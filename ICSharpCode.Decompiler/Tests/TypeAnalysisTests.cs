@@ -140,4 +140,14 @@ public class TypeAnalysisTests
 	{
 		return new byte[length];
 	}
+	
+	public StringComparison EnumDiffNumber(StringComparison data)
+	{
+		return data - 1;
+	}
+	
+	public int EnumDiff(StringComparison a, StringComparison b)
+	{
+		return Math.Abs(a - b);
+	}
 }

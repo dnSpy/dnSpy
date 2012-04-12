@@ -1004,6 +1004,19 @@ namespace ICSharpCode.Decompiler.ILAst
 				InferTypeForExpression(right, typeSystem.IntPtr);
 				return leftPreferred;
 			}
+			if (IsEnum(leftPreferred)) {
+				if (expectedType != null && IsEnum(expectedType)) {
+					// E-U=E
+					left.InferredType = left.ExpectedType = leftPreferred;
+					InferTypeForExpression(right, GetEnumUnderlyingType(leftPreferred));
+					return leftPreferred;
+				} else {
+					// E-E=U
+					left.InferredType = left.ExpectedType = leftPreferred;
+					InferTypeForExpression(right, leftPreferred);
+					return GetEnumUnderlyingType(leftPreferred);
+				}
+			}
 			return InferBinaryArguments(left, right, expectedType, leftPreferred: leftPreferred);
 		}
 
