@@ -101,7 +101,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				// Find all branches
 				foreach(ILLabel target in node.GetSelfAndChildrenRecursive<ILExpression>(e => e.IsBranch()).SelectMany(e => e.GetBranchTargets())) {
 					ControlFlowNode destination;
-					// Labels which are out of out scope will not be int the collection
+					// Labels which are out of out scope will not be in the collection
 					// Insert self edge only if we are sure we are a loop
 					if (labelToCfNode.TryGetValue(target, out destination) && (destination != source || target == node.Body.FirstOrDefault())) {
 						ControlFlowEdge edge = new ControlFlowEdge(source, destination, JumpType.Normal);
@@ -364,18 +364,12 @@ namespace ICSharpCode.Decompiler.ILAst
 							labelToCfNode.TryGetValue(falseLabel, out falseTarget);
 							
 							// Pull in the conditional code
-							HashSet<ControlFlowNode> frontiers = new HashSet<ControlFlowNode>();
-							if (trueTarget != null)
-								frontiers.UnionWith(trueTarget.DominanceFrontier.Except(new [] { trueTarget }));
-							if (falseTarget != null)
-								frontiers.UnionWith(falseTarget.DominanceFrontier.Except(new [] { falseTarget }));
-							
-							if (trueTarget != null && !frontiers.Contains(trueTarget)) {
+							if (trueTarget != null && trueTarget.Incoming.Count == 1) {
 								HashSet<ControlFlowNode> content = FindDominatedNodes(scope, trueTarget);
 								scope.ExceptWith(content);
 								ilCond.TrueBlock.Body.AddRange(FindConditions(content, trueTarget));
 							}
-							if (falseTarget != null && !frontiers.Contains(falseTarget)) {
+							if (falseTarget != null && falseTarget.Incoming.Count == 1) {
 								HashSet<ControlFlowNode> content = FindDominatedNodes(scope, falseTarget);
 								scope.ExceptWith(content);
 								ilCond.FalseBlock.Body.AddRange(FindConditions(content, falseTarget));

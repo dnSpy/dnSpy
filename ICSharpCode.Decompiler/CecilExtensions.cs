@@ -133,6 +133,8 @@ namespace ICSharpCode.Decompiler
 		/// </summary>
 		public static int GetEndOffset(this Instruction inst)
 		{
+			if (inst == null)
+				throw new ArgumentNullException("inst");
 			return inst.Offset + inst.GetSize();
 		}
 		
