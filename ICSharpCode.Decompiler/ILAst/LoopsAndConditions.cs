@@ -228,15 +228,10 @@ namespace ICSharpCode.Decompiler.ILAst
 			// Do not modify entry data
 			scope = new HashSet<ControlFlowNode>(scope);
 			
-			HashSet<ControlFlowNode> agenda  = new HashSet<ControlFlowNode>();
-			agenda.Add(entryNode);
-			while(agenda.Any()) {
-				ControlFlowNode node = agenda.First();
-				// Attempt for a good order
-				while(agenda.Contains(node.ImmediateDominator)) {
-					node = node.ImmediateDominator;
-				}
-				agenda.Remove(node);
+			Stack<ControlFlowNode> agenda  = new Stack<ControlFlowNode>();
+			agenda.Push(entryNode);
+			while(agenda.Count > 0) {
+				ControlFlowNode node = agenda.Pop();
 				
 				// Find a block that represents a simple condition
 				if (scope.Contains(node)) {
@@ -384,9 +379,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 				}
 
-				// Using the dominator tree should ensure we find the the widest loop first
-				foreach(var child in node.DominatorTreeChildren) {
-					agenda.Add(child);
+				// depth-first traversal of dominator tree
+				for (int i = node.DominatorTreeChildren.Count - 1; i >= 0; i--) {
+					agenda.Push(node.DominatorTreeChildren[i]);
 				}
 			}
 			

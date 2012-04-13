@@ -66,6 +66,8 @@
     <Compile Include="CheckedUnchecked.cs" />
     <Compile Include="ControlFlow.cs" />
     <Compile Include="ExpressionTrees.cs" />
+    <None Include="IL\SequenceOfNestedIfs.Output.cs" />
+    <Compile Include="IL\ILTests.cs" />
     <Compile Include="LiftedOperators.cs" />
     <Compile Include="CustomShortCircuitOperators.cs" />
     <Compile Include="Helpers\CodeAssert.cs" />
@@ -78,6 +80,10 @@
     <Compile Include="UnsafeCode.cs" />
     <Compile Include="Types\S_TypeDeclarations.cs" />
     <Compile Include="YieldReturn.cs" />
+    <None Include="IL\SequenceOfNestedIfs.dll" />
+    <None Include="IL\SequenceOfNestedIfs.il" />
+    <None Include="IL\StackTests.exe" />
+    <None Include="IL\StackTests.il" />
     <None Include="packages.config" />
     <None Include="Types\S_EnumSamples.cs" />
     <None Include="CustomAttributes\S_AssemblyCustomAttribute.cs" />
@@ -118,10 +124,11 @@
       <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="IL" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="BooleanConsumedAsInteger.il" />
-    <None Include="StackTests\StackTests.il" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

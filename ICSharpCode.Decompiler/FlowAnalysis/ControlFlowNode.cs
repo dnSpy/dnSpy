@@ -280,6 +280,10 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 				writer.WriteLine();
 				Disassembler.DisassemblerHelpers.WriteTo(inst, new PlainTextOutput(writer));
 			}
+			if (UserData != null) {
+				writer.WriteLine();
+				writer.Write(UserData.ToString());
+			}
 			return writer.ToString();
 		}
 		
