@@ -31,6 +31,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
@@ -331,6 +332,34 @@ namespace ICSharpCode.ILSpy
 			}
 			
 			NavigationCommands.Search.InputGestures.Add(new KeyGesture(Key.E, ModifierKeys.Control));
+			
+			AvalonEditTextOutput output = new AvalonEditTextOutput();
+			if (FormatExceptions(App.StartupExceptions.ToArray(), output))
+				decompilerTextView.ShowText(output);
+		}
+		
+		bool FormatExceptions(App.ExceptionData[] exceptions, ITextOutput output)
+		{
+			if (exceptions.Length == 0) return false;
+			bool first = true;
+			
+			foreach (var item in exceptions) {
+				if (first)
+					first = false;
+				else
+					output.WriteLine("-------------------------------------------------");
+				output.WriteLine("Error(s) loading plugin: " + item.PluginName);
+				if (item.Exception is System.Reflection.ReflectionTypeLoadException) {
+					var e = (System.Reflection.ReflectionTypeLoadException)item.Exception;
+					foreach (var ex in e.LoaderExceptions) {
+						output.WriteLine(ex.ToString());
+						output.WriteLine();
+					}
+				} else
+					output.WriteLine(item.Exception.ToString());
+			}
+			
+			return true;
 		}
 		
 		#region Update Check

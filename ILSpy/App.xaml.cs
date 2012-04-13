@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.IO;
@@ -26,6 +27,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Navigation;
 using System.Windows.Threading;
+
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.TextView;
 
@@ -43,6 +45,14 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		internal static CommandLineArguments CommandLineArguments;
+		
+		internal static IList<ExceptionData> StartupExceptions = new List<ExceptionData>();
+		
+		internal class ExceptionData
+		{
+			public Exception Exception;
+			public string PluginName;
+		}
 		
 		public App()
 		{
@@ -65,9 +75,13 @@ namespace ICSharpCode.ILSpy
 			foreach (string plugin in Directory.GetFiles(appPath, "*.Plugin.dll")) {
 				string shortName = Path.GetFileNameWithoutExtension(plugin);
 				try {
-					catalog.Catalogs.Add(new AssemblyCatalog(Assembly.Load(shortName)));
+					var asm = Assembly.Load(shortName);
+					asm.GetTypes();
+					catalog.Catalogs.Add(new AssemblyCatalog(asm));
 				} catch (Exception ex) {
-					MessageBox.Show(ex.ToString(), "Error loading plugin " + shortName);
+					// Cannot show MessageBox here, because WPF would crash with a XamlParseException
+					// Remember and show exceptions in text output, once MainWindow is properly initialized
+					StartupExceptions.Add(new ExceptionData { Exception = ex, PluginName = shortName });
 				}
 			}
 			
