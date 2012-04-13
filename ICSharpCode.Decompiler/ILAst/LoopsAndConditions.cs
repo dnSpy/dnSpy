@@ -364,12 +364,12 @@ namespace ICSharpCode.Decompiler.ILAst
 							labelToCfNode.TryGetValue(falseLabel, out falseTarget);
 							
 							// Pull in the conditional code
-							if (trueTarget != null && trueTarget.Incoming.Count == 1) {
+							if (trueTarget != null && HasSingleEdgeEnteringBlock(trueTarget)) {
 								HashSet<ControlFlowNode> content = FindDominatedNodes(scope, trueTarget);
 								scope.ExceptWith(content);
 								ilCond.TrueBlock.Body.AddRange(FindConditions(content, trueTarget));
 							}
-							if (falseTarget != null && falseTarget.Incoming.Count == 1) {
+							if (falseTarget != null && HasSingleEdgeEnteringBlock(falseTarget)) {
 								HashSet<ControlFlowNode> content = FindDominatedNodes(scope, falseTarget);
 								scope.ExceptWith(content);
 								ilCond.FalseBlock.Body.AddRange(FindConditions(content, falseTarget));
@@ -396,6 +396,11 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			
 			return result;
+		}
+		
+		static bool HasSingleEdgeEnteringBlock(ControlFlowNode node)
+		{
+			return node.Incoming.Count(edge => !node.Dominates(edge.Source)) == 1;
 		}
 		
 		static HashSet<ControlFlowNode> FindDominatedNodes(HashSet<ControlFlowNode> scope, ControlFlowNode head)
