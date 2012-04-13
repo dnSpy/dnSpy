@@ -985,10 +985,22 @@ namespace ICSharpCode.Decompiler.ILAst
 				InferTypeForExpression(right, typeSystem.IntPtr);
 				return leftPreferred;
 			}
+			if (IsEnum(leftPreferred)) {
+				//E+U=E
+				left.InferredType = left.ExpectedType = leftPreferred;
+				InferTypeForExpression(right, GetEnumUnderlyingType(leftPreferred));
+				return leftPreferred;
+			}
 			TypeReference rightPreferred = DoInferTypeForExpression(right, expectedType);
 			if (rightPreferred is PointerType) {
 				InferTypeForExpression(left, typeSystem.IntPtr);
 				right.InferredType = right.ExpectedType = rightPreferred;
+				return rightPreferred;
+			}
+			if (IsEnum(rightPreferred)) {
+				//U+E=E
+				right.InferredType = right.ExpectedType = rightPreferred;
+				InferTypeForExpression(left, GetEnumUnderlyingType(rightPreferred));
 				return rightPreferred;
 			}
 			return InferBinaryArguments(left, right, expectedType, leftPreferred: leftPreferred, rightPreferred: rightPreferred);
