@@ -32,8 +32,16 @@
 				<bindingRedirect oldVersion="1.0.0.0-99.9.9.9" newVersion="$INSERTVERSION$"/>
 			</dependentAssembly>
 			<dependentAssembly>
-				<assemblyIdentity name="ICSharpCode.ILSpy" publicKeyToken="d4bfe873e7598c49" culture="neutral"/>
+				<assemblyIdentity name="ILSpy" publicKeyToken="d4bfe873e7598c49" culture="neutral"/>
 				<bindingRedirect oldVersion="1.0.0.0-99.9.9.9" newVersion="$INSERTVERSION$"/>
+			</dependentAssembly>
+			<dependentAssembly>
+				<assemblyIdentity name="Mono.Cecil" publicKeyToken="0738eb9f132ed756" culture="neutral"/>
+				<bindingRedirect oldVersion="0.0.0.0-99.9.9.9" newVersion="0.9.5.0"/>
+			</dependentAssembly>
+			<dependentAssembly>
+				<assemblyIdentity name="Mono.Cecil.Pdb" publicKeyToken="0738eb9f132ed756" culture="neutral"/>
+				<bindingRedirect oldVersion="0.0.0.0-99.9.9.9" newVersion="0.9.5.0"/>
 			</dependentAssembly>
 		</assemblyBinding>
 	</runtime>
