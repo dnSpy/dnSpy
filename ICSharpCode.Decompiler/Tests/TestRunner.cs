@@ -61,7 +61,7 @@ namespace ICSharpCode.Decompiler.Tests
 		[Test]
 		public void ExceptionHandling()
 		{
-			TestFile(@"..\..\Tests\ExceptionHandling.cs", false);
+			TestFile(@"..\..\Tests\ExceptionHandling.cs", optimize: false);
 		}
 		
 		[Test]
@@ -79,7 +79,7 @@ namespace ICSharpCode.Decompiler.Tests
 		[Test]
 		public void ControlFlowWithDebug()
 		{
-			TestFile(@"..\..\Tests\ControlFlow.cs", false, true);
+			TestFile(@"..\..\Tests\ControlFlow.cs", optimize: false, useDebug: true);
 		}
 		
 		[Test]
