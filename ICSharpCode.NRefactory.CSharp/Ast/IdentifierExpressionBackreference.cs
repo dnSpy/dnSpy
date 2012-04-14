@@ -48,7 +48,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			CSharp.AstNode referenced = (CSharp.AstNode)match.Get(referencedGroupName).Last();
 			if (referenced == null)
 				return false;
-			return ident.Identifier == referenced.GetChildByRole(CSharp.AstNode.Roles.Identifier).Name;
+			return ident.Identifier == referenced.GetChildByRole(CSharp.Roles.Identifier).Name;
 		}
 	}
 }

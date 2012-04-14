@@ -24,6 +24,7 @@ namespace ICSharpCode.NRefactory.Editor
 	/// <summary>
 	/// Read-only implementation of <see cref="IDocument"/>.
 	/// </summary>
+	[Serializable]
 	public sealed class ReadOnlyDocument : IDocument
 	{
 		readonly ITextSource textSource;
@@ -220,8 +221,9 @@ namespace ICSharpCode.NRefactory.Editor
 			get { return lines.Length; }
 		}
 		
-		ITextSourceVersion ITextSource.Version {
-			get { return null; }
+		/// <inheritdoc/>
+		public ITextSourceVersion Version {
+			get { return textSource.Version; }
 		}
 		
 		/// <inheritdoc/>
@@ -325,6 +327,12 @@ namespace ICSharpCode.NRefactory.Editor
 		}
 		
 		/// <inheritdoc/>
+		public IDocument CreateDocumentSnapshot()
+		{
+			return this; // ReadOnlyDocument is immutable
+		}
+		
+		/// <inheritdoc/>
 		public System.IO.TextReader CreateReader()
 		{
 			return textSource.CreateReader();
@@ -355,6 +363,12 @@ namespace ICSharpCode.NRefactory.Editor
 		}
 		
 		/// <inheritdoc/>
+		public int IndexOf(char c, int startIndex, int count)
+		{
+			return textSource.IndexOf(c, startIndex, count);
+		}
+		
+		/// <inheritdoc/>
 		public int IndexOfAny(char[] anyOf, int startIndex, int count)
 		{
 			return textSource.IndexOfAny(anyOf, startIndex, count);
@@ -364,6 +378,12 @@ namespace ICSharpCode.NRefactory.Editor
 		public int IndexOf(string searchText, int startIndex, int count, StringComparison comparisonType)
 		{
 			return textSource.IndexOf(searchText, startIndex, count, comparisonType);
+		}
+		
+		/// <inheritdoc/>
+		public int LastIndexOf(char c, int startIndex, int count)
+		{
+			return textSource.LastIndexOf(c, startIndex, count);
 		}
 		
 		/// <inheritdoc/>

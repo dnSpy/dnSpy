@@ -26,8 +26,13 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class ArrayCreateExpression : Expression
 	{
+		public readonly static TokenRole NewKeywordRole = new TokenRole ("new");
 		public readonly static Role<ArraySpecifier> AdditionalArraySpecifierRole = new Role<ArraySpecifier>("AdditionalArraySpecifier");
 		public readonly static Role<ArrayInitializerExpression> InitializerRole = new Role<ArrayInitializerExpression>("Initializer", ArrayInitializerExpression.Null);
+		
+		public CSharpTokenNode NewToken {
+			get { return GetChildByRole (NewKeywordRole); }
+		}
 		
 		public AstType Type {
 			get { return GetChildByRole (Roles.Type); }
@@ -51,7 +56,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (InitializerRole, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitArrayCreateExpression (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitArrayCreateExpression (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitArrayCreateExpression (this, data);
 		}

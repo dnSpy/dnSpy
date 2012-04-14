@@ -55,8 +55,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			bool isExtensionMethodInvocation = false,
 			bool isExpandedForm = false,
 			bool isDelegateInvocation = false,
-			IList<int> argumentToParameterMap = null)
-			: base(targetResult, member, arguments)
+			IList<int> argumentToParameterMap = null,
+			IList<ResolveResult> initializerStatements = null
+		)
+			: base(targetResult, member, arguments, initializerStatements)
 		{
 			this.OverloadResolutionErrors = overloadResolutionErrors;
 			this.IsExtensionMethodInvocation = isExtensionMethodInvocation;

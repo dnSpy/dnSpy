@@ -11,13 +11,17 @@
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <NoStdLib>False</NoStdLib>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin\Debug\</OutputPath>
-    <DebugSymbols>True</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
     <Optimize>False</Optimize>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
@@ -30,6 +34,9 @@
     <Optimize>True</Optimize>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
     <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Build" />
@@ -47,14 +54,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\ICSharpCode.NRefactory\Properties\GlobalAssemblyInfo.cs">
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="CSharpProject.cs" />
     <Compile Include="FindReferencesConsistencyCheck.cs" />
+    <Compile Include="IDStringConsistencyCheck.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomizedOrderResolverTest.cs" />
     <Compile Include="ResolverTest.cs" />
     <Compile Include="RoundtripTest.cs" />
     <Compile Include="Solution.cs" />
+    <Compile Include="Xml\IncrementalXmlParserTests.cs" />
+    <Compile Include="Xml\XmlReaderTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -65,10 +78,17 @@
       <Project>{53DCA265-3C3C-42F9-B647-F72BA678122B}</Project>
       <Name>ICSharpCode.NRefactory.CSharp</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ICSharpCode.NRefactory.Xml\ICSharpCode.NRefactory.Xml.csproj">
+      <Project>{DC393B66-92ED-4CAD-AB25-CFEF23F3D7C6}</Project>
+      <Name>ICSharpCode.NRefactory.Xml</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
       <Project>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</Project>
       <Name>ICSharpCode.NRefactory</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

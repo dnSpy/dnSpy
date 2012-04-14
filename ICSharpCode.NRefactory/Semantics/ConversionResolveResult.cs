@@ -32,6 +32,8 @@ namespace ICSharpCode.NRefactory.Semantics
 		{
 			if (input == null)
 				throw new ArgumentNullException("input");
+			if (conversion == null)
+				throw new ArgumentNullException("conversion");
 			this.Input = input;
 			this.Conversion = conversion;
 		}

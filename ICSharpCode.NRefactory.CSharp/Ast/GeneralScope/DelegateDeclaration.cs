@@ -24,45 +24,27 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
 	/// <summary>
 	/// delegate ReturnType Name&lt;TypeParameters&gt;(Parameters) where Constraints;
 	/// </summary>
-	public class DelegateDeclaration : AttributedNode
+	public class DelegateDeclaration : EntityDeclaration
 	{
 		public override NodeType NodeType {
-			get {
-				return NodeType.TypeDeclaration;
-			}
+			get { return NodeType.TypeDeclaration; }
 		}
 		
-		public AstType ReturnType {
-			get { return GetChildByRole (Roles.Type); }
-			set { SetChildByRole (Roles.Type, value); }
+		public override EntityType EntityType {
+			get { return EntityType.TypeDefinition; }
 		}
 		
-		public string Name {
-			get {
-				return GetChildByRole (Roles.Identifier).Name;
-			}
-			set {
-				SetChildByRole (Roles.Identifier, Identifier.Create (value, TextLocation.Empty));
-			}
+		public CSharpTokenNode DelegateToken {
+			get { return GetChildByRole(Roles.DelegateKeyword); }
 		}
-		
-		public Identifier NameToken {
-			get {
-				return GetChildByRole (Roles.Identifier);
-			}
-			set {
-				SetChildByRole (Roles.Identifier, value);
-			}
-		}
-		
+
 		public AstNodeCollection<TypeParameterDeclaration> TypeParameters {
 			get { return GetChildrenByRole (Roles.TypeParameter); }
 		}
@@ -83,7 +65,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildrenByRole (Roles.Constraint); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitDelegateDeclaration (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitDelegateDeclaration (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitDelegateDeclaration (this, data);
 		}
@@ -91,8 +83,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
 			DelegateDeclaration o = other as DelegateDeclaration;
-			return o != null && this.MatchAttributesAndModifiers(o, match)
-				&& this.ReturnType.DoMatch(o.ReturnType, match) && MatchString(this.Name, o.Name)
+			return o != null && MatchString(this.Name, o.Name) 
+				&& this.MatchAttributesAndModifiers(o, match) && this.ReturnType.DoMatch(o.ReturnType, match)
 				&& this.TypeParameters.DoMatch(o.TypeParameters, match) && this.Parameters.DoMatch(o.Parameters, match)
 				&& this.Constraints.DoMatch(o.Constraints, match);
 		}

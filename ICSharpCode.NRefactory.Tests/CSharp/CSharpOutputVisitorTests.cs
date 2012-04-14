@@ -1,4 +1,4 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -28,11 +28,27 @@ namespace ICSharpCode.NRefactory.CSharp
 		void AssertOutput(string expected, AstNode node, CSharpFormattingOptions policy = null)
 		{
 			if (policy == null)
-				policy = new CSharpFormattingOptions();
+				policy = FormattingOptionsFactory.CreateMono();
 			StringWriter w = new StringWriter();
 			w.NewLine = "\n";
-			node.AcceptVisitor(new CSharpOutputVisitor(new TextWriterOutputFormatter(w) { IndentationString = "$" }, policy), null);
+			node.AcceptVisitor(new CSharpOutputVisitor(new TextWriterOutputFormatter(w) { IndentationString = "$" }, policy));
 			Assert.AreEqual(expected.Replace("\r", ""), w.ToString());
+		}
+		
+		[Test]
+		public void AnonymousLocalVariableDeclaration()
+		{
+			var code = @"class Test
+{
+	void Foo ()
+	{
+		Action<int> act = delegate (int testMe) {
+		};
+	}
+}
+";
+			var unit = CompilationUnit.Parse(code);
+			AssertOutput("class Test\n{\n$void Foo ()\n${\n$$Action<int> act = delegate (int testMe) {\n$$};\n$}\n}\n", unit);
 		}
 		
 		[Test]
@@ -51,7 +67,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		[Test]
-		public void EnumDeclarationWithInitializers()
+		public void EnumDeclarationWithInitializers ()
 		{
 			TypeDeclaration type = new TypeDeclaration {
 				ClassType = ClassType.Enum,
@@ -70,11 +86,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void InlineCommentAtEndOfCondition()
 		{
 			IfElseStatement condition = new IfElseStatement();
-			condition.AddChild(new CSharpTokenNode(new TextLocation(1, 1), 2), IfElseStatement.IfKeywordRole);
-			condition.AddChild(new CSharpTokenNode(new TextLocation(1, 4), 1), IfElseStatement.Roles.LPar);
+			condition.AddChild(new CSharpTokenNode(new TextLocation(1, 1)), IfElseStatement.IfKeywordRole);
+			condition.AddChild(new CSharpTokenNode(new TextLocation(1, 4)), Roles.LPar);
 			condition.AddChild(new IdentifierExpression("cond", new TextLocation(1, 5)), IfElseStatement.ConditionRole);
-			condition.AddChild(new Comment(CommentType.MultiLine, new TextLocation(1, 9), new TextLocation(1, 14)) { Content = "a" }, IfElseStatement.Roles.Comment);
-			condition.AddChild(new CSharpTokenNode(new TextLocation(1, 14), 1), IfElseStatement.Roles.RPar);
+			condition.AddChild(new Comment(CommentType.MultiLine, new TextLocation(1, 9), new TextLocation(1, 14)) { Content = "a" }, Roles.Comment);
+			condition.AddChild(new CSharpTokenNode(new TextLocation(1, 14)), Roles.RPar);
 			condition.AddChild(new ReturnStatement(), IfElseStatement.TrueRole);
 			
 			AssertOutput("if (cond/*a*/)\n$return;\n", condition);

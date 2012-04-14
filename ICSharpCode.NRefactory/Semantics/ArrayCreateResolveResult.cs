@@ -32,15 +32,15 @@ namespace ICSharpCode.NRefactory.Semantics
 		/// <summary>
 		/// Gets the size arguments.
 		/// </summary>
-		public readonly ResolveResult[] SizeArguments;
+		public readonly IList<ResolveResult> SizeArguments;
 		
 		/// <summary>
 		/// Gets the initializer elements.
 		/// This field may be null if no initializer was specified.
 		/// </summary>
-		public readonly ResolveResult[] InitializerElements;
+		public readonly IList<ResolveResult> InitializerElements;
 		
-		public ArrayCreateResolveResult(IType arrayType, ResolveResult[] sizeArguments, ResolveResult[] initializerElements)
+		public ArrayCreateResolveResult(IType arrayType, IList<ResolveResult> sizeArguments, IList<ResolveResult> initializerElements)
 			: base(arrayType)
 		{
 			this.SizeArguments = sizeArguments;

@@ -1041,10 +1041,6 @@ namespace Mono.CSharp
 		{
 		}
 
-		public override void EmitSymbolInfo ()
-		{
-		}
-
 		protected override FieldExpr GetFieldExpression (EmitContext ec)
 		{
 			return new FieldExpr (field, field.Location);

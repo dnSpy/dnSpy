@@ -19,6 +19,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using ICSharpCode.NRefactory.Documentation;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using ICSharpCode.NRefactory.TypeSystem.TestCase;
@@ -66,7 +67,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 			ITypeDefinition disposable = GetTypeDefinition(typeof(NRefactory.TypeSystem.TestCase.ExplicitDisposableImplementation));
 			IMethod method = disposable.Methods.Single(m => m.Name == "Dispose");
 			Assert.IsTrue(method.IsExplicitInterfaceImplementation);
-			Assert.AreEqual("System.IDisposable.Dispose", method.InterfaceImplementations.Single().FullName);
+			Assert.AreEqual("System.IDisposable.Dispose", method.ImplementedInterfaceMembers.Single().FullName);
 		}
 		
 		[Test]
@@ -79,11 +80,11 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 			Assert.IsTrue(implMethod1.IsExplicitInterfaceImplementation);
 			Assert.IsTrue(implMethod2.IsExplicitInterfaceImplementation);
 			
-			IMethod interfaceMethod1 = (IMethod)implMethod1.InterfaceImplementations.Single();
+			IMethod interfaceMethod1 = (IMethod)implMethod1.ImplementedInterfaceMembers.Single();
 			Assert.AreEqual(genericInterfaceOfString, interfaceMethod1.DeclaringType);
 			Assert.IsTrue(!interfaceMethod1.Parameters[1].IsRef);
 			
-			IMethod interfaceMethod2 = (IMethod)implMethod2.InterfaceImplementations.Single();
+			IMethod interfaceMethod2 = (IMethod)implMethod2.ImplementedInterfaceMembers.Single();
 			Assert.AreEqual(genericInterfaceOfString, interfaceMethod2.DeclaringType);
 			Assert.IsTrue(interfaceMethod2.Parameters[1].IsRef);
 		}
@@ -94,9 +95,9 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 			IType type = compilation.FindType(typeof(ExplicitGenericInterfaceImplementationWithUnifiableMethods<int, int>));
 			Assert.AreEqual(2, type.GetMethods(m => m.IsExplicitInterfaceImplementation).Count());
 			foreach (IMethod method in type.GetMethods(m => m.IsExplicitInterfaceImplementation)) {
-				Assert.AreEqual(1, method.InterfaceImplementations.Count, method.ToString());
+				Assert.AreEqual(1, method.ImplementedInterfaceMembers.Count, method.ToString());
 				Assert.AreEqual("System.Int32", method.Parameters.Single().Type.ReflectionName);
-				IMethod interfaceMethod = (IMethod)method.InterfaceImplementations.Single();
+				IMethod interfaceMethod = (IMethod)method.ImplementedInterfaceMembers.Single();
 				Assert.AreEqual("System.Int32", interfaceMethod.Parameters.Single().Type.ReflectionName);
 				var genericParamType = ((IMethod)method.MemberDefinition).Parameters.Single().Type;
 				var interfaceGenericParamType = ((IMethod)interfaceMethod.MemberDefinition).Parameters.Single().Type;
@@ -104,6 +105,26 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 				Assert.AreEqual(TypeKind.TypeParameter, interfaceGenericParamType.Kind);
 				Assert.AreEqual(genericParamType.ReflectionName, interfaceGenericParamType.ReflectionName);
 			}
+		}
+		
+		[Test]
+		public void PartialMethodWithImplementation()
+		{
+			var t = compilation.FindType(typeof(PartialClass));
+			var methods = t.GetMethods(m => m.Name == "PartialMethodWithImplementation").ToList();
+			Assert.AreEqual(2, methods.Count);
+			var method1 = methods.Single(m => m.Parameters[0].Type.FullName == "System.Int32");
+			var method2 = methods.Single(m => m.Parameters[0].Type.FullName == "System.String");
+			Assert.AreEqual(2, method1.Parts.Count);
+			Assert.AreEqual(2, method2.Parts.Count);
+		}
+		
+		[Test]
+		public void PartialMethodWithoutImplementation()
+		{
+			var t = compilation.FindType(typeof(PartialClass));
+			var method = t.GetMethods(m => m.Name == "PartialMethodWithoutImplementation").Single();
+			Assert.AreEqual(1, method.Parts.Count);
 		}
 	}
 	

@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using ICSharpCode.NRefactory.Documentation;
 
 namespace ICSharpCode.NRefactory.TypeSystem
 {
@@ -137,7 +138,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// <summary>
 		/// Gets the documentation for this entity.
 		/// </summary>
-		string Documentation { get; }
+		DocumentationComment Documentation { get; }
 		
 		/// <summary>
 		/// Gets whether this entity is static.

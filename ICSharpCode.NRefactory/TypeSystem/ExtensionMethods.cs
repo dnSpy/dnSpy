@@ -67,6 +67,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		#region GetAllBaseTypeDefinitions
 		/// <summary>
 		/// Gets all base type definitions.
+		/// The output is ordered so that base types occur before derived types.
 		/// </summary>
 		/// <remarks>
 		/// This is equivalent to type.GetAllBaseTypes().Select(t => t.GetDefinition()).Where(d => d != null).Distinct().
@@ -76,30 +77,18 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			if (type == null)
 				throw new ArgumentNullException("type");
 			
-			HashSet<ITypeDefinition> typeDefinitions = new HashSet<ITypeDefinition>();
-			Func<ITypeDefinition, IEnumerable<ITypeDefinition>> recursion =
-				t => t.DirectBaseTypes.Select(b => b.GetDefinition()).Where(d => d != null && typeDefinitions.Add(d));
-			
-			ITypeDefinition typeDef = type.GetDefinition();
-			if (typeDef != null) {
-				typeDefinitions.Add(typeDef);
-				return TreeTraversal.PreOrder(typeDef, recursion);
-			} else {
-				return TreeTraversal.PreOrder(
-					type.DirectBaseTypes.Select(b => b.GetDefinition()).Where(d => d != null && typeDefinitions.Add(d)),
-					recursion);
-			}
+			return type.GetAllBaseTypes().Select(t => t.GetDefinition()).Where(d => d != null).Distinct();
 		}
 		
 		/// <summary>
-		/// Gets whether this type definition is derived from the base type defintiion.
+		/// Gets whether this type definition is derived from the base type definition.
 		/// </summary>
 		public static bool IsDerivedFrom(this ITypeDefinition type, ITypeDefinition baseType)
 		{
 			if (type.Compilation != baseType.Compilation) {
 				throw new InvalidOperationException("Both arguments to IsDerivedFrom() must be from the same compilation.");
 			}
-			return GetAllBaseTypeDefinitions(type).Contains(baseType);
+			return type.GetAllBaseTypeDefinitions().Contains(baseType);
 		}
 		#endregion
 		
@@ -257,19 +246,10 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		{
 			if (type == null)
 				throw new ArgumentNullException("type");
-			ITypeDefinition def = type.GetDefinition();
-			if (def != null && def.Kind == TypeKind.Delegate) {
-				foreach (IMember member in def.Members) {
-					if (member.Name == "Invoke" && member is IMethod) {
-						ParameterizedType pt = type as ParameterizedType;
-						if (pt != null) {
-							return new SpecializedMethod(pt, (IMethod)member);
-						}
-						return (IMethod)member;
-					}
-				}
-			}
-			return null;
+			if (type.Kind == TypeKind.Delegate)
+				return type.GetMethods(m => m.Name == "Invoke", GetMemberOptions.IgnoreInheritedMembers).FirstOrDefault();
+			else
+				return null;
 		}
 		#endregion
 		
@@ -303,8 +283,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// </summary>
 		public static IEnumerable<ITypeDefinition> GetAllTypeDefinitions (this ICompilation compilation)
 		{
-			return compilation.MainAssembly.GetAllTypeDefinitions()
-				.Concat(compilation.ReferencedAssemblies.SelectMany(a => a.GetAllTypeDefinitions()));
+			return compilation.Assemblies.SelectMany(a => a.GetAllTypeDefinitions());
 		}
 		
 		/// <summary>

@@ -305,11 +305,10 @@ namespace Mono.CSharp {
 							//
 							// First check exact modifiers match
 							//
-							const Parameter.Modifier ref_out = Parameter.Modifier.REF | Parameter.Modifier.OUT;
-							if ((cp[pi].ModFlags & ref_out) == (tp[pi].ModFlags & ref_out))
+							if ((cp[pi].ModFlags & Parameter.Modifier.RefOutMask) == (tp[pi].ModFlags & Parameter.Modifier.RefOutMask))
 								continue;
 
-							if ((cp[pi].ModFlags & tp[pi].ModFlags & Parameter.Modifier.ISBYREF) != 0) {
+							if (((cp[pi].ModFlags | tp[pi].ModFlags) & Parameter.Modifier.RefOutMask) == Parameter.Modifier.RefOutMask) {
 								ref_only_difference = true;
 								continue;
 							}
@@ -508,7 +507,7 @@ namespace Mono.CSharp {
 			}
 
 			int top = param.Count;
-			var ec = new EmitContext (new ProxyMethodContext (container), proxy.GetILGenerator (), null);
+			var ec = new EmitContext (new ProxyMethodContext (container), proxy.GetILGenerator (), null, null);
 			ec.EmitThis ();
 			// TODO: GetAllParametersArguments
 			for (int i = 0; i < top; i++)
@@ -557,8 +556,7 @@ namespace Mono.CSharp {
 						//
 						// First check exact ref/out match
 						//
-						const Parameter.Modifier ref_out = Parameter.Modifier.REF | Parameter.Modifier.OUT;
-						if ((parameters.FixedParameters[i].ModFlags & ref_out) == (candidate_param.FixedParameters[i].ModFlags & ref_out))
+						if ((parameters.FixedParameters[i].ModFlags & Parameter.Modifier.RefOutMask) == (candidate_param.FixedParameters[i].ModFlags & Parameter.Modifier.RefOutMask))
 							continue;
 
 						modifiers_match = false;
@@ -566,7 +564,7 @@ namespace Mono.CSharp {
 						//
 						// Different in ref/out only
 						//
-						if ((parameters.FixedParameters[i].ModFlags & candidate_param.FixedParameters[i].ModFlags & Parameter.Modifier.ISBYREF) != 0) {
+						if ((parameters.FixedParameters[i].ModFlags & Parameter.Modifier.RefOutMask) != (candidate_param.FixedParameters[i].ModFlags & Parameter.Modifier.RefOutMask)) {
 							if (similar_candidate == null) {
 								if (!candidate.IsPublic)
 									break;

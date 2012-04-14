@@ -42,11 +42,11 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// <summary>
 		/// Show the definition key word (class, struct, Sub, Function, etc.)
 		/// </summary>
-		ShowDefinitionKeyWord  = 8,
+		ShowDefinitionKeyword  = 8,
 		/// <summary>
-		/// Show the fully qualified name for the member
+		/// Show the declaring type for the member
 		/// </summary>
-		UseFullyQualifiedMemberNames = 0x10,
+		ShowDeclaringType = 0x10,
 		/// <summary>
 		/// Show modifiers (virtual, override, etc.)
 		/// </summary>
@@ -56,7 +56,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// </summary>
 		ShowReturnType = 0x40,
 		/// <summary>
-		/// Use fully qualified names for return type and parameters.
+		/// Use fully qualified names for types.
 		/// </summary>
 		UseFullyQualifiedTypeNames = 0x80,
 		/// <summary>
@@ -76,21 +76,20 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			ShowReturnType |
 			ShowModifiers |
 			ShowTypeParameterList |
-			ShowDefinitionKeyWord |
+			ShowDefinitionKeyword |
 			ShowBody,
 		
-		All = 0xfff,
+		All = 0x3ff,
 	}
 	
 	public interface IAmbience
 	{
 		ConversionFlags ConversionFlags { get; set; }
 		
-		string ConvertEntity(IEntity e);
+		string ConvertEntity(IEntity entity);
 		string ConvertType(IType type);
 		string ConvertVariable(IVariable variable);
 		
-		string WrapAttribute(string attribute);
 		string WrapComment(string comment);
 	}
 }

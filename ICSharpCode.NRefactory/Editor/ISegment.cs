@@ -49,22 +49,23 @@ namespace ICSharpCode.NRefactory.Editor
 	public static class ISegmentExtensions
 	{
 		/// <summary>
-		/// Gets whether the segment contains the offset.
+		/// Gets whether <paramref name="segment"/> fully contains the specified segment.
 		/// </summary>
-		/// <returns>
-		/// True, if offset is between segment.Start and segment.End (inclusive); otherwise, false.
-		/// </returns>
-		public static bool Contains (this ISegment segment, int offset)
+		/// <remarks>
+		/// Use <c>segment.Contains(offset, 0)</c> to detect whether a segment (end inclusive) contains offset;
+		/// use <c>segment.Contains(offset, 1)</c> to detect whether a segment (end exclusive) contains offset.
+		/// </remarks>
+		public static bool Contains (this ISegment segment, int offset, int length)
 		{
-			return segment.Offset <= offset && offset <= segment.EndOffset;
+			return segment.Offset <= offset && offset + length <= segment.EndOffset;
 		}
 		
 		/// <summary>
-		/// True, if the segment contains the specified segment, false otherwise.
+		/// Gets whether <paramref name="thisSegment"/> fully contains the specified segment.
 		/// </summary>
 		public static bool Contains (this ISegment thisSegment, ISegment segment)
 		{
-			return  segment != null && thisSegment.Offset <= segment.Offset && segment.EndOffset <= thisSegment.EndOffset;
+			return segment != null && thisSegment.Offset <= segment.Offset && segment.EndOffset <= thisSegment.EndOffset;
 		}
 	}
 }

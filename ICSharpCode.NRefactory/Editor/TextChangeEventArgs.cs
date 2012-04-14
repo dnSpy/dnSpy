@@ -92,5 +92,13 @@ namespace ICSharpCode.NRefactory.Editor
 				return offset;
 			}
 		}
+		
+		/// <summary>
+		/// Creates TextChangeEventArgs for the reverse change.
+		/// </summary>
+		public virtual TextChangeEventArgs Invert()
+		{
+			return new TextChangeEventArgs(offset, insertedText, removedText);
+		}
 	}
 }

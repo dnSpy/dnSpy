@@ -54,7 +54,17 @@ namespace ICSharpCode.NRefactory.CSharp
 				get { return NodeType.Pattern; }
 			}
 			
-			public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data = default(T))
+			public override void AcceptVisitor (IAstVisitor visitor)
+			{
+				visitor.VisitPatternPlaceholder (this, child);
+			}
+				
+			public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+			{
+				return visitor.VisitPatternPlaceholder (this, child);
+			}
+			
+			public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
 			{
 				return visitor.VisitPatternPlaceholder(this, child, data);
 			}
@@ -71,9 +81,6 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		#endregion
 		
-		public static readonly Role<Attribute> AttributeRole = new Role<Attribute>("Attribute");
-		public static readonly Role<CSharpTokenNode> TargetRole = new Role<CSharpTokenNode>("Target", CSharpTokenNode.Null);
-		
 		public override NodeType NodeType {
 			get {
 				return NodeType.Unknown;
@@ -89,7 +96,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				return GetChildByRole (Roles.Identifier).Name;
 			}
 			set {
-				SetChildByRole (Roles.Identifier, CSharp.Identifier.Create (value, TextLocation.Empty));
+				SetChildByRole (Roles.Identifier, CSharp.Identifier.Create (value));
 			}
 		}
 		
@@ -103,14 +110,24 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		public AstNodeCollection<Attribute> Attributes {
-			get { return base.GetChildrenByRole (AttributeRole); }
+			get { return base.GetChildrenByRole (Roles.Attribute); }
 		}
 		
 		public CSharpTokenNode RBracketToken {
 			get { return GetChildByRole (Roles.RBracket); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitAttributeSection (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitAttributeSection (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitAttributeSection (this, data);
 		}

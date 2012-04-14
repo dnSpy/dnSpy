@@ -35,6 +35,9 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	/// <summary>
 	/// Contains the main resolver logic.
 	/// </summary>
+	/// <remarks>
+	/// This class is thread-safe.
+	/// </remarks>
 	public class CSharpResolver
 	{
 		static readonly ResolveResult ErrorResult = ErrorResolveResult.UnknownError;
@@ -42,7 +45,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		static readonly ResolveResult NullResult = new ResolveResult(SpecialType.NullType);
 		
 		readonly ICompilation compilation;
-		internal readonly Conversions conversions;
+		internal readonly CSharpConversions conversions;
 		readonly CSharpTypeResolveContext context;
 		readonly bool checkForOverflow;
 		readonly bool isWithinLambdaExpression;
@@ -53,7 +56,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			if (compilation == null)
 				throw new ArgumentNullException("compilation");
 			this.compilation = compilation;
-			this.conversions = Conversions.Get(compilation);
+			this.conversions = CSharpConversions.Get(compilation);
 			this.context = new CSharpTypeResolveContext(compilation.MainAssembly);
 		}
 		
@@ -62,13 +65,13 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			if (context == null)
 				throw new ArgumentNullException("context");
 			this.compilation = context.Compilation;
-			this.conversions = Conversions.Get(compilation);
+			this.conversions = CSharpConversions.Get(compilation);
 			this.context = context;
 			if (context.CurrentTypeDefinition != null)
 				currentTypeDefinitionCache = new TypeDefinitionCache(context.CurrentTypeDefinition);
 		}
 		
-		private CSharpResolver(ICompilation compilation, Conversions conversions, CSharpTypeResolveContext context, bool checkForOverflow, bool isWithinLambdaExpression, TypeDefinitionCache currentTypeDefinitionCache, ImmutableStack<IVariable> localVariableStack, ObjectInitializerContext objectInitializerStack)
+		private CSharpResolver(ICompilation compilation, CSharpConversions conversions, CSharpTypeResolveContext context, bool checkForOverflow, bool isWithinLambdaExpression, TypeDefinitionCache currentTypeDefinitionCache, ImmutableStack<IVariable> localVariableStack, ObjectInitializerContext objectInitializerStack)
 		{
 			this.compilation = compilation;
 			this.conversions = conversions;
@@ -275,12 +278,12 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		#region Object Initializer Context
 		sealed class ObjectInitializerContext
 		{
-			internal readonly IType type;
+			internal readonly ResolveResult initializedObject;
 			internal readonly ObjectInitializerContext prev;
 			
-			public ObjectInitializerContext(IType type, CSharpResolver.ObjectInitializerContext prev)
+			public ObjectInitializerContext(ResolveResult initializedObject, CSharpResolver.ObjectInitializerContext prev)
 			{
-				this.type = type;
+				this.initializedObject = initializedObject;
 				this.prev = prev;
 			}
 		}
@@ -295,18 +298,36 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		/// <summary>
 		/// Pushes the type of the object that is currently being initialized.
 		/// </summary>
-		public CSharpResolver PushInitializerType(IType type)
+		public CSharpResolver PushObjectInitializer(ResolveResult initializedObject)
 		{
-			if (type == null)
-				throw new ArgumentNullException("type");
-			return WithObjectInitializerStack(new ObjectInitializerContext(type, objectInitializerStack));
+			if (initializedObject == null)
+				throw new ArgumentNullException("initializedObject");
+			return WithObjectInitializerStack(new ObjectInitializerContext(initializedObject, objectInitializerStack));
 		}
 		
-		public CSharpResolver PopInitializerType()
+		public CSharpResolver PopObjectInitializer()
 		{
 			if (objectInitializerStack == null)
 				throw new InvalidOperationException();
 			return WithObjectInitializerStack(objectInitializerStack.prev);
+		}
+		
+		/// <summary>
+		/// Gets whether this context is within an object initializer.
+		/// </summary>
+		public bool IsInObjectInitializer {
+			get { return objectInitializerStack != null; }
+		}
+		
+		/// <summary>
+		/// Gets the current object initializer. This usually is an <see cref="InitializedObjectResolveResult"/>
+		/// or (for nested initializers) a semantic tree based on an <see cref="InitializedObjectResolveResult"/>.
+		/// Returns ErrorResolveResult if there is no object initializer.
+		/// </summary>
+		public ResolveResult CurrentObjectInitializer {
+			get {
+				return objectInitializerStack != null ? objectInitializerStack.initializedObject : ErrorResult;
+			}
 		}
 		
 		/// <summary>
@@ -315,7 +336,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		/// has unknown type).
 		/// </summary>
 		public IType CurrentObjectInitializerType {
-			get { return objectInitializerStack != null ? objectInitializerStack.type : SpecialType.UnknownType; }
+			get { return CurrentObjectInitializer.Type; }
 		}
 		#endregion
 		
@@ -389,7 +410,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 					// C# 4.0 spec: §7.7.5 Prefix increment and decrement operators
 					TypeCode code = ReflectionHelper.GetTypeCode(type);
 					if ((code >= TypeCode.Char && code <= TypeCode.Decimal) || type.Kind == TypeKind.Enum || type.Kind == TypeKind.Pointer)
-						return UnaryOperatorResolveResult(expression.Type, op, expression);
+						return UnaryOperatorResolveResult(expression.Type, op, expression, isNullable);
 					else
 						return new ErrorResolveResult(expression.Type);
 				case UnaryOperatorType.Plus:
@@ -409,7 +430,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 							var unpackedEnum = new ConstantResolveResult(U, expression.ConstantValue);
 							return CheckErrorAndResolveCast(expression.Type, ResolveUnaryOperator(op, unpackedEnum));
 						} else {
-							return UnaryOperatorResolveResult(expression.Type, op, expression);
+							return UnaryOperatorResolveResult(expression.Type, op, expression, isNullable);
 						}
 					} else {
 						methodGroup = operators.BitwiseComplementOperators;
@@ -446,13 +467,16 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				return new ConstantResolveResult(resultType, val);
 			} else {
 				expression = Convert(expression, m.Parameters[0].Type, builtinOperatorOR.ArgumentConversions[0]);
-				return UnaryOperatorResolveResult(resultType, op, expression);
+				return UnaryOperatorResolveResult(resultType, op, expression,
+				                                  builtinOperatorOR.BestCandidate is OverloadResolution.ILiftedOperator);
 			}
 		}
 		
-		OperatorResolveResult UnaryOperatorResolveResult(IType resultType, UnaryOperatorType op, ResolveResult expression)
+		OperatorResolveResult UnaryOperatorResolveResult(IType resultType, UnaryOperatorType op, ResolveResult expression, bool isLifted = false)
 		{
-			return new OperatorResolveResult(resultType, UnaryOperatorExpression.GetLinqNodeType(op, this.CheckForOverflow), expression);
+			return new OperatorResolveResult(
+				resultType, UnaryOperatorExpression.GetLinqNodeType(op, this.CheckForOverflow),
+				null, isLifted, new[] { expression });
 		}
 		#endregion
 		
@@ -800,7 +824,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			} else {
 				lhs = Convert(lhs, m.Parameters[0].Type, builtinOperatorOR.ArgumentConversions[0]);
 				rhs = Convert(rhs, m.Parameters[1].Type, builtinOperatorOR.ArgumentConversions[1]);
-				return BinaryOperatorResolveResult(resultType, lhs, op, rhs);
+				return BinaryOperatorResolveResult(resultType, lhs, op, rhs,
+				                                   builtinOperatorOR.BestCandidate is OverloadResolution.ILiftedOperator);
 			}
 		}
 		
@@ -809,9 +834,11 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			return NullableType.IsNullable(type) || type.IsReferenceType != false;
 		}
 		
-		ResolveResult BinaryOperatorResolveResult(IType resultType, ResolveResult lhs, BinaryOperatorType op, ResolveResult rhs)
+		ResolveResult BinaryOperatorResolveResult(IType resultType, ResolveResult lhs, BinaryOperatorType op, ResolveResult rhs, bool isLifted = false)
 		{
-			return new OperatorResolveResult(resultType, BinaryOperatorExpression.GetLinqNodeType(op, this.CheckForOverflow), lhs, rhs);
+			return new OperatorResolveResult(
+				resultType, BinaryOperatorExpression.GetLinqNodeType(op, this.CheckForOverflow),
+				null, isLifted, new[] { lhs, rhs });
 		}
 		#endregion
 		
@@ -863,7 +890,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				return ResolveBinaryOperator(op, lhs, rhs);
 			}
 			IType resultType = compilation.FindType(KnownTypeCode.Boolean);
-			return BinaryOperatorResolveResult(resultType, lhs, op, rhs);
+			return BinaryOperatorResolveResult(resultType, lhs, op, rhs, isNullable);
 		}
 		
 		/// <summary>
@@ -884,7 +911,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				return CheckErrorAndResolveCast(elementType, ResolveBinaryOperator(BinaryOperatorType.Subtract, lhs, rhs));
 			}
 			IType resultType = MakeNullable(elementType, isNullable);
-			return BinaryOperatorResolveResult(resultType, lhs, BinaryOperatorType.Subtract, rhs);
+			return BinaryOperatorResolveResult(resultType, lhs, BinaryOperatorType.Subtract, rhs, isNullable);
 		}
 		
 		/// <summary>
@@ -910,7 +937,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				return CheckErrorAndResolveCast(enumType, ResolveBinaryOperator(op, lhs, rhs));
 			}
 			IType resultType = MakeNullable(enumType, isNullable);
-			return BinaryOperatorResolveResult(resultType, lhs, op, rhs);
+			return BinaryOperatorResolveResult(resultType, lhs, op, rhs, isNullable);
 		}
 		
 		IType MakeNullable(IType type, bool isNullable)
@@ -1140,13 +1167,16 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			internal readonly IParameterizedMember nonLiftedOperator;
 			
 			public LiftedUserDefinedOperator(IMethod nonLiftedMethod)
-				: base(nonLiftedMethod.DeclaringType, (IMethod)nonLiftedMethod.MemberDefinition,
-				       EmptyList<IType>.Instance, new MakeNullableVisitor(nonLiftedMethod.Compilation))
+				: base(nonLiftedMethod, TypeParameterSubstitution.Identity)
 			{
 				this.nonLiftedOperator = nonLiftedMethod;
+				var substitution = new MakeNullableVisitor(nonLiftedMethod.Compilation);
+				this.Parameters = base.CreateParameters(substitution);
 				// Comparison operators keep the 'bool' return type even when lifted.
 				if (IsComparisonOperator(nonLiftedMethod))
 					this.ReturnType = nonLiftedMethod.ReturnType;
+				else
+					this.ReturnType = nonLiftedMethod.ReturnType.AcceptVisitor(substitution);
 			}
 			
 			public IList<IParameter> NonLiftedParameters {
@@ -1347,14 +1377,16 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 							break;
 					}
 					if (cache != null) {
-						foundInCache = cache.TryGetValue(identifier, out r);
+						lock (cache)
+							foundInCache = cache.TryGetValue(identifier, out r);
 					}
 				}
 				if (!foundInCache) {
 					r = LookInCurrentType(identifier, typeArguments, lookupMode, parameterizeResultType);
 					if (cache != null) {
 						// also cache missing members (r==null)
-						cache[identifier] = r;
+						lock (cache)
+							cache[identifier] = r;
 					}
 				}
 				if (r != null)
@@ -1382,6 +1414,16 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			} else {
 				return new UnknownIdentifierResolveResult(identifier, typeArguments.Count);
 			}
+		}
+		
+		public bool IsVariableReferenceWithSameType (ResolveResult rr, string identifier, out TypeResolveResult trr)
+		{
+			if (!(rr is MemberResolveResult || rr is LocalResolveResult)) {
+				trr = null;
+				return false;
+			}
+			trr = LookupSimpleNameOrTypeName (identifier, EmptyList<IType>.Instance, SimpleNameLookupMode.Type) as TypeResolveResult;
+			return trr != null && trr.Type.Equals (rr.Type);
 		}
 		
 		ResolveResult LookInCurrentType(string identifier, IList<IType> typeArguments, SimpleNameLookupMode lookupMode, bool parameterizeResultType)
@@ -1623,8 +1665,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		public ResolveResult ResolveIdentifierInObjectInitializer(string identifier)
 		{
 			MemberLookup memberLookup = CreateMemberLookup();
-			ResolveResult target = new ResolveResult(this.CurrentObjectInitializerType);
-			return memberLookup.Lookup(target, identifier, EmptyList<IType>.Instance, false);
+			return memberLookup.Lookup(this.CurrentObjectInitializer, identifier, EmptyList<IType>.Instance, false);
 		}
 		#endregion
 		
@@ -1688,13 +1729,13 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 					if (typeArguments != null && typeArguments.Count > 0) {
 						if (method.TypeParameters.Count != typeArguments.Count)
 							continue;
-						SpecializedMethod sm = new SpecializedMethod(method.DeclaringType, method, typeArguments);
-						if (IsEligibleExtensionMethod(targetType, method, false, out inferredTypes))
+						SpecializedMethod sm = new SpecializedMethod(method, new TypeParameterSubstitution(null, typeArguments));
+						if (IsEligibleExtensionMethod(compilation, conversions, targetType, method, false, out inferredTypes))
 							outputGroup.Add(sm);
 					} else {
-						if (IsEligibleExtensionMethod(targetType, method, true, out inferredTypes)) {
+						if (IsEligibleExtensionMethod(compilation, conversions, targetType, method, true, out inferredTypes)) {
 							if (substituteInferredTypes && inferredTypes != null) {
-								outputGroup.Add(new SpecializedMethod(method.DeclaringType, method, inferredTypes));
+								outputGroup.Add(new SpecializedMethod(method, new TypeParameterSubstitution(null, inferredTypes)));
 							} else {
 								outputGroup.Add(method);
 							}
@@ -1707,12 +1748,32 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			return extensionMethodGroups;
 		}
 		
-		internal bool IsEligibleExtensionMethod(IType targetType, IMethod method, bool useTypeInference, out IType[] outInferredTypes)
+		/// <summary>
+		/// Checks whether the specified extension method is eligible on the target type.
+		/// </summary>
+		/// <param name="targetType">Target type that is passed as first argument to the extension method.</param>
+		/// <param name="method">The extension method.</param>
+		/// <param name="useTypeInference">Whether to perform type inference for the method.
+		/// Use <c>false</c> if <paramref name="method"/> is already specialized (e.g. when type arguments were given explicitly).
+		/// Otherwise, use <c>true</c>.
+		/// </param>
+		/// <param name="outInferredTypes">If the method is generic and <paramref name="useTypeInference"/> is <c>true</c>,
+		/// and at least some of the type arguments could be inferred, this parameter receives the inferred type arguments.
+		/// Since only the type for the first parameter is considered, not all type arguments may be inferred.
+		/// If an array is returned, any slot with an uninferred type argument will be set to the method's
+		/// corresponding type parameter.
+		/// </param>
+		public static bool IsEligibleExtensionMethod(IType targetType, IMethod method, bool useTypeInference, out IType[] outInferredTypes)
 		{
-			return IsEligibleExtensionMethod(compilation, conversions, targetType, method, useTypeInference, out outInferredTypes);
+			if (targetType == null)
+				throw new ArgumentNullException("targetType");
+			if (method == null)
+				throw new ArgumentNullException("method");
+			var compilation = method.Compilation;
+			return IsEligibleExtensionMethod(compilation, CSharpConversions.Get(compilation), targetType, method, useTypeInference, out outInferredTypes);
 		}
 		
-		internal static bool IsEligibleExtensionMethod(ICompilation compilation, Conversions conversions, IType targetType, IMethod method, bool useTypeInference, out IType[] outInferredTypes)
+		static bool IsEligibleExtensionMethod(ICompilation compilation, CSharpConversions conversions, IType targetType, IMethod method, bool useTypeInference, out IType[] outInferredTypes)
 		{
 			outInferredTypes = null;
 			if (targetType == null)
@@ -1756,9 +1817,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			var currentUsingScope = context.CurrentUsingScope;
 			if (currentUsingScope == null)
 				return EmptyList<List<IMethod>>.Instance;
-			List<List<IMethod>> extensionMethodGroups = currentUsingScope.AllExtensionMethods;
+			List<List<IMethod>> extensionMethodGroups = LazyInit.VolatileRead(ref currentUsingScope.AllExtensionMethods);
 			if (extensionMethodGroups != null) {
-				LazyInit.ReadBarrier();
 				return extensionMethodGroups;
 			}
 			extensionMethodGroups = new List<List<IMethod>>();
@@ -1817,7 +1877,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			if (mgrr != null) {
 				OverloadResolution or = mgrr.PerformOverloadResolution(compilation, arguments, argumentNames, conversions: conversions);
 				if (or.BestCandidate != null) {
-					return or.CreateResolveResult(mgrr.TargetResult);
+					if (or.BestCandidate.IsStatic && !or.IsExtensionMethodInvocation && !(mgrr.TargetResult is TypeResolveResult))
+						return or.CreateResolveResult(new TypeResolveResult(mgrr.TargetResult.Type));
+					else
+						return or.CreateResolveResult(mgrr.TargetResult);
 				} else {
 					// No candidate found at all (not even an inapplicable one).
 					// This can happen with empty method groups (as sometimes used with extension methods)
@@ -2001,8 +2064,12 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		/// Whether to allow calling protected constructors.
 		/// This should be false except when resolving constructor initializers.
 		/// </param>
+		/// <param name="initializerStatements">
+		/// Statements for Objects/Collections initializer.
+		/// <see cref="InvocationResolveResult.InitializerStatements"/>
+		/// </param>
 		/// <returns>InvocationResolveResult or ErrorResolveResult</returns>
-		public ResolveResult ResolveObjectCreation(IType type, ResolveResult[] arguments, string[] argumentNames = null, bool allowProtectedAccess = false)
+		public ResolveResult ResolveObjectCreation(IType type, ResolveResult[] arguments, string[] argumentNames = null, bool allowProtectedAccess = false, IList<ResolveResult> initializerStatements = null)
 		{
 			if (type.Kind == TypeKind.Delegate && arguments.Length == 1) {
 				return Convert(arguments[0], type);
@@ -2016,7 +2083,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 					or.AddCandidate(ctor, OverloadResolutionErrors.Inaccessible);
 			}
 			if (or.BestCandidate != null) {
-				return or.CreateResolveResult(null);
+				return or.CreateResolveResult(null, initializerStatements);
 			} else {
 				return new ErrorResolveResult(type);
 			}
@@ -2086,7 +2153,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			if (t != null) {
 				foreach (IType baseType in t.DirectBaseTypes) {
 					if (baseType.Kind != TypeKind.Unknown && baseType.Kind != TypeKind.Interface) {
-						return new ThisResolveResult(baseType);
+						return new ThisResolveResult(baseType, causesNonVirtualInvocation: true);
 					}
 				}
 			}

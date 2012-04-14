@@ -53,7 +53,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			Expression = expr;
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitParenthesizedExpression (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitParenthesizedExpression (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitParenthesizedExpression (this, data);
 		}
@@ -81,7 +91,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		public static Expression UnpackParenthesizedExpression(Expression expr)
 		{
 			while (ActsAsParenthesizedExpression(expr))
-				expr = expr.GetChildByRole(ParenthesizedExpression.Roles.Expression);
+				expr = expr.GetChildByRole(Roles.Expression);
 			return expr;
 		}
 	}

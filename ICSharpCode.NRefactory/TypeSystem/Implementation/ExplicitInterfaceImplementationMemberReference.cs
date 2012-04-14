@@ -49,7 +49,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			var members = type.GetMembers(
 				m => m.EntityType == interfaceMember.EntityType && m.IsExplicitInterfaceImplementation,
 				GetMemberOptions.IgnoreInheritedMembers);
-			return members.FirstOrDefault(m => m.InterfaceImplementations.Count == 1 && interfaceMember.Equals(m.InterfaceImplementations[0]));
+			return members.FirstOrDefault(m => m.ImplementedInterfaceMembers.Count == 1 && interfaceMember.Equals(m.ImplementedInterfaceMembers[0]));
 		}
 	}
 }

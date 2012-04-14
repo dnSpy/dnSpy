@@ -36,9 +36,9 @@ namespace ICSharpCode.NRefactory.Utils
 		
 		public object GetShared(object key)
 		{
-			object val;
-			sharedDict.TryGetValue(key, out val);
-			return val;
+			object value;
+			sharedDict.TryGetValue(key, out value);
+			return value;
 		}
 		
 		public object GetOrAddShared(object key, Func<object, object> valueFactory)
@@ -46,14 +46,14 @@ namespace ICSharpCode.NRefactory.Utils
 			return sharedDict.GetOrAdd(key, valueFactory);
 		}
 		
-		public object GetOrAddShared(object key, object val)
+		public object GetOrAddShared(object key, object value)
 		{
-			return sharedDict.GetOrAdd(key, val);
+			return sharedDict.GetOrAdd(key, value);
 		}
 		
-		public void SetShared(object key, object val)
+		public void SetShared(object key, object value)
 		{
-			sharedDict[key] = val;
+			sharedDict[key] = value;
 		}
 	}
 }

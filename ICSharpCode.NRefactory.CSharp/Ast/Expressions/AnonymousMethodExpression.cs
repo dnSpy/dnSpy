@@ -34,17 +34,26 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class AnonymousMethodExpression : Expression
 	{
-		public readonly static Role<CSharpTokenNode> AsyncModifierRole = LambdaExpression.AsyncModifierRole;
+		public readonly static TokenRole DelegateKeywordRole = new TokenRole ("delegate");
+		public readonly static TokenRole AsyncModifierRole = LambdaExpression.AsyncModifierRole;
 		
-		public bool IsAsync { get; set; }
+		bool isAsync;
+		
+		public bool IsAsync {
+			get { return isAsync; }
+			set { ThrowIfFrozen(); isAsync = value; }
+		}
 		
 		// used to tell the difference between delegate {} and delegate () {}
+		bool hasParameterList;
+		
 		public bool HasParameterList {
-			get; set;
+			get { return hasParameterList; }
+			set { ThrowIfFrozen(); hasParameterList = value; }
 		}
 		
 		public CSharpTokenNode DelegateToken {
-			get { return GetChildByRole (Roles.Keyword); }
+			get { return GetChildByRole (DelegateKeywordRole); }
 		}
 		
 		public CSharpTokenNode LParToken {
@@ -82,7 +91,17 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitAnonymousMethodExpression (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitAnonymousMethodExpression (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitAnonymousMethodExpression (this, data);
 		}

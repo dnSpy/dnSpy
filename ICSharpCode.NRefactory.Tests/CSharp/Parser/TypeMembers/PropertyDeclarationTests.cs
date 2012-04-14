@@ -1,4 +1,4 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -73,8 +73,8 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 			
 			CSharpParser parser = new CSharpParser();
 			CompilationUnit cu = parser.Parse(new StringReader(code), "parsed.cs");
-			PropertyDeclaration pd = (PropertyDeclaration)cu.Children.Single().GetChildByRole(TypeDeclaration.MemberRole);
-			Assert.AreEqual(new TextLocation(2, code.IndexOf("{\n\t\tget") - line2Pos + 1), pd.GetChildByRole(AstNode.Roles.LBrace).StartLocation);
+			PropertyDeclaration pd = (PropertyDeclaration)cu.Children.Single().GetChildByRole(Roles.TypeMemberRole);
+			Assert.AreEqual(new TextLocation(2, code.IndexOf("{\n\t\tget") - line2Pos + 1), pd.GetChildByRole(Roles.LBrace).StartLocation);
 			Assert.AreEqual(new TextLocation(5, 3), pd.EndLocation);
 			Assert.AreEqual(new TextLocation(3, code.IndexOf("{ return") - line3Pos + 1), pd.Getter.Body.StartLocation);
 			Assert.AreEqual(new TextLocation(3, code.IndexOf("}\n\t\tset") + 1 - line3Pos + 1), pd.Getter.Body.EndLocation);

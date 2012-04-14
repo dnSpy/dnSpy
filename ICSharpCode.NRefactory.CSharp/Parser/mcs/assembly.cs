@@ -50,7 +50,7 @@ namespace Mono.CSharp
 		// TODO: make it private and move all builder based methods here
 		public AssemblyBuilder Builder;
 		protected AssemblyBuilderExtension builder_extra;
-		MonoSymbolWriter symbol_writer;
+		MonoSymbolFile symbol_writer;
 
 		bool is_cls_compliant;
 		bool wrap_non_exception_throws;
@@ -176,6 +176,12 @@ namespace Mono.CSharp
 		protected Report Report {
 			get {
 				return Compiler.Report;
+			}
+		}
+
+		public MonoSymbolFile SymbolWriter {
+			get {
+				return symbol_writer;
 			}
 		}
 
@@ -446,10 +452,7 @@ namespace Mono.CSharp
 			}
 
 			if (Compiler.Settings.GenerateDebugInfo) {
-				symbol_writer = new MonoSymbolWriter (file_name);
-
-				// TODO: global variables
-				SymbolWriter.symwriter = symbol_writer;
+				symbol_writer = new MonoSymbolFile ();
 			}
 
 			module.EmitContainer ();
@@ -781,25 +784,38 @@ namespace Mono.CSharp
 
 		public void Save ()
 		{
-			PortableExecutableKinds pekind;
+			PortableExecutableKinds pekind = PortableExecutableKinds.ILOnly;
 			ImageFileMachine machine;
 
 			switch (Compiler.Settings.Platform) {
 			case Platform.X86:
-				pekind = PortableExecutableKinds.Required32Bit | PortableExecutableKinds.ILOnly;
+				pekind |= PortableExecutableKinds.Required32Bit;
 				machine = ImageFileMachine.I386;
 				break;
 			case Platform.X64:
-				pekind = PortableExecutableKinds.ILOnly;
+				pekind |= PortableExecutableKinds.PE32Plus;
 				machine = ImageFileMachine.AMD64;
 				break;
 			case Platform.IA64:
-				pekind = PortableExecutableKinds.ILOnly;
 				machine = ImageFileMachine.IA64;
 				break;
+			case Platform.AnyCPU32Preferred:
+#if STATIC
+				pekind |= PortableExecutableKinds.Preferred32Bit;
+				machine = ImageFileMachine.I386;
+				break;
+#else
+				throw new NotSupportedException ();
+#endif
+			case Platform.Arm:
+#if STATIC
+				machine = ImageFileMachine.ARM;
+				break;
+#else
+				throw new NotSupportedException ();
+#endif
 			case Platform.AnyCPU:
 			default:
-				pekind = PortableExecutableKinds.ILOnly;
 				machine = ImageFileMachine.I386;
 				break;
 			}
@@ -820,7 +836,21 @@ namespace Mono.CSharp
 			if (symbol_writer != null && Compiler.Report.Errors == 0) {
 				// TODO: it should run in parallel
 				Compiler.TimeReporter.Start (TimeReporter.TimerType.DebugSave);
-				symbol_writer.WriteSymbolFile (SymbolWriter.GetGuid (module.Builder));
+
+				var filename = file_name + ".mdb";
+				try {
+					// We mmap the file, so unlink the previous version since it may be in use
+					File.Delete (filename);
+				} catch {
+					// We can safely ignore
+				}
+
+				module.WriteDebugSymbol (symbol_writer);
+
+				using (FileStream fs = new FileStream (filename, FileMode.Create, FileAccess.Write)) {
+					symbol_writer.CreateSymbolFile (module.Builder.ModuleVersionId, fs);
+				}
+
 				Compiler.TimeReporter.Stop (TimeReporter.TimerType.DebugSave);
 			}
 		}
@@ -980,7 +1010,7 @@ namespace Mono.CSharp
 	//
 	// A placeholder class for assembly attributes when emitting module
 	//
-	class AssemblyAttributesPlaceholder : CompilerGeneratedClass
+	class AssemblyAttributesPlaceholder : CompilerGeneratedContainer
 	{
 		static readonly string TypeNamePrefix = "<$AssemblyAttributes${0}>";
 		public static readonly string AssemblyFieldName = "attributes";
@@ -988,7 +1018,7 @@ namespace Mono.CSharp
 		Field assembly;
 
 		public AssemblyAttributesPlaceholder (ModuleContainer parent, string outputName)
-			: base (parent, new MemberName (GetGeneratedName (outputName)), Modifiers.STATIC)
+			: base (parent, new MemberName (GetGeneratedName (outputName)), Modifiers.STATIC | Modifiers.INTERNAL)
 		{
 			assembly = new Field (this, new TypeExpression (parent.Compiler.BuiltinTypes.Object, Location), Modifiers.PUBLIC | Modifiers.STATIC,
 				new MemberName (AssemblyFieldName), null);

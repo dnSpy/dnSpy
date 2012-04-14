@@ -31,8 +31,10 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class UncheckedStatement : Statement
 	{
+		public static readonly TokenRole UncheckedKeywordRole = new TokenRole ("unchecked");
+		
 		public CSharpTokenNode UncheckedToken {
-			get { return GetChildByRole (Roles.Keyword); }
+			get { return GetChildByRole (UncheckedKeywordRole); }
 		}
 		
 		public BlockStatement Body {
@@ -49,7 +51,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			AddChild (body, Roles.Body);
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitUncheckedStatement (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitUncheckedStatement (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitUncheckedStatement (this, data);
 		}

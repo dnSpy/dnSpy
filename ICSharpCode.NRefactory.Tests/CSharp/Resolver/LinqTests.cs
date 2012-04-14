@@ -267,7 +267,7 @@ class TestClass {
 			Assert.AreEqual("System.Collections.Generic.IEnumerable`1[[System.String]]", rr.Type.ReflectionName);
 		}
 		
-		[Test, Ignore("Parser bug (incorrect position), but also resolver bug (handles Select as a separate call when it's combined into the GroupJoin)")]
+		[Test]
 		public void GroupJoinWithCustomMethod()
 		{
 			string program = @"using System;

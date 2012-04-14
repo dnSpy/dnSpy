@@ -82,6 +82,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			switch (style) {
 				case BraceStyle.DoNotChange:
 				case BraceStyle.EndOfLine:
+				case BraceStyle.BannerStyle:
 					WriteIndentation();
 					if (!isAtStartOfLine)
 						textWriter.Write(' ');
@@ -130,6 +131,7 @@ namespace ICSharpCode.NRefactory.CSharp
 					textWriter.Write('}');
 					isAtStartOfLine = false;
 					break;
+				case BraceStyle.BannerStyle:
 				case BraceStyle.NextLineShifted:
 					WriteIndentation();
 					textWriter.Write('}');

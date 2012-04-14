@@ -31,8 +31,10 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class ReturnStatement : Statement
 	{
+		public static readonly TokenRole ReturnKeywordRole = new TokenRole ("return");
+
 		public CSharpTokenNode ReturnToken {
-			get { return GetChildByRole (Roles.Keyword); }
+			get { return GetChildByRole (ReturnKeywordRole); }
 		}
 		
 		public Expression Expression {
@@ -53,7 +55,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			AddChild (returnExpression, Roles.Expression);
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitReturnStatement (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitReturnStatement (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitReturnStatement (this, data);
 		}

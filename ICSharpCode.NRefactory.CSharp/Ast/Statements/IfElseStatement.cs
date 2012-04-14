@@ -31,11 +31,10 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class IfElseStatement : Statement
 	{
-		public readonly static Role<CSharpTokenNode> IfKeywordRole = Roles.Keyword;
+		public readonly static TokenRole IfKeywordRole = new TokenRole ("if");
 		public readonly static Role<Expression> ConditionRole = Roles.Condition;
-		public readonly static Role<CSharpTokenNode> QuestionMarkRole = new Role<CSharpTokenNode>("QuestionMark", CSharpTokenNode.Null);
 		public readonly static Role<Statement> TrueRole = new Role<Statement>("True", Statement.Null);
-		public readonly static Role<CSharpTokenNode> ElseKeywordRole = new Role<CSharpTokenNode>("ElseKeyword", CSharpTokenNode.Null);
+		public readonly static TokenRole ElseKeywordRole = new TokenRole ("else");
 		public readonly static Role<Statement> FalseRole = new Role<Statement>("False", Statement.Null);
 		
 		public CSharpTokenNode IfToken {
@@ -69,7 +68,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (FalseRole, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitIfElseStatement (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitIfElseStatement (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitIfElseStatement (this, data);
 		}

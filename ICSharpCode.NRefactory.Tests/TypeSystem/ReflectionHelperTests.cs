@@ -155,12 +155,14 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			MethodInfo convertAllInfo = typeof(List<>).GetMethod("ConvertAll");
 			ITypeReference parameterType = convertAllInfo.GetParameters()[0].ParameterType.ToTypeReference(); // Converter[[`0],[``0]]
 			// cannot resolve generic types without knowing the parent entity:
-			Assert.AreEqual("System.Converter`2[[?],[?]]",
-			                parameterType.Resolve(compilation.TypeResolveContext).ReflectionName);
+			IType resolvedWithoutEntity = parameterType.Resolve(compilation.TypeResolveContext);
+			Assert.AreEqual("System.Converter`2[[`0],[``0]]", resolvedWithoutEntity.ReflectionName);
+			Assert.IsNull(((ITypeParameter)((ParameterizedType)resolvedWithoutEntity).GetTypeArgument(0)).Owner);
 			// now try with parent entity:
 			IMethod convertAll = compilation.FindType(typeof(List<>)).GetMethods(m => m.Name == "ConvertAll").Single();
-			Assert.AreEqual("System.Converter`2[[`0],[``0]]",
-			                parameterType.Resolve(new SimpleTypeResolveContext(convertAll)).ReflectionName);
+			IType resolvedWithEntity = parameterType.Resolve(new SimpleTypeResolveContext(convertAll));
+			Assert.AreEqual("System.Converter`2[[`0],[``0]]", resolvedWithEntity.ReflectionName);
+			Assert.AreSame(convertAll.DeclaringTypeDefinition, ((ITypeParameter)((ParameterizedType)resolvedWithEntity).GetTypeArgument(0)).Owner);
 		}
 		
 		[Test]
@@ -181,9 +183,16 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		public void ParseOpenGenericReflectionName()
 		{
 			ITypeReference typeRef = ReflectionHelper.ParseReflectionName("System.Converter`2[[`0],[``0]]");
-			Assert.AreEqual("System.Converter`2[[?],[?]]", typeRef.Resolve(new SimpleTypeResolveContext(compilation.MainAssembly)).ReflectionName);
+			Assert.AreEqual("System.Converter`2[[`0],[``0]]", typeRef.Resolve(new SimpleTypeResolveContext(compilation.MainAssembly)).ReflectionName);
 			IMethod convertAll = compilation.FindType(typeof(List<>)).GetMethods(m => m.Name == "ConvertAll").Single();
 			Assert.AreEqual("System.Converter`2[[`0],[``0]]", typeRef.Resolve(new SimpleTypeResolveContext(convertAll)).ReflectionName);
+		}
+		
+		[Test]
+		public void ArrayOfTypeParameter()
+		{
+			var context = new SimpleTypeResolveContext(compilation.MainAssembly);
+			Assert.AreEqual("`0[,]", ReflectionHelper.ParseReflectionName("`0[,]").Resolve(context).ReflectionName);
 		}
 		
 		[Test, ExpectedException(typeof(ArgumentNullException))]

@@ -60,15 +60,54 @@ namespace ICSharpCode.NRefactory.CSharp
 				handler (comment, data);
 			return VisitChildren (comment, data);
 		}
-		
-		public event Action<PreProcessorDirective, T> PreProcessorDirectiveVisited;
 
+		public event Action<NewLineNode, T> NewLineVisited;
+
+		S IAstVisitor<T, S>.VisitNewLine(NewLineNode newLineNode, T data)
+		{
+			var handler = NewLineVisited;
+			if (handler != null)
+				handler(newLineNode, data);
+			return VisitChildren(newLineNode, data);
+		}
+
+		public event Action<WhitespaceNode, T> WhitespaceVisited;
+
+		S IAstVisitor<T, S>.VisitWhitespace(WhitespaceNode whitespace, T data)
+		{
+			var handler = WhitespaceVisited;
+			if (handler != null)
+				handler(whitespace, data);
+			return VisitChildren(whitespace, data);
+		}
+
+		public event Action<TextNode, T> TextVisited;
+
+		S IAstVisitor<T, S>.VisitText(TextNode textNode, T data)
+		{
+			var handler = TextVisited;
+			if (handler != null)
+				handler(textNode, data);
+			return VisitChildren(textNode, data);
+		}
+
+		public event Action<PreProcessorDirective, T> PreProcessorDirectiveVisited;
 		S IAstVisitor<T, S>.VisitPreProcessorDirective (PreProcessorDirective preProcessorDirective, T data)
 		{
 			var handler = PreProcessorDirectiveVisited;
 			if (handler != null)
 				handler (preProcessorDirective, data);
 			return VisitChildren (preProcessorDirective, data);
+		}
+		
+		public event Action<DocumentationReference, T> DocumentationReferenceVisited;
+
+		S IAstVisitor<T, S>.VisitDocumentationReference (DocumentationReference documentationReference, T data)
+		{
+			var handler = DocumentationReferenceVisited;
+			if (handler != null)
+				handler (documentationReference, data);
+			return VisitChildren (documentationReference, data);
 		}
 		
 		public event Action<Identifier, T> IdentifierVisited;

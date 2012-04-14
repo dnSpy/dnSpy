@@ -1116,7 +1116,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				Condition = new NamedNode(
 					"condition",
 					new CSharp.BinaryOperatorExpression {
-						Left = new NamedNode("ident", new CSharp.IdentifierExpression()),
+						Left = new NamedNode("ident", new CSharp.IdentifierExpression(Pattern.AnyString)),
 						Operator = CSharp.BinaryOperatorType.Any,
 						Right = new AnyNode("endExpr")
 					}),
@@ -1675,7 +1675,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				Right = new NamedNode(
 					"modifier",
 					new CSharp.MemberReferenceExpression() {
-						Target = new CSharp.IdentifierExpression("CharSet")
+						Target = new CSharp.IdentifierExpression("CharSet"),
+						MemberName = Pattern.AnyString
 					})
 			};
 			
@@ -1893,7 +1894,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			
 			// look for type in parent
 			decl.Type = (AstType)variableInitializer.Parent
-				.GetChildByRole(CSharp.VariableInitializer.Roles.Type)
+				.GetChildByRole(ICSharpCode.NRefactory.CSharp.Roles.Type)
 				.AcceptVisitor(this, data);
 			decl.Identifiers.Add(new VariableIdentifier() { Name = variableInitializer.Name });
 			decl.Initializer = (Expression)variableInitializer.Initializer.AcceptVisitor(this, data);
@@ -2061,7 +2062,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			};
 			
 			var constraint = typeParameterDeclaration.Parent
-				.GetChildrenByRole(CSharp.AstNode.Roles.Constraint)
+				.GetChildrenByRole(ICSharpCode.NRefactory.CSharp.Roles.Constraint)
 				.SingleOrDefault(c => c.TypeParameter.Identifier == typeParameterDeclaration.Name);
 			
 			if (constraint != null)
@@ -2213,6 +2214,26 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			}
 			foundAttribute = null;
 			return false;
+		}
+		
+		public AstNode VisitDocumentationReference(CSharp.DocumentationReference documentationReference, object data)
+		{
+			throw new NotImplementedException();
+		}
+		
+		public AstNode VisitNewLine(CSharp.NewLineNode newLineNode, object data)
+		{
+			return null;
+		}
+		
+		public AstNode VisitWhitespace(CSharp.WhitespaceNode whitespaceNode, object data)
+		{
+			return null;
+		}
+		
+		public AstNode VisitText(CSharp.TextNode textNode, object data)
+		{
+			return null;
 		}
 	}
 }

@@ -68,6 +68,10 @@ namespace Mono.CSharp {
 		{
 			ec.Mark (loc);
 			DoEmit (ec);
+
+			if (ec.StatementEpilogue != null) {
+				ec.EmitEpilogue ();
+			}
 		}
 
 		//
@@ -856,6 +860,8 @@ namespace Mono.CSharp {
 					ec.Report.Error (127, loc,
 						"`{0}': A return keyword must not be followed by any expression when method returns void",
 						ec.GetSignatureForError ());
+
+					return false;
 				}
 			} else {
 				if (am.IsIterator) {
@@ -874,12 +880,21 @@ namespace Mono.CSharp {
 							return true;
 						}
 
+						// TODO: Better error message
+						if (async_type.Kind == MemberKind.Void) {
+							ec.Report.Error (127, loc,
+								"`{0}': A return keyword must not be followed by any expression when method returns void",
+								ec.GetSignatureForError ());
+
+							return false;
+						}
+
 						if (!async_type.IsGenericTask) {
 							if (this is ContextualReturn)
 								return true;
 
 							ec.Report.Error (1997, loc,
-								"`{0}': A return keyword must not be followed by an expression when async method returns Task. Consider using Task<T>",
+								"`{0}': A return keyword must not be followed by an expression when async method returns `Task'. Consider using `Task<T>' return type",
 								ec.GetSignatureForError ());
 							return false;
 						}
@@ -887,7 +902,13 @@ namespace Mono.CSharp {
 						//
 						// The return type is actually Task<T> type argument
 						//
-						block_return_type = async_type.TypeArguments[0];
+						if (expr.Type == async_type) {
+							ec.Report.Error (4016, loc,
+								"`{0}': The return expression type of async method must be `{1}' rather than `Task<{1}>'",
+								ec.GetSignatureForError (), async_type.TypeArguments[0].GetSignatureForError ());
+						} else {
+							block_return_type = async_type.TypeArguments[0];
+						}
 					}
 				} else {
 					var l = am as AnonymousMethodBody;
@@ -901,7 +922,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			if (expr.Type != block_return_type) {
+			if (expr.Type != block_return_type && expr.Type != InternalType.ErrorType) {
 				expr = Convert.ImplicitConversionRequired (ec, expr, block_return_type, loc);
 
 				if (expr == null) {
@@ -930,11 +951,15 @@ namespace Mono.CSharp {
 					if (async_return != null) {
 						async_return.EmitAssign (ec);
 
+						ec.EmitEpilogue ();
+
 						ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, async_body.BodyEnd);
 					}
 
 					return;
 				}
+
+				ec.EmitEpilogue ();
 
 				if (unwind_protect || ec.EmitAccurateDebugInfo)
 					ec.Emit (OpCodes.Stloc, ec.TemporaryReturn ());
@@ -1190,9 +1215,9 @@ namespace Mono.CSharp {
 				res = c;
 			} else {
 				TypeSpec type = ec.Switch.SwitchType;
-				res = c.TryReduce (ec, type, c.Location);
+				res = c.TryReduce (ec, type);
 				if (res == null) {
-					c.Error_ValueCannotBeConverted (ec, loc, type, true);
+					c.Error_ValueCannotBeConverted (ec, type, true);
 					return false;
 				}
 
@@ -1465,7 +1490,7 @@ namespace Mono.CSharp {
 			declarators.Add (decl);
 		}
 
-		void CreateEvaluatorVariable (BlockContext bc, LocalVariable li)
+		static void CreateEvaluatorVariable (BlockContext bc, LocalVariable li)
 		{
 			if (bc.Report.Errors != 0)
 				return;
@@ -1656,7 +1681,7 @@ namespace Mono.CSharp {
 				if (TypeSpec.IsReferenceType (li.Type))
 					initializer.Error_ConstantCanBeInitializedWithNullOnly (bc, li.Type, initializer.Location, li.Name);
 				else
-					initializer.Error_ValueCannotBeConverted (bc, initializer.Location, li.Type, false);
+					initializer.Error_ValueCannotBeConverted (bc, li.Type, false);
 
 				return null;
 			}
@@ -1764,6 +1789,12 @@ namespace Mono.CSharp {
 		public bool IsDeclared {
 			get {
 				return type != null;
+			}
+		}
+
+		public bool IsCompilerGenerated {
+			get {
+				return (flags & Flags.CompilerGenerated) != 0;
 			}
 		}
 
@@ -2298,7 +2329,8 @@ namespace Mono.CSharp {
 			if (warn)
 				ec.Report.Warning (162, 2, loc, "Unreachable code detected");
 
-			ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
+			var fb = ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
+			fb.CurrentUsageVector.IsUnreachable = true;
 			bool ok = Resolve (ec);
 			ec.KillFlowBranching ();
 
@@ -2318,19 +2350,12 @@ namespace Mono.CSharp {
 				EmitScopeInitializers (ec);
 
 			DoEmit (ec);
-
-			if (SymbolWriter.HasSymbolWriter)
-				EmitSymbolInfo (ec);
 		}
 
 		protected void EmitScopeInitializers (EmitContext ec)
 		{
 			foreach (Statement s in scope_initializers)
 				s.Emit (ec);
-		}
-
-		protected virtual void EmitSymbolInfo (EmitContext ec)
-		{
 		}
 
 #if DEBUG
@@ -2398,14 +2423,22 @@ namespace Mono.CSharp {
 		}
 
 		public bool HasCapturedThis {
-			set { flags = value ? flags | Flags.HasCapturedThis : flags & ~Flags.HasCapturedThis; }
+			set {
+				flags = value ? flags | Flags.HasCapturedThis : flags & ~Flags.HasCapturedThis;
+			}
 			get {
 				return (flags & Flags.HasCapturedThis) != 0;
 			}
 		}
 
+		//
+		// Used to indicate that the block has reference to parent
+		// block and cannot be made static when defining anonymous method
+		//
 		public bool HasCapturedVariable {
-			set { flags = value ? flags | Flags.HasCapturedVariable : flags & ~Flags.HasCapturedVariable; }
+			set {
+				flags = value ? flags | Flags.HasCapturedVariable : flags & ~Flags.HasCapturedVariable;
+			}
 			get {
 				return (flags & Flags.HasCapturedVariable) != 0;
 			}
@@ -2432,11 +2465,12 @@ namespace Mono.CSharp {
 				return ec.CurrentAnonymousMethod.Storey;
 
 			//
-			// When referencing a variable in parent iterator/async storey
-			// from nested anonymous method
+			// When referencing a variable inside iterator where all
+			// variables will be captured anyway we don't need to create
+			// another storey context
 			//
-			if (ParametersBlock.am_storey is StateMachine) {
-				return ParametersBlock.am_storey;
+			if (ParametersBlock.StateMachine is IteratorStorey) {
+				return ParametersBlock.StateMachine;
 			}
 
 			if (am_storey == null) {
@@ -2445,7 +2479,7 @@ namespace Mono.CSharp {
 				//
 				// Creates anonymous method storey for this block
 				//
-				am_storey = new AnonymousMethodStorey (this, ec.CurrentMemberDefinition.Parent.PartialContainer, mc, ec.CurrentTypeParameters, "AnonStorey");
+				am_storey = new AnonymousMethodStorey (this, ec.CurrentMemberDefinition.Parent.PartialContainer, mc, ec.CurrentTypeParameters, "AnonStorey", MemberKind.Class);
 			}
 
 			return am_storey;
@@ -2454,7 +2488,7 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			if (am_storey != null) {
-				DefineAnonymousStorey (ec);
+				DefineStoreyContainer (ec, am_storey);
 				am_storey.EmitStoreyInstantiation (ec, this);
 			}
 
@@ -2465,16 +2499,12 @@ namespace Mono.CSharp {
 				ec.Emit (OpCodes.Nop);
 			}
 
-			bool emit_debug_info = SymbolWriter.HasSymbolWriter && Parent != null && !(am_storey is IteratorStorey);
-			if (emit_debug_info)
+			if (Parent != null)
 				ec.BeginScope ();
 
 			DoEmit (ec);
 
-			if (SymbolWriter.HasSymbolWriter)
-				EmitSymbolInfo (ec);
-
-			if (emit_debug_info)
+			if (Parent != null)
 				ec.EndScope ();
 
 			if (ec.EmitAccurateDebugInfo && !HasUnreachableClosingBrace && !IsCompilerGenerated && ec.Mark (EndLocation)) {
@@ -2482,48 +2512,103 @@ namespace Mono.CSharp {
 			}
 		}
 
-		void DefineAnonymousStorey (EmitContext ec)
+		protected void DefineStoreyContainer (EmitContext ec, AnonymousMethodStorey storey)
 		{
+			if (ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod.Storey != null) {
+				storey.SetNestedStoryParent (ec.CurrentAnonymousMethod.Storey);
+				storey.Mutator = ec.CurrentAnonymousMethod.Storey.Mutator;
+			}
+
 			//
 			// Creates anonymous method storey
 			//
-			if (ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod.Storey != null) {
-				//
-				// Creates parent storey reference when hoisted this is accessible
-				//
-				if (am_storey.OriginalSourceBlock.Explicit.HasCapturedThis) {
-					ExplicitBlock parent = am_storey.OriginalSourceBlock.Explicit.Parent.Explicit;
+			storey.CreateContainer ();
+			storey.DefineContainer ();
 
-					//
-					// Hoisted this exists in top-level parent storey only
-					//
-					while (parent.am_storey == null || parent.am_storey.Parent is AnonymousMethodStorey)
-						parent = parent.Parent.Explicit;
+			if (Original.Explicit.HasCapturedThis && Original.ParametersBlock.TopBlock.ThisReferencesFromChildrenBlock != null) {
 
-					am_storey.AddParentStoreyReference (ec, parent.am_storey);
+				//
+				// Only first storey in path will hold this reference. All children blocks will
+				// reference it indirectly using $ref field
+				//
+				for (Block b = Original.Explicit.Parent; b != null; b = b.Parent) {
+					var s = b.Explicit.AnonymousMethodStorey;
+					if (s != null) {
+						storey.HoistedThis = s.HoistedThis;
+						break;
+					}
 				}
 
-				am_storey.SetNestedStoryParent (ec.CurrentAnonymousMethod.Storey);
+				//
+				// We are the first storey on path and this has to be hoisted
+				//
+				if (storey.HoistedThis == null) {
+					foreach (ExplicitBlock ref_block in Original.ParametersBlock.TopBlock.ThisReferencesFromChildrenBlock) {
+						//
+						// ThisReferencesFromChildrenBlock holds all reference even if they
+						// are not on this path. It saves some memory otherwise it'd have to
+						// be in every explicit block. We run this check to see if the reference
+						// is valid for this storey
+						//
+						Block block_on_path = ref_block;
+						for (; block_on_path != null && block_on_path != Original; block_on_path = block_on_path.Parent);
 
-				// TODO MemberCache: Review
-				am_storey.Mutator = ec.CurrentAnonymousMethod.Storey.Mutator;
+						if (block_on_path == null)
+							continue;
+
+						if (storey.HoistedThis == null)
+							storey.AddCapturedThisField (ec);
+
+						for (ExplicitBlock b = ref_block; b.AnonymousMethodStorey != storey; b = b.Parent.Explicit) {
+							if (b.AnonymousMethodStorey != null) {
+								b.AnonymousMethodStorey.AddParentStoreyReference (ec, storey);
+								b.AnonymousMethodStorey.HoistedThis = storey.HoistedThis;
+
+								//
+								// Stop propagation inside same top block
+								//
+								if (b.ParametersBlock == ParametersBlock.Original)
+									break;
+
+								b = b.ParametersBlock;
+							}
+
+							var pb = b as ParametersBlock;
+							if (pb != null && pb.StateMachine != null) {
+								if (pb.StateMachine == storey)
+									break;
+
+								pb.StateMachine.AddParentStoreyReference (ec, storey);
+							}
+
+							b.HasCapturedVariable = true;
+						}
+					}
+				}
 			}
 
-			am_storey.CreateContainer ();
-			am_storey.DefineContainer ();
-
-			var ref_blocks = am_storey.ReferencesFromChildrenBlock;
+			var ref_blocks = storey.ReferencesFromChildrenBlock;
 			if (ref_blocks != null) {
 				foreach (ExplicitBlock ref_block in ref_blocks) {
-					for (ExplicitBlock b = ref_block.Explicit; b.am_storey != am_storey; b = b.Parent.Explicit) {
-						if (b.am_storey != null) {
-							b.am_storey.AddParentStoreyReference (ec, am_storey);
+					for (ExplicitBlock b = ref_block; b.AnonymousMethodStorey != storey; b = b.Parent.Explicit) {
+						if (b.AnonymousMethodStorey != null) {
+							b.AnonymousMethodStorey.AddParentStoreyReference (ec, storey);
 
+							//
 							// Stop propagation inside same top block
-							if (b.ParametersBlock.Original == ParametersBlock.Original)
+							//
+							if (b.ParametersBlock == ParametersBlock.Original)
 								break;
 
 							b = b.ParametersBlock;
+						}
+
+						var pb = b as ParametersBlock;
+						if (pb != null && pb.StateMachine != null) {
+							if (pb.StateMachine == storey)
+								break;
+
+							pb.StateMachine.AddParentStoreyReference (ec, storey);
 						}
 
 						b.HasCapturedVariable = true;
@@ -2531,8 +2616,8 @@ namespace Mono.CSharp {
 				}
 			}
 
-			am_storey.Define ();
-			am_storey.Parent.PartialContainer.AddCompilerGeneratedClass (am_storey);
+			storey.Define ();
+			storey.Parent.PartialContainer.AddCompilerGeneratedClass (storey);
 		}
 
 		public void RegisterAsyncAwait ()
@@ -2541,7 +2626,7 @@ namespace Mono.CSharp {
 			while ((block.flags & Flags.AwaitBlock) == 0) {
 				block.flags |= Flags.AwaitBlock;
 
-				if (block.Parent == null)
+				if (block is ParametersBlock)
 					return;
 
 				block = block.Parent.Explicit;
@@ -2590,7 +2675,13 @@ namespace Mono.CSharp {
 
 			#region Properties
 
-			public Block Block {
+			public ParametersBlock Block {
+				get {
+					return block;
+				}
+			}
+
+			Block INamedBlockVariable.Block {
 				get {
 					return block;
 				}
@@ -2693,6 +2784,7 @@ namespace Mono.CSharp {
 		bool resolved;
 		protected bool unreachable;
 		protected ToplevelBlock top_block;
+		protected StateMachine state_machine;
 
 		public ParametersBlock (Block parent, ParametersCompiled parameters, Location start)
 			: base (parent, 0, start, start)
@@ -2732,6 +2824,7 @@ namespace Mono.CSharp {
 			this.resolved = true;
 			this.unreachable = source.unreachable;
 			this.am_storey = source.am_storey;
+			this.state_machine = source.state_machine;
 
 			ParametersBlock = this;
 
@@ -2768,6 +2861,12 @@ namespace Mono.CSharp {
 		public ParametersCompiled Parameters {
 			get {
 				return parameters;
+			}
+		}
+
+		public StateMachine StateMachine {
+			get {
+				return state_machine;
 			}
 		}
 
@@ -2826,6 +2925,26 @@ namespace Mono.CSharp {
 			return base.CreateExpressionTree (ec);
 		}
 
+		public override void Emit (EmitContext ec)
+		{
+			if (state_machine != null && state_machine.OriginalSourceBlock != this) {
+				DefineStoreyContainer (ec, state_machine);
+				state_machine.EmitStoreyInstantiation (ec, this);
+			}
+
+			base.Emit (ec);
+		}
+
+		public void EmitEmbedded (EmitContext ec)
+		{
+			if (state_machine != null && state_machine.OriginalSourceBlock != this) {
+				DefineStoreyContainer (ec, state_machine);
+				state_machine.EmitStoreyInstantiation (ec, this);
+			}
+
+			base.Emit (ec);
+		}
+
 		public ParameterInfo GetParameterInfo (Parameter p)
 		{
 			for (int i = 0; i < parameters.Count; ++i) {
@@ -2836,7 +2955,7 @@ namespace Mono.CSharp {
 			throw new ArgumentException ("Invalid parameter");
 		}
 
-		public Expression GetParameterReference (int index, Location loc)
+		public ParameterReference GetParameterReference (int index, Location loc)
 		{
 			return new ParameterReference (parameter_info[index], loc);
 		}
@@ -2887,7 +3006,7 @@ namespace Mono.CSharp {
 					unreachable = top_level.End ();
 				}
 			} catch (Exception e) {
-				if (e is CompletionResult || rc.Report.IsDisabled)
+				if (e is CompletionResult || rc.Report.IsDisabled || e is FatalException)
 					throw;
 
 				if (rc.CurrentBlock != null) {
@@ -2939,7 +3058,7 @@ namespace Mono.CSharp {
 			for (int i = 0; i < orig_count; ++i) {
 				Parameter.Modifier mod = parameters.FixedParameters[i].ModFlags;
 
-				if ((mod & Parameter.Modifier.OUT) != Parameter.Modifier.OUT)
+				if ((mod & Parameter.Modifier.OUT) == 0)
 					continue;
 
 				VariableInfo vi = new VariableInfo (parameters, i, ec.FlowOffset);
@@ -2948,37 +3067,71 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void WrapIntoIterator (IMethodData method, TypeDefinition host, TypeSpec iterator_type, bool is_enumerable)
+		public ToplevelBlock ConvertToIterator (IMethodData method, TypeDefinition host, TypeSpec iterator_type, bool is_enumerable)
 		{
-			ParametersBlock pb = new ParametersBlock (this, ParametersCompiled.EmptyReadOnlyParameters, Location.Null);
-			pb.statements = statements;
-			pb.Original = this;
+			var iterator = new Iterator (this, method, host, iterator_type, is_enumerable);
+			var stateMachine = new IteratorStorey (iterator);
 
-			var iterator = new Iterator (pb, method, host, iterator_type, is_enumerable);
-			am_storey = new IteratorStorey (iterator);
+			state_machine = stateMachine;
+			iterator.SetStateMachine (stateMachine);
 
-			statements = new List<Statement> (1);
-			AddStatement (new Return (iterator, iterator.Location));
-			flags &= ~Flags.YieldBlock;
-			IsCompilerGenerated = true;
+			var tlb = new ToplevelBlock (host.Compiler, Parameters, Location.Null);
+			tlb.Original = this;
+			tlb.IsCompilerGenerated = true;
+			tlb.state_machine = stateMachine;
+			tlb.AddStatement (new Return (iterator, iterator.Location));
+			return tlb;
 		}
 
-		public void WrapIntoAsyncTask (IMemberContext context, TypeDefinition host, TypeSpec returnType)
+		public ParametersBlock ConvertToAsyncTask (IMemberContext context, TypeDefinition host, ParametersCompiled parameters, TypeSpec returnType, Location loc)
 		{
-			ParametersBlock pb = new ParametersBlock (this, ParametersCompiled.EmptyReadOnlyParameters, StartLocation);
-			pb.EndLocation = EndLocation;
-			pb.statements = statements;
-			pb.Original = this;
+			for (int i = 0; i < parameters.Count; i++) {
+				Parameter p = parameters[i];
+				Parameter.Modifier mod = p.ModFlags;
+				if ((mod & Parameter.Modifier.RefOutMask) != 0) {
+					host.Compiler.Report.Error (1988, p.Location,
+						"Async methods cannot have ref or out parameters");
+					return this;
+				}
+
+				if (p is ArglistParameter) {
+					host.Compiler.Report.Error (4006, p.Location,
+						"__arglist is not allowed in parameter list of async methods");
+					return this;
+				}
+
+				if (parameters.Types[i].IsPointer) {
+					host.Compiler.Report.Error (4005, p.Location,
+						"Async methods cannot have unsafe parameters");
+					return this;
+				}
+			}
+
+			if (!HasAwait) {
+				host.Compiler.Report.Warning (1998, 1, loc,
+					"Async block lacks `await' operator and will run synchronously");
+			}
 
 			var block_type = host.Module.Compiler.BuiltinTypes.Void;
-			var initializer = new AsyncInitializer (pb, host, block_type);
+			var initializer = new AsyncInitializer (this, host, block_type);
 			initializer.Type = block_type;
 
-			am_storey = new AsyncTaskStorey (context, initializer, returnType);
+			var stateMachine = new AsyncTaskStorey (this, context, initializer, returnType);
 
-			statements = new List<Statement> (1);
-			AddStatement (new StatementExpression (initializer));
-			flags &= ~Flags.AwaitBlock;
+			state_machine = stateMachine;
+			initializer.SetStateMachine (stateMachine);
+
+			var b = this is ToplevelBlock ?
+				new ToplevelBlock (host.Compiler, Parameters, Location.Null) :
+				new ParametersBlock (Parent, parameters, Location.Null) {
+					IsAsync = true,
+				};
+
+			b.Original = this;
+			b.IsCompilerGenerated = true;
+			b.state_machine = stateMachine;
+			b.AddStatement (new StatementExpression (initializer));
+			return b;
 		}
 	}
 
@@ -2992,11 +3145,7 @@ namespace Mono.CSharp {
 		Dictionary<string, object> names;
 		Dictionary<string, object> labels;
 
-		public HoistedVariable HoistedThisVariable;
-
-		public Report Report {
-			get { return compiler.Report; }
-		}
+		List<ExplicitBlock> this_references;
 
 		public ToplevelBlock (CompilerContext ctx, Location loc)
 			: this (ctx, ParametersCompiled.EmptyReadOnlyParameters, loc)
@@ -3030,6 +3179,31 @@ namespace Mono.CSharp {
 		public bool IsIterator {
 			get {
 				return HasYield;
+			}
+		}
+
+		public Report Report {
+			get {
+				return compiler.Report;
+			}
+		}
+
+		//
+		// Used by anonymous blocks to track references of `this' variable
+		//
+		public List<ExplicitBlock> ThisReferencesFromChildrenBlock {
+			get {
+				return this_references;
+			}
+		}
+
+		//
+		// Returns the "this" instance variable of this block.
+		// See AddThisVariable() for more information.
+		//
+		public LocalVariable ThisVariable {
+			get {
+				return this_variable;
 			}
 		}
 
@@ -3153,6 +3327,20 @@ namespace Mono.CSharp {
 			existing_list.Add (label);
 		}
 
+		public void AddThisReferenceFromChildrenBlock (ExplicitBlock block)
+		{
+			if (this_references == null)
+				this_references = new List<ExplicitBlock> ();
+
+			if (!this_references.Contains (block))
+				this_references.Add (block);
+		}
+
+		public void RemoveThisReferenceFromChildrenBlock (ExplicitBlock block)
+		{
+			this_references.Remove (block);
+		}
+
 		//
 		// Creates an arguments set from all parameters, useful for method proxy calls
 		//
@@ -3264,14 +3452,6 @@ namespace Mono.CSharp {
 		}
 
 		// <summary>
-		//   Returns the "this" instance variable of this block.
-		//   See AddThisVariable() for more information.
-		// </summary>
-		public LocalVariable ThisVariable {
-			get { return this_variable; }
-		}
-
-		// <summary>
 		//   This is used by non-static `struct' constructors which do not have an
 		//   initializer - in this case, the constructor must initialize all of the
 		//   struct's fields.  To do this, we add a "this" variable and use the flow
@@ -3343,15 +3523,6 @@ namespace Mono.CSharp {
 				throw;
 			}
 #endif
-		}
-
-		protected override void EmitSymbolInfo (EmitContext ec)
-		{
-			AnonymousExpression ae = ec.CurrentAnonymousMethod;
-			if ((ae != null) && (ae.Storey != null))
-				SymbolWriter.DefineScopeVariable (ae.Storey.ID);
-
-			base.EmitSymbolInfo (ec);
 		}
 	}
 	
@@ -4118,7 +4289,7 @@ namespace Mono.CSharp {
 			var ctype = ec.CurrentMemberDefinition.Parent.PartialContainer;
 			Field field = new Field (ctype, string_dictionary_type,
 				Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED,
-				new MemberName (CompilerGeneratedClass.MakeName (null, "f", "switch$map", ec.Module.CounterSwitchTypes++), loc), null);
+				new MemberName (CompilerGeneratedContainer.MakeName (null, "f", "switch$map", ec.Module.CounterSwitchTypes++), loc), null);
 			if (!field.Define ())
 				return;
 			ctype.AddField (field);
@@ -4321,6 +4492,7 @@ namespace Mono.CSharp {
 		protected Statement stmt;
 		Label dispose_try_block;
 		bool prepared_for_dispose, emitted_dispose;
+		Method finally_host;
 
 		protected TryFinallyBlock (Statement stmt, Location loc)
 			: base (loc)
@@ -4339,7 +4511,7 @@ namespace Mono.CSharp {
 		#endregion
 
 		protected abstract void EmitTryBody (EmitContext ec);
-		protected abstract void EmitFinallyBody (EmitContext ec);
+		public abstract void EmitFinallyBody (EmitContext ec);
 
 		public override Label PrepareForDispose (EmitContext ec, Label end)
 		{
@@ -4367,7 +4539,14 @@ namespace Mono.CSharp {
 			}
 
 			ec.MarkLabel (start_finally);
-			EmitFinallyBody (ec);
+
+			if (finally_host != null) {
+				var ce = new CallEmitter ();
+				ce.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
+				ce.EmitPredefined (ec, finally_host.Spec, new Arguments (0));
+			} else {
+				EmitFinallyBody (ec);
+			}
 
 			ec.EndExceptionBlock ();
 		}
@@ -4411,12 +4590,10 @@ namespace Mono.CSharp {
 				bool emit_dispatcher = j < labels.Length;
 
 				if (emit_dispatcher) {
-					//SymbolWriter.StartIteratorDispatcher (ec.ig);
 					ec.Emit (OpCodes.Ldloc, pc);
 					ec.EmitInt (first_resume_pc);
 					ec.Emit (OpCodes.Sub);
 					ec.Emit (OpCodes.Switch, labels);
-					//SymbolWriter.EndIteratorDispatcher (ec.ig);
 				}
 
 				foreach (ResumableStatement s in resume_points)
@@ -4427,9 +4604,33 @@ namespace Mono.CSharp {
 
 			ec.BeginFinallyBlock ();
 
-			EmitFinallyBody (ec);
+			if (finally_host != null) {
+				var ce = new CallEmitter ();
+				ce.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
+				ce.EmitPredefined (ec, finally_host.Spec, new Arguments (0));
+			} else {
+				EmitFinallyBody (ec);
+			}
 
 			ec.EndExceptionBlock ();
+		}
+
+		public override bool Resolve (BlockContext bc)
+		{
+			//
+			// Finally block inside iterator is called from MoveNext and
+			// Dispose methods that means we need to lift the block into
+			// newly created host method to emit the body only once. The
+			// original block then simply calls the newly generated method.
+			//
+			if (bc.CurrentIterator != null && !bc.IsInProbingMode) {
+				var b = stmt as Block;
+				if (b != null && b.Explicit.HasYield) {
+					finally_host = bc.CurrentIterator.CreateFinallyHost (this);
+				}
+			}
+
+			return base.Resolve (bc);
 		}
 	}
 
@@ -4619,7 +4820,7 @@ namespace Mono.CSharp {
 			Statement.Emit (ec);
 		}
 
-		protected override void EmitFinallyBody (EmitContext ec)
+		public override void EmitFinallyBody (EmitContext ec)
 		{
 			//
 			// if (lock_taken) Monitor.Exit (expr_copy)
@@ -5222,6 +5423,7 @@ namespace Mono.CSharp {
 
 			if (ok)
 				ec.CurrentBranching.CreateSibling (fini, FlowBranching.SiblingType.Finally);
+
 			using (ec.With (ResolveContext.Options.FinallyScope, true)) {
 				if (!fini.Resolve (ec))
 					ok = false;
@@ -5239,7 +5441,7 @@ namespace Mono.CSharp {
 			stmt.Emit (ec);
 		}
 
-		protected override void EmitFinallyBody (EmitContext ec)
+		public override void EmitFinallyBody (EmitContext ec)
 		{
 			fini.Emit (ec);
 		}
@@ -5501,7 +5703,7 @@ namespace Mono.CSharp {
 
 				// Add conditional call when disposing possible null variable
 				if (!type.IsStruct || type.IsNullableType)
-					dispose = new If (new Binary (Binary.Operator.Inequality, lvr, new NullLiteral (loc), loc), dispose, loc);
+					dispose = new If (new Binary (Binary.Operator.Inequality, lvr, new NullLiteral (loc), loc), dispose, dispose.loc);
 
 				return dispose;
 			}
@@ -5583,7 +5785,7 @@ namespace Mono.CSharp {
 			stmt.Emit (ec);
 		}
 
-		protected override void EmitFinallyBody (EmitContext ec)
+		public override void EmitFinallyBody (EmitContext ec)
 		{
 			decl.EmitDispose (ec);
 		}
@@ -5649,27 +5851,43 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class Foreach : Statement
 	{
-		sealed class ArrayForeach : Statement
+		abstract class IteratorStatement : Statement
 		{
-			readonly Foreach for_each;
-			readonly Statement statement;
+			protected readonly Foreach for_each;
 
-			Expression conv;
+			protected IteratorStatement (Foreach @foreach)
+			{
+				this.for_each = @foreach;
+				this.loc = @foreach.expr.Location;
+			}
+
+			protected override void CloneTo (CloneContext clonectx, Statement target)
+			{
+				throw new NotImplementedException ();
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				if (ec.EmitAccurateDebugInfo) {
+					ec.Emit (OpCodes.Nop);
+				}
+
+				base.Emit (ec);
+			}
+		}
+
+		sealed class ArrayForeach : IteratorStatement
+		{
 			TemporaryVariableReference[] lengths;
 			Expression [] length_exprs;
 			StatementExpression[] counter;
 			TemporaryVariableReference[] variables;
 
 			TemporaryVariableReference copy;
-			Expression access;
-			LocalVariableReference variable;
 
 			public ArrayForeach (Foreach @foreach, int rank)
+				: base (@foreach)
 			{
-				for_each = @foreach;
-				statement = for_each.statement;
-				loc = @foreach.loc;
-
 				counter = new StatementExpression[rank];
 				variables = new TemporaryVariableReference[rank];
 				length_exprs = new Expression [rank];
@@ -5680,11 +5898,6 @@ namespace Mono.CSharp {
 				//
 				if (rank > 1)
 					lengths = new TemporaryVariableReference [rank];
-			}
-
-			protected override void CloneTo (CloneContext clonectx, Statement target)
-			{
-				throw new NotImplementedException ();
 			}
 
 			public override bool Resolve (BlockContext ec)
@@ -5698,7 +5911,7 @@ namespace Mono.CSharp {
 				for (int i = 0; i < rank; i++) {
 					var v = TemporaryVariableReference.Create (ec.BuiltinTypes.Int, variables_block, loc);
 					variables[i] = v;
-					counter[i] = new StatementExpression (new UnaryMutator (UnaryMutator.Mode.PostIncrement, v, loc));
+					counter[i] = new StatementExpression (new UnaryMutator (UnaryMutator.Mode.PostIncrement, v, Location.Null));
 					counter[i].Resolve (ec);
 
 					if (rank == 1) {
@@ -5715,7 +5928,7 @@ namespace Mono.CSharp {
 					list.Add (new Argument (v));
 				}
 
-				access = new ElementAccess (copy, list, loc).Resolve (ec);
+				var access = new ElementAccess (copy, list, loc).Resolve (ec);
 				if (access == null)
 					return false;
 
@@ -5725,26 +5938,30 @@ namespace Mono.CSharp {
 					var_type = access.Type;
 				} else {
 					var_type = for_each.type.ResolveAsType (ec);
+
+					if (var_type == null)
+						return false;
+
+					access = Convert.ExplicitConversion (ec, access, var_type, loc);
+					if (access == null)
+						return false;
 				}
 
-				if (var_type == null)
+				for_each.variable.Type = var_type;
+
+				var variable_ref = new LocalVariableReference (for_each.variable, loc).Resolve (ec);
+				if (variable_ref == null)
 					return false;
 
-				conv = Convert.ExplicitConversion (ec, access, var_type, loc);
-				if (conv == null)
-					return false;
+				for_each.body.AddScopeStatement (new StatementExpression (new CompilerAssign (variable_ref, access, Location.Null), for_each.variable.Location));
 
 				bool ok = true;
 
 				ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
 				ec.CurrentBranching.CreateSibling ();
 
-				for_each.variable.Type = conv.Type;
-				variable = new LocalVariableReference (for_each.variable, loc);
-				variable.Resolve (ec);
-
 				ec.StartFlowBranching (FlowBranching.BranchingType.Embedded, loc);
-				if (!statement.Resolve (ec))
+				if (!for_each.body.Resolve (ec))
 					ok = false;
 				ec.EndFlowBranching ();
 
@@ -5780,12 +5997,10 @@ namespace Mono.CSharp {
 					ec.MarkLabel (loop [i]);
 				}
 
-				variable.local_info.CreateBuilder (ec);
-				variable.EmitAssign (ec, conv, false, false);
-
-				statement.Emit (ec);
+				for_each.body.Emit (ec);
 
 				ec.MarkLabel (ec.LoopBegin);
+				ec.Mark (for_each.expr.Location);
 
 				for (int i = rank - 1; i >= 0; i--){
 					counter [i].Emit (ec);
@@ -5805,59 +6020,8 @@ namespace Mono.CSharp {
 			}
 		}
 
-		sealed class CollectionForeach : Statement, OverloadResolver.IErrorHandler
+		sealed class CollectionForeach : IteratorStatement, OverloadResolver.IErrorHandler
 		{
-			class Body : Statement
-			{
-				TypeSpec type;
-				LocalVariableReference variable;
-				Expression current, conv;
-				Statement statement;
-
-				public Body (TypeSpec type, LocalVariable variable,
-								   Expression current, Statement statement,
-								   Location loc)
-				{
-					this.type = type;
-					this.variable = new LocalVariableReference (variable, loc);
-					this.current = current;
-					this.statement = statement;
-					this.loc = loc;
-				}
-
-				protected override void CloneTo (CloneContext clonectx, Statement target)
-				{
-					throw new NotImplementedException ();
-				}
-
-				public override bool Resolve (BlockContext ec)
-				{
-					current = current.Resolve (ec);
-					if (current == null)
-						return false;
-
-					conv = Convert.ExplicitConversion (ec, current, type, loc);
-					if (conv == null)
-						return false;
-
-					variable.local_info.Type = conv.Type;
-					variable.Resolve (ec);
-
-					if (!statement.Resolve (ec))
-						return false;
-
-					return true;
-				}
-
-				protected override void DoEmit (EmitContext ec)
-				{
-					variable.local_info.CreateBuilder (ec);
-					variable.EmitAssign (ec, conv, false, false);
-
-					statement.Emit (ec);
-				}
-			}
-
 			class RuntimeDispose : Using.VariableDeclaration
 			{
 				public RuntimeDispose (LocalVariable lv, Location loc)
@@ -5900,23 +6064,15 @@ namespace Mono.CSharp {
 			LocalVariable variable;
 			Expression expr;
 			Statement statement;
-			Expression var_type;
 			ExpressionStatement init;
 			TemporaryVariableReference enumerator_variable;
 			bool ambiguous_getenumerator_name;
 
-			public CollectionForeach (Expression var_type, LocalVariable var, Expression expr, Statement stmt, Location l)
+			public CollectionForeach (Foreach @foreach, LocalVariable var, Expression expr)
+				: base (@foreach)
 			{
-				this.var_type = var_type;
 				this.variable = var;
 				this.expr = expr;
-				statement = stmt;
-				loc = l;
-			}
-
-			protected override void CloneTo (CloneContext clonectx, Statement target)
-			{
-				throw new NotImplementedException ();
 			}
 
 			void Error_WrongEnumerator (ResolveContext rc, MethodSpec enumerator)
@@ -6078,7 +6234,7 @@ namespace Mono.CSharp {
 				if (current_pe == null)
 					return false;
 
-				VarExpr ve = var_type as VarExpr;
+				VarExpr ve = for_each.type as VarExpr;
 
 				if (ve != null) {
 					if (is_dynamic) {
@@ -6094,16 +6250,26 @@ namespace Mono.CSharp {
 						current_pe = EmptyCast.Create (current_pe, ec.BuiltinTypes.Dynamic);
 					}
 
-					variable.Type = var_type.ResolveAsType (ec);
+					variable.Type = for_each.type.ResolveAsType (ec);
+
+					if (variable.Type == null)
+						return false;
+
+					current_pe = Convert.ExplicitConversion (ec, current_pe, variable.Type, loc);
+					if (current_pe == null)
+						return false;
 				}
 
-				if (variable.Type == null)
+				var variable_ref = new LocalVariableReference (variable, loc).Resolve (ec);
+				if (variable_ref == null)
 					return false;
+
+				for_each.body.AddScopeStatement (new StatementExpression (new CompilerAssign (variable_ref, current_pe, Location.Null), variable.Location));
 
 				var init = new Invocation (get_enumerator_mg, null);
 
 				statement = new While (new BooleanExpression (new Invocation (move_next_mg, null)),
-					new Body (variable.Type, variable, current_pe, statement, variable.Location), Location.Null);
+					 for_each.body, Location.Null);
 
 				var enum_type = enumerator_variable.Type;
 
@@ -6183,13 +6349,15 @@ namespace Mono.CSharp {
 		LocalVariable variable;
 		Expression expr;
 		Statement statement;
+		Block body;
 
-		public Foreach (Expression type, LocalVariable var, Expression expr, Statement stmt, Location l)
+		public Foreach (Expression type, LocalVariable var, Expression expr, Statement stmt, Block body, Location l)
 		{
 			this.type = type;
 			this.variable = var;
 			this.expr = expr;
-			statement = stmt;
+			this.statement = stmt;
+			this.body = body;
 			loc = l;
 		}
 
@@ -6209,7 +6377,6 @@ namespace Mono.CSharp {
 			get { return variable; }
 		}
 
-
 		public override bool Resolve (BlockContext ec)
 		{
 			expr = expr.Resolve (ec);
@@ -6220,6 +6387,8 @@ namespace Mono.CSharp {
 				ec.Report.Error (186, loc, "Use of null is not valid in this context");
 				return false;
 			}
+
+			body.AddStatement (statement);
 
 			if (expr.Type.BuiltinType == BuiltinTypeSpec.Type.String) {
 				statement = new ArrayForeach (this, 1);
@@ -6232,7 +6401,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				statement = new CollectionForeach (type, variable, expr, statement, loc);
+				statement = new CollectionForeach (this, variable, expr);
 			}
 
 			return statement.Resolve (ec);
@@ -6240,6 +6409,8 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
+			variable.CreateBuilder (ec);
+
 			Label old_begin = ec.LoopBegin, old_end = ec.LoopEnd;
 			ec.LoopBegin = ec.DefineLabel ();
 			ec.LoopEnd = ec.DefineLabel ();
@@ -6256,6 +6427,7 @@ namespace Mono.CSharp {
 
 			target.type = type.Clone (clonectx);
 			target.expr = expr.Clone (clonectx);
+			target.body = (Block) body.Clone (clonectx);
 			target.statement = statement.Clone (clonectx);
 		}
 		

@@ -72,7 +72,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		/// Produces a conversion with <see cref="Conversion.IsAnonymousFunctionConversion"/>=<c>true</c> if the lambda is valid;
 		/// otherwise returns <see cref="Conversion.None"/>.
 		/// </returns>
-		public abstract Conversion IsValid(IType[] parameterTypes, IType returnType, Conversions conversions);
+		public abstract Conversion IsValid(IType[] parameterTypes, IType returnType, CSharpConversions conversions);
 		
 		/// <summary>
 		/// Gets the resolve result for the lambda body.

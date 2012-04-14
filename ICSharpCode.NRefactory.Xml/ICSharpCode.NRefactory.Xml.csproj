@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <ProjectGuid>{DC393B66-92ED-4CAD-AB25-CFEF23F3D7C6}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputType>Library</OutputType>
+    <RootNamespace>ICSharpCode.NRefactory.Xml</RootNamespace>
+    <AssemblyName>ICSharpCode.NRefactory.Xml</AssemblyName>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <NoStdLib>False</NoStdLib>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DocumentationFile>..\ICSharpCode.NRefactory\bin\$(Configuration)\ICSharpCode.NRefactory.Xml.xml</DocumentationFile>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\ICSharpCode.NRefactory.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>False</DelaySign>
+    <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <BaseAddress>4194304</BaseAddress>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>..\ICSharpCode.NRefactory\bin\Debug\</OutputPath>
+    <Optimize>False</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>..\ICSharpCode.NRefactory\bin\Release\</OutputPath>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>PdbOnly</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\ICSharpCode.NRefactory\Properties\GlobalAssemblyInfo.cs">
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="AXmlAttribute.cs" />
+    <Compile Include="AXmlDocument.cs" />
+    <Compile Include="AXmlElement.cs" />
+    <Compile Include="AXmlObject.cs" />
+    <Compile Include="AXmlReader.cs" />
+    <Compile Include="AXmlTag.cs" />
+    <Compile Include="AXmlText.cs" />
+    <Compile Include="AXmlVisitor.cs" />
+    <Compile Include="DocumentationElement.cs" />
+    <Compile Include="IncrementalParserState.cs" />
+    <Compile Include="InternalDocument.cs" />
+    <Compile Include="ObjectIterator.cs" />
+    <Compile Include="ReuseEqualityComparer.cs" />
+    <Compile Include="SyntaxError.cs" />
+    <Compile Include="TagMatchingHeuristics.cs" />
+    <Compile Include="TextType.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TagReader.cs" />
+    <Compile Include="AXmlParser.cs" />
+    <Compile Include="TokenReader.cs" />
+    <Compile Include="XmlSegment.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
+      <Project>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</Project>
+      <Name>ICSharpCode.NRefactory</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
+</Project>

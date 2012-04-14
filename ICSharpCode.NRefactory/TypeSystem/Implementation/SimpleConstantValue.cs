@@ -43,6 +43,8 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			return new ConstantResolveResult(type.Resolve(context), value);
 		}
 		
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase",
+		                                                 Justification = "The C# keyword is lower case")]
 		public override string ToString()
 		{
 			if (value == null)

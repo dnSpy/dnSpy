@@ -31,8 +31,10 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class UnsafeStatement : Statement
 	{
+		public static readonly TokenRole UnsafeKeywordRole = new TokenRole ("unsafe");
+		
 		public CSharpTokenNode UnsafeToken {
-			get { return GetChildByRole (Roles.Keyword); }
+			get { return GetChildByRole (UnsafeKeywordRole); }
 		}
 		
 		public BlockStatement Body {
@@ -40,7 +42,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Body, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitUnsafeStatement (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitUnsafeStatement (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitUnsafeStatement (this, data);
 		}

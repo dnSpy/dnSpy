@@ -31,13 +31,15 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class IsExpression : Expression
 	{
+		public readonly static TokenRole IsKeywordRole = new TokenRole ("is");
+		
 		public Expression Expression {
 			get { return GetChildByRole(Roles.Expression); }
 			set { SetChildByRole(Roles.Expression, value); }
 		}
 		
 		public CSharpTokenNode IsToken {
-			get { return GetChildByRole (Roles.Keyword); }
+			get { return GetChildByRole (IsKeywordRole); }
 		}
 		
 		public AstType Type {
@@ -45,7 +47,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole(Roles.Type, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitIsExpression (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitIsExpression (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitIsExpression (this, data);
 		}

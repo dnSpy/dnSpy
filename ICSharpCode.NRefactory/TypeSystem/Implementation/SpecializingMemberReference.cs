@@ -24,50 +24,29 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 	[Serializable]
 	public sealed class SpecializingMemberReference : IMemberReference
 	{
-		ITypeReference declaringTypeReference;
 		IMemberReference memberDefinitionReference;
-		IList<ITypeReference> typeArgumentReferences;
+		IList<ITypeReference> classTypeArgumentReferences;
+		IList<ITypeReference> methodTypeArgumentReferences;
 		
-		public SpecializingMemberReference(ITypeReference declaringTypeReference, IMemberReference memberDefinitionReference, IList<ITypeReference> typeArgumentReferences = null)
+		public SpecializingMemberReference(IMemberReference memberDefinitionReference, IList<ITypeReference> classTypeArgumentReferences = null, IList<ITypeReference> methodTypeArgumentReferences = null)
 		{
-			if (declaringTypeReference == null)
-				throw new ArgumentNullException("declaringTypeReference");
 			if (memberDefinitionReference == null)
 				throw new ArgumentNullException("memberDefinitionReference");
-			this.declaringTypeReference = declaringTypeReference;
 			this.memberDefinitionReference = memberDefinitionReference;
-			this.typeArgumentReferences = typeArgumentReferences;
+			this.classTypeArgumentReferences = classTypeArgumentReferences;
+			this.methodTypeArgumentReferences = methodTypeArgumentReferences;
 		}
 		
 		public IMember Resolve(ITypeResolveContext context)
 		{
-			var declaringType = declaringTypeReference.Resolve(context);
 			var memberDefinition = memberDefinitionReference.Resolve(context);
-			IType[] typeArguments = null;
-			if (typeArgumentReferences != null) {
-				typeArguments = new IType[typeArgumentReferences.Count];
-				for (int i = 0; i < typeArguments.Length; i++) {
-					typeArguments[i] = typeArgumentReferences[i].Resolve(context);
-				}
-			}
-			return CreateSpecializedMember(declaringType, memberDefinition, typeArguments);
-		}
-		
-		internal static IMember CreateSpecializedMember(IType declaringType, IMember memberDefinition, IList<IType> typeArguments)
-		{
-			if (memberDefinition == null) {
-				return null;
-			} else if (memberDefinition is IMethod) {
-				return new SpecializedMethod(declaringType, (IMethod)memberDefinition, typeArguments);
-			} else if (memberDefinition is IProperty) {
-				return new SpecializedProperty(declaringType, (IProperty)memberDefinition);
-			} else if (memberDefinition is IField) {
-				return new SpecializedField(declaringType, (IField)memberDefinition);
-			} else if (memberDefinition is IEvent) {
-				return new SpecializedEvent(declaringType, (IEvent)memberDefinition);
-			} else {
-				throw new NotSupportedException("Unknown IMember: " + memberDefinition);
-			}
+			return SpecializedMember.Create(
+				memberDefinition,
+				new TypeParameterSubstitution(
+					classTypeArgumentReferences != null ? classTypeArgumentReferences.Resolve(context) : null,
+					methodTypeArgumentReferences != null ? methodTypeArgumentReferences.Resolve(context) : null
+				)
+			);
 		}
 	}
 }

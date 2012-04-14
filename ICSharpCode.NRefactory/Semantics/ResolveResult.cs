@@ -38,6 +38,8 @@ namespace ICSharpCode.NRefactory.Semantics
 			this.type = type;
 		}
 		
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods",
+		                                                 Justification = "Unrelated to object.GetType()")]
 		public IType Type {
 			get { return type; }
 		}

@@ -34,6 +34,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		readonly CacheManager cacheManager = new CacheManager();
 		readonly KnownTypeCache knownTypeCache;
 		readonly IAssembly mainAssembly;
+		readonly IList<IAssembly> assemblies;
 		readonly IList<IAssembly> referencedAssemblies;
 		INamespace rootNamespace;
 		
@@ -63,12 +64,17 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			this.solutionSnapshot = solutionSnapshot;
 			this.context = new SimpleTypeResolveContext(this);
 			this.mainAssembly = mainAssembly.Resolve(context);
+			List<IAssembly> assemblies = new List<IAssembly>();
+			assemblies.Add(this.mainAssembly);
 			List<IAssembly> referencedAssemblies = new List<IAssembly>();
 			foreach (var asmRef in assemblyReferences) {
 				IAssembly asm = asmRef.Resolve(context);
+				if (asm != null && !assemblies.Contains(asm))
+					assemblies.Add(asm);
 				if (asm != null && !referencedAssemblies.Contains(asm))
 					referencedAssemblies.Add(asm);
 			}
+			this.assemblies = assemblies.AsReadOnly();
 			this.referencedAssemblies = referencedAssemblies.AsReadOnly();
 			this.knownTypeCache = new KnownTypeCache(this);
 		}
@@ -81,6 +87,15 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
+		public IList<IAssembly> Assemblies {
+			get {
+				if (assemblies == null)
+					throw new InvalidOperationException("Compilation isn't initialized yet");
+				return assemblies;
+			}
+		}
+		
+		[ObsoleteAttribute("Use compilation.Assemblies.Where(asm != compilation.MainAssembly) instead.")]
 		public IList<IAssembly> ReferencedAssemblies {
 			get {
 				if (referencedAssemblies == null)
@@ -95,9 +110,8 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		public INamespace RootNamespace {
 			get {
-				INamespace ns = this.rootNamespace;
+				INamespace ns = LazyInit.VolatileRead(ref this.rootNamespace);
 				if (ns != null) {
-					LazyInit.ReadBarrier();
 					return ns;
 				} else {
 					if (referencedAssemblies == null)

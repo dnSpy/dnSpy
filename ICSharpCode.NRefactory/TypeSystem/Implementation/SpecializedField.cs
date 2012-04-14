@@ -27,18 +27,11 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 	{
 		readonly IField fieldDefinition;
 		
-		public SpecializedField(IType declaringType, IField fieldDefinition)
-			: base(declaringType, fieldDefinition)
+		public SpecializedField(IField fieldDefinition, TypeParameterSubstitution substitution)
+			: base(fieldDefinition)
 		{
-			this.fieldDefinition = fieldDefinition;
-			Initialize(GetSubstitution(declaringType));
-		}
-		
-		internal SpecializedField(IType declaringType, IField fieldDefinition, TypeVisitor substitution)
-			: base(declaringType, fieldDefinition)
-		{
-			this.fieldDefinition = fieldDefinition;
-			Initialize(substitution);
+			AddSubstitution(substitution);
+			this.fieldDefinition = (IField)base.MemberDefinition;
 		}
 		
 		public bool IsReadOnly {

@@ -33,11 +33,16 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class LambdaExpression : Expression
 	{
-		public readonly static Role<CSharpTokenNode> AsyncModifierRole = new Role<CSharpTokenNode>("AsyncModifier", CSharpTokenNode.Null);
-		public readonly static Role<CSharpTokenNode> ArrowRole = new Role<CSharpTokenNode>("Arrow", CSharpTokenNode.Null);
+		public readonly static TokenRole AsyncModifierRole = new TokenRole ("async");
+		public readonly static TokenRole ArrowRole = new TokenRole ("=>");
 		public static readonly Role<AstNode> BodyRole = new Role<AstNode>("Body", AstNode.Null);
 		
-		public bool IsAsync { get; set; }
+		bool isAsync;
+		
+		public bool IsAsync {
+			get { return isAsync; }
+			set { ThrowIfFrozen(); isAsync = value; }
+		}
 		
 		public AstNodeCollection<ParameterDeclaration> Parameters {
 			get { return GetChildrenByRole (Roles.Parameter); }
@@ -52,7 +57,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (BodyRole, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitLambdaExpression (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitLambdaExpression (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitLambdaExpression (this, data);
 		}

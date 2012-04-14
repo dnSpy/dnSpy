@@ -1,6 +1,6 @@
 ﻿// 
 // Identifier.cs
-//  
+//
 // Author:
 //       Mike Krüger <mkrueger@novell.com>
 // 
@@ -28,7 +28,7 @@ using System;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public class Identifier : AstNode, IRelocatable
+	public class Identifier : AstNode
 	{
 		public new static readonly Identifier Null = new NullIdentifier ();
 		sealed class NullIdentifier : Identifier
@@ -39,7 +39,16 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			}
 			
-			public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+			public override void AcceptVisitor (IAstVisitor visitor)
+			{
+			}
+			
+			public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+			{
+				return default (T);
+			}
+			
+			public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 			{
 				return default (S);
 			}
@@ -59,9 +68,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		string name;
 		public string Name {
 			get { return this.name; }
-			set { 
+			set {
 				if (value == null)
 					throw new ArgumentNullException("value");
+				ThrowIfFrozen();
 				this.name = value;
 			}
 		}
@@ -71,25 +81,26 @@ namespace ICSharpCode.NRefactory.CSharp
 			get {
 				return startLocation;
 			}
-			
 		}
 		
-		public virtual bool IsVerbatim {
+		const uint verbatimBit = 1u << AstNodeFlagsUsedBits;
+		
+		public bool IsVerbatim {
 			get {
-				return false;
+				return (flags & verbatimBit) != 0;
+			}
+			set {
+				ThrowIfFrozen();
+				if (value)
+					flags |= verbatimBit;
+				else
+					flags &= ~verbatimBit;
 			}
 		}
 		
-		#region IRelocationable implementation
-		void IRelocatable.SetStartLocation (TextLocation startLocation)
-		{
-			this.startLocation = startLocation;
-		}
-		#endregion
-		
 		public override TextLocation EndLocation {
 			get {
-				return new TextLocation (StartLocation.Line, StartLocation.Column + (Name ?? "").Length);
+				return new TextLocation (StartLocation.Line, StartLocation.Column + (Name ?? "").Length + (IsVerbatim ? 1 : 0));
 			}
 		}
 		
@@ -116,22 +127,32 @@ namespace ICSharpCode.NRefactory.CSharp
 			if (string.IsNullOrEmpty(name))
 				return Identifier.Null;
 			if (name[0] == '@')
-				return new VerbatimIdentifier(name.Substring (1), location);
+				return new Identifier (name.Substring (1), location) { IsVerbatim = true };
 			else
 				return new Identifier (name, location);
 		}
 		
 		public static Identifier Create (string name, TextLocation location, bool isVerbatim)
 		{
-			if (string.IsNullOrEmpty(name))
+			if (string.IsNullOrEmpty (name))
 				return Identifier.Null;
 			
 			if (isVerbatim)
-				return new VerbatimIdentifier(name, location);
+				return new Identifier (name, location) { IsVerbatim = true };
 			return new Identifier (name, location);
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitIdentifier (this);
+		}
+		
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitIdentifier (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitIdentifier (this, data);
 		}
@@ -140,25 +161,6 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			Identifier o = other as Identifier;
 			return o != null && !o.IsNull && MatchString(this.Name, o.Name);
-		}
-
-		class VerbatimIdentifier : Identifier
-		{
-			public override TextLocation EndLocation {
-				get {
-					return new TextLocation (StartLocation.Line, StartLocation.Column + (Name ?? "").Length + 1); // @"..."
-				}
-			}
-			
-			public override bool IsVerbatim {
-				get {
-					return true;
-				}
-			}
-			
-			public VerbatimIdentifier(string name, TextLocation location) : base (name, location)
-			{
-			}
 		}
 	}
 }

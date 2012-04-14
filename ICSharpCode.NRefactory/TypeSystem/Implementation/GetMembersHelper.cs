@@ -132,7 +132,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 						else
 							substitution = new TypeParameterSubstitution(null, methodTypeArguments);
 					}
-					yield return new SpecializedMethod(baseType, m, methodTypeArguments, substitution);
+					yield return new SpecializedMethod(m, substitution);
 				}
 			} else {
 				foreach (IMethod m in declaredMethods) {
@@ -162,7 +162,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			ParameterizedType pt = baseType as ParameterizedType;
 			if (pt != null) {
 				var substitution = pt.GetSubstitution();
-				return declaredCtors.Select(m => new SpecializedMethod(pt, m, null, substitution));
+				return declaredCtors.Select(m => new SpecializedMethod(m, substitution) { DeclaringType = pt });
 			} else {
 				return declaredCtors;
 			}
@@ -189,7 +189,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			ParameterizedType pt = baseType as ParameterizedType;
 			if (pt != null) {
 				var substitution = pt.GetSubstitution();
-				return declaredProperties.Select(m => new SpecializedProperty(pt, m, substitution));
+				return declaredProperties.Select(m => new SpecializedProperty(m, substitution) { DeclaringType = pt });
 			} else {
 				return declaredProperties;
 			}
@@ -216,7 +216,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			ParameterizedType pt = baseType as ParameterizedType;
 			if (pt != null) {
 				var substitution = pt.GetSubstitution();
-				return declaredFields.Select(m => new SpecializedField(pt, m, substitution));
+				return declaredFields.Select(m => new SpecializedField(m, substitution) { DeclaringType = pt });
 			} else {
 				return declaredFields;
 			}
@@ -243,7 +243,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			ParameterizedType pt = baseType as ParameterizedType;
 			if (pt != null) {
 				var substitution = pt.GetSubstitution();
-				return declaredEvents.Select(m => new SpecializedEvent(pt, m, substitution));
+				return declaredEvents.Select(m => new SpecializedEvent(m, substitution) { DeclaringType = pt });
 			} else {
 				return declaredEvents;
 			}

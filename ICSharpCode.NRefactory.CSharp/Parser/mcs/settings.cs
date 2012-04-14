@@ -47,7 +47,12 @@ namespace Mono.CSharp {
 
 	public enum Platform
 	{
-		AnyCPU, X86, X64, IA64
+		AnyCPU,
+		AnyCPU32Preferred,
+		Arm,
+		X86,
+		X64,
+		IA64
 	}
 
 	public class CompilerSettings
@@ -135,10 +140,15 @@ namespace Mono.CSharp {
 
 		public bool GenerateDebugInfo;
 
-		// Compiler debug flags only
+		#region Compiler debug flags only
 		public bool ParseOnly, TokenizeOnly, Timestamps;
 		public int DebugFlags;
 		public int VerboseParserFlag;
+		public int FatalCounter;
+		public bool Stacktrace;
+		#endregion
+
+		public bool ShowFullPaths;
 
 		//
 		// Whether we are being linked against the standard libraries.
@@ -1044,7 +1054,10 @@ namespace Mono.CSharp {
 					return ParseResult.Error;
 				}
 
-				switch (value.ToLower (CultureInfo.InvariantCulture)) {
+				switch (value.ToLowerInvariant ()) {
+				case "arm":
+					settings.Platform = Platform.Arm;
+					break;
 				case "anycpu":
 					settings.Platform = Platform.AnyCPU;
 					break;
@@ -1057,8 +1070,12 @@ namespace Mono.CSharp {
 				case "itanium":
 					settings.Platform = Platform.IA64;
 					break;
+				case "anycpu32bitpreferred":
+					settings.Platform = Platform.AnyCPU32Preferred;
+					break;
 				default:
-					report.Error (1672, "Invalid platform type for -platform. Valid options are `anycpu', `x86', `x64' or `itanium'");
+					report.Error (1672, "Invalid -platform option `{0}'. Valid options are `anycpu', `anycpu32bitpreferred', `arm', `x86', `x64' or `itanium'",
+						value);
 					return ParseResult.Error;
 				}
 
@@ -1111,7 +1128,7 @@ namespace Mono.CSharp {
 				return ParseResult.Success;
 
 			case "/fullpaths":
-				report.Printer.ShowFullPaths = true;
+				settings.ShowFullPaths = true;
 				return ParseResult.Success;
 
 			case "/keyfile":
@@ -1271,7 +1288,7 @@ namespace Mono.CSharp {
 				return ParseResult.Success;
 				
 			case "--stacktrace":
-				report.Printer.Stacktrace = true;
+				settings.Stacktrace = true;
 				return ParseResult.Success;
 				
 			case "--linkresource":
@@ -1435,12 +1452,12 @@ namespace Mono.CSharp {
 				return ParseResult.Success;
 
 			default:
-				if (arg.StartsWith ("--fatal")){
+				if (arg.StartsWith ("--fatal", StringComparison.Ordinal)){
 					int fatal = 1;
-					if (arg.StartsWith ("--fatal="))
+					if (arg.StartsWith ("--fatal=", StringComparison.Ordinal))
 						int.TryParse (arg.Substring (8), out fatal);
 
-					report.Printer.FatalCounter = fatal;
+					settings.FatalCounter = fatal;
 					return ParseResult.Success;
 				}
 				if (arg.StartsWith ("--runtime:", StringComparison.Ordinal)) {
@@ -1517,7 +1534,7 @@ namespace Mono.CSharp {
 		void Usage ()
 		{
 			output.WriteLine (
-				"Mono C# compiler, Copyright 2001 - 2011 Novell, Inc.\n" +
+				"Mono C# compiler, Copyright 2001-2011 Novell, Inc., Copyright 2011-2012 Xamarin, Inc\n" +
 				"mcs [options] source-files\n" +
 				"   --about              About the Mono C# compiler\n" +
 				"   -addmodule:M1[,Mn]   Adds the module to the generated assembly\n" +
@@ -1542,7 +1559,8 @@ namespace Mono.CSharp {
 				"   -out:FILE            Specifies output assembly name\n" +
 				"   -pkg:P1[,Pn]         References packages P1..Pn\n" +
 				"   -platform:ARCH       Specifies the target platform of the output assembly\n" +
-				"                        ARCH can be one of: anycpu, x86, x64 or itanium\n" +
+				"                        ARCH can be one of: anycpu, anycpu32bitpreferred, arm,\n" +
+				"                        x86, x64 or itanium. The default is anycpu.\n" +
 				"   -recurse:SPEC        Recursively compiles files according to SPEC pattern\n" +
 				"   -reference:A1[,An]   Imports metadata from the specified assembly (short: -r)\n" +
 				"   -reference:ALIAS=A   Imports metadata using specified extern alias (short: -r)\n" +

@@ -103,6 +103,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		IEnumeratorOfT,
 		/// <summary><c>System.Collections.Generic.IList{T}</c></summary>
 		IListOfT,
+		/// <summary><c>System.Collections.Generic.IReadOnlyList{T}</c></summary>
+		IReadOnlyListOfT,
 		/// <summary><c>System.Threading.Tasks.Task</c></summary>
 		Task,
 		/// <summary><c>System.Threading.Tasks.Task{T}</c></summary>
@@ -157,6 +159,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			new KnownTypeReference(KnownTypeCode.IEnumerableOfT, "System.Collections.Generic", "IEnumerable", 1),
 			new KnownTypeReference(KnownTypeCode.IEnumeratorOfT, "System.Collections.Generic", "IEnumerator", 1),
 			new KnownTypeReference(KnownTypeCode.IListOfT,       "System.Collections.Generic", "IList", 1),
+			new KnownTypeReference(KnownTypeCode.IReadOnlyListOfT, "System.Collections.Generic", "IReadOnlyList", 1),
 			new KnownTypeReference(KnownTypeCode.Task,        "System.Threading.Tasks", "Task"),
 			new KnownTypeReference(KnownTypeCode.TaskOfT,     "System.Threading.Tasks", "Task", 1, baseType: KnownTypeCode.Task),
 			new KnownTypeReference(KnownTypeCode.NullableOfT, "System", "Nullable", 1, baseType: KnownTypeCode.ValueType),
@@ -313,16 +316,6 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		public static readonly KnownTypeReference UIntPtr = Get(KnownTypeCode.UIntPtr);
 		
 		/// <summary>
-		/// Gets a type reference pointing to the <c>System.Collections.Generic.IList{T}</c> type.
-		/// </summary>
-		public static readonly KnownTypeReference GenericIList = Get(KnownTypeCode.IListOfT);
-		
-		/// <summary>
-		/// Gets a type reference pointing to the <c>System.Nullable{T}</c> type.
-		/// </summary>
-		public static readonly KnownTypeReference NullableOfT = Get(KnownTypeCode.NullableOfT);
-		
-		/// <summary>
 		/// Gets a type reference pointing to the <c>System.Collections.IEnumerable</c> type.
 		/// </summary>
 		public static readonly KnownTypeReference IEnumerable = Get(KnownTypeCode.IEnumerable);
@@ -348,6 +341,11 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		public static readonly KnownTypeReference IListOfT = Get(KnownTypeCode.IListOfT);
 		
 		/// <summary>
+		/// Gets a type reference pointing to the <c>System.Collections.Generic.IReadOnlyList{T}</c> type.
+		/// </summary>
+		public static readonly KnownTypeReference IReadOnlyListOfT = Get(KnownTypeCode.IReadOnlyListOfT);
+		
+		/// <summary>
 		/// Gets a type reference pointing to the <c>System.Threading.Tasks.Task</c> type.
 		/// </summary>
 		public static readonly KnownTypeReference Task = Get(KnownTypeCode.Task);
@@ -356,6 +354,11 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// Gets a type reference pointing to the <c>System.Threading.Tasks.Task{T}</c> type.
 		/// </summary>
 		public static readonly KnownTypeReference TaskOfT = Get(KnownTypeCode.TaskOfT);
+		
+		/// <summary>
+		/// Gets a type reference pointing to the <c>System.Nullable{T}</c> type.
+		/// </summary>
+		public static readonly KnownTypeReference NullableOfT = Get(KnownTypeCode.NullableOfT);
 		
 		/// <summary>
 		/// Gets a type reference pointing to the <c>System.IDisposable</c> type.

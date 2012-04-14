@@ -143,7 +143,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			}
 		}
 		
-		IEnumerable<TextLocation> FindDollarSigns(string code)
+		protected IEnumerable<TextLocation> FindDollarSigns(string code)
 		{
 			int line = 1;
 			int col = 1;
@@ -172,12 +172,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			project = project.UpdateProjectContent(null, parsedFile);
 			compilation = project.CreateCompilation();
 			
-			FindNodeVisitor fnv = new FindNodeVisitor(dollars[0], dollars[1]);
-			cu.AcceptVisitor(fnv, null);
-			Assert.IsNotNull(fnv.ResultNode, "Did not find DOM node at the specified location");
-			
 			CSharpAstResolver resolver = new CSharpAstResolver(compilation, cu, parsedFile);
-			return Tuple.Create(resolver, fnv.ResultNode);
+			return Tuple.Create(resolver, FindNode(cu, dollars[0], dollars[1]));
 		}
 		
 		protected ResolveResult Resolve(string code)
@@ -216,7 +212,15 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			return (T)rr;
 		}
 		
-		sealed class FindNodeVisitor : DepthFirstAstVisitor<object, object>
+		protected AstNode FindNode(CompilationUnit cu, TextLocation start, TextLocation end)
+		{
+			FindNodeVisitor fnv = new FindNodeVisitor(start, end);
+			cu.AcceptVisitor(fnv);
+			Assert.IsNotNull(fnv.ResultNode, "Did not find DOM node at the specified location");
+			return fnv.ResultNode;
+		}
+		
+		sealed class FindNodeVisitor : DepthFirstAstVisitor
 		{
 			readonly TextLocation start;
 			readonly TextLocation end;
@@ -228,15 +232,15 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				this.end = end;
 			}
 			
-			protected override object VisitChildren(AstNode node, object data)
+			protected override void VisitChildren(AstNode node)
 			{
 				if (node.StartLocation == start && node.EndLocation == end) {
 					if (ResultNode != null)
 						throw new InvalidOperationException("found multiple nodes with same start+end");
-					return ResultNode = node;
-				} else {
-					return base.VisitChildren(node, data);
+					ResultNode = node;
+					return;
 				}
+				base.VisitChildren(node);
 			}
 		}
 		

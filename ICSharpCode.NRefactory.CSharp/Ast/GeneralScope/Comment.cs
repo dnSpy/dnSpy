@@ -43,10 +43,14 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// <summary>
 		/// Inactive code (code in non-taken "#if")
 		/// </summary>
-		InactiveCode
+		InactiveCode,
+		/// <summary>
+		/// "/** */" comment
+		/// </summary>
+		MultiLineDocumentation
 	}
 	
-	public class Comment : AstNode, IRelocatable
+	public class Comment : AstNode
 	{
 		public override NodeType NodeType {
 			get {
@@ -54,19 +58,25 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
+		CommentType commentType;
+		
 		public CommentType CommentType {
-			get;
-			set;
+			get { return commentType; }
+			set { ThrowIfFrozen(); commentType = value; }
 		}
+		
+		bool startsLine;
 		
 		public bool StartsLine {
-			get;
-			set;
+			get { return startsLine; }
+			set { ThrowIfFrozen(); startsLine = value; }
 		}
 		
+		string content;
+		
 		public string Content {
-			get;
-			set;
+			get { return content; }
+			set { ThrowIfFrozen(); content = value; }
 		}
 		
 		TextLocation startLocation;
@@ -96,16 +106,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			this.endLocation = endLocation;
 		}
 		
-		#region IRelocationable implementation
-		void IRelocatable.SetStartLocation (TextLocation startLocation)
+		public override void AcceptVisitor (IAstVisitor visitor)
 		{
-			int lineDelta = startLocation.Line - this.startLocation.Line;
-			endLocation = new TextLocation (endLocation.Line + lineDelta, lineDelta != 0 ? endLocation.Column : endLocation.Column + startLocation.Column - this.startLocation.Column);
-			this.startLocation = startLocation;
+			visitor.VisitComment (this);
 		}
-		#endregion
-
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitComment (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitComment (this, data);
 		}

@@ -39,7 +39,16 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			}
 			
-			public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+			public override void AcceptVisitor (IAstVisitor visitor)
+			{
+			}
+			
+			public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+			{
+				return default (T);
+			}
+			
+			public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 			{
 				return default (S);
 			}
@@ -75,9 +84,19 @@ namespace ICSharpCode.NRefactory.CSharp
 				get { return NodeType.Pattern; }
 			}
 			
-			public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data = default(T))
+			public override void AcceptVisitor (IAstVisitor visitor)
 			{
-				return visitor.VisitPatternPlaceholder(this, child, data);
+				visitor.VisitPatternPlaceholder (this, child);
+			}
+			
+			public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+			{
+				return visitor.VisitPatternPlaceholder (this, child);
+			}
+			
+			public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
+			{
+				return visitor.VisitPatternPlaceholder (this, child, data);
 			}
 			
 			public override ITypeReference ToTypeReference(SimpleNameLookupMode lookupMode)
@@ -151,6 +170,26 @@ namespace ICSharpCode.NRefactory.CSharp
 		public MemberReferenceExpression Member(string memberName)
 		{
 			return new TypeReferenceExpression { Type = this }.Member(memberName);
+		}
+		
+		/// <summary>
+		/// Builds an expression that can be used to access a static member on this type.
+		/// </summary>
+		public MemberType MemberType(string memberName, params AstType[] typeArguments)
+		{
+			var memberType = new MemberType(this, memberName);
+			memberType.TypeArguments.AddRange(typeArguments);
+			return memberType;
+		}
+		
+		/// <summary>
+		/// Builds an expression that can be used to access a static member on this type.
+		/// </summary>
+		public MemberType MemberType(string memberName, IEnumerable<AstType> typeArguments)
+		{
+			var memberType = new MemberType(this, memberName);
+			memberType.TypeArguments.AddRange(typeArguments);
+			return memberType;
 		}
 		
 		/// <summary>

@@ -28,6 +28,11 @@ namespace ICSharpCode.NRefactory.Editor
 	public interface IDocument : ITextSource, IServiceProvider
 	{
 		/// <summary>
+		/// Creates an immutable snapshot of this document.
+		/// </summary>
+		IDocument CreateDocumentSnapshot();
+		
+		/// <summary>
 		/// Gets/Sets the text of the whole document..
 		/// </summary>
 		new string Text { get; set; } // hides TextBuffer.Text to add the setter

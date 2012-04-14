@@ -220,7 +220,7 @@ namespace Mono.CSharp {
 					var p = parameters[i];
 					compiled[i] = new Parameter (new TypeExpression (parameters.Types[i], Location),
 						p.Name,
-						p.ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT),
+						p.ModFlags & Parameter.Modifier.RefOutMask,
 						p.OptAttributes == null ? null : p.OptAttributes.Clone (), Location);
 				}
 
@@ -255,7 +255,7 @@ namespace Mono.CSharp {
 			int out_params = 0;
 
 			foreach (Parameter p in Parameters.FixedParameters) {
-				if ((p.ModFlags & Parameter.Modifier.ISBYREF) != 0)
+				if ((p.ModFlags & Parameter.Modifier.RefOutMask) != 0)
 					++out_params;
 			}
 
@@ -265,12 +265,12 @@ namespace Mono.CSharp {
 				int param = 0;
 				for (int i = 0; i < Parameters.FixedParameters.Length; ++i) {
 					Parameter p = parameters [i];
-					if ((p.ModFlags & Parameter.Modifier.ISBYREF) == 0)
+					if ((p.ModFlags & Parameter.Modifier.RefOutMask) == 0)
 						continue;
 
 					end_params [param++] = new Parameter (new TypeExpression (p.Type, Location),
 						p.Name,
-						p.ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT),
+						p.ModFlags & Parameter.Modifier.RefOutMask,
 						p.OptAttributes == null ? null : p.OptAttributes.Clone (), Location);
 				}
 

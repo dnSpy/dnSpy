@@ -36,13 +36,13 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	public unsafe class ConversionsTest
 	{
 		ICompilation compilation;
-		Conversions conversions;
+		CSharpConversions conversions;
 		
 		[SetUp]
 		public void SetUp()
 		{
 			compilation = new SimpleCompilation(CecilLoaderTests.Mscorlib);
-			conversions = new Conversions(compilation);
+			conversions = new CSharpConversions(compilation);
 		}
 		
 		Conversion ImplicitConversion(Type from, Type to)

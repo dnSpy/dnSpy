@@ -31,6 +31,8 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class GotoStatement : Statement
 	{
+		public static readonly TokenRole GotoKeywordRole = new TokenRole ("goto");
+		
 		public GotoStatement ()
 		{
 		}
@@ -41,7 +43,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		public CSharpTokenNode GotoToken {
-			get { return GetChildByRole (Roles.Keyword); }
+			get { return GetChildByRole (GotoKeywordRole); }
 		}
 		
 		public string Label {
@@ -52,7 +54,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				if (string.IsNullOrEmpty(value))
 					SetChildByRole(Roles.Identifier, null);
 				else
-					SetChildByRole(Roles.Identifier, Identifier.Create (value, TextLocation.Empty));
+					SetChildByRole(Roles.Identifier, Identifier.Create (value));
 			}
 		}
 		
@@ -60,7 +62,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.Semicolon); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitGotoStatement (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitGotoStatement (this);
+		}
+
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitGotoStatement (this, data);
 		}
@@ -77,10 +89,11 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class GotoCaseStatement : Statement
 	{
-		public static readonly Role<CSharpTokenNode> CaseKeywordRole = new Role<CSharpTokenNode>("CaseKeyword", CSharpTokenNode.Null);
+		public static readonly TokenRole GotoKeywordRole = new TokenRole ("goto");
+		public static readonly TokenRole CaseKeywordRole = new TokenRole ("case");
 		
 		public CSharpTokenNode GotoToken {
-			get { return GetChildByRole (Roles.Keyword); }
+			get { return GetChildByRole (GotoKeywordRole); }
 		}
 		
 		public CSharpTokenNode CaseToken {
@@ -99,7 +112,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.Semicolon); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitGotoCaseStatement (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitGotoCaseStatement (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitGotoCaseStatement (this, data);
 		}
@@ -116,10 +139,11 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class GotoDefaultStatement : Statement
 	{
-		public static readonly Role<CSharpTokenNode> DefaultKeywordRole = new Role<CSharpTokenNode>("DefaultKeyword", CSharpTokenNode.Null);
+		public static readonly TokenRole GotoKeywordRole = new TokenRole ("goto");
+		public static readonly TokenRole DefaultKeywordRole = new TokenRole ("default");
 		
 		public CSharpTokenNode GotoToken {
-			get { return GetChildByRole (Roles.Keyword); }
+			get { return GetChildByRole (GotoKeywordRole); }
 		}
 		
 		public CSharpTokenNode DefaultToken {
@@ -130,7 +154,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.Semicolon); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitGotoDefaultStatement (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitGotoDefaultStatement (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitGotoDefaultStatement (this, data);
 		}

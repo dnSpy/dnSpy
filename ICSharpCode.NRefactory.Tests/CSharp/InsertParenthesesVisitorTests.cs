@@ -30,26 +30,26 @@ namespace ICSharpCode.NRefactory.CSharp
 		[SetUp]
 		public void SetUp()
 		{
-			policy = new CSharpFormattingOptions();
+			policy = FormattingOptionsFactory.CreateMono ();
 		}
 		
 		string InsertReadable(Expression expr)
 		{
 			expr = expr.Clone();
-			expr.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true }, null);
+			expr.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true });
 			StringWriter w = new StringWriter();
 			w.NewLine = " ";
-			expr.AcceptVisitor(new CSharpOutputVisitor(new TextWriterOutputFormatter(w) { IndentationString = "" }, policy), null);
+			expr.AcceptVisitor(new CSharpOutputVisitor(new TextWriterOutputFormatter(w) { IndentationString = "" }, policy));
 			return w.ToString();
 		}
 		
 		string InsertRequired(Expression expr)
 		{
 			expr = expr.Clone();
-			expr.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = false }, null);
+			expr.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = false });
 			StringWriter w = new StringWriter();
 			w.NewLine = " ";
-			expr.AcceptVisitor(new CSharpOutputVisitor(new TextWriterOutputFormatter(w) { IndentationString = "" }, policy), null);
+			expr.AcceptVisitor(new CSharpOutputVisitor(new TextWriterOutputFormatter(w) { IndentationString = "" }, policy));
 			return w.ToString();
 		}
 		

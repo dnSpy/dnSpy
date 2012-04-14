@@ -159,12 +159,9 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				var outputGroup = new List<IMethod>();
 				foreach (var method in methodGroup) {
 					IType[] inferredTypes;
-					if (CSharpResolver.IsEligibleExtensionMethod(
-						method.Compilation, Conversions.Get(method.Compilation),
-						this.TargetType, method, true, out inferredTypes))
-					{
+					if (CSharpResolver.IsEligibleExtensionMethod(this.TargetType, method, true, out inferredTypes)) {
 						if (substituteInferredTypes && inferredTypes != null) {
-							outputGroup.Add(new SpecializedMethod(method.DeclaringType, method, inferredTypes));
+							outputGroup.Add(new SpecializedMethod(method, new TypeParameterSubstitution(null, inferredTypes)));
 						} else {
 							outputGroup.Add(method);
 						}
@@ -181,7 +178,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			return string.Format("[{0} with {1} method(s)]", GetType().Name, this.Methods.Count());
 		}
 		
-		public OverloadResolution PerformOverloadResolution(ICompilation compilation, ResolveResult[] arguments, string[] argumentNames = null, bool allowExtensionMethods = true, bool allowExpandingParams = true, Conversions conversions = null)
+		public OverloadResolution PerformOverloadResolution(ICompilation compilation, ResolveResult[] arguments, string[] argumentNames = null, bool allowExtensionMethods = true, bool allowExpandingParams = true, CSharpConversions conversions = null)
 		{
 			Log.WriteLine("Performing overload resolution for " + this);
 			Log.WriteCollection("  Arguments: ", arguments);

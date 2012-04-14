@@ -297,5 +297,16 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			Assert.IsFalse(getDecoder.IsVirtual);
 			Assert.IsTrue(getDecoder.IsOverride);
 		}
+		
+		[Test]
+		public void FindRedirectedType()
+		{
+			var compilationWithSystemCore = new SimpleCompilation(systemCore.Value, mscorlib.Value);
+			
+			var typeRef = ReflectionHelper.ParseReflectionName("System.Func`2, System.Core");
+			ITypeDefinition c = typeRef.Resolve(compilationWithSystemCore.TypeResolveContext).GetDefinition();
+			Assert.IsNotNull(c, "System.Func<,> not found");
+			Assert.AreEqual("mscorlib", c.ParentAssembly.AssemblyName);
+		}
 	}
 }

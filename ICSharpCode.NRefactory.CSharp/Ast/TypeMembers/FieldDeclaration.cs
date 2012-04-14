@@ -24,27 +24,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public class FieldDeclaration : AttributedNode
+	public class FieldDeclaration : EntityDeclaration
 	{
-		public override NodeType NodeType {
-			get { return NodeType.Member; }
-		}
-		
-		public AstType ReturnType {
-			get { return GetChildByRole (Roles.Type); }
-			set { SetChildByRole(Roles.Type, value); }
+		public override EntityType EntityType {
+			get { return EntityType.Field; }
 		}
 		
 		public AstNodeCollection<VariableInitializer> Variables {
 			get { return GetChildrenByRole (Roles.Variable); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitFieldDeclaration (this);
+		}
+		
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitFieldDeclaration (this);
+		}
+
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitFieldDeclaration (this, data);
 		}

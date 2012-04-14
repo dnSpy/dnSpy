@@ -24,15 +24,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public class IndexerDeclaration : MemberDeclaration
+	public class IndexerDeclaration : EntityDeclaration
 	{
+		public static readonly TokenRole ThisKeywordRole = new TokenRole ("this");
 		public static readonly Role<Accessor> GetterRole = PropertyDeclaration.GetterRole;
 		public static readonly Role<Accessor> SetterRole = PropertyDeclaration.SetterRole;
+		
+		public override EntityType EntityType {
+			get { return EntityType.Indexer; }
+		}
+		
+		/// <summary>
+		/// Gets/Sets the type reference of the interface that is explicitly implemented.
+		/// Null node if this member is not an explicit interface implementation.
+		/// </summary>
+		public AstType PrivateImplementationType {
+			get { return GetChildByRole (PrivateImplementationTypeRole); }
+			set { SetChildByRole (PrivateImplementationTypeRole, value); }
+		}
 		
 		public CSharpTokenNode LBracketToken {
 			get { return GetChildByRole (Roles.LBracket); }
@@ -64,7 +77,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.RBrace); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitIndexerDeclaration (this);
+		}
+		
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitIndexerDeclaration (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitIndexerDeclaration (this, data);
 		}
@@ -72,7 +95,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
 			IndexerDeclaration o = other as IndexerDeclaration;
-			return o != null && this.MatchMember(o, match) && this.Parameters.DoMatch(o.Parameters, match)
+			return o != null && MatchString(this.Name, o.Name)
+				&& this.MatchAttributesAndModifiers(o, match) && this.ReturnType.DoMatch(o.ReturnType, match)
+				&& this.PrivateImplementationType.DoMatch(o.PrivateImplementationType, match)
+				&& this.Parameters.DoMatch(o.Parameters, match)
 				&& this.Getter.DoMatch(o.Getter, match) && this.Setter.DoMatch(o.Setter, match);
 		}
 	}

@@ -73,15 +73,6 @@ namespace Mono.CSharp {
 		public readonly TypeSpec MemberType;
 		public readonly int Arity; // -1 to ignore the check
 
-		private MemberFilter (string name, MemberKind kind)
-		{
-			Name = name;
-			Kind = kind;
-			Parameters = null;
-			MemberType = null;
-			Arity = -1;
-		}
-
 		public MemberFilter (MethodSpec m)
 		{
 			Name = m.Name;
@@ -797,7 +788,7 @@ namespace Mono.CSharp {
 			while (true) {
 				foreach (var entry in abstract_type.MemberCache.member_hash) {
 					foreach (var name_entry in entry.Value) {
-						if ((name_entry.Modifiers & Modifiers.ABSTRACT) == 0)
+						if ((name_entry.Modifiers & (Modifiers.ABSTRACT | Modifiers.OVERRIDE)) != Modifiers.ABSTRACT)
 							continue;
 
 						if (name_entry.Kind != MemberKind.Method)
@@ -844,6 +835,12 @@ namespace Mono.CSharp {
 					var filter = new MemberFilter (candidate);
 					foreach (var item in applicable) {
 						if ((item.Modifiers & (Modifiers.OVERRIDE | Modifiers.VIRTUAL)) == 0)
+							continue;
+
+						//
+						// Abstract override does not override anything
+						//
+						if ((item.Modifiers & Modifiers.ABSTRACT) != 0)
 							continue;
 
 						if (filter.Equals (item)) {
@@ -1163,8 +1160,9 @@ namespace Mono.CSharp {
 			if (container.BaseType == null) {
 				locase_members = new Dictionary<string, MemberSpec[]> (member_hash.Count); // StringComparer.OrdinalIgnoreCase);
 			} else {
-				container.BaseType.MemberCache.VerifyClsCompliance (container.BaseType, report);
-				locase_members = new Dictionary<string, MemberSpec[]> (container.BaseType.MemberCache.locase_members); //, StringComparer.OrdinalIgnoreCase);
+				var btype = container.BaseType.GetDefinition ();
+				btype.MemberCache.VerifyClsCompliance (btype, report);
+				locase_members = new Dictionary<string, MemberSpec[]> (btype.MemberCache.locase_members); //, StringComparer.OrdinalIgnoreCase);
 			}
 
 			var is_imported_type = container.MemberDefinition.IsImported;
@@ -1354,8 +1352,10 @@ namespace Mono.CSharp {
 						type_a = parameters.Types [ii];
 						type_b = p_types [ii];
 
-						if ((pd.FixedParameters [ii].ModFlags & Parameter.Modifier.ISBYREF) !=
-							(parameters.FixedParameters [ii].ModFlags & Parameter.Modifier.ISBYREF))
+						var a_byref = (pd.FixedParameters[ii].ModFlags & Parameter.Modifier.RefOutMask) != 0;
+						var b_byref = (parameters.FixedParameters[ii].ModFlags & Parameter.Modifier.RefOutMask) != 0;
+
+						if (a_byref != b_byref)
 							break;
 
 					} while (TypeSpecComparer.Override.IsEqual (type_a, type_b) && ii-- != 0);
@@ -1374,7 +1374,9 @@ namespace Mono.CSharp {
 					//
 					if (pd != null && member is MethodCore) {
 						ii = method_param_count;
-						while (ii-- != 0 && parameters.FixedParameters[ii].ModFlags == pd.FixedParameters[ii].ModFlags &&
+						while (ii-- != 0 &&
+							(parameters.FixedParameters[ii].ModFlags & Parameter.Modifier.ModifierMask) ==
+							(pd.FixedParameters[ii].ModFlags & Parameter.Modifier.ModifierMask) &&
 							parameters.ExtensionMethodType == pd.ExtensionMethodType) ;
 
 						if (ii >= 0) {

@@ -26,11 +26,15 @@ namespace ICSharpCode.NRefactory.Utils
 {
 	public static class LazyInit
 	{
-		static volatile object barrier = null;
-		
-		public static void ReadBarrier()
+		public static T VolatileRead<T>(ref T location) where T : class
 		{
-			object tmp = barrier;
+			#if NET45
+			return Volatile.Read(ref location);
+			#else
+			T result = location;
+			Thread.MemoryBarrier();
+			return result;
+			#endif
 		}
 		
 		/// <summary>

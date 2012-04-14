@@ -1,4 +1,4 @@
-﻿//
+//
 // CodeCompletionBugTests.cs
 //
 // Author:
@@ -43,8 +43,7 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 	[TestFixture()]
 	public class CodeCompletionBugTests : TestBase
 	{
-		static int pcount = 0;
-		
+
 		public static CompletionDataList CreateProvider (string text)
 		{
 			return CreateProvider (text, false);
@@ -219,6 +218,7 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 			pctx = pctx.AddAssemblyReferences (new [] { CecilLoaderTests.Mscorlib, CecilLoaderTests.SystemCore });
 			
 			var compilationUnit = new CSharpParser ().Parse (parsedText, "program.cs");
+			compilationUnit.Freeze ();
 			
 			var parsedFile = compilationUnit.ToTypeSystem ();
 			pctx = pctx.UpdateProjectContent (null, parsedFile);
@@ -241,7 +241,7 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 			var engine = new CSharpCompletionEngine (doc, new TestFactory (), pctx, rctx, compilationUnit, parsedFile);
 				
 			engine.EolMarker = Environment.NewLine;
-			engine.FormattingPolicy = new CSharpFormattingOptions ();
+			engine.FormattingPolicy = FormattingOptionsFactory.CreateMono ();
 			
 			var data = engine.GetCompletionData (cursorPosition, isCtrlSpace);
 			
@@ -265,7 +265,7 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 			
 			var engine = new CSharpCompletionEngine (doc, new TestFactory (), pctx, new CSharpTypeResolveContext (cmp.MainAssembly), compilationUnit, parsedFile);
 			engine.EolMarker = Environment.NewLine;
-			engine.FormattingPolicy = new CSharpFormattingOptions ();
+			engine.FormattingPolicy = FormattingOptionsFactory.CreateMono ();
 			return Tuple.Create (doc, engine);
 		}
 		
@@ -304,20 +304,18 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 		}
 		
 		class TestLocVisitor
-		: ICSharpCode.NRefactory.CSharp.DepthFirstAstVisitor<object, object>
+		: ICSharpCode.NRefactory.CSharp.DepthFirstAstVisitor
 		{
 			public List<Tuple<TextLocation, string>> output = new List<Tuple<TextLocation, string>> ();
 			
-			public override object VisitMemberReferenceExpression (MemberReferenceExpression memberReferenceExpression, object data)
+			public override void VisitMemberReferenceExpression (MemberReferenceExpression memberReferenceExpression)
 			{
 				output.Add (Tuple.Create (memberReferenceExpression.MemberNameToken.StartLocation, memberReferenceExpression.MemberName));
-				return base.VisitMemberReferenceExpression (memberReferenceExpression, data);
 			}
 			
-			public override object VisitIdentifierExpression (IdentifierExpression identifierExpression, object data)
+			public override void VisitIdentifierExpression (IdentifierExpression identifierExpression)
 			{
 				output.Add (Tuple.Create (identifierExpression.StartLocation, identifierExpression.Identifier));
-				return base.VisitIdentifierExpression (identifierExpression, data);
 			}
 		}
 		
@@ -351,7 +349,7 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 						}
 					}
 				} catch (Exception e) {
-					Console.WriteLine ("Exception in:" + file);
+					Console.WriteLine ("Exception in:" + file  + "/" + e);
 					exceptions++;
 				}
 			}
@@ -926,7 +924,7 @@ class Test{
 	}
 }");
 			Assert.IsNotNull (provider, "provider not found.");
-			Assert.IsNotNull (provider.Find ("string"), "type string not found.");
+			Assert.IsNotNull (provider.Find ("string[]"), "type string not found.");
 		}
 
 		/// <summary>
@@ -1121,7 +1119,6 @@ namespace MyNamespace
 		/// <summary>
 		/// Bug 432434B - Code completion doesn't work with subclasses
 		/// </summary>
-		[Ignore("Fixme!")]
 		[Test()]
 		public void TestBug432434B ()
 		{
@@ -1569,24 +1566,7 @@ class A
 		}
 		
 		
-		/// <summary>
-		/// Bug 2198 - Typing generic argument to a class/method pops up type completion window
-		/// </summary>
-		[Test()]
-		public void TestBug2198 ()
-		{
-			CombinedProviderTest (@"$class Klass <T$", provider => {
-				Assert.AreEqual (0, provider.Count, "provider needs to be empty");
-			});
-		}
-		
-		[Test()]
-		public void TestBug2198Case2 ()
-		{
-			CombinedProviderTest (@"$class Klass { void Test<T$", provider => {
-				Assert.AreEqual (0, provider.Count, "provider needs to be empty");
-			});
-		}
+	
 		
 		
 		/// <summary>
@@ -1692,6 +1672,37 @@ class A
 				Assert.IsNull (provider.Find ("Finalize"), "'Finalize' found.");
 			});
 		}
+		[Test()]
+		public void TestOverrideCompletion ()
+		{
+			CombinedProviderTest (
+@"using System;
+
+class Base
+{
+
+	public virtual int Property { get;}
+	public virtual int Method () { }
+	public virtual event EventHandler Event;
+	public virtual int this[int i] { get { } }
+}
+
+
+class A : Base
+{
+	$public override $
+}
+", provider => {
+				Assert.IsNotNull (provider.Find ("Property"), "'Property' not found.");
+				Assert.IsNotNull (provider.Find ("Method"), "'Method' not found.");
+				Assert.IsNotNull (provider.Find ("Event"), "'Event' not found.");
+				Assert.IsNotNull (provider.Find ("ToString"), "'Event' not found.");
+				Assert.IsNotNull (provider.Find ("GetHashCode"), "'GetHashCode' not found.");
+				Assert.IsNotNull (provider.Find ("Equals"), "'Equals' not found.");
+				Assert.AreEqual (7, provider.Count);
+			});
+		}
+		
 		
 		/// <summary>
 		/// Bug 3370 -MD ignores member hiding
@@ -2100,7 +2111,7 @@ class Test
 }
 ");
 			Assert.IsNotNull (provider, "provider not found.");
-			Assert.AreEqual (1, provider.OverloadCount, "There should be one overload");
+			Assert.AreEqual (1, provider.Count, "There should be one overload");
 			Assert.AreEqual (1, provider.GetParameterCount (0), "Parameter 'test' should exist");
 		}
 		
@@ -4405,7 +4416,6 @@ namespace Test
 			});
 		}
 		
-		[Ignore("Fixme!")]
 		[Test()]
 		public void TestAnonymousArguments ()
 		{
@@ -4508,5 +4518,502 @@ class Test
 			Assert.IsNull (provider.Find ("TestMethod"), "'TestMethod' found.");
 			
 		}
+		
+		/// <summary>
+		/// Bug 2109 - [Regression] Incorrect autocompletion when declaring an enum 
+		/// </summary>
+		[Test()]
+		public void TestBug2109B ()
+		{
+			CompletionDataList provider = CreateProvider (
+@"namespace Foobar
+{
+    class MainClass
+    {
+        public enum Foo
+        {
+            Value1,
+            Value2
+        }
+
+        public class Test
+        {
+            Foo Foo {
+                get; set;
+            }
+
+            public static void Method (Foo foo)
+            {
+                $Foo.$
+            }
+        }
+    }
+}
+");
+			Assert.AreEqual (4, provider.Count); // 2xTryParse + 2 fields
+			Assert.IsNotNull (provider.Find ("Value1"), "field 'Value1' not found.");
+			Assert.IsNotNull (provider.Find ("Value2"), "field 'Value2' not found.");
+		}
+		
+		/// <summary>
+		/// Bug 3581 - [New Resolver] No code completion on Attributes
+		/// </summary>
+		[Test()]
+		public void TestBug3581 ()
+		{
+			CompletionDataList provider = CreateProvider (
+@"using System;
+
+namespace Foobar
+{
+	class Intent 
+	{
+		public static int Foo = 0;
+		public static int Bar = 1;
+	}
+	
+	class MyAttribute : Attribute
+	{
+		public int[] Categories;
+	}
+	
+	[MyAttribute(Categories = new [] { $I$ })]
+	class MainClass
+	{
+		public static void Main (string[] args)
+		{
+			Console.WriteLine (ddsd);
+		}
+	}
+}
+
+");
+			Assert.IsNotNull (provider.Find ("Intent"), "'Intent' not found.");
+		}
+		
+		[Test()]
+		public void TestForConditionContext ()
+		{
+			CompletionDataList provider = CreateProvider (
+@"using System;
+
+class MainClass
+{
+	public static void Main (string[] args)
+	{
+		$for (int i = 0; i < System.$
+	}
+}
+");
+			Assert.IsNotNull (provider.Find ("Math"), "'Math' not found.");
+		}
+		
+		[Ignore("Mcs bug")]
+		[Test()]
+		public void TestConditionalExpression ()
+		{
+			CompletionDataList provider = CreateProvider (
+@"using System;
+
+class MainClass
+{
+	public static void Main (string[] args)
+	{
+		int a;
+		$a = true ? System.$
+	}
+}
+");
+			Assert.IsNotNull (provider.Find ("Math"), "'Math' not found.");
+		}
+		
+		/// <summary>
+		/// Bug 3655 - Autocompletion does not work for the assembly attribute [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("MyExternalAssembly")] 
+		/// </summary>
+		[Test()]
+		public void Test3655 ()
+		{
+			CombinedProviderTest (@"$[a$", provider => {
+				Assert.IsNotNull (provider.Find ("assembly"), "'assembly' not found.");
+				Assert.IsNotNull (provider.Find ("System"), "'System' not found.");
+			});
+		}
+		
+		[Test()]
+		public void Test3655Case2 ()
+		{
+			CombinedProviderTest (@"$[assembly:System.R$", provider => {
+				Assert.IsNotNull (provider.Find ("Runtime"), "'Runtime' not found.");
+			});
+		}
+		
+		[Test()]
+		public void Test3655Case2Part2 ()
+		{
+			CombinedProviderTest (@"$[assembly:System.$", provider => {
+				Assert.IsNotNull (provider.Find ("Runtime"), "'Runtime' not found.");
+			});
+		}
+		
+		[Test()]
+		public void Test3655Case3 ()
+		{
+			CombinedProviderTest (@"$[assembly:System.Runtime.C$", provider => {
+				Assert.IsNotNull (provider.Find ("CompilerServices"), "'CompilerServices' not found.");
+			});
+		}
+		
+		[Test()]
+		public void Test3655Case3Part2 ()
+		{
+			CombinedProviderTest (@"$[assembly:System.Runtime.$", provider => {
+				Assert.IsNotNull (provider.Find ("CompilerServices"), "'CompilerServices' not found.");
+			});
+		}
+		
+		[Test()]
+		public void Test3655Case4 ()
+		{
+			CombinedProviderTest (@"$[assembly:System.Runtime.CompilerServices.I$", provider => {
+				Assert.IsNotNull (provider.Find ("InternalsVisibleTo"), "'InternalsVisibleTo' not found.");
+			});
+		}
+		
+		[Test()]
+		public void Test3655Case4Part2 ()
+		{
+			CombinedProviderTest (@"$[assembly:System.Runtime.CompilerServices.$", provider => {
+				Assert.IsNotNull (provider.Find ("InternalsVisibleTo"), "'InternalsVisibleTo' not found.");
+			});
+		}
+		
+		[Test()]
+		public void TestUsingContext ()
+		{
+			CombinedProviderTest (@"$using System.$", provider => {
+				Assert.IsNotNull (provider.Find ("IO"), "'IO' not found.");
+				Assert.IsNull (provider.Find ("Console"), "'Console' found.");
+			});
+		}
+		
+		[Test()]
+		public void TestUsingContextCase2 ()
+		{
+			CombinedProviderTest (@"$using System.U$", provider => {
+				Assert.IsNotNull (provider.Find ("IO"), "'IO' not found.");
+				Assert.IsNull (provider.Find ("Console"), "'Console' found.");
+			});
+		}
+
+		[Test()]
+		public void TestInterfaceReturnType()
+		{
+			var provider = CreateProvider(
+@"using System;
+using System.Collections.Generic;
+
+class MainClass
+{
+	public IEnumerable<string> Test ()
+	{
+		$return new a$
+	}
+}
+");
+			Assert.IsNotNull(provider.Find("string[]"), "'string[]' not found.");
+			Assert.IsNotNull(provider.Find("List<string>"), "'List<string>' not found.");
+			Assert.IsNull(provider.Find("IEnumerable"), "'IEnumerable' found.");
+			Assert.IsNull(provider.Find("IEnumerable<string>"), "'IEnumerable<string>' found.");
+			Assert.IsNull (provider.Find ("Console"), "'Console' found.");
+		}
+
+		[Test()]
+		public void TestInterfaceReturnTypeCase2 ()
+		{
+			var provider = CreateProvider (
+@"using System;
+using System.Collections.Generic;
+
+class MainClass
+{
+	public IEnumerable<string> Test ()
+	{
+		$return new System.Collections.Generic.a$
+	}
+}
+");
+			Assert.IsNotNull (provider.Find ("List"), "'List' not found.");
+			Assert.IsNull (provider.Find ("IEnumerable"), "'IEnumerable' found.");
+		}
+
+		[Test()]
+		public void TestInterfaceReturnTypeCase3 ()
+		{
+			var provider = CreateProvider (
+@"using System;
+using System.Collections.Generic;
+
+class MainClass
+{
+	public IEnumerable<string> Test ()
+	{
+		$return new System.Collections.Generic.$
+	}
+}
+");
+			Assert.IsNotNull (provider.Find ("List"), "'List' not found.");
+			Assert.IsNull (provider.Find ("IEnumerable"), "'IEnumerable' found.");
+		}
+
+
+		/// <summary>
+		/// Bug 3957 - [New Resolver]Override completion doesn't work well for overloaded methods
+		/// </summary>
+		[Test()]
+		public void TestBug3957 ()
+		{
+			var provider = CreateProvider (
+@"class A
+{
+    public virtual void Method()
+    {}
+    public virtual void Method(int i)
+    {}
+}
+
+class B : A
+{
+	$override $
+}
+
+");
+			Assert.AreEqual (2, provider.Data.Where (d => d.DisplayText == "Method").Count ());
+		}
+
+		/// <summary>
+		/// Bug 3973 - code completion forgets context if text is deleted 
+		/// </summary>
+		[Test()]
+		public void TestBug3973 ()
+		{
+			var provider = CreateProvider (
+@"
+using System;
+
+class A
+{
+	public static void Main (string[] args)
+	{
+		Console.$W$
+	}
+}
+
+");
+			Assert.IsNotNull (provider.Find ("WriteLine"), "'WriteLine' not found.");
+		}
+
+		/// <summary>
+		/// Bug 4017 - code completion in foreach does not work for local variables declared in the same block
+		/// </summary>
+		[Test()]
+		public void TestBug4017()
+		{
+			var provider = CreateProvider (
+@"
+class TestClass
+{
+    void Foo()
+    {
+        string[] args = null;
+        $foreach(string arg in a$
+    }
+}
+");
+			Assert.IsNotNull (provider.Find ("args"), "'args' not found.");
+		}
+
+		/// <summary>
+		/// Bug 4020 - code completion handles explicit interface implementations improperly
+		/// </summary>
+		[Test()]
+		public void TestBug4020 ()
+		{
+			// todo: maybe a better solution would be 
+			//       having an item to insert the proper cast on 'Dispose' ?
+			var provider = CreateProvider (
+@"
+using System;
+namespace Test
+{
+    class TestClass : IDisposable
+    {
+        void IDisposable.Dispose ()
+        {
+        }
+        public void Foo()
+        {
+            $D$
+        }
+    }
+}
+");
+			Assert.IsNull (provider.Find ("Dispose"), "'Dispose' found.");
+		}
+
+
+		/// <summary>
+		/// Bug 4085 - code completion problem with generic dictionary
+		/// </summary>
+		[Test()]
+		public void TestBug4085()
+		{
+			// Name proposal feature breaks here
+			var provider = CreateCtrlSpaceProvider(
+@"using System.Collections.Generic;
+namespace Test
+{
+	class TestClass
+	{
+		static void Main()
+		{
+			$IDictionary<string, TestClass> foo = new Dictionary<string, $
+		}
+	}
+}
+
+");
+			Assert.IsNotNull(provider.Find("TestClass"), "'TestClass' not found.");
+		}
+
+		/// <summary>
+		/// Bug 4283 - Newresolver: completing constructor parameters
+		/// </summary>
+		[Test()]
+		public void TestBug4283()
+		{
+			var provider = CreateCtrlSpaceProvider(
+@"class Program
+{
+	public Program (int test) : base($)
+	{
+	}
+}");
+			Assert.IsNotNull(provider.Find("test"), "'test' not found.");
+		}
+
+		[Test()]
+		public void TestBug4283ThisCase()
+		{
+			var provider = CreateCtrlSpaceProvider(
+@"class Program
+{
+	public Program (int test) : this($)
+	{
+	}
+}");
+			Assert.IsNotNull(provider.Find("test"), "'test' not found.");
+		}
+
+		/// <summary>
+		/// Bug 4290 - Parameter completion exception inserting method with arguments before other methods
+		/// </summary>
+		[Test()]
+		public void TestBug4290()
+		{
+			// just test for exception
+			ParameterCompletionTests.CreateProvider (
+@"using System;
+namespace Test
+{
+    class TestClass  
+    {
+        $public static void Foo(string bar,$
+        public static void Main(string[] args)
+        {
+        }
+    }
+}");
+		}
+
+		/// <summary>
+		/// Bug 4174 - Intellisense popup after #region (same line) 
+		/// </summary>
+		[Test()]
+		public void TestBug4174()
+		{
+			var provider = CreateProvider(
+@"
+namespace Test
+{
+	class TestClass  
+    {
+$#region S$
+    }
+}");
+			Assert.IsTrue(provider == null || provider.Count == 0);
+		}
+
+		/// <summary>
+		/// Bug 4323 - Parameter completion exception while attempting to instantiate unknown class
+		/// </summary>
+		[Test()]
+		public void TestBug4323()
+		{
+			// just test for exception
+			ParameterCompletionTests.CreateProvider(
+@"namespace Test
+{
+    class TestClass
+    {
+        public static void Main(string[] args)
+        {
+            $object foo = new Foo($
+        }
+    }
+}");
+		}
+
+		[Test()]
+		public void TestParameterAttributeContext()
+		{
+			CombinedProviderTest(
+@"using System;
+using System.Runtime.InteropServices;
+
+public class Test
+{
+	$static extern IntPtr somefunction([MarshalAs(UnmanagedType.LPTStr)] string fileName, [MarshalAs(UnmanagedType.$
+}
+", provider => {
+				Assert.IsNotNull(provider.Find("LPStr"), "'LPStr' not found.");
+			});
+		}
+
+
+		/// <summary>
+		/// Bug 1051 - Code completion can't handle interface return types properly
+		/// </summary>
+		[Test()]
+		public void TestBug1051()
+		{
+			CombinedProviderTest(
+@"using System;
+using System.Collections.Generic;
+
+public class Test
+{
+	IEnumerable<string> TestFoo()
+	{
+		$return new $
+	}
+}
+", provider => {
+				Assert.IsNull(provider.Find("IEnumerable<string>"), "'IEnumerable<string>' found.");
+				Assert.IsNotNull(provider.Find("List<string>"), "'List<string>' not found.");
+				Assert.IsNotNull(provider.Find("string[]"), "'string[]' not found.");
+			});
+		}
+
+
 	}
 }

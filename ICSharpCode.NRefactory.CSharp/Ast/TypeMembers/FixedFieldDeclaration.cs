@@ -24,31 +24,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public class FixedFieldDeclaration : AttributedNode
+	public class FixedFieldDeclaration : EntityDeclaration
 	{
+		public static readonly TokenRole FixedKeywordRole = new TokenRole ("fixed");
 		public static readonly Role<FixedVariableInitializer> VariableRole = new Role<FixedVariableInitializer> ("FixedVariable");
 		
-		public override NodeType NodeType {
-			get { return NodeType.Member; }
+		public override EntityType EntityType {
+			get { return EntityType.Field; }
 		}
 		
 		public CSharpTokenNode FixedToken {
-			get { return GetChildByRole (Roles.Keyword); }
+			get { return GetChildByRole (FixedKeywordRole); }
 		}
 
-		public AstType ReturnType {
-			get { return GetChildByRole (Roles.Type); }
-			set { SetChildByRole (Roles.Type, value); }
-		}
-		
 		public AstNodeCollection<FixedVariableInitializer> Variables {
 			get { return GetChildrenByRole (VariableRole); }
 		}
 
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitFixedFieldDeclaration (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitFixedFieldDeclaration (this);
+		}
+
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitFixedFieldDeclaration (this, data);
 		}

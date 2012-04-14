@@ -100,6 +100,22 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			get { return this.EntityType == EntityType.Operator; }
 		}
 		
+		public bool IsPartialMethodDeclaration {
+			get { return flags[FlagPartialMethodDeclaration]; }
+			set {
+				ThrowIfFrozen();
+				flags[FlagPartialMethodDeclaration] = value;
+			}
+		}
+		
+		public bool IsPartialMethodImplementation {
+			get { return flags[FlagPartialMethodImplemenation]; }
+			set {
+				ThrowIfFrozen();
+				flags[FlagPartialMethodImplemenation] = value;
+			}
+		}
+		
 		public IList<IUnresolvedParameter> Parameters {
 			get {
 				if (parameters == null)

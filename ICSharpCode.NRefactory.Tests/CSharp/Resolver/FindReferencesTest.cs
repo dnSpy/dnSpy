@@ -33,24 +33,26 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		CompilationUnit compilationUnit;
 		CSharpParsedFile parsedFile;
 		ICompilation compilation;
+		FindReferences findReferences;
 		
 		void Init(string code)
 		{
 			compilationUnit = new CSharpParser().Parse(new StringReader(code), "test.cs");
 			parsedFile = compilationUnit.ToTypeSystem();
 			compilation = TypeSystemHelper.CreateCompilation(parsedFile);
+			findReferences = new FindReferences();
 		}
 		
 		AstNode[] FindReferences(IEntity entity)
 		{
 			var result = new List<AstNode>();
-			var findReferences = new FindReferences();
 			var searchScopes = findReferences.GetSearchScopes(entity);
 			findReferences.FindReferencesInFile(searchScopes, parsedFile, compilationUnit, compilation,
 			                                    (node, rr) => result.Add(node), CancellationToken.None);
 			return result.OrderBy(n => n.StartLocation).ToArray();
 		}
 		
+		#region Method Group
 		[Test]
 		public void FindMethodGroupReference()
 		{
@@ -107,5 +109,107 @@ class Test {
 			Assert.AreEqual(new [] { new TextLocation(4, 49), new TextLocation(7, 2) },
 			                FindReferences(m_string).Select(n => n.StartLocation).ToArray());
 		}
+		#endregion
+		
+		#region GetEnumerator
+		[Test]
+		public void FindReferenceToGetEnumeratorUsedImplicitlyInForeach()
+		{
+			Init(@"using System;
+class MyEnumerable {
+ public System.Collections.IEnumerator GetEnumerator();
+}
+class Test {
+ static void T() {
+  var x = new MyEnumerable();
+  foreach (var y in x) {
+  }
+ }
+}");
+			var test = compilation.MainAssembly.TopLevelTypeDefinitions.Single(t => t.Name == "MyEnumerable");
+			var getEnumerator = test.Methods.Single(m => m.Name == "GetEnumerator");
+			var actual = FindReferences(getEnumerator).ToList();
+			Assert.AreEqual(2, actual.Count);
+			Assert.IsTrue(actual.Any(r => r.StartLocation.Line == 3 && r is MethodDeclaration));
+			Assert.IsTrue(actual.Any(r => r.StartLocation.Line == 8 && r is ForeachStatement));
+		}
+		#endregion
+		
+		#region Op_Implicit
+		[Test]
+		public void FindReferencesForOpImplicitInLocalVariableInitialization()
+		{
+			Init(@"using System;
+class Test {
+ static void T() {
+  int x = new Test();
+ }
+ public static implicit operator int(Test x) { return 0; }
+}");
+			var test = compilation.MainAssembly.TopLevelTypeDefinitions.Single(t => t.Name == "Test");
+			var opImplicit = test.Methods.Single(m => m.Name == "op_Implicit");
+			var actual = FindReferences(opImplicit).ToList();
+			Assert.AreEqual(2, actual.Count);
+			Assert.IsTrue(actual.Any(r => r.StartLocation.Line == 4 && r is ObjectCreateExpression));
+			Assert.IsTrue(actual.Any(r => r.StartLocation.Line == 6 && r is OperatorDeclaration));
+		}
+		#endregion
+		
+		#region Inheritance
+		const string inheritanceTest = @"using System;
+class A { public virtual void M() {} }
+class B : A { public override void M() {} }
+class C : A { public override void M() {} }
+class Calls {
+	void Test(A a, B b, C c) {
+		a.M();
+		b.M();
+		c.M();
+	}
+}";
+		
+		[Test]
+		public void InheritanceTest1()
+		{
+			Init(inheritanceTest);
+			var test = compilation.MainAssembly.TopLevelTypeDefinitions.Single(t => t.Name == "B");
+			var BM = test.Methods.Single(m => m.Name == "M");
+			var actual = FindReferences(BM).ToList();
+			Assert.AreEqual(2, actual.Count);
+			Assert.IsTrue(actual.Any(r => r.StartLocation.Line == 3 && r is MethodDeclaration));
+			Assert.IsTrue(actual.Any(r => r.StartLocation.Line == 8 && r is InvocationExpression));
+		}
+		
+		[Test]
+		public void InheritanceTest2()
+		{
+			Init(inheritanceTest);
+			findReferences.FindCallsThroughVirtualBaseMethod = true;
+			var test = compilation.MainAssembly.TopLevelTypeDefinitions.Single(t => t.Name == "B");
+			var BM = test.Methods.Single(m => m.Name == "M");
+			var actual = FindReferences(BM).ToList();
+			Assert.AreEqual(3, actual.Count);
+			Assert.IsTrue(actual.Any(r => r.StartLocation.Line == 3 && r is MethodDeclaration));
+			Assert.IsTrue(actual.Any(r => r.StartLocation.Line == 7 && r is InvocationExpression));
+			Assert.IsTrue(actual.Any(r => r.StartLocation.Line == 8 && r is InvocationExpression));
+		}
+		
+		[Test]
+		public void InheritanceTest3()
+		{
+			Init(inheritanceTest);
+			findReferences.WholeVirtualSlot = true;
+			var test = compilation.MainAssembly.TopLevelTypeDefinitions.Single(t => t.Name == "B");
+			var BM = test.Methods.Single(m => m.Name == "M");
+			var actual = FindReferences(BM).ToList();
+			Assert.AreEqual(6, actual.Count);
+			Assert.IsTrue(actual.Any(r => r.StartLocation.Line == 2 && r is MethodDeclaration));
+			Assert.IsTrue(actual.Any(r => r.StartLocation.Line == 3 && r is MethodDeclaration));
+			Assert.IsTrue(actual.Any(r => r.StartLocation.Line == 4 && r is MethodDeclaration));
+			Assert.IsTrue(actual.Any(r => r.StartLocation.Line == 7 && r is InvocationExpression));
+			Assert.IsTrue(actual.Any(r => r.StartLocation.Line == 8 && r is InvocationExpression));
+			Assert.IsTrue(actual.Any(r => r.StartLocation.Line == 9 && r is InvocationExpression));
+		}
+		#endregion
 	}
 }

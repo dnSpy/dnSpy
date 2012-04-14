@@ -31,8 +31,6 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class ExternAliasDeclaration : AstNode
 	{
-		public static readonly Role<CSharpTokenNode> AliasRole = new Role<CSharpTokenNode> ("Alias", CSharpTokenNode.Null);
-
 		public override NodeType NodeType {
 			get {
 				return NodeType.Unknown;
@@ -40,11 +38,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 
 		public CSharpTokenNode ExternToken {
-			get { return GetChildByRole (Roles.Keyword); }
+			get { return GetChildByRole (Roles.ExternKeyword); }
 		}
 
 		public CSharpTokenNode AliasToken {
-			get { return GetChildByRole (AliasRole); }
+			get { return GetChildByRole (Roles.AliasKeyword); }
 		}
 
 		public string Name {
@@ -52,7 +50,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				return GetChildByRole (Roles.Identifier).Name;
 			}
 			set {
-				SetChildByRole (Roles.Identifier, Identifier.Create (value, TextLocation.Empty));
+				SetChildByRole (Roles.Identifier, Identifier.Create (value));
 			}
 		}
 		
@@ -69,7 +67,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.Semicolon); }
 		}
 
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitExternAliasDeclaration (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitExternAliasDeclaration (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitExternAliasDeclaration (this, data);
 		}

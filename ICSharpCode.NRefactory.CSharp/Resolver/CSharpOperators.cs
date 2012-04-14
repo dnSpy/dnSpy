@@ -45,7 +45,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			CacheManager cache = compilation.CacheManager;
 			CSharpOperators operators = (CSharpOperators)cache.GetShared(typeof(CSharpOperators));
 			if (operators == null) {
-				operators = (CSharpOperators)cache.GetOrAddShared(typeof(Conversions), new CSharpOperators(compilation));
+				operators = (CSharpOperators)cache.GetOrAddShared(typeof(CSharpOperators), new CSharpOperators(compilation));
 			}
 			return operators;
 		}
@@ -131,7 +131,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				get { return null; }
 			}
 			
-			IList<IMember> IMember.InterfaceImplementations {
+			IList<IMember> IMember.ImplementedInterfaceMembers {
 				get { return EmptyList<IMember>.Instance; }
 			}
 			
@@ -163,7 +163,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				get { return EmptyList<IAttribute>.Instance; }
 			}
 			
-			string IEntity.Documentation {
+			Documentation.DocumentationComment IEntity.Documentation {
 				get { return null; }
 			}
 			
@@ -327,9 +327,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] UnaryPlusOperators {
 			get {
-				OperatorMethod[] ops = unaryPlusOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref unaryPlusOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref unaryPlusOperators, Lift(
@@ -350,9 +349,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] UncheckedUnaryMinusOperators {
 			get {
-				OperatorMethod[] ops = uncheckedUnaryMinusOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref uncheckedUnaryMinusOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref uncheckedUnaryMinusOperators, Lift(
@@ -370,9 +368,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] CheckedUnaryMinusOperators {
 			get {
-				OperatorMethod[] ops = checkedUnaryMinusOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref checkedUnaryMinusOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref checkedUnaryMinusOperators, Lift(
@@ -391,9 +388,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] LogicalNegationOperators {
 			get {
-				OperatorMethod[] ops = logicalNegationOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref logicalNegationOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref logicalNegationOperators, Lift(
@@ -408,9 +404,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] BitwiseComplementOperators {
 			get {
-				OperatorMethod[] ops = bitwiseComplementOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref bitwiseComplementOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref bitwiseComplementOperators, Lift(
@@ -501,9 +496,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] MultiplicationOperators {
 			get {
-				OperatorMethod[] ops = multiplicationOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref multiplicationOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref multiplicationOperators, Lift(
@@ -524,9 +518,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] DivisionOperators {
 			get {
-				OperatorMethod[] ops = divisionOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref divisionOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref divisionOperators, Lift(
@@ -547,9 +540,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] RemainderOperators {
 			get {
-				OperatorMethod[] ops = remainderOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref remainderOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref remainderOperators, Lift(
@@ -570,9 +562,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] AdditionOperators {
 			get {
-				OperatorMethod[] ops = additionOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref additionOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref additionOperators, Lift(
@@ -620,9 +611,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] SubtractionOperators {
 			get {
-				OperatorMethod[] ops = subtractionOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref subtractionOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref subtractionOperators, Lift(
@@ -643,9 +633,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] ShiftLeftOperators {
 			get {
-				OperatorMethod[] ops = shiftLeftOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref shiftLeftOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref shiftLeftOperators, Lift(
@@ -662,9 +651,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] ShiftRightOperators {
 			get {
-				OperatorMethod[] ops = shiftRightOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref shiftRightOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref shiftRightOperators, Lift(
@@ -767,9 +755,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] ValueEqualityOperators {
 			get {
-				OperatorMethod[] ops = valueEqualityOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref valueEqualityOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref valueEqualityOperators, Lift(
@@ -783,9 +770,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] ValueInequalityOperators {
 			get {
-				OperatorMethod[] ops = valueInequalityOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref valueInequalityOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref valueInequalityOperators, Lift(
@@ -799,9 +785,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] ReferenceEqualityOperators {
 			get {
-				OperatorMethod[] ops = referenceEqualityOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref referenceEqualityOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref referenceEqualityOperators, Lift(
@@ -816,9 +801,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] ReferenceInequalityOperators {
 			get {
-				OperatorMethod[] ops = referenceInequalityOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref referenceInequalityOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref referenceInequalityOperators, Lift(
@@ -868,9 +852,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] LessThanOperators {
 			get {
-				OperatorMethod[] ops = lessThanOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref lessThanOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref lessThanOperators, Lift(
@@ -890,9 +873,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] LessThanOrEqualOperators {
 			get {
-				OperatorMethod[] ops = lessThanOrEqualOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref lessThanOrEqualOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref lessThanOrEqualOperators, Lift(
@@ -912,9 +894,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] GreaterThanOperators {
 			get {
-				OperatorMethod[] ops = greaterThanOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref greaterThanOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref greaterThanOperators, Lift(
@@ -934,9 +915,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] GreaterThanOrEqualOperators {
 			get {
-				OperatorMethod[] ops = greaterThanOrEqualOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref greaterThanOrEqualOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref greaterThanOrEqualOperators, Lift(
@@ -958,9 +938,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] LogicalAndOperators {
 			get {
-				OperatorMethod[] ops = logicalAndOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref logicalAndOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref logicalAndOperators, new OperatorMethod[] {
@@ -975,9 +954,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] BitwiseAndOperators {
 			get {
-				OperatorMethod[] ops = bitwiseAndOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref bitwiseAndOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref bitwiseAndOperators, Lift(
@@ -996,9 +974,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] LogicalOrOperators {
 			get {
-				OperatorMethod[] ops = logicalOrOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref logicalOrOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref logicalOrOperators, new OperatorMethod[] {
@@ -1012,9 +989,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public OperatorMethod[] BitwiseOrOperators {
 			get {
-				OperatorMethod[] ops = bitwiseOrOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref bitwiseOrOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref bitwiseOrOperators, Lift(
@@ -1036,9 +1012,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 
 		public OperatorMethod[] BitwiseXorOperators {
 			get {
-				OperatorMethod[] ops = bitwiseXorOperators;
+				OperatorMethod[] ops = LazyInit.VolatileRead(ref bitwiseXorOperators);
 				if (ops != null) {
-					LazyInit.ReadBarrier();
 					return ops;
 				} else {
 					return LazyInit.GetOrSet(ref bitwiseXorOperators, Lift(

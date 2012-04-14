@@ -422,6 +422,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		bool ITypeDefinition.IsPartial {
+			get {
+				return false;
+			}
+		}
+
 		public bool IsMethodTypeParameter {
 			get {
 				return spec.IsMethodOwned;
@@ -2146,10 +2152,6 @@ namespace Mono.CSharp {
 			this.args = args;
 		}
 
-		public TypeArguments TypeArguments {
-			get { return args; }
-		}
-
 		public override string GetSignatureForError ()
 		{
 			return TypeManager.CSharpName (type);
@@ -2504,7 +2506,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		bool HasDefaultConstructor (TypeSpec atype)
+		static bool HasDefaultConstructor (TypeSpec atype)
 		{
 			var tp = atype as TypeParameterSpec;
 			if (tp != null) {

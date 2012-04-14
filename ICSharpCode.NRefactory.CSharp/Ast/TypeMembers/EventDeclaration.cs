@@ -25,25 +25,33 @@
 // THE SOFTWARE.
 
 using System.Collections.Generic;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public class EventDeclaration : AttributedNode
+	public class EventDeclaration : EntityDeclaration
 	{
-		public override NodeType NodeType {
-			get { return NodeType.Member; }
-		}
+		public static readonly TokenRole EventKeywordRole = new TokenRole ("event");
 		
-		public AstType ReturnType {
-			get { return GetChildByRole (Roles.Type); }
-			set { SetChildByRole(Roles.Type, value); }
+		public override EntityType EntityType {
+			get { return EntityType.Event; }
 		}
 		
 		public AstNodeCollection<VariableInitializer> Variables {
 			get { return GetChildrenByRole (Roles.Variable); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitEventDeclaration (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitEventDeclaration (this);
+		}
+
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitEventDeclaration (this, data);
 		}
@@ -56,10 +64,27 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 	}
 	
-	public class CustomEventDeclaration : MemberDeclaration
+	public class CustomEventDeclaration : EntityDeclaration
 	{
+		public static readonly TokenRole EventKeywordRole = new TokenRole ("event");
+		public static readonly TokenRole AddKeywordRole = new TokenRole ("add");
+		public static readonly TokenRole RemoveKeywordRole = new TokenRole ("remove");
+		
 		public static readonly Role<Accessor> AddAccessorRole = new Role<Accessor>("AddAccessor", Accessor.Null);
 		public static readonly Role<Accessor> RemoveAccessorRole = new Role<Accessor>("RemoveAccessor", Accessor.Null);
+		
+		public override EntityType EntityType {
+			get { return EntityType.Event; }
+		}
+		
+		/// <summary>
+		/// Gets/Sets the type reference of the interface that is explicitly implemented.
+		/// Null node if this member is not an explicit interface implementation.
+		/// </summary>
+		public AstType PrivateImplementationType {
+			get { return GetChildByRole (PrivateImplementationTypeRole); }
+			set { SetChildByRole (PrivateImplementationTypeRole, value); }
+		}
 		
 		public CSharpTokenNode LBraceToken {
 			get { return GetChildByRole (Roles.LBrace); }
@@ -79,7 +104,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.RBrace); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitCustomEventDeclaration (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitCustomEventDeclaration (this);
+		}
+
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitCustomEventDeclaration (this, data);
 		}
@@ -87,7 +122,9 @@ namespace ICSharpCode.NRefactory.CSharp
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
 			CustomEventDeclaration o = other as CustomEventDeclaration;
-			return o != null && this.MatchMember(o, match)
+			return o != null && MatchString(this.Name, o.Name)
+				&& this.MatchAttributesAndModifiers(o, match) && this.ReturnType.DoMatch(o.ReturnType, match)
+				&& this.PrivateImplementationType.DoMatch(o.PrivateImplementationType, match)
 				&& this.AddAccessor.DoMatch(o.AddAccessor, match) && this.RemoveAccessor.DoMatch(o.RemoveAccessor, match);
 		}
 	}

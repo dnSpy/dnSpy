@@ -43,8 +43,8 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 						break;
 					}
 				}
-			} else if (parentMethod.IsExplicitInterfaceImplementation && parentMethod.InterfaceImplementations.Count == 1) {
-				baseMethod = parentMethod.InterfaceImplementations[0] as IMethod;
+			} else if (parentMethod.IsExplicitInterfaceImplementation && parentMethod.ImplementedInterfaceMembers.Count == 1) {
+				baseMethod = parentMethod.ImplementedInterfaceMembers[0] as IMethod;
 			}
 			if (baseMethod != null && index < baseMethod.TypeParameters.Count)
 				return baseMethod.TypeParameters[index];

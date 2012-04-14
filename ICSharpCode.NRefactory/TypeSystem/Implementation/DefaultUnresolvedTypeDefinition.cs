@@ -17,8 +17,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 
 namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 {
@@ -110,7 +111,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			get { return namespaceName; }
 			set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException("value");
 				ThrowIfFrozen();
 				namespaceName = value;
 			}
@@ -121,18 +122,18 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				IUnresolvedTypeDefinition declaringTypeDef = this.DeclaringTypeDefinition;
 				if (declaringTypeDef != null) {
 					if (this.TypeParameters.Count > declaringTypeDef.TypeParameters.Count) {
-						return declaringTypeDef.ReflectionName + "+" + this.Name + "`" + (this.TypeParameters.Count - declaringTypeDef.TypeParameters.Count).ToString();
+						return declaringTypeDef.ReflectionName + "+" + this.Name + "`" + (this.TypeParameters.Count - declaringTypeDef.TypeParameters.Count).ToString(CultureInfo.InvariantCulture);
 					} else {
 						return declaringTypeDef.ReflectionName + "+" + this.Name;
 					}
 				} else if (string.IsNullOrEmpty(namespaceName)) {
 					if (this.TypeParameters.Count > 0)
-						return this.Name + "`" + this.TypeParameters.Count.ToString();
+						return this.Name + "`" + this.TypeParameters.Count.ToString(CultureInfo.InvariantCulture);
 					else
 						return this.Name;
 				} else {
 					if (this.TypeParameters.Count > 0)
-						return namespaceName + "." + this.Name + "`" + this.TypeParameters.Count.ToString();
+						return namespaceName + "." + this.Name + "`" + this.TypeParameters.Count.ToString(CultureInfo.InvariantCulture);
 					else
 						return namespaceName + "." + this.Name;
 				}

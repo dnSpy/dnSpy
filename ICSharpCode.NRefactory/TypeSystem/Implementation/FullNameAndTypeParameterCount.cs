@@ -22,7 +22,7 @@ using System.Collections.Generic;
 namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 {
 	[Serializable]
-	public struct FullNameAndTypeParameterCount
+	public struct FullNameAndTypeParameterCount : IEquatable<FullNameAndTypeParameterCount>
 	{
 		public readonly string Namespace;
 		public readonly string Name;
@@ -37,6 +37,31 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			this.Namespace = nameSpace;
 			this.Name = name;
 			this.TypeParameterCount = typeParameterCount;
+		}
+		
+		public override bool Equals(object obj)
+		{
+			return (obj is FullNameAndTypeParameterCount) && Equals((FullNameAndTypeParameterCount)obj);
+		}
+		
+		public bool Equals(FullNameAndTypeParameterCount other)
+		{
+			return this.Namespace == other.Namespace && this.Name == other.Name && this.TypeParameterCount == other.TypeParameterCount;
+		}
+		
+		public override int GetHashCode()
+		{
+			return Name.GetHashCode() ^ Namespace.GetHashCode() ^ TypeParameterCount;
+		}
+		
+		public static bool operator ==(FullNameAndTypeParameterCount lhs, FullNameAndTypeParameterCount rhs)
+		{
+			return lhs.Equals(rhs);
+		}
+		
+		public static bool operator !=(FullNameAndTypeParameterCount lhs, FullNameAndTypeParameterCount rhs)
+		{
+			return !lhs.Equals(rhs);
 		}
 	}
 	

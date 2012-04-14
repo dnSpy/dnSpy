@@ -24,25 +24,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public class ConstructorDeclaration : AttributedNode
+	public class ConstructorDeclaration : EntityDeclaration
 	{
 		public static readonly Role<ConstructorInitializer> InitializerRole = new Role<ConstructorInitializer>("Initializer", ConstructorInitializer.Null);
 		
-		/// <summary>
-		/// Gets/Sets the name of the class containing the constructor.
-		/// This property can be used to inform the output visitor about the class name when writing a constructor declaration
-		/// without writing the complete type declaration. It is ignored when the constructor has a type declaration as parent.
-		/// </summary>
-		public string Name { get; set; }
-		
-		public Identifier IdentifierToken {
-			get { return GetChildByRole (Roles.Identifier); }
-			set { SetChildByRole (Roles.Identifier, value); }
+		public override EntityType EntityType {
+			get { return EntityType.Constructor; }
 		}
 		
 		public CSharpTokenNode LParToken {
@@ -71,11 +62,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Body, value); }
 		}
 		
-		public override NodeType NodeType {
-			get { return NodeType.Member; }
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitConstructorDeclaration (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitConstructorDeclaration (this);
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitConstructorDeclaration (this, data);
 		}
@@ -95,6 +92,9 @@ namespace ICSharpCode.NRefactory.CSharp
 	
 	public class ConstructorInitializer : AstNode
 	{
+		public static readonly TokenRole BaseKeywordRole = new TokenRole ("base");
+		public static readonly TokenRole ThisKeywordRole = new TokenRole ("this");
+		
 		public static readonly new ConstructorInitializer Null = new NullConstructorInitializer ();
 		class NullConstructorInitializer : ConstructorInitializer
 		{
@@ -110,7 +110,16 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			}
 			
-			public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+			public override void AcceptVisitor (IAstVisitor visitor)
+			{
+			}
+				
+			public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+			{
+				return default (T);
+			}
+			
+			public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 			{
 				return default (S);
 			}
@@ -144,7 +153,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.RPar); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitConstructorInitializer (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitConstructorInitializer (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitConstructorInitializer (this, data);
 		}

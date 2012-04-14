@@ -23,6 +23,268 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// <summary>
 	/// AST visitor.
 	/// </summary>
+	public interface IAstVisitor
+	{
+		void VisitAnonymousMethodExpression(AnonymousMethodExpression anonymousMethodExpression);
+		void VisitUndocumentedExpression(UndocumentedExpression undocumentedExpression);
+		void VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression);
+		void VisitArrayInitializerExpression(ArrayInitializerExpression arrayInitializerExpression);
+		void VisitAsExpression(AsExpression asExpression);
+		void VisitAssignmentExpression(AssignmentExpression assignmentExpression);
+		void VisitBaseReferenceExpression(BaseReferenceExpression baseReferenceExpression);
+		void VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression);
+		void VisitCastExpression(CastExpression castExpression);
+		void VisitCheckedExpression(CheckedExpression checkedExpression);
+		void VisitConditionalExpression(ConditionalExpression conditionalExpression);
+		void VisitDefaultValueExpression(DefaultValueExpression defaultValueExpression);
+		void VisitDirectionExpression(DirectionExpression directionExpression);
+		void VisitIdentifierExpression(IdentifierExpression identifierExpression);
+		void VisitIndexerExpression(IndexerExpression indexerExpression);
+		void VisitInvocationExpression(InvocationExpression invocationExpression);
+		void VisitIsExpression(IsExpression isExpression);
+		void VisitLambdaExpression(LambdaExpression lambdaExpression);
+		void VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression);
+		void VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression);
+		void VisitNamedExpression(NamedExpression namedExpression);
+		void VisitNullReferenceExpression(NullReferenceExpression nullReferenceExpression);
+		void VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression);
+		void VisitAnonymousTypeCreateExpression(AnonymousTypeCreateExpression anonymousTypeCreateExpression);
+		void VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression);
+		void VisitPointerReferenceExpression(PointerReferenceExpression pointerReferenceExpression);
+		void VisitPrimitiveExpression(PrimitiveExpression primitiveExpression);
+		void VisitSizeOfExpression(SizeOfExpression sizeOfExpression);
+		void VisitStackAllocExpression(StackAllocExpression stackAllocExpression);
+		void VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression);
+		void VisitTypeOfExpression(TypeOfExpression typeOfExpression);
+		void VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression);
+		void VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression);
+		void VisitUncheckedExpression(UncheckedExpression uncheckedExpression);
+		void VisitEmptyExpression (EmptyExpression emptyExpression);
+		
+		void VisitQueryExpression(QueryExpression queryExpression);
+		void VisitQueryContinuationClause(QueryContinuationClause queryContinuationClause);
+		void VisitQueryFromClause(QueryFromClause queryFromClause);
+		void VisitQueryLetClause(QueryLetClause queryLetClause);
+		void VisitQueryWhereClause(QueryWhereClause queryWhereClause);
+		void VisitQueryJoinClause(QueryJoinClause queryJoinClause);
+		void VisitQueryOrderClause(QueryOrderClause queryOrderClause);
+		void VisitQueryOrdering(QueryOrdering queryOrdering);
+		void VisitQuerySelectClause(QuerySelectClause querySelectClause);
+		void VisitQueryGroupClause(QueryGroupClause queryGroupClause);
+		
+		void VisitAttribute(Attribute attribute);
+		void VisitAttributeSection(AttributeSection attributeSection);
+		void VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration);
+		void VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration);
+		void VisitTypeDeclaration(TypeDeclaration typeDeclaration);
+		void VisitUsingAliasDeclaration(UsingAliasDeclaration usingAliasDeclaration);
+		void VisitUsingDeclaration(UsingDeclaration usingDeclaration);
+		void VisitExternAliasDeclaration(ExternAliasDeclaration externAliasDeclaration);
+		
+		void VisitBlockStatement(BlockStatement blockStatement);
+		void VisitBreakStatement(BreakStatement breakStatement);
+		void VisitCheckedStatement(CheckedStatement checkedStatement);
+		void VisitContinueStatement(ContinueStatement continueStatement);
+		void VisitDoWhileStatement(DoWhileStatement doWhileStatement);
+		void VisitEmptyStatement(EmptyStatement emptyStatement);
+		void VisitExpressionStatement(ExpressionStatement expressionStatement);
+		void VisitFixedStatement(FixedStatement fixedStatement);
+		void VisitForeachStatement(ForeachStatement foreachStatement);
+		void VisitForStatement(ForStatement forStatement);
+		void VisitGotoCaseStatement(GotoCaseStatement gotoCaseStatement);
+		void VisitGotoDefaultStatement(GotoDefaultStatement gotoDefaultStatement);
+		void VisitGotoStatement(GotoStatement gotoStatement);
+		void VisitIfElseStatement(IfElseStatement ifElseStatement);
+		void VisitLabelStatement(LabelStatement labelStatement);
+		void VisitLockStatement(LockStatement lockStatement);
+		void VisitReturnStatement(ReturnStatement returnStatement);
+		void VisitSwitchStatement(SwitchStatement switchStatement);
+		void VisitSwitchSection(SwitchSection switchSection);
+		void VisitCaseLabel(CaseLabel caseLabel);
+		void VisitThrowStatement(ThrowStatement throwStatement);
+		void VisitTryCatchStatement(TryCatchStatement tryCatchStatement);
+		void VisitCatchClause(CatchClause catchClause);
+		void VisitUncheckedStatement(UncheckedStatement uncheckedStatement);
+		void VisitUnsafeStatement(UnsafeStatement unsafeStatement);
+		void VisitUsingStatement(UsingStatement usingStatement);
+		void VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement);
+		void VisitWhileStatement(WhileStatement whileStatement);
+		void VisitYieldBreakStatement(YieldBreakStatement yieldBreakStatement);
+		void VisitYieldReturnStatement(YieldReturnStatement yieldReturnStatement);
+		
+		void VisitAccessor(Accessor accessor);
+		void VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration);
+		void VisitConstructorInitializer(ConstructorInitializer constructorInitializer);
+		void VisitDestructorDeclaration(DestructorDeclaration destructorDeclaration);
+		void VisitEnumMemberDeclaration(EnumMemberDeclaration enumMemberDeclaration);
+		void VisitEventDeclaration(EventDeclaration eventDeclaration);
+		void VisitCustomEventDeclaration(CustomEventDeclaration customEventDeclaration);
+		void VisitFieldDeclaration(FieldDeclaration fieldDeclaration);
+		void VisitIndexerDeclaration(IndexerDeclaration indexerDeclaration);
+		void VisitMethodDeclaration(MethodDeclaration methodDeclaration);
+		void VisitOperatorDeclaration(OperatorDeclaration operatorDeclaration);
+		void VisitParameterDeclaration(ParameterDeclaration parameterDeclaration);
+		void VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration);
+		void VisitVariableInitializer(VariableInitializer variableInitializer);
+		void VisitFixedFieldDeclaration(FixedFieldDeclaration fixedFieldDeclaration);
+		void VisitFixedVariableInitializer(FixedVariableInitializer fixedVariableInitializer);
+		
+		void VisitCompilationUnit(CompilationUnit compilationUnit);
+		void VisitSimpleType(SimpleType simpleType);
+		void VisitMemberType(MemberType memberType);
+		void VisitComposedType(ComposedType composedType);
+		void VisitArraySpecifier(ArraySpecifier arraySpecifier);
+		void VisitPrimitiveType(PrimitiveType primitiveType);
+		
+		void VisitComment(Comment comment);
+		void VisitNewLine(NewLineNode newLineNode);
+		void VisitWhitespace(WhitespaceNode whitespaceNode);
+		void VisitText(TextNode textNode);
+		void VisitPreProcessorDirective(PreProcessorDirective preProcessorDirective);
+		void VisitDocumentationReference(DocumentationReference documentationReference);
+		
+		void VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration);
+		void VisitConstraint(Constraint constraint);
+		void VisitCSharpTokenNode(CSharpTokenNode cSharpTokenNode);
+		void VisitIdentifier(Identifier identifier);
+		
+		void VisitPatternPlaceholder(AstNode placeholder, PatternMatching.Pattern pattern);
+	}
+	
+	/// <summary>
+	/// AST visitor.
+	/// </summary>
+	public interface IAstVisitor<out S>
+	{
+		S VisitAnonymousMethodExpression(AnonymousMethodExpression anonymousMethodExpression);
+		S VisitUndocumentedExpression(UndocumentedExpression undocumentedExpression);
+		S VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression);
+		S VisitArrayInitializerExpression(ArrayInitializerExpression arrayInitializerExpression);
+		S VisitAsExpression(AsExpression asExpression);
+		S VisitAssignmentExpression(AssignmentExpression assignmentExpression);
+		S VisitBaseReferenceExpression(BaseReferenceExpression baseReferenceExpression);
+		S VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression);
+		S VisitCastExpression(CastExpression castExpression);
+		S VisitCheckedExpression(CheckedExpression checkedExpression);
+		S VisitConditionalExpression(ConditionalExpression conditionalExpression);
+		S VisitDefaultValueExpression(DefaultValueExpression defaultValueExpression);
+		S VisitDirectionExpression(DirectionExpression directionExpression);
+		S VisitIdentifierExpression(IdentifierExpression identifierExpression);
+		S VisitIndexerExpression(IndexerExpression indexerExpression);
+		S VisitInvocationExpression(InvocationExpression invocationExpression);
+		S VisitIsExpression(IsExpression isExpression);
+		S VisitLambdaExpression(LambdaExpression lambdaExpression);
+		S VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression);
+		S VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression);
+		S VisitNamedExpression(NamedExpression namedExpression);
+		S VisitNullReferenceExpression(NullReferenceExpression nullReferenceExpression);
+		S VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression);
+		S VisitAnonymousTypeCreateExpression(AnonymousTypeCreateExpression anonymousTypeCreateExpression);
+		S VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression);
+		S VisitPointerReferenceExpression(PointerReferenceExpression pointerReferenceExpression);
+		S VisitPrimitiveExpression(PrimitiveExpression primitiveExpression);
+		S VisitSizeOfExpression(SizeOfExpression sizeOfExpression);
+		S VisitStackAllocExpression(StackAllocExpression stackAllocExpression);
+		S VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression);
+		S VisitTypeOfExpression(TypeOfExpression typeOfExpression);
+		S VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression);
+		S VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression);
+		S VisitUncheckedExpression(UncheckedExpression uncheckedExpression);
+		S VisitEmptyExpression (EmptyExpression emptyExpression);
+		
+		S VisitQueryExpression(QueryExpression queryExpression);
+		S VisitQueryContinuationClause(QueryContinuationClause queryContinuationClause);
+		S VisitQueryFromClause(QueryFromClause queryFromClause);
+		S VisitQueryLetClause(QueryLetClause queryLetClause);
+		S VisitQueryWhereClause(QueryWhereClause queryWhereClause);
+		S VisitQueryJoinClause(QueryJoinClause queryJoinClause);
+		S VisitQueryOrderClause(QueryOrderClause queryOrderClause);
+		S VisitQueryOrdering(QueryOrdering queryOrdering);
+		S VisitQuerySelectClause(QuerySelectClause querySelectClause);
+		S VisitQueryGroupClause(QueryGroupClause queryGroupClause);
+		
+		S VisitAttribute(Attribute attribute);
+		S VisitAttributeSection(AttributeSection attributeSection);
+		S VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration);
+		S VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration);
+		S VisitTypeDeclaration(TypeDeclaration typeDeclaration);
+		S VisitUsingAliasDeclaration(UsingAliasDeclaration usingAliasDeclaration);
+		S VisitUsingDeclaration(UsingDeclaration usingDeclaration);
+		S VisitExternAliasDeclaration(ExternAliasDeclaration externAliasDeclaration);
+		
+		S VisitBlockStatement(BlockStatement blockStatement);
+		S VisitBreakStatement(BreakStatement breakStatement);
+		S VisitCheckedStatement(CheckedStatement checkedStatement);
+		S VisitContinueStatement(ContinueStatement continueStatement);
+		S VisitDoWhileStatement(DoWhileStatement doWhileStatement);
+		S VisitEmptyStatement(EmptyStatement emptyStatement);
+		S VisitExpressionStatement(ExpressionStatement expressionStatement);
+		S VisitFixedStatement(FixedStatement fixedStatement);
+		S VisitForeachStatement(ForeachStatement foreachStatement);
+		S VisitForStatement(ForStatement forStatement);
+		S VisitGotoCaseStatement(GotoCaseStatement gotoCaseStatement);
+		S VisitGotoDefaultStatement(GotoDefaultStatement gotoDefaultStatement);
+		S VisitGotoStatement(GotoStatement gotoStatement);
+		S VisitIfElseStatement(IfElseStatement ifElseStatement);
+		S VisitLabelStatement(LabelStatement labelStatement);
+		S VisitLockStatement(LockStatement lockStatement);
+		S VisitReturnStatement(ReturnStatement returnStatement);
+		S VisitSwitchStatement(SwitchStatement switchStatement);
+		S VisitSwitchSection(SwitchSection switchSection);
+		S VisitCaseLabel(CaseLabel caseLabel);
+		S VisitThrowStatement(ThrowStatement throwStatement);
+		S VisitTryCatchStatement(TryCatchStatement tryCatchStatement);
+		S VisitCatchClause(CatchClause catchClause);
+		S VisitUncheckedStatement(UncheckedStatement uncheckedStatement);
+		S VisitUnsafeStatement(UnsafeStatement unsafeStatement);
+		S VisitUsingStatement(UsingStatement usingStatement);
+		S VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement);
+		S VisitWhileStatement(WhileStatement whileStatement);
+		S VisitYieldBreakStatement(YieldBreakStatement yieldBreakStatement);
+		S VisitYieldReturnStatement(YieldReturnStatement yieldReturnStatement);
+		
+		S VisitAccessor(Accessor accessor);
+		S VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration);
+		S VisitConstructorInitializer(ConstructorInitializer constructorInitializer);
+		S VisitDestructorDeclaration(DestructorDeclaration destructorDeclaration);
+		S VisitEnumMemberDeclaration(EnumMemberDeclaration enumMemberDeclaration);
+		S VisitEventDeclaration(EventDeclaration eventDeclaration);
+		S VisitCustomEventDeclaration(CustomEventDeclaration customEventDeclaration);
+		S VisitFieldDeclaration(FieldDeclaration fieldDeclaration);
+		S VisitIndexerDeclaration(IndexerDeclaration indexerDeclaration);
+		S VisitMethodDeclaration(MethodDeclaration methodDeclaration);
+		S VisitOperatorDeclaration(OperatorDeclaration operatorDeclaration);
+		S VisitParameterDeclaration(ParameterDeclaration parameterDeclaration);
+		S VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration);
+		S VisitVariableInitializer(VariableInitializer variableInitializer);
+		S VisitFixedFieldDeclaration(FixedFieldDeclaration fixedFieldDeclaration);
+		S VisitFixedVariableInitializer(FixedVariableInitializer fixedVariableInitializer);
+		
+		S VisitCompilationUnit(CompilationUnit compilationUnit);
+		S VisitSimpleType(SimpleType simpleType);
+		S VisitMemberType(MemberType memberType);
+		S VisitComposedType(ComposedType composedType);
+		S VisitArraySpecifier(ArraySpecifier arraySpecifier);
+		S VisitPrimitiveType(PrimitiveType primitiveType);
+		
+		S VisitComment(Comment comment);
+		S VisitWhitespace(WhitespaceNode whitespaceNode);
+		S VisitText(TextNode textNode);
+		S VisitNewLine(NewLineNode newLineNode);
+		S VisitPreProcessorDirective(PreProcessorDirective preProcessorDirective);
+		S VisitDocumentationReference(DocumentationReference documentationReference);
+		
+		S VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration);
+		S VisitConstraint(Constraint constraint);
+		S VisitCSharpTokenNode(CSharpTokenNode cSharpTokenNode);
+		S VisitIdentifier(Identifier identifier);
+		
+		S VisitPatternPlaceholder(AstNode placeholder, PatternMatching.Pattern pattern);
+	}
+	
+	/// <summary>
+	/// AST visitor.
+	/// </summary>
 	public interface IAstVisitor<in T, out S>
 	{
 		S VisitAnonymousMethodExpression(AnonymousMethodExpression anonymousMethodExpression, T data);
@@ -137,7 +399,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		S VisitPrimitiveType(PrimitiveType primitiveType, T data);
 		
 		S VisitComment(Comment comment, T data);
+		S VisitNewLine(NewLineNode newLineNode, T data);
+		S VisitWhitespace(WhitespaceNode whitespaceNode, T data);
+		S VisitText(TextNode textNode, T data);
 		S VisitPreProcessorDirective(PreProcessorDirective preProcessorDirective, T data);
+		S VisitDocumentationReference(DocumentationReference documentationReference, T data);
 		
 		S VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration, T data);
 		S VisitConstraint(Constraint constraint, T data);

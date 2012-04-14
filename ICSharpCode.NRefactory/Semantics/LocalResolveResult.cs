@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Globalization;
 using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.Semantics
@@ -65,7 +66,7 @@ namespace ICSharpCode.NRefactory.Semantics
 		
 		public override string ToString()
 		{
-			return string.Format("[LocalResolveResult {0}]", variable);
+			return string.Format(CultureInfo.InvariantCulture, "[LocalResolveResult {0}]", variable);
 		}
 		
 		public override DomRegion GetDefinitionRegion()

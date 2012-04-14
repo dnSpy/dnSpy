@@ -71,6 +71,25 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		}
 		
 		[Test]
+		public void ArrayToReadOnlyList()
+		{
+			ITypeParameter tp = new DefaultTypeParameter(compilation, EntityType.Method, 0, "T");
+			IType stringType = compilation.FindType(KnownTypeCode.String);
+			ITypeDefinition readOnlyListType = compilation.FindType(KnownTypeCode.IReadOnlyListOfT).GetDefinition();
+			if (readOnlyListType == null)
+				Assert.Ignore(".NET 4.5 IReadOnlyList not available");
+			
+			bool success;
+			Assert.AreEqual(
+				new [] { stringType },
+				ti.InferTypeArguments(new [] { tp },
+				                      new [] { new ResolveResult(new ArrayType(compilation, stringType)) },
+				                      new [] { new ParameterizedType(readOnlyListType, new [] { tp }) },
+				                      out success));
+			Assert.IsTrue(success);
+		}
+		
+		[Test]
 		public void EnumerableToArrayInContravariantType()
 		{
 			ITypeParameter tp = new DefaultTypeParameter(compilation, EntityType.Method, 0, "T");
@@ -105,6 +124,28 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				                      new [] { new ResolveResult(compilation.FindType(KnownTypeCode.Object)), new ResolveResult(SpecialType.NullType) },
 				                      new [] { tp, tp },
 				                      out success));
+			Assert.IsTrue(success);
+		}
+		
+		[Test]
+		public void ArrayToListWithArrayCovariance()
+		{
+			ITypeParameter tp = new DefaultTypeParameter(compilation, EntityType.Method, 0, "T");
+			IType objectType = compilation.FindType(KnownTypeCode.Object);
+			IType stringType = compilation.FindType(KnownTypeCode.String);
+			ITypeDefinition listType = compilation.FindType(KnownTypeCode.IListOfT).GetDefinition();
+			
+			// void M<T>(IList<T> a, T b);
+			// M(new string[0], new object());
+			
+			bool success;
+			Assert.AreEqual(
+				new [] { objectType },
+				ti.InferTypeArguments(
+					new [] { tp },
+					new [] { new ResolveResult(new ArrayType(compilation, stringType)), new ResolveResult(objectType) },
+					new [] { new ParameterizedType(listType, new [] { tp }), (IType)tp },
+					out success));
 			Assert.IsTrue(success);
 		}
 		#endregion
@@ -174,7 +215,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				get { return parameters; }
 			}
 			
-			public override Conversion IsValid(IType[] parameterTypes, IType returnType, Conversions conversions)
+			public override Conversion IsValid(IType[] parameterTypes, IType returnType, CSharpConversions conversions)
 			{
 				Assert.AreEqual(expectedParameterTypes, parameterTypes);
 				return conversions.ImplicitConversion(inferredReturnType, returnType);
@@ -330,6 +371,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		}
 		
 		[Test]
+		[Ignore("Produces different results in .NET 4.5 due to new read-only interfaces")]
 		public void ListOfStringAndObject()
 		{
 			Assert.AreEqual(
@@ -338,6 +380,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		}
 		
 		[Test]
+		[Ignore("Produces different results in .NET 4.5 due to new read-only interfaces")]
 		public void ListOfListOfStringAndObject()
 		{
 			Assert.AreEqual(

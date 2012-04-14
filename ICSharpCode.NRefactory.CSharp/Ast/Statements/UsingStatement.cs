@@ -31,10 +31,11 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class UsingStatement : Statement
 	{
+		public static readonly TokenRole UsingKeywordRole = new TokenRole ("using");
 		public static readonly Role<AstNode> ResourceAcquisitionRole = new Role<AstNode>("ResourceAcquisition", AstNode.Null);
 		
 		public CSharpTokenNode UsingToken {
-			get { return GetChildByRole (Roles.Keyword); }
+			get { return GetChildByRole (UsingKeywordRole); }
 		}
 		
 		public CSharpTokenNode LParToken {
@@ -58,7 +59,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.EmbeddedStatement, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitUsingStatement (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitUsingStatement (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitUsingStatement (this, data);
 		}

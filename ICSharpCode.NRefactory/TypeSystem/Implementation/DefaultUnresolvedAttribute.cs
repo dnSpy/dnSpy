@@ -246,9 +246,8 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			
 			public IList<KeyValuePair<IMember, ResolveResult>> NamedArguments {
 				get {
-					var namedArgs = this.namedArguments;
+					var namedArgs = LazyInit.VolatileRead(ref this.namedArguments);
 					if (namedArgs != null) {
-						LazyInit.ReadBarrier();
 						return namedArgs;
 					} else {
 						namedArgs = new List<KeyValuePair<IMember, ResolveResult>>();

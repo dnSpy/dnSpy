@@ -54,7 +54,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				return GetChildByRole (Roles.Identifier).Name;
 			}
 			set {
-				SetChildByRole (Roles.Identifier, Identifier.Create (value, TextLocation.Empty));
+				SetChildByRole (Roles.Identifier, Identifier.Create (value));
 			}
 		}
 		
@@ -79,8 +79,18 @@ namespace ICSharpCode.NRefactory.CSharp
 		public CSharpTokenNode RBracketToken {
 			get { return GetChildByRole (Roles.RBracket); }
 		}
+		
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitFixedVariableInitializer (this);
+		}
+				
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitFixedVariableInitializer (this);
+		}
 
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitFixedVariableInitializer (this, data);
 		}

@@ -54,6 +54,8 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 			bool checkResults = rnd.Next(0, 2) == 0;
 			bool checkStateBefore = rnd.Next(0, 2) == 0;
 			bool checkStateAfter = rnd.Next(0, 2) == 0;
+			bool checkConversion = rnd.Next(0, 2) == 0;
+			bool checkExpectedType = rnd.Next(0, 2) == 0;
 			foreach (var _node in file.CompilationUnit.DescendantsAndSelf) {
 				var node = _node;
 				if (CSharpAstResolver.IsUnresolvableNode(node))
@@ -66,8 +68,10 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 					actions.Add(() => test.CheckStateAfter(node));
 				var expr = node as Expression;
 				if (expr != null) {
-					//actions.Add(() => test.CheckExpectedType(node));
-					//actions.Add(() => test.CheckConversion(node));
+					if (checkConversion)
+						actions.Add(() => test.CheckConversion(expr));
+					if (checkExpectedType)
+						actions.Add(() => test.CheckExpectedType(expr));
 				}
 			}
 			
@@ -116,6 +120,30 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 			if (IsEqualResolverState(expectedState, actualState))
 				return true;
 			Console.WriteLine("Different resolver states after '{0}' at {1} in {2}.", node, node.StartLocation, node.GetRegion().FileName);
+			return false;
+		}
+		
+		bool CheckConversion(Expression node)
+		{
+			Conversion expectedConversion = resolveAllResolver.GetConversion(node);
+			Conversion actualConversion = resolver.GetConversion(node);
+			if (Compare(expectedConversion, actualConversion, typeof(Conversion)))
+				return true;
+			Console.WriteLine("Different conversions for '{0}' at {1} in {2}:", node, node.StartLocation, node.GetRegion().FileName);
+			Console.WriteLine(" expected: " + expectedConversion);
+			Console.WriteLine(" actual:   " + actualConversion);
+			return false;
+		}
+		
+		bool CheckExpectedType(Expression node)
+		{
+			IType expectedExpectedType = resolveAllResolver.GetExpectedType(node);
+			IType actualExpectedType = resolver.GetExpectedType(node);
+			if (expectedExpectedType.Equals(actualExpectedType))
+				return true;
+			Console.WriteLine("Different expected types for '{0}' at {1} in {2}:", node, node.StartLocation, node.GetRegion().FileName);
+			Console.WriteLine(" expected: " + expectedExpectedType);
+			Console.WriteLine(" actual:   " + actualExpectedType);
 			return false;
 		}
 		

@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using ICSharpCode.NRefactory.TypeSystem;
 
@@ -59,7 +60,7 @@ namespace ICSharpCode.NRefactory.Semantics
 		
 		public override string ToString()
 		{
-			return string.Format("[{0} {1} {2}]", GetType().Name, IsOut ? "out" : "ref", ElementType);
+			return string.Format(CultureInfo.InvariantCulture, "[{0} {1} {2}]", GetType().Name, IsOut ? "out" : "ref", ElementType);
 		}
 	}
 }

@@ -413,9 +413,7 @@ namespace ICSharpCode.NRefactory.VB
 			}
 			
 			// Finally, clone the annotation, if necessary
-			ICloneable annotations = copy.annotations as ICloneable; // read from copy (for thread-safety)
-			if (annotations != null)
-				copy.annotations = annotations.Clone();
+			copy.CloneAnnotations();
 			
 			return copy;
 		}

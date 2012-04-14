@@ -27,7 +27,7 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// would incorrectly result in "2 * 1 + 1". By running InsertParenthesesVisitor, the necessary
 	/// parentheses are inserted: "2 * (1 + 1)".
 	/// </summary>
-	public class InsertParenthesesVisitor : DepthFirstAstVisitor<object, object>
+	public class InsertParenthesesVisitor : DepthFirstAstVisitor
 	{
 		/// <summary>
 		/// Gets/Sets whether the visitor should insert parentheses to make the code better looking.
@@ -126,25 +126,25 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		// Primary expressions
-		public override object VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, object data)
+		public override void VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression)
 		{
 			ParenthesizeIfRequired(memberReferenceExpression.Target, Primary);
-			return base.VisitMemberReferenceExpression(memberReferenceExpression, data);
+			base.VisitMemberReferenceExpression(memberReferenceExpression);
 		}
 		
-		public override object VisitPointerReferenceExpression(PointerReferenceExpression pointerReferenceExpression, object data)
+		public override void VisitPointerReferenceExpression(PointerReferenceExpression pointerReferenceExpression)
 		{
 			ParenthesizeIfRequired(pointerReferenceExpression.Target, Primary);
-			return base.VisitPointerReferenceExpression(pointerReferenceExpression, data);
+			base.VisitPointerReferenceExpression(pointerReferenceExpression);
 		}
 		
-		public override object VisitInvocationExpression(InvocationExpression invocationExpression, object data)
+		public override void VisitInvocationExpression(InvocationExpression invocationExpression)
 		{
 			ParenthesizeIfRequired(invocationExpression.Target, Primary);
-			return base.VisitInvocationExpression(invocationExpression, data);
+			base.VisitInvocationExpression(invocationExpression);
 		}
 		
-		public override object VisitIndexerExpression(IndexerExpression indexerExpression, object data)
+		public override void VisitIndexerExpression(IndexerExpression indexerExpression)
 		{
 			ParenthesizeIfRequired(indexerExpression.Target, Primary);
 			ArrayCreateExpression ace = indexerExpression.Target as ArrayCreateExpression;
@@ -152,20 +152,20 @@ namespace ICSharpCode.NRefactory.CSharp
 				// require parentheses for "(new int[1])[0]"
 				Parenthesize(indexerExpression.Target);
 			}
-			return base.VisitIndexerExpression(indexerExpression, data);
+			base.VisitIndexerExpression(indexerExpression);
 		}
 		
 		// Unary expressions
-		public override object VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, object data)
+		public override void VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression)
 		{
 			ParenthesizeIfRequired(unaryOperatorExpression.Expression, GetPrecedence(unaryOperatorExpression));
 			UnaryOperatorExpression child = unaryOperatorExpression.Expression as UnaryOperatorExpression;
 			if (child != null && InsertParenthesesForReadability)
 				Parenthesize(child);
-			return base.VisitUnaryOperatorExpression(unaryOperatorExpression, data);
+			base.VisitUnaryOperatorExpression(unaryOperatorExpression);
 		}
 		
-		public override object VisitCastExpression(CastExpression castExpression, object data)
+		public override void VisitCastExpression(CastExpression castExpression)
 		{
 			ParenthesizeIfRequired(castExpression.Expression, InsertParenthesesForReadability ? Primary : Unary);
 			// There's a nasty issue in the C# grammar: cast expressions including certain operators are ambiguous in some cases
@@ -211,7 +211,7 @@ namespace ICSharpCode.NRefactory.CSharp
 						break;
 				}
 			}
-			return base.VisitCastExpression(castExpression, data);
+			base.VisitCastExpression(castExpression);
 		}
 		
 		static bool TypeCanBeMisinterpretedAsExpression(AstType type)
@@ -227,7 +227,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		// Binary Operators
-		public override object VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, object data)
+		public override void VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression)
 		{
 			int precedence = GetPrecedence(binaryOperatorExpression);
 			if (binaryOperatorExpression.Operator == BinaryOperatorType.NullCoalescing) {
@@ -255,7 +255,7 @@ namespace ICSharpCode.NRefactory.CSharp
 					ParenthesizeIfRequired(binaryOperatorExpression.Right, precedence + 1);
 				}
 			}
-			return base.VisitBinaryOperatorExpression(binaryOperatorExpression, data);
+			base.VisitBinaryOperatorExpression(binaryOperatorExpression);
 		}
 		
 		BinaryOperatorType? GetBinaryOperatorType(Expression expr)
@@ -267,7 +267,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				return null;
 		}
 		
-		public override object VisitIsExpression(IsExpression isExpression, object data)
+		public override void VisitIsExpression(IsExpression isExpression)
 		{
 			if (InsertParenthesesForReadability) {
 				// few people know the precedence of 'is', so always put parentheses in nice-looking mode.
@@ -275,10 +275,10 @@ namespace ICSharpCode.NRefactory.CSharp
 			} else {
 				ParenthesizeIfRequired(isExpression.Expression, RelationalAndTypeTesting);
 			}
-			return base.VisitIsExpression(isExpression, data);
+			base.VisitIsExpression(isExpression);
 		}
 		
-		public override object VisitAsExpression(AsExpression asExpression, object data)
+		public override void VisitAsExpression(AsExpression asExpression)
 		{
 			if (InsertParenthesesForReadability) {
 				// few people know the precedence of 'as', so always put parentheses in nice-looking mode.
@@ -286,11 +286,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			} else {
 				ParenthesizeIfRequired(asExpression.Expression, RelationalAndTypeTesting);
 			}
-			return base.VisitAsExpression(asExpression, data);
+			base.VisitAsExpression(asExpression);
 		}
 		
 		// Conditional operator
-		public override object VisitConditionalExpression(ConditionalExpression conditionalExpression, object data)
+		public override void VisitConditionalExpression(ConditionalExpression conditionalExpression)
 		{
 			// Associativity here is a bit tricky:
 			// (a ? b : c ? d : e) == (a ? b : (c ? d : e))
@@ -306,10 +306,10 @@ namespace ICSharpCode.NRefactory.CSharp
 				ParenthesizeIfRequired(conditionalExpression.TrueExpression, Conditional);
 				ParenthesizeIfRequired(conditionalExpression.FalseExpression, Conditional);
 			}
-			return base.VisitConditionalExpression(conditionalExpression, data);
+			base.VisitConditionalExpression(conditionalExpression);
 		}
 		
-		public override object VisitAssignmentExpression(AssignmentExpression assignmentExpression, object data)
+		public override void VisitAssignmentExpression(AssignmentExpression assignmentExpression)
 		{
 			// assignment is right-associative
 			ParenthesizeIfRequired(assignmentExpression.Left, Assignment + 1);
@@ -318,12 +318,12 @@ namespace ICSharpCode.NRefactory.CSharp
 			} else {
 				ParenthesizeIfRequired(assignmentExpression.Right, Assignment);
 			}
-			return base.VisitAssignmentExpression(assignmentExpression, data);
+			base.VisitAssignmentExpression(assignmentExpression);
 		}
 		
 		// don't need to handle lambdas, they have lowest precedence and unambiguous associativity
 		
-		public override object VisitQueryExpression(QueryExpression queryExpression, object data)
+		public override void VisitQueryExpression(QueryExpression queryExpression)
 		{
 			// Query expressions are strange beasts:
 			// "var a = -from b in c select d;" is valid, so queries bind stricter than unary expressions.
@@ -339,7 +339,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				if (queryExpression.Parent is UnaryOperatorExpression || queryExpression.Parent is BinaryOperatorExpression)
 					Parenthesize(queryExpression);
 			}
-			return base.VisitQueryExpression(queryExpression, data);
+			base.VisitQueryExpression(queryExpression);
 		}
 	}
 }

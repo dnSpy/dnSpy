@@ -671,5 +671,35 @@ class Test {
 			Assert.IsFalse(irr.IsError);
 			Assert.AreEqual(compilation.FindType(KnownTypeCode.Boolean), irr.Type);
 		}
+		
+		[Test]
+		public void IsLiftedProperty()
+		{
+			string program = @"
+class Test {
+    static void Inc() {
+        int? a = 0, b = 0;
+        int? c = $a + b$;
+    }
+}";
+			var irr = Resolve<OperatorResolveResult>(program);
+			Assert.IsFalse(irr.IsError);
+			Assert.IsTrue(irr.IsLiftedOperator);
+		}
+
+		[Test]
+		public void IsLiftedProperty2()
+		{
+			string program = @"
+class Test {
+    static void Inc() {
+        int? a = 0, b = 0;
+        $b += a$;
+    }
+}";
+			var irr = Resolve<OperatorResolveResult>(program);
+			Assert.IsFalse(irr.IsError);
+			Assert.IsTrue(irr.IsLiftedOperator);
+		}
 	}
 }

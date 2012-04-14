@@ -35,6 +35,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		bool IsConstructor { get; }
 		bool IsDestructor { get; }
 		bool IsOperator { get; }
+		
+		bool IsPartialMethodDeclaration { get; }
+		bool IsPartialMethodImplementation { get; }
 	}
 	
 	/// <summary>
@@ -42,6 +45,13 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// </summary>
 	public interface IMethod : IParameterizedMember
 	{
+		/// <summary>
+		/// Gets the unresolved method parts.
+		/// For partial methods, this returns all parts.
+		/// Otherwise, this returns an array with a single element (new[] { UnresolvedMember }).
+		/// </summary>
+		IList<IUnresolvedMethod> Parts { get; }
+		
 		/// <summary>
 		/// Gets the attributes associated with the return type. (e.g. [return: MarshalAs(...)])
 		/// </summary>

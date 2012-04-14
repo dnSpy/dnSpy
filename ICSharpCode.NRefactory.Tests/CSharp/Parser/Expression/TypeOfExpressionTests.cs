@@ -127,8 +127,8 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 		public void UnboundTypeOfExpressionTest()
 		{
 			var type = new SimpleType("MyType");
-			type.AddChild (new SimpleType (), SimpleType.Roles.TypeArgument);
-			type.AddChild (new SimpleType (), SimpleType.Roles.TypeArgument);
+			type.AddChild (new SimpleType (), Roles.TypeArgument);
+			type.AddChild (new SimpleType (), Roles.TypeArgument);
 			ParseUtilCSharp.AssertExpression(
 				"typeof(MyType<,>)",
 				new TypeOfExpression {

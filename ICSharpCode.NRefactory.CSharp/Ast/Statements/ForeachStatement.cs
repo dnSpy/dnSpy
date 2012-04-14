@@ -31,8 +31,11 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class ForeachStatement : Statement
 	{
+		public static readonly TokenRole ForeachKeywordRole = new TokenRole ("foreach");
+		public static readonly TokenRole InKeywordRole = new TokenRole ("in");
+		
 		public CSharpTokenNode ForeachToken {
-			get { return GetChildByRole (Roles.Keyword); }
+			get { return GetChildByRole (ForeachKeywordRole); }
 		}
 		
 		public CSharpTokenNode LParToken {
@@ -49,7 +52,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				return GetChildByRole (Roles.Identifier).Name;
 			}
 			set {
-				SetChildByRole(Roles.Identifier, Identifier.Create (value, TextLocation.Empty));
+				SetChildByRole(Roles.Identifier, Identifier.Create (value));
 			}
 		}
 		
@@ -63,7 +66,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		public CSharpTokenNode InToken {
-			get { return GetChildByRole (Roles.InKeyword); }
+			get { return GetChildByRole (InKeywordRole); }
 		}
 		
 		public Expression InExpression {
@@ -80,7 +83,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.EmbeddedStatement, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitForeachStatement (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitForeachStatement (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitForeachStatement (this, data);
 		}

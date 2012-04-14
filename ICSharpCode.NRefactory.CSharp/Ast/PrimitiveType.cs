@@ -32,10 +32,20 @@ using ICSharpCode.NRefactory.TypeSystem.Implementation;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public class PrimitiveType : AstType, IRelocatable
+	public class PrimitiveType : AstType
 	{
-		public string Keyword { get; set; }
-		public TextLocation Location { get; set; }
+		TextLocation location;
+		string keyword = string.Empty;
+		
+		public string Keyword {
+			get { return keyword; }
+			set { 
+				if (value == null)
+					throw new ArgumentNullException();
+				ThrowIfFrozen();
+				keyword = value; 
+			}
+		}
 		
 		public KnownTypeCode KnownTypeCode {
 			get { return GetTypeCodeForPrimitiveType(this.Keyword); }
@@ -53,29 +63,31 @@ namespace ICSharpCode.NRefactory.CSharp
 		public PrimitiveType(string keyword, TextLocation location)
 		{
 			this.Keyword = keyword;
-			this.Location = location;
+			this.location = location;
 		}
 		
 		public override TextLocation StartLocation {
 			get {
-				return Location;
+				return location;
 			}
 		}
 		public override TextLocation EndLocation {
 			get {
-				return new TextLocation (Location.Line, Location.Column + (Keyword != null ? Keyword.Length : 0));
+				return new TextLocation (location.Line, location.Column + keyword.Length);
 			}
 		}
 		
-		
-		#region IRelocationable implementation
-		void IRelocatable.SetStartLocation (TextLocation startLocation)
+		public override void AcceptVisitor (IAstVisitor visitor)
 		{
-			this.Location = startLocation;
+			visitor.VisitPrimitiveType (this);
 		}
-		#endregion
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitPrimitiveType (this);
+		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitPrimitiveType (this, data);
 		}
@@ -88,7 +100,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public override string ToString()
 		{
-			return Keyword ?? base.ToString();
+			return Keyword;
 		}
 		
 		public override ITypeReference ToTypeReference(SimpleNameLookupMode lookupMode = SimpleNameLookupMode.Type)

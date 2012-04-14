@@ -149,7 +149,7 @@ namespace Mono.CSharp {
 					case Binary.Operator.ExclusiveOr:
 						result = BinaryFold (ec, oper, ((EnumConstant)left).Child, ((EnumConstant)right).Child, loc);
 						if (result != null)
-							result = result.TryReduce (ec, lt, loc);
+							result = result.TryReduce (ec, lt);
 						return result;
 
 					///
@@ -158,7 +158,7 @@ namespace Mono.CSharp {
 					case Binary.Operator.Subtraction:
 						result = BinaryFold (ec, oper, ((EnumConstant)left).Child, ((EnumConstant)right).Child, loc);
 						if (result != null)
-							result = result.TryReduce (ec, EnumSpec.GetUnderlyingType (lt), loc);
+							result = result.TryReduce (ec, EnumSpec.GetUnderlyingType (lt));
 						return result;
 
 					///
@@ -340,7 +340,7 @@ namespace Mono.CSharp {
 					if (result == null)
 						return null;
 
-					result = result.TryReduce (ec, lt, loc);
+					result = result.TryReduce (ec, lt);
 					if (result == null)
 						return null;
 
@@ -459,7 +459,7 @@ namespace Mono.CSharp {
 					if (result == null)
 						return null;
 
-					result = result.TryReduce (ec, lt, loc);
+					result = result.TryReduce (ec, lt);
 					if (result == null)
 						return null;
 

@@ -1,6 +1,6 @@
 ﻿// 
 // RefactoringContext.cs
-//  
+//
 // Author:
 //       Mike Krüger <mkrueger@novell.com>
 // 
@@ -23,100 +23,117 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Linq;
+using System.Threading;
 using ICSharpCode.NRefactory.CSharp.Resolver;
+using ICSharpCode.NRefactory.CSharp.TypeSystem;
 using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
+using ICSharpCode.NRefactory.Editor;
+using System.Collections.Generic;
 
 namespace ICSharpCode.NRefactory.CSharp.Refactoring
 {
-	public abstract class RefactoringContext : AbstractActionFactory
+	public abstract class RefactoringContext : BaseRefactoringContext
 	{
-		public CompilationUnit Unit {
-			get;
-			protected set;
-		}
-
-		public TextLocation Location {
-			get;
-			protected set;
-		}
-		
-		public abstract bool HasCSharp3Support {
-			get;
-		}
-		
-		public ICompilation Compilation {
-			get;
-			protected set;
-		}
-		
-		public abstract CSharpFormattingOptions FormattingOptions {
-			get;
-		}
-
-		public abstract AstType CreateShortType (IType fullType);
-		
-		public AstType CreateShortType (string ns, string name, int typeParameterCount = 0)
+		public RefactoringContext(CSharpAstResolver resolver, CancellationToken cancellationToken) : base  (resolver, cancellationToken)
 		{
-			var def = Compilation.MainAssembly.GetTypeDefinition (ns, name, typeParameterCount);
-			if (def == null) {
-				foreach (var asm in Compilation.ReferencedAssemblies) {
-					def = asm.GetTypeDefinition (ns, name, typeParameterCount);
-					if (def != null)
-						break;
+		}
+
+		public abstract TextLocation Location { get; }
+
+		public virtual AstType CreateShortType (IType fullType)
+		{
+			var csResolver = Resolver.GetResolverStateBefore(GetNode());
+			var builder = new TypeSystemAstBuilder(csResolver);
+			return builder.ConvertType(fullType);
+		}
+		
+		public AstType CreateShortType(string ns, string name, int typeParameterCount = 0)
+		{
+			foreach (var asm in Compilation.Assemblies) {
+				var def = asm.GetTypeDefinition(ns, name, typeParameterCount);
+				if (def != null) {
+					return CreateShortType(def);
 				}
-				
 			}
-			if (def == null)
-				return new MemberType (new SimpleType (ns), name);
-			return CreateShortType (def);
+			
+			return new MemberType(new SimpleType(ns), name);
 		}
-		
-		public virtual AstType CreateShortType (AstType fullType)
-		{
-			return CreateShortType (Resolve (fullType).Type);
-		}
-		
-//		public abstract IType GetDefinition (AstType resolvedType);
 
-		public abstract void ReplaceReferences (IMember member, MemberDeclaration replaceWidth);
-		
+		public virtual IEnumerable<AstNode> GetSelectedNodes()
+		{
+			if (!IsSomethingSelected) {
+				return Enumerable.Empty<AstNode> ();
+			}
+			
+			return RootNode.GetNodesBetween(SelectionStart, SelectionEnd);
+		}
+
 		public AstNode GetNode ()
 		{
-			return Unit.GetNodeAt (Location);
+			return RootNode.GetNodeAt (Location);
+		}
+		
+		public AstNode GetNode (Predicate<AstNode> pred)
+		{
+			return RootNode.GetNodeAt (Location, pred);
 		}
 		
 		public T GetNode<T> () where T : AstNode
 		{
-			return Unit.GetNodeAt<T> (Location);
+			return RootNode.GetNodeAt<T> (Location);
 		}
 		
-		public abstract Script StartScript ();
-		
 		#region Text stuff
-		public abstract string EolMarker { get; }
-		public abstract bool IsSomethingSelected { get; }
-		public abstract string SelectedText { get; }
-		public abstract int SelectionStart { get; }
-		public abstract int SelectionEnd { get; }
-		public abstract int SelectionLength { get; }
+		public virtual TextEditorOptions TextEditorOptions {
+			get {
+				return TextEditorOptions.Default;
+			}
+		}
+		
+		public virtual bool IsSomethingSelected {
+			get {
+				return SelectionStart != TextLocation.Empty;
+			}
+		}
+		
+		public virtual string SelectedText {
+			get { return string.Empty; }
+		}
+		
+		public virtual TextLocation SelectionStart {
+			get {
+				return TextLocation.Empty;
+			}
+		}
+		
+		public virtual TextLocation SelectionEnd {
+			get {
+				return TextLocation.Empty;
+			}
+		}
+
 		public abstract int GetOffset (TextLocation location);
+
+		public abstract IDocumentLine GetLineByOffset (int offset);
+		
 		public int GetOffset (int line, int col)
 		{
 			return GetOffset (new TextLocation (line, col));
 		}
+
 		public abstract TextLocation GetLocation (int offset);
+
 		public abstract string GetText (int offset, int length);
+
+		public abstract string GetText (ISegment segment);
 		#endregion
-		
-		#region Resolving
-		public abstract ResolveResult Resolve (AstNode expression);
-		#endregion
-		
-		public string GetNameProposal (string name, bool camelCase = true)
+
+		public virtual string GetNameProposal (string name, bool camelCase = true)
 		{
 			string baseName = (camelCase ? char.ToLower (name [0]) : char.ToUpper (name [0])) + name.Substring (1);
 			
@@ -126,9 +143,9 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			
 			int number = -1;
 			string proposedName;
-			do { 
+			do {
 				proposedName = AppendNumberToName (baseName, number++);
-			} while (type.Members.Select (m => m.GetChildByRole (AstNode.Roles.Identifier)).Any (n => n.Name == proposedName));
+			} while (type.Members.Select (m => m.GetChildByRole (Roles.Identifier)).Any (n => n.Name == proposedName));
 			return proposedName;
 		}
 		
@@ -136,17 +153,6 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 		{
 			return baseName + (number > 0 ? (number + 1).ToString () : "");
 		}
-	}
-	
-	public static class RefactoringExtensions
-	{
-		#region ConvertTypes
-		public static ICSharpCode.NRefactory.CSharp.AstType ConvertToAstType (this IType type)
-		{
-			var builder = new TypeSystemAstBuilder ();
-			return builder.ConvertType (type);
-		}
-		#endregion
 	}
 }
 

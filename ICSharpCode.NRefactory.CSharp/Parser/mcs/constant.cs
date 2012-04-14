@@ -58,7 +58,7 @@ namespace Mono.CSharp {
 		}
 #endif
 
-		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, TypeSpec target, bool expl)
+		public override void Error_ValueCannotBeConverted (ResolveContext ec, TypeSpec target, bool expl)
 		{
 			if (!expl && IsLiteral && 
 				BuiltinTypeSpec.IsPrimitiveTypeOrDecimal (target) &&
@@ -66,7 +66,7 @@ namespace Mono.CSharp {
 				ec.Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
 					GetValueAsLiteral (), TypeManager.CSharpName (target));
 			} else {
-				base.Error_ValueCannotBeConverted (ec, loc, target, expl);
+				base.Error_ValueCannotBeConverted (ec, target, expl);
 			}
 		}
 
@@ -74,7 +74,7 @@ namespace Mono.CSharp {
 		{
 			Constant c = ConvertImplicitly (type);
 			if (c == null)
-				Error_ValueCannotBeConverted (ec, loc, type, false);
+				Error_ValueCannotBeConverted (ec, type, false);
 
 			return c;
 		}
@@ -160,8 +160,11 @@ namespace Mono.CSharp {
 					return new NullConstant (t, loc);
 			}
 
-			throw new InternalErrorException ("Constant value `{0}' has unexpected underlying type `{1}'",
-				v, TypeManager.CSharpName (t));
+#if STATIC
+			throw new InternalErrorException ("Constant value `{0}' has unexpected underlying type `{1}'", v, t.GetSignatureForError ());
+#else
+			return null;
+#endif
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -251,32 +254,38 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Attempts to do a compile-time folding of a constant cast.
 		/// </summary>
-		public Constant TryReduce (ResolveContext ec, TypeSpec target_type, Location loc)
+		public Constant TryReduce (ResolveContext ec, TypeSpec target_type)
 		{
 			try {
-				return TryReduce (ec, target_type);
-			}
-			catch (OverflowException) {
+				return TryReduceConstant (ec, target_type);
+			} catch (OverflowException) {
 				if (ec.ConstantCheckState && Type.BuiltinType != BuiltinTypeSpec.Type.Decimal) {
 					ec.Report.Error (221, loc,
 						"Constant value `{0}' cannot be converted to a `{1}' (use `unchecked' syntax to override)",
 						GetValueAsLiteral (), target_type.GetSignatureForError ());
 				} else {
-					Error_ValueCannotBeConverted (ec, loc, target_type, false);
+					Error_ValueCannotBeConverted (ec, target_type, false);
 				}
 
 				return New.Constantify (target_type, loc);
 			}
 		}
 
-		Constant TryReduce (ResolveContext ec, TypeSpec target_type)
+		Constant TryReduceConstant (ResolveContext ec, TypeSpec target_type)
 		{
-			if (Type == target_type)
+			if (Type == target_type) {
+				//
+				// Reducing literal value produces a new constant. Syntactically 10 is not same as (int)10 
+				//
+				if (IsLiteral)
+					return CreateConstantFromValue (target_type, GetValue (), loc);
+
 				return this;
+			}
 
 			Constant c;
 			if (target_type.IsEnum) {
-				c = TryReduce (ec, EnumSpec.GetUnderlyingType (target_type));
+				c = TryReduceConstant (ec, EnumSpec.GetUnderlyingType (target_type));
 				if (c == null)
 					return null;
 
@@ -378,11 +387,11 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Value;
 		}
 
-		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, TypeSpec target, bool expl)
+		public override void Error_ValueCannotBeConverted (ResolveContext ec, TypeSpec target, bool expl)
 		{
 			try {
 				ConvertExplicitly (true, target);
-				base.Error_ValueCannotBeConverted (ec, loc, target, expl);
+				base.Error_ValueCannotBeConverted (ec, target, expl);
 			}
 			catch
 			{

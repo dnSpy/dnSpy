@@ -31,6 +31,1201 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// <summary>
 	/// AST visitor with a default implementation that visits all node depth-first.
 	/// </summary>
+	public abstract class DepthFirstAstVisitor : IAstVisitor
+	{
+		protected virtual void VisitChildren (AstNode node)
+		{
+			AstNode next;
+			for (var child = node.FirstChild; child != null; child = next) {
+				// Store next to allow the loop to continue
+				// if the visitor removes/replaces child.
+				next = child.NextSibling;
+				child.AcceptVisitor (this);
+			}
+		}
+		
+		public virtual void VisitCompilationUnit (CompilationUnit unit)
+		{
+			VisitChildren (unit);
+		}
+		
+		public virtual void VisitComment(Comment comment)
+		{
+			VisitChildren(comment);
+		}
+
+		public virtual void VisitNewLine(NewLineNode newLineNode)
+		{
+			VisitChildren(newLineNode);
+		}
+
+		public virtual void VisitWhitespace(WhitespaceNode whitespaceNode)
+		{
+			VisitChildren(whitespaceNode);
+		}
+
+		public virtual void VisitText(TextNode textNode)
+		{
+			VisitChildren(textNode);
+		}
+
+		public virtual void VisitDocumentationReference (DocumentationReference documentationReference)
+		{
+			VisitChildren (documentationReference);
+		}
+		
+		public virtual void VisitPreProcessorDirective (PreProcessorDirective preProcessorDirective)
+		{
+			VisitChildren (preProcessorDirective);
+		}
+
+		public virtual void VisitIdentifier (Identifier identifier)
+		{
+			VisitChildren (identifier);
+		}
+		
+		public virtual void VisitCSharpTokenNode (CSharpTokenNode token)
+		{
+			VisitChildren (token);
+		}
+		
+		public virtual void VisitPrimitiveType (PrimitiveType primitiveType)
+		{
+			VisitChildren (primitiveType);
+		}
+		
+		public virtual void VisitComposedType (ComposedType composedType)
+		{
+			VisitChildren (composedType);
+		}
+		
+		public virtual void VisitSimpleType(SimpleType simpleType)
+		{
+			VisitChildren (simpleType);
+		}
+		
+		public virtual void VisitMemberType(MemberType memberType)
+		{
+			VisitChildren (memberType);
+		}
+		
+		public virtual void VisitAttribute (Attribute attribute)
+		{
+			VisitChildren (attribute);
+		}
+		
+		public virtual void VisitAttributeSection (AttributeSection attributeSection)
+		{
+			VisitChildren (attributeSection);
+		}
+		
+		public virtual void VisitDelegateDeclaration (DelegateDeclaration delegateDeclaration)
+		{
+			VisitChildren (delegateDeclaration);
+		}
+		
+		public virtual void VisitNamespaceDeclaration (NamespaceDeclaration namespaceDeclaration)
+		{
+			VisitChildren (namespaceDeclaration);
+		}
+		
+		public virtual void VisitTypeDeclaration (TypeDeclaration typeDeclaration)
+		{
+			VisitChildren (typeDeclaration);
+		}
+		
+		public virtual void VisitTypeParameterDeclaration (TypeParameterDeclaration typeParameterDeclaration)
+		{
+			VisitChildren (typeParameterDeclaration);
+		}
+		
+		public virtual void VisitEnumMemberDeclaration (EnumMemberDeclaration enumMemberDeclaration)
+		{
+			VisitChildren (enumMemberDeclaration);
+		}
+		
+		public virtual void VisitUsingDeclaration (UsingDeclaration usingDeclaration)
+		{
+			VisitChildren (usingDeclaration);
+		}
+		
+		public virtual void VisitUsingAliasDeclaration (UsingAliasDeclaration usingDeclaration)
+		{
+			VisitChildren (usingDeclaration);
+		}
+		
+		public virtual void VisitExternAliasDeclaration(ExternAliasDeclaration externAliasDeclaration)
+		{
+			VisitChildren (externAliasDeclaration);
+		}
+		
+		public virtual void VisitConstructorDeclaration (ConstructorDeclaration constructorDeclaration)
+		{
+			VisitChildren (constructorDeclaration);
+		}
+		
+		public virtual void VisitConstructorInitializer (ConstructorInitializer constructorInitializer)
+		{
+			VisitChildren (constructorInitializer);
+		}
+		
+		public virtual void VisitDestructorDeclaration (DestructorDeclaration destructorDeclaration)
+		{
+			VisitChildren (destructorDeclaration);
+		}
+		
+		public virtual void VisitEventDeclaration (EventDeclaration eventDeclaration)
+		{
+			VisitChildren (eventDeclaration);
+		}
+		
+		public virtual void VisitCustomEventDeclaration (CustomEventDeclaration eventDeclaration)
+		{
+			VisitChildren (eventDeclaration);
+		}
+		
+		public virtual void VisitFieldDeclaration (FieldDeclaration fieldDeclaration)
+		{
+			VisitChildren (fieldDeclaration);
+		}
+		
+		public virtual void VisitFixedFieldDeclaration (FixedFieldDeclaration fixedFieldDeclaration)
+		{
+			VisitChildren (fixedFieldDeclaration);
+		}
+		
+		public virtual void VisitFixedVariableInitializer (FixedVariableInitializer fixedVariableInitializer)
+		{
+			VisitChildren (fixedVariableInitializer);
+		}
+		
+		public virtual void VisitIndexerDeclaration (IndexerDeclaration indexerDeclaration)
+		{
+			VisitChildren (indexerDeclaration);
+		}
+		
+		public virtual void VisitMethodDeclaration (MethodDeclaration methodDeclaration)
+		{
+			VisitChildren (methodDeclaration);
+		}
+		
+		public virtual void VisitOperatorDeclaration (OperatorDeclaration operatorDeclaration)
+		{
+			VisitChildren (operatorDeclaration);
+		}
+		
+		public virtual void VisitPropertyDeclaration (PropertyDeclaration propertyDeclaration)
+		{
+			VisitChildren (propertyDeclaration);
+		}
+		
+		public virtual void VisitAccessor (Accessor accessor)
+		{
+			VisitChildren (accessor);
+		}
+		
+		public virtual void VisitVariableInitializer (VariableInitializer variableInitializer)
+		{
+			VisitChildren (variableInitializer);
+		}
+		
+		public virtual void VisitParameterDeclaration (ParameterDeclaration parameterDeclaration)
+		{
+			VisitChildren (parameterDeclaration);
+		}
+		
+		public virtual void VisitConstraint (Constraint constraint)
+		{
+			VisitChildren (constraint);
+		}
+		
+		public virtual void VisitBlockStatement (BlockStatement blockStatement)
+		{
+			VisitChildren (blockStatement);
+		}
+		
+		public virtual void VisitExpressionStatement (ExpressionStatement expressionStatement)
+		{
+			VisitChildren (expressionStatement);
+		}
+		
+		public virtual void VisitBreakStatement (BreakStatement breakStatement)
+		{
+			VisitChildren (breakStatement);
+		}
+		
+		public virtual void VisitCheckedStatement (CheckedStatement checkedStatement)
+		{
+			VisitChildren (checkedStatement);
+		}
+		
+		public virtual void VisitContinueStatement (ContinueStatement continueStatement)
+		{
+			VisitChildren (continueStatement);
+		}
+		
+		public virtual void VisitDoWhileStatement (DoWhileStatement doWhileStatement)
+		{
+			VisitChildren (doWhileStatement);
+		}
+		
+		public virtual void VisitEmptyStatement (EmptyStatement emptyStatement)
+		{
+			VisitChildren (emptyStatement);
+		}
+		
+		public virtual void VisitFixedStatement (FixedStatement fixedStatement)
+		{
+			VisitChildren (fixedStatement);
+		}
+		
+		public virtual void VisitForeachStatement (ForeachStatement foreachStatement)
+		{
+			VisitChildren (foreachStatement);
+		}
+		
+		public virtual void VisitForStatement (ForStatement forStatement)
+		{
+			VisitChildren (forStatement);
+		}
+		
+		public virtual void VisitGotoCaseStatement (GotoCaseStatement gotoCaseStatement)
+		{
+			VisitChildren (gotoCaseStatement);
+		}
+		
+		public virtual void VisitGotoDefaultStatement (GotoDefaultStatement gotoDefaultStatement)
+		{
+			VisitChildren (gotoDefaultStatement);
+		}
+		
+		public virtual void VisitGotoStatement (GotoStatement gotoStatement)
+		{
+			VisitChildren (gotoStatement);
+		}
+		
+		public virtual void VisitIfElseStatement (IfElseStatement ifElseStatement)
+		{
+			VisitChildren (ifElseStatement);
+		}
+		
+		public virtual void VisitLabelStatement (LabelStatement labelStatement)
+		{
+			VisitChildren (labelStatement);
+		}
+		
+		public virtual void VisitLockStatement (LockStatement lockStatement)
+		{
+			VisitChildren (lockStatement);
+		}
+		
+		public virtual void VisitReturnStatement (ReturnStatement returnStatement)
+		{
+			VisitChildren (returnStatement);
+		}
+		
+		public virtual void VisitSwitchStatement (SwitchStatement switchStatement)
+		{
+			VisitChildren (switchStatement);
+		}
+		
+		public virtual void VisitSwitchSection (SwitchSection switchSection)
+		{
+			VisitChildren (switchSection);
+		}
+		
+		public virtual void VisitCaseLabel (CaseLabel caseLabel)
+		{
+			VisitChildren (caseLabel);
+		}
+		
+		public virtual void VisitThrowStatement (ThrowStatement throwStatement)
+		{
+			VisitChildren (throwStatement);
+		}
+		
+		public virtual void VisitTryCatchStatement (TryCatchStatement tryCatchStatement)
+		{
+			VisitChildren (tryCatchStatement);
+		}
+		
+		public virtual void VisitCatchClause (CatchClause catchClause)
+		{
+			VisitChildren (catchClause);
+		}
+		
+		public virtual void VisitUncheckedStatement (UncheckedStatement uncheckedStatement)
+		{
+			VisitChildren (uncheckedStatement);
+		}
+		
+		public virtual void VisitUnsafeStatement (UnsafeStatement unsafeStatement)
+		{
+			VisitChildren (unsafeStatement);
+		}
+		
+		public virtual void VisitUsingStatement (UsingStatement usingStatement)
+		{
+			VisitChildren (usingStatement);
+		}
+		
+		public virtual void VisitVariableDeclarationStatement (VariableDeclarationStatement variableDeclarationStatement)
+		{
+			VisitChildren (variableDeclarationStatement);
+		}
+		
+		public virtual void VisitWhileStatement (WhileStatement whileStatement)
+		{
+			VisitChildren (whileStatement);
+		}
+		
+		public virtual void VisitYieldBreakStatement (YieldBreakStatement yieldBreakStatement)
+		{
+			VisitChildren (yieldBreakStatement);
+		}
+		
+		public virtual void VisitYieldReturnStatement (YieldReturnStatement yieldReturnStatement)
+		{
+			VisitChildren (yieldReturnStatement);
+		}
+		
+		public virtual void VisitAnonymousMethodExpression (AnonymousMethodExpression anonymousMethodExpression)
+		{
+			VisitChildren (anonymousMethodExpression);
+		}
+		
+		public virtual void VisitLambdaExpression (LambdaExpression lambdaExpression)
+		{
+			VisitChildren (lambdaExpression);
+		}
+		
+		public virtual void VisitAssignmentExpression (AssignmentExpression assignmentExpression)
+		{
+			VisitChildren (assignmentExpression);
+		}
+		
+		public virtual void VisitBaseReferenceExpression (BaseReferenceExpression baseReferenceExpression)
+		{
+			VisitChildren (baseReferenceExpression);
+		}
+		
+		public virtual void VisitBinaryOperatorExpression (BinaryOperatorExpression binaryOperatorExpression)
+		{
+			VisitChildren (binaryOperatorExpression);
+		}
+		
+		public virtual void VisitCastExpression (CastExpression castExpression)
+		{
+			VisitChildren (castExpression);
+		}
+		
+		public virtual void VisitCheckedExpression (CheckedExpression checkedExpression)
+		{
+			VisitChildren (checkedExpression);
+		}
+		
+		public virtual void VisitConditionalExpression (ConditionalExpression conditionalExpression)
+		{
+			VisitChildren (conditionalExpression);
+		}
+		
+		public virtual void VisitIdentifierExpression (IdentifierExpression identifierExpression)
+		{
+			VisitChildren (identifierExpression);
+		}
+		
+		public virtual void VisitIndexerExpression (IndexerExpression indexerExpression)
+		{
+			VisitChildren (indexerExpression);
+		}
+		
+		public virtual void VisitInvocationExpression (InvocationExpression invocationExpression)
+		{
+			VisitChildren (invocationExpression);
+		}
+		
+		public virtual void VisitDirectionExpression (DirectionExpression directionExpression)
+		{
+			VisitChildren (directionExpression);
+		}
+		
+		public virtual void VisitMemberReferenceExpression (MemberReferenceExpression memberReferenceExpression)
+		{
+			VisitChildren (memberReferenceExpression);
+		}
+		
+		public virtual void VisitNullReferenceExpression (NullReferenceExpression nullReferenceExpression)
+		{
+			VisitChildren (nullReferenceExpression);
+		}
+		
+		public virtual void VisitObjectCreateExpression (ObjectCreateExpression objectCreateExpression)
+		{
+			VisitChildren (objectCreateExpression);
+		}
+		
+		public virtual void VisitAnonymousTypeCreateExpression(AnonymousTypeCreateExpression anonymousTypeCreateExpression)
+		{
+			VisitChildren (anonymousTypeCreateExpression);
+		}
+		
+		public virtual void VisitArrayCreateExpression (ArrayCreateExpression arrayCreateExpression)
+		{
+			VisitChildren (arrayCreateExpression);
+		}
+		
+		public virtual void VisitParenthesizedExpression (ParenthesizedExpression parenthesizedExpression)
+		{
+			VisitChildren (parenthesizedExpression);
+		}
+		
+		public virtual void VisitPointerReferenceExpression (PointerReferenceExpression pointerReferenceExpression)
+		{
+			VisitChildren (pointerReferenceExpression);
+		}
+		
+		public virtual void VisitPrimitiveExpression(PrimitiveExpression primitiveExpression)
+		{
+			VisitChildren (primitiveExpression);
+		}
+		
+		public virtual void VisitSizeOfExpression (SizeOfExpression sizeOfExpression)
+		{
+			VisitChildren (sizeOfExpression);
+		}
+		
+		public virtual void VisitStackAllocExpression (StackAllocExpression stackAllocExpression)
+		{
+			VisitChildren (stackAllocExpression);
+		}
+		
+		public virtual void VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression)
+		{
+			VisitChildren (thisReferenceExpression);
+		}
+		
+		public virtual void VisitTypeOfExpression (TypeOfExpression typeOfExpression)
+		{
+			VisitChildren (typeOfExpression);
+		}
+		
+		public virtual void VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression)
+		{
+			VisitChildren (typeReferenceExpression);
+		}
+		
+		public virtual void VisitUnaryOperatorExpression (UnaryOperatorExpression unaryOperatorExpression)
+		{
+			VisitChildren (unaryOperatorExpression);
+		}
+		
+		public virtual void VisitUncheckedExpression (UncheckedExpression uncheckedExpression)
+		{
+			VisitChildren (uncheckedExpression);
+		}
+		
+		public virtual void VisitQueryExpression(QueryExpression queryExpression)
+		{
+			VisitChildren (queryExpression);
+		}
+		
+		public virtual void VisitQueryContinuationClause(QueryContinuationClause queryContinuationClause)
+		{
+			VisitChildren (queryContinuationClause);
+		}
+		
+		public virtual void VisitQueryFromClause(QueryFromClause queryFromClause)
+		{
+			VisitChildren (queryFromClause);
+		}
+		
+		public virtual void VisitQueryLetClause(QueryLetClause queryLetClause)
+		{
+			VisitChildren (queryLetClause);
+		}
+		
+		public virtual void VisitQueryWhereClause(QueryWhereClause queryWhereClause)
+		{
+			VisitChildren (queryWhereClause);
+		}
+		
+		public virtual void VisitQueryJoinClause(QueryJoinClause queryJoinClause)
+		{
+			VisitChildren (queryJoinClause);
+		}
+		
+		public virtual void VisitQueryOrderClause(QueryOrderClause queryOrderClause)
+		{
+			VisitChildren (queryOrderClause);
+		}
+		
+		public virtual void VisitQueryOrdering(QueryOrdering queryOrdering)
+		{
+			VisitChildren (queryOrdering);
+		}
+		
+		public virtual void VisitQuerySelectClause(QuerySelectClause querySelectClause)
+		{
+			VisitChildren (querySelectClause);
+		}
+		
+		public virtual void VisitQueryGroupClause(QueryGroupClause queryGroupClause)
+		{
+			VisitChildren (queryGroupClause);
+		}
+		
+		public virtual void VisitAsExpression (AsExpression asExpression)
+		{
+			VisitChildren (asExpression);
+		}
+		
+		public virtual void VisitIsExpression (IsExpression isExpression)
+		{
+			VisitChildren (isExpression);
+		}
+		
+		public virtual void VisitDefaultValueExpression (DefaultValueExpression defaultValueExpression)
+		{
+			VisitChildren (defaultValueExpression);
+		}
+		
+		public virtual void VisitUndocumentedExpression (UndocumentedExpression undocumentedExpression)
+		{
+			VisitChildren (undocumentedExpression);
+		}
+		
+		public virtual void VisitArrayInitializerExpression (ArrayInitializerExpression arrayInitializerExpression)
+		{
+			VisitChildren (arrayInitializerExpression);
+		}
+		
+		public virtual void VisitArraySpecifier (ArraySpecifier arraySpecifier)
+		{
+			VisitChildren (arraySpecifier);
+		}
+		
+		public virtual void VisitNamedArgumentExpression (NamedArgumentExpression namedArgumentExpression)
+		{
+			VisitChildren (namedArgumentExpression);
+		}
+		
+		public virtual void VisitNamedExpression (NamedExpression namedExpression)
+		{
+			VisitChildren (namedExpression);
+		}
+		
+		public virtual void VisitEmptyExpression (EmptyExpression emptyExpression)
+		{
+			VisitChildren (emptyExpression);
+		}
+		
+		public virtual void VisitPatternPlaceholder(AstNode placeholder, PatternMatching.Pattern pattern)
+		{
+			VisitChildren (placeholder);
+		}
+	}
+	
+	/// <summary>
+	/// AST visitor with a default implementation that visits all node depth-first.
+	/// </summary>
+	public abstract class DepthFirstAstVisitor<T> : IAstVisitor<T>
+	{
+		protected virtual T VisitChildren (AstNode node)
+		{
+			AstNode next;
+			for (var child = node.FirstChild; child != null; child = next) {
+				// Store next to allow the loop to continue
+				// if the visitor removes/replaces child.
+				next = child.NextSibling;
+				child.AcceptVisitor (this);
+			}
+			return default (T);
+		}
+		
+		public virtual T VisitCompilationUnit (CompilationUnit unit)
+		{
+			return VisitChildren (unit);
+		}
+		
+		public virtual T VisitComment (Comment comment)
+		{
+			return VisitChildren (comment);
+		}
+		
+		public virtual T VisitNewLine(NewLineNode newLineNode)
+		{
+			return VisitChildren(newLineNode);
+		}
+		
+		public virtual T VisitWhitespace(WhitespaceNode whitespaceNode)
+		{
+			return VisitChildren(whitespaceNode);
+		}
+
+		public virtual T VisitText(TextNode textNode)
+		{
+			return VisitChildren(textNode);
+		}
+
+		public virtual T VisitDocumentationReference (DocumentationReference documentationReference)
+		{
+			return VisitChildren (documentationReference);
+		}
+		
+		public virtual T VisitPreProcessorDirective (PreProcessorDirective preProcessorDirective)
+		{
+			return VisitChildren (preProcessorDirective);
+		}
+
+		public virtual T VisitIdentifier (Identifier identifier)
+		{
+			return VisitChildren (identifier);
+		}
+		
+		public virtual T VisitCSharpTokenNode (CSharpTokenNode token)
+		{
+			return VisitChildren (token);
+		}
+		
+		public virtual T VisitPrimitiveType (PrimitiveType primitiveType)
+		{
+			return VisitChildren (primitiveType);
+		}
+		
+		public virtual T VisitComposedType (ComposedType composedType)
+		{
+			return VisitChildren (composedType);
+		}
+		
+		public virtual T VisitSimpleType(SimpleType simpleType)
+		{
+			return VisitChildren (simpleType);
+		}
+		
+		public virtual T VisitMemberType(MemberType memberType)
+		{
+			return VisitChildren (memberType);
+		}
+		
+		public virtual T VisitAttribute (Attribute attribute)
+		{
+			return VisitChildren (attribute);
+		}
+		
+		public virtual T VisitAttributeSection (AttributeSection attributeSection)
+		{
+			return VisitChildren (attributeSection);
+		}
+		
+		public virtual T VisitDelegateDeclaration (DelegateDeclaration delegateDeclaration)
+		{
+			return VisitChildren (delegateDeclaration);
+		}
+		
+		public virtual T VisitNamespaceDeclaration (NamespaceDeclaration namespaceDeclaration)
+		{
+			return VisitChildren (namespaceDeclaration);
+		}
+		
+		public virtual T VisitTypeDeclaration (TypeDeclaration typeDeclaration)
+		{
+			return VisitChildren (typeDeclaration);
+		}
+		
+		public virtual T VisitTypeParameterDeclaration (TypeParameterDeclaration typeParameterDeclaration)
+		{
+			return VisitChildren (typeParameterDeclaration);
+		}
+		
+		public virtual T VisitEnumMemberDeclaration (EnumMemberDeclaration enumMemberDeclaration)
+		{
+			return VisitChildren (enumMemberDeclaration);
+		}
+		
+		public virtual T VisitUsingDeclaration (UsingDeclaration usingDeclaration)
+		{
+			return VisitChildren (usingDeclaration);
+		}
+		
+		public virtual T VisitUsingAliasDeclaration (UsingAliasDeclaration usingDeclaration)
+		{
+			return VisitChildren (usingDeclaration);
+		}
+		
+		public virtual T VisitExternAliasDeclaration(ExternAliasDeclaration externAliasDeclaration)
+		{
+			return VisitChildren (externAliasDeclaration);
+		}
+		
+		public virtual T VisitConstructorDeclaration (ConstructorDeclaration constructorDeclaration)
+		{
+			return VisitChildren (constructorDeclaration);
+		}
+		
+		public virtual T VisitConstructorInitializer (ConstructorInitializer constructorInitializer)
+		{
+			return VisitChildren (constructorInitializer);
+		}
+		
+		public virtual T VisitDestructorDeclaration (DestructorDeclaration destructorDeclaration)
+		{
+			return VisitChildren (destructorDeclaration);
+		}
+		
+		public virtual T VisitEventDeclaration (EventDeclaration eventDeclaration)
+		{
+			return VisitChildren (eventDeclaration);
+		}
+		
+		public virtual T VisitCustomEventDeclaration (CustomEventDeclaration eventDeclaration)
+		{
+			return VisitChildren (eventDeclaration);
+		}
+		
+		public virtual T VisitFieldDeclaration (FieldDeclaration fieldDeclaration)
+		{
+			return VisitChildren (fieldDeclaration);
+		}
+		
+		public virtual T VisitFixedFieldDeclaration (FixedFieldDeclaration fixedFieldDeclaration)
+		{
+			return VisitChildren (fixedFieldDeclaration);
+		}
+		
+		public virtual T VisitFixedVariableInitializer (FixedVariableInitializer fixedVariableInitializer)
+		{
+			return VisitChildren (fixedVariableInitializer);
+		}
+		
+		public virtual T VisitIndexerDeclaration (IndexerDeclaration indexerDeclaration)
+		{
+			return VisitChildren (indexerDeclaration);
+		}
+		
+		public virtual T VisitMethodDeclaration (MethodDeclaration methodDeclaration)
+		{
+			return VisitChildren (methodDeclaration);
+		}
+		
+		public virtual T VisitOperatorDeclaration (OperatorDeclaration operatorDeclaration)
+		{
+			return VisitChildren (operatorDeclaration);
+		}
+		
+		public virtual T VisitPropertyDeclaration (PropertyDeclaration propertyDeclaration)
+		{
+			return VisitChildren (propertyDeclaration);
+		}
+		
+		public virtual T VisitAccessor (Accessor accessor)
+		{
+			return VisitChildren (accessor);
+		}
+		
+		public virtual T VisitVariableInitializer (VariableInitializer variableInitializer)
+		{
+			return VisitChildren (variableInitializer);
+		}
+		
+		public virtual T VisitParameterDeclaration (ParameterDeclaration parameterDeclaration)
+		{
+			return VisitChildren (parameterDeclaration);
+		}
+		
+		public virtual T VisitConstraint (Constraint constraint)
+		{
+			return VisitChildren (constraint);
+		}
+		
+		public virtual T VisitBlockStatement (BlockStatement blockStatement)
+		{
+			return VisitChildren (blockStatement);
+		}
+		
+		public virtual T VisitExpressionStatement (ExpressionStatement expressionStatement)
+		{
+			return VisitChildren (expressionStatement);
+		}
+		
+		public virtual T VisitBreakStatement (BreakStatement breakStatement)
+		{
+			return VisitChildren (breakStatement);
+		}
+		
+		public virtual T VisitCheckedStatement (CheckedStatement checkedStatement)
+		{
+			return VisitChildren (checkedStatement);
+		}
+		
+		public virtual T VisitContinueStatement (ContinueStatement continueStatement)
+		{
+			return VisitChildren (continueStatement);
+		}
+		
+		public virtual T VisitDoWhileStatement (DoWhileStatement doWhileStatement)
+		{
+			return VisitChildren (doWhileStatement);
+		}
+		
+		public virtual T VisitEmptyStatement (EmptyStatement emptyStatement)
+		{
+			return VisitChildren (emptyStatement);
+		}
+		
+		public virtual T VisitFixedStatement (FixedStatement fixedStatement)
+		{
+			return VisitChildren (fixedStatement);
+		}
+		
+		public virtual T VisitForeachStatement (ForeachStatement foreachStatement)
+		{
+			return VisitChildren (foreachStatement);
+		}
+		
+		public virtual T VisitForStatement (ForStatement forStatement)
+		{
+			return VisitChildren (forStatement);
+		}
+		
+		public virtual T VisitGotoCaseStatement (GotoCaseStatement gotoCaseStatement)
+		{
+			return VisitChildren (gotoCaseStatement);
+		}
+		
+		public virtual T VisitGotoDefaultStatement (GotoDefaultStatement gotoDefaultStatement)
+		{
+			return VisitChildren (gotoDefaultStatement);
+		}
+		
+		public virtual T VisitGotoStatement (GotoStatement gotoStatement)
+		{
+			return VisitChildren (gotoStatement);
+		}
+		
+		public virtual T VisitIfElseStatement (IfElseStatement ifElseStatement)
+		{
+			return VisitChildren (ifElseStatement);
+		}
+		
+		public virtual T VisitLabelStatement (LabelStatement labelStatement)
+		{
+			return VisitChildren (labelStatement);
+		}
+		
+		public virtual T VisitLockStatement (LockStatement lockStatement)
+		{
+			return VisitChildren (lockStatement);
+		}
+		
+		public virtual T VisitReturnStatement (ReturnStatement returnStatement)
+		{
+			return VisitChildren (returnStatement);
+		}
+		
+		public virtual T VisitSwitchStatement (SwitchStatement switchStatement)
+		{
+			return VisitChildren (switchStatement);
+		}
+		
+		public virtual T VisitSwitchSection (SwitchSection switchSection)
+		{
+			return VisitChildren (switchSection);
+		}
+		
+		public virtual T VisitCaseLabel (CaseLabel caseLabel)
+		{
+			return VisitChildren (caseLabel);
+		}
+		
+		public virtual T VisitThrowStatement (ThrowStatement throwStatement)
+		{
+			return VisitChildren (throwStatement);
+		}
+		
+		public virtual T VisitTryCatchStatement (TryCatchStatement tryCatchStatement)
+		{
+			return VisitChildren (tryCatchStatement);
+		}
+		
+		public virtual T VisitCatchClause (CatchClause catchClause)
+		{
+			return VisitChildren (catchClause);
+		}
+		
+		public virtual T VisitUncheckedStatement (UncheckedStatement uncheckedStatement)
+		{
+			return VisitChildren (uncheckedStatement);
+		}
+		
+		public virtual T VisitUnsafeStatement (UnsafeStatement unsafeStatement)
+		{
+			return VisitChildren (unsafeStatement);
+		}
+		
+		public virtual T VisitUsingStatement (UsingStatement usingStatement)
+		{
+			return VisitChildren (usingStatement);
+		}
+		
+		public virtual T VisitVariableDeclarationStatement (VariableDeclarationStatement variableDeclarationStatement)
+		{
+			return VisitChildren (variableDeclarationStatement);
+		}
+		
+		public virtual T VisitWhileStatement (WhileStatement whileStatement)
+		{
+			return VisitChildren (whileStatement);
+		}
+		
+		public virtual T VisitYieldBreakStatement (YieldBreakStatement yieldBreakStatement)
+		{
+			return VisitChildren (yieldBreakStatement);
+		}
+		
+		public virtual T VisitYieldReturnStatement (YieldReturnStatement yieldReturnStatement)
+		{
+			return VisitChildren (yieldReturnStatement);
+		}
+		
+		public virtual T VisitAnonymousMethodExpression (AnonymousMethodExpression anonymousMethodExpression)
+		{
+			return VisitChildren (anonymousMethodExpression);
+		}
+		
+		public virtual T VisitLambdaExpression (LambdaExpression lambdaExpression)
+		{
+			return VisitChildren (lambdaExpression);
+		}
+		
+		public virtual T VisitAssignmentExpression (AssignmentExpression assignmentExpression)
+		{
+			return VisitChildren (assignmentExpression);
+		}
+		
+		public virtual T VisitBaseReferenceExpression (BaseReferenceExpression baseReferenceExpression)
+		{
+			return VisitChildren (baseReferenceExpression);
+		}
+		
+		public virtual T VisitBinaryOperatorExpression (BinaryOperatorExpression binaryOperatorExpression)
+		{
+			return VisitChildren (binaryOperatorExpression);
+		}
+		
+		public virtual T VisitCastExpression (CastExpression castExpression)
+		{
+			return VisitChildren (castExpression);
+		}
+		
+		public virtual T VisitCheckedExpression (CheckedExpression checkedExpression)
+		{
+			return VisitChildren (checkedExpression);
+		}
+		
+		public virtual T VisitConditionalExpression (ConditionalExpression conditionalExpression)
+		{
+			return VisitChildren (conditionalExpression);
+		}
+		
+		public virtual T VisitIdentifierExpression (IdentifierExpression identifierExpression)
+		{
+			return VisitChildren (identifierExpression);
+		}
+		
+		public virtual T VisitIndexerExpression (IndexerExpression indexerExpression)
+		{
+			return VisitChildren (indexerExpression);
+		}
+		
+		public virtual T VisitInvocationExpression (InvocationExpression invocationExpression)
+		{
+			return VisitChildren (invocationExpression);
+		}
+		
+		public virtual T VisitDirectionExpression (DirectionExpression directionExpression)
+		{
+			return VisitChildren (directionExpression);
+		}
+		
+		public virtual T VisitMemberReferenceExpression (MemberReferenceExpression memberReferenceExpression)
+		{
+			return VisitChildren (memberReferenceExpression);
+		}
+		
+		public virtual T VisitNullReferenceExpression (NullReferenceExpression nullReferenceExpression)
+		{
+			return VisitChildren (nullReferenceExpression);
+		}
+		
+		public virtual T VisitObjectCreateExpression (ObjectCreateExpression objectCreateExpression)
+		{
+			return VisitChildren (objectCreateExpression);
+		}
+		
+		public virtual T VisitAnonymousTypeCreateExpression(AnonymousTypeCreateExpression anonymousTypeCreateExpression)
+		{
+			return VisitChildren (anonymousTypeCreateExpression);
+		}
+		
+		public virtual T VisitArrayCreateExpression (ArrayCreateExpression arrayCreateExpression)
+		{
+			return VisitChildren (arrayCreateExpression);
+		}
+		
+		public virtual T VisitParenthesizedExpression (ParenthesizedExpression parenthesizedExpression)
+		{
+			return VisitChildren (parenthesizedExpression);
+		}
+		
+		public virtual T VisitPointerReferenceExpression (PointerReferenceExpression pointerReferenceExpression)
+		{
+			return VisitChildren (pointerReferenceExpression);
+		}
+		
+		public virtual T VisitPrimitiveExpression(PrimitiveExpression primitiveExpression)
+		{
+			return VisitChildren (primitiveExpression);
+		}
+		
+		public virtual T VisitSizeOfExpression (SizeOfExpression sizeOfExpression)
+		{
+			return VisitChildren (sizeOfExpression);
+		}
+		
+		public virtual T VisitStackAllocExpression (StackAllocExpression stackAllocExpression)
+		{
+			return VisitChildren (stackAllocExpression);
+		}
+		
+		public virtual T VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression)
+		{
+			return VisitChildren (thisReferenceExpression);
+		}
+		
+		public virtual T VisitTypeOfExpression (TypeOfExpression typeOfExpression)
+		{
+			return VisitChildren (typeOfExpression);
+		}
+		
+		public virtual T VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression)
+		{
+			return VisitChildren (typeReferenceExpression);
+		}
+		
+		public virtual T VisitUnaryOperatorExpression (UnaryOperatorExpression unaryOperatorExpression)
+		{
+			return VisitChildren (unaryOperatorExpression);
+		}
+		
+		public virtual T VisitUncheckedExpression (UncheckedExpression uncheckedExpression)
+		{
+			return VisitChildren (uncheckedExpression);
+		}
+		
+		public virtual T VisitQueryExpression(QueryExpression queryExpression)
+		{
+			return VisitChildren (queryExpression);
+		}
+		
+		public virtual T VisitQueryContinuationClause(QueryContinuationClause queryContinuationClause)
+		{
+			return VisitChildren (queryContinuationClause);
+		}
+		
+		public virtual T VisitQueryFromClause(QueryFromClause queryFromClause)
+		{
+			return VisitChildren (queryFromClause);
+		}
+		
+		public virtual T VisitQueryLetClause(QueryLetClause queryLetClause)
+		{
+			return VisitChildren (queryLetClause);
+		}
+		
+		public virtual T VisitQueryWhereClause(QueryWhereClause queryWhereClause)
+		{
+			return VisitChildren (queryWhereClause);
+		}
+		
+		public virtual T VisitQueryJoinClause(QueryJoinClause queryJoinClause)
+		{
+			return VisitChildren (queryJoinClause);
+		}
+		
+		public virtual T VisitQueryOrderClause(QueryOrderClause queryOrderClause)
+		{
+			return VisitChildren (queryOrderClause);
+		}
+		
+		public virtual T VisitQueryOrdering(QueryOrdering queryOrdering)
+		{
+			return VisitChildren (queryOrdering);
+		}
+		
+		public virtual T VisitQuerySelectClause(QuerySelectClause querySelectClause)
+		{
+			return VisitChildren (querySelectClause);
+		}
+		
+		public virtual T VisitQueryGroupClause(QueryGroupClause queryGroupClause)
+		{
+			return VisitChildren (queryGroupClause);
+		}
+		
+		public virtual T VisitAsExpression (AsExpression asExpression)
+		{
+			return VisitChildren (asExpression);
+		}
+		
+		public virtual T VisitIsExpression (IsExpression isExpression)
+		{
+			return VisitChildren (isExpression);
+		}
+		
+		public virtual T VisitDefaultValueExpression (DefaultValueExpression defaultValueExpression)
+		{
+			return VisitChildren (defaultValueExpression);
+		}
+		
+		public virtual T VisitUndocumentedExpression (UndocumentedExpression undocumentedExpression)
+		{
+			return VisitChildren (undocumentedExpression);
+		}
+		
+		public virtual T VisitArrayInitializerExpression (ArrayInitializerExpression arrayInitializerExpression)
+		{
+			return VisitChildren (arrayInitializerExpression);
+		}
+		
+		public virtual T VisitArraySpecifier (ArraySpecifier arraySpecifier)
+		{
+			return VisitChildren (arraySpecifier);
+		}
+		
+		public virtual T VisitNamedArgumentExpression (NamedArgumentExpression namedArgumentExpression)
+		{
+			return VisitChildren (namedArgumentExpression);
+		}
+		
+		public virtual T VisitNamedExpression (NamedExpression namedExpression)
+		{
+			return VisitChildren (namedExpression);
+		}
+		
+		public virtual T VisitEmptyExpression (EmptyExpression emptyExpression)
+		{
+			return VisitChildren (emptyExpression);
+		}
+		
+		public virtual T VisitPatternPlaceholder(AstNode placeholder, PatternMatching.Pattern pattern)
+		{
+			return VisitChildren (placeholder);
+		}
+	}
+	
+	/// <summary>
+	/// AST visitor with a default implementation that visits all node depth-first.
+	/// </summary>
 	public abstract class DepthFirstAstVisitor<T, S> : IAstVisitor<T, S>
 	{
 		protected virtual S VisitChildren (AstNode node, T data)
@@ -53,6 +1248,26 @@ namespace ICSharpCode.NRefactory.CSharp
 		public virtual S VisitComment (Comment comment, T data)
 		{
 			return VisitChildren (comment, data);
+		}
+		
+		public virtual S VisitNewLine(NewLineNode newLineNode, T data)
+		{
+			return VisitChildren(newLineNode, data);
+		}
+
+		public virtual S VisitWhitespace(WhitespaceNode whitespaceNode, T data)
+		{
+			return VisitChildren(whitespaceNode, data);
+		}
+
+		public virtual S VisitText(TextNode textNode, T data)
+		{
+			return VisitChildren(textNode, data);
+		}
+
+		public virtual S VisitDocumentationReference (DocumentationReference documentationReference, T data)
+		{
+			return VisitChildren (documentationReference, data);
 		}
 		
 		public virtual S VisitPreProcessorDirective (PreProcessorDirective preProcessorDirective, T data)

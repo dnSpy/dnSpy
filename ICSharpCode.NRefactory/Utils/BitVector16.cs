@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Globalization;
 
 namespace ICSharpCode.NRefactory.Utils
 {
@@ -76,7 +77,7 @@ namespace ICSharpCode.NRefactory.Utils
 		
 		public override string ToString()
 		{
-			return data.ToString("x4");
+			return data.ToString("x4", CultureInfo.InvariantCulture);
 		}
 	}
 }

@@ -120,7 +120,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser
 		
 		void CheckMissingTokens(AstNode node)
 		{
-			if (node is IRelocatable) {
+			if (node is CSharpTokenNode) {
 				Assert.IsNull(node.FirstChild, "Token nodes should not have children");
 			} else {
 				var prevNodeEnd = node.StartLocation;
