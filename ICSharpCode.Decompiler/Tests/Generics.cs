@@ -123,6 +123,11 @@ public static class Generics
 		return (string)((object)input);
 	}
 	
+	public static T CastFromString<T>(string input)
+	{
+		return (T)((object)input);
+	}
+	
 	public static bool IsInt<T>(T input)
 	{
 		return input is int;
@@ -131,6 +136,11 @@ public static class Generics
 	public static int CastToInt<T>(T input)
 	{
 		return (int)((object)input);
+	}
+	
+	public static T CastFromInt<T>(int input)
+	{
+		return (T)((object)input);
 	}
 	
 	public static bool IsNullableInt<T>(T input)
@@ -146,5 +156,10 @@ public static class Generics
 	public static int? CastToNullableInt<T>(T input)
 	{
 		return (int?)((object)input);
+	}
+	
+	public static T CastFromNullableInt<T>(int? input)
+	{
+		return (T)((object)input);
 	}
 }
