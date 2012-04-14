@@ -689,7 +689,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				bool isNotKey = (identifier > 0xe8);
 				if (isNotKey)
 					identifier = (short)(identifier - 0xe8);
-				ResourceName resource = KnownInfo.KnownResourceTable[identifier];
+				ResourceName resource;
+				if (!KnownInfo.KnownResourceTable.TryGetValue(identifier, out resource))
+					throw new ArgumentException("Cannot find resource name " + identifier);
 				if (!isNotKey)
 					return new ResourceName(resource.Name + "Key");
 				return resource;
@@ -1253,6 +1255,8 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		
 		XmlPIMapping FindByClrNamespaceAndAssemblyName(string clrNamespace, string assemblyName)
 		{
+			if (clrNamespace == XamlTypeDeclaration.Namespace && assemblyName == XamlTypeDeclaration.Assembly)
+				return new XmlPIMapping(XmlPIMapping.XamlNamespace, assemblyName, clrNamespace);
 			for (int x = 0; x < Mappings.Count; x++) {
 				XmlPIMapping xp = Mappings[x];
 				if (string.Equals(xp.Assembly, assemblyName, StringComparison.Ordinal) && string.Equals(xp.ClrNamespace, clrNamespace, StringComparison.Ordinal))
@@ -1406,7 +1410,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				resource = GetTypeExtension(typeIdentifier);
 			else if (isStaticType) {
 				object name = GetResourceName(typeIdentifier);
-				if (name is ResourceName)
+				if (name == null)
+					resource = null;
+				else if (name is ResourceName)
 					resource = GetStaticExtension(((ResourceName)name).Name);
 				else if (name is PropertyDeclaration)
 					resource = GetStaticExtension(FormatPropertyDeclaration(((PropertyDeclaration)name), true, false, false));
@@ -1512,7 +1518,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		object GetStaticResource(short identifier)
 		{
-			int keyIndex = currentKey;
+			int keyIndex = currentKey - 1;
 			while (keyIndex >= 0 && !keys[keyIndex].HasStaticResources)
 				keyIndex--;
 			if (keyIndex >= 0 && identifier < keys[keyIndex].StaticResources.Count)
