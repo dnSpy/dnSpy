@@ -177,7 +177,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// The filter is tested on the original method definitions (before specialization).</param>
 		/// <param name="options">Specified additional options for the GetMembers() operation.</param>
 		/// <remarks>
-		/// <para>The result does not include constructors in base classes or static constructors.</para>
+		/// <para>The result does not include static constructors.
+		/// Constructors in base classes are not returned by default, as GetMemberOptions.IgnoreInheritedMembers is the default value.</para>
 		/// <para>
 		/// For methods on parameterized types, type substitution will be performed on the method signature,
 		/// and the appropriate <see cref="Implementation.SpecializedMethod"/> will be returned.

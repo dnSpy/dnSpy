@@ -147,10 +147,7 @@ namespace ICSharpCode.NRefactory.Demo
 		
 		void CSharpGenerateCodeButtonClick(object sender, EventArgs e)
 		{
-			StringWriter w = new StringWriter();
-			CSharpOutputVisitor output = new CSharpOutputVisitor(w, new CSharpFormattingOptions());
-			compilationUnit.AcceptVisitor(output, null);
-			csharpCodeTextBox.Text = w.ToString();
+			csharpCodeTextBox.Text = compilationUnit.GetText();
 		}
 		
 		int GetOffset(TextBox textBox, TextLocation location)

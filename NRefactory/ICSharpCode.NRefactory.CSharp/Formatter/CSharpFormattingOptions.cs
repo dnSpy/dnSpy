@@ -37,7 +37,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		EndOfLineWithoutSpace,
 		NextLine,
 		NextLineShifted,
-		NextLineShifted2
+		NextLineShifted2,
+		BannerStyle
 	}
 
 	public enum BraceForcement
@@ -47,17 +48,17 @@ namespace ICSharpCode.NRefactory.CSharp
 		AddBraces
 	}
 
-	public enum ArrayInitializerPlacement
-	{
-		AlwaysNewLine,
-		AlwaysSameLine
-	}
-
 	public enum PropertyFormatting
 	{
 		AllowOneLine,
 		ForceOneLine,
 		ForceNewLine
+	}
+
+	public enum Wrapping {
+		DoNotWrap,
+		WrapAlways,
+		WrapIfTooLong
 	}
 
 	public class CSharpFormattingOptions
@@ -318,11 +319,6 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 
 		public bool PlaceWhileOnNewLine { // tested
-			get;
-			set;
-		}
-
-		public ArrayInitializerPlacement PlaceArrayInitializersOnNewLine {
 			get;
 			set;
 		}
@@ -726,6 +722,10 @@ namespace ICSharpCode.NRefactory.CSharp
 			set;
 		}
 
+		public bool SpaceInNamedArgumentAfterDoubleColon {
+			get;
+			set;
+		}
 		#endregion
 		
 		#region Blank Lines
@@ -765,119 +765,31 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 
 		#endregion
-		
-		public CSharpFormattingOptions ()
+
+
+		#region Keep formatting
+		public bool KeepCommentsAtFirstColumn {
+			get;
+			set;
+		}
+		#endregion
+
+		#region Wrapping
+
+		public Wrapping ArrayInitializerWrapping {
+			get;
+			set;
+		}
+
+		public BraceStyle ArrayInitializerBraceStyle {
+			get;
+			set;
+		}
+
+		#endregion
+
+		internal CSharpFormattingOptions()
 		{
-			IndentNamespaceBody = true;
-			IndentClassBody = IndentInterfaceBody = IndentStructBody = IndentEnumBody = true;
-			IndentMethodBody = IndentPropertyBody = IndentEventBody = true;
-			IndentBlocks = true;
-			IndentSwitchBody = false;
-			IndentCaseBody = true;
-			IndentBreakStatements = true;
-			NamespaceBraceStyle = BraceStyle.NextLine;
-			ClassBraceStyle = InterfaceBraceStyle = StructBraceStyle = EnumBraceStyle = BraceStyle.NextLine;
-			MethodBraceStyle = ConstructorBraceStyle = DestructorBraceStyle = BraceStyle.NextLine;
-			AnonymousMethodBraceStyle = BraceStyle.EndOfLine;
-
-			PropertyBraceStyle = PropertyGetBraceStyle = PropertySetBraceStyle = BraceStyle.EndOfLine;
-			AllowPropertyGetBlockInline = AllowPropertySetBlockInline = true;
-
-			EventBraceStyle = EventAddBraceStyle = EventRemoveBraceStyle = BraceStyle.EndOfLine;
-			AllowEventAddBlockInline = AllowEventRemoveBlockInline = true;
-			StatementBraceStyle = BraceStyle.EndOfLine;
-
-			PlaceElseOnNewLine = false;
-			PlaceCatchOnNewLine = false;
-			PlaceFinallyOnNewLine = false;
-			PlaceWhileOnNewLine = false;
-			PlaceArrayInitializersOnNewLine = ArrayInitializerPlacement.AlwaysSameLine;
-
-			SpaceBeforeMethodCallParentheses = true;
-			SpaceBeforeMethodDeclarationParentheses = true;
-			SpaceBeforeConstructorDeclarationParentheses = true;
-			SpaceBeforeDelegateDeclarationParentheses = true;
-			SpaceAfterMethodCallParameterComma = true;
-			SpaceAfterConstructorDeclarationParameterComma = true;
-			
-			SpaceBeforeNewParentheses = true;
-			SpacesWithinNewParentheses = false;
-			SpacesBetweenEmptyNewParentheses = false;
-			SpaceBeforeNewParameterComma = false;
-			SpaceAfterNewParameterComma = true;
-			
-			SpaceBeforeIfParentheses = true;
-			SpaceBeforeWhileParentheses = true;
-			SpaceBeforeForParentheses = true;
-			SpaceBeforeForeachParentheses = true;
-			SpaceBeforeCatchParentheses = true;
-			SpaceBeforeSwitchParentheses = true;
-			SpaceBeforeLockParentheses = true;
-			SpaceBeforeUsingParentheses = true;
-			SpaceAroundAssignment = true;
-			SpaceAroundLogicalOperator = true;
-			SpaceAroundEqualityOperator = true;
-			SpaceAroundRelationalOperator = true;
-			SpaceAroundBitwiseOperator = true;
-			SpaceAroundAdditiveOperator = true;
-			SpaceAroundMultiplicativeOperator = true;
-			SpaceAroundShiftOperator = true;
-			SpaceAroundNullCoalescingOperator = true;
-			SpacesWithinParentheses = false;
-			SpaceWithinMethodCallParentheses = false;
-			SpaceWithinMethodDeclarationParentheses = false;
-			SpacesWithinIfParentheses = false;
-			SpacesWithinWhileParentheses = false;
-			SpacesWithinForParentheses = false;
-			SpacesWithinForeachParentheses = false;
-			SpacesWithinCatchParentheses = false;
-			SpacesWithinSwitchParentheses = false;
-			SpacesWithinLockParentheses = false;
-			SpacesWithinUsingParentheses = false;
-			SpacesWithinCastParentheses = false;
-			SpacesWithinSizeOfParentheses = false;
-			SpacesWithinTypeOfParentheses = false;
-			SpacesWithinCheckedExpressionParantheses = false;
-			SpaceBeforeConditionalOperatorCondition = true;
-			SpaceAfterConditionalOperatorCondition = true;
-			SpaceBeforeConditionalOperatorSeparator = true;
-			SpaceAfterConditionalOperatorSeparator = true;
-
-			SpacesWithinBrackets = false;
-			SpacesBeforeBrackets = true;
-			SpaceBeforeBracketComma = false;
-			SpaceAfterBracketComma = true;
-					
-			SpaceBeforeForSemicolon = false;
-			SpaceAfterForSemicolon = true;
-			SpaceAfterTypecast = false;
-			
-			AlignEmbeddedIfStatements = true;
-			AlignEmbeddedUsingStatements = true;
-			PropertyFormatting = PropertyFormatting.AllowOneLine;
-			SpaceBeforeMethodDeclarationParameterComma = false;
-			SpaceAfterMethodDeclarationParameterComma = true;
-			SpaceBeforeFieldDeclarationComma = false;
-			SpaceAfterFieldDeclarationComma = true;
-			SpaceBeforeLocalVariableDeclarationComma = false;
-			SpaceAfterLocalVariableDeclarationComma = true;
-			
-			SpaceBeforeIndexerDeclarationBracket = true;
-			SpaceWithinIndexerDeclarationBracket = false;
-			SpaceBeforeIndexerDeclarationParameterComma = false;
-		
-		
-			SpaceAfterIndexerDeclarationParameterComma = true;
-			
-			BlankLinesBeforeUsings = 0;
-			BlankLinesAfterUsings = 1;
-			
-			
-			BlankLinesBeforeFirstDeclaration = 0;
-			BlankLinesBetweenTypes = 1;
-			BlankLinesBetweenFields = 0;
-			BlankLinesBetweenEventFields = 0;
-			BlankLinesBetweenMembers = 1;
 		}
 
 		/*public static CSharpFormattingOptions Load (FilePath selectedFile)
@@ -889,7 +801,7 @@ namespace ICSharpCode.NRefactory.CSharp
 
 		public static CSharpFormattingOptions Load (System.IO.Stream input)
 		{
-			CSharpFormattingOptions result = new CSharpFormattingOptions ();
+			CSharpFormattingOptions result = FormattingOptionsFactory.CreateMonoOptions ();
 			result.Name = "noname";
 			using (XmlTextReader reader = new XmlTextReader (input)) {
 				while (reader.Read ()) {

@@ -18,6 +18,8 @@
 
 using System;
 using System.Collections.Generic;
+using ICSharpCode.NRefactory.Documentation;
+using ICSharpCode.NRefactory.Editor;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using System.Linq;
@@ -28,7 +30,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 	/// Represents a file that was parsed and converted for the type system.
 	/// </summary>
 	[Serializable]
-	public sealed class CSharpParsedFile : AbstractFreezable, IParsedFile
+	public sealed class CSharpParsedFile : AbstractFreezable, IParsedFile, IUnresolvedDocumentationProvider
 	{
 		readonly string fileName;
 		readonly UsingScope rootUsingScope;
@@ -37,6 +39,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		IList<IUnresolvedAttribute> moduleAttributes = new List<IUnresolvedAttribute>();
 		IList<UsingScope> usingScopes = new List<UsingScope>();
 		IList<Error> errors = new List<Error> ();
+		Dictionary<IUnresolvedEntity, string> documentation;
 		
 		protected override void FreezeInternal()
 		{
@@ -70,9 +73,9 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			get { return fileName; }
 		}
 		
-		DateTime lastWriteTime = DateTime.UtcNow;
+		DateTime? lastWriteTime;
 		
-		public DateTime LastWriteTime {
+		public DateTime? LastWriteTime {
 			get { return lastWriteTime; }
 			set {
 				FreezableHelper.ThrowIfFrozen(this);
@@ -103,6 +106,14 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		
 		public IList<IUnresolvedAttribute> ModuleAttributes {
 			get { return moduleAttributes; }
+		}
+		
+		public void AddDocumentation(IUnresolvedEntity entity, string xmlDocumentation)
+		{
+			FreezableHelper.ThrowIfFrozen(this);
+			if (documentation == null)
+				documentation = new Dictionary<IUnresolvedEntity, string>();
+			documentation.Add(entity, xmlDocumentation);
 		}
 		
 		public UsingScope GetUsingScope(TextLocation location)
@@ -148,7 +159,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			return null;
 		}
 		
-		public CSharpTypeResolveContext GetTypeResolveContext (ICompilation compilation, TextLocation loc)
+		public CSharpTypeResolveContext GetTypeResolveContext(ICompilation compilation, TextLocation loc)
 		{
 			var rctx = new CSharpTypeResolveContext (compilation.MainAssembly);
 			rctx = rctx.WithUsingScope (GetUsingScope (loc).Resolve (compilation));
@@ -175,6 +186,40 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		public ICSharpCode.NRefactory.CSharp.Resolver.CSharpResolver GetResolver (ICompilation compilation, TextLocation loc)
 		{
 			return new ICSharpCode.NRefactory.CSharp.Resolver.CSharpResolver (GetTypeResolveContext (compilation, loc));
+		}
+		
+		public string GetDocumentation(IUnresolvedEntity entity)
+		{
+			if (entity == null)
+				throw new ArgumentNullException("entity");
+			if (documentation == null)
+				return null;
+			string xmlDoc;
+			if (documentation.TryGetValue(entity, out xmlDoc))
+				return xmlDoc;
+			else
+				return null;
+		}
+		
+		public DocumentationComment GetDocumentation(IUnresolvedEntity entity, IEntity resolvedEntity)
+		{
+			if (entity == null)
+				throw new ArgumentNullException("entity");
+			if (resolvedEntity == null)
+				throw new ArgumentNullException("resolvedEntity");
+			string xmlDoc = GetDocumentation(entity);
+			if (xmlDoc == null)
+				return null;
+			var unresolvedTypeDef = entity as IUnresolvedTypeDefinition ?? entity.DeclaringTypeDefinition;
+			var resolvedTypeDef = resolvedEntity as ITypeDefinition ?? resolvedEntity.DeclaringTypeDefinition;
+			if (unresolvedTypeDef != null && resolvedTypeDef != null) {
+				var context = unresolvedTypeDef.CreateResolveContext(new SimpleTypeResolveContext(resolvedTypeDef));
+				if (resolvedEntity is IMember)
+					context = context.WithCurrentMember((IMember)resolvedEntity);
+				return new CSharpDocumentationComment(new StringTextSource(xmlDoc), context);
+			} else {
+				return new DocumentationComment(new StringTextSource(xmlDoc), new SimpleTypeResolveContext(resolvedEntity));
+			}
 		}
 	}
 }

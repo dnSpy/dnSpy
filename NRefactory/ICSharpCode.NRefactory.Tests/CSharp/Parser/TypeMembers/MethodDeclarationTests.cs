@@ -210,9 +210,9 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 		}
 		
 		[Test]
-		public void ShadowingMethodInInterface()
+		public void ShadowingMethodInInterface ()
 		{
-			ParseUtilCSharp.AssertGlobal(
+			ParseUtilCSharp.AssertGlobal (
 				@"interface MyInterface : IDisposable {
 	new void Dispose();
 }
@@ -314,7 +314,9 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 			Assert.AreEqual("a", md.Name);
 			Assert.AreEqual(1, md.TypeParameters.Count);
 			Assert.AreEqual("T", md.TypeParameters.Single().Name);
-			Assert.AreEqual(0, md.Constraints.Count());
+			Assert.AreEqual(1, md.Constraints.Count());
+			Assert.AreEqual(0, md.Constraints.First ().BaseTypes.Count());
+			
 		}
 		
 		[Test]

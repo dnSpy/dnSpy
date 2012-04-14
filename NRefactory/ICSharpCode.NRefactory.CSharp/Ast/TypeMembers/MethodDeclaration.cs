@@ -24,13 +24,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System.Collections.Generic;
-using System.Linq;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public class MethodDeclaration : MemberDeclaration
+	public class MethodDeclaration : EntityDeclaration
 	{
+		public override EntityType EntityType {
+			get { return EntityType.Method; }
+		}
+		
+		/// <summary>
+		/// Gets/Sets the type reference of the interface that is explicitly implemented.
+		/// Null node if this member is not an explicit interface implementation.
+		/// </summary>
+		public AstType PrivateImplementationType {
+			get { return GetChildByRole (PrivateImplementationTypeRole); }
+			set { SetChildByRole (PrivateImplementationTypeRole, value); }
+		}
+		
 		public AstNodeCollection<TypeParameterDeclaration> TypeParameters {
 			get { return GetChildrenByRole (Roles.TypeParameter); }
 		}
@@ -63,7 +75,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitMethodDeclaration (this);
+		}
+		
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitMethodDeclaration (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitMethodDeclaration (this, data);
 		}
@@ -71,7 +93,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
 			MethodDeclaration o = other as MethodDeclaration;
-			return o != null && this.MatchMember(o, match) && this.TypeParameters.DoMatch(o.TypeParameters, match)
+			return o != null && MatchString(this.Name, o.Name)
+				&& this.MatchAttributesAndModifiers(o, match) && this.ReturnType.DoMatch(o.ReturnType, match)
+				&& this.PrivateImplementationType.DoMatch(o.PrivateImplementationType, match)
+				&& this.TypeParameters.DoMatch(o.TypeParameters, match)
 				&& this.Parameters.DoMatch(o.Parameters, match) && this.Constraints.DoMatch(o.Constraints, match)
 				&& this.Body.DoMatch(o.Body, match);
 		}

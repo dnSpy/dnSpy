@@ -30,21 +30,21 @@ namespace ICSharpCode.NRefactory.Semantics
 	public class ArrayAccessResolveResult : ResolveResult
 	{
 		public readonly ResolveResult Array;
-		public readonly ResolveResult[] Indices;
+		public readonly IList<ResolveResult> Indexes;
 		
-		public ArrayAccessResolveResult(IType elementType, ResolveResult array, ResolveResult[] indices) : base(elementType)
+		public ArrayAccessResolveResult(IType elementType, ResolveResult array, IList<ResolveResult> indexes) : base(elementType)
 		{
 			if (array == null)
 				throw new ArgumentNullException("array");
-			if (indices == null)
-				throw new ArgumentNullException("indices");
+			if (indexes == null)
+				throw new ArgumentNullException("indexes");
 			this.Array = array;
-			this.Indices = indices;
+			this.Indexes = indexes;
 		}
 		
 		public override IEnumerable<ResolveResult> GetChildResults()
 		{
-			return new [] { Array }.Concat(Indices);
+			return new [] { Array }.Concat(Indexes);
 		}
 	}
 }

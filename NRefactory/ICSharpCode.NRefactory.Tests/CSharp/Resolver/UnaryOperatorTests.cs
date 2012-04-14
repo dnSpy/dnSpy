@@ -241,5 +241,20 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			// compiler error:
 			AssertError(typeof(ulong), Resolve("class A { object x = $-(9223372036854775808)$; }"));
 		}
+		
+		[Test]
+		public void IsLiftedProperty()
+		{
+			string program = @"
+class Test {
+	static void Inc() {
+		int? a = 0;
+		a = $-a$;
+	}
+}";
+			var irr = Resolve<OperatorResolveResult>(program);
+			Assert.IsFalse(irr.IsError);
+			Assert.IsTrue(irr.IsLiftedOperator);
+		}
 	}
 }

@@ -69,6 +69,11 @@ namespace ICSharpCode.NRefactory.Semantics
 		public static readonly Conversion BoxingConversion = new BuiltinConversion(true, 7);
 		public static readonly Conversion UnboxingConversion = new BuiltinConversion(false, 8);
 		
+		/// <summary>
+		/// C# 'as' cast.
+		/// </summary>
+		public static readonly Conversion TryCast = new BuiltinConversion(false, 9);
+		
 		public static Conversion UserDefinedImplicitConversion(IMethod operatorMethod, bool isLifted)
 		{
 			if (operatorMethod == null)
@@ -83,11 +88,11 @@ namespace ICSharpCode.NRefactory.Semantics
 			return new UserDefinedConversion(false, operatorMethod, isLifted);
 		}
 		
-		public static Conversion MethodGroupConversion(IMethod chosenMethod)
+		public static Conversion MethodGroupConversion(IMethod chosenMethod, bool isVirtualMethodLookup)
 		{
 			if (chosenMethod == null)
 				throw new ArgumentNullException("chosenMethod");
-			return new MethodGroupConv(chosenMethod);
+			return new MethodGroupConv(chosenMethod, isVirtualMethodLookup);
 		}
 		#endregion
 		
@@ -204,6 +209,10 @@ namespace ICSharpCode.NRefactory.Semantics
 				get { return type == 8; }
 			}
 			
+			public override bool IsTryCast {
+				get { return type == 9; }
+			}
+			
 			public override string ToString()
 			{
 				string name = null;
@@ -231,6 +240,8 @@ namespace ICSharpCode.NRefactory.Semantics
 						return "boxing conversion";
 					case 8:
 						return "unboxing conversion";
+					case 9:
+						return "try cast";
 				}
 				return (isImplicit ? "implicit " : "explicit ") + name + " conversion";
 			}
@@ -291,10 +302,12 @@ namespace ICSharpCode.NRefactory.Semantics
 		sealed class MethodGroupConv : Conversion
 		{
 			readonly IMethod method;
+			readonly bool isVirtualMethodLookup;
 			
-			public MethodGroupConv(IMethod method)
+			public MethodGroupConv(IMethod method, bool isVirtualMethodLookup)
 			{
 				this.method = method;
+				this.isVirtualMethodLookup = isVirtualMethodLookup;
 			}
 			
 			public override bool IsImplicit {
@@ -303,6 +316,10 @@ namespace ICSharpCode.NRefactory.Semantics
 			
 			public override bool IsMethodGroupConversion {
 				get { return true; }
+			}
+			
+			public override bool IsVirtualMethodLookup {
+				get { return isVirtualMethodLookup; }
 			}
 			
 			public override IMethod Method {
@@ -334,6 +351,13 @@ namespace ICSharpCode.NRefactory.Semantics
 		}
 		
 		public virtual bool IsExplicit {
+			get { return false; }
+		}
+		
+		/// <summary>
+		/// Gets whether the conversion is an '<c>as</c>' cast.
+		/// </summary>
+		public virtual bool IsTryCast {
 			get { return false; }
 		}
 		
@@ -413,6 +437,13 @@ namespace ICSharpCode.NRefactory.Semantics
 		/// Gets whether this conversion is a method group conversion.
 		/// </summary>
 		public virtual bool IsMethodGroupConversion {
+			get { return false; }
+		}
+		
+		/// <summary>
+		/// For method-group conversions, gets whether to perform a virtual method lookup at runtime.
+		/// </summary>
+		public virtual bool IsVirtualMethodLookup {
 			get { return false; }
 		}
 		

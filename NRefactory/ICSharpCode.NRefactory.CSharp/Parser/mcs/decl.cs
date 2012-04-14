@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Mono.CompilerServices.SymbolWriter;
 
 #if NET_2_1
 using XmlElement = System.Object;
@@ -298,7 +299,8 @@ namespace Mono.CSharp {
 			PartialDefinitionExists	= 1 << 14,	// Set when corresponding partial method definition exists
 			HasStructLayout	= 1 << 15,			// Has StructLayoutAttribute
 			HasInstanceConstructor = 1 << 16,
-			HasUserOperators = 1 << 17
+			HasUserOperators = 1 << 17,
+			CanBeReused = 1 << 18
 		}
 
 		/// <summary>
@@ -422,6 +424,15 @@ namespace Mono.CSharp {
 				return;
 
 			VerifyClsCompliance ();
+		}
+
+		public bool IsAvailableForReuse {
+			get {
+				return (caching_flags & Flags.CanBeReused) != 0;
+			}
+			set {
+				caching_flags = value ? (caching_flags | Flags.CanBeReused) : (caching_flags & ~Flags.CanBeReused);
+			}
 		}
 
 		public bool IsCompilerGenerated {
@@ -675,7 +686,7 @@ namespace Mono.CSharp {
 			do {
 				var ns = m as NamespaceContainer;
 				if (ns != null)
-					return ns.LookupExtensionMethod (this, extensionType, name, arity, ns, 0);
+					return ns.LookupExtensionMethod (this, extensionType, name, arity, 0);
 
 				m = m.Parent;
 			} while (m != null);
@@ -809,6 +820,11 @@ namespace Mono.CSharp {
 			Report.Warning (3008, 1, MemberName.Location, "Identifier `{0}' is not CLS-compliant", GetSignatureForError ());
 		}
 
+		public virtual string GetCallerMemberName ()
+		{
+			return MemberName.Name;
+		}
+
 		//
 		// Returns a string that represents the signature for this 
 		// member which should be used in XML documentation.
@@ -842,6 +858,10 @@ namespace Mono.CSharp {
 			} catch (Exception e) {
 				throw new InternalErrorException (this, e);
 			}
+		}
+
+		public virtual void WriteDebugSymbol (MonoSymbolFile file)
+		{
 		}
 
 		#region IMemberContext Members

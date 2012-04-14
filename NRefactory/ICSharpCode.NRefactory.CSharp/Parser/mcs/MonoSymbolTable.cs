@@ -551,7 +551,6 @@ namespace Mono.CompilerServices.SymbolWriter
 			}
 		}
 
-		[Obsolete]
 		public int DefineNamespace (string name, string[] using_clauses, int parent)
 		{
 			if (!creating)
@@ -921,9 +920,7 @@ namespace Mono.CompilerServices.SymbolWriter
 						   (opcode <= DW_LNE_MONO__extensions_end)) {
 						; // reserved for future extensions
 					} else {
-						throw new MonoSymbolFileException (
-							"Unknown extended opcode {0:x} in LNT ({1})",
-							opcode, file.FileName);
+						throw new MonoSymbolFileException ("Unknown extended opcode {0:x}", opcode);
 					}
 
 					br.BaseStream.Position = end_pos;
@@ -1113,7 +1110,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			}
 		}
 		
-		void CheckLineNumberTable (LineNumberEntry[] line_numbers)
+		static void CheckLineNumberTable (LineNumberEntry[] line_numbers)
 		{
 			int last_offset = -1;
 			int last_row = -1;

@@ -25,17 +25,20 @@ namespace ICSharpCode.NRefactory
 {
 	[Serializable]
 	public sealed class EmptyList<T> : IList<T>, IEnumerator<T>
+		#if NET45
+		, IReadOnlyList<T>
+		#endif
 	{
-		public static readonly IList<T> Instance = new EmptyList<T>();
+		public static readonly EmptyList<T> Instance = new EmptyList<T>();
 		
 		private EmptyList() {}
 		
-		T IList<T>.this[int index] {
-			get { throw new IndexOutOfRangeException(); }
-			set { throw new IndexOutOfRangeException(); }
+		public T this[int index] {
+			get { throw new ArgumentOutOfRangeException("index"); }
+			set { throw new ArgumentOutOfRangeException("index"); }
 		}
 		
-		int ICollection<T>.Count {
+		public int Count {
 			get { return 0; }
 		}
 		

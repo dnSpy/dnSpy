@@ -1,4 +1,4 @@
-// 
+﻿// 
 // CompletionCategory.cs
 //  
 // Author:
@@ -33,11 +33,11 @@ namespace ICSharpCode.NRefactory.Completion
 		
 		public string Icon { get; set; }
 		
-		public CompletionCategory ()
+		protected CompletionCategory ()
 		{
 		}
 		
-		public CompletionCategory (string displayText, string icon)
+		protected CompletionCategory (string displayText, string icon)
 		{
 			this.DisplayText = displayText;
 			this.Icon = icon;

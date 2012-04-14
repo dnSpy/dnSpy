@@ -33,10 +33,11 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class ObjectCreateExpression : Expression
 	{
+		public readonly static TokenRole NewKeywordRole = new TokenRole ("new");
 		public readonly static Role<ArrayInitializerExpression> InitializerRole = ArrayCreateExpression.InitializerRole;
 		
 		public CSharpTokenNode NewToken {
-			get { return GetChildByRole (Roles.Keyword); }
+			get { return GetChildByRole (NewKeywordRole); }
 		}
 		
 		public AstType Type {
@@ -79,7 +80,17 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitObjectCreateExpression (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitObjectCreateExpression (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitObjectCreateExpression (this, data);
 		}

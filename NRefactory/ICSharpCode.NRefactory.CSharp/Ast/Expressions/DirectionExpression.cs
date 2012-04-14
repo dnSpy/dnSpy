@@ -38,13 +38,16 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class DirectionExpression : Expression
 	{
+		public readonly static TokenRole RefKeywordRole = new TokenRole ("ref");
+		public readonly static TokenRole OutKeywordRole = new TokenRole ("out");
+		
 		public FieldDirection FieldDirection {
 			get;
 			set;
 		}
 		
 		public CSharpTokenNode FieldDirectionToken {
-			get { return GetChildByRole (Roles.Keyword); }
+			get { return FieldDirection == ICSharpCode.NRefactory.CSharp.FieldDirection.Ref ? GetChildByRole (RefKeywordRole) : GetChildByRole (OutKeywordRole); }
 		}
 		
 		public Expression Expression {
@@ -62,7 +65,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			AddChild (expression, Roles.Expression);
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitDirectionExpression (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitDirectionExpression (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitDirectionExpression (this, data);
 		}

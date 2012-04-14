@@ -162,9 +162,9 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		readonly TypeExpr underlying_type_expr;
+		readonly FullNamedExpression underlying_type_expr;
 
-		public Enum (TypeContainer parent, TypeExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
+		public Enum (TypeContainer parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (parent, name, attrs, MemberKind.Enum)
 		{
 			underlying_type_expr = type;
@@ -181,7 +181,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public TypeExpr BaseTypeExpression {
+		public FullNamedExpression BaseTypeExpression {
 			get {
 				return underlying_type_expr;
 			}

@@ -35,6 +35,15 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 	public class KeywordTests : TestBase
 	{
 		[Test()]
+		public void TestTooManyOptions ()
+		{
+			var provider = CodeCompletionBugTests.CreateProvider (@"$public S$");
+			Assert.IsNotNull (provider, "provider == null");
+			Assert.IsNotNull (provider.Find ("class"), "keyword 'class' not found.");
+			Assert.IsNull (provider.Find ("System"), "'System' found.");
+		}
+		
+		[Test()]
 		public void CaseKeywordTest ()
 		{
 			var provider = CodeCompletionBugTests.CreateProvider (
@@ -53,6 +62,23 @@ class Class
 			Assert.IsNotNull (provider.Find ("case"), "keyword 'case' not found.");
 		}
 		
+		[Test()]
+		public void CatchKeywordTest ()
+		{
+			var provider = CodeCompletionBugTests.CreateProvider (
+@"
+class Class
+{
+	void Test (string t)
+	{
+		$try {} c$
+	}
+}
+");
+			Assert.IsNotNull (provider, "provider == null");
+			Assert.IsNotNull (provider.Find ("catch"), "keyword 'catch' not found.");
+		}
+
 		[Test()]
 		public void CaseKeywordTestCase2 ()
 		{
@@ -380,6 +406,45 @@ class Test
 		}
 		
 		[Test()]
+		public void RefOutParamsTest1 ()
+		{
+			CodeCompletionBugTests.CombinedProviderTest (
+@"using System;
+class Test
+{
+	$public void MyMethod (o$
+}
+", (provider) => {
+				Console.WriteLine (provider.Count);
+				
+				Assert.IsNotNull (provider.Find ("ref"), "keyword 'ref' not found.");
+				Assert.IsNotNull (provider.Find ("out"), "keyword 'out' not found.");
+				Assert.IsNotNull (provider.Find ("params"), "keyword 'params' not found.");
+			});
+		}
+		
+		[Test()]
+		public void RefOutParamsTest ()
+		{
+			CodeCompletionBugTests.CombinedProviderTest (
+@"using System;
+class Test
+{
+	public void MyMethod ()
+	{
+		$Call(i$
+	}
+}
+", (provider) => {
+				Console.WriteLine (provider.Count);
+				
+				Assert.IsNotNull (provider.Find ("ref"), "keyword 'ref' not found.");
+				Assert.IsNotNull (provider.Find ("out"), "keyword 'out' not found.");
+				Assert.IsNull (provider.Find ("params"), "keyword 'params' found.");
+			});
+		}
+
+		[Test()]
 		public void VariableDeclarationTestMethodDeclarationCase ()
 		{
 			CodeCompletionBugTests.CombinedProviderTest (
@@ -421,9 +486,9 @@ class Test
 	}
 }
 ", (provider) => {
-			// Either empty list or in - both behaviours are ok.
-			if (provider.Count > 0)
-				Assert.IsNotNull (provider.Find ("in"), "keyword 'in' not found.");
+				// Either empty list or in - both behaviours are ok.
+				if (provider.Count > 0)
+					Assert.IsNotNull (provider.Find ("in"), "keyword 'in' not found.");
 			});
 		}
 	}

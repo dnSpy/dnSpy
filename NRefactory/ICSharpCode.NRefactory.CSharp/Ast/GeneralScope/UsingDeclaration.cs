@@ -35,6 +35,7 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class UsingDeclaration : AstNode
 	{
+		public static readonly TokenRole UsingKeywordRole = new TokenRole ("using");
 		public static readonly Role<AstType> ImportRole = new Role<AstType>("Import", AstType.Null);
 		
 		public override NodeType NodeType {
@@ -44,7 +45,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		public CSharpTokenNode UsingToken {
-			get { return GetChildByRole (Roles.Keyword); }
+			get { return GetChildByRole (UsingKeywordRole); }
 		}
 		
 		public AstType Import {
@@ -74,7 +75,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			AddChild (import, ImportRole);
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitUsingDeclaration (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitUsingDeclaration (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitUsingDeclaration (this, data);
 		}

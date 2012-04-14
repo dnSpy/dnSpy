@@ -26,11 +26,12 @@ namespace ICSharpCode.NRefactory.CSharp
 	public class AstStructureTests
 	{
 		[Test]
-		public void RolesAreStaticReadOnly()
+		public void RolesAreStaticReadOnly ()
 		{
 			foreach (Type type in typeof(AstNode).Assembly.GetExportedTypes()) {
-				if (type.IsSubclassOf(typeof(AstNode))) {
+				if (type.IsSubclassOf (typeof(AstNode))) {
 					foreach (FieldInfo field in type.GetFields()) {
+						Console.WriteLine (field);
 						if (field.FieldType.IsSubclassOf(typeof(Role))) {
 							Assert.IsTrue(field.IsPublic);
 							Assert.IsTrue(field.IsStatic);

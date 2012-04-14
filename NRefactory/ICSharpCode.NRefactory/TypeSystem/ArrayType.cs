@@ -85,6 +85,10 @@ namespace ICSharpCode.NRefactory.TypeSystem
 					ITypeDefinition def = compilation.FindType(KnownTypeCode.IListOfT) as ITypeDefinition;
 					if (def != null)
 						baseTypes.Add(new ParameterizedType(def, new[] { elementType }));
+					// And in .NET 4.5 they also implement IReadOnlyList<T>
+					def = compilation.FindType(KnownTypeCode.IReadOnlyListOfT) as ITypeDefinition;
+					if (def != null)
+						baseTypes.Add(new ParameterizedType(def, new[] { elementType }));
 				}
 				return baseTypes;
 			}

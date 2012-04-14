@@ -182,12 +182,60 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			IMethod m = testClass.Methods.Single(me => me.Name == "GetIndex");
 			Assert.AreEqual("T", m.TypeParameters[0].Name);
 			Assert.AreEqual(EntityType.Method, m.TypeParameters[0].OwnerType);
+			Assert.AreSame(m, m.TypeParameters[0].Owner);
 			
 			ParameterizedType constraint = (ParameterizedType)m.TypeParameters[0].DirectBaseTypes.First();
 			Assert.AreEqual("IEquatable", constraint.Name);
 			Assert.AreEqual(1, constraint.TypeParameterCount);
 			Assert.AreEqual(1, constraint.TypeArguments.Count);
 			Assert.AreSame(m.TypeParameters[0], constraint.TypeArguments[0]);
+		}
+		
+		[Test]
+		public void GetIndexSpecializedTypeParameter()
+		{
+			var testClass = GetTypeDefinition(typeof(GenericClass<,>));
+			var methodDef = testClass.Methods.Single(me => me.Name == "GetIndex");
+			var m = new SpecializedMethod(methodDef, new TypeParameterSubstitution(
+				new[] { compilation.FindType(KnownTypeCode.Int16), compilation.FindType(KnownTypeCode.Int32) },
+				null
+			));
+			
+			Assert.AreEqual("T", m.TypeParameters[0].Name);
+			Assert.AreEqual(EntityType.Method, m.TypeParameters[0].OwnerType);
+			Assert.AreSame(m, m.TypeParameters[0].Owner);
+			
+			ParameterizedType constraint = (ParameterizedType)m.TypeParameters[0].DirectBaseTypes.First();
+			Assert.AreEqual("IEquatable", constraint.Name);
+			Assert.AreEqual(1, constraint.TypeParameterCount);
+			Assert.AreEqual(1, constraint.TypeArguments.Count);
+			Assert.AreSame(m.TypeParameters[0], constraint.TypeArguments[0]);
+		}
+		
+		[Test]
+		public void GetIndexDoubleSpecialization()
+		{
+			var testClass = GetTypeDefinition(typeof(GenericClass<,>));
+			// GenericClass<A, B>.GetIndex<T>
+			var methodDef = testClass.Methods.Single(me => me.Name == "GetIndex");
+			
+			// GenericClass<B, A>.GetIndex<A>
+			var m1 = new SpecializedMethod(methodDef, new TypeParameterSubstitution(
+				new[] { testClass.TypeParameters[1], testClass.TypeParameters[0] },
+				new[] { testClass.TypeParameters[0] }
+			));
+			// GenericClass<string, int>.GetIndex<int>
+			var m2 = new SpecializedMethod(m1, new TypeParameterSubstitution(
+				new[] { compilation.FindType(KnownTypeCode.Int32), compilation.FindType(KnownTypeCode.String) },
+				null
+			));
+			
+			// GenericClass<string, int>.GetIndex<int>
+			var m12 = new SpecializedMethod(methodDef, new TypeParameterSubstitution(
+				new[] { compilation.FindType(KnownTypeCode.String), compilation.FindType(KnownTypeCode.Int32) },
+				new[] { compilation.FindType(KnownTypeCode.Int32) }
+			));
+			Assert.AreEqual(m12, m2);
 		}
 		
 		[Test]
@@ -613,7 +661,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		{
 			ITypeDefinition type = GetTypeDefinition(typeof(ParamsAttribute));
 			var arr = (ArrayCreateResolveResult)type.Attributes.Single().PositionalArguments.Single();
-			Assert.AreEqual(5, arr.InitializerElements.Length);
+			Assert.AreEqual(5, arr.InitializerElements.Count);
 			return arr.InitializerElements[index];
 		}
 		
@@ -682,11 +730,76 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		{
 			ITypeDefinition type = GetTypeDefinition(typeof(ImplementationOfUnifiedMethods));
 			IMethod test = type.Methods.Single(m => m.Name == "Test");
-			Assert.AreEqual(2, test.InterfaceImplementations.Count);
-			Assert.AreEqual("Int32", ((IMethod)test.InterfaceImplementations[0]).Parameters.Single().Type.Name);
-			Assert.AreEqual("Int32", ((IMethod)test.InterfaceImplementations[1]).Parameters.Single().Type.Name);
-			Assert.AreEqual("T", ((IMethod)test.InterfaceImplementations[0].MemberDefinition).Parameters.Single().Type.Name);
-			Assert.AreEqual("S", ((IMethod)test.InterfaceImplementations[1].MemberDefinition).Parameters.Single().Type.Name);
+			Assert.AreEqual(2, test.ImplementedInterfaceMembers.Count);
+			Assert.AreEqual("Int32", ((IMethod)test.ImplementedInterfaceMembers[0]).Parameters.Single().Type.Name);
+			Assert.AreEqual("Int32", ((IMethod)test.ImplementedInterfaceMembers[1]).Parameters.Single().Type.Name);
+			Assert.AreEqual("T", ((IMethod)test.ImplementedInterfaceMembers[0].MemberDefinition).Parameters.Single().Type.Name);
+			Assert.AreEqual("S", ((IMethod)test.ImplementedInterfaceMembers[1].MemberDefinition).Parameters.Single().Type.Name);
+		}
+		
+		[Test]
+		public void StaticityOfEventAccessors()
+		{
+			// https://github.com/icsharpcode/NRefactory/issues/20
+			ITypeDefinition type = GetTypeDefinition(typeof(ClassWithStaticAndNonStaticMembers));
+			var evt1 = type.Events.Single(e => e.Name == "Event1");
+			Assert.IsTrue(evt1.IsStatic);
+			Assert.IsTrue(evt1.AddAccessor.IsStatic);
+			Assert.IsTrue(evt1.RemoveAccessor.IsStatic);
+
+			var evt2 = type.Events.Single(e => e.Name == "Event2");
+			Assert.IsFalse(evt2.IsStatic);
+			Assert.IsFalse(evt2.AddAccessor.IsStatic);
+			Assert.IsFalse(evt2.RemoveAccessor.IsStatic);
+
+			var evt3 = type.Events.Single(e => e.Name == "Event3");
+			Assert.IsTrue(evt3.IsStatic);
+			Assert.IsTrue(evt3.AddAccessor.IsStatic);
+			Assert.IsTrue(evt3.RemoveAccessor.IsStatic);
+
+			var evt4 = type.Events.Single(e => e.Name == "Event4");
+			Assert.IsFalse(evt4.IsStatic);
+			Assert.IsFalse(evt4.AddAccessor.IsStatic);
+			Assert.IsFalse(evt4.RemoveAccessor.IsStatic);
+		}
+		
+		[Test]
+		public void StaticityOfPropertyAccessors()
+		{
+			// https://github.com/icsharpcode/NRefactory/issues/20
+			ITypeDefinition type = GetTypeDefinition(typeof(ClassWithStaticAndNonStaticMembers));
+			var prop1 = type.Properties.Single(e => e.Name == "Prop1");
+			Assert.IsTrue(prop1.IsStatic);
+			Assert.IsTrue(prop1.Getter.IsStatic);
+			Assert.IsTrue(prop1.Setter.IsStatic);
+
+			var prop2 = type.Properties.Single(e => e.Name == "Prop2");
+			Assert.IsFalse(prop2.IsStatic);
+			Assert.IsFalse(prop2.Getter.IsStatic);
+			Assert.IsFalse(prop2.Setter.IsStatic);
+
+			var prop3 = type.Properties.Single(e => e.Name == "Prop3");
+			Assert.IsTrue(prop3.IsStatic);
+			Assert.IsTrue(prop3.Getter.IsStatic);
+			Assert.IsTrue(prop3.Setter.IsStatic);
+
+			var prop4 = type.Properties.Single(e => e.Name == "Prop4");
+			Assert.IsFalse(prop4.IsStatic);
+			Assert.IsFalse(prop4.Getter.IsStatic);
+			Assert.IsFalse(prop4.Setter.IsStatic);
+		}
+		
+		[Test]
+		public void EventAccessorNames()
+		{
+			ITypeDefinition type = GetTypeDefinition(typeof(ClassWithStaticAndNonStaticMembers));
+			var customEvent = type.Events.Single(e => e.Name == "Event1");
+			Assert.AreEqual("add_Event1", customEvent.AddAccessor.Name);
+			Assert.AreEqual("remove_Event1", customEvent.RemoveAccessor.Name);
+			
+			var normalEvent = type.Events.Single(e => e.Name == "Event3");
+			Assert.AreEqual("add_Event3", normalEvent.AddAccessor.Name);
+			Assert.AreEqual("remove_Event3", normalEvent.RemoveAccessor.Name);
 		}
 	}
 }

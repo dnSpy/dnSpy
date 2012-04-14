@@ -68,7 +68,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			get { return returnType; }
 			set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException("value");
 				ThrowIfFrozen();
 				returnType = value;
 			}

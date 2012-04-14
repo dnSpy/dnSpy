@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Globalization;
 using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.Semantics
@@ -43,7 +44,7 @@ namespace ICSharpCode.NRefactory.Semantics
 		
 		public override string ToString()
 		{
-			return string.Format("[{0} {1}]", GetType().Name, ns);
+			return string.Format(CultureInfo.InvariantCulture, "[{0} {1}]", GetType().Name, ns);
 		}
 	}
 }

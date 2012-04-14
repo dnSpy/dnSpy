@@ -495,6 +495,11 @@ namespace Mono.CSharp {
 			return ImplicitNumericConversion (expr, expr.Type, target_type);
 		}
 
+		public static bool ImplicitNumericConversionExists (TypeSpec expr_type, TypeSpec target_type)
+		{
+			return ImplicitNumericConversion (null, expr_type, target_type) != null;
+		}
+
 		static Expression ImplicitNumericConversion (Expression expr, TypeSpec expr_type, TypeSpec target_type)
 		{
 			switch (expr_type.BuiltinType) {
@@ -1190,7 +1195,7 @@ namespace Mono.CSharp {
 			if (s_x != source_type) {
 				var c = source as Constant;
 				if (c != null) {
-					source = c.TryReduce (ec, s_x, loc);
+					source = c.TryReduce (ec, s_x);
 				} else {
 					source = implicitOnly ?
 						ImplicitConversionStandard (ec, source_type_expr, s_x, loc) :
@@ -1418,7 +1423,7 @@ namespace Mono.CSharp {
 			if (e != null)
 				return e;
 
-			source.Error_ValueCannotBeConverted (ec, loc, target_type, false);
+			source.Error_ValueCannotBeConverted (ec, target_type, false);
 			return null;
 		}
 
@@ -2098,7 +2103,7 @@ namespace Mono.CSharp {
 			if (ec.IsUnsafe && expr.Type.IsPointer && target_type.IsPointer && ((PointerContainer)expr.Type).Element.Kind == MemberKind.Void)
 				return EmptyCast.Create (expr, target_type);
 
-			expr.Error_ValueCannotBeConverted (ec, l, target_type, true);
+			expr.Error_ValueCannotBeConverted (ec, target_type, true);
 			return null;
 		}
 
@@ -2161,7 +2166,7 @@ namespace Mono.CSharp {
 			if (e != null)
 				return e;			
 
-			expr.Error_ValueCannotBeConverted (ec, loc, target_type, true);
+			expr.Error_ValueCannotBeConverted (ec, target_type, true);
 			return null;
 		}
 	}

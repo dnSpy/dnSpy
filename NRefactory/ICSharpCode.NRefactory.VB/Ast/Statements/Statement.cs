@@ -120,7 +120,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 ////			if (IsNull)
 ////				return "Null";
 ////			StringWriter w = new StringWriter();
-////			AcceptVisitor(new OutputVisitor(w, new CSharpFormattingOptions()), null);
+////			AcceptVisitor(new OutputVisitor(w, FormattingOptionsFactory.CreateMonoOptions ()), null);
 ////			string text = w.ToString().TrimEnd().Replace("\t", "").Replace(w.NewLine, " ");
 ////			if (text.Length > 100)
 ////				return text.Substring(0, 97) + "...";

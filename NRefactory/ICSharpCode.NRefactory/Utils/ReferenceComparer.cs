@@ -22,13 +22,13 @@ using System.Runtime.CompilerServices;
 
 namespace ICSharpCode.NRefactory.Utils
 {
-	sealed class ReferenceComparer : IEqualityComparer<object>
+	public sealed class ReferenceComparer : IEqualityComparer<object>
 	{
 		public readonly static ReferenceComparer Instance = new ReferenceComparer();
 		
-		public new bool Equals(object a, object b)
+		public new bool Equals(object x, object y)
 		{
-			return a == b;
+			return x == y;
 		}
 		
 		public int GetHashCode(object obj)

@@ -121,8 +121,20 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 }");
 			Assert.IsTrue (provider == null || provider.Count == 0, "provider should be empty.");
 		}
-		
-		[Ignore("MCS TODO!")]
+
+		[Test()]
+		public void TestForLoopLocalVariableName ()
+		{
+
+			var provider = CodeCompletionBugTests.CreateProvider (@"class MyClass {
+	void Test() 
+	{
+		$for (int f$
+	}
+}");
+			Assert.IsTrue (provider == null || provider.Count == 0, "provider should be empty.");
+		}
+
 		[Test()]
 		public void TestCatchExceptionName ()
 		{
@@ -136,6 +148,24 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 			Assert.IsTrue (provider == null || provider.Count == 0, "provider should be empty.");
 		}
 		
+			/// <summary>
+		/// Bug 2198 - Typing generic argument to a class/method pops up type completion window
+		/// </summary>
+		[Test()]
+		public void TestBug2198 ()
+		{
+			CodeCompletionBugTests.CombinedProviderTest (@"$class Klass <T$", provider => {
+				Assert.AreEqual (0, provider.Count, "provider needs to be empty");
+			});
+		}
+		
+		[Test()]
+		public void TestBug2198Case2 ()
+		{
+			CodeCompletionBugTests.CombinedProviderTest (@"$class Klass { void Test<T$", provider => {
+				Assert.AreEqual (0, provider.Count, "provider needs to be empty");
+			});
+		}
 	}
 }
 

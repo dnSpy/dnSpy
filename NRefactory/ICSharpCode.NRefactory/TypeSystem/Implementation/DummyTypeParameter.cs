@@ -71,7 +71,15 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		}
 		
 		public override string Name {
-			get { return "!" + index; }
+			get {
+				return (ownerType == EntityType.Method ? "!!" : "!") + index;
+			}
+		}
+		
+		public override string ReflectionName {
+			get {
+				return (ownerType == EntityType.Method ? "``" : "`") + index;
+			}
 		}
 		
 		public override bool? IsReferenceType {

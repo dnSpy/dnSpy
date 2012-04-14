@@ -36,9 +36,8 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		public IType FindType(KnownTypeCode typeCode)
 		{
-			IType type = knownTypes[(int)typeCode];
+			IType type = LazyInit.VolatileRead(ref knownTypes[(int)typeCode]);
 			if (type != null) {
-				LazyInit.ReadBarrier();
 				return type;
 			}
 			return LazyInit.GetOrSet(ref knownTypes[(int)typeCode], SearchType(typeCode));
@@ -49,17 +48,12 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			KnownTypeReference typeRef = KnownTypeReference.Get(typeCode);
 			if (typeRef == null)
 				return SpecialType.UnknownType;
-			ITypeDefinition typeDef;
-			foreach (IAssembly asm in compilation.ReferencedAssemblies) {
-				typeDef = asm.GetTypeDefinition(typeRef.Namespace, typeRef.Name, typeRef.TypeParameterCount);
+			foreach (IAssembly asm in compilation.Assemblies) {
+				var typeDef = asm.GetTypeDefinition(typeRef.Namespace, typeRef.Name, typeRef.TypeParameterCount);
 				if (typeDef != null)
 					return typeDef;
 			}
-			typeDef = compilation.MainAssembly.GetTypeDefinition(typeRef.Namespace, typeRef.Name, typeRef.TypeParameterCount);
-			if (typeDef != null)
-				return typeDef;
-			else
-				return new UnknownType(typeRef.Namespace, typeRef.Name, typeRef.TypeParameterCount);
+			return new UnknownType(typeRef.Namespace, typeRef.Name, typeRef.TypeParameterCount);
 		}
 	}
 }

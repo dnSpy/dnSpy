@@ -9,18 +9,21 @@ Features:
 	- Lots of C# refactorings
 	- VB support is not implemented yet.
 
-
-Dependencies:
-	.NET 4.0
-	Mono.Cecil 0.9.5
-	NRefactory contains a modified copy of mcs (Mono's C# compiler) for the C# parser.
-
+How to download:
+	- Binaries are provided as a NuGet package (http://nuget.org/packages/ICSharpCode.NRefactory)
+	- Sourcecode is available on GitHub (https://github.com/icsharpcode/NRefactory)
 
 How to compile:
 	1. Get Mono.Cecil
 		Download Cecil from https://github.com/jbevain/cecil/ and unzip it into a directory named "Mono.Cecil"
 		next to the directory containing NRefactory.
 	2. Open NRefactory.sln in your favorite .NET IDE and compile.
+
+
+Dependencies:
+	.NET 4.0
+	Mono.Cecil 0.9.5
+	NRefactory contains a modified copy of mcs (Mono's C# compiler) for the C# parser.
 
 
 Namespace overview:
@@ -38,13 +41,16 @@ ICSharpCode.NRefactory assembly
 		Contains default implementations for the type system interfaces.
 	
 	ICSharpCode.NRefactory.Semantics:
-		Contains classes used to represent the semantics of a language element.
+		Contains classes (ResolveResults) used to represent the semantics of a language element.
+		ResolveResults can have child results, thus forming semantic trees.
 	
 	ICSharpCode.NRefactory.Documentation:
 		Classes for working with .xml documentation files.
+		See "doc/XML Documentation.html" for details.
 	
 	ICSharpCode.NRefactory.PatternMatching:
 		Provides classes for pattern matching over the C# and VB ASTs.
+		See "doc/Pattern Matching.html" for details.
 	
 	ICSharpCode.NRefactory.Util:
 		Various helper classes.
@@ -62,14 +68,24 @@ ICSharpCode.NRefactory.CSharp assembly
 	
 	ICSharpCode.NRefactory.CSharp.Analysis:
 		Semantic analysis for C# (additional analysis functionality)
-
+	
 	ICSharpCode.NRefactory.CSharp.TypeSystem:
 		Contains type system implementations specific to C#.
-
+	
+	ICSharpCode.NRefactory.CSharp.Refactoring:
+		Infrastructure for refactorings; and several built-in refactorings.
 
 ICSharpCode.NRefactory.VB assembly
 	ICSharpCode.NRefactory.VB:
 		Abstract Syntax Tree for VB
+
+ICSharpCode.NRefactory.Xml assembly
+	ICSharpCode.NRefactory.Xml:
+		Error-tolerant XML parser. Supports incremental parsing.
+		When tags don't match correctly, the parser uses a heuristic to guess the parse tree.
+		The heuristic tries to minimize the edit distance from the erroneous document to
+		the fixed document, and it also considers the indentation.
+
 
 
 Null-Object pattern:
@@ -179,7 +195,7 @@ A:	This question is a bit difficult to answer.
 		   so it's thread-safe but slow.
 	
 	Some instance methods may use hidden instance state, so it is not safe to e.g use an instance
-	of the CSharp.Resolver.Conversions class concurrently.
+	of the CSharp.Resolver.TypeInference class concurrently.
 	Instead, you need to create an instance on every thread.
 	
 	The type system itself is thread-safe. Both the unresolved and the resolved type systems are

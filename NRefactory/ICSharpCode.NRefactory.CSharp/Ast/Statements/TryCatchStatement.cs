@@ -34,10 +34,10 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class TryCatchStatement : Statement
 	{
-		public static readonly Role<CSharpTokenNode> TryKeywordRole = new Role<CSharpTokenNode>("TryKeyword", CSharpTokenNode.Null);
+		public static readonly TokenRole TryKeywordRole = new TokenRole ("try");
 		public static readonly Role<BlockStatement> TryBlockRole = new Role<BlockStatement>("TryBlock", BlockStatement.Null);
 		public static readonly Role<CatchClause> CatchClauseRole = new Role<CatchClause>("CatchClause");
-		public static readonly Role<CSharpTokenNode> FinallyKeywordRole = new Role<CSharpTokenNode>("FinallyKeyword", CSharpTokenNode.Null);
+		public static readonly TokenRole FinallyKeywordRole = new TokenRole ("finally");
 		public static readonly Role<BlockStatement> FinallyBlockRole = new Role<BlockStatement>("FinallyBlock", BlockStatement.Null);
 		
 		public CSharpTokenNode TryToken {
@@ -62,7 +62,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (FinallyBlockRole, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitTryCatchStatement (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitTryCatchStatement (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitTryCatchStatement (this, data);
 		}
@@ -79,6 +89,8 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class CatchClause : AstNode
 	{
+		public static readonly TokenRole CatchKeywordRole = new TokenRole ("catch");
+		
 		#region PatternPlaceholder
 		public static implicit operator CatchClause(PatternMatching.Pattern pattern)
 		{
@@ -98,7 +110,17 @@ namespace ICSharpCode.NRefactory.CSharp
 				get { return NodeType.Pattern; }
 			}
 			
-			public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data = default(T))
+			public override void AcceptVisitor (IAstVisitor visitor)
+			{
+				visitor.VisitPatternPlaceholder(this, child);
+			}
+				
+			public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+			{
+				return visitor.VisitPatternPlaceholder(this, child);
+			}
+
+			public override S AcceptVisitor<T, S>(IAstVisitor<T, S> visitor, T data)
 			{
 				return visitor.VisitPatternPlaceholder(this, child, data);
 			}
@@ -122,7 +144,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		public CSharpTokenNode CatchToken {
-			get { return GetChildByRole (Roles.Keyword); }
+			get { return GetChildByRole (CatchKeywordRole); }
 		}
 		
 		public CSharpTokenNode LParToken {
@@ -140,7 +162,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				if (string.IsNullOrEmpty(value))
 					SetChildByRole (Roles.Identifier, null);
 				else
-					SetChildByRole (Roles.Identifier, Identifier.Create (value, TextLocation.Empty));
+					SetChildByRole (Roles.Identifier, Identifier.Create (value));
 			}
 		}
 		
@@ -162,7 +184,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Body, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitCatchClause (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitCatchClause (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitCatchClause (this, data);
 		}

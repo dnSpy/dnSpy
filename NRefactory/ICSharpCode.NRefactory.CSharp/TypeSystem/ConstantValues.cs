@@ -89,12 +89,12 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem.ConstantValues
 			}
 		}
 		
-		static ResolveResult[] MapToNewContext(ResolveResult[] input, ITypeResolveContext newContext)
+		static ResolveResult[] MapToNewContext(IList<ResolveResult> input, ITypeResolveContext newContext)
 		{
 			if (input == null)
 				return null;
-			ResolveResult[] output = new ResolveResult[input.Length];
-			for (int i = 0; i < input.Length; i++) {
+			ResolveResult[] output = new ResolveResult[input.Count];
+			for (int i = 0; i < output.Length; i++) {
 				output[i] = MapToNewContext(input[i], newContext);
 			}
 			return output;

@@ -205,7 +205,7 @@ namespace Mono.CSharp {
 					else if (!(expr is Constant))
 						Error_ExpressionMustBeConstant (rc, expr.Location, GetSignatureForError ());
 					else
-						expr.Error_ValueCannotBeConverted (rc, expr.Location, field.MemberType, false);
+						expr.Error_ValueCannotBeConverted (rc, field.MemberType, false);
 				}
 
 				expr = c;

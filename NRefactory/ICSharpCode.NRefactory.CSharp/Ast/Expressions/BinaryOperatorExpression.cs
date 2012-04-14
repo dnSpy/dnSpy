@@ -34,8 +34,27 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class BinaryOperatorExpression : Expression
 	{
+		public readonly static TokenRole BitwiseAndRole = new TokenRole ("&");
+		public readonly static TokenRole BitwiseOrRole = new TokenRole ("|");
+		public readonly static TokenRole ConditionalAndRole = new TokenRole ("&&");
+		public readonly static TokenRole ConditionalOrRole = new TokenRole ("||");
+		public readonly static TokenRole ExclusiveOrRole = new TokenRole ("^");
+		public readonly static TokenRole GreaterThanRole = new TokenRole (">");
+		public readonly static TokenRole GreaterThanOrEqualRole = new TokenRole (">=");
+		public readonly static TokenRole EqualityRole = new TokenRole ("==");
+		public readonly static TokenRole InEqualityRole = new TokenRole ("!=");
+		public readonly static TokenRole LessThanRole = new TokenRole ("<");
+		public readonly static TokenRole LessThanOrEqualRole = new TokenRole ("<=");
+		public readonly static TokenRole AddRole = new TokenRole ("+");
+		public readonly static TokenRole SubtractRole = new TokenRole ("-");
+		public readonly static TokenRole MultiplyRole = new TokenRole ("*");
+		public readonly static TokenRole DivideRole = new TokenRole ("/");
+		public readonly static TokenRole ModulusRole = new TokenRole ("%");
+		public readonly static TokenRole ShiftLeftRole = new TokenRole ("<<");
+		public readonly static TokenRole ShiftRightRole = new TokenRole (">>");
+		public readonly static TokenRole NullCoalescingRole = new TokenRole ("??");
+		
 		public readonly static Role<Expression> LeftRole = new Role<Expression>("Left", Expression.Null);
-		public readonly static Role<CSharpTokenNode> OperatorRole = new Role<CSharpTokenNode>("Operator", CSharpTokenNode.Null);
 		public readonly static Role<Expression> RightRole = new Role<Expression>("Right", Expression.Null);
 		
 		public BinaryOperatorExpression()
@@ -60,15 +79,25 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		public CSharpTokenNode OperatorToken {
-			get { return GetChildByRole (OperatorRole); }
+			get { return GetChildByRole (GetOperatorRole (Operator)); }
 		}
 		
 		public Expression Right {
 			get { return GetChildByRole (RightRole); }
-			set { SetChildByRole(RightRole, value); }
+			set { SetChildByRole (RightRole, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitBinaryOperatorExpression (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitBinaryOperatorExpression (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitBinaryOperatorExpression (this, data);
 		}
@@ -80,47 +109,47 @@ namespace ICSharpCode.NRefactory.CSharp
 				&& this.Left.DoMatch(o.Left, match) && this.Right.DoMatch(o.Right, match);
 		}
 		
-		public static string GetOperatorSymbol(BinaryOperatorType op)
+		public static TokenRole GetOperatorRole (BinaryOperatorType op)
 		{
 			switch (op) {
 				case BinaryOperatorType.BitwiseAnd:
-					return "&";
+					return BitwiseAndRole;
 				case BinaryOperatorType.BitwiseOr:
-					return "|";
+					return BitwiseOrRole;
 				case BinaryOperatorType.ConditionalAnd:
-					return "&&";
+					return ConditionalAndRole;
 				case BinaryOperatorType.ConditionalOr:
-					return "||";
+					return ConditionalOrRole;
 				case BinaryOperatorType.ExclusiveOr:
-					return "^";
+					return ExclusiveOrRole;
 				case BinaryOperatorType.GreaterThan:
-					return ">";
+					return GreaterThanRole;
 				case BinaryOperatorType.GreaterThanOrEqual:
-					return ">=";
+					return GreaterThanOrEqualRole;
 				case BinaryOperatorType.Equality:
-					return "==";
+					return EqualityRole;
 				case BinaryOperatorType.InEquality:
-					return "!=";
+					return InEqualityRole;
 				case BinaryOperatorType.LessThan:
-					return "<";
+					return LessThanRole;
 				case BinaryOperatorType.LessThanOrEqual:
-					return "<=";
+					return LessThanOrEqualRole;
 				case BinaryOperatorType.Add:
-					return "+";
+					return AddRole;
 				case BinaryOperatorType.Subtract:
-					return "-";
+					return SubtractRole;
 				case BinaryOperatorType.Multiply:
-					return "*";
+					return MultiplyRole;
 				case BinaryOperatorType.Divide:
-					return "/";
+					return DivideRole;
 				case BinaryOperatorType.Modulus:
-					return "%";
+					return ModulusRole;
 				case BinaryOperatorType.ShiftLeft:
-					return "<<";
+					return ShiftLeftRole;
 				case BinaryOperatorType.ShiftRight:
-					return ">>";
+					return ShiftRightRole;
 				case BinaryOperatorType.NullCoalescing:
-					return "??";
+					return NullCoalescingRole;
 				default:
 					throw new NotSupportedException("Invalid value for BinaryOperatorType");
 			}

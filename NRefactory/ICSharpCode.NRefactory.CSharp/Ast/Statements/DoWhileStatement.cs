@@ -31,8 +31,8 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class DoWhileStatement : Statement
 	{
-		public static readonly Role<CSharpTokenNode> DoKeywordRole = new Role<CSharpTokenNode>("DoKeyword", CSharpTokenNode.Null);
-		public static readonly Role<CSharpTokenNode> WhileKeywordRole = new Role<CSharpTokenNode>("WhileKeyword", CSharpTokenNode.Null);
+		public static readonly TokenRole DoKeywordRole = new TokenRole ("do");
+		public static readonly TokenRole WhileKeywordRole = new TokenRole ("while");
 		
 		public CSharpTokenNode DoToken {
 			get { return GetChildByRole (DoKeywordRole); }
@@ -64,7 +64,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.Semicolon); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitDoWhileStatement (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitDoWhileStatement (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitDoWhileStatement (this, data);
 		}

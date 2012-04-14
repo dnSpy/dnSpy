@@ -34,7 +34,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// <summary>
 		/// Gets the time when the file was last written.
 		/// </summary>
-		DateTime LastWriteTime { get; }
+		DateTime? LastWriteTime { get; set; }
 		
 		/// <summary>
 		/// Gets all top-level type definitions.

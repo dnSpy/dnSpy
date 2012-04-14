@@ -19,7 +19,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text;
 using ICSharpCode.NRefactory.CSharp.Analysis;
 using ICSharpCode.NRefactory.CSharp.Resolver;
 using ICSharpCode.NRefactory.CSharp.TypeSystem;
@@ -33,7 +35,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 	/// <summary>
 	/// Produces type and member definitions from the DOM.
 	/// </summary>
-	public class TypeSystemConvertVisitor : DepthFirstAstVisitor<object, IUnresolvedEntity>
+	public class TypeSystemConvertVisitor : DepthFirstAstVisitor<IUnresolvedEntity>
 	{
 		readonly CSharpParsedFile parsedFile;
 		UsingScope usingScope;
@@ -50,6 +52,12 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			get { return interningProvider; }
 			set { interningProvider = value; }
 		}
+		
+		/// <summary>
+		/// Gets/Sets whether to ignore XML documentation.
+		/// The default value is false.
+		/// </summary>
+		public bool SkipXmlDocumentation { get; set; }
 		
 		/// <summary>
 		/// Creates a new TypeSystemConvertVisitor.
@@ -100,26 +108,26 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			if (node == null || node.IsNull)
 				return DomRegion.Empty;
 			else
-				return MakeRegion(node.GetChildByRole(AstNode.Roles.LBrace).StartLocation,
-				                  node.GetChildByRole(AstNode.Roles.RBrace).EndLocation);
+				return MakeRegion(node.GetChildByRole(Roles.LBrace).StartLocation,
+				                  node.GetChildByRole(Roles.RBrace).EndLocation);
 		}
 		
 		#region Compilation Unit
-		public override IUnresolvedEntity VisitCompilationUnit (CompilationUnit unit, object data)
+		public override IUnresolvedEntity VisitCompilationUnit (CompilationUnit unit)
 		{
 			parsedFile.Errors = unit.Errors;
-			return base.VisitCompilationUnit (unit, data);
+			return base.VisitCompilationUnit (unit);
 		}
 		#endregion
 		
 		#region Using Declarations
-		public override IUnresolvedEntity VisitExternAliasDeclaration(ExternAliasDeclaration externAliasDeclaration, object data)
+		public override IUnresolvedEntity VisitExternAliasDeclaration(ExternAliasDeclaration externAliasDeclaration)
 		{
 			usingScope.ExternAliases.Add(externAliasDeclaration.Name);
 			return null;
 		}
 		
-		public override IUnresolvedEntity VisitUsingDeclaration(UsingDeclaration usingDeclaration, object data)
+		public override IUnresolvedEntity VisitUsingDeclaration(UsingDeclaration usingDeclaration)
 		{
 			TypeOrNamespaceReference u = usingDeclaration.Import.ToTypeReference(SimpleNameLookupMode.TypeInUsingDeclaration) as TypeOrNamespaceReference;
 			if (u != null) {
@@ -130,7 +138,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			return null;
 		}
 		
-		public override IUnresolvedEntity VisitUsingAliasDeclaration(UsingAliasDeclaration usingDeclaration, object data)
+		public override IUnresolvedEntity VisitUsingAliasDeclaration(UsingAliasDeclaration usingDeclaration)
 		{
 			TypeOrNamespaceReference u = usingDeclaration.Import.ToTypeReference(SimpleNameLookupMode.TypeInUsingDeclaration) as TypeOrNamespaceReference;
 			if (u != null) {
@@ -143,7 +151,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		#endregion
 		
 		#region Namespace Declaration
-		public override IUnresolvedEntity VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, object data)
+		public override IUnresolvedEntity VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration)
 		{
 			DomRegion region = MakeRegion(namespaceDeclaration);
 			UsingScope previousUsingScope = usingScope;
@@ -151,7 +159,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				usingScope = new UsingScope(usingScope, ident.Name);
 				usingScope.Region = region;
 			}
-			base.VisitNamespaceDeclaration(namespaceDeclaration, data);
+			base.VisitNamespaceDeclaration(namespaceDeclaration);
 			parsedFile.UsingScopes.Add(usingScope); // add after visiting children so that nested scopes come first
 			usingScope = previousUsingScope;
 			return null;
@@ -176,11 +184,12 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			return newType;
 		}
 		
-		public override IUnresolvedEntity VisitTypeDeclaration(TypeDeclaration typeDeclaration, object data)
+		public override IUnresolvedEntity VisitTypeDeclaration(TypeDeclaration typeDeclaration)
 		{
 			var td = currentTypeDefinition = CreateTypeDefinition(typeDeclaration.Name);
 			td.Region = MakeRegion(typeDeclaration);
 			td.BodyRegion = MakeBraceRegion(typeDeclaration);
+			AddXmlDocumentation(td, typeDeclaration);
 			
 			ApplyModifiers(td, typeDeclaration.Modifiers);
 			switch (typeDeclaration.ClassType) {
@@ -205,8 +214,8 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				td.BaseTypes.Add(baseType.ToTypeReference(SimpleNameLookupMode.BaseTypeReference));
 			}
 			
-			foreach (AttributedNode member in typeDeclaration.Members) {
-				member.AcceptVisitor(this, data);
+			foreach (EntityDeclaration member in typeDeclaration.Members) {
+				member.AcceptVisitor(this);
 			}
 			
 			currentTypeDefinition = (CSharpUnresolvedTypeDefinition)currentTypeDefinition.DeclaringTypeDefinition;
@@ -216,12 +225,13 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			return td;
 		}
 		
-		public override IUnresolvedEntity VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration, object data)
+		public override IUnresolvedEntity VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration)
 		{
 			var td = currentTypeDefinition = CreateTypeDefinition(delegateDeclaration.Name);
 			td.Kind = TypeKind.Delegate;
 			td.Region = MakeRegion(delegateDeclaration);
 			td.BaseTypes.Add(KnownTypeReference.MulticastDelegate);
+			AddXmlDocumentation(td, delegateDeclaration);
 			
 			ApplyModifiers(td, delegateDeclaration.Modifiers);
 			td.IsSealed = true; // delegates are implicitly sealed
@@ -323,7 +333,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		#endregion
 		
 		#region Fields
-		public override IUnresolvedEntity VisitFieldDeclaration(FieldDeclaration fieldDeclaration, object data)
+		public override IUnresolvedEntity VisitFieldDeclaration(FieldDeclaration fieldDeclaration)
 		{
 			bool isSingleField = fieldDeclaration.Variables.Count == 1;
 			Modifiers modifiers = fieldDeclaration.Modifiers;
@@ -334,6 +344,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				field.Region = isSingleField ? MakeRegion(fieldDeclaration) : MakeRegion(vi);
 				field.BodyRegion = MakeRegion(vi);
 				ConvertAttributes(field.Attributes, fieldDeclaration.Attributes);
+				AddXmlDocumentation(field, fieldDeclaration);
 				
 				ApplyModifiers(field, modifiers);
 				field.IsVolatile = (modifiers & Modifiers.Volatile) != 0;
@@ -353,17 +364,18 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			return isSingleField ? field : null;
 		}
 		
-		public override IUnresolvedEntity VisitFixedFieldDeclaration(FixedFieldDeclaration fixedFieldDeclaration, object data)
+		public override IUnresolvedEntity VisitFixedFieldDeclaration(FixedFieldDeclaration fixedFieldDeclaration)
 		{
 			// TODO: add support for fixed fields
-			return base.VisitFixedFieldDeclaration(fixedFieldDeclaration, data);
+			return base.VisitFixedFieldDeclaration(fixedFieldDeclaration);
 		}
 		
-		public override IUnresolvedEntity VisitEnumMemberDeclaration(EnumMemberDeclaration enumMemberDeclaration, object data)
+		public override IUnresolvedEntity VisitEnumMemberDeclaration(EnumMemberDeclaration enumMemberDeclaration)
 		{
 			DefaultUnresolvedField field = new DefaultUnresolvedField(currentTypeDefinition, enumMemberDeclaration.Name);
 			field.Region = field.BodyRegion = MakeRegion(enumMemberDeclaration);
 			ConvertAttributes(field.Attributes, enumMemberDeclaration.Attributes);
+			AddXmlDocumentation(field, enumMemberDeclaration);
 			
 			if (currentTypeDefinition.TypeParameters.Count == 0) {
 				field.ReturnType = currentTypeDefinition;
@@ -396,12 +408,13 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		#endregion
 		
 		#region Methods
-		public override IUnresolvedEntity VisitMethodDeclaration(MethodDeclaration methodDeclaration, object data)
+		public override IUnresolvedEntity VisitMethodDeclaration(MethodDeclaration methodDeclaration)
 		{
 			DefaultUnresolvedMethod m = new DefaultUnresolvedMethod(currentTypeDefinition, methodDeclaration.Name);
 			currentMethod = m; // required for resolving type parameters
 			m.Region = MakeRegion(methodDeclaration);
 			m.BodyRegion = MakeRegion(methodDeclaration.Body);
+			AddXmlDocumentation(m, methodDeclaration);
 			
 			if (InheritsConstraints(methodDeclaration) && methodDeclaration.Constraints.Count == 0) {
 				int index = 0;
@@ -423,6 +436,12 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			if (methodDeclaration.IsExtensionMethod) {
 				m.IsExtensionMethod = true;
 				currentTypeDefinition.HasExtensionMethods = true;
+			}
+			if (methodDeclaration.HasModifier(Modifiers.Partial)) {
+				if (methodDeclaration.Body.IsNull)
+					m.IsPartialMethodDeclaration = true;
+				else
+					m.IsPartialMethodImplementation = true;
 			}
 			
 			ConvertParameters(m.Parameters, methodDeclaration.Parameters);
@@ -520,12 +539,13 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		#endregion
 		
 		#region Operators
-		public override IUnresolvedEntity VisitOperatorDeclaration(OperatorDeclaration operatorDeclaration, object data)
+		public override IUnresolvedEntity VisitOperatorDeclaration(OperatorDeclaration operatorDeclaration)
 		{
 			DefaultUnresolvedMethod m = new DefaultUnresolvedMethod(currentTypeDefinition, operatorDeclaration.Name);
 			m.EntityType = EntityType.Operator;
 			m.Region = MakeRegion(operatorDeclaration);
 			m.BodyRegion = MakeRegion(operatorDeclaration.Body);
+			AddXmlDocumentation(m, operatorDeclaration);
 			
 			m.ReturnType = operatorDeclaration.ReturnType.ToTypeReference();
 			ConvertAttributes(m.Attributes, operatorDeclaration.Attributes.Where(s => s.AttributeTarget != "return"));
@@ -544,7 +564,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		#endregion
 		
 		#region Constructors
-		public override IUnresolvedEntity VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, object data)
+		public override IUnresolvedEntity VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration)
 		{
 			Modifiers modifiers = constructorDeclaration.Modifiers;
 			bool isStatic = (modifiers & Modifiers.Static) != 0;
@@ -560,6 +580,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			
 			ConvertAttributes(ctor.Attributes, constructorDeclaration.Attributes);
 			ConvertParameters(ctor.Parameters, constructorDeclaration.Parameters);
+			AddXmlDocumentation(ctor, constructorDeclaration);
 			
 			if (isStatic)
 				ctor.IsStatic = true;
@@ -575,7 +596,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		#endregion
 		
 		#region Destructors
-		public override IUnresolvedEntity VisitDestructorDeclaration(DestructorDeclaration destructorDeclaration, object data)
+		public override IUnresolvedEntity VisitDestructorDeclaration(DestructorDeclaration destructorDeclaration)
 		{
 			DefaultUnresolvedMethod dtor = new DefaultUnresolvedMethod(currentTypeDefinition, "Finalize");
 			dtor.EntityType = EntityType.Destructor;
@@ -586,6 +607,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			dtor.ReturnType = KnownTypeReference.Void;
 			
 			ConvertAttributes(dtor.Attributes, destructorDeclaration.Attributes);
+			AddXmlDocumentation(dtor, destructorDeclaration);
 			
 			currentTypeDefinition.Members.Add(dtor);
 			if (interningProvider != null) {
@@ -596,7 +618,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		#endregion
 		
 		#region Properties / Indexers
-		public override IUnresolvedEntity VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, object data)
+		public override IUnresolvedEntity VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration)
 		{
 			DefaultUnresolvedProperty p = new DefaultUnresolvedProperty(currentTypeDefinition, propertyDeclaration.Name);
 			p.Region = MakeRegion(propertyDeclaration);
@@ -604,6 +626,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			ApplyModifiers(p, propertyDeclaration.Modifiers);
 			p.ReturnType = propertyDeclaration.ReturnType.ToTypeReference();
 			ConvertAttributes(p.Attributes, propertyDeclaration.Attributes);
+			AddXmlDocumentation(p, propertyDeclaration);
 			if (!propertyDeclaration.PrivateImplementationType.IsNull) {
 				p.Accessibility = Accessibility.None;
 				p.IsExplicitInterfaceImplementation = true;
@@ -619,7 +642,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			return p;
 		}
 		
-		public override IUnresolvedEntity VisitIndexerDeclaration(IndexerDeclaration indexerDeclaration, object data)
+		public override IUnresolvedEntity VisitIndexerDeclaration(IndexerDeclaration indexerDeclaration)
 		{
 			DefaultUnresolvedProperty p = new DefaultUnresolvedProperty(currentTypeDefinition, "Item");
 			p.EntityType = EntityType.Indexer;
@@ -628,6 +651,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			ApplyModifiers(p, indexerDeclaration.Modifiers);
 			p.ReturnType = indexerDeclaration.ReturnType.ToTypeReference();
 			ConvertAttributes(p.Attributes, indexerDeclaration.Attributes);
+			AddXmlDocumentation(p, indexerDeclaration);
 			
 			ConvertParameters(p.Parameters, indexerDeclaration.Parameters);
 			p.Getter = ConvertAccessor(indexerDeclaration.Getter, p, "get_");
@@ -653,6 +677,13 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				return null;
 			var a = new DefaultUnresolvedMethod(currentTypeDefinition, prefix + p.Name);
 			a.Accessibility = GetAccessibility(accessor.Modifiers) ?? p.Accessibility;
+			a.IsAbstract = p.IsAbstract;
+			a.IsOverride = p.IsOverridable;
+			a.IsSealed = p.IsSealed;
+			a.IsStatic = p.IsStatic;
+			a.IsSynthetic = p.IsSynthetic;
+			a.IsVirtual = p.IsVirtual;
+			
 			a.Region = MakeRegion(accessor);
 			if (p.EntityType == EntityType.Indexer) {
 				foreach (var indexerParam in ((IUnresolvedProperty)p).Parameters)
@@ -680,7 +711,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		#endregion
 		
 		#region Events
-		public override IUnresolvedEntity VisitEventDeclaration(EventDeclaration eventDeclaration, object data)
+		public override IUnresolvedEntity VisitEventDeclaration(EventDeclaration eventDeclaration)
 		{
 			bool isSingleEvent = eventDeclaration.Variables.Count == 1;
 			Modifiers modifiers = eventDeclaration.Modifiers;
@@ -692,12 +723,13 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				ev.BodyRegion = MakeRegion(vi);
 				
 				ApplyModifiers(ev, modifiers);
+				AddXmlDocumentation(ev, eventDeclaration);
 				
 				ev.ReturnType = eventDeclaration.ReturnType.ToTypeReference();
 				
 				var valueParameter = new DefaultUnresolvedParameter(ev.ReturnType, "value");
-				ev.AddAccessor = CreateDefaultEventAccessor(ev, "get_" + ev.Name, valueParameter);
-				ev.RemoveAccessor = CreateDefaultEventAccessor(ev, "set_" + ev.Name, valueParameter);
+				ev.AddAccessor = CreateDefaultEventAccessor(ev, "add_" + ev.Name, valueParameter);
+				ev.RemoveAccessor = CreateDefaultEventAccessor(ev, "remove_" + ev.Name, valueParameter);
 				
 				foreach (AttributeSection section in eventDeclaration.Attributes) {
 					if (section.AttributeTarget == "method") {
@@ -725,12 +757,18 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			a.Region = ev.BodyRegion;
 			a.BodyRegion = ev.BodyRegion;
 			a.Accessibility = ev.Accessibility;
+			a.IsAbstract = ev.IsAbstract;
+			a.IsOverride = ev.IsOverridable;
+			a.IsSealed = ev.IsSealed;
+			a.IsStatic = ev.IsStatic;
+			a.IsSynthetic = ev.IsSynthetic;
+			a.IsVirtual = ev.IsVirtual;
 			a.ReturnType = KnownTypeReference.Void;
 			a.Parameters.Add(valueParameter);
 			return a;
 		}
 		
-		public override IUnresolvedEntity VisitCustomEventDeclaration(CustomEventDeclaration eventDeclaration, object data)
+		public override IUnresolvedEntity VisitCustomEventDeclaration(CustomEventDeclaration eventDeclaration)
 		{
 			DefaultUnresolvedEvent e = new DefaultUnresolvedEvent(currentTypeDefinition, eventDeclaration.Name);
 			e.Region = MakeRegion(eventDeclaration);
@@ -738,6 +776,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			ApplyModifiers(e, eventDeclaration.Modifiers);
 			e.ReturnType = eventDeclaration.ReturnType.ToTypeReference();
 			ConvertAttributes(e.Attributes, eventDeclaration.Attributes);
+			AddXmlDocumentation(e, eventDeclaration);
 			
 			if (!eventDeclaration.PrivateImplementationType.IsNull) {
 				e.Accessibility = Accessibility.None;
@@ -804,7 +843,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		#endregion
 		
 		#region Attributes
-		public override IUnresolvedEntity VisitAttributeSection(AttributeSection attributeSection, object data)
+		public override IUnresolvedEntity VisitAttributeSection(AttributeSection attributeSection)
 		{
 			// non-assembly attributes are handled by their parent entity
 			if (attributeSection.AttributeTarget == "assembly") {
@@ -832,7 +871,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		internal static ITypeReference ConvertAttributeType(AstType type)
 		{
 			ITypeReference tr = type.ToTypeReference();
-			if (!type.GetChildByRole(AstNode.Roles.Identifier).IsVerbatim) {
+			if (!type.GetChildByRole(Roles.Identifier).IsVerbatim) {
 				// Try to add "Attribute" suffix, but only if the identifier
 				// (=last identifier in fully qualified name) isn't a verbatim identifier.
 				SimpleTypeOrNamespaceReference st = tr as SimpleTypeOrNamespaceReference;
@@ -895,7 +934,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			IUnresolvedTypeDefinition parentTypeDefinition, IUnresolvedMethod parentMethodDefinition, UsingScope parentUsingScope)
 		{
 			ConstantValueBuilder b = new ConstantValueBuilder(false);
-			ConstantExpression c = expression.AcceptVisitor(b, null);
+			ConstantExpression c = expression.AcceptVisitor(b);
 			if (c == null)
 				return new ErrorConstantValue(targetType);
 			PrimitiveConstantExpression pc = c as PrimitiveConstantExpression;
@@ -910,10 +949,10 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		IConstantValue ConvertAttributeArgument(Expression expression)
 		{
 			ConstantValueBuilder b = new ConstantValueBuilder(true);
-			return expression.AcceptVisitor(b, null);
+			return expression.AcceptVisitor(b);
 		}
 		
-		sealed class ConstantValueBuilder : DepthFirstAstVisitor<object, ConstantExpression>
+		sealed class ConstantValueBuilder : DepthFirstAstVisitor<ConstantExpression>
 		{
 			readonly bool isAttributeArgument;
 			
@@ -922,17 +961,17 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				this.isAttributeArgument = isAttributeArgument;
 			}
 			
-			protected override ConstantExpression VisitChildren(AstNode node, object data)
+			protected override ConstantExpression VisitChildren(AstNode node)
 			{
 				return null;
 			}
 			
-			public override ConstantExpression VisitNullReferenceExpression(NullReferenceExpression nullReferenceExpression, object data)
+			public override ConstantExpression VisitNullReferenceExpression(NullReferenceExpression nullReferenceExpression)
 			{
 				return new PrimitiveConstantExpression(KnownTypeReference.Object, null);
 			}
 			
-			public override ConstantExpression VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, object data)
+			public override ConstantExpression VisitPrimitiveExpression(PrimitiveExpression primitiveExpression)
 			{
 				TypeCode typeCode = Type.GetTypeCode(primitiveExpression.Value.GetType());
 				return new PrimitiveConstantExpression(typeCode.ToTypeReference(), primitiveExpression.Value);
@@ -951,12 +990,12 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				return result;
 			}
 			
-			public override ConstantExpression VisitIdentifierExpression(IdentifierExpression identifierExpression, object data)
+			public override ConstantExpression VisitIdentifierExpression(IdentifierExpression identifierExpression)
 			{
 				return new ConstantIdentifierReference(identifierExpression.Identifier, ConvertTypeArguments(identifierExpression.TypeArguments));
 			}
 			
-			public override ConstantExpression VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression, object data)
+			public override ConstantExpression VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression)
 			{
 				TypeReferenceExpression tre = memberReferenceExpression.Target as TypeReferenceExpression;
 				if (tre != null) {
@@ -966,7 +1005,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 						memberReferenceExpression.MemberName,
 						ConvertTypeArguments(memberReferenceExpression.TypeArguments));
 				}
-				ConstantExpression v = memberReferenceExpression.Target.AcceptVisitor(this, data);
+				ConstantExpression v = memberReferenceExpression.Target.AcceptVisitor(this);
 				if (v == null)
 					return null;
 				return new ConstantMemberReference(
@@ -974,45 +1013,45 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 					ConvertTypeArguments(memberReferenceExpression.TypeArguments));
 			}
 			
-			public override ConstantExpression VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, object data)
+			public override ConstantExpression VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression)
 			{
-				return parenthesizedExpression.Expression.AcceptVisitor(this, data);
+				return parenthesizedExpression.Expression.AcceptVisitor(this);
 			}
 			
-			public override ConstantExpression VisitCastExpression(CastExpression castExpression, object data)
+			public override ConstantExpression VisitCastExpression(CastExpression castExpression)
 			{
-				ConstantExpression v = castExpression.Expression.AcceptVisitor(this, data);
+				ConstantExpression v = castExpression.Expression.AcceptVisitor(this);
 				if (v == null)
 					return null;
 				return new ConstantCast(castExpression.Type.ToTypeReference(), v);
 			}
 			
-			public override ConstantExpression VisitCheckedExpression(CheckedExpression checkedExpression, object data)
+			public override ConstantExpression VisitCheckedExpression(CheckedExpression checkedExpression)
 			{
-				ConstantExpression v = checkedExpression.Expression.AcceptVisitor(this, data);
+				ConstantExpression v = checkedExpression.Expression.AcceptVisitor(this);
 				if (v != null)
 					return new ConstantCheckedExpression(true, v);
 				else
 					return null;
 			}
 			
-			public override ConstantExpression VisitUncheckedExpression(UncheckedExpression uncheckedExpression, object data)
+			public override ConstantExpression VisitUncheckedExpression(UncheckedExpression uncheckedExpression)
 			{
-				ConstantExpression v = uncheckedExpression.Expression.AcceptVisitor(this, data);
+				ConstantExpression v = uncheckedExpression.Expression.AcceptVisitor(this);
 				if (v != null)
 					return new ConstantCheckedExpression(false, v);
 				else
 					return null;
 			}
 			
-			public override ConstantExpression VisitDefaultValueExpression(DefaultValueExpression defaultValueExpression, object data)
+			public override ConstantExpression VisitDefaultValueExpression(DefaultValueExpression defaultValueExpression)
 			{
 				return new ConstantDefaultValue(defaultValueExpression.Type.ToTypeReference());
 			}
 			
-			public override ConstantExpression VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, object data)
+			public override ConstantExpression VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression)
 			{
-				ConstantExpression v = unaryOperatorExpression.Expression.AcceptVisitor(this, data);
+				ConstantExpression v = unaryOperatorExpression.Expression.AcceptVisitor(this);
 				if (v == null)
 					return null;
 				switch (unaryOperatorExpression.Operator) {
@@ -1026,16 +1065,16 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				}
 			}
 			
-			public override ConstantExpression VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, object data)
+			public override ConstantExpression VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression)
 			{
-				ConstantExpression left = binaryOperatorExpression.Left.AcceptVisitor(this, data);
-				ConstantExpression right = binaryOperatorExpression.Right.AcceptVisitor(this, data);
+				ConstantExpression left = binaryOperatorExpression.Left.AcceptVisitor(this);
+				ConstantExpression right = binaryOperatorExpression.Right.AcceptVisitor(this);
 				if (left == null || right == null)
 					return null;
 				return new ConstantBinaryOperator(left, binaryOperatorExpression.Operator, right);
 			}
 			
-			public override ConstantExpression VisitTypeOfExpression(TypeOfExpression typeOfExpression, object data)
+			public override ConstantExpression VisitTypeOfExpression(TypeOfExpression typeOfExpression)
 			{
 				if (isAttributeArgument) {
 					return new TypeOfConstantExpression(typeOfExpression.Type.ToTypeReference());
@@ -1044,7 +1083,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				}
 			}
 			
-			public override ConstantExpression VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, object data)
+			public override ConstantExpression VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression)
 			{
 				var initializer = arrayCreateExpression.Initializer;
 				// Attributes only allow one-dimensional arrays
@@ -1061,7 +1100,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 					ConstantExpression[] elements = new ConstantExpression[initializer.Elements.Count];
 					int pos = 0;
 					foreach (Expression expr in initializer.Elements) {
-						ConstantExpression c = expr.AcceptVisitor(this, data);
+						ConstantExpression c = expr.AcceptVisitor(this);
 						if (c == null)
 							return null;
 						elements[pos++] = c;
@@ -1098,6 +1137,90 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 					p.DefaultValue = ConvertConstantValue(p.Type, pd.DefaultExpression);
 				outputList.Add(p);
 			}
+		}
+		#endregion
+		
+		#region XML Documentation
+		void AddXmlDocumentation(IUnresolvedEntity entity, AstNode entityDeclaration)
+		{
+			if (this.SkipXmlDocumentation)
+				return;
+			List<string> documentation = null;
+			// traverse AST backwards until the next non-whitespace node
+			for (AstNode node = entityDeclaration.PrevSibling; node != null && node.NodeType == NodeType.Whitespace; node = node.PrevSibling) {
+				Comment c = node as Comment;
+				if (c != null && (c.CommentType == CommentType.Documentation || c.CommentType == CommentType.MultiLineDocumentation)) {
+					if (documentation == null)
+						documentation = new List<string>();
+					if (c.CommentType == CommentType.MultiLineDocumentation) {
+						documentation.Add(PrepareMultilineDocumentation(c.Content));
+					} else {
+						if (c.Content.Length > 0 && c.Content[0] == ' ')
+							documentation.Add(c.Content.Substring(1));
+						else
+							documentation.Add(c.Content);
+					}
+				}
+			}
+			if (documentation != null) {
+				documentation.Reverse(); // bring documentation in correct order
+				parsedFile.AddDocumentation(entity, string.Join(Environment.NewLine, documentation));
+			}
+		}
+		
+		string PrepareMultilineDocumentation(string content)
+		{
+			StringBuilder b = new StringBuilder();
+			using (var reader = new StringReader(content)) {
+				string firstLine = reader.ReadLine();
+				// Add first line only if it's not empty:
+				if (!string.IsNullOrWhiteSpace(firstLine)) {
+					if (firstLine[0] == ' ')
+						b.Append(firstLine, 1, firstLine.Length - 1);
+					else
+						b.Append(firstLine);
+				}
+				// Read lines into list:
+				List<string> lines = new List<string>();
+				string line;
+				while ((line = reader.ReadLine()) != null)
+					lines.Add(line);
+				// If the last line (the line with '*/' delimiter) is white space only, ignore it.
+				if (lines.Count > 0 && string.IsNullOrWhiteSpace(lines[lines.Count - 1]))
+					lines.RemoveAt(lines.Count - 1);
+				if (lines.Count > 0) {
+					// Extract pattern from lines[0]: whitespace, asterisk, whitespace
+					int patternLength = 0;
+					string secondLine = lines[0];
+					while (patternLength < secondLine.Length && char.IsWhiteSpace(secondLine[patternLength]))
+						patternLength++;
+					if (patternLength < secondLine.Length && secondLine[patternLength] == '*') {
+						patternLength++;
+						while (patternLength < secondLine.Length && char.IsWhiteSpace(secondLine[patternLength]))
+							patternLength++;
+					} else {
+						// no asterisk
+						patternLength = 0;
+					}
+					// Now reduce pattern length to the common pattern:
+					for (int i = 1; i < lines.Count; i++) {
+						line = lines[i];
+						if (line.Length < patternLength)
+							patternLength = line.Length;
+						for (int j = 0; j < patternLength; j++) {
+							if (secondLine[j] != line[j])
+								patternLength = j;
+						}
+					}
+					// Append the lines to the string builder:
+					for (int i = 0; i < lines.Count; i++) {
+						if (b.Length > 0 || i > 0)
+							b.Append(Environment.NewLine);
+						b.Append(lines[i], patternLength, lines[i].Length - patternLength);
+					}
+				}
+			}
+			return b.ToString();
 		}
 		#endregion
 	}

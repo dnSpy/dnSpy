@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>ICSharpCode.NRefactory</id>
-    <version>5.0.0.4</version>
+    <version>5.0.0.6</version>
     <title>NRefactory</title>
     <authors>Daniel Grunwald, Mike Krüger</authors>
     <owners>Daniel Grunwald</owners>
@@ -25,7 +25,11 @@
 		<file src="..\ICSharpCode.NRefactory\bin\Release\ICSharpCode.NRefactory.CSharp.dll" target="lib\Net40" />
 		<file src="..\ICSharpCode.NRefactory\bin\Release\ICSharpCode.NRefactory.CSharp.pdb" target="lib\Net40" />
 		<file src="..\ICSharpCode.NRefactory\bin\Release\ICSharpCode.NRefactory.CSharp.xml" target="lib\Net40" />
+		<file src="..\ICSharpCode.NRefactory\bin\Release\ICSharpCode.NRefactory.Xml.dll" target="lib\Net40" />
+		<file src="..\ICSharpCode.NRefactory\bin\Release\ICSharpCode.NRefactory.Xml.pdb" target="lib\Net40" />
+		<file src="..\ICSharpCode.NRefactory\bin\Release\ICSharpCode.NRefactory.Xml.xml" target="lib\Net40" />
 		<file src="..\ICSharpCode.NRefactory\**\*.cs" target="src\ICSharpCode.NRefactory" />
 		<file src="..\ICSharpCode.NRefactory.CSharp\**\*.cs" target="src\ICSharpCode.NRefactory.CSharp" />
+		<file src="..\ICSharpCode.NRefactory.Xml\**\*.cs" target="src\ICSharpCode.NRefactory.Xml" />
 	</files>
 </package>

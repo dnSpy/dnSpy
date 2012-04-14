@@ -31,8 +31,10 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class CheckedStatement : Statement
 	{
+		public static readonly TokenRole CheckedKeywordRole = new TokenRole ("checked");
+		
 		public CSharpTokenNode CheckedToken {
-			get { return GetChildByRole (Roles.Keyword); }
+			get { return GetChildByRole (CheckedKeywordRole); }
 		}
 		
 		public BlockStatement Body {
@@ -49,7 +51,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			AddChild (body, Roles.Body);
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitCheckedStatement (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitCheckedStatement (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitCheckedStatement (this, data);
 		}

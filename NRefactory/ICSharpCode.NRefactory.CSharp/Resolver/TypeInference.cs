@@ -50,7 +50,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	public sealed class TypeInference
 	{
 		readonly ICompilation compilation;
-		readonly Conversions conversions;
+		readonly CSharpConversions conversions;
 		TypeInferenceAlgorithm algorithm = TypeInferenceAlgorithm.CSharp4;
 		
 		// determines the maximum generic nesting level; necessary to avoid infinite recursion in 'Improved' mode.
@@ -63,10 +63,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			if (compilation == null)
 				throw new ArgumentNullException("compilation");
 			this.compilation = compilation;
-			this.conversions = Conversions.Get(compilation);
+			this.conversions = CSharpConversions.Get(compilation);
 		}
 		
-		internal TypeInference(ICompilation compilation, Conversions conversions)
+		internal TypeInference(ICompilation compilation, CSharpConversions conversions)
 		{
 			Debug.Assert(compilation != null);
 			Debug.Assert(conversions != null);
@@ -513,7 +513,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 					                                        allowExtensionMethods: false,
 					                                        allowExpandingParams: false);
 					if (or.FoundApplicableCandidate && or.BestCandidateAmbiguousWith == null) {
-						IType returnType = or.BestCandidate.ReturnType;
+						IType returnType = or.GetBestCandidateWithSubstitutedTypeArguments().ReturnType;
 						MakeLowerBoundInference(returnType, m.ReturnType);
 					}
 				}
@@ -633,7 +633,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			if (arrU != null && arrV != null && arrU.Dimensions == arrV.Dimensions) {
 				MakeLowerBoundInference(arrU.ElementType, arrV.ElementType);
 				return;
-			} else if (arrU != null && IsIEnumerableCollectionOrList(pV) && arrU.Dimensions == 1) {
+			} else if (arrU != null && IsGenericInterfaceImplementedByArray(pV) && arrU.Dimensions == 1) {
 				MakeLowerBoundInference(arrU.ElementType, pV.GetTypeArgument(0));
 				return;
 			}
@@ -678,14 +678,15 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			}
 		}
 		
-		static bool IsIEnumerableCollectionOrList(ParameterizedType rt)
+		static bool IsGenericInterfaceImplementedByArray(ParameterizedType rt)
 		{
 			if (rt == null || rt.TypeParameterCount != 1)
 				return false;
 			switch (rt.GetDefinition().FullName) {
-				case "System.Collections.Generic.IList":
-				case "System.Collections.Generic.ICollection":
 				case "System.Collections.Generic.IEnumerable":
+				case "System.Collections.Generic.ICollection":
+				case "System.Collections.Generic.IList":
+				case "System.Collections.Generic.IReadOnlyList":
 					return true;
 				default:
 					return false;
@@ -717,10 +718,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			if (arrV != null && arrU != null && arrU.Dimensions == arrV.Dimensions) {
 				MakeUpperBoundInference(arrU.ElementType, arrV.ElementType);
 				return;
-			} else if (arrV != null && IsIEnumerableCollectionOrList(pU) && arrV.Dimensions == 1) {
+			} else if (arrV != null && IsGenericInterfaceImplementedByArray(pU) && arrV.Dimensions == 1) {
 				MakeUpperBoundInference(pU.GetTypeArgument(0), arrV.ElementType);
 				return;
-			}
+ 			}
 			// Handle parameterized types:
 			if (pU != null) {
 				ParameterizedType uniqueBaseType = null;

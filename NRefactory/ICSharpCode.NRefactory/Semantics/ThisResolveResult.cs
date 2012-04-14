@@ -27,8 +27,18 @@ namespace ICSharpCode.NRefactory.Semantics
 	/// </summary>
 	public class ThisResolveResult : ResolveResult
 	{
-		public ThisResolveResult(IType type) : base(type)
+		bool causesNonVirtualInvocation;
+		
+		public ThisResolveResult(IType type, bool causesNonVirtualInvocation = false) : base(type)
 		{
+			this.causesNonVirtualInvocation = causesNonVirtualInvocation;
+		}
+		
+		/// <summary>
+		/// Gets whether this resolve result causes member invocations to be non-virtual.
+		/// </summary>
+		public bool CausesNonVirtualInvocation {
+			get { return causesNonVirtualInvocation; }
 		}
 	}
 }

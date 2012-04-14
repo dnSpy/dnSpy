@@ -82,7 +82,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 						MemberName = "Namespace"
 					}.Member("Subnamespace").Member ("SomeClass");
 			
-			target.AddChild (new PrimitiveType("string"), MemberReferenceExpression.Roles.TypeArgument);
+			target.AddChild (new PrimitiveType("string"), Roles.TypeArgument);
 			
 			ParseUtilCSharp.AssertExpression(
 				"global::Namespace.Subnamespace.SomeClass<string>.myField",

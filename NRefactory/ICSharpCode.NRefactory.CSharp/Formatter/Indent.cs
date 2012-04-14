@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Indent.cs
 //  
 // Author:
@@ -24,66 +24,75 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
+using System.Collections.Generic;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
+	public enum IndentType {
+		Block,
+		Continuation,
+		Label
+	}
+
 	public class Indent
 	{
-		public int Level {
-			get;
-			set;
-		}
+		readonly Stack<IndentType> indentStack = new Stack<IndentType> ();
+		readonly TextEditorOptions options;
+		
+		int curIndent;
 
-		public int ExtraSpaces {
-			get;
-			set;
-		}
-
-		public bool TabsToSpaces {
-			get;
-			set;
-		}
-
-		public int TabSize {
-			get;
-			set;
-		}
-
-		public Indent ()
+		public Indent(TextEditorOptions options)
 		{
+			this.options = options;
 		}
 
-		public Indent (int level, int extraSpaces)
+
+		public void Push(IndentType type)
 		{
-			this.Level = level;
-			this.ExtraSpaces = extraSpaces;
+			indentStack.Push(type);
+			curIndent += GetIndent(type);
+			Update();
 		}
 
-		public static Indent operator+ (Indent left, Indent right)
+		public void Pop()
 		{
-			return new Indent (left.Level + right.Level, left.ExtraSpaces + right.ExtraSpaces);
+			curIndent -= GetIndent(indentStack.Pop());
+			Update();
 		}
 
-		public static Indent operator- (Indent left, Indent right)
+		int GetIndent(IndentType indentType)
 		{
-			return new Indent (left.Level - right.Level, left.ExtraSpaces - right.ExtraSpaces);
+			switch (indentType) {
+				case IndentType.Block:
+					return options.IndentSize;
+				case IndentType.Continuation:
+					return options.ContinuationIndent;
+				case IndentType.Label:
+					return options.LabelIndent;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
 		}
 
+		void Update()
+		{
+			if (options.TabsToSpaces) {
+				indentString = new string(' ', curIndent);
+				return;
+			}
+			indentString = new string('\t', curIndent / options.TabSize) + new string(' ', curIndent % options.TabSize); 
+		}
+
+		string indentString;
 		public string IndentString {
 			get {
-				return (TabsToSpaces ? new string (' ', Level * TabSize) : new string ('\t', Level)) + new string (' ', ExtraSpaces);
+				return indentString;
 			}
 		}
 
-		public string SingleIndent {
-			get {
-				return TabsToSpaces ? new string (' ', TabSize) : "\t";
-			}
-		}
-
-		public override string ToString ()
+		public override string ToString()
 		{
-			return string.Format ("[Indent: Level={0}, ExtraSpaces={1}]", Level, ExtraSpaces);
+			return string.Format("[Indent: curIndent={0}]", curIndent);
 		}
 	}
 }

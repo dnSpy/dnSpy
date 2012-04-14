@@ -147,6 +147,9 @@ namespace Mono.CSharp
 		Location parameterModifierLocation, savedLocation, savedOpenLocation, savedCloseLocation;
 		Location savedAttrParenOpenLocation, savedAttrParenCloseLocation, savedOperatorLocation;
 		Stack<List<Location>> locationListStack = new Stack<List<Location>> (); // used for type parameters
+		Stack<Location> opt_intoStack = new Stack<Location> ();
+
+		bool HadAttributeParens;
 		List<Location> attributeCommas = new List<Location> ();
 		List<Location> attributeArgumentCommas = new List<Location> ();
 		List<Location> parameterListCommas = new List<Location> ();
@@ -397,6 +400,8 @@ outer_declaration
 			Attributes attrs = (Attributes) $4;
 			report.Error (1730, attrs.Attrs [0].Location,
 				"Assembly and module attributes must precede all other elements except using clauses and extern alias declarations");
+
+			current_namespace.UnattachedAttributes = attrs;
 		}
 	  }
 	| opt_extern_alias_directives opt_using_directives attribute_sections
@@ -615,9 +620,7 @@ namespace_or_type_declaration
 		current_namespace.DeclarationFound = true;
 	  }
 	| attribute_sections CLOSE_BRACE {
-#if FULL_AST
 		current_namespace.UnattachedAttributes = (Attributes) $1;
-#endif
 		report.Error (1518, lexer.Location, "Attributes must be attached to class, delegate, enum, interface or struct");
 		lexer.putback ('}');
 	  }
@@ -779,6 +782,8 @@ attribute
 			attributeArgumentCommas.Add (savedAttrParenCloseLocation);
 			lbag.AddLocation ($$, attributeArgumentCommas);
 			attributeArgumentCommas.Clear ();
+		} else if (HadAttributeParens) {
+			lbag.AddLocation ($$, savedAttrParenOpenLocation, savedAttrParenCloseLocation);
 		}
 	  }
 	;
@@ -788,12 +793,13 @@ attribute_name
 	;
 
 opt_attribute_arguments
-	: /* empty */   { $$ = null; }
+	: /* empty */   { $$ = null; HadAttributeParens = false;  }
 	| OPEN_PARENS attribute_arguments CLOSE_PARENS
 	  {
 		savedAttrParenOpenLocation = GetLocation ($1);
 		savedAttrParenCloseLocation = GetLocation ($3);
 		$$ = $2;
+		HadAttributeParens = true;
 	  }
 	;
 
@@ -1356,6 +1362,23 @@ method_header
 
 		$$ = method;
 	  }
+	| opt_attributes
+	  opt_modifiers
+	  member_type
+	  method_declaration_name error
+	  {
+		Error_SyntaxError (yyToken);
+		current_local_parameters = ParametersCompiled.Undefined;
+
+		MemberName name = (MemberName) $4;
+		var method = Method.Create (current_type, (FullNamedExpression) $3, (Modifiers) $2,
+									name, current_local_parameters, (Attributes) $1, false);
+
+		if (doc_support)
+			method.DocComment = Lexer.consume_doc_comment ();
+
+		$$ = method;
+	  }
 	;
 
 method_body
@@ -1498,12 +1521,18 @@ fixed_parameter
 		$$ = new Parameter ((FullNamedExpression) $3, lt.Value, (Parameter.Modifier) $2, (Attributes) $1, lt.Location);
 		lbag.AddLocation ($$, parameterModifierLocation);
 	  }
+	| attribute_sections error
+	  {
+		Error_SyntaxError (yyToken);
+	  	Location l = GetLocation ($2);
+		$$ = new Parameter (null, null, Parameter.Modifier.NONE, (Attributes) $1, l);
+	  }
 	| opt_attributes
 	  opt_parameter_modifier
 	  parameter_type
 	  error
 	  {
-		Error_SyntaxError (yyToken);	  
+		Error_SyntaxError (yyToken);
 	  	Location l = GetLocation ($4);
 		$$ = new Parameter ((FullNamedExpression) $3, null, (Parameter.Modifier) $2, (Attributes) $1, l);
 		lbag.AddLocation ($$, parameterModifierLocation);
@@ -2290,6 +2319,7 @@ destructor_declaration
 		
 		Destructor d = new Destructor (current_type, (Modifiers) $2,
 			ParametersCompiled.EmptyReadOnlyParameters, (Attributes) $1, lt.Location);
+		d.Identifier = lt.Value;
 		if (doc_support)
 			d.DocComment = ConsumeStoredComment ();
 		  
@@ -2512,10 +2542,9 @@ event_accessor_block
 	;
 
 attributes_without_members
-	: attribute_sections CLOSE_BRACE {
-#if FULL_AST
+	: attribute_sections CLOSE_BRACE
+	  {
 		current_type.UnattachedAttributes = (Attributes) $1;
-#endif
 		report.Error (1519, GetLocation ($1), "An attribute is missing member declaration");
 		lexer.putback ('}');
 	  }
@@ -2541,7 +2570,7 @@ enum_declaration
 			report.Error (1675, name.Location, "Enums cannot have type parameters");
 		}
 		
-		push_current_container (new Enum (current_container, (TypeExpression) $5, (Modifiers) $2, name, (Attributes) $1), null);
+		push_current_container (new Enum (current_container, (FullNamedExpression) $5, (Modifiers) $2, name, (Attributes) $1), null);
 		if ($5 != null) {
 			lbag.AddMember (current_container, GetModifierLocations (), GetLocation ($3), savedLocation, GetLocation ($7));
 		} else {
@@ -2576,14 +2605,8 @@ opt_enum_base
 	: /* empty */
 	| COLON type
 	 {
-	 	var te = $2 as TypeExpression;
-		if (te == null || !EnumSpec.IsValidUnderlyingType (te.Type)) {
-			Enum.Error_1008 (GetLocation ($2), report);
-			$$ = null;
-		} else {
-			savedLocation = GetLocation ($1);
-			$$ = $2;
-		}
+		savedLocation = GetLocation ($1);
+		$$ = $2;
 	 }
 	| COLON error
 	 {
@@ -2854,7 +2877,10 @@ opt_type_parameter_list
 			FeatureIsNotAvailable (GetLocation ($1), "generics");
 	  
 		$$ = $2;
-		lbag.AppendTo ($$, GetLocation ($1), GetLocation ($3));
+		var list = locationListStack.Pop ();
+		list.Add (GetLocation ($1));
+		list.Add (GetLocation ($2));
+		lbag.AddLocation ($2, list);
 	  }
 	;
 
@@ -2864,13 +2890,14 @@ type_parameters
 		var tparams = new TypeParameters ();
 		tparams.Add ((TypeParameter)$1);
 		$$ = tparams;
+		locationListStack.Push (new List<Location> ());
 	  }
 	| type_parameters COMMA type_parameter
 	  {
 		var tparams = (TypeParameters) $1;
 		tparams.Add ((TypeParameter)$3);
 		$$ = tparams;
-		lbag.AddLocation ($3, GetLocation ($3));
+		locationListStack.Peek ().Add (GetLocation ($2));
 	  }	  
 	;
 
@@ -3002,11 +3029,6 @@ base_type_name
 			report.Error (1521, GetLocation ($1), "Invalid base type `{0}'", ((ComposedCast)$1).GetSignatureForError ());
 		}
 		$$ = $1;
-	  }
-	| error
-	  {
-	  	Error_TypeExpected (lexer.Location);
-		$$ = null;
 	  }
 	;
 	
@@ -3249,8 +3271,10 @@ member_initializer
 	  {
 		if ($2 == null)
 			$$ = null;
-		else
+		else {
 	  		$$ = new CollectionElementInitializer ((List<Expression>)$2, GetLocation ($1));
+			lbag.AddLocation ($$, GetLocation ($2));
+	  	}
 	  }
 	| OPEN_BRACE CLOSE_BRACE
 	  {
@@ -3301,10 +3325,10 @@ argument_list
 		lbag.AppendTo (list, GetLocation ($2));
 		$$ = list;
 	  }
-	| argument_list COMMA
+	| argument_list COMMA error
 	  {
-	  	report.Error (839, GetLocation ($2), "An argument is missing");
-	  	$$ = $1;
+		Error_SyntaxError (yyToken);
+		$$ = $1;
 	  }
 	| COMMA error
 	  {
@@ -3361,10 +3385,12 @@ element_access
 	  }
 	| primary_expression OPEN_BRACKET_EXPR expression_list_arguments error
 	  {
+		Error_SyntaxError (yyToken);
 		$$ = new ElementAccess ((Expression) $1, (Arguments) $3, GetLocation ($2));
 	  }
 	| primary_expression OPEN_BRACKET_EXPR error
 	  {
+		Error_SyntaxError (yyToken);
 		$$ = new ElementAccess ((Expression) $1, null, GetLocation ($2));
 	  }
 	;
@@ -3505,8 +3531,9 @@ array_creation_expression
 	  }
 	| NEW new_expr_type error
 	  {
-		Error_SyntaxError (1526, yyToken, "Unexpected symbol");
-		$$ = new ArrayCreation ((FullNamedExpression) $2, null, GetLocation ($1));
+		Error_SyntaxError (yyToken);
+		// It can be any of new expression, create the most common one
+		$$ = new New ((FullNamedExpression) $2, null, GetLocation ($1));
 	  }
 	;
 
@@ -3874,8 +3901,16 @@ unary_expression
 	| AWAIT prefixed_unary_expression
 	  {
 		if (!async_block) {
-			report.Error (1992, GetLocation ($1),
-				"The `await' operator can only be used when its containing method or lambda expression is marked with the `async' modifier");
+			 if (current_anonymous_method is LambdaExpression) {
+				report.Error (4034, GetLocation ($1),
+					"The `await' operator can only be used when its containing lambda expression is marked with the `async' modifier");
+			} else if (current_anonymous_method is AnonymousMethodExpression) {
+				report.Error (4035, GetLocation ($1),
+					"The `await' operator can only be used when its containing anonymous method is marked with the `async' modifier");
+			} else {
+				report.Error (4033, GetLocation ($1),
+					"The `await' operator can only be used when its containing method is marked with the `async' modifier");
+			}
 		} else {
 			current_block.Explicit.RegisterAsyncAwait ();
 		}
@@ -4071,10 +4106,15 @@ null_coalescing_expression
 
 conditional_expression
 	: null_coalescing_expression
-	| null_coalescing_expression INTERR expression COLON expression 
+	| null_coalescing_expression INTERR expression COLON expression_or_error
 	  {
 		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, (Expression) $5, GetLocation ($2));
 		lbag.AddLocation ($$, GetLocation ($4));
+	  }
+	| null_coalescing_expression INTERR expression error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = new Conditional (new BooleanExpression ((Expression) $1), (Expression) $3, null, GetLocation ($2));
 	  }
 	;
 
@@ -4494,6 +4534,12 @@ opt_class_base
 		current_type.AddBasesForPart ((List<FullNamedExpression>) $2);
 		lbag.AppendToMember (current_type, GetLocation ($1));
 	 }
+	| COLON type_list error
+	  {
+		Error_SyntaxError (yyToken);
+
+		current_type.AddBasesForPart ((List<FullNamedExpression>) $2);
+	  }
 	;
 
 opt_type_parameter_constraints_clauses
@@ -4502,11 +4548,6 @@ opt_type_parameter_constraints_clauses
 	  {
 		$$ = $1;
 	  }
-	| error
-	 {
-		Error_SyntaxError (yyToken);
-		$$ = null;
-	 }
 	;
 
 type_parameter_constraints_clauses
@@ -4540,6 +4581,13 @@ type_parameter_constraints_clause
 		var lt = (Tokenizer.LocatedToken) $2;
 		$$ = new Constraints (new SimpleMemberName (lt.Value, lt.Location), (List<FullNamedExpression>) $4, GetLocation ($1));
 		lbag.AddLocation ($$, GetLocation ($3));
+	  }
+	| WHERE IDENTIFIER error
+	  {
+		Error_SyntaxError (yyToken);
+	  
+		var lt = (Tokenizer.LocatedToken) $2;
+		$$ = new Constraints (new SimpleMemberName (lt.Value, lt.Location), null, GetLocation ($1));
 	  }
 	; 
 
@@ -4675,6 +4723,11 @@ block_prepared
 	  {
 		--lexer.parsing_block;
 		$$ = end_block (GetLocation ($4));
+	  } | CLOSE_BRACE
+	  {
+		report.Error (1525, GetLocation ($1), "Unexpected symbol '}', expected '{'");
+		lexer.putback ('}');
+		$$ = end_block (GetLocation ($1));
 	  }
 	;
 
@@ -4925,7 +4978,7 @@ block_variable_declaration
 		current_block.AddLocalName (li);
 		current_variable = new BlockVariableDeclaration ((FullNamedExpression) $1, li);
 	  }
-	  opt_local_variable_initializer opt_variable_declarators SEMICOLON
+	  opt_local_variable_initializer opt_variable_declarators semicolon_or_handle_error_close_brace
 	  {
 		$$ = current_variable;
 		current_variable = null;
@@ -4947,6 +5000,16 @@ block_variable_declaration
 		}
 		$$ = current_variable;;
 		current_variable = null;
+	  }
+	;
+
+semicolon_or_handle_error_close_brace 
+	: SEMICOLON
+	| CLOSE_BRACE {
+		// Redundant, but wont regress
+		report.Error (1525, lexer.Location, "Unexpected symbol }");
+		lexer.putback ('}');
+		$$ = $1;
 	  }
 	;
 
@@ -5079,10 +5142,10 @@ expression_statement
 		lbag.AddStatement ($$, GetLocation ($2));
 	  }
 	| statement_expression COMPLETE_COMPLETION { $$ = $1; }
-	| statement_expression CLOSE_BRACE {
-        $$ = $1;
-		lbag.AddStatement ($$, GetLocation ($2));
-		report.Error (1525, "Unexpected symbol '}' after statement, expecting ';'");
+	| statement_expression CLOSE_BRACE
+	  {
+		$$ = $1;
+		report.Error (1002, GetLocation ($2), "; expected");
 		lexer.putback ('}');
 	  }
 	;
@@ -5245,6 +5308,11 @@ switch_label
 	 	$$ = new SwitchLabel ((Expression) $2, GetLocation ($1));
 	 	lbag.AddLocation ($$, GetLocation ($3));
 	 }
+	| CASE constant_expression error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = new SwitchLabel ((Expression) $2, GetLocation ($1));
+	  }
 	| DEFAULT_COLON
 	  {
 		$$ = new SwitchLabel (null, GetLocation ($1));
@@ -5303,6 +5371,7 @@ for_statement
 		current_block.IsCompilerGenerated = true;
 		For f = new For (GetLocation ($1));
 		current_block.AddStatement (f);
+		lbag.AddStatement (f, current_block.StartLocation);
 		$$ = f;
 	  }
 	  for_statement_cont
@@ -5315,24 +5384,57 @@ for_statement
 for_statement_cont
 	: opt_for_initializer SEMICOLON
 	  {
-		((For) $0).Initializer = (Statement) $1;
+		For f =  (For) $0;
+		f.Initializer = (Statement) $1;
+		lbag.AppendTo (f, GetLocation ($2));
+		$$ = f;
 	  }
-	  opt_for_condition SEMICOLON
+	  for_statement_condition
 	  {
-		((For) $0).Condition = (BooleanExpression) $4;
+		$$ = $4;
 	  }
-	  opt_for_iterator CLOSE_PARENS
+	| opt_for_initializer CLOSE_PARENS {
+		report.Error (1525, GetLocation ($2), "Unexpected symbol ')', expected ';'");
+		For f =  (For) $0;
+		f.Initializer = (Statement) $1;
+		lbag.AppendTo (f, GetLocation ($2));
+		$$ = end_block (GetLocation ($2));
+	}
+	;
+
+for_statement_condition
+	: opt_for_condition SEMICOLON
 	  {
-		((For) $0).Iterator = (Statement) $7;
+		For f =  (For) $0;
+		f.Condition = (BooleanExpression) $1;
+		lbag.AppendTo (f, GetLocation ($2));
+		$$ = f;
 	  }
+	  for_statement_end
+	  {
+		$$ = $4;
+	  }
+	| boolean_expression CLOSE_PARENS {
+		report.Error (1525, GetLocation ($2), "Unexpected symbol ')', expected ';'");
+		For f =  (For) $0;
+		f.Condition = (BooleanExpression) $1;
+		lbag.AppendTo (f, GetLocation ($2));
+		$$ = end_block (GetLocation ($2));
+	}
+	;
+
+for_statement_end
+	: opt_for_iterator CLOSE_PARENS
 	  embedded_statement
 	  {
-		if ($10 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
-			Warning_EmptyStatement (GetLocation ($10));
+		For f =  (For) $0;
+		f.Iterator = (Statement) $1;
+		
+		if ($3 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
+			Warning_EmptyStatement (GetLocation ($3));
 	  
-		For f = ((For) $0);
-		f.Statement = (Statement) $10;
-		lbag.AddStatement (f, current_block.StartLocation, GetLocation ($2), GetLocation ($5), GetLocation ($8));
+		f.Statement = (Statement) $3;
+		lbag.AppendTo (f, GetLocation ($2));
 
 		$$ = end_block (GetLocation ($2));
 	  }
@@ -5389,6 +5491,7 @@ statement_expression_list
 	  	} else {
 	  		sl.Add ((Statement) $3);
 	  		lbag.AppendTo (sl, GetLocation ($2));
+	  		
 	  	}
 	  		
 		$$ = sl;
@@ -5403,7 +5506,7 @@ foreach_statement
 		start_block (GetLocation ($2));
 		current_block.IsCompilerGenerated = true;
 		
-		Foreach f = new Foreach ((Expression) $3, null, null, null, GetLocation ($1));
+		Foreach f = new Foreach ((Expression) $3, null, null, null, null, GetLocation ($1));
 		current_block.AddStatement (f);
 		
 		lbag.AddStatement (f, GetLocation ($2));
@@ -5412,7 +5515,7 @@ foreach_statement
 	| FOREACH open_parens_any type identifier_inside_body error
 	  {
 		Error_SyntaxError (yyToken);
-	  
+	
 		start_block (GetLocation ($2));
 		current_block.IsCompilerGenerated = true;
 		
@@ -5420,7 +5523,7 @@ foreach_statement
 		var li = new LocalVariable (current_block, lt.Value, LocalVariable.Flags.ForeachVariable | LocalVariable.Flags.Used, lt.Location);
 		current_block.AddLocalName (li);
 		
-		Foreach f = new Foreach ((Expression) $3, li, null, null, GetLocation ($1));
+		Foreach f = new Foreach ((Expression) $3, li, null, null, null, GetLocation ($1));
 		current_block.AddStatement (f);
 		
 		lbag.AddStatement (f, GetLocation ($2));
@@ -5439,12 +5542,12 @@ foreach_statement
 	  {
 		if ($9 is EmptyStatement && lexer.peek_token () == Token.OPEN_BRACE)
 			Warning_EmptyStatement (GetLocation ($9));
-	  
-		Foreach f = new Foreach ((Expression) $3, (LocalVariable) $8, (Expression) $6, (Statement) $9, GetLocation ($1));
-		current_block.AddStatement (f);
 		
+		Foreach f = new Foreach ((Expression) $3, (LocalVariable) $8, (Expression) $6, (Statement) $9, current_block, GetLocation ($1));
 		lbag.AddStatement (f, GetLocation ($2), GetLocation ($5), GetLocation ($7));
-		$$ = end_block (GetLocation ($7));
+		end_block (GetLocation ($7));
+		
+		$$ = f;
 	  }
 	| FOREACH open_parens_any type identifier_inside_body error
 	  {
@@ -5453,7 +5556,7 @@ foreach_statement
 		var lt = $4 as Tokenizer.LocatedToken;
 		var li = lt != null ? new LocalVariable (current_block, lt.Value, LocalVariable.Flags.ForeachVariable | LocalVariable.Flags.Used, lt.Location) : null;
 		
-		Foreach f = new Foreach ((Expression) $3, li, null, null, GetLocation ($1));
+		Foreach f = new Foreach ((Expression) $3, li, null, null, null, GetLocation ($1));
 		current_block.AddStatement (f);
 		
 		lbag.AddStatement (f, GetLocation ($2));
@@ -5461,7 +5564,7 @@ foreach_statement
 	  }
 	| FOREACH open_parens_any type error
 	  {
-		Foreach f = new Foreach ((Expression) $3, null, null, null, GetLocation ($1));
+		Foreach f = new Foreach ((Expression) $3, null, null, null, null, GetLocation ($1));
 		current_block.AddStatement (f);
 		
 		lbag.AddStatement (f, GetLocation ($2));
@@ -5492,6 +5595,11 @@ continue_statement
 		$$ = new Continue (GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($2));
 	  }
+	| CONTINUE error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = new Continue (GetLocation ($1));
+	  }
 	;
 
 goto_statement
@@ -5519,6 +5627,11 @@ return_statement
 		$$ = new Return ((Expression) $2, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($3));
 	  }
+	| RETURN error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = new Return (null, GetLocation ($1));
+	  }
 	;
 
 throw_statement
@@ -5526,6 +5639,11 @@ throw_statement
 	  {
 		$$ = new Throw ((Expression) $2, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($3));
+	  }
+	| THROW error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = new Throw (null, GetLocation ($1));
 	  }
 	;
 
@@ -5579,7 +5697,8 @@ try_statement
 	  }
 	| TRY block catch_clauses FINALLY block
 	  {
-		$$ = new TryFinally (new TryCatch ((Block) $2, (List<Catch>) $3, Location.Null, true), (Block) $5, GetLocation ($1));
+		var loc = GetLocation ($1);
+		$$ = new TryFinally (new TryCatch ((Block) $2, (List<Catch>) $3, loc, true), (Block) $5, loc);
 		lbag.AddStatement ($$, GetLocation ($4));
 	  }
 	| TRY block error
@@ -5837,7 +5956,9 @@ first_from_clause
 	  
 		var lt = (Tokenizer.LocatedToken) $2;
 		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
-		$$ = new Linq.QueryExpression (new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$4, rv, GetLocation ($1)));
+		var start = new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$4, rv, GetLocation ($1));
+		lbag.AddLocation (start, GetLocation ($3));
+		$$ = new Linq.QueryExpression (start);
 	  }
 	| FROM_FIRST type identifier_inside_body IN expression
 	  {
@@ -5845,11 +5966,11 @@ first_from_clause
 	  
 		var lt = (Tokenizer.LocatedToken) $3;
 		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
-		$$ = new Linq.QueryExpression (
-			new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$5, rv, GetLocation ($1)) {
-				IdentifierType = (FullNamedExpression)$2
-			}
-		);
+		var start = new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$5, rv, GetLocation ($1)) {
+			IdentifierType = (FullNamedExpression)$2
+		};
+		lbag.AddLocation (start, GetLocation ($4));
+		$$ = new Linq.QueryExpression (start);
 	  }
 	;
 
@@ -5860,7 +5981,9 @@ nested_from_clause
 	  
 		var lt = (Tokenizer.LocatedToken) $2;
 		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
-		$$ = new Linq.QueryExpression (new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$4, rv, GetLocation ($1)));
+		var start = new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$4, rv, GetLocation ($1));
+		lbag.AddLocation (start, GetLocation ($3));
+		$$ = new Linq.QueryExpression (start);
 	  }
 	| FROM type identifier_inside_body IN expression
 	  {
@@ -5868,11 +5991,11 @@ nested_from_clause
 	  
 		var lt = (Tokenizer.LocatedToken) $3;
 		var rv = new Linq.RangeVariable (lt.Value, lt.Location);
-		$$ = new Linq.QueryExpression (
-			new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$5, rv, GetLocation ($1)) {
-				IdentifierType = (FullNamedExpression)$2
-			}
-		);
+		var start = new Linq.QueryStartClause ((Linq.QueryBlock)current_block, (Expression)$5, rv, GetLocation ($1)) {
+			IdentifierType = (FullNamedExpression)$2
+		};
+		lbag.AddLocation (start, GetLocation ($4));
+		$$ = new Linq.QueryExpression (start);
 	  }
 	;
 	
@@ -5889,8 +6012,9 @@ from_clause
 		
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
-		
 		((Linq.QueryBlock)current_block).AddRangeVariable (sn);
+
+		lbag.AddLocation ($$, GetLocation ($3));
 	  }	  
 	| FROM type identifier_inside_body IN
 	  {
@@ -5909,11 +6033,13 @@ from_clause
 		current_block = current_block.Parent;
 		
 		((Linq.QueryBlock)current_block).AddRangeVariable (sn);
+		
+		lbag.AddLocation ($$, GetLocation ($4));
 	  }
 	;	
 
 query_body
-	: opt_query_body_clauses select_or_group_clause opt_query_continuation 
+	: query_body_clauses select_or_group_clause opt_query_continuation 
 	  {
 	  	Linq.AQueryClause head = (Linq.AQueryClause)$2;
 		
@@ -5928,7 +6054,24 @@ query_body
 		
 		$$ = head;
 	  }
-	| opt_query_body_clauses COMPLETE_COMPLETION
+	| select_or_group_clause opt_query_continuation
+	  {
+	  	Linq.AQueryClause head = (Linq.AQueryClause)$2;
+
+		if ($1 != null) {
+			Linq.AQueryClause clause = (Linq.AQueryClause)$1;
+			clause.Tail.Next = head;
+			head = clause;
+		}
+		
+		$$ = head;
+	  }
+	| query_body_clauses COMPLETE_COMPLETION
+	| query_body_clauses error
+	  {
+		report.Error (742, GetLocation ($2), "Unexpected symbol `{0}'. A query body must end with select or group clause", GetSymbolName (yyToken));
+		$$ = $1;
+	  }
 	| error
 	  {
 		Error_SyntaxError (yyToken);
@@ -5971,11 +6114,6 @@ select_or_group_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 	  }
-	;
-	
-opt_query_body_clauses
-	: /* empty */
-	| query_body_clauses
 	;
 	
 query_body_clauses
@@ -6085,7 +6223,7 @@ join_clause
 			into = new Linq.RangeVariable (lt.Value, lt.Location);
 
 			$$ = new Linq.GroupJoin (block, sn, (Expression)$5, outer_selector, (Linq.QueryBlock) current_block, into, GetLocation ($1));	
-			lbag.AddLocation ($$, GetLocation ($3), GetLocation ($6), GetLocation ($9), GetLocation ($12));
+			lbag.AddLocation ($$, GetLocation ($3), GetLocation ($6), GetLocation ($9), opt_intoStack.Pop ());
 		}
 
 		current_block = block.Parent;
@@ -6132,6 +6270,7 @@ join_clause
 	  		$$ = new Linq.Join (block, sn, (Expression)$6, outer_selector, (Linq.QueryBlock) current_block, GetLocation ($1)) {
 	  			IdentifierType = (FullNamedExpression)$2
 	  		};
+			lbag.AddLocation ($$, GetLocation ($3), GetLocation ($6), GetLocation ($9));
 		} else {
 			//
 			// Set equals right side parent to beginning of linq query, it is not accessible therefore cannot cause name collisions
@@ -6150,6 +6289,7 @@ join_clause
 			$$ = new Linq.GroupJoin (block, sn, (Expression)$6, outer_selector, (Linq.QueryBlock) current_block, into, GetLocation ($1)) {
 	  			IdentifierType = (FullNamedExpression)$2
 	  		};			
+			lbag.AddLocation ($$, GetLocation ($3), GetLocation ($6), GetLocation ($9), opt_intoStack.Pop ());
 		}
 		
 		current_block = block.Parent;
@@ -6161,6 +6301,7 @@ opt_join_into
 	: /* empty */
 	| INTO identifier_inside_body
 	  {
+		opt_intoStack.Push (GetLocation ($1));
 		$$ = $2;
 	  }
 	;
@@ -6680,10 +6821,10 @@ public void parse ()
 			report.Error (-25, lexer.Location, "Parsing error");
 		} else {
 			// Used by compiler-tester to test internal errors
-			if (yacc_verbose_flag > 0)
+			if (yacc_verbose_flag > 0 || e is FatalException)
 				throw;
 		
-			report.Error (589, lexer.Location, "Internal compiler error during parsing");
+			report.Error (589, lexer.Location, "Internal compiler error during parsing" + e);
 		}
 	}
 }

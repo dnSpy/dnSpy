@@ -31,8 +31,10 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class SizeOfExpression : Expression
 	{
+		public readonly static TokenRole SizeofKeywordRole = new TokenRole ("sizeof");
+		
 		public CSharpTokenNode SizeOfToken {
-			get { return GetChildByRole (Roles.Keyword); }
+			get { return GetChildByRole (SizeofKeywordRole); }
 		}
 		
 		public CSharpTokenNode LParToken {
@@ -57,7 +59,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			AddChild (type, Roles.Type);
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitSizeOfExpression (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitSizeOfExpression (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitSizeOfExpression (this, data);
 		}

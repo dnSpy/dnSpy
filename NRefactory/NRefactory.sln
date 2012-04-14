@@ -1,7 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-# SharpDevelop 4.2.0.8528-beta
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DC98210E-1646-483B-819A-2BB8272461E4}"
 	ProjectSection(SolutionItems) = preProject
 		README = README
@@ -25,6 +24,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.GtkDemo", "ICSharpCode.NRefactory.GtkDemo\ICSharpCode.NRefactory.GtkDemo.csproj", "{A7EEF7F8-238F-459D-95A9-96467539641D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.ConsistencyCheck", "ICSharpCode.NRefactory.ConsistencyCheck\ICSharpCode.NRefactory.ConsistencyCheck.csproj", "{D81206EF-3DCA-4A30-897B-E262A2AD9EE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.Xml", "ICSharpCode.NRefactory.Xml\ICSharpCode.NRefactory.Xml.csproj", "{DC393B66-92ED-4CAD-AB25-CFEF23F3D7C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.CSharp.AstVerifier", "ICSharpCode.NRefactory.CSharp.AstVerifier\ICSharpCode.NRefactory.CSharp.AstVerifier.csproj", "{961DADFA-7CE6-429F-BC22-47630D6DB826}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,6 +69,14 @@ Global
 		{7B82B671-419F-45F4-B778-D9286F996EFA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7B82B671-419F-45F4-B778-D9286F996EFA}.Release|x86.ActiveCfg = Release|Any CPU
 		{7B82B671-419F-45F4-B778-D9286F996EFA}.Release|x86.Build.0 = Release|Any CPU
+		{961DADFA-7CE6-429F-BC22-47630D6DB826}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{961DADFA-7CE6-429F-BC22-47630D6DB826}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{961DADFA-7CE6-429F-BC22-47630D6DB826}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{961DADFA-7CE6-429F-BC22-47630D6DB826}.Debug|x86.Build.0 = Debug|Any CPU
+		{961DADFA-7CE6-429F-BC22-47630D6DB826}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{961DADFA-7CE6-429F-BC22-47630D6DB826}.Release|Any CPU.Build.0 = Release|Any CPU
+		{961DADFA-7CE6-429F-BC22-47630D6DB826}.Release|x86.ActiveCfg = Release|Any CPU
+		{961DADFA-7CE6-429F-BC22-47630D6DB826}.Release|x86.Build.0 = Release|Any CPU
 		{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C19E629-C93E-4ACB-9A4B-13072B5AEF9D}.Debug|x86.ActiveCfg = Debug|x86
@@ -90,17 +101,35 @@ Global
 		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Release|Any CPU.Build.0 = net_4_0_Release|Any CPU
 		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Release|x86.ActiveCfg = net_4_0_Release|Any CPU
 		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Release|x86.Build.0 = net_4_0_Release|Any CPU
-		{D81206EF-3DCA-4A30-897B-E262A2AD9EE3}.Debug|Any CPU.Build.0 = Debug|x86
-		{D81206EF-3DCA-4A30-897B-E262A2AD9EE3}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{D81206EF-3DCA-4A30-897B-E262A2AD9EE3}.Debug|x86.Build.0 = Debug|x86
+		{D81206EF-3DCA-4A30-897B-E262A2AD9EE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D81206EF-3DCA-4A30-897B-E262A2AD9EE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D81206EF-3DCA-4A30-897B-E262A2AD9EE3}.Debug|x86.ActiveCfg = Debug|x86
-		{D81206EF-3DCA-4A30-897B-E262A2AD9EE3}.Release|Any CPU.Build.0 = Release|x86
-		{D81206EF-3DCA-4A30-897B-E262A2AD9EE3}.Release|Any CPU.ActiveCfg = Release|x86
-		{D81206EF-3DCA-4A30-897B-E262A2AD9EE3}.Release|x86.Build.0 = Release|x86
+		{D81206EF-3DCA-4A30-897B-E262A2AD9EE3}.Debug|x86.Build.0 = Debug|x86
+		{D81206EF-3DCA-4A30-897B-E262A2AD9EE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D81206EF-3DCA-4A30-897B-E262A2AD9EE3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D81206EF-3DCA-4A30-897B-E262A2AD9EE3}.Release|x86.ActiveCfg = Release|x86
+		{D81206EF-3DCA-4A30-897B-E262A2AD9EE3}.Release|x86.Build.0 = Release|x86
+		{DC393B66-92ED-4CAD-AB25-CFEF23F3D7C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC393B66-92ED-4CAD-AB25-CFEF23F3D7C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC393B66-92ED-4CAD-AB25-CFEF23F3D7C6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DC393B66-92ED-4CAD-AB25-CFEF23F3D7C6}.Debug|x86.Build.0 = Debug|Any CPU
+		{DC393B66-92ED-4CAD-AB25-CFEF23F3D7C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC393B66-92ED-4CAD-AB25-CFEF23F3D7C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC393B66-92ED-4CAD-AB25-CFEF23F3D7C6}.Release|x86.ActiveCfg = Release|Any CPU
+		{DC393B66-92ED-4CAD-AB25-CFEF23F3D7C6}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = ICSharpCode.NRefactory.Demo\ICSharpCode.NRefactory.Demo.csproj
+		Policies = $0
+		$0.TextStylePolicy = $1
+		$1.FileWidth = 120
+		$1.TabWidth = 4
+		$1.EolMarker = Unix
+		$1.inheritsSet = Mono
+		$1.inheritsScope = text/plain
+		$1.scope = text/plain
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

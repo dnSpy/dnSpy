@@ -21,6 +21,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using ICSharpCode.NRefactory.ConsistencyCheck.Xml;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.Utils;
 
@@ -36,9 +37,9 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 			@"C:\Program Files (x86)\GtkSharp\2.12\lib\Mono.Posix",
 			@"C:\work\SD\src\Tools\NUnit"
 		};
-		//public const string SolutionFile = @"C:\work\NRefactory\NRefactory.sln";
+		public const string SolutionFile = @"C:\work\NRefactory\NRefactory.sln";
 		//public const string SolutionFile = @"C:\work\SD\SharpDevelop.sln";
-		public const string SolutionFile = @"C:\work\ILSpy\ILSpy.sln";
+		//public const string SolutionFile = @"C:\work\ILSpy\ILSpy.sln";
 		
 		public const string TempPath = @"C:\temp";
 		
@@ -56,6 +57,8 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 			                  solution.AllFiles.Count(),
 			                  solution.Projects.Count);
 			
+			using (new Timer("ID String test... "))
+				IDStringConsistencyCheck.Run(solution);
 			//RunTestOnAllFiles("Roundtripping test", RoundtripTest.RunTest);
 			RunTestOnAllFiles("Resolver test", ResolverTest.RunTest);
 			RunTestOnAllFiles("Resolver test (randomized order)", RandomizedOrderResolverTest.RunTest);

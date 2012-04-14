@@ -31,11 +31,27 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class ContinueStatement : Statement
 	{
+		public static readonly TokenRole ContinueKeywordRole = new TokenRole ("continue");
+		
+		public CSharpTokenNode ContinueToken {
+			get { return GetChildByRole (ContinueKeywordRole); }
+		}
+		
 		public CSharpTokenNode SemicolonToken {
 			get { return GetChildByRole (Roles.Semicolon); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitContinueStatement (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitContinueStatement (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitContinueStatement (this, data);
 		}

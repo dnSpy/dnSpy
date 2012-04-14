@@ -74,7 +74,6 @@ namespace ICSharpCode.NRefactory.CSharp
 					return new UnaryOperatorExpression (UnaryOperatorType.Not, new ParenthesizedExpression (condition));
 				}
 			}
-			
 			if (condition is ConditionalExpression) {
 				var cEx = condition as ConditionalExpression;
 				cEx.Condition = InvertCondition (cEx.Condition);
@@ -83,8 +82,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			if (condition is PrimitiveExpression) {
 				var pex = condition as PrimitiveExpression;
 				if (pex.Value is bool) {
-					pex.Value = !((bool)pex.Value);
-					return pex; 
+					return new PrimitiveExpression (!((bool)pex.Value)); 
 				}
 			}
 			

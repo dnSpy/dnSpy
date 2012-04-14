@@ -137,6 +137,11 @@ namespace Mono.CSharp
 				pos = 0;
 			}
 
+			public override string ToString ()
+			{
+				return string.Format ("Token '{0}' at {1},{2}", Value, row, column);
+			}
+			
 			public Location Location {
 				get { return new Location (row, column); }
 			}
@@ -375,6 +380,9 @@ namespace Mono.CSharp
 		public int Line {
 			get {
 				return ref_line;
+			}
+			set {
+				ref_line = value;
 			}
 		}
 
@@ -971,6 +979,7 @@ namespace Mono.CSharp
 						case Token.UNCHECKED:
 						case Token.UNSAFE:
 						case Token.DEFAULT:
+						case Token.AWAIT:
 
 						//
 						// These can be part of a member access
@@ -1262,10 +1271,24 @@ namespace Mono.CSharp
 					int ntoken;
 					int interrs = 1;
 					int colons = 0;
+					int braces = 0;
 					//
 					// All shorcuts failed, do it hard way
 					//
 					while ((ntoken = xtoken ()) != Token.EOF) {
+						if (ntoken == Token.OPEN_BRACE) {
+							++braces;
+							continue;
+						}
+
+						if (ntoken == Token.CLOSE_BRACE) {
+							--braces;
+							continue;
+						}
+
+						if (braces != 0)
+							continue;
+
 						if (ntoken == Token.SEMICOLON)
 							break;
 						
@@ -1281,7 +1304,7 @@ namespace Mono.CSharp
 						}
 					}
 					
-					next_token = colons != interrs ? Token.INTERR_NULLABLE : Token.INTERR;
+					next_token = colons != interrs && braces == 0 ? Token.INTERR_NULLABLE : Token.INTERR;
 					break;
 				}
 			}
@@ -1974,7 +1997,7 @@ namespace Mono.CSharp
 					hidden_block_start = Location.Null;
 				}
 
-				ref_line = line;
+				//ref_line = line;
 				Location.Push (current_source);
 				return true;
 			}
@@ -2070,7 +2093,7 @@ namespace Mono.CSharp
 				hidden_block_start = Location.Null;
 			}
 
-			ref_line = new_line;
+			//ref_line = new_line;
 			return true;
 		}
 
@@ -2242,6 +2265,9 @@ namespace Mono.CSharp
 			return true;
 		}
 
+#if !FULL_AST
+		static
+#endif
 		bool IsTokenIdentifierEqual (char[] identifier)
 		{
 			for (int i = 0; i < identifier.Length; ++i) {
@@ -2288,6 +2314,7 @@ namespace Mono.CSharp
 				Report.Warning (1709, 1, Location, "Filename specified for preprocessor directive is empty");
 			}
 
+		
 			return string_builder.ToString ();
 		}
 
@@ -3003,6 +3030,9 @@ namespace Mono.CSharp
 			return Token.IDENTIFIER;
 		}
 
+#if !FULL_AST
+		static
+#endif
 		string InternIdentifier (char[] charBuffer, int length)
 		{
 			//

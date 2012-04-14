@@ -31,8 +31,10 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class CheckedExpression : Expression
 	{
+		public readonly static TokenRole CheckedKeywordRole = new TokenRole ("checked");
+		
 		public CSharpTokenNode CheckedToken {
-			get { return GetChildByRole (Roles.Keyword); }
+			get { return GetChildByRole (CheckedKeywordRole); }
 		}
 		
 		public CSharpTokenNode LParToken {
@@ -57,7 +59,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			AddChild (expression, Roles.Expression);
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitCheckedExpression (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitCheckedExpression (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitCheckedExpression (this, data);
 		}

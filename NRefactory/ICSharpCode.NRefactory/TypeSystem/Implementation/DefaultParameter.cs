@@ -107,22 +107,22 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			return ToString(this);
 		}
 		
-		public static string ToString(IParameter p)
+		public static string ToString(IParameter parameter)
 		{
 			StringBuilder b = new StringBuilder();
-			if (p.IsRef)
+			if (parameter.IsRef)
 				b.Append("ref ");
-			if (p.IsOut)
+			if (parameter.IsOut)
 				b.Append("out ");
-			if (p.IsParams)
+			if (parameter.IsParams)
 				b.Append("params ");
-			b.Append(p.Name);
+			b.Append(parameter.Name);
 			b.Append(':');
-			b.Append(p.Type.ToString());
-			if (p.IsOptional) {
+			b.Append(parameter.Type.ToString());
+			if (parameter.IsOptional) {
 				b.Append(" = ");
-				if (p.ConstantValue != null)
-					b.Append(p.ConstantValue.ToString());
+				if (parameter.ConstantValue != null)
+					b.Append(parameter.ConstantValue.ToString());
 				else
 					b.Append("null");
 			}

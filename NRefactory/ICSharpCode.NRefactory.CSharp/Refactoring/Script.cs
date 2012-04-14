@@ -1,6 +1,6 @@
 ﻿// 
 // Script.cs
-//  
+//
 // Author:
 //       Mike Krüger <mkrueger@novell.com>
 // 
@@ -26,177 +26,338 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using ICSharpCode.NRefactory.Editor;
+using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.CSharp.Refactoring
 {
+	/// <summary>
+	/// Class for creating change scripts.
+	/// 'Original document' = document without the change script applied.
+	/// 'Current document' = document with the change script (as far as it is already created) applies.
+	/// </summary>
 	public abstract class Script : IDisposable
 	{
-		public RefactoringContext Context {
-			get;
-			private set;
-		}
-
-		protected readonly List<Action> changes = new List<Action> ();
-
-		public IEnumerable<Action> Actions {
-			get {
-				return changes;
+		internal struct Segment : ISegment
+		{
+			readonly int offset;
+			readonly int length;
+			
+			public int Offset {
+				get { return offset; }
+			}
+			
+			public int Length {
+				get { return length; }
+			}
+			
+			public int EndOffset {
+				get { return Offset + Length; }
+			}
+			
+			public Segment (int offset, int length)
+			{
+				this.offset = offset;
+				this.length = length;
+			}
+			
+			public override string ToString ()
+			{
+				return string.Format ("[Script.Segment: Offset={0}, Length={1}, EndOffset={2}]", Offset, Length, EndOffset);
 			}
 		}
 		
-		public Script (RefactoringContext context)
+		protected string eolMarker = Environment.NewLine;
+		readonly CSharpFormattingOptions formattingOptions;
+		Dictionary<AstNode, ISegment> segmentsForInsertedNodes = new Dictionary<AstNode, ISegment>();
+		
+		protected Script(CSharpFormattingOptions formattingOptions)
 		{
-			if (context == null)
-				throw new ArgumentNullException ("context");
-			this.Context = context;
+			if (formattingOptions == null)
+				throw new ArgumentNullException("formattingOptions");
+			this.formattingOptions = formattingOptions;
 		}
 		
-		public void Queue (Action change)
+		/// <summary>
+		/// Given an offset in the original document (at the start of script execution),
+		/// returns the offset in the current document.
+		/// </summary>
+		public abstract int GetCurrentOffset(int originalDocumentOffset);
+		
+		/// <summary>
+		/// Given an offset in the original document (at the start of script execution),
+		/// returns the offset in the current document.
+		/// </summary>
+		public abstract int GetCurrentOffset(TextLocation originalDocumentLocation);
+		
+		/// <summary>
+		/// Creates a tracked segment for the specified (offset,length)-segment.
+		/// Offset is interpreted to be an offset in the current document.
+		/// </summary>
+		/// <returns>
+		/// A segment that initially has the specified values, and updates
+		/// on every <see cref="Replace(int,int,string)"/> call.
+		/// </returns>
+		protected abstract ISegment CreateTrackedSegment(int offset, int length);
+		
+		protected ISegment GetSegment(AstNode node)
 		{
-			changes.Add (change);
+			ISegment segment;
+			if (segmentsForInsertedNodes.TryGetValue(node, out segment))
+				return segment;
+			if (node.StartLocation.IsEmpty || node.EndLocation.IsEmpty) {
+				throw new InvalidOperationException("Trying to get the position of a node that is not part of the original document and was not inserted");
+			}
+			int startOffset = GetCurrentOffset(node.StartLocation);
+			int endOffset = GetCurrentOffset(node.EndLocation);
+			return new Segment(startOffset, endOffset - startOffset);
 		}
 		
-		public void InsertText (int offset, string text)
+		/// <summary>
+		/// Replaces text.
+		/// </summary>
+		/// <param name="offset">The starting offset of the text to be replaced.</param>
+		/// <param name="length">The length of the text to be replaced.</param>
+		/// <param name="newText">The new text.</param>
+		public abstract void Replace (int offset, int length, string newText);
+		
+		public void InsertText(int offset, string newText)
 		{
-			Queue (Context.CreateTextReplaceAction (offset, 0, text));
+			Replace(offset, 0, newText);
 		}
 		
-		public void InsertBefore (AstNode node, AstNode insertNode)
+		public void RemoveText(int offset, int length)
 		{
-			var startOffset = Context.GetOffset (node.StartLocation.Line, 1);
+			Replace(offset, length, "");
+		}
+		
+		public CSharpFormattingOptions FormattingOptions {
+			get { return formattingOptions; }
+		}
+		
+		public void InsertBefore(AstNode node, AstNode insertNode)
+		{
+			var startOffset = GetCurrentOffset(new TextLocation(node.StartLocation.Line, 1));
 			var output = OutputNode (GetIndentLevelAt (startOffset), insertNode);
-			
+			string text = output.Text;
 			if (!(insertNode is Expression || insertNode is AstType))
-				output.Text += Context.EolMarker;
-			
-			Queue (Context.CreateNodeOutputAction (startOffset, 0, output));
+				text += eolMarker;
+			InsertText(startOffset, text);
+			output.RegisterTrackedSegments(this, startOffset);
 		}
 
-		public void AddTo (BlockStatement bodyStatement, AstNode insertNode)
+		public void AddTo(BlockStatement bodyStatement, AstNode insertNode)
 		{
-			var startOffset = Context.GetOffset (bodyStatement.LBraceToken.StartLocation) + 1;
-			var output = OutputNode (GetIndentLevelAt (startOffset), insertNode, true);
-			Queue (Context.CreateNodeOutputAction (startOffset, 0, output));
+			var startOffset = GetCurrentOffset(bodyStatement.LBraceToken.EndLocation);
+			var output = OutputNode(1 + GetIndentLevelAt(startOffset), insertNode, true);
+			InsertText(startOffset, output.Text);
+			output.RegisterTrackedSegments(this, startOffset);
 		}
 		
-		public void Link (params AstNode[] nodes)
+		public virtual void Link (params AstNode[] nodes)
 		{
-			Queue (Context.CreateLinkAction (nodes));
-		}
-		
-		public void Link (IEnumerable<AstNode> nodes)
-		{
-			Queue (Context.CreateLinkAction (nodes));
-		}
-		
-		public void Remove (AstNode node)
-		{
-			var startOffset = Context.GetOffset (node.StartLocation);
-			var endOffset = Context.GetOffset (node.EndLocation);
-			Remove (startOffset, endOffset - startOffset);
-		}
-		
-		void Remove (int offset, int length)
-		{
-			Queue (Context.CreateTextReplaceAction (offset, length, null));
-		}
-		
-		void Replace (int offset, int length, string text)
-		{
-			Queue (Context.CreateTextReplaceAction (offset, length, text));
+			// Default implementation: do nothing
+			// Derived classes are supposed to enter the text editor's linked state.
 		}
 		
 		public void Replace (AstNode node, AstNode replaceWith)
 		{
-			var startOffset = Context.GetOffset (node.StartLocation);
-			var endOffset = Context.GetOffset (node.EndLocation);
+			var segment = GetSegment (node);
+			int startOffset = segment.Offset;
 			int level = 0;
 			if (!(replaceWith is Expression) && !(replaceWith is AstType))
 				level = GetIndentLevelAt (startOffset);
 			NodeOutput output = OutputNode (level, replaceWith);
-			output.Trim ();
-			Queue (Context.CreateNodeOutputAction (startOffset, endOffset - startOffset, output));
-		}
-
-		public void FormatText (Func<RefactoringContext, AstNode> callback)
-		{
-			Queue (Context.CreateFormatTextAction (callback));
+			output.TrimStart ();
+			Replace (startOffset, segment.Length, output.Text);
+			output.RegisterTrackedSegments(this, startOffset);
 		}
 		
-		public void Select (AstNode node)
+		public abstract void Remove (AstNode node, bool removeEmptyLine = true);
+		
+		public abstract void FormatText (AstNode node);
+		
+		public virtual void Select (AstNode node)
 		{
-			Queue (Context.CreateNodeSelectionAction (node));
+			// default implementation: do nothing
+			// Derived classes are supposed to set the text editor's selection
 		}
 		
-		public enum InsertPosition {
+		public enum InsertPosition
+		{
 			Start,
 			Before,
 			After,
 			End
 		}
 		
-		public abstract void InsertWithCursor (string operation, AstNode node, InsertPosition defaultPosition);
-
-		protected int GetIndentLevelAt (int offset)
+		public virtual void InsertWithCursor (string operation, AstNode node, InsertPosition defaultPosition)
 		{
-			var node = Context.Unit.GetNodeAt (Context.GetLocation (offset));
-			int level = 0;
-			while (node != null) {
-					if (node is BlockStatement || node is TypeDeclaration || node is NamespaceDeclaration)
-						level++;
-					node = node.Parent;
-				}
-			return level;
+			throw new NotImplementedException();
+		}
+		
+		public virtual void InsertWithCursor(string operation, AstNode node, ITypeDefinition parentType)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected virtual int GetIndentLevelAt (int offset)
+		{
+			return 0;
 		}
 		
 		sealed class SegmentTrackingOutputFormatter : TextWriterOutputFormatter
 		{
-			readonly NodeOutput result;
+			internal List<KeyValuePair<AstNode, Segment>> NewSegments = new List<KeyValuePair<AstNode, Segment>>();
+			Stack<int> startOffsets = new Stack<int>();
 			readonly StringWriter stringWriter;
 			
-			public SegmentTrackingOutputFormatter(NodeOutput result, StringWriter stringWriter)
+			public SegmentTrackingOutputFormatter (StringWriter stringWriter)
 				: base(stringWriter)
 			{
-				this.result = result;
 				this.stringWriter = stringWriter;
 			}
 			
-			public override void StartNode(AstNode node)
+			public override void StartNode (AstNode node)
 			{
-				base.StartNode(node);
-				result.NodeSegments [node] = new NodeOutput.Segment (stringWriter.GetStringBuilder ().Length);
+				base.StartNode (node);
+				startOffsets.Push(stringWriter.GetStringBuilder ().Length);
 			}
 			
-			public override void EndNode(AstNode node)
+			public override void EndNode (AstNode node)
 			{
-				var nodeSegment = result.NodeSegments [node];
-				nodeSegment.Length = stringWriter.GetStringBuilder ().Length - nodeSegment.Offset;
-				base.EndNode(node);
+				int startOffset = startOffsets.Pop();
+				int endOffset = stringWriter.GetStringBuilder ().Length;
+				NewSegments.Add(new KeyValuePair<AstNode, Segment>(node, new Segment(startOffset, endOffset - startOffset)));
+				base.EndNode (node);
 			}
 		}
 		
-		protected NodeOutput OutputNode (int indentLevel, AstNode node, bool startWithNewLine = false)
+		protected NodeOutput OutputNode(int indentLevel, AstNode node, bool startWithNewLine = false)
 		{
-			var result = new NodeOutput ();
 			var stringWriter = new StringWriter ();
-			var formatter = new SegmentTrackingOutputFormatter (result, stringWriter);
+			var formatter = new SegmentTrackingOutputFormatter (stringWriter);
 			formatter.Indentation = indentLevel;
-			stringWriter.NewLine = Context.EolMarker;
+			stringWriter.NewLine = eolMarker;
 			if (startWithNewLine)
 				formatter.NewLine ();
-			var visitor = new CSharpOutputVisitor (formatter, Context.FormattingOptions);
-			node.AcceptVisitor (visitor, null);
-			result.Text = stringWriter.ToString ().TrimEnd ();
+			var visitor = new CSharpOutputVisitor (formatter, formattingOptions);
+			node.AcceptVisitor (visitor);
+			string text = stringWriter.ToString().TrimEnd();
+			
 			if (node is FieldDeclaration)
-				result.Text += Context.EolMarker;
-
-			return result;
+				text += eolMarker;
+			return new NodeOutput(text, formatter.NewSegments);
+		}
+		
+		protected class NodeOutput
+		{
+			string text;
+			List<KeyValuePair<AstNode, Segment>> newSegments;
+			int trimmedLength;
+			
+			internal NodeOutput(string text, List<KeyValuePair<AstNode, Segment>> newSegments)
+			{
+				this.text = text;
+				this.newSegments = newSegments;
+			}
+			
+			public string Text {
+				get { return text; }
+			}
+			
+			public void TrimStart()
+			{
+				for (int i = 0; i < text.Length; i++) {
+					char ch = text [i];
+					if (ch != ' ' && ch != '\t') {
+						if (i > 0) {
+							text = text.Substring (i);
+							trimmedLength = i;
+						}
+						break;
+					}
+				}
+			}
+			
+			public void RegisterTrackedSegments(Script script, int insertionOffset)
+			{
+				foreach (var pair in newSegments) {
+					int offset = insertionOffset + pair.Value.Offset - trimmedLength;
+					ISegment trackedSegment = script.CreateTrackedSegment(offset, pair.Value.Length);
+					script.segmentsForInsertedNodes.Add(pair.Key, trackedSegment);
+				}
+			}
+		}
+		
+		/// <summary>
+		/// Renames the specified entity.
+		/// </summary>
+		/// <param name='entity'>
+		/// The Entity to rename
+		/// </param>
+		/// <param name='name'>
+		/// The new name, if null the user is prompted for a new name.
+		/// </param>
+		public virtual void Rename(IEntity entity, string name = null)
+		{
+		}
+		
+		/// <summary>
+		/// Renames the specified entity.
+		/// </summary>
+		/// <param name='entity'>
+		/// The Entity to rename
+		/// </param>
+		/// <param name='name'>
+		/// The new name, if null the user is prompted for a new name.
+		/// </param>
+		public virtual void RenameTypeParameter (IType type, string name = null)
+		{
+		}
+		
+		/// <summary>
+		/// Renames the specified variable.
+		/// </summary>
+		/// <param name='variable'>
+		/// The Variable to rename
+		/// </param>
+		/// <param name='name'>
+		/// The new name, if null the user is prompted for a new name.
+		/// </param>
+		public virtual void Rename(IVariable variable, string name = null)
+		{
 		}
 
-		#region IDisposable implementation
-		public abstract void Dispose ();
-		#endregion
+		public virtual void Dispose()
+		{
+		}
+
+		public enum NewTypeContext {
+			/// <summary>
+			/// The class should be placed in a new file to the current namespace.
+			/// </summary>
+			CurrentNamespace,
+
+			/// <summary>
+			/// The class should be placed in the unit tests. (not implemented atm.)
+			/// </summary>
+			UnitTests
+		}
+
+		/// <summary>
+		/// Creates a new file containing the type, namespace and correct usings.
+		/// (Note: Should take care of IDE specific things, file headers, add to project, correct name).
+		/// </summary>
+		/// <param name='newType'>
+		/// New type to be created.
+		/// </param>
+		/// <param name='context'>
+		/// The Context in which the new type should be created.
+		/// </param>
+		public virtual void CreateNewType(AstNode newType, NewTypeContext context = NewTypeContext.CurrentNamespace)
+		{
+		}
 	}
 }
 

@@ -27,13 +27,39 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	/// </summary>
 	public sealed class FindReferencedEntities : IResolveVisitorNavigator
 	{
-		readonly Action<AstNode, IEntity> referenceFound;
+		readonly Action<AstNode, IMember> memberReferenceFound;
+		readonly Action<AstNode, IType> typeReferenceFound;
 		
+		/// <summary>
+		/// Creates a new FindReferencedEntities instance that
+		/// looks for entity definitions.
+		/// The visitor will report type definitions and member definitions (not specialized members).
+		/// </summary>
 		public FindReferencedEntities(Action<AstNode, IEntity> referenceFound)
 		{
 			if (referenceFound == null)
 				throw new ArgumentNullException("referenceFound");
-			this.referenceFound = referenceFound;
+			this.memberReferenceFound = (node, member) => referenceFound(node, member.MemberDefinition);
+			this.typeReferenceFound = (node, type) => {
+				var def = type.GetDefinition();
+				if (def != null)
+					referenceFound(node, def);
+			};
+		}
+		
+		/// <summary>
+		/// Creates a new FindReferencedEntities instance that
+		/// looks for types and members.
+		/// The visitor will report parameterized types and potentially specialized members.
+		/// </summary>
+		public FindReferencedEntities(Action<AstNode, IType> typeReferenceFound, Action<AstNode, IMember> memberReferenceFound)
+		{
+			if (typeReferenceFound == null)
+				throw new ArgumentNullException("typeReferenceFound");
+			if (memberReferenceFound == null)
+				throw new ArgumentNullException("memberReferenceFound");
+			this.typeReferenceFound = typeReferenceFound;
+			this.memberReferenceFound = memberReferenceFound;
 		}
 		
 		public ResolveVisitorNavigationMode Scan(AstNode node)
@@ -48,20 +74,26 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			
 			MemberResolveResult mrr = result as MemberResolveResult;
 			if (mrr != null) {
-				referenceFound(node, mrr.Member.MemberDefinition);
+				memberReferenceFound(node, mrr.Member);
 			}
 			TypeResolveResult trr = result as TypeResolveResult;
 			if (trr != null) {
-				ITypeDefinition typeDef = trr.Type.GetDefinition();
-				if (typeDef != null)
-					referenceFound(node, typeDef);
+				typeReferenceFound(node, trr.Type);
+			}
+			ForEachResolveResult ferr = result as ForEachResolveResult;
+			if (ferr != null) {
+				Resolved(node, ferr.GetEnumeratorCall);
+				if (ferr.CurrentProperty != null)
+					memberReferenceFound(node, ferr.CurrentProperty);
+				if (ferr.MoveNextMethod != null)
+					memberReferenceFound(node, ferr.MoveNextMethod);
 			}
 		}
 		
 		public void ProcessConversion(Expression expression, ResolveResult result, Conversion conversion, IType targetType)
 		{
 			if (conversion.IsUserDefined || conversion.IsMethodGroupConversion) {
-				referenceFound(expression, conversion.Method.MemberDefinition);
+				memberReferenceFound(expression, conversion.Method);
 			}
 		}
 	}

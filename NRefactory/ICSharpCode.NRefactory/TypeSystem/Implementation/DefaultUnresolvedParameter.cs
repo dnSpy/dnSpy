@@ -18,8 +18,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Text;
+
 using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.Utils;
 
@@ -62,7 +62,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			get { return name; }
 			set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException("value");
 				FreezableHelper.ThrowIfFrozen(this);
 				name = value;
 			}
@@ -72,7 +72,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			get { return type; }
 			set {
 				if (value == null)
-					throw new ArgumentNullException();
+					throw new ArgumentNullException("value");
 				FreezableHelper.ThrowIfFrozen(this);
 				type = value;
 			}
@@ -234,9 +234,8 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			
 			public object ConstantValue {
 				get {
-					ResolveResult rr = this.resolvedDefaultValue;
+					ResolveResult rr = LazyInit.VolatileRead(ref this.resolvedDefaultValue);
 					if (rr != null) {
-						LazyInit.ReadBarrier();
 						return rr.ConstantValue;
 					} else {
 						rr = defaultValue.Resolve(context);

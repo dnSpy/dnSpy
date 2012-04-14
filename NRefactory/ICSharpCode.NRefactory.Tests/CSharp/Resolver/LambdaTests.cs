@@ -17,7 +17,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.IO;
 using System.Linq;
+
+using ICSharpCode.NRefactory.CSharp.TypeSystem;
 using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
@@ -559,6 +562,30 @@ class Test {
 			var rr = Resolve<CSharpInvocationResolveResult>(program);
 			Assert.IsFalse(rr.IsError);
 			Assert.AreEqual("System.Threading.Tasks.Task`1[[System.Int32]]", rr.Type.ReflectionName);
+		}
+		
+		[Test]
+		public void LambdaParameterIdentity()
+		{
+			string code = @"using System;
+class TestClass {
+	void F() {
+		Func<int, int> f = $i => i + 1$;
+	}
+}";
+			
+			var prep = PrepareResolver(code);
+			var lambda = (LambdaExpression)prep.Item2;
+			var identifierInLambdaBody = ((BinaryOperatorExpression)lambda.Body).Left;
+			var resolver = prep.Item1;
+			
+			var resolvedParameter = ((LocalResolveResult)resolver.Resolve(lambda.Parameters.Single())).Variable;
+			var parameterInResolveResult = ((LambdaResolveResult)resolver.Resolve(lambda)).Parameters[0];
+			var referencedParameter = ((LocalResolveResult)resolver.Resolve(identifierInLambdaBody)).Variable;
+			
+			Assert.AreEqual("System.Int32" ,resolvedParameter.Type.ReflectionName);
+			Assert.AreSame(resolvedParameter, parameterInResolveResult);
+			Assert.AreSame(resolvedParameter, referencedParameter);
 		}
 	}
 }

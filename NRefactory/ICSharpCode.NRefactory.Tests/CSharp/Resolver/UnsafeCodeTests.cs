@@ -25,7 +25,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	[TestFixture]
 	public class UnsafeCodeTests : ResolverTestBase
 	{
-		[Test, Ignore("Parser returns incorrect positions")]
+		[Test]
 		public void FixedStatement()
 		{
 			string program = @"using System;
@@ -38,8 +38,8 @@ class TestClass {
 			var lrr = Resolve<LocalResolveResult>(program);
 			Assert.AreEqual("System.Byte*", lrr.Type.ReflectionName);
 			
-			var rr = Resolve<ResolveResult>(program.Replace("$p$", "$*p$"));
-			Assert.AreEqual("System.Byte", lrr.Type.ReflectionName);
+			var rr = Resolve<OperatorResolveResult>(program.Replace("$p$", "$*p$"));
+			Assert.AreEqual("System.Byte", rr.Type.ReflectionName);
 		}
 		
 		[Test]

@@ -45,23 +45,14 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			this.currentAssembly = assembly;
 		}
 		
-		public SimpleTypeResolveContext(ITypeDefinition typeDefinition)
+		public SimpleTypeResolveContext(IEntity entity)
 		{
-			if (typeDefinition == null)
-				throw new ArgumentNullException("typeDefinition");
-			this.compilation = typeDefinition.Compilation;
-			this.currentAssembly = typeDefinition.ParentAssembly;
-			this.currentTypeDefinition = typeDefinition;
-		}
-		
-		public SimpleTypeResolveContext(IMember member)
-		{
-			if (member == null)
-				throw new ArgumentNullException("member");
-			this.compilation = member.Compilation;
-			this.currentAssembly = member.ParentAssembly;
-			this.currentTypeDefinition = member.DeclaringTypeDefinition;
-			this.currentMember = member;
+			if (entity == null)
+				throw new ArgumentNullException("entity");
+			this.compilation = entity.Compilation;
+			this.currentAssembly = entity.ParentAssembly;
+			this.currentTypeDefinition = (entity as ITypeDefinition) ?? entity.DeclaringTypeDefinition;
+			this.currentMember = entity as IMember;
 		}
 		
 		private SimpleTypeResolveContext(ICompilation compilation, IAssembly currentAssembly, ITypeDefinition currentTypeDefinition, IMember currentMember)

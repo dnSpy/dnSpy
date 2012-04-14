@@ -232,12 +232,14 @@ namespace Mono.CSharp
 		{
 			if (member_type.BuiltinType == BuiltinTypeSpec.Type.Dynamic) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (FieldBuilder);
-			} else if (!(Parent is CompilerGeneratedClass) && member_type.HasDynamicElement) {
+			} else if (!Parent.IsCompilerGenerated && member_type.HasDynamicElement) {
 				Module.PredefinedAttributes.Dynamic.EmitAttribute (FieldBuilder, member_type, Location);
 			}
 
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
 				Module.PredefinedAttributes.CompilerGenerated.EmitAttribute (FieldBuilder);
+			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
+				Module.PredefinedAttributes.DebuggerBrowsable.EmitAttribute (FieldBuilder, System.Diagnostics.DebuggerBrowsableState.Never);
 
 			if (OptAttributes != null) {
 				OptAttributes.Emit ();

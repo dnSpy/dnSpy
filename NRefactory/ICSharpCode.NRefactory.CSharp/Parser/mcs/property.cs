@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Mono.CompilerServices.SymbolWriter;
 
 #if NET_2_1
 using XmlElement = System.Object;
@@ -686,6 +687,15 @@ namespace Mono.CSharp
 				Set.UpdateName (this);
 		}
 
+		public override void WriteDebugSymbol (MonoSymbolFile file)
+		{
+			if (get != null)
+				get.WriteDebugSymbol (file);
+
+			if (set != null)
+				set.WriteDebugSymbol (file);
+		}
+
 		//
 		//   Represents header string for documentation comment.
 		//
@@ -1337,6 +1347,12 @@ namespace Mono.CSharp
 			Remove.Emit (Parent);
 
 			base.Emit ();
+		}
+
+		public override void WriteDebugSymbol (MonoSymbolFile file)
+		{
+			add.WriteDebugSymbol (file);
+			remove.WriteDebugSymbol (file);
 		}
 
 		//

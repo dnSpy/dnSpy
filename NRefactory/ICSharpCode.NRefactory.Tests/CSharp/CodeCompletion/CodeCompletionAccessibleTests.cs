@@ -30,7 +30,6 @@ using System;
 using NUnit.Framework;
 using System.Diagnostics;
 
-
 namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 {
 	[TestFixture]
@@ -1125,9 +1124,8 @@ public static void Query(MySqlConnection conn, string database, string table)
 			Assert.IsNotNull (provider, "provider == null");
 			Assert.IsNotNull (provider.Find ("WriteLine"), "method 'WriteLine' not found.");
 		}
-		
 		[Test()]
-		public void TestAttributeContext ()
+		public void TestAttributeContextClass ()
 		{
 			var provider = CodeCompletionBugTests.CreateProvider (@"
 using System;
@@ -1137,6 +1135,38 @@ class Test {
 }");
 			Assert.IsNotNull (provider, "provider == null");
 			Assert.IsNotNull (provider.Find ("Obsolete"), "attribute 'Obsolete' not found.");
+			Assert.IsNotNull (provider.Find ("Serializable"), "attribute 'Serializable' not found.");
+		}
+		
+		[Test()]
+		public void TestAttributeContextInNamespace ()
+		{
+			var provider = CodeCompletionBugTests.CreateProvider (@"
+using System;
+
+namespace Test {
+	$[O$
+	class Test {
+	}
+}
+");
+			Assert.IsNotNull (provider, "provider == null");
+			Assert.IsNotNull (provider.Find ("Obsolete"), "attribute 'Obsolete' not found.");
+			Assert.IsNotNull (provider.Find ("Serializable"), "attribute 'Serializable' not found.");
+		}
+		
+		[Test()]
+		public void TestAttributeContextMember ()
+		{
+			var provider = CodeCompletionBugTests.CreateProvider (@"
+using System;
+
+class Test {
+	$[O$
+}");
+			Assert.IsNotNull (provider, "provider == null");
+			Assert.IsNotNull (provider.Find ("Obsolete"), "attribute 'Obsolete' not found.");
+			Assert.IsNotNull (provider.Find ("Serializable"), "attribute 'Serializable' not found.");
 		}
 		
 		[Test()]
@@ -1165,6 +1195,15 @@ $$
 			Assert.IsNotNull (provider, "provider == null");
 			Assert.IsNotNull (provider.Find ("Test"), "class 'Test' not found.");
 		}
+		
+		[Test()]
+		public void TestAttributeContextParameterCompletion ()
+		{
+			var provider = CodeCompletionBugTests.CreateProvider (@"$[Obsolete(System.$");
+			Assert.IsNotNull (provider, "provider == null");
+			Assert.IsNotNull (provider.Find ("Console"), "'Console' not found.");
+		}
+		
 		
 		/// <summary>
 		/// Bug 3320 - Constants accessed by class name do not show in completion list

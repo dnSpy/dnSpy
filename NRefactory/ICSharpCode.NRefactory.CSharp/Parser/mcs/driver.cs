@@ -113,12 +113,13 @@ namespace Mono.CSharp
 			input.Close ();
 		}
 
-		public CSharpParser Parse (SeekableStreamReader reader, SourceFile sourceFile, ModuleContainer module)
+		public static CSharpParser Parse(SeekableStreamReader reader, SourceFile sourceFile, ModuleContainer module, int lineModifier = 0)
 		{
 			var file = new CompilationSourceFile (module, sourceFile);
-			module.AddTypeContainer (file);
+			module.AddTypeContainer(file);
 
 			CSharpParser parser = new CSharpParser (reader, file);
+			parser.Lexer.Line += lineModifier;
 			parser.Lexer.sbag = new SpecialsBag ();
 			parser.parse ();
 			return parser;
@@ -213,6 +214,11 @@ namespace Mono.CSharp
 				return false;
 			}
 
+			if (settings.Platform == Platform.AnyCPU32Preferred && (settings.Target == Target.Library || settings.Target == Target.Module)) {
+				Report.Error (4023, "Platform option `anycpu32bitpreferred' is valid only for executables");
+				return false;
+			}
+
 			TimeReporter tr = new TimeReporter (settings.Timestamps);
 			ctx.TimeReporter = tr;
 			tr.StartTotal ();
@@ -253,6 +259,12 @@ namespace Mono.CSharp
 				output_file = output_file_name;
 			} else {
 				output_file_name = Path.GetFileName (output_file);
+
+				if (string.IsNullOrEmpty (Path.GetFileNameWithoutExtension (output_file_name)) ||
+					output_file_name.IndexOfAny (Path.GetInvalidFileNameChars ()) >= 0) {
+					Report.Error (2021, "Output file name is not valid");
+					return false;
+				}
 			}
 
 #if STATIC
@@ -403,7 +415,6 @@ namespace Mono.CSharp
 			if (!full_flag)
 				return;
 
-			SymbolWriter.Reset ();
 			Linq.QueryBlock.TransparentParameter.Reset ();
 			TypeInfo.Reset ();
 		}

@@ -18,8 +18,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
+using System.Globalization;
+
 using ICSharpCode.NRefactory.Utils;
 
 namespace ICSharpCode.NRefactory.TypeSystem.Implementation
@@ -61,7 +61,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		{
 			this.ownerType = ownerType;
 			this.index = index;
-			this.name = name ?? ((ownerType == EntityType.Method ? "!!" : "!") + index.ToString());
+			this.name = name ?? ((ownerType == EntityType.Method ? "!!" : "!") + index.ToString(CultureInfo.InvariantCulture));
 		}
 		
 		public EntityType OwnerType {
@@ -95,9 +95,9 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		string INamedElement.ReflectionName {
 			get {
 				if (ownerType == EntityType.Method)
-					return "``" + index.ToString();
+					return "``" + index.ToString(CultureInfo.InvariantCulture);
 				else
-					return "`" + index.ToString();
+					return "`" + index.ToString(CultureInfo.InvariantCulture);
 			}
 		}
 		

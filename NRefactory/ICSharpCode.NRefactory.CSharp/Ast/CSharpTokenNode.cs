@@ -27,7 +27,13 @@ using System;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public class CSharpTokenNode : AstNode, IRelocatable
+	/// <summary>
+	/// Represents a token in C#. Note that the type of the token is defined through the TokenRole.
+	/// </summary>
+	/// <remarks>
+	/// In all non null c# token nodes the Role of a CSharpToken must be a TokenRole.
+	/// </remarks>
+	public class CSharpTokenNode : AstNode
 	{
 		public static new readonly CSharpTokenNode Null = new NullCSharpTokenNode ();
 		class NullCSharpTokenNode : CSharpTokenNode
@@ -38,11 +44,20 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 			}
 			
-			public NullCSharpTokenNode () : base (TextLocation.Empty, 0)
+			public NullCSharpTokenNode () : base (TextLocation.Empty)
 			{
 			}
 			
-			public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+			public override void AcceptVisitor (IAstVisitor visitor)
+			{
+			}
+				
+			public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+			{
+				return default (T);
+			}
+			
+			public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 			{
 				return default (S);
 			}
@@ -52,7 +67,6 @@ namespace ICSharpCode.NRefactory.CSharp
 				return other == null || other.IsNull;
 			}
 		}
-		
 		
 		public override NodeType NodeType {
 			get {
@@ -67,27 +81,43 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		protected int tokenLength;
-		public override TextLocation EndLocation {
+		protected virtual int TokenLength {
 			get {
-				return new TextLocation (StartLocation.Line, StartLocation.Column + tokenLength);
+				if (!(Role is TokenRole))
+					return 0;
+				return ((TokenRole)Role).Length;
 			}
 		}
 		
-		public CSharpTokenNode (TextLocation location, int tokenLength)
+		public override TextLocation EndLocation {
+			get {
+				return new TextLocation (StartLocation.Line, StartLocation.Column + TokenLength);
+			}
+		}
+		
+		public CSharpTokenNode (TextLocation location)
 		{
 			this.startLocation = location;
-			this.tokenLength = tokenLength;
 		}
 		
-		#region IRelocationable implementation
-		void IRelocatable.SetStartLocation (TextLocation startLocation)
+		public override string GetText (CSharpFormattingOptions formattingOptions = null)
 		{
-			this.startLocation = startLocation;
+			if (!(Role is TokenRole))
+				return null;
+			return ((TokenRole)Role).Token;
 		}
-		#endregion
+
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitCSharpTokenNode (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitCSharpTokenNode (this);
+		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitCSharpTokenNode (this, data);
 		}

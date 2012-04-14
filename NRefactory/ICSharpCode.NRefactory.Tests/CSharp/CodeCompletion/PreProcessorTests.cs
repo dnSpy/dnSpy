@@ -55,6 +55,14 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 			CodeCompletionBugTests.CombinedProviderTest (@"$#if $", provider => {
 				Assert.IsNotNull (provider.Find ("DEBUG"), "define 'DEBUG' not found.");
 			});
-		}		
+		}	
+
+		[Test()]
+		public void TestIfInsideComment ()
+		{
+			CodeCompletionBugTests.CombinedProviderTest (@"$// #if $", provider => {
+				Assert.IsNull (provider.Find ("DEBUG"), "define 'DEBUG' found.");
+			});
+		}	
 	}
 }

@@ -30,7 +30,7 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// <summary>
 	/// Type&lt;[EMPTY]&gt;
 	/// </summary>
-	public class EmptyExpression : Expression, IRelocatable
+	public class EmptyExpression : Expression
 	{
 		TextLocation location;
 
@@ -55,14 +55,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			this.location = location;
 		}
 		
-		#region IRelocationable implementation
-		void IRelocatable.SetStartLocation (TextLocation startLocation)
+		public override void AcceptVisitor (IAstVisitor visitor)
 		{
-			this.location = startLocation;
+			visitor.VisitEmptyExpression (this);
 		}
-		#endregion
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitEmptyExpression (this);
+		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitEmptyExpression (this, data);
 		}

@@ -10,23 +10,6 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ICSharpCode.NRefactory")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("ICSharpCode")]
-[assembly: AssemblyProduct("SharpDevelop/MonoDevelop")]
-[assembly: AssemblyCopyright("Copyright 2010-2012 AlphaSierraPapa")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyDescription("Type system and other language-independent parts of NRefactory")]
 
-// This sets the default COM visibility of types in the assembly to invisible.
-// If you need to expose a type to COM, use [ComVisible(true)] on that type.
-[assembly: ComVisible(false)]
 [assembly: CLSCompliant(true)]
-
-// The assembly version has following format :
-//
-// Major.Minor.Build.Revision
-//
-// You can specify all the values or you can use the default the Revision and 
-// Build Numbers by using the '*' as shown below:
-[assembly: AssemblyVersion("5.0.0.4")]

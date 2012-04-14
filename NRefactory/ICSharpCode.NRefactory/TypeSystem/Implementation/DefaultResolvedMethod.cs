@@ -28,6 +28,8 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 	/// </summary>
 	public class DefaultResolvedMethod : AbstractResolvedMember, IMethod
 	{
+		IUnresolvedMethod[] parts;
+		
 		public DefaultResolvedMethod(DefaultUnresolvedMethod unresolved, ITypeResolveContext parentContext)
 			: this(unresolved, parentContext, unresolved.IsExtensionMethod)
 		{
@@ -42,11 +44,24 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			this.IsExtensionMethod = isExtensionMethod;
 		}
 		
+		public static DefaultResolvedMethod CreateFromMultipleParts(IUnresolvedMethod[] parts, ITypeResolveContext firstPartParentContext, bool isExtensionMethod)
+		{
+			DefaultResolvedMethod method = new DefaultResolvedMethod(parts[0], firstPartParentContext, isExtensionMethod);
+			method.parts = parts;
+			return method;
+		}
+		
 		public IList<IParameter> Parameters { get; private set; }
 		public IList<IAttribute> ReturnTypeAttributes { get; private set; }
 		public IList<ITypeParameter> TypeParameters { get; private set; }
 		
 		public bool IsExtensionMethod { get; private set; }
+		
+		public IList<IUnresolvedMethod> Parts {
+			get {
+				return parts ?? new IUnresolvedMethod[] { (IUnresolvedMethod)unresolved };
+			}
+		}
 		
 		public bool IsConstructor {
 			get { return ((IUnresolvedMethod)unresolved).IsConstructor; }
@@ -63,8 +78,8 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		public override IMemberReference ToMemberReference()
 		{
 			var declTypeRef = this.DeclaringType.ToTypeReference();
-			if (IsExplicitInterfaceImplementation && InterfaceImplementations.Count == 1) {
-				return new ExplicitInterfaceImplementationMemberReference(declTypeRef, InterfaceImplementations[0].ToMemberReference());
+			if (IsExplicitInterfaceImplementation && ImplementedInterfaceMembers.Count == 1) {
+				return new ExplicitInterfaceImplementationMemberReference(declTypeRef, ImplementedInterfaceMembers[0].ToMemberReference());
 			} else {
 				return new DefaultMemberReference(
 					this.EntityType, declTypeRef, this.Name, this.TypeParameters.Count,

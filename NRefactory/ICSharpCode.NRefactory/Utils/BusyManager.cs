@@ -29,13 +29,16 @@ namespace ICSharpCode.NRefactory.Utils
 	/// </summary>
 	public static class BusyManager
 	{
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible",
+		                                                 Justification = "Should always be used with 'var'")]
 		public struct BusyLock : IDisposable
 		{
 			public static readonly BusyLock Failed = new BusyLock(null);
 			
 			readonly List<object> objectList;
 			
-			public BusyLock(List<object> objectList)
+			internal BusyLock(List<object> objectList)
 			{
 				this.objectList = objectList;
 			}

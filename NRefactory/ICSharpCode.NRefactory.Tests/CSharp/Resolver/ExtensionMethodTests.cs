@@ -101,5 +101,22 @@ public static class XC {
 			Assert.AreEqual("XC.Filter", mrr.Member.FullName);
 			Assert.AreEqual("System.Collections.Generic.IEnumerable`1[[System.String]]", mrr.Type.ReflectionName);
 		}
+		
+		[Test]
+		public void FirstIsEligibleExtensionMethod()
+		{
+			string program = @"using System; using System.Collections.Generic;
+public static class XC {
+	$public static TSource First<TSource>(this IEnumerable<TSource> source) {}$
+}
+";
+			var mrr = Resolve<MemberResolveResult>(program);
+			var targetType = compilation.FindType(typeof(string[]));
+			IType[] inferredTypes;
+			bool isEligible = CSharpResolver.IsEligibleExtensionMethod(targetType, (IMethod)mrr.Member, true, out inferredTypes);
+			Assert.IsTrue(isEligible);
+			Assert.AreEqual(1, inferredTypes.Length);
+			Assert.AreEqual("System.String", inferredTypes[0].ReflectionName);
+		}
 	}
 }

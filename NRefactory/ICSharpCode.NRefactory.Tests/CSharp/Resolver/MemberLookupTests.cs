@@ -19,10 +19,10 @@
 using System;
 using System.IO;
 using System.Linq;
-
 using ICSharpCode.NRefactory.CSharp.TypeSystem;
 using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
+using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Resolver
@@ -161,6 +161,51 @@ class Derived : Base {
 			var rr = Resolve<MemberResolveResult>(program);
 			Assert.AreEqual("Test.Field", rr.Member.FullName);
 			Assert.IsTrue(rr.TargetResult is TypeResolveResult);
+		}
+		
+		[Test]
+		public void InstanceMethodImplicitThis()
+		{
+			string program = @"using System;
+class Test {
+	void F() {}
+	public void M() {
+		$F()$;
+	}
+}";
+			var rr = Resolve<CSharpInvocationResolveResult>(program);
+			Assert.AreEqual("Test.F", rr.Member.FullName);
+			Assert.IsInstanceOf<ThisResolveResult>(rr.TargetResult);
+		}
+		
+		[Test]
+		public void InstanceMethodExplicitThis()
+		{
+			string program = @"using System;
+class Test {
+	void F() {}
+	public void M() {
+		$this.F()$;
+	}
+}";
+			var rr = Resolve<CSharpInvocationResolveResult>(program);
+			Assert.AreEqual("Test.F", rr.Member.FullName);
+			Assert.IsInstanceOf<ThisResolveResult>(rr.TargetResult);
+		}
+		
+		[Test]
+		public void StaticMethod()
+		{
+			string program = @"using System;
+class Test {
+	static void F() {}
+	public void M() {
+		$F()$;
+	}
+}";
+			var rr = Resolve<CSharpInvocationResolveResult>(program);
+			Assert.AreEqual("Test.F", rr.Member.FullName);
+			Assert.IsInstanceOf<TypeResolveResult>(rr.TargetResult);
 		}
 		
 		[Test]
@@ -342,6 +387,74 @@ class Derived<T> : Base where T : Derived<T>
 			rr = Resolve<CSharpInvocationResolveResult>(program.Replace("c.Test()", "$c.Test()$"));
 			Assert.IsFalse(rr.IsError);
 			Assert.AreEqual(0, rr.Member.Parameters.Count);
+		}
+		
+		[Test]
+		public void MethodGroupConversionForGenericMethodHasSpecializedMethod()
+		{
+			string program = @"using System;
+class TestClass {
+	void F<T>(T x) {}
+	public void M() {
+		System.Action<int> f;
+		f = $F$;
+	}
+}";
+			var conversion = GetConversion(program);
+			Assert.IsTrue(conversion.IsValid);
+			Assert.IsTrue(conversion.IsMethodGroupConversion);
+			Assert.IsInstanceOf<SpecializedMethod>(conversion.Method);
+			Assert.AreEqual(
+				new[] { "System.Int32" },
+				((SpecializedMethod)conversion.Method).TypeArguments.Select(t => t.ReflectionName).ToArray());
+		}
+		
+		[Test]
+		public void PartialMethod_WithoutImplementation()
+		{
+			string program = @"using System;
+class TestClass {
+	$partial void M();$
+}";
+			var mrr = Resolve<MemberResolveResult>(program);
+			Assert.AreEqual("TestClass.M", mrr.Member.FullName);
+		}
+		
+		[Test]
+		public void PartialMethod_Declaration()
+		{
+			string program = @"using System;
+class TestClass {
+	$partial void M();$
+	
+	partial void M() {}
+}";
+			var mrr = Resolve<MemberResolveResult>(program);
+			Assert.AreEqual("TestClass.M", mrr.Member.FullName);
+		}
+		
+		[Test]
+		public void PartialMethod_Implementation()
+		{
+			string program = @"using System;
+class TestClass {
+	partial void M();
+	
+	$partial void M() {}$
+}";
+			var mrr = Resolve<MemberResolveResult>(program);
+			Assert.AreEqual("TestClass.M", mrr.Member.FullName);
+		}
+		
+		[Test]
+		public void MembersWithoutWhitespace()
+		{
+			string program = @"using System;
+class TestClass {
+	void A();$void B();$void C();
+}";
+			var mrr = Resolve<MemberResolveResult>(program);
+			Assert.AreEqual("TestClass.B", mrr.Member.FullName);
 		}
 	}
 }

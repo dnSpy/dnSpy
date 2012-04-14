@@ -6,7 +6,6 @@
   </configuration>
   <import>
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
-    <widget-library name="../../../StandAloneTextEditor/StandAloneTextEditor/bin/Debug/Mono.TextEditor.dll" />
     <widget-library name="../bin/Debug/ICSharpCode.NRefactory.GtkDemo.exe" internal="true" />
   </import>
   <widget class="Gtk.Window" id="ICSharpCode.NRefactory.GtkDemo.MainWindow" design-size="400 300">
@@ -23,12 +22,10 @@
             <property name="CanFocus">True</property>
             <property name="ShadowType">In</property>
             <child>
-              <widget class="Gtk.Viewport" id="GtkViewport">
+              <widget class="Gtk.TextView" id="textview1">
                 <property name="MemberName" />
-                <property name="ShadowType">None</property>
-                <child>
-                  <placeholder />
-                </child>
+                <property name="CanFocus">True</property>
+                <property name="Text" translatable="yes" />
               </widget>
             </child>
           </widget>

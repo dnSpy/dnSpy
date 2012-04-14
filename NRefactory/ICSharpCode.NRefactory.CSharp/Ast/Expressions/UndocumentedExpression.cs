@@ -42,12 +42,30 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class UndocumentedExpression : Expression
 	{
+		public readonly static TokenRole ArglistKeywordRole = new TokenRole ("__arglist");
+		public readonly static TokenRole RefvalueKeywordRole = new TokenRole ("__refvalue");
+		public readonly static TokenRole ReftypeKeywordRole = new TokenRole ("__reftype");
+		public readonly static TokenRole MakerefKeywordRole = new TokenRole ("__makeref");
+		
 		public UndocumentedExpressionType UndocumentedExpressionType {
 			get; set;
 		}
 		
 		public CSharpTokenNode UndocumentedToken {
-			get { return GetChildByRole (Roles.Keyword); }
+			get {
+				switch (UndocumentedExpressionType) {
+				case ICSharpCode.NRefactory.CSharp.UndocumentedExpressionType.ArgListAccess:
+				case ICSharpCode.NRefactory.CSharp.UndocumentedExpressionType.ArgList:
+					return GetChildByRole (ArglistKeywordRole);
+				case ICSharpCode.NRefactory.CSharp.UndocumentedExpressionType.RefValue:
+					return GetChildByRole (RefvalueKeywordRole);
+				case ICSharpCode.NRefactory.CSharp.UndocumentedExpressionType.RefType:
+					return GetChildByRole (ReftypeKeywordRole);
+				case ICSharpCode.NRefactory.CSharp.UndocumentedExpressionType.MakeRef:
+					return GetChildByRole (MakerefKeywordRole);
+				}
+				return CSharpTokenNode.Null;
+			}
 		}
 		
 		public CSharpTokenNode LParToken {
@@ -62,7 +80,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.RPar); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitUndocumentedExpression (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitUndocumentedExpression (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitUndocumentedExpression (this, data);
 		}

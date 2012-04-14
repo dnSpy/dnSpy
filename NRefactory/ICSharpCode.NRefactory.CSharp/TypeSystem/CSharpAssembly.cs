@@ -17,9 +17,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using ICSharpCode.NRefactory.Utils;
@@ -67,9 +68,8 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		
 		IList<IAttribute> GetAttributes(ref IList<IAttribute> field, bool assemblyAttributes)
 		{
-			IList<IAttribute> result = field;
+			IList<IAttribute> result = LazyInit.VolatileRead(ref field);
 			if (result != null) {
-				LazyInit.ReadBarrier();
 				return result;
 			} else {
 				result = new List<IAttribute>();
@@ -88,17 +88,17 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		
 		public INamespace RootNamespace {
 			get {
-				NS root = this.rootNamespace;
+				NS root = LazyInit.VolatileRead(ref this.rootNamespace);
 				if (root != null) {
-					LazyInit.ReadBarrier();
 					return root;
 				} else {
 					root = new NS(this);
-					Dictionary<string, NS> dict = new Dictionary<string, NS>();
+					Dictionary<string, NS> dict = new Dictionary<string, NS>(compilation.NameComparer);
 					dict.Add(string.Empty, root);
 					foreach (var pair in GetTypes()) {
 						NS ns = GetOrAddNamespace(dict, pair.Key.Namespace);
-						ns.types[pair.Key] = pair.Value;
+						if (ns.types != null)
+							ns.types[pair.Key] = pair.Value;
 					}
 					return LazyInit.GetOrSet(ref this.rootNamespace, root);
 				}
@@ -149,13 +149,19 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			if (result != null) {
 				return result;
 			} else {
-				internalsVisibleTo = (
-					from attr in this.AssemblyAttributes
-					where attr.AttributeType.Name == "InternalsVisibleToAttribute"
-					&& attr.AttributeType.Namespace == "System.Runtime.CompilerServices"
-					&& attr.PositionalArguments.Count == 1
-					select GetShortName(attr.PositionalArguments.Single().ConstantValue as string)
-				).ToArray();
+				using (var busyLock = BusyManager.Enter(this)) {
+					Debug.Assert(busyLock.Success);
+					if (!busyLock.Success) {
+						return new string[0];
+					}
+					internalsVisibleTo = (
+						from attr in this.AssemblyAttributes
+						where attr.AttributeType.Name == "InternalsVisibleToAttribute"
+						&& attr.AttributeType.Namespace == "System.Runtime.CompilerServices"
+						&& attr.PositionalArguments.Count == 1
+						select GetShortName(attr.PositionalArguments.Single().ConstantValue as string)
+					).ToArray();
+				}
 				return internalsVisibleTo;
 			}
 		}
@@ -171,27 +177,34 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				return fullAssemblyName.Substring(0, pos);
 		}
 		
-		Dictionary<FullNameAndTypeParameterCount, DefaultResolvedTypeDefinition> typeDict;
+		Dictionary<FullNameAndTypeParameterCount, ITypeDefinition> typeDict;
 		
-		Dictionary<FullNameAndTypeParameterCount, DefaultResolvedTypeDefinition> GetTypes()
+		Dictionary<FullNameAndTypeParameterCount, ITypeDefinition> GetTypes()
 		{
-			var dict = this.typeDict;
+			var dict = LazyInit.VolatileRead(ref this.typeDict);
 			if (dict != null) {
-				LazyInit.ReadBarrier();
 				return dict;
 			} else {
+				// Always use the ordinal comparer for the main dictionary so that partial classes
+				// get merged correctly.
+				// The compilation's comparer will be used for the per-namespace dictionaries.
 				var comparer = FullNameAndTypeParameterCountComparer.Ordinal;
 				dict = projectContent.TopLevelTypeDefinitions
 					.GroupBy(t => new FullNameAndTypeParameterCount(t.Namespace, t.Name, t.TypeParameters.Count), comparer)
-					.ToDictionary(g => g.Key, g => new DefaultResolvedTypeDefinition(context, g.ToArray()), comparer);
+					.ToDictionary(g => g.Key, g => CreateResolvedTypeDefinition(g.ToArray()), comparer);
 				return LazyInit.GetOrSet(ref this.typeDict, dict);
 			}
+		}
+		
+		ITypeDefinition CreateResolvedTypeDefinition(IUnresolvedTypeDefinition[] parts)
+		{
+			return new DefaultResolvedTypeDefinition(context, parts);
 		}
 		
 		public ITypeDefinition GetTypeDefinition(string ns, string name, int typeParameterCount)
 		{
 			var key = new FullNameAndTypeParameterCount(ns ?? string.Empty, name, typeParameterCount);
-			DefaultResolvedTypeDefinition def;
+			ITypeDefinition def;
 			if (GetTypes().TryGetValue(key, out def))
 				return def;
 			else
@@ -223,7 +236,11 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				this.assembly = assembly;
 				this.fullName = string.Empty;
 				this.name = string.Empty;
-				this.types = new Dictionary<FullNameAndTypeParameterCount, ITypeDefinition>(new FullNameAndTypeParameterCountComparer(assembly.compilation.NameComparer));
+				// Our main dictionary for the CSharpAssembly is using an ordinal comparer.
+				// If the compilation's comparer isn't ordinal, we need to create a new dictionary with the compilation's comparer.
+				if (assembly.compilation.NameComparer != StringComparer.Ordinal) {
+					this.types = new Dictionary<FullNameAndTypeParameterCount, ITypeDefinition>(new FullNameAndTypeParameterCountComparer(assembly.compilation.NameComparer));
+				}
 			}
 			
 			public NS(NS parentNamespace, string fullName, string name)
@@ -232,7 +249,8 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				this.parentNamespace = parentNamespace;
 				this.fullName = fullName;
 				this.name = name;
-				this.types = new Dictionary<FullNameAndTypeParameterCount, ITypeDefinition>(parentNamespace.types.Comparer);
+				if (parentNamespace.types != null)
+					this.types = new Dictionary<FullNameAndTypeParameterCount, ITypeDefinition>(parentNamespace.types.Comparer);
 			}
 			
 			string INamespace.ExternAlias {
@@ -256,7 +274,16 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			}
 			
 			IEnumerable<ITypeDefinition> INamespace.Types {
-				get { return types.Values; }
+				get {
+					if (types != null)
+						return types.Values;
+					else
+						return (
+							from t in assembly.GetTypes()
+							where t.Key.Namespace == fullName
+							select t.Value
+						);
+				}
 			}
 			
 			ICompilation IResolved.Compilation {
@@ -275,7 +302,16 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			
 			ITypeDefinition INamespace.GetTypeDefinition(string name, int typeParameterCount)
 			{
-				return assembly.GetTypeDefinition(this.fullName, name, typeParameterCount);
+				if (types != null) {
+					var key = new FullNameAndTypeParameterCount(fullName, name, typeParameterCount);
+					ITypeDefinition typeDef;
+					if (types.TryGetValue(key, out typeDef))
+						return typeDef;
+					else
+						return null;
+				} else {
+					return assembly.GetTypeDefinition(fullName, name, typeParameterCount);
+				}
 			}
 		}
 	}

@@ -44,7 +44,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		protected CSharpProjectContent(CSharpProjectContent pc)
 		{
 			this.assemblyName = pc.assemblyName;
-			this.parsedFiles = new Dictionary<string, IParsedFile>(pc.parsedFiles);
+			this.parsedFiles = new Dictionary<string, IParsedFile>(pc.parsedFiles, Platform.FileNameComparer);
 			this.assemblyReferences = new List<IAssemblyReference>(pc.assemblyReferences);
 		}
 		

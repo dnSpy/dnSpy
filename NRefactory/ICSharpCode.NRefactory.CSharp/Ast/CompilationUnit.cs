@@ -28,6 +28,10 @@ using System.Collections.Generic;
 using ICSharpCode.NRefactory.CSharp.Resolver;
 using ICSharpCode.NRefactory.CSharp.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem;
+using System.Threading;
+using Mono.CSharp;
+using System.IO;
+using ICSharpCode.NRefactory.Editor;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
@@ -41,10 +45,22 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
+		string fileName;
+		
 		/// <summary>
 		/// Gets/Sets the file name of this compilation unit.
 		/// </summary>
-		public string FileName { get; set; }
+		public string FileName {
+			get { return fileName; }
+			set {
+				ThrowIfFrozen();
+				fileName = value;
+			}
+		}
+		
+		public AstNodeCollection<AstNode> Members {
+			get { return GetChildrenByRole(MemberRole); }
+		}
 		
 		List<Error> errors = new List<Error> ();
 		
@@ -68,17 +84,18 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 		}
 		
-		public IEnumerable<TypeDeclaration> GetTypes (bool includeInnerTypes = false)
+		public IEnumerable<TypeDeclaration> GetTypes(bool includeInnerTypes = false)
 		{
 			Stack<AstNode> nodeStack = new Stack<AstNode> ();
-			nodeStack.Push (this);
+			nodeStack.Push(this);
 			while (nodeStack.Count > 0) {
-				var curNode = nodeStack.Pop ();
-				if (curNode is TypeDeclaration)
+				var curNode = nodeStack.Pop();
+				if (curNode is TypeDeclaration) {
 					yield return (TypeDeclaration)curNode;
+				}
 				foreach (var child in curNode.Children) {
 					if (!(child is Statement || child is Expression) &&
-					    (child.Role != TypeDeclaration.MemberRole || (child is TypeDeclaration && includeInnerTypes)))
+					    (child.Role != Roles.TypeMemberRole || (child is TypeDeclaration && includeInnerTypes)))
 						nodeStack.Push (child);
 				}
 			}
@@ -90,7 +107,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			return o != null && GetChildrenByRole(MemberRole).DoMatch(o.GetChildrenByRole(MemberRole), match);
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitCompilationUnit (this);
+		}
+		
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitCompilationUnit (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitCompilationUnit (this, data);
 		}
@@ -98,14 +125,45 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// <summary>
 		/// Converts this compilation unit into a parsed file that can be stored in the type system.
 		/// </summary>
-		public CSharpParsedFile ToTypeSystem()
+		public CSharpParsedFile ToTypeSystem ()
 		{
-			if (string.IsNullOrEmpty(this.FileName))
-				throw new InvalidOperationException("Cannot use ToTypeSystem() on a compilation unit without file name.");
-			var v = new TypeSystemConvertVisitor(this.FileName);
-			v.VisitCompilationUnit(this, null);
+			if (string.IsNullOrEmpty (this.FileName))
+				throw new InvalidOperationException ("Cannot use ToTypeSystem() on a compilation unit without file name.");
+			var v = new TypeSystemConvertVisitor (this.FileName);
+			v.VisitCompilationUnit (this);
 			return v.ParsedFile;
+		}
+		
+		public static CompilationUnit Parse (string text, string fileName = "", CompilerSettings settings = null, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			var parser = new CSharpParser ();
+			if (settings != null)
+				parser.CompilerSettings = settings;
+			return parser.Parse (text, fileName);
+		}
+		
+		public static CompilationUnit Parse (TextReader reader, string fileName = "", CompilerSettings settings = null, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			var parser = new CSharpParser ();
+			if (settings != null)
+				parser.CompilerSettings = settings;
+			return parser.Parse (reader, fileName, 0);
+		}
+		
+		public static CompilationUnit Parse (Stream stream, string fileName = "", CompilerSettings settings = null, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			var parser = new CSharpParser ();
+			if (settings != null)
+				parser.CompilerSettings = settings;
+			return parser.Parse (stream, fileName, 0);
+		}
+		
+		public static CompilationUnit Parse (ITextSource textSource, string fileName = "", CompilerSettings settings = null, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			var parser = new CSharpParser ();
+			if (settings != null)
+				parser.CompilerSettings = settings;
+			return parser.Parse (textSource, fileName, 0);
 		}
 	}
 }
-

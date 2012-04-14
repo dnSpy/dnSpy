@@ -78,8 +78,8 @@ public class Form1 {
 			string program = @"[Attr] class Test {}";
 			TypeDeclaration type = ParseUtilCSharp.ParseGlobal<TypeDeclaration>(program);
 			var attr = type.Attributes.Single().Attributes.Single();
-			Assert.IsTrue(attr.GetChildByRole(AstNode.Roles.LPar).IsNull);
-			Assert.IsTrue(attr.GetChildByRole(AstNode.Roles.RPar).IsNull);
+			Assert.IsTrue(attr.GetChildByRole(Roles.LPar).IsNull);
+			Assert.IsTrue(attr.GetChildByRole(Roles.RPar).IsNull);
 		}
 		
 		[Test, Ignore("Parser bug - parenthesis are missing")]
@@ -88,8 +88,8 @@ public class Form1 {
 			string program = @"[Attr()] class Test {}";
 			TypeDeclaration type = ParseUtilCSharp.ParseGlobal<TypeDeclaration>(program);
 			var attr = type.Attributes.Single().Attributes.Single();
-			Assert.IsFalse(attr.GetChildByRole(AstNode.Roles.LPar).IsNull);
-			Assert.IsFalse(attr.GetChildByRole(AstNode.Roles.RPar).IsNull);
+			Assert.IsFalse(attr.GetChildByRole(Roles.LPar).IsNull);
+			Assert.IsFalse(attr.GetChildByRole(Roles.RPar).IsNull);
 		}
 		
 		[Test]
@@ -98,6 +98,7 @@ public class Form1 {
 			ParseUtilCSharp.AssertGlobal(
 				@"[A, B] class Test {}",
 				new TypeDeclaration {
+					ClassType = ClassType.Class,
 					Name = "Test",
 					Attributes = {
 						new AttributeSection {
@@ -169,11 +170,12 @@ public class Form1 {
 		// TODO: Tests for other contexts where attributes can appear
 		
 		[Test]
-		public void AttributeWithNamedArguments()
+		public void AttributeWithNamedArguments ()
 		{
-			ParseUtilCSharp.AssertTypeMember(
+			ParseUtilCSharp.AssertTypeMember (
 				@"[A(0, a:1, b=2)] class Test {}",
 				new TypeDeclaration {
+					ClassType = ClassType.Class,
 					Name = "Test",
 					Attributes = {
 						new AttributeSection {

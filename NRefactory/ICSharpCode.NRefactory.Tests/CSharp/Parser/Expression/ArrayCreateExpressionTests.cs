@@ -152,10 +152,10 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 		{
 			var ace = ParseUtilCSharp.ParseExpression<ArrayCreateExpression>("new [] { 1, }");
 			Assert.AreEqual(new Role[] {
-			                	AstNode.Roles.LBrace,
-			                	AstNode.Roles.Expression,
-			                	AstNode.Roles.Comma,
-			                	AstNode.Roles.RBrace
+			                	Roles.LBrace,
+			                	Roles.Expression,
+			                	Roles.Comma,
+			                	Roles.RBrace
 			                }, ace.Initializer.Children.Select(c => c.Role).ToArray());
 		}
 	}

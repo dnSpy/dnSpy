@@ -29,7 +29,7 @@ using System.IO;
 using NUnit.Framework;
 using ICSharpCode.NRefactory.CSharp;
 
-namespace ICSharpCode.NRefactory.FormattingTests
+namespace ICSharpCode.NRefactory.CSharp.FormattingTests
 {
 	[TestFixture()]
 	public class TestTypeLevelIndentation : TestBase
@@ -37,7 +37,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestClassIndentation ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.ClassBraceStyle = BraceStyle.DoNotChange;
 			
 			Test (policy,
@@ -48,7 +48,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestAttributeIndentation ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.ClassBraceStyle = BraceStyle.DoNotChange;
 			
 			Test (policy,
@@ -63,7 +63,7 @@ class Test {}");
 		[Test()]
 		public void TestClassIndentationInNamespaces ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.NamespaceBraceStyle = BraceStyle.EndOfLine;
 			policy.ClassBraceStyle = BraceStyle.DoNotChange;
 			
@@ -77,7 +77,7 @@ class Test {}");
 		[Test()]
 		public void TestNoIndentationInNamespaces ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.NamespaceBraceStyle = BraceStyle.EndOfLine;
 			policy.ClassBraceStyle = BraceStyle.DoNotChange;
 			policy.IndentNamespaceBody = false;
@@ -92,7 +92,7 @@ class Test {}
 		[Test()]
 		public void TestClassIndentationInNamespacesCase2 ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.NamespaceBraceStyle = BraceStyle.NextLine;
 			policy.ClassBraceStyle = BraceStyle.NextLine;
 			policy.ConstructorBraceStyle = BraceStyle.NextLine;
@@ -122,7 +122,7 @@ namespace MonoDevelop.CSharp.Formatting
 		[Test()]
 		public void TestIndentClassBody ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.IndentClassBody = true;
 			Test (policy,
 @"class Test
@@ -148,7 +148,7 @@ Test a;
 		[Test()]
 		public void TestIndentInterfaceBody ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.IndentInterfaceBody = true;
 			
 			Test (policy,
@@ -173,7 +173,7 @@ Test Foo ();
 		[Test()]
 		public void TestIndentStructBody ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.IndentStructBody = true;
 			
 			Test (policy,
@@ -198,7 +198,7 @@ Test Foo ();
 		[Test()]
 		public void TestIndentEnumBody ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.IndentEnumBody = true;
 			
 			Test (policy,
@@ -223,7 +223,7 @@ A
 		[Test()]
 		public void TestIndentMethodBody ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.IndentMethodBody = true;
 			
 			Test (policy,
@@ -266,7 +266,7 @@ A
 		[Test()]
 		public void TestIndentMethodBodyOperatorCase ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.IndentMethodBody = true;
 
 			var adapter = Test (policy,
@@ -300,7 +300,7 @@ A
 		[Test()]
 		public void TestIndentPropertyBody ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.IndentPropertyBody = true;
 			
 			var adapter = Test (policy,
@@ -333,7 +333,7 @@ set;
 		[Test()]
 		public void TestIndentPropertyOneLine ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.PropertyFormatting = PropertyFormatting.AllowOneLine;
 			policy.AllowPropertyGetBlockInline = true;
 			policy.AllowPropertySetBlockInline = true;
@@ -352,7 +352,7 @@ set;
 		[Test()]
 		public void TestIndentPropertyOneLineCase2 ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.PropertyFormatting = PropertyFormatting.AllowOneLine;
 			policy.AllowPropertyGetBlockInline = true;
 			policy.AllowPropertySetBlockInline = true;
@@ -371,7 +371,7 @@ set;
 		[Test()]
 		public void TestIndentPropertyBodyIndexerCase ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.IndentPropertyBody = true;
 			
 			var adapter = Test (policy,
@@ -415,7 +415,7 @@ set {
 		[Test()]
 		public void TestPropertyAlignment ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.PropertyFormatting = PropertyFormatting.AllowOneLine;
 			var adapter = Test (policy,
 @"class Test
@@ -448,7 +448,7 @@ set {
 		[Test()]
 		public void TestIndentNamespaceBody ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.ClassBraceStyle = BraceStyle.DoNotChange;
 			policy.NamespaceBraceStyle = BraceStyle.EndOfLine;
 			policy.IndentNamespaceBody = true;
@@ -471,7 +471,7 @@ class FooBar {}
 		[Test()]
 		public void TestMethodIndentation ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.MethodBraceStyle = BraceStyle.DoNotChange;
 			
 			Test (policy,
@@ -488,7 +488,7 @@ MyType TestMethod () {}
 		[Test()]
 		public void TestPropertyIndentation ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.PropertyBraceStyle = BraceStyle.DoNotChange;
 			
 			Test (policy, 
@@ -504,7 +504,7 @@ MyType TestMethod () {}
 		[Test()]
 		public void TestPropertyIndentationCase2 ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			
 			Test (policy, 
 @"class Test
@@ -527,7 +527,7 @@ set;
 		[Test()]
 		public void TestIndentEventBody ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.IndentEventBody = true;
 			
 			var adapter = Test (policy, 

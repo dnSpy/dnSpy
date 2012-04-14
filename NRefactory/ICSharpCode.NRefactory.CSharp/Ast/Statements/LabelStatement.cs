@@ -36,15 +36,30 @@ namespace ICSharpCode.NRefactory.CSharp
 				return GetChildByRole (Roles.Identifier).Name;
 			}
 			set {
-				SetChildByRole(Roles.Identifier, Identifier.Create (value, TextLocation.Empty));
+				SetChildByRole(Roles.Identifier, Identifier.Create (value));
 			}
 		}
 		
+		public Identifier LabelToken {
+			get { return GetChildByRole (Roles.Identifier); }
+			set { SetChildByRole (Roles.Identifier, value); }
+		}
+
 		public CSharpTokenNode Colon {
 			get { return GetChildByRole (Roles.Colon); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitLabelStatement (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitLabelStatement (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitLabelStatement (this, data);
 		}

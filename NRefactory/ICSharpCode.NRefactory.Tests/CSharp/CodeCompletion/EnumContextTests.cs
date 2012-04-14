@@ -95,9 +95,9 @@ enum Name {
 		
 		
 		[Test()]
-		public void TestEnumInitializerContinuation ()
+		public void TestEnumInitializerContinuation()
 		{
-			CodeCompletionBugTests.CombinedProviderTest (
+			CodeCompletionBugTests.CombinedProviderTest(
 @"using System;
 [Flags]
 enum Name {
@@ -106,9 +106,40 @@ enum Name {
 	Combined $= Name.$
 }
 ", provider => {
-				Assert.IsNotNull (provider.Find ("Flag1"), "value 'Flag1' not found.");
-				Assert.IsNotNull (provider.Find ("Flag2"), "value 'Flag2' not found.");
+				Assert.IsNotNull(provider.Find("Flag1"), "value 'Flag1' not found.");
+				Assert.IsNotNull(provider.Find("Flag2"), "value 'Flag2' not found.");
 			});
 		}
+
+		[Test()]
+		public void TestEnumBaseTypes()
+		{
+			string[] integralTypes = { "byte", "sbyte", "short", "int", "long", "ushort", "uint", "ulong" };
+			CodeCompletionBugTests.CombinedProviderTest(
+@"using System;
+enum Name : $b$
+{
+	Flag1
+}
+", provider => {
+				foreach (var type in integralTypes)
+					Assert.IsNotNull(provider.Find(type), "value '" + type + "' not found.");
+				Assert.IsNull(provider.Find("char"), "type 'char' found.");
+			});
+		}
+
+		[Test()]
+		public void TestEnumBaseTypesAutoPopup()
+		{
+			string[] integralTypes = { "byte", "sbyte", "short", "int", "long", "ushort", "uint", "ulong" };
+			var provider = CodeCompletionBugTests.CreateProvider(
+@"using System;
+$enum Name : $
+");
+			foreach (var type in integralTypes)
+				Assert.IsNotNull(provider.Find(type), "value '" + type + "' not found.");
+			Assert.IsNull(provider.Find("char"), "type 'char' found.");
+		}
+		
 	}
 }

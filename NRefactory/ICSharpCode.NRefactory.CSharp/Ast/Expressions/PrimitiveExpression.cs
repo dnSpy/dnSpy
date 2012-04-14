@@ -24,12 +24,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System;
+
 namespace ICSharpCode.NRefactory.CSharp
 {
 	/// <summary>
 	/// Represents a literal value.
 	/// </summary>
-	public class PrimitiveExpression : Expression, IRelocatable
+	public class PrimitiveExpression : Expression
 	{
 		public static readonly object AnyValue = new object();
 		
@@ -47,20 +49,30 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
+		object value;
+		
 		public object Value {
-			get;
-			set;
+			get { return this.value; }
+			set { 
+				ThrowIfFrozen(); 
+				this.value = value;
+			}
 		}
 		
 		public string LiteralValue {
-			get {
-				return literalValue;
+			get { return literalValue; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException();
+				ThrowIfFrozen();
+				literalValue = value;
 			}
 		}
 		
 		public PrimitiveExpression (object value)
 		{
 			this.Value = value;
+			this.literalValue = "";
 		}
 		
 		public PrimitiveExpression (object value, string literalValue)
@@ -76,14 +88,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			this.literalValue = literalValue ?? "";
 		}
 		
-		#region IRelocationable implementation
-		void IRelocatable.SetStartLocation (TextLocation startLocation)
+		public override void AcceptVisitor (IAstVisitor visitor)
 		{
-			this.startLocation = startLocation;
+			visitor.VisitPrimitiveExpression (this);
 		}
-		#endregion
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitPrimitiveExpression (this);
+		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitPrimitiveExpression (this, data);
 		}

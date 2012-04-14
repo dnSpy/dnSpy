@@ -32,50 +32,36 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 	public class SpecializedMethod : SpecializedParameterizedMember, IMethod
 	{
 		readonly IMethod methodDefinition;
-		readonly IList<IType> typeArguments;
-		readonly IList<ITypeParameter> specializedTypeParameters;
+		readonly ITypeParameter[] specializedTypeParameters;
 		
-		public SpecializedMethod(IType declaringType, IMethod methodDefinition, IList<IType> typeArguments = null)
-			: this(declaringType, methodDefinition, typeArguments, GetSubstitution(declaringType, typeArguments))
+		public SpecializedMethod(IMethod methodDefinition, TypeParameterSubstitution substitution)
+			: base(methodDefinition)
 		{
-		}
-		
-		internal protected SpecializedMethod(IType declaringType, IMethod methodDefinition, IList<IType> typeArguments, TypeVisitor substitution)
-			: base(declaringType, methodDefinition)
-		{
-			if (declaringType == null)
-				throw new ArgumentNullException("declaringType");
-			if (methodDefinition == null)
-				throw new ArgumentNullException("methodDefinition");
-			
+			// The base ctor might have unpacked a SpecializedMember
+			// (in case we are specializing an already-specialized method)
+			methodDefinition = (IMethod)base.MemberDefinition;
 			this.methodDefinition = methodDefinition;
-			this.typeArguments = typeArguments ?? EmptyList<IType>.Instance;
-			
 			if (methodDefinition.TypeParameters.Any(ConstraintNeedsSpecialization)) {
 				// The method is generic, and we need to specialize the type parameters
 				specializedTypeParameters = new ITypeParameter[methodDefinition.TypeParameters.Count];
-				for (int i = 0; i < specializedTypeParameters.Count; i++) {
+				for (int i = 0; i < specializedTypeParameters.Length; i++) {
 					ITypeParameter tp = methodDefinition.TypeParameters[i];
 					if (ConstraintNeedsSpecialization(tp))
-						tp = new SpecializedTypeParameter(tp, this, substitution);
+						tp = new SpecializedTypeParameter(tp, this);
 					specializedTypeParameters[i] = tp;
 				}
+				// add substitution that replaces the base method's type parameters with our specialized version
+				AddSubstitution(new TypeParameterSubstitution(null, specializedTypeParameters));
 			}
-			if (typeArguments != null && typeArguments.Count > 0) {
-				if (typeArguments.Count != methodDefinition.TypeParameters.Count)
-					throw new ArgumentException("Incorrect number of type arguments");
-			} else if (specializedTypeParameters != null) {
-				// No type arguments were specified, but the method is generic.
-				// -> substitute original type parameters with the specialized ones
-				substitution = GetSubstitution(declaringType, specializedTypeParameters.ToArray<IType>());
-				for (int i = 0; i < specializedTypeParameters.Count; i++) {
-					if (ConstraintNeedsSpecialization(methodDefinition.TypeParameters[i])) {
-						((SpecializedTypeParameter)specializedTypeParameters[i]).substitution = substitution;
-					}
+			// Add the main substitution after the method type parameter specialization.
+			AddSubstitution(substitution);
+			if (specializedTypeParameters != null) {
+				// Set the substitution on the type parameters to the final composed substitution
+				foreach (var tp in specializedTypeParameters.OfType<SpecializedTypeParameter>()) {
+					if (tp.Owner == this)
+						tp.substitution = base.Substitution;
 				}
 			}
-			
-			Initialize(substitution);
 		}
 		
 		static bool ConstraintNeedsSpecialization(ITypeParameter tp)
@@ -95,53 +81,17 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				return null;
 		}
 		
-		public override IMemberReference ToMemberReference()
-		{
-			return new SpecializingMemberReference(
-				this.DeclaringType.ToTypeReference(),
-				this.MemberDefinition.ToMemberReference(),
-				typeArguments.Select(ta => ta.ToTypeReference()).ToList()
-			);
-		}
-		
-		protected override IMember Specialize(IMember otherMember)
-		{
-			return SpecializingMemberReference.CreateSpecializedMember(this.DeclaringType, this.MemberDefinition, typeArguments);
-		}
-		
 		/// <summary>
 		/// Gets the type arguments passed to this method.
 		/// If only the type parameters for the class were specified and the generic method
 		/// itself is not specialized yet, this property will return an empty list.
 		/// </summary>
 		public IList<IType> TypeArguments {
-			get { return typeArguments; }
+			get { return this.Substitution.MethodTypeArguments ?? EmptyList<IType>.Instance; }
 		}
 		
-		public override int GetHashCode()
-		{
-			int hashCode = base.GetHashCode();
-			unchecked {
-				for (int i = 0; i < typeArguments.Count; i++) {
-					hashCode *= 362631391;
-					hashCode += typeArguments[i].GetHashCode();
-				}
-			}
-			return hashCode;
-		}
-		
-		public override bool Equals(object obj)
-		{
-			SpecializedMethod other = obj as SpecializedMethod;
-			if (!base.Equals(other))
-				return false;
-			if (typeArguments.Count != other.typeArguments.Count)
-				return false;
-			for (int i = 0; i < typeArguments.Count; i++) {
-				if (!typeArguments[i].Equals(other.typeArguments[i]))
-					return false;
-			}
-			return true;
+		public IList<IUnresolvedMethod> Parts {
+			get { return methodDefinition.Parts; }
 		}
 		
 		public IList<IAttribute> ReturnTypeAttributes {
@@ -178,11 +128,11 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			b.Append(this.DeclaringType.ToString());
 			b.Append('.');
 			b.Append(this.Name);
-			if (typeArguments.Count > 0) {
+			if (this.TypeArguments.Count > 0) {
 				b.Append('[');
-				for (int i = 0; i < typeArguments.Count; i++) {
+				for (int i = 0; i < this.TypeArguments.Count; i++) {
 					if (i > 0) b.Append(", ");
-					b.Append(typeArguments[i].ToString());
+					b.Append(this.TypeArguments[i].ToString());
 				}
 				b.Append(']');
 			}
@@ -201,14 +151,15 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		{
 			readonly ITypeParameter baseTp;
 			
-			// not readonly: The substition may be replaced at the end of SpecializedMethod constructor
+			// The substition is set at the end of SpecializedMethod constructor
 			internal TypeVisitor substitution;
 			
-			public SpecializedTypeParameter(ITypeParameter baseTp, IMethod specializedOwner, TypeVisitor substitution)
+			public SpecializedTypeParameter(ITypeParameter baseTp, IMethod specializedOwner)
 				: base(specializedOwner, baseTp.Index, baseTp.Name, baseTp.Variance, baseTp.Attributes, baseTp.Region)
 			{
+				// We don't have to consider already-specialized baseTps because
+				// we read the baseTp directly from the unpacked memberDefinition.
 				this.baseTp = baseTp;
-				this.substitution = substitution;
 			}
 			
 			public override int GetHashCode()

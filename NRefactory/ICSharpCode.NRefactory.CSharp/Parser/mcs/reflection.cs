@@ -166,8 +166,11 @@ namespace Mono.CSharp
 	{
 		[System.Runtime.InteropServices.FieldOffset (0)]
 		int i;
+
+#pragma warning disable 414
 		[System.Runtime.InteropServices.FieldOffset (0)]
 		float f;
+#pragma warning restore 414
 
 		public static int SingleToInt32Bits (float v)
 		{

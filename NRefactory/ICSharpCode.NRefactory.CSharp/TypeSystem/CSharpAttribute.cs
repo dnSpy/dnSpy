@@ -93,9 +93,8 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			
 			InvocationResolveResult GetCtorInvocation()
 			{
-				ResolveResult rr = this.ctorInvocation;
+				ResolveResult rr = LazyInit.VolatileRead(ref this.ctorInvocation);
 				if (rr != null) {
-					LazyInit.ReadBarrier();
 					return rr as InvocationResolveResult;
 				} else {
 					CSharpResolver resolver = new CSharpResolver(context);
@@ -132,9 +131,8 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			
 			IList<ResolveResult> IAttribute.PositionalArguments {
 				get {
-					var result = this.positionalArguments;
+					var result = LazyInit.VolatileRead(ref this.positionalArguments);
 					if (result != null) {
-						LazyInit.ReadBarrier();
 						return result;
 					} else {
 						var invocation = GetCtorInvocation();
@@ -149,9 +147,8 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			
 			IList<KeyValuePair<IMember, ResolveResult>> IAttribute.NamedArguments {
 				get {
-					var namedArgs = this.namedArguments;
+					var namedArgs = LazyInit.VolatileRead(ref this.namedArguments);
 					if (namedArgs != null) {
-						LazyInit.ReadBarrier();
 						return namedArgs;
 					} else {
 						namedArgs = new List<KeyValuePair<IMember, ResolveResult>>();

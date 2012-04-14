@@ -1,4 +1,4 @@
-﻿// 
+// 
 // TestFormattingVisitor.cs
 //  
 // Author:
@@ -29,20 +29,20 @@ using System.IO;
 using NUnit.Framework;
 using ICSharpCode.NRefactory.CSharp;
 
-namespace ICSharpCode.NRefactory.FormattingTests
+namespace ICSharpCode.NRefactory.CSharp.FormattingTests
 {
 	[TestFixture()]
 	public class TestSpacingVisitor : TestBase
 	{
 		[Test()]
-		public void TestFieldSpacesBeforeComma1 ()
+		public void TestFieldSpacesBeforeComma1()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			policy.SpaceBeforeFieldDeclarationComma = false;
 			policy.SpaceAfterFieldDeclarationComma = false;
 			
-			Test (policy, @"class Test {
+			Test(policy, @"class Test {
 	int a           ,                   b,          c;
 }",
 @"class Test {
@@ -53,7 +53,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestFieldSpacesBeforeComma2 ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			policy.SpaceBeforeFieldDeclarationComma = true;
 			policy.SpaceAfterFieldDeclarationComma = true;
@@ -69,7 +69,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestFixedFieldSpacesBeforeComma ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			policy.SpaceAfterFieldDeclarationComma = true;
 			policy.SpaceBeforeFieldDeclarationComma = true;
@@ -85,7 +85,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestConstFieldSpacesBeforeComma ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.ClassBraceStyle = BraceStyle.EndOfLine;
 			policy.SpaceAfterFieldDeclarationComma = false;
 			policy.SpaceBeforeFieldDeclarationComma = false;
@@ -101,7 +101,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestBeforeMethodDeclarationParentheses ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeMethodDeclarationParentheses = true;
 			
 			Test (policy, @"public abstract class Test
@@ -117,7 +117,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestBeforeConstructorDeclarationParenthesesDestructorCase ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeConstructorDeclarationParentheses = true;
 			
 			Test (policy, @"class Test
@@ -148,7 +148,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestSpacesAroundMultiplicativeOperator ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceAroundMultiplicativeOperator = true;
 			
 			TestBinaryOperator (policy, "*");
@@ -158,7 +158,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestSpacesAroundShiftOperator ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceAroundShiftOperator = true;
 			TestBinaryOperator (policy, "<<");
 			TestBinaryOperator (policy, ">>");
@@ -167,7 +167,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestSpacesAroundAdditiveOperator ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceAroundAdditiveOperator = true;
 			
 			TestBinaryOperator (policy, "+");
@@ -177,7 +177,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestSpacesAroundBitwiseOperator ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceAroundBitwiseOperator = true;
 			
 			TestBinaryOperator (policy, "&");
@@ -188,7 +188,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestSpacesAroundRelationalOperator ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceAroundRelationalOperator = true;
 			
 			TestBinaryOperator (policy, "<");
@@ -200,7 +200,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestSpacesAroundEqualityOperator ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceAroundEqualityOperator = true;
 			
 			TestBinaryOperator (policy, "==");
@@ -210,7 +210,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestSpacesAroundLogicalOperator ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceAroundLogicalOperator = true;
 			
 			TestBinaryOperator (policy, "&&");
@@ -220,7 +220,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestConditionalOperator ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeConditionalOperatorCondition = true;
 			policy.SpaceAfterConditionalOperatorCondition = true;
 			policy.SpaceBeforeConditionalOperatorSeparator = true;
@@ -256,7 +256,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestBeforeMethodCallParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeMethodCallParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -288,7 +288,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestWithinMethodCallParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceWithinMethodCallParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -318,7 +318,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestBeforeIfParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeIfParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -335,7 +335,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestWithinIfParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpacesWithinIfParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -352,7 +352,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestBeforeWhileParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeWhileParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -369,7 +369,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestWithinWhileParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpacesWithinWhileParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -387,7 +387,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestBeforeForParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeForParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -404,7 +404,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestWithinForParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpacesWithinForParentheses = true;
 		
 			var result = GetResult (policy, @"class Test {
@@ -421,7 +421,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestBeforeForeachParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeForeachParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -438,7 +438,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestWithinForeachParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpacesWithinForeachParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -455,7 +455,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestBeforeCatchParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeCatchParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -472,7 +472,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestWithinCatchParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpacesWithinCatchParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -489,7 +489,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestBeforeLockParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeLockParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -506,7 +506,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestWithinLockParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpacesWithinLockParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -523,7 +523,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestSpacesAfterForSemicolon ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceAfterForSemicolon = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -541,7 +541,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestSpacesBeforeForSemicolon ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeForSemicolon = true;
 			policy.SpaceAfterForSemicolon = false;
 			
@@ -560,7 +560,7 @@ namespace ICSharpCode.NRefactory.FormattingTests
 		[Test()]
 		public void TestSpacesAfterTypecast ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceAfterTypecast = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -578,7 +578,7 @@ return (Test)null;
 		[Test()]
 		public void TestBeforeUsingParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeUsingParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -595,7 +595,7 @@ return (Test)null;
 		[Test()]
 		public void TestWithinUsingParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpacesWithinUsingParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -623,7 +623,7 @@ return (Test)null;
 		[Test()]
 		public void TestAroundAssignmentSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceAroundAssignment = true;
 			
 			TestAssignmentOperator (policy, "=");
@@ -642,7 +642,7 @@ return (Test)null;
 		[Test()]
 		public void TestAroundAssignmentSpaceInDeclarations ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceAroundAssignment = true;
 			var result = GetResult (policy, @"class Test {
 	void TestMe ()
@@ -659,7 +659,7 @@ return (Test)null;
 		[Test()]
 		public void TestBeforeSwitchParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeSwitchParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -676,7 +676,7 @@ return (Test)null;
 		[Test()]
 		public void TestWithinSwitchParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpacesWithinSwitchParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -693,7 +693,7 @@ return (Test)null;
 		[Test()]
 		public void TestWithinParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpacesWithinParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -710,7 +710,7 @@ return (Test)null;
 		[Test()]
 		public void TestWithinMethodDeclarationParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceWithinMethodDeclarationParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -726,7 +726,7 @@ return (Test)null;
 		[Test()]
 		public void TestWithinCastParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpacesWithinCastParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -743,7 +743,7 @@ return (Test)null;
 		[Test()]
 		public void TestWithinSizeOfParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpacesWithinSizeOfParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -760,7 +760,7 @@ return (Test)null;
 		[Test()]
 		public void TestBeforeSizeOfParentheses ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeSizeOfParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -777,7 +777,7 @@ return (Test)null;
 		[Test()]
 		public void TestWithinTypeOfParenthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpacesWithinTypeOfParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -794,7 +794,7 @@ return (Test)null;
 		[Test()]
 		public void TestBeforeTypeOfParentheses ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeTypeOfParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -812,7 +812,7 @@ return (Test)null;
 		[Test()]
 		public void TestWithinCheckedExpressionParanthesesSpace ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpacesWithinCheckedExpressionParantheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -841,7 +841,7 @@ return (Test)null;
 		[Test()]
 		public void TestSpaceBeforeNewParentheses ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeNewParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -858,7 +858,7 @@ return (Test)null;
 		[Test()]
 		public void TestWithinNewParentheses ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpacesWithinNewParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -875,7 +875,7 @@ return (Test)null;
 		[Test()]
 		public void TestBetweenEmptyNewParentheses ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpacesBetweenEmptyNewParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -892,7 +892,7 @@ return (Test)null;
 		[Test()]
 		public void TestBeforeNewParameterComma ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeNewParameterComma = true;
 			policy.SpaceAfterNewParameterComma = false;
 			
@@ -910,7 +910,7 @@ return (Test)null;
 		[Test()]
 		public void TestAfterNewParameterComma ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceAfterNewParameterComma = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -927,7 +927,7 @@ return (Test)null;
 		[Test()]
 		public void TestFieldDeclarationComma ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeFieldDeclarationComma = false;
 			policy.SpaceAfterFieldDeclarationComma = true;
 			
@@ -955,7 +955,7 @@ return (Test)null;
 		[Test()]
 		public void TestBeforeMethodDeclarationParameterComma ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeMethodDeclarationParameterComma = true;
 			policy.SpaceAfterMethodDeclarationParameterComma = false;
 			
@@ -976,7 +976,7 @@ return (Test)null;
 		[Test()]
 		public void TestAfterMethodDeclarationParameterComma ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeMethodDeclarationParameterComma = false;
 			policy.SpaceAfterMethodDeclarationParameterComma = true;
 			
@@ -997,7 +997,7 @@ return (Test)null;
 		[Test()]
 		public void TestSpacesInLambdaExpression ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpacesWithinWhileParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -1014,7 +1014,7 @@ return (Test)null;
 		[Test()]
 		public void TestBeforeLocalVariableDeclarationComma ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeLocalVariableDeclarationComma = true;
 			policy.SpaceAfterLocalVariableDeclarationComma = false;
 
@@ -1041,7 +1041,7 @@ return (Test)null;
 		[Test()]
 		public void TestLocalVariableDeclarationComma ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeLocalVariableDeclarationComma = true;
 			policy.SpaceAfterLocalVariableDeclarationComma = true;
 
@@ -1069,7 +1069,7 @@ return (Test)null;
 		[Test()]
 		public void TestLocalVariableWithGenerics ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeLocalVariableDeclarationComma = true;
 			policy.SpaceAfterLocalVariableDeclarationComma = true;
 
@@ -1090,7 +1090,7 @@ return (Test)null;
 		[Test()]
 		public void TestBeforeConstructorDeclarationParentheses ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeConstructorDeclarationParentheses = true;
 			
 			var result = GetResult (policy, @"class Test
@@ -1111,7 +1111,7 @@ return (Test)null;
 		[Test()]
 		public void TestBeforeConstructorDeclarationParameterComma ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeConstructorDeclarationParameterComma = true;
 			policy.SpaceAfterConstructorDeclarationParameterComma = false;
 			
@@ -1134,7 +1134,7 @@ return (Test)null;
 		[Test()]
 		public void TestAfterConstructorDeclarationParameterComma ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeConstructorDeclarationParameterComma = false;
 			policy.SpaceAfterConstructorDeclarationParameterComma = true;
 			
@@ -1155,7 +1155,7 @@ return (Test)null;
 		[Test()]
 		public void TestWithinConstructorDeclarationParentheses ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceWithinConstructorDeclarationParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -1171,7 +1171,7 @@ return (Test)null;
 		[Test()]
 		public void TestBetweenEmptyConstructorDeclarationParentheses ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBetweenEmptyConstructorDeclarationParentheses = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -1190,7 +1190,7 @@ return (Test)null;
 		[Test()]
 		public void TestBeforeDelegateDeclarationParentheses ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeDelegateDeclarationParentheses = true;
 			
 			var result = GetResult (policy, @"delegate void Test();");
@@ -1201,7 +1201,7 @@ return (Test)null;
 		[Test()]
 		public void TestBeforeDelegateDeclarationParenthesesComplex ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeDelegateDeclarationParentheses = true;
 			
 			var result = GetResult (policy, "delegate void TestDelegate\t\t\t();");
@@ -1212,7 +1212,7 @@ return (Test)null;
 		[Test()]
 		public void TestBeforeDelegateDeclarationParameterComma ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeDelegateDeclarationParameterComma = true;
 			policy.SpaceAfterDelegateDeclarationParameterComma = false;
 			
@@ -1232,7 +1232,7 @@ return (Test)null;
 		[Test()]
 		public void TestAfterDelegateDeclarationParameterComma ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeDelegateDeclarationParameterComma = false;
 			policy.SpaceAfterDelegateDeclarationParameterComma = true;
 			
@@ -1252,7 +1252,7 @@ return (Test)null;
 		[Test()]
 		public void TestWithinDelegateDeclarationParentheses ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceWithinDelegateDeclarationParentheses = true;
 			var result = GetResult (policy, @"delegate void Test (int a);");
 			
@@ -1264,7 +1264,7 @@ return (Test)null;
 		[Test()]
 		public void TestBetweenEmptyDelegateDeclarationParentheses ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBetweenEmptyDelegateDeclarationParentheses = true;
 			var result = GetResult (policy, @"delegate void Test();");
 			
@@ -1279,7 +1279,7 @@ return (Test)null;
 		[Test()]
 		public void TestBeforeMethodCallParentheses ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeMethodCallParentheses = true;
 			
 			var result = GetResult (policy, @"class FooBar
@@ -1302,7 +1302,7 @@ return (Test)null;
 		[Test()]
 		public void TestBeforeMethodCallParameterComma ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeMethodCallParameterComma = true;
 			policy.SpaceAfterMethodCallParameterComma = false;
 			
@@ -1327,7 +1327,7 @@ return (Test)null;
 		[Test()]
 		public void TestAfterMethodCallParameterComma ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeMethodCallParameterComma = false;
 			policy.SpaceAfterMethodCallParameterComma = true;
 			
@@ -1352,7 +1352,7 @@ return (Test)null;
 		[Test()]
 		public void TestWithinMethodCallParentheses ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceWithinMethodCallParentheses = true;
 			
 			var result = GetResult (policy, @"class FooBar
@@ -1370,7 +1370,7 @@ return (Test)null;
 		[Test()]
 		public void TestBetweenEmptyMethodCallParentheses ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBetweenEmptyMethodCallParentheses = true;
 			
 			var result = GetResult (policy, @"class FooBar
@@ -1392,7 +1392,7 @@ return (Test)null;
 		public void TestBeforeIndexerDeclarationBracket ()
 		{
 			
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeIndexerDeclarationBracket = true;
 			
 			var result = GetResult (policy, @"class FooBar
@@ -1416,7 +1416,7 @@ return (Test)null;
 		[Test()]
 		public void TestBeforeIndexerDeclarationParameterComma ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeIndexerDeclarationParameterComma = true;
 			policy.SpaceAfterIndexerDeclarationParameterComma = false;
 			
@@ -1437,7 +1437,7 @@ return (Test)null;
 		[Test()]
 		public void TestAfterIndexerDeclarationParameterComma ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceAfterIndexerDeclarationParameterComma = true;
 			
 			var result = GetResult (policy, @"class FooBar
@@ -1456,7 +1456,7 @@ return (Test)null;
 		[Test()]
 		public void TestWithinIndexerDeclarationBracket ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceWithinIndexerDeclarationBracket = true;
 			
 			var result = GetResult (policy, @"class FooBar
@@ -1479,7 +1479,7 @@ return (Test)null;
 		[Test()]
 		public void TestSpacesWithinBrackets ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpacesWithinBrackets = true;
 			policy.SpacesBeforeBrackets = false;
 			
@@ -1503,7 +1503,7 @@ return (Test)null;
 		[Test()]
 		public void TestSpacesBeforeBrackets ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpacesBeforeBrackets = true;
 			
 			var result = GetResult (policy, @"class Test
@@ -1527,7 +1527,7 @@ return (Test)null;
 		[Test()]
 		public void TestBeforeBracketComma ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeBracketComma = true;
 			policy.SpaceAfterBracketComma = false;
 			
@@ -1546,7 +1546,7 @@ return (Test)null;
 		[Test()]
 		public void TestAfterBracketComma ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceAfterBracketComma = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -1566,7 +1566,7 @@ return (Test)null;
 		[Test()]
 		public void TestSpacesBeforeArrayDeclarationBrackets ()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
 			policy.SpaceBeforeArrayDeclarationBrackets = true;
 			
 			var result = GetResult (policy, @"class Test {
@@ -1584,19 +1584,56 @@ return (Test)null;
 		}
 
 		[Test()]
-		public void TestRemoveWhitespacesBeforeSemicolon ()
+		public void TestRemoveWhitespacesBeforeSemicolon()
 		{
-			CSharpFormattingOptions policy = new CSharpFormattingOptions ();
-			var result = GetResult (policy, @"class Test {
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
+			var result = GetResult(policy, @"class Test {
 	void TestMe ()
 	{
 		Foo ()        ;
 	}
 }");
-			int i1 = result.Text.IndexOf ("Foo");
-			int i2 = result.Text.LastIndexOf (";") + ";".Length;
-			Assert.AreEqual (@"Foo ();", result.GetText (i1, i2 - i1));
+			int i1 = result.Text.IndexOf("Foo");
+			int i2 = result.Text.LastIndexOf(";") + ";".Length;
+			Assert.AreEqual(@"Foo ();", result.GetText(i1, i2 - i1));
 		}
+
+		[Test()]
+		public void TestSpaceInNamedArgumentAfterDoubleColon()
+		{
+			var policy = FormattingOptionsFactory.CreateMono ();
+			policy.SpaceInNamedArgumentAfterDoubleColon = true;
+			var result = GetResult(policy, @"class Test {
+	void TestMe ()
+	{
+		Foo (bar:expr);
+	}
+}");
+			int i1 = result.Text.IndexOf("Foo");
+			int i2 = result.Text.LastIndexOf(";") + ";".Length;
+			Assert.AreEqual(@"Foo (bar: expr);", result.GetText(i1, i2 - i1));
+		}
+
+		[Test()]
+		public void TestSpaceInNamedArgumentAfterDoubleColon2()
+		{
+			var policy = FormattingOptionsFactory.CreateMono ();
+			policy.SpaceInNamedArgumentAfterDoubleColon = false;
+			var result = GetResult(policy, @"class Test {
+	void TestMe ()
+	{
+		Foo (bar:                      expr);
+	}
+}");
+			int i1 = result.Text.IndexOf("Foo");
+			int i2 = result.Text.LastIndexOf(";") + ";".Length;
+			Assert.AreEqual(@"Foo (bar:expr);", result.GetText(i1, i2 - i1));
+		}
+
+
+
+
+
 		
 	}
 }

@@ -34,7 +34,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			Assert.AreEqual("System.Runtime", result.NamespaceName);
 		}
 		
-		[Test, Ignore("Parser produces incorrect position (attribute position doesn't include empty arg list)")]
+		[Test]
 		public void AttributeWithShortName()
 		{
 			string program = "using System; [$Obsolete$()] class Test {}";
@@ -43,7 +43,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			Assert.AreEqual("System.ObsoleteAttribute", result.Type.FullName);
 		}
 		
-		[Test, Ignore("Parser produces incorrect position (attribute position doesn't include empty arg list)")]
+		[Test]
 		public void QualifiedAttributeWithShortName()
 		{
 			string program = "using System; [$System.Obsolete$()] class Test {}";

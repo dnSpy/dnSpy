@@ -34,7 +34,15 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class UnaryOperatorExpression : Expression
 	{
-		public readonly static Role<CSharpTokenNode> OperatorRole = BinaryOperatorExpression.OperatorRole;
+		public readonly static TokenRole NotRole = new TokenRole ("!");
+		public readonly static TokenRole BitNotRole = new TokenRole ("~");
+		public readonly static TokenRole MinusRole = new TokenRole ("-");
+		public readonly static TokenRole PlusRole = new TokenRole ("+");
+		public readonly static TokenRole IncrementRole = new TokenRole ("++");
+		public readonly static TokenRole DecrementRole = new TokenRole ("--");
+		public readonly static TokenRole DereferenceRole = new TokenRole ("*");
+		public readonly static TokenRole AddressOfRole = new TokenRole ("&");
+		public readonly static TokenRole AwaitRole = new TokenRole ("await");
 		
 		public UnaryOperatorExpression()
 		{
@@ -52,7 +60,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		public CSharpTokenNode OperatorToken {
-			get { return GetChildByRole (OperatorRole); }
+			get { return GetChildByRole (GetOperatorRole (Operator)); }
 		}
 		
 		public Expression Expression {
@@ -60,7 +68,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.Expression, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitUnaryOperatorExpression (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitUnaryOperatorExpression (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitUnaryOperatorExpression (this, data);
 		}
@@ -72,29 +90,29 @@ namespace ICSharpCode.NRefactory.CSharp
 				&& this.Expression.DoMatch(o.Expression, match);
 		}
 		
-		public static string GetOperatorSymbol(UnaryOperatorType op)
+		public static TokenRole GetOperatorRole(UnaryOperatorType op)
 		{
 			switch (op) {
 				case UnaryOperatorType.Not:
-					return "!";
+					return NotRole;
 				case UnaryOperatorType.BitNot:
-					return "~";
+					return BitNotRole;
 				case UnaryOperatorType.Minus:
-					return "-";
+					return MinusRole;
 				case UnaryOperatorType.Plus:
-					return "+";
+					return PlusRole;
 				case UnaryOperatorType.Increment:
 				case UnaryOperatorType.PostIncrement:
-					return "++";
+					return IncrementRole;
 				case UnaryOperatorType.PostDecrement:
 				case UnaryOperatorType.Decrement:
-					return "--";
+					return DecrementRole;
 				case UnaryOperatorType.Dereference:
-					return "*";
+					return DereferenceRole;
 				case UnaryOperatorType.AddressOf:
-					return "&";
+					return AddressOfRole;
 				case UnaryOperatorType.Await:
-					return "await";
+					return AwaitRole;
 				default:
 					throw new NotSupportedException("Invalid value for UnaryOperatorType");
 			}

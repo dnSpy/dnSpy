@@ -31,7 +31,7 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class WhileStatement : Statement
 	{
-		public static readonly Role<CSharpTokenNode> WhileKeywordRole = new Role<CSharpTokenNode>("WhileKeyword", CSharpTokenNode.Null);
+		public static readonly TokenRole WhileKeywordRole = new TokenRole ("while");
 		
 		public CSharpTokenNode WhileToken {
 			get { return GetChildByRole (WhileKeywordRole); }
@@ -55,7 +55,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			set { SetChildByRole (Roles.EmbeddedStatement, value); }
 		}
 		
-		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data = default(T))
+		public override void AcceptVisitor (IAstVisitor visitor)
+		{
+			visitor.VisitWhileStatement (this);
+		}
+			
+		public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+		{
+			return visitor.VisitWhileStatement (this);
+		}
+		
+		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{
 			return visitor.VisitWhileStatement (this, data);
 		}
