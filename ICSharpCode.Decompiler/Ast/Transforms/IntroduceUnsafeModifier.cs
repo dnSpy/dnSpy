@@ -38,8 +38,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			for (AstNode child = node.FirstChild; child != null; child = child.NextSibling) {
 				result |= child.AcceptVisitor(this, data);
 			}
-			if (result && node is AttributedNode && !(node is Accessor)) {
-				((AttributedNode)node).Modifiers |= Modifiers.Unsafe;
+			if (result && node is EntityDeclaration && !(node is Accessor)) {
+				((EntityDeclaration)node).Modifiers |= Modifiers.Unsafe;
 				return false;
 			}
 			return result;

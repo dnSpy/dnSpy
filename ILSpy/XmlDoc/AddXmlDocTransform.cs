@@ -30,7 +30,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 	{
 		public static void Run(AstNode node)
 		{
-			if (node is AttributedNode) {
+			if (node is EntityDeclaration) {
 				MemberReference mr = node.Annotation<MemberReference>();
 				if (mr != null && mr.Module != null) {
 					var xmldoc = XmlDocLoader.LoadDocumentation(mr.Module);
@@ -66,12 +66,12 @@ namespace ICSharpCode.ILSpy.XmlDoc
 					skippedWhitespaceLines++;
 				} else {
 					while (skippedWhitespaceLines > 0) {
-						node.Parent.InsertChildBefore(node, new Comment(string.Empty, CommentType.Documentation), AstNode.Roles.Comment);
+						node.Parent.InsertChildBefore(node, new Comment(string.Empty, CommentType.Documentation), Roles.Comment);
 						skippedWhitespaceLines--;
 					}
 					if (line.StartsWith(indentation, StringComparison.Ordinal))
 						line = line.Substring(indentation.Length);
-					node.Parent.InsertChildBefore(node, new Comment(" " + line, CommentType.Documentation), AstNode.Roles.Comment);
+					node.Parent.InsertChildBefore(node, new Comment(" " + line, CommentType.Documentation), Roles.Comment);
 				}
 				line = r.ReadLine();
 			}

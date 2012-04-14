@@ -26,8 +26,7 @@ public class PropertiesAndEvents
 	[field: NonSerialized]
 	public event EventHandler AutomaticEventWithInitializer = delegate
 	{
-	}
-	;
+	};
 	
 	public event EventHandler CustomEvent
 	{

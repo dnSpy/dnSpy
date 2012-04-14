@@ -173,7 +173,7 @@ namespace ICSharpCode.ILSpy
 			public void Run(AstNode compilationUnit)
 			{
 				foreach (var child in compilationUnit.Children) {
-					if (child is AttributedNode) {
+					if (child is EntityDeclaration) {
 						if (child.Annotation<FieldDefinition>() != field)
 							child.Remove();
 					}
@@ -576,7 +576,7 @@ namespace ICSharpCode.ILSpy
 					((ComposedType)astType).PointerRank--;
 			}
 
-			astType.AcceptVisitor(new CSharpOutputVisitor(w, new CSharpFormattingOptions()), null);
+			astType.AcceptVisitor(new CSharpOutputVisitor(w, FormattingOptionsFactory.CreateAllman()));
 			return w.ToString();
 		}
 

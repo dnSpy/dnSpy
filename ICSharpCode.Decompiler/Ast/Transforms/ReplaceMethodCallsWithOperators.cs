@@ -140,7 +140,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				invocationExpression.ReplaceWith(arguments[0]);
 				return;
 			}
-			if (methodRef.Name == "op_True" && arguments.Length == 1 && invocationExpression.Role == AstNode.Roles.Condition) {
+			if (methodRef.Name == "op_True" && arguments.Length == 1 && invocationExpression.Role == Roles.Condition) {
 				invocationExpression.ReplaceWith(arguments[0]);
 				return;
 			}

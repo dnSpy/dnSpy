@@ -157,12 +157,7 @@ namespace ICSharpCode.NRefactory.Ast
 		{
 			if (code == null) return string.Empty;
 
-			using (var sw = new StringWriter())
-			{
-				CSharpOutputVisitor csOutVisitor = new CSharpOutputVisitor(sw, new CSharpFormattingOptions());
-				code.AcceptVisitor(csOutVisitor, null);
-				return sw.ToString();
-			}
+			return code.GetText(FormattingOptionsFactory.CreateSharpDevelop());
 		}
 		
 		public static AstType GetTypeReference(this Type type)

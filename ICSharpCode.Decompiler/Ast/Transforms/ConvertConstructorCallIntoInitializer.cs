@@ -123,7 +123,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					if (allSame) {
 						foreach (var ctor in instanceCtorsNotChainingWithThis)
 							ctor.Body.First().Remove();
-						fieldOrEventDecl.GetChildrenByRole(AstNode.Roles.Variable).Single().Initializer = initializer.Detach();
+						fieldOrEventDecl.GetChildrenByRole(Roles.Variable).Single().Initializer = initializer.Detach();
 					}
 				} while (allSame);
 			}
