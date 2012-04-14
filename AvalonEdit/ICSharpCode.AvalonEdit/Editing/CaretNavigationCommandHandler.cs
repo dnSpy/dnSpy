@@ -73,6 +73,8 @@ namespace ICSharpCode.AvalonEdit.Editing
 			AddBinding(EditingCommands.SelectToDocumentEnd, Ctrl | Shift, Key.End, OnMoveCaretExtendSelection(CaretMovementType.DocumentEnd));
 			
 			CommandBindings.Add(new CommandBinding(ApplicationCommands.SelectAll, OnSelectAll));
+			
+			TextAreaDefaultInputHandler.WorkaroundWPFMemoryLeak(InputBindings);
 		}
 		
 		static void OnSelectAll(object target, ExecutedRoutedEventArgs args)

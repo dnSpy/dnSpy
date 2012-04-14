@@ -151,13 +151,13 @@ namespace ICSharpCode.AvalonEdit.Rendering
 								offset += element.DocumentLength;
 								if (offset > currentLineEnd) {
 									DocumentLine newEndLine = document.GetLineByOffset(offset);
-									if (newEndLine == this.LastDocumentLine) {
+									currentLineEnd = newEndLine.Offset + newEndLine.Length;
+									this.LastDocumentLine = newEndLine;
+									if (currentLineEnd < offset) {
 										throw new InvalidOperationException(
 											"The VisualLineElementGenerator " + g.GetType().Name +
 											" produced an element which ends within the line delimiter");
 									}
-									currentLineEnd = newEndLine.Offset + newEndLine.Length;
-									this.LastDocumentLine = newEndLine;
 								}
 								break;
 							}
@@ -179,7 +179,7 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				textOffset += element.DocumentLength;
 			}
 			VisualLength = visualOffset;
-			Debug.Assert(textOffset == LastDocumentLine.Offset + LastDocumentLine.Length - FirstDocumentLine.Offset);
+			Debug.Assert(textOffset == LastDocumentLine.EndOffset - FirstDocumentLine.Offset);
 		}
 		
 		internal void RunTransformers(ITextRunConstructionContext context, IVisualLineTransformer[] transformers)

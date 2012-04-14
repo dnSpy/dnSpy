@@ -75,6 +75,8 @@ namespace ICSharpCode.AvalonEdit.Editing
 			CommandBindings.Add(new CommandBinding(AvalonEditCommands.ConvertLeadingTabsToSpaces, OnConvertLeadingTabsToSpaces));
 			CommandBindings.Add(new CommandBinding(AvalonEditCommands.ConvertLeadingSpacesToTabs, OnConvertLeadingSpacesToTabs));
 			CommandBindings.Add(new CommandBinding(AvalonEditCommands.IndentSelection, OnIndentSelection));
+			
+			TextAreaDefaultInputHandler.WorkaroundWPFMemoryLeak(InputBindings);
 		}
 		
 		static TextArea GetTextArea(object target)

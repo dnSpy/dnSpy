@@ -27,8 +27,7 @@ namespace ICSharpCode.TreeView
 
 		public SharpTreeViewItem Item { get; set; }
 
-		public SharpTreeNode Node
-		{
+		public SharpTreeNode Node {
 			get { return Item.Node; }
 		}
 
@@ -43,8 +42,7 @@ namespace ICSharpCode.TreeView
 		{
 			if (e.Key == Key.Enter) {
 				Commit();
-			}
-			else if (e.Key == Key.Escape) {
+			} else if (e.Key == Key.Escape) {
 				Node.IsEditing = false;
 			}
 		}

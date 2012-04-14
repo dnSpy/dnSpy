@@ -999,12 +999,18 @@ namespace ICSharpCode.AvalonEdit.Rendering
 			
 			visualLine.ConstructVisualElements(textSource, elementGeneratorsArray);
 			
-			#if DEBUG
-			for (int i = visualLine.FirstDocumentLine.LineNumber + 1; i <= visualLine.LastDocumentLine.LineNumber; i++) {
-				if (!heightTree.GetIsCollapsed(i))
-					throw new InvalidOperationException("Line " + i + " was skipped by a VisualLineElementGenerator, but it is not collapsed.");
+			if (visualLine.FirstDocumentLine != visualLine.LastDocumentLine) {
+				// Check whether the lines are collapsed correctly:
+				double firstLinePos = heightTree.GetVisualPosition(visualLine.FirstDocumentLine.NextLine);
+				double lastLinePos = heightTree.GetVisualPosition(visualLine.LastDocumentLine);
+				if (!firstLinePos.IsClose(lastLinePos)) {
+					for (int i = visualLine.FirstDocumentLine.LineNumber + 1; i <= visualLine.LastDocumentLine.LineNumber; i++) {
+						if (!heightTree.GetIsCollapsed(i))
+							throw new InvalidOperationException("Line " + i + " was skipped by a VisualLineElementGenerator, but it is not collapsed.");
+					}
+					throw new InvalidOperationException("All lines collapsed but visual pos different - height tree inconsistency?");
+				}
 			}
-			#endif
 			
 			visualLine.RunTransformers(textSource, lineTransformersArray);
 			

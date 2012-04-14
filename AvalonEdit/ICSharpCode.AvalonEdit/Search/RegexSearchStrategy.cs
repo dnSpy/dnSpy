@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Documents;
 
 using ICSharpCode.AvalonEdit.Document;
 
@@ -14,21 +15,32 @@ namespace ICSharpCode.AvalonEdit.Search
 	class RegexSearchStrategy : ISearchStrategy
 	{
 		readonly Regex searchPattern;
+		readonly bool matchWholeWords;
 		
-		public RegexSearchStrategy(Regex searchPattern)
+		public RegexSearchStrategy(Regex searchPattern, bool matchWholeWords)
 		{
 			if (searchPattern == null)
 				throw new ArgumentNullException("searchPattern");
 			this.searchPattern = searchPattern;
+			this.matchWholeWords = matchWholeWords;
 		}
 		
 		public IEnumerable<ISearchResult> FindAll(ITextSource document, int offset, int length)
 		{
 			int endOffset = offset + length;
 			foreach (Match result in searchPattern.Matches(document.Text)) {
-				if (offset <= result.Index && endOffset >= (result.Length + result.Index))
-					yield return new SearchResult { StartOffset = result.Index, Length = result.Length, Data = result };
+				int resultEndOffset = result.Length + result.Index;
+				if (offset > result.Index || endOffset < resultEndOffset)
+					continue;
+				if (matchWholeWords && (!IsWordBorder(document, result.Index) || !IsWordBorder(document, resultEndOffset)))
+					continue;
+				yield return new SearchResult { StartOffset = result.Index, Length = result.Length, Data = result };
 			}
+		}
+		
+		static bool IsWordBorder(ITextSource document, int offset)
+		{
+			return TextUtilities.GetNextCaretPosition(document, offset - 1, LogicalDirection.Forward, CaretPositioningMode.WordBorder) == offset;
 		}
 		
 		public ISearchResult FindNext(ITextSource document, int offset, int length)

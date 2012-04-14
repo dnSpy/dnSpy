@@ -85,6 +85,7 @@
     <Compile Include="Document\HeightTests.cs" />
     <Compile Include="Document\RandomizedLineManagerTest.cs" />
     <Compile Include="Document\LineManagerTests.cs" />
+    <Compile Include="Search\FindTests.cs" />
     <Compile Include="Utils\CaretNavigationTests.cs" />
     <Compile Include="Utils\CompressingTreeListTests.cs" />
     <Compile Include="Utils\ExtensionMethodsTests.cs" />
@@ -103,5 +104,8 @@
       <Project>{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}</Project>
       <Name>ICSharpCode.AvalonEdit</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Search" />
   </ItemGroup>
 </Project>

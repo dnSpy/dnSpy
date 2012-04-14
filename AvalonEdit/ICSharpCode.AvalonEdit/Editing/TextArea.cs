@@ -806,10 +806,12 @@ namespace ICSharpCode.AvalonEdit.Editing
 			//Debug.WriteLine("TextInput: Text='" + e.Text + "' SystemText='" + e.SystemText + "' ControlText='" + e.ControlText + "'");
 			base.OnTextInput(e);
 			if (!e.Handled && this.Document != null) {
-				if (string.IsNullOrEmpty(e.Text) || e.Text == "\x1b") {
+				if (string.IsNullOrEmpty(e.Text) || e.Text == "\x1b" || e.Text == "\b") {
 					// ASCII 0x1b = ESC.
 					// WPF produces a TextInput event with that old ASCII control char
 					// when Escape is pressed. We'll just ignore it.
+					
+					// A deadkey followed by backspace causes a textinput event for the BS character.
 					
 					// Similarly, some shortcuts like Alt+Space produce an empty TextInput event.
 					// We have to ignore those (not handle them) to keep the shortcut working.
@@ -846,7 +848,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 				throw ThrowUtil.NoDocumentAssigned();
 			OnTextEntering(e);
 			if (!e.Handled) {
-				if (e.Text == "\n" || e.Text == "\r\n")
+				if (e.Text == "\n" || e.Text == "\r" || e.Text == "\r\n")
 					ReplaceSelectionWithNewLine();
 				else
 					ReplaceSelectionWithText(e.Text);

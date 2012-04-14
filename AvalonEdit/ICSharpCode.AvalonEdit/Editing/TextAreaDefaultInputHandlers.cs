@@ -2,7 +2,7 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 
@@ -52,6 +52,16 @@ namespace ICSharpCode.AvalonEdit.Editing
 			if (f != null)
 				f.Freeze();
 			return kb;
+		}
+		
+		internal static void WorkaroundWPFMemoryLeak(List<InputBinding> inputBindings)
+		{
+			// Work around WPF memory leak:
+			// KeyBinding retains a reference to whichever UIElement it is used in first.
+			// Using a dummy element for this purpose ensures that we don't leak
+			// a real text editor (which a potentially large document).
+			UIElement dummyElement = new UIElement();
+			dummyElement.InputBindings.AddRange(inputBindings);
 		}
 		
 		#region Undo / Redo

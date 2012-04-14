@@ -110,7 +110,7 @@ namespace ICSharpCode.AvalonEdit.Folding
 					// into account the <!-- chars.
 					
 					int startOffset = GetOffset(document, reader) - 4;
-					int endOffset = startOffset + comment.Length + 3;
+					int endOffset = startOffset + comment.Length + 7;
 					
 					string foldText = String.Concat("<!--", comment.Substring(0, firstNewLine).TrimEnd('\r') , "-->");
 					foldMarkers.Add(new NewFolding(startOffset, endOffset) { Name = foldText } );

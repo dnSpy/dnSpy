@@ -364,6 +364,8 @@ namespace ICSharpCode.TreeView
 			Debug.Assert(node.listParent == null);
 			Debug.Assert(node.left == null);
 			Debug.Assert(node.right == null);
+			node.height = 1;
+			node.totalListLength = -1;
 			if (balancingNode != null)
 				RebalanceUntilRoot(balancingNode);
 		}

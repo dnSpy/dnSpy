@@ -143,7 +143,8 @@ namespace ICSharpCode.AvalonEdit.Document
 			CheckHeights();
 			Assert.AreSame(null, sec1.Start);
 			Assert.AreSame(null, sec1.End);
-			Assert.IsTrue(sec1.IsCollapsed);
+			// section gets uncollapsed when it is removed
+			Assert.IsFalse(sec1.IsCollapsed);
 		}
 		
 		void CheckHeights()

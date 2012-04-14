@@ -2,6 +2,7 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
+using System.Windows.Threading;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Rendering;
@@ -45,7 +46,6 @@ namespace ICSharpCode.AvalonEdit
 		}
 		
 		[Test]
-		[Ignore]
 		public void DocumentDoesNotHoldReferenceToTextArea()
 		{
 			TextDocument textDocument = new TextDocument();
@@ -61,7 +61,6 @@ namespace ICSharpCode.AvalonEdit
 		}
 		
 		[Test]
-		[Ignore]
 		public void DocumentDoesNotHoldReferenceToTextEditor()
 		{
 			TextDocument textDocument = new TextDocument();
@@ -102,9 +101,12 @@ namespace ICSharpCode.AvalonEdit
 		
 		static void GarbageCollect()
 		{
-			GC.WaitForPendingFinalizers();
-			GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-			GC.WaitForPendingFinalizers();
+			for (int i = 0; i < 3; i++) {
+				GC.WaitForPendingFinalizers();
+				GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
+				// pump WPF messages so that WeakEventManager can unregister
+				Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.Background, new Action(delegate {}));
+			}
 		}
 	}
 }

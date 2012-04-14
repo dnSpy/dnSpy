@@ -38,6 +38,15 @@ namespace ICSharpCode.TreeView
 		}
 
 		public SharpTreeViewItem ParentItem { get; private set; }
+		
+		public static readonly DependencyProperty CellEditorProperty =
+			DependencyProperty.Register("CellEditor", typeof(Control), typeof(SharpTreeNodeView),
+			                            new FrameworkPropertyMetadata());
+		
+		public Control CellEditor {
+			get { return (Control)GetValue(CellEditorProperty); }
+			set { SetValue(CellEditorProperty, value); }
+		}
 
 		public SharpTreeView ParentTreeView
 		{
@@ -104,7 +113,10 @@ namespace ICSharpCode.TreeView
 		{
 			var textEditorContainer = Template.FindName("textEditorContainer", this) as Border;
 			if (Node.IsEditing) {
-				textEditorContainer.Child = new EditTextBox() { Item = ParentItem };
+				if (CellEditor == null)
+					textEditorContainer.Child = new EditTextBox() { Item = ParentItem };
+				else
+					textEditorContainer.Child = CellEditor;
 			}
 			else {
 				textEditorContainer.Child = null;

@@ -2,6 +2,7 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Threading;
 using ICSharpCode.AvalonEdit.Document;
@@ -28,15 +29,20 @@ namespace ICSharpCode.AvalonEdit.Folding
 				if (isFolded != value) {
 					isFolded = value;
 					if (value) {
+						// Create collapsed sections
 						if (manager != null) {
 							DocumentLine startLine = manager.document.GetLineByOffset(StartOffset);
 							DocumentLine endLine = manager.document.GetLineByOffset(EndOffset);
 							if (startLine != endLine) {
 								DocumentLine startLinePlusOne = startLine.NextLine;
-								collapsedSections = manager.CollapseLines(startLinePlusOne, endLine);
+								collapsedSections = new CollapsedLineSection[manager.textViews.Count];
+								for (int i = 0; i < collapsedSections.Length; i++) {
+									collapsedSections[i] = manager.textViews[i].CollapseLines(startLinePlusOne, endLine);
+								}
 							}
 						}
 					} else {
+						// Destroy collapsed sections
 						RemoveCollapsedLineSection();
 					}
 					if (manager != null)
@@ -45,6 +51,9 @@ namespace ICSharpCode.AvalonEdit.Folding
 			}
 		}
 		
+		/// <summary>
+		/// Creates new collapsed section when a text view is added to the folding manager.
+		/// </summary>
 		internal CollapsedLineSection CollapseSection(TextView textView)
 		{
 			DocumentLine startLine = manager.document.GetLineByOffset(StartOffset);
@@ -54,6 +63,34 @@ namespace ICSharpCode.AvalonEdit.Folding
 				return textView.CollapseLines(startLinePlusOne, endLine);
 			}
 			return null;
+		}
+		
+		internal void ValidateCollapsedLineSections()
+		{
+			if (!isFolded) {
+				RemoveCollapsedLineSection();
+				return;
+			}
+			DocumentLine startLine = manager.document.GetLineByOffset(StartOffset);
+			DocumentLine endLine = manager.document.GetLineByOffset(EndOffset);
+			if (startLine == endLine) {
+				RemoveCollapsedLineSection();
+			} else {
+				if (collapsedSections == null)
+					collapsedSections = new CollapsedLineSection[manager.textViews.Count];
+				// Validate collapsed line sections
+				DocumentLine startLinePlusOne = startLine.NextLine;
+				for (int i = 0; i < collapsedSections.Length; i++) {
+					var collapsedSection = collapsedSections[i];
+					if (collapsedSection == null || collapsedSection.Start != startLinePlusOne || collapsedSection.End != endLine) {
+						// recreate this collapsed section
+						Debug.WriteLine("CollapsedLineSection validation - recreate collapsed section from " + startLinePlusOne + " to " + endLine);
+						if (collapsedSection != null)
+							collapsedSection.Uncollapse();
+						collapsedSections[i] = manager.textViews[i].CollapseLines(startLinePlusOne, endLine);
+					}
+				}
+			}
 		}
 		
 		/// <summary>

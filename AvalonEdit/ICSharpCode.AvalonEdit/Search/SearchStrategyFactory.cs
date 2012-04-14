@@ -33,12 +33,9 @@ namespace ICSharpCode.AvalonEdit.Search
 					searchPattern = ConvertWildcardsToRegex(searchPattern);
 					break;
 			}
-
-			if (matchWholeWords)
-				searchPattern = "\\b" + searchPattern + "\\b";
 			try {
 				Regex pattern = new Regex(searchPattern, options);
-				return new RegexSearchStrategy(pattern);
+				return new RegexSearchStrategy(pattern, matchWholeWords);
 			} catch (ArgumentException ex) {
 				throw new SearchPatternException(ex.Message, ex);
 			}

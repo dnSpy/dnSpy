@@ -176,6 +176,10 @@ namespace ICSharpCode.TreeView
 			base.PrepareContainerForItemOverride(element, item);
 			SharpTreeViewItem container = element as SharpTreeViewItem;
 			container.ParentTreeView = this;
+			// Make sure that the line renderer takes into account the new bound data
+			if (container.NodeView != null) {
+				container.NodeView.LinesRenderer.InvalidateVisual();
+			}
 		}
 		
 		bool doNotScrollOnExpanding;
