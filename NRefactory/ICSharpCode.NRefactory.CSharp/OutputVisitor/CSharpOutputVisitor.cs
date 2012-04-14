@@ -1837,16 +1837,19 @@ namespace ICSharpCode.NRefactory.CSharp
 				label.AcceptVisitor(this);
 				first = false;
 			}
-			if (policy.IndentCaseBody) {
+			bool isBlock = switchSection.Statements.Count == 1 && switchSection.Statements.Single() is BlockStatement;
+			if (policy.IndentCaseBody && !isBlock) {
 				formatter.Indent();
 			}
 			
-			foreach (var statement in switchSection.Statements) {
+			if (!isBlock)
 				NewLine();
+			
+			foreach (var statement in switchSection.Statements) {
 				statement.AcceptVisitor(this);
 			}
 			
-			if (policy.IndentCaseBody) {
+			if (policy.IndentCaseBody && !isBlock) {
 				formatter.Unindent();
 			}
 			

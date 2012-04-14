@@ -18,6 +18,7 @@
 
 using System;
 using System.ComponentModel;
+using ICSharpCode.NRefactory.CSharp;
 
 namespace ICSharpCode.Decompiler
 {
@@ -271,6 +272,26 @@ namespace ICSharpCode.Decompiler
 		}
 		#endregion
 		
+		CSharpFormattingOptions csharpFormattingOptions;
+		
+		public CSharpFormattingOptions CSharpFormattingOptions {
+			get {
+				if (csharpFormattingOptions == null) {
+					csharpFormattingOptions = FormattingOptionsFactory.CreateAllman();
+					csharpFormattingOptions.IndentSwitchBody = false;
+				}
+				return csharpFormattingOptions;
+			}
+			set {
+				if (value == null)
+					throw new ArgumentNullException();
+				if (csharpFormattingOptions != value) {
+					csharpFormattingOptions = value;
+					OnPropertyChanged("CSharpFormattingOptions");
+				}
+			}
+		}
+		
 		public event PropertyChangedEventHandler PropertyChanged;
 		
 		protected virtual void OnPropertyChanged(string propertyName)
@@ -283,6 +304,7 @@ namespace ICSharpCode.Decompiler
 		public DecompilerSettings Clone()
 		{
 			DecompilerSettings settings = (DecompilerSettings)MemberwiseClone();
+			settings.csharpFormattingOptions = csharpFormattingOptions.Clone();
 			settings.PropertyChanged = null;
 			return settings;
 		}

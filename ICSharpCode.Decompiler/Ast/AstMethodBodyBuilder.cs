@@ -550,7 +550,7 @@ namespace ICSharpCode.Decompiler.Ast
 					else
 						goto case ILCode.Castclass;
 				case ILCode.Castclass:
-					if (byteCode.Arguments[0].InferredType.IsGenericParameter || ((Cecil.TypeReference)operand).IsGenericParameter)
+					if ((byteCode.Arguments[0].InferredType != null && byteCode.Arguments[0].InferredType.IsGenericParameter) || ((Cecil.TypeReference)operand).IsGenericParameter)
 						return arg1.CastTo(new PrimitiveType("object")).CastTo(operandAsTypeRef);
 					else
 						return arg1.CastTo(operandAsTypeRef);

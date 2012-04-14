@@ -159,7 +159,7 @@ namespace ICSharpCode.Decompiler.Ast
 			
 			astCompileUnit.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true });
 			var outputFormatter = new TextOutputFormatter(output);
-			var formattingPolicy = FormattingOptionsFactory.CreateAllman();
+			var formattingPolicy = context.Settings.CSharpFormattingOptions;
 			astCompileUnit.AcceptVisitor(new CSharpOutputVisitor(outputFormatter, formattingPolicy));
 		}
 		
