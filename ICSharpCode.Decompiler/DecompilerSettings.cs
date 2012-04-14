@@ -304,7 +304,8 @@ namespace ICSharpCode.Decompiler
 		public DecompilerSettings Clone()
 		{
 			DecompilerSettings settings = (DecompilerSettings)MemberwiseClone();
-			settings.csharpFormattingOptions = csharpFormattingOptions.Clone();
+			if (csharpFormattingOptions != null)
+				settings.csharpFormattingOptions = csharpFormattingOptions.Clone();
 			settings.PropertyChanged = null;
 			return settings;
 		}
