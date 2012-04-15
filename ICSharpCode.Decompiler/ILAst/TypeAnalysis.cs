@@ -790,8 +790,17 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.YieldBreak:
 					return null;
 				case ILCode.Ret:
-					if (forceInferChildren && expr.Arguments.Count == 1)
-						InferTypeForExpression(expr.Arguments[0], context.CurrentMethod.ReturnType);
+					if (forceInferChildren && expr.Arguments.Count == 1) {
+						TypeReference returnType = context.CurrentMethod.ReturnType;
+						if (context.CurrentMethodIsAsync && returnType != null && returnType.Namespace == "System.Threading.Tasks") {
+							if (returnType.Name == "Task") {
+								returnType = typeSystem.Void;
+							} else if (returnType.Name == "Task`1" && returnType.IsGenericInstance) {
+								returnType = ((GenericInstanceType)returnType).GenericArguments[0];
+							}
+						}
+						InferTypeForExpression(expr.Arguments[0], returnType);
+					}
 					return null;
 				case ILCode.YieldReturn:
 					if (forceInferChildren) {

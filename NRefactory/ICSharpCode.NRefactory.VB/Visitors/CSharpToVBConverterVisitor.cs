@@ -671,6 +671,12 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 					((InvocationExpression)expr).Target = new IdentifierExpression() { Identifier = "__Dereference" };
 					((InvocationExpression)expr).Arguments.Add((Expression)unaryOperatorExpression.Expression.AcceptVisitor(this, data));
 					break;
+				case ICSharpCode.NRefactory.CSharp.UnaryOperatorType.Await:
+					expr = new UnaryOperatorExpression() {
+						Expression = (Expression)unaryOperatorExpression.Expression.AcceptVisitor(this, data),
+						Operator = UnaryOperatorType.Await
+					};
+					break;
 				default:
 					throw new Exception("Invalid value for UnaryOperatorType");
 			}
@@ -2134,6 +2140,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				mod |= Modifiers.Override;
 			if ((modifier & CSharp.Modifiers.Virtual) == CSharp.Modifiers.Virtual)
 				mod |= Modifiers.Overridable;
+			if ((modifier & CSharp.Modifiers.Async) == CSharp.Modifiers.Async)
+				mod |= Modifiers.Async;
 			
 			return mod;
 		}

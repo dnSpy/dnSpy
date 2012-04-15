@@ -770,6 +770,10 @@ namespace ICSharpCode.Decompiler.Ast
 						SetNewModifier(astMethod);
 				}
 				astMethod.Body = CreateMethodBody(methodDef, astMethod.Parameters);
+				if (context.CurrentMethodIsAsync) {
+					astMethod.Modifiers |= Modifiers.Async;
+					context.CurrentMethodIsAsync = false;
+				}
 			}
 			ConvertAttributes(astMethod, methodDef);
 			if (methodDef.HasCustomAttributes && astMethod.Parameters.Count > 0) {

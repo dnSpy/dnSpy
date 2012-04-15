@@ -101,6 +101,7 @@
     <Compile Include="FlowAnalysis\SsaOptimization.cs" />
     <Compile Include="FlowAnalysis\SsaVariable.cs" />
     <Compile Include="FlowAnalysis\TransformToSsa.cs" />
+    <Compile Include="ILAst\AsyncDecompiler.cs" />
     <Compile Include="ILAst\LiftedOperators.cs" />
     <Compile Include="ILAst\InitializerPeepholeTransforms.cs" />
     <Compile Include="ILAst\DefaultDictionary.cs" />
@@ -114,6 +115,8 @@
     <Compile Include="ILAst\PatternMatching.cs" />
     <Compile Include="ILAst\PeepholeTransform.cs" />
     <Compile Include="ILAst\SimpleControlFlow.cs" />
+    <Compile Include="ILAst\StateRange.cs" />
+    <Compile Include="ILAst\SymbolicExecution.cs" />
     <Compile Include="ILAst\TypeAnalysis.cs" />
     <Compile Include="ILAst\YieldReturnDecompiler.cs" />
     <Compile Include="ITextOutput.cs" />

@@ -58,6 +58,7 @@ namespace ICSharpCode.Decompiler.Ast
 			MethodDefinition oldCurrentMethod = context.CurrentMethod;
 			Debug.Assert(oldCurrentMethod == null || oldCurrentMethod == methodDef);
 			context.CurrentMethod = methodDef;
+			context.CurrentMethodIsAsync = false;
 			try {
 				AstMethodBodyBuilder builder = new AstMethodBodyBuilder();
 				builder.methodDef = methodDef;
@@ -847,8 +848,11 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.ExpressionTreeParameterDeclarations:
 					args[args.Count - 1].AddAnnotation(new ParameterDeclarationAnnotation(byteCode));
 					return args[args.Count - 1];
+				case ILCode.Await:
+					return new UnaryOperatorExpression(UnaryOperatorType.Await, arg1);
 				case ILCode.NullableOf:
-					case ILCode.ValueOf: return arg1;
+				case ILCode.ValueOf: 
+					return arg1;
 				default:
 					throw new Exception("Unknown OpCode: " + byteCode.Code);
 			}

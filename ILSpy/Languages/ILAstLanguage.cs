@@ -58,6 +58,9 @@ namespace ICSharpCode.ILSpy
 				new ILAstOptimizer().Optimize(context, ilMethod, abortBeforeStep.Value);
 			}
 			
+			if (context.CurrentMethodIsAsync)
+				output.WriteLine("async/await");
+			
 			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable)
 				.Where(v => v != null && !v.IsParameter).Distinct();
 			foreach (ILVariable v in allVariables) {

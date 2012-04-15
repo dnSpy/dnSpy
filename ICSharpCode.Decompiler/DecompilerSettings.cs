@@ -72,6 +72,21 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 		
+		bool asyncAwait = true;
+		
+		/// <summary>
+		/// Decompile async methods.
+		/// </summary>
+		public bool AsyncAwait {
+			get { return asyncAwait; }
+			set {
+				if (asyncAwait != value) {
+					asyncAwait = value;
+					OnPropertyChanged("AsyncAwait");
+				}
+			}
+		}
+		
 		bool automaticProperties = true;
 		
 		/// <summary>

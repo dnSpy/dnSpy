@@ -1963,6 +1963,7 @@ namespace ICSharpCode.NRefactory.VB
 			WriteKeyword("For");
 			WriteKeyword("Each");
 			forEachStatement.Variable.AcceptVisitor(this, data);
+			Space();
 			WriteKeyword("In");
 			forEachStatement.InExpression.AcceptVisitor(this, data);
 			NewLine();

@@ -151,6 +151,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			
 			DecompilerContext subContext = context.Clone();
 			subContext.CurrentMethod = method;
+			subContext.CurrentMethodIsAsync = false;
 			subContext.ReservedVariableNames.AddRange(currentlyUsedVariableNames);
 			BlockStatement body = AstMethodBodyBuilder.CreateMethodBody(method, subContext, ame.Parameters);
 			TransformationPipeline.RunTransformationsUntil(body, v => v is DelegateConstruction, subContext);

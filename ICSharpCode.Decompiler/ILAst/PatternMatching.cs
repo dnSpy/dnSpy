@@ -155,5 +155,17 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILVariable v;
 			return node.Match(ILCode.Ldloc, out v) && v == expectedVar;
 		}
+		
+		public static bool MatchLdloca(this ILNode node, ILVariable expectedVar)
+		{
+			ILVariable v;
+			return node.Match(ILCode.Ldloca, out v) && v == expectedVar;
+		}
+		
+		public static bool MatchStloc(this ILNode node, ILVariable expectedVar, out ILExpression expr)
+		{
+			ILVariable v;
+			return node.Match(ILCode.Stloc, out v, out expr) && v == expectedVar;
+		}
 	}
 }
