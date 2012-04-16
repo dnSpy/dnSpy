@@ -56,6 +56,25 @@ public class Async
 		return true;
 	}
 	
+	public async void TwoAwaitsWithDifferentAwaiterTypes()
+	{
+		Console.WriteLine("Before");
+		if (await SimpleBoolTaskMethod()) {
+			await Task.Delay(TimeSpan.FromSeconds(1.0));
+		}
+		Console.WriteLine("After");
+	}
+	
+	public async void StreamCopyTo(Stream destination, int bufferSize)
+	{
+		byte[] array = new byte[bufferSize];
+		int count;
+		while ((count = await destination.ReadAsync(array, 0, array.Length)) != 0)
+		{
+			await destination.WriteAsync(array, 0, count);
+		}
+	}
+	
 	public async void AwaitInLoopCondition()
 	{
 		while (await SimpleBoolTaskMethod()) {
@@ -81,5 +100,10 @@ public class Async
 		} catch (Exception) {
 			Console.WriteLine("Crash");
 		}
+	}
+	
+	public async Task<int> NestedAwait(Task<Task<int>> task)
+	{
+		return await(await task);
 	}
 }
