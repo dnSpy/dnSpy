@@ -812,6 +812,14 @@ namespace ICSharpCode.Decompiler.ILAst
 						}
 					}
 					return null;
+				case ILCode.Await:
+					{
+						TypeReference taskType = InferTypeForExpression(expr.Arguments[0], null);
+						if (taskType.Name == "Task`1" && taskType.IsGenericInstance && taskType.Namespace == "System.Threading.Tasks") {
+							return ((GenericInstanceType)taskType).GenericArguments[0];
+						}
+						return null;
+					}
 					#endregion
 				case ILCode.Pop:
 					return null;

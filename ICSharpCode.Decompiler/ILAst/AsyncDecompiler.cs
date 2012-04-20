@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Mono.Cecil;
+using Mono.Cecil.Cil;
 
 namespace ICSharpCode.Decompiler.ILAst
 {
@@ -29,6 +30,17 @@ namespace ICSharpCode.Decompiler.ILAst
 	/// </summary>
 	class AsyncDecompiler
 	{
+		public static bool IsCompilerGeneratedStateMachine(TypeDefinition type)
+		{
+			if (!(type.DeclaringType != null && type.IsCompilerGenerated()))
+				return false;
+			foreach (TypeReference i in type.Interfaces) {
+				if (i.Namespace == "System.Runtime.CompilerServices" && i.Name == "IAsyncStateMachine")
+					return true;
+			}
+			return false;
+		}
+		
 		enum AsyncMethodType
 		{
 			Void,
@@ -90,6 +102,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			ValidateCatchBlock(mainTryCatch.CatchBlocks[0]);
 			AnalyzeStateMachine(mainTryCatch.TryBlock);
 			// AnalyzeStateMachine invokes ConvertBody
+			MarkGeneratedVariables();
 			YieldReturnDecompiler.TranslateFieldsToLocalAccess(newTopLevelBody, fieldToParameterMap);
 		}
 		#endregion
@@ -384,6 +397,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					FieldDefinition awaiterField;
 					int targetStateID;
 					HandleAwait(newBody, out awaiterVar, out awaiterField, out targetStateID);
+					MarkAsGeneratedVariable(awaiterVar);
 					newBody.Add(new ILExpression(ILCode.Await, null, new ILExpression(ILCode.Ldloca, awaiterVar)));
 					newBody.Add(MakeGoTo(mapping, targetStateID));
 				} else if (tryCatchBlock != null) {
@@ -429,6 +443,10 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (ceqExpr.Match(ILCode.Ceq, out unused, out loadDoFinallyBodies, out loadZero)) {
 					int num;
 					if (loadDoFinallyBodies.MatchLdloc(doFinallyBodies) && loadZero.Match(ILCode.Ldc_I4, out num) && num == 0) {
+						newBody.RemoveAt(0);
+					}
+				} else if (ceqExpr.Match(ILCode.LogicNot, out loadDoFinallyBodies)) {
+					if (loadDoFinallyBodies.MatchLdloc(doFinallyBodies)) {
 						newBody.RemoveAt(0);
 					}
 				}
@@ -481,6 +499,26 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 		#endregion
 		
+		#region MarkGeneratedVariables
+		int smallestGeneratedVariableIndex = int.MaxValue;
+		
+		void MarkAsGeneratedVariable(ILVariable v)
+		{
+			if (v.OriginalVariable != null && v.OriginalVariable.Index >= 0) {
+				smallestGeneratedVariableIndex = Math.Min(smallestGeneratedVariableIndex, v.OriginalVariable.Index);
+			}
+		}
+		
+		void MarkGeneratedVariables()
+		{
+			var expressions = new ILBlock(newTopLevelBody).GetSelfAndChildrenRecursive<ILExpression>();
+			foreach (var v in expressions.Select(e => e.Operand).OfType<ILVariable>()) {
+				if (v.OriginalVariable != null && v.OriginalVariable.Index >= smallestGeneratedVariableIndex)
+					v.IsGenerated = true;
+			}
+		}
+		#endregion
+		
 		#region RunStep2() method
 		public static void RunStep2(DecompilerContext context, ILBlock method)
 		{
@@ -524,6 +562,11 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (!loadAwaiter.Match(ILCode.Ldloca, out awaiterVar))
 				return false;
 			
+			ILVariable stackVar;
+			ILExpression stackExpr;
+			while (pos >= 1 && body[pos - 1].Match(ILCode.Stloc, out stackVar, out stackExpr))
+				pos--;
+			
 			// stloc(CS$0$0001, callvirt(class System.Threading.Tasks.Task`1<bool>::GetAwaiter, awaiterExpr)
 			ILExpression getAwaiterCall;
 			if (!(pos >= 2 && body[pos - 2].MatchStloc(awaiterVar, out getAwaiterCall)))
@@ -552,6 +595,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					case ILCode.Stloc:
 					case ILCode.Initobj:
 					case ILCode.Stfld:
+					case ILCode.Await:
 						// e.g.
 						// stloc(CS$0$0001, ldfld(StateMachine::<>u__$awaitere, ldloc(this)))
 						// initobj(valuetype [mscorlib]System.Runtime.CompilerServices.TaskAwaiter`1<bool>, ldloca(CS$0$0002_66))

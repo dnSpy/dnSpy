@@ -59,7 +59,8 @@ public class Async
 	public async void TwoAwaitsWithDifferentAwaiterTypes()
 	{
 		Console.WriteLine("Before");
-		if (await SimpleBoolTaskMethod()) {
+		if (await this.SimpleBoolTaskMethod()) 
+		{
 			await Task.Delay(TimeSpan.FromSeconds(1.0));
 		}
 		Console.WriteLine("After");
@@ -77,27 +78,33 @@ public class Async
 	
 	public async void AwaitInLoopCondition()
 	{
-		while (await SimpleBoolTaskMethod()) {
+		while (await this.SimpleBoolTaskMethod()) 
+		{
 			Console.WriteLine("Body");
 		}
 	}
 	
 	public async Task<int> AwaitInForEach(IEnumerable<Task<int>> elements)
 	{
-		int sum = 0;
-		foreach (Task<int> element in elements) {
-			sum += await element;
+		int num = 0;
+		foreach (Task<int> current in elements)
+		{
+			num += await current;
 		}
-		return sum;
+		return num;
 	}
 	
 	public async Task TaskMethodWithoutAwaitButWithExceptionHandling()
 	{
-		try {
-			using (new StringWriter()) {
+		try 
+		{
+			using (new StringWriter())
+			{
 				Console.WriteLine("No Await");
 			}
-		} catch (Exception) {
+		} 
+		catch (Exception) 
+		{
 			Console.WriteLine("Crash");
 		}
 	}
@@ -105,5 +112,23 @@ public class Async
 	public async Task<int> NestedAwait(Task<Task<int>> task)
 	{
 		return await(await task);
+	}
+	
+	public async Task AwaitWithStack(Task<int> task)
+	{
+		Console.WriteLine("A", 1, await task);
+	}
+	
+	public async Task AwaitWithStack2(Task<int> task)
+	{
+		if (await this.SimpleBoolTaskMethod()) 
+		{
+			Console.WriteLine("A", 1, await task);
+		} 
+		else 
+		{
+			int num = 1;
+			Console.WriteLine("A", 1, num);
+		}
 	}
 }

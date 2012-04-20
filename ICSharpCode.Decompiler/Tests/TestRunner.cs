@@ -34,6 +34,12 @@ namespace ICSharpCode.Decompiler.Tests
 	[TestFixture]
 	public class TestRunner
 	{
+		[Test]
+		public void Async()
+		{
+			TestFile(@"..\..\Tests\Async.cs");
+		}
+		
 		[Test, Ignore("disambiguating overloads is not yet implemented")]
 		public void CallOverloadedMethod()
 		{

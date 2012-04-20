@@ -71,6 +71,9 @@ namespace ICSharpCode.ILSpy
 						output.Write("pinned ");
 					v.Type.WriteTo(output, ILNameSyntax.ShortTypeName);
 				}
+				if (v.IsGenerated) {
+					output.Write(" [generated]");
+				}
 				output.WriteLine();
 			}
 			output.WriteLine();

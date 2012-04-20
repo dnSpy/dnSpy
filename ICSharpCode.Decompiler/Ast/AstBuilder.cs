@@ -81,6 +81,8 @@ namespace ICSharpCode.Decompiler.Ast
 						return true;
 					if (settings.YieldReturn && YieldReturnDecompiler.IsCompilerGeneratorEnumerator(type))
 						return true;
+					if (settings.AsyncAwait && AsyncDecompiler.IsCompilerGeneratedStateMachine(type))
+						return true;
 				} else if (type.IsCompilerGenerated()) {
 					if (type.Name.StartsWith("<PrivateImplementationDetails>", StringComparison.Ordinal))
 						return true;
@@ -1356,6 +1358,12 @@ namespace ICSharpCode.Decompiler.Ast
 					if (customAttribute.AttributeType.Name == "ParamArrayAttribute" && customAttribute.AttributeType.Namespace == "System") {
 						// don't show the ParamArrayAttribute (it's converted to the 'params' modifier)
 						continue;
+					}
+					if (customAttribute.AttributeType.Name == "DebuggerStepThroughAttribute" && customAttribute.AttributeType.Namespace == "System.Diagnostics") {
+						// don't show the attribute if the method is async
+						EntityDeclaration entityDecl = attributedNode as EntityDeclaration;
+						if (entityDecl != null && entityDecl.HasModifier(Modifiers.Async))
+							continue;
 					}
 					
 					var attribute = new ICSharpCode.NRefactory.CSharp.Attribute();
