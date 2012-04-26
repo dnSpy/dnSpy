@@ -114,6 +114,9 @@ namespace ICSharpCode.Decompiler.Ast
 		object GetCurrentLocalDefinition()
 		{
 			AstNode node = nodeStack.Peek();
+			if (node is Identifier && node.Parent != null)
+				node = node.Parent;
+			
 			var parameterDef = node.Annotation<ParameterDefinition>();
 			if (parameterDef != null)
 				return parameterDef;
@@ -126,14 +129,11 @@ namespace ICSharpCode.Decompiler.Ast
 					//if (variable.OriginalVariable != null)
 					//    return variable.OriginalVariable;
 					return variable;
-				} else {
-
 				}
 			}
 
 			var label = node as LabelStatement;
-			if (label != null)
-			{
+			if (label != null) {
 				var method = nodeStack.Select(nd => nd.Annotation<MethodReference>()).FirstOrDefault(mr => mr != null);
 				if (method != null)
 					return method.ToString() + label.Label;
