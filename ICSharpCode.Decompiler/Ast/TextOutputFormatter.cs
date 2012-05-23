@@ -36,6 +36,8 @@ namespace ICSharpCode.Decompiler.Ast
 		bool firstUsingDeclaration;
 		bool lastUsingDeclaration;
 		
+		public bool FoldBraces = false;
+		
 		public TextOutputFormatter(ITextOutput output)
 		{
 			if (output == null)
@@ -183,7 +185,7 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			if (braceLevelWithinType >= 0 || nodeStack.Peek() is TypeDeclaration)
 				braceLevelWithinType++;
-			if (nodeStack.OfType<BlockStatement>().Count() <= 1) {
+			if (nodeStack.OfType<BlockStatement>().Count() <= 1 || FoldBraces) {
 				output.MarkFoldStart(defaultCollapsed: braceLevelWithinType == 1);
 			}
 			output.WriteLine();
@@ -195,7 +197,7 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			output.Unindent();
 			output.Write('}');
-			if (nodeStack.OfType<BlockStatement>().Count() <= 1)
+			if (nodeStack.OfType<BlockStatement>().Count() <= 1 || FoldBraces)
 				output.MarkFoldEnd();
 			if (braceLevelWithinType >= 0)
 				braceLevelWithinType--;

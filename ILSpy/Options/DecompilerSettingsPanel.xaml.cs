@@ -57,6 +57,7 @@ namespace ICSharpCode.ILSpy.Options
 			s.QueryExpressions = (bool?)e.Attribute("queryExpressions") ?? s.QueryExpressions;
 			s.UseDebugSymbols = (bool?)e.Attribute("useDebugSymbols") ?? s.UseDebugSymbols;
 			s.ShowXmlDocumentation = (bool?)e.Attribute("xmlDoc") ?? s.ShowXmlDocumentation;
+			s.FoldBraces = (bool?)e.Attribute("foldBraces") ?? s.FoldBraces;
 			return s;
 		}
 		
@@ -70,6 +71,7 @@ namespace ICSharpCode.ILSpy.Options
 			section.SetAttributeValue("queryExpressions", s.QueryExpressions);
 			section.SetAttributeValue("useDebugSymbols", s.UseDebugSymbols);
 			section.SetAttributeValue("xmlDoc", s.ShowXmlDocumentation);
+			section.SetAttributeValue("foldBraces", s.FoldBraces);
 			
 			XElement existingElement = root.Element("DecompilerSettings");
 			if (existingElement != null)
