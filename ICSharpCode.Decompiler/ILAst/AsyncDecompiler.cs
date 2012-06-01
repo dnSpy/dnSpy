@@ -576,6 +576,11 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (!(getAwaiterCall.Match(ILCode.Call, out getAwaiterMethod, out awaitedExpr) || getAwaiterCall.Match(ILCode.Callvirt, out getAwaiterMethod, out awaitedExpr)))
 				return false;
 			
+			if (awaitedExpr.Code == ILCode.AddressOf) {
+				// remove 'AddressOf()' when calling GetAwaiter() on a value type
+				awaitedExpr = awaitedExpr.Arguments[0];
+			}
+			
 			// brtrue(IL_7C, call(valuetype [mscorlib]System.Runtime.CompilerServices.TaskAwaiter`1<bool>::get_IsCompleted, ldloca(CS$0$0001)))
 			ILLabel label;
 			ILExpression getIsCompletedCall;

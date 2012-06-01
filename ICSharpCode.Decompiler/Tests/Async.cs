@@ -76,6 +76,16 @@ public class Async
 		}
 	}
 	
+	public async void StreamCopyToWithConfigureAwait(Stream destination, int bufferSize)
+	{
+		byte[] array = new byte[bufferSize];
+		int count;
+		while ((count = await destination.ReadAsync(array, 0, array.Length).ConfigureAwait(false)) != 0)
+		{
+			await destination.WriteAsync(array, 0, count).ConfigureAwait(false);
+		}
+	}
+	
 	public async void AwaitInLoopCondition()
 	{
 		while (await this.SimpleBoolTaskMethod()) 
