@@ -50,7 +50,7 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		static readonly Uri UpdateUrl = new Uri("http://www.ilspy.net/updates.xml");
-		const string band = "beta";
+		const string band = "stable";
 		
 		static AvailableVersionInfo latestAvailableVersion;
 		
