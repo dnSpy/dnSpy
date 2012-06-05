@@ -769,6 +769,12 @@ namespace ICSharpCode.ILSpy.TextView
 			int offset = textEditor.Document.GetOffset(position.Value.Location);
 			return referenceElementGenerator.References.FindSegmentsContaining(offset).FirstOrDefault();
 		}
+		
+		public int CurrentOffset {
+			get {
+				return textEditor.CaretOffset;
+			}
+		}
 
 		public DecompilerTextViewState GetState()
 		{
@@ -808,6 +814,13 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 			// scroll to
 			textEditor.ScrollTo(lineNumber, 0);
+		}
+		
+		public FoldingManager FoldingManager
+		{
+			get {
+				return foldingManager;
+			}
 		}
 		#endregion
 	}
