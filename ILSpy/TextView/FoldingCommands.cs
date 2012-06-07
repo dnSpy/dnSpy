@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Folding;
 
 namespace ICSharpCode.ILSpy.TextView
@@ -62,16 +63,23 @@ namespace ICSharpCode.ILSpy.TextView
     
     public void Execute(TextViewContext context)
     {
-      if (null == context.TextView)
-        return;
+    	var textView = context.TextView;
+    	if (null == textView)
+    		return;
+      var editor = textView.textEditor;
       FoldingManager foldingManager = context.TextView.FoldingManager;
       if (null == foldingManager)
         return;
-      int offset = context.TextView.CurrentOffset;
-      FoldingSection folding = foldingManager.GetNextFolding(offset);
-      if (folding == null || folding.StartOffset != offset) {
-        // no folding found on current line: find innermost folding containing the caret
-        folding = foldingManager.GetFoldingsContaining(offset).LastOrDefault();
+    	// TODO: or use Caret if position is not given?
+      var posBox = context.Position;
+    	if (null == posBox)
+        return;
+      TextViewPosition pos = posBox.Value;
+			// look for folding on this line:
+			FoldingSection folding = foldingManager.GetNextFolding(editor.Document.GetOffset(pos.Line, 1));
+			if (folding == null || editor.Document.GetLineByOffset(folding.StartOffset).LineNumber != pos.Line) {
+        // no folding found on current line: find innermost folding containing the mouse position
+        folding = foldingManager.GetFoldingsContaining(editor.Document.GetOffset(pos.Line, pos.Column)).LastOrDefault();
       }
       if (folding != null) {
         folding.IsFolded = !folding.IsFolded;

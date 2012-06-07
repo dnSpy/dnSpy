@@ -763,19 +763,18 @@ namespace ICSharpCode.ILSpy.TextView
 
 		internal ReferenceSegment GetReferenceSegmentAtMousePosition()
 		{
-			TextViewPosition? position = textEditor.TextArea.TextView.GetPosition(Mouse.GetPosition(textEditor.TextArea.TextView) + textEditor.TextArea.TextView.ScrollOffset);
+			TextViewPosition? position = GetPositionFromMousePosition();
 			if (position == null)
 				return null;
 			int offset = textEditor.Document.GetOffset(position.Value.Location);
 			return referenceElementGenerator.References.FindSegmentsContaining(offset).FirstOrDefault();
 		}
 		
-		public int CurrentOffset {
-			get {
-				return textEditor.CaretOffset;
-			}
+		internal TextViewPosition? GetPositionFromMousePosition()
+		{
+			return textEditor.TextArea.TextView.GetPosition(Mouse.GetPosition(textEditor.TextArea.TextView) + textEditor.TextArea.TextView.ScrollOffset);
 		}
-
+		
 		public DecompilerTextViewState GetState()
 		{
 			if (decompiledNodes == null)
