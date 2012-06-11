@@ -674,6 +674,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 		public void DisassembleField(FieldDefinition field)
 		{
 			output.WriteDefinition(".field ", field);
+			if (field.HasLayoutInfo) {
+				output.Write("[" + field.Offset + "] ");
+			}
 			WriteEnum(field.Attributes & FieldAttributes.FieldAccessMask, fieldVisibility);
 			const FieldAttributes hasXAttributes = FieldAttributes.HasDefault | FieldAttributes.HasFieldMarshal | FieldAttributes.HasFieldRVA;
 			WriteFlags(field.Attributes & ~(FieldAttributes.FieldAccessMask | hasXAttributes), fieldAttributes);
