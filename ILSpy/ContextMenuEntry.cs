@@ -159,11 +159,11 @@ namespace ICSharpCode.ILSpy
 		{
 			menu = new ContextMenu();
 			foreach (var category in entries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
-				bool needSeparatorForCategory = true;
+				bool needSeparatorForCategory = menu.Items.Count > 0;
 				foreach (var entryPair in category) {
 					IContextMenuEntry entry = entryPair.Value;
 					if (entry.IsVisible(context)) {
-						if (needSeparatorForCategory && menu.Items.Count > 0) {
+						if (needSeparatorForCategory) {
 							menu.Items.Add(new Separator());
 							needSeparatorForCategory = false;
 						}
