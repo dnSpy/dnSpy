@@ -33,6 +33,21 @@ public class UnsafeCode
 		return *(long*)(&d);
 	}
 	
+	public unsafe double ConvertLongToDouble(long d)
+	{
+		return *(double*)(&d);
+	}
+	
+	public unsafe int ConvertFloatToInt(float d)
+	{
+		return *(int*)(&d);
+	}
+	
+	public unsafe float ConvertIntToFloat(int d)
+	{
+		return *(float*)(&d);
+	}
+	
 	public unsafe void PassRefParameterAsPointer(ref int p)
 	{
 		fixed (int* ptr = &p)
@@ -48,7 +63,8 @@ public class UnsafeCode
 	
 	public unsafe void AddressInMultiDimensionalArray(double[,] matrix)
 	{
-		fixed (double* ptr = &matrix[1, 2]) {
+		fixed (double* ptr = &matrix[1, 2])
+		{
 			this.PointerReferenceExpression(ptr);
 		}
 	}
@@ -58,7 +74,7 @@ public class UnsafeCode
 		fixed (char* ptr = text)
 		{
 			char* ptr2 = ptr;
-			while (*ptr2 != 0)
+			while (*ptr2 != '\0')
 			{
 				*ptr2 = 'A';
 				ptr2++;
@@ -68,7 +84,7 @@ public class UnsafeCode
 	
 	public unsafe void PutDoubleIntoLongArray1(long[] array, int index, double val)
 	{
-		fixed (long* ptr = array) 
+		fixed (long* ptr = array)
 		{
 			((double*)ptr)[index] = val;
 		}
@@ -76,7 +92,7 @@ public class UnsafeCode
 	
 	public unsafe void PutDoubleIntoLongArray2(long[] array, int index, double val)
 	{
-		fixed (long* ptr = &array[index]) 
+		fixed (long* ptr = &array[index])
 		{
 			*(double*)ptr = val;
 		}
@@ -89,7 +105,7 @@ public class UnsafeCode
 	
 	public unsafe void FixMultipleStrings(string text)
 	{
-		fixed (char* ptr = text, userName = Environment.UserName, ptr2 = text) 
+		fixed (char* ptr = text, userName = Environment.UserName, ptr2 = text)
 		{
 			*ptr = 'c';
 			*userName = 'd';
@@ -100,7 +116,7 @@ public class UnsafeCode
 	public unsafe string StackAlloc(int count)
 	{
 		char* ptr = stackalloc char[count];
-		for (int i = 0; i < count; i++) 
+		for (int i = 0; i < count; i++)
 		{
 			ptr[i] = (char)i;
 		}

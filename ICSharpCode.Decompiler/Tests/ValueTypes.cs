@@ -160,4 +160,12 @@ public static class ValueTypes
 		s.SetField();
 		return p;
 	}
+	
+	public static void UseRefBoolInCondition(ref bool x)
+	{
+		if (x) 
+		{
+			Console.WriteLine("true");
+		}
+	}
 }
