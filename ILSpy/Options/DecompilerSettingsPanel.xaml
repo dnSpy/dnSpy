@@ -9,5 +9,6 @@
 		<CheckBox IsChecked="{Binding QueryExpressions}" IsEnabled="{Binding AnonymousMethods}">Decompile query expressions</CheckBox>
 		<CheckBox IsChecked="{Binding UseDebugSymbols}">Use variable names from debug symbols, if available</CheckBox>
 		<CheckBox IsChecked="{Binding ShowXmlDocumentation}">Show XML documentation in decompiled code</CheckBox>
+		<CheckBox IsChecked="{Binding FoldBraces}">Enable folding on all blocks in braces</CheckBox>
 	</StackPanel>
 </UserControl>

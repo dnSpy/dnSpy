@@ -21,6 +21,8 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+
+using ICSharpCode.AvalonEdit;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.TreeView;
 
@@ -59,15 +61,23 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		public ReferenceSegment Reference { get; private set; }
 		
+		/// <summary>
+		/// Returns the position in TextView the mouse cursor is currently hovering above.
+		/// Returns null, if TextView returns null;
+		/// </summary>
+		public TextViewPosition? Position { get; private set; }
+		
 		public static TextViewContext Create(SharpTreeView treeView = null, DecompilerTextView textView = null)
 		{
 			var reference = textView != null ? textView.GetReferenceSegmentAtMousePosition() : null;
+			var position = textView != null ? textView.GetPositionFromMousePosition() : null;
 			var selectedTreeNodes = treeView != null ? treeView.GetTopLevelSelection().ToArray() : null;
 			return new TextViewContext {
 				TreeView = treeView,
 				SelectedTreeNodes = selectedTreeNodes,
 				TextView = textView,
-				Reference = reference
+				Reference = reference,
+				Position = position
 			};
 		}
 	}

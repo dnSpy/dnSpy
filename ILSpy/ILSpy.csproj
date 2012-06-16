@@ -177,6 +177,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Commands\SimpleCommand.cs" />
+    <Compile Include="TextView\FoldingCommands.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzeContextMenuEntry.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedAssemblyTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedAttributeAppliedToTreeNode.cs" />

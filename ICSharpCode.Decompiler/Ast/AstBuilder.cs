@@ -160,7 +160,7 @@ namespace ICSharpCode.Decompiler.Ast
 				RunTransformations();
 			
 			astCompileUnit.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true });
-			var outputFormatter = new TextOutputFormatter(output);
+			var outputFormatter = new TextOutputFormatter(output) { FoldBraces = context.Settings.FoldBraces };
 			var formattingPolicy = context.Settings.CSharpFormattingOptions;
 			astCompileUnit.AcceptVisitor(new CSharpOutputVisitor(outputFormatter, formattingPolicy));
 		}
