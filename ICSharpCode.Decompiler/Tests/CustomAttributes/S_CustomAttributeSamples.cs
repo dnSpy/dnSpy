@@ -69,6 +69,19 @@ namespace AppliedToEvent
 		public event EventHandler MyEvent;
 	}
 }
+//$$ AppliedToEventMethods
+namespace AppliedToEventMethods
+{
+	[AttributeUsage(AttributeTargets.Method)]
+	public class MyAttributeAttribute : Attribute
+	{
+	}
+	public class TestClass
+	{
+		[method: MyAttribute]
+		public event EventHandler MyEvent;
+	}
+}
 //$$ AppliedToField
 namespace AppliedToField
 {

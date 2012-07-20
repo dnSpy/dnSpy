@@ -897,6 +897,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		#region Automatic Events
 		static readonly Accessor automaticEventPatternV4 = new Accessor {
+			Attributes = { new Repeat(new AnyNode()) },
 			Body = new BlockStatement {
 				new VariableDeclarationStatement { Type = new AnyNode("type"), Variables = { new AnyNode() } },
 				new VariableDeclarationStatement { Type = new Backreference("type"), Variables = { new AnyNode() } },
@@ -965,6 +966,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				return null;
 			EventDeclaration ed = new EventDeclaration();
 			ev.Attributes.MoveTo(ed.Attributes);
+			foreach (var attr in ev.AddAccessor.Attributes) {
+				attr.AttributeTarget = "method";
+				ed.Attributes.Add(attr.Detach());
+			}
 			ed.ReturnType = ev.ReturnType.Detach();
 			ed.Modifiers = ev.Modifiers;
 			ed.Variables.Add(new VariableInitializer(ev.Name));
