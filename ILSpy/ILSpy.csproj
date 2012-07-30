@@ -15,7 +15,7 @@
     <NoStdLib>False</NoStdLib>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <ApplicationIcon>Images\ILSpy.ico</ApplicationIcon>
+    <ApplicationIcon>Images\ILSpy-Large.ico</ApplicationIcon>
     <RunCodeAnalysis>False</RunCodeAnalysis>
     <StartArguments>/separate</StartArguments>
     <SignAssembly>True</SignAssembly>
