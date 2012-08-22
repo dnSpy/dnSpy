@@ -34,14 +34,23 @@ namespace Mono.Cecil {
 
 	public abstract class TypeSystem {
 
-		sealed class CorlibTypeSystem : TypeSystem {
+		sealed class CoreTypeSystem : TypeSystem {
 
-			public CorlibTypeSystem (ModuleDefinition module)
+			public CoreTypeSystem (ModuleDefinition module)
 				: base (module)
 			{
 			}
 
 			internal override TypeReference LookupType (string @namespace, string name)
+			{
+				var type = LookupTypeDefinition (@namespace, name) ?? LookupTypeForwarded (@namespace, name);
+				if (type != null)
+					return type;
+
+				throw new NotSupportedException ();
+			}
+
+			TypeReference LookupTypeDefinition (string @namespace, string name)
 			{
 				var metadata = module.MetadataSystem;
 				if (metadata.Types == null)
@@ -62,6 +71,22 @@ namespace Mono.Cecil {
 
 					return null;
 				});
+			}
+
+			TypeReference LookupTypeForwarded (string @namespace, string name)
+			{
+				if (!module.HasExportedTypes)
+					return null;
+
+				var exported_types = module.ExportedTypes;
+				for (int i = 0; i < exported_types.Count; i++) {
+					var exported_type = exported_types [i];
+
+					if (exported_type.Name == name && exported_type.Namespace == @namespace)
+						return exported_type.CreateReference ();
+				}
+
+				return null;
 			}
 
 			static void Initialize (object obj)
@@ -159,7 +184,7 @@ namespace Mono.Cecil {
 		internal static TypeSystem CreateTypeSystem (ModuleDefinition module)
 		{
 			if (module.IsCorlib ())
-				return new CorlibTypeSystem (module);
+				return new CoreTypeSystem (module);
 
 			return new CommonTypeSystem (module);
 		}

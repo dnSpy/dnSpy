@@ -102,8 +102,11 @@ namespace Mono.Cecil {
 
 		public static void TryProcessPrimitiveTypeReference (TypeReference type)
 		{
+			if (type.Namespace != "System")
+				return;
+
 			var scope = type.scope;
-			if (scope == null || scope.MetadataScopeType != MetadataScopeType.AssemblyNameReference || scope.Name != "mscorlib")
+			if (scope == null || scope.MetadataScopeType != MetadataScopeType.AssemblyNameReference)
 				return;
 
 			Row<ElementType, bool> primitive_data;
@@ -118,7 +121,7 @@ namespace Mono.Cecil {
 		{
 			etype = ElementType.None;
 
-			if (!type.HasImage || !type.Module.IsCorlib ())
+			if (type.Namespace != "System")
 				return false;
 
 			Row<ElementType, bool> primitive_data;
@@ -132,11 +135,6 @@ namespace Mono.Cecil {
 
 		static bool TryGetPrimitiveData (TypeReference type, out Row<ElementType, bool> primitive_data)
 		{
-			primitive_data = new Row<ElementType, bool> ();
-
-			if (type.Namespace != "System")
-				return false;
-
 			if (primitive_value_types == null)
 				InitializePrimitives ();
 

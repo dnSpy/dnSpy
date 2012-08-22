@@ -75,7 +75,7 @@ namespace Mono.Cecil.PE {
 			this.GetDebugHeader ();
 			this.GetWin32Resources ();
 			this.text_map = BuildTextMap ();
-			this.sections = 2; // text + reloc
+			this.sections = (ushort) (pe64 ? 1 : 2); // text + reloc
 			this.time_stamp = (uint) DateTime.UtcNow.Subtract (new DateTime (1970, 1, 1)).TotalSeconds;
 		}
 
@@ -133,7 +133,8 @@ namespace Mono.Cecil.PE {
 				previous = rsrc;
 			}
 
-			reloc = CreateSection (".reloc", 12u, previous);
+			if (!pe64)
+				reloc = CreateSection (".reloc", 12u, previous);
 		}
 
 		Section CreateSection (string name, uint size, Section previous)
@@ -217,20 +218,29 @@ namespace Mono.Cecil.PE {
 			throw new NotSupportedException ();
 		}
 
+		Section LastSection ()
+		{
+			if (reloc != null)
+				return reloc;
+
+			if (rsrc != null)
+				return rsrc;
+
+			return text;
+		}
+
 		void WriteOptionalHeaders ()
 		{
 			WriteUInt16 ((ushort) (!pe64 ? 0x10b : 0x20b));	// Magic
 			WriteByte (8);	// LMajor
 			WriteByte (0);	// LMinor
 			WriteUInt32 (text.SizeOfRawData);	// CodeSize
-			WriteUInt32 (reloc.SizeOfRawData
+			WriteUInt32 ((reloc != null ? reloc.SizeOfRawData : 0)
 				+ (rsrc != null ? rsrc.SizeOfRawData : 0));	// InitializedDataSize
 			WriteUInt32 (0);	// UninitializedDataSize
 
-			var entry_point_rva = text_map.GetRVA (TextSegment.StartupStub);
-			if (module.Architecture == TargetArchitecture.IA64)
-				entry_point_rva += 0x20;
-			WriteUInt32 (entry_point_rva); // EntryPointRVA
+			var startub_stub = text_map.GetRange (TextSegment.StartupStub);
+			WriteUInt32 (startub_stub.Length > 0 ? startub_stub.Start : 0);  // EntryPointRVA
 			WriteUInt32 (text_rva);	// BaseOfCode
 
 			if (!pe64) {
@@ -251,12 +261,13 @@ namespace Mono.Cecil.PE {
 			WriteUInt16 (0);	// SubSysMinor
 			WriteUInt32 (0);	// Reserved
 
-			WriteUInt32 (reloc.VirtualAddress + Align (reloc.VirtualSize, section_alignment));	// ImageSize
+			var last_section = LastSection();
+			WriteUInt32 (last_section.VirtualAddress + Align (last_section.VirtualSize, section_alignment));	// ImageSize
 			WriteUInt32 (text.PointerToRawData);	// HeaderSize
 
 			WriteUInt32 (0);	// Checksum
 			WriteUInt16 (GetSubSystem ());	// SubSystem
-			WriteUInt16 (0x8540);	// DLLFlags
+			WriteUInt16 ((ushort) module.Characteristics);	// DLLFlags
 
 			const ulong stack_reserve = 0x100000;
 			const ulong stack_commit = 0x1000;
@@ -288,8 +299,8 @@ namespace Mono.Cecil.PE {
 
 			WriteZeroDataDirectory ();	// ExceptionTable
 			WriteZeroDataDirectory ();	// CertificateTable
-			WriteUInt32 (reloc.VirtualAddress);			// BaseRelocationTable
-			WriteUInt32 (reloc.VirtualSize);
+			WriteUInt32 (reloc != null ? reloc.VirtualAddress : 0);			// BaseRelocationTable
+			WriteUInt32 (reloc != null ? reloc.VirtualSize : 0);
 
 			if (text_map.GetLength (TextSegment.DebugDirectory) > 0) {
 				WriteUInt32 (text_map.GetRVA (TextSegment.DebugDirectory));
@@ -335,7 +346,8 @@ namespace Mono.Cecil.PE {
 			if (rsrc != null)
 				WriteSection (rsrc, 0x40000040);
 
-			WriteSection (reloc, 0x42000040);
+			if (reloc != null)
+				WriteSection (reloc, 0x42000040);
 		}
 
 		void WriteSection (Section section, uint characteristics)
@@ -386,8 +398,10 @@ namespace Mono.Cecil.PE {
 
 			// ImportAddressTable
 
-			WriteRVA (text_map.GetRVA (TextSegment.ImportHintNameTable));
-			WriteRVA (0);
+			if (!pe64) {
+				WriteRVA (text_map.GetRVA (TextSegment.ImportHintNameTable));
+				WriteRVA (0);
+			}
 
 			// CLIHeader
 
@@ -438,6 +452,9 @@ namespace Mono.Cecil.PE {
 				MoveToRVA (TextSegment.DebugDirectory);
 				WriteDebugDirectory ();
 			}
+
+			if (pe64)
+				return;
 
 			// ImportDirectory
 			MoveToRVA (TextSegment.ImportDirectory);
@@ -605,19 +622,8 @@ namespace Mono.Cecil.PE {
 				WriteUInt16 (0x25ff);
 				WriteUInt32 ((uint) image_base + text_map.GetRVA (TextSegment.ImportAddressTable));
 				return;
-			case TargetArchitecture.AMD64:
-				WriteUInt16 (0xa148);
-				WriteUInt32 ((uint) image_base + text_map.GetRVA (TextSegment.ImportAddressTable));
-				WriteUInt16 (0xe0ff);
-				return;
-			case TargetArchitecture.IA64:
-				WriteBytes (new byte [] {
-					0x0b, 0x48, 0x00, 0x02, 0x18, 0x10, 0xa0, 0x40, 0x24, 0x30, 0x28, 0x00, 0x00, 0x00, 0x04, 0x00,
-					0x10, 0x08, 0x00, 0x12, 0x18, 0x10, 0x60, 0x50, 0x04, 0x80, 0x03, 0x00, 0x60, 0x00, 0x80, 0x00
-				});
-				WriteUInt32 ((uint) image_base + text_map.GetRVA (TextSegment.StartupStub));
-				WriteUInt32 ((uint) image_base + text_rva);
-				return;
+			default:
+				throw new NotSupportedException ();
 			}
 		}
 
@@ -642,13 +648,8 @@ namespace Mono.Cecil.PE {
 			case TargetArchitecture.I386:
 				WriteUInt32 (0x3000 + reloc_rva - page_rva);
 				break;
-			case TargetArchitecture.AMD64:
-				WriteUInt32 (0xa000 + reloc_rva - page_rva);
-				break;
-			case TargetArchitecture.IA64:
-				WriteUInt16 ((ushort) (0xa000 + reloc_rva - page_rva));
-				WriteUInt16 ((ushort) (0xa000 + reloc_rva - page_rva + 8));
-				break;
+			default:
+				throw new NotSupportedException();
 			}
 
 			WriteBytes (new byte [file_alignment - reloc.VirtualSize]);
@@ -663,7 +664,8 @@ namespace Mono.Cecil.PE {
 			WriteText ();
 			if (rsrc != null)
 				WriteRsrc ();
-			WriteReloc ();
+			if (reloc != null)
+				WriteReloc ();
 		}
 
 		TextMap BuildTextMap ()
@@ -694,8 +696,16 @@ namespace Mono.Cecil.PE {
 
 			map.AddMap (TextSegment.DebugDirectory, debug_dir_len, 4);
 
+			if (pe64) {
+				var start = map.GetNextRVA (TextSegment.DebugDirectory);
+				map.AddMap (TextSegment.ImportDirectory, new Range (start, 0));
+				map.AddMap (TextSegment.ImportHintNameTable, new Range (start, 0));
+				map.AddMap (TextSegment.StartupStub, new Range (start, 0));
+				return map;
+			}
+
 			RVA import_dir_rva = map.GetNextRVA (TextSegment.DebugDirectory);
-			RVA import_hnt_rva = import_dir_rva + (!pe64 ? 48u : 52u);
+			RVA import_hnt_rva = import_dir_rva + 48u;
 			import_hnt_rva = (import_hnt_rva + 15u) & ~15u;
 			uint import_dir_len = (import_hnt_rva - import_dir_rva) + 27u;
 
@@ -716,12 +726,8 @@ namespace Mono.Cecil.PE {
 			switch (module.Architecture) {
 			case TargetArchitecture.I386:
 				return 6;
-			case TargetArchitecture.AMD64:
-				return 12;
-			case TargetArchitecture.IA64:
-				return 48;
 			default:
-				throw new InvalidOperationException ();
+				throw new NotSupportedException ();
 			}
 		}
 
@@ -744,24 +750,22 @@ namespace Mono.Cecil.PE {
 
 		int GetStrongNameLength ()
 		{
-			if ((module.Attributes & ModuleAttributes.StrongNameSigned) == 0)
+			if (module.Assembly == null)
 				return 0;
 
-			if (module.Assembly == null)
-				throw new InvalidOperationException ();
-
 			var public_key = module.Assembly.Name.PublicKey;
+			if (public_key.IsNullOrEmpty ())
+				return 0;
 
-			if (public_key != null) {
-				// in fx 2.0 the key may be from 384 to 16384 bits
-				// so we must calculate the signature size based on
-				// the size of the public key (minus the 32 byte header)
-				int size = public_key.Length;
-				if (size > 32)
-					return size - 32;
-				// note: size == 16 for the ECMA "key" which is replaced
-				// by the runtime with a 1024 bits key (128 bytes)
-			}
+			// in fx 2.0 the key may be from 384 to 16384 bits
+			// so we must calculate the signature size based on
+			// the size of the public key (minus the 32 byte header)
+			int size = public_key.Length;
+			if (size > 32)
+				return size - 32;
+
+			// note: size == 16 for the ECMA "key" which is replaced
+			// by the runtime with a 1024 bits key (128 bytes)
 
 			return 128; // default strongname signature size
 		}

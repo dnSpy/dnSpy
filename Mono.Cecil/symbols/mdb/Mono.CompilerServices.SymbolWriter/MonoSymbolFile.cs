@@ -446,6 +446,11 @@ namespace Mono.CompilerServices.SymbolWriter
 		protected MonoSymbolFile (string filename, Mono.Cecil.ModuleDefinition module)
 			: this (filename)
 		{
+			// Check that the MDB file matches the module, if we have been
+			// passed a module.
+			if (module == null)
+				return;
+
 			CheckGuidMatch (module.Mvid, filename, module.FullyQualifiedName);
 		}
 
@@ -485,7 +490,7 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		public static MonoSymbolFile ReadSymbolFile (string mdbFilename)
 		{
-			return new MonoSymbolFile (mdbFilename, null);
+			return new MonoSymbolFile (mdbFilename);
 		}
 
 		public int CompileUnitCount {

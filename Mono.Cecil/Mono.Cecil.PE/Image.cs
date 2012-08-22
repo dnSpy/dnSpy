@@ -41,6 +41,7 @@ namespace Mono.Cecil.PE {
 		public ModuleKind Kind;
 		public TargetRuntime Runtime;
 		public TargetArchitecture Architecture;
+		public ModuleCharacteristics Characteristics;
 		public string FileName;
 
 		public Section [] Sections;
@@ -52,6 +53,7 @@ namespace Mono.Cecil.PE {
 
 		public DataDirectory Debug;
 		public DataDirectory Resources;
+		public DataDirectory StrongName;
 
 		public StringHeap StringHeap;
 		public BlobHeap BlobHeap;

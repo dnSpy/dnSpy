@@ -424,10 +424,18 @@ namespace Mono.Cecil.Cil {
 			switch (instruction.opcode.FlowControl) {
 			case FlowControl.Call: {
 				var method = (IMethodSignature) instruction.operand;
-				stack_size -= (method.HasParameters ? method.Parameters.Count : 0)
-					+ (method.HasThis && instruction.opcode.Code != Code.Newobj ? 1 : 0);
-				stack_size += (method.ReturnType.etype == ElementType.Void ? 0 : 1)
-					+ (method.HasThis && instruction.opcode.Code == Code.Newobj ? 1 : 0);
+				// pop 'this' argument
+				if (method.HasImplicitThis() && instruction.opcode.Code != Code.Newobj)
+					stack_size--;
+				// pop normal arguments
+				if (method.HasParameters)
+					stack_size -= method.Parameters.Count;
+				// pop function pointer
+				if (instruction.opcode.Code == Code.Calli)
+					stack_size--;
+				// push return value
+				if (method.ReturnType.etype != ElementType.Void || instruction.opcode.Code == Code.Newobj)
+					stack_size++;
 				break;
 			}
 			default:

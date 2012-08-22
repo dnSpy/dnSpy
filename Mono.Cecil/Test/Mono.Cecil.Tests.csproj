@@ -116,6 +116,7 @@
     <Compile Include="Mono.Cecil.Tests\ImageReadTests.cs" />
     <Compile Include="Mono.Cecil.Tests\ModuleTests.cs" />
     <Compile Include="Mono.Cecil.Tests\NestedTypesTests.cs" />
+    <None Include="Resources\il\explicitthis.il" />
     <None Include="Resources\cs\CustomAttributes.cs" />
     <None Include="Resources\cs\Generics.cs" />
     <None Include="Resources\cs\Interfaces.cs" />

@@ -102,7 +102,7 @@ namespace Mono.Cecil.Cil {
 				throw new InvalidOperationException ();
 			}
 
-			var symbol_reader = reader.module.SymbolReader;
+			var symbol_reader = reader.module.symbol_reader;
 
 			if (symbol_reader != null) {
 				var instructions = body.Instructions;
@@ -409,7 +409,7 @@ namespace Mono.Cecil.Cil {
 				throw new NotSupportedException ();
 			}
 
-			var symbol_reader = reader.module.SymbolReader;
+			var symbol_reader = reader.module.symbol_reader;
 			if (symbol_reader != null && writer.metadata.write_symbols) {
 				symbols.method_token = GetOriginalToken (writer.metadata, method);
 				symbols.local_var_token = local_var_token;

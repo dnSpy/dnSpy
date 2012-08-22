@@ -97,20 +97,18 @@ namespace Mono.Cecil {
 			var symbol_writer = GetSymbolWriter (module, fq_name, symbol_writer_provider);
 
 #if !SILVERLIGHT && !CF
-			if (parameters.StrongNameKeyPair != null && name != null)
+			if (parameters.StrongNameKeyPair != null && name != null) {
 				name.PublicKey = parameters.StrongNameKeyPair.PublicKey;
-#endif
-
-			if (name != null && name.HasPublicKey)
 				module.Attributes |= ModuleAttributes.StrongNameSigned;
-
+			}
+#endif
 			var metadata = new MetadataBuilder (module, fq_name,
 				symbol_writer_provider, symbol_writer);
 
 			BuildMetadata (module, metadata);
 
-			if (module.SymbolReader != null)
-				module.SymbolReader.Dispose ();
+			if (module.symbol_reader != null)
+				module.symbol_reader.Dispose ();
 
 			var writer = ImageWriter.CreateWriter (module, metadata, stream);
 
@@ -786,7 +784,7 @@ namespace Mono.Cecil {
 		TextMap CreateTextMap ()
 		{
 			var map = new TextMap ();
-			map.AddMap (TextSegment.ImportAddressTable, module.Architecture == TargetArchitecture.I386 ? 8 : 16);
+			map.AddMap (TextSegment.ImportAddressTable, module.Architecture == TargetArchitecture.I386 ? 8 : 0);
 			map.AddMap (TextSegment.CLIHeader, 0x48, 8);
 			return map;
 		}

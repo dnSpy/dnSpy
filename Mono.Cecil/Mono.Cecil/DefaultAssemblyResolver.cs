@@ -31,11 +31,6 @@ using System.Collections.Generic;
 
 namespace Mono.Cecil {
 
-	public static class GlobalAssemblyResolver {
-
-		public static readonly IAssemblyResolver Instance = new DefaultAssemblyResolver ();
-	}
-
 	public class DefaultAssemblyResolver : BaseAssemblyResolver {
 
 		readonly IDictionary<string, AssemblyDefinition> cache;

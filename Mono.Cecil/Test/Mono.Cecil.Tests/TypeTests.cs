@@ -209,5 +209,20 @@ namespace Mono.Cecil.Tests {
 			Assert.IsTrue (int32_def.IsPrimitive);
 			Assert.AreEqual (MetadataType.Int32, int32_def.MetadataType);
 		}
+
+		[TestIL ("explicitthis.il", Verify = false)]
+		public void ExplicitThis (ModuleDefinition module)
+		{
+			var type = module.GetType ("MakeDecision");
+			var method = type.GetMethod ("Decide");
+			var fptr = method.ReturnType as FunctionPointerType;
+
+			Assert.IsNotNull (fptr);
+			Assert.IsTrue (fptr.HasThis);
+			Assert.IsTrue (fptr.ExplicitThis);
+
+			Assert.AreEqual (0, fptr.Parameters [0].Sequence);
+			Assert.AreEqual (1, fptr.Parameters [1].Sequence);
+		}
 	}
 }

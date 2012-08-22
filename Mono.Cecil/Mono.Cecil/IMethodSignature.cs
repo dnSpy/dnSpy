@@ -46,6 +46,11 @@ namespace Mono.Cecil {
 
 	static partial class Mixin {
 
+		public static bool HasImplicitThis (this IMethodSignature self)
+		{
+			return self.HasThis && !self.ExplicitThis;
+		}
+
 		public static void MethodSignatureFullName (this IMethodSignature self, StringBuilder builder)
 		{
 			builder.Append ("(");
