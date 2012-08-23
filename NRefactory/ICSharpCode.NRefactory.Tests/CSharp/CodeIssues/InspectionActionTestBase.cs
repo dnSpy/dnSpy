@@ -36,17 +36,17 @@ namespace ICSharpCode.NRefactory.CSharp.CodeIssues
 {
 	public abstract class InspectionActionTestBase
 	{
-		protected static List<CodeIssue> GetIssues (ICodeIssueProvider action, string input, out TestRefactoringContext context)
+		protected static List<CodeIssue> GetIssues (ICodeIssueProvider action, string input, out TestRefactoringContext context, bool expectErrors = false)
 		{
-			context = TestRefactoringContext.Create (input);
+			context = TestRefactoringContext.Create (input, expectErrors);
 			
 			return new List<CodeIssue> (action.GetIssues (context));
 		}
 
-		protected static void CheckFix (TestRefactoringContext ctx, CodeIssue issue, string expectedOutput)
+		protected static void CheckFix (TestRefactoringContext ctx, CodeIssue issue, string expectedOutput, int fixIndex = 0)
 		{
 			using (var script = ctx.StartScript ())
-				issue.Actions.First ().Run (script);
+				issue.Actions[fixIndex].Run (script);
 			Assert.AreEqual (expectedOutput, ctx.Text);
 		}
 
@@ -62,6 +62,29 @@ namespace ICSharpCode.NRefactory.CSharp.CodeIssues
 				Console.WriteLine (ctx.Text);
 			}
 			Assert.AreEqual (expectedOutput, ctx.Text);
+		}
+
+		protected static void Test<T> (string input, int issueCount, string output = null, int issueToFix = -1)
+			where T : ICodeIssueProvider, new ()
+		{
+			TestRefactoringContext context;
+			var issues = GetIssues (new T (), input, out context);
+			Assert.AreEqual (issueCount, issues.Count);
+			if (issueCount == 0 || output == null) 
+				return;
+			if (issueToFix == -1)
+				CheckFix (context, issues, output);
+			else
+				CheckFix (context, issues [issueToFix], output);
+		}
+
+		protected static void Test<T> (string input, string output, int fixIndex)
+			where T : ICodeIssueProvider, new ()
+		{
+			TestRefactoringContext context;
+			var issues = GetIssues (new T (), input, out context);
+			Assert.AreEqual (1, issues.Count);
+			CheckFix (context, issues[0], output, fixIndex);
 		}
 	}
 	

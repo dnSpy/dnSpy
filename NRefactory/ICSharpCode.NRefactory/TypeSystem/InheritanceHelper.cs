@@ -39,7 +39,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		{
 			return GetBaseMembers(member, false).FirstOrDefault();
 		}
-		
+
 		/// <summary>
 		/// Gets all base members that have the same signature.
 		/// </summary>
@@ -50,7 +50,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		{
 			if (member == null)
 				throw new ArgumentNullException("member");
-			
+
 			if (member.IsExplicitInterfaceImplementation && member.ImplementedInterfaceMembers.Count == 1) {
 				// C#-style explicit interface implementation
 				member = member.ImplementedInterfaceMembers[0];
@@ -69,8 +69,14 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			foreach (IType baseType in allBaseTypes.Reverse()) {
 				if (baseType == member.DeclaringTypeDefinition)
 					continue;
-				
-				foreach (IMember baseMember in baseType.GetMembers(m => m.Name == member.Name, GetMemberOptions.IgnoreInheritedMembers)) {
+
+				IEnumerable<IMember> baseMembers;
+				if (member.EntityType == EntityType.Accessor) {
+					baseMembers = baseType.GetAccessors(m => m.Name == member.Name && !m.IsExplicitInterfaceImplementation, GetMemberOptions.IgnoreInheritedMembers);
+				} else {
+					baseMembers = baseType.GetMembers(m => m.Name == member.Name && !m.IsExplicitInterfaceImplementation, GetMemberOptions.IgnoreInheritedMembers);
+				}
+				foreach (IMember baseMember in baseMembers) {
 					if (SignatureComparer.Ordinal.Equals(member, baseMember)) {
 						if (specializedMember != null)
 							yield return SpecializedMember.Create(baseMember, specializedMember.Substitution);

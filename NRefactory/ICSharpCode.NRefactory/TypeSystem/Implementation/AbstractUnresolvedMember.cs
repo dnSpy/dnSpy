@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICSharpCode.NRefactory.Utils;
 
 namespace ICSharpCode.NRefactory.TypeSystem.Implementation
@@ -38,6 +39,20 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			interfaceImplementations = provider.InternList(interfaceImplementations);
 		}
 		
+		protected override void FreezeInternal()
+		{
+			base.FreezeInternal();
+			interfaceImplementations = FreezableHelper.FreezeList(interfaceImplementations);
+		}
+		
+		public override object Clone()
+		{
+			var copy = (AbstractUnresolvedMember)base.Clone();
+			if (interfaceImplementations != null)
+				copy.interfaceImplementations = new List<IMemberReference>(interfaceImplementations);
+			return copy;
+		}
+		
 		/*
 		[Serializable]
 		internal new class RareFields : AbstractUnresolvedEntity.RareFields
@@ -55,6 +70,8 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				interfaceImplementations = FreezableHelper.FreezeListAndElements(interfaceImplementations);
 				base.FreezeInternal();
 			}
+			
+			override Clone(){}
 		}
 		
 		internal override AbstractUnresolvedEntity.RareFields WriteRareFields()
@@ -82,20 +99,16 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
-		/*
-		public IList<IMemberReference> InterfaceImplementations {
+		public IList<IMemberReference> ExplicitInterfaceImplementations {
 			get {
+				/*
 				RareFields rareFields = (RareFields)this.rareFields;
 				if (rareFields == null || rareFields.interfaceImplementations == null) {
 					rareFields = (RareFields)WriteRareFields();
 					return rareFields.interfaceImplementations = new List<IMemberReference>();
 				}
 				return rareFields.interfaceImplementations;
-			}
-		}*/
-		
-		public IList<IMemberReference> ExplicitInterfaceImplementations {
-			get {
+				*/
 				if (interfaceImplementations == null)
 					interfaceImplementations = new List<IMemberReference>();
 				return interfaceImplementations;
@@ -125,6 +138,131 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
+		ITypeReference IMemberReference.DeclaringTypeReference {
+			get { return this.DeclaringTypeDefinition; }
+		}
+		
+		#region Resolve
 		public abstract IMember CreateResolved(ITypeResolveContext context);
+		
+		public virtual IMember Resolve(ITypeResolveContext context)
+		{
+			ITypeReference interfaceTypeReference = null;
+			if (this.IsExplicitInterfaceImplementation && this.ExplicitInterfaceImplementations.Count == 1)
+				interfaceTypeReference = this.ExplicitInterfaceImplementations[0].DeclaringTypeReference;
+			return Resolve(ExtendContextForType(context, this.DeclaringTypeDefinition), this.EntityType, this.Name, interfaceTypeReference);
+		}
+		
+		protected static ITypeResolveContext ExtendContextForType(ITypeResolveContext assemblyContext, IUnresolvedTypeDefinition typeDef)
+		{
+			if (typeDef == null)
+				return assemblyContext;
+			ITypeResolveContext parentContext;
+			if (typeDef.DeclaringTypeDefinition != null)
+				parentContext = ExtendContextForType(assemblyContext, typeDef.DeclaringTypeDefinition);
+			else
+				parentContext = assemblyContext;
+			ITypeDefinition resolvedTypeDef = typeDef.Resolve(assemblyContext).GetDefinition();
+			return typeDef.CreateResolveContext(parentContext).WithCurrentTypeDefinition(resolvedTypeDef);
+		}
+		
+		public static IMember Resolve(ITypeResolveContext context,
+		                              EntityType entityType,
+		                              string name,
+		                              ITypeReference explicitInterfaceTypeReference = null,
+		                              IList<string> typeParameterNames = null,
+		                              IList<ITypeReference> parameterTypeReferences = null)
+		{
+			if (context.CurrentTypeDefinition == null)
+				return null;
+			if (parameterTypeReferences == null)
+				parameterTypeReferences = EmptyList<ITypeReference>.Instance;
+			if (typeParameterNames == null || typeParameterNames.Count == 0) {
+				// non-generic member
+				// In this case, we can simply resolve the parameter types in the given context
+				var parameterTypes = parameterTypeReferences.Resolve(context);
+				if (explicitInterfaceTypeReference == null) {
+					foreach (IMember member in context.CurrentTypeDefinition.Members) {
+						if (member.IsExplicitInterfaceImplementation)
+							continue;
+						if (IsNonGenericMatch(member, entityType, name, parameterTypes))
+							return member;
+					}
+				} else {
+					IType explicitInterfaceType = explicitInterfaceTypeReference.Resolve(context);
+					foreach (IMember member in context.CurrentTypeDefinition.Members) {
+						if (!member.IsExplicitInterfaceImplementation)
+							continue;
+						if (member.ImplementedInterfaceMembers.Count != 1)
+							continue;
+						if (IsNonGenericMatch(member, entityType, name, parameterTypes)) {
+							if (explicitInterfaceType.Equals(member.ImplementedInterfaceMembers[0].DeclaringType))
+								return member;
+						}
+					}
+				}
+			} else {
+				// generic member
+				// In this case, we must specify the correct context for resolving the parameter types
+				foreach (IMethod method in context.CurrentTypeDefinition.Methods) {
+					if (method.EntityType != entityType)
+						continue;
+					if (method.Name != name)
+						continue;
+					if (method.Parameters.Count != parameterTypeReferences.Count)
+						continue;
+					// Compare type parameter count and names:
+					if (!typeParameterNames.SequenceEqual(method.TypeParameters.Select(tp => tp.Name)))
+						continue;
+					// Once we know the type parameter names are fitting, we can resolve the
+					// type references in the context of the method:
+					var contextForMethod = context.WithCurrentMember(method);
+					var parameterTypes = parameterTypeReferences.Resolve(contextForMethod);
+					if (!IsParameterTypeMatch(method, parameterTypes))
+						continue;
+					if (explicitInterfaceTypeReference == null) {
+						if (!method.IsExplicitInterfaceImplementation)
+							return method;
+					} else if (method.IsExplicitInterfaceImplementation && method.ImplementedInterfaceMembers.Count == 1) {
+						IType explicitInterfaceType = explicitInterfaceTypeReference.Resolve(contextForMethod);
+						if (explicitInterfaceType.Equals(method.ImplementedInterfaceMembers[0].DeclaringType))
+							return method;
+					}
+				}
+			}
+			return null;
+		}
+		
+		static bool IsNonGenericMatch(IMember member, EntityType entityType, string name, IList<IType> parameterTypes)
+		{
+			if (member.EntityType != entityType)
+				return false;
+			if (member.Name != name)
+				return false;
+			IMethod method = member as IMethod;
+			if (method != null && method.TypeParameters.Count > 0)
+				return false;
+			return IsParameterTypeMatch(member, parameterTypes);
+		}
+		
+		static bool IsParameterTypeMatch(IMember member, IList<IType> parameterTypes)
+		{
+			IParameterizedMember parameterizedMember = member as IParameterizedMember;
+			if (parameterizedMember == null) {
+				return parameterTypes.Count == 0;
+			} else if (parameterTypes.Count == parameterizedMember.Parameters.Count) {
+				for (int i = 0; i < parameterTypes.Count; i++) {
+					IType type1 = parameterTypes[i];
+					IType type2 = parameterizedMember.Parameters[i].Type;
+					if (!type1.Equals(type2)) {
+						return false;
+					}
+				}
+				return true;
+			} else {
+				return false;
+			}
+		}
+		#endregion
 	}
 }

@@ -33,15 +33,13 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	using C = Conversion;
 	
 	[TestFixture]
-	public unsafe class ConversionsTest
+	public unsafe class ConversionsTest : ResolverTestBase
 	{
-		ICompilation compilation;
 		CSharpConversions conversions;
 		
-		[SetUp]
-		public void SetUp()
+		public override void SetUp()
 		{
-			compilation = new SimpleCompilation(CecilLoaderTests.Mscorlib);
+			base.SetUp();
 			conversions = new CSharpConversions(compilation);
 		}
 		
@@ -50,13 +48,6 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			IType from2 = compilation.FindType(from);
 			IType to2 = compilation.FindType(to);
 			return conversions.ImplicitConversion(from2, to2);
-		}
-		
-		Conversion ExplicitConversion(Type from, Type to)
-		{
-			IType from2 = compilation.FindType(from);
-			IType to2 = compilation.FindType(to);
-			return conversions.ExplicitConversion(from2, to2);
 		}
 		
 		[Test]
@@ -75,8 +66,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		[Test]
 		public void DynamicIdentityConversions()
 		{
-			Assert.AreEqual(C.IdentityConversion, ImplicitConversion(typeof(object), typeof(ReflectionHelper.Dynamic)));
-			Assert.AreEqual(C.IdentityConversion, ImplicitConversion(typeof(ReflectionHelper.Dynamic), typeof(object)));
+			Assert.AreEqual(C.IdentityConversion, ImplicitConversion(typeof(object), typeof(dynamic)));
+			Assert.AreEqual(C.IdentityConversion, ImplicitConversion(typeof(dynamic), typeof(object)));
 		}
 		
 		[Test]
@@ -105,6 +96,16 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			Assert.AreEqual(C.None,                      ImplicitConversion(typeof(float), typeof(decimal)));
 			Assert.AreEqual(C.ImplicitNumericConversion, ImplicitConversion(typeof(char), typeof(long)));
 			Assert.AreEqual(C.ImplicitNumericConversion, ImplicitConversion(typeof(uint), typeof(long)));
+		}
+		
+		[Test]
+		public void EnumerationConversion()
+		{
+			ResolveResult zero = new ConstantResolveResult(compilation.FindType(KnownTypeCode.Int32), 0);
+			ResolveResult one = new ConstantResolveResult(compilation.FindType(KnownTypeCode.Int32), 1);
+			C implicitEnumerationConversion = C.EnumerationConversion(true, false);
+			Assert.AreEqual(implicitEnumerationConversion, conversions.ImplicitConversion(zero, compilation.FindType(typeof(StringComparison))));
+			Assert.AreEqual(C.None, conversions.ImplicitConversion(one, compilation.FindType(typeof(StringComparison))));
 		}
 		
 		[Test]
@@ -157,12 +158,24 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		}
 		
 		[Test]
-		public void SimpleDynamicConversions()
+		public void ConversionToDynamic()
 		{
 			Assert.AreEqual(C.ImplicitReferenceConversion, ImplicitConversion(typeof(string),  typeof(dynamic)));
-			Assert.AreEqual(C.ImplicitDynamicConversion,   ImplicitConversion(typeof(dynamic), typeof(string)));
 			Assert.AreEqual(C.BoxingConversion,            ImplicitConversion(typeof(int),     typeof(dynamic)));
-			Assert.AreEqual(C.ImplicitDynamicConversion,   ImplicitConversion(typeof(dynamic), typeof(int)));
+		}
+		
+		[Test]
+		public void ConversionFromDynamic()
+		{
+			// There is no conversion from the type 'dynamic' to other types (except the identity conversion to object).
+			// Such conversions only exists from dynamic expression.
+			// This is an important distinction for type inference (see TypeInferenceTests.IEnumerableCovarianceWithDynamic)
+			Assert.AreEqual(C.None, ImplicitConversion(typeof(dynamic), typeof(string)));
+			Assert.AreEqual(C.None, ImplicitConversion(typeof(dynamic), typeof(int)));
+			
+			var dynamicRR = new ResolveResult(SpecialType.Dynamic);
+			Assert.AreEqual(C.ImplicitDynamicConversion, conversions.ImplicitConversion(dynamicRR, compilation.FindType(typeof(string))));
+			Assert.AreEqual(C.ImplicitDynamicConversion, conversions.ImplicitConversion(dynamicRR, compilation.FindType(typeof(int))));
 		}
 		
 		[Test]
@@ -231,16 +244,6 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		{
 			Assert.AreEqual(C.ImplicitPointerConversion, ImplicitConversion(typeof(Null), typeof(int*)));
 			Assert.AreEqual(C.ImplicitPointerConversion, ImplicitConversion(typeof(int*), typeof(void*)));
-		}
-		
-		[Test]
-		public void ExplicitPointerConversion()
-		{
-			Assert.AreEqual(C.ExplicitPointerConversion, ExplicitConversion(typeof(int*), typeof(short)));
-			Assert.AreEqual(C.ExplicitPointerConversion, ExplicitConversion(typeof(short), typeof(void*)));
-			
-			Assert.AreEqual(C.ExplicitPointerConversion, ExplicitConversion(typeof(void*), typeof(int*)));
-			Assert.AreEqual(C.ExplicitPointerConversion, ExplicitConversion(typeof(long*), typeof(byte*)));
 		}
 		
 		[Test]
@@ -512,5 +515,91 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			IType type2 = new ParameterizedType(resolvedA, new [] { new ParameterizedType(resolvedB, new[] { compilation.FindType(KnownTypeCode.String) }) });
 			Assert.IsFalse(conversions.ImplicitConversion(type1, type2).IsValid);
 		}
+
+		[Test]
+		public void ImplicitTypeParameterConversion()
+		{
+			string program = @"using System;
+class Test {
+	public void M<T, U>(T t) where T : U {
+		U u = $t$;
+	}
+}";
+			Assert.AreEqual(C.BoxingConversion, GetConversion(program));
+		}
+		
+		[Test]
+		public void InvalidImplicitTypeParameterConversion()
+		{
+			string program = @"using System;
+class Test {
+	public void M<T, U>(T t) where U : T {
+		U u = $t$;
+	}
+}";
+			Assert.AreEqual(C.None, GetConversion(program));
+		}
+		
+		[Test]
+		public void ImplicitTypeParameterArrayConversion()
+		{
+			string program = @"using System;
+class Test {
+	public void M<T, U>(T[] t) where T : U {
+		U[] u = $t$;
+	}
+}";
+			// invalid, e.g. T=int[], U=object[]
+			Assert.AreEqual(C.None, GetConversion(program));
+		}
+		
+		[Test]
+		public void ImplicitTypeParameterConversionWithClassConstraint()
+		{
+			string program = @"using System;
+class Test {
+	public void M<T, U>(T t) where T : class, U where U : class {
+		U u = $t$;
+	}
+}";
+			Assert.AreEqual(C.ImplicitReferenceConversion, GetConversion(program));
+		}
+		
+		[Test]
+		public void ImplicitTypeParameterArrayConversionWithClassConstraint()
+		{
+			string program = @"using System;
+class Test {
+	public void M<T, U>(T[] t) where T : class, U where U : class {
+		U[] u = $t$;
+	}
+}";
+			Assert.AreEqual(C.ImplicitReferenceConversion, GetConversion(program));
+		}
+		
+		[Test]
+		public void ImplicitTypeParameterConversionWithClassConstraintOnlyOnT()
+		{
+			string program = @"using System;
+class Test {
+	public void M<T, U>(T t) where T : class, U {
+		U u = $t$;
+	}
+}";
+			Assert.AreEqual(C.ImplicitReferenceConversion, GetConversion(program));
+		}
+		
+		[Test]
+		public void ImplicitTypeParameterArrayConversionWithClassConstraintOnlyOnT()
+		{
+			string program = @"using System;
+class Test {
+	public void M<T, U>(T[] t) where T : class, U {
+		U[] u = $t$;
+	}
+}";
+			Assert.AreEqual(C.ImplicitReferenceConversion, GetConversion(program));
+		}
+		
 	}
 }

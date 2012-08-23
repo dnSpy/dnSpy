@@ -33,16 +33,20 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring.ExtractMethod
 	class VariableLookupVisitor : DepthFirstAstVisitor
 	{
 		readonly RefactoringContext context;
-
+		
 		public List<IVariable> UsedVariables = new List<IVariable> ();
-
+		
 		TextLocation startLocation = TextLocation.Empty;
 		TextLocation endLocation = TextLocation.Empty;
-
-
+		
 		public VariableLookupVisitor (RefactoringContext context)
 		{
 			this.context = context;
+		}
+		
+		public bool Has (IVariable item1)
+		{
+			return UsedVariables.Contains (item1);
 		}
 		
 		public void SetAnalyzedRange(AstNode start, AstNode end, bool startInclusive = true, bool endInclusive = true)
@@ -54,17 +58,18 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring.ExtractMethod
 			startLocation = startInclusive ? start.StartLocation : start.EndLocation;
 			endLocation = endInclusive ? end.EndLocation : end.StartLocation;
 		}
-
+		
 		public override void VisitIdentifierExpression(IdentifierExpression identifierExpression)
 		{
 			if (startLocation.IsEmpty || startLocation <= identifierExpression.StartLocation && identifierExpression.EndLocation <= endLocation) {
 				var result = context.Resolve(identifierExpression);
 				var local = result as LocalResolveResult;
-				if (local != null && !UsedVariables.Contains(local.Variable))
+				if (local != null && !UsedVariables.Contains(local.Variable)) {
 					UsedVariables.Add(local.Variable);
+				}
 			}
 		}
-
+		
 		public override void VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement)
 		{
 			base.VisitVariableDeclarationStatement(variableDeclarationStatement);
@@ -78,14 +83,14 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring.ExtractMethod
 			}
 		}
 		
-
+		
 		public static List<IVariable> Analyze(RefactoringContext context, Expression expression)
 		{
 			var visitor = new VariableLookupVisitor(context);
 			expression.AcceptVisitor(visitor);
 			return visitor.UsedVariables;
 		}
-
+		
 		public static List<IVariable> Analyze(RefactoringContext context, List<Statement> statements)
 		{
 			var visitor = new VariableLookupVisitor(context);

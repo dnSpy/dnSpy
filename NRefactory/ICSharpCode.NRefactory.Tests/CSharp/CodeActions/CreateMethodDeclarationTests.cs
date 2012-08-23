@@ -699,6 +699,20 @@ class Test
 }");
 		}
 
+		[Test]
+		public void TestEnumCase()
+		{
+			TestWrongContext<CreateMethodDeclarationAction>(@"
+enum AEnum { A }
+class Foo
+{
+	public void Test ()
+	{
+		AEnum e = AEnum.B$ar ();
+	}
+}
+");
+		}
 
 
 	}

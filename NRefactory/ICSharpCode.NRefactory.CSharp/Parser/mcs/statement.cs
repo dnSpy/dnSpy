@@ -281,11 +281,16 @@ namespace Mono.CSharp {
 		public Expression expr;
 		public Statement  EmbeddedStatement;
 
-		public Do (Statement statement, BooleanExpression bool_expr, Location l)
+		public Do (Statement statement, BooleanExpression bool_expr, Location doLocation, Location whileLocation)
 		{
 			expr = bool_expr;
 			EmbeddedStatement = statement;
-			loc = l;
+			loc = doLocation;
+			WhileLocation = whileLocation;
+		}
+
+		public Location WhileLocation {
+			get; private set;
 		}
 
 		public override bool Resolve (BlockContext ec)
@@ -332,7 +337,7 @@ namespace Mono.CSharp {
 			ec.MarkLabel (ec.LoopBegin);
 
 			// Mark start of while condition
-			ec.Mark (expr.Location);
+			ec.Mark (WhileLocation);
 
 			//
 			// Dead code elimination
@@ -461,7 +466,7 @@ namespace Mono.CSharp {
 			
 				ec.MarkLabel (ec.LoopBegin);
 
-				ec.Mark (expr.Location);
+				ec.Mark (loc);
 				expr.EmitBranchable (ec, while_loop, true);
 				
 				ec.MarkLabel (ec.LoopEnd);
@@ -784,12 +789,10 @@ namespace Mono.CSharp {
 
 		public sealed override bool Resolve (BlockContext ec)
 		{
-			if (!DoResolve (ec))
-				return false;
-
+			var res = DoResolve (ec);
 			unwind_protect = ec.CurrentBranching.AddReturnOrigin (ec.CurrentBranching.CurrentUsageVector, this);
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
-			return true;
+			return res;
 		}
 	}
 
@@ -880,7 +883,6 @@ namespace Mono.CSharp {
 							return true;
 						}
 
-						// TODO: Better error message
 						if (async_type.Kind == MemberKind.Void) {
 							ec.Report.Error (127, loc,
 								"`{0}': A return keyword must not be followed by any expression when method returns void",
@@ -911,6 +913,15 @@ namespace Mono.CSharp {
 						}
 					}
 				} else {
+					// Same error code as .NET but better error message
+					if (block_return_type.Kind == MemberKind.Void) {
+						ec.Report.Error (127, loc,
+							"`{0}': A return keyword must not be followed by any expression when delegate returns void",
+							am.GetSignatureForError ());
+
+						return false;
+					}
+
 					var l = am as AnonymousMethodBody;
 					if (l != null && l.ReturnTypeInference != null && expr != null) {
 						l.ReturnTypeInference.AddCommonTypeBound (expr.Type);
@@ -952,10 +963,9 @@ namespace Mono.CSharp {
 						async_return.EmitAssign (ec);
 
 						ec.EmitEpilogue ();
-
-						ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, async_body.BodyEnd);
 					}
 
+					ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, async_body.BodyEnd);
 					return;
 				}
 
@@ -1438,6 +1448,7 @@ namespace Mono.CSharp {
 		protected FullNamedExpression type_expr;
 		protected LocalVariable li;
 		protected List<Declarator> declarators;
+		TypeSpec type;
 
 		public BlockVariableDeclaration (FullNamedExpression type, LocalVariable li)
 		{
@@ -1514,8 +1525,7 @@ namespace Mono.CSharp {
 
 		public bool Resolve (BlockContext bc, bool resolveDeclaratorInitializers)
 		{
-			if (li.Type == null) {
-				TypeSpec type = null;
+			if (type == null && !li.IsCompilerGenerated) {
 				var vexpr = type_expr as VarExpr;
 
 				//
@@ -1623,8 +1633,10 @@ namespace Mono.CSharp {
 			if (declarators != null) {
 				foreach (var d in declarators) {
 					d.Variable.CreateBuilder (ec);
-					if (d.Initializer != null)
+					if (d.Initializer != null) {
+						ec.Mark (d.Variable.Location);
 						((ExpressionStatement) d.Initializer).EmitStatement (ec);
+					}
 				}
 			}
 		}
@@ -2463,15 +2475,6 @@ namespace Mono.CSharp {
 			//
 			if (ec.CurrentAnonymousMethod is StateMachineInitializer && ParametersBlock.Original == ec.CurrentAnonymousMethod.Block.Original)
 				return ec.CurrentAnonymousMethod.Storey;
-
-			//
-			// When referencing a variable inside iterator where all
-			// variables will be captured anyway we don't need to create
-			// another storey context
-			//
-			if (ParametersBlock.StateMachine is IteratorStorey) {
-				return ParametersBlock.StateMachine;
-			}
 
 			if (am_storey == null) {
 				MemberBase mc = ec.MemberContext as MemberBase;
@@ -4248,10 +4251,10 @@ namespace Mono.CSharp {
 
 				Expression cond = null;
 				for (int ci = 0; ci < s.Labels.Count; ++ci) {
-					var e = new Binary (Binary.Operator.Equality, value, s.Labels[ci].Converted, loc);
+					var e = new Binary (Binary.Operator.Equality, value, s.Labels[ci].Converted);
 
 					if (ci > 0) {
-						cond = new Binary (Binary.Operator.LogicalOr, cond, e, loc);
+						cond = new Binary (Binary.Operator.LogicalOr, cond, e);
 					} else {
 						cond = e;
 					}
@@ -4541,6 +4544,12 @@ namespace Mono.CSharp {
 			ec.MarkLabel (start_finally);
 
 			if (finally_host != null) {
+				finally_host.Define ();
+				finally_host.Emit ();
+
+				// Now it's safe to add, to close it properly and emit sequence points
+				finally_host.Parent.AddMember (finally_host);
+
 				var ce = new CallEmitter ();
 				ce.InstanceExpression = new CompilerGeneratedThis (ec.CurrentType, loc);
 				ce.EmitPredefined (ec, finally_host.Spec, new Arguments (0));
@@ -4755,21 +4764,9 @@ namespace Mono.CSharp {
 				locked = false;
 			}
 
-			using (ec.Set (ResolveContext.Options.LockScope)) {
-				ec.StartFlowBranching (this);
-				Statement.Resolve (ec);
-				ec.EndFlowBranching ();
-			}
-
-			if (lv != null) {
-				lv.IsLockedByStatement = locked;
-			}
-
-			base.Resolve (ec);
-
 			//
 			// Have to keep original lock value around to unlock same location
-			// in the case the original has changed or is null
+			// in the case of original value has changed or is null
 			//
 			expr_copy = TemporaryVariableReference.Create (ec.BuiltinTypes.Object, ec.CurrentBlock, loc);
 			expr_copy.Resolve (ec);
@@ -4781,6 +4778,18 @@ namespace Mono.CSharp {
 				lock_taken = TemporaryVariableReference.Create (ec.BuiltinTypes.Bool, ec.CurrentBlock, loc);
 				lock_taken.Resolve (ec);
 			}
+
+			using (ec.Set (ResolveContext.Options.LockScope)) {
+				ec.StartFlowBranching (this);
+				Statement.Resolve (ec);
+				ec.EndFlowBranching ();
+			}
+
+			if (lv != null) {
+				lv.IsLockedByStatement = locked;
+			}
+
+			base.Resolve (ec);
 
 			return true;
 		}
@@ -5136,8 +5145,8 @@ namespace Mono.CSharp {
 					// fixed (T* e_ptr = (e == null || e.Length == 0) ? null : converted [0])
 					//
 					converted = new Conditional (new BooleanExpression (new Binary (Binary.Operator.LogicalOr,
-						new Binary (Binary.Operator.Equality, initializer, new NullLiteral (loc), loc),
-						new Binary (Binary.Operator.Equality, new MemberAccess (initializer, "Length"), new IntConstant (bc.BuiltinTypes, 0, loc), loc), loc)),
+						new Binary (Binary.Operator.Equality, initializer, new NullLiteral (loc)),
+						new Binary (Binary.Operator.Equality, new MemberAccess (initializer, "Length"), new IntConstant (bc.BuiltinTypes, 0, loc)))),
 							new NullLiteral (loc),
 							converted, loc);
 
@@ -5703,7 +5712,7 @@ namespace Mono.CSharp {
 
 				// Add conditional call when disposing possible null variable
 				if (!type.IsStruct || type.IsNullableType)
-					dispose = new If (new Binary (Binary.Operator.Inequality, lvr, new NullLiteral (loc), loc), dispose, dispose.loc);
+					dispose = new If (new Binary (Binary.Operator.Inequality, lvr, new NullLiteral (loc)), dispose, dispose.loc);
 
 				return dispose;
 			}
@@ -5717,7 +5726,7 @@ namespace Mono.CSharp {
 			{
 				for (int i = declarators.Count - 1; i >= 0; --i) {
 					var d = declarators [i];
-					var vd = new VariableDeclaration (d.Variable, type_expr.Location);
+					var vd = new VariableDeclaration (d.Variable, d.Variable.Location);
 					vd.Initializer = d.Initializer;
 					vd.IsNested = true;
 					vd.dispose_call = CreateDisposeCall (bc, d.Variable);
@@ -5953,7 +5962,7 @@ namespace Mono.CSharp {
 				if (variable_ref == null)
 					return false;
 
-				for_each.body.AddScopeStatement (new StatementExpression (new CompilerAssign (variable_ref, access, Location.Null), for_each.variable.Location));
+				for_each.body.AddScopeStatement (new StatementExpression (new CompilerAssign (variable_ref, access, Location.Null), for_each.type.Location));
 
 				bool ok = true;
 
@@ -6049,7 +6058,7 @@ namespace Mono.CSharp {
 					var idisaposable_test = new Binary (Binary.Operator.Inequality, new CompilerAssign (
 						dispose_variable.CreateReferenceExpression (bc, loc),
 						new As (lv.CreateReferenceExpression (bc, loc), new TypeExpression (dispose_variable.Type, loc), loc),
-						loc), new NullLiteral (loc), loc);
+						loc), new NullLiteral (loc));
 
 					var m = bc.Module.PredefinedMembers.IDisposableDispose.Resolve (loc);
 
@@ -6264,7 +6273,7 @@ namespace Mono.CSharp {
 				if (variable_ref == null)
 					return false;
 
-				for_each.body.AddScopeStatement (new StatementExpression (new CompilerAssign (variable_ref, current_pe, Location.Null), variable.Location));
+				for_each.body.AddScopeStatement (new StatementExpression (new CompilerAssign (variable_ref, current_pe, Location.Null), for_each.type.Location));
 
 				var init = new Invocation (get_enumerator_mg, null);
 

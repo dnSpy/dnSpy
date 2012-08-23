@@ -435,12 +435,15 @@ namespace Mono.CSharp {
 		// A special method to work with member lookup only. It returns a list of all members named @name
 		// starting from @container. It's very performance sensitive
 		//
-		public static IList<MemberSpec> FindMembers (TypeSpec container, string name, bool declaredOnly)
+		// declaredOnlyClass cannot be used interfaces. Manual filtering is required because names are
+		// compacted
+		//
+		public static IList<MemberSpec> FindMembers (TypeSpec container, string name, bool declaredOnlyClass)
 		{
 			IList<MemberSpec> applicable;
 
 			do {
-				if (container.MemberCache.member_hash.TryGetValue (name, out applicable) || declaredOnly)
+				if (container.MemberCache.member_hash.TryGetValue (name, out applicable) || declaredOnlyClass)
 					return applicable;
 
 				container = container.BaseType;

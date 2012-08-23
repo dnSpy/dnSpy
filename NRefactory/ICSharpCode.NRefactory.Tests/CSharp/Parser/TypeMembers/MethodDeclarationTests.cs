@@ -333,6 +333,19 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 		}
 		
 		[Test]
+		public void ExtensionMethodWithAttributeTest()
+		{
+			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>(
+				"public static int ToInt32([Attr] this string s) { return int.Parse(s); }"
+			);
+			Assert.AreEqual("ToInt32", md.Name);
+			Assert.IsTrue(md.IsExtensionMethod);
+			Assert.AreEqual("s", md.Parameters.Single().Name);
+			Assert.AreEqual(KnownTypeCode.String, ((PrimitiveType)md.Parameters.Single().Type).KnownTypeCode);
+			Assert.AreEqual(1, md.Parameters.Single().Attributes.Count);
+		}
+		
+		[Test]
 		public void VoidExtensionMethodTest()
 		{
 			MethodDeclaration md = ParseUtilCSharp.ParseTypeMember<MethodDeclaration>(

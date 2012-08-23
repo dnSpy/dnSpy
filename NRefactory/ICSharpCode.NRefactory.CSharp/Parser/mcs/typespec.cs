@@ -23,6 +23,9 @@ using System.Reflection;
 
 namespace Mono.CSharp
 {
+	//
+	// Inflated or non-inflated representation of any type. 
+	//
 	public class TypeSpec : MemberSpec
 	{
 		protected MetaType info;
@@ -306,6 +309,9 @@ namespace Mono.CSharp
 			}
 		}
 
+		//
+		// A cache of all type members (including nested types)
+		//
 		public MemberCache MemberCache {
 			get {
 				if (cache == null || (state & StateFlags.PendingMemberCacheMembers) != 0)
@@ -435,6 +441,9 @@ namespace Mono.CSharp
 			return aua;
 		}
 
+		//
+		// Return metadata information used during emit to describe the type
+		//
 		public virtual MetaType GetMetaInfo ()
 		{
 			return info;
@@ -445,6 +454,9 @@ namespace Mono.CSharp
 			return this;
 		}
 
+		//
+		// Text representation of type used by documentation writer
+		//
 		public override string GetSignatureForDocumentation ()
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -651,6 +663,9 @@ namespace Mono.CSharp
 			return new InflatedTypeSpec (inflator.Context, this, inflator.TypeInstance, targs);
 		}
 
+		//
+		// Inflates current type using specific type arguments
+		//
 		public InflatedTypeSpec MakeGenericType (IModuleContext context, TypeSpec[] targs)
 		{
 			if (targs.Length == 0 && !IsNested)
@@ -721,6 +736,18 @@ namespace Mono.CSharp
 				}
 			}
 
+			if (MemberDefinition.TypeParametersCount > 0) {
+				foreach (var tp in MemberDefinition.TypeParameters) {
+					var tp_missing = tp.GetMissingDependencies ();
+					if (tp_missing != null) {
+						if (missing == null)
+							missing = new List<TypeSpec> ();
+
+						missing.AddRange (tp_missing);
+					}
+				}
+			}
+
 			if (missing != null || BaseType == null)
 				return missing;
 
@@ -741,6 +768,10 @@ namespace Mono.CSharp
 		}
 	}
 
+	//
+	// Special version used for types which must exist in corlib or
+	// the compiler cannot work
+	//
 	public sealed class BuiltinTypeSpec : TypeSpec
 	{
 		public enum Type
@@ -922,6 +953,9 @@ namespace Mono.CSharp
 		}
 	}
 
+	//
+	// Various type comparers used by compiler
+	//
 	static class TypeSpecComparer
 	{
 		//
@@ -1333,7 +1367,7 @@ namespace Mono.CSharp
 			cache = MemberCache.Empty;
 
 			// Make all internal types CLS-compliant, non-obsolete
-			state = (state & ~(StateFlags.CLSCompliant_Undetected | StateFlags.Obsolete_Undetected)) | StateFlags.CLSCompliant;
+			state = (state & ~(StateFlags.CLSCompliant_Undetected | StateFlags.Obsolete_Undetected | StateFlags.MissingDependency_Undetected)) | StateFlags.CLSCompliant;
 		}
 
 		#region Properties
@@ -1447,6 +1481,9 @@ namespace Mono.CSharp
 		#endregion
 	}
 
+	//
+	// Common base class for composite types
+	//
 	public abstract class ElementTypeSpec : TypeSpec, ITypeDefinition
 	{
 		protected ElementTypeSpec (MemberKind kind, TypeSpec element, MetaType info)
@@ -1454,11 +1491,8 @@ namespace Mono.CSharp
 		{
 			this.Element = element;
 
-			// Some flags can be copied directly from the element
-			const StateFlags shared_flags = StateFlags.CLSCompliant | StateFlags.CLSCompliant_Undetected
-				| StateFlags.Obsolete | StateFlags.Obsolete_Undetected | StateFlags.HasDynamicElement;
-			state &= ~shared_flags;
-			state |= (element.state & shared_flags);
+			state &= ~SharedStateFlags;
+			state |= (element.state & SharedStateFlags);
 
 			if (element.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
 				state |= StateFlags.HasDynamicElement;

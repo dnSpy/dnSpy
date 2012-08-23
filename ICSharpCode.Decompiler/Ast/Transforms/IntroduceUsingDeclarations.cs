@@ -55,7 +55,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				for (int i = 1; i < parts.Length; i++) {
 					nsType = new MemberType { Target = nsType, MemberName = parts[i] };
 				}
-				compilationUnit.InsertChildAfter(null, new UsingDeclaration { Import = nsType }, CompilationUnit.MemberRole);
+				compilationUnit.InsertChildAfter(null, new UsingDeclaration { Import = nsType }, SyntaxTree.MemberRole);
 			}
 			
 			if (!context.Settings.FullyQualifyAmbiguousTypeNames)

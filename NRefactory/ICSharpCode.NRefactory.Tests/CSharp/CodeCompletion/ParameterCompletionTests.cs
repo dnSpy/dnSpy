@@ -1,4 +1,4 @@
-//
+﻿//
 // ParameterCompletionTests.cs
 //
 // Author:
@@ -254,43 +254,45 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 			#endregion
 		}
 		
-		internal static IParameterDataProvider CreateProvider (string text)
+		internal static IParameterDataProvider CreateProvider(string text)
 		{
 			string parsedText;
 			string editorText;
-			int cursorPosition = text.IndexOf ('$');
-			int endPos = text.IndexOf ('$', cursorPosition + 1);
-			if (endPos == -1)
-				parsedText = editorText = text.Substring (0, cursorPosition) + text.Substring (cursorPosition + 1);
-			else {
-				parsedText = text.Substring (0, cursorPosition) + new string (' ', endPos - cursorPosition) + text.Substring (endPos + 1);
-				editorText = text.Substring (0, cursorPosition) + text.Substring (cursorPosition + 1, endPos - cursorPosition - 1) + text.Substring (endPos + 1);
+			int cursorPosition = text.IndexOf('$');
+			int endPos = text.IndexOf('$', cursorPosition + 1);
+			if (endPos == -1) {
+				parsedText = editorText = text.Substring(0, cursorPosition) + text.Substring(cursorPosition + 1);
+			} else {
+				parsedText = text.Substring(0, cursorPosition) + new string(' ', endPos - cursorPosition) + text.Substring(endPos + 1);
+				editorText = text.Substring(0, cursorPosition) + text.Substring(cursorPosition + 1, endPos - cursorPosition - 1) + text.Substring(endPos + 1);
 				cursorPosition = endPos - 1; 
 			}
-			var doc = new ReadOnlyDocument (editorText);
+			var doc = new ReadOnlyDocument(editorText);
 			
-			IProjectContent pctx = new CSharpProjectContent ();
-			pctx = pctx.AddAssemblyReferences (new [] { CecilLoaderTests.Mscorlib, CecilLoaderTests.SystemCore });
+			IProjectContent pctx = new CSharpProjectContent();
+			pctx = pctx.AddAssemblyReferences(new [] { CecilLoaderTests.Mscorlib, CecilLoaderTests.SystemCore });
 			
-			var compilationUnit = new CSharpParser ().Parse (parsedText, "program.cs");
-			compilationUnit.Freeze ();
+			var syntaxTree = new CSharpParser().Parse(parsedText, "program.cs");
+			syntaxTree.Freeze();
 			
-			var parsedFile = compilationUnit.ToTypeSystem ();
-			pctx = pctx.UpdateProjectContent (null, parsedFile);
-			var cmp = pctx.CreateCompilation ();
-			var loc = doc.GetLocation (cursorPosition);
+			var unresolvedFile = syntaxTree.ToTypeSystem();
+			pctx = pctx.AddOrUpdateFiles(unresolvedFile);
+			var cmp = pctx.CreateCompilation();
+			var loc = doc.GetLocation(cursorPosition);
 			
 			
-			var rctx = new CSharpTypeResolveContext (cmp.MainAssembly);
-			rctx = rctx.WithUsingScope (parsedFile.GetUsingScope (loc).Resolve (cmp));
-			var curDef = parsedFile.GetInnermostTypeDefinition (loc);
+			var rctx = new CSharpTypeResolveContext(cmp.MainAssembly);
+			rctx = rctx.WithUsingScope(unresolvedFile.GetUsingScope(loc).Resolve(cmp));
+			var curDef = unresolvedFile.GetInnermostTypeDefinition(loc);
 			if (curDef != null) {
-				rctx = rctx.WithCurrentTypeDefinition (curDef.Resolve (rctx).GetDefinition ());
-				var curMember = parsedFile.GetMember (loc);
-				if (curMember != null)
-					rctx = rctx.WithCurrentMember (curMember.CreateResolved (rctx));
+				rctx = rctx.WithCurrentTypeDefinition(curDef.Resolve(rctx).GetDefinition());
+				var curMember = unresolvedFile.GetMember(loc);
+				if (curMember != null) {
+					rctx = rctx.WithCurrentMember(curMember.CreateResolved(rctx));
+				}
 			}
-			var engine = new CSharpParameterCompletionEngine (doc, new TestFactory (pctx), pctx, rctx, compilationUnit, parsedFile);
+			var mb = new DefaultCompletionContextProvider(doc, unresolvedFile);
+			var engine = new CSharpParameterCompletionEngine (doc, mb, new TestFactory (pctx), pctx, rctx);
 			return engine.GetParameterDataProvider (cursorPosition, doc.GetCharAt (cursorPosition - 1));
 		}
 		
@@ -590,7 +592,7 @@ class TestClass
 	}
 }");
 			Assert.IsNotNull (provider, "provider was not created.");
-			Assert.AreEqual (6, provider.Count);
+			Assert.IsTrue (provider.Count > 0);
 		}
 		
 		[Test()]
@@ -940,6 +942,40 @@ class TestClass
 }
 ");
 			Assert.IsTrue (provider == null || provider.Count == 0);
+		}
+
+		/// <summary>
+		/// Bug 4927 - [New Resolver] Autocomplete shows non-static methods when using class name
+		/// </summary>
+		[Test()]
+		public void TestBug4927 ()
+		{
+			IParameterDataProvider provider = CreateProvider (
+@"
+public class A
+{
+  // static method
+  public static void Method(string someParameter, object anotherParameter)
+  {
+  }
+
+  // instance method
+  public void Method()
+  {
+  }
+}
+
+
+public class B
+{
+  public static void Main()
+  {
+    $A.Method($
+  }
+}
+");
+			Assert.IsNotNull (provider, "provider was not created.");
+			Assert.AreEqual (1, provider.Count);
 		}
 	}
 }

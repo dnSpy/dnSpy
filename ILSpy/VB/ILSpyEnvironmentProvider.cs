@@ -36,7 +36,7 @@ namespace ICSharpCode.ILSpy.VB
 			}
 		}
 
-		readonly CecilLoader loader = new CecilLoader(false);
+		readonly CecilLoader loader = new CecilLoader();
 		
 		public string GetTypeNameForAttribute(ICSharpCode.NRefactory.CSharp.Attribute attribute)
 		{

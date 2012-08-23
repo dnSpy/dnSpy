@@ -144,7 +144,7 @@ namespace Mono.CSharp
 		{
 			var ctx = module.Compiler;
 			foreach (var p in types) {
-				var found = PredefinedType.Resolve (module, p.Kind, p.Namespace, p.Name, p.Arity);
+				var found = PredefinedType.Resolve (module, p.Kind, p.Namespace, p.Name, p.Arity, true, true);
 				if (found == null || found == p)
 					continue;
 
@@ -340,6 +340,7 @@ namespace Mono.CSharp
 		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderSetStateMachine;
 		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderOnCompleted;
 		public readonly PredefinedMember<MethodSpec> AsyncVoidMethodBuilderOnCompletedUnsafe;
+		public readonly PredefinedMember<MethodSpec> AsyncStateMachineAttributeCtor;
 		public readonly PredefinedMember<MethodSpec> DebuggerBrowsableAttributeCtor;
 		public readonly PredefinedMember<MethodSpec> DecimalCtor;
 		public readonly PredefinedMember<MethodSpec> DecimalCtorInt;
@@ -357,6 +358,7 @@ namespace Mono.CSharp
 		public readonly PredefinedMember<MethodSpec> IEnumerableGetEnumerator;
 		public readonly PredefinedMember<MethodSpec> InterlockedCompareExchange;
 		public readonly PredefinedMember<MethodSpec> InterlockedCompareExchange_T;
+		public readonly PredefinedMember<MethodSpec> IteratorStateMachineAttributeCtor;
 		public readonly PredefinedMember<MethodSpec> FixedBufferAttributeCtor;
 		public readonly PredefinedMember<MethodSpec> MethodInfoGetMethodFromHandle;
 		public readonly PredefinedMember<MethodSpec> MethodInfoGetMethodFromHandle2;
@@ -549,6 +551,10 @@ namespace Mono.CSharp
 							}, false),
 					btypes.Void));
 
+			AsyncStateMachineAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.AsyncStateMachine,
+				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (
+					btypes.Type)));
+
 			DebuggerBrowsableAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.DebuggerBrowsable,
 				MemberFilter.Constructor (null));
 
@@ -624,6 +630,10 @@ namespace Mono.CSharp
 								new TypeParameterSpec (0, tp, SpecialConstraint.None, Variance.None, null),
 							}, false),
 					null));
+
+			IteratorStateMachineAttributeCtor = new PredefinedMember<MethodSpec> (module, atypes.IteratorStateMachine,
+				MemberFilter.Constructor (ParametersCompiled.CreateFullyResolved (
+					btypes.Type)));
 
 			MethodInfoGetMethodFromHandle = new PredefinedMember<MethodSpec> (module, types.MethodBase,
 				"GetMethodFromHandle", MemberKind.Method, types.RuntimeMethodHandle);
@@ -748,7 +758,7 @@ namespace Mono.CSharp
 			if (type != null)
 				return true;
 
-			type = Resolve (module, kind, ns, name, arity, false);
+			type = Resolve (module, kind, ns, name, arity, false, false);
 			return type != null;
 		}
 
@@ -757,17 +767,21 @@ namespace Mono.CSharp
 			return ns + "." + name;
 		}
 
-		public static TypeSpec Resolve (ModuleContainer module, MemberKind kind, string ns, string name, int arity)
+		public static TypeSpec Resolve (ModuleContainer module, MemberKind kind, string ns, string name, int arity, bool required, bool reportErrors)
 		{
-			return Resolve (module, kind, ns, name, arity, true);
-		}
+			//
+			// Cannot call it with true because it could create non-existent namespaces for
+			// predefined types. It's set to true only for build-in types which all must
+			// exist therefore it does not matter, for predefined types we don't want to create
+			// fake namespaces when type is optional and does not exist (e.g. System.Linq).
+			//
+			Namespace type_ns = module.GlobalRootNamespace.GetNamespace (ns, required);
+			IList<TypeSpec> found = null;
+			if (type_ns != null)
+				found = type_ns.GetAllTypes (name);
 
-		public static TypeSpec Resolve (ModuleContainer module, MemberKind kind, string ns, string name, int arity, bool reportErrors)
-		{
-			Namespace type_ns = module.GlobalRootNamespace.GetNamespace (ns, true);
-			var found = type_ns.GetAllTypes (name);
 			if (found == null) {
-				if (reportErrors)
+				if (reportErrors )
 					module.Compiler.Report.Error (518, "The predefined type `{0}.{1}' is not defined or imported", ns, name);
 
 				return null;
@@ -837,13 +851,13 @@ namespace Mono.CSharp
 		public TypeSpec Resolve ()
 		{
 			if (type == null)
-				type = Resolve (module, kind, ns, name, arity);
+				type = Resolve (module, kind, ns, name, arity, false, true);
 
 			return type;
 		}
 	}
 
-	class PredefinedMember<T> where T : MemberSpec
+	public class PredefinedMember<T> where T : MemberSpec
 	{
 		readonly ModuleContainer module;
 		T member;

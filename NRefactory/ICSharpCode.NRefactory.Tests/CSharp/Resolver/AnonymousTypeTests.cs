@@ -18,6 +18,7 @@
 
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
 using NUnit.Framework;
@@ -59,6 +60,41 @@ class Test {
 			Assert.AreEqual("Item1", rr.Member.Name);
 			Assert.AreEqual(EntityType.Property, rr.Member.EntityType);
 			Assert.AreEqual("System.String", rr.Member.ReturnType.FullName);
+		}
+		
+		[Test]
+		public void ZipAnonymousType()
+		{
+			string program = programStart + "var q = list1.Zip(list2, (a,b) => $new { a, b }$);" + programEnd;
+			var rr = Resolve<InvocationResolveResult>(program);
+			Assert.AreEqual(TypeKind.Anonymous, rr.Type.Kind);
+			Assert.AreEqual(EntityType.Constructor, rr.Member.EntityType);
+			Assert.AreEqual(rr.Type, rr.Member.DeclaringType);
+			Assert.AreEqual(0, rr.Arguments.Count);
+			Assert.AreEqual(2, rr.InitializerStatements.Count);
+			var init1 = (OperatorResolveResult)rr.InitializerStatements[0];
+			Assert.AreEqual(ExpressionType.Assign, init1.OperatorType);
+			Assert.IsInstanceOf<MemberResolveResult>(init1.Operands[0]);
+			Assert.IsInstanceOf<LocalResolveResult>(init1.Operands[1]);
+			
+			ResolveResult target = ((MemberResolveResult)init1.Operands[0]).TargetResult;
+			Assert.IsInstanceOf<InitializedObjectResolveResult>(target);
+			Assert.AreEqual(rr.Type, target.Type);
+		}
+
+		[Test]
+		public void NestingAnonymousTypesShouldWork()
+		{
+			string program = @"using System;
+class TestClass {
+	void F() {
+		var o = $new { a = 0, b = 1, c = new { d = 2, e = 3, f = 4 } }$;
+	}
+}";
+			
+			var result = Resolve<InvocationResolveResult>(program);
+			Assert.That(result.Type.GetProperties().Select(p => p.Name), Is.EquivalentTo(new[] { "a", "b", "c" }));
+			Assert.That(result.Type.GetProperties().Single(p => p.Name == "c").ReturnType.GetProperties().Select(p => p.Name), Is.EquivalentTo(new[] { "d", "e", "f" }));
 		}
 	}
 }

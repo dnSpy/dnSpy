@@ -15,13 +15,14 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <RunCodeAnalysis>False</RunCodeAnalysis>
     <CodeAnalysisRules>-Microsoft.Design#CA1000;-Microsoft.Design#CA1004;-Microsoft.Design#CA1005;-Microsoft.Design#CA1006;-Microsoft.Design#CA1026;-Microsoft.Design#CA1033;-Microsoft.Design#CA1051;-Microsoft.Design#CA1063;-Microsoft.Naming#CA1702;-Microsoft.Naming#CA1704;-Microsoft.Naming#CA1710;-Microsoft.Naming#CA1716;-Microsoft.Naming#CA1720;-Microsoft.Performance#CA1800;-Microsoft.Security#CA2104</CodeAnalysisRules>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\ICSharpCode.NRefactory.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
     <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
-    <DocumentationFile>bin\$(Configuration)\ICSharpCode.NRefactory.xml</DocumentationFile>
     <WarningLevel>4</WarningLevel>
     <NoWarn>1591</NoWarn>
+    <OutputPath>..\bin\$(Configuration)\</OutputPath>
+    <DocumentationFile>..\bin\$(Configuration)\ICSharpCode.NRefactory.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,23 +32,41 @@
     <FileAlignment>4096</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <OutputPath>bin\Debug\</OutputPath>
     <Optimize>False</Optimize>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <StartAction>Project</StartAction>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <OutputPath>bin\Release\</OutputPath>
     <Optimize>True</Optimize>
     <DefineConstants>TRACE</DefineConstants>
     <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <DebugSymbols>True</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>PdbOnly</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'net_4_5_Debug' ">
+    <Optimize>False</Optimize>
+    <DefineConstants>DEBUG;TRACE;NET_4_5</DefineConstants>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <StartAction>Project</StartAction>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'net_4_5_Debug|AnyCPU' ">
     <DebugType>Full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)' == 'net_4_5_Release' ">
+    <Optimize>True</Optimize>
+    <DefineConstants>TRACE;NET_4_5</DefineConstants>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'net_4_5_Release|AnyCPU' ">
     <DebugType>PdbOnly</DebugType>
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
@@ -99,6 +118,7 @@
     <Compile Include="Semantics\InvocationResolveResult.cs" />
     <Compile Include="Semantics\LocalResolveResult.cs" />
     <Compile Include="Semantics\MemberResolveResult.cs" />
+    <Compile Include="Semantics\NamedArgumentResolveResult.cs" />
     <Compile Include="Semantics\NamespaceResolveResult.cs" />
     <Compile Include="Semantics\OperatorResolveResult.cs" />
     <Compile Include="Semantics\ResolveResult.cs" />
@@ -114,6 +134,7 @@
     <Compile Include="TypeSystem\ByReferenceType.cs" />
     <Compile Include="TypeSystem\CecilLoader.cs" />
     <Compile Include="TypeSystem\ComHelper.cs" />
+    <Compile Include="TypeSystem\DefaultSolutionSnapshot.cs" />
     <Compile Include="TypeSystem\DomRegion.cs" />
     <Compile Include="TypeSystem\EntityType.cs" />
     <Compile Include="TypeSystem\ExtensionMethods.cs" />
@@ -136,8 +157,10 @@
     <Compile Include="TypeSystem\Implementation\AbstractType.cs" />
     <Compile Include="TypeSystem\Implementation\AbstractUnresolvedEntity.cs" />
     <Compile Include="TypeSystem\Implementation\AbstractUnresolvedMember.cs" />
+    <Compile Include="TypeSystem\Implementation\AccessorOwnerMemberReference.cs" />
     <Compile Include="TypeSystem\Implementation\BaseTypeCollector.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultAssemblyReference.cs" />
+    <Compile Include="TypeSystem\Implementation\DefaultAttribute.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultMemberReference.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultParameter.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultResolvedEvent.cs" />
@@ -146,7 +169,6 @@
     <Compile Include="TypeSystem\Implementation\DefaultResolvedProperty.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultResolvedTypeDefinition.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultResolvedTypeParameter.cs" />
-    <Compile Include="TypeSystem\Implementation\DefaultSolutionSnapshot.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultUnresolvedAssembly.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultUnresolvedAttribute.cs" />
     <Compile Include="TypeSystem\Implementation\DefaultUnresolvedEvent.cs" />
@@ -168,7 +190,6 @@
     <Compile Include="TypeSystem\Implementation\SimpleCompilation.cs" />
     <Compile Include="TypeSystem\Implementation\SimpleConstantValue.cs" />
     <Compile Include="TypeSystem\Implementation\SimpleInterningProvider.cs" />
-    <Compile Include="TypeSystem\Implementation\SimpleTypeResolveContext.cs" />
     <Compile Include="TypeSystem\Implementation\SpecializedEvent.cs" />
     <Compile Include="TypeSystem\Implementation\SpecializedField.cs" />
     <Compile Include="TypeSystem\Implementation\SpecializedMember.cs" />
@@ -186,7 +207,7 @@
     <Compile Include="TypeSystem\IntersectionType.cs" />
     <Compile Include="TypeSystem\IParameter.cs" />
     <Compile Include="TypeSystem\IParameterizedMember.cs" />
-    <Compile Include="TypeSystem\IParsedFile.cs" />
+    <Compile Include="TypeSystem\IUnresolvedFile.cs" />
     <Compile Include="TypeSystem\IProjectContent.cs" />
     <Compile Include="TypeSystem\IProperty.cs" />
     <Compile Include="TypeSystem\ISolutionSnapshot.cs" />
@@ -199,7 +220,9 @@
     <Compile Include="TypeSystem\NullableType.cs" />
     <Compile Include="TypeSystem\ParameterizedType.cs" />
     <Compile Include="TypeSystem\ParameterListComparer.cs" />
+    <Compile Include="TypeSystem\ProjectReference.cs" />
     <Compile Include="TypeSystem\ReflectionNameParseException.cs" />
+    <Compile Include="TypeSystem\SimpleTypeResolveContext.cs" />
     <Compile Include="TypeSystem\TypeKind.cs" />
     <Compile Include="TypeSystem\TypeVisitor.cs" />
     <Compile Include="TypeSystem\IVariable.cs" />
@@ -219,6 +242,7 @@
     <Compile Include="Utils\ImmutableStack.cs" />
     <Compile Include="Utils\KeyComparer.cs" />
     <Compile Include="Utils\LazyInit.cs" />
+    <Compile Include="Utils\MultiDictionary.cs" />
     <Compile Include="Utils\Platform.cs" />
     <Compile Include="Utils\ProjectedList.cs" />
     <Compile Include="Utils\ReferenceComparer.cs" />
@@ -232,10 +256,18 @@
     <Compile Include="Completion\IVariableCompletionData.cs" />
     <Compile Include="Documentation\IdStringProvider.cs" />
     <Compile Include="Documentation\IdStringMemberReference.cs" />
+    <Compile Include="Utils\CompositeFormatStringParser\CompositeFormatStringParser.cs" />
+    <Compile Include="Utils\CompositeFormatStringParser\TextSegment.cs" />
+    <Compile Include="Utils\CompositeFormatStringParser\FormatItem.cs" />
+    <Compile Include="Utils\CompositeFormatStringParser\FormatStringSegmentBase.cs" />
+    <Compile Include="Utils\CompositeFormatStringParser\IFormatStringSegment.cs" />
+    <Compile Include="Utils\CompositeFormatStringParser\IFormatStringError.cs" />
+    <Compile Include="Completion\CompletionExtensionMethods.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Completion\" />
     <Folder Include="TypeSystem\" />
+    <Folder Include="Utils\CompositeFormatStringParser\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Mono.Cecil\Mono.Cecil.csproj">

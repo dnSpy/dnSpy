@@ -34,7 +34,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 	/// <summary>
 	/// Finds redundant internal modifiers.
 	/// </summary>
-	[IssueDescription("Remove redundant 'private' modifier.",
+	[IssueDescription("Remove redundant 'private' modifier",
 	       Description = "Removes 'private' modifiers that are not required.",
 	       Category = IssueCategories.Redundancies,
 	       Severity = Severity.Hint,

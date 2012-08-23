@@ -1337,8 +1337,7 @@ namespace Mono.CSharp {
 				try {
 					c = c.ConvertImplicitly (target_type);
 				} catch {
-					Console.WriteLine ("Conversion error happened in line {0}", loc);
-					throw;
+					throw new InternalErrorException ("Conversion error", loc);
 				}
 				if (c != null)
 					return c;

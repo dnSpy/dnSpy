@@ -31,7 +31,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			: base(eventDefinition)
 		{
 			AddSubstitution(substitution);
-			this.eventDefinition = (IEvent)base.MemberDefinition;
+			this.eventDefinition = (IEvent)base.baseMember;
 		}
 		
 		public bool CanAdd {

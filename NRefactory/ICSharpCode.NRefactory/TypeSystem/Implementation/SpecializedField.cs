@@ -31,7 +31,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			: base(fieldDefinition)
 		{
 			AddSubstitution(substitution);
-			this.fieldDefinition = (IField)base.MemberDefinition;
+			this.fieldDefinition = (IField)base.baseMember;
 		}
 		
 		public bool IsReadOnly {

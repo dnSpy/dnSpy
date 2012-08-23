@@ -18,7 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 
 namespace ICSharpCode.NRefactory.TypeSystem
 {
@@ -40,9 +39,6 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// and which are used only within a single type definition. Then a persistent file format could be organized so
 	/// that shared objects are loaded only once, yet non-shared objects get loaded lazily together with the class.
 	/// </remarks>
-	#if WITH_CONTRACTS
-	[ContractClass(typeof(IInterningProviderContract))]
-	#endif
 	public interface IInterningProvider
 	{
 		/// <summary>
@@ -55,22 +51,4 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		
 		IList<T> InternList<T>(IList<T> list) where T : class;
 	}
-	
-	#if WITH_CONTRACTS
-	[ContractClassFor(typeof(IInterningProvider))]
-	abstract class IInterningProviderContract : IInterningProvider
-	{
-		T IInterningProvider.Intern<T>(T obj)
-		{
-			Contract.Ensures((Contract.Result<T>() == null) == (obj == null));
-			return obj;
-		}
-		
-		IList<T> IInterningProvider.InternList<T>(IList<T> list)
-		{
-			Contract.Ensures((Contract.Result<IList<T>>() == null) == (list == null));
-			return list;
-		}
-	}
-	#endif
 }

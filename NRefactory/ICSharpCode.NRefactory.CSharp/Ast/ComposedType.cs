@@ -126,7 +126,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			return this;
 		}
 		
-		public override ITypeReference ToTypeReference(SimpleNameLookupMode lookupMode = SimpleNameLookupMode.Type)
+		public override ITypeReference ToTypeReference(NameLookupMode lookupMode = NameLookupMode.Type)
 		{
 			ITypeReference t = this.BaseType.ToTypeReference(lookupMode);
 			if (this.HasNullableSpecifier) {

@@ -54,12 +54,16 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		/// <summary>
 		/// Gets the list of class type arguments.
-		/// Returns <c>null</c> if this substitution keeps class type parameter unmodified.
+		/// Returns <c>null</c> if this substitution keeps class type parameters unmodified.
 		/// </summary>
 		public IList<IType> ClassTypeArguments {
 			get { return classTypeArguments; }
 		}
 		
+		/// <summary>
+		/// Gets the list of method type arguments.
+		/// Returns <c>null</c> if this substitution keeps method type parameters unmodified.
+		/// </summary>
 		public IList<IType> MethodTypeArguments {
 			get { return methodTypeArguments; }
 		}
@@ -170,7 +174,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 					b.Append('`');
 					b.Append(i);
 					b.Append(" -> ");
-					b.Append(classTypeArguments[i]);
+					b.Append(classTypeArguments[i].ReflectionName);
 				}
 			}
 			if (methodTypeArguments != null) {
@@ -179,7 +183,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 					b.Append("``");
 					b.Append(i);
 					b.Append(" -> ");
-					b.Append(methodTypeArguments[i]);
+					b.Append(methodTypeArguments[i].ReflectionName);
 				}
 			}
 			b.Append(']');

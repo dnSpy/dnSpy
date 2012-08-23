@@ -53,25 +53,25 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			if (invokeMethod == null) {
 				yield break;
 			}
-			yield return new CodeAction (context.TranslateString("Create event invocator"), script => {
+			yield return new CodeAction(context.TranslateString("Create event invocator"), script => {
 				bool hasSenderParam = false;
 				IEnumerable<IParameter> pars = invokeMethod.Parameters;
-				if (invokeMethod.Parameters.Any ()) {
+				if (invokeMethod.Parameters.Any()) {
 					var first = invokeMethod.Parameters [0];
 					if (first.Name == "sender" /*&& first.Type == "System.Object"*/) {
 						hasSenderParam = true;
-						pars = invokeMethod.Parameters.Skip (1);
+						pars = invokeMethod.Parameters.Skip(1);
 					}
 				}
 				const string handlerName = "handler";
 						
-				var arguments = new List<Expression> ();
+				var arguments = new List<Expression>();
 				if (hasSenderParam)
-					arguments.Add (new ThisReferenceExpression ());
+					arguments.Add(new ThisReferenceExpression());
 				foreach (var par in pars)
-					arguments.Add (new IdentifierExpression (par.Name));
+					arguments.Add(new IdentifierExpression(par.Name));
 				
-				var methodDeclaration = new MethodDeclaration () {
+				var methodDeclaration = new MethodDeclaration() {
 					Name = "On" + initializer.Name,
 					ReturnType = new PrimitiveType ("void"),
 					Modifiers = ICSharpCode.NRefactory.CSharp.Modifiers.Protected | ICSharpCode.NRefactory.CSharp.Modifiers.Virtual,
@@ -85,12 +85,16 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				};
 				
 				foreach (var par in pars) {
-					var typeName = context.CreateShortType (par.Type);
-					var decl = new ParameterDeclaration (typeName, par.Name);
-					methodDeclaration.Parameters.Add (decl);
+					var typeName = context.CreateShortType(par.Type);
+					var decl = new ParameterDeclaration(typeName, par.Name);
+					methodDeclaration.Parameters.Add(decl);
 				}
 				
-				script.InsertWithCursor (context.TranslateString("Create event invocator"), methodDeclaration, Script.InsertPosition.After);
+				script.InsertWithCursor(
+					context.TranslateString("Create event invocator"),
+					Script.InsertPosition.After,
+					methodDeclaration
+				);
 			});
 		}
 		

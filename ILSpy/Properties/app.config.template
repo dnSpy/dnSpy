@@ -17,15 +17,15 @@
 			</dependentAssembly>
 			<dependentAssembly>
 				<assemblyIdentity name="ICSharpCode.NRefactory" publicKeyToken="d4bfe873e7598c49" culture="neutral"/>
-				<bindingRedirect oldVersion="5.0.0.0-99.9.9.9" newVersion="5.0.0.6"/>
+				<bindingRedirect oldVersion="5.0.0.0-99.9.9.9" newVersion="5.0.0.0"/>
 			</dependentAssembly>
 			<dependentAssembly>
 				<assemblyIdentity name="ICSharpCode.NRefactory.CSharp" publicKeyToken="d4bfe873e7598c49" culture="neutral"/>
-				<bindingRedirect oldVersion="5.0.0.0-99.9.9.9" newVersion="5.0.0.6"/>
+				<bindingRedirect oldVersion="5.0.0.0-99.9.9.9" newVersion="5.0.0.0"/>
 			</dependentAssembly>
 			<dependentAssembly>
 				<assemblyIdentity name="ICSharpCode.NRefactory.VB" publicKeyToken="d4bfe873e7598c49" culture="neutral"/>
-				<bindingRedirect oldVersion="5.0.0.0-99.9.9.9" newVersion="5.0.0.6"/>
+				<bindingRedirect oldVersion="5.0.0.0-99.9.9.9" newVersion="5.0.0.0"/>
 			</dependentAssembly>
 			<dependentAssembly>
 				<assemblyIdentity name="ICSharpCode.Decompiler" publicKeyToken="d4bfe873e7598c49" culture="neutral"/>

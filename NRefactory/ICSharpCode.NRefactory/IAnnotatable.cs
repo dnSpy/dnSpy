@@ -78,6 +78,10 @@ namespace ICSharpCode.NRefactory
 		void RemoveAnnotations(Type type);
 	}
 	
+	/// <summary>
+	/// Base class used to implement the IAnnotatable interface.
+	/// This implementation is thread-safe.
+	/// </summary>
 	[Serializable]
 	public abstract class AbstractAnnotatable : IAnnotatable
 	{

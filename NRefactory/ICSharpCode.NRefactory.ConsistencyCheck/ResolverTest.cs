@@ -29,19 +29,19 @@ using ICSharpCode.NRefactory.TypeSystem;
 namespace ICSharpCode.NRefactory.ConsistencyCheck
 {
 	/// <summary>
-	/// Description of ResolverTest.
+	/// Validates that no compile errors are found in valid code.
 	/// </summary>
 	public class ResolverTest
 	{
 		public static void RunTest(CSharpFile file)
 		{
-			CSharpAstResolver resolver = new CSharpAstResolver(file.Project.Compilation, file.CompilationUnit, file.ParsedFile);
+			CSharpAstResolver resolver = new CSharpAstResolver(file.Project.Compilation, file.SyntaxTree, file.UnresolvedTypeSystemForFile);
 			var navigator = new ValidatingResolveAllNavigator(file.FileName);
 			resolver.ApplyNavigator(navigator, CancellationToken.None);
-			navigator.Validate(file.CompilationUnit);
+			navigator.Validate(resolver, file.SyntaxTree);
 		}
 		
-		sealed class ValidatingResolveAllNavigator : IResolveVisitorNavigator
+		class ValidatingResolveAllNavigator : IResolveVisitorNavigator
 		{
 			string fileName;
 			bool allowErrors;
@@ -54,7 +54,8 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 				this.allowErrors = (fileName.Contains(".xaml") || File.Exists(Path.ChangeExtension(fileName, ".xaml")) || fileName.EndsWith("AvalonDockLayout.cs") || fileName.EndsWith("ResourcesFileTreeNode.cs") || fileName.EndsWith("ChangeMarkerMargin.cs"));
 			}
 			
-			HashSet<AstNode> resolvedNodes = new HashSet<AstNode>();
+			Dictionary<AstNode, ResolveResult> resolvedNodes = new Dictionary<AstNode, ResolveResult>();
+			HashSet<ResolveResult> resolveResults = new HashSet<ResolveResult>();
 			HashSet<AstNode> nodesWithConversions = new HashSet<AstNode>();
 			
 			public ResolveVisitorNavigationMode Scan(AstNode node)
@@ -62,19 +63,23 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 				return ResolveVisitorNavigationMode.Resolve;
 			}
 			
-			public void Resolved(AstNode node, ResolveResult result)
+			public virtual void Resolved(AstNode node, ResolveResult result)
 			{
-				if (!resolvedNodes.Add(node))
+				if (resolvedNodes.ContainsKey(node))
 					throw new InvalidOperationException("Duplicate Resolved() call");
+				resolvedNodes.Add(node, result);
 				if (CSharpAstResolver.IsUnresolvableNode(node))
 					throw new InvalidOperationException("Resolved unresolvable node");
+				if (!ParenthesizedExpression.ActsAsParenthesizedExpression(node))
+					if (!resolveResults.Add(result) && result != ErrorResolveResult.UnknownError)
+						throw new InvalidOperationException("Duplicate resolve result");
 				
 				if (result.IsError && !allowErrors) {
 					Console.WriteLine("Compiler error at " + fileName + ":" + node.StartLocation + ": " + result);
 				}
 			}
 			
-			public void ProcessConversion(Expression expression, ResolveResult result, Conversion conversion, IType targetType)
+			public virtual void ProcessConversion(Expression expression, ResolveResult result, Conversion conversion, IType targetType)
 			{
 				if (!nodesWithConversions.Add(expression))
 					throw new InvalidOperationException("Duplicate ProcessConversion() call");
@@ -83,12 +88,33 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 				}
 			}
 			
-			public void Validate(CompilationUnit cu)
+			public virtual void Validate(CSharpAstResolver resolver, SyntaxTree syntaxTree)
 			{
-				foreach (AstNode node in cu.DescendantsAndSelf.Except(resolvedNodes)) {
+				foreach (AstNode node in syntaxTree.DescendantsAndSelf.Except(resolvedNodes.Keys)) {
 					if (!CSharpAstResolver.IsUnresolvableNode(node)) {
 						Console.WriteLine("Forgot to resolve " + node);
 					}
+				}
+				foreach (var pair in resolvedNodes) {
+					if (resolver.Resolve(pair.Key) != pair.Value)
+						throw new InvalidOperationException("Inconsistent result");
+				}
+			}
+		}
+		
+		public static void RunTestWithoutUnresolvedFile(CSharpFile file)
+		{
+			CSharpAstResolver resolver = new CSharpAstResolver(file.Project.Compilation, file.SyntaxTree);
+			var navigator = new ValidatingResolveAllNavigator(file.FileName);
+			resolver.ApplyNavigator(navigator, CancellationToken.None);
+			navigator.Validate(resolver, file.SyntaxTree);
+			
+			CSharpAstResolver originalResolver = new CSharpAstResolver(file.Project.Compilation, file.SyntaxTree, file.UnresolvedTypeSystemForFile);
+			foreach (var node in file.SyntaxTree.DescendantsAndSelf) {
+				var originalResult = originalResolver.Resolve(node);
+				var result = resolver.Resolve(node);
+				if (!RandomizedOrderResolverTest.IsEqualResolveResult(result, originalResult)) {
+					Console.WriteLine("Got different without IUnresolvedFile at " + file.FileName + ":" + node.StartLocation);
 				}
 			}
 		}

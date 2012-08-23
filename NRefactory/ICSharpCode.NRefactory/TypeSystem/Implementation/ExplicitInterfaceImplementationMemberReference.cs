@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ICSharpCode.NRefactory.TypeSystem.Implementation
@@ -24,6 +25,14 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 	/// <summary>
 	/// References a member that is an explicit interface implementation.
 	/// </summary>
+	/// <remarks>
+	/// Resolving an ExplicitInterfaceImplementationMemberReference requires a context
+	/// that provides enough information for resolving the declaring type reference
+	/// and the interface member reference.
+	/// Note that the interface member reference is resolved in '<c>context.WithCurrentTypeDefinition(declaringType.GetDefinition())</c>'
+	/// - this is done to ensure that open generics in the interface member reference resolve to the type parameters of the
+	/// declaring type.
+	/// </remarks>
 	[Serializable]
 	public sealed class ExplicitInterfaceImplementationMemberReference : IMemberReference
 	{
@@ -40,15 +49,26 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			this.interfaceMemberReference = interfaceMemberReference;
 		}
 		
+		public ITypeReference DeclaringTypeReference {
+			get { return typeReference; }
+		}
+		
 		public IMember Resolve(ITypeResolveContext context)
 		{
-			IMember interfaceMember = interfaceMemberReference.Resolve(context);
+			IType declaringType = typeReference.Resolve(context);
+			IMember interfaceMember = interfaceMemberReference.Resolve(context.WithCurrentTypeDefinition(declaringType.GetDefinition()));
 			if (interfaceMember == null)
 				return null;
-			IType type = typeReference.Resolve(context);
-			var members = type.GetMembers(
-				m => m.EntityType == interfaceMember.EntityType && m.IsExplicitInterfaceImplementation,
-				GetMemberOptions.IgnoreInheritedMembers);
+			IEnumerable<IMember> members;
+			if (interfaceMember.EntityType == EntityType.Accessor) {
+				members = declaringType.GetAccessors(
+					m => m.IsExplicitInterfaceImplementation,
+					GetMemberOptions.IgnoreInheritedMembers);
+			} else {
+				members = declaringType.GetMembers(
+					m => m.EntityType == interfaceMember.EntityType && m.IsExplicitInterfaceImplementation,
+					GetMemberOptions.IgnoreInheritedMembers);
+			}
 			return members.FirstOrDefault(m => m.ImplementedInterfaceMembers.Count == 1 && interfaceMember.Equals(m.ImplementedInterfaceMembers[0]));
 		}
 	}

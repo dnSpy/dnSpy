@@ -103,7 +103,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			return Keyword;
 		}
 		
-		public override ITypeReference ToTypeReference(SimpleNameLookupMode lookupMode = SimpleNameLookupMode.Type)
+		public override ITypeReference ToTypeReference(NameLookupMode lookupMode = NameLookupMode.Type)
 		{
 			KnownTypeCode typeCode = GetTypeCodeForPrimitiveType(this.Keyword);
 			if (typeCode == KnownTypeCode.None)

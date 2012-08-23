@@ -1,4 +1,4 @@
-// 
+﻿// 
 // CSharpParameterCompletionEngine.cs
 //  
 // Author:
@@ -39,7 +39,7 @@ namespace ICSharpCode.NRefactory.CSharp.Completion
 	{
 		internal IParameterCompletionDataFactory factory;
 		
-		public CSharpParameterCompletionEngine(IDocument document, IParameterCompletionDataFactory factory, IProjectContent content, CSharpTypeResolveContext ctx, CompilationUnit unit, CSharpParsedFile parsedFile) : base (content, ctx, unit, parsedFile)
+		public CSharpParameterCompletionEngine(IDocument document, ICompletionContextProvider completionContextProvider, IParameterCompletionDataFactory factory, IProjectContent content, CSharpTypeResolveContext ctx) : base (content, completionContextProvider, ctx)
 		{
 			if (document == null) {
 				throw new ArgumentNullException("document");
@@ -53,11 +53,8 @@ namespace ICSharpCode.NRefactory.CSharp.Completion
 
 		public ExpressionResult GetIndexerBeforeCursor()
 		{
-			CompilationUnit baseUnit;
+			SyntaxTree baseUnit;
 			if (currentMember == null && currentType == null) { 
-				return null;
-			}
-			if (Unit == null) {
 				return null;
 			}
 			baseUnit = ParseStub("x] = a[1");
@@ -76,11 +73,8 @@ namespace ICSharpCode.NRefactory.CSharp.Completion
 		
 		public ExpressionResult GetConstructorInitializerBeforeCursor()
 		{
-			CompilationUnit baseUnit;
+			SyntaxTree baseUnit;
 			if (currentMember == null && currentType == null) { 
-				return null;
-			}
-			if (Unit == null) {
 				return null;
 			}
 			baseUnit = ParseStub("a) {}", false);
@@ -94,11 +88,8 @@ namespace ICSharpCode.NRefactory.CSharp.Completion
 		
 		public ExpressionResult GetTypeBeforeCursor()
 		{
-			CompilationUnit baseUnit;
+			SyntaxTree baseUnit;
 			if (currentMember == null && currentType == null) { 
-				return null;
-			}
-			if (Unit == null) {
 				return null;
 			}
 			baseUnit = ParseStub("x> a");
@@ -113,25 +104,24 @@ namespace ICSharpCode.NRefactory.CSharp.Completion
 
 		IEnumerable<IMethod> CollectMethods(AstNode resolvedNode, MethodGroupResolveResult resolveResult)
 		{
-			//			var lookup = new MemberLookup (ctx.CurrentTypeDefinition, Compilation.MainAssembly);
+			var lookup = new MemberLookup(ctx.CurrentTypeDefinition, Compilation.MainAssembly);
 			bool onlyStatic = false;
-			if (resolvedNode is IdentifierExpression && currentMember != null && currentMember.IsStatic) {
+			if (resolvedNode is IdentifierExpression && currentMember != null && currentMember.IsStatic || resolveResult.TargetResult is TypeResolveResult) {
 				onlyStatic = true;
 			}
-			
 			foreach (var method in resolveResult.Methods) {
 				if (method.IsConstructor) {
 					continue;
 				}
-				//				if (!lookup.IsAccessible (member, true))
-				//					continue;
+				if (!lookup.IsAccessible (method, true))
+					continue;
 				if (onlyStatic && !method.IsStatic) {
 					continue;
 				}
 				yield return method;	
 			}
 				
-			foreach (var extMethods in resolveResult.GetExtensionMethods ()) {
+			foreach (var extMethods in resolveResult.GetEligibleExtensionMethods (true)) {
 				foreach (var method in extMethods) {
 					yield return method;
 				}
@@ -172,7 +162,7 @@ namespace ICSharpCode.NRefactory.CSharp.Completion
 						}
 					}
 					if (invoke.Node is ObjectCreateExpression) {
-						var createType = ResolveExpression(((ObjectCreateExpression)invoke.Node).Type, invoke.Unit);
+						var createType = ResolveExpression(((ObjectCreateExpression)invoke.Node).Type);
 						if (createType.Item1.Type.Kind == TypeKind.Unknown)
 							return null;
 						return factory.CreateConstructorProvider(document.GetOffset(invoke.Node.StartLocation), createType.Item1.Type);
@@ -235,7 +225,7 @@ namespace ICSharpCode.NRefactory.CSharp.Completion
 					if (GetCurrentParameterIndex(document.GetOffset(invoke.Node.StartLocation), offset) < 0)
 						return null;
 					if (invoke.Node is ObjectCreateExpression) {
-						var createType = ResolveExpression(((ObjectCreateExpression)invoke.Node).Type, invoke.Unit);
+						var createType = ResolveExpression(((ObjectCreateExpression)invoke.Node).Type);
 						return factory.CreateConstructorProvider(document.GetOffset(invoke.Node.StartLocation), createType.Item1.Type);
 					}
 				
@@ -317,17 +307,12 @@ namespace ICSharpCode.NRefactory.CSharp.Completion
 		
 		List<string> GetUsedNamespaces()
 		{
-			var scope = CSharpParsedFile.GetUsingScope(location);
+			var scope = ctx.CurrentUsingScope;
 			var result = new List<string>();
-			var resolver = new CSharpResolver(ctx);
 			while (scope != null) {
-				result.Add(scope.NamespaceName);
+				result.Add(scope.Namespace.FullName);
 				
-				foreach (var u in scope.Usings) {
-					var ns = u.ResolveNamespace(resolver);
-					if (ns == null) {
-						continue;
-					}
+				foreach (var ns in scope.Usings) {
 					result.Add(ns.FullName);
 				}
 				scope = scope.Parent;
@@ -335,144 +320,7 @@ namespace ICSharpCode.NRefactory.CSharp.Completion
 			return result;
 		}
 		
-		public int GetCurrentParameterIndex(int triggerOffset, int endOffset)
-		{
-			char lastChar = document.GetCharAt(endOffset - 1);
-			if (lastChar == '(' || lastChar == '<') { 
-				return 0;
-			}
-			var parameter = new Stack<int>();
-			var bracketStack = new Stack<Stack<int>>();
-			bool inSingleComment = false, inString = false, inVerbatimString = false, inChar = false, inMultiLineComment = false;
-			for (int i = triggerOffset; i < endOffset; i++) {
-				char ch = document.GetCharAt(i);
-				char nextCh = i + 1 < document.TextLength ? document.GetCharAt(i + 1) : '\0';
-				switch (ch) {
-					case '{':
-						if (inString || inChar || inVerbatimString || inSingleComment || inMultiLineComment) {
-							break;
-						}
-						bracketStack.Push(parameter);
-						parameter = new Stack<int>();
-						break;
-					case '[':
-					case '(':
-						if (inString || inChar || inVerbatimString || inSingleComment || inMultiLineComment) {
-							break;
-						}
-						parameter.Push(0);
-						break;
-					case '}':
-						if (inString || inChar || inVerbatimString || inSingleComment || inMultiLineComment) {
-							break;
-						}
-						if (bracketStack.Count > 0) {
-							parameter = bracketStack.Pop();
-						} else {
-							return -1;
-						}
-						break;
-					case ']':
-					case ')':
-						if (inString || inChar || inVerbatimString || inSingleComment || inMultiLineComment) {
-							break;
-						}
-						if (parameter.Count > 0) {
-							parameter.Pop();
-						} else {
-							return -1;
-						}
-						break;
-					case '<':
-						if (inString || inChar || inVerbatimString || inSingleComment || inMultiLineComment) {
-							break;
-						}
-						parameter.Push(0);
-						break;
-					case '>':
-						if (inString || inChar || inVerbatimString || inSingleComment || inMultiLineComment) {
-							break;
-						}
-						if (parameter.Count > 0) {
-							parameter.Pop();
-						}
-						break;
-					case ',':
-						if (inString || inChar || inVerbatimString || inSingleComment || inMultiLineComment) {
-							break;
-						}
-						if (parameter.Count > 0) {
-							parameter.Push(parameter.Pop() + 1);
-						}
-						break;
-					case '/':
-						if (inString || inChar || inVerbatimString) {
-							break;
-						}
-						if (nextCh == '/') {
-							i++;
-							inSingleComment = true;
-						}
-						if (nextCh == '*') {
-							inMultiLineComment = true;
-						}
-						break;
-					case '*':
-						if (inString || inChar || inVerbatimString || inSingleComment) {
-							break;
-						}
-						if (nextCh == '/') {
-							i++;
-							inMultiLineComment = false;
-						}
-						break;
-					case '@':
-						if (inString || inChar || inVerbatimString || inSingleComment || inMultiLineComment) {
-							break;
-						}
-						if (nextCh == '"') {
-							i++;
-							inVerbatimString = true;
-						}
-						break;
-					case '\n':
-					case '\r':
-						inSingleComment = false;
-						inString = false;
-						inChar = false;
-						break;
-					case '\\':
-						if (inString || inChar) {
-							i++;
-						}
-						break;
-					case '"':
-						if (inSingleComment || inMultiLineComment || inChar) {
-							break;
-						}
-						if (inVerbatimString) {
-							if (nextCh == '"') {
-								i++;
-								break;
-							}
-							inVerbatimString = false;
-							break;
-						}
-						inString = !inString;
-						break;
-					case '\'':
-						if (inSingleComment || inMultiLineComment || inString || inVerbatimString) {
-							break;
-						}
-						inChar = !inChar;
-						break;
-				}
-			}
-			if (parameter.Count == 0 || bracketStack.Count > 0) {
-				return -1;
-			}
-			return parameter.Pop() + 1;
-		}
+	
 	}
 }
 

@@ -942,5 +942,78 @@ class Derived : Base {
 			Assert.AreEqual("A.X", result.Member.FullName);
 			Assert.AreEqual("A", result.Type.ReflectionName);
 		}
+
+		[Test]
+		public void InheritFromProtectedInnerClassTest()
+		{
+			string program = @"
+class Test
+{
+	protected class Foo
+	{
+		public int Bar = 0;
+	}
+}
+
+class MainClass : Test
+{
+	class Foo2 : Test.Foo
+	{
+		public Foo2 ()
+		{
+			Console.WriteLine ($Bar$);
+		}
+	}
+}
+";
+			var result = Resolve<MemberResolveResult>(program);
+			Assert.IsFalse(result.IsError);
+			Assert.AreEqual("Test.Foo.Bar", result.Member.FullName);
+		}
+
+		[Test]
+		public void LocalInsideUnsafeBlock()
+		{
+			string program = @"class A {
+	void Method() {
+		unsafe {
+			string a;
+			string b = $a$;
+		}
+	}
+}
+";
+			LocalResolveResult result = Resolve<LocalResolveResult>(program);
+			Assert.AreEqual("a", result.Variable.Name);
+			Assert.IsFalse(result.IsParameter);
+			
+			Assert.AreEqual("System.String", result.Type.FullName);
+		}
+
+		[Test]
+		public void DuplicateUsingDirective() {
+			string program = @"
+using foo;
+using foo;
+namespace bar {
+	using foo;
+	using foo;
+
+    public class Bar {
+        public void M() {
+            new $Foo$();
+        }
+    }
+}
+namespace foo {
+    public class Foo {
+    }
+}";
+
+			var result = Resolve<TypeResolveResult>(program);
+			Assert.IsFalse(result.IsError);
+			Assert.AreEqual("foo.Foo", result.Type.FullName);
+
+		}
 	}
 }

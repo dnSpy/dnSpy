@@ -539,8 +539,8 @@ namespace Mono.CSharp.Nullable
 		Expression user_operator;
 		MethodSpec wrap_ctor;
 
-		public LiftedBinaryOperator (Binary.Operator op, Expression left, Expression right, Location loc)
-			: base (op, left, right, loc)
+		public LiftedBinaryOperator (Binary.Operator op, Expression left, Expression right)
+			: base (op, left, right)
 		{
 		}
 
@@ -583,7 +583,7 @@ namespace Mono.CSharp.Nullable
 			Constant c = new BoolConstant (ec.BuiltinTypes, Oper == Operator.Inequality, loc);
 
 			if ((Oper & Operator.EqualityMask) != 0) {
-				ec.Report.Warning (472, 2, loc, "The result of comparing value type `{0}' with null is `{1}'",
+				ec.Report.Warning (472, 2, loc, "The result of comparing value type `{0}' with null is always `{1}'",
 					TypeManager.CSharpName (expr.Type), c.GetValueAsLiteral ());
 			} else {
 				ec.Report.Warning (464, 2, loc, "The result of comparing type `{0}' with null is always `{1}'",
@@ -1000,12 +1000,12 @@ namespace Mono.CSharp.Nullable
 	{
 		Expression left, right;
 		Unwrap unwrap;
-		
-		public NullCoalescingOperator (Expression left, Expression right, Location loc)
+
+		public NullCoalescingOperator (Expression left, Expression right)
 		{
 			this.left = left;
 			this.right = right;
-			this.loc = loc;
+			this.loc = left.Location;
 		}
 
 		public Expression LeftExpression {

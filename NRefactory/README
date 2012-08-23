@@ -1,13 +1,7 @@
 ﻿Overview of the NRefactory library:
 
-Features:
-	- C# Parser
-	- Abstract Syntax Tree with pattern-matching support
-	- Semantic Analysis for C# (supports C# 4.0 + async/await)
-	- Code Completion for C#
-	- Pretty Printer for C#
-	- Lots of C# refactorings
-	- VB support is not implemented yet.
+Introductory documentation:
+	 http://www.codeproject.com/Articles/408663/Using-NRefactory-for-analyzing-Csharp-code
 
 How to download:
 	- Binaries are provided as a NuGet package (http://nuget.org/packages/ICSharpCode.NRefactory)
@@ -19,6 +13,17 @@ How to compile:
 		next to the directory containing NRefactory.
 	2. Open NRefactory.sln in your favorite .NET IDE and compile.
 
+Features:
+	- C# Parser
+	- Abstract Syntax Tree with pattern-matching support
+	- Semantic Analysis for C# (supports C# 4.0 + async/await)
+	- Code Completion for C#
+	- Pretty Printer for C#
+	- Lots of C# refactorings
+	
+Non-Features:
+	- VB support is not implemented yet.
+	- NRefactory cannot generate IL code
 
 Dependencies:
 	.NET 4.0
@@ -110,6 +115,13 @@ Null-Object pattern:
 	Null nodes are not considered to be part of the AST (e.g. they don't have a parent).
 
 FAQ:
+Q:  What is the difference between NRefactory and Roslyn?
+	- NRefactory is ready and stable, Roslyn is only a CTP at this point of time.
+	- NRefactory does not have VB support.
+	- NRefactory cannot compile code to IL; it's not a full compiler, just a frontend.
+	- NRefactory C# AST is mutable and supports pattern matching; Roslyn is immutable and does not have built-in pattern matching.
+	- NRefactory is Open Source, if you somehow can't get at the information you need, you can modify the code.
+
 Q:	What is the difference between types and type definitions?
 
 A:	Basically, a type (IType) is any type in the .NET type system:

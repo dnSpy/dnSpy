@@ -35,6 +35,24 @@ namespace ICSharpCode.NRefactory.CSharp.FormattingTests
 	public class TestTypeLevelIndentation : TestBase
 	{
 		[Test()]
+		public void TestUsingDeclarations()
+		{
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono();
+	
+			Test(policy, @"		using Foo;", @"using Foo;
+");
+		}
+
+		[Test()]
+		public void TestUsingAliasDeclarations()
+		{
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono();
+	
+			Test(policy, @"		using Foo = Bar;", @"using Foo = Bar;
+");
+		}
+
+		[Test()]
 		public void TestClassIndentation ()
 		{
 			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
@@ -522,7 +540,59 @@ set;
 	}
 }");
 		}
+
+		[Test()]
+		public void TestPropertyIndentationClosingBracketCorrection ()
+		{
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
+
+			Test (policy, 
+@"class Test
+{
+				public int Prop { get;
+				}
+}",@"class Test
+{
+	public int Prop { get; }
+}");
+		}
+		[Test()]
+		public void TestPropertyIndentationClosingBracketCorrection2 ()
+		{
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
+
+			Test (policy, 
+@"class Test
+{
+				public int Prop {
+					get;}
+}",@"class Test
+{
+	public int Prop {
+		get;
+	}
+}");
+		}
+
+		[Test()]
+		public void TestPropertyCorrection()
+		{
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono();
+			policy.PropertyFormatting = PropertyFormatting.ForceNewLine;
+			Test(policy, 
+@"class Test
+{
+				public int Prop { get;          private set; }
+}", @"class Test
+{
+	public int Prop {
+		get;
+		private set;
+	}
+}");
+		}
 		
+
 		
 		[Test()]
 		public void TestIndentEventBody ()

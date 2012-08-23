@@ -28,6 +28,7 @@ using ICSharpCode.NRefactory.PatternMatching;
 using System.Linq;
 using System.Threading;
 using System.Collections.Generic;
+using ICSharpCode.NRefactory.Semantics;
 
 namespace ICSharpCode.NRefactory.CSharp.Refactoring
 {
@@ -50,15 +51,24 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				}
 			}
 			var field = initializer.Parent as FieldDeclaration;
-			if (field == null) {
+			if (field == null || field.HasModifier(Modifiers.Readonly) || field.HasModifier(Modifiers.Const)) {
 				yield break;
 			}
-			yield return new CodeAction (context.TranslateString("Create property"), script => {
-				script.InsertWithCursor(context.TranslateString("Create property"), GeneratePropertyDeclaration(context, field, initializer), Script.InsertPosition.After);
+			var resolveResult = context.Resolve(initializer) as MemberResolveResult;
+			if (resolveResult == null)
+				yield break;
+			yield return new CodeAction(context.TranslateString("Create property"), script => {
+				var fieldName = context.GetNameProposal(initializer.Name, true);
+				if (initializer.Name == context.GetNameProposal(initializer.Name, false)) {
+					script.Rename(resolveResult.Member, fieldName);
+				}
+				script.InsertWithCursor(
+					context.TranslateString("Create property"),
+					Script.InsertPosition.After, GeneratePropertyDeclaration(context, field, fieldName));
 			});
 		}
 		
-		static PropertyDeclaration GeneratePropertyDeclaration (RefactoringContext context, FieldDeclaration field, VariableInitializer initializer)
+		static PropertyDeclaration GeneratePropertyDeclaration (RefactoringContext context, FieldDeclaration field, string fieldName)
 		{
 			var mod = ICSharpCode.NRefactory.CSharp.Modifiers.Public;
 			if (field.HasModifier (ICSharpCode.NRefactory.CSharp.Modifiers.Static))
@@ -66,16 +76,16 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			
 			return new PropertyDeclaration () {
 				Modifiers = mod,
-				Name = context.GetNameProposal (initializer.Name, false),
+				Name = context.GetNameProposal (fieldName, false),
 				ReturnType = field.ReturnType.Clone (),
 				Getter = new Accessor () {
 					Body = new BlockStatement () {
-						new ReturnStatement (new IdentifierExpression (initializer.Name))
+						new ReturnStatement (new IdentifierExpression (fieldName))
 					}
 				},
 				Setter = new Accessor () {
 					Body = new BlockStatement () {
-						new ExpressionStatement (new AssignmentExpression (new IdentifierExpression (initializer.Name), new IdentifierExpression ("value")))
+						new ExpressionStatement (new AssignmentExpression (new IdentifierExpression (fieldName), new IdentifierExpression ("value")))
 					}
 				}
 			};

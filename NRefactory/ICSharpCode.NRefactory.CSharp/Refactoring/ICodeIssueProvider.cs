@@ -1,4 +1,4 @@
-// 
+﻿// 
 // IInspector.cs
 //  
 // Author:
@@ -29,12 +29,12 @@ using System.Collections.Generic;
 namespace ICSharpCode.NRefactory.CSharp.Refactoring
 {
 	/// <summary>
-	/// The code issue provider gets a list of all code issues in a compilation unit.
+	/// The code issue provider gets a list of all code issues in a syntax tree.
 	/// </summary>
 	public interface ICodeIssueProvider
 	{
 		/// <summary>
-		/// Gets all code issues inside a compilation unit.
+		/// Gets all code issues inside a syntax tree.
 		/// </summary>
 		/// <param name='context'>
 		/// The refactoring context of the issues to get.

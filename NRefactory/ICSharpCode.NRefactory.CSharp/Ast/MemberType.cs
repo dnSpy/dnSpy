@@ -135,7 +135,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			return b.ToString();
 		}
 		
-		public override ITypeReference ToTypeReference(SimpleNameLookupMode lookupMode = SimpleNameLookupMode.Type)
+		public override ITypeReference ToTypeReference(NameLookupMode lookupMode = NameLookupMode.Type)
 		{
 			TypeOrNamespaceReference t;
 			if (this.IsDoubleColon) {
@@ -154,7 +154,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			foreach (var ta in this.TypeArguments) {
 				typeArguments.Add(ta.ToTypeReference(lookupMode));
 			}
-			return new MemberTypeOrNamespaceReference(t, this.MemberName, typeArguments);
+			return new MemberTypeOrNamespaceReference(t, this.MemberName, typeArguments, lookupMode);
 		}
 	}
 }

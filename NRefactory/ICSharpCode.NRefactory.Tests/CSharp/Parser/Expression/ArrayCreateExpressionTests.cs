@@ -101,7 +101,8 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 							new PrimitiveExpression(100),
 							new PrimitiveExpression(1000)
 						}
-					}});
+					}}
+			);
 		}
 		
 		[Test]
@@ -146,8 +147,18 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 						}
 					}});
 		}
-		
-		[Test, Ignore("Parser bug")]
+
+		[Test]
+		public void EmptyArrayCreation()
+		{
+			var ace = ParseUtilCSharp.ParseExpression<ArrayCreateExpression>("new [] { }");
+			Assert.AreEqual(new Role[] {
+			                	Roles.LBrace,
+			                	Roles.RBrace
+			                }, ace.Initializer.Children.Select(c => c.Role).ToArray());
+		}
+
+		[Test]
 		public void ArrayInitializerWithCommaAtEnd()
 		{
 			var ace = ParseUtilCSharp.ParseExpression<ArrayCreateExpression>("new [] { 1, }");

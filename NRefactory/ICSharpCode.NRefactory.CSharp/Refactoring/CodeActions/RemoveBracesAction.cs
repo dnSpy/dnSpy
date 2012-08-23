@@ -41,6 +41,11 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			}
 
 			yield return new CodeAction (context.TranslateString("Remove braces"), script => {
+				var start = script.GetCurrentOffset (block.LBraceToken.GetPrevNode ().EndLocation);
+				var end = script.GetCurrentOffset (block.LBraceToken.EndLocation);
+				if (end <= start)
+					return;
+				script.RemoveText (start, end - start);
 				script.Remove(block.LBraceToken);
 				script.Remove(block.RBraceToken);
 				script.FormatText(block.Parent);

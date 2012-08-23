@@ -54,7 +54,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// Gets the parsed file in which this entity is defined.
 		/// Returns null if this entity wasn't parsed from source code (e.g. loaded from a .dll with CecilLoader).
 		/// </summary>
-		IParsedFile ParsedFile { get; }
+		IUnresolvedFile UnresolvedFile { get; }
 		
 		/// <summary>
 		/// Gets the attributes on this entity.

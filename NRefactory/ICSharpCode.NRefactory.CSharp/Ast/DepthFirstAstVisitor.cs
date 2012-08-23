@@ -44,9 +44,9 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		public virtual void VisitCompilationUnit (CompilationUnit unit)
+		public virtual void VisitSyntaxTree (SyntaxTree syntaxTree)
 		{
-			VisitChildren (unit);
+			VisitChildren (syntaxTree);
 		}
 		
 		public virtual void VisitComment(Comment comment)
@@ -642,7 +642,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			return default (T);
 		}
 		
-		public virtual T VisitCompilationUnit (CompilationUnit unit)
+		public virtual T VisitSyntaxTree (SyntaxTree unit)
 		{
 			return VisitChildren (unit);
 		}
@@ -1240,7 +1240,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			return default (S);
 		}
 		
-		public virtual S VisitCompilationUnit (CompilationUnit unit, T data)
+		public virtual S VisitSyntaxTree (SyntaxTree unit, T data)
 		{
 			return VisitChildren (unit, data);
 		}

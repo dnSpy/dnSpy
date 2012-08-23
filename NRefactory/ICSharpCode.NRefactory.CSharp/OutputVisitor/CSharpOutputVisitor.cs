@@ -917,7 +917,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression)
 		{
 			StartNode(namedArgumentExpression);
-			namedArgumentExpression.IdentifierToken.AcceptVisitor(this);
+			namedArgumentExpression.NameToken.AcceptVisitor(this);
 			WriteToken(Roles.Colon);
 			Space();
 			namedArgumentExpression.Expression.AcceptVisitor(this);
@@ -927,7 +927,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void VisitNamedExpression(NamedExpression namedExpression)
 		{
 			StartNode(namedExpression);
-			namedExpression.IdentifierToken.AcceptVisitor(this);
+			namedExpression.NameToken.AcceptVisitor(this);
 			Space();
 			WriteToken(Roles.Assign);
 			Space();
@@ -1005,6 +1005,14 @@ namespace ICSharpCode.NRefactory.CSharp
 				WritePrimitiveValue(primitiveExpression.Value);
 			}
 			EndNode(primitiveExpression);
+		}
+		
+		public static string PrintPrimitiveValue(object val)
+		{
+			StringWriter writer = new StringWriter();
+			CSharpOutputVisitor visitor = new CSharpOutputVisitor(writer, new CSharpFormattingOptions());
+			visitor.WritePrimitiveValue(val);
+			return writer.ToString();
 		}
 		
 		void WritePrimitiveValue(object val)
@@ -2164,6 +2172,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteAttributes(indexerDeclaration.Attributes);
 			WriteModifiers(indexerDeclaration.ModifierTokens);
 			indexerDeclaration.ReturnType.AcceptVisitor(this);
+			Space();
 			WritePrivateImplementationType(indexerDeclaration.PrivateImplementationType);
 			WriteKeyword(IndexerDeclaration.ThisKeywordRole);
 			Space(policy.SpaceBeforeMethodDeclarationParentheses);
@@ -2296,10 +2305,10 @@ namespace ICSharpCode.NRefactory.CSharp
 			EndNode(variableInitializer);
 		}
 		
-		public void VisitCompilationUnit(CompilationUnit compilationUnit)
+		public void VisitSyntaxTree(SyntaxTree syntaxTree)
 		{
 			// don't do node tracking as we visit all children directly
-			foreach (AstNode node in compilationUnit.Children) {
+			foreach (AstNode node in syntaxTree.Children) {
 				node.AcceptVisitor(this);
 			}
 		}

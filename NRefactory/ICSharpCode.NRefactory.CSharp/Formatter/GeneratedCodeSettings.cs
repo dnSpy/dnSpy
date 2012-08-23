@@ -1,4 +1,4 @@
-// 
+﻿// 
 // GeneratedCodeSettings.cs
 //  
 // Author:
@@ -177,7 +177,9 @@ namespace ICSharpCode.NRefactory.CSharp
 						var cmt = new Comment ("", CommentType.SingleLine);
 						var cmt2 = new Comment (" " + label, CommentType.SingleLine);
 						var cmt3 = new Comment ("", CommentType.SingleLine);
-						mem.Parent.InsertChildsBefore (mem, Roles.Comment, cmt, cmt2, cmt3);
+						mem.Parent.InsertChildBefore (mem, cmt, Roles.Comment);
+						mem.Parent.InsertChildBefore (mem, cmt2, Roles.Comment);
+						mem.Parent.InsertChildBefore (mem, cmt3, Roles.Comment);
 						if (cmt.PrevSibling is EntityDeclaration)
 							mem.Parent.InsertChildBefore (cmt, new UnixNewLine (), Roles.NewLine);
 

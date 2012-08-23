@@ -222,6 +222,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			AssertType(typeof(StringComparison?), resolver.ResolveUnaryOperator(UnaryOperatorType.BitNot, MakeResult(typeof(StringComparison?))));
 		}
 		
+		[Ignore("Broken on mcs")]
 		[Test]
 		public void IntMinValue()
 		{
@@ -255,6 +256,23 @@ class Test {
 			var irr = Resolve<OperatorResolveResult>(program);
 			Assert.IsFalse(irr.IsError);
 			Assert.IsTrue(irr.IsLiftedOperator);
+		}
+		
+		[Test]
+		public void UShortEnumNegation()
+		{
+			string program = @"
+class Test {
+	enum UShortEnum : ushort { Three = 3 }
+	static void Inc() {
+		checked { // even in checked context, the implicit cast back to enum is unchecked
+			var a = $~UShortEnum.Three$;
+		}
+	}
+}";
+			var rr = Resolve<ConstantResolveResult>(program);
+			Assert.IsFalse(rr.IsError);
+			Assert.AreEqual(unchecked( (ushort)~3 ), rr.ConstantValue);
 		}
 	}
 }

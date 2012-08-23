@@ -640,13 +640,12 @@ namespace Mono.CSharp
 			}
 
 			if (initializer != null) {
-				Parent.RegisterFieldForInitialization (this,
-					new FieldInitializer (spec, initializer, this));
+				Parent.RegisterFieldForInitialization (this, new FieldInitializer (this, initializer, TypeExpression.Location));
 			}
 
 			if (declarators != null) {
-				var t = new TypeExpression (MemberType, TypeExpression.Location);
 				foreach (var d in declarators) {
+					var t = new TypeExpression (MemberType, d.Name.Location);
 					var f = new Field (Parent, t, ModFlags, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
 					if (d.Initializer != null)
 						f.initializer = d.Initializer;

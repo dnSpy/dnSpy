@@ -73,14 +73,12 @@ namespace ICSharpCode.NRefactory.Visitors
 			switch (language) {
 				case SupportedLanguage.CSharp:
 					var parser = new CSharpParser();
-					using (var textReader = new StringReader(code)) {
-						AstNode astRoot = parser.ParseExpression(textReader);
-						if (parser.HasErrors) {
-							throw new GetValueException("Parser errors");
-						}
-
-						return astRoot;
+					AstNode astRoot = parser.ParseExpression(code);
+					if (parser.HasErrors) {
+						throw new GetValueException("Parser errors");
 					}
+
+					return astRoot;
 					
 				default:
 					throw new ArgumentException("Unsuported language");
@@ -125,14 +123,12 @@ namespace ICSharpCode.NRefactory.Visitors
 			switch (language) {
 				case SupportedLanguage.CSharp:
 					var parser = new CSharpParser();
-					using (var textReader = new StringReader(code)) {
-						AstNode astRoot = parser.ParseExpression(textReader);
-						if (parser.HasErrors) {
-							throw new GetValueException("Parser errors");
-						}
-
-						return astRoot as Expression;
+					AstNode astRoot = parser.ParseExpression(code);
+					if (parser.HasErrors) {
+						throw new GetValueException("Parser errors");
 					}
+
+					return astRoot as Expression;
 				default:
 					throw new ArgumentException("Unsuported language");
 			}

@@ -37,7 +37,28 @@ namespace ICSharpCode.NRefactory.CSharp.CodeCompletion
 			var provider = CodeCompletionBugTests.CreateProvider (@"$namespace n$");
 			Assert.IsTrue (provider == null || provider.Count == 0, "provider should be empty.");
 		}
-		
+		[Test()]
+		public void TestNamespaceNameCase2 ()
+		{
+			var provider = CodeCompletionBugTests.CreateProvider (@"$namespace $");
+			Assert.IsTrue (provider == null || provider.Count == 0, "provider should be empty.");
+		}
+
+		[Ignore("Parser bug.")]
+		[Test()]
+		public void TestNamespaceNameCase3 ()
+		{
+			var provider = CodeCompletionBugTests.CreateProvider (@"$namespace Foo.b$");
+			Assert.IsTrue (provider == null || provider.Count == 0, "provider should be empty.");
+		}
+
+		[Test()]
+		public void TestNamespaceNameCase4 ()
+		{
+			var provider = CodeCompletionBugTests.CreateProvider (@"$namespace Foo.$");
+			Assert.IsTrue (provider == null || provider.Count == 0, "provider should be empty.");
+		}
+
 		[Test()]
 		public void TestClassName ()
 		{

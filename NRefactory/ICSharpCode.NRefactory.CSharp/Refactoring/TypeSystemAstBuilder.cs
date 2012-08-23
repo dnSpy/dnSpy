@@ -111,6 +111,18 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 		/// The default value is <c>false</c>.
 		/// </summary>
 		public bool AlwaysUseShortTypeNames { get; set; }
+		
+		/// <summary>
+		/// Controls whether to generate a body that throws a <c>System.NotImplementedException</c>.
+		/// The default value is <c>false</c>.
+		/// </summary>
+		public bool GenerateBody { get; set; }
+		
+		/// <summary>
+		/// Controls whether to generate custom events.
+		/// The default value is <c>false</c>.
+		/// </summary>
+		public bool UseCustomEvents { get; set; }
 		#endregion
 		
 		#region Convert Type
@@ -122,6 +134,19 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			if (AddAnnotations)
 				astType.AddAnnotation(type);
 			return astType;
+		}
+		
+		public AstType ConvertType(string ns, string name, int typeParameterCount = 0)
+		{
+			if (resolver != null) {
+				foreach (var asm in resolver.Compilation.Assemblies) {
+					var def = asm.GetTypeDefinition(ns, name, typeParameterCount);
+					if (def != null) {
+						return ConvertType(def);
+					}
+				}
+			}
+			return new MemberType(new SimpleType(ns), name);
 		}
 		
 		AstType ConvertTypeHelper(IType type)
@@ -557,12 +582,25 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			return decl;
 		}
 		
-		Accessor ConvertAccessor(IMethod accessor)
+		BlockStatement GenerateBodyBlock()
+		{
+			if (GenerateBody) {
+				return new BlockStatement {
+					new ThrowStatement(new ObjectCreateExpression(ConvertType("System", "NotImplementedException")))
+				};
+			} else {
+				return BlockStatement.Null;
+			}
+		}
+		
+		Accessor ConvertAccessor(IMethod accessor, Accessibility ownerAccessibility)
 		{
 			if (accessor == null)
 				return Accessor.Null;
 			Accessor decl = new Accessor();
-			decl.Modifiers = ModifierFromAccessibility(accessor.Accessibility);
+			if (accessor.Accessibility != ownerAccessibility)
+				decl.Modifiers = ModifierFromAccessibility(accessor.Accessibility);
+			decl.Body = GenerateBodyBlock();
 			return decl;
 		}
 		
@@ -572,8 +610,8 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			decl.Modifiers = GetMemberModifiers(property);
 			decl.ReturnType = ConvertType(property.ReturnType);
 			decl.Name = property.Name;
-			decl.Getter = ConvertAccessor(property.Getter);
-			decl.Setter = ConvertAccessor(property.Setter);
+			decl.Getter = ConvertAccessor(property.Getter, property.Accessibility);
+			decl.Setter = ConvertAccessor(property.Setter, property.Accessibility);
 			return decl;
 		}
 		
@@ -585,18 +623,28 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			foreach (IParameter p in indexer.Parameters) {
 				decl.Parameters.Add(ConvertParameter(p));
 			}
-			decl.Getter = ConvertAccessor(indexer.Getter);
-			decl.Setter = ConvertAccessor(indexer.Setter);
+			decl.Getter = ConvertAccessor(indexer.Getter, indexer.Accessibility);
+			decl.Setter = ConvertAccessor(indexer.Setter, indexer.Accessibility);
 			return decl;
 		}
 		
-		EventDeclaration ConvertEvent(IEvent ev)
+		EntityDeclaration ConvertEvent(IEvent ev)
 		{
-			EventDeclaration decl = new EventDeclaration();
-			decl.Modifiers = GetMemberModifiers(ev);
-			decl.ReturnType = ConvertType(ev.ReturnType);
-			decl.Variables.Add(new VariableInitializer(ev.Name));
-			return decl;
+			if (this.UseCustomEvents) {
+				CustomEventDeclaration decl = new CustomEventDeclaration();
+				decl.Modifiers = GetMemberModifiers(ev);
+				decl.ReturnType = ConvertType(ev.ReturnType);
+				decl.Name = ev.Name;
+				decl.AddAccessor    = ConvertAccessor(ev.AddAccessor, ev.Accessibility);
+				decl.RemoveAccessor = ConvertAccessor(ev.RemoveAccessor, ev.Accessibility);
+				return decl;
+			} else {
+				EventDeclaration decl = new EventDeclaration();
+				decl.Modifiers = GetMemberModifiers(ev);
+				decl.ReturnType = ConvertType(ev.ReturnType);
+				decl.Variables.Add(new VariableInitializer(ev.Name));
+				return decl;
+			}
 		}
 		
 		MethodDeclaration ConvertMethod(IMethod method)
@@ -625,6 +673,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 						decl.Constraints.Add(constraint);
 				}
 			}
+			decl.Body = GenerateBodyBlock();
 			return decl;
 		}
 		
@@ -641,6 +690,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			foreach (IParameter p in op.Parameters) {
 				decl.Parameters.Add(ConvertParameter(p));
 			}
+			decl.Body = GenerateBodyBlock();
 			return decl;
 		}
 		
@@ -652,6 +702,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			foreach (IParameter p in ctor.Parameters) {
 				decl.Parameters.Add(ConvertParameter(p));
 			}
+			decl.Body = GenerateBodyBlock();
 			return decl;
 		}
 		
@@ -659,6 +710,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 		{
 			DestructorDeclaration decl = new DestructorDeclaration();
 			decl.Name = dtor.DeclaringTypeDefinition.Name;
+			decl.Body = GenerateBodyBlock();
 			return decl;
 		}
 		#endregion
@@ -687,12 +739,13 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 		
 		Modifiers GetMemberModifiers(IMember member)
 		{
-			Modifiers m = ModifierFromAccessibility(member.Accessibility);
+			bool isInterfaceMember = member.DeclaringType.Kind == TypeKind.Interface;
+			Modifiers m = isInterfaceMember ? Modifiers.None : ModifierFromAccessibility(member.Accessibility);
 			if (this.ShowModifiers) {
 				if (member.IsStatic) {
 					m |= Modifiers.Static;
 				} else {
-					if (member.IsAbstract)
+					if (member.IsAbstract && !isInterfaceMember)
 						m |= Modifiers.Abstract;
 					if (member.IsOverride)
 						m |= Modifiers.Override;

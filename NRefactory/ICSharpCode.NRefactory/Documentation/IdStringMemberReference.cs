@@ -55,6 +55,10 @@ namespace ICSharpCode.NRefactory.Documentation
 			}
 		}
 		
+		public ITypeReference DeclaringTypeReference {
+			get { return declaringTypeReference; }
+		}
+		
 		public IMember Resolve(ITypeResolveContext context)
 		{
 			IType declaringType = declaringTypeReference.Resolve(context);

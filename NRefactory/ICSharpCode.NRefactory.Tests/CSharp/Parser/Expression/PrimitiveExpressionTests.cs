@@ -18,6 +18,7 @@
 
 using System;
 using System.Linq;
+using System.Text;
 using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
@@ -145,9 +146,9 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 		public void InvalidHexadecimalInteger()
 		{
 			// don't check result, just make sure there is no exception
-			ParseUtilCSharp.ParseExpression<PrimitiveExpression>("0x2GF", expectErrors: true);
-			ParseUtilCSharp.ParseExpression<PrimitiveExpression>("0xG2F", expectErrors: true);
-			ParseUtilCSharp.ParseExpression<PrimitiveExpression>("0x", expectErrors: true); // SD-457
+			ParseUtilCSharp.ParseExpression<ICSharpCode.NRefactory.CSharp.Expression>("0x2GF", expectErrors: true);
+			ParseUtilCSharp.ParseExpression<ICSharpCode.NRefactory.CSharp.Expression>("0xG2F", expectErrors: true);
+			ParseUtilCSharp.ParseExpression<ICSharpCode.NRefactory.CSharp.Expression>("0x", expectErrors: true); // SD-457
 			// hexadecimal integer >ulong.MaxValue
 			ParseUtilCSharp.ParseExpression<PrimitiveExpression>("0xfedcba98765432100", expectErrors: true);
 		}
@@ -233,6 +234,27 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 			Assert.AreEqual(new TextLocation(1, 1), pe.StartLocation);
 			Assert.AreEqual(new TextLocation(1, 2), pe.EndLocation);
 			Assert.AreEqual("0", pe.LiteralValue);
+		}
+		
+		[Test]
+		public void InvalidUnicodeEscapeSequence()
+		{
+			string code = @"""\u{0}""";
+			var pe = ParseUtilCSharp.ParseExpression<PrimitiveExpression>(code, expectErrors: true);
+			Assert.AreEqual(code, pe.LiteralValue);
+		}
+		
+		[Test]
+		public void LargeVerbatimString()
+		{
+			StringBuilder b = new StringBuilder();
+			for (int i = 0; i < 10000; i++) {
+				b.Append(i.ToString());
+				b.Append("\r\n");
+			}
+			string literal = b.ToString();
+			var pe = ParseUtilCSharp.ParseExpression<PrimitiveExpression>("@\"" + literal + "\"");
+			Assert.AreEqual(literal, pe.Value);
 		}
 	}
 }

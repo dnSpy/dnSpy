@@ -33,7 +33,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		public DefaultAssemblyReference(string assemblyName)
 		{
-			int pos = assemblyName.IndexOf(',');
+			int pos = assemblyName != null ? assemblyName.IndexOf(',') : -1;
 			if (pos >= 0)
 				shortName = assemblyName.Substring(0, pos);
 			else

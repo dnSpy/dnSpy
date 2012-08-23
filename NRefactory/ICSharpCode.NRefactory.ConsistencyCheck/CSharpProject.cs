@@ -20,171 +20,128 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+
 using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.CSharp.TypeSystem;
-using ICSharpCode.NRefactory.Editor;
 using ICSharpCode.NRefactory.TypeSystem;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Logging;
 
 namespace ICSharpCode.NRefactory.ConsistencyCheck
 {
+	/// <summary>
+	/// Represents a C# project (.csproj file)
+	/// </summary>
 	public class CSharpProject
 	{
+		/// <summary>
+		/// Parent solution.
+		/// </summary>
 		public readonly Solution Solution;
+		
+		/// <summary>
+		/// Title is the project name as specified in the .sln file.
+		/// </summary>
 		public readonly string Title;
+		
+		/// <summary>
+		/// Name of the output assembly.
+		/// </summary>
 		public readonly string AssemblyName;
+		
+		/// <summary>
+		/// Full path to the .csproj file.
+		/// </summary>
 		public readonly string FileName;
 		
 		public readonly List<CSharpFile> Files = new List<CSharpFile>();
 		
-		public readonly bool AllowUnsafeBlocks;
-		public readonly bool CheckForOverflowUnderflow;
-		public readonly string[] PreprocessorDefines;
+		public readonly CompilerSettings CompilerSettings = new CompilerSettings();
 		
-		public IProjectContent ProjectContent;
+		/// <summary>
+		/// The unresolved type system for this project.
+		/// </summary>
+		public readonly IProjectContent ProjectContent;
 		
-		public ICompilation Compilation {
-			get {
-				return Solution.SolutionSnapshot.GetCompilation(ProjectContent);
-			}
-		}
+		/// <summary>
+		/// The resolved type system for this project.
+		/// This field is initialized once all projects have been loaded (in Solution constructor).
+		/// </summary>
+		public ICompilation Compilation;
 		
 		public CSharpProject(Solution solution, string title, string fileName)
 		{
+			// Normalize the file name
+			fileName = Path.GetFullPath(fileName);
+			
 			this.Solution = solution;
 			this.Title = title;
 			this.FileName = fileName;
 			
-			var p = new Microsoft.Build.Evaluation.Project(fileName);
-			this.AssemblyName = p.GetPropertyValue("AssemblyName");
-			this.AllowUnsafeBlocks = GetBoolProperty(p, "AllowUnsafeBlocks") ?? false;
-			this.CheckForOverflowUnderflow = GetBoolProperty(p, "CheckForOverflowUnderflow") ?? false;
-			this.PreprocessorDefines = p.GetPropertyValue("DefineConstants").Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-			foreach (var item in p.GetItems("Compile")) {
-				Files.Add(new CSharpFile(this, Path.Combine(p.DirectoryPath, item.EvaluatedInclude)));
+			// Use MSBuild to open the .csproj
+			var msbuildProject = new Microsoft.Build.Evaluation.Project(fileName);
+			// Figure out some compiler settings
+			this.AssemblyName = msbuildProject.GetPropertyValue("AssemblyName");
+			this.CompilerSettings.AllowUnsafeBlocks = GetBoolProperty(msbuildProject, "AllowUnsafeBlocks") ?? false;
+			this.CompilerSettings.CheckForOverflow = GetBoolProperty(msbuildProject, "CheckForOverflowUnderflow") ?? false;
+			string defineConstants = msbuildProject.GetPropertyValue("DefineConstants");
+			foreach (string symbol in defineConstants.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+				this.CompilerSettings.ConditionalSymbols.Add(symbol.Trim());
+			
+			// Initialize the unresolved type system
+			IProjectContent pc = new CSharpProjectContent();
+			pc = pc.SetAssemblyName(this.AssemblyName);
+			pc = pc.SetProjectFileName(fileName);
+			pc = pc.SetCompilerSettings(this.CompilerSettings);
+			// Parse the C# code files
+			foreach (var item in msbuildProject.GetItems("Compile")) {
+				var file = new CSharpFile(this, Path.Combine(msbuildProject.DirectoryPath, item.EvaluatedInclude));
+				Files.Add(file);
 			}
-			List<IAssemblyReference> references = new List<IAssemblyReference>();
-			string mscorlib = FindAssembly(Program.AssemblySearchPaths, "mscorlib");
-			if (mscorlib != null) {
-				references.Add(Program.LoadAssembly(mscorlib));
-			} else {
-				Console.WriteLine("Could not find mscorlib");
+			// Add parsed files to the type system
+			pc = pc.AddOrUpdateFiles(Files.Select(f => f.UnresolvedTypeSystemForFile));
+			
+			// Add referenced assemblies:
+			foreach (string assemblyFile in ResolveAssemblyReferences(msbuildProject)) {
+				IUnresolvedAssembly assembly = solution.LoadAssembly(assemblyFile);
+				pc = pc.AddAssemblyReferences(new [] { assembly });
 			}
-			bool hasSystemCore = false;
-			foreach (var item in p.GetItems("Reference")) {
-				string assemblyFileName = null;
-				if (item.HasMetadata("HintPath")) {
-					assemblyFileName = Path.Combine(p.DirectoryPath, item.GetMetadataValue("HintPath"));
-					if (!File.Exists(assemblyFileName))
-						assemblyFileName = null;
-				}
-				if (assemblyFileName == null) {
-					assemblyFileName = FindAssembly(Program.AssemblySearchPaths, item.EvaluatedInclude);
-				}
-				if (assemblyFileName != null) {
-					if (Path.GetFileName(assemblyFileName).Equals("System.Core.dll", StringComparison.OrdinalIgnoreCase))
-						hasSystemCore = true;
-					references.Add(Program.LoadAssembly(assemblyFileName));
-				} else {
-					Console.WriteLine("Could not find referenced assembly " + item.EvaluatedInclude);
-				}
+			
+			// Add project references:
+			foreach (var item in msbuildProject.GetItems("ProjectReference")) {
+				string referencedFileName = Path.Combine(msbuildProject.DirectoryPath, item.EvaluatedInclude);
+				// Normalize the path; this is required to match the name with the referenced project's file name
+				referencedFileName = Path.GetFullPath(referencedFileName);
+				pc = pc.AddAssemblyReferences(new[] { new ProjectReference(referencedFileName) });
 			}
-			if (!hasSystemCore && FindAssembly(Program.AssemblySearchPaths, "System.Core") != null)
-				references.Add(Program.LoadAssembly(FindAssembly(Program.AssemblySearchPaths, "System.Core")));
-			foreach (var item in p.GetItems("ProjectReference")) {
-				references.Add(new ProjectReference(solution, item.GetMetadataValue("Name")));
-			}
-			this.ProjectContent = new CSharpProjectContent()
-				.SetAssemblyName(this.AssemblyName)
-				.AddAssemblyReferences(references)
-				.UpdateProjectContent(null, Files.Select(f => f.ParsedFile));
+			this.ProjectContent = pc;
 		}
 		
-		string FindAssembly(IEnumerable<string> assemblySearchPaths, string evaluatedInclude)
+		IEnumerable<string> ResolveAssemblyReferences(Microsoft.Build.Evaluation.Project project)
 		{
-			if (evaluatedInclude.IndexOf(',') >= 0)
-				evaluatedInclude = evaluatedInclude.Substring(0, evaluatedInclude.IndexOf(','));
-			foreach (string searchPath in assemblySearchPaths) {
-				string assemblyFile = Path.Combine(searchPath, evaluatedInclude + ".dll");
-				if (File.Exists(assemblyFile))
-					return assemblyFile;
-			}
-			return null;
+			// Use MSBuild to figure out the full path of the referenced assemblies
+			var projectInstance = project.CreateProjectInstance();
+			projectInstance.SetProperty("BuildingProject", "false");
+			project.SetProperty("DesignTimeBuild", "true");
+			
+			projectInstance.Build("ResolveAssemblyReferences", new [] { new ConsoleLogger(LoggerVerbosity.Minimal) });
+			var items = projectInstance.GetItems("_ResolveAssemblyReferenceResolvedFiles");
+			string baseDirectory = Path.GetDirectoryName(this.FileName);
+			return items.Select(i => Path.Combine(baseDirectory, i.GetMetadataValue("Identity")));
 		}
 		
 		static bool? GetBoolProperty(Microsoft.Build.Evaluation.Project p, string propertyName)
 		{
 			string val = p.GetPropertyValue(propertyName);
-			if (val.Equals("true", StringComparison.OrdinalIgnoreCase))
-				return true;
-			if (val.Equals("false", StringComparison.OrdinalIgnoreCase))
-				return false;
-			return null;
-		}
-		
-		public CSharpParser CreateParser()
-		{
-			var settings = new Mono.CSharp.CompilerSettings();
-			settings.Unsafe = AllowUnsafeBlocks;
-			foreach (string define in PreprocessorDefines)
-				settings.AddConditionalSymbol(define);
-			return new CSharpParser(settings);
+			bool result;
+			if (bool.TryParse(val, out result))
+				return result;
+			else
+				return null;
 		}
 		
 		public override string ToString()
 		{
 			return string.Format("[CSharpProject AssemblyName={0}]", AssemblyName);
-		}
-		
-		public CSharpFile GetFile(string fileName)
-		{
-			return Files.Single(f => f.FileName == fileName);
-		}
-	}
-	
-	public class ProjectReference : IAssemblyReference
-	{
-		readonly Solution solution;
-		readonly string projectTitle;
-		
-		public ProjectReference(Solution solution, string projectTitle)
-		{
-			this.solution = solution;
-			this.projectTitle = projectTitle;
-		}
-		
-		public IAssembly Resolve(ITypeResolveContext context)
-		{
-			var project = solution.Projects.Single(p => string.Equals(p.Title, projectTitle, StringComparison.OrdinalIgnoreCase));
-			return project.ProjectContent.Resolve(context);
-		}
-	}
-	
-	public class CSharpFile
-	{
-		public readonly CSharpProject Project;
-		public readonly string FileName;
-		
-		public readonly ITextSource Content;
-		public readonly int LinesOfCode;
-		public CompilationUnit CompilationUnit;
-		public CSharpParsedFile ParsedFile;
-		
-		public CSharpFile(CSharpProject project, string fileName)
-		{
-			this.Project = project;
-			this.FileName = fileName;
-			this.Content = new StringTextSource(File.ReadAllText(FileName));
-			this.LinesOfCode = 1 + this.Content.Text.Count(c => c == '\n');
-			
-			CSharpParser p = project.CreateParser();
-			this.CompilationUnit = p.Parse(Content.CreateReader(), fileName);
-			if (p.HasErrors) {
-				Console.WriteLine("Error parsing " + fileName + ":");
-				foreach (var error in p.ErrorPrinter.Errors) {
-					Console.WriteLine("  " + error.Region + " " + error.Message);
-				}
-			}
-			this.ParsedFile = this.CompilationUnit.ToTypeSystem();
 		}
 	}
 }

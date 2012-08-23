@@ -159,6 +159,8 @@ namespace Mono.CSharp {
 
 		public RuntimeVersion StdLibRuntimeVersion;
 
+		public bool WriteMetadataOnly;
+
 		readonly List<string> conditional_symbols;
 
 		readonly List<SourceFile> source_files;
@@ -180,10 +182,8 @@ namespace Mono.CSharp {
 			StdLibRuntimeVersion = RuntimeVersion.v4;
 			WarningLevel = 4;
 
-			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-				TabSize = 4;
-			else
-				TabSize = 8;
+			// Default to 1 or mdb files would be platform speficic
+			TabSize = 1;
 
 			AssemblyReferences = new List<string> ();
 			AssemblyReferencesAliases = new List<Tuple<string, string>> ();
@@ -565,36 +565,22 @@ namespace Mono.CSharp {
 			source_file_index.Add (path, unit.Index);
 		}
 
-		void AddWarningAsError (string warningId, CompilerSettings settings)
+		public bool ProcessWarningsList (string text, Action<int> action)
 		{
-			int id;
-			try {
-				id = int.Parse (warningId);
-			} catch {
-				report.CheckWarningCode (warningId, Location.Null);
-				return;
+			bool valid = true;
+			foreach (string wid in text.Split (numeric_value_separator)) {
+				int id;
+				if (!int.TryParse (wid, NumberStyles.AllowLeadingWhite, CultureInfo.InvariantCulture, out id)) {
+					report.Error (1904, "`{0}' is not a valid warning number", wid);
+					valid = false;
+					continue;
+				}
+
+				if (report.CheckWarningCode (id, Location.Null))
+					action (id);
 			}
 
-			if (!report.CheckWarningCode (id, Location.Null))
-				return;
-
-			settings.AddWarningAsError (id);
-		}
-
-		void RemoveWarningAsError (string warningId, CompilerSettings settings)
-		{
-			int id;
-			try {
-				id = int.Parse (warningId);
-			} catch {
-				report.CheckWarningCode (warningId, Location.Null);
-				return;
-			}
-
-			if (!report.CheckWarningCode (id, Location.Null))
-				return;
-
-			settings.AddWarningOnly (id);
+			return valid;
 		}
 
 		void Error_RequiresArgument (string option)
@@ -684,8 +670,9 @@ namespace Mono.CSharp {
 		{
 			output.WriteLine (
 				"Other flags in the compiler\n" +
-				"   --fatal[=COUNT]    Makes errors after COUNT fatal\n" +
+				"   --fatal[=COUNT]    Makes error after COUNT fatal\n" +
 				"   --lint             Enhanced warnings\n" +
+				"   --metadata-only    Produced assembly will contain metadata only\n" +
 				"   --parse            Only parses the source file\n" +
 				"   --runtime:VERSION  Sets mscorlib.dll metadata version: v1, v2, v4\n" +
 				"   --stacktrace       Shows stack trace at error location\n" +
@@ -947,7 +934,7 @@ namespace Mono.CSharp {
 				return ParseResult.Success;
 
 			case "/debug":
-				if (value == "full" || value == "pdbonly" || idx < 0) {
+				if (value.Equals ("full", StringComparison.OrdinalIgnoreCase) || value.Equals ("pdbonly", StringComparison.OrdinalIgnoreCase) || idx < 0) {
 					settings.GenerateDebugInfo = true;
 					return ParseResult.Success;
 				}
@@ -997,8 +984,8 @@ namespace Mono.CSharp {
 					settings.WarningsAreErrors = true;
 					parser_settings.WarningsAreErrors = true;
 				} else {
-					foreach (string wid in value.Split (numeric_value_separator))
-						AddWarningAsError (wid, settings);
+					if (!ProcessWarningsList (value, v => settings.AddWarningAsError (v)))
+						return ParseResult.Error;
 				}
 				return ParseResult.Success;
 
@@ -1006,12 +993,13 @@ namespace Mono.CSharp {
 				if (value.Length == 0) {
 					settings.WarningsAreErrors = false;
 				} else {
-					foreach (string wid in value.Split (numeric_value_separator))
-						RemoveWarningAsError (wid, settings);
+					if (!ProcessWarningsList (value, v => settings.AddWarningOnly (v)))
+						return ParseResult.Error;
 				}
 				return ParseResult.Success;
 
 			case "/warn":
+			case "/w":
 				if (value.Length == 0) {
 					Error_RequiresArgument (option);
 					return ParseResult.Error;
@@ -1021,28 +1009,15 @@ namespace Mono.CSharp {
 				return ParseResult.Success;
 
 			case "/nowarn":
-					if (value.Length == 0) {
-						Error_RequiresArgument (option);
-						return ParseResult.Error;
-					}
+				if (value.Length == 0) {
+					Error_RequiresArgument (option);
+					return ParseResult.Error;
+				}
 
-					var warns = value.Split (numeric_value_separator);
-					foreach (string wc in warns) {
-						try {
-							if (wc.Trim ().Length == 0)
-								continue;
+				if (!ProcessWarningsList (value, v => settings.SetIgnoreWarning (v)))
+					return ParseResult.Error;
 
-							int warn = Int32.Parse (wc);
-							if (warn < 1) {
-								throw new ArgumentOutOfRangeException ("warn");
-							}
-							settings.SetIgnoreWarning (warn);
-						} catch {
-							report.Error (1904, "`{0}' is not a valid warning number", wc);
-							return ParseResult.Error;
-						}
-					}
-					return ParseResult.Success;
+				return ParseResult.Success;
 
 			case "/noconfig":
 				settings.LoadDefaultReferences = false;
@@ -1451,6 +1426,10 @@ namespace Mono.CSharp {
 				settings.LoadDefaultReferences = false;
 				return ParseResult.Success;
 
+			case "--metadata-only":
+				settings.WriteMetadataOnly = true;
+				return ParseResult.Success;
+
 			default:
 				if (arg.StartsWith ("--fatal", StringComparison.Ordinal)){
 					int fatal = 1;
@@ -1565,7 +1544,7 @@ namespace Mono.CSharp {
 				"   -reference:A1[,An]   Imports metadata from the specified assembly (short: -r)\n" +
 				"   -reference:ALIAS=A   Imports metadata using specified extern alias (short: -r)\n" +
 				"   -sdk:VERSION         Specifies SDK version of referenced assemblies\n" +
-				"                        VERSION can be one of: 2, 4 (default) or custom value\n" +
+				"                        VERSION can be one of: 2, 4, 4.5 (default) or a custom value\n" +
 				"   -target:KIND         Specifies the format of the output assembly (short: -t)\n" +
 				"                        KIND can be one of: exe, winexe, library, module\n" +
 				"   -unsafe[+|-]         Allows to compile code which uses unsafe keyword\n" +

@@ -42,7 +42,7 @@ namespace ICSharpCode.Decompiler.Tests
 			var assembly = AssemblyDefinition.ReadAssembly(Path.Combine(path, compiledFile));
 			AstBuilder decompiler = new AstBuilder(new DecompilerContext(assembly.MainModule));
 			decompiler.AddAssembly(assembly);
-			new Helpers.RemoveCompilerAttribute().Run(decompiler.CompilationUnit);
+			new Helpers.RemoveCompilerAttribute().Run(decompiler.SyntaxTree);
 			StringWriter output = new StringWriter();
 			decompiler.GenerateCode(new PlainTextOutput(output));
 			CodeAssert.AreEqual(expectedOutput, output.ToString());

@@ -17,8 +17,6 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 
 namespace ICSharpCode.NRefactory.TypeSystem
 {
@@ -26,9 +24,6 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// Interface for TypeSystem objects that support interning.
 	/// See <see cref="IInterningProvider"/> for more information.
 	/// </summary>
-	#if WITH_CONTRACTS
-	[ContractClass(typeof(ISupportsInterningContract))]
-	#endif
 	public interface ISupportsInterning
 	{
 		/// <summary>
@@ -46,25 +41,4 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// </summary>
 		bool EqualsForInterning(ISupportsInterning other);
 	}
-	
-	#if WITH_CONTRACTS
-	[ContractClassFor(typeof(ISupportsInterning))]
-	abstract class ISupportsInterningContract : ISupportsInterning
-	{
-		void ISupportsInterning.PrepareForInterning(IInterningProvider provider)
-		{
-			Contract.Requires(provider != null);
-		}
-		
-		int ISupportsInterning.GetHashCodeForInterning()
-		{
-			return 0;
-		}
-		
-		bool ISupportsInterning.EqualsForInterning(ISupportsInterning other)
-		{
-			return false;
-		}
-	}
-	#endif
 }

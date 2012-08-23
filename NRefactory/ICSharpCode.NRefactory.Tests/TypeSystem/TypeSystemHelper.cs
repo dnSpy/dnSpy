@@ -27,20 +27,20 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	{
 		public static ICompilation CreateCompilation()
 		{
-			return CreateCompilation(new IParsedFile[0]);
+			return CreateCompilation(new IUnresolvedFile[0]);
 		}
 		
 		public static ICompilation CreateCompilation(params IUnresolvedTypeDefinition[] unresolvedTypeDefinitions)
 		{
-			var parsedFile = new CSharpParsedFile("dummy.cs");
+			var unresolvedFile = new CSharpUnresolvedFile("dummy.cs");
 			foreach (var typeDef in unresolvedTypeDefinitions)
-				parsedFile.TopLevelTypeDefinitions.Add(typeDef);
-			return CreateCompilation(parsedFile);
+				unresolvedFile.TopLevelTypeDefinitions.Add(typeDef);
+			return CreateCompilation(unresolvedFile);
 		}
 		
-		public static ICompilation CreateCompilation(params IParsedFile[] parsedFiles)
+		public static ICompilation CreateCompilation(params IUnresolvedFile[] unresolvedFiles)
 		{
-			var pc = new CSharpProjectContent().UpdateProjectContent(null, parsedFiles);
+			var pc = new CSharpProjectContent().AddOrUpdateFiles(unresolvedFiles);
 			pc = pc.AddAssemblyReferences(new [] { CecilLoaderTests.Mscorlib, CecilLoaderTests.SystemCore });
 			return pc.CreateCompilation();
 		}

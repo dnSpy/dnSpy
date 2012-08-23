@@ -70,6 +70,12 @@ namespace Mono.CSharp
 			}
 		}
 
+		public Dictionary<string, MemberCore> DefinedNames {
+			get {
+				return defined_names;
+			}
+		}
+
 		public TypeDefinition PartialContainer {
 			get {
 				return main_container;
@@ -340,12 +346,31 @@ namespace Mono.CSharp
 			return MemberName.GetSignatureForError ();
 		}
 
+		public string GetSignatureForMetadata ()
+		{
+#if STATIC
+			var name = TypeNameParser.Escape (MemberName.Basename);
+
+			if (Parent is TypeDefinition) {
+				return Parent.GetSignatureForMetadata () + "+" + name;
+			}
+
+			if (Parent != null && Parent.MemberName != null)
+				return Parent.GetSignatureForMetadata () + "." + name;
+
+			return name;
+#else
+			throw new NotImplementedException ();
+#endif
+		}
+
 		public virtual void RemoveContainer (TypeContainer cont)
 		{
 			if (containers != null)
 				containers.Remove (cont);
 
-			defined_names.Remove (cont.Basename);
+			var tc = Parent == Module ? Module : this;
+			tc.defined_names.Remove (cont.Basename);
 		}
 
 		public virtual void VerifyMembers ()
@@ -1838,13 +1863,20 @@ namespace Mono.CSharp
 				return;
 
 			string class_indexer_name = null;
-			has_normal_indexers = true;
 
 			//
 			// Check normal indexers for consistent name, explicit interface implementation
 			// indexers are ignored
 			//
 			foreach (var indexer in indexers) {
+				//
+				// FindMembers can return unfiltered full hierarchy names
+				//
+				if (indexer.DeclaringType != spec)
+					continue;
+
+				has_normal_indexers = true;
+
 				if (class_indexer_name == null) {
 					indexer_name = class_indexer_name = indexer.Name;
 					continue;
@@ -1922,7 +1954,7 @@ namespace Mono.CSharp
 						continue;
 
 					//
-					// Don't be pendatic over serializable attributes
+					// Don't be pedantic when type requires specific layout
 					//
 					if (f.OptAttributes != null || PartialContainer.HasStructLayout)
 						continue;
@@ -1934,10 +1966,6 @@ namespace Mono.CSharp
 					} else if (TypeSpec.IsReferenceType (f.MemberType)) {
 						value = "null";
 					} else {
-						// Ignore this warning for struct value fields (they are always initialized)
-						if (f.MemberType.IsStruct)
-							continue;
-
 						value = null;
 					}
 
@@ -2401,16 +2429,6 @@ namespace Mono.CSharp
 			}
 
 			base.AddNameToContainer (symbol, name);
-		}
-
-		public override void VerifyMembers ()
-		{
-			base.VerifyMembers ();
-
-			if (containers != null) {
-				foreach (var t in containers)
-					t.VerifyMembers ();
-			}
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)

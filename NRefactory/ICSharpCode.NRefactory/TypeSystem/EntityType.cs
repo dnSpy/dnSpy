@@ -31,6 +31,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		Method,
 		Operator,
 		Constructor,
-		Destructor
+		Destructor,
+		Accessor
 	}
 }

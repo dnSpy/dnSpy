@@ -17,16 +17,12 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Diagnostics.Contracts;
 
 namespace ICSharpCode.NRefactory.TypeSystem
 {
 	/// <summary>
 	/// Represents a variable (name/type pair).
 	/// </summary>
-	#if WITH_CONTRACTS
-	[ContractClass(typeof(IVariableContract))]
-	#endif
 	public interface IVariable
 	{
 		/// <summary>
@@ -55,36 +51,4 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// </summary>
 		object ConstantValue { get; }
 	}
-	
-	#if WITH_CONTRACTS
-	[ContractClassFor(typeof(IVariable))]
-	abstract class IVariableContract : IVariable
-	{
-		string IVariable.Name {
-			get {
-				Contract.Ensures(Contract.Result<string>() != null);
-				return null;
-			}
-		}
-		
-		ITypeReference IVariable.Type {
-			get {
-				Contract.Ensures(Contract.Result<ITypeReference>() != null);
-				return null;
-			}
-		}
-		
-		bool IVariable.IsConst {
-			get {
-				IVariable @this = this;
-				Contract.Ensures(Contract.Result<bool>() == (@this.ConstantValue != null));
-				return false;
-			}
-		}
-		
-		object IVariable.ConstantValue {
-			get { return null; }
-		}
-	}
-	#endif
 }

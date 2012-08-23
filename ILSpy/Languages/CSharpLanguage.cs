@@ -212,10 +212,10 @@ namespace ICSharpCode.ILSpy
 		{
 			astBuilder.RunTransformations(transformAbortCondition);
 			if (additionalTransform != null) {
-				additionalTransform.Run(astBuilder.CompilationUnit);
+				additionalTransform.Run(astBuilder.SyntaxTree);
 			}
 			if (options.DecompilerSettings.ShowXmlDocumentation) {
-				AddXmlDocTransform.Run(astBuilder.CompilationUnit);
+				AddXmlDocTransform.Run(astBuilder.SyntaxTree);
 			}
 			astBuilder.GenerateCode(output);
 		}
@@ -650,7 +650,7 @@ namespace ICSharpCode.ILSpy
 				else
 					b.AddField(fd);
 				b.RunTransformations();
-				foreach (var attribute in b.CompilationUnit.Descendants.OfType<AttributeSection>())
+				foreach (var attribute in b.SyntaxTree.Descendants.OfType<AttributeSection>())
 					attribute.Remove();
 
 				StringWriter w = new StringWriter();

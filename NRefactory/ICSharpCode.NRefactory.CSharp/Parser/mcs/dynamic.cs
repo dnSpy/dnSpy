@@ -502,7 +502,7 @@ namespace Mono.CSharp
 
 			using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
 				if (s.Resolve (bc)) {
-					Statement init = new If (new Binary (Binary.Operator.Equality, site_field_expr, new NullLiteral (loc), loc), s, loc);
+					Statement init = new If (new Binary (Binary.Operator.Equality, site_field_expr, new NullLiteral (loc)), s, loc);
 					init.Emit (ec);
 				}
 

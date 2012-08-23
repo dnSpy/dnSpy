@@ -944,10 +944,10 @@ namespace Mono.CSharp
 			if (method.ReturnType.Kind == MemberKind.Void && method.IsConditionallyExcluded (ec.MemberContext, loc))
 				return;
 
-			EmitPredefined (ec, method, Arguments);
+			EmitPredefined (ec, method, Arguments, loc);
 		}
 
-		public void EmitPredefined (EmitContext ec, MethodSpec method, Arguments Arguments)
+		public void EmitPredefined (EmitContext ec, MethodSpec method, Arguments Arguments, Location? loc = null)
 		{
 			Expression instance_copy = null;
 
@@ -1004,6 +1004,18 @@ namespace Mono.CSharp
 
 			if (call_op == OpCodes.Callvirt && (InstanceExpression.Type.IsGenericParameter || InstanceExpression.Type.IsStruct)) {
 				ec.Emit (OpCodes.Constrained, InstanceExpression.Type);
+			}
+
+			if (loc != null) {
+				//
+				// Emit explicit sequence point for expressions like Foo.Bar () to help debugger to
+				// break at right place when LHS expression can be stepped-into
+				//
+				// TODO: The list is probably not comprehensive, need to do more testing
+				//
+				if (InstanceExpression is PropertyExpr || InstanceExpression is Invocation || InstanceExpression is IndexerExpr ||
+					InstanceExpression is New || InstanceExpression is DelegateInvocation)
+					ec.Mark (loc.Value);
 			}
 
 			//

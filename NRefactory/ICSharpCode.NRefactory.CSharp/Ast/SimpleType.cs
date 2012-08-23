@@ -66,7 +66,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				return other == null || other.IsNull;
 			}
 			
-			public override ITypeReference ToTypeReference(SimpleNameLookupMode lookupMode)
+			public override ITypeReference ToTypeReference(NameLookupMode lookupMode)
 			{
 				return SpecialType.UnknownType;
 			}
@@ -158,7 +158,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			return b.ToString();
 		}
 		
-		public override ITypeReference ToTypeReference(SimpleNameLookupMode lookupMode = SimpleNameLookupMode.Type)
+		public override ITypeReference ToTypeReference(NameLookupMode lookupMode = NameLookupMode.Type)
 		{
 			var typeArguments = new List<ITypeReference>();
 			foreach (var ta in this.TypeArguments) {

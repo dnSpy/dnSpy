@@ -19,6 +19,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+
 using ICSharpCode.NRefactory.Semantics;
 
 namespace ICSharpCode.NRefactory.TypeSystem.Implementation
@@ -43,11 +45,127 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			this.TypeParameters = unresolved.TypeParameters.CreateResolvedTypeParameters(context);
 			this.IsExtensionMethod = isExtensionMethod;
 		}
-		
-		public static DefaultResolvedMethod CreateFromMultipleParts(IUnresolvedMethod[] parts, ITypeResolveContext firstPartParentContext, bool isExtensionMethod)
+
+		class ListOfLists<T> : IList<T>
 		{
-			DefaultResolvedMethod method = new DefaultResolvedMethod(parts[0], firstPartParentContext, isExtensionMethod);
+			List<IList<T>> lists =new List<IList<T>> ();
+
+			public void AddList(IList<T> list)
+			{
+				lists.Add (list);
+			}
+
+			#region IEnumerable implementation
+			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+			{
+				return GetEnumerator();
+			}
+			#endregion
+
+			#region IEnumerable implementation
+			public IEnumerator<T> GetEnumerator ()
+			{
+				for (int i = 0; i < this.Count; i++) {
+					yield return this[i];
+				}
+			}
+			#endregion
+
+			#region ICollection implementation
+			public void Add (T item)
+			{
+				throw new NotSupportedException();
+			}
+
+			public void Clear ()
+			{
+				throw new NotSupportedException();
+			}
+
+			public bool Contains (T item)
+			{
+				var comparer = EqualityComparer<T>.Default;
+				for (int i = 0; i < this.Count; i++) {
+					if (comparer.Equals(this[i], item))
+						return true;
+				}
+				return false;
+			}
+
+			public void CopyTo (T[] array, int arrayIndex)
+			{
+				for (int i = 0; i < Count; i++) {
+					array[arrayIndex + i] = this[i];
+				}
+			}
+
+			public bool Remove (T item)
+			{
+				throw new NotSupportedException();
+			}
+
+			public int Count {
+				get {
+					return lists.Sum (l => l.Count);
+				}
+			}
+
+			public bool IsReadOnly {
+				get {
+					return true;
+				}
+			}
+			#endregion
+
+			#region IList implementation
+			public int IndexOf (T item)
+			{
+				var comparer = EqualityComparer<T>.Default;
+				for (int i = 0; i < this.Count; i++) {
+					if (comparer.Equals(this[i], item))
+						return i;
+				}
+				return -1;
+			}
+
+			public void Insert (int index, T item)
+			{
+				throw new NotSupportedException();
+			}
+
+			public void RemoveAt (int index)
+			{
+				throw new NotSupportedException();
+			}
+
+			public T this[int index] {
+				get {
+					foreach (var list in lists){
+						if (index < list.Count)
+							return list[index];
+						index -= list.Count;
+					}
+					throw new IndexOutOfRangeException ();
+				}
+				set {
+					throw new NotSupportedException();
+				}
+			}
+			#endregion
+		}
+
+		public static DefaultResolvedMethod CreateFromMultipleParts(IUnresolvedMethod[] parts, ITypeResolveContext[] contexts, bool isExtensionMethod)
+		{
+			DefaultResolvedMethod method = new DefaultResolvedMethod(parts[0], contexts[0], isExtensionMethod);
 			method.parts = parts;
+			if (parts.Length > 1) {
+				var attrs = new ListOfLists <IAttribute>();
+				attrs.AddList (method.Attributes);
+				for (int i = 1; i < parts.Length; i++) {
+					attrs.AddList (parts[i].Attributes.CreateResolvedAttributes(contexts[i]));
+				}
+				method.Attributes = attrs;
+			}
 			return method;
 		}
 		
@@ -74,6 +192,28 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		public bool IsOperator {
 			get { return ((IUnresolvedMethod)unresolved).IsOperator; }
 		}
+			
+		public bool IsPartial {
+			get { return ((IUnresolvedMethod)unresolved).IsPartial; }
+		}
+		
+		public bool HasBody {
+			get { return ((IUnresolvedMethod)unresolved).HasBody; }
+		}
+		
+		public bool IsAccessor {
+			get { return ((IUnresolvedMethod)unresolved).AccessorOwner != null; }
+		}
+		
+		public IMember AccessorOwner {
+			get { 
+				var reference = ((IUnresolvedMethod)unresolved).AccessorOwner; 
+				if (reference != null)
+					return reference.Resolve(context);
+				else
+					return null;
+			}
+		}
 		
 		public override IMemberReference ToMemberReference()
 		{
@@ -85,6 +225,58 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 					this.EntityType, declTypeRef, this.Name, this.TypeParameters.Count,
 					this.Parameters.Select(p => p.Type.ToTypeReference()).ToList());
 			}
+		}
+		
+		public override string ToString()
+		{
+			StringBuilder b = new StringBuilder("[");
+			b.Append(this.EntityType);
+			b.Append(' ');
+			b.Append(this.DeclaringType.ReflectionName);
+			b.Append('.');
+			b.Append(this.Name);
+			if (this.TypeParameters.Count > 0) {
+				b.Append("``");
+				b.Append(this.TypeParameters.Count);
+			}
+			b.Append('(');
+			for (int i = 0; i < this.Parameters.Count; i++) {
+				if (i > 0) b.Append(", ");
+				b.Append(this.Parameters[i].ToString());
+			}
+			b.Append("):");
+			b.Append(this.ReturnType.ReflectionName);
+			b.Append(']');
+			return b.ToString();
+		}
+		
+		/// <summary>
+		/// Gets a dummy constructor for the specified compilation.
+		/// </summary>
+		/// <returns>
+		/// A public instance constructor with IsSynthetic=true and no declaring type.
+		/// </returns>
+		/// <seealso cref="DefaultUnresolvedMethod.DummyConstructor"/>
+		public static IMethod GetDummyConstructor(ICompilation compilation)
+		{
+			var dummyConstructor = DefaultUnresolvedMethod.DummyConstructor;
+			// Reuse the same IMethod instance for all dummy constructors
+			// so that two occurrences of 'new T()' refer to the same constructor.
+			return (IMethod)compilation.CacheManager.GetOrAddShared(
+				dummyConstructor, _ => dummyConstructor.CreateResolved(compilation.TypeResolveContext));
+		}
+		
+		/// <summary>
+		/// Gets a dummy constructor for the specified type.
+		/// </summary>
+		/// <returns>
+		/// A public instance constructor with IsSynthetic=true and the specified declaring type.
+		/// </returns>
+		/// <seealso cref="DefaultUnresolvedMethod.DummyConstructor"/>
+		public static IMethod GetDummyConstructor(ICompilation compilation, IType declaringType)
+		{
+			var resolvedCtor = GetDummyConstructor(compilation);
+			return new SpecializedMethod(resolvedCtor, TypeParameterSubstitution.Identity) { DeclaringType = declaringType };
 		}
 	}
 }

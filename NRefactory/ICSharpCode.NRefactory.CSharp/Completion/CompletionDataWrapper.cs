@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using ICSharpCode.NRefactory.Completion;
 using ICSharpCode.NRefactory.TypeSystem;
 using System.Linq;
+using ICSharpCode.NRefactory.CSharp.Resolver;
 
 namespace ICSharpCode.NRefactory.CSharp.Completion
 {
@@ -35,7 +36,7 @@ namespace ICSharpCode.NRefactory.CSharp.Completion
 	{
 		CSharpCompletionEngine completion;
 		List<ICompletionData> result = new List<ICompletionData> ();
-			
+		
 		public List<ICompletionData> Result {
 			get {
 				return result;
@@ -47,119 +48,109 @@ namespace ICSharpCode.NRefactory.CSharp.Completion
 				return completion.factory;
 			}
 		}
-			
+		
 		public CompletionDataWrapper (CSharpCompletionEngine completion)
 		{
 			this.completion = completion;
 		}
-
+		
 		public void Add (ICompletionData data)
 		{
 			result.Add (data);
 		}
 
+
 		public void AddCustom (string displayText, string description = null, string completionText = null)
 		{
 			result.Add (Factory.CreateLiteralCompletionData (displayText, description, completionText));
 		}
-			
+		
 		HashSet<string> usedNamespaces = new HashSet<string> ();
-			
-		public void AddNamespace (string name)
+		
+		public void AddNamespace (INamespace ns)
 		{
-			if (string.IsNullOrEmpty (name) || usedNamespaces.Contains (name))
+			if (usedNamespaces.Contains (ns.Name))
 				return;
-			usedNamespaces.Add (name);
-			result.Add (Factory.CreateNamespaceCompletionData (name));
+			usedNamespaces.Add (ns.Name);
+			result.Add (Factory.CreateNamespaceCompletionData (ns));
 		}
-			
+
+		public void AddAlias(string alias)
+		{
+			result.Add (Factory.CreateLiteralCompletionData (alias));
+		}
+
+
 		HashSet<string> usedTypes = new HashSet<string> ();
 
-		public void AddType (IType type, string shortType)
+		public ICompletionData AddType(IType type, string shortType)
 		{
-			if (type == null || string.IsNullOrEmpty (shortType) || usedTypes.Contains (shortType))
-				return;
-			usedTypes.Add (shortType);
-			result.Add (Factory.CreateTypeCompletionData (type, shortType));
-		}
-		
-		public void AddType (IUnresolvedTypeDefinition type, string shortType)
-		{
-			if (type == null || string.IsNullOrEmpty (shortType) || usedTypes.Contains (shortType))
-				return;
-			usedTypes.Add (shortType);
-			result.Add (Factory.CreateTypeCompletionData (type, shortType));
-		}
-			
-		Dictionary<string, List<ICompletionData>> data = new Dictionary<string, List<ICompletionData>> ();
-			
-		public void AddVariable (IVariable variable)
-		{
-			if (data.ContainsKey (variable.Name))
-				return;
-			data [variable.Name] = new List<ICompletionData> ();
-			result.Add (Factory.CreateVariableCompletionData (variable));
-		}
-			
-		public void AddTypeParameter (IUnresolvedTypeParameter variable)
-		{
-			if (data.ContainsKey (variable.Name))
-				return;
-			data [variable.Name] = new List<ICompletionData> ();
-			result.Add (Factory.CreateVariableCompletionData (variable));
-		}
-			
-		public ICompletionData AddMember (IUnresolvedMember member)
-		{
-			var newData = Factory.CreateEntityCompletionData (member);
-			
-//				newData.HideExtensionParameter = HideExtensionParameter;
-			string memberKey = newData.DisplayText;
-			if (memberKey == null)
+			if (type == null || string.IsNullOrEmpty(shortType) || usedTypes.Contains(shortType))
 				return null;
-			if (member is IMember) {
-				newData.CompletionCategory = GetCompletionCategory (member.DeclaringTypeDefinition.Resolve (completion.ctx));
-			}
-			List<ICompletionData> existingData;
-			data.TryGetValue (memberKey, out existingData);
-				
-			if (existingData != null) {
-				var a = member as IEntity;
-				foreach (var d in existingData) {
-					if (!(d is IEntityCompletionData))
-						continue;
-					var b = ((IEntityCompletionData)d).Entity;
-					if (a == null || b == null || a.EntityType == b.EntityType) {
-						d.AddOverload (newData);
-						return d;
-					} 
-				}
-				if (newData != null) {
-					result.Add (newData);
-					data [memberKey].Add (newData);
-				}
-			} else {
-				result.Add (newData);
-				data [memberKey] = new List<ICompletionData> ();
-				data [memberKey].Add (newData);
-			}
-			return newData;
+			if (type.Name == "Void" && type.Namespace == "System")
+				return null;
+
+			var def = type.GetDefinition ();
+			if (def != null && def.ParentAssembly != completion.ctx.CurrentAssembly && !def.IsBrowsable ())
+				return null;
+
+			usedTypes.Add(shortType);
+			var iCompletionData = Factory.CreateTypeCompletionData(type, shortType);
+			result.Add(iCompletionData);
+			return iCompletionData;
+		}
+
+		Dictionary<string, List<ICompletionData>> data = new Dictionary<string, List<ICompletionData>> ();
+		
+		public ICompletionData AddVariable(IVariable variable)
+		{
+			if (data.ContainsKey(variable.Name))
+				return null;
+			data [variable.Name] = new List<ICompletionData>();
+			var cd = Factory.CreateVariableCompletionData(variable);
+			result.Add(cd);
+			return cd;
 		}
 		
+		public ICompletionData AddNamedParameterVariable(IVariable variable)
+		{
+			var name = variable.Name + ":";
+			if (data.ContainsKey(name))
+				return null;
+			data [name] = new List<ICompletionData>();
+			
+			var cd = Factory.CreateVariableCompletionData(variable);
+			cd.CompletionText += ":";
+			cd.DisplayText += ":";
+			result.Add(cd);
+			return cd;
+		}
+		
+		public void AddTypeParameter (ITypeParameter variable)
+		{
+			if (data.ContainsKey (variable.Name))
+				return;
+			data [variable.Name] = new List<ICompletionData> ();
+			result.Add (Factory.CreateVariableCompletionData (variable));
+		}
+
 		public ICompletionData AddMember (IMember member)
 		{
 			var newData = Factory.CreateEntityCompletionData (member);
 			
-//				newData.HideExtensionParameter = HideExtensionParameter;
+			if (member.ParentAssembly != completion.ctx.CurrentAssembly && !member.IsBrowsable ())
+				return null;
+
 			string memberKey = newData.DisplayText;
 			if (memberKey == null)
 				return null;
+
 			if (member is IMember) {
 				newData.CompletionCategory = GetCompletionCategory (member.DeclaringTypeDefinition);
 			}
 			List<ICompletionData> existingData;
 			data.TryGetValue (memberKey, out existingData);
-				
+			
 			if (existingData != null) {
 				var a = member as IEntity;
 				foreach (var d in existingData) {
@@ -182,7 +173,7 @@ namespace ICSharpCode.NRefactory.CSharp.Completion
 			}
 			return newData;
 		}
-			
+		
 		internal CompletionCategory GetCompletionCategory (IType type)
 		{
 			if (type == null)
@@ -191,7 +182,7 @@ namespace ICSharpCode.NRefactory.CSharp.Completion
 				completionCategories [type] = new TypeCompletionCategory (type);
 			return completionCategories [type];
 		}
-			
+		
 		Dictionary<IType, CompletionCategory> completionCategories = new Dictionary<IType, CompletionCategory> ();
 		class TypeCompletionCategory : CompletionCategory
 		{
@@ -210,13 +201,32 @@ namespace ICSharpCode.NRefactory.CSharp.Completion
 				var compareCategory = other as TypeCompletionCategory;
 				if (compareCategory == null)
 					return -1;
-					
+				
 				if (Type.ReflectionName == compareCategory.Type.ReflectionName)
 					return 0;
-					
+				
 				if (Type.GetAllBaseTypes ().Any (t => t.ReflectionName == compareCategory.Type.ReflectionName))
 					return -1;
 				return 1;
+			}
+		}
+		HashSet<IType> addedEnums = new HashSet<IType> ();
+		public void AddEnumMembers (IType resolvedType, CSharpResolver state, string typeString)
+		{
+			if (addedEnums.Contains (resolvedType))
+				return;
+			addedEnums.Add (resolvedType);
+			if (typeString.Contains(".")) {
+				AddType(resolvedType, typeString);
+			}
+			foreach (var field in resolvedType.GetFields ()) {
+				if (field.IsPublic && (field.IsConst || field.IsStatic)) {
+					Result.Add(Factory.CreateEntityCompletionData(
+						field,
+						typeString + "." + field.Name
+						)
+					           );
+				}
 			}
 		}
 	}

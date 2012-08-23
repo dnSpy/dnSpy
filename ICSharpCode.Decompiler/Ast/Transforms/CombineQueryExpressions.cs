@@ -82,11 +82,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				new AnonymousTypeCreateExpression {
 					Initializers = {
 						new NamedExpression {
-							Identifier = Pattern.AnyString,
+							Name = Pattern.AnyString,
 							Expression = new IdentifierExpression(Pattern.AnyString)
 						}.WithName("nae1"),
 						new NamedExpression {
-							Identifier = Pattern.AnyString,
+							Name = Pattern.AnyString,
 							Expression = new AnyNode("nae2Expr")
 						}.WithName("nae2")
 					}
@@ -114,11 +114,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			QuerySelectClause selectClause = (QuerySelectClause)innerQuery.Clauses.Last();
 			NamedExpression nae1 = match.Get<NamedExpression>("nae1").SingleOrDefault();
 			NamedExpression nae2 = match.Get<NamedExpression>("nae2").SingleOrDefault();
-			if (nae1 != null && nae1.Identifier != ((IdentifierExpression)nae1.Expression).Identifier)
+			if (nae1 != null && nae1.Name != ((IdentifierExpression)nae1.Expression).Identifier)
 				return false;
 			Expression nae2Expr = match.Get<Expression>("nae2Expr").Single();
 			IdentifierExpression nae2IdentExpr = nae2Expr as IdentifierExpression;
-			if (nae2IdentExpr != null && (nae2 == null || nae2.Identifier == nae2IdentExpr.Identifier)) {
+			if (nae2IdentExpr != null && (nae2 == null || nae2.Name == nae2IdentExpr.Identifier)) {
 				// from * in (from x in ... select new { x = x, y = y }) ...
 				// =>
 				// from x in ... ...
@@ -142,7 +142,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				}
 				string ident;
 				if (nae2 != null)
-					ident = nae2.Identifier;
+					ident = nae2.Name;
 				else if (nae2Expr is IdentifierExpression)
 					ident = ((IdentifierExpression)nae2Expr).Identifier;
 				else if (nae2Expr is MemberReferenceExpression)

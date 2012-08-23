@@ -31,7 +31,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			: base(propertyDefinition)
 		{
 			AddSubstitution(substitution);
-			this.propertyDefinition = (IProperty)base.MemberDefinition;
+			this.propertyDefinition = (IProperty)base.baseMember;
 		}
 		
 		public bool CanGet {

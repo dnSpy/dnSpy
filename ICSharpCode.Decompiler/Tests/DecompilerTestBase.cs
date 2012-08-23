@@ -58,7 +58,7 @@ namespace ICSharpCode.Decompiler.Tests
 			AssemblyDefinition assembly = Compile(code);
 			AstBuilder decompiler = new AstBuilder(new DecompilerContext(assembly.MainModule) { Settings = settings });
 			decompiler.AddAssembly(assembly);
-			new Helpers.RemoveCompilerAttribute().Run(decompiler.CompilationUnit);
+			new Helpers.RemoveCompilerAttribute().Run(decompiler.SyntaxTree);
 			StringWriter output = new StringWriter();
 			decompiler.GenerateCode(new PlainTextOutput(output));
 			return output.ToString();

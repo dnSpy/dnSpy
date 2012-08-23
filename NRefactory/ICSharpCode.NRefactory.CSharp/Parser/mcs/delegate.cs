@@ -520,8 +520,11 @@ namespace Mono.CSharp {
 			}
 
 			TypeSpec rt = delegate_method.ReturnType;
+			if (rt.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
+				rt = ec.BuiltinTypes.Object;
+
 			if (!Delegate.IsTypeCovariant (ec, rt, invoke_method.ReturnType)) {
-				Expression ret_expr = new TypeExpression (rt, loc);
+				Expression ret_expr = new TypeExpression (delegate_method.ReturnType, loc);
 				Error_ConversionFailed (ec, delegate_method, ret_expr);
 			}
 

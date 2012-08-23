@@ -1,4 +1,4 @@
-﻿// 
+// 
 // InspectionIssue.cs
 //
 // Author:
@@ -35,9 +35,9 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 	public class CodeIssue
 	{
 		/// <summary>
-		/// Gets the desription of the issue.
+		/// Gets the description of the issue.
 		/// </summary>
-		public string Desription {
+		public string Description {
 			get;
 			private set;
 		}
@@ -83,7 +83,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 		/// </param>
 		public CodeIssue(string description, TextLocation start, TextLocation end, IEnumerable<CodeAction> actions = null)
 		{
-			Desription = description;
+			Description = description;
 			Start = start;
 			End = end;
 			if (actions != null)

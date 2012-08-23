@@ -737,6 +737,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool HasAnyTypeConstraint {
+			get {
+				return (spec & (SpecialConstraint.Class | SpecialConstraint.Struct)) != 0 || ifaces != null || targs != null || HasTypeConstraint;
+			}
+		}
+
 		public bool HasTypeConstraint {
 			get {
 				var bt = BaseType.BuiltinType;
@@ -1226,6 +1232,30 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		public static bool HasAnyTypeParameterTypeConstrained (IGenericMethodDefinition md)
+		{
+			var tps = md.TypeParameters;
+			for (int i = 0; i < md.TypeParametersCount; ++i) {
+				if (tps[i].HasAnyTypeConstraint) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		public static bool HasAnyTypeParameterConstrained (IGenericMethodDefinition md)
+		{
+			var tps = md.TypeParameters;
+			for (int i = 0; i < md.TypeParametersCount; ++i) {
+				if (tps[i].IsConstrained) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		public override TypeSpec Mutate (TypeParameterMutator mutator)
 		{
 			return mutator.Mutate (this);
@@ -1488,7 +1518,9 @@ namespace Mono.CSharp {
 			if (targs == null)
 				throw new ArgumentNullException ("targs");
 
-//			this.state = openType.state;
+			this.state &= ~SharedStateFlags;
+			this.state |= (openType.state & SharedStateFlags);
+
 			this.context = context;
 			this.open_type = openType;
 			this.targs = targs;
@@ -2222,28 +2254,13 @@ namespace Mono.CSharp {
 	struct ConstraintChecker
 	{
 		IMemberContext mc;
-		bool ignore_inferred_dynamic;
 		bool recursive_checks;
 
 		public ConstraintChecker (IMemberContext ctx)
 		{
 			this.mc = ctx;
-			ignore_inferred_dynamic = false;
 			recursive_checks = false;
 		}
-
-		#region Properties
-
-		public bool IgnoreInferredDynamic {
-			get {
-				return ignore_inferred_dynamic;
-			}
-			set {
-				ignore_inferred_dynamic = value;
-			}
-		}
-
-		#endregion
 
 		//
 		// Checks the constraints of open generic type against type
@@ -2289,14 +2306,11 @@ namespace Mono.CSharp {
 
 		//
 		// Checks all type arguments againts type parameters constraints
-		// NOTE: It can run in probing mode when `mc' is null
+		// NOTE: It can run in probing mode when `this.mc' is null
 		//
 		public bool CheckAll (MemberSpec context, TypeSpec[] targs, TypeParameterSpec[] tparams, Location loc)
 		{
 			for (int i = 0; i < tparams.Length; i++) {
-				if (ignore_inferred_dynamic && targs[i].BuiltinType == BuiltinTypeSpec.Type.Dynamic)
-					continue;
-
 				var targ = targs[i];
 				if (!CheckConstraint (context, targ, tparams [i], loc))
 					return false;
@@ -2342,15 +2356,6 @@ namespace Mono.CSharp {
 			// Check the class constraint
 			//
 			if (tparam.HasTypeConstraint) {
-				var dep = tparam.BaseType.GetMissingDependencies ();
-				if (dep != null) {
-					if (mc == null)
-						return false;
-
-					ImportedTypeDefinition.Error_MissingDependency (mc, dep, loc);
-					ok = false;
-				}
-
 				if (!CheckConversion (mc, context, atype, tparam, tparam.BaseType, loc)) {
 					if (mc == null)
 						return false;
@@ -2364,19 +2369,6 @@ namespace Mono.CSharp {
 			//
 			if (tparam.Interfaces != null) {
 				foreach (TypeSpec iface in tparam.Interfaces) {
-					var dep = iface.GetMissingDependencies ();
-					if (dep != null) {
-						if (mc == null)
-							return false;
-
-						ImportedTypeDefinition.Error_MissingDependency (mc, dep, loc);
-						ok = false;
-
-						// return immediately to avoid duplicate errors because we are scanning
-						// expanded interface list
-						return false;
-					}
-
 					if (!CheckConversion (mc, context, atype, tparam, iface, loc)) {
 						if (mc == null)
 							return false;
@@ -2465,14 +2457,6 @@ namespace Mono.CSharp {
 				if (Convert.ImplicitReferenceConversionExists (atype, ttype) || Convert.ImplicitBoxingConversion (null, atype, ttype) != null)
 					return true;
 			}
-
-			//
-			// When partial/full type inference finds a dynamic type argument delay
-			// the constraint check to runtime, it can succeed for real underlying
-			// dynamic type
-			//
-			if (ignore_inferred_dynamic && HasDynamicTypeArgument (ttype.TypeArguments))
-				return true;
 
 			if (mc != null) {
 				mc.Module.Compiler.Report.SymbolRelatedToPreviousError (tparam);

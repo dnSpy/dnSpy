@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Linq;
 using NUnit.Framework;
 
 namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
@@ -180,7 +181,127 @@ select new { c.Name, o.OrderID, o.Total }",
 						}
 					}});
 		}
+
+		[Test]
+		public void ExpressionWithOrderByWithTwoOrderings()
+		{
+			ParseUtilCSharp.AssertExpression(
+				"from c in customers orderby c.Name, c.Address select c",
+				new QueryExpression {
+					Clauses = {
+						new QueryFromClause {
+							Identifier = "c",
+							Expression = new IdentifierExpression("customers")
+						},
+						new QueryOrderClause {
+							Orderings = {
+								new QueryOrdering {
+									Expression = new IdentifierExpression("c").Member("Name")
+								},
+								new QueryOrdering {
+									Expression = new IdentifierExpression("c").Member("Address")
+								}
+							}
+						},
+						new QuerySelectClause {
+							Expression = new IdentifierExpression("c")
+						}
+					}});
+		}
+
+		[Test]
+		public void ExpressionWithOrderByWithTwoOrderBys()
+		{
+			ParseUtilCSharp.AssertExpression(
+				"from c in customers orderby c.Name orderby c.Address select c",
+				new QueryExpression {
+					Clauses = {
+						new QueryFromClause {
+							Identifier = "c",
+							Expression = new IdentifierExpression("customers")
+						},
+						new QueryOrderClause {
+							Orderings = {
+								new QueryOrdering {
+									Expression = new IdentifierExpression("c").Member("Name")
+								}
+							}
+						},
+						new QueryOrderClause {
+							Orderings = {
+								new QueryOrdering {
+									Expression = new IdentifierExpression("c").Member("Address")
+								}
+							}
+						},
+						new QuerySelectClause {
+							Expression = new IdentifierExpression("c")
+						}
+					}});
+		}
 		
+		[Test]
+		public void ExpressionWithOrderByWithTwoOrderingsDescending()
+		{
+			ParseUtilCSharp.AssertExpression(
+				"from c in customers orderby c.Name descending, c.Address descending select c",
+				new QueryExpression {
+					Clauses = {
+						new QueryFromClause {
+							Identifier = "c",
+							Expression = new IdentifierExpression("customers")
+						},
+						new QueryOrderClause {
+							Orderings = {
+								new QueryOrdering {
+									Expression = new IdentifierExpression("c").Member("Name"),
+									Direction = QueryOrderingDirection.Descending
+								},
+								new QueryOrdering {
+									Expression = new IdentifierExpression("c").Member("Address"),
+									Direction = QueryOrderingDirection.Descending
+								}
+							}
+						},
+						new QuerySelectClause {
+							Expression = new IdentifierExpression("c")
+						}
+					}});
+		}
+
+		[Test]
+		public void ExpressionWithOrderByWithTwoOrderByDecendings()
+		{
+			ParseUtilCSharp.AssertExpression(
+				"from c in customers orderby c.Name descending orderby c.Address descending select c",
+				new QueryExpression {
+					Clauses = {
+						new QueryFromClause {
+							Identifier = "c",
+							Expression = new IdentifierExpression("customers")
+						},
+						new QueryOrderClause {
+							Orderings = {
+								new QueryOrdering {
+									Expression = new IdentifierExpression("c").Member("Name"),
+									Direction = QueryOrderingDirection.Descending
+								}
+							}
+						},
+						new QueryOrderClause {
+							Orderings = {
+								new QueryOrdering {
+									Expression = new IdentifierExpression("c").Member("Address"),
+									Direction = QueryOrderingDirection.Descending
+								}
+							}
+						},
+						new QuerySelectClause {
+							Expression = new IdentifierExpression("c")
+						}
+					}});
+		}
+
 		[Test]
 		public void ExpressionWithOrderByAndLet()
 		{

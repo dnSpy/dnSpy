@@ -127,7 +127,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 	}
-
+	#if !FULL_AST
 	/// <summary>
 	///   This is an arbitrarily seekable StreamReader wrapper.
 	///
@@ -137,21 +137,23 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class SeekableStreamReader : IDisposable
 	{
+		public const int DefaultReadAheadSize = 2048;
+
 		StreamReader reader;
 		Stream stream;
 
-		static char[] buffer;
+		char[] buffer;
 		int read_ahead_length;	// the length of read buffer
 		int buffer_start;       // in chars
 		int char_count;         // count of filled characters in buffer[]
 		int pos;                // index into buffer[]
 
-		public SeekableStreamReader (Stream stream, Encoding encoding)
+		public SeekableStreamReader (Stream stream, Encoding encoding, char[] sharedBuffer = null)
 		{
 			this.stream = stream;
+			this.buffer = sharedBuffer;
 
-			const int default_read_ahead = 2048;
-			InitializeStream (default_read_ahead);
+			InitializeStream (DefaultReadAheadSize);
 			reader = new StreamReader (stream, encoding, true);
 		}
 
@@ -274,7 +276,7 @@ namespace Mono.CSharp {
 			return buffer [pos++];
 		}
 	}
-
+#endif
 	public class UnixUtils {
 		[System.Runtime.InteropServices.DllImport ("libc", EntryPoint="isatty")]
 		extern static int _isatty (int fd);

@@ -29,10 +29,32 @@ using ICSharpCode.NRefactory.TypeSystem.Implementation;
 
 namespace ICSharpCode.NRefactory.CSharp.Resolver
 {
+	/// <summary>
+	/// A method list that belongs to a declaring type.
+	/// </summary>
 	public class MethodListWithDeclaringType : List<IParameterizedMember>
 	{
 		readonly IType declaringType;
 		
+		/// <summary>
+		/// The declaring type.
+		/// </summary>
+		/// <remarks>
+		/// Not all methods in this list necessarily have this as their declaring type.
+		/// For example, this program:
+		/// <code>
+		///  class Base {
+		///    public virtual void M() {}
+		///  }
+		///  class Derived : Base {
+		///    public override void M() {}
+		///    public void M(int i) {}
+		///  }
+		/// </code>
+		/// results in two lists:
+		///  <c>new MethodListWithDeclaringType(Base) { Derived.M() }</c>,
+		///  <c>new MethodListWithDeclaringType(Derived) { Derived.M(int) }</c>
+		/// </remarks>
 		public IType DeclaringType {
 			get { return declaringType; }
 		}
@@ -51,6 +73,9 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	
 	/// <summary>
 	/// Represents a group of methods.
+	/// A method reference used to create a delegate is resolved to a MethodGroupResolveResult.
+	/// The MethodGroupResolveResult has no type.
+	/// To retrieve the delegate type or the chosen overload, look at the method group conversion.
 	/// </summary>
 	public class MethodGroupResolveResult : ResolveResult
 	{
@@ -61,8 +86,6 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		public MethodGroupResolveResult(ResolveResult targetResult, string methodName, IList<MethodListWithDeclaringType> methods, IList<IType> typeArguments) : base(SpecialType.UnknownType)
 		{
-			if (targetResult == null)
-				throw new ArgumentNullException("targetResult");
 			if (methods == null)
 				throw new ArgumentNullException("methods");
 			this.targetResult = targetResult;
@@ -82,7 +105,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		/// Gets the type of the reference to the target object.
 		/// </summary>
 		public IType TargetType {
-			get { return targetResult.Type; }
+			get { return targetResult != null ? targetResult.Type : SpecialType.UnknownType; }
 		}
 		
 		/// <summary>
@@ -129,6 +152,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		/// Gets all candidate extension methods.
 		/// Note: this includes candidates that are not eligible due to an inapplicable
 		/// this argument.
+		/// The candidates will only be specialized if the type arguments were provided explicitly.
 		/// </summary>
 		/// <remarks>
 		/// The results are stored in nested lists because they are grouped by using scope.
@@ -152,6 +176,24 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			return extensionMethods ?? Enumerable.Empty<IEnumerable<IMethod>>();
 		}
 		
+		/// <summary>
+		/// Gets the eligible extension methods.
+		/// </summary>
+		/// <param name="substituteInferredTypes">
+		/// Specifies whether to produce a <see cref="SpecializedMethod"/>
+		/// when type arguments could be inferred from <see cref="TargetType"/>.
+		/// This setting is only used for inferred types and has no effect if the type parameters are
+		/// specified explicitly.
+		/// </param>
+		/// <remarks>
+		/// The results are stored in nested lists because they are grouped by using scope.
+		/// That is, for "using SomeExtensions; namespace X { using MoreExtensions; ... }",
+		/// the return value will be
+		/// new List {
+		///    new List { all extensions from MoreExtensions },
+		///    new List { all extensions from SomeExtensions }
+		/// }
+		/// </remarks>
 		public IEnumerable<IEnumerable<IMethod>> GetEligibleExtensionMethods(bool substituteInferredTypes)
 		{
 			var result = new List<List<IMethod>>();
@@ -178,7 +220,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			return string.Format("[{0} with {1} method(s)]", GetType().Name, this.Methods.Count());
 		}
 		
-		public OverloadResolution PerformOverloadResolution(ICompilation compilation, ResolveResult[] arguments, string[] argumentNames = null, bool allowExtensionMethods = true, bool allowExpandingParams = true, CSharpConversions conversions = null)
+		public OverloadResolution PerformOverloadResolution(ICompilation compilation, ResolveResult[] arguments, string[] argumentNames = null, bool allowExtensionMethods = true, bool allowExpandingParams = true, bool checkForOverflow = false, CSharpConversions conversions = null)
 		{
 			Log.WriteLine("Performing overload resolution for " + this);
 			Log.WriteCollection("  Arguments: ", arguments);
@@ -186,6 +228,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			var typeArgumentArray = this.TypeArguments.ToArray();
 			OverloadResolution or = new OverloadResolution(compilation, arguments, argumentNames, typeArgumentArray, conversions);
 			or.AllowExpandingParams = allowExpandingParams;
+			or.CheckForOverflow = checkForOverflow;
 			
 			or.AddMethodLists(methodLists);
 			
@@ -207,6 +250,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 					var extOr = new OverloadResolution(compilation, extArguments, extArgumentNames, typeArgumentArray, conversions);
 					extOr.AllowExpandingParams = allowExpandingParams;
 					extOr.IsExtensionMethodInvocation = true;
+					extOr.CheckForOverflow = checkForOverflow;
 					
 					foreach (var g in extensionMethods) {
 						foreach (var method in g) {

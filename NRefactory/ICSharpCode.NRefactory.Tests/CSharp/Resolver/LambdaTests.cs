@@ -587,5 +587,53 @@ class TestClass {
 			Assert.AreSame(resolvedParameter, parameterInResolveResult);
 			Assert.AreSame(resolvedParameter, referencedParameter);
 		}
+		
+		[Test]
+		public void MultipleOverloadsWithImplicitLambda()
+		{
+			string program = @"class MainClass {
+	void Main() {
+		$M(x=>x.ToUpper())$;
+	}
+	delegate R Func<T, R>(T arg);
+	int M(Func<int, int> f){ }
+	string M(Func<string, string> f){ }
+}";
+			var mrr = Resolve<CSharpInvocationResolveResult>(program);
+			Assert.IsFalse(mrr.IsError);
+			Assert.AreEqual("System.String", mrr.Type.ReflectionName);
+		}
+		
+		[Test]
+		public void MultipleOverloadsWithImplicitLambda2()
+		{
+			string program = @"class MainClass {
+	void Main() {
+		$M(x=>x.Length)$;
+	}
+	delegate R Func<T, R>(T arg);
+	int M(Func<int, int> f){ }
+	string M(Func<string, int> f){ }
+}";
+			var mrr = Resolve<CSharpInvocationResolveResult>(program);
+			Assert.IsFalse(mrr.IsError);
+			Assert.AreEqual("System.String", mrr.Type.ReflectionName);
+		}
+		
+		[Test]
+		public void MultipleOverloadsWithImplicitLambda3()
+		{
+			string program = @"class MainClass {
+	void Main() {
+		$M(x=>x+x)$;
+	}
+	delegate R Func<T, R>(T arg);
+	string M(Func<string, int> f){ }
+	int M(Func<int, int> f){ }
+}";
+			var mrr = Resolve<CSharpInvocationResolveResult>(program);
+			Assert.IsFalse(mrr.IsError);
+			Assert.AreEqual("System.Int32", mrr.Type.ReflectionName);
+		}
 	}
 }

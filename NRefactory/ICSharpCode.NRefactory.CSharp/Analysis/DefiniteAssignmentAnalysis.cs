@@ -443,7 +443,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				// the special values are valid as output only, not as input
 				Debug.Assert(data == CleanSpecialValues(data));
 				DefiniteAssignmentStatus status = data;
-				foreach (AstNode child in node.Children) {
+				for (AstNode child = node.FirstChild; child != null; child = child.NextSibling) {
 					analysis.analysisCancellationToken.ThrowIfCancellationRequested();
 					
 					Debug.Assert(!(child is Statement)); // statements are visited with the CFG, not with the visitor pattern
@@ -721,7 +721,7 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 					}
 					
 					DefiniteAssignmentStatus afterTrue = conditionalExpression.TrueExpression.AcceptVisitor(this, beforeTrue);
-					DefiniteAssignmentStatus afterFalse = conditionalExpression.TrueExpression.AcceptVisitor(this, beforeFalse);
+					DefiniteAssignmentStatus afterFalse = conditionalExpression.FalseExpression.AcceptVisitor(this, beforeFalse);
 					return MergeStatus(CleanSpecialValues(afterTrue), CleanSpecialValues(afterFalse));
 				}
 			}

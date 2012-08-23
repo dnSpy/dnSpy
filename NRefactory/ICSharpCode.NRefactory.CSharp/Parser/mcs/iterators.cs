@@ -972,7 +972,9 @@ namespace Mono.CSharp
 			method.Block.IsCompilerGenerated = true;
 			method.Block.AddStatement (new TryFinallyBlockProxyStatement (this, block));
 
-			storey.AddMember (method);
+			// Cannot it add to storey because it'd be emitted before nested
+			// anonoymous methods which could capture shared variable
+
 			return method;
 		}
 

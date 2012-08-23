@@ -30,24 +30,35 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	/// </summary>
 	public static class ResolveAtLocation
 	{
-		public static ResolveResult Resolve(ICompilation compilation, CSharpParsedFile parsedFile, CompilationUnit cu, TextLocation location,
+		public static ResolveResult Resolve (ICompilation compilation, CSharpUnresolvedFile unresolvedFile, SyntaxTree syntaxTree, TextLocation location,
+		                                    CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return Resolve (new Lazy<ICompilation>(() => compilation), unresolvedFile, syntaxTree, location, cancellationToken);
+		}
+		public static ResolveResult Resolve(Lazy<ICompilation> compilation, CSharpUnresolvedFile unresolvedFile, SyntaxTree syntaxTree, TextLocation location,
 		                                    CancellationToken cancellationToken = default(CancellationToken))
 		{
 			AstNode node;
-			return Resolve(compilation, parsedFile, cu, location, out node, cancellationToken);
+			return Resolve(compilation, unresolvedFile, syntaxTree, location, out node, cancellationToken);
 		}
 		
-		public static ResolveResult Resolve(ICompilation compilation, CSharpParsedFile parsedFile, CompilationUnit cu, TextLocation location, out AstNode node,
+		public static ResolveResult Resolve (ICompilation compilation, CSharpUnresolvedFile unresolvedFile, SyntaxTree syntaxTree, TextLocation location, out AstNode node,
 		                                    CancellationToken cancellationToken = default(CancellationToken))
 		{
-			node = cu.GetNodeAt(location);
-			if (node == null)
+			return Resolve (new Lazy<ICompilation>(() => compilation), unresolvedFile, syntaxTree, location, out node, cancellationToken);
+		}
+		public static ResolveResult Resolve(Lazy<ICompilation> compilation, CSharpUnresolvedFile unresolvedFile, SyntaxTree syntaxTree, TextLocation location, out AstNode node,
+		                                    CancellationToken cancellationToken = default(CancellationToken))
+		{
+			node = syntaxTree.GetNodeAt(location);
+			if (node == null || node is ArrayInitializerExpression)
 				return null;
 			if (CSharpAstResolver.IsUnresolvableNode(node)) {
 				if (node is Identifier) {
 					node = node.Parent;
 				} else if (node.NodeType == NodeType.Token) {
 					if (node.Parent is IndexerExpression || node.Parent is ConstructorInitializer) {
+						Console.WriteLine (2);
 						// There's no other place where one could hover to see the indexer's tooltip,
 						// so we need to resolve it when hovering over the '[' or ']'.
 						// For constructor initializer, the same applies to the 'base'/'this' token.
@@ -79,13 +90,13 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			}
 			
 			InvocationExpression parentInvocation = null;
-			if (node is IdentifierExpression || node is MemberReferenceExpression || node is PointerReferenceExpression) {
+			if ((node is IdentifierExpression || node is MemberReferenceExpression || node is PointerReferenceExpression) && node.Role != Roles.Argument) {
 				// we also need to resolve the invocation
 				parentInvocation = node.Parent as InvocationExpression;
 			}
 			
-			CSharpAstResolver resolver = new CSharpAstResolver(compilation, cu, parsedFile);
-			resolver.ApplyNavigator(new NodeListResolveVisitorNavigator(node), cancellationToken);
+			// TODO: I think we should provide an overload so that an existing CSharpAstResolver can be reused
+			CSharpAstResolver resolver = new CSharpAstResolver(compilation.Value, syntaxTree, unresolvedFile);
 			ResolveResult rr = resolver.Resolve(node, cancellationToken);
 			if (rr is MethodGroupResolveResult && parentInvocation != null)
 				return resolver.Resolve(parentInvocation);

@@ -37,26 +37,28 @@ namespace ICSharpCode.NRefactory.CSharp
 			bool lastWasLower = false, lastWasUpper = false;
 			for (int i = 0; i < identifier.Length; i++) {
 				char c = identifier[i];
-				if (c == '_') {
-					if ((i - wordStart) > 0) {
-						words.Add (identifier.Substring (wordStart, i - wordStart));
-					}
-					wordStart = i + 1;
-					lastWasLower = lastWasUpper = false;
-				} else if (Char.IsLower (c)) {
+				var category = char.GetUnicodeCategory (c);
+				if (category == System.Globalization.UnicodeCategory.LowercaseLetter) {
 					if (lastWasUpper && (i - wordStart) > 2) {
 						words.Add (identifier.Substring (wordStart, i - wordStart - 1));
 						wordStart = i - 1;
 					}
 					lastWasLower = true;
 					lastWasUpper = false;
-				} else if (Char.IsUpper (c)) {
+				} else if (category == System.Globalization.UnicodeCategory.UppercaseLetter) {
 					if (lastWasLower) {
 						words.Add (identifier.Substring (wordStart, i - wordStart));
 						wordStart = i;
 					}
 					lastWasLower = false;
 					lastWasUpper = true;
+				} else {
+					if (c == '_') {
+						if ((i - wordStart) > 0)
+							words.Add(identifier.Substring(wordStart, i - wordStart));
+						wordStart = i + 1;
+						lastWasLower = lastWasUpper = false;
+					}
 				}
 			}
 			if (wordStart < identifier.Length)

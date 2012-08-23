@@ -567,7 +567,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					for (int i = 0; i < resolvedCtor.Parameters.Count; i++) {
 						atce.Initializers.Add(
 							new NamedExpression {
-								Identifier = resolvedCtor.Parameters[i].Name,
+								Name = resolvedCtor.Parameters[i].Name,
 								Expression = arguments[i].Detach()
 							});
 					}

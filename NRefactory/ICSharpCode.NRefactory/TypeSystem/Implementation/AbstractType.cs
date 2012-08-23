@@ -123,6 +123,11 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				.Concat(GetEvents(filter, options));
 		}
 		
+		public virtual IEnumerable<IMethod> GetAccessors(Predicate<IUnresolvedMethod> filter, GetMemberOptions options = GetMemberOptions.None)
+		{
+			return EmptyList<IMethod>.Instance;
+		}
+		
 		public override sealed bool Equals(object obj)
 		{
 			return Equals(obj as IType);

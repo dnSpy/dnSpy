@@ -1,4 +1,4 @@
-// 
+﻿// 
 // TestRefactoringContext.cs
 //  
 // Author:
@@ -36,6 +36,7 @@ using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
 using NUnit.Framework;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ICSharpCode.NRefactory.CSharp.CodeActions
 {
@@ -89,29 +90,40 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 				this.context = context;
 			}
 			
-			public override void Link (params AstNode[] nodes)
+			public override Task Link (params AstNode[] nodes)
 			{
 				// check that all links are valid.
 				foreach (var node in nodes) {
 					Assert.IsNotNull (GetSegment (node));
 				}
+				return new Task (() => {});
 			}
 			
-			public override void InsertWithCursor (string operation, AstNode node, InsertPosition defaultPosition)
+			public override Task InsertWithCursor(string operation, InsertPosition defaultPosition, IEnumerable<AstNode> nodes)
 			{
-				var entity = context.GetNode<EntityDeclaration> ();
-				InsertBefore (entity, node);
+				var entity = context.GetNode<EntityDeclaration>();
+				foreach (var node in nodes) {
+					InsertBefore(entity, node);
+				}
+				var tcs = new TaskCompletionSource<object> ();
+				tcs.SetResult (null);
+				return tcs.Task;
 			}
 
-			public override void InsertWithCursor (string operation, AstNode node, ITypeDefinition parentType)
+			public override Task InsertWithCursor (string operation, ITypeDefinition parentType, IEnumerable<AstNode> nodes)
 			{
 				var unit = context.RootNode;
 				var insertType = unit.GetNodeAt<TypeDeclaration> (parentType.Region.Begin);
 
 				var startOffset = GetCurrentOffset (insertType.LBraceToken.EndLocation);
-				var output = OutputNode (1, node, true);
-				InsertText (startOffset, output.Text);
-				output.RegisterTrackedSegments (this, startOffset);
+				foreach (var node in nodes.Reverse ()) {
+					var output = OutputNode (1, node, true);
+					InsertText (startOffset, output.Text);
+					output.RegisterTrackedSegments (this, startOffset);
+				}
+				var tcs = new TaskCompletionSource<object> ();
+				tcs.SetResult (null);
+				return tcs.Task;
 			}
 
 			void Rename (AstNode node, string newName)
@@ -146,8 +158,8 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 			{
 				FindReferences refFinder = new FindReferences ();
 				refFinder.FindReferencesInFile (refFinder.GetSearchScopes (entity), 
-				                               context.ParsedFile, 
-				                               context.RootNode as CompilationUnit, 
+				                               context.UnresolvedFile, 
+				                               context.RootNode as SyntaxTree, 
 				                               context.Compilation, (n, r) => Rename (n, name), 
 				                               context.CancellationToken);
 			}
@@ -156,8 +168,8 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 			{
 				FindReferences refFinder = new FindReferences ();
 				refFinder.FindLocalReferences (variable, 
-				                               context.ParsedFile, 
-				                               context.RootNode as CompilationUnit, 
+				                               context.UnresolvedFile, 
+				                               context.RootNode as SyntaxTree, 
 				                               context.Compilation, (n, r) => Rename (n, name), 
 				                               context.CancellationToken);
 			}
@@ -166,8 +178,8 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 			{
 				FindReferences refFinder = new FindReferences ();
 				refFinder.FindTypeParameterReferences (type, 
-				                               context.ParsedFile, 
-				                               context.RootNode as CompilationUnit, 
+				                               context.UnresolvedFile, 
+				                               context.RootNode as SyntaxTree, 
 				                               context.Compilation, (n, r) => Rename (n, name), 
 				                               context.CancellationToken);
 			}
@@ -221,7 +233,7 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 				return doc.Text;
 			}
 		}
-		public static TestRefactoringContext Create (string content)
+		public static TestRefactoringContext Create (string content, bool expectErrors = false)
 		{
 			int idx = content.IndexOf ("$");
 			if (idx >= 0)
@@ -238,22 +250,28 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 				selectionEnd = idx2 - 2;
 				idx = selectionEnd;
 			}
-			
-			var doc = new StringBuilderDocument (content);
-			var parser = new CSharpParser ();
-			var unit = parser.Parse (content, "program.cs");
-			if (parser.HasErrors)
-				parser.ErrorPrinter.Errors.ForEach (e => Console.WriteLine (e.Message));
-			Assert.IsFalse (parser.HasErrors, "File contains parsing errors.");
+
+			var doc = new StringBuilderDocument(content);
+			var parser = new CSharpParser();
+			var unit = parser.Parse(content, "program.cs");
+			if (!expectErrors) {
+				foreach (var error in parser.Errors) {
+					Console.WriteLine(error.Message);
+				}
+				Assert.IsFalse(parser.HasErrors, "The file contains unexpected parsing errors.");
+			} else {
+				Assert.IsTrue(parser.HasErrors, "Expected parsing errors, but the file doesn't contain any.");
+			}
+
 			unit.Freeze ();
-			var parsedFile = unit.ToTypeSystem ();
+			var unresolvedFile = unit.ToTypeSystem ();
 			
 			IProjectContent pc = new CSharpProjectContent ();
-			pc = pc.UpdateProjectContent (null, parsedFile);
+			pc = pc.AddOrUpdateFiles (unresolvedFile);
 			pc = pc.AddAssemblyReferences (new[] { CecilLoaderTests.Mscorlib, CecilLoaderTests.SystemCore });
 			
 			var compilation = pc.CreateCompilation ();
-			var resolver = new CSharpAstResolver (compilation, unit, parsedFile);
+			var resolver = new CSharpAstResolver (compilation, unit, unresolvedFile);
 			TextLocation location = TextLocation.Empty;
 			if (idx >= 0)
 				location = doc.GetLocation (idx);

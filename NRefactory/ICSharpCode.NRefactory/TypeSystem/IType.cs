@@ -18,7 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 
 namespace ICSharpCode.NRefactory.TypeSystem
 {
@@ -107,8 +106,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// Creates a type reference that can be used to look up a type equivalent to this type in another compilation.
 		/// </summary>
 		/// <remarks>
-		/// If this type is open, the resulting type reference will need to be looked up in an appropriate generic context.
-		/// If this type is closed, the resulting type reference can be looked up in the main resolve context of another compilation.
+		/// If this type contains open generics, the resulting type reference will need to be looked up in an appropriate generic context.
+		/// Otherwise, the main resolve context of a compilation is sufficient.
 		/// </remarks>
 		ITypeReference ToTypeReference();
 		
@@ -194,7 +193,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// <param name="options">Specified additional options for the GetMembers() operation.</param>
 		/// <remarks>
 		/// <para>
-		/// The result does not include constructors.
+		/// The result does not include constructors or accessors.
 		/// </para>
 		/// <para>
 		/// For methods on parameterized types, type substitution will be performed on the method signature,
@@ -221,7 +220,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// The filter is tested on the original method definitions (before specialization).</param>
 		/// <param name="options">Specified additional options for the GetMembers() operation.</param>
 		/// <remarks>
-		/// <para>The result does not include constructors.</para>
+		/// <para>The result does not include constructors or accessors.</para>
 		/// <para>
 		/// Type substitution will be performed on the method signature, creating a <see cref="Implementation.SpecializedMethod"/>
 		/// with the specified type arguments.
@@ -288,6 +287,17 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// </para>
 		/// </remarks>
 		IEnumerable<IMember> GetMembers(Predicate<IUnresolvedMember> filter = null, GetMemberOptions options = GetMemberOptions.None);
+		
+		/// <summary>
+		/// Gets all accessors belonging to properties or events on this type.
+		/// </summary>
+		/// <param name="filter">The filter used to select which members to return.
+		/// The filter is tested on the original member definitions (before specialization).</param>
+		/// <param name="options">Specified additional options for the GetMembers() operation.</param>
+		/// <remarks>
+		/// Accessors are not returned by GetMembers() or GetMethods().
+		/// </remarks>
+		IEnumerable<IMethod> GetAccessors(Predicate<IUnresolvedMethod> filter = null, GetMemberOptions options = GetMemberOptions.None);
 	}
 	
 	[Flags]

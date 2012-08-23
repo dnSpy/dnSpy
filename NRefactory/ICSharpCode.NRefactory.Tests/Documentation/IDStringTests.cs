@@ -50,8 +50,8 @@ namespace ICSharpCode.NRefactory.Documentation
 		{
 			pc = new IDStringTestProjectContent();
 			
-			var cu = new CSharpParser().Parse(new StringReader(program), "program.cs");
-			foreach (var type in cu.ToTypeSystem().TopLevelTypeDefinitions) {
+			var syntaxTree = SyntaxTree.Parse(program, "program.cs");
+			foreach (var type in syntaxTree.ToTypeSystem().TopLevelTypeDefinitions) {
 				pc.AddTypeDefinition(type);
 			}
 			compilation = new SimpleCompilation(pc, CecilLoaderTests.Mscorlib);

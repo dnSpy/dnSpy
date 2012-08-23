@@ -72,7 +72,30 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			this.DeclaringTypeDefinition = declaringTypeDefinition;
 			this.namespaceName = declaringTypeDefinition.Namespace;
 			this.Name = name;
-			this.ParsedFile = declaringTypeDefinition.ParsedFile;
+			this.UnresolvedFile = declaringTypeDefinition.UnresolvedFile;
+		}
+		
+		protected override void FreezeInternal()
+		{
+			base.FreezeInternal();
+			baseTypes = FreezableHelper.FreezeList(baseTypes);
+			typeParameters = FreezableHelper.FreezeListAndElements(typeParameters);
+			nestedTypes = FreezableHelper.FreezeListAndElements(nestedTypes);
+			members = FreezableHelper.FreezeListAndElements(members);
+		}
+		
+		public override object Clone()
+		{
+			var copy = (DefaultUnresolvedTypeDefinition)base.Clone();
+			if (baseTypes != null)
+				copy.baseTypes = new List<ITypeReference>(baseTypes);
+			if (typeParameters != null)
+				copy.typeParameters = new List<IUnresolvedTypeParameter>(typeParameters);
+			if (nestedTypes != null)
+				copy.nestedTypes = new List<IUnresolvedTypeDefinition>(nestedTypes);
+			if (members != null)
+				copy.members = new List<IUnresolvedMember>(members);
+			return copy;
 		}
 		
 		public TypeKind Kind {

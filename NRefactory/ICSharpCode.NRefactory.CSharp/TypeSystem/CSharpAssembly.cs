@@ -73,9 +73,9 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				return result;
 			} else {
 				result = new List<IAttribute>();
-				foreach (var parsedFile in projectContent.Files.OfType<CSharpParsedFile>()) {
-					var attributes = assemblyAttributes ? parsedFile.AssemblyAttributes : parsedFile.ModuleAttributes;
-					var context = new CSharpTypeResolveContext(this, parsedFile.RootUsingScope.Resolve(compilation));
+				foreach (var unresolvedFile in projectContent.Files.OfType<CSharpUnresolvedFile>()) {
+					var attributes = assemblyAttributes ? unresolvedFile.AssemblyAttributes : unresolvedFile.ModuleAttributes;
+					var context = new CSharpTypeResolveContext(this, unresolvedFile.RootUsingScope.Resolve(compilation));
 					foreach (var unresolvedAttr in attributes) {
 						result.Add(unresolvedAttr.CreateResolvedAttribute(context));
 					}
@@ -288,6 +288,10 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			
 			ICompilation IResolved.Compilation {
 				get { return assembly.Compilation; }
+			}
+			
+			IEnumerable<IAssembly> INamespace.ContributingAssemblies {
+				get { return new [] { assembly }; }
 			}
 			
 			INamespace INamespace.GetChildNamespace(string name)

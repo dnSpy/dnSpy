@@ -36,7 +36,7 @@ namespace ICSharpCode.NRefactory.CSharp
 	{
 		public static readonly TokenRole TryKeywordRole = new TokenRole ("try");
 		public static readonly Role<BlockStatement> TryBlockRole = new Role<BlockStatement>("TryBlock", BlockStatement.Null);
-		public static readonly Role<CatchClause> CatchClauseRole = new Role<CatchClause>("CatchClause");
+		public static readonly Role<CatchClause> CatchClauseRole = new Role<CatchClause>("CatchClause", CatchClause.Null);
 		public static readonly TokenRole FinallyKeywordRole = new TokenRole ("finally");
 		public static readonly Role<BlockStatement> FinallyBlockRole = new Role<BlockStatement>("FinallyBlock", BlockStatement.Null);
 		
@@ -90,7 +90,39 @@ namespace ICSharpCode.NRefactory.CSharp
 	public class CatchClause : AstNode
 	{
 		public static readonly TokenRole CatchKeywordRole = new TokenRole ("catch");
+
+		#region Null
+		public new static readonly CatchClause Null = new NullCatchClause ();
 		
+		sealed class NullCatchClause : CatchClause
+		{
+			public override bool IsNull {
+				get {
+					return true;
+				}
+			}
+			
+			public override void AcceptVisitor (IAstVisitor visitor)
+			{
+			}
+			
+			public override T AcceptVisitor<T> (IAstVisitor<T> visitor)
+			{
+				return default (T);
+			}
+			
+			public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
+			{
+				return default (S);
+			}
+			
+			protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
+			{
+				return other == null || other.IsNull;
+			}
+		}
+		#endregion
+
 		#region PatternPlaceholder
 		public static implicit operator CatchClause(PatternMatching.Pattern pattern)
 		{

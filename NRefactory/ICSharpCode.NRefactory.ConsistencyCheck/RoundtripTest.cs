@@ -34,7 +34,7 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 	{
 		public static void RunTest(CSharpFile file)
 		{
-			string code = file.Content.Text.Replace("\r\n", "\n");
+			string code = file.OriginalText.Replace("\r\n", "\n");
 			Debug.Assert(code.IndexOf('\r') < 0);
 			if (code.Contains("#pragma"))
 				return; // skip code with preprocessor directives
@@ -55,21 +55,21 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 			if (file.FileName.EndsWith("DefaultResolvedTypeDefinition.cs"))
 				return; // skip due to MethodDeclarationTests.GenericMethodWithMultipleConstraints
 			
-			Roundtrip(file.Project.CreateParser(), file.FileName, code);
+			Roundtrip(new CSharpParser(file.Project.CompilerSettings), file.FileName, code);
 			// After trying unix-style newlines, also try windows-style newlines:
-			Roundtrip(file.Project.CreateParser(), file.FileName, code.Replace("\n", "\r\n"));
+			Roundtrip(new CSharpParser(file.Project.CompilerSettings), file.FileName, code.Replace("\n", "\r\n"));
 		}
 		
 		public static void Roundtrip(CSharpParser parser, string fileName, string code)
 		{
 			// 1. Parse
-			CompilationUnit cu = parser.Parse(code, fileName);
+			SyntaxTree syntaxTree = parser.Parse(code, fileName);
 			if (parser.HasErrors)
 				throw new InvalidOperationException("There were parse errors.");
 			
 			// 2. Output
 			StringWriter w = new StringWriter();
-			cu.AcceptVisitor(new CSharpOutputVisitor(w, FormattingOptionsFactory.CreateMono ()));
+			syntaxTree.AcceptVisitor(new CSharpOutputVisitor(w, FormattingOptionsFactory.CreateMono ()));
 			string generatedCode = w.ToString().TrimEnd();
 			
 			// 3. Compare output with original (modulo whitespaces)
@@ -94,7 +94,7 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 				throw new InvalidOperationException(@"Got lone \r in " + fileName);
 			
 			// 4. Parse generated output
-			CompilationUnit generatedCU;
+			SyntaxTree generatedCU;
 			try {
 				generatedCU = parser.Parse(generatedCode, fileName);
 			} catch {
@@ -108,7 +108,7 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 			}
 			
 			// 5. Compare AST1 with AST2
-			if (!cu.IsMatch(generatedCU))
+			if (!syntaxTree.IsMatch(generatedCU))
 				throw new InvalidOperationException("AST match failed for " + fileName + ".");
 		}
 	}

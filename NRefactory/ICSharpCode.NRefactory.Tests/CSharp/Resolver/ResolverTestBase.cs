@@ -72,7 +72,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		protected static TypeOrNamespaceReference MakeReference(string namespaceName)
 		{
 			string[] nameParts = namespaceName.Split('.');
-			TypeOrNamespaceReference r = new SimpleTypeOrNamespaceReference(nameParts[0], new ITypeReference[0], SimpleNameLookupMode.TypeInUsingDeclaration);
+			TypeOrNamespaceReference r = new SimpleTypeOrNamespaceReference(nameParts[0], new ITypeReference[0], NameLookupMode.TypeInUsingDeclaration);
 			for (int i = 1; i < nameParts.Length; i++) {
 				r = new MemberTypeOrNamespaceReference(r, nameParts[i], new ITypeReference[0]);
 			}
@@ -161,19 +161,19 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		protected Tuple<CSharpAstResolver, AstNode> PrepareResolver(string code)
 		{
-			CompilationUnit cu = new CSharpParser().Parse(new StringReader(code.Replace("$", "")), "code.cs");
+			SyntaxTree syntaxTree = new CSharpParser().Parse(code.Replace("$", ""), "code.cs");
 			
 			TextLocation[] dollars = FindDollarSigns(code).ToArray();
 			Assert.AreEqual(2, dollars.Length, "Expected 2 dollar signs marking start+end of desired node");
 			
 			SetUp();
 			
-			CSharpParsedFile parsedFile = cu.ToTypeSystem();
-			project = project.UpdateProjectContent(null, parsedFile);
+			CSharpUnresolvedFile unresolvedFile = syntaxTree.ToTypeSystem();
+			project = project.AddOrUpdateFiles(unresolvedFile);
 			compilation = project.CreateCompilation();
 			
-			CSharpAstResolver resolver = new CSharpAstResolver(compilation, cu, parsedFile);
-			return Tuple.Create(resolver, FindNode(cu, dollars[0], dollars[1]));
+			CSharpAstResolver resolver = new CSharpAstResolver(compilation, syntaxTree, unresolvedFile);
+			return Tuple.Create(resolver, FindNode(syntaxTree, dollars[0], dollars[1]));
 		}
 		
 		protected ResolveResult Resolve(string code)
@@ -212,10 +212,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			return (T)rr;
 		}
 		
-		protected AstNode FindNode(CompilationUnit cu, TextLocation start, TextLocation end)
+		protected AstNode FindNode(SyntaxTree syntaxTree, TextLocation start, TextLocation end)
 		{
 			FindNodeVisitor fnv = new FindNodeVisitor(start, end);
-			cu.AcceptVisitor(fnv);
+			syntaxTree.AcceptVisitor(fnv);
 			Assert.IsNotNull(fnv.ResultNode, "Did not find DOM node at the specified location");
 			return fnv.ResultNode;
 		}
@@ -246,18 +246,18 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		
 		protected ResolveResult ResolveAtLocation(string code)
 		{
-			CompilationUnit cu = new CSharpParser().Parse(new StringReader(code.Replace("$", "")), "test.cs");
+			SyntaxTree syntaxTree = SyntaxTree.Parse(code.Replace("$", ""), "test.cs");
 			
 			TextLocation[] dollars = FindDollarSigns(code).ToArray();
 			Assert.AreEqual(1, dollars.Length, "Expected 1 dollar signs marking the location");
 			
 			SetUp();
 			
-			CSharpParsedFile parsedFile = cu.ToTypeSystem();
-			project = project.UpdateProjectContent(null, parsedFile);
+			CSharpUnresolvedFile unresolvedFile = syntaxTree.ToTypeSystem();
+			project = project.AddOrUpdateFiles(unresolvedFile);
 			compilation = project.CreateCompilation();
 			
-			ResolveResult rr = Resolver.ResolveAtLocation.Resolve(compilation, parsedFile, cu, dollars[0]);
+			ResolveResult rr = Resolver.ResolveAtLocation.Resolve(compilation, unresolvedFile, syntaxTree, dollars[0]);
 			return rr;
 		}
 		

@@ -608,7 +608,7 @@ namespace Mono.CSharp {
 						if (al == Modifiers.PRIVATE) {
 							var decl = mc.Parent;
 							do {
-								same_access_restrictions = decl.CurrentType == p_parent;
+								same_access_restrictions = decl.CurrentType.MemberDefinition == p_parent.MemberDefinition;
 							} while (!same_access_restrictions && !decl.PartialContainer.IsTopLevel && (decl = decl.Parent) != null);
 						}
 						
@@ -944,6 +944,15 @@ namespace Mono.CSharp {
 			GenericIterateInterface = 1 << 21,
 			GenericTask = 1 << 22
 		}
+
+		//
+		// Some flags can be copied directly from other member
+		//
+		protected const StateFlags SharedStateFlags =
+			StateFlags.CLSCompliant | StateFlags.CLSCompliant_Undetected |
+			StateFlags.Obsolete | StateFlags.Obsolete_Undetected |
+			StateFlags.MissingDependency | StateFlags.MissingDependency_Undetected |
+			StateFlags.HasDynamicElement;
 
 		protected Modifiers modifiers;
 		public StateFlags state;

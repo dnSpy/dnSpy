@@ -38,10 +38,10 @@ namespace ICSharpCode.NRefactory.CSharp.FormattingTests
 		/// Bug 325187 - Bug in smart indent
 		/// </summary>
 		[Test()]
-		public void TestBug325187 ()
+		public void TestBug325187()
 		{
-			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
-			policy.PlaceElseOnNewLine = true;
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono();
+			policy.ElseNewLinePlacement = NewLinePlacement.NewLine;
 			
 			TestStatementFormatting (policy,
 @"foreach (int i in myints)
@@ -227,7 +227,84 @@ foo ();
 	}
 }");
 		}
-		
+
+        /// <summary>
+        /// Bug GH35 - Formatter issues with if/else statements and // comments
+        /// </summary>
+        [Ignore]
+        public void TestBugGH35()
+        {
+            var policy = FormattingOptionsFactory.CreateMono ();
+            policy.ConstructorBraceStyle = BraceStyle.EndOfLine;
+
+            Test(policy, @"public class A : B
+{
+    public void Test()
+    {
+        // Comment before
+        if (conditionA) {
+            DoSomething();
+        }
+        // Comment before else ends up incorporating it
+        else if (conditionB) {
+            DoSomethingElse();
+        }
+    }
+}",
+@"public class A : B
+{
+	public void Test()
+	{
+		// Comment before
+		if (conditionA) {
+			DoSomething();
+		}
+		// Comment before else ends up incorporating it
+		else if (conditionB) {
+			DoSomethingElse();
+		}
+	}
+}");
+        }
+
+        /// <summary>
+        /// Bug GH35a - Formatter issues with if/else statements and // comments else variant
+        /// </summary>
+        [Ignore]
+        public void TestBugGH35a()
+        {
+            var policy = FormattingOptionsFactory.CreateMono ();
+            policy.ConstructorBraceStyle = BraceStyle.EndOfLine;
+
+            Test(policy, @"public class A : B
+{
+    public void Test()
+    {
+        // Comment before
+        if (conditionA) {
+            DoSomething();
+        }
+        // Comment before else ends up incorporating it
+        else (conditionB) {
+            DoSomethingElse();
+        }
+    }
+}",
+@"public class A : B
+{
+	public void Test()
+	{
+		// Comment before
+		if (conditionA) {
+			DoSomething();
+		}
+		// Comment before else ends up incorporating it
+		else (conditionB) {
+			DoSomethingElse();
+		}
+	}
+}");
+        }
 	}
 }
 

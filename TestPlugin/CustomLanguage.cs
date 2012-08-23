@@ -53,7 +53,7 @@ namespace TestPlugin
 				                              });
 				b.AddMethod(method);
 				b.RunTransformations();
-				output.WriteLine("Decompiled AST has {0} nodes", b.CompilationUnit.DescendantsAndSelf.Count());
+				output.WriteLine("Decompiled AST has {0} nodes", b.SyntaxTree.DescendantsAndSelf.Count());
 			}
 		}
 	}

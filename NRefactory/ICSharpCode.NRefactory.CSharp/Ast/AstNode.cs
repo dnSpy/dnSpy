@@ -1,4 +1,4 @@
-// 
+﻿// 
 // AstNode.cs
 //
 // Author:
@@ -23,6 +23,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -194,13 +195,13 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		/// <summary>
 		/// Gets the region from StartLocation to EndLocation for this node.
-		/// The file name of the region is set based on the parent CompilationUnit's file name.
+		/// The file name of the region is set based on the parent SyntaxTree's file name.
 		/// If this node is not connected to a whole compilation, the file name will be null.
 		/// </summary>
 		public ICSharpCode.NRefactory.TypeSystem.DomRegion GetRegion()
 		{
-			var cu = (this.Ancestors.LastOrDefault() ?? this) as CompilationUnit;
-			string fileName = (cu != null ? cu.FileName : null);
+			var syntaxTree = (this.Ancestors.LastOrDefault() ?? this) as SyntaxTree;
+			string fileName = (syntaxTree != null ? syntaxTree.FileName : null);
 			return new ICSharpCode.NRefactory.TypeSystem.DomRegion(fileName, this.StartLocation, this.EndLocation);
 		}
 		
@@ -288,17 +289,31 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// Gets all descendants of this node (excluding this node itself).
 		/// </summary>
 		public IEnumerable<AstNode> Descendants {
-			get {
-				return Utils.TreeTraversal.PreOrder (this.Children, n => n.Children);
-			}
+			get { return GetDescendants(false); }
 		}
 		
 		/// <summary>
 		/// Gets all descendants of this node (including this node itself).
 		/// </summary>
 		public IEnumerable<AstNode> DescendantsAndSelf {
-			get {
-				return Utils.TreeTraversal.PreOrder (this, n => n.Children);
+			get { return GetDescendants(true); }
+		}
+		
+		IEnumerable<AstNode> GetDescendants(bool includeSelf)
+		{
+			if (includeSelf)
+				yield return this;
+			Stack<AstNode> nextStack = new Stack<AstNode>();
+			nextStack.Push(null);
+			AstNode pos = firstChild;
+			while (pos != null) {
+				if (pos.nextSibling != null)
+					nextStack.Push(pos.nextSibling);
+				yield return pos;
+				if (pos.firstChild != null)
+					pos = pos.firstChild;
+				else
+					pos = nextStack.Pop();
 			}
 		}
 		
@@ -322,7 +337,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			return Ancestors.OfType<T>().FirstOrDefault();
 		}
-				
+		
 		public AstNodeCollection<T> GetChildrenByRole<T> (Role<T> role) where T : AstNode
 		{
 			return new AstNodeCollection<T> (this, role);
@@ -367,13 +382,6 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 
-		public void InsertChildsBefore<T>(AstNode nextSibling, Role<T> role, params T[] child) where T : AstNode
-		{
-			foreach (var cur in child) {
-				InsertChildBefore(nextSibling, cur, role);
-			}
-		}
-		
 		public void InsertChildBefore<T> (AstNode nextSibling, T child, Role<T> role) where T : AstNode
 		{
 			if (role == null)
@@ -483,25 +491,24 @@ namespace ICSharpCode.NRefactory.CSharp
 			newNode.SetRole(this.Role);
 			newNode.prevSibling = prevSibling;
 			newNode.nextSibling = nextSibling;
-			if (parent != null) {
-				if (prevSibling != null) {
-					Debug.Assert (prevSibling.nextSibling == this);
-					prevSibling.nextSibling = newNode;
-				} else {
-					Debug.Assert (parent.firstChild == this);
-					parent.firstChild = newNode;
-				}
-				if (nextSibling != null) {
-					Debug.Assert (nextSibling.prevSibling == this);
-					nextSibling.prevSibling = newNode;
-				} else {
-					Debug.Assert (parent.lastChild == this);
-					parent.lastChild = newNode;
-				}
-				parent = null;
-				prevSibling = null;
-				nextSibling = null;
+
+			if (prevSibling != null) {
+				Debug.Assert (prevSibling.nextSibling == this);
+				prevSibling.nextSibling = newNode;
+			} else {
+				Debug.Assert (parent.firstChild == this);
+				parent.firstChild = newNode;
 			}
+			if (nextSibling != null) {
+				Debug.Assert (nextSibling.prevSibling == this);
+				nextSibling.prevSibling = newNode;
+			} else {
+				Debug.Assert (parent.lastChild == this);
+				parent.lastChild = newNode;
+			}
+			parent = null;
+			prevSibling = null;
+			nextSibling = null;
 		}
 		
 		public AstNode ReplaceWith (Func<AstNode, AstNode> replaceFunction)

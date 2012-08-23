@@ -60,5 +60,49 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 				"	}" + Environment.NewLine +
 				"}", result);
 		}
+
+		[Test()]
+		public void TestLambda ()
+		{
+			Test<CheckIfParameterIsNullAction> (@"class Foo
+{
+	void Test ()
+	{
+		var lambda = ($sender, e) => {
+		};
+	}
+}",@"class Foo
+{
+	void Test ()
+	{
+		var lambda = (sender, e) => {
+			if (sender == null)
+				throw new System.ArgumentNullException (""sender"");
+		};
+	}
+}");
+		}
+
+		[Test()]
+		public void TestAnonymousMethod ()
+		{
+			Test<CheckIfParameterIsNullAction> (@"class Foo
+{
+	void Test ()
+	{
+		var lambda = delegate(object $sender, object e) {
+		};
+	}
+}",@"class Foo
+{
+	void Test ()
+	{
+		var lambda = delegate(object sender, object e) {
+			if (sender == null)
+				throw new System.ArgumentNullException (""sender"");
+		};
+	}
+}");
+		}
 	}
 }

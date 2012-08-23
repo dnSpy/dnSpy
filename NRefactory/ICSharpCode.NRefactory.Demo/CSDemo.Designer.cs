@@ -142,7 +142,7 @@ namespace ICSharpCode.NRefactory.Demo
 			this.csharpGenerateCodeButton.Name = "csharpGenerateCodeButton";
 			this.csharpGenerateCodeButton.Size = new System.Drawing.Size(100, 23);
 			this.csharpGenerateCodeButton.TabIndex = 1;
-			this.csharpGenerateCodeButton.Text = "Generate";
+			this.csharpGenerateCodeButton.Text = "\u2191 Generate \u2191";
 			this.csharpGenerateCodeButton.UseVisualStyleBackColor = true;
 			this.csharpGenerateCodeButton.Click += new System.EventHandler(this.CSharpGenerateCodeButtonClick);
 			// 
@@ -153,7 +153,7 @@ namespace ICSharpCode.NRefactory.Demo
 			this.csharpParseButton.Name = "csharpParseButton";
 			this.csharpParseButton.Size = new System.Drawing.Size(100, 23);
 			this.csharpParseButton.TabIndex = 0;
-			this.csharpParseButton.Text = "Parse";
+			this.csharpParseButton.Text = "\u2193 Parse \u2193";
 			this.csharpParseButton.UseVisualStyleBackColor = true;
 			this.csharpParseButton.Click += new System.EventHandler(this.CSharpParseButtonClick);
 			// 

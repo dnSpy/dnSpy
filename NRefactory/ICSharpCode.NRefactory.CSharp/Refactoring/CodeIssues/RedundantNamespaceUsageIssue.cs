@@ -61,7 +61,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			{
 				base.VisitMemberReferenceExpression(memberReferenceExpression);
 				HandleMemberReference(
-					memberReferenceExpression, memberReferenceExpression.Target, memberReferenceExpression.MemberNameToken, memberReferenceExpression.TypeArguments, SimpleNameLookupMode.Expression,
+					memberReferenceExpression, memberReferenceExpression.Target, memberReferenceExpression.MemberNameToken, memberReferenceExpression.TypeArguments, NameLookupMode.Expression,
 					script => {
 						script.Replace(memberReferenceExpression, RefactoringAstHelper.RemoveTarget(memberReferenceExpression));
 					});
@@ -71,13 +71,13 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			{
 				base.VisitMemberType(memberType);
 				HandleMemberReference(
-					memberType, memberType.Target, memberType.MemberNameToken, memberType.TypeArguments, SimpleNameLookupMode.Type,
+					memberType, memberType.Target, memberType.MemberNameToken, memberType.TypeArguments, NameLookupMode.Type,
 					script => {
 						script.Replace(memberType, RefactoringAstHelper.RemoveTarget(memberType));
 					});
 			}
 			
-			void HandleMemberReference(AstNode wholeNode, AstNode targetNode, Identifier memberName, IEnumerable<AstType> typeArguments, SimpleNameLookupMode mode, Action<Script> action)
+			void HandleMemberReference(AstNode wholeNode, AstNode targetNode, Identifier memberName, IEnumerable<AstType> typeArguments, NameLookupMode mode, Action<Script> action)
 			{
 				var result = ctx.Resolve(targetNode);
 				if (!(result is NamespaceResolveResult)) {

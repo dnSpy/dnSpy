@@ -167,7 +167,22 @@ class TestClass
 }
 ");
 		}
-	
+
+		[Test]
+		public void TestEnumCase()
+		{
+			TestWrongContext<CreateIndexerAction>(@"
+enum AEnum { A }
+class Foo
+{
+	public void Test ()
+	{
+		AEnum e;
+		$e[0] = 2;
+	}
+}
+");
+		}
 	}
 }
 

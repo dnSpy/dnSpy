@@ -25,7 +25,7 @@ namespace ICSharpCode.NRefactory
 {
 	[Serializable]
 	public sealed class EmptyList<T> : IList<T>, IEnumerator<T>
-		#if NET45
+		#if NET_4_5
 		, IReadOnlyList<T>
 		#endif
 	{

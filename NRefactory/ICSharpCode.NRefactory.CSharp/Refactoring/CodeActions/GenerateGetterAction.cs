@@ -55,8 +55,11 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				yield break;
 			}
 			
-			yield return new CodeAction (context.TranslateString("Create getter"), script => {
-				script.InsertWithCursor(context.TranslateString("Create getter"), GeneratePropertyDeclaration(context, field, initializer), Script.InsertPosition.After);
+			yield return new CodeAction(context.TranslateString("Create getter"), script => {
+				script.InsertWithCursor(
+					context.TranslateString("Create getter"),
+					Script.InsertPosition.After,
+					GeneratePropertyDeclaration(context, field, initializer));
 			});
 		}
 		

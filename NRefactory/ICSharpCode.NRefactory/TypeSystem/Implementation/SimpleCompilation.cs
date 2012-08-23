@@ -18,8 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using ICSharpCode.NRefactory.Utils;
 
 namespace ICSharpCode.NRefactory.TypeSystem.Implementation
@@ -95,7 +93,6 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
-		[ObsoleteAttribute("Use compilation.Assemblies.Where(asm != compilation.MainAssembly) instead.")]
 		public IList<IAssembly> ReferencedAssemblies {
 			get {
 				if (referencedAssemblies == null)

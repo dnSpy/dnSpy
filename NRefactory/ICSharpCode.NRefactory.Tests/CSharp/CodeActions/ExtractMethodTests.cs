@@ -31,8 +31,57 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 	[TestFixture]
 	public class ExtractMethodTests : ContextActionTestBase
 	{
+		[Test()]
+		public void SimpleArgument()
+		{
+			Test<ExtractMethodAction>(@"class TestClass
+{
+	void TestMethod ()
+	{
+		int i = 5;
+		<-Console.WriteLine (i);->
+	}
+}
+", @"class TestClass
+{
+	static void NewMethod (int i)
+	{
+		Console.WriteLine (i);
+	}
+	void TestMethod ()
+	{
+		int i = 5;
+		NewMethod (i);
+	}
+}
+");
+		}
+		[Test()]
+		public void NoArgument()
+		{
+			Test<ExtractMethodAction>(@"class TestClass
+{
+	void TestMethod ()
+	{
+		int i = 5;
+		<-Console.WriteLine (""Hello World"");->
+	}
+}
+", @"class TestClass
+{
+	static void NewMethod ()
+	{
+		Console.WriteLine (""Hello World"");
+	}
+	void TestMethod ()
+	{
+		int i = 5;
+		NewMethod ();
+	}
+}
+");
+		}
 
-		[Ignore("FIXME!!")]
 		[Test()]
 		public void ExtractMethodResultStatementTest()
 		{
@@ -91,7 +140,6 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 ");
 		}
 		
-		[Ignore("FIXME!!")]
 		[Test()]
 		public void ExtractMethodStaticResultStatementTest()
 		{
@@ -146,7 +194,6 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 ");
 		}
 		
-		[Ignore("FIXME!!")]
 		[Test()]
 		public void ExtractMethodMultiVariableTest()
 		{
@@ -164,7 +211,7 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 ", @"class TestClass
 {
 	int member;
-	void NewMethod (ref int j, int i, out int k)
+	void NewMethod (int i, ref int j, out int k)
 	{
 		j = i + j;
 		k = j + member;
@@ -185,7 +232,8 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 		[Test()]
 		public void TestBug607990()
 		{
-			Test<ExtractMethodAction>(@"class TestClass
+			Test<ExtractMethodAction>(@"using System;
+class TestClass
 {
 	void TestMethod ()
 	{
@@ -193,7 +241,8 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 		obj1.ToString();->
 	}
 }
-", @"class TestClass
+", @"using System;
+class TestClass
 {
 	static void NewMethod ()
 	{
@@ -212,7 +261,6 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 		/// <summary>
 		/// Bug 616193 - Extract method passes param with does not exists any more in main method
 		/// </summary>
-		[Ignore("FIXME!!")]
 		[Test()]
 		public void TestBug616193()
 		{
@@ -248,7 +296,6 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 		/// <summary>
 		/// Bug 616199 - Extract method forgets to return a local var which is used in main method
 		/// </summary>
-		[Ignore("FIXME!!")]
 		[Test()]
 		public void TestBug616199()
 		{
@@ -269,7 +316,7 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 	}
 	void TestMethod ()
 	{
-		string z = NewMethod ();
+		var z = NewMethod ();
 		string ret = ""test1"" + z;
 	}
 }
@@ -331,8 +378,7 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 ");
 		}
 		
-		
-		[Ignore("FIXME!!")]
+		[Ignore("Fix me!")]
 		[Test()]
 		public void ExtractMethodMultiVariableWithLocalReturnVariableTest()
 		{
@@ -352,7 +398,7 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 ", @"class TestClass
 {
 	int member;
-	void NewMethod (ref int j, int i, out int k, out int test)
+	void NewMethod (int i, ref int j, out int k, out int test)
 	{
 		j = i + j;
 		k = j + member;

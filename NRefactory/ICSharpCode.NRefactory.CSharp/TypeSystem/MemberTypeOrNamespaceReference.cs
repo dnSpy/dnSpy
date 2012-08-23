@@ -35,8 +35,9 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		TypeOrNamespaceReference target;
 		string identifier;
 		IList<ITypeReference> typeArguments;
+		readonly NameLookupMode lookupMode;
 		
-		public MemberTypeOrNamespaceReference(TypeOrNamespaceReference target, string identifier, IList<ITypeReference> typeArguments)
+		public MemberTypeOrNamespaceReference(TypeOrNamespaceReference target, string identifier, IList<ITypeReference> typeArguments, NameLookupMode lookupMode = NameLookupMode.Type)
 		{
 			if (target == null)
 				throw new ArgumentNullException("target");
@@ -45,6 +46,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			this.target = target;
 			this.identifier = identifier;
 			this.typeArguments = typeArguments ?? EmptyList<ITypeReference>.Instance;
+			this.lookupMode = lookupMode;
 		}
 		
 		public string Identifier {
@@ -76,7 +78,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			IList<IType> typeArgs = typeArguments.Resolve(resolver.CurrentTypeResolveContext);
 			using (var busyLock = BusyManager.Enter(this)) {
 				if (busyLock.Success) {
-					return resolver.ResolveMemberType(targetRR, identifier, typeArgs);
+					return resolver.ResolveMemberAccess(targetRR, identifier, typeArgs, lookupMode);
 				} else {
 					// This can happen for "class Test : $Test.Base$ { public class Base {} }":
 					return ErrorResolveResult.UnknownError; // don't cache this error
@@ -106,6 +108,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				hashCode += 1000000007 * target.GetHashCode();
 				hashCode += 1000000033 * identifier.GetHashCode();
 				hashCode += 1000000087 * typeArguments.GetHashCode();
+				hashCode += 1000000021 * (int)lookupMode;
 			}
 			return hashCode;
 		}
@@ -114,7 +117,8 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		{
 			MemberTypeOrNamespaceReference o = other as MemberTypeOrNamespaceReference;
 			return o != null && this.target == o.target
-				&& this.identifier == o.identifier && this.typeArguments == o.typeArguments;
+				&& this.identifier == o.identifier && this.typeArguments == o.typeArguments
+				&& this.lookupMode == o.lookupMode;
 		}
 	}
 }

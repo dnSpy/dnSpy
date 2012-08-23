@@ -204,5 +204,21 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			node.InsertChildBefore(existingItem, newItem, role);
 		}
+		
+		/// <summary>
+		/// Applies the <paramref name="visitor"/> to all nodes in this collection.
+		/// </summary>
+		public void AcceptVisitor(IAstVisitor visitor)
+		{
+			AstNode next;
+			for (AstNode cur = node.FirstChild; cur != null; cur = next) {
+				Debug.Assert(cur.Parent == node);
+				// Remember next before yielding cur.
+				// This allows removing/replacing nodes while iterating through the list.
+				next = cur.NextSibling;
+				if (cur.Role == role)
+					cur.AcceptVisitor(visitor);
+			}
+		}
 	}
 }

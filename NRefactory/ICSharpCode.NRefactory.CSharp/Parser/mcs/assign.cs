@@ -543,11 +543,11 @@ namespace Mono.CSharp {
 		ExpressionStatement resolved;
 		IMemberContext mc;
 
-		public FieldInitializer (FieldSpec spec, Expression expression, IMemberContext mc)
-			: base (new FieldExpr (spec, expression.Location), expression, expression.Location)
+		public FieldInitializer (FieldBase mc, Expression expression, Location loc)
+			: base (new FieldExpr (mc.Spec, expression.Location), expression, loc)
 		{
 			this.mc = mc;
-			if (!spec.IsStatic)
+			if (!mc.IsStatic)
 				((FieldExpr)target).InstanceExpression = new CompilerGeneratedThis (mc.CurrentType, expression.Location);
 		}
 
@@ -660,15 +660,15 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public CompoundAssign (Binary.Operator op, Expression target, Expression source, Location loc)
-			: base (target, source, loc)
+		public CompoundAssign (Binary.Operator op, Expression target, Expression source)
+			: base (target, source, target.Location)
 		{
 			right = source;
 			this.op = op;
 		}
 
-		public CompoundAssign (Binary.Operator op, Expression target, Expression source, Expression left, Location loc)
-			: this (op, target, source, loc)
+		public CompoundAssign (Binary.Operator op, Expression target, Expression source, Expression left)
+			: this (op, target, source)
 		{
 			this.left = left;
 		}
@@ -731,7 +731,7 @@ namespace Mono.CSharp {
 			if (left == null)
 				left = new TargetExpression (target);
 
-			source = new Binary (op, left, right, true, loc);
+			source = new Binary (op, left, right, true);
 
 			if (target is DynamicMemberAssignable) {
 				Arguments targs = ((DynamicMemberAssignable) target).Arguments;

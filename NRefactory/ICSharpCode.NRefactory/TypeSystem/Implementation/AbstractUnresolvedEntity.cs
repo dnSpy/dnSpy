@@ -50,7 +50,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		internal const ushort FlagShadowing = 0x0008;
 		internal const ushort FlagSynthetic = 0x0010;
 		internal const ushort FlagStatic    = 0x0020;
-		// flags for DefaultUnresolvedTypeDefinition
+		// flags for DefaultUnresolvedTypeDefinition/LazyCecilTypeDefinition
 		internal const ushort FlagAddDefaultConstructorIfRequired = 0x0040;
 		internal const ushort FlagHasExtensionMethods = 0x0080;
 		internal const ushort FlagHasNoExtensionMethods = 0x0100;
@@ -63,8 +63,8 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		internal const ushort FlagFieldIsVolatile = 0x2000;
 		// flags for DefaultMethod:
 		internal const ushort FlagExtensionMethod = 0x1000;
-		internal const ushort FlagPartialMethodDeclaration = 0x2000;
-		internal const ushort FlagPartialMethodImplemenation = 0x4000;
+		internal const ushort FlagPartialMethod = 0x2000;
+		internal const ushort FlagHasBody = 0x4000;
 		
 		public bool IsFrozen {
 			get { return flags[FlagFrozen]; }
@@ -96,12 +96,29 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				rareFields.ApplyInterningProvider(provider);
 		}
 		
+		/// <summary>
+		/// Creates a shallow clone of this entity.
+		/// Collections (e.g. a type's member list) will be cloned as well, but the elements
+		/// of said list will not be.
+		/// If this instance is frozen, the clone will be unfrozen.
+		/// </summary>
+		public virtual object Clone()
+		{
+			var copy = (AbstractUnresolvedEntity)MemberwiseClone();
+			copy.flags[FlagFrozen] = false;
+			if (attributes != null)
+				copy.attributes = new List<IUnresolvedAttribute>(attributes);
+			if (rareFields != null)
+				copy.rareFields = (RareFields)rareFields.Clone();
+			return copy;
+		}
+		
 		[Serializable]
 		internal class RareFields
 		{
 			internal DomRegion region;
 			internal DomRegion bodyRegion;
-			internal IParsedFile parsedFile;
+			internal IUnresolvedFile unresolvedFile;
 			
 			protected internal virtual void FreezeInternal()
 			{
@@ -109,6 +126,11 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			
 			public virtual void ApplyInterningProvider(IInterningProvider provider)
 			{
+			}
+			
+			public virtual object Clone()
+			{
+				return MemberwiseClone();
 			}
 		}
 		
@@ -148,11 +170,11 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
-		public IParsedFile ParsedFile {
-			get { return rareFields != null ? rareFields.parsedFile : null; }
+		public IUnresolvedFile UnresolvedFile {
+			get { return rareFields != null ? rareFields.unresolvedFile : null; }
 			set {
 				if (value != null || rareFields != null)
-					WriteRareFields().parsedFile = value;
+					WriteRareFields().unresolvedFile = value;
 			}
 		}
 		

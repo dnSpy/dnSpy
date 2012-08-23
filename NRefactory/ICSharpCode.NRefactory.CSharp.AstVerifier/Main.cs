@@ -59,7 +59,7 @@ namespace ICSharpCode.NRefactory.CSharp.AstVerifier
 				if (!file.EndsWith (".cs"))
 					continue;
 				string text = File.ReadAllText (file);
-				var unit = CompilationUnit.Parse (text, file);
+				var unit = SyntaxTree.Parse (text, file);
 				if (unit == null)
 					continue;
 				string generated = unit.GetText ();

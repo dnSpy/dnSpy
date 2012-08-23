@@ -42,6 +42,7 @@ partial class ExpressionFinder {
 	bool isMissingModifier = false;
 	bool isAlreadyInExpr = false;
 	bool wasNormalAttribute = false;
+	int lambdaNestingDepth = 0;
 	int activeArgument = 0;
 	List<Token> errors = new List<Token>();
 	

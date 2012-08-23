@@ -257,6 +257,21 @@ namespace ICSharpCode.NRefactory.Editor
 			throw new NotSupportedException();
 		}
 		
+		void IDocument.Insert(int offset, ITextSource text)
+		{
+			throw new NotImplementedException();
+		}
+		
+		void IDocument.Insert(int offset, ITextSource text, AnchorMovementType defaultAnchorMovementType)
+		{
+			throw new NotImplementedException();
+		}
+		
+		void IDocument.Replace(int offset, int length, ITextSource newText)
+		{
+			throw new NotImplementedException();
+		}
+		
 		void IDocument.StartUndoableAction()
 		{
 		}
@@ -342,6 +357,18 @@ namespace ICSharpCode.NRefactory.Editor
 		public System.IO.TextReader CreateReader(int offset, int length)
 		{
 			return textSource.CreateReader(offset, length);
+		}
+		
+		/// <inheritdoc/>
+		public void WriteTextTo(System.IO.TextWriter writer)
+		{
+			textSource.WriteTextTo(writer);
+		}
+		
+		/// <inheritdoc/>
+		public void WriteTextTo(System.IO.TextWriter writer, int offset, int length)
+		{
+			textSource.WriteTextTo(writer, offset, length);
 		}
 		
 		/// <inheritdoc/>

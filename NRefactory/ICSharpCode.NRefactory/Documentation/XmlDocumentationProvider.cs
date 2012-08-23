@@ -121,7 +121,7 @@ namespace ICSharpCode.NRefactory.Documentation
 						this.fileName = fileName;
 						ReadXmlDoc(xmlReader);
 					} else {
-						string redirectionTarget = GetRedirectionTarget(xmlReader.GetAttribute("redirect"));
+						string redirectionTarget = GetRedirectionTarget(fileName, xmlReader.GetAttribute("redirect"));
 						if (redirectionTarget != null) {
 							Debug.WriteLine("XmlDoc " + fileName + " is redirecting to " + redirectionTarget);
 							using (FileStream redirectedFs = new FileStream(redirectionTarget, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete)) {
@@ -138,7 +138,7 @@ namespace ICSharpCode.NRefactory.Documentation
 			}
 		}
 		
-		static string GetRedirectionTarget(string target)
+		static string GetRedirectionTarget(string xmlFileName, string target)
 		{
 			string programFilesDir = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
 			programFilesDir = AppendDirectorySeparator(programFilesDir);
@@ -146,8 +146,11 @@ namespace ICSharpCode.NRefactory.Documentation
 			string corSysDir = System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory();
 			corSysDir = AppendDirectorySeparator(corSysDir);
 			
-			return LookupLocalizedXmlDoc(target.Replace("%PROGRAMFILESDIR%", programFilesDir)
-			                             .Replace("%CORSYSDIR%", corSysDir));
+			var fileName = target.Replace ("%PROGRAMFILESDIR%", programFilesDir)
+			                     .Replace ("%CORSYSDIR%", corSysDir);
+			if (!Path.IsPathRooted (fileName))
+				fileName = Path.Combine (Path.GetDirectoryName (xmlFileName), fileName);
+			return LookupLocalizedXmlDoc(fileName);
 		}
 		
 		static string AppendDirectorySeparator(string dir)

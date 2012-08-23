@@ -217,7 +217,7 @@ namespace ICSharpCode.ILSpy
 			      if (1 == searchTerm.Length)
 			      {
   						CSharpParser parser = new CSharpParser();
-  						PrimitiveExpression pe = parser.ParseExpression(new StringReader(searchTerm[0])) as PrimitiveExpression;
+  						PrimitiveExpression pe = parser.ParseExpression(searchTerm[0]) as PrimitiveExpression;
   						if (pe != null && pe.Value != null) {
   							TypeCode peValueType = Type.GetTypeCode(pe.Value.GetType());
   							switch (peValueType) {
