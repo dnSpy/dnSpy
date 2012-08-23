@@ -315,7 +315,7 @@ namespace Mono.CSharp {
 			}
 
 			var hoisted = localVariable.HoistedVariant;
-			if (hoisted != null && hoisted.Storey != this && hoisted.Storey.Kind == MemberKind.Struct) {
+			if (hoisted != null && hoisted.Storey != this && hoisted.Storey is StateMachine) {
 				// TODO: It's too late the field is defined in HoistedLocalVariable ctor
 				hoisted.Storey.hoisted_locals.Remove (hoisted);
 				hoisted = null;
@@ -331,7 +331,7 @@ namespace Mono.CSharp {
 				hoisted_locals.Add (hoisted);
 			}
 
-			if (ec.CurrentBlock.Explicit != localVariable.Block.Explicit)
+			if (ec.CurrentBlock.Explicit != localVariable.Block.Explicit && !(hoisted.Storey is StateMachine))
 				hoisted.Storey.AddReferenceFromChildrenBlock (ec.CurrentBlock.Explicit);
 		}
 
@@ -343,7 +343,7 @@ namespace Mono.CSharp {
 
 			var hoisted = parameterInfo.Parameter.HoistedVariant;
 
-			if (parameterInfo.Block.StateMachine is AsyncTaskStorey) {
+			if (parameterInfo.Block.StateMachine != null) {
 				//
 				// Another storey in same block exists but state machine does not
 				// have parameter captured. We need to add it there as well to
@@ -365,7 +365,7 @@ namespace Mono.CSharp {
 				// Lift captured parameter from value type storey to reference type one. Otherwise
 				// any side effects would be done on a copy
 				//
-				if (hoisted != null && hoisted.Storey != this && hoisted.Storey.Kind == MemberKind.Struct) {
+				if (hoisted != null && hoisted.Storey != this && hoisted.Storey is StateMachine) {
 					if (hoisted_local_params == null)
 						hoisted_local_params = new List<HoistedParameter> ();
 
@@ -488,7 +488,7 @@ namespace Mono.CSharp {
 			// When the current context is async (or iterator) lift local storey
 			// instantiation to the currect storey
 			//
-			if (ec.CurrentAnonymousMethod is StateMachineInitializer) {
+			if (ec.CurrentAnonymousMethod is StateMachineInitializer && (block.HasYield || block.HasAwait)) {
 				//
 				// Unfortunately, normal capture mechanism could not be used because we are
 				// too late in the pipeline and standart assign cannot be used either due to
@@ -702,7 +702,7 @@ namespace Mono.CSharp {
 			public override void Emit (EmitContext ec)
 			{
 				ResolveContext rc = new ResolveContext (ec.MemberContext);
-				Expression e = hv.GetFieldExpression (ec).CreateExpressionTree (rc);
+				Expression e = hv.GetFieldExpression (ec).CreateExpressionTree (rc, false);
 				// This should never fail
 				e = e.Resolve (rc);
 				if (e != null)
@@ -816,7 +816,7 @@ namespace Mono.CSharp {
 		sealed class HoistedFieldAssign : CompilerAssign
 		{
 			public HoistedFieldAssign (Expression target, Expression source)
-				: base (target, source, source.Location)
+				: base (target, source, target.Location)
 			{
 			}
 
@@ -960,11 +960,16 @@ namespace Mono.CSharp {
 				return Block.Parameters;
 			}
 		}
-		
+
 		public bool IsAsync {
 			get;
 			internal set;
 		}
+
+		public ReportPrinter TypeInferenceReportPrinter {
+			get; set;
+		}
+
 		#endregion
 
 		//
@@ -975,7 +980,13 @@ namespace Mono.CSharp {
 		{
 			using (ec.With (ResolveContext.Options.InferReturnType, false)) {
 				using (ec.Set (ResolveContext.Options.ProbingMode)) {
-					return Compatible (ec, delegate_type) != null;
+					var prev = ec.Report.SetPrinter (TypeInferenceReportPrinter ?? new NullReportPrinter ());
+
+					var res = Compatible (ec, delegate_type) != null;
+
+					ec.Report.SetPrinter (prev);
+
+					return res;
 				}
 			}
 		}
@@ -1109,11 +1120,22 @@ namespace Mono.CSharp {
 			}
 
 			using (ec.Set (ResolveContext.Options.ProbingMode | ResolveContext.Options.InferReturnType)) {
+				ReportPrinter prev;
+				if (TypeInferenceReportPrinter != null) {
+					prev = ec.Report.SetPrinter (TypeInferenceReportPrinter);
+				} else {
+					prev = null;
+				}
+
 				var body = CompatibleMethodBody (ec, tic, null, delegate_type);
 				if (body != null) {
 					am = body.Compatible (ec, body);
 				} else {
 					am = null;
+				}
+
+				if (TypeInferenceReportPrinter != null) {
+					ec.Report.SetPrinter (prev);
 				}
 			}
 
@@ -1476,7 +1498,14 @@ namespace Mono.CSharp {
 			if (ec.HasSet (ResolveContext.Options.ExpressionTreeConversion))
 				flags |= ResolveContext.Options.ExpressionTreeConversion;
 
+			if (ec.HasSet (ResolveContext.Options.BaseInitializer))
+				flags |= ResolveContext.Options.BaseInitializer;
+
 			aec.Set (flags);
+
+			var bc = ec as BlockContext;
+			if (bc != null)
+				aec.FlowOffset = bc.FlowOffset;
 
 			var errors = ec.Report.Errors;
 
@@ -1988,11 +2017,11 @@ namespace Mono.CSharp {
 
 				IntConstant FNV_prime = new IntConstant (Compiler.BuiltinTypes, 16777619, loc);				
 				rs_hashcode = new Binary (Binary.Operator.Multiply,
-					new Binary (Binary.Operator.ExclusiveOr, rs_hashcode, field_hashcode, loc),
-					FNV_prime, loc);
+					new Binary (Binary.Operator.ExclusiveOr, rs_hashcode, field_hashcode),
+					FNV_prime);
 
 				Expression field_to_string = new Conditional (new BooleanExpression (new Binary (Binary.Operator.Inequality,
-					new MemberAccess (new This (f.Location), f.Name), new NullLiteral (loc), loc)),
+					new MemberAccess (new This (f.Location), f.Name), new NullLiteral (loc))),
 					new Invocation (new MemberAccess (
 						new MemberAccess (new This (f.Location), f.Name), "ToString"), null),
 					new StringConstant (Compiler.BuiltinTypes, string.Empty, loc), loc);
@@ -2003,9 +2032,7 @@ namespace Mono.CSharp {
 						string_concat,
 						new Binary (Binary.Operator.Addition,
 							new StringConstant (Compiler.BuiltinTypes, " " + p.Name + " = ", loc),
-							field_to_string,
-							loc),
-						loc);
+							field_to_string));
 					continue;
 				}
 
@@ -2015,18 +2042,15 @@ namespace Mono.CSharp {
 				string_concat = new Binary (Binary.Operator.Addition,
 					new Binary (Binary.Operator.Addition,
 						string_concat,
-						new StringConstant (Compiler.BuiltinTypes, ", " + p.Name + " = ", loc),
-						loc),
-					field_to_string,
-					loc);
+						new StringConstant (Compiler.BuiltinTypes, ", " + p.Name + " = ", loc)),
+					field_to_string);
 
-				rs_equals = new Binary (Binary.Operator.LogicalAnd, rs_equals, field_equal, loc);
+				rs_equals = new Binary (Binary.Operator.LogicalAnd, rs_equals, field_equal);
 			}
 
 			string_concat = new Binary (Binary.Operator.Addition,
 				string_concat,
-				new StringConstant (Compiler.BuiltinTypes, " }", loc),
-				loc);
+				new StringConstant (Compiler.BuiltinTypes, " }", loc));
 
 			//
 			// Equals (object obj) override
@@ -2037,9 +2061,9 @@ namespace Mono.CSharp {
 					new As (equals_block.GetParameterReference (0, loc),
 						current_type, loc), loc)));
 
-			Expression equals_test = new Binary (Binary.Operator.Inequality, other_variable, new NullLiteral (loc), loc);
+			Expression equals_test = new Binary (Binary.Operator.Inequality, other_variable, new NullLiteral (loc));
 			if (rs_equals != null)
-				equals_test = new Binary (Binary.Operator.LogicalAnd, equals_test, rs_equals, loc);
+				equals_test = new Binary (Binary.Operator.LogicalAnd, equals_test, rs_equals);
 			equals_block.AddStatement (new Return (equals_test, loc));
 
 			equals.Block = equals_block;
@@ -2081,19 +2105,19 @@ namespace Mono.CSharp {
 			var hash_variable = new LocalVariableReference (li_hash, loc);
 			hashcode_block.AddStatement (new StatementExpression (
 				new CompoundAssign (Binary.Operator.Addition, hash_variable,
-					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (Compiler.BuiltinTypes, 13, loc), loc), loc)));
+					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (Compiler.BuiltinTypes, 13, loc)))));
 			hashcode_block.AddStatement (new StatementExpression (
 				new CompoundAssign (Binary.Operator.ExclusiveOr, hash_variable,
-					new Binary (Binary.Operator.RightShift, hash_variable, new IntConstant (Compiler.BuiltinTypes, 7, loc), loc), loc)));
+					new Binary (Binary.Operator.RightShift, hash_variable, new IntConstant (Compiler.BuiltinTypes, 7, loc)))));
 			hashcode_block.AddStatement (new StatementExpression (
 				new CompoundAssign (Binary.Operator.Addition, hash_variable,
-					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (Compiler.BuiltinTypes, 3, loc), loc), loc)));
+					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (Compiler.BuiltinTypes, 3, loc)))));
 			hashcode_block.AddStatement (new StatementExpression (
 				new CompoundAssign (Binary.Operator.ExclusiveOr, hash_variable,
-					new Binary (Binary.Operator.RightShift, hash_variable, new IntConstant (Compiler.BuiltinTypes, 17, loc), loc), loc)));
+					new Binary (Binary.Operator.RightShift, hash_variable, new IntConstant (Compiler.BuiltinTypes, 17, loc)))));
 			hashcode_block.AddStatement (new StatementExpression (
 				new CompoundAssign (Binary.Operator.Addition, hash_variable,
-					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (Compiler.BuiltinTypes, 5, loc), loc), loc)));
+					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (Compiler.BuiltinTypes, 5, loc)))));
 
 			hashcode_block.AddStatement (new Return (hash_variable, loc));
 			hashcode.Block = hashcode_top;

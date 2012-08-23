@@ -1,4 +1,4 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -22,13 +22,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using ICSharpCode.NRefactory.CSharp.Analysis;
-using ICSharpCode.NRefactory.CSharp.Resolver;
 using ICSharpCode.NRefactory.CSharp.TypeSystem;
 using ICSharpCode.NRefactory.CSharp.TypeSystem.ConstantValues;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
-using ICSharpCode.NRefactory.Utils;
 
 namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 {
@@ -37,7 +34,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 	/// </summary>
 	public class TypeSystemConvertVisitor : DepthFirstAstVisitor<IUnresolvedEntity>
 	{
-		readonly CSharpParsedFile parsedFile;
+		readonly CSharpUnresolvedFile unresolvedFile;
 		UsingScope usingScope;
 		CSharpUnresolvedTypeDefinition currentTypeDefinition;
 		DefaultUnresolvedMethod currentMethod;
@@ -67,32 +64,32 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		{
 			if (fileName == null)
 				throw new ArgumentNullException("fileName");
-			this.parsedFile = new CSharpParsedFile(fileName);
-			this.usingScope = parsedFile.RootUsingScope;
+			this.unresolvedFile = new CSharpUnresolvedFile(fileName);
+			this.usingScope = unresolvedFile.RootUsingScope;
 		}
 		
 		/// <summary>
 		/// Creates a new TypeSystemConvertVisitor and initializes it with a given context.
 		/// </summary>
-		/// <param name="parsedFile">The parsed file to which members should be added.</param>
+		/// <param name="unresolvedFile">The parsed file to which members should be added.</param>
 		/// <param name="currentUsingScope">The current using scope.</param>
 		/// <param name="currentTypeDefinition">The current type definition.</param>
-		public TypeSystemConvertVisitor(CSharpParsedFile parsedFile, UsingScope currentUsingScope = null, CSharpUnresolvedTypeDefinition currentTypeDefinition = null)
+		public TypeSystemConvertVisitor(CSharpUnresolvedFile unresolvedFile, UsingScope currentUsingScope = null, CSharpUnresolvedTypeDefinition currentTypeDefinition = null)
 		{
-			if (parsedFile == null)
-				throw new ArgumentNullException("parsedFile");
-			this.parsedFile = parsedFile;
-			this.usingScope = currentUsingScope ?? parsedFile.RootUsingScope;
+			if (unresolvedFile == null)
+				throw new ArgumentNullException("unresolvedFile");
+			this.unresolvedFile = unresolvedFile;
+			this.usingScope = currentUsingScope ?? unresolvedFile.RootUsingScope;
 			this.currentTypeDefinition = currentTypeDefinition;
 		}
 		
-		public CSharpParsedFile ParsedFile {
-			get { return parsedFile; }
+		public CSharpUnresolvedFile UnresolvedFile {
+			get { return unresolvedFile; }
 		}
 		
 		DomRegion MakeRegion(TextLocation start, TextLocation end)
 		{
-			return new DomRegion(parsedFile.FileName, start.Line, start.Column, end.Line, end.Column);
+			return new DomRegion(unresolvedFile.FileName, start.Line, start.Column, end.Line, end.Column);
 		}
 		
 		DomRegion MakeRegion(AstNode node)
@@ -100,7 +97,17 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			if (node == null || node.IsNull)
 				return DomRegion.Empty;
 			else
-				return MakeRegion(node.StartLocation, node.EndLocation);
+				return MakeRegion(GetStartLocationAfterAttributes(node), node.EndLocation);
+		}
+		
+		internal static TextLocation GetStartLocationAfterAttributes(AstNode node)
+		{
+			AstNode child = node.FirstChild;
+			// Skip attributes and comments between attributes for the purpose of
+			// getting a declaration's region.
+			while (child != null && (child is AttributeSection || child.NodeType == NodeType.Whitespace))
+				child = child.NextSibling;
+			return (child ?? node).StartLocation;
 		}
 		
 		DomRegion MakeBraceRegion(AstNode node)
@@ -113,10 +120,10 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		}
 		
 		#region Compilation Unit
-		public override IUnresolvedEntity VisitCompilationUnit (CompilationUnit unit)
+		public override IUnresolvedEntity VisitSyntaxTree (SyntaxTree unit)
 		{
-			parsedFile.Errors = unit.Errors;
-			return base.VisitCompilationUnit (unit);
+			unresolvedFile.Errors = unit.Errors;
+			return base.VisitSyntaxTree (unit);
 		}
 		#endregion
 		
@@ -129,7 +136,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		
 		public override IUnresolvedEntity VisitUsingDeclaration(UsingDeclaration usingDeclaration)
 		{
-			TypeOrNamespaceReference u = usingDeclaration.Import.ToTypeReference(SimpleNameLookupMode.TypeInUsingDeclaration) as TypeOrNamespaceReference;
+			TypeOrNamespaceReference u = usingDeclaration.Import.ToTypeReference(NameLookupMode.TypeInUsingDeclaration) as TypeOrNamespaceReference;
 			if (u != null) {
 				if (interningProvider != null)
 					u = interningProvider.Intern(u);
@@ -140,7 +147,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		
 		public override IUnresolvedEntity VisitUsingAliasDeclaration(UsingAliasDeclaration usingDeclaration)
 		{
-			TypeOrNamespaceReference u = usingDeclaration.Import.ToTypeReference(SimpleNameLookupMode.TypeInUsingDeclaration) as TypeOrNamespaceReference;
+			TypeOrNamespaceReference u = usingDeclaration.Import.ToTypeReference(NameLookupMode.TypeInUsingDeclaration) as TypeOrNamespaceReference;
 			if (u != null) {
 				if (interningProvider != null)
 					u = interningProvider.Intern(u);
@@ -160,7 +167,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				usingScope.Region = region;
 			}
 			base.VisitNamespaceDeclaration(namespaceDeclaration);
-			parsedFile.UsingScopes.Add(usingScope); // add after visiting children so that nested scopes come first
+			unresolvedFile.UsingScopes.Add(usingScope); // add after visiting children so that nested scopes come first
 			usingScope = previousUsingScope;
 			return null;
 		}
@@ -177,9 +184,9 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				currentTypeDefinition.NestedTypes.Add(newType);
 			} else {
 				newType = new CSharpUnresolvedTypeDefinition(usingScope, name);
-				parsedFile.TopLevelTypeDefinitions.Add(newType);
+				unresolvedFile.TopLevelTypeDefinitions.Add(newType);
 			}
-			newType.ParsedFile = parsedFile;
+			newType.UnresolvedFile = unresolvedFile;
 			newType.HasExtensionMethods = false; // gets set to true when an extension method is added
 			return newType;
 		}
@@ -211,7 +218,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			ConvertTypeParameters(td.TypeParameters, typeDeclaration.TypeParameters, typeDeclaration.Constraints, EntityType.TypeDefinition);
 			
 			foreach (AstType baseType in typeDeclaration.BaseTypes) {
-				td.BaseTypes.Add(baseType.ToTypeReference(SimpleNameLookupMode.BaseTypeReference));
+				td.BaseTypes.Add(baseType.ToTypeReference(NameLookupMode.BaseTypeReference));
 			}
 			
 			foreach (EntityDeclaration member in typeDeclaration.Members) {
@@ -354,6 +361,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				
 				if ((modifiers & Modifiers.Const) != 0) {
 					field.ConstantValue = ConvertConstantValue(field.ReturnType, vi.Initializer);
+					field.IsStatic = true;
 				}
 				
 				currentTypeDefinition.Members.Add(field);
@@ -437,12 +445,8 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				m.IsExtensionMethod = true;
 				currentTypeDefinition.HasExtensionMethods = true;
 			}
-			if (methodDeclaration.HasModifier(Modifiers.Partial)) {
-				if (methodDeclaration.Body.IsNull)
-					m.IsPartialMethodDeclaration = true;
-				else
-					m.IsPartialMethodImplementation = true;
-			}
+			m.IsPartial = methodDeclaration.HasModifier(Modifiers.Partial);
+			m.HasBody = !methodDeclaration.Body.IsNull;
 			
 			ConvertParameters(m.Parameters, methodDeclaration.Parameters);
 			if (!methodDeclaration.PrivateImplementationType.IsNull) {
@@ -552,6 +556,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			ConvertAttributes(m.ReturnTypeAttributes, operatorDeclaration.Attributes.Where(s => s.AttributeTarget == "return"));
 			
 			ApplyModifiers(m, operatorDeclaration.Modifiers);
+			m.HasBody = !operatorDeclaration.Body.IsNull;
 			
 			ConvertParameters(m.Parameters, operatorDeclaration.Parameters);
 			
@@ -581,6 +586,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			ConvertAttributes(ctor.Attributes, constructorDeclaration.Attributes);
 			ConvertParameters(ctor.Parameters, constructorDeclaration.Parameters);
 			AddXmlDocumentation(ctor, constructorDeclaration);
+			ctor.HasBody = !constructorDeclaration.Body.IsNull;
 			
 			if (isStatic)
 				ctor.IsStatic = true;
@@ -605,6 +611,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			dtor.Accessibility = Accessibility.Protected;
 			dtor.IsOverride = true;
 			dtor.ReturnType = KnownTypeReference.Void;
+			dtor.HasBody = !destructorDeclaration.Body.IsNull;
 			
 			ConvertAttributes(dtor.Attributes, destructorDeclaration.Attributes);
 			AddXmlDocumentation(dtor, destructorDeclaration);
@@ -633,8 +640,9 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				p.ExplicitInterfaceImplementations.Add(new DefaultMemberReference(
 					p.EntityType, propertyDeclaration.PrivateImplementationType.ToTypeReference(), p.Name));
 			}
-			p.Getter = ConvertAccessor(propertyDeclaration.Getter, p, "get_");
-			p.Setter = ConvertAccessor(propertyDeclaration.Setter, p, "set_");
+			bool isExtern = propertyDeclaration.HasModifier(Modifiers.Extern);
+			p.Getter = ConvertAccessor(propertyDeclaration.Getter, p, "get_", isExtern);
+			p.Setter = ConvertAccessor(propertyDeclaration.Setter, p, "set_", isExtern);
 			currentTypeDefinition.Members.Add(p);
 			if (interningProvider != null) {
 				p.ApplyInterningProvider(interningProvider);
@@ -654,8 +662,6 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			AddXmlDocumentation(p, indexerDeclaration);
 			
 			ConvertParameters(p.Parameters, indexerDeclaration.Parameters);
-			p.Getter = ConvertAccessor(indexerDeclaration.Getter, p, "get_");
-			p.Setter = ConvertAccessor(indexerDeclaration.Setter, p, "set_");
 			
 			if (!indexerDeclaration.PrivateImplementationType.IsNull) {
 				p.Accessibility = Accessibility.None;
@@ -663,6 +669,9 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				p.ExplicitInterfaceImplementations.Add(new DefaultMemberReference(
 					p.EntityType, indexerDeclaration.PrivateImplementationType.ToTypeReference(), p.Name, 0, GetParameterTypes(p.Parameters)));
 			}
+			bool isExtern = indexerDeclaration.HasModifier(Modifiers.Extern);
+			p.Getter = ConvertAccessor(indexerDeclaration.Getter, p, "get_", isExtern);
+			p.Setter = ConvertAccessor(indexerDeclaration.Setter, p, "set_", isExtern);
 			
 			currentTypeDefinition.Members.Add(p);
 			if (interningProvider != null) {
@@ -671,20 +680,27 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			return p;
 		}
 		
-		DefaultUnresolvedMethod ConvertAccessor(Accessor accessor, IUnresolvedMember p, string prefix)
+		DefaultUnresolvedMethod ConvertAccessor(Accessor accessor, IUnresolvedMember p, string prefix, bool memberIsExtern)
 		{
 			if (accessor.IsNull)
 				return null;
 			var a = new DefaultUnresolvedMethod(currentTypeDefinition, prefix + p.Name);
+			a.EntityType = EntityType.Accessor;
+			a.AccessorOwner = p;
 			a.Accessibility = GetAccessibility(accessor.Modifiers) ?? p.Accessibility;
 			a.IsAbstract = p.IsAbstract;
-			a.IsOverride = p.IsOverridable;
+			a.IsOverride = p.IsOverride;
 			a.IsSealed = p.IsSealed;
 			a.IsStatic = p.IsStatic;
 			a.IsSynthetic = p.IsSynthetic;
 			a.IsVirtual = p.IsVirtual;
 			
 			a.Region = MakeRegion(accessor);
+			a.BodyRegion = MakeRegion(accessor.Body);
+			// An accessor has no body if all both are true:
+			//  a) there's no body in the code
+			//  b) the member is either abstract or extern
+			a.HasBody = !(accessor.Body.IsNull && (p.IsAbstract || memberIsExtern));
 			if (p.EntityType == EntityType.Indexer) {
 				foreach (var indexerParam in ((IUnresolvedProperty)p).Parameters)
 					a.Parameters.Add(indexerParam);
@@ -705,6 +721,15 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				} else {
 					ConvertAttributes(a.Attributes, section);
 				}
+			}
+			if (p.IsExplicitInterfaceImplementation) {
+				a.IsExplicitInterfaceImplementation = true;
+				Debug.Assert(p.ExplicitInterfaceImplementations.Count == 1);
+				a.ExplicitInterfaceImplementations.Add(new DefaultMemberReference(
+					EntityType.Accessor,
+					p.ExplicitInterfaceImplementations[0].DeclaringTypeReference,
+					a.Name, 0, GetParameterTypes(a.Parameters)
+				));
 			}
 			return a;
 		}
@@ -754,15 +779,18 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		DefaultUnresolvedMethod CreateDefaultEventAccessor(IUnresolvedEvent ev, string name, IUnresolvedParameter valueParameter)
 		{
 			var a = new DefaultUnresolvedMethod(currentTypeDefinition, name);
+			a.EntityType = EntityType.Accessor;
+			a.AccessorOwner = ev;
 			a.Region = ev.BodyRegion;
 			a.BodyRegion = ev.BodyRegion;
 			a.Accessibility = ev.Accessibility;
 			a.IsAbstract = ev.IsAbstract;
-			a.IsOverride = ev.IsOverridable;
+			a.IsOverride = ev.IsOverride;
 			a.IsSealed = ev.IsSealed;
 			a.IsStatic = ev.IsStatic;
 			a.IsSynthetic = ev.IsSynthetic;
 			a.IsVirtual = ev.IsVirtual;
+			a.HasBody = true;
 			a.ReturnType = KnownTypeReference.Void;
 			a.Parameters.Add(valueParameter);
 			return a;
@@ -785,8 +813,9 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 					e.EntityType, eventDeclaration.PrivateImplementationType.ToTypeReference(), e.Name));
 			}
 			
-			e.AddAccessor = ConvertAccessor(eventDeclaration.AddAccessor, e, "add_");
-			e.RemoveAccessor = ConvertAccessor(eventDeclaration.RemoveAccessor, e, "remove_");
+			// custom events can't be extern; the non-custom event syntax must be used for extern events
+			e.AddAccessor = ConvertAccessor(eventDeclaration.AddAccessor, e, "add_", false);
+			e.RemoveAccessor = ConvertAccessor(eventDeclaration.RemoveAccessor, e, "remove_", false);
 			
 			currentTypeDefinition.Members.Add(e);
 			if (interningProvider != null) {
@@ -820,7 +849,6 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			m.IsShadowing = (modifiers & Modifiers.New) != 0;
 			m.IsStatic = (modifiers & Modifiers.Static) != 0;
 			m.IsVirtual = (modifiers & Modifiers.Virtual) != 0;
-			//m.IsPartial = (modifiers & Modifiers.Partial) != 0;
 		}
 		
 		static Accessibility? GetAccessibility(Modifiers modifiers)
@@ -847,9 +875,9 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		{
 			// non-assembly attributes are handled by their parent entity
 			if (attributeSection.AttributeTarget == "assembly") {
-				ConvertAttributes(parsedFile.AssemblyAttributes, attributeSection);
+				ConvertAttributes(unresolvedFile.AssemblyAttributes, attributeSection);
 			} else if (attributeSection.AttributeTarget == "module") {
-				ConvertAttributes(parsedFile.ModuleAttributes, attributeSection);
+				ConvertAttributes(unresolvedFile.ModuleAttributes, attributeSection);
 			}
 			return null;
 		}
@@ -896,11 +924,11 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				if (nae != null) {
 					if (namedCtorArguments == null)
 						namedCtorArguments = new List<KeyValuePair<string, IConstantValue>>();
-					namedCtorArguments.Add(new KeyValuePair<string, IConstantValue>(nae.Identifier, ConvertAttributeArgument(nae.Expression)));
+					namedCtorArguments.Add(new KeyValuePair<string, IConstantValue>(nae.Name, ConvertAttributeArgument(nae.Expression)));
 				} else {
 					NamedExpression namedExpression = expr as NamedExpression;
 					if (namedExpression != null) {
-						string name = namedExpression.Identifier;
+						string name = namedExpression.Name;
 						if (namedArguments == null)
 							namedArguments = new List<KeyValuePair<string, IConstantValue>>();
 						namedArguments.Add(new KeyValuePair<string, IConstantValue>(name, ConvertAttributeArgument(namedExpression.Expression)));
@@ -917,7 +945,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		
 		#region Types
 		[Obsolete("Use AstType.ToTypeReference() instead.")]
-		public static ITypeReference ConvertType(AstType type, SimpleNameLookupMode lookupMode = SimpleNameLookupMode.Type)
+		public static ITypeReference ConvertType(AstType type, NameLookupMode lookupMode = NameLookupMode.Type)
 		{
 			return type.ToTypeReference(lookupMode);
 		}
@@ -1138,6 +1166,18 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				outputList.Add(p);
 			}
 		}
+		
+		internal static IList<ITypeReference> GetParameterTypes(IEnumerable<ParameterDeclaration> parameters)
+		{
+			List<ITypeReference> result = new List<ITypeReference>();
+			foreach (ParameterDeclaration pd in parameters) {
+				ITypeReference type = pd.Type.ToTypeReference();
+				if (pd.ParameterModifier == ParameterModifier.Ref || pd.ParameterModifier == ParameterModifier.Out)
+					type = new ByReferenceTypeReference(type);
+				result.Add(type);
+			}
+			return result;
+		}
 		#endregion
 		
 		#region XML Documentation
@@ -1164,7 +1204,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			}
 			if (documentation != null) {
 				documentation.Reverse(); // bring documentation in correct order
-				parsedFile.AddDocumentation(entity, string.Join(Environment.NewLine, documentation));
+				unresolvedFile.AddDocumentation(entity, string.Join(Environment.NewLine, documentation));
 			}
 		}
 		

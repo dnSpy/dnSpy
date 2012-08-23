@@ -1,2 +1,5 @@
+bin
+obj
 /lib/*.dll
 /ICSharpCode.NRefactory.Tests/PartCover/*
+_ReSharper*/*

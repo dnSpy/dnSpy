@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using ICSharpCode.NRefactory.Utils;
 
 namespace ICSharpCode.NRefactory.TypeSystem.Implementation
@@ -94,6 +93,10 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		public ICompilation Compilation {
 			get { return compilation; }
+		}
+		
+		public IEnumerable<IAssembly> ContributingAssemblies {
+			get { return namespaces.SelectMany(ns => ns.ContributingAssemblies); }
 		}
 		
 		public IEnumerable<INamespace> ChildNamespaces {

@@ -33,7 +33,6 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 	[TestFixture]
 	public class GenerateGetterTests : ContextActionTestBase
 	{
-		[Ignore("NotImplemented")]
 		[Test()]
 		public void Test ()
 		{

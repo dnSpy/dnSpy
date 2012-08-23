@@ -61,14 +61,13 @@ namespace ICSharpCode.NRefactory.Demo
 			}
 		}
 		
-		CompilationUnit compilationUnit;
+		SyntaxTree syntaxTree;
 		
 		void CSharpParseButtonClick(object sender, EventArgs e)
 		{
-			CSharpParser parser = new CSharpParser();
-			compilationUnit = parser.Parse(new StringReader(csharpCodeTextBox.Text), "dummy.cs");
+			syntaxTree = new CSharpParser().Parse(csharpCodeTextBox.Text, "demo.cs");
 			csharpTreeView.Nodes.Clear();
-			foreach (var element in compilationUnit.Children) {
+			foreach (var element in syntaxTree.Children) {
 				csharpTreeView.Nodes.Add(MakeTreeNode(element));
 			}
 			SelectCurrentNode(csharpTreeView.Nodes);
@@ -94,7 +93,7 @@ namespace ICSharpCode.NRefactory.Demo
 			b.Append(node.GetType().Name);
 			bool hasProperties = false;
 			foreach (PropertyInfo p in node.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)) {
-				if (p.Name == "NodeType" || p.Name == "IsNull")
+				if (p.Name == "NodeType" || p.Name == "IsNull" || p.Name == "IsFrozen" || p.Name == "HasChildren")
 					continue;
 				if (p.PropertyType == typeof(string) || p.PropertyType.IsEnum || p.PropertyType == typeof(bool)) {
 					if (!hasProperties) {
@@ -147,12 +146,20 @@ namespace ICSharpCode.NRefactory.Demo
 		
 		void CSharpGenerateCodeButtonClick(object sender, EventArgs e)
 		{
-			csharpCodeTextBox.Text = compilationUnit.GetText();
+			csharpCodeTextBox.Text = syntaxTree.GetText();
 		}
 		
 		int GetOffset(TextBox textBox, TextLocation location)
 		{
+			// TextBox uses 0-based coordinates, TextLocation is 1-based
 			return textBox.GetFirstCharIndexFromLine(location.Line - 1) + location.Column - 1;
+		}
+		
+		TextLocation GetTextLocation(TextBox textBox, int offset)
+		{
+			int line = textBox.GetLineFromCharIndex(offset);
+			int col = offset - textBox.GetFirstCharIndexFromLine(line);
+			return new TextLocation(line + 1, col + 1);
 		}
 		
 		void CSharpTreeViewAfterSelect(object sender, TreeViewEventArgs e)
@@ -197,74 +204,28 @@ namespace ICSharpCode.NRefactory.Demo
 		void ResolveButtonClick(object sender, EventArgs e)
 		{
 			IProjectContent project = new CSharpProjectContent();
-			var parsedFile = compilationUnit.ToTypeSystem();
-			project = project.UpdateProjectContent(null, parsedFile);
+			var unresolvedFile = syntaxTree.ToTypeSystem();
+			project = project.AddOrUpdateFiles(unresolvedFile);
 			project = project.AddAssemblyReferences(builtInLibs.Value);
 			
 			ICompilation compilation = project.CreateCompilation();
 			
-			StoreInDictionaryNavigator navigator;
+			ResolveResult result;
 			if (csharpTreeView.SelectedNode != null) {
-				navigator = new StoreInDictionaryNavigator((AstNode)csharpTreeView.SelectedNode.Tag);
+				var selectedNode = (AstNode)csharpTreeView.SelectedNode.Tag;
+				CSharpAstResolver resolver = new CSharpAstResolver(compilation, syntaxTree, unresolvedFile);
+				result = resolver.Resolve(selectedNode);
+				// CSharpAstResolver.Resolve() never returns null
 			} else {
-				navigator = new StoreInDictionaryNavigator();
-			}
-			CSharpAstResolver resolver = new CSharpAstResolver(compilation, compilationUnit, parsedFile);
-			resolver.ApplyNavigator(navigator);
-			csharpTreeView.BeginUpdate();
-			ShowResolveResultsInTree(csharpTreeView.Nodes, navigator);
-			csharpTreeView.EndUpdate();
-		}
-		
-		sealed class StoreInDictionaryNavigator : NodeListResolveVisitorNavigator
-		{
-			internal Dictionary<AstNode, ResolveResult> resolveResults = new Dictionary<AstNode, ResolveResult>();
-			internal Dictionary<AstNode, Conversion> conversions = new Dictionary<AstNode, Conversion>();
-			internal Dictionary<AstNode, IType> conversionTargetTypes = new Dictionary<AstNode, IType>();
-			bool resolveAll;
-			
-			public StoreInDictionaryNavigator(params AstNode[] nodes)
-				: base(nodes)
-			{
-				resolveAll = (nodes.Length == 0);
-			}
-			
-			public override ResolveVisitorNavigationMode Scan(AstNode node)
-			{
-				if (resolveAll)
-					return ResolveVisitorNavigationMode.Resolve;
-				else
-					return base.Scan(node);
-			}
-			
-			public override void Resolved(AstNode node, ResolveResult result)
-			{
-				resolveResults.Add(node, result);
-			}
-			
-			public override void ProcessConversion(Expression expression, ResolveResult result, Conversion conversion, IType targetType)
-			{
-				conversions.Add(expression, conversion);
-				conversionTargetTypes.Add(expression, targetType);
-			}
-		}
-		
-		void ShowResolveResultsInTree(TreeNodeCollection c, StoreInDictionaryNavigator n)
-		{
-			foreach (TreeNode t in c) {
-				AstNode node = t.Tag as AstNode;
-				if (node != null) {
-					ResolveResult rr;
-					string text = GetNodeTitle(node);
-					if (n.resolveResults.TryGetValue(node, out rr))
-						text += " " + rr.ToString();
-					if (n.conversions.ContainsKey(node)) {
-						text += " [" + n.conversions[node] + " to " + n.conversionTargetTypes[node] + "]";
-					}
-					t.Text = text;
+				TextLocation location = GetTextLocation(csharpCodeTextBox, csharpCodeTextBox.SelectionStart);
+				result = ResolveAtLocation.Resolve(compilation, unresolvedFile, syntaxTree, location);
+				if (result == null) {
+					MessageBox.Show("Could not find a resolvable node at the caret location.");
+					return;
 				}
-				ShowResolveResultsInTree(t.Nodes, n);
 			}
+			using (var dlg = new SemanticTreeDialog(result))
+				dlg.ShowDialog();
 		}
 		
 		void CSharpCodeTextBoxKeyDown(object sender, KeyEventArgs e)
@@ -287,12 +248,12 @@ namespace ICSharpCode.NRefactory.Demo
 				return;
 			
 			IProjectContent project = new CSharpProjectContent();
-			var parsedFile = compilationUnit.ToTypeSystem();
-			project = project.UpdateProjectContent(null, parsedFile);
+			var unresolvedFile = syntaxTree.ToTypeSystem();
+			project = project.AddOrUpdateFiles(unresolvedFile);
 			project = project.AddAssemblyReferences(builtInLibs.Value);
 			
 			ICompilation compilation = project.CreateCompilation();
-			CSharpAstResolver resolver = new CSharpAstResolver(compilation, compilationUnit, parsedFile);
+			CSharpAstResolver resolver = new CSharpAstResolver(compilation, syntaxTree, unresolvedFile);
 			
 			AstNode node = (AstNode)csharpTreeView.SelectedNode.Tag;
 			IEntity entity;
@@ -315,7 +276,7 @@ namespace ICSharpCode.NRefactory.Demo
 			
 			var searchScopes = fr.GetSearchScopes(entity);
 			Debug.WriteLine("Find references to " + entity.ReflectionName);
-			fr.FindReferencesInFile(searchScopes, parsedFile, compilationUnit, compilation, callback, CancellationToken.None);
+			fr.FindReferencesInFile(searchScopes, unresolvedFile, syntaxTree, compilation, callback, CancellationToken.None);
 			
 			MessageBox.Show("Found " + referenceCount + " references to " + entity.FullName);
 		}

@@ -20,6 +20,7 @@ using System.IO;
 using System.Text;
 using System.Globalization;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Mono.CSharp
 {
@@ -41,7 +42,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		void tokenize_file (SourceFile sourceFile, ModuleContainer module)
+		void tokenize_file (SourceFile sourceFile, ModuleContainer module, ParserSession session)
 		{
 			Stream input;
 
@@ -56,7 +57,7 @@ namespace Mono.CSharp
 				SeekableStreamReader reader = new SeekableStreamReader (input, ctx.Settings.Encoding);
 				var file = new CompilationSourceFile (module, sourceFile);
 
-				Tokenizer lexer = new Tokenizer (reader, file);
+				Tokenizer lexer = new Tokenizer (reader, file, session);
 				int token, tokens = 0, errors = 0;
 
 				while ((token = lexer.token ()) != Token.EOF){
@@ -77,49 +78,97 @@ namespace Mono.CSharp
 
 			Location.Initialize (sources);
 
+			var session = new ParserSession () {
+				UseJayGlobalArrays = true,
+				LocatedTokens = new Tokenizer.LocatedToken[15000]
+			};
+
 			for (int i = 0; i < sources.Count; ++i) {
 				if (tokenize_only) {
-					tokenize_file (sources[i], module);
+					tokenize_file (sources[i], module, session);
 				} else {
-					Parse (sources[i], module);
+					Parse (sources[i], module, session, Report);
 				}
 			}
 		}
 
-		public void Parse (SourceFile file, ModuleContainer module)
+#if false
+		void ParseParallel (ModuleContainer module)
+		{
+			var sources = module.Compiler.SourceFiles;
+
+			Location.Initialize (sources);
+
+			var pcount = Environment.ProcessorCount;
+			var threads = new Thread[System.Math.Max (2, pcount - 1)];
+
+			for (int i = 0; i < threads.Length; ++i) {
+				var t = new Thread (l => {
+					var session = new ParserSession () {
+						//UseJayGlobalArrays = true,
+					};
+
+					var report = new Report (ctx, Report.Printer); // TODO: Implement flush at once printer
+
+					for (int ii = (int) l; ii < sources.Count; ii += threads.Length) {
+						Parse (sources[ii], module, session, report);
+					}
+
+					// TODO: Merge warning regions
+				});
+
+				t.Start (i);
+				threads[i] = t;
+			}
+
+			for (int t = 0; t < threads.Length; ++t) {
+				threads[t].Join ();
+			}
+		}
+#endif
+
+		public void Parse (SourceFile file, ModuleContainer module, ParserSession session, Report report)
 		{
 			Stream input;
 
 			try {
 				input = File.OpenRead (file.Name);
 			} catch {
-				Report.Error (2001, "Source file `{0}' could not be found", file.Name);
+				report.Error (2001, "Source file `{0}' could not be found", file.Name);
 				return;
 			}
 
 			// Check 'MZ' header
 			if (input.ReadByte () == 77 && input.ReadByte () == 90) {
 
-				Report.Error (2015, "Source file `{0}' is a binary file and not a text file", file.Name);
+				report.Error (2015, "Source file `{0}' is a binary file and not a text file", file.Name);
 				input.Close ();
 				return;
 			}
 
 			input.Position = 0;
-			SeekableStreamReader reader = new SeekableStreamReader (input, ctx.Settings.Encoding);
+			SeekableStreamReader reader = new SeekableStreamReader (input, ctx.Settings.Encoding, session.StreamReaderBuffer);
 
-			Parse (reader, file, module);
+			Parse (reader, file, module, session, report);
+
+			if (ctx.Settings.GenerateDebugInfo && report.Errors == 0 && !file.HasChecksum) {
+				input.Position = 0;
+				var checksum = session.GetChecksumAlgorithm ();
+				file.SetChecksum (checksum.ComputeHash (input));
+			}
+
 			reader.Dispose ();
 			input.Close ();
 		}
 
-		public static CSharpParser Parse(SeekableStreamReader reader, SourceFile sourceFile, ModuleContainer module, int lineModifier = 0)
+		public static CSharpParser Parse (SeekableStreamReader reader, SourceFile sourceFile, ModuleContainer module, ParserSession session, Report report, int lineModifier = 0, int colModifier = 0)
 		{
 			var file = new CompilationSourceFile (module, sourceFile);
 			module.AddTypeContainer(file);
 
-			CSharpParser parser = new CSharpParser (reader, file);
+			CSharpParser parser = new CSharpParser (reader, file, report, session);
 			parser.Lexer.Line += lineModifier;
+			parser.Lexer.Column += colModifier;
 			parser.Lexer.sbag = new SpecialsBag ();
 			parser.parse ();
 			return parser;
@@ -347,7 +396,8 @@ namespace Mono.CSharp
 			tr.Stop (TimeReporter.TimerType.CloseTypes);
 
 			tr.Start (TimeReporter.TimerType.Resouces);
-			assembly.EmbedResources ();
+			if (!settings.WriteMetadataOnly)
+				assembly.EmbedResources ();
 			tr.Stop (TimeReporter.TimerType.Resouces);
 
 			if (Report.Errors > 0)
@@ -369,6 +419,7 @@ namespace Mono.CSharp
 		public ModuleContainer ModuleCompiled { get; set; }
 		public LocationsBag LocationsBag { get; set; }
 		public SpecialsBag SpecialsBag { get; set; }
+		public IEnumerable<string> Conditionals { get; set; }
 		public object LastYYValue { get; set; }
 	}
 

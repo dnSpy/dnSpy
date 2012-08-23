@@ -27,6 +27,11 @@ namespace ICSharpCode.NRefactory.Editor
 	[Serializable]
 	public class StringTextSource : ITextSource
 	{
+		/// <summary>
+		/// Gets a text source containing the empty string.
+		/// </summary>
+		public static readonly StringTextSource Empty = new StringTextSource(string.Empty);
+		
 		readonly string text;
 		readonly ITextSourceVersion version;
 		
@@ -69,7 +74,7 @@ namespace ICSharpCode.NRefactory.Editor
 		/// <inheritdoc/>
 		public ITextSource CreateSnapshot()
 		{
-			return this; // StringTextBuffer is immutable
+			return this; // StringTextSource is immutable
 		}
 		
 		/// <inheritdoc/>
@@ -88,6 +93,18 @@ namespace ICSharpCode.NRefactory.Editor
 		public TextReader CreateReader(int offset, int length)
 		{
 			return new StringReader(text.Substring(offset, length));
+		}
+		
+		/// <inheritdoc/>
+		public void WriteTextTo(TextWriter writer)
+		{
+			writer.Write(text);
+		}
+		
+		/// <inheritdoc/>
+		public void WriteTextTo(TextWriter writer, int offset, int length)
+		{
+			writer.Write(text.Substring(offset, length));
 		}
 		
 		/// <inheritdoc/>

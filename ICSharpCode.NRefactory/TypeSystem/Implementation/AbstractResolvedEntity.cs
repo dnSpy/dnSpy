@@ -65,7 +65,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			get { return parentContext.CurrentAssembly; }
 		}
 		
-		public IList<IAttribute> Attributes { get; private set; }
+		public IList<IAttribute> Attributes { get; protected set; }
 		
 		public virtual DocumentationComment Documentation {
 			get {

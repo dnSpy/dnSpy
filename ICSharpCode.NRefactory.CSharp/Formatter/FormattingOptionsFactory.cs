@@ -43,9 +43,9 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// <summary>
 		/// Creates mono indent style CSharpFormatting options.
 		/// </summary>
-		public static CSharpFormattingOptions CreateMono()
+		public static CSharpFormattingOptions CreateMono ()
 		{
-			return new CSharpFormattingOptions() {
+			return new CSharpFormattingOptions () {
 				IndentNamespaceBody = true,
 				IndentClassBody = true,
 				IndentInterfaceBody = true,
@@ -81,10 +81,10 @@ namespace ICSharpCode.NRefactory.CSharp
 				AllowEventRemoveBlockInline = true,
 				StatementBraceStyle = BraceStyle.EndOfLine,
 	
-				PlaceElseOnNewLine = false,
-				PlaceCatchOnNewLine = false,
-				PlaceFinallyOnNewLine = false,
-				PlaceWhileOnNewLine = false,
+				ElseNewLinePlacement = NewLinePlacement.SameLine,
+				CatchNewLinePlacement = NewLinePlacement.SameLine,
+				FinallyNewLinePlacement = NewLinePlacement.SameLine,
+				WhileNewLinePlacement = NewLinePlacement.SameLine,
 				ArrayInitializerWrapping = Wrapping.WrapIfTooLong,
 				ArrayInitializerBraceStyle = BraceStyle.EndOfLine,
 	
@@ -94,7 +94,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				SpaceBeforeDelegateDeclarationParentheses = true,
 				SpaceAfterMethodCallParameterComma = true,
 				SpaceAfterConstructorDeclarationParameterComma = true,
-				
+
 				SpaceBeforeNewParentheses = true,
 				SpacesWithinNewParentheses = false,
 				SpacesBetweenEmptyNewParentheses = false,
@@ -152,6 +152,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				PropertyFormatting = PropertyFormatting.AllowOneLine,
 				SpaceBeforeMethodDeclarationParameterComma = false,
 				SpaceAfterMethodDeclarationParameterComma = true,
+				SpaceAfterDelegateDeclarationParameterComma = true,
 				SpaceBeforeFieldDeclarationComma = false,
 				SpaceAfterFieldDeclarationComma = true,
 				SpaceBeforeLocalVariableDeclarationComma = false,
@@ -175,6 +176,21 @@ namespace ICSharpCode.NRefactory.CSharp
 				BlankLinesBetweenMembers = 1,
 	
 				KeepCommentsAtFirstColumn = true,
+				ChainedMethodCallWrapping = Wrapping.DoNotChange,
+				MethodCallArgumentWrapping = Wrapping.DoNotChange,
+				NewLineAferMethodCallOpenParentheses = true,
+				MethodCallClosingParenthesesOnNewLine = true,
+
+				IndexerArgumentWrapping = Wrapping.DoNotChange,
+				NewLineAferIndexerOpenBracket = false,
+				IndexerClosingBracketOnNewLine = false,
+
+				IfElseBraceForcement = BraceForcement.DoNotChange,
+				ForBraceForcement = BraceForcement.DoNotChange,
+				ForEachBraceForcement = BraceForcement.DoNotChange,
+				WhileBraceForcement = BraceForcement.DoNotChange,
+				UsingBraceForcement = BraceForcement.DoNotChange,
+				FixedBraceForcement = BraceForcement.DoNotChange
 			};
 		}
 
@@ -183,7 +199,23 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// </summary>
 		public static CSharpFormattingOptions CreateSharpDevelop()
 		{
-			return new CSharpFormattingOptions() {
+			var baseOptions = CreateKRStyle();
+			baseOptions.IfElseBraceForcement = BraceForcement.AddBraces;
+			baseOptions.ForBraceForcement = BraceForcement.AddBraces;
+			baseOptions.ForEachBraceForcement = BraceForcement.AddBraces;
+			baseOptions.WhileBraceForcement = BraceForcement.AddBraces;
+			baseOptions.UsingBraceForcement = BraceForcement.AddBraces;
+			baseOptions.FixedBraceForcement = BraceForcement.AddBraces;
+			return baseOptions;
+		}
+
+		/// <summary>
+		/// The K&R style, so named because it was used in Kernighan and Ritchie's book The C Programming Language,
+		/// is commonly used in C. It is less common for C++, C#, and others.
+		/// </summary>
+		public static CSharpFormattingOptions CreateKRStyle ()
+		{
+			return new CSharpFormattingOptions () {
 				IndentNamespaceBody = true,
 				IndentClassBody = true,
 				IndentInterfaceBody = true,
@@ -219,10 +251,10 @@ namespace ICSharpCode.NRefactory.CSharp
 				AllowEventRemoveBlockInline = true,
 				StatementBraceStyle = BraceStyle.EndOfLine,
 	
-				PlaceElseOnNewLine = false,
-				PlaceCatchOnNewLine = false,
-				PlaceFinallyOnNewLine = false,
-				PlaceWhileOnNewLine = false,
+				ElseNewLinePlacement = NewLinePlacement.SameLine,
+				CatchNewLinePlacement = NewLinePlacement.SameLine,
+				FinallyNewLinePlacement = NewLinePlacement.SameLine,
+				WhileNewLinePlacement = NewLinePlacement.SameLine,
 				ArrayInitializerWrapping = Wrapping.WrapIfTooLong,
 				ArrayInitializerBraceStyle = BraceStyle.EndOfLine,
 	
@@ -291,6 +323,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				PropertyFormatting = PropertyFormatting.AllowOneLine,
 				SpaceBeforeMethodDeclarationParameterComma = false,
 				SpaceAfterMethodDeclarationParameterComma = true,
+				SpaceAfterDelegateDeclarationParameterComma = true,
 				SpaceBeforeFieldDeclarationComma = false,
 				SpaceAfterFieldDeclarationComma = true,
 				SpaceBeforeLocalVariableDeclarationComma = false,
@@ -313,6 +346,21 @@ namespace ICSharpCode.NRefactory.CSharp
 				BlankLinesBetweenMembers = 1,
 	
 				KeepCommentsAtFirstColumn = true,
+				ChainedMethodCallWrapping = Wrapping.DoNotChange,
+				MethodCallArgumentWrapping = Wrapping.DoNotChange,
+				NewLineAferMethodCallOpenParentheses = true,
+				MethodCallClosingParenthesesOnNewLine = true,
+
+				IndexerArgumentWrapping = Wrapping.DoNotChange,
+				NewLineAferIndexerOpenBracket = false,
+				IndexerClosingBracketOnNewLine = false,
+
+				IfElseBraceForcement = BraceForcement.DoNotChange,
+				ForBraceForcement = BraceForcement.DoNotChange,
+				ForEachBraceForcement = BraceForcement.DoNotChange,
+				WhileBraceForcement = BraceForcement.DoNotChange,
+				UsingBraceForcement = BraceForcement.DoNotChange,
+				FixedBraceForcement = BraceForcement.DoNotChange
 			};
 		}
 
@@ -321,19 +369,65 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// </summary>
 		public static CSharpFormattingOptions CreateAllman()
 		{
-			var baseOptions = CreateSharpDevelop();
-			baseOptions.AnonymousMethodBraceStyle = BraceStyle.EndOfLine;
-			baseOptions.PropertyBraceStyle = BraceStyle.EndOfLine;
-			baseOptions.PropertyGetBraceStyle = BraceStyle.EndOfLine;
-			baseOptions.PropertySetBraceStyle = BraceStyle.EndOfLine;
+			var baseOptions = CreateKRStyle();
+			baseOptions.AnonymousMethodBraceStyle = BraceStyle.NextLine;
+			baseOptions.PropertyBraceStyle = BraceStyle.NextLine;
+			baseOptions.PropertyGetBraceStyle = BraceStyle.NextLine;
+			baseOptions.PropertySetBraceStyle = BraceStyle.NextLine;
 
-			baseOptions.EventBraceStyle = BraceStyle.EndOfLine;
-			baseOptions.EventAddBraceStyle = BraceStyle.EndOfLine;
-			baseOptions.EventRemoveBraceStyle = BraceStyle.EndOfLine;
-			baseOptions.StatementBraceStyle = BraceStyle.EndOfLine;
-			baseOptions.ArrayInitializerBraceStyle = BraceStyle.EndOfLine;
+			baseOptions.EventBraceStyle = BraceStyle.NextLine;
+			baseOptions.EventAddBraceStyle = BraceStyle.NextLine;
+			baseOptions.EventRemoveBraceStyle = BraceStyle.NextLine;
+			baseOptions.StatementBraceStyle = BraceStyle.NextLine;
+			baseOptions.ArrayInitializerBraceStyle = BraceStyle.NextLine;
 			return baseOptions;
 		}
+	
+		/// <summary>
+		/// The Whitesmiths style, also called Wishart style to a lesser extent, is less common today than the previous three. It was originally used in the documentation for the first commercial C compiler, the Whitesmiths Compiler.
+		/// </summary>
+		public static CSharpFormattingOptions CreateWhitesmiths()
+		{
+			var baseOptions = CreateKRStyle();
+				
+			baseOptions.NamespaceBraceStyle = BraceStyle.NextLineShifted;
+			baseOptions.ClassBraceStyle = BraceStyle.NextLineShifted;
+			baseOptions.InterfaceBraceStyle = BraceStyle.NextLineShifted;
+			baseOptions.StructBraceStyle = BraceStyle.NextLineShifted;
+			baseOptions.EnumBraceStyle = BraceStyle.NextLineShifted;
+			baseOptions.MethodBraceStyle = BraceStyle.NextLineShifted;
+			baseOptions.ConstructorBraceStyle = BraceStyle.NextLineShifted;
+			baseOptions.DestructorBraceStyle = BraceStyle.NextLineShifted;
+			baseOptions.AnonymousMethodBraceStyle = BraceStyle.NextLineShifted;
+			baseOptions.PropertyBraceStyle = BraceStyle.NextLineShifted;
+			baseOptions.PropertyGetBraceStyle = BraceStyle.NextLineShifted;
+			baseOptions.PropertySetBraceStyle = BraceStyle.NextLineShifted;
+	
+			baseOptions.EventBraceStyle = BraceStyle.NextLineShifted;
+			baseOptions.EventAddBraceStyle = BraceStyle.NextLineShifted;
+			baseOptions.EventRemoveBraceStyle = BraceStyle.NextLineShifted;
+			baseOptions.StatementBraceStyle = BraceStyle.NextLineShifted;
+			return baseOptions;
+		}
+
+		/// <summary>
+		/// Like the Allman and Whitesmiths styles, GNU style puts braces on a line by themselves, indented by 2 spaces,
+		/// except when opening a function definition, where they are not indented.
+		/// In either case, the contained code is indented by 2 spaces from the braces.
+		/// Popularised by Richard Stallman, the layout may be influenced by his background of writing Lisp code.
+		/// In Lisp the equivalent to a block (a progn) 
+		/// is a first class data entity and giving it its own indent level helps to emphasize that,
+		/// whereas in C a block is just syntax.
+		/// Although not directly related to indentation, GNU coding style also includes a space before the bracketed 
+		/// list of arguments to a function.
+		/// </summary>
+		public static CSharpFormattingOptions CreateGNU()
+		{
+			var baseOptions = CreateAllman();
+			baseOptions.StatementBraceStyle = BraceStyle.NextLineShifted2;
+			return baseOptions;
+		}
+
 	}
 }
 

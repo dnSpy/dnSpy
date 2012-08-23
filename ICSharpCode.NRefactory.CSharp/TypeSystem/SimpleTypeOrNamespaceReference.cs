@@ -35,9 +35,9 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 	{
 		string identifier;
 		IList<ITypeReference> typeArguments;
-		readonly SimpleNameLookupMode lookupMode;
+		readonly NameLookupMode lookupMode;
 		
-		public SimpleTypeOrNamespaceReference(string identifier, IList<ITypeReference> typeArguments, SimpleNameLookupMode lookupMode = SimpleNameLookupMode.Type)
+		public SimpleTypeOrNamespaceReference(string identifier, IList<ITypeReference> typeArguments, NameLookupMode lookupMode = NameLookupMode.Type)
 		{
 			if (identifier == null)
 				throw new ArgumentNullException("identifier");

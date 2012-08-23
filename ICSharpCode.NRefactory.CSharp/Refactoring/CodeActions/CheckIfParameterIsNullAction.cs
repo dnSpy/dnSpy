@@ -37,18 +37,24 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 	{
 		protected override CodeAction GetAction(RefactoringContext context, ParameterDeclaration parameter)
 		{
-			var bodyStatement = parameter.Parent.GetChildByRole(Roles.Body);
-			if (bodyStatement == null)
+			BlockStatement bodyStatement;
+			if (parameter.Parent is LambdaExpression) {
+				bodyStatement = parameter.Parent.GetChildByRole (LambdaExpression.BodyRole) as BlockStatement;
+			} else {
+				bodyStatement = parameter.Parent.GetChildByRole (Roles.Body);
+			}
+			if (bodyStatement == null || bodyStatement.IsNull)
 				return null;
 			var type = context.ResolveType(parameter.Type);
 			if (type.IsReferenceType == false || HasNullCheck(parameter)) 
 				return null;
 			
-			return new CodeAction (context.TranslateString("Add null check for parameter"), script => {
-				var statement = new IfElseStatement () {
+			return new CodeAction(context.TranslateString("Add null check for parameter"), script => {
+				var statement = new IfElseStatement() {
 					Condition = new BinaryOperatorExpression (new IdentifierExpression (parameter.Name), BinaryOperatorType.Equality, new NullReferenceExpression ()),
 					TrueStatement = new ThrowStatement (new ObjectCreateExpression (context.CreateShortType("System", "ArgumentNullException"), new PrimitiveExpression (parameter.Name)))
 				};
+				System.Console.WriteLine(bodyStatement.StartLocation +"/" + bodyStatement.EndLocation);
 				script.AddTo(bodyStatement, statement);
 			});
 		}

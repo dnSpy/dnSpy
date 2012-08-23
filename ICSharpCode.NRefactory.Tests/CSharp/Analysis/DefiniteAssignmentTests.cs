@@ -17,9 +17,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading;
-
 using ICSharpCode.NRefactory.CSharp.Resolver;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
@@ -288,6 +288,42 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 			Assert.AreEqual(DefiniteAssignmentStatus.PotentiallyAssigned, da.GetStatusBefore(case1.Statements.First()));
 			Assert.AreEqual(DefiniteAssignmentStatus.DefinitelyAssigned, da.GetStatusBefore(case2.Statements.First()));
 			Assert.AreEqual(DefiniteAssignmentStatus.DefinitelyAssigned, da.GetStatusAfter(@switch));
+		}
+		
+		[Test]
+		public void ConditionalExpression1()
+		{
+			string code = "int a; int b = X ? (a = 1) : 0;";
+			var block = new BlockStatement();
+			block.Statements.AddRange(new CSharpParser().ParseStatements(code));
+			
+			DefiniteAssignmentAnalysis da = CreateDefiniteAssignmentAnalysis(block);
+			da.Analyze("a");
+			Assert.AreEqual(DefiniteAssignmentStatus.PotentiallyAssigned, da.GetStatusAfter(block));
+		}
+		
+		[Test]
+		public void ConditionalExpression2()
+		{
+			string code = "int a; int b = X ? (a = 1) : (a = 2);";
+			var block = new BlockStatement();
+			block.Statements.AddRange(new CSharpParser().ParseStatements(code));
+			
+			DefiniteAssignmentAnalysis da = CreateDefiniteAssignmentAnalysis(block);
+			da.Analyze("a");
+			Assert.AreEqual(DefiniteAssignmentStatus.DefinitelyAssigned, da.GetStatusAfter(block));
+		}
+		
+		[Test]
+		public void ConditionalExpression3()
+		{
+			string code = "int a; int b = true ? (a = 1) : 0;";
+			var block = new BlockStatement();
+			block.Statements.AddRange(new CSharpParser().ParseStatements(code));
+			
+			DefiniteAssignmentAnalysis da = CreateDefiniteAssignmentAnalysis(block);
+			da.Analyze("a");
+			Assert.AreEqual(DefiniteAssignmentStatus.DefinitelyAssigned, da.GetStatusAfter(block));
 		}
 	}
 }

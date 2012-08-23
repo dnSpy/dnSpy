@@ -35,6 +35,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 			Assert.AreEqual(Modifiers.Public, id.Modifiers);
 			Assert.AreEqual(Modifiers.None, id.Getter.Modifiers);
 			Assert.AreEqual(Modifiers.Protected, id.Setter.Modifiers);
+			Assert.AreEqual("Item", id.Name);
 		}
 		
 		[Test]
@@ -59,7 +60,6 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 						Identifier = "MyInterface",
 						TypeArguments = { new PrimitiveType("string") }
 					},
-					Name = "this",
 					Parameters = {
 						new ParameterDeclaration(new PrimitiveType("int"), "a"),
 						new ParameterDeclaration(new PrimitiveType("string"), "b")

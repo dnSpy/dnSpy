@@ -27,6 +27,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		readonly ResolvedUsingScope currentUsingScope;
 		readonly ITypeDefinition currentTypeDefinition;
 		readonly IMember currentMember;
+		readonly string[] methodTypeParameterNames;
 		
 		public CSharpTypeResolveContext(IAssembly assembly, ResolvedUsingScope usingScope = null, ITypeDefinition typeDefinition = null, IMember member = null)
 		{
@@ -36,6 +37,15 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			this.currentUsingScope = usingScope;
 			this.currentTypeDefinition = typeDefinition;
 			this.currentMember = member;
+		}
+		
+		private CSharpTypeResolveContext(IAssembly assembly, ResolvedUsingScope usingScope, ITypeDefinition typeDefinition, IMember member, string[] methodTypeParameterNames)
+		{
+			this.assembly = assembly;
+			this.currentUsingScope = usingScope;
+			this.currentTypeDefinition = typeDefinition;
+			this.currentMember = member;
+			this.methodTypeParameterNames = methodTypeParameterNames;
 		}
 		
 		public ResolvedUsingScope CurrentUsingScope {
@@ -60,7 +70,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		
 		public CSharpTypeResolveContext WithCurrentTypeDefinition(ITypeDefinition typeDefinition)
 		{
-			return new CSharpTypeResolveContext(assembly, currentUsingScope, typeDefinition, currentMember);
+			return new CSharpTypeResolveContext(assembly, currentUsingScope, typeDefinition, currentMember, methodTypeParameterNames);
 		}
 		
 		ITypeResolveContext ITypeResolveContext.WithCurrentTypeDefinition(ITypeDefinition typeDefinition)
@@ -70,7 +80,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		
 		public CSharpTypeResolveContext WithCurrentMember(IMember member)
 		{
-			return new CSharpTypeResolveContext(assembly, currentUsingScope, currentTypeDefinition, member);
+			return new CSharpTypeResolveContext(assembly, currentUsingScope, currentTypeDefinition, member, methodTypeParameterNames);
 		}
 		
 		ITypeResolveContext ITypeResolveContext.WithCurrentMember(IMember member)
@@ -80,7 +90,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 		
 		public CSharpTypeResolveContext WithUsingScope(ResolvedUsingScope usingScope)
 		{
-			return new CSharpTypeResolveContext(assembly, usingScope, currentTypeDefinition, currentMember);
+			return new CSharpTypeResolveContext(assembly, usingScope, currentTypeDefinition, currentMember, methodTypeParameterNames);
 		}
 	}
 }

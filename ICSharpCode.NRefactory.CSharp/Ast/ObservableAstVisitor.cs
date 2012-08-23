@@ -1,6 +1,6 @@
 ﻿// 
 // ObservableAstVisitor.cs
-//  
+//
 // Author:
 //       Mike Krüger <mkrueger@novell.com>
 // 
@@ -23,1178 +23,834 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
+
 using System;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
-	public class ObservableAstVisitor<T, S>: IAstVisitor<T, S>
+	public class ObservableAstVisitor : IAstVisitor
 	{
-		S VisitChildren (AstNode node, T data)
+		void Visit<T>(Action<T> enter, Action<T> leave, T node) where T : AstNode
 		{
+			if (enter != null)
+				enter(node);
 			AstNode next;
 			for (var child = node.FirstChild; child != null; child = next) {
 				// Store next to allow the loop to continue
-				// if the visitor removes/replaces child.
+				// if the visitor removes/replaces children.
 				next = child.NextSibling;
-				child.AcceptVisitor (this, data);
+				child.AcceptVisitor (this);
 			}
-			return default (S);
+			if (leave != null)
+				leave(node);
 		}
 		
-		public event Action<CompilationUnit, T> CompilationUnitVisited;
-
-		S IAstVisitor<T, S>.VisitCompilationUnit (CompilationUnit unit, T data)
+		public event Action<SyntaxTree> EnterSyntaxTree, LeaveSyntaxTree;
+		
+		void IAstVisitor.VisitSyntaxTree(SyntaxTree unit)
 		{
-			var handler = CompilationUnitVisited;
-			if (handler != null)
-				handler (unit, data);
-			return VisitChildren (unit, data);
+			Visit(EnterSyntaxTree, LeaveSyntaxTree, unit);
 		}
 		
-		public event Action<Comment, T> CommentVisited;
-
-		S IAstVisitor<T, S>.VisitComment (Comment comment, T data)
+		public event Action<Comment> EnterComment, LeaveComment;
+		
+		void IAstVisitor.VisitComment(Comment comment)
 		{
-			var handler = CommentVisited;
-			if (handler != null)
-				handler (comment, data);
-			return VisitChildren (comment, data);
+			Visit(EnterComment, LeaveComment, comment);
 		}
-
-		public event Action<NewLineNode, T> NewLineVisited;
-
-		S IAstVisitor<T, S>.VisitNewLine(NewLineNode newLineNode, T data)
+		
+		public event Action<NewLineNode> EnterNewLine, LeaveNewLine;
+		
+		void IAstVisitor.VisitNewLine(NewLineNode newLineNode)
 		{
-			var handler = NewLineVisited;
-			if (handler != null)
-				handler(newLineNode, data);
-			return VisitChildren(newLineNode, data);
+			Visit(EnterNewLine, LeaveNewLine, newLineNode);
 		}
-
-		public event Action<WhitespaceNode, T> WhitespaceVisited;
-
-		S IAstVisitor<T, S>.VisitWhitespace(WhitespaceNode whitespace, T data)
+		
+		public event Action<WhitespaceNode> EnterWhitespace, LeaveWhitespace;
+		
+		void IAstVisitor.VisitWhitespace(WhitespaceNode whitespace)
 		{
-			var handler = WhitespaceVisited;
-			if (handler != null)
-				handler(whitespace, data);
-			return VisitChildren(whitespace, data);
+			Visit(EnterWhitespace, LeaveWhitespace, whitespace);
 		}
-
-		public event Action<TextNode, T> TextVisited;
-
-		S IAstVisitor<T, S>.VisitText(TextNode textNode, T data)
+		
+		public event Action<TextNode> EnterText, LeaveText;
+		
+		void IAstVisitor.VisitText(TextNode textNode)
 		{
-			var handler = TextVisited;
-			if (handler != null)
-				handler(textNode, data);
-			return VisitChildren(textNode, data);
+			Visit(EnterText, LeaveText, textNode);
 		}
-
-		public event Action<PreProcessorDirective, T> PreProcessorDirectiveVisited;
-		S IAstVisitor<T, S>.VisitPreProcessorDirective (PreProcessorDirective preProcessorDirective, T data)
+		
+		public event Action<PreProcessorDirective> EnterPreProcessorDirective, LeavePreProcessorDirective;
+		void IAstVisitor.VisitPreProcessorDirective(PreProcessorDirective preProcessorDirective)
 		{
-			var handler = PreProcessorDirectiveVisited;
-			if (handler != null)
-				handler (preProcessorDirective, data);
-			return VisitChildren (preProcessorDirective, data);
+			Visit(EnterPreProcessorDirective, LeavePreProcessorDirective, preProcessorDirective);
 		}
+		
+		public event Action<DocumentationReference> EnterDocumentationReference, LeaveDocumentationReference;
 		
-		public event Action<DocumentationReference, T> DocumentationReferenceVisited;
-
-		S IAstVisitor<T, S>.VisitDocumentationReference (DocumentationReference documentationReference, T data)
+		void IAstVisitor.VisitDocumentationReference(DocumentationReference documentationReference)
 		{
-			var handler = DocumentationReferenceVisited;
-			if (handler != null)
-				handler (documentationReference, data);
-			return VisitChildren (documentationReference, data);
+			Visit(EnterDocumentationReference, LeaveDocumentationReference, documentationReference);
 		}
 		
-		public event Action<Identifier, T> IdentifierVisited;
-
-		S IAstVisitor<T, S>.VisitIdentifier (Identifier identifier, T data)
+		public event Action<Identifier> EnterIdentifier, LeaveIdentifier;
+		
+		void IAstVisitor.VisitIdentifier(Identifier identifier)
 		{
-			var handler = IdentifierVisited;
-			if (handler != null)
-				handler (identifier, data);
-			return VisitChildren (identifier, data);
+			Visit(EnterIdentifier, LeaveIdentifier, identifier);
 		}
+		
+		public event Action<CSharpTokenNode> EnterCSharpTokenNode, LeaveCSharpTokenNode;
 		
-		public event Action<CSharpTokenNode, T> CSharpTokenNodeVisited;
-
-		S IAstVisitor<T, S>.VisitCSharpTokenNode (CSharpTokenNode token, T data)
+		void IAstVisitor.VisitCSharpTokenNode(CSharpTokenNode token)
 		{
-			var handler = CSharpTokenNodeVisited;
-			if (handler != null)
-				handler (token, data);
-			return VisitChildren (token, data);
+			Visit(EnterCSharpTokenNode, LeaveCSharpTokenNode, token);
 		}
 		
-		public event Action<PrimitiveType, T> PrimitiveTypeVisited;
-
-		S IAstVisitor<T, S>.VisitPrimitiveType (PrimitiveType primitiveType, T data)
+		public event Action<PrimitiveType> EnterPrimitiveType, LeavePrimitiveType;
+		
+		void IAstVisitor.VisitPrimitiveType(PrimitiveType primitiveType)
 		{
-			var handler = PrimitiveTypeVisited;
-			if (handler != null)
-				handler (primitiveType, data);
-			return VisitChildren (primitiveType, data);
+			Visit(EnterPrimitiveType, LeavePrimitiveType, primitiveType);
 		}
+		
+		public event Action<ComposedType> EnterComposedType, LeaveComposedType;
 		
-		public event Action<ComposedType, T> ComposedTypeVisited;
-
-		S IAstVisitor<T, S>.VisitComposedType (ComposedType composedType, T data)
+		void IAstVisitor.VisitComposedType(ComposedType composedType)
 		{
-			var handler = ComposedTypeVisited;
-			if (handler != null)
-				handler (composedType, data);
-			return VisitChildren (composedType, data);
+			Visit(EnterComposedType, LeaveComposedType, composedType);
 		}
 		
-		public event Action<SimpleType, T> SimpleTypeVisited;
-
-		S IAstVisitor<T, S>.VisitSimpleType (SimpleType simpleType, T data)
+		public event Action<SimpleType> EnterSimpleType, LeaveSimpleType;
+		
+		void IAstVisitor.VisitSimpleType(SimpleType simpleType)
 		{
-			var handler = SimpleTypeVisited;
-			if (handler != null)
-				handler (simpleType, data);
-			return VisitChildren (simpleType, data);
+			Visit(EnterSimpleType, LeaveSimpleType, simpleType);
 		}
 		
-		public event Action<MemberType, T> MemberTypeVisited;
-
-		S IAstVisitor<T, S>.VisitMemberType (MemberType memberType, T data)
+		public event Action<MemberType> EnterMemberType, LeaveMemberType;
+		
+		void IAstVisitor.VisitMemberType(MemberType memberType)
 		{
-			var handler = MemberTypeVisited;
-			if (handler != null)
-				handler (memberType, data);
-			return VisitChildren (memberType, data);
+			Visit(EnterMemberType, LeaveMemberType, memberType);
 		}
+		
+		public event Action<Attribute> EnterAttribute, LeaveAttribute;
 		
-		public event Action<Attribute, T> AttributeVisited;
-
-		S IAstVisitor<T, S>.VisitAttribute (Attribute attribute, T data)
+		void IAstVisitor.VisitAttribute(Attribute attribute)
 		{
-			var handler = AttributeVisited;
-			if (handler != null)
-				handler (attribute, data);
-			return VisitChildren (attribute, data);
+			Visit(EnterAttribute, LeaveAttribute, attribute);
 		}
 		
-		public event Action<AttributeSection, T> AttributeSectionVisited;
-
-		S IAstVisitor<T, S>.VisitAttributeSection (AttributeSection attributeSection, T data)
+		public event Action<AttributeSection> EnterAttributeSection, LeaveAttributeSection;
+		
+		void IAstVisitor.VisitAttributeSection(AttributeSection attributeSection)
 		{
-			var handler = AttributeSectionVisited;
-			if (handler != null)
-				handler (attributeSection, data);
-			return VisitChildren (attributeSection, data);
+			Visit(EnterAttributeSection, LeaveAttributeSection, attributeSection);
 		}
+		
+		public event Action<DelegateDeclaration> EnterDelegateDeclaration, LeaveDelegateDeclaration;
 		
-		public event Action<DelegateDeclaration, T> DelegateDeclarationVisited;
-
-		S IAstVisitor<T, S>.VisitDelegateDeclaration (DelegateDeclaration delegateDeclaration, T data)
+		void IAstVisitor.VisitDelegateDeclaration(DelegateDeclaration delegateDeclaration)
 		{
-			var handler = DelegateDeclarationVisited;
-			if (handler != null)
-				handler (delegateDeclaration, data);
-			return VisitChildren (delegateDeclaration, data);
+			Visit(EnterDelegateDeclaration, LeaveDelegateDeclaration, delegateDeclaration);
 		}
 		
-		public event Action<NamespaceDeclaration, T> NamespaceDeclarationVisited;
-
-		S IAstVisitor<T, S>.VisitNamespaceDeclaration (NamespaceDeclaration namespaceDeclaration, T data)
+		public event Action<NamespaceDeclaration> EnterNamespaceDeclaration, LeaveNamespaceDeclaration;
+		
+		void IAstVisitor.VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration)
 		{
-			var handler = NamespaceDeclarationVisited;
-			if (handler != null)
-				handler (namespaceDeclaration, data);
-			return VisitChildren (namespaceDeclaration, data);
+			Visit(EnterNamespaceDeclaration, LeaveNamespaceDeclaration, namespaceDeclaration);
 		}
+		
+		public event Action<TypeDeclaration> EnterTypeDeclaration, LeaveTypeDeclaration;
 		
-		public event Action<TypeDeclaration, T> TypeDeclarationVisited;
-
-		S IAstVisitor<T, S>.VisitTypeDeclaration (TypeDeclaration typeDeclaration, T data)
+		void IAstVisitor.VisitTypeDeclaration(TypeDeclaration typeDeclaration)
 		{
-			var handler = TypeDeclarationVisited;
-			if (handler != null)
-				handler (typeDeclaration, data);
-			return VisitChildren (typeDeclaration, data);
+			Visit(EnterTypeDeclaration, LeaveTypeDeclaration, typeDeclaration);
 		}
 		
-		public event Action<TypeParameterDeclaration, T> TypeParameterDeclarationVisited;
-
-		S IAstVisitor<T, S>.VisitTypeParameterDeclaration (TypeParameterDeclaration typeParameterDeclaration, T data)
+		public event Action<TypeParameterDeclaration> EnterTypeParameterDeclaration, LeaveTypeParameterDeclaration;
+		
+		void IAstVisitor.VisitTypeParameterDeclaration(TypeParameterDeclaration typeParameterDeclaration)
 		{
-			var handler = TypeParameterDeclarationVisited;
-			if (handler != null)
-				handler (typeParameterDeclaration, data);
-			return VisitChildren (typeParameterDeclaration, data);
+			Visit(EnterTypeParameterDeclaration, LeaveTypeParameterDeclaration, typeParameterDeclaration);
 		}
+		
+		public event Action<EnumMemberDeclaration> EnterEnumMemberDeclaration, LeaveEnumMemberDeclaration;
 		
-		public event Action<EnumMemberDeclaration, T> EnumMemberDeclarationVisited;
-
-		S IAstVisitor<T, S>.VisitEnumMemberDeclaration (EnumMemberDeclaration enumMemberDeclaration, T data)
+		void IAstVisitor.VisitEnumMemberDeclaration(EnumMemberDeclaration enumMemberDeclaration)
 		{
-			var handler = EnumMemberDeclarationVisited;
-			if (handler != null)
-				handler (enumMemberDeclaration, data);
-			return VisitChildren (enumMemberDeclaration, data);
+			Visit(EnterEnumMemberDeclaration, LeaveEnumMemberDeclaration, enumMemberDeclaration);
 		}
 		
-		public event Action<UsingDeclaration, T> UsingDeclarationVisited;
-
-		S IAstVisitor<T, S>.VisitUsingDeclaration (UsingDeclaration usingDeclaration, T data)
+		public event Action<UsingDeclaration> EnterUsingDeclaration, LeaveUsingDeclaration;
+		
+		void IAstVisitor.VisitUsingDeclaration(UsingDeclaration usingDeclaration)
 		{
-			var handler = UsingDeclarationVisited;
-			if (handler != null)
-				handler (usingDeclaration, data);
-			return VisitChildren (usingDeclaration, data);
+			Visit(EnterUsingDeclaration, LeaveUsingDeclaration, usingDeclaration);
 		}
+		
+		public event Action<UsingAliasDeclaration> EnterUsingAliasDeclaration, LeaveUsingAliasDeclaration;
 		
-		public event Action<UsingAliasDeclaration, T> UsingAliasDeclarationVisited;
-
-		S IAstVisitor<T, S>.VisitUsingAliasDeclaration (UsingAliasDeclaration usingDeclaration, T data)
+		void IAstVisitor.VisitUsingAliasDeclaration(UsingAliasDeclaration usingDeclaration)
 		{
-			var handler = UsingAliasDeclarationVisited;
-			if (handler != null)
-				handler (usingDeclaration, data);
-			return VisitChildren (usingDeclaration, data);
+			Visit(EnterUsingAliasDeclaration, LeaveUsingAliasDeclaration, usingDeclaration);
 		}
 		
-		public event Action<ExternAliasDeclaration, T> ExternAliasDeclarationVisited;
-
-		S IAstVisitor<T, S>.VisitExternAliasDeclaration (ExternAliasDeclaration externAliasDeclaration, T data)
+		public event Action<ExternAliasDeclaration> EnterExternAliasDeclaration, LeaveExternAliasDeclaration;
+		
+		void IAstVisitor.VisitExternAliasDeclaration(ExternAliasDeclaration externAliasDeclaration)
 		{
-			var handler = ExternAliasDeclarationVisited;
-			if (handler != null)
-				handler (externAliasDeclaration, data);
-			return VisitChildren (externAliasDeclaration, data);
+			Visit(EnterExternAliasDeclaration, LeaveExternAliasDeclaration, externAliasDeclaration);
 		}
+		
+		public event Action<ConstructorDeclaration> EnterConstructorDeclaration, LeaveConstructorDeclaration;
 		
-		public event Action<ConstructorDeclaration, T> ConstructorDeclarationVisited;
-
-		S IAstVisitor<T, S>.VisitConstructorDeclaration (ConstructorDeclaration constructorDeclaration, T data)
+		void IAstVisitor.VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration)
 		{
-			var handler = ConstructorDeclarationVisited;
-			if (handler != null)
-				handler (constructorDeclaration, data);
-			return VisitChildren (constructorDeclaration, data);
+			Visit(EnterConstructorDeclaration, LeaveConstructorDeclaration, constructorDeclaration);
 		}
 		
-		public event Action<ConstructorInitializer, T> ConstructorInitializerVisited;
-
-		S IAstVisitor<T, S>.VisitConstructorInitializer (ConstructorInitializer constructorInitializer, T data)
+		public event Action<ConstructorInitializer> EnterConstructorInitializer, LeaveConstructorInitializer;
+		
+		void IAstVisitor.VisitConstructorInitializer(ConstructorInitializer constructorInitializer)
 		{
-			var handler = ConstructorInitializerVisited;
-			if (handler != null)
-				handler (constructorInitializer, data);
-			return VisitChildren (constructorInitializer, data);
+			Visit(EnterConstructorInitializer, LeaveConstructorInitializer, constructorInitializer);
 		}
+		
+		public event Action<DestructorDeclaration> EnterDestructorDeclaration, LeaveDestructorDeclaration;
 		
-		public event Action<DestructorDeclaration, T> DestructorDeclarationVisited;
-
-		S IAstVisitor<T, S>.VisitDestructorDeclaration (DestructorDeclaration destructorDeclaration, T data)
+		void IAstVisitor.VisitDestructorDeclaration(DestructorDeclaration destructorDeclaration)
 		{
-			var handler = DestructorDeclarationVisited;
-			if (handler != null)
-				handler (destructorDeclaration, data);
-			return VisitChildren (destructorDeclaration, data);
+			Visit(EnterDestructorDeclaration, LeaveDestructorDeclaration, destructorDeclaration);
 		}
 		
-		public event Action<EventDeclaration, T> EventDeclarationVisited;
-
-		S IAstVisitor<T, S>.VisitEventDeclaration (EventDeclaration eventDeclaration, T data)
+		public event Action<EventDeclaration> EnterEventDeclaration, LeaveEventDeclaration;
+		
+		void IAstVisitor.VisitEventDeclaration(EventDeclaration eventDeclaration)
 		{
-			var handler = EventDeclarationVisited;
-			if (handler != null)
-				handler (eventDeclaration, data);
-			return VisitChildren (eventDeclaration, data);
+			Visit(EnterEventDeclaration, LeaveEventDeclaration, eventDeclaration);
 		}
 		
-		public event Action<CustomEventDeclaration, T> CustomEventDeclarationVisited;
-
-		S IAstVisitor<T, S>.VisitCustomEventDeclaration (CustomEventDeclaration eventDeclaration, T data)
+		public event Action<CustomEventDeclaration> EnterCustomEventDeclaration, LeaveCustomEventDeclaration;
+		
+		void IAstVisitor.VisitCustomEventDeclaration(CustomEventDeclaration eventDeclaration)
 		{
-			var handler = CustomEventDeclarationVisited;
-			if (handler != null)
-				handler (eventDeclaration, data);
-			return VisitChildren (eventDeclaration, data);
+			Visit(EnterCustomEventDeclaration, LeaveCustomEventDeclaration, eventDeclaration);
 		}
+		
+		public event Action<FieldDeclaration> EnterFieldDeclaration, LeaveFieldDeclaration;
 		
-		public event Action<FieldDeclaration, T> FieldDeclarationVisited;
-
-		S IAstVisitor<T, S>.VisitFieldDeclaration (FieldDeclaration fieldDeclaration, T data)
+		void IAstVisitor.VisitFieldDeclaration(FieldDeclaration fieldDeclaration)
 		{
-			var handler = FieldDeclarationVisited;
-			if (handler != null)
-				handler (fieldDeclaration, data);
-			return VisitChildren (fieldDeclaration, data);
+			Visit(EnterFieldDeclaration, LeaveFieldDeclaration, fieldDeclaration);
 		}
 		
-		public event Action<FixedFieldDeclaration, T> FixedFieldDeclarationVisited;
-
-		S IAstVisitor<T, S>.VisitFixedFieldDeclaration (FixedFieldDeclaration fixedFieldDeclaration, T data)
+		public event Action<FixedFieldDeclaration> EnterFixedFieldDeclaration, LeaveFixedFieldDeclaration;
+		
+		void IAstVisitor.VisitFixedFieldDeclaration(FixedFieldDeclaration fixedFieldDeclaration)
 		{
-			var handler = FixedFieldDeclarationVisited;
-			if (handler != null)
-				handler (fixedFieldDeclaration, data);
-			return VisitChildren (fixedFieldDeclaration, data);
+			Visit(EnterFixedFieldDeclaration, LeaveFixedFieldDeclaration, fixedFieldDeclaration);
 		}
+		
+		public event Action<FixedVariableInitializer> EnterFixedVariableInitializer, LeaveFixedVariableInitializer;
 		
-		public event Action<FixedVariableInitializer, T> FixedVariableInitializerVisited;
-
-		S IAstVisitor<T, S>.VisitFixedVariableInitializer (FixedVariableInitializer fixedVariableInitializer, T data)
+		void IAstVisitor.VisitFixedVariableInitializer(FixedVariableInitializer fixedVariableInitializer)
 		{
-			var handler = FixedVariableInitializerVisited;
-			if (handler != null)
-				handler (fixedVariableInitializer, data);
-			return VisitChildren (fixedVariableInitializer, data);
+			Visit(EnterFixedVariableInitializer, LeaveFixedVariableInitializer, fixedVariableInitializer);
 		}
 		
-		public event Action<IndexerDeclaration, T> IndexerDeclarationVisited;
-
-		S IAstVisitor<T, S>.VisitIndexerDeclaration (IndexerDeclaration indexerDeclaration, T data)
+		public event Action<IndexerDeclaration> EnterIndexerDeclaration, LeaveIndexerDeclaration;
+		
+		void IAstVisitor.VisitIndexerDeclaration(IndexerDeclaration indexerDeclaration)
 		{
-			var handler = IndexerDeclarationVisited;
-			if (handler != null)
-				handler (indexerDeclaration, data);
-			return VisitChildren (indexerDeclaration, data);
+			Visit(EnterIndexerDeclaration, LeaveIndexerDeclaration, indexerDeclaration);
 		}
+		
+		public event Action<MethodDeclaration> EnterMethodDeclaration, LeaveMethodDeclaration;
 		
-		public event Action<MethodDeclaration, T> MethodDeclarationVisited;
-
-		S IAstVisitor<T, S>.VisitMethodDeclaration (MethodDeclaration methodDeclaration, T data)
+		void IAstVisitor.VisitMethodDeclaration(MethodDeclaration methodDeclaration)
 		{
-			var handler = MethodDeclarationVisited;
-			if (handler != null)
-				handler (methodDeclaration, data);
-			return VisitChildren (methodDeclaration, data);
+			Visit(EnterMethodDeclaration, LeaveMethodDeclaration, methodDeclaration);
 		}
 		
-		public event Action<OperatorDeclaration, T> OperatorDeclarationVisited;
-
-		S IAstVisitor<T, S>.VisitOperatorDeclaration (OperatorDeclaration operatorDeclaration, T data)
+		public event Action<OperatorDeclaration> EnterOperatorDeclaration, LeaveOperatorDeclaration;
+		
+		void IAstVisitor.VisitOperatorDeclaration(OperatorDeclaration operatorDeclaration)
 		{
-			var handler = OperatorDeclarationVisited;
-			if (handler != null)
-				handler (operatorDeclaration, data);
-			return VisitChildren (operatorDeclaration, data);
+			Visit(EnterOperatorDeclaration, LeaveOperatorDeclaration, operatorDeclaration);
 		}
+		
+		public event Action<PropertyDeclaration> EnterPropertyDeclaration, LeavePropertyDeclaration;
 		
-		public event Action<PropertyDeclaration, T> PropertyDeclarationVisited;
-
-		S IAstVisitor<T, S>.VisitPropertyDeclaration (PropertyDeclaration propertyDeclaration, T data)
+		void IAstVisitor.VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration)
 		{
-			var handler = PropertyDeclarationVisited;
-			if (handler != null)
-				handler (propertyDeclaration, data);
-			return VisitChildren (propertyDeclaration, data);
+			Visit(EnterPropertyDeclaration, LeavePropertyDeclaration, propertyDeclaration);
 		}
 		
-		public event Action<Accessor, T> AccessorVisited;
-
-		S IAstVisitor<T, S>.VisitAccessor (Accessor accessor, T data)
+		public event Action<Accessor> EnterAccessor, LeaveAccessor;
+		
+		void IAstVisitor.VisitAccessor(Accessor accessor)
 		{
-			var handler = AccessorVisited;
-			if (handler != null)
-				handler (accessor, data);
-			return VisitChildren (accessor, data);
+			Visit(EnterAccessor, LeaveAccessor, accessor);
 		}
+		
+		public event Action<VariableInitializer> EnterVariableInitializer, LeaveVariableInitializer;
 		
-		public event Action<VariableInitializer, T> VariableInitializerVisited;
-
-		S IAstVisitor<T, S>.VisitVariableInitializer (VariableInitializer variableInitializer, T data)
+		void IAstVisitor.VisitVariableInitializer(VariableInitializer variableInitializer)
 		{
-			var handler = VariableInitializerVisited;
-			if (handler != null)
-				handler (variableInitializer, data);
-			return VisitChildren (variableInitializer, data);
+			Visit(EnterVariableInitializer, LeaveVariableInitializer, variableInitializer);
 		}
 		
-		public event Action<ParameterDeclaration, T> ParameterDeclarationVisited;
-
-		S IAstVisitor<T, S>.VisitParameterDeclaration (ParameterDeclaration parameterDeclaration, T data)
+		public event Action<ParameterDeclaration> EnterParameterDeclaration, LeaveParameterDeclaration;
+		
+		void IAstVisitor.VisitParameterDeclaration(ParameterDeclaration parameterDeclaration)
 		{
-			var handler = ParameterDeclarationVisited;
-			if (handler != null)
-				handler (parameterDeclaration, data);
-			return VisitChildren (parameterDeclaration, data);
+			Visit(EnterParameterDeclaration, LeaveParameterDeclaration, parameterDeclaration);
 		}
+		
+		public event Action<Constraint> EnterConstraint, LeaveConstraint;
 		
-		public event Action<Constraint, T> ConstraintVisited;
-
-		S IAstVisitor<T, S>.VisitConstraint (Constraint constraint, T data)
+		void IAstVisitor.VisitConstraint(Constraint constraint)
 		{
-			var handler = ConstraintVisited;
-			if (handler != null)
-				handler (constraint, data);
-			return VisitChildren (constraint, data);
+			Visit(EnterConstraint, LeaveConstraint, constraint);
 		}
 		
-		public event Action<BlockStatement, T> BlockStatementVisited;
-
-		S IAstVisitor<T, S>.VisitBlockStatement (BlockStatement blockStatement, T data)
+		public event Action<BlockStatement> EnterBlockStatement, LeaveBlockStatement;
+		
+		void IAstVisitor.VisitBlockStatement(BlockStatement blockStatement)
 		{
-			var handler = BlockStatementVisited;
-			if (handler != null)
-				handler (blockStatement, data);
-			return VisitChildren (blockStatement, data);
+			Visit(EnterBlockStatement, LeaveBlockStatement, blockStatement);
 		}
+		
+		public event Action<ExpressionStatement> EnterExpressionStatement, LeaveExpressionStatement;
 		
-		public event Action<ExpressionStatement, T> ExpressionStatementVisited;
-
-		S IAstVisitor<T, S>.VisitExpressionStatement (ExpressionStatement expressionStatement, T data)
+		void IAstVisitor.VisitExpressionStatement(ExpressionStatement expressionStatement)
 		{
-			var handler = ExpressionStatementVisited;
-			if (handler != null)
-				handler (expressionStatement, data);
-			return VisitChildren (expressionStatement, data);
+			Visit(EnterExpressionStatement, LeaveExpressionStatement, expressionStatement);
 		}
 		
-		public event Action<BreakStatement, T> BreakStatementVisited;
-
-		S IAstVisitor<T, S>.VisitBreakStatement (BreakStatement breakStatement, T data)
+		public event Action<BreakStatement> EnterBreakStatement, LeaveBreakStatement;
+		
+		void IAstVisitor.VisitBreakStatement(BreakStatement breakStatement)
 		{
-			var handler = BreakStatementVisited;
-			if (handler != null)
-				handler (breakStatement, data);
-			return VisitChildren (breakStatement, data);
+			Visit(EnterBreakStatement, LeaveBreakStatement, breakStatement);
 		}
 		
-		public event Action<CheckedStatement, T> CheckedStatementVisited;
-
-		S IAstVisitor<T, S>.VisitCheckedStatement (CheckedStatement checkedStatement, T data)
+		public event Action<CheckedStatement> EnterCheckedStatement, LeaveCheckedStatement;
+		
+		void IAstVisitor.VisitCheckedStatement(CheckedStatement checkedStatement)
 		{
-			var handler = CheckedStatementVisited;
-			if (handler != null)
-				handler (checkedStatement, data);
-			return VisitChildren (checkedStatement, data);
+			Visit(EnterCheckedStatement, LeaveCheckedStatement, checkedStatement);
 		}
+		
+		public event Action<ContinueStatement> EnterContinueStatement, LeaveContinueStatement;
 		
-		public event Action<ContinueStatement, T> ContinueStatementVisited;
-
-		S IAstVisitor<T, S>.VisitContinueStatement (ContinueStatement continueStatement, T data)
+		void IAstVisitor.VisitContinueStatement(ContinueStatement continueStatement)
 		{
-			var handler = ContinueStatementVisited;
-			if (handler != null)
-				handler (continueStatement, data);
-			return VisitChildren (continueStatement, data);
+			Visit(EnterContinueStatement, LeaveContinueStatement, continueStatement);
 		}
 		
-		public event Action<DoWhileStatement, T> DoWhileStatementVisited;
-
-		S IAstVisitor<T, S>.VisitDoWhileStatement (DoWhileStatement doWhileStatement, T data)
+		public event Action<DoWhileStatement> EnterDoWhileStatement, LeaveDoWhileStatement;
+		
+		void IAstVisitor.VisitDoWhileStatement(DoWhileStatement doWhileStatement)
 		{
-			var handler = DoWhileStatementVisited;
-			if (handler != null)
-				handler (doWhileStatement, data);
-			return VisitChildren (doWhileStatement, data);
+			Visit(EnterDoWhileStatement, LeaveDoWhileStatement, doWhileStatement);
 		}
+		
+		public event Action<EmptyStatement> EnterEmptyStatement, LeaveEmptyStatement;
 		
-		public event Action<EmptyStatement, T> EmptyStatementVisited;
-
-		S IAstVisitor<T, S>.VisitEmptyStatement (EmptyStatement emptyStatement, T data)
+		void IAstVisitor.VisitEmptyStatement(EmptyStatement emptyStatement)
 		{
-			var handler = EmptyStatementVisited;
-			if (handler != null)
-				handler (emptyStatement, data);
-			return VisitChildren (emptyStatement, data);
+			Visit(EnterEmptyStatement, LeaveEmptyStatement, emptyStatement);
 		}
 		
-		public event Action<FixedStatement, T> FixedStatementVisited;
-
-		S IAstVisitor<T, S>.VisitFixedStatement (FixedStatement fixedStatement, T data)
+		public event Action<FixedStatement> EnterFixedStatement, LeaveFixedStatement;
+		
+		void IAstVisitor.VisitFixedStatement(FixedStatement fixedStatement)
 		{
-			var handler = FixedStatementVisited;
-			if (handler != null)
-				handler (fixedStatement, data);
-			return VisitChildren (fixedStatement, data);
+			Visit(EnterFixedStatement, LeaveFixedStatement, fixedStatement);
 		}
+		
+		public event Action<ForeachStatement> EnterForeachStatement, LeaveForeachStatement;
 		
-		public event Action<ForeachStatement, T> ForeachStatementVisited;
-
-		S IAstVisitor<T, S>.VisitForeachStatement (ForeachStatement foreachStatement, T data)
+		void IAstVisitor.VisitForeachStatement(ForeachStatement foreachStatement)
 		{
-			var handler = ForeachStatementVisited;
-			if (handler != null)
-				handler (foreachStatement, data);
-			return VisitChildren (foreachStatement, data);
+			Visit(EnterForeachStatement, LeaveForeachStatement, foreachStatement);
 		}
 		
-		public event Action<ForStatement, T> ForStatementVisited;
-
-		S IAstVisitor<T, S>.VisitForStatement (ForStatement forStatement, T data)
+		public event Action<ForStatement> EnterForStatement, LeaveForStatement;
+		
+		void IAstVisitor.VisitForStatement(ForStatement forStatement)
 		{
-			var handler = ForStatementVisited;
-			if (handler != null)
-				handler (forStatement, data);
-			return VisitChildren (forStatement, data);
+			Visit(EnterForStatement, LeaveForStatement, forStatement);
 		}
+		
+		public event Action<GotoCaseStatement> EnterGotoCaseStatement, LeaveGotoCaseStatement;
 		
-		public event Action<GotoCaseStatement, T> GotoCaseStatementVisited;
-
-		S IAstVisitor<T, S>.VisitGotoCaseStatement (GotoCaseStatement gotoCaseStatement, T data)
+		void IAstVisitor.VisitGotoCaseStatement(GotoCaseStatement gotoCaseStatement)
 		{
-			var handler = GotoCaseStatementVisited;
-			if (handler != null)
-				handler (gotoCaseStatement, data);
-			return VisitChildren (gotoCaseStatement, data);
+			Visit(EnterGotoCaseStatement, LeaveGotoCaseStatement, gotoCaseStatement);
 		}
 		
-		public event Action<GotoDefaultStatement, T> GotoDefaultStatementVisited;
-
-		S IAstVisitor<T, S>.VisitGotoDefaultStatement (GotoDefaultStatement gotoDefaultStatement, T data)
+		public event Action<GotoDefaultStatement> EnterGotoDefaultStatement, LeaveGotoDefaultStatement;
+		
+		void IAstVisitor.VisitGotoDefaultStatement(GotoDefaultStatement gotoDefaultStatement)
 		{
-			var handler = GotoDefaultStatementVisited;
-			if (handler != null)
-				handler (gotoDefaultStatement, data);
-			return VisitChildren (gotoDefaultStatement, data);
+			Visit(EnterGotoDefaultStatement, LeaveGotoDefaultStatement, gotoDefaultStatement);
 		}
+		
+		public event Action<GotoStatement> EnterGotoStatement, LeaveGotoStatement;
 		
-		public event Action<GotoStatement, T> GotoStatementVisited;
-
-		S IAstVisitor<T, S>.VisitGotoStatement (GotoStatement gotoStatement, T data)
+		void IAstVisitor.VisitGotoStatement(GotoStatement gotoStatement)
 		{
-			var handler = GotoStatementVisited;
-			if (handler != null)
-				handler (gotoStatement, data);
-			return VisitChildren (gotoStatement, data);
+			Visit(EnterGotoStatement, LeaveGotoStatement, gotoStatement);
 		}
 		
-		public event Action<IfElseStatement, T> IfElseStatementVisited;
-
-		S IAstVisitor<T, S>.VisitIfElseStatement (IfElseStatement ifElseStatement, T data)
+		public event Action<IfElseStatement> EnterIfElseStatement, LeaveIfElseStatement;
+		
+		void IAstVisitor.VisitIfElseStatement(IfElseStatement ifElseStatement)
 		{
-			var handler = IfElseStatementVisited;
-			if (handler != null)
-				handler (ifElseStatement, data);
-			return VisitChildren (ifElseStatement, data);
+			Visit(EnterIfElseStatement, LeaveIfElseStatement, ifElseStatement);
 		}
+		
+		public event Action<LabelStatement> EnterLabelStatement, LeaveLabelStatement;
 		
-		public event Action<LabelStatement, T> LabelStatementVisited;
-
-		S IAstVisitor<T, S>.VisitLabelStatement (LabelStatement labelStatement, T data)
+		void IAstVisitor.VisitLabelStatement(LabelStatement labelStatement)
 		{
-			var handler = LabelStatementVisited;
-			if (handler != null)
-				handler (labelStatement, data);
-			return VisitChildren (labelStatement, data);
+			Visit(EnterLabelStatement, LeaveLabelStatement, labelStatement);
 		}
 		
-		public event Action<LockStatement, T> LockStatementVisited;
-
-		S IAstVisitor<T, S>.VisitLockStatement (LockStatement lockStatement, T data)
+		public event Action<LockStatement> EnterLockStatement, LeaveLockStatement;
+		
+		void IAstVisitor.VisitLockStatement(LockStatement lockStatement)
 		{
-			var handler = LockStatementVisited;
-			if (handler != null)
-				handler (lockStatement, data);
-			return VisitChildren (lockStatement, data);
+			Visit(EnterLockStatement, LeaveLockStatement, lockStatement);
 		}
+		
+		public event Action<ReturnStatement> EnterReturnStatement, LeaveReturnStatement;
 		
-		public event Action<ReturnStatement, T> ReturnStatementVisited;
-
-		S IAstVisitor<T, S>.VisitReturnStatement (ReturnStatement returnStatement, T data)
+		void IAstVisitor.VisitReturnStatement(ReturnStatement returnStatement)
 		{
-			var handler = ReturnStatementVisited;
-			if (handler != null)
-				handler (returnStatement, data);
-			return VisitChildren (returnStatement, data);
+			Visit(EnterReturnStatement, LeaveReturnStatement, returnStatement);
 		}
 		
-		public event Action<SwitchStatement, T> SwitchStatementVisited;
-
-		S IAstVisitor<T, S>.VisitSwitchStatement (SwitchStatement switchStatement, T data)
+		public event Action<SwitchStatement> EnterSwitchStatement, LeaveSwitchStatement;
+		
+		void IAstVisitor.VisitSwitchStatement(SwitchStatement switchStatement)
 		{
-			var handler = SwitchStatementVisited;
-			if (handler != null)
-				handler (switchStatement, data);
-			return VisitChildren (switchStatement, data);
+			Visit(EnterSwitchStatement, LeaveSwitchStatement, switchStatement);
 		}
 		
-		public event Action<SwitchSection, T> SwitchSectionVisited;
-
-		S IAstVisitor<T, S>.VisitSwitchSection (SwitchSection switchSection, T data)
+		public event Action<SwitchSection> EnterSwitchSection, LeaveSwitchSection;
+		
+		void IAstVisitor.VisitSwitchSection(SwitchSection switchSection)
 		{
-			var handler = SwitchSectionVisited;
-			if (handler != null)
-				handler (switchSection, data);
-			return VisitChildren (switchSection, data);
+			Visit(EnterSwitchSection, LeaveSwitchSection, switchSection);
 		}
+		
+		public event Action<CaseLabel> EnterCaseLabel, LeaveCaseLabel;
 		
-		public event Action<CaseLabel, T> CaseLabelVisited;
-
-		S IAstVisitor<T, S>.VisitCaseLabel (CaseLabel caseLabel, T data)
+		void IAstVisitor.VisitCaseLabel(CaseLabel caseLabel)
 		{
-			var handler = CaseLabelVisited;
-			if (handler != null)
-				handler (caseLabel, data);
-			return VisitChildren (caseLabel, data);
+			Visit(EnterCaseLabel, LeaveCaseLabel, caseLabel);
 		}
 		
-		public event Action<ThrowStatement, T> ThrowStatementVisited;
-
-		S IAstVisitor<T, S>.VisitThrowStatement (ThrowStatement throwStatement, T data)
+		public event Action<ThrowStatement> EnterThrowStatement, LeaveThrowStatement;
+		
+		void IAstVisitor.VisitThrowStatement(ThrowStatement throwStatement)
 		{
-			var handler = ThrowStatementVisited;
-			if (handler != null)
-				handler (throwStatement, data);
-			return VisitChildren (throwStatement, data);
+			Visit(EnterThrowStatement, LeaveThrowStatement, throwStatement);
 		}
+		
+		public event Action<TryCatchStatement> EnterTryCatchStatement, LeaveTryCatchStatement;
 		
-		public event Action<TryCatchStatement, T> TryCatchStatementVisited;
-
-		S IAstVisitor<T, S>.VisitTryCatchStatement (TryCatchStatement tryCatchStatement, T data)
+		void IAstVisitor.VisitTryCatchStatement(TryCatchStatement tryCatchStatement)
 		{
-			var handler = TryCatchStatementVisited;
-			if (handler != null)
-				handler (tryCatchStatement, data);
-			return VisitChildren (tryCatchStatement, data);
+			Visit(EnterTryCatchStatement, LeaveTryCatchStatement, tryCatchStatement);
 		}
 		
-		public event Action<CatchClause, T> CatchClauseVisited;
-
-		S IAstVisitor<T, S>.VisitCatchClause (CatchClause catchClause, T data)
+		public event Action<CatchClause> EnterCatchClause, LeaveCatchClause;
+		
+		void IAstVisitor.VisitCatchClause(CatchClause catchClause)
 		{
-			var handler = CatchClauseVisited;
-			if (handler != null)
-				handler (catchClause, data);
-			return VisitChildren (catchClause, data);
+			Visit(EnterCatchClause, LeaveCatchClause, catchClause);
 		}
+		
+		public event Action<UncheckedStatement> EnterUncheckedStatement, LeaveUncheckedStatement;
 		
-		public event Action<UncheckedStatement, T> UncheckedStatementVisited;
-
-		S IAstVisitor<T, S>.VisitUncheckedStatement (UncheckedStatement uncheckedStatement, T data)
+		void IAstVisitor.VisitUncheckedStatement(UncheckedStatement uncheckedStatement)
 		{
-			var handler = UncheckedStatementVisited;
-			if (handler != null)
-				handler (uncheckedStatement, data);
-			return VisitChildren (uncheckedStatement, data);
+			Visit(EnterUncheckedStatement, LeaveUncheckedStatement, uncheckedStatement);
 		}
 		
-		public event Action<UnsafeStatement, T> UnsafeStatementVisited;
-
-		S IAstVisitor<T, S>.VisitUnsafeStatement (UnsafeStatement unsafeStatement, T data)
+		public event Action<UnsafeStatement> EnterUnsafeStatement, LeaveUnsafeStatement;
+		
+		void IAstVisitor.VisitUnsafeStatement(UnsafeStatement unsafeStatement)
 		{
-			var handler = UnsafeStatementVisited;
-			if (handler != null)
-				handler (unsafeStatement, data);
-			return VisitChildren (unsafeStatement, data);
+			Visit(EnterUnsafeStatement, LeaveUnsafeStatement, unsafeStatement);
 		}
 		
-		public event Action<UsingStatement, T> UsingStatementVisited;
-
-		S IAstVisitor<T, S>.VisitUsingStatement (UsingStatement usingStatement, T data)
+		public event Action<UsingStatement> EnterUsingStatement, LeaveUsingStatement;
+		
+		void IAstVisitor.VisitUsingStatement(UsingStatement usingStatement)
 		{
-			var handler = UsingStatementVisited;
-			if (handler != null)
-				handler (usingStatement, data);
-			return VisitChildren (usingStatement, data);
+			Visit(EnterUsingStatement, LeaveUsingStatement, usingStatement);
 		}
+		
+		public event Action<VariableDeclarationStatement> EnterVariableDeclarationStatement, LeaveVariableDeclarationStatement;
 		
-		public event Action<VariableDeclarationStatement, T> VariableDeclarationStatementVisited;
-
-		S IAstVisitor<T, S>.VisitVariableDeclarationStatement (VariableDeclarationStatement variableDeclarationStatement, T data)
+		void IAstVisitor.VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement)
 		{
-			var handler = VariableDeclarationStatementVisited;
-			if (handler != null)
-				handler (variableDeclarationStatement, data);
-			return VisitChildren (variableDeclarationStatement, data);
+			Visit(EnterVariableDeclarationStatement, LeaveVariableDeclarationStatement, variableDeclarationStatement);
 		}
 		
-		public event Action<WhileStatement, T> WhileStatementVisited;
-
-		S IAstVisitor<T, S>.VisitWhileStatement (WhileStatement whileStatement, T data)
+		public event Action<WhileStatement> EnterWhileStatement, LeaveWhileStatement;
+		
+		void IAstVisitor.VisitWhileStatement(WhileStatement whileStatement)
 		{
-			var handler = WhileStatementVisited;
-			if (handler != null)
-				handler (whileStatement, data);
-			return VisitChildren (whileStatement, data);
+			Visit(EnterWhileStatement, LeaveWhileStatement, whileStatement);
 		}
+		
+		public event Action<YieldBreakStatement> EnterYieldBreakStatement, LeaveYieldBreakStatement;
 		
-		public event Action<YieldBreakStatement, T> YieldBreakStatementVisited;
-
-		S IAstVisitor<T, S>.VisitYieldBreakStatement (YieldBreakStatement yieldBreakStatement, T data)
+		void IAstVisitor.VisitYieldBreakStatement(YieldBreakStatement yieldBreakStatement)
 		{
-			var handler = YieldBreakStatementVisited;
-			if (handler != null)
-				handler (yieldBreakStatement, data);
-			return VisitChildren (yieldBreakStatement, data);
+			Visit(EnterYieldBreakStatement, LeaveYieldBreakStatement, yieldBreakStatement);
 		}
 		
-		public event Action<YieldReturnStatement, T> YieldReturnStatementVisited;
-
-		S IAstVisitor<T, S>.VisitYieldReturnStatement (YieldReturnStatement yieldStatement, T data)
+		public event Action<YieldReturnStatement> EnterYieldReturnStatement, LeaveYieldReturnStatement;
+		
+		void IAstVisitor.VisitYieldReturnStatement(YieldReturnStatement yieldStatement)
 		{
-			var handler = YieldReturnStatementVisited;
-			if (handler != null)
-				handler (yieldStatement, data);
-			return VisitChildren (yieldStatement, data);
+			Visit(EnterYieldReturnStatement, LeaveYieldReturnStatement, yieldStatement);
 		}
+		
+		public event Action<AnonymousMethodExpression> EnterAnonymousMethodExpression, LeaveAnonymousMethodExpression;
 		
-		public event Action<AnonymousMethodExpression, T> AnonymousMethodExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitAnonymousMethodExpression (AnonymousMethodExpression anonymousMethodExpression, T data)
+		void IAstVisitor.VisitAnonymousMethodExpression(AnonymousMethodExpression anonymousMethodExpression)
 		{
-			var handler = AnonymousMethodExpressionVisited;
-			if (handler != null)
-				handler (anonymousMethodExpression, data);
-			return VisitChildren (anonymousMethodExpression, data);
+			Visit(EnterAnonymousMethodExpression, LeaveAnonymousMethodExpression, anonymousMethodExpression);
 		}
 		
-		public event Action<LambdaExpression, T> LambdaExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitLambdaExpression (LambdaExpression lambdaExpression, T data)
+		public event Action<LambdaExpression> EnterLambdaExpression, LeaveLambdaExpression;
+		
+		void IAstVisitor.VisitLambdaExpression(LambdaExpression lambdaExpression)
 		{
-			var handler = LambdaExpressionVisited;
-			if (handler != null)
-				handler (lambdaExpression, data);
-			return VisitChildren (lambdaExpression, data);
+			Visit(EnterLambdaExpression, LeaveLambdaExpression, lambdaExpression);
 		}
 		
-		public event Action<AssignmentExpression, T> AssignmentExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitAssignmentExpression (AssignmentExpression assignmentExpression, T data)
+		public event Action<AssignmentExpression> EnterAssignmentExpression, LeaveAssignmentExpression;
+		
+		void IAstVisitor.VisitAssignmentExpression(AssignmentExpression assignmentExpression)
 		{
-			var handler = AssignmentExpressionVisited;
-			if (handler != null)
-				handler (assignmentExpression, data);
-			return VisitChildren (assignmentExpression, data);
+			Visit(EnterAssignmentExpression, LeaveAssignmentExpression, assignmentExpression);
 		}
+		
+		public event Action<BaseReferenceExpression> EnterBaseReferenceExpression, LeaveBaseReferenceExpression;
 		
-		public event Action<BaseReferenceExpression, T> BaseReferenceExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitBaseReferenceExpression (BaseReferenceExpression baseReferenceExpression, T data)
+		void IAstVisitor.VisitBaseReferenceExpression(BaseReferenceExpression baseReferenceExpression)
 		{
-			var handler = BaseReferenceExpressionVisited;
-			if (handler != null)
-				handler (baseReferenceExpression, data);
-			return VisitChildren (baseReferenceExpression, data);
+			Visit(EnterBaseReferenceExpression, LeaveBaseReferenceExpression, baseReferenceExpression);
 		}
 		
-		public event Action<BinaryOperatorExpression, T> BinaryOperatorExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitBinaryOperatorExpression (BinaryOperatorExpression binaryOperatorExpression, T data)
+		public event Action<BinaryOperatorExpression> EnterBinaryOperatorExpression, LeaveBinaryOperatorExpression;
+		
+		void IAstVisitor.VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression)
 		{
-			var handler = BinaryOperatorExpressionVisited;
-			if (handler != null)
-				handler (binaryOperatorExpression, data);
-			return VisitChildren (binaryOperatorExpression, data);
+			Visit(EnterBinaryOperatorExpression, LeaveBinaryOperatorExpression, binaryOperatorExpression);
 		}
+		
+		public event Action<CastExpression> EnterCastExpression, LeaveCastExpression;
 		
-		public event Action<CastExpression, T> CastExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitCastExpression (CastExpression castExpression, T data)
+		void IAstVisitor.VisitCastExpression(CastExpression castExpression)
 		{
-			var handler = CastExpressionVisited;
-			if (handler != null)
-				handler (castExpression, data);
-			return VisitChildren (castExpression, data);
+			Visit(EnterCastExpression, LeaveCastExpression, castExpression);
 		}
 		
-		public event Action<CheckedExpression, T> CheckedExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitCheckedExpression (CheckedExpression checkedExpression, T data)
+		public event Action<CheckedExpression> EnterCheckedExpression, LeaveCheckedExpression;
+		
+		void IAstVisitor.VisitCheckedExpression(CheckedExpression checkedExpression)
 		{
-			var handler = CheckedExpressionVisited;
-			if (handler != null)
-				handler (checkedExpression, data);
-			return VisitChildren (checkedExpression, data);
+			Visit(EnterCheckedExpression, LeaveCheckedExpression, checkedExpression);
 		}
+		
+		public event Action<ConditionalExpression> EnterConditionalExpression, LeaveConditionalExpression;
 		
-		public event Action<ConditionalExpression, T> ConditionalExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitConditionalExpression (ConditionalExpression conditionalExpression, T data)
+		void IAstVisitor.VisitConditionalExpression(ConditionalExpression conditionalExpression)
 		{
-			var handler = ConditionalExpressionVisited;
-			if (handler != null)
-				handler (conditionalExpression, data);
-			return VisitChildren (conditionalExpression, data);
+			Visit(EnterConditionalExpression, LeaveConditionalExpression, conditionalExpression);
 		}
 		
-		public event Action<IdentifierExpression, T> IdentifierExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitIdentifierExpression (IdentifierExpression identifierExpression, T data)
+		public event Action<IdentifierExpression> EnterIdentifierExpression, LeaveIdentifierExpression;
+		
+		void IAstVisitor.VisitIdentifierExpression(IdentifierExpression identifierExpression)
 		{
-			var handler = IdentifierExpressionVisited;
-			if (handler != null)
-				handler (identifierExpression, data);
-			return VisitChildren (identifierExpression, data);
+			Visit(EnterIdentifierExpression, LeaveIdentifierExpression, identifierExpression);
 		}
+		
+		public event Action<IndexerExpression> EnterIndexerExpression, LeaveIndexerExpression;
 		
-		public event Action<IndexerExpression, T> IndexerExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitIndexerExpression (IndexerExpression indexerExpression, T data)
+		void IAstVisitor.VisitIndexerExpression(IndexerExpression indexerExpression)
 		{
-			var handler = IndexerExpressionVisited;
-			if (handler != null)
-				handler (indexerExpression, data);
-			return VisitChildren (indexerExpression, data);
+			Visit(EnterIndexerExpression, LeaveIndexerExpression, indexerExpression);
 		}
 		
-		public event Action<InvocationExpression, T> InvocationExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitInvocationExpression (InvocationExpression invocationExpression, T data)
+		public event Action<InvocationExpression> EnterInvocationExpression, LeaveInvocationExpression;
+		
+		void IAstVisitor.VisitInvocationExpression(InvocationExpression invocationExpression)
 		{
-			var handler = InvocationExpressionVisited;
-			if (handler != null)
-				handler (invocationExpression, data);
-			return VisitChildren (invocationExpression, data);
+			Visit(EnterInvocationExpression, LeaveInvocationExpression, invocationExpression);
 		}
+		
+		public event Action<DirectionExpression> EnterDirectionExpression, LeaveDirectionExpression;
 		
-		public event Action<DirectionExpression, T> DirectionExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitDirectionExpression (DirectionExpression directionExpression, T data)
+		void IAstVisitor.VisitDirectionExpression(DirectionExpression directionExpression)
 		{
-			var handler = DirectionExpressionVisited;
-			if (handler != null)
-				handler (directionExpression, data);
-			return VisitChildren (directionExpression, data);
+			Visit(EnterDirectionExpression, LeaveDirectionExpression, directionExpression);
 		}
 		
-		public event Action<MemberReferenceExpression, T> MemberReferenceExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitMemberReferenceExpression (MemberReferenceExpression memberReferenceExpression, T data)
+		public event Action<MemberReferenceExpression> EnterMemberReferenceExpression, LeaveMemberReferenceExpression;
+		
+		void IAstVisitor.VisitMemberReferenceExpression(MemberReferenceExpression memberReferenceExpression)
 		{
-			var handler = MemberReferenceExpressionVisited;
-			if (handler != null)
-				handler (memberReferenceExpression, data);
-			return VisitChildren (memberReferenceExpression, data);
+			Visit(EnterMemberReferenceExpression, LeaveMemberReferenceExpression, memberReferenceExpression);
 		}
+		
+		public event Action<NullReferenceExpression> EnterNullReferenceExpression, LeaveNullReferenceExpression;
 		
-		public event Action<NullReferenceExpression, T> NullReferenceExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitNullReferenceExpression (NullReferenceExpression nullReferenceExpression, T data)
+		void IAstVisitor.VisitNullReferenceExpression(NullReferenceExpression nullReferenceExpression)
 		{
-			var handler = NullReferenceExpressionVisited;
-			if (handler != null)
-				handler (nullReferenceExpression, data);
-			return VisitChildren (nullReferenceExpression, data);
+			Visit(EnterNullReferenceExpression, LeaveNullReferenceExpression, nullReferenceExpression);
 		}
 		
-		public event Action<ObjectCreateExpression, T> ObjectCreateExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitObjectCreateExpression (ObjectCreateExpression objectCreateExpression, T data)
+		public event Action<ObjectCreateExpression> EnterObjectCreateExpression, LeaveObjectCreateExpression;
+		
+		void IAstVisitor.VisitObjectCreateExpression(ObjectCreateExpression objectCreateExpression)
 		{
-			var handler = ObjectCreateExpressionVisited;
-			if (handler != null)
-				handler (objectCreateExpression, data);
-			return VisitChildren (objectCreateExpression, data);
+			Visit(EnterObjectCreateExpression, LeaveObjectCreateExpression, objectCreateExpression);
 		}
+		
+		public event Action<AnonymousTypeCreateExpression> EnterAnonymousTypeCreateExpression, LeaveAnonymousTypeCreateExpression;
 		
-		public event Action<AnonymousTypeCreateExpression, T> AnonymousTypeCreateExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitAnonymousTypeCreateExpression (AnonymousTypeCreateExpression anonymousTypeCreateExpression, T data)
+		void IAstVisitor.VisitAnonymousTypeCreateExpression(AnonymousTypeCreateExpression anonymousTypeCreateExpression)
 		{
-			var handler = AnonymousTypeCreateExpressionVisited;
-			if (handler != null)
-				handler (anonymousTypeCreateExpression, data);
-			return VisitChildren (anonymousTypeCreateExpression, data);
+			Visit(EnterAnonymousTypeCreateExpression, LeaveAnonymousTypeCreateExpression, anonymousTypeCreateExpression);
 		}
 		
-		public event Action<ArrayCreateExpression, T> ArrayCreateExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitArrayCreateExpression (ArrayCreateExpression arraySCreateExpression, T data)
+		public event Action<ArrayCreateExpression> EnterArrayCreateExpression, LeaveArrayCreateExpression;
+		
+		void IAstVisitor.VisitArrayCreateExpression(ArrayCreateExpression arraySCreateExpression)
 		{
-			var handler = ArrayCreateExpressionVisited;
-			if (handler != null)
-				handler (arraySCreateExpression, data);
-			return VisitChildren (arraySCreateExpression, data);
+			Visit(EnterArrayCreateExpression, LeaveArrayCreateExpression, arraySCreateExpression);
 		}
 		
-		public event Action<ParenthesizedExpression, T> ParenthesizedExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitParenthesizedExpression (ParenthesizedExpression parenthesizedExpression, T data)
+		public event Action<ParenthesizedExpression> EnterParenthesizedExpression, LeaveParenthesizedExpression;
+		
+		void IAstVisitor.VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression)
 		{
-			var handler = ParenthesizedExpressionVisited;
-			if (handler != null)
-				handler (parenthesizedExpression, data);
-			return VisitChildren (parenthesizedExpression, data);
+			Visit(EnterParenthesizedExpression, LeaveParenthesizedExpression, parenthesizedExpression);
 		}
+		
+		public event Action<PointerReferenceExpression> EnterPointerReferenceExpression, LeavePointerReferenceExpression;
 		
-		public event Action<PointerReferenceExpression, T> PointerReferenceExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitPointerReferenceExpression (PointerReferenceExpression pointerReferenceExpression, T data)
+		void IAstVisitor.VisitPointerReferenceExpression(PointerReferenceExpression pointerReferenceExpression)
 		{
-			var handler = PointerReferenceExpressionVisited;
-			if (handler != null)
-				handler (pointerReferenceExpression, data);
-			return VisitChildren (pointerReferenceExpression, data);
+			Visit(EnterPointerReferenceExpression, LeavePointerReferenceExpression, pointerReferenceExpression);
 		}
 		
-		public event Action<PrimitiveExpression, T> PrimitiveExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitPrimitiveExpression (PrimitiveExpression primitiveExpression, T data)
+		public event Action<PrimitiveExpression> EnterPrimitiveExpression, LeavePrimitiveExpression;
+		
+		void IAstVisitor.VisitPrimitiveExpression(PrimitiveExpression primitiveExpression)
 		{
-			var handler = PrimitiveExpressionVisited;
-			if (handler != null)
-				handler (primitiveExpression, data);
-			return VisitChildren (primitiveExpression, data);
+			Visit(EnterPrimitiveExpression, LeavePrimitiveExpression, primitiveExpression);
 		}
+		
+		public event Action<SizeOfExpression> EnterSizeOfExpression, LeaveSizeOfExpression;
 		
-		public event Action<SizeOfExpression, T> SizeOfExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitSizeOfExpression (SizeOfExpression sizeOfExpression, T data)
+		void IAstVisitor.VisitSizeOfExpression(SizeOfExpression sizeOfExpression)
 		{
-			var handler = SizeOfExpressionVisited;
-			if (handler != null)
-				handler (sizeOfExpression, data);
-			return VisitChildren (sizeOfExpression, data);
+			Visit(EnterSizeOfExpression, LeaveSizeOfExpression, sizeOfExpression);
 		}
 		
-		public event Action<StackAllocExpression, T> StackAllocExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitStackAllocExpression (StackAllocExpression stackAllocExpression, T data)
+		public event Action<StackAllocExpression> EnterStackAllocExpression, LeaveStackAllocExpression;
+		
+		void IAstVisitor.VisitStackAllocExpression(StackAllocExpression stackAllocExpression)
 		{
-			var handler = StackAllocExpressionVisited;
-			if (handler != null)
-				handler (stackAllocExpression, data);
-			return VisitChildren (stackAllocExpression, data);
+			Visit(EnterStackAllocExpression, LeaveStackAllocExpression, stackAllocExpression);
 		}
+		
+		public event Action<ThisReferenceExpression> EnterThisReferenceExpression, LeaveThisReferenceExpression;
 		
-		public event Action<ThisReferenceExpression, T> ThisReferenceExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitThisReferenceExpression (ThisReferenceExpression thisReferenceExpression, T data)
+		void IAstVisitor.VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression)
 		{
-			var handler = ThisReferenceExpressionVisited;
-			if (handler != null)
-				handler (thisReferenceExpression, data);
-			return VisitChildren (thisReferenceExpression, data);
+			Visit(EnterThisReferenceExpression, LeaveThisReferenceExpression, thisReferenceExpression);
 		}
 		
-		public event Action<TypeOfExpression, T> TypeOfExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitTypeOfExpression (TypeOfExpression typeOfExpression, T data)
+		public event Action<TypeOfExpression> EnterTypeOfExpression, LeaveTypeOfExpression;
+		
+		void IAstVisitor.VisitTypeOfExpression(TypeOfExpression typeOfExpression)
 		{
-			var handler = TypeOfExpressionVisited;
-			if (handler != null)
-				handler (typeOfExpression, data);
-			return VisitChildren (typeOfExpression, data);
+			Visit(EnterTypeOfExpression, LeaveTypeOfExpression, typeOfExpression);
 		}
+		
+		public event Action<TypeReferenceExpression> EnterTypeReferenceExpression, LeaveTypeReferenceExpression;
 		
-		public event Action<TypeReferenceExpression, T> TypeReferenceExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitTypeReferenceExpression (TypeReferenceExpression typeReferenceExpression, T data)
+		void IAstVisitor.VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression)
 		{
-			var handler = TypeReferenceExpressionVisited;
-			if (handler != null)
-				handler (typeReferenceExpression, data);
-			return VisitChildren (typeReferenceExpression, data);
+			Visit(EnterTypeReferenceExpression, LeaveTypeReferenceExpression, typeReferenceExpression);
 		}
 		
-		public event Action<UnaryOperatorExpression, T> UnaryOperatorExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitUnaryOperatorExpression (UnaryOperatorExpression unaryOperatorExpression, T data)
+		public event Action<UnaryOperatorExpression> EnterUnaryOperatorExpression, LeaveUnaryOperatorExpression;
+		
+		void IAstVisitor.VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression)
 		{
-			var handler = UnaryOperatorExpressionVisited;
-			if (handler != null)
-				handler (unaryOperatorExpression, data);
-			return VisitChildren (unaryOperatorExpression, data);
+			Visit(EnterUnaryOperatorExpression, LeaveUnaryOperatorExpression, unaryOperatorExpression);
 		}
+		
+		public event Action<UncheckedExpression> EnterUncheckedExpression, LeaveUncheckedExpression;
 		
-		public event Action<UncheckedExpression, T> UncheckedExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitUncheckedExpression (UncheckedExpression uncheckedExpression, T data)
+		void IAstVisitor.VisitUncheckedExpression(UncheckedExpression uncheckedExpression)
 		{
-			var handler = UncheckedExpressionVisited;
-			if (handler != null)
-				handler (uncheckedExpression, data);
-			return VisitChildren (uncheckedExpression, data);
+			Visit(EnterUncheckedExpression, LeaveUncheckedExpression, uncheckedExpression);
 		}
 		
-		public event Action<QueryExpression, T> QueryExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitQueryExpression (QueryExpression queryExpression, T data)
+		public event Action<QueryExpression> EnterQueryExpression, LeaveQueryExpression;
+		
+		void IAstVisitor.VisitQueryExpression(QueryExpression queryExpression)
 		{
-			var handler = QueryExpressionVisited;
-			if (handler != null)
-				handler (queryExpression, data);
-			return VisitChildren (queryExpression, data);
+			Visit(EnterQueryExpression, LeaveQueryExpression, queryExpression);
 		}
+		
+		public event Action<QueryContinuationClause> EnterQueryContinuationClause, LeaveQueryContinuationClause;
 		
-		public event Action<QueryContinuationClause, T> QueryContinuationClauseVisited;
-
-		S IAstVisitor<T, S>.VisitQueryContinuationClause (QueryContinuationClause queryContinuationClause, T data)
+		void IAstVisitor.VisitQueryContinuationClause(QueryContinuationClause queryContinuationClause)
 		{
-			var handler = QueryContinuationClauseVisited;
-			if (handler != null)
-				handler (queryContinuationClause, data);
-			return VisitChildren (queryContinuationClause, data);
+			Visit(EnterQueryContinuationClause, LeaveQueryContinuationClause, queryContinuationClause);
 		}
 		
-		public event Action<QueryFromClause, T> QueryFromClauseVisited;
-
-		S IAstVisitor<T, S>.VisitQueryFromClause (QueryFromClause queryFromClause, T data)
+		public event Action<QueryFromClause> EnterQueryFromClause, LeaveQueryFromClause;
+		
+		void IAstVisitor.VisitQueryFromClause(QueryFromClause queryFromClause)
 		{
-			var handler = QueryFromClauseVisited;
-			if (handler != null)
-				handler (queryFromClause, data);
-			return VisitChildren (queryFromClause, data);
+			Visit(EnterQueryFromClause, LeaveQueryFromClause, queryFromClause);
 		}
+		
+		public event Action<QueryLetClause> EnterQueryLetClause, LeaveQueryLetClause;
 		
-		public event Action<QueryLetClause, T> QueryLetClauseVisited;
-
-		S IAstVisitor<T, S>.VisitQueryLetClause (QueryLetClause queryLetClause, T data)
+		void IAstVisitor.VisitQueryLetClause(QueryLetClause queryLetClause)
 		{
-			var handler = QueryLetClauseVisited;
-			if (handler != null)
-				handler (queryLetClause, data);
-			return VisitChildren (queryLetClause, data);
+			Visit(EnterQueryLetClause, LeaveQueryLetClause, queryLetClause);
 		}
 		
-		public event Action<QueryWhereClause, T> QueryWhereClauseVisited;
-
-		S IAstVisitor<T, S>.VisitQueryWhereClause (QueryWhereClause queryWhereClause, T data)
+		public event Action<QueryWhereClause> EnterQueryWhereClause, LeaveQueryWhereClause;
+		
+		void IAstVisitor.VisitQueryWhereClause(QueryWhereClause queryWhereClause)
 		{
-			var handler = QueryWhereClauseVisited;
-			if (handler != null)
-				handler (queryWhereClause, data);
-			return VisitChildren (queryWhereClause, data);
+			Visit(EnterQueryWhereClause, LeaveQueryWhereClause, queryWhereClause);
 		}
 		
-		public event Action<QueryJoinClause, T> QueryJoinClauseVisited;
-
-		S IAstVisitor<T, S>.VisitQueryJoinClause (QueryJoinClause queryJoinClause, T data)
+		public event Action<QueryJoinClause> EnterQueryJoinClause, LeaveQueryJoinClause;
+		
+		void IAstVisitor.VisitQueryJoinClause(QueryJoinClause queryJoinClause)
 		{
-			var handler = QueryJoinClauseVisited;
-			if (handler != null)
-				handler (queryJoinClause, data);
-			return VisitChildren (queryJoinClause, data);
+			Visit(EnterQueryJoinClause, LeaveQueryJoinClause, queryJoinClause);
 		}
+		
+		public event Action<QueryOrderClause> EnterQueryOrderClause, LeaveQueryOrderClause;
 		
-		public event Action<QueryOrderClause, T> QueryOrderClauseVisited;
-
-		S IAstVisitor<T, S>.VisitQueryOrderClause (QueryOrderClause queryOrderClause, T data)
+		void IAstVisitor.VisitQueryOrderClause(QueryOrderClause queryOrderClause)
 		{
-			var handler = QueryOrderClauseVisited;
-			if (handler != null)
-				handler (queryOrderClause, data);
-			return VisitChildren (queryOrderClause, data);
+			Visit(EnterQueryOrderClause, LeaveQueryOrderClause, queryOrderClause);
 		}
 		
-		public event Action<QueryOrdering, T> QueryOrderingVisited;
-
-		S IAstVisitor<T, S>.VisitQueryOrdering (QueryOrdering queryOrdering, T data)
+		public event Action<QueryOrdering> EnterQueryOrdering, LeaveQueryOrdering;
+		
+		void IAstVisitor.VisitQueryOrdering(QueryOrdering queryOrdering)
 		{
-			var handler = QueryOrderingVisited;
-			if (handler != null)
-				handler (queryOrdering, data);
-			return VisitChildren (queryOrdering, data);
+			Visit(EnterQueryOrdering, LeaveQueryOrdering, queryOrdering);
 		}
+		
+		public event Action<QuerySelectClause> EnterQuerySelectClause, LeaveQuerySelectClause;
 		
-		public event Action<QuerySelectClause, T> QuerySelectClauseVisited;
-
-		S IAstVisitor<T, S>.VisitQuerySelectClause (QuerySelectClause querySelectClause, T data)
+		void IAstVisitor.VisitQuerySelectClause(QuerySelectClause querySelectClause)
 		{
-			var handler = QuerySelectClauseVisited;
-			if (handler != null)
-				handler (querySelectClause, data);
-			return VisitChildren (querySelectClause, data);
+			Visit(EnterQuerySelectClause, LeaveQuerySelectClause, querySelectClause);
 		}
 		
-		public event Action<QueryGroupClause, T> QueryGroupClauseVisited;
-
-		S IAstVisitor<T, S>.VisitQueryGroupClause (QueryGroupClause queryGroupClause, T data)
+		public event Action<QueryGroupClause> EnterQueryGroupClause, LeaveQueryGroupClause;
+		
+		void IAstVisitor.VisitQueryGroupClause(QueryGroupClause queryGroupClause)
 		{
-			var handler = QueryGroupClauseVisited;
-			if (handler != null)
-				handler (queryGroupClause, data);
-			return VisitChildren (queryGroupClause, data);
+			Visit(EnterQueryGroupClause, LeaveQueryGroupClause, queryGroupClause);
 		}
+		
+		public event Action<AsExpression> EnterAsExpression, LeaveAsExpression;
 		
-		public event Action<AsExpression, T> AsExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitAsExpression (AsExpression asExpression, T data)
+		void IAstVisitor.VisitAsExpression(AsExpression asExpression)
 		{
-			var handler = AsExpressionVisited;
-			if (handler != null)
-				handler (asExpression, data);
-			return VisitChildren (asExpression, data);
+			Visit(EnterAsExpression, LeaveAsExpression, asExpression);
 		}
 		
-		public event Action<IsExpression, T> IsExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitIsExpression (IsExpression isExpression, T data)
+		public event Action<IsExpression> EnterIsExpression, LeaveIsExpression;
+		
+		void IAstVisitor.VisitIsExpression(IsExpression isExpression)
 		{
-			var handler = IsExpressionVisited;
-			if (handler != null)
-				handler (isExpression, data);
-			return VisitChildren (isExpression, data);
+			Visit(EnterIsExpression, LeaveIsExpression, isExpression);
 		}
+		
+		public event Action<DefaultValueExpression> EnterDefaultValueExpression, LeaveDefaultValueExpression;
 		
-		public event Action<DefaultValueExpression, T> DefaultValueExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitDefaultValueExpression (DefaultValueExpression defaultValueExpression, T data)
+		void IAstVisitor.VisitDefaultValueExpression(DefaultValueExpression defaultValueExpression)
 		{
-			var handler = DefaultValueExpressionVisited;
-			if (handler != null)
-				handler (defaultValueExpression, data);
-			return VisitChildren (defaultValueExpression, data);
+			Visit(EnterDefaultValueExpression, LeaveDefaultValueExpression, defaultValueExpression);
 		}
 		
-		public event Action<UndocumentedExpression, T> UndocumentedExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitUndocumentedExpression (UndocumentedExpression undocumentedExpression, T data)
+		public event Action<UndocumentedExpression> EnterUndocumentedExpression, LeaveUndocumentedExpression;
+		
+		void IAstVisitor.VisitUndocumentedExpression(UndocumentedExpression undocumentedExpression)
 		{
-			var handler = UndocumentedExpressionVisited;
-			if (handler != null)
-				handler (undocumentedExpression, data);
-			return VisitChildren (undocumentedExpression, data);
+			Visit(EnterUndocumentedExpression, LeaveUndocumentedExpression, undocumentedExpression);
 		}
+		
+		public event Action<ArrayInitializerExpression> EnterArrayInitializerExpression, LeaveArrayInitializerExpression;
 		
-		public event Action<ArrayInitializerExpression, T> ArrayInitializerExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitArrayInitializerExpression (ArrayInitializerExpression arrayInitializerExpression, T data)
+		void IAstVisitor.VisitArrayInitializerExpression(ArrayInitializerExpression arrayInitializerExpression)
 		{
-			var handler = ArrayInitializerExpressionVisited;
-			if (handler != null)
-				handler (arrayInitializerExpression, data);
-			return VisitChildren (arrayInitializerExpression, data);
+			Visit(EnterArrayInitializerExpression, LeaveArrayInitializerExpression, arrayInitializerExpression);
 		}
 		
-		public event Action<ArraySpecifier, T> ArraySpecifierVisited;
-
-		S IAstVisitor<T, S>.VisitArraySpecifier (ArraySpecifier arraySpecifier, T data)
+		public event Action<ArraySpecifier> EnterArraySpecifier, LeaveArraySpecifier;
+		
+		void IAstVisitor.VisitArraySpecifier(ArraySpecifier arraySpecifier)
 		{
-			var handler = ArraySpecifierVisited;
-			if (handler != null)
-				handler (arraySpecifier, data);
-			return VisitChildren (arraySpecifier, data);
+			Visit(EnterArraySpecifier, LeaveArraySpecifier, arraySpecifier);
 		}
+		
+		public event Action<NamedArgumentExpression> EnterNamedArgumentExpression, LeaveNamedArgumentExpression;
 		
-		public event Action<NamedArgumentExpression, T> NamedArgumentExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitNamedArgumentExpression (NamedArgumentExpression namedArgumentExpression, T data)
+		void IAstVisitor.VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression)
 		{
-			var handler = NamedArgumentExpressionVisited;
-			if (handler != null)
-				handler (namedArgumentExpression, data);
-			return VisitChildren (namedArgumentExpression, data);
+			Visit(EnterNamedArgumentExpression, LeaveNamedArgumentExpression, namedArgumentExpression);
 		}
 		
-		public event Action<NamedExpression, T> NamedExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitNamedExpression (NamedExpression namedExpression, T data)
+		public event Action<NamedExpression> EnterNamedExpression, LeaveNamedExpression;
+		
+		void IAstVisitor.VisitNamedExpression(NamedExpression namedExpression)
 		{
-			var handler = NamedExpressionVisited;
-			if (handler != null)
-				handler (namedExpression, data);
-			return VisitChildren (namedExpression, data);
+			Visit(EnterNamedExpression, LeaveNamedExpression, namedExpression);
 		}
+		
+		public event Action<EmptyExpression> EnterEmptyExpression, LeaveEmptyExpression;
 		
-		public event Action<EmptyExpression, T> EmptyExpressionVisited;
-
-		S IAstVisitor<T, S>.VisitEmptyExpression (EmptyExpression emptyExpression, T data)
+		void IAstVisitor.VisitEmptyExpression(EmptyExpression emptyExpression)
 		{
-			var handler = EmptyExpressionVisited;
-			if (handler != null)
-				handler (emptyExpression, data);
-			return VisitChildren (emptyExpression, data);
+			Visit(EnterEmptyExpression, LeaveEmptyExpression, emptyExpression);
 		}
 		
-		S IAstVisitor<T, S>.VisitPatternPlaceholder (AstNode placeholder, PatternMatching.Pattern pattern, T data)
+		void IAstVisitor.VisitPatternPlaceholder(AstNode placeholder, PatternMatching.Pattern pattern)
 		{
-			return VisitChildren (placeholder, data);
 		}
 	}
 }
-
-

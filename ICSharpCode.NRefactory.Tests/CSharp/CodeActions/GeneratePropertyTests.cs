@@ -1,4 +1,4 @@
-// 
+﻿// 
 // GeneratePropertyTests.cs
 //  
 // Author:
@@ -32,7 +32,6 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 	[TestFixture]
 	public class GeneratePropertyTests : ContextActionTestBase
 	{
-		[Ignore("NotImplemented")]
 		[Test()]
 		public void Test ()
 		{
@@ -59,6 +58,80 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 				"	}" + Environment.NewLine +
 				"	int myField;" + Environment.NewLine +
 				"}", result);
+		}
+
+		[Test()]
+		public void HandlesFieldsWhichMatchThePropertyNameTest ()
+		{
+			Test<GeneratePropertyAction> (
+@"
+class TestClass
+{
+	public int $MyField;
+}",
+@"
+class TestClass
+{
+	public int MyField {
+		get {
+			return myField;
+		}
+		set {
+			myField = value;
+		}
+	}
+	public int myField;
+}");
+		}
+
+		[Test()]
+		public void HandlesMultiDeclarationTest ()
+		{
+			Test<GeneratePropertyAction> (
+@"
+class TestClass
+{
+	int $MyField, myOtherField;
+}",
+@"
+class TestClass
+{
+	public int MyField {
+		get {
+			return myField;
+		}
+		set {
+			myField = value;
+		}
+	}
+	int myField, myOtherField;
+}");
+		}
+		
+		[Test]
+		public void CannotGeneratePropertyForReadOnlyField()
+		{
+			TestWrongContext (
+				new GeneratePropertyAction (),
+				"using System;" + Environment.NewLine +
+					"class TestClass" + Environment.NewLine +
+					"{" + Environment.NewLine +
+					"	readonly int $myField;" + Environment.NewLine +
+					"}"
+			);
+		}
+		
+		[Test]
+		public void CannotGeneratePropertyForConst()
+		{
+			TestWrongContext (
+				new GeneratePropertyAction (),
+				"using System;" + Environment.NewLine +
+					"class TestClass" + Environment.NewLine +
+					"{" + Environment.NewLine +
+					"	const int $myField = 0;" + Environment.NewLine +
+					"}"
+			);
 		}
 	}
 }

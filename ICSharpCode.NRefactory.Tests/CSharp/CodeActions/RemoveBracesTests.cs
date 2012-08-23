@@ -53,7 +53,7 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 				"{" + Environment.NewLine +
 				"	void Test ()" + Environment.NewLine +
 				"	{" + Environment.NewLine +
-				"		if (true) " + Environment.NewLine +
+				"		if (true)" + Environment.NewLine +
 				"			;" + Environment.NewLine +
 				"	}" + Environment.NewLine +
 				"}", result);

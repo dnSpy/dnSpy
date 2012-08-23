@@ -70,9 +70,9 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.TypeMembers
 						MemberName = "EventHandler"
 					},
 					Name = "MyEvent",
-					AddAccessor = new Accessor { Body = new BlockStatement() },
-					RemoveAccessor = new Accessor { Body = new BlockStatement() }
-				});
+				AddAccessor = new Accessor { Body = new BlockStatement() },
+				RemoveAccessor = new Accessor { Body = new BlockStatement() }
+			});
 		}
 		
 		[Test]

@@ -20,7 +20,7 @@
 	property is accessed.<br/>
 	For this purpose, the type system casts the parsed file to <code>IUnresolvedDocumentationProvider</code>
 	and tries to get the documentation.
-	This way, the <code>CSharpParsedFile</code> can provide the documentation from the XML comments.<br/>
+	This way, the <code>CSharpUnresolvedFile</code> can provide the documentation from the XML comments.<br/>
 	If this fails, the type system casts the unresolved assembly/project content to <code>IDocumentationProvider</code>.
 	This is the way the request for documentation gets to the <code>CecilLoader</code>,
 	which in turn forwards it to the user-provided <code>IDocumentationProvider</code>.

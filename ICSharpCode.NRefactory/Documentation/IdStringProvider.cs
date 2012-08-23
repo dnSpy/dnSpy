@@ -184,6 +184,11 @@ namespace ICSharpCode.NRefactory.Documentation
 		/// <param name="memberIdString">The ID string representing the member (with "M:", "F:", "P:" or "E:" prefix).</param>
 		/// <returns>A member reference that represents the ID string.</returns>
 		/// <exception cref="ReflectionNameParseException">The syntax of the ID string is invalid</exception>
+		/// <remarks>
+		/// The member reference will look in <see cref="ITypeResolveContext.CurrentAssembly"/> first,
+		/// and if the member is not found there,
+		/// it will look in all other assemblies of the compilation.
+		/// </remarks>
 		public static IMemberReference ParseMemberIdString(string memberIdString)
 		{
 			if (memberIdString == null)

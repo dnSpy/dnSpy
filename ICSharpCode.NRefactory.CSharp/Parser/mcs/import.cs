@@ -90,7 +90,7 @@ namespace Mono.CSharp
 				if (cad.Count > 0) {
 					foreach (var ca in cad) {
 						var dt = ca.Constructor.DeclaringType;
-						if (dt.Name != "DynamicAttribute" && dt.Namespace != CompilerServicesNamespace)
+						if (dt.Name != "DynamicAttribute" || dt.Namespace != CompilerServicesNamespace)
 							continue;
 
 						if (ca.ConstructorArguments.Count == 0) {
@@ -390,18 +390,21 @@ namespace Mono.CSharp
 				if ((mod & Modifiers.OVERRIDE) != 0) {
 					bool is_real_override = false;
 					if (kind == MemberKind.Method && declaringType.BaseType != null) {
-						var filter = MemberFilter.Method (name, tparams != null ? tparams.Length : 0, parameters, null);
-						var candidate = MemberCache.FindMember (declaringType.BaseType, filter, BindingRestriction.None);
+						var btype = declaringType.BaseType;
+						if (IsOverrideMethodBaseTypeAccessible (btype)) {
+							var filter = MemberFilter.Method (name, tparams != null ? tparams.Length : 0, parameters, null);
+							var candidate = MemberCache.FindMember (btype, filter, BindingRestriction.None);
 
-						//
-						// For imported class method do additional validation to be sure that metadata
-						// override flag was correct
-						// 
-						// Difference between protected internal and protected is ok
-						//
-						const Modifiers conflict_mask = Modifiers.AccessibilityMask & ~Modifiers.INTERNAL;
-						if (candidate != null && (candidate.Modifiers & conflict_mask) == (mod & conflict_mask) && !candidate.IsStatic) {
-							is_real_override = true;
+							//
+							// For imported class method do additional validation to be sure that metadata
+							// override flag was correct
+							// 
+							// Difference between protected internal and protected is ok
+							//
+							const Modifiers conflict_mask = Modifiers.AccessibilityMask & ~Modifiers.INTERNAL;
+							if (candidate != null && (candidate.Modifiers & conflict_mask) == (mod & conflict_mask) && !candidate.IsStatic) {
+								is_real_override = true;
+							}
 						}
 					}
 
@@ -432,6 +435,30 @@ namespace Mono.CSharp
 				ms.IsGeneric = true;
 
 			return ms;
+		}
+
+		bool IsOverrideMethodBaseTypeAccessible (TypeSpec baseType)
+		{
+			switch (baseType.Modifiers & Modifiers.AccessibilityMask) {
+			case Modifiers.PUBLIC:
+				return true;
+			case Modifiers.INTERNAL:
+				//
+				// Check whether imported method in base type is accessible from compiled
+				// context
+				//
+				return baseType.MemberDefinition.IsInternalAsPublic (module.DeclaringAssembly);
+			case Modifiers.PRIVATE:
+				return false;
+			default:
+				// protected
+				// protected internal
+				// 
+				// Method accessibility checks will be done later based on context
+				// where the method is called (CS0122 error will be reported for inaccessible)
+				//
+				return true;
+			}
 		}
 
 		//
@@ -835,6 +862,13 @@ namespace Mono.CSharp
 
 			import_cache.Add (type, spec);
 
+			if (kind == MemberKind.TypeParameter) {
+				if (canImportBaseType)
+					ImportTypeParameterTypeConstraints ((TypeParameterSpec) spec, type);
+
+				return spec;
+			}
+
 			//
 			// Two stage setup as the base type can be inflated declaring type or
 			// another nested type inside same declaring type which has not been
@@ -992,7 +1026,6 @@ namespace Mono.CSharp
 					ImportTypeParameterTypeConstraints (tp, tp.GetMetaInfo ());
 				}
 			}
-
 		}
 
 		protected void ImportTypes (MetaType[] types, Namespace targetNamespace, bool hasExtensionTypes)
@@ -1796,7 +1829,15 @@ namespace Mono.CSharp
 			// or referenced from the user core in which case compilation error has to
 			// be reported because compiler cannot continue anyway
 			//
-			foreach (var t in types) {
+			for (int i = 0; i < types.Count; ++i) {
+				var t = types [i];
+
+				//
+				// Report missing types only once per type
+				//
+				if (i > 0 && types.IndexOf (t) < i)
+					continue;
+
 				string name = t.GetSignatureForError ();
 
 				if (t.MemberDefinition.DeclaringAssembly == ctx.Module.DeclaringAssembly) {

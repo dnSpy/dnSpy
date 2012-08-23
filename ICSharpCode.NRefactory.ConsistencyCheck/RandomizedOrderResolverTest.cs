@@ -45,9 +45,9 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 			Random rnd = new Random(seed);
 			var test = new RandomizedOrderResolverTest();
 			// Resolve all nodes, but in a random order without using a navigator.
-			test.resolver = new CSharpAstResolver(file.Project.Compilation, file.CompilationUnit, file.ParsedFile);
+			test.resolver = new CSharpAstResolver(file.Project.Compilation, file.SyntaxTree, file.UnresolvedTypeSystemForFile);
 			// For comparing whether the results are equivalent, we also use a normal 'resolve all' resolver:
-			test.resolveAllResolver = new CSharpAstResolver(file.Project.Compilation, file.CompilationUnit, file.ParsedFile);
+			test.resolveAllResolver = new CSharpAstResolver(file.Project.Compilation, file.SyntaxTree, file.UnresolvedTypeSystemForFile);
 			test.resolveAllResolver.ApplyNavigator(new ResolveAllNavigator(), CancellationToken.None);
 			// Prepare list of actions that we need to verify:
 			var actions = new List<Func<bool>>();
@@ -56,7 +56,7 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 			bool checkStateAfter = rnd.Next(0, 2) == 0;
 			bool checkConversion = rnd.Next(0, 2) == 0;
 			bool checkExpectedType = rnd.Next(0, 2) == 0;
-			foreach (var _node in file.CompilationUnit.DescendantsAndSelf) {
+			foreach (var _node in file.SyntaxTree.DescendantsAndSelf) {
 				var node = _node;
 				if (CSharpAstResolver.IsUnresolvableNode(node))
 					continue;
@@ -147,7 +147,7 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 			return false;
 		}
 		
-		bool IsEqualResolveResult(ResolveResult rr1, ResolveResult rr2)
+		internal static bool IsEqualResolveResult(ResolveResult rr1, ResolveResult rr2)
 		{
 			if (rr1 == rr2)
 				return true;
@@ -169,7 +169,7 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 			return eq;
 		}
 		
-		bool Compare(object val1, object val2, Type type)
+		static bool Compare(object val1, object val2, Type type)
 		{
 			if (val1 == val2)
 				return true;
@@ -205,7 +205,7 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 			}
 		}
 		
-		bool IsEqualResolverState(CSharpResolver r1, CSharpResolver r2)
+		internal static bool IsEqualResolverState(CSharpResolver r1, CSharpResolver r2)
 		{
 			if (r1.CheckForOverflow != r2.CheckForOverflow)
 				return false;
@@ -226,7 +226,7 @@ namespace ICSharpCode.NRefactory.ConsistencyCheck
 			return r1.LocalVariables.Zip(r2.LocalVariables, IsEqualVariable).All(_ => _);
 		}
 		
-		bool IsEqualVariable(IVariable v1, IVariable v2)
+		internal static bool IsEqualVariable(IVariable v1, IVariable v2)
 		{
 			return object.Equals(v1.ConstantValue, v2.ConstantValue)
 				&& v1.IsConst == v2.IsConst

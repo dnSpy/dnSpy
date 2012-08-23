@@ -46,7 +46,7 @@ namespace ICSharpCode.NRefactory.GtkDemo
 		TreeStore store = new TreeStore (typeof (string), typeof (string), typeof (AstNode), typeof (Pixbuf));
 		Dictionary<AstNode, TreeIter> iterDict = new Dictionary<AstNode, TreeIter> ();
 //		TextEditor editor = new TextEditor ();
-		CompilationUnit unit;
+		SyntaxTree unit;
 		
 		Pixbuf comment = new Pixbuf (typeof (MainWindow).Assembly, "comment.png");
 		Pixbuf classPixbuf = new Pixbuf (typeof (MainWindow).Assembly, "class.png");
@@ -129,7 +129,7 @@ namespace ICSharpCode.NRefactory.GtkDemo
 		}
 
 
-		public void ShowUnit (CompilationUnit unit, CSharpAstResolver visitor)
+		public void ShowUnit (SyntaxTree unit, CSharpAstResolver visitor)
 		{
 			this.unit = unit;
 			store.Clear ();
@@ -223,14 +223,14 @@ namespace ICSharpCode.NRefactory.GtkDemo
 			var parser = new CSharpParser ();
 			var unit = parser.Parse (textview1.Buffer.Text, "dummy.cs");
 			
-			var parsedFile = unit.ToTypeSystem();
+			var unresolvedFile = unit.ToTypeSystem();
 			
 			IProjectContent project = new CSharpProjectContent ();
-			project = project.UpdateProjectContent (null, parsedFile);
+			project = project.AddOrUpdateFiles (unresolvedFile);
 			project = project.AddAssemblyReferences (builtInLibs.Value);
 			
 			
-			CSharpAstResolver resolver = new CSharpAstResolver(project.CreateCompilation (), unit, parsedFile);
+			CSharpAstResolver resolver = new CSharpAstResolver(project.CreateCompilation (), unit, unresolvedFile);
 			ShowUnit (unit, resolver);
 			
 		}

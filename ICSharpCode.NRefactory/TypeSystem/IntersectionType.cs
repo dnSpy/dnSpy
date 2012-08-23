@@ -162,6 +162,11 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			return GetMembersHelper.GetMembers(this, FilterNonStatic(filter), options);
 		}
 		
+		public override IEnumerable<IMethod> GetAccessors(Predicate<IUnresolvedMethod> filter, GetMemberOptions options)
+		{
+			return GetMembersHelper.GetAccessors(this, FilterNonStatic(filter), options);
+		}
+		
 		static Predicate<T> FilterNonStatic<T>(Predicate<T> filter) where T : class, IUnresolvedMember
 		{
 			if (filter == null)

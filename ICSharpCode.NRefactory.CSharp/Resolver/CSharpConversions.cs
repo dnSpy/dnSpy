@@ -84,6 +84,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			
 			public bool Equals(TypePair other)
 			{
+				if (this.FromType == null || this.ToType == null || other.FromType == null || other.ToType == null)
+					return false;
 				return this.FromType.Equals(other.FromType) && this.ToType.Equals(other.ToType);
 			}
 			
@@ -110,6 +112,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			}
 			c = ImplicitConversion(resolveResult.Type, toType);
 			if (c.IsValid) return c;
+			if (resolveResult.Type.Kind == TypeKind.Dynamic)
+				return Conversion.ImplicitDynamicConversion;
 			c = AnonymousFunctionConversion(resolveResult, toType);
 			if (c.IsValid) return c;
 			c = MethodGroupConversion(resolveResult, toType);
@@ -155,10 +159,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				return Conversion.NullLiteralConversion;
 			if (ImplicitReferenceConversion(fromType, toType, 0))
 				return Conversion.ImplicitReferenceConversion;
-			if (BoxingConversion(fromType, toType))
+			if (IsBoxingConversion(fromType, toType))
 				return Conversion.BoxingConversion;
-			if (fromType.Kind == TypeKind.Dynamic)
-				return Conversion.ImplicitDynamicConversion;
 			if (ImplicitTypeParameterConversion(fromType, toType)) {
 				// Implicit type parameter conversions that aren't also
 				// reference conversions are considered to be boxing conversions
@@ -184,8 +186,15 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				return true;
 			if (ImplicitReferenceConversion(fromType, toType, 0))
 				return true;
-			if (BoxingConversion(fromType, toType) && !NullableType.IsNullable(fromType))
-				return true;
+			if (NullableType.IsNullable(fromType)) {
+				// An 'object' constraint still allows nullable value types
+				// (object constraints don't exist in C#, but are inserted by DefaultResolvedTypeParameter.DirectBaseTypes)
+				if (toType.IsKnownType(KnownTypeCode.Object))
+					return true;
+			} else {
+				if (IsBoxingConversion(fromType, toType))
+					return true;
+			}
 			if (ImplicitTypeParameterConversion(fromType, toType))
 				return true;
 			return false;
@@ -216,8 +225,6 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			if (toType == null)
 				throw new ArgumentNullException("toType");
 			
-			if (fromType.Kind == TypeKind.Dynamic)
-				return Conversion.ExplicitDynamicConversion;
 			Conversion c = ImplicitConversion(fromType, toType);
 			if (c.IsValid)
 				return c;
@@ -240,11 +247,9 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				return Conversion.ExplicitReferenceConversion;
 			if (UnboxingConversion(fromType, toType))
 				return Conversion.UnboxingConversion;
-			if (ExplicitTypeParameterConversion(fromType, toType)) {
-				// Explicit type parameter conversions that aren't also
-				// reference conversions are considered to be unboxing conversions
-				return Conversion.UnboxingConversion;
-			}
+			c = ExplicitTypeParameterConversion(fromType, toType);
+			if (c.IsValid)
+				return c;
 			if (ExplicitPointerConversion(fromType, toType))
 				return Conversion.ExplicitPointerConversion;
 			return UserDefinedExplicitConversion(fromType, toType);
@@ -398,12 +403,20 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		#endregion
 		
 		#region Implicit Reference Conversion
+		public bool IsImplicitReferenceConversion(IType fromType, IType toType)
+		{
+			return ImplicitReferenceConversion(fromType, toType, 0);
+		}
+		
 		bool ImplicitReferenceConversion(IType fromType, IType toType, int subtypeCheckNestingDepth)
 		{
 			// C# 4.0 spec: §6.1.6
 			
-			// reference conversions are possible only if both types are known to be reference types
-			if (!(fromType.IsReferenceType == true && toType.IsReferenceType == true))
+			// reference conversions are possible:
+			// - if both types are known to be reference types
+			// - if both types are type parameters and fromType has a class constraint
+			//     (ImplicitTypeParameterConversionWithClassConstraintOnlyOnT)
+			if (!(fromType.IsReferenceType == true && toType.IsReferenceType != false))
 				return false;
 			
 			ArrayType fromArray = fromType as ArrayType;
@@ -415,22 +428,35 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 						&& ImplicitReferenceConversion(fromArray.ElementType, toArray.ElementType, subtypeCheckNestingDepth);
 				}
 				// conversion from single-dimensional array S[] to IList<T>:
-				ParameterizedType toPT = toType as ParameterizedType;
-				if (fromArray.Dimensions == 1 && toPT != null && toPT.TypeParameterCount == 1
-				    && toPT.Namespace == "System.Collections.Generic"
-				    && (toPT.Name == "IList" || toPT.Name == "ICollection" || toPT.Name == "IEnumerable" || toPT.Name == "IReadOnlyList"))
-				{
+				IType toTypeArgument = UnpackGenericArrayInterface(toType);
+				if (fromArray.Dimensions == 1 && toTypeArgument != null) {
 					// array covariance plays a part here as well (string[] is IList<object>)
-					return IdentityConversion(fromArray.ElementType, toPT.GetTypeArgument(0))
-						|| ImplicitReferenceConversion(fromArray.ElementType, toPT.GetTypeArgument(0), subtypeCheckNestingDepth);
+					return IdentityConversion(fromArray.ElementType, toTypeArgument)
+						|| ImplicitReferenceConversion(fromArray.ElementType, toTypeArgument, subtypeCheckNestingDepth);
 				}
 				// conversion from any array to System.Array and the interfaces it implements:
 				IType systemArray = compilation.FindType(KnownTypeCode.Array);
-				return systemArray.Kind != TypeKind.Unknown && (systemArray.Equals(toType) || ImplicitReferenceConversion(systemArray, toType, subtypeCheckNestingDepth));
+				return ImplicitReferenceConversion(systemArray, toType, subtypeCheckNestingDepth);
 			}
 			
 			// now comes the hard part: traverse the inheritance chain and figure out generics+variance
 			return IsSubtypeOf(fromType, toType, subtypeCheckNestingDepth);
+		}
+		
+		/// <summary>
+		/// For IList{T}, ICollection{T}, IEnumerable{T} and IReadOnlyList{T}, returns T.
+		/// Otherwise, returns null.
+		/// </summary>
+		IType UnpackGenericArrayInterface(IType interfaceType)
+		{
+			ParameterizedType pt = interfaceType as ParameterizedType;
+			if (pt != null) {
+				KnownTypeCode tc = pt.GetDefinition().KnownTypeCode;
+				if (tc == KnownTypeCode.IListOfT || tc == KnownTypeCode.ICollectionOfT || tc == KnownTypeCode.IEnumerableOfT || tc == KnownTypeCode.IReadOnlyListOfT) {
+					return pt.GetTypeArgument(0);
+				}
+			}
+			return null;
 		}
 		
 		// Determines whether s is a subtype of t.
@@ -461,7 +487,9 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		bool IdentityOrVarianceConversion(IType s, IType t, int subtypeCheckNestingDepth)
 		{
 			ITypeDefinition def = s.GetDefinition();
-			if (def != null && def.Equals(t.GetDefinition())) {
+			if (def != null) {
+				if (!def.Equals(t.GetDefinition()))
+					return false;
 				ParameterizedType ps = s as ParameterizedType;
 				ParameterizedType pt = t as ParameterizedType;
 				if (ps != null && pt != null) {
@@ -489,8 +517,10 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 					return false; // only of of them is parameterized, or counts don't match? -> not valid conversion
 				}
 				return true;
+			} else {
+				// not type definitions? we still need to check for equal types (e.g. s and t might be type parameters)
+				return s.Equals(t);
 			}
-			return false;
 		}
 		#endregion
 		
@@ -499,18 +529,97 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		{
 			// C# 4.0 spec: §6.2.4
 			
-			// reference conversions are possible only if both types are known to be reference types
-			if (!(fromType.IsReferenceType == true && toType.IsReferenceType == true))
+			// test that the types are reference types:
+			if (toType.IsReferenceType != true)
 				return false;
+			if (fromType.IsReferenceType != true) {
+				// special case:
+				// converting from F to T is a reference conversion where T : class, F
+				// (because F actually must be a reference type as well, even though C# doesn't treat it as one)
+				if (fromType.Kind == TypeKind.TypeParameter)
+					return IsSubtypeOf(toType, fromType, 0);
+				return false;
+			}
 			
-			// There's lots of additional rules, but they're not really relevant,
-			// as they are only used to identify invalid casts, and we currently don't care about reporting those.
-			return true;
+			if (toType.Kind == TypeKind.Array) {
+				ArrayType toArray = (ArrayType)toType;
+				if (fromType.Kind == TypeKind.Array) {
+					// Array covariance
+					ArrayType fromArray = (ArrayType)fromType;
+					if (fromArray.Dimensions != toArray.Dimensions)
+						return false;
+					return ExplicitReferenceConversion(fromArray.ElementType, toArray.ElementType);
+				}
+				IType fromTypeArgument = UnpackGenericArrayInterface(fromType);
+				if (fromTypeArgument != null && toArray.Dimensions == 1) {
+					return ExplicitReferenceConversion(fromTypeArgument, toArray.ElementType)
+						|| IdentityConversion(fromTypeArgument, toArray.ElementType);
+				}
+				// Otherwise treat the array like a sealed class - require implicit conversion in the opposite direction
+				return IsImplicitReferenceConversion(toType, fromType);
+			} else if (fromType.Kind == TypeKind.Array) {
+				ArrayType fromArray = (ArrayType)fromType;
+				IType toTypeArgument = UnpackGenericArrayInterface(toType);
+				if (toTypeArgument != null && fromArray.Dimensions == 1) {
+					return ExplicitReferenceConversion(fromArray.ElementType, toTypeArgument);
+				}
+				// Otherwise treat the array like a sealed class
+				return IsImplicitReferenceConversion(fromType, toType);
+			} else if (fromType.Kind == TypeKind.Delegate && toType.Kind == TypeKind.Delegate) {
+				ITypeDefinition def = fromType.GetDefinition();
+				if (def == null || !def.Equals(toType.GetDefinition()))
+					return false;
+				ParameterizedType ps = fromType as ParameterizedType;
+				ParameterizedType pt = toType as ParameterizedType;
+				if (ps == null || pt == null) {
+					// non-generic delegate - return true for the identity conversion
+					return ps == null && pt == null;
+				}
+				for (int i = 0; i < def.TypeParameters.Count; i++) {
+					IType si = ps.GetTypeArgument(i);
+					IType ti = pt.GetTypeArgument(i);
+					if (IdentityConversion(si, ti))
+						continue;
+					ITypeParameter xi = def.TypeParameters[i];
+					switch (xi.Variance) {
+						case VarianceModifier.Covariant:
+							if (!ExplicitReferenceConversion(si, ti))
+								return false;
+							break;
+						case VarianceModifier.Contravariant:
+							if (!(si.IsReferenceType == true && ti.IsReferenceType == true))
+								return false;
+							break;
+						default:
+							return false;
+					}
+				}
+				return true;
+			} else if (IsSealedReferenceType(fromType)) {
+				// If the source type is sealed, explicit conversions can't do anything more than implicit ones
+				return IsImplicitReferenceConversion(fromType, toType);
+			} else if (IsSealedReferenceType(toType)) {
+				// The the target type is sealed, there must be an implicit conversion in the opposite direction
+				return IsImplicitReferenceConversion(toType, fromType);
+			} else {
+				if (fromType.Kind == TypeKind.Interface || toType.Kind == TypeKind.Interface)
+					return true;
+				else
+					return IsImplicitReferenceConversion(toType, fromType)
+						|| IsImplicitReferenceConversion(fromType, toType);
+			}
+		}
+		
+		bool IsSealedReferenceType(IType type)
+		{
+			TypeKind kind = type.Kind;
+			return kind == TypeKind.Class && type.GetDefinition().IsSealed
+				|| kind == TypeKind.Delegate || kind == TypeKind.Anonymous;
 		}
 		#endregion
 		
 		#region Boxing Conversions
-		bool BoxingConversion(IType fromType, IType toType)
+		public bool IsBoxingConversion(IType fromType, IType toType)
 		{
 			// C# 4.0 spec: §6.1.7
 			fromType = NullableType.GetUnderlyingType(fromType);
@@ -575,13 +684,18 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			return IsSubtypeOf(fromType, toType, 0);
 		}
 		
-		bool ExplicitTypeParameterConversion(IType fromType, IType toType)
+		Conversion ExplicitTypeParameterConversion(IType fromType, IType toType)
 		{
 			if (toType.Kind == TypeKind.TypeParameter) {
-				return fromType.Kind == TypeKind.TypeParameter || fromType.IsReferenceType == true;
+				// Explicit type parameter conversions that aren't also
+				// reference conversions are considered to be unboxing conversions
+				if (fromType.Kind == TypeKind.Interface || IsSubtypeOf(toType, fromType, 0))
+					return Conversion.UnboxingConversion;
 			} else {
-				return fromType.Kind == TypeKind.TypeParameter && toType.Kind == TypeKind.Interface;
+				if (fromType.Kind == TypeKind.TypeParameter && toType.Kind == TypeKind.Interface)
+					return Conversion.BoxingConversion;
 			}
+			return Conversion.None;
 		}
 		#endregion
 		

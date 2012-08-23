@@ -108,6 +108,44 @@ public class Form1 {
 							}
 						}}});
 		}
+	
+		[Test]
+		public void TwoAttributesInSameSectionLocations()
+		{
+			string program = @"[A, B] class Test {}";
+			TypeDeclaration type = ParseUtilCSharp.ParseGlobal<TypeDeclaration>(program);
+			var attributeSection = type.Attributes.Single();
+			
+			var firstAttribute = attributeSection.Attributes.First();
+			Assert.AreEqual(2, firstAttribute.StartLocation.Column);
+			Assert.AreEqual(3, firstAttribute.EndLocation.Column); 
+			
+			var lastAttribute = attributeSection.Attributes.Last();
+			Assert.AreEqual(5, lastAttribute.StartLocation.Column);
+			Assert.AreEqual(6, lastAttribute.EndLocation.Column);
+			
+			Assert.AreEqual(1, attributeSection.StartLocation.Column);
+			Assert.AreEqual(7, attributeSection.EndLocation.Column);
+		}
+		
+		[Test]
+		public void TwoAttributesWithOptionalCommaInSameSectionLocations()
+		{
+			string program = @"[A, B,] class Test {}";
+			TypeDeclaration type = ParseUtilCSharp.ParseGlobal<TypeDeclaration>(program);
+			var attributeSection = type.Attributes.Single();
+			
+			var firstAttribute = attributeSection.Attributes.First();
+			Assert.AreEqual(2, firstAttribute.StartLocation.Column);
+			Assert.AreEqual(3, firstAttribute.EndLocation.Column); 
+			
+			var lastAttribute = attributeSection.Attributes.Last();
+			Assert.AreEqual(5, lastAttribute.StartLocation.Column);
+			Assert.AreEqual(6, lastAttribute.EndLocation.Column);
+			
+			Assert.AreEqual(1, attributeSection.StartLocation.Column);
+			Assert.AreEqual(8, attributeSection.EndLocation.Column);
+		}
 		
 		[Test]
 		public void AttributesOnTypeParameter()
@@ -197,13 +235,27 @@ public class Form1 {
 		[Test]
 		public void AssemblyAttributeBeforeNamespace()
 		{
-			var cu = new CSharpParser().Parse(new StringReader("using System; [assembly: Attr] namespace X {}"), "code.cs");
+			var syntaxTree = SyntaxTree.Parse("using System; [assembly: Attr] namespace X {}");
 			Assert.AreEqual(
 				new Type[] {
 					typeof(UsingDeclaration),
 					typeof(AttributeSection),
 					typeof(NamespaceDeclaration)
-				}, cu.Children.Select(c => c.GetType()).ToArray());
+				}, syntaxTree.Children.Select(c => c.GetType()).ToArray());
+		}
+		
+		[Ignore("Fixme!")]
+		[Test]
+		public void AssemblyAttributeBeforeClass()
+		{
+			var syntaxTree = SyntaxTree.Parse("using System; [assembly: Attr] class X {}");
+			Assert.AreEqual(
+				new Type[] {
+					typeof(UsingDeclaration),
+					typeof(AttributeSection),
+					typeof(TypeDeclaration)
+				}, syntaxTree.Children.Select(c => c.GetType()).ToArray());
+			Assert.That(((TypeDeclaration)syntaxTree.LastChild).Attributes, Is.Empty);
 		}
 	}
 }

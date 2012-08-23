@@ -37,7 +37,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		/// <param name="nameSpace">The namespace name containing the type, e.g. "System.Collections.Generic".</param>
 		/// <param name="name">The name of the type, e.g. "List".</param>
 		/// <param name="typeParameterCount">The number of type parameters, (e.g. 1 for List&lt;T&gt;).</param>
-		public GetClassTypeReference(string nameSpace, string name, int typeParameterCount)
+		public GetClassTypeReference(string nameSpace, string name, int typeParameterCount = 0)
 		{
 			if (nameSpace == null)
 				throw new ArgumentNullException("nameSpace");
@@ -56,7 +56,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		/// <param name="nameSpace">The namespace name containing the type, e.g. "System.Collections.Generic".</param>
 		/// <param name="name">The name of the type, e.g. "List".</param>
 		/// <param name="typeParameterCount">The number of type parameters, (e.g. 1 for List&lt;T&gt;).</param>
-		public GetClassTypeReference(IAssemblyReference assembly, string nameSpace, string name, int typeParameterCount)
+		public GetClassTypeReference(IAssemblyReference assembly, string nameSpace, string name, int typeParameterCount = 0)
 		{
 			if (nameSpace == null)
 				throw new ArgumentNullException("nameSpace");

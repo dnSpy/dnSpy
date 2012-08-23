@@ -1,4 +1,4 @@
-// 
+﻿// 
 // RedundantThisInspector.cs
 //  
 // Author:
@@ -45,6 +45,21 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 	       IssueMarker = IssueMarker.GrayOut)]
 	public class RedundantThisIssue : ICodeIssueProvider
 	{
+		bool ignoreConstructors = true;
+
+		/// <summary>
+		/// Specifies whether to ignore redundant 'this' in constructors.
+		/// "this.Name = name;"
+		/// </summary>
+		public bool IgnoreConstructors {
+			get {
+				return ignoreConstructors;
+			}
+			set {
+				ignoreConstructors = value;
+			}
+		}
+		
 		public IEnumerable<CodeIssue> GetIssues(BaseRefactoringContext context)
 		{
 			return new GatherVisitor(context, this).GetIssues();
@@ -69,6 +84,13 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 
 				return null;
 			}
+			
+			public override void VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration)
+			{
+				if (inspector.IgnoreConstructors)
+					return;
+				base.VisitConstructorDeclaration(constructorDeclaration);
+			}
 
 			public override void VisitThisReferenceExpression(ThisReferenceExpression thisReferenceExpression)
 			{
@@ -86,7 +108,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 					return;
 				}
 
-				var result = state.LookupSimpleNameOrTypeName(memberReference.MemberName, EmptyList<IType>.Instance, SimpleNameLookupMode.Expression);
+				var result = state.LookupSimpleNameOrTypeName(memberReference.MemberName, EmptyList<IType>.Instance, NameLookupMode.Expression);
 			
 				bool isRedundant;
 				if (result is MemberResolveResult) {

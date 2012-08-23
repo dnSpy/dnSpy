@@ -53,7 +53,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		}
 	}
 
-	internal class MyBinaryWriter : BinaryWriter
+	sealed class MyBinaryWriter : BinaryWriter
 	{
 		public MyBinaryWriter (Stream stream)
 			: base (stream)

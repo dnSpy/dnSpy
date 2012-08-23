@@ -227,7 +227,9 @@ namespace Mono.CSharp
 			//
 			// awaiter = expr.GetAwaiter ();
 			//
-			fe_awaiter.EmitAssign (ec, expr, false, false);
+			using (ec.With (BuilderContext.Options.OmitDebugInfo, true)) {
+				fe_awaiter.EmitAssign (ec, expr, false, false);
+			}
 
 			Label skip_continuation = ec.DefineLabel ();
 
@@ -284,14 +286,8 @@ namespace Mono.CSharp
 
 			awaiter.IsAvailableForReuse = true;
 
-			if (ResultType.Kind != MemberKind.Void) {
-				var storey = (AsyncTaskStorey) machine_initializer.Storey;
-
-			    if (storey.HoistedReturn != null)
-			        storey.HoistedReturn.EmitAssign (ec);
-				else
-					ec.Emit (OpCodes.Pop);
-			}
+			if (ResultType.Kind != MemberKind.Void)
+				ec.Emit (OpCodes.Pop);
 		}
 
 		void Error_WrongAwaiterPattern (ResolveContext rc, TypeSpec awaiter)

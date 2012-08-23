@@ -17,8 +17,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using ICSharpCode.NRefactory.CSharp.Resolver;
 using ICSharpCode.NRefactory.Documentation;
 using ICSharpCode.NRefactory.Editor;
+using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.CSharp.TypeSystem
@@ -38,6 +40,23 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 				// resolve ID string
 				return base.ResolveCref(cref);
 			}
+			var documentationReference = new CSharpParser().ParseDocumentationReference(cref);
+			var csharpContext = context as CSharpTypeResolveContext;
+			CSharpResolver resolver;
+			if (csharpContext != null) {
+				resolver = new CSharpResolver(csharpContext);
+			} else {
+				resolver = new CSharpResolver(context.Compilation);
+			}
+			var astResolver = new CSharpAstResolver(resolver, documentationReference);
+			var rr = astResolver.Resolve(documentationReference);
+			
+			MemberResolveResult mrr = rr as MemberResolveResult;
+			if (mrr != null)
+				return mrr.Member;
+			TypeResolveResult trr = rr as TypeResolveResult;
+			if (trr != null)
+				return trr.Type.GetDefinition();
 			return null;
 		}
 	}

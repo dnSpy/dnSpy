@@ -25,7 +25,6 @@ using NUnit.Framework;
 namespace ICSharpCode.NRefactory.Documentation
 {
 	[TestFixture]
-	[Ignore("Cref parsing not yet implemented")]
 	public class CSharpCrefParserTests
 	{
 		[Test]
@@ -39,6 +38,7 @@ namespace ICSharpCode.NRefactory.Documentation
 		}
 		
 		[Test]
+		[Ignore("mcs bug")]
 		public void This()
 		{
 			ParseUtilCSharp.AssertDocumentationReference(
@@ -49,6 +49,7 @@ namespace ICSharpCode.NRefactory.Documentation
 		}
 		
 		[Test]
+		[Ignore("mcs bug (Unexpected symbol `this', expecting `explicit', `implicit', `operator', or `type')")]
 		public void ThisWithParameter()
 		{
 			ParseUtilCSharp.AssertDocumentationReference(
@@ -112,6 +113,21 @@ namespace ICSharpCode.NRefactory.Documentation
 				"@int",
 				new DocumentationReference {
 					MemberName = "int"
+				});
+		}
+		
+		[Test]
+		public void IntParse()
+		{
+			ParseUtilCSharp.AssertDocumentationReference(
+				"int.Parse(string)",
+				new DocumentationReference {
+					DeclaringType = new PrimitiveType("int"),
+					MemberName = "Parse",
+					HasParameterList = true,
+					Parameters = {
+						new ParameterDeclaration { Type = new PrimitiveType("string") }
+					}
 				});
 		}
 		
@@ -201,6 +217,7 @@ namespace ICSharpCode.NRefactory.Documentation
 		}
 		
 		[Test]
+		[Ignore("mcs bug (Unexpected symbol `operator', expecting `identifier' or `this')")]
 		public void OperatorPlusWithDeclaringType()
 		{
 			ParseUtilCSharp.AssertDocumentationReference(
@@ -256,6 +273,7 @@ namespace ICSharpCode.NRefactory.Documentation
 		}
 		
 		[Test]
+		[Ignore("mcs bug (Unexpected symbol `explicit', expecting `identifier' or `this')")]
 		public void ExplicitOperatorWithParameterListAndDeclaringType()
 		{
 			ParseUtilCSharp.AssertDocumentationReference(

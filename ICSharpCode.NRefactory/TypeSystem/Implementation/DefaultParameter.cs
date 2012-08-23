@@ -118,7 +118,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				b.Append("params ");
 			b.Append(parameter.Name);
 			b.Append(':');
-			b.Append(parameter.Type.ToString());
+			b.Append(parameter.Type.ReflectionName);
 			if (parameter.IsOptional) {
 				b.Append(" = ");
 				if (parameter.ConstantValue != null)

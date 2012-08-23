@@ -18,7 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 
 using ICSharpCode.NRefactory.Semantics;
 
@@ -27,9 +26,6 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <summary>
 	/// Represents an unresolved attribute.
 	/// </summary>
-	#if WITH_CONTRACTS
-	[ContractClass(typeof(IUnresolvedAttributeContract))]
-	#endif
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
 	public interface IUnresolvedAttribute
 	{
@@ -37,8 +33,6 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// Gets the code region of this attribute.
 		/// </summary>
 		DomRegion Region { get; }
-		
-		//ITypeReference AttributeType { get; }
 		
 		/// <summary>
 		/// Resolves the attribute.
@@ -49,9 +43,6 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <summary>
 	/// Represents an attribute.
 	/// </summary>
-	#if WITH_CONTRACTS
-	[ContractClass(typeof(IAttributeContract))]
-	#endif
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
 	public interface IAttribute
 	{
@@ -81,41 +72,4 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// </summary>
 		IList<KeyValuePair<IMember, ResolveResult>> NamedArguments { get; }
 	}
-	
-	#if WITH_CONTRACTS
-	[ContractClassFor(typeof(IAttribute))]
-	abstract class IAttributeContract : IFreezableContract, IAttribute
-	{
-		DomRegion IAttribute.Region {
-			get { return DomRegion.Empty; }
-		}
-		
-		ITypeReference IAttribute.AttributeType {
-			get {
-				Contract.Ensures(Contract.Result<ITypeReference>() != null);
-				return null;
-			}
-		}
-		
-		IList<IConstantValue> IAttribute.GetPositionalArguments(ITypeResolveContext context)
-		{
-			Contract.Requires(context != null);
-			Contract.Ensures(Contract.Result<IList<IConstantValue>>() != null);
-			return null;
-		}
-		
-		IList<KeyValuePair<string, IConstantValue>> IAttribute.GetNamedArguments(ITypeResolveContext context)
-		{
-			Contract.Requires(context != null);
-			Contract.Ensures(Contract.Result<IList<KeyValuePair<string, IConstantValue>>>() != null);
-			return null;
-		}
-		
-		IMethod IAttribute.ResolveConstructor(ITypeResolveContext context)
-		{
-			Contract.Requires(context != null);
-			return null;
-		}
-	}
-	#endif
 }

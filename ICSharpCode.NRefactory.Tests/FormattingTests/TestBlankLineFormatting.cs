@@ -62,6 +62,7 @@ namespace Test
 }", FormattingMode.Intrusive);
 		}
 
+		[Ignore()]
 		[Test()]
 		public void TestBlankLinesBeforeUsings ()
 		{

@@ -25,7 +25,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 {
 	/// <summary>
 	/// When an <see cref="IResolveVisitorNavigator"/> is searching for specific nodes
-	/// (e.g. all IdentifierExpressions), it has to scan the whole compilation unit for those nodes.
+	/// (e.g. all IdentifierExpressions), it has to scan the whole syntax tree for those nodes.
 	/// However, scanning in the ResolveVisitor is expensive (e.g. any lambda that is scanned must be resolved),
 	/// so it makes sense to detect when a whole subtree is scan-only, and skip that tree instead.
 	/// 

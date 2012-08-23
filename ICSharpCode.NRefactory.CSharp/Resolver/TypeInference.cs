@@ -510,7 +510,6 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 					}
 					var or = mgrr.PerformOverloadResolution(compilation,
 					                                        args,
-					                                        allowExtensionMethods: false,
 					                                        allowExpandingParams: false);
 					if (or.FoundApplicableCandidate && or.BestCandidateAmbiguousWith == null) {
 						IType returnType = or.GetBestCandidateWithSubstitutedTypeArguments().ReturnType;

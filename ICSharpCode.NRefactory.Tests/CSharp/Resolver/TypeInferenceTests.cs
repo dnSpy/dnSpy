@@ -148,6 +148,30 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 					out success));
 			Assert.IsTrue(success);
 		}
+		
+		[Test]
+		public void IEnumerableCovarianceWithDynamic()
+		{
+			ITypeParameter tp = new DefaultTypeParameter(compilation, EntityType.Method, 0, "T");
+			var ienumerableOfT = new ParameterizedType(compilation.FindType(typeof(IEnumerable<>)).GetDefinition(), new[] { tp });
+			var ienumerableOfString = compilation.FindType(typeof(IEnumerable<string>));
+			var ienumerableOfDynamic = compilation.FindType(typeof(IEnumerable<ReflectionHelper.Dynamic>));
+			
+			// static T M<T>(IEnumerable<T> x, IEnumerable<T> y) {}
+			// M(IEnumerable<dynamic>, IEnumerable<string>); -> should infer T=dynamic, no ambiguity
+			// See http://blogs.msdn.com/b/cburrows/archive/2010/04/01/errata-dynamic-conversions-and-overload-resolution.aspx
+			// for details.
+			
+			bool success;
+			Assert.AreEqual(
+				new [] { SpecialType.Dynamic },
+				ti.InferTypeArguments(
+					new [] { tp },
+					new [] { new ResolveResult(ienumerableOfDynamic), new ResolveResult(ienumerableOfString) },
+					new [] { ienumerableOfT, ienumerableOfT },
+					out success));
+			Assert.IsTrue(success);
+		}
 		#endregion
 		
 		#region Inference with Method Groups

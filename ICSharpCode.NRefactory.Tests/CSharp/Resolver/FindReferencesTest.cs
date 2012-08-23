@@ -30,16 +30,16 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 	[TestFixture]
 	public class FindReferencesTest
 	{
-		CompilationUnit compilationUnit;
-		CSharpParsedFile parsedFile;
+		SyntaxTree syntaxTree;
+		CSharpUnresolvedFile unresolvedFile;
 		ICompilation compilation;
 		FindReferences findReferences;
 		
 		void Init(string code)
 		{
-			compilationUnit = new CSharpParser().Parse(new StringReader(code), "test.cs");
-			parsedFile = compilationUnit.ToTypeSystem();
-			compilation = TypeSystemHelper.CreateCompilation(parsedFile);
+			syntaxTree = SyntaxTree.Parse(code, "test.cs");
+			unresolvedFile = syntaxTree.ToTypeSystem();
+			compilation = TypeSystemHelper.CreateCompilation(unresolvedFile);
 			findReferences = new FindReferences();
 		}
 		
@@ -47,7 +47,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		{
 			var result = new List<AstNode>();
 			var searchScopes = findReferences.GetSearchScopes(entity);
-			findReferences.FindReferencesInFile(searchScopes, parsedFile, compilationUnit, compilation,
+			findReferences.FindReferencesInFile(searchScopes, unresolvedFile, syntaxTree, compilation,
 			                                    (node, rr) => result.Add(node), CancellationToken.None);
 			return result.OrderBy(n => n.StartLocation).ToArray();
 		}

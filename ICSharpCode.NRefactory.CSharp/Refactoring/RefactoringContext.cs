@@ -44,24 +44,23 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 		}
 
 		public abstract TextLocation Location { get; }
-
-		public virtual AstType CreateShortType (IType fullType)
+		
+		public TypeSystemAstBuilder CreateTypeSytemAstBuilder()
 		{
 			var csResolver = Resolver.GetResolverStateBefore(GetNode());
-			var builder = new TypeSystemAstBuilder(csResolver);
+			return new TypeSystemAstBuilder(csResolver);
+		}
+		
+		public virtual AstType CreateShortType (IType fullType)
+		{
+			var builder = CreateTypeSytemAstBuilder();
 			return builder.ConvertType(fullType);
 		}
 		
-		public AstType CreateShortType(string ns, string name, int typeParameterCount = 0)
+		public virtual AstType CreateShortType(string ns, string name, int typeParameterCount = 0)
 		{
-			foreach (var asm in Compilation.Assemblies) {
-				var def = asm.GetTypeDefinition(ns, name, typeParameterCount);
-				if (def != null) {
-					return CreateShortType(def);
-				}
-			}
-			
-			return new MemberType(new SimpleType(ns), name);
+			var builder = CreateTypeSytemAstBuilder();
+			return builder.ConvertType(ns, name, typeParameterCount);
 		}
 
 		public virtual IEnumerable<AstNode> GetSelectedNodes()
@@ -133,6 +132,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 		public abstract string GetText (ISegment segment);
 		#endregion
 
+		#region Naming
 		public virtual string GetNameProposal (string name, bool camelCase = true)
 		{
 			string baseName = (camelCase ? char.ToLower (name [0]) : char.ToUpper (name [0])) + name.Substring (1);
@@ -153,6 +153,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 		{
 			return baseName + (number > 0 ? (number + 1).ToString () : "");
 		}
+		#endregion
 	}
 }
 

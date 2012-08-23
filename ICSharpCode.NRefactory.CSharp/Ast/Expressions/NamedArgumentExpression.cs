@@ -30,13 +30,13 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 		}
 		
-		public NamedArgumentExpression(string identifier, Expression expression)
+		public NamedArgumentExpression(string name, Expression expression)
 		{
-			this.Identifier = identifier;
+			this.Name = name;
 			this.Expression = expression;
 		}
 		
-		public string Identifier {
+		public string Name {
 			get {
 				return GetChildByRole (Roles.Identifier).Name;
 			}
@@ -45,7 +45,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		public Identifier IdentifierToken {
+		public Identifier NameToken {
 			get {
 				return GetChildByRole (Roles.Identifier);
 			}
@@ -81,7 +81,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		protected internal override bool DoMatch(AstNode other, PatternMatching.Match match)
 		{
 			NamedArgumentExpression o = other as NamedArgumentExpression;
-			return o != null && MatchString(this.Identifier, o.Identifier) && this.Expression.DoMatch(o.Expression, match);
+			return o != null && MatchString(this.Name, o.Name) && this.Expression.DoMatch(o.Expression, match);
 		}
 	}
 }

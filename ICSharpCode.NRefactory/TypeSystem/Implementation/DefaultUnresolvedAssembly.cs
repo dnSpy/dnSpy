@@ -69,7 +69,18 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				assemblyName = value;
 			}
 		}
-		
+
+		string location;
+		public string Location {
+			get {
+				return location;
+			}
+			set {
+				FreezableHelper.ThrowIfFrozen(this);
+				location = value;
+			}
+		}
+
 		public IList<IUnresolvedAttribute> AssemblyAttributes {
 			get { return assemblyAttributes; }
 		}
@@ -260,8 +271,8 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				this.unresolvedTypeDict = unresolved.GetTypeDictionary(compilation.NameComparer);
 				this.rootNamespace = new NS(this, unresolved.GetUnresolvedRootNamespace(compilation.NameComparer), null);
 				this.context = new SimpleTypeResolveContext(this);
-				this.AssemblyAttributes = unresolved.AssemblyAttributes.ToList().CreateResolvedAttributes(context);
-				this.ModuleAttributes = unresolved.ModuleAttributes.ToList().CreateResolvedAttributes(context);
+				this.AssemblyAttributes = unresolved.AssemblyAttributes.CreateResolvedAttributes(context);
+				this.ModuleAttributes = unresolved.ModuleAttributes.CreateResolvedAttributes(context);
 			}
 			
 			public IUnresolvedAssembly UnresolvedAssembly {
@@ -365,6 +376,10 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				
 				INamespace INamespace.ParentNamespace {
 					get { return parentNamespace; }
+				}
+				
+				IEnumerable<IAssembly> INamespace.ContributingAssemblies {
+					get { return new [] { assembly }; }
 				}
 				
 				IEnumerable<INamespace> INamespace.ChildNamespaces {

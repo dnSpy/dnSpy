@@ -29,27 +29,11 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	/// <remarks>
 	/// 'ref int' and 'out int' are considered to be equal.
 	/// "Method{T}(T a)" and "Method{S}(S b)" are also considered equal.
+	/// However, "Method(T a)" and "Method(S b)" are not considered equal when the type parameters T and S belong to classes.
 	/// </remarks>
 	public sealed class ParameterListComparer : IEqualityComparer<IList<IParameter>>
 	{
 		public static readonly ParameterListComparer Instance = new ParameterListComparer();
-		
-		// We want to consider the parameter lists "Method<T>(T a)" and "Method<S>(S b)" as equal.
-		// However, the parameter types are not considered equal, as T is a different type parameter than S.
-		// In order to compare the method signatures, we will normalize all method type parameters.
-		sealed class NormalizeMethodTypeParametersVisitor : TypeVisitor
-		{
-			public override IType VisitTypeParameter(ITypeParameter type)
-			{
-				if (type.OwnerType == EntityType.Method) {
-					return DummyTypeParameter.GetMethodTypeParameter(type.Index);
-				} else {
-					return base.VisitTypeParameter(type);
-				}
-			}
-		}
-		
-		readonly NormalizeMethodTypeParametersVisitor normalization = new NormalizeMethodTypeParametersVisitor();
 		
 		/// <summary>
 		/// Replaces all occurrences of method type parameters in the given type
@@ -58,7 +42,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// </summary>
 		public IType NormalizeMethodTypeParameters(IType type)
 		{
-			return type.AcceptVisitor(normalization);
+			return DummyTypeParameter.NormalizeMethodTypeParameters(type);
 		}
 		
 		public bool Equals(IList<IParameter> x, IList<IParameter> y)
@@ -74,8 +58,12 @@ namespace ICSharpCode.NRefactory.TypeSystem
 					continue;
 				if (a == null || b == null)
 					return false;
-				IType aType = a.Type.AcceptVisitor(normalization);
-				IType bType = b.Type.AcceptVisitor(normalization);
+				
+				// We want to consider the parameter lists "Method<T>(T a)" and "Method<S>(S b)" as equal.
+				// However, the parameter types are not considered equal, as T is a different type parameter than S.
+				// In order to compare the method signatures, we will normalize all method type parameters.
+				IType aType = DummyTypeParameter.NormalizeMethodTypeParameters(a.Type);
+				IType bType = DummyTypeParameter.NormalizeMethodTypeParameters(b.Type);
 				
 				if (!aType.Equals(bType))
 					return false;
@@ -89,7 +77,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			unchecked {
 				foreach (IParameter p in obj) {
 					hashCode *= 27;
-					IType type = p.Type.AcceptVisitor(normalization);
+					IType type = DummyTypeParameter.NormalizeMethodTypeParameters(p.Type);
 					hashCode += type.GetHashCode();
 				}
 			}

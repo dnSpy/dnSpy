@@ -63,12 +63,14 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			ResolveResult targetResolveResult = null;
 			if (identifier is MemberReferenceExpression) {
 				targetResolveResult = context.Resolve(((MemberReferenceExpression)identifier).Target);
+				if (targetResolveResult.Type.GetDefinition() == null || targetResolveResult.Type.GetDefinition().Region.IsEmpty)
+					yield break;
 				createInOtherType = !state.CurrentTypeDefinition.Equals(targetResolveResult.Type.GetDefinition());
 			}
 
 			bool isStatic = targetResolveResult is TypeResolveResult;
 			if (createInOtherType) {
-				if (isStatic && targetResolveResult.Type.Kind == TypeKind.Interface)
+				if (isStatic && targetResolveResult.Type.Kind == TypeKind.Interface || targetResolveResult.Type.Kind == TypeKind.Enum)
 					yield break;
 			} else {
 				if (state.CurrentMember == null)
@@ -76,7 +78,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				isStatic |= state.CurrentMember.IsStatic || state.CurrentTypeDefinition.IsStatic;
 			}
 
-//			var service = (NamingConventionService)context.GetService(typeof(NamingConventionService));
+	//			var service = (NamingConventionService)context.GetService(typeof(NamingConventionService));
 //			if (service != null && !service.IsValidName(propertyName, AffectedEntity.Property, Modifiers.Private, isStatic)) { 
 //				yield break;
 //			}
@@ -97,15 +99,20 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 					} else {
 						decl.Modifiers |= Modifiers.Public;
 					}
-					script.InsertWithCursor(context.TranslateString("Create property"), decl, targetResolveResult.Type.GetDefinition());
+					script.InsertWithCursor(
+						context.TranslateString("Create property"),
+						targetResolveResult.Type.GetDefinition(),
+						decl);
+
 					return;
 				}
 
-				script.InsertWithCursor(context.TranslateString("Create property"), decl, Script.InsertPosition.Before);
+				script.InsertWithCursor(context.TranslateString("Create property"), Script.InsertPosition.Before, decl);
+
 			});
 		}
 
-		static string GetPropertyName(Expression expr)
+		internal static string GetPropertyName(Expression expr)
 		{
 			if (expr is IdentifierExpression) 
 				return ((IdentifierExpression)expr).Identifier;

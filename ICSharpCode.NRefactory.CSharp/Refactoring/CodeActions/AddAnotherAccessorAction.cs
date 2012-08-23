@@ -37,7 +37,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 		public IEnumerable<CodeAction> GetActions(RefactoringContext context)
 		{
 			var pdecl = GetPropertyDeclaration(context);
-			if (pdecl == null) { 
+			if (pdecl == null || !pdecl.Getter.IsNull && !pdecl.Setter.IsNull) { 
 				yield break;
 			}
 
@@ -45,7 +45,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			if (type != null && type.ClassType == ClassType.Interface) {
 				yield break;
 			}
-			yield return new CodeAction (pdecl.Setter.IsNull ? context.TranslateString("Add getter") : context.TranslateString("Add setter"), script => {
+			yield return new CodeAction (pdecl.Setter.IsNull ? context.TranslateString("Add setter") : context.TranslateString("Add getter"), script => {
 				var accessorStatement = BuildAccessorStatement(context, pdecl);
 			
 				Accessor accessor = new Accessor () {

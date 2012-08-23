@@ -31,6 +31,7 @@ using ICSharpCode.NRefactory.CSharp.Resolver;
 using ICSharpCode.NRefactory.CSharp.Analysis;
 using System.Threading;
 using ICSharpCode.NRefactory.TypeSystem;
+using System.Threading.Tasks;
 
 namespace ICSharpCode.NRefactory.CSharp.Refactoring.ExtractMethod
 {
@@ -44,14 +45,14 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring.ExtractMethod
 			var selected = new List<AstNode>(context.GetSelectedNodes());
 			if (selected.Count == 0)
 				yield break;
-
+			
 			if (selected.Count == 1 && selected [0] is Expression) {
 				var codeAction = CreateFromExpression(context, (Expression)selected [0]);
 				if (codeAction == null)
 					yield break;
 				yield return codeAction;
 			}
-
+			
 			foreach (var node in selected) {
 				if (!(node is Statement))
 					yield break;
@@ -60,13 +61,13 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring.ExtractMethod
 			if (action != null)
 				yield return action;
 		}
-
+		
 		CodeAction CreateFromExpression(RefactoringContext context, Expression expression)
 		{
 			var resolveResult = context.Resolve(expression);
 			if (resolveResult.IsError)
 				return null;
-
+			
 			return new CodeAction(context.TranslateString("Extract method"), script => {
 				string methodName = "NewMethod";
 				var method = new MethodDeclaration() {
@@ -78,18 +79,27 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring.ExtractMethod
 				};
 				if (!StaticVisitor.UsesNotStaticMember(context, expression))
 					method.Modifiers |= Modifiers.Static;
-				script.InsertWithCursor(context.TranslateString("Extract method"), method, Script.InsertPosition.Before);
-				var target = new IdentifierExpression(methodName);
-				script.Replace(expression, new InvocationExpression(target));
-//				script.Link(target, method.NameToken);
+				var task = script.InsertWithCursor(context.TranslateString("Extract method"), Script.InsertPosition.Before, method);
+
+				Action<Task> replaceStatements = delegate {
+					var target = new IdentifierExpression(methodName);
+					script.Replace(expression, new InvocationExpression(target));
+					script.Link(target, method.NameToken);
+				};
+
+				if (task.IsCompleted) {
+					replaceStatements (null);
+				} else {
+					task.ContinueWith (replaceStatements, TaskScheduler.FromCurrentSynchronizationContext ());
+				}
 			});
 		}
-
+		
 		CodeAction CreateFromStatements(RefactoringContext context, List<Statement> statements)
 		{
 			if (!(statements [0].Parent is Statement))
 				return null;
-
+			
 			return new CodeAction(context.TranslateString("Extract method"), script => {
 				string methodName = "NewMethod";
 				var method = new MethodDeclaration() {
@@ -107,79 +117,90 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring.ExtractMethod
 				
 				var target = new IdentifierExpression(methodName);
 				var invocation = new InvocationExpression(target);
-
-				var usedVariables = VariableLookupVisitor.Analyze(context, statements);
-
-				var extractedCodeAnalysis = new DefiniteAssignmentAnalysis((Statement)statements [0].Parent, context.Resolver, context.CancellationToken);
-				var lastStatement = statements [statements.Count - 1];
-				extractedCodeAnalysis.SetAnalyzedRange(statements [0], lastStatement);
-				var statusAfterMethod = new List<Tuple<IVariable, DefiniteAssignmentStatus>>();
 				
-				foreach (var variable in usedVariables) {
-					extractedCodeAnalysis.Analyze(variable.Name, DefiniteAssignmentStatus.PotentiallyAssigned, context.CancellationToken);
-					statusAfterMethod.Add(Tuple.Create(variable, extractedCodeAnalysis.GetStatusAfter(lastStatement)));
-				}
+				var usedVariables = VariableLookupVisitor.Analyze(context, statements);
+				
+				var inExtractedRegion = new VariableUsageAnalyzation (context, usedVariables);
+				var lastStatement = statements [statements.Count - 1];
+				
 				var stmt = statements [0].GetParent<BlockStatement>();
 				while (stmt.GetParent<BlockStatement> () != null) {
 					stmt = stmt.GetParent<BlockStatement>();
 				}
 				
-				var wholeCodeAnalysis = new DefiniteAssignmentAnalysis(stmt, context.Resolver, context.CancellationToken);
-				var statusBeforeMethod = new Dictionary<IVariable, DefiniteAssignmentStatus>();
+				inExtractedRegion.SetAnalyzedRange(statements [0], lastStatement);
+				stmt.AcceptVisitor (inExtractedRegion);
+				
+				var beforeExtractedRegion = new VariableUsageAnalyzation (context, usedVariables);
+				beforeExtractedRegion.SetAnalyzedRange(statements [0].Parent, statements [0], true, false);
+				stmt.AcceptVisitor (beforeExtractedRegion);
+				
+				var afterExtractedRegion = new VariableUsageAnalyzation (context, usedVariables);
+				afterExtractedRegion.SetAnalyzedRange(lastStatement, stmt.Statements.Last(), false, true);
+				stmt.AcceptVisitor (afterExtractedRegion);
+				usedVariables.Sort ((l, r) => l.Region.Begin.CompareTo (r.Region.Begin));
+
+				IVariable generatedReturnVariable = null;
 				foreach (var variable in usedVariables) {
-					wholeCodeAnalysis.Analyze(variable.Name, DefiniteAssignmentStatus.PotentiallyAssigned, context.CancellationToken);
-					statusBeforeMethod [variable] = extractedCodeAnalysis.GetStatusBefore(statements [0]);
-				}
-
-				var afterCodeAnalysis = new DefiniteAssignmentAnalysis(stmt, context.Resolver, context.CancellationToken);
-				var statusAtEnd = new Dictionary<IVariable, DefiniteAssignmentStatus>();
-				afterCodeAnalysis.SetAnalyzedRange(lastStatement, stmt.Statements.Last(), false, true);
-
-				foreach (var variable in usedVariables) {
-					afterCodeAnalysis.Analyze(variable.Name, DefiniteAssignmentStatus.PotentiallyAssigned, context.CancellationToken);
-					statusBeforeMethod [variable] = extractedCodeAnalysis.GetStatusBefore(statements [0]);
-				}
-				var beforeVisitor = new VariableLookupVisitor(context);
-				beforeVisitor.SetAnalyzedRange(stmt, statements [0], true, false);
-				stmt.AcceptVisitor(beforeVisitor);
-				var afterVisitor = new VariableLookupVisitor(context);
-				afterVisitor.SetAnalyzedRange(lastStatement, stmt, false, true);
-				stmt.AcceptVisitor(afterVisitor);
-
-				foreach (var status in statusAfterMethod) {
-					if (!beforeVisitor.UsedVariables.Contains(status.Item1) && !afterVisitor.UsedVariables.Contains(status.Item1))
+					if ((variable is IParameter) || beforeExtractedRegion.Has (variable) || !afterExtractedRegion.Has (variable))
 						continue;
-					Expression argumentExpression = new IdentifierExpression(status.Item1.Name); 
+					generatedReturnVariable = variable;
+					method.ReturnType = context.CreateShortType (variable.Type);
+					method.Body.Add (new ReturnStatement (new IdentifierExpression (variable.Name)));
+					break;
+				}
+
+				foreach (var variable in usedVariables) {
+					if (!(variable is IParameter) && !beforeExtractedRegion.Has (variable) && !afterExtractedRegion.Has (variable))
+						continue;
+					if (variable == generatedReturnVariable)
+						continue;
+					Expression argumentExpression = new IdentifierExpression(variable.Name); 
 					
-					ParameterModifier mod;
-					switch (status.Item2) {
-						case DefiniteAssignmentStatus.AssignedAfterTrueExpression:
-						case DefiniteAssignmentStatus.AssignedAfterFalseExpression:
-						case DefiniteAssignmentStatus.PotentiallyAssigned:
-							mod = ParameterModifier.Ref;
-							argumentExpression = new DirectionExpression(FieldDirection.Ref, argumentExpression);
-							break;
-						case DefiniteAssignmentStatus.DefinitelyAssigned:
-							if (statusBeforeMethod [status.Item1] != DefiniteAssignmentStatus.PotentiallyAssigned)
-								goto case DefiniteAssignmentStatus.PotentiallyAssigned;
+					ParameterModifier mod = ParameterModifier.None;
+					if (inExtractedRegion.GetStatus (variable) == VariableState.Changed) {
+						if (beforeExtractedRegion.GetStatus (variable) == VariableState.None) {
 							mod = ParameterModifier.Out;
 							argumentExpression = new DirectionExpression(FieldDirection.Out, argumentExpression);
-							break;
-//						case DefiniteAssignmentStatus.Unassigned:
-						default:
-							mod = ParameterModifier.None;
-							break;
+						} else {
+							mod = ParameterModifier.Ref;
+							argumentExpression = new DirectionExpression(FieldDirection.Ref, argumentExpression);
+						}
 					}
-					method.Parameters.Add(new ParameterDeclaration(context.CreateShortType(status.Item1.Type), status.Item1.Name, mod));
+					
+					method.Parameters.Add(new ParameterDeclaration(context.CreateShortType(variable.Type), variable.Name, mod));
 					invocation.Arguments.Add(argumentExpression);
 				}
+				var task = script.InsertWithCursor(context.TranslateString("Extract method"), Script.InsertPosition.Before, method);
+				Action<Task> replaceStatements = delegate {
+					foreach (var node in statements.Skip (1)) {
+						script.Remove(node);
+					}
+					foreach (var variable in usedVariables) {
+						if ((variable is IParameter) || beforeExtractedRegion.Has (variable) || !afterExtractedRegion.Has (variable))
+							continue;
+						if (variable == generatedReturnVariable)
+							continue;
+						script.InsertBefore (statements [0], new VariableDeclarationStatement (context.CreateShortType(variable.Type), variable.Name));
+					}
+					AstNode invocationStatement;
 
-				foreach (var node in statements.Skip (1)) {
-					script.Remove(node);
+					if (generatedReturnVariable != null) {
+						invocationStatement = new VariableDeclarationStatement (new SimpleType ("var"), generatedReturnVariable.Name, invocation);
+					} else {
+						invocationStatement = new ExpressionStatement(invocation);
+					}
+					script.Replace(statements [0], invocationStatement);
+
+
+					script.Link(target, method.NameToken);
+				};
+
+				if (task.IsCompleted) {
+					replaceStatements (null);
+				} else {
+					task.ContinueWith (replaceStatements, TaskScheduler.FromCurrentSynchronizationContext ());
 				}
-				script.Replace(statements [0], new ExpressionStatement(invocation));
-				script.InsertWithCursor(context.TranslateString("Extract method"), method, Script.InsertPosition.Before);
-				//script.Link(target, method.NameToken);
 			});
 		}
 	}

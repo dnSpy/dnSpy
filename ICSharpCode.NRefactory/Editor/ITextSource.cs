@@ -95,6 +95,16 @@ namespace ICSharpCode.NRefactory.Editor
 		string GetText(ISegment segment);
 		
 		/// <summary>
+		/// Writes the text from this document into the TextWriter.
+		/// </summary>
+		void WriteTextTo(TextWriter writer);
+		
+		/// <summary>
+		/// Writes the text from this document into the TextWriter.
+		/// </summary>
+		void WriteTextTo(TextWriter writer, int offset, int length);
+		
+		/// <summary>
 		/// Gets the index of the first occurrence of the character in the specified array.
 		/// </summary>
 		/// <param name="c">Character to search for</param>

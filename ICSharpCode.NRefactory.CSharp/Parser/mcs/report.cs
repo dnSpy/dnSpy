@@ -49,7 +49,7 @@ namespace Mono.CSharp {
 			809, 824,
 			1030, 1058, 1060, 1066,
 			1522, 1570, 1571, 1572, 1573, 1574, 1580, 1581, 1584, 1587, 1589, 1590, 1591, 1592,
-			1607, 1616, 1633, 1634, 1635, 1685, 1690, 1691, 1692, 1695, 1696, 1699,
+			1607, 1616, 1633, 1634, 1635, 1685, 1690, 1691, 1692, 1695, 1696, 1697, 1699,
 			1700, 1701, 1702, 1709, 1711, 1717, 1718, 1720, 1735,
 			1901, 1956, 1981, 1998,
 			2002, 2023, 2029,
@@ -170,12 +170,6 @@ namespace Mono.CSharp {
 			extra_information.Add (msg);
 		}
 
-		public bool CheckWarningCode (string code, Location loc)
-		{
-			Warning (1691, 1, loc, "`{0}' is not a valid warning number", code);
-			return false;
-		}
-
 		public bool CheckWarningCode (int code, Location loc)
 		{
 			if (AllWarningsHashSet == null)
@@ -184,7 +178,8 @@ namespace Mono.CSharp {
 			if (AllWarningsHashSet.Contains (code))
 				return true;
 
-			return CheckWarningCode (code.ToString (), loc);
+			Warning (1691, 1, loc, "`{0}' is not a valid warning number", code);
+			return false;
 		}
 
 		public void ExtraInformation (Location loc, string msg)
@@ -643,6 +638,11 @@ namespace Mono.CSharp {
 		List<AbstractMessage> merged_messages;
 
 		bool showFullPaths;
+
+		public void ClearSession ()
+		{
+			session_messages = null;
+		}
 
 		public override void Print (AbstractMessage msg, bool showFullPath)
 		{

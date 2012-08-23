@@ -26,7 +26,6 @@ using NUnit.Framework;
 namespace ICSharpCode.NRefactory.Documentation
 {
 	[TestFixture]
-	[Ignore("Cref parsing not yet implemented")]
 	public class CSharpCrefLookupTests
 	{
 		IEntity Lookup(string cref)
@@ -56,9 +55,9 @@ class Impl<T> : IGeneric<List<string>[,], T> {
 }";
 			
 			var pc = new CSharpProjectContent().AddAssemblyReferences(new[] { CecilLoaderTests.Mscorlib });
-			var cu = new CSharpParser().Parse(new StringReader(program), "program.cs");
-			var compilation = pc.UpdateProjectContent(null, cu.ToTypeSystem()).CreateCompilation();
-			var typeDefinition = compilation.MainAssembly.TopLevelTypeDefinitions.Single();
+			var syntaxTree = SyntaxTree.Parse(program, "program.cs");
+			var compilation = pc.AddOrUpdateFiles(syntaxTree.ToTypeSystem()).CreateCompilation();
+			var typeDefinition = compilation.MainAssembly.TopLevelTypeDefinitions.First();
 			IEntity entity = typeDefinition.Documentation.ResolveCref(cref);
 			Assert.IsNotNull(entity, "ResolveCref() returned null.");
 			return entity;
@@ -109,7 +108,7 @@ class Impl<T> : IGeneric<List<string>[,], T> {
 		[Test]
 		public void M()
 		{
-			Assert.AreEqual("M:Test.M(System.String[0:,0:])",
+			Assert.AreEqual("M:Test.M(System.Int32)",
 			                IdStringProvider.GetIdString(Lookup("M")));
 		}
 		
@@ -141,19 +140,25 @@ class Impl<T> : IGeneric<List<string>[,], T> {
 		[Test]
 		public void MethodInGenericInterface()
 		{
-			Assert.AreEqual("M:XmlDocTest.IGeneric`2.Test``1(``0[0:,0:]@)",
+			Assert.AreEqual("M:IGeneric`2.Test``1(``0[0:,0:]@)",
 			                IdStringProvider.GetIdString(Lookup("IGeneric{X, Y}.Test")));
-			Assert.AreEqual("M:XmlDocTest.IGeneric`2.Test``1(``0[0:,0:]@)",
+			Assert.AreEqual("M:IGeneric`2.Test``1(``0[0:,0:]@)",
 			                IdStringProvider.GetIdString(Lookup("IGeneric{X, Y}.Test{Z}")));
-			Assert.AreEqual("M:XmlDocTest.IGeneric`2.Test``1(``0[0:,0:]@)",
+			Assert.AreEqual("M:IGeneric`2.Test``1(``0[0:,0:]@)",
 			                IdStringProvider.GetIdString(Lookup("IGeneric{X, Y}.Test{Z}(ref Z[,])")));
 		}
 		
 		[Test]
-		public void Indexer()
+		[Ignore("Fails due to mcs parser bug (see CSharpCrefParserTests.This)")]
+		public void IndexerWithoutDeclaringType()
 		{
 			Assert.AreEqual("P:Test.Item(System.Int32)",
 			                IdStringProvider.GetIdString(Lookup("this")));
+		}
+		
+		[Test]
+		public void IndexerWithDeclaringType()
+		{
 			Assert.AreEqual("P:Test.Item(System.Int32)",
 			                IdStringProvider.GetIdString(Lookup("Test.this")));
 			Assert.AreEqual("P:Test.Item(System.Int32)",
@@ -161,6 +166,7 @@ class Impl<T> : IGeneric<List<string>[,], T> {
 		}
 		
 		[Test]
+		[Ignore("mcs bug, see CSharpCrefParserTests.OperatorPlusWithDeclaringType")]
 		public void OperatorPlus()
 		{
 			Assert.AreEqual("M:Test.op_Addition(Test,System.Int32)",
@@ -172,6 +178,7 @@ class Impl<T> : IGeneric<List<string>[,], T> {
 		}
 		
 		[Test]
+		[Ignore("mcs bug, see CSharpCrefParserTests.OperatorPlusWithDeclaringType")]
 		public void ImplicitOperator()
 		{
 			Assert.AreEqual("M:Test.op_Implicit(Test)~System.Int32",

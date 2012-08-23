@@ -80,7 +80,19 @@ namespace ICSharpCode.NRefactory.CSharp
 				indentString = new string(' ', curIndent);
 				return;
 			}
-			indentString = new string('\t', curIndent / options.TabSize) + new string(' ', curIndent % options.TabSize); 
+			indentString = new string('\t', curIndent / options.TabSize) + new string(' ', curIndent % options.TabSize) + new string (' ', ExtraSpaces);
+		}
+
+		int extraSpaces;
+
+		public int ExtraSpaces {
+			get {
+				return extraSpaces;
+			}
+			set {
+				extraSpaces = value;
+				Update();
+			}
 		}
 
 		string indentString;

@@ -50,9 +50,13 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 						new ThrowStatement(new ObjectCreateExpression(context.CreateShortType("System", "NotImplementedException")))
 					}
 				};
-				decl.Parameters.AddRange(CreateMethodDeclarationAction.GenerateParameters (context, createExpression.Arguments));
+				decl.Parameters.AddRange(CreateMethodDeclarationAction.GenerateParameters(context, createExpression.Arguments));
 
-				script.InsertWithCursor(context.TranslateString("Create constructor"), decl, resolveResult.Member.DeclaringTypeDefinition);
+				script.InsertWithCursor(
+					context.TranslateString("Create constructor"),
+					resolveResult.Member.DeclaringTypeDefinition,
+					decl
+				);
 			});
 		}
 	}

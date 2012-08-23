@@ -59,7 +59,7 @@ namespace Mono.CSharp {
 
 			if ((field_attr & FieldAttributes.InitOnly) != 0)
 				Parent.PartialContainer.RegisterFieldForInitialization (this,
-					new FieldInitializer (spec, initializer, this));
+					new FieldInitializer (this, initializer, Location));
 
 			if (declarators != null) {
 				var t = new TypeExpression (MemberType, TypeExpression.Location);

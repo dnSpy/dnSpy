@@ -1,4 +1,4 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
@@ -419,7 +419,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		public AstNode VisitNamedArgumentExpression(CSharp.NamedArgumentExpression namedArgumentExpression, object data)
 		{
 			Expression expr = new NamedArgumentExpression {
-				Identifier = namedArgumentExpression.Identifier,
+				Identifier = namedArgumentExpression.Name,
 				Expression = (Expression)namedArgumentExpression.Expression.AcceptVisitor(this, data)
 			};
 			
@@ -430,7 +430,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		{
 			Expression expr = new FieldInitializerExpression {
 				IsKey = true,
-				Identifier = namedExpression.Identifier,
+				Identifier = namedExpression.Name,
 				Expression = (Expression)namedExpression.Expression.AcceptVisitor(this, data)
 			};
 			return EndNode(namedExpression, expr);
@@ -590,7 +590,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			return EndNode(
 				stackAllocExpression,
 				new InvocationExpression(
-					new IdentifierExpression() { Identifier = "__StackĄlloc" },
+					new IdentifierExpression() { Identifier = "__StackAlloc" },
 					new TypeReferenceExpression((AstType)stackAllocExpression.Type.AcceptVisitor(this, data)),
 					(Expression)stackAllocExpression.CountExpression.AcceptVisitor(this, data)
 				)

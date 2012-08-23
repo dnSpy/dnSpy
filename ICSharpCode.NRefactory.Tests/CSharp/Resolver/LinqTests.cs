@@ -103,8 +103,8 @@ class TestClass {
 	}
 }
 ";
-			var rr = Resolve<CSharpInvocationResolveResult>(program);
-			Assert.AreEqual("System.Linq.Enumerable.Select", rr.Member.FullName);
+			var rr = Resolve<ConversionResolveResult>(program);
+			Assert.IsTrue(rr.Conversion.IsIdentityConversion);
 			Assert.AreEqual("System.Collections.Generic.IEnumerable", rr.Type.FullName);
 			Assert.AreEqual("System.Int32", ((ParameterizedType)rr.Type).TypeArguments[0].FullName);
 		}
@@ -114,7 +114,7 @@ class TestClass {
 		{
 			string program = @"using System;
 class TestClass { static void M() {
-	$(from a in new XYZ() select a.ToUpper())$.ToString();
+	(from a in new XYZ() $select a.ToUpper()$).ToString();
 }}
 class XYZ {
 	public int Select<U>(Func<string, U> f) { return 42; }

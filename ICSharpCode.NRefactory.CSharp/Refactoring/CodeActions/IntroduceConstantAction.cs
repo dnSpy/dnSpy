@@ -1,4 +1,4 @@
-// 
+﻿// 
 // IntroduceConstantAction.cs
 //  
 // Author:
@@ -81,7 +81,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				var variableUsage = new IdentifierExpression(name);
 				script.Replace(pexpr, variableUsage);
 //				script.Link(initializer.NameToken, variableUsage);
-				script.InsertWithCursor(context.TranslateString("Create constant"), decl, Script.InsertPosition.Before);
+				script.InsertWithCursor(context.TranslateString("Create constant"), Script.InsertPosition.Before, decl);
 			});
 		}
 	}

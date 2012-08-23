@@ -26,7 +26,7 @@ using ICSharpCode.NRefactory.Utils;
 namespace ICSharpCode.NRefactory.Xml
 {
 	/// <summary>
-	/// XML object.
+	/// XML object. Base class for all nodes in the XML document.
 	/// </summary>
 	public abstract class AXmlObject : ISegment
 	{
@@ -111,7 +111,7 @@ namespace ICSharpCode.NRefactory.Xml
 					return child.GetChildAtOffset(offset);
 				}
 			}
-			return this; // No childs at offset
+			return this; // No children at offset
 		}
 		
 		/// <summary>

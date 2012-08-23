@@ -1,4 +1,4 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -177,7 +177,7 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.Expression
 					Target = new IdentifierExpression("a"),
 					Arguments = {
 						new NamedArgumentExpression {
-							Identifier = "arg",
+							Name = "arg",
 							Expression = new DirectionExpression {
 								FieldDirection = FieldDirection.Ref,
 								Expression = new IdentifierExpression("v")

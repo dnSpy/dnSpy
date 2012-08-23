@@ -38,13 +38,13 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			lookup = new MemberLookup(null, compilation.MainAssembly);
 		}
 		
-		CSharpParsedFile Parse(string program)
+		CSharpUnresolvedFile Parse(string program)
 		{
-			CompilationUnit cu = new CSharpParser().Parse(new StringReader(program), "test.cs");
-			CSharpParsedFile parsedFile = cu.ToTypeSystem();
-			project = project.UpdateProjectContent(null, parsedFile);
+			SyntaxTree syntaxTree = SyntaxTree.Parse(program, "test.cs");
+			CSharpUnresolvedFile unresolvedFile = syntaxTree.ToTypeSystem();
+			project = project.AddOrUpdateFiles(unresolvedFile);
 			compilation = project.CreateCompilation();
-			return parsedFile;
+			return unresolvedFile;
 		}
 		
 		[Test]
@@ -60,8 +60,8 @@ class Middle : Base {
 class Derived : Middle {
 	public override void Method() {}
 }";
-			var parsedFile = Parse(program);
-			ITypeDefinition derived = compilation.MainAssembly.GetTypeDefinition(parsedFile.TopLevelTypeDefinitions[2]);
+			var unresolvedFile = Parse(program);
+			ITypeDefinition derived = compilation.MainAssembly.GetTypeDefinition(unresolvedFile.TopLevelTypeDefinitions[2]);
 			var rr = lookup.Lookup(new ResolveResult(derived), "Method", EmptyList<IType>.Instance, true) as MethodGroupResolveResult;
 			Assert.AreEqual(2, rr.MethodsGroupedByDeclaringType.Count());
 			
@@ -87,8 +87,8 @@ class Derived : Base<int> {
 	public override void Method(int a) {}
 	public override void Method(string a) {}
 }";
-			var parsedFile = Parse(program);
-			ITypeDefinition derived = compilation.MainAssembly.GetTypeDefinition(parsedFile.TopLevelTypeDefinitions[1]);
+			var unresolvedFile = Parse(program);
+			ITypeDefinition derived = compilation.MainAssembly.GetTypeDefinition(unresolvedFile.TopLevelTypeDefinitions[1]);
 			var rr = lookup.Lookup(new ResolveResult(derived), "Method", EmptyList<IType>.Instance, true) as MethodGroupResolveResult;
 			Assert.AreEqual(2, rr.MethodsGroupedByDeclaringType.Count());
 			
@@ -115,8 +115,8 @@ class Base {
 class Derived : Base {
 	public override void Method<S>(S a) {}
 }";
-			var parsedFile = Parse(program);
-			ITypeDefinition derived = compilation.MainAssembly.GetTypeDefinition(parsedFile.TopLevelTypeDefinitions[1]);
+			var unresolvedFile = Parse(program);
+			ITypeDefinition derived = compilation.MainAssembly.GetTypeDefinition(unresolvedFile.TopLevelTypeDefinitions[1]);
 			var rr = lookup.Lookup(new ResolveResult(derived), "Method", EmptyList<IType>.Instance, true) as MethodGroupResolveResult;
 			Assert.AreEqual(1, rr.MethodsGroupedByDeclaringType.Count());
 			

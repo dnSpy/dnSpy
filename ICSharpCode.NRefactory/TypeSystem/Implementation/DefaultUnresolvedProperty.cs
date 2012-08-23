@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 {
@@ -36,6 +37,14 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			FreezableHelper.Freeze(getter);
 			FreezableHelper.Freeze(setter);
 			base.FreezeInternal();
+		}
+		
+		public override object Clone()
+		{
+			var copy = (DefaultUnresolvedProperty)base.Clone();
+			if (parameters != null)
+				copy.parameters = new List<IUnresolvedParameter>(parameters);
+			return copy;
 		}
 		
 		public override void ApplyInterningProvider(IInterningProvider provider)
@@ -57,7 +66,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			this.DeclaringTypeDefinition = declaringType;
 			this.Name = name;
 			if (declaringType != null)
-				this.ParsedFile = declaringType.ParsedFile;
+				this.UnresolvedFile = declaringType.UnresolvedFile;
 		}
 		
 		public bool IsIndexer {
@@ -99,6 +108,21 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		public override IMember CreateResolved(ITypeResolveContext context)
 		{
 			return new DefaultResolvedProperty(this, context);
+		}
+		
+		public override IMember Resolve(ITypeResolveContext context)
+		{
+			ITypeReference interfaceTypeReference = null;
+			if (this.IsExplicitInterfaceImplementation && this.ExplicitInterfaceImplementations.Count == 1)
+				interfaceTypeReference = this.ExplicitInterfaceImplementations[0].DeclaringTypeReference;
+			return Resolve(ExtendContextForType(context, this.DeclaringTypeDefinition), 
+			               this.EntityType, this.Name, interfaceTypeReference,
+			               parameterTypeReferences: this.Parameters.Select(p => p.Type).ToList());
+		}
+		
+		IProperty IUnresolvedProperty.Resolve(ITypeResolveContext context)
+		{
+			return (IProperty)Resolve(context);
 		}
 	}
 }

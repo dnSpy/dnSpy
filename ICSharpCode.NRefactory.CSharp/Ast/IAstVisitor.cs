@@ -129,7 +129,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		void VisitFixedFieldDeclaration(FixedFieldDeclaration fixedFieldDeclaration);
 		void VisitFixedVariableInitializer(FixedVariableInitializer fixedVariableInitializer);
 		
-		void VisitCompilationUnit(CompilationUnit compilationUnit);
+		void VisitSyntaxTree(SyntaxTree syntaxTree);
 		void VisitSimpleType(SimpleType simpleType);
 		void VisitMemberType(MemberType memberType);
 		void VisitComposedType(ComposedType composedType);
@@ -260,7 +260,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		S VisitFixedFieldDeclaration(FixedFieldDeclaration fixedFieldDeclaration);
 		S VisitFixedVariableInitializer(FixedVariableInitializer fixedVariableInitializer);
 		
-		S VisitCompilationUnit(CompilationUnit compilationUnit);
+		S VisitSyntaxTree(SyntaxTree syntaxTree);
 		S VisitSimpleType(SimpleType simpleType);
 		S VisitMemberType(MemberType memberType);
 		S VisitComposedType(ComposedType composedType);
@@ -391,7 +391,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		S VisitFixedFieldDeclaration(FixedFieldDeclaration fixedFieldDeclaration, T data);
 		S VisitFixedVariableInitializer(FixedVariableInitializer fixedVariableInitializer, T data);
 		
-		S VisitCompilationUnit(CompilationUnit compilationUnit, T data);
+		S VisitSyntaxTree(SyntaxTree syntaxTree, T data);
 		S VisitSimpleType(SimpleType simpleType, T data);
 		S VisitMemberType(MemberType memberType, T data);
 		S VisitComposedType(ComposedType composedType, T data);

@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.IO;
 using ICSharpCode.NRefactory.Editor;
 using ICSharpCode.NRefactory.TypeSystem;
+using System.Threading.Tasks;
 
 namespace ICSharpCode.NRefactory.CSharp.Refactoring
 {
@@ -67,15 +68,18 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			}
 		}
 		
-		protected string eolMarker = Environment.NewLine;
 		readonly CSharpFormattingOptions formattingOptions;
+		readonly TextEditorOptions options;
 		Dictionary<AstNode, ISegment> segmentsForInsertedNodes = new Dictionary<AstNode, ISegment>();
 		
-		protected Script(CSharpFormattingOptions formattingOptions)
+		protected Script(CSharpFormattingOptions formattingOptions, TextEditorOptions options)
 		{
 			if (formattingOptions == null)
 				throw new ArgumentNullException("formattingOptions");
+			if (options == null)
+				throw new ArgumentNullException("options");
 			this.formattingOptions = formattingOptions;
+			this.options = options;
 		}
 		
 		/// <summary>
@@ -135,15 +139,31 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			get { return formattingOptions; }
 		}
 		
+		public TextEditorOptions Options {
+			get { return options; }
+		}
+		
 		public void InsertBefore(AstNode node, AstNode insertNode)
 		{
 			var startOffset = GetCurrentOffset(new TextLocation(node.StartLocation.Line, 1));
 			var output = OutputNode (GetIndentLevelAt (startOffset), insertNode);
 			string text = output.Text;
 			if (!(insertNode is Expression || insertNode is AstType))
-				text += eolMarker;
+				text += Options.EolMarker;
 			InsertText(startOffset, text);
 			output.RegisterTrackedSegments(this, startOffset);
+		}
+
+		public void InsertAfter(AstNode node, AstNode insertNode)
+		{
+			var indentOffset = GetCurrentOffset(new TextLocation(node.StartLocation.Line, 1));
+			var output = OutputNode (GetIndentLevelAt (indentOffset), insertNode);
+			string text = output.Text;
+			if (!(insertNode is Expression || insertNode is AstType))
+				text = Options.EolMarker + text;
+			var insertOffset = GetCurrentOffset(node.EndLocation);
+			InsertText(insertOffset, text);
+			output.RegisterTrackedSegments(this, insertOffset);
 		}
 
 		public void AddTo(BlockStatement bodyStatement, AstNode insertNode)
@@ -154,10 +174,15 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			output.RegisterTrackedSegments(this, startOffset);
 		}
 		
-		public virtual void Link (params AstNode[] nodes)
+		public virtual Task Link (params AstNode[] nodes)
 		{
 			// Default implementation: do nothing
 			// Derived classes are supposed to enter the text editor's linked state.
+			
+			// Immediately signal the task as completed:
+			var tcs = new TaskCompletionSource<object>();
+			tcs.SetResult(null);
+			return tcs.Task;
 		}
 		
 		public void Replace (AstNode node, AstNode replaceWith)
@@ -191,16 +216,26 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			End
 		}
 		
-		public virtual void InsertWithCursor (string operation, AstNode node, InsertPosition defaultPosition)
+		public virtual Task InsertWithCursor(string operation, InsertPosition defaultPosition, IEnumerable<AstNode> node)
 		{
 			throw new NotImplementedException();
 		}
 		
-		public virtual void InsertWithCursor(string operation, AstNode node, ITypeDefinition parentType)
+		public virtual Task InsertWithCursor(string operation, ITypeDefinition parentType, IEnumerable<AstNode> node)
 		{
 			throw new NotImplementedException();
 		}
-
+		
+		public Task InsertWithCursor(string operation, InsertPosition defaultPosition, params AstNode[] nodes)
+		{
+			return InsertWithCursor(operation, defaultPosition, (IEnumerable<AstNode>)nodes);
+		}
+		
+		public Task InsertWithCursor(string operation, ITypeDefinition parentType, params AstNode[] nodes)
+		{
+			return InsertWithCursor(operation, parentType, (IEnumerable<AstNode>)nodes);
+		}
+		
 		protected virtual int GetIndentLevelAt (int offset)
 		{
 			return 0;
@@ -238,15 +273,14 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			var stringWriter = new StringWriter ();
 			var formatter = new SegmentTrackingOutputFormatter (stringWriter);
 			formatter.Indentation = indentLevel;
-			stringWriter.NewLine = eolMarker;
+			formatter.IndentationString = Options.TabsToSpaces ? new string (' ', Options.IndentSize) : "\t";
+			stringWriter.NewLine = Options.EolMarker;
 			if (startWithNewLine)
 				formatter.NewLine ();
 			var visitor = new CSharpOutputVisitor (formatter, formattingOptions);
 			node.AcceptVisitor (visitor);
 			string text = stringWriter.ToString().TrimEnd();
 			
-			if (node is FieldDeclaration)
-				text += eolMarker;
 			return new NodeOutput(text, formatter.NewSegments);
 		}
 		
@@ -306,7 +340,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 		/// <summary>
 		/// Renames the specified entity.
 		/// </summary>
-		/// <param name='entity'>
+		/// <param name='type'>
 		/// The Entity to rename
 		/// </param>
 		/// <param name='name'>
@@ -328,23 +362,23 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 		public virtual void Rename(IVariable variable, string name = null)
 		{
 		}
-
+		
 		public virtual void Dispose()
 		{
 		}
-
+		
 		public enum NewTypeContext {
 			/// <summary>
 			/// The class should be placed in a new file to the current namespace.
 			/// </summary>
 			CurrentNamespace,
-
+			
 			/// <summary>
 			/// The class should be placed in the unit tests. (not implemented atm.)
 			/// </summary>
 			UnitTests
 		}
-
+		
 		/// <summary>
 		/// Creates a new file containing the type, namespace and correct usings.
 		/// (Note: Should take care of IDE specific things, file headers, add to project, correct name).

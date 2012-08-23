@@ -624,9 +624,16 @@ namespace Mono.CSharp
 					new MemberAccess (system_security_permissions, "SecurityPermissionAttribute"),
 					new Arguments[] { pos, named }, loc, false);
 				g.AttachTo (module, module);
-				var ctor = g.Resolve ();
-				if (ctor != null) {
-					g.ExtractSecurityPermissionSet (ctor, ref declarative_security);
+
+				// Disable no-location warnings (e.g. obsolete) for compiler generated attribute
+				Compiler.Report.DisableReporting ();
+				try {
+					var ctor = g.Resolve ();
+					if (ctor != null) {
+						g.ExtractSecurityPermissionSet (ctor, ref declarative_security);
+					}
+				} finally {
+					Compiler.Report.EnableReporting ();
 				}
 			}
 

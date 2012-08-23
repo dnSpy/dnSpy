@@ -185,6 +185,14 @@ namespace ICSharpCode.NRefactory.Semantics
 				get { return type == 0; }
 			}
 			
+			public override bool IsNullLiteralConversion {
+				get { return type == 1; }
+			}
+			
+			public override bool IsConstantExpressionConversion {
+				get { return type == 2; }
+			}
+
 			public override bool IsReferenceConversion {
 				get { return type == 3; }
 			}
@@ -365,6 +373,14 @@ namespace ICSharpCode.NRefactory.Semantics
 			get { return false; }
 		}
 		
+		public virtual bool IsNullLiteralConversion {
+			get { return false; }
+		}
+		
+		public virtual bool IsConstantExpressionConversion {
+			get { return false; }
+		}
+
 		public virtual bool IsNumericConversion {
 			get { return false; }
 		}

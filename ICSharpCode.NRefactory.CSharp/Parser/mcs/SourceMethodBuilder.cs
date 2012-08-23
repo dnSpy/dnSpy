@@ -64,7 +64,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		public void MarkSequencePoint (int offset, SourceFileEntry file, int line, int column, bool is_hidden)
 		{
 			int file_idx = file != null ? file.Index : 0;
-			var lne = new LineNumberEntry (file_idx, line, offset, is_hidden);
+			var lne = new LineNumberEntry (file_idx, line, column, offset, is_hidden);
 
 			if (method_lines.Count > 0) {
 				var prev = method_lines[method_lines.Count - 1];
@@ -185,7 +185,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		{
 			MethodEntry entry = new MethodEntry (
 				file, _comp_unit.Entry, token, ScopeVariables,
-				Locals, method_lines.ToArray (), Blocks, null, 0, ns_id);
+				Locals, method_lines.ToArray (), Blocks, null, MethodEntry.Flags.ColumnsInfoIncluded, ns_id);
 
 			file.AddMethod (entry);
 		}

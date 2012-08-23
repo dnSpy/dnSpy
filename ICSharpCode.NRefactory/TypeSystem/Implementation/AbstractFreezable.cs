@@ -87,14 +87,5 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		protected virtual void FreezeInternal()
 		{
 		}
-		
-		/*
-		protected static IList<T> CopyList<T>(IList<T> inputList)
-		{
-			if (inputList == null || inputList.Count == 0)
-				return null;
-			else
-				return new List<T>(inputList);
-		}*/
 	}
 }

@@ -10,12 +10,7 @@
 //
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
 // (C) 2004-2011 Novell, Inc
-// Copyright 2011 Xamarin Inc.
-//
-// TODO:
-//   (1) Figure out why error productions dont work.  `type-declaration' is a
-//       great spot to put an `error' because you can reproduce it with this input:
-//	 "public X { }"
+// Copyright 2011-2012 Xamarin Inc.
 //
 
 using System.Text;
@@ -81,7 +76,7 @@ namespace Mono.CSharp
 		///
 		/// An out-of-band stack.
 		///
-		static Stack<object> oob_stack;
+		Stack<object> oob_stack;
 
 		///
 		/// Controls the verbosity of the errors produced by the parser
@@ -137,7 +132,7 @@ namespace Mono.CSharp
 		// share the bucket for very common constructs which can never
 		// be recursive
 		//
-		static List<Parameter> parameters_bucket = new List<Parameter> (6);
+		List<Parameter> parameters_bucket;
 		
 		//
 		// Full AST support members
@@ -2669,6 +2664,22 @@ enum_member_declaration
 
 		$$ = em;
 	  }
+	| opt_attributes IDENTIFIER error
+	  {
+		Error_SyntaxError (yyToken);
+	  
+		var lt = (Tokenizer.LocatedToken) $2;
+	  	var em = new EnumMember ((Enum) current_type, new MemberName (lt.Value, lt.Location), (Attributes) $1);
+	  	((Enum) current_type).AddEnumMember (em);
+
+		if (doc_support) {
+			em.DocComment = Lexer.consume_doc_comment ();
+			Lexer.doc_state = XmlCommentState.Allowed;
+		}
+
+		$$ = em;
+	  }
+	| attributes_without_members
 	;
 
 delegate_declaration
@@ -3196,6 +3207,14 @@ invocation_expression
 		$$ = new Invocation ((Expression) $1, (Arguments) $3);
 		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
 	  }
+	| primary_expression open_parens_any argument_list error
+	  {
+		Error_SyntaxError (yyToken);
+
+		$$ = new Invocation ((Expression) $1, (Arguments) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
+	
 	;
 
 opt_object_or_collection_initializer
@@ -3207,8 +3226,8 @@ object_or_collection_initializer
 	: OPEN_BRACE opt_member_initializer_list close_brace_or_complete_completion
 	  {
 	  	if ($2 == null) {
-	  		$$ = CollectionOrObjectInitializers.Empty;
-	  		// TODO: lbag
+	  		$$ = new CollectionOrObjectInitializers (new List<Expression> (), GetLocation ($1));
+	  		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($3));
 	  	} else {
 	  		$$ = new CollectionOrObjectInitializers ((List<Expression>) $2, GetLocation ($1));
 	  		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($3));
@@ -3279,7 +3298,8 @@ member_initializer
 	| OPEN_BRACE CLOSE_BRACE
 	  {
 	  	report.Error (1920, GetLocation ($1), "An element initializer cannot be empty");
-		$$ = null;
+		$$ = new CollectionElementInitializer (new List<Expression> (), GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }	  
 	;
 
@@ -3327,6 +3347,7 @@ argument_list
 	  }
 	| argument_list COMMA error
 	  {
+	  	lexer.putback (')'); // TODO: Wrong but what can I do
 		Error_SyntaxError (yyToken);
 		$$ = $1;
 	  }
@@ -3955,18 +3976,18 @@ multiplicative_expression
 	: prefixed_unary_expression
 	| multiplicative_expression STAR prefixed_unary_expression
 	  {
-		$$ = new Binary (Binary.Operator.Multiply, 
-			         (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new Binary (Binary.Operator.Multiply, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| multiplicative_expression DIV prefixed_unary_expression
 	  {
-		$$ = new Binary (Binary.Operator.Division, 
-			         (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new Binary (Binary.Operator.Division, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| multiplicative_expression PERCENT prefixed_unary_expression 
 	  {
-		$$ = new Binary (Binary.Operator.Modulus, 
-			         (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new Binary (Binary.Operator.Modulus, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	;
 
@@ -3974,18 +3995,14 @@ additive_expression
 	: multiplicative_expression
 	| additive_expression PLUS multiplicative_expression 
 	  {
-		$$ = new Binary (Binary.Operator.Addition, 
-			         (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new Binary (Binary.Operator.Addition, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| additive_expression MINUS multiplicative_expression
 	  {
-		$$ = new Binary (Binary.Operator.Subtraction, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new Binary (Binary.Operator.Subtraction, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
-  	| parenthesized_expression MINUS multiplicative_expression
-	  {
-	  	// Shift/Reduce conflict
-		$$ = new Binary (Binary.Operator.Subtraction, (Expression) $1, (Expression) $3, GetLocation ($2));
-  	  }
 	| additive_expression AS type
 	  {
 		$$ = new As ((Expression) $1, (Expression) $3, GetLocation ($2));
@@ -4000,13 +4017,13 @@ shift_expression
 	: additive_expression
 	| shift_expression OP_SHIFT_LEFT additive_expression
 	  {
-		$$ = new Binary (Binary.Operator.LeftShift, 
-			         (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new Binary (Binary.Operator.LeftShift, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| shift_expression OP_SHIFT_RIGHT additive_expression
 	  {
-		$$ = new Binary (Binary.Operator.RightShift, 
-			         (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new Binary (Binary.Operator.RightShift, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	; 
 
@@ -4014,23 +4031,23 @@ relational_expression
 	: shift_expression
 	| relational_expression OP_LT shift_expression
 	  {
-		$$ = new Binary (Binary.Operator.LessThan, 
-			         (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new Binary (Binary.Operator.LessThan, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| relational_expression OP_GT shift_expression
 	  {
-		$$ = new Binary (Binary.Operator.GreaterThan, 
-			         (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new Binary (Binary.Operator.GreaterThan, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| relational_expression OP_LE shift_expression
 	  {
-		$$ = new Binary (Binary.Operator.LessThanOrEqual, 
-			         (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new Binary (Binary.Operator.LessThanOrEqual, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| relational_expression OP_GE shift_expression
 	  {
-		$$ = new Binary (Binary.Operator.GreaterThanOrEqual, 
-			         (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new Binary (Binary.Operator.GreaterThanOrEqual, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	;
 
@@ -4038,13 +4055,13 @@ equality_expression
 	: relational_expression
 	| equality_expression OP_EQ relational_expression
 	  {
-		$$ = new Binary (Binary.Operator.Equality, 
-			         (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new Binary (Binary.Operator.Equality, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| equality_expression OP_NE relational_expression
 	  {
-		$$ = new Binary (Binary.Operator.Inequality, 
-			         (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new Binary (Binary.Operator.Inequality, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	; 
 
@@ -4052,8 +4069,8 @@ and_expression
 	: equality_expression
 	| and_expression BITWISE_AND equality_expression
 	  {
-		$$ = new Binary (Binary.Operator.BitwiseAnd, 
-			         (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new Binary (Binary.Operator.BitwiseAnd, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	;
 
@@ -4061,8 +4078,8 @@ exclusive_or_expression
 	: and_expression
 	| exclusive_or_expression CARRET and_expression
 	  {
-		$$ = new Binary (Binary.Operator.ExclusiveOr, 
-			         (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new Binary (Binary.Operator.ExclusiveOr, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	;
 
@@ -4070,8 +4087,8 @@ inclusive_or_expression
 	: exclusive_or_expression
 	| inclusive_or_expression BITWISE_OR exclusive_or_expression
 	  {
-		$$ = new Binary (Binary.Operator.BitwiseOr, 
-			         (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new Binary (Binary.Operator.BitwiseOr, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	;
 
@@ -4079,8 +4096,8 @@ conditional_and_expression
 	: inclusive_or_expression
 	| conditional_and_expression OP_AND inclusive_or_expression
 	  {
-		$$ = new Binary (Binary.Operator.LogicalAnd, 
-			         (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new Binary (Binary.Operator.LogicalAnd, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	;
 
@@ -4088,8 +4105,8 @@ conditional_or_expression
 	: conditional_and_expression
 	| conditional_or_expression OP_OR conditional_and_expression
 	  {
-		$$ = new Binary (Binary.Operator.LogicalOr, 
-			         (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new Binary (Binary.Operator.LogicalOr, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	;
 	
@@ -4100,7 +4117,8 @@ null_coalescing_expression
 		if (lang_version < LanguageVersion.ISO_2)
 			FeatureIsNotAvailable (GetLocation ($2), "null coalescing operator");
 			
-		$$ = new Nullable.NullCoalescingOperator ((Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new Nullable.NullCoalescingOperator ((Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	;
 
@@ -4121,57 +4139,58 @@ conditional_expression
 assignment_expression
 	: prefixed_unary_expression ASSIGN expression
 	  {
-		$$ = new SimpleAssign ((Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new SimpleAssign ((Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_MULT_ASSIGN expression
 	  {
-		$$ = new CompoundAssign (
-			Binary.Operator.Multiply, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new CompoundAssign (Binary.Operator.Multiply, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_DIV_ASSIGN expression
 	  {
-		$$ = new CompoundAssign (
-			Binary.Operator.Division, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new CompoundAssign (Binary.Operator.Division, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_MOD_ASSIGN expression
 	  {
-		$$ = new CompoundAssign (
-			Binary.Operator.Modulus, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new CompoundAssign (Binary.Operator.Modulus, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_ADD_ASSIGN expression
 	  {
-		$$ = new CompoundAssign (
-			Binary.Operator.Addition, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new CompoundAssign (Binary.Operator.Addition, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_SUB_ASSIGN expression
 	  {
-		$$ = new CompoundAssign (
-			Binary.Operator.Subtraction, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new CompoundAssign (Binary.Operator.Subtraction, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_SHIFT_LEFT_ASSIGN expression
 	  {
-		$$ = new CompoundAssign (
-			Binary.Operator.LeftShift, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new CompoundAssign (Binary.Operator.LeftShift, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_SHIFT_RIGHT_ASSIGN expression
 	  {
-		$$ = new CompoundAssign (
-			Binary.Operator.RightShift, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new CompoundAssign (Binary.Operator.RightShift, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_AND_ASSIGN expression
 	  {
-		$$ = new CompoundAssign (
-			Binary.Operator.BitwiseAnd, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new CompoundAssign (Binary.Operator.BitwiseAnd, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_OR_ASSIGN expression
 	  {
-		$$ = new CompoundAssign (
-			Binary.Operator.BitwiseOr, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new CompoundAssign (Binary.Operator.BitwiseOr, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_XOR_ASSIGN expression
 	  {
-		$$ = new CompoundAssign (
-			Binary.Operator.ExclusiveOr, (Expression) $1, (Expression) $3, GetLocation ($2));
+		$$ = new CompoundAssign (Binary.Operator.ExclusiveOr, (Expression) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	;
 
@@ -4965,7 +4984,7 @@ identifier_inside_body
 	  {
 		if (async_block) {
 			report.Error (4003, GetLocation ($1), "`await' cannot be used as an identifier within an async method or lambda expression");
-			$$ = Tokenizer.LocatedToken.Create ("await", GetLocation ($1));
+			$$ = new Tokenizer.LocatedToken ("await", GetLocation ($1));
 		}
 	  }
 	;
@@ -5347,19 +5366,19 @@ while_statement
 do_statement
 	: DO embedded_statement WHILE open_parens_any boolean_expression CLOSE_PARENS SEMICOLON
 	  {
-		$$ = new Do ((Statement) $2, (BooleanExpression) $5, GetLocation ($1));
+		$$ = new Do ((Statement) $2, (BooleanExpression) $5, GetLocation ($1), GetLocation ($3));
 		lbag.AddStatement ($$, GetLocation ($3), GetLocation ($4), GetLocation ($6), GetLocation ($7));
 	  }
 	| DO embedded_statement error
 	  {
 		Error_SyntaxError (yyToken);
-		$$ = new Do ((Statement) $2, null, GetLocation ($1));
+		$$ = new Do ((Statement) $2, null, GetLocation ($1), Location.Null);
 	  }
 	| DO embedded_statement WHILE open_parens_any boolean_expression error
 	  {
 		Error_SyntaxError (yyToken);
 	  
-		$$ = new Do ((Statement) $2, (BooleanExpression) $5, GetLocation ($1));
+		$$ = new Do ((Statement) $2, (BooleanExpression) $5, GetLocation ($1), GetLocation ($3));
 		lbag.AddStatement ($$, GetLocation ($3), GetLocation ($4));
 	  }
 	;
@@ -5414,6 +5433,7 @@ for_statement_condition
 	  {
 		$$ = $4;
 	  }
+
 	| boolean_expression CLOSE_PARENS {
 		report.Error (1525, GetLocation ($2), "Unexpected symbol ')', expected ';'");
 		For f =  (For) $0;
@@ -5627,6 +5647,11 @@ return_statement
 		$$ = new Return ((Expression) $2, GetLocation ($1));
 		lbag.AddStatement ($$, GetLocation ($3));
 	  }
+	| RETURN expression error
+	  {
+		Error_SyntaxError (yyToken);
+		$$ = new Return ((Expression) $2, GetLocation ($1));
+	  }
 	| RETURN error
 	  {
 		Error_SyntaxError (yyToken);
@@ -5663,6 +5688,24 @@ yield_statement
 		current_block.Explicit.RegisterIteratorYield ();
 		$$ = new Yield ((Expression) $3, lt.Location);
 		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($4));
+	  }
+	| identifier_inside_body RETURN expression error
+	  {
+		Error_SyntaxError (yyToken);
+
+		var lt = (Tokenizer.LocatedToken) $1;
+		string s = lt.Value;
+		if (s != "yield"){
+			report.Error (1003, lt.Location, "; expected");
+		} else if ($3 == null) {
+			report.Error (1627, GetLocation ($4), "Expression expected after yield return");
+		} else if (lang_version == LanguageVersion.ISO_1){
+			FeatureIsNotAvailable (lt.Location, "iterators");
+		}
+		
+		current_block.Explicit.RegisterIteratorYield ();
+		$$ = new Yield ((Expression) $3, lt.Location);
+		lbag.AddStatement ($$, GetLocation ($2));
 	  }
 	| identifier_inside_body BREAK SEMICOLON
 	  {
@@ -6762,17 +6805,12 @@ public Tokenizer Lexer {
 	}
 }		   
 
-static CSharpParser ()
-{
-	oob_stack = new Stack<object> ();
-}
-
-public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file)
-	: this (reader, file, file.Compiler.Report)
+public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file, ParserSession session)
+	: this (reader, file, file.Compiler.Report, session)
 {
 }
 
-public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file, Report report)
+public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file, Report report, ParserSession session)
 {
 	this.file = file;
 	current_container = current_namespace = file;
@@ -6785,22 +6823,16 @@ public CSharpParser (SeekableStreamReader reader, CompilationSourceFile file, Re
 	lang_version = settings.Version;
 	yacc_verbose_flag = settings.VerboseParserFlag;
 	doc_support = settings.DocumentationFile != null;
-	oob_stack.Clear ();
-	lexer = new Tokenizer (reader, file);
-
-#if FULL_AST
-	lbag = new LocationsBag ();
-#else
-	lbag = null;
-#endif
-	
-	use_global_stacks = true;
+	lexer = new Tokenizer (reader, file, session);
+	oob_stack = new Stack<object> ();
+	lbag = session.LocationsBag;
+	use_global_stacks = session.UseJayGlobalArrays;
+	parameters_bucket = session.ParametersStack;
 }
 
 public void parse ()
 {
 	eof_token = Token.EOF;
-	Tokenizer.LocatedToken.Initialize ();
 	
 	try {
 		if (yacc_verbose_flag > 1)
@@ -6865,12 +6897,6 @@ Location GetLocation (object obj)
 		return expr.Location;
 
 	return lexer.Location;
-}
-
-public LocationsBag LocationsBag {
-	get {
-		return lbag;
-	}
 }
 
 void start_block (Location loc)

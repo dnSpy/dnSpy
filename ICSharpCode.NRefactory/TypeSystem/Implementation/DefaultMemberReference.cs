@@ -24,8 +24,12 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 {
 	/// <summary>
 	/// References an entity by its type and name.
-	/// This class can be used to refer to fields, events, and parameterless properties.
+	/// This class can be used to refer to all members except for constructors and explicit interface implementations.
 	/// </summary>
+	/// <remarks>
+	/// Resolving a DefaultMemberReference requires a context that provides enough information for resolving the declaring type reference
+	/// and the parameter types references.
+	/// </remarks>
 	[Serializable]
 	public sealed class DefaultMemberReference : IMemberReference, ISupportsInterning
 	{
@@ -50,30 +54,39 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			this.parameterTypes = parameterTypes ?? EmptyList<ITypeReference>.Instance;
 		}
 		
+		public ITypeReference DeclaringTypeReference {
+			get { return typeReference; }
+		}
+		
 		public IMember Resolve(ITypeResolveContext context)
 		{
 			IType type = typeReference.Resolve(context);
 			IEnumerable<IMember> members;
-			if (entityType == EntityType.Method) {
+			if (entityType == EntityType.Accessor) {
+				members = type.GetAccessors(
+					m => m.Name == name && !m.IsExplicitInterfaceImplementation,
+					GetMemberOptions.IgnoreInheritedMembers);
+			} else if (entityType == EntityType.Method) {
 				members = type.GetMethods(
-					m => m.Name == name && m.EntityType == EntityType.Method && m.TypeParameters.Count == typeParameterCount,
+					m => m.Name == name && m.EntityType == EntityType.Method
+					&& m.TypeParameters.Count == typeParameterCount && !m.IsExplicitInterfaceImplementation,
 					GetMemberOptions.IgnoreInheritedMembers);
 			} else {
 				members = type.GetMembers(
-					m => m.Name == name && m.EntityType == entityType,
+					m => m.Name == name && m.EntityType == entityType && !m.IsExplicitInterfaceImplementation,
 					GetMemberOptions.IgnoreInheritedMembers);
 			}
 			var resolvedParameterTypes = parameterTypes.Resolve(context);
 			foreach (IMember member in members) {
 				IParameterizedMember parameterizedMember = member as IParameterizedMember;
-				if (parameterTypes.Count == 0) {
-					if (parameterizedMember == null || parameterizedMember.Parameters.Count == 0)
+				if (parameterizedMember == null) {
+					if (parameterTypes.Count == 0)
 						return member;
 				} else if (parameterTypes.Count == parameterizedMember.Parameters.Count) {
 					bool signatureMatches = true;
 					for (int i = 0; i < parameterTypes.Count; i++) {
-						IType type1 = ParameterListComparer.Instance.NormalizeMethodTypeParameters(resolvedParameterTypes[i]);
-						IType type2 = ParameterListComparer.Instance.NormalizeMethodTypeParameters(parameterizedMember.Parameters[i].Type);
+						IType type1 = DummyTypeParameter.NormalizeAllTypeParameters(resolvedParameterTypes[i]);
+						IType type2 = DummyTypeParameter.NormalizeAllTypeParameters(parameterizedMember.Parameters[i].Type);
 						if (!type1.Equals(type2)) {
 							signatureMatches = false;
 							break;

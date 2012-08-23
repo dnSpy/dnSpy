@@ -1294,10 +1294,10 @@ if (b) {
 		}
 
 		[Test()]
-		public void TestElseOnNewLine ()
+		public void TestElseOnNewLine()
 		{
-			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
-			policy.PlaceElseOnNewLine = true;
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono();
+			policy.ElseNewLinePlacement = NewLinePlacement.NewLine;
 			
 			Test (policy, @"class Test
 {
@@ -1325,10 +1325,10 @@ if (b) {
 		}
 
 		[Test()]
-		public void TestElseIfOnNewLine ()
+		public void TestElseIfOnNewLine()
 		{
-			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
-			policy.PlaceElseIfOnNewLine = true;
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono();
+			policy.ElseIfNewLinePlacement = NewLinePlacement.NewLine;
 			
 			Test (policy, @"class Test
 {
@@ -1356,10 +1356,10 @@ if (b) {
 		}
 
 		[Test()]
-		public void TestElseOnNewLineOff ()
+		public void TestElseOnNewLineOff()
 		{
-			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
-			policy.PlaceElseOnNewLine = false;
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono();
+			policy.ElseNewLinePlacement = NewLinePlacement.SameLine;
 			
 			Test (policy, @"class Test
 {
@@ -1387,12 +1387,12 @@ if (b) {
 		}
 
 		[Test()]
-		public void TestSimpleIfElseComment ()
+		public void TestSimpleIfElseComment()
 		{
-			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono();
 			
 			policy.StatementBraceStyle = BraceStyle.EndOfLine;
-			policy.PlaceElseIfOnNewLine = false; // for simple statements it must be new line.
+			policy.ElseIfNewLinePlacement = NewLinePlacement.SameLine; // for simple statements it must be new line.
 			
 			Test (policy, @"class Test
 {
@@ -1865,11 +1865,11 @@ if (b) {
 		}
 
 		[Test()]
-		public void TestPlaceCatchOnNewLine ()
+		public void TestPlaceCatchOnNewLine()
 		{
-			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono();
 			
-			policy.PlaceCatchOnNewLine = true;
+			policy.CatchNewLinePlacement = NewLinePlacement.NewLine;
 			
 			Test (policy, @"class Test
 {
@@ -1897,10 +1897,10 @@ if (b) {
 		}
 
 		[Test()]
-		public void TestPlaceFinallyOnNewLine ()
+		public void TestPlaceFinallyOnNewLine()
 		{
-			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
-			policy.PlaceFinallyOnNewLine = true;
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono();
+			policy.FinallyNewLinePlacement = NewLinePlacement.NewLine;
 			
 			Test (policy, @"class Test
 {
@@ -1928,11 +1928,11 @@ if (b) {
 		}
 
 		[Test()]
-		public void TestPlaceWhileOnNewLine ()
+		public void TestPlaceWhileOnNewLine()
 		{
-			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono ();
+			CSharpFormattingOptions policy = FormattingOptionsFactory.CreateMono();
 			
-			policy.PlaceWhileOnNewLine = true;
+			policy.WhileNewLinePlacement = NewLinePlacement.NewLine;
 			
 			Test (policy, @"class Test
 {

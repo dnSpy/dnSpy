@@ -53,15 +53,15 @@ namespace ICSharpCode.NRefactory.CSharp.Parser.GeneralScope
 		public void ExternAliasTest()
 		{
 			string program = "extern alias X; extern alias Y; using X::System; namespace TestNamespace { extern alias Z; using Y::System; }";
-			var cu = new CSharpParser().Parse(new StringReader(program), "code.cs");
+			var syntaxTree = new CSharpParser().Parse(program, "code.cs");
 			Assert.AreEqual(
 				new Type[] {
 					typeof(ExternAliasDeclaration),
 					typeof(ExternAliasDeclaration),
 					typeof(UsingDeclaration),
 					typeof(NamespaceDeclaration)
-				}, cu.Children.Select(c => c.GetType()).ToArray());
-			var namespaceMembers = ((NamespaceDeclaration)cu.LastChild).Members;
+				}, syntaxTree.Children.Select(c => c.GetType()).ToArray());
+			var namespaceMembers = ((NamespaceDeclaration)syntaxTree.LastChild).Members;
 			Assert.AreEqual(
 				new Type[] {
 					typeof(ExternAliasDeclaration),

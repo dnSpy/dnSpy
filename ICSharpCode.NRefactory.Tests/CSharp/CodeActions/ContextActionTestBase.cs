@@ -53,9 +53,10 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 			return sb.ToString ();
 		}
 
-		public void Test<T> (string input, string output, int action = 0) where T : ICodeActionProvider, new ()
+		public void Test<T> (string input, string output, int action = 0, bool expectErrors = false) 
+			where T : ICodeActionProvider, new ()
 		{
-			string result = RunContextAction (new T (), HomogenizeEol (input), action);
+			string result = RunContextAction (new T (), HomogenizeEol (input), action, expectErrors);
 			bool passed = result == output;
 			if (!passed) {
 				Console.WriteLine ("-----------Expected:");
@@ -67,9 +68,10 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 		}	
 	
 
-		protected static string RunContextAction (ICodeActionProvider action, string input, int actionIndex = 0)
+		protected static string RunContextAction (ICodeActionProvider action, string input,
+		                                          int actionIndex = 0, bool expectErrors = false)
 		{
-			var context = TestRefactoringContext.Create (input);
+			var context = TestRefactoringContext.Create (input, expectErrors);
 			bool isValid = action.GetActions (context).Any ();
 
 			if (!isValid)
@@ -84,7 +86,11 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 		
 		protected static void TestWrongContext<T> (string input) where T : ICodeActionProvider, new ()
 		{
-			ICodeActionProvider action = new T ();
+			TestWrongContext (new T(), input);
+		}
+		
+		protected static void TestWrongContext (ICodeActionProvider action, string input)
+		{
 			var context = TestRefactoringContext.Create (input);
 			bool isValid = action.GetActions (context).Any ();
 			if (!isValid)

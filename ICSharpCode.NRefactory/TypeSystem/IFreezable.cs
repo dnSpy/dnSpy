@@ -17,13 +17,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Diagnostics.Contracts;
 
 namespace ICSharpCode.NRefactory.TypeSystem
 {
-	#if WITH_CONTRACTS
-	[ContractClass(typeof(IFreezableContract))]
-	#endif
 	public interface IFreezable
 	{
 		/// <summary>
@@ -36,20 +32,4 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		/// </summary>
 		void Freeze();
 	}
-	
-	#if WITH_CONTRACTS
-	[ContractClassFor(typeof(IFreezable))]
-	abstract class IFreezableContract : IFreezable
-	{
-		bool IFreezable.IsFrozen {
-			get { return default(bool); }
-		}
-		
-		void IFreezable.Freeze()
-		{
-			IFreezable self = this;
-			Contract.Ensures(self.IsFrozen);
-		}
-	}
-	#endif
 }

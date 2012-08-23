@@ -97,7 +97,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 					CSharpResolver resolver = new CSharpResolver(parentContext.WithUsingScope(this));
 					foreach (var u in usingScope.Usings) {
 						INamespace ns = u.ResolveNamespace(resolver);
-						if (ns != null)
+						if (ns != null && !result.Contains(ns))
 							result.Add(ns);
 					}
 					return LazyInit.GetOrSet(ref this.usings, new ReadOnlyCollection<INamespace>(result));
@@ -170,6 +170,10 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem
 			
 			IEnumerable<ITypeDefinition> INamespace.Types {
 				get { return EmptyList<ITypeDefinition>.Instance; }
+			}
+			
+			IEnumerable<IAssembly> INamespace.ContributingAssemblies {
+				get { return EmptyList<IAssembly>.Instance; }
 			}
 			
 			ICompilation IResolved.Compilation {

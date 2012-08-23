@@ -44,6 +44,9 @@ namespace ICSharpCode.NRefactory.TypeSystem.TestCase
 	public class ParamsAttribute : Attribute
 	{
 		public ParamsAttribute(params object[] x) {}
+		
+		[Params(Property = new string[] { "a", "b" })]
+		public string[] Property { get; set; }
 	}
 	
 	[Double(1)]
@@ -71,6 +74,8 @@ namespace ICSharpCode.NRefactory.TypeSystem.TestCase
 		public void GetIndex<T>(T element) where T : IEquatable<T> {}
 		
 		public NestedEnum EnumField;
+		
+		public A Property { get; set; }
 		
 		public enum NestedEnum {
 			EnumMember
@@ -111,6 +116,11 @@ namespace ICSharpCode.NRefactory.TypeSystem.TestCase
 	public struct MyStructWithCtor
 	{
 		public MyStructWithCtor(int a) {}
+	}
+	
+	public class MyClassWithCtor
+	{
+		private MyClassWithCtor(int a) {}
 	}
 	
 	[Serializable]
@@ -233,5 +243,88 @@ namespace ICSharpCode.NRefactory.TypeSystem.TestCase
 		public int Prop2 { get { return 0; } set {} }
 		public static int Prop3 { get; set; }
 		public int Prop4 { get; set; }
+	}
+
+	public interface IInterfaceWithProperty {
+		int Prop { get; set; }
+	}
+
+	public class ClassWithVirtualProperty {
+		public virtual int Prop { get; set; }
+	}
+	
+	public class ClassThatOverridesAndSealsVirtualProperty : ClassWithVirtualProperty {
+		public sealed override int Prop { get; set; }
+	}
+
+	public class ClassThatImplementsProperty : IInterfaceWithProperty {
+		public int Prop { get; set; }
+	}
+
+	public class ClassThatImplementsPropertyExplicitly : IInterfaceWithProperty {
+		int IInterfaceWithProperty.Prop { get; set; }
+	}
+
+	public interface IInterfaceWithIndexers {
+		int this[int x] { get; set; }
+		int this[string x] { get; set; }
+		int this[int x, int y] { get; set; }
+	}
+
+	public interface IGenericInterfaceWithIndexer<T> {
+		int this[T x] { get; set; }
+	}
+
+	public class ClassThatImplementsIndexers : IInterfaceWithIndexers, IGenericInterfaceWithIndexer<int> {
+		public int this[int x] { get { return 0; } set {} }
+		public int this[string x] { get { return 0; } set {} }
+		public int this[int x, int y] { get { return 0; } set {} }
+	}
+
+	public class ClassThatImplementsIndexersExplicitly : IInterfaceWithIndexers, IGenericInterfaceWithIndexer<int> {
+		int IInterfaceWithIndexers.this[int x] { get { return 0; } set {} }
+		int IGenericInterfaceWithIndexer<int>.this[int x] { get { return 0; } set {} }
+		int IInterfaceWithIndexers.this[string x] { get { return 0; } set {} }
+		int IInterfaceWithIndexers.this[int x, int y] { get { return 0; } set {} }
+	}
+
+	public interface IHasEvent {
+		event EventHandler Event;
+	}
+
+	public class ClassThatImplementsEvent : IHasEvent {
+		public event EventHandler Event;
+	}
+
+	public class ClassThatImplementsEventWithCustomAccessors : IHasEvent {
+		public event EventHandler Event { add {} remove {} }
+	}
+
+	public class ClassThatImplementsEventExplicitly : IHasEvent {
+		event EventHandler IHasEvent.Event { add {} remove {} }
+	}
+
+	public interface IShadowTestBase {
+		void Method();
+		int this[int i] { get; set; }
+		int Prop { get; set; }
+		event EventHandler Evt;
+	}
+
+	public interface IShadowTestDerived : IShadowTestBase {
+		new void Method();
+		new int this[int i] { get; set; }
+		new int Prop { get; set; }
+		new event EventHandler Evt;
+	}
+	
+	public static class StaticClass {}
+	public abstract class AbstractClass {}
+	
+	public class IndexerNonDefaultName {
+		[IndexerName("Foo")]
+		public int this[int index] {
+			get { return 0; }
+		}
 	}
 }

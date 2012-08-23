@@ -63,7 +63,11 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			});
 
 			yield return new CodeAction(context.TranslateString("Create nested class"), script => {
-				script.InsertWithCursor(context.TranslateString("Create nested class"), CreateType(context, service, node), Script.InsertPosition.Before);
+				script.InsertWithCursor(
+					context.TranslateString("Create nested class"),
+					Script.InsertPosition.Before,
+					CreateType(context, service, node)
+				);
 			});
 		}
 

@@ -94,12 +94,22 @@ namespace ICSharpCode.NRefactory.CSharp
 			set;
 		}
 
+		/// <summary>
+		/// Gets or sets the length of the desired line length. The formatting engine will wrap at wrap points set to Wrapping.WrapIfTooLong if the line length is too long.
+		/// 0 means do not wrap.
+		/// </summary>
+		public int WrapLineLength {
+			get;
+			set;
+		}
+
 		public TextEditorOptions()
 		{
 			TabsToSpaces = false;
 			TabSize = 4;
 			IndentSize = 4;
 			ContinuationIndent = 4;
+			WrapLineLength = 0;
 			EolMarker = Environment.NewLine;
 		}
 	}

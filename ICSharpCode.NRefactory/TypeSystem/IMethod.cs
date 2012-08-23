@@ -36,8 +36,42 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		bool IsDestructor { get; }
 		bool IsOperator { get; }
 		
+		/// <summary>
+		/// Gets whether the method is a C#-style partial method.
+		/// Check <see cref="HasBody"/> to test if it is a partial method declaration or implementation.
+		/// </summary>
+		bool IsPartial { get; }
+		
+		[Obsolete("Use IsPartial && !HasBody instead")]
 		bool IsPartialMethodDeclaration { get; }
+		
+		[Obsolete("Use IsPartial && HasBody instead")]
 		bool IsPartialMethodImplementation { get; }
+		
+		/// <summary>
+		/// Gets whether the method has a body.
+		/// This property returns <c>false</c> for <c>abstract</c> or <c>extern</c> methods,
+		/// or for <c>partial</c> methods without implementation.
+		/// </summary>
+		bool HasBody { get; }
+		
+		/// <summary>
+		/// If this method is an accessor, returns a reference to the corresponding property/event.
+		/// Otherwise, returns null.
+		/// </summary>
+		IUnresolvedMember AccessorOwner { get; }
+		
+		/// <summary>
+		/// Resolves the member.
+		/// </summary>
+		/// <param name="context">
+		/// Context for looking up the member. The context must specify the current assembly.
+		/// A <see cref="SimpleTypeResolveContext"/> that specifies the current assembly is sufficient.
+		/// </param>
+		/// <returns>
+		/// Returns the resolved member, or <c>null</c> if the member could not be found.
+		/// </returns>
+		new IMethod Resolve(ITypeResolveContext context);
 	}
 	
 	/// <summary>
@@ -63,5 +97,30 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		bool IsConstructor { get; }
 		bool IsDestructor { get; }
 		bool IsOperator { get; }
+		
+		/// <summary>
+		/// Gets whether the method is a C#-style partial method.
+		/// A call to such a method is ignored by the compiler if the partial method has no body.
+		/// </summary>
+		/// <seealso cref="HasBody"/>
+		bool IsPartial { get; }
+		
+		/// <summary>
+		/// Gets whether the method has a body.
+		/// This property returns <c>false</c> for <c>abstract</c> or <c>extern</c> methods,
+		/// or for <c>partial</c> methods without implementation.
+		/// </summary>
+		bool HasBody { get; }
+		
+		/// <summary>
+		/// Gets whether the method is a property/event accessor.
+		/// </summary>
+		bool IsAccessor { get; }
+		
+		/// <summary>
+		/// If this method is an accessor, returns the corresponding property/event.
+		/// Otherwise, returns null.
+		/// </summary>
+		IMember AccessorOwner { get; }
 	}
 }

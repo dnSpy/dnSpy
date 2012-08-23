@@ -429,7 +429,7 @@ namespace Mono.CSharp
 
 			base.EmitContainer ();
 
-			if (Compiler.Report.Errors == 0)
+			if (Compiler.Report.Errors == 0 && !Compiler.Settings.WriteMetadataOnly)
 				VerifyMembers ();
 
 			if (anonymous_types != null) {

@@ -90,7 +90,7 @@ class MyTest
 		/// <summary>
 		/// Bug 487236 - Object initializer completion uses wrong type
 		/// </summary>
-		[Test(), Ignore ("FIXME!")]
+		[Test()]
 		public void TestBug487236 ()
 		{
 			CompletionDataList provider = CodeCompletionBugTests.CreateCtrlSpaceProvider (
@@ -458,6 +458,136 @@ class MainClass
 ");
 			Assert.IsNotNull(provider.Find("Foo"), "'Foo' not found.");
 		}
+
+		[Test()]
+		public void TestArrayInitializerObjectCreation()
+		{
+			CodeCompletionBugTests.CombinedProviderTest(
+@"using System;
+using System.Collections.Generic;
+
+class MyTest
+{
+	public void Test ()
+	{
+		$new IEnumerable<string>[] { new L$
 	}
+}
+", provider => {
+				Assert.IsNotNull(provider.Find("List<string>"), "class 'List<string>' not found.");
+			}
+			);
+		}
+
+		[Test()]
+		public void TestArrayInitializerObjectCreationNarrowing()
+		{
+			CodeCompletionBugTests.CombinedProviderTest(
+@"using System;
+using System.Collections.Generic;
+class MyList : List<IEnumerable<string>> {}
+class MyTest
+{
+	public void Test ()
+	{
+		$new MyList { new L$
+	}
+}
+", provider => {
+				Assert.IsNotNull(provider.Find("List<string>"), "class 'List<string>' not found.");
+			}
+			);
+		}
+
+		[Test()]
+		public void TestObjectCreationEnumerable()
+		{
+			CodeCompletionBugTests.CombinedProviderTest(
+@"using System;
+using System.Collections.Generic;
+class MyList : List<IEnumerable<string>> { public bool MyProp {get;set; } }
+class MyTest
+{
+	public void Test ()
+	{
+		$new MyList { n$
+	}
+}
+", provider => {
+				Assert.IsNotNull(provider.Find("new"), "'new' not found.");
+				Assert.IsNotNull(provider.Find("MyProp"), "'MyProp' not found.");
+			}
+			);
+		}
+
+		[Test()]
+		public void TestObjectCreationForbiddenInArrayInitializers()
+		{
+			CodeCompletionBugTests.CombinedProviderTest(
+@"using System;
+using System.Collections.Generic;
+class MyList : List<IEnumerable<string>> { public bool MyProp {get;set; } }
+class MyTest
+{
+	public void Test ()
+	{
+		$new MyList { new List<string> (), n$
+	}
+}
+", provider => {
+				Assert.IsNotNull(provider.Find("new"), "'new' not found.");
+				Assert.IsNull(provider.Find("MyProp"), "'MyProp' found.");
+			}
+			);
+		}
+
+		[Test()]
+		public void TestArrayInitializersForbiddenInObjectCreation()
+		{
+			CodeCompletionBugTests.CombinedProviderTest(
+@"using System;
+using System.Collections.Generic;
+class MyList : List<IEnumerable<string>> { public bool MyProp {get;set; }  public bool MyProp2 {get;set; }  }
+class MyTest
+{
+	public void Test ()
+	{
+		$new MyList { MyProp = true, n$
+	}
+}
+", provider => {
+				Assert.IsNull(provider.Find("new"), "'new' found.");
+				Assert.IsNotNull(provider.Find("MyProp2"), "'MyProp2' not found.");
+			}
+			);
+		}
+
+		/// <summary>
+		/// Bug 5126 - Multiple projects including the same files don't update their typesystem properly
+		/// </summary>
+		[Test()]
+		public void TestBug5126()
+		{
+			CodeCompletionBugTests.CombinedProviderTest(
+@"using System;
+using System.Collections.Generic;
+class MyList { public bool MyProp {get;set; }  public bool MyProp2 {get;set; }  }
+class MyTest
+{
+	public void Test ()
+	{
+		$new MyList { n$
+	}
+}
+", provider => {
+				Assert.IsNull(provider.Find("new"), "'new' found.");
+				Assert.IsNotNull(provider.Find("MyProp"), "'MyProp' not found.");
+				Assert.IsNotNull(provider.Find("MyProp2"), "'MyProp2' not found.");
+			}
+			);
+		}
+
+	}
+
 }
 

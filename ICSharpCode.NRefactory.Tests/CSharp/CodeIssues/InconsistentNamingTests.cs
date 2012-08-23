@@ -57,24 +57,24 @@ namespace ICSharpCode.NRefactory.CSharp.CodeIssues
 		[Test]
 		public void TestClassName ()
 		{
-			var input = @"class anIssue {}";
-			var output = @"class AnIssue {}";
+			var input = @"public class anIssue {}";
+			var output = @"public class AnIssue {}";
 			CheckNaming (input, output);
 		}
 
 		[Test]
 		public void TestAttributeName ()
 		{
-			var input = @"class test : System.Attribute {}";
-			var output = @"class TestAttribute : System.Attribute {}";
+			var input = @"public class test : System.Attribute {}";
+			var output = @"public class TestAttribute : System.Attribute {}";
 			CheckNaming (input, output);
 		}
 		
 		[Test]
 		public void TestEventArgsName ()
 		{
-			var input = @"class test : System.EventArgs {}";
-			var output = @"class TestEventArgs : System.EventArgs {}";
+			var input = @"public class test : System.EventArgs {}";
+			var output = @"public class TestEventArgs : System.EventArgs {}";
 			CheckNaming (input, output);
 		}
 
@@ -89,50 +89,50 @@ namespace ICSharpCode.NRefactory.CSharp.CodeIssues
 		[Test]
 		public void TestStructName ()
 		{
-			var input = @"struct anIssue {}";
-			var output = @"struct AnIssue {}";
+			var input = @"public struct anIssue {}";
+			var output = @"public struct AnIssue {}";
 			CheckNaming (input, output);
 		}
 
 		[Test]
 		public void TestInterfaceName ()
 		{
-			var input = @"interface anIssue {}";
-			var output = @"interface IAnIssue {}";
+			var input = @"public interface anIssue {}";
+			var output = @"public interface IAnIssue {}";
 			CheckNaming (input, output);
 		}
 
 		[Test]
 		public void TestEnumName ()
 		{
-			var input = @"enum anIssue {}";
-			var output = @"enum AnIssue {}";
+			var input = @"public enum anIssue {}";
+			var output = @"public enum AnIssue {}";
 			CheckNaming (input, output);
 		}
 
 		[Test]
 		public void TestDelegateName ()
 		{
-			var input = @"delegate void anIssue ();";
-			var output = @"delegate void AnIssue ();";
+			var input = @"public delegate void anIssue ();";
+			var output = @"public delegate void AnIssue ();";
 			CheckNaming (input, output);
 		}
 
-		[Test]
-		public void TestPrivateFieldName ()
-		{
-			var input = @"class AClass { int Field; }";
-			var output = @"class AClass { int field; }";
-			CheckNaming (input, output);
-		}
+//		[Test]
+//		public void TestPrivateFieldName ()
+//		{
+//			var input = @"class AClass { int Field; }";
+//			var output = @"class AClass { int field; }";
+//			CheckNaming (input, output);
+//		}
 		
-		[Test]
-		public void TestUnderscoreFieldName ()
-		{
-			var input = @"class AClass { int _Field; }";
-			var output = @"class AClass { int _field; }";
-			CheckNaming (input, output);
-		}
+//		[Test]
+//		public void TestUnderscoreFieldName ()
+//		{
+//			var input = @"class AClass { int _Field; }";
+//			var output = @"class AClass { int _field; }";
+//			CheckNaming (input, output);
+//		}
 		
 		[Test]
 		public void TestPublicFieldName ()
@@ -142,13 +142,13 @@ namespace ICSharpCode.NRefactory.CSharp.CodeIssues
 			CheckNaming (input, output);
 		}
 		
-		[Test]
-		public void TestPrivateConstantFieldName ()
-		{
-			var input = @"class AClass { const int field = 5; }";
-			var output = @"class AClass { const int Field = 5; }";
-			CheckNaming (input, output);
-		}
+//		[Test]
+//		public void TestPrivateConstantFieldName ()
+//		{
+//			var input = @"class AClass { const int field = 5; }";
+//			var output = @"class AClass { const int Field = 5; }";
+//			CheckNaming (input, output);
+//		}
 		
 		[Test]
 		public void TestPublicReadOnlyFieldName ()
@@ -174,13 +174,13 @@ namespace ICSharpCode.NRefactory.CSharp.CodeIssues
 			CheckNaming (input, output, true);
 		}
 
-		[Test]
-		public void TestPrivateStaticFieldName ()
-		{
-			var input = @"class AClass { static int Field; }";
-			var output = @"class AClass { static int field; }";
-			CheckNaming (input, output);
-		}
+//		[Test]
+//		public void TestPrivateStaticFieldName ()
+//		{
+//			var input = @"class AClass { static int Field; }";
+//			var output = @"class AClass { static int field; }";
+//			CheckNaming (input, output);
+//		}
 
 		[Test]
 		public void TestPublicStaticReadOnlyFieldName ()
@@ -190,13 +190,13 @@ namespace ICSharpCode.NRefactory.CSharp.CodeIssues
 			CheckNaming (input, output);
 		}
 		
-		[Test]
-		public void TestPrivateReadOnlyFieldName ()
-		{
-			var input = @"class AClass { readonly int Field; }";
-			var output = @"class AClass { readonly int field; }";
-			CheckNaming (input, output);
-		}
+//		[Test]
+//		public void TestPrivateReadOnlyFieldName ()
+//		{
+//			var input = @"class AClass { readonly int Field; }";
+//			var output = @"class AClass { readonly int field; }";
+//			CheckNaming (input, output);
+//		}
 		
 		[Test]
 		public void TestPublicConstantFieldName ()
@@ -209,16 +209,16 @@ namespace ICSharpCode.NRefactory.CSharp.CodeIssues
 		[Test]
 		public void TestMethodName ()
 		{
-			var input = @"class AClass { int method () {} }";
-			var output = @"class AClass { int Method () {} }";
+			var input = @"class AClass { public int method () {} }";
+			var output = @"class AClass { public int Method () {} }";
 			CheckNaming (input, output);
 		}
 
 		[Test]
 		public void TestPropertyName ()
 		{
-			var input = @"class AClass { int property { get; set; } }";
-			var output = @"class AClass { int Property { get; set; } }";
+			var input = @"class AClass { public int property { get; set; } }";
+			var output = @"class AClass { public int Property { get; set; } }";
 			CheckNaming (input, output);
 		}
 
@@ -236,6 +236,31 @@ namespace ICSharpCode.NRefactory.CSharp.CodeIssues
 			var input = @"struct Str<K> { K k;}";
 			var output = @"struct Str<TK> { TK k;}";
 			CheckNaming (input, output);
+		}
+
+
+		[Test]
+		public void TestOverrideMembers ()
+		{
+			var input = @"
+class Base { public virtual int method (int Param) {} }
+class MyClass : Base { public override int method (int Param) {} }";
+			TestRefactoringContext context;
+			var issues = GetIssues (new InconsistentNamingIssue (), input, out context);
+			Assert.AreEqual (2, issues.Count);
+		}
+
+		[Test]
+		public void TestOverrideMembersParameterNameCaseMismatch ()
+		{
+			var input = @"
+class Base { public virtual int Method (int param) {} }
+class MyClass : Base { public override int Method (int Param) {} }";
+			TestRefactoringContext context;
+			var issues = GetIssues (new InconsistentNamingIssue (), input, out context);
+			foreach (var issue in issues)
+				Console.WriteLine(issue.Description);
+			Assert.AreEqual (1, issues.Count);
 		}
 	}
 

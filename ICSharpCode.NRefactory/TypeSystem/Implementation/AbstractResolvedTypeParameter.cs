@@ -232,37 +232,12 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			return EmptyList<IType>.Instance;
 		}
 		
-		static readonly IUnresolvedMethod dummyConstructor = CreateDummyConstructor();
-		
-		static IUnresolvedMethod CreateDummyConstructor()
-		{
-			var m = new DefaultUnresolvedMethod {
-				EntityType = EntityType.Constructor,
-				Name = ".ctor",
-				Accessibility = Accessibility.Public,
-				IsSynthetic = true,
-				ReturnType = KnownTypeReference.Void
-			};
-			m.Freeze();
-			return m;
-		}
-		
-		static IMethod GetDummyConstructor(ICompilation compilation)
-		{
-			// Reuse the same IMethod instance for all dummy constructors
-			// so that two occurrences of 'new T()' refer to the same constructor.
-			return (IMethod)compilation.CacheManager.GetOrAddShared(
-				dummyConstructor, _ => dummyConstructor.CreateResolved(compilation.TypeResolveContext));
-		}
-		
 		public IEnumerable<IMethod> GetConstructors(Predicate<IUnresolvedMethod> filter = null, GetMemberOptions options = GetMemberOptions.IgnoreInheritedMembers)
 		{
 			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers) {
 				if (this.HasDefaultConstructorConstraint || this.HasValueTypeConstraint) {
-					if (filter == null || filter(dummyConstructor)) {
-						var resolvedCtor = GetDummyConstructor(compilation);
-						IMethod m = new SpecializedMethod(resolvedCtor, TypeParameterSubstitution.Identity) { DeclaringType = this };
-						return new [] { m };
+					if (filter == null || filter(DefaultUnresolvedMethod.DummyConstructor)) {
+						return new [] { DefaultResolvedMethod.GetDummyConstructor(compilation, this) };
 					}
 				}
 				return EmptyList<IMethod>.Instance;
@@ -319,6 +294,14 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				return GetMembersHelper.GetMembers(this, FilterNonStatic(filter), options);
 		}
 		
+		public IEnumerable<IMethod> GetAccessors(Predicate<IUnresolvedMethod> filter = null, GetMemberOptions options = GetMemberOptions.None)
+		{
+			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers)
+				return EmptyList<IMethod>.Instance;
+			else
+				return GetMembersHelper.GetAccessors(this, FilterNonStatic(filter), options);
+		}
+		
 		static Predicate<T> FilterNonStatic<T>(Predicate<T> filter) where T : class, IUnresolvedMember
 		{
 			if (filter == null)
@@ -344,7 +327,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		public override string ToString()
 		{
-			return this.ReflectionName;
+			return this.ReflectionName + " (owner=" + owner + ")";
 		}
 	}
 }

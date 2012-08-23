@@ -142,6 +142,22 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		}
 		#endregion
 		
+		#region GetAccessors
+		public static IEnumerable<IMethod> GetAccessors(IType type, Predicate<IUnresolvedMethod> filter, GetMemberOptions options)
+		{
+			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers) {
+				return GetAccessorsImpl(type, filter, options);
+			} else {
+				return type.GetNonInterfaceBaseTypes().SelectMany(t => GetAccessorsImpl(t, filter, options));
+			}
+		}
+		
+		static IEnumerable<IMethod> GetAccessorsImpl(IType baseType, Predicate<IUnresolvedMethod> filter, GetMemberOptions options)
+		{
+			return GetConstructorsOrAccessorsImpl(baseType, baseType.GetAccessors(filter, options | declaredMembers), filter, options);
+		}
+		#endregion
+		
 		#region GetConstructors
 		public static IEnumerable<IMethod> GetConstructors(IType type, Predicate<IUnresolvedMethod> filter, GetMemberOptions options)
 		{
@@ -154,17 +170,21 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		static IEnumerable<IMethod> GetConstructorsImpl(IType baseType, Predicate<IUnresolvedMethod> filter, GetMemberOptions options)
 		{
-			IEnumerable<IMethod> declaredCtors = baseType.GetConstructors(filter, options | declaredMembers);
+			return GetConstructorsOrAccessorsImpl(baseType, baseType.GetConstructors(filter, options | declaredMembers), filter, options);
+		}
+		
+		static IEnumerable<IMethod> GetConstructorsOrAccessorsImpl(IType baseType, IEnumerable<IMethod> declaredMembers, Predicate<IUnresolvedMethod> filter, GetMemberOptions options)
+		{
 			if ((options & GetMemberOptions.ReturnMemberDefinitions) == GetMemberOptions.ReturnMemberDefinitions) {
-				return declaredCtors;
+				return declaredMembers;
 			}
 			
 			ParameterizedType pt = baseType as ParameterizedType;
 			if (pt != null) {
 				var substitution = pt.GetSubstitution();
-				return declaredCtors.Select(m => new SpecializedMethod(m, substitution) { DeclaringType = pt });
+				return declaredMembers.Select(m => new SpecializedMethod(m, substitution) { DeclaringType = pt });
 			} else {
-				return declaredCtors;
+				return declaredMembers;
 			}
 		}
 		#endregion

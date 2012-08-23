@@ -82,11 +82,10 @@ namespace ICSharpCode.NRefactory.CSharp.CodeActions
 	}
 }", @"class TestClass
 {
-	const string HelloWorld = ""Hello World"";
-
+	const string helloWorld = ""Hello World"";
 	public void Hello ()
 	{
-		System.Console.WriteLine (HelloWorld);
+		System.Console.WriteLine (helloWorld);
 	}
 }", 1);
 		}

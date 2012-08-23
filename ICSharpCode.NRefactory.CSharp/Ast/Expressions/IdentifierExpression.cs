@@ -55,7 +55,16 @@ namespace ICSharpCode.NRefactory.CSharp
 				SetChildByRole(Roles.Identifier, CSharp.Identifier.Create (value));
 			}
 		}
-		
+
+		public Identifier IdentifierToken {
+			get {
+				return GetChildByRole (Roles.Identifier);
+			}
+			set {
+				SetChildByRole (Roles.Identifier, value);
+			}
+		}
+
 		public AstNodeCollection<AstType> TypeArguments {
 			get { return GetChildrenByRole (Roles.TypeArgument); }
 		}

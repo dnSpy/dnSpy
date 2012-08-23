@@ -1,4 +1,4 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
+// Copyright (c) AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -290,7 +290,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		/// <summary>
 		/// Gets the file names that possibly contain references to the element being searched for.
 		/// </summary>
-		public IEnumerable<CSharpParsedFile> GetInterestingFiles(IFindReferenceSearchScope searchScope, ICompilation compilation)
+		public IEnumerable<CSharpUnresolvedFile> GetInterestingFiles(IFindReferenceSearchScope searchScope, ICompilation compilation)
 		{
 			if (searchScope == null)
 				throw new ArgumentNullException("searchScope");
@@ -303,47 +303,47 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				ITypeDefinition topLevelTypeDef = compilation.Import(searchScope.TopLevelTypeDefinition);
 				if (topLevelTypeDef == null) {
 					// This compilation cannot have references to the target entity.
-					return EmptyList<CSharpParsedFile>.Instance;
+					return EmptyList<CSharpUnresolvedFile>.Instance;
 				}
 				switch (searchScope.Accessibility) {
 					case Accessibility.None:
 					case Accessibility.Private:
 						if (topLevelTypeDef.ParentAssembly == compilation.MainAssembly)
-							return topLevelTypeDef.Parts.Select(p => p.ParsedFile).OfType<CSharpParsedFile>().Distinct();
+							return topLevelTypeDef.Parts.Select(p => p.UnresolvedFile).OfType<CSharpUnresolvedFile>().Distinct();
 						else
-							return EmptyList<CSharpParsedFile>.Instance;
+							return EmptyList<CSharpUnresolvedFile>.Instance;
 					case Accessibility.Protected:
 						return GetInterestingFilesProtected(topLevelTypeDef);
 					case Accessibility.Internal:
 						if (topLevelTypeDef.ParentAssembly.InternalsVisibleTo(compilation.MainAssembly))
-							return pc.Files.OfType<CSharpParsedFile>();
+							return pc.Files.OfType<CSharpUnresolvedFile>();
 						else
-							return EmptyList<CSharpParsedFile>.Instance;
+							return EmptyList<CSharpUnresolvedFile>.Instance;
 					case Accessibility.ProtectedAndInternal:
 						if (topLevelTypeDef.ParentAssembly.InternalsVisibleTo(compilation.MainAssembly))
 							return GetInterestingFilesProtected(topLevelTypeDef);
 						else
-							return EmptyList<CSharpParsedFile>.Instance;
+							return EmptyList<CSharpUnresolvedFile>.Instance;
 					case Accessibility.ProtectedOrInternal:
 						if (topLevelTypeDef.ParentAssembly.InternalsVisibleTo(compilation.MainAssembly))
-							return pc.Files.OfType<CSharpParsedFile>();
+							return pc.Files.OfType<CSharpUnresolvedFile>();
 						else
 							return GetInterestingFilesProtected(topLevelTypeDef);
 					default:
-						return pc.Files.OfType<CSharpParsedFile>();
+						return pc.Files.OfType<CSharpUnresolvedFile>();
 				}
 			} else {
-				return pc.Files.OfType<CSharpParsedFile>();
+				return pc.Files.OfType<CSharpUnresolvedFile>();
 			}
 		}
 		
-		IEnumerable<CSharpParsedFile> GetInterestingFilesProtected(ITypeDefinition referencedTypeDefinition)
+		IEnumerable<CSharpUnresolvedFile> GetInterestingFilesProtected(ITypeDefinition referencedTypeDefinition)
 		{
 			return (from typeDef in referencedTypeDefinition.Compilation.MainAssembly.GetAllTypeDefinitions()
 			        where typeDef.IsDerivedFrom(referencedTypeDefinition)
 			        from part in typeDef.Parts
-			        select part.ParsedFile
-			       ).OfType<CSharpParsedFile>().Distinct();
+			        select part.UnresolvedFile
+			       ).OfType<CSharpUnresolvedFile>().Distinct();
 		}
 		#endregion
 		
@@ -352,37 +352,37 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		/// Finds all references in the given file.
 		/// </summary>
 		/// <param name="searchScope">The search scope for which to look.</param>
-		/// <param name="parsedFile">The type system representation of the file being searched.</param>
-		/// <param name="compilationUnit">The compilation unit of the file being searched.</param>
+		/// <param name="unresolvedFile">The type system representation of the file being searched.</param>
+		/// <param name="syntaxTree">The syntax tree of the file being searched.</param>
 		/// <param name="compilation">The compilation for the project that contains the file.</param>
 		/// <param name="callback">Callback used to report the references that were found.</param>
 		/// <param name="cancellationToken">CancellationToken that may be used to cancel the operation.</param>
-		public void FindReferencesInFile(IFindReferenceSearchScope searchScope, CSharpParsedFile parsedFile, CompilationUnit compilationUnit,
+		public void FindReferencesInFile(IFindReferenceSearchScope searchScope, CSharpUnresolvedFile unresolvedFile, SyntaxTree syntaxTree,
 		                                 ICompilation compilation, FoundReferenceCallback callback, CancellationToken cancellationToken)
 		{
 			if (searchScope == null)
 				throw new ArgumentNullException("searchScope");
-			FindReferencesInFile(new[] { searchScope }, parsedFile, compilationUnit, compilation, callback, cancellationToken);
+			FindReferencesInFile(new[] { searchScope }, unresolvedFile, syntaxTree, compilation, callback, cancellationToken);
 		}
 		
 		/// <summary>
 		/// Finds all references in the given file.
 		/// </summary>
 		/// <param name="searchScopes">The search scopes for which to look.</param>
-		/// <param name="parsedFile">The type system representation of the file being searched.</param>
-		/// <param name="compilationUnit">The compilation unit of the file being searched.</param>
+		/// <param name="unresolvedFile">The type system representation of the file being searched.</param>
+		/// <param name="syntaxTree">The syntax tree of the file being searched.</param>
 		/// <param name="compilation">The compilation for the project that contains the file.</param>
 		/// <param name="callback">Callback used to report the references that were found.</param>
 		/// <param name="cancellationToken">CancellationToken that may be used to cancel the operation.</param>
-		public void FindReferencesInFile(IList<IFindReferenceSearchScope> searchScopes, CSharpParsedFile parsedFile, CompilationUnit compilationUnit,
+		public void FindReferencesInFile(IList<IFindReferenceSearchScope> searchScopes, CSharpUnresolvedFile unresolvedFile, SyntaxTree syntaxTree,
 		                                 ICompilation compilation, FoundReferenceCallback callback, CancellationToken cancellationToken)
 		{
 			if (searchScopes == null)
 				throw new ArgumentNullException("searchScopes");
-			if (parsedFile == null)
-				throw new ArgumentNullException("parsedFile");
-			if (compilationUnit == null)
-				throw new ArgumentNullException("compilationUnit");
+			if (unresolvedFile == null)
+				throw new ArgumentNullException("unresolvedFile");
+			if (syntaxTree == null)
+				throw new ArgumentNullException("syntaxTree");
 			if (compilation == null)
 				throw new ArgumentNullException("compilation");
 			if (callback == null)
@@ -402,9 +402,9 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			}
 			
 			cancellationToken.ThrowIfCancellationRequested();
-			combinedNavigator = new DetectSkippableNodesNavigator(combinedNavigator, compilationUnit);
+			combinedNavigator = new DetectSkippableNodesNavigator(combinedNavigator, syntaxTree);
 			cancellationToken.ThrowIfCancellationRequested();
-			CSharpAstResolver resolver = new CSharpAstResolver(compilation, compilationUnit, parsedFile);
+			CSharpAstResolver resolver = new CSharpAstResolver(compilation, syntaxTree, unresolvedFile);
 			resolver.ApplyNavigator(combinedNavigator, cancellationToken);
 			foreach (var n in navigators) {
 				var frn = n as FindReferenceNavigator;
@@ -535,7 +535,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				
 				NamedExpression ne = node as NamedExpression;
 				if (ne != null)
-					return ne.Identifier == searchTerm;
+					return ne.Name == searchTerm;
 				
 				return false;
 			}
@@ -1171,19 +1171,19 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		/// Finds all references of a given variable.
 		/// </summary>
 		/// <param name="variable">The variable for which to look.</param>
-		/// <param name="parsedFile">The type system representation of the file being searched.</param>
-		/// <param name="compilationUnit">The compilation unit of the file being searched.</param>
+		/// <param name="unresolvedFile">The type system representation of the file being searched.</param>
+		/// <param name="syntaxTree">The syntax tree of the file being searched.</param>
 		/// <param name="compilation">The compilation.</param>
 		/// <param name="callback">Callback used to report the references that were found.</param>
 		/// <param name="cancellationToken">Cancellation token that may be used to cancel the operation.</param>
-		public void FindLocalReferences(IVariable variable, CSharpParsedFile parsedFile, CompilationUnit compilationUnit,
+		public void FindLocalReferences(IVariable variable, CSharpUnresolvedFile unresolvedFile, SyntaxTree syntaxTree,
 		                                ICompilation compilation, FoundReferenceCallback callback, CancellationToken cancellationToken)
 		{
 			if (variable == null)
 				throw new ArgumentNullException("variable");
 			var searchScope = new SearchScope(c => new FindLocalReferencesNavigator(variable));
 			searchScope.declarationCompilation = compilation;
-			FindReferencesInFile(searchScope, parsedFile, compilationUnit, compilation, callback, cancellationToken);
+			FindReferencesInFile(searchScope, unresolvedFile, syntaxTree, compilation, callback, cancellationToken);
 		}
 		
 		class FindLocalReferencesNavigator : FindReferenceNavigator
@@ -1225,12 +1225,12 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 		/// Finds all references of a given type parameter.
 		/// </summary>
 		/// <param name="typeParameter">The type parameter for which to look.</param>
-		/// <param name="parsedFile">The type system representation of the file being searched.</param>
-		/// <param name="compilationUnit">The compilation unit of the file being searched.</param>
+		/// <param name="unresolvedFile">The type system representation of the file being searched.</param>
+		/// <param name="syntaxTree">The syntax tree of the file being searched.</param>
 		/// <param name="compilation">The compilation.</param>
 		/// <param name="callback">Callback used to report the references that were found.</param>
 		/// <param name="cancellationToken">Cancellation token that may be used to cancel the operation.</param>
-		public void FindTypeParameterReferences(IType typeParameter, CSharpParsedFile parsedFile, CompilationUnit compilationUnit,
+		public void FindTypeParameterReferences(IType typeParameter, CSharpUnresolvedFile unresolvedFile, SyntaxTree syntaxTree,
 		                                ICompilation compilation, FoundReferenceCallback callback, CancellationToken cancellationToken)
 		{
 			if (typeParameter == null)
@@ -1240,7 +1240,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 			var searchScope = new SearchScope(c => new FindTypeParameterReferencesNavigator((ITypeParameter)typeParameter));
 			searchScope.declarationCompilation = compilation;
 			searchScope.accessibility = Accessibility.Private;
-			FindReferencesInFile(searchScope, parsedFile, compilationUnit, compilation, callback, cancellationToken);
+			FindReferencesInFile(searchScope, unresolvedFile, syntaxTree, compilation, callback, cancellationToken);
 		}
 		
 		class FindTypeParameterReferencesNavigator : FindReferenceNavigator

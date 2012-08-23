@@ -27,6 +27,8 @@ namespace ICSharpCode.NRefactory.Semantics
 {
 	/// <summary>
 	/// Represents the result of a member invocation.
+	/// Used for field/property/event access.
+	/// Also, <see cref="InvocationResolveResult"/> derives from MemberResolveResult.
 	/// </summary>
 	public class MemberResolveResult : ResolveResult
 	{
@@ -73,6 +75,16 @@ namespace ICSharpCode.NRefactory.Semantics
 			this.member = member;
 			this.isConstant = isConstant;
 			this.constantValue = constantValue;
+		}
+		
+		public MemberResolveResult(ResolveResult targetResult, IMember member, IType returnType, bool isConstant, object constantValue, bool isVirtualCall)
+			: base(returnType)
+		{
+			this.targetResult = targetResult;
+			this.member = member;
+			this.isConstant = isConstant;
+			this.constantValue = constantValue;
+			this.isVirtualCall = isVirtualCall;
 		}
 		
 		public ResolveResult TargetResult {

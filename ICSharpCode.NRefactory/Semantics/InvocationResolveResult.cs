@@ -26,7 +26,7 @@ using ICSharpCode.NRefactory.TypeSystem.Implementation;
 namespace ICSharpCode.NRefactory.Semantics
 {
 	/// <summary>
-	/// Represents the result of a method invocation.
+	/// Represents the result of a method, constructor or indexer invocation.
 	/// </summary>
 	public class InvocationResolveResult : MemberResolveResult
 	{

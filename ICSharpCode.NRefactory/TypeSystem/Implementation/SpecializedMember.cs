@@ -32,7 +32,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 	/// </summary>
 	public abstract class SpecializedMember : IMember
 	{
-		readonly IMember memberDefinition;
+		protected readonly IMember baseMember;
 		TypeParameterSubstitution substitution;
 		
 		IType declaringType;
@@ -45,10 +45,10 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			
 			SpecializedMember sm = memberDefinition as SpecializedMember;
 			if (sm != null) {
-				this.memberDefinition = sm.memberDefinition;
+				this.baseMember = sm.baseMember;
 				this.substitution = sm.substitution;
 			} else {
-				this.memberDefinition = memberDefinition;
+				this.baseMember = memberDefinition;
 				this.substitution = TypeParameterSubstitution.Identity;
 			}
 		}
@@ -80,15 +80,15 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			}
 		}
 		
-		public IMemberReference ToMemberReference()
+		public virtual IMemberReference ToMemberReference()
 		{
 			return new SpecializingMemberReference(
-				memberDefinition.ToMemberReference(),
+				baseMember.ToMemberReference(),
 				ToTypeReference(substitution.ClassTypeArguments),
-				ToTypeReference(substitution.MethodTypeArguments));
+				null);
 		}
 		
-		static IList<ITypeReference> ToTypeReference(IList<IType> typeArguments)
+		internal static IList<ITypeReference> ToTypeReference(IList<IType> typeArguments)
 		{
 			if (typeArguments == null)
 				return null;
@@ -101,10 +101,13 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			if (accessorDefinition == null)
 				return null;
 			var result = LazyInit.VolatileRead(ref cachingField);
-			if (result != null)
+			if (result != null) {
 				return result;
-			else
-				return LazyInit.GetOrSet(ref cachingField, new SpecializedMethod(accessorDefinition, substitution));
+			} else {
+				var sm = new SpecializedMethod(accessorDefinition, substitution);
+				//sm.AccessorOwner = this;
+				return LazyInit.GetOrSet(ref cachingField, sm);
+			}
 		}
 		
 		/// <summary>
@@ -119,7 +122,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				var result = LazyInit.VolatileRead(ref this.declaringType);
 				if (result != null)
 					return result;
-				IType definitionDeclaringType = memberDefinition.DeclaringType;
+				IType definitionDeclaringType = baseMember.DeclaringType;
 				ITypeDefinition definitionDeclaringTypeDef = definitionDeclaringType as ITypeDefinition;
 				if (definitionDeclaringTypeDef != null && definitionDeclaringType.TypeParameterCount > 0) {
 					if (substitution.ClassTypeArguments != null && substitution.ClassTypeArguments.Count == definitionDeclaringType.TypeParameterCount) {
@@ -144,11 +147,11 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		}
 		
 		public IMember MemberDefinition {
-			get { return memberDefinition.MemberDefinition; }
+			get { return baseMember.MemberDefinition; }
 		}
 		
 		public IUnresolvedMember UnresolvedMember {
-			get { return memberDefinition.UnresolvedMember; }
+			get { return baseMember.UnresolvedMember; }
 		}
 		
 		public IType ReturnType {
@@ -157,7 +160,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				if (result != null)
 					return result;
 				else
-					return LazyInit.GetOrSet(ref this.returnType, memberDefinition.ReturnType.AcceptVisitor(substitution));
+					return LazyInit.GetOrSet(ref this.returnType, baseMember.ReturnType.AcceptVisitor(substitution));
 			}
 			protected set {
 				// This setter is used for LiftedUserDefinedOperator, a special case of specialized member
@@ -170,35 +173,35 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		}
 		
 		public bool IsVirtual {
-			get { return memberDefinition.IsVirtual; }
+			get { return baseMember.IsVirtual; }
 		}
 		
 		public bool IsOverride {
-			get { return memberDefinition.IsOverride; }
+			get { return baseMember.IsOverride; }
 		}
 		
 		public bool IsOverridable {
-			get { return memberDefinition.IsOverridable; }
+			get { return baseMember.IsOverridable; }
 		}
 		
 		public EntityType EntityType {
-			get { return memberDefinition.EntityType; }
+			get { return baseMember.EntityType; }
 		}
 		
 		public DomRegion Region {
-			get { return memberDefinition.Region; }
+			get { return baseMember.Region; }
 		}
 		
 		public DomRegion BodyRegion {
-			get { return memberDefinition.BodyRegion; }
+			get { return baseMember.BodyRegion; }
 		}
 		
 		public ITypeDefinition DeclaringTypeDefinition {
-			get { return memberDefinition.DeclaringTypeDefinition; }
+			get { return baseMember.DeclaringTypeDefinition; }
 		}
 		
 		public IList<IAttribute> Attributes {
-			get { return memberDefinition.Attributes; }
+			get { return baseMember.Attributes; }
 		}
 		
 		IList<IMember> implementedInterfaceMembers;
@@ -211,7 +214,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		IList<IMember> FindImplementedInterfaceMembers()
 		{
-			var definitionImplementations = memberDefinition.ImplementedInterfaceMembers;
+			var definitionImplementations = baseMember.ImplementedInterfaceMembers;
 			IMember[] result = new IMember[definitionImplementations.Count];
 			for (int i = 0; i < result.Length; i++) {
 				result[i] = SpecializedMember.Create(definitionImplementations[i], substitution);
@@ -220,83 +223,83 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		}
 		
 		public bool IsExplicitInterfaceImplementation {
-			get { return memberDefinition.IsExplicitInterfaceImplementation; }
+			get { return baseMember.IsExplicitInterfaceImplementation; }
 		}
 		
 		public DocumentationComment Documentation {
-			get { return memberDefinition.Documentation; }
+			get { return baseMember.Documentation; }
 		}
 		
 		public Accessibility Accessibility {
-			get { return memberDefinition.Accessibility; }
+			get { return baseMember.Accessibility; }
 		}
 		
 		public bool IsStatic {
-			get { return memberDefinition.IsStatic; }
+			get { return baseMember.IsStatic; }
 		}
 		
 		public bool IsAbstract {
-			get { return memberDefinition.IsAbstract; }
+			get { return baseMember.IsAbstract; }
 		}
 		
 		public bool IsSealed {
-			get { return memberDefinition.IsSealed; }
+			get { return baseMember.IsSealed; }
 		}
 		
 		public bool IsShadowing {
-			get { return memberDefinition.IsShadowing; }
+			get { return baseMember.IsShadowing; }
 		}
 		
 		public bool IsSynthetic {
-			get { return memberDefinition.IsSynthetic; }
+			get { return baseMember.IsSynthetic; }
 		}
 		
 		public bool IsPrivate {
-			get { return memberDefinition.IsPrivate; }
+			get { return baseMember.IsPrivate; }
 		}
 		
 		public bool IsPublic {
-			get { return memberDefinition.IsPublic; }
+			get { return baseMember.IsPublic; }
 		}
 		
 		public bool IsProtected {
-			get { return memberDefinition.IsProtected; }
+			get { return baseMember.IsProtected; }
 		}
 		
 		public bool IsInternal {
-			get { return memberDefinition.IsInternal; }
+			get { return baseMember.IsInternal; }
 		}
 		
 		public bool IsProtectedOrInternal {
-			get { return memberDefinition.IsProtectedOrInternal; }
+			get { return baseMember.IsProtectedOrInternal; }
 		}
 		
 		public bool IsProtectedAndInternal {
-			get { return memberDefinition.IsProtectedAndInternal; }
+			get { return baseMember.IsProtectedAndInternal; }
 		}
 		
 		public string FullName {
-			get { return memberDefinition.FullName; }
+			get { return baseMember.FullName; }
 		}
 		
 		public string Name {
-			get { return memberDefinition.Name; }
+			get { return baseMember.Name; }
 		}
 		
 		public string Namespace {
-			get { return memberDefinition.Namespace; }
+			get { return baseMember.Namespace; }
 		}
 		
 		public string ReflectionName {
-			get { return memberDefinition.ReflectionName; }
+			get { return baseMember.ReflectionName; }
 		}
 		
 		public ICompilation Compilation {
-			get { return memberDefinition.Compilation; }
+			get { return baseMember.Compilation; }
 		}
 		
 		public IAssembly ParentAssembly {
-			get { return memberDefinition.ParentAssembly; }
+			get { return baseMember.ParentAssembly; }
 		}
 		
 		public override bool Equals(object obj)
@@ -304,13 +307,13 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			SpecializedMember other = obj as SpecializedMember;
 			if (other == null)
 				return false;
-			return this.memberDefinition.Equals(other.memberDefinition) && this.substitution.Equals(other.substitution);
+			return this.baseMember.Equals(other.baseMember) && this.substitution.Equals(other.substitution);
 		}
 		
 		public override int GetHashCode()
 		{
 			unchecked {
-				return 1000000007 * memberDefinition.GetHashCode() + 1000000009 * substitution.GetHashCode();
+				return 1000000007 * baseMember.GetHashCode() + 1000000009 * substitution.GetHashCode();
 			}
 		}
 		
@@ -358,7 +361,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		
 		protected IList<IParameter> CreateParameters(TypeVisitor substitution)
 		{
-			var paramDefs = ((IParameterizedMember)this.MemberDefinition).Parameters;
+			var paramDefs = ((IParameterizedMember)this.baseMember).Parameters;
 			if (paramDefs.Count == 0) {
 				return EmptyList<IParameter>.Instance;
 			} else {
@@ -380,7 +383,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			StringBuilder b = new StringBuilder("[");
 			b.Append(GetType().Name);
 			b.Append(' ');
-			b.Append(this.DeclaringType.ToString());
+			b.Append(this.DeclaringType.ReflectionName);
 			b.Append('.');
 			b.Append(this.Name);
 			b.Append('(');
@@ -389,7 +392,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				b.Append(this.Parameters[i].ToString());
 			}
 			b.Append("):");
-			b.Append(this.ReturnType.ToString());
+			b.Append(this.ReturnType.ReflectionName);
 			b.Append(']');
 			return b.ToString();
 		}

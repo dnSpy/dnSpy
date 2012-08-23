@@ -35,8 +35,8 @@ namespace ICSharpCode.NRefactory.Documentation
 		void Init(string program)
 		{
 			var pc = new CSharpProjectContent().AddAssemblyReferences(new[] { CecilLoaderTests.Mscorlib });
-			var cu = new CSharpParser().Parse(new StringReader(program), "program.cs");
-			compilation = pc.UpdateProjectContent(null, cu.ToTypeSystem()).CreateCompilation();
+			var syntaxTree = SyntaxTree.Parse(program, "program.cs");
+			compilation = pc.AddOrUpdateFiles(syntaxTree.ToTypeSystem()).CreateCompilation();
 			typeDefinition = compilation.MainAssembly.TopLevelTypeDefinitions.FirstOrDefault();
 		}
 		
@@ -136,6 +136,38 @@ class Base {
 			Assert.AreEqual("remarks", element.Children[1].Name);
 			Assert.AreEqual("Overridden summary", element.Children[0].TextContent);
 			Assert.AreEqual("Base remarks", element.Children[1].TextContent);
+		}
+		
+		[Test]
+		public void DocumentationAboveAttribute()
+		{
+			Init(@"using System;
+/// <summary/>
+[SomeAttribute]
+class Test { }");
+			Assert.AreEqual("<summary/>", typeDefinition.Documentation.ToString());
+		}
+		
+		[Test]
+		public void DocumentationAboveAttribute2()
+		{
+			Init(@"using System;
+/// <summary/>
+[SomeAttribute] // a comment on the attribute
+class Test { }");
+			Assert.AreEqual("<summary/>", typeDefinition.Documentation.ToString());
+		}
+		
+		[Test]
+		public void DocumentationAboveAttributeInRegion()
+		{
+			Init(@"using System;
+/// <summary/>
+#region R
+[SomeAttribute]
+#endregion
+class Test { }");
+			Assert.AreEqual("<summary/>", typeDefinition.Documentation.ToString());
 		}
 	}
 }

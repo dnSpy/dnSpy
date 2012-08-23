@@ -151,6 +151,10 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			return typeArguments[index];
 		}
 		
+		/// <summary>
+		/// Gets the definition of the generic type.
+		/// For <c>ParameterizedType</c>, this method never returns null.
+		/// </summary>
 		public ITypeDefinition GetDefinition()
 		{
 			return genericType;
@@ -257,6 +261,14 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				return genericType.GetMembers(filter, options);
 			else
 				return GetMembersHelper.GetMembers(this, filter, options);
+		}
+		
+		public IEnumerable<IMethod> GetAccessors(Predicate<IUnresolvedMethod> filter = null, GetMemberOptions options = GetMemberOptions.None)
+		{
+			if ((options & GetMemberOptions.ReturnMemberDefinitions) == GetMemberOptions.ReturnMemberDefinitions)
+				return genericType.GetAccessors(filter, options);
+			else
+				return GetMembersHelper.GetAccessors(this, filter, options);
 		}
 		
 		public override bool Equals(object obj)

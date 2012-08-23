@@ -25,6 +25,8 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 {
 	/// <summary>
 	/// Represents an anonymous method or lambda expression.
+	/// Note: the lambda has no type.
+	/// To retrieve the delegate type, look at the anonymous function conversion.
 	/// </summary>
 	public abstract class LambdaResolveResult : ResolveResult
 	{

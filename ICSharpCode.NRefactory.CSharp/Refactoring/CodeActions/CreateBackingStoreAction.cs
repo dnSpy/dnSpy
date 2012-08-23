@@ -46,6 +46,8 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				
 				// create field
 				var backingStore = new FieldDeclaration ();
+				if (property.Modifiers.HasFlag (Modifiers.Static))
+					backingStore.Modifiers |= Modifiers.Static;
 				backingStore.ReturnType = property.ReturnType.Clone ();
 				
 				var initializer = new VariableInitializer (backingStoreName);

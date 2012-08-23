@@ -44,37 +44,45 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				yield break;
 			}
 			yield return new CodeAction(context.TranslateString("Convert 'foreach' loop to 'for'"), script => {
-				var result = context.Resolve (foreachStatement.InExpression);
-				var countProperty = GetCountProperty (result.Type);
+				var result = context.Resolve(foreachStatement.InExpression);
+				var countProperty = GetCountProperty(result.Type);
 				
 				// TODO: use another variable name if 'i' is already in use
-				var initializer = new VariableDeclarationStatement (new PrimitiveType ("int"), "i", new PrimitiveExpression (0));
-				var id1 = new IdentifierExpression ("i");
-				var id2 = id1.Clone ();
-				var id3 = id1.Clone ();
+				var initializer = new VariableDeclarationStatement(new PrimitiveType("int"), "i", new PrimitiveExpression(0));
+				var id1 = new IdentifierExpression("i");
+				var id2 = id1.Clone();
+				var id3 = id1.Clone();
 				
-				var forStatement = new ForStatement () {
+				var variableDeclarationStatement = new VariableDeclarationStatement(
+					foreachStatement.VariableType.Clone(),
+					foreachStatement.VariableName,
+					new IndexerExpression(foreachStatement.InExpression.Clone(), id3)
+				);
+				var forStatement = new ForStatement() {
 					Initializers = { initializer },
 					Condition = new BinaryOperatorExpression (id1, BinaryOperatorType.LessThan, new MemberReferenceExpression (foreachStatement.InExpression.Clone (), countProperty)),
 					Iterators = { new ExpressionStatement (new UnaryOperatorExpression (UnaryOperatorType.PostIncrement, id2)) },
 					EmbeddedStatement = new BlockStatement {
-						new VariableDeclarationStatement (foreachStatement.VariableType.Clone (), foreachStatement.VariableName, new IndexerExpression (foreachStatement.InExpression.Clone (), id3))
+						variableDeclarationStatement
 					}
 				};
 				
 				if (foreachStatement.EmbeddedStatement is BlockStatement) {
-					foreach (var child in ((BlockStatement)foreachStatement.EmbeddedStatement).Statements) {
-						forStatement.EmbeddedStatement.AddChild (child.Clone (), BlockStatement.StatementRole);
+					variableDeclarationStatement.Remove();
+					var oldBlock = (BlockStatement)foreachStatement.EmbeddedStatement.Clone();
+					if (oldBlock.Statements.Any()) {
+						oldBlock.Statements.InsertBefore(oldBlock.Statements.First(), variableDeclarationStatement);
+					} else {
+						oldBlock.Statements.Add(variableDeclarationStatement);
 					}
+					forStatement.EmbeddedStatement = oldBlock;
 				} else {
 					forStatement.EmbeddedStatement.AddChild (foreachStatement.EmbeddedStatement.Clone (), BlockStatement.StatementRole);
 				}
-				
 				script.Replace (foreachStatement, forStatement);
 				script.Link (initializer.Variables.First ().NameToken, id1, id2, id3);
 			});
 		}
-		
 		
 		static string GetCountProperty(IType type)
 		{

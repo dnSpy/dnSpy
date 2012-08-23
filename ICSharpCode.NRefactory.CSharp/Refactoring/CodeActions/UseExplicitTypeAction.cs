@@ -52,7 +52,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			if (!(!type.Equals(SpecialType.NullType) && !type.Equals(SpecialType.UnknownType))) {
 				yield break;
 			}
-			yield return new CodeAction (context.TranslateString("Use expcicit type"), script => {
+			yield return new CodeAction (context.TranslateString("Use explicit type"), script => {
 				if (varDecl != null) {
 					script.Replace (varDecl.Type, context.CreateShortType (type));
 				} else {

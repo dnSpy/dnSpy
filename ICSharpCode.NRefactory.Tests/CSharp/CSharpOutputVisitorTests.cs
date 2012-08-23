@@ -47,7 +47,7 @@ namespace ICSharpCode.NRefactory.CSharp
 	}
 }
 ";
-			var unit = CompilationUnit.Parse(code);
+			var unit = SyntaxTree.Parse(code);
 			AssertOutput("class Test\n{\n$void Foo ()\n${\n$$Action<int> act = delegate (int testMe) {\n$$};\n$}\n}\n", unit);
 		}
 		
@@ -94,6 +94,49 @@ namespace ICSharpCode.NRefactory.CSharp
 			condition.AddChild(new ReturnStatement(), IfElseStatement.TrueRole);
 			
 			AssertOutput("if (cond/*a*/)\n$return;\n", condition);
+		}
+		
+		[Test]
+		public void SwitchStatement()
+		{
+			SwitchStatement type = new SwitchStatement {
+				Expression = new IdentifierExpression("i"),
+				SwitchSections = {
+					new SwitchSection {
+						CaseLabels = {
+							new CaseLabel(new PrimitiveExpression(1)),
+							new CaseLabel(new PrimitiveExpression(2))
+						},
+						Statements = {
+							new ExpressionStatement(new IdentifierExpression("A").Invoke()),
+							new ExpressionStatement(new IdentifierExpression("B").Invoke()),
+							new BreakStatement()
+						}
+					},
+					new SwitchSection {
+						CaseLabels = {
+							new CaseLabel(new PrimitiveExpression(3))
+						},
+						Statements = {
+							new BlockStatement {
+								new VariableDeclarationStatement(new PrimitiveType("int"), "a", new PrimitiveExpression(3)),
+								new ReturnStatement(new IdentifierExpression("a")),
+							}
+						}
+					},
+					new SwitchSection {
+						CaseLabels = {
+							new CaseLabel()
+						},
+						Statements = {
+							new BreakStatement()
+						}
+					}
+				}};
+			
+			AssertOutput("switch (i) {\ncase 1:\ncase 2:\n$A ();\n$B ();\n$break;\n" +
+			             "case 3: {\n$int a = 3;\n$return a;\n}\n" +
+			             "default:\n$break;\n}\n", type);
 		}
 	}
 }

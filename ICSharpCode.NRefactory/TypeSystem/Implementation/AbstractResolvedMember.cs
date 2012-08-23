@@ -76,19 +76,23 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 						result.Add(member);
 				}
 				return result.ToArray();
-			} else if (unresolved.IsStatic) {
+			} else if (unresolved.IsStatic || !unresolved.IsPublic || DeclaringTypeDefinition == null || DeclaringTypeDefinition.Kind == TypeKind.Interface) {
 				return EmptyList<IMember>.Instance;
 			} else {
 				// TODO: implement interface member mappings correctly
-				return InheritanceHelper.GetBaseMembers(this, true)
+				var result = InheritanceHelper.GetBaseMembers(this, true)
 					.Where(m => m.DeclaringTypeDefinition != null && m.DeclaringTypeDefinition.Kind == TypeKind.Interface)
 					.ToArray();
+
+				result = result.Where(item => !DeclaringTypeDefinition.Members.Any(m => m.IsExplicitInterfaceImplementation && m.ImplementedInterfaceMembers.Contains(item))).ToArray();
+
+				return result;
 			}
 		}
 		
 		public override DocumentationComment Documentation {
 			get {
-				IUnresolvedDocumentationProvider docProvider = unresolved.ParsedFile as IUnresolvedDocumentationProvider;
+				IUnresolvedDocumentationProvider docProvider = unresolved.UnresolvedFile as IUnresolvedDocumentationProvider;
 				if (docProvider != null) {
 					var doc = docProvider.GetDocumentation(unresolved, this);
 					if (doc != null)

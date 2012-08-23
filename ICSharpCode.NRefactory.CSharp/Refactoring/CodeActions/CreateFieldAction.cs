@@ -46,20 +46,28 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 
 		public IEnumerable<CodeAction> GetActions(RefactoringContext context)
 		{
-			var identifier = context.GetNode<IdentifierExpression>();
-			if (identifier == null)
+			var expr = context.GetNode(n => n is IdentifierExpression || n is MemberReferenceExpression) as Expression;
+			if (expr == null)
 				yield break;
-			if (IsInvocationTarget(identifier))
+
+			if (expr is MemberReferenceExpression && !(((MemberReferenceExpression)expr).Target is ThisReferenceExpression))
 				yield break;
-			var statement = identifier.GetParent<Statement>();
+
+			var propertyName = CreatePropertyAction.GetPropertyName(expr);
+			if (propertyName == null)
+				yield break;
+
+			if (IsInvocationTarget(expr))
+				yield break;
+			var statement = expr.GetParent<Statement>();
 			if (statement == null)
 				yield break;
-			if (!(context.Resolve(identifier).IsError))
+			if (!(context.Resolve(expr).IsError))
 				yield break;
-			var guessedType = CreateFieldAction.GuessAstType(context, identifier);
+			var guessedType = CreateFieldAction.GuessAstType(context, expr);
 			if (guessedType == null)
 				yield break;
-			var state = context.GetResolverStateBefore(identifier);
+			var state = context.GetResolverStateBefore(expr);
 			if (state.CurrentMember == null || state.CurrentTypeDefinition == null)
 				yield break;
 
@@ -73,11 +81,11 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			yield return new CodeAction(context.TranslateString("Create field"), script => {
 				var decl = new FieldDeclaration() {
 					ReturnType = guessedType,
-					Variables = { new VariableInitializer(identifier.Identifier) }
+					Variables = { new VariableInitializer(propertyName) }
 				};
 				if (isStatic)
 					decl.Modifiers |= Modifiers.Static;
-				script.InsertWithCursor(context.TranslateString("Create field"), decl, Script.InsertPosition.Before);
+				script.InsertWithCursor(context.TranslateString("Create field"), Script.InsertPosition.Before, decl);
 			});
 
 		}
@@ -131,6 +139,24 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			}
 		}
 
+		static IType GetElementType(CSharpAstResolver resolver, IType type)
+		{
+			// TODO: A better get element type method.
+			if (type.Kind == TypeKind.Array || type.Kind == TypeKind.Dynamic) {
+				if (type.Kind == TypeKind.Array)
+					return ((ArrayType)type).ElementType;
+				return resolver.Compilation.FindType(KnownTypeCode.Object);
+			}
+
+			foreach (var method in type.GetMethods (m => m.Name == "GetEnumerator")) {
+				var pr = method.ReturnType.GetProperties(p => p.Name == "Current").FirstOrDefault();
+				if (pr != null)
+					return pr.ReturnType;
+			}
+
+			return resolver.Compilation.FindType(KnownTypeCode.Object);
+		}
+
 		internal static IEnumerable<IType> GetValidTypes(CSharpAstResolver resolver, Expression expr)
 		{
 			if (expr.Parent is DirectionExpression) {
@@ -141,11 +167,24 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				}
 			}
 
+			if (expr.Parent is ArrayInitializerExpression) {
+				var aex = expr.Parent as ArrayInitializerExpression;
+				if (aex.IsSingleElement)
+					aex = aex.Parent as ArrayInitializerExpression;
+				var type = GetElementType(resolver, resolver.Resolve(aex.Parent).Type);
+				if (type.Kind != TypeKind.Unknown)
+					return new [] { type };
+			}
+
 			if (expr.Parent is ObjectCreateExpression) {
-				var parent = expr.Parent;
-				if (parent is ObjectCreateExpression) {
-					var invoke = (ObjectCreateExpression)parent;
-					return GetAllValidTypesFromObjectCreation(resolver, invoke, expr);
+				var invoke = (ObjectCreateExpression)expr.Parent;
+				return GetAllValidTypesFromObjectCreation(resolver, invoke, expr);
+			}
+
+			if (expr.Parent is ArrayCreateExpression) {
+				var ace = (ArrayCreateExpression)expr.Parent;
+				if (!ace.Type.IsNull) {
+					return new [] { resolver.Resolve(ace.Type).Type };
 				}
 			}
 
@@ -159,6 +198,9 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			
 			if (expr.Parent is VariableInitializer) {
 				var initializer = (VariableInitializer)expr.Parent;
+				var field = initializer.GetParent<FieldDeclaration>();
+				if (field != null)
+					return new [] { resolver.Resolve(field.ReturnType).Type };
 				return new [] { resolver.Resolve(initializer).Type };
 			}
 			
@@ -185,8 +227,8 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			}
 			
 			if (expr.Parent is ReturnStatement) {
-				var state = resolver.GetResolverStateBefore(expr);
-				if (state != null)
+				var state = resolver.GetResolverStateBefore(expr.Parent);
+				if (state != null  && state.CurrentMember != null)
 					return new [] { state.CurrentMember.ReturnType };
 			}
 

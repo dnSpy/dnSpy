@@ -51,7 +51,6 @@ namespace ICSharpCode.NRefactory.Demo
 			this.csDemo1 = new ICSharpCode.NRefactory.Demo.CSDemo();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.vbDemo1 = new ICSharpCode.NRefactory.Demo.VBDemo();
 			this.tabPage1.SuspendLayout();
 			this.tabControl1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -101,7 +100,6 @@ namespace ICSharpCode.NRefactory.Demo
 			// 
 			// tabPage2
 			// 
-			this.tabPage2.Controls.Add(this.vbDemo1);
 			this.tabPage2.Location = new System.Drawing.Point(4, 22);
 			this.tabPage2.Name = "tabPage2";
 			this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
@@ -109,14 +107,6 @@ namespace ICSharpCode.NRefactory.Demo
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "VB";
 			this.tabPage2.UseVisualStyleBackColor = true;
-			// 
-			// vbDemo1
-			// 
-			this.vbDemo1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.vbDemo1.Location = new System.Drawing.Point(3, 3);
-			this.vbDemo1.Name = "vbDemo1";
-			this.vbDemo1.Size = new System.Drawing.Size(501, 452);
-			this.vbDemo1.TabIndex = 0;
 			// 
 			// MainForm
 			// 
@@ -131,7 +121,6 @@ namespace ICSharpCode.NRefactory.Demo
 			this.tabPage2.ResumeLayout(false);
 			this.ResumeLayout(false);
 		}
-		private ICSharpCode.NRefactory.Demo.VBDemo vbDemo1;
 		private System.Windows.Forms.TabPage tabPage2;
 		private ICSharpCode.NRefactory.Demo.CSDemo csDemo1;
 		private System.Windows.Forms.ToolStrip miniToolStrip;

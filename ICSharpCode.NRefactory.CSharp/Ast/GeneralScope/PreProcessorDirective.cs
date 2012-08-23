@@ -86,13 +86,19 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 		}
 		
-		public PreProcessorDirective (PreProcessorDirectiveType type, TextLocation startLocation, TextLocation endLocation)
+		public PreProcessorDirective(PreProcessorDirectiveType type, TextLocation startLocation, TextLocation endLocation)
 		{
 			this.Type = type;
 			this.startLocation = startLocation;
 			this.endLocation = endLocation;
 		}
-		
+
+		public PreProcessorDirective(PreProcessorDirectiveType type, string argument = null)
+		{
+			this.Type = type;
+			this.Argument = argument;
+		}
+
 		public override void AcceptVisitor (IAstVisitor visitor)
 		{
 			visitor.VisitPreProcessorDirective (this);

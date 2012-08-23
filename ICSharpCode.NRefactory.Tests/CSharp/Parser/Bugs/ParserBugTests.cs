@@ -1,4 +1,4 @@
-// 
+﻿// 
 // ParserBugTests.cs
 //  
 // Author:
@@ -53,7 +53,7 @@ class Foo
     {
     }
 }";
-			var unit = CompilationUnit.Parse(code);
+			var unit = SyntaxTree.Parse(code);
 			var type = unit.Members.First() as TypeDeclaration;
 			var constructor = type.Members.Skip(1).First() as ConstructorDeclaration;
 			var passed = !constructor.HasModifier(Modifiers.Override);
@@ -78,7 +78,7 @@ class Stub
         return new Test ()
     }
 }";
-			var unit = CompilationUnit.Parse(code);
+			var unit = SyntaxTree.Parse(code);
 			var type = unit.Members.First() as TypeDeclaration;
 			var method = type.Members.First() as MethodDeclaration;
 			bool passed = method.Body.Statements.FirstOrDefault() is ReturnStatement;
@@ -102,7 +102,7 @@ class TestClass
   {
   }
 }";
-			var unit = CompilationUnit.Parse(code);
+			var unit = SyntaxTree.Parse(code);
 			
 			var type = unit.Members.First() as TypeDeclaration;
 			var constructor = type.Members.First() as ConstructorDeclaration;
@@ -131,7 +131,7 @@ class Foo
 		Test(new Foo (
 	}
 }";
-			var unit = CompilationUnit.Parse(code);
+			var unit = SyntaxTree.Parse(code);
 			
 			var type = unit.Members.First() as TypeDeclaration;
 			var method = type.Members.First() as MethodDeclaration;
@@ -157,7 +157,7 @@ class Foo
 		for (int i = 0; i < foo.bar)
 	}
 }";
-			var unit = CompilationUnit.Parse(code);
+			var unit = SyntaxTree.Parse(code);
 			
 			bool passed = @"class Foo
 {
@@ -187,7 +187,7 @@ class Foo
 		a = cond ? expr
 	}
 }";
-			var unit = CompilationUnit.Parse(code);
+			var unit = SyntaxTree.Parse(code);
 			
 			var type = unit.Members.First() as TypeDeclaration;
 			var method = type.Members.First() as MethodDeclaration;
@@ -213,7 +213,7 @@ class Foo
 		a = cond ? expr :
 	}
 }";
-			var unit = CompilationUnit.Parse(code);
+			var unit = SyntaxTree.Parse(code);
 			
 			var type = unit.Members.First() as TypeDeclaration;
 			var method = type.Members.First() as MethodDeclaration;
@@ -242,7 +242,7 @@ class Foo
         string str = 
     }
 }";
-			var unit = CompilationUnit.Parse(code);
+			var unit = SyntaxTree.Parse(code);
 			
 			var type = unit.Members.First() as TypeDeclaration;
 			var method = type.Members.First() as MethodDeclaration;
@@ -269,7 +269,7 @@ class Foo
 		} catch (Exception name)
 	}
 }";
-			var unit = CompilationUnit.Parse(code);
+			var unit = SyntaxTree.Parse(code);
 			
 			var type = unit.Members.First() as TypeDeclaration;
 			var method = type.Members.First() as MethodDeclaration;
@@ -300,7 +300,7 @@ class Test
     }
 }
 ";
-			var unit = CompilationUnit.Parse(code);
+			var unit = SyntaxTree.Parse(code);
 			
 			bool passed = unit.GetText().Trim() == @"using System;
 class Test
@@ -317,7 +317,99 @@ class Test
 			}
 			Assert.IsTrue(passed);
 		}
+
+		/// <summary>
+		/// Bug 4556 - AST broken for unclosed invocation
+		/// </summary>
+		[Ignore ()]
+		[Test]
+		public void TestBug4556()
+		{
+			string code = 
+@"using System;
+
+class Foo
+{
+    public static void Main (string[] args)
+    {
+        Console.WriteLine (""foo"", 
+    }
+}
+";
+			var unit = SyntaxTree.Parse(code);
+			
+			var type = unit.Members.First() as TypeDeclaration;
+			var method = type.Members.First() as MethodDeclaration;
+			bool passed = !method.Body.IsNull;
+			if (!passed) {
+				Console.WriteLine("Expected:" + code);
+				Console.WriteLine("Was:" + unit.GetText());
+			}
+			Assert.IsTrue(passed);
+		}
 		
+		/// <summary>
+		/// Bug 5064 - Autocomplete doesn't include object initializer properties in yield return 
+		/// </summary>
+		[Ignore("Still open")]
+		[Test]
+		public void TestBug5064()
+		{
+			string code = 
+@"public class Bar
+{
+    public IEnumerable<Foo> GetFoos()
+    {
+        yield return new Foo { }
+    }
+}";
+			var unit = SyntaxTree.Parse(code);
+			
+			bool passed = unit.GetText().Trim() == @"public class Bar
+{
+	public IEnumerable<Foo> GetFoos()
+	{
+		yield return new Foo { };
+	}
+}";
+			if (!passed) {
+				Console.WriteLine("Expected:" + code);
+				Console.WriteLine("Was:" + unit.GetText());
+			}
+			Assert.IsTrue(passed);
+		}
+
+		/// <summary>
+		/// Bug 5389 - Code completion does not work well inside a dictionary initializer
+		/// </summary>
+		[Ignore("Still open")]
+		[Test()]
+		public void TestBug5389()
+		{
+			string code = 
+@"class Foo
+{
+	static Dictionary<Tuple<Type, string>, string> CreatePropertyMap ()
+	{
+		return new Dictionary<Tuple<Type, string>, string> {
+			{ Tuple.Create (typeof (MainClass), ""Prop1""), ""Prop2"" },
+			{ Tuple.C }
+		}
+	}
+}
+";
+			var unit = SyntaxTree.Parse(code);
+			
+			var type = unit.Members.First() as TypeDeclaration;
+			var method = type.Members.First() as MethodDeclaration;
+			var stmt = method.Body.Statements.First () as ReturnStatement;
+			bool passed = stmt.Expression is ObjectCreateExpression;
+			if (!passed) {
+				Console.WriteLine("Expected:" + code);
+				Console.WriteLine("Was:" + unit.GetText());
+			}
+			Assert.IsTrue(passed);
+		}
 	}
 }
 

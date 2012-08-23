@@ -23,7 +23,7 @@ using ICSharpCode.NRefactory.TypeSystem;
 namespace ICSharpCode.NRefactory.Semantics
 {
 	/// <summary>
-	/// Represents a local variable.
+	/// Represents a local variable or parameter.
 	/// </summary>
 	public class LocalResolveResult : ResolveResult
 	{

@@ -96,36 +96,34 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		
 		public override IEnumerable<IMethod> GetMethods(Predicate<IUnresolvedMethod> filter = null, GetMemberOptions options = GetMemberOptions.None)
 		{
-			return compilation.FindType(KnownTypeCode.Array).GetMethods(filter, options);
+			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers)
+				return EmptyList<IMethod>.Instance;
+			else
+				return compilation.FindType(KnownTypeCode.Array).GetMethods(filter, options);
 		}
 		
-		//static readonly DefaultUnresolvedParameter indexerParam = new DefaultUnresolvedParameter(KnownTypeReference.Int32, string.Empty);
+		public override IEnumerable<IMethod> GetMethods(IList<IType> typeArguments, Predicate<IUnresolvedMethod> filter = null, GetMemberOptions options = GetMemberOptions.None)
+		{
+			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers)
+				return EmptyList<IMethod>.Instance;
+			else
+				return compilation.FindType(KnownTypeCode.Array).GetMethods(typeArguments, filter, options);
+		}
+		
+		public override IEnumerable<IMethod> GetAccessors(Predicate<IUnresolvedMethod> filter = null, GetMemberOptions options = GetMemberOptions.None)
+		{
+			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers)
+				return EmptyList<IMethod>.Instance;
+			else
+				return compilation.FindType(KnownTypeCode.Array).GetAccessors(filter, options);
+		}
 		
 		public override IEnumerable<IProperty> GetProperties(Predicate<IUnresolvedProperty> filter = null, GetMemberOptions options = GetMemberOptions.None)
 		{
-			ITypeDefinition arrayDef = compilation.FindType(KnownTypeCode.Array) as ITypeDefinition;
-			if (arrayDef != null) {
-				if ((options & GetMemberOptions.IgnoreInheritedMembers) == 0) {
-					foreach (IProperty p in arrayDef.GetProperties(filter, options)) {
-						yield return p;
-					}
-				}
-				/*DefaultUnresolvedProperty indexer = new DefaultUnresolvedProperty(arrayDef, "Items") {
-					EntityType = EntityType.Indexer,
-					ReturnType = elementType,
-					Accessibility = Accessibility.Public,
-					Getter = DefaultAccessor.GetFromAccessibility(Accessibility.Public),
-					Setter = DefaultAccessor.GetFromAccessibility(Accessibility.Public),
-					IsSynthetic = true
-				};
-				for (int i = 0; i < dimensions; i++) {
-					indexer.Parameters.Add(indexerParam);
-				}
-				indexer.Freeze();
-				if (filter == null || filter(indexer)) {
-					yield return indexer.CreateResolved(context);
-				}*/
-			}
+			if ((options & GetMemberOptions.IgnoreInheritedMembers) == GetMemberOptions.IgnoreInheritedMembers)
+				return EmptyList<IProperty>.Instance;
+			else
+				return compilation.FindType(KnownTypeCode.Array).GetProperties(filter, options);
 		}
 		
 		// NestedTypes, Events, Fields: System.Array doesn't have any; so we can use the AbstractType default implementation

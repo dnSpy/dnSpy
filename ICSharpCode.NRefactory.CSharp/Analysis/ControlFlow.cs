@@ -599,7 +599,8 @@ namespace ICSharpCode.NRefactory.CSharp.Analysis
 				
 				ControlFlowNode bodyStart = builder.CreateStartNode(forStatement.EmbeddedStatement);
 				ControlFlowNode bodyEnd = forStatement.EmbeddedStatement.AcceptVisitor(this, bodyStart);
-				Connect(bodyEnd, iteratorStart);
+				if (bodyEnd != null)
+					Connect(bodyEnd, iteratorStart);
 				
 				breakTargets.Pop();
 				continueTargets.Pop();

@@ -17,10 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
-using ICSharpCode.NRefactory.TypeSystem;
 
 namespace ICSharpCode.NRefactory.Utils
 {
@@ -28,7 +25,7 @@ namespace ICSharpCode.NRefactory.Utils
 	{
 		public static T VolatileRead<T>(ref T location) where T : class
 		{
-			#if NET45
+			#if NET_4_5
 			return Volatile.Read(ref location);
 			#else
 			T result = location;

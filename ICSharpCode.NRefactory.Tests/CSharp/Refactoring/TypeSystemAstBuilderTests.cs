@@ -56,15 +56,15 @@ namespace OtherNS {
 		IProjectContent pc;
 		ICompilation compilation;
 		ITypeDefinition baseClass, derivedClass, nestedClass, systemClass;
-		CSharpParsedFile parsedFile;
+		CSharpUnresolvedFile unresolvedFile;
 		
 		[SetUp]
 		public void SetUp()
 		{
 			pc = new CSharpProjectContent();
 			pc = pc.SetAssemblyName("MyAssembly");
-			parsedFile = new CSharpParser().Parse(new StringReader(program), "program.cs").ToTypeSystem();
-			pc = pc.UpdateProjectContent(null, parsedFile);
+			unresolvedFile = SyntaxTree.Parse(program, "program.cs").ToTypeSystem();
+			pc = pc.AddOrUpdateFiles(unresolvedFile);
 			pc = pc.AddAssemblyReferences(new [] { CecilLoaderTests.Mscorlib });
 			
 			compilation = pc.CreateCompilation();
@@ -77,7 +77,7 @@ namespace OtherNS {
 		
 		TypeSystemAstBuilder CreateBuilder(ITypeDefinition currentTypeDef = null)
 		{
-			UsingScope usingScope = currentTypeDef != null ? parsedFile.GetUsingScope(currentTypeDef.Region.Begin) : parsedFile.RootUsingScope;
+			UsingScope usingScope = currentTypeDef != null ? unresolvedFile.GetUsingScope(currentTypeDef.Region.Begin) : unresolvedFile.RootUsingScope;
 			return new TypeSystemAstBuilder(new CSharpResolver(
 				new CSharpTypeResolveContext(compilation.MainAssembly, usingScope.Resolve(compilation), currentTypeDef)));
 		}

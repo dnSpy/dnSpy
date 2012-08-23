@@ -21,6 +21,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using NUnit.Framework;
 
@@ -31,12 +32,43 @@ namespace ICSharpCode.NRefactory.TypeSystem
 	[TestFixture]
 	public class GetAllBaseTypesTest
 	{
+		const string corlib = @"
+namespace System {
+	class Object {}
+	class ValueType {}
+	class String : System.Collections.Generic.IEnumerable<char>, IComparable<string> {}
+	class Array : System.Collections.IList, ICloneable {}
+	
+	interface ICloneable {}
+	interface IComparable<in T> {}
+	struct Int32 {}
+	struct Char {}
+}
+namespace System.Collections {
+	interface IEnumerable {}
+	interface ICollection : IEnumerable {}
+	interface IList : ICollection {}
+	interface IDictionary : ICollection {}
+}
+namespace System.Collections.Generic {
+	interface IEnumerable<out T> : IEnumerable {}
+	interface ICollection<T> : IEnumerable<T> {}
+	interface IList<T> : ICollection<T> {}
+	interface IDictionary<TKey, TValue> : ICollection<KeyValuePair<TKey, TValue>> {}
+
+	class List<T> : IList, IList<T> {}
+	class Dictionary<TKey, TValue> : IDictionary<TKey, TValue>, IDictionary {}
+	struct KeyValuePair<TKey, TValue> {}
+}
+";
+		
 		ICompilation compilation;
 		
 		[SetUp]
 		public void SetUp()
 		{
-			compilation = new SimpleCompilation(CecilLoaderTests.Mscorlib);
+			var unresolvedFile = new CSharpParser().Parse(corlib, "corlib.cs").ToTypeSystem();
+			compilation = new CSharpProjectContent().SetAssemblyName("mscorlib").AddOrUpdateFiles(unresolvedFile).CreateCompilation();
 		}
 		
 		IType[] GetAllBaseTypes(Type type)
@@ -46,7 +78,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		
 		IType[] GetTypes(params Type[] types)
 		{
-			return types.Select(t => compilation.FindType(t)).OrderBy(t => t.ReflectionName).ToArray();;
+			return types.Select(t => compilation.FindType(t)).OrderBy(t => t.ReflectionName).ToArray();
 		}
 		
 		ITypeDefinition Resolve(IUnresolvedTypeDefinition typeDef)
@@ -58,24 +90,26 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		public void ObjectBaseTypes()
 		{
 			Assert.AreEqual(GetTypes(typeof(object)), GetAllBaseTypes(typeof(object)));
+			
+			Assert.That(compilation.FindType(KnownTypeCode.Object).DirectBaseTypes, Is.Empty);
 		}
 		
 		[Test]
 		public void StringBaseTypes()
 		{
-			Assert.AreEqual(GetTypes(typeof(string), typeof(object), typeof(IComparable), typeof(ICloneable), typeof(IConvertible),
-			                         typeof(IComparable<string>), typeof(IEquatable<string>), typeof(IEnumerable<char>), typeof(IEnumerable)),
+			Assert.AreEqual(GetTypes(typeof(string), typeof(object),
+			                         typeof(IComparable<string>), typeof(IEnumerable<char>), typeof(IEnumerable)),
 			                GetAllBaseTypes(typeof(string)));
 		}
 		
 		[Test]
-		[Ignore("Produces different results in .NET 4.5 due to new read-only interfaces")]
 		public void ArrayOfString()
 		{
-			Assert.AreEqual(GetTypes(typeof(string[]), typeof(Array), typeof(object),
-			                         typeof(IList), typeof(ICollection), typeof(IEnumerable),
-			                         typeof(IList<string>), typeof(ICollection<string>), typeof(IEnumerable<string>),
-			                         typeof(IStructuralEquatable), typeof(IStructuralComparable), typeof(ICloneable)),
+			var expectedTypes = GetTypes(
+				typeof(string[]), typeof(Array), typeof(object),
+				typeof(IList), typeof(ICollection), typeof(IEnumerable), typeof(ICloneable),
+				typeof(IList<string>), typeof(ICollection<string>), typeof(IEnumerable<string>));
+			Assert.AreEqual(expectedTypes,
 			                GetAllBaseTypes(typeof(string[])));
 		}
 		
@@ -83,8 +117,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		public unsafe void ArrayOfPointers()
 		{
 			Assert.AreEqual(GetTypes(typeof(int*[]), typeof(Array), typeof(object),
-			                         typeof(IList), typeof(ICollection), typeof(IEnumerable),
-			                         typeof(IStructuralEquatable), typeof(IStructuralComparable), typeof(ICloneable)),
+			                         typeof(IList), typeof(ICollection), typeof(IEnumerable), typeof(ICloneable)),
 			                GetAllBaseTypes(typeof(int*[])));
 		}
 		
@@ -92,8 +125,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		public void MultidimensionalArrayOfString()
 		{
 			Assert.AreEqual(GetTypes(typeof(string[,]), typeof(Array), typeof(object),
-			                         typeof(IList), typeof(ICollection), typeof(IEnumerable),
-			                         typeof(IStructuralEquatable), typeof(IStructuralComparable), typeof(ICloneable)),
+			                         typeof(IList), typeof(ICollection), typeof(IEnumerable), typeof(ICloneable)),
 			                GetAllBaseTypes(typeof(string[,])));
 		}
 		
@@ -175,7 +207,6 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		}
 		
 		[Test]
-		[Ignore("Produces different results in .NET 4.5 due to new read-only interfaces")]
 		public void BaseTypesOfListOfString()
 		{
 			Assert.AreEqual(
@@ -186,7 +217,6 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		}
 		
 		[Test]
-		[Ignore("Produces different results in .NET 4.5 due to new read-only interfaces")]
 		public void BaseTypesOfUnboundDictionary()
 		{
 			Assert.AreEqual(
@@ -198,15 +228,12 @@ namespace ICSharpCode.NRefactory.TypeSystem
 					typeof(ICollection).FullName,
 					typeof(IDictionary).FullName,
 					typeof(IEnumerable).FullName,
-					typeof(object).FullName,
-					typeof(IDeserializationCallback).FullName,
-					typeof(ISerializable).FullName,
+					typeof(object).FullName
 				},
-				GetAllBaseTypes(typeof(Dictionary<,>)).Select(t => t.ReflectionName).ToArray());
+				GetAllBaseTypes(typeof(Dictionary<,>)).Select(t => t.ReflectionName).OrderBy(n => n).ToArray());
 		}
 		
 		[Test]
-		[Ignore("Produces different results in .NET 4.5 due to new read-only interfaces")]
 		public void BaseTypeDefinitionsOfListOfString()
 		{
 			Assert.AreEqual(
@@ -217,12 +244,10 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		}
 		
 		[Test]
-		[Ignore("Produces different results in .NET 4.5 due to new read-only interfaces")]
 		public void BaseTypeDefinitionsOfStringArray()
 		{
 			Assert.AreEqual(
-				GetTypes(typeof(Array), typeof(object),
-				         typeof(ICloneable), typeof(IStructuralComparable), typeof(IStructuralEquatable),
+				GetTypes(typeof(Array), typeof(object), typeof(ICloneable),
 				         typeof(IList), typeof(ICollection), typeof(IEnumerable),
 				         typeof(IEnumerable<>), typeof(ICollection<>), typeof(IList<>)),
 				compilation.FindType(typeof(string[])).GetAllBaseTypeDefinitions().OrderBy(t => t.ReflectionName).ToArray());

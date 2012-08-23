@@ -51,7 +51,7 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 			this.DeclaringTypeDefinition = declaringType;
 			this.Name = name;
 			if (declaringType != null)
-				this.ParsedFile = declaringType.ParsedFile;
+				this.UnresolvedFile = declaringType.UnresolvedFile;
 		}
 		
 		public bool IsConst {
@@ -85,6 +85,11 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 		public override IMember CreateResolved(ITypeResolveContext context)
 		{
 			return new DefaultResolvedField(this, context);
+		}
+		
+		IField IUnresolvedField.Resolve(ITypeResolveContext context)
+		{
+			return (IField)Resolve(context);
 		}
 	}
 }

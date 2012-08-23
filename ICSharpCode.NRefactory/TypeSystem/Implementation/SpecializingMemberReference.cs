@@ -48,5 +48,14 @@ namespace ICSharpCode.NRefactory.TypeSystem.Implementation
 				)
 			);
 		}
+		
+		public ITypeReference DeclaringTypeReference {
+			get {
+				if (classTypeArgumentReferences != null)
+					return new ParameterizedTypeReference(memberDefinitionReference.DeclaringTypeReference, classTypeArgumentReferences);
+				else
+					return memberDefinitionReference.DeclaringTypeReference;
+			}
+		}
 	}
 }

@@ -35,7 +35,7 @@ namespace ICSharpCode.NRefactory.CSharp
 	/// </summary>
 	public class NamespaceDeclaration : AstNode
 	{
-		public static readonly Role<AstNode> MemberRole = CompilationUnit.MemberRole;
+		public static readonly Role<AstNode> MemberRole = SyntaxTree.MemberRole;
 		
 		public override NodeType NodeType {
 			get {
