@@ -303,7 +303,13 @@ namespace ICSharpCode.Decompiler.ILAst
 						return v.Type;
 					}
 				case ILCode.Ldloca:
-					return new ByReferenceType(((ILVariable)expr.Operand).Type);
+					{
+						ILVariable v = (ILVariable)expr.Operand;
+						if (v.Type != null)
+							return new ByReferenceType(v.Type);
+						else
+							return null;
+					}
 					#endregion
 					#region Call / NewObj
 				case ILCode.Call:
