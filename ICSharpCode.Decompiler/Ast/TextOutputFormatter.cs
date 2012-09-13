@@ -150,13 +150,11 @@ namespace ICSharpCode.Decompiler.Ast
 				return null;
 			
 			var node = nodeStack.Peek();
+			if (node is Identifier)
+				node = node.Parent;
 			if (IsDefinition(node))
 				return node.Annotation<MemberReference>();
 			
-			var fieldDef = node.Parent.Annotation<FieldDefinition>();
-			if (fieldDef != null)
-				return node.Parent.Annotation<MemberReference>();
-
 			return null;
 		}
 		
@@ -332,7 +330,9 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		private static bool IsDefinition(AstNode node)
 		{
-			return node is EntityDeclaration;
+			return node is EntityDeclaration
+				|| (node is VariableInitializer && node.Parent is FieldDeclaration)
+				|| node is FixedVariableInitializer;
 		}
 	}
 }
