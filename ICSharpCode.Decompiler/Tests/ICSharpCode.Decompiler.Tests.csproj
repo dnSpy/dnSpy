@@ -67,6 +67,7 @@
     <Compile Include="CallOverloadedMethod.cs" />
     <Compile Include="CheckedUnchecked.cs" />
     <Compile Include="ControlFlow.cs" />
+    <Compile Include="DoubleConstants.cs" />
     <Compile Include="ExpressionTrees.cs" />
     <None Include="IL\SequenceOfNestedIfs.Output.cs" />
     <Compile Include="IL\ILTests.cs" />

@@ -1057,6 +1057,12 @@ namespace ICSharpCode.NRefactory.CSharp
 					}
 					return;
 				}
+				if (f == 0 && 1 / f == double.NegativeInfinity) {
+					// negative zero is a special case
+					// (again, not a primitive expression, but it's better to handle
+					// the special case here than to do it in all code generators)
+					formatter.WriteToken("-");
+				}
 				formatter.WriteToken(f.ToString("R", NumberFormatInfo.InvariantInfo) + "f");
 				lastWritten = LastWritten.Other;
 			} else if (val is double) {
@@ -1074,6 +1080,12 @@ namespace ICSharpCode.NRefactory.CSharp
 						WriteIdentifier("NaN");
 					}
 					return;
+				}
+				if (f == 0 && 1 / f == double.NegativeInfinity) {
+					// negative zero is a special case
+					// (again, not a primitive expression, but it's better to handle
+					// the special case here than to do it in all code generators)
+					formatter.WriteToken("-");
 				}
 				string number = f.ToString("R", NumberFormatInfo.InvariantInfo);
 				if (number.IndexOf('.') < 0 && number.IndexOf('E') < 0) {

@@ -89,6 +89,12 @@ namespace ICSharpCode.Decompiler.Tests
 		}
 		
 		[Test]
+		public void DoubleConstants()
+		{
+			TestFile(@"..\..\Tests\DoubleConstants.cs");
+		}
+		
+		[Test]
 		public void IncrementDecrement()
 		{
 			TestFile(@"..\..\Tests\IncrementDecrement.cs");

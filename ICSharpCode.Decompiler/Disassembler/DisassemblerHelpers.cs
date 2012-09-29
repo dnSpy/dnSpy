@@ -359,6 +359,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 			} else if (operand is float) {
 				float val = (float)operand;
 				if (val == 0) {
+					if (1 / val == float.NegativeInfinity) {
+						// negative zero is a special case
+						writer.Write('-');
+					}
 					writer.Write("0.0");
 				} else if (float.IsInfinity(val) || float.IsNaN(val)) {
 					byte[] data = BitConverter.GetBytes(val);
@@ -375,6 +379,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 			} else if (operand is double) {
 				double val = (double)operand;
 				if (val == 0) {
+					if (1 / val == double.NegativeInfinity) {
+						// negative zero is a special case
+						writer.Write('-');
+					}
 					writer.Write("0.0");
 				} else if (double.IsInfinity(val) || double.IsNaN(val)) {
 					byte[] data = BitConverter.GetBytes(val);
