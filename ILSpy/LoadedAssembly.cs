@@ -30,7 +30,7 @@ namespace ICSharpCode.ILSpy
 	/// </summary>
 	public sealed class LoadedAssembly
 	{
-		readonly Task<AssemblyDefinition> assemblyTask;
+		readonly Task<ModuleDefinition> assemblyTask;
 		readonly AssemblyList assemblyList;
 		readonly string fileName;
 		readonly string shortName;
@@ -44,21 +44,32 @@ namespace ICSharpCode.ILSpy
 			this.assemblyList = assemblyList;
 			this.fileName = fileName;
 			
-			this.assemblyTask = Task.Factory.StartNew<AssemblyDefinition>(LoadAssembly); // requires that this.fileName is set
+			this.assemblyTask = Task.Factory.StartNew<ModuleDefinition>(LoadAssembly); // requires that this.fileName is set
 			this.shortName = Path.GetFileNameWithoutExtension(fileName);
 		}
 		
 		/// <summary>
-		/// Gets the Cecil AssemblyDefinition.
+		/// Gets the Cecil ModuleDefinition.
 		/// Can be null when there was a load error.
 		/// </summary>
-		public AssemblyDefinition AssemblyDefinition {
+		public ModuleDefinition ModuleDefinition {
 			get {
 				try {
 					return assemblyTask.Result;
 				} catch (AggregateException) {
 					return null;
 				}
+			}
+		}
+		
+		/// <summary>
+		/// Gets the Cecil AssemblyDefinition.
+		/// Is null when there was a load error; or when opening a netmodule.
+		/// </summary>
+		public AssemblyDefinition AssemblyDefinition {
+			get {
+				var module = this.ModuleDefinition;
+				return module != null ? module.Assembly : null;
 			}
 		}
 		
@@ -82,22 +93,22 @@ namespace ICSharpCode.ILSpy
 			get { return assemblyTask.IsFaulted; }
 		}
 		
-		AssemblyDefinition LoadAssembly()
+		ModuleDefinition LoadAssembly()
 		{
 			// runs on background thread
 			ReaderParameters p = new ReaderParameters();
 			p.AssemblyResolver = new MyAssemblyResolver(this);
-			AssemblyDefinition asm = AssemblyDefinition.ReadAssembly(fileName, p);
+			ModuleDefinition module = ModuleDefinition.ReadModule(fileName, p);
 			if (DecompilerSettingsPanel.CurrentDecompilerSettings.UseDebugSymbols) {
 				try {
-					LoadSymbols(asm.MainModule);
+					LoadSymbols(module);
 				} catch (IOException) {
 				} catch (UnauthorizedAccessException) {
 				} catch (InvalidOperationException) {
 					// ignore any errors during symbol loading
 				}
 			}
-			return asm;
+			return module;
 		}
 		
 		private void LoadSymbols(ModuleDefinition module)
@@ -244,7 +255,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		public Task ContinueWhenLoaded(Action<Task<AssemblyDefinition>> onAssemblyLoaded, TaskScheduler taskScheduler)
+		public Task ContinueWhenLoaded(Action<Task<ModuleDefinition>> onAssemblyLoaded, TaskScheduler taskScheduler)
 		{
 			return this.assemblyTask.ContinueWith(onAssemblyLoaded, taskScheduler);
 		}

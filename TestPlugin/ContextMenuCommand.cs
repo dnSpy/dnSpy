@@ -29,7 +29,7 @@ namespace TestPlugin
 			if (context.SelectedTreeNodes == null)
 				return;
 			AssemblyTreeNode node = (AssemblyTreeNode)context.SelectedTreeNodes[0];
-			AssemblyDefinition asm = node.LoadedAssembly.AssemblyDefinition as AssemblyDefinition;
+			AssemblyDefinition asm = node.LoadedAssembly.AssemblyDefinition;
 			if (asm != null) {
 				SaveFileDialog dlg = new SaveFileDialog();
 				dlg.FileName = node.LoadedAssembly.FileName;

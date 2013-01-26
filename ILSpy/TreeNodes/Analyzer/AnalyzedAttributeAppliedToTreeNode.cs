@@ -94,7 +94,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			var currentAssembly = analyzedType.Module.Assembly;
 			var assemblies = analyzedType.IsPublic ? GetReferencingAssemblies(currentAssembly, ct) : GetAssemblyAndAnyFriends(currentAssembly, ct);
 
-			var results = assemblies.AsParallel().WithCancellation(ct).SelectMany(a => FindReferencesInAssembly(a.Item1, a.Item2, ct));
+			var results = assemblies.AsParallel().WithCancellation(ct).SelectMany(a => FindReferencesInAssembly(a.Item1.MainModule, a.Item2, ct));
 
 			foreach (var result in results.OrderBy(n => n.Text)) {
 				yield return result;
@@ -105,13 +105,14 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		#region standard custom attributes
 
-		private IEnumerable<AnalyzerTreeNode> FindReferencesInAssembly(AssemblyDefinition asm, TypeReference tr, CancellationToken ct)
+		private IEnumerable<AnalyzerTreeNode> FindReferencesInAssembly(ModuleDefinition module, TypeReference tr, CancellationToken ct)
 		{
 			//since we do not display modules as separate entities, coalesce the assembly and module searches
 			bool foundInAssyOrModule = false;
 
 			if ((usage & AttributeTargets.Assembly) != 0) {
-				if (asm.HasCustomAttributes) {
+				AssemblyDefinition asm = module.Assembly;
+				if (asm != null && asm.HasCustomAttributes) {
 					foreach (var attribute in asm.CustomAttributes) {
 						if (attribute.AttributeType == tr) {
 							foundInAssyOrModule = true;
@@ -126,13 +127,11 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 				//search module
 				if ((usage & AttributeTargets.Module) != 0) {
-					foreach (var module in asm.Modules) {
-						if (module.HasCustomAttributes) {
-							foreach (var attribute in module.CustomAttributes) {
-								if (attribute.AttributeType == tr) {
-									foundInAssyOrModule = true;
-									break;
-								}
+					if (module.HasCustomAttributes) {
+						foreach (var attribute in module.CustomAttributes) {
+							if (attribute.AttributeType == tr) {
+								foundInAssyOrModule = true;
+								break;
 							}
 						}
 					}
@@ -141,12 +140,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 
 			if (foundInAssyOrModule) {
-				yield return new AnalyzedAssemblyTreeNode(asm);
+				yield return new AnalyzedAssemblyTreeNode(module);
 			}
 
 			ct.ThrowIfCancellationRequested();
 
-			foreach (TypeDefinition type in TreeTraversal.PreOrder(asm.MainModule.Types, t => t.NestedTypes).OrderBy(t => t.FullName)) {
+			foreach (TypeDefinition type in TreeTraversal.PreOrder(module.Types, t => t.NestedTypes).OrderBy(t => t.FullName)) {
 				ct.ThrowIfCancellationRequested();
 				foreach (var result in FindReferencesWithinInType(type, tr)) {
 					ct.ThrowIfCancellationRequested();

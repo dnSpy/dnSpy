@@ -132,6 +132,18 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		#region Find*Node
 
+		public AssemblyTreeNode FindAssemblyNode(ModuleDefinition module)
+		{
+			if (module == null)
+				return null;
+			App.Current.Dispatcher.VerifyAccess();
+			foreach (AssemblyTreeNode node in this.Children) {
+				if (node.LoadedAssembly.IsLoaded && node.LoadedAssembly.ModuleDefinition == module)
+					return node;
+			}
+			return null;
+		}
+		
 		public AssemblyTreeNode FindAssemblyNode(AssemblyDefinition asm)
 		{
 			if (asm == null)

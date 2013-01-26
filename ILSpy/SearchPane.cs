@@ -244,11 +244,11 @@ namespace ICSharpCode.ILSpy
 					}
 					
 					foreach (var loadedAssembly in assemblies) {
-						AssemblyDefinition asm = loadedAssembly.AssemblyDefinition;
-						if (asm == null)
+						ModuleDefinition module = loadedAssembly.ModuleDefinition;
+						if (module == null)
 							continue;
 						CancellationToken cancellationToken = cts.Token;
-						foreach (TypeDefinition type in asm.MainModule.Types) {
+						foreach (TypeDefinition type in module.Types) {
 							cancellationToken.ThrowIfCancellationRequested();
 							PerformSearch(type);
 						}

@@ -72,9 +72,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (assemblyListNode != null) {
 				var refNode = assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedAssembly(r));
 				if (refNode != null) {
-					AssemblyDefinition asm = refNode.LoadedAssembly.AssemblyDefinition;
-					if (asm != null) {
-						foreach (var childRef in asm.MainModule.AssemblyReferences)
+					ModuleDefinition module = refNode.LoadedAssembly.ModuleDefinition;
+					if (module != null) {
+						foreach (var childRef in module.AssemblyReferences)
 							this.Children.Add(new AssemblyReferenceTreeNode(childRef, refNode));
 					}
 				}

@@ -27,10 +27,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	class DerivedTypesEntryNode : ILSpyTreeNode, IMemberTreeNode
 	{
 		private readonly TypeDefinition type;
-		private readonly AssemblyDefinition[] assemblies;
+		private readonly ModuleDefinition[] assemblies;
 		private readonly ThreadingSupport threading;
 
-		public DerivedTypesEntryNode(TypeDefinition type, AssemblyDefinition[] assemblies)
+		public DerivedTypesEntryNode(TypeDefinition type, ModuleDefinition[] assemblies)
 		{
 			this.type = type;
 			this.assemblies = assemblies;

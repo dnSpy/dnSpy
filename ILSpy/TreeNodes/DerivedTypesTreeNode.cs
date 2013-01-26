@@ -61,14 +61,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken cancellationToken)
 		{
 			// FetchChildren() runs on the main thread; but the enumerator will be consumed on a background thread
-			var assemblies = list.GetAssemblies().Select(node => node.AssemblyDefinition).Where(asm => asm != null).ToArray();
+			var assemblies = list.GetAssemblies().Select(node => node.ModuleDefinition).Where(asm => asm != null).ToArray();
 			return FindDerivedTypes(type, assemblies, cancellationToken);
 		}
 
-		internal static IEnumerable<DerivedTypesEntryNode> FindDerivedTypes(TypeDefinition type, AssemblyDefinition[] assemblies, CancellationToken cancellationToken)
+		internal static IEnumerable<DerivedTypesEntryNode> FindDerivedTypes(TypeDefinition type, ModuleDefinition[] assemblies, CancellationToken cancellationToken)
 		{
-			foreach (AssemblyDefinition asm in assemblies) {
-				foreach (TypeDefinition td in TreeTraversal.PreOrder(asm.MainModule.Types, t => t.NestedTypes)) {
+			foreach (ModuleDefinition module in assemblies) {
+				foreach (TypeDefinition td in TreeTraversal.PreOrder(module.Types, t => t.NestedTypes)) {
 					cancellationToken.ThrowIfCancellationRequested();
 					if (type.IsInterface && td.HasInterfaces) {
 						foreach (TypeReference typeRef in td.Interfaces) {

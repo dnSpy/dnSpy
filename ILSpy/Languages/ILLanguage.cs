@@ -114,14 +114,15 @@ namespace ICSharpCode.ILSpy
 			
 			ReflectionDisassembler rd = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
 			if (options.FullDecompilation)
-				rd.WriteAssemblyReferences(assembly.AssemblyDefinition.MainModule);
-			rd.WriteAssemblyHeader(assembly.AssemblyDefinition);
+				rd.WriteAssemblyReferences(assembly.ModuleDefinition);
+			if (assembly.AssemblyDefinition != null)
+				rd.WriteAssemblyHeader(assembly.AssemblyDefinition);
 			output.WriteLine();
-			rd.WriteModuleHeader(assembly.AssemblyDefinition.MainModule);
+			rd.WriteModuleHeader(assembly.ModuleDefinition);
 			if (options.FullDecompilation) {
 				output.WriteLine();
 				output.WriteLine();
-				rd.WriteModuleContents(assembly.AssemblyDefinition.MainModule);
+				rd.WriteModuleContents(assembly.ModuleDefinition);
 			}
 		}
 		

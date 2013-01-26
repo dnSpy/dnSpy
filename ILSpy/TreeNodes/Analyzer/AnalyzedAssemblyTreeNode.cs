@@ -23,9 +23,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
 	internal class AnalyzedAssemblyTreeNode : AnalyzerEntityTreeNode
 	{
-		private readonly AssemblyDefinition analyzedAssembly;
+		private readonly ModuleDefinition analyzedAssembly;
 
-		public AnalyzedAssemblyTreeNode(AssemblyDefinition analyzedAssembly)
+		public AnalyzedAssemblyTreeNode(ModuleDefinition analyzedAssembly)
 		{
 			if (analyzedAssembly == null)
 				throw new ArgumentNullException("analyzedAssembly");
@@ -42,7 +42,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			get
 			{
-				return analyzedAssembly.Name.Name;
+				return analyzedAssembly.Name;
 			}
 		}
 

@@ -39,7 +39,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		public override bool HandleAssemblyListChanged(ICollection<LoadedAssembly> removedAssemblies, ICollection<LoadedAssembly> addedAssemblies)
 		{
 			foreach (LoadedAssembly asm in removedAssemblies) {
-				if (this.Member.Module.Assembly == asm.AssemblyDefinition)
+				if (this.Member.Module == asm.ModuleDefinition)
 					return false; // remove this node
 			}
 			this.Children.RemoveAll(
