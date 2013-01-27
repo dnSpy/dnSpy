@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Linq;
 using System.Windows.Threading;
 using ICSharpCode.Decompiler;
 using Mono.Cecil;
@@ -52,18 +53,20 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		protected override void LoadChildren()
 		{
-			foreach (var r in module.AssemblyReferences)
+			foreach (var r in module.AssemblyReferences.OrderBy(r => r.Name))
 				this.Children.Add(new AssemblyReferenceTreeNode(r, parentAssembly));
-			foreach (var r in module.ModuleReferences)
+			foreach (var r in module.ModuleReferences.OrderBy(r => r.Name))
 				this.Children.Add(new ModuleReferenceTreeNode(r));
 		}
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(EnsureLazyChildren));
-			foreach (ILSpyTreeNode child in this.Children) {
-				child.Decompile(language, output, options);
-			}
+			// Show metadata order of references
+			foreach (var r in module.AssemblyReferences)
+				new AssemblyReferenceTreeNode(r, parentAssembly).Decompile(language, output, options);
+			foreach (var r in module.ModuleReferences)
+				language.WriteCommentLine(output, r.Name);
 		}
 	}
 }
