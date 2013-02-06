@@ -29,7 +29,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	[Export(typeof(IResourceNodeFactory))]
 	sealed class ImageResourceNodeFactory : IResourceNodeFactory
 	{
-		static readonly string[] imageFileExtensions = { ".png", ".gif", ".bmp", ".jpg", ".ico" };
+		static readonly string[] imageFileExtensions = { ".png", ".gif", ".bmp", ".jpg" };
 
 		public ILSpyTreeNode CreateNode(Resource resource)
 		{
@@ -42,13 +42,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public ILSpyTreeNode CreateNode(string key, object data)
 		{
-			if (data is System.Drawing.Icon)
-			{
-				MemoryStream s = new MemoryStream();
-				((System.Drawing.Icon)data).Save(s);
-				return new ImageResourceEntryNode(key, s);
-			}
-			else if (data is System.Drawing.Image)
+			if (data is System.Drawing.Image)
 			{
 				MemoryStream s = new MemoryStream();
 				((System.Drawing.Image)data).Save(s, System.Drawing.Imaging.ImageFormat.Bmp);
