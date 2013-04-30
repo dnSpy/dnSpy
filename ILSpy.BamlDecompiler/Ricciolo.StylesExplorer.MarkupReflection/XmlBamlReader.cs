@@ -1106,7 +1106,16 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				XmlBamlProperty property =
 					new XmlBamlProperty(elements.Peek(), PropertyType.Complex, propertyElement.PropertyDeclaration);
 				property.Value = sb.ToString();
-				nodes.Add(property);
+
+				// insert the replacement property after the last attribute of the parent element
+				int elementIndex = nodes.IndexOf(propertyElement.Parent);
+				int attributeIndex;
+				for (attributeIndex = elementIndex + 1; attributeIndex < nodes.Count; attributeIndex++)
+				{
+					if (!(nodes[attributeIndex] is XmlBamlProperty) && !(nodes[attributeIndex] is XmlBamlSimpleProperty))
+						break;
+				}
+				nodes.Insert(attributeIndex, property);
 			}
 		}
 
