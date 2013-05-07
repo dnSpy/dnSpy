@@ -1089,13 +1089,20 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			complexPropertyOpened--;
 			// this property could be a markup extension
 			// try to convert it
+			int elementIndex = nodes.IndexOf(propertyElement.Parent);
 			int start = nodes.IndexOf(propertyElement) + 1;
 			IEnumerator<XmlBamlNode> enumerator = nodes.GetEnumerator();
 			
 			// move enumerator to the start of this property value
-			for (int i = 0; i < start && enumerator.MoveNext(); i++) ;
+			// note whether there are any child elements before this one
+			bool anyChildElement = false;
+			for (int i = 0; i < start && enumerator.MoveNext(); i++)
+			{
+				if (i > elementIndex && i < start - 1 && (enumerator.Current is XmlBamlEndElement))
+					anyChildElement = true;
+			}
 
-			if (IsExtension(enumerator) && start < nodes.Count - 1) {
+			if (!anyChildElement && IsExtension(enumerator) && start < nodes.Count - 1) {
 				start--;
 				nodes.RemoveAt(start);
 				nodes.RemoveLast();
@@ -1106,16 +1113,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				XmlBamlProperty property =
 					new XmlBamlProperty(elements.Peek(), PropertyType.Complex, propertyElement.PropertyDeclaration);
 				property.Value = sb.ToString();
-
-				// insert the replacement property after the last attribute of the parent element
-				int elementIndex = nodes.IndexOf(propertyElement.Parent);
-				int attributeIndex;
-				for (attributeIndex = elementIndex + 1; attributeIndex < nodes.Count; attributeIndex++)
-				{
-					if (!(nodes[attributeIndex] is XmlBamlProperty) && !(nodes[attributeIndex] is XmlBamlSimpleProperty))
-						break;
-				}
-				nodes.Insert(attributeIndex, property);
+				nodes.Add(property);
 			}
 		}
 
