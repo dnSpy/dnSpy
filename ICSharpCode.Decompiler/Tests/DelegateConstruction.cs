@@ -62,6 +62,22 @@ public static class DelegateConstruction
 			}
 			return null;
 		}
+		
+		public void LambdaInForLoop()
+		{
+			for (int i = 0; i < 100000; i++) {
+			    Bar(() => Foo());
+			}
+		}
+		
+		public int Foo()
+		{
+			return 0;
+		}
+		
+		public void Bar(Func<int> f)
+		{
+		}
 	}
 
 	public static void Test(this string a)

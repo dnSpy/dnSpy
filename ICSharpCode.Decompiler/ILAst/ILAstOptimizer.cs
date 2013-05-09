@@ -225,11 +225,13 @@ namespace ICSharpCode.Decompiler.ILAst
 			new ILInlining(method).InlineAllVariables();
 			
 			if (abortBeforeStep == ILAstOptimizationStep.CachedDelegateInitialization) return;
-			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
-				for (int i = 0; i < block.Body.Count; i++) {
-					// TODO: Move before loops
-					CachedDelegateInitializationWithField(block, ref i);
-					CachedDelegateInitializationWithLocal(block, ref i);
+			if (context.Settings.AnonymousMethods) {
+				foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
+					for (int i = 0; i < block.Body.Count; i++) {
+						// TODO: Move before loops
+						CachedDelegateInitializationWithField(block, ref i);
+						CachedDelegateInitializationWithLocal(block, ref i);
+					}
 				}
 			}
 			
