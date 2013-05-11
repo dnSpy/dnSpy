@@ -75,10 +75,6 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		int currentKey;
 		List<KeyMapping> keys = new List<KeyMapping>();
 		
-		KeyMapping LastKey {
-			get { return keys.LastOrDefault(); }
-		}
-		
 		void LayerPop()
 		{
 			layer.Pop();
@@ -1383,7 +1379,10 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			short identifier = reader.ReadInt16();
 			byte flags = reader.ReadByte();
 			TypeDeclaration declaration = GetTypeDeclaration(identifier);
-			LastKey.StaticResources.Add(declaration);
+			var lastKey = keys.LastOrDefault();
+			if (lastKey == null)
+				throw new InvalidOperationException("No key mapping found for StaticResourceStart!");
+			lastKey.StaticResources.Add(declaration);
 			XmlBamlElement element;
 			if (elements.Any())
 				element = new XmlBamlElement(elements.Peek());
@@ -1454,8 +1453,11 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			} else {
 				resource = this.stringTable[typeIdentifier];
 			}
-
-			LastKey.StaticResources.Add(resource);
+			
+			var lastKey = keys.LastOrDefault();
+			if (lastKey == null)
+				throw new InvalidOperationException("No key mapping found for OptimizedStaticResource!");
+			lastKey.StaticResources.Add(resource);
 		}
 
 		string GetTemplateBindingExtension(PropertyDeclaration propertyDeclaration)
