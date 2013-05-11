@@ -908,11 +908,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			short identifier = reader.ReadInt16();
 			string text = reader.ReadString();
 
-			PropertyDeclaration pd = this.GetPropertyDeclaration(identifier);
-			XmlBamlProperty property = new XmlBamlProperty(elements.Peek(), PropertyType.Value, pd);
-			property.Value = text;
-
-			nodes.Enqueue(property);
+			EnqueueProperty(identifier, text);
 		}
 
 		void ReadPropertyWithConverter()
@@ -921,11 +917,41 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			string text = reader.ReadString();
 			reader.ReadInt16();
 
+			EnqueueProperty(identifier, text);
+		}
+		
+		bool HaveSeenNestedElement()
+		{
+			XmlBamlElement element = elements.Peek();
+			int elementIndex = nodes.IndexOf(element);
+			for (int i = elementIndex + 1; i < nodes.Count; i++)
+			{
+				if (nodes[i] is XmlBamlEndElement)
+					return true;
+			}
+			return false;
+		}
+		
+		void EnqueueProperty(short identifier, string text)
+		{
 			PropertyDeclaration pd = this.GetPropertyDeclaration(identifier);
-			XmlBamlProperty property = new XmlBamlProperty(elements.Peek(), PropertyType.Value, pd);
-			property.Value = text;
-
-			nodes.Enqueue(property);
+			XmlBamlElement element = FindXmlBamlElement();
+			// if we've already read a nested element for the current element, this property must be a nested element as well
+			if (HaveSeenNestedElement())
+			{
+				XmlBamlPropertyElement property = new XmlBamlPropertyElement(element, PropertyType.Complex, pd);
+				
+				nodes.Enqueue(property);
+				nodes.Enqueue(new XmlBamlText(text));
+				nodes.Enqueue(new XmlBamlEndElement(property));
+			}
+			else
+			{
+				XmlBamlProperty property = new XmlBamlProperty(element, PropertyType.Value, pd);
+				property.Value = text;
+				
+				nodes.Enqueue(property);
+			}
 		}
 
 		void ReadAttributeInfo()
