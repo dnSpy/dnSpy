@@ -75,6 +75,7 @@ namespace ICSharpCode.NRefactory.VB {
 		S VisitLabelDeclarationStatement(LabelDeclarationStatement labelDeclarationStatement, T data);
 		S VisitLocalDeclarationStatement(LocalDeclarationStatement localDeclarationStatement, T data);
 		S VisitExpressionStatement(ExpressionStatement expressionStatement, T data);
+		S VisitAddRemoveHandlerStatement(AddRemoveHandlerStatement addRemoveHandlerStatement, T data);
 		S VisitWithStatement(WithStatement withStatement, T data);
 		S VisitSyncLockStatement(SyncLockStatement syncLockStatement, T data);
 		S VisitIfElseStatement(IfElseStatement ifElseStatement, T data);

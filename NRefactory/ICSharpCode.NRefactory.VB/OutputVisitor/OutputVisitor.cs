@@ -256,7 +256,7 @@ namespace ICSharpCode.NRefactory.VB
 			}
 			
 			if (!typeDeclaration.InheritsType.IsNull || typeDeclaration.ImplementsTypes.Any())
-			NewLine();
+				NewLine();
 			
 			WriteMembers(typeDeclaration.Members);
 			
@@ -397,6 +397,8 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			StartNode(primitiveExpression);
 			
+			if (lastWritten == LastWritten.KeywordOrIdentifier)
+				Space();
 			WritePrimitiveValue(primitiveExpression.Value);
 			
 			return EndNode(primitiveExpression);
@@ -895,6 +897,10 @@ namespace ICSharpCode.NRefactory.VB
 //				formatter.Space();
 //			}
 			formatter.WriteToken(token);
+			if (token == ",") {
+				lastWritten = LastWritten.Whitespace;
+				Space();
+			}
 //			if (token == "+")
 //				lastWritten = LastWritten.Plus;
 //			else if (token == "-")
@@ -2654,6 +2660,22 @@ namespace ICSharpCode.NRefactory.VB
 			WriteCommaSeparatedList(groupJoinQueryOperator.IntoExpressions);
 			
 			return EndNode(groupJoinQueryOperator);
+		}
+		
+		public object VisitAddRemoveHandlerStatement(AddRemoveHandlerStatement addRemoveHandlerStatement, object data)
+		{
+			StartNode(addRemoveHandlerStatement);
+			
+			if (addRemoveHandlerStatement.IsAddHandler)
+				WriteKeyword("AddHandler");
+			else
+				WriteKeyword("RemoveHandler");
+			
+			addRemoveHandlerStatement.EventExpression.AcceptVisitor(this, data);
+			WriteToken(",", VBTokenNode.Roles.Comma);
+			addRemoveHandlerStatement.DelegateExpression.AcceptVisitor(this, data);
+			
+			return EndNode(addRemoveHandlerStatement);
 		}
 	}
 }

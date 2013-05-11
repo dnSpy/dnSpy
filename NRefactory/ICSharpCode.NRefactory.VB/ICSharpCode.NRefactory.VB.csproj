@@ -103,6 +103,7 @@
     <Compile Include="Ast\GlobalScope\OptionStatement.cs" />
     <Compile Include="Ast\Identifier.cs" />
     <Compile Include="Ast\INullable.cs" />
+    <Compile Include="Ast\Statements\AddRemoveHandlerStatement.cs" />
     <Compile Include="Ast\Statements\BlockStatement.cs" />
     <Compile Include="Ast\Statements\ContinueStatement.cs" />
     <Compile Include="Ast\Statements\DoLoopStatement.cs" />
