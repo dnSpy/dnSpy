@@ -170,11 +170,15 @@ namespace ICSharpCode.Decompiler.ILAst
 					modified |= block.RunOptimization(TransformObjectInitializers);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.MakeAssignmentExpression) return;
-					modified |= block.RunOptimization(MakeAssignmentExpression);
+					if (context.Settings.MakeAssignmentExpressions) {
+						modified |= block.RunOptimization(MakeAssignmentExpression);
+					}
 					modified |= block.RunOptimization(MakeCompoundAssignments);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.IntroducePostIncrement) return;
-					modified |= block.RunOptimization(IntroducePostIncrement);
+					if (context.Settings.IntroduceIncrementAndDecrement) {
+						modified |= block.RunOptimization(IntroducePostIncrement);
+					}
 					
 					if (abortBeforeStep == ILAstOptimizationStep.InlineExpressionTreeParameterDeclarations) return;
 					if (context.Settings.ExpressionTrees) {

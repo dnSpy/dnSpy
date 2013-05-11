@@ -64,6 +64,10 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		public bool HasNullableSpecifier { get; set; }
 		
+		public AstNodeCollection<Expression> ArraySizeSpecifiers {
+			get { return GetChildrenByRole (Roles.Argument); }
+		}
+		
 		public AstNodeCollection<ArraySpecifier> ArraySpecifiers {
 			get { return GetChildrenByRole(ComposedType.ArraySpecifierRole); }
 		}

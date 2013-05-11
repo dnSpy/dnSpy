@@ -98,7 +98,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				Type = (AstType)arrayCreateExpression.Type.AcceptVisitor(this, data),
 				Initializer = (ArrayInitializerExpression)arrayCreateExpression.Initializer.AcceptVisitor(this, data)
 			};
-			ConvertNodes(arrayCreateExpression.Arguments, expr.Arguments);
+			ConvertNodes(arrayCreateExpression.Arguments, expr.Arguments,
+			             n => new BinaryOperatorExpression(n, BinaryOperatorType.Subtract, new PrimitiveExpression(1)));
 			ConvertNodes(arrayCreateExpression.AdditionalArraySpecifiers, expr.AdditionalArraySpecifiers);
 			
 			return EndNode(arrayCreateExpression, expr);
@@ -2213,10 +2214,12 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			throw new NotImplementedException();
 		}
 		
-		void ConvertNodes<T>(IEnumerable<CSharp.AstNode> nodes, VB.AstNodeCollection<T> result) where T : VB.AstNode
+		void ConvertNodes<T>(IEnumerable<CSharp.AstNode> nodes, VB.AstNodeCollection<T> result, Func<T, T> transform = null) where T: VB.AstNode
 		{
 			foreach (var node in nodes) {
 				T n = (T)node.AcceptVisitor(this, null);
+				if (transform != null)
+					n = transform(n);
 				if (n != null)
 					result.Add(n);
 			}
