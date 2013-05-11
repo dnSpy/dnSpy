@@ -73,6 +73,12 @@ namespace ILSpy.BamlDecompiler.Tests
 			RunTest("cases/markupextension");
 		}
 		
+		[Test]
+		public void SimplePropertyElement()
+		{
+			RunTest("cases/simplepropertyelement");
+		}
+		
 		#region RunTest
 		void RunTest(string name)
 		{

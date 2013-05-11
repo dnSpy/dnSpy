@@ -1,0 +1,6 @@
+﻿<Label xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<Label.Style>
+		<Style />
+	</Label.Style>
+	<Label.Content>Blah</Label.Content>
+</Label>
