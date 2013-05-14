@@ -1667,6 +1667,13 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 					    || (elementDeclaration.Type != null && declaration.Type != null && elementDeclaration.Type.IsSubclassOf(declaration.Type)))
 						return String.Empty;
 				}
+				else if (node is XmlBamlPropertyElement)
+				{
+					XmlBamlPropertyElement property = (XmlBamlPropertyElement)node;
+					declaration = property.TypeDeclaration;
+					if (property.Parent.TypeDeclaration.Type.IsSubclassOf(property.PropertyDeclaration.DeclaringType.Type))
+						declaration = property.Parent.TypeDeclaration;
+				}
 				else if (node is XmlBamlElement)
 					declaration = ((XmlBamlElement)node).TypeDeclaration;
 				else

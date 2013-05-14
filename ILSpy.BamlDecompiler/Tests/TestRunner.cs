@@ -79,6 +79,12 @@ namespace ILSpy.BamlDecompiler.Tests
 			RunTest("cases/simplepropertyelement");
 		}
 		
+		[Test]
+		public void NamespacePrefix()
+		{
+			RunTest("cases/namespaceprefix");
+		}
+		
 		#region RunTest
 		void RunTest(string name)
 		{
