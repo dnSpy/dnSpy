@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 public class Async
@@ -34,6 +35,16 @@ public class Async
 	public async void VoidMethodWithoutAwait()
 	{
 		Console.WriteLine("No Await");
+	}
+	
+	public async void AwaitYield()
+	{
+		await Task.Yield();
+	}
+	
+	public async void AwaitDefaultYieldAwaitable()
+	{
+		await default(YieldAwaitable);
 	}
 	
 	public async Task SimpleVoidTaskMethod()

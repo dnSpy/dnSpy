@@ -334,6 +334,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					case ILCode.Stfld:
 					case ILCode.Ldfld:
 					case ILCode.Ldflda:
+					case ILCode.Await:
 						return true;
 				}
 			}
