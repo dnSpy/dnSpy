@@ -88,7 +88,7 @@ namespace ICSharpCode.ILSpy.VB
 		{
 			var annotation = expression.Annotations.OfType<TypeInformation>().FirstOrDefault();
 			
-			if (annotation == null)
+			if (annotation == null || annotation.InferredType == null)
 				return TypeCode.Object;
 			
 			var definition = annotation.InferredType.Resolve();
@@ -113,7 +113,7 @@ namespace ICSharpCode.ILSpy.VB
 			
 			var annotation = expression.Annotations.OfType<TypeInformation>().FirstOrDefault();
 			
-			if (annotation == null)
+			if (annotation == null || annotation.InferredType == null)
 				return null;
 			
 			var definition = annotation.InferredType.Resolve();
