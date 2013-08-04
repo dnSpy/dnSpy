@@ -417,7 +417,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			// I belive it is safe to just remove it
 			body.RemoveAll(b => b.StackBefore == null);
 			
-			// Genertate temporary variables to replace stack
+			// Generate temporary variables to replace stack
 			foreach(ByteCode byteCode in body) {
 				int argIdx = 0;
 				int popCount = byteCode.PopCount ?? byteCode.StackBefore.Length;
@@ -652,7 +652,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				// Find the first and widest scope
 				int tryStart = ehs.Min(eh => eh.TryStart.Offset);
 				int tryEnd   = ehs.Where(eh => eh.TryStart.Offset == tryStart).Max(eh => eh.TryEnd.Offset);
-				var handlers = ehs.Where(eh => eh.TryStart.Offset == tryStart && eh.TryEnd.Offset == tryEnd).OrderBy(eh => eh.TryStart.Offset).ToList();
+				var handlers = ehs.Where(eh => eh.TryStart.Offset == tryStart && eh.TryEnd.Offset == tryEnd).ToList();
 				
 				// Remember that any part of the body migt have been removed due to unreachability
 				
