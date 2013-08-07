@@ -1,0 +1,60 @@
+Currently used in ILSpy			#D Icon
+
+Assembly.png					ClassBrowserIcons\Icons.16x16.Reference.png
+AssemblyList.png				new (Fugue-Icon-Mashup)
+AssemblyWarning.png				new (Fugue-Icon-Mashup)
+Back.png						BitmapResources-data\Icons.16x16.BrowserBefore.png
+Breakpoint.png					Bookmarks\Breakpoint.png
+Class.png						ClassBrowserIcons\Icons.16x16.Class.png
+ClearSearch.png					new (Fugue: Cross-white.png)
+Constructor.png					new (SharpDevelop-Team)
+CurrentLine.png					BitmapResources-Data\Icons.16x16.SelectionArrow.png
+Delegate.png					ClassBrowserIcons\Icons.16x16.Delegate.png
+Delete.png						BitmapResources-data\Icons.16x16.DeleteIcon.png
+DisabledBreakpoint.png			Bookmarks\DisabledBreakpoint.png
+Enum.png						ClassBrowserIcons\Icons.16x16.Enum.png
+EnumValue.png					new (SharpDevelop-Team)
+Event.png						ClassBrowserIcons\Icons.16x16.Event.png
+ExtensionMethod.png				ClassBrowserIcons\Icons.16x16.ExtensionMethod.png
+Field.png						ClassBrowserIcons\Icons.16x16.Field.png
+FieldReadOnly.png				new (SharpDevelop-Team)
+Find.png						BitmapResources-data\Icons.16x16.FindIcon.png
+FindAssembly.png				new (Fugue-Icon-Mashup)
+Folder.Closed.png				ClassBrowserIcons\Folder.Closed.png
+Folder.Open.png					ClassBrowserIcons\Folder.Open.png
+Forward.png						BitmapResources-Data\Icons.16x16.BrowserAfter.png
+Indexer.png						ClassBrowserIcons\Icons.16x16.Indexer.png
+Interface.png					ClassBrowserIcons\Icons.16x16.Interface.png
+Library.png						new (Fugue derived)
+Literal.png						ClassBrowserIcons\Icons.16x16.Literal.png
+Method.png						ClassBrowserIcons\Icons.16x16.Method.png
+NameSpace.png					ClassBrowserIcons\Icons.16x16.NameSpace.png
+OK.png							BitmapResources-data\Icons.16x16.OK.png
+Open.png						BitmapResources-data\Icons.16x16.OpenFileIcon.png
+Operator.png					ClassBrowserIcons\Icons.16x16.Operator.png
+OverlayCompilerControlled.png	new (Fugue derived)
+OverlayInternal.png				new (Fugue derived)
+OverlayPrivate.png				new (Fugue derived)
+OverlayProtected.png			new (Fugue derived)
+OverlayProtectedInternal.png	new (Fugue derived)
+OverlayStatic.png 				new (Fugue derived)
+PInvokeMethod.png				new (Fugue-Icon-Mashup)
+PrivateInternal.png				new (Fugue derived)
+Property.png					ClassBrowserIcons\Icons.16x16.Property.png
+ReferenceFolder.Closed.png		ProjectBrowserIcons\ReferenceFolder.Closed.png
+ReferenceFolder.Open.png		ProjectBrowserIcons\ReferenceFolder.Open.png
+Refresh.png						BitmapResources-data\Icons.16x16.Refresh.png
+Resource.png					BitmapResources-data\Icons.16x16.SideBarDocument.png
+ResourceImage.png				BitmapResources-data\Icons.16x16.ResourceEditor.bmp.png
+ResourceResourcesFile.png		new (Fugue-Icon-Mashup)
+ResourceXml.png					backendicons\miscFiles\Icons.16x16.XMLFileIcon.png
+ResourceXsd.png					backendicons\miscFiles\XSD_16.png
+ResourceXslt.png				backendicons\miscFiles\XSL_16.png
+SaveFile.png					BitmapResources-data\Icons.16x16.SaveIcon.png
+Search.png						BitmapResources-data\Icons.16x16.FindIcon.png	
+StaticClass.png					new (Fugue-Icon-Mashup)
+Struct.png						ClassBrowserIcons\Icons.16x16.Struct.png
+SubTypes.png					new (Fugue: arrow-turn-270.png)
+SuperTypes.png					new (Fugue: arrow-turn-090-left.png)
+ViewCode.png					BitmapResources-data\Icons.16x16.FormsDesigner.ViewCode.png
+VirtualMethod.png				new (SharpDevelop-Team)
