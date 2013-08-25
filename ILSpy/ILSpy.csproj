@@ -196,6 +196,7 @@
     <Compile Include="TreeNodes\Analyzer\AnalyzedVirtualMethodUsedByTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzerEntityTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzerSearchTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\RemoveAnalyzeContextMenuEntry.cs" />
     <Compile Include="TreeNodes\Analyzer\Helpers.cs" />
     <Compile Include="TreeNodes\Analyzer\ScopedWhereUsedAnalyzer.cs" />
     <Compile Include="TreeNodes\BaseTypesEntryNode.cs" />
