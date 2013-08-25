@@ -29,6 +29,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	{
 		public bool IsVisible(TextViewContext context)
 		{
+			if (context.TreeView is AnalyzerTreeView && context.SelectedTreeNodes != null && context.SelectedTreeNodes.All(n => n.Parent.IsRoot))
+				return false;
 			if (context.SelectedTreeNodes == null)
 				return context.Reference != null && context.Reference.Reference is MemberReference;
 			return context.SelectedTreeNodes.All(n => n is IMemberTreeNode);
