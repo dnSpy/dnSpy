@@ -423,6 +423,25 @@ namespace ICSharpCode.ILSpy
 			return true;
 		}
 
+		IEnumerable<Tuple<string, string>> WriteAssemblyInfo(ModuleDefinition module, DecompilationOptions options, HashSet<string> directories)
+		{
+			// don't automatically load additional assemblies when an assembly node is selected in the tree view
+			using (LoadedAssembly.DisableAssemblyLoad())
+			{
+				AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: module);
+				codeDomBuilder.AddAssembly(module, onlyAssemblyLevel: true);
+				codeDomBuilder.RunTransformations(transformAbortCondition);
+
+				string prop = "Properties";
+				if (directories.Add("Properties"))
+					Directory.CreateDirectory(Path.Combine(options.SaveAsProjectDirectory, prop));
+				string assemblyInfo = Path.Combine(prop, "AssemblyInfo" + this.FileExtension);
+				using (StreamWriter w = new StreamWriter(Path.Combine(options.SaveAsProjectDirectory, assemblyInfo)))
+					codeDomBuilder.GenerateCode(new PlainTextOutput(w));
+				return new Tuple<string, string>[] { Tuple.Create("Compile", assemblyInfo) };
+			}
+		}
+
 		IEnumerable<Tuple<string, string>> WriteCodeFilesInProject(ModuleDefinition module, DecompilationOptions options, HashSet<string> directories)
 		{
 			var files = module.Types.Where(t => IncludeTypeWhenDecompilingProject(t, options)).GroupBy(
@@ -452,7 +471,7 @@ namespace ICSharpCode.ILSpy
 					}
 				});
 			AstMethodBodyBuilder.PrintNumberOfUnhandledOpcodes();
-			return files.Select(f => Tuple.Create("Compile", f.Key));
+			return files.Select(f => Tuple.Create("Compile", f.Key)).Concat(WriteAssemblyInfo(module, options, directories));
 		}
 		#endregion
 
