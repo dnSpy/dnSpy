@@ -413,11 +413,11 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 			}
 			
-			// Occasionally the compilers or obfuscators generate unreachable code (which might be intentonally invalid)
-			// I belive it is safe to just remove it
+			// Occasionally the compilers or obfuscators generate unreachable code (which might be intentionally invalid)
+			// I believe it is safe to just remove it
 			body.RemoveAll(b => b.StackBefore == null);
 			
-			// Genertate temporary variables to replace stack
+			// Generate temporary variables to replace stack
 			foreach(ByteCode byteCode in body) {
 				int argIdx = 0;
 				int popCount = byteCode.PopCount ?? byteCode.StackBefore.Length;
