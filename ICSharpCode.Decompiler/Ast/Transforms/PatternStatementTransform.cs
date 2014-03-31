@@ -25,7 +25,7 @@ using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.Analysis;
 using ICSharpCode.NRefactory.PatternMatching;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.Decompiler.Ast.Transforms
 {
@@ -715,7 +715,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				if (!(assign != null && m.Get("switchVar").Single().IsMatch(assign.Left)))
 					return null;
 			}
-			FieldReference cachedDictField = m.Get<AstNode>("cachedDict").Single().Annotation<FieldReference>();
+			IField cachedDictField = m.Get<AstNode>("cachedDict").Single().Annotation<IField>();
 			if (cachedDictField == null)
 				return null;
 			List<Statement> dictCreation = m.Get<BlockStatement>("dictCreation").Single().Statements.ToList();
@@ -861,14 +861,14 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		PropertyDeclaration TransformAutomaticProperties(PropertyDeclaration property)
 		{
-			PropertyDefinition cecilProperty = property.Annotation<PropertyDefinition>();
+			PropertyDef cecilProperty = property.Annotation<PropertyDef>();
 			if (cecilProperty == null || cecilProperty.GetMethod == null || cecilProperty.SetMethod == null)
 				return null;
 			if (!(cecilProperty.GetMethod.IsCompilerGenerated() && cecilProperty.SetMethod.IsCompilerGenerated()))
 				return null;
 			Match m = automaticPropertyPattern.Match(property);
 			if (m.Success) {
-				FieldDefinition field = m.Get<AstNode>("fieldReference").Single().Annotation<FieldReference>().ResolveWithinSameModule();
+				FieldDef field = m.Get<AstNode>("fieldReference").Single().Annotation<IField>().ResolveFieldWithinSameModule();
 				if (field.IsCompilerGenerated() && field.DeclaringType == cecilProperty.DeclaringType) {
 					RemoveCompilerGeneratedAttribute(property.Getter.Attributes);
 					RemoveCompilerGeneratedAttribute(property.Setter.Attributes);
@@ -884,7 +884,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		{
 			foreach (AttributeSection section in attributeSections) {
 				foreach (var attr in section.Attributes) {
-					TypeReference tr = attr.Type.Annotation<TypeReference>();
+					ITypeDefOrRef tr = attr.Type.Annotation<ITypeDefOrRef>();
 					if (tr != null && tr.Namespace == "System.Runtime.CompilerServices" && tr.Name == "CompilerGeneratedAttribute") {
 						attr.Remove();
 					}
@@ -950,7 +950,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				return false; // field name must match event name
 			if (!ev.ReturnType.IsMatch(m.Get("type").Single()))
 				return false; // variable types must match event type
-			var combineMethod = m.Get<AstNode>("delegateCombine").Single().Parent.Annotation<MethodReference>();
+			var combineMethod = m.Get<AstNode>("delegateCombine").Single().Parent.Annotation<IMethod>();
 			if (combineMethod == null || combineMethod.Name != (isAddAccessor ? "Combine" : "Remove"))
 				return false;
 			return combineMethod.DeclaringType.FullName == "System.Delegate";
@@ -975,9 +975,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			ed.Variables.Add(new VariableInitializer(ev.Name));
 			ed.CopyAnnotationsFrom(ev);
 			
-			EventDefinition eventDef = ev.Annotation<EventDefinition>();
+			EventDef eventDef = ev.Annotation<EventDef>();
 			if (eventDef != null) {
-				FieldDefinition field = eventDef.DeclaringType.Fields.FirstOrDefault(f => f.Name == ev.Name);
+				FieldDef field = eventDef.DeclaringType.Fields.FirstOrDefault(f => f.Name == ev.Name);
 				if (field != null) {
 					ed.AddAnnotation(field);
 					AstBuilder.ConvertAttributes(ed, field, "field");

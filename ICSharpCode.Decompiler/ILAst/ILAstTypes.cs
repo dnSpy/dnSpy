@@ -25,10 +25,9 @@ using System.Text;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.NRefactory.Utils;
-using Mono.Cecil;
-using Mono.Cecil.Cil;
+using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 using Mono.CSharp;
-using Cecil = Mono.Cecil;
 
 namespace ICSharpCode.Decompiler.ILAst
 {
@@ -135,7 +134,7 @@ namespace ICSharpCode.Decompiler.ILAst
 	{
 		public class CatchBlock: ILBlock
 		{
-			public TypeReference ExceptionType;
+			public TypeSig ExceptionType;
 			public ILVariable ExceptionVariable;
 			
 			public override void WriteTo(ITextOutput output)
@@ -202,13 +201,13 @@ namespace ICSharpCode.Decompiler.ILAst
 	public class ILVariable
 	{
 		public string Name;
-		public bool   IsGenerated;
-		public TypeReference Type;
-		public VariableDefinition OriginalVariable;
-		public ParameterDefinition OriginalParameter;
+		public bool IsGenerated;
+		public TypeSig Type;
+		public Local OriginalVariable;
+		public dnlib.DotNet.Parameter OriginalParameter;
 		
 		public bool IsPinned {
-			get { return OriginalVariable != null && OriginalVariable.IsPinned; }
+			get { return OriginalVariable != null && OriginalVariable.Type is PinnedSig; }
 		}
 		
 		public bool IsParameter {
@@ -223,8 +222,8 @@ namespace ICSharpCode.Decompiler.ILAst
 	
 	public class ILRange
 	{
-		public int From;
-		public int To;   // Exlusive
+		public uint From;
+		public uint To;   // Exlusive
 		
 		public override string ToString()
 		{
@@ -261,7 +260,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			var ordered = OrderAndJoint(input);
 			if (ordered.Count == 0) {
-				yield return new ILRange() { From = 0, To = codeSize };
+				yield return new ILRange() { From = 0, To = (uint)codeSize };
 			} else {
 				// Gap before the first element
 				if (ordered.First().From != 0)
@@ -274,7 +273,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				// Gap after the last element
 				Debug.Assert(ordered.Last().To <= codeSize);
 				if (ordered.Last().To != codeSize)
-					yield return new ILRange() { From = ordered.Last().To, To = codeSize };
+					yield return new ILRange() { From = ordered.Last().To, To = (uint)codeSize };
 			}
 		}
 	}
@@ -300,8 +299,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		// Mapping to the original instructions (useful for debugging)
 		public List<ILRange> ILRanges { get; set; }
 		
-		public TypeReference ExpectedType { get; set; }
-		public TypeReference InferredType { get; set; }
+		public TypeSig ExpectedType { get; set; }
+		public TypeSig InferredType { get; set; }
 		
 		public static readonly object AnyOperand = new object();
 		
@@ -427,15 +426,22 @@ namespace ICSharpCode.Decompiler.ILAst
 							output.Write(", ");
 						output.WriteReference(labels[i].Name, labels[i]);
 					}
-				} else if (Operand is MethodReference) {
-					MethodReference method = (MethodReference)Operand;
+				} else if (Operand is MemberRef) {
+					MemberRef member = (MemberRef)Operand;
+					if (member.DeclaringType != null) {
+						member.DeclaringType.WriteTo(output, ILNameSyntax.ShortTypeName);
+						output.Write("::");
+					}
+					output.WriteReference(member.Name, member);
+				} else if (Operand is IMethod) {
+					IMethod method = (IMethod)Operand;
 					if (method.DeclaringType != null) {
 						method.DeclaringType.WriteTo(output, ILNameSyntax.ShortTypeName);
 						output.Write("::");
 					}
 					output.WriteReference(method.Name, method);
-				} else if (Operand is FieldReference) {
-					FieldReference field = (FieldReference)Operand;
+				} else if (Operand is IField) {
+					IField field = (IField)Operand;
 					field.DeclaringType.WriteTo(output, ILNameSyntax.ShortTypeName);
 					output.Write("::");
 					output.WriteReference(field.Name, field);

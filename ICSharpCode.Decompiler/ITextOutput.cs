@@ -19,7 +19,6 @@
 using System;
 using System.IO;
 using ICSharpCode.NRefactory;
-using Mono.Cecil;
 
 namespace ICSharpCode.Decompiler
 {

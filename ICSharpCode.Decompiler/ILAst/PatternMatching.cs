@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Mono.Cecil;
 
 namespace ICSharpCode.Decompiler.ILAst
 {
@@ -147,7 +146,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		public static bool MatchThis(this ILNode node)
 		{
 			ILVariable v;
-			return node.Match(ILCode.Ldloc, out v) && v.IsParameter && v.OriginalParameter.Index == -1;
+			return node.Match(ILCode.Ldloc, out v) && v.IsParameter && v.OriginalParameter.IsHiddenThisParameter;
 		}
 		
 		public static bool MatchLdloc(this ILNode node, ILVariable expectedVar)

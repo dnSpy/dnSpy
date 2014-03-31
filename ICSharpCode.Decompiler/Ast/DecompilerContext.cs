@@ -22,23 +22,23 @@ using System.Threading;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.Decompiler
 {
 	public class DecompilerContext
 	{
-		public ModuleDefinition CurrentModule;
+		public ModuleDef CurrentModule;
 		public CancellationToken CancellationToken;
-		public TypeDefinition CurrentType;
-		public MethodDefinition CurrentMethod;
+		public TypeDef CurrentType;
+		public MethodDef CurrentMethod;
 		public DecompilerSettings Settings = new DecompilerSettings();
 		public bool CurrentMethodIsAsync;
 		
 //		public ITypeResolveContext TypeResolveContext;
 //		public IProjectContent ProjectContent;
 		
-		public DecompilerContext(ModuleDefinition currentModule)
+		public DecompilerContext(ModuleDef currentModule)
 		{
 			if (currentModule == null)
 				throw new ArgumentNullException("currentModule");

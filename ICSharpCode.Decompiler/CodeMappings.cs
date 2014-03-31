@@ -25,7 +25,7 @@ using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.Decompiler
 {
@@ -58,7 +58,7 @@ namespace ICSharpCode.Decompiler
 		/// Retrieves the array that contains the IL range and the missing gaps between ranges.
 		/// </summary>
 		/// <returns>The array representation of the step aranges.</returns>
-		public int[] ToArray(bool isMatch)
+		public uint[] ToArray(bool isMatch)
 		{
 			var currentList = new List<ILRange>();
 			
@@ -78,7 +78,7 @@ namespace ICSharpCode.Decompiler
 			}
 			
 			// set the output
-			var resultList = new List<int>();
+			var resultList = new List<uint>();
 			foreach (var element in ILRange.OrderAndJoint(currentList)) {
 				resultList.Add(element.From);
 				resultList.Add(element.To);
@@ -99,18 +99,19 @@ namespace ICSharpCode.Decompiler
 		{
 		}
 		
-		public MemberMapping(MethodDefinition method)
+		public MemberMapping(MethodDef method)
 		{
-			this.MetadataToken = method.MetadataToken.ToInt32();
+			this.MetadataToken = method.MDToken.ToInt32();
 			this.MemberCodeMappings = new List<SourceCodeMapping>();
 			this.MemberReference = method;
-			this.CodeSize = method.Body.CodeSize;
+			var last = method.Body.Instructions.LastOrDefault();
+			this.CodeSize = method.Body.GetCodeSize();
 		}
 		
 		/// <summary>
 		/// Gets or sets the type of the mapping.
 		/// </summary>
-		public MemberReference MemberReference { get; internal set; }
+		public IMemberRef MemberReference { get; internal set; }
 		
 		/// <summary>
 		/// Metadata token of the member.
@@ -228,7 +229,7 @@ namespace ICSharpCode.Decompiler
 		public static bool GetInstructionByTokenAndOffset(
 			this MemberMapping mapping,
 			int ilOffset,
-			out MemberReference member,
+			out IMemberRef member,
 			out int line)
 		{
 			member = null;

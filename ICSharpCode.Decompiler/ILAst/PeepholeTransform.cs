@@ -22,7 +22,7 @@ using System.Diagnostics;
 using System.Linq;
 
 using ICSharpCode.NRefactory.Utils;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.Decompiler.ILAst
 {
@@ -43,7 +43,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		static bool TransformDecimalCtorToConstant(ILExpression expr)
 		{
-			MethodReference r;
+			IMethod r;
 			List<ILExpression> args;
 			if (expr.Match(ILCode.Newobj, out r, out args) &&
 			    r.DeclaringType.Namespace == "System" &&
@@ -54,7 +54,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (args[0].Match(ILCode.Ldc_I4, out val)) {
 						expr.Code = ILCode.Ldc_Decimal;
 						expr.Operand = new decimal(val);
-						expr.InferredType = r.DeclaringType;
+						expr.InferredType = r.DeclaringType.ToTypeSig();
 						expr.Arguments.Clear();
 						return true;
 					}
@@ -68,7 +68,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					{
 						expr.Code = ILCode.Ldc_Decimal;
 						expr.Operand = new decimal(lo, mid, hi, isNegative != 0, (byte)scale);
-						expr.InferredType = r.DeclaringType;
+						expr.InferredType = r.DeclaringType.ToTypeSig();
 						expr.Arguments.Clear();
 						return true;
 					}
@@ -92,7 +92,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		static bool RemoveConvIFromArrayCreation(ILExpression expr)
 		{
-			TypeReference typeRef;
+			ITypeDefOrRef typeRef;
 			ILExpression length;
 			ILExpression input;
 			if (expr.Match(ILCode.Newarr, out typeRef, out length)) {
@@ -133,18 +133,18 @@ namespace ICSharpCode.Decompiler.ILAst
 				modified = true;
 			}
 			ILExpression arg, arg2;
-			TypeReference type;
+			ITypeDefOrRef type;
 			ILCode? newCode = null;
 			if (expr.Match(ILCode.Stobj, out type, out arg, out arg2)) {
 				switch (arg.Code) {
-						case ILCode.Ldelema: newCode = ILCode.Stelem_Any; break;
+						case ILCode.Ldelema: newCode = ILCode.Stelem; break;
 						case ILCode.Ldloca:  newCode = ILCode.Stloc; break;
 						case ILCode.Ldflda:  newCode = ILCode.Stfld; break;
 						case ILCode.Ldsflda: newCode = ILCode.Stsfld; break;
 				}
 			} else if (expr.Match(ILCode.Ldobj, out type, out arg)) {
 				switch (arg.Code) {
-						case ILCode.Ldelema: newCode = ILCode.Ldelem_Any; break;
+						case ILCode.Ldelema: newCode = ILCode.Ldelem; break;
 						case ILCode.Ldloca:  newCode = ILCode.Ldloc; break;
 						case ILCode.Ldflda:  newCode = ILCode.Ldfld; break;
 						case ILCode.Ldsflda: newCode = ILCode.Ldsfld; break;
@@ -185,11 +185,13 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression condition = c.Condition.Arguments.Single() as ILExpression;
 			if (condition == null || condition.Code != ILCode.Ldsfld)
 				return;
-			FieldDefinition field = ((FieldReference)condition.Operand).ResolveWithinSameModule(); // field is defined in current assembly
+			FieldDef field = condition.Operand is MemberRef ? 
+				((MemberRef)condition.Operand).ResolveFieldWithinSameModule() : 
+				(FieldDef)condition.Operand; // field is defined in current assembly
 			if (field == null || !field.IsCompilerGeneratedOrIsInCompilerGeneratedClass())
 				return;
 			ILExpression stsfld = c.TrueBlock.Body[0] as ILExpression;
-			if (!(stsfld != null && stsfld.Code == ILCode.Stsfld && ((FieldReference)stsfld.Operand).ResolveWithinSameModule() == field))
+			if (!(stsfld != null && stsfld.Code == ILCode.Stsfld && ((IField)stsfld.Operand).ResolveFieldWithinSameModule() == field))
 				return;
 			ILExpression newObj = stsfld.Arguments[0];
 			if (!(newObj.Code == ILCode.Newobj && newObj.Arguments.Count == 2))
@@ -198,17 +200,17 @@ namespace ICSharpCode.Decompiler.ILAst
 				return;
 			if (newObj.Arguments[1].Code != ILCode.Ldftn)
 				return;
-			MethodDefinition anonymousMethod = ((MethodReference)newObj.Arguments[1].Operand).ResolveWithinSameModule(); // method is defined in current assembly
+			MethodDef anonymousMethod = ((IMethod)newObj.Arguments[1].Operand).ResolveMethodWithinSameModule(); // method is defined in current assembly
 			if (!Ast.Transforms.DelegateConstruction.IsAnonymousMethod(context, anonymousMethod))
 				return;
 			
 			ILNode followingNode = block.Body.ElementAtOrDefault(i + 1);
 			if (followingNode != null && followingNode.GetSelfAndChildrenRecursive<ILExpression>().Count(
-				e => e.Code == ILCode.Ldsfld && ((FieldReference)e.Operand).ResolveWithinSameModule() == field) == 1)
+				e => e.Code == ILCode.Ldsfld && ((IField)e.Operand).ResolveFieldWithinSameModule() == field) == 1)
 			{
 				foreach (ILExpression parent in followingNode.GetSelfAndChildrenRecursive<ILExpression>()) {
 					for (int j = 0; j < parent.Arguments.Count; j++) {
-						if (parent.Arguments[j].Code == ILCode.Ldsfld && ((FieldReference)parent.Arguments[j].Operand).ResolveWithinSameModule() == field) {
+						if (parent.Arguments[j].Code == ILCode.Ldsfld && ((IField)parent.Arguments[j].Operand).ResolveFieldWithinSameModule() == field) {
 							parent.Arguments[j] = newObj;
 							block.Body.RemoveAt(i);
 							i -= new ILInlining(method).InlineInto(block.Body, i, aggressive: false);
@@ -248,7 +250,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				return;
 			if (newObj.Arguments[1].Code != ILCode.Ldftn)
 				return;
-			MethodDefinition anonymousMethod = ((MethodReference)newObj.Arguments[1].Operand).ResolveWithinSameModule(); // method is defined in current assembly
+			MethodDef anonymousMethod = ((IMethod)newObj.Arguments[1].Operand).ResolveMethodWithinSameModule(); // method is defined in current assembly
 			if (!Ast.Transforms.DelegateConstruction.IsAnonymousMethod(context, anonymousMethod))
 				return;
 			
@@ -380,8 +382,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			// stobj(T, ldloc(ptr), <OP>(ldobj(T, ldloc(ptr)), <RIGHT>))
 			ILCode expectedLdelemCode;
 			switch (expr.Code) {
-				case ILCode.Stelem_Any:
-					expectedLdelemCode = ILCode.Ldelem_Any;
+				case ILCode.Stelem:
+					expectedLdelemCode = ILCode.Ldelem;
 					break;
 				case ILCode.Stfld:
 					expectedLdelemCode = ILCode.Ldfld;
@@ -468,8 +470,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Shr_Un:
 					return true;
 				case ILCode.Call:
-					var m = expr.Operand as MethodReference;
-					if (m == null || m.HasThis || expr.Arguments.Count != 2) return false;
+					var m = expr.Operand as IMethod;
+					if (m == null || m.MethodSig.HasThis || expr.Arguments.Count != 2) return false;
 					switch (m.Name) {
 						case "op_Addition":
 						case "op_Subtraction":
@@ -593,17 +595,17 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		static bool IsGetterSetterPair(object getterOperand, object setterOperand)
 		{
-			MethodReference getter = getterOperand as MethodReference;
-			MethodReference setter = setterOperand as MethodReference;
+			IMethod getter = getterOperand as IMethod;
+			IMethod setter = setterOperand as IMethod;
 			if (getter == null || setter == null)
 				return false;
 			if (!TypeAnalysis.IsSameType(getter.DeclaringType, setter.DeclaringType))
 				return false;
-			MethodDefinition getterDef = getter.Resolve();
-			MethodDefinition setterDef = setter.Resolve();
+			MethodDef getterDef = getter.Resolve();
+			MethodDef setterDef = setter.Resolve();
 			if (getterDef == null || setterDef == null)
 				return false;
-			foreach (PropertyDefinition prop in getterDef.DeclaringType.Properties) {
+			foreach (PropertyDef prop in getterDef.DeclaringType.Properties) {
 				if (prop.GetMethod == getterDef)
 					return prop.SetMethod == setterDef;
 			}
@@ -647,10 +649,10 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (initialValue.Code != ILCode.Ldfld)
 					return null;
 				// There might be two different FieldReference instances, so we compare the field's signatures:
-				FieldReference getField = (FieldReference)initialValue.Operand;
-				FieldReference setField = (FieldReference)expr.Operand;
+				IField getField = (IField)initialValue.Operand;
+				IField setField = (IField)expr.Operand;
 				if (!(TypeAnalysis.IsSameType(getField.DeclaringType, setField.DeclaringType)
-				      && getField.Name == setField.Name && TypeAnalysis.IsSameType(getField.FieldType, setField.FieldType)))
+				      && getField.Name == setField.Name && TypeAnalysis.IsSameType(getField.FieldSig.Type, setField.FieldSig.Type)))
 				{
 					return null;
 				}
@@ -747,8 +749,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					fixedStmt.Initializers.Insert(0, initValue);
 					body.RemoveRange(i, initEndPos - i);
 					fixedStmt.BodyBlock.Body.RemoveAt(fixedStmt.BodyBlock.Body.Count - 1);
-					if (pinnedVar.Type.IsByReference)
-						pinnedVar.Type = new PointerType(((ByReferenceType)pinnedVar.Type).ElementType);
+					if (pinnedVar.Type is ByRefSig)
+						pinnedVar.Type = new PtrSig(((ByRefSig)pinnedVar.Type).Next);
 					return true;
 				}
 			}
@@ -771,8 +773,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			fixedStmt.BodyBlock = new ILBlock(body.GetRange(initEndPos, j - initEndPos)); // from initEndPos to j-1 (inclusive)
 			body.RemoveRange(i + 1, Math.Min(j, body.Count - 1) - i); // from i+1 to j (inclusive)
 			body[i] = fixedStmt;
-			if (pinnedVar.Type.IsByReference)
-				pinnedVar.Type = new PointerType(((ByReferenceType)pinnedVar.Type).ElementType);
+			if (pinnedVar.Type is ByRefSig)
+				pinnedVar.Type = new PtrSig(((ByRefSig)pinnedVar.Type).Next);
 			
 			return true;
 		}
@@ -899,7 +901,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression assignedExpr;
 			if (!(ifStmt.TrueBlock.Body[0].Match(ILCode.Stloc, out assignedVar, out assignedExpr) && assignedVar == var2 && assignedExpr.Code == ILCode.Add))
 				return false;
-			MethodReference calledMethod;
+			IMethod calledMethod;
 			if (!(assignedExpr.Arguments[0].MatchLdloc(var1)))
 				return false;
 			if (!(assignedExpr.Arguments[1].Match(ILCode.Call, out calledMethod) || assignedExpr.Arguments[1].Match(ILCode.CallGetter, out calledMethod)))
@@ -930,7 +932,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			ILExpression a;
 			// "ceq(a, ldc.i4.0)" becomes "logicnot(a)" if the inferred type for expression "a" is boolean
-			if (expr.Code == ILCode.Ceq && TypeAnalysis.IsBoolean(expr.Arguments[0].InferredType) && (a = expr.Arguments[1]).Code == ILCode.Ldc_I4 && (int)a.Operand == 0) {
+			if (expr.Code == ILCode.Ceq && expr.Arguments[0].InferredType.GetElementType() == ElementType.Boolean && (a = expr.Arguments[1]).Code == ILCode.Ldc_I4 && (int)a.Operand == 0) {
 				expr.Code = ILCode.LogicNot;
 				expr.ILRanges.AddRange(a.ILRanges);
 				expr.Arguments.RemoveAt(1);
@@ -1008,11 +1010,11 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (a.Code != ILCode.And || a.Arguments[1].Code != ILCode.Ldc_I4 || expr.InferredType == null)
 				return;
 			int mask;
-			switch (expr.InferredType.MetadataType) {
-				case MetadataType.Int32:
-					case MetadataType.UInt32: mask = 31; break;
-				case MetadataType.Int64:
-					case MetadataType.UInt64: mask = 63; break;
+			switch (expr.InferredType.ElementType) {
+				case ElementType.I4:
+					case ElementType.U4: mask = 31; break;
+				case ElementType.I8:
+					case ElementType.U8: mask = 63; break;
 					default: return;
 			}
 			if ((int)a.Arguments[1].Operand != mask) return;
@@ -1043,7 +1045,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					return true;
 			}
 			
-			MethodReference mr;
+			IMethod mr;
 			ILExpression lambdaBodyExpr, parameterArray;
 			if (!(expr.Match(ILCode.Call, out mr, out lambdaBodyExpr, out parameterArray) && mr.Name == "Lambda"))
 				return false;
@@ -1084,13 +1086,13 @@ namespace ICSharpCode.Decompiler.ILAst
 				return false;
 			if (v.Type == null || v.Type.FullName != "System.Linq.Expressions.ParameterExpression")
 				return false;
-			MethodReference parameterMethod;
+			IMethod parameterMethod;
 			ILExpression typeArg, nameArg;
 			if (!init.Match(ILCode.Call, out parameterMethod, out typeArg, out nameArg))
 				return false;
 			if (!(parameterMethod.Name == "Parameter" && parameterMethod.DeclaringType.FullName == "System.Linq.Expressions.Expression"))
 				return false;
-			MethodReference getTypeFromHandle;
+			IMethod getTypeFromHandle;
 			ILExpression typeToken;
 			if (!typeArg.Match(ILCode.Call, out getTypeFromHandle, out typeToken))
 				return false;

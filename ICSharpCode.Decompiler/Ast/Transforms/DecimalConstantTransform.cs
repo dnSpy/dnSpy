@@ -19,7 +19,7 @@
 using System;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.Decompiler.Ast.Transforms
 {
@@ -36,7 +36,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if ((fieldDeclaration.Modifiers & staticReadOnly) == staticReadOnly && decimalType.IsMatch(fieldDeclaration.ReturnType)) {
 				foreach (var attributeSection in fieldDeclaration.Attributes) {
 					foreach (var attribute in attributeSection.Attributes) {
-						TypeReference tr = attribute.Type.Annotation<TypeReference>();
+						ITypeDefOrRef tr = attribute.Type.Annotation<ITypeDefOrRef>();
 						if (tr != null && tr.Name == "DecimalConstantAttribute" && tr.Namespace == "System.Runtime.CompilerServices") {
 							attribute.Remove();
 							if (attributeSection.Attributes.Count == 0)

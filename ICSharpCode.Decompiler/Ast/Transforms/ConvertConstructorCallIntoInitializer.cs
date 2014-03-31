@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.Decompiler.Ast.Transforms
 {
@@ -51,7 +51,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				invocation.Arguments.MoveTo(ci.Arguments);
 				// Add the initializer: (unless it is the default 'base()')
 				if (!(ci.ConstructorInitializerType == ConstructorInitializerType.Base && ci.Arguments.Count == 0))
-					constructorDeclaration.Initializer = ci.WithAnnotation(invocation.Annotation<MethodReference>());
+					constructorDeclaration.Initializer = ci.WithAnnotation(invocation.Annotation<IMethod>());
 				// Remove the statement:
 				stmt.Remove();
 			}
@@ -92,7 +92,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			var instanceCtors = members.OfType<ConstructorDeclaration>().Where(c => (c.Modifiers & Modifiers.Static) == 0).ToArray();
 			var instanceCtorsNotChainingWithThis = instanceCtors.Where(ctor => !thisCallPattern.IsMatch(ctor.Body.Statements.FirstOrDefault())).ToArray();
 			if (instanceCtorsNotChainingWithThis.Length > 0) {
-				MethodDefinition ctorMethodDef = instanceCtorsNotChainingWithThis[0].Annotation<MethodDefinition>();
+				MethodDef ctorMethodDef = instanceCtorsNotChainingWithThis[0].Annotation<MethodDef>();
 				if (ctorMethodDef != null && ctorMethodDef.DeclaringType.IsValueType)
 					return;
 				
@@ -104,10 +104,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					if (!m.Success)
 						break;
 					
-					FieldDefinition fieldDef = m.Get<AstNode>("fieldAccess").Single().Annotation<FieldReference>().ResolveWithinSameModule();
+					FieldDef fieldDef = m.Get<AstNode>("fieldAccess").Single().Annotation<IField>().ResolveFieldWithinSameModule();
 					if (fieldDef == null)
 						break;
-					AstNode fieldOrEventDecl = members.FirstOrDefault(f => f.Annotation<FieldDefinition>() == fieldDef);
+					AstNode fieldOrEventDecl = members.FirstOrDefault(f => f.Annotation<FieldDef>() == fieldDef);
 					if (fieldOrEventDecl == null)
 						break;
 					Expression initializer = m.Get<Expression>("initializer").Single();
@@ -146,7 +146,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			// Convert static constructor into field initializers if the class is BeforeFieldInit
 			var staticCtor = members.OfType<ConstructorDeclaration>().FirstOrDefault(c => (c.Modifiers & Modifiers.Static) == Modifiers.Static);
 			if (staticCtor != null) {
-				MethodDefinition ctorMethodDef = staticCtor.Annotation<MethodDefinition>();
+				MethodDef ctorMethodDef = staticCtor.Annotation<MethodDef>();
 				if (ctorMethodDef != null && ctorMethodDef.DeclaringType.IsBeforeFieldInit) {
 					while (true) {
 						ExpressionStatement es = staticCtor.Body.Statements.FirstOrDefault() as ExpressionStatement;
@@ -155,10 +155,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						AssignmentExpression assignment = es.Expression as AssignmentExpression;
 						if (assignment == null || assignment.Operator != AssignmentOperatorType.Assign)
 							break;
-						FieldDefinition fieldDef = assignment.Left.Annotation<FieldReference>().ResolveWithinSameModule();
+						FieldDef fieldDef = assignment.Left.Annotation<IField>().ResolveFieldWithinSameModule();
 						if (fieldDef == null || !fieldDef.IsStatic)
 							break;
-						FieldDeclaration fieldDecl = members.OfType<FieldDeclaration>().FirstOrDefault(f => f.Annotation<FieldDefinition>() == fieldDef);
+						FieldDeclaration fieldDecl = members.OfType<FieldDeclaration>().FirstOrDefault(f => f.Annotation<FieldDef>() == fieldDef);
 						if (fieldDecl == null)
 							break;
 						fieldDecl.Variables.Single().Initializer = assignment.Right.Detach();

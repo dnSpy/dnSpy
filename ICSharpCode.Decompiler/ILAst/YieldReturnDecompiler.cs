@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.Decompiler.ILAst
 {
@@ -38,12 +38,12 @@ namespace ICSharpCode.Decompiler.ILAst
 		// for a description of this step.
 		
 		DecompilerContext context;
-		TypeDefinition enumeratorType;
-		MethodDefinition enumeratorCtor;
-		MethodDefinition disposeMethod;
-		FieldDefinition stateField;
-		FieldDefinition currentField;
-		Dictionary<FieldDefinition, ILVariable> fieldToParameterMap = new Dictionary<FieldDefinition, ILVariable>();
+		TypeDef enumeratorType;
+		MethodDef enumeratorCtor;
+		MethodDef disposeMethod;
+		FieldDef stateField;
+		FieldDef currentField;
+		Dictionary<FieldDef, ILVariable> fieldToParameterMap = new Dictionary<FieldDef, ILVariable>();
 		List<ILNode> newBody;
 		
 		#region Run() method
@@ -114,7 +114,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			int i;
 			for (i = 1; i < method.Body.Count; i++) {
 				// stfld(..., ldloc(var_1), ldloc(parameter))
-				FieldReference storedField;
+				IField storedField;
 				ILExpression ldloc, loadParameter;
 				if (!method.Body[i].Match(ILCode.Stfld, out storedField, out ldloc, out loadParameter))
 					break;
@@ -124,7 +124,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				storedField = GetFieldDefinition(storedField);
 				if (loadedVar != var1 || storedField == null || !loadedArg.IsParameter)
 					return false;
-				fieldToParameterMap[(FieldDefinition)storedField] = loadedArg;
+				fieldToParameterMap[(FieldDef)storedField] = loadedArg;
 			}
 			ILVariable var2;
 			ILExpression ldlocForStloc2;
@@ -147,17 +147,17 @@ namespace ICSharpCode.Decompiler.ILAst
 			return false;
 		}
 		
-		static FieldDefinition GetFieldDefinition(FieldReference field)
+		static FieldDef GetFieldDefinition(IField field)
 		{
-			return CecilExtensions.ResolveWithinSameModule(field);
+			return DnlibExtensions.ResolveFieldWithinSameModule(field);
 		}
 		
-		static MethodDefinition GetMethodDefinition(MethodReference method)
+		static MethodDef GetMethodDefinition(IMethod method)
 		{
-			return CecilExtensions.ResolveWithinSameModule(method);
+			return DnlibExtensions.ResolveMethodWithinSameModule(method);
 		}
 		
-		bool MatchEnumeratorCreationNewObj(ILExpression expr, out MethodDefinition ctor)
+		bool MatchEnumeratorCreationNewObj(ILExpression expr, out MethodDef ctor)
 		{
 			// newobj(CurrentType/...::.ctor, ldc.i4(-2))
 			ctor = null;
@@ -168,18 +168,18 @@ namespace ICSharpCode.Decompiler.ILAst
 			int initialState = (int)expr.Arguments[0].Operand;
 			if (!(initialState == -2 || initialState == 0))
 				return false;
-			ctor = GetMethodDefinition(expr.Operand as MethodReference);
+			ctor = GetMethodDefinition(expr.Operand as IMethod);
 			if (ctor == null || ctor.DeclaringType.DeclaringType != context.CurrentType)
 				return false;
 			return IsCompilerGeneratorEnumerator(ctor.DeclaringType);
 		}
 		
-		public static bool IsCompilerGeneratorEnumerator(TypeDefinition type)
+		public static bool IsCompilerGeneratorEnumerator(TypeDef type)
 		{
 			if (!(type.DeclaringType != null && type.IsCompilerGenerated()))
 				return false;
-			foreach (TypeReference i in type.Interfaces) {
-				if (i.Namespace == "System.Collections" && i.Name == "IEnumerator")
+			foreach (var i in type.Interfaces) {
+				if (i.Interface.Namespace == "System.Collections" && i.Interface.Name == "IEnumerator")
 					return true;
 			}
 			return false;
@@ -195,14 +195,14 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILBlock method = CreateILAst(enumeratorCtor);
 			
 			foreach (ILNode node in method.Body) {
-				FieldReference field;
+				IField field;
 				ILExpression instExpr;
 				ILExpression stExpr;
 				ILVariable arg;
 				if (node.Match(ILCode.Stfld, out field, out instExpr, out stExpr) &&
 				    instExpr.MatchThis() &&
 				    stExpr.Match(ILCode.Ldloc, out arg) &&
-				    arg.IsParameter && arg.OriginalParameter.Index == 0)
+				    arg.IsParameter && arg.OriginalParameter.Index == 1)
 				{
 					stateField = GetFieldDefinition(field);
 				}
@@ -214,7 +214,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// <summary>
 		/// Creates ILAst for the specified method, optimized up to before the 'YieldReturn' step.
 		/// </summary>
-		ILBlock CreateILAst(MethodDefinition method)
+		ILBlock CreateILAst(MethodDef method)
 		{
 			if (method == null || !method.HasBody)
 				throw new SymbolicAnalysisFailedException();
@@ -234,14 +234,14 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// </summary>
 		void AnalyzeCurrentProperty()
 		{
-			MethodDefinition getCurrentMethod = enumeratorType.Methods.FirstOrDefault(
-				m => m.Name.StartsWith("System.Collections.Generic.IEnumerator", StringComparison.Ordinal)
-				&& m.Name.EndsWith(".get_Current", StringComparison.Ordinal));
+			MethodDef getCurrentMethod = enumeratorType.Methods.FirstOrDefault(
+				m => m.Name.String.StartsWith("System.Collections.Generic.IEnumerator", StringComparison.Ordinal)
+				&& m.Name.String.EndsWith(".get_Current", StringComparison.Ordinal));
 			ILBlock method = CreateILAst(getCurrentMethod);
 			if (method.Body.Count == 1) {
 				// release builds directly return the current field
 				ILExpression retExpr;
-				FieldReference field;
+				IField field;
 				ILExpression ldFromObj;
 				if (method.Body[0].Match(ILCode.Ret, out retExpr) &&
 				    retExpr.Match(ILCode.Ldfld, out field, out ldFromObj) &&
@@ -252,7 +252,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			} else if (method.Body.Count == 2) {
 				ILVariable v, v2;
 				ILExpression stExpr;
-				FieldReference field;
+				IField field;
 				ILExpression ldFromObj;
 				ILExpression retExpr;
 				if (method.Body[0].Match(ILCode.Stloc, out v, out stExpr) &&
@@ -273,25 +273,25 @@ namespace ICSharpCode.Decompiler.ILAst
 		#region Figure out the mapping of IEnumerable fields to IEnumerator fields  (analysis of GetEnumerator())
 		void ResolveIEnumerableIEnumeratorFieldMapping()
 		{
-			MethodDefinition getEnumeratorMethod = enumeratorType.Methods.FirstOrDefault(
-				m => m.Name.StartsWith("System.Collections.Generic.IEnumerable", StringComparison.Ordinal)
-				&& m.Name.EndsWith(".GetEnumerator", StringComparison.Ordinal));
+			MethodDef getEnumeratorMethod = enumeratorType.Methods.FirstOrDefault(
+				m => m.Name.String.StartsWith("System.Collections.Generic.IEnumerable", StringComparison.Ordinal)
+				&& m.Name.String.EndsWith(".GetEnumerator", StringComparison.Ordinal));
 			if (getEnumeratorMethod == null)
 				return; // no mappings (maybe it's just an IEnumerator implementation?)
 			
 			ILBlock method = CreateILAst(getEnumeratorMethod);
 			foreach (ILNode node in method.Body) {
-				FieldReference stField;
+				IField stField;
 				ILExpression stToObj;
 				ILExpression stExpr;
-				FieldReference ldField;
+				IField ldField;
 				ILExpression ldFromObj;
 				if (node.Match(ILCode.Stfld, out stField, out stToObj, out stExpr) &&
 				    stExpr.Match(ILCode.Ldfld, out ldField, out ldFromObj) &&
 				    ldFromObj.MatchThis())
 				{
-					FieldDefinition storedField = GetFieldDefinition(stField);
-					FieldDefinition loadedField = GetFieldDefinition(ldField);
+					FieldDef storedField = GetFieldDefinition(stField);
+					FieldDef loadedField = GetFieldDefinition(ldField);
 					if (storedField != null && loadedField != null) {
 						ILVariable mappedParameter;
 						if (fieldToParameterMap.TryGetValue(loadedField, out mappedParameter))
@@ -312,7 +312,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		// This is (int.MinValue, int.MaxValue) for the first instruction.
 		// These ranges are propagated depending on the conditional jumps performed by the code.
 		
-		Dictionary<MethodDefinition, Interval> finallyMethodToStateInterval;
+		Dictionary<MethodDef, Interval> finallyMethodToStateInterval;
 		
 		void ConstructExceptionTable()
 		{
@@ -337,7 +337,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (!finallyBody[1].Match(ILCode.Endfinally))
 					throw new SymbolicAnalysisFailedException();
 				
-				MethodDefinition mdef = GetMethodDefinition(call.Operand as MethodReference);
+				MethodDef mdef = GetMethodDefinition(call.Operand as IMethod);
 				if (mdef == null || finallyMethodToStateInterval.ContainsKey(mdef))
 					throw new SymbolicAnalysisFailedException();
 				finallyMethodToStateInterval.Add(mdef, interval);
@@ -353,7 +353,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		void AnalyzeMoveNext()
 		{
-			MethodDefinition moveNextMethod = enumeratorType.Methods.FirstOrDefault(m => m.Name == "MoveNext");
+			MethodDef moveNextMethod = enumeratorType.Methods.FirstOrDefault(m => m.Name == "MoveNext");
 			ILBlock ilMethod = CreateILAst(moveNextMethod);
 			
 			if (ilMethod.Body.Count == 0)
@@ -393,7 +393,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				// Ensure the fault block contains the call to Dispose().
 				if (faultBlock.Body.Count != 2)
 					throw new SymbolicAnalysisFailedException();
-				MethodReference disposeMethodRef;
+				IMethod disposeMethodRef;
 				ILExpression disposeArg;
 				if (!faultBlock.Body[0].Match(ILCode.Call, out disposeMethodRef, out disposeArg))
 					throw new SymbolicAnalysisFailedException();
@@ -468,12 +468,12 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression expr = body[pos] as ILExpression;
 				if (expr != null && expr.Code == ILCode.Stfld && expr.Arguments[0].MatchThis()) {
 					// Handle stores to 'state' or 'current'
-					if (GetFieldDefinition(expr.Operand as FieldReference) == stateField) {
+					if (GetFieldDefinition(expr.Operand as IField) == stateField) {
 						if (expr.Arguments[1].Code != ILCode.Ldc_I4)
 							throw new SymbolicAnalysisFailedException();
 						currentState = (int)expr.Arguments[1].Operand;
 						stateChanges.Add(new SetState(newBody.Count, currentState));
-					} else if (GetFieldDefinition(expr.Operand as FieldReference) == currentField) {
+					} else if (GetFieldDefinition(expr.Operand as IField) == currentField) {
 						newBody.Add(new ILExpression(ILCode.YieldReturn, null, expr.Arguments[1]));
 					} else {
 						newBody.Add(body[pos]);
@@ -504,7 +504,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						throw new SymbolicAnalysisFailedException();
 					}
 				} else if (expr != null && expr.Code == ILCode.Call && expr.Arguments.Count == 1 && expr.Arguments[0].MatchThis()) {
-					MethodDefinition method = GetMethodDefinition(expr.Operand as MethodReference);
+					MethodDef method = GetMethodDefinition(expr.Operand as IMethod);
 					if (method == null)
 						throw new SymbolicAnalysisFailedException();
 					Interval interval;
@@ -559,11 +559,11 @@ namespace ICSharpCode.Decompiler.ILAst
 			throw new SymbolicAnalysisFailedException();
 		}
 		
-		ILBlock ConvertFinallyBlock(MethodDefinition finallyMethod)
+		ILBlock ConvertFinallyBlock(MethodDef finallyMethod)
 		{
 			ILBlock block = CreateILAst(finallyMethod);
 			// Get rid of assignment to state
-			FieldReference stfld;
+			IField stfld;
 			List<ILExpression> args;
 			if (block.Body.Count > 0 && block.Body[0].Match(ILCode.Stfld, out stfld, out args)) {
 				if (GetFieldDefinition(stfld) == stateField && args[0].MatchThis())
@@ -584,12 +584,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			TranslateFieldsToLocalAccess(newBody, fieldToParameterMap);
 		}
 		
-		internal static void TranslateFieldsToLocalAccess(List<ILNode> newBody, Dictionary<FieldDefinition, ILVariable> fieldToParameterMap)
+		internal static void TranslateFieldsToLocalAccess(List<ILNode> newBody, Dictionary<FieldDef, ILVariable> fieldToParameterMap)
 		{
-			var fieldToLocalMap = new DefaultDictionary<FieldDefinition, ILVariable>(f => new ILVariable { Name = f.Name, Type = f.FieldType });
+			var fieldToLocalMap = new DefaultDictionary<FieldDef, ILVariable>(f => new ILVariable { Name = f.Name, Type = (TypeSig)ILAstBuilder.ResolveGenericParams(f.DeclaringType, f.FieldType) });
 			foreach (ILNode node in newBody) {
 				foreach (ILExpression expr in node.GetSelfAndChildrenRecursive<ILExpression>()) {
-					FieldDefinition field = GetFieldDefinition(expr.Operand as FieldReference);
+					FieldDef field = GetFieldDefinition(expr.Operand as IField);
 					if (field != null) {
 						switch (expr.Code) {
 							case ILCode.Ldfld:

@@ -148,7 +148,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 				writer.WriteLine();
 			}
 			if (Instruction != null && Instruction.Offset >= 0) {
-				writer.Write(CecilExtensions.OffsetToString(Instruction.Offset));
+				writer.Write(DnlibExtensions.OffsetToString(Instruction.Offset));
 				writer.Write(": ");
 			}
 			if (Target != null) {

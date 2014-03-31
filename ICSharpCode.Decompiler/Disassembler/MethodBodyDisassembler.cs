@@ -24,8 +24,8 @@ using System.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.FlowAnalysis;
 using ICSharpCode.Decompiler.ILAst;
-using Mono.Cecil;
-using Mono.Cecil.Cil;
+using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 
 namespace ICSharpCode.Decompiler.Disassembler
 {
@@ -47,14 +47,15 @@ namespace ICSharpCode.Decompiler.Disassembler
 			this.cancellationToken = cancellationToken;
 		}
 		
-		public void Disassemble(MethodBody body, MemberMapping methodMapping)
+		public void Disassemble(MethodDef method, MemberMapping methodMapping)
 		{
 			// start writing IL code
-			MethodDefinition method = body.Method;
+			CilBody body = method.Body;
 			output.WriteLine("// Method begins at RVA 0x{0:x4}", method.RVA);
-			output.WriteLine("// Code size {0} (0x{0:x})", body.CodeSize);
-			output.WriteLine(".maxstack {0}", body.MaxStackSize);
-            if (method.DeclaringType.Module.Assembly != null && method.DeclaringType.Module.Assembly.EntryPoint == method)
+			output.WriteLine("// Metadata token 0x{0:x8} (RID {1})", method.MDToken.ToInt32(), method.Rid);
+			output.WriteLine("// Code size {0} (0x{0:x})", body.GetCodeSize());
+			output.WriteLine(".maxstack {0}", body.MaxStack);
+            if (method.DeclaringType.Module.Assembly != null && method.DeclaringType.Module.EntryPoint == method)
                 output.WriteLine (".entrypoint");
 			
 			if (method.Body.HasVariables) {
@@ -65,7 +66,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				output.Indent();
 				foreach (var v in method.Body.Variables) {
 					output.WriteDefinition("[" + v.Index + "] ", v);
-					v.VariableType.WriteTo(output);
+					v.Type.WriteTo(output);
 					if (!string.IsNullOrEmpty(v.Name)) {
 						output.Write(' ');
 						output.Write(DisassemblerHelpers.Escape(v.Name));
@@ -80,9 +81,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.WriteLine();
 			
 			if (detectControlStructure && body.Instructions.Count > 0) {
-				Instruction inst = body.Instructions[0];
-				HashSet<int> branchTargets = GetBranchTargets(body.Instructions);
-				WriteStructureBody(new ILStructure(body), branchTargets, ref inst, methodMapping, method.Body.CodeSize);
+				int index = 0;
+				HashSet<uint> branchTargets = GetBranchTargets(body.Instructions);
+				WriteStructureBody(body, new ILStructure(body), branchTargets, ref index, methodMapping, method.Body.GetCodeSize());
 			} else {
 				foreach (var inst in method.Body.Instructions) {
 					var startLocation = output.Location;
@@ -90,11 +91,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 					
 					if (methodMapping != null) {
 						// add IL code mappings - used in debugger
+						var next = body.GetNext(inst);
 						methodMapping.MemberCodeMappings.Add(
 							new SourceCodeMapping() {
 								StartLocation = output.Location,
 								EndLocation = output.Location,
-								ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Next == null ? method.Body.CodeSize : inst.Next.Offset },
+								ILInstructionOffset = new ILRange { From = inst.Offset, To = next == null ? (uint)method.Body.GetCodeSize() : next.Offset },
 								MemberMapping = methodMapping
 							});
 					}
@@ -111,9 +113,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 		}
 		
-		HashSet<int> GetBranchTargets(IEnumerable<Instruction> instructions)
+		HashSet<uint> GetBranchTargets(IEnumerable<Instruction> instructions)
 		{
-			HashSet<int> branchTargets = new HashSet<int>();
+			HashSet<uint> branchTargets = new HashSet<uint>();
 			foreach (var inst in instructions) {
 				Instruction target = inst.Operand as Instruction;
 				if (target != null)
@@ -144,8 +146,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 					break;
 				case ILStructureType.Handler:
 					switch (s.ExceptionHandler.HandlerType) {
-						case Mono.Cecil.Cil.ExceptionHandlerType.Catch:
-						case Mono.Cecil.Cil.ExceptionHandlerType.Filter:
+						case ExceptionHandlerType.Catch:
+						case ExceptionHandlerType.Filter:
 							output.Write("catch");
 							if (s.ExceptionHandler.CatchType != null) {
 								output.Write(' ');
@@ -153,10 +155,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 							}
 							output.WriteLine();
 							break;
-						case Mono.Cecil.Cil.ExceptionHandlerType.Finally:
+						case ExceptionHandlerType.Finally:
 							output.WriteLine("finally");
 							break;
-						case Mono.Cecil.Cil.ExceptionHandlerType.Fault:
+						case ExceptionHandlerType.Fault:
 							output.WriteLine("fault");
 							break;
 						default:
@@ -174,17 +176,18 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Indent();
 		}
 		
-		void WriteStructureBody(ILStructure s, HashSet<int> branchTargets, ref Instruction inst, MemberMapping currentMethodMapping, int codeSize)
+		void WriteStructureBody(CilBody body, ILStructure s, HashSet<uint> branchTargets, ref int index, MemberMapping currentMethodMapping, int codeSize)
 		{
 			bool isFirstInstructionInStructure = true;
 			bool prevInstructionWasBranch = false;
 			int childIndex = 0;
-			while (inst != null && inst.Offset < s.EndOffset) {
-				int offset = inst.Offset;
+			while (index < body.Instructions.Count) {
+				Instruction inst = body.Instructions[index];
+				uint offset = inst.Offset;
 				if (childIndex < s.Children.Count && s.Children[childIndex].StartOffset <= offset && offset < s.Children[childIndex].EndOffset) {
 					ILStructure child = s.Children[childIndex++];
 					WriteStructureHeader(child);
-					WriteStructureBody(child, branchTargets, ref inst, currentMethodMapping, codeSize);
+					WriteStructureBody(body, child, branchTargets, ref index, currentMethodMapping, codeSize);
 					WriteStructureFooter(child);
 				} else {
 					if (!isFirstInstructionInStructure && (prevInstructionWasBranch || branchTargets.Contains(offset))) {
@@ -195,11 +198,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 					
 					// add IL code mappings - used in debugger
 					if (currentMethodMapping != null) {
+						var next = body.GetNext(inst);
 						currentMethodMapping.MemberCodeMappings.Add(
 							new SourceCodeMapping() {
 								StartLocation = startLocation,
 								EndLocation = output.Location,
-								ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Next == null ? codeSize : inst.Next.Offset },
+								ILInstructionOffset = new ILRange { From = inst.Offset, To = next == null ? (uint)codeSize : next.Offset },
 								MemberMapping = currentMethodMapping
 							});
 					}
@@ -210,8 +214,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 						|| inst.OpCode.FlowControl == FlowControl.Cond_Branch
 						|| inst.OpCode.FlowControl == FlowControl.Return
 						|| inst.OpCode.FlowControl == FlowControl.Throw;
-					
-					inst = inst.Next;
+
+					index++;
 				}
 				isFirstInstructionInStructure = false;
 			}

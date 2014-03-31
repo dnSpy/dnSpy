@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.Decompiler.ILAst
 {
@@ -31,12 +31,12 @@ namespace ICSharpCode.Decompiler.ILAst
 		Dictionary<ILLabel, ILBasicBlock> labelToBasicBlock = new Dictionary<ILLabel, ILBasicBlock>();
 		
 		DecompilerContext context;
-		TypeSystem typeSystem;
+		ICorLibTypes corLib;
 		
 		public SimpleControlFlow(DecompilerContext context, ILBlock method)
 		{
 			this.context = context;
-			this.typeSystem = context.CurrentMethod.Module.TypeSystem;
+			this.corLib = context.CurrentMethod.Module.CorLibTypes;
 			
 			foreach(ILLabel target in method.GetSelfAndChildrenRecursive<ILExpression>(e => e.IsBranch()).SelectMany(e => e.GetBranchTargets())) {
 				labelGlobalRefCount[target] = labelGlobalRefCount.GetOrDefault(target) + 1;
@@ -77,8 +77,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			{
 				bool isStloc = trueLocVar != null;
 				ILCode opCode = isStloc ? ILCode.Stloc : ILCode.Ret;
-				TypeReference retType = isStloc ? trueLocVar.Type : this.context.CurrentMethod.ReturnType;
-				bool retTypeIsBoolean = TypeAnalysis.IsBoolean(retType);
+				TypeSig retType = isStloc ? trueLocVar.Type : this.context.CurrentMethod.ReturnType;
+				bool retTypeIsBoolean = retType.GetElementType() == ElementType.Boolean;
 				int leftBoolVal;
 				int rightBoolVal;
 				ILExpression newExpr;
@@ -98,16 +98,16 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (leftBoolVal != 0) {
 						newExpr = condExpr;
 					} else {
-						newExpr = new ILExpression(ILCode.LogicNot, null, condExpr) { InferredType = typeSystem.Boolean };
+						newExpr = new ILExpression(ILCode.LogicNot, null, condExpr) { InferredType = corLib.Boolean };
 					}
-				} else if ((retTypeIsBoolean || TypeAnalysis.IsBoolean(falseExpr.InferredType)) && trueExpr.Match(ILCode.Ldc_I4, out leftBoolVal) && (leftBoolVal == 0 || leftBoolVal == 1)) {
+				} else if ((retTypeIsBoolean || falseExpr.InferredType.GetElementType() == ElementType.Boolean) && trueExpr.Match(ILCode.Ldc_I4, out leftBoolVal) && (leftBoolVal == 0 || leftBoolVal == 1)) {
 					// It can be expressed as logical expression
 					if (leftBoolVal != 0) {
 						newExpr = MakeLeftAssociativeShortCircuit(ILCode.LogicOr, condExpr, falseExpr);
 					} else {
 						newExpr = MakeLeftAssociativeShortCircuit(ILCode.LogicAnd, new ILExpression(ILCode.LogicNot, null, condExpr), falseExpr);
 					}
-				} else if ((retTypeIsBoolean || TypeAnalysis.IsBoolean(trueExpr.InferredType)) && falseExpr.Match(ILCode.Ldc_I4, out rightBoolVal) && (rightBoolVal == 0 || rightBoolVal == 1)) {
+				} else if ((retTypeIsBoolean || trueExpr.InferredType.GetElementType() == ElementType.Boolean) && falseExpr.Match(ILCode.Ldc_I4, out rightBoolVal) && (rightBoolVal == 0 || rightBoolVal == 1)) {
 					// It can be expressed as logical expression
 					if (rightBoolVal != 0) {
 						newExpr = MakeLeftAssociativeShortCircuit(ILCode.LogicOr, new ILExpression(ILCode.LogicNot, null, condExpr), trueExpr);
@@ -274,7 +274,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (labelGlobalRefCount[followingBlock] > 1)
 				return false;
 			
-			MethodReference opFalse;
+			IMethod opFalse;
 			ILExpression opFalseArg;
 			if (!callExpr.Match(ILCode.Call, out opFalse, out opFalseArg))
 				return false;
@@ -300,7 +300,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (_targetVar != targetVar || exitLabel != _exitLabel)
 				return false;
 			
-			MethodReference opBitwise;
+			IMethod opBitwise;
 			ILExpression leftVarExpression;
 			ILExpression rightExpression;
 			if (!opBitwiseCallExpr.Match(ILCode.Call, out opBitwise, out leftVarExpression, out rightExpression))
@@ -343,10 +343,10 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression current = right;
 				while(current.Arguments[0].Match(code))
 					current = current.Arguments[0];
-				current.Arguments[0] = new ILExpression(code, null, left, current.Arguments[0]) { InferredType = typeSystem.Boolean };
+				current.Arguments[0] = new ILExpression(code, null, left, current.Arguments[0]) { InferredType = corLib.Boolean };
 				return right;
 			} else {
-				return new ILExpression(code, null, left, right) { InferredType = typeSystem.Boolean };
+				return new ILExpression(code, null, left, right) { InferredType = corLib.Boolean };
 			}
 		}
 		

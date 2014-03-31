@@ -22,9 +22,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Mono.Cecil;
-using Mono.Cecil.Cil;
-using Cecil = Mono.Cecil;
+using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 
 namespace ICSharpCode.Decompiler.ILAst
 {
@@ -90,8 +89,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		sealed class ByteCode
 		{
 			public ILLabel  Label;      // Non-null only if needed
-			public int      Offset;
-			public int      EndOffset;
+			public uint      Offset;
+			public uint      EndOffset;
 			public ILCode   Code;
 			public object   Operand;
 			public int?     PopCount;   // Null means pop all
@@ -201,19 +200,33 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 		}
 		
-		MethodDefinition methodDef;
+		MethodDef methodDef;
 		bool optimize;
 		
 		// Virtual instructions to load exception on stack
 		Dictionary<ExceptionHandler, ByteCode> ldexceptions = new Dictionary<ExceptionHandler, ILAstBuilder.ByteCode>();
 		
 		DecompilerContext context;
+
+		static readonly Dictionary<Code, ILCode> ilCodeTranslation =
+			OpCodes.OneByteOpCodes
+			.Concat(OpCodes.TwoByteOpCodes)
+			.Where(opCode => opCode.OpCodeType != OpCodeType.Nternal)
+			.Select(opCode => new { Code = opCode.Code, ILCode = (ILCode)Enum.Parse(typeof(ILCode), opCode.Code.ToString()) })
+			.ToDictionary(translation => translation.Code, translation => translation.ILCode);
 		
-		public List<ILNode> Build(MethodDefinition methodDef, bool optimize, DecompilerContext context)
+		public List<ILNode> Build(MethodDef methodDef, bool optimize, DecompilerContext context)
 		{
 			this.methodDef = methodDef;
 			this.optimize = optimize;
 			this.context = context;
+
+			this.typeParams = methodDef.DeclaringType.GenericParameters
+				.Select(param => (TypeSig)new GenericTypeParam(param))
+				.ToList();
+			this.methodParams = methodDef.GenericParameters
+				.Select(param => (TypeSig)new GenericMethodParam(param))
+				.ToList();
 			
 			if (methodDef.Body.Instructions.Count == 0) return new List<ILNode>();
 			
@@ -224,7 +237,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			return ast;
 		}
 		
-		List<ByteCode> StackAnalysis(MethodDefinition methodDef)
+		List<ByteCode> StackAnalysis(MethodDef methodDef)
 		{
 			Dictionary<Instruction, ByteCode> instrToByteCode = new Dictionary<Instruction, ByteCode>();
 			
@@ -238,12 +251,13 @@ namespace ICSharpCode.Decompiler.ILAst
 					prefixes.Add(inst);
 					continue;
 				}
-				ILCode code  = (ILCode)inst.OpCode.Code;
-				object operand = inst.Operand;
-				ILCodeUtil.ExpandMacro(ref code, ref operand, methodDef.Body);
+				ILCode code = ilCodeTranslation[inst.OpCode.Code];
+				object operand = ResolveGenericParams(inst.Operand);
+				ILCodeUtil.ExpandMacro(ref code, ref operand, methodDef);
+				var next = methodDef.Body.GetNext(inst);
 				ByteCode byteCode = new ByteCode() {
 					Offset      = inst.Offset,
-					EndOffset   = inst.Next != null ? inst.Next.Offset : methodDef.Body.CodeSize,
+					EndOffset   = next != null ? next.Offset : (uint)methodDef.Body.GetCodeSize(),
 					Code        = code,
 					Operand     = operand,
 					PopCount    = inst.GetPopDelta(methodDef),
@@ -319,7 +333,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				// Calculate new variable state
 				VariableSlot[] newVariableState = VariableSlot.CloneVariableState(byteCode.VariablesBefore);
 				if (byteCode.IsVariableDefinition) {
-					newVariableState[((VariableReference)byteCode.Operand).Index] = new VariableSlot(new [] { byteCode }, false);
+					newVariableState[((Local)byteCode.Operand).Index] = new VariableSlot(new [] { byteCode }, false);
 				}
 				
 				// After the leave, finally block might have touched the variables
@@ -332,7 +346,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (!byteCode.Code.IsUnconditionalControlFlow()) {
 					if (exceptionHandlerStarts.Contains(byteCode.Next)) {
 						// Do not fall though down to exception handler
-						// It is invalid IL as per ECMA-335 §12.4.2.8.1, but some obfuscators produce it
+						// It is invalid IL as per ECMA-335 ?2.4.2.8.1, but some obfuscators produce it
 					} else {
 						branchTargets.Add(byteCode.Next);
 					}
@@ -509,7 +523,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			if (b.Code == ILCode.Ldfld || b.Code == ILCode.Stfld)
 				return true;
-			return (b.Code == ILCode.Call || b.Code == ILCode.Callvirt) && ((MethodReference)b.Operand).HasThis;
+			return (b.Code == ILCode.Call || b.Code == ILCode.Callvirt) && ((IMethod)b.Operand).MethodSig.HasThis;
 		}
 		
 		sealed class VariableInfo
@@ -525,7 +539,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// </summary>
 		void ConvertLocalVariables(List<ByteCode> body)
 		{
-			foreach(VariableDefinition varDef in methodDef.Body.Variables) {
+			foreach(Local varDef in methodDef.Body.Variables) {
 				
 				// Find all definitions and uses of this variable
 				var defs = body.Where(b => b.Operand == varDef &&  b.IsVariableDefinition).ToList();
@@ -536,11 +550,11 @@ namespace ICSharpCode.Decompiler.ILAst
 				// If the variable is pinned, use single variable.
 				// If any of the uses is from unknown definition, use single variable
 				// If any of the uses is ldloca with a nondeterministic usage pattern, use  single variable
-				if (!optimize || varDef.IsPinned || uses.Any(b => b.VariablesBefore[varDef.Index].UnknownDefinition || (b.Code == ILCode.Ldloca && !IsDeterministicLdloca(b)))) {				
+				if (!optimize || varDef.Type is PinnedSig || uses.Any(b => b.VariablesBefore[varDef.Index].UnknownDefinition || (b.Code == ILCode.Ldloca && !IsDeterministicLdloca(b)))) {				
 					newVars = new List<VariableInfo>(1) { new VariableInfo() {
 						Variable = new ILVariable() {
 							Name = string.IsNullOrEmpty(varDef.Name) ? "var_" + varDef.Index : varDef.Name,
-							Type = varDef.IsPinned ? ((PinnedType)varDef.VariableType).ElementType : varDef.VariableType,
+							Type = (TypeSig)ResolveGenericParams(varDef.Type is PinnedSig ? ((PinnedSig)varDef.Type).Next : varDef.Type),
 							OriginalVariable = varDef
 						},
 						Defs = defs,
@@ -551,7 +565,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					newVars = defs.Select(def => new VariableInfo() {
 						Variable = new ILVariable() {
 							Name = (string.IsNullOrEmpty(varDef.Name) ? "var_" + varDef.Index : varDef.Name) + "_" + def.Offset.ToString("X2"),
-							Type = varDef.VariableType,
+							Type = (TypeSig)ResolveGenericParams(varDef.Type),
 							OriginalVariable = varDef
 					    },
 					    Defs = new List<ByteCode>() { def },
@@ -605,36 +619,36 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			ILVariable thisParameter = null;
 			if (methodDef.HasThis) {
-				TypeReference type = methodDef.DeclaringType;
+				TypeDef type = methodDef.DeclaringType;
 				thisParameter = new ILVariable();
-				thisParameter.Type = type.IsValueType ? new ByReferenceType(type) : type;
+				thisParameter.Type = (TypeSig)ResolveGenericParams(type.IsValueType ? new ByRefSig(type.ToTypeSig()) : type.ToTypeSig());
 				thisParameter.Name = "this";
-				thisParameter.OriginalParameter = methodDef.Body.ThisParameter;
+				thisParameter.OriginalParameter = methodDef.Parameters[0];
 			}
-			foreach (ParameterDefinition p in methodDef.Parameters) {
-				this.Parameters.Add(new ILVariable { Type = p.ParameterType, Name = p.Name, OriginalParameter = p });
+			foreach (Parameter p in methodDef.Parameters.Skip(methodDef.HasThis ? 1 : 0)) {
+				this.Parameters.Add(new ILVariable { Type = (TypeSig)ResolveGenericParams(p.Type), Name = p.Name, OriginalParameter = p });
 			}
-			if (this.Parameters.Count > 0 && (methodDef.IsSetter || methodDef.IsAddOn || methodDef.IsRemoveOn)) {
+			if (this.Parameters.Count > 0 && (methodDef.IsSetter() || methodDef.IsAddOn() || methodDef.IsRemoveOn())) {
 				// last parameter must be 'value', so rename it
 				this.Parameters.Last().Name = "value";
 			}
 			foreach (ByteCode byteCode in body) {
-				ParameterDefinition p;
+				Parameter p;
 				switch (byteCode.Code) {
-					case ILCode.__Ldarg:
-						p = (ParameterDefinition)byteCode.Operand;
+					case ILCode.Ldarg:
+						p = (Parameter)byteCode.Operand;
 						byteCode.Code = ILCode.Ldloc;
-						byteCode.Operand = p.Index < 0 ? thisParameter : this.Parameters[p.Index];
+						byteCode.Operand = p.IsHiddenThisParameter ? thisParameter : this.Parameters[p.MethodSigIndex];
 						break;
-					case ILCode.__Starg:
-						p = (ParameterDefinition)byteCode.Operand;
+					case ILCode.Starg:
+						p = (Parameter)byteCode.Operand;
 						byteCode.Code = ILCode.Stloc;
-						byteCode.Operand = p.Index < 0 ? thisParameter : this.Parameters[p.Index];
+						byteCode.Operand = p.IsHiddenThisParameter ? thisParameter : this.Parameters[p.MethodSigIndex];
 						break;
-					case ILCode.__Ldarga:
-						p = (ParameterDefinition)byteCode.Operand;
+					case ILCode.Ldarga:
+						p = (Parameter)byteCode.Operand;
 						byteCode.Code = ILCode.Ldloca;
-						byteCode.Operand = p.Index < 0 ? thisParameter : this.Parameters[p.Index];
+						byteCode.Operand = p.IsHiddenThisParameter ? thisParameter : this.Parameters[p.MethodSigIndex];
 						break;
 				}
 			}
@@ -650,8 +664,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILTryCatchBlock tryCatchBlock = new ILTryCatchBlock();
 				
 				// Find the first and widest scope
-				int tryStart = ehs.Min(eh => eh.TryStart.Offset);
-				int tryEnd   = ehs.Where(eh => eh.TryStart.Offset == tryStart).Max(eh => eh.TryEnd.Offset);
+				uint tryStart = ehs.Min(eh => eh.TryStart.Offset);
+				uint tryEnd   = ehs.Where(eh => eh.TryStart.Offset == tryStart).Max(eh => eh.TryEnd.Offset);
 				var handlers = ehs.Where(eh => eh.TryStart.Offset == tryStart && eh.TryEnd.Offset == tryEnd).OrderBy(eh => eh.TryStart.Offset).ToList();
 				
 				// Remember that any part of the body migt have been removed due to unreachability
@@ -675,7 +689,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				// Cut all handlers
 				tryCatchBlock.CatchBlocks = new List<ILTryCatchBlock.CatchBlock>();
 				foreach(ExceptionHandler eh in handlers) {
-					int handlerEndOffset = eh.HandlerEnd == null ? methodDef.Body.CodeSize : eh.HandlerEnd.Offset;
+					uint handlerEndOffset = eh.HandlerEnd == null ? (uint)methodDef.Body.GetCodeSize() : eh.HandlerEnd.Offset;
 					int startIdx = 0;
 					while (startIdx < body.Count && body[startIdx].Offset < eh.HandlerStart.Offset) startIdx++;
 					int endIdx = 0;
@@ -685,7 +699,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					List<ILNode> handlerAst = ConvertToAst(body.CutRange(startIdx, endIdx - startIdx), nestedEHs);
 					if (eh.HandlerType == ExceptionHandlerType.Catch) {
 						ILTryCatchBlock.CatchBlock catchBlock = new ILTryCatchBlock.CatchBlock() {
-							ExceptionType = eh.CatchType,
+							ExceptionType = eh.CatchType.ToTypeSig(),
 							Body = handlerAst
 						};
 						// Handle the automatically pushed exception on the stack
@@ -787,6 +801,65 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			
 			return ast;
+		}
+
+		List<TypeSig> typeParams, methodParams;
+		object ResolveGenericParams(object operand)
+		{
+			return ResolveGenericParams(typeParams, methodParams, operand);
+		}
+
+		public static object ResolveGenericParams(MethodDef methodContext, TypeSig operand)
+		{
+			var typeParams = methodContext.DeclaringType.GenericParameters
+				.Select(param => (TypeSig)new GenericTypeParam(param))
+				.ToList();
+			var methodParams = methodContext.GenericParameters
+				.Select(param => (TypeSig)new GenericTypeParam(param))
+				.ToList();
+			return ResolveGenericParams(typeParams, methodParams, operand);
+		}
+		public static object ResolveGenericParams(TypeDef typeContext, TypeSig operand)
+		{
+			var typeParams = typeContext.GenericParameters
+				.Select(param => (TypeSig)new GenericTypeParam(param))
+				.ToList();
+			return ResolveGenericParams(typeParams, null, operand);
+		}
+		static object ResolveGenericParams(List<TypeSig> typeParams, List<TypeSig> methodParams, object operand)
+		{
+			if (operand is MemberRef)
+			{
+				MemberRef memberRef = (MemberRef)operand;
+				if (memberRef.IsFieldRef)
+					return new MemberRefUser(
+						memberRef.Module, memberRef.Name,
+						new FieldSig((TypeSig)ResolveGenericParams(typeParams, methodParams, memberRef.FieldSig.Type)),
+						(IMemberRefParent)ResolveGenericParams(typeParams, methodParams, memberRef.DeclaringType)) { Rid = memberRef.Rid };
+				else
+					return new MemberRefUser(
+						memberRef.Module, memberRef.Name,
+						GenericArgumentResolver.Resolve(memberRef.MethodSig, typeParams, methodParams),
+						(IMemberRefParent)ResolveGenericParams(typeParams, methodParams, memberRef.DeclaringType)) { Rid = memberRef.Rid };
+			}
+			else if (operand is MethodSpec)
+			{
+				MethodSpec spec = (MethodSpec)operand;
+				return new MethodSpecUser(
+					(IMethodDefOrRef)ResolveGenericParams(typeParams, methodParams, spec.Method),
+					new GenericInstMethodSig(spec.GenericInstMethodSig.GenericArguments.Select(arg => (TypeSig)ResolveGenericParams(typeParams, methodParams, arg)).ToList())
+					) { Rid = spec.Rid };
+			}
+			else if (operand is TypeSpec)
+			{
+				TypeSpec spec = (TypeSpec)operand;
+				return new TypeSpecUser((TypeSig)ResolveGenericParams(typeParams, methodParams, spec.TypeSig)) { Rid = spec.Rid };
+			}
+			else if (operand is TypeSig)
+			{
+				return GenericArgumentResolver.Resolve((TypeSig)operand, typeParams, methodParams);
+			}
+			return operand;
 		}
 	}
 	

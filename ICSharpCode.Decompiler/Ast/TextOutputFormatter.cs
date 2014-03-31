@@ -23,7 +23,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.Decompiler.Ast
 {
@@ -80,14 +80,14 @@ namespace ICSharpCode.Decompiler.Ast
 			output.Write(identifier);
 		}
 
-		MemberReference GetCurrentMemberReference()
+		IMemberRef GetCurrentMemberReference()
 		{
 			AstNode node = nodeStack.Peek();
-			MemberReference memberRef = node.Annotation<MemberReference>();
+			IMemberRef memberRef = node.Annotation<IMemberRef>();
 			if ((node.Role == Roles.Type && node.Parent is ObjectCreateExpression) ||
 				(memberRef == null && node.Role == Roles.TargetExpression && (node.Parent is InvocationExpression || node.Parent is ObjectCreateExpression)))
 			{
-				memberRef = node.Parent.Annotation<MemberReference>();
+				memberRef = node.Parent.Annotation<IMemberRef>();
 			}
 			return memberRef;
 		}
@@ -107,7 +107,7 @@ namespace ICSharpCode.Decompiler.Ast
 			var gotoStatement = node as GotoStatement;
 			if (gotoStatement != null)
 			{
-				var method = nodeStack.Select(nd => nd.Annotation<MethodReference>()).FirstOrDefault(mr => mr != null);
+				var method = nodeStack.Select(nd => nd.Annotation<IMemberRef>()).FirstOrDefault(mr => mr != null);
 				if (method != null)
 					return method.ToString() + gotoStatement.Label;
 			}
@@ -121,7 +121,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (node is Identifier && node.Parent != null)
 				node = node.Parent;
 			
-			var parameterDef = node.Annotation<ParameterDefinition>();
+			var parameterDef = node.Annotation<Parameter>();
 			if (parameterDef != null)
 				return parameterDef;
 
@@ -138,7 +138,7 @@ namespace ICSharpCode.Decompiler.Ast
 
 			var label = node as LabelStatement;
 			if (label != null) {
-				var method = nodeStack.Select(nd => nd.Annotation<MethodReference>()).FirstOrDefault(mr => mr != null);
+				var method = nodeStack.Select(nd => nd.Annotation<IMethod>()).FirstOrDefault(mr => mr != null);
 				if (method != null)
 					return method.ToString() + label.Label;
 			}
@@ -155,14 +155,14 @@ namespace ICSharpCode.Decompiler.Ast
 			if (node is Identifier)
 				node = node.Parent;
 			if (IsDefinition(node))
-				return node.Annotation<MemberReference>();
+				return node.Annotation<IMemberRef>();
 			
 			return null;
 		}
 		
 		public void WriteKeyword(string keyword)
 		{
-			MemberReference memberRef = GetCurrentMemberReference();
+			IMemberRef memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
 			if (memberRef != null && node is ConstructorInitializer)
 				output.WriteReference(keyword, memberRef);
@@ -173,7 +173,7 @@ namespace ICSharpCode.Decompiler.Ast
 		public void WriteToken(string token)
 		{
 			// Attach member reference to token only if there's no identifier in the current node.
-			MemberReference memberRef = GetCurrentMemberReference();
+			IMemberRef memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
 			if (memberRef != null && node.GetChildByRole(Roles.Identifier).IsNull)
 				output.WriteReference(token, memberRef);
@@ -289,8 +289,8 @@ namespace ICSharpCode.Decompiler.Ast
 			nodeStack.Push(node);
 			startLocations.Push(output.Location);
 			
-			if (node is EntityDeclaration && node.Annotation<MemberReference>() != null && node.GetChildByRole(Roles.Identifier).IsNull)
-				output.WriteDefinition("", node.Annotation<MemberReference>(), false);
+			if (node is EntityDeclaration && node.Annotation<IMemberRef>() != null && node.GetChildByRole(Roles.Identifier).IsNull)
+				output.WriteDefinition("", node.Annotation<IMemberRef>(), false);
 			
 			MemberMapping mapping = node.Annotation<MemberMapping>();
 			if (mapping != null) {

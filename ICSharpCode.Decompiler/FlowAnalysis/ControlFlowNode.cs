@@ -23,7 +23,7 @@ using System.IO;
 using System.Linq;
 
 using ICSharpCode.Decompiler.Disassembler;
-using Mono.Cecil.Cil;
+using dnlib.DotNet.Emit;
 
 namespace ICSharpCode.Decompiler.FlowAnalysis
 {
@@ -80,7 +80,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		/// <summary>
 		/// Gets the IL offset of this node.
 		/// </summary>
-		public readonly int Offset;
+		public readonly uint? Offset;
 		
 		/// <summary>
 		/// Type of the node.
@@ -134,13 +134,13 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		/// <summary>
 		/// Start of code block represented by this node. Only set for nodetype == Normal.
 		/// </summary>
-		public readonly Instruction Start;
+		public readonly LinkedListNode<Instruction> Start;
 		
 		/// <summary>
 		/// End of the code block represented by this node. Only set for nodetype == Normal.
 		/// The end is exclusive, the end instruction itself does not belong to this block.
 		/// </summary>
-		public readonly Instruction End;
+		public readonly LinkedListNode<Instruction> End;
 		
 		/// <summary>
 		/// Gets the exception handler associated with this node.
@@ -163,14 +163,14 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		/// </summary>
 		public object UserData;
 		
-		internal ControlFlowNode(int blockIndex, int offset, ControlFlowNodeType nodeType)
+		internal ControlFlowNode(int blockIndex, uint? offset, ControlFlowNodeType nodeType)
 		{
 			this.BlockIndex = blockIndex;
 			this.Offset = offset;
 			this.NodeType = nodeType;
 		}
 		
-		internal ControlFlowNode(int blockIndex, Instruction start, Instruction end)
+		internal ControlFlowNode(int blockIndex, LinkedListNode<Instruction> start, LinkedListNode<Instruction> end)
 		{
 			if (start == null)
 				throw new ArgumentNullException("start");
@@ -180,7 +180,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			this.NodeType = ControlFlowNodeType.Normal;
 			this.Start = start;
 			this.End = end;
-			this.Offset = start.Offset;
+			this.Offset = start.Value.Offset;
 		}
 		
 		internal ControlFlowNode(int blockIndex, ExceptionHandler exceptionHandler, ControlFlowNode endFinallyOrFaultNode)
@@ -217,12 +217,12 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		/// </summary>
 		public IEnumerable<Instruction> Instructions {
 			get {
-				Instruction inst = Start;
+				LinkedListNode<Instruction> inst = Start;
 				if (inst != null) {
-					yield return inst;
+					yield return inst.Value;
 					while (inst != End) {
 						inst = inst.Next;
-						yield return inst;
+						yield return inst.Value;
 					}
 				}
 			}
@@ -255,9 +255,9 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 				case ControlFlowNodeType.Normal:
 					writer.Write("Block #{0}", BlockIndex);
 					if (Start != null)
-						writer.Write(": IL_{0:x4}", Start.Offset);
+						writer.Write(": IL_{0:x4}", Start.Value.Offset);
 					if (End != null)
-						writer.Write(" to IL_{0:x4}", End.GetEndOffset());
+						writer.Write(" to IL_{0:x4}", End.Value.GetEndOffset());
 					break;
 				case ControlFlowNodeType.CatchHandler:
 				case ControlFlowNodeType.FinallyOrFaultHandler:

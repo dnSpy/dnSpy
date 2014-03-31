@@ -19,7 +19,7 @@
 using System;
 using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.Decompiler.Ast.Transforms
 {
@@ -39,15 +39,15 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		{
 			foreach (InvocationExpression invocation in compilationUnit.Descendants.OfType<InvocationExpression>()) {
 				MemberReferenceExpression mre = invocation.Target as MemberReferenceExpression;
-				MethodReference methodReference = invocation.Annotation<MethodReference>();
+				IMethod methodReference = invocation.Annotation<IMethod>();
 				if (mre != null && mre.Target is TypeReferenceExpression && methodReference != null && invocation.Arguments.Any()) {
-					MethodDefinition d = methodReference.Resolve();
+					MethodDef d = methodReference.Resolve();
 					if (d != null) {
 						foreach (var ca in d.CustomAttributes) {
 							if (ca.AttributeType.Name == "ExtensionAttribute" && ca.AttributeType.Namespace == "System.Runtime.CompilerServices") {
 								var firstArgument = invocation.Arguments.First();
 								if (firstArgument is NullReferenceExpression)
-									firstArgument = firstArgument.ReplaceWith(expr => expr.CastTo(AstBuilder.ConvertType(d.Parameters.First().ParameterType)));
+									firstArgument = firstArgument.ReplaceWith(expr => expr.CastTo(AstBuilder.ConvertType(context.CurrentMethod.DeclaringType, context.CurrentMethod, d.Parameters.First().Type)));
 								else
 									mre.Target = firstArgument.Detach();
 								if (invocation.Arguments.Any()) {

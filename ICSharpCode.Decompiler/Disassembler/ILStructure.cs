@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.Decompiler.FlowAnalysis;
-using Mono.Cecil.Cil;
+using dnlib.DotNet.Emit;
 
 namespace ICSharpCode.Decompiler.Disassembler
 {
@@ -84,31 +84,31 @@ namespace ICSharpCode.Decompiler.Disassembler
 		/// </summary>
 		public readonly List<ILStructure> Children = new List<ILStructure>();
 		
-		public ILStructure(MethodBody body)
-			: this(ILStructureType.Root, 0, body.CodeSize)
+		public ILStructure(CilBody body)
+			: this(ILStructureType.Root, 0, body.GetCodeSize())
 		{
 			// Build the tree of exception structures:
 			for (int i = 0; i < body.ExceptionHandlers.Count; i++) {
 				ExceptionHandler eh = body.ExceptionHandlers[i];
 				if (!body.ExceptionHandlers.Take(i).Any(oldEh => oldEh.TryStart == eh.TryStart && oldEh.TryEnd == eh.TryEnd))
-					AddNestedStructure(new ILStructure(ILStructureType.Try, eh.TryStart.Offset, eh.TryEnd.Offset, eh));
+					AddNestedStructure(new ILStructure(ILStructureType.Try, (int)eh.TryStart.Offset, (int)eh.TryEnd.Offset, eh));
 				if (eh.HandlerType == ExceptionHandlerType.Filter)
-					AddNestedStructure(new ILStructure(ILStructureType.Filter, eh.FilterStart.Offset, eh.HandlerStart.Offset, eh));
-				AddNestedStructure(new ILStructure(ILStructureType.Handler, eh.HandlerStart.Offset, eh.HandlerEnd == null ? body.CodeSize : eh.HandlerEnd.Offset, eh));
+					AddNestedStructure(new ILStructure(ILStructureType.Filter, (int)eh.FilterStart.Offset, (int)eh.HandlerStart.Offset, eh));
+				AddNestedStructure(new ILStructure(ILStructureType.Handler, (int)eh.HandlerStart.Offset, eh.HandlerEnd == null ? body.GetCodeSize() : (int)eh.HandlerEnd.Offset, eh));
 			}
 			// Very simple loop detection: look for backward branches
 			List<KeyValuePair<Instruction, Instruction>> allBranches = FindAllBranches(body);
 			// We go through the branches in reverse so that we find the biggest possible loop boundary first (think loops with "continue;")
 			for (int i = allBranches.Count - 1; i >= 0; i--) {
 				int loopEnd = allBranches[i].Key.GetEndOffset();
-				int loopStart = allBranches[i].Value.Offset;
+				int loopStart = (int)allBranches[i].Value.Offset;
 				if (loopStart < loopEnd) {
 					// We found a backward branch. This is a potential loop.
 					// Check that is has only one entry point:
 					Instruction entryPoint = null;
 					
 					// entry point is first instruction in loop if prev inst isn't an unconditional branch
-					Instruction prev = allBranches[i].Value.Previous;
+					Instruction prev = body.GetPrevious(allBranches[i].Value);
 					if (prev != null && !OpCodeInfo.IsUnconditionalBranch(prev.OpCode))
 						entryPoint = allBranches[i].Value;
 					
@@ -187,7 +187,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		/// Multiple entries for the same source offset are possible (switch statements).
 		/// The result is sorted by source offset.
 		/// </summary>
-		List<KeyValuePair<Instruction, Instruction>> FindAllBranches(MethodBody body)
+		List<KeyValuePair<Instruction, Instruction>> FindAllBranches(CilBody body)
 		{
 			var result = new List<KeyValuePair<Instruction, Instruction>>();
 			foreach (Instruction inst in body.Instructions) {

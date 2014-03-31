@@ -18,8 +18,8 @@
 
 using System;
 using System.Collections.Generic;
-using Mono.Cecil;
-using Mono.Cecil.Cil;
+using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 
 namespace ICSharpCode.Decompiler.Disassembler
 {
@@ -47,7 +47,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 	{
 		public static void WriteOffsetReference(ITextOutput writer, Instruction instruction)
 		{
-			writer.WriteReference(CecilExtensions.OffsetToString(instruction.Offset), instruction);
+			writer.WriteReference(DnlibExtensions.OffsetToString(instruction.Offset), instruction);
 		}
 		
 		public static void WriteTo(this ExceptionHandler exceptionHandler, ITextOutput writer)
@@ -75,15 +75,16 @@ namespace ICSharpCode.Decompiler.Disassembler
 		
 		public static void WriteTo(this Instruction instruction, ITextOutput writer)
 		{
-			writer.WriteDefinition(CecilExtensions.OffsetToString(instruction.Offset), instruction);
+			writer.WriteDefinition(DnlibExtensions.OffsetToString(instruction.Offset), instruction);
 			writer.Write(": ");
 			writer.WriteReference(instruction.OpCode.Name, instruction.OpCode);
 			if (instruction.Operand != null) {
 				writer.Write(' ');
 				if (instruction.OpCode == OpCodes.Ldtoken) {
-					if (instruction.Operand is MethodReference)
+					MemberRef member = instruction.Operand as MemberRef;
+					if ((member != null && member.IsMethodRef) || instruction.Operand is MethodDef || instruction.Operand is MethodSpec)
 						writer.Write("method ");
-					else if (instruction.Operand is FieldReference)
+					else if ((member != null && member.IsFieldRef) || instruction.Operand is FieldDef)
 						writer.Write("field ");
 				}
 				WriteOperand(writer, instruction.Operand);
@@ -108,48 +109,67 @@ namespace ICSharpCode.Decompiler.Disassembler
 				: value.ToString();
 		}
 		
-		public static void WriteTo(this MethodReference method, ITextOutput writer)
+		public static void WriteMethodTo(this IMethod method, ITextOutput writer)
 		{
-			if (method.ExplicitThis) {
+			MethodSig sig = method.MethodSig;
+			if (sig.ExplicitThis) {
 				writer.Write("instance explicit ");
 			}
-			else if (method.HasThis) {
+			else if (sig.HasThis) {
 				writer.Write("instance ");
 			}
-			method.ReturnType.WriteTo(writer, ILNameSyntax.SignatureNoNamedTypeParameters);
+			sig.RetType.WriteTo(writer, ILNameSyntax.SignatureNoNamedTypeParameters);
 			writer.Write(' ');
 			if (method.DeclaringType != null) {
 				method.DeclaringType.WriteTo(writer, ILNameSyntax.TypeName);
 				writer.Write("::");
 			}
-			MethodDefinition md = method as MethodDefinition;
+			MethodDef md = method as MethodDef;
 			if (md != null && md.IsCompilerControlled) {
-				writer.WriteReference(Escape(method.Name + "$PST" + method.MetadataToken.ToInt32().ToString("X8")), method);
+				writer.WriteReference(Escape(method.Name + "$PST" + method.MDToken.ToInt32().ToString("X8")), method);
 			} else {
 				writer.WriteReference(Escape(method.Name), method);
 			}
-			GenericInstanceMethod gim = method as GenericInstanceMethod;
+			MethodSpec gim = method as MethodSpec;
 			if (gim != null) {
 				writer.Write('<');
-				for (int i = 0; i < gim.GenericArguments.Count; i++) {
+				for (int i = 0; i < gim.GenericInstMethodSig.GenericArguments.Count; i++) {
 					if (i > 0)
 						writer.Write(", ");
-					gim.GenericArguments[i].WriteTo(writer);
+					gim.GenericInstMethodSig.GenericArguments[i].WriteTo(writer);
 				}
 				writer.Write('>');
 			}
 			writer.Write("(");
-			var parameters = method.Parameters;
+			var parameters = sig.GetParams();
 			for(int i = 0; i < parameters.Count; ++i) {
 				if (i > 0) writer.Write(", ");
-				parameters[i].ParameterType.WriteTo(writer, ILNameSyntax.SignatureNoNamedTypeParameters);
+				parameters[i].WriteTo(writer, ILNameSyntax.SignatureNoNamedTypeParameters);
+			}
+			writer.Write(")");
+		}
+
+		public static void WriteTo(this MethodSig sig, ITextOutput writer)
+		{
+			if (sig.ExplicitThis) {
+				writer.Write("instance explicit ");
+			}
+			else if (sig.HasThis) {
+				writer.Write("instance ");
+			}
+			sig.RetType.WriteTo(writer, ILNameSyntax.SignatureNoNamedTypeParameters);
+			writer.Write(" (");
+			var parameters = sig.GetParams();
+			for(int i = 0; i < parameters.Count; ++i) {
+				if (i > 0) writer.Write(", ");
+				parameters[i].WriteTo(writer, ILNameSyntax.SignatureNoNamedTypeParameters);
 			}
 			writer.Write(")");
 		}
 		
-		static void WriteTo(this FieldReference field, ITextOutput writer)
+		static void WriteFieldTo(this IField field, ITextOutput writer)
 		{
-			field.FieldType.WriteTo(writer, ILNameSyntax.SignatureNoNamedTypeParameters);
+			field.FieldSig.Type.WriteTo(writer, ILNameSyntax.SignatureNoNamedTypeParameters);
 			writer.Write(' ');
 			field.DeclaringType.WriteTo(writer, ILNameSyntax.TypeName);
 			writer.Write("::");
@@ -210,7 +230,11 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			HashSet<string> s = new HashSet<string>(keywords);
 			foreach (var field in typeof(OpCodes).GetFields()) {
-				s.Add(((OpCode)field.GetValue(null)).Name);
+				if (field.FieldType != typeof(OpCode))
+					continue;
+				OpCode opCode = (OpCode)field.GetValue(null);
+				if (opCode.OpCodeType != OpCodeType.Nternal)
+					s.Add(opCode.Name);
 			}
 			return s;
 		}
@@ -226,74 +250,100 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 		}
 		
-		public static void WriteTo(this TypeReference type, ITextOutput writer, ILNameSyntax syntax = ILNameSyntax.Signature)
+		public static void WriteTo(this TypeSig type, ITextOutput writer, ILNameSyntax syntax = ILNameSyntax.Signature)
 		{
 			ILNameSyntax syntaxForElementTypes = syntax == ILNameSyntax.SignatureNoNamedTypeParameters ? syntax : ILNameSyntax.Signature;
-			if (type is PinnedType) {
-				((PinnedType)type).ElementType.WriteTo(writer, syntaxForElementTypes);
+			if (type is PinnedSig) {
+				((PinnedSig)type).Next.WriteTo(writer, syntaxForElementTypes);
 				writer.Write(" pinned");
-			} else if (type is ArrayType) {
-				ArrayType at = (ArrayType)type;
-				at.ElementType.WriteTo(writer, syntaxForElementTypes);
+			} else if (type is ArraySig) {
+				ArraySig at = (ArraySig)type;
+				at.Next.WriteTo(writer, syntaxForElementTypes);
 				writer.Write('[');
-				writer.Write(string.Join(", ", at.Dimensions));
+				for (int i = 0; i < at.Rank; i++)
+				{
+					if (i != 0)
+						writer.Write(", ");
+					int? lower = i < at.LowerBounds.Count ? at.LowerBounds[i] : (int?)null;
+					uint? size = i < at.Sizes.Count ? at.Sizes[i] : (uint?)null;
+					if (lower != null)
+					{
+						writer.Write(lower.ToString());
+						writer.Write("..");
+						if (size != null)
+							writer.Write((lower.Value + (int)size.Value - 1).ToString());
+						else
+							writer.Write(".");
+					}
+				}
 				writer.Write(']');
-			} else if (type is GenericParameter) {
+			} else if (type is GenericSig) {
 				writer.Write('!');
-				if (((GenericParameter)type).Owner.GenericParameterType == GenericParameterType.Method)
+				if (((GenericSig)type).IsMethodVar)
 					writer.Write('!');
-				if (string.IsNullOrEmpty(type.Name) || type.Name[0] == '!' || syntax == ILNameSyntax.SignatureNoNamedTypeParameters)
-					writer.Write(((GenericParameter)type).Position.ToString());
+				if (string.IsNullOrEmpty(type.TypeName) || type.TypeName[0] == '!' || syntax == ILNameSyntax.SignatureNoNamedTypeParameters)
+					writer.Write(((GenericSig)type).Number.ToString());
 				else
-					writer.Write(Escape(type.Name));
-			} else if (type is ByReferenceType) {
-				((ByReferenceType)type).ElementType.WriteTo(writer, syntaxForElementTypes);
+					writer.Write(Escape(type.TypeName));
+			} else if (type is ByRefSig) {
+				((ByRefSig)type).Next.WriteTo(writer, syntaxForElementTypes);
 				writer.Write('&');
-			} else if (type is PointerType) {
-				((PointerType)type).ElementType.WriteTo(writer, syntaxForElementTypes);
+			} else if (type is PtrSig) {
+				((PtrSig)type).Next.WriteTo(writer, syntaxForElementTypes);
 				writer.Write('*');
-			} else if (type is GenericInstanceType) {
-				type.GetElementType().WriteTo(writer, syntaxForElementTypes);
+			} else if (type is GenericInstSig) {
+				((GenericInstSig)type).GenericType.WriteTo(writer, syntaxForElementTypes);
 				writer.Write('<');
-				var arguments = ((GenericInstanceType)type).GenericArguments;
+				var arguments = ((GenericInstSig)type).GenericArguments;
 				for (int i = 0; i < arguments.Count; i++) {
 					if (i > 0)
 						writer.Write(", ");
 					arguments[i].WriteTo(writer, syntaxForElementTypes);
 				}
 				writer.Write('>');
-			} else if (type is OptionalModifierType) {
-				((OptionalModifierType)type).ElementType.WriteTo(writer, syntax);
+			} else if (type is CModOptSig) {
+				((ModifierSig)type).Next.WriteTo(writer, syntax);
 				writer.Write(" modopt(");
-				((OptionalModifierType)type).ModifierType.WriteTo(writer, ILNameSyntax.TypeName);
+				((ModifierSig)type).Modifier.WriteTo(writer, ILNameSyntax.TypeName);
 				writer.Write(") ");
-			} else if (type is RequiredModifierType) {
-				((RequiredModifierType)type).ElementType.WriteTo(writer, syntax);
+			} else if (type is CModReqdSig) {
+				((ModifierSig)type).Next.WriteTo(writer, syntax);
 				writer.Write(" modreq(");
-				((RequiredModifierType)type).ModifierType.WriteTo(writer, ILNameSyntax.TypeName);
+				((ModifierSig)type).Modifier.WriteTo(writer, ILNameSyntax.TypeName);
 				writer.Write(") ");
-			} else {
-				string name = PrimitiveTypeName(type.FullName);
-				if (syntax == ILNameSyntax.ShortTypeName) {
-					if (name != null)
-						writer.Write(name);
-					else
-						writer.WriteReference(Escape(type.Name), type);
-				} else if ((syntax == ILNameSyntax.Signature || syntax == ILNameSyntax.SignatureNoNamedTypeParameters) && name != null) {
+			} else if (type is ClassOrValueTypeSig) {
+				WriteTo(((ClassOrValueTypeSig)type).TypeDefOrRef, writer, syntax);
+			}
+		}
+
+		public static void WriteTo(this ITypeDefOrRef type, ITextOutput writer, ILNameSyntax syntax = ILNameSyntax.Signature)
+		{
+			if (type is TypeSpec)
+			{
+				WriteTo(((TypeSpec)type).TypeSig, writer, syntax);
+				return;
+			}
+			string name = PrimitiveTypeName(type.FullName);
+			if (syntax == ILNameSyntax.ShortTypeName) {
+				if (name != null)
 					writer.Write(name);
+				else
+					writer.WriteReference(Escape(type.Name), type);
+			} else if ((syntax == ILNameSyntax.Signature || syntax == ILNameSyntax.SignatureNoNamedTypeParameters) && name != null) {
+				writer.Write(name);
+			} else {
+				if (syntax == ILNameSyntax.Signature || syntax == ILNameSyntax.SignatureNoNamedTypeParameters)
+					writer.Write(type.IsValueType ? "valuetype " : "class ");
+
+				ITypeDefOrRef declType = type.GetDeclaringType();
+				if (declType != null) {
+					declType.WriteTo(writer, ILNameSyntax.TypeName);
+					writer.Write('/');
+					writer.WriteReference(Escape(type.Name), type);
 				} else {
-					if (syntax == ILNameSyntax.Signature || syntax == ILNameSyntax.SignatureNoNamedTypeParameters)
-						writer.Write(type.IsValueType ? "valuetype " : "class ");
-					
-					if (type.DeclaringType != null) {
-						type.DeclaringType.WriteTo(writer, ILNameSyntax.TypeName);
-						writer.Write('/');
-						writer.WriteReference(Escape(type.Name), type);
-					} else {
-						if (!type.IsDefinition && type.Scope != null && !(type is TypeSpecification))
-							writer.Write("[{0}]", Escape(type.Scope.Name));
-						writer.WriteReference(Escape(type.FullName), type);
-					}
+					if (!(type is TypeDef) && type.Scope != null)
+						writer.Write("[{0}]", Escape(type.Scope.ScopeName));
+					writer.WriteReference(Escape(type.FullName), type);
 				}
 			}
 		}
@@ -315,16 +365,16 @@ namespace ICSharpCode.Decompiler.Disassembler
 				return;
 			}
 			
-			VariableReference variableRef = operand as VariableReference;
-			if (variableRef != null) {
-				if (string.IsNullOrEmpty(variableRef.Name))
-					writer.WriteReference(variableRef.Index.ToString(), variableRef);
+			Local variable = operand as Local;
+			if (variable != null) {
+				if (string.IsNullOrEmpty(variable.Name))
+					writer.WriteReference(variable.Index.ToString(), variable);
 				else
-					writer.WriteReference(Escape(variableRef.Name), variableRef);
+					writer.WriteReference(Escape(variable.Name), variable);
 				return;
 			}
 			
-			ParameterReference paramRef = operand as ParameterReference;
+			Parameter paramRef = operand as Parameter;
 			if (paramRef != null) {
 				if (string.IsNullOrEmpty(paramRef.Name))
 					writer.WriteReference(paramRef.Index.ToString(), paramRef);
@@ -333,21 +383,42 @@ namespace ICSharpCode.Decompiler.Disassembler
 				return;
 			}
 			
-			MethodReference methodRef = operand as MethodReference;
-			if (methodRef != null) {
-				methodRef.WriteTo(writer);
+			MemberRef memberRef = operand as MemberRef;
+			if (memberRef != null) {
+				if (memberRef.IsMethodRef)
+					memberRef.WriteMethodTo(writer);
+				else
+					memberRef.WriteFieldTo(writer);
 				return;
 			}
 			
-			TypeReference typeRef = operand as TypeReference;
+			MethodDef methodDef = operand as MethodDef;
+			if (methodDef != null) {
+				methodDef.WriteMethodTo(writer);
+				return;
+			}
+			
+			FieldDef fieldDef = operand as FieldDef;
+			if (fieldDef != null) {
+				fieldDef.WriteFieldTo(writer);
+				return;
+			}
+			
+			ITypeDefOrRef typeRef = operand as ITypeDefOrRef;
 			if (typeRef != null) {
 				typeRef.WriteTo(writer, ILNameSyntax.TypeName);
 				return;
 			}
-			
-			FieldReference fieldRef = operand as FieldReference;
-			if (fieldRef != null) {
-				fieldRef.WriteTo(writer);
+
+			IMethod method = operand as IMethod;
+			if (method != null) {
+				method.WriteMethodTo(writer);
+				return;
+			}
+
+			MethodSig sig = operand as MethodSig;
+			if (sig != null) {
+				sig.WriteTo(writer);
 				return;
 			}
 			

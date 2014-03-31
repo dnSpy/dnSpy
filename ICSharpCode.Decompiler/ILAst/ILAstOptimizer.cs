@@ -22,8 +22,8 @@ using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.Decompiler.FlowAnalysis;
 using ICSharpCode.NRefactory.Utils;
-using Mono.Cecil;
-using Mono.Cecil.Cil;
+using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 using Mono.CSharp;
 
 namespace ICSharpCode.Decompiler.ILAst
@@ -79,13 +79,13 @@ namespace ICSharpCode.Decompiler.ILAst
 		int nextLabelIndex = 0;
 		
 		DecompilerContext context;
-		TypeSystem typeSystem;
+		ICorLibTypes corLib;
 		ILBlock method;
 		
 		public void Optimize(DecompilerContext context, ILBlock method, ILAstOptimizationStep abortBeforeStep = ILAstOptimizationStep.None)
 		{
 			this.context = context;
-			this.typeSystem = context.CurrentMethod.Module.TypeSystem;
+			this.corLib = context.CurrentMethod.Module.CorLibTypes;
 			this.method = method;
 			
 			if (abortBeforeStep == ILAstOptimizationStep.RemoveRedundantCode) return;
@@ -163,8 +163,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (abortBeforeStep == ILAstOptimizationStep.TransformArrayInitializers) return;
 					modified |= block.RunOptimization(TransformArrayInitializers);
 
-					if (abortBeforeStep == ILAstOptimizationStep.TransformMultidimensionalArrayInitializers) return;
-					modified |= block.RunOptimization(TransformMultidimensionalArrayInitializers);
+					// TODO: multi-dimensional array initializer
+					//if (abortBeforeStep == ILAstOptimizationStep.TransformMultidimensionalArrayInitializers) return;
+					//modified |= block.RunOptimization(TransformMultidimensionalArrayInitializers);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.TransformObjectInitializers) return;
 					modified |= block.RunOptimization(TransformObjectInitializers);
@@ -344,17 +345,17 @@ namespace ICSharpCode.Decompiler.ILAst
 							expr.Arguments.Single().ILRanges.AddRange(expr.ILRanges);
 							expr.ILRanges.Clear();
 							continue;
-							case ILCode.__Brfalse:  op = ILCode.LogicNot; break;
-							case ILCode.__Beq:      op = ILCode.Ceq; break;
-							case ILCode.__Bne_Un:   op = ILCode.Cne; break;
-							case ILCode.__Bgt:      op = ILCode.Cgt; break;
-							case ILCode.__Bgt_Un:   op = ILCode.Cgt_Un; break;
-							case ILCode.__Ble:      op = ILCode.Cle; break;
-							case ILCode.__Ble_Un:   op = ILCode.Cle_Un; break;
-							case ILCode.__Blt:      op = ILCode.Clt; break;
-							case ILCode.__Blt_Un:   op = ILCode.Clt_Un; break;
-							case ILCode.__Bge:	    op = ILCode.Cge; break;
-							case ILCode.__Bge_Un:   op = ILCode.Cge_Un; break;
+							case ILCode.Brfalse:  op = ILCode.LogicNot; break;
+							case ILCode.Beq:      op = ILCode.Ceq; break;
+							case ILCode.Bne_Un:   op = ILCode.Cne; break;
+							case ILCode.Bgt:      op = ILCode.Cgt; break;
+							case ILCode.Bgt_Un:   op = ILCode.Cgt_Un; break;
+							case ILCode.Ble:      op = ILCode.Cle; break;
+							case ILCode.Ble_Un:   op = ILCode.Cle_Un; break;
+							case ILCode.Blt:      op = ILCode.Clt; break;
+							case ILCode.Blt_Un:   op = ILCode.Clt_Un; break;
+							case ILCode.Bge:	    op = ILCode.Cge; break;
+							case ILCode.Bge_Un:   op = ILCode.Cge_Un; break;
 						default:
 							continue;
 					}
@@ -395,9 +396,10 @@ namespace ICSharpCode.Decompiler.ILAst
 		void IntroducePropertyAccessInstructions(ILExpression expr, ILExpression parentExpr, int posInParent)
 		{
 			if (expr.Code == ILCode.Call || expr.Code == ILCode.Callvirt) {
-				MethodReference cecilMethod = (MethodReference)expr.Operand;
-				if (cecilMethod.DeclaringType is ArrayType) {
-					switch (cecilMethod.Name) {
+				IMethod method = (IMethod)expr.Operand;
+				var declType = method.DeclaringType as dnlib.DotNet.TypeSpec;
+				if (declType != null && (declType.TypeSig is ArraySig || declType.TypeSig is SZArraySig)) {
+					switch (method.Name) {
 						case "Get":
 							expr.Code = ILCode.CallGetter;
 							break;
@@ -405,12 +407,10 @@ namespace ICSharpCode.Decompiler.ILAst
 							expr.Code = ILCode.CallSetter;
 							break;
 						case "Address":
-							ByReferenceType brt = cecilMethod.ReturnType as ByReferenceType;
+							ByRefSig brt = method.MethodSig.RetType as ByRefSig;
 							if (brt != null) {
-								MethodReference getMethod = new MethodReference("Get", brt.ElementType, cecilMethod.DeclaringType);
-								foreach (var p in cecilMethod.Parameters)
-									getMethod.Parameters.Add(p);
-								getMethod.HasThis = cecilMethod.HasThis;
+								IMethod getMethod = new MemberRefUser(method.Module, "Get", method.MethodSig.Clone());
+								getMethod.MethodSig.RetType = declType.TypeSig;
 								expr.Operand = getMethod;
 							}
 							expr.Code = ILCode.CallGetter;
@@ -420,11 +420,11 @@ namespace ICSharpCode.Decompiler.ILAst
 							break;
 					}
 				} else {
-					MethodDefinition cecilMethodDef = cecilMethod.Resolve();
-					if (cecilMethodDef != null) {
-						if (cecilMethodDef.IsGetter)
+					MethodDef methodDef = method.Resolve();
+					if (methodDef != null) {
+						if (methodDef.IsGetter())
 							expr.Code = (expr.Code == ILCode.Call) ? ILCode.CallGetter : ILCode.CallvirtGetter;
-						else if (cecilMethodDef.IsSetter)
+						else if (methodDef.IsSetter())
 							expr.Code = (expr.Code == ILCode.Call) ? ILCode.CallSetter : ILCode.CallvirtSetter;
 					}
 				}
@@ -650,7 +650,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			// Recombine variables that were split when the ILAst was created
 			// This ensures that a single IL variable is a single C# variable (gets assigned only one name)
 			// The DeclareVariables transformation might then split up the C# variable again if it is used indendently in two separate scopes.
-			Dictionary<VariableDefinition, ILVariable> dict = new Dictionary<VariableDefinition, ILVariable>();
+			Dictionary<Local, ILVariable> dict = new Dictionary<Local, ILVariable>();
 			ReplaceVariables(
 				method,
 				delegate(ILVariable v) {
@@ -687,7 +687,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		void ReportUnassignedILRanges(ILBlock method)
 		{
-			var unassigned = ILRange.Invert(method.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.ILRanges), context.CurrentMethod.Body.CodeSize).ToList();
+			var unassigned = ILRange.Invert(method.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.ILRanges), context.CurrentMethod.Body.GetCodeSize()).ToList();
 			if (unassigned.Count > 0)
 				Debug.WriteLine(string.Format("Unassigned ILRanges for {0}.{1}: {2}", this.context.CurrentMethod.DeclaringType.Name, this.context.CurrentMethod.Name, string.Join(", ", unassigned.Select(r => r.ToString()))));
 		}
@@ -764,7 +764,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		public static bool IsStoreToArray(this ILCode code)
 		{
 			switch (code) {
-				case ILCode.Stelem_Any:
+				case ILCode.Stelem:
 				case ILCode.Stelem_I:
 				case ILCode.Stelem_I1:
 				case ILCode.Stelem_I2:
@@ -782,7 +782,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		public static bool IsLoadFromArray(this ILCode code)
 		{
 			switch (code) {
-				case ILCode.Ldelem_Any:
+				case ILCode.Ldelem:
 				case ILCode.Ldelem_I:
 				case ILCode.Ldelem_I1:
 				case ILCode.Ldelem_I2:
@@ -809,8 +809,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Call:
 				case ILCode.Callvirt:
 					// property getters can't be expression statements, but all other method calls can be
-					MethodReference mr = (MethodReference)expr.Operand;
-					return !mr.Name.StartsWith("get_", StringComparison.Ordinal);
+					IMethod mr = (IMethod)expr.Operand;
+					return !mr.Name.String.StartsWith("get_", StringComparison.Ordinal);
 				case ILCode.CallSetter:
 				case ILCode.CallvirtSetter:
 				case ILCode.Newobj:
@@ -820,7 +820,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Stsfld:
 				case ILCode.Stfld:
 				case ILCode.Stind_Ref:
-				case ILCode.Stelem_Any:
+				case ILCode.Stelem:
 				case ILCode.Stelem_I:
 				case ILCode.Stelem_I1:
 				case ILCode.Stelem_I2:

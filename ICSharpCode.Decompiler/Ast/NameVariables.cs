@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using ICSharpCode.Decompiler.ILAst;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.Decompiler.Ast
 {
@@ -50,7 +50,7 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			NameVariables nv = new NameVariables();
 			nv.context = context;
-			nv.fieldNamesInCurrentType = context.CurrentType.Fields.Select(f => f.Name).ToList();
+			nv.fieldNamesInCurrentType = context.CurrentType.Fields.Select(f => f.Name.String).ToList();
 			// First mark existing variable names as reserved.
 			foreach (string name in context.ReservedVariableNames)
 				nv.AddExistingName(name);
@@ -162,7 +162,7 @@ namespace ICSharpCode.Decompiler.Ast
 		string GenerateNameForVariable(ILVariable variable, ILBlock methodBody)
 		{
 			string proposedName = null;
-			if (variable.Type == context.CurrentType.Module.TypeSystem.Int32) {
+			if (variable.Type == context.CurrentType.Module.CorLibTypes.Int32) {
 				// test whether the variable might be a loop counter
 				bool isLoopCounter = false;
 				foreach (ILWhileLoop loop in methodBody.GetSelfAndChildrenRecursive<ILWhileLoop>()) {
@@ -243,18 +243,18 @@ namespace ICSharpCode.Decompiler.Ast
 			switch (expr.Code) {
 				case ILCode.Ldfld:
 				case ILCode.Ldsfld:
-					return CleanUpVariableName(((FieldReference)expr.Operand).Name);
+					return CleanUpVariableName(((IField)expr.Operand).Name);
 				case ILCode.Call:
 				case ILCode.Callvirt:
 				case ILCode.CallGetter:
 				case ILCode.CallvirtGetter:
-					MethodReference mr = (MethodReference)expr.Operand;
-					if (mr.Name.StartsWith("get_", StringComparison.OrdinalIgnoreCase) && mr.Parameters.Count == 0) {
+					IMethod mr = (IMethod)expr.Operand;
+					if (mr.Name.String.StartsWith("get_", StringComparison.OrdinalIgnoreCase) && mr.MethodSig.GetParams().Count == 0) {
 						// use name from properties, but not from indexers
-						return CleanUpVariableName(mr.Name.Substring(4));
-					} else if (mr.Name.StartsWith("Get", StringComparison.OrdinalIgnoreCase) && mr.Name.Length >= 4 && char.IsUpper(mr.Name[3])) {
+						return CleanUpVariableName(mr.Name.String.Substring(4));
+					} else if (mr.Name.String.StartsWith("Get", StringComparison.OrdinalIgnoreCase) && mr.Name.String.Length >= 4 && char.IsUpper(mr.Name.String[3])) {
 						// use name from Get-methods
-						return CleanUpVariableName(mr.Name.Substring(3));
+						return CleanUpVariableName(mr.Name.String.Substring(3));
 					}
 					break;
 			}
@@ -267,7 +267,7 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.Stfld:
 				case ILCode.Stsfld:
 					if (i == parent.Arguments.Count - 1) // last argument is stored value
-						return CleanUpVariableName(((FieldReference)parent.Operand).Name);
+						return CleanUpVariableName(((IField)parent.Operand).Name);
 					else
 						break;
 				case ILCode.Call:
@@ -277,18 +277,18 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.CallvirtGetter:
 				case ILCode.CallSetter:
 				case ILCode.CallvirtSetter:
-					MethodReference methodRef = (MethodReference)parent.Operand;
-					if (methodRef.Parameters.Count == 1 && i == parent.Arguments.Count - 1) {
+					IMethod methodRef = (IMethod)parent.Operand;
+					if (methodRef.MethodSig.GetParams().Count == 1 && i == parent.Arguments.Count - 1) {
 						// argument might be value of a setter
-						if (methodRef.Name.StartsWith("set_", StringComparison.OrdinalIgnoreCase)) {
-							return CleanUpVariableName(methodRef.Name.Substring(4));
-						} else if (methodRef.Name.StartsWith("Set", StringComparison.OrdinalIgnoreCase) && methodRef.Name.Length >= 4 && char.IsUpper(methodRef.Name[3])) {
-							return CleanUpVariableName(methodRef.Name.Substring(3));
+						if (methodRef.Name.String.StartsWith("set_", StringComparison.OrdinalIgnoreCase)) {
+							return CleanUpVariableName(methodRef.Name.String.Substring(4));
+						} else if (methodRef.Name.String.StartsWith("Set", StringComparison.OrdinalIgnoreCase) && methodRef.Name.String.Length >= 4 && char.IsUpper(methodRef.Name.String[3])) {
+							return CleanUpVariableName(methodRef.Name.String.Substring(3));
 						}
 					}
-					MethodDefinition methodDef = methodRef.Resolve();
+					MethodDef methodDef = methodRef.Resolve();
 					if (methodDef != null) {
-						var p = methodDef.Parameters.ElementAtOrDefault((parent.Code != ILCode.Newobj && methodDef.HasThis) ? i - 1 : i);
+						var p = methodDef.Parameters.ElementAtOrDefault(i + (parent.Code == ILCode.Newobj ? 1 : 0));
 						if (p != null && !string.IsNullOrEmpty(p.Name))
 							return CleanUpVariableName(p.Name);
 					}
@@ -299,24 +299,32 @@ namespace ICSharpCode.Decompiler.Ast
 			return null;
 		}
 		
-		string GetNameByType(TypeReference type)
+		string GetNameByType(TypeSig type)
 		{
-			type = TypeAnalysis.UnpackModifiers(type);
+			type = type.RemoveModifiers();
 			
-			GenericInstanceType git = type as GenericInstanceType;
-			if (git != null && git.ElementType.FullName == "System.Nullable`1" && git.GenericArguments.Count == 1) {
-				type = ((GenericInstanceType)type).GenericArguments[0];
+			GenericInstSig git = type as GenericInstSig;
+			if (git != null && git.GenericType.FullName == "System.Nullable`1" && git.GenericArguments.Count == 1) {
+				type = ((GenericInstSig)type).GenericArguments[0];
 			}
 			
 			string name;
-			if (type.IsArray) {
+			if (type.IsArray || type.IsSZArray) {
 				name = "array";
-			} else if (type.IsPointer || type.IsByReference) {
+			} else if (type.IsPointer || type.IsByRef) {
 				name = "ptr";
-			} else if (type.Name.EndsWith("Exception", StringComparison.Ordinal)) {
+			} else if (type.TypeName.EndsWith("Exception", StringComparison.Ordinal)) {
 				name = "ex";
 			} else if (!typeNameToVariableNameDict.TryGetValue(type.FullName, out name)) {
-				name = type.Name;
+
+				if (type is IGenericParam)
+					name = ((IGenericParam)type).GenericParameter.Name;
+				else if (type is GenericVar)
+					name = context.CurrentMethod.DeclaringType.GenericParameters[(int)type.ToGenericVar().Number].Name;
+				else if (type is GenericMVar)
+					name = context.CurrentMethod.GenericParameters[(int)type.ToGenericVar().Number].Name;
+				else
+					name = type.TypeName;
 				// remove the 'I' for interfaces
 				if (name.Length >= 3 && name[0] == 'I' && char.IsUpper(name[1]) && char.IsLower(name[2]))
 					name = name.Substring(1);

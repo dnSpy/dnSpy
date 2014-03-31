@@ -19,7 +19,7 @@
 using System;
 using System.Diagnostics;
 using ICSharpCode.NRefactory.CSharp;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.Decompiler.Ast.Transforms
 {
@@ -39,9 +39,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		public override TResult VisitTypeDeclaration(TypeDeclaration typeDeclaration, object data)
 		{
-			TypeDefinition oldType = context.CurrentType;
+			TypeDef oldType = context.CurrentType;
 			try {
-				context.CurrentType = typeDeclaration.Annotation<TypeDefinition>();
+				context.CurrentType = typeDeclaration.Annotation<TypeDef>();
 				return base.VisitTypeDeclaration(typeDeclaration, data);
 			} finally {
 				context.CurrentType = oldType;
@@ -52,7 +52,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		{
 			Debug.Assert(context.CurrentMethod == null);
 			try {
-				context.CurrentMethod = methodDeclaration.Annotation<MethodDefinition>();
+				context.CurrentMethod = methodDeclaration.Annotation<MethodDef>();
 				return base.VisitMethodDeclaration(methodDeclaration, data);
 			} finally {
 				context.CurrentMethod = null;
@@ -63,7 +63,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		{
 			Debug.Assert(context.CurrentMethod == null);
 			try {
-				context.CurrentMethod = constructorDeclaration.Annotation<MethodDefinition>();
+				context.CurrentMethod = constructorDeclaration.Annotation<MethodDef>();
 				return base.VisitConstructorDeclaration(constructorDeclaration, data);
 			} finally {
 				context.CurrentMethod = null;
@@ -74,7 +74,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		{
 			Debug.Assert(context.CurrentMethod == null);
 			try {
-				context.CurrentMethod = destructorDeclaration.Annotation<MethodDefinition>();
+				context.CurrentMethod = destructorDeclaration.Annotation<MethodDef>();
 				return base.VisitDestructorDeclaration(destructorDeclaration, data);
 			} finally {
 				context.CurrentMethod = null;
@@ -85,7 +85,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		{
 			Debug.Assert(context.CurrentMethod == null);
 			try {
-				context.CurrentMethod = operatorDeclaration.Annotation<MethodDefinition>();
+				context.CurrentMethod = operatorDeclaration.Annotation<MethodDef>();
 				return base.VisitOperatorDeclaration(operatorDeclaration, data);
 			} finally {
 				context.CurrentMethod = null;
@@ -96,7 +96,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		{
 			Debug.Assert(context.CurrentMethod == null);
 			try {
-				context.CurrentMethod = accessor.Annotation<MethodDefinition>();
+				context.CurrentMethod = accessor.Annotation<MethodDef>();
 				return base.VisitAccessor(accessor, data);
 			} finally {
 				context.CurrentMethod = null;

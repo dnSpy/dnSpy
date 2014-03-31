@@ -20,8 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Mono.Cecil;
-using Mono.Cecil.Cil;
+using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 
 namespace ICSharpCode.Decompiler.ILAst
 {
@@ -30,12 +30,12 @@ namespace ICSharpCode.Decompiler.ILAst
 	/// </summary>
 	class AsyncDecompiler
 	{
-		public static bool IsCompilerGeneratedStateMachine(TypeDefinition type)
+		public static bool IsCompilerGeneratedStateMachine(TypeDef type)
 		{
 			if (!(type.DeclaringType != null && type.IsCompilerGenerated()))
 				return false;
-			foreach (TypeReference i in type.Interfaces) {
-				if (i.Namespace == "System.Runtime.CompilerServices" && i.Name == "IAsyncStateMachine")
+			foreach (var i in type.Interfaces) {
+				if (i.Interface.Namespace == "System.Runtime.CompilerServices" && i.Interface.Name == "IAsyncStateMachine")
 					return true;
 			}
 			return false;
@@ -53,11 +53,11 @@ namespace ICSharpCode.Decompiler.ILAst
 		// These fields are set by MatchTaskCreationPattern()
 		AsyncMethodType methodType;
 		int initialState;
-		TypeDefinition stateMachineStruct;
-		MethodDefinition moveNextMethod;
-		FieldDefinition builderField;
-		FieldDefinition stateField;
-		Dictionary<FieldDefinition, ILVariable> fieldToParameterMap = new Dictionary<FieldDefinition, ILVariable>();
+		TypeDef stateMachineStruct;
+		MethodDef moveNextMethod;
+		FieldDef builderField;
+		FieldDef stateField;
+		Dictionary<FieldDef, ILVariable> fieldToParameterMap = new Dictionary<FieldDef, ILVariable>();
 		
 		// These fields are set by AnalyzeMoveNext()
 		int finalState = -2;
@@ -113,7 +113,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (method.Body.Count < 5)
 				return false;
 			// Check the second-to-last instruction (the start call) first, as we can get the most information from that
-			MethodReference startMethod;
+			IMethod startMethod;
 			ILExpression loadStartTarget, loadStartArgument;
 			// call(AsyncTaskMethodBuilder::Start, ldloca(builder), ldloca(stateMachine))
 			if (!method.Body[method.Body.Count - 2].Match(ILCode.Call, out startMethod, out loadStartTarget, out loadStartArgument))
@@ -138,8 +138,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				return false;
 			if (!loadStartArgument.Match(ILCode.Ldloca, out stateMachineVar))
 				return false;
-			
-			stateMachineStruct = stateMachineVar.Type.ResolveWithinSameModule();
+
+			stateMachineStruct = stateMachineVar.Type.GetTypeDefOrRef().ResolveWithinSameModule();
 			if (stateMachineStruct == null || !stateMachineStruct.IsValueType)
 				return false;
 			moveNextMethod = stateMachineStruct.Methods.FirstOrDefault(f => f.Name == "MoveNext");
@@ -151,13 +151,13 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression loadBuilderExpr;
 			if (!method.Body[method.Body.Count - 3].MatchStloc(builderVar, out loadBuilderExpr))
 				return false;
-			FieldReference builderFieldRef;
+			IField builderFieldRef;
 			ILExpression loadStateMachineForBuilderExpr;
 			if (!loadBuilderExpr.Match(ILCode.Ldfld, out builderFieldRef, out loadStateMachineForBuilderExpr))
 				return false;
 			if (!loadStateMachineForBuilderExpr.MatchLdloca(stateMachineVar))
 				return false;
-			builderField = builderFieldRef.ResolveWithinSameModule();
+			builderField = builderFieldRef.ResolveFieldWithinSameModule();
 			if (builderField == null)
 				return false;
 			
@@ -170,15 +170,15 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression returnValue;
 				if (!method.Body[method.Body.Count - 1].Match(ILCode.Ret, out returnValue))
 					return false;
-				MethodReference getTaskMethod;
+				IMethod getTaskMethod;
 				ILExpression builderExpr;
 				if (!returnValue.Match(ILCode.Call, out getTaskMethod, out builderExpr))
 					return false;
 				ILExpression loadStateMachineForBuilderExpr2;
-				FieldReference builderField2;
+				IField builderField2;
 				if (!builderExpr.Match(ILCode.Ldflda, out builderField2, out loadStateMachineForBuilderExpr2))
 					return false;
-				if (builderField2.ResolveWithinSameModule() != builderField || !loadStateMachineForBuilderExpr2.MatchLdloca(stateMachineVar))
+				if (builderField2.ResolveFieldWithinSameModule() != builderField || !loadStateMachineForBuilderExpr2.MatchLdloca(stateMachineVar))
 					return false;
 			}
 			
@@ -192,18 +192,18 @@ namespace ICSharpCode.Decompiler.ILAst
 				return false;
 			
 			// Check the second-to-last field assignment - this should be the builder field
-			FieldDefinition builderField3;
+			FieldDef builderField3;
 			ILExpression builderInitialization;
 			if (!MatchStFld(method.Body[method.Body.Count - 5], stateMachineVar, out builderField3, out builderInitialization))
 				return false;
-			MethodReference createMethodRef;
+			IMethod createMethodRef;
 			if (builderField3 != builderField || !builderInitialization.Match(ILCode.Call, out createMethodRef))
 				return false;
 			if (createMethodRef.Name != "Create")
 				return false;
 			
 			for (int i = 0; i < method.Body.Count - 5; i++) {
-				FieldDefinition field;
+				FieldDef field;
 				ILExpression fieldInit;
 				if (!MatchStFld(method.Body[i], stateMachineVar, out field, out fieldInit))
 					return false;
@@ -218,14 +218,14 @@ namespace ICSharpCode.Decompiler.ILAst
 			return true;
 		}
 		
-		static bool MatchStFld(ILNode stfld, ILVariable stateMachineVar, out FieldDefinition field, out ILExpression expr)
+		static bool MatchStFld(ILNode stfld, ILVariable stateMachineVar, out FieldDef field, out ILExpression expr)
 		{
 			field = null;
-			FieldReference fieldRef;
+			IField fieldRef;
 			ILExpression ldloca;
 			if (!stfld.Match(ILCode.Stfld, out fieldRef, out ldloca, out expr))
 				return false;
-			field = fieldRef.ResolveWithinSameModule();
+			field = fieldRef.ResolveFieldWithinSameModule();
 			return field != null && ldloca.MatchLdloca(stateMachineVar);
 		}
 		#endregion
@@ -252,7 +252,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				throw new SymbolicAnalysisFailedException();
 			
 			// call(AsyncTaskMethodBuilder`1::SetResult, ldflda(StateMachine::<>t__builder, ldloc(this)), ldloc(<>t__result))
-			MethodReference setResultMethod;
+			IMethod setResultMethod;
 			ILExpression builderExpr;
 			if (methodType == AsyncMethodType.TaskOfT) {
 				if (!ilMethod.Body[3].Match(ILCode.Call, out setResultMethod, out builderExpr, out resultExpr))
@@ -272,7 +272,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// <summary>
 		/// Creates ILAst for the specified method, optimized up to before the 'YieldReturn' step.
 		/// </summary>
-		ILBlock CreateILAst(MethodDefinition method)
+		ILBlock CreateILAst(MethodDef method)
 		{
 			if (method == null || !method.HasBody)
 				throw new SymbolicAnalysisFailedException();
@@ -287,14 +287,14 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		void ValidateCatchBlock(ILTryCatchBlock.CatchBlock catchBlock)
 		{
-			if (catchBlock.ExceptionType == null || catchBlock.ExceptionType.Name != "Exception")
+			if (catchBlock.ExceptionType == null || catchBlock.ExceptionType.TypeName != "Exception")
 				throw new SymbolicAnalysisFailedException();
 			if (catchBlock.Body.Count != 3)
 				throw new SymbolicAnalysisFailedException();
 			int stateID;
 			if (!(MatchStateAssignment(catchBlock.Body[0], out stateID) && stateID == finalState))
 				throw new SymbolicAnalysisFailedException();
-			MethodReference setExceptionMethod;
+			IMethod setExceptionMethod;
 			ILExpression builderExpr, exceptionExpr;
 			if (!catchBlock.Body[1].Match(ILCode.Call, out setExceptionMethod, out builderExpr, out exceptionExpr))
 				throw new SymbolicAnalysisFailedException();
@@ -309,10 +309,10 @@ namespace ICSharpCode.Decompiler.ILAst
 		bool IsBuilderFieldOnThis(ILExpression builderExpr)
 		{
 			// ldflda(StateMachine::<>t__builder, ldloc(this))
-			FieldReference fieldRef;
+			IField fieldRef;
 			ILExpression target;
 			return builderExpr.Match(ILCode.Ldflda, out fieldRef, out target)
-				&& fieldRef.ResolveWithinSameModule() == builderField
+				&& fieldRef.ResolveFieldWithinSameModule() == builderField
 				&& target.MatchThis();
 		}
 		
@@ -320,10 +320,10 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			// stfld(StateMachine::<>1__state, ldloc(this), ldc.i4(-2))
 			stateID = 0;
-			FieldReference fieldRef;
+			IField fieldRef;
 			ILExpression target, val;
 			if (stfld.Match(ILCode.Stfld, out fieldRef, out target, out val)) {
-				return fieldRef.ResolveWithinSameModule() == stateField
+				return fieldRef.ResolveFieldWithinSameModule() == stateField
 					&& target.MatchThis()
 					&& val.Match(ILCode.Ldc_I4, out stateID);
 			}
@@ -394,7 +394,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression expr = body[pos] as ILExpression;
 				if (expr != null && expr.Code == ILCode.Leave && expr.Operand == exitLabel) {
 					ILVariable awaiterVar;
-					FieldDefinition awaiterField;
+					FieldDef awaiterField;
 					int targetStateID;
 					HandleAwait(newBody, out awaiterVar, out awaiterField, out targetStateID);
 					MarkAsGeneratedVariable(awaiterVar);
@@ -454,7 +454,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			return newBody;
 		}
 		
-		void HandleAwait(List<ILNode> newBody, out ILVariable awaiterVar, out FieldDefinition awaiterField, out int targetStateID)
+		void HandleAwait(List<ILNode> newBody, out ILVariable awaiterVar, out FieldDef awaiterField, out int targetStateID)
 		{
 			// Handle the instructions prior to the exit out of the method to detect what is being awaited.
 			// (analyses the last instructions in newBody and removes the analyzed instructions from newBody)
@@ -475,7 +475,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			newBody.RemoveAt(newBody.Count - 1); // remove AwaitUnsafeOnCompleted call
 			if (callAwaitUnsafeOnCompleted == null || callAwaitUnsafeOnCompleted.Code != ILCode.Call)
 				throw new SymbolicAnalysisFailedException();
-			string methodName = ((MethodReference)callAwaitUnsafeOnCompleted.Operand).Name;
+			string methodName = ((IMethod)callAwaitUnsafeOnCompleted.Operand).Name;
 			if (methodName != "AwaitUnsafeOnCompleted" && methodName != "AwaitOnCompleted")
 				throw new SymbolicAnalysisFailedException();
 			if (callAwaitUnsafeOnCompleted.Arguments.Count != 3)
@@ -484,12 +484,12 @@ namespace ICSharpCode.Decompiler.ILAst
 				throw new SymbolicAnalysisFailedException();
 			
 			// stfld(StateMachine::<>u__$awaiter6, ldloc(this), ldloc(CS$0$0001))
-			FieldReference awaiterFieldRef;
+			IField awaiterFieldRef;
 			ILExpression loadThis, loadAwaiterVar;
 			if (!newBody.LastOrDefault().Match(ILCode.Stfld, out awaiterFieldRef, out loadThis, out loadAwaiterVar))
 				throw new SymbolicAnalysisFailedException();
 			newBody.RemoveAt(newBody.Count - 1); // remove awaiter field assignment
-			awaiterField = awaiterFieldRef.ResolveWithinSameModule();
+			awaiterField = awaiterFieldRef.ResolveFieldWithinSameModule();
 			if (!(awaiterField != null && loadThis.MatchThis() && loadAwaiterVar.MatchLdloc(awaiterVar)))
 				throw new SymbolicAnalysisFailedException();
 			
@@ -572,7 +572,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression getAwaiterCall;
 			if (!(pos >= 2 && body[pos - 2].MatchStloc(awaiterVar, out getAwaiterCall)))
 				return false;
-			MethodReference getAwaiterMethod;
+			IMethod getAwaiterMethod;
 			ILExpression awaitedExpr;
 			if (!(getAwaiterCall.Match(ILCode.Call, out getAwaiterMethod, out awaitedExpr) || getAwaiterCall.Match(ILCode.Callvirt, out getAwaiterMethod, out awaitedExpr)))
 				return false;
@@ -620,7 +620,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			bool isResultAssignment = resultAssignment.Match(ILCode.Stloc, out resultVar, out getResultCall);
 			if (!isResultAssignment)
 				getResultCall = resultAssignment;
-			if (!(getResultCall.Operand is MethodReference && ((MethodReference)getResultCall.Operand).Name == "GetResult"))
+			if (!(getResultCall.Operand is IMethod && ((IMethod)getResultCall.Operand).Name == "GetResult"))
 				return false;
 			
 			pos -= 2; // also delete 'stloc', 'brtrue' and 'await'

@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using Mono.Cecil.Cil;
+using dnlib.DotNet.Emit;
 
 namespace ICSharpCode.Decompiler.FlowAnalysis
 {
@@ -52,7 +52,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 				current.Nodes.ExceptWith(tryNodes);
 				ControlStructure tryBlock = new ControlStructure(
 					tryNodes,
-					g.Nodes.Single(n => n.Start == eh.TryStart),
+					g.Nodes.Single(n => n.Start.Value == eh.TryStart),
 					ControlStructureType.Try);
 				tryBlock.ExceptionHandler = eh;
 				MoveControlStructures(current, tryBlock, eh.TryStart, eh.TryEnd);
@@ -82,10 +82,10 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		static HashSet<ControlFlowNode> FindNodes(ControlStructure current, Instruction startInst, Instruction endInst)
 		{
 			HashSet<ControlFlowNode> result = new HashSet<ControlFlowNode>();
-			int start = startInst.Offset;
-			int end = endInst.Offset;
+			uint start = startInst.Offset;
+			uint end = endInst.Offset;
 			foreach (var node in current.Nodes.ToArray()) {
-				if (node.Start != null && start <= node.Start.Offset && node.Start.Offset < end) {
+				if (node.Start != null && start <= node.Start.Value.Offset && node.Start.Value.Offset < end) {
 					result.Add(node);
 				}
 			}

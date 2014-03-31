@@ -18,7 +18,7 @@
 
 using System;
 using System.Runtime.Serialization;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.Decompiler
 {
@@ -27,9 +27,9 @@ namespace ICSharpCode.Decompiler
 	/// </summary>
 	public class DecompilerException : Exception, ISerializable
 	{
-		public MethodDefinition DecompiledMethod { get; set; }
+		public MethodDef DecompiledMethod { get; set; }
 		
-		public DecompilerException(MethodDefinition decompiledMethod, Exception innerException) 
+		public DecompilerException(MethodDef decompiledMethod, Exception innerException) 
 			: base("Error decompiling " + decompiledMethod.FullName + Environment.NewLine, innerException)
 		{
 		}

@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.Decompiler.Ast
 {
 	public class TypeInformation
 	{
-		public readonly TypeReference InferredType;
+		public readonly TypeSig InferredType;
 		
-		public TypeInformation(TypeReference inferredType)
+		public TypeInformation(TypeSig inferredType)
 		{
 			this.InferredType = inferredType;
 		}
@@ -34,9 +34,9 @@ namespace ICSharpCode.Decompiler.Ast
 				// p looks like this:
 				//   stloc(v, call(Expression::Parameter, call(Type::GetTypeFromHandle, ldtoken(...)), ldstr(...)))
 				ILVariable v = (ILVariable)p.Operand;
-				TypeReference typeRef = (TypeReference)p.Arguments[0].Arguments[0].Arguments[0].Operand;
+				ITypeDefOrRef typeRef = (ITypeDefOrRef)p.Arguments[0].Arguments[0].Arguments[0].Operand;
 				string name = (string)p.Arguments[0].Arguments[1].Operand;
-				Parameters.Add(new ParameterDeclaration(AstBuilder.ConvertType(typeRef), name).WithAnnotation(v));
+				Parameters.Add(new ParameterDeclaration(AstBuilder.ConvertType(null, null, typeRef), name).WithAnnotation(v));
 			}
 		}
 	}

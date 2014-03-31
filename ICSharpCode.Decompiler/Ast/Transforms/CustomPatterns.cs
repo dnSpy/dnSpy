@@ -21,7 +21,7 @@ using System.Linq;
 using System.Reflection;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.Decompiler.Ast.Transforms
 {
@@ -49,7 +49,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				if (o == null)
 					return false;
 			}
-			TypeReference tr = o.Annotation<TypeReference>();
+			ITypeDefOrRef tr = o.Annotation<ITypeDefOrRef>();
 			return tr != null && tr.Namespace == ns && tr.Name == name;
 		}
 		

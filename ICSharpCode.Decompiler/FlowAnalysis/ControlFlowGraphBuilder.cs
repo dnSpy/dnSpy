@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-using Mono.Cecil.Cil;
+using dnlib.DotNet.Emit;
 
 namespace ICSharpCode.Decompiler.FlowAnalysis
 {
@@ -30,7 +30,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 	/// </summary>
 	public sealed class ControlFlowGraphBuilder
 	{
-		public static ControlFlowGraph Build(MethodBody methodBody)
+		public static ControlFlowGraph Build(CilBody methodBody)
 		{
 			return new ControlFlowGraphBuilder(methodBody).Build();
 		}
@@ -40,16 +40,17 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		// true means that a copy of the whole finally block is created for each leave target. In this case, each endfinally node will be connected with the leave
 		//   target using a normal edge.
 		bool copyFinallyBlocks = false;
-		
-		MethodBody methodBody;
-		int[] offsets; // array index = instruction index; value = IL offset
+
+		CilBody methodBody;
+		LinkedList<Instruction> instructions;
+		uint[] offsets; // array index = instruction index; value = IL offset
 		bool[] hasIncomingJumps; // array index = instruction index
 		List<ControlFlowNode> nodes = new List<ControlFlowNode>();
 		ControlFlowNode entryPoint;
 		ControlFlowNode regularExit;
 		ControlFlowNode exceptionalExit;
 		
-		private ControlFlowGraphBuilder(MethodBody methodBody)
+		private ControlFlowGraphBuilder(CilBody methodBody)
 		{
 			this.methodBody = methodBody;
 			offsets = methodBody.Instructions.Select(i => i.Offset).ToArray();
@@ -57,9 +58,9 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			
 			entryPoint = new ControlFlowNode(0, 0, ControlFlowNodeType.EntryPoint);
 			nodes.Add(entryPoint);
-			regularExit = new ControlFlowNode(1, -1, ControlFlowNodeType.RegularExit);
+			regularExit = new ControlFlowNode(1, null, ControlFlowNodeType.RegularExit);
 			nodes.Add(regularExit);
-			exceptionalExit = new ControlFlowNode(2, -1, ControlFlowNodeType.ExceptionalExit);
+			exceptionalExit = new ControlFlowNode(2, null, ControlFlowNodeType.ExceptionalExit);
 			nodes.Add(exceptionalExit);
 			Debug.Assert(nodes.Count == 3);
 		}
@@ -93,7 +94,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		#region Step 1: calculate which instructions are the targets of jump instructions.
 		void CalculateHasIncomingJumps()
 		{
-			foreach (Instruction inst in methodBody.Instructions) {
+			foreach (Instruction inst in instructions) {
 				if (inst.OpCode.OperandType == OperandType.InlineBrTarget || inst.OpCode.OperandType == OperandType.ShortInlineBrTarget) {
 					hasIncomingJumps[GetInstructionIndex((Instruction)inst.Operand)] = true;
 				} else if (inst.OpCode.OperandType == OperandType.InlineSwitch) {
@@ -114,25 +115,32 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		void CreateNodes()
 		{
 			// Step 2a: find basic blocks and create nodes for them
-			for (int i = 0; i < methodBody.Instructions.Count; i++) {
-				Instruction blockStart = methodBody.Instructions[i];
+			int i = 0;
+			LinkedListNode<Instruction> current = instructions.First;
+			while (current != null) {
+				Instruction blockStart = current.Value;
 				ExceptionHandler blockStartEH = FindInnermostExceptionHandler(blockStart.Offset);
+
 				// try and see how big we can make that block:
+				LinkedListNode<Instruction> blockEnd = current;
 				for (; i + 1 < methodBody.Instructions.Count; i++) {
 					Instruction inst = methodBody.Instructions[i];
 					if (IsBranch(inst.OpCode) || CanThrowException(inst.OpCode))
 						break;
-					if (hasIncomingJumps[i + 1])
-						break;
-					if (inst.Next != null) {
+					if (i + 1 < methodBody.Instructions.Count) {
+						if (hasIncomingJumps[i + 1])
+							break;
 						// ensure that blocks never contain instructions from different try blocks
-						ExceptionHandler instEH = FindInnermostExceptionHandler(inst.Next.Offset);
+						ExceptionHandler instEH = FindInnermostExceptionHandler(methodBody.Instructions[i + 1].Offset);
 						if (instEH != blockStartEH)
 							break;
 					}
+					blockEnd = blockEnd.Next;
 				}
-				
-				nodes.Add(new ControlFlowNode(nodes.Count, blockStart, methodBody.Instructions[i]));
+
+				nodes.Add(new ControlFlowNode(nodes.Count, current, blockEnd));
+				i++;
+				current = current.Next;
 			}
 			// Step 2b: Create special nodes for the exception handling constructs
 			foreach (ExceptionHandler handler in methodBody.ExceptionHandlers) {
@@ -155,39 +163,39 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			foreach (ControlFlowNode node in nodes) {
 				if (node.End != null) {
 					// create normal edges from one instruction to the next
-					if (!OpCodeInfo.IsUnconditionalBranch(node.End.OpCode))
-						CreateEdge(node, node.End.Next, JumpType.Normal);
+					if (!OpCodeInfo.IsUnconditionalBranch(node.End.Value.OpCode))
+						CreateEdge(node, node.End.Next.Value, JumpType.Normal);
 					
 					// create edges for branch instructions
-					if (node.End.OpCode.OperandType == OperandType.InlineBrTarget || node.End.OpCode.OperandType == OperandType.ShortInlineBrTarget) {
-						if (node.End.OpCode == OpCodes.Leave || node.End.OpCode == OpCodes.Leave_S) {
-							var handlerBlock = FindInnermostHandlerBlock(node.End.Offset);
+					if (node.End.Value.OpCode.OperandType == OperandType.InlineBrTarget || node.End.Value.OpCode.OperandType == OperandType.ShortInlineBrTarget) {
+						if (node.End.Value.OpCode == OpCodes.Leave || node.End.Value.OpCode == OpCodes.Leave_S) {
+							var handlerBlock = FindInnermostHandlerBlock(node.End.Value.Offset);
 							if (handlerBlock.NodeType == ControlFlowNodeType.FinallyOrFaultHandler)
-								CreateEdge(node, (Instruction)node.End.Operand, JumpType.LeaveTry);
+								CreateEdge(node, (Instruction)node.End.Value.Operand, JumpType.LeaveTry);
 							else
-								CreateEdge(node, (Instruction)node.End.Operand, JumpType.Normal);
+								CreateEdge(node, (Instruction)node.End.Value.Operand, JumpType.Normal);
 						} else {
-							CreateEdge(node, (Instruction)node.End.Operand, JumpType.Normal);
+							CreateEdge(node, (Instruction)node.End.Value.Operand, JumpType.Normal);
 						}
-					} else if (node.End.OpCode.OperandType == OperandType.InlineSwitch) {
-						foreach (Instruction i in (Instruction[])node.End.Operand)
+					} else if (node.End.Value.OpCode.OperandType == OperandType.InlineSwitch) {
+						foreach (Instruction i in (Instruction[])node.End.Value.Operand)
 							CreateEdge(node, i, JumpType.Normal);
 					}
 					
 					// create edges for return instructions
-					if (node.End.OpCode.FlowControl == FlowControl.Return) {
-						switch (node.End.OpCode.Code) {
+					if (node.End.Value.OpCode.FlowControl == FlowControl.Return) {
+						switch (node.End.Value.OpCode.Code) {
 							case Code.Ret:
 								CreateEdge(node, regularExit, JumpType.Normal);
 								break;
 							case Code.Endfinally:
-								ControlFlowNode handlerBlock = FindInnermostHandlerBlock(node.End.Offset);
+								ControlFlowNode handlerBlock = FindInnermostHandlerBlock(node.End.Value.Offset);
 								if (handlerBlock.EndFinallyOrFaultNode == null)
 									throw new InvalidProgramException("Found endfinally in block " + handlerBlock);
 								CreateEdge(node, handlerBlock.EndFinallyOrFaultNode, JumpType.Normal);
 								break;
 							default:
-								throw new NotSupportedException(node.End.OpCode.ToString());
+								throw new NotSupportedException(node.End.Value.OpCode.ToString());
 						}
 					}
 				}
@@ -199,8 +207,8 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		void CreateExceptionalControlFlow()
 		{
 			foreach (ControlFlowNode node in nodes) {
-				if (node.End != null && CanThrowException(node.End.OpCode)) {
-					CreateEdge(node, FindInnermostExceptionHandlerNode(node.End.Offset), JumpType.JumpToExceptionHandler);
+				if (node.End != null && CanThrowException(node.End.Value.OpCode)) {
+					CreateEdge(node, FindInnermostExceptionHandlerNode(node.End.Value.Offset), JumpType.JumpToExceptionHandler);
 				}
 				if (node.ExceptionHandler != null) {
 					if (node.EndFinallyOrFaultNode != null) {
@@ -217,7 +225,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			}
 		}
 		
-		ExceptionHandler FindInnermostExceptionHandler(int instructionOffsetInTryBlock)
+		ExceptionHandler FindInnermostExceptionHandler(uint instructionOffsetInTryBlock)
 		{
 			foreach (ExceptionHandler h in methodBody.ExceptionHandlers) {
 				if (h.TryStart.Offset <= instructionOffsetInTryBlock && instructionOffsetInTryBlock < h.TryEnd.Offset) {
@@ -227,7 +235,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			return null;
 		}
 		
-		ControlFlowNode FindInnermostExceptionHandlerNode(int instructionOffsetInTryBlock)
+		ControlFlowNode FindInnermostExceptionHandlerNode(uint instructionOffsetInTryBlock)
 		{
 			ExceptionHandler h = FindInnermostExceptionHandler(instructionOffsetInTryBlock);
 			if (h != null)
@@ -236,7 +244,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 				return exceptionalExit;
 		}
 		
-		ControlFlowNode FindInnermostHandlerBlock(int instructionOffset)
+		ControlFlowNode FindInnermostHandlerBlock(uint instructionOffset)
 		{
 			foreach (ExceptionHandler h in methodBody.ExceptionHandlers) {
 				if (h.TryStart.Offset <= instructionOffset && instructionOffset < h.TryEnd.Offset
@@ -252,7 +260,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		{
 			Debug.Assert(exceptionHandler.NodeType == ControlFlowNodeType.CatchHandler
 			             || exceptionHandler.NodeType == ControlFlowNodeType.FinallyOrFaultHandler);
-			int offset = exceptionHandler.ExceptionHandler.TryStart.Offset;
+			uint offset = exceptionHandler.ExceptionHandler.TryStart.Offset;
 			for (int i = exceptionHandler.BlockIndex + 1; i < nodes.Count; i++) {
 				ExceptionHandler h = nodes[i].ExceptionHandler;
 				if (h != null && h.TryStart.Offset <= offset && offset < h.TryEnd.Offset)
@@ -269,14 +277,14 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			for (int i = nodes.Count - 1; i >= 0; i--) {
 				ControlFlowNode node = nodes[i];
 				if (node.End != null && node.Outgoing.Count == 1 && node.Outgoing[0].Type == JumpType.LeaveTry) {
-					Debug.Assert(node.End.OpCode == OpCodes.Leave || node.End.OpCode == OpCodes.Leave_S);
+					Debug.Assert(node.End.Value.OpCode == OpCodes.Leave || node.End.Value.OpCode == OpCodes.Leave_S);
 					
 					ControlFlowNode target = node.Outgoing[0].Target;
 					// remove the edge
 					target.Incoming.Remove(node.Outgoing[0]);
 					node.Outgoing.Clear();
 					
-					ControlFlowNode handler = FindInnermostExceptionHandlerNode(node.End.Offset);
+					ControlFlowNode handler = FindInnermostExceptionHandlerNode(node.End.Value.Offset);
 					Debug.Assert(handler.NodeType == ControlFlowNodeType.FinallyOrFaultHandler);
 					
 					CreateEdge(node, handler, JumpType.Normal);
@@ -294,14 +302,14 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			for (int i = nodes.Count - 1; i >= 0; i--) {
 				ControlFlowNode node = nodes[i];
 				if (node.End != null && node.Outgoing.Count == 1 && node.Outgoing[0].Type == JumpType.LeaveTry) {
-					Debug.Assert(node.End.OpCode == OpCodes.Leave || node.End.OpCode == OpCodes.Leave_S);
+					Debug.Assert(node.End.Value.OpCode == OpCodes.Leave || node.End.Value.OpCode == OpCodes.Leave_S);
 					
 					ControlFlowNode target = node.Outgoing[0].Target;
 					// remove the edge
 					target.Incoming.Remove(node.Outgoing[0]);
 					node.Outgoing.Clear();
 					
-					ControlFlowNode handler = FindInnermostExceptionHandlerNode(node.End.Offset);
+					ControlFlowNode handler = FindInnermostExceptionHandlerNode(node.End.Value.Offset);
 					Debug.Assert(handler.NodeType == ControlFlowNodeType.FinallyOrFaultHandler);
 					
 					ControlFlowNode copy = CopyFinallySubGraph(handler, handler.EndFinallyOrFaultNode, target);
@@ -398,7 +406,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		#region CreateEdge methods
 		void CreateEdge(ControlFlowNode fromNode, Instruction toInstruction, JumpType type)
 		{
-			CreateEdge(fromNode, nodes.Single(n => n.Start == toInstruction), type);
+			CreateEdge(fromNode, nodes.Single(n => n.Start.Value == toInstruction), type);
 		}
 		
 		void CreateEdge(ControlFlowNode fromNode, ControlFlowNode toNode, JumpType type)

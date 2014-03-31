@@ -25,7 +25,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.Decompiler.Ast.Transforms
 {
@@ -67,7 +67,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				Annotation annotation = func.Annotation<Annotation>();
 				if (annotation != null) {
 					IdentifierExpression methodIdent = (IdentifierExpression)((InvocationExpression)func).Arguments.Single();
-					MethodReference method = methodIdent.Annotation<MethodReference>();
+					IMethod method = methodIdent.Annotation<IMethod>();
 					if (method != null) {
 						if (HandleAnonymousMethod(objectCreateExpression, obj, method))
 							return null;
@@ -76,26 +76,26 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						methodIdent.Remove();
 						if (!annotation.IsVirtual && obj is ThisReferenceExpression) {
 							// maybe it's getting the pointer of a base method?
-							if (method.DeclaringType.GetElementType() != context.CurrentType) {
+							if (method.DeclaringType.ResolveTypeDef() != context.CurrentType) {
 								obj = new BaseReferenceExpression();
 							}
 						}
-						if (!annotation.IsVirtual && obj is NullReferenceExpression && !method.HasThis) {
+						if (!annotation.IsVirtual && obj is NullReferenceExpression && !method.MethodSig.HasThis) {
 							// We're loading a static method.
 							// However it is possible to load extension methods with an instance, so we compare the number of arguments:
 							bool isExtensionMethod = false;
-							TypeReference delegateType = objectCreateExpression.Type.Annotation<TypeReference>();
+							ITypeDefOrRef delegateType = objectCreateExpression.Type.Annotation<ITypeDefOrRef>();
 							if (delegateType != null) {
-								TypeDefinition delegateTypeDef = delegateType.Resolve();
+								TypeDef delegateTypeDef = delegateType.ResolveTypeDef();
 								if (delegateTypeDef != null) {
-									MethodDefinition invokeMethod = delegateTypeDef.Methods.FirstOrDefault(m => m.Name == "Invoke");
+									MethodDef invokeMethod = delegateTypeDef.Methods.FirstOrDefault(m => m.Name == "Invoke");
 									if (invokeMethod != null) {
-										isExtensionMethod = (invokeMethod.Parameters.Count + 1 == method.Parameters.Count);
+										isExtensionMethod = (invokeMethod.Parameters.Count + 1 == method.MethodSig.GetParams().Count);
 									}
 								}
 							}
 							if (!isExtensionMethod) {
-								obj = new TypeReferenceExpression { Type = AstBuilder.ConvertType(method.DeclaringType) };
+								obj = new TypeReferenceExpression { Type = AstBuilder.ConvertType(context.CurrentMethod.DeclaringType, context.CurrentMethod, method.DeclaringType) };
 							}
 						}
 						// now transform the identifier into a member reference
@@ -113,16 +113,16 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			return base.VisitObjectCreateExpression(objectCreateExpression, data);
 		}
 		
-		internal static bool IsAnonymousMethod(DecompilerContext context, MethodDefinition method)
+		internal static bool IsAnonymousMethod(DecompilerContext context, MethodDef method)
 		{
-			if (method == null || !(method.HasGeneratedName() || method.Name.Contains("$")))
+			if (method == null || !(method.HasGeneratedName() || method.Name.String.Contains("$")))
 				return false;
 			if (!(method.IsCompilerGenerated() || IsPotentialClosure(context, method.DeclaringType)))
 				return false;
 			return true;
 		}
 		
-		bool HandleAnonymousMethod(ObjectCreateExpression objectCreateExpression, Expression target, MethodReference methodRef)
+		bool HandleAnonymousMethod(ObjectCreateExpression objectCreateExpression, Expression target, IMethod methodRef)
 		{
 			if (!context.Settings.AnonymousMethods)
 				return false; // anonymous method decompilation is disabled
@@ -130,14 +130,14 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				return false; // don't copy arbitrary expressions, deal with identifiers only
 			
 			// Anonymous methods are defined in the same assembly
-			MethodDefinition method = methodRef.ResolveWithinSameModule();
+			MethodDef method = methodRef.ResolveMethodWithinSameModule();
 			if (!IsAnonymousMethod(context, method))
 				return false;
 			
 			// Create AnonymousMethodExpression and prepare parameters
 			AnonymousMethodExpression ame = new AnonymousMethodExpression();
 			ame.CopyAnnotationsFrom(objectCreateExpression); // copy ILRanges etc.
-			ame.RemoveAnnotations<MethodReference>(); // remove reference to delegate ctor
+			ame.RemoveAnnotations<IMethod>(); // remove reference to delegate ctor
 			ame.AddAnnotation(method); // add reference to anonymous method
 			ame.Parameters.AddRange(AstBuilder.MakeParameters(method, isLambda: true));
 			ame.HasParameterList = true;
@@ -197,7 +197,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			return true;
 		}
 		
-		internal static bool IsPotentialClosure(DecompilerContext context, TypeDefinition potentialDisplayClass)
+		internal static bool IsPotentialClosure(DecompilerContext context, TypeDef potentialDisplayClass)
 		{
 			if (potentialDisplayClass == null || !potentialDisplayClass.IsCompilerGeneratedOrIsInCompilerGeneratedClass())
 				return false;
@@ -310,23 +310,23 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				ILVariable variable = displayClassAssignmentMatch.Get<AstNode>("variable").Single().Annotation<ILVariable>();
 				if (variable == null)
 					continue;
-				TypeDefinition type = variable.Type.ResolveWithinSameModule();
+				TypeDef type = variable.Type.ToTypeDefOrRef().ResolveWithinSameModule();
 				if (!IsPotentialClosure(context, type))
 					continue;
-				if (displayClassAssignmentMatch.Get<AstType>("type").Single().Annotation<TypeReference>().ResolveWithinSameModule() != type)
+				if (displayClassAssignmentMatch.Get<AstType>("type").Single().Annotation<ITypeDefOrRef>().ResolveWithinSameModule() != type)
 					continue;
 				
 				// Looks like we found a display class creation. Now let's verify that the variable is used only for field accesses:
 				bool ok = true;
 				foreach (var identExpr in blockStatement.Descendants.OfType<IdentifierExpression>()) {
 					if (identExpr.Identifier == variable.Name && identExpr != displayClassAssignmentMatch.Get("variable").Single()) {
-						if (!(identExpr.Parent is MemberReferenceExpression && identExpr.Parent.Annotation<FieldReference>() != null))
+						if (!(identExpr.Parent is MemberReferenceExpression && identExpr.Parent.Annotation<IField>() != null))
 							ok = false;
 					}
 				}
 				if (!ok)
 					continue;
-				Dictionary<FieldReference, AstNode> dict = new Dictionary<FieldReference, AstNode>();
+				Dictionary<IField, AstNode> dict = new Dictionary<IField, AstNode>();
 				
 				// Delete the variable declaration statement:
 				VariableDeclarationStatement displayClassVarDecl = PatternStatementTransform.FindVariableDeclaration(stmt, variable.Name);
@@ -358,7 +358,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					);
 					Match m = closureFieldAssignmentPattern.Match(cur);
 					if (m.Success) {
-						FieldDefinition fieldDef = m.Get<MemberReferenceExpression>("left").Single().Annotation<FieldReference>().ResolveWithinSameModule();
+						FieldDef fieldDef = m.Get<MemberReferenceExpression>("left").Single().Annotation<IField>().ResolveFieldWithinSameModule();
 						AstNode right = m.Get<AstNode>("right").Single();
 						bool isParameter = false;
 						bool isDisplayClassParentPointerAssignment = false;
@@ -368,7 +368,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 							// handle parameters only if the whole method contains no other occurrence except for 'right'
 							ILVariable v = right.Annotation<ILVariable>();
 							isParameter = v.IsParameter && parameterOccurrances.Count(c => c == v) == 1;
-							if (!isParameter && IsPotentialClosure(context, v.Type.ResolveWithinSameModule())) {
+							if (!isParameter && IsPotentialClosure(context, v.Type.ToTypeDefOrRef().ResolveWithinSameModule())) {
 								// parent display class within the same method
 								// (closure2.localsX = closure1;)
 								isDisplayClassParentPointerAssignment = true;
@@ -379,8 +379,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 							MemberReferenceExpression mre = m.Get<MemberReferenceExpression>("right").Single();
 							do {
 								// descend into the targets of the mre as long as the field types are closures
-								FieldDefinition fieldDef2 = mre.Annotation<FieldReference>().ResolveWithinSameModule();
-								if (fieldDef2 == null || !IsPotentialClosure(context, fieldDef2.FieldType.ResolveWithinSameModule())) {
+								FieldDef fieldDef2 = mre.Annotation<FieldDef>().ResolveFieldWithinSameModule();
+								if (fieldDef2 == null || !IsPotentialClosure(context, fieldDef2.FieldType.ToTypeDefOrRef().ResolveWithinSameModule())) {
 									break;
 								}
 								// if we finally get to a this reference, it's copying a display class parent pointer
@@ -403,7 +403,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				
 				// Now create variables for all fields of the display class (except for those that we already handled as parameters)
 				List<Tuple<AstType, ILVariable>> variablesToDeclare = new List<Tuple<AstType, ILVariable>>();
-				foreach (FieldDefinition field in type.Fields) {
+				foreach (FieldDef field in type.Fields) {
 					if (field.IsStatic)
 						continue; // skip static fields
 					if (dict.ContainsKey(field)) // skip field if it already was handled as parameter
@@ -417,9 +417,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					{
 						IsGenerated = true,
 						Name = capturedVariableName,
-						Type = field.FieldType,
+						Type = (TypeSig)ILAstBuilder.ResolveGenericParams(field.DeclaringType, field.FieldType),
 					};
-					variablesToDeclare.Add(Tuple.Create(AstBuilder.ConvertType(field.FieldType, field), ilVar));
+					variablesToDeclare.Add(Tuple.Create(AstBuilder.ConvertType(context.CurrentMethod.DeclaringType, context.CurrentMethod, field.FieldType, field), ilVar));
 					dict[field] = new IdentifierExpression(capturedVariableName).WithAnnotation(ilVar);
 				}
 				
@@ -428,7 +428,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					if (identExpr.Identifier == variable.Name) {
 						MemberReferenceExpression mre = (MemberReferenceExpression)identExpr.Parent;
 						AstNode replacement;
-						if (dict.TryGetValue(mre.Annotation<FieldReference>().ResolveWithinSameModule(), out replacement)) {
+						if (dict.TryGetValue(mre.Annotation<IField>().ResolveFieldWithinSameModule(), out replacement)) {
 							mre.ReplaceWith(replacement.Clone());
 						}
 					}
