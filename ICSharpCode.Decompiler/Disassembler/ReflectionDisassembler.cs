@@ -168,7 +168,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			WriteEnum(method.CallingConvention & (CallingConvention)0x1f, callingConvention);
 			
 			//return type
-			method.ReturnType.WriteTo(output);
+			method.ReturnType.ResolveGenericParams(method).WriteTo(output);
 			output.Write(' ');
 			if (method.Parameters.ReturnParameter.HasParamDef && method.Parameters.ReturnParameter.ParamDef.HasMarshalInfo) {
 				WriteMarshalInfo(method.Parameters.ReturnParameter.ParamDef.FieldMarshal);
@@ -184,10 +184,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			//( params )
 			output.Write(" (");
-			if (method.Parameters.Count > 0) {
+			if (method.MethodSig.GetParams().Count > 0) {
 				output.WriteLine();
 				output.Indent();
-				WriteParameters(method.Parameters);
+				WriteParameters(method, method.Parameters);
 				output.Unindent();
 			}
 			output.Write(") ");
@@ -591,10 +591,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 		}
 		#endregion
 		
-		void WriteParameters(ParameterList parameters)
+		void WriteParameters(MethodDef method, ParameterList parameters)
 		{
 			for (int i = 0; i < parameters.Count; i++) {
 				var p = parameters[i];
+				if (p.IsHiddenThisParameter)
+					continue;
 				var paramDef = p.ParamDef;
 				if (paramDef != null)
 				{
@@ -605,7 +607,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 					if (paramDef.IsOptional)
 						output.Write("[opt] ");
 				}
-				p.Type.WriteTo(output);
+				p.Type.ResolveGenericParams(method).WriteTo(output);
 				output.Write(' ');
 				if (paramDef != null && paramDef.HasFieldMarshal) {
 					WriteMarshalInfo(paramDef.FieldMarshal);
@@ -617,12 +619,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 		}
 		
-		void WriteParameters(IList<TypeSig> parameters)
+		void WriteParameters(TypeDef type, IList<TypeSig> parameters)
 		{
 			for (int i = 0; i < parameters.Count; i++) {
 				if (i != 0)
 					output.Write(", ");
-				parameters[i].WriteTo(output);
+				parameters[i].ResolveGenericParams(type).WriteTo(output);
 			}
 		}
 		
@@ -701,7 +703,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (field.HasMarshalInfo) {
 				WriteMarshalInfo(field.FieldMarshal);
 			}
-			field.FieldType.WriteTo(output);
+			field.FieldType.ResolveGenericParams(field.DeclaringType).WriteTo(output);
 			output.Write(' ');
 			output.Write(DisassemblerHelpers.Escape(field.Name));
 			if ((field.Attributes & FieldAttributes.HasFieldRVA) == FieldAttributes.HasFieldRVA) {
@@ -741,7 +743,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Write(DisassemblerHelpers.Escape(property.Name));
 			
 			output.Write("(");
-			WriteParameters(property.PropertySig.GetParams());
+			WriteParameters(property.DeclaringType, property.PropertySig.GetParameters());
 			output.Write(")");
 			
 			OpenBlock(false);
@@ -780,7 +782,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			output.WriteDefinition(".event ", ev);
 			WriteFlags(ev.Attributes, eventAttributes);
-			ev.EventType.WriteTo(output, ILNameSyntax.TypeName);
+			ev.EventType.ToTypeSig().ResolveGenericParams(ev.DeclaringType).WriteTo(output, ILNameSyntax.TypeName);
 			output.Write(' ');
 			output.Write(DisassemblerHelpers.Escape(ev.Name));
 			OpenBlock(false);
@@ -851,7 +853,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (type.BaseType != null) {
 				output.Indent();
 				output.Write("extends ");
-				type.BaseType.WriteTo(output, ILNameSyntax.TypeName);
+				type.BaseType.ToTypeSig().ResolveGenericParams(type).WriteTo(output, ILNameSyntax.TypeName);
 				output.WriteLine();
 				output.Unindent();
 			}
@@ -864,7 +866,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 						output.Write("implements ");
 					else
 						output.Write("           ");
-					type.Interfaces[index].Interface.WriteTo(output, ILNameSyntax.TypeName);
+					type.Interfaces[index].Interface.ToTypeSig().ResolveGenericParams(type).WriteTo(output, ILNameSyntax.TypeName);
 				}
 				output.WriteLine();
 				output.Unindent();
@@ -1135,7 +1137,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 					if (exportedType.DeclaringType != null)
 						output.WriteLine(".class extern {0}", DisassemblerHelpers.Escape(exportedType.DeclaringType.FullName));
 					else
-						output.WriteLine(".assembly extern {0}", DisassemblerHelpers.Escape(exportedType.Scope.ScopeName));
+						output.WriteLine(".assembly extern {0}", DisassemblerHelpers.Escape(exportedType.Scope.GetScopeName()));
 					CloseBlock();
 				}
 			}

@@ -62,8 +62,8 @@ namespace ICSharpCode.Decompiler.Ast
 			if (parentMethod.Name != childMethod.Name)
 				return false;
 
-			var parentParams = parentMethod.MethodSig.GetParams();
-			var childParams = childMethod.MethodSig.GetParams();
+			var parentParams = parentMethod.MethodSig.GetParameters();
+			var childParams = childMethod.MethodSig.GetParameters();
 			if (parentParams.Count > 0 || childParams.Count > 0)
 				if (parentParams.Count == 0 || childParams.Count == 0 || parentParams.Count != childParams.Count)
 					return false;
@@ -88,8 +88,8 @@ namespace ICSharpCode.Decompiler.Ast
 			if (parentProperty.Name != childProperty.Name)
 				return false;
 
-			var parentParams = parentProperty.PropertySig.GetParams();
-			var childParams = childProperty.PropertySig.GetParams();
+			var parentParams = parentProperty.PropertySig.GetParameters();
+			var childParams = childProperty.PropertySig.GetParameters();
 			if (parentParams.Count > 0 || childParams.Count > 0)
 				if (parentParams.Count == 0 || childParams.Count == 0 || parentParams.Count != childParams.Count)
 					return false;
@@ -145,6 +145,16 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 
 			return new SigComparer().Equals(mCandidateSig, mMethod.MethodSig);
+		}
+
+		public static bool MatchInterfaceMethod(MethodDef candidate, MethodDef method, ITypeDefOrRef interfaceContextType)
+		{
+			var genericInstSig = interfaceContextType.TryGetGenericInstSig();
+			if (genericInstSig != null) {
+				return MatchMethod(candidate, GenericArgumentResolver.Resolve(candidate.MethodSig, genericInstSig.GenericArguments, null), method);
+			} else {
+				return MatchMethod(candidate, candidate.MethodSig, method);
+			}
 		}
 
 		/// <summary>

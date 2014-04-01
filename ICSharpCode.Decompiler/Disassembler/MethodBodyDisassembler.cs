@@ -51,7 +51,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			// start writing IL code
 			CilBody body = method.Body;
-			output.WriteLine("// Method begins at RVA 0x{0:x4}", method.RVA);
+			output.WriteLine("// Method begins at RVA 0x{0:x8}", (uint)method.RVA);
 			output.WriteLine("// Metadata token 0x{0:x8} (RID {1})", method.MDToken.ToInt32(), method.Rid);
 			output.WriteLine("// Code size {0} (0x{0:x})", body.GetCodeSize());
 			output.WriteLine(".maxstack {0}", body.MaxStack);
@@ -83,11 +83,11 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (detectControlStructure && body.Instructions.Count > 0) {
 				int index = 0;
 				HashSet<uint> branchTargets = GetBranchTargets(body.Instructions);
-				WriteStructureBody(body, new ILStructure(body), branchTargets, ref index, methodMapping, method.Body.GetCodeSize());
+				WriteStructureBody(method, body, new ILStructure(body), branchTargets, ref index, methodMapping, method.Body.GetCodeSize());
 			} else {
 				foreach (var inst in method.Body.Instructions) {
 					var startLocation = output.Location;
-					inst.WriteTo(output);
+					inst.WriteTo(method, output);
 					
 					if (methodMapping != null) {
 						// add IL code mappings - used in debugger
@@ -106,7 +106,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				if (method.Body.HasExceptionHandlers) {
 					output.WriteLine();
 					foreach (var eh in method.Body.ExceptionHandlers) {
-						eh.WriteTo(output);
+						eh.WriteTo(method, output);
 						output.WriteLine();
 					}
 				}
@@ -176,7 +176,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Indent();
 		}
 		
-		void WriteStructureBody(CilBody body, ILStructure s, HashSet<uint> branchTargets, ref int index, MemberMapping currentMethodMapping, int codeSize)
+		void WriteStructureBody(MethodDef method, CilBody body, ILStructure s, HashSet<uint> branchTargets, ref int index, MemberMapping currentMethodMapping, int codeSize)
 		{
 			bool isFirstInstructionInStructure = true;
 			bool prevInstructionWasBranch = false;
@@ -187,14 +187,14 @@ namespace ICSharpCode.Decompiler.Disassembler
 				if (childIndex < s.Children.Count && s.Children[childIndex].StartOffset <= offset && offset < s.Children[childIndex].EndOffset) {
 					ILStructure child = s.Children[childIndex++];
 					WriteStructureHeader(child);
-					WriteStructureBody(body, child, branchTargets, ref index, currentMethodMapping, codeSize);
+					WriteStructureBody(method, body, child, branchTargets, ref index, currentMethodMapping, codeSize);
 					WriteStructureFooter(child);
 				} else {
 					if (!isFirstInstructionInStructure && (prevInstructionWasBranch || branchTargets.Contains(offset))) {
 						output.WriteLine(); // put an empty line after branches, and in front of branch targets
 					}
 					var startLocation = output.Location;
-					inst.WriteTo(output);
+					inst.WriteTo(method, output);
 					
 					// add IL code mappings - used in debugger
 					if (currentMethodMapping != null) {

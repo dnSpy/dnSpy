@@ -192,7 +192,7 @@ namespace ICSharpCode.Decompiler
 		/// <returns>A code mapping.</returns>
 		public static SourceCodeMapping GetInstructionByTokenAndOffset(
 			this MemberMapping codeMapping,
-			int ilOffset,
+			uint ilOffset,
 			out bool isMatch)
 		{
 			isMatch = false;
@@ -228,7 +228,7 @@ namespace ICSharpCode.Decompiler
 		/// <remarks>It is possible to exist to different types from different assemblies with the same metadata token.</remarks>
 		public static bool GetInstructionByTokenAndOffset(
 			this MemberMapping mapping,
-			int ilOffset,
+			uint ilOffset,
 			out IMemberRef member,
 			out int line)
 		{

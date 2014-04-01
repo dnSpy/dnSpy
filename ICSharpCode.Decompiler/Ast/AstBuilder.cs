@@ -1024,7 +1024,7 @@ namespace ICSharpCode.Decompiler.Ast
 			astIndexer.ReturnType = astProp.ReturnType.Detach();
 			astIndexer.Getter = astProp.Getter.Detach();
 			astIndexer.Setter = astProp.Setter.Detach();
-			astIndexer.Parameters.AddRange(MakeParameters(propDef.DeclaringType, propDef));
+			astIndexer.Parameters.AddRange(MakeParameters(propDef.DeclaringType, null, propDef.GetParameters().ToList()));
 			return astIndexer;
 		}
 		
@@ -1121,30 +1121,6 @@ namespace ICSharpCode.Decompiler.Ast
 				return parameters.Concat(new[] { new ParameterDeclaration { Type = new PrimitiveType("__arglist") } });
 			} else {
 				return parameters;
-			}
-		}
-		
-		public static IEnumerable<ParameterDeclaration> MakeParameters(TypeDef typeContext, PropertyDef property)
-		{
-			if (property.GetMethod != null)
-			{
-				foreach (var param in MakeParameters(typeContext, null, property.GetMethod.Parameters))
-					yield return param;
-				yield break;
-			}
-			if (property.SetMethod != null)
-			{
-				foreach (var param in MakeParameters(typeContext, null, property.SetMethod.Parameters).Skip(1))
-					yield return param;
-				yield break;
-			}
-			
-			int i = 0;
-			foreach (TypeSig param in property.PropertySig.GetParams())
-			{
-				ParameterDeclaration astParam = new ParameterDeclaration();
-				astParam.Type = ConvertType(typeContext, null, param, null);
-				yield return astParam;
 			}
 		}
 		

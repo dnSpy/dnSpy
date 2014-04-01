@@ -586,7 +586,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		internal static void TranslateFieldsToLocalAccess(List<ILNode> newBody, Dictionary<FieldDef, ILVariable> fieldToParameterMap)
 		{
-			var fieldToLocalMap = new DefaultDictionary<FieldDef, ILVariable>(f => new ILVariable { Name = f.Name, Type = (TypeSig)ILAstBuilder.ResolveGenericParams(f.DeclaringType, f.FieldType) });
+			var fieldToLocalMap = new DefaultDictionary<FieldDef, ILVariable>(f => new ILVariable { Name = f.Name, Type = f.FieldType.ResolveGenericParams(f.DeclaringType) });
 			foreach (ILNode node in newBody) {
 				foreach (ILExpression expr in node.GetSelfAndChildrenRecursive<ILExpression>()) {
 					FieldDef field = GetFieldDefinition(expr.Operand as IField);

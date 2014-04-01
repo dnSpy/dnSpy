@@ -249,7 +249,7 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.CallGetter:
 				case ILCode.CallvirtGetter:
 					IMethod mr = (IMethod)expr.Operand;
-					if (mr.Name.String.StartsWith("get_", StringComparison.OrdinalIgnoreCase) && mr.MethodSig.GetParams().Count == 0) {
+					if (mr.Name.String.StartsWith("get_", StringComparison.OrdinalIgnoreCase) && mr.MethodSig.GetParameters().Count == 0) {
 						// use name from properties, but not from indexers
 						return CleanUpVariableName(mr.Name.String.Substring(4));
 					} else if (mr.Name.String.StartsWith("Get", StringComparison.OrdinalIgnoreCase) && mr.Name.String.Length >= 4 && char.IsUpper(mr.Name.String[3])) {
@@ -278,7 +278,7 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.CallSetter:
 				case ILCode.CallvirtSetter:
 					IMethod methodRef = (IMethod)parent.Operand;
-					if (methodRef.MethodSig.GetParams().Count == 1 && i == parent.Arguments.Count - 1) {
+					if (methodRef.MethodSig.GetParameters().Count == 1 && i == parent.Arguments.Count - 1) {
 						// argument might be value of a setter
 						if (methodRef.Name.String.StartsWith("set_", StringComparison.OrdinalIgnoreCase)) {
 							return CleanUpVariableName(methodRef.Name.String.Substring(4));

@@ -692,7 +692,7 @@ namespace ICSharpCode.Decompiler.Ast
 							loadName = "methodof";
 							handleName = "MethodHandle";
 							IMethod mr = (IMethod)operand;
-							var methodParameters = mr.MethodSig.GetParams().Select(p => new TypeReferenceExpression(AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, p)));
+							var methodParameters = mr.MethodSig.GetParameters().Select(p => new TypeReferenceExpression(AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, p)));
 							referencedEntity = AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, mr.DeclaringType).Invoke(mr.Name, methodParameters).WithAnnotation(mr);
 						} else {
 							loadName = "ldtoken";

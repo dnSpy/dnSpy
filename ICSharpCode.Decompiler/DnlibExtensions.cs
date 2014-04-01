@@ -356,7 +356,7 @@ namespace ICSharpCode.Decompiler
 				   method.DeclaringType.Events.Any(propertyDef => propertyDef.AddMethod == method || propertyDef.RemoveMethod == method || propertyDef.InvokeMethod == method);
 		}
 
-		public static IList<TypeSig> GetParams(this MethodBaseSig methodSig)
+		public static IList<TypeSig> GetParameters(this MethodBaseSig methodSig)
 		{
 			if (methodSig.ParamsAfterSentinel != null)
 				return methodSig.Params
@@ -381,6 +381,110 @@ namespace ICSharpCode.Decompiler
 		public static bool IsCorlibType(this ITypeDefOrRef type, string ns, string name)
 		{
 			return type.DefinitionAssembly.IsCorLib() && type.Namespace == ns && type.Name == name;
+		}
+
+		public static IEnumerable<Parameter> GetParameters(this PropertyDef property)
+		{
+			if (property.GetMethod != null)
+			{
+				foreach (var param in property.GetMethod.Parameters)
+					yield return param;
+				yield break;
+			}
+			if (property.SetMethod != null)
+			{
+				int last = property.SetMethod.Parameters.Count - 1;
+				foreach (var param in property.SetMethod.Parameters)
+				{
+					if (param.Index != last)
+						yield return param;
+				}
+				yield break;
+			}
+
+			int i = 0;
+			foreach (TypeSig param in property.PropertySig.GetParameters())
+			{
+				yield return new Parameter(i,i,param);
+				i++;
+			}
+		}
+
+		public static string GetScopeName(this IScope scope)
+		{
+			if (scope is AssemblyRef)
+				return ((AssemblyRef)scope).Name;
+			else
+				return scope.ScopeName;
+		}
+
+		public static object ResolveGenericParams(this object operand, MethodDef methodContext)
+		{
+			if (methodContext == null)
+				return operand;
+			var typeParams = methodContext.DeclaringType.GenericParameters
+				.Select(param => (TypeSig)new GenericTypeParam(param))
+				.ToList();
+			var methodParams = methodContext.GenericParameters
+				.Select(param => (TypeSig)new GenericMethodParam(param))
+				.ToList();
+			return ResolveGenericParams(typeParams, methodParams, operand);
+		}
+		public static TypeSig ResolveGenericParams(this TypeSig type, MethodDef methodContext)
+		{
+			if (methodContext == null)
+				return type;
+			var typeParams = methodContext.DeclaringType.GenericParameters
+				.Select(param => (TypeSig)new GenericTypeParam(param))
+				.ToList();
+			var methodParams = methodContext.GenericParameters
+				.Select(param => (TypeSig)new GenericMethodParam(param))
+				.ToList();
+			return (TypeSig)ResolveGenericParams(typeParams, methodParams, type);
+		}
+		public static TypeSig ResolveGenericParams(this TypeSig type, TypeDef typeContext)
+		{
+			if (typeContext == null)
+				return type;
+			var typeParams = typeContext.GenericParameters
+				.Select(param => (TypeSig)new GenericTypeParam(param))
+				.ToList();
+			return (TypeSig)ResolveGenericParams(typeParams, null, type);
+		}
+		internal static object ResolveGenericParams(List<TypeSig> typeParams, List<TypeSig> methodParams, object operand)
+		{
+			if (operand is MemberRef)
+			{
+				MemberRef memberRef = (MemberRef)operand;
+				if (memberRef.IsFieldRef)
+					return new MemberRefUser(
+						memberRef.Module, memberRef.Name,
+						new FieldSig((TypeSig)ResolveGenericParams(typeParams, methodParams, memberRef.FieldSig.Type)),
+						(IMemberRefParent)ResolveGenericParams(typeParams, methodParams, memberRef.DeclaringType)) { Rid = memberRef.Rid };
+				else
+					return new MemberRefUser(
+						memberRef.Module, memberRef.Name,
+						GenericArgumentResolver.Resolve(memberRef.MethodSig, typeParams, methodParams),
+						(IMemberRefParent)ResolveGenericParams(typeParams, methodParams, memberRef.DeclaringType)) { Rid = memberRef.Rid };
+			}
+			else if (operand is MethodSpec)
+			{
+				MethodSpec spec = (MethodSpec)operand;
+				return new MethodSpecUser(
+					(IMethodDefOrRef)ResolveGenericParams(typeParams, methodParams, spec.Method),
+					new GenericInstMethodSig(spec.GenericInstMethodSig.GenericArguments.Select(arg => (TypeSig)ResolveGenericParams(typeParams, methodParams, arg)).ToList())
+					) { Rid = spec.Rid };
+			}
+			else if (operand is TypeSpec)
+			{
+				TypeSpec spec = (TypeSpec)operand;
+				return new TypeSpecUser((TypeSig)ResolveGenericParams(typeParams, methodParams, spec.TypeSig)) { Rid = spec.Rid };
+			}
+			else if (operand is TypeSig)
+			{
+				return GenericArgumentResolver.Resolve((TypeSig)operand, typeParams, methodParams);
+			}
+			return operand;
 		}
 	}
 }

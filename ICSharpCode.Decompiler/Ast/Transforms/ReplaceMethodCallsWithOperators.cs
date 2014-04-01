@@ -339,7 +339,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				IMethod method = m.Get<AstNode>("method").Single().Annotation<IMethod>();
 				if (m.Has("declaringType")) {
 					Expression newNode = m.Get<AstType>("declaringType").Single().Detach().Member(method.Name);
-					newNode = newNode.Invoke(method.MethodSig.GetParams().Select(p => new TypeReferenceExpression(AstBuilder.ConvertType(context.CurrentMethod.DeclaringType, context.CurrentMethod, p))));
+					newNode = newNode.Invoke(method.MethodSig.GetParameters().Select(p => new TypeReferenceExpression(AstBuilder.ConvertType(context.CurrentMethod.DeclaringType, context.CurrentMethod, p))));
 					newNode.AddAnnotation(method);
 					m.Get<AstNode>("method").Single().ReplaceWith(newNode);
 				}

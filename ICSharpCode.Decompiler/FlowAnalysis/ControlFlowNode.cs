@@ -262,7 +262,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 				case ControlFlowNodeType.CatchHandler:
 				case ControlFlowNodeType.FinallyOrFaultHandler:
 					writer.Write("Block #{0}: {1}: ", BlockIndex, NodeType);
-					Disassembler.DisassemblerHelpers.WriteTo(ExceptionHandler, new PlainTextOutput(writer));
+					Disassembler.DisassemblerHelpers.WriteTo(ExceptionHandler, null, new PlainTextOutput(writer));
 					break;
 				default:
 					writer.Write("Block #{0}: {1}", BlockIndex, NodeType);
@@ -278,7 +278,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			}
 			foreach (Instruction inst in this.Instructions) {
 				writer.WriteLine();
-				Disassembler.DisassemblerHelpers.WriteTo(inst, new PlainTextOutput(writer));
+				Disassembler.DisassemblerHelpers.WriteTo(inst, null, new PlainTextOutput(writer));
 			}
 			if (UserData != null) {
 				writer.WriteLine();

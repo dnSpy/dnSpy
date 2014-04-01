@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using dnlib.DotNet;
+﻿using dnlib.DotNet;
 
-namespace ICSharpCode.Decompiler.ILAst
+namespace ICSharpCode.Decompiler
 {
 	class GenericTypeParam : GenericVar, IGenericParam
 	{
@@ -28,7 +24,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		public GenericParam GenericParameter { get; private set; }
 	}
 
-	interface IGenericParam
+	public interface IGenericParam
 	{
 		GenericParam GenericParameter { get; }
 	}

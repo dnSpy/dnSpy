@@ -213,7 +213,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						}
 						if (inferredType == null)
 							inferredType = corLib.Object;
-						v.Type = (TypeSig)ILAstBuilder.ResolveGenericParams(context.CurrentMethod, inferredType);
+						v.Type = inferredType.ResolveGenericParams(context.CurrentMethod);
 						// Assign inferred type to all the assignments (in case they used different inferred types):
 						foreach (ExpressionToInfer expr in pair.Value) {
 							expr.Expression.InferredType = inferredType;
@@ -298,7 +298,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					{
 						ILVariable v = (ILVariable)expr.Operand;
 						if (v.Type == null && singleLoadVariables.Contains(v)) {
-							v.Type = (TypeSig)ILAstBuilder.ResolveGenericParams(context.CurrentMethod, expectedType);
+							v.Type = expectedType.ResolveGenericParams(context.CurrentMethod);
 						}
 						return v.Type;
 					}
@@ -320,7 +320,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.CallvirtSetter:
 					{
 						IMethod method = (IMethod)expr.Operand;
-						var parameters = method.MethodSig.GetParams();
+						var parameters = method.MethodSig.GetParameters();
 						if (forceInferChildren) {
 							for (int i = 0; i < expr.Arguments.Count; i++) {
 								if (i == 0 && method.MethodSig.HasThis) {
@@ -331,7 +331,7 @@ namespace ICSharpCode.Decompiler.ILAst
 							}
 						}
 						if (expr.Code == ILCode.CallSetter || expr.Code == ILCode.CallvirtSetter) {
-							return SubstituteTypeArgs(method.MethodSig.GetParams().Last(), method: method);
+							return SubstituteTypeArgs(method.MethodSig.GetParameters().Last(), method: method);
 						} else {
 							return SubstituteTypeArgs(method.MethodSig.RetType, method: method);
 						}
@@ -340,7 +340,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					{
 						IMethod ctor = (IMethod)expr.Operand;
 						if (forceInferChildren) {
-							var parameters = ctor.MethodSig.GetParams();
+							var parameters = ctor.MethodSig.GetParameters();
 							for (int i = 0; i < parameters.Count; i++) {
 								InferTypeForExpression(expr.Arguments[i], SubstituteTypeArgs(parameters[i], null, ctor));
 							}

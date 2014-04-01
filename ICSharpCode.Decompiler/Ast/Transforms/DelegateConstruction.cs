@@ -90,7 +90,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 								if (delegateTypeDef != null) {
 									MethodDef invokeMethod = delegateTypeDef.Methods.FirstOrDefault(m => m.Name == "Invoke");
 									if (invokeMethod != null) {
-										isExtensionMethod = (invokeMethod.Parameters.Count + 1 == method.MethodSig.GetParams().Count);
+										isExtensionMethod = (invokeMethod.Parameters.Count + 1 == method.MethodSig.GetParameters().Count);
 									}
 								}
 							}
@@ -417,7 +417,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					{
 						IsGenerated = true,
 						Name = capturedVariableName,
-						Type = (TypeSig)ILAstBuilder.ResolveGenericParams(field.DeclaringType, field.FieldType),
+						Type = field.FieldType.ResolveGenericParams(field.DeclaringType),
 					};
 					variablesToDeclare.Add(Tuple.Create(AstBuilder.ConvertType(context.CurrentMethod.DeclaringType, context.CurrentMethod, field.FieldType, field), ilVar));
 					dict[field] = new IdentifierExpression(capturedVariableName).WithAnnotation(ilVar);
