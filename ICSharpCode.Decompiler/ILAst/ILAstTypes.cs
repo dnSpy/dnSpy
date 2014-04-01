@@ -134,15 +134,26 @@ namespace ICSharpCode.Decompiler.ILAst
 	{
 		public class CatchBlock: ILBlock
 		{
+			public bool IsFilter;
 			public TypeSig ExceptionType;
 			public ILVariable ExceptionVariable;
 			
 			public override void WriteTo(ITextOutput output)
 			{
-				output.Write("catch ");
-				output.WriteReference(ExceptionType.FullName, ExceptionType);
-				if (ExceptionVariable != null) {
-					output.Write(' ');
+				if (IsFilter) {
+					output.Write("filter ");
+					output.Write(ExceptionVariable.Name);
+				}
+				else if (ExceptionType != null) {
+					output.Write("catch ");
+					output.WriteReference(ExceptionType.FullName, ExceptionType);
+					if (ExceptionVariable != null) {
+						output.Write(' ');
+						output.Write(ExceptionVariable.Name);
+					}
+				}
+				else {
+					output.Write("handler ");
 					output.Write(ExceptionVariable.Name);
 				}
 				output.WriteLine(" {");
@@ -152,11 +163,27 @@ namespace ICSharpCode.Decompiler.ILAst
 				output.WriteLine("}");
 			}
 		}
+		public class FilterILBlock: CatchBlock
+		{
+			public FilterILBlock()
+			{
+				IsFilter = true;
+			}
+
+			public CatchBlock HandlerBlock;
+			
+			public override void WriteTo(ITextOutput output)
+			{
+				base.WriteTo(output);
+				HandlerBlock.WriteTo(output);
+			}
+		}
 		
 		public ILBlock          TryBlock;
 		public List<CatchBlock> CatchBlocks;
 		public ILBlock          FinallyBlock;
 		public ILBlock          FaultBlock;
+		public FilterILBlock    FilterBlock;
 		
 		public override IEnumerable<ILNode> GetChildren()
 		{
@@ -169,6 +196,11 @@ namespace ICSharpCode.Decompiler.ILAst
 				yield return this.FaultBlock;
 			if (this.FinallyBlock != null)
 				yield return this.FinallyBlock;
+			if (this.FilterBlock != null)
+			{
+				yield return this.FilterBlock;
+				yield return this.FilterBlock.HandlerBlock;
+			}
 		}
 		
 		public override void WriteTo(ITextOutput output)
@@ -194,6 +226,9 @@ namespace ICSharpCode.Decompiler.ILAst
 				FinallyBlock.WriteTo(output);
 				output.Unindent();
 				output.WriteLine("}");
+			}
+			if (FilterBlock != null) {
+				FilterBlock.WriteTo(output);
 			}
 		}
 	}

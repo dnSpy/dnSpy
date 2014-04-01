@@ -205,14 +205,22 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		// Virtual instructions to load exception on stack
 		Dictionary<ExceptionHandler, ByteCode> ldexceptions = new Dictionary<ExceptionHandler, ILAstBuilder.ByteCode>();
-		
+		Dictionary<ExceptionHandler, ByteCode> ldfilters = new Dictionary<ExceptionHandler, ILAstBuilder.ByteCode>();
+
 		DecompilerContext context;
 
 		static readonly Dictionary<Code, ILCode> ilCodeTranslation =
 			OpCodes.OneByteOpCodes
 			.Concat(OpCodes.TwoByteOpCodes)
-			.Where(opCode => opCode.OpCodeType != OpCodeType.Nternal)
-			.Select(opCode => new { Code = opCode.Code, ILCode = (ILCode)Enum.Parse(typeof(ILCode), opCode.Code.ToString()) })
+			.GroupBy(opCode => opCode.Code)
+			.Select(group => group.First())
+			.Select(opCode => new
+			{
+				Code = opCode.Code,
+				ILCode = opCode.OpCodeType == OpCodeType.Nternal ?
+					ILCode.Nop :
+					(ILCode)Enum.Parse(typeof(ILCode), opCode.Code.ToString())
+			})
 			.ToDictionary(translation => translation.Code, translation => translation.ILCode);
 		
 		public List<ILNode> Build(MethodDef methodDef, bool optimize, DecompilerContext context)
@@ -311,7 +319,7 @@ namespace ICSharpCode.Decompiler.ILAst
 							PopCount = 0,
 							PushCount = 1
 						};
-						// TODO: ldexceptions[ex] = ldexception;
+						ldfilters[ex] = ldexception;
 						filterStart.StackBefore = new StackSlot[] { new StackSlot(new [] { ldexception }, null) };
 						filterStart.VariablesBefore = VariableSlot.MakeUknownState(varCount);
 						agenda.Push(filterStart);
@@ -697,6 +705,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					HashSet<ExceptionHandler> nestedEHs = new HashSet<ExceptionHandler>(ehs.Where(e => (eh.HandlerStart.Offset <= e.TryStart.Offset && e.TryEnd.Offset < handlerEndOffset) || (eh.HandlerStart.Offset < e.TryStart.Offset && e.TryEnd.Offset <= handlerEndOffset)));
 					ehs.ExceptWith(nestedEHs);
 					List<ILNode> handlerAst = ConvertToAst(body.CutRange(startIdx, endIdx - startIdx), nestedEHs);
+
 					if (eh.HandlerType == ExceptionHandlerType.Catch) {
 						ILTryCatchBlock.CatchBlock catchBlock = new ILTryCatchBlock.CatchBlock() {
 							ExceptionType = eh.CatchType.ToTypeSig(),
@@ -704,39 +713,36 @@ namespace ICSharpCode.Decompiler.ILAst
 						};
 						// Handle the automatically pushed exception on the stack
 						ByteCode ldexception = ldexceptions[eh];
-						if (ldexception.StoreTo == null || ldexception.StoreTo.Count == 0) {
-							// Exception is not used
-							catchBlock.ExceptionVariable = null;
-						} else if (ldexception.StoreTo.Count == 1) {
-							ILExpression first = catchBlock.Body[0] as ILExpression;
-							if (first != null &&
-							    first.Code == ILCode.Pop &&
-							    first.Arguments[0].Code == ILCode.Ldloc &&
-							    first.Arguments[0].Operand == ldexception.StoreTo[0])
-							{
-								// The exception is just poped - optimize it all away;
-								if (context.Settings.AlwaysGenerateExceptionVariableForCatchBlocks)
-									catchBlock.ExceptionVariable = new ILVariable() { Name = "ex_" + eh.HandlerStart.Offset.ToString("X2"), IsGenerated = true };
-								else
-									catchBlock.ExceptionVariable = null;
-								catchBlock.Body.RemoveAt(0);
-							} else {
-								catchBlock.ExceptionVariable = ldexception.StoreTo[0];
-							}
-						} else {
-							ILVariable exTemp = new ILVariable() { Name = "ex_" + eh.HandlerStart.Offset.ToString("X2"), IsGenerated = true };
-							catchBlock.ExceptionVariable = exTemp;
-							foreach(ILVariable storeTo in ldexception.StoreTo) {
-								catchBlock.Body.Insert(0, new ILExpression(ILCode.Stloc, storeTo, new ILExpression(ILCode.Ldloc, exTemp)));
-							}
-						}
+						ConvertExceptionVariable(eh, catchBlock, ldexception);
 						tryCatchBlock.CatchBlocks.Add(catchBlock);
 					} else if (eh.HandlerType == ExceptionHandlerType.Finally) {
 						tryCatchBlock.FinallyBlock = new ILBlock(handlerAst);
 					} else if (eh.HandlerType == ExceptionHandlerType.Fault) {
 						tryCatchBlock.FaultBlock = new ILBlock(handlerAst);
+					} else if (eh.HandlerType == ExceptionHandlerType.Filter) {
+						ILTryCatchBlock.CatchBlock catchBlock = new ILTryCatchBlock.CatchBlock() {
+							ExceptionType = eh.CatchType.ToTypeSig(),
+							Body = handlerAst
+						};
+						// Handle the automatically pushed exception on the stack
+						ByteCode ldexception = ldexceptions[eh];
+						ConvertExceptionVariable(eh, catchBlock, ldexception);
+						
+						// Extract the filter part
+						startIdx = 0;
+						while (startIdx < body.Count && body[startIdx].Offset < eh.FilterStart.Offset) startIdx++;
+						endIdx = 0;
+						while (endIdx < body.Count && body[endIdx].Offset < eh.HandlerStart.Offset) endIdx++;
+						nestedEHs = new HashSet<ExceptionHandler>(ehs.Where(e => (eh.FilterStart.Offset <= e.TryStart.Offset && e.TryEnd.Offset < eh.HandlerStart.Offset) || (eh.FilterStart.Offset < e.TryStart.Offset && e.TryEnd.Offset <= eh.HandlerStart.Offset)));
+						ehs.ExceptWith(nestedEHs);
+						List<ILNode> filterAst = ConvertToAst(body.CutRange(startIdx, endIdx - startIdx), nestedEHs);
+						var filterBlock = new ILTryCatchBlock.FilterILBlock() { Body = filterAst };
+						ByteCode ldfilter = ldfilters[eh];
+						ConvertExceptionVariable(eh, filterBlock, ldfilter);
+						filterBlock.HandlerBlock = catchBlock;
+
+						tryCatchBlock.FilterBlock = filterBlock;
 					} else {
-						// TODO: ExceptionHandlerType.Filter
 					}
 				}
 				
@@ -749,6 +755,44 @@ namespace ICSharpCode.Decompiler.ILAst
 			ast.AddRange(ConvertToAst(body));
 			
 			return ast;
+		}
+
+		private void ConvertExceptionVariable(ExceptionHandler eh, ILTryCatchBlock.CatchBlock catchBlock, ByteCode ldexception)
+		{
+			if (ldexception.StoreTo == null || ldexception.StoreTo.Count == 0)
+			{
+				// Exception is not used
+				catchBlock.ExceptionVariable = null;
+			}
+			else if (ldexception.StoreTo.Count == 1)
+			{
+				ILExpression first = catchBlock.Body[0] as ILExpression;
+				if (first != null &&
+					first.Code == ILCode.Pop &&
+					first.Arguments[0].Code == ILCode.Ldloc &&
+					first.Arguments[0].Operand == ldexception.StoreTo[0])
+				{
+					// The exception is just poped - optimize it all away;
+					if (context.Settings.AlwaysGenerateExceptionVariableForCatchBlocks)
+						catchBlock.ExceptionVariable = new ILVariable() { Name = "ex_" + eh.HandlerStart.Offset.ToString("X2"), IsGenerated = true };
+					else
+						catchBlock.ExceptionVariable = null;
+					catchBlock.Body.RemoveAt(0);
+				}
+				else
+				{
+					catchBlock.ExceptionVariable = ldexception.StoreTo[0];
+				}
+			}
+			else
+			{
+				ILVariable exTemp = new ILVariable() { Name = "ex_" + eh.HandlerStart.Offset.ToString("X2"), IsGenerated = true };
+				catchBlock.ExceptionVariable = exTemp;
+				foreach (ILVariable storeTo in ldexception.StoreTo)
+				{
+					catchBlock.Body.Insert(0, new ILExpression(ILCode.Stloc, storeTo, new ILExpression(ILCode.Ldloc, exTemp)));
+				}
+			}
 		}
 		
 		List<ILNode> ConvertToAst(List<ByteCode> body)

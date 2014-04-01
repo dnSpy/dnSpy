@@ -31,7 +31,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 	{
 		public static bool IsUnconditionalBranch(OpCode opcode)
 		{
-			if (opcode.OpCodeType == OpCodeType.Prefix)
+			if (opcode.OpCodeType == OpCodeType.Prefix || opcode.OpCodeType == OpCodeType.Nternal)
 				return false;
 			switch (opcode.FlowControl) {
 				case FlowControl.Branch:
