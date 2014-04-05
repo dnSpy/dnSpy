@@ -134,7 +134,7 @@ namespace ICSharpCode.ILSpy.VB
 				w.WriteAttributeString("DefaultTargets", "Build");
 
 				w.WriteStartElement("PropertyGroup");
-				w.WriteElementString("ProjectGuid", Guid.NewGuid().ToString().ToUpperInvariant());
+				w.WriteElementString("ProjectGuid", Guid.NewGuid().ToString("B").ToUpperInvariant());
 
 				w.WriteStartElement("Configuration");
 				w.WriteAttributeString("Condition", " '$(Configuration)' == '' ");
