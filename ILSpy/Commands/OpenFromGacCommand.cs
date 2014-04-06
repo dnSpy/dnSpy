@@ -20,7 +20,7 @@ using System;
 
 namespace ICSharpCode.ILSpy
 {
-	[ExportMainMenuCommand(Menu = "_File", Header = "Open from _GAC", MenuCategory = "Open", MenuOrder = 1)]
+	[ExportMainMenuCommand(Menu = "_File", Header = "Open from _GAC", MenuIcon = "Images/AssemblyListGAC.png", MenuCategory = "Open", MenuOrder = 1)]
 	sealed class OpenFromGacCommand : SimpleCommand
 	{
 		public override void Execute(object parameter)
