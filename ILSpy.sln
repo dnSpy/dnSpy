@@ -1,7 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-# SharpDevelop 4.3
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+# SharpDevelop 5.0
+VisualStudioVersion = 12.0.20827.3
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{F45DB999-7E72-4000-B5AD-3A7B485A0896}"
 	ProjectSection(SolutionItems) = preProject
 		doc\Command Line.txt = doc\Command Line.txt
@@ -30,8 +32,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ILSpy.BamlDecompiler", "ILSpy.BamlDecompiler\ILSpy.BamlDecompiler.csproj", "{A6BAD2BA-76BA-461C-8B6D-418607591247}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ILSpy.BamlDecompiler.Tests", "ILSpy.BamlDecompiler\Tests\ILSpy.BamlDecompiler.Tests.csproj", "{1169E6D1-1899-43D4-A500-07CE4235B388}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ILSpy.SharpDevelop.LGPL", "ILSpy.SharpDevelop.LGPL\ILSpy.SharpDevelop.LGPL.csproj", "{704F66F1-5C7F-4326-A7AA-C604A3896D4E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.CSharp", "NRefactory\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj", "{53DCA265-3C3C-42F9-B647-F72BA678122B}"
 EndProject
@@ -139,14 +139,6 @@ Global
 		{1169E6D1-1899-43D4-A500-07CE4235B388}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1169E6D1-1899-43D4-A500-07CE4235B388}.Release|x86.ActiveCfg = Release|x86
 		{1169E6D1-1899-43D4-A500-07CE4235B388}.Release|x86.Build.0 = Release|x86
-		{704F66F1-5C7F-4326-A7AA-C604A3896D4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{704F66F1-5C7F-4326-A7AA-C604A3896D4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{704F66F1-5C7F-4326-A7AA-C604A3896D4E}.Debug|x86.ActiveCfg = Debug|x86
-		{704F66F1-5C7F-4326-A7AA-C604A3896D4E}.Debug|x86.Build.0 = Debug|x86
-		{704F66F1-5C7F-4326-A7AA-C604A3896D4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{704F66F1-5C7F-4326-A7AA-C604A3896D4E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{704F66F1-5C7F-4326-A7AA-C604A3896D4E}.Release|x86.ActiveCfg = Release|x86
-		{704F66F1-5C7F-4326-A7AA-C604A3896D4E}.Release|x86.Build.0 = Release|x86
 		{53DCA265-3C3C-42F9-B647-F72BA678122B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{53DCA265-3C3C-42F9-B647-F72BA678122B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53DCA265-3C3C-42F9-B647-F72BA678122B}.Debug|x86.ActiveCfg = Debug|Any CPU

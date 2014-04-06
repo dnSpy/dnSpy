@@ -99,8 +99,8 @@
     </Compile>
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
-    <Compile Include="AvalonEdit\IconMarginActionsProvider.cs" />
-    <Compile Include="Bookmarks\MemberBookmark.cs" />
+    <Compile Include="AvalonEdit\ITextMarker.cs" />
+    <Compile Include="AvalonEdit\TextMarkerService.cs" />
     <Compile Include="Commands\BrowseBackCommand.cs" />
     <Compile Include="Commands\BrowseForwardCommand.cs" />
     <Compile Include="CommandLineArguments.cs" />
@@ -361,10 +361,6 @@
       <Project>{984CC812-9470-4A13-AFF9-CC44068D666C}</Project>
       <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ILSpy.SharpDevelop.LGPL\ILSpy.SharpDevelop.LGPL.csproj">
-      <Project>{704F66F1-5C7F-4326-A7AA-C604A3896D4E}</Project>
-      <Name>ILSpy.SharpDevelop.LGPL</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Mono.Cecil\Mono.Cecil.csproj">
       <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
       <Name>Mono.Cecil</Name>
@@ -394,7 +390,9 @@
       <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="AvalonEdit" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\ResourceXml.png" />
     <Resource Include="Images\ResourceXsd.png" />
