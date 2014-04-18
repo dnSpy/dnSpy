@@ -135,6 +135,7 @@
     <Page Include="Cases\SimpleNames.xaml" />
     <Page Include="Cases\SimplePropertyElement.xaml" />
     <Page Include="Cases\Dictionary1.xaml" />
+    <Page Include="Cases\Issue445.xaml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
