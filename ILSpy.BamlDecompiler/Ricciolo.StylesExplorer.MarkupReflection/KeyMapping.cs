@@ -14,8 +14,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			get { return staticResources; }
 		}
 		
-		public bool HasStaticResources {
-			get { return staticResources != null && staticResources.Count > 0; }
+		public bool HasStaticResource(int identifier)
+		{
+			return staticResources != null && staticResources.Count > identifier;
 		}
 		
 		public string KeyString { get; set; }

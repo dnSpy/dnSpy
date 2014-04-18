@@ -682,13 +682,21 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 				return declaration;
 			} else {
 				identifier = (short)-identifier;
-				bool isNotKey = (identifier > 0xe8);
-				if (isNotKey)
-					identifier = (short)(identifier - 0xe8);
+				bool isKey = true;
+				if (identifier > 0xe8 && identifier < 0x1d0) {
+					isKey = false;
+					identifier -= 0xe8;
+				} else if (identifier > 0x1d0 && identifier < 0x1d3) {
+					identifier -= 0xe7;
+				} else if (identifier > 0x1d3 && identifier < 0x1d6) {
+					identifier -= 0xea;
+					isKey = false;
+				}
 				ResourceName resource;
 				if (!KnownInfo.KnownResourceTable.TryGetValue(identifier, out resource))
+//					resource = new ResourceName("???Resource" + identifier + "???");
 					throw new ArgumentException("Cannot find resource name " + identifier);
-				if (!isNotKey)
+				if (isKey)
 					return new ResourceName(resource.Name + "Key");
 				return resource;
 			}
@@ -1554,7 +1562,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		object GetStaticResource(short identifier)
 		{
 			int keyIndex = Math.Max(0, currentKey - 1);
-			while (keyIndex >= 0 && !keys[keyIndex].HasStaticResources)
+			while (keyIndex > keys.Count)
+				keyIndex--;
+			while (keyIndex >= 0 && !keys[keyIndex].HasStaticResource(identifier))
 				keyIndex--;
 			if (keyIndex >= 0 && identifier < keys[keyIndex].StaticResources.Count)
 				return keys[keyIndex].StaticResources[(int)identifier];

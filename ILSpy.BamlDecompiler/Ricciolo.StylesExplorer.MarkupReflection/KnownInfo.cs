@@ -1175,6 +1175,9 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			KnownResourceTable.Add(0xda, new ResourceName("InternalSystemParametersEnd"));
 			KnownResourceTable.Add(0x5e, new ResourceName("InternalSystemParametersStart"));
 			KnownResourceTable.Add(0xe8, new ResourceName("InternalSystemThemeStylesEnd"));
+			KnownResourceTable.Add(0xe9, new ResourceName("InternalSystemColorsExtendedStart"));
+			KnownResourceTable.Add(0xea, new ResourceName("InactiveSelectionHighlightBrush"));
+			KnownResourceTable.Add(0xeb, new ResourceName("InactiveSelectionHighlightTextBrush"));
 			KnownResourceTable.Add(0xd6, new ResourceName("InternalSystemThemeStylesStart"));
 			KnownResourceTable.Add(0x95, new ResourceName("SystemParameters.IsImmEnabled"));
 			KnownResourceTable.Add(150, new ResourceName("SystemParameters.IsMediaCenter"));
