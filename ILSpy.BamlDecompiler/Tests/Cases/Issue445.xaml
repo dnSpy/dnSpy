@@ -1,17 +1,12 @@
-﻿<UserControl x:Class="BamlTest.UserControl1"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             mc:Ignorable="d">
+﻿<UserControl x:Class="BamlTest.UserControl1" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d">
 	<UserControl.Resources>
-		<Style TargetType="Control" x:Key="baseStyle" />
+		<Style x:Key="baseStyle" TargetType="{x:Type Control}" />
 	</UserControl.Resources>
 	<Grid>
 		<Grid.ContextMenu>
 			<ContextMenu>
 				<ContextMenu.Resources>
-					<Style TargetType="Control" BasedOn="{StaticResource baseStyle}" />
+					<Style TargetType="{x:Type Control}" BasedOn="{StaticResource baseStyle}" />
 				</ContextMenu.Resources>
 			</ContextMenu>
 		</Grid.ContextMenu>

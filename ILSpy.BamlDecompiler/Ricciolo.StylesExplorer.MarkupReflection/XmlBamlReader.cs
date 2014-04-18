@@ -1553,7 +1553,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 
 		object GetStaticResource(short identifier)
 		{
-			int keyIndex = currentKey - 1;
+			int keyIndex = Math.Max(0, currentKey - 1);
 			while (keyIndex >= 0 && !keys[keyIndex].HasStaticResources)
 				keyIndex--;
 			if (keyIndex >= 0 && identifier < keys[keyIndex].StaticResources.Count)

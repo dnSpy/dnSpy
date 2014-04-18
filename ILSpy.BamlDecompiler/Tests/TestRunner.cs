@@ -79,7 +79,7 @@ namespace ILSpy.BamlDecompiler.Tests
 			RunTest("cases/simplepropertyelement");
 		}
 		
-		[Test, Ignore]
+		[Test]
 		public void Issue445()
 		{
 			RunTest("cases/issue445");
