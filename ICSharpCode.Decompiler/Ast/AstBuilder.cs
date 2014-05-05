@@ -443,8 +443,8 @@ namespace ICSharpCode.Decompiler.Ast
 		public static AstType ConvertType(TypeDef typeContext, MethodDef methodContext, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null, ConvertTypeOptions options = ConvertTypeOptions.None)
 		{
 			int typeIndex = 0;
-			var typeParams = typeContext == null ? new List<GenericParam>() : typeContext.GenericParameters;
-			var methodParams = methodContext == null ? new List<GenericParam>() : methodContext.GenericParameters;
+			var typeParams = typeContext == null ? (IList<GenericParam>)new List<GenericParam>() : typeContext.GenericParameters;
+			var methodParams = methodContext == null ? (IList<GenericParam>)new List<GenericParam>() : methodContext.GenericParameters;
 			return ConvertType(typeParams, methodParams, type, typeAttributes, ref typeIndex, options);
 		}
 
@@ -458,8 +458,8 @@ namespace ICSharpCode.Decompiler.Ast
 		public static AstType ConvertType(TypeDef typeContext, MethodDef methodContext, TypeSig type, IHasCustomAttribute typeAttributes = null, ConvertTypeOptions options = ConvertTypeOptions.None)
 		{
 			int typeIndex = 0;
-			var typeParams = typeContext == null ? new List<GenericParam>() : typeContext.GenericParameters;
-			var methodParams = methodContext == null ? new List<GenericParam>() : methodContext.GenericParameters;
+			var typeParams = typeContext == null ? (IList<GenericParam>)new List<GenericParam>() : typeContext.GenericParameters;
+			var methodParams = methodContext == null ? (IList<GenericParam>)new List<GenericParam>() : methodContext.GenericParameters;
 			return ConvertType(typeParams, methodParams, type, typeAttributes, ref typeIndex, options);
 		}
 
