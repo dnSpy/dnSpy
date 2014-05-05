@@ -17,7 +17,7 @@ using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.NRefactory;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.AvalonEdit
 {
@@ -257,7 +257,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			var storage = DebugInformation.CodeMappings;
 			if (storage == null || storage.Count == 0)
 				return;
-			var key = breakpoint.MemberReference.MetadataToken.ToInt32();
+			var key = breakpoint.MemberReference.MDToken.ToInt32();
 			if (storage.ContainsKey(key))
 			{
 				// register to show enabled/disabled state
@@ -274,7 +274,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			var storage = DebugInformation.CodeMappings;
 			if (storage == null || storage.Count == 0)
 				return;
-			var key = breakpoint.MemberReference.MetadataToken.ToInt32();
+			var key = breakpoint.MemberReference.MDToken.ToInt32();
 			if (storage.ContainsKey(key))
 			{
 				breakpoint.ImageChanged -= delegate { InvalidateVisual(); };
@@ -335,14 +335,14 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			// 1. Save it's data
 			int line = CurrentLineBookmark.Instance.LineNumber;
 			var markerType = CurrentLineBookmark.Instance.MemberReference;
-			int token = markerType.MetadataToken.ToInt32();
-			int offset = CurrentLineBookmark.Instance.ILOffset;
+			int token = markerType.MDToken.ToInt32();
+			uint offset = CurrentLineBookmark.Instance.ILOffset;
 			
 			if (!codeMappings.ContainsKey(token))
 				return;
 			
 			// 2. map the marker line
-			MemberReference memberReference;
+			IMemberRef memberReference;
 			int newline;
 			if (codeMappings[token].GetInstructionByTokenAndOffset(offset, out memberReference, out newline)) {
 				// 3. create breakpoint for new languages

@@ -2,8 +2,8 @@ bin/
 obj/
 
 /ICSharpCode.Decompiler/Properties/AssemblyInfo.cs
-/ILSpy/Properties/AssemblyInfo.cs
-/ILSpy/app.config
+/dnSpy/Properties/AssemblyInfo.cs
+/dnSpy/app.config
 *.suo
 *.user
 /Resharper-ILSpy-Style.xml

@@ -10,7 +10,7 @@ using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.SharpDevelop;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 {
@@ -82,7 +82,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		
 		public string Tooltip { get; private set; }
 		
-		public BreakpointBookmark(MemberReference member, TextLocation location, int functionToken, ILRange range, BreakpointAction action)
+		public BreakpointBookmark(IMemberRef member, TextLocation location, int functionToken, ILRange range, BreakpointAction action)
 			: base(member, location)
 		{
 			this.action = action;

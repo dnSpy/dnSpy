@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.Debugger
 {
@@ -19,7 +19,7 @@ namespace ICSharpCode.ILSpy.Debugger
 		/// <summary>
 		/// List of loaded assemblies.
 		/// </summary>
-		public static IEnumerable<AssemblyDefinition> LoadedAssemblies { get; set; }
+		public static IEnumerable<AssemblyDef> LoadedAssemblies { get; set; }
 		
 		/// <summary>
 		/// Gets or sets the current code mappings.
@@ -29,7 +29,7 @@ namespace ICSharpCode.ILSpy.Debugger
 		/// <summary>
 		/// Gets or sets the current token, IL offset and member reference. Used for step in/out.
 		/// </summary>
-		public static Tuple<int, int, MemberReference> DebugStepInformation { get; set; }
+		public static Tuple<int, uint, IMemberRef> DebugStepInformation { get; set; }
 		
 		/// <summary>
 		/// Gets or sets whether the debugger is loaded.

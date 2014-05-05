@@ -7,7 +7,7 @@ using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace TestPlugin
 {
@@ -29,13 +29,13 @@ namespace TestPlugin
 			if (context.SelectedTreeNodes == null)
 				return;
 			AssemblyTreeNode node = (AssemblyTreeNode)context.SelectedTreeNodes[0];
-			AssemblyDefinition asm = node.LoadedAssembly.AssemblyDefinition;
+			AssemblyDef asm = node.LoadedAssembly.AssemblyDefinition;
 			if (asm != null) {
 				SaveFileDialog dlg = new SaveFileDialog();
 				dlg.FileName = node.LoadedAssembly.FileName;
 				dlg.Filter = "Assembly|*.dll;*.exe";
 				if (dlg.ShowDialog(MainWindow.Instance) == true) {
-					asm.MainModule.Write(dlg.FileName);
+					asm.ManifestModule.Write(dlg.FileName);
 				}
 			}
 		}

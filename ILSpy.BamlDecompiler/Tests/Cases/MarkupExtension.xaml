@@ -1,8 +1,0 @@
-<Label DataContext="{Binding Blub}" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-    <Label.Style>
-        <Style />
-    </Label.Style>
-    <Label.Content>
-        <Binding Path="Blah" />
-    </Label.Content>
-</Label>

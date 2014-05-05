@@ -12,7 +12,7 @@ using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Tooltips;
 using ICSharpCode.NRefactory.CSharp.Resolver;
 using ICSharpCode.NRefactory.Semantics;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.Debugger.Services
 {
@@ -169,7 +169,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			}
 		}
 		
-		public static void ToggleBreakpointAt(MemberReference member, int lineNumber, int functionToken, ILRange range)
+		public static void ToggleBreakpointAt(IMemberRef member, int lineNumber, int functionToken, ILRange range)
 		{
 			BookmarkManager.ToggleBookmark(
 				member.FullName, lineNumber,
@@ -190,7 +190,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			CurrentLineBookmark.Remove();
 		}
 		
-		public static void JumpToCurrentLine(MemberReference memberReference, int startLine, int startColumn, int endLine, int endColumn, int ilOffset)
+		public static void JumpToCurrentLine(IMemberRef memberReference, int startLine, int startColumn, int endLine, int endColumn, uint ilOffset)
 		{
 			CurrentLineBookmark.SetPosition(memberReference, startLine, startColumn, endLine, endColumn, ilOffset);
 		}

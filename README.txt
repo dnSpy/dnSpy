@@ -4,8 +4,10 @@ Website: http://www.ilspy.net/
 Copyright 2011-2012 AlphaSierraPapa for the SharpDevelop team
 License: ILSpy is distributed under the MIT License.
 
+Patched to use dnlib by Ki.
+
 Included open-source libraries:
- Mono.Cecil: MIT License (thanks to Jb Evain)
+ dnlib: MIT License
  AvalonEdit: LGPL
  SharpTreeView: LGPL
  ICSharpCode.Decompiler: MIT License (developed as part of ILSpy)

@@ -10,7 +10,6 @@ using System.Linq;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.NRefactory.CSharp;
-using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.AvalonEdit
 {

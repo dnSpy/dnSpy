@@ -9,7 +9,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.ILSpy;
 using ICSharpCode.NRefactory.CSharp;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace TestPlugin
 {
@@ -34,10 +34,13 @@ namespace TestPlugin
 		
 		// There are several methods available to override; in this sample, we deal with methods only
 		
-		public override void DecompileMethod(MethodDefinition method, ITextOutput output, DecompilationOptions options)
+		public override void DecompileMethod(MethodDef method, ITextOutput output, DecompilationOptions options)
 		{
 			if (method.Body != null) {
-				output.WriteLine("Size of method: {0} bytes", method.Body.CodeSize);
+				var instrs = method.Body.Instructions;
+				var instr = instrs.Count == 0 ? null : instrs[instrs.Count - 1];
+				uint codeSize = instr == null ? 0 : instr.Offset + (uint)instr.GetSize();
+				output.WriteLine("Size of method: {0} bytes", codeSize);
 				
 				ISmartTextOutput smartOutput = output as ISmartTextOutput;
 				if (smartOutput != null) {

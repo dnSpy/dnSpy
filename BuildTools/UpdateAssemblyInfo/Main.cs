@@ -22,19 +22,19 @@ namespace UpdateAssemblyInfo
 		const string BaseCommit = "d779383cb85003d6dabeb976f0845631e07bf463";
 		const int BaseCommitRev = 1;
 		
-		const string globalAssemblyInfoTemplateFile = "ILSpy/Properties/AssemblyInfo.template.cs";
+		const string globalAssemblyInfoTemplateFile = "dnSpy/Properties/AssemblyInfo.template.cs";
 		static readonly TemplateFile[] templateFiles = {
 			new TemplateFile {
 				Input = globalAssemblyInfoTemplateFile,
-				Output = "ILSpy/Properties/AssemblyInfo.cs"
+				Output = "dnSpy/Properties/AssemblyInfo.cs"
 			},
 			new TemplateFile {
 				Input = "ICSharpCode.Decompiler/Properties/AssemblyInfo.template.cs",
 				Output = "ICSharpCode.Decompiler/Properties/AssemblyInfo.cs"
 			},
 			new TemplateFile {
-				Input = "ILSpy/Properties/app.config.template",
-				Output = "ILSpy/app.config"
+				Input = "dnSpy/Properties/app.config.template",
+				Output = "dnSpy/app.config"
 			}
 		};
 		

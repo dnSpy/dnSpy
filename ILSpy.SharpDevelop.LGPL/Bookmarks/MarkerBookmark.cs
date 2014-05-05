@@ -5,13 +5,13 @@ using System;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.ILSpy.AvalonEdit;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.Bookmarks
 {
 	public abstract class MarkerBookmark : BookmarkBase
 	{
-		public MarkerBookmark(MemberReference member, TextLocation location) : base(member, location)
+		public MarkerBookmark(IMemberRef member, TextLocation location) : base(member, location)
 		{
 		}
 		
