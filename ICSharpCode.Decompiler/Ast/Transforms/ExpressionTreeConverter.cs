@@ -804,7 +804,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				return new IndexerExpression(targetConverted, indexConverted);
 			}
 			IList<Expression> indexesConverted = ConvertExpressionsArray(index);
-			if (indexConverted != null) {
+			if (indexesConverted != null) {
 				return new IndexerExpression(targetConverted, indexesConverted);
 			}
 			return null;

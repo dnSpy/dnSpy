@@ -28,7 +28,6 @@ using System.Windows.Documents;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 
-using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy
@@ -100,11 +99,6 @@ namespace ICSharpCode.ILSpy
 			                                  Hyperlink.RequestNavigateEvent,
 			                                  new RequestNavigateEventHandler(Window_RequestNavigate));
 			
-			try {
-				DebuggerService.SetDebugger(compositionContainer.GetExport<IDebugger>());
-			} catch {
-				// unable to find a IDebugger
-			}
 		}
 		
 		string FullyQualifyPath(string argument)
