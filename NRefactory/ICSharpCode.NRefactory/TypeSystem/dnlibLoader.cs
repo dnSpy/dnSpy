@@ -485,7 +485,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				AddCustomAttributes(parameter.CustomAttributes, targetParameter.Attributes);
 			}
 			if (parameter.HasMarshalInfo) {
-				targetParameter.Attributes.Add(ConvertMarshalInfo(parameter.FieldMarshal));
+				targetParameter.Attributes.Add(ConvertMarshalInfo(parameter.MarshalType));
 			}
 		}
 		#endregion
@@ -617,7 +617,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 			ParamDef returnParam = methodDef.Parameters.ReturnParameter.ParamDef;
 			if (returnParam != null && returnParam.HasMarshalInfo) {
-				returnTypeAttributes.Add(ConvertMarshalInfo(returnParam.FieldMarshal));
+				returnTypeAttributes.Add(ConvertMarshalInfo(returnParam.MarshalType));
 			}
 			if (returnParam != null && returnParam.HasCustomAttributes) {
 				AddCustomAttributes(returnParam.CustomAttributes, returnTypeAttributes);
@@ -709,7 +709,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 			
 			if (fieldDef.HasMarshalInfo) {
-				targetEntity.Attributes.Add(ConvertMarshalInfo(fieldDef.FieldMarshal));
+				targetEntity.Attributes.Add(ConvertMarshalInfo(fieldDef.MarshalType));
 			}
 			
 			if (fieldDef.HasCustomAttributes) {
@@ -740,34 +740,39 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		static readonly ITypeReference marshalAsAttributeTypeRef = typeof(MarshalAsAttribute).ToTypeReference();
 		static readonly ITypeReference unmanagedTypeTypeRef = typeof(UnmanagedType).ToTypeReference();
 		
-		static IUnresolvedAttribute ConvertMarshalInfo(FieldMarshal marshal)
+		static IUnresolvedAttribute ConvertMarshalInfo(MarshalType marshal)
 		{
-			var marshalInfo = dnlibMarshalInfo.Read(marshal);
+			var marshalInfo = marshal;
 			DefaultUnresolvedAttribute attr = new DefaultUnresolvedAttribute(marshalAsAttributeTypeRef, new[] { unmanagedTypeTypeRef });
 			attr.PositionalArguments.Add(new SimpleConstantValue(unmanagedTypeTypeRef, (int)marshalInfo.NativeType));
 
-			dnlibFixedArrayMarshalInfo fami = marshalInfo as dnlibFixedArrayMarshalInfo;
+			var fami = marshalInfo as FixedArrayMarshalType;
 			if (fami != null) {
-				attr.AddNamedFieldArgument("SizeConst", KnownTypeReference.Int32, (int)fami.SizeConst);
-				attr.AddNamedFieldArgument("ArraySubType", unmanagedTypeTypeRef, (int)fami.ArraySubType);
+				if (fami.IsSizeValid)
+					attr.AddNamedFieldArgument("SizeConst", KnownTypeReference.Int32, (int)fami.Size);
+				if (fami.IsElementTypeValid)
+					attr.AddNamedFieldArgument("ArraySubType", unmanagedTypeTypeRef, (int)fami.ElementType);
 			}
-			dnlibSafeArrayMarshalInfo sami = marshalInfo as dnlibSafeArrayMarshalInfo;
-			if (sami != null && sami.SafeArraySubType != VarEnum.VT_EMPTY) {
-				attr.AddNamedFieldArgument("SafeArraySubType", typeof(VarEnum).ToTypeReference(), (int)sami.SafeArraySubType);
+			var sami = marshalInfo as SafeArrayMarshalType;
+			if (sami != null) {
+				if (sami.IsVariantTypeValid && sami.VariantType != VariantType.Empty)
+					attr.AddNamedFieldArgument("SafeArraySubType", typeof(VarEnum).ToTypeReference(), (int)sami.VariantType);
 			}
-			dnlibArrayMarshalInfo ami = marshalInfo as dnlibArrayMarshalInfo;
+			var ami = marshalInfo as ArrayMarshalType;
 			if (ami != null) {
-				attr.AddNamedFieldArgument("ArraySubType", unmanagedTypeTypeRef, (int)ami.ArraySubType);
-				if (ami.SizeConst != null)
-					attr.AddNamedFieldArgument("SizeConst", KnownTypeReference.Int32, (int)ami.SizeConst);
-				if (ami.SizeParamIndex != null)
-					attr.AddNamedFieldArgument("SizeParamIndex", KnownTypeReference.Int16, (short)ami.SizeParamIndex);
+				if (ami.IsElementTypeValid)
+					attr.AddNamedFieldArgument("ArraySubType", unmanagedTypeTypeRef, (int)ami.ElementType);
+				if (ami.IsSizeValid)
+					attr.AddNamedFieldArgument("SizeConst", KnownTypeReference.Int32, (int)ami.Size);
+				if (ami.IsParamNumberValid)
+					attr.AddNamedFieldArgument("SizeParamIndex", KnownTypeReference.Int16, (short)ami.ParamNumber);
 			}
-			dnlibCustomMarshalInfo cmi = marshalInfo as dnlibCustomMarshalInfo;
+			var cmi = marshalInfo as CustomMarshalType;
 			if (cmi != null) {
-				attr.AddNamedFieldArgument("MarshalType", KnownTypeReference.String, cmi.MarshalType);
-				if (!string.IsNullOrEmpty(cmi.MarshalCookie))
-					attr.AddNamedFieldArgument("MarshalCookie", KnownTypeReference.String, cmi.MarshalCookie);
+				if (cmi.CustomMarshaler != null)
+					attr.AddNamedFieldArgument("MarshalType", KnownTypeReference.String, cmi.CustomMarshaler.FullName);
+				if (!UTF8String.IsNullOrEmpty(cmi.Cookie))
+					attr.AddNamedFieldArgument("MarshalCookie", KnownTypeReference.String, cmi.Cookie.String);
 			}
 			
 			return attr;
@@ -1372,7 +1377,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 
 		void AddSecurityAttributes(DeclSecurity declSec, IList<IUnresolvedAttribute> targetCollection)
 		{
-			byte[] blob = declSec.PermissionSet;
+			byte[] blob = declSec.GetBlob();
 			BlobReader reader = new BlobReader(blob, null);
 			var securityAction = new SimpleConstantValue(securityActionTypeReference, (int)declSec.Action);
 			if (reader.ReadByte() == '.') {

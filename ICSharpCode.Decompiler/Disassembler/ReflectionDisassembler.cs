@@ -171,7 +171,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			method.ReturnType.ResolveGenericParams(method).WriteTo(output);
 			output.Write(' ');
 			if (method.Parameters.ReturnParameter.HasParamDef && method.Parameters.ReturnParameter.ParamDef.HasMarshalInfo) {
-				WriteMarshalInfo(method.Parameters.ReturnParameter.ParamDef.FieldMarshal);
+				WriteMarshalInfo(method.Parameters.ReturnParameter.ParamDef.MarshalType);
 			}
 			
 			if (method.IsCompilerControlled) {
@@ -367,14 +367,14 @@ namespace ICSharpCode.Decompiler.Disassembler
 		#endregion
 		
 		#region WriteMarshalInfo
-		void WriteMarshalInfo(FieldMarshal marshalInfo)
+		void WriteMarshalInfo(MarshalType marshalInfo)
 		{
 			output.Write("marshal(");
 			WriteNativeType(marshalInfo);
 			output.Write(") ");
 		}
 
-		void WriteNativeType(FieldMarshal marshalInfo)
+		void WriteNativeType(MarshalType marshalInfo)
 		{
 			// TODO: implement
 			/*
@@ -610,7 +610,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				p.Type.ResolveGenericParams(method).WriteTo(output);
 				output.Write(' ');
 				if (paramDef != null && paramDef.HasFieldMarshal) {
-					WriteMarshalInfo(paramDef.FieldMarshal);
+					WriteMarshalInfo(paramDef.MarshalType);
 				}
 				output.WriteDefinition(DisassemblerHelpers.Escape(p.Name), p);
 				if (i < parameters.Count - 1)
@@ -701,7 +701,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			const FieldAttributes hasXAttributes = FieldAttributes.HasDefault | FieldAttributes.HasFieldMarshal | FieldAttributes.HasFieldRVA;
 			WriteFlags(field.Attributes & ~(FieldAttributes.FieldAccessMask | hasXAttributes), fieldAttributes);
 			if (field.HasMarshalInfo) {
-				WriteMarshalInfo(field.FieldMarshal);
+				WriteMarshalInfo(field.MarshalType);
 			}
 			field.FieldType.ResolveGenericParams(field.DeclaringType).WriteTo(output);
 			output.Write(' ');

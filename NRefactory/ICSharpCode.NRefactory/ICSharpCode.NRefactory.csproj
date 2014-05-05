@@ -135,7 +135,6 @@
     <Compile Include="TypeSystem\dnlibLoader.cs" />
     <Compile Include="TypeSystem\ComHelper.cs" />
     <Compile Include="TypeSystem\DefaultSolutionSnapshot.cs" />
-    <Compile Include="TypeSystem\dnlibMarshalInfo.cs" />
     <Compile Include="TypeSystem\DomRegion.cs" />
     <Compile Include="TypeSystem\EntityType.cs" />
     <Compile Include="TypeSystem\ExtensionMethods.cs" />
