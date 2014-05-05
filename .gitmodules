@@ -1,4 +1,3 @@
 [submodule "dnlib"]
 	path = dnlib
-	url = https://github.com/yck1509/dnlib.git
-	branch = dnSpy
+	url = https://github.com/0xd4d/dnlib.git
