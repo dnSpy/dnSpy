@@ -9,8 +9,8 @@
 		<Border BorderThickness="1,1,0,1" BorderBrush="#FF828790">
 			<Grid>
 				<ae:TextEditor Name="textEditor" FontFamily="Consolas" FontSize="10pt" IsReadOnly="True"
-				               Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}"
-				               Foreground="{DynamicResource {x:Static SystemColors.InfoTextBrushKey}}">
+				               Background="White"
+				               Foreground="Black">
 					<ae:TextEditor.Resources>
 						<!-- prevent App-wide button style from applying to the buttons in the search box -->
 						<Style TargetType="{x:Type Button}" />
