@@ -112,16 +112,19 @@ namespace ICSharpCode.ILSpy.XmlDoc
 			if (arrayType != null) {
 				AppendTypeName(b, arrayType.Next);
 				b.Append("[]");
+				return;
 			}
 			ByRefSig refType = type as ByRefSig;
 			if (refType != null) {
 				AppendTypeName(b, refType.Next);
 				b.Append('@');
+				return;
 			}
 			PtrSig ptrType = type as PtrSig;
 			if (ptrType != null) {
 				AppendTypeName(b, ptrType.Next);
 				b.Append('*');
+				return;
 			}
 			GenericSig gp = type as GenericSig;
 			if (gp != null) {

@@ -813,7 +813,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				attributeType = this.InterningProvider.Intern(attributeType);
 				ctorParameterTypes = this.InterningProvider.InternList(ctorParameterTypes);
 			}
-			return new dnlibUnresolvedAttribute(attributeType, ctorParameterTypes ?? EmptyList<ITypeReference>.Instance, attribute.RawData);
+			return new dnlibUnresolvedAttribute(attributeType, ctorParameterTypes ?? EmptyList<ITypeReference>.Instance, attribute.OrigRawData);
 		}
 		#endregion
 		

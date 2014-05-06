@@ -56,7 +56,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (!yrd.MatchEnumeratorCreationPattern(method))
 				return;
 			yrd.enumeratorType = yrd.enumeratorCtor.DeclaringType;
-			#if DEBUG
+			#if DEBUG && CRASH_IN_DEBUG_MODE
 			if (Debugger.IsAttached) {
 				yrd.Run();
 			} else {
@@ -66,7 +66,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				} catch (SymbolicAnalysisFailedException) {
 					return;
 				}
-				#if DEBUG
+				#if DEBUG && CRASH_IN_DEBUG_MODE
 			}
 			#endif
 			method.Body.Clear();

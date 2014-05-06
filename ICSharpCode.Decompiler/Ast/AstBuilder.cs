@@ -800,11 +800,15 @@ namespace ICSharpCode.Decompiler.Ast
 			
 			// Add events
 			foreach(EventDef eventDef in typeDef.Events) {
+				if (eventDef.AddMethod == null && eventDef.RemoveMethod == null)
+					continue;
 				astType.AddChild(CreateEvent(eventDef), Roles.TypeMemberRole);
 			}
 
 			// Add properties
 			foreach(PropertyDef propDef in typeDef.Properties) {
+				if (propDef.GetMethod == null && propDef.SetMethod == null)
+					continue;
 				astType.Members.Add(CreateProperty(propDef));
 			}
 			
@@ -1215,10 +1219,10 @@ namespace ICSharpCode.Decompiler.Ast
 				if (charSet != CharSet.Ansi) {
 					structLayout.AddNamedArgument("CharSet", new IdentifierExpression("CharSet").Member(charSet.ToString()));
 				}
-				if (typeDef.PackingSize > 0) {
+				if (typeDef.PackingSize != ushort.MaxValue) {
 					structLayout.AddNamedArgument("Pack", new PrimitiveExpression((int)typeDef.PackingSize));
 				}
-				if (typeDef.ClassSize > 0) {
+				if (typeDef.ClassSize != uint.MaxValue) {
 					structLayout.AddNamedArgument("Size", new PrimitiveExpression((int)typeDef.ClassSize));
 				}
 				attributedNode.Attributes.Add(new AttributeSection(structLayout));
@@ -1583,9 +1587,9 @@ namespace ICSharpCode.Decompiler.Ast
 
 		internal static Expression MakePrimitive(long val, ITypeDefOrRef type)
 		{
-			if (type.IsCorlibType("System", "Boolean") && val == 0)
+			if (val == 0 && type.IsCorlibType("System", "Boolean"))
 				return new Ast.PrimitiveExpression(false);
-			else if (type.IsCorlibType("System", "Boolean") && val == 1)
+			else if (val == 1 && type.IsCorlibType("System", "Boolean"))
 				return new Ast.PrimitiveExpression(true);
 			else if (val == 0 && type.TryGetPtrSig() != null)
 				return new Ast.NullReferenceExpression();

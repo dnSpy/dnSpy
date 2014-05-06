@@ -419,7 +419,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						Name = capturedVariableName,
 						Type = field.FieldType.ResolveGenericParams(field.DeclaringType),
 					};
-					variablesToDeclare.Add(Tuple.Create(AstBuilder.ConvertType(context.CurrentMethod.DeclaringType, context.CurrentMethod, field.FieldType, field), ilVar));
+					variablesToDeclare.Add(Tuple.Create(AstBuilder.ConvertType(type, null, field.FieldType, field), ilVar));
 					dict[field] = new IdentifierExpression(capturedVariableName).WithAnnotation(ilVar);
 				}
 				
