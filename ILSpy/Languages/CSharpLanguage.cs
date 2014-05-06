@@ -400,7 +400,7 @@ namespace ICSharpCode.ILSpy
 		#region WriteCodeFilesInProject
 		bool IncludeTypeWhenDecompilingProject(TypeDef type, DecompilationOptions options)
 		{
-			if (type.Name == "<Module>" || AstBuilder.MemberIsHidden(type, options.DecompilerSettings))
+			if (type.IsGlobalModuleType || AstBuilder.MemberIsHidden(type, options.DecompilerSettings))
 				return false;
 			if (type.Namespace == "XamlGeneratedNamespace" && type.Name == "GeneratedInternalTypeHelper")
 				return false;
