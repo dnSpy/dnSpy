@@ -249,12 +249,12 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.CallGetter:
 				case ILCode.CallvirtGetter:
 					IMethod mr = (IMethod)expr.Operand;
-					if (mr.Name.String.StartsWith("get_", StringComparison.OrdinalIgnoreCase) && mr.MethodSig.GetParameters().Count == 0) {
+					if (mr.Name.StartsWith("get_", StringComparison.OrdinalIgnoreCase) && mr.MethodSig.GetParameters().Count == 0) {
 						// use name from properties, but not from indexers
-						return CleanUpVariableName(mr.Name.String.Substring(4));
-					} else if (mr.Name.String.StartsWith("Get", StringComparison.OrdinalIgnoreCase) && mr.Name.String.Length >= 4 && char.IsUpper(mr.Name.String[3])) {
+						return CleanUpVariableName(mr.Name.Substring(4));
+					} else if (mr.Name.StartsWith("Get", StringComparison.OrdinalIgnoreCase) && mr.Name.String.Length >= 4 && char.IsUpper(mr.Name.String[3])) {
 						// use name from Get-methods
-						return CleanUpVariableName(mr.Name.String.Substring(3));
+						return CleanUpVariableName(mr.Name.Substring(3));
 					}
 					break;
 			}
@@ -280,10 +280,10 @@ namespace ICSharpCode.Decompiler.Ast
 					IMethod methodRef = (IMethod)parent.Operand;
 					if (methodRef.MethodSig.GetParameters().Count == 1 && i == parent.Arguments.Count - 1) {
 						// argument might be value of a setter
-						if (methodRef.Name.String.StartsWith("set_", StringComparison.OrdinalIgnoreCase)) {
-							return CleanUpVariableName(methodRef.Name.String.Substring(4));
-						} else if (methodRef.Name.String.StartsWith("Set", StringComparison.OrdinalIgnoreCase) && methodRef.Name.String.Length >= 4 && char.IsUpper(methodRef.Name.String[3])) {
-							return CleanUpVariableName(methodRef.Name.String.Substring(3));
+						if (methodRef.Name.StartsWith("set_", StringComparison.OrdinalIgnoreCase)) {
+							return CleanUpVariableName(methodRef.Name.Substring(4));
+						} else if (methodRef.Name.StartsWith("Set", StringComparison.OrdinalIgnoreCase) && methodRef.Name.String.Length >= 4 && char.IsUpper(methodRef.Name.String[3])) {
+							return CleanUpVariableName(methodRef.Name.Substring(3));
 						}
 					}
 					MethodDef methodDef = methodRef.Resolve();

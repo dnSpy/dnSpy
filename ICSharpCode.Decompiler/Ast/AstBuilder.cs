@@ -84,7 +84,7 @@ namespace ICSharpCode.Decompiler.Ast
 					if (settings.AsyncAwait && AsyncDecompiler.IsCompilerGeneratedStateMachine(type))
 						return true;
 				} else if (type.IsCompilerGenerated()) {
-					if (type.Name.String.StartsWith("<PrivateImplementationDetails>", StringComparison.Ordinal))
+					if (type.Name.StartsWith("<PrivateImplementationDetails>", StringComparison.Ordinal))
 						return true;
 					if (type.IsAnonymousType())
 						return true;
@@ -111,22 +111,22 @@ namespace ICSharpCode.Decompiler.Ast
 
 		static bool IsSwitchOnStringCache(FieldDef field)
 		{
-			return field.Name.String.StartsWith("<>f__switch", StringComparison.Ordinal);
+			return field.Name.StartsWith("<>f__switch", StringComparison.Ordinal);
 		}
 
 		static bool IsAutomaticPropertyBackingField(FieldDef field)
 		{
-			return field.HasGeneratedName() && field.Name.String.EndsWith("BackingField", StringComparison.Ordinal);
+			return field.HasGeneratedName() && field.Name.EndsWith("BackingField", StringComparison.Ordinal);
 		}
 
 		static bool IsAnonymousMethodCacheField(FieldDef field)
 		{
-			return field.Name.String.StartsWith("CS$<>", StringComparison.Ordinal) || field.Name.String.StartsWith("<>f__am", StringComparison.Ordinal);
+			return field.Name.StartsWith("CS$<>", StringComparison.Ordinal) || field.Name.StartsWith("<>f__am", StringComparison.Ordinal);
 		}
 
 		static bool IsClosureType(TypeDef type)
 		{
-			return type.HasGeneratedName() && type.IsCompilerGenerated() && (type.Name.String.Contains("DisplayClass") || type.Name.String.Contains("AnonStorey"));
+			return type.HasGeneratedName() && type.IsCompilerGenerated() && (type.Name.Contains("DisplayClass") || type.Name.Contains("AnonStorey"));
 		}
 		
 		/// <summary>

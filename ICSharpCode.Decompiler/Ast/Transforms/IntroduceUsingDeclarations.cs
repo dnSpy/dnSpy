@@ -179,7 +179,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					}
 					foreach (TypeDef t in typeDef.NestedTypes) {
 						if (privateMembersVisible || IsVisible(t, internalMembersVisibleInModule))
-							currentMemberTypes.Add(t.Name.String.Substring(t.Name.String.LastIndexOf('+') + 1));
+							currentMemberTypes.Add(t.Name.Substring(t.Name.LastIndexOf('+') + 1));
 					}
 					
 					foreach (MethodDef method in typeDef.Methods) {

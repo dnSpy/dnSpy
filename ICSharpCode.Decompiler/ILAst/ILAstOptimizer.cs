@@ -810,7 +810,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Callvirt:
 					// property getters can't be expression statements, but all other method calls can be
 					IMethod mr = (IMethod)expr.Operand;
-					return !mr.Name.String.StartsWith("get_", StringComparison.Ordinal);
+					return !mr.Name.StartsWith("get_", StringComparison.Ordinal);
 				case ILCode.CallSetter:
 				case ILCode.CallvirtSetter:
 				case ILCode.Newobj:

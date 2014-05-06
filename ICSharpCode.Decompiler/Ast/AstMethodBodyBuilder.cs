@@ -1109,7 +1109,7 @@ namespace ICSharpCode.Decompiler.Ast
 			string indexerName = null;
 			foreach (CustomAttribute ca in typeDef.CustomAttributes) {
 				if (((IMethod)ca.Constructor).FullName == "System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)") {
-					indexerName = ((UTF8String)ca.ConstructorArguments.Single().Value).String;
+					indexerName = (UTF8String)ca.ConstructorArguments.Single().Value;
 					break;
 				}
 			}

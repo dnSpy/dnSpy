@@ -210,7 +210,7 @@ namespace ICSharpCode.Decompiler
 		{
 			if (type == null)
 				return false;
-			if (string.IsNullOrEmpty(type.Namespace) && type.HasGeneratedName() && (type.Name.String.Contains("AnonType") || type.Name.String.Contains("AnonymousType"))) {
+			if (string.IsNullOrEmpty(type.Namespace) && type.HasGeneratedName() && (type.Name.Contains("AnonType") || type.Name.Contains("AnonymousType"))) {
 				TypeDef td = type.ResolveTypeDef();
 				return td != null && td.IsCompilerGenerated();
 			}
@@ -219,7 +219,7 @@ namespace ICSharpCode.Decompiler
 
 		public static bool HasGeneratedName(this IMemberRef member)
 		{
-			return member.Name.String.StartsWith("<", StringComparison.Ordinal);
+			return member.Name.StartsWith("<", StringComparison.Ordinal);
 		}
 		
 		public static bool ContainsAnonymousType(this TypeSig type)
@@ -252,7 +252,7 @@ namespace ICSharpCode.Decompiler
 					if (ca.AttributeType.Name == "DefaultMemberAttribute" && ca.AttributeType.Namespace == "System.Reflection"
 						&& ((IMethod)ca.Constructor).FullName == @"System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)") {
 						defaultMemberAttribute = ca;
-						return ((UTF8String)ca.ConstructorArguments[0].Value).String;
+						return (UTF8String)ca.ConstructorArguments[0].Value;
 					}
 			defaultMemberAttribute = null;
 			return null;

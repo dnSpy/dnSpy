@@ -115,7 +115,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		internal static bool IsAnonymousMethod(DecompilerContext context, MethodDef method)
 		{
-			if (method == null || !(method.HasGeneratedName() || method.Name.String.Contains("$")))
+			if (method == null || !(method.HasGeneratedName() || method.Name.Contains("$")))
 				return false;
 			if (!(method.IsCompilerGenerated() || IsPotentialClosure(context, method.DeclaringType)))
 				return false;

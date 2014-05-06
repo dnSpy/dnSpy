@@ -235,8 +235,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		void AnalyzeCurrentProperty()
 		{
 			MethodDef getCurrentMethod = enumeratorType.Methods.FirstOrDefault(
-				m => m.Name.String.StartsWith("System.Collections.Generic.IEnumerator", StringComparison.Ordinal)
-				&& m.Name.String.EndsWith(".get_Current", StringComparison.Ordinal));
+				m => m.Name.StartsWith("System.Collections.Generic.IEnumerator", StringComparison.Ordinal)
+				&& m.Name.EndsWith(".get_Current", StringComparison.Ordinal));
 			ILBlock method = CreateILAst(getCurrentMethod);
 			if (method.Body.Count == 1) {
 				// release builds directly return the current field
@@ -274,8 +274,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		void ResolveIEnumerableIEnumeratorFieldMapping()
 		{
 			MethodDef getEnumeratorMethod = enumeratorType.Methods.FirstOrDefault(
-				m => m.Name.String.StartsWith("System.Collections.Generic.IEnumerable", StringComparison.Ordinal)
-				&& m.Name.String.EndsWith(".GetEnumerator", StringComparison.Ordinal));
+				m => m.Name.StartsWith("System.Collections.Generic.IEnumerable", StringComparison.Ordinal)
+				&& m.Name.EndsWith(".GetEnumerator", StringComparison.Ordinal));
 			if (getEnumeratorMethod == null)
 				return; // no mappings (maybe it's just an IEnumerator implementation?)
 			

@@ -1707,7 +1707,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 						if (method.IsSpecialName) {
 							if (method.IsConstructor)
 								type = EntityType.Constructor;
-							else if (method.Name.String.StartsWith("op_", StringComparison.Ordinal))
+							else if (method.Name.StartsWith("op_", StringComparison.Ordinal))
 								type = EntityType.Operator;
 						}
 						members.Add(ReadMethod(method, td, type));
@@ -1725,7 +1725,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				string defaultMemberName = null;
 				var defaultMemberAttribute = typeDef.CustomAttributes.Find(typeof(System.Reflection.DefaultMemberAttribute).FullName);
 				if (defaultMemberAttribute != null && defaultMemberAttribute.ConstructorArguments.Count == 1) {
-					defaultMemberName = ((UTF8String)defaultMemberAttribute.ConstructorArguments[0].Value).String;
+					defaultMemberName = (UTF8String)defaultMemberAttribute.ConstructorArguments[0].Value;
 				}
 				foreach (PropertyDef property in typeDef.Properties) {
 					bool getterVisible = property.GetMethod != null && IsVisible(property.GetMethod.Attributes);
@@ -1736,7 +1736,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 							// Try to detect indexer:
 							if (property.Name == defaultMemberName) {
 								type = EntityType.Indexer; // normal indexer
-							} else if (property.Name.String.EndsWith(".Item", StringComparison.Ordinal) && (property.GetMethod ?? property.SetMethod).HasOverrides) {
+							} else if (property.Name.EndsWith(".Item", StringComparison.Ordinal) && (property.GetMethod ?? property.SetMethod).HasOverrides) {
 								// explicit interface implementation of indexer
 								type = EntityType.Indexer;
 								// We can't really tell parameterized properties and indexers apart in this case without
@@ -1954,10 +1954,10 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				m.IsExtensionMethod = true;
 			}
 
-			int lastDot = method.Name.String.LastIndexOf('.');
+			int lastDot = method.Name.LastIndexOf('.');
 			if (lastDot >= 0 && method.HasOverrides) {
 				// To be consistent with the parser-initialized type system, shorten the method name:
-				m.Name = method.Name.String.Substring(lastDot + 1);
+				m.Name = method.Name.Substring(lastDot + 1);
 				m.IsExplicitInterfaceImplementation = true;
 				foreach (var or in method.Overrides) {
 					m.ExplicitInterfaceImplementations.Add(new DefaultMemberReference(
@@ -2177,7 +2177,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 
 			var accessor = p.Getter ?? p.Setter;
 			if (accessor != null && accessor.IsExplicitInterfaceImplementation) {
-				p.Name = property.Name.String.Substring(property.Name.String.LastIndexOf('.') + 1);
+				p.Name = property.Name.Substring(property.Name.LastIndexOf('.') + 1);
 				p.IsExplicitInterfaceImplementation = true;
 				foreach (var mr in accessor.ExplicitInterfaceImplementations) {
 					p.ExplicitInterfaceImplementations.Add(new AccessorOwnerMemberReference(mr));
@@ -2210,7 +2210,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			
 			var accessor = e.AddAccessor ?? e.RemoveAccessor ?? e.InvokeAccessor;
 			if (accessor != null && accessor.IsExplicitInterfaceImplementation) {
-				e.Name = ev.Name.String.Substring(ev.Name.String.LastIndexOf('.') + 1);
+				e.Name = ev.Name.Substring(ev.Name.LastIndexOf('.') + 1);
 				e.IsExplicitInterfaceImplementation = true;
 				foreach (var mr in accessor.ExplicitInterfaceImplementations) {
 					e.ExplicitInterfaceImplementations.Add(new AccessorOwnerMemberReference(mr));
