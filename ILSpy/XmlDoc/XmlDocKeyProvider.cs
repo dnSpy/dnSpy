@@ -39,28 +39,21 @@ namespace ICSharpCode.ILSpy.XmlDoc
 				AppendTypeName(b, ((ITypeDefOrRef)member).ToTypeSig());
 			} else {
 				ITypeDefOrRef declType;
-				if ((member is MemberRef && ((MemberRef)member).IsFieldRef) || member is IField)
-				{
+				if (member is IField && ((IField)member).FieldSig != null) {
 					declType = ((IField)member).DeclaringType;
 					b.Append("F:");
-				}
-				else if (member is PropertyDef)
-				{
+				} else if (member is PropertyDef) {
 					declType = ((PropertyDef)member).DeclaringType;
 					b.Append("P:");
-				}
-				else if (member is EventDef)
-				{
+				} else if (member is EventDef) {
 					declType = ((EventDef)member).DeclaringType;
 					b.Append("E:");
-				}
-				else if (member is IMethod)
-				{
+				} else if (member is IMethod) {
 					declType = ((IMethod)member).DeclaringType;
 					b.Append("M:");
-				}
-				else
+				} else {
 					throw new NotSupportedException();
+				}
 				AppendTypeName(b, declType.ToTypeSig());
 				b.Append('.');
 				b.Append(member.Name.String.Replace('.', '#'));
@@ -68,7 +61,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 				TypeSig explicitReturnType = null;
 				if (member is PropertyDef) {
 					parameters = Decompiler.DnlibExtensions.GetParameters((PropertyDef)member).ToList();
-				} else if ((member is MemberRef && ((MemberRef)member).IsMethodRef) || member is IMethod) {
+				} else if (member is IMethod && ((IMethod)member).MethodSig != null) {
 					var mr = Decompiler.DnlibExtensions.Resolve((IMethod)member);
 					if (mr.HasGenericParameters) {
 						b.Append("``");
@@ -235,7 +228,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 			int pos = name.LastIndexOf('.');
 			if (string.IsNullOrEmpty(name)) return null;
 			TypeDef type = module.Find(name, true);
-			if (type == null && pos != -1) {
+			if (type == null && pos > 0) { // Original code only entered if ns.Length > 0
 				// try if this is a nested type
 				type = FindType(module, name.Substring(0, pos));
 				if (type != null) {

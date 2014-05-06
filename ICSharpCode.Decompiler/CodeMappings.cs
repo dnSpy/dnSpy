@@ -104,7 +104,6 @@ namespace ICSharpCode.Decompiler
 			this.MetadataToken = method.MDToken.ToInt32();
 			this.MemberCodeMappings = new List<SourceCodeMapping>();
 			this.MemberReference = method;
-			var last = method.Body.Instructions.LastOrDefault();
 			this.CodeSize = method.Body.GetCodeSize();
 		}
 		

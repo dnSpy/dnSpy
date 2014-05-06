@@ -427,8 +427,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				ITypeDefOrRef type = a.AttributeType;
 				if (type.Name == "DynamicAttribute" && type.Namespace == "System.Runtime.CompilerServices") {
 					if (a.ConstructorArguments.Count == 1) {
-						CAArgument[] values = a.ConstructorArguments[0].Value as CAArgument[];
-						if (values != null && typeIndex < values.Length && values[typeIndex].Value is bool)
+						IList<CAArgument> values = a.ConstructorArguments[0].Value as IList<CAArgument>;
+						if (values != null && typeIndex < values.Count && values[typeIndex].Value is bool)
 							return (bool)values[typeIndex].Value;
 					}
 					return true;

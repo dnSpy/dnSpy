@@ -497,7 +497,6 @@ namespace ICSharpCode.Decompiler.Ast
 					};
 				}
 				AstType baseType = ConvertType(typeContext, methodContext, gType.GenericType.TypeDefOrRef, typeAttributes, ref typeIndex, options & ~ConvertTypeOptions.IncludeTypeParameterDefinitions);
-				var baseTypeDef = gType.GenericType.TypeDefOrRef.ResolveTypeDef();
 				List<AstType> typeArguments = new List<AstType>();
 				foreach (var typeArgument in gType.GenericArguments) {
 					typeIndex++;
@@ -538,32 +537,25 @@ namespace ICSharpCode.Decompiler.Ast
 				string namepart = ICSharpCode.NRefactory.TypeSystem.ReflectionHelper.SplitTypeParameterCountFromReflectionName(type.Name);
 				MemberType memberType = new MemberType { Target = typeRef, MemberName = namepart };
 				memberType.AddAnnotation(type);
-				if ((options & ConvertTypeOptions.IncludeTypeParameterDefinitions) == ConvertTypeOptions.IncludeTypeParameterDefinitions)
-				{
+				if ((options & ConvertTypeOptions.IncludeTypeParameterDefinitions) == ConvertTypeOptions.IncludeTypeParameterDefinitions) {
 					AddTypeParameterDefininitionsTo(type, memberType);
 				}
 				return memberType;
 			}
-			else
-			{
+			else {
 				string ns = type.Namespace ?? string.Empty;
 				string name = type.Name;
 				if (name == null)
 					throw new InvalidOperationException("type.Name returned null. Type: " + type.ToString());
 
-				if (name == "Object" && ns == "System" && HasDynamicAttribute(typeAttributes, typeIndex))
-				{
+				if (name == "Object" && ns == "System" && HasDynamicAttribute(typeAttributes, typeIndex)) {
 					return new PrimitiveType("dynamic");
 				}
-				else
-				{
-					if (ns == "System")
-					{
+				else {
+					if (ns == "System") {
 						if ((options & ConvertTypeOptions.DoNotUsePrimitiveTypeNames)
-							!= ConvertTypeOptions.DoNotUsePrimitiveTypeNames)
-						{
-							switch (name)
-							{
+							!= ConvertTypeOptions.DoNotUsePrimitiveTypeNames) {
+							switch (name) {
 								case "SByte":
 									return new PrimitiveType("sbyte");
 								case "Int16":
@@ -603,24 +595,20 @@ namespace ICSharpCode.Decompiler.Ast
 					name = ICSharpCode.NRefactory.TypeSystem.ReflectionHelper.SplitTypeParameterCountFromReflectionName(name);
 
 					AstType astType;
-					if ((options & ConvertTypeOptions.IncludeNamespace) == ConvertTypeOptions.IncludeNamespace && ns.Length > 0)
-					{
+					if ((options & ConvertTypeOptions.IncludeNamespace) == ConvertTypeOptions.IncludeNamespace && ns.Length > 0) {
 						string[] parts = ns.Split('.');
 						AstType nsType = new SimpleType(parts[0]);
-						for (int i = 1; i < parts.Length; i++)
-						{
+						for (int i = 1; i < parts.Length; i++) {
 							nsType = new MemberType { Target = nsType, MemberName = parts[i] };
 						}
 						astType = new MemberType { Target = nsType, MemberName = name };
 					}
-					else
-					{
+					else {
 						astType = new SimpleType(name);
 					}
 					astType.AddAnnotation(type);
 
-					if ((options & ConvertTypeOptions.IncludeTypeParameterDefinitions) == ConvertTypeOptions.IncludeTypeParameterDefinitions)
-					{
+					if ((options & ConvertTypeOptions.IncludeTypeParameterDefinitions) == ConvertTypeOptions.IncludeTypeParameterDefinitions) {
 						AddTypeParameterDefininitionsTo(type, astType);
 					}
 					return astType;
@@ -673,8 +661,8 @@ namespace ICSharpCode.Decompiler.Ast
 			foreach (CustomAttribute a in attributeProvider.CustomAttributes) {
 				if (((IMethod)a.Constructor).DeclaringType.FullName == DynamicAttributeFullName) {
 					if (a.ConstructorArguments.Count == 1) {
-						CAArgument[] values = a.ConstructorArguments[0].Value as CAArgument[];
-						if (values != null && typeIndex < values.Length && values[typeIndex].Value is bool)
+						IList<CAArgument> values = a.ConstructorArguments[0].Value as IList<CAArgument>;
+						if (values != null && typeIndex < values.Count && values[typeIndex].Value is bool)
 							return (bool)values[typeIndex].Value;
 					}
 					return true;
@@ -1212,8 +1200,7 @@ namespace ICSharpCode.Decompiler.Ast
 					break;
 			}
 			LayoutKind defaultLayoutKind = (typeDef.IsValueType && !typeDef.IsEnum) ? LayoutKind.Sequential : LayoutKind.Auto;
-			if (layoutKind != defaultLayoutKind || charSet != CharSet.Ansi || typeDef.HasClassLayout)
-			{
+			if (layoutKind != defaultLayoutKind || charSet != CharSet.Ansi || typeDef.HasClassLayout) {
 				var structLayout = CreateNonCustomAttribute(typeof(StructLayoutAttribute));
 				structLayout.Arguments.Add(new IdentifierExpression("LayoutKind").Member(layoutKind.ToString()));
 				if (charSet != CharSet.Ansi) {
@@ -1461,19 +1448,21 @@ namespace ICSharpCode.Decompiler.Ast
 						}
 					}
 
-					TypeDef resolvedAttributeType = customAttribute.AttributeType.ResolveTypeDef();
-					foreach (var propertyNamedArg in customAttribute.Properties) {
-						var propertyReference = resolvedAttributeType != null ? resolvedAttributeType.Properties.FirstOrDefault(pr => pr.Name == propertyNamedArg.Name) : null;
-						var propertyName = new IdentifierExpression(propertyNamedArg.Name).WithAnnotation(propertyReference);
-						var argumentValue = ConvertArgumentValue(propertyNamedArg.Argument);
-						attribute.Arguments.Add(new AssignmentExpression(propertyName, argumentValue));
-					}
+					if (customAttribute.HasNamedArguments) {
+						TypeDef resolvedAttributeType = customAttribute.AttributeType.ResolveTypeDef();
+						foreach (var propertyNamedArg in customAttribute.Properties) {
+							var propertyReference = resolvedAttributeType != null ? resolvedAttributeType.Properties.FirstOrDefault(pr => pr.Name == propertyNamedArg.Name) : null;
+							var propertyName = new IdentifierExpression(propertyNamedArg.Name).WithAnnotation(propertyReference);
+							var argumentValue = ConvertArgumentValue(propertyNamedArg.Argument);
+							attribute.Arguments.Add(new AssignmentExpression(propertyName, argumentValue));
+						}
 
-					foreach (var fieldNamedArg in customAttribute.Fields) {
-						var fieldReference = resolvedAttributeType != null ? resolvedAttributeType.Fields.FirstOrDefault(f => f.Name == fieldNamedArg.Name) : null;
-						var fieldName = new IdentifierExpression(fieldNamedArg.Name).WithAnnotation(fieldReference);
-						var argumentValue = ConvertArgumentValue(fieldNamedArg.Argument);
-						attribute.Arguments.Add(new AssignmentExpression(fieldName, argumentValue));
+						foreach (var fieldNamedArg in customAttribute.Fields) {
+							var fieldReference = resolvedAttributeType != null ? resolvedAttributeType.Fields.FirstOrDefault(f => f.Name == fieldNamedArg.Name) : null;
+							var fieldName = new IdentifierExpression(fieldNamedArg.Name).WithAnnotation(fieldReference);
+							var argumentValue = ConvertArgumentValue(fieldNamedArg.Argument);
+							attribute.Arguments.Add(new AssignmentExpression(fieldName, argumentValue));
+						}
 					}
 				}
 
@@ -1557,9 +1546,9 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		private static Expression ConvertArgumentValue(CAArgument argument)
 		{
-			if (argument.Value is CAArgument[]) {
+			if (argument.Value is IList<CAArgument>) {
 				ArrayInitializerExpression arrayInit = new ArrayInitializerExpression();
-				foreach (CAArgument element in (CAArgument[])argument.Value) {
+				foreach (CAArgument element in (IList<CAArgument>)argument.Value) {
 					arrayInit.Elements.Add(ConvertArgumentValue(element));
 				}
 				SZArraySig arrayType = argument.Type as SZArraySig;

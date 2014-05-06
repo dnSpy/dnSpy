@@ -115,16 +115,15 @@ namespace ICSharpCode.Decompiler.Ast
 			if (method == null)
 				throw new ArgumentNullException("method");
 
-			foreach (var baseType in BaseTypes(method.DeclaringType))
-			{
+			foreach (var baseType in BaseTypes(method.DeclaringType)) {
 				var baseTypeDef = baseType.Resolve();
-				foreach (var baseMethod in baseTypeDef.Methods)
-					if (MatchMethod(baseMethod, Resolve(baseMethod.MethodSig, baseType), method) && IsVisibleFromDerived(baseMethod, method.DeclaringType))
-					{
+				foreach (var baseMethod in baseTypeDef.Methods) {
+					if (MatchMethod(baseMethod, Resolve(baseMethod.MethodSig, baseType), method) && IsVisibleFromDerived(baseMethod, method.DeclaringType)) {
 						yield return baseMethod;
 						if (baseMethod.IsNewSlot == baseMethod.IsVirtual)
 							yield break;
 					}
+				}
 			}
 		}
 
@@ -172,13 +171,11 @@ namespace ICSharpCode.Decompiler.Ast
 
 			bool isIndexer = property.IsIndexer();
 
-			foreach (var baseType in BaseTypes(property.DeclaringType))
-			{
+			foreach (var baseType in BaseTypes(property.DeclaringType)) {
 				var baseTypeDef = baseType.Resolve();
-				foreach (var baseProperty in baseTypeDef.Properties)
+				foreach (var baseProperty in baseTypeDef.Properties) {
 					if (MatchProperty(baseProperty, Resolve(baseProperty.PropertySig, baseType), property)
-							&& IsVisibleFromDerived(baseProperty, property.DeclaringType))
-					{
+							&& IsVisibleFromDerived(baseProperty, property.DeclaringType)) {
 						if (isIndexer != baseProperty.IsIndexer())
 							continue;
 						yield return baseProperty;
@@ -186,6 +183,7 @@ namespace ICSharpCode.Decompiler.Ast
 						if (anyPropertyAccessor.IsNewSlot == anyPropertyAccessor.IsVirtual)
 							yield break;
 					}
+				}
 			}
 		}
 
@@ -207,18 +205,17 @@ namespace ICSharpCode.Decompiler.Ast
 
 			var eventType = eventDef.EventType.ToTypeSig();
 
-			foreach (var baseType in BaseTypes(eventDef.DeclaringType))
-			{
+			foreach (var baseType in BaseTypes(eventDef.DeclaringType)) {
 				var baseTypeDef = baseType.Resolve();
-				foreach (var baseEvent in baseTypeDef.Events)
+				foreach (var baseEvent in baseTypeDef.Events) {
 					if (MatchEvent(baseEvent, Resolve(baseEvent.EventType.ToTypeSig(), baseType), eventDef, eventType) &&
-						IsVisibleFromDerived(baseEvent, eventDef.DeclaringType))
-					{
+						IsVisibleFromDerived(baseEvent, eventDef.DeclaringType)) {
 						yield return baseEvent;
 						var anyEventAccessor = baseEvent.AddMethod ?? baseEvent.RemoveMethod;
 						if (anyEventAccessor.IsNewSlot == anyEventAccessor.IsVirtual)
 							yield break;
 					}
+				}
 			}
 		}
 

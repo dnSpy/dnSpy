@@ -365,7 +365,7 @@
       <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
     <ProjectReference Include="..\dnlib\src\dnlib.csproj">
-      <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
+      <Project>{FDFC1237-143F-4919-8318-4926901F4639}</Project>
       <Name>dnlib</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">

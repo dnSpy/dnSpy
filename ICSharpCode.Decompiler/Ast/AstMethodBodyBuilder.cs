@@ -683,7 +683,7 @@ namespace ICSharpCode.Decompiler.Ast
 						Expression referencedEntity;
 						string loadName;
 						string handleName;
-						if ((operand is MemberRef && ((MemberRef)operand).IsFieldRef) || operand is IField) {
+						if (operand is IField && ((IField)operand).FieldSig != null) {
 							loadName = "fieldof";
 							handleName = "FieldHandle";
 							IField fr = (IField)operand;
@@ -780,7 +780,7 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Pop: return arg1;
 					case ILCode.Readonly: return InlineAssembly(byteCode, args);
 				case ILCode.Ret:
-					if (this.methodDef.ReturnType.FullName != "System.Void") {
+					if (methodDef.ReturnType.FullName != "System.Void") {
 						return new Ast.ReturnStatement { Expression = arg1 };
 					} else {
 						return new Ast.ReturnStatement();
@@ -972,11 +972,11 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		AstNode TransformCall(bool isVirtual, ILExpression byteCode, List<Ast.Expression> args)
 		{
-			IMethod method = (IMethod)byteCode.Operand;
-			MethodDef methodDef = method.Resolve();
+			IMethod cecilMethod = (IMethod)byteCode.Operand;
+			MethodDef cecilMethodDef = cecilMethod.Resolve();
 			Ast.Expression target;
 			List<Ast.Expression> methodArgs = new List<Ast.Expression>(args);
-			if (method.MethodSig.HasThis) {
+			if (cecilMethod.MethodSig.HasThis) {
 				target = methodArgs[0];
 				methodArgs.RemoveAt(0);
 				
@@ -984,102 +984,102 @@ namespace ICSharpCode.Decompiler.Ast
 				// (calling methods on value types implicitly passes the first argument by reference)
 				target = UnpackDirectionExpression(target);
 				
-				if (methodDef != null) {
+				if (cecilMethodDef != null) {
 					// convert null.ToLower() to ((string)null).ToLower()
 					if (target is NullReferenceExpression)
-						target = target.CastTo(AstBuilder.ConvertType(this.methodDef.DeclaringType, this.methodDef, method.DeclaringType));
+						target = target.CastTo(AstBuilder.ConvertType(this.methodDef.DeclaringType, this.methodDef, cecilMethod.DeclaringType));
 					
-					if (methodDef.DeclaringType.IsInterface) {
+					if (cecilMethodDef.DeclaringType.IsInterface) {
 						TypeSig tr = byteCode.Arguments[0].InferredType;
 						if (tr != null) {
 							TypeDef td = tr.Resolve();
 							if (td != null && !td.IsInterface) {
 								// Calling an interface method on a non-interface object:
 								// we need to introduce an explicit cast
-								target = target.CastTo(AstBuilder.ConvertType(this.methodDef.DeclaringType, this.methodDef, method.DeclaringType));
+								target = target.CastTo(AstBuilder.ConvertType(this.methodDef.DeclaringType, this.methodDef, cecilMethod.DeclaringType));
 							}
 						}
 					}
 				}
 			} else {
-				target = new TypeReferenceExpression { Type = AstBuilder.ConvertType(this.methodDef.DeclaringType, this.methodDef, method.DeclaringType) };
+				target = new TypeReferenceExpression { Type = AstBuilder.ConvertType(this.methodDef.DeclaringType, this.methodDef, cecilMethod.DeclaringType) };
 			}
 			if (target is ThisReferenceExpression && !isVirtual) {
 				// a non-virtual call on "this" might be a "base"-call.
-				if (method.DeclaringType.ScopeType.ResolveTypeDef() != this.methodDef.DeclaringType) {
+				if (cecilMethod.DeclaringType.ScopeType.ResolveTypeDef() != this.methodDef.DeclaringType) {
 					// If we're not calling a method in the current class; we must be calling one in the base class.
 					target = new BaseReferenceExpression();
 				}
 			}
 			
-			if (method.Name == ".ctor" && method.DeclaringType.IsValueType) {
+			if (cecilMethod.Name == ".ctor" && cecilMethod.DeclaringType.IsValueType) {
 				// On value types, the constructor can be called.
 				// This is equivalent to 'target = new ValueType(args);'.
 				ObjectCreateExpression oce = new ObjectCreateExpression();
-				oce.Type = AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, method.DeclaringType);
-				oce.AddAnnotation(method);
-				AdjustArgumentsForMethodCall(method, methodArgs);
+				oce.Type = AstBuilder.ConvertType(cecilMethodDef.DeclaringType, cecilMethodDef, cecilMethod.DeclaringType);
+				oce.AddAnnotation(cecilMethod);
+				AdjustArgumentsForMethodCall(cecilMethod, methodArgs);
 				oce.Arguments.AddRange(methodArgs);
 				return new AssignmentExpression(target, oce);
 			}
 			
-			if (method.Name == "Get" && (method.DeclaringType.TryGetArraySig() != null || method.DeclaringType.TryGetSZArraySig() != null) && methodArgs.Count > 1) {
+			if (cecilMethod.Name == "Get" && (cecilMethod.DeclaringType.TryGetArraySig() != null || cecilMethod.DeclaringType.TryGetSZArraySig() != null) && methodArgs.Count > 1) {
 				return target.Indexer(methodArgs);
-			} else if (method.Name == "Set" && (method.DeclaringType.TryGetArraySig() != null || method.DeclaringType.TryGetSZArraySig() != null) && methodArgs.Count > 2) {
+			} else if (cecilMethod.Name == "Set" && (cecilMethod.DeclaringType.TryGetArraySig() != null || cecilMethod.DeclaringType.TryGetSZArraySig() != null) && methodArgs.Count > 2) {
 				return new AssignmentExpression(target.Indexer(methodArgs.GetRange(0, methodArgs.Count - 1)), methodArgs.Last());
 			}
 			
 			// Test whether the method is an accessor:
-			if (methodDef != null) {
-				if (methodDef.IsGetter() && methodArgs.Count == 0) {
-					foreach (var prop in methodDef.DeclaringType.Properties) {
-						if (prop.GetMethod == methodDef)
-							return target.Member(prop.Name).WithAnnotation(prop).WithAnnotation(method);
+			if (cecilMethodDef != null) {
+				if (cecilMethodDef.IsGetter() && methodArgs.Count == 0) {
+					foreach (var prop in cecilMethodDef.DeclaringType.Properties) {
+						if (prop.GetMethod == cecilMethodDef)
+							return target.Member(prop.Name).WithAnnotation(prop).WithAnnotation(cecilMethod);
 					}
-				} else if (methodDef.IsGetter()) { // with parameters
-					PropertyDef indexer = GetIndexer(methodDef);
+				} else if (cecilMethodDef.IsGetter()) { // with parameters
+					PropertyDef indexer = GetIndexer(cecilMethodDef);
 					if (indexer != null)
-						return target.Indexer(methodArgs).WithAnnotation(indexer).WithAnnotation(method);
-				} else if (methodDef.IsSetter() && methodArgs.Count == 1) {
-					foreach (var prop in methodDef.DeclaringType.Properties) {
-						if (prop.SetMethod == methodDef)
-							return new Ast.AssignmentExpression(target.Member(prop.Name).WithAnnotation(prop).WithAnnotation(method), methodArgs[0]);
+						return target.Indexer(methodArgs).WithAnnotation(indexer).WithAnnotation(cecilMethod);
+				} else if (cecilMethodDef.IsSetter() && methodArgs.Count == 1) {
+					foreach (var prop in cecilMethodDef.DeclaringType.Properties) {
+						if (prop.SetMethod == cecilMethodDef)
+							return new Ast.AssignmentExpression(target.Member(prop.Name).WithAnnotation(prop).WithAnnotation(cecilMethod), methodArgs[0]);
 					}
-				} else if (methodDef.IsSetter() && methodArgs.Count > 1) {
-					PropertyDef indexer = GetIndexer(methodDef);
+				} else if (cecilMethodDef.IsSetter() && methodArgs.Count > 1) {
+					PropertyDef indexer = GetIndexer(cecilMethodDef);
 					if (indexer != null)
 						return new AssignmentExpression(
-							target.Indexer(methodArgs.GetRange(0, methodArgs.Count - 1)).WithAnnotation(indexer).WithAnnotation(method),
+							target.Indexer(methodArgs.GetRange(0, methodArgs.Count - 1)).WithAnnotation(indexer).WithAnnotation(cecilMethod),
 							methodArgs[methodArgs.Count - 1]
 						);
-				} else if (methodDef.IsAddOn() && methodArgs.Count == 1) {
-					foreach (var ev in methodDef.DeclaringType.Events) {
-						if (ev.AddMethod == methodDef) {
+				} else if (cecilMethodDef.IsAddOn() && methodArgs.Count == 1) {
+					foreach (var ev in cecilMethodDef.DeclaringType.Events) {
+						if (ev.AddMethod == cecilMethodDef) {
 							return new Ast.AssignmentExpression {
-								Left = target.Member(ev.Name).WithAnnotation(ev).WithAnnotation(method),
+								Left = target.Member(ev.Name).WithAnnotation(ev).WithAnnotation(cecilMethod),
 								Operator = AssignmentOperatorType.Add,
 								Right = methodArgs[0]
 							};
 						}
 					}
-				} else if (methodDef.IsRemoveOn() && methodArgs.Count == 1) {
-					foreach (var ev in methodDef.DeclaringType.Events) {
-						if (ev.RemoveMethod == methodDef) {
+				} else if (cecilMethodDef.IsRemoveOn() && methodArgs.Count == 1) {
+					foreach (var ev in cecilMethodDef.DeclaringType.Events) {
+						if (ev.RemoveMethod == cecilMethodDef) {
 							return new Ast.AssignmentExpression {
-								Left = target.Member(ev.Name).WithAnnotation(ev).WithAnnotation(method),
+								Left = target.Member(ev.Name).WithAnnotation(ev).WithAnnotation(cecilMethod),
 								Operator = AssignmentOperatorType.Subtract,
 								Right = methodArgs[0]
 							};
 						}
 					}
-				} else if (methodDef.Name == "Invoke" && methodDef.DeclaringType.BaseType != null && methodDef.DeclaringType.BaseType.FullName == "System.MulticastDelegate") {
-					AdjustArgumentsForMethodCall(method, methodArgs);
-					return target.Invoke(methodArgs).WithAnnotation(method);
+				} else if (cecilMethodDef.Name == "Invoke" && cecilMethodDef.DeclaringType.BaseType != null && cecilMethodDef.DeclaringType.BaseType.FullName == "System.MulticastDelegate") {
+					AdjustArgumentsForMethodCall(cecilMethod, methodArgs);
+					return target.Invoke(methodArgs).WithAnnotation(cecilMethod);
 				}
 			}
 			// Default invocation
-			AdjustArgumentsForMethodCall(methodDef ?? method, methodArgs);
-			return target.Invoke(method.Name, ConvertTypeArguments(method), methodArgs).WithAnnotation(method);
+			AdjustArgumentsForMethodCall(cecilMethodDef ?? cecilMethod, methodArgs);
+			return target.Invoke(cecilMethod.Name, ConvertTypeArguments(cecilMethod), methodArgs).WithAnnotation(cecilMethod);
 		}
 		
 		static Expression UnpackDirectionExpression(Expression target)
@@ -1091,9 +1091,9 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
-		static void AdjustArgumentsForMethodCall(IMethod method, List<Expression> methodArgs)
+		static void AdjustArgumentsForMethodCall(IMethod cecilMethod, List<Expression> methodArgs)
 		{
-			MethodDef methodDef = method.Resolve();
+			MethodDef methodDef = cecilMethod.Resolve();
 			// Convert 'ref' into 'out' where necessary
 			for (int i = 0; i < methodArgs.Count && i < methodDef.Parameters.Count; i++) {
 				DirectionExpression dir = methodArgs[i] as DirectionExpression;
@@ -1103,9 +1103,9 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
-		internal static PropertyDef GetIndexer(MethodDef methodDef)
+		internal static PropertyDef GetIndexer(MethodDef cecilMethod)
 		{
-			TypeDef typeDef = methodDef.DeclaringType;
+			TypeDef typeDef = cecilMethod.DeclaringType;
 			string indexerName = null;
 			foreach (CustomAttribute ca in typeDef.CustomAttributes) {
 				if (((IMethod)ca.Constructor).FullName == "System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)") {
@@ -1117,7 +1117,7 @@ namespace ICSharpCode.Decompiler.Ast
 				return null;
 			foreach (PropertyDef prop in typeDef.Properties) {
 				if (prop.Name == indexerName) {
-					if (prop.GetMethod == methodDef || prop.SetMethod == methodDef)
+					if (prop.GetMethod == cecilMethod || prop.SetMethod == cecilMethod)
 						return prop;
 				}
 			}
@@ -1164,7 +1164,7 @@ namespace ICSharpCode.Decompiler.Ast
 				return string.Empty;
 				//} else if (operand is ILExpression) {
 				//	return string.Format("IL_{0:X2}", ((ILExpression)operand).Offset);
-			} else if ((operand is MemberRef && ((MemberRef)operand).IsMethodRef) || operand is IMethod) {
+			} else if (operand is IMethod && ((IMethod)operand).MethodSig != null) {
 				return ((IMethod)operand).Name + "()";
 			} else if (operand is ITypeDefOrRef) {
 				return ((ITypeDefOrRef)operand).FullName;
@@ -1183,9 +1183,9 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
-		IEnumerable<AstType> ConvertTypeArguments(IMethod method)
+		IEnumerable<AstType> ConvertTypeArguments(IMethod cecilMethod)
 		{
-			MethodSpec g = method as MethodSpec;
+			MethodSpec g = cecilMethod as MethodSpec;
 			if (g == null)
 				return null;
 			if (g.GenericInstMethodSig.GenericArguments.Any(ta => ta.ContainsAnonymousType()))

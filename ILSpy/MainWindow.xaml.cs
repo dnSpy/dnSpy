@@ -539,7 +539,7 @@ namespace ICSharpCode.ILSpy
 		{
 			if (reference is ITypeDefOrRef) {
 				return assemblyListTreeNode.FindTypeNode(((ITypeDefOrRef)reference).ResolveTypeDef());
-			} else if ((reference is MemberRef && ((MemberRef)reference).IsMethodRef) ||reference is IMethod) {
+			} else if (reference is IMethod && ((IMethod)reference).MethodSig != null) {
 				return assemblyListTreeNode.FindMethodNode(((IMethod)reference).Resolve());
 			} else if (reference is IField) {
 				return assemblyListTreeNode.FindFieldNode(((IField)reference).Resolve());
@@ -562,7 +562,7 @@ namespace ICSharpCode.ILSpy
 			if (treeNode != null) {
 				SelectNode(treeNode);
 			} else if (reference is dnlib.DotNet.Emit.OpCode) {
-				string link = "http://msdn.microsoft.com/library/system.reflection.emit.opcodes." + ((dnlib.DotNet.Emit.OpCode)reference).Name.ToString().ToLowerInvariant() + ".aspx";
+				string link = "http://msdn.microsoft.com/library/system.reflection.emit.opcodes." + ((dnlib.DotNet.Emit.OpCode)reference).Code.ToString().ToLowerInvariant() + ".aspx";
 				try {
 					Process.Start(link);
 				} catch {

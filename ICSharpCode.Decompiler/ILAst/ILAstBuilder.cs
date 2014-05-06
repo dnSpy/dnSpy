@@ -354,7 +354,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (!byteCode.Code.IsUnconditionalControlFlow()) {
 					if (exceptionHandlerStarts.Contains(byteCode.Next)) {
 						// Do not fall though down to exception handler
-						// It is invalid IL as per ECMA-335 ?2.4.2.8.1, but some obfuscators produce it
+						// It is invalid IL as per ECMA-335 §12.4.2.8.1, but some obfuscators produce it
 					} else {
 						branchTargets.Add(byteCode.Next);
 					}

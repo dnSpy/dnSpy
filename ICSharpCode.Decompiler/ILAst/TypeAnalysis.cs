@@ -611,7 +611,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Ldtoken:
 					if (expr.Operand is ITypeDefOrRef)
 						return corLib.GetTypeRef("System", "RuntimeTypeHandle").ToTypeSig();
-					else if ((expr.Operand is MemberRef && ((MemberRef)expr.Operand).IsFieldRef) || expr is IField)
+					else if (expr.Operand is IField && ((IField)expr.Operand).FieldSig != null)
 						return corLib.GetTypeRef("System", "RuntimeFieldHandle").ToTypeSig();
 					else
 						return corLib.GetTypeRef("System", "RuntimeMethodHandle").ToTypeSig();

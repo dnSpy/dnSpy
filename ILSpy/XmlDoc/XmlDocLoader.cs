@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -75,17 +76,48 @@ namespace ICSharpCode.ILSpy.XmlDoc
 		
 		static string FindXmlDocumentation(string assemblyFileName, string runtime)
 		{
+			if (runtime.StartsWith(MDHeaderRuntimeVersion.MS_CLR_10_PREFIX_X86RETAIL) ||
+				runtime == MDHeaderRuntimeVersion.MS_CLR_10_RETAIL ||
+				runtime == MDHeaderRuntimeVersion.MS_CLR_10_COMPLUS)
+				runtime = MDHeaderRuntimeVersion.MS_CLR_10;
+			runtime = FixRuntimeString(runtime);
+
 			string fileName = LookupLocalizedXmlDoc(Path.Combine(frameworkPath, runtime, assemblyFileName));
-			if (runtime.StartsWith(MDHeaderRuntimeVersion.MS_CLR_20_PREFIX)) {
+			if (runtime.StartsWith(MDHeaderRuntimeVersion.MS_CLR_10_PREFIX))
+				fileName = fileName ?? LookupLocalizedXmlDoc(Path.Combine(frameworkPath, "v1.0.3705", assemblyFileName));
+			else if (runtime.StartsWith(MDHeaderRuntimeVersion.MS_CLR_11_PREFIX))
+				fileName = fileName ?? LookupLocalizedXmlDoc(Path.Combine(frameworkPath, "v1.1.4322", assemblyFileName));
+			else if (runtime.StartsWith(MDHeaderRuntimeVersion.MS_CLR_20_PREFIX)) {
 				fileName = fileName
+					?? LookupLocalizedXmlDoc(Path.Combine(frameworkPath, "v2.0.50727", assemblyFileName))
 					?? LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, "v3.5"))
 					?? LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, "v3.0"))
 					?? LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, @".NETFramework\v3.5\Profile\Client"));
 			}
 			else if (runtime.StartsWith(MDHeaderRuntimeVersion.MS_CLR_40_PREFIX)) {
-				fileName = fileName ?? LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, @".NETFramework\v4.0", assemblyFileName));
+				fileName = fileName
+					?? LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, @".NETFramework\v4.0", assemblyFileName))
+					?? LookupLocalizedXmlDoc(Path.Combine(frameworkPath, "v4.0.30319", assemblyFileName));
 			}
 			return fileName;
+		}
+
+		static readonly List<char> InvalidChars = new List<char>(Path.GetInvalidPathChars()) {
+			Path.PathSeparator,
+			Path.VolumeSeparatorChar,
+			Path.DirectorySeparatorChar,
+			Path.AltDirectorySeparatorChar,
+		};
+		static string FixRuntimeString(string runtime) {
+			int min = int.MaxValue;
+			foreach (var c in InvalidChars) {
+				int index = runtime.IndexOf(c);
+				if (index >= 0 && index < min)
+					min = index;
+			}
+			if (min == int.MaxValue)
+				return runtime;
+			return runtime.Substring(0, min);
 		}
 		
 		static string LookupLocalizedXmlDoc(string fileName)

@@ -88,7 +88,14 @@ namespace ICSharpCode.ILSpy.VB
 				if (!mainModule.IsILOnly) {
 					WriteCommentLine(output, "This assembly contains unmanaged code.");
 				}
-				output.WriteLine("// Runtime: " + mainModule.RuntimeVersion);
+				if (mainModule.IsClr10)
+					WriteCommentLine(output, "Runtime: .NET 1.0");
+				else if (mainModule.IsClr11)
+					WriteCommentLine(output, "Runtime: .NET 1.1");
+				else if (mainModule.IsClr20)
+					WriteCommentLine(output, "Runtime: .NET 2.0");
+				else if (mainModule.IsClr40)
+					WriteCommentLine(output, "Runtime: .NET 4.0");
 				output.WriteLine();
 				
 				// don't automatically load additional assemblies when an assembly node is selected in the tree view

@@ -119,8 +119,11 @@ namespace ICSharpCode.ILSpy
 				.Append (reference.Version)
 				.Append ("__");
 
-			for (int i = 0; i < reference.PublicKeyOrToken.Data.Length; i++)
-				gac_folder.Append (reference.PublicKeyOrToken.Data [i].ToString ("x2"));
+			var pkt = PublicKeyBase.ToPublicKeyToken (reference.PublicKeyOrToken);
+			if (pkt == null)
+				pkt = new PublicKeyToken (new byte[8]);
+			for (int i = 0; i < pkt.Data.Length; i++)
+				gac_folder.Append (pkt.Data [i].ToString ("x2"));
 
 			return Path.Combine (
 				Path.Combine (
