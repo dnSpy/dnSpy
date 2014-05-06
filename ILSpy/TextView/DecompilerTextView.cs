@@ -60,6 +60,7 @@ namespace ICSharpCode.ILSpy.TextView
 	[Export, PartCreationPolicy(CreationPolicy.Shared)]
 	public sealed partial class DecompilerTextView : UserControl, IDisposable
 	{
+		bool USE_FOLDING = false;
 		readonly ReferenceElementGenerator referenceElementGenerator;
 		readonly UIElementGenerator uiElementGenerator;
 		List<VisualLineElementGenerator> activeCustomElementGenerators = new List<VisualLineElementGenerator>();
@@ -322,15 +323,17 @@ namespace ICSharpCode.ILSpy.TextView
 			Debug.WriteLine("  Set-up: {0}", w.Elapsed); w.Restart();
 			textEditor.Document = textOutput.GetDocument();
 			Debug.WriteLine("  Assigning document: {0}", w.Elapsed); w.Restart();
-			if (textOutput.Foldings.Count > 0) {
+			if (USE_FOLDING && textOutput.Foldings.Count > 0) {
 				if (state != null) {
 					state.RestoreFoldings(textOutput.Foldings);
 					textEditor.ScrollToVerticalOffset(state.VerticalOffset);
 					textEditor.ScrollToHorizontalOffset(state.HorizontalOffset);
 				}
-				foldingManager = FoldingManager.Install(textEditor.TextArea);
-				foldingManager.UpdateFoldings(textOutput.Foldings.OrderBy(f => f.StartOffset), -1);
-				Debug.WriteLine("  Updating folding: {0}", w.Elapsed); w.Restart();
+				if (USE_FOLDING) {
+					foldingManager = FoldingManager.Install(textEditor.TextArea);
+					foldingManager.UpdateFoldings(textOutput.Foldings.OrderBy(f => f.StartOffset), -1);
+					Debug.WriteLine("  Updating folding: {0}", w.Elapsed); w.Restart();
+				}
 			}
 		}
 		#endregion
@@ -709,7 +712,7 @@ namespace ICSharpCode.ILSpy.TextView
 			var line = textEditor.Document.GetLineByNumber(lineNumber);
 			
 			// unfold
-			var foldings = foldingManager.GetFoldingsContaining(line.Offset);
+			var foldings = foldingManager == null ? null : foldingManager.GetFoldingsContaining(line.Offset);
 			if (foldings != null) {
 				foreach (var folding in foldings) {
 					if (folding.IsFolded) {
