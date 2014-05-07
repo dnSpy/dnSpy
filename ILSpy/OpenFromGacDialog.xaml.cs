@@ -96,7 +96,7 @@ namespace ICSharpCode.ILSpy
 			}
 
 			public string Culture {
-				get { return r.Locale; }
+				get { return r.Culture; }
 			}
 
 			public string PublicKeyToken {
