@@ -1689,7 +1689,7 @@ namespace ICSharpCode.Decompiler.Ast
 
 		private static bool HidesBaseMember(EntityDeclaration member)
 		{
-			var memberDefinition = member.Annotation<IDefinition>();
+			var memberDefinition = member.Annotation<IMemberDef>();
 			bool addNewModifier = false;
 			var methodDefinition = memberDefinition as MethodDef;
 			if (methodDefinition != null) {
@@ -1707,7 +1707,7 @@ namespace ICSharpCode.Decompiler.Ast
 		/// <param name="member">The derived type's member.</param>
 		/// <param name="includeBaseMethods">true if names of methods declared in base types should also be checked.</param>
 		/// <returns>true if any base member has the same name as given member, otherwise false.</returns>
-		static bool HidesByName(IDefinition member, bool includeBaseMethods)
+		static bool HidesByName(IMemberDef member, bool includeBaseMethods)
 		{
 			Debug.Assert(!(member is PropertyDef) || !((PropertyDef)member).IsIndexer());
 
@@ -1732,8 +1732,8 @@ namespace ICSharpCode.Decompiler.Ast
 			return false;
 		}
 
-		static bool AnyIsHiddenBy<T>(IEnumerable<T> members, IDefinition derived, Predicate<T> condition = null)
-			where T : IDefinition
+		static bool AnyIsHiddenBy<T>(IEnumerable<T> members, IMemberDef derived, Predicate<T> condition = null)
+			where T : IMemberDef
 		{
 			return members.Any(m => m.Name == derived.Name
 			                   && (condition == null || condition(m))

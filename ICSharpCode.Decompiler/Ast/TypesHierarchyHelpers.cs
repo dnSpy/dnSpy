@@ -239,7 +239,7 @@ namespace ICSharpCode.Decompiler.Ast
 		/// <param name="baseMember">The member which visibility is checked.</param>
 		/// <param name="derivedType">The derived type.</param>
 		/// <returns>true if the member is visible from derived type, othewise false.</returns>
-		public static bool IsVisibleFromDerived(IDefinition baseMember, TypeDef derivedType)
+		public static bool IsVisibleFromDerived(IMemberDef baseMember, TypeDef derivedType)
 		{
 			if (baseMember == null)
 				throw new ArgumentNullException("baseMember");
@@ -256,7 +256,7 @@ namespace ICSharpCode.Decompiler.Ast
 				return false;
 		}
 
-		private static bool? IsVisibleFromDerived(IDefinition member)
+		private static bool? IsVisibleFromDerived(IMemberDef member)
 		{
 			MethodAttributes attrs = GetAccessAttributes(member) & MethodAttributes.MemberAccessMask;
 			if (attrs == MethodAttributes.Private)
@@ -266,7 +266,7 @@ namespace ICSharpCode.Decompiler.Ast
 				return true;
 		}
 
-		private static MethodAttributes GetAccessAttributes(IDefinition member)
+		private static MethodAttributes GetAccessAttributes(IMemberDef member)
 		{
 			var fld = member as FieldDef;
 			if (fld != null)

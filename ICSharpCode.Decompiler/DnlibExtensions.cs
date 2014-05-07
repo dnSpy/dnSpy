@@ -189,7 +189,7 @@ namespace ICSharpCode.Decompiler
 			return false;
 		}
 		
-		public static bool IsCompilerGeneratedOrIsInCompilerGeneratedClass(this IDefinition member)
+		public static bool IsCompilerGeneratedOrIsInCompilerGeneratedClass(this IMemberDef member)
 		{
 			if (member == null)
 				return false;

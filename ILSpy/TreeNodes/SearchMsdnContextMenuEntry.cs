@@ -100,8 +100,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				var memberName = string.Empty;
 
 				ITypeDefOrRef declType = null;
-				if (member is IDefinition)
-					declType = ((IDefinition)member).DeclaringType;
+				if (member is IMemberDef)
+					declType = ((IMemberDef)member).DeclaringType;
 				else if (declType is IField)
 					declType = ((IField)member).DeclaringType;
 				else if (declType is IMethod)

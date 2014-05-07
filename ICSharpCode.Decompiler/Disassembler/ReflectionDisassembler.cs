@@ -35,7 +35,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		CancellationToken cancellationToken;
 		bool isInType; // whether we are currently disassembling a whole type (-> defaultCollapsed for foldings)
 		MethodBodyDisassembler methodBodyDisassembler;
-		IDefinition currentMember;
+		IMemberDef currentMember;
 		
 		public ReflectionDisassembler(ITextOutput output, bool detectControlStructure, CancellationToken cancellationToken)
 		{
