@@ -87,6 +87,7 @@
     <Compile Include="Disassembler\ILStructure.cs" />
     <Compile Include="Disassembler\MethodBodyDisassembler.cs" />
     <Compile Include="Disassembler\ReflectionDisassembler.cs" />
+    <Compile Include="DnlibExtra\GenericArgumentResolver.cs" />
     <Compile Include="FlowAnalysis\ControlFlowEdge.cs" />
     <Compile Include="FlowAnalysis\ControlFlowGraph.cs" />
     <Compile Include="FlowAnalysis\ControlFlowGraphBuilder.cs" />
