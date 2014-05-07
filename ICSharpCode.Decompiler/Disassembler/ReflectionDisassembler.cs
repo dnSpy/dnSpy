@@ -170,7 +170,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			//return type
 			method.ReturnType.ResolveGenericParams(method).WriteTo(output);
 			output.Write(' ');
-			if (method.Parameters.ReturnParameter.HasParamDef && method.Parameters.ReturnParameter.ParamDef.HasMarshalInfo) {
+			if (method.Parameters.ReturnParameter.HasParamDef && method.Parameters.ReturnParameter.ParamDef.HasMarshalType) {
 				WriteMarshalInfo(method.Parameters.ReturnParameter.ParamDef.MarshalType);
 			}
 			
@@ -700,7 +700,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			WriteEnum(field.Attributes & FieldAttributes.FieldAccessMask, fieldVisibility);
 			const FieldAttributes hasXAttributes = FieldAttributes.HasDefault | FieldAttributes.HasFieldMarshal | FieldAttributes.HasFieldRVA;
 			WriteFlags(field.Attributes & ~(FieldAttributes.FieldAccessMask | hasXAttributes), fieldAttributes);
-			if (field.HasMarshalInfo) {
+			if (field.HasMarshalType) {
 				WriteMarshalInfo(field.MarshalType);
 			}
 			field.FieldType.ResolveGenericParams(field.DeclaringType).WriteTo(output);

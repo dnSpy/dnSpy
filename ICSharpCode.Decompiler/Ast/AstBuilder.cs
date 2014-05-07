@@ -987,7 +987,7 @@ namespace ICSharpCode.Decompiler.Ast
 				Parameter lastParam = propDef.SetMethod.Parameters.LastOrDefault();
 				if (lastParam != null) {
 					ConvertCustomAttributes(astProp.Setter, lastParam.ParamDef, "param");
-					if (lastParam.HasParamDef && lastParam.ParamDef.HasMarshalInfo) {
+					if (lastParam.HasParamDef && lastParam.ParamDef.HasMarshalType) {
 						astProp.Setter.Attributes.Add(new AttributeSection(ConvertMarshalInfo(lastParam.ParamDef, propDef.Module)) { AttributeTarget = "param" });
 					}
 				}
@@ -1147,7 +1147,7 @@ namespace ICSharpCode.Decompiler.Ast
 				
 				ConvertCustomAttributes(astParam, paramDef.ParamDef);
 				ModuleDef module = paramDef.Method.Module;
-				if (paramDef.HasParamDef && paramDef.ParamDef.HasMarshalInfo) {
+				if (paramDef.HasParamDef && paramDef.ParamDef.HasMarshalType) {
 					astParam.Attributes.Add(new AttributeSection(ConvertMarshalInfo(paramDef.ParamDef, module)));
 				}
 				if (paramDef.HasParamDef && astParam.ParameterModifier != ParameterModifier.Out) {
@@ -1319,7 +1319,7 @@ namespace ICSharpCode.Decompiler.Ast
 		void ConvertAttributes(EntityDeclaration attributedNode, Parameter methodReturnType, ModuleDef module)
 		{
 			ConvertCustomAttributes(attributedNode, methodReturnType.ParamDef, "return");
-			if (methodReturnType.HasParamDef && methodReturnType.ParamDef.HasMarshalInfo) {
+			if (methodReturnType.HasParamDef && methodReturnType.ParamDef.HasMarshalType) {
 				var marshalInfo = ConvertMarshalInfo(methodReturnType.ParamDef, module);
 				attributedNode.Attributes.Add(new AttributeSection(marshalInfo) { AttributeTarget = "return" });
 			}
@@ -1344,7 +1344,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			#endregion
 			
-			if (fieldDef.HasMarshalInfo) {
+			if (fieldDef.HasMarshalType) {
 				attributedNode.Attributes.Add(new AttributeSection(ConvertMarshalInfo(fieldDef, fieldDef.Module))  { AttributeTarget = attributeTarget });
 			}
 		}

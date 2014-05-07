@@ -173,7 +173,7 @@ namespace ICSharpCode.ILSpy
 				return false;
 			}
 
-			public AssemblyDef Resolve(AssemblyNameInfo assembly, ModuleDef sourceModule)
+			public AssemblyDef Resolve(dnlib.DotNet.IAssembly assembly, ModuleDef sourceModule)
 			{
 				var node = parent.LookupReferencedAssembly(assembly);
 				return node != null ? node.AssemblyDefinition : null;
@@ -185,11 +185,11 @@ namespace ICSharpCode.ILSpy
 			return new MyAssemblyResolver(this);
 		}
 
-		public LoadedAssembly LookupReferencedAssembly(AssemblyNameInfo name)
+		public LoadedAssembly LookupReferencedAssembly(dnlib.DotNet.IAssembly name)
 		{
 			if (name == null)
 				throw new ArgumentNullException("name");
-			if ((name.Flags & AssemblyAttributes.ContentType_WindowsRuntime) != 0) {
+			if (name.IsContentTypeWindowsRuntime) {
 				return assemblyList.winRTMetadataLookupCache.GetOrAdd(name.Name, LookupWinRTMetadata);
 			} else {
 				return assemblyList.assemblyLookupCache.GetOrAdd(name.FullName, LookupReferencedAssemblyInternal);

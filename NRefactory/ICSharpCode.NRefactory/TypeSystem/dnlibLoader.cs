@@ -270,7 +270,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		// used to prevent dnlib from loading referenced assemblies
 		sealed class DummyAssemblyResolver : IAssemblyResolver
 		{
-			public AssemblyDef Resolve(AssemblyNameInfo assembly, ModuleDef sourceModule)
+			public AssemblyDef Resolve(dnlib.DotNet.IAssembly assembly, ModuleDef sourceModule)
 			{
 				return null;
 			}
@@ -484,7 +484,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			if (parameter.HasCustomAttributes) {
 				AddCustomAttributes(parameter.CustomAttributes, targetParameter.Attributes);
 			}
-			if (parameter.HasMarshalInfo) {
+			if (parameter.HasMarshalType) {
 				targetParameter.Attributes.Add(ConvertMarshalInfo(parameter.MarshalType));
 			}
 		}
@@ -508,7 +508,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			if (methodDef.Parameters.ReturnParameter.HasParamDef)
 			{
 				var returnParam = methodDef.Parameters.ReturnParameter.ParamDef;
-				if (returnParam.HasMarshalInfo || returnParam.HasCustomAttributes)
+				if (returnParam.HasMarshalType || returnParam.HasCustomAttributes)
 					return true;
 			}
 			return methodDef.HasCustomAttributes;
@@ -616,7 +616,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				AddSecurityAttributes(methodDef.DeclSecurities, attributes);
 			}
 			ParamDef returnParam = methodDef.Parameters.ReturnParameter.ParamDef;
-			if (returnParam != null && returnParam.HasMarshalInfo) {
+			if (returnParam != null && returnParam.HasMarshalType) {
 				returnTypeAttributes.Add(ConvertMarshalInfo(returnParam.MarshalType));
 			}
 			if (returnParam != null && returnParam.HasCustomAttributes) {
@@ -708,7 +708,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 				targetEntity.Attributes.Add(nonSerializedAttribute);
 			}
 			
-			if (fieldDef.HasMarshalInfo) {
+			if (fieldDef.HasMarshalType) {
 				targetEntity.Attributes.Add(ConvertMarshalInfo(fieldDef.MarshalType));
 			}
 			
