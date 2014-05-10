@@ -316,15 +316,7 @@ namespace ICSharpCode.Decompiler.Ast
 			} else if (type.TypeName.EndsWith("Exception", StringComparison.Ordinal)) {
 				name = "ex";
 			} else if (!typeNameToVariableNameDict.TryGetValue(type.FullName, out name)) {
-
-				if (type is IGenericParam)
-					name = ((IGenericParam)type).GenericParameter.Name;
-				else if (type is GenericVar)
-					name = context.CurrentMethod.DeclaringType.GenericParameters[(int)type.ToGenericVar().Number].Name;
-				else if (type is GenericMVar)
-					name = context.CurrentMethod.GenericParameters[(int)type.ToGenericVar().Number].Name;
-				else
-					name = type.TypeName;
+				name = type.TypeName;
 				// remove the 'I' for interfaces
 				if (name.Length >= 3 && name[0] == 'I' && char.IsUpper(name[1]) && char.IsLower(name[2]))
 					name = name.Substring(1);

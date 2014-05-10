@@ -505,17 +505,7 @@ namespace ICSharpCode.Decompiler.Ast
 				ApplyTypeArgumentsTo(baseType, typeArguments);
 				return baseType;
 			} else if (type is GenericSig) {
-
-				GenericSig genericSig = (GenericSig)type;
-				int num = (int)genericSig.Number;
-				if (genericSig is IGenericParam)
-					return new SimpleType(((IGenericParam)genericSig).GenericParameter.Name);
-				else if (genericSig is GenericVar)
-					return new SimpleType(typeContext[num].Name);
-				else if (genericSig is GenericMVar)
-					return new SimpleType(methodContext[num].Name);
-				throw new NotSupportedException();
-
+				return new SimpleType(((GenericSig)type).TypeName);
 			} else if (type is TypeDefOrRefSig) {
 				return ConvertType(typeContext, methodContext, ((TypeDefOrRefSig)type).TypeDefOrRef, typeAttributes, ref typeIndex, options);
 			} else

@@ -285,7 +285,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				writer.Write('!');
 				if (((GenericSig)type).IsMethodVar)
 					writer.Write('!');
-				string typeName = type is IGenericParam ? ((IGenericParam)type).GenericParameter.Name : null;
+				string typeName = type.TypeName;
 				if (string.IsNullOrEmpty(typeName) || typeName[0] == '!' || syntax == ILNameSyntax.SignatureNoNamedTypeParameters)
 					writer.Write(((GenericSig)type).Number.ToString());
 				else
