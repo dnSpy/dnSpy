@@ -1478,12 +1478,12 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			if (secDeclProvider.DeclSecurities.Count == 0)
 				return;
-			/*var attributes = new List<ICSharpCode.NRefactory.CSharp.Attribute>();
-			foreach (var secDecl in secDeclProvider.SecurityDeclarations.OrderBy(d => d.Action)) {
+			var attributes = new List<ICSharpCode.NRefactory.CSharp.Attribute>();
+			foreach (var secDecl in secDeclProvider.DeclSecurities.OrderBy(d => d.Action)) {
 				foreach (var secAttribute in secDecl.SecurityAttributes.OrderBy(a => a.AttributeType.FullName)) {
 					var attribute = new ICSharpCode.NRefactory.CSharp.Attribute();
 					attribute.AddAnnotation(secAttribute);
-					attribute.Type = ConvertType(secAttribute.AttributeType);
+					attribute.Type = ConvertType(null, null, secAttribute.AttributeType);
 					attributes.Add(attribute);
 					
 					SimpleType st = attribute.Type as SimpleType;
@@ -1492,21 +1492,18 @@ namespace ICSharpCode.Decompiler.Ast
 					}
 					
 					var module = secAttribute.AttributeType.Module;
-					var securityActionType = new TypeReference("System.Security.Permissions", "SecurityAction", module, module.TypeSystem.Corlib);
+					var securityActionType = module.CorLibTypes.GetTypeRef("System.Security.Permissions", "SecurityAction");
 					attribute.Arguments.Add(MakePrimitive((int)secDecl.Action, securityActionType));
 					
-					if (secAttribute.HasProperties) {
-						TypeDefinition resolvedAttributeType = secAttribute.AttributeType.Resolve();
+					if (secAttribute.HasNamedArguments) {
+						TypeDef resolvedAttributeType = secAttribute.AttributeType.ResolveTypeDef();
 						foreach (var propertyNamedArg in secAttribute.Properties) {
 							var propertyReference = resolvedAttributeType != null ? resolvedAttributeType.Properties.FirstOrDefault(pr => pr.Name == propertyNamedArg.Name) : null;
 							var propertyName = new IdentifierExpression(propertyNamedArg.Name).WithAnnotation(propertyReference);
 							var argumentValue = ConvertArgumentValue(propertyNamedArg.Argument);
 							attribute.Arguments.Add(new AssignmentExpression(propertyName, argumentValue));
 						}
-					}
 
-					if (secAttribute.HasFields) {
-						TypeDefinition resolvedAttributeType = secAttribute.AttributeType.Resolve();
 						foreach (var fieldNamedArg in secAttribute.Fields) {
 							var fieldReference = resolvedAttributeType != null ? resolvedAttributeType.Fields.FirstOrDefault(f => f.Name == fieldNamedArg.Name) : null;
 							var fieldName = new IdentifierExpression(fieldNamedArg.Name).WithAnnotation(fieldReference);
@@ -1531,7 +1528,6 @@ namespace ICSharpCode.Decompiler.Ast
 				section.Attributes.AddRange(attributes);
 				attributedNode.AddChild(section, EntityDeclaration.AttributeRole);
 			}
-			*/
 		}
 		
 		private static Expression ConvertArgumentValue(CAArgument argument)

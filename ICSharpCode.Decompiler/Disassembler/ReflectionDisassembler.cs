@@ -225,15 +225,13 @@ namespace ICSharpCode.Decompiler.Disassembler
 		}
 		
 		#region Write Security Declarations
-		void WriteSecurityDeclarations(IHasDeclSecurity declSecProvider)
+		void WriteSecurityDeclarations(IHasDeclSecurity secDeclProvider)
 		{
-			// TODO: implement
-			/*
-			if (declSecProvider.DeclSecurities.Count == 0)
+			if (secDeclProvider.DeclSecurities.Count == 0)
 				return;
-			foreach (var declSec in declSecProvider.DeclSecurities) {
+			foreach (var secdecl in secDeclProvider.DeclSecurities) {
 				output.Write(".permissionset ");
-				switch (declSec.Action) {
+				switch (secdecl.Action) {
 					case SecurityAction.Request:
 						output.Write("request");
 						break;
@@ -289,22 +287,22 @@ namespace ICSharpCode.Decompiler.Disassembler
 					SecurityAttribute sa = secdecl.SecurityAttributes[i];
 					if (sa.AttributeType.Scope == sa.AttributeType.Module) {
 						output.Write("class ");
-						output.Write(DisassemblerHelpers.Escape(GetAssemblyQualifiedName(sa.AttributeType)));
+						output.Write(DisassemblerHelpers.Escape(GetAssemblyQualifiedName(sa.AttributeType.ToTypeSig())));
 					} else {
 						sa.AttributeType.WriteTo(output, ILNameSyntax.TypeName);
 					}
 					output.Write(" = {");
-					if (sa.HasFields || sa.HasProperties) {
+					if (sa.HasNamedArguments) {
 						output.WriteLine();
 						output.Indent();
 						
-						foreach (CustomAttributeNamedArgument na in sa.Fields) {
+						foreach (var na in sa.Fields) {
 							output.Write("field ");
 							WriteSecurityDeclarationArgument(na);
 							output.WriteLine();
 						}
 						
-						foreach (CustomAttributeNamedArgument na in sa.Properties) {
+						foreach (var na in sa.Properties) {
 							output.Write("property ");
 							WriteSecurityDeclarationArgument(na);
 							output.WriteLine();
@@ -321,13 +319,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 				output.Unindent();
 				output.WriteLine("}");
 			}
-			 * */
 		}
 		
-		/*void WriteSecurityDeclarationArgument(CustomAttributeNamedArgument na)
+		void WriteSecurityDeclarationArgument(CANamedArgument na)
 		{
-			TypeReference type = na.Argument.Type;
-			if (type.MetadataType == MetadataType.Class || type.MetadataType == MetadataType.ValueType) {
+			TypeSig type = na.Argument.Type;
+			if (type.ElementType == ElementType.Class || type.ElementType == ElementType.ValueType) {
 				output.Write("enum ");
 				if (type.Scope != type.Module) {
 					output.Write("class ");
@@ -349,13 +346,13 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 		}
 		
-		string GetAssemblyQualifiedName(TypeReference type)
+		string GetAssemblyQualifiedName(TypeSig type)
 		{
-			AssemblyNameReference anr = type.Scope as AssemblyNameReference;
+			IAssembly anr = type.Scope as IAssembly;
 			if (anr == null) {
-				ModuleDefinition md = type.Scope as ModuleDefinition;
+				ModuleDef md = type.Scope as ModuleDef;
 				if (md != null) {
-					anr = md.Assembly.Name;
+					anr = md.Assembly;
 				}
 			}
 			if (anr != null) {
@@ -363,7 +360,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			} else {
 				return type.FullName;
 			}
-		}*/
+		}
 		#endregion
 		
 		#region WriteMarshalInfo
