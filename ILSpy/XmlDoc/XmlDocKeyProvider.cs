@@ -38,47 +38,41 @@ namespace ICSharpCode.ILSpy.XmlDoc
 				b.Append("T:");
 				AppendTypeName(b, ((ITypeDefOrRef)member).ToTypeSig());
 			} else {
-				ITypeDefOrRef declType;
-				if (member is IField && ((IField)member).FieldSig != null) {
-					declType = ((IField)member).DeclaringType;
+				if (member.IsField)
 					b.Append("F:");
-				} else if (member is PropertyDef) {
-					declType = ((PropertyDef)member).DeclaringType;
+				else if (member.IsPropertyDef)
 					b.Append("P:");
-				} else if (member is EventDef) {
-					declType = ((EventDef)member).DeclaringType;
+				else if (member.IsEventDef)
 					b.Append("E:");
-				} else if (member is IMethod) {
-					declType = ((IMethod)member).DeclaringType;
+				else if (member.IsMethod)
 					b.Append("M:");
-				} else {
-					throw new NotSupportedException();
-				}
-				AppendTypeName(b, declType.ToTypeSig());
+				AppendTypeName(b, member.DeclaringType.ToTypeSig());
 				b.Append('.');
 				b.Append(member.Name.String.Replace('.', '#'));
 				IList<Parameter> parameters;
 				TypeSig explicitReturnType = null;
-				if (member is PropertyDef) {
+				if (member.IsPropertyDef) {
 					parameters = Decompiler.DnlibExtensions.GetParameters((PropertyDef)member).ToList();
-				} else if (member is IMethod && ((IMethod)member).MethodSig != null) {
-					var mr = Decompiler.DnlibExtensions.Resolve((IMethod)member);
-					if (mr.HasGenericParameters) {
+				} else if (member.IsMethod) {
+					var mr = (IMethod)member;
+					if (mr.NumberOfGenericParameters > 0) {
 						b.Append("``");
-						b.Append(mr.GenericParameters.Count);
+						b.Append(mr.NumberOfGenericParameters);
 					}
-					parameters = mr.Parameters;
+					parameters = Decompiler.DnlibExtensions.GetParameters(mr);
 					if (mr.Name == "op_Implicit" || mr.Name == "op_Explicit") {
-						explicitReturnType = mr.ReturnType;
+						explicitReturnType = mr.MethodSig.RetType;
 					}
 				} else {
 					parameters = null;
 				}
-				if (parameters != null && parameters.Count > 0) {
+				if (parameters != null && Decompiler.DnlibExtensions.HasNormalParameter(parameters)) {
 					b.Append('(');
 					for (int i = 0; i < parameters.Count; i++) {
-						if (i > 0) b.Append(',');
-						AppendTypeName(b, parameters[i].Type);
+						var param = parameters[i];
+						if (!param.IsNormalMethodParameter) continue;
+						if (param.MethodSigIndex > 0) b.Append(',');
+						AppendTypeName(b, param.Type);
 					}
 					b.Append(')');
 				}
@@ -100,11 +94,23 @@ namespace ICSharpCode.ILSpy.XmlDoc
 				GenericInstSig giType = (GenericInstSig)type;
 				AppendTypeNameWithArguments(b, giType.GenericType.TypeDefOrRef, giType.GenericArguments);
 				return;
-			} 
-			SZArraySig arrayType = type as SZArraySig;  // TODO: multi-dimensional array
+			}
+			ArraySigBase arrayType = type as ArraySigBase;
 			if (arrayType != null) {
 				AppendTypeName(b, arrayType.Next);
-				b.Append("[]");
+				b.Append('[');
+				var lowerBounds = arrayType.GetLowerBounds();
+				var sizes = arrayType.GetSizes();
+				for (int i = 0; i < arrayType.Rank; i++) {
+					if (i > 0)
+						b.Append(',');
+					if (i < lowerBounds.Count && i < sizes.Count) {
+						b.Append(lowerBounds[i]);
+						b.Append(':');
+						b.Append(sizes[i] + lowerBounds[i] - 1);
+					}
+				}
+				b.Append(']');
 				return;
 			}
 			ByRefSig refType = type as ByRefSig;

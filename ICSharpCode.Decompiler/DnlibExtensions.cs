@@ -356,6 +356,14 @@ namespace ICSharpCode.Decompiler
 				   method.DeclaringType.Events.Any(propertyDef => propertyDef.AddMethod == method || propertyDef.RemoveMethod == method || propertyDef.InvokeMethod == method);
 		}
 
+		public static bool HasNormalParameter(this IEnumerable<Parameter> list)
+		{
+			foreach (var p in list)
+				if (p.IsNormalMethodParameter)
+					return true;
+			return false;
+		}
+
 		public static IList<TypeSig> GetParameters(this MethodBaseSig methodSig)
 		{
 			if (methodSig.ParamsAfterSentinel != null)
@@ -381,6 +389,24 @@ namespace ICSharpCode.Decompiler
 		public static bool IsCorlibType(this ITypeDefOrRef type, string ns, string name)
 		{
 			return type.DefinitionAssembly.IsCorLib() && type.Namespace == ns && type.Name == name;
+		}
+
+		public static IList<Parameter> GetParameters(this IMethod method)
+		{
+			if (method == null || method.MethodSig == null)
+				return new List<Parameter>();
+
+			var md = method as MethodDef;
+			if (md != null)
+				return md.Parameters;
+
+			var list = new List<Parameter>();
+			int paramIndex = 0, methodSigIndex = 0;
+			if (method.MethodSig.HasThis)
+				list.Add(new Parameter(paramIndex++, Parameter.HIDDEN_THIS_METHOD_SIG_INDEX, method.DeclaringType.ToTypeSig()));
+			foreach (var type in GetParameters(method.MethodSig))
+				list.Add(new Parameter(paramIndex++, methodSigIndex++, type));
+			return list;
 		}
 
 		public static IEnumerable<Parameter> GetParameters(this PropertyDef property)
