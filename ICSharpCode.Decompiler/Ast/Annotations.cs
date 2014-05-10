@@ -36,7 +36,7 @@ namespace ICSharpCode.Decompiler.Ast
 				ILVariable v = (ILVariable)p.Operand;
 				ITypeDefOrRef typeRef = (ITypeDefOrRef)p.Arguments[0].Arguments[0].Arguments[0].Operand;
 				string name = (string)p.Arguments[0].Arguments[1].Operand;
-				Parameters.Add(new ParameterDeclaration(AstBuilder.ConvertType(null, null, typeRef), name).WithAnnotation(v));
+				Parameters.Add(new ParameterDeclaration(AstBuilder.ConvertType(typeRef), name).WithAnnotation(v));
 			}
 		}
 	}

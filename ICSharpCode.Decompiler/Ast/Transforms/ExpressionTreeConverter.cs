@@ -279,7 +279,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				if (m.Has("declaringType"))
 					convertedTarget = new TypeReferenceExpression(m.Get<AstType>("declaringType").Single().Clone());
 				else
-					convertedTarget = new TypeReferenceExpression(AstBuilder.ConvertType(context.CurrentMethod.DeclaringType, context.CurrentMethod, fr.DeclaringType));
+					convertedTarget = new TypeReferenceExpression(AstBuilder.ConvertType(fr.DeclaringType));
 			} else {
 				convertedTarget = Convert(target);
 				if (convertedTarget == null)
@@ -317,7 +317,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				if (m.Has("declaringType"))
 					convertedTarget = new TypeReferenceExpression(m.Get<AstType>("declaringType").Single().Clone());
 				else
-					convertedTarget = new TypeReferenceExpression(AstBuilder.ConvertType(context.CurrentMethod.DeclaringType, context.CurrentMethod, mr.DeclaringType));
+					convertedTarget = new TypeReferenceExpression(AstBuilder.ConvertType(mr.DeclaringType));
 			} else {
 				convertedTarget = Convert(target);
 				if (convertedTarget == null)
@@ -367,7 +367,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				if (m.Has("declaringType"))
 					convertedTarget = new TypeReferenceExpression(m.Get<AstType>("declaringType").Single().Clone());
 				else
-					convertedTarget = new TypeReferenceExpression(AstBuilder.ConvertType(context.CurrentMethod.DeclaringType, context.CurrentMethod, mr.DeclaringType));
+					convertedTarget = new TypeReferenceExpression(AstBuilder.ConvertType(mr.DeclaringType));
 			} else {
 				convertedTarget = Convert(target);
 				if (convertedTarget == null)
@@ -378,7 +378,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			MethodSpec gim = mr as MethodSpec;
 			if (gim != null) {
 				foreach (TypeSig tr in gim.GenericInstMethodSig.GenericArguments) {
-					mre.TypeArguments.Add(AstBuilder.ConvertType(context.CurrentMethod.DeclaringType, context.CurrentMethod, tr));
+					mre.TypeArguments.Add(AstBuilder.ConvertType(tr));
 				}
 			}
 			IList<Expression> arguments = null;
@@ -542,7 +542,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				declaringTypeNode = m.Get<AstType>("declaringType").Single().Clone();
 				declaringType = declaringTypeNode.Annotation<ITypeDefOrRef>();
 			} else {
-				declaringTypeNode = AstBuilder.ConvertType(context.CurrentMethod.DeclaringType, context.CurrentMethod, ctor.DeclaringType);
+				declaringTypeNode = AstBuilder.ConvertType(ctor.DeclaringType);
 				declaringType = ctor.DeclaringType;
 			}
 			if (declaringTypeNode == null)

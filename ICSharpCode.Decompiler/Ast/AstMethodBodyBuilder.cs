@@ -119,7 +119,7 @@ namespace ICSharpCode.Decompiler.Ast
 				if (v.Type.ContainsAnonymousType())
 					type = new SimpleType("var");
 				else
-					type = AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, v.Type);
+					type = AstBuilder.ConvertType(v.Type);
 				var newVarDecl = new VariableDeclarationStatement(type, v.Name);
 				newVarDecl.Variables.Single().AddAnnotation(v);
 				astBlock.Statements.InsertBefore(insertionPoint, newVarDecl);
@@ -209,7 +209,7 @@ namespace ICSharpCode.Decompiler.Ast
 					} else {
 						tryCatchStmt.CatchClauses.Add(
 							new Ast.CatchClause {
-								Type = AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, catchClause.ExceptionType),
+								Type = AstBuilder.ConvertType(catchClause.ExceptionType),
 								VariableName = catchClause.ExceptionVariable == null ? null : catchClause.ExceptionVariable.Name,
 								Body = TransformBlock(catchClause)
 							}.WithAnnotation(catchClause.ExceptionVariable));
@@ -236,7 +236,7 @@ namespace ICSharpCode.Decompiler.Ast
 							Initializer = (Expression)TransformExpression(initializer.Arguments[0])
 						}.WithAnnotation(v));
 				}
-				fixedStatement.Type = AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, ((ILVariable)fixedNode.Initializers[0].Operand).Type);
+				fixedStatement.Type = AstBuilder.ConvertType(((ILVariable)fixedNode.Initializers[0].Operand).Type);
 				fixedStatement.EmbeddedStatement = TransformBlock(fixedNode.BodyBlock);
 				yield return fixedStatement;
 			} else if (node is ILBlock) {
@@ -272,7 +272,7 @@ namespace ICSharpCode.Decompiler.Ast
 		AstNode TransformByteCode(ILExpression byteCode)
 		{
 			object operand = byteCode.Operand;
-			AstType operandAsTypeRef = AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, operand as ITypeDefOrRef);
+			AstType operandAsTypeRef = AstBuilder.ConvertType(operand as ITypeDefOrRef);
 
 			List<Ast.Expression> args = new List<Expression>();
 			foreach(ILExpression arg in byteCode.Arguments) {
@@ -636,7 +636,7 @@ namespace ICSharpCode.Decompiler.Ast
 						arg1 = ((DirectionExpression)arg1).Expression.Detach();
 					return arg1.Member(((IField) operand).Name).WithAnnotation(operand);
 				case ILCode.Ldsfld:
-					return AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, ((IField)operand).DeclaringType)
+					return AstBuilder.ConvertType(((IField)operand).DeclaringType)
 						.Member(((IField)operand).Name).WithAnnotation(operand);
 				case ILCode.Stfld:
 					if (arg1 is DirectionExpression)
@@ -644,7 +644,7 @@ namespace ICSharpCode.Decompiler.Ast
 					return new AssignmentExpression(arg1.Member(((IField) operand).Name).WithAnnotation(operand), arg2);
 				case ILCode.Stsfld:
 					return new AssignmentExpression(
-						AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, ((IField)operand).DeclaringType)
+						AstBuilder.ConvertType(((IField)operand).DeclaringType)
 						.Member(((IField)operand).Name).WithAnnotation(operand),
 						arg1);
 				case ILCode.Ldflda:
@@ -653,7 +653,7 @@ namespace ICSharpCode.Decompiler.Ast
 					return MakeRef(arg1.Member(((IField) operand).Name).WithAnnotation(operand));
 				case ILCode.Ldsflda:
 					return MakeRef(
-						AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, ((IField)operand).DeclaringType)
+						AstBuilder.ConvertType(((IField)operand).DeclaringType)
 						.Member(((IField)operand).Name).WithAnnotation(operand));
 					case ILCode.Ldloc: {
 						ILVariable v = (ILVariable)operand;
@@ -678,7 +678,7 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Ldstr:  return new Ast.PrimitiveExpression(operand);
 				case ILCode.Ldtoken:
 					if (operand is ITypeDefOrRef) {
-						return AstBuilder.CreateTypeOfExpression(methodDef.DeclaringType, methodDef, (ITypeDefOrRef)operand).Member("TypeHandle");
+						return AstBuilder.CreateTypeOfExpression((ITypeDefOrRef)operand).Member("TypeHandle");
 					} else {
 						Expression referencedEntity;
 						string loadName;
@@ -687,13 +687,13 @@ namespace ICSharpCode.Decompiler.Ast
 							loadName = "fieldof";
 							handleName = "FieldHandle";
 							IField fr = (IField)operand;
-							referencedEntity = AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, fr.DeclaringType).Member(fr.Name).WithAnnotation(fr);
+							referencedEntity = AstBuilder.ConvertType(fr.DeclaringType).Member(fr.Name).WithAnnotation(fr);
 						} else if (operand is IMethod) {
 							loadName = "methodof";
 							handleName = "MethodHandle";
 							IMethod mr = (IMethod)operand;
-							var methodParameters = mr.MethodSig.GetParameters().Select(p => new TypeReferenceExpression(AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, p)));
-							referencedEntity = AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, mr.DeclaringType).Invoke(mr.Name, methodParameters).WithAnnotation(mr);
+							var methodParameters = mr.MethodSig.GetParameters().Select(p => new TypeReferenceExpression(AstBuilder.ConvertType(p)));
+							referencedEntity = AstBuilder.ConvertType(mr.DeclaringType).Invoke(mr.Name, methodParameters).WithAnnotation(mr);
 						} else {
 							loadName = "ldtoken";
 							handleName = "Handle";
@@ -712,7 +712,7 @@ namespace ICSharpCode.Decompiler.Ast
 							type = corLib.Byte;
 						}
 						return new StackAllocExpression {
-							Type = AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, type),
+							Type = AstBuilder.ConvertType(type),
 							CountExpression = DivideBySize(arg1, type)
 						};
 					}
@@ -742,7 +742,7 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Newobj: {
 						ITypeDefOrRef declaringType = ((IMethod)operand).DeclaringType;
 						if (declaringType.TryGetSZArraySig() != null || declaringType.TryGetArraySig() != null) {
-							ComposedType ct = AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, declaringType) as ComposedType;
+							ComposedType ct = AstBuilder.ConvertType(declaringType) as ComposedType;
 							if (ct != null && ct.ArraySpecifiers.Count >= 1) {
 								var ace = new Ast.ArrayCreateExpression();
 								ct.ArraySpecifiers.First().Remove();
@@ -771,7 +771,7 @@ namespace ICSharpCode.Decompiler.Ast
 							}
 						}
 						var oce = new Ast.ObjectCreateExpression();
-						oce.Type = AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, declaringType);
+						oce.Type = AstBuilder.ConvertType(declaringType);
 						oce.Arguments.AddRange(args);
 						return oce.WithAnnotation(operand);
 					}
@@ -934,7 +934,7 @@ namespace ICSharpCode.Decompiler.Ast
 					sizeOfExpression = new PrimitiveExpression(8);
 					break;
 				default:
-					sizeOfExpression = new SizeOfExpression { Type = AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, type) };
+					sizeOfExpression = new SizeOfExpression { Type = AstBuilder.ConvertType(type) };
 					break;
 			}
 			
@@ -967,7 +967,7 @@ namespace ICSharpCode.Decompiler.Ast
 						return new PrimitiveExpression(0m);
 				}
 			}
-			return new DefaultValueExpression { Type = AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, type) };
+			return new DefaultValueExpression { Type = AstBuilder.ConvertType(type) };
 		}
 		
 		AstNode TransformCall(bool isVirtual, ILExpression byteCode, List<Ast.Expression> args)
@@ -987,7 +987,7 @@ namespace ICSharpCode.Decompiler.Ast
 				if (cecilMethodDef != null) {
 					// convert null.ToLower() to ((string)null).ToLower()
 					if (target is NullReferenceExpression)
-						target = target.CastTo(AstBuilder.ConvertType(this.methodDef.DeclaringType, this.methodDef, cecilMethod.DeclaringType));
+						target = target.CastTo(AstBuilder.ConvertType(cecilMethod.DeclaringType));
 					
 					if (cecilMethodDef.DeclaringType.IsInterface) {
 						TypeSig tr = byteCode.Arguments[0].InferredType;
@@ -996,13 +996,13 @@ namespace ICSharpCode.Decompiler.Ast
 							if (td != null && !td.IsInterface) {
 								// Calling an interface method on a non-interface object:
 								// we need to introduce an explicit cast
-								target = target.CastTo(AstBuilder.ConvertType(this.methodDef.DeclaringType, this.methodDef, cecilMethod.DeclaringType));
+								target = target.CastTo(AstBuilder.ConvertType(cecilMethod.DeclaringType));
 							}
 						}
 					}
 				}
 			} else {
-				target = new TypeReferenceExpression { Type = AstBuilder.ConvertType(this.methodDef.DeclaringType, this.methodDef, cecilMethod.DeclaringType) };
+				target = new TypeReferenceExpression { Type = AstBuilder.ConvertType(cecilMethod.DeclaringType) };
 			}
 			if (target is ThisReferenceExpression && !isVirtual) {
 				// a non-virtual call on "this" might be a "base"-call.
@@ -1016,7 +1016,7 @@ namespace ICSharpCode.Decompiler.Ast
 				// On value types, the constructor can be called.
 				// This is equivalent to 'target = new ValueType(args);'.
 				ObjectCreateExpression oce = new ObjectCreateExpression();
-				oce.Type = AstBuilder.ConvertType(cecilMethodDef.DeclaringType, cecilMethodDef, cecilMethod.DeclaringType);
+				oce.Type = AstBuilder.ConvertType(cecilMethod.DeclaringType);
 				oce.AddAnnotation(cecilMethod);
 				AdjustArgumentsForMethodCall(cecilMethod, methodArgs);
 				oce.Arguments.AddRange(methodArgs);
@@ -1190,7 +1190,7 @@ namespace ICSharpCode.Decompiler.Ast
 				return null;
 			if (g.GenericInstMethodSig.GenericArguments.Any(ta => ta.ContainsAnonymousType()))
 				return null;
-			return g.GenericInstMethodSig.GenericArguments.Select(t => AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, t));
+			return g.GenericInstMethodSig.GenericArguments.Select(t => AstBuilder.ConvertType(t));
 		}
 		
 		static Ast.DirectionExpression MakeRef(Ast.Expression expr)
@@ -1215,7 +1215,7 @@ namespace ICSharpCode.Decompiler.Ast
 				};
 			} else if (actualType is PtrSig && reqType is PtrSig) {
 				if (actualType.FullName != reqType.FullName)
-					return expr.CastTo(AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, reqType));
+					return expr.CastTo(AstBuilder.ConvertType(reqType));
 				else
 					return expr;
 			} else {
@@ -1241,7 +1241,7 @@ namespace ICSharpCode.Decompiler.Ast
 
 				if (expr is PrimitiveExpression && !requiredIsIntegerOrEnum && TypeAnalysis.IsEnum(actualType))
 				{
-					return expr.CastTo(AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, actualType));
+					return expr.CastTo(AstBuilder.ConvertType(actualType));
 				}
 				
 				bool actualIsPrimitiveType = actualIsIntegerOrEnum
@@ -1249,7 +1249,7 @@ namespace ICSharpCode.Decompiler.Ast
 				bool requiredIsPrimitiveType = requiredIsIntegerOrEnum
 					|| reqType.GetElementType() == ElementType.R4 || reqType.GetElementType() == ElementType.R8;
 				if (actualIsPrimitiveType && requiredIsPrimitiveType) {
-					return expr.CastTo(AstBuilder.ConvertType(methodDef.DeclaringType, methodDef, reqType));
+					return expr.CastTo(AstBuilder.ConvertType(reqType));
 				}
 				return expr;
 			}

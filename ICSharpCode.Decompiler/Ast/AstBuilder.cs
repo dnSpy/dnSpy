@@ -215,7 +215,7 @@ namespace ICSharpCode.Decompiler.Ast
 				return;
 			foreach (ExportedType type in module.ExportedTypes) {
 				if (type.IsForwarder) {
-					var forwardedType = CreateTypeOfExpression(null, null, new TypeRefUser(module, type.TypeNamespace, type.TypeName));
+					var forwardedType = CreateTypeOfExpression(new TypeRefUser(module, type.TypeNamespace, type.TypeName));
 					astCompileUnit.AddChild(
 						new AttributeSection {
 							AttributeTarget = target,
@@ -313,7 +313,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (typeDef.DeclaringType != null && typeDef.DeclaringType.HasGenericParameters)
 				genericParameters = genericParameters.Skip(typeDef.DeclaringType.GenericParameters.Count);
 			astType.TypeParameters.AddRange(MakeTypeParameters(genericParameters));
-			astType.Constraints.AddRange(MakeConstraints(typeDef, null, genericParameters));
+			astType.Constraints.AddRange(MakeConstraints(genericParameters));
 			
 			EntityDeclaration result = astType;
 			if (typeDef.IsEnum) {
@@ -323,7 +323,7 @@ namespace ICSharpCode.Decompiler.Ast
 					if (!field.IsStatic) {
 						// the value__ field
 						if (field.FieldType != typeDef.Module.CorLibTypes.Int32) {
-							astType.AddChild(ConvertType(typeDef, null, field.FieldType), Roles.BaseType);
+							astType.AddChild(ConvertType(field.FieldType), Roles.BaseType);
 						}
 					} else {
 						EnumMemberDeclaration enumMember = new EnumMemberDeclaration();
@@ -347,7 +347,7 @@ namespace ICSharpCode.Decompiler.Ast
 				astType.Constraints.MoveTo(dd.Constraints);
 				foreach (var m in typeDef.Methods) {
 					if (m.Name == "Invoke") {
-						dd.ReturnType = ConvertType(typeDef, m, m.ReturnType, m.Parameters.ReturnParameter.ParamDef);
+						dd.ReturnType = ConvertType(m.ReturnType, m.Parameters.ReturnParameter.ParamDef);
 						dd.Parameters.AddRange(MakeParameters(m));
 						ConvertAttributes(dd, m.Parameters.ReturnParameter, m.Module);
 					}
@@ -356,10 +356,10 @@ namespace ICSharpCode.Decompiler.Ast
 			} else {
 				// Base type
 				if (typeDef.BaseType != null && !typeDef.IsValueType && typeDef.BaseType.FullName != "System.Object") {
-					astType.AddChild(ConvertType(typeDef, null, typeDef.BaseType), Roles.BaseType);
+					astType.AddChild(ConvertType(typeDef.BaseType), Roles.BaseType);
 				}
 				foreach (var i in typeDef.Interfaces)
-					astType.AddChild(ConvertType(typeDef, null, i.Interface), Roles.BaseType);
+					astType.AddChild(ConvertType(i.Interface), Roles.BaseType);
 				
 				AddTypeMembers(astType, typeDef);
 
@@ -397,9 +397,9 @@ namespace ICSharpCode.Decompiler.Ast
 		/// <summary>
 		/// Creates a typeof-expression for the specified type.
 		/// </summary>
-		public static TypeOfExpression CreateTypeOfExpression(TypeDef typeContext, MethodDef methodContext, ITypeDefOrRef type)
+		public static TypeOfExpression CreateTypeOfExpression(ITypeDefOrRef type)
 		{
-			return new TypeOfExpression(AddEmptyTypeArgumentsForUnboundGenerics(ConvertType(typeContext, methodContext, type)));
+			return new TypeOfExpression(AddEmptyTypeArgumentsForUnboundGenerics(ConvertType(type)));
 		}
 		
 		static AstType AddEmptyTypeArgumentsForUnboundGenerics(AstType type)
@@ -440,12 +440,10 @@ namespace ICSharpCode.Decompiler.Ast
 		/// a type system type reference.</param>
 		/// <param name="typeAttributes">Attributes associated with the Cecil type reference.
 		/// This is used to support the 'dynamic' type.</param>
-		public static AstType ConvertType(TypeDef typeContext, MethodDef methodContext, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null, ConvertTypeOptions options = ConvertTypeOptions.None)
+		public static AstType ConvertType(ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null, ConvertTypeOptions options = ConvertTypeOptions.None)
 		{
 			int typeIndex = 0;
-			var typeParams = typeContext == null ? (IList<GenericParam>)new List<GenericParam>() : typeContext.GenericParameters;
-			var methodParams = methodContext == null ? (IList<GenericParam>)new List<GenericParam>() : methodContext.GenericParameters;
-			return ConvertType(typeParams, methodParams, type, typeAttributes, ref typeIndex, options);
+			return ConvertType(type, typeAttributes, ref typeIndex, options);
 		}
 
 		/// <summary>
@@ -455,15 +453,13 @@ namespace ICSharpCode.Decompiler.Ast
 		/// a type system type reference.</param>
 		/// <param name="typeAttributes">Attributes associated with the Cecil type reference.
 		/// This is used to support the 'dynamic' type.</param>
-		public static AstType ConvertType(TypeDef typeContext, MethodDef methodContext, TypeSig type, IHasCustomAttribute typeAttributes = null, ConvertTypeOptions options = ConvertTypeOptions.None)
+		public static AstType ConvertType(TypeSig type, IHasCustomAttribute typeAttributes = null, ConvertTypeOptions options = ConvertTypeOptions.None)
 		{
 			int typeIndex = 0;
-			var typeParams = typeContext == null ? (IList<GenericParam>)new List<GenericParam>() : typeContext.GenericParameters;
-			var methodParams = methodContext == null ? (IList<GenericParam>)new List<GenericParam>() : methodContext.GenericParameters;
-			return ConvertType(typeParams, methodParams, type, typeAttributes, ref typeIndex, options);
+			return ConvertType(type, typeAttributes, ref typeIndex, options);
 		}
 
-		static AstType ConvertType(IList<GenericParam> typeContext, IList<GenericParam> methodContext, TypeSig type, IHasCustomAttribute typeAttributes, ref int typeIndex, ConvertTypeOptions options)
+		static AstType ConvertType(TypeSig type, IHasCustomAttribute typeAttributes, ref int typeIndex, ConvertTypeOptions options)
 		{
 			type = type.RemoveModifiers();
 			if (type == null) {
@@ -473,57 +469,57 @@ namespace ICSharpCode.Decompiler.Ast
 			if (type is ByRefSig) {
 				typeIndex++;
 				// by reference type cannot be represented in C#; so we'll represent it as a pointer instead
-				return ConvertType(typeContext, methodContext, (type as ByRefSig).Next, typeAttributes, ref typeIndex, options)
+				return ConvertType((type as ByRefSig).Next, typeAttributes, ref typeIndex, options)
 					.MakePointerType();
 			} else if (type is PtrSig) {
 				typeIndex++;
-				return ConvertType(typeContext, methodContext, (type as PtrSig).Next, typeAttributes, ref typeIndex, options)
+				return ConvertType((type as PtrSig).Next, typeAttributes, ref typeIndex, options)
 					.MakePointerType();
 			} else if (type is ArraySig) {
 				typeIndex++;
-				return ConvertType(typeContext, methodContext, (type as ArraySig).Next, typeAttributes, ref typeIndex, options)
+				return ConvertType((type as ArraySig).Next, typeAttributes, ref typeIndex, options)
 					.MakeArrayType((int)(type as ArraySig).Rank);
 			} else if (type is SZArraySig) {
 				typeIndex++;
-				return ConvertType(typeContext, methodContext, (type as SZArraySig).Next, typeAttributes, ref typeIndex, options)
+				return ConvertType((type as SZArraySig).Next, typeAttributes, ref typeIndex, options)
 					.MakeArrayType(1);
 			} else if (type is GenericInstSig) {
 				GenericInstSig gType = (GenericInstSig)type;
 				if (gType.GenericType.Namespace == "System" && gType.GenericType.TypeName == "Nullable`1" && gType.GenericArguments.Count == 1) {
 					typeIndex++;
 					return new ComposedType {
-						BaseType = ConvertType(typeContext, methodContext, gType.GenericArguments[0], typeAttributes, ref typeIndex, options),
+						BaseType = ConvertType(gType.GenericArguments[0], typeAttributes, ref typeIndex, options),
 						HasNullableSpecifier = true
 					};
 				}
-				AstType baseType = ConvertType(typeContext, methodContext, gType.GenericType.TypeDefOrRef, typeAttributes, ref typeIndex, options & ~ConvertTypeOptions.IncludeTypeParameterDefinitions);
+				AstType baseType = ConvertType(gType.GenericType.TypeDefOrRef, typeAttributes, ref typeIndex, options & ~ConvertTypeOptions.IncludeTypeParameterDefinitions);
 				List<AstType> typeArguments = new List<AstType>();
 				foreach (var typeArgument in gType.GenericArguments) {
 					typeIndex++;
-					typeArguments.Add(ConvertType(typeContext, methodContext, typeArgument, typeAttributes, ref typeIndex, options));
+					typeArguments.Add(ConvertType(typeArgument, typeAttributes, ref typeIndex, options));
 				}
 				ApplyTypeArgumentsTo(baseType, typeArguments);
 				return baseType;
 			} else if (type is GenericSig) {
 				return new SimpleType(((GenericSig)type).TypeName);
 			} else if (type is TypeDefOrRefSig) {
-				return ConvertType(typeContext, methodContext, ((TypeDefOrRefSig)type).TypeDefOrRef, typeAttributes, ref typeIndex, options);
+				return ConvertType(((TypeDefOrRefSig)type).TypeDefOrRef, typeAttributes, ref typeIndex, options);
 			} else
 				throw new NotSupportedException();
 		}
 
-		static AstType ConvertType(IList<GenericParam> typeContext, IList<GenericParam> methodContext, ITypeDefOrRef type, IHasCustomAttribute typeAttributes, ref int typeIndex, ConvertTypeOptions options)
+		static AstType ConvertType(ITypeDefOrRef type, IHasCustomAttribute typeAttributes, ref int typeIndex, ConvertTypeOptions options)
 		{
 			if (type == null)
 				return null;
 
 			if (type is TypeSpec)
-				return ConvertType(typeContext, methodContext, ((TypeSpec)type).TypeSig, typeAttributes, ref typeIndex, options);
+				return ConvertType(((TypeSpec)type).TypeSig, typeAttributes, ref typeIndex, options);
 
 			var declType = type.GetDeclaringType();
 			if (declType != null)
 			{
-				AstType typeRef = ConvertType(typeContext, methodContext, declType, typeAttributes, ref typeIndex, options & ~ConvertTypeOptions.IncludeTypeParameterDefinitions);
+				AstType typeRef = ConvertType(declType, typeAttributes, ref typeIndex, options & ~ConvertTypeOptions.IncludeTypeParameterDefinitions);
 				string namepart = ICSharpCode.NRefactory.TypeSystem.ReflectionHelper.SplitTypeParameterCountFromReflectionName(type.Name);
 				MemberType memberType = new MemberType { Target = typeRef, MemberName = namepart };
 				memberType.AddAnnotation(type);
@@ -805,15 +801,15 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			MethodDeclaration astMethod = new MethodDeclaration();
 			astMethod.AddAnnotation(methodDef);
-			astMethod.ReturnType = ConvertType(methodDef.DeclaringType, methodDef, methodDef.ReturnType, methodDef.Parameters.ReturnParameter.ParamDef);
+			astMethod.ReturnType = ConvertType(methodDef.ReturnType, methodDef.Parameters.ReturnParameter.ParamDef);
 			astMethod.Name = CleanName(methodDef.Name);
 			astMethod.TypeParameters.AddRange(MakeTypeParameters(methodDef.GenericParameters));
 			astMethod.Parameters.AddRange(MakeParameters(methodDef));
 			// constraints for override and explicit interface implementation methods are inherited from the base method, so they cannot be specified directly
-			if (!methodDef.IsVirtual || (methodDef.IsNewSlot && !methodDef.IsPrivate)) astMethod.Constraints.AddRange(MakeConstraints(methodDef.DeclaringType, methodDef, methodDef.GenericParameters));
+			if (!methodDef.IsVirtual || (methodDef.IsNewSlot && !methodDef.IsPrivate)) astMethod.Constraints.AddRange(MakeConstraints(methodDef.GenericParameters));
 			if (!methodDef.DeclaringType.IsInterface) {
 				if (IsExplicitInterfaceImplementation(methodDef)) {
-					astMethod.PrivateImplementationType = ConvertType(methodDef.DeclaringType, methodDef, methodDef.Overrides.First().MethodDeclaration.DeclaringType);
+					astMethod.PrivateImplementationType = ConvertType(methodDef.Overrides.First().MethodDeclaration.DeclaringType);
 				} else {
 					astMethod.Modifiers = ConvertModifiers(methodDef);
 					if (methodDef.IsVirtual == methodDef.IsNewSlot)
@@ -871,7 +867,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
-		IEnumerable<Constraint> MakeConstraints(TypeDef typeContext, MethodDef methodContext, IEnumerable<GenericParam> genericParameters)
+		IEnumerable<Constraint> MakeConstraints(IEnumerable<GenericParam> genericParameters)
 		{
 			foreach (var gp in genericParameters) {
 				Constraint c = new Constraint();
@@ -886,7 +882,7 @@ namespace ICSharpCode.Decompiler.Ast
 					if ((gp.Flags & GenericParamAttributes.NotNullableValueTypeConstraint) != 0 && 
 						constraintType.Constraint.FullName == "System.ValueType")
 						continue;
-					c.BaseTypes.Add(ConvertType(typeContext, methodContext, constraintType.Constraint));
+					c.BaseTypes.Add(ConvertType(constraintType.Constraint));
 				}
 
 				if ((gp.Flags & GenericParamAttributes.DefaultConstructorConstraint) != 0 && (gp.Flags & GenericParamAttributes.NotNullableValueTypeConstraint) == 0)
@@ -936,7 +932,7 @@ namespace ICSharpCode.Decompiler.Ast
 			Modifiers getterModifiers = Modifiers.None;
 			Modifiers setterModifiers = Modifiers.None;
 			if (IsExplicitInterfaceImplementation(accessor)) {
-				astProp.PrivateImplementationType = ConvertType(propDef.DeclaringType, null, accessor.Overrides.First().MethodDeclaration.DeclaringType);
+				astProp.PrivateImplementationType = ConvertType(accessor.Overrides.First().MethodDeclaration.DeclaringType);
 			} else if (!propDef.DeclaringType.IsInterface) {
 				getterModifiers = ConvertModifiers(propDef.GetMethod);
 				setterModifiers = ConvertModifiers(propDef.SetMethod);
@@ -958,7 +954,7 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 			}
 			astProp.Name = CleanName(propDef.Name);
-			astProp.ReturnType = ConvertType(propDef.DeclaringType, null, propDef.PropertySig.RetType, propDef);
+			astProp.ReturnType = ConvertType(propDef.PropertySig.RetType, propDef);
 			
 			if (propDef.GetMethod != null) {
 				astProp.Getter = new Accessor();
@@ -1006,7 +1002,7 @@ namespace ICSharpCode.Decompiler.Ast
 			astIndexer.ReturnType = astProp.ReturnType.Detach();
 			astIndexer.Getter = astProp.Getter.Detach();
 			astIndexer.Setter = astProp.Setter.Detach();
-			astIndexer.Parameters.AddRange(MakeParameters(propDef.DeclaringType, null, propDef.GetParameters().ToList()));
+			astIndexer.Parameters.AddRange(MakeParameters(propDef.GetParameters().ToList()));
 			return astIndexer;
 		}
 		
@@ -1018,7 +1014,7 @@ namespace ICSharpCode.Decompiler.Ast
 				ConvertCustomAttributes(astEvent, eventDef);
 				astEvent.AddAnnotation(eventDef);
 				astEvent.Variables.Add(new VariableInitializer(CleanName(eventDef.Name)));
-				astEvent.ReturnType = ConvertType(eventDef.DeclaringType, null, eventDef.EventType, eventDef);
+				astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
 				if (!eventDef.DeclaringType.IsInterface)
 					astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
 				return astEvent;
@@ -1027,11 +1023,11 @@ namespace ICSharpCode.Decompiler.Ast
 				ConvertCustomAttributes(astEvent, eventDef);
 				astEvent.AddAnnotation(eventDef);
 				astEvent.Name = CleanName(eventDef.Name);
-				astEvent.ReturnType = ConvertType(eventDef.DeclaringType, null, eventDef.EventType, eventDef);
+				astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
 				if (eventDef.AddMethod == null || !IsExplicitInterfaceImplementation(eventDef.AddMethod))
 					astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
 				else
-					astEvent.PrivateImplementationType = ConvertType(eventDef.DeclaringType, null, eventDef.AddMethod.Overrides.First().MethodDeclaration.DeclaringType);
+					astEvent.PrivateImplementationType = ConvertType(eventDef.AddMethod.Overrides.First().MethodDeclaration.DeclaringType);
 				
 				if (eventDef.AddMethod != null) {
 					astEvent.AddAccessor = new Accessor {
@@ -1069,21 +1065,21 @@ namespace ICSharpCode.Decompiler.Ast
 			astField.AddAnnotation(fieldDef);
 			VariableInitializer initializer = new VariableInitializer(CleanName(fieldDef.Name));
 			astField.AddChild(initializer, Roles.Variable);
-			astField.ReturnType = ConvertType(fieldDef.DeclaringType, null, fieldDef.FieldType, fieldDef);
+			astField.ReturnType = ConvertType(fieldDef.FieldType, fieldDef);
 			astField.Modifiers = ConvertModifiers(fieldDef);
 			if (fieldDef.HasConstant) {
-				initializer.Initializer = CreateExpressionForConstant(fieldDef.DeclaringType, null, fieldDef.Constant.Value, fieldDef.FieldType, fieldDef.DeclaringType.IsEnum);
+				initializer.Initializer = CreateExpressionForConstant(fieldDef.Constant.Value, fieldDef.FieldType, fieldDef.DeclaringType.IsEnum);
 			}
 			ConvertAttributes(astField, fieldDef);
 			SetNewModifier(astField);
 			return astField;
 		}
 		
-		static Expression CreateExpressionForConstant(TypeDef typeContext, MethodDef methodContext, object constant, TypeSig type, bool isEnumMemberDeclaration = false)
+		static Expression CreateExpressionForConstant(object constant, TypeSig type, bool isEnumMemberDeclaration = false)
 		{
 			if (constant == null) {
 				if (type.IsValueType && !(type.Namespace == "System" && type.TypeName == "Nullable`1"))
-					return new DefaultValueExpression(ConvertType(typeContext, methodContext, type));
+					return new DefaultValueExpression(ConvertType(type));
 				else
 					return new NullReferenceExpression();
 			} else {
@@ -1098,7 +1094,7 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public static IEnumerable<ParameterDeclaration> MakeParameters(MethodDef method, bool isLambda = false)
 		{
-			var parameters = MakeParameters(method.DeclaringType, method, method.Parameters, isLambda);
+			var parameters = MakeParameters(method.Parameters, isLambda);
 			if (method.CallingConvention == dnlib.DotNet.CallingConvention.VarArg) {
 				return parameters.Concat(new[] { new ParameterDeclaration { Type = new PrimitiveType("__arglist") } });
 			} else {
@@ -1106,7 +1102,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
-		public static IEnumerable<ParameterDeclaration> MakeParameters(TypeDef typeContext, MethodDef methodContext, IEnumerable<Parameter> paramCol, bool isLambda = false)
+		public static IEnumerable<ParameterDeclaration> MakeParameters(IEnumerable<Parameter> paramCol, bool isLambda = false)
 		{
 			foreach (Parameter paramDef in paramCol) {
 				if (paramDef.IsHiddenThisParameter)
@@ -1115,7 +1111,7 @@ namespace ICSharpCode.Decompiler.Ast
 				ParameterDeclaration astParam = new ParameterDeclaration();
 				astParam.AddAnnotation(paramDef);
 				if (!(isLambda && paramDef.Type.ContainsAnonymousType()))
-					astParam.Type = ConvertType(typeContext, methodContext, paramDef.Type, paramDef.ParamDef);
+					astParam.Type = ConvertType(paramDef.Type, paramDef.ParamDef);
 				astParam.Name = paramDef.Name;
 				
 				if (paramDef.Type is ByRefSig) {
@@ -1132,7 +1128,7 @@ namespace ICSharpCode.Decompiler.Ast
 					}
 				}
 				if (paramDef.HasParamDef && paramDef.ParamDef.IsOptional) {
-					astParam.DefaultExpression = CreateExpressionForConstant(typeContext, methodContext, paramDef.ParamDef.Constant.Value, paramDef.Type);
+					astParam.DefaultExpression = CreateExpressionForConstant(paramDef.ParamDef.Constant.Value, paramDef.Type);
 				}
 				
 				ConvertCustomAttributes(astParam, paramDef.ParamDef);
@@ -1439,7 +1435,7 @@ namespace ICSharpCode.Decompiler.Ast
 					
 					var attribute = new ICSharpCode.NRefactory.CSharp.Attribute();
 					attribute.AddAnnotation(customAttribute);
-					attribute.Type = ConvertType(null, null, customAttribute.AttributeType);
+					attribute.Type = ConvertType(customAttribute.AttributeType);
 					attributes.Add(attribute);
 					
 					SimpleType st = attribute.Type as SimpleType;
@@ -1499,7 +1495,7 @@ namespace ICSharpCode.Decompiler.Ast
 				foreach (var secAttribute in secDecl.SecurityAttributes.OrderBy(a => a.AttributeType.FullName)) {
 					var attribute = new ICSharpCode.NRefactory.CSharp.Attribute();
 					attribute.AddAnnotation(secAttribute);
-					attribute.Type = ConvertType(null, null, secAttribute.AttributeType);
+					attribute.Type = ConvertType(secAttribute.AttributeType);
 					attributes.Add(attribute);
 					
 					SimpleType st = attribute.Type as SimpleType;
@@ -1555,7 +1551,7 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 				SZArraySig arrayType = argument.Type as SZArraySig;
 				return new ArrayCreateExpression {
-					Type = ConvertType(null, null, arrayType != null ? arrayType.Next : argument.Type),
+					Type = ConvertType(arrayType != null ? arrayType.Next : argument.Type),
 					AdditionalArraySpecifiers = { new ArraySpecifier() },
 					Initializer = arrayInit
 				};
@@ -1567,7 +1563,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (type != null && type.IsEnum) {
 				return MakePrimitive(Convert.ToInt64(argument.Value), type);
 			} else if (argument.Value is TypeSig) {
-				return CreateTypeOfExpression(null, null, ((TypeSig)argument.Value).ToTypeDefOrRef());
+				return CreateTypeOfExpression(((TypeSig)argument.Value).ToTypeDefOrRef());
 			} else if (argument.Value is UTF8String) {
 				return new PrimitiveExpression(((UTF8String)argument.Value).String);
 			} else {
@@ -1591,7 +1587,7 @@ namespace ICSharpCode.Decompiler.Ast
 					TypeCode enumBaseTypeCode = TypeCode.Int32;
 					foreach (FieldDef field in enumDefinition.Fields) {
 						if (field.IsStatic && object.Equals(CSharpPrimitiveCast.Cast(TypeCode.Int64, field.Constant.Value, false), val))
-							return ConvertType(null, null, type).Member(field.Name).WithAnnotation(field);
+							return ConvertType(type).Member(field.Name).WithAnnotation(field);
 						else if (!field.IsStatic)
 							enumBaseTypeCode = TypeAnalysis.GetTypeCode(field.FieldType); // use primitive type of the enum
 					}
@@ -1621,7 +1617,7 @@ namespace ICSharpCode.Decompiler.Ast
 								continue;	// skip None enum value
 
 							if ((fieldValue & enumValue) == fieldValue) {
-								var fieldExpression = ConvertType(null, null, type).Member(field.Name).WithAnnotation(field);
+								var fieldExpression = ConvertType(type).Member(field.Name).WithAnnotation(field);
 								if (expr == null)
 									expr = fieldExpression;
 								else
@@ -1630,7 +1626,7 @@ namespace ICSharpCode.Decompiler.Ast
 								enumValue &= ~fieldValue;
 							}
 							if ((fieldValue & negatedEnumValue) == fieldValue) {
-								var fieldExpression = ConvertType(null, null, type).Member(field.Name).WithAnnotation(field);
+								var fieldExpression = ConvertType(type).Member(field.Name).WithAnnotation(field);
 								if (negatedExpr == null)
 									negatedExpr = fieldExpression;
 								else
@@ -1648,7 +1644,7 @@ namespace ICSharpCode.Decompiler.Ast
 							return new UnaryOperatorExpression(UnaryOperatorType.BitNot, negatedExpr);
 						}
 					}
-					return new Ast.PrimitiveExpression(CSharpPrimitiveCast.Cast(enumBaseTypeCode, val, false)).CastTo(ConvertType(null, null, type));
+					return new Ast.PrimitiveExpression(CSharpPrimitiveCast.Cast(enumBaseTypeCode, val, false)).CastTo(ConvertType(type));
 				}
 			}
 			TypeCode code = TypeAnalysis.GetTypeCode(type.ToTypeSig());

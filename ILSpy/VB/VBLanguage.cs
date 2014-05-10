@@ -466,7 +466,7 @@ namespace ICSharpCode.ILSpy.VB
 		{
 			var envProvider = new ILSpyEnvironmentProvider();
 			var converter = new CSharpToVBConverterVisitor(envProvider);
-			var astType = AstBuilder.ConvertType(null, null, type, typeAttributes, options);
+			var astType = AstBuilder.ConvertType(type, typeAttributes, options);
 			StringWriter w = new StringWriter();
 
 			if (type.TryGetByRefSig() != null) {

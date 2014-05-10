@@ -572,7 +572,7 @@ namespace ICSharpCode.ILSpy
 
 		string TypeToString(ConvertTypeOptions options, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null)
 		{
-			AstType astType = AstBuilder.ConvertType(null, null, type, typeAttributes, options);
+			AstType astType = AstBuilder.ConvertType(type, typeAttributes, options);
 
 			StringWriter w = new StringWriter();
 			if (type.TryGetByRefSig() != null) {

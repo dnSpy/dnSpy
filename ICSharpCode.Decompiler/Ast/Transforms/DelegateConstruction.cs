@@ -95,7 +95,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 								}
 							}
 							if (!isExtensionMethod) {
-								obj = new TypeReferenceExpression { Type = AstBuilder.ConvertType(context.CurrentMethod.DeclaringType, context.CurrentMethod, method.DeclaringType) };
+								obj = new TypeReferenceExpression { Type = AstBuilder.ConvertType(method.DeclaringType) };
 							}
 						}
 						// now transform the identifier into a member reference
@@ -419,7 +419,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						Name = capturedVariableName,
 						Type = field.FieldType,
 					};
-					variablesToDeclare.Add(Tuple.Create(AstBuilder.ConvertType(type, null, field.FieldType, field), ilVar));
+					variablesToDeclare.Add(Tuple.Create(AstBuilder.ConvertType(field.FieldType, field), ilVar));
 					dict[field] = new IdentifierExpression(capturedVariableName).WithAnnotation(ilVar);
 				}
 				
