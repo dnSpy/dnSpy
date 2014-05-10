@@ -1228,17 +1228,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					v.Type = null;
 			}
 		}
-		
-		public static bool IsSameType(TypeSig type1, TypeSig type2)
-		{
-			if (type1 == type2)
-				return true;
-			if (type1 == null || type2 == null)
-				return false;
-			return new SigComparer().Equals(type1, type2);
-		}
 
-		public static bool IsSameType(ITypeDefOrRef type1, ITypeDefOrRef type2)
+		public static bool IsSameType(IType type1, IType type2)
 		{
 			if (type1 == type2)
 				return true;
