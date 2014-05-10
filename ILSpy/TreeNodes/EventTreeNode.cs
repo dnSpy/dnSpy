@@ -60,7 +60,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public static object GetText(EventDef eventDef, Language language)
 		{
-			return HighlightSearchMatch(eventDef.Name, " : " + language.TypeToString(eventDef.EventType.ToTypeSig().ResolveGenericParams(eventDef.DeclaringType).ToTypeDefOrRef(), false, eventDef));
+			return HighlightSearchMatch(eventDef.Name, " : " + language.TypeToString(eventDef.EventType.ToTypeSig().ToTypeDefOrRef(), false, eventDef));
 		}
 		
 		public override object Icon

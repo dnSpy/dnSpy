@@ -44,7 +44,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Text
 		{
-			get { return HighlightSearchMatch(field.Name, " : " + this.Language.TypeToString(field.FieldType.ResolveGenericParams(field.DeclaringType).ToTypeDefOrRef(), false, field)); }
+			get { return HighlightSearchMatch(field.Name, " : " + this.Language.TypeToString(field.FieldType.ToTypeDefOrRef(), false, field)); }
 		}
 
 		public override object Icon

@@ -213,7 +213,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						}
 						if (inferredType == null)
 							inferredType = corLib.Object;
-						v.Type = inferredType.ResolveGenericParams(context.CurrentMethod);
+						v.Type = inferredType;
 						// Assign inferred type to all the assignments (in case they used different inferred types):
 						foreach (ExpressionToInfer expr in pair.Value) {
 							expr.Expression.InferredType = inferredType;
@@ -298,7 +298,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					{
 						ILVariable v = (ILVariable)expr.Operand;
 						if (v.Type == null && singleLoadVariables.Contains(v)) {
-							v.Type = expectedType.ResolveGenericParams(context.CurrentMethod);
+							v.Type = expectedType;
 						}
 						return v.Type;
 					}

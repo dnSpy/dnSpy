@@ -168,7 +168,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			WriteEnum(method.CallingConvention & (CallingConvention)0x1f, callingConvention);
 			
 			//return type
-			method.ReturnType.ResolveGenericParams(method).WriteTo(output);
+			method.ReturnType.WriteTo(output);
 			output.Write(' ');
 			if (method.Parameters.ReturnParameter.HasParamDef && method.Parameters.ReturnParameter.ParamDef.HasMarshalType) {
 				WriteMarshalInfo(method.Parameters.ReturnParameter.ParamDef.MarshalType);
@@ -607,7 +607,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 					if (paramDef.IsOptional)
 						output.Write("[opt] ");
 				}
-				p.Type.ResolveGenericParams(method).WriteTo(output);
+				p.Type.WriteTo(output);
 				output.Write(' ');
 				if (paramDef != null && paramDef.HasFieldMarshal) {
 					WriteMarshalInfo(paramDef.MarshalType);
@@ -624,7 +624,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			for (int i = 0; i < parameters.Count; i++) {
 				if (i != 0)
 					output.Write(", ");
-				parameters[i].ResolveGenericParams(type).WriteTo(output);
+				parameters[i].WriteTo(output);
 			}
 		}
 		
@@ -703,7 +703,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (field.HasMarshalType) {
 				WriteMarshalInfo(field.MarshalType);
 			}
-			field.FieldType.ResolveGenericParams(field.DeclaringType).WriteTo(output);
+			field.FieldType.WriteTo(output);
 			output.Write(' ');
 			output.Write(DisassemblerHelpers.Escape(field.Name));
 			if ((field.Attributes & FieldAttributes.HasFieldRVA) == FieldAttributes.HasFieldRVA) {
@@ -782,7 +782,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			output.WriteDefinition(".event ", ev);
 			WriteFlags(ev.Attributes, eventAttributes);
-			ev.EventType.ToTypeSig().ResolveGenericParams(ev.DeclaringType).WriteTo(output, ILNameSyntax.TypeName);
+			ev.EventType.ToTypeSig().WriteTo(output, ILNameSyntax.TypeName);
 			output.Write(' ');
 			output.Write(DisassemblerHelpers.Escape(ev.Name));
 			OpenBlock(false);
@@ -853,7 +853,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (type.BaseType != null) {
 				output.Indent();
 				output.Write("extends ");
-				type.BaseType.ToTypeSig().ResolveGenericParams(type).WriteTo(output, ILNameSyntax.TypeName);
+				type.BaseType.ToTypeSig().WriteTo(output, ILNameSyntax.TypeName);
 				output.WriteLine();
 				output.Unindent();
 			}
@@ -866,7 +866,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 						output.Write("implements ");
 					else
 						output.Write("           ");
-					type.Interfaces[index].Interface.ToTypeSig().ResolveGenericParams(type).WriteTo(output, ILNameSyntax.TypeName);
+					type.Interfaces[index].Interface.ToTypeSig().WriteTo(output, ILNameSyntax.TypeName);
 				}
 				output.WriteLine();
 				output.Unindent();

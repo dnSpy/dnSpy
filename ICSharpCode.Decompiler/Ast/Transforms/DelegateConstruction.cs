@@ -417,7 +417,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					{
 						IsGenerated = true,
 						Name = capturedVariableName,
-						Type = field.FieldType.ResolveGenericParams(field.DeclaringType),
+						Type = field.FieldType,
 					};
 					variablesToDeclare.Add(Tuple.Create(AstBuilder.ConvertType(type, null, field.FieldType, field), ilVar));
 					dict[field] = new IdentifierExpression(capturedVariableName).WithAnnotation(ilVar);

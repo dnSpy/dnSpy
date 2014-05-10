@@ -65,7 +65,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			if (exceptionHandler.CatchType != null) {
 				writer.Write(' ');
-				exceptionHandler.CatchType.ToTypeSig().ResolveGenericParams(method).WriteTo(writer);
+				exceptionHandler.CatchType.ToTypeSig().WriteTo(writer);
 			}
 			writer.Write(' ');
 			WriteOffsetReference(writer, exceptionHandler.HandlerStart);
@@ -87,7 +87,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 					else if ((member != null && member.IsFieldRef) || instruction.Operand is FieldDef)
 						writer.Write("field ");
 				}
-				WriteOperand(writer, instruction.Operand.ResolveGenericParams(method));
+				WriteOperand(writer, instruction.Operand);
 			}
 		}
 		

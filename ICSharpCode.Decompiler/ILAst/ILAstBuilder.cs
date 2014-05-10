@@ -228,13 +228,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			this.methodDef = methodDef;
 			this.optimize = optimize;
 			this.context = context;
-
-			this.typeParams = methodDef.DeclaringType.GenericParameters
-				.Select(param => (TypeSig)new GenericTypeParam(param))
-				.ToList();
-			this.methodParams = methodDef.GenericParameters
-				.Select(param => (TypeSig)new GenericMethodParam(param))
-				.ToList();
 			
 			if (methodDef.Body.Instructions.Count == 0) return new List<ILNode>();
 			
@@ -260,7 +253,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					continue;
 				}
 				ILCode code = ilCodeTranslation[inst.OpCode.Code];
-				object operand = ResolveGenericParams(inst.Operand);
+				object operand = inst.Operand;
 				ILCodeUtil.ExpandMacro(ref code, ref operand, methodDef);
 				var next = methodDef.Body.GetNext(inst);
 				ByteCode byteCode = new ByteCode() {
@@ -562,7 +555,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					newVars = new List<VariableInfo>(1) { new VariableInfo() {
 						Variable = new ILVariable() {
 							Name = string.IsNullOrEmpty(varDef.Name) ? "var_" + varDef.Index : varDef.Name,
-							Type = (TypeSig)ResolveGenericParams(varDef.Type is PinnedSig ? ((PinnedSig)varDef.Type).Next : varDef.Type),
+							Type = varDef.Type is PinnedSig ? ((PinnedSig)varDef.Type).Next : varDef.Type,
 							OriginalVariable = varDef
 						},
 						Defs = defs,
@@ -573,7 +566,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					newVars = defs.Select(def => new VariableInfo() {
 						Variable = new ILVariable() {
 							Name = (string.IsNullOrEmpty(varDef.Name) ? "var_" + varDef.Index : varDef.Name) + "_" + def.Offset.ToString("X2"),
-							Type = (TypeSig)ResolveGenericParams(varDef.Type),
+							Type = varDef.Type,
 							OriginalVariable = varDef
 					    },
 					    Defs = new List<ByteCode>() { def },
@@ -629,12 +622,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (methodDef.HasThis) {
 				TypeDef type = methodDef.DeclaringType;
 				thisParameter = new ILVariable();
-				thisParameter.Type = (TypeSig)ResolveGenericParams(type.IsValueType ? new ByRefSig(type.ToTypeSig()) : type.ToTypeSig());
+				thisParameter.Type = type.IsValueType ? new ByRefSig(type.ToTypeSig()) : type.ToTypeSig();
 				thisParameter.Name = "this";
 				thisParameter.OriginalParameter = methodDef.Parameters[0];
 			}
 			foreach (Parameter p in methodDef.Parameters.Skip(methodDef.HasThis ? 1 : 0)) {
-				this.Parameters.Add(new ILVariable { Type = (TypeSig)ResolveGenericParams(p.Type), Name = p.Name, OriginalParameter = p });
+				this.Parameters.Add(new ILVariable { Type = p.Type, Name = p.Name, OriginalParameter = p });
 			}
 			if (this.Parameters.Count > 0 && (methodDef.IsSetter() || methodDef.IsAddOn() || methodDef.IsRemoveOn())) {
 				// last parameter must be 'value', so rename it
@@ -845,12 +838,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			
 			return ast;
-		}
-
-		List<TypeSig> typeParams, methodParams;
-		object ResolveGenericParams(object operand)
-		{
-			return DnlibExtensions.ResolveGenericParams(typeParams, methodParams, operand);
 		}
 	}
 	
