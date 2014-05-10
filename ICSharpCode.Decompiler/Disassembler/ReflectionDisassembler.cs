@@ -978,7 +978,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			foreach (CustomAttribute a in attributes) {
 				output.Write(".custom ");
 				((IMethod)a.Constructor).WriteMethodTo(output);
-				byte[] blob = a.OrigRawData;
+				byte[] blob = a.GetBlob();
 				if (blob != null) {
 					output.Write(" = ");
 					WriteBlob(blob);
