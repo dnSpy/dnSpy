@@ -367,16 +367,14 @@ namespace ICSharpCode.Decompiler.Disassembler
 		void WriteMarshalInfo(MarshalType marshalInfo)
 		{
 			output.Write("marshal(");
-			WriteNativeType(marshalInfo);
+			WriteNativeType(marshalInfo.NativeType, marshalInfo);
 			output.Write(") ");
 		}
 
-		void WriteNativeType(MarshalType marshalInfo)
+		void WriteNativeType(NativeType nativeType, MarshalType marshalInfo = null)
 		{
-			// TODO: implement
-			/*
 			switch (nativeType) {
-				case NativeType.None:
+				case NativeType.NotInitialized:
 					break;
 				case NativeType.Boolean:
 					output.Write("bool");
@@ -423,19 +421,19 @@ namespace ICSharpCode.Decompiler.Disassembler
 				case NativeType.Func:
 					goto default; // ??
 				case NativeType.Array:
-					ArrayMarshalInfo ami = (ArrayMarshalInfo)marshalInfo;
+					ArrayMarshalType ami = (ArrayMarshalType)marshalInfo;
 					if (ami == null)
 						goto default;
 					if (ami.ElementType != NativeType.Max)
 						WriteNativeType(ami.ElementType);
 					output.Write('[');
-					if (ami.SizeParameterMultiplier == 0) {
+					if (ami.Flags == 0) {
 						output.Write(ami.Size.ToString());
 					} else {
 						if (ami.Size >= 0)
 							output.Write(ami.Size.ToString());
 						output.Write(" + ");
-						output.Write(ami.SizeParameterIndex.ToString());
+						output.Write(ami.ParamNumber.ToString());
 					}
 					output.Write(']');
 					break;
@@ -452,25 +450,28 @@ namespace ICSharpCode.Decompiler.Disassembler
 					output.Write("lptstr");
 					break;
 				case NativeType.FixedSysString:
-					output.Write("fixed sysstring[{0}]", ((FixedSysStringMarshalInfo)marshalInfo).Size);
+					output.Write("fixed sysstring[{0}]", ((FixedSysStringMarshalType)marshalInfo).Size);
 					break;
 				case NativeType.IUnknown:
 					output.Write("iunknown");
+					//TODO: Print InterfaceMarshalType.IsIidParamIndexValid
 					break;
 				case NativeType.IDispatch:
 					output.Write("idispatch");
+					//TODO: Print InterfaceMarshalType.IsIidParamIndexValid
 					break;
 				case NativeType.Struct:
 					output.Write("struct");
 					break;
 				case NativeType.IntF:
 					output.Write("interface");
+					//TODO: Print InterfaceMarshalType.IsIidParamIndexValid
 					break;
 				case NativeType.SafeArray:
 					output.Write("safearray ");
-					SafeArrayMarshalInfo sami = marshalInfo as SafeArrayMarshalInfo;
+					SafeArrayMarshalType sami = marshalInfo as SafeArrayMarshalType;
 					if (sami != null) {
-						switch (sami.ElementType) {
+						switch (sami.VariantType) {
 							case VariantType.None:
 								break;
 							case VariantType.I2:
@@ -531,17 +532,20 @@ namespace ICSharpCode.Decompiler.Disassembler
 								output.Write("unsigned int");
 								break;
 							default:
-								output.Write(sami.ElementType.ToString());
+								output.Write(sami.VariantType.ToString());
 								break;
+						}
+						if (sami.IsUserDefinedSubTypeValid) {
+							//TODO:
 						}
 					}
 					break;
 				case NativeType.FixedArray:
 					output.Write("fixed array");
-					FixedArrayMarshalInfo fami = marshalInfo as FixedArrayMarshalInfo;
+					FixedArrayMarshalType fami = marshalInfo as FixedArrayMarshalType;
 					if (fami != null) {
 						output.Write("[{0}]", fami.Size);
-						if (fami.ElementType != NativeType.None) {
+						if (fami.IsElementTypeValid) {
 							output.Write(' ');
 							WriteNativeType(fami.ElementType);
 						}
@@ -566,14 +570,14 @@ namespace ICSharpCode.Decompiler.Disassembler
 					output.Write("lpstruct");
 					break;
 				case NativeType.CustomMarshaler:
-					CustomMarshalInfo cmi = marshalInfo as CustomMarshalInfo;
+					CustomMarshalType cmi = marshalInfo as CustomMarshalType;
 					if (cmi == null)
 						goto default;
 					output.Write("custom(\"{0}\", \"{1}\"",
-					             NRefactory.CSharp.CSharpOutputVisitor.ConvertString(cmi.ManagedType.FullName),
+								 NRefactory.CSharp.CSharpOutputVisitor.ConvertString(cmi.CustomMarshaler.FullName),
 					             NRefactory.CSharp.CSharpOutputVisitor.ConvertString(cmi.Cookie));
-					if (cmi.Guid != Guid.Empty || !string.IsNullOrEmpty(cmi.UnmanagedType)) {
-						output.Write(", \"{0}\", \"{1}\"", cmi.Guid.ToString(), NRefactory.CSharp.CSharpOutputVisitor.ConvertString(cmi.UnmanagedType));
+					if (!UTF8String.IsNullOrEmpty(cmi.Guid) || !UTF8String.IsNullOrEmpty(cmi.NativeTypeName)) {
+						output.Write(", \"{0}\", \"{1}\"", NRefactory.CSharp.CSharpOutputVisitor.ConvertString(cmi.Guid), NRefactory.CSharp.CSharpOutputVisitor.ConvertString(cmi.NativeTypeName));
 					}
 					output.Write(')');
 					break;
@@ -584,7 +588,6 @@ namespace ICSharpCode.Decompiler.Disassembler
 					output.Write(nativeType.ToString());
 					break;
 			}
-			*/
 		}
 		#endregion
 		

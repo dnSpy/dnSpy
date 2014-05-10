@@ -1340,43 +1340,59 @@ namespace ICSharpCode.Decompiler.Ast
 		}
 		
 		#region MarshalAsAttribute (ConvertMarshalInfo)
-		static Ast.Attribute ConvertMarshalInfo(IHasFieldMarshal fieldMarshal, ModuleDef module)
+		static Ast.Attribute ConvertMarshalInfo(IHasFieldMarshal marshalInfoProvider, ModuleDef module)
 		{
-			//MarshalInfo marshalInfo = marshalInfoProvider.MarshalInfo;
+			MarshalType marshalInfo = marshalInfoProvider.MarshalType;
 			Ast.Attribute attr = CreateNonCustomAttribute(typeof(MarshalAsAttribute), module);
-			/*var unmanagedType = new TypeReference("System.Runtime.InteropServices", "UnmanagedType", module, module.TypeSystem.Corlib);
+			var unmanagedType = module.CorLibTypes.GetTypeRef("System.Runtime.InteropServices", "UnmanagedType");
 			attr.Arguments.Add(MakePrimitive((int)marshalInfo.NativeType, unmanagedType));
 			
-			FixedArrayMarshalInfo fami = marshalInfo as FixedArrayMarshalInfo;
+			var fami = marshalInfo as FixedArrayMarshalType;
 			if (fami != null) {
-				attr.AddNamedArgument("SizeConst", new PrimitiveExpression(fami.Size));
-				if (fami.ElementType != NativeType.None)
+				if (fami.IsSizeValid)
+					attr.AddNamedArgument("SizeConst", new PrimitiveExpression(fami.Size));
+				if (fami.IsElementTypeValid)
 					attr.AddNamedArgument("ArraySubType", MakePrimitive((int)fami.ElementType, unmanagedType));
 			}
-			SafeArrayMarshalInfo sami = marshalInfo as SafeArrayMarshalInfo;
-			if (sami != null && sami.ElementType != VariantType.None) {
-				var varEnum = new TypeReference("System.Runtime.InteropServices", "VarEnum", module, module.TypeSystem.Corlib);
-				attr.AddNamedArgument("SafeArraySubType", MakePrimitive((int)sami.ElementType, varEnum));
+			var sami = marshalInfo as SafeArrayMarshalType;
+			if (sami != null) {
+				if (sami.IsVariantTypeValid) {
+					var varEnum = module.CorLibTypes.GetTypeRef("System.Runtime.InteropServices", "VarEnum");
+					attr.AddNamedArgument("SafeArraySubType", MakePrimitive((int)sami.VariantType, varEnum));
+				}
+				if (sami.IsUserDefinedSubTypeValid) {
+					//TODO:
+				}
 			}
-			ArrayMarshalInfo ami = marshalInfo as ArrayMarshalInfo;
+			var ami = marshalInfo as ArrayMarshalType;
 			if (ami != null) {
-				if (ami.ElementType != NativeType.Max)
+				if (ami.IsElementTypeValid && ami.ElementType != NativeType.Max)
 					attr.AddNamedArgument("ArraySubType", MakePrimitive((int)ami.ElementType, unmanagedType));
-				if (ami.Size >= 0)
+				if (ami.IsSizeValid)
 					attr.AddNamedArgument("SizeConst", new PrimitiveExpression(ami.Size));
-				if (ami.SizeParameterMultiplier != 0 && ami.SizeParameterIndex >= 0)
-					attr.AddNamedArgument("SizeParamIndex", new PrimitiveExpression(ami.SizeParameterIndex));
+				if (ami.Flags != 0 && ami.ParamNumber >= 0)
+					attr.AddNamedArgument("SizeParamIndex", new PrimitiveExpression(ami.ParamNumber));
 			}
-			CustomMarshalInfo cmi = marshalInfo as CustomMarshalInfo;
+			var cmi = marshalInfo as CustomMarshalType;
 			if (cmi != null) {
-				attr.AddNamedArgument("MarshalType", new PrimitiveExpression(cmi.ManagedType.FullName));
-				if (!string.IsNullOrEmpty(cmi.Cookie))
-					attr.AddNamedArgument("MarshalCookie", new PrimitiveExpression(cmi.Cookie));
+				if (cmi.CustomMarshaler != null)
+					attr.AddNamedArgument("MarshalType", new PrimitiveExpression(cmi.CustomMarshaler.FullName));
+				if (!UTF8String.IsNullOrEmpty(cmi.Cookie))
+					attr.AddNamedArgument("MarshalCookie", new PrimitiveExpression(cmi.Cookie.String));
 			}
-			FixedSysStringMarshalInfo fssmi = marshalInfo as FixedSysStringMarshalInfo;
+			var fssmi = marshalInfo as FixedSysStringMarshalType;
 			if (fssmi != null) {
-				attr.AddNamedArgument("SizeConst", new PrimitiveExpression(fssmi.Size));
-			}*/
+				if (fssmi.IsSizeValid)
+					attr.AddNamedArgument("SizeConst", new PrimitiveExpression(fssmi.Size));
+			}
+			var imti = marshalInfo as InterfaceMarshalType;
+			if (imti != null) {
+				//TODO:
+			}
+			var rmti = marshalInfo as RawMarshalType;
+			if (rmti != null) {
+				//TODO:
+			}
 			return attr;
 		}
 		#endregion

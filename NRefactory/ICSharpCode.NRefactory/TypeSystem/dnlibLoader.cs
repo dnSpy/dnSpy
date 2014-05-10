@@ -739,10 +739,9 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		#region MarshalAsAttribute (ConvertMarshalInfo)
 		static readonly ITypeReference marshalAsAttributeTypeRef = typeof(MarshalAsAttribute).ToTypeReference();
 		static readonly ITypeReference unmanagedTypeTypeRef = typeof(UnmanagedType).ToTypeReference();
-		
-		static IUnresolvedAttribute ConvertMarshalInfo(MarshalType marshal)
+
+		static IUnresolvedAttribute ConvertMarshalInfo(MarshalType marshalInfo)
 		{
-			var marshalInfo = marshal;
 			DefaultUnresolvedAttribute attr = new DefaultUnresolvedAttribute(marshalAsAttributeTypeRef, new[] { unmanagedTypeTypeRef });
 			attr.PositionalArguments.Add(new SimpleConstantValue(unmanagedTypeTypeRef, (int)marshalInfo.NativeType));
 
@@ -755,16 +754,19 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			}
 			var sami = marshalInfo as SafeArrayMarshalType;
 			if (sami != null) {
-				if (sami.IsVariantTypeValid && sami.VariantType != VariantType.Empty)
+				if (sami.IsVariantTypeValid)
 					attr.AddNamedFieldArgument("SafeArraySubType", typeof(VarEnum).ToTypeReference(), (int)sami.VariantType);
+				if (sami.IsUserDefinedSubTypeValid) {
+					//TODO:
+				}
 			}
 			var ami = marshalInfo as ArrayMarshalType;
 			if (ami != null) {
-				if (ami.IsElementTypeValid)
+				if (ami.IsElementTypeValid && ami.ElementType != NativeType.Max)
 					attr.AddNamedFieldArgument("ArraySubType", unmanagedTypeTypeRef, (int)ami.ElementType);
 				if (ami.IsSizeValid)
 					attr.AddNamedFieldArgument("SizeConst", KnownTypeReference.Int32, (int)ami.Size);
-				if (ami.IsParamNumberValid)
+				if (ami.Flags != 0 && ami.IsParamNumberValid)
 					attr.AddNamedFieldArgument("SizeParamIndex", KnownTypeReference.Int16, (short)ami.ParamNumber);
 			}
 			var cmi = marshalInfo as CustomMarshalType;
@@ -773,6 +775,19 @@ namespace ICSharpCode.NRefactory.TypeSystem
 					attr.AddNamedFieldArgument("MarshalType", KnownTypeReference.String, cmi.CustomMarshaler.FullName);
 				if (!UTF8String.IsNullOrEmpty(cmi.Cookie))
 					attr.AddNamedFieldArgument("MarshalCookie", KnownTypeReference.String, cmi.Cookie.String);
+			}
+			var fssmi = marshalInfo as FixedSysStringMarshalType;
+			if (fssmi != null) {
+				if (fssmi.IsSizeValid)
+					attr.AddNamedFieldArgument("SizeConst", KnownTypeReference.Int32, (int)fssmi.Size);
+			}
+			var imti = marshalInfo as InterfaceMarshalType;
+			if (imti != null) {
+				//TODO:
+			}
+			var rmti = marshalInfo as RawMarshalType;
+			if (rmti != null) {
+				//TODO:
 			}
 			
 			return attr;
