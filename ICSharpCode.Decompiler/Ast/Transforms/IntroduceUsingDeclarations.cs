@@ -62,14 +62,16 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				return;
 			
 			FindAmbiguousTypeNames(context.CurrentModule, internalsVisible: true);
-			/*foreach (AssemblyNameReference r in context.CurrentModule.AssemblyReferences) {
-				AssemblyDefinition d = context.CurrentModule.AssemblyResolver.Resolve(r);
-				if (d != null)
-					FindAmbiguousTypeNames(d.MainModule, internalsVisible: false);
-			}*/
+			if (context.CurrentModule is ModuleDefMD) {
+				foreach (var r in ((ModuleDefMD)context.CurrentModule).GetAssemblyRefs()) {
+					AssemblyDef d = context.CurrentModule.Context.AssemblyResolver.Resolve(r, context.CurrentModule);
+					if (d != null)
+						FindAmbiguousTypeNames(d.ManifestModule, internalsVisible: false);
+				}
+			}
 			
 			// verify that the SimpleTypes refer to the correct type (no ambiguities)
-			//compilationUnit.AcceptVisitor(new FullyQualifyAmbiguousTypeNamesVisitor(this), null);
+			compilationUnit.AcceptVisitor(new FullyQualifyAmbiguousTypeNamesVisitor(this), null);
 		}
 		
 		readonly HashSet<string> declaredNamespaces = new HashSet<string>() { string.Empty };
@@ -226,11 +228,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				if (currentMembers.TryGetValue(m.Name, out existingMember)) {
 					// We keep the existing member assignment if it was from another class (=from a derived class),
 					// because members in derived classes have precedence over members in base classes.
-					// TODO: implement
-					//if (existingMember != null && existingMember.DeclaringType == m.DeclaringType) {
+					if (existingMember != null && existingMember.DeclaringType == m.DeclaringType) {
 						// Use null as value to signalize multiple members with the same name
 						currentMembers[m.Name] = null;
-					//}
+					}
 				} else {
 					currentMembers.Add(m.Name, m);
 				}
