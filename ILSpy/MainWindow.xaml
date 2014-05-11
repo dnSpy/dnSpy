@@ -141,7 +141,7 @@
 					<DockPanel>
 						<Button DockPanel.Dock="Right" Click="updateAvailablePanelCloseButtonClick" MinWidth="0">X</Button>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock Margin="4,0" VerticalAlignment="Center">A new ILSpy version is available.</TextBlock>
+							<TextBlock Margin="4,0" VerticalAlignment="Center">A new dnSpy version is available.</TextBlock>
 							<Button Click="downloadUpdateButtonClick">Download</Button>
 						</StackPanel>
 					</DockPanel>

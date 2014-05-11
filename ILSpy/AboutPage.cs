@@ -57,7 +57,7 @@ namespace ICSharpCode.ILSpy
 		public static void Display(DecompilerTextView textView)
 		{
 			AvalonEditTextOutput output = new AvalonEditTextOutput();
-			output.WriteLine("ILSpy version " + RevisionClass.FullVersion);
+			output.WriteLine("dnSpy version " + RevisionClass.FullVersion);
 			output.AddUIElement(
 				delegate {
 					StackPanel stackPanel = new StackPanel();

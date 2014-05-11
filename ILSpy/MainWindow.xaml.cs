@@ -324,7 +324,7 @@ namespace ICSharpCode.ILSpy
 					SelectNode(node);
 					
 					// only if not showing the about page, perform the update check:
-					ShowMessageIfUpdatesAvailableAsync(spySettings);
+					//ShowMessageIfUpdatesAvailableAsync(spySettings);
 				} else {
 					AboutPage.Display(decompilerTextView);
 				}
@@ -492,7 +492,7 @@ namespace ICSharpCode.ILSpy
 					MessageBox.Show("Navigation failed because the target is hidden or a compiler-generated class.\n" +
 						"Please disable all filters that might hide the item (i.e. activate " +
 						"\"View > Show internal types and members\") and try again.",
-						"ILSpy", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+						"dnSpy", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 				}
 			}
 		}

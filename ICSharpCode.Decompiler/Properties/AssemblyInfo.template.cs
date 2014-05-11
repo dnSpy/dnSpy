@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("ICSharpCode.Decompiler")]
 [assembly: AssemblyDescription("IL decompiler engine")]
 [assembly: AssemblyCompany("ic#code")]
-[assembly: AssemblyProduct("ILSpy")]
+[assembly: AssemblyProduct("dnSpy")]
 [assembly: AssemblyCopyright("Copyright 2011 AlphaSierraPapa for the SharpDevelop Team")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

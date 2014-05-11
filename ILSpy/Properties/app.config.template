@@ -5,8 +5,8 @@
 	</startup>
 	<runtime>
 		<assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
-			<!-- The redirects allow using AddIns with a different ILSpy version than they were compiled against. -->
-			<!-- No guarantee they'll work correctly, though (there might be breaking API changes in ILSpy). -->
+			<!-- The redirects allow using AddIns with a different dnSpy version than they were compiled against. -->
+			<!-- No guarantee they'll work correctly, though (there might be breaking API changes in dnSpy). -->
 			<dependentAssembly>
 				<assemblyIdentity name="ICSharpCode.TreeView" publicKeyToken="d4bfe873e7598c49" culture="neutral"/>
 				<bindingRedirect oldVersion="4.1.0.0-99.9.9.9" newVersion="4.2.0.8752"/>
@@ -32,16 +32,12 @@
 				<bindingRedirect oldVersion="1.0.0.0-99.9.9.9" newVersion="$INSERTVERSION$"/>
 			</dependentAssembly>
 			<dependentAssembly>
-				<assemblyIdentity name="ILSpy" publicKeyToken="d4bfe873e7598c49" culture="neutral"/>
+				<assemblyIdentity name="dnSpy" publicKeyToken="d4bfe873e7598c49" culture="neutral"/>
 				<bindingRedirect oldVersion="1.0.0.0-99.9.9.9" newVersion="$INSERTVERSION$"/>
 			</dependentAssembly>
 			<dependentAssembly>
-				<assemblyIdentity name="Mono.Cecil" publicKeyToken="0738eb9f132ed756" culture="neutral"/>
-				<bindingRedirect oldVersion="0.0.0.0-99.9.9.9" newVersion="0.9.5.0"/>
-			</dependentAssembly>
-			<dependentAssembly>
-				<assemblyIdentity name="Mono.Cecil.Pdb" publicKeyToken="0738eb9f132ed756" culture="neutral"/>
-				<bindingRedirect oldVersion="0.0.0.0-99.9.9.9" newVersion="0.9.5.0"/>
+				<assemblyIdentity name="dnlib" publicKeyToken="50e96378b6e77999" culture="neutral"/>
+				<bindingRedirect oldVersion="0.0.0.0-99.9.9.9" newVersion="1.0.2.0"/>
 			</dependentAssembly>
 		</assemblyBinding>
 	</runtime>

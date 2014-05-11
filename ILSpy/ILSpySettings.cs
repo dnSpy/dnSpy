@@ -34,7 +34,7 @@ namespace ICSharpCode.ILSpy
 		
 		ILSpySettings()
 		{
-			this.root = new XElement("ILSpy");
+			this.root = new XElement("dnSpy");
 		}
 		
 		ILSpySettings(XElement root)
@@ -91,7 +91,7 @@ namespace ICSharpCode.ILSpy
 		/// <summary>
 		/// Updates the saved settings.
 		/// We always reload the file on updates to ensure we aren't overwriting unrelated changes performed
-		/// by another ILSpy instance.
+		/// by another dnSpy instance.
 		/// </summary>
 		public static void Update(Action<XElement> action)
 		{
@@ -103,9 +103,9 @@ namespace ICSharpCode.ILSpy
 				} catch (IOException) {
 					// ensure the directory exists
 					Directory.CreateDirectory(Path.GetDirectoryName(config));
-					doc = new XDocument(new XElement("ILSpy"));
+					doc = new XDocument(new XElement("dnSpy"));
 				} catch (XmlException) {
-					doc = new XDocument(new XElement("ILSpy"));
+					doc = new XDocument(new XElement("dnSpy"));
 				}
 				doc.Root.SetAttributeValue("version", RevisionClass.Major + "." + RevisionClass.Minor + "." + RevisionClass.Build + "." + RevisionClass.Revision);
 				action(doc.Root);
@@ -115,13 +115,13 @@ namespace ICSharpCode.ILSpy
 		
 		static string GetConfigFile()
 		{
-			return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ICSharpCode\\ILSpy.xml");
+			return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ICSharpCode\\dnSpy.xml");
 		}
 		
 		const string ConfigFileMutex = "01A91708-49D1-410D-B8EB-4DE2662B3971";
 		
 		/// <summary>
-		/// Helper class for serializing access to the config file when multiple ILSpy instances are running.
+		/// Helper class for serializing access to the config file when multiple dnSpy instances are running.
 		/// </summary>
 		sealed class MutexProtector : IDisposable
 		{

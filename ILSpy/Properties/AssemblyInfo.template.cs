@@ -10,10 +10,10 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ILSpy")]
+[assembly: AssemblyTitle("dnSpy")]
 [assembly: AssemblyDescription(".NET assembly inspector and decompiler")]
 [assembly: AssemblyCompany("ic#code")]
-[assembly: AssemblyProduct("ILSpy")]
+[assembly: AssemblyProduct("dnSpy")]
 [assembly: AssemblyCopyright("Copyright 2011 AlphaSierraPapa for the SharpDevelop Team")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

@@ -65,7 +65,7 @@ namespace UpdateAssemblyInfo
 						}
 					}
 					if (!File.Exists("ILSpy.sln")) {
-						Console.WriteLine("Working directory must be the ILSpy repo root!");
+						Console.WriteLine("Working directory must be the dnSpy repo root!");
 						return 2;
 					}
 					RetrieveRevisionNumber();
