@@ -184,7 +184,7 @@ namespace ICSharpCode.ILSpy
 		{
 			return new MyAssemblyResolver(this);
 		}
-
+		
 		public LoadedAssembly LookupReferencedAssembly(dnlib.DotNet.IAssembly name)
 		{
 			if (name == null)

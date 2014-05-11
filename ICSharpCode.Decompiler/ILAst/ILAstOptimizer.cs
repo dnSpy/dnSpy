@@ -398,7 +398,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (expr.Code == ILCode.Call || expr.Code == ILCode.Callvirt) {
 				IMethod cecilMethod = (IMethod)expr.Operand;
 				var declType = cecilMethod.DeclaringType as dnlib.DotNet.TypeSpec;
-				if (declType != null && (declType.TypeSig is ArraySig || declType.TypeSig is SZArraySig)) {
+				if (declType != null && declType.TypeSig is ArraySigBase) {
 					switch (cecilMethod.Name) {
 						case "Get":
 							expr.Code = ILCode.CallGetter;
@@ -420,11 +420,11 @@ namespace ICSharpCode.Decompiler.ILAst
 							break;
 					}
 				} else {
-					MethodDef methodDef = cecilMethod.Resolve();
-					if (methodDef != null) {
-						if (methodDef.IsGetter())
+					MethodDef cecilMethodDef = cecilMethod.Resolve();
+					if (cecilMethodDef != null) {
+						if (cecilMethodDef.IsGetter())
 							expr.Code = (expr.Code == ILCode.Call) ? ILCode.CallGetter : ILCode.CallvirtGetter;
-						else if (methodDef.IsSetter())
+						else if (cecilMethodDef.IsSetter())
 							expr.Code = (expr.Code == ILCode.Call) ? ILCode.CallSetter : ILCode.CallvirtSetter;
 					}
 				}

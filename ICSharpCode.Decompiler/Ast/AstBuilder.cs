@@ -475,14 +475,10 @@ namespace ICSharpCode.Decompiler.Ast
 				typeIndex++;
 				return ConvertType((type as PtrSig).Next, typeAttributes, ref typeIndex, options)
 					.MakePointerType();
-			} else if (type is ArraySig) {
+			} else if (type is ArraySigBase) {
 				typeIndex++;
-				return ConvertType((type as ArraySig).Next, typeAttributes, ref typeIndex, options)
-					.MakeArrayType((int)(type as ArraySig).Rank);
-			} else if (type is SZArraySig) {
-				typeIndex++;
-				return ConvertType((type as SZArraySig).Next, typeAttributes, ref typeIndex, options)
-					.MakeArrayType(1);
+				return ConvertType((type as ArraySigBase).Next, typeAttributes, ref typeIndex, options)
+					.MakeArrayType((int)(type as ArraySigBase).Rank);
 			} else if (type is GenericInstSig) {
 				GenericInstSig gType = (GenericInstSig)type;
 				if (gType.GenericType.Namespace == "System" && gType.GenericType.TypeName == "Nullable`1" && gType.GenericArguments.Count == 1) {
@@ -516,10 +512,8 @@ namespace ICSharpCode.Decompiler.Ast
 			if (type is TypeSpec)
 				return ConvertType(((TypeSpec)type).TypeSig, typeAttributes, ref typeIndex, options);
 
-			var declType = type.GetDeclaringType();
-			if (declType != null)
-			{
-				AstType typeRef = ConvertType(declType, typeAttributes, ref typeIndex, options & ~ConvertTypeOptions.IncludeTypeParameterDefinitions);
+			if (type.DeclaringType != null) {
+				AstType typeRef = ConvertType(type.DeclaringType, typeAttributes, ref typeIndex, options & ~ConvertTypeOptions.IncludeTypeParameterDefinitions);
 				string namepart = ICSharpCode.NRefactory.TypeSystem.ReflectionHelper.SplitTypeParameterCountFromReflectionName(type.Name);
 				MemberType memberType = new MemberType { Target = typeRef, MemberName = namepart };
 				memberType.AddAnnotation(type);
@@ -527,17 +521,15 @@ namespace ICSharpCode.Decompiler.Ast
 					AddTypeParameterDefininitionsTo(type, memberType);
 				}
 				return memberType;
-			}
-			else {
+			} else {
 				string ns = type.Namespace ?? string.Empty;
 				string name = type.Name;
 				if (name == null)
 					throw new InvalidOperationException("type.Name returned null. Type: " + type.ToString());
-
+				
 				if (name == "Object" && ns == "System" && HasDynamicAttribute(typeAttributes, typeIndex)) {
 					return new PrimitiveType("dynamic");
-				}
-				else {
+				} else {
 					if (ns == "System") {
 						if ((options & ConvertTypeOptions.DoNotUsePrimitiveTypeNames)
 							!= ConvertTypeOptions.DoNotUsePrimitiveTypeNames) {
@@ -577,9 +569,9 @@ namespace ICSharpCode.Decompiler.Ast
 							}
 						}
 					}
-
+					
 					name = ICSharpCode.NRefactory.TypeSystem.ReflectionHelper.SplitTypeParameterCountFromReflectionName(name);
-
+					
 					AstType astType;
 					if ((options & ConvertTypeOptions.IncludeNamespace) == ConvertTypeOptions.IncludeNamespace && ns.Length > 0) {
 						string[] parts = ns.Split('.');
@@ -588,12 +580,11 @@ namespace ICSharpCode.Decompiler.Ast
 							nsType = new MemberType { Target = nsType, MemberName = parts[i] };
 						}
 						astType = new MemberType { Target = nsType, MemberName = name };
-					}
-					else {
+					} else {
 						astType = new SimpleType(name);
 					}
 					astType.AddAnnotation(type);
-
+					
 					if ((options & ConvertTypeOptions.IncludeTypeParameterDefinitions) == ConvertTypeOptions.IncludeTypeParameterDefinitions) {
 						AddTypeParameterDefininitionsTo(type, astType);
 					}
@@ -645,7 +636,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (attributeProvider == null || !attributeProvider.HasCustomAttributes)
 				return false;
 			foreach (CustomAttribute a in attributeProvider.CustomAttributes) {
-				if (((IMethod)a.Constructor).DeclaringType.FullName == DynamicAttributeFullName) {
+				if (a.Constructor.DeclaringType.FullName == DynamicAttributeFullName) {
 					if (a.ConstructorArguments.Count == 1) {
 						IList<CAArgument> values = a.ConstructorArguments[0].Value as IList<CAArgument>;
 						if (values != null && typeIndex < values.Count && values[typeIndex].Value is bool)
@@ -858,9 +849,9 @@ namespace ICSharpCode.Decompiler.Ast
 			foreach (var gp in genericParameters) {
 				TypeParameterDeclaration tp = new TypeParameterDeclaration();
 				tp.Name = CleanName(gp.Name);
-				if ((gp.Flags & GenericParamAttributes.Contravariant) != 0)
+				if (gp.IsContravariant)
 					tp.Variance = VarianceModifier.Contravariant;
-				else if ((gp.Flags & GenericParamAttributes.Covariant) != 0)
+				else if (gp.IsCovariant)
 					tp.Variance = VarianceModifier.Covariant;
 				ConvertCustomAttributes(tp, gp);
 				yield return tp;
@@ -873,19 +864,18 @@ namespace ICSharpCode.Decompiler.Ast
 				Constraint c = new Constraint();
 				c.TypeParameter = new SimpleType(CleanName(gp.Name));
 				// class/struct must be first
-				if ((gp.Flags & GenericParamAttributes.ReferenceTypeConstraint) != 0)
+				if (gp.HasReferenceTypeConstraint)
 					c.BaseTypes.Add(new PrimitiveType("class"));
-				if ((gp.Flags & GenericParamAttributes.NotNullableValueTypeConstraint) != 0)
+				if (gp.HasNotNullableValueTypeConstraint)
 					c.BaseTypes.Add(new PrimitiveType("struct"));
 				
 				foreach (var constraintType in gp.GenericParamConstraints) {
-					if ((gp.Flags & GenericParamAttributes.NotNullableValueTypeConstraint) != 0 && 
-						constraintType.Constraint.FullName == "System.ValueType")
+					if (gp.HasNotNullableValueTypeConstraint && constraintType.Constraint.FullName == "System.ValueType")
 						continue;
 					c.BaseTypes.Add(ConvertType(constraintType.Constraint));
 				}
-
-				if ((gp.Flags & GenericParamAttributes.DefaultConstructorConstraint) != 0 && (gp.Flags & GenericParamAttributes.NotNullableValueTypeConstraint) == 0)
+				
+				if (gp.HasDefaultConstructorConstraint && !gp.HasNotNullableValueTypeConstraint)
 					c.BaseTypes.Add(new PrimitiveType("new")); // new() must be last
 				if (c.BaseTypes.Any())
 					yield return c;
@@ -1212,24 +1202,24 @@ namespace ICSharpCode.Decompiler.Ast
 			
 			#region DllImportAttribute
 			if (methodDef.HasImplMap) {
-				ImplMap impl = methodDef.ImplMap;
+				ImplMap info = methodDef.ImplMap;
 				Ast.Attribute dllImport = CreateNonCustomAttribute(typeof(DllImportAttribute));
-				dllImport.Arguments.Add(new PrimitiveExpression(impl.Module.Name.String));
+				dllImport.Arguments.Add(new PrimitiveExpression(info.Module.Name.String));
 				
-				if (impl.IsBestFitDisabled)
+				if (info.IsBestFitDisabled)
 					dllImport.AddNamedArgument("BestFitMapping", new PrimitiveExpression(false));
-				if (impl.IsBestFitEnabled)
+				if (info.IsBestFitEnabled)
 					dllImport.AddNamedArgument("BestFitMapping", new PrimitiveExpression(true));
 				
 				System.Runtime.InteropServices.CallingConvention callingConvention;
-				switch (impl.Attributes & PInvokeAttributes.CallConvMask) {
+				switch (info.Attributes & PInvokeAttributes.CallConvMask) {
 					case PInvokeAttributes.CallConvCdecl:
 						callingConvention = System.Runtime.InteropServices.CallingConvention.Cdecl;
 						break;
 					case PInvokeAttributes.CallConvFastcall:
 						callingConvention = System.Runtime.InteropServices.CallingConvention.FastCall;
 						break;
-					case PInvokeAttributes.CallConvStdcall:
+					case PInvokeAttributes.CallConvStdCall:
 						callingConvention = System.Runtime.InteropServices.CallingConvention.StdCall;
 						break;
 					case PInvokeAttributes.CallConvThiscall:
@@ -1245,7 +1235,7 @@ namespace ICSharpCode.Decompiler.Ast
 					dllImport.AddNamedArgument("CallingConvention", new IdentifierExpression("CallingConvention").Member(callingConvention.ToString()));
 				
 				CharSet charSet = CharSet.None;
-				switch (impl.Attributes & PInvokeAttributes.CharSetMask) {
+				switch (info.Attributes & PInvokeAttributes.CharSetMask) {
 					case PInvokeAttributes.CharSetAnsi:
 						charSet = CharSet.Ansi;
 						break;
@@ -1259,23 +1249,23 @@ namespace ICSharpCode.Decompiler.Ast
 				if (charSet != CharSet.None)
 					dllImport.AddNamedArgument("CharSet", new IdentifierExpression("CharSet").Member(charSet.ToString()));
 				
-				if (!string.IsNullOrEmpty(impl.Name) && impl.Name != methodDef.Name)
-					dllImport.AddNamedArgument("EntryPoint", new PrimitiveExpression(impl.Name.String));
+				if (!string.IsNullOrEmpty(info.Name) && info.Name != methodDef.Name)
+					dllImport.AddNamedArgument("EntryPoint", new PrimitiveExpression(info.Name.String));
 				
-				if (impl.IsNoMangle)
+				if (info.IsNoMangle)
 					dllImport.AddNamedArgument("ExactSpelling", new PrimitiveExpression(true));
 				
 				if ((implAttributes & MethodImplAttributes.PreserveSig) == MethodImplAttributes.PreserveSig)
 					implAttributes &= ~MethodImplAttributes.PreserveSig;
 				else
 					dllImport.AddNamedArgument("PreserveSig", new PrimitiveExpression(false));
-
-				if (impl.SupportsLastError)
+				
+				if (info.SupportsLastError)
 					dllImport.AddNamedArgument("SetLastError", new PrimitiveExpression(true));
-
-				if (impl.IsThrowOnUnmappableCharDisabled)
+				
+				if (info.IsThrowOnUnmappableCharDisabled)
 					dllImport.AddNamedArgument("ThrowOnUnmappableChar", new PrimitiveExpression(false));
-				if (impl.IsThrowOnUnmappableCharEnabled)
+				if (info.IsThrowOnUnmappableCharEnabled)
 					dllImport.AddNamedArgument("ThrowOnUnmappableChar", new PrimitiveExpression(true));
 				
 				attributedNode.Attributes.Add(new AttributeSection(dllImport));
@@ -1449,7 +1439,6 @@ namespace ICSharpCode.Decompiler.Ast
 							attribute.Arguments.Add(parameterValue);
 						}
 					}
-
 					if (customAttribute.HasNamedArguments) {
 						TypeDef resolvedAttributeType = customAttribute.AttributeType.ResolveTypeDef();
 						foreach (var propertyNamedArg in customAttribute.Properties) {
@@ -1488,7 +1477,7 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		static void ConvertSecurityAttributes(AstNode attributedNode, IHasDeclSecurity secDeclProvider, string attributeTarget = null)
 		{
-			if (secDeclProvider.DeclSecurities.Count == 0)
+			if (!secDeclProvider.HasCustomAttributes)
 				return;
 			var attributes = new List<ICSharpCode.NRefactory.CSharp.Attribute>();
 			foreach (var secDecl in secDeclProvider.DeclSecurities.OrderBy(d => d.Action)) {

@@ -41,11 +41,10 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			if (type.Namespace != typeRef.Namespace)
 				return false;
 
-			var declType = typeRef.GetDeclaringType();
-			if (type.DeclaringType != null || declType != null) {
-				if (type.DeclaringType == null || declType == null)
+			if (type.DeclaringType != null || typeRef.DeclaringType != null) {
+				if (type.DeclaringType == null || typeRef.DeclaringType == null)
 					return false;
-				if (!IsReferencedBy(type.DeclaringType, declType))
+				if (!IsReferencedBy(type.DeclaringType, typeRef.DeclaringType))
 					return false;
 			}
 
@@ -92,7 +91,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					continue;
 				foreach (Instruction instr in method.Body.Instructions) {
 					IMethod mr = instr.Operand as IMethod;
-					if (mr != null && !(mr is MemberRef && ((MemberRef)mr).IsFieldRef) && mr.Name == name &&
+					if (mr != null && !mr.IsField && mr.Name == name &&
 						IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) &&
 						mr.Resolve() == analyzedMethod) {
 						found = true;

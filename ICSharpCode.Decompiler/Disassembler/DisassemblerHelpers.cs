@@ -50,7 +50,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			writer.WriteReference(DnlibExtensions.OffsetToString(instruction.Offset), instruction);
 		}
 		
-		public static void WriteTo(this ExceptionHandler exceptionHandler, MethodDef method, ITextOutput writer)
+		public static void WriteTo(this ExceptionHandler exceptionHandler, ITextOutput writer)
 		{
 			writer.Write("Try ");
 			WriteOffsetReference(writer, exceptionHandler.TryStart);
@@ -81,10 +81,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (instruction.Operand != null) {
 				writer.Write(' ');
 				if (instruction.OpCode == OpCodes.Ldtoken) {
-					MemberRef member = instruction.Operand as MemberRef;
-					if ((member != null && member.IsMethodRef) || instruction.Operand is MethodDef || instruction.Operand is MethodSpec)
+					var member = instruction.Operand as IMemberRef;
+					if (member != null && member.IsMethod)
 						writer.Write("method ");
-					else if ((member != null && member.IsFieldRef) || instruction.Operand is FieldDef)
+					else if (member != null && member.IsField)
 						writer.Write("field ");
 				}
 				WriteOperand(writer, instruction.Operand);
@@ -319,6 +319,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			} else if (type is TypeDefOrRefSig) {
 				WriteTo(((TypeDefOrRefSig)type).TypeDefOrRef, writer, syntax);
 			}
+			//TODO: FnPtrSig, SentinelSig
 		}
 
 		public static void WriteTo(this ITypeDefOrRef type, ITextOutput writer, ILNameSyntax syntax = ILNameSyntax.Signature)
@@ -340,9 +341,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 				if (syntax == ILNameSyntax.Signature || syntax == ILNameSyntax.SignatureNoNamedTypeParameters)
 					writer.Write(type.IsValueType ? "valuetype " : "class ");
 
-				ITypeDefOrRef declType = type.GetDeclaringType();
-				if (declType != null) {
-					declType.WriteTo(writer, ILNameSyntax.TypeName);
+				if (type.DeclaringType != null) {
+					type.DeclaringType.WriteTo(writer, ILNameSyntax.TypeName);
 					writer.Write('/');
 					writer.WriteReference(Escape(type.Name), type);
 				} else {
@@ -414,7 +414,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				typeRef.WriteTo(writer, ILNameSyntax.TypeName);
 				return;
 			}
-
+			
 			IMethod method = operand as IMethod;
 			if (method != null) {
 				method.WriteMethodTo(writer);

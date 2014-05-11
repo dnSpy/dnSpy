@@ -94,7 +94,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					continue;
 				foreach (Instruction instr in method.Body.Instructions) {
 					IMethod mr = instr.Operand as IMethod;
-					if (mr != null && !(mr is MemberRef && ((MemberRef)mr).IsFieldRef) && mr.Name == name) {
+					if (mr != null && !mr.IsField && mr.Name == name) {
 						// explicit call to the requested method 
 						if (instr.OpCode.Code == Code.Call
 							&& Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType)

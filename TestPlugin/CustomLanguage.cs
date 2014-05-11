@@ -37,10 +37,7 @@ namespace TestPlugin
 		public override void DecompileMethod(MethodDef method, ITextOutput output, DecompilationOptions options)
 		{
 			if (method.Body != null) {
-				var instrs = method.Body.Instructions;
-				var instr = instrs.Count == 0 ? null : instrs[instrs.Count - 1];
-				uint codeSize = instr == null ? 0 : instr.Offset + (uint)instr.GetSize();
-				output.WriteLine("Size of method: {0} bytes", codeSize);
+				output.WriteLine("Size of method: {0} bytes", method.Body.GetCodeSize());
 				
 				ISmartTextOutput smartOutput = output as ISmartTextOutput;
 				if (smartOutput != null) {

@@ -300,7 +300,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						// so we have to handle both 'call' and 'callgetter'
 						IMethod mr = (IMethod)inlinedExpression.Operand;
 						// ensure that it's not an multi-dimensional array getter
-						if (mr.DeclaringType is TypeSpec && (((TypeSpec)mr.DeclaringType).TypeSig.IsArray || ((TypeSpec)mr.DeclaringType).TypeSig.IsSZArray))
+						if (mr.DeclaringType is TypeSpec && ((TypeSpec)mr.DeclaringType).TypeSig.IsSingleOrMultiDimensionalArray)
 							return false;
 						goto case ILCode.Callvirt;
 					case ILCode.Callvirt:

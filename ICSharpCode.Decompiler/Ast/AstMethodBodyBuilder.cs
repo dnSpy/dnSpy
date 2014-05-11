@@ -1108,7 +1108,7 @@ namespace ICSharpCode.Decompiler.Ast
 			TypeDef typeDef = cecilMethod.DeclaringType;
 			string indexerName = null;
 			foreach (CustomAttribute ca in typeDef.CustomAttributes) {
-				if (((IMethod)ca.Constructor).FullName == "System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)") {
+				if (ca.Constructor.FullName == "System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)") {
 					indexerName = (UTF8String)ca.ConstructorArguments.Single().Value;
 					break;
 				}
@@ -1197,7 +1197,7 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			return new DirectionExpression { Expression = expr, FieldDirection = FieldDirection.Ref };
 		}
-
+		
 		Ast.Expression Convert(Ast.Expression expr, TypeSig actualType, TypeSig reqType)
 		{
 			if (actualType == null || reqType == null || TypeAnalysis.IsSameType(actualType, reqType)) {

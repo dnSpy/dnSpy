@@ -67,7 +67,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 				foreach (Instruction instr in method.Body.Instructions) {
 					IMethod mr = instr.Operand as IMethod;
-					if (mr != null && !(mr is MemberRef && ((MemberRef)mr).IsFieldRef) && mr.Name == ".ctor") {
+					if (mr != null && !mr.IsField && mr.Name == ".ctor") {
 						if (Helpers.IsReferencedBy(analyzedType, mr.DeclaringType)) {
 							found = true;
 							break;

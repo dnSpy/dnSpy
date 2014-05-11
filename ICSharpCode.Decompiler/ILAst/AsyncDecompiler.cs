@@ -138,7 +138,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				return false;
 			if (!loadStartArgument.Match(ILCode.Ldloca, out stateMachineVar))
 				return false;
-
+			
 			stateMachineStruct = stateMachineVar.Type.GetTypeDefOrRef().ResolveWithinSameModule();
 			if (stateMachineStruct == null || !stateMachineStruct.IsValueType)
 				return false;
@@ -620,7 +620,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			bool isResultAssignment = resultAssignment.Match(ILCode.Stloc, out resultVar, out getResultCall);
 			if (!isResultAssignment)
 				getResultCall = resultAssignment;
-			if (!(getResultCall.Operand is IMethod && ((IMethod)getResultCall.Operand).Name == "GetResult"))
+			var method = getResultCall.Operand as IMethod;
+			if (!(method != null && !method.IsField && method.Name == "GetResult"))
 				return false;
 			
 			pos -= 2; // also delete 'stloc', 'brtrue' and 'await'

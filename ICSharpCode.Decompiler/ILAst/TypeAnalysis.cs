@@ -1163,7 +1163,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		static bool IsArrayPointerOrReference(TypeSig type)
 		{
 			while (type != null) {
-				if (type is ArraySig || type is SZArraySig || type is PtrSig || type is ByRefSig)
+				if (type is ArraySigBase || type is PtrSig || type is ByRefSig)
 					return true;
 				type = type.Next;
 			}
@@ -1228,7 +1228,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					v.Type = null;
 			}
 		}
-
+		
 		public static bool IsSameType(IType type1, IType type2)
 		{
 			if (type1 == type2)

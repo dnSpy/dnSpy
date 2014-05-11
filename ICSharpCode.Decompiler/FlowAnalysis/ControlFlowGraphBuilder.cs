@@ -40,7 +40,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		// true means that a copy of the whole finally block is created for each leave target. In this case, each endfinally node will be connected with the leave
 		//   target using a normal edge.
 		bool copyFinallyBlocks = false;
-
+		
 		CilBody methodBody;
 		LinkedList<Instruction> instructions;
 		uint[] offsets; // array index = instruction index; value = IL offset
@@ -120,7 +120,6 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			while (current != null) {
 				Instruction blockStart = current.Value;
 				ExceptionHandler blockStartEH = FindInnermostExceptionHandler(blockStart.Offset);
-
 				// try and see how big we can make that block:
 				LinkedListNode<Instruction> blockEnd = current;
 				for (; i + 1 < methodBody.Instructions.Count; i++) {
@@ -137,7 +136,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 					}
 					blockEnd = blockEnd.Next;
 				}
-
+				
 				nodes.Add(new ControlFlowNode(nodes.Count, current, blockEnd));
 				i++;
 				current = current.Next;

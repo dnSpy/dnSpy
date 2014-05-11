@@ -597,7 +597,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			IMethod getter = getterOperand as IMethod;
 			IMethod setter = setterOperand as IMethod;
-			if (getter == null || setter == null)
+			if (getter == null || setter == null || !getter.IsMethod || !setter.IsMethod)
 				return false;
 			if (!TypeAnalysis.IsSameType(getter.DeclaringType, setter.DeclaringType))
 				return false;

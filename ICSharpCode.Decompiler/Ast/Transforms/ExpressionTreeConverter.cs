@@ -306,7 +306,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			Match m = getMethodFromHandlePattern.Match(invocation.Arguments.ElementAt(1));
 			if (!m.Success)
 				return NotSupported(invocation);
-
+			
 			IMethod mr = m.Get<AstNode>("method").Single().Annotation<IMethod>();
 			if (mr == null)
 				return null;
@@ -356,7 +356,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				target = invocation.Arguments.ElementAt(0);
 				firstArgumentPosition = 2;
 			}
-
+			
 			IMethod mr = m.Get<AstNode>("method").Single().Annotation<IMethod>();
 			if (mr == null)
 				return null;
@@ -531,7 +531,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			Match m = newObjectCtorPattern.Match(invocation.Arguments.First());
 			if (!m.Success)
 				return NotSupported(invocation);
-
+			
 			IMethod ctor = m.Get<AstNode>("ctor").Single().Annotation<IMethod>();
 			if (ctor == null)
 				return null;

@@ -80,7 +80,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public static ImageSource GetIcon(MethodDef method)
 		{
-			if (method.IsSpecialName && method.Name.String.StartsWith("op_", StringComparison.Ordinal)) {
+			if (method.IsSpecialName && method.Name.StartsWith("op_", StringComparison.Ordinal)) {
 				return Images.GetIcon(MemberIcon.Operator, GetOverlayIcon(method.Attributes), false);
 			}
 

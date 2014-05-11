@@ -264,6 +264,11 @@
     <Compile Include="Utils\CompositeFormatStringParser\IFormatStringError.cs" />
     <Compile Include="Completion\CompletionExtensionMethods.cs" />
   </ItemGroup>
+   <ItemGroup>
+    <Folder Include="Completion\" />
+    <Folder Include="TypeSystem\" />
+    <Folder Include="Utils\CompositeFormatStringParser\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\dnlib\src\dnlib.csproj">
       <Project>{FDFC1237-143F-4919-8318-4926901F4639}</Project>

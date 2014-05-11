@@ -68,7 +68,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				yield break;
 			}
 
-			foreach (PropertyDef property in type.Properties.Where(e => e.Name.String.EndsWith(analyzedProperty.Name))) {
+			foreach (PropertyDef property in type.Properties.Where(e => e.Name.EndsWith(analyzedProperty.Name))) {
 				MethodDef accessor = property.GetMethod ?? property.SetMethod;
 				if (accessor.HasOverrides && accessor.Overrides.Any(m => Decompiler.DnlibExtensions.Resolve(m.MethodDeclaration) == analyzedMethod)) {
 					var node = new AnalyzedPropertyTreeNode(property);

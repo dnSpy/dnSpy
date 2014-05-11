@@ -51,7 +51,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			{ MethodAttributes.Final, "final" },
 			{ MethodAttributes.HideBySig, "hidebysig" },
 			{ MethodAttributes.SpecialName, "specialname" },
-			{ MethodAttributes.PinvokeImpl, null }, // handled separately
+			{ MethodAttributes.PInvokeImpl, null }, // handled separately
 			{ MethodAttributes.UnmanagedExport, "export" },
 			{ MethodAttributes.RTSpecialName, "rtspecialname" },
 			{ MethodAttributes.RequireSecObject, "reqsecobj" },
@@ -121,34 +121,34 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if ((method.Attributes & MethodAttributes.PinvokeImpl) == MethodAttributes.PinvokeImpl) {
 				output.Write("pinvokeimpl");
 				if (method.HasImplMap) {
-					ImplMap impl = method.ImplMap;
-					output.Write("(\"" + NRefactory.CSharp.CSharpOutputVisitor.ConvertString(impl.Module.Name) + "\"");
+					ImplMap info = method.ImplMap;
+					output.Write("(\"" + NRefactory.CSharp.CSharpOutputVisitor.ConvertString(info.Module.Name) + "\"");
 					
-					if (!string.IsNullOrEmpty(impl.Name) && impl.Name != method.Name)
-						output.Write(" as \"" + NRefactory.CSharp.CSharpOutputVisitor.ConvertString(impl.Name) + "\"");
+					if (!string.IsNullOrEmpty(info.Name) && info.Name != method.Name)
+						output.Write(" as \"" + NRefactory.CSharp.CSharpOutputVisitor.ConvertString(info.Name) + "\"");
 					
-					if (impl.IsNoMangle)
+					if (info.IsNoMangle)
 						output.Write(" nomangle");
 					
-					if (impl.IsCharSetAnsi)
+					if (info.IsCharSetAnsi)
 						output.Write(" ansi");
-					else if (impl.IsCharSetAuto)
+					else if (info.IsCharSetAuto)
 						output.Write(" autochar");
-					else if (impl.IsCharSetUnicode)
+					else if (info.IsCharSetUnicode)
 						output.Write(" unicode");
 					
-					if (impl.SupportsLastError)
+					if (info.SupportsLastError)
 						output.Write(" lasterr");
 					
-					if (impl.IsCallConvCdecl)
+					if (info.IsCallConvCdecl)
 						output.Write(" cdecl");
-					else if (impl.IsCallConvFastcall)
+					else if (info.IsCallConvFastcall)
 						output.Write(" fastcall");
-					else if (impl.IsCallConvStdcall)
+					else if (info.IsCallConvStdcall)
 						output.Write(" stdcall");
-					else if (impl.IsCallConvThiscall)
+					else if (info.IsCallConvThiscall)
 						output.Write(" thiscall");
-					else if (impl.IsCallConvWinapi)
+					else if (info.IsCallConvWinapi)
 						output.Write(" winapi");
 					
 					output.Write(')');
@@ -227,7 +227,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		#region Write Security Declarations
 		void WriteSecurityDeclarations(IHasDeclSecurity secDeclProvider)
 		{
-			if (secDeclProvider.DeclSecurities.Count == 0)
+			if (!secDeclProvider.HasDeclSecurities)
 				return;
 			foreach (var secdecl in secDeclProvider.DeclSecurities) {
 				output.Write(".permissionset ");
@@ -370,7 +370,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			WriteNativeType(marshalInfo.NativeType, marshalInfo);
 			output.Write(") ");
 		}
-
+		
 		void WriteNativeType(NativeType nativeType, MarshalType marshalInfo = null)
 		{
 			switch (nativeType) {
@@ -598,8 +598,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				if (p.IsHiddenThisParameter)
 					continue;
 				var paramDef = p.ParamDef;
-				if (paramDef != null)
-				{
+				if (paramDef != null) {
 					if (paramDef.IsIn)
 						output.Write("[in] ");
 					if (paramDef.IsOut)
@@ -619,8 +618,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 		}
 		
-		void WriteParameters(TypeDef type, IList<TypeSig> parameters)
-		{
+		void WriteParameters(TypeDef type, IList<TypeSig> parameters) {
 			for (int i = 0; i < parameters.Count; i++) {
 				if (i != 0)
 					output.Write(", ");
@@ -837,12 +835,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 			// start writing IL
 			output.WriteDefinition(".class ", type);
 			
-			if ((type.Attributes & TypeAttributes.ClassSemanticsMask) == TypeAttributes.Interface)
+			if ((type.Attributes & TypeAttributes.ClassSemanticMask) == TypeAttributes.Interface)
 				output.Write("interface ");
 			WriteEnum(type.Attributes & TypeAttributes.VisibilityMask, typeVisibility);
 			WriteEnum(type.Attributes & TypeAttributes.LayoutMask, typeLayout);
 			WriteEnum(type.Attributes & TypeAttributes.StringFormatMask, typeStringFormat);
-			const TypeAttributes masks = TypeAttributes.ClassSemanticsMask | TypeAttributes.VisibilityMask | TypeAttributes.LayoutMask | TypeAttributes.StringFormatMask;
+			const TypeAttributes masks = TypeAttributes.ClassSemanticMask | TypeAttributes.VisibilityMask | TypeAttributes.LayoutMask | TypeAttributes.StringFormatMask;
 			WriteFlags(type.Attributes & ~masks, typeAttributes);
 			
 			output.Write(DisassemblerHelpers.Escape(type.DeclaringType != null ? type.Name.String : type.FullName));
@@ -929,29 +927,23 @@ namespace ICSharpCode.Decompiler.Disassembler
 			isInType = oldIsInType;
 		}
 		
-		void WriteTypeParameters(ITextOutput output, IGenericParameterProvider p)
+		void WriteTypeParameters(ITextOutput output, ITypeOrMethodDef p)
 		{
-			if (p.NumberOfGenericParameters > 0) {
-				IList<GenericParam> genericParams;
-				if (p is MethodDef)
-					genericParams = ((MethodDef)p).GenericParameters;
-				else
-					genericParams = ((TypeDef)p).GenericParameters;
-
+			if (p.HasGenericParameters) {
 				output.Write('<');
-				for (int i = 0; i < genericParams.Count; i++) {
+				for (int i = 0; i < p.GenericParameters.Count; i++) {
 					if (i > 0)
 						output.Write(", ");
-					GenericParam gp = genericParams[i];
-					if ((gp.Flags & GenericParamAttributes.ReferenceTypeConstraint) != 0) {
+					GenericParam gp = p.GenericParameters[i];
+					if (gp.HasReferenceTypeConstraint) {
 						output.Write("class ");
-					} else if ((gp.Flags & GenericParamAttributes.NotNullableValueTypeConstraint) != 0) {
+					} else if (gp.HasNotNullableValueTypeConstraint) {
 						output.Write("valuetype ");
 					}
-					if ((gp.Flags & GenericParamAttributes.DefaultConstructorConstraint) != 0) {
+					if (gp.HasDefaultConstructorConstraint) {
 						output.Write(".ctor ");
 					}
-					if (gp.GenericParamConstraints.Count > 0) {
+					if (gp.HasGenericParamConstraints) {
 						output.Write('(');
 						for (int j = 0; j < gp.GenericParamConstraints.Count; j++) {
 							if (j > 0)
@@ -960,9 +952,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 						}
 						output.Write(") ");
 					}
-					if ((gp.Flags & GenericParamAttributes.Contravariant) != 0) {
+					if (gp.IsContravariant) {
 						output.Write('-');
-					} else if ((gp.Flags & GenericParamAttributes.Covariant) != 0) {
+					} else if (gp.IsCovariant) {
 						output.Write('+');
 					}
 					output.Write(DisassemblerHelpers.Escape(gp.Name));
@@ -977,7 +969,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			foreach (CustomAttribute a in attributes) {
 				output.Write(".custom ");
-				((IMethod)a.Constructor).WriteMethodTo(output);
+				a.Constructor.WriteMethodTo(output);
 				byte[] blob = a.GetBlob();
 				if (blob != null) {
 					output.Write(" = ");

@@ -293,16 +293,6 @@ namespace ICSharpCode.Decompiler
 			return false;
 		}
 
-		public static ITypeDefOrRef GetDeclaringType(this ITypeDefOrRef typeDefOrRef)
-		{
-			if (typeDefOrRef is TypeSpec)
-				throw new NotSupportedException();
-			if (typeDefOrRef is TypeDef)
-				return ((TypeDef)typeDefOrRef).DeclaringType;
-			else
-				return ((TypeRef)typeDefOrRef).DeclaringType;
-		}
-
 		public static int GetCodeSize(this CilBody body)
 		{
 			if (body.Instructions.Count == 0)

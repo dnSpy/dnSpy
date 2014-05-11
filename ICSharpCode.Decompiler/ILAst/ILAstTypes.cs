@@ -196,8 +196,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				yield return this.FaultBlock;
 			if (this.FinallyBlock != null)
 				yield return this.FinallyBlock;
-			if (this.FilterBlock != null)
-			{
+			if (this.FilterBlock != null) {
 				yield return this.FilterBlock;
 				yield return this.FilterBlock.HandlerBlock;
 			}
@@ -236,13 +235,13 @@ namespace ICSharpCode.Decompiler.ILAst
 	public class ILVariable
 	{
 		public string Name;
-		public bool IsGenerated;
+		public bool   IsGenerated;
 		public TypeSig Type;
 		public Local OriginalVariable;
 		public dnlib.DotNet.Parameter OriginalParameter;
 		
 		public bool IsPinned {
-			get { return OriginalVariable != null && OriginalVariable.Type is PinnedSig; }
+			get { return OriginalVariable != null && OriginalVariable.Type.IsPinned; }
 		}
 		
 		public bool IsParameter {
@@ -461,14 +460,7 @@ namespace ICSharpCode.Decompiler.ILAst
 							output.Write(", ");
 						output.WriteReference(labels[i].Name, labels[i]);
 					}
-				} else if (Operand is MemberRef) {
-					MemberRef member = (MemberRef)Operand;
-					if (member.DeclaringType != null) {
-						member.DeclaringType.WriteTo(output, ILNameSyntax.ShortTypeName);
-						output.Write("::");
-					}
-					output.WriteReference(member.Name, member);
-				} else if (Operand is IMethod) {
+				} else if (Operand is IMethod && (Operand as IMethod).MethodSig != null) {
 					IMethod method = (IMethod)Operand;
 					if (method.DeclaringType != null) {
 						method.DeclaringType.WriteTo(output, ILNameSyntax.ShortTypeName);

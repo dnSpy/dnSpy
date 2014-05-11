@@ -46,7 +46,7 @@ namespace ICSharpCode.ILSpy
 				
 				StringBuilder name = new StringBuilder((int)nChars);
 				assemblyName.GetDisplayName(name, ref nChars, 0);
-
+				
 				AssemblyNameInfo r = null;
 				try {
 					r = new AssemblyNameInfo(name.ToString());

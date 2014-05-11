@@ -106,7 +106,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				if (method.Body.HasExceptionHandlers) {
 					output.WriteLine();
 					foreach (var eh in method.Body.ExceptionHandlers) {
-						eh.WriteTo(method, output);
+						eh.WriteTo(output);
 						output.WriteLine();
 					}
 				}
@@ -214,7 +214,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 						|| inst.OpCode.FlowControl == FlowControl.Cond_Branch
 						|| inst.OpCode.FlowControl == FlowControl.Return
 						|| inst.OpCode.FlowControl == FlowControl.Throw;
-
+					
 					index++;
 				}
 				isFirstInstructionInStructure = false;

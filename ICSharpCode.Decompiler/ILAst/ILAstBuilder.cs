@@ -89,8 +89,8 @@ namespace ICSharpCode.Decompiler.ILAst
 		sealed class ByteCode
 		{
 			public ILLabel  Label;      // Non-null only if needed
-			public uint      Offset;
-			public uint      EndOffset;
+			public uint     Offset;
+			public uint     EndOffset;
 			public ILCode   Code;
 			public object   Operand;
 			public int?     PopCount;   // Null means pop all
@@ -206,7 +206,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		// Virtual instructions to load exception on stack
 		Dictionary<ExceptionHandler, ByteCode> ldexceptions = new Dictionary<ExceptionHandler, ILAstBuilder.ByteCode>();
 		Dictionary<ExceptionHandler, ByteCode> ldfilters = new Dictionary<ExceptionHandler, ILAstBuilder.ByteCode>();
-
+		
 		DecompilerContext context;
 
 		static readonly Dictionary<Code, ILCode> ilCodeTranslation =
@@ -551,11 +551,11 @@ namespace ICSharpCode.Decompiler.ILAst
 				// If the variable is pinned, use single variable.
 				// If any of the uses is from unknown definition, use single variable
 				// If any of the uses is ldloca with a nondeterministic usage pattern, use  single variable
-				if (!optimize || varDef.Type is PinnedSig || uses.Any(b => b.VariablesBefore[varDef.Index].UnknownDefinition || (b.Code == ILCode.Ldloca && !IsDeterministicLdloca(b)))) {				
+				if (!optimize || varDef.Type.IsPinned || uses.Any(b => b.VariablesBefore[varDef.Index].UnknownDefinition || (b.Code == ILCode.Ldloca && !IsDeterministicLdloca(b)))) {				
 					newVars = new List<VariableInfo>(1) { new VariableInfo() {
 						Variable = new ILVariable() {
 							Name = string.IsNullOrEmpty(varDef.Name) ? "var_" + varDef.Index : varDef.Name,
-							Type = varDef.Type is PinnedSig ? ((PinnedSig)varDef.Type).Next : varDef.Type,
+							Type = varDef.Type.IsPinned ? ((PinnedSig)varDef.Type).Next : varDef.Type,
 							OriginalVariable = varDef
 						},
 						Defs = defs,
@@ -698,7 +698,6 @@ namespace ICSharpCode.Decompiler.ILAst
 					HashSet<ExceptionHandler> nestedEHs = new HashSet<ExceptionHandler>(ehs.Where(e => (eh.HandlerStart.Offset <= e.TryStart.Offset && e.TryEnd.Offset < handlerEndOffset) || (eh.HandlerStart.Offset < e.TryStart.Offset && e.TryEnd.Offset <= handlerEndOffset)));
 					ehs.ExceptWith(nestedEHs);
 					List<ILNode> handlerAst = ConvertToAst(body.CutRange(startIdx, endIdx - startIdx), nestedEHs);
-
 					if (eh.HandlerType == ExceptionHandlerType.Catch) {
 						ILTryCatchBlock.CatchBlock catchBlock = new ILTryCatchBlock.CatchBlock() {
 							ExceptionType = eh.CatchType.ToTypeSig(),
@@ -752,13 +751,10 @@ namespace ICSharpCode.Decompiler.ILAst
 
 		private void ConvertExceptionVariable(ExceptionHandler eh, ILTryCatchBlock.CatchBlock catchBlock, ByteCode ldexception)
 		{
-			if (ldexception.StoreTo == null || ldexception.StoreTo.Count == 0)
-			{
+			if (ldexception.StoreTo == null || ldexception.StoreTo.Count == 0) {
 				// Exception is not used
 				catchBlock.ExceptionVariable = null;
-			}
-			else if (ldexception.StoreTo.Count == 1)
-			{
+			} else if (ldexception.StoreTo.Count == 1) {
 				ILExpression first = catchBlock.Body[0] as ILExpression;
 				if (first != null &&
 					first.Code == ILCode.Pop &&
@@ -771,18 +767,13 @@ namespace ICSharpCode.Decompiler.ILAst
 					else
 						catchBlock.ExceptionVariable = null;
 					catchBlock.Body.RemoveAt(0);
-				}
-				else
-				{
+				} else {
 					catchBlock.ExceptionVariable = ldexception.StoreTo[0];
 				}
-			}
-			else
-			{
+			} else {
 				ILVariable exTemp = new ILVariable() { Name = "ex_" + eh.HandlerStart.Offset.ToString("X2"), IsGenerated = true };
 				catchBlock.ExceptionVariable = exTemp;
-				foreach (ILVariable storeTo in ldexception.StoreTo)
-				{
+				foreach (ILVariable storeTo in ldexception.StoreTo) {
 					catchBlock.Body.Insert(0, new ILExpression(ILCode.Stloc, storeTo, new ILExpression(ILCode.Ldloc, exTemp)));
 				}
 			}

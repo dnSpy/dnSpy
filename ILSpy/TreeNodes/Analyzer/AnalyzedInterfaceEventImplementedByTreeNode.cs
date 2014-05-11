@@ -70,7 +70,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				yield break;
 			}
 
-			foreach (EventDef ev in type.Events.Where(e => e.Name.String.EndsWith(analyzedEvent.Name))) {
+			foreach (EventDef ev in type.Events.Where(e => e.Name.EndsWith(analyzedEvent.Name))) {
 				MethodDef accessor = ev.AddMethod ?? ev.RemoveMethod;
 				if (accessor.HasOverrides && accessor.Overrides.Any(m => Decompiler.DnlibExtensions.Resolve(m.MethodDeclaration) == analyzedMethod)) {
 					var node = new AnalyzedEventTreeNode(ev);

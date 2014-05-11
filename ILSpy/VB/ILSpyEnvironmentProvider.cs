@@ -76,8 +76,6 @@ namespace ICSharpCode.ILSpy.VB
 				return TypeKind.Interface;
 			if (definition.IsEnum)
 				return TypeKind.Enum;
-			/*if (definition.IsFunctionPointer)
-				return TypeKind.Delegate;*/
 			if (definition.IsValueType)
 				return TypeKind.Struct;
 			
@@ -129,7 +127,7 @@ namespace ICSharpCode.ILSpy.VB
 			foreach (var type in interfaces) {
 				var def = type.Annotation<ITypeDefOrRef>().ResolveTypeDef();
 				if (def == null) continue;
-				foreach (var method in def.Methods.Where(m => !m.Name.String.StartsWith("get_") && !m.Name.String.StartsWith("set_"))) {
+				foreach (var method in def.Methods.Where(m => !m.Name.StartsWith("get_") && !m.Name.StartsWith("set_"))) {
 					yield return new NRefactory.VB.Ast.InterfaceMemberSpecifier((NRefactory.VB.Ast.AstType)type.Clone(), method.Name);
 				}
 				

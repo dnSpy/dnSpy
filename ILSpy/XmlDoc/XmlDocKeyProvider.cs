@@ -48,7 +48,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 					b.Append("M:");
 				AppendTypeName(b, member.DeclaringType.ToTypeSig());
 				b.Append('.');
-				b.Append(member.Name.String.Replace('.', '#'));
+				b.Append(member.Name.Replace('.', '#'));
 				IList<Parameter> parameters;
 				TypeSig explicitReturnType = null;
 				if (member.IsPropertyDef) {
@@ -134,9 +134,8 @@ namespace ICSharpCode.ILSpy.XmlDoc
 				b.Append(gp.Number);
 			} else {
 				var typeRef = type.ToTypeDefOrRef();
-				var declType = Decompiler.DnlibExtensions.GetDeclaringType(typeRef);
-				if (declType != null) {
-					AppendTypeName(b, declType.ToTypeSig());
+				if (typeRef.DeclaringType != null) {
+					AppendTypeName(b, typeRef.DeclaringType.ToTypeSig());
 					b.Append('.');
 					b.Append(typeRef.Name);
 				} else {
@@ -144,12 +143,12 @@ namespace ICSharpCode.ILSpy.XmlDoc
 				}
 			}
 		}
-
+		
 		static int AppendTypeNameWithArguments(StringBuilder b, ITypeDefOrRef type, IList<TypeSig> genericArguments)
 		{
 			int outerTypeParameterCount = 0;
-			var declType = Decompiler.DnlibExtensions.GetDeclaringType(type);
-			if (declType != null) {
+			if (type.DeclaringType != null) {
+				ITypeDefOrRef declType = type.DeclaringType;
 				outerTypeParameterCount = AppendTypeNameWithArguments(b, declType, genericArguments);
 				b.Append('.');
 			} else if (!string.IsNullOrEmpty(type.Namespace)) {
@@ -194,7 +193,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 					return null;
 			}
 		}
-
+		
 		static IMemberRef FindMember(ModuleDef module, string key, Func<TypeDef, IEnumerable<IMemberRef>> memberSelector)
 		{
 			Debug.WriteLine("Looking for member " + key);
@@ -222,7 +221,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 				Debug.WriteLine(memberKey);
 				if (memberKey == key)
 					return member;
-				if (shortName == member.Name.String.Replace('.', '#'))
+				if (shortName == member.Name.Replace('.', '#'))
 					shortNameMatch = member;
 			}
 			// if there's no match by ID string (key), return the match by name.

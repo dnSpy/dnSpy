@@ -299,7 +299,7 @@ namespace ICSharpCode.ILSpy.VB
 					string fileName;
 					Stream s = r.GetResourceStream();
 					s.Position = 0;
-					if (r.Name.String.EndsWith(".g.resources", StringComparison.OrdinalIgnoreCase)) {
+					if (r.Name.EndsWith(".g.resources", StringComparison.OrdinalIgnoreCase)) {
 						IEnumerable<DictionaryEntry> rs = null;
 						try {
 							rs = new ResourceSet(s).Cast<DictionaryEntry>();

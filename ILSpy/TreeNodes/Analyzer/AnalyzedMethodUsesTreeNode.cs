@@ -63,7 +63,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			foreach (Instruction instr in analyzedMethod.Body.Instructions) {
 				IMethod mr = instr.Operand as IMethod;
-				if (mr != null && !(mr is MemberRef && ((MemberRef)mr).IsFieldRef)) {
+				if (mr != null && !mr.IsField) {
 					MethodDef def = Decompiler.DnlibExtensions.Resolve(mr);
 					if (def != null)
 						yield return def;
@@ -75,7 +75,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			foreach (Instruction instr in analyzedMethod.Body.Instructions) {
 				IField fr = instr.Operand as IField;
-				if (fr != null && !(fr is MemberRef && ((MemberRef)fr).IsMethodRef)) {
+				if (fr != null && !fr.IsMethod) {
 					FieldDef def = Decompiler.DnlibExtensions.Resolve(fr);
 					if (def != null)
 						yield return def;

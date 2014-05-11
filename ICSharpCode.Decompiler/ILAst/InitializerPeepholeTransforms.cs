@@ -475,7 +475,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression g = getters[getters.Count - i];
 				IMemberRef mr = (IMemberRef)g.Operand;
 				TypeSig returnType;
-				if (mr is IField && ((IField)mr).FieldSig != null)
+				if (mr.IsField)
 					returnType = TypeAnalysis.GetFieldType((IField)mr);
 				else
 					returnType = TypeAnalysis.SubstituteTypeArgs(((IMethod)mr).MethodSig.RetType, method: (IMethod)mr);

@@ -37,7 +37,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public ILSpyTreeNode CreateNode(Resource resource)
 		{
 			EmbeddedResource er = resource as EmbeddedResource;
-			if (er != null && er.Name.String.EndsWith(".resources", StringComparison.OrdinalIgnoreCase)) {
+			if (er != null && er.Name.EndsWith(".resources", StringComparison.OrdinalIgnoreCase)) {
 				return new ResourcesFileTreeNode(er);
 			}
 			return null;

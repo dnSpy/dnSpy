@@ -99,18 +99,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				var member = memberNode.Member;
 				var memberName = string.Empty;
 
-				ITypeDefOrRef declType = null;
-				if (member is IMemberDef)
-					declType = ((IMemberDef)member).DeclaringType;
-				else if (declType is IField)
-					declType = ((IField)member).DeclaringType;
-				else if (declType is IMethod)
-					declType = ((IMethod)member).DeclaringType;
-
-				if (declType == null)
+				if (member.DeclaringType == null)
 					memberName = member.FullName;
 				else
-					memberName = string.Format("{0}.{1}", declType.FullName, member.Name);
+					memberName = string.Format("{0}.{1}", member.DeclaringType.FullName, member.Name);
 
 				address = string.Format(msdnAddress, memberName);
 			}
