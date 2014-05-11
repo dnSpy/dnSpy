@@ -626,7 +626,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				thisParameter.Name = "this";
 				thisParameter.OriginalParameter = methodDef.Parameters[0];
 			}
-			foreach (Parameter p in methodDef.Parameters.Skip(methodDef.HasThis ? 1 : 0)) {
+			foreach (Parameter p in methodDef.Parameters.SkipNonNormal()) {
 				this.Parameters.Add(new ILVariable { Type = p.Type, Name = p.Name, OriginalParameter = p });
 			}
 			if (this.Parameters.Count > 0 && (methodDef.IsSetter() || methodDef.IsAddOn() || methodDef.IsRemoveOn())) {

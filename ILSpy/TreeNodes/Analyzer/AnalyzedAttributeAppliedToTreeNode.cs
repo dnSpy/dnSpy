@@ -260,6 +260,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 						((usage & AttributeTargets.Parameter) != 0) &&
 						method.Parameters.Count > 0) {
 						foreach (var parameter in method.Parameters.Where(param => param.HasParamDef)) {
+							if (parameter.IsHiddenThisParameter)
+								continue;
 							foreach (var attribute in parameter.ParamDef.CustomAttributes) {
 								if (attribute.AttributeType == attrTypeRef) {
 									found = true;

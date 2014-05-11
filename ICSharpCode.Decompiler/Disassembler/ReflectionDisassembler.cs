@@ -210,6 +210,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 				}
 			}
 			foreach (var p in method.Parameters) {
+				if (p.IsHiddenThisParameter)
+					continue;
 				WriteParameterAttributes(p);
 			}
 			WriteSecurityDeclarations(method);

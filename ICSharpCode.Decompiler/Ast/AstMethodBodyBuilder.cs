@@ -759,10 +759,11 @@ namespace ICSharpCode.Decompiler.Ast
 								if (CanInferAnonymousTypePropertyNamesFromArguments(args, ctor.Parameters)) {
 									atce.Initializers.AddRange(args);
 								} else {
+									int skip = ctor.Parameters.GetParametersSkip();
 									for (int i = 0; i < args.Count; i++) {
 										atce.Initializers.Add(
 											new NamedExpression {
-												Name = ctor.Parameters[i].Name,
+												Name = ctor.Parameters[i + skip].Name,
 												Expression = args[i]
 											});
 									}
@@ -867,6 +868,7 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		internal static bool CanInferAnonymousTypePropertyNamesFromArguments(IList<Expression> args, IList<Parameter> parameters)
 		{
+			int skip = parameters.GetParametersSkip();
 			for (int i = 0; i < args.Count; i++) {
 				string inferredName;
 				if (args[i] is IdentifierExpression)
@@ -876,7 +878,7 @@ namespace ICSharpCode.Decompiler.Ast
 				else
 					inferredName = null;
 				
-				if (inferredName != parameters[i].Name) {
+				if (i + skip >= parameters.Count || inferredName != parameters[i + skip].Name) {
 					return false;
 				}
 			}
@@ -1094,10 +1096,11 @@ namespace ICSharpCode.Decompiler.Ast
 		static void AdjustArgumentsForMethodCall(IMethod cecilMethod, List<Expression> methodArgs)
 		{
 			MethodDef methodDef = cecilMethod.Resolve();
+			int skip = methodDef.Parameters.GetParametersSkip();
 			// Convert 'ref' into 'out' where necessary
-			for (int i = 0; i < methodArgs.Count && i < methodDef.Parameters.Count; i++) {
+			for (int i = 0; i < methodArgs.Count && i < methodDef.Parameters.Count - skip; i++) {
 				DirectionExpression dir = methodArgs[i] as DirectionExpression;
-				Parameter p = methodDef.Parameters[i + (methodDef.HasThis ? 1 : 0)];
+				Parameter p = methodDef.Parameters[i + skip];
 				if (dir != null && p.HasParamDef && p.ParamDef.IsOut && !p.ParamDef.IsIn)
 					dir.FieldDirection = FieldDirection.Out;
 			}

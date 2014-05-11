@@ -90,7 +90,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 								if (delegateTypeDef != null) {
 									MethodDef invokeMethod = delegateTypeDef.Methods.FirstOrDefault(m => m.Name == "Invoke");
 									if (invokeMethod != null) {
-										isExtensionMethod = (invokeMethod.Parameters.Count + 1 == method.MethodSig.GetParameters().Count);
+										isExtensionMethod = (invokeMethod.Parameters.GetNumberOfNormalParameters() + 1 == method.MethodSig.GetParameters().Count);
 									}
 								}
 							}
@@ -164,7 +164,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			}
 			// Remove the parameter list from an AnonymousMethodExpression if the original method had no names,
 			// and the parameters are not used in the method body
-			if (!isLambda && method.Parameters.All(p => string.IsNullOrEmpty(p.Name))) {
+			if (!isLambda && method.Parameters.SkipNonNormal().All(p => string.IsNullOrEmpty(p.Name))) {
 				var parameterReferencingIdentifiers =
 					from ident in body.Descendants.OfType<IdentifierExpression>()
 					let v = ident.Annotation<ILVariable>()

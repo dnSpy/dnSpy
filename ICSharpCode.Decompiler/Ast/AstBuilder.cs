@@ -960,7 +960,7 @@ namespace ICSharpCode.Decompiler.Ast
 				astProp.Setter.Body = CreateMethodBody(propDef.SetMethod);
 				astProp.Setter.AddAnnotation(propDef.SetMethod);
 				ConvertAttributes(astProp.Setter, propDef.SetMethod);
-				Parameter lastParam = propDef.SetMethod.Parameters.LastOrDefault();
+				Parameter lastParam = propDef.SetMethod.Parameters.SkipNonNormal().LastOrDefault();
 				if (lastParam != null) {
 					ConvertCustomAttributes(astProp.Setter, lastParam.ParamDef, "param");
 					if (lastParam.HasParamDef && lastParam.ParamDef.HasMarshalType) {

@@ -141,6 +141,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				return true;
 
 			foreach (var parameter in method.Parameters) {
+				if (parameter.IsHiddenThisParameter)
+					continue;
 				if (Decompiler.DnlibExtensions.Resolve(parameter.Type) == analyzedType)
 					return true;
 			}

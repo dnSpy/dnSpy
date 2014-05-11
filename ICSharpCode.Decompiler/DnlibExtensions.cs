@@ -433,5 +433,26 @@ namespace ICSharpCode.Decompiler
 			else
 				return scope.ScopeName;
 		}
+
+		public static int GetParametersSkip(this IList<Parameter> parameters)
+		{
+			if (parameters.Count == 0)
+				return 0;
+			if (parameters[0].IsHiddenThisParameter)
+				return 1;
+			return 0;
+		}
+
+		public static IEnumerable<Parameter> SkipNonNormal(this IList<Parameter> parameters)
+		{
+			foreach (var p in parameters)
+				if (p.IsNormalMethodParameter)
+					yield return p;
+		}
+
+		public static int GetNumberOfNormalParameters(this IList<Parameter> parameters)
+		{
+			return parameters.Count - GetParametersSkip(parameters);
+		}
 	}
 }

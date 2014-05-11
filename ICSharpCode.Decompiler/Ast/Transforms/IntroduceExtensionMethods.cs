@@ -47,7 +47,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 							if (ca.AttributeType.Name == "ExtensionAttribute" && ca.AttributeType.Namespace == "System.Runtime.CompilerServices") {
 								var firstArgument = invocation.Arguments.First();
 								if (firstArgument is NullReferenceExpression)
-									firstArgument = firstArgument.ReplaceWith(expr => expr.CastTo(AstBuilder.ConvertType(d.Parameters.First().Type)));
+									firstArgument = firstArgument.ReplaceWith(expr => expr.CastTo(AstBuilder.ConvertType(d.Parameters.SkipNonNormal().First().Type)));
 								else
 									mre.Target = firstArgument.Detach();
 								if (invocation.Arguments.Any()) {

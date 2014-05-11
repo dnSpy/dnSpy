@@ -1960,6 +1960,8 @@ namespace ICSharpCode.NRefactory.TypeSystem
 			
 			if (method.Parameters.Count > 0) {
 				foreach (Parameter p in method.Parameters) {
+					if (p.IsHiddenThisParameter)
+						continue;
 					m.Parameters.Add(ReadParameter(p));
 				}
 			}

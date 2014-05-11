@@ -53,7 +53,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				yield break;
 			foreach (MethodDef method in type.Methods) {
 				if (method.IsStatic && HasExtensionAttribute(method)) {
-					if (method.Parameters.Count > 0 && Decompiler.DnlibExtensions.Resolve(method.Parameters[0].Type) == analyzedType) {
+					int skip = Decompiler.DnlibExtensions.GetParametersSkip(method.Parameters);
+					if (method.Parameters.Count > skip && Decompiler.DnlibExtensions.Resolve(method.Parameters[skip].Type) == analyzedType) {
 						var node = new AnalyzedMethodTreeNode(method);
 						node.Language = this.Language;
 						yield return node;
