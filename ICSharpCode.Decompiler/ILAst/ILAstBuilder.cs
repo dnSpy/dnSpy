@@ -132,8 +132,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					sb.Append(' ');
 					if (this.Operand is Instruction) {
 						sb.Append("IL_" + ((Instruction)this.Operand).Offset.ToString("X2"));
-					} else if (this.Operand is Instruction[]) {
-						foreach(Instruction inst in (Instruction[])this.Operand) {
+					} else if (this.Operand is IList<Instruction>) {
+						foreach(Instruction inst in (IList<Instruction>)this.Operand) {
 							sb.Append("IL_" + inst.Offset.ToString("X2"));
 							sb.Append(" ");
 						}
@@ -354,8 +354,8 @@ namespace ICSharpCode.Decompiler.ILAst
 						branchTargets.Add(byteCode.Next);
 					}
 				}
-				if (byteCode.Operand is Instruction[]) {
-					foreach(Instruction inst in (Instruction[])byteCode.Operand) {
+				if (byteCode.Operand is IList<Instruction>) {
+					foreach(Instruction inst in (IList<Instruction>)byteCode.Operand) {
 						ByteCode target = instrToByteCode[inst];
 						branchTargets.Add(target);
 						// The target of a branch must have label
@@ -482,9 +482,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			// Convert branch targets to labels
 			foreach(ByteCode byteCode in body) {
-				if (byteCode.Operand is Instruction[]) {
+				if (byteCode.Operand is IList<Instruction>) {
 					List<ILLabel> newOperand = new List<ILLabel>();
-					foreach(Instruction target in (Instruction[])byteCode.Operand) {
+					foreach(Instruction target in (IList<Instruction>)byteCode.Operand) {
 						newOperand.Add(instrToByteCode[target].Label);
 					}
 					byteCode.Operand = newOperand.ToArray();

@@ -197,7 +197,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 						result.Add(new KeyValuePair<Instruction, Instruction>(inst, (Instruction)inst.Operand));
 						break;
 					case OperandType.InlineSwitch:
-						foreach (Instruction target in (Instruction[])inst.Operand)
+						foreach (Instruction target in (IList<Instruction>)inst.Operand)
 							result.Add(new KeyValuePair<Instruction, Instruction>(inst, target));
 						break;
 				}

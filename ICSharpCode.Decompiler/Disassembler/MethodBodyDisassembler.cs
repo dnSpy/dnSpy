@@ -122,7 +122,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				Instruction target = inst.Operand as Instruction;
 				if (target != null)
 					branchTargets.Add(target.Offset);
-				Instruction[] targets = inst.Operand as Instruction[];
+				IList<Instruction> targets = inst.Operand as IList<Instruction>;
 				if (targets != null)
 					foreach (Instruction t in targets)
 						branchTargets.Add(t.Offset);

@@ -91,10 +91,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 		}
 		
-		static void WriteLabelList(ITextOutput writer, Instruction[] instructions)
+		static void WriteLabelList(ITextOutput writer, IList<Instruction> instructions)
 		{
 			writer.Write("(");
-			for(int i = 0; i < instructions.Length; i++) {
+			for(int i = 0; i < instructions.Count; i++) {
 				if(i != 0) writer.Write(", ");
 				WriteOffsetReference(writer, instructions[i]);
 			}
@@ -363,7 +363,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				return;
 			}
 			
-			Instruction[] targetInstructions = operand as Instruction[];
+			IList<Instruction> targetInstructions = operand as IList<Instruction>;
 			if (targetInstructions != null) {
 				WriteLabelList(writer, targetInstructions);
 				return;

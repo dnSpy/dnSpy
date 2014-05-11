@@ -98,7 +98,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 				if (inst.OpCode.OperandType == OperandType.InlineBrTarget || inst.OpCode.OperandType == OperandType.ShortInlineBrTarget) {
 					hasIncomingJumps[GetInstructionIndex((Instruction)inst.Operand)] = true;
 				} else if (inst.OpCode.OperandType == OperandType.InlineSwitch) {
-					foreach (Instruction i in (Instruction[])inst.Operand)
+					foreach (Instruction i in (IList<Instruction>)inst.Operand)
 						hasIncomingJumps[GetInstructionIndex(i)] = true;
 				}
 			}
@@ -177,7 +177,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 							CreateEdge(node, (Instruction)node.End.Value.Operand, JumpType.Normal);
 						}
 					} else if (node.End.Value.OpCode.OperandType == OperandType.InlineSwitch) {
-						foreach (Instruction i in (Instruction[])node.End.Value.Operand)
+						foreach (Instruction i in (IList<Instruction>)node.End.Value.Operand)
 							CreateEdge(node, i, JumpType.Normal);
 					}
 					
