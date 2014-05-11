@@ -380,18 +380,16 @@ namespace ICSharpCode.Decompiler.Ast
 							ct.ArraySpecifiers.MoveTo(ace.AdditionalArraySpecifiers);
 							ace.Initializer = new ArrayInitializerExpression();
 						}
-						if (operand is SZArraySig)
+						var arySig = (ArraySigBase)((TypeSpec)operand).TypeSig;
+						if (arySig.IsSingleDimensional)
 						{
 							ace.Initializer.Elements.AddRange(args);
 						}
 						else
 						{
-							// TODO: implement
-							/*var arrayType = operand as ArraySig;
 							var newArgs = new List<Expression>();
-							foreach (var arrayDimension in arrayType..Skip(1).Reverse())
+							foreach (var length in arySig.GetLengths().Skip(1).Reverse())
 							{
-								int length = (int)arrayDimension.UpperBound - (int)arrayDimension.LowerBound;
 								for (int j = 0; j < args.Count; j += length)
 								{
 									var child = new ArrayInitializerExpression();
@@ -402,7 +400,7 @@ namespace ICSharpCode.Decompiler.Ast
 								args = newArgs;
 								newArgs = temp;
 								newArgs.Clear();
-							}*/
+							}
 							ace.Initializer.Elements.AddRange(args);
 						}
 						return ace;

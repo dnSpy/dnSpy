@@ -163,9 +163,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (abortBeforeStep == ILAstOptimizationStep.TransformArrayInitializers) return;
 					modified |= block.RunOptimization(TransformArrayInitializers);
 
-					// TODO: multi-dimensional array initializer
-					//if (abortBeforeStep == ILAstOptimizationStep.TransformMultidimensionalArrayInitializers) return;
-					//modified |= block.RunOptimization(TransformMultidimensionalArrayInitializers);
+					if (abortBeforeStep == ILAstOptimizationStep.TransformMultidimensionalArrayInitializers) return;
+					modified |= block.RunOptimization(TransformMultidimensionalArrayInitializers);
 					
 					if (abortBeforeStep == ILAstOptimizationStep.TransformObjectInitializers) return;
 					modified |= block.RunOptimization(TransformObjectInitializers);

@@ -454,5 +454,12 @@ namespace ICSharpCode.Decompiler
 		{
 			return parameters.Count - GetParametersSkip(parameters);
 		}
+
+		public static IEnumerable<int> GetLengths(this ArraySigBase ary)
+		{
+			var sizes = ary.GetSizes();
+			for (int i = 0; i < (int)ary.Rank; i++)
+				yield return i < sizes.Count ? (int)sizes[i] - 1 : 0;
+		}
 	}
 }

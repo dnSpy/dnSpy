@@ -29,8 +29,6 @@ namespace ICSharpCode.Decompiler.ILAst
 	/// </summary>
 	partial class ILAstOptimizer
 	{
-		// TODO: multi-dimensional array
-
 		#region Array Initializers
 		bool TransformArrayInitializers(List<ILNode> body, ILExpression expr, int pos)
 		{
@@ -45,10 +43,10 @@ namespace ICSharpCode.Decompiler.ILAst
 			    arrayLength > 0) {
 				ILExpression[] newArr;
 				int initArrayPos;
-				if (ForwardScanInitializeArrayRuntimeHelper(body, pos + 1, v, elementType.ToTypeSig(), arrayLength, out newArr, out initArrayPos)) {
-					var arrayType = new SZArraySig(elementType.ToTypeSig());
-					//arrayType.Dimensions[0] = new ArrayDimension(0, arrayLength);
-					body[pos] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, arrayType, newArr));
+				if (ForwardScanInitializeArrayRuntimeHelper(body, pos + 1, v, new SZArraySig(elementType.ToTypeSig()), arrayLength, out newArr, out initArrayPos)) {
+					var arrayType = new ArraySig(elementType.ToTypeSig(), 1, new uint[1], new int[1]);
+					arrayType.Sizes[0] = (uint)(arrayLength + 1);
+					body[pos] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, arrayType.ToTypeDefOrRef(), newArr));
 					body.RemoveAt(initArrayPos);
 				}
 				// Put in a limit so that we don't consume too much memory if the code allocates a huge array
@@ -77,8 +75,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 				}
 				if (operands.Count == arrayLength) {
-					var arrayType = new SZArraySig(elementType.ToTypeSig());
-					//arrayType.Dimensions[0] = new ArrayDimension(0, arrayLength);
+					var arrayType = new ArraySig(elementType.ToTypeSig(), 1, new uint[1], new int[1]);
+					arrayType.Sizes[0] = (uint)(arrayLength + 1);
 					expr.Arguments[0] = new ILExpression(ILCode.InitArray, arrayType.ToTypeDefOrRef(), operands);
 					body.RemoveRange(pos + 1, numberOfInstructionsToRemove);
 
@@ -89,37 +87,40 @@ namespace ICSharpCode.Decompiler.ILAst
 			return false;
 		}
 
-		/*bool TransformMultidimensionalArrayInitializers(List<ILNode> body, ILExpression expr, int pos)
+		bool TransformMultidimensionalArrayInitializers(List<ILNode> body, ILExpression expr, int pos)
 		{
 			ILVariable v;
 			ILExpression newarrExpr;
 			IMethod ctor;
 			List<ILExpression> ctorArgs;
-			ArrayType arrayType;
+			TypeSpec arySpec;
+			ArraySigBase arrayType;
 			if (expr.Match(ILCode.Stloc, out v, out newarrExpr) &&
 			    newarrExpr.Match(ILCode.Newobj, out ctor, out ctorArgs) &&
-			    (arrayType = (ctor.DeclaringType as ArrayType)) != null &&
+			    (arySpec = (ctor.DeclaringType as TypeSpec)) != null &&
+				(arrayType = arySpec.TypeSig as ArraySigBase) != null &&
 			    arrayType.Rank == ctorArgs.Count) {
 				// Clone the type, so we can muck about with the Dimensions
-				arrayType = new ArrayType(arrayType.ElementType, arrayType.Rank);
-				var arrayLengths = new int[arrayType.Rank];
-				for (int i = 0; i < arrayType.Rank; i++) {
+				var multAry = new ArraySig(arrayType.Next, arrayType.Rank, new uint[arrayType.Rank], new int[arrayType.Rank]);
+				var arrayLengths = new int[multAry.Rank];
+				for (int i = 0; i < multAry.Rank; i++) {
 					if (!ctorArgs[i].Match(ILCode.Ldc_I4, out arrayLengths[i])) return false;
 					if (arrayLengths[i] <= 0) return false;
-					arrayType.Dimensions[i] = new ArrayDimension(0, arrayLengths[i]);
+					multAry.Sizes[i] = (uint)(arrayLengths[i] + 1);
+					multAry.LowerBounds[i] = 0;
 				}
 
 				var totalElements = arrayLengths.Aggregate(1, (t, l) => t * l);
 				ILExpression[] newArr;
 				int initArrayPos;
-				if (ForwardScanInitializeArrayRuntimeHelper(body, pos + 1, v, arrayType, totalElements, out newArr, out initArrayPos)) {
-					body[pos] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, arrayType, newArr));
+				if (ForwardScanInitializeArrayRuntimeHelper(body, pos + 1, v, multAry, totalElements, out newArr, out initArrayPos)) {
+					body[pos] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, multAry.ToTypeDefOrRef(), newArr));
 					body.RemoveAt(initArrayPos);
 					return true;
 				}
 			}
 			return false;
-		}*/
+		}
 
 		bool ForwardScanInitializeArrayRuntimeHelper(List<ILNode> body, int pos, ILVariable array, TypeSig arrayType, int arrayLength, out ILExpression[] values, out int foundPos)
 		{
