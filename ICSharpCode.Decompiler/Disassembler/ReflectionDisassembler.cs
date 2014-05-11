@@ -1117,6 +1117,31 @@ namespace ICSharpCode.Decompiler.Disassembler
 			CloseBlock();
 		}
 		
+		public void WriteAssemblyReferences(ModuleDefMD module)
+		{
+			if (module == null)
+				return;
+			foreach (var mref in module.GetModuleRefs()) {
+				output.WriteLine(".module extern {0}", DisassemblerHelpers.Escape(mref.Name));
+			}
+			foreach (var aref in module.GetAssemblyRefs()) {
+				output.Write(".assembly extern ");
+				if (aref.IsContentTypeWindowsRuntime)
+					output.Write("windowsruntime ");
+				output.Write(DisassemblerHelpers.Escape(aref.Name));
+				OpenBlock(false);
+				if (!PublicKeyBase.IsNullOrEmpty2(aref.PublicKeyOrToken)) {
+					output.Write(".publickeytoken = ");
+					WriteBlob(aref.PublicKeyOrToken.Token.Data);
+					output.WriteLine();
+				}
+				if (aref.Version != null) {
+					output.WriteLine(".ver {0}:{1}:{2}:{3}", aref.Version.Major, aref.Version.Minor, aref.Version.Build, aref.Version.Revision);
+				}
+				CloseBlock();
+			}
+		}
+		
 		public void WriteModuleHeader(ModuleDef module)
 		{
 			if (module.HasExportedTypes) {
