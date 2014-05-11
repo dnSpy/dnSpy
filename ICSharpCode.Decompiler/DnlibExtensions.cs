@@ -428,10 +428,10 @@ namespace ICSharpCode.Decompiler
 
 		public static string GetScopeName(this IScope scope)
 		{
-			if (scope is AssemblyRef)
-				return ((AssemblyRef)scope).Name;
+			if (scope is IFullName)
+				return ((IFullName)scope).Name;
 			else
-				return scope.ScopeName;
+				return scope.ScopeName;	// Shouldn't be reached
 		}
 
 		public static int GetParametersSkip(this IList<Parameter> parameters)

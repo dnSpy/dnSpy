@@ -65,7 +65,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			if (exceptionHandler.CatchType != null) {
 				writer.Write(' ');
-				exceptionHandler.CatchType.ToTypeSig().WriteTo(writer);
+				exceptionHandler.CatchType.WriteTo(writer);
 			}
 			writer.Write(' ');
 			WriteOffsetReference(writer, exceptionHandler.HandlerStart);
@@ -73,7 +73,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			WriteOffsetReference(writer, exceptionHandler.HandlerEnd);
 		}
 		
-		public static void WriteTo(this Instruction instruction, MethodDef method, ITextOutput writer)
+		public static void WriteTo(this Instruction instruction, ITextOutput writer)
 		{
 			writer.WriteDefinition(DnlibExtensions.OffsetToString(instruction.Offset), instruction);
 			writer.Write(": ");
@@ -324,8 +324,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 
 		public static void WriteTo(this ITypeDefOrRef type, ITextOutput writer, ILNameSyntax syntax = ILNameSyntax.Signature)
 		{
-			if (type is TypeSpec)
-			{
+			if (type is TypeSpec) {
 				WriteTo(((TypeSpec)type).TypeSig, writer, syntax);
 				return;
 			}
@@ -346,7 +345,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 					writer.Write('/');
 					writer.WriteReference(Escape(type.Name), type);
 				} else {
-					if (!(type is TypeDef) && type.Scope != null)
+					if (!(type is TypeDef) && type.Scope != null && !(type is TypeSpec))
 						writer.Write("[{0}]", Escape(type.Scope.GetScopeName()));
 					writer.WriteReference(Escape(type.FullName), type);
 				}

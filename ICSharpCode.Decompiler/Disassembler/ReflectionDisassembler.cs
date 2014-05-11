@@ -184,10 +184,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			//( params )
 			output.Write(" (");
-			if (method.MethodSig.GetParams().Count > 0) {
+			if (method.Parameters.GetNumberOfNormalParameters() > 0) {
 				output.WriteLine();
 				output.Indent();
-				WriteParameters(method, method.Parameters);
+				WriteParameters(method.Parameters);
 				output.Unindent();
 			}
 			output.Write(") ");
@@ -593,7 +593,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		}
 		#endregion
 		
-		void WriteParameters(MethodDef method, ParameterList parameters)
+		void WriteParameters(IList<Parameter> parameters)
 		{
 			for (int i = 0; i < parameters.Count; i++) {
 				var p = parameters[i];
@@ -617,14 +617,6 @@ namespace ICSharpCode.Decompiler.Disassembler
 				if (i < parameters.Count - 1)
 					output.Write(',');
 				output.WriteLine();
-			}
-		}
-		
-		void WriteParameters(TypeDef type, IList<TypeSig> parameters) {
-			for (int i = 0; i < parameters.Count; i++) {
-				if (i != 0)
-					output.Write(", ");
-				parameters[i].WriteTo(output);
 			}
 		}
 		
@@ -743,7 +735,13 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Write(DisassemblerHelpers.Escape(property.Name));
 			
 			output.Write("(");
-			WriteParameters(property.DeclaringType, property.PropertySig.GetParameters());
+			var parameters = new List<Parameter>(property.GetParameters());
+			if (parameters.GetNumberOfNormalParameters() > 0) {
+				output.WriteLine();
+				output.Indent();
+				WriteParameters(parameters);
+				output.Unindent();
+			}
 			output.Write(")");
 			
 			OpenBlock(false);
@@ -782,7 +780,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			output.WriteDefinition(".event ", ev);
 			WriteFlags(ev.Attributes, eventAttributes);
-			ev.EventType.ToTypeSig().WriteTo(output, ILNameSyntax.TypeName);
+			ev.EventType.WriteTo(output, ILNameSyntax.TypeName);
 			output.Write(' ');
 			output.Write(DisassemblerHelpers.Escape(ev.Name));
 			OpenBlock(false);
@@ -853,7 +851,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (type.BaseType != null) {
 				output.Indent();
 				output.Write("extends ");
-				type.BaseType.ToTypeSig().WriteTo(output, ILNameSyntax.TypeName);
+				type.BaseType.WriteTo(output, ILNameSyntax.TypeName);
 				output.WriteLine();
 				output.Unindent();
 			}
@@ -866,7 +864,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 						output.Write("implements ");
 					else
 						output.Write("           ");
-					type.Interfaces[index].Interface.ToTypeSig().WriteTo(output, ILNameSyntax.TypeName);
+					type.Interfaces[index].Interface.WriteTo(output, ILNameSyntax.TypeName);
 				}
 				output.WriteLine();
 				output.Unindent();

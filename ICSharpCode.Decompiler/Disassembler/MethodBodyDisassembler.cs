@@ -83,11 +83,11 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (detectControlStructure && body.Instructions.Count > 0) {
 				int index = 0;
 				HashSet<uint> branchTargets = GetBranchTargets(body.Instructions);
-				WriteStructureBody(method, body, new ILStructure(body), branchTargets, ref index, methodMapping, method.Body.GetCodeSize());
+				WriteStructureBody(body, new ILStructure(body), branchTargets, ref index, methodMapping, method.Body.GetCodeSize());
 			} else {
 				foreach (var inst in method.Body.Instructions) {
 					var startLocation = output.Location;
-					inst.WriteTo(method, output);
+					inst.WriteTo(output);
 					
 					if (methodMapping != null) {
 						// add IL code mappings - used in debugger
@@ -176,25 +176,27 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Indent();
 		}
 		
-		void WriteStructureBody(MethodDef method, CilBody body, ILStructure s, HashSet<uint> branchTargets, ref int index, MemberMapping currentMethodMapping, int codeSize)
+		void WriteStructureBody(CilBody body, ILStructure s, HashSet<uint> branchTargets, ref int index, MemberMapping currentMethodMapping, int codeSize)
 		{
 			bool isFirstInstructionInStructure = true;
 			bool prevInstructionWasBranch = false;
 			int childIndex = 0;
 			while (index < body.Instructions.Count) {
 				Instruction inst = body.Instructions[index];
+				if (inst.Offset >= s.EndOffset)
+					break;
 				uint offset = inst.Offset;
 				if (childIndex < s.Children.Count && s.Children[childIndex].StartOffset <= offset && offset < s.Children[childIndex].EndOffset) {
 					ILStructure child = s.Children[childIndex++];
 					WriteStructureHeader(child);
-					WriteStructureBody(method, body, child, branchTargets, ref index, currentMethodMapping, codeSize);
+					WriteStructureBody(body, child, branchTargets, ref index, currentMethodMapping, codeSize);
 					WriteStructureFooter(child);
 				} else {
 					if (!isFirstInstructionInStructure && (prevInstructionWasBranch || branchTargets.Contains(offset))) {
 						output.WriteLine(); // put an empty line after branches, and in front of branch targets
 					}
 					var startLocation = output.Location;
-					inst.WriteTo(method, output);
+					inst.WriteTo(output);
 					
 					// add IL code mappings - used in debugger
 					if (currentMethodMapping != null) {
