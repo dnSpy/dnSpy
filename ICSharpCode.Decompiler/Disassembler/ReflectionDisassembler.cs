@@ -472,7 +472,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				case NativeType.SafeArray:
 					output.Write("safearray ");
 					SafeArrayMarshalType sami = marshalInfo as SafeArrayMarshalType;
-					if (sami != null) {
+					if (sami != null && sami.IsVariantTypeValid) {
 						switch (sami.VariantType) {
 							case VariantType.None:
 								break;
@@ -546,7 +546,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 					output.Write("fixed array");
 					FixedArrayMarshalType fami = marshalInfo as FixedArrayMarshalType;
 					if (fami != null) {
-						output.Write("[{0}]", fami.Size);
+						if (fami.IsSizeValid)
+							output.Write("[{0}]", fami.Size);
 						if (fami.IsElementTypeValid) {
 							output.Write(' ');
 							WriteNativeType(fami.ElementType);
@@ -629,7 +630,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			if (!HasParameterAttributes(p))
 				return;
-			output.Write(".param [{0}]", p.Index + 1);
+			output.Write(".param [{0}]", p.MethodSigIndex + 1);
 			if (p.ParamDef.HasConstant) {
 				output.Write(" = ");
 				WriteConstant(p.ParamDef.Constant.Value);
@@ -699,7 +700,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Write(' ');
 			output.Write(DisassemblerHelpers.Escape(field.Name));
 			if ((field.Attributes & FieldAttributes.HasFieldRVA) == FieldAttributes.HasFieldRVA) {
-				output.Write(" at I_{0:x8}", field.RVA);
+				output.Write(" at I_{0:x8}", (int)field.RVA);
 			}
 			if (field.HasConstant) {
 				output.Write(" = ");
