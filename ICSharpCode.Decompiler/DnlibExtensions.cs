@@ -43,31 +43,6 @@ namespace ICSharpCode.Decompiler
 			instruction.CalculateStackUsage(methodDef.ReturnType.ElementType != ElementType.Void, out pushes, out pops);
 			return pops == -1 ? (int?)null : pops;
 		}
-
-		public static bool IsVoid(this ITypeDefOrRef type)
-		{
-			if (type is TypeSpec)
-				return IsVoid(((TypeSpec)type).TypeSig);
-			return type.DefinitionAssembly.IsCorLib() && type.Namespace == "System" && type.Name == "Void";
-		}
-		
-		public static bool IsVoid(this TypeSig type)
-		{
-			return type.GetElementType() == ElementType.Void;
-		}
-
-		public static bool IsValueTypeOrVoid(this ITypeDefOrRef type)
-		{
-			if (type is TypeSpec)
-				return IsValueTypeOrVoid(((TypeSpec)type).TypeSig);
-			return type.IsValueType || IsVoid(type);
-		}
-
-		public static bool IsValueTypeOrVoid(this TypeSig type)
-		{
-			var elemType = type.GetElementType();
-			return elemType == ElementType.Void || elemType == ElementType.ValueType;
-		}
 		#endregion
 		
 		/// <summary>
@@ -180,13 +155,7 @@ namespace ICSharpCode.Decompiler
 
 		public static bool IsCompilerGenerated(this IHasCustomAttribute provider)
 		{
-			if (provider != null && provider.HasCustomAttributes) {
-				foreach (CustomAttribute a in provider.CustomAttributes) {
-					if (a.AttributeType.FullName == "System.Runtime.CompilerServices.CompilerGeneratedAttribute")
-						return true;
-				}
-			}
-			return false;
+			return provider != null && provider.CustomAttributes.IsDefined("System.Runtime.CompilerServices.CompilerGeneratedAttribute");
 		}
 		
 		public static bool IsCompilerGeneratedOrIsInCompilerGeneratedClass(this IMemberDef member)
