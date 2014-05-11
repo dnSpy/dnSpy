@@ -428,7 +428,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					if (identExpr.Identifier == variable.Name) {
 						MemberReferenceExpression mre = (MemberReferenceExpression)identExpr.Parent;
 						AstNode replacement;
-						if (dict.TryGetValue(mre.Annotation<IField>().ResolveFieldWithinSameModule(), out replacement)) {
+						var fieldDef = mre.Annotation<IField>().ResolveFieldWithinSameModule();
+						if (fieldDef != null && dict.TryGetValue(fieldDef, out replacement)) {
 							mre.ReplaceWith(replacement.Clone());
 						}
 					}

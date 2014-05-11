@@ -814,7 +814,7 @@ namespace ICSharpCode.NRefactory.TypeSystem
 		{
 			if (attribute == null)
 				throw new ArgumentNullException("attribute");
-			var ctor = (dnlib.DotNet.IMethod)attribute.Constructor;
+			var ctor = attribute.Constructor;
 			ITypeReference attributeType = ReadTypeReference(attribute.AttributeType);
 			IList<ITypeReference> ctorParameterTypes = null;
 			if (ctor.MethodSig.GetParamCount() > 0) {

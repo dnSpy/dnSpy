@@ -751,17 +751,17 @@ namespace ICSharpCode.Decompiler.Ast
 							}
 						}
 						if (declaringType.IsAnonymousType()) {
-							MethodDef ctor = ((IMethod)operand).Resolve();
+							var ctorParams = ((IMethod)operand).GetParameters();
 							if (methodDef != null) {
 								AnonymousTypeCreateExpression atce = new AnonymousTypeCreateExpression();
-								if (CanInferAnonymousTypePropertyNamesFromArguments(args, ctor.Parameters)) {
+								if (CanInferAnonymousTypePropertyNamesFromArguments(args, ctorParams)) {
 									atce.Initializers.AddRange(args);
 								} else {
-									int skip = ctor.Parameters.GetParametersSkip();
+									int skip = ctorParams.GetParametersSkip();
 									for (int i = 0; i < args.Count; i++) {
 										atce.Initializers.Add(
 											new NamedExpression {
-												Name = ctor.Parameters[i + skip].Name,
+												Name = ctorParams[i + skip].Name,
 												Expression = args[i]
 											});
 									}
@@ -1031,7 +1031,7 @@ namespace ICSharpCode.Decompiler.Ast
 			
 			// Test whether the method is an accessor:
 			if (cecilMethodDef != null) {
-				if (cecilMethodDef.IsGetter() && methodArgs.Count == 0) {
+				if (methodArgs.Count == 0 && cecilMethodDef.IsGetter()) {
 					foreach (var prop in cecilMethodDef.DeclaringType.Properties) {
 						if (prop.GetMethod == cecilMethodDef)
 							return target.Member(prop.Name).WithAnnotation(prop).WithAnnotation(cecilMethod);
@@ -1040,19 +1040,19 @@ namespace ICSharpCode.Decompiler.Ast
 					PropertyDef indexer = GetIndexer(cecilMethodDef);
 					if (indexer != null)
 						return target.Indexer(methodArgs).WithAnnotation(indexer).WithAnnotation(cecilMethod);
-				} else if (cecilMethodDef.IsSetter() && methodArgs.Count == 1) {
+				} else if (methodArgs.Count == 1 && cecilMethodDef.IsSetter()) {
 					foreach (var prop in cecilMethodDef.DeclaringType.Properties) {
 						if (prop.SetMethod == cecilMethodDef)
 							return new Ast.AssignmentExpression(target.Member(prop.Name).WithAnnotation(prop).WithAnnotation(cecilMethod), methodArgs[0]);
 					}
-				} else if (cecilMethodDef.IsSetter() && methodArgs.Count > 1) {
+				} else if (methodArgs.Count > 1 && cecilMethodDef.IsSetter()) {
 					PropertyDef indexer = GetIndexer(cecilMethodDef);
 					if (indexer != null)
 						return new AssignmentExpression(
 							target.Indexer(methodArgs.GetRange(0, methodArgs.Count - 1)).WithAnnotation(indexer).WithAnnotation(cecilMethod),
 							methodArgs[methodArgs.Count - 1]
 						);
-				} else if (cecilMethodDef.IsAddOn() && methodArgs.Count == 1) {
+				} else if (methodArgs.Count == 1 && cecilMethodDef.IsAddOn()) {
 					foreach (var ev in cecilMethodDef.DeclaringType.Events) {
 						if (ev.AddMethod == cecilMethodDef) {
 							return new Ast.AssignmentExpression {
@@ -1062,7 +1062,7 @@ namespace ICSharpCode.Decompiler.Ast
 							};
 						}
 					}
-				} else if (cecilMethodDef.IsRemoveOn() && methodArgs.Count == 1) {
+				} else if (methodArgs.Count == 1 && cecilMethodDef.IsRemoveOn()) {
 					foreach (var ev in cecilMethodDef.DeclaringType.Events) {
 						if (ev.RemoveMethod == cecilMethodDef) {
 							return new Ast.AssignmentExpression {
@@ -1093,12 +1093,12 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		static void AdjustArgumentsForMethodCall(IMethod cecilMethod, List<Expression> methodArgs)
 		{
-			MethodDef methodDef = cecilMethod.Resolve();
-			int skip = methodDef.Parameters.GetParametersSkip();
+			var parameters = cecilMethod.GetParameters();
+			int skip = parameters.GetParametersSkip();
 			// Convert 'ref' into 'out' where necessary
-			for (int i = 0; i < methodArgs.Count && i < methodDef.Parameters.Count - skip; i++) {
+			for (int i = 0; i < methodArgs.Count && i < parameters.Count - skip; i++) {
 				DirectionExpression dir = methodArgs[i] as DirectionExpression;
-				Parameter p = methodDef.Parameters[i + skip];
+				Parameter p = parameters[i + skip];
 				if (dir != null && p.HasParamDef && p.ParamDef.IsOut && !p.ParamDef.IsIn)
 					dir.FieldDirection = FieldDirection.Out;
 			}

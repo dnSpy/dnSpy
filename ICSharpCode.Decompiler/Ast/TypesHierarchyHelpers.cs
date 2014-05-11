@@ -117,6 +117,8 @@ namespace ICSharpCode.Decompiler.Ast
 
 			foreach (var baseType in BaseTypes(method.DeclaringType)) {
 				var baseTypeDef = baseType.Resolve();
+				if (baseTypeDef == null)
+					throw new ResolveException(string.Format("Could not resolve base type {0} ({1:X8})", baseType, baseType.MDToken.Raw));
 				foreach (var baseMethod in baseTypeDef.Methods) {
 					if (MatchMethod(baseMethod, Resolve(baseMethod.MethodSig, baseType), method) && IsVisibleFromDerived(baseMethod, method.DeclaringType)) {
 						yield return baseMethod;
@@ -173,6 +175,8 @@ namespace ICSharpCode.Decompiler.Ast
 
 			foreach (var baseType in BaseTypes(property.DeclaringType)) {
 				var baseTypeDef = baseType.Resolve();
+				if (baseTypeDef == null)
+					throw new ResolveException(string.Format("Could not resolve base type {0} ({1:X8})", baseType, baseType.MDToken.Raw));
 				foreach (var baseProperty in baseTypeDef.Properties) {
 					if (MatchProperty(baseProperty, Resolve(baseProperty.PropertySig, baseType), property)
 							&& IsVisibleFromDerived(baseProperty, property.DeclaringType)) {
@@ -207,6 +211,8 @@ namespace ICSharpCode.Decompiler.Ast
 
 			foreach (var baseType in BaseTypes(eventDef.DeclaringType)) {
 				var baseTypeDef = baseType.Resolve();
+				if (baseTypeDef == null)
+					throw new ResolveException(string.Format("Could not resolve base type {0} ({1:X8})", baseType, baseType.MDToken.Raw));
 				foreach (var baseEvent in baseTypeDef.Events) {
 					if (MatchEvent(baseEvent, Resolve(baseEvent.EventType.ToTypeSig(), baseType), eventDef, eventType) &&
 						IsVisibleFromDerived(baseEvent, eventDef.DeclaringType)) {

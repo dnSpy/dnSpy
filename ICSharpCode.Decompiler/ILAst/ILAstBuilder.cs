@@ -245,7 +245,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			// Create temporary structure for the stack analysis
 			List<ByteCode> body = new List<ByteCode>(methodDef.Body.Instructions.Count);
 			List<Instruction> prefixes = null;
-			foreach(Instruction inst in methodDef.Body.Instructions) {
+			var instructions = methodDef.Body.Instructions;
+			for (int i = 0; i < instructions.Count; i++) {
+				var inst = instructions[i];
 				if (inst.OpCode.OpCodeType == OpCodeType.Prefix) {
 					if (prefixes == null)
 						prefixes = new List<Instruction>(1);
@@ -255,7 +257,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILCode code = ilCodeTranslation[inst.OpCode.Code];
 				object operand = inst.Operand;
 				ILCodeUtil.ExpandMacro(ref code, ref operand, methodDef);
-				var next = methodDef.Body.GetNext(inst);
+				var next = i + 1 < instructions.Count ? instructions[i + 1] : null;
 				ByteCode byteCode = new ByteCode() {
 					Offset      = inst.Offset,
 					EndOffset   = next != null ? next.Offset : (uint)methodDef.Body.GetCodeSize(),

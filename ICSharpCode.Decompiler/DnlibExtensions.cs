@@ -106,14 +106,6 @@ namespace ICSharpCode.Decompiler
 			else
 				return null;
 		}
-
-		public static MethodDef ResolveMethodWithinSameModule(this MemberRef method)
-		{
-			if (method != null && method.DeclaringType.Scope == method.Module)
-				return method.ResolveMethod();
-			else
-				return null;
-		}
 		
 		public static MethodDef ResolveMethodWithinSameModule(this IMethod method)
 		{
@@ -166,14 +158,6 @@ namespace ICSharpCode.Decompiler
 				return true;
 			return IsCompilerGeneratedOrIsInCompilerGeneratedClass(member.DeclaringType);
 		}
-
-		public static TypeSig GetEnumUnderlyingType(this TypeDef type)
-		{
-			if (!type.IsEnum)
-				throw new ArgumentException("Type must be an enum", "type");
-
-			return type.GetEnumUnderlyingType();
-		}
 		
 		public static bool IsAnonymousType(this ITypeDefOrRef type)
 		{
@@ -208,18 +192,11 @@ namespace ICSharpCode.Decompiler
 			return false;
 		}
 
-		public static string GetDefaultMemberName(this TypeDef type)
-		{
-			CustomAttribute attr;
-			return type.GetDefaultMemberName(out attr);
-		}
-
 		public static string GetDefaultMemberName(this TypeDef type, out CustomAttribute defaultMemberAttribute)
 		{
 			if (type.HasCustomAttributes)
-				foreach (CustomAttribute ca in type.CustomAttributes)
-					if (ca.AttributeType.Name == "DefaultMemberAttribute" && ca.AttributeType.Namespace == "System.Reflection"
-						&& ((IMethod)ca.Constructor).FullName == @"System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)") {
+				foreach (CustomAttribute ca in type.CustomAttributes.FindAll("System.Reflection.DefaultMemberAttribute"))
+					if (ca.Constructor.FullName == @"System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)") {
 						defaultMemberAttribute = ca;
 						return (UTF8String)ca.ConstructorArguments[0].Value;
 					}
@@ -233,7 +210,7 @@ namespace ICSharpCode.Decompiler
 			return property.IsIndexer(out attr);
 		}
 
-		public static bool IsIndexer(this PropertyDef property, out CustomAttribute defaultMemberAttribute)
+		static bool IsIndexer(this PropertyDef property, out CustomAttribute defaultMemberAttribute)
 		{
 			defaultMemberAttribute = null;
 			if (property.PropertySig.GetParamCount() > 0) {
@@ -279,14 +256,6 @@ namespace ICSharpCode.Decompiler
 			if (index == -1 || index == 0)
 				return null;
 			return body.Instructions[index - 1];
-		}
-
-		public static Instruction GetNext(this CilBody body, Instruction instr)
-		{
-			int index = body.Instructions.IndexOf(instr);
-			if (index == -1 || index + 1 >= body.Instructions.Count)
-				return null;
-			return body.Instructions[index + 1];
 		}
 
 		public static bool IsGetter(this MethodDef method)
@@ -363,7 +332,7 @@ namespace ICSharpCode.Decompiler
 			int paramIndex = 0, methodSigIndex = 0;
 			if (method.MethodSig.HasThis)
 				list.Add(new Parameter(paramIndex++, Parameter.HIDDEN_THIS_METHOD_SIG_INDEX, method.DeclaringType.ToTypeSig()));
-			foreach (var type in GetParameters(method.MethodSig))
+			foreach (var type in method.MethodSig.GetParameters())
 				list.Add(new Parameter(paramIndex++, methodSigIndex++, type));
 			return list;
 		}

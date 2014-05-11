@@ -869,7 +869,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			Match m = automaticPropertyPattern.Match(property);
 			if (m.Success) {
 				FieldDef field = m.Get<AstNode>("fieldReference").Single().Annotation<IField>().ResolveFieldWithinSameModule();
-				if (field.IsCompilerGenerated() && field.DeclaringType == cecilProperty.DeclaringType) {
+				if (field != null && field.IsCompilerGenerated() && field.DeclaringType == cecilProperty.DeclaringType) {
 					RemoveCompilerGeneratedAttribute(property.Getter.Attributes);
 					RemoveCompilerGeneratedAttribute(property.Setter.Attributes);
 					property.Getter.Body = null;

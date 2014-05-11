@@ -85,13 +85,15 @@ namespace ICSharpCode.Decompiler.Disassembler
 				HashSet<uint> branchTargets = GetBranchTargets(body.Instructions);
 				WriteStructureBody(body, new ILStructure(body), branchTargets, ref index, methodMapping, method.Body.GetCodeSize());
 			} else {
-				foreach (var inst in method.Body.Instructions) {
+				var instructions = method.Body.Instructions;
+				for (int i = 0; i < instructions.Count; i++) {
+					var inst = instructions[i];
 					var startLocation = output.Location;
 					inst.WriteTo(output);
 					
 					if (methodMapping != null) {
 						// add IL code mappings - used in debugger
-						var next = body.GetNext(inst);
+						var next = i + 1 < instructions.Count ? instructions[i + 1] : null;
 						methodMapping.MemberCodeMappings.Add(
 							new SourceCodeMapping() {
 								StartLocation = output.Location,
@@ -181,8 +183,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 			bool isFirstInstructionInStructure = true;
 			bool prevInstructionWasBranch = false;
 			int childIndex = 0;
-			while (index < body.Instructions.Count) {
-				Instruction inst = body.Instructions[index];
+			var instructions = body.Instructions;
+			while (index < instructions.Count) {
+				Instruction inst = instructions[index];
 				if (inst.Offset >= s.EndOffset)
 					break;
 				uint offset = inst.Offset;
@@ -200,7 +203,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 					
 					// add IL code mappings - used in debugger
 					if (currentMethodMapping != null) {
-						var next = body.GetNext(inst);
+						var next = index + 1 < instructions.Count ? instructions[index + 1] : null;
 						currentMethodMapping.MemberCodeMappings.Add(
 							new SourceCodeMapping() {
 								StartLocation = startLocation,
