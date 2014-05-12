@@ -90,7 +90,7 @@
     <Compile Include="DnlibExtra\GenericArgumentResolver.cs" />
     <Compile Include="FlowAnalysis\ControlFlowEdge.cs" />
     <Compile Include="FlowAnalysis\ControlFlowGraph.cs" />
-    <Compile Include="FlowAnalysis\ControlFlowGraphBuilder.cs" />
+    <None Include="FlowAnalysis\ControlFlowGraphBuilder.cs" />
     <Compile Include="FlowAnalysis\ControlFlowNode.cs" />
     <Compile Include="FlowAnalysis\ControlStructureDetector.cs" />
     <Compile Include="FlowAnalysis\OpCodeInfo.cs" />
