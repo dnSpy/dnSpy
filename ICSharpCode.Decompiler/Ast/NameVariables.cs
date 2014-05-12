@@ -286,10 +286,12 @@ namespace ICSharpCode.Decompiler.Ast
 							return CleanUpVariableName(methodRef.Name.Substring(3));
 						}
 					}
-					var parameters = methodRef.GetParameters();
-					var p = parameters.ElementAtOrDefault(i + (parent.Code == ILCode.Newobj ? 1 : 0));
-					if (p != null && !string.IsNullOrEmpty(p.Name))
-						return CleanUpVariableName(p.Name);
+					MethodDef methodDef = methodRef.Resolve();
+					if (methodDef != null) {
+						var p = methodDef.Parameters.ElementAtOrDefault(i + (parent.Code == ILCode.Newobj ? 1 : 0));
+						if (p != null && !string.IsNullOrEmpty(p.Name))
+							return CleanUpVariableName(p.Name);
+					}
 					break;
 				case ILCode.Ret:
 					return "result";

@@ -23,6 +23,17 @@ using System.Linq;
 using System.Text;
 using dnlib.DotNet;
 
+//NOTE: A note and a little time saver for those investigating why ILSpy writes a 'new' keyword
+//		but dnSpy doesn't.
+//		The original code which this code is based on, doesn't seem to work correctly. It seems
+//		to incorrectly say that a method hides a base method when it in fact doesn't:
+//			class:		mscorlib 4.0: System.Threading.Tasks.Task<TResult>
+//			ILSpy:		public new Task ContinueWith(Action<Task<TResult>> continuationAction)
+//			dnSpy:		public     Task ContinueWith(Action<Task<TResult>> continuationAction)
+//			Base method:public     Task ContinueWith(Action<Task> continuationAction)
+//		The signatures (name + method args) are clearly not the same so a 'new' keyword should
+//		not be present.
+
 namespace ICSharpCode.Decompiler.Ast
 {
 	public static class TypesHierarchyHelpers
@@ -145,7 +156,10 @@ namespace ICSharpCode.Decompiler.Ast
 					return false;
 			}
 
-			return new SigComparer().Equals(mCandidateSig, mMethod.MethodSig);
+			if (mCandidateSig.Params.Count != mMethod.MethodSig.Params.Count)
+				return false;
+
+			return new SigComparer().Equals(mCandidateSig.Params, mMethod.MethodSig.Params);
 		}
 
 		public static bool MatchInterfaceMethod(MethodDef candidate, MethodDef method, ITypeDefOrRef interfaceContextType)
@@ -199,7 +213,10 @@ namespace ICSharpCode.Decompiler.Ast
 			if ((mCandidate.GetMethod ?? mCandidate.SetMethod).HasOverrides)
 				return false;
 
-			return new SigComparer().Equals(mCandidateSig, mProperty.PropertySig);
+			if (mCandidateSig.GenParamCount != mProperty.PropertySig.GenParamCount)
+				return false;
+
+			return new SigComparer().Equals(mCandidateSig.Params, mProperty.PropertySig.Params);
 		}
 
 		public static IEnumerable<EventDef> FindBaseEvents(EventDef eventDef)

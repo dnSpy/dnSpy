@@ -1183,10 +1183,10 @@ namespace ICSharpCode.Decompiler.Ast
 				if (charSet != CharSet.Ansi) {
 					structLayout.AddNamedArgument("CharSet", new IdentifierExpression("CharSet").Member(charSet.ToString()));
 				}
-				if (typeDef.PackingSize != ushort.MaxValue) {
+				if (typeDef.PackingSize != ushort.MaxValue && typeDef.PackingSize > 0) {
 					structLayout.AddNamedArgument("Pack", new PrimitiveExpression((int)typeDef.PackingSize));
 				}
-				if (typeDef.ClassSize != uint.MaxValue) {
+				if (typeDef.ClassSize != uint.MaxValue && typeDef.ClassSize > 0) {
 					structLayout.AddNamedArgument("Size", new PrimitiveExpression((int)typeDef.ClassSize));
 				}
 				attributedNode.Attributes.Add(new AttributeSection(structLayout));
@@ -1307,9 +1307,9 @@ namespace ICSharpCode.Decompiler.Ast
 			ConvertCustomAttributes(attributedNode, fieldDef);
 			
 			#region FieldOffsetAttribute
-			if (fieldDef.HasLayoutInfo) {
+			if (fieldDef.HasLayoutInfo && fieldDef.FieldOffset.HasValue) {
 				Ast.Attribute fieldOffset = CreateNonCustomAttribute(typeof(FieldOffsetAttribute), fieldDef.Module);
-				fieldOffset.Arguments.Add(new PrimitiveExpression(fieldDef.FieldOffset));
+				fieldOffset.Arguments.Add(new PrimitiveExpression((int)fieldDef.FieldOffset));
 				attributedNode.Attributes.Add(new AttributeSection(fieldOffset) { AttributeTarget = attributeTarget });
 			}
 			#endregion
@@ -1479,7 +1479,7 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		static void ConvertSecurityAttributes(AstNode attributedNode, IHasDeclSecurity secDeclProvider, string attributeTarget = null)
 		{
-			if (!secDeclProvider.HasCustomAttributes)
+			if (!secDeclProvider.HasDeclSecurities)
 				return;
 			var attributes = new List<ICSharpCode.NRefactory.CSharp.Attribute>();
 			foreach (var secDecl in secDeclProvider.DeclSecurities.OrderBy(d => d.Action)) {
