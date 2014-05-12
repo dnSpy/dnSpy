@@ -408,8 +408,8 @@ namespace ICSharpCode.Decompiler.ILAst
 						case "Address":
 							ByRefSig brt = cecilMethod.MethodSig.RetType as ByRefSig;
 							if (brt != null) {
-								IMethod getMethod = new MemberRefUser(cecilMethod.Module, "Get", cecilMethod.MethodSig.Clone());
-								getMethod.MethodSig.RetType = declType.TypeSig;
+								IMethod getMethod = new MemberRefUser(cecilMethod.Module, "Get", cecilMethod.MethodSig.Clone(), declType.TypeSig.ToTypeDefOrRef());
+								getMethod.MethodSig.RetType = declType.TypeSig.Next;
 								expr.Operand = getMethod;
 							}
 							expr.Code = ILCode.CallGetter;
