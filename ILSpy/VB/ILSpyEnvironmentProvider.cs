@@ -36,7 +36,7 @@ namespace ICSharpCode.ILSpy.VB
 			}
 		}
 
-		readonly dnlibLoader loader = new dnlibLoader();
+		//readonly dnlibLoader loader = new dnlibLoader();
 		
 		public string GetTypeNameForAttribute(ICSharpCode.NRefactory.CSharp.Attribute attribute)
 		{

@@ -132,7 +132,6 @@
     <Compile Include="TypeSystem\AnonymousType.cs" />
     <Compile Include="TypeSystem\ArrayType.cs" />
     <Compile Include="TypeSystem\ByReferenceType.cs" />
-    <Compile Include="TypeSystem\dnlibLoader.cs" />
     <Compile Include="TypeSystem\ComHelper.cs" />
     <Compile Include="TypeSystem\DefaultSolutionSnapshot.cs" />
     <Compile Include="TypeSystem\DomRegion.cs" />
