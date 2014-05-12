@@ -58,6 +58,8 @@ namespace ICSharpCode.ILSpy
 		{
 			AvalonEditTextOutput output = new AvalonEditTextOutput();
 			output.WriteLine("dnSpy version " + RevisionClass.FullVersion);
+			bool checkForUpdateCode = false;
+			if (checkForUpdateCode)
 			output.AddUIElement(
 				delegate {
 					StackPanel stackPanel = new StackPanel();
@@ -80,6 +82,7 @@ namespace ICSharpCode.ILSpy
 						Children = { stackPanel, checkBox }
 					};
 				});
+			if (checkForUpdateCode)
 			output.WriteLine();
 			foreach (var plugin in App.CompositionContainer.GetExportedValues<IAboutPageAddition>())
 				plugin.Write(output);
