@@ -1,5 +1,5 @@
 The following MIT license applies to ILSpy, NRefactory and ICSharpCode.Decompiler.
-dnlib uses MIT license.
+dnlib uses MIT license, Copyright (C) 2012-2014 de4dot@gmail.com
 AvalonEdit and SharpTreeView use LGPL, which can be found in the LGPL.txt file.
 
 MIT license:
