@@ -23,6 +23,7 @@ using System.Text;
 
 namespace ICSharpCode.Decompiler
 {
+#if false
 	/// <summary>
 	/// Represents an error while resolving a reference to a type or a member.
 	/// </summary>
@@ -65,4 +66,5 @@ namespace ICSharpCode.Decompiler
 		{
 		}
 	}
+#endif
 }

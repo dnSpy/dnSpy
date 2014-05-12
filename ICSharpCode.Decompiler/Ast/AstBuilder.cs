@@ -502,6 +502,7 @@ namespace ICSharpCode.Decompiler.Ast
 				return ConvertType(((TypeDefOrRefSig)type).TypeDefOrRef, typeAttributes, ref typeIndex, options);
 			} else
 				throw new NotSupportedException();
+			//TODO: FnPtrSig
 		}
 
 		static AstType ConvertType(ITypeDefOrRef type, IHasCustomAttribute typeAttributes, ref int typeIndex, ConvertTypeOptions options)
@@ -939,7 +940,7 @@ namespace ICSharpCode.Decompiler.Ast
 							}
 						}
 					}
-				} catch (ReferenceResolvingException) {
+				} catch (ResolveException) {
 					// TODO: add some kind of notification (a comment?) about possible problems with decompiled code due to unresolved references.
 				}
 			}
@@ -1347,7 +1348,7 @@ namespace ICSharpCode.Decompiler.Ast
 					attr.AddNamedArgument("SafeArraySubType", MakePrimitive((int)sami.VariantType, varEnum));
 				}
 				if (sami.IsUserDefinedSubTypeValid) {
-					//TODO:
+					//TODO: SafeArrayUserDefinedSubType
 				}
 			}
 			var ami = marshalInfo as ArrayMarshalType;
@@ -1361,6 +1362,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			var cmi = marshalInfo as CustomMarshalType;
 			if (cmi != null) {
+				//TODO: Use MarshalTypeRef instead of MarshalType, with CreateTypeOfExpression(cmi.CustomMarshaler) as arg
 				if (cmi.CustomMarshaler != null)
 					attr.AddNamedArgument("MarshalType", new PrimitiveExpression(cmi.CustomMarshaler.FullName));
 				if (!UTF8String.IsNullOrEmpty(cmi.Cookie))
@@ -1373,7 +1375,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			var imti = marshalInfo as InterfaceMarshalType;
 			if (imti != null) {
-				//TODO:
+				//TODO: IidParameterIndex
 			}
 			var rmti = marshalInfo as RawMarshalType;
 			if (rmti != null) {
@@ -1538,7 +1540,7 @@ namespace ICSharpCode.Decompiler.Ast
 				foreach (CAArgument element in (IList<CAArgument>)argument.Value) {
 					arrayInit.Elements.Add(ConvertArgumentValue(element));
 				}
-				SZArraySig arrayType = argument.Type as SZArraySig;
+				ArraySigBase arrayType = argument.Type as ArraySigBase;
 				return new ArrayCreateExpression {
 					Type = ConvertType(arrayType != null ? arrayType.Next : argument.Type),
 					AdditionalArraySpecifiers = { new ArraySpecifier() },
@@ -1669,7 +1671,7 @@ namespace ICSharpCode.Decompiler.Ast
 				if (addNewModifier)
 					member.Modifiers |= Modifiers.New;
 			}
-			catch (ReferenceResolvingException) {
+			catch (ResolveException) {
 				// TODO: add some kind of notification (a comment?) about possible problems with decompiled code due to unresolved references.
 			}
 		}

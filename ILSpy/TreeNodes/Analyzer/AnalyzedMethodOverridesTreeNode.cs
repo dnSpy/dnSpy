@@ -66,7 +66,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					}
 				}
 			}
-			catch (ReferenceResolvingException) {
+			catch (ResolveException) {
 				// ignore this type definition. maybe add a notification about such cases.
 			}
 
