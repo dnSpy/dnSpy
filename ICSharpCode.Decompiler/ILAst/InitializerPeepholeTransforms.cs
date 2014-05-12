@@ -98,7 +98,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (expr.Match(ILCode.Stloc, out v, out newarrExpr) &&
 			    newarrExpr.Match(ILCode.Newobj, out ctor, out ctorArgs) &&
 			    (arySpec = (ctor.DeclaringType as TypeSpec)) != null &&
-				(arrayType = arySpec.TypeSig as ArraySigBase) != null &&
+				(arrayType = arySpec.TypeSig.RemovePinnedAndModifiers() as ArraySigBase) != null &&
 			    arrayType.Rank == ctorArgs.Count) {
 				// Clone the type, so we can muck about with the Dimensions
 				var multAry = new ArraySig(arrayType.Next, arrayType.Rank, new uint[arrayType.Rank], new int[arrayType.Rank]);

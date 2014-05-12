@@ -380,7 +380,7 @@ namespace ICSharpCode.Decompiler.Ast
 							ct.ArraySpecifiers.MoveTo(ace.AdditionalArraySpecifiers);
 							ace.Initializer = new ArrayInitializerExpression();
 						}
-						var arySig = (ArraySigBase)((TypeSpec)operand).TypeSig;
+						var arySig = (ArraySigBase)((TypeSpec)operand).TypeSig.RemovePinnedAndModifiers();
 						if (arySig.IsSingleDimensional)
 						{
 							ace.Initializer.Elements.AddRange(args);

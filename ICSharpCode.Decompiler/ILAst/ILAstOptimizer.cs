@@ -397,7 +397,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (expr.Code == ILCode.Call || expr.Code == ILCode.Callvirt) {
 				IMethod cecilMethod = (IMethod)expr.Operand;
 				var declType = cecilMethod.DeclaringType as dnlib.DotNet.TypeSpec;
-				if (declType != null && declType.TypeSig is ArraySigBase) {
+				var declArrayType = declType == null ? null : declType.TypeSig.RemovePinnedAndModifiers() as ArraySigBase;
+				if (declArrayType != null) {
 					switch (cecilMethod.Name) {
 						case "Get":
 							expr.Code = ILCode.CallGetter;
@@ -408,8 +409,8 @@ namespace ICSharpCode.Decompiler.ILAst
 						case "Address":
 							ByRefSig brt = cecilMethod.MethodSig.RetType as ByRefSig;
 							if (brt != null) {
-								IMethod getMethod = new MemberRefUser(cecilMethod.Module, "Get", cecilMethod.MethodSig.Clone(), declType.TypeSig.ToTypeDefOrRef());
-								getMethod.MethodSig.RetType = declType.TypeSig.Next;
+								IMethod getMethod = new MemberRefUser(cecilMethod.Module, "Get", cecilMethod.MethodSig.Clone(), declArrayType.ToTypeDefOrRef());
+								getMethod.MethodSig.RetType = declArrayType.Next;
 								expr.Operand = getMethod;
 							}
 							expr.Code = ILCode.CallGetter;

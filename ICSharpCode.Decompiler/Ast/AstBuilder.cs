@@ -461,7 +461,7 @@ namespace ICSharpCode.Decompiler.Ast
 
 		static AstType ConvertType(TypeSig type, IHasCustomAttribute typeAttributes, ref int typeIndex, ConvertTypeOptions options)
 		{
-			type = type.RemoveModifiers();
+			type = type.RemovePinnedAndModifiers();
 			if (type == null) {
 				return AstType.Null;
 			}
