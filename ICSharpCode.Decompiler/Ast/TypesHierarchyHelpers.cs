@@ -306,16 +306,15 @@ namespace ICSharpCode.Decompiler.Ast
 
 		private static IEnumerable<TypeSig> BaseTypes(TypeDef type)
 		{
-			return BaseTypes(type.ToTypeSig());
+			return BaseTypes2(type);
 		}
 
-		private static IEnumerable<TypeSig> BaseTypes(TypeSig type)
+		private static IEnumerable<TypeSig> BaseTypes2(TypeDef typeDef)
 		{
-			TypeDef typeDef = type.GetTypeDefOrRef().ResolveTypeDefThrow();
 			if (typeDef.BaseType == null)
 				yield break;
 
-			TypeSig baseType = type;
+			TypeSig baseType = typeDef.ToTypeSig();
 			do {
 				var genericArgs = baseType.IsGenericInstanceType ? ((GenericInstSig)baseType).GenericArguments : null;
 				baseType = GenericArgumentResolver.Resolve(typeDef.BaseType.ToTypeSig(), genericArgs, null);
