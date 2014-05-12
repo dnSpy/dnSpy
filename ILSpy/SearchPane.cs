@@ -358,7 +358,7 @@ namespace ICSharpCode.ILSpy
 			bool IsMatch(FieldDef field)
 			{
 				if (searchMode == SearchMode_Literal)
-					return IsLiteralMatch(field.Constant);
+					return IsLiteralMatch(field.Constant == null ? null : field.Constant.Value);
 				else
 					return IsMatch(field.Name);
 			}
