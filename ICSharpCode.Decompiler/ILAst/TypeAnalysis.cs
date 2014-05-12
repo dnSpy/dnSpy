@@ -542,7 +542,7 @@ namespace ICSharpCode.Decompiler.ILAst
 							InferTypeForExpression(expr.Arguments[1], corLib.Int32);
 						TypeSig type = NumericPromotion(InferTypeForExpression(expr.Arguments[0], null));
 						TypeSig expectedInputType = null;
-						switch (type.ElementType) {
+						switch (type.GetElementType()) {
 							case ElementType.I4:
 								if (expr.Code == ILCode.Shr_Un)
 									expectedInputType = corLib.UInt32;

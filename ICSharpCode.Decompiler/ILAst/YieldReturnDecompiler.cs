@@ -468,12 +468,13 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression expr = body[pos] as ILExpression;
 				if (expr != null && expr.Code == ILCode.Stfld && expr.Arguments[0].MatchThis()) {
 					// Handle stores to 'state' or 'current'
-					if (GetFieldDefinition(expr.Operand as IField) == stateField) {
+					FieldDef field;
+					if ((field = GetFieldDefinition(expr.Operand as IField)) == stateField) {
 						if (expr.Arguments[1].Code != ILCode.Ldc_I4)
 							throw new SymbolicAnalysisFailedException();
 						currentState = (int)expr.Arguments[1].Operand;
 						stateChanges.Add(new SetState(newBody.Count, currentState));
-					} else if (GetFieldDefinition(expr.Operand as IField) == currentField) {
+					} else if (field == currentField) {
 						newBody.Add(new ILExpression(ILCode.YieldReturn, null, expr.Arguments[1]));
 					} else {
 						newBody.Add(body[pos]);

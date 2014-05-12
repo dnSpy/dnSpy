@@ -42,7 +42,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.analyzedEvent = analyzedEvent;
 
 			this.eventBackingField = GetBackingField(analyzedEvent);
-			this.eventFiringMethod = analyzedEvent.EventType.ResolveTypeDef().Methods.First(md => md.Name == "Invoke");
+			var eventType = analyzedEvent.EventType.ResolveTypeDef();
+			if (eventType != null)
+				this.eventFiringMethod = eventType.Methods.First(md => md.Name == "Invoke");
 		}
 
 		public override object Text
@@ -82,7 +84,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					}
 					if (readBackingField && (code == Code.Callvirt || code == Code.Call)) {
 						IMethod mr = instr.Operand as IMethod;
-						if (mr != null && mr.Name == eventFiringMethod.Name && Decompiler.DnlibExtensions.Resolve(mr) == eventFiringMethod) {
+						if (mr != null && eventFiringMethod != null && mr.Name == eventFiringMethod.Name && Decompiler.DnlibExtensions.Resolve(mr) == eventFiringMethod) {
 							found = true;
 							break;
 						}

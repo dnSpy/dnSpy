@@ -595,8 +595,8 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		static void AddTypeParameterDefininitionsTo(ITypeDefOrRef type, AstType astType)
 		{
-			TypeDef typeDef = type.ResolveTypeDefThrow();
-			if (typeDef.HasGenericParameters) {
+			TypeDef typeDef = type.ResolveTypeDef();
+			if (typeDef != null && typeDef.HasGenericParameters) {
 				List<AstType> typeArguments = new List<AstType>();
 				foreach (GenericParam gp in typeDef.GenericParameters) {
 					typeArguments.Add(new SimpleType(gp.Name));
@@ -1701,7 +1701,9 @@ namespace ICSharpCode.Decompiler.Ast
 			if (member.DeclaringType.BaseType != null) {
 				var baseTypeRef = member.DeclaringType.BaseType;
 				while (baseTypeRef != null) {
-					var baseType = baseTypeRef.ResolveTypeDefThrow();
+					var baseType = baseTypeRef.ResolveTypeDef();
+					if (baseType == null)
+						break;
 					if (baseType.HasProperties && AnyIsHiddenBy(baseType.Properties, member, m => !m.IsIndexer()))
 						return true;
 					if (baseType.HasEvents && AnyIsHiddenBy(baseType.Events, member))

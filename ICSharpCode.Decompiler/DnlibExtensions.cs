@@ -316,7 +316,7 @@ namespace ICSharpCode.Decompiler
 
 		public static bool IsCorlibType(this ITypeDefOrRef type, string ns, string name)
 		{
-			return type.DefinitionAssembly.IsCorLib() && type.Namespace == ns && type.Name == name;
+			return type != null && type.DefinitionAssembly.IsCorLib() && type.Namespace == ns && type.Name == name;
 		}
 
 		public static IList<Parameter> GetParameters(this IMethod method)

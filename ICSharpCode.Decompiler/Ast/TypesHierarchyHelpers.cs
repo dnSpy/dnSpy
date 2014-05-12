@@ -34,7 +34,7 @@ namespace ICSharpCode.Decompiler.Ast
 			else {
 				var comparableBaseType = baseType;
 				while (derivedType.BaseType != null) {
-					var resolvedBaseType = derivedType.BaseType.ResolveTypeDefThrow();
+					var resolvedBaseType = derivedType.BaseType.ResolveTypeDef();
 					if (resolvedBaseType == null)
 						return false;
 					if (comparableBaseType == resolvedBaseType)
@@ -118,7 +118,7 @@ namespace ICSharpCode.Decompiler.Ast
 			foreach (var baseType in BaseTypes(method.DeclaringType)) {
 				var baseTypeDef = baseType.Resolve();
 				if (baseTypeDef == null)
-					throw new ResolveException(string.Format("Could not resolve base type {0} ({1:X8})", baseType, baseType.MDToken.Raw));
+					continue;
 				foreach (var baseMethod in baseTypeDef.Methods) {
 					if (MatchMethod(baseMethod, Resolve(baseMethod.MethodSig, baseType), method) && IsVisibleFromDerived(baseMethod, method.DeclaringType)) {
 						yield return baseMethod;
@@ -176,7 +176,7 @@ namespace ICSharpCode.Decompiler.Ast
 			foreach (var baseType in BaseTypes(property.DeclaringType)) {
 				var baseTypeDef = baseType.Resolve();
 				if (baseTypeDef == null)
-					throw new ResolveException(string.Format("Could not resolve base type {0} ({1:X8})", baseType, baseType.MDToken.Raw));
+					continue;
 				foreach (var baseProperty in baseTypeDef.Properties) {
 					if (MatchProperty(baseProperty, Resolve(baseProperty.PropertySig, baseType), property)
 							&& IsVisibleFromDerived(baseProperty, property.DeclaringType)) {
@@ -212,7 +212,7 @@ namespace ICSharpCode.Decompiler.Ast
 			foreach (var baseType in BaseTypes(eventDef.DeclaringType)) {
 				var baseTypeDef = baseType.Resolve();
 				if (baseTypeDef == null)
-					throw new ResolveException(string.Format("Could not resolve base type {0} ({1:X8})", baseType, baseType.MDToken.Raw));
+					continue;
 				foreach (var baseEvent in baseTypeDef.Events) {
 					if (MatchEvent(baseEvent, Resolve(baseEvent.EventType.ToTypeSig(), baseType), eventDef, eventType) &&
 						IsVisibleFromDerived(baseEvent, eventDef.DeclaringType)) {
@@ -320,7 +320,9 @@ namespace ICSharpCode.Decompiler.Ast
 				baseType = GenericArgumentResolver.Resolve(typeDef.BaseType.ToTypeSig(), genericArgs, null);
 				yield return baseType;
 
-				typeDef = typeDef.BaseType.ResolveTypeDefThrow();
+				typeDef = typeDef.BaseType.ResolveTypeDef();
+				if (typeDef == null)
+					break;
 			} while (typeDef.BaseType != null);
 		}
 

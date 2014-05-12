@@ -391,7 +391,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 							} while (mre != null);
 						}
 						if (isParameter || isDisplayClassParentPointerAssignment) {
-							dict[fieldDef] = right;
+							if (fieldDef != null)
+								dict[fieldDef] = right;
 							cur.Remove();
 						} else {
 							break;
