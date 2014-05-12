@@ -381,7 +381,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			Parameter paramRef = operand as Parameter;
 			if (paramRef != null) {
 				if (string.IsNullOrEmpty(paramRef.Name))
-					writer.WriteReference(paramRef.Index.ToString(), paramRef);
+					writer.WriteReference(paramRef.MethodSigIndex.ToString(), paramRef);
 				else
 					writer.WriteReference(Escape(paramRef.Name), paramRef);
 				return;
