@@ -42,7 +42,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			get
 			{
-				return analyzedAssembly.Name;
+				return analyzedAssembly.Name.String;
 			}
 		}
 

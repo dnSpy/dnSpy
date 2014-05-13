@@ -93,7 +93,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			var instanceCtorsNotChainingWithThis = instanceCtors.Where(ctor => !thisCallPattern.IsMatch(ctor.Body.Statements.FirstOrDefault())).ToArray();
 			if (instanceCtorsNotChainingWithThis.Length > 0) {
 				MethodDef ctorMethodDef = instanceCtorsNotChainingWithThis[0].Annotation<MethodDef>();
-				if (ctorMethodDef != null && ctorMethodDef.DeclaringType.IsValueType)
+				if (ctorMethodDef != null && DnlibExtensions.IsValueType(ctorMethodDef.DeclaringType))
 					return;
 				
 				// Recognize field initializers:

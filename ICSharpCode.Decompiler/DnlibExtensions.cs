@@ -281,6 +281,12 @@ namespace ICSharpCode.Decompiler
 				   method.DeclaringType.Events.Any(propertyDef => propertyDef.AddMethod == method || propertyDef.RemoveMethod == method || propertyDef.InvokeMethod == method);
 		}
 
+		public static bool HasSemanticsButNotInvoke(this MethodDef method)
+		{
+			return method.DeclaringType.Properties.Any(propertyDef => propertyDef.SetMethod == method || propertyDef.GetMethod == method) ||
+				   method.DeclaringType.Events.Any(propertyDef => propertyDef.AddMethod == method || propertyDef.RemoveMethod == method);
+		}
+
 		public static bool HasNormalParameter(this IEnumerable<Parameter> list)
 		{
 			foreach (var p in list)
@@ -422,6 +428,24 @@ namespace ICSharpCode.Decompiler
 			return sb.ToString();
 		}
 
+		public static string GetMethodSigFullName(MethodSig methodSig)
+		{
+			var sb = new StringBuilder();
+
+			sb.Append(FullNameCreator.FullName(methodSig.RetType, false));
+			sb.Append("(");
+			PrintArgs(sb, methodSig.Params, true);
+			if (methodSig.ParamsAfterSentinel != null) {
+				if (methodSig.Params.Count > 0)
+					sb.Append(",");
+				sb.Append("...,");
+				PrintArgs(sb, methodSig.ParamsAfterSentinel, false);
+			}
+			sb.Append(")");
+
+			return sb.ToString();
+		}
+
 		static void PrintArgs(StringBuilder sb, IList<TypeSig> args, bool isFirst) {
 			foreach (var arg in args) {
 				if (!isFirst)
@@ -434,6 +458,36 @@ namespace ICSharpCode.Decompiler
 		public static string GetFnPtrName(FnPtrSig sig)
 		{
 			return "method";
+		}
+
+		public static bool IsValueType(ITypeDefOrRef tdr)
+		{
+			if (tdr == null)
+				return false;
+			var ts = tdr as TypeSpec;
+			if (ts != null)
+				return IsValueType(ts.TypeSig);
+			return tdr.IsValueType;
+		}
+
+		public static bool IsValueType(TypeSig ts)
+		{
+			if (ts == null)
+				return false;
+			switch (ts.ElementType) {
+			case ElementType.SZArray:
+			case ElementType.Array:
+			case ElementType.CModReqd:
+			case ElementType.CModOpt:
+			case ElementType.Pinned:
+			case ElementType.Ptr:
+			case ElementType.ByRef:
+			case ElementType.Sentinel:
+				// Emulate cecil behavior
+				return false;
+			default:
+				return ts.IsValueType;
+			}
 		}
 	}
 }

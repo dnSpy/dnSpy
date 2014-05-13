@@ -91,7 +91,7 @@ namespace ICSharpCode.ILSpy
 		{
 			WriteCommentLine(output, TypeToString(method.DeclaringType, includeNamespace: true));
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: method.DeclaringType, isSingleMember: true);
-			if (method.IsConstructor && !method.IsStatic && !method.DeclaringType.IsValueType) {
+			if (method.IsConstructor && !method.IsStatic && !DnlibExtensions.IsValueType(method.DeclaringType)) {
 				// also fields and other ctors so that the field initializers can be shown as such
 				AddFieldsAndCtors(codeDomBuilder, method.DeclaringType, method.IsStatic);
 				RunTransformsAndGenerateCode(codeDomBuilder, output, options, new SelectCtorTransform(method));

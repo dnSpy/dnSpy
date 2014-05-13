@@ -757,14 +757,14 @@ namespace ICSharpCode.Decompiler.ILAst
 						// isinst performs the equivalent of a cast only for reference types;
 						// value types still need to be unboxed after an isinst instruction
 						TypeSig tr = ((ITypeDefOrRef)expr.Operand).ToTypeSig();
-						return tr.IsValueType ? corLib.Object : tr;
+						return DnlibExtensions.IsValueType(tr) ? corLib.Object : tr;
 					}
 				case ILCode.Box:
 					{
 						var tr = ((ITypeDefOrRef)expr.Operand).ToTypeSig();
 						if (forceInferChildren)
 							InferTypeForExpression(expr.Arguments.Single(), tr);
-						return tr.IsValueType ? corLib.Object : tr;
+						return DnlibExtensions.IsValueType(tr) ? corLib.Object : tr;
 					}
 					#endregion
 					#region Comparison instructions
@@ -857,7 +857,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			if (constrainedPrefix != null)
 				return new ByRefSig(((ITypeDefOrRef)constrainedPrefix.Operand).ToTypeSig());
-			if (type.IsValueType)
+			if (DnlibExtensions.IsValueType(type))
 				return new ByRefSig(type);
 			else
 				return type;

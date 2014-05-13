@@ -140,7 +140,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				return false;
 			
 			stateMachineStruct = stateMachineVar.Type.GetTypeDefOrRef().ResolveWithinSameModule();
-			if (stateMachineStruct == null || !stateMachineStruct.IsValueType)
+			if (stateMachineStruct == null || !DnlibExtensions.IsValueType(stateMachineStruct))
 				return false;
 			moveNextMethod = stateMachineStruct.Methods.FirstOrDefault(f => f.Name == "MoveNext");
 			if (moveNextMethod == null)

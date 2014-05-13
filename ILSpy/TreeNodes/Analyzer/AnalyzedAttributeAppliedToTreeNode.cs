@@ -163,7 +163,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			bool searchRequired = (type.IsClass && usage.HasFlag(AttributeTargets.Class))
 				|| (type.IsEnum && usage.HasFlag(AttributeTargets.Enum))
 				|| (type.IsInterface && usage.HasFlag(AttributeTargets.Interface))
-				|| (type.IsValueType && usage.HasFlag(AttributeTargets.Struct));
+				|| (Decompiler.DnlibExtensions.IsValueType(type) && usage.HasFlag(AttributeTargets.Struct));
 			if (searchRequired) {
 				if (type.HasCustomAttributes) {
 					foreach (var attribute in type.CustomAttributes) {

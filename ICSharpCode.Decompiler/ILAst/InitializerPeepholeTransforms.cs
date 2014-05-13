@@ -289,7 +289,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			} else {
 				return false;
 			}
-			if (newObjType.IsValueType != isValueType)
+			if (DnlibExtensions.IsValueType(newObjType) != isValueType)
 				return false;
 			
 			int originalPos = pos;

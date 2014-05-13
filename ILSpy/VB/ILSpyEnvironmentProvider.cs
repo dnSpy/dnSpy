@@ -78,7 +78,7 @@ namespace ICSharpCode.ILSpy.VB
 				return TypeKind.Interface;
 			if (definition.IsEnum)
 				return TypeKind.Enum;
-			if (definition.IsValueType)
+			if (Decompiler.DnlibExtensions.IsValueType(definition))
 				return TypeKind.Struct;
 			
 			return TypeKind.Unknown;
@@ -121,7 +121,7 @@ namespace ICSharpCode.ILSpy.VB
 			if (definition == null)
 				return null;
 			
-			return !definition.IsValueType;
+			return !Decompiler.DnlibExtensions.IsValueType(definition);
 		}
 		
 		public IEnumerable<NRefactory.VB.Ast.InterfaceMemberSpecifier> CreateMemberSpecifiersForInterfaces(IEnumerable<NRefactory.VB.Ast.AstType> interfaces)

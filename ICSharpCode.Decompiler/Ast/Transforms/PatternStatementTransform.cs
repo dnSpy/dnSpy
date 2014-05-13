@@ -189,7 +189,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (m2.Has("valueType")) {
 				// if there's no if(x!=null), then it must be a value type
 				ILVariable v = m1.Get<AstNode>("variable").Single().Annotation<ILVariable>();
-				if (v == null || v.Type == null || !v.Type.IsValueType)
+				if (v == null || v.Type == null || !DnlibExtensions.IsValueType(v.Type))
 					return null;
 			}
 			

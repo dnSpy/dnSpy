@@ -262,7 +262,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// <param name="inlinedExpression">The expression being inlined</param>
 		bool IsGeneratedValueTypeTemporary(ILExpression next, ILExpression parent, int pos, ILVariable v, ILExpression inlinedExpression)
 		{
-			if (pos == 0 && v.Type != null && v.Type.IsValueType) {
+			if (pos == 0 && v.Type != null && DnlibExtensions.IsValueType(v.Type)) {
 				// Inlining a value type variable is allowed only if the resulting code will maintain the semantics
 				// that the method is operating on a copy.
 				// Thus, we have to disallow inlining of other locals, fields, array elements, dereferenced pointers

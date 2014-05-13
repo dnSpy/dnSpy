@@ -464,13 +464,13 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Cgt_Un: {
 						// can also mean Inequality, when used with object references
 						TypeSig arg1Type = byteCode.Arguments[0].InferredType;
-						if (arg1Type != null && !arg1Type.IsValueType) goto case ILCode.Cne;
+						if (arg1Type != null && !DnlibExtensions.IsValueType(arg1Type)) goto case ILCode.Cne;
 						goto case ILCode.Cgt;
 					}
 					case ILCode.Cle_Un: {
 						// can also mean Equality, when used with object references
 						TypeSig arg1Type = byteCode.Arguments[0].InferredType;
-						if (arg1Type != null && !arg1Type.IsValueType) goto case ILCode.Ceq;
+						if (arg1Type != null && !DnlibExtensions.IsValueType(arg1Type)) goto case ILCode.Ceq;
 						goto case ILCode.Cle;
 					}
 					case ILCode.Cle: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
@@ -954,7 +954,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (typeDef != null) {
 				if (TypeAnalysis.IsIntegerOrEnum(type))
 					return AstBuilder.MakePrimitive(0, typeDef);
-				else if (!typeDef.IsValueType)
+				else if (!DnlibExtensions.IsValueType(typeDef))
 					return new NullReferenceExpression();
 				switch (typeDef.FullName) {
 					case "System.Nullable`1":
@@ -1012,7 +1012,7 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 			}
 			
-			if (cecilMethod.Name == ".ctor" && cecilMethod.DeclaringType.IsValueType) {
+			if (cecilMethod.Name == ".ctor" && DnlibExtensions.IsValueType(cecilMethod.DeclaringType)) {
 				// On value types, the constructor can be called.
 				// This is equivalent to 'target = new ValueType(args);'.
 				ObjectCreateExpression oce = new ObjectCreateExpression();
@@ -1180,6 +1180,9 @@ namespace ICSharpCode.Decompiler.Ast
 				return "\"" + operand + "\"";
 			} else if (operand is int) {
 				return operand.ToString();
+			} else if (operand is MethodSig) {
+				var msig = (MethodSig)operand;
+				return DnlibExtensions.GetMethodSigFullName(msig);
 			} else {
 				return operand.ToString();
 			}

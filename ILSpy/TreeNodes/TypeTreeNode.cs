@@ -96,21 +96,21 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				this.Children.Add(new BaseTypesTreeNode(type));
 			if (!type.IsSealed)
 				this.Children.Add(new DerivedTypesTreeNode(parentAssemblyNode.AssemblyList, type));
-			foreach (TypeDef nestedType in type.NestedTypes.OrderBy(m => m.Name)) {
+			foreach (TypeDef nestedType in type.NestedTypes.OrderBy(m => m.Name.String)) {
 				this.Children.Add(new TypeTreeNode(nestedType, parentAssemblyNode));
 			}
-			foreach (FieldDef field in type.Fields.OrderBy(m => m.Name)) {
+			foreach (FieldDef field in type.Fields.OrderBy(m => m.Name.String)) {
 				this.Children.Add(new FieldTreeNode(field));
 			}
 			
-			foreach (PropertyDef property in type.Properties.OrderBy(m => m.Name)) {
+			foreach (PropertyDef property in type.Properties.OrderBy(m => m.Name.String)) {
 				this.Children.Add(new PropertyTreeNode(property));
 			}
-			foreach (EventDef ev in type.Events.OrderBy(m => m.Name)) {
+			foreach (EventDef ev in type.Events.OrderBy(m => m.Name.String)) {
 				this.Children.Add(new EventTreeNode(ev));
 			}
 			HashSet<MethodDef> accessorMethods = type.GetAccessorMethods();
-			foreach (MethodDef method in type.Methods.OrderBy(m => m.Name)) {
+			foreach (MethodDef method in type.Methods.OrderBy(m => m.Name.String)) {
 				if (!accessorMethods.Contains(method)) {
 					this.Children.Add(new MethodTreeNode(method));
 				}
@@ -142,7 +142,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		static TypeIcon GetTypeIcon(TypeDef type)
 		{
-			if (type.IsValueType) {
+			if (Decompiler.DnlibExtensions.IsValueType(type)) {
 				if (type.IsEnum)
 					return TypeIcon.Enum;
 				else

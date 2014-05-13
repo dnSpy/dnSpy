@@ -68,7 +68,7 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			MethodDef method = member as MethodDef;
 			if (method != null) {
-				if (method.HasSemantics())
+				if (method.HasSemanticsButNotInvoke())
 					return true;
 				if (settings.AnonymousMethods && method.HasGeneratedName() && method.IsCompilerGenerated())
 					return true;
@@ -299,7 +299,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (typeDef.IsEnum) {  // NB: Enum is value type
 				astType.ClassType = ClassType.Enum;
 				astType.Modifiers &= ~Modifiers.Sealed;
-			} else if (typeDef.IsValueType) {
+			} else if (DnlibExtensions.IsValueType(typeDef)) {
 				astType.ClassType = ClassType.Struct;
 				astType.Modifiers &= ~Modifiers.Sealed;
 			} else if (typeDef.IsInterface) {
@@ -355,7 +355,7 @@ namespace ICSharpCode.Decompiler.Ast
 				result = dd;
 			} else {
 				// Base type
-				if (typeDef.BaseType != null && !typeDef.IsValueType && typeDef.BaseType.FullName != "System.Object") {
+				if (typeDef.BaseType != null && !DnlibExtensions.IsValueType(typeDef) && typeDef.BaseType.FullName != "System.Object") {
 					astType.AddChild(ConvertType(typeDef.BaseType), Roles.BaseType);
 				}
 				foreach (var i in typeDef.Interfaces)
@@ -1071,7 +1071,7 @@ namespace ICSharpCode.Decompiler.Ast
 		static Expression CreateExpressionForConstant(object constant, TypeSig type, bool isEnumMemberDeclaration = false)
 		{
 			if (constant == null) {
-				if (type.IsValueType && !(type.Namespace == "System" && type.TypeName == "Nullable`1"))
+				if (DnlibExtensions.IsValueType(type) && !(type.Namespace == "System" && type.TypeName == "Nullable`1"))
 					return new DefaultValueExpression(ConvertType(type));
 				else
 					return new NullReferenceExpression();
@@ -1179,7 +1179,7 @@ namespace ICSharpCode.Decompiler.Ast
 					charSet = CharSet.Unicode;
 					break;
 			}
-			LayoutKind defaultLayoutKind = (typeDef.IsValueType && !typeDef.IsEnum) ? LayoutKind.Sequential : LayoutKind.Auto;
+			LayoutKind defaultLayoutKind = (DnlibExtensions.IsValueType(typeDef) && !typeDef.IsEnum) ? LayoutKind.Sequential : LayoutKind.Auto;
 			if (layoutKind != defaultLayoutKind || charSet != CharSet.Ansi || typeDef.HasClassLayout) {
 				var structLayout = CreateNonCustomAttribute(typeof(StructLayoutAttribute));
 				structLayout.Arguments.Add(new IdentifierExpression("LayoutKind").Member(layoutKind.ToString()));

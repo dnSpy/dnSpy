@@ -331,8 +331,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 				WriteTo(((TypeSpec)type).TypeSig, writer, syntax);
 				return;
 			}
-			var typeFullName = type.FullName;
-			var typeName = type.Name;
+			string typeFullName = type.FullName;
+			string typeName = type.Name;
 			if (ts != null) {
 				var fnPtrSig = ts.TypeSig as FnPtrSig;
 				typeFullName = DnlibExtensions.GetFnPtrFullName(fnPtrSig);
@@ -348,7 +348,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				writer.Write(name);
 			} else {
 				if (syntax == ILNameSyntax.Signature || syntax == ILNameSyntax.SignatureNoNamedTypeParameters)
-					writer.Write(type.IsValueType ? "valuetype " : "class ");
+					writer.Write(DnlibExtensions.IsValueType(type) ? "valuetype " : "class ");
 
 				if (type.DeclaringType != null) {
 					type.DeclaringType.WriteTo(writer, ILNameSyntax.TypeName);

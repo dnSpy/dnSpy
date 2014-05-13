@@ -207,6 +207,9 @@ namespace ICSharpCode.Decompiler.ILAst
 		Dictionary<ExceptionHandler, ByteCode> ldexceptions = new Dictionary<ExceptionHandler, ILAstBuilder.ByteCode>();
 		Dictionary<ExceptionHandler, ByteCode> ldfilters = new Dictionary<ExceptionHandler, ILAstBuilder.ByteCode>();
 		
+		//TODO: Disable this for now because the filter code is only shown in IL, not C# or VB, mode
+		bool useNewFilterCode = false;
+
 		DecompilerContext context;
 
 		static readonly Dictionary<Code, ILCode> ilCodeTranslation =
@@ -624,7 +627,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (methodDef.HasThis) {
 				TypeDef type = methodDef.DeclaringType;
 				thisParameter = new ILVariable();
-				thisParameter.Type = type.IsValueType ? new ByRefSig(type.ToTypeSig()) : type.ToTypeSig();
+				thisParameter.Type = DnlibExtensions.IsValueType(type) ? new ByRefSig(type.ToTypeSig()) : type.ToTypeSig();
 				thisParameter.Name = "this";
 				thisParameter.OriginalParameter = methodDef.Parameters[0];
 			}
@@ -713,7 +716,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						tryCatchBlock.FinallyBlock = new ILBlock(handlerAst);
 					} else if (eh.HandlerType == ExceptionHandlerType.Fault) {
 						tryCatchBlock.FaultBlock = new ILBlock(handlerAst);
-					} else if (eh.HandlerType == ExceptionHandlerType.Filter) {
+					} else if (useNewFilterCode && eh.HandlerType == ExceptionHandlerType.Filter) {
 						ILTryCatchBlock.CatchBlock catchBlock = new ILTryCatchBlock.CatchBlock() {
 							ExceptionType = eh.CatchType.ToTypeSig(),
 							Body = handlerAst

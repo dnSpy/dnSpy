@@ -42,7 +42,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Text {
-			get { return r.Name; }
+			get { return r.Name.String; }
 		}
 		
 		public override object Icon {
