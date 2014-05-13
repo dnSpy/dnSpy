@@ -1549,9 +1549,15 @@ namespace ICSharpCode.Decompiler.Ast
 				return ConvertArgumentValue((CAArgument)argument.Value);
 			}
 			var type = argument.Type.Resolve();
-			if (type != null && type.IsEnum) {
-				return MakePrimitive(Convert.ToInt64(argument.Value), type);
-			} else if (argument.Value is TypeSig) {
+			if (type != null && type.IsEnum && argument.Value != null) {
+				try {
+					if (argument.Value is UTF8String)
+						return MakePrimitive(Convert.ToInt64(((UTF8String)argument.Value).String), type);
+					return MakePrimitive(Convert.ToInt64(argument.Value), type);
+				} catch (SystemException) {
+				}
+			}
+			if (argument.Value is TypeSig) {
 				return CreateTypeOfExpression(((TypeSig)argument.Value).ToTypeDefOrRef());
 			} else if (argument.Value is UTF8String) {
 				return new PrimitiveExpression(((UTF8String)argument.Value).String);
