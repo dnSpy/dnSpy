@@ -58,7 +58,10 @@
 			</Grid>
 		</GroupBox>
 		<GroupBox Header="Other options" Grid.Row="1">
-			<CheckBox Margin="3,3" IsChecked="{Binding ShowLineNumbers}">Show line numbers</CheckBox>
+			<StackPanel Margin="3">
+				<CheckBox IsChecked="{Binding ShowLineNumbers}">Show line numbers</CheckBox>
+				<CheckBox IsChecked="{Binding ShowMetadataTokens}">Show metadata tokens</CheckBox>
+			</StackPanel>
 		</GroupBox>
 	</Grid>
 </UserControl>

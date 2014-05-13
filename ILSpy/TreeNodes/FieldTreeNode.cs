@@ -19,6 +19,7 @@
 using System;
 using System.Windows.Media;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.Options;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -44,7 +45,15 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Text
 		{
-			get { return HighlightSearchMatch(field.Name, " : " + this.Language.TypeToString(field.FieldType, false, field)); }
+			get
+			{
+				return HighlightSearchMatch(
+					field.Name,
+					" : " + this.Language.TypeToString(field.FieldType, false, field) +
+						(DisplaySettingsPanel.CurrentDisplaySettings.ShowMetadataTokens ?
+						" @" + field.MetadataToken.ToInt32().ToString("x8") :
+						""));
+			}
 		}
 
 		public override object Icon

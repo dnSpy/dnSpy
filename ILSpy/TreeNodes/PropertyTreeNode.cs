@@ -19,6 +19,7 @@
 using System;
 using System.Windows.Media;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.Options;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -57,7 +58,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Text
 		{
-			get { return GetText(property, Language, isIndexer); }
+			get
+			{
+				return GetText(property, Language, isIndexer) +
+					(DisplaySettingsPanel.CurrentDisplaySettings.ShowMetadataTokens ?
+					" @" + property.MetadataToken.ToInt32().ToString("x8") :
+					"");
+			}
 		}
 
 		public static object GetText(PropertyDefinition property, Language language, bool? isIndexer = null)
