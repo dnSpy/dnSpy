@@ -279,7 +279,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					.Where(attr => attr.AttributeType.FullName == "System.Runtime.CompilerServices.InternalsVisibleToAttribute");
 				var friendAssemblies = new HashSet<string>();
 				foreach (var attribute in attributes) {
-					string assemblyName = attribute.ConstructorArguments[0].Value as string;
+					string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
+					if (assemblyName == null)
+						continue;
 					assemblyName = assemblyName.Split(',')[0]; // strip off any public key info
 					friendAssemblies.Add(assemblyName);
 				}

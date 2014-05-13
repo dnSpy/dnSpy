@@ -192,7 +192,8 @@ namespace ICSharpCode.Decompiler
 		{
 			if (type.HasCustomAttributes)
 				foreach (CustomAttribute ca in type.CustomAttributes.FindAll("System.Reflection.DefaultMemberAttribute"))
-					if (ca.Constructor.FullName == @"System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)") {
+					if (ca.Constructor.FullName == @"System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)" &&
+						ca.ConstructorArguments[0].Value is UTF8String) {
 						defaultMemberAttribute = ca;
 						return (UTF8String)ca.ConstructorArguments[0].Value;
 					}
