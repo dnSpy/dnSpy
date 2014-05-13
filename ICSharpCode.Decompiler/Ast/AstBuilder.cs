@@ -1350,9 +1350,8 @@ namespace ICSharpCode.Decompiler.Ast
 					var varEnum = module.CorLibTypes.GetTypeRef("System.Runtime.InteropServices", "VarEnum");
 					attr.AddNamedArgument("SafeArraySubType", MakePrimitive((int)sami.VariantType, varEnum));
 				}
-				if (sami.IsUserDefinedSubTypeValid) {
-					//TODO: SafeArrayUserDefinedSubType
-				}
+				if (sami.IsUserDefinedSubTypeValid)
+					attr.AddNamedArgument("SafeArrayUserDefinedSubType", CreateTypeOfExpression(sami.UserDefinedSubType));
 			}
 			var ami = marshalInfo as ArrayMarshalType;
 			if (ami != null) {
@@ -1365,9 +1364,8 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			var cmi = marshalInfo as CustomMarshalType;
 			if (cmi != null) {
-				//TODO: Use MarshalTypeRef instead of MarshalType, with CreateTypeOfExpression(cmi.CustomMarshaler) as arg
 				if (cmi.CustomMarshaler != null)
-					attr.AddNamedArgument("MarshalType", new PrimitiveExpression(cmi.CustomMarshaler.FullName));
+					attr.AddNamedArgument("MarshalTypeRef", CreateTypeOfExpression(cmi.CustomMarshaler));
 				if (!UTF8String.IsNullOrEmpty(cmi.Cookie))
 					attr.AddNamedArgument("MarshalCookie", new PrimitiveExpression(cmi.Cookie.String));
 			}
@@ -1378,11 +1376,8 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			var imti = marshalInfo as InterfaceMarshalType;
 			if (imti != null) {
-				//TODO: IidParameterIndex
-			}
-			var rmti = marshalInfo as RawMarshalType;
-			if (rmti != null) {
-				//TODO:
+				if (imti.IsIidParamIndexValid)
+					attr.AddNamedArgument("IidParameterIndex", new PrimitiveExpression(imti.IidParamIndex));
 			}
 			return attr;
 		}

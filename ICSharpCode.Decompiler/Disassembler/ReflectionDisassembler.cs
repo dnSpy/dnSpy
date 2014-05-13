@@ -421,9 +421,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 					output.Write("unsigned int");
 					break;
 				case NativeType.Func:
-					goto default; // ??
+					output.Write("method");
+					break;
 				case NativeType.Array:
-					ArrayMarshalType ami = (ArrayMarshalType)marshalInfo;
+					ArrayMarshalType ami = marshalInfo as ArrayMarshalType;
 					if (ami == null)
 						goto default;
 					if (ami.ElementType != NativeType.Max)
@@ -452,29 +453,38 @@ namespace ICSharpCode.Decompiler.Disassembler
 					output.Write("lptstr");
 					break;
 				case NativeType.FixedSysString:
-					output.Write("fixed sysstring[{0}]", ((FixedSysStringMarshalType)marshalInfo).Size);
+					var fsmi = marshalInfo as FixedSysStringMarshalType;
+					output.Write("fixed sysstring");
+					if (fsmi != null && fsmi.IsSizeValid)
+						output.Write("[{0}]", fsmi.Size);
 					break;
 				case NativeType.IUnknown:
-					output.Write("iunknown");
-					//TODO: Print InterfaceMarshalType.IsIidParamIndexValid
-					break;
 				case NativeType.IDispatch:
-					output.Write("idispatch");
-					//TODO: Print InterfaceMarshalType.IsIidParamIndexValid
+				case NativeType.IntF:
+					if (nativeType == NativeType.IUnknown)
+						output.Write("iunknown");
+					else if (nativeType == NativeType.IDispatch)
+						output.Write("idispatch");
+					else if (nativeType == NativeType.IntF)
+						output.Write("interface");
+					else
+						throw new InvalidOperationException();
+					var imti = marshalInfo as InterfaceMarshalType;
+					if (imti != null && imti.IsIidParamIndexValid)
+						output.Write("(iidparam = {0})", imti.IidParamIndex);
 					break;
 				case NativeType.Struct:
 					output.Write("struct");
-					break;
-				case NativeType.IntF:
-					output.Write("interface");
-					//TODO: Print InterfaceMarshalType.IsIidParamIndexValid
 					break;
 				case NativeType.SafeArray:
 					output.Write("safearray ");
 					SafeArrayMarshalType sami = marshalInfo as SafeArrayMarshalType;
 					if (sami != null && sami.IsVariantTypeValid) {
-						switch (sami.VariantType) {
+						switch (sami.VariantType & VariantType.TypeMask) {
 							case VariantType.None:
+								break;
+							case VariantType.Null:
+								output.Write("null");
 								break;
 							case VariantType.I2:
 								output.Write("int16");
@@ -527,19 +537,88 @@ namespace ICSharpCode.Decompiler.Disassembler
 							case VariantType.UI4:
 								output.Write("unsigned int32");
 								break;
+							case VariantType.I8:
+								output.Write("int64");
+								break;
+							case VariantType.UI8:
+								output.Write("unsigned int64");
+								break;
 							case VariantType.Int:
 								output.Write("int");
 								break;
 							case VariantType.UInt:
 								output.Write("unsigned int");
 								break;
+							case VariantType.Void:
+								output.Write("void");
+								break;
+							case VariantType.HResult:
+								output.Write("hresult");
+								break;
+							case VariantType.Ptr:
+								output.Write("*");
+								break;
+							case VariantType.SafeArray:
+								output.Write("safearray");
+								break;
+							case VariantType.CArray:
+								output.Write("carray");
+								break;
+							case VariantType.UserDefined:
+								output.Write("userdefined");
+								break;
+							case VariantType.LPStr:
+								output.Write("lpstr");
+								break;
+							case VariantType.LPWStr:
+								output.Write("lpwstr");
+								break;
+							case VariantType.Record:
+								output.Write("record");
+								break;
+							case VariantType.FileTime:
+								output.Write("filetime");
+								break;
+							case VariantType.Blob:
+								output.Write("blob");
+								break;
+							case VariantType.Stream:
+								output.Write("stream");
+								break;
+							case VariantType.Storage:
+								output.Write("storage");
+								break;
+							case VariantType.StreamedObject:
+								output.Write("streamed_object");
+								break;
+							case VariantType.StoredObject:
+								output.Write("stored_object");
+								break;
+							case VariantType.BlobObject:
+								output.Write("blob_object");
+								break;
+							case VariantType.CF:
+								output.Write("cf");
+								break;
+							case VariantType.CLSID:
+								output.Write("clsid");
+								break;
+							case VariantType.IntPtr:
+							case VariantType.UIntPtr:
+							case VariantType.VersionedStream:
+							case VariantType.BStrBlob:
 							default:
-								output.Write(sami.VariantType.ToString());
+								output.Write((sami.VariantType & VariantType.TypeMask).ToString());
 								break;
 						}
-						if (sami.IsUserDefinedSubTypeValid) {
-							//TODO:
-						}
+						if ((sami.VariantType & VariantType.ByRef) != 0)
+							output.Write("&");
+						if ((sami.VariantType & VariantType.Array) != 0)
+							output.Write("[]");
+						if ((sami.VariantType & VariantType.Vector) != 0)
+							output.Write(" vector");
+						if (sami.IsUserDefinedSubTypeValid)
+							output.Write(", \"{0}\"", NRefactory.CSharp.CSharpOutputVisitor.ConvertString(sami.UserDefinedSubType.FullName));
 					}
 					break;
 				case NativeType.FixedArray:
@@ -587,6 +666,30 @@ namespace ICSharpCode.Decompiler.Disassembler
 				case NativeType.Error:
 					output.Write("error");
 					break;
+				case NativeType.Void:
+					output.Write("void");
+					break;
+				case NativeType.SysChar:
+					output.Write("syschar");
+					break;
+				case NativeType.Variant:
+					output.Write("variant");
+					break;
+				case NativeType.Decimal:
+					output.Write("decimal");
+					break;
+				case NativeType.Date:
+					output.Write("date");
+					break;
+				case NativeType.ObjectRef:
+					output.Write("objectref");
+					break;
+				case NativeType.NestedStruct:
+					output.Write("nested struct");
+					break;
+				case NativeType.Ptr:
+				case NativeType.IInspectable:
+				case NativeType.HString:
 				default:
 					output.Write(nativeType.ToString());
 					break;
