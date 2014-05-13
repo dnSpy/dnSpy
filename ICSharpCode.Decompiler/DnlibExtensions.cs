@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
@@ -393,6 +394,45 @@ namespace ICSharpCode.Decompiler
 			var sizes = ary.GetSizes();
 			for (int i = 0; i < (int)ary.Rank; i++)
 				yield return i < sizes.Count ? (int)sizes[i] - 1 : 0;
+		}
+
+		public static string GetFnPtrFullName(FnPtrSig sig)
+		{
+			if (sig == null)
+				return string.Empty;
+			var methodSig = sig.MethodSig;
+			if (methodSig == null)
+				return GetFnPtrName(sig);
+
+			var sb = new StringBuilder();
+
+			sb.Append("method ");
+			sb.Append(FullNameCreator.FullName(methodSig.RetType, false));
+			sb.Append(" *(");
+			PrintArgs(sb, methodSig.Params, true);
+			if (methodSig.ParamsAfterSentinel != null) {
+				if (methodSig.Params.Count > 0)
+					sb.Append(",");
+				sb.Append("...,");
+				PrintArgs(sb, methodSig.ParamsAfterSentinel, false);
+			}
+			sb.Append(")");
+
+			return sb.ToString();
+		}
+
+		static void PrintArgs(StringBuilder sb, IList<TypeSig> args, bool isFirst) {
+			foreach (var arg in args) {
+				if (!isFirst)
+					sb.Append(",");
+				isFirst = false;
+				sb.Append(FullNameCreator.FullName(arg, false));
+			}
+		}
+
+		public static string GetFnPtrName(FnPtrSig sig)
+		{
+			return "method";
 		}
 	}
 }

@@ -318,22 +318,32 @@ namespace ICSharpCode.Decompiler.Disassembler
 				writer.Write(") ");
 			} else if (type is TypeDefOrRefSig) {
 				WriteTo(((TypeDefOrRefSig)type).TypeDefOrRef, writer, syntax);
+			} else if (type is FnPtrSig) {
+				WriteTo(type.ToTypeDefOrRef(), writer, syntax);
 			}
-			//TODO: FnPtrSig, SentinelSig
+			//TODO: SentinelSig
 		}
 
 		public static void WriteTo(this ITypeDefOrRef type, ITextOutput writer, ILNameSyntax syntax = ILNameSyntax.Signature)
 		{
-			if (type is TypeSpec) {
+			var ts = type as TypeSpec;
+			if (ts != null && !(ts.TypeSig is FnPtrSig)) {
 				WriteTo(((TypeSpec)type).TypeSig, writer, syntax);
 				return;
 			}
-			string name = PrimitiveTypeName(type.FullName);
+			var typeFullName = type.FullName;
+			var typeName = type.Name;
+			if (ts != null) {
+				var fnPtrSig = ts.TypeSig as FnPtrSig;
+				typeFullName = DnlibExtensions.GetFnPtrFullName(fnPtrSig);
+				typeName = DnlibExtensions.GetFnPtrName(fnPtrSig);
+			}
+			string name = PrimitiveTypeName(typeFullName);
 			if (syntax == ILNameSyntax.ShortTypeName) {
 				if (name != null)
 					writer.Write(name);
 				else
-					writer.WriteReference(Escape(type.Name), type);
+					writer.WriteReference(Escape(typeName), type);
 			} else if ((syntax == ILNameSyntax.Signature || syntax == ILNameSyntax.SignatureNoNamedTypeParameters) && name != null) {
 				writer.Write(name);
 			} else {
@@ -343,11 +353,11 @@ namespace ICSharpCode.Decompiler.Disassembler
 				if (type.DeclaringType != null) {
 					type.DeclaringType.WriteTo(writer, ILNameSyntax.TypeName);
 					writer.Write('/');
-					writer.WriteReference(Escape(type.Name), type);
+					writer.WriteReference(Escape(typeName), type);
 				} else {
 					if (!(type is TypeDef) && type.Scope != null && !(type is TypeSpec))
 						writer.Write("[{0}]", Escape(type.Scope.GetScopeName()));
-					writer.WriteReference(Escape(type.FullName), type);
+					writer.WriteReference(Escape(typeFullName), type);
 				}
 			}
 		}

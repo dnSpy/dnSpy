@@ -340,9 +340,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Write(' ');
 			output.Write(DisassemblerHelpers.Escape(na.Name));
 			output.Write(" = ");
-			if (na.Argument.Value is string) {
+			if (na.Argument.Value is UTF8String) {
 				// secdecls use special syntax for strings
-				output.Write("string('{0}')", NRefactory.CSharp.CSharpOutputVisitor.ConvertString((string)na.Argument.Value).Replace("'", "\'"));
+				output.Write("string('{0}')", NRefactory.CSharp.CSharpOutputVisitor.ConvertString((UTF8String)na.Argument.Value).Replace("'", "\'"));
 			} else {
 				WriteConstant(na.Argument.Value);
 			}
@@ -701,6 +701,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Write(DisassemblerHelpers.Escape(field.Name));
 			if ((field.Attributes & FieldAttributes.HasFieldRVA) == FieldAttributes.HasFieldRVA) {
 				output.Write(" at I_{0:x8}", (int)field.RVA);
+				uint fieldSize;
+				if (field.GetFieldSize(out fieldSize))
+					output.Write(" // {0} (0x{0:x4}) bytes", fieldSize);
 			}
 			if (field.HasConstant) {
 				output.Write(" = ");

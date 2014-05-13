@@ -525,8 +525,8 @@ namespace ICSharpCode.Decompiler.Ast
 			} else {
 				string ns = type.Namespace ?? string.Empty;
 				string name = type.Name;
-				if (ts != null && string.IsNullOrEmpty(name))
-					name = "method";
+				if (ts != null)
+					name = DnlibExtensions.GetFnPtrName(ts.TypeSig as FnPtrSig);
 				if (name == null)
 					throw new InvalidOperationException("type.Name returned null. Type: " + type.ToString());
 				
