@@ -751,17 +751,17 @@ namespace ICSharpCode.Decompiler.Ast
 							}
 						}
 						if (declaringType.IsAnonymousType()) {
-							var ctorParams = ((IMethod)operand).GetParameters();
+							MethodDef ctor = ((IMethod)operand).Resolve();
 							if (methodDef != null) {
 								AnonymousTypeCreateExpression atce = new AnonymousTypeCreateExpression();
-								if (CanInferAnonymousTypePropertyNamesFromArguments(args, ctorParams)) {
+								if (CanInferAnonymousTypePropertyNamesFromArguments(args, ctor.Parameters)) {
 									atce.Initializers.AddRange(args);
 								} else {
-									int skip = ctorParams.GetParametersSkip();
+									int skip = ctor.Parameters.GetParametersSkip();
 									for (int i = 0; i < args.Count; i++) {
 										atce.Initializers.Add(
 											new NamedExpression {
-												Name = ctorParams[i + skip].Name,
+												Name = ctor.Parameters[i + skip].Name,
 												Expression = args[i]
 											});
 									}
@@ -1093,12 +1093,12 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		static void AdjustArgumentsForMethodCall(IMethod cecilMethod, List<Expression> methodArgs)
 		{
-			var parameters = cecilMethod.GetParameters();
-			int skip = parameters.GetParametersSkip();
+			MethodDef methodDef = cecilMethod.Resolve();
+			int skip = methodDef.Parameters.GetParametersSkip();
 			// Convert 'ref' into 'out' where necessary
-			for (int i = 0; i < methodArgs.Count && i < parameters.Count - skip; i++) {
+			for (int i = 0; i < methodArgs.Count && i < methodDef.Parameters.Count - skip; i++) {
 				DirectionExpression dir = methodArgs[i] as DirectionExpression;
-				Parameter p = parameters[i + skip];
+				Parameter p = methodDef.Parameters[i + skip];
 				if (dir != null && p.HasParamDef && p.ParamDef.IsOut && !p.ParamDef.IsIn)
 					dir.FieldDirection = FieldDirection.Out;
 			}

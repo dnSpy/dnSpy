@@ -556,19 +556,21 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				oce.Arguments.AddRange(arguments);
 			}
 			if (invocation.Arguments.Count >= 3 && declaringType.IsAnonymousType()) {
-				var ctorParams = ctor.GetParameters();
-				int skip = ctorParams.GetParametersSkip();
-				if (ctorParams.Count - skip != oce.Arguments.Count)
+				MethodDef resolvedCtor = ctor.Resolve();
+				if (resolvedCtor == null)
+					return null;
+				int skip = resolvedCtor.Parameters.GetParametersSkip();
+				if (resolvedCtor.Parameters.Count - skip != oce.Arguments.Count)
 					return null;
 				AnonymousTypeCreateExpression atce = new AnonymousTypeCreateExpression();
 				var arguments = oce.Arguments.ToArray();
-				if (AstMethodBodyBuilder.CanInferAnonymousTypePropertyNamesFromArguments(arguments, ctorParams)) {
+				if (AstMethodBodyBuilder.CanInferAnonymousTypePropertyNamesFromArguments(arguments, resolvedCtor.Parameters)) {
 					oce.Arguments.MoveTo(atce.Initializers);
 				} else {
-					for (int i = 0; i < ctorParams.Count - skip; i++) {
+					for (int i = 0; i < resolvedCtor.Parameters.Count - skip; i++) {
 						atce.Initializers.Add(
 							new NamedExpression {
-								Name = ctorParams[i + skip].Name,
+								Name = resolvedCtor.Parameters[i + skip].Name,
 								Expression = arguments[i].Detach()
 							});
 					}

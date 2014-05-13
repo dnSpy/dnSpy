@@ -215,7 +215,7 @@ namespace ICSharpCode.Decompiler.Ast
 				return;
 			foreach (ExportedType type in module.ExportedTypes) {
 				if (type.IsForwarder) {
-					var forwardedType = CreateTypeOfExpression(new TypeRefUser(module, type.TypeNamespace, type.TypeName));
+					var forwardedType = CreateTypeOfExpression(new TypeRefUser(module, type.TypeNamespace, type.TypeName, new AssemblyRefUser(type.DefinitionAssembly)));
 					astCompileUnit.AddChild(
 						new AttributeSection {
 							AttributeTarget = target,
@@ -501,17 +501,17 @@ namespace ICSharpCode.Decompiler.Ast
 			} else if (type is TypeDefOrRefSig) {
 				return ConvertType(((TypeDefOrRefSig)type).TypeDefOrRef, typeAttributes, ref typeIndex, options);
 			} else
-				throw new NotSupportedException();
-			//TODO: FnPtrSig
+				return ConvertType(type.ToTypeDefOrRef(), typeAttributes, ref typeIndex, options);
 		}
 
 		static AstType ConvertType(ITypeDefOrRef type, IHasCustomAttribute typeAttributes, ref int typeIndex, ConvertTypeOptions options)
 		{
 			if (type == null)
-				return null;
+				return AstType.Null;
 
-			if (type is TypeSpec)
-				return ConvertType(((TypeSpec)type).TypeSig, typeAttributes, ref typeIndex, options);
+			var ts = type as TypeSpec;
+			if (ts != null && !(ts.TypeSig is FnPtrSig))
+				return ConvertType(ts.TypeSig, typeAttributes, ref typeIndex, options);
 
 			if (type.DeclaringType != null) {
 				AstType typeRef = ConvertType(type.DeclaringType, typeAttributes, ref typeIndex, options & ~ConvertTypeOptions.IncludeTypeParameterDefinitions);
@@ -525,6 +525,8 @@ namespace ICSharpCode.Decompiler.Ast
 			} else {
 				string ns = type.Namespace ?? string.Empty;
 				string name = type.Name;
+				if (ts != null && string.IsNullOrEmpty(name))
+					name = "method";
 				if (name == null)
 					throw new InvalidOperationException("type.Name returned null. Type: " + type.ToString());
 				

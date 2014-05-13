@@ -137,12 +137,7 @@ namespace ICSharpCode.Decompiler
 
 		public static TypeDef Resolve(this TypeSig type)
 		{
-			if (type is GenericInstSig)
-				return ((GenericInstSig)type).GenericType.TypeDefOrRef.ResolveTypeDef();
-			else if (type is TypeDefOrRefSig)
-				return ((TypeDefOrRefSig)type).TypeDefOrRef.ResolveTypeDef();
-			else
-				return null;
+			return type.ScopeType.ResolveTypeDef();
 		}
 
 		public static bool IsCompilerGenerated(this IHasCustomAttribute provider)
