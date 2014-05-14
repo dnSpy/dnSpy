@@ -150,7 +150,7 @@ namespace ICSharpCode.NRefactory.CSharp.TypeSystem.ConstantValues
 			ResolveResult rr = baseValue.Resolve(context);
 			if (rr.IsCompileTimeConstant && rr.ConstantValue != null) {
 				object val = rr.ConstantValue;
-				TypeCode typeCode = Type.GetTypeCode(val.GetType());
+				TypeCode typeCode = val == null ? TypeCode.Empty : Type.GetTypeCode(val.GetType());
 				if (typeCode >= TypeCode.SByte && typeCode <= TypeCode.UInt64) {
 					long intVal = (long)CSharpPrimitiveCast.Cast(TypeCode.Int64, val, false);
 					object newVal = CSharpPrimitiveCast.Cast(typeCode, unchecked(intVal + incrementAmount), false);

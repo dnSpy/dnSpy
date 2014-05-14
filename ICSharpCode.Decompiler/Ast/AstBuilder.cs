@@ -329,9 +329,13 @@ namespace ICSharpCode.Decompiler.Ast
 						EnumMemberDeclaration enumMember = new EnumMemberDeclaration();
 						enumMember.AddAnnotation(field);
 						enumMember.Name = CleanName(field.Name);
-						long memberValue = (long)CSharpPrimitiveCast.Cast(TypeCode.Int64, field.Constant == null ? null : field.Constant.Value, false);
+						var constant = field.Constant == null ? null : field.Constant.Value;
+						TypeCode c = constant == null ? TypeCode.Empty : Type.GetTypeCode(constant.GetType());
+						if (c < TypeCode.Char || c > TypeCode.Decimal)
+							continue;
+						long memberValue = (long)CSharpPrimitiveCast.Cast(TypeCode.Int64, constant, false);
 						if (forcePrintingInitializers || memberValue != expectedEnumMemberValue) {
-							enumMember.AddChild(new PrimitiveExpression(field.Constant == null ? null : field.Constant.Value), EnumMemberDeclaration.InitializerRole);
+							enumMember.AddChild(new PrimitiveExpression(constant), EnumMemberDeclaration.InitializerRole);
 						}
 						expectedEnumMemberValue = memberValue + 1;
 						astType.AddChild(enumMember, Roles.TypeMemberRole);
@@ -1581,9 +1585,13 @@ namespace ICSharpCode.Decompiler.Ast
 				if (enumDefinition != null && enumDefinition.IsEnum) {
 					TypeCode enumBaseTypeCode = TypeCode.Int32;
 					foreach (FieldDef field in enumDefinition.Fields) {
-						if (field.IsStatic && object.Equals(CSharpPrimitiveCast.Cast(TypeCode.Int64, field.Constant == null ? null : field.Constant.Value, false), val))
-							return ConvertType(type).Member(field.Name).WithAnnotation(field);
-						else if (!field.IsStatic)
+						if (field.IsStatic) {
+							var constant = field.Constant == null ? null : field.Constant.Value;
+							TypeCode c = constant == null ? TypeCode.Empty : Type.GetTypeCode(constant.GetType());
+							if (c >= TypeCode.Char && c <= TypeCode.Decimal &&
+								object.Equals(CSharpPrimitiveCast.Cast(TypeCode.Int64, constant, false), val))
+								return ConvertType(type).Member(field.Name).WithAnnotation(field);
+						} else if (!field.IsStatic)
 							enumBaseTypeCode = TypeAnalysis.GetTypeCode(field.FieldType); // use primitive type of the enum
 					}
 					if (IsFlagsEnum(enumDefinition)) {
@@ -1607,7 +1615,11 @@ namespace ICSharpCode.Decompiler.Ast
 						}
 						Expression negatedExpr = null;
 						foreach (FieldDef field in enumDefinition.Fields.Where(fld => fld.IsStatic)) {
-							long fieldValue = (long)CSharpPrimitiveCast.Cast(TypeCode.Int64, field.Constant == null ? null : field.Constant.Value, false);
+							var constant = field.Constant == null ? null : field.Constant.Value;
+							TypeCode c = constant == null ? TypeCode.Empty : Type.GetTypeCode(constant.GetType());
+							if (c < TypeCode.Char || c > TypeCode.Decimal)
+								continue;
+							long fieldValue = (long)CSharpPrimitiveCast.Cast(TypeCode.Int64, constant, false);
 							if (fieldValue == 0)
 								continue;	// skip None enum value
 

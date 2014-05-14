@@ -466,7 +466,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				object val;
 				try {
 					val = m.Invoke(this, expression.ConstantValue);
-				} catch (ArithmeticException) {
+				} catch (SystemException) {
 					return new ErrorResolveResult(resultType);
 				}
 				return new ConstantResolveResult(resultType, val);
@@ -822,7 +822,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				object val;
 				try {
 					val = m.Invoke(this, lhs.ConstantValue, rhs.ConstantValue);
-				} catch (ArithmeticException) {
+				} catch (SystemException) {
 					return new ErrorResolveResult(resultType);
 				}
 				return new ConstantResolveResult(resultType, val);
@@ -1277,7 +1277,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 				if (code >= TypeCode.Boolean && code <= TypeCode.Decimal && expression.ConstantValue != null) {
 					try {
 						return new ConstantResolveResult(targetType, CSharpPrimitiveCast(code, expression.ConstantValue));
-					} catch (OverflowException) {
+					} catch (SystemException) {
 						return new ErrorResolveResult(targetType);
 					}
 				} else if (code == TypeCode.String) {
@@ -1290,7 +1290,7 @@ namespace ICSharpCode.NRefactory.CSharp.Resolver
 					if (code >= TypeCode.SByte && code <= TypeCode.UInt64 && expression.ConstantValue != null) {
 						try {
 							return new ConstantResolveResult(targetType, CSharpPrimitiveCast(code, expression.ConstantValue));
-						} catch (OverflowException) {
+						} catch (SystemException) {
 							return new ErrorResolveResult(targetType);
 						}
 					}
