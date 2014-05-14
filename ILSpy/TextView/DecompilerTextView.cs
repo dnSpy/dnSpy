@@ -321,6 +321,7 @@ namespace ICSharpCode.ILSpy.TextView
 			
 			Debug.WriteLine("  Set-up: {0}", w.Elapsed); w.Restart();
 			textEditor.Document = textOutput.GetDocument();
+			textMarkerService.SetDocument(textEditor.Document);
 			Debug.WriteLine("  Assigning document: {0}", w.Elapsed); w.Restart();
 			if (textOutput.Foldings.Count > 0) {
 				if (state != null) {

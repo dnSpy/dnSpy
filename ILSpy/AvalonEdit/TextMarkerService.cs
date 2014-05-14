@@ -43,6 +43,11 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			this.document = document;
 			this.markers = new TextSegmentCollection<TextMarker>(document);
 		}
+
+		public void SetDocument(TextDocument document)
+		{
+			this.document = document;
+		}
 		
 		#region ITextMarkerService
 		public ITextMarker Create(int startOffset, int length)
