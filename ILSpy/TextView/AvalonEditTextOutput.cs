@@ -223,8 +223,11 @@ namespace ICSharpCode.ILSpy.TextView
 			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference, IsLocal = isLocal });
 		}
 		
+		static readonly bool USE_FOLDING = false;
 		public void MarkFoldStart(string collapsedText, bool defaultCollapsed)
 		{
+			if (!USE_FOLDING)
+				return;
 			WriteIndent();
 			openFoldings.Push(
 				new NewFolding {
@@ -236,6 +239,8 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		public void MarkFoldEnd()
 		{
+			if (!USE_FOLDING)
+				return;
 			NewFolding f = openFoldings.Pop();
 			f.EndOffset = this.TextLength;
 			this.Foldings.Add(f);
