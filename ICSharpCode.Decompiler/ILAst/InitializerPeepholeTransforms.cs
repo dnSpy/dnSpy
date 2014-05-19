@@ -43,8 +43,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			    arrayLength > 0) {
 				ILExpression[] newArr;
 				int initArrayPos;
-				if (ForwardScanInitializeArrayRuntimeHelper(body, pos + 1, v, new SZArraySig(elementType.ToTypeSig()), arrayLength, out newArr, out initArrayPos)) {
-					var arrayType = new ArraySig(elementType.ToTypeSig(), 1, new uint[1], new int[1]);
+				if (ForwardScanInitializeArrayRuntimeHelper(body, pos + 1, v, new SZArraySig(elementType.ToTypeSigInternal()), arrayLength, out newArr, out initArrayPos)) {
+					var arrayType = new ArraySig(elementType.ToTypeSigInternal(), 1, new uint[1], new int[1]);
 					arrayType.Sizes[0] = (uint)(arrayLength + 1);
 					body[pos] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, arrayType.ToTypeDefOrRef(), newArr));
 					body.RemoveAt(initArrayPos);
@@ -75,7 +75,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 				}
 				if (operands.Count == arrayLength) {
-					var arrayType = new ArraySig(elementType.ToTypeSig(), 1, new uint[1], new int[1]);
+					var arrayType = new ArraySig(elementType.ToTypeSigInternal(), 1, new uint[1], new int[1]);
 					arrayType.Sizes[0] = (uint)(arrayLength + 1);
 					expr.Arguments[0] = new ILExpression(ILCode.InitArray, arrayType.ToTypeDefOrRef(), operands);
 					body.RemoveRange(pos + 1, numberOfInstructionsToRemove);
@@ -298,7 +298,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (Ast.Transforms.DelegateConstruction.IsPotentialClosure(context, newObjType.ResolveWithinSameModule()))
 				return false;
 
-			ILExpression initializer = ParseObjectInitializer(body, ref pos, v, newObjExpr, IsCollectionType(newObjType.ToTypeSig()), isValueType);
+			ILExpression initializer = ParseObjectInitializer(body, ref pos, v, newObjExpr, IsCollectionType(newObjType.ToTypeSigInternal()), isValueType);
 
 			if (initializer.Arguments.Count == 1) // only newobj argument, no initializer elements
 				return false;

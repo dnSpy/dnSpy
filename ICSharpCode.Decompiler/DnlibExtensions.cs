@@ -311,7 +311,7 @@ namespace ICSharpCode.Decompiler
 			type = type.RemovePinnedAndModifiers();
 			if (type.IsGenericInstanceType)
 				return ((GenericInstSig)type).GenericType.TypeDefOrRef;
-			else if (type.IsTypeDefOrRef)
+			else if (type.IsTypeDefOrRefSig)
 				return ((TypeDefOrRefSig)type).TypeDefOrRef;
 			else
 				return null;
@@ -334,7 +334,7 @@ namespace ICSharpCode.Decompiler
 			var list = new List<Parameter>();
 			int paramIndex = 0, methodSigIndex = 0;
 			if (method.MethodSig.HasThis)
-				list.Add(new Parameter(paramIndex++, Parameter.HIDDEN_THIS_METHOD_SIG_INDEX, method.DeclaringType.ToTypeSig()));
+				list.Add(new Parameter(paramIndex++, Parameter.HIDDEN_THIS_METHOD_SIG_INDEX, method.DeclaringType.ToTypeSigInternal()));
 			foreach (var type in method.MethodSig.GetParameters())
 				list.Add(new Parameter(paramIndex++, methodSigIndex++, type));
 			return list;
@@ -467,7 +467,7 @@ namespace ICSharpCode.Decompiler
 			var ts = tdr as TypeSpec;
 			if (ts != null)
 				return IsValueType(ts.TypeSig);
-			return tdr.IsValueType;
+			return tdr.IsValueTypeCached;
 		}
 
 		public static bool IsValueType(TypeSig ts)
@@ -488,6 +488,11 @@ namespace ICSharpCode.Decompiler
 			default:
 				return ts.IsValueType;
 			}
+		}
+
+		public static TypeSig ToTypeSigInternal(this ITypeDefOrRef type)
+		{
+			return type == null ? null : type.ToTypeSig();
 		}
 	}
 }

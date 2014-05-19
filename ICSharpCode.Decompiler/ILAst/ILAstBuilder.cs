@@ -627,7 +627,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (methodDef.HasThis) {
 				TypeDef type = methodDef.DeclaringType;
 				thisParameter = new ILVariable();
-				thisParameter.Type = DnlibExtensions.IsValueType(type) ? new ByRefSig(type.ToTypeSig()) : type.ToTypeSig();
+				thisParameter.Type = DnlibExtensions.IsValueType(type) ? new ByRefSig(type.ToTypeSigInternal()) : type.ToTypeSigInternal();
 				thisParameter.Name = "this";
 				thisParameter.OriginalParameter = methodDef.Parameters[0];
 			}
@@ -705,7 +705,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					List<ILNode> handlerAst = ConvertToAst(body.CutRange(startIdx, endIdx - startIdx), nestedEHs);
 					if (eh.HandlerType == ExceptionHandlerType.Catch) {
 						ILTryCatchBlock.CatchBlock catchBlock = new ILTryCatchBlock.CatchBlock() {
-							ExceptionType = eh.CatchType.ToTypeSig(),
+							ExceptionType = eh.CatchType.ToTypeSigInternal(),
 							Body = handlerAst
 						};
 						// Handle the automatically pushed exception on the stack
@@ -718,7 +718,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						tryCatchBlock.FaultBlock = new ILBlock(handlerAst);
 					} else if (useNewFilterCode && eh.HandlerType == ExceptionHandlerType.Filter) {
 						ILTryCatchBlock.CatchBlock catchBlock = new ILTryCatchBlock.CatchBlock() {
-							ExceptionType = eh.CatchType.ToTypeSig(),
+							ExceptionType = eh.CatchType.ToTypeSigInternal(),
 							Body = handlerAst
 						};
 						// Handle the automatically pushed exception on the stack

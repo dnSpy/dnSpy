@@ -619,7 +619,7 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Initblk:     return InlineAssembly(byteCode, args);
 					case ILCode.Initobj:      return InlineAssembly(byteCode, args);
 				case ILCode.DefaultValue:
-					return MakeDefaultValue(((ITypeDefOrRef)operand).ToTypeSig());
+					return MakeDefaultValue(((ITypeDefOrRef)operand).ToTypeSigInternal());
 					case ILCode.Jmp: return InlineAssembly(byteCode, args);
 				case ILCode.Ldc_I4:
 					return AstBuilder.MakePrimitive((int)operand, byteCode.InferredType.ToTypeDefOrRef());

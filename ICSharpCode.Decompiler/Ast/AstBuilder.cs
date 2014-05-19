@@ -1654,7 +1654,7 @@ namespace ICSharpCode.Decompiler.Ast
 					return new Ast.PrimitiveExpression(CSharpPrimitiveCast.Cast(enumBaseTypeCode, val, false)).CastTo(ConvertType(type));
 				}
 			}
-			TypeCode code = TypeAnalysis.GetTypeCode(type.ToTypeSig());
+			TypeCode code = TypeAnalysis.GetTypeCode(type.ToTypeSigInternal());
 			if (code == TypeCode.Object || code == TypeCode.Empty)
 				code = TypeCode.Int32;
 			return new Ast.PrimitiveExpression(CSharpPrimitiveCast.Cast(code, val, false));

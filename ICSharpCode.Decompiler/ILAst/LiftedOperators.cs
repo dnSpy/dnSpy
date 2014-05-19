@@ -141,7 +141,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				{
 					if (e.Code != this.code) return false;
 					var m = (IMethod)e.Operand;
-					return m.Name == this.method && TypeAnalysis.IsNullableType(m.DeclaringType.ToTypeSig()) && base.Match(pm, e);
+					return m.Name == this.method && TypeAnalysis.IsNullableType(m.DeclaringType.ToTypeSigInternal()) && base.Match(pm, e);
 				}
 			}
 

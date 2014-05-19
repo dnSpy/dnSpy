@@ -54,7 +54,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (args[0].Match(ILCode.Ldc_I4, out val)) {
 						expr.Code = ILCode.Ldc_Decimal;
 						expr.Operand = new decimal(val);
-						expr.InferredType = r.DeclaringType.ToTypeSig();
+						expr.InferredType = r.DeclaringType.ToTypeSigInternal();
 						expr.Arguments.Clear();
 						return true;
 					}
@@ -68,7 +68,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					{
 						expr.Code = ILCode.Ldc_Decimal;
 						expr.Operand = new decimal(lo, mid, hi, isNegative != 0, (byte)scale);
-						expr.InferredType = r.DeclaringType.ToTypeSig();
+						expr.InferredType = r.DeclaringType.ToTypeSigInternal();
 						expr.Arguments.Clear();
 						return true;
 					}
