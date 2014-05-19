@@ -505,7 +505,7 @@ namespace ICSharpCode.Decompiler.Ast
 			} else if (type is TypeDefOrRefSig) {
 				return ConvertType(((TypeDefOrRefSig)type).TypeDefOrRef, typeAttributes, ref typeIndex, options);
 			} else
-				return ConvertType(type.ToTypeDefOrRef(), typeAttributes, ref typeIndex, options);
+				return ConvertType(type.ToTypeDefOrRefInternal(), typeAttributes, ref typeIndex, options);
 		}
 
 		static AstType ConvertType(ITypeDefOrRef type, IHasCustomAttribute typeAttributes, ref int typeIndex, ConvertTypeOptions options)
@@ -1082,7 +1082,7 @@ namespace ICSharpCode.Decompiler.Ast
 			} else {
 				TypeCode c = Type.GetTypeCode(constant.GetType());
 				if (c >= TypeCode.SByte && c <= TypeCode.UInt64 && !isEnumMemberDeclaration) {
-					return MakePrimitive((long)CSharpPrimitiveCast.Cast(TypeCode.Int64, constant, false), type.ToTypeDefOrRef());
+					return MakePrimitive((long)CSharpPrimitiveCast.Cast(TypeCode.Int64, constant, false), type.ToTypeDefOrRefInternal());
 				} else {
 					return new PrimitiveExpression(constant);
 				}
@@ -1562,7 +1562,7 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 			}
 			if (argument.Value is TypeSig) {
-				return CreateTypeOfExpression(((TypeSig)argument.Value).ToTypeDefOrRef());
+				return CreateTypeOfExpression(((TypeSig)argument.Value).ToTypeDefOrRefInternal());
 			} else if (argument.Value is UTF8String) {
 				return new PrimitiveExpression(((UTF8String)argument.Value).String);
 			} else {

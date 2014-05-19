@@ -409,7 +409,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						case "Address":
 							ByRefSig brt = cecilMethod.MethodSig.RetType as ByRefSig;
 							if (brt != null) {
-								IMethod getMethod = new MemberRefUser(cecilMethod.Module, "Get", cecilMethod.MethodSig.Clone(), declArrayType.ToTypeDefOrRef());
+								IMethod getMethod = new MemberRefUser(cecilMethod.Module, "Get", cecilMethod.MethodSig.Clone(), declArrayType.ToTypeDefOrRefInternal());
 								getMethod.MethodSig.RetType = declArrayType.Next;
 								expr.Operand = getMethod;
 							}

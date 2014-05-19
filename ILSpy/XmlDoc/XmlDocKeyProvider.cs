@@ -133,7 +133,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 				}
 				b.Append(gp.Number);
 			} else {
-				var typeRef = type.ToTypeDefOrRef();
+				var typeRef = Decompiler.DnlibExtensions.ToTypeDefOrRefInternal(type);
 				if (typeRef.DeclaringType != null) {
 					AppendTypeName(b, Decompiler.DnlibExtensions.ToTypeSigInternal(typeRef.DeclaringType));
 					b.Append('.');

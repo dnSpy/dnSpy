@@ -43,7 +43,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			get
 			{
 				return Language.TypeToString(analyzedField.DeclaringType, true) +
-					"." + analyzedField.Name + " : " + this.Language.TypeToString(analyzedField.FieldType.ToTypeDefOrRef(), false, analyzedField);
+					"." + analyzedField.Name + " : " + this.Language.TypeToString(Decompiler.DnlibExtensions.ToTypeDefOrRefInternal(analyzedField.FieldType), false, analyzedField);
 			}
 		}
 

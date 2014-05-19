@@ -136,7 +136,7 @@ namespace ICSharpCode.Decompiler
 				return (FieldDef)field;
 		}
 
-		public static TypeDef Resolve(this TypeSig type)
+		public static TypeDef Resolve(this IType type)
 		{
 			return type.ScopeType.ResolveTypeDef();
 		}
@@ -493,6 +493,11 @@ namespace ICSharpCode.Decompiler
 		public static TypeSig ToTypeSigInternal(this ITypeDefOrRef type)
 		{
 			return type == null ? null : type.ToTypeSig();
+		}
+
+		public static ITypeDefOrRef ToTypeDefOrRefInternal(this TypeSig type)
+		{
+			return type == null ? null : type.ToTypeDefOrRef();
 		}
 	}
 }
