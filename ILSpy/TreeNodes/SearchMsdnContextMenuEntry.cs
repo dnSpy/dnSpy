@@ -71,6 +71,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				var methodNode = node as MethodTreeNode;
 				if (methodNode != null && (!methodNode.IsPublicAPI || !methodNode.MethodDefinition.DeclaringType.IsPublic))
 					return false;
+
+				var namespaceNode = node as NamespaceTreeNode;
+				if (namespaceNode != null && string.IsNullOrEmpty(namespaceNode.Name))
+					return false;
 			}
 
 			return true;
