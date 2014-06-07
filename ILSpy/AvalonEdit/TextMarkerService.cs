@@ -28,20 +28,30 @@ using ICSharpCode.AvalonEdit.Rendering;
 
 namespace ICSharpCode.ILSpy.AvalonEdit
 {
+	using TextView = ICSharpCode.AvalonEdit.Rendering.TextView;
 	/// <summary>
 	/// Handles the text markers for a code editor.
 	/// </summary>
-	public sealed class TextMarkerService : DocumentColorizingTransformer, IBackgroundRenderer, ITextMarkerService, ITextViewConnect
+	sealed class TextMarkerService : DocumentColorizingTransformer, IBackgroundRenderer, ITextMarkerService
 	{
 		TextSegmentCollection<TextMarker> markers;
-		TextDocument document;
+		TextView textView;
 		
-		public TextMarkerService(TextDocument document)
+		public TextMarkerService(TextView textView)
 		{
-			if (document == null)
-				throw new ArgumentNullException("document");
-			this.document = document;
-			this.markers = new TextSegmentCollection<TextMarker>(document);
+			if (textView == null)
+				throw new ArgumentNullException("textView");
+			this.textView = textView;
+			textView.DocumentChanged += OnDocumentChanged;
+			OnDocumentChanged(null, null);
+		}
+
+		void OnDocumentChanged(object sender, EventArgs e)
+		{
+			if (textView.Document != null)
+				markers = new TextSegmentCollection<TextMarker>(textView.Document);
+			else
+				markers = null;
 		}
 		
 		#region ITextMarkerService
@@ -50,7 +60,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			if (markers == null)
 				throw new InvalidOperationException("Cannot create a marker when not attached to a document");
 			
-			int textLength = document.TextLength;
+			int textLength = textView.Document.TextLength;
 			if (startOffset < 0 || startOffset > textLength)
 				throw new ArgumentOutOfRangeException("startOffset", startOffset, "Value must be between 0 and " + textLength);
 			if (length < 0 || startOffset + length > textLength)
@@ -102,9 +112,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		/// </summary>
 		internal void Redraw(ISegment segment)
 		{
-			foreach (var view in textViews) {
-				view.Redraw(segment, DispatcherPriority.Normal);
-			}
+			textView.Redraw(segment, DispatcherPriority.Normal);
 			if (RedrawRequested != null)
 				RedrawRequested(this, EventArgs.Empty);
 		}
@@ -228,29 +236,9 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				yield return new Point(start.X + i * offset, start.Y - ((i + 1) % 2 == 0 ? offset : 0));
 		}
 		#endregion
-		
-		#region ITextViewConnect
-		readonly List<ICSharpCode.AvalonEdit.Rendering.TextView> textViews = new List<ICSharpCode.AvalonEdit.Rendering.TextView>();
-		
-		void ITextViewConnect.AddToTextView(ICSharpCode.AvalonEdit.Rendering.TextView textView)
-		{
-			if (textView != null && !textViews.Contains(textView)) {
-				Debug.Assert(textView.Document == document);
-				textViews.Add(textView);
-			}
-		}
-		
-		void ITextViewConnect.RemoveFromTextView(ICSharpCode.AvalonEdit.Rendering.TextView textView)
-		{
-			if (textView != null) {
-				Debug.Assert(textView.Document == document);
-				textViews.Remove(textView);
-			}
-		}
-		#endregion
 	}
 	
-	public sealed class TextMarker : TextSegment, ITextMarker
+	sealed class TextMarker : TextSegment, ITextMarker
 	{
 		readonly TextMarkerService service;
 		
