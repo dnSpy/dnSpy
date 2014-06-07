@@ -19,7 +19,6 @@
 using System;
 using System.Linq;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.Options;
 using ICSharpCode.TreeView;
 using Mono.Cecil;
 
@@ -48,13 +47,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Text
 		{
-			get
-			{
-				return this.Language.TypeToString(tr, true) +
-					(DisplaySettingsPanel.CurrentDisplaySettings.ShowMetadataTokens ?
-					" @" + tr.MetadataToken.ToInt32().ToString("x8") :
-					"");
-			}
+			get { return this.Language.TypeToString(tr, true) + tr.MetadataToken.ToSuffixString(); }
 		}
 
 		public override object Icon

@@ -22,7 +22,6 @@ using System.Linq;
 using System.Windows.Media;
 
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.Options;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -60,14 +59,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Text {
-			get
-			{
-				return HighlightSearchMatch(
-					this.Language.FormatTypeName(type),
-					DisplaySettingsPanel.CurrentDisplaySettings.ShowMetadataTokens ?
-						" @" + type.MetadataToken.ToInt32().ToString("x8") :
-						"");
-			}
+			get { return HighlightSearchMatch(this.Language.FormatTypeName(type), type.MetadataToken.ToSuffixString()); }
 		}
 		
 		public override bool IsPublicAPI {

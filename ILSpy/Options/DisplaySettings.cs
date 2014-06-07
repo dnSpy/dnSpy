@@ -88,10 +88,8 @@ namespace ICSharpCode.ILSpy.Options
 		public bool ShowMetadataTokens
 		{
 			get { return showMetadataTokens; }
-			set
-			{
-				if (showMetadataTokens != value)
-				{
+			set {
+				if (showMetadataTokens != value) {
 					showMetadataTokens = value;
 					OnPropertyChanged("ShowMetadataTokens");
 				}

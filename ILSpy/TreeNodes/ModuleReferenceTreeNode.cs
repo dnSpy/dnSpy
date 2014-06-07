@@ -18,7 +18,6 @@
 
 using System;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.Options;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -38,13 +37,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Text {
-			get
-			{
-				return r.Name +
-					(DisplaySettingsPanel.CurrentDisplaySettings.ShowMetadataTokens ?
-					" @" + r.MetadataToken.ToInt32().ToString("x8") :
-					"");
-			}
+			get { return r.Name + r.MetadataToken.ToSuffixString(); }
 		}
 		
 		public override object Icon {

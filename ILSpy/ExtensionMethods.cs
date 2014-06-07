@@ -18,8 +18,8 @@
 
 using System;
 using System.Collections.Generic;
-using ICSharpCode.Decompiler;
 using Mono.Cecil;
+using ICSharpCode.ILSpy.Options;
 
 namespace ICSharpCode.ILSpy
 {
@@ -46,6 +46,14 @@ namespace ICSharpCode.ILSpy
 				type = resolvedBaseType;
 			}
 			return false;
+		}
+		
+		public static string ToSuffixString(this MetadataToken token)
+		{
+			if (!DisplaySettingsPanel.CurrentDisplaySettings.ShowMetadataTokens)
+				return string.Empty;
+			
+			return " @" + token.ToInt32().ToString("x8");
 		}
 	}
 }

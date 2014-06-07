@@ -21,7 +21,6 @@ using System.Text;
 using System.Windows.Media;
 
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.Options;
 using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -69,10 +68,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 			b.Append(") : ");
 			b.Append(language.TypeToString(method.ReturnType, false, method.MethodReturnType));
-			if (DisplaySettingsPanel.CurrentDisplaySettings.ShowMetadataTokens)
-			{
-				b.Append(" @" + method.MetadataToken.ToInt32().ToString("x8"));
-			}
+			b.Append(method.MetadataToken.ToSuffixString());
 			return HighlightSearchMatch(method.Name, b.ToString());
 		}
 
