@@ -1,0 +1,16 @@
+﻿<Grid xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:cc="clr-namespace:ILSpy.BamlDecompiler.Tests.Cases">
+	<cc:CustomControl>
+		<cc:CustomControl.Style>
+			<Style />
+		</cc:CustomControl.Style>
+		<Grid.Row>0</Grid.Row>
+		<cc:CustomControl.CustomName>Custom1</cc:CustomControl.CustomName>
+	</cc:CustomControl>
+	<Label>
+		<Label.Style>
+			<Style />
+		</Label.Style>
+		<Grid.Row>0</Grid.Row>
+		<cc:CustomControl.CustomName>Label1</cc:CustomControl.CustomName>
+	</Label>
+</Grid>
