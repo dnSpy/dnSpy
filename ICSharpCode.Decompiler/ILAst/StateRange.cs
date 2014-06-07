@@ -137,7 +137,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		internal DefaultDictionary<ILNode, StateRange> ranges;
 		SymbolicEvaluationContext evalContext;
 		
-		internal Dictionary<MethodDefinition, Interval> finallyMethodToStateInterval; // used only for IteratorDispose
+		internal Dictionary<MethodDefinition, StateRange> finallyMethodToStateRange; // used only for IteratorDispose
 		
 		/// <summary>
 		/// Initializes the state range logic:
@@ -148,7 +148,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			this.mode = mode;
 			this.stateField = stateField;
 			if (mode == StateRangeAnalysisMode.IteratorDispose) {
-				finallyMethodToStateInterval = new Dictionary<MethodDefinition, Interval>();
+				finallyMethodToStateRange = new Dictionary<MethodDefinition, StateRange>();
 			}
 			
 			ranges = new DefaultDictionary<ILNode, StateRange>(n => new StateRange());
@@ -249,9 +249,9 @@ namespace ICSharpCode.Decompiler.ILAst
 						// in some cases (e.g. foreach over array) the C# compiler produces a finally method outside of try-finally blocks
 						if (mode == StateRangeAnalysisMode.IteratorDispose) {
 							MethodDefinition mdef = (expr.Operand as MethodReference).ResolveWithinSameModule();
-							if (mdef == null || finallyMethodToStateInterval.ContainsKey(mdef))
+							if (mdef == null || finallyMethodToStateRange.ContainsKey(mdef))
 								throw new SymbolicAnalysisFailedException();
-							finallyMethodToStateInterval.Add(mdef, nodeRange.ToEnclosingInterval());
+							finallyMethodToStateRange.Add(mdef, nodeRange);
 							break;
 						} else {
 							goto default;

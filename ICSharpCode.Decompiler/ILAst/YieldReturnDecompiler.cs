@@ -312,7 +312,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		// This is (int.MinValue, int.MaxValue) for the first instruction.
 		// These ranges are propagated depending on the conditional jumps performed by the code.
 		
-		Dictionary<MethodDefinition, Interval> finallyMethodToStateInterval;
+		Dictionary<MethodDefinition, StateRange> finallyMethodToStateRange;
 		
 		void ConstructExceptionTable()
 		{
@@ -321,11 +321,11 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			var rangeAnalysis = new StateRangeAnalysis(ilMethod.Body[0], StateRangeAnalysisMode.IteratorDispose, stateField);
 			rangeAnalysis.AssignStateRanges(ilMethod.Body, ilMethod.Body.Count);
-			finallyMethodToStateInterval = rangeAnalysis.finallyMethodToStateInterval;
+			finallyMethodToStateRange = rangeAnalysis.finallyMethodToStateRange;
 			
 			// Now look at the finally blocks:
 			foreach (var tryFinally in ilMethod.GetSelfAndChildrenRecursive<ILTryCatchBlock>()) {
-				Interval interval = rangeAnalysis.ranges[tryFinally.TryBlock.Body[0]].ToEnclosingInterval();
+				var range = rangeAnalysis.ranges[tryFinally.TryBlock.Body[0]];
 				var finallyBody = tryFinally.FinallyBlock.Body;
 				if (finallyBody.Count != 2)
 					throw new SymbolicAnalysisFailedException();
@@ -338,9 +338,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					throw new SymbolicAnalysisFailedException();
 				
 				MethodDefinition mdef = GetMethodDefinition(call.Operand as MethodReference);
-				if (mdef == null || finallyMethodToStateInterval.ContainsKey(mdef))
+				if (mdef == null || finallyMethodToStateRange.ContainsKey(mdef))
 					throw new SymbolicAnalysisFailedException();
-				finallyMethodToStateInterval.Add(mdef, interval);
+				finallyMethodToStateRange.Add(mdef, range);
 			}
 			rangeAnalysis = null;
 		}
@@ -507,21 +507,21 @@ namespace ICSharpCode.Decompiler.ILAst
 					MethodDefinition method = GetMethodDefinition(expr.Operand as MethodReference);
 					if (method == null)
 						throw new SymbolicAnalysisFailedException();
-					Interval interval;
+					StateRange stateRange;
 					if (method == disposeMethod) {
 						// Explicit call to dispose is used for "yield break;" within the method.
 						ILExpression br = body.ElementAtOrDefault(++pos) as ILExpression;
 						if (br == null || !(br.Code == ILCode.Br || br.Code == ILCode.Leave) || br.Operand != returnFalseLabel)
 							throw new SymbolicAnalysisFailedException();
 						newBody.Add(MakeGoTo(returnFalseLabel));
-					} else if (finallyMethodToStateInterval.TryGetValue(method, out interval)) {
+					} else if (finallyMethodToStateRange.TryGetValue(method, out stateRange)) {
 						// Call to Finally-method
-						int index = stateChanges.FindIndex(ss => ss.NewState >= interval.Start && ss.NewState <= interval.End);
+						int index = stateChanges.FindIndex(ss => stateRange.Contains(ss.NewState));
 						if (index < 0)
 							throw new SymbolicAnalysisFailedException();
 						
 						ILLabel label = new ILLabel();
-						label.Name = "JumpOutOfTryFinally" + interval.Start + "_" + interval.End;
+						label.Name = "JumpOutOfTryFinally" + stateChanges[index].NewState;
 						newBody.Add(new ILExpression(ILCode.Leave, label));
 						
 						SetState stateChange = stateChanges[index];
