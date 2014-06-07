@@ -150,4 +150,10 @@ public class TypeAnalysisTests
 	{
 		return Math.Abs(a - b);
 	}
+	
+	public void Bug393(int valuePos)
+	{
+		if ((0x2A >> (valuePos++)) == 0)
+			return;
+	}
 }
