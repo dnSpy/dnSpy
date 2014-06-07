@@ -652,7 +652,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				// Find the first and widest scope
 				int tryStart = ehs.Min(eh => eh.TryStart.Offset);
 				int tryEnd   = ehs.Where(eh => eh.TryStart.Offset == tryStart).Max(eh => eh.TryEnd.Offset);
-				var handlers = ehs.Where(eh => eh.TryStart.Offset == tryStart && eh.TryEnd.Offset == tryEnd).OrderBy(eh => eh.TryStart.Offset).ToList();
+				var handlers = ehs.Where(eh => eh.TryStart.Offset == tryStart && eh.TryEnd.Offset == tryEnd).ToList();
 				
 				// Remember that any part of the body migt have been removed due to unreachability
 				
