@@ -73,9 +73,8 @@ namespace ICSharpCode.ILSpy.Xaml
 							output.Write(ex.ToString());
 						}
 						return output;
-					}, token),
-				t => textView.ShowNode(t.Result, this, highlighting)
-			);
+					}, token)
+			).Then(t => textView.ShowNode(t, this, highlighting)).HandleExceptions();
 			return true;
 		}
 	}

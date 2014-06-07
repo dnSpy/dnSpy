@@ -26,12 +26,12 @@ namespace ILSpy.BamlDecompiler
 		
 		public override bool View(DecompilerTextView textView)
 		{
-			AvalonEditTextOutput output = new AvalonEditTextOutput();
 			IHighlightingDefinition highlighting = null;
 			
 			textView.RunWithCancellation(
 				token => Task.Factory.StartNew(
 					() => {
+						AvalonEditTextOutput output = new AvalonEditTextOutput();
 						try {
 							if (LoadBaml(output))
 								highlighting = HighlightingManager.Instance.GetDefinitionByExtension(".xml");
@@ -39,9 +39,9 @@ namespace ILSpy.BamlDecompiler
 							output.Write(ex.ToString());
 						}
 						return output;
-					}, token),
-				t => textView.ShowNode(t.Result, this, highlighting)
-			);
+					}, token))
+				.Then(output => textView.ShowNode(output, this, highlighting))
+				.HandleExceptions();
 			return true;
 		}
 		
