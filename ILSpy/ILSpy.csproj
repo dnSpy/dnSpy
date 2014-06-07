@@ -230,6 +230,7 @@
       <Link>license.txt</Link>
     </EmbeddedResource>
     <Resource Include="Images\AssemblyList.png" />
+    <Resource Include="Images\AssemblyListGAC.png" />
     <Resource Include="Images\AssemblyWarning.png" />
     <Resource Include="Images\ViewCode.png" />
     <Resource Include="Images\SaveFile.png" />
