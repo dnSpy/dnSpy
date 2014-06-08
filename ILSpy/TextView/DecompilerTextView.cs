@@ -226,6 +226,10 @@ namespace ICSharpCode.ILSpy.TextView
 			if (waitAdorner.Visibility != Visibility.Visible) {
 				waitAdorner.Visibility = Visibility.Visible;
 				waitAdorner.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, new Duration(TimeSpan.FromSeconds(0.5)), FillBehavior.Stop));
+				var taskBar = MainWindow.Instance.TaskbarItemInfo;
+				if (taskBar != null) {
+					taskBar.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
+				}
 			}
 			CancellationTokenSource previousCancellationTokenSource = currentCancellationTokenSource;
 			var myCancellationTokenSource = new CancellationTokenSource();
@@ -248,6 +252,10 @@ namespace ICSharpCode.ILSpy.TextView
 					if (currentCancellationTokenSource == myCancellationTokenSource) {
 						currentCancellationTokenSource = null;
 						waitAdorner.Visibility = Visibility.Collapsed;
+						var taskBar = MainWindow.Instance.TaskbarItemInfo;
+						if (taskBar != null) {
+							taskBar.ProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+						}
 						if (task.IsCanceled) {
 							AvalonEditTextOutput output = new AvalonEditTextOutput();
 							output.WriteLine("The operation was canceled.");
