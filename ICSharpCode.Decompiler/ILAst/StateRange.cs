@@ -213,7 +213,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						break;
 					case ILCode.Brtrue:
 						{
-							SymbolicValue val = evalContext.Eval(expr.Arguments[0]);
+							SymbolicValue val = evalContext.Eval(expr.Arguments[0]).AsBool();
 							if (val.Type == SymbolicValueType.StateEquals) {
 								ranges[(ILLabel)expr.Operand].UnionWith(nodeRange, val.Constant, val.Constant);
 								StateRange nextRange = ranges[body[i + 1]];

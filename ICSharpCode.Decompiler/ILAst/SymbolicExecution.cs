@@ -67,7 +67,16 @@ namespace ICSharpCode.Decompiler.ILAst
 			this.Type = type;
 			this.Constant = constant;
 		}
-		
+
+		public SymbolicValue AsBool()
+		{
+			if (Type == SymbolicValueType.State) {
+				// convert state integer to bool:
+				// if (state + c) = if (state + c != 0) = if (state != -c)
+				return new SymbolicValue(SymbolicValueType.StateInEquals, unchecked(-Constant));
+			}
+			return this;
+		}
 		public override string ToString()
 		{
 			return string.Format("[SymbolicValue {0}: {1}]", this.Type, this.Constant);
@@ -133,7 +142,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					// bool: (state == right.Constant - left.Constant)
 					return new SymbolicValue(expr.Code == ILCode.Ceq ? SymbolicValueType.StateEquals : SymbolicValueType.StateInEquals, unchecked(right.Constant - left.Constant));
 				case ILCode.LogicNot:
-					SymbolicValue val = Eval(expr.Arguments[0]);
+					SymbolicValue val = Eval(expr.Arguments[0]).AsBool();
 					if (val.Type == SymbolicValueType.StateEquals)
 						return new SymbolicValue(SymbolicValueType.StateInEquals, val.Constant);
 					else if (val.Type == SymbolicValueType.StateInEquals)
@@ -141,7 +150,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					else
 						return Failed();
 				default:
-						return Failed();
+					return Failed();
 			}
 		}
 	}
