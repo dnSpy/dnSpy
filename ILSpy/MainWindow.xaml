@@ -13,7 +13,7 @@
 	FocusManager.FocusedElement="{Binding ElementName=treeView}"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008" d:DesignHeight="500" d:DesignWidth="500"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
-	>
+>
 	<Window.Resources>
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 	</Window.Resources>
@@ -39,6 +39,9 @@
 			Command="Search"
 			Executed="SearchCommandExecuted" />
 	</Window.CommandBindings>
+	<Window.TaskbarItemInfo>
+		<TaskbarItemInfo />
+	</Window.TaskbarItemInfo>
 	<DockPanel>
 		<!-- Main menu -->
 		<Menu DockPanel.Dock="Top" Name="mainMenu" Height="23">
@@ -83,7 +86,7 @@
 		<StatusBar x:Name="statusBar" DockPanel.Dock="Bottom" Height="26" Visibility="Collapsed">
 			<StatusBarItem DockPanel.Dock="Right">
 				<TextBlock VerticalAlignment="Center"
-				           HorizontalAlignment="Right"				           
+				           HorizontalAlignment="Right"
 				           x:Name="StatusLabel"
 				           ToolTip="Status"
 				           Text="Stand by..."/>
@@ -113,7 +116,7 @@
 				SelectionChanged="TreeView_SelectionChanged"
 				ShowRoot="False"
 				AllowDropOrder="True"
-				AllowDrop="True" 
+				AllowDrop="True"
 				BorderThickness="0,1,1,1" Visibility="Visible" />
 			<GridSplitter
 				Grid.ZIndex="1"
@@ -146,10 +149,10 @@
 						</StackPanel>
 					</DockPanel>
 				</Border>
-
+				
 				<controls:DockedPane x:Name="topPane" Grid.Row="1" Title="Top" Visibility="Collapsed"
-						CloseButtonClicked="TopPane_CloseButtonClicked" Margin="0,0,0,3"
-						BorderThickness="1,1,0,1" />
+					CloseButtonClicked="TopPane_CloseButtonClicked" Margin="0,0,0,3"
+					BorderThickness="1,1,0,1" />
 				
 				<GridSplitter
 					Grid.ZIndex="1"
@@ -173,9 +176,9 @@
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Center"
 					Visibility="{Binding Visibility, ElementName=bottomPane}" />
-
+				
 				<controls:DockedPane x:Name="bottomPane" Grid.Row="5" Title="Bottom" Visibility="Collapsed"
-						CloseButtonClicked="BottomPane_CloseButtonClicked" Margin="0,3,0,0" BorderThickness="1,1,0,1"/>
+					CloseButtonClicked="BottomPane_CloseButtonClicked" Margin="0,3,0,0" BorderThickness="1,1,0,1"/>
 			</Grid>
 		</Grid>
 	</DockPanel>
