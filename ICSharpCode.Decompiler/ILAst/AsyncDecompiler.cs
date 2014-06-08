@@ -58,6 +58,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		FieldDefinition builderField;
 		FieldDefinition stateField;
 		Dictionary<FieldDefinition, ILVariable> fieldToParameterMap = new Dictionary<FieldDefinition, ILVariable>();
+		ILVariable cachedStateVar;
 		
 		// These fields are set by AnalyzeMoveNext()
 		int finalState = -2;
@@ -155,7 +156,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression loadStateMachineForBuilderExpr;
 			if (!loadBuilderExpr.Match(ILCode.Ldfld, out builderFieldRef, out loadStateMachineForBuilderExpr))
 				return false;
-			if (!loadStateMachineForBuilderExpr.MatchLdloca(stateMachineVar))
+			if (!(loadStateMachineForBuilderExpr.MatchLdloca(stateMachineVar) || loadStateMachineForBuilderExpr.MatchLdloc(stateMachineVar)))
 				return false;
 			builderField = builderFieldRef.ResolveWithinSameModule();
 			if (builderField == null)
@@ -235,36 +236,50 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			ILBlock ilMethod = CreateILAst(moveNextMethod);
 			
-			if (ilMethod.Body.Count != 6)
+			int startIndex;
+			if (ilMethod.Body.Count == 6) {
+				startIndex = 0;
+			} else if (ilMethod.Body.Count == 7) {
+				// stloc(cachedState, ldfld(valuetype StateMachineStruct::<>1__state, ldloc(this)))
+				ILExpression cachedStateInit;
+				if (!ilMethod.Body[0].Match(ILCode.Stloc, out cachedStateVar, out cachedStateInit))
+					throw new SymbolicAnalysisFailedException();
+				ILExpression instanceExpr;
+				FieldReference loadedField;
+				if (!cachedStateInit.Match(ILCode.Ldfld, out loadedField, out instanceExpr) || loadedField.ResolveWithinSameModule() != stateField || !instanceExpr.MatchThis())
+					throw new SymbolicAnalysisFailedException();
+				startIndex = 1;
+			} else {
 				throw new SymbolicAnalysisFailedException();
+			}
 			
-			mainTryCatch = ilMethod.Body[0] as ILTryCatchBlock;
+			mainTryCatch = ilMethod.Body[startIndex + 0] as ILTryCatchBlock;
 			if (mainTryCatch == null || mainTryCatch.CatchBlocks.Count != 1)
 				throw new SymbolicAnalysisFailedException();
 			if (mainTryCatch.FaultBlock != null || mainTryCatch.FinallyBlock != null)
 				throw new SymbolicAnalysisFailedException();
 			
-			setResultAndExitLabel = ilMethod.Body[1] as ILLabel;
+			setResultAndExitLabel = ilMethod.Body[startIndex + 1] as ILLabel;
 			if (setResultAndExitLabel == null)
 				throw new SymbolicAnalysisFailedException();
 			
-			if (!MatchStateAssignment(ilMethod.Body[2], out finalState))
+			if (!MatchStateAssignment(ilMethod.Body[startIndex + 2], out finalState))
 				throw new SymbolicAnalysisFailedException();
 			
 			// call(AsyncTaskMethodBuilder`1::SetResult, ldflda(StateMachine::<>t__builder, ldloc(this)), ldloc(<>t__result))
 			MethodReference setResultMethod;
 			ILExpression builderExpr;
 			if (methodType == AsyncMethodType.TaskOfT) {
-				if (!ilMethod.Body[3].Match(ILCode.Call, out setResultMethod, out builderExpr, out resultExpr))
+				if (!ilMethod.Body[startIndex + 3].Match(ILCode.Call, out setResultMethod, out builderExpr, out resultExpr))
 					throw new SymbolicAnalysisFailedException();
 			} else {
-				if (!ilMethod.Body[3].Match(ILCode.Call, out setResultMethod, out builderExpr))
+				if (!ilMethod.Body[startIndex + 3].Match(ILCode.Call, out setResultMethod, out builderExpr))
 					throw new SymbolicAnalysisFailedException();
 			}
 			if (!(setResultMethod.Name == "SetResult" && IsBuilderFieldOnThis(builderExpr)))
 				throw new SymbolicAnalysisFailedException();
 			
-			exitLabel = ilMethod.Body[4] as ILLabel;
+			exitLabel = ilMethod.Body[startIndex + 4] as ILLabel;
 			if (exitLabel == null)
 				throw new SymbolicAnalysisFailedException();
 		}
@@ -345,7 +360,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (body.Count == 0)
 					throw new SymbolicAnalysisFailedException();
 			}
-			StateRangeAnalysis rangeAnalysis = new StateRangeAnalysis(body[0], StateRangeAnalysisMode.AsyncMoveNext, stateField);
+			StateRangeAnalysis rangeAnalysis = new StateRangeAnalysis(body[0], StateRangeAnalysisMode.AsyncMoveNext, stateField, cachedStateVar);
 			int bodyLength = block.Body.Count;
 			int pos = rangeAnalysis.AssignStateRanges(body, bodyLength);
 			rangeAnalysis.EnsureLabelAtPos(body, ref pos, ref bodyLength);

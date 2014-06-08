@@ -829,7 +829,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Await:
 					{
 						TypeReference taskType = InferTypeForExpression(expr.Arguments[0], null);
-						if (taskType.Name == "Task`1" && taskType.IsGenericInstance && taskType.Namespace == "System.Threading.Tasks") {
+						if (taskType != null && taskType.Name == "Task`1" && taskType.IsGenericInstance && taskType.Namespace == "System.Threading.Tasks") {
 							return ((GenericInstanceType)taskType).GenericArguments[0];
 						}
 						return null;

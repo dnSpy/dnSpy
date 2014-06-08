@@ -143,7 +143,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// Initializes the state range logic:
 		/// Clears 'ranges' and sets 'ranges[entryPoint]' to the full range (int.MinValue to int.MaxValue)
 		/// </summary>
-		public StateRangeAnalysis(ILNode entryPoint, StateRangeAnalysisMode mode, FieldDefinition stateField)
+		public StateRangeAnalysis(ILNode entryPoint, StateRangeAnalysisMode mode, FieldDefinition stateField, ILVariable cachedStateVar = null)
 		{
 			this.mode = mode;
 			this.stateField = stateField;
@@ -154,6 +154,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			ranges = new DefaultDictionary<ILNode, StateRange>(n => new StateRange());
 			ranges[entryPoint] = new StateRange(int.MinValue, int.MaxValue);
 			evalContext = new SymbolicEvaluationContext(stateField);
+			if (cachedStateVar != null)
+				evalContext.AddStateVariable(cachedStateVar);
 		}
 		
 		public int AssignStateRanges(List<ILNode> body, int bodyLength)
