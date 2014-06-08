@@ -167,5 +167,11 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILVariable v;
 			return node.Match(ILCode.Stloc, out v, out expr) && v == expectedVar;
 		}
+		
+		public static bool MatchLdcI4(this ILNode node, int expectedValue)
+		{
+			int v;
+			return node.Match(ILCode.Ldc_I4, out v) && v == expectedValue;
+		}
 	}
 }

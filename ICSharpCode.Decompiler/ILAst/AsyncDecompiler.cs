@@ -333,7 +333,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		bool MatchStateAssignment(ILNode stfld, out int stateID)
 		{
-			// stfld(StateMachine::<>1__state, ldloc(this), ldc.i4(-2))
+			// stfld(StateMachine::<>1__state, ldloc(this), ldc.i4(stateId))
 			stateID = 0;
 			FieldReference fieldRef;
 			ILExpression target, val;
@@ -341,6 +341,31 @@ namespace ICSharpCode.Decompiler.ILAst
 				return fieldRef.ResolveWithinSameModule() == stateField
 					&& target.MatchThis()
 					&& val.Match(ILCode.Ldc_I4, out stateID);
+			}
+			return false;
+		}
+		
+		bool MatchRoslynStateAssignment(List<ILNode> block, int index, out int stateID)
+		{
+			// v = ldc.i4(stateId)
+			// stloc(cachedState, v)
+			// stfld(StateMachine::<>1__state, ldloc(this), v)
+			stateID = 0;
+			if (index < 0)
+				return false;
+			ILVariable v;
+			ILExpression val;
+			if (!block[index].Match(ILCode.Stloc, out v, out val) || !val.Match(ILCode.Ldc_I4, out stateID))
+				return false;
+			ILExpression loadV;
+			if (!block[index + 1].MatchStloc(cachedStateVar, out loadV) || !loadV.MatchLdloc(v))
+				return false;
+			ILExpression target;
+			FieldReference fieldRef;
+			if (block[index + 2].Match(ILCode.Stfld, out fieldRef, out target, out loadV)) {
+				return fieldRef.ResolveWithinSameModule() == stateField
+					&& target.MatchThis()
+					&& loadV.MatchLdloc(v);
 			}
 			return false;
 		}
@@ -450,23 +475,32 @@ namespace ICSharpCode.Decompiler.ILAst
 		List<ILNode> ConvertFinally(List<ILNode> body)
 		{
 			List<ILNode> newBody = new List<ILNode>(body);
+			if (newBody.Count == 0)
+				return newBody;
 			ILLabel endFinallyLabel;
 			ILExpression ceqExpr;
-			if (newBody.Count > 0 && newBody[0].Match(ILCode.Brtrue, out endFinallyLabel, out ceqExpr)) {
-				ILExpression loadDoFinallyBodies, loadZero;
-				object unused;
-				if (ceqExpr.Match(ILCode.Ceq, out unused, out loadDoFinallyBodies, out loadZero)) {
-					int num;
-					if (loadDoFinallyBodies.MatchLdloc(doFinallyBodies) && loadZero.Match(ILCode.Ldc_I4, out num) && num == 0) {
+			if (newBody[0].Match(ILCode.Brtrue, out endFinallyLabel, out ceqExpr)) {
+				ILExpression condition;
+				if (MatchLogicNot(ceqExpr, out condition)) {
+					if (condition.MatchLdloc(doFinallyBodies)) {
 						newBody.RemoveAt(0);
-					}
-				} else if (ceqExpr.Match(ILCode.LogicNot, out loadDoFinallyBodies)) {
-					if (loadDoFinallyBodies.MatchLdloc(doFinallyBodies)) {
+					} else if (condition.Code == ILCode.Clt && condition.Arguments[0].MatchLdloc(cachedStateVar) && condition.Arguments[1].MatchLdcI4(0)) {
 						newBody.RemoveAt(0);
 					}
 				}
 			}
 			return newBody;
+		}
+		
+		bool MatchLogicNot(ILExpression expr, out ILExpression arg)
+		{
+			ILExpression loadZero;
+			object unused;
+			if (expr.Match(ILCode.Ceq, out unused, out arg, out loadZero)) {
+				int num;
+				return loadZero.Match(ILCode.Ldc_I4, out num) && num == 0;
+			}
+			return expr.Match(ILCode.LogicNot, out arg);
 		}
 		
 		void HandleAwait(List<ILNode> newBody, out ILVariable awaiterVar, out FieldDefinition awaiterField, out int targetStateID)
@@ -509,9 +543,10 @@ namespace ICSharpCode.Decompiler.ILAst
 				throw new SymbolicAnalysisFailedException();
 			
 			// stfld(StateMachine::<>1__state, ldloc(this), ldc.i4(0))
-			if (!MatchStateAssignment(newBody.LastOrDefault(), out targetStateID))
-				throw new SymbolicAnalysisFailedException();
-			newBody.RemoveAt(newBody.Count - 1); // remove awaiter field assignment
+			if (MatchStateAssignment(newBody.LastOrDefault(), out targetStateID))
+				newBody.RemoveAt(newBody.Count - 1); // remove awaiter field assignment
+			else if (MatchRoslynStateAssignment(newBody, newBody.Count - 3, out targetStateID))
+				newBody.RemoveRange(newBody.Count - 3, 3); // remove awaiter field assignment
 		}
 		#endregion
 		
