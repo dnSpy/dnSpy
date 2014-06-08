@@ -430,10 +430,9 @@ namespace ICSharpCode.Decompiler.ILAst
 				
 				bodyLength--; // don't conside the stloc instruction to be part of the body
 			}
-			// verify that the last element in the body is a label pointing to the 'ret(false)'
+			// The last element in the body usually is a label pointing to the 'ret(false)'
 			returnFalseLabel = body.ElementAtOrDefault(bodyLength - 1) as ILLabel;
-			if (returnFalseLabel == null)
-				throw new SymbolicAnalysisFailedException();
+			// Note: in Roslyn-compiled code, returnFalseLabel may be null.
 			
 			var rangeAnalysis = new StateRangeAnalysis(body[0], StateRangeAnalysisMode.IteratorMoveNext, stateField);
 			int pos = rangeAnalysis.AssignStateRanges(body, bodyLength);
@@ -485,7 +484,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						throw new SymbolicAnalysisFailedException();
 					int val = (int)expr.Arguments[0].Operand;
 					if (val == 0) {
-						newBody.Add(MakeGoTo(returnFalseLabel));
+						newBody.Add(new ILExpression(ILCode.YieldBreak, null));
 					} else if (val == 1) {
 						newBody.Add(MakeGoTo(labels, currentState));
 					} else {
@@ -497,7 +496,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					// handle direct return (e.g. in release builds)
 					int val = (int)expr.Arguments[0].Operand;
 					if (val == 0) {
-						newBody.Add(MakeGoTo(returnFalseLabel));
+						newBody.Add(new ILExpression(ILCode.YieldBreak, null));
 					} else if (val == 1) {
 						newBody.Add(MakeGoTo(labels, currentState));
 					} else {
@@ -513,7 +512,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						ILExpression br = body.ElementAtOrDefault(++pos) as ILExpression;
 						if (br == null || !(br.Code == ILCode.Br || br.Code == ILCode.Leave) || br.Operand != returnFalseLabel)
 							throw new SymbolicAnalysisFailedException();
-						newBody.Add(MakeGoTo(returnFalseLabel));
+						newBody.Add(new ILExpression(ILCode.YieldBreak, null));
 					} else if (finallyMethodToStateRange.TryGetValue(method, out stateRange)) {
 						// Call to Finally-method
 						int index = stateChanges.FindIndex(ss => stateRange.Contains(ss.NewState));
@@ -544,6 +543,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		ILExpression MakeGoTo(ILLabel targetLabel)
 		{
+			Debug.Assert(targetLabel != null);
 			if (targetLabel == returnFalseLabel)
 				return new ILExpression(ILCode.YieldBreak, null);
 			else
