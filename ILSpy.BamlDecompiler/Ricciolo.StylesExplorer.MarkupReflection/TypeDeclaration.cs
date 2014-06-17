@@ -131,7 +131,8 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		
 		void ParseName(string assemblyQualifiedName, out string name, out string @namespace, out string assembly)
 		{
-			int commaSeparator = assemblyQualifiedName.IndexOf(", ");
+			int bracket = assemblyQualifiedName.LastIndexOf(']');
+			int commaSeparator = bracket > -1 ? assemblyQualifiedName.IndexOf(", ", bracket) : assemblyQualifiedName.IndexOf(", ");
 			assembly = "";
 			if (commaSeparator >= 0) {
 				assembly = assemblyQualifiedName.Substring(commaSeparator + 2);

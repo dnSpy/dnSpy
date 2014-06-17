@@ -39,12 +39,13 @@ namespace ILSpy.BamlDecompiler
 		
 		public IType GetTypeByAssemblyQualifiedName(string name)
 		{
-			int comma = name.IndexOf(',');
+			int bracket = name.LastIndexOf(']');
+			int comma = bracket > -1 ? name.IndexOf(',', bracket) : name.IndexOf(',');
 			
 			if (comma == -1)
 				throw new ArgumentException("invalid name");
-			
-			string fullName = name.Substring(0, comma);
+
+			string fullName = bracket > -1 ? name.Substring(0, name.IndexOf('[')) : name.Substring(0, comma);
 			string assemblyName = name.Substring(comma + 1).Trim();
 			
 			var type = thisAssembly.MainModule.GetType(fullName);

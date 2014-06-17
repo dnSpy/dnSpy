@@ -1316,7 +1316,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 		{
 			reader.ReadInt16();
 
-			// Non serve aprire niente, è il default
+			// Non serve aprire niente, ?il default
 		}
 
 		static void ReadConstructorParametersStart()
@@ -1588,7 +1588,8 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			string fullName = reader.ReadString();
 			assemblyId = (short)(assemblyId & 0xfff);
 			TypeDeclaration declaration;
-			int length = fullName.LastIndexOf('.');
+			int bracket = fullName.IndexOf('[');
+			int length = bracket > -1 ? fullName.LastIndexOf('.', bracket) : fullName.LastIndexOf('.');
 			if (length != -1)
 			{
 				string name = fullName.Substring(length + 1);
