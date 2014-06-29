@@ -230,6 +230,9 @@
     <EmbeddedResource Include="..\doc\license.txt">
       <Link>license.txt</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\doc\MS-PL.txt">
+      <Link>MS-PL.txt</Link>
+    </EmbeddedResource>
     <Resource Include="Images\AssemblyList.png" />
     <Resource Include="Images\AssemblyListGAC.png" />
     <Resource Include="Images\AssemblyWarning.png" />

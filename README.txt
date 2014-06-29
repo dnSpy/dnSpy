@@ -9,6 +9,7 @@ Included open-source libraries:
  AvalonEdit: LGPL
  SharpTreeView: LGPL
  ICSharpCode.Decompiler: MIT License (developed as part of ILSpy)
+ Ricciolo.StylesExplorer: MS-PL (part of ILSpy.BamlDecompiler.Plugin)
 
 ILSpy Contributors:
 	Daniel Grunwald

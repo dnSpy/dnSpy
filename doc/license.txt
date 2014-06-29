@@ -1,10 +1,12 @@
 The following MIT license applies to ILSpy, NRefactory and ICSharpCode.Decompiler.
 Mono.Cecil also uses the MIT license (Copyright JB Evain).
 AvalonEdit and SharpTreeView use LGPL, which can be found in the LGPL.txt file.
+ILSpy.BamlDecompiler uses the MS-PL, which can be found in the MS-PL.txt file.
+
 
 MIT license:
 
-Copyright (c) 2011 AlphaSierraPapa for the SharpDevelop team
+Copyright (c) 2011-2014 AlphaSierraPapa for the SharpDevelop team
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this
 software and associated documentation files (the "Software"), to deal in the Software
