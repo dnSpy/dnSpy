@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription(".NET assembly inspector and decompiler")]
 [assembly: AssemblyCompany("ic#code")]
 [assembly: AssemblyProduct("ILSpy")]
-[assembly: AssemblyCopyright("Copyright 2011 AlphaSierraPapa for the SharpDevelop Team")]
+[assembly: AssemblyCopyright("Copyright 2011-2014 AlphaSierraPapa for the SharpDevelop Team")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,7 +32,7 @@ using System.Runtime.InteropServices;
 internal static class RevisionClass
 {
 	public const string Major = "2";
-	public const string Minor = "1";
+	public const string Minor = "2";
 	public const string Build = "0";
 	public const string Revision = "$INSERTREVISION$";
 	public const string VersionName = null;
