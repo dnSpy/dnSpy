@@ -20,6 +20,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -513,17 +514,27 @@ namespace ICSharpCode.ILSpy
 	internal abstract class SearcherBase : SearchPane.ISearch
 	{
 		protected string[] searchTerm;
+		protected Regex regex = null;
 
 		protected SearcherBase(string[] terms)
 		{
 			if (terms.Length == 1 && terms[0].Length > 2 && terms[0][1] == ':')
-				terms[0] = terms[0].Substring(2);
+			{
+				var search = terms[0].Substring(2);
+				if (search.StartsWith("/") && search.EndsWith("/") && search.Length > 4)
+					regex = SafeNewRegex(search.Substring(1, search.Length - 2));
+
+				terms[0] = search;
+			}
 
 			searchTerm = terms;
 		}
 
 		protected bool IsMatch(string text)
 		{
+			if (regex != null)
+				return regex.IsMatch(text);
+
 			for (int i = 0; i < searchTerm.Length; ++i)
 			{
 				// How to handle overlapping matches?
@@ -555,7 +566,7 @@ namespace ICSharpCode.ILSpy
 
 		public virtual void Search(TypeDefinition type, Language language, Action<SearchPane.SearchResult> addResult)
 		{
-			foreach (FieldDefinition field in type.Fields)
+			foreach (var field in type.Fields)
 			{
 				if (IsMatch(field))
 				{
@@ -569,7 +580,7 @@ namespace ICSharpCode.ILSpy
 					});
 				}
 			}
-			foreach (PropertyDefinition property in type.Properties)
+			foreach (var property in type.Properties)
 			{
 				if (IsMatch(property))
 				{
@@ -583,7 +594,7 @@ namespace ICSharpCode.ILSpy
 					});
 				}
 			}
-			foreach (EventDefinition ev in type.Events)
+			foreach (var ev in type.Events)
 			{
 				if (IsMatch(ev))
 				{
@@ -597,7 +608,7 @@ namespace ICSharpCode.ILSpy
 					});
 				}
 			}
-			foreach (MethodDefinition method in type.Methods)
+			foreach (var method in type.Methods)
 			{
 				switch (method.SemanticsAttributes)
 				{
@@ -619,6 +630,18 @@ namespace ICSharpCode.ILSpy
 						Location = language.TypeToString(type, includeNamespace: true)
 					});
 				}
+			}
+		}
+
+		private Regex SafeNewRegex(string unsafePattern)
+		{
+			try
+			{
+				return new Regex(unsafePattern, RegexOptions.Compiled);
+			}
+			catch (ArgumentException)
+			{
+				return null;
 			}
 		}
 	}
