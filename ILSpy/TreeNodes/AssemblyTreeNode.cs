@@ -63,7 +63,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Text
 		{
-			get { return HighlightSearchMatch(assembly.ShortName); }
+			get { return HighlightSearchMatch(assembly.Text); }
 		}
 
 		public override object Icon
