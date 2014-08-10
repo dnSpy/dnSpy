@@ -43,7 +43,7 @@ WM_COPYDATA (SendMessage API):
     That is, by sending this message:
         ILSpy:
         C:\Assembly.dll
-        /navigateTo T:Type
+        /navigateTo:T:Type
     The target ILSpy instance will open C:\Assembly.dll and navigate to the specified type.
     
     ILSpy will return TRUE (1) if it handles the message, and FALSE (0) otherwise.
