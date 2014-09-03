@@ -17,9 +17,11 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
@@ -563,74 +565,46 @@ namespace ICSharpCode.ILSpy
 		{
 			return false;
 		}
+		
+		private void Add<T>(IEnumerable<T> items, TypeDefinition type, Language language, Action<SearchPane.SearchResult> addResult, Func<T, bool> matcher, Func<T, ImageSource> image) where T : MemberReference
+		{
+			foreach (var item in items)
+			{
+				if (matcher(item))
+				{
+					addResult(new SearchPane.SearchResult
+					{
+						Member = item,
+						Image = image(item),
+						Name = item.Name,
+						LocationImage = TypeTreeNode.GetIcon(type),
+						Location = language.TypeToString(type, includeNamespace: true)
+					});
+				}
+			}
+		}
 
 		public virtual void Search(TypeDefinition type, Language language, Action<SearchPane.SearchResult> addResult)
 		{
-			foreach (var field in type.Fields)
-			{
-				if (IsMatch(field))
-				{
-					addResult(new SearchPane.SearchResult
-					{
-						Member = field,
-						Image = FieldTreeNode.GetIcon(field),
-						Name = field.Name,
-						LocationImage = TypeTreeNode.GetIcon(type),
-						Location = language.TypeToString(type, includeNamespace: true)
-					});
-				}
-			}
-			foreach (var property in type.Properties)
-			{
-				if (IsMatch(property))
-				{
-					addResult(new SearchPane.SearchResult
-					{
-						Member = property,
-						Image = PropertyTreeNode.GetIcon(property),
-						Name = property.Name,
-						LocationImage = TypeTreeNode.GetIcon(type),
-						Location = language.TypeToString(type, includeNamespace: true)
-					});
-				}
-			}
-			foreach (var ev in type.Events)
-			{
-				if (IsMatch(ev))
-				{
-					addResult(new SearchPane.SearchResult
-					{
-						Member = ev,
-						Image = EventTreeNode.GetIcon(ev),
-						Name = ev.Name,
-						LocationImage = TypeTreeNode.GetIcon(type),
-						Location = language.TypeToString(type, includeNamespace: true)
-					});
-				}
-			}
-			foreach (var method in type.Methods)
-			{
-				switch (method.SemanticsAttributes)
-				{
-					case MethodSemanticsAttributes.Setter:
-					case MethodSemanticsAttributes.Getter:
-					case MethodSemanticsAttributes.AddOn:
-					case MethodSemanticsAttributes.RemoveOn:
-					case MethodSemanticsAttributes.Fire:
-						continue;
-				}
-				if (IsMatch(method))
-				{
-					addResult(new SearchPane.SearchResult
-					{
-						Member = method,
-						Image = MethodTreeNode.GetIcon(method),
-						Name = method.Name,
-						LocationImage = TypeTreeNode.GetIcon(type),
-						Location = language.TypeToString(type, includeNamespace: true)
-					});
-				}
-			}
+			Add(type.Fields, type, language, addResult, IsMatch, FieldTreeNode.GetIcon);
+			Add(type.Properties, type, language, addResult, IsMatch, p => PropertyTreeNode.GetIcon(p));
+			Add(type.Events, type, language, addResult, IsMatch, EventTreeNode.GetIcon);
+			Add(
+				type.Methods.Where(NotSpecialMethod), 
+				type, 
+				language, 
+				addResult, 
+				IsMatch, MethodTreeNode.GetIcon);
+		}
+
+		private bool NotSpecialMethod(MethodDefinition arg)
+		{
+			return (arg.SemanticsAttributes & (
+				MethodSemanticsAttributes.Setter	
+				| MethodSemanticsAttributes.Getter
+				| MethodSemanticsAttributes.AddOn
+				| MethodSemanticsAttributes.RemoveOn
+				| MethodSemanticsAttributes.Fire)) == 0;
 		}
 
 		private Regex SafeNewRegex(string unsafePattern)
