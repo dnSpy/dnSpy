@@ -84,7 +84,6 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				});
 				var issueMessage = ctx.TranslateString("Argument is identical to the default value");
 				var lastPositionalArgument = redundantArguments.FirstOrDefault(expression => !(expression is NamedArgumentExpression));
-				bool hasNamedArguments = false;
 
 				foreach (var argument in redundantArguments) {
 					var localArgument = argument;
@@ -100,7 +99,6 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 							var newInvocation = generateReplacement(node, newArgumentList);
 							script.Replace(node, newInvocation);
 						}));
-						hasNamedArguments = true;
 					} else {
 						var title = ctx.TranslateString("Remove this and the following positional arguments");
 						actions.Add(new CodeAction(title, script => {

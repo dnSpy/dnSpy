@@ -800,7 +800,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			
 			throw new NotImplementedException();
 			
-			return EndNode(queryGroupClause, op);
+			//return EndNode(queryGroupClause, op);
 		}
 		
 		public AstNode VisitAttribute(CSharp.Attribute attribute, object data)
