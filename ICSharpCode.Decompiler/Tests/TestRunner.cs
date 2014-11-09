@@ -32,7 +32,7 @@ using NUnit.Framework;
 namespace ICSharpCode.Decompiler.Tests
 {
 	[TestFixture]
-	public class TestRunner
+	public class TestRunner : DecompilerTestBase
 	{
 		[Test]
 		public void Async()
@@ -67,7 +67,8 @@ namespace ICSharpCode.Decompiler.Tests
 		[Test]
 		public void ExceptionHandling()
 		{
-			TestFile(@"..\..\Tests\ExceptionHandling.cs", optimize: false);
+			AssertRoundtripCode(@"..\..\Tests\ExceptionHandling.cs", optimize: false);
+			AssertRoundtripCode(@"..\..\Tests\ExceptionHandling.cs", optimize: false);
 		}
 		
 		[Test]
@@ -85,7 +86,8 @@ namespace ICSharpCode.Decompiler.Tests
 		[Test]
 		public void ControlFlowWithDebug()
 		{
-			TestFile(@"..\..\Tests\ControlFlow.cs", optimize: false, useDebug: true);
+			AssertRoundtripCode(@"..\..\Tests\ControlFlow.cs", optimize: false, useDebug: true);
+			AssertRoundtripCode(@"..\..\Tests\ControlFlow.cs", optimize: false, useDebug: true);
 		}
 		
 		[Test]
@@ -180,42 +182,10 @@ namespace ICSharpCode.Decompiler.Tests
 		
 		static void TestFile(string fileName, bool useDebug = false)
 		{
-			TestFile(fileName, false, useDebug);
-			TestFile(fileName, true, useDebug);
-		}
-
-		static void TestFile(string fileName, bool optimize, bool useDebug = false)
-		{
-			string code = File.ReadAllText(fileName);
-			AssemblyDefinition assembly = Compile(code, optimize, useDebug);
-			AstBuilder decompiler = new AstBuilder(new DecompilerContext(assembly.MainModule));
-			decompiler.AddAssembly(assembly);
-			new Helpers.RemoveCompilerAttribute().Run(decompiler.SyntaxTree);
-			StringWriter output = new StringWriter();
-			decompiler.GenerateCode(new PlainTextOutput(output));
-			CodeAssert.AreEqual(code, output.ToString());
-		}
-
-		static AssemblyDefinition Compile(string code, bool optimize, bool useDebug)
-		{
-			CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string, string> { { "CompilerVersion", "v4.0" } });
-			CompilerParameters options = new CompilerParameters();
-			options.CompilerOptions = "/unsafe /o" + (optimize ? "+" : "-") + (useDebug ? " /debug": "");
-			options.ReferencedAssemblies.Add("System.Core.dll");
-			CompilerResults results = provider.CompileAssemblyFromSource(options, code);
-			try {
-				if (results.Errors.Count > 0) {
-					StringBuilder b = new StringBuilder("Compiler error:");
-					foreach (var error in results.Errors) {
-						b.AppendLine(error.ToString());
-					}
-					throw new Exception(b.ToString());
-				}
-				return AssemblyDefinition.ReadAssembly(results.PathToAssembly);
-			} finally {
-				File.Delete(results.PathToAssembly);
-				results.TempFiles.Delete();
-			}
+			AssertRoundtripCode(fileName, optimize: false, useDebug: useDebug);
+			AssertRoundtripCode(fileName, optimize: true, useDebug: useDebug);
+			AssertRoundtripCode(fileName, optimize: false, useDebug: useDebug);
+			AssertRoundtripCode(fileName, optimize: true, useDebug: useDebug);
 		}
 	}
 }

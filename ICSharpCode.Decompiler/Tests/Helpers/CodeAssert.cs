@@ -104,7 +104,7 @@ namespace ICSharpCode.Decompiler.Tests.Helpers
 
 		private static IEnumerable<string> NormalizeAndSplitCode(string input)
 		{
-			return input.Split(new[] { "\r\n", "\n\r", "\n", "\r" }, StringSplitOptions.None);
+			return input.Split(new[] { "\r\n", "\n\r", "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries);
 		}
 	}
 }
