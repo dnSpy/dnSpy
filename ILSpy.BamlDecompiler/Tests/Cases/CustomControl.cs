@@ -10,6 +10,8 @@ namespace ILSpy.BamlDecompiler.Tests.Cases
 {
 	public class CustomControl : ContentControl
 	{
+		public static string SimpleProperty = "Hi!";
+
 		public static readonly DependencyProperty CustomNameProperty = DependencyProperty.RegisterAttached("CustomName", typeof(string), typeof(CustomControl));
 		
 		public static string GetCustomName(DependencyObject target)
