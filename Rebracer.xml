@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--Rebracer Solution Settings File-->
+<!--This file contains Visual Studio settings for ILSpy.sln.-->
+<!--Rebracer uses this file to apply settings for this solution-->
+<!--when the solution is opened.-->
+<!--Install Rebracer from http://visualstudiogallery.msdn.microsoft.com/410e9b9f-65f3-4495-b68e-15567e543c58 -->
+<!--See https://github.com/SLaks/Rebracer for more information-->
+<UserSettings>
+  <ToolsOptions>
+    <ToolsOptionsCategory name="Environment">
+      <ToolsOptionsSubCategory name="TaskList">
+        <PropertyValue name="CommentTokens" ArrayType="VT_VARIANT" ArrayElementCount="4">
+          <PropertyValue name="0">TODO:2</PropertyValue>
+          <PropertyValue name="1">HACK:2</PropertyValue>
+          <PropertyValue name="2">UNDONE:2</PropertyValue>
+          <PropertyValue name="3">UnresolvedMergeConflict:3</PropertyValue>
+        </PropertyValue>
+        <PropertyValue name="ConfirmTaskDeletion">true</PropertyValue>
+        <PropertyValue name="DontShowFilePaths">true</PropertyValue>
+        <PropertyValue name="WarnOnAddingHiddenItem">false</PropertyValue>
+      </ToolsOptionsSubCategory>
+    </ToolsOptionsCategory>
+    <ToolsOptionsCategory name="TextEditor">
+      <ToolsOptionsSubCategory name="CSharp-Specific">
+        <PropertyValue name="AutoComment">1</PropertyValue>
+        <PropertyValue name="BringUpOnIdentifier">1</PropertyValue>
+        <PropertyValue name="Formatting_TriggerOnBlockCompletion">1</PropertyValue>
+        <PropertyValue name="Formatting_TriggerOnPaste">1</PropertyValue>
+        <PropertyValue name="Formatting_TriggerOnStatementCompletion">1</PropertyValue>
+        <PropertyValue name="Indent_BlockContents">1</PropertyValue>
+        <PropertyValue name="Indent_Braces">0</PropertyValue>
+        <PropertyValue name="Indent_CaseContents">1</PropertyValue>
+        <PropertyValue name="Indent_CaseLabels">0</PropertyValue>
+        <PropertyValue name="Indent_FlushLabelsLeft">0</PropertyValue>
+        <PropertyValue name="Indent_UnindentLabels">2</PropertyValue>
+        <PropertyValue name="InsertNewlineOnEnterWithWholeWord">0</PropertyValue>
+        <PropertyValue name="NewLines_AnonymousTypeInitializer_EachMember">1</PropertyValue>
+        <PropertyValue name="NewLines_Braces_AnonymousMethod">0</PropertyValue>
+        <PropertyValue name="NewLines_Braces_AnonymousTypeInitializer">0</PropertyValue>
+        <PropertyValue name="NewLines_Braces_CollectionInitializer">0</PropertyValue>
+        <PropertyValue name="NewLines_Braces_ControlFlow">0</PropertyValue>
+        <PropertyValue name="NewLines_Braces_LambdaExpressionBody">0</PropertyValue>
+        <PropertyValue name="NewLines_Braces_Method">1</PropertyValue>
+        <PropertyValue name="NewLines_Braces_ObjectInitializer">1</PropertyValue>
+        <PropertyValue name="NewLines_Braces_Type">1</PropertyValue>
+        <PropertyValue name="NewLines_Keywords_Catch">0</PropertyValue>
+        <PropertyValue name="NewLines_Keywords_Else">0</PropertyValue>
+        <PropertyValue name="NewLines_Keywords_Finally">0</PropertyValue>
+        <PropertyValue name="NewLines_ObjectInitializer_EachMember">1</PropertyValue>
+        <PropertyValue name="NewLines_QueryExpression_EachClause">1</PropertyValue>
+        <PropertyValue name="ShowKeywords">1</PropertyValue>
+        <PropertyValue name="ShowSnippets">1</PropertyValue>
+        <PropertyValue name="SortUsings_PlaceSystemFirst">1</PropertyValue>
+        <PropertyValue name="Space_AfterBasesColon">1</PropertyValue>
+        <PropertyValue name="Space_AfterCast">0</PropertyValue>
+        <PropertyValue name="Space_AfterComma">1</PropertyValue>
+        <PropertyValue name="Space_AfterDot">0</PropertyValue>
+        <PropertyValue name="Space_AfterMethodCallName">0</PropertyValue>
+        <PropertyValue name="Space_AfterMethodDeclarationName">0</PropertyValue>
+        <PropertyValue name="Space_AfterSemicolonsInForStatement">1</PropertyValue>
+        <PropertyValue name="Space_AroundBinaryOperator">1</PropertyValue>
+        <PropertyValue name="Space_BeforeBasesColon">1</PropertyValue>
+        <PropertyValue name="Space_BeforeComma">0</PropertyValue>
+        <PropertyValue name="Space_BeforeDot">0</PropertyValue>
+        <PropertyValue name="Space_BeforeOpenSquare">0</PropertyValue>
+        <PropertyValue name="Space_BeforeSemicolonsInForStatement">0</PropertyValue>
+        <PropertyValue name="Space_BetweenEmptyMethodCallParentheses">0</PropertyValue>
+        <PropertyValue name="Space_BetweenEmptyMethodDeclarationParentheses">0</PropertyValue>
+        <PropertyValue name="Space_BetweenEmptySquares">0</PropertyValue>
+        <PropertyValue name="Space_InControlFlowConstruct">1</PropertyValue>
+        <PropertyValue name="Space_WithinCastParentheses">0</PropertyValue>
+        <PropertyValue name="Space_WithinExpressionParentheses">0</PropertyValue>
+        <PropertyValue name="Space_WithinMethodCallParentheses">0</PropertyValue>
+        <PropertyValue name="Space_WithinMethodDeclarationParentheses">0</PropertyValue>
+        <PropertyValue name="Space_WithinOtherParentheses">0</PropertyValue>
+        <PropertyValue name="Space_WithinSquares">0</PropertyValue>
+        <PropertyValue name="Wrapping_IgnoreSpacesAroundBinaryOperators">0</PropertyValue>
+        <PropertyValue name="Wrapping_IgnoreSpacesAroundVariableDeclaration">0</PropertyValue>
+        <PropertyValue name="Wrapping_KeepStatementsOnSingleLine">1</PropertyValue>
+        <PropertyValue name="Wrapping_PreserveSingleLine">1</PropertyValue>
+      </ToolsOptionsSubCategory>
+    </ToolsOptionsCategory>
+  </ToolsOptions>
+</UserSettings>
