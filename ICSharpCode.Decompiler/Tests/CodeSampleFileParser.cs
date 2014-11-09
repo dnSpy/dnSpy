@@ -87,7 +87,8 @@ namespace ICSharpCode.Decompiler.Tests
 		{
 			if(String.IsNullOrWhiteSpace(s))
 				return true;
-			return s.Trim().StartsWith("//");
+			s = s.Trim();
+			return s.StartsWith("//") || s.StartsWith("#");	// Also ignore #pragmas for warning suppression
 		}
 
 		public static string ConcatLines(IEnumerable<string> lines)
