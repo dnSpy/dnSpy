@@ -4,6 +4,7 @@
     <!-- Use the SDK for the current version of Visual Studio -->
     <VsSdkTargets Condition="'$(VisualStudioVersion)'!=''">$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\VSSDK\Microsoft.VsSDK.targets</VsSdkTargets>
     <VsSdkTargets Condition="'$(VisualStudioVersion)'==''">$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v10.0\VSSDK\Microsoft.VsSDK.targets</VsSdkTargets>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition="'$(VisualStudioVersion)' != ''">
     <!-- This is added to prevent forced migrations in Visual Studio 2012 and newer -->
@@ -22,7 +23,7 @@
     <AssemblyName>ILSpy.AddIn</AssemblyName>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Common debugging support -->

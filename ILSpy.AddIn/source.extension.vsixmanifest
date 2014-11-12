@@ -10,7 +10,7 @@
     <!--TODO: <PreviewImage>~200px image</PreviewImage>-->
     <MoreInfoUrl>http://ilspy.net</MoreInfoUrl>
     <Locale>1033</Locale>
-    <SupportedFrameworkRuntimeEdition MinVersion="4.5" MaxVersion="6.0"/>
+    <SupportedFrameworkRuntimeEdition MinVersion="4.0" MaxVersion="6.0"/>
     <SupportedProducts>
       <VisualStudio Version="10.0">
         <Edition>Pro</Edition>
