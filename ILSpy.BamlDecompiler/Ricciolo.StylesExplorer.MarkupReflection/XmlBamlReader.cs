@@ -908,7 +908,7 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			short identifier = reader.ReadInt16();
 			string text = reader.ReadString();
 
-			EnqueueProperty(identifier, text);
+			EnqueueProperty(identifier, EscapeCurlyBraces(text));
 		}
 
 		void ReadPropertyWithConverter()
@@ -917,7 +917,16 @@ namespace Ricciolo.StylesExplorer.MarkupReflection
 			string text = reader.ReadString();
 			reader.ReadInt16();
 
-			EnqueueProperty(identifier, text);
+			EnqueueProperty(identifier, EscapeCurlyBraces(text));
+		}
+
+		string EscapeCurlyBraces(string text)
+		{
+			if (!text.StartsWith("{", StringComparison.OrdinalIgnoreCase))
+				return text;
+			if (text.StartsWith("{}", StringComparison.OrdinalIgnoreCase))
+				return text;
+			return "{}" + text;
 		}
 		
 		bool HaveSeenNestedElement()

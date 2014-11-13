@@ -4,6 +4,7 @@
 			<Style />
 		</cc:CustomControl.Style>
 		<Grid.Row>0</Grid.Row>
+		<cc:CustomControl.Tag>{}{Test}</cc:CustomControl.Tag>
 		<cc:CustomControl.CustomName>Custom1</cc:CustomControl.CustomName>
 	</cc:CustomControl>
 	<Label ToolTip="{DynamicResource {x:Static cc:CustomControl.SimpleProperty}}">

@@ -3,6 +3,6 @@
         <Style />
     </Label.Style>
     <Label.Content>
-        <Binding Path="Blah" />
+        <Binding Path="Blah" StringFormat="{}{0} items" />
     </Label.Content>
 </Label>

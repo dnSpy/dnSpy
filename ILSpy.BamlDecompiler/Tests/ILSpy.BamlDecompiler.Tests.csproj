@@ -117,15 +117,15 @@
       <Name>ILSpy.BamlDecompiler</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Cases" />
-    <Folder Include="Mocks" />
-    <Folder Include="Properties" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Page Include="Cases\AttachedEvent.xaml" />
     <Page Include="Cases\AvalonDockBrushes.xaml" />
     <Page Include="Cases\AvalonDockCommon.xaml" />
+    <Page Include="Cases\EscapeSequence.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Cases\MarkupExtension.xaml" />
     <Page Include="Cases\MyControl.xaml" />
     <Page Include="Cases\NamespacePrefix.xaml" />
@@ -138,6 +138,9 @@
     <Page Include="Cases\SimplePropertyElement.xaml" />
     <Page Include="Cases\Dictionary1.xaml" />
     <Page Include="Cases\Issue445.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

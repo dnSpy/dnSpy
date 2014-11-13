@@ -127,11 +127,12 @@
       <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="IL" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="BooleanConsumedAsInteger.il" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
