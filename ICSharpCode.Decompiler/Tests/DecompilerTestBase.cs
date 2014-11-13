@@ -35,10 +35,8 @@ namespace ICSharpCode.Decompiler.Tests
 	{
 		protected static void ValidateFileRoundtrip(string samplesFileName)
 		{
-			var lines = File.ReadAllLines(Path.Combine(@"..\..\Tests", samplesFileName));
-			var testCode = RemoveIgnorableLines(lines);
-			var decompiledTestCode = RoundtripCode(testCode);
-			CodeAssert.AreEqual(testCode, decompiledTestCode);
+			var fullPath = Path.Combine(@"..\..\Tests", samplesFileName);
+			AssertRoundtripCode(fullPath);
 		}
 
 		static string RemoveIgnorableLines(IEnumerable<string> lines)
@@ -46,28 +44,25 @@ namespace ICSharpCode.Decompiler.Tests
 			return CodeSampleFileParser.ConcatLines(lines.Where(l => !CodeSampleFileParser.IsCommentOrBlank(l)));
 		}
 
-		/// <summary>
-		/// Compiles and decompiles a source code.
-		/// </summary>
-		/// <param name="code">The source code to copile.</param>
-		/// <returns>The decompilation result of compiled source code.</returns>
-		static string RoundtripCode(string code)
+		protected static void AssertRoundtripCode(string fileName, bool optimize = false, bool useDebug = false)
 		{
-			DecompilerSettings settings = new DecompilerSettings();
-			settings.FullyQualifyAmbiguousTypeNames = false;
-			AssemblyDefinition assembly = Compile(code);
-			AstBuilder decompiler = new AstBuilder(new DecompilerContext(assembly.MainModule) { Settings = settings });
+			var code = RemoveIgnorableLines(File.ReadLines(fileName));
+			AssemblyDefinition assembly = CompileLegacy(code, optimize, useDebug);
+
+			AstBuilder decompiler = new AstBuilder(new DecompilerContext(assembly.MainModule));
 			decompiler.AddAssembly(assembly);
 			new Helpers.RemoveCompilerAttribute().Run(decompiler.SyntaxTree);
+
 			StringWriter output = new StringWriter();
 			decompiler.GenerateCode(new PlainTextOutput(output));
-			return output.ToString();
+			CodeAssert.AreEqual(code, output.ToString());
 		}
 
-		static AssemblyDefinition Compile(string code)
+		protected static AssemblyDefinition CompileLegacy(string code, bool optimize, bool useDebug)
 		{
 			CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string, string> { { "CompilerVersion", "v4.0" } });
 			CompilerParameters options = new CompilerParameters();
+			options.CompilerOptions = "/unsafe /o" + (optimize ? "+" : "-") + (useDebug ? " /debug" : "");
 			options.ReferencedAssemblies.Add("System.Core.dll");
 			CompilerResults results = provider.CompileAssemblyFromSource(options, code);
 			try
