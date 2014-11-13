@@ -10,3 +10,4 @@ obj/
 _ReSharper*/
 *.ReSharper
 *.patch
+/packages
