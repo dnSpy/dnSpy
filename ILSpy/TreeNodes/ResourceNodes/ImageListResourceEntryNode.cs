@@ -27,65 +27,64 @@ using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
-  [Export(typeof(IResourceNodeFactory))]
-  sealed class ImageListResourceEntryNodeFactory : IResourceNodeFactory
-  {
-    #region IResourceNodeFactory Members
+	[Export(typeof(IResourceNodeFactory))]
+	sealed class ImageListResourceEntryNodeFactory : IResourceNodeFactory
+	{
+		#region IResourceNodeFactory Members
 
-    public ILSpyTreeNode CreateNode(Mono.Cecil.Resource resource)
-    {
-      return null;
-    }
+		public ILSpyTreeNode CreateNode(Mono.Cecil.Resource resource)
+		{
+			return null;
+		}
 
-    public ILSpyTreeNode CreateNode(string key, object data)
-    {
-      if (data is ImageListStreamer)
-        return new ImageListResourceEntryNode(key, (ImageListStreamer)data);
-      return null;
-    }
+		public ILSpyTreeNode CreateNode(string key, object data)
+		{
+			if (data is ImageListStreamer)
+				return new ImageListResourceEntryNode(key, (ImageListStreamer)data);
+			return null;
+		}
 
-    #endregion
-  }
+		#endregion
+	}
 
-  sealed class ImageListResourceEntryNode : ILSpyTreeNode
-  {
+	sealed class ImageListResourceEntryNode : ILSpyTreeNode
+	{
 		private readonly string key;
 		private readonly ImageList data;
 
-    public ImageListResourceEntryNode(string key, ImageListStreamer data)
+		public ImageListResourceEntryNode(string key, ImageListStreamer data)
 		{
-      this.LazyLoading = true;
-      this.key = key;
-      this.data = new ImageList();
-      this.data.ImageStream = data;
+			this.LazyLoading = true;
+			this.key = key;
+			this.data = new ImageList();
+			this.data.ImageStream = data;
 		}
 
-    public override object Text
-    {
-      get { return key; }
-    }
+		public override object Text
+		{
+			get { return key; }
+		}
 
-    public override object Icon
+		public override object Icon
 		{
 			get { return Images.ResourceImage; }
 		}
 
-    protected override void LoadChildren()
-    {
-      int i = 0;
-      foreach (Image image in this.data.Images)
-      {
-        var node = ResourceEntryNode.Create("Image" + i.ToString(), image);
-        if (node != null)
-          Children.Add(node);
-        ++i;
-      }
-    }
+		protected override void LoadChildren()
+		{
+			int i = 0;
+			foreach (Image image in this.data.Images) {
+				var node = ResourceEntryNode.Create("Image" + i.ToString(), image);
+				if (node != null)
+					Children.Add(node);
+				++i;
+			}
+		}
 
 
-    public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-    {
-      EnsureLazyChildren();
-    }
-  }
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
+		{
+			EnsureLazyChildren();
+		}
+	}
 }
