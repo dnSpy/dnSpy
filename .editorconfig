@@ -5,11 +5,6 @@ root = true
 indent_style = tab
 indent_size = 4
 
-# The indentation (and source formatting!) of the addin sources are different than the rest of the solution.
-[ILSpy.AddIn/*]
-indent_style = space
-indent_size = 4
-
 [*.il]
 indent_style = space
 indent_size = 2
@@ -21,5 +16,8 @@ indent_size = 2
 indent_style = space
 indent_size = 2
 [*.vsixmanifest]
+indent_style = space
+indent_size = 2
+[*.vsct]
 indent_style = space
 indent_size = 2
