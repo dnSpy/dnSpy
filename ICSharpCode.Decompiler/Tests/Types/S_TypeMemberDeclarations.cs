@@ -664,7 +664,9 @@ namespace HideMembers3
 	}
 	public class J2 : J
 	{
+#pragma warning disable 0108	// Deliberate bad code for test case
 		public int get_P;
+#pragma warning restore 0108
 	}
 }
 //$$ HideMembers4

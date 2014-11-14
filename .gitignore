@@ -11,3 +11,4 @@ _ReSharper*/
 *.ReSharper
 *.patch
 /packages
+*.ide/
