@@ -86,9 +86,9 @@ namespace ICSharpCode.ILSpy.AddIn
 		private void OpenInILSpyCallback(object sender, EventArgs e)
 		{
 			var explorer = ((EnvDTE80.DTE2)GetGlobalService(typeof(EnvDTE.DTE))).ToolWindows.SolutionExplorer;
-			var items = explorer.SelectedItems as EnvDTE.UIHierarchyItem[];
+			var items =(object[]) explorer.SelectedItems ;
 
-			foreach (var item in items) {
+			foreach (EnvDTE.UIHierarchyItem item in items) {
 				dynamic obj = item.Object;
 				OpenAssemblyInILSpy(obj.Path);
 			}

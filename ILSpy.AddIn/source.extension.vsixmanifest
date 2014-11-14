@@ -1,20 +1,32 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
-  <Metadata>
-    <Identity Id="a9120dbe-164a-4891-842f-fb7829273838" Version="1.0" Language="en-US" Publisher="IC#Code" />
-    <DisplayName>ILSpy</DisplayName>
-    <Description>Integration of the ILSpy Decompiler into Visual Studio.</Description>
-    <License>license.txt</License>
+<Vsix Version="1.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2010">
+  <Identifier Id="a9120dbe-164a-4891-842f-fb7829273838">
+    <Name>ILSpy</Name>
+    <Author>IC#Code</Author>
+    <Version>1.0</Version>
+    <Description xml:space="preserve">Integrates the ILSpy decompiler into Visual Studio.</Description>
     <Icon>ILSpy-Large.ico</Icon>
-  </Metadata>
-  <Installation InstalledByMsi="false">
-    <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[12.0]" />
-  </Installation>
-  <Dependencies>
-    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
-    <Dependency Id="Microsoft.VisualStudio.MPF.12.0" DisplayName="Visual Studio MPF 12.0" d:Source="Installed" Version="[12.0]" />
-  </Dependencies>
-  <Assets>
-    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
-  </Assets>
-</PackageManifest>
+    <License>license.txt</License>
+    <!--TODO: <PreviewImage>~200px image</PreviewImage>-->
+    <MoreInfoUrl>http://ilspy.net</MoreInfoUrl>
+    <Locale>1033</Locale>
+    <SupportedFrameworkRuntimeEdition MinVersion="4.0" MaxVersion="6.0"/>
+    <SupportedProducts>
+      <VisualStudio Version="10.0">
+        <Edition>Pro</Edition>
+      </VisualStudio>
+      <VisualStudio Version="11.0">
+        <Edition>Pro</Edition>
+      </VisualStudio>
+      <VisualStudio Version="12.0">
+        <Edition>Pro</Edition>
+      </VisualStudio>
+      <VisualStudio Version="14.0">
+        <Edition>Pro</Edition>
+      </VisualStudio>
+    </SupportedProducts>
+  </Identifier>
+  <Content>
+    <VsPackage>|%CurrentProject%;PkgdefProjectOutputGroup|</VsPackage>
+  </Content>
+</Vsix>
