@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using System.Reflection;
 using System.IO;
+using Mono.Cecil;
 
 namespace ICSharpCode.ILSpy.AddIn
 {
@@ -86,13 +87,19 @@ namespace ICSharpCode.ILSpy.AddIn
 		private void OpenInILSpyCallback(object sender, EventArgs e)
 		{
 			var explorer = ((EnvDTE80.DTE2)GetGlobalService(typeof(EnvDTE.DTE))).ToolWindows.SolutionExplorer;
-			var items =(object[]) explorer.SelectedItems ;
+			var items =(object[]) explorer.SelectedItems;
 
 			foreach (EnvDTE.UIHierarchyItem item in items) {
-				dynamic obj = item.Object;
-				OpenAssemblyInILSpy(obj.Path);
+				dynamic reference = item.Object;
+				string path = null;
+				if (reference.PublicKeyToken != "") {
+					var token = Utils.HexStringToBytes(reference.PublicKeyToken);
+					path = GacInterop.FindAssemblyInNetGac(new AssemblyNameReference(reference.Identity, new Version(reference.Version)) { PublicKeyToken = token });
+				}
+				if (path == null)
+					path = reference.Path;
+				OpenAssemblyInILSpy(path);
 			}
-
 		}
 
 		private void OpenILSpyCallback(object sender, EventArgs e)
