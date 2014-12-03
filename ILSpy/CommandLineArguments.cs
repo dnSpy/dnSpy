@@ -27,6 +27,7 @@ namespace ICSharpCode.ILSpy
 		public List<string> AssembliesToLoad = new List<string>();
 		public bool? SingleInstance;
 		public string NavigateTo;
+		public string Search;
 		public string Language;
 		public bool NoActivate;
 		
@@ -42,6 +43,8 @@ namespace ICSharpCode.ILSpy
 						this.SingleInstance = false;
 					else if (arg.StartsWith("/navigateTo:", StringComparison.OrdinalIgnoreCase))
 						this.NavigateTo = arg.Substring("/navigateTo:".Length);
+					else if (arg.StartsWith("/search:", StringComparison.OrdinalIgnoreCase))
+						this.Search = arg.Substring("/search:".Length);
 					else if (arg.StartsWith("/language:", StringComparison.OrdinalIgnoreCase))
 						this.Language = arg.Substring("/language:".Length);
 					else if (arg.Equals("/noActivate", StringComparison.OrdinalIgnoreCase))

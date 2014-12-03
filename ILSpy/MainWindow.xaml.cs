@@ -295,6 +295,11 @@ namespace ICSharpCode.ILSpy
 				// Select the newly loaded assembly
 				JumpToReference(commandLineLoadedAssemblies[0].ModuleDefinition);
 			}
+			if (args.Search != null)
+			{
+				SearchPane.Instance.SearchTerm = args.Search;
+				SearchPane.Instance.Show();
+			}
 			commandLineLoadedAssemblies.Clear(); // clear references once we don't need them anymore
 		}
 		
