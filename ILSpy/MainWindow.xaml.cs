@@ -639,6 +639,9 @@ namespace ICSharpCode.ILSpy
 		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			DecompileSelectedNodes();
+
+			if (SelectionChanged != null)
+				SelectionChanged(sender, e);
 		}
 		
 		Task decompilationTask;
@@ -689,7 +692,9 @@ namespace ICSharpCode.ILSpy
 				return sessionSettings.FilterSettings.Language;
 			}
 		}
-		
+
+		public event SelectionChangedEventHandler SelectionChanged;
+
 		public IEnumerable<ILSpyTreeNode> SelectedNodes {
 			get {
 				return treeView.GetTopLevelSelection().OfType<ILSpyTreeNode>();
