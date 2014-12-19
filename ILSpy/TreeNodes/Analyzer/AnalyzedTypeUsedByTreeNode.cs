@@ -48,6 +48,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedType, FindTypeUsage);
 			return analyzer.PerformAnalysis(ct)
 				.Cast<AnalyzerEntityTreeNode>()
+				.Where(n => n.Member.DeclaringType != analyzedType)
 				.Distinct(new AnalyzerEntityTreeNodeComparer())
 				.OrderBy(n => n.Text);
 		}
@@ -100,7 +101,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private bool IsUsedInFieldReference(FieldReference field)
 		{
-			if (field == null || field.DeclaringType == analyzedType)
+			if (field == null)
 				return false;
 
 			return TypeMatches(field.DeclaringType)
@@ -115,7 +116,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private bool IsUsedInMethodReference(MethodReference method)
 		{
-			if (method == null || method.DeclaringType == analyzedType)
+			if (method == null)
 				return false;
 
 			return TypeMatches(method.DeclaringType)
