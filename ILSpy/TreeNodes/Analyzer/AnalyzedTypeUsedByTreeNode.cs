@@ -71,9 +71,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			var property = method.DeclaringType.Properties.FirstOrDefault(p => p.GetMethod == method || p.SetMethod == method);
 			if (property != null)
-				return new AnalyzedPropertyTreeNode(property) {Language = Language};
+				return new AnalyzedPropertyTreeNode(property) { Language = Language };
 
-			return new AnalyzedMethodTreeNode(method) {Language = Language};
+			return new AnalyzedMethodTreeNode(method) { Language = Language };
 		}
 
 		private bool IsUsedInTypeReferences(IEnumerable<TypeReference> types)
@@ -93,9 +93,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		private bool IsUsedInTypeDefinition(TypeDefinition type)
 		{
 			return IsUsedInTypeReference(type)
-			       || TypeMatches(type.BaseType)
+				   || TypeMatches(type.BaseType)
 				   || IsUsedInTypeReferences(type.Interfaces)
-			       || IsUsedInCustomAttributes(type.CustomAttributes);
+				   || IsUsedInCustomAttributes(type.CustomAttributes);
 		}
 
 		private bool IsUsedInFieldReference(FieldReference field)
@@ -122,12 +122,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				   || TypeMatches(method.ReturnType)
 				   || IsUsedInMethodParameters(method.Parameters);
 		}
-		
+
 		private bool IsUsedInMethodDefinition(MethodDefinition method)
 		{
 			return IsUsedInMethodReference(method)
-			       || IsUsedInMethodBody(method.Body)
-			       || IsUsedInCustomAttributes(method.CustomAttributes);
+				   || IsUsedInMethodBody(method.Body)
+				   || IsUsedInCustomAttributes(method.CustomAttributes);
 		}
 
 		private bool IsUsedInMethodBody(MethodBody body)
@@ -148,7 +148,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		private bool IsUsedInMethodParameter(ParameterDefinition parameter)
 		{
 			return TypeMatches(parameter.ParameterType)
-			       || IsUsedInCustomAttributes(parameter.CustomAttributes);
+				   || IsUsedInCustomAttributes(parameter.CustomAttributes);
 		}
 
 		private bool IsUsedInCustomAttributes(IEnumerable<CustomAttribute> attributes)
@@ -161,7 +161,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			// No need search in custom attribe, ILSpy already provide an "Applied To" search.
 			return false;
 		}
-	
+
 		private bool TypeMatches(TypeReference tref)
 		{
 			return tref != null && analyzedType.ToString() == tref.ToString();
