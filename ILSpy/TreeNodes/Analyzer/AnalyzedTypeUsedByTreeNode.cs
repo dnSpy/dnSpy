@@ -22,7 +22,6 @@ using System.Linq;
 using System.Threading;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using TypeDefinition = Mono.Cecil.TypeDefinition;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
@@ -159,7 +158,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private bool IsUsedInCustomAttribute(CustomAttribute attribute)
 		{
-			// No need search in custom attribe, ILSpy already provide an "Applied To" search.
+			// No need search in custom attribute, ILSpy already provide an "Applied To" search.
 			return false;
 		}
 
