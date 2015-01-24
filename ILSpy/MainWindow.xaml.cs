@@ -558,6 +558,19 @@ namespace ICSharpCode.ILSpy
 		
 		public void JumpToReference(object reference)
 		{
+			JumpToReferenceAsync(reference).HandleExceptions();
+		}
+		
+		/// <summary>
+		/// Jumps to the specified reference.
+		/// </summary>
+		/// <returns>
+		/// Returns a task that will signal completion when the decompilation of the jump target has finished.
+		/// The task will be marked as canceled if the decompilation is canceled.
+		/// </returns>
+		public Task JumpToReferenceAsync(object reference)
+		{
+			decompilationTask = TaskHelper.CompletedTask;
 			ILSpyTreeNode treeNode = FindTreeNode(reference);
 			if (treeNode != null) {
 				SelectNode(treeNode);
@@ -569,6 +582,7 @@ namespace ICSharpCode.ILSpy
 					
 				}
 			}
+			return decompilationTask;
 		}
 		#endregion
 		
@@ -627,6 +641,7 @@ namespace ICSharpCode.ILSpy
 			DecompileSelectedNodes();
 		}
 		
+		Task decompilationTask;
 		bool ignoreDecompilationRequests;
 		
 		void DecompileSelectedNodes(DecompilerTextViewState state = null, bool recordHistory = true)
@@ -646,7 +661,7 @@ namespace ICSharpCode.ILSpy
 				if (node != null && node.View(decompilerTextView))
 					return;
 			}
-			decompilerTextView.Decompile(this.CurrentLanguage, this.SelectedNodes, new DecompilationOptions() { TextViewState = state });
+			decompilationTask = decompilerTextView.DecompileAsync(this.CurrentLanguage, this.SelectedNodes, new DecompilationOptions() { TextViewState = state });
 		}
 		
 		void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e)

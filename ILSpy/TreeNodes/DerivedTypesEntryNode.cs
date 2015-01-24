@@ -45,7 +45,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Text
 		{
-			get { return this.Language.TypeToString(type, true); }
+			get { return this.Language.TypeToString(type, true) + type.MDToken.ToSuffixString(); }
 		}
 
 		public override object Icon

@@ -20,21 +20,19 @@ using System;
 
 public static class CustomShortCircuitOperators
 {
-	private class B
+	// TODO: Restore base class after https://roslyn.codeplex.com/workitem/358 is fixed.
+	private class C
 	{
-		public static bool operator true(CustomShortCircuitOperators.B x)
+		public static bool operator true(CustomShortCircuitOperators.C x)
 		{
 			return true;
 		}
 
-		public static bool operator false(CustomShortCircuitOperators.B x)
+		public static bool operator false(CustomShortCircuitOperators.C x)
 		{
 			return false;
 		}
-	}
 
-	private class C : CustomShortCircuitOperators.B
-	{
 		public static CustomShortCircuitOperators.C operator &(CustomShortCircuitOperators.C x, CustomShortCircuitOperators.C y)
 		{
 			return null;

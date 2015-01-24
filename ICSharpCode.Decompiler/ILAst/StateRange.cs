@@ -137,23 +137,25 @@ namespace ICSharpCode.Decompiler.ILAst
 		internal DefaultDictionary<ILNode, StateRange> ranges;
 		SymbolicEvaluationContext evalContext;
 		
-		internal Dictionary<MethodDef, Interval> finallyMethodToStateInterval; // used only for IteratorDispose
+		internal Dictionary<MethodDef, StateRange> finallyMethodToStateRange; // used only for IteratorDispose
 		
 		/// <summary>
 		/// Initializes the state range logic:
 		/// Clears 'ranges' and sets 'ranges[entryPoint]' to the full range (int.MinValue to int.MaxValue)
 		/// </summary>
-		public StateRangeAnalysis(ILNode entryPoint, StateRangeAnalysisMode mode, FieldDef stateField)
+		public StateRangeAnalysis(ILNode entryPoint, StateRangeAnalysisMode mode, FieldDef stateField, ILVariable cachedStateVar = null)
 		{
 			this.mode = mode;
 			this.stateField = stateField;
 			if (mode == StateRangeAnalysisMode.IteratorDispose) {
-				finallyMethodToStateInterval = new Dictionary<MethodDef, Interval>();
+				finallyMethodToStateRange = new Dictionary<MethodDef, StateRange>();
 			}
 			
 			ranges = new DefaultDictionary<ILNode, StateRange>(n => new StateRange());
 			ranges[entryPoint] = new StateRange(int.MinValue, int.MaxValue);
 			evalContext = new SymbolicEvaluationContext(stateField);
+			if (cachedStateVar != null)
+				evalContext.AddStateVariable(cachedStateVar);
 		}
 		
 		public int AssignStateRanges(List<ILNode> body, int bodyLength)
@@ -213,7 +215,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						break;
 					case ILCode.Brtrue:
 						{
-							SymbolicValue val = evalContext.Eval(expr.Arguments[0]);
+							SymbolicValue val = evalContext.Eval(expr.Arguments[0]).AsBool();
 							if (val.Type == SymbolicValueType.StateEquals) {
 								ranges[(ILLabel)expr.Operand].UnionWith(nodeRange, val.Constant, val.Constant);
 								StateRange nextRange = ranges[body[i + 1]];
@@ -249,9 +251,9 @@ namespace ICSharpCode.Decompiler.ILAst
 						// in some cases (e.g. foreach over array) the C# compiler produces a finally method outside of try-finally blocks
 						if (mode == StateRangeAnalysisMode.IteratorDispose) {
 							MethodDef mdef = (expr.Operand as IMethod).ResolveMethodWithinSameModule();
-							if (mdef == null || finallyMethodToStateInterval.ContainsKey(mdef))
+							if (mdef == null || finallyMethodToStateRange.ContainsKey(mdef))
 								throw new SymbolicAnalysisFailedException();
-							finallyMethodToStateInterval.Add(mdef, nodeRange.ToEnclosingInterval());
+							finallyMethodToStateRange.Add(mdef, nodeRange);
 							break;
 						} else {
 							goto default;

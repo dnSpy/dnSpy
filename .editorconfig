@@ -1,0 +1,23 @@
+; Top-most EditorConfig file
+root = true
+
+[*]
+indent_style = tab
+indent_size = 4
+
+[*.il]
+indent_style = space
+indent_size = 2
+
+[*.csproj]
+indent_style = space
+indent_size = 2
+[*.config]
+indent_style = space
+indent_size = 2
+[*.vsixmanifest]
+indent_style = space
+indent_size = 2
+[*.vsct]
+indent_style = space
+indent_size = 2

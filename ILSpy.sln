@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
+#VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{F45DB999-7E72-4000-B5AD-3A7B485A0896}"
 	ProjectSection(SolutionItems) = preProject
 		doc\Command Line.txt = doc\Command Line.txt
@@ -26,6 +28,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.CSharp", "NRefactory\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj", "{53DCA265-3C3C-42F9-B647-F72BA678122B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnlib", "dnlib\src\dnlib.csproj", "{FDFC1237-143F-4919-8318-4926901F4639}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ILSpy.AddIn", "ILSpy.AddIn\ILSpy.AddIn.csproj", "{9D7BE6C0-B7B3-4A50-A54E-18A2D84A3384}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0A344E19-D1FC-4F4C-8883-0844AC669113}"
+	ProjectSection(SolutionItems) = preProject
+		Rebracer.xml = Rebracer.xml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -113,6 +121,12 @@ Global
 		{FDFC1237-143F-4919-8318-4926901F4639}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDFC1237-143F-4919-8318-4926901F4639}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FDFC1237-143F-4919-8318-4926901F4639}.Release|x86.ActiveCfg = Release|Any CPU
+		{9D7BE6C0-B7B3-4A50-A54E-18A2D84A3384}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D7BE6C0-B7B3-4A50-A54E-18A2D84A3384}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D7BE6C0-B7B3-4A50-A54E-18A2D84A3384}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9D7BE6C0-B7B3-4A50-A54E-18A2D84A3384}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D7BE6C0-B7B3-4A50-A54E-18A2D84A3384}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D7BE6C0-B7B3-4A50-A54E-18A2D84A3384}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

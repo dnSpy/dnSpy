@@ -541,6 +541,8 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (forceInferChildren)
 							InferTypeForExpression(expr.Arguments[1], corLib.Int32);
 						TypeSig type = NumericPromotion(InferTypeForExpression(expr.Arguments[0], null));
+						if (type == null)
+							return null;
 						TypeSig expectedInputType = null;
 						switch (type.GetElementType()) {
 							case ElementType.I4:
@@ -829,7 +831,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Await:
 					{
 						TypeSig taskType = InferTypeForExpression(expr.Arguments[0], null);
-						if (taskType.TypeName == "Task`1" && taskType.IsGenericInstanceType && taskType.Namespace == "System.Threading.Tasks") {
+						if (taskType != null && taskType.TypeName == "Task`1" && taskType.IsGenericInstanceType && taskType.Namespace == "System.Threading.Tasks") {
 							return ((GenericInstSig)taskType).GenericArguments[0];
 						}
 						return null;

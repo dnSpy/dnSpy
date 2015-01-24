@@ -10,3 +10,5 @@ obj/
 _ReSharper*/
 *.ReSharper
 *.patch
+/packages
+*.ide/

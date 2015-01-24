@@ -82,12 +82,26 @@ namespace ICSharpCode.ILSpy.Options
 				}
 			}
 		}
-		
+
+		bool showMetadataTokens;
+
+		public bool ShowMetadataTokens
+		{
+			get { return showMetadataTokens; }
+			set {
+				if (showMetadataTokens != value) {
+					showMetadataTokens = value;
+					OnPropertyChanged("ShowMetadataTokens");
+				}
+			}
+		}
+
 		public void CopyValues(DisplaySettings s)
 		{
 			this.SelectedFont = s.selectedFont;
 			this.SelectedFontSize = s.selectedFontSize;
 			this.ShowLineNumbers = s.showLineNumbers;
+			this.ShowMetadataTokens = s.showMetadataTokens;
 		}
 	}
 }

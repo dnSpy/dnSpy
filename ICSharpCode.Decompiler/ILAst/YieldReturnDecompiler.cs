@@ -312,7 +312,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		// This is (int.MinValue, int.MaxValue) for the first instruction.
 		// These ranges are propagated depending on the conditional jumps performed by the code.
 		
-		Dictionary<MethodDef, Interval> finallyMethodToStateInterval;
+		Dictionary<MethodDef, StateRange> finallyMethodToStateRange;
 		
 		void ConstructExceptionTable()
 		{
@@ -321,11 +321,11 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			var rangeAnalysis = new StateRangeAnalysis(ilMethod.Body[0], StateRangeAnalysisMode.IteratorDispose, stateField);
 			rangeAnalysis.AssignStateRanges(ilMethod.Body, ilMethod.Body.Count);
-			finallyMethodToStateInterval = rangeAnalysis.finallyMethodToStateInterval;
+			finallyMethodToStateRange = rangeAnalysis.finallyMethodToStateRange;
 			
 			// Now look at the finally blocks:
 			foreach (var tryFinally in ilMethod.GetSelfAndChildrenRecursive<ILTryCatchBlock>()) {
-				Interval interval = rangeAnalysis.ranges[tryFinally.TryBlock.Body[0]].ToEnclosingInterval();
+				var range = rangeAnalysis.ranges[tryFinally.TryBlock.Body[0]];
 				var finallyBody = tryFinally.FinallyBlock.Body;
 				if (finallyBody.Count != 2)
 					throw new SymbolicAnalysisFailedException();
@@ -338,9 +338,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					throw new SymbolicAnalysisFailedException();
 				
 				MethodDef mdef = GetMethodDefinition(call.Operand as IMethod);
-				if (mdef == null || finallyMethodToStateInterval.ContainsKey(mdef))
+				if (mdef == null || finallyMethodToStateRange.ContainsKey(mdef))
 					throw new SymbolicAnalysisFailedException();
-				finallyMethodToStateInterval.Add(mdef, interval);
+				finallyMethodToStateRange.Add(mdef, range);
 			}
 			rangeAnalysis = null;
 		}
@@ -430,10 +430,9 @@ namespace ICSharpCode.Decompiler.ILAst
 				
 				bodyLength--; // don't conside the stloc instruction to be part of the body
 			}
-			// verify that the last element in the body is a label pointing to the 'ret(false)'
+			// The last element in the body usually is a label pointing to the 'ret(false)'
 			returnFalseLabel = body.ElementAtOrDefault(bodyLength - 1) as ILLabel;
-			if (returnFalseLabel == null)
-				throw new SymbolicAnalysisFailedException();
+			// Note: in Roslyn-compiled code, returnFalseLabel may be null.
 			
 			var rangeAnalysis = new StateRangeAnalysis(body[0], StateRangeAnalysisMode.IteratorMoveNext, stateField);
 			int pos = rangeAnalysis.AssignStateRanges(body, bodyLength);
@@ -486,7 +485,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						throw new SymbolicAnalysisFailedException();
 					int val = (int)expr.Arguments[0].Operand;
 					if (val == 0) {
-						newBody.Add(MakeGoTo(returnFalseLabel));
+						newBody.Add(new ILExpression(ILCode.YieldBreak, null));
 					} else if (val == 1) {
 						newBody.Add(MakeGoTo(labels, currentState));
 					} else {
@@ -498,7 +497,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					// handle direct return (e.g. in release builds)
 					int val = (int)expr.Arguments[0].Operand;
 					if (val == 0) {
-						newBody.Add(MakeGoTo(returnFalseLabel));
+						newBody.Add(new ILExpression(ILCode.YieldBreak, null));
 					} else if (val == 1) {
 						newBody.Add(MakeGoTo(labels, currentState));
 					} else {
@@ -508,21 +507,21 @@ namespace ICSharpCode.Decompiler.ILAst
 					MethodDef method = GetMethodDefinition(expr.Operand as IMethod);
 					if (method == null)
 						throw new SymbolicAnalysisFailedException();
-					Interval interval;
+					StateRange stateRange;
 					if (method == disposeMethod) {
 						// Explicit call to dispose is used for "yield break;" within the method.
 						ILExpression br = body.ElementAtOrDefault(++pos) as ILExpression;
 						if (br == null || !(br.Code == ILCode.Br || br.Code == ILCode.Leave) || br.Operand != returnFalseLabel)
 							throw new SymbolicAnalysisFailedException();
-						newBody.Add(MakeGoTo(returnFalseLabel));
-					} else if (finallyMethodToStateInterval.TryGetValue(method, out interval)) {
+						newBody.Add(new ILExpression(ILCode.YieldBreak, null));
+					} else if (finallyMethodToStateRange.TryGetValue(method, out stateRange)) {
 						// Call to Finally-method
-						int index = stateChanges.FindIndex(ss => ss.NewState >= interval.Start && ss.NewState <= interval.End);
+						int index = stateChanges.FindIndex(ss => stateRange.Contains(ss.NewState));
 						if (index < 0)
 							throw new SymbolicAnalysisFailedException();
 						
 						ILLabel label = new ILLabel();
-						label.Name = "JumpOutOfTryFinally" + interval.Start + "_" + interval.End;
+						label.Name = "JumpOutOfTryFinally" + stateChanges[index].NewState;
 						newBody.Add(new ILExpression(ILCode.Leave, label));
 						
 						SetState stateChange = stateChanges[index];
@@ -545,6 +544,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		ILExpression MakeGoTo(ILLabel targetLabel)
 		{
+			Debug.Assert(targetLabel != null);
 			if (targetLabel == returnFalseLabel)
 				return new ILExpression(ILCode.YieldBreak, null);
 			else

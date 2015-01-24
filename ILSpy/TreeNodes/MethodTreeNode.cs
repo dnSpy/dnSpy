@@ -70,6 +70,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 			b.Append(") : ");
 			b.Append(language.TypeToString(method.ReturnType.ToTypeDefOrRefInternal(), false, method.Parameters.ReturnParameter.ParamDef));
+			b.Append(method.MDToken.ToSuffixString());
 			return HighlightSearchMatch(method.Name, b.ToString());
 		}
 

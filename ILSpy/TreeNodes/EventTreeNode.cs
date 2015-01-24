@@ -55,7 +55,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override object Text
 		{
-			get { return GetText(ev, this.Language); }
+			get { return GetText(ev, this.Language) + ev.MDToken.ToSuffixString(); }
 		}
 
 		public static object GetText(EventDef eventDef, Language language)

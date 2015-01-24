@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Vsix Version="1.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2010">
+  <Identifier Id="a9120dbe-164a-4891-842f-fb7829273838">
+    <Name>ILSpy</Name>
+    <Author>IC#Code</Author>
+    <Version>1.1</Version>
+    <Description xml:space="preserve">Integrates the ILSpy decompiler into Visual Studio.</Description>
+    <Icon>ILSpy-Large.ico</Icon>
+    <License>license.txt</License>
+    <!--TODO: <PreviewImage>~200px image</PreviewImage>-->
+    <MoreInfoUrl>http://ilspy.net</MoreInfoUrl>
+    <Locale>1033</Locale>
+    <SupportedFrameworkRuntimeEdition MinVersion="4.0" MaxVersion="6.0"/>
+    <SupportedProducts>
+      <VisualStudio Version="10.0">
+        <Edition>Pro</Edition>
+      </VisualStudio>
+      <VisualStudio Version="11.0">
+        <Edition>Pro</Edition>
+      </VisualStudio>
+      <VisualStudio Version="12.0">
+        <Edition>Pro</Edition>
+      </VisualStudio>
+      <VisualStudio Version="14.0">
+        <Edition>Pro</Edition>
+      </VisualStudio>
+    </SupportedProducts>
+  </Identifier>
+  <Content>
+    <VsPackage>|%CurrentProject%;PkgdefProjectOutputGroup|</VsPackage>
+  </Content>
+</Vsix>

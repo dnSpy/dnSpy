@@ -180,6 +180,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Commands\SimpleCommand.cs" />
+    <Compile Include="TaskHelper.cs" />
     <Compile Include="TextView\FoldingCommands.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzeContextMenuEntry.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedAssemblyTreeNode.cs" />
@@ -208,6 +209,7 @@
     <Compile Include="TreeNodes\IMemberTreeNode.cs" />
     <Compile Include="TreeNodes\ResourceNodes\CursorResourceEntryNode.cs" />
     <Compile Include="TreeNodes\ResourceNodes\IconResourceEntryNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\ImageListResourceEntryNode.cs" />
     <Compile Include="TreeNodes\ResourceNodes\ImageResourceEntryNode.cs" />
     <Compile Include="TreeNodes\ResourceNodes\XmlResourceNode.cs" />
     <Compile Include="TreeNodes\ResourceNodes\IResourceNodeFactory.cs" />
@@ -233,6 +235,7 @@
       <Link>license.txt</Link>
     </EmbeddedResource>
     <Resource Include="Images\AssemblyList.png" />
+    <Resource Include="Images\AssemblyListGAC.png" />
     <Resource Include="Images\AssemblyWarning.png" />
     <Resource Include="Images\ViewCode.png" />
     <Resource Include="Images\SaveFile.png" />

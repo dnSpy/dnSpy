@@ -128,8 +128,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			if (method.IsPrivate) {
 				if (!method.HasOverrides)
 					return false;
-				var declType = method.Overrides[0].MethodDeclaration.DeclaringType.ResolveTypeDef();
-				if (declType != null && !declType.IsInterface)
+				var typeDefinition = method.Overrides[0].MethodDeclaration.DeclaringType.ResolveTypeDef();
+				if (typeDefinition != null && !typeDefinition.IsInterface)
 					return false;
 			}
 

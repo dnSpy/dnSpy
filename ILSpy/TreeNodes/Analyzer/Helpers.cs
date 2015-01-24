@@ -68,11 +68,24 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 			return typeUsage ?? method;
 		}
+		
+		/// <summary>
+		/// Given a compiler-generated type, returns the method where that type is used.
+		/// Used to detect the 'parent method' for a lambda/iterator/async state machine.
+		/// </summary>
 		public static MethodDef GetOriginalCodeLocation(TypeDef type)
 		{
 			if (type != null && type.DeclaringType != null && type.IsCompilerGenerated()) {
-				MethodDef constructor = GetTypeConstructor(type);
-				return FindMethodUsageInType(type.DeclaringType, constructor);
+				if (type.IsValueType) {
+					// Value types might not have any constructor; but they must be stored in a local var
+					// because 'initobj' (or 'call .ctor') expects a managed ref.
+					return FindVariableOfTypeUsageInType(type.DeclaringType, type);
+				} else {
+					MethodDef constructor = GetTypeConstructor(type);
+					if (constructor == null)
+						return null;
+					return FindMethodUsageInType(type.DeclaringType, constructor);
+				}
 			}
 			return null;
 		}
@@ -94,6 +107,27 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					if (mr != null && !mr.IsField && mr.Name == name &&
 						IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) &&
 						mr.Resolve() == analyzedMethod) {
+						found = true;
+						break;
+					}
+				}
+
+				method.Body = null;
+
+				if (found)
+					return method;
+			}
+			return null;
+		}
+		
+		private static MethodDef FindVariableOfTypeUsageInType(TypeDef type, TypeDef variableType)
+		{
+			foreach (MethodDef method in type.Methods) {
+				bool found = false;
+				if (!method.HasBody)
+					continue;
+				foreach (var v in method.Body.Variables) {
+					if (v.Type.ToTypeDefOrRef().ResolveWithinSameModule() == variableType) {
 						found = true;
 						break;
 					}
