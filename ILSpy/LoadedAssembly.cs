@@ -101,7 +101,7 @@ namespace ICSharpCode.ILSpy
 			moduleCtx.AssemblyResolver = new MyAssemblyResolver(this);
 			moduleCtx.Resolver = new Resolver(moduleCtx.AssemblyResolver);
 
-			ModuleDef module = ModuleDefMD.Load(fileName, moduleCtx);
+			ModuleDefMD module = ModuleDefMD.Load(fileName, moduleCtx);
 			module.EnableTypeDefFindCache = true;
 			if (DecompilerSettingsPanel.CurrentDecompilerSettings.UseDebugSymbols) {
 				try {
@@ -115,17 +115,14 @@ namespace ICSharpCode.ILSpy
 			return module;
 		}
 		
-		private void LoadSymbols(ModuleDef module)
+		private void LoadSymbols(ModuleDefMD module)
 		{
 			// search for pdb in same directory as dll
-			// TODO: symbols
-			/*string pdbName = Path.Combine(Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName) + ".pdb");
+			string pdbName = Path.Combine(Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName) + ".pdb");
 			if (File.Exists(pdbName)) {
-				using (Stream s = File.OpenRead(pdbName)) {
-					module.ReadSymbols(new Mono.Cecil.Pdb.PdbReaderProvider().GetSymbolReader(module, s));
-				}
+				module.LoadPdb(pdbName);
 				return;
-			}*/
+			}
 			
 			// TODO: use symbol cache, get symbols from microsoft
 		}
