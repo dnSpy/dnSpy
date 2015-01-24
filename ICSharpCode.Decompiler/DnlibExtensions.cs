@@ -311,7 +311,7 @@ namespace ICSharpCode.Decompiler
 			type = type.RemovePinnedAndModifiers();
 			if (type.IsGenericInstanceType)
 				return ((GenericInstSig)type).GenericType.TypeDefOrRef;
-			else if (type.IsTypeDefOrRefSig)
+			else if (type.IsTypeDefOrRef)
 				return ((TypeDefOrRefSig)type).TypeDefOrRef;
 			else
 				return null;
@@ -467,7 +467,7 @@ namespace ICSharpCode.Decompiler
 			var ts = tdr as TypeSpec;
 			if (ts != null)
 				return IsValueType(ts.TypeSig);
-			return tdr.IsValueTypeCached;
+			return tdr.IsValueType;
 		}
 
 		public static bool IsValueType(TypeSig ts)

@@ -175,6 +175,9 @@ namespace ICSharpCode.ILSpy
 				var node = parent.LookupReferencedAssembly(assembly);
 				return node != null ? node.AssemblyDefinition : null;
 			}
+
+			public void Clear() {
+			}
 		}
 		
 		public IAssemblyResolver GetAssemblyResolver()
