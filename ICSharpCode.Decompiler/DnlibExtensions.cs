@@ -255,38 +255,6 @@ namespace ICSharpCode.Decompiler
 			return body.Instructions[index - 1];
 		}
 
-		public static bool IsGetter(this MethodDef method)
-		{
-			return method.DeclaringType.Properties.Any(propertyDef => propertyDef.GetMethod == method);
-		}
-
-		public static bool IsSetter(this MethodDef method)
-		{
-			return method.DeclaringType.Properties.Any(propertyDef => propertyDef.SetMethod == method);
-		}
-
-		public static bool IsAddOn(this MethodDef method)
-		{
-			return method.DeclaringType.Events.Any(propertyDef => propertyDef.AddMethod == method);
-		}
-
-		public static bool IsRemoveOn(this MethodDef method)
-		{
-			return method.DeclaringType.Events.Any(propertyDef => propertyDef.RemoveMethod == method);
-		}
-
-		public static bool HasSemantics(this MethodDef method)
-		{
-			return method.DeclaringType.Properties.Any(propertyDef => propertyDef.SetMethod == method || propertyDef.GetMethod == method) ||
-				   method.DeclaringType.Events.Any(propertyDef => propertyDef.AddMethod == method || propertyDef.RemoveMethod == method || propertyDef.InvokeMethod == method);
-		}
-
-		public static bool HasSemanticsButNotInvoke(this MethodDef method)
-		{
-			return method.DeclaringType.Properties.Any(propertyDef => propertyDef.SetMethod == method || propertyDef.GetMethod == method) ||
-				   method.DeclaringType.Events.Any(propertyDef => propertyDef.AddMethod == method || propertyDef.RemoveMethod == method);
-		}
-
 		public static bool HasNormalParameter(this IEnumerable<Parameter> list)
 		{
 			foreach (var p in list)

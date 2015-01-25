@@ -422,9 +422,9 @@ namespace ICSharpCode.Decompiler.ILAst
 				} else {
 					MethodDef cecilMethodDef = cecilMethod.Resolve();
 					if (cecilMethodDef != null) {
-						if (cecilMethodDef.IsGetter())
+						if (cecilMethodDef.IsGetter)
 							expr.Code = (expr.Code == ILCode.Call) ? ILCode.CallGetter : ILCode.CallvirtGetter;
-						else if (cecilMethodDef.IsSetter())
+						else if (cecilMethodDef.IsSetter)
 							expr.Code = (expr.Code == ILCode.Call) ? ILCode.CallSetter : ILCode.CallvirtSetter;
 					}
 				}

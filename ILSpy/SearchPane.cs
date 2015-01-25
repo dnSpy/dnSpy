@@ -341,8 +341,14 @@ namespace ICSharpCode.ILSpy
 					}
 				}
 				foreach (MethodDef method in type.Methods) {
-					if (Decompiler.DnlibExtensions.HasSemantics(method))
-						continue;
+					switch (method.SemanticsAttributes) {
+						case MethodSemanticsAttributes.Setter:
+						case MethodSemanticsAttributes.Getter:
+						case MethodSemanticsAttributes.AddOn:
+						case MethodSemanticsAttributes.RemoveOn:
+						case MethodSemanticsAttributes.Fire:
+							continue;
+					}
 					if (IsMatch(method)) {
 						AddResult(new SearchResult {
 						          	Member = method,

@@ -135,7 +135,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 			// exclude methods with 'semantics'. for example, property getters & setters.
 			// HACK: this is a potentially fragile implementation, as the MethodSemantics may be extended to other uses at a later date.
-			if (Decompiler.DnlibExtensions.HasSemantics(method))
+			if (method.SemanticsAttributes != MethodSemanticsAttributes.None)
 				return false;
 
 			if (Decompiler.DnlibExtensions.Resolve(method.ReturnType) == analyzedType)

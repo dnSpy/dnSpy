@@ -1031,28 +1031,28 @@ namespace ICSharpCode.Decompiler.Ast
 			
 			// Test whether the method is an accessor:
 			if (cecilMethodDef != null) {
-				if (methodArgs.Count == 0 && cecilMethodDef.IsGetter()) {
+				if (methodArgs.Count == 0 && cecilMethodDef.IsGetter) {
 					foreach (var prop in cecilMethodDef.DeclaringType.Properties) {
 						if (prop.GetMethod == cecilMethodDef)
 							return target.Member(prop.Name).WithAnnotation(prop).WithAnnotation(cecilMethod);
 					}
-				} else if (cecilMethodDef.IsGetter()) { // with parameters
+				} else if (cecilMethodDef.IsGetter) { // with parameters
 					PropertyDef indexer = GetIndexer(cecilMethodDef);
 					if (indexer != null)
 						return target.Indexer(methodArgs).WithAnnotation(indexer).WithAnnotation(cecilMethod);
-				} else if (methodArgs.Count == 1 && cecilMethodDef.IsSetter()) {
+				} else if (methodArgs.Count == 1 && cecilMethodDef.IsSetter) {
 					foreach (var prop in cecilMethodDef.DeclaringType.Properties) {
 						if (prop.SetMethod == cecilMethodDef)
 							return new Ast.AssignmentExpression(target.Member(prop.Name).WithAnnotation(prop).WithAnnotation(cecilMethod), methodArgs[0]);
 					}
-				} else if (methodArgs.Count > 1 && cecilMethodDef.IsSetter()) {
+				} else if (methodArgs.Count > 1 && cecilMethodDef.IsSetter) {
 					PropertyDef indexer = GetIndexer(cecilMethodDef);
 					if (indexer != null)
 						return new AssignmentExpression(
 							target.Indexer(methodArgs.GetRange(0, methodArgs.Count - 1)).WithAnnotation(indexer).WithAnnotation(cecilMethod),
 							methodArgs[methodArgs.Count - 1]
 						);
-				} else if (methodArgs.Count == 1 && cecilMethodDef.IsAddOn()) {
+				} else if (methodArgs.Count == 1 && cecilMethodDef.IsAddOn) {
 					foreach (var ev in cecilMethodDef.DeclaringType.Events) {
 						if (ev.AddMethod == cecilMethodDef) {
 							return new Ast.AssignmentExpression {
@@ -1062,7 +1062,7 @@ namespace ICSharpCode.Decompiler.Ast
 							};
 						}
 					}
-				} else if (methodArgs.Count == 1 && cecilMethodDef.IsRemoveOn()) {
+				} else if (methodArgs.Count == 1 && cecilMethodDef.IsRemoveOn) {
 					foreach (var ev in cecilMethodDef.DeclaringType.Events) {
 						if (ev.RemoveMethod == cecilMethodDef) {
 							return new Ast.AssignmentExpression {

@@ -396,7 +396,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				}
 			}
 			MethodDef methodDef = mr.Resolve();
-			if (methodDef != null && methodDef.IsGetter()) {
+			if (methodDef != null && methodDef.IsGetter) {
 				PropertyDef indexer = AstMethodBodyBuilder.GetIndexer(methodDef);
 				if (indexer != null)
 					return new IndexerExpression(mre.Target.Detach(), arguments).WithAnnotation(indexer);

@@ -68,7 +68,7 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			MethodDef method = member as MethodDef;
 			if (method != null) {
-				if (method.HasSemanticsButNotInvoke())
+				if (method.IsGetter || method.IsSetter || method.IsAddOn || method.IsRemoveOn)
 					return true;
 				if (settings.AnonymousMethods && method.HasGeneratedName() && method.IsCompilerGenerated())
 					return true;

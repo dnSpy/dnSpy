@@ -634,7 +634,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			foreach (Parameter p in methodDef.Parameters.SkipNonNormal()) {
 				this.Parameters.Add(new ILVariable { Type = p.Type, Name = p.Name, OriginalParameter = p });
 			}
-			if (this.Parameters.Count > 0 && (methodDef.IsSetter() || methodDef.IsAddOn() || methodDef.IsRemoveOn())) {
+			if (this.Parameters.Count > 0 && (methodDef.IsSetter || methodDef.IsAddOn || methodDef.IsRemoveOn)) {
 				// last parameter must be 'value', so rename it
 				this.Parameters.Last().Name = "value";
 			}
