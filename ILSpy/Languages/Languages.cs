@@ -36,10 +36,20 @@ namespace ICSharpCode.ILSpy
 			get { return allLanguages; }
 		}
 
+		public static void Initialize()
+		{
+			Initialize(null);
+		}
+
 		internal static void Initialize(CompositionContainer composition)
 		{
 			List<Language> languages = new List<Language>();
-			languages.AddRange(composition.GetExportedValues<Language>());
+			if (composition != null)
+				languages.AddRange(composition.GetExportedValues<Language>());
+			else {
+				languages.Add(new CSharpLanguage());
+				languages.Add(new VB.VBLanguage());
+			}
 			languages.Add(new ILLanguage(true));
 			#if DEBUG
 			languages.AddRange(ILAstLanguage.GetDebugLanguages());

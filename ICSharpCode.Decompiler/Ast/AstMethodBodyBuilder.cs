@@ -1094,6 +1094,8 @@ namespace ICSharpCode.Decompiler.Ast
 		static void AdjustArgumentsForMethodCall(IMethod cecilMethod, List<Expression> methodArgs)
 		{
 			MethodDef methodDef = cecilMethod.Resolve();
+			if (methodDef == null)
+				return;
 			int skip = methodDef.Parameters.GetParametersSkip();
 			// Convert 'ref' into 'out' where necessary
 			for (int i = 0; i < methodArgs.Count && i < methodDef.Parameters.Count - skip; i++) {

@@ -146,7 +146,8 @@ namespace ICSharpCode.ILSpy
 					disposed = true;
 					assemblyLoadDisableCount--;
 					// clear the lookup cache since we might have stored the lookups failed due to DisableAssemblyLoad()
-					MainWindow.Instance.CurrentAssemblyList.ClearCache();
+					if (MainWindow.Instance != null)
+						MainWindow.Instance.CurrentAssemblyList.ClearCache();
 				}
 			}
 		}
@@ -210,7 +211,7 @@ namespace ICSharpCode.ILSpy
 			if (assemblyLoadDisableCount > 0)
 				return null;
 			
-			if (!App.Current.Dispatcher.CheckAccess()) {
+			if (App.Current != null && !App.Current.Dispatcher.CheckAccess()) {
 				// Call this method on the GUI thread.
 				return (LoadedAssembly)App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Func<string, LoadedAssembly>(LookupReferencedAssembly), fullName);
 			}
@@ -239,7 +240,7 @@ namespace ICSharpCode.ILSpy
 			}
 			if (assemblyLoadDisableCount > 0)
 				return null;
-			if (!App.Current.Dispatcher.CheckAccess()) {
+			if (App.Current != null && !App.Current.Dispatcher.CheckAccess()) {
 				// Call this method on the GUI thread.
 				return (LoadedAssembly)App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Func<string, LoadedAssembly>(LookupWinRTMetadata), name);
 			}

@@ -85,11 +85,13 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		internal XElement SaveAsXml()
 		{
-			return new XElement(
-				"List",
-				new XAttribute("name", this.ListName),
-				assemblies.Select(asm => new XElement("Assembly", asm.FileName))
-			);
+			lock (assemblies) {
+				return new XElement(
+					"List",
+					new XAttribute("name", this.ListName),
+					assemblies.Select(asm => new XElement("Assembly", asm.FileName))
+				);
+			}
 		}
 		
 		/// <summary>
@@ -106,7 +108,13 @@ namespace ICSharpCode.ILSpy
 			// and enqueue a task that saves it once the UI has finished modifying the assembly list.
 			if (!dirty) {
 				dirty = true;
-				App.Current.Dispatcher.BeginInvoke(
+				if (App.Current == null) {
+					dirty = false;
+					AssemblyListManager.SaveList(this);
+					ClearCache();
+				}
+				else {
+					App.Current.Dispatcher.BeginInvoke(
 					DispatcherPriority.Background,
 					new Action(
 						delegate {
@@ -114,7 +122,8 @@ namespace ICSharpCode.ILSpy
 							AssemblyListManager.SaveList(this);
 							ClearCache();
 						})
-				);
+					);
+				}
 			}
 		}
 		
@@ -130,25 +139,27 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		public LoadedAssembly OpenAssembly(string file)
 		{
-			App.Current.Dispatcher.VerifyAccess();
-			
+			if (App.Current != null)
+				App.Current.Dispatcher.VerifyAccess();
+
 			file = Path.GetFullPath(file);
-			
-			foreach (LoadedAssembly asm in this.assemblies) {
-				if (file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase))
-					return asm;
-			}
-			
-			var newAsm = new LoadedAssembly(this, file);
+
 			lock (assemblies) {
+				foreach (LoadedAssembly asm in this.assemblies) {
+					if (file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase))
+						return asm;
+				}
+
+				var newAsm = new LoadedAssembly(this, file);
 				this.assemblies.Add(newAsm);
+				return newAsm;
 			}
-			return newAsm;
 		}
 		
 		public void Unload(LoadedAssembly assembly)
 		{
-			App.Current.Dispatcher.VerifyAccess();
+			if (App.Current != null)
+				App.Current.Dispatcher.VerifyAccess();
 			lock (assemblies) {
 				assemblies.Remove(assembly);
 			}
@@ -161,11 +172,17 @@ namespace ICSharpCode.ILSpy
 		{
 			if (gcRequested) return;
 			gcRequested = true;
-			App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(
+			if (App.Current == null) {
+				gcRequested = false;
+				GC.Collect();
+			}
+			else {
+				App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(
 				delegate {
 					gcRequested = false;
 					GC.Collect();
 				}));
+			}
 		}
 		
 		public void Sort(IComparer<LoadedAssembly> comparer)
@@ -175,7 +192,8 @@ namespace ICSharpCode.ILSpy
 		
 		public void Sort(int index, int count, IComparer<LoadedAssembly> comparer)
 		{
-			App.Current.Dispatcher.VerifyAccess();
+			if (App.Current != null)
+				App.Current.Dispatcher.VerifyAccess();
 			lock (assemblies) {
 				List<LoadedAssembly> list = new List<LoadedAssembly>(assemblies);
 				list.Sort(index, Math.Min(count, list.Count - index), comparer);
