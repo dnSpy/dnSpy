@@ -271,6 +271,10 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public void EnsureLabelAtPos(List<ILNode> body, ref int pos, ref int bodyLength)
 		{
+			//TODO: HACK FIX so .NET Native System.IO.StringWriter.MakeCompletedTask doesn't crash ILSpy
+			if (pos >= body.Count)
+				pos = body.Count - 1;
+
 			if (pos > 0 && body[pos - 1] is ILLabel) {
 				pos--;
 			} else {

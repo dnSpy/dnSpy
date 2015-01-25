@@ -180,8 +180,11 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 				if (numberOfExpressionsAlreadyInferred == oldCount) {
 					if (ignoreSingleLoadDependencies) {
-						if (assignVariableTypesBasedOnPartialInformation)
-							throw new InvalidOperationException("Could not infer any expression");
+						if (assignVariableTypesBasedOnPartialInformation) {
+							//throw new InvalidOperationException("Could not infer any expression");
+							//TODO: HACK so .NET Native (2014-12-19) System.IO.WinRTFileSystem.OpenAsync() doesn't throw
+							numberOfExpressionsAlreadyInferred++;
+						}
 						else
 							assignVariableTypesBasedOnPartialInformation = true;
 					} else {
