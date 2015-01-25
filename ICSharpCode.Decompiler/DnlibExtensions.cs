@@ -183,7 +183,7 @@ namespace ICSharpCode.Decompiler
 				}
 				return false;
 			}
-			if (type.Next != null)
+			if (type != null && type.Next != null)
 				return ContainsAnonymousType(type.Next);
 			return false;
 		}
