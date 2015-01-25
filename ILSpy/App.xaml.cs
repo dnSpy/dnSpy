@@ -33,6 +33,19 @@ using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy
 {
+	static class StartUpClass
+	{
+		[STAThread]
+		public static void Main() {
+			if (!dnlib.Settings.IsThreadSafe) {
+				MessageBox.Show("dnlib wasn't compiled with THREAD_SAFE defined.");
+				Environment.Exit(1);
+			}
+
+			App.Main();
+		}
+	}
+
 	/// <summary>
 	/// Interaction logic for App.xaml
 	/// </summary>
