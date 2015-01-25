@@ -25,6 +25,11 @@ namespace ilspc {
 		static string projDirSuffix = string.Empty;
 
 		static int Main(string[] args) {
+			if (!dnlib.Settings.IsThreadSafe) {
+				Console.WriteLine("dnlib wasn't compiled with THREAD_SAFE defined");
+				return 1;
+			}
+
 			try {
 				InitILSpy();
 				ParseCommandLine(args);
