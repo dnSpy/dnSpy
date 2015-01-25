@@ -156,7 +156,7 @@ namespace ICSharpCode.ILSpy.VB
 				bool useTargetFrameworkAttribute = false;
 				var targetFrameworkAttribute = module.Assembly.CustomAttributes.FirstOrDefault(a => a.AttributeType.FullName == "System.Runtime.Versioning.TargetFrameworkAttribute");
 				if (targetFrameworkAttribute != null && targetFrameworkAttribute.ConstructorArguments.Any()) {
-					string frameworkName = (string)targetFrameworkAttribute.ConstructorArguments[0].Value;
+					string frameworkName = (UTF8String)targetFrameworkAttribute.ConstructorArguments[0].Value;
 					string[] frameworkParts = frameworkName.Split(',');
 					string frameworkVersion = frameworkParts.FirstOrDefault(a => a.StartsWith("Version="));
 					if (frameworkVersion != null) {
