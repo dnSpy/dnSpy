@@ -205,7 +205,7 @@ namespace ICSharpCode.ILSpy
 		public LoadedAssembly LookupReferencedAssembly(string fullName, ModuleDef sourceModule)
 		{
 			var asm = assemblyList.assemblyLookupCache.GetOrAdd(fullName, n => LookupReferencedAssemblyInternal(n, sourceModule));
-			if (asm != null && !asm.AssemblyDefinition.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase))
+			if (asm != null && asm.AssemblyDefinition != null && !asm.AssemblyDefinition.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase))
 				assemblyList.assemblyLookupCache.TryAdd(asm.AssemblyDefinition.FullName, asm);
 			return asm;
 		}
