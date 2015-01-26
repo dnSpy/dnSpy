@@ -19,6 +19,7 @@ namespace ilspc {
 	class Program {
 		static bool useStdout;
 		static bool isRecursive;
+		static bool noGac;
 		static string outputDir;
 		static List<string> files;
 		static List<string> asmPaths;
@@ -58,10 +59,11 @@ namespace ilspc {
 
 		static void PrintHelp() {
 			var progName = GetProgramBaseName();
-			Console.WriteLine("{0} [--stdout] [--asm-path path] [--proj-dir-suffix suffix] [-r] [-o outdir] [-l lang] [fileOrDir1] [fileOrDir2] [...]", progName);
+			Console.WriteLine("{0} [--stdout] [--asm-path path] [--no-gac] [--proj-dir-suffix suffix] [-r] [-o outdir] [-l lang] [fileOrDir1] [fileOrDir2] [...]", progName);
 			Console.WriteLine("  --stdout     decompile to the screen");
 			Console.WriteLine("  --proj-dir-suffix suffix   append 'suffix' to project dir name");
 			Console.WriteLine("  --asm-path path    Asm search paths. Paths can be separated with '{0}'", PATHS_SEP);
+			Console.WriteLine("  --no-gac     don't use the GAC to look up assemblies");
 			Console.WriteLine("  -r           recursive search");
 			Console.WriteLine("  -o outdir    output directory");
 			Console.WriteLine("  -l lang      set language, default is C#");
@@ -155,6 +157,10 @@ namespace ilspc {
 						i++;
 						break;
 
+					case "-no-gac":
+						noGac = true;
+						break;
+
 					default:
 						throw new ErrorException(string.Format("Invalid option: {0}", arg));
 					}
@@ -226,6 +232,7 @@ namespace ilspc {
 				throw new Exception(".NET module filename is empty or null");
 
 			var asmList = new AssemblyList("MyListName");
+			asmList.UseGAC = !noGac;
 			asmList.AddSearchPath(Path.GetDirectoryName(fileName));
 			foreach (var path in asmPaths)
 				asmList.AddSearchPath(path);
