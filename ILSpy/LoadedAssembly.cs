@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using ICSharpCode.ILSpy.Options;
@@ -127,12 +128,11 @@ namespace ICSharpCode.ILSpy
 			// TODO: use symbol cache, get symbols from microsoft
 		}
 		
-		[ThreadStatic]
 		static int assemblyLoadDisableCount;
 		
 		public static IDisposable DisableAssemblyLoad()
 		{
-			assemblyLoadDisableCount++;
+			Interlocked.Increment(ref assemblyLoadDisableCount);
 			return new DecrementAssemblyLoadDisableCount();
 		}
 		
@@ -144,7 +144,7 @@ namespace ICSharpCode.ILSpy
 			{
 				if (!disposed) {
 					disposed = true;
-					assemblyLoadDisableCount--;
+					Interlocked.Decrement(ref assemblyLoadDisableCount);
 					// clear the lookup cache since we might have stored the lookups failed due to DisableAssemblyLoad()
 					if (MainWindow.Instance != null)
 						MainWindow.Instance.CurrentAssemblyList.ClearCache();
@@ -198,13 +198,16 @@ namespace ICSharpCode.ILSpy
 			if (name.IsContentTypeWindowsRuntime) {
 				return assemblyList.winRTMetadataLookupCache.GetOrAdd(name.Name, LookupWinRTMetadata);
 			} else {
-				return assemblyList.assemblyLookupCache.GetOrAdd(name.FullName, n => LookupReferencedAssemblyInternal(n, sourceModule));
+				return LookupReferencedAssembly(name.FullName, sourceModule);
 			}
 		}
 		
 		public LoadedAssembly LookupReferencedAssembly(string fullName, ModuleDef sourceModule)
 		{
-			return assemblyList.assemblyLookupCache.GetOrAdd(fullName, n => LookupReferencedAssemblyInternal(n, sourceModule));
+			var asm = assemblyList.assemblyLookupCache.GetOrAdd(fullName, n => LookupReferencedAssemblyInternal(n, sourceModule));
+			if (asm != null && !asm.AssemblyDefinition.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase))
+				assemblyList.assemblyLookupCache.TryAdd(asm.AssemblyDefinition.FullName, asm);
+			return asm;
 		}
 		
 		LoadedAssembly LookupReferencedAssemblyInternal(string fullName, ModuleDef sourceModule)
@@ -213,8 +216,6 @@ namespace ICSharpCode.ILSpy
 				if (asm.AssemblyDefinition != null && fullName.Equals(asm.AssemblyDefinition.FullName, StringComparison.OrdinalIgnoreCase))
 					return asm;
 			}
-			if (assemblyLoadDisableCount > 0)
-				return null;
 			
 			if (App.Current != null && !App.Current.Dispatcher.CheckAccess()) {
 				// Call this method on the GUI thread.
@@ -222,54 +223,46 @@ namespace ICSharpCode.ILSpy
 			}
 			
 			var name = new AssemblyNameInfo(fullName);
-			var loadedAsm = LookupFromSearchPaths(name, sourceModule, false);
+			var loadedAsm = LookupFromSearchPaths(name, sourceModule, true);
 			if (loadedAsm != null)
-				return assemblyList.AddAssembly(loadedAsm);
+				return assemblyList.AddAssembly(loadedAsm, assemblyLoadDisableCount == 0);
 
-			string file = GacInterop.FindAssemblyInNetGac(name);
-			if (file == null) {
-				if (name.IsCorLib()) {
-					loadedAsm = LookupFromSearchPaths(name, sourceModule, true);
-					if (loadedAsm != null)
-						return assemblyList.AddAssembly(loadedAsm);
-				}
+			if (assemblyList.UseGAC) {
+				var file = GacInterop.FindAssemblyInNetGac(name);
+				if (file != null)
+					return assemblyList.OpenAssembly(file, assemblyLoadDisableCount == 0);
+			}
 
-				string dir = Path.GetDirectoryName(this.fileName);
-				if (File.Exists(Path.Combine(dir, name.Name + ".dll")))
-					file = Path.Combine(dir, name.Name + ".dll");
-				else if (File.Exists(Path.Combine(dir, name.Name + ".exe")))
-					file = Path.Combine(dir, name.Name + ".exe");
-			}
-			if (file != null) {
-				return assemblyList.OpenAssembly(file);
-			} else {
-				return null;
-			}
+			loadedAsm = LookupFromSearchPaths(name, sourceModule, false);
+			if (loadedAsm != null)
+				return assemblyList.AddAssembly(loadedAsm, assemblyLoadDisableCount == 0);
+
+			return null;
 		}
 
-		LoadedAssembly LookupFromSearchPaths(IAssembly asmName, ModuleDef sourceModule, bool corLibCheck) {
+		LoadedAssembly LookupFromSearchPaths(IAssembly asmName, ModuleDef sourceModule, bool exactCheck) {
 			LoadedAssembly asm;
 			if (sourceModule != null && !string.IsNullOrEmpty(sourceModule.Location)) {
-				asm = TryLoadFromDir(asmName, corLibCheck, Path.GetDirectoryName(sourceModule.Location));
+				asm = TryLoadFromDir(asmName, exactCheck, Path.GetDirectoryName(sourceModule.Location));
 				if (asm != null)
 					return asm;
 			}
 			lock (assemblyList.assemblySearchPaths) {
 				foreach (var path in assemblyList.assemblySearchPaths) {
-					asm = TryLoadFromDir(asmName, corLibCheck, path);
+					asm = TryLoadFromDir(asmName, exactCheck, path);
 					if (asm != null)
 						return asm;
 				}
 			}
-			return TryLoadFromDir(asmName, corLibCheck, Path.GetDirectoryName(this.fileName));
+			return TryLoadFromDir(asmName, exactCheck, Path.GetDirectoryName(this.fileName));
 		}
 
-		LoadedAssembly TryLoadFromDir(IAssembly asmName, bool corLibCheck, string dirPath) {
-			return TryLoadFromDir2(asmName, corLibCheck, Path.Combine(dirPath, asmName.Name + ".dll")) ??
-				   TryLoadFromDir2(asmName, corLibCheck, Path.Combine(dirPath, asmName.Name + ".exe"));
+		LoadedAssembly TryLoadFromDir(IAssembly asmName, bool exactCheck, string dirPath) {
+			return TryLoadFromDir2(asmName, exactCheck, Path.Combine(dirPath, asmName.Name + ".dll")) ??
+				   TryLoadFromDir2(asmName, exactCheck, Path.Combine(dirPath, asmName.Name + ".exe"));
 		}
 
-		LoadedAssembly TryLoadFromDir2(IAssembly asmName, bool corLibCheck, string fileName) {
+		LoadedAssembly TryLoadFromDir2(IAssembly asmName, bool exactCheck, string fileName) {
 			if (!File.Exists(fileName))
 				return null;
 
@@ -283,9 +276,9 @@ namespace ICSharpCode.ILSpy
 				var asm = mod.Assembly;
 				if (asm == null)
 					return null;
-				bool b = corLibCheck ?
-					AssemblyNameComparer.NameOnly.Equals(asmName, asm) :
-					AssemblyNameComparer.CompareAll.Equals(asmName, asm);
+				bool b = exactCheck ?
+					AssemblyNameComparer.CompareAll.Equals(asmName, asm) :
+					AssemblyNameComparer.NameAndPublicKeyTokenOnly.Equals(asmName, asm);
 				if (!b)
 					return null;
 

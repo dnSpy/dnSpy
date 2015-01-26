@@ -38,9 +38,15 @@ namespace ICSharpCode.ILSpy
 		/// <summary>Dirty flag, used to mark modifications so that the list is saved later</summary>
 		bool dirty;
 		
-		internal readonly ConcurrentDictionary<string, LoadedAssembly> assemblyLookupCache = new ConcurrentDictionary<string, LoadedAssembly>();
-		internal readonly ConcurrentDictionary<string, LoadedAssembly> winRTMetadataLookupCache = new ConcurrentDictionary<string, LoadedAssembly>();
+		internal readonly ConcurrentDictionary<string, LoadedAssembly> assemblyLookupCache = new ConcurrentDictionary<string, LoadedAssembly>(StringComparer.OrdinalIgnoreCase);
+		internal readonly ConcurrentDictionary<string, LoadedAssembly> winRTMetadataLookupCache = new ConcurrentDictionary<string, LoadedAssembly>(StringComparer.OrdinalIgnoreCase);
 		internal List<string> assemblySearchPaths = new List<string>();
+
+		public bool UseGAC {
+			get { return useGAC; }
+			set { useGAC = value; }
+		}
+		bool useGAC = true;
 		
 		/// <summary>
 		/// The assemblies in this list.
@@ -151,6 +157,10 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		public LoadedAssembly OpenAssembly(string file)
 		{
+			return OpenAssembly(file, true);
+		}
+
+		internal LoadedAssembly OpenAssembly(string file, bool canAdd) {
 			if (App.Current != null)
 				App.Current.Dispatcher.VerifyAccess();
 
@@ -163,12 +173,13 @@ namespace ICSharpCode.ILSpy
 				}
 
 				var newAsm = new LoadedAssembly(this, file);
-				this.assemblies.Add(newAsm);
+				if (canAdd)
+					this.assemblies.Add(newAsm);
 				return newAsm;
 			}
 		}
 
-		internal LoadedAssembly AddAssembly(LoadedAssembly newAsm)
+		internal LoadedAssembly AddAssembly(LoadedAssembly newAsm, bool canAdd)
 		{
 			if (App.Current != null)
 				App.Current.Dispatcher.VerifyAccess();
@@ -183,7 +194,8 @@ namespace ICSharpCode.ILSpy
 					}
 				}
 
-				this.assemblies.Add(newAsm);
+				if (canAdd)
+					this.assemblies.Add(newAsm);
 				return newAsm;
 			}
 		}
