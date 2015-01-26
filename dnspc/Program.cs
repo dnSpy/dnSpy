@@ -21,6 +21,7 @@ namespace ilspc {
 		static bool isRecursive;
 		static string outputDir;
 		static List<string> files;
+		static List<string> asmPaths;
 		static string language;
 		static string projDirSuffix = string.Empty;
 
@@ -47,11 +48,20 @@ namespace ilspc {
 			return 0;
 		}
 
+		static bool IsUnix() {
+			// See http://mono-project.com/FAQ:_Technical#Mono_Platforms for platform detection.
+			int p = (int)Environment.OSVersion.Platform;
+			return p == 4 || p == 6 || p == 128;
+		}
+
+		static char PATHS_SEP = IsUnix() ? ':' : ';';
+
 		static void PrintHelp() {
 			var progName = GetProgramBaseName();
-			Console.WriteLine("{0} [--stdout] [--proj-dir-suffix suffix] [-r] [-o outdir] [-l lang] [fileOrDir1] [fileOrDir2] [...]", progName);
+			Console.WriteLine("{0} [--stdout] [--asm-path path] [--proj-dir-suffix suffix] [-r] [-o outdir] [-l lang] [fileOrDir1] [fileOrDir2] [...]", progName);
 			Console.WriteLine("  --stdout     decompile to the screen");
 			Console.WriteLine("  --proj-dir-suffix suffix   append 'suffix' to project dir name");
+			Console.WriteLine("  --asm-path path    Asm search paths. Paths can be separated with '{0}'", PATHS_SEP);
 			Console.WriteLine("  -r           recursive search");
 			Console.WriteLine("  -o outdir    output directory");
 			Console.WriteLine("  -l lang      set language, default is C#");
@@ -99,6 +109,7 @@ namespace ilspc {
 				throw new ErrorException("No options specified");
 
 			files = new List<string>();
+			asmPaths = new List<string>();
 			bool canParseCommands = true;
 			for (int i = 0; i < args.Length; i++) {
 				var arg = args[i];
@@ -135,6 +146,13 @@ namespace ilspc {
 
 					case "-stdout":
 						useStdout = true;
+						break;
+
+					case "-asm-path":
+						if (next == null)
+							throw new ErrorException("Missing assembly search path");
+						asmPaths.AddRange(next.Split(new char[] { PATHS_SEP }, StringSplitOptions.RemoveEmptyEntries));
+						i++;
 						break;
 
 					default:
@@ -208,6 +226,9 @@ namespace ilspc {
 				throw new Exception(".NET module filename is empty or null");
 
 			var asmList = new AssemblyList("MyListName");
+			asmList.AddSearchPath(Path.GetDirectoryName(fileName));
+			foreach (var path in asmPaths)
+				asmList.AddSearchPath(path);
 			var lasm = new LoadedAssembly(asmList, fileName);
 			var opts = new DecompilationOptions {
 				FullDecompilation = true,
