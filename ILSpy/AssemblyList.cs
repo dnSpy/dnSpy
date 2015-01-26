@@ -40,6 +40,7 @@ namespace ICSharpCode.ILSpy
 		
 		internal readonly ConcurrentDictionary<string, LoadedAssembly> assemblyLookupCache = new ConcurrentDictionary<string, LoadedAssembly>();
 		internal readonly ConcurrentDictionary<string, LoadedAssembly> winRTMetadataLookupCache = new ConcurrentDictionary<string, LoadedAssembly>();
+		internal List<string> assemblySearchPaths = new List<string>();
 		
 		/// <summary>
 		/// The assemblies in this list.
@@ -70,6 +71,17 @@ namespace ICSharpCode.ILSpy
 			this.dirty = false; // OpenAssembly() sets dirty, so reset it afterwards
 		}
 		
+		/// <summary>
+		/// Adds an assembly search path
+		/// </summary>
+		/// <param name="path"></param>
+		public void AddSearchPath(string path) {
+			if (!string.IsNullOrWhiteSpace(path)) {
+				lock (assemblySearchPaths)
+					assemblySearchPaths.Add(path);
+			}
+		}
+
 		/// <summary>
 		/// Gets the loaded assemblies. This method is thread-safe.
 		/// </summary>
@@ -151,6 +163,26 @@ namespace ICSharpCode.ILSpy
 				}
 
 				var newAsm = new LoadedAssembly(this, file);
+				this.assemblies.Add(newAsm);
+				return newAsm;
+			}
+		}
+
+		internal LoadedAssembly AddAssembly(LoadedAssembly newAsm)
+		{
+			if (App.Current != null)
+				App.Current.Dispatcher.VerifyAccess();
+
+			lock (assemblies) {
+				foreach (LoadedAssembly asm in this.assemblies) {
+					if (newAsm.FileName.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase)) {
+						var mod = newAsm.ModuleDefinition;
+						if (mod != null)
+							mod.Dispose();
+						return asm;
+					}
+				}
+
 				this.assemblies.Add(newAsm);
 				return newAsm;
 			}
