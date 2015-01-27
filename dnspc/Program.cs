@@ -3,6 +3,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy;
@@ -20,7 +21,10 @@ namespace ilspc {
 		static bool useStdout;
 		static bool isRecursive;
 		static bool noGac;
+		static bool noCorlibRef;
+		static bool createSlnFile;
 		static string outputDir;
+		static string slnName;
 		static List<string> files;
 		static List<string> asmPaths;
 		static string language;
@@ -59,11 +63,14 @@ namespace ilspc {
 
 		static void PrintHelp() {
 			var progName = GetProgramBaseName();
-			Console.WriteLine("{0} [--stdout] [--asm-path path] [--no-gac] [--proj-dir-suffix suffix] [-r] [-o outdir] [-l lang] [fileOrDir1] [fileOrDir2] [...]", progName);
+			Console.WriteLine("{0} [--stdout] [--asm-path path] [--no-gac] [--no-stdlib] [--sln] [--proj-dir-suffix suffix] [-r] [-o outdir] [-l lang] [fileOrDir1] [fileOrDir2] [...]", progName);
 			Console.WriteLine("  --stdout     decompile to the screen");
 			Console.WriteLine("  --proj-dir-suffix suffix   append 'suffix' to project dir name");
 			Console.WriteLine("  --asm-path path    Asm search paths. Paths can be separated with '{0}'", PATHS_SEP);
 			Console.WriteLine("  --no-gac     don't use the GAC to look up assemblies");
+			Console.WriteLine("  --no-stdlib  projects don't reference mscorlib (C# projects only)");
+			Console.WriteLine("  --sln        create .sln file");
+			Console.WriteLine("  --sln-name name   name of .sln file");
 			Console.WriteLine("  -r           recursive search");
 			Console.WriteLine("  -o outdir    output directory");
 			Console.WriteLine("  -l lang      set language, default is C#");
@@ -131,18 +138,24 @@ namespace ilspc {
 
 					case "o":
 					case "-output-dir":
+						if (next == null)
+							throw new ErrorException("Missing output directory");
 						outputDir = next;
 						i++;
 						break;
 
 					case "l":
 					case "-lang":
+						if (next == null)
+							throw new ErrorException("Missing language name");
 						language = next;
 						i++;
 						break;
 
 					case "-proj-dir-suffix":
-						projDirSuffix = next ?? string.Empty;
+						if (next == null)
+							throw new ErrorException("Missing project directory suffix");
+						projDirSuffix = next;
 						i++;
 						break;
 
@@ -161,6 +174,21 @@ namespace ilspc {
 						noGac = true;
 						break;
 
+					case "-no-stdlib":
+						noCorlibRef = true;
+						break;
+
+					case "-sln":
+						createSlnFile = true;
+						break;
+
+					case "-sln-name":
+						if (next == null)
+							throw new ErrorException("Missing .sln name");
+						slnName = next;
+						i++;
+						break;
+
 					default:
 						throw new ErrorException(string.Format("Invalid option: {0}", arg));
 					}
@@ -171,67 +199,130 @@ namespace ilspc {
 		}
 
 		static void DoIt() {
+			if (useStdout || !createSlnFile) {
+				foreach (var info in GetDotNetFiles())
+					DumpNetModule(info, null);
+			}
+			else {
+				var projectFiles = new List<ProjectInfo>(GetDotNetFiles());
+				foreach (var info in projectFiles)
+					DumpNetModule(info, projectFiles);
+
+				var slnPathName = Path.Combine(outputDir, slnName ?? "solution.sln");
+				using (var writer = new StreamWriter(slnPathName, false, Encoding.UTF8)) {
+					const string crlf = "\r\n";	// Make sure it's always CRLF
+					writer.Write(crlf);
+					writer.Write("Microsoft Visual Studio Solution File, Format Version 11.00" + crlf);
+					writer.Write("# Visual Studio 2010" + crlf);
+					var slnGuid = Guid.NewGuid().ToString("B").ToUpperInvariant();
+					foreach (var info in projectFiles) {
+						writer.Write("Project(\"{0}\") = \"{1}\", \"{1}\\{2}\", \"{3}\"" + crlf,
+							slnGuid,
+							info.AssemblySimpleName,
+							Path.GetFileName(info.ProjectFileName),
+							info.ProjectGuid.ToString("B").ToUpperInvariant()
+						);
+						writer.Write("EndProject" + crlf);
+					}
+					writer.Write("Global" + crlf);
+					writer.Write("\tGlobalSection(SolutionConfigurationPlatforms) = preSolution" + crlf);
+					writer.Write("\t\tDebug|Any CPU = Debug|Any CPU" + crlf);
+					writer.Write("\t\tRelease|Any CPU = Release|Any CPU" + crlf);
+					writer.Write("\tEndGlobalSection" + crlf);
+					writer.Write("\tGlobalSection(ProjectConfigurationPlatforms) = postSolution" + crlf);
+					foreach (var info in projectFiles) {
+						var prjGuid = info.ProjectGuid.ToString("B").ToUpperInvariant();
+						writer.Write("\t\t{0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU" + crlf, prjGuid);
+						writer.Write("\t\t{0}.Debug|Any CPU.Build.0 = Debug|Any CPU" + crlf, prjGuid);
+						writer.Write("\t\t{0}.Release|Any CPU.ActiveCfg = Release|Any CPU" + crlf, prjGuid);
+						writer.Write("\t\t{0}.Release|Any CPU.Build.0 = Release|Any CPU" + crlf, prjGuid);
+					}
+					writer.Write("\tEndGlobalSection" + crlf);
+					writer.Write("\tGlobalSection(SolutionProperties) = preSolution" + crlf);
+					writer.Write("\t\tHideSolutionNode = FALSE" + crlf);
+					writer.Write("\tEndGlobalSection" + crlf);
+					writer.Write("EndGlobal" + crlf);
+				}
+			}
+		}
+
+		static IEnumerable<ProjectInfo> GetDotNetFiles() {
 			foreach (var file in files) {
-				if (File.Exists(file))
-					DumpFile(file);
-				else if (Directory.Exists(file))
-					DumpDir(file, null);
+				if (File.Exists(file)) {
+					var info = OpenNetFile(file);
+					if (info == null)
+						throw new Exception(string.Format("{0} is not a .NET file", file));
+					yield return info;
+				}
+				else if (Directory.Exists(file)) {
+					foreach (var info in DumpDir(file, null))
+						yield return info;
+				}
 				else {
 					var path = Path.GetDirectoryName(file);
 					var name = Path.GetFileName(file);
-					if (Directory.Exists(path))
-						DumpDir(path, name);
+					if (Directory.Exists(path)) {
+						foreach (var info in DumpDir(path, name))
+							yield return info;
+					}
 					else
 						throw new ErrorException(string.Format("File/dir '{0}' doesn't exist", file));
 				}
 			}
 		}
 
-		static void DumpDir(string path, string pattern) {
+		static IEnumerable<ProjectInfo> DumpDir(string path, string pattern) {
 			pattern = pattern ?? "*";
-			DumpDir2(path, pattern);
+			foreach (var info in DumpDir2(path, pattern))
+				yield return info;
 			if (isRecursive) {
-				foreach (var di in new DirectoryInfo(path).GetDirectories("*", SearchOption.AllDirectories))
-					DumpDir2(di.FullName, pattern);
+				foreach (var di in new DirectoryInfo(path).GetDirectories("*", SearchOption.AllDirectories)) {
+					foreach (var info in DumpDir2(di.FullName, pattern))
+						yield return info;
+				}
 			}
 		}
 
-		static void DumpDir2(string path, string pattern) {
+		static IEnumerable<ProjectInfo> DumpDir2(string path, string pattern) {
 			pattern = pattern ?? "*";
 			foreach (var fi in new DirectoryInfo(path).GetFiles(pattern)) {
-				var fname = OpenNetFile(fi.FullName);
-				if (fname == null)
-					continue;
-				DumpNetModule(fname);
+				var info = OpenNetFile(fi.FullName);
+				if (info != null)
+					yield return info;
 			}
 		}
 
-		static string OpenNetFile(string file) {
+		static ProjectInfo OpenNetFile(string file) {
 			try {
 				file = Path.GetFullPath(file);
 				if (!File.Exists(file))
 					return null;
+				string asmName = null;
 				using (var mod = ModuleDefMD.Load(file)) {
+					if (mod.Assembly != null)
+						asmName = mod.Assembly.Name;
 				}
-				return file;
+
+				var projFileName = Path.GetFileNameWithoutExtension(file) + (GetLanguage().ProjectFileExtension ?? ".XXproj");
+				projFileName = Path.Combine(GetProjectDir(file), projFileName);
+				return new ProjectInfo {
+					AssemblyFileName = file,
+					AssemblySimpleName = asmName,
+					ProjectFileName = projFileName,
+					ProjectGuid = Guid.NewGuid(),
+				};
 			}
 			catch {
 			}
 			return null;
 		}
 
-		static void DumpFile(string file) {
-			var fname = OpenNetFile(file);
-			if (fname == null)
-				throw new Exception(string.Format("{0} is not a .NET file", file));
-			DumpNetModule(fname);
-		}
-
-		static void DumpNetModule(string fileName) {
+		static void DumpNetModule(ProjectInfo info, List<ProjectInfo> projectFiles) {
+			var fileName = info.AssemblyFileName;
 			if (string.IsNullOrEmpty(fileName))
 				throw new Exception(".NET module filename is empty or null");
 
-			var asmList = new AssemblyList("MyListName");
+			var asmList = new AssemblyList("dnspc.exe");
 			asmList.UseGAC = !noGac;
 			asmList.AddSearchPath(Path.GetDirectoryName(fileName));
 			foreach (var path in asmPaths)
@@ -251,10 +342,11 @@ namespace ilspc {
 				else {
 					var baseDir = GetProjectDir(fileName);
 					Directory.CreateDirectory(baseDir);
-					var projFileName = Path.GetFileNameWithoutExtension(fileName) + (lang.ProjectFileExtension ?? ".XXproj");
-					var projFilePath = Path.Combine(baseDir, projFileName);
-					writer = new StreamWriter(projFilePath, false, System.Text.Encoding.UTF8);
+					writer = new StreamWriter(info.ProjectFileName, false, Encoding.UTF8);
 					opts.SaveAsProjectDirectory = baseDir;
+					opts.DontReferenceStdLib = noCorlibRef;
+					opts.ProjectFiles = projectFiles;
+					opts.ProjectGuid = info.ProjectGuid;
 					Console.WriteLine("Saving {0} to {1}", Path.GetFileName(fileName), baseDir);
 				}
 
