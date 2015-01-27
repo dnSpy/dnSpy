@@ -36,6 +36,41 @@ namespace ICSharpCode.ILSpy
 		readonly AssemblyList assemblyList;
 		readonly string fileName;
 		readonly string shortName;
+
+		static string[] gacPaths;
+		static string[] GacPaths {
+			get {
+				return gacPaths ?? (gacPaths = new string[] {
+					Fusion.GetGacPath(false),
+					Fusion.GetGacPath(true)
+				}); 
+			}
+		}
+
+		/// <summary>
+		/// true if this assembly is located in the GAC
+		/// </summary>
+		public bool IsGAC {
+			get {
+				foreach (var p in GacPaths) {
+					if (IsSubPath(p, fileName))
+						return true;
+				}
+				return false;
+			}
+		}
+
+		static bool IsSubPath(string path, string fileName)
+		{
+			fileName = Path.GetFullPath(Path.GetDirectoryName(fileName));
+			var root = Path.GetPathRoot(fileName);
+			while (fileName != root) {
+				if (path == fileName)
+					return true;
+				fileName = Path.GetDirectoryName(fileName);
+			}
+			return false;
+		}
 		
 		public LoadedAssembly(AssemblyList assemblyList, string fileName)
 		{
@@ -191,7 +226,7 @@ namespace ICSharpCode.ILSpy
 			return LookupReferencedAssembly(name, null);
 		}
 
-		LoadedAssembly LookupReferencedAssembly(IAssembly name, ModuleDef sourceModule)
+		public LoadedAssembly LookupReferencedAssembly(IAssembly name, ModuleDef sourceModule)
 		{
 			if (name == null)
 				throw new ArgumentNullException("name");
@@ -299,8 +334,6 @@ namespace ICSharpCode.ILSpy
 				if (asm.AssemblyDefinition != null && name.Equals(asm.AssemblyDefinition.Name, StringComparison.OrdinalIgnoreCase))
 					return asm;
 			}
-			if (assemblyLoadDisableCount > 0)
-				return null;
 			if (App.Current != null && !App.Current.Dispatcher.CheckAccess()) {
 				// Call this method on the GUI thread.
 				return (LoadedAssembly)App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Func<string, LoadedAssembly>(LookupWinRTMetadata), name);
@@ -308,7 +341,7 @@ namespace ICSharpCode.ILSpy
 			
 			string file = Path.Combine(Environment.SystemDirectory, "WinMetadata", name + ".winmd");
 			if (File.Exists(file)) {
-				return assemblyList.OpenAssembly(file);
+				return assemblyList.OpenAssembly(file, assemblyLoadDisableCount == 0);
 			} else {
 				return null;
 			}

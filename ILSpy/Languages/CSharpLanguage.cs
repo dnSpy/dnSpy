@@ -264,7 +264,7 @@ namespace ICSharpCode.ILSpy
 				HashSet<string> directories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 				var files = WriteCodeFilesInProject(assembly.ModuleDefinition, options, directories).ToList();
 				files.AddRange(WriteResourceFilesInProject(assembly, options, directories));
-				WriteProjectFile(new TextOutputWriter(output), files, assembly.ModuleDefinition);
+				WriteProjectFile(new TextOutputWriter(output), files, assembly, options);
 			} else {
 				base.DecompileAssembly(assembly, output, options);
 				output.WriteLine();
@@ -299,11 +299,14 @@ namespace ICSharpCode.ILSpy
 		}
 
 		#region WriteProjectFile
-		void WriteProjectFile(TextWriter writer, IEnumerable<Tuple<string, string>> files, ModuleDef module)
+		void WriteProjectFile(TextWriter writer, IEnumerable<Tuple<string, string>> files, LoadedAssembly assembly, DecompilationOptions options)
 		{
+			var module = assembly.ModuleDefinition;
 			const string ns = "http://schemas.microsoft.com/developer/msbuild/2003";
 			string platformName = GetPlatformName(module);
 			using (XmlTextWriter w = new XmlTextWriter(writer)) {
+				var asmRefs = GetAssemblyRefs(options, assembly);
+
 				w.Formatting = Formatting.Indented;
 				w.WriteStartDocument();
 				w.WriteStartElement("Project", ns);
@@ -311,7 +314,7 @@ namespace ICSharpCode.ILSpy
 				w.WriteAttributeString("DefaultTargets", "Build");
 
 				w.WriteStartElement("PropertyGroup");
-				w.WriteElementString("ProjectGuid", Guid.NewGuid().ToString("B").ToUpperInvariant());
+				w.WriteElementString("ProjectGuid", (options.ProjectGuid ?? Guid.NewGuid()).ToString("B").ToUpperInvariant());
 
 				w.WriteStartElement("Configuration");
 				w.WriteAttributeString("Condition", " '$(Configuration)' == '' ");
@@ -377,6 +380,11 @@ namespace ICSharpCode.ILSpy
 				w.WriteElementString("DebugSymbols", "true");
 				w.WriteElementString("DebugType", "full");
 				w.WriteElementString("Optimize", "false");
+				if (options.DontReferenceStdLib) {
+					w.WriteStartElement("NoStdLib");
+					w.WriteString("true");
+					w.WriteEndElement();
+				}
 				w.WriteEndElement(); // </PropertyGroup> (Debug)
 
 				w.WriteStartElement("PropertyGroup"); // Release
@@ -385,17 +393,29 @@ namespace ICSharpCode.ILSpy
 				w.WriteElementString("DebugSymbols", "true");
 				w.WriteElementString("DebugType", "pdbonly");
 				w.WriteElementString("Optimize", "true");
+				if (options.DontReferenceStdLib) {
+					w.WriteStartElement("NoStdLib");
+					w.WriteString("true");
+					w.WriteEndElement();
+				}
 				w.WriteEndElement(); // </PropertyGroup> (Release)
 
 
 				w.WriteStartElement("ItemGroup"); // References
-				if (module is ModuleDefMD) {
-					foreach (AssemblyRef r in ((ModuleDefMD)module).GetAssemblyRefs()) {
-						if (r.Name != "mscorlib") {
-							w.WriteStartElement("Reference");
-							w.WriteAttributeString("Include", r.Name);
+				foreach (var r in asmRefs) {
+					if (r.Name != "mscorlib") {
+						var asm = assembly.LookupReferencedAssembly(r, module);
+						if (asm != null && ExistsInProject(options, asm.FileName))
+							continue;
+						w.WriteStartElement("Reference");
+						w.WriteAttributeString("Include", r.Name);
+						var hintPath = GetHintPath(options, asm);
+						if (hintPath != null) {
+							w.WriteStartElement("HintPath");
+							w.WriteString(hintPath);
 							w.WriteEndElement();
 						}
+						w.WriteEndElement();
 					}
 				}
 				w.WriteEndElement(); // </ItemGroup> (References)
@@ -410,12 +430,197 @@ namespace ICSharpCode.ILSpy
 					w.WriteEndElement();
 				}
 
+				w.WriteStartElement("ItemGroup"); // ProjectReference
+				foreach (var r in asmRefs) {
+					var asm = assembly.LookupReferencedAssembly(r, module);
+					if (asm == null)
+						continue;
+					var otherProj = FindOtherProject(options, asm.FileName);
+					if (otherProj != null) {
+						var relPath = GetRelativePath(options.SaveAsProjectDirectory, otherProj.ProjectFileName);
+						w.WriteStartElement("ProjectReference");
+						w.WriteAttributeString("Include", relPath);
+						w.WriteStartElement("Project");
+						w.WriteString(otherProj.ProjectGuid.ToString("B").ToUpperInvariant());
+						w.WriteEndElement();
+						w.WriteStartElement("Name");
+						w.WriteString(otherProj.AssemblySimpleName);
+						w.WriteEndElement();
+						w.WriteEndElement();
+					}
+				}
+				w.WriteEndElement(); // </ItemGroup> (ProjectReference)
+
 				w.WriteStartElement("Import");
 				w.WriteAttributeString("Project", "$(MSBuildToolsPath)\\Microsoft.CSharp.targets");
 				w.WriteEndElement();
 
 				w.WriteEndDocument();
 			}
+		}
+
+		internal static List<IAssembly> GetAssemblyRefs(DecompilationOptions options, LoadedAssembly assembly)
+		{
+			return new RealAssemblyReferencesFinder(options, assembly).Find();
+		}
+
+		class RealAssemblyReferencesFinder
+		{
+			readonly DecompilationOptions options;
+			readonly LoadedAssembly assembly;
+			readonly List<IAssembly> allReferences = new List<IAssembly>();
+			readonly HashSet<IAssembly> checkedAsms = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
+
+			public RealAssemblyReferencesFinder(DecompilationOptions options, LoadedAssembly assembly)
+			{
+				this.options = options;
+				this.assembly = assembly;
+			}
+
+			bool ShouldFindRealAsms()
+			{
+				return options.ProjectFiles != null && options.DontReferenceStdLib;
+			}
+
+			public List<IAssembly> Find()
+			{
+				if (!ShouldFindRealAsms()) {
+					var mod = assembly.ModuleDefinition as ModuleDefMD;
+					if (mod != null)
+						allReferences.AddRange(mod.GetAssemblyRefs());
+				}
+				else {
+					Find(assembly.ModuleDefinition.CorLibTypes.Object.TypeRef);
+					var mod = assembly.ModuleDefinition as ModuleDefMD;
+					if (mod != null) {
+						// Some types might've been moved to assembly A and some other types to
+						// assembly B. Therefore we must check every type reference and we can't
+						// just loop over all asm refs.
+						for (uint rid = 1; ; rid++) {
+							var tr = mod.ResolveTypeRef(rid);
+							if (tr == null)
+								break;
+							Find(tr);
+						}
+						for (uint rid = 1; ; rid++) {
+							var et = mod.ResolveExportedType(rid);
+							if (et == null)
+								break;
+							Find(et);
+						}
+					}
+				}
+				return allReferences;
+			}
+
+			void Find(ExportedType et)
+			{
+				if (et == null)
+					return;
+				// The type might've been moved, so always resolve it instead of using DefinitionAssembly
+				var td = et.Resolve(assembly.ModuleDefinition);
+				if (td == null)
+					Find(et.DefinitionAssembly);
+				else
+					Find(td.DefinitionAssembly ?? et.DefinitionAssembly);
+			}
+
+			void Find(TypeRef typeRef)
+			{
+				if (typeRef == null)
+					return;
+				// The type might've been moved, so always resolve it instead of using DefinitionAssembly
+				var td = typeRef.Resolve(assembly.ModuleDefinition);
+				if (td == null)
+					Find(typeRef.DefinitionAssembly);
+				else
+					Find(td.DefinitionAssembly ?? typeRef.DefinitionAssembly);
+			}
+
+			void Find(IAssembly asmRef)
+			{
+				if (asmRef == null)
+					return;
+				if (checkedAsms.Contains(asmRef))
+					return;
+				checkedAsms.Add(asmRef);
+				var asm = assembly.LookupReferencedAssembly(asmRef, assembly.ModuleDefinition);
+				if (asm == null)
+					allReferences.Add(asmRef);
+				else
+					AddKnown(asm);
+			}
+
+			void AddKnown(LoadedAssembly asm)
+			{
+				if (asm.FileName.Equals(assembly.FileName, StringComparison.OrdinalIgnoreCase))
+					return;
+				allReferences.Add(asm.ModuleDefinition.Assembly);
+			}
+		}
+
+		internal static string GetHintPath(DecompilationOptions options, LoadedAssembly asmRef)
+		{
+			if (asmRef == null || options.ProjectFiles == null || options.SaveAsProjectDirectory == null)
+				return null;
+			if (asmRef.IsGAC)
+				return null;
+			if (ExistsInProject(options, asmRef.FileName))
+				return null;
+
+			return GetRelativePath(options.SaveAsProjectDirectory, asmRef.FileName);
+		}
+
+		// ("C:\dir1\dir2\dir3", "d:\Dir1\Dir2\Dir3\file.dll") = "d:\Dir1\Dir2\Dir3\file.dll"
+		// ("C:\dir1\dir2\dir3", "c:\Dir1\dirA\dirB\file.dll") = "..\..\dirA\dirB\file.dll"
+		// ("C:\dir1\dir2\dir3", "c:\Dir1\Dir2\Dir3\Dir4\Dir5\file.dll") = "Dir4\Dir5\file.dll"
+		internal static string GetRelativePath(string sourceDir, string destFile)
+		{
+			sourceDir = Path.GetFullPath(sourceDir);
+			destFile = Path.GetFullPath(destFile);
+			if (!Path.GetPathRoot(sourceDir).Equals(Path.GetPathRoot(destFile), StringComparison.OrdinalIgnoreCase))
+				return destFile;
+			var sourceDirs = GetPathNames(sourceDir);
+			var destDirs = GetPathNames(Path.GetDirectoryName(destFile));
+
+			var hintPath = string.Empty;
+			int i;
+			for (i = 0; i < sourceDirs.Count && i < destDirs.Count; i++) {
+				if (!sourceDirs[i].Equals(destDirs[i], StringComparison.OrdinalIgnoreCase))
+					break;
+			}
+			for (int j = i; j < sourceDirs.Count; j++)
+				hintPath = Path.Combine(hintPath, "..");
+			for (; i < destDirs.Count; i++)
+				hintPath = Path.Combine(hintPath, destDirs[i]);
+			hintPath = Path.Combine(hintPath, Path.GetFileName(destFile));
+
+			return hintPath;
+		}
+
+		static List<string> GetPathNames(string path)
+		{
+			var list = new List<string>();
+			var root = Path.GetPathRoot(path);
+			while (path != root) {
+				list.Add(Path.GetFileName(path));
+				path = Path.GetDirectoryName(path);
+			}
+			list.Add(root);
+			list.Reverse();
+			return list;
+		}
+
+		internal static bool ExistsInProject(DecompilationOptions options, string fileName)
+		{
+			return FindOtherProject(options, fileName) != null;
+		}
+
+		internal static ProjectInfo FindOtherProject(DecompilationOptions options, string fileName)
+		{
+			if (options.ProjectFiles == null)
+				return null;
+			return options.ProjectFiles.FirstOrDefault(f => Path.GetFullPath(f.AssemblyFileName).Equals(Path.GetFullPath(fileName)));
 		}
 		#endregion
 

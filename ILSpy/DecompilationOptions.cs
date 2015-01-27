@@ -17,12 +17,21 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Options;
 
 namespace ICSharpCode.ILSpy
 {
+	public class ProjectInfo
+	{
+		public string AssemblyFileName { get; set; }
+		public string AssemblySimpleName { get; set; }
+		public string ProjectFileName { get; set; }
+		public Guid ProjectGuid { get; set; }
+	}
+
 	/// <summary>
 	/// Options passed to the decompiler.
 	/// </summary>
@@ -38,6 +47,23 @@ namespace ICSharpCode.ILSpy
 		/// Gets/Sets the directory into which the project is saved.
 		/// </summary>
 		public string SaveAsProjectDirectory { get; set; }
+
+		/// <summary>
+		/// Gets/sets whether project files can reference the standard library (eg. mscorlib). Only
+		/// used in C# projects.
+		/// </summary>
+		public bool DontReferenceStdLib { get; set; }
+
+		/// <summary>
+		/// Gets/sets the project files. First string is path to assembly, second string is assembly
+		/// name, and the GUID is the project GUID.
+		/// </summary>
+		public List<ProjectInfo> ProjectFiles { get; set; }
+
+		/// <summary>
+		/// Gets/sets the project guid
+		/// </summary>
+		public Guid? ProjectGuid { get; set; }
 		
 		/// <summary>
 		/// Gets the cancellation token that is used to abort the decompiler.

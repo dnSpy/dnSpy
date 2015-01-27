@@ -74,7 +74,7 @@ namespace ICSharpCode.ILSpy.VB
 				HashSet<string> directories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 				var files = WriteCodeFilesInProject(assembly.ModuleDefinition, options, directories).ToList();
 				files.AddRange(WriteResourceFilesInProject(assembly, options, directories));
-				WriteProjectFile(new TextOutputWriter(output), files, assembly.ModuleDefinition);
+				WriteProjectFile(new TextOutputWriter(output), files, assembly, options);
 			} else {
 				base.DecompileAssembly(assembly, output, options);
 				output.WriteLine();
@@ -116,11 +116,14 @@ namespace ICSharpCode.ILSpy.VB
 		};
 		
 		#region WriteProjectFile
-		void WriteProjectFile(TextWriter writer, IEnumerable<Tuple<string, string>> files, ModuleDef module)
+		void WriteProjectFile(TextWriter writer, IEnumerable<Tuple<string, string>> files, LoadedAssembly assembly, DecompilationOptions options)
 		{
+			var module = assembly.ModuleDefinition;
 			const string ns = "http://schemas.microsoft.com/developer/msbuild/2003";
 			string platformName = CSharpLanguage.GetPlatformName(module);
 			using (XmlTextWriter w = new XmlTextWriter(writer)) {
+				var asmRefs = CSharpLanguage.GetAssemblyRefs(options, assembly);
+
 				w.Formatting = Formatting.Indented;
 				w.WriteStartDocument();
 				w.WriteStartElement("Project", ns);
@@ -128,7 +131,7 @@ namespace ICSharpCode.ILSpy.VB
 				w.WriteAttributeString("DefaultTargets", "Build");
 
 				w.WriteStartElement("PropertyGroup");
-				w.WriteElementString("ProjectGuid", Guid.NewGuid().ToString("B").ToUpperInvariant());
+				w.WriteElementString("ProjectGuid", (options.ProjectGuid ?? Guid.NewGuid()).ToString("B").ToUpperInvariant());
 
 				w.WriteStartElement("Configuration");
 				w.WriteAttributeString("Condition", " '$(Configuration)' == '' ");
@@ -194,6 +197,11 @@ namespace ICSharpCode.ILSpy.VB
 				w.WriteElementString("DebugSymbols", "true");
 				w.WriteElementString("DebugType", "full");
 				w.WriteElementString("Optimize", "false");
+				if (options.DontReferenceStdLib) {
+					w.WriteStartElement("NoStdLib");
+					w.WriteString("true");
+					w.WriteEndElement();
+				}
 				w.WriteEndElement(); // </PropertyGroup> (Debug)
 
 				w.WriteStartElement("PropertyGroup"); // Release
@@ -202,17 +210,29 @@ namespace ICSharpCode.ILSpy.VB
 				w.WriteElementString("DebugSymbols", "true");
 				w.WriteElementString("DebugType", "pdbonly");
 				w.WriteElementString("Optimize", "true");
+				if (options.DontReferenceStdLib) {
+					w.WriteStartElement("NoStdLib");
+					w.WriteString("true");
+					w.WriteEndElement();
+				}
 				w.WriteEndElement(); // </PropertyGroup> (Release)
 
 
 				w.WriteStartElement("ItemGroup"); // References
-				if (module is ModuleDefMD) {
-					foreach (AssemblyRef r in ((ModuleDefMD)module).GetAssemblyRefs()) {
-						if (r.Name != "mscorlib") {
-							w.WriteStartElement("Reference");
-							w.WriteAttributeString("Include", r.Name);
+				foreach (var r in asmRefs) {
+					if (r.Name != "mscorlib") {
+						var asm = assembly.LookupReferencedAssembly(r, module);
+						if (asm != null && CSharpLanguage.ExistsInProject(options, asm.FileName))
+							continue;
+						w.WriteStartElement("Reference");
+						w.WriteAttributeString("Include", r.Name);
+						var hintPath = CSharpLanguage.GetHintPath(options, asm);
+						if (hintPath != null) {
+							w.WriteStartElement("HintPath");
+							w.WriteString(hintPath);
 							w.WriteEndElement();
 						}
+						w.WriteEndElement();
 					}
 				}
 				w.WriteEndElement(); // </ItemGroup> (References)
@@ -226,6 +246,27 @@ namespace ICSharpCode.ILSpy.VB
 					}
 					w.WriteEndElement();
 				}
+
+				w.WriteStartElement("ItemGroup"); // ProjectReference
+				foreach (var r in asmRefs) {
+					var asm = assembly.LookupReferencedAssembly(r, module);
+					if (asm == null)
+						continue;
+					var otherProj = CSharpLanguage.FindOtherProject(options, asm.FileName);
+					if (otherProj != null) {
+						var relPath = CSharpLanguage.GetRelativePath(options.SaveAsProjectDirectory, otherProj.ProjectFileName);
+						w.WriteStartElement("ProjectReference");
+						w.WriteAttributeString("Include", relPath);
+						w.WriteStartElement("Project");
+						w.WriteString(otherProj.ProjectGuid.ToString("B").ToUpperInvariant());
+						w.WriteEndElement();
+						w.WriteStartElement("Name");
+						w.WriteString(otherProj.AssemblySimpleName);
+						w.WriteEndElement();
+						w.WriteEndElement();
+					}
+				}
+				w.WriteEndElement(); // </ItemGroup> (ProjectReference)
 				
 				w.WriteStartElement("ItemGroup"); // Imports
 				foreach (var import in projectImports.OrderBy(x => x)) {

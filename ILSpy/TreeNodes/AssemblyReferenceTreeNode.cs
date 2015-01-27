@@ -51,7 +51,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override bool ShowExpander {
 			get {
-				if (r.Name == "mscorlib")
+				if (r.IsCorLib())
 					EnsureLazyChildren(); // likely doesn't have any children
 				return base.ShowExpander;
 			}
