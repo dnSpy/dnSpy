@@ -250,6 +250,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<AssemblyDef> GetReferencingAssemblies(AssemblyDef asm, CancellationToken ct)
 		{
+			if (asm == null)
+				yield break;
 			yield return asm;
 
 			string requiredAssemblyFullName = asm.FullName;
@@ -272,6 +274,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<AssemblyDef> GetAssemblyAndAnyFriends(AssemblyDef asm, CancellationToken ct)
 		{
+			if (asm == null)
+				yield break;
 			yield return asm;
 
 			if (asm.HasCustomAttributes) {

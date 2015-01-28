@@ -267,7 +267,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					Code        = code,
 					Operand     = operand,
 					PopCount    = inst.GetPopDelta(methodDef),
-					PushCount   = inst.GetPushDelta()
+					PushCount   = inst.GetPushDelta(methodDef)
 				};
 				if (prefixes != null) {
 					instrToByteCode[prefixes[0]] = byteCode;

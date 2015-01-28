@@ -1047,11 +1047,29 @@ namespace ICSharpCode.Decompiler.Ast
 		}
 		
 		public bool DecompileMethodBodies { get; set; }
+		public bool DontShowCreateMethodBodyExceptions { get; set; }
 		
 		BlockStatement CreateMethodBody(MethodDef method, IEnumerable<ParameterDeclaration> parameters = null)
 		{
-			if (DecompileMethodBodies)
-				return AstMethodBodyBuilder.CreateMethodBody(method, context, parameters);
+			if (DecompileMethodBodies) {
+				string msg;
+				try {
+					return AstMethodBodyBuilder.CreateMethodBody(method, context, parameters);
+				}
+				catch (OperationCanceledException) {
+					throw;
+				}
+				catch (Exception ex) {
+					if (DontShowCreateMethodBodyExceptions)
+						throw;
+					msg = string.Format("{0}An exception occurred when decompiling this method ({1:X8}){0}{0}{2}{0}",
+							Environment.NewLine, method.MDToken.ToUInt32(), ex.ToString());
+				}
+				var bs = new BlockStatement();
+				bs.Statements.Add(new EmptyStatement());
+				bs.InsertChildAfter(null, new Comment(msg, CommentType.MultiLine), Roles.Comment);
+				return bs;
+			}
 			else
 				return null;
 		}
@@ -1481,7 +1499,7 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		static void ConvertSecurityAttributes(AstNode attributedNode, IHasDeclSecurity secDeclProvider, string attributeTarget = null)
 		{
-			if (!secDeclProvider.HasDeclSecurities)
+			if (secDeclProvider == null || !secDeclProvider.HasDeclSecurities)
 				return;
 			var attributes = new List<ICSharpCode.NRefactory.CSharp.Attribute>();
 			foreach (var secDecl in secDeclProvider.DeclSecurities.OrderBy(d => d.Action)) {

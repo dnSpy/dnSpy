@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using dnlib.Threading;
 
 namespace dnlib.DotNet
 {
@@ -125,7 +126,7 @@ namespace dnlib.DotNet
                 case ElementType.CModOpt: result = new CModOptSig((typeSig as ModifierSig).Modifier, ResolveGenericArgs(typeSig.Next)); break;
                 case ElementType.Module: result = new ModuleSig((typeSig as ModuleSig).Index, ResolveGenericArgs(typeSig.Next)); break;
                 case ElementType.Pinned: result = new PinnedSig(ResolveGenericArgs(typeSig.Next)); break;
-                case ElementType.FnPtr: throw new NotSupportedException("FnPtr is not supported.");
+                case ElementType.FnPtr: result = new FnPtrSig(ResolveGenericArgs(((FnPtrSig)typeSig).MethodSig)); break;
 
                 case ElementType.Array:
                     ArraySig arraySig = (ArraySig)typeSig;
@@ -152,5 +153,84 @@ namespace dnlib.DotNet
 
             return result;
         }
-    }
+
+		CallingConventionSig ResolveGenericArgs(CallingConventionSig sig)
+		{
+            if (!recursionCounter.Increment())
+                return null;
+
+			CallingConventionSig result;
+			MethodSig msig;
+			FieldSig fsig;
+			LocalSig lsig;
+			PropertySig psig;
+			GenericInstMethodSig gsig;
+			if ((msig = sig as MethodSig) != null)
+				result = ResolveGenericArgs(msig);
+			else if ((fsig = sig as FieldSig) != null)
+				result = ResolveGenericArgs(fsig);
+			else if ((lsig = sig as LocalSig) != null)
+				result = ResolveGenericArgs(lsig);
+			else if ((psig = sig as PropertySig) != null)
+				result = ResolveGenericArgs(psig);
+			else if ((gsig = sig as GenericInstMethodSig) != null)
+				result = ResolveGenericArgs(gsig);
+			else
+				result = null;
+
+            recursionCounter.Decrement();
+
+            return result;
+		}
+
+		MethodSig ResolveGenericArgs(MethodSig sig)
+		{
+			var msig = ResolveGenericArgs2(new MethodSig(), sig);
+			msig.OriginalToken = sig.OriginalToken;
+			return msig;
+		}
+
+		PropertySig ResolveGenericArgs(PropertySig sig)
+		{
+			return ResolveGenericArgs2(new PropertySig(), sig);
+		}
+
+		T ResolveGenericArgs2<T>(T outSig, T inSig) where T : MethodBaseSig
+		{
+			outSig.RetType = ResolveGenericArgs(inSig.RetType);
+			outSig.GenParamCount = inSig.GenParamCount;
+			UpdateSigList(outSig.Params, inSig.Params);
+			if (inSig.ParamsAfterSentinel != null)
+			{
+				outSig.ParamsAfterSentinel = ThreadSafeListCreator.Create<TypeSig>(inSig.ParamsAfterSentinel.Count);
+				UpdateSigList(outSig.ParamsAfterSentinel, inSig.ParamsAfterSentinel);
+			}
+			return outSig;
+		}
+
+		void UpdateSigList(IList<TypeSig> inList, IList<TypeSig> outList)
+		{
+			foreach (var arg in outList.GetSafeEnumerable())
+				inList.Add(ResolveGenericArgs(arg));
+		}
+
+		FieldSig ResolveGenericArgs(FieldSig sig)
+		{
+			return new FieldSig(ResolveGenericArgs(sig.Type));
+		}
+
+		LocalSig ResolveGenericArgs(LocalSig sig)
+		{
+			var lsig = new LocalSig();
+			UpdateSigList(lsig.Locals, sig.Locals);
+			return lsig;
+		}
+
+		GenericInstMethodSig ResolveGenericArgs(GenericInstMethodSig sig)
+		{
+			var gsig = new GenericInstMethodSig();
+			UpdateSigList(gsig.GenericArguments, sig.GenericArguments);
+			return gsig;
+		}
+	}
 }

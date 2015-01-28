@@ -64,6 +64,12 @@ namespace ICSharpCode.ILSpy
 		/// Gets/sets the project guid
 		/// </summary>
 		public Guid? ProjectGuid { get; set; }
+
+		/// <summary>
+		/// Don't print an error message if an exception occurs when decompiling a method, instead
+		/// let the exception pass through (the decompile operation will fail of course).
+		/// </summary>
+		public bool DontShowCreateMethodBodyExceptions { get; set; }
 		
 		/// <summary>
 		/// Gets the cancellation token that is used to abort the decompiler.

@@ -3,11 +3,13 @@ dnSpy
 
 For license info, authors and other credits, see README.txt.
 
-dnSpy is ILSpy using dnlib. It should be able to read assemblies that ILSpy can't read since dnlib isn't as sensitive as Mono.Cecil when it comes to reading assemblies and invalid .NET metadata. The decompiler has also gotten some updates so it can handle some invalid input I discovered during testing.
+dnSpy is ILSpy using dnlib. dnSpy is now able to open assemblies that ILSpy can't.
 
-Most of the porting work were done by [yck1509 (Ki)](https://github.com/yck1509). He split it up into several projects, but these have been merged into one project again so updating dnSpy to latest ILSpy version is as easy as possible.
+Most of the porting work were done by [yck1509 (Ki)](https://github.com/yck1509). He split it up into several projects, but these have been merged into one project again so updating dnSpy to latest ILSpy version is as easy as possible. I fixed the remaining porting todos and fixed stuff I discovered during testing.
 
-BUILD instructions
+A command line tool using dnSpy (dnspc.exe) has also been added.
+
+Build instructions
 ==================
 
 You need [dnlib](https://github.com/0xd4d/dnlib) and you must define `THREAD_SAFE` when compiling it. dnSpy will immediately exit if it detects that dnlib isn't thread safe.

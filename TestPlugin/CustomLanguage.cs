@@ -50,7 +50,9 @@ namespace TestPlugin
 				AstBuilder b = new AstBuilder(new DecompilerContext(method.Module) {
 				                              	Settings = options.DecompilerSettings,
 				                              	CurrentType = method.DeclaringType
-				                              });
+												}) {
+													DontShowCreateMethodBodyExceptions = options.DontShowCreateMethodBodyExceptions,
+												};
 				b.AddMethod(method);
 				b.RunTransformations();
 				output.WriteLine("Decompiled AST has {0} nodes", b.SyntaxTree.DescendantsAndSelf.Count());

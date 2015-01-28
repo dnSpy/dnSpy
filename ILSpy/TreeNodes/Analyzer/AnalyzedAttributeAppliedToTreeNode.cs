@@ -299,6 +299,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<Tuple<AssemblyDef, ITypeDefOrRef>> GetReferencingAssemblies(AssemblyDef asm, CancellationToken ct)
 		{
+			if (asm == null)
+				yield break;
 			yield return new Tuple<AssemblyDef, ITypeDefOrRef>(asm, this.analyzedType);
 
 			string requiredAssemblyFullName = asm.FullName;
@@ -324,6 +326,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<Tuple<AssemblyDef, ITypeDefOrRef>> GetAssemblyAndAnyFriends(AssemblyDef asm, CancellationToken ct)
 		{
+			if (asm == null)
+				yield break;
 			yield return new Tuple<AssemblyDef, ITypeDefOrRef>(asm, analyzedType);
 
 			if (asm.HasCustomAttributes) {

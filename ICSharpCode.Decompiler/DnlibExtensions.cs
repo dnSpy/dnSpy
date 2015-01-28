@@ -31,17 +31,17 @@ namespace ICSharpCode.Decompiler
 	public static class DnlibExtensions
 	{
 		#region GetPushDelta / GetPopDelta
-		public static int GetPushDelta(this Instruction instruction)
+		public static int GetPushDelta(this Instruction instruction, MethodDef methodDef)
 		{
 			int pushes, pops;
-			instruction.CalculateStackUsage(out pushes, out pops);
+			instruction.CalculateStackUsage(methodDef.ReturnType.RemovePinnedAndModifiers().GetElementType() != ElementType.Void, out pushes, out pops);
 			return pushes;
 		}
 		
 		public static int? GetPopDelta(this Instruction instruction, MethodDef methodDef)
 		{
 			int pushes, pops;
-			instruction.CalculateStackUsage(methodDef.ReturnType.ElementType != ElementType.Void, out pushes, out pops);
+			instruction.CalculateStackUsage(methodDef.ReturnType.RemovePinnedAndModifiers().GetElementType() != ElementType.Void, out pushes, out pops);
 			return pops == -1 ? (int?)null : pops;
 		}
 		#endregion

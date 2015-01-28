@@ -680,6 +680,12 @@ namespace ICSharpCode.ILSpy.TextView
 			return tcs.Task;
 		}
 		
+		static HashSet<string> ReservedFileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
+			"CON", "PRN", "AUX", "NUL",
+			"COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
+			"LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9",
+		};
+
 		/// <summary>
 		/// Cleans up a node name for use as a file name.
 		/// </summary>
@@ -694,6 +700,8 @@ namespace ICSharpCode.ILSpy.TextView
 			text = text.Trim();
 			foreach (char c in Path.GetInvalidFileNameChars())
 				text = text.Replace(c, '-');
+			if (ReservedFileNames.Contains(text))
+				text = "__" + text + "__";
 			return text;
 		}
 		#endregion
