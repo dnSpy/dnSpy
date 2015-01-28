@@ -3,7 +3,7 @@ dnSpy
 
 For license info, authors and other credits, see README.txt.
 
-dnSpy is ILSpy using dnlib. dnSpy is now able to open assemblies that ILSpy can't.
+dnSpy is [ILSpy](https://github.com/icsharpcode/ILSpy) using dnlib. dnSpy is now able to open assemblies that ILSpy can't.
 
 Most of the porting work were done by [yck1509 (Ki)](https://github.com/yck1509). He split it up into several projects, but these have been merged into one project again so updating dnSpy to latest ILSpy version is as easy as possible. I fixed the remaining porting todos and fixed stuff I discovered during testing.
 
