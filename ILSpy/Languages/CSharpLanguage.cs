@@ -341,7 +341,7 @@ namespace ICSharpCode.ILSpy
 				if (module.Assembly != null)
 					w.WriteElementString("AssemblyName", module.Assembly.Name);
 				bool useTargetFrameworkAttribute = false;
-				var targetFrameworkAttribute = module.Assembly == null ? null : module.Assembly.CustomAttributes.FirstOrDefault(a => a.AttributeType.FullName == "System.Runtime.Versioning.TargetFrameworkAttribute");
+				var targetFrameworkAttribute = module.Assembly == null ? null : module.Assembly.CustomAttributes.FirstOrDefault(a => a.TypeFullName == "System.Runtime.Versioning.TargetFrameworkAttribute");
 				if (targetFrameworkAttribute != null && targetFrameworkAttribute.ConstructorArguments.Any()) {
 					string frameworkName = (UTF8String)targetFrameworkAttribute.ConstructorArguments[0].Value;
 					string[] frameworkParts = frameworkName.Split(',');

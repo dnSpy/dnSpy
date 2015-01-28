@@ -58,7 +58,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			if (analyzedType.HasCustomAttributes) {
 				foreach (CustomAttribute ca in analyzedType.CustomAttributes) {
 					ITypeDefOrRef t = ca.AttributeType;
-					if (t.Name == "AttributeUsageAttribute" && t.Namespace == "System" &&
+					if (t != null && t.Name == "AttributeUsageAttribute" && t.Namespace == "System" &&
 						ca.ConstructorArguments[0].Value is int) {
 						this.usage = (AttributeTargets)ca.ConstructorArguments[0].Value;
 						if (ca.ConstructorArguments.Count > 2) {
@@ -332,7 +332,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 			if (asm.HasCustomAttributes) {
 				var attributes = asm.CustomAttributes
-					.Where(attr => attr.AttributeType.FullName == "System.Runtime.CompilerServices.InternalsVisibleToAttribute");
+					.Where(attr => attr.TypeFullName == "System.Runtime.CompilerServices.InternalsVisibleToAttribute");
 				var friendAssemblies = new HashSet<string>();
 				foreach (var attribute in attributes) {
 					string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;

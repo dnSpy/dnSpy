@@ -822,7 +822,7 @@ namespace ICSharpCode.Decompiler.Ast
 			ConvertAttributes(astMethod, methodDef);
 			if (methodDef.HasCustomAttributes && astMethod.Parameters.Count > 0) {
 				foreach (CustomAttribute ca in methodDef.CustomAttributes) {
-					if (ca.AttributeType.Name == "ExtensionAttribute" && ca.AttributeType.Namespace == "System.Runtime.CompilerServices") {
+					if (ca.AttributeType != null && ca.AttributeType.Name == "ExtensionAttribute" && ca.AttributeType.Namespace == "System.Runtime.CompilerServices") {
 						astMethod.Parameters.First().ParameterModifier = ParameterModifier.This;
 					}
 				}
@@ -1138,7 +1138,7 @@ namespace ICSharpCode.Decompiler.Ast
 				
 				if (paramDef.HasParamDef && paramDef.ParamDef.HasCustomAttributes) {
 					foreach (CustomAttribute ca in paramDef.ParamDef.CustomAttributes) {
-						if (ca.AttributeType.Name == "ParamArrayAttribute" && ca.AttributeType.Namespace == "System")
+						if (ca.AttributeType != null && ca.AttributeType.Name == "ParamArrayAttribute" && ca.AttributeType.Namespace == "System")
 							astParam.ParameterModifier = ParameterModifier.Params;
 					}
 				}
@@ -1426,7 +1426,9 @@ namespace ICSharpCode.Decompiler.Ast
 			EntityDeclaration entityDecl = attributedNode as EntityDeclaration;
 			if (customAttributeProvider != null && customAttributeProvider.HasCustomAttributes) {
 				var attributes = new List<ICSharpCode.NRefactory.CSharp.Attribute>();
-				foreach (var customAttribute in customAttributeProvider.CustomAttributes.OrderBy(a => a.AttributeType.FullName)) {
+				foreach (var customAttribute in customAttributeProvider.CustomAttributes.OrderBy(a => a.TypeFullName)) {
+					if (customAttribute.AttributeType == null)
+						continue;
 					if (customAttribute.AttributeType.Name == "ExtensionAttribute" && customAttribute.AttributeType.Namespace == "System.Runtime.CompilerServices") {
 						// don't show the ExtensionAttribute (it's converted to the 'this' modifier)
 						continue;
@@ -1503,7 +1505,9 @@ namespace ICSharpCode.Decompiler.Ast
 				return;
 			var attributes = new List<ICSharpCode.NRefactory.CSharp.Attribute>();
 			foreach (var secDecl in secDeclProvider.DeclSecurities.OrderBy(d => d.Action)) {
-				foreach (var secAttribute in secDecl.SecurityAttributes.OrderBy(a => a.AttributeType.FullName)) {
+				foreach (var secAttribute in secDecl.SecurityAttributes.OrderBy(a => a.TypeFullName)) {
+					if (secAttribute.AttributeType == null)
+						continue;
 					var attribute = new ICSharpCode.NRefactory.CSharp.Attribute();
 					attribute.AddAnnotation(secAttribute);
 					attribute.Type = ConvertType(secAttribute.AttributeType);
@@ -1683,7 +1687,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (!type.HasCustomAttributes)
 				return false;
 
-			return type.CustomAttributes.Any(attr => attr.AttributeType.FullName == "System.FlagsAttribute");
+			return type.CustomAttributes.Any(attr => attr.TypeFullName == "System.FlagsAttribute");
 		}
 
 		/// <summary>

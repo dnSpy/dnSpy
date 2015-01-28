@@ -331,8 +331,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 				WriteTo(((TypeSpec)type).TypeSig, writer, syntax);
 				return;
 			}
-			string typeFullName = type.FullName;
-			string typeName = type.Name;
+			string typeFullName = type == null ? "<<NULL>>" : type.FullName;
+			string typeName = type == null ? "<<NULL>>" : type.Name.String;
 			if (ts != null) {
 				var fnPtrSig = ts.TypeSig as FnPtrSig;
 				typeFullName = DnlibExtensions.GetFnPtrFullName(fnPtrSig);

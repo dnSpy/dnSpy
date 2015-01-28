@@ -87,7 +87,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 			if (method.IsStatic && method.HasCustomAttributes) {
 				foreach (var ca in method.CustomAttributes) {
-					if (ca.AttributeType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute") {
+					if (ca.TypeFullName == "System.Runtime.CompilerServices.ExtensionAttribute") {
 						return Images.GetIcon(MemberIcon.ExtensionMethod, GetOverlayIcon(method.Attributes), false);
 					}
 				}

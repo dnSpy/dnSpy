@@ -81,7 +81,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					var attrs = field.CustomAttributes;
 					for (int i = 0; i < attrs.Count; i++) {
 						var attrType = attrs[i].AttributeType;
-						if (attrType.Name == "DecimalConstantAttribute" && attrType.Namespace == "System.Runtime.CompilerServices")
+						if (attrType != null && attrType.Name == "DecimalConstantAttribute" && attrType.Namespace == "System.Runtime.CompilerServices")
 							return true;
 					}
 				}

@@ -287,7 +287,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				output.Indent();
 				for (int i = 0; i < secdecl.SecurityAttributes.Count; i++) {
 					SecurityAttribute sa = secdecl.SecurityAttributes[i];
-					if (sa.AttributeType.Scope == sa.AttributeType.Module) {
+					if (sa.AttributeType != null && sa.AttributeType.Scope == sa.AttributeType.Module) {
 						output.Write("class ");
 						output.Write(DisassemblerHelpers.Escape(GetAssemblyQualifiedName(sa.AttributeType.ToTypeSigInternal())));
 					} else {

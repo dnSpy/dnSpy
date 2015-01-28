@@ -280,7 +280,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 			if (asm.HasCustomAttributes) {
 				var attributes = asm.CustomAttributes
-					.Where(attr => attr.AttributeType.FullName == "System.Runtime.CompilerServices.InternalsVisibleToAttribute");
+					.Where(attr => attr.TypeFullName == "System.Runtime.CompilerServices.InternalsVisibleToAttribute");
 				var friendAssemblies = new HashSet<string>();
 				foreach (var attribute in attributes) {
 					string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
