@@ -288,7 +288,13 @@ namespace ICSharpCode.Decompiler.ILAst
 			int varCount = methodDef.Body.Variables.Count;
 			
 			var exceptionHandlerStarts = new HashSet<ByteCode>(methodDef.Body.ExceptionHandlers.Select(eh => instrToByteCode[eh.HandlerStart]));
-			
+
+			// HACK: Some MS reference assemblies contain just a RET instruction. If the method
+			// returns a value, the code below will eventually throw an exception in
+			// StackSlot.ModifyStack().
+			if (body.Count == 1 && body[0].Code == ILCode.Ret)
+				body[0].PopCount = 0;
+
 			// Add known states
 			if(methodDef.Body.HasExceptionHandlers) {
 				foreach(ExceptionHandler ex in methodDef.Body.ExceptionHandlers) {

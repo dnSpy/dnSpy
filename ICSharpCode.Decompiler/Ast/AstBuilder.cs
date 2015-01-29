@@ -215,7 +215,7 @@ namespace ICSharpCode.Decompiler.Ast
 				return;
 			foreach (ExportedType type in module.ExportedTypes) {
 				if (type.IsForwarder) {
-					var forwardedType = CreateTypeOfExpression(new TypeRefUser(module, type.TypeNamespace, type.TypeName, new AssemblyRefUser(type.DefinitionAssembly)));
+					var forwardedType = CreateTypeOfExpression(type.ToTypeRef());
 					astCompileUnit.AddChild(
 						new AttributeSection {
 							AttributeTarget = target,
@@ -485,7 +485,7 @@ namespace ICSharpCode.Decompiler.Ast
 					.MakeArrayType((int)(type as ArraySigBase).Rank);
 			} else if (type is GenericInstSig) {
 				GenericInstSig gType = (GenericInstSig)type;
-				if (gType.GenericType.Namespace == "System" && gType.GenericType.TypeName == "Nullable`1" && gType.GenericArguments.Count == 1) {
+				if (gType.GenericType != null && gType.GenericType.Namespace == "System" && gType.GenericType.TypeName == "Nullable`1" && gType.GenericArguments.Count == 1) {
 					typeIndex++;
 					return new ComposedType {
 						BaseType = ConvertType(gType.GenericArguments[0], typeAttributes, ref typeIndex, options),
