@@ -97,7 +97,7 @@ namespace ICSharpCode.ILSpy
 		public static string FindAssemblyInNetGac (AssemblyNameInfo reference)
 		{
 			// without public key, it can't be in the GAC
-			if (reference.PublicKeyOrToken.IsNullOrEmpty)
+			if (PublicKeyBase.IsNullOrEmpty2(reference.PublicKeyOrToken))
 				return null;
 			
 			for (int i = 0; i < 2; i++) {
@@ -120,7 +120,7 @@ namespace ICSharpCode.ILSpy
 				.Append ("__");
 
 			var pkt = PublicKeyBase.ToPublicKeyToken (reference.PublicKeyOrToken);
-			if (pkt == null)
+			if (PublicKeyBase.IsNullOrEmpty2(pkt))
 				pkt = new PublicKeyToken (new byte[8]);
 			for (int i = 0; i < pkt.Data.Length; i++)
 				gac_folder.Append (pkt.Data [i].ToString ("x2"));

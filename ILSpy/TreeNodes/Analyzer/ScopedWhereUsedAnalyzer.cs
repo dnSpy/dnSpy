@@ -94,6 +94,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private Accessibility GetMethodAccessibility(MethodDef method)
 		{
+			if (method == null)
+				return 0;
 			Accessibility accessibility;
 			switch (method.Attributes & MethodAttributes.MemberAccessMask) {
 				case MethodAttributes.Private:
@@ -283,6 +285,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					.Where(attr => attr.TypeFullName == "System.Runtime.CompilerServices.InternalsVisibleToAttribute");
 				var friendAssemblies = new HashSet<string>();
 				foreach (var attribute in attributes) {
+					if (attribute.ConstructorArguments.Count == 0)
+						continue;
 					string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
 					if (assemblyName == null)
 						continue;

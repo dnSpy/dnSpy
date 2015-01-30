@@ -82,6 +82,8 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		static HashSet<ControlFlowNode> FindNodes(ControlStructure current, Instruction startInst, Instruction endInst)
 		{
 			HashSet<ControlFlowNode> result = new HashSet<ControlFlowNode>();
+			if (startInst == null || endInst == null)
+				return result;
 			uint start = startInst.Offset;
 			uint end = endInst.Offset;
 			foreach (var node in current.Nodes.ToArray()) {
@@ -94,6 +96,8 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 		
 		static void MoveControlStructures(ControlStructure current, ControlStructure target, Instruction startInst, Instruction endInst)
 		{
+			if (startInst == null || endInst == null)
+				return;
 			for (int i = 0; i < current.Children.Count; i++) {
 				var child = current.Children[i];
 				if (startInst.Offset <= child.EntryPoint.Offset && child.EntryPoint.Offset < endInst.Offset) {

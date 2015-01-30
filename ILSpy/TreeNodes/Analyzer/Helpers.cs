@@ -28,11 +28,18 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	{
 		public static bool IsReferencedBy(TypeDef type, ITypeDefOrRef typeRef)
 		{
+			return IsReferencedBy(type, typeRef, 0);
+		}
+
+		static bool IsReferencedBy(TypeDef type, ITypeDefOrRef typeRef, int depth)
+		{
+			if (depth >= 30)
+				return false;
 			// TODO: move it to a better place after adding support for more cases.
 			if (type == null)
-				throw new ArgumentNullException("type");
+				return false;
 			if (typeRef == null)
-				throw new ArgumentNullException("typeRef");
+				return false;
 
 			if (type == typeRef)
 				return true;
@@ -44,7 +51,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			if (type.DeclaringType != null || typeRef.DeclaringType != null) {
 				if (type.DeclaringType == null || typeRef.DeclaringType == null)
 					return false;
-				if (!IsReferencedBy(type.DeclaringType, typeRef.DeclaringType))
+				if (!IsReferencedBy(type.DeclaringType, typeRef.DeclaringType, depth + 1))
 					return false;
 			}
 

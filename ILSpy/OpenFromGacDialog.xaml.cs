@@ -102,7 +102,7 @@ namespace ICSharpCode.ILSpy
 			public string PublicKeyToken {
 				get {
 					var pkt = PublicKeyBase.ToPublicKeyToken(r.PublicKeyOrToken);
-					if (pkt == null)
+					if (PublicKeyBase.IsNullOrEmpty2(pkt))
 						return "null";
 					StringBuilder s = new StringBuilder();
 					foreach (byte b in pkt.Data)

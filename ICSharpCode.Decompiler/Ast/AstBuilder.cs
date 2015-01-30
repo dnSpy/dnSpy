@@ -322,7 +322,7 @@ namespace ICSharpCode.Decompiler.Ast
 				foreach (FieldDef field in typeDef.Fields) {
 					if (!field.IsStatic) {
 						// the value__ field
-						if (field.FieldType != typeDef.Module.CorLibTypes.Int32) {
+						if (!new SigComparer().Equals(field.FieldType, typeDef.Module.CorLibTypes.Int32)) {
 							astType.AddChild(ConvertType(field.FieldType), Roles.BaseType);
 						}
 					} else {
@@ -492,7 +492,7 @@ namespace ICSharpCode.Decompiler.Ast
 						HasNullableSpecifier = true
 					};
 				}
-				AstType baseType = ConvertType(gType.GenericType.TypeDefOrRef, typeAttributes, ref typeIndex, options & ~ConvertTypeOptions.IncludeTypeParameterDefinitions);
+				AstType baseType = ConvertType(gType.GenericType == null ? null : gType.GenericType.TypeDefOrRef, typeAttributes, ref typeIndex, options & ~ConvertTypeOptions.IncludeTypeParameterDefinitions);
 				List<AstType> typeArguments = new List<AstType>();
 				foreach (var typeArgument in gType.GenericArguments) {
 					typeIndex++;
@@ -643,7 +643,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (attributeProvider == null || !attributeProvider.HasCustomAttributes)
 				return false;
 			foreach (CustomAttribute a in attributeProvider.CustomAttributes) {
-				if (a.Constructor.DeclaringType.FullName == DynamicAttributeFullName) {
+				if (a.TypeFullName == DynamicAttributeFullName) {
 					if (a.ConstructorArguments.Count == 1) {
 						IList<CAArgument> values = a.ConstructorArguments[0].Value as IList<CAArgument>;
 						if (values != null && typeIndex < values.Count && values[typeIndex].Value is bool)
@@ -706,7 +706,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			
 			CModReqdSig modreq = fieldDef.FieldType as CModReqdSig;
-			if (modreq != null && modreq.Modifier.FullName == typeof(IsVolatile).FullName)
+			if (modreq != null && modreq.Modifier != null && modreq.Modifier.FullName == typeof(IsVolatile).FullName)
 				modifiers |= Modifiers.Volatile;
 			
 			return modifiers;
@@ -807,7 +807,8 @@ namespace ICSharpCode.Decompiler.Ast
 			if (!methodDef.IsVirtual || (methodDef.IsNewSlot && !methodDef.IsPrivate)) astMethod.Constraints.AddRange(MakeConstraints(methodDef.GenericParameters));
 			if (!methodDef.DeclaringType.IsInterface) {
 				if (IsExplicitInterfaceImplementation(methodDef)) {
-					astMethod.PrivateImplementationType = ConvertType(methodDef.Overrides.First().MethodDeclaration.DeclaringType);
+					var methDecl = methodDef.Overrides.First().MethodDeclaration;
+					astMethod.PrivateImplementationType = ConvertType(methDecl == null ? null : methDecl.DeclaringType);
 				} else {
 					astMethod.Modifiers = ConvertModifiers(methodDef);
 					if (methodDef.IsVirtual == methodDef.IsNewSlot)
@@ -848,7 +849,7 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		bool IsExplicitInterfaceImplementation(MethodDef methodDef)
 		{
-			return methodDef.HasOverrides && methodDef.IsPrivate;
+			return methodDef != null && methodDef.HasOverrides && methodDef.IsPrivate;
 		}
 
 		IEnumerable<TypeParameterDeclaration> MakeTypeParameters(IEnumerable<GenericParam> genericParameters)
@@ -877,6 +878,8 @@ namespace ICSharpCode.Decompiler.Ast
 					c.BaseTypes.Add(new PrimitiveType("struct"));
 				
 				foreach (var constraintType in gp.GenericParamConstraints) {
+					if (constraintType.Constraint == null)
+						continue;
 					if (gp.HasNotNullableValueTypeConstraint && constraintType.Constraint.FullName == "System.ValueType")
 						continue;
 					c.BaseTypes.Add(ConvertType(constraintType.Constraint));
@@ -929,20 +932,23 @@ namespace ICSharpCode.Decompiler.Ast
 			Modifiers getterModifiers = Modifiers.None;
 			Modifiers setterModifiers = Modifiers.None;
 			if (IsExplicitInterfaceImplementation(accessor)) {
-				astProp.PrivateImplementationType = ConvertType(accessor.Overrides.First().MethodDeclaration.DeclaringType);
+				var methDecl = accessor.Overrides.First().MethodDeclaration;
+				astProp.PrivateImplementationType = ConvertType(methDecl == null ? null : methDecl.DeclaringType);
 			} else if (!propDef.DeclaringType.IsInterface) {
 				getterModifiers = ConvertModifiers(propDef.GetMethod);
 				setterModifiers = ConvertModifiers(propDef.SetMethod);
 				astProp.Modifiers = FixUpVisibility(getterModifiers | setterModifiers);
 				try {
-					if (accessor.IsVirtual && !accessor.IsNewSlot && (propDef.GetMethod == null || propDef.SetMethod == null)) {
+					if (accessor != null && accessor.IsVirtual && !accessor.IsNewSlot && (propDef.GetMethod == null || propDef.SetMethod == null)) {
 						foreach (var basePropDef in TypesHierarchyHelpers.FindBaseProperties(propDef)) {
 							if (basePropDef.GetMethod != null && basePropDef.SetMethod != null) {
 								var propVisibilityModifiers = ConvertModifiers(basePropDef.GetMethod) | ConvertModifiers(basePropDef.SetMethod);
 								astProp.Modifiers = FixUpVisibility((astProp.Modifiers & ~Modifiers.VisibilityMask) | (propVisibilityModifiers & Modifiers.VisibilityMask));
 								break;
-							} else if ((basePropDef.GetMethod ?? basePropDef.SetMethod).IsNewSlot) {
-								break;
+							} else {
+								var baseAcc = basePropDef.GetMethod ?? basePropDef.SetMethod;
+								if (baseAcc != null && baseAcc.IsNewSlot)
+									break;
 							}
 						}
 					}
@@ -951,7 +957,7 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 			}
 			astProp.Name = CleanName(propDef.Name);
-			astProp.ReturnType = ConvertType(propDef.PropertySig.RetType, propDef);
+			astProp.ReturnType = ConvertType(propDef.PropertySig.GetRetType(), propDef);
 			
 			if (propDef.GetMethod != null) {
 				astProp.Getter = new Accessor();
@@ -983,7 +989,7 @@ namespace ICSharpCode.Decompiler.Ast
 			EntityDeclaration member = astProp;
 			if(propDef.IsIndexer())
 				member = ConvertPropertyToIndexer(astProp, propDef);
-			if(!accessor.HasOverrides && !accessor.DeclaringType.IsInterface)
+			if(accessor != null && !accessor.HasOverrides && !accessor.DeclaringType.IsInterface)
 				if (accessor.IsVirtual == accessor.IsNewSlot)
 					SetNewModifier(member);
 			return member;
@@ -1023,8 +1029,10 @@ namespace ICSharpCode.Decompiler.Ast
 				astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
 				if (eventDef.AddMethod == null || !IsExplicitInterfaceImplementation(eventDef.AddMethod))
 					astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
-				else
-					astEvent.PrivateImplementationType = ConvertType(eventDef.AddMethod.Overrides.First().MethodDeclaration.DeclaringType);
+				else {
+					var methDecl = eventDef.AddMethod.Overrides.First().MethodDeclaration;
+					astEvent.PrivateImplementationType = ConvertType(methDecl == null ? null : methDecl.DeclaringType);
+				}
 				
 				if (eventDef.AddMethod != null) {
 					astEvent.AddAccessor = new Accessor {
@@ -1039,7 +1047,7 @@ namespace ICSharpCode.Decompiler.Ast
 					ConvertAttributes(astEvent.RemoveAccessor, eventDef.RemoveMethod);
 				}
 				MethodDef accessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
-				if (accessor.IsVirtual == accessor.IsNewSlot) {
+				if (accessor != null && accessor.IsVirtual == accessor.IsNewSlot) {
 					SetNewModifier(astEvent);
 				}
 				return astEvent;
@@ -1148,11 +1156,11 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 				
 				ConvertCustomAttributes(astParam, paramDef.ParamDef);
-				ModuleDef module = paramDef.Method.Module;
-				if (paramDef.HasParamDef && paramDef.ParamDef.HasMarshalType) {
+				ModuleDef module = paramDef.Method == null ? null : paramDef.Method.Module;
+				if (module != null && paramDef.HasParamDef && paramDef.ParamDef.HasMarshalType) {
 					astParam.Attributes.Add(new AttributeSection(ConvertMarshalInfo(paramDef.ParamDef, module)));
 				}
-				if (paramDef.HasParamDef && astParam.ParameterModifier != ParameterModifier.Out) {
+				if (module != null && paramDef.HasParamDef && astParam.ParameterModifier != ParameterModifier.Out) {
 					if (paramDef.ParamDef.IsIn)
 						astParam.Attributes.Add(new AttributeSection(CreateNonCustomAttribute(typeof(InAttribute), module)));
 					if (paramDef.ParamDef.IsOut)
@@ -1230,7 +1238,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (methodDef.HasImplMap) {
 				ImplMap info = methodDef.ImplMap;
 				Ast.Attribute dllImport = CreateNonCustomAttribute(typeof(DllImportAttribute));
-				dllImport.Arguments.Add(new PrimitiveExpression(info.Module.Name.String));
+				dllImport.Arguments.Add(new PrimitiveExpression(info.Module == null ? string.Empty : info.Module.Name.String));
 				
 				if (info.IsBestFitDisabled)
 					dllImport.AddNamedArgument("BestFitMapping", new PrimitiveExpression(false));

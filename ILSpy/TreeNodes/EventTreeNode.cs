@@ -72,7 +72,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			MethodDef accessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
 			if (accessor != null)
-				return Images.GetIcon(MemberIcon.Event, GetOverlayIcon(eventDef.AddMethod.Attributes), eventDef.AddMethod.IsStatic);
+				return Images.GetIcon(MemberIcon.Event, GetOverlayIcon(accessor.Attributes), accessor.IsStatic);
 			else
 				return Images.GetIcon(MemberIcon.Event, AccessOverlayIcon.Public, false);
 		}

@@ -47,7 +47,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 	{
 		public static void WriteOffsetReference(ITextOutput writer, Instruction instruction)
 		{
-			writer.WriteReference(DnlibExtensions.OffsetToString(instruction.Offset), instruction);
+			writer.WriteReference(DnlibExtensions.OffsetToString(instruction.GetOffset()), instruction);
 		}
 		
 		public static void WriteTo(this ExceptionHandler exceptionHandler, ITextOutput writer)
@@ -75,7 +75,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		
 		public static void WriteTo(this Instruction instruction, ITextOutput writer)
 		{
-			writer.WriteDefinition(DnlibExtensions.OffsetToString(instruction.Offset), instruction);
+			writer.WriteDefinition(DnlibExtensions.OffsetToString(instruction.GetOffset()), instruction);
 			writer.Write(": ");
 			writer.WriteReference(instruction.OpCode.Name, instruction.OpCode);
 			if (instruction.Operand != null) {
@@ -111,7 +111,11 @@ namespace ICSharpCode.Decompiler.Disassembler
 		
 		public static void WriteMethodTo(this IMethod method, ITextOutput writer)
 		{
+			if (method == null)
+				return;
 			MethodSig sig = method.MethodSig;
+			if (sig == null)
+				return;
 			if (sig.ExplicitThis) {
 				writer.Write("instance explicit ");
 			}
@@ -131,7 +135,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				writer.WriteReference(Escape(method.Name), method);
 			}
 			MethodSpec gim = method as MethodSpec;
-			if (gim != null) {
+			if (gim != null && gim.GenericInstMethodSig != null) {
 				writer.Write('<');
 				for (int i = 0; i < gim.GenericInstMethodSig.GenericArguments.Count; i++) {
 					if (i > 0)
@@ -169,6 +173,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 		
 		static void WriteFieldTo(this IField field, ITextOutput writer)
 		{
+			if (field == null || field.FieldSig == null)
+				return;
 			field.FieldSig.Type.WriteTo(writer, ILNameSyntax.SignatureNoNamedTypeParameters);
 			writer.Write(' ');
 			field.DeclaringType.WriteTo(writer, ILNameSyntax.TypeName);
@@ -326,13 +332,15 @@ namespace ICSharpCode.Decompiler.Disassembler
 
 		public static void WriteTo(this ITypeDefOrRef type, ITextOutput writer, ILNameSyntax syntax = ILNameSyntax.Signature)
 		{
+			if (type == null)
+				return;
 			var ts = type as TypeSpec;
 			if (ts != null && !(ts.TypeSig is FnPtrSig)) {
 				WriteTo(((TypeSpec)type).TypeSig, writer, syntax);
 				return;
 			}
-			string typeFullName = type == null ? "<<NULL>>" : type.FullName;
-			string typeName = type == null ? "<<NULL>>" : type.Name.String;
+			string typeFullName = type.FullName;
+			string typeName = type.Name.String;
 			if (ts != null) {
 				var fnPtrSig = ts.TypeSig as FnPtrSig;
 				typeFullName = DnlibExtensions.GetFnPtrFullName(fnPtrSig);

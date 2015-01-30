@@ -305,14 +305,15 @@ namespace ICSharpCode.Decompiler.ILAst
 						// so we have to handle both 'call' and 'callgetter'
 						IMethod mr = (IMethod)inlinedExpression.Operand;
 						// ensure that it's not an multi-dimensional array getter
-						if (mr.DeclaringType is TypeSpec && ((TypeSpec)mr.DeclaringType).TypeSig.RemovePinnedAndModifiers().IsSingleOrMultiDimensionalArray)
+						TypeSig ts;
+						if (mr.DeclaringType is TypeSpec && (ts = ((TypeSpec)mr.DeclaringType).TypeSig.RemovePinnedAndModifiers()) != null && ts.IsSingleOrMultiDimensionalArray)
 							return false;
 						goto case ILCode.Callvirt;
 					case ILCode.Callvirt:
 					case ILCode.CallvirtGetter:
 						// don't inline foreach loop variables:
 						mr = (IMethod)inlinedExpression.Operand;
-						if (mr.Name == "get_Current" && mr.MethodSig.HasThis)
+						if (mr.Name == "get_Current" && mr.MethodSig != null && mr.MethodSig.HasThis)
 							return false;
 						break;
 					case ILCode.Castclass:
@@ -321,7 +322,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						ILExpression arg = inlinedExpression.Arguments[0];
 						if (arg.Code == ILCode.CallGetter || arg.Code == ILCode.CallvirtGetter || arg.Code == ILCode.Call || arg.Code == ILCode.Callvirt) {
 							mr = (IMethod)arg.Operand;
-							if (mr.Name == "get_Current" && mr.MethodSig.HasThis)
+							if (mr.Name == "get_Current" && mr.MethodSig != null && mr.MethodSig.HasThis)
 								return false; // looks like a foreach loop variable, so don't inline it
 						}
 						break;
@@ -335,8 +336,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					case ILCode.Callvirt:
 					case ILCode.CallvirtGetter:
 					case ILCode.CallvirtSetter:
-						IMethod mr = (IMethod)parent.Operand;
-						return mr.MethodSig.HasThis;
+						IMethod mr = parent.Operand as IMethod;
+						return mr == null || mr.MethodSig == null ? false : mr.MethodSig.HasThis;
 					case ILCode.Stfld:
 					case ILCode.Ldfld:
 					case ILCode.Ldflda:

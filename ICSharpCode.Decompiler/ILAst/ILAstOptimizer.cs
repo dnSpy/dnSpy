@@ -407,10 +407,11 @@ namespace ICSharpCode.Decompiler.ILAst
 							expr.Code = ILCode.CallSetter;
 							break;
 						case "Address":
-							ByRefSig brt = cecilMethod.MethodSig.RetType as ByRefSig;
+							ByRefSig brt = cecilMethod.MethodSig.GetRetType() as ByRefSig;
 							if (brt != null) {
-								IMethod getMethod = new MemberRefUser(cecilMethod.Module, "Get", cecilMethod.MethodSig.Clone(), declArrayType.ToTypeDefOrRefInternal());
-								getMethod.MethodSig.RetType = declArrayType.Next;
+								IMethod getMethod = new MemberRefUser(cecilMethod.Module, "Get", cecilMethod.MethodSig == null ? null : cecilMethod.MethodSig.Clone(), declArrayType.ToTypeDefOrRefInternal());
+								if (getMethod.MethodSig != null)
+									getMethod.MethodSig.RetType = declArrayType.Next;
 								expr.Operand = getMethod;
 							}
 							expr.Code = ILCode.CallGetter;

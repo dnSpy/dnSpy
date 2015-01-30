@@ -104,7 +104,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			if (IsPrivate(property))
 				return false;
 
-			if (Decompiler.DnlibExtensions.Resolve(property.PropertySig.RetType) == analyzedType)
+			if (Decompiler.DnlibExtensions.Resolve(property.PropertySig.GetRetType()) == analyzedType)
 				return true;
 
 			return false;
@@ -128,7 +128,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			if (method.IsPrivate) {
 				if (!method.HasOverrides)
 					return false;
-				var typeDefinition = method.Overrides[0].MethodDeclaration.DeclaringType.ResolveTypeDef();
+				var methDecl = method.Overrides[0].MethodDeclaration;
+				var typeDefinition = methDecl == null ? null : methDecl.DeclaringType.ResolveTypeDef();
 				if (typeDefinition != null && !typeDefinition.IsInterface)
 					return false;
 			}

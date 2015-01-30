@@ -551,7 +551,7 @@ namespace ICSharpCode.ILSpy.TextView
 			object reference = referenceSegment.Reference;
 			if (referenceSegment.IsLocal) {
 				ClearLocalReferenceMarks();
-				if (references != null) {
+				if (references != null && reference != null) {
 					foreach (var r in references) {
 						if (reference.Equals(r.Reference)) {
 							var mark = textMarkerService.Create(r.StartOffset, r.Length);

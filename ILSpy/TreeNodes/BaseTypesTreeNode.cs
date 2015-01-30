@@ -57,7 +57,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (type.BaseType != null)
 				children.Add(new BaseTypesEntryNode(type.BaseType, false));
 			foreach (var i in type.Interfaces) {
-				children.Add(new BaseTypesEntryNode(i.Interface, true));
+				if (i.Interface != null)
+					children.Add(new BaseTypesEntryNode(i.Interface, true));
 			}
 		}
 

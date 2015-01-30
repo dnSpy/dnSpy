@@ -179,6 +179,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (!(type.DeclaringType != null && type.IsCompilerGenerated()))
 				return false;
 			foreach (var i in type.Interfaces) {
+				if (i.Interface == null)
+					continue;
 				if (i.Interface.Namespace == "System.Collections" && i.Interface.Name == "IEnumerator")
 					return true;
 			}

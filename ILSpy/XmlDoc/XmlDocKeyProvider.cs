@@ -61,7 +61,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 					}
 					parameters = Decompiler.DnlibExtensions.GetParameters(mr);
 					if (mr.Name == "op_Implicit" || mr.Name == "op_Explicit") {
-						explicitReturnType = mr.MethodSig.RetType;
+						explicitReturnType = mr.MethodSig.GetRetType();
 					}
 				} else {
 					parameters = null;
@@ -92,7 +92,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 			}
 			if (type is GenericInstSig) {
 				GenericInstSig giType = (GenericInstSig)type;
-				AppendTypeNameWithArguments(b, giType.GenericType.TypeDefOrRef, giType.GenericArguments);
+				AppendTypeNameWithArguments(b, giType.GenericType == null ? null : giType.GenericType.TypeDefOrRef, giType.GenericArguments);
 				return;
 			}
 			ArraySigBase arrayType = type as ArraySigBase;
@@ -146,6 +146,8 @@ namespace ICSharpCode.ILSpy.XmlDoc
 		
 		static int AppendTypeNameWithArguments(StringBuilder b, ITypeDefOrRef type, IList<TypeSig> genericArguments)
 		{
+			if (type == null)
+				return 0;
 			int outerTypeParameterCount = 0;
 			if (type.DeclaringType != null) {
 				ITypeDefOrRef declType = type.DeclaringType;

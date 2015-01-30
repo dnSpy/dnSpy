@@ -55,7 +55,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.WriteLine("// Metadata token 0x{0:x8} (RID {1})", method.MDToken.ToInt32(), method.Rid);
 			output.WriteLine("// Code size {0} (0x{0:x})", body.GetCodeSize());
 			output.WriteLine(".maxstack {0}", body.MaxStack);
-            if (method.DeclaringType.Module.Assembly != null && method.DeclaringType.Module.EntryPoint == method)
+            if (method.DeclaringType.Module.EntryPoint == method)
                 output.WriteLine (".entrypoint");
 			
 			if (method.Body.HasVariables) {
@@ -125,7 +125,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 				IList<Instruction> targets = inst.Operand as IList<Instruction>;
 				if (targets != null)
 					foreach (Instruction t in targets)
-						branchTargets.Add(t.Offset);
+						if (t != null)
+							branchTargets.Add(t.Offset);
 			}
 			return branchTargets;
 		}
@@ -164,7 +165,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 							output.WriteLine("fault");
 							break;
 						default:
-							throw new NotSupportedException();
+							output.WriteLine(s.ExceptionHandler.HandlerType.ToString());
+							break;
 					}
 					output.WriteLine("{");
 					break;

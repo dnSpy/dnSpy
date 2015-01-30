@@ -76,7 +76,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		private static bool IsDecimalConstant(FieldDef field)
 		{
 			var fieldType = field.FieldType;
-			if (fieldType.TypeName == "Decimal" && fieldType.Namespace == "System") {
+			if (fieldType != null && fieldType.TypeName == "Decimal" && fieldType.Namespace == "System") {
 				if (field.HasCustomAttributes) {
 					var attrs = field.CustomAttributes;
 					for (int i = 0; i < attrs.Count; i++) {

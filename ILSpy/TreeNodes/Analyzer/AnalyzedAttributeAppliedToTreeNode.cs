@@ -59,6 +59,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				foreach (CustomAttribute ca in analyzedType.CustomAttributes) {
 					ITypeDefOrRef t = ca.AttributeType;
 					if (t != null && t.Name == "AttributeUsageAttribute" && t.Namespace == "System" &&
+						ca.ConstructorArguments.Count > 0 &&
 						ca.ConstructorArguments[0].Value is int) {
 						this.usage = (AttributeTargets)ca.ConstructorArguments[0].Value;
 						if (ca.ConstructorArguments.Count > 2) {
@@ -335,6 +336,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					.Where(attr => attr.TypeFullName == "System.Runtime.CompilerServices.InternalsVisibleToAttribute");
 				var friendAssemblies = new HashSet<string>();
 				foreach (var attribute in attributes) {
+					if (attribute.ConstructorArguments.Count == 0)
+						continue;
 					string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
 					if (assemblyName == null)
 						continue;

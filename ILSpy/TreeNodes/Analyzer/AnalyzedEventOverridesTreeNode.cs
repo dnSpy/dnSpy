@@ -56,6 +56,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			foreach (EventDef eventDef in type.Events) {
 				if (TypesHierarchyHelpers.IsBaseEvent(analyzedEvent, eventDef)) {
 					MethodDef anyAccessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
+					if (anyAccessor == null)
+						continue;
 					bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
 					var node = new AnalyzedEventTreeNode(eventDef, hidesParent ? "(hides) " : "");
 					node.Language = this.Language;
@@ -67,7 +69,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		public static bool CanShow(EventDef property)
 		{
 			var accessor = property.AddMethod ?? property.RemoveMethod;
-			return accessor.IsVirtual && !accessor.IsFinal && !accessor.DeclaringType.IsInterface;
+			return accessor != null && accessor.IsVirtual && !accessor.IsFinal && !accessor.DeclaringType.IsInterface;
 		}
 	}
 }

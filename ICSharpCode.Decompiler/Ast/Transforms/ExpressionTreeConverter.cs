@@ -35,7 +35,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		{
 			if (expr != null && expr.Arguments.Count == 2) {
 				IMethod mr = expr.Annotation<IMethod>();
-				return mr != null && mr.Name == "Lambda" && mr.DeclaringType.FullName == "System.Linq.Expressions.Expression";
+				return mr != null && mr.Name == "Lambda" && mr.DeclaringType != null && mr.DeclaringType.FullName == "System.Linq.Expressions.Expression";
 			}
 			return false;
 		}
@@ -64,7 +64,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			InvocationExpression invocation = expr as InvocationExpression;
 			if (invocation != null) {
 				IMethod mr = invocation.Annotation<IMethod>();
-				if (mr != null && mr.DeclaringType.FullName == "System.Linq.Expressions.Expression") {
+				if (mr != null && mr.DeclaringType != null && mr.DeclaringType.FullName == "System.Linq.Expressions.Expression") {
 					switch (mr.Name) {
 						case "Add":
 							return ConvertBinaryOperator(invocation, BinaryOperatorType.Add, false);
@@ -376,7 +376,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			
 			MemberReferenceExpression mre = convertedTarget.Member(mr.Name);
 			MethodSpec gim = mr as MethodSpec;
-			if (gim != null) {
+			if (gim != null && gim.GenericInstMethodSig != null) {
 				foreach (TypeSig tr in gim.GenericInstMethodSig.GenericArguments) {
 					mre.TypeArguments.Add(AstBuilder.ConvertType(tr));
 				}

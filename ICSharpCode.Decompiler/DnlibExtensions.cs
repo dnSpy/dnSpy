@@ -34,14 +34,14 @@ namespace ICSharpCode.Decompiler
 		public static int GetPushDelta(this Instruction instruction, MethodDef methodDef)
 		{
 			int pushes, pops;
-			instruction.CalculateStackUsage(methodDef.ReturnType.RemovePinnedAndModifiers().GetElementType() != ElementType.Void, out pushes, out pops);
+			instruction.CalculateStackUsage(methodDef.HasReturnType, out pushes, out pops);
 			return pushes;
 		}
 		
 		public static int? GetPopDelta(this Instruction instruction, MethodDef methodDef)
 		{
 			int pushes, pops;
-			instruction.CalculateStackUsage(methodDef.ReturnType.RemovePinnedAndModifiers().GetElementType() != ElementType.Void, out pushes, out pops);
+			instruction.CalculateStackUsage(methodDef.HasReturnType, out pushes, out pops);
 			return pops == -1 ? (int?)null : pops;
 		}
 		#endregion
@@ -52,7 +52,7 @@ namespace ICSharpCode.Decompiler
 		public static int GetEndOffset(this Instruction inst)
 		{
 			if (inst == null)
-				throw new ArgumentNullException("inst");
+				return 0;
 			return (int)inst.Offset + inst.GetSize();
 		}
 		
@@ -94,7 +94,7 @@ namespace ICSharpCode.Decompiler
 		
 		public static FieldDef ResolveFieldWithinSameModule(this MemberRef field)
 		{
-			if (field != null && field.DeclaringType.Scope == field.Module)
+			if (field != null && field.DeclaringType != null && field.DeclaringType.Scope == field.Module)
 				return field.ResolveField();
 			else
 				return null;
@@ -102,7 +102,7 @@ namespace ICSharpCode.Decompiler
 		
 		public static FieldDef ResolveFieldWithinSameModule(this IField field)
 		{
-			if (field != null && field.DeclaringType.Scope == field.Module)
+			if (field != null && field.DeclaringType != null && field.DeclaringType.Scope == field.Module)
 				return field is FieldDef ? (FieldDef)field : ((MemberRef)field).ResolveField();
 			else
 				return null;
@@ -111,8 +111,8 @@ namespace ICSharpCode.Decompiler
 		public static MethodDef ResolveMethodWithinSameModule(this IMethod method)
 		{
 			if (method is MethodSpec)
-				return ((MethodSpec)method).Method.ResolveMethodWithinSameModule();
-			if (method != null && method.DeclaringType.Scope == method.Module)
+				method = ((MethodSpec)method).Method;
+			if (method != null && method.DeclaringType != null && method.DeclaringType.Scope == method.Module)
 				return method is MethodDef ? (MethodDef)method : ((MemberRef)method).ResolveMethod();
 			else
 				return null;
@@ -120,10 +120,10 @@ namespace ICSharpCode.Decompiler
 
 		public static MethodDef Resolve(this IMethod method)
 		{
+			if (method is MethodSpec)
+				method = ((MethodSpec)method).Method;
 			if (method is MemberRef)
 				return ((MemberRef)method).ResolveMethod();
-			else if (method is MethodSpec)
-				return ((MethodSpec)method).Method.Resolve();
 			else
 				return (MethodDef)method;
 		}
@@ -138,7 +138,7 @@ namespace ICSharpCode.Decompiler
 
 		public static TypeDef Resolve(this IType type)
 		{
-			return type.ScopeType.ResolveTypeDef();
+			return type == null ? null : type.ScopeType.ResolveTypeDef();
 		}
 
 		public static bool IsCompilerGenerated(this IHasCustomAttribute provider)
@@ -148,11 +148,14 @@ namespace ICSharpCode.Decompiler
 		
 		public static bool IsCompilerGeneratedOrIsInCompilerGeneratedClass(this IMemberDef member)
 		{
-			if (member == null)
-				return false;
-			if (member.IsCompilerGenerated())
-				return true;
-			return IsCompilerGeneratedOrIsInCompilerGeneratedClass(member.DeclaringType);
+			for (int i = 0; i < 50; i++) {
+				if (member == null)
+					break;
+				if (member.IsCompilerGenerated())
+					return true;
+				member = member.DeclaringType;
+			}
+			return false;
 		}
 		
 		public static bool IsAnonymousType(this ITypeDefOrRef type)
@@ -168,31 +171,39 @@ namespace ICSharpCode.Decompiler
 
 		public static bool HasGeneratedName(this IMemberRef member)
 		{
-			return member.Name.StartsWith("<", StringComparison.Ordinal);
+			return member != null && member.Name.StartsWith("<", StringComparison.Ordinal);
 		}
 		
 		public static bool ContainsAnonymousType(this TypeSig type)
 		{
+			return type.ContainsAnonymousType(0);
+		}
+
+		static bool ContainsAnonymousType(this TypeSig type, int depth)
+		{
+			if (depth >= 30)
+				return false;
 			GenericInstSig git = type as GenericInstSig;
-			if (git != null) {
+			if (git != null && git.GenericType != null) {
 				if (IsAnonymousType(git.GenericType.TypeDefOrRef))
 					return true;
 				for (int i = 0; i < git.GenericArguments.Count; i++) {
-					if (git.GenericArguments[i].ContainsAnonymousType())
+					if (git.GenericArguments[i].ContainsAnonymousType(depth + 1))
 						return true;
 				}
 				return false;
 			}
 			if (type != null && type.Next != null)
-				return ContainsAnonymousType(type.Next);
+				return type.Next.ContainsAnonymousType(depth + 1);
 			return false;
 		}
 
 		public static string GetDefaultMemberName(this TypeDef type, out CustomAttribute defaultMemberAttribute)
 		{
-			if (type.HasCustomAttributes)
+			if (type != null && type.HasCustomAttributes)
 				foreach (CustomAttribute ca in type.CustomAttributes.FindAll("System.Reflection.DefaultMemberAttribute"))
-					if (ca.Constructor.FullName == @"System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)" &&
+					if (ca.Constructor != null && ca.Constructor.FullName == @"System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)" &&
+						ca.ConstructorArguments.Count == 1 &&
 						ca.ConstructorArguments[0].Value is UTF8String) {
 						defaultMemberAttribute = ca;
 						return (UTF8String)ca.ConstructorArguments[0].Value;
@@ -210,10 +221,10 @@ namespace ICSharpCode.Decompiler
 		static bool IsIndexer(this PropertyDef property, out CustomAttribute defaultMemberAttribute)
 		{
 			defaultMemberAttribute = null;
-			if (property.PropertySig.GetParamCount() > 0) {
+			if (property != null && property.PropertySig.GetParamCount() > 0) {
 				var accessor = property.GetMethod ?? property.SetMethod;
 				PropertyDef basePropDef = property;
-				if (accessor.HasOverrides) {
+				if (accessor != null && accessor.HasOverrides) {
 					// if the property is explicitly implementing an interface, look up the property in the interface:
 					MethodDef baseAccessor = accessor.Overrides.First().MethodDeclaration.Resolve();
 					if (baseAccessor != null) {
@@ -250,7 +261,7 @@ namespace ICSharpCode.Decompiler
 		public static Instruction GetPrevious(this CilBody body, Instruction instr)
 		{
 			int index = body.Instructions.IndexOf(instr);
-			if (index == -1 || index == 0)
+			if (index <= 0)
 				return null;
 			return body.Instructions[index - 1];
 		}
@@ -265,6 +276,8 @@ namespace ICSharpCode.Decompiler
 
 		public static IList<TypeSig> GetParameters(this MethodBaseSig methodSig)
 		{
+			if (methodSig == null)
+				return new List<TypeSig>();
 			if (methodSig.ParamsAfterSentinel != null)
 				return methodSig.Params
 					.Concat(new TypeSig[] { new SentinelSig() })
@@ -277,8 +290,12 @@ namespace ICSharpCode.Decompiler
 		public static ITypeDefOrRef GetTypeDefOrRef(this TypeSig type)
 		{
 			type = type.RemovePinnedAndModifiers();
-			if (type.IsGenericInstanceType)
-				return ((GenericInstSig)type).GenericType.TypeDefOrRef;
+			if (type == null)
+				return null;
+			if (type.IsGenericInstanceType) {
+				var git = (GenericInstSig)type;
+				return git.GenericType == null ? null : git.GenericType.TypeDefOrRef;
+			}
 			else if (type.IsTypeDefOrRef)
 				return ((TypeDefOrRefSig)type).TypeDefOrRef;
 			else
@@ -310,6 +327,8 @@ namespace ICSharpCode.Decompiler
 
 		public static IEnumerable<Parameter> GetParameters(this PropertyDef property)
 		{
+			if (property == null)
+				yield break;
 			if (property.GetMethod != null)
 			{
 				foreach (var param in property.GetMethod.Parameters)
@@ -337,6 +356,8 @@ namespace ICSharpCode.Decompiler
 
 		public static string GetScopeName(this IScope scope)
 		{
+			if (scope == null)
+				return string.Empty;
 			if (scope is IFullName)
 				return ((IFullName)scope).Name;
 			else
@@ -345,7 +366,7 @@ namespace ICSharpCode.Decompiler
 
 		public static int GetParametersSkip(this IList<Parameter> parameters)
 		{
-			if (parameters.Count == 0)
+			if (parameters == null || parameters.Count == 0)
 				return 0;
 			if (parameters[0].IsHiddenThisParameter)
 				return 1;
@@ -354,6 +375,8 @@ namespace ICSharpCode.Decompiler
 
 		public static IEnumerable<Parameter> SkipNonNormal(this IList<Parameter> parameters)
 		{
+			if (parameters == null)
+				yield break;
 			foreach (var p in parameters)
 				if (p.IsNormalMethodParameter)
 					yield return p;
@@ -361,6 +384,8 @@ namespace ICSharpCode.Decompiler
 
 		public static int GetNumberOfNormalParameters(this IList<Parameter> parameters)
 		{
+			if (parameters == null)
+				return 0;
 			return parameters.Count - GetParametersSkip(parameters);
 		}
 
@@ -398,6 +423,8 @@ namespace ICSharpCode.Decompiler
 
 		public static string GetMethodSigFullName(MethodSig methodSig)
 		{
+			if (methodSig == null)
+				return string.Empty;
 			var sb = new StringBuilder();
 
 			sb.Append(FullNameCreator.FullName(methodSig.RetType, false));

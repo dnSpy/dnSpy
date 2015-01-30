@@ -57,6 +57,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 				if (TypesHierarchyHelpers.IsBaseProperty(analyzedProperty, property)) {
 					MethodDef anyAccessor = property.GetMethod ?? property.SetMethod;
+					if (anyAccessor == null)
+						continue;
 					bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
 					var node = new AnalyzedPropertyTreeNode(property, hidesParent ? "(hides) " : "");
 					node.Language = this.Language;
@@ -68,7 +70,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		public static bool CanShow(PropertyDef property)
 		{
 			var accessor = property.GetMethod ?? property.SetMethod;
-			return accessor.IsVirtual && !accessor.IsFinal && !accessor.DeclaringType.IsInterface;
+			return accessor != null && accessor.IsVirtual && !accessor.IsFinal && !accessor.DeclaringType.IsInterface;
 		}
 	}
 }

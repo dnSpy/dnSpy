@@ -46,6 +46,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
 		{
+			if (analyzedMethod == null)
+				yield break;
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedMethod, FindReferencesInType);
 			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.Text)) {
 				yield return child;
@@ -54,15 +56,16 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type)
 		{
-			if (!type.HasInterfaces)
+			if (!type.HasInterfaces || analyzedMethod == null)
 				yield break;
-			ITypeDefOrRef implementedInterfaceRef = type.Interfaces.FirstOrDefault(i => i.Interface.ResolveTypeDef() == analyzedMethod.DeclaringType).Interface;
+			var iff = type.Interfaces.FirstOrDefault(i => i.Interface.ResolveTypeDef() == analyzedMethod.DeclaringType);
+			ITypeDefOrRef implementedInterfaceRef = iff == null ? null : iff.Interface;
 			if (implementedInterfaceRef == null)
 				yield break;
 
 			foreach (EventDef ev in type.Events.Where(e => e.Name == analyzedEvent.Name)) {
 				MethodDef accessor = ev.AddMethod ?? ev.RemoveMethod;
-				if (TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
+				if (accessor != null && TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
 					var node = new AnalyzedEventTreeNode(ev);
 					node.Language = this.Language;
 					yield return node;
@@ -72,7 +75,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 			foreach (EventDef ev in type.Events.Where(e => e.Name.EndsWith(analyzedEvent.Name))) {
 				MethodDef accessor = ev.AddMethod ?? ev.RemoveMethod;
-				if (accessor.HasOverrides && accessor.Overrides.Any(m => Decompiler.DnlibExtensions.Resolve(m.MethodDeclaration) == analyzedMethod)) {
+				if (accessor != null && accessor.HasOverrides && accessor.Overrides.Any(m => Decompiler.DnlibExtensions.Resolve(m.MethodDeclaration) == analyzedMethod)) {
 					var node = new AnalyzedEventTreeNode(ev);
 					node.Language = this.Language;
 					yield return node;

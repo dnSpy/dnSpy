@@ -80,7 +80,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 								obj = new BaseReferenceExpression();
 							}
 						}
-						if (!annotation.IsVirtual && obj is NullReferenceExpression && !method.MethodSig.HasThis) {
+						if (!annotation.IsVirtual && obj is NullReferenceExpression && method.MethodSig != null && !method.MethodSig.HasThis) {
 							// We're loading a static method.
 							// However it is possible to load extension methods with an instance, so we compare the number of arguments:
 							bool isExtensionMethod = false;

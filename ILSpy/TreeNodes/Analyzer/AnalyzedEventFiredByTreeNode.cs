@@ -115,10 +115,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			var fieldName = ev.Name;
 			var vbStyleFieldName = fieldName + "Event";
 			var fieldType = ev.EventType;
+			if (fieldType == null)
+				return null;
 
 			foreach (var fd in ev.DeclaringType.Fields) {
 				if (fd.Name == fieldName || fd.Name == vbStyleFieldName)
-					if (fd.FieldType.FullName == fieldType.FullName)
+					if (fd.FieldType != null && fd.FieldType.FullName == fieldType.FullName)
 						return fd;
 			}
 

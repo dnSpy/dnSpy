@@ -346,8 +346,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						// as is requested, then we can use the short name (if it's not otherwise ambiguous)
 						PropertyDef prop = mr as PropertyDef;
 						FieldDef field = mr as FieldDef;
-						if (!(prop != null && prop.PropertySig.RetType.Namespace == ns && prop.PropertySig.RetType.TypeName == name)
-						    && !(field != null && field.FieldType.Namespace == ns && field.FieldType.TypeName == name))
+						if (!(prop != null && prop.PropertySig.GetRetType().GetNamespace() == ns && prop.PropertySig.GetRetType().GetName() == name)
+							&& !(field != null && field.FieldType != null && field.FieldType.Namespace == ns && field.FieldType.TypeName == name))
 							return true;
 					}
 				}

@@ -142,6 +142,9 @@ namespace ICSharpCode.Decompiler.Ast
 
 		private static bool MatchMethod(MethodDef mCandidate, MethodSig mCandidateSig, MethodDef mMethod)
 		{
+			if (mCandidate == null || mCandidateSig == null || mMethod == null)
+				return false;
+
 			if (mCandidate.Name != mMethod.Name)
 				return false;
 
@@ -156,7 +159,7 @@ namespace ICSharpCode.Decompiler.Ast
 					return false;
 			}
 
-			if (mCandidateSig.Params.Count != mMethod.MethodSig.Params.Count)
+			if (mMethod.MethodSig == null || mCandidateSig.Params.Count != mMethod.MethodSig.Params.Count)
 				return false;
 
 			return new SigComparer().Equals(mCandidateSig.Params, mMethod.MethodSig.Params);
@@ -166,9 +169,9 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			var genericInstSig = interfaceContextType.TryGetGenericInstSig();
 			if (genericInstSig != null) {
-				return MatchMethod(candidate, GenericArgumentResolver.Resolve(candidate.MethodSig, genericInstSig.GenericArguments, null), method);
+				return MatchMethod(candidate, GenericArgumentResolver.Resolve(candidate == null ? null : candidate.MethodSig, genericInstSig.GenericArguments, null), method);
 			} else {
-				return MatchMethod(candidate, candidate.MethodSig, method);
+				return MatchMethod(candidate, candidate == null ? null : candidate.MethodSig, method);
 			}
 		}
 
@@ -182,7 +185,8 @@ namespace ICSharpCode.Decompiler.Ast
 			if (property == null)
 				throw new ArgumentNullException("property");
 
-			if ((property.GetMethod ?? property.SetMethod).HasOverrides)
+			var accMeth = property.GetMethod ?? property.SetMethod;
+			if (accMeth != null && accMeth.HasOverrides)
 				yield break;
 
 			bool isIndexer = property.IsIndexer();
@@ -198,7 +202,7 @@ namespace ICSharpCode.Decompiler.Ast
 							continue;
 						yield return baseProperty;
 						var anyPropertyAccessor = baseProperty.GetMethod ?? baseProperty.SetMethod;
-						if (anyPropertyAccessor.IsNewSlot == anyPropertyAccessor.IsVirtual)
+						if (anyPropertyAccessor != null && anyPropertyAccessor.IsNewSlot == anyPropertyAccessor.IsVirtual)
 							yield break;
 					}
 				}
@@ -210,10 +214,11 @@ namespace ICSharpCode.Decompiler.Ast
 			if (mCandidate.Name != mProperty.Name)
 				return false;
 
-			if ((mCandidate.GetMethod ?? mCandidate.SetMethod).HasOverrides)
+			var accMeth = mCandidate.GetMethod ?? mCandidate.SetMethod;
+			if (accMeth != null && accMeth.HasOverrides)
 				return false;
 
-			if (mCandidateSig.GenParamCount != mProperty.PropertySig.GenParamCount)
+			if (mProperty.PropertySig == null || mCandidateSig.GenParamCount != mProperty.PropertySig.GenParamCount)
 				return false;
 
 			return new SigComparer().Equals(mCandidateSig.Params, mProperty.PropertySig.Params);
@@ -235,7 +240,7 @@ namespace ICSharpCode.Decompiler.Ast
 						IsVisibleFromDerived(baseEvent, eventDef.DeclaringType)) {
 						yield return baseEvent;
 						var anyEventAccessor = baseEvent.AddMethod ?? baseEvent.RemoveMethod;
-						if (anyEventAccessor.IsNewSlot == anyEventAccessor.IsVirtual)
+						if (anyEventAccessor != null && anyEventAccessor.IsNewSlot == anyEventAccessor.IsVirtual)
 							yield break;
 					}
 				}
@@ -247,7 +252,8 @@ namespace ICSharpCode.Decompiler.Ast
 			if (mCandidate.Name != mEvent.Name)
 				return false;
 
-			if ((mCandidate.AddMethod ?? mCandidate.RemoveMethod).HasOverrides)
+			var m = mCandidate.AddMethod ?? mCandidate.RemoveMethod;
+			if (m == null || m.HasOverrides)
 				return false;
 
 			if (!new SigComparer().Equals(mCandidateType, mEventType))
@@ -301,12 +307,14 @@ namespace ICSharpCode.Decompiler.Ast
 
 			var prop = member as PropertyDef;
 			if (prop != null) {
-				return (prop.GetMethod ?? prop.SetMethod).Attributes;
+				var accMeth = prop.GetMethod ?? prop.SetMethod;
+				return accMeth == null ? 0 : accMeth.Attributes;
 		}
 
 			var evnt = member as EventDef;
 			if (evnt != null) {
-				return (evnt.AddMethod ?? evnt.RemoveMethod).Attributes;
+				var m = evnt.AddMethod ?? evnt.RemoveMethod;
+				return m == null ? 0 : m.Attributes;
 			}
 
 			var nestedType = member as TypeDef;
@@ -333,7 +341,7 @@ namespace ICSharpCode.Decompiler.Ast
 
 			TypeSig baseType = typeDef.ToTypeSigInternal();
 			do {
-				var genericArgs = baseType.IsGenericInstanceType ? ((GenericInstSig)baseType).GenericArguments : null;
+				var genericArgs = baseType is GenericInstSig ? ((GenericInstSig)baseType).GenericArguments : null;
 				baseType = GenericArgumentResolver.Resolve(typeDef.BaseType.ToTypeSigInternal(), genericArgs, null);
 				yield return baseType;
 
@@ -345,13 +353,13 @@ namespace ICSharpCode.Decompiler.Ast
 
 		private static TypeSig Resolve(TypeSig type, TypeSig typeContext)
 		{
-			var genericArgs = typeContext.IsGenericInstanceType ? ((GenericInstSig)typeContext).GenericArguments : null;
+			var genericArgs = typeContext is GenericInstSig ? ((GenericInstSig)typeContext).GenericArguments : null;
 			return GenericArgumentResolver.Resolve(type, genericArgs, null);
 		}
 
 		private static MethodSig Resolve(MethodBaseSig method, TypeSig typeContext)
 		{
-			var genericArgs = typeContext.IsGenericInstanceType ? ((GenericInstSig)typeContext).GenericArguments : null;
+			var genericArgs = typeContext is GenericInstSig ? ((GenericInstSig)typeContext).GenericArguments : null;
 			return GenericArgumentResolver.Resolve(method, genericArgs, null);
 		}
 	}

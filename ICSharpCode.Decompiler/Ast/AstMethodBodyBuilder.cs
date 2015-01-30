@@ -380,8 +380,10 @@ namespace ICSharpCode.Decompiler.Ast
 							ct.ArraySpecifiers.MoveTo(ace.AdditionalArraySpecifiers);
 							ace.Initializer = new ArrayInitializerExpression();
 						}
-						var arySig = (ArraySigBase)((TypeSpec)operand).TypeSig.RemovePinnedAndModifiers();
-						if (arySig.IsSingleDimensional)
+						var arySig = ((TypeSpec)operand).TypeSig.RemovePinnedAndModifiers() as ArraySigBase;
+						if (arySig == null) {
+						}
+						else if (arySig.IsSingleDimensional)
 						{
 							ace.Initializer.Elements.AddRange(args);
 						}
@@ -556,7 +558,7 @@ namespace ICSharpCode.Decompiler.Ast
 					else
 						goto case ILCode.Castclass;
 				case ILCode.Castclass:
-					if ((byteCode.Arguments[0].InferredType != null && byteCode.Arguments[0].InferredType.IsGenericParameter) || ((ITypeDefOrRef)operand).TryGetGenericSig() != null)
+					if ((byteCode.Arguments[0].InferredType != null && byteCode.Arguments[0].InferredType.IsGenericParameter) || (operand as ITypeDefOrRef).TryGetGenericSig() != null)
 						return arg1.CastTo(new PrimitiveType("object")).CastTo(operandAsTypeRef);
 					else
 						return arg1.CastTo(operandAsTypeRef);
@@ -619,7 +621,7 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Initblk:     return InlineAssembly(byteCode, args);
 					case ILCode.Initobj:      return InlineAssembly(byteCode, args);
 				case ILCode.DefaultValue:
-					return MakeDefaultValue(((ITypeDefOrRef)operand).ToTypeSigInternal());
+					return MakeDefaultValue((operand as ITypeDefOrRef).ToTypeSigInternal());
 					case ILCode.Jmp: return InlineAssembly(byteCode, args);
 				case ILCode.Ldc_I4:
 						return AstBuilder.MakePrimitive((int)operand, byteCode.InferredType.ToTypeDefOrRefInternal());
@@ -779,7 +781,7 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Pop: return arg1;
 					case ILCode.Readonly: return InlineAssembly(byteCode, args);
 				case ILCode.Ret:
-					if (methodDef.ReturnType.FullName != "System.Void") {
+					if (methodDef.ReturnType.GetFullName() != "System.Void") {
 						return new Ast.ReturnStatement { Expression = arg1 };
 					} else {
 						return new Ast.ReturnStatement();
@@ -976,7 +978,7 @@ namespace ICSharpCode.Decompiler.Ast
 			MethodDef cecilMethodDef = cecilMethod.Resolve();
 			Ast.Expression target;
 			List<Ast.Expression> methodArgs = new List<Ast.Expression>(args);
-			if (cecilMethod.MethodSig.HasThis) {
+			if (cecilMethod.MethodSig != null && cecilMethod.MethodSig.HasThis) {
 				target = methodArgs[0];
 				methodArgs.RemoveAt(0);
 				
@@ -1006,7 +1008,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			if (target is ThisReferenceExpression && !isVirtual) {
 				// a non-virtual call on "this" might be a "base"-call.
-				if (cecilMethod.DeclaringType.ScopeType.ResolveTypeDef() != this.methodDef.DeclaringType) {
+				if (cecilMethod.DeclaringType != null && cecilMethod.DeclaringType.ScopeType.ResolveTypeDef() != this.methodDef.DeclaringType) {
 					// If we're not calling a method in the current class; we must be calling one in the base class.
 					target = new BaseReferenceExpression();
 				}
@@ -1111,7 +1113,7 @@ namespace ICSharpCode.Decompiler.Ast
 			TypeDef typeDef = cecilMethod.DeclaringType;
 			string indexerName = null;
 			foreach (CustomAttribute ca in typeDef.CustomAttributes) {
-				if (ca.Constructor.FullName == "System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)") {
+				if (ca.Constructor != null && ca.Constructor.FullName == "System.Void System.Reflection.DefaultMemberAttribute::.ctor(System.String)") {
 					indexerName = ca.ConstructorArguments.Single().Value as UTF8String;
 					if (indexerName != null)
 						break;
@@ -1193,7 +1195,7 @@ namespace ICSharpCode.Decompiler.Ast
 		IEnumerable<AstType> ConvertTypeArguments(IMethod cecilMethod)
 		{
 			MethodSpec g = cecilMethod as MethodSpec;
-			if (g == null)
+			if (g == null || g.GenericInstMethodSig == null)
 				return null;
 			if (g.GenericInstMethodSig.GenericArguments.Any(ta => ta.ContainsAnonymousType()))
 				return null;

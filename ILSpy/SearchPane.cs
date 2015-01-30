@@ -280,6 +280,8 @@ namespace ICSharpCode.ILSpy
 			
 			bool IsMatch(string text)
 			{
+			  if (text == null)
+  			    return false;
 			  for (int i = 0; i < searchTerm.Length; ++i) {
 			    // How to handle overlapping matches?
 			    if (text.IndexOf(searchTerm[i], StringComparison.OrdinalIgnoreCase) < 0)

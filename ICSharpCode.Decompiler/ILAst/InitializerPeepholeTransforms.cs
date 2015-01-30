@@ -130,6 +130,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression methodArg2;
 			IField fieldRef;
 			if (body.ElementAtOrDefault(pos).Match(ILCode.Call, out methodRef, out methodArg1, out methodArg2) &&
+				methodRef.DeclaringType != null &&
 			    methodRef.DeclaringType.FullName == "System.Runtime.CompilerServices.RuntimeHelpers" &&
 			    methodRef.Name == "InitializeArray" &&
 			    methodArg1.Match(ILCode.Ldloc, out v2) &&
@@ -362,7 +363,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				return false;
 			TypeDef td = tr.Resolve();
 			while (td != null) {
-				if (td.Interfaces.Any(intf => intf.Interface.Name == "IEnumerable" && intf.Interface.Namespace == "System.Collections"))
+				if (td.Interfaces.Any(intf => intf.Interface != null && intf.Interface.Name == "IEnumerable" && intf.Interface.Namespace == "System.Collections"))
 					return true;
 				td = td.BaseType != null ? td.BaseType.ResolveTypeDef() : null;
 			}
@@ -391,7 +392,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			IMethod addMethod;
 			List<ILExpression> args;
 			if (expr.Match(ILCode.Callvirt, out addMethod, out args) || expr.Match(ILCode.Call, out addMethod, out args)) {
-				if (addMethod.Name == "Add" && addMethod.MethodSig.HasThis) {
+				if (addMethod.Name == "Add" && addMethod.MethodSig != null && addMethod.MethodSig.HasThis) {
 					return args.Count >= 2;
 				}
 			}
@@ -474,12 +475,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			// Now create new initializers for the remaining arguments:
 			for (; i <= getters.Count; i++) {
 				ILExpression g = getters[getters.Count - i];
-				IMemberRef mr = (IMemberRef)g.Operand;
+				IMemberRef mr = g.Operand as IMemberRef;
 				TypeSig returnType;
-				if (mr.IsField)
+				if (mr == null || mr.IsField)
 					returnType = TypeAnalysis.GetFieldType((IField)mr);
 				else
-					returnType = TypeAnalysis.SubstituteTypeArgs(((IMethod)mr).MethodSig.RetType, method: (IMethod)mr);
+					returnType = TypeAnalysis.SubstituteTypeArgs(((IMethod)mr).MethodSig.GetRetType(), method: (IMethod)mr);
 
 				ILExpression nestedInitializer = new ILExpression(
 					IsCollectionType(returnType) ? ILCode.InitCollection : ILCode.InitObject,

@@ -269,7 +269,7 @@ namespace ICSharpCode.ILSpy
 				base.DecompileAssembly(assembly, output, options);
 				output.WriteLine();
 				ModuleDef mainModule = assembly.ModuleDefinition;
-				if (mainModule.EntryPoint != null) {
+				if (mainModule.EntryPoint != null && mainModule.EntryPoint.DeclaringType != null) {
 					output.Write("// Entry point: ");
 					output.WriteReference(mainModule.EntryPoint.DeclaringType.FullName + "." + mainModule.EntryPoint.Name, mainModule.EntryPoint);
 					output.WriteLine();
@@ -343,7 +343,7 @@ namespace ICSharpCode.ILSpy
 				bool useTargetFrameworkAttribute = false;
 				var targetFrameworkAttribute = module.Assembly == null ? null : module.Assembly.CustomAttributes.FirstOrDefault(a => a.TypeFullName == "System.Runtime.Versioning.TargetFrameworkAttribute");
 				if (targetFrameworkAttribute != null && targetFrameworkAttribute.ConstructorArguments.Any()) {
-					string frameworkName = (UTF8String)targetFrameworkAttribute.ConstructorArguments[0].Value;
+					string frameworkName = (targetFrameworkAttribute.ConstructorArguments[0].Value as UTF8String) ?? string.Empty;
 					string[] frameworkParts = frameworkName.Split(',');
 					string frameworkVersion = frameworkParts.FirstOrDefault(a => a.StartsWith("Version="));
 					if (frameworkVersion != null) {
@@ -825,8 +825,9 @@ namespace ICSharpCode.ILSpy
 			if (isIndexer.Value) {
 				var buffer = new System.Text.StringBuilder();
 				var accessor = property.GetMethod ?? property.SetMethod;
-				if (accessor.HasOverrides) {
-					var declaringType = accessor.Overrides.First().MethodDeclaration.DeclaringType;
+				if (accessor != null && accessor.HasOverrides) {
+					var methDecl = accessor.Overrides.First().MethodDeclaration;
+					var declaringType = methDecl == null ? null : methDecl.DeclaringType;
 					buffer.Append(TypeToString(declaringType, includeNamespace: true));
 					buffer.Append(@".");
 				}

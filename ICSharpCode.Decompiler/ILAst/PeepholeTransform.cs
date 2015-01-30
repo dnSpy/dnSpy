@@ -46,6 +46,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			IMethod r;
 			List<ILExpression> args;
 			if (expr.Match(ILCode.Newobj, out r, out args) &&
+				r.DeclaringType != null &&
 			    r.DeclaringType.Namespace == "System" &&
 			    r.DeclaringType.Name == "Decimal")
 			{
@@ -471,7 +472,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					return true;
 				case ILCode.Call:
 					var m = expr.Operand as IMethod;
-					if (m == null || m.MethodSig.HasThis || expr.Arguments.Count != 2) return false;
+					if (m == null || m.MethodSig == null || m.MethodSig.HasThis || expr.Arguments.Count != 2) return false;
 					switch (m.Name) {
 						case "op_Addition":
 						case "op_Subtraction":
@@ -652,7 +653,9 @@ namespace ICSharpCode.Decompiler.ILAst
 				IField getField = (IField)initialValue.Operand;
 				IField setField = (IField)expr.Operand;
 				if (!(TypeAnalysis.IsSameType(getField.DeclaringType, setField.DeclaringType)
-				      && getField.Name == setField.Name && TypeAnalysis.IsSameType(getField.FieldSig.Type, setField.FieldSig.Type)))
+				      && getField.Name == setField.Name &&
+					  getField.FieldSig != null && setField.FieldSig != null &&
+					  TypeAnalysis.IsSameType(getField.FieldSig.Type, setField.FieldSig.Type)))
 				{
 					return null;
 				}
@@ -906,7 +909,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				return false;
 			if (!(assignedExpr.Arguments[1].Match(ILCode.Call, out calledMethod) || assignedExpr.Arguments[1].Match(ILCode.CallGetter, out calledMethod)))
 				return false;
-			if (!(calledMethod.Name == "get_OffsetToStringData" && calledMethod.DeclaringType.FullName == "System.Runtime.CompilerServices.RuntimeHelpers"))
+			if (!(calledMethod.Name == "get_OffsetToStringData" && calledMethod.DeclaringType != null && calledMethod.DeclaringType.FullName == "System.Runtime.CompilerServices.RuntimeHelpers"))
 				return false;
 			
 			ILVariable pointerVar;
@@ -1049,7 +1052,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression lambdaBodyExpr, parameterArray;
 			if (!(expr.Match(ILCode.Call, out mr, out lambdaBodyExpr, out parameterArray) && mr.Name == "Lambda"))
 				return false;
-			if (!(parameterArray.Code == ILCode.InitArray && mr.DeclaringType.FullName == "System.Linq.Expressions.Expression"))
+			if (!(parameterArray.Code == ILCode.InitArray && mr.DeclaringType != null && mr.DeclaringType.FullName == "System.Linq.Expressions.Expression"))
 				return false;
 			int firstParameterPos = pos - parameterArray.Arguments.Count;
 			if (firstParameterPos < 0)
@@ -1090,13 +1093,13 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression typeArg, nameArg;
 			if (!init.Match(ILCode.Call, out parameterMethod, out typeArg, out nameArg))
 				return false;
-			if (!(parameterMethod.Name == "Parameter" && parameterMethod.DeclaringType.FullName == "System.Linq.Expressions.Expression"))
+			if (!(parameterMethod.Name == "Parameter" && parameterMethod.DeclaringType != null && parameterMethod.DeclaringType.FullName == "System.Linq.Expressions.Expression"))
 				return false;
 			IMethod getTypeFromHandle;
 			ILExpression typeToken;
 			if (!typeArg.Match(ILCode.Call, out getTypeFromHandle, out typeToken))
 				return false;
-			if (!(getTypeFromHandle.Name == "GetTypeFromHandle" && getTypeFromHandle.DeclaringType.FullName == "System.Type"))
+			if (!(getTypeFromHandle.Name == "GetTypeFromHandle" && getTypeFromHandle.DeclaringType != null && getTypeFromHandle.DeclaringType.FullName == "System.Type"))
 				return false;
 			return typeToken.Code == ILCode.Ldtoken && nameArg.Code == ILCode.Ldstr;
 		}

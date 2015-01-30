@@ -50,7 +50,7 @@ namespace ICSharpCode.ILSpy.TextView
 		public int GetDefinitionPosition(object definition)
 		{
 			int val;
-			if (definitions.TryGetValue(definition, out val))
+			if (definition != null && definitions.TryGetValue(definition, out val))
 				return val;
 			else
 				return -1;
@@ -58,7 +58,8 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		public void AddDefinition(object definition, int offset)
 		{
-			definitions[definition] = offset;
+			if (definition != null)
+				definitions[definition] = offset;
 		}
 	}
 	

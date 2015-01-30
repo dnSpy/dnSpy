@@ -190,7 +190,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 			this.ExceptionHandler = exceptionHandler;
 			this.EndFinallyOrFaultNode = endFinallyOrFaultNode;
 			Debug.Assert((exceptionHandler.HandlerType == ExceptionHandlerType.Finally || exceptionHandler.HandlerType == ExceptionHandlerType.Fault) == (endFinallyOrFaultNode != null));
-			this.Offset = exceptionHandler.HandlerStart.Offset;
+			this.Offset = exceptionHandler.HandlerStart.GetOffset();
 		}
 		
 		/// <summary>
@@ -255,7 +255,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 				case ControlFlowNodeType.Normal:
 					writer.Write("Block #{0}", BlockIndex);
 					if (Start != null)
-						writer.Write(": IL_{0:x4}", Start.Value.Offset);
+						writer.Write(": IL_{0:x4}", Start.Value.GetOffset());
 					if (End != null)
 						writer.Write(" to IL_{0:x4}", End.Value.GetEndOffset());
 					break;

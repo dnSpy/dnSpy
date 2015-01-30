@@ -23,6 +23,8 @@ namespace dnlib.DotNet
         /// <exception cref="System.ArgumentException">No generic arguments to resolve.</exception>
 		public static TypeSig Resolve(TypeSig typeSig, IList<TypeSig> typeGenArgs, IList<TypeSig> methodGenArgs)
         {
+			if (typeSig == null)
+				return typeSig;
 			if (typeGenArgs == null && methodGenArgs == null)
 				return typeSig;
 
@@ -49,6 +51,8 @@ namespace dnlib.DotNet
         /// <exception cref="System.ArgumentException">No generic arguments to resolve.</exception>
 		public static MethodSig Resolve(MethodBaseSig methodSig, IList<TypeSig> typeGenArgs, IList<TypeSig> methodGenArgs)
         {
+			if (methodSig == null)
+				return null;
             var resolver = new GenericArgumentResolver();
             resolver.genericArguments = new GenericArguments();
             resolver.recursionCounter = new RecursionCounter();
@@ -104,6 +108,8 @@ namespace dnlib.DotNet
 
         TypeSig ResolveGenericArgs(TypeSig typeSig)
         {
+			if (typeSig == null)
+				return null;
             if (!recursionCounter.Increment())
                 return null;
 
@@ -141,7 +147,7 @@ namespace dnlib.DotNet
                     {
                         genArgs.Add(ResolveGenericArgs(ga));
                     }
-                    result = new GenericInstSig(ResolveGenericArgs((TypeSig)gis.GenericType) as ClassOrValueTypeSig, genArgs);
+					result = new GenericInstSig(ResolveGenericArgs(gis.GenericType as TypeSig) as ClassOrValueTypeSig, genArgs);
                     break;
 
                 default:

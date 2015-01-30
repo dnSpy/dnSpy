@@ -241,7 +241,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		public dnlib.DotNet.Parameter OriginalParameter;
 		
 		public bool IsPinned {
-			get { return OriginalVariable != null && OriginalVariable.Type.IsPinned; }
+			get { return OriginalVariable != null && OriginalVariable.Type is PinnedSig; }
 		}
 		
 		public bool IsParameter {

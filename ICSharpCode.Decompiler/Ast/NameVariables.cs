@@ -162,7 +162,7 @@ namespace ICSharpCode.Decompiler.Ast
 		string GenerateNameForVariable(ILVariable variable, ILBlock methodBody)
 		{
 			string proposedName = null;
-			if (variable.Type == context.CurrentType.Module.CorLibTypes.Int32) {
+			if (new SigComparer().Equals(variable.Type, context.CurrentType.Module.CorLibTypes.Int32)) {
 				// test whether the variable might be a loop counter
 				bool isLoopCounter = false;
 				foreach (ILWhileLoop loop in methodBody.GetSelfAndChildrenRecursive<ILWhileLoop>()) {
@@ -304,11 +304,13 @@ namespace ICSharpCode.Decompiler.Ast
 			type = type.RemoveModifiers();
 			
 			GenericInstSig git = type as GenericInstSig;
-			if (git != null && git.GenericType.FullName == "System.Nullable`1" && git.GenericArguments.Count == 1) {
+			if (git != null && git.GenericType != null && git.GenericType.FullName == "System.Nullable`1" && git.GenericArguments.Count == 1) {
 				type = ((GenericInstSig)type).GenericArguments[0];
 			}
 			
 			string name;
+			if (type == null)
+				return string.Empty;
 			if (type.IsSingleOrMultiDimensionalArray) {
 				name = "array";
 			} else if (type.IsPointer || type.IsByRef) {

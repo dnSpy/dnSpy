@@ -46,21 +46,26 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
 		{
+			if (analyzedMethod == null)
+				return new List<AnalyzerTreeNode>();
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedMethod, FindReferencesInType);
 			return analyzer.PerformAnalysis(ct).OrderBy(n => n.Text);
 		}
 
 		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type)
 		{
+			if (analyzedMethod == null)
+				yield break;
 			if (!type.HasInterfaces)
 				yield break;
-			ITypeDefOrRef implementedInterfaceRef = type.Interfaces.FirstOrDefault(i => i.Interface.ResolveTypeDef() == analyzedMethod.DeclaringType).Interface;
+			var iff = type.Interfaces.FirstOrDefault(i => i.Interface.ResolveTypeDef() == analyzedMethod.DeclaringType);
+			ITypeDefOrRef implementedInterfaceRef = iff == null ? null : iff.Interface;
 			if (implementedInterfaceRef == null)
 				yield break;
 
 			foreach (PropertyDef property in type.Properties.Where(e => e.Name == analyzedProperty.Name)) {
 				MethodDef accessor = property.GetMethod ?? property.SetMethod;
-				if (TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
+				if (accessor != null && TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
 					var node = new AnalyzedPropertyTreeNode(property);
 					node.Language = this.Language;
 					yield return node;
@@ -70,7 +75,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 			foreach (PropertyDef property in type.Properties.Where(e => e.Name.EndsWith(analyzedProperty.Name))) {
 				MethodDef accessor = property.GetMethod ?? property.SetMethod;
-				if (accessor.HasOverrides && accessor.Overrides.Any(m => Decompiler.DnlibExtensions.Resolve(m.MethodDeclaration) == analyzedMethod)) {
+				if (accessor != null && accessor.HasOverrides && accessor.Overrides.Any(m => Decompiler.DnlibExtensions.Resolve(m.MethodDeclaration) == analyzedMethod)) {
 					var node = new AnalyzedPropertyTreeNode(property);
 					node.Language = this.Language;
 					yield return node;

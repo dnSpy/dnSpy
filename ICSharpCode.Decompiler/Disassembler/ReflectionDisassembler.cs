@@ -122,7 +122,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				output.Write("pinvokeimpl");
 				if (method.HasImplMap) {
 					ImplMap info = method.ImplMap;
-					output.Write("(\"" + NRefactory.CSharp.CSharpOutputVisitor.ConvertString(info.Module.Name) + "\"");
+					output.Write("(\"" + NRefactory.CSharp.CSharpOutputVisitor.ConvertString(info.Module == null ? string.Empty : info.Module.Name.String) + "\"");
 					
 					if (!string.IsNullOrEmpty(info.Name) && info.Name != method.Name)
 						output.Write(" as \"" + NRefactory.CSharp.CSharpOutputVisitor.ConvertString(info.Name) + "\"");
@@ -326,7 +326,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		void WriteSecurityDeclarationArgument(CANamedArgument na)
 		{
 			TypeSig type = na.Argument.Type;
-			if (type.ElementType == ElementType.Class || type.ElementType == ElementType.ValueType) {
+			if (type != null && (type.ElementType == ElementType.Class || type.ElementType == ElementType.ValueType)) {
 				output.Write("enum ");
 				if (type.Scope != type.Module) {
 					output.Write("class ");
@@ -656,7 +656,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 					if (cmi == null)
 						goto default;
 					output.Write("custom(\"{0}\", \"{1}\"",
-								 NRefactory.CSharp.CSharpOutputVisitor.ConvertString(cmi.CustomMarshaler.FullName),
+						NRefactory.CSharp.CSharpOutputVisitor.ConvertString(cmi.CustomMarshaler == null ? string.Empty : cmi.CustomMarshaler.FullName),
 					             NRefactory.CSharp.CSharpOutputVisitor.ConvertString(cmi.Cookie));
 					if (!UTF8String.IsNullOrEmpty(cmi.Guid) || !UTF8String.IsNullOrEmpty(cmi.NativeTypeName)) {
 						output.Write(", \"{0}\", \"{1}\"", NRefactory.CSharp.CSharpOutputVisitor.ConvertString(cmi.Guid), NRefactory.CSharp.CSharpOutputVisitor.ConvertString(cmi.NativeTypeName));
@@ -734,12 +734,13 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (!HasParameterAttributes(p))
 				return;
 			output.Write(".param [{0}]", p.MethodSigIndex + 1);
-			if (p.ParamDef.HasConstant) {
+			if (p.HasParamDef && p.ParamDef.HasConstant) {
 				output.Write(" = ");
 				WriteConstant(p.ParamDef.Constant.Value);
 			}
 			output.WriteLine();
-			WriteAttributes(p.ParamDef.CustomAttributes);
+			if (p.HasParamDef)
+				WriteAttributes(p.ParamDef.CustomAttributes);
 		}
 		
 		void WriteConstant(object constant)
@@ -835,9 +836,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			output.WriteDefinition(".property ", property);
 			WriteFlags(property.Attributes, propertyAttributes);
-			if (property.PropertySig.HasThis)
+			if (property.PropertySig != null && property.PropertySig.HasThis)
 				output.Write("instance ");
-			property.PropertySig.RetType.WriteTo(output);
+			property.PropertySig.GetRetType().WriteTo(output);
 			output.Write(' ');
 			output.Write(DisassemblerHelpers.Escape(property.Name));
 			

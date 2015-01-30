@@ -209,7 +209,7 @@ namespace ICSharpCode.Decompiler.ILAst
 							break;
 						case ILCode.Call:
 							var m = e.Operand as IMethod;
-							if (m == null || m.MethodSig.HasThis || m.MethodSig.GetParamCount() == 0 || e.Arguments.Count > 2 || !IsCustomOperator(m.Name)) return false;
+							if (m == null || m.MethodSig == null || m.MethodSig.HasThis || m.MethodSig.Params.Count == 0 || e.Arguments.Count > 2 || !IsCustomOperator(m.Name)) return false;
 							break;
 						default: return false;
 					}

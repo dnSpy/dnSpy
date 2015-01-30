@@ -134,6 +134,8 @@ namespace ICSharpCode.Decompiler.ILAst
 						sb.Append("IL_" + ((Instruction)this.Operand).Offset.ToString("X2"));
 					} else if (this.Operand is IList<Instruction>) {
 						foreach(Instruction inst in (IList<Instruction>)this.Operand) {
+							if (inst == null)
+								continue;
 							sb.Append("IL_" + inst.Offset.ToString("X2"));
 							sb.Append(" ");
 						}
@@ -287,7 +289,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			int varCount = methodDef.Body.Variables.Count;
 			
-			var exceptionHandlerStarts = new HashSet<ByteCode>(methodDef.Body.ExceptionHandlers.Select(eh => instrToByteCode[eh.HandlerStart]));
+			var exceptionHandlerStarts = new HashSet<ByteCode>(methodDef.Body.ExceptionHandlers.Select(eh => eh.HandlerStart == null ? null : instrToByteCode[eh.HandlerStart]));
+			exceptionHandlerStarts.Remove(null);
 
 			// HACK: Some MS reference assemblies contain just a RET instruction. If the method
 			// returns a value, the code below will eventually throw an exception in
@@ -298,6 +301,8 @@ namespace ICSharpCode.Decompiler.ILAst
 			// Add known states
 			if(methodDef.Body.HasExceptionHandlers) {
 				foreach(ExceptionHandler ex in methodDef.Body.ExceptionHandlers) {
+					if (ex.HandlerStart == null)
+						continue;
 					ByteCode handlerStart = instrToByteCode[ex.HandlerStart];
 					handlerStart.StackBefore = new StackSlot[0];
 					handlerStart.VariablesBefore = VariableSlot.MakeUknownState(varCount);
@@ -314,7 +319,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 					agenda.Push(handlerStart);
 					
-					if (ex.HandlerType == ExceptionHandlerType.Filter)
+					if (ex.HandlerType == ExceptionHandlerType.Filter && ex.FilterStart != null)
 					{
 						ByteCode filterStart = instrToByteCode[ex.FilterStart];
 						ByteCode ldexception = new ByteCode() {
@@ -344,7 +349,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				
 				// Calculate new variable state
 				VariableSlot[] newVariableState = VariableSlot.CloneVariableState(byteCode.VariablesBefore);
-				if (byteCode.IsVariableDefinition) {
+				if (byteCode.IsVariableDefinition && byteCode.Operand is Local) {
 					newVariableState[((Local)byteCode.Operand).Index] = new VariableSlot(new [] { byteCode }, false);
 				}
 				
@@ -526,7 +531,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					case ILCode.Ldloc:
 					case ILCode.Ldloca:
 					case ILCode.Stloc:
-						if (b.Operand == v) return false;
+						if (v != null && b.Operand == v) return false;
 						break;
 				}
 				stack += b.PushCount;
@@ -535,7 +540,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			if (b.Code == ILCode.Ldfld || b.Code == ILCode.Stfld)
 				return true;
-			return (b.Code == ILCode.Call || b.Code == ILCode.Callvirt) && ((IMethod)b.Operand).MethodSig.HasThis;
+			return (b.Code == ILCode.Call || b.Code == ILCode.Callvirt) && b.Operand is IMethod && ((IMethod)b.Operand).MethodSig != null && ((IMethod)b.Operand).MethodSig.HasThis;
 		}
 		
 		sealed class VariableInfo
@@ -562,11 +567,11 @@ namespace ICSharpCode.Decompiler.ILAst
 				// If the variable is pinned, use single variable.
 				// If any of the uses is from unknown definition, use single variable
 				// If any of the uses is ldloca with a nondeterministic usage pattern, use  single variable
-				if (!optimize || varDef.Type.IsPinned || uses.Any(b => b.VariablesBefore[varDef.Index].UnknownDefinition || (b.Code == ILCode.Ldloca && !IsDeterministicLdloca(b)))) {				
+				if (!optimize || varDef.Type is PinnedSig || uses.Any(b => b.VariablesBefore[varDef.Index].UnknownDefinition || (b.Code == ILCode.Ldloca && !IsDeterministicLdloca(b)))) {				
 					newVars = new List<VariableInfo>(1) { new VariableInfo() {
 						Variable = new ILVariable() {
 							Name = string.IsNullOrEmpty(varDef.Name) ? "var_" + varDef.Index : varDef.Name,
-							Type = varDef.Type.IsPinned ? ((PinnedSig)varDef.Type).Next : varDef.Type,
+							Type = varDef.Type is PinnedSig ? ((PinnedSig)varDef.Type).Next : varDef.Type,
 							OriginalVariable = varDef
 						},
 						Defs = defs,
@@ -648,19 +653,19 @@ namespace ICSharpCode.Decompiler.ILAst
 				Parameter p;
 				switch (byteCode.Code) {
 					case ILCode.Ldarg:
-						p = (Parameter)byteCode.Operand;
+						p = byteCode.Operand as Parameter;
 						byteCode.Code = ILCode.Ldloc;
-						byteCode.Operand = p.IsHiddenThisParameter ? thisParameter : this.Parameters[p.MethodSigIndex];
+						byteCode.Operand = p == null ? null : p.IsHiddenThisParameter ? thisParameter : this.Parameters[p.MethodSigIndex];
 						break;
 					case ILCode.Starg:
-						p = (Parameter)byteCode.Operand;
+						p = byteCode.Operand as Parameter;
 						byteCode.Code = ILCode.Stloc;
-						byteCode.Operand = p.IsHiddenThisParameter ? thisParameter : this.Parameters[p.MethodSigIndex];
+						byteCode.Operand = p == null ? null : p.IsHiddenThisParameter ? thisParameter : this.Parameters[p.MethodSigIndex];
 						break;
 					case ILCode.Ldarga:
-						p = (Parameter)byteCode.Operand;
+						p = byteCode.Operand as Parameter;
 						byteCode.Code = ILCode.Ldloca;
-						byteCode.Operand = p.IsHiddenThisParameter ? thisParameter : this.Parameters[p.MethodSigIndex];
+						byteCode.Operand = p == null ? null : p.IsHiddenThisParameter ? thisParameter : this.Parameters[p.MethodSigIndex];
 						break;
 				}
 			}
@@ -676,9 +681,9 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILTryCatchBlock tryCatchBlock = new ILTryCatchBlock();
 				
 				// Find the first and widest scope
-				uint tryStart = ehs.Min(eh => eh.TryStart.Offset);
-				uint tryEnd   = ehs.Where(eh => eh.TryStart.Offset == tryStart).Max(eh => eh.TryEnd.Offset);
-				var handlers = ehs.Where(eh => eh.TryStart.Offset == tryStart && eh.TryEnd.Offset == tryEnd).ToList();
+				uint tryStart = ehs.Min(eh => eh.TryStart.GetOffset());
+				uint tryEnd   = ehs.Where(eh => eh.TryStart.GetOffset() == tryStart).Max(eh => eh.TryEnd.GetOffset());
+				var handlers = ehs.Where(eh => eh.TryStart.GetOffset() == tryStart && eh.TryEnd.GetOffset() == tryEnd).ToList();
 				
 				// Remember that any part of the body migt have been removed due to unreachability
 				
@@ -691,7 +696,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				
 				// Cut the try block
 				{
-					HashSet<ExceptionHandler> nestedEHs = new HashSet<ExceptionHandler>(ehs.Where(eh => (tryStart <= eh.TryStart.Offset && eh.TryEnd.Offset < tryEnd) || (tryStart < eh.TryStart.Offset && eh.TryEnd.Offset <= tryEnd)));
+					HashSet<ExceptionHandler> nestedEHs = new HashSet<ExceptionHandler>(ehs.Where(eh => (tryStart <= eh.TryStart.GetOffset() && eh.TryEnd.GetOffset() < tryEnd) || (tryStart < eh.TryStart.GetOffset() && eh.TryEnd.GetOffset() <= tryEnd)));
 					ehs.ExceptWith(nestedEHs);
 					int tryEndIdx = 0;
 					while (tryEndIdx < body.Count && body[tryEndIdx].Offset < tryEnd) tryEndIdx++;
@@ -703,10 +708,10 @@ namespace ICSharpCode.Decompiler.ILAst
 				foreach(ExceptionHandler eh in handlers) {
 					uint handlerEndOffset = eh.HandlerEnd == null ? (uint)methodDef.Body.GetCodeSize() : eh.HandlerEnd.Offset;
 					int startIdx = 0;
-					while (startIdx < body.Count && body[startIdx].Offset < eh.HandlerStart.Offset) startIdx++;
+					while (startIdx < body.Count && body[startIdx].Offset < eh.HandlerStart.GetOffset()) startIdx++;
 					int endIdx = 0;
 					while (endIdx < body.Count && body[endIdx].Offset < handlerEndOffset) endIdx++;
-					HashSet<ExceptionHandler> nestedEHs = new HashSet<ExceptionHandler>(ehs.Where(e => (eh.HandlerStart.Offset <= e.TryStart.Offset && e.TryEnd.Offset < handlerEndOffset) || (eh.HandlerStart.Offset < e.TryStart.Offset && e.TryEnd.Offset <= handlerEndOffset)));
+					HashSet<ExceptionHandler> nestedEHs = new HashSet<ExceptionHandler>(ehs.Where(e => (eh.HandlerStart.GetOffset() <= e.TryStart.GetOffset() && e.TryEnd.GetOffset() < handlerEndOffset) || (eh.HandlerStart.GetOffset() < e.TryStart.GetOffset() && e.TryEnd.GetOffset() <= handlerEndOffset)));
 					ehs.ExceptWith(nestedEHs);
 					List<ILNode> handlerAst = ConvertToAst(body.CutRange(startIdx, endIdx - startIdx), nestedEHs);
 					if (eh.HandlerType == ExceptionHandlerType.Catch) {
@@ -733,10 +738,10 @@ namespace ICSharpCode.Decompiler.ILAst
 						
 						// Extract the filter part
 						startIdx = 0;
-						while (startIdx < body.Count && body[startIdx].Offset < eh.FilterStart.Offset) startIdx++;
+						while (startIdx < body.Count && body[startIdx].Offset < eh.FilterStart.GetOffset()) startIdx++;
 						endIdx = 0;
-						while (endIdx < body.Count && body[endIdx].Offset < eh.HandlerStart.Offset) endIdx++;
-						nestedEHs = new HashSet<ExceptionHandler>(ehs.Where(e => (eh.FilterStart.Offset <= e.TryStart.Offset && e.TryEnd.Offset < eh.HandlerStart.Offset) || (eh.FilterStart.Offset < e.TryStart.Offset && e.TryEnd.Offset <= eh.HandlerStart.Offset)));
+						while (endIdx < body.Count && body[endIdx].Offset < eh.HandlerStart.GetOffset()) endIdx++;
+						nestedEHs = new HashSet<ExceptionHandler>(ehs.Where(e => (eh.FilterStart.GetOffset() <= e.TryStart.GetOffset() && e.TryEnd.GetOffset() < eh.HandlerStart.GetOffset()) || (eh.FilterStart.GetOffset() < e.TryStart.GetOffset() && e.TryEnd.GetOffset() <= eh.HandlerStart.GetOffset())));
 						ehs.ExceptWith(nestedEHs);
 						List<ILNode> filterAst = ConvertToAst(body.CutRange(startIdx, endIdx - startIdx), nestedEHs);
 						var filterBlock = new ILTryCatchBlock.FilterILBlock() { Body = filterAst };
@@ -774,7 +779,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				{
 					// The exception is just poped - optimize it all away;
 					if (context.Settings.AlwaysGenerateExceptionVariableForCatchBlocks)
-						catchBlock.ExceptionVariable = new ILVariable() { Name = "ex_" + eh.HandlerStart.Offset.ToString("X2"), IsGenerated = true };
+						catchBlock.ExceptionVariable = new ILVariable() { Name = "ex_" + eh.HandlerStart.GetOffset().ToString("X2"), IsGenerated = true };
 					else
 						catchBlock.ExceptionVariable = null;
 					catchBlock.Body.RemoveAt(0);
@@ -782,7 +787,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					catchBlock.ExceptionVariable = ldexception.StoreTo[0];
 				}
 			} else {
-				ILVariable exTemp = new ILVariable() { Name = "ex_" + eh.HandlerStart.Offset.ToString("X2"), IsGenerated = true };
+				ILVariable exTemp = new ILVariable() { Name = "ex_" + eh.HandlerStart.GetOffset().ToString("X2"), IsGenerated = true };
 				catchBlock.ExceptionVariable = exTemp;
 				foreach (ILVariable storeTo in ldexception.StoreTo) {
 					catchBlock.Body.Insert(0, new ILExpression(ILCode.Stloc, storeTo, new ILExpression(ILCode.Ldloc, exTemp)));

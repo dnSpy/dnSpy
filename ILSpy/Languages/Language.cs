@@ -109,6 +109,8 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		public virtual string TypeToString(ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null)
 		{
+			if (type == null)
+				return string.Empty;
 			if (includeNamespace)
 				return type.FullName;
 			else
