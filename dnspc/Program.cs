@@ -3,6 +3,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Security;
 using System.Text;
 using System.Threading;
 using dnlib.DotNet;
@@ -23,11 +24,12 @@ namespace ilspc {
 		static bool noGac;
 		static bool noCorlibRef;
 		static bool createSlnFile;
+		static bool dontMaskErr;
 		static string outputDir;
 		static string slnName;
 		static List<string> files;
 		static List<string> asmPaths;
-		static string language;
+		static string language = "C#";
 		static string projDirSuffix = string.Empty;
 
 		static int Main(string[] args) {
@@ -63,14 +65,15 @@ namespace ilspc {
 
 		static void PrintHelp() {
 			var progName = GetProgramBaseName();
-			Console.WriteLine("{0} [--stdout] [--asm-path path] [--no-gac] [--no-stdlib] [--sln] [--proj-dir-suffix suffix] [-r] [-o outdir] [-l lang] [fileOrDir1] [fileOrDir2] [...]", progName);
+			Console.WriteLine("{0} [--stdout] [--asm-path path] [--no-gac] [--no-stdlib] [--sln] [--sln-name name] [--proj-dir-suffix suffix] [--dont-mask-merr] [-r] [-o outdir] [-l lang] [fileOrDir1] [fileOrDir2] [...]", progName);
 			Console.WriteLine("  --stdout     decompile to the screen");
+			Console.WriteLine("  --asm-path path    assembly search path. Paths can be separated with '{0}'", PATHS_SEP);
+			Console.WriteLine("  --no-gac     don't use the GAC to look up assemblies. Useful with --no-stdlib");
+			Console.WriteLine("  --no-stdlib  projects don't reference mscorlib");
+			Console.WriteLine("  --sln        create a .sln file");
+			Console.WriteLine("  --sln-name name   name of the .sln file");
 			Console.WriteLine("  --proj-dir-suffix suffix   append 'suffix' to project dir name");
-			Console.WriteLine("  --asm-path path    Asm search paths. Paths can be separated with '{0}'", PATHS_SEP);
-			Console.WriteLine("  --no-gac     don't use the GAC to look up assemblies");
-			Console.WriteLine("  --no-stdlib  projects don't reference mscorlib (C# projects only)");
-			Console.WriteLine("  --sln        create .sln file");
-			Console.WriteLine("  --sln-name name   name of .sln file");
+			Console.WriteLine("  --dont-mask-merr   don't catch method exceptions when decompiling");
 			Console.WriteLine("  -r           recursive search");
 			Console.WriteLine("  -o outdir    output directory");
 			Console.WriteLine("  -l lang      set language, default is C#");
@@ -84,8 +87,8 @@ namespace ilspc {
       Decompile all .NET files in the above directory
   {0} -r C:\some\path
       Decompile all .NET files in the above directory and all sub directories
-  {0} -o C:\out\path C:\some\path
-      Decompile all .NET files in the above directory and save files in C:\out\path
+  {0} -o C:\out\path C:\some\path\*.dll
+      Decompile all *.dll .NET files in the above directory and save files in C:\out\path
 ", progName);
 		}
 
@@ -189,6 +192,10 @@ namespace ilspc {
 						i++;
 						break;
 
+					case "-dont-mask-merr":
+						dontMaskErr = true;
+						break;
+
 					default:
 						throw new ErrorException(string.Format("Invalid option: {0}", arg));
 					}
@@ -218,7 +225,7 @@ namespace ilspc {
 					foreach (var info in projectFiles) {
 						writer.Write("Project(\"{0}\") = \"{1}\", \"{1}\\{2}\", \"{3}\"" + crlf,
 							slnGuid,
-							info.AssemblySimpleName,
+							Path.GetFileName(Path.GetDirectoryName(info.ProjectFileName)),
 							Path.GetFileName(info.ProjectFileName),
 							info.ProjectGuid.ToString("B").ToUpperInvariant()
 						);
@@ -273,22 +280,89 @@ namespace ilspc {
 
 		static IEnumerable<ProjectInfo> DumpDir(string path, string pattern) {
 			pattern = pattern ?? "*";
-			foreach (var info in DumpDir2(path, pattern))
-				yield return info;
-			if (isRecursive) {
-				foreach (var di in new DirectoryInfo(path).GetDirectories("*", SearchOption.AllDirectories)) {
-					foreach (var info in DumpDir2(di.FullName, pattern))
-						yield return info;
+			Stack<string> stack = new Stack<string>();
+			stack.Push(path);
+			while (stack.Count > 0) {
+				path = stack.Pop();
+				foreach (var info in DumpDir2(path, pattern))
+					yield return info;
+				if (isRecursive) {
+					foreach (var di in GetDirs(path))
+						stack.Push(di.FullName);
 				}
+			}
+		}
+
+		static IEnumerable<DirectoryInfo> GetDirs(string path) {
+			IEnumerable<FileSystemInfo> fsysIter = null;
+			try {
+				fsysIter = new DirectoryInfo(path).EnumerateFileSystemInfos("*", SearchOption.TopDirectoryOnly);
+			}
+			catch (IOException) {
+			}
+			catch (UnauthorizedAccessException) {
+			}
+			catch (SecurityException) {
+			}
+			if (fsysIter == null)
+				yield break;
+
+			foreach (var info in fsysIter) {
+				if ((info.Attributes & System.IO.FileAttributes.Directory) == 0)
+					continue;
+				DirectoryInfo di = null;
+				try {
+					di = new DirectoryInfo(info.FullName);
+				}
+				catch (IOException) {
+				}
+				catch (UnauthorizedAccessException) {
+				}
+				catch (SecurityException) {
+				}
+				if (di != null)
+					yield return di;
 			}
 		}
 
 		static IEnumerable<ProjectInfo> DumpDir2(string path, string pattern) {
 			pattern = pattern ?? "*";
-			foreach (var fi in new DirectoryInfo(path).GetFiles(pattern)) {
+			foreach (var fi in GetFiles(path, pattern)) {
 				var info = OpenNetFile(fi.FullName);
 				if (info != null)
 					yield return info;
+			}
+		}
+
+		static IEnumerable<FileInfo> GetFiles(string path, string pattern) {
+			IEnumerable<FileSystemInfo> fsysIter = null;
+			try {
+				fsysIter = new DirectoryInfo(path).EnumerateFileSystemInfos(pattern, SearchOption.TopDirectoryOnly);
+			}
+			catch (IOException) {
+			}
+			catch (UnauthorizedAccessException) {
+			}
+			catch (SecurityException) {
+			}
+			if (fsysIter == null)
+				yield break;
+
+			foreach (var info in fsysIter) {
+				if ((info.Attributes & System.IO.FileAttributes.Directory) != 0)
+					continue;
+				FileInfo fi = null;
+				try {
+					fi = new FileInfo(info.FullName);
+				}
+				catch (IOException) {
+				}
+				catch (UnauthorizedAccessException) {
+				}
+				catch (SecurityException) {
+				}
+				if (fi != null)
+					yield return fi;
 			}
 		}
 
@@ -347,7 +421,8 @@ namespace ilspc {
 					opts.DontReferenceStdLib = noCorlibRef;
 					opts.ProjectFiles = projectFiles;
 					opts.ProjectGuid = info.ProjectGuid;
-					Console.WriteLine("Saving {0} to {1}", Path.GetFileName(fileName), baseDir);
+					opts.DontShowCreateMethodBodyExceptions = dontMaskErr;
+					Console.WriteLine("Saving {0} to {1}", fileName, baseDir);
 				}
 
 				lang.DecompileAssembly(lasm, new PlainTextOutput(writer), opts);
