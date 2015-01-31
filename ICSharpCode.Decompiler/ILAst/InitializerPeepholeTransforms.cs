@@ -43,10 +43,10 @@ namespace ICSharpCode.Decompiler.ILAst
 			    arrayLength > 0) {
 				ILExpression[] newArr;
 				int initArrayPos;
-				if (ForwardScanInitializeArrayRuntimeHelper(body, pos + 1, v, new SZArraySig(elementType.ToTypeSigInternal()), arrayLength, out newArr, out initArrayPos)) {
-					var arrayType = new ArraySig(elementType.ToTypeSigInternal(), 1, new uint[1], new int[1]);
+				if (ForwardScanInitializeArrayRuntimeHelper(body, pos + 1, v, new SZArraySig(elementType.ToTypeSig()), arrayLength, out newArr, out initArrayPos)) {
+					var arrayType = new ArraySig(elementType.ToTypeSig(), 1, new uint[1], new int[1]);
 					arrayType.Sizes[0] = (uint)(arrayLength + 1);
-					body[pos] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, arrayType.ToTypeDefOrRefInternal(), newArr));
+					body[pos] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, arrayType.ToTypeDefOrRef(), newArr));
 					body.RemoveAt(initArrayPos);
 				}
 				// Put in a limit so that we don't consume too much memory if the code allocates a huge array
@@ -75,9 +75,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 				}
 				if (operands.Count == arrayLength) {
-					var arrayType = new ArraySig(elementType.ToTypeSigInternal(), 1, new uint[1], new int[1]);
+					var arrayType = new ArraySig(elementType.ToTypeSig(), 1, new uint[1], new int[1]);
 					arrayType.Sizes[0] = (uint)(arrayLength + 1);
-					expr.Arguments[0] = new ILExpression(ILCode.InitArray, arrayType.ToTypeDefOrRefInternal(), operands);
+					expr.Arguments[0] = new ILExpression(ILCode.InitArray, arrayType.ToTypeDefOrRef(), operands);
 					body.RemoveRange(pos + 1, numberOfInstructionsToRemove);
 
 					new ILInlining(method).InlineIfPossible(body, ref pos);
@@ -114,7 +114,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression[] newArr;
 				int initArrayPos;
 				if (ForwardScanInitializeArrayRuntimeHelper(body, pos + 1, v, multAry, totalElements, out newArr, out initArrayPos)) {
-					body[pos] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, multAry.ToTypeDefOrRefInternal(), newArr));
+					body[pos] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, multAry.ToTypeDefOrRef(), newArr));
 					body.RemoveAt(initArrayPos);
 					return true;
 				}
@@ -178,7 +178,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				case TypeCode.Double:
 					return DecodeArrayInitializer(initialValue, output, elementType, BitConverter.ToDouble);
 				case TypeCode.Object:
-					var typeDef = elementTypeRef.ToTypeDefOrRefInternal().ResolveWithinSameModule();
+					var typeDef = elementTypeRef.ToTypeDefOrRef().ResolveWithinSameModule();
 					if (typeDef != null && typeDef.IsEnum)
 						return DecodeArrayInitializer(typeDef.GetEnumUnderlyingType(), initialValue, output);
 
@@ -299,7 +299,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (Ast.Transforms.DelegateConstruction.IsPotentialClosure(context, newObjType.ResolveWithinSameModule()))
 				return false;
 
-			ILExpression initializer = ParseObjectInitializer(body, ref pos, v, newObjExpr, IsCollectionType(newObjType.ToTypeSigInternal()), isValueType);
+			ILExpression initializer = ParseObjectInitializer(body, ref pos, v, newObjExpr, IsCollectionType(newObjType.ToTypeSig()), isValueType);
 
 			if (initializer.Arguments.Count == 1) // only newobj argument, no initializer elements
 				return false;

@@ -319,7 +319,7 @@ namespace ICSharpCode.Decompiler
 			var list = new List<Parameter>();
 			int paramIndex = 0, methodSigIndex = 0;
 			if (method.MethodSig.HasThis)
-				list.Add(new Parameter(paramIndex++, Parameter.HIDDEN_THIS_METHOD_SIG_INDEX, method.DeclaringType.ToTypeSigInternal()));
+				list.Add(new Parameter(paramIndex++, Parameter.HIDDEN_THIS_METHOD_SIG_INDEX, method.DeclaringType.ToTypeSig()));
 			foreach (var type in method.MethodSig.GetParameters())
 				list.Add(new Parameter(paramIndex++, methodSigIndex++, type));
 			return list;
@@ -483,16 +483,6 @@ namespace ICSharpCode.Decompiler
 			default:
 				return ts.IsValueType;
 			}
-		}
-
-		public static TypeSig ToTypeSigInternal(this ITypeDefOrRef type)
-		{
-			return type == null ? null : type.ToTypeSig();
-		}
-
-		public static ITypeDefOrRef ToTypeDefOrRefInternal(this TypeSig type)
-		{
-			return type == null ? null : type.ToTypeDefOrRef();
 		}
 	}
 }

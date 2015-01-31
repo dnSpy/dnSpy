@@ -233,14 +233,14 @@ namespace ICSharpCode.Decompiler.Ast
 			if (eventDef == null)
 				yield break;
 
-			var eventType = eventDef.EventType.ToTypeSigInternal();
+			var eventType = eventDef.EventType.ToTypeSig();
 
 			foreach (var baseType in BaseTypes(eventDef.DeclaringType)) {
 				var baseTypeDef = baseType.Resolve();
 				if (baseTypeDef == null)
 					continue;
 				foreach (var baseEvent in baseTypeDef.Events) {
-					if (MatchEvent(baseEvent, Resolve(baseEvent.EventType.ToTypeSigInternal(), baseType), eventDef, eventType) &&
+					if (MatchEvent(baseEvent, Resolve(baseEvent.EventType.ToTypeSig(), baseType), eventDef, eventType) &&
 						IsVisibleFromDerived(baseEvent, eventDef.DeclaringType)) {
 						yield return baseEvent;
 						var anyEventAccessor = baseEvent.AddMethod ?? baseEvent.RemoveMethod;
@@ -342,10 +342,10 @@ namespace ICSharpCode.Decompiler.Ast
 			if (typeDef.BaseType == null)
 				yield break;
 
-			TypeSig baseType = typeDef.ToTypeSigInternal();
+			TypeSig baseType = typeDef.ToTypeSig();
 			do {
 				var genericArgs = baseType is GenericInstSig ? ((GenericInstSig)baseType).GenericArguments : null;
-				baseType = GenericArgumentResolver.Resolve(typeDef.BaseType.ToTypeSigInternal(), genericArgs, null);
+				baseType = GenericArgumentResolver.Resolve(typeDef.BaseType.ToTypeSig(), genericArgs, null);
 				yield return baseType;
 
 				typeDef = typeDef.BaseType.ResolveTypeDef();

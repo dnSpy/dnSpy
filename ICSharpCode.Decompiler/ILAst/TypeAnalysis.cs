@@ -327,7 +327,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (forceInferChildren && parameters != null && method.MethodSig != null) {
 							for (int i = 0; i < expr.Arguments.Count; i++) {
 								if (i == 0 && method.MethodSig.HasThis) {
-									InferTypeForExpression(expr.Arguments[0], MakeRefIfValueType(method.DeclaringType.ToTypeSigInternal(), expr.GetPrefix(ILCode.Constrained)));
+									InferTypeForExpression(expr.Arguments[0], MakeRefIfValueType(method.DeclaringType.ToTypeSig(), expr.GetPrefix(ILCode.Constrained)));
 								} else {
 									InferTypeForExpression(expr.Arguments[i], SubstituteTypeArgs(parameters[method.MethodSig.HasThis ? i - 1 : i], method: method));
 								}
@@ -348,7 +348,7 @@ namespace ICSharpCode.Decompiler.ILAst
 								InferTypeForExpression(expr.Arguments[i], SubstituteTypeArgs(parameters[i], null, ctor));
 							}
 						}
-						return ctor.DeclaringType.ToTypeSigInternal();
+						return ctor.DeclaringType.ToTypeSig();
 					}
 				case ILCode.InitObject:
 				case ILCode.InitCollection:
@@ -361,21 +361,21 @@ namespace ICSharpCode.Decompiler.ILAst
 					#region Load/Store Fields
 				case ILCode.Ldfld:
 					if (forceInferChildren) {
-						InferTypeForExpression(expr.Arguments[0], MakeRefIfValueType(!(expr.Operand is IField) ? null : ((IField)expr.Operand).DeclaringType.ToTypeSigInternal(), expr.GetPrefix(ILCode.Constrained)));
+						InferTypeForExpression(expr.Arguments[0], MakeRefIfValueType(!(expr.Operand is IField) ? null : ((IField)expr.Operand).DeclaringType.ToTypeSig(), expr.GetPrefix(ILCode.Constrained)));
 					}
 					return GetFieldType(expr.Operand as IField);
 				case ILCode.Ldsfld:
 					return GetFieldType(expr.Operand as IField);
 				case ILCode.Ldflda:
 					if (forceInferChildren) {
-						InferTypeForExpression(expr.Arguments[0], MakeRefIfValueType(!(expr.Operand is IField) ? null : ((IField)expr.Operand).DeclaringType.ToTypeSigInternal(), expr.GetPrefix(ILCode.Constrained)));
+						InferTypeForExpression(expr.Arguments[0], MakeRefIfValueType(!(expr.Operand is IField) ? null : ((IField)expr.Operand).DeclaringType.ToTypeSig(), expr.GetPrefix(ILCode.Constrained)));
 					}
 					return new ByRefSig(GetFieldType(expr.Operand as IField));
 				case ILCode.Ldsflda:
 					return new ByRefSig(GetFieldType(expr.Operand as IField));
 				case ILCode.Stfld:
 					if (forceInferChildren) {
-						InferTypeForExpression(expr.Arguments[0], MakeRefIfValueType(!(expr.Operand is IField) ? null : ((IField)expr.Operand).DeclaringType.ToTypeSigInternal(), expr.GetPrefix(ILCode.Constrained)));
+						InferTypeForExpression(expr.Arguments[0], MakeRefIfValueType(!(expr.Operand is IField) ? null : ((IField)expr.Operand).DeclaringType.ToTypeSig(), expr.GetPrefix(ILCode.Constrained)));
 						InferTypeForExpression(expr.Arguments[1], GetFieldType(expr.Operand as IField));
 					}
 					return GetFieldType(expr.Operand as IField);
@@ -395,7 +395,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					return null;
 				case ILCode.Ldobj:
 					{
-						TypeSig type = ((ITypeDefOrRef)expr.Operand).ToTypeSigInternal();
+						TypeSig type = ((ITypeDefOrRef)expr.Operand).ToTypeSig();
 						var argType = InferTypeForExpression(expr.Arguments[0], null);
 						if (argType is PtrSig || argType is ByRefSig) {
 							var elementType = argType.Next;
@@ -423,7 +423,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 				case ILCode.Stobj:
 					{
-						TypeSig operandType = ((ITypeDefOrRef)expr.Operand).ToTypeSigInternal();
+						TypeSig operandType = ((ITypeDefOrRef)expr.Operand).ToTypeSig();
 						TypeSig pointerType = InferTypeForExpression(expr.Arguments[0], new ByRefSig(operandType));
 						TypeSig elementType;
 						if (pointerType is PtrSig)
@@ -443,7 +443,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (forceInferChildren) {
 							if (pointerType is PtrSig)
 								InferTypeForExpression(expr.Arguments[0], new PtrSig(operandType));
-							else if (!IsSameType(operandType, (expr.Operand as ITypeDefOrRef).ToTypeSigInternal()))
+							else if (!IsSameType(operandType, (expr.Operand as ITypeDefOrRef).ToTypeSig()))
 								InferTypeForExpression(expr.Arguments[0], new ByRefSig(operandType));
 							InferTypeForExpression(expr.Arguments[1], operandType);
 						}
@@ -452,7 +452,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Initobj:
 					return null;
 				case ILCode.DefaultValue:
-					return ((ITypeDefOrRef)expr.Operand).ToTypeSigInternal();
+					return ((ITypeDefOrRef)expr.Operand).ToTypeSig();
 				case ILCode.Localloc:
 					if (forceInferChildren) {
 						InferTypeForExpression(expr.Arguments[0], corLib.Int32);
@@ -476,19 +476,19 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 				case ILCode.Mkrefany:
 					if (forceInferChildren) {
-						InferTypeForExpression(expr.Arguments[0], ((ITypeDefOrRef)expr.Operand).ToTypeSigInternal());
+						InferTypeForExpression(expr.Arguments[0], ((ITypeDefOrRef)expr.Operand).ToTypeSig());
 					}
 					return corLib.TypedReference;
 				case ILCode.Refanytype:
 					if (forceInferChildren) {
 						InferTypeForExpression(expr.Arguments[0], corLib.TypedReference);
 					}
-					return corLib.GetTypeRef("System", "RuntimeTypeHandle").ToTypeSigInternal();
+					return corLib.GetTypeRef("System", "RuntimeTypeHandle").ToTypeSig();
 				case ILCode.Refanyval:
 					if (forceInferChildren) {
 						InferTypeForExpression(expr.Arguments[0], corLib.TypedReference);
 					}
-					return new ByRefSig(((ITypeDefOrRef)expr.Operand).ToTypeSigInternal());
+					return new ByRefSig(((ITypeDefOrRef)expr.Operand).ToTypeSig());
 				case ILCode.AddressOf:
 					{
 						TypeSig t = InferTypeForExpression(expr.Arguments[0], UnpackPointer(expectedType));
@@ -612,16 +612,16 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.Ldc_R8:
 					return corLib.Double;
 				case ILCode.Ldc_Decimal:
-					return corLib.GetTypeRef("System", "Decimal").ToTypeSigInternal();
+					return corLib.GetTypeRef("System", "Decimal").ToTypeSig();
 				case ILCode.Ldtoken:
 					if (expr.Operand is ITypeDefOrRef)
-						return corLib.GetTypeRef("System", "RuntimeTypeHandle").ToTypeSigInternal();
+						return corLib.GetTypeRef("System", "RuntimeTypeHandle").ToTypeSig();
 					else if (expr.Operand is IField && ((IField)expr.Operand).FieldSig != null)
-						return corLib.GetTypeRef("System", "RuntimeFieldHandle").ToTypeSigInternal();
+						return corLib.GetTypeRef("System", "RuntimeFieldHandle").ToTypeSig();
 					else
-						return corLib.GetTypeRef("System", "RuntimeMethodHandle").ToTypeSigInternal();
+						return corLib.GetTypeRef("System", "RuntimeMethodHandle").ToTypeSig();
 				case ILCode.Arglist:
-					return corLib.GetTypeRef("System", "RuntimeArgumentHandle").ToTypeSigInternal();
+					return corLib.GetTypeRef("System", "RuntimeArgumentHandle").ToTypeSig();
 					#endregion
 					#region Array instructions
 				case ILCode.Newarr:
@@ -638,9 +638,9 @@ namespace ICSharpCode.Decompiler.ILAst
 							InferTypeForExpression(expr.Arguments.Single(), lengthType);
 						}
 					}
-					return new SZArraySig(((ITypeDefOrRef)expr.Operand).ToTypeSigInternal());
+					return new SZArraySig(((ITypeDefOrRef)expr.Operand).ToTypeSig());
 				case ILCode.InitArray:
-					var operandSig = ((ITypeDefOrRef)expr.Operand).ToTypeSigInternal();
+					var operandSig = ((ITypeDefOrRef)expr.Operand).ToTypeSig();
 					if (forceInferChildren)
 					{
 						foreach (ILExpression arg in expr.Arguments)
@@ -671,7 +671,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (forceInferChildren) {
 						InferTypeForExpression(expr.Arguments[1], corLib.Int32);
 					}
-					return ((ITypeDefOrRef)expr.Operand).ToTypeSigInternal();
+					return ((ITypeDefOrRef)expr.Operand).ToTypeSig();
 				case ILCode.Ldelema:
 					{
 						SZArraySig arrayType = InferTypeForExpression(expr.Arguments[0], null) as SZArraySig;
@@ -754,19 +754,19 @@ namespace ICSharpCode.Decompiler.ILAst
 					return (expectedType != null  && expectedType.ElementType == ElementType.R4) ? corLib.Single : corLib.Double;
 				case ILCode.Castclass:
 				case ILCode.Unbox_Any:
-					return ((ITypeDefOrRef)expr.Operand).ToTypeSigInternal();
+					return ((ITypeDefOrRef)expr.Operand).ToTypeSig();
 				case ILCode.Unbox:
-					return new ByRefSig(((ITypeDefOrRef)expr.Operand).ToTypeSigInternal());
+					return new ByRefSig(((ITypeDefOrRef)expr.Operand).ToTypeSig());
 				case ILCode.Isinst:
 					{
 						// isinst performs the equivalent of a cast only for reference types;
 						// value types still need to be unboxed after an isinst instruction
-						TypeSig tr = ((ITypeDefOrRef)expr.Operand).ToTypeSigInternal();
+						TypeSig tr = ((ITypeDefOrRef)expr.Operand).ToTypeSig();
 						return DnlibExtensions.IsValueType(tr) ? corLib.Object : tr;
 					}
 				case ILCode.Box:
 					{
-						var tr = ((ITypeDefOrRef)expr.Operand).ToTypeSigInternal();
+						var tr = ((ITypeDefOrRef)expr.Operand).ToTypeSig();
 						if (forceInferChildren)
 							InferTypeForExpression(expr.Arguments.Single(), tr);
 						return DnlibExtensions.IsValueType(tr) ? corLib.Object : tr;
@@ -861,7 +861,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		TypeSig MakeRefIfValueType(TypeSig type, ILExpressionPrefix constrainedPrefix)
 		{
 			if (constrainedPrefix != null)
-				return new ByRefSig((constrainedPrefix.Operand as ITypeDefOrRef).ToTypeSigInternal());
+				return new ByRefSig((constrainedPrefix.Operand as ITypeDefOrRef).ToTypeSig());
 			if (DnlibExtensions.IsValueType(type))
 				return new ByRefSig(type);
 			else
@@ -911,7 +911,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public static TypeSig GetFieldType(IField field)
 		{
-			return SubstituteTypeArgs(field == null || field.FieldSig == null ? null : field.FieldSig.Type.RemoveModifiers(), field == null ? null : field.DeclaringType.ToTypeSigInternal());
+			return SubstituteTypeArgs(field == null || field.FieldSig == null ? null : field.FieldSig.Type.RemoveModifiers(), field == null ? null : field.DeclaringType.ToTypeSig());
 		}
 		
 		public static TypeSig SubstituteTypeArgs(TypeSig type, TypeSig typeContext = null, IMethod method = null)
@@ -919,7 +919,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			IList<TypeSig> typeArgs = null, methodArgs = null;
 
 			if (typeContext == null)
-				typeContext = method.DeclaringType.ToTypeSigInternal();
+				typeContext = method.DeclaringType.ToTypeSig();
 
 			if (typeContext is GenericInstSig)
 				typeArgs = ((GenericInstSig)typeContext).GenericArguments;
@@ -951,7 +951,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		TypeSig CreateNullableType(TypeSig type)
 		{
 			if (type == null) return null;
-			var t = new GenericInstSig((ClassOrValueTypeSig)corLib.GetTypeRef("System", "Nullable`1").ToTypeSigInternal());
+			var t = new GenericInstSig((ClassOrValueTypeSig)corLib.GetTypeRef("System", "Nullable`1").ToTypeSig());
 			t.GenericArguments.Add(type);
 			return t;
 		}

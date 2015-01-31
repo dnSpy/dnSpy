@@ -310,7 +310,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				ILVariable variable = displayClassAssignmentMatch.Get<AstNode>("variable").Single().Annotation<ILVariable>();
 				if (variable == null)
 					continue;
-				TypeDef type = variable.Type.ToTypeDefOrRefInternal().ResolveWithinSameModule();
+				TypeDef type = variable.Type.ToTypeDefOrRef().ResolveWithinSameModule();
 				if (!IsPotentialClosure(context, type))
 					continue;
 				if (displayClassAssignmentMatch.Get<AstType>("type").Single().Annotation<ITypeDefOrRef>().ResolveWithinSameModule() != type)
@@ -368,7 +368,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 							// handle parameters only if the whole method contains no other occurrence except for 'right'
 							ILVariable v = right.Annotation<ILVariable>();
 							isParameter = v.IsParameter && parameterOccurrances.Count(c => c == v) == 1;
-							if (!isParameter && IsPotentialClosure(context, v.Type.ToTypeDefOrRefInternal().ResolveWithinSameModule())) {
+							if (!isParameter && IsPotentialClosure(context, v.Type.ToTypeDefOrRef().ResolveWithinSameModule())) {
 								// parent display class within the same method
 								// (closure2.localsX = closure1;)
 								isDisplayClassParentPointerAssignment = true;
@@ -380,7 +380,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 							do {
 								// descend into the targets of the mre as long as the field types are closures
 								FieldDef fieldDef2 = mre.Annotation<FieldDef>().ResolveFieldWithinSameModule();
-								if (fieldDef2 == null || !IsPotentialClosure(context, fieldDef2.FieldType.ToTypeDefOrRefInternal().ResolveWithinSameModule())) {
+								if (fieldDef2 == null || !IsPotentialClosure(context, fieldDef2.FieldType.ToTypeDefOrRef().ResolveWithinSameModule())) {
 									break;
 								}
 								// if we finally get to a this reference, it's copying a display class parent pointer

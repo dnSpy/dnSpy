@@ -36,7 +36,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 			StringBuilder b = new StringBuilder();
 			if (member is ITypeDefOrRef) {
 				b.Append("T:");
-				AppendTypeName(b, Decompiler.DnlibExtensions.ToTypeSigInternal((ITypeDefOrRef)member));
+				AppendTypeName(b, ((ITypeDefOrRef)member).ToTypeSig());
 			} else {
 				if (member.IsField)
 					b.Append("F:");
@@ -46,7 +46,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 					b.Append("E:");
 				else if (member.IsMethod)
 					b.Append("M:");
-				AppendTypeName(b, Decompiler.DnlibExtensions.ToTypeSigInternal(member.DeclaringType));
+				AppendTypeName(b, member.DeclaringType.ToTypeSig());
 				b.Append('.');
 				b.Append(member.Name.Replace('.', '#'));
 				IList<Parameter> parameters;
@@ -133,9 +133,9 @@ namespace ICSharpCode.ILSpy.XmlDoc
 				}
 				b.Append(gp.Number);
 			} else {
-				var typeRef = Decompiler.DnlibExtensions.ToTypeDefOrRefInternal(type);
+				var typeRef = type.ToTypeDefOrRef();
 				if (typeRef.DeclaringType != null) {
-					AppendTypeName(b, Decompiler.DnlibExtensions.ToTypeSigInternal(typeRef.DeclaringType));
+					AppendTypeName(b, typeRef.DeclaringType.ToTypeSig());
 					b.Append('.');
 					b.Append(typeRef.Name);
 				} else {

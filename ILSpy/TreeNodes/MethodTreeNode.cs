@@ -61,7 +61,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					continue;
 				if (method.Parameters[i].MethodSigIndex > 0)
 					b.Append(", ");
-				b.Append(language.TypeToString(method.Parameters[i].Type.ToTypeDefOrRefInternal(), false, method.Parameters[i].ParamDef));
+				b.Append(language.TypeToString(method.Parameters[i].Type.ToTypeDefOrRef(), false, method.Parameters[i].ParamDef));
 			}
 			if (method.CallingConvention == CallingConvention.VarArg) {
 				if (method.MethodSig.GetParamCount() > 0)
@@ -69,7 +69,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				b.Append("...");
 			}
 			b.Append(") : ");
-			b.Append(language.TypeToString(method.ReturnType.ToTypeDefOrRefInternal(), false, method.Parameters.ReturnParameter.ParamDef));
+			b.Append(language.TypeToString(method.ReturnType.ToTypeDefOrRef(), false, method.Parameters.ReturnParameter.ParamDef));
 			b.Append(method.MDToken.ToSuffixString());
 			return HighlightSearchMatch(method.Name, b.ToString());
 		}

@@ -838,7 +838,7 @@ namespace ICSharpCode.ILSpy
 						buffer.Append(@", ");
 					else
 						addSeparator = true;
-					buffer.Append(TypeToString(p.ToTypeDefOrRefInternal(), includeNamespace: true));
+					buffer.Append(TypeToString(p.ToTypeDefOrRef(), includeNamespace: true));
 				}
 				buffer.Append(@"]");
 				return buffer.ToString();

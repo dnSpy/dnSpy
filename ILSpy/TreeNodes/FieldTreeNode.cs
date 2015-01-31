@@ -47,7 +47,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get {
 				return HighlightSearchMatch(
 					field.Name,
-					" : " + this.Language.TypeToString(field.FieldType.ToTypeDefOrRefInternal(), false, field) + field.MDToken.ToSuffixString()
+					" : " + this.Language.TypeToString(field.FieldType.ToTypeDefOrRef(), false, field) + field.MDToken.ToSuffixString()
 				);
 			}
 		}

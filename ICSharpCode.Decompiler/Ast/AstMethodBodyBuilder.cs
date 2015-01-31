@@ -189,7 +189,7 @@ namespace ICSharpCode.Decompiler.Ast
 				foreach (var caseBlock in ilSwitch.CaseBlocks) {
 					SwitchSection section = new SwitchSection();
 					if (caseBlock.Values != null) {
-						section.CaseLabels.AddRange(caseBlock.Values.Select(i => new CaseLabel() { Expression = AstBuilder.MakePrimitive(i, (ilSwitch.Condition.ExpectedType ?? ilSwitch.Condition.InferredType).ToTypeDefOrRefInternal()) }));
+						section.CaseLabels.AddRange(caseBlock.Values.Select(i => new CaseLabel() { Expression = AstBuilder.MakePrimitive(i, (ilSwitch.Condition.ExpectedType ?? ilSwitch.Condition.InferredType).ToTypeDefOrRef()) }));
 					} else {
 						section.CaseLabels.Add(new CaseLabel());
 					}
@@ -621,12 +621,12 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Initblk:     return InlineAssembly(byteCode, args);
 					case ILCode.Initobj:      return InlineAssembly(byteCode, args);
 				case ILCode.DefaultValue:
-					return MakeDefaultValue((operand as ITypeDefOrRef).ToTypeSigInternal());
+					return MakeDefaultValue((operand as ITypeDefOrRef).ToTypeSig());
 					case ILCode.Jmp: return InlineAssembly(byteCode, args);
 				case ILCode.Ldc_I4:
-						return AstBuilder.MakePrimitive((int)operand, byteCode.InferredType.ToTypeDefOrRefInternal());
+						return AstBuilder.MakePrimitive((int)operand, byteCode.InferredType.ToTypeDefOrRef());
 				case ILCode.Ldc_I8:
-						return AstBuilder.MakePrimitive((long)operand, byteCode.InferredType.ToTypeDefOrRefInternal());
+						return AstBuilder.MakePrimitive((long)operand, byteCode.InferredType.ToTypeDefOrRef());
 				case ILCode.Ldc_R4:
 				case ILCode.Ldc_R8:
 				case ILCode.Ldc_Decimal:
@@ -1235,7 +1235,7 @@ namespace ICSharpCode.Decompiler.Ast
 					if (actualType.GetElementType() == ElementType.Boolean)
 						return expr;
 					if (actualIsIntegerOrEnum) {
-						return new BinaryOperatorExpression(expr, BinaryOperatorType.InEquality, AstBuilder.MakePrimitive(0, actualType.ToTypeDefOrRefInternal()));
+						return new BinaryOperatorExpression(expr, BinaryOperatorType.InEquality, AstBuilder.MakePrimitive(0, actualType.ToTypeDefOrRef()));
 					} else {
 						return new BinaryOperatorExpression(expr, BinaryOperatorType.InEquality, new NullReferenceExpression());
 					}
@@ -1243,8 +1243,8 @@ namespace ICSharpCode.Decompiler.Ast
 				if (actualType.GetElementType() == ElementType.Boolean && requiredIsIntegerOrEnum) {
 					return new ConditionalExpression {
 						Condition = expr,
-						TrueExpression = AstBuilder.MakePrimitive(1, reqType.ToTypeDefOrRefInternal()),
-						FalseExpression = AstBuilder.MakePrimitive(0, reqType.ToTypeDefOrRefInternal())
+						TrueExpression = AstBuilder.MakePrimitive(1, reqType.ToTypeDefOrRef()),
+						FalseExpression = AstBuilder.MakePrimitive(0, reqType.ToTypeDefOrRef())
 					};
 				}
 

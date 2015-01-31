@@ -289,7 +289,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 					SecurityAttribute sa = secdecl.SecurityAttributes[i];
 					if (sa.AttributeType != null && sa.AttributeType.Scope == sa.AttributeType.Module) {
 						output.Write("class ");
-						output.Write(DisassemblerHelpers.Escape(GetAssemblyQualifiedName(sa.AttributeType.ToTypeSigInternal())));
+						output.Write(DisassemblerHelpers.Escape(GetAssemblyQualifiedName(sa.AttributeType.ToTypeSig())));
 					} else {
 						sa.AttributeType.WriteTo(output, ILNameSyntax.TypeName);
 					}

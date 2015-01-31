@@ -325,7 +325,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			} else if (type is TypeDefOrRefSig) {
 				WriteTo(((TypeDefOrRefSig)type).TypeDefOrRef, writer, syntax);
 			} else if (type is FnPtrSig) {
-				WriteTo(type.ToTypeDefOrRefInternal(), writer, syntax);
+				WriteTo(type.ToTypeDefOrRef(), writer, syntax);
 			}
 			//TODO: SentinelSig
 		}
