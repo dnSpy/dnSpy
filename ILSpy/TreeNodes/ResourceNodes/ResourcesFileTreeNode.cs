@@ -75,6 +75,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				try {
 					reader = new ResourceReader(s);
 				}
+				catch (IOException) {
+					return;
+				}
+				catch (BadImageFormatException) {
+					return;
+				}
 				catch (ArgumentException) {
 					return;
 				}
