@@ -40,6 +40,8 @@ namespace ICSharpCode.Decompiler.Ast
 	{
 		public static bool IsBaseType(TypeDef baseType, TypeDef derivedType, bool resolveTypeArguments)
 		{
+			if (baseType == null || derivedType == null)
+				return false;
 			if (resolveTypeArguments)
 				return BaseTypes(derivedType).Any(t => t.Resolve() == baseType);
 			else {
@@ -66,9 +68,9 @@ namespace ICSharpCode.Decompiler.Ast
 		public static bool IsBaseMethod(MethodDef parentMethod, MethodDef childMethod)
 		{
 			if (parentMethod == null)
-				throw new ArgumentNullException("parentMethod");
+				return false;
 			if (childMethod == null)
-				throw new ArgumentNullException("childMethod");
+				return false;
 
 			if (parentMethod.Name != childMethod.Name)
 				return false;
@@ -92,9 +94,9 @@ namespace ICSharpCode.Decompiler.Ast
 		public static bool IsBaseProperty(PropertyDef parentProperty, PropertyDef childProperty)
 		{
 			if (parentProperty == null)
-				throw new ArgumentNullException("parentProperty");
+				return false;
 			if (childProperty == null)
-				throw new ArgumentNullException("childProperty");
+				return false;
 
 			if (parentProperty.Name != childProperty.Name)
 				return false;
@@ -110,7 +112,7 @@ namespace ICSharpCode.Decompiler.Ast
 
 		public static bool IsBaseEvent(EventDef parentEvent, EventDef childEvent)
 		{
-			if (parentEvent.Name != childEvent.Name)
+			if (parentEvent == null || parentEvent.Name != childEvent.Name)
 				return false;
 
 			return FindBaseEvents(childEvent).Any(m => m == parentEvent);
@@ -124,7 +126,7 @@ namespace ICSharpCode.Decompiler.Ast
 		public static IEnumerable<MethodDef> FindBaseMethods(MethodDef method)
 		{
 			if (method == null)
-				throw new ArgumentNullException("method");
+				yield break;
 
 			foreach (var baseType in BaseTypes(method.DeclaringType)) {
 				var baseTypeDef = baseType.Resolve();
@@ -183,7 +185,7 @@ namespace ICSharpCode.Decompiler.Ast
 		public static IEnumerable<PropertyDef> FindBaseProperties(PropertyDef property)
 		{
 			if (property == null)
-				throw new ArgumentNullException("property");
+				yield break;
 
 			var accMeth = property.GetMethod ?? property.SetMethod;
 			if (accMeth != null && accMeth.HasOverrides)
@@ -211,6 +213,8 @@ namespace ICSharpCode.Decompiler.Ast
 
 		private static bool MatchProperty(PropertyDef mCandidate, MethodSig mCandidateSig, PropertyDef mProperty)
 		{
+			if (mCandidate == null || mCandidateSig == null || mProperty == null)
+				return false;
 			if (mCandidate.Name != mProperty.Name)
 				return false;
 
@@ -227,7 +231,7 @@ namespace ICSharpCode.Decompiler.Ast
 		public static IEnumerable<EventDef> FindBaseEvents(EventDef eventDef)
 		{
 			if (eventDef == null)
-				throw new ArgumentNullException("eventDef");
+				yield break;
 
 			var eventType = eventDef.EventType.ToTypeSigInternal();
 
@@ -249,6 +253,8 @@ namespace ICSharpCode.Decompiler.Ast
 
 		private static bool MatchEvent(EventDef mCandidate, TypeSig mCandidateType, EventDef mEvent, TypeSig mEventType)
 		{
+			if (mCandidate == null || mCandidateType == null || mEvent == null || mEventType == null)
+				return false;
 			if (mCandidate.Name != mEvent.Name)
 				return false;
 
@@ -271,9 +277,9 @@ namespace ICSharpCode.Decompiler.Ast
 		public static bool IsVisibleFromDerived(IMemberDef baseMember, TypeDef derivedType)
 		{
 			if (baseMember == null)
-				throw new ArgumentNullException("baseMember");
+				return false;
 			if (derivedType == null)
-				throw new ArgumentNullException("derivedType");
+				return false;
 
 			var visibility = IsVisibleFromDerived(baseMember);
 			if (visibility.HasValue)
@@ -326,16 +332,13 @@ namespace ICSharpCode.Decompiler.Ast
 				return MethodAttributes.Public;
 			}
 
-			throw new NotSupportedException();
+			return 0;
 		}
 
-		private static IEnumerable<TypeSig> BaseTypes(TypeDef type)
+		private static IEnumerable<TypeSig> BaseTypes(TypeDef typeDef)
 		{
-			return BaseTypes2(type);
-		}
-
-		private static IEnumerable<TypeSig> BaseTypes2(TypeDef typeDef)
-		{
+			if (typeDef == null)
+				yield break;
 			if (typeDef.BaseType == null)
 				yield break;
 

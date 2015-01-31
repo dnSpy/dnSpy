@@ -1263,7 +1263,8 @@ namespace ICSharpCode.Decompiler.Ast
 						callingConvention = System.Runtime.InteropServices.CallingConvention.Winapi;
 						break;
 					default:
-						throw new NotSupportedException("unknown calling convention");
+						callingConvention = 0;
+						break;
 				}
 				if (callingConvention != System.Runtime.InteropServices.CallingConvention.Winapi)
 					dllImport.AddNamedArgument("CallingConvention", new IdentifierExpression("CallingConvention").Member(callingConvention.ToString()));
@@ -1634,6 +1635,7 @@ namespace ICSharpCode.Decompiler.Ast
 							case TypeCode.SByte:
 								negatedEnumValue &= byte.MaxValue;
 								break;
+							case TypeCode.Char:
 							case TypeCode.Int16:
 							case TypeCode.UInt16:
 								negatedEnumValue &= ushort.MaxValue;
@@ -1681,11 +1683,13 @@ namespace ICSharpCode.Decompiler.Ast
 							return new UnaryOperatorExpression(UnaryOperatorType.BitNot, negatedExpr);
 						}
 					}
+					if (enumBaseTypeCode < TypeCode.Char || enumBaseTypeCode > TypeCode.Decimal)
+						enumBaseTypeCode = TypeCode.Int32;
 					return new Ast.PrimitiveExpression(CSharpPrimitiveCast.Cast(enumBaseTypeCode, val, false)).CastTo(ConvertType(type));
 				}
 			}
 			TypeCode code = TypeAnalysis.GetTypeCode(type.ToTypeSigInternal());
-			if (code == TypeCode.Object || code == TypeCode.Empty)
+			if (code < TypeCode.Char || code > TypeCode.Decimal)
 				code = TypeCode.Int32;
 			return new Ast.PrimitiveExpression(CSharpPrimitiveCast.Cast(code, val, false));
 		}
@@ -1744,6 +1748,8 @@ namespace ICSharpCode.Decompiler.Ast
 		/// <returns>true if any base member has the same name as given member, otherwise false.</returns>
 		static bool HidesByName(IMemberDef member, bool includeBaseMethods)
 		{
+			if (member == null)
+				return false;
 			Debug.Assert(!(member is PropertyDef) || !((PropertyDef)member).IsIndexer());
 
 			if (member.DeclaringType.BaseType != null) {
