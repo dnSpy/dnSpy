@@ -174,7 +174,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				
 				TypeDef typeDef = typeDeclaration.Annotation<TypeDef>();
 				bool privateMembersVisible = true;
-				ModuleDef internalMembersVisibleInModule = typeDef.Module;
+				ModuleDef internalMembersVisibleInModule = typeDef == null ? null : typeDef.Module;
 				while (typeDef != null) {
 					foreach (GenericParam gp in typeDef.GenericParameters) {
 						currentMemberTypes.Add(gp.Name);

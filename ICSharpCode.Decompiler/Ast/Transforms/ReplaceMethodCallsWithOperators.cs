@@ -337,7 +337,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			Match m = getMethodOrConstructorFromHandlePattern.Match(castExpression);
 			if (m.Success) {
 				IMethod method = m.Get<AstNode>("method").Single().Annotation<IMethod>();
-				if (m.Has("declaringType")) {
+				if (method != null && m.Has("declaringType")) {
 					Expression newNode = m.Get<AstType>("declaringType").Single().Detach().Member(method.Name);
 					newNode = newNode.Invoke(method.MethodSig.GetParameters().Select(p => new TypeReferenceExpression(AstBuilder.ConvertType(p))));
 					newNode.AddAnnotation(method);

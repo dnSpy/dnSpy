@@ -40,10 +40,10 @@ namespace ICSharpCode.ILSpy.VB
 		
 		public string GetTypeNameForAttribute(ICSharpCode.NRefactory.CSharp.Attribute attribute)
 		{
-			return attribute.Type.Annotations
+			var mr = attribute.Type.Annotations
 				.OfType<IMemberRef>()
-				.First()
-				.FullName;
+				.FirstOrDefault();
+			return mr == null ? string.Empty : mr.FullName;
 		}
 		
 		public NRefactory.TypeSystem.IType ResolveType(NRefactory.VB.Ast.AstType type, NRefactory.VB.Ast.TypeDeclaration entity = null)
