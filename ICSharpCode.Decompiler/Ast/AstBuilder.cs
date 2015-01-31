@@ -214,7 +214,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (!module.HasExportedTypes)
 				return;
 			foreach (ExportedType type in module.ExportedTypes) {
-				if (type.IsForwarder) {
+				if (type.MovedToAnotherAssembly) {
 					var forwardedType = CreateTypeOfExpression(type.ToTypeRef());
 					astCompileUnit.AddChild(
 						new AttributeSection {
