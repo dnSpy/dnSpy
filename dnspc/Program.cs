@@ -55,19 +55,13 @@ namespace ilspc {
 			return 0;
 		}
 
-		static bool IsUnix() {
-			// See http://mono-project.com/FAQ:_Technical#Mono_Platforms for platform detection.
-			int p = (int)Environment.OSVersion.Platform;
-			return p == 4 || p == 6 || p == 128;
-		}
-
-		static char PATHS_SEP = IsUnix() ? ':' : ';';
+		static char PATHS_SEP = Path.PathSeparator;
 
 		static void PrintHelp() {
 			var progName = GetProgramBaseName();
 			Console.WriteLine("{0} [--stdout] [--asm-path path] [--no-gac] [--no-stdlib] [--sln] [--sln-name name] [--proj-dir-suffix suffix] [--dont-mask-merr] [-r] [-o outdir] [-l lang] [fileOrDir1] [fileOrDir2] [...]", progName);
 			Console.WriteLine("  --stdout     decompile to the screen");
-			Console.WriteLine("  --asm-path path    assembly search path. Paths can be separated with '{0}'", PATHS_SEP);
+			Console.WriteLine("  --asm-path path    assembly search path. Paths can be separated with '{0}' or multiple --asm-path's can be used", PATHS_SEP);
 			Console.WriteLine("  --no-gac     don't use the GAC to look up assemblies. Useful with --no-stdlib");
 			Console.WriteLine("  --no-stdlib  projects don't reference mscorlib");
 			Console.WriteLine("  --sln        create a .sln file");
@@ -83,9 +77,9 @@ namespace ilspc {
 			Console.WriteLine(@"Examples:
   {0} --stdout C:\some\path\file.dll
       Decompile file.dll to the screen
-  {0} C:\some\path
-      Decompile all .NET files in the above directory
-  {0} -r C:\some\path
+  {0} -o c:\out\path C:\some\path
+      Decompile all .NET files in the above directory and save files in C:\out\path
+  {0} -o c:\out\path -r C:\some\path
       Decompile all .NET files in the above directory and all sub directories
   {0} -o C:\out\path C:\some\path\*.dll
       Decompile all *.dll .NET files in the above directory and save files in C:\out\path
@@ -153,6 +147,8 @@ namespace ilspc {
 							throw new ErrorException("Missing language name");
 						language = next;
 						i++;
+						if (!language.Equals(GetLanguage().Name, StringComparison.OrdinalIgnoreCase))
+							throw new ErrorException(string.Format("Language '{0}' doesn't exist", language));
 						break;
 
 					case "-proj-dir-suffix":
@@ -190,6 +186,8 @@ namespace ilspc {
 							throw new ErrorException("Missing .sln name");
 						slnName = next;
 						i++;
+						if (Path.IsPathRooted(slnName))
+							throw new ErrorException(string.Format(".sln name ({0}) must be relative to project dir", slnName));
 						break;
 
 					case "-dont-mask-merr":
@@ -377,8 +375,8 @@ namespace ilspc {
 						asmName = mod.Assembly.Name;
 				}
 
-				var projFileName = Path.GetFileNameWithoutExtension(file) + (GetLanguage().ProjectFileExtension ?? ".XXproj");
-				projFileName = Path.Combine(GetProjectDir(file), projFileName);
+				var projFileName = GetProjectFileName(file);
+				projFileName = Path.Combine(GetProjectDir(GetLanguage(), file), projFileName);
 				return new ProjectInfo {
 					AssemblyFileName = file,
 					AssemblySimpleName = asmName,
@@ -414,7 +412,7 @@ namespace ilspc {
 				if (useStdout)
 					writer = System.Console.Out;
 				else {
-					var baseDir = GetProjectDir(fileName);
+					var baseDir = GetProjectDir(lang, fileName);
 					Directory.CreateDirectory(baseDir);
 					writer = new StreamWriter(info.ProjectFileName, false, Encoding.UTF8);
 					opts.SaveAsProjectDirectory = baseDir;
@@ -437,10 +435,9 @@ namespace ilspc {
 			return Languages.GetLanguage(language);
 		}
 
-		static string GetProjectDir(string fileName) {
-			if (useStdout)
-				throw new Exception("Shouldn't be here when --stdout was used");
-
+		static string GetProjectDir(Language lang, string fileName) {
+			if (lang.ProjectFileExtension == null)
+				return outputDir;
 			var nameNoExt = Path.GetFileNameWithoutExtension(fileName);
 			if (string.IsNullOrEmpty(outputDir)) {
 				var path = Path.GetDirectoryName(fileName);
@@ -448,6 +445,12 @@ namespace ilspc {
 			}
 			else
 				return Path.Combine(outputDir, nameNoExt + projDirSuffix);
+		}
+
+		static string GetProjectFileName(string fileName) {
+			var lang = GetLanguage();
+			var ext = lang.ProjectFileExtension ?? lang.FileExtension;
+			return Path.GetFileNameWithoutExtension(fileName) + ext;
 		}
 	}
 }
