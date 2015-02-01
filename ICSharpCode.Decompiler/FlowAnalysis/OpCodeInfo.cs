@@ -43,7 +43,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 				case FlowControl.Cond_Branch:
 					return false;
 				default:
-					throw new NotSupportedException(opcode.FlowControl.ToString());
+					return false;
 			}
 		}
 		

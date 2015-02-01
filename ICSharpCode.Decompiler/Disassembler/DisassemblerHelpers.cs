@@ -103,6 +103,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 		
 		static string ToInvariantCultureString(object value)
 		{
+			if (value == null)
+				return "<<<NULL>>>";
 			IConvertible convertible = value as IConvertible;
 			return(null != convertible)
 				? convertible.ToString(System.Globalization.CultureInfo.InvariantCulture)
@@ -372,9 +374,6 @@ namespace ICSharpCode.Decompiler.Disassembler
 		
 		public static void WriteOperand(ITextOutput writer, object operand)
 		{
-			if (operand == null)
-				throw new ArgumentNullException("operand");
-			
 			Instruction targetInstruction = operand as Instruction;
 			if (targetInstruction != null) {
 				WriteOffsetReference(writer, targetInstruction);
