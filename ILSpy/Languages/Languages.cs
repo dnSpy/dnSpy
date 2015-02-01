@@ -64,7 +64,7 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		public static Language GetLanguage(string name)
 		{
-			return AllLanguages.FirstOrDefault(l => l.Name == name) ?? AllLanguages.First();
+			return AllLanguages.FirstOrDefault(l => l.Name.Equals(name, StringComparison.OrdinalIgnoreCase)) ?? AllLanguages.First();
 		}
 	}
 }
