@@ -37,7 +37,7 @@
 			</dependentAssembly>
 			<dependentAssembly>
 				<assemblyIdentity name="dnlib" publicKeyToken="50e96378b6e77999" culture="neutral"/>
-				<bindingRedirect oldVersion="0.0.0.0-99.9.9.9" newVersion="1.0.2.0"/>
+				<bindingRedirect oldVersion="0.0.0.0-99.9.9.9" newVersion="1.5.0.1500"/>
 			</dependentAssembly>
 		</assemblyBinding>
 	</runtime>
