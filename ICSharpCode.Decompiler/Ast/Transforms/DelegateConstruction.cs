@@ -320,7 +320,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				bool ok = true;
 				foreach (var identExpr in blockStatement.Descendants.OfType<IdentifierExpression>()) {
 					if (identExpr.Identifier == variable.Name && identExpr != displayClassAssignmentMatch.Get("variable").Single()) {
-						if (!(identExpr.Parent is MemberReferenceExpression && identExpr.Parent.Annotation<IField>() != null))
+						if (!(identExpr.Parent is MemberReferenceExpression && identExpr.Parent.Annotation<IField>() != null && identExpr.Parent.Annotation<IField>().IsField))
 							ok = false;
 					}
 				}

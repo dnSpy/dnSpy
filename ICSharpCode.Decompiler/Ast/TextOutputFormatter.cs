@@ -107,7 +107,7 @@ namespace ICSharpCode.Decompiler.Ast
 			var gotoStatement = node as GotoStatement;
 			if (gotoStatement != null)
 			{
-				var method = nodeStack.Select(nd => nd.Annotation<IMemberRef>()).FirstOrDefault(mr => mr != null);
+				var method = nodeStack.Select(nd => nd.Annotation<IMethod>()).FirstOrDefault(mr => mr != null && mr.IsMethod);
 				if (method != null)
 					return method.ToString() + gotoStatement.Label;
 			}
@@ -138,7 +138,7 @@ namespace ICSharpCode.Decompiler.Ast
 
 			var label = node as LabelStatement;
 			if (label != null) {
-				var method = nodeStack.Select(nd => nd.Annotation<IMethod>()).FirstOrDefault(mr => mr != null);
+				var method = nodeStack.Select(nd => nd.Annotation<IMethod>()).FirstOrDefault(mr => mr != null && mr.IsMethod);
 				if (method != null)
 					return method.ToString() + label.Label;
 			}
