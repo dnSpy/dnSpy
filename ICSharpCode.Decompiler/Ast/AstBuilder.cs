@@ -1214,20 +1214,53 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			LayoutKind defaultLayoutKind = (DnlibExtensions.IsValueType(typeDef) && !typeDef.IsEnum) ? LayoutKind.Sequential : LayoutKind.Auto;
 			if (layoutKind != defaultLayoutKind || charSet != CharSet.Ansi || typeDef.HasClassLayout) {
-				var structLayout = CreateNonCustomAttribute(typeof(StructLayoutAttribute));
-				structLayout.Arguments.Add(new IdentifierExpression("LayoutKind").Member(layoutKind.ToString()));
+				var attrType = typeof(StructLayoutAttribute);
+				var structLayout = CreateNonCustomAttribute(attrType);
+				structLayout.Arguments.Add(CreateEnumIdentifierExpression(typeof(LayoutKind), layoutKind.ToString()));
+				var module = GetModule();
 				if (charSet != CharSet.Ansi) {
-					structLayout.AddNamedArgument("CharSet", new IdentifierExpression("CharSet").Member(charSet.ToString()));
+					structLayout.AddNamedArgument(module, attrType, typeof(CharSet), "CharSet", CreateEnumIdentifierExpression(typeof(CharSet), charSet.ToString()));
 				}
 				if (typeDef.PackingSize != ushort.MaxValue && typeDef.PackingSize > 0) {
-					structLayout.AddNamedArgument("Pack", new PrimitiveExpression((int)typeDef.PackingSize));
+					structLayout.AddNamedArgument(module, attrType, typeof(int), "Pack", new PrimitiveExpression((int)typeDef.PackingSize));
 				}
 				if (typeDef.ClassSize != uint.MaxValue && typeDef.ClassSize > 0) {
-					structLayout.AddNamedArgument("Size", new PrimitiveExpression((int)typeDef.ClassSize));
+					structLayout.AddNamedArgument(module, attrType, typeof(int), "Size", new PrimitiveExpression((int)typeDef.ClassSize));
 				}
 				attributedNode.Attributes.Add(new AttributeSection(structLayout));
 			}
 			#endregion
+		}
+
+		ModuleDef GetModule()
+		{
+			if (context.CurrentMethod != null && context.CurrentMethod.Module != null)
+				return context.CurrentMethod.Module;
+			if (context.CurrentType != null && context.CurrentType.Module != null)
+				return context.CurrentType.Module;
+			if (context.CurrentModule != null)
+				return context.CurrentModule;
+
+			return null;
+		}
+
+		MemberReferenceExpression CreateEnumIdentifierExpression(Type enumType, string fieldName)
+		{
+			var module = GetModule();
+			var ide = new IdentifierExpression(enumType.Name);
+			TypeRef typeRef = null;
+			if (module != null) {
+				typeRef = module.CorLibTypes.GetTypeRef(enumType.Namespace, enumType.Name);
+				ide.AddAnnotation(typeRef);
+				ide.IdentifierToken.AddAnnotation(typeRef);
+			}
+			var mre = ide.Member(fieldName);
+			if (module != null) {
+				MemberRef mr;
+				mre.AddAnnotation(mr = new MemberRefUser(module, fieldName, new FieldSig(new ValueTypeSig(typeRef)), typeRef));
+				mre.MemberNameToken.AddAnnotation(mr);
+			}
+			return mre;
 		}
 		
 		void ConvertAttributes(EntityDeclaration attributedNode, MethodDef methodDef)
@@ -1240,13 +1273,15 @@ namespace ICSharpCode.Decompiler.Ast
 			#region DllImportAttribute
 			if (methodDef.HasImplMap) {
 				ImplMap info = methodDef.ImplMap;
-				Ast.Attribute dllImport = CreateNonCustomAttribute(typeof(DllImportAttribute));
+				var attrType = typeof(DllImportAttribute);
+				var module = GetModule();
+				Ast.Attribute dllImport = CreateNonCustomAttribute(attrType);
 				dllImport.Arguments.Add(new PrimitiveExpression(info.Module == null ? string.Empty : info.Module.Name.String));
 				
 				if (info.IsBestFitDisabled)
-					dllImport.AddNamedArgument("BestFitMapping", new PrimitiveExpression(false));
+					dllImport.AddNamedArgument(module, attrType, typeof(bool), "BestFitMapping", new PrimitiveExpression(false));
 				if (info.IsBestFitEnabled)
-					dllImport.AddNamedArgument("BestFitMapping", new PrimitiveExpression(true));
+					dllImport.AddNamedArgument(module, attrType, typeof(bool), "BestFitMapping", new PrimitiveExpression(true));
 				
 				System.Runtime.InteropServices.CallingConvention callingConvention;
 				switch (info.Attributes & PInvokeAttributes.CallConvMask) {
@@ -1270,7 +1305,7 @@ namespace ICSharpCode.Decompiler.Ast
 						break;
 				}
 				if (callingConvention != System.Runtime.InteropServices.CallingConvention.Winapi)
-					dllImport.AddNamedArgument("CallingConvention", new IdentifierExpression("CallingConvention").Member(callingConvention.ToString()));
+					dllImport.AddNamedArgument(module, attrType, typeof(System.Runtime.InteropServices.CallingConvention), "CallingConvention", CreateEnumIdentifierExpression(typeof(System.Runtime.InteropServices.CallingConvention), callingConvention.ToString()));
 				
 				CharSet charSet = CharSet.None;
 				switch (info.Attributes & PInvokeAttributes.CharSetMask) {
@@ -1285,26 +1320,26 @@ namespace ICSharpCode.Decompiler.Ast
 						break;
 				}
 				if (charSet != CharSet.None)
-					dllImport.AddNamedArgument("CharSet", new IdentifierExpression("CharSet").Member(charSet.ToString()));
+					dllImport.AddNamedArgument(module, attrType, typeof(CharSet), "CharSet", CreateEnumIdentifierExpression(typeof(CharSet), charSet.ToString()));
 				
 				if (!string.IsNullOrEmpty(info.Name) && info.Name != methodDef.Name)
-					dllImport.AddNamedArgument("EntryPoint", new PrimitiveExpression(info.Name.String));
+					dllImport.AddNamedArgument(module, attrType, typeof(string), "EntryPoint", new PrimitiveExpression(info.Name.String));
 				
 				if (info.IsNoMangle)
-					dllImport.AddNamedArgument("ExactSpelling", new PrimitiveExpression(true));
+					dllImport.AddNamedArgument(module, attrType, typeof(bool), "ExactSpelling", new PrimitiveExpression(true));
 				
 				if ((implAttributes & MethodImplAttributes.PreserveSig) == MethodImplAttributes.PreserveSig)
 					implAttributes &= ~MethodImplAttributes.PreserveSig;
 				else
-					dllImport.AddNamedArgument("PreserveSig", new PrimitiveExpression(false));
+					dllImport.AddNamedArgument(module, attrType, typeof(bool), "PreserveSig", new PrimitiveExpression(false));
 				
 				if (info.SupportsLastError)
-					dllImport.AddNamedArgument("SetLastError", new PrimitiveExpression(true));
+					dllImport.AddNamedArgument(module, attrType, typeof(bool), "SetLastError", new PrimitiveExpression(true));
 				
 				if (info.IsThrowOnUnmappableCharDisabled)
-					dllImport.AddNamedArgument("ThrowOnUnmappableChar", new PrimitiveExpression(false));
+					dllImport.AddNamedArgument(module, attrType, typeof(bool), "ThrowOnUnmappableChar", new PrimitiveExpression(false));
 				if (info.IsThrowOnUnmappableCharEnabled)
-					dllImport.AddNamedArgument("ThrowOnUnmappableChar", new PrimitiveExpression(true));
+					dllImport.AddNamedArgument(module, attrType, typeof(bool), "ThrowOnUnmappableChar", new PrimitiveExpression(true));
 				
 				attributedNode.Attributes.Add(new AttributeSection(dllImport));
 			}
@@ -1367,51 +1402,52 @@ namespace ICSharpCode.Decompiler.Ast
 		static Ast.Attribute ConvertMarshalInfo(IHasFieldMarshal marshalInfoProvider, ModuleDef module)
 		{
 			MarshalType marshalInfo = marshalInfoProvider.MarshalType;
-			Ast.Attribute attr = CreateNonCustomAttribute(typeof(MarshalAsAttribute), module);
+			var attrType = typeof(MarshalAsAttribute);
+			Ast.Attribute attr = CreateNonCustomAttribute(attrType, module);
 			var unmanagedType = module.CorLibTypes.GetTypeRef("System.Runtime.InteropServices", "UnmanagedType");
 			attr.Arguments.Add(MakePrimitive((int)marshalInfo.NativeType, unmanagedType));
 			
 			var fami = marshalInfo as FixedArrayMarshalType;
 			if (fami != null) {
 				if (fami.IsSizeValid)
-					attr.AddNamedArgument("SizeConst", new PrimitiveExpression(fami.Size));
+					attr.AddNamedArgument(module, attrType, typeof(int), "SizeConst", new PrimitiveExpression(fami.Size));
 				if (fami.IsElementTypeValid)
-					attr.AddNamedArgument("ArraySubType", MakePrimitive((int)fami.ElementType, unmanagedType));
+					attr.AddNamedArgument(module, attrType, typeof(UnmanagedType), "ArraySubType", MakePrimitive((int)fami.ElementType, unmanagedType));
 			}
 			var sami = marshalInfo as SafeArrayMarshalType;
 			if (sami != null) {
 				if (sami.IsVariantTypeValid) {
 					var varEnum = module.CorLibTypes.GetTypeRef("System.Runtime.InteropServices", "VarEnum");
-					attr.AddNamedArgument("SafeArraySubType", MakePrimitive((int)sami.VariantType, varEnum));
+					attr.AddNamedArgument(module, attrType, typeof(VarEnum), "SafeArraySubType", MakePrimitive((int)sami.VariantType, varEnum));
 				}
 				if (sami.IsUserDefinedSubTypeValid)
-					attr.AddNamedArgument("SafeArrayUserDefinedSubType", CreateTypeOfExpression(sami.UserDefinedSubType));
+					attr.AddNamedArgument(module, attrType, typeof(Type), "SafeArrayUserDefinedSubType", CreateTypeOfExpression(sami.UserDefinedSubType));
 			}
 			var ami = marshalInfo as ArrayMarshalType;
 			if (ami != null) {
 				if (ami.IsElementTypeValid && ami.ElementType != NativeType.Max)
-					attr.AddNamedArgument("ArraySubType", MakePrimitive((int)ami.ElementType, unmanagedType));
+					attr.AddNamedArgument(module, attrType, typeof(UnmanagedType), "ArraySubType", MakePrimitive((int)ami.ElementType, unmanagedType));
 				if (ami.IsSizeValid)
-					attr.AddNamedArgument("SizeConst", new PrimitiveExpression(ami.Size));
+					attr.AddNamedArgument(module, attrType, typeof(int), "SizeConst", new PrimitiveExpression(ami.Size));
 				if (ami.Flags != 0 && ami.ParamNumber >= 0)
-					attr.AddNamedArgument("SizeParamIndex", new PrimitiveExpression(ami.ParamNumber));
+					attr.AddNamedArgument(module, attrType, typeof(short), "SizeParamIndex", new PrimitiveExpression(ami.ParamNumber));
 			}
 			var cmi = marshalInfo as CustomMarshalType;
 			if (cmi != null) {
 				if (cmi.CustomMarshaler != null)
-					attr.AddNamedArgument("MarshalTypeRef", CreateTypeOfExpression(cmi.CustomMarshaler));
+					attr.AddNamedArgument(module, attrType, typeof(Type), "MarshalTypeRef", CreateTypeOfExpression(cmi.CustomMarshaler));
 				if (!UTF8String.IsNullOrEmpty(cmi.Cookie))
-					attr.AddNamedArgument("MarshalCookie", new PrimitiveExpression(cmi.Cookie.String));
+					attr.AddNamedArgument(module, attrType, typeof(string), "MarshalCookie", new PrimitiveExpression(cmi.Cookie.String));
 			}
 			var fssmi = marshalInfo as FixedSysStringMarshalType;
 			if (fssmi != null) {
 				if (fssmi.IsSizeValid)
-					attr.AddNamedArgument("SizeConst", new PrimitiveExpression(fssmi.Size));
+					attr.AddNamedArgument(module, attrType, typeof(int), "SizeConst", new PrimitiveExpression(fssmi.Size));
 			}
 			var imti = marshalInfo as InterfaceMarshalType;
 			if (imti != null) {
 				if (imti.IsIidParamIndexValid)
-					attr.AddNamedArgument("IidParameterIndex", new PrimitiveExpression(imti.IidParamIndex));
+					attr.AddNamedArgument(module, attrType, typeof(int), "IidParameterIndex", new PrimitiveExpression(imti.IidParamIndex));
 			}
 			return attr;
 		}

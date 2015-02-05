@@ -19,6 +19,7 @@
 using System;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
+using dnlib.DotNet;
 
 namespace ICSharpCode.Decompiler.Ast
 {
@@ -55,9 +56,21 @@ namespace ICSharpCode.Decompiler.Ast
 			return new NamedNode(patternGroupName, node);
 		}
 		
-		public static void AddNamedArgument(this NRefactory.CSharp.Attribute attribute, string name, Expression argument)
+		public static void AddNamedArgument(this NRefactory.CSharp.Attribute attribute, ModuleDef module, Type attrType, Type fieldType, string fieldName, Expression argument)
 		{
-			attribute.Arguments.Add(new AssignmentExpression(new IdentifierExpression(name), argument));
+			var ide = new IdentifierExpression(fieldName);
+			if (module != null) {
+				TypeSig sig = module.CorLibTypes.GetCorLibTypeSig(module.Import(fieldType));
+				if (sig == null) {
+					var typeRef = module.CorLibTypes.GetTypeRef(fieldType.Namespace, fieldType.Name);
+					sig = fieldType.IsValueType ? (TypeSig)new ValueTypeSig(typeRef) : new ClassSig(typeRef);
+				}
+				var fr = new MemberRefUser(module, fieldName, new FieldSig(sig), module.CorLibTypes.GetTypeRef(attrType.Namespace, attrType.Name));
+				ide.AddAnnotation(fr);
+				ide.IdentifierToken.AddAnnotation(fr);
+			}
+
+			attribute.Arguments.Add(new AssignmentExpression(ide, argument));
 		}
 		
 		public static AstType ToType(this Pattern pattern)
