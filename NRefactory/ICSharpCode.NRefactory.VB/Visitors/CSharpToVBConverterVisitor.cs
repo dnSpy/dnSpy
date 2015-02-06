@@ -2062,6 +2062,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 				case "void":
 					typeName = "Void";
 					break;
+				case "__arglist":
+					typeName = "__ArgList";
+					break;
 				default:
 					typeName = "unknown";
 					break;
