@@ -346,17 +346,18 @@ namespace ICSharpCode.Decompiler.Disassembler
 						output.WriteLine();
 						output.Indent();
 						
+						var attrType = sa.AttributeType.ResolveTypeDef();
 						foreach (var na in sa.Fields) {
 							output.Write("field", TextTokenType.Keyword);
 							output.WriteSpace();
-							WriteSecurityDeclarationArgument(na);
+							WriteSecurityDeclarationArgument(attrType, na);
 							output.WriteLine();
 						}
 						
 						foreach (var na in sa.Properties) {
 							output.Write("property", TextTokenType.Keyword);
 							output.WriteSpace();
-							WriteSecurityDeclarationArgument(na);
+							WriteSecurityDeclarationArgument(attrType, na);
 							output.WriteLine();
 						}
 						
@@ -373,8 +374,16 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 		}
 		
-		void WriteSecurityDeclarationArgument(CANamedArgument na)
+		void WriteSecurityDeclarationArgument(TypeDef attrType, CANamedArgument na)
 		{
+			object reference = null;
+			if (attrType != null) {
+				if (na.IsField)
+					reference = attrType.FindField(na.Name, new FieldSig(na.Type));
+				else
+					reference = attrType.FindProperty(na.Name, PropertySig.CreateInstance(na.Type));
+			}
+
 			TypeSig type = na.Argument.Type;
 			if (type != null && (type.ElementType == ElementType.Class || type.ElementType == ElementType.ValueType)) {
 				output.Write("enum", TextTokenType.Keyword);
@@ -390,7 +399,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				type.WriteTo(output);
 			}
 			output.WriteSpace();
-			output.Write(DisassemblerHelpers.Escape(na.Name), na.IsField ? TextTokenType.InstanceField : TextTokenType.InstanceProperty);
+			output.WriteReference(DisassemblerHelpers.Escape(na.Name), reference, na.IsField ? TextTokenType.InstanceField : TextTokenType.InstanceProperty);
 			output.WriteSpace();
 			output.Write('=', TextTokenType.Operator);
 			output.WriteSpace();
