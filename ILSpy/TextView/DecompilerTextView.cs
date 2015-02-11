@@ -189,10 +189,10 @@ namespace ICSharpCode.ILSpy.TextView
 				// if possible, resolve the reference
 				if (mr is ITypeDefOrRef) {
 					mr = ((ITypeDefOrRef)mr).ResolveTypeDef() ?? mr;
-				} else if (mr is MemberRef && ((MemberRef)mr).IsMethodRef) {
-					mr = ((MemberRef)mr).ResolveMethod() ?? mr;
-				} else if (mr is MemberRef && ((MemberRef)mr).IsFieldRef) {
-					mr = ((MemberRef)mr).ResolveField() ?? mr;
+				} else if (mr is IMethod && ((IMethod)mr).IsMethod) {
+					mr = ((IMethod)mr).ResolveMethodDef() ?? mr;
+				} else if (mr is IField && ((IField)mr).IsField) {
+					mr = ((IField)mr).ResolveFieldDef() ?? mr;
 				}
 				XmlDocRenderer renderer = new XmlDocRenderer();
 				renderer.AppendText(MainWindow.Instance.CurrentLanguage.GetTooltip(mr));
