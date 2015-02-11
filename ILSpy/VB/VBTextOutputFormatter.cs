@@ -169,7 +169,12 @@ namespace ICSharpCode.ILSpy.VB
 		
 		public void WriteKeyword(string keyword)
 		{
-			output.Write(keyword, TextTokenType.Keyword);
+			IMemberRef memberRef = GetCurrentMemberReference();
+			var node = nodeStack.Peek();
+			if (memberRef != null && node is PrimitiveType)
+				output.WriteReference(keyword, memberRef, TextTokenType.Keyword);
+			else
+				output.Write(keyword, TextTokenType.Keyword);
 		}
 		
 		public void WriteToken(string token, TextTokenType tokenType)

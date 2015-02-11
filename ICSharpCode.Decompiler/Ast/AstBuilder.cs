@@ -546,37 +546,37 @@ namespace ICSharpCode.Decompiler.Ast
 							!= ConvertTypeOptions.DoNotUsePrimitiveTypeNames) {
 							switch (name) {
 								case "SByte":
-									return new PrimitiveType("sbyte");
+									return new PrimitiveType("sbyte").WithAnnotation(type);
 								case "Int16":
-									return new PrimitiveType("short");
+									return new PrimitiveType("short").WithAnnotation(type);
 								case "Int32":
-									return new PrimitiveType("int");
+									return new PrimitiveType("int").WithAnnotation(type);
 								case "Int64":
-									return new PrimitiveType("long");
+									return new PrimitiveType("long").WithAnnotation(type);
 								case "Byte":
-									return new PrimitiveType("byte");
+									return new PrimitiveType("byte").WithAnnotation(type);
 								case "UInt16":
-									return new PrimitiveType("ushort");
+									return new PrimitiveType("ushort").WithAnnotation(type);
 								case "UInt32":
-									return new PrimitiveType("uint");
+									return new PrimitiveType("uint").WithAnnotation(type);
 								case "UInt64":
-									return new PrimitiveType("ulong");
+									return new PrimitiveType("ulong").WithAnnotation(type);
 								case "String":
-									return new PrimitiveType("string");
+									return new PrimitiveType("string").WithAnnotation(type);
 								case "Single":
-									return new PrimitiveType("float");
+									return new PrimitiveType("float").WithAnnotation(type);
 								case "Double":
-									return new PrimitiveType("double");
+									return new PrimitiveType("double").WithAnnotation(type);
 								case "Decimal":
-									return new PrimitiveType("decimal");
+									return new PrimitiveType("decimal").WithAnnotation(type);
 								case "Char":
-									return new PrimitiveType("char");
+									return new PrimitiveType("char").WithAnnotation(type);
 								case "Boolean":
-									return new PrimitiveType("bool");
+									return new PrimitiveType("bool").WithAnnotation(type);
 								case "Void":
-									return new PrimitiveType("void");
+									return new PrimitiveType("void").WithAnnotation(type);
 								case "Object":
-									return new PrimitiveType("object");
+									return new PrimitiveType("object").WithAnnotation(type);
 							}
 						}
 					}
