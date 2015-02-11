@@ -447,8 +447,8 @@ namespace ICSharpCode.Decompiler.Ast
 		/// This is used to support the 'dynamic' type.</param>
 		public static AstType ConvertType(ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null, ConvertTypeOptions options = ConvertTypeOptions.None)
 		{
-			int typeIndex = 0, depth = 0;
-			return ConvertType(type, typeAttributes, ref typeIndex, options, ref depth);
+			int typeIndex = 0;
+			return ConvertType(type, typeAttributes, ref typeIndex, options, 0);
 		}
 
 		/// <summary>
@@ -460,12 +460,12 @@ namespace ICSharpCode.Decompiler.Ast
 		/// This is used to support the 'dynamic' type.</param>
 		public static AstType ConvertType(TypeSig type, IHasCustomAttribute typeAttributes = null, ConvertTypeOptions options = ConvertTypeOptions.None)
 		{
-			int typeIndex = 0, depth = 0;
-			return ConvertType(type, typeAttributes, ref typeIndex, options, ref depth);
+			int typeIndex = 0;
+			return ConvertType(type, typeAttributes, ref typeIndex, options, 0);
 		}
 
 		const int MAX_CONVERTTYPE_DEPTH = 50;
-		static AstType ConvertType(TypeSig type, IHasCustomAttribute typeAttributes, ref int typeIndex, ConvertTypeOptions options, ref int depth)
+		static AstType ConvertType(TypeSig type, IHasCustomAttribute typeAttributes, ref int typeIndex, ConvertTypeOptions options, int depth)
 		{
 			if (depth++ > MAX_CONVERTTYPE_DEPTH)
 				return AstType.Null;
@@ -477,52 +477,52 @@ namespace ICSharpCode.Decompiler.Ast
 			if (type is ByRefSig) {
 				typeIndex++;
 				// by reference type cannot be represented in C#; so we'll represent it as a pointer instead
-				return ConvertType((type as ByRefSig).Next, typeAttributes, ref typeIndex, options, ref depth)
+				return ConvertType((type as ByRefSig).Next, typeAttributes, ref typeIndex, options, depth)
 					.MakePointerType();
 			} else if (type is PtrSig) {
 				typeIndex++;
-				return ConvertType((type as PtrSig).Next, typeAttributes, ref typeIndex, options, ref depth)
+				return ConvertType((type as PtrSig).Next, typeAttributes, ref typeIndex, options, depth)
 					.MakePointerType();
 			} else if (type is ArraySigBase) {
 				typeIndex++;
-				return ConvertType((type as ArraySigBase).Next, typeAttributes, ref typeIndex, options, ref depth)
+				return ConvertType((type as ArraySigBase).Next, typeAttributes, ref typeIndex, options, depth)
 					.MakeArrayType((int)(type as ArraySigBase).Rank);
 			} else if (type is GenericInstSig) {
 				GenericInstSig gType = (GenericInstSig)type;
 				if (gType.GenericType != null && gType.GenericType.Namespace == "System" && gType.GenericType.TypeName == "Nullable`1" && gType.GenericArguments.Count == 1) {
 					typeIndex++;
 					return new ComposedType {
-						BaseType = ConvertType(gType.GenericArguments[0], typeAttributes, ref typeIndex, options, ref depth),
+						BaseType = ConvertType(gType.GenericArguments[0], typeAttributes, ref typeIndex, options, depth),
 						HasNullableSpecifier = true
 					};
 				}
-				AstType baseType = ConvertType(gType.GenericType == null ? null : gType.GenericType.TypeDefOrRef, typeAttributes, ref typeIndex, options & ~ConvertTypeOptions.IncludeTypeParameterDefinitions, ref depth);
+				AstType baseType = ConvertType(gType.GenericType == null ? null : gType.GenericType.TypeDefOrRef, typeAttributes, ref typeIndex, options & ~ConvertTypeOptions.IncludeTypeParameterDefinitions, depth);
 				List<AstType> typeArguments = new List<AstType>();
 				foreach (var typeArgument in gType.GenericArguments) {
 					typeIndex++;
-					typeArguments.Add(ConvertType(typeArgument, typeAttributes, ref typeIndex, options, ref depth));
+					typeArguments.Add(ConvertType(typeArgument, typeAttributes, ref typeIndex, options, depth));
 				}
 				ApplyTypeArgumentsTo(baseType, typeArguments);
 				return baseType;
 			} else if (type is GenericSig) {
 				return new SimpleType(((GenericSig)type).TypeName).WithAnnotation(type);
 			} else if (type is TypeDefOrRefSig) {
-				return ConvertType(((TypeDefOrRefSig)type).TypeDefOrRef, typeAttributes, ref typeIndex, options, ref depth);
+				return ConvertType(((TypeDefOrRefSig)type).TypeDefOrRef, typeAttributes, ref typeIndex, options, depth);
 			} else
-				return ConvertType(type.ToTypeDefOrRef(), typeAttributes, ref typeIndex, options, ref depth);
+				return ConvertType(type.ToTypeDefOrRef(), typeAttributes, ref typeIndex, options, depth);
 		}
 
-		static AstType ConvertType(ITypeDefOrRef type, IHasCustomAttribute typeAttributes, ref int typeIndex, ConvertTypeOptions options, ref int depth)
+		static AstType ConvertType(ITypeDefOrRef type, IHasCustomAttribute typeAttributes, ref int typeIndex, ConvertTypeOptions options, int depth)
 		{
 			if (depth++ > MAX_CONVERTTYPE_DEPTH || type == null)
 				return AstType.Null;
 
 			var ts = type as TypeSpec;
 			if (ts != null && !(ts.TypeSig is FnPtrSig))
-				return ConvertType(ts.TypeSig, typeAttributes, ref typeIndex, options, ref depth);
+				return ConvertType(ts.TypeSig, typeAttributes, ref typeIndex, options, depth);
 
 			if (type.DeclaringType != null) {
-				AstType typeRef = ConvertType(type.DeclaringType, typeAttributes, ref typeIndex, options & ~ConvertTypeOptions.IncludeTypeParameterDefinitions, ref depth);
+				AstType typeRef = ConvertType(type.DeclaringType, typeAttributes, ref typeIndex, options & ~ConvertTypeOptions.IncludeTypeParameterDefinitions, depth);
 				string namepart = ICSharpCode.NRefactory.TypeSystem.ReflectionHelper.SplitTypeParameterCountFromReflectionName(type.Name);
 				MemberType memberType = new MemberType { Target = typeRef, MemberNameToken = Identifier.Create(namepart).WithAnnotation(type) };
 				memberType.AddAnnotation(type);

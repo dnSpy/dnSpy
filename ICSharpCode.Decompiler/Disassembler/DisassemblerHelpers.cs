@@ -289,14 +289,22 @@ namespace ICSharpCode.Decompiler.Disassembler
 		
 		public static void WriteTo(this TypeSig type, ITextOutput writer, ILNameSyntax syntax = ILNameSyntax.Signature)
 		{
+			type.WriteTo(writer, syntax, 0);
+		}
+
+		const int MAX_CONVERTTYPE_DEPTH = 50;
+		public static void WriteTo(this TypeSig type, ITextOutput writer, ILNameSyntax syntax, int depth)
+		{
+			if (depth++ > MAX_CONVERTTYPE_DEPTH)
+				return;
 			ILNameSyntax syntaxForElementTypes = syntax == ILNameSyntax.SignatureNoNamedTypeParameters ? syntax : ILNameSyntax.Signature;
 			if (type is PinnedSig) {
-				((PinnedSig)type).Next.WriteTo(writer, syntaxForElementTypes);
+				((PinnedSig)type).Next.WriteTo(writer, syntaxForElementTypes, depth);
 				writer.WriteSpace();
 				writer.Write("pinned", TextTokenType.Keyword);
 			} else if (type is ArraySig) {
 				ArraySig at = (ArraySig)type;
-				at.Next.WriteTo(writer, syntaxForElementTypes);
+				at.Next.WriteTo(writer, syntaxForElementTypes, depth);
 				writer.Write('[', TextTokenType.Operator);
 				for (int i = 0; i < at.Rank; i++)
 				{
@@ -320,7 +328,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				writer.Write(']', TextTokenType.Operator);
 			} else if (type is SZArraySig) {
 				SZArraySig at = (SZArraySig)type;
-				at.Next.WriteTo(writer, syntaxForElementTypes);
+				at.Next.WriteTo(writer, syntaxForElementTypes, depth);
 				writer.Write("[]", TextTokenType.Operator);
 			} else if (type is GenericSig) {
 				if (((GenericSig)type).IsMethodVar)
@@ -333,13 +341,13 @@ namespace ICSharpCode.Decompiler.Disassembler
 				else
 					writer.Write(Escape(typeName), TextTokenHelper.GetTextTokenType(type));
 			} else if (type is ByRefSig) {
-				((ByRefSig)type).Next.WriteTo(writer, syntaxForElementTypes);
+				((ByRefSig)type).Next.WriteTo(writer, syntaxForElementTypes, depth);
 				writer.Write('&', TextTokenType.Operator);
 			} else if (type is PtrSig) {
-				((PtrSig)type).Next.WriteTo(writer, syntaxForElementTypes);
+				((PtrSig)type).Next.WriteTo(writer, syntaxForElementTypes, depth);
 				writer.Write('*', TextTokenType.Operator);
 			} else if (type is GenericInstSig) {
-				((GenericInstSig)type).GenericType.WriteTo(writer, syntaxForElementTypes);
+				((GenericInstSig)type).GenericType.WriteTo(writer, syntaxForElementTypes, depth);
 				writer.Write('<', TextTokenType.Operator);
 				var arguments = ((GenericInstSig)type).GenericArguments;
 				for (int i = 0; i < arguments.Count; i++) {
@@ -347,42 +355,47 @@ namespace ICSharpCode.Decompiler.Disassembler
 						writer.Write(',', TextTokenType.Operator);
 						writer.WriteSpace();
 					}
-					arguments[i].WriteTo(writer, syntaxForElementTypes);
+					arguments[i].WriteTo(writer, syntaxForElementTypes, depth);
 				}
 				writer.Write('>', TextTokenType.Operator);
 			} else if (type is CModOptSig) {
-				((ModifierSig)type).Next.WriteTo(writer, syntax);
+				((ModifierSig)type).Next.WriteTo(writer, syntax, depth);
 				writer.WriteSpace();
 				writer.Write("modopt", TextTokenType.Keyword);
 				writer.Write('(', TextTokenType.Operator);
-				((ModifierSig)type).Modifier.WriteTo(writer, ILNameSyntax.TypeName);
+				((ModifierSig)type).Modifier.WriteTo(writer, ILNameSyntax.TypeName, depth);
 				writer.Write(')', TextTokenType.Operator);
 				writer.WriteSpace();
 			}
 			else if (type is CModReqdSig) {
-				((ModifierSig)type).Next.WriteTo(writer, syntax);
+				((ModifierSig)type).Next.WriteTo(writer, syntax, depth);
 				writer.WriteSpace();
 				writer.Write("modreq", TextTokenType.Keyword);
 				writer.Write('(', TextTokenType.Operator);
-				((ModifierSig)type).Modifier.WriteTo(writer, ILNameSyntax.TypeName);
+				((ModifierSig)type).Modifier.WriteTo(writer, ILNameSyntax.TypeName, depth);
 				writer.Write(')', TextTokenType.Operator);
 				writer.WriteSpace();
 			}
 			else if (type is TypeDefOrRefSig) {
-				WriteTo(((TypeDefOrRefSig)type).TypeDefOrRef, writer, syntax);
+				WriteTo(((TypeDefOrRefSig)type).TypeDefOrRef, writer, syntax, depth);
 			} else if (type is FnPtrSig) {
-				WriteTo(type.ToTypeDefOrRef(), writer, syntax);
+				WriteTo(type.ToTypeDefOrRef(), writer, syntax, depth);
 			}
 			//TODO: SentinelSig
 		}
 
 		public static void WriteTo(this ITypeDefOrRef type, ITextOutput writer, ILNameSyntax syntax = ILNameSyntax.Signature)
 		{
-			if (type == null)
+			type.WriteTo(writer, syntax, 0);
+		}
+
+		public static void WriteTo(this ITypeDefOrRef type, ITextOutput writer, ILNameSyntax syntax, int depth)
+		{
+			if (depth++ > MAX_CONVERTTYPE_DEPTH || type == null)
 				return;
 			var ts = type as TypeSpec;
 			if (ts != null && !(ts.TypeSig is FnPtrSig)) {
-				WriteTo(((TypeSpec)type).TypeSig, writer, syntax);
+				WriteTo(((TypeSpec)type).TypeSig, writer, syntax, depth);
 				return;
 			}
 			string typeFullName = type.FullName;
@@ -407,7 +420,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				}
 
 				if (type.DeclaringType != null) {
-					type.DeclaringType.WriteTo(writer, ILNameSyntax.TypeName);
+					type.DeclaringType.WriteTo(writer, ILNameSyntax.TypeName, depth);
 					writer.Write('/', TextTokenType.Operator);
 					writer.WriteReference(Escape(typeName), type, TextTokenHelper.GetTextTokenType(type));
 				} else {
