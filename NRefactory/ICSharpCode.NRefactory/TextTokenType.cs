@@ -301,6 +301,10 @@ namespace ICSharpCode.NRefactory
 			if (gp != null)
 				return GetTextTokenType(gp);
 
+			// It can be a MemberRef if it doesn't have a field or method sig (invalid metadata)
+			if (r.IsMemberRef)
+				return TextTokenType.Text;
+
 			Debug.Fail("Unknown token");
 			return TextTokenType.Text;
 		}
