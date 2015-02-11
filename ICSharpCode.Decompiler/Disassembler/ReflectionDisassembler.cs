@@ -436,7 +436,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			output.Write("marshal", TextTokenType.Keyword);
 			output.Write('(', TextTokenType.Operator);
-			WriteNativeType(marshalInfo.NativeType, marshalInfo);
+			if (marshalInfo != null)
+				WriteNativeType(marshalInfo.NativeType, marshalInfo);
 			output.Write(')', TextTokenType.Operator);
 			output.WriteSpace();
 		}
@@ -855,7 +856,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				}
 				p.Type.WriteTo(output);
 				output.WriteSpace();
-				if (paramDef != null && paramDef.HasFieldMarshal) {
+				if (paramDef != null && paramDef.MarshalType != null) {
 					WriteMarshalInfo(paramDef.MarshalType);
 				}
 				output.WriteDefinition(DisassemblerHelpers.Escape(p.Name), p, TextTokenType.Parameter);
