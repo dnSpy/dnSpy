@@ -63,7 +63,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 						continue;
 
 					AddIssue (variable, ctx.TranslateString ("Remove redundant field initializer"),
-						script => script.Replace (variable, new VariableInitializer (variable.Name)));
+						script => script.Replace (variable, new VariableInitializer (null, variable.Name)));
 				}
 			}
 

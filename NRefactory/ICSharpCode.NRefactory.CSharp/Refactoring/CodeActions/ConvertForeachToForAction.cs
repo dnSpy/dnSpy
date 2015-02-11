@@ -48,12 +48,13 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				var countProperty = GetCountProperty(result.Type);
 				
 				// TODO: use another variable name if 'i' is already in use
-				var initializer = new VariableDeclarationStatement(new PrimitiveType("int"), "i", new PrimitiveExpression(0));
+				var initializer = new VariableDeclarationStatement(null, new PrimitiveType("int"), "i", new PrimitiveExpression(0));
 				var id1 = new IdentifierExpression("i");
 				var id2 = id1.Clone();
 				var id3 = id1.Clone();
 				
 				var variableDeclarationStatement = new VariableDeclarationStatement(
+					null,
 					foreachStatement.VariableType.Clone(),
 					foreachStatement.VariableName,
 					new IndexerExpression(foreachStatement.InExpression.Clone(), id3)

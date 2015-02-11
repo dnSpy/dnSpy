@@ -101,7 +101,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 
 					var usingStatement = new UsingStatement
 					{
-						ResourceAcquisition = new VariableDeclarationStatement (variableDecl.Type.Clone (), node.Name,
+						ResourceAcquisition = new VariableDeclarationStatement (null, variableDecl.Type.Clone (), node.Name,
 																				node.Initializer.Clone ()),
 						EmbeddedStatement = body
 					};

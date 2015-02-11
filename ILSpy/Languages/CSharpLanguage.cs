@@ -32,6 +32,7 @@ using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.XmlDoc;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using dnlib.DotNet;
 
@@ -270,22 +271,22 @@ namespace ICSharpCode.ILSpy
 				output.WriteLine();
 				ModuleDef mainModule = assembly.ModuleDefinition;
 				if (mainModule.EntryPoint != null && mainModule.EntryPoint.DeclaringType != null) {
-					output.Write("// Entry point: ");
-					output.WriteReference(mainModule.EntryPoint.DeclaringType.FullName + "." + mainModule.EntryPoint.Name, mainModule.EntryPoint);
+					output.Write("// Entry point: ", TextTokenType.Comment);
+					output.WriteReference(mainModule.EntryPoint.DeclaringType.FullName + "." + mainModule.EntryPoint.Name, mainModule.EntryPoint, TextTokenType.Comment);
 					output.WriteLine();
 				}
-				output.WriteLine("// Architecture: " + GetPlatformDisplayName(mainModule));
+				output.WriteLine("// Architecture: " + GetPlatformDisplayName(mainModule), TextTokenType.Comment);
 				if (!mainModule.IsILOnly) {
-					output.WriteLine("// This assembly contains unmanaged code.");
+					output.WriteLine("// This assembly contains unmanaged code.", TextTokenType.Comment);
 				}
 				if (mainModule.IsClr10)
-					output.WriteLine("// Runtime: .NET 1.0");
+					output.WriteLine("// Runtime: .NET 1.0", TextTokenType.Comment);
 				else if (mainModule.IsClr11)
-					output.WriteLine("// Runtime: .NET 1.1");
+					output.WriteLine("// Runtime: .NET 1.1", TextTokenType.Comment);
 				else if (mainModule.IsClr20)
-					output.WriteLine("// Runtime: .NET 2.0");
+					output.WriteLine("// Runtime: .NET 2.0", TextTokenType.Comment);
 				else if (mainModule.IsClr40)
-					output.WriteLine("// Runtime: .NET 4.0");
+					output.WriteLine("// Runtime: .NET 4.0", TextTokenType.Comment);
 				output.WriteLine();
 				
 				// don't automatically load additional assemblies when an assembly node is selected in the tree view

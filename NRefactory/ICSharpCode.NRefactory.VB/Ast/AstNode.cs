@@ -420,8 +420,8 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public override void AddAnnotation (object annotation)
 		{
-			if (this.IsNull)
-				throw new InvalidOperationException("Cannot add annotations to the null node");
+			if (this.IsNull || annotation == null)
+				return;
 			base.AddAnnotation (annotation);
 		}
 		

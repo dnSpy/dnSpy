@@ -23,7 +23,12 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		
 		public string Name {
 			get { return GetChildByRole (Roles.Identifier).Name; }
-			set { SetChildByRole(Roles.Identifier, new Identifier (value, TextLocation.Empty)); }
+//			set { SetChildByRole(Roles.Identifier, new Identifier (TextToken.Default, value, TextLocation.Empty)); }
+		}
+
+		public Identifier NameToken {
+			get { return GetChildByRole(Roles.Identifier); }
+			set { SetChildByRole(Roles.Identifier, value); }
 		}
 		
 		public AstNodeCollection<AstType> Constraints {

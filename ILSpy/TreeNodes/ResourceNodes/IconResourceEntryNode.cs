@@ -21,7 +21,9 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
+using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -70,7 +72,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				Data.Position = 0;
 				IconBitmapDecoder decoder = new IconBitmapDecoder(Data, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.None);
 				foreach (var frame in decoder.Frames) {
-					output.Write(String.Format("{0}x{1}, {2} bit: ", frame.PixelHeight, frame.PixelWidth, frame.Thumbnail.Format.BitsPerPixel));
+					output.Write(String.Format("{0}x{1}, {2} bit: ", frame.PixelHeight, frame.PixelWidth, frame.Thumbnail.Format.BitsPerPixel), TextTokenType.Text);
 					AddIcon(output, frame);
 					output.WriteLine();
 				}

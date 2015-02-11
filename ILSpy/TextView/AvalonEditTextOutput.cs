@@ -27,6 +27,7 @@ using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.TextView
 {
@@ -68,6 +69,7 @@ namespace ICSharpCode.ILSpy.TextView
 	/// </summary>
 	public sealed class AvalonEditTextOutput : ISmartTextOutput
 	{
+		internal LanguageTokens tokens = new LanguageTokens();
 		int lastLineStart = 0;
 		int lineNumber = 1;
 		readonly StringBuilder b = new StringBuilder();
@@ -176,27 +178,27 @@ namespace ICSharpCode.ILSpy.TextView
 			if (needsIndent) {
 				needsIndent = false;
 				for (int i = 0; i < indent; i++) {
-					b.Append('\t');
+					Append(TextTokenType.Text, '\t');
 				}
 			}
 		}
 		
-		public void Write(char ch)
+		public void Write(char ch, TextTokenType tokenType)
 		{
 			WriteIndent();
-			b.Append(ch);
+			Append(tokenType, ch);
 		}
 		
-		public void Write(string text)
+		public void Write(string text, TextTokenType tokenType)
 		{
 			WriteIndent();
-			b.Append(text);
+			Append(tokenType, text);
 		}
 		
 		public void WriteLine()
 		{
 			Debug.Assert(textDocument == null);
-			b.AppendLine();
+			AppendLine();
 			needsIndent = true;
 			lastLineStart = b.Length;
 			lineNumber++;
@@ -205,21 +207,21 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 		
-		public void WriteDefinition(string text, object definition, bool isLocal)
+		public void WriteDefinition(string text, object definition, TextTokenType tokenType, bool isLocal)
 		{
 			WriteIndent();
 			int start = this.TextLength;
-			b.Append(text);
+			Append(tokenType, text);
 			int end = this.TextLength;
 			this.DefinitionLookup.AddDefinition(definition, this.TextLength);
 			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = definition, IsLocal = isLocal, IsLocalTarget = true });
 		}
 		
-		public void WriteReference(string text, object reference, bool isLocal)
+		public void WriteReference(string text, object reference, TextTokenType tokenType, bool isLocal)
 		{
 			WriteIndent();
 			int start = this.TextLength;
-			b.Append(text);
+			Append(tokenType, text);
 			int end = this.TextLength;
 			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference, IsLocal = isLocal });
 		}
@@ -259,6 +261,24 @@ namespace ICSharpCode.ILSpy.TextView
 		public void AddDebuggerMemberMapping(MemberMapping memberMapping)
 		{
 			DebuggerMemberMappings.Add(memberMapping);
+		}
+
+		void Append(TextTokenType tokenType, char c)
+		{
+			tokens.Append(tokenType, c);
+			b.Append(c);
+		}
+
+		void Append(TextTokenType tokenType, string s)
+		{
+			tokens.Append(tokenType, s);
+			b.Append(s);
+		}
+
+		void AppendLine()
+		{
+			tokens.AppendLine();
+			b.AppendLine();
 		}
 	}
 }

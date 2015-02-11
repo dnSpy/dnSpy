@@ -19,7 +19,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
+using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy
 {
@@ -195,7 +197,7 @@ namespace ICSharpCode.ILSpy
 		{
 			task.Catch<Exception>(exception => MainWindow.Instance.Dispatcher.BeginInvoke(new Action(delegate {
 				AvalonEditTextOutput output = new AvalonEditTextOutput();
-				output.Write(exception.ToString());
+				output.Write(exception.ToString(), TextTokenType.Text);
 				MainWindow.Instance.TextView.ShowText(output);
 			}))).IgnoreExceptions();
 		}

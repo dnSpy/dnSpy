@@ -167,9 +167,9 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// <summary>
 		/// Builds an expression that can be used to access a static member on this type.
 		/// </summary>
-		public MemberReferenceExpression Member(string memberName)
+		public MemberReferenceExpression Member(string memberName, object memberAnnotation)
 		{
-			return new TypeReferenceExpression { Type = this }.Member(memberName);
+			return new TypeReferenceExpression { Type = this }.Member(memberName, memberAnnotation);
 		}
 		
 		/// <summary>
@@ -195,9 +195,9 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// <summary>
 		/// Builds an invocation expression using this type as target.
 		/// </summary>
-		public InvocationExpression Invoke(string methodName, IEnumerable<Expression> arguments)
+		public InvocationExpression Invoke(object annotation, string methodName, IEnumerable<Expression> arguments)
 		{
-			return new TypeReferenceExpression { Type = this }.Invoke(methodName, arguments);
+			return new TypeReferenceExpression { Type = this }.Invoke(annotation, methodName, arguments);
 		}
 		
 		/// <summary>
@@ -211,9 +211,17 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// <summary>
 		/// Builds an invocation expression using this type as target.
 		/// </summary>
-		public InvocationExpression Invoke(string methodName, IEnumerable<AstType> typeArguments, IEnumerable<Expression> arguments)
+		public InvocationExpression Invoke2(object annotation, string methodName, params Expression[] arguments)
 		{
-			return new TypeReferenceExpression { Type = this }.Invoke(methodName, typeArguments, arguments);
+			return new TypeReferenceExpression { Type = this }.Invoke2(annotation, methodName, arguments);
+		}
+		
+		/// <summary>
+		/// Builds an invocation expression using this type as target.
+		/// </summary>
+		public InvocationExpression Invoke(object annotation, string methodName, IEnumerable<AstType> typeArguments, IEnumerable<Expression> arguments)
+		{
+			return new TypeReferenceExpression { Type = this }.Invoke(annotation, methodName, typeArguments, arguments);
 		}
 	}
 }

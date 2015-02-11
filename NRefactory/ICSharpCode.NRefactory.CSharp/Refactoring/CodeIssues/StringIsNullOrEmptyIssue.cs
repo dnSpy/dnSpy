@@ -96,7 +96,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				if (m.Success) {
 					var str = m.Get<Expression>("str").Single();
 					AddIssue(binaryOperatorExpression, ctx.TranslateString("Use string.IsNullOrEmpty"), script => {
-						Expression expr = new PrimitiveType ("string").Invoke("IsNullOrEmpty", str.Clone());
+						Expression expr = new PrimitiveType ("string").Invoke2(TextTokenType.StaticMethod, "IsNullOrEmpty", str.Clone());
 						if (isNegated)
 							expr = new UnaryOperatorExpression (UnaryOperatorType.Not, expr);
 						script.Replace(binaryOperatorExpression, expr);

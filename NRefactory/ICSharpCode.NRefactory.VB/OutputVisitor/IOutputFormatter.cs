@@ -18,7 +18,7 @@ namespace ICSharpCode.NRefactory.VB
 		/// If the identifier conflicts with a keyword, the output visitor will
 		/// call <c>WriteToken("[")</c> before and <c>WriteToken("]")</c> after calling WriteIdentifier().
 		/// </summary>
-		void WriteIdentifier(string identifier);
+		void WriteIdentifier(string identifier, TextTokenType tokenType);
 		
 		/// <summary>
 		/// Writes a keyword to the output.
@@ -28,7 +28,7 @@ namespace ICSharpCode.NRefactory.VB
 		/// <summary>
 		/// Writes a token to the output.
 		/// </summary>
-		void WriteToken(string token);
+		void WriteToken(string token, TextTokenType tokenType);
 		void Space();
 		
 		void Indent();

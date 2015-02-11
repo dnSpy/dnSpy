@@ -23,6 +23,7 @@ using System.Linq;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.Decompiler.ILAst;
+using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy
@@ -58,21 +59,31 @@ namespace ICSharpCode.ILSpy
 				new ILAstOptimizer().Optimize(context, ilMethod, abortBeforeStep.Value);
 			}
 			
-			if (context.CurrentMethodIsAsync)
-				output.WriteLine("async/await");
+			if (context.CurrentMethodIsAsync) {
+				output.Write("async", TextTokenType.Keyword);
+				output.Write('/', TextTokenType.Operator);
+				output.WriteLine("await", TextTokenType.Keyword);
+			}
 			
 			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable)
 				.Where(v => v != null && !v.IsParameter).Distinct();
 			foreach (ILVariable v in allVariables) {
-				output.WriteDefinition(v.Name, v);
+				output.WriteDefinition(v.Name, v, v.IsParameter ? TextTokenType.Parameter : TextTokenType.Local);
 				if (v.Type != null) {
-					output.Write(" : ");
-					if (v.IsPinned)
-						output.Write("pinned ");
+					output.WriteSpace();
+					output.Write(':', TextTokenType.Operator);
+					output.WriteSpace();
+					if (v.IsPinned) {
+						output.Write("pinned", TextTokenType.Keyword);
+						output.WriteSpace();
+					}
 					v.Type.WriteTo(output, ILNameSyntax.ShortTypeName);
 				}
 				if (v.IsGenerated) {
-					output.Write(" [generated]");
+					output.WriteSpace();
+					output.Write('[', TextTokenType.Operator);
+					output.Write("generated", TextTokenType.Keyword);
+					output.Write(']', TextTokenType.Operator);
 				}
 				output.WriteLine();
 			}

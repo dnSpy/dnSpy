@@ -19,6 +19,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
 using dnlib.DotNet;
@@ -92,8 +93,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		public TypeOfPattern(string groupName)
 		{
-			childNode = new TypePattern(typeof(Type)).ToType().Invoke(
-				"GetTypeFromHandle", new TypeOfExpression(new AnyNode(groupName)).Member("TypeHandle"));
+			childNode = new TypePattern(typeof(Type)).ToType().Invoke2(TextTokenType.StaticMethod,
+				"GetTypeFromHandle", new TypeOfExpression(new AnyNode(groupName)).Member("TypeHandle", TextTokenType.InstanceProperty));
 		}
 		
 		public override bool DoMatch(INode other, Match match)

@@ -129,6 +129,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public Identifier IdentifierToken {
 			get { return GetChildByRole (Roles.Identifier); }
+			set { SetChildByRole(Roles.Identifier, value); }
 		}
 		
 		public override void AcceptVisitor (IAstVisitor visitor)
@@ -174,6 +175,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public Identifier IdentifierToken {
 			get { return GetChildByRole(Roles.Identifier); }
+			set { SetChildByRole(Roles.Identifier, value); }
 		}
 		
 		public Expression Expression {
@@ -223,6 +225,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public Identifier IdentifierToken {
 			get { return GetChildByRole(Roles.Identifier); }
+			set { SetChildByRole(Roles.Identifier, value); }
 		}
 		
 		public CSharpTokenNode AssignToken {
@@ -333,6 +336,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public Identifier JoinIdentifierToken {
 			get { return GetChildByRole(JoinIdentifierRole); }
+			set { SetChildByRole(JoinIdentifierRole, value); }
 		}
 		
 		public CSharpTokenNode InKeyword {
@@ -377,6 +381,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public Identifier IntoIdentifierToken {
 			get { return GetChildByRole(IntoIdentifierRole); }
+			set { SetChildByRole(IntoIdentifierRole, value); }
 		}
 		
 		public override void AcceptVisitor (IAstVisitor visitor)

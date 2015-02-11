@@ -22,8 +22,10 @@ using System.IO;
 using System.Threading.Tasks;
 
 using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
+using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.Xaml
@@ -68,10 +70,10 @@ namespace ICSharpCode.ILSpy.Xaml
 									xaml = reader.ReadToEnd();
 								}
 							}
-							output.Write(xaml);
+							output.Write(xaml, TextTokenType.Text);
 							highlighting = HighlightingManager.Instance.GetDefinitionByExtension(".xml");
 						} catch (Exception ex) {
-							output.Write(ex.ToString());
+							output.Write(ex.ToString(), TextTokenType.Text);
 						}
 						return output;
 					}, token)

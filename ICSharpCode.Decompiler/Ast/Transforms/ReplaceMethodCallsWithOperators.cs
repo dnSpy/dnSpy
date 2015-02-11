@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.PatternMatching;
 using dnlib.DotNet;
 using Ast = ICSharpCode.NRefactory.CSharp;
@@ -102,7 +103,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 								IField field = oldArg.Annotation<IField>();
 								if (field != null) {
 									AstType declaringType = ((TypeOfExpression)mre2.Target).Type.Detach();
-									oldArg.ReplaceWith(declaringType.Member(field.Name).WithAnnotation(field));
+									oldArg.ReplaceWith(declaringType.Member(field.Name, field).WithAnnotation(field));
 									invocationExpression.ReplaceWith(mre1.Target);
 									return;
 								}
@@ -321,10 +322,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		}
 		
 		static readonly Expression getMethodOrConstructorFromHandlePattern =
-			new TypePattern(typeof(MethodBase)).ToType().Invoke(
+			new TypePattern(typeof(MethodBase)).ToType().Invoke2(
+				TextTokenType.StaticMethod,
 				"GetMethodFromHandle",
-				new NamedNode("ldtokenNode", new LdTokenPattern("method")).ToExpression().Member("MethodHandle"),
-				new OptionalNode(new TypeOfExpression(new AnyNode("declaringType")).Member("TypeHandle"))
+				new NamedNode("ldtokenNode", new LdTokenPattern("method")).ToExpression().Member("MethodHandle", TextTokenType.InstanceProperty),
+				new OptionalNode(new TypeOfExpression(new AnyNode("declaringType")).Member("TypeHandle", TextTokenType.InstanceProperty))
 			).CastTo(new Choice {
 		         	new TypePattern(typeof(MethodInfo)),
 		         	new TypePattern(typeof(ConstructorInfo))
@@ -338,7 +340,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (m.Success) {
 				IMethod method = m.Get<AstNode>("method").Single().Annotation<IMethod>();
 				if (method != null && m.Has("declaringType")) {
-					Expression newNode = m.Get<AstType>("declaringType").Single().Detach().Member(method.Name);
+					Expression newNode = m.Get<AstType>("declaringType").Single().Detach().Member(method.Name, method);
 					newNode = newNode.Invoke(method.MethodSig.GetParameters().Select(p => new TypeReferenceExpression(AstBuilder.ConvertType(p))));
 					newNode.AddAnnotation(method);
 					m.Get<AstNode>("method").Single().ReplaceWith(newNode);

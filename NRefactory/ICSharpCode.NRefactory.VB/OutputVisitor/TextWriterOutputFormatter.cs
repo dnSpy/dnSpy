@@ -22,7 +22,7 @@ namespace ICSharpCode.NRefactory.VB
 			this.textWriter = textWriter;
 		}
 		
-		public void WriteIdentifier(string ident)
+		public void WriteIdentifier(string ident, TextTokenType tokenType)
 		{
 			WriteIndentation();
 			textWriter.Write(ident);
@@ -34,7 +34,7 @@ namespace ICSharpCode.NRefactory.VB
 			textWriter.Write(keyword);
 		}
 		
-		public void WriteToken(string token)
+		public void WriteToken(string token, TextTokenType tokenType)
 		{
 			WriteIndentation();
 			textWriter.Write(token);

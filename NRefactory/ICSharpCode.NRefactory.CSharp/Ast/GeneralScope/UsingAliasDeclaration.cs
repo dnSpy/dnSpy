@@ -53,6 +53,10 @@ namespace ICSharpCode.NRefactory.CSharp
 				SetChildByRole(AliasRole, Identifier.Create (value));
 			}
 		}
+
+		public Identifier AliasToken {
+			get { return GetChildByRole (AliasRole); }
+		}
 		
 		public CSharpTokenNode AssignToken {
 			get { return GetChildByRole (Roles.Assign); }
@@ -74,7 +78,9 @@ namespace ICSharpCode.NRefactory.CSharp
 		public UsingAliasDeclaration (string alias, string nameSpace)
 		{
 			AddChild (Identifier.Create (alias), AliasRole);
-			AddChild (new SimpleType (nameSpace), ImportRole);
+			var st = new SimpleType (nameSpace);
+			st.AddAnnotation (TextTokenType.NamespacePart);
+			AddChild (st, ImportRole);
 		}
 		
 		public UsingAliasDeclaration (string alias, AstType import)

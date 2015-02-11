@@ -53,8 +53,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			set {
 				if (string.IsNullOrEmpty(value))
 					SetChildByRole(Roles.Identifier, null);
-				else
-					SetChildByRole(Roles.Identifier, Identifier.Create (value));
+				else {
+					var id = Identifier.Create(value);
+					id.AddAnnotation(TextTokenType.Label);
+					SetChildByRole(Roles.Identifier, id);
+				}
 			}
 		}
 		

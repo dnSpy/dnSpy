@@ -50,7 +50,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			this.IndentationString = "\t";
 		}
 		
-		public void WriteIdentifier(string ident)
+		public void WriteIdentifier(string ident, TextTokenType tokenType)
 		{
 			WriteIndentation();
 			textWriter.Write(ident);
@@ -64,7 +64,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			isAtStartOfLine = false;
 		}
 		
-		public void WriteToken(string token)
+		public void WriteToken(string token, TextTokenType tokenType)
 		{
 			WriteIndentation();
 			textWriter.Write(token);

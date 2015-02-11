@@ -46,7 +46,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				return null;
 
 			return new CodeAction (context.TranslateString ("Join local variable declaration and assignment"), script => {
-				var jointVariableDecl = new VariableDeclarationStatement (variableDecl.Type.Clone (),
+				var jointVariableDecl = new VariableDeclarationStatement (null, variableDecl.Type.Clone (),
 					node.Name, match.Get<Expression> ("value").First ().Clone ());
 				script.Replace (variableDecl.NextSibling, jointVariableDecl);
 				if (variableDecl.Variables.Count == 1) {

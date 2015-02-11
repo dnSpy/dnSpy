@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
+using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy
@@ -109,7 +110,7 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options)
 		{
-			output.WriteLine("// " + assembly.FileName);
+			output.WriteLine("// " + assembly.FileName, TextTokenType.Comment);
 			output.WriteLine();
 			
 			ReflectionDisassembler rd = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);

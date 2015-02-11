@@ -46,6 +46,7 @@ using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.XmlDoc;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.Documentation;
 using Microsoft.Win32;
 using dnlib.DotNet;
@@ -115,6 +116,11 @@ namespace ICSharpCode.ILSpy.TextView
 		}
 		
 		#endregion
+
+		internal void OnThemeUpdated()
+		{
+			textEditor.OnThemeUpdated();
+		}
 		
 		#region Line margin
 
@@ -261,7 +267,7 @@ namespace ICSharpCode.ILSpy.TextView
 						}
 						if (task.IsCanceled) {
 							AvalonEditTextOutput output = new AvalonEditTextOutput();
-							output.WriteLine("The operation was canceled.");
+							output.WriteLine("The operation was canceled.", TextTokenType.Text);
 							ShowOutput(output);
 						}
 						tcs.SetFromTask(task);
@@ -323,6 +329,8 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			Debug.WriteLine("Showing {0} characters of output", textOutput.TextLength);
 			Stopwatch w = Stopwatch.StartNew();
+			textEditor.LanguageTokens = textOutput.tokens;
+			textEditor.LanguageTokens.Finish();
 
 			ClearLocalReferenceMarks();
 			textEditor.ScrollToHome();
@@ -444,7 +452,7 @@ namespace ICSharpCode.ILSpy.TextView
 					if (exception is OutputLengthExceededException) {
 						WriteOutputLengthExceededMessage(output, context, outputLengthLimit == DefaultOutputLengthLimit);
 					} else {
-						output.WriteLine(exception.ToString());
+						output.WriteLine(exception.ToString(), TextTokenType.Text);
 					}
 					ShowOutput(output);
 					decompiledNodes = context.TreeNodes;
@@ -521,9 +529,9 @@ namespace ICSharpCode.ILSpy.TextView
 		void WriteOutputLengthExceededMessage(ISmartTextOutput output, DecompilationContext context, bool wasNormalLimit)
 		{
 			if (wasNormalLimit) {
-				output.WriteLine("You have selected too much code for it to be displayed automatically.");
+				output.WriteLine("You have selected too much code for it to be displayed automatically.", TextTokenType.Text);
 			} else {
-				output.WriteLine("You have selected too much code; it cannot be displayed here.");
+				output.WriteLine("You have selected too much code; it cannot be displayed here.", TextTokenType.Text);
 			}
 			output.WriteLine();
 			if (wasNormalLimit) {
@@ -638,7 +646,7 @@ namespace ICSharpCode.ILSpy.TextView
 					// Unpack aggregate exceptions as long as there's only a single exception:
 					// (assembly load errors might produce nested aggregate exceptions)
 					AvalonEditTextOutput output = new AvalonEditTextOutput();
-					output.WriteLine(ex.ToString());
+					output.WriteLine(ex.ToString(), TextTokenType.Text);
 					ShowOutput(output);
 				}).HandleExceptions();
 		}
@@ -662,7 +670,7 @@ namespace ICSharpCode.ILSpy.TextView
 						}
 						stopwatch.Stop();
 						AvalonEditTextOutput output = new AvalonEditTextOutput();
-						output.WriteLine("Decompilation complete in " + stopwatch.Elapsed.TotalSeconds.ToString("F1") + " seconds.");
+						output.WriteLine("Decompilation complete in " + stopwatch.Elapsed.TotalSeconds.ToString("F1") + " seconds.", TextTokenType.Text);
 						output.WriteLine();
 						output.AddButton(null, "Open Explorer", delegate { Process.Start("explorer", "/select,\"" + fileName + "\""); });
 						output.WriteLine();

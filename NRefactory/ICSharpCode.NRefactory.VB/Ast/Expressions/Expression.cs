@@ -35,36 +35,36 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		/// <summary>
 		/// Builds an member reference expression using this expression as target.
 		/// </summary>
-		public MemberAccessExpression Member(string memberName)
+		public MemberAccessExpression Member(object annotation, string memberName)
 		{
-			return new MemberAccessExpression { Target = this, MemberName = memberName };
+			return new MemberAccessExpression { Target = this, MemberName = Identifier.Create(annotation, memberName) };
 		}
 		
 		/// <summary>
 		/// Builds an invocation expression using this expression as target.
 		/// </summary>
-		public InvocationExpression Invoke(string methodName, IEnumerable<Expression> arguments)
+		public InvocationExpression Invoke2(object annotations, string methodName, IEnumerable<Expression> arguments)
 		{
-			return Invoke(methodName, null, arguments);
+			return Invoke(annotations, methodName, null, arguments);
 		}
 		
 		/// <summary>
 		/// Builds an invocation expression using this expression as target.
 		/// </summary>
-		public InvocationExpression Invoke(string methodName, params Expression[] arguments)
+		public InvocationExpression Invoke2(object annotations, string methodName, params Expression[] arguments)
 		{
-			return Invoke(methodName, null, arguments);
+			return Invoke(annotations, methodName, null, arguments);
 		}
 		
 		/// <summary>
 		/// Builds an invocation expression using this expression as target.
 		/// </summary>
-		public InvocationExpression Invoke(string methodName, IEnumerable<AstType> typeArguments, IEnumerable<Expression> arguments)
+		public InvocationExpression Invoke(object annotation, string methodName, IEnumerable<AstType> typeArguments, IEnumerable<Expression> arguments)
 		{
 			InvocationExpression ie = new InvocationExpression();
 			MemberAccessExpression mre = new MemberAccessExpression();
 			mre.Target = this;
-			mre.MemberName = methodName;
+			mre.MemberName = Identifier.Create(TextTokenType.InstanceMethod, methodName);
 			mre.TypeArguments.AddRange(typeArguments);
 			ie.Target = mre;
 			ie.Arguments.AddRange(arguments);

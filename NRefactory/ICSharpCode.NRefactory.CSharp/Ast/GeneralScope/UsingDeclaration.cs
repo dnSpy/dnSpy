@@ -67,7 +67,9 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		public UsingDeclaration (string nameSpace)
 		{
-			AddChild (new SimpleType (nameSpace), ImportRole);
+			var st = new SimpleType (nameSpace);
+			st.AddAnnotation (TextTokenType.NamespacePart);
+			AddChild (st, ImportRole);
 		}
 		
 		public UsingDeclaration (AstType import)

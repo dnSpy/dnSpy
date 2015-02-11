@@ -45,30 +45,30 @@ namespace ICSharpCode.Decompiler.Ast
 			this.output = output;
 		}
 		
-		public void WriteIdentifier(string identifier)
+		public void WriteIdentifier(string identifier, TextTokenType tokenType)
 		{
 			var definition = GetCurrentDefinition();
 			if (definition != null) {
-				output.WriteDefinition(identifier, definition, false);
+				output.WriteDefinition(identifier, definition, tokenType, false);
 				return;
 			}
 			
 			object memberRef = GetCurrentMemberReference();
 
 			if (memberRef != null) {
-				output.WriteReference(identifier, memberRef);
+				output.WriteReference(identifier, memberRef, tokenType);
 				return;
 			}
 
 			definition = GetCurrentLocalDefinition();
 			if (definition != null) {
-				output.WriteDefinition(identifier, definition);
+				output.WriteDefinition(identifier, definition, tokenType);
 				return;
 			}
 
 			memberRef = GetCurrentLocalReference();
 			if (memberRef != null) {
-				output.WriteReference(identifier, memberRef, true);
+				output.WriteReference(identifier, memberRef, tokenType, true);
 				return;
 			}
 
@@ -77,7 +77,7 @@ namespace ICSharpCode.Decompiler.Ast
 				firstUsingDeclaration = false;
 			}
 
-			output.Write(identifier);
+			output.Write(identifier, tokenType);
 		}
 
 		IMemberRef GetCurrentMemberReference()
@@ -165,25 +165,25 @@ namespace ICSharpCode.Decompiler.Ast
 			IMemberRef memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
 			if (memberRef != null && node is ConstructorInitializer)
-				output.WriteReference(keyword, memberRef);
+				output.WriteReference(keyword, memberRef, TextTokenType.Keyword);
 			else
-				output.Write(keyword);
+				output.Write(keyword, TextTokenType.Keyword);
 		}
 		
-		public void WriteToken(string token)
+		public void WriteToken(string token, TextTokenType tokenType)
 		{
 			// Attach member reference to token only if there's no identifier in the current node.
 			IMemberRef memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
 			if (memberRef != null && node.GetChildByRole(Roles.Identifier).IsNull)
-				output.WriteReference(token, memberRef);
+				output.WriteReference(token, memberRef, tokenType);
 			else
-				output.Write(token);
+				output.Write(token, tokenType);
 		}
 		
 		public void Space()
 		{
-			output.Write(' ');
+			output.WriteSpace();
 		}
 		
 		public void OpenBrace(BraceStyle style)
@@ -194,14 +194,14 @@ namespace ICSharpCode.Decompiler.Ast
 				output.MarkFoldStart(defaultCollapsed: braceLevelWithinType == 1);
 			}
 			output.WriteLine();
-			output.WriteLine("{");
+			output.WriteLineLeftBrace();
 			output.Indent();
 		}
 		
 		public void CloseBrace(BraceStyle style)
 		{
 			output.Unindent();
-			output.Write('}');
+			output.WriteRightBrace();
 			if (nodeStack.OfType<BlockStatement>().Count() <= 1 || FoldBraces)
 				output.MarkFoldEnd();
 			if (braceLevelWithinType >= 0)
@@ -231,13 +231,13 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			switch (commentType) {
 				case CommentType.SingleLine:
-					output.Write("//");
-					output.WriteLine(content);
+					output.Write("//", TextTokenType.Comment);
+					output.WriteLine(content, TextTokenType.Comment);
 					break;
 				case CommentType.MultiLine:
-					output.Write("/*");
-					output.Write(content);
-					output.Write("*/");
+					output.Write("/*", TextTokenType.Comment);
+					output.Write(content, TextTokenType.Comment);
+					output.Write("*/", TextTokenType.Comment);
 					break;
 				case CommentType.Documentation:
 					bool isLastLine = !(nodeStack.Peek().NextSibling is Comment);
@@ -245,8 +245,8 @@ namespace ICSharpCode.Decompiler.Ast
 						inDocumentationComment = true;
 						output.MarkFoldStart("///" + content, true);
 					}
-					output.Write("///");
-					output.Write(content);
+					output.Write("///", TextTokenType.XmlDocTag);
+					output.WriteXmlDoc(content);
 					if (inDocumentationComment && isLastLine) {
 						inDocumentationComment = false;
 						output.MarkFoldEnd();
@@ -254,7 +254,7 @@ namespace ICSharpCode.Decompiler.Ast
 					output.WriteLine();
 					break;
 				default:
-					output.Write(content);
+					output.Write(content, TextTokenType.Comment);
 					break;
 			}
 		}
@@ -262,11 +262,11 @@ namespace ICSharpCode.Decompiler.Ast
 		public void WritePreProcessorDirective(PreProcessorDirectiveType type, string argument)
 		{
 			// pre-processor directive must start on its own line
-			output.Write('#');
-			output.Write(type.ToString().ToLowerInvariant());
+			output.Write('#', TextTokenType.Text);
+			output.Write(type.ToString().ToLowerInvariant(), TextTokenType.Text);
 			if (!string.IsNullOrEmpty(argument)) {
-				output.Write(' ');
-				output.Write(argument);
+				output.WriteSpace();
+				output.Write(argument, TextTokenType.Text);
 			}
 			output.WriteLine();
 		}
@@ -290,7 +290,7 @@ namespace ICSharpCode.Decompiler.Ast
 			startLocations.Push(output.Location);
 			
 			if (node is EntityDeclaration && node.Annotation<IMemberRef>() != null && node.GetChildByRole(Roles.Identifier).IsNull)
-				output.WriteDefinition("", node.Annotation<IMemberRef>(), false);
+				output.WriteDefinition("", node.Annotation<IMemberRef>(), TextTokenType.Text, false);
 			
 			MemberMapping mapping = node.Annotation<MemberMapping>();
 			if (mapping != null) {

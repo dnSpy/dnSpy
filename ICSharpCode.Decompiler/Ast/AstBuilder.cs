@@ -30,6 +30,7 @@ using System.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.Decompiler.ILAst;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Utils;
 using dnlib.DotNet;
@@ -294,7 +295,7 @@ namespace ICSharpCode.Decompiler.Ast
 			ConvertAttributes(astType, typeDef);
 			astType.AddAnnotation(typeDef);
 			astType.Modifiers = ConvertModifiers(typeDef);
-			astType.Name = CleanName(typeDef.Name);
+			astType.NameToken = Identifier.Create(CleanName(typeDef.Name)).WithAnnotation(typeDef);
 			
 			if (typeDef.IsEnum) {  // NB: Enum is value type
 				astType.ClassType = ClassType.Enum;
@@ -328,7 +329,7 @@ namespace ICSharpCode.Decompiler.Ast
 					} else {
 						EnumMemberDeclaration enumMember = new EnumMemberDeclaration();
 						enumMember.AddAnnotation(field);
-						enumMember.Name = CleanName(field.Name);
+						enumMember.NameToken = Identifier.Create(CleanName(field.Name)).WithAnnotation(field);
 						var constant = field.Constant == null ? null : field.Constant.Value;
 						TypeCode c = constant == null ? TypeCode.Empty : Type.GetTypeCode(constant.GetType());
 						if (c < TypeCode.Char || c > TypeCode.Decimal)
@@ -344,7 +345,7 @@ namespace ICSharpCode.Decompiler.Ast
 			} else if (typeDef.BaseType != null && typeDef.BaseType.FullName == "System.MulticastDelegate") {
 				DelegateDeclaration dd = new DelegateDeclaration();
 				dd.Modifiers = astType.Modifiers & ~Modifiers.Sealed;
-				dd.Name = astType.Name;
+				dd.NameToken = (Identifier)astType.NameToken.Clone();
 				dd.AddAnnotation(typeDef);
 				astType.Attributes.MoveTo(dd.Attributes);
 				astType.TypeParameters.MoveTo(dd.TypeParameters);
@@ -418,7 +419,7 @@ namespace ICSharpCode.Decompiler.Ast
 			MemberType mType = type as MemberType;
 			if (sType != null) {
 				while (typeDef.GenericParameters.Count > sType.TypeArguments.Count) {
-					sType.TypeArguments.Add(new SimpleType(""));
+					sType.TypeArguments.Add(new SimpleType("").WithAnnotation(TextTokenType.TypeGenericParameter));
 				}
 			}
 			
@@ -428,7 +429,7 @@ namespace ICSharpCode.Decompiler.Ast
 				int outerTypeParamCount = typeDef.DeclaringType == null ? 0 : typeDef.DeclaringType.GenericParameters.Count;
 				
 				while (typeDef.GenericParameters.Count - outerTypeParamCount > mType.TypeArguments.Count) {
-					mType.TypeArguments.Add(new SimpleType(""));
+					mType.TypeArguments.Add(new SimpleType("").WithAnnotation(TextTokenType.TypeGenericParameter));
 				}
 			}
 			
@@ -504,7 +505,7 @@ namespace ICSharpCode.Decompiler.Ast
 				ApplyTypeArgumentsTo(baseType, typeArguments);
 				return baseType;
 			} else if (type is GenericSig) {
-				return new SimpleType(((GenericSig)type).TypeName);
+				return new SimpleType(((GenericSig)type).TypeName).WithAnnotation(type);
 			} else if (type is TypeDefOrRefSig) {
 				return ConvertType(((TypeDefOrRefSig)type).TypeDefOrRef, typeAttributes, ref typeIndex, options, ref depth);
 			} else
@@ -523,7 +524,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (type.DeclaringType != null) {
 				AstType typeRef = ConvertType(type.DeclaringType, typeAttributes, ref typeIndex, options & ~ConvertTypeOptions.IncludeTypeParameterDefinitions, ref depth);
 				string namepart = ICSharpCode.NRefactory.TypeSystem.ReflectionHelper.SplitTypeParameterCountFromReflectionName(type.Name);
-				MemberType memberType = new MemberType { Target = typeRef, MemberName = namepart };
+				MemberType memberType = new MemberType { Target = typeRef, MemberNameToken = Identifier.Create(namepart).WithAnnotation(type) };
 				memberType.AddAnnotation(type);
 				if ((options & ConvertTypeOptions.IncludeTypeParameterDefinitions) == ConvertTypeOptions.IncludeTypeParameterDefinitions) {
 					AddTypeParameterDefininitionsTo(type, memberType);
@@ -585,11 +586,11 @@ namespace ICSharpCode.Decompiler.Ast
 					AstType astType;
 					if ((options & ConvertTypeOptions.IncludeNamespace) == ConvertTypeOptions.IncludeNamespace && ns.Length > 0) {
 						string[] parts = ns.Split('.');
-						AstType nsType = new SimpleType(parts[0]);
+						AstType nsType = new SimpleType(parts[0]).WithAnnotation(TextTokenType.NamespacePart);
 						for (int i = 1; i < parts.Length; i++) {
-							nsType = new MemberType { Target = nsType, MemberName = parts[i] };
+							nsType = new MemberType { Target = nsType, MemberNameToken = Identifier.Create(parts[i]).WithAnnotation(TextTokenType.NamespacePart) }.WithAnnotation(TextTokenType.NamespacePart);
 						}
-						astType = new MemberType { Target = nsType, MemberName = name };
+						astType = new MemberType { Target = nsType, MemberNameToken = Identifier.Create(name).WithAnnotation(type) };
 					} else {
 						astType = new SimpleType(name);
 					}
@@ -609,7 +610,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (typeDef != null && typeDef.HasGenericParameters) {
 				List<AstType> typeArguments = new List<AstType>();
 				foreach (GenericParam gp in typeDef.GenericParameters) {
-					typeArguments.Add(new SimpleType(gp.Name));
+					typeArguments.Add(new SimpleType(gp.Name).WithAnnotation(gp));
 				}
 				ApplyTypeArgumentsTo(astType, typeArguments);
 			}
@@ -803,7 +804,7 @@ namespace ICSharpCode.Decompiler.Ast
 			MethodDeclaration astMethod = new MethodDeclaration();
 			astMethod.AddAnnotation(methodDef);
 			astMethod.ReturnType = ConvertType(methodDef.ReturnType, methodDef.Parameters.ReturnParameter.ParamDef);
-			astMethod.Name = CleanName(methodDef.Name);
+			astMethod.NameToken = Identifier.Create(CleanName(methodDef.Name)).WithAnnotation(methodDef);
 			astMethod.TypeParameters.AddRange(MakeTypeParameters(methodDef.GenericParameters));
 			astMethod.Parameters.AddRange(MakeParameters(methodDef));
 			// constraints for override and explicit interface implementation methods are inherited from the base method, so they cannot be specified directly
@@ -859,7 +860,7 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			foreach (var gp in genericParameters) {
 				TypeParameterDeclaration tp = new TypeParameterDeclaration();
-				tp.Name = CleanName(gp.Name);
+				tp.NameToken = Identifier.Create(CleanName(gp.Name)).WithAnnotation(TextTokenHelper.GetTextTokenType(gp));
 				if (gp.IsContravariant)
 					tp.Variance = VarianceModifier.Contravariant;
 				else if (gp.IsCovariant)
@@ -873,7 +874,7 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			foreach (var gp in genericParameters) {
 				Constraint c = new Constraint();
-				c.TypeParameter = new SimpleType(CleanName(gp.Name));
+				c.TypeParameter = new SimpleType(CleanName(gp.Name)).WithAnnotation(gp);
 				// class/struct must be first
 				if (gp.HasReferenceTypeConstraint)
 					c.BaseTypes.Add(new PrimitiveType("class"));
@@ -904,7 +905,7 @@ namespace ICSharpCode.Decompiler.Ast
 				// don't show visibility for static ctors
 				astMethod.Modifiers &= ~Modifiers.VisibilityMask;
 			}
-			astMethod.Name = CleanName(methodDef.DeclaringType.Name);
+			astMethod.NameToken = Identifier.Create(CleanName(methodDef.DeclaringType.Name)).WithAnnotation(methodDef.DeclaringType);
 			astMethod.Parameters.AddRange(MakeParameters(methodDef));
 			astMethod.Body = CreateMethodBody(methodDef, astMethod.Parameters);
 			ConvertAttributes(astMethod, methodDef);
@@ -959,7 +960,7 @@ namespace ICSharpCode.Decompiler.Ast
 					// TODO: add some kind of notification (a comment?) about possible problems with decompiled code due to unresolved references.
 				}
 			}
-			astProp.Name = CleanName(propDef.Name);
+			astProp.NameToken = Identifier.Create(CleanName(propDef.Name)).WithAnnotation(propDef);
 			astProp.ReturnType = ConvertType(propDef.PropertySig.GetRetType(), propDef);
 			
 			if (propDef.GetMethod != null) {
@@ -1019,7 +1020,7 @@ namespace ICSharpCode.Decompiler.Ast
 				EventDeclaration astEvent = new EventDeclaration();
 				ConvertCustomAttributes(astEvent, eventDef);
 				astEvent.AddAnnotation(eventDef);
-				astEvent.Variables.Add(new VariableInitializer(CleanName(eventDef.Name)));
+				astEvent.Variables.Add(new VariableInitializer(eventDef, CleanName(eventDef.Name)));
 				astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
 				if (!eventDef.DeclaringType.IsInterface)
 					astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
@@ -1028,7 +1029,7 @@ namespace ICSharpCode.Decompiler.Ast
 				CustomEventDeclaration astEvent = new CustomEventDeclaration();
 				ConvertCustomAttributes(astEvent, eventDef);
 				astEvent.AddAnnotation(eventDef);
-				astEvent.Name = CleanName(eventDef.Name);
+				astEvent.NameToken = Identifier.Create(CleanName(eventDef.Name)).WithAnnotation(eventDef);
 				astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
 				if (eventDef.AddMethod == null || !IsExplicitInterfaceImplementation(eventDef.AddMethod))
 					astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
@@ -1089,7 +1090,7 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			FieldDeclaration astField = new FieldDeclaration();
 			astField.AddAnnotation(fieldDef);
-			VariableInitializer initializer = new VariableInitializer(CleanName(fieldDef.Name));
+			VariableInitializer initializer = new VariableInitializer(fieldDef, CleanName(fieldDef.Name));
 			astField.AddChild(initializer, Roles.Variable);
 			astField.ReturnType = ConvertType(fieldDef.FieldType, fieldDef);
 			astField.Modifiers = ConvertModifiers(fieldDef);
@@ -1122,7 +1123,11 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			var parameters = MakeParameters(method.Parameters, isLambda);
 			if (method.CallingConvention == dnlib.DotNet.CallingConvention.VarArg) {
-				return parameters.Concat(new[] { new ParameterDeclaration { Type = new PrimitiveType("__arglist") } });
+				var pd = new ParameterDeclaration {
+					Type = new PrimitiveType("__arglist"),
+					NameToken = Identifier.Create("__arglist").WithAnnotation(TextTokenType.Parameter)
+				};
+				return parameters.Concat(new[] { pd });
 			} else {
 				return parameters;
 			}
@@ -1138,7 +1143,7 @@ namespace ICSharpCode.Decompiler.Ast
 				astParam.AddAnnotation(paramDef);
 				if (!(isLambda && paramDef.Type.ContainsAnonymousType()))
 					astParam.Type = ConvertType(paramDef.Type, paramDef.ParamDef);
-				astParam.Name = paramDef.Name;
+				astParam.NameToken = Identifier.Create(paramDef.Name).WithAnnotation(paramDef);
 				
 				if (paramDef.Type is ByRefSig) {
 					astParam.ParameterModifier = (paramDef.HasParamDef && !paramDef.ParamDef.IsIn && paramDef.ParamDef.IsOut) ? ParameterModifier.Out : ParameterModifier.Ref;
@@ -1254,7 +1259,7 @@ namespace ICSharpCode.Decompiler.Ast
 				ide.AddAnnotation(typeRef);
 				ide.IdentifierToken.AddAnnotation(typeRef);
 			}
-			var mre = ide.Member(fieldName);
+			var mre = ide.Member(fieldName, null);
 			if (module != null) {
 				MemberRef mr;
 				mre.AddAnnotation(mr = new MemberRefUser(module, fieldName, new FieldSig(new ValueTypeSig(typeRef)), typeRef));
@@ -1502,7 +1507,9 @@ namespace ICSharpCode.Decompiler.Ast
 					
 					SimpleType st = attribute.Type as SimpleType;
 					if (st != null && st.Identifier.EndsWith("Attribute", StringComparison.Ordinal)) {
-						st.Identifier = st.Identifier.Substring(0, st.Identifier.Length - "Attribute".Length);
+						var id = Identifier.Create(st.Identifier.Substring(0, st.Identifier.Length - "Attribute".Length));
+						id.AddAnnotationsFrom(st.IdentifierToken);
+						st.IdentifierToken = id;
 					}
 
 					if(customAttribute.HasConstructorArguments) {
@@ -1515,14 +1522,14 @@ namespace ICSharpCode.Decompiler.Ast
 						TypeDef resolvedAttributeType = customAttribute.AttributeType.ResolveTypeDef();
 						foreach (var propertyNamedArg in customAttribute.Properties) {
 							var propertyReference = resolvedAttributeType != null ? resolvedAttributeType.Properties.FirstOrDefault(pr => pr.Name == propertyNamedArg.Name) : null;
-							var propertyName = new IdentifierExpression(propertyNamedArg.Name).WithAnnotation(propertyReference);
+							var propertyName = IdentifierExpression.Create(propertyNamedArg.Name, TextTokenHelper.GetTextTokenType((object)propertyReference ?? TextTokenType.InstanceProperty), true).WithAnnotation(propertyReference);
 							var argumentValue = ConvertArgumentValue(propertyNamedArg.Argument);
 							attribute.Arguments.Add(new AssignmentExpression(propertyName, argumentValue));
 						}
 
 						foreach (var fieldNamedArg in customAttribute.Fields) {
 							var fieldReference = resolvedAttributeType != null ? resolvedAttributeType.Fields.FirstOrDefault(f => f.Name == fieldNamedArg.Name) : null;
-							var fieldName = new IdentifierExpression(fieldNamedArg.Name).WithAnnotation(fieldReference);
+							var fieldName = IdentifierExpression.Create(fieldNamedArg.Name, TextTokenHelper.GetTextTokenType((object)fieldReference ?? TextTokenType.InstanceField), true).WithAnnotation(fieldReference);
 							var argumentValue = ConvertArgumentValue(fieldNamedArg.Argument);
 							attribute.Arguments.Add(new AssignmentExpression(fieldName, argumentValue));
 						}
@@ -1563,7 +1570,9 @@ namespace ICSharpCode.Decompiler.Ast
 					
 					SimpleType st = attribute.Type as SimpleType;
 					if (st != null && st.Identifier.EndsWith("Attribute", StringComparison.Ordinal)) {
-						st.Identifier = st.Identifier.Substring(0, st.Identifier.Length - "Attribute".Length);
+						var id = Identifier.Create(st.Identifier.Substring(0, st.Identifier.Length - "Attribute".Length));
+						id.AddAnnotationsFrom(st.IdentifierToken);
+						st.IdentifierToken = id;
 					}
 					
 					var module = secAttribute.AttributeType.Module;
@@ -1574,14 +1583,14 @@ namespace ICSharpCode.Decompiler.Ast
 						TypeDef resolvedAttributeType = secAttribute.AttributeType.ResolveTypeDef();
 						foreach (var propertyNamedArg in secAttribute.Properties) {
 							var propertyReference = resolvedAttributeType != null ? resolvedAttributeType.Properties.FirstOrDefault(pr => pr.Name == propertyNamedArg.Name) : null;
-							var propertyName = new IdentifierExpression(propertyNamedArg.Name).WithAnnotation(propertyReference);
+							var propertyName = IdentifierExpression.Create(propertyNamedArg.Name, TextTokenHelper.GetTextTokenType((object)propertyReference ?? TextTokenType.InstanceProperty), true).WithAnnotation(propertyReference);
 							var argumentValue = ConvertArgumentValue(propertyNamedArg.Argument);
 							attribute.Arguments.Add(new AssignmentExpression(propertyName, argumentValue));
 						}
 
 						foreach (var fieldNamedArg in secAttribute.Fields) {
 							var fieldReference = resolvedAttributeType != null ? resolvedAttributeType.Fields.FirstOrDefault(f => f.Name == fieldNamedArg.Name) : null;
-							var fieldName = new IdentifierExpression(fieldNamedArg.Name).WithAnnotation(fieldReference);
+							var fieldName = IdentifierExpression.Create(fieldNamedArg.Name, TextTokenHelper.GetTextTokenType((object)fieldReference ?? TextTokenType.InstanceField), true).WithAnnotation(fieldReference);
 							var argumentValue = ConvertArgumentValue(fieldNamedArg.Argument);
 							attribute.Arguments.Add(new AssignmentExpression(fieldName, argumentValue));
 						}
@@ -1660,7 +1669,7 @@ namespace ICSharpCode.Decompiler.Ast
 							TypeCode c = constant == null ? TypeCode.Empty : Type.GetTypeCode(constant.GetType());
 							if (c >= TypeCode.Char && c <= TypeCode.Decimal &&
 								object.Equals(CSharpPrimitiveCast.Cast(TypeCode.Int64, constant, false), val))
-								return ConvertType(type).Member(field.Name).WithAnnotation(field);
+								return ConvertType(type).Member(field.Name, field).WithAnnotation(field);
 						} else if (!field.IsStatic)
 							enumBaseTypeCode = TypeAnalysis.GetTypeCode(field.FieldType); // use primitive type of the enum
 					}
@@ -1695,7 +1704,7 @@ namespace ICSharpCode.Decompiler.Ast
 								continue;	// skip None enum value
 
 							if ((fieldValue & enumValue) == fieldValue) {
-								var fieldExpression = ConvertType(type).Member(field.Name).WithAnnotation(field);
+								var fieldExpression = ConvertType(type).Member(field.Name, field).WithAnnotation(field);
 								if (expr == null)
 									expr = fieldExpression;
 								else
@@ -1704,7 +1713,7 @@ namespace ICSharpCode.Decompiler.Ast
 								enumValue &= ~fieldValue;
 							}
 							if ((fieldValue & negatedEnumValue) == fieldValue) {
-								var fieldExpression = ConvertType(type).Member(field.Name).WithAnnotation(field);
+								var fieldExpression = ConvertType(type).Member(field.Name, field).WithAnnotation(field);
 								if (negatedExpr == null)
 									negatedExpr = fieldExpression;
 								else

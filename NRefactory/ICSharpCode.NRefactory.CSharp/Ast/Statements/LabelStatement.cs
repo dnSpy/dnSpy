@@ -36,7 +36,9 @@ namespace ICSharpCode.NRefactory.CSharp
 				return GetChildByRole (Roles.Identifier).Name;
 			}
 			set {
-				SetChildByRole(Roles.Identifier, Identifier.Create (value));
+				var id = Identifier.Create (value);
+				id.AddAnnotation(TextTokenType.Label);
+				SetChildByRole(Roles.Identifier, id);
 			}
 		}
 		

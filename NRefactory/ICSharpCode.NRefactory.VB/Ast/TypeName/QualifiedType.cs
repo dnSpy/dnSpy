@@ -23,9 +23,13 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			get {
 				return GetChildByRole (Roles.Identifier).Name;
 			}
-			set {
-				SetChildByRole (Roles.Identifier, new Identifier (value, TextLocation.Empty));
-			}
+// 			set {
+// 				SetChildByRole (Roles.Identifier, new Identifier (TextToken.Default, value, TextLocation.Empty));
+// 			}
+		}
+
+		public Identifier NameToken {
+			get { return GetChildByRole (Roles.Identifier); }
 		}
 		
 		public QualifiedType(AstType target, Identifier name)

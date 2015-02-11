@@ -53,6 +53,7 @@
 					</MenuItem.Icon>
 				</MenuItem>
 			</MenuItem>
+			<MenuItem Header="_Themes" Name="themeMenu" />
 		</Menu>
 		<!-- ToolBar -->
 		<ToolBar

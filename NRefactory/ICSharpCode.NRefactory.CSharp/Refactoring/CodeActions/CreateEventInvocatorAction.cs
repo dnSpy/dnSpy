@@ -76,7 +76,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 					ReturnType = new PrimitiveType ("void"),
 					Modifiers = ICSharpCode.NRefactory.CSharp.Modifiers.Protected | ICSharpCode.NRefactory.CSharp.Modifiers.Virtual,
 					Body = new BlockStatement () {
-						new VariableDeclarationStatement (eventDeclaration.ReturnType.Clone (), handlerName, new MemberReferenceExpression (new ThisReferenceExpression (), initializer.Name)),
+						new VariableDeclarationStatement (null, eventDeclaration.ReturnType.Clone (), handlerName, new MemberReferenceExpression (new ThisReferenceExpression (), initializer.Name)),
 						new IfElseStatement () {
 							Condition = new BinaryOperatorExpression (new IdentifierExpression (handlerName), BinaryOperatorType.InEquality, new PrimitiveExpression (null)),
 							TrueStatement = new ExpressionStatement (new InvocationExpression (new IdentifierExpression (handlerName), arguments))

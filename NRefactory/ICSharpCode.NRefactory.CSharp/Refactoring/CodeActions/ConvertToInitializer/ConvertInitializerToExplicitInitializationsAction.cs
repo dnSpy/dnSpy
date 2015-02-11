@@ -145,7 +145,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				} else {
 					AstType declarationType = GetDeclarationType(objectCreateExpression.Type);
 					var name = namingHelper.GenerateVariableName(objectCreateExpression.Type);
-					var variableInitializer = new VariableDeclarationStatement(declarationType, name, newCreation);
+					var variableInitializer = new VariableDeclarationStatement(null, declarationType, name, newCreation);
 					statements.Add(variableInitializer);
 
 					var identifier = new IdentifierExpression(name);

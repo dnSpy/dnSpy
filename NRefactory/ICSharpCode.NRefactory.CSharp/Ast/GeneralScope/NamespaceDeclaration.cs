@@ -58,7 +58,11 @@ namespace ICSharpCode.NRefactory.CSharp
 				return builder.ToString ();
 			}
 			set {
-				GetChildrenByRole(Roles.Identifier).ReplaceWith(value.Split('.').Select(ident => Identifier.Create (ident)));
+				GetChildrenByRole(Roles.Identifier).ReplaceWith(value.Split('.').Select(ident => {
+					var id = Identifier.Create (ident);
+					id.AddAnnotation(TextTokenType.NamespacePart);
+					return id;
+				}));
 			}
 		}
 		

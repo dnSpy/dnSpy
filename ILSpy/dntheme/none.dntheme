@@ -1,0 +1,6 @@
+<theme name="none" menu-name="_None" sort="999999">
+	<colors>
+		<color name="defaulttext" fg="Black" bg="White" />
+		<color name="selection" bg="#ADD6FF" />
+	</colors>
+</theme>

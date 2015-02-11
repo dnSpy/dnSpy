@@ -97,39 +97,39 @@ namespace ICSharpCode.NRefactory.CSharp
 				WriteMemberDeclarationName((IMember)entity, formatter, formattingPolicy);
 			
 			if ((ConversionFlags & ConversionFlags.ShowParameterList) == ConversionFlags.ShowParameterList && HasParameters(entity)) {
-				formatter.WriteToken(entity.EntityType == EntityType.Indexer ? "[" : "(");
+				formatter.WriteTokenOperator(entity.EntityType == EntityType.Indexer ? "[" : "(");
 				bool first = true;
 				foreach (var param in node.GetChildrenByRole(Roles.Parameter)) {
 					if (first) {
 						first = false;
 					} else {
-						formatter.WriteToken(",");
+						formatter.WriteTokenOperator(",");
 						formatter.Space();
 					}
 					param.AcceptVisitor(new CSharpOutputVisitor(formatter, formattingPolicy));
 				}
-				formatter.WriteToken(entity.EntityType == EntityType.Indexer ? "]" : ")");
+				formatter.WriteTokenOperator(entity.EntityType == EntityType.Indexer ? "]" : ")");
 			}
 			
 			if ((ConversionFlags & ConversionFlags.ShowBody) == ConversionFlags.ShowBody && !(node is TypeDeclaration)) {
 				IProperty property = entity as IProperty;
 				if (property != null) {
 					formatter.Space();
-					formatter.WriteToken("{");
+					formatter.WriteTokenBrace("{");
 					formatter.Space();
 					if (property.CanGet) {
 						formatter.WriteKeyword("get");
-						formatter.WriteToken(";");
+						formatter.WriteTokenOperator(";");
 						formatter.Space();
 					}
 					if (property.CanSet) {
 						formatter.WriteKeyword("set");
-						formatter.WriteToken(";");
+						formatter.WriteTokenOperator(";");
 						formatter.Space();
 					}
-					formatter.WriteToken("}");
+					formatter.WriteTokenBrace("}");
 				} else {
-					formatter.WriteToken(";");
+					formatter.WriteTokenOperator(";");
 				}
 			}
 		}
@@ -166,12 +166,12 @@ namespace ICSharpCode.NRefactory.CSharp
 			TypeSystemAstBuilder astBuilder = CreateAstBuilder();
 			if (typeDef.DeclaringTypeDefinition != null) {
 				WriteTypeDeclarationName(typeDef.DeclaringTypeDefinition, formatter, formattingPolicy);
-				formatter.WriteToken(".");
+				formatter.WriteTokenOperator(".");
 			} else if ((ConversionFlags & ConversionFlags.UseFullyQualifiedTypeNames) == ConversionFlags.UseFullyQualifiedTypeNames) {
-				formatter.WriteIdentifier(typeDef.Namespace);
-				formatter.WriteToken(".");
+				formatter.WriteIdentifier(typeDef.Namespace, TextTokenType.Text);
+				formatter.WriteTokenOperator(".");
 			}
-			formatter.WriteIdentifier(typeDef.Name);
+			formatter.WriteIdentifier(typeDef.Name, TextTokenType.Text);
 			if ((ConversionFlags & ConversionFlags.ShowTypeParameterList) == ConversionFlags.ShowTypeParameterList) {
 				var outputVisitor = new CSharpOutputVisitor(formatter, formattingPolicy);
 				outputVisitor.WriteTypeParameters(astBuilder.ConvertEntity(typeDef).GetChildrenByRole(Roles.TypeParameter));
@@ -183,18 +183,18 @@ namespace ICSharpCode.NRefactory.CSharp
 			TypeSystemAstBuilder astBuilder = CreateAstBuilder();
 			if ((ConversionFlags & ConversionFlags.ShowDeclaringType) == ConversionFlags.ShowDeclaringType) {
 				ConvertType(member.DeclaringType, formatter, formattingPolicy);
-				formatter.WriteToken(".");
+				formatter.WriteTokenOperator(".");
 			}
 			switch (member.EntityType) {
 				case EntityType.Indexer:
 					formatter.WriteKeyword("this");
 					break;
 				case EntityType.Constructor:
-					formatter.WriteIdentifier(member.DeclaringType.Name);
+					formatter.WriteIdentifier(member.DeclaringType.Name, TextTokenType.Text);
 					break;
 				case EntityType.Destructor:
-					formatter.WriteToken("~");
-					formatter.WriteIdentifier(member.DeclaringType.Name);
+					formatter.WriteTokenOperator("~");
+					formatter.WriteIdentifier(member.DeclaringType.Name, TextTokenType.Text);
 					break;
 				case EntityType.Operator:
 					switch (member.Name) {
@@ -217,14 +217,14 @@ namespace ICSharpCode.NRefactory.CSharp
 							formatter.Space();
 							var operatorType = OperatorDeclaration.GetOperatorType(member.Name);
 							if (operatorType.HasValue)
-								formatter.WriteToken(OperatorDeclaration.GetToken(operatorType.Value));
+								formatter.WriteToken(OperatorDeclaration.GetToken(operatorType.Value), TextTokenType.Text);
 							else
-								formatter.WriteIdentifier(member.Name);
+								formatter.WriteIdentifier(member.Name, TextTokenType.Text);
 							break;
 					}
 					break;
 				default:
-					formatter.WriteIdentifier(member.Name);
+					formatter.WriteIdentifier(member.Name, TextTokenType.Text);
 					break;
 			}
 			if ((ConversionFlags & ConversionFlags.ShowTypeParameterList) == ConversionFlags.ShowTypeParameterList && member.EntityType == EntityType.Method) {

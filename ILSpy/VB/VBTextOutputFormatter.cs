@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.VB;
 using ICSharpCode.NRefactory.VB.Ast;
 using dnlib.DotNet;
@@ -74,33 +75,33 @@ namespace ICSharpCode.ILSpy.VB
 				throw new InvalidOperationException();
 		}
 		
-		public void WriteIdentifier(string identifier)
+		public void WriteIdentifier(string identifier, TextTokenType tokenType)
 		{
 			var definition = GetCurrentDefinition();
 			if (definition != null) {
-				output.WriteDefinition(identifier, definition);
+				output.WriteDefinition(identifier, definition, tokenType);
 				return;
 			}
 			
 			object memberRef = GetCurrentMemberReference();
 			if (memberRef != null) {
-				output.WriteReference(identifier, memberRef);
+				output.WriteReference(identifier, memberRef, tokenType);
 				return;
 			}
 
 			definition = GetCurrentLocalDefinition();
 			if (definition != null) {
-				output.WriteDefinition(identifier, definition);
+				output.WriteDefinition(identifier, definition, tokenType);
 				return;
 			}
 
 			memberRef = GetCurrentLocalReference();
 			if (memberRef != null) {
-				output.WriteReference(identifier, memberRef, true);
+				output.WriteReference(identifier, memberRef, tokenType, true);
 				return;
 			}
 
-			output.Write(identifier);
+			output.Write(identifier, tokenType);
 		}
 
 		IMemberRef GetCurrentMemberReference()
@@ -168,22 +169,22 @@ namespace ICSharpCode.ILSpy.VB
 		
 		public void WriteKeyword(string keyword)
 		{
-			output.Write(keyword);
+			output.Write(keyword, TextTokenType.Keyword);
 		}
 		
-		public void WriteToken(string token)
+		public void WriteToken(string token, TextTokenType tokenType)
 		{
 			// Attach member reference to token only if there's no identifier in the current node.
 			IMemberRef memberRef = GetCurrentMemberReference();
 			if (memberRef != null && nodeStack.Peek().GetChildByRole(AstNode.Roles.Identifier).IsNull)
-				output.WriteReference(token, memberRef);
+				output.WriteReference(token, memberRef, tokenType);
 			else
-				output.Write(token);
+				output.Write(token, tokenType);
 		}
 		
 		public void Space()
 		{
-			output.Write(' ');
+			output.WriteSpace();
 		}
 		
 		public void Indent()
@@ -203,11 +204,13 @@ namespace ICSharpCode.ILSpy.VB
 		
 		public void WriteComment(bool isDocumentation, string content)
 		{
-			if (isDocumentation)
-				output.Write("'''");
+			if (isDocumentation) {
+				output.Write("'''", TextTokenType.XmlDocTag);
+				output.WriteXmlDoc(content);
+				output.WriteLine();
+			}
 			else
-				output.Write("'");
-			output.WriteLine(content);
+				output.WriteLine("'" + content, TextTokenType.Comment);
 		}
 		
 		public void MarkFoldStart()

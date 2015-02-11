@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.ILSpy;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using dnlib.DotNet;
 
@@ -37,7 +38,7 @@ namespace TestPlugin
 		public override void DecompileMethod(MethodDef method, ITextOutput output, DecompilationOptions options)
 		{
 			if (method.Body != null) {
-				output.WriteLine("Size of method: {0} bytes", method.Body.GetCodeSize());
+				output.WriteLine(string.Format("Size of method: {0} bytes", method.Body.GetCodeSize()), TextTokenType.Text);
 				
 				ISmartTextOutput smartOutput = output as ISmartTextOutput;
 				if (smartOutput != null) {
@@ -55,7 +56,7 @@ namespace TestPlugin
 												};
 				b.AddMethod(method);
 				b.RunTransformations();
-				output.WriteLine("Decompiled AST has {0} nodes", b.SyntaxTree.DescendantsAndSelf.Count());
+				output.WriteLine(string.Format("Decompiled AST has {0} nodes", b.SyntaxTree.DescendantsAndSelf.Count()), TextTokenType.Text);
 			}
 		}
 	}

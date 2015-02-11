@@ -43,7 +43,7 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 	/// Highlighting brush implementation that takes a frozen brush.
 	/// </summary>
 	[Serializable]
-	sealed class SimpleHighlightingBrush : HighlightingBrush, ISerializable
+	public sealed class SimpleHighlightingBrush : HighlightingBrush, ISerializable
 	{
 		readonly SolidColorBrush brush;
 		
@@ -81,7 +81,7 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 	/// HighlightingBrush implementation that finds a brush using a resource.
 	/// </summary>
 	[Serializable]
-	sealed class SystemColorHighlightingBrush : HighlightingBrush, ISerializable
+	public sealed class SystemColorHighlightingBrush : HighlightingBrush, ISerializable
 	{
 		readonly PropertyInfo property;
 		

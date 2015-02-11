@@ -29,30 +29,47 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Ast = ICSharpCode.NRefactory.VB.Ast;
+
 namespace ICSharpCode.NRefactory.VB.Ast
 {
 	public class SimpleType : AstType
 	{
-		public SimpleType()
+		public SimpleType(Identifier identifier)
 		{
+			this.IdentifierToken = identifier;
+		}
+
+		public SimpleType(IEnumerable<object> annotations, string identifier)
+		{
+			this.IdentifierToken = Ast.Identifier.Create(annotations, identifier);
 		}
 		
-		public SimpleType(string identifier)
+		public SimpleType(TextTokenType tokenType, string identifier)
 		{
-			this.Identifier = identifier;
+			this.IdentifierToken = Ast.Identifier.Create(tokenType, identifier);
 		}
 		
-		public SimpleType(string identifier, TextLocation location)
+		public SimpleType(TextTokenType tokenType, string identifier, TextLocation location)
 		{
-			SetChildByRole (Roles.Identifier, new Identifier (identifier, location));
+			SetChildByRole (Roles.Identifier, new Identifier (tokenType, identifier, location));
 		}
 		
 		public string Identifier {
 			get {
 				return GetChildByRole (Roles.Identifier).Name;
 			}
+// 			set {
+// 				SetChildByRole (Roles.Identifier, new Identifier (TextToken.Default, value, TextLocation.Empty));
+// 			}
+		}
+
+		public Identifier IdentifierToken {
+			get {
+				return GetChildByRole (Roles.Identifier);
+			}
 			set {
-				SetChildByRole (Roles.Identifier, new Identifier (value, TextLocation.Empty));
+				SetChildByRole (Roles.Identifier, value);
 			}
 		}
 		

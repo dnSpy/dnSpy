@@ -34,6 +34,7 @@ using System.Xml.Linq;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
+using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy
 {
@@ -57,7 +58,7 @@ namespace ICSharpCode.ILSpy
 		public static void Display(DecompilerTextView textView)
 		{
 			AvalonEditTextOutput output = new AvalonEditTextOutput();
-			output.WriteLine("dnSpy version " + RevisionClass.FullVersion);
+			output.WriteLine("dnSpy version " + RevisionClass.FullVersion, TextTokenType.Text);
 			bool checkForUpdateCode = false;
 			if (checkForUpdateCode)
 			output.AddUIElement(
@@ -91,7 +92,7 @@ namespace ICSharpCode.ILSpy
 				using (StreamReader r = new StreamReader(s)) {
 					string line;
 					while ((line = r.ReadLine()) != null) {
-						output.WriteLine(line);
+						output.WriteLine(line, TextTokenType.Text);
 					}
 				}
 			}
@@ -134,7 +135,7 @@ namespace ICSharpCode.ILSpy
 							ShowAvailableVersion(task.Result, stackPanel);
 						} catch (Exception ex) {
 							AvalonEditTextOutput exceptionOutput = new AvalonEditTextOutput();
-							exceptionOutput.WriteLine(ex.ToString());
+							exceptionOutput.WriteLine(ex.ToString(), TextTokenType.Text);
 							textView.ShowText(exceptionOutput);
 						}
 					}, TaskScheduler.FromCurrentSynchronizationContext());

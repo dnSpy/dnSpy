@@ -75,14 +75,14 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 		
-		public void Write(char ch)
+		public void Write(char ch, TextTokenType tokenType)
 		{
 			WriteIndent();
 			writer.Write(ch);
 			column++;
 		}
 		
-		public void Write(string text)
+		public void Write(string text, TextTokenType tokenType)
 		{
 			WriteIndent();
 			writer.Write(text);
@@ -97,14 +97,14 @@ namespace ICSharpCode.Decompiler
 			column = 1;
 		}
 		
-		public void WriteDefinition(string text, object definition, bool isLocal)
+		public void WriteDefinition(string text, object definition, TextTokenType tokenType, bool isLocal)
 		{
-			Write(text);
+			Write(text, TextTokenType.Text);
 		}
 		
-		public void WriteReference(string text, object reference, bool isLocal)
+		public void WriteReference(string text, object reference, TextTokenType tokenType, bool isLocal)
 		{
-			Write(text);
+			Write(text, TextTokenType.Text);
 		}
 		
 		void ITextOutput.MarkFoldStart(string collapsedText, bool defaultCollapsed)

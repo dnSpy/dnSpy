@@ -37,10 +37,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 		}
 		
-		public VariableDeclarationStatement(AstType type, string name, Expression initializer = null)
+		public VariableDeclarationStatement(object annotations, AstType type, string name, Expression initializer = null)
 		{
 			this.Type = type;
-			this.Variables.Add(new VariableInitializer(name, initializer));
+			this.Variables.Add(new VariableInitializer(annotations, name, initializer));
 		}
 		
 		public Modifiers Modifiers {

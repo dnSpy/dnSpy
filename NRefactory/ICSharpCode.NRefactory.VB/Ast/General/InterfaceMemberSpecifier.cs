@@ -2,6 +2,7 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Generic;
 
 namespace ICSharpCode.NRefactory.VB.Ast
 {
@@ -15,10 +16,16 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			Member = member;
 		}
 		
-		public InterfaceMemberSpecifier(AstType target, string member)
+		public InterfaceMemberSpecifier(AstType target, string member, TextTokenType typeToken)
 		{
 			Target = new TypeReferenceExpression(target);
-			Member = new Identifier(member, TextLocation.Empty);
+			Member = new Identifier(typeToken, member, TextLocation.Empty);
+		}
+
+		public InterfaceMemberSpecifier(AstType target, string member, IEnumerable<object> annotations)
+		{
+			Target = new TypeReferenceExpression(target);
+			Member = Identifier.Create(annotations, member);
 		}
 		
 		public Expression Target {

@@ -51,7 +51,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				if (service != null)
 					name = service.CheckName(context, name, AffectedEntity.LocalConstant);
 
-				var initializer = new VariableInitializer(name, pexpr.Clone());
+				var initializer = new VariableInitializer(null, name, pexpr.Clone());
 				var decl = new VariableDeclarationStatement() {
 					Type = context.CreateShortType(resolveResult.Type),
 					Modifiers = Modifiers.Const,
@@ -70,7 +70,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				if (service != null)
 					name = service.CheckName(context, name, AffectedEntity.ConstantField);
 
-				var initializer = new VariableInitializer(name, pexpr.Clone());
+				var initializer = new VariableInitializer(null, name, pexpr.Clone());
 
 				var decl = new FieldDeclaration() {
 					ReturnType = context.CreateShortType(resolveResult.Type),

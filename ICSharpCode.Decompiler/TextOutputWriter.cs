@@ -19,6 +19,7 @@
 using System;
 using System.IO;
 using System.Text;
+using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.Decompiler
 {
@@ -39,12 +40,12 @@ namespace ICSharpCode.Decompiler
 		
 		public override void Write(char value)
 		{
-			output.Write(value);
+			output.Write(value, TextTokenType.Text);
 		}
 		
 		public override void Write(string value)
 		{
-			output.Write(value);
+			output.Write(value, TextTokenType.Text);
 		}
 		
 		public override void WriteLine()

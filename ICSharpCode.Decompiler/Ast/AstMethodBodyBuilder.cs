@@ -25,6 +25,7 @@ using System.Threading;
 
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.Decompiler.ILAst;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
 using ICSharpCode.NRefactory.Utils;
@@ -105,7 +106,7 @@ namespace ICSharpCode.Decompiler.Ast
 				                      join v in astBuilder.Parameters on p.Annotation<Parameter>() equals v.OriginalParameter
 				                      select new { p, v.Name }))
 				{
-					pair.p.Name = pair.Name;
+					pair.p.NameToken = Identifier.Create(pair.Name).WithAnnotation(TextTokenType.Parameter);
 				}
 			}
 			
@@ -117,10 +118,10 @@ namespace ICSharpCode.Decompiler.Ast
 			foreach (ILVariable v in localVariablesToDefine) {
 				AstType type;
 				if (v.Type.ContainsAnonymousType())
-					type = new SimpleType("var");
+					type = new SimpleType("var").WithAnnotation(TextTokenType.Keyword);
 				else
 					type = AstBuilder.ConvertType(v.Type);
-				var newVarDecl = new VariableDeclarationStatement(type, v.Name);
+				var newVarDecl = new VariableDeclarationStatement(v.IsParameter ? TextTokenType.Parameter : TextTokenType.Local, type, v.Name);
 				newVarDecl.Variables.Single().AddAnnotation(v);
 				astBlock.Statements.InsertBefore(insertionPoint, newVarDecl);
 			}
@@ -210,7 +211,7 @@ namespace ICSharpCode.Decompiler.Ast
 						tryCatchStmt.CatchClauses.Add(
 							new Ast.CatchClause {
 								Type = AstBuilder.ConvertType(catchClause.ExceptionType),
-								VariableName = catchClause.ExceptionVariable == null ? null : catchClause.ExceptionVariable.Name,
+								VariableNameToken = catchClause.ExceptionVariable == null ? null : Identifier.Create(catchClause.ExceptionVariable.Name).WithAnnotation(catchClause.ExceptionVariable.IsParameter ? TextTokenType.Parameter : TextTokenType.Local),
 								Body = TransformBlock(catchClause)
 							}.WithAnnotation(catchClause.ExceptionVariable));
 					}
@@ -232,7 +233,7 @@ namespace ICSharpCode.Decompiler.Ast
 					ILVariable v = (ILVariable)initializer.Operand;
 					fixedStatement.Variables.Add(
 						new VariableInitializer {
-							Name = v.Name,
+							NameToken = Identifier.Create(v.Name).WithAnnotation(v.IsParameter ? TextTokenType.Parameter : TextTokenType.Local),
 							Initializer = (Expression)TransformExpression(initializer.Arguments[0])
 						}.WithAnnotation(v));
 				}
@@ -407,7 +408,7 @@ namespace ICSharpCode.Decompiler.Ast
 						}
 						return ace;
 					}
-					case ILCode.Ldlen: return arg1.Member("Length");
+					case ILCode.Ldlen: return arg1.Member("Length", TextTokenType.InstanceProperty);
 				case ILCode.Ldelem_I:
 				case ILCode.Ldelem_I1:
 				case ILCode.Ldelem_I2:
@@ -596,18 +597,18 @@ namespace ICSharpCode.Decompiler.Ast
 					return TransformCall(true, byteCode,  args);
 					case ILCode.Ldftn: {
 						IMethod cecilMethod = (IMethod)operand;
-						var expr = new Ast.IdentifierExpression(cecilMethod.Name);
+						var expr = Ast.IdentifierExpression.Create(cecilMethod.Name, cecilMethod);
 						expr.TypeArguments.AddRange(ConvertTypeArguments(cecilMethod));
 						expr.AddAnnotation(cecilMethod);
-						return new IdentifierExpression("ldftn").Invoke(expr)
+						return IdentifierExpression.Create("ldftn", TextTokenType.OpCode).Invoke(expr)
 							.WithAnnotation(new Transforms.DelegateConstruction.Annotation(false));
 					}
 					case ILCode.Ldvirtftn: {
 						IMethod cecilMethod = (IMethod)operand;
-						var expr = new Ast.IdentifierExpression(cecilMethod.Name);
+						var expr = Ast.IdentifierExpression.Create(cecilMethod.Name, cecilMethod);
 						expr.TypeArguments.AddRange(ConvertTypeArguments(cecilMethod));
 						expr.AddAnnotation(cecilMethod);
-						return new IdentifierExpression("ldvirtftn").Invoke(expr)
+						return IdentifierExpression.Create("ldvirtftn", TextTokenType.OpCode).Invoke(expr)
 							.WithAnnotation(new Transforms.DelegateConstruction.Annotation(true));
 					}
 					case ILCode.Calli:       return InlineAssembly(byteCode, args);
@@ -634,27 +635,27 @@ namespace ICSharpCode.Decompiler.Ast
 				case ILCode.Ldfld:
 					if (arg1 is DirectionExpression)
 						arg1 = ((DirectionExpression)arg1).Expression.Detach();
-					return arg1.Member(((IField) operand).Name).WithAnnotation(operand);
+					return arg1.Member(((IField) operand).Name, operand).WithAnnotation(operand);
 				case ILCode.Ldsfld:
 					return AstBuilder.ConvertType(((IField)operand).DeclaringType)
-						.Member(((IField)operand).Name).WithAnnotation(operand);
+						.Member(((IField)operand).Name, operand).WithAnnotation(operand);
 				case ILCode.Stfld:
 					if (arg1 is DirectionExpression)
 						arg1 = ((DirectionExpression)arg1).Expression.Detach();
-					return new AssignmentExpression(arg1.Member(((IField) operand).Name).WithAnnotation(operand), arg2);
+					return new AssignmentExpression(arg1.Member(((IField) operand).Name, operand).WithAnnotation(operand), arg2);
 				case ILCode.Stsfld:
 					return new AssignmentExpression(
 						AstBuilder.ConvertType(((IField)operand).DeclaringType)
-						.Member(((IField)operand).Name).WithAnnotation(operand),
+						.Member(((IField)operand).Name, operand).WithAnnotation(operand),
 						arg1);
 				case ILCode.Ldflda:
 					if (arg1 is DirectionExpression)
 						arg1 = ((DirectionExpression)arg1).Expression.Detach();
-					return MakeRef(arg1.Member(((IField) operand).Name).WithAnnotation(operand));
+					return MakeRef(arg1.Member(((IField) operand).Name, operand).WithAnnotation(operand));
 				case ILCode.Ldsflda:
 					return MakeRef(
 						AstBuilder.ConvertType(((IField)operand).DeclaringType)
-						.Member(((IField)operand).Name).WithAnnotation(operand));
+						.Member(((IField)operand).Name, operand).WithAnnotation(operand));
 					case ILCode.Ldloc: {
 						ILVariable v = (ILVariable)operand;
 						if (!v.IsParameter)
@@ -663,7 +664,7 @@ namespace ICSharpCode.Decompiler.Ast
 						if (v.IsParameter && v.OriginalParameter.IsHiddenThisParameter)
 							expr = new ThisReferenceExpression();
 						else
-							expr = new Ast.IdentifierExpression(((ILVariable)operand).Name).WithAnnotation(operand);
+							expr = Ast.IdentifierExpression.Create(((ILVariable)operand).Name, ((ILVariable)operand).IsParameter ? TextTokenType.Parameter : TextTokenType.Local).WithAnnotation(operand);
 						return v.IsParameter && v.Type is ByRefSig ? MakeRef(expr) : expr;
 					}
 					case ILCode.Ldloca: {
@@ -672,13 +673,13 @@ namespace ICSharpCode.Decompiler.Ast
 							return MakeRef(new ThisReferenceExpression());
 						if (!v.IsParameter)
 							localVariablesToDefine.Add((ILVariable)operand);
-						return MakeRef(new Ast.IdentifierExpression(((ILVariable)operand).Name).WithAnnotation(operand));
+						return MakeRef(Ast.IdentifierExpression.Create(((ILVariable)operand).Name, ((ILVariable)operand).IsParameter ? TextTokenType.Parameter : TextTokenType.Local).WithAnnotation(operand));
 					}
 					case ILCode.Ldnull: return new Ast.NullReferenceExpression();
 					case ILCode.Ldstr:  return new Ast.PrimitiveExpression(operand);
 				case ILCode.Ldtoken:
 					if (operand is ITypeDefOrRef) {
-						return AstBuilder.CreateTypeOfExpression((ITypeDefOrRef)operand).Member("TypeHandle");
+						return AstBuilder.CreateTypeOfExpression((ITypeDefOrRef)operand).Member("TypeHandle", TextTokenType.InstanceProperty);
 					} else {
 						Expression referencedEntity;
 						string loadName;
@@ -687,19 +688,19 @@ namespace ICSharpCode.Decompiler.Ast
 							loadName = "fieldof";
 							handleName = "FieldHandle";
 							IField fr = (IField)operand;
-							referencedEntity = AstBuilder.ConvertType(fr.DeclaringType).Member(fr.Name).WithAnnotation(fr);
+							referencedEntity = AstBuilder.ConvertType(fr.DeclaringType).Member(fr.Name, fr).WithAnnotation(fr);
 						} else if (operand is IMethod) {
 							loadName = "methodof";
 							handleName = "MethodHandle";
 							IMethod mr = (IMethod)operand;
 							var methodParameters = mr.MethodSig.GetParameters().Select(p => new TypeReferenceExpression(AstBuilder.ConvertType(p)));
-							referencedEntity = AstBuilder.ConvertType(mr.DeclaringType).Invoke(mr.Name, methodParameters).WithAnnotation(mr);
+							referencedEntity = AstBuilder.ConvertType(mr.DeclaringType).Invoke(mr, mr.Name, methodParameters).WithAnnotation(mr);
 						} else {
 							loadName = "ldtoken";
 							handleName = "Handle";
-							referencedEntity = new IdentifierExpression(FormatByteCodeOperand(byteCode.Operand));
+							referencedEntity = IdentifierExpression.Create(FormatByteCodeOperand(byteCode.Operand), byteCode.Operand);
 						}
-						return new IdentifierExpression(loadName).Invoke(referencedEntity).WithAnnotation(new LdTokenAnnotation()).Member(handleName);
+						return IdentifierExpression.Create(loadName, TextTokenType.Keyword).Invoke(referencedEntity).WithAnnotation(new LdTokenAnnotation()).Member(handleName, TextTokenType.InstanceProperty);
 					}
 					case ILCode.Leave:    return new GotoStatement() { Label = ((ILLabel)operand).Name };
 				case ILCode.Localloc:
@@ -732,7 +733,7 @@ namespace ICSharpCode.Decompiler.Ast
 					return new UndocumentedExpression {
 						UndocumentedExpressionType = UndocumentedExpressionType.RefType,
 						Arguments = { arg1 }
-					}.Member("TypeHandle");
+					}.Member("TypeHandle", TextTokenType.InstanceProperty);
 				case ILCode.Refanyval:
 					return MakeRef(
 						new UndocumentedExpression {
@@ -763,7 +764,7 @@ namespace ICSharpCode.Decompiler.Ast
 									for (int i = 0; i < args.Count; i++) {
 										atce.Initializers.Add(
 											new NamedExpression {
-												Name = ctor.Parameters[i + skip].Name,
+												NameToken = Identifier.Create(ctor.Parameters[i + skip].Name).WithAnnotation(ctor.Parameters[i + skip]),
 												Expression = args[i]
 											});
 									}
@@ -792,7 +793,7 @@ namespace ICSharpCode.Decompiler.Ast
 						ILVariable locVar = (ILVariable)operand;
 						if (!locVar.IsParameter)
 							localVariablesToDefine.Add(locVar);
-						return new Ast.AssignmentExpression(new Ast.IdentifierExpression(locVar.Name).WithAnnotation(locVar), arg1);
+						return new Ast.AssignmentExpression(Ast.IdentifierExpression.Create(locVar.Name, locVar.IsParameter ? TextTokenType.Parameter : TextTokenType.Local).WithAnnotation(locVar), arg1);
 					}
 					case ILCode.Switch: return InlineAssembly(byteCode, args);
 					case ILCode.Tailcall: return InlineAssembly(byteCode, args);
@@ -813,7 +814,7 @@ namespace ICSharpCode.Decompiler.Ast
 								MemberReferenceExpression mre = m.Get<MemberReferenceExpression>("left").Single();
 								initializer.Elements.Add(
 									new NamedExpression {
-										Name = mre.MemberName,
+										NameToken = (Identifier)mre.MemberNameToken.Clone(),
 										Expression = m.Get<Expression>("right").Single().Detach()
 									}.CopyAnnotationsFrom(mre));
 							} else {
@@ -1036,7 +1037,7 @@ namespace ICSharpCode.Decompiler.Ast
 				if (methodArgs.Count == 0 && cecilMethodDef.IsGetter) {
 					foreach (var prop in cecilMethodDef.DeclaringType.Properties) {
 						if (prop.GetMethod == cecilMethodDef)
-							return target.Member(prop.Name).WithAnnotation(prop).WithAnnotation(cecilMethod);
+							return target.Member(prop.Name, prop).WithAnnotation(prop).WithAnnotation(cecilMethod);
 					}
 				} else if (cecilMethodDef.IsGetter) { // with parameters
 					PropertyDef indexer = GetIndexer(cecilMethodDef);
@@ -1045,7 +1046,7 @@ namespace ICSharpCode.Decompiler.Ast
 				} else if (methodArgs.Count == 1 && cecilMethodDef.IsSetter) {
 					foreach (var prop in cecilMethodDef.DeclaringType.Properties) {
 						if (prop.SetMethod == cecilMethodDef)
-							return new Ast.AssignmentExpression(target.Member(prop.Name).WithAnnotation(prop).WithAnnotation(cecilMethod), methodArgs[0]);
+							return new Ast.AssignmentExpression(target.Member(prop.Name, prop).WithAnnotation(prop).WithAnnotation(cecilMethod), methodArgs[0]);
 					}
 				} else if (methodArgs.Count > 1 && cecilMethodDef.IsSetter) {
 					PropertyDef indexer = GetIndexer(cecilMethodDef);
@@ -1058,7 +1059,7 @@ namespace ICSharpCode.Decompiler.Ast
 					foreach (var ev in cecilMethodDef.DeclaringType.Events) {
 						if (ev.AddMethod == cecilMethodDef) {
 							return new Ast.AssignmentExpression {
-								Left = target.Member(ev.Name).WithAnnotation(ev).WithAnnotation(cecilMethod),
+								Left = target.Member(ev.Name, ev).WithAnnotation(ev).WithAnnotation(cecilMethod),
 								Operator = AssignmentOperatorType.Add,
 								Right = methodArgs[0]
 							};
@@ -1068,7 +1069,7 @@ namespace ICSharpCode.Decompiler.Ast
 					foreach (var ev in cecilMethodDef.DeclaringType.Events) {
 						if (ev.RemoveMethod == cecilMethodDef) {
 							return new Ast.AssignmentExpression {
-								Left = target.Member(ev.Name).WithAnnotation(ev).WithAnnotation(cecilMethod),
+								Left = target.Member(ev.Name, ev).WithAnnotation(ev).WithAnnotation(cecilMethod),
 								Operator = AssignmentOperatorType.Subtract,
 								Right = methodArgs[0]
 							};
@@ -1081,7 +1082,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			// Default invocation
 			AdjustArgumentsForMethodCall(cecilMethodDef ?? cecilMethod, methodArgs);
-			return target.Invoke(cecilMethod.Name, ConvertTypeArguments(cecilMethod), methodArgs).WithAnnotation(cecilMethod);
+			return target.Invoke(cecilMethodDef ?? cecilMethod, cecilMethod.Name, ConvertTypeArguments(cecilMethod), methodArgs).WithAnnotation(cecilMethod);
 		}
 		
 		static Expression UnpackDirectionExpression(Expression target)
@@ -1159,9 +1160,9 @@ namespace ICSharpCode.Decompiler.Ast
 			#endif
 			// Output the operand of the unknown IL code as well
 			if (byteCode.Operand != null) {
-				args.Insert(0, new IdentifierExpression(FormatByteCodeOperand(byteCode.Operand)));
+				args.Insert(0, IdentifierExpression.Create(FormatByteCodeOperand(byteCode.Operand), byteCode.Operand));
 			}
-			return new IdentifierExpression(byteCode.Code.GetName()).Invoke(args);
+			return IdentifierExpression.Create(byteCode.Code.GetName(), TextTokenType.OpCode).Invoke(args);
 		}
 		
 		static string FormatByteCodeOperand(object operand)

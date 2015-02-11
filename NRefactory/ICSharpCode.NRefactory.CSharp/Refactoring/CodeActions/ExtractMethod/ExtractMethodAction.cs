@@ -181,12 +181,12 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring.ExtractMethod
 							continue;
 						if (variable == generatedReturnVariable)
 							continue;
-						script.InsertBefore (statements [0], new VariableDeclarationStatement (context.CreateShortType(variable.Type), variable.Name));
+						script.InsertBefore (statements [0], new VariableDeclarationStatement (null, context.CreateShortType(variable.Type), variable.Name));
 					}
 					AstNode invocationStatement;
 
 					if (generatedReturnVariable != null) {
-						invocationStatement = new VariableDeclarationStatement (new SimpleType ("var"), generatedReturnVariable.Name, invocation);
+						invocationStatement = new VariableDeclarationStatement (null, new SimpleType ("var"), generatedReturnVariable.Name, invocation);
 					} else {
 						invocationStatement = new ExpressionStatement(invocation);
 					}

@@ -33,7 +33,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// If the identifier conflicts with a keyword, the output visitor will
 		/// call <c>WriteToken("@")</c> before calling WriteIdentifier().
 		/// </summary>
-		void WriteIdentifier(string identifier);
+		void WriteIdentifier(string identifier, TextTokenType tokenType);
 		
 		/// <summary>
 		/// Writes a keyword to the output.
@@ -43,7 +43,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// <summary>
 		/// Writes a token to the output.
 		/// </summary>
-		void WriteToken(string token);
+		void WriteToken(string token, TextTokenType tokenType);
 		void Space();
 		
 		void OpenBrace(BraceStyle style);
@@ -56,5 +56,23 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		void WriteComment(CommentType commentType, string content);
 		void WritePreProcessorDirective(PreProcessorDirectiveType type, string argument);
+	}
+
+	public static class Extensions
+	{
+		public static void WriteTokenOperator(this IOutputFormatter output, string token)
+		{
+			output.WriteToken(token, TextTokenType.Operator);
+		}
+
+		public static void WriteTokenBrace(this IOutputFormatter output, string token)
+		{
+			output.WriteToken(token, TextTokenType.Brace);
+		}
+
+		public static void WriteTokenNumber(this IOutputFormatter output, string token)
+		{
+			output.WriteToken(token, TextTokenType.Number);
+		}
 	}
 }

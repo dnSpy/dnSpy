@@ -88,7 +88,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (uoe != null && uoe.Operator == UnaryOperatorType.Dereference) {
 				PointerReferenceExpression pre = new PointerReferenceExpression();
 				pre.Target = uoe.Expression.Detach();
-				pre.MemberName = memberReferenceExpression.MemberName;
+				pre.MemberNameToken = (Identifier)memberReferenceExpression.MemberNameToken.Clone();
 				memberReferenceExpression.TypeArguments.MoveTo(pre.TypeArguments);
 				pre.CopyAnnotationsFrom(uoe);
 				pre.CopyAnnotationsFrom(memberReferenceExpression);

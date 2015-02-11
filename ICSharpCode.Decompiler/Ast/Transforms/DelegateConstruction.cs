@@ -23,6 +23,7 @@ using System.Linq;
 using System.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
 using dnlib.DotNet;
@@ -101,7 +102,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						// now transform the identifier into a member reference
 						MemberReferenceExpression mre = new MemberReferenceExpression();
 						mre.Target = obj;
-						mre.MemberName = methodIdent.Identifier;
+						mre.MemberNameToken = (Identifier)methodIdent.IdentifierToken.Clone();
 						methodIdent.TypeArguments.MoveTo(mre.TypeArguments);
 						mre.AddAnnotation(method);
 						objectCreateExpression.Arguments.Clear();
@@ -350,7 +351,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					ExpressionStatement closureFieldAssignmentPattern = new ExpressionStatement(
 						new AssignmentExpression(
 							new NamedNode("left", new MemberReferenceExpression { 
-							              	Target = new IdentifierExpression(variable.Name),
+							              	Target = IdentifierExpression.Create(variable.Name, variable.IsParameter ? TextTokenType.Parameter : TextTokenType.Local),
 							              	MemberName = Pattern.AnyString
 							              }),
 							new AnyNode("right")
@@ -421,7 +422,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						Type = field.FieldType,
 					};
 					variablesToDeclare.Add(Tuple.Create(AstBuilder.ConvertType(field.FieldType, field), ilVar));
-					dict[field] = new IdentifierExpression(capturedVariableName).WithAnnotation(ilVar);
+					dict[field] = IdentifierExpression.Create(capturedVariableName, TextTokenType.Local).WithAnnotation(ilVar);
 				}
 				
 				// Now figure out where the closure was accessed and use the simpler replacement expression there:
@@ -438,7 +439,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				// Now insert the variable declarations (we can do this after the replacements only so that the scope detection works):
 				Statement insertionPoint = blockStatement.Statements.FirstOrDefault();
 				foreach (var tuple in variablesToDeclare) {
-					var newVarDecl = new VariableDeclarationStatement(tuple.Item1, tuple.Item2.Name);
+					var newVarDecl = new VariableDeclarationStatement(tuple.Item2.IsParameter ? TextTokenType.Parameter : TextTokenType.Local, tuple.Item1, tuple.Item2.Name);
 					newVarDecl.Variables.Single().AddAnnotation(new CapturedVariableAnnotation());
 					newVarDecl.Variables.Single().AddAnnotation(tuple.Item2);
 					blockStatement.Statements.InsertBefore(insertionPoint, newVarDecl);
@@ -476,7 +477,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			// rename identifiers
 			foreach (IdentifierExpression ident in topMostBlock.Descendants.OfType<IdentifierExpression>()) {
 				if (ident.Identifier == name) {
-					ident.Identifier = newName;
+					var id = Identifier.Create(newName);
+					id.AddAnnotationsFrom(ident.IdentifierToken);
+					ident.IdentifierToken = id;
 					ILVariable v = ident.Annotation<ILVariable>();
 					if (v != null)
 						v.Name = newName;
@@ -485,7 +488,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			// rename variable declarations
 			foreach (VariableInitializer vi in topMostBlock.Descendants.OfType<VariableInitializer>()) {
 				if (vi.Name == name) {
-					vi.Name = newName;
+					var id = Identifier.Create(newName);
+					id.AddAnnotationsFrom(vi.NameToken);
+					vi.NameToken = id;
 					ILVariable v = vi.Annotation<ILVariable>();
 					if (v != null)
 						v.Name = newName;

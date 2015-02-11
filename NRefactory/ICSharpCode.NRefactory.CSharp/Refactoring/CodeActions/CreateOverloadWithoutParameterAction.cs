@@ -65,10 +65,10 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 					var body = new BlockStatement ();
 					Expression argExpr;
 					if (node.ParameterModifier == ParameterModifier.Ref) {
-						body.Add (new VariableDeclarationStatement (node.Type.Clone (), node.Name, defaultExpr));
+						body.Add (new VariableDeclarationStatement (null, node.Type.Clone (), node.Name, defaultExpr));
 						argExpr = new DirectionExpression (FieldDirection.Ref, new IdentifierExpression (node.Name));
 					} else if (node.ParameterModifier == ParameterModifier.Out) {
-						body.Add (new VariableDeclarationStatement (node.Type.Clone (), node.Name));
+						body.Add (new VariableDeclarationStatement (null, node.Type.Clone (), node.Name));
 						argExpr = new DirectionExpression (FieldDirection.Out, new IdentifierExpression (node.Name));
 					} else {
 						argExpr = defaultExpr;
@@ -100,7 +100,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				var members = type.GetMembers ().ToArray();
 				if (members.Length == 0)
 					return new DefaultValueExpression (astType.Clone ());
-				return astType.Member(members[0].Name);
+				return astType.Member(members[0].Name, null);
 			}
 
 			if ((type.IsReferenceType ?? false) || type.Kind == TypeKind.Dynamic)

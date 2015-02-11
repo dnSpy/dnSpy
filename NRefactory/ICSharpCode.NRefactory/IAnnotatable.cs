@@ -105,6 +105,14 @@ namespace ICSharpCode.NRefactory
 			if (cloneable != null)
 				annotations = cloneable.Clone();
 		}
+
+		public void AddAnnotationsFrom(AbstractAnnotatable other)
+		{
+			if (other == null)
+				return;
+			foreach (var ann in other.Annotations)
+				AddAnnotation(ann);
+		}
 		
 		sealed class AnnotationList : List<object>, ICloneable
 		{

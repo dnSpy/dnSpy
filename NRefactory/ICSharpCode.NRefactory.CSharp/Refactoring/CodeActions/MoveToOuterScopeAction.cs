@@ -71,7 +71,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 					script.InsertBefore(declaration, innerDeclaration);
 				}
 				script.Remove(declaration);
-				var outerDeclaration = new VariableDeclarationStatement(type, name, initializer.Initializer.Clone());
+				var outerDeclaration = new VariableDeclarationStatement(null, type, name, initializer.Initializer.Clone());
 				script.InsertBefore(insertAnchor, outerDeclaration);
 			});
 		}
@@ -87,7 +87,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 					Expression = new AssignmentExpression(new IdentifierExpression(name), initializer.Initializer.Clone())
 				});
 				script.Remove(declarationStatement);
-				script.InsertBefore(insertAnchor, new VariableDeclarationStatement(type, name, Expression.Null));
+				script.InsertBefore(insertAnchor, new VariableDeclarationStatement(null, type, name, Expression.Null));
 			});
 		}
 

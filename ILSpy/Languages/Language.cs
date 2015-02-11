@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy
@@ -101,7 +102,7 @@ namespace ICSharpCode.ILSpy
 
 		public virtual void WriteCommentLine(ITextOutput output, string comment)
 		{
-			output.WriteLine("// " + comment);
+			output.WriteLine("// " + comment, TextTokenType.Comment);
 		}
 
 		/// <summary>

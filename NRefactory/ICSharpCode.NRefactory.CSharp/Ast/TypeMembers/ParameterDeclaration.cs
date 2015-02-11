@@ -124,7 +124,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		public ParameterDeclaration(AstType type, string name, ParameterModifier modifier = ParameterModifier.None)
 		{
 			Type = type;
-			Name = name;
+			NameToken = Identifier.Create(name);
+			NameToken.AddAnnotation(TextTokenType.Parameter);
 			ParameterModifier = modifier;
 		}
 	}

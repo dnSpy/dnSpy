@@ -54,6 +54,7 @@ namespace ICSharpCode.ILSpy
 			this.SplitterPosition = FromString((string)doc.Element("SplitterPosition"), 0.4);
 			this.TopPaneSplitterPosition = FromString((string)doc.Element("TopPaneSplitterPosition"), 0.3);
 			this.BottomPaneSplitterPosition = FromString((string)doc.Element("BottomPaneSplitterPosition"), 0.3);
+			this.ThemeName = (string)doc.Element("ThemeName") ?? "dark";
 		}
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -78,6 +79,8 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		public double SplitterPosition;
 		public double TopPaneSplitterPosition, BottomPaneSplitterPosition;
+
+		public string ThemeName;
 		
 		public void Save()
 		{
@@ -94,6 +97,7 @@ namespace ICSharpCode.ILSpy
 			doc.Add(new XElement("SplitterPosition", ToString(this.SplitterPosition)));
 			doc.Add(new XElement("TopPaneSplitterPosition", ToString(this.TopPaneSplitterPosition)));
 			doc.Add(new XElement("BottomPaneSplitterPosition", ToString(this.BottomPaneSplitterPosition)));
+			doc.Add(new XElement("ThemeName", ToString(this.ThemeName)));
 			
 			ILSpySettings.SaveSettings(doc);
 		}

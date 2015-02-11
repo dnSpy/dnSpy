@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 using System.Windows.Navigation;
+using ICSharpCode.AvalonEdit.Highlighting;
 
 namespace ICSharpCode.AvalonEdit.Rendering
 {
@@ -42,11 +43,31 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		{
 			this.RequireControlModifierForClick = true;
 		}
+
+		/// <summary>
+		/// Default link color properties
+		/// </summary>
+		public static HighlightingColor DefaultLinkColor = new HighlightingColor {
+			Name = "Default Clickable Link",
+			Foreground = new SimpleHighlightingBrush(Brushes.Blue),
+		};
 		
 		/// <inheritdoc/>
 		public override TextRun CreateTextRun(int startVisualColumn, ITextRunConstructionContext context)
 		{
-			this.TextRunProperties.SetForegroundBrush(Brushes.Blue);
+			if (DefaultLinkColor.Foreground != null)
+				this.TextRunProperties.SetForegroundBrush(DefaultLinkColor.Foreground.GetBrush(context));
+			if (DefaultLinkColor.Background != null)
+				this.TextRunProperties.SetBackgroundBrush(DefaultLinkColor.Background.GetBrush(context));
+			if (DefaultLinkColor.FontStyle != null || DefaultLinkColor.FontWeight != null) {
+				Typeface tf = this.TextRunProperties.Typeface;
+				this.TextRunProperties.SetTypeface(new Typeface(
+					tf.FontFamily,
+					DefaultLinkColor.FontStyle ?? tf.Style,
+					DefaultLinkColor.FontWeight ?? tf.Weight,
+					tf.Stretch
+				));
+			}
 			this.TextRunProperties.SetTextDecorations(TextDecorations.Underline);
 			return base.CreateTextRun(startVisualColumn, context);
 		}

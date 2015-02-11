@@ -177,7 +177,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteSpecialsUpToRole(Roles.Comma, nextNode);
 			Space(policy.SpaceBeforeBracketComma);
 			// TODO: Comma policy has changed.
-			formatter.WriteToken(",");
+			formatter.WriteTokenOperator(",");
 			lastWritten = LastWritten.Other;
 			Space(!noSpaceAfterComma && policy.SpaceAfterBracketComma);
 			// TODO: Comma policy has changed.
@@ -313,7 +313,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			lastWritten = LastWritten.KeywordOrIdentifier;
 		}*/
 		
-		void WriteIdentifier(string identifier, Role<Identifier> identifierRole = null)
+		void WriteIdentifier(string identifier, TextTokenType tokenType, Role<Identifier> identifierRole = null)
 		{
 			WriteSpecialsUpToRole(identifierRole ?? Roles.Identifier);
 			if (IsKeyword(identifier, containerStack.Peek())) {
@@ -321,12 +321,12 @@ namespace ICSharpCode.NRefactory.CSharp
 					Space();
 				}
 				// this space is not strictly required, so we call Space()
-				formatter.WriteToken("@");
+				formatter.WriteTokenOperator("@");
 			} else if (lastWritten == LastWritten.KeywordOrIdentifier) {
 				formatter.Space();
 				// this space is strictly required, so we directly call the formatter
 			}
-			formatter.WriteIdentifier(identifier);
+			formatter.WriteIdentifier(identifier, tokenType);
 			lastWritten = LastWritten.KeywordOrIdentifier;
 		}
 		
@@ -351,7 +351,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				|| lastWritten == LastWritten.Division && token [0] == '*') {
 				formatter.Space();
 			}
-			formatter.WriteToken(token);
+			formatter.WriteToken(token, token.GetTextTokenTypeFromLangToken());
 			if (token == "+") {
 				lastWritten = LastWritten.Plus;
 			} else if (token == "-") {
@@ -507,11 +507,11 @@ namespace ICSharpCode.NRefactory.CSharp
 					}
 				} else {
 					WriteSpecialsUpToRole(Roles.Dot, ident);
-					formatter.WriteToken(".");
+					formatter.WriteTokenOperator(".");
 					lastWritten = LastWritten.Other;
 				}
 				WriteSpecialsUpToNode(ident);
-				formatter.WriteIdentifier(ident.Name);
+				formatter.WriteIdentifier(ident.Name, TextTokenHelper.GetTextTokenType(ident.Annotation<object>()));
 				lastWritten = LastWritten.KeywordOrIdentifier;
 			}
 		}
@@ -843,7 +843,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void VisitIdentifierExpression(IdentifierExpression identifierExpression)
 		{
 			StartNode(identifierExpression);
-			WriteIdentifier(identifierExpression.Identifier);
+			WriteIdentifier(identifierExpression.Identifier, TextTokenHelper.GetTextTokenType(identifierExpression.IdentifierToken.Annotation<object>()));
 			WriteTypeArguments(identifierExpression.TypeArguments);
 			EndNode(identifierExpression);
 		}
@@ -909,7 +909,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			StartNode(memberReferenceExpression);
 			memberReferenceExpression.Target.AcceptVisitor(this);
 			WriteToken(Roles.Dot);
-			WriteIdentifier(memberReferenceExpression.MemberName);
+			WriteIdentifier(memberReferenceExpression.MemberName, TextTokenHelper.GetTextTokenType(memberReferenceExpression.MemberNameToken.Annotation<object>()));
 			WriteTypeArguments(memberReferenceExpression.TypeArguments);
 			EndNode(memberReferenceExpression);
 		}
@@ -984,7 +984,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			StartNode(pointerReferenceExpression);
 			pointerReferenceExpression.Target.AcceptVisitor(this);
 			WriteToken(PointerReferenceExpression.ArrowRole);
-			WriteIdentifier(pointerReferenceExpression.MemberName);
+			WriteIdentifier(pointerReferenceExpression.MemberName, TextTokenHelper.GetTextTokenType(pointerReferenceExpression.MemberNameToken.Annotation<object>()));
 			WriteTypeArguments(pointerReferenceExpression.TypeArguments);
 			EndNode(pointerReferenceExpression);
 		}
@@ -1000,7 +1000,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			StartNode(primitiveExpression);
 			if (!string.IsNullOrEmpty(primitiveExpression.LiteralValue)) {
-				formatter.WriteToken(primitiveExpression.LiteralValue);
+				formatter.WriteToken(primitiveExpression.LiteralValue, TextTokenType.Text);
 			} else {
 				WritePrimitiveValue(primitiveExpression.Value);
 			}
@@ -1033,13 +1033,13 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 			
 			if (val is string) {
-				formatter.WriteToken("\"" + ConvertString(val.ToString()) + "\"");
+				formatter.WriteToken("\"" + ConvertString(val.ToString()) + "\"", TextTokenType.String);
 				lastWritten = LastWritten.Other;
 			} else if (val is char) {
-				formatter.WriteToken("'" + ConvertCharLiteral((char)val) + "'");
+				formatter.WriteToken("'" + ConvertCharLiteral((char)val) + "'", TextTokenType.Char);
 				lastWritten = LastWritten.Other;
 			} else if (val is decimal) {
-				formatter.WriteToken(((decimal)val).ToString(NumberFormatInfo.InvariantInfo) + "m");
+				formatter.WriteTokenNumber(((decimal)val).ToString(NumberFormatInfo.InvariantInfo) + "m");
 				lastWritten = LastWritten.Other;
 			} else if (val is float) {
 				float f = (float)val;
@@ -1049,11 +1049,11 @@ namespace ICSharpCode.NRefactory.CSharp
 					WriteKeyword("float");
 					WriteToken(Roles.Dot);
 					if (float.IsPositiveInfinity(f)) {
-						WriteIdentifier("PositiveInfinity");
+						WriteIdentifier("PositiveInfinity", TextTokenType.LiteralField);
 					} else if (float.IsNegativeInfinity(f)) {
-						WriteIdentifier("NegativeInfinity");
+						WriteIdentifier("NegativeInfinity", TextTokenType.LiteralField);
 					} else {
-						WriteIdentifier("NaN");
+						WriteIdentifier("NaN", TextTokenType.LiteralField);
 					}
 					return;
 				}
@@ -1061,9 +1061,9 @@ namespace ICSharpCode.NRefactory.CSharp
 					// negative zero is a special case
 					// (again, not a primitive expression, but it's better to handle
 					// the special case here than to do it in all code generators)
-					formatter.WriteToken("-");
+					formatter.WriteTokenNumber("-");
 				}
-				formatter.WriteToken(f.ToString("R", NumberFormatInfo.InvariantInfo) + "f");
+				formatter.WriteTokenNumber(f.ToString("R", NumberFormatInfo.InvariantInfo) + "f");
 				lastWritten = LastWritten.Other;
 			} else if (val is double) {
 				double f = (double)val;
@@ -1073,25 +1073,26 @@ namespace ICSharpCode.NRefactory.CSharp
 					WriteKeyword("double");
 					WriteToken(Roles.Dot);
 					if (double.IsPositiveInfinity(f)) {
-						WriteIdentifier("PositiveInfinity");
+						WriteIdentifier("PositiveInfinity", TextTokenType.LiteralField);
 					} else if (double.IsNegativeInfinity(f)) {
-						WriteIdentifier("NegativeInfinity");
+						WriteIdentifier("NegativeInfinity", TextTokenType.LiteralField);
 					} else {
-						WriteIdentifier("NaN");
+						WriteIdentifier("NaN", TextTokenType.LiteralField);
 					}
 					return;
 				}
+				string sign = string.Empty;
 				if (f == 0 && 1 / f == double.NegativeInfinity) {
 					// negative zero is a special case
 					// (again, not a primitive expression, but it's better to handle
 					// the special case here than to do it in all code generators)
-					formatter.WriteToken("-");
+					sign = "-";
 				}
-				string number = f.ToString("R", NumberFormatInfo.InvariantInfo);
+				string number = sign + f.ToString("R", NumberFormatInfo.InvariantInfo);
 				if (number.IndexOf('.') < 0 && number.IndexOf('E') < 0) {
 					number += ".0";
 				}
-				formatter.WriteToken(number);
+				formatter.WriteTokenNumber(number);
 				// needs space if identifier follows number; this avoids mistaking the following identifier as type suffix
 				lastWritten = LastWritten.KeywordOrIdentifier;
 			} else if (val is IFormattable) {
@@ -1108,11 +1109,11 @@ namespace ICSharpCode.NRefactory.CSharp
 				if (val is long || val is ulong) {
 					b.Append("L");
 				}
-				formatter.WriteToken(b.ToString());
+				formatter.WriteToken(b.ToString(), TextTokenHelper.GetTextTokenType(val));
 				// needs space if identifier follows number; this avoids mistaking the following identifier as type suffix
 				lastWritten = LastWritten.KeywordOrIdentifier;
 			} else {
-				formatter.WriteToken(val.ToString());
+				formatter.WriteToken(val.ToString(), TextTokenHelper.GetTextTokenType(val));
 				lastWritten = LastWritten.Other;
 			}
 		}
@@ -1340,7 +1341,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteKeyword(QueryJoinClause.JoinKeywordRole);
 			queryJoinClause.Type.AcceptVisitor(this);
 			Space();
-			WriteIdentifier(queryJoinClause.JoinIdentifier, QueryJoinClause.JoinIdentifierRole);
+			WriteIdentifier(queryJoinClause.JoinIdentifier, TextTokenHelper.GetTextTokenType(queryJoinClause.JoinIdentifierToken.Annotation<object>()), QueryJoinClause.JoinIdentifierRole);
 			Space();
 			WriteKeyword(QueryJoinClause.InKeywordRole);
 			Space();
@@ -1356,7 +1357,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			if (queryJoinClause.IsGroupJoin) {
 				Space();
 				WriteKeyword(QueryJoinClause.IntoKeywordRole);
-				WriteIdentifier(queryJoinClause.IntoIdentifier, QueryJoinClause.IntoIdentifierRole);
+				WriteIdentifier(queryJoinClause.IntoIdentifier, TextTokenHelper.GetTextTokenType(queryJoinClause.IntoIdentifierToken.Annotation<object>()), QueryJoinClause.IntoIdentifierRole);
 			}
 			EndNode(queryJoinClause);
 		}
@@ -1540,7 +1541,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			StartNode(usingAliasDeclaration);
 			WriteKeyword(UsingAliasDeclaration.UsingKeywordRole);
-			WriteIdentifier(usingAliasDeclaration.Alias, UsingAliasDeclaration.AliasRole);
+			WriteIdentifier(usingAliasDeclaration.Alias, TextTokenType.Text, UsingAliasDeclaration.AliasRole);
 			Space(policy.SpaceAroundEqualityOperator);
 			WriteToken(Roles.Assign);
 			Space(policy.SpaceAroundEqualityOperator);
@@ -1751,7 +1752,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			StartNode(gotoStatement);
 			WriteKeyword(GotoStatement.GotoKeywordRole);
-			WriteIdentifier(gotoStatement.Label);
+			WriteIdentifier(gotoStatement.Label, TextTokenType.Label);
 			Semicolon();
 			EndNode(gotoStatement);
 		}
@@ -1777,7 +1778,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void VisitLabelStatement(LabelStatement labelStatement)
 		{
 			StartNode(labelStatement);
-			WriteIdentifier(labelStatement.Label);
+			WriteIdentifier(labelStatement.Label, TextTokenType.Label);
 			WriteToken(Roles.Colon);
 			bool foundLabelledStatement = false;
 			for (AstNode tmp = labelStatement.NextSibling; tmp != null; tmp = tmp.NextSibling) {
@@ -2044,7 +2045,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteModifiers(constructorDeclaration.ModifierTokens);
 			TypeDeclaration type = constructorDeclaration.Parent as TypeDeclaration;
 			StartNode(constructorDeclaration.NameToken);
-			WriteIdentifier(type != null ? type.Name : constructorDeclaration.Name);
+			var obj = (type == null ? null : type.Annotation<object>()) ?? constructorDeclaration.Annotation<object>();
+			WriteIdentifier(type != null ? type.Name : constructorDeclaration.Name, TextTokenHelper.GetTextTokenType(obj));
 			EndNode(constructorDeclaration.NameToken);
 			Space(policy.SpaceBeforeConstructorDeclarationParentheses);
 			WriteCommaSeparatedListInParenthesis(constructorDeclaration.Parameters, policy.SpaceWithinMethodDeclarationParentheses);
@@ -2079,7 +2081,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteToken(DestructorDeclaration.TildeRole);
 			TypeDeclaration type = destructorDeclaration.Parent as TypeDeclaration;
 			StartNode(destructorDeclaration.NameToken);
-			WriteIdentifier(type != null ? type.Name : destructorDeclaration.Name);
+			var obj = (type == null ? null : type.Annotation<object>()) ?? destructorDeclaration.Annotation<object>();
+			WriteIdentifier(type != null ? type.Name : destructorDeclaration.Name, TextTokenHelper.GetTextTokenType(obj));
 			EndNode(destructorDeclaration.NameToken);
 			Space(policy.SpaceBeforeConstructorDeclarationParentheses);
 			LPar();
@@ -2328,7 +2331,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void VisitSimpleType(SimpleType simpleType)
 		{
 			StartNode(simpleType);
-			WriteIdentifier(simpleType.Identifier);
+			WriteIdentifier(simpleType.Identifier, TextTokenHelper.GetTextTokenType(simpleType.IdentifierToken.Annotation<object>() ?? simpleType.Annotation<object>()));
 			WriteTypeArguments(simpleType.TypeArguments);
 			EndNode(simpleType);
 		}
@@ -2342,7 +2345,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			} else {
 				WriteToken(Roles.Dot);
 			}
-			WriteIdentifier(memberType.MemberName);
+			WriteIdentifier(memberType.MemberName, TextTokenHelper.GetTextTokenType(memberType.MemberNameToken.Annotation<object>() ?? memberType.Annotation<object>()));
 			WriteTypeArguments(memberType.TypeArguments);
 			EndNode(memberType);
 		}
@@ -2369,7 +2372,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteToken(Roles.LBracket);
 			foreach (var comma in arraySpecifier.GetChildrenByRole(Roles.Comma)) {
 				WriteSpecialsUpToNode(comma);
-				formatter.WriteToken(",");
+				formatter.WriteTokenOperator(",");
 				lastWritten = LastWritten.Other;
 			}
 			WriteToken(Roles.RBracket);
@@ -2451,7 +2454,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			StartNode(constraint);
 			Space();
 			WriteKeyword(Roles.WhereKeyword);
-			WriteIdentifier(constraint.TypeParameter.Identifier);
+			WriteIdentifier(constraint.TypeParameter.Identifier, TextTokenHelper.GetTextTokenType(constraint.TypeParameter.IdentifierToken.Annotation<object>() ?? constraint.TypeParameter.Annotation<object>()));
 			Space();
 			WriteToken(Roles.Colon);
 			Space();
@@ -2474,7 +2477,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void VisitIdentifier(Identifier identifier)
 		{
 			StartNode(identifier);
-			WriteIdentifier(identifier.Name);
+			WriteIdentifier(identifier.Name, TextTokenHelper.GetTextTokenType(identifier.Annotation<object>()));
 			EndNode(identifier);
 		}
 
@@ -2491,7 +2494,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		void VisitAnyNode(AnyNode anyNode)
 		{
 			if (!string.IsNullOrEmpty(anyNode.GroupName)) {
-				WriteIdentifier(anyNode.GroupName);
+				WriteIdentifier(anyNode.GroupName, TextTokenType.Text);
 				WriteToken(Roles.Colon);
 			}
 		}
@@ -2500,7 +2503,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			WriteKeyword("backreference");
 			LPar();
-			WriteIdentifier(backreference.ReferencedGroupName);
+			WriteIdentifier(backreference.ReferencedGroupName, TextTokenType.Text);
 			RPar();
 		}
 		
@@ -2508,7 +2511,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 			WriteKeyword("identifierBackreference");
 			LPar();
-			WriteIdentifier(identifierExpressionBackreference.ReferencedGroupName);
+			WriteIdentifier(identifierExpressionBackreference.ReferencedGroupName, TextTokenType.Text);
 			RPar();
 		}
 		
@@ -2533,7 +2536,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		void VisitNamedNode(NamedNode namedNode)
 		{
 			if (!string.IsNullOrEmpty(namedNode.GroupName)) {
-				WriteIdentifier(namedNode.GroupName);
+				WriteIdentifier(namedNode.GroupName, TextTokenType.Text);
 				WriteToken(Roles.Colon);
 			}
 			VisitNodeInPattern(namedNode.ChildNode);
@@ -2544,9 +2547,9 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteKeyword("repeat");
 			LPar();
 			if (repeat.MinCount != 0 || repeat.MaxCount != int.MaxValue) {
-				WriteIdentifier(repeat.MinCount.ToString());
+				WriteIdentifier(repeat.MinCount.ToString(), TextTokenType.Number);
 				WriteToken(Roles.Comma);
-				WriteIdentifier(repeat.MaxCount.ToString());
+				WriteIdentifier(repeat.MaxCount.ToString(), TextTokenType.Number);
 				WriteToken(Roles.Comma);
 			}
 			VisitNodeInPattern(repeat.ChildNode);
@@ -2618,7 +2621,7 @@ namespace ICSharpCode.NRefactory.CSharp
 					}
 					break;
 				default:
-					WriteIdentifier(documentationReference.MemberName);
+					WriteIdentifier(documentationReference.MemberName, TextTokenType.Text);
 					break;
 			}
 			WriteTypeArguments(documentationReference.TypeArguments);

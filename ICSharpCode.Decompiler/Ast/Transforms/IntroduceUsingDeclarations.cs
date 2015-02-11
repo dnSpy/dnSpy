@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using dnlib.DotNet;
 
@@ -51,9 +52,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				// we go backwards (OrderByDescending) through the list of namespaces because we insert them backwards
 				// (always inserting at the start of the list)
 				string[] parts = ns.Split('.');
-				AstType nsType = new SimpleType(parts[0]);
+				AstType nsType = new SimpleType(parts[0]).WithAnnotation(TextTokenType.NamespacePart);
 				for (int i = 1; i < parts.Length; i++) {
-					nsType = new MemberType { Target = nsType, MemberName = parts[i] };
+					nsType = new MemberType { Target = nsType, MemberNameToken = Identifier.Create(parts[i]).WithAnnotation(TextTokenType.NamespacePart) }.WithAnnotation(TextTokenType.NamespacePart);
 				}
 				compilationUnit.InsertChildAfter(null, new UsingDeclaration { Import = nsType }, SyntaxTree.MemberRole);
 			}
@@ -300,23 +301,23 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				if (tr != null && IsAmbiguous(tr.Namespace, tr.Name)) {
 					AstType ns;
 					if (string.IsNullOrEmpty(tr.Namespace)) {
-						ns = new SimpleType("global");
+						ns = new SimpleType("global").WithAnnotation(TextTokenType.Keyword);
 					} else {
 						string[] parts = tr.Namespace.Split('.');
 						if (IsAmbiguous(string.Empty, parts[0])) {
 							// conflict between namespace and type name/member name
-							ns = new MemberType { Target = new SimpleType("global"), IsDoubleColon = true, MemberName = parts[0] };
+							ns = new MemberType { Target = new SimpleType("global").WithAnnotation(TextTokenType.Keyword), IsDoubleColon = true, MemberNameToken = Identifier.Create(parts[0]).WithAnnotation(TextTokenType.NamespacePart) }.WithAnnotation(TextTokenType.NamespacePart);
 						} else {
-							ns = new SimpleType(parts[0]);
+							ns = new SimpleType(parts[0]).WithAnnotation(TextTokenType.NamespacePart);
 						}
 						for (int i = 1; i < parts.Length; i++) {
-							ns = new MemberType { Target = ns, MemberName = parts[i] };
+							ns = new MemberType { Target = ns, MemberNameToken = Identifier.Create(parts[i]).WithAnnotation(TextTokenType.NamespacePart) }.WithAnnotation(TextTokenType.NamespacePart);
 						}
 					}
 					MemberType mt = new MemberType();
 					mt.Target = ns;
 					mt.IsDoubleColon = string.IsNullOrEmpty(tr.Namespace);
-					mt.MemberName = simpleType.Identifier;
+					mt.MemberNameToken = (Identifier)simpleType.IdentifierToken.Clone();
 					mt.CopyAnnotationsFrom(simpleType);
 					simpleType.TypeArguments.MoveTo(mt.TypeArguments);
 					simpleType.ReplaceWith(mt);

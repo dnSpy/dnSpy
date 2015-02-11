@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using ICSharpCode.NRefactory;
 
@@ -28,11 +29,11 @@ namespace ICSharpCode.Decompiler
 		
 		void Indent();
 		void Unindent();
-		void Write(char ch);
-		void Write(string text);
+		void Write(char ch, TextTokenType tokenType);
+		void Write(string text, TextTokenType tokenType);
 		void WriteLine();
-		void WriteDefinition(string text, object definition, bool isLocal = true);
-		void WriteReference(string text, object reference, bool isLocal = false);
+		void WriteDefinition(string text, object definition, TextTokenType tokenType, bool isLocal = true);
+		void WriteReference(string text, object reference, TextTokenType tokenType, bool isLocal = false);
 		
 		void AddDebuggerMemberMapping(MemberMapping memberMapping);
 		
@@ -42,20 +43,109 @@ namespace ICSharpCode.Decompiler
 	
 	public static class TextOutputExtensions
 	{
-		public static void Write(this ITextOutput output, string format, params object[] args)
+		public static void WriteLine(this ITextOutput output, string text, TextTokenType tokenType)
 		{
-			output.Write(string.Format(format, args));
-		}
-		
-		public static void WriteLine(this ITextOutput output, string text)
-		{
-			output.Write(text);
+			output.Write(text, tokenType);
 			output.WriteLine();
 		}
-		
-		public static void WriteLine(this ITextOutput output, string format, params object[] args)
+
+		public static void WriteSpace(this ITextOutput output)
 		{
-			output.WriteLine(string.Format(format, args));
+			output.Write(' ', TextTokenType.Text);
+		}
+
+		public static void WriteLineLeftBrace(this ITextOutput output)
+		{
+			output.Write('{', TextTokenType.Brace);
+			output.WriteLine();
+		}
+
+		public static void WriteLineRightBrace(this ITextOutput output)
+		{
+			output.Write('}', TextTokenType.Brace);
+			output.WriteLine();
+		}
+
+		public static void WriteLeftBrace(this ITextOutput output)
+		{
+			output.Write('{', TextTokenType.Brace);
+		}
+
+		public static void WriteRightBrace(this ITextOutput output)
+		{
+			output.Write('}', TextTokenType.Brace);
+		}
+
+		public static void WriteXmlDoc(this ITextOutput output, string text)
+		{
+			foreach (var kv in SimpleXmlParser.Parse(text))
+				output.Write(kv.Key, kv.Value);
+		}
+	}
+
+	// We have to parse it ourselves since we'd get all sorts of exceptions if we let
+	// the standard XML reader try to parse it, even if we set the data to Fragment.
+	// Since it only operates on one line at a time (no extra context), it won't be
+	// able to handle eg. attributes spanning more than one line, but this rarely happens.
+	struct SimpleXmlParser
+	{
+		static readonly char[] specialChars = new char[] { '<', '>', '"' };
+
+		IEnumerable<KeyValuePair<string, TextTokenType>> Parse2(string text)
+		{
+			int index = 0;
+			while (index < text.Length) {
+				int specialIndex = text.IndexOfAny(specialChars, index);
+				if (specialIndex < 0) {
+					yield return new KeyValuePair<string, TextTokenType>(text.Substring(index), TextTokenType.XmlDocComment);
+					break;
+				}
+
+				var c = text[specialIndex];
+				if (c == '>') {
+					yield return new KeyValuePair<string, TextTokenType>(text.Substring(index, specialIndex - index + 1), TextTokenType.XmlDocTag);
+					index = specialIndex + 1;
+				}
+				else {
+					if (specialIndex - index > 0) {
+						if (c == '<')
+							yield return new KeyValuePair<string, TextTokenType>(text.Substring(index, specialIndex - index), TextTokenType.XmlDocComment);
+						else // c == '"'
+							yield return new KeyValuePair<string, TextTokenType>(text.Substring(index, specialIndex - index), TextTokenType.XmlDocTag);
+					}
+
+					index = specialIndex;
+					int endIndex = text.IndexOf('>', index);
+					endIndex = endIndex < 0 ? text.Length : endIndex + 1;
+
+					while (index < endIndex) {
+						int attrIndex = text.IndexOf('"', index, endIndex - index);
+						if (attrIndex < 0) {
+							yield return new KeyValuePair<string, TextTokenType>(text.Substring(index, endIndex - index), TextTokenType.XmlDocTag);
+							break;
+						}
+
+						if (attrIndex - index > 0)
+							yield return new KeyValuePair<string, TextTokenType>(text.Substring(index, attrIndex - index), TextTokenType.XmlDocTag);
+
+						int endAttrIndex = text.IndexOf('"', attrIndex + 1, endIndex - attrIndex - 1);
+						if (endAttrIndex < 0) {
+							yield return new KeyValuePair<string, TextTokenType>(text.Substring(attrIndex, endIndex - attrIndex), TextTokenType.XmlDocAttribute);
+							break;
+						}
+
+						yield return new KeyValuePair<string, TextTokenType>(text.Substring(attrIndex, endAttrIndex - attrIndex + 1), TextTokenType.XmlDocAttribute);
+						index = endAttrIndex + 1;
+					}
+
+					index = endIndex;
+				}
+			}
+		}
+
+		public static IEnumerable<KeyValuePair<string, TextTokenType>> Parse(string text)
+		{
+			return new SimpleXmlParser().Parse2(text);
 		}
 	}
 }

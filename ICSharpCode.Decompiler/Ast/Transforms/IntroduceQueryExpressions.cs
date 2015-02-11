@@ -19,6 +19,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 
 namespace ICSharpCode.Decompiler.Ast.Transforms
@@ -47,7 +48,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				QueryFromClause fromClause = (QueryFromClause)query.Clauses.First();
 				if (IsDegenerateQuery(query)) {
 					// introduce select for degenerate query
-					query.Clauses.Add(new QuerySelectClause { Expression = new IdentifierExpression(fromClause.Identifier) });
+					query.Clauses.Add(new QuerySelectClause { Expression = IdentifierExpression.Create(fromClause.Identifier, fromClause.IdentifierToken.Annotation<object>()) });
 				}
 				// See if the data source of this query is a degenerate query,
 				// and combine the queries if possible.
@@ -102,7 +103,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						Expression body;
 						if (MatchSimpleLambda(invocation.Arguments.Single(), out parameterName, out body)) {
 							QueryExpression query = new QueryExpression();
-							query.Clauses.Add(new QueryFromClause { Identifier = parameterName, Expression = mre.Target.Detach() });
+							query.Clauses.Add(new QueryFromClause { IdentifierToken = Identifier.Create(parameterName).WithAnnotation(TextTokenType.Parameter), Expression = mre.Target.Detach() });
 							query.Clauses.Add(new QuerySelectClause { Expression = body.Detach() });
 							return query;
 						}
@@ -118,7 +119,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 							    && parameterName1 == parameterName2)
 							{
 								QueryExpression query = new QueryExpression();
-								query.Clauses.Add(new QueryFromClause { Identifier = parameterName1, Expression = mre.Target.Detach() });
+								query.Clauses.Add(new QueryFromClause { IdentifierToken = Identifier.Create(parameterName1).WithAnnotation(TextTokenType.Parameter), Expression = mre.Target.Detach() });
 								query.Clauses.Add(new QueryGroupClause { Projection = elementSelector.Detach(), Key = keySelector.Detach() });
 								return query;
 							}
@@ -127,8 +128,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 							Expression keySelector;
 							if (MatchSimpleLambda(invocation.Arguments.Single(), out parameterName, out keySelector)) {
 								QueryExpression query = new QueryExpression();
-								query.Clauses.Add(new QueryFromClause { Identifier = parameterName, Expression = mre.Target.Detach() });
-								query.Clauses.Add(new QueryGroupClause { Projection = new IdentifierExpression(parameterName), Key = keySelector.Detach() });
+								query.Clauses.Add(new QueryFromClause { IdentifierToken = Identifier.Create(parameterName).WithAnnotation(TextTokenType.Parameter), Expression = mre.Target.Detach() });
+								query.Clauses.Add(new QueryGroupClause { Projection = IdentifierExpression.Create(parameterName, TextTokenType.Parameter), Key = keySelector.Detach() });
 								return query;
 							}
 						}
@@ -148,8 +149,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 							ParameterDeclaration p2 = lambda.Parameters.ElementAt(1);
 							if (p1.Name == parameterName) {
 								QueryExpression query = new QueryExpression();
-								query.Clauses.Add(new QueryFromClause { Identifier = p1.Name, Expression = mre.Target.Detach() });
-								query.Clauses.Add(new QueryFromClause { Identifier = p2.Name, Expression = collectionSelector.Detach() });
+								query.Clauses.Add(new QueryFromClause { IdentifierToken = Identifier.Create(p1.Name).WithAnnotation(TextTokenType.Parameter), Expression = mre.Target.Detach() });
+								query.Clauses.Add(new QueryFromClause { IdentifierToken = Identifier.Create(p2.Name).WithAnnotation(TextTokenType.Parameter), Expression = collectionSelector.Detach() });
 								query.Clauses.Add(new QuerySelectClause { Expression = ((Expression)lambda.Body).Detach() });
 								return query;
 							}
@@ -164,7 +165,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						Expression body;
 						if (MatchSimpleLambda(invocation.Arguments.Single(), out parameterName, out body)) {
 							QueryExpression query = new QueryExpression();
-							query.Clauses.Add(new QueryFromClause { Identifier = parameterName, Expression = mre.Target.Detach() });
+							query.Clauses.Add(new QueryFromClause { IdentifierToken = Identifier.Create(parameterName).WithAnnotation(TextTokenType.Parameter), Expression = mre.Target.Detach() });
 							query.Clauses.Add(new QueryWhereClause { Condition = body.Detach() });
 							return query;
 						}
@@ -203,7 +204,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 									});
 								
 								QueryExpression query = new QueryExpression();
-								query.Clauses.Add(new QueryFromClause { Identifier = parameterName, Expression = mre.Target.Detach() });
+								query.Clauses.Add(new QueryFromClause { IdentifierToken = Identifier.Create(parameterName).WithAnnotation(TextTokenType.Parameter), Expression = mre.Target.Detach() });
 								query.Clauses.Add(orderClause);
 								return query;
 							}
@@ -229,14 +230,14 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 							ParameterDeclaration p2 = lambda.Parameters.ElementAt(1);
 							if (p1.Name == elementName1 && (p2.Name == elementName2 || mre.MemberName == "GroupJoin")) {
 								QueryExpression query = new QueryExpression();
-								query.Clauses.Add(new QueryFromClause { Identifier = elementName1, Expression = source1.Detach() });
+								query.Clauses.Add(new QueryFromClause { IdentifierToken = Identifier.Create(elementName1).WithAnnotation(TextTokenType.Parameter), Expression = source1.Detach() });
 								QueryJoinClause joinClause = new QueryJoinClause();
-								joinClause.JoinIdentifier = elementName2;    // join elementName2
+								joinClause.JoinIdentifierToken = Identifier.Create(elementName2).WithAnnotation(TextTokenType.Parameter);    // join elementName2
 								joinClause.InExpression = source2.Detach();  // in source2
 								joinClause.OnExpression = key1.Detach();     // on key1
 								joinClause.EqualsExpression = key2.Detach(); // equals key2
 								if (mre.MemberName == "GroupJoin") {
-									joinClause.IntoIdentifier = p2.Name; // into p2.Name
+									joinClause.IntoIdentifierToken = Identifier.Create(p2.Name).WithAnnotation(TextTokenType.Parameter); // into p2.Name
 								}
 								query.Clauses.Add(joinClause);
 								query.Clauses.Add(new QuerySelectClause { Expression = ((Expression)lambda.Body).Detach() });

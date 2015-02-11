@@ -22,6 +22,7 @@ using System.Linq;
 
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.VB.Visitors;
 using dnlib.DotNet;
@@ -130,11 +131,11 @@ namespace ICSharpCode.ILSpy.VB
 				var def = type.Annotation<ITypeDefOrRef>().ResolveTypeDef();
 				if (def == null) continue;
 				foreach (var method in def.Methods.Where(m => !m.Name.StartsWith("get_") && !m.Name.StartsWith("set_"))) {
-					yield return new NRefactory.VB.Ast.InterfaceMemberSpecifier((NRefactory.VB.Ast.AstType)type.Clone(), method.Name);
+					yield return new NRefactory.VB.Ast.InterfaceMemberSpecifier((NRefactory.VB.Ast.AstType)type.Clone(), method.Name, TextTokenHelper.GetTextTokenType(method));
 				}
 				
 				foreach (var property in def.Properties) {
-					yield return new NRefactory.VB.Ast.InterfaceMemberSpecifier((NRefactory.VB.Ast.AstType)type.Clone(), property.Name);
+					yield return new NRefactory.VB.Ast.InterfaceMemberSpecifier((NRefactory.VB.Ast.AstType)type.Clone(), property.Name, TextTokenHelper.GetTextTokenType(property));
 				}
 			}
 		}

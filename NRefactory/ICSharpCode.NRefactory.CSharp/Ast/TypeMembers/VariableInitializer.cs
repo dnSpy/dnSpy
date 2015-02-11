@@ -116,9 +116,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 		}
 		
-		public VariableInitializer(string name, Expression initializer = null)
+		public VariableInitializer(object nameAnnotation, string name, Expression initializer = null)
 		{
-			this.Name = name;
+			this.NameToken = Identifier.Create(name);
+			if (nameAnnotation != null)
+				this.NameToken.AddAnnotation(nameAnnotation);
 			this.Initializer = initializer;
 		}
 

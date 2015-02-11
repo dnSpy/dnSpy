@@ -40,9 +40,17 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 		}
 		
-		public NamedExpression (string name, Expression expression)
+		public NamedExpression (string name, Expression expression, object idAnnotation)
 		{
 			this.Name = name;
+			if (idAnnotation != null)
+				NameToken.AddAnnotation(idAnnotation);
+			this.Expression = expression;
+		}
+
+		public NamedExpression (Identifier name, Expression expression)
+		{
+			this.NameToken = (Identifier)name.Clone();
 			this.Expression = expression;
 		}
 		

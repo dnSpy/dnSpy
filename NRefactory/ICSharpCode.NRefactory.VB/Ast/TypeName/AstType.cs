@@ -71,19 +71,21 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			return new ComposedType { BaseType = this }.MakeArrayType(rank);
 		}
 		
-		public static AstType FromName(string fullName)
+		public static AstType FromName(string fullName, TextTokenType tokenType)
 		{
 			if (string.IsNullOrEmpty(fullName))
 				throw new ArgumentNullException("fullName");
 			fullName = fullName.Trim();
 			if (!fullName.Contains("."))
-				return new SimpleType(fullName);
+				return new SimpleType(tokenType, fullName);
 			string[] parts = fullName.Split('.');
 			
-			AstType type = new SimpleType(parts.First());
+			AstType type = new SimpleType(TextTokenType.NamespacePart, parts.First());
 			
-			foreach (var part in parts.Skip(1)) {
-				type = new QualifiedType(type, part);
+			for (int i = 1; i < parts.Length; i++) {
+				var part = parts[i];
+				var tt = i + 1 == parts.Length ? tokenType : TextTokenType.NamespacePart;
+				type = new QualifiedType(type, Identifier.Create(tt, part));
 			}
 			
 			return type;
@@ -92,9 +94,9 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		/// <summary>
 		/// Builds an expression that can be used to access a static member on this type.
 		/// </summary>
-		public MemberAccessExpression Member(string memberName)
+		public MemberAccessExpression Member(object annotation, string memberName)
 		{
-			return new TypeReferenceExpression { Type = this }.Member(memberName);
+			return new TypeReferenceExpression { Type = this }.Member(annotation, memberName);
 		}
 		
 		/// <summary>
@@ -102,7 +104,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		/// </summary>
 		public InvocationExpression Invoke(string methodName, IEnumerable<Expression> arguments)
 		{
-			return new TypeReferenceExpression { Type = this }.Invoke(methodName, arguments);
+			return new TypeReferenceExpression { Type = this }.Invoke2(null, methodName, arguments);
 		}
 		
 		/// <summary>
@@ -110,7 +112,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		/// </summary>
 		public InvocationExpression Invoke(string methodName, params Expression[] arguments)
 		{
-			return new TypeReferenceExpression { Type = this }.Invoke(methodName, arguments);
+			return new TypeReferenceExpression { Type = this }.Invoke2(null, methodName, arguments);
 		}
 		
 		/// <summary>
@@ -118,7 +120,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		/// </summary>
 		public InvocationExpression Invoke(string methodName, IEnumerable<AstType> typeArguments, IEnumerable<Expression> arguments)
 		{
-			return new TypeReferenceExpression { Type = this }.Invoke(methodName, typeArguments, arguments);
+			return new TypeReferenceExpression { Type = this }.Invoke(null, methodName, typeArguments, arguments);
 		}
 		
 		public static AstType Create(Type type)
@@ -157,7 +159,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 				case TypeCode.DateTime:
 					return new PrimitiveType("Date");
 			}
-			return new SimpleType(type.FullName); // TODO: implement this correctly
+			return new SimpleType(TextTokenHelper.GetTextTokenType(type), type.FullName); // TODO: implement this correctly
 		}
 	}
 }

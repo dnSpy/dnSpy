@@ -1,0 +1,53 @@
+<theme name="dark" menu-name="_Dark" sort="100">
+	<colors>
+		<color name="defaulttext" fg="#D0D0D0" bg="#252525" />
+		<color name="brace" fg="#A6B8DB" />
+		<color name="operator" fg="#9B9B9B" />
+		<color name="number" fg="#B5CEA8" />
+		<color name="comment" fg="#668066" />
+		<color name="xmldoctag" fg="#808080" />
+		<color name="xmldocattribute" fg="#70704D" />
+		<color name="xmldoccomment" fg="#668066" italics="true" />
+		<color name="keyword" fg="#569CD6" />
+		<color name="string" fg="#9999FF" />
+		<color name="char" fg="#9999FF" />
+		<color name="namespacepart" fg="#666699" />
+		<color name="type" fg="#2B91AF" />
+		<color name="statictype" fg="#6BB2C7" />
+		<color name="delegate" fg="#33CCFF" />
+		<color name="enum" fg="#5C993D" />
+		<color name="interface" fg="#70704D" />
+		<color name="valuetype" fg="#009933" />
+		<color name="typegenericparameter" fg="#1E667A" />
+		<color name="methodgenericparameter" fg="#1E667A" />
+		<color name="instancemethod" fg="#336699" />
+		<color name="staticmethod" fg="#5C85AD" />
+		<color name="extensionmethod" fg="#8DAAC6" italics="true" />
+		<color name="instancefield" fg="#AA70FF" />
+		<color name="enumfield" fg="#A883A8" />
+		<color name="literalfield" fg="#C266FF" />
+		<color name="staticfield" fg="#5C5CAD" />
+		<color name="instanceevent" fg="#CC6699" />
+		<color name="staticevent" fg="#DB94B8" />
+		<color name="instanceproperty" fg="#248F8F" />
+		<color name="staticproperty" fg="#196464" />
+		<color name="variable" fg="#8080C0" />
+		<color name="parameter" bold="true" />
+		<color name="label" fg="#806F4D" />
+		<color name="opcode" fg="#993366" />
+		<color name="ildirective" fg="#9999FF" />
+		<color name="ilmodule" fg="#666699" />
+		<color name="linenumber" fg="#666699" />
+		<color name="xmlcomment" fg="#668066" italics="true" />
+		<color name="xmlcdata" fg="#339966" />
+		<color name="xmldoctype" fg="#669999" />
+		<color name="xmldeclaration" fg="#CC9900" />
+		<color name="xmltag" fg="#808080" />
+		<color name="xmlattributename" fg="#804C1A" />
+		<color name="xmlattributevalue" fg="#70704D" />
+		<color name="xmlentity" fg="#999966" />
+		<color name="xmlbrokenentity" fg="#999966" />
+		<color name="link" fg="#CCFF33" />
+		<color name="selection" bg="#404040" />
+	</colors>
+</theme>

@@ -32,9 +32,11 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.dntheme;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.XmlDoc;
+using ICSharpCode.NRefactory;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
 using dnlib.DotNet;
@@ -66,6 +68,8 @@ namespace ICSharpCode.ILSpy
 		public SessionSettings SessionSettings {
 			get { return sessionSettings; }
 		}
+
+		internal Theme Theme { get; private set; }
 		
 		public MainWindow()
 		{
@@ -73,6 +77,7 @@ namespace ICSharpCode.ILSpy
 			spySettings = ILSpySettings.Load();
 			this.sessionSettings = new SessionSettings(spySettings);
 			this.assemblyListManager = new AssemblyListManager(spySettings);
+			Theme = Themes.GetThemeOrDefault(sessionSettings.ThemeName);
 			
 			this.Icon = new BitmapImage(new Uri("pack://application:,,,/ILSpy;component/images/ILSpy.ico"));
 			
@@ -93,6 +98,45 @@ namespace ICSharpCode.ILSpy
 			ContextMenuProvider.Add(treeView, decompilerTextView);
 			
 			this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
+			this.themeMenu.Click += new RoutedEventHandler(themeMenu_Click);
+		}
+
+		void themeMenu_Click(object sender, RoutedEventArgs e) {
+			BuildThemeMenu();
+		}
+
+		void BuildThemeMenu() {
+			themeMenu.Items.Clear();
+			foreach (var theme in Themes.AllThemes.OrderBy(x => x.Sort)) {
+				var mi = new MenuItem {
+					Header = theme.MenuName,
+					Tag = theme,
+				};
+				if (Theme == theme)
+					mi.IsChecked = true;
+				mi.Click += new RoutedEventHandler(ThemeMenuItem_Click);
+				themeMenu.Items.Add(mi);
+			}
+		}
+
+		void ThemeMenuItem_Click(object sender, RoutedEventArgs e) {
+			var mi = (MenuItem)sender;
+			SetTheme((Theme)mi.Tag);
+		}
+
+		void SetTheme(Theme theme)
+		{
+			if (theme == null)
+				return;
+			if (theme == Theme)
+				return;
+			Theme = theme;
+			OnThemeUpdated();
+		}
+
+		void OnThemeUpdated()
+		{
+			decompilerTextView.OnThemeUpdated();
 		}
 		
 		void SetWindowBounds(Rect bounds)
@@ -287,7 +331,7 @@ namespace ICSharpCode.ILSpy
 				}
 				if (!found) {
 					AvalonEditTextOutput output = new AvalonEditTextOutput();
-					output.Write(string.Format("Cannot find '{0}' in command line specified assemblies.", args.NavigateTo));
+					output.Write(string.Format("Cannot find '{0}' in command line specified assemblies.", args.NavigateTo), TextTokenType.Text);
 					decompilerTextView.ShowText(output);
 				}
 			} else if (commandLineLoadedAssemblies.Count == 1) {
@@ -300,6 +344,9 @@ namespace ICSharpCode.ILSpy
 		
 		void MainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
+			BuildThemeMenu();
+			OnThemeUpdated();
+
 			ILSpySettings spySettings = this.spySettings;
 			this.spySettings = null;
 			
@@ -346,16 +393,16 @@ namespace ICSharpCode.ILSpy
 				if (first)
 					first = false;
 				else
-					output.WriteLine("-------------------------------------------------");
-				output.WriteLine("Error(s) loading plugin: " + item.PluginName);
+					output.WriteLine("-------------------------------------------------", TextTokenType.Text);
+				output.WriteLine("Error(s) loading plugin: " + item.PluginName, TextTokenType.Text);
 				if (item.Exception is System.Reflection.ReflectionTypeLoadException) {
 					var e = (System.Reflection.ReflectionTypeLoadException)item.Exception;
 					foreach (var ex in e.LoaderExceptions) {
-						output.WriteLine(ex.ToString());
+						output.WriteLine(ex.ToString(), TextTokenType.Text);
 						output.WriteLine();
 					}
 				} else
-					output.WriteLine(item.Exception.ToString());
+					output.WriteLine(item.Exception.ToString(), TextTokenType.Text);
 			}
 			
 			return true;
@@ -758,6 +805,7 @@ namespace ICSharpCode.ILSpy
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			base.OnClosing(e);
+			sessionSettings.ThemeName = Theme.Name;
 			sessionSettings.ActiveAssemblyList = assemblyList.ListName;
 			sessionSettings.ActiveTreeViewPath = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
 			sessionSettings.WindowBounds = this.RestoreBounds;

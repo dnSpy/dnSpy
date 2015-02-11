@@ -86,7 +86,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 					containingStatement.GetParent<EntityDeclaration> (),
 					Enumerable.Range (1, 100).Select (i => variableName + i));
 
-				var variableDecl = new VariableDeclarationStatement (new SimpleType("var"), newName, 
+				var variableDecl = new VariableDeclarationStatement (null, new SimpleType("var"), newName, 
 																	 new IdentifierExpression (variableName));
 				
 				if (containingStatement.Parent is BlockStatement || containingStatement.Parent is SwitchSection) {

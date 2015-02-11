@@ -62,7 +62,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 				}
 				var name = CreateMethodDeclarationAction.CreateBaseName(expr, guessedType);
 				var type = context.UseExplicitTypes ? context.CreateShortType(guessedType) : new SimpleType("var");
-				var varDecl = new VariableDeclarationStatement(type, name, expr.Clone());
+				var varDecl = new VariableDeclarationStatement(null, type, name, expr.Clone());
 				if (expr.Parent is ExpressionStatement) {
 					script.Replace(expr.Parent, varDecl);
 					script.Select(varDecl.Variables.First().NameToken);
@@ -89,7 +89,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 					var linkedNodes = new List<AstNode>();
 					var name = CreateMethodDeclarationAction.CreateBaseName(expr, guessedType);
 					var type = context.UseExplicitTypes ? context.CreateShortType(guessedType) : new SimpleType("var");
-					var varDecl = new VariableDeclarationStatement(type, name, expr.Clone());
+					var varDecl = new VariableDeclarationStatement(null, type, name, expr.Clone());
 					linkedNodes.Add(varDecl.Variables.First().NameToken);
 					var first = visitor.Matches [0];
 					if (first.Parent is ExpressionStatement) {

@@ -30,6 +30,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.ILSpy.XmlDoc;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using ICSharpCode.NRefactory.VB;
@@ -65,7 +66,7 @@ namespace ICSharpCode.ILSpy.VB
 		
 		public override void WriteCommentLine(ITextOutput output, string comment)
 		{
-			output.WriteLine("' " + comment);
+			output.WriteLine("' " + comment, TextTokenType.Comment);
 		}
 		
 		public override void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options)
@@ -80,8 +81,8 @@ namespace ICSharpCode.ILSpy.VB
 				output.WriteLine();
 				ModuleDef mainModule = assembly.ModuleDefinition;
 				if (mainModule.EntryPoint != null && mainModule.EntryPoint.DeclaringType != null) {
-					output.Write("' Entry point: ");
-					output.WriteReference(mainModule.EntryPoint.DeclaringType.FullName + "." + mainModule.EntryPoint.Name, mainModule.EntryPoint);
+					output.Write("' Entry point: ", TextTokenType.Comment);
+					output.WriteReference(mainModule.EntryPoint.DeclaringType.FullName + "." + mainModule.EntryPoint.Name, mainModule.EntryPoint, TextTokenType.Comment);
 					output.WriteLine();
 				}
 				WriteCommentLine(output, "Architecture: " + CSharpLanguage.GetPlatformDisplayName(mainModule));

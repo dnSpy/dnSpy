@@ -50,14 +50,14 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 					backingStore.Modifiers |= Modifiers.Static;
 				backingStore.ReturnType = property.ReturnType.Clone ();
 				
-				var initializer = new VariableInitializer (backingStoreName);
+				var initializer = new VariableInitializer (null, backingStoreName);
 				backingStore.Variables.Add (initializer);
 				
 				// create new property & implement the get/set bodies
 				var newProperty = (PropertyDeclaration)property.Clone ();
 				Expression id1;
 				if (backingStoreName == "value")
-					id1 = new ThisReferenceExpression().Member("value");
+					id1 = new ThisReferenceExpression().Member("value", TextTokenType.Keyword);
 				else
 					id1 = new IdentifierExpression (backingStoreName);
 				Expression id2 = id1.Clone();

@@ -32,6 +32,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		public IdentifierExpression()
 		{
 		}
+
+		public IdentifierExpression(Identifier identifier)
+		{
+			IdentifierToken = identifier;
+		}
 		
 		public IdentifierExpression(string identifier)
 		{
@@ -41,6 +46,17 @@ namespace ICSharpCode.NRefactory.CSharp
 		public IdentifierExpression(string identifier, TextLocation location)
 		{
 			SetChildByRole(Roles.Identifier, CSharp.Identifier.Create (identifier, location));
+		}
+
+		public static IdentifierExpression Create(string identifier, object annotation, bool addAnnotationToExpr = false)
+		{
+			var ide = new IdentifierExpression(identifier);
+			if (annotation != null) {
+				if (addAnnotationToExpr)
+					ide.AddAnnotation(annotation);
+				ide.IdentifierToken.AddAnnotation(annotation);
+			}
+			return ide;
 		}
 		
 //		public Identifier IdentifierToken {

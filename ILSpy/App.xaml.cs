@@ -29,7 +29,9 @@ using System.Windows.Documents;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 
+using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
+using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy
 {
@@ -207,7 +209,7 @@ namespace ICSharpCode.ILSpy
 					using (StreamReader r = new StreamReader(s)) {
 						string line;
 						while ((line = r.ReadLine()) != null) {
-							output.Write(line);
+							output.Write(line, TextTokenType.Text);
 							output.WriteLine();
 						}
 					}

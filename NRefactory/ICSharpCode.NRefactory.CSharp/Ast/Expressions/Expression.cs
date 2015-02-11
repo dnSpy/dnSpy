@@ -136,9 +136,12 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// <summary>
 		/// Builds an member reference expression using this expression as target.
 		/// </summary>
-		public MemberReferenceExpression Member(string memberName)
+		public MemberReferenceExpression Member(string memberName, object memberAnnotation)
 		{
-			return new MemberReferenceExpression { Target = this, MemberName = memberName };
+			var id = Identifier.Create(memberName);
+			if (memberAnnotation != null)
+				id.AddAnnotation(memberAnnotation);
+			return new MemberReferenceExpression { Target = this, MemberNameToken = id };
 		}
 		
 		/// <summary>
@@ -166,9 +169,9 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// <summary>
 		/// Builds an invocation expression using this expression as target.
 		/// </summary>
-		public InvocationExpression Invoke(string methodName, IEnumerable<Expression> arguments)
+		public InvocationExpression Invoke(object annotation, string methodName, IEnumerable<Expression> arguments)
 		{
-			return Invoke(methodName, null, arguments);
+			return Invoke(annotation, methodName, null, arguments);
 		}
 		
 		/// <summary>
@@ -176,18 +179,27 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// </summary>
 		public InvocationExpression Invoke(string methodName, params Expression[] arguments)
 		{
-			return Invoke(methodName, null, arguments);
+			return Invoke(null, methodName, null, arguments);
 		}
 		
 		/// <summary>
 		/// Builds an invocation expression using this expression as target.
 		/// </summary>
-		public InvocationExpression Invoke(string methodName, IEnumerable<AstType> typeArguments, IEnumerable<Expression> arguments)
+		public InvocationExpression Invoke2(object annotations, string methodName, params Expression[] arguments)
+		{
+			return Invoke(annotations, methodName, null, arguments);
+		}
+		
+		/// <summary>
+		/// Builds an invocation expression using this expression as target.
+		/// </summary>
+		public InvocationExpression Invoke(object annotation, string methodName, IEnumerable<AstType> typeArguments, IEnumerable<Expression> arguments)
 		{
 			InvocationExpression ie = new InvocationExpression();
 			MemberReferenceExpression mre = new MemberReferenceExpression();
 			mre.Target = this;
 			mre.MemberName = methodName;
+			mre.MemberNameToken.AddAnnotation(annotation ?? TextTokenType.InstanceMethod);
 			mre.TypeArguments.AddRange(typeArguments);
 			ie.Target = mre;
 			ie.Arguments.AddRange(arguments);

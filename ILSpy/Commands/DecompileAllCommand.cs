@@ -21,6 +21,8 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy
@@ -51,10 +53,10 @@ namespace ICSharpCode.ILSpy
 							}
 						}
 						lock (output) {
-							output.Write(asm.ShortName + " - " + w.Elapsed);
+							output.Write(asm.ShortName + " - " + w.Elapsed, TextTokenType.Text);
 							if (exception != null) {
-								output.Write(" - ");
-								output.Write(exception.GetType().Name);
+								output.Write(" - ", TextTokenType.Text);
+								output.Write(exception.GetType().Name, TextTokenType.Text);
 							}
 							output.WriteLine();
 						}

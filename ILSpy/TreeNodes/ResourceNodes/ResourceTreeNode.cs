@@ -23,6 +23,7 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Utils;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
+using ICSharpCode.NRefactory;
 using Microsoft.Win32;
 using dnlib.DotNet;
 
@@ -87,7 +88,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					if (type != FileType.Binary) {
 						s.Position = 0;
 						AvalonEditTextOutput output = new AvalonEditTextOutput();
-						output.Write(FileReader.OpenStream(s, Encoding.UTF8).ReadToEnd());
+						output.Write(FileReader.OpenStream(s, Encoding.UTF8).ReadToEnd(), TextTokenType.Text);
 						string ext;
 						if (type == FileType.Xml)
 							ext = ".xml";

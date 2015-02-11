@@ -25,6 +25,7 @@ using System.Text;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.NRefactory.Utils;
+using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using Mono.CSharp;
@@ -126,7 +127,8 @@ namespace ICSharpCode.Decompiler.ILAst
 
 		public override void WriteTo(ITextOutput output)
 		{
-			output.WriteDefinition(Name + ":", this);
+			output.WriteDefinition(Name, this, TextTokenType.Label);
+			output.Write(':', TextTokenType.Operator);
 		}
 	}
 	
@@ -141,26 +143,30 @@ namespace ICSharpCode.Decompiler.ILAst
 			public override void WriteTo(ITextOutput output)
 			{
 				if (IsFilter) {
-					output.Write("filter ");
-					output.Write(ExceptionVariable.Name);
+					output.Write("filter", TextTokenType.Keyword);
+					output.WriteSpace();
+					output.Write(ExceptionVariable.Name, TextTokenType.Local);
 				}
 				else if (ExceptionType != null) {
-					output.Write("catch ");
-					output.WriteReference(ExceptionType.FullName, ExceptionType);
+					output.Write("catch", TextTokenType.Keyword);
+					output.WriteSpace();
+					output.WriteReference(ExceptionType.FullName, ExceptionType, TextTokenHelper.GetTextTokenType(ExceptionType));
 					if (ExceptionVariable != null) {
-						output.Write(' ');
-						output.Write(ExceptionVariable.Name);
+						output.WriteSpace();
+						output.Write(ExceptionVariable.Name, TextTokenType.Local);
 					}
 				}
 				else {
-					output.Write("handler ");
-					output.Write(ExceptionVariable.Name);
+					output.Write("handler", TextTokenType.Keyword);
+					output.WriteSpace();
+					output.Write(ExceptionVariable.Name, TextTokenType.Local);
 				}
-				output.WriteLine(" {");
+				output.WriteSpace();
+				output.WriteLineLeftBrace();
 				output.Indent();
 				base.WriteTo(output);
 				output.Unindent();
-				output.WriteLine("}");
+				output.WriteLineRightBrace();
 			}
 		}
 		public class FilterILBlock: CatchBlock
@@ -204,27 +210,33 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public override void WriteTo(ITextOutput output)
 		{
-			output.WriteLine(".try {");
+			output.Write(".try", TextTokenType.Keyword);
+			output.WriteSpace();
+			output.WriteLineLeftBrace();
 			output.Indent();
 			TryBlock.WriteTo(output);
 			output.Unindent();
-			output.WriteLine("}");
+			output.WriteLineRightBrace();
 			foreach (CatchBlock block in CatchBlocks) {
 				block.WriteTo(output);
 			}
 			if (FaultBlock != null) {
-				output.WriteLine("fault {");
+				output.Write("fault", TextTokenType.Keyword);
+				output.WriteSpace();
+				output.WriteLineLeftBrace();
 				output.Indent();
 				FaultBlock.WriteTo(output);
 				output.Unindent();
-				output.WriteLine("}");
+				output.WriteLineRightBrace();
 			}
 			if (FinallyBlock != null) {
-				output.WriteLine("finally {");
+				output.Write("finally", TextTokenType.Keyword);
+				output.WriteSpace();
+				output.WriteLineLeftBrace();
 				output.Indent();
 				FinallyBlock.WriteTo(output);
 				output.Unindent();
-				output.WriteLine("}");
+				output.WriteLineRightBrace();
 			}
 			if (FilterBlock != null) {
 				FilterBlock.WriteTo(output);
@@ -408,19 +420,23 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			if (Operand is ILVariable && ((ILVariable)Operand).IsGenerated) {
 				if (Code == ILCode.Stloc && this.InferredType == null) {
-					output.Write(((ILVariable)Operand).Name);
-					output.Write(" = ");
+					output.Write(((ILVariable)Operand).Name, ((ILVariable)Operand).IsParameter ? TextTokenType.Parameter : TextTokenType.Local);
+					output.WriteSpace();
+					output.Write('=', TextTokenType.Operator);
+					output.WriteSpace();
 					Arguments.First().WriteTo(output);
 					return;
 				} else if (Code == ILCode.Ldloc) {
-					output.Write(((ILVariable)Operand).Name);
+					output.Write(((ILVariable)Operand).Name, ((ILVariable)Operand).IsParameter ? TextTokenType.Parameter : TextTokenType.Local);
 					if (this.InferredType != null) {
-						output.Write(':');
+						output.Write(':', TextTokenType.Operator);
 						this.InferredType.WriteTo(output, ILNameSyntax.ShortTypeName);
 						if (this.ExpectedType != null && this.ExpectedType.FullName != this.InferredType.FullName) {
-							output.Write("[exp:");
+							output.Write('[', TextTokenType.Operator);
+							output.Write("exp", TextTokenType.Keyword);
+							output.Write(':', TextTokenType.Operator);
 							this.ExpectedType.WriteTo(output, ILNameSyntax.ShortTypeName);
-							output.Write(']');
+							output.Write(']', TextTokenType.Operator);
 						}
 					}
 					return;
@@ -429,60 +445,69 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			if (this.Prefixes != null) {
 				foreach (var prefix in this.Prefixes) {
-					output.Write(prefix.Code.GetName());
-					output.Write(". ");
+					output.Write(prefix.Code.GetName() + ".", TextTokenType.OpCode);
+					output.WriteSpace();
 				}
 			}
 			
-			output.Write(Code.GetName());
+			output.Write(Code.GetName(), TextTokenType.OpCode);
 			if (this.InferredType != null) {
-				output.Write(':');
+				output.Write(':', TextTokenType.Operator);
 				this.InferredType.WriteTo(output, ILNameSyntax.ShortTypeName);
 				if (this.ExpectedType != null && this.ExpectedType.FullName != this.InferredType.FullName) {
-					output.Write("[exp:");
+					output.Write('[', TextTokenType.Operator);
+					output.Write("exp", TextTokenType.Keyword);
+					output.Write(':', TextTokenType.Operator);
 					this.ExpectedType.WriteTo(output, ILNameSyntax.ShortTypeName);
-					output.Write(']');
+					output.Write(']', TextTokenType.Operator);
 				}
 			} else if (this.ExpectedType != null) {
-				output.Write("[exp:");
+				output.Write('[', TextTokenType.Operator);
+				output.Write("exp", TextTokenType.Keyword);
+				output.Write(':', TextTokenType.Operator);
 				this.ExpectedType.WriteTo(output, ILNameSyntax.ShortTypeName);
-				output.Write(']');
+				output.Write(']', TextTokenType.Operator);
 			}
-			output.Write('(');
+			output.Write('(', TextTokenType.Operator);
 			bool first = true;
 			if (Operand != null) {
 				if (Operand is ILLabel) {
-					output.WriteReference(((ILLabel)Operand).Name, Operand);
+					output.WriteReference(((ILLabel)Operand).Name, Operand, TextTokenType.Label);
 				} else if (Operand is ILLabel[]) {
 					ILLabel[] labels = (ILLabel[])Operand;
 					for (int i = 0; i < labels.Length; i++) {
-						if (i > 0)
-							output.Write(", ");
-						output.WriteReference(labels[i].Name, labels[i]);
+						if (i > 0) {
+							output.Write(',', TextTokenType.Operator);
+							output.WriteSpace();
+						}
+						output.WriteReference(labels[i].Name, labels[i], TextTokenType.Label);
 					}
 				} else if (Operand is IMethod && (Operand as IMethod).MethodSig != null) {
 					IMethod method = (IMethod)Operand;
 					if (method.DeclaringType != null) {
 						method.DeclaringType.WriteTo(output, ILNameSyntax.ShortTypeName);
-						output.Write("::");
+						output.Write("::", TextTokenType.Operator);
 					}
-					output.WriteReference(method.Name, method);
+					output.WriteReference(method.Name, method, TextTokenHelper.GetTextTokenType(method));
 				} else if (Operand is IField) {
 					IField field = (IField)Operand;
 					field.DeclaringType.WriteTo(output, ILNameSyntax.ShortTypeName);
-					output.Write("::");
-					output.WriteReference(field.Name, field);
+					output.Write("::", TextTokenType.Operator);
+					output.WriteReference(field.Name, field, TextTokenHelper.GetTextTokenType(field));
 				} else {
 					DisassemblerHelpers.WriteOperand(output, Operand);
 				}
 				first = false;
 			}
 			foreach (ILExpression arg in this.Arguments) {
-				if (!first) output.Write(", ");
+				if (!first) {
+					output.Write(',', TextTokenType.Operator);
+					output.WriteSpace();
+				}
 				arg.WriteTo(output);
 				first = false;
 			}
-			output.Write(')');
+			output.Write(')', TextTokenType.Operator);
 		}
 	}
 	
@@ -501,15 +526,19 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public override void WriteTo(ITextOutput output)
 		{
-			output.WriteLine("");
-			output.Write("loop (");
+			output.WriteLine("", TextTokenType.Text);
+			output.Write("loop", TextTokenType.Keyword);
+			output.WriteSpace();
+			output.Write('(', TextTokenType.Operator);
 			if (this.Condition != null)
 				this.Condition.WriteTo(output);
-			output.WriteLine(") {");
+			output.Write(')', TextTokenType.Operator);
+			output.WriteSpace();
+			output.WriteLineLeftBrace();
 			output.Indent();
 			this.BodyBlock.WriteTo(output);
 			output.Unindent();
-			output.WriteLine("}");
+			output.WriteLineRightBrace();
 		}
 	}
 	
@@ -531,19 +560,26 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public override void WriteTo(ITextOutput output)
 		{
-			output.Write("if (");
+			output.Write("if", TextTokenType.Keyword);
+			output.WriteSpace();
+			output.Write('(', TextTokenType.Operator);
 			Condition.WriteTo(output);
-			output.WriteLine(") {");
+			output.Write(')', TextTokenType.Operator);
+			output.WriteSpace();
+			output.WriteLineLeftBrace();
 			output.Indent();
 			TrueBlock.WriteTo(output);
 			output.Unindent();
-			output.Write("}");
+			output.WriteRightBrace();
 			if (FalseBlock != null) {
-				output.WriteLine(" else {");
+				output.WriteSpace();
+				output.Write("else", TextTokenType.Keyword);
+				output.WriteSpace();
+				output.WriteLineLeftBrace();
 				output.Indent();
 				FalseBlock.WriteTo(output);
 				output.Unindent();
-				output.WriteLine("}");
+				output.WriteLineRightBrace();
 			}
 		}
 	}
@@ -558,10 +594,14 @@ namespace ICSharpCode.Decompiler.ILAst
 			{
 				if (this.Values != null) {
 					foreach (int i in this.Values) {
-						output.WriteLine("case {0}:", i);
+						output.Write("case", TextTokenType.Keyword);
+						output.WriteSpace();
+						output.Write(string.Format("{0}", i), TextTokenType.Number);
+						output.WriteLine(":", TextTokenType.Operator);
 					}
 				} else {
-					output.WriteLine("default:");
+					output.Write("default", TextTokenType.Keyword);
+					output.WriteLine(":", TextTokenType.Operator);
 				}
 				output.Indent();
 				base.WriteTo(output);
@@ -583,15 +623,19 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public override void WriteTo(ITextOutput output)
 		{
-			output.Write("switch (");
+			output.Write("switch", TextTokenType.Keyword);
+			output.WriteSpace();
+			output.Write('(', TextTokenType.Operator);
 			Condition.WriteTo(output);
-			output.WriteLine(") {");
+			output.Write(')', TextTokenType.Operator);
+			output.WriteSpace();
+			output.WriteLineLeftBrace();
 			output.Indent();
 			foreach (CaseBlock caseBlock in this.CaseBlocks) {
 				caseBlock.WriteTo(output);
 			}
 			output.Unindent();
-			output.WriteLine("}");
+			output.WriteLineRightBrace();
 		}
 	}
 	
@@ -610,17 +654,23 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public override void WriteTo(ITextOutput output)
 		{
-			output.Write("fixed (");
+			output.Write("fixed", TextTokenType.Keyword);
+			output.WriteSpace();
+			output.Write('(', TextTokenType.Operator);
 			for (int i = 0; i < this.Initializers.Count; i++) {
-				if (i > 0)
-					output.Write(", ");
+				if (i > 0) {
+					output.Write(',', TextTokenType.Operator);
+					output.WriteSpace();
+				}
 				this.Initializers[i].WriteTo(output);
 			}
-			output.WriteLine(") {");
+			output.Write(')', TextTokenType.Operator);
+			output.WriteSpace();
+			output.WriteLineLeftBrace();
 			output.Indent();
 			this.BodyBlock.WriteTo(output);
 			output.Unindent();
-			output.WriteLine("}");
+			output.WriteLineRightBrace();
 		}
 	}
 }

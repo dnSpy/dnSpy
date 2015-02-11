@@ -2,6 +2,7 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Generic;
 
 namespace ICSharpCode.NRefactory.VB.Ast
 {
@@ -56,24 +57,46 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			}
 		}
 		
-		private Identifier()
+		Identifier()
 		{
 			this.name = string.Empty;
 		}
 		
-		public Identifier (string name, TextLocation location)
+		public Identifier (object annotation, string name, TextLocation location)
 		{
 			if (name == null)
 				throw new ArgumentNullException("name");
 			this.Name = name;
+			if (annotation != null)
+				this.AddAnnotation(annotation);
 			this.startLocation = location;
 		}
 		
-		public static implicit operator Identifier(string name)
+		public static Identifier Create(object annotation, string name)
 		{
-			return new Identifier(name, TextLocation.Empty);
+			return new Identifier(annotation, name, TextLocation.Empty);
 		}
 		
+		public static Identifier Create(IEnumerable<object> annotations, string name)
+		{
+			return Create(annotations, name, TextLocation.Empty);
+		}
+
+		public static Identifier Create(IEnumerable<object> annotations, string name, TextLocation textLoc)
+		{
+			var id = new Identifier(null, name, textLoc);
+			if (annotations != null) {
+				foreach (var ann in annotations)
+					id.AddAnnotation(ann);
+			}
+			return id;
+		}
+
+		public static Identifier CreateLiteralField(string name)
+		{
+			return new Identifier(TextTokenType.LiteralField, name, TextLocation.Empty);
+		}
+
 		protected internal override bool DoMatch(AstNode other, ICSharpCode.NRefactory.PatternMatching.Match match)
 		{
 			var node = other as Identifier;

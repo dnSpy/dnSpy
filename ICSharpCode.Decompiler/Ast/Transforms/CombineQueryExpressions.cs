@@ -64,7 +64,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					} else {
 						QueryContinuationClause continuation = new QueryContinuationClause();
 						continuation.PrecedingQuery = innerQuery.Detach();
-						continuation.Identifier = fromClause.Identifier;
+						continuation.IdentifierToken = (Identifier)fromClause.IdentifierToken.Clone();
 						fromClause.ReplaceWith(continuation);
 					}
 				} else {
@@ -140,16 +140,16 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				foreach (var clause in innerQuery.Clauses) {
 					query.Clauses.InsertAfter(insertionPos, insertionPos = clause.Detach());
 				}
-				string ident;
+				Identifier ident;
 				if (nae2 != null)
-					ident = nae2.Name;
+					ident = nae2.NameToken;
 				else if (nae2Expr is IdentifierExpression)
-					ident = ((IdentifierExpression)nae2Expr).Identifier;
+					ident = ((IdentifierExpression)nae2Expr).IdentifierToken;
 				else if (nae2Expr is MemberReferenceExpression)
-					ident = ((MemberReferenceExpression)nae2Expr).MemberName;
+					ident = ((MemberReferenceExpression)nae2Expr).MemberNameToken;
 				else
 					throw new InvalidOperationException("Could not infer name from initializer in AnonymousTypeCreateExpression");
-				query.Clauses.InsertAfter(insertionPos, new QueryLetClause { Identifier = ident, Expression = nae2Expr.Detach() });
+				query.Clauses.InsertAfter(insertionPos, new QueryLetClause { IdentifierToken = (Identifier)ident.Clone(), Expression = nae2Expr.Detach() });
 			}
 			return true;
 		}
@@ -166,7 +166,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (mre != null) {
 				IdentifierExpression ident = mre.Target as IdentifierExpression;
 				if (ident != null && IsTransparentIdentifier(ident.Identifier)) {
-					IdentifierExpression newIdent = new IdentifierExpression(mre.MemberName);
+					IdentifierExpression newIdent = IdentifierExpression.Create(mre.MemberName, mre.MemberNameToken.Annotation<object>());
 					mre.TypeArguments.MoveTo(newIdent.TypeArguments);
 					newIdent.CopyAnnotationsFrom(mre);
 					newIdent.RemoveAnnotations<PropertyDeclaration>(); // remove the reference to the property of the anonymous type

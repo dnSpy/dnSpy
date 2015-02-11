@@ -53,7 +53,7 @@ namespace ICSharpCode.NRefactory.CSharp.Refactoring
 			}
 
 			yield return new CodeAction(context.TranslateString("Create local variable"), script => {
-				var initializer = new VariableInitializer(identifier.Identifier);
+				var initializer = new VariableInitializer(null, identifier.Identifier);
 				var decl = new VariableDeclarationStatement() {
 					Type = guessedType,
 					Variables = { initializer }
