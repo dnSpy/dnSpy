@@ -958,7 +958,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				output.WriteSpace();
 				output.Write("at", TextTokenType.Keyword);
 				output.WriteSpace();
-				output.Write(string.Format("I_{0:x8}", (int)field.RVA), TextTokenType.Text);
+				output.Write(string.Format("I_{0:x8}", (uint)field.RVA), TextTokenType.Text);
 				uint fieldSize;
 				if (field.GetFieldSize(out fieldSize)) {
 					output.WriteSpace();
@@ -1416,7 +1416,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				output.WriteSpace();
 				output.Write("algorithm", TextTokenType.Keyword);
 				output.WriteSpace();
-				output.Write(string.Format("0x{0:x8}", (int)asm.HashAlgorithm), TextTokenType.Number);
+				output.Write(string.Format("0x{0:x8}", (uint)asm.HashAlgorithm), TextTokenType.Number);
 				if (asm.HashAlgorithm == AssemblyHashAlgorithm.SHA1) {
 					output.WriteSpace();
 					output.Write("// SHA1", TextTokenType.Comment);
