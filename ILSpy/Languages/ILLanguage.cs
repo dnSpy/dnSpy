@@ -139,11 +139,6 @@ namespace ICSharpCode.ILSpy
 			dis.DisassembleType(type);
 		}
 		
-		public override void DecompileNamespace(string nameSpace, IEnumerable<TypeDef> types, ITextOutput output, DecompilationOptions options)
-		{
-			CreateReflectionDisassembler(output, options).DisassembleNamespace(nameSpace, types);
-		}
-		
 		public override void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options)
 		{
 			output.WriteLine("// " + assembly.FileName, TextTokenType.Comment);
