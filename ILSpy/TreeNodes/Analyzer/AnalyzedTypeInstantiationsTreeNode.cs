@@ -75,7 +75,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					}
 				}
 
-				method.FreeMethodBody();
+				Helpers.FreeMethodBody(method);
 
 				if (found) {
 					var node = new AnalyzedMethodTreeNode(method);

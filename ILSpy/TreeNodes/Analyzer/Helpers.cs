@@ -119,7 +119,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					}
 				}
 
-				method.FreeMethodBody();
+				Helpers.FreeMethodBody(method);
 
 				if (found)
 					return method;
@@ -140,12 +140,19 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					}
 				}
 
-				method.FreeMethodBody();
+				Helpers.FreeMethodBody(method);
 
 				if (found)
 					return method;
 			}
 			return null;
+		}
+
+		public static void FreeMethodBody(MethodDef method)
+		{
+			//TODO: Don't free the body if it's been modified by ILSpy / a plugin
+			if (method != null)
+				method.FreeMethodBody();
 		}
 	}
 }

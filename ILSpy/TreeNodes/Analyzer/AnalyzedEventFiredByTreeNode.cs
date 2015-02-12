@@ -91,7 +91,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					}
 				}
 
-				method.FreeMethodBody();
+				Helpers.FreeMethodBody(method);
 
 				if (found) {
 					MethodDef codeLocation = this.Language.GetOriginalCodeLocation(method) as MethodDef;
