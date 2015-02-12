@@ -557,7 +557,7 @@ namespace ICSharpCode.ILSpy
 				if (node == null)
 					break;
 				bestMatch = node;
-				node.EnsureLazyChildren();
+				((ILSpyTreeNode)node).EnsureChildrenFiltered();
 				node = node.Children.FirstOrDefault(c => c.ToString() == element);
 			}
 			if (returnBestMatch)
