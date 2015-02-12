@@ -52,9 +52,11 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			// start writing IL code
 			CilBody body = method.Body;
-			output.WriteLine(string.Format("// Method begins at RVA 0x{0:x8}", (uint)method.RVA), TextTokenType.Comment);
+			uint codeSize = (uint)body.GetCodeSize();
+			output.WriteLine(string.Format("// RVA 0x{0:x8} - 0x{1:x8} ({2} (0x{2:x}) bytes)", (uint)method.RVA, (uint)method.RVA + codeSize, codeSize), TextTokenType.Comment);
 			output.WriteLine(string.Format("// Metadata token 0x{0:x8} (RID {1})", method.MDToken.ToInt32(), method.Rid), TextTokenType.Comment);
-			output.WriteLine(string.Format("// Code size {0} (0x{0:x})", body.GetCodeSize()), TextTokenType.Comment);
+			if (body.LocalVarSigTok != 0)
+				output.WriteLine(string.Format("// LocalVarSig token 0x{0:x8} (RID {1})", body.LocalVarSigTok, body.LocalVarSigTok & 0xFFFFFF), TextTokenType.Comment);
 			output.Write(".maxstack", TextTokenType.ILDirective);
 			output.WriteSpace();
 			output.WriteLine(string.Format("{0}", body.MaxStack), TextTokenType.Number);
