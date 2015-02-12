@@ -171,18 +171,10 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			if (segment.Reference is OpCode) {
 				OpCode code = (OpCode)segment.Reference;
-				string encodedName = code.Code.ToString();
+				var s = ILLanguage.GetOpCodeDocumentation(code);
 				string opCodeHex = code.Size > 1 ? string.Format("0x{0:x4}", code.Value) : string.Format("0x{0:x2}", code.Value);
-				XmlDocumentationProvider docProvider = XmlDocLoader.MscorlibDocumentation;
-				if (docProvider != null){
-					string documentation = docProvider.GetDocumentation("F:System.Reflection.Emit.OpCodes." + encodedName);
-					if (documentation != null) {
-						XmlDocRenderer renderer = new XmlDocRenderer();
-						renderer.AppendText(string.Format("{0} ({1}) - ", code.Name, opCodeHex));
-						renderer.AddXmlDocumentation(documentation);
-						return renderer.CreateTextBlock();
-					}
-				}
+				if (s != null)
+					return new TextBlock { Text = string.Format("{0} ({1}) - {2}", code.Name, opCodeHex, s) };
 				return string.Format("{0} ({1})", code.Name, opCodeHex);
 			} else if (segment.Reference is IMemberRef) {
 				IMemberRef mr = (IMemberRef)segment.Reference;

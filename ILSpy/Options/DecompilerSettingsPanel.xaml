@@ -10,5 +10,6 @@
 		<CheckBox IsChecked="{Binding UseDebugSymbols}">Use variable names from debug symbols, if available</CheckBox>
 		<CheckBox IsChecked="{Binding ShowXmlDocumentation}">Show XML documentation in decompiled code</CheckBox>
 		<CheckBox IsChecked="{Binding FoldBraces}">Enable folding on all blocks in braces</CheckBox>
+		<CheckBox IsChecked="{Binding AddILComments}">Add IL opcode comments</CheckBox>
 	</StackPanel>
 </UserControl>

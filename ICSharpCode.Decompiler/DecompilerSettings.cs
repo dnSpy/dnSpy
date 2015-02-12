@@ -266,6 +266,18 @@ namespace ICSharpCode.Decompiler
 				}
 			}
 		}
+
+		bool addILComments = false;
+
+		public bool AddILComments {
+			get { return addILComments; }
+			set {
+				if (addILComments != value) {
+					addILComments = value;
+					OnPropertyChanged("AddILComments");
+				}
+			}
+		}
 		
 		#region Options to aid VB decompilation
 		bool introduceIncrementAndDecrement = true;

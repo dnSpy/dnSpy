@@ -37,15 +37,15 @@ namespace ICSharpCode.Decompiler.Disassembler
 	{
 		readonly ITextOutput output;
 		readonly bool detectControlStructure;
-		readonly CancellationToken cancellationToken;
+		readonly DisassemblerOptions options;
 		
-		public MethodBodyDisassembler(ITextOutput output, bool detectControlStructure, CancellationToken cancellationToken)
+		public MethodBodyDisassembler(ITextOutput output, bool detectControlStructure, DisassemblerOptions options)
 		{
 			if (output == null)
 				throw new ArgumentNullException("output");
 			this.output = output;
 			this.detectControlStructure = detectControlStructure;
-			this.cancellationToken = cancellationToken;
+			this.options = options;
 		}
 		
 		public void Disassemble(MethodDef method, MemberMapping methodMapping)
@@ -98,7 +98,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				for (int i = 0; i < instructions.Count; i++) {
 					var inst = instructions[i];
 					var startLocation = output.Location;
-					inst.WriteTo(output);
+					inst.WriteTo(output, options.GetOpCodeDocumentation);
 					
 					if (methodMapping != null) {
 						// add IL code mappings - used in debugger
@@ -210,7 +210,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 						output.WriteLine(); // put an empty line after branches, and in front of branch targets
 					}
 					var startLocation = output.Location;
-					inst.WriteTo(output);
+					inst.WriteTo(output, options.GetOpCodeDocumentation);
 					
 					// add IL code mappings - used in debugger
 					if (currentMethodMapping != null) {

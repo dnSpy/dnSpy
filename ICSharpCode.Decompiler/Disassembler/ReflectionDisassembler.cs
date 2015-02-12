@@ -24,27 +24,43 @@ using System.Text;
 using System.Threading;
 using ICSharpCode.NRefactory;
 using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 
 namespace ICSharpCode.Decompiler.Disassembler
 {
+	public class DisassemblerOptions
+	{
+		public DisassemblerOptions(CancellationToken cancellationToken)
+		{
+			this.CancellationToken = cancellationToken;
+		}
+
+		public readonly CancellationToken CancellationToken;
+
+		/// <summary>
+		/// null if we shouldn't add opcode documentation. It returns null if no doc was found
+		/// </summary>
+		public Func<OpCode, string> GetOpCodeDocumentation;
+	}
+
 	/// <summary>
 	/// Disassembles type and member definitions.
 	/// </summary>
 	public sealed class ReflectionDisassembler
 	{
 		ITextOutput output;
-		CancellationToken cancellationToken;
+		readonly DisassemblerOptions options;
 		bool isInType; // whether we are currently disassembling a whole type (-> defaultCollapsed for foldings)
 		MethodBodyDisassembler methodBodyDisassembler;
 		IMemberDef currentMember;
 		
-		public ReflectionDisassembler(ITextOutput output, bool detectControlStructure, CancellationToken cancellationToken)
+		public ReflectionDisassembler(ITextOutput output, bool detectControlStructure, DisassemblerOptions options)
 		{
 			if (output == null)
 				throw new ArgumentNullException("output");
 			this.output = output;
-			this.cancellationToken = cancellationToken;
-			this.methodBodyDisassembler = new MethodBodyDisassembler(output, detectControlStructure, cancellationToken);
+			this.options = options;
+			this.methodBodyDisassembler = new MethodBodyDisassembler(output, detectControlStructure, options);
 		}
 		
 		#region Disassemble Method
@@ -1165,7 +1181,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (type.HasNestedTypes) {
 				output.WriteLine("// Nested Types", TextTokenType.Comment);
 				foreach (var nestedType in type.NestedTypes) {
-					cancellationToken.ThrowIfCancellationRequested();
+					options.CancellationToken.ThrowIfCancellationRequested();
 					DisassembleType(nestedType);
 					output.WriteLine();
 				}
@@ -1174,7 +1190,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (type.HasFields) {
 				output.WriteLine("// Fields", TextTokenType.Comment);
 				foreach (var field in type.Fields) {
-					cancellationToken.ThrowIfCancellationRequested();
+					options.CancellationToken.ThrowIfCancellationRequested();
 					DisassembleField(field);
 				}
 				output.WriteLine();
@@ -1182,7 +1198,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (type.HasMethods) {
 				output.WriteLine("// Methods", TextTokenType.Comment);
 				foreach (var m in type.Methods) {
-					cancellationToken.ThrowIfCancellationRequested();
+					options.CancellationToken.ThrowIfCancellationRequested();
 					DisassembleMethod(m);
 					output.WriteLine();
 				}
@@ -1190,7 +1206,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (type.HasEvents) {
 				output.WriteLine("// Events", TextTokenType.Comment);
 				foreach (var ev in type.Events) {
-					cancellationToken.ThrowIfCancellationRequested();
+					options.CancellationToken.ThrowIfCancellationRequested();
 					DisassembleEvent(ev);
 					output.WriteLine();
 				}
@@ -1199,7 +1215,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (type.HasProperties) {
 				output.WriteLine("// Properties", TextTokenType.Comment);
 				foreach (var prop in type.Properties) {
-					cancellationToken.ThrowIfCancellationRequested();
+					options.CancellationToken.ThrowIfCancellationRequested();
 					DisassembleProperty(prop);
 				}
 				output.WriteLine();
@@ -1382,7 +1398,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			bool oldIsInType = isInType;
 			isInType = true;
 			foreach (TypeDef td in types) {
-				cancellationToken.ThrowIfCancellationRequested();
+				options.CancellationToken.ThrowIfCancellationRequested();
 				DisassembleType(td);
 				output.WriteLine();
 			}

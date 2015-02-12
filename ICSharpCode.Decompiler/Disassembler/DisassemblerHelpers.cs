@@ -77,7 +77,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			WriteOffsetReference(writer, exceptionHandler.HandlerEnd);
 		}
 		
-		public static void WriteTo(this Instruction instruction, ITextOutput writer)
+		public static void WriteTo(this Instruction instruction, ITextOutput writer, Func<OpCode, string> getOpCodeDocumentation)
 		{
 			writer.WriteDefinition(DnlibExtensions.OffsetToString(instruction.GetOffset()), instruction, TextTokenType.Label);
 			writer.Write(':', TextTokenType.Operator);
@@ -97,6 +97,13 @@ namespace ICSharpCode.Decompiler.Disassembler
 					}
 				}
 				WriteOperand(writer, instruction.Operand);
+			}
+			if (getOpCodeDocumentation != null) {
+				var doc = getOpCodeDocumentation(instruction.OpCode);
+				if (doc != null) {
+					writer.Write("\t", TextTokenType.Text);
+					writer.Write("// " + doc, TextTokenType.Comment);
+				}
 			}
 		}
 		

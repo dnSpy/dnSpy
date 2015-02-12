@@ -21,7 +21,9 @@ using System.Collections.Generic;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.NRefactory;
+using ICSharpCode.ILSpy.XmlDoc;
 using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 
 namespace ICSharpCode.ILSpy
 {
@@ -48,22 +50,56 @@ namespace ICSharpCode.ILSpy
 		public override string FileExtension {
 			get { return ".il"; }
 		}
+
+		ReflectionDisassembler CreateReflectionDisassembler(ITextOutput output, DecompilationOptions options)
+		{
+			var disOpts = new DisassemblerOptions(options.CancellationToken);
+			if (options.DecompilerSettings.AddILComments)
+				disOpts.GetOpCodeDocumentation = GetOpCodeDocumentation;
+			return new ReflectionDisassembler(output, detectControlStructure, disOpts);
+		}
+
+		static readonly string[] cachedOpCodeDocs = new string[0x200];
+		public static string GetOpCodeDocumentation(OpCode code)
+		{
+			int index = (int)code.Code;
+			int hi = index >> 8;
+			if (hi == 0xFE)
+				index -= 0xFD00;
+			else if (hi != 0)
+				return null;
+			var s = cachedOpCodeDocs[index];
+			if (s != null)
+				return s;
+
+			var docProvider = XmlDocLoader.MscorlibDocumentation;
+			if (docProvider != null) {
+				string docXml = docProvider.GetDocumentation("F:System.Reflection.Emit.OpCodes." + code.Code.ToString());
+				if (docXml != null) {
+					XmlDocRenderer renderer = new XmlDocRenderer();
+					renderer.AddXmlDocumentation(docXml);
+					return cachedOpCodeDocs[index] = renderer.ToString();
+				}
+			}
+
+			return null;
+		}
 		
 		public override void DecompileMethod(MethodDef method, ITextOutput output, DecompilationOptions options)
 		{
-			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
+			var dis = CreateReflectionDisassembler(output, options);
 			dis.DisassembleMethod(method);
 		}
 		
 		public override void DecompileField(FieldDef field, ITextOutput output, DecompilationOptions options)
 		{
-			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
+			var dis = CreateReflectionDisassembler(output, options);
 			dis.DisassembleField(field);
 		}
 		
 		public override void DecompileProperty(PropertyDef property, ITextOutput output, DecompilationOptions options)
 		{
-			ReflectionDisassembler rd = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
+			ReflectionDisassembler rd = CreateReflectionDisassembler(output, options);
 			rd.DisassembleProperty(property);
 			if (property.GetMethod != null) {
 				output.WriteLine();
@@ -81,7 +117,7 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileEvent(EventDef ev, ITextOutput output, DecompilationOptions options)
 		{
-			ReflectionDisassembler rd = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
+			ReflectionDisassembler rd = CreateReflectionDisassembler(output, options);
 			rd.DisassembleEvent(ev);
 			if (ev.AddMethod != null) {
 				output.WriteLine();
@@ -99,13 +135,13 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileType(TypeDef type, ITextOutput output, DecompilationOptions options)
 		{
-			var dis = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
+			var dis = CreateReflectionDisassembler(output, options);
 			dis.DisassembleType(type);
 		}
 		
 		public override void DecompileNamespace(string nameSpace, IEnumerable<TypeDef> types, ITextOutput output, DecompilationOptions options)
 		{
-			new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken).DisassembleNamespace(nameSpace, types);
+			CreateReflectionDisassembler(output, options).DisassembleNamespace(nameSpace, types);
 		}
 		
 		public override void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options)
@@ -113,7 +149,7 @@ namespace ICSharpCode.ILSpy
 			output.WriteLine("// " + assembly.FileName, TextTokenType.Comment);
 			output.WriteLine();
 			
-			ReflectionDisassembler rd = new ReflectionDisassembler(output, detectControlStructure, options.CancellationToken);
+			ReflectionDisassembler rd = CreateReflectionDisassembler(output, options);
 			if (options.FullDecompilation)
 				rd.WriteAssemblyReferences(assembly.ModuleDefinition as ModuleDefMD);
 			if (assembly.AssemblyDefinition != null)

@@ -58,6 +58,7 @@ namespace ICSharpCode.ILSpy.Options
 			s.UseDebugSymbols = (bool?)e.Attribute("useDebugSymbols") ?? s.UseDebugSymbols;
 			s.ShowXmlDocumentation = (bool?)e.Attribute("xmlDoc") ?? s.ShowXmlDocumentation;
 			s.FoldBraces = (bool?)e.Attribute("foldBraces") ?? s.FoldBraces;
+			s.AddILComments = (bool?)e.Attribute("addILComments") ?? s.AddILComments;
 			return s;
 		}
 		
@@ -72,6 +73,7 @@ namespace ICSharpCode.ILSpy.Options
 			section.SetAttributeValue("useDebugSymbols", s.UseDebugSymbols);
 			section.SetAttributeValue("xmlDoc", s.ShowXmlDocumentation);
 			section.SetAttributeValue("foldBraces", s.FoldBraces);
+			section.SetAttributeValue("addILComments", s.AddILComments);
 			
 			XElement existingElement = root.Element("DecompilerSettings");
 			if (existingElement != null)
