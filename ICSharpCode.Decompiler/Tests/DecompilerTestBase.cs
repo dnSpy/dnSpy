@@ -26,7 +26,7 @@ using System.Text;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Tests.Helpers;
 using Microsoft.CSharp;
-using Mono.Cecil;
+using dnlib.DotNet;
 using NUnit.Framework;
 
 namespace ICSharpCode.Decompiler.Tests
@@ -47,9 +47,9 @@ namespace ICSharpCode.Decompiler.Tests
 		protected static void AssertRoundtripCode(string fileName, bool optimize = false, bool useDebug = false)
 		{
 			var code = RemoveIgnorableLines(File.ReadLines(fileName));
-			AssemblyDefinition assembly = CompileLegacy(code, optimize, useDebug);
+			AssemblyDef assembly = CompileLegacy(code, optimize, useDebug);
 
-			AstBuilder decompiler = new AstBuilder(new DecompilerContext(assembly.MainModule));
+			AstBuilder decompiler = new AstBuilder(new DecompilerContext(assembly.ManifestModule));
 			decompiler.AddAssembly(assembly);
 			new Helpers.RemoveCompilerAttribute().Run(decompiler.SyntaxTree);
 
@@ -58,7 +58,7 @@ namespace ICSharpCode.Decompiler.Tests
 			CodeAssert.AreEqual(code, output.ToString());
 		}
 
-		protected static AssemblyDefinition CompileLegacy(string code, bool optimize, bool useDebug)
+		protected static AssemblyDef CompileLegacy(string code, bool optimize, bool useDebug)
 		{
 			CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string, string> { { "CompilerVersion", "v4.0" } });
 			CompilerParameters options = new CompilerParameters();
@@ -76,7 +76,7 @@ namespace ICSharpCode.Decompiler.Tests
 					}
 					throw new Exception(b.ToString());
 				}
-				return AssemblyDefinition.ReadAssembly(results.PathToAssembly);
+				return AssemblyDef.Load(results.PathToAssembly);
 			}
 			finally
 			{

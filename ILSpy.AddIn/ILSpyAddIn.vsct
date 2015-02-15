@@ -65,14 +65,14 @@
         <Parent guid="guidILSpyAddInCmdSet" id="ILSpyAddInGroup" />
         <Icon guid="guidImages" id="bmpPicSearch" />
         <Strings>
-          <ButtonText>Open in ILSpy</ButtonText>
+          <ButtonText>Open in dnSpy</ButtonText>
         </Strings>
       </Button>
 
       <Button guid="guidILSpyAddInCmdSet" id="cmdidOpenILSpy" priority="0x0600" type="Button">
         <Parent guid="guidILSpyAddInCmdSet" id="OpenILSpyGroup" />
         <Strings>
-          <ButtonText>ILSpy</ButtonText>
+          <ButtonText>dnSpy</ButtonText>
         </Strings>
       </Button>
  
@@ -91,10 +91,10 @@
 
   <Symbols>
     <!-- This is the package guid. -->
-    <GuidSymbol name="guidILSpyAddInPkg" value="{a9120dbe-164a-4891-842f-fb7829273838}" />
+    <GuidSymbol name="guidILSpyAddInPkg" value="{E423C8E4-E730-47FE-B943-5D0E0E5C7CEB}" />
     
     <!-- This is the guid used to group the menu commands together -->
-    <GuidSymbol name="guidILSpyAddInCmdSet" value="{85ddb8ca-a842-4b1c-ba1a-94141fdf19d0}">
+    <GuidSymbol name="guidILSpyAddInCmdSet" value="{116541AF-26D5-49C0-B5BD-9683B27A18AC}">
 
       <IDSymbol name="ILSpyAddInGroup" value="0x1020" />
       <IDSymbol name="OpenILSpyGroup" value="0x1030" />

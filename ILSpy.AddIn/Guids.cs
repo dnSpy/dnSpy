@@ -6,8 +6,8 @@ namespace ICSharpCode.ILSpy.AddIn
 {
 	static class GuidList
 	{
-		public const string guidILSpyAddInPkgString = "a9120dbe-164a-4891-842f-fb7829273838";
-		public const string guidILSpyAddInCmdSetString = "85ddb8ca-a842-4b1c-ba1a-94141fdf19d0";
+		public const string guidILSpyAddInPkgString = "E423C8E4-E730-47FE-B943-5D0E0E5C7CEB";
+		public const string guidILSpyAddInCmdSetString = "116541AF-26D5-49C0-B5BD-9683B27A18AC";
 
 		public static readonly Guid guidILSpyAddInCmdSet = new Guid(guidILSpyAddInCmdSetString);
 	};

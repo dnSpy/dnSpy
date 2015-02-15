@@ -134,7 +134,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 			return new TextBlock { Text = ret.ToString() };
 		}
 
-		public string ToString()
+		public override string ToString()
 		{
 			return ret.ToString();
 		}

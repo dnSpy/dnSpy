@@ -20,7 +20,7 @@ using System;
 using System.IO;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Tests.Helpers;
-using Mono.Cecil;
+using dnlib.DotNet;
 using NUnit.Framework;
 
 namespace ICSharpCode.Decompiler.Tests
@@ -39,8 +39,8 @@ namespace ICSharpCode.Decompiler.Tests
 		void Run(string compiledFile, string expectedOutputFile)
 		{
 			string expectedOutput = File.ReadAllText(Path.Combine(path, expectedOutputFile));
-			var assembly = AssemblyDefinition.ReadAssembly(Path.Combine(path, compiledFile));
-			AstBuilder decompiler = new AstBuilder(new DecompilerContext(assembly.MainModule));
+			var assembly = AssemblyDef.Load(Path.Combine(path, compiledFile));
+			AstBuilder decompiler = new AstBuilder(new DecompilerContext(assembly.ManifestModule));
 			decompiler.AddAssembly(assembly);
 			new Helpers.RemoveCompilerAttribute().Run(decompiler.SyntaxTree);
 			StringWriter output = new StringWriter();

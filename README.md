@@ -20,10 +20,7 @@ Build instructions
 
 You need [dnlib](https://github.com/0xd4d/dnlib) and you must define `THREAD_SAFE` when compiling it. dnSpy will immediately exit if it detects that dnlib isn't thread safe.
 
-Compile it with VS2010. I've not tried to compile it with VS2012-2013. If you try to compile it with VS2012 or later, you may need to remove a few projects, which haven't been ported yet:
-
-* ILSpy.AddIn
-* ICSharpCode.Decompiler.Tests
+Use Visual Studio 2010 or later or run `debugbuild.bat` / `releasebuild.bat` to build it.
 
 Themes
 ======

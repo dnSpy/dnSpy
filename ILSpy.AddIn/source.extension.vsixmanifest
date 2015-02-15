@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Vsix Version="1.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2010">
-  <Identifier Id="a9120dbe-164a-4891-842f-fb7829273838">
-    <Name>ILSpy</Name>
+  <Identifier Id="E423C8E4-E730-47FE-B943-5D0E0E5C7CEB">
+    <Name>dnSpy</Name>
     <Author>IC#Code</Author>
     <Version>1.1</Version>
-    <Description xml:space="preserve">Integrates the ILSpy decompiler into Visual Studio.</Description>
+    <Description xml:space="preserve">Integrates the dnSpy decompiler into Visual Studio.</Description>
     <Icon>ILSpy-Large.ico</Icon>
     <License>license.txt</License>
     <!--TODO: <PreviewImage>~200px image</PreviewImage>-->

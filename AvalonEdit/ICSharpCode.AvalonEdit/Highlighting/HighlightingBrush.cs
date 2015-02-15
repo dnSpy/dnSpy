@@ -47,6 +47,7 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 	{
 		readonly SolidColorBrush brush;
 		
+#pragma warning disable 1591
 		public SimpleHighlightingBrush(SolidColorBrush brush)
 		{
 			brush.Freeze();
@@ -64,6 +65,7 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 		{
 			return brush.ToString();
 		}
+#pragma warning restore 1591
 		
 		SimpleHighlightingBrush(SerializationInfo info, StreamingContext context)
 		{
@@ -85,6 +87,7 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 	{
 		readonly PropertyInfo property;
 		
+#pragma warning disable 1591
 		public SystemColorHighlightingBrush(PropertyInfo property)
 		{
 			Debug.Assert(property.ReflectedType == typeof(SystemColors));
@@ -101,6 +104,7 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 		{
 			return property.Name;
 		}
+#pragma warning restore 1591
 		
 		SystemColorHighlightingBrush(SerializationInfo info, StreamingContext context)
 		{

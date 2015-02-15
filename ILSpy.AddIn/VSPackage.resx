@@ -132,7 +132,7 @@
     <value>ILSpy.AddIn</value>
   </data>
   <data name="112" xml:space="preserve">
-    <value>Integration of the ILSpy Decompiler into Visual Studio.</value>
+    <value>Integration of the dnSpy Decompiler into Visual Studio.</value>
   </data>
   <data name="400" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Package.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

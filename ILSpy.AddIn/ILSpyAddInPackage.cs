@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using System.Reflection;
 using System.IO;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.AddIn
 {
@@ -94,7 +94,7 @@ namespace ICSharpCode.ILSpy.AddIn
 				string path = null;
 				if (reference.PublicKeyToken != "") {
 					var token = Utils.HexStringToBytes(reference.PublicKeyToken);
-					path = GacInterop.FindAssemblyInNetGac(new AssemblyNameReference(reference.Identity, new Version(reference.Version)) { PublicKeyToken = token });
+					path = GacInterop.FindAssemblyInNetGac(new AssemblyNameInfo() { Name = reference.Identity, Version = new Version(reference.Version), PublicKeyOrToken = new PublicKeyToken(token), Culture = string.Empty });
 				}
 				if (path == null)
 					path = reference.Path;
@@ -110,7 +110,7 @@ namespace ICSharpCode.ILSpy.AddIn
 		private string GetILSpyPath()
 		{
 			var basePath = Path.GetDirectoryName(typeof(ILSpyAddInPackage).Assembly.Location);
-			return Path.Combine(basePath, "ILSpy.exe");
+			return Path.Combine(basePath, "dnSpy.exe");
 		}
 
 		private void OpenAssemblyInILSpy(string assemblyFileName)
