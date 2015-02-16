@@ -313,10 +313,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				var mod = tmp as ModuleDefMD;
 				if (mod == null)
 					continue;
-				for (uint rid = 1; ; rid++) {
-					var typeref = mod.ResolveTypeRef(rid);
-					if (typeref == null)
-						break;
+				foreach (var typeref in mod.GetTypeRefs()) {
 					if (typeref.Name == typeScope.Name && typeref.Namespace == typeScope.Namespace)
 						return true;
 				}

@@ -498,12 +498,8 @@ namespace ICSharpCode.ILSpy
 						// Some types might've been moved to assembly A and some other types to
 						// assembly B. Therefore we must check every type reference and we can't
 						// just loop over all asm refs.
-						for (uint rid = 1; ; rid++) {
-							var tr = mod.ResolveTypeRef(rid);
-							if (tr == null)
-								break;
+						foreach (var tr in mod.GetTypeRefs())
 							Find(tr);
-						}
 						for (uint rid = 1; ; rid++) {
 							var et = mod.ResolveExportedType(rid);
 							if (et == null)
