@@ -11,7 +11,7 @@
 		<color name="keyword" fg="#0000FF" />
 		<color name="string" fg="#A31515" />
 		<color name="char" fg="#A31515" />
-		<color name="namespacepart" fg="#0000FF" />
+		<color name="namespacepart" fg="#3366CC" />
 		<color name="type" fg="#2B91AF" />
 		<color name="statictype" fg="#1B5D70" />
 		<color name="delegate" fg="#33CCFF" />
