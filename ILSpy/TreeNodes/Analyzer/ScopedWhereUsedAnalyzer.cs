@@ -309,14 +309,19 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private bool AssemblyReferencesScopeType(AssemblyDef asm)
 		{
-			bool hasRef = false;
-			/*foreach (var typeref in asm.MainModule.GetTypeReferences()) {
-				if (typeref.Name == typeScope.Name && typeref.Namespace == typeScope.Namespace) {
-					hasRef = true;
-					break;
+			foreach (var tmp in asm.Modules) {
+				var mod = tmp as ModuleDefMD;
+				if (mod == null)
+					continue;
+				for (uint rid = 1; ; rid++) {
+					var typeref = mod.ResolveTypeRef(rid);
+					if (typeref == null)
+						break;
+					if (typeref.Name == typeScope.Name && typeref.Namespace == typeScope.Namespace)
+						return true;
 				}
-			}*/
-			return hasRef;
+			}
+			return false;
 		}
 	}
 }

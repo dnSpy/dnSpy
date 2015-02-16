@@ -288,11 +288,15 @@ namespace ICSharpCode.Decompiler.Ast
 			if (attrs == MethodAttributes.Assembly || attrs == MethodAttributes.FamANDAssem) {
 				var derivedTypeAsm = derivedType.Module.Assembly;
 				var asm = baseMember.DeclaringType.Module.Assembly;
-				if (asm.HasCustomAttributes) {
+				if (derivedTypeAsm != null && asm != null && asm.HasCustomAttributes) {
 					var attributes = asm.CustomAttributes
-						.Where(attr => attr.AttributeType.FullName == "System.Runtime.CompilerServices.InternalsVisibleToAttribute");
+						.Where(attr => attr.TypeFullName == "System.Runtime.CompilerServices.InternalsVisibleToAttribute");
 					foreach (var attribute in attributes) {
-						string assemblyName = attribute.ConstructorArguments[0].Value as string;
+						if (attribute.ConstructorArguments.Count == 0)
+							continue;
+						string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
+						if (assemblyName == null)
+							continue;
 						assemblyName = assemblyName.Split(',')[0]; // strip off any public key info
 						if (assemblyName == derivedTypeAsm.Name)
 							return true;

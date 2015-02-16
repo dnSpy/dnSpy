@@ -363,11 +363,18 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private ITypeDefOrRef GetScopeTypeReferenceInAssembly(AssemblyDef asm)
 		{
-			/*foreach (var typeref in asm.Modules.OfType<ModuleDefMD>().SelectMany(module => module.GetTypeRefs())) {
-				if (typeref.Name == analyzedType.Name && typeref.Namespace == analyzedType.Namespace) {
-					return typeref;
+			foreach (var tmp in asm.Modules) {
+				var mod = tmp as ModuleDefMD;
+				if (mod == null)
+					continue;
+				for (uint rid = 1; ; rid++) {
+					var typeref = mod.ResolveTypeRef(rid);
+					if (typeref == null)
+						break;
+					if (typeref.Name == analyzedType.Name && typeref.Namespace == analyzedType.Namespace)
+						return typeref;
 				}
-			}*/
+			}
 			return null;
 		}
 
