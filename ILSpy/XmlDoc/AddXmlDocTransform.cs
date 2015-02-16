@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using ICSharpCode.NRefactory.CSharp;
 using dnlib.DotNet;
@@ -50,12 +51,17 @@ namespace ICSharpCode.ILSpy.XmlDoc
 		
 		static void InsertXmlDocumentation(AstNode node, StringReader r)
 		{
+			foreach (var line in GetXmlDocLines(r))
+				node.Parent.InsertChildBefore(node, new Comment(line, CommentType.Documentation), Roles.Comment);
+		}
+
+		public static IEnumerable<string> GetXmlDocLines(StringReader r) {
 			// Find the first non-empty line:
 			string firstLine;
 			do {
 				firstLine = r.ReadLine();
 				if (firstLine == null)
-					return;
+					yield break;
 			} while (string.IsNullOrWhiteSpace(firstLine));
 			string indentation = firstLine.Substring(0, firstLine.Length - firstLine.TrimStart().Length);
 			string line = firstLine;
@@ -66,12 +72,12 @@ namespace ICSharpCode.ILSpy.XmlDoc
 					skippedWhitespaceLines++;
 				} else {
 					while (skippedWhitespaceLines > 0) {
-						node.Parent.InsertChildBefore(node, new Comment(string.Empty, CommentType.Documentation), Roles.Comment);
+						yield return string.Empty;
 						skippedWhitespaceLines--;
 					}
 					if (line.StartsWith(indentation, StringComparison.Ordinal))
 						line = line.Substring(indentation.Length);
-					node.Parent.InsertChildBefore(node, new Comment(" " + line, CommentType.Documentation), Roles.Comment);
+					yield return " " + line;
 				}
 				line = r.ReadLine();
 			}

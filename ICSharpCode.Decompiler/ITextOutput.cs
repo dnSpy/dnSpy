@@ -87,11 +87,11 @@ namespace ICSharpCode.Decompiler
 	// the standard XML reader try to parse it, even if we set the data to Fragment.
 	// Since it only operates on one line at a time (no extra context), it won't be
 	// able to handle eg. attributes spanning more than one line, but this rarely happens.
-	struct SimpleXmlParser
+	static class SimpleXmlParser
 	{
 		static readonly char[] specialChars = new char[] { '<', '>', '"' };
 
-		IEnumerable<KeyValuePair<string, TextTokenType>> Parse2(string text)
+		public static IEnumerable<KeyValuePair<string, TextTokenType>> Parse(string text)
 		{
 			int index = 0;
 			while (index < text.Length) {
@@ -141,11 +141,6 @@ namespace ICSharpCode.Decompiler
 					index = endIndex;
 				}
 			}
-		}
-
-		public static IEnumerable<KeyValuePair<string, TextTokenType>> Parse(string text)
-		{
-			return new SimpleXmlParser().Parse2(text);
 		}
 	}
 }

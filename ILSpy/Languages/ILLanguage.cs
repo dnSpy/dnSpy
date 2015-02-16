@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.NRefactory;
@@ -56,6 +57,8 @@ namespace ICSharpCode.ILSpy
 			var disOpts = new DisassemblerOptions(options.CancellationToken);
 			if (options.DecompilerSettings.AddILComments)
 				disOpts.GetOpCodeDocumentation = GetOpCodeDocumentation;
+			if (options.DecompilerSettings.ShowXmlDocumentation)
+				disOpts.GetXmlDocComments = GetXmlDocComments;
 			return new ReflectionDisassembler(output, detectControlStructure, disOpts);
 		}
 
@@ -83,6 +86,21 @@ namespace ICSharpCode.ILSpy
 			}
 
 			return null;
+		}
+
+		static IEnumerable<string> GetXmlDocComments(IMemberRef mr)
+		{
+			if (mr == null || mr.Module == null)
+				yield break;
+			var xmldoc = XmlDocLoader.LoadDocumentation(mr.Module);
+			if (xmldoc == null)
+				yield break;
+			string doc = xmldoc.GetDocumentation(XmlDocKeyProvider.GetKey(mr));
+			if (doc == null)
+				yield break;
+
+			foreach (var line in AddXmlDocTransform.GetXmlDocLines(new StringReader(doc)))
+				yield return line;
 		}
 		
 		public override void DecompileMethod(MethodDef method, ITextOutput output, DecompilationOptions options)

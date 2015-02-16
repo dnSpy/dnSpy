@@ -41,6 +41,11 @@ namespace ICSharpCode.Decompiler.Disassembler
 		/// null if we shouldn't add opcode documentation. It returns null if no doc was found
 		/// </summary>
 		public Func<OpCode, string> GetOpCodeDocumentation;
+
+		/// <summary>
+		/// null if we shouldn't add XML doc comments.
+		/// </summary>
+		public Func<IMemberRef, IEnumerable<string>> GetXmlDocComments;
 	}
 
 	/// <summary>
@@ -113,6 +118,16 @@ namespace ICSharpCode.Decompiler.Disassembler
 			{ MethodImplAttributes.InternalCall, "internalcall" },
 			{ MethodImplAttributes.ForwardRef, "forwardref" },
 		};
+
+		void WriteXmlDocComment(IMemberDef mr) {
+			if (options.GetXmlDocComments == null)
+				return;
+			foreach (var line in options.GetXmlDocComments(mr)) {
+				output.Write("///", TextTokenType.XmlDocTag);
+				output.WriteXmlDoc(line);
+				output.WriteLine();
+			}
+		}
 		
 		public void DisassembleMethod(MethodDef method)
 		{
@@ -120,6 +135,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			currentMember = method;
 			
 			// write method header
+			WriteXmlDocComment(method);
 			output.WriteDefinition(".method", method, TextTokenType.ILDirective);
 			output.WriteSpace();
 			DisassembleMethodInternal(method);
@@ -954,6 +970,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		
 		public void DisassembleField(FieldDef field)
 		{
+			WriteXmlDocComment(field);
 			output.WriteDefinition(".field", field, TextTokenType.ILDirective);
 			output.WriteSpace();
 			if (field.HasLayoutInfo && field.FieldOffset.HasValue) {
@@ -1009,6 +1026,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			// set current member
 			currentMember = property;
 			
+			WriteXmlDocComment(property);
 			output.WriteDefinition(".property", property, TextTokenType.ILDirective);
 			output.WriteSpace();
 			WriteFlags(property.Attributes, propertyAttributes);
@@ -1064,6 +1082,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			// set current member
 			currentMember = ev;
 			
+			WriteXmlDocComment(ev);
 			output.WriteDefinition(".event", ev, TextTokenType.ILDirective);
 			output.WriteSpace();
 			WriteFlags(ev.Attributes, eventAttributes);
@@ -1120,6 +1139,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		public void DisassembleType(TypeDef type)
 		{
 			// start writing IL
+			WriteXmlDocComment(type);
 			output.WriteDefinition(".class", type, TextTokenType.ILDirective);
 			output.WriteSpace();
 			
