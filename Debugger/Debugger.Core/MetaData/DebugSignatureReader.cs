@@ -3,7 +3,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.MD;
 
 namespace Debugger.MetaData {
-	struct DebugSignatureReader : ISignatureReaderHelper {
+	struct DebugSignatureReader {
 		static readonly CorLibTypes corLibTypes = new CorLibTypes();
 
 		sealed class CorLibTypes : ICorLibTypes {
@@ -108,29 +108,33 @@ namespace Debugger.MetaData {
 			}
 		}
 
+		sealed class SignatureReaderHelper : ISignatureReaderHelper {
+			public static readonly SignatureReaderHelper Instance = new SignatureReaderHelper();
+
+			public ITypeDefOrRef ResolveTypeDefOrRef(uint codedToken, GenericParamContext gpContext) {
+				uint token;
+				if (!CodedToken.TypeDefOrRef.Decode(codedToken, out token))
+					return null;
+				uint rid = MDToken.ToRID(token);
+				switch (MDToken.ToTable(token)) {
+				case Table.TypeDef:		return new TypeDefUser(UTF8String.Empty) { Rid = rid };
+				case Table.TypeRef:		return new TypeRefUser(null, UTF8String.Empty) { Rid = rid };
+				case Table.TypeSpec:	return new TypeSpecUser() { Rid = rid };
+				}
+				return null;
+			}
+
+			public TypeSig ConvertRTInternalAddress(IntPtr address) {
+				return null;
+			}
+		}
+
 		public TypeSig ReadTypeSignature(byte[] data) {
-			return SignatureReader.ReadTypeSig(this, corLibTypes, data);
+			return SignatureReader.ReadTypeSig(SignatureReaderHelper.Instance, corLibTypes, data);
 		}
 
 		public CallingConventionSig ReadSignature(byte[] data) {
-			return SignatureReader.ReadSig(this, corLibTypes, data);
-		}
-
-		public ITypeDefOrRef ResolveTypeDefOrRef(uint codedToken, GenericParamContext gpContext) {
-			uint token;
-			if (!CodedToken.TypeDefOrRef.Decode(codedToken, out token))
-				return null;
-			uint rid = MDToken.ToRID(token);
-			switch (MDToken.ToTable(token)) {
-			case Table.TypeDef:		return new TypeDefUser(UTF8String.Empty) { Rid = rid };
-			case Table.TypeRef:		return new TypeRefUser(null, UTF8String.Empty) { Rid = rid };
-			case Table.TypeSpec:	return new TypeSpecUser() { Rid = rid };
-			}
-			return null;
-		}
-
-		public TypeSig ConvertRTInternalAddress(IntPtr address) {
-			return null;
+			return SignatureReader.ReadSig(SignatureReaderHelper.Instance, corLibTypes, data);
 		}
 	}
 }
