@@ -104,9 +104,11 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.Options.RequireControlModifierForHyperlinkClick = false;
 			textEditor.TextArea.TextView.MouseHover += TextViewMouseHover;
 			textEditor.TextArea.TextView.MouseHoverStopped += TextViewMouseHoverStopped;
-			textEditor.SetBinding(TextEditor.FontFamilyProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = new PropertyPath("SelectedFont") });
-			textEditor.SetBinding(TextEditor.FontSizeProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = new PropertyPath("SelectedFontSize") });
+			textEditor.SetBinding(Control.FontFamilyProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = new PropertyPath("SelectedFont") });
+			textEditor.SetBinding(Control.FontSizeProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = new PropertyPath("SelectedFontSize") });
 			
+			// add marker service & margin
+			iconMargin = new IconBarMargin((manager = new IconBarManager()));
 			textMarkerService = new TextMarkerService(textEditor.TextArea.TextView);
 			textEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
 			textEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
@@ -138,7 +140,6 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.TextArea.TextView.VisualLinesChanged += (s, _) => iconMargin.InvalidateVisual();
 			
 			// add marker service & margin
-			textMarkerService.CodeEditor = textEditor;
 			textEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
 			textEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
 		}
@@ -468,6 +469,13 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		Task DoDecompile(DecompilationContext context, int outputLengthLimit)
 		{
+			// close popup
+			if (textEditorListeners != null) {
+				foreach (var listener in textEditorListeners) {
+					listener.ClosePopup();
+				}
+			}
+
 			return RunWithCancellation(
 				delegate (CancellationToken ct) { // creation of the background task
 					context.Options.CancellationToken = ct;
@@ -477,6 +485,7 @@ namespace ICSharpCode.ILSpy.TextView
 				delegate (AvalonEditTextOutput textOutput) { // handling the result
 					ShowOutput(textOutput, context.Language.SyntaxHighlighting, context.Options.TextViewState);
 					decompiledNodes = context.TreeNodes;
+					UpdateDebugUI(true);
 				})
 			.Catch<Exception>(exception => {
 					textEditor.SyntaxHighlighting = null;
@@ -489,6 +498,7 @@ namespace ICSharpCode.ILSpy.TextView
 					}
 					ShowOutput(output);
 					decompiledNodes = context.TreeNodes;
+					UpdateDebugUI(false);
 				});
 		}
 		

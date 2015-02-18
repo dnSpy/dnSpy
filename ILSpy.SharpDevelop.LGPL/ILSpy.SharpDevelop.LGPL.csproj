@@ -63,13 +63,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\ILSpy\AvalonEdit\ITextMarker.cs">
+      <Link>AvalonEdit\ITextMarker.cs</Link>
+    </Compile>
+    <Compile Include="..\ILSpy\AvalonEdit\TextMarkerService.cs">
+      <Link>AvalonEdit\TextMarkerService.cs</Link>
+    </Compile>
     <Compile Include="AvalonEdit\IconBarManager.cs" />
     <Compile Include="AvalonEdit\IconBarMargin.cs" />
     <Compile Include="AvalonEdit\ITextEditorListener.cs" />
-    <Compile Include="AvalonEdit\ITextMarker.cs" />
     <Compile Include="AvalonEdit\IToolTip.cs" />
     <Compile Include="AvalonEdit\TextEditorWeakEventManager.cs" />
-    <Compile Include="AvalonEdit\TextMarkerService.cs" />
     <Compile Include="Bookmarks\BookmarkBase.cs" />
     <Compile Include="Bookmarks\BookmarkEventHandler.cs" />
     <Compile Include="Bookmarks\BookmarkManager.cs" />
