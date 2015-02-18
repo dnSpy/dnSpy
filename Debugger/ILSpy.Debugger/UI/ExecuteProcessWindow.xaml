@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Window
+	x:Class="ICSharpCode.ILSpy.Debugger.UI.ExecuteProcessWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Title="Select process to debug..."
+	WindowStartupLocation="CenterOwner"
+	WindowState="Normal"
+	WindowStyle="ToolWindow"
+	ShowInTaskbar="False"
+	Height="171"
+	Width="509">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition
+				Height="1.4*" />
+			<RowDefinition
+				Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition
+				Width="125" />
+			<ColumnDefinition
+				Width="1*" />
+			<ColumnDefinition
+				Width="40" />
+		</Grid.ColumnDefinitions>
+		<Label
+			Content="Executable"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Margin="19.5,15.5,0,0" />
+		<TextBox
+			Name="pathTextBox"
+			Grid.Column="1"
+			Grid.Row="0"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Top"
+			Margin="5,15.5,0,0" />
+		<Button
+			Content="..."
+			MinWidth="25"
+			Name="pathButton"
+			Click="pathButton_Click"
+			Grid.Column="2"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Margin="5,15.5,0,0" />
+		<Label
+			Content="Arguments"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Margin="19.5,46.46,0,0" />
+		<TextBox
+			Name="argumentsTextBox"
+			Grid.Column="1"
+			Grid.Row="0"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Top"
+			Margin="5,46.46,0,0" />
+		<Label
+			Content="Working directory"
+			Grid.Column="0"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Margin="19.5,77.42,0,0" />
+		<TextBox
+			Name="workingDirectoryTextBox"
+			Grid.Column="1"
+			Grid.Row="0"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Top"
+			Margin="5,77.42,0,0" />
+		<Button
+			Content="..."
+			MinWidth="25"
+			Click="workingDirectoryButton_Click"
+			Name="workingDirectoryButton"
+			Grid.Column="2"
+			Grid.Row="0"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Margin="5,77.42,0,0" />
+		<StackPanel
+			Margin="4"
+			Orientation="Horizontal"
+			HorizontalAlignment="Right"
+			Grid.Row="1"
+			Grid.ColumnSpan="3">
+			<Button
+				Margin="0,0,4,0"
+				DockPanel.Dock="Left"
+				HorizontalAlignment="Center"
+				x:Name="ExecuteButton"
+				IsDefault="True"
+				Click="ExecuteButton_Click"
+				Content="Execute" />
+			<Button
+				DockPanel.Dock="Right"
+				IsCancel="True"
+				x:Name="CancelButton"
+				Content="Cancel"
+				Click="CancelButton_Click" />
+		</StackPanel>
+	</Grid>
+</Window>
