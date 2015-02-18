@@ -8,10 +8,12 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 
+using SR = System.Reflection;
+
 using Debugger.Interop.CorDebug;
 using Debugger.Interop.CorSym;
 using Debugger.Interop.MetaData;
-using Mono.Cecil.Signatures;
+using dnlib.DotNet;
 
 namespace Debugger.MetaData
 {
@@ -152,9 +154,9 @@ namespace Debugger.MetaData
 		//		public virtual MethodBody GetMethodBody();
 		
 		/// <inheritdoc/>
-		public override MethodImplAttributes GetMethodImplementationFlags()
+		public override SR.MethodImplAttributes GetMethodImplementationFlags()
 		{
-			return (MethodImplAttributes)methodProps.ImplFlags;
+			return (SR.MethodImplAttributes)methodProps.ImplFlags;
 		}
 		
 		/// <inheritdoc/>
@@ -174,8 +176,8 @@ namespace Debugger.MetaData
 		}
 		
 		/// <inheritdoc/>
-		public override MethodAttributes Attributes {
-			get { return (MethodAttributes)methodProps.Flags; }
+		public override SR.MethodAttributes Attributes {
+			get { return (SR.MethodAttributes)methodProps.Flags; }
 		}
 		
 		//		public virtual CallingConventions CallingConvention { get; }
@@ -214,15 +216,15 @@ namespace Debugger.MetaData
 		/// <inheritdoc/>
 		public override Type ReturnType {
 			get {
-				if (this.MethodDefSig.RetType.Void) return null;
-				return DebugType.CreateFromSignature(this.DebugModule, this.MethodDefSig.RetType.Type, declaringType);
+				if (this.MethodDefSig.RetType.RemovePinnedAndModifiers().GetElementType() == ElementType.Void) return null;
+				return DebugType.CreateFromSignature(this.DebugModule, this.MethodDefSig.RetType, declaringType);
 			}
 		}
 		
 		/// <inheritdoc/>
 		public override ParameterInfo ReturnParameter {
 			get {
-				if (this.MethodDefSig.RetType.Void) return null;
+				if (this.MethodDefSig.RetType.RemovePinnedAndModifiers().GetElementType() == ElementType.Void) return null;
 				return new DebugParameterInfo(this, string.Empty, this.ReturnType, -1, delegate { throw new NotSupportedException(); });
 			}
 		}
@@ -232,21 +234,19 @@ namespace Debugger.MetaData
 			get { throw new NotSupportedException(); }
 		}
 		
-		MethodDefSig methodDefSig;
-		
-		MethodDefSig MethodDefSig {
+		MethodSig methodDefSig;
+
+		MethodSig MethodDefSig {
 			get {
-				if (methodDefSig == null) {
-					SignatureReader sigReader = new SignatureReader(methodProps.SigBlob.GetData());
-					methodDefSig = sigReader.GetMethodDefSig(0);
-				}
+				if (methodDefSig == null)
+					methodDefSig = new DebugSignatureReader().ReadSignature(methodProps.SigBlob.GetData()) as MethodSig;
 				return methodDefSig;
 			}
 		}
 		
 		/// <summary> Gets the number of paramters of this method </summary>
 		public int ParameterCount {
-			get { return this.MethodDefSig.ParamCount; }
+			get { return this.MethodDefSig.GetParamCount(); }
 		}
 		
 		ParameterInfo[] parameters;
@@ -264,7 +264,7 @@ namespace Debugger.MetaData
 		public override ParameterInfo[] GetParameters()
 		{
 			if (parameters == null) {
-				parameters = new ParameterInfo[this.MethodDefSig.ParamCount];
+				parameters = new ParameterInfo[this.MethodDefSig.GetParamCount()];
 				for(int i = 0; i < parameters.Length; i++) {
 					string name;
 					try {
@@ -278,7 +278,7 @@ namespace Debugger.MetaData
 						new DebugParameterInfo(
 							this,
 							name,
-							DebugType.CreateFromSignature(this.DebugModule, this.MethodDefSig.Parameters[i].Type, declaringType),
+							DebugType.CreateFromSignature(this.DebugModule, this.MethodDefSig.Params[i], declaringType),
 							i,
 							delegate (StackFrame context) { return context.GetArgumentValue(iCopy); }
 						);
@@ -638,10 +638,8 @@ namespace Debugger.MetaData
 			List<DebugLocalVariableInfo> vars = new List<DebugLocalVariableInfo>();
 			foreach (ISymUnmanagedVariable symVar in symScope.GetLocals()) {
 				ISymUnmanagedVariable symVarCopy = symVar;
-				int start;
-				SignatureReader sigReader = new SignatureReader(symVar.GetSignature());
-				LocalVarSig.LocalVariable locVarSig = sigReader.ReadLocalVariable(sigReader.Blob, 0, out start);
-				DebugType locVarType = DebugType.CreateFromSignature(this.DebugModule, locVarSig.Type, declaringType);
+				var locVarSig = new DebugSignatureReader().ReadTypeSignature(symVar.GetSignature());
+				DebugType locVarType = DebugType.CreateFromSignature(this.DebugModule, locVarSig, declaringType);
 				// Compiler generated?
 				// NB: Display class does not have the compiler-generated flag
 				if ((symVar.GetAttributes() & 1) == 1 || symVar.GetName().StartsWith("CS$")) {

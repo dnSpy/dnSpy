@@ -67,6 +67,7 @@
     <Compile Include="ManagedCallbackProxy.cs" />
     <Compile Include="ManagedCallbackSwitch.cs" />
     <Compile Include="MetaData\DebugConstructorInfo.cs" />
+    <Compile Include="MetaData\DebugSignatureReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AppDomain.cs" />
     <Compile Include="AppDomainCollection.cs" />
@@ -108,46 +109,6 @@
     <Compile Include="MetaData\IOverloadable.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="ModuleCollection.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Binary\ImageFormatException.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Metadata\CodedIndex.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Metadata\ElementType.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Metadata\MetadataFormatException.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Metadata\MetadataToken.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Metadata\TokenType.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Metadata\Utilities.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\Array.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\ArrayShape.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\BaseSignatureVisitor.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\Class.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\Constraint.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\CustomMod.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\FieldSig.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\FnPtr.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\GenericArg.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\GenericInst.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\GenericInstSignature.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\InputOutputItem.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\ISignatureVisitable.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\ISignatureVisitor.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\LocalVarSig.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\MethodDefSig.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\MethodRefSig.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\MethodSig.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\MethodSpec.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\MVar.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\Param.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\PropertySig.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\Ptr.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\RetType.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\Signature.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\SignatureReader.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\SigType.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\SzArray.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\TypeSpec.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\ValueType.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil.Signatures\Var.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil\MethodCallingConvention.cs" />
-    <Compile Include="Mono.Cecil\Mono.Cecil\ReflectionException.cs" />
     <Compile Include="NDebugger.cs" />
     <Compile Include="NRefactory\Ast\ExpressionExtensionMethods.cs" />
     <Compile Include="NRefactory\Visitors\ExpressionEvaluator.cs" />
@@ -195,20 +156,12 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Interop" />
-    <Folder Include="MetaData" />
-    <Folder Include="Mono.Cecil" />
-    <Folder Include="Mono.Cecil\Mono.Cecil" />
-    <Folder Include="Mono.Cecil\Mono.Cecil.Binary" />
-    <Folder Include="Mono.Cecil\Mono.Cecil.Metadata" />
-    <Folder Include="Mono.Cecil\Mono.Cecil.Signatures" />
-    <Folder Include="NRefactory" />
-    <Folder Include="NRefactory\Ast" />
-    <Folder Include="NRefactory\Visitors" />
-    <Folder Include="Tests" />
-  </ItemGroup>
-  <ItemGroup>
+    <ProjectReference Include="..\..\dnlib\src\dnlib.csproj">
+      <Project>{FDFC1237-143F-4919-8318-4926901F4639}</Project>
+      <Name>dnlib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\NRefactory\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj">
       <Project>{53DCA265-3C3C-42F9-B647-F72BA678122B}</Project>
       <Name>ICSharpCode.NRefactory.CSharp</Name>

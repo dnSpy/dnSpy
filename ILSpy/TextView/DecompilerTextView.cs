@@ -401,7 +401,7 @@ namespace ICSharpCode.ILSpy.TextView
 			var document = textEditor.Document;
 			manager.Bookmarks.Clear();
 			foreach (var pair in textOutput.DefinitionLookup.definitions) {
-				MemberReference member = pair.Key as MemberReference;
+				IMemberRef member = pair.Key as IMemberRef;
 				int offset = pair.Value;
 				if (member != null) {
 					int line = document.GetLocation(offset).Line;
@@ -520,11 +520,11 @@ namespace ICSharpCode.ILSpy.TextView
 					int token = DebugInformation.DebugStepInformation.Item1;
 					int ilOffset = DebugInformation.DebugStepInformation.Item2;
 					int line;
-					MemberReference member;
+					IMemberRef member;
 					if (DebugInformation.CodeMappings == null || !DebugInformation.CodeMappings.ContainsKey(token))
 						return;
 
-					if (!DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset(ilOffset, out member, out line))
+					if (!DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset((uint)ilOffset, out member, out line))
 						return;
 					
 					// update marker

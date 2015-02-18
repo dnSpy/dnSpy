@@ -19,7 +19,7 @@
 using System;
 using System.Windows.Input;
 using System.Windows.Media;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.Bookmarks
 {
@@ -30,15 +30,15 @@ namespace ICSharpCode.ILSpy.Bookmarks
 	/// </summary>
 	public class MemberBookmark : IBookmark
 	{
-		MemberReference member;
+		IMemberRef member;
 		
-		public MemberReference Member {
+		public IMemberRef Member {
 			get {
 				return member;
 			}
 		}
 		
-		public MemberBookmark(MemberReference member, int line)
+		public MemberBookmark(IMemberRef member, int line)
 		{
 			this.member = member;
 			LineNumber = line;
@@ -46,20 +46,20 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		
 		public virtual ImageSource Image {
 			get {
-				if (member is FieldDefinition)
-					return TreeNodes.FieldTreeNode.GetIcon((FieldDefinition)member);
+				if (member is FieldDef)
+					return TreeNodes.FieldTreeNode.GetIcon((FieldDef)member);
 				
-				if (member is PropertyDefinition)
-					return TreeNodes.PropertyTreeNode.GetIcon((PropertyDefinition)member);
+				if (member is PropertyDef)
+					return TreeNodes.PropertyTreeNode.GetIcon((PropertyDef)member);
 				
-				if (member is EventDefinition)
-					return TreeNodes.EventTreeNode.GetIcon((EventDefinition)member);
+				if (member is EventDef)
+					return TreeNodes.EventTreeNode.GetIcon((EventDef)member);
 				
-				if (member is MethodDefinition)
-					return TreeNodes.MethodTreeNode.GetIcon((MethodDefinition)member);
+				if (member is MethodDef)
+					return TreeNodes.MethodTreeNode.GetIcon((MethodDef)member);
 				
-				if (member is TypeDefinition)
-					return TreeNodes.TypeTreeNode.GetIcon((TypeDefinition)member);
+				if (member is TypeDef)
+					return TreeNodes.TypeTreeNode.GetIcon((TypeDef)member);
 				
 				return null;
 			}

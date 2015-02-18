@@ -175,7 +175,7 @@ namespace Debugger
 	
 	public class ILBreakpoint : Breakpoint
 	{
-		public ILBreakpoint(NDebugger debugger, string typeName, int line, int metadataToken, int offset, bool enabled)
+		public ILBreakpoint(NDebugger debugger, string typeName, int line, int metadataToken, uint offset, bool enabled)
 		{
 			this.Debugger = debugger;
 			this.Line = line;
@@ -187,11 +187,11 @@ namespace Debugger
 		
 		public int MetadataToken { get; private set; }
 		
-		public int ILOffset { get; private set; }
+		public uint ILOffset { get; private set; }
 		
 		public override bool SetBreakpoint(Module module)
 		{
-			SourcecodeSegment segment = SourcecodeSegment.CreateForIL(module, this.Line, (int)MetadataToken, ILOffset);
+			SourcecodeSegment segment = SourcecodeSegment.CreateForIL(module, this.Line, (int)MetadataToken, (int)ILOffset);
 			if (segment == null)
 				return false;
 			try {

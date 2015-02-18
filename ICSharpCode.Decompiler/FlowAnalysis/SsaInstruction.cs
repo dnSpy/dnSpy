@@ -21,7 +21,7 @@ using System.Diagnostics;
 using System.IO;
 
 using ICSharpCode.Decompiler.Disassembler;
-using Mono.Cecil;
+using dnlib.DotNet;
 using Mono.Cecil.Cil;
 
 namespace ICSharpCode.Decompiler.FlowAnalysis

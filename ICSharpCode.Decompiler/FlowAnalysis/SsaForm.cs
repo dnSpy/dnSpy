@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.Linq;
 
 using ICSharpCode.NRefactory.Utils;
-using Mono.Cecil;
+using dnlib.DotNet;
 using Mono.Cecil.Cil;
 
 namespace ICSharpCode.Decompiler.FlowAnalysis

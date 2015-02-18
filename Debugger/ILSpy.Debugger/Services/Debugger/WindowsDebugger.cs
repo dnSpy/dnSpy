@@ -21,7 +21,7 @@ using ICSharpCode.ILSpy.Debugger.Tooltips;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Visitors;
-using Mono.Cecil;
+using dnlib.DotNet;
 using CorDbg = Debugger;
 using Process = Debugger.Process;
 using StackFrame = Debugger.StackFrame;
@@ -288,7 +288,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			if (DebugInformation.CodeMappings == null || !DebugInformation.CodeMappings.ContainsKey(key))
 				return null;
 			
-			return DebugInformation.CodeMappings[key].GetInstructionByTokenAndOffset(frame.IP, out isMatch);
+			return DebugInformation.CodeMappings[key].GetInstructionByTokenAndOffset((uint)frame.IP, out isMatch);
 		}
 		
 		StackFrame GetStackFrame()
@@ -727,7 +727,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			foreach (var bookmark in DebuggerService.Breakpoints) {
 				var breakpoint =
 					debugger.Breakpoints.FirstOrDefault(
-						b => b.Line == bookmark.LineNumber && (b as ILBreakpoint).MetadataToken == bookmark.MemberReference.MetadataToken.ToInt32());
+						b => b.Line == bookmark.LineNumber && (b as ILBreakpoint).MetadataToken == bookmark.MemberReference.MDToken.ToInt32());
 				if (breakpoint == null)
 					continue;
 				// set the breakpoint only if the module contains the type
@@ -800,11 +800,11 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				int token = frame.MethodInfo.MetadataToken;
 				int ilOffset = frame.IP;
 				int line;
-				MemberReference memberReference;
+				IMemberRef memberReference;
 				
 				if (DebugInformation.CodeMappings != null && 
 				    DebugInformation.CodeMappings.ContainsKey(token) &&
-				    DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset(ilOffset, out memberReference, out line)) {
+				    DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset((uint)ilOffset, out memberReference, out line)) {
 					DebugInformation.DebugStepInformation = null; // we do not need to step into/out
 					DebuggerService.RemoveCurrentLineMarker();
 					DebuggerService.JumpToCurrentLine(memberReference, line, 0, line, 0, ilOffset);
@@ -829,18 +829,18 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				throw new NullReferenceException("No DebugData assemblies!");
 			else {
 				// search for type in the current assembly list
-				TypeDefinition typeDef = null;
-				TypeDefinition nestedTypeDef = null;
+				TypeDef typeDef = null;
+				TypeDef nestedTypeDef = null;
 				
 				foreach (var assembly in DebugInformation.LoadedAssemblies) {
 					if (null == assembly)
 						continue;
 					if ((assembly.FullName.StartsWith("System") || assembly.FullName.StartsWith("Microsoft") || assembly.FullName.StartsWith("mscorlib")) &&
-					    !assembly.Name.Version.ToString().StartsWith(debuggeeVersion))
+					    !assembly.Version.ToString().StartsWith(debuggeeVersion))
 						continue;
 					
 					foreach (var module in assembly.Modules) {
-						var localType = module.GetType(fullName);
+						var localType = module.Find(fullName, true);
 						if (localType != null) {
 							if (localType.DeclaringType == null) {
 								typeDef = localType;
@@ -856,7 +856,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				}
 				
 				if (typeDef != null) {
-					TypeDefinition type = nestedTypeDef ?? typeDef;
+					TypeDef type = nestedTypeDef ?? typeDef;
 					DebugInformation.DebugStepInformation = Tuple.Create(token, ilOffset, type.GetMemberByToken(token));
 				} else {
 					Debug.Assert(typeDef != null, "No type was found!");

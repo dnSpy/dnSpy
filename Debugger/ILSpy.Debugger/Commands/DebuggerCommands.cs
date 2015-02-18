@@ -19,7 +19,7 @@ using ICSharpCode.ILSpy.Debugger.UI;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.Debugger.Commands
 {
@@ -189,8 +189,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 					AssemblyTreeNode a = n as AssemblyTreeNode;
 					if (a == null)
 						return false;
-					AssemblyDefinition asm = a.LoadedAssembly.AssemblyDefinition;
-					return asm != null && asm.EntryPoint != null;
+					AssemblyDef asm = a.LoadedAssembly.AssemblyDefinition;
+					return asm != null && asm.ManifestModule != null && asm.ManifestModule.EntryPoint != null;
 				});
 		}
 		

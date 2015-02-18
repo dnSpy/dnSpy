@@ -14,7 +14,7 @@ using System.Windows.Media;
 using System.Xml;
 using System.Xml.Linq;
 
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.Debugger.Services
 {
@@ -407,41 +407,41 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		/// <param name="type">Type.</param>
 		/// <param name="memberToken">Member metadata token.</param>
 		/// <returns></returns>
-		public static MemberReference GetMemberByToken(this TypeDefinition type, int memberToken)
+		public static IMemberRef GetMemberByToken(this TypeDef type, int memberToken)
 		{
 			if (type.HasProperties) {
 				foreach (var member in type.Properties) {
-					if (member.MetadataToken.ToInt32() == memberToken)
+					if (member.MDToken.ToInt32() == memberToken)
 						return member;
-					if (member.GetMethod != null && member.GetMethod.MetadataToken.ToInt32() == memberToken)
+					if (member.GetMethod != null && member.GetMethod.MDToken.ToInt32() == memberToken)
 						return member;
-					if (member.SetMethod != null && member.SetMethod.MetadataToken.ToInt32() == memberToken)
+					if (member.SetMethod != null && member.SetMethod.MDToken.ToInt32() == memberToken)
 						return member;
 				}
 			}
 			
 			if (type.HasEvents) {
 				foreach (var member in type.Events) {
-					if (member.MetadataToken.ToInt32() == memberToken)
+					if (member.MDToken.ToInt32() == memberToken)
 						return member;
-					if (member.AddMethod != null && member.AddMethod.MetadataToken.ToInt32() == memberToken)
+					if (member.AddMethod != null && member.AddMethod.MDToken.ToInt32() == memberToken)
 						return member;
-					if (member.RemoveMethod != null && member.RemoveMethod.MetadataToken.ToInt32() == memberToken)
+					if (member.RemoveMethod != null && member.RemoveMethod.MDToken.ToInt32() == memberToken)
 						return member;
-					if (member.InvokeMethod != null && member.InvokeMethod.MetadataToken.ToInt32() == memberToken)
+					if (member.InvokeMethod != null && member.InvokeMethod.MDToken.ToInt32() == memberToken)
 						return member;
 				}
 			}
 			if (type.HasMethods) {
 				foreach (var member in type.Methods) {
-					if (member.MetadataToken.ToInt32() == memberToken)
+					if (member.MDToken.ToInt32() == memberToken)
 						return member;
 				}
 			}
 			
 			if (type.HasFields) {
 				foreach (var member in type.Fields) {
-					if (member.MetadataToken.ToInt32() == memberToken)
+					if (member.MDToken.ToInt32() == memberToken)
 						return member;
 				}
 			}

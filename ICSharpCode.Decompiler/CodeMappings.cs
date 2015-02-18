@@ -58,7 +58,7 @@ namespace ICSharpCode.Decompiler
 		/// Retrieves the array that contains the IL range and the missing gaps between ranges.
 		/// </summary>
 		/// <returns>The array representation of the step aranges.</returns>
-		public uint[] ToArray(bool isMatch)
+		public int[] ToArray(bool isMatch)
 		{
 			var currentList = new List<ILRange>();
 			
@@ -78,10 +78,10 @@ namespace ICSharpCode.Decompiler
 			}
 			
 			// set the output
-			var resultList = new List<uint>();
+			var resultList = new List<int>();
 			foreach (var element in ILRange.OrderAndJoint(currentList)) {
-				resultList.Add(element.From);
-				resultList.Add(element.To);
+				resultList.Add((int)element.From);
+				resultList.Add((int)element.To);
 			}
 			
 			return resultList.ToArray();

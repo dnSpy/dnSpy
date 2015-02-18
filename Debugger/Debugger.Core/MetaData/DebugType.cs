@@ -7,10 +7,12 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 
+using SR = System.Reflection;
+
 using Debugger.Interop.CorDebug;
 using Debugger.Interop.MetaData;
 using ICSharpCode.NRefactory.Ast;
-using Mono.Cecil.Signatures;
+using dnlib.DotNet;
 
 namespace Debugger.MetaData
 {
@@ -239,9 +241,9 @@ namespace Debugger.MetaData
 		}
 		
 		/// <inheritdoc/>
-		protected override TypeAttributes GetAttributeFlagsImpl()
+		protected override SR.TypeAttributes GetAttributeFlagsImpl()
 		{
-			return (TypeAttributes)classProps.Flags;
+			return (SR.TypeAttributes)classProps.Flags;
 		}
 		
 		/// <inheritdoc/>
@@ -955,73 +957,97 @@ namespace Debugger.MetaData
 		
 		public static DebugType CreateFromSignature(Module module, byte[] signature, DebugType declaringType)
 		{
-			SignatureReader sigReader = new SignatureReader(signature);
-			int start;
-			SigType sigType = sigReader.ReadType(signature, 0, out start);
+			TypeSig sigType = new DebugSignatureReader().ReadTypeSignature(signature);
 			return CreateFromSignature(module, sigType, declaringType);
 		}
-		
-		internal static DebugType CreateFromSignature(Module module, SigType sigType, DebugType declaringType)
+
+		static uint GetToken(TypeDefOrRefSig sig)
 		{
+			if (sig == null)
+				return 0;
+			var tdr = sig.TypeDefOrRef;
+			if (tdr == null)
+				return 0;
+			return tdr.MDToken.ToUInt32();
+		}
+
+		static bool? IsValueType2(GenericInstSig sig)
+		{
+			// Match original code which only checks whether it's a ValueTypeSig
+			if (sig == null)
+				return null;
+			var tdr = sig.GenericType;
+			if (tdr == null)
+				return null;
+			return tdr.IsValueTypeSig;
+		}
+		
+		internal static DebugType CreateFromSignature(Module module, TypeSig sigType, DebugType declaringType)
+		{
+			sigType = sigType.RemovePinnedAndModifiers();
 			System.Type sysType = CorElementTypeToManagedType((CorElementType)(uint)sigType.ElementType);
 			if (sysType != null)
 				return CreateFromType(module.AppDomain.Mscorlib, sysType);
 			
-			if (sigType is CLASS) {
-				return CreateFromTypeDefOrRef(module, false, ((CLASS)sigType).Type.ToUInt(), null);
+			if (sigType is ClassSig) {
+				return CreateFromTypeDefOrRef(module, false, GetToken((ClassSig)sigType), null);
 			}
 			
-			if (sigType is VALUETYPE) {
-				return CreateFromTypeDefOrRef(module, true, ((VALUETYPE)sigType).Type.ToUInt(), null);
+			if (sigType is ValueTypeSig) {
+				return CreateFromTypeDefOrRef(module, true, GetToken((ValueTypeSig)sigType), null);
 			}
 			
 			// Numbered generic reference
-			if (sigType is VAR) {
+			if (sigType is GenericVar) {
 				if (declaringType == null) throw new DebuggerException("declaringType is needed");
-				return (DebugType)declaringType.GetGenericArguments()[((VAR)sigType).Index];
+				return (DebugType)declaringType.GetGenericArguments()[((GenericVar)sigType).Number];
 			}
 			
 			// Numbered generic reference
-			if (sigType is MVAR) {
+			if (sigType is GenericMVar) {
 				return module.AppDomain.ObjectType;
 			}
 			
-			if (sigType is GENERICINST) {
-				GENERICINST genInst = (GENERICINST)sigType;
+			if (sigType is GenericInstSig) {
+				GenericInstSig genInst = (GenericInstSig)sigType;
 				
-				List<DebugType> genArgs = new List<DebugType>(genInst.Signature.Arity);
-				foreach(GenericArg genArgSig in genInst.Signature.Types) {
-					genArgs.Add(CreateFromSignature(module, genArgSig.Type, declaringType));
+				List<DebugType> genArgs = new List<DebugType>(genInst.GenericArguments.Count);
+				foreach(TypeSig genArgSig in genInst.GenericArguments) {
+					genArgs.Add(CreateFromSignature(module, genArgSig, declaringType));
 				}
 				
-				return CreateFromTypeDefOrRef(module, genInst.ValueType, genInst.Type.ToUInt(), genArgs.ToArray());
+				return CreateFromTypeDefOrRef(module, IsValueType2(genInst), GetToken(genInst.GenericType), genArgs.ToArray());
 			}
 			
-			if (sigType is ARRAY) {
-				ARRAY arraySig = (ARRAY)sigType;
-				DebugType elementType = CreateFromSignature(module, arraySig.Type, declaringType);
-				return (DebugType)elementType.MakeArrayType(arraySig.Shape.Rank);
+			if (sigType is ArraySig) {
+				ArraySig arraySig = (ArraySig)sigType;
+				DebugType elementType = CreateFromSignature(module, arraySig.Next, declaringType);
+				return (DebugType)elementType.MakeArrayType((int)arraySig.Rank);
 			}
 			
-			if (sigType is SZARRAY) {
-				SZARRAY arraySig = (SZARRAY)sigType;
-				DebugType elementType = CreateFromSignature(module, arraySig.Type, declaringType);
+			if (sigType is SZArraySig) {
+				SZArraySig arraySig = (SZArraySig)sigType;
+				DebugType elementType = CreateFromSignature(module, arraySig.Next, declaringType);
 				return (DebugType)elementType.MakeArrayType();
 			}
 			
-			if (sigType is PTR) {
-				PTR ptrSig = (PTR)sigType;
+			if (sigType is PtrSig) {
+				PtrSig ptrSig = (PtrSig)sigType;
 				DebugType elementType;
-				if (ptrSig.Void) {
+				if (ptrSig.Next.RemovePinnedAndModifiers().GetElementType() == ElementType.Void) {
 					elementType = DebugType.CreateFromType(module.AppDomain.Mscorlib, typeof(void));
 				} else {
-					elementType = CreateFromSignature(module, ptrSig.PtrType, declaringType);
+					elementType = CreateFromSignature(module, ptrSig.Next, declaringType);
 				}
 				return (DebugType)elementType.MakePointerType();
 			}
 			
-			if (sigType is FNPTR) {
+			if (sigType is FnPtrSig) {
 				// TODO: FNPTR
+			}
+
+			if (sigType is ByRefSig) {
+				//TODO:
 			}
 			
 			throw new NotImplementedException(sigType.ElementType.ToString());
@@ -1205,6 +1231,7 @@ namespace Debugger.MetaData
 				case CorElementType.STRING:  return typeof(System.String);
 				case CorElementType.OBJECT:  return typeof(System.Object);
 				case CorElementType.VOID:    return typeof(void);
+				case CorElementType.TYPEDBYREF: return typeof(System.TypedReference);
 				default: return null;
 			}
 		}

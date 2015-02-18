@@ -18,7 +18,7 @@ using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Debugger.Models.TreeModel;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.XmlDoc;
-using Mono.Cecil;
+using dnlib.DotNet;
 using Mono.CSharp;
 
 namespace ICSharpCode.ILSpy.Debugger.UI
@@ -230,7 +230,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
             if (null == foundAssembly || null == foundAssembly.AssemblyDefinition)
                 return;
             
-			MemberReference mr = XmlDocKeyProvider.FindMemberByKey(foundAssembly.AssemblyDefinition.MainModule, "M:" + selectedItem.Name);
+			IMemberRef mr = XmlDocKeyProvider.FindMemberByKey(foundAssembly.AssemblyDefinition.ManifestModule, "M:" + selectedItem.Name);
 			if (mr == null)
 				return;
 			MainWindow.Instance.JumpToReference(mr);

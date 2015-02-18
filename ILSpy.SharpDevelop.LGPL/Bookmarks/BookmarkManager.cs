@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
-using Mono.Cecil;
+using dnlib.DotNet;
 using Mono.CSharp;
 
 namespace ICSharpCode.ILSpy.Bookmarks

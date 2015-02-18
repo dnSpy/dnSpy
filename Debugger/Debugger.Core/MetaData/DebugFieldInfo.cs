@@ -5,8 +5,10 @@ using System;
 using System.Globalization;
 using System.Reflection;
 
+using SR = System.Reflection;
+
 using Debugger.Interop.MetaData;
-using Mono.Cecil.Signatures;
+using dnlib.DotNet;
 
 namespace Debugger.MetaData
 {
@@ -84,8 +86,8 @@ namespace Debugger.MetaData
 		}
 		
 		/// <inheritdoc/>
-		public override FieldAttributes Attributes {
-			get { return (FieldAttributes)fieldProps.Flags; }
+		public override SR.FieldAttributes Attributes {
+			get { return (SR.FieldAttributes)fieldProps.Flags; }
 		}
 		
 		/// <inheritdoc/>
@@ -96,8 +98,9 @@ namespace Debugger.MetaData
 		/// <inheritdoc/>
 		public override Type FieldType {
 			get {
-				SignatureReader sigReader = new SignatureReader(fieldProps.SigBlob.GetData());
-				FieldSig fieldSig = sigReader.GetFieldSig(0);
+				var fieldSig = new DebugSignatureReader().ReadSignature(fieldProps.SigBlob.GetData()) as FieldSig;
+				if (fieldSig == null)
+					return typeof(void);
 				return DebugType.CreateFromSignature(this.DebugModule, fieldSig.Type, declaringType);
 			}
 		}

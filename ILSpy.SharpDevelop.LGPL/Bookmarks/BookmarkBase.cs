@@ -6,7 +6,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
-using Mono.Cecil;
+using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.Bookmarks
 {
@@ -41,7 +41,7 @@ namespace ICSharpCode.ILSpy.Bookmarks
 			
 		}
 		
-		public MemberReference MemberReference { get; set; }
+		public IMemberRef MemberReference { get; set; }
 		
 		public int LineNumber {
 			get { return location.Line; }
@@ -64,7 +64,7 @@ namespace ICSharpCode.ILSpy.Bookmarks
 			}
 		}
 		
-		public BookmarkBase(MemberReference member, TextLocation location)
+		public BookmarkBase(IMemberRef member, TextLocation location)
 		{
 			this.MemberReference = member;
 			this.Location = location;
