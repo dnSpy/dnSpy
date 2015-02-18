@@ -122,7 +122,22 @@ public class UnsafeCode
 		}
 		return this.PointerReferenceExpression((double*)ptr);
 	}
-	
+
+	public unsafe int* PointerArithmetic(int* p)
+	{
+		return p + 2;
+	}
+
+	public unsafe byte* PointerArithmetic2(long* p, int y, int x)
+	{
+		return (byte*)p + (y * x);
+	}
+
+	public unsafe long* PointerArithmetic3(long* p)
+	{
+		return (long*)((byte*)p + 3);
+	}
+
 	unsafe ~UnsafeCode()
 	{
 		this.PassPointerAsRefParameter(this.NullPointer);
