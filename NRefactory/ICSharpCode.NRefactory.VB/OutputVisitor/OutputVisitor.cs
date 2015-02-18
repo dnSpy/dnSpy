@@ -836,6 +836,17 @@ namespace ICSharpCode.NRefactory.VB
 			}
 			WriteToken("]", AstNode.Roles.RBracket);
 		}
+
+		void WriteCommaSeparatedListInBrackets(IEnumerable<Expression> list)
+		{
+			WriteToken ("[", AstNode.Roles.LBracket);
+			if (list.Any ()) {
+				Space();
+				WriteCommaSeparatedList(list);
+				Space();
+			}
+			WriteToken ("]", AstNode.Roles.RBracket);
+		}
 		#endregion
 		
 		#region Write tokens

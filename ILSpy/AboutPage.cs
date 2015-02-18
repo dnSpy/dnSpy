@@ -97,6 +97,9 @@ namespace ICSharpCode.ILSpy
 			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("LGPL", "resource:LGPL.txt"));
 			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("MS-PL", "resource:MS-PL.txt"));
 			textView.ShowText(output);
+			
+			//reset icon bar
+			textView.manager.Bookmarks.Clear();
 		}
 		
 		sealed class MyLinkElementGenerator : LinkElementGenerator

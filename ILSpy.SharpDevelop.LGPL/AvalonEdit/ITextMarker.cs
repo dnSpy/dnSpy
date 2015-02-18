@@ -1,25 +1,11 @@
-﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
-// 
-// Permission is hereby granted, free of charge, to any person obtaining a copy of this
-// software and associated documentation files (the "Software"), to deal in the Software
-// without restriction, including without limitation the rights to use, copy, modify, merge,
-// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
-// to whom the Software is furnished to do so, subject to the following conditions:
-// 
-// The above copyright notice and this permission notice shall be included in all copies or
-// substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
-// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-// DEALINGS IN THE SOFTWARE.
+﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
+// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
 using System.Collections.Generic;
-using System.Windows;
 using System.Windows.Media;
+
+using ICSharpCode.ILSpy.Bookmarks;
 
 namespace ICSharpCode.ILSpy.AvalonEdit
 {
@@ -69,19 +55,9 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		Color? ForegroundColor { get; set; }
 		
 		/// <summary>
-		/// Gets/Sets the font weight.
-		/// </summary>
-		FontWeight? FontWeight { get; set; }
-		
-		/// <summary>
-		/// Gets/Sets the font style.
-		/// </summary>
-		FontStyle? FontStyle { get; set; }
-		
-		/// <summary>
 		/// Gets/Sets the type of the marker. Use TextMarkerType.None for normal markers.
 		/// </summary>
-		TextMarkerTypes MarkerTypes { get; set; }
+		TextMarkerType MarkerType { get; set; }
 		
 		/// <summary>
 		/// Gets/Sets the color of the marker.
@@ -97,44 +73,28 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		/// Gets/Sets an object that will be displayed as tooltip in the text editor.
 		/// </summary>
 		object ToolTip { get; set; }
+		
+		/// <summary>
+		/// Gets or sets if the marker is visible or not.
+		/// </summary>
+		Predicate<object> IsVisible { get; set; }
+		
+		/// <summary>
+		/// Gets or sets the bookmark.
+		/// </summary>
+		IBookmark Bookmark { get; set; }
 	}
 	
-	[Flags]
-	public enum TextMarkerTypes
+	public enum TextMarkerType
 	{
 		/// <summary>
 		/// Use no marker
 		/// </summary>
-		None = 0x0000,
+		None,
 		/// <summary>
 		/// Use squiggly underline marker
 		/// </summary>
-		SquigglyUnderline = 0x001,
-		/// <summary>
-		/// Normal underline.
-		/// </summary>
-		NormalUnderline = 0x002,
-		/// <summary>
-		/// Dotted underline.
-		/// </summary>
-		DottedUnderline = 0x004,
-		
-		/// <summary>
-		/// Horizontal line in the scroll bar.
-		/// </summary>
-		LineInScrollBar = 0x0100,
-		/// <summary>
-		/// Small triangle in the scroll bar, pointing to the right.
-		/// </summary>
-		ScrollBarRightTriangle = 0x0400,
-		/// <summary>
-		/// Small triangle in the scroll bar, pointing to the left.
-		/// </summary>
-		ScrollBarLeftTriangle = 0x0800,
-		/// <summary>
-		/// Small circle in the scroll bar.
-		/// </summary>
-		CircleInScrollBar = 0x1000
+		SquigglyUnderline
 	}
 	
 	public interface ITextMarkerService
@@ -159,10 +119,5 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		/// Removes all text markers that match the condition.
 		/// </summary>
 		void RemoveAll(Predicate<ITextMarker> predicate);
-		
-		/// <summary>
-		/// Finds all text markers at the specified offset.
-		/// </summary>
-		IEnumerable<ITextMarker> GetMarkersAtOffset(int offset);
 	}
 }
