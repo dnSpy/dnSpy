@@ -1,0 +1,13 @@
+﻿<UserControl x:Class="ICSharpCode.ILSpy.Options.DebuggerSettingsPanel"
+             x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<Grid>
+		<StackPanel Margin="10">
+			<CheckBox IsChecked="{Binding ShowWarnings}">Show warning messages</CheckBox>
+			<CheckBox IsChecked="{Binding AskForArguments}">Ask for arguments and working directory before executing a process</CheckBox>
+			<CheckBox IsChecked="{Binding ShowAllBookmarks}">Show all bookmarks in breakpoints window</CheckBox>
+      <CheckBox IsChecked="{Binding BreakAtBeginning}">Break debugged process at start or attach</CheckBox>
+    </StackPanel>
+	</Grid>
+</UserControl>

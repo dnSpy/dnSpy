@@ -33,6 +33,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.dntheme;
+using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.XmlDoc;
@@ -505,7 +506,7 @@ namespace ICSharpCode.ILSpy
 			foreach (System.Reflection.Assembly asm in initialAssemblies)
 				assemblyList.OpenAssembly(asm.Location);
 		}
-		
+
 		void filterSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			RefreshTreeViewFilter();
@@ -671,9 +672,13 @@ namespace ICSharpCode.ILSpy
 		
 		void RefreshCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			var path = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
-			ShowAssemblyList(assemblyListManager.LoadList(ILSpySettings.Load(), assemblyList.ListName));
-			SelectNode(FindNodeByPath(path, true));
+			if (!DebugInformation.IsDebuggerLoaded) {
+				var path = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
+				ShowAssemblyList(assemblyListManager.LoadList(ILSpySettings.Load(), assemblyList.ListName));
+				SelectNode(FindNodeByPath(path, true));
+			} else {
+				e.Handled = false;
+			}
 		}
 		
 		void SearchCommandExecuted(object sender, ExecutedRoutedEventArgs e)

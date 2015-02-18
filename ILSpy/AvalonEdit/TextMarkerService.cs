@@ -23,8 +23,12 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
+
+using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
+using ICSharpCode.ILSpy.Bookmarks;
+using ICSharpCode.ILSpy.Debugger.Bookmarks;
 
 namespace ICSharpCode.ILSpy.AvalonEdit
 {
@@ -32,7 +36,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 	/// <summary>
 	/// Handles the text markers for a code editor.
 	/// </summary>
-	sealed class TextMarkerService : DocumentColorizingTransformer, IBackgroundRenderer, ITextMarkerService
+	public sealed class TextMarkerService : DocumentColorizingTransformer, IBackgroundRenderer, ITextMarkerService
 	{
 		TextSegmentCollection<TextMarker> markers;
 		TextView textView;
@@ -43,6 +47,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				throw new ArgumentNullException("textView");
 			this.textView = textView;
 			textView.DocumentChanged += OnDocumentChanged;
+			BookmarkManager.Added += new BookmarkEventHandler(BookmarkManager_Added);
+			BookmarkManager.Removed += new BookmarkEventHandler(BookmarkManager_Removed);
 			OnDocumentChanged(null, null);
 		}
 
@@ -60,6 +66,30 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			// this.document = document;
 		}
 		
+		void BookmarkManager_Removed(object sender, BookmarkEventArgs e)
+		{
+			if (e.Bookmark is BreakpointBookmark) {
+				var bm = (MarkerBookmark)e.Bookmark;
+				Remove(bm.Marker);
+			}
+			
+			if (e.Bookmark is CurrentLineBookmark) {
+				RemoveAll(m => m.Bookmark is CurrentLineBookmark);
+			}
+		}
+
+		void BookmarkManager_Added(object sender, BookmarkEventArgs e)
+		{
+			if (e.Bookmark is MarkerBookmark) {
+				var bm = (MarkerBookmark)e.Bookmark;
+				// add bookmark for the current type
+				if (bm.LineNumber < textView.Document.LineCount) {
+					DocumentLine line = textView.Document.GetLineByNumber(bm.LineNumber);
+					bm.CreateMarker(this, line.Offset, line.Length);
+				}
+			}
+		}
+
 		#region ITextMarkerService
 		public ITextMarker Create(int startOffset, int length)
 		{
@@ -134,6 +164,9 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			int lineStart = line.Offset;
 			int lineEnd = lineStart + line.Length;
 			foreach (TextMarker marker in markers.FindOverlappingSegments(lineStart, line.Length)) {
+				if (marker.Bookmark != null && !marker.IsVisible(marker.Bookmark))
+					continue;
+				
 				Brush foregroundBrush = null;
 				if (marker.ForegroundColor != null) {
 					foregroundBrush = new SolidColorBrush(marker.ForegroundColor.Value);
@@ -181,6 +214,9 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			int viewStart = visualLines.First().FirstDocumentLine.Offset;
 			int viewEnd = visualLines.Last().LastDocumentLine.EndOffset;
 			foreach (TextMarker marker in markers.FindOverlappingSegments(viewStart, viewEnd - viewStart)) {
+				if (marker.Bookmark != null && !marker.IsVisible(marker.Bookmark))
+					continue;
+				
 				if (marker.BackgroundColor != null) {
 					BackgroundGeometryBuilder geoBuilder = new BackgroundGeometryBuilder();
 					geoBuilder.AlignToWholePixels = true;
@@ -353,7 +389,13 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				}
 			}
 		}
-		
+		/// <inheritdoc/>
 		public object ToolTip { get; set; }
+		
+		/// <inheritdoc/>
+		public Predicate<object> IsVisible { get; set; }
+		
+		/// <inheritdoc/>
+		public IBookmark Bookmark { get; set; }
 	}
 }

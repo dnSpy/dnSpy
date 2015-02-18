@@ -21,6 +21,8 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 
+using ICSharpCode.ILSpy.Bookmarks;
+
 namespace ICSharpCode.ILSpy.AvalonEdit
 {
 	/// <summary>
@@ -97,6 +99,16 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		/// Gets/Sets an object that will be displayed as tooltip in the text editor.
 		/// </summary>
 		object ToolTip { get; set; }
+		
+		/// <summary>
+		/// Gets or sets if the marker is visible or not.
+		/// </summary>
+		Predicate<object> IsVisible { get; set; }
+		
+		/// <summary>
+		/// Gets or sets the bookmark.
+		/// </summary>
+		IBookmark Bookmark { get; set; }
 	}
 	
 	[Flags]
