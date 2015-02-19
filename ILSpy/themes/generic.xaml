@@ -3,7 +3,7 @@
 	xmlns:controls="clr-namespace:ICSharpCode.ILSpy.Controls"
 >
 	<ResourceDictionary.MergedDictionaries>
-		<ResourceDictionary Source="../Controls/SearchBoxStyle.xaml" />
+		<ResourceDictionary Source="pack://application:,,,/dnSpy;component/Controls/SearchBoxStyle.xaml" />
 	</ResourceDictionary.MergedDictionaries>
 	
 	<!-- SortableGridViewColumn.

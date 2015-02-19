@@ -49,7 +49,7 @@
 			<MenuItem Header="_View">
 				<MenuItem Header="Show _internal types and members" IsCheckable="True" IsChecked="{Binding FilterSettings.ShowInternalApi}">
 					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="Images/PrivateInternal.png" />
+						<Image Width="16" Height="16" Source="pack://application:,,,/dnSpy;component/Images/PrivateInternal.png" />
 					</MenuItem.Icon>
 				</MenuItem>
 			</MenuItem>
@@ -76,7 +76,7 @@
 			<!-- 'Open' toolbar category is inserted here -->
 			<Separator />
 			<CheckBox IsChecked="{Binding FilterSettings.ShowInternalApi}" ToolTip="Show internal types and members">
-				<Image Width="16" Height="16" Source="Images/PrivateInternal.png" />
+				<Image Width="16" Height="16" Source="pack://application:,,,/dnSpy;component/Images/PrivateInternal.png" />
 			</CheckBox>
 			<Separator />
 			<ComboBox Name="languageComboBox" DisplayMemberPath="Name" Width="100"

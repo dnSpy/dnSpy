@@ -28,7 +28,7 @@ namespace ICSharpCode.ILSpy
 	{
 		static BitmapImage LoadBitmap(string name)
 		{
-			BitmapImage image = new BitmapImage(new Uri("pack://application:,,,/Images/" + name + ".png"));
+			BitmapImage image = new BitmapImage(new Uri("pack://application:,,,/dnSpy;component/Images/" + name + ".png"));
 			image.Freeze();
 			return image;
 		}
@@ -103,12 +103,8 @@ namespace ICSharpCode.ILSpy
 		{
 			Uri uri;
 			var assembly = part.GetType().Assembly;
-			if (assembly == typeof(Images).Assembly) {
-				uri = new Uri("pack://application:,,,/" + icon);
-			} else {
-				var name = assembly.GetName();
-				uri = new Uri("pack://application:,,,/" + name.Name + ";v" + name.Version + ";component/" + icon);
-			}
+			var name = assembly.GetName();
+			uri = new Uri("pack://application:,,,/" + name.Name + ";v" + name.Version + ";component/" + icon);
 			BitmapImage image = new BitmapImage(uri);
 			image.Freeze();
 			return image;

@@ -12,7 +12,7 @@ namespace ICSharpCode.ILSpy.SharpDevelop
 		static BitmapImage LoadBitmap(string name)
 		{
 			try {
-				BitmapImage image = new BitmapImage(new Uri("pack://application:,,,/ILSpy;component/Images/" + name + ".png"));
+				BitmapImage image = new BitmapImage(new Uri("pack://application:,,,/dnSpy;component/Images/" + name + ".png"));
 				if (image == null)
 					return null;
 				image.Freeze();

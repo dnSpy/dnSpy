@@ -227,24 +227,30 @@ namespace ICSharpCode.ILSpy
 		Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
 		{
 			var name = new AssemblyName(args.Name).Name;
+			Assembly asm;
 			if (name == "ILSpy")
-				return typeof(App).Assembly;
+				asm = typeof(App).Assembly;
 			else if (name == "ICSharpCode.TreeView")
-				return typeof(ICSharpCode.TreeView.SharpTreeView).Assembly;
+				asm = typeof(ICSharpCode.TreeView.SharpTreeView).Assembly;
 			else if (name == "ICSharpCode.AvalonEdit")
-				return typeof(ICSharpCode.AvalonEdit.TextEditor).Assembly;
+				asm = typeof(ICSharpCode.AvalonEdit.TextEditor).Assembly;
 			else if (name == "ICSharpCode.NRefactory")
-				return typeof(ICSharpCode.NRefactory.IAnnotatable).Assembly;
+				asm = typeof(ICSharpCode.NRefactory.IAnnotatable).Assembly;
 			else if (name == "ICSharpCode.NRefactory.CSharp")
-				return typeof(ICSharpCode.NRefactory.CSharp.AstNode).Assembly;
+				asm = typeof(ICSharpCode.NRefactory.CSharp.AstNode).Assembly;
 			else if (name == "ICSharpCode.NRefactory.VB")
-				return typeof(ICSharpCode.NRefactory.VB.AstNode).Assembly;
+				asm = typeof(ICSharpCode.NRefactory.VB.AstNode).Assembly;
 			else if (name == "ICSharpCode.Decompiler")
-				return typeof(ICSharpCode.Decompiler.DecompilerContext).Assembly;
+				asm = typeof(ICSharpCode.Decompiler.DecompilerContext).Assembly;
+			else if (name == "ILSpy.SharpDevelop.LGPL")
+				asm = typeof(ICSharpCode.ILSpy.Debugger.DebugInformation).Assembly;
 			else if (name == "dnlib")
-				return typeof(dnlib.DotNet.ModuleDef).Assembly;
+				asm = typeof(dnlib.DotNet.ModuleDef).Assembly;
 			else
 				return null;
+
+			Debug.Fail(string.Format("Unresolved assembly reference to {0}", name));
+			return asm;
 		}
 	}
 }

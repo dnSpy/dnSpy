@@ -80,7 +80,7 @@ namespace ICSharpCode.ILSpy
 			this.assemblyListManager = new AssemblyListManager(spySettings);
 			Theme = Themes.GetThemeOrDefault(sessionSettings.ThemeName);
 			
-			this.Icon = new BitmapImage(new Uri("pack://application:,,,/ILSpy;component/images/ILSpy.ico"));
+			this.Icon = new BitmapImage(new Uri("pack://application:,,,/dnSpy;component/images/ILSpy.ico"));
 			
 			this.DataContext = sessionSettings;
 			

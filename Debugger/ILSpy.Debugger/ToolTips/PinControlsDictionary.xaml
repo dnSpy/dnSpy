@@ -346,7 +346,7 @@
 			<Image Width="9" Height="9" Margin="2 2"
 			       x:Name="RefreshContentImage"
 			       Tag="{Binding}"
-			       Source="pack://application:,,,/ILSpy;component/Images/Refresh.png"/>
+			       Source="pack://application:,,,/dnSpy;component/Images/Refresh.png"/>
 		</Border>
 		<ControlTemplate.Triggers>
 			<Trigger Property="UIElement.IsMouseOver" Value="true">
