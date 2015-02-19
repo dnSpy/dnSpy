@@ -115,7 +115,7 @@ namespace ICSharpCode.ILSpy
 		
 		static string GetConfigFile()
 		{
-			return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ICSharpCode\\dnSpy.xml");
+			return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "dnSpy", "dnSpy.xml");
 		}
 		
 		const string ConfigFileMutex = "01A91708-49D1-410D-B8EB-4DE2662B3971";
