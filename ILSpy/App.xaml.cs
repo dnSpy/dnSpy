@@ -36,7 +36,7 @@ using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy
 {
-	static class StartUpClass
+	public static class StartUpClass
 	{
 		[STAThread]
 		public static void Main() {
