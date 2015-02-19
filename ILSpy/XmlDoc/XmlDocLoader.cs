@@ -71,8 +71,8 @@ namespace ICSharpCode.ILSpy.XmlDoc
 			}
 		}
 		
-		static readonly string referenceAssembliesPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Reference Assemblies\Microsoft\\Framework");
-		static readonly string frameworkPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), @"Microsoft.NET\Framework");
+		static readonly string referenceAssembliesPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Reference Assemblies", "Microsoft", "Framework");
+		static readonly string frameworkPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Microsoft.NET", "Framework");
 		
 		static string FindXmlDocumentation(string assemblyFileName, string runtime)
 		{
@@ -92,12 +92,14 @@ namespace ICSharpCode.ILSpy.XmlDoc
 			else if (runtime.StartsWith(MDHeaderRuntimeVersion.MS_CLR_20_PREFIX)) {
 				fileName = LookupLocalizedXmlDoc(Path.Combine(frameworkPath, runtime, assemblyFileName))
 					?? LookupLocalizedXmlDoc(Path.Combine(frameworkPath, "v2.0.50727", assemblyFileName))
-					?? LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, "v3.5"))
-					?? LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, "v3.0"))
-					?? LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, @".NETFramework\v3.5\Profile\Client"));
+					?? LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, "v3.5", assemblyFileName))
+					?? LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, "v3.0", assemblyFileName))
+					?? LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, ".NETFramework", "v3.5", "Profile", "Client", assemblyFileName));
 			}
 			else {	// .NET 4.0
-				fileName = LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, @".NETFramework\v4.0", assemblyFileName))
+				fileName = LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, ".NETFramework", "v4.5.1", assemblyFileName))
+					?? LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, ".NETFramework", "v4.5", assemblyFileName))
+					?? LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, ".NETFramework", "v4.0", assemblyFileName))
 					?? LookupLocalizedXmlDoc(Path.Combine(frameworkPath, runtime, assemblyFileName))
 					?? LookupLocalizedXmlDoc(Path.Combine(frameworkPath, "v4.0.30319", assemblyFileName));
 			}
