@@ -817,51 +817,20 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 
 		void StepIntoUnknownFrame(StackFrame frame)
 		{
-			string debuggeeVersion = frame.MethodInfo.DebugModule.Process.DebuggeeVersion.Substring(1, 3); // should retrieve 2.0, 3.0, 4.0
 			var debugType = (DebugType)frame.MethodInfo.DeclaringType;
 			int token = frame.MethodInfo.MetadataToken;
 			int ilOffset = frame.IP;
-			string fullName = debugType.FullNameWithoutGenericArguments;
-			
-			DebugInformation.LoadedAssemblies =  MainWindow.Instance.CurrentAssemblyList.GetAssemblies().Select(a => a.AssemblyDefinition);
-			
-			if (DebugInformation.LoadedAssemblies == null)
-				throw new NullReferenceException("No DebugData assemblies!");
-			else {
-				// search for type in the current assembly list
-				TypeDef typeDef = null;
-				TypeDef nestedTypeDef = null;
-				
-				foreach (var assembly in DebugInformation.LoadedAssemblies) {
-					if (null == assembly)
-						continue;
-					if ((assembly.FullName.StartsWith("System") || assembly.FullName.StartsWith("Microsoft") || assembly.FullName.StartsWith("mscorlib")) &&
-					    !assembly.Version.ToString().StartsWith(debuggeeVersion))
-						continue;
-					
-					foreach (var module in assembly.Modules) {
-						var localType = module.Find(fullName, true);
-						if (localType != null) {
-							if (localType.DeclaringType == null) {
-								typeDef = localType;
-							} else {
-								nestedTypeDef = localType;
-								typeDef = localType.DeclaringType;
-							}
-							break;
-						}
-					}
-					if (typeDef != null)
-						break;
-				}
-				
-				if (typeDef != null) {
-					TypeDef type = nestedTypeDef ?? typeDef;
-					DebugInformation.DebugStepInformation = Tuple.Create(token, ilOffset, type.GetMemberByToken(token));
-				} else {
-					Debug.Assert(typeDef != null, "No type was found!");
+
+			var debugModule = debugType.DebugModule;
+			DebugInformation.DebugStepInformation = null;
+			if (!string.IsNullOrEmpty(debugModule.FullPath)) {
+				var loadedMod = MainWindow.Instance.CurrentAssemblyList.OpenAssembly(debugModule.FullPath).ModuleDefinition as ModuleDefMD;
+				if (loadedMod != null) {
+					DebugInformation.DebugStepInformation = Tuple.Create(token, ilOffset, loadedMod.ResolveToken(token) as IMemberRef);
 				}
 			}
+			if (DebugInformation.DebugStepInformation == null)
+				Debug.Fail("No type was found!");
 		}
 		
 		public void ShowAttachDialog()
