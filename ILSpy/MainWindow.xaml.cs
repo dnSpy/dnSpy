@@ -464,9 +464,22 @@ namespace ICSharpCode.ILSpy
 			treeView.Root = assemblyListTreeNode;
 			
 			if (assemblyList.ListName == AssemblyListManager.DefaultListName)
-				this.Title = "dnSpy";
+				this.Title = string.Format("dnSpy ({0})", GetCpuType());
 			else
-				this.Title = "dnSpy - " + assemblyList.ListName;
+				this.Title = string.Format("dnSpy ({0}) - {1}", GetCpuType(), assemblyList.ListName);
+		}
+
+		static string GetCpuType()
+		{
+			var name = System.Reflection.Assembly.GetEntryAssembly().GetName().Name;
+			if (name == "dnSpy-x86")
+				return "x86";
+			if (name == "dnSpy-x64")
+				return "x64";
+			if (name == "dnSpy")
+				return "AnyCPU - " + (IntPtr.Size == 4 ? "x86" : "x64");
+			Debug.Fail("Unknown entry assembly name" + name);
+			return string.Empty;
 		}
 		
 		void assemblyList_Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
