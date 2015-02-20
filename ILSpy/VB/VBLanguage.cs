@@ -69,7 +69,7 @@ namespace ICSharpCode.ILSpy.VB
 			output.WriteLine("' " + comment, TextTokenType.Comment);
 		}
 		
-		public override void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options)
+		public override void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule)
 		{
 			if (options.FullDecompilation && options.SaveAsProjectDirectory != null) {
 				HashSet<string> directories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -77,32 +77,36 @@ namespace ICSharpCode.ILSpy.VB
 				files.AddRange(WriteResourceFilesInProject(assembly, options, directories));
 				WriteProjectFile(new TextOutputWriter(output), files, assembly, options);
 			} else {
-				base.DecompileAssembly(assembly, output, options);
+				bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
+				bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
+				base.DecompileAssembly(assembly, output, options, flags);
 				output.WriteLine();
-				ModuleDef mainModule = assembly.ModuleDefinition;
-				if (mainModule.EntryPoint != null && mainModule.EntryPoint.DeclaringType != null) {
-					output.Write("' Entry point: ", TextTokenType.Comment);
-					output.WriteReference(mainModule.EntryPoint.DeclaringType.FullName + "." + mainModule.EntryPoint.Name, mainModule.EntryPoint, TextTokenType.Comment);
+				if (decompileMod) {
+					ModuleDef mainModule = assembly.ModuleDefinition;
+					if (mainModule.EntryPoint != null && mainModule.EntryPoint.DeclaringType != null) {
+						output.Write("' Entry point: ", TextTokenType.Comment);
+						output.WriteReference(mainModule.EntryPoint.DeclaringType.FullName + "." + mainModule.EntryPoint.Name, mainModule.EntryPoint, TextTokenType.Comment);
+						output.WriteLine();
+					}
+					WriteCommentLine(output, "Architecture: " + CSharpLanguage.GetPlatformDisplayName(mainModule));
+					if (!mainModule.IsILOnly) {
+						WriteCommentLine(output, "This assembly contains unmanaged code.");
+					}
+					if (mainModule.IsClr10)
+						WriteCommentLine(output, "Runtime: .NET 1.0");
+					else if (mainModule.IsClr11)
+						WriteCommentLine(output, "Runtime: .NET 1.1");
+					else if (mainModule.IsClr20)
+						WriteCommentLine(output, "Runtime: .NET 2.0");
+					else if (mainModule.IsClr40)
+						WriteCommentLine(output, "Runtime: .NET 4.0");
 					output.WriteLine();
 				}
-				WriteCommentLine(output, "Architecture: " + CSharpLanguage.GetPlatformDisplayName(mainModule));
-				if (!mainModule.IsILOnly) {
-					WriteCommentLine(output, "This assembly contains unmanaged code.");
-				}
-				if (mainModule.IsClr10)
-					WriteCommentLine(output, "Runtime: .NET 1.0");
-				else if (mainModule.IsClr11)
-					WriteCommentLine(output, "Runtime: .NET 1.1");
-				else if (mainModule.IsClr20)
-					WriteCommentLine(output, "Runtime: .NET 2.0");
-				else if (mainModule.IsClr40)
-					WriteCommentLine(output, "Runtime: .NET 4.0");
-				output.WriteLine();
 				
 				// don't automatically load additional assemblies when an assembly node is selected in the tree view
 				using (options.FullDecompilation ? null : LoadedAssembly.DisableAssemblyLoad()) {
 					AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: assembly.ModuleDefinition);
-					codeDomBuilder.AddAssembly(assembly.ModuleDefinition, onlyAssemblyLevel: !options.FullDecompilation);
+					codeDomBuilder.AddAssembly(assembly.ModuleDefinition, !options.FullDecompilation, decompileAsm, decompileMod);
 					RunTransformsAndGenerateCode(codeDomBuilder, output, options, assembly.ModuleDefinition);
 				}
 			}
@@ -303,7 +307,7 @@ namespace ICSharpCode.ILSpy.VB
 			using (LoadedAssembly.DisableAssemblyLoad())
 			{
 				AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: module);
-				codeDomBuilder.AddAssembly(module, onlyAssemblyLevel: true);
+				codeDomBuilder.AddAssembly(module, true, true, true);
 				codeDomBuilder.RunTransformations(transformAbortCondition);
 
 				string prop = "Properties";

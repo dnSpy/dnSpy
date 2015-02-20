@@ -25,6 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Threading;
 using System.Xml.Linq;
+using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy
 {
@@ -102,6 +103,24 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
+		/// <summary>
+		/// Gets the loaded modules and includes all modules in multifile assemblies. This method is thread-safe.
+		/// </summary>
+		public ModuleDef[] GetAllModules()
+		{
+			lock (assemblies) {
+				return assemblies.SelectMany(a => {
+					var asm = a.AssemblyDefinition;
+					if (asm != null)
+						return (IEnumerable<ModuleDef>)asm.Modules; // cast to make compiler happy
+					var mod = a.ModuleDefinition;
+					if (mod != null)
+						return new ModuleDef[] { mod };
+					return new ModuleDef[0];
+				}).ToArray();
+			}
+		}
+
 		/// <summary>
 		/// Saves this assembly list to XML.
 		/// </summary>

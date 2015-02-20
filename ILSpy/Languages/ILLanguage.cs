@@ -157,22 +157,26 @@ namespace ICSharpCode.ILSpy
 			dis.DisassembleType(type);
 		}
 		
-		public override void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options)
+		public override void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule)
 		{
+			bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
+			bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
 			output.WriteLine("// " + assembly.FileName, TextTokenType.Comment);
 			output.WriteLine();
 			
 			ReflectionDisassembler rd = CreateReflectionDisassembler(output, options);
-			if (options.FullDecompilation)
+			if (decompileMod && options.FullDecompilation)
 				rd.WriteAssemblyReferences(assembly.ModuleDefinition as ModuleDefMD);
-			if (assembly.AssemblyDefinition != null)
+			if (decompileAsm && assembly.AssemblyDefinition != null)
 				rd.WriteAssemblyHeader(assembly.AssemblyDefinition);
-			output.WriteLine();
-			rd.WriteModuleHeader(assembly.ModuleDefinition);
-			if (options.FullDecompilation) {
+			if (decompileMod) {
 				output.WriteLine();
-				output.WriteLine();
-				rd.WriteModuleContents(assembly.ModuleDefinition);
+				rd.WriteModuleHeader(assembly.ModuleDefinition);
+				if (options.FullDecompilation) {
+					output.WriteLine();
+					output.WriteLine();
+					rd.WriteModuleContents(assembly.ModuleDefinition);
+				}
 			}
 		}
 		

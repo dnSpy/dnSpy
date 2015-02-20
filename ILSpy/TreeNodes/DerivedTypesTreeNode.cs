@@ -61,22 +61,22 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken cancellationToken)
 		{
 			// FetchChildren() runs on the main thread; but the enumerator will be consumed on a background thread
-			var assemblies = list.GetAssemblies().Select(node => node.ModuleDefinition).Where(asm => asm != null).ToArray();
-			return FindDerivedTypes(type, assemblies, cancellationToken);
+			var modules = list.GetAllModules().Select(mod => mod).Where(mod => mod != null).ToArray();
+			return FindDerivedTypes(type, modules, cancellationToken);
 		}
 
-		internal static IEnumerable<DerivedTypesEntryNode> FindDerivedTypes(TypeDef type, ModuleDef[] assemblies, CancellationToken cancellationToken)
+		internal static IEnumerable<DerivedTypesEntryNode> FindDerivedTypes(TypeDef type, ModuleDef[] modules, CancellationToken cancellationToken)
 		{
-			foreach (ModuleDef module in assemblies) {
+			foreach (ModuleDef module in modules) {
 				foreach (TypeDef td in TreeTraversal.PreOrder(module.Types, t => t.NestedTypes)) {
 					cancellationToken.ThrowIfCancellationRequested();
 					if (type.IsInterface && td.HasInterfaces) {
 						foreach (var typeRef in td.Interfaces) {
 							if (IsSameType(typeRef.Interface, type))
-								yield return new DerivedTypesEntryNode(td, assemblies);
+								yield return new DerivedTypesEntryNode(td, modules);
 						}
 					} else if (!type.IsInterface && td.BaseType != null && IsSameType(td.BaseType, type)) {
-						yield return new DerivedTypesEntryNode(td, assemblies);
+						yield return new DerivedTypesEntryNode(td, modules);
 					}
 				}
 			}

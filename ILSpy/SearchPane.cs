@@ -127,7 +127,7 @@ namespace ICSharpCode.ILSpy
 				listBox.ItemsSource = null;
 			} else {
 				MainWindow mainWindow = MainWindow.Instance;
-				currentSearch = new RunningSearch(mainWindow.CurrentAssemblyList.GetAssemblies(), searchTerm, searchModeComboBox.SelectedIndex, mainWindow.CurrentLanguage);
+				currentSearch = new RunningSearch(mainWindow.CurrentAssemblyList.GetAllModules(), searchTerm, searchModeComboBox.SelectedIndex, mainWindow.CurrentLanguage);
 				listBox.ItemsSource = currentSearch.Results;
 				new Thread(currentSearch.Run).Start();
 			}
@@ -188,7 +188,7 @@ namespace ICSharpCode.ILSpy
 		{
 			readonly Dispatcher dispatcher;
 			readonly CancellationTokenSource cts = new CancellationTokenSource();
-			readonly LoadedAssembly[] assemblies;
+			readonly ModuleDef[] modules;
 			readonly string[] searchTerm;
 			readonly int searchMode;
 			readonly Language language;
@@ -198,10 +198,10 @@ namespace ICSharpCode.ILSpy
 			TypeCode searchTermLiteralType = TypeCode.Empty;
 			object searchTermLiteralValue;
 			
-			public RunningSearch(LoadedAssembly[] assemblies, string searchTerm, int searchMode, Language language)
+			public RunningSearch(ModuleDef[] modules, string searchTerm, int searchMode, Language language)
 			{
 				this.dispatcher = Dispatcher.CurrentDispatcher;
-				this.assemblies = assemblies;
+				this.modules = modules;
 				this.searchTerm = searchTerm.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 				this.language = language;
 				this.searchMode = searchMode;
@@ -247,8 +247,7 @@ namespace ICSharpCode.ILSpy
 						}
 					}
 					
-					foreach (var loadedAssembly in assemblies) {
-						ModuleDef module = loadedAssembly.ModuleDefinition;
+					foreach (var module in modules) {
 						if (module == null)
 							continue;
 						CancellationToken cancellationToken = cts.Token;

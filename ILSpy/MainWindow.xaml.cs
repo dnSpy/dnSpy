@@ -611,7 +611,7 @@ namespace ICSharpCode.ILSpy
 			} else if (reference is AssemblyDef) {
 				return assemblyListTreeNode.FindAssemblyNode((AssemblyDef)reference);
 			} else if (reference is ModuleDef) {
-				return assemblyListTreeNode.FindAssemblyNode((ModuleDef)reference);
+				return assemblyListTreeNode.FindModuleNode((ModuleDef)reference);
 			} else {
 				return null;
 			}

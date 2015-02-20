@@ -259,7 +259,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		public override void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options)
+		public override void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule)
 		{
 			if (options.FullDecompilation && options.SaveAsProjectDirectory != null) {
 				HashSet<string> directories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -267,32 +267,36 @@ namespace ICSharpCode.ILSpy
 				files.AddRange(WriteResourceFilesInProject(assembly, options, directories));
 				WriteProjectFile(new TextOutputWriter(output), files, assembly, options);
 			} else {
-				base.DecompileAssembly(assembly, output, options);
+				bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
+				bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
+				base.DecompileAssembly(assembly, output, options, flags);
 				output.WriteLine();
-				ModuleDef mainModule = assembly.ModuleDefinition;
-				if (mainModule.EntryPoint != null && mainModule.EntryPoint.DeclaringType != null) {
-					output.Write("// Entry point: ", TextTokenType.Comment);
-					output.WriteReference(mainModule.EntryPoint.DeclaringType.FullName + "." + mainModule.EntryPoint.Name, mainModule.EntryPoint, TextTokenType.Comment);
+				if (decompileMod) {
+					ModuleDef mainModule = assembly.ModuleDefinition;
+					if (mainModule.EntryPoint != null && mainModule.EntryPoint.DeclaringType != null) {
+						output.Write("// Entry point: ", TextTokenType.Comment);
+						output.WriteReference(mainModule.EntryPoint.DeclaringType.FullName + "." + mainModule.EntryPoint.Name, mainModule.EntryPoint, TextTokenType.Comment);
+						output.WriteLine();
+					}
+					output.WriteLine("// Architecture: " + GetPlatformDisplayName(mainModule), TextTokenType.Comment);
+					if (!mainModule.IsILOnly) {
+						output.WriteLine("// This assembly contains unmanaged code.", TextTokenType.Comment);
+					}
+					if (mainModule.IsClr10)
+						output.WriteLine("// Runtime: .NET 1.0", TextTokenType.Comment);
+					else if (mainModule.IsClr11)
+						output.WriteLine("// Runtime: .NET 1.1", TextTokenType.Comment);
+					else if (mainModule.IsClr20)
+						output.WriteLine("// Runtime: .NET 2.0", TextTokenType.Comment);
+					else if (mainModule.IsClr40)
+						output.WriteLine("// Runtime: .NET 4.0", TextTokenType.Comment);
 					output.WriteLine();
 				}
-				output.WriteLine("// Architecture: " + GetPlatformDisplayName(mainModule), TextTokenType.Comment);
-				if (!mainModule.IsILOnly) {
-					output.WriteLine("// This assembly contains unmanaged code.", TextTokenType.Comment);
-				}
-				if (mainModule.IsClr10)
-					output.WriteLine("// Runtime: .NET 1.0", TextTokenType.Comment);
-				else if (mainModule.IsClr11)
-					output.WriteLine("// Runtime: .NET 1.1", TextTokenType.Comment);
-				else if (mainModule.IsClr20)
-					output.WriteLine("// Runtime: .NET 2.0", TextTokenType.Comment);
-				else if (mainModule.IsClr40)
-					output.WriteLine("// Runtime: .NET 4.0", TextTokenType.Comment);
-				output.WriteLine();
 				
 				// don't automatically load additional assemblies when an assembly node is selected in the tree view
 				using (options.FullDecompilation ? null : LoadedAssembly.DisableAssemblyLoad()) {
 					AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: assembly.ModuleDefinition);
-					codeDomBuilder.AddAssembly(assembly.ModuleDefinition, onlyAssemblyLevel: !options.FullDecompilation);
+					codeDomBuilder.AddAssembly(assembly.ModuleDefinition, !options.FullDecompilation, decompileAsm, decompileMod);
 					codeDomBuilder.RunTransformations(transformAbortCondition);
 					codeDomBuilder.GenerateCode(output);
 				}
@@ -639,7 +643,7 @@ namespace ICSharpCode.ILSpy
 			using (LoadedAssembly.DisableAssemblyLoad())
 			{
 				AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: module);
-				codeDomBuilder.AddAssembly(module, onlyAssemblyLevel: true);
+				codeDomBuilder.AddAssembly(module, true, true, true);
 				codeDomBuilder.RunTransformations(transformAbortCondition);
 
 				string prop = "Properties";

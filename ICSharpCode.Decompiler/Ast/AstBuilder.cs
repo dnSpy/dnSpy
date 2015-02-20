@@ -166,14 +166,9 @@ namespace ICSharpCode.Decompiler.Ast
 			syntaxTree.AcceptVisitor(new CSharpOutputVisitor(outputFormatter, formattingPolicy));
 		}
 		
-		public void AddAssembly(AssemblyDef assemblyDefinition, bool onlyAssemblyLevel = false)
+		public void AddAssembly(ModuleDef moduleDefinition, bool onlyAssemblyLevel, bool decompileAsm, bool decompileMod)
 		{
-			AddAssembly(assemblyDefinition.ManifestModule, onlyAssemblyLevel);
-		}
-		
-		public void AddAssembly(ModuleDef moduleDefinition, bool onlyAssemblyLevel = false)
-		{
-			if (moduleDefinition.Assembly != null && moduleDefinition.Assembly.Version != null) {
+			if (decompileAsm && moduleDefinition.Assembly != null && moduleDefinition.Assembly.Version != null) {
 				syntaxTree.AddChild(
 					new AttributeSection {
 						AttributeTarget = "assembly",
@@ -190,14 +185,16 @@ namespace ICSharpCode.Decompiler.Ast
 					}, EntityDeclaration.AttributeRole);
 			}
 			
-			if (moduleDefinition.Assembly != null) {
+			if (decompileAsm && moduleDefinition.Assembly != null) {
 				ConvertCustomAttributes(syntaxTree, moduleDefinition.Assembly, "assembly");
 				ConvertSecurityAttributes(syntaxTree, moduleDefinition.Assembly, "assembly");
 			}
-			ConvertCustomAttributes(syntaxTree, moduleDefinition, "module");
-			AddTypeForwarderAttributes(syntaxTree, moduleDefinition, "assembly");
+			if (decompileMod) {
+				ConvertCustomAttributes(syntaxTree, moduleDefinition, "module");
+				AddTypeForwarderAttributes(syntaxTree, moduleDefinition, "assembly");
+			}
 			
-			if (!onlyAssemblyLevel) {
+			if (decompileMod && !onlyAssemblyLevel) {
 				foreach (TypeDef typeDef in moduleDefinition.Types) {
 					// Skip the <Module> class
 					if (typeDef.IsGlobalModuleType) continue;

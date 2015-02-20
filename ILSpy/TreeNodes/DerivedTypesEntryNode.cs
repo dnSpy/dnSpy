@@ -27,13 +27,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	class DerivedTypesEntryNode : ILSpyTreeNode, IMemberTreeNode
 	{
 		private readonly TypeDef type;
-		private readonly ModuleDef[] assemblies;
+		private readonly ModuleDef[] modules;
 		private readonly ThreadingSupport threading;
 
-		public DerivedTypesEntryNode(TypeDef type, ModuleDef[] assemblies)
+		public DerivedTypesEntryNode(TypeDef type, ModuleDef[] modules)
 		{
 			this.type = type;
-			this.assemblies = assemblies;
+			this.modules = modules;
 			this.LazyLoading = true;
 			threading = new ThreadingSupport();
 		}
@@ -88,7 +88,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken ct)
 		{
 			// FetchChildren() runs on the main thread; but the enumerator will be consumed on a background thread
-			return DerivedTypesTreeNode.FindDerivedTypes(type, assemblies, ct);
+			return DerivedTypesTreeNode.FindDerivedTypes(type, modules, ct);
 		}
 
 		public override void ActivateItem(System.Windows.RoutedEventArgs e)

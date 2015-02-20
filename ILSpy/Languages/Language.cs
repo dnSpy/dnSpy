@@ -25,6 +25,14 @@ using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy
 {
+	[Flags]
+	public enum DecompileAssemblyFlags
+	{
+		Assembly = 1,
+		Module = 2,
+		AssemblyAndModule = Assembly | Module,
+	}
+
 	/// <summary>
 	/// Base class for language-specific decompiler implementations.
 	/// </summary>
@@ -86,16 +94,18 @@ namespace ICSharpCode.ILSpy
 			WriteCommentLine(output, nameSpace);
 		}
 
-		public virtual void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options)
+		public virtual void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule)
 		{
+			bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
+			bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
 			WriteCommentLine(output, assembly.FileName);
-			if (assembly.AssemblyDefinition != null) {
+			if (decompileAsm && assembly.AssemblyDefinition != null) {
 				if (assembly.AssemblyDefinition.IsContentTypeWindowsRuntime) {
 					WriteCommentLine(output, assembly.AssemblyDefinition.Name + " [WinRT]");
 				} else {
 					WriteCommentLine(output, assembly.AssemblyDefinition.FullName);
 				}
-			} else {
+			} else if (decompileMod) {
 				WriteCommentLine(output, assembly.ModuleDefinition.Name);
 			}
 		}

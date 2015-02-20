@@ -62,9 +62,26 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return assembly; }
 		}
 
+		/// <summary>
+		/// true if this is a netmodule (it doesn't have an assembly)
+		/// </summary>
+		public bool IsNetModule
+		{
+			get { return assembly.AssemblyDefinition == null; }
+		}
+
 		public override object Text
 		{
-			get { return HighlightSearchMatch(assembly.ShortName); }
+			get {
+				if (!assembly.IsLoaded)
+					return HighlightSearchMatch(assembly.ShortName);
+
+				if (assembly.ModuleDefinition == null)
+					return HighlightSearchMatch(assembly.ShortName);
+				if (Parent is AssemblyTreeNode || assembly.AssemblyDefinition == null)
+					return HighlightSearchMatch(assembly.ModuleDefinition.Name);
+				return HighlightSearchMatch(assembly.AssemblyDefinition.Name);
+			}
 		}
 
 		public override object Icon
@@ -94,9 +111,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				// observe the exception so that the Task's finalizer doesn't re-throw it
 				try { moduleTask.Wait(); }
 				catch (AggregateException) { }
-			} else {
-				RaisePropertyChanged("Text"); // shortname might have changed
 			}
+			RaisePropertyChanged("Text");
 		}
 
 		readonly Dictionary<TypeDef, TypeTreeNode> typeDict = new Dictionary<TypeDef, TypeTreeNode>();
@@ -110,6 +126,24 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return;
 			}
 
+			if (Parent is AssemblyTreeNode || assembly.AssemblyDefinition == null) {
+				LoadModuleChildren(moduleDefinition);
+			}
+			else {
+				// Add all modules in this assembly
+				foreach (var mod in assembly.AssemblyDefinition.Modules) {
+					if (mod == assembly.ModuleDefinition)
+						this.Children.Add(new AssemblyTreeNode(assembly));
+					else {
+						var loadAsm = new LoadedAssembly(AssemblyList, mod);
+						this.Children.Add(new AssemblyTreeNode(loadAsm));
+					}
+				}
+			}
+		}
+
+		void LoadModuleChildren(ModuleDef moduleDefinition)
+		{
 			if (moduleDefinition is ModuleDefMD)
 				this.Children.Add(new ReferenceFolderTreeNode((ModuleDefMD)moduleDefinition, this));
 			if (moduleDefinition.HasResources)
@@ -148,8 +182,15 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			TypeTreeNode node;
 			if (typeDict.TryGetValue(def, out node))
 				return node;
-			else
-				return null;
+
+			if (!(Parent is AssemblyTreeNode)) {
+				foreach (var asmNode in Children.OfType<AssemblyTreeNode>()) {
+					node = asmNode.FindTypeNode(def);
+					if (node != null)
+						return node;
+				}
+			}
+			return null;
 		}
 
 		/// <summary>
@@ -222,7 +263,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					throw;
 				}
 			}
-			language.DecompileAssembly(assembly, output, options);
+			var flags = Parent is AssemblyTreeNode ? DecompileAssemblyFlags.Module : DecompileAssemblyFlags.Assembly;
+			if (assembly.AssemblyDefinition == null)
+				flags = DecompileAssemblyFlags.Module;
+			if (options.FullDecompilation)
+				flags = DecompileAssemblyFlags.AssemblyAndModule;
+			language.DecompileAssembly(assembly, output, options, flags);
 		}
 
 		public override bool Save(DecompilerTextView textView)

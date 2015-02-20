@@ -9,6 +9,7 @@ Differences between dnSpy and ILSpy
 * More stable, can handle bad input that will crash ILSpy
 * Updated syntax highlighting code
 * Debugger
+* Multifile assembly support
 * Command line decompiler (dnspc.exe)
 * Other minor updates / fixes
 

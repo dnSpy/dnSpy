@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -70,6 +71,27 @@ namespace ICSharpCode.ILSpy
 				fileName = Path.GetDirectoryName(fileName);
 			}
 			return false;
+		}
+
+		/// <summary>
+		/// Constructor to create modules present in multi-module assemblies
+		/// </summary>
+		/// <param name="assemblyList"></param>
+		/// <param name="module"></param>
+		public LoadedAssembly(AssemblyList assemblyList, ModuleDef module)
+		{
+			if (assemblyList == null)
+				throw new ArgumentNullException("assemblyList");
+			if (module == null)
+				throw new ArgumentNullException("module");
+			if (string.IsNullOrEmpty(module.Location))
+				throw new ArgumentException("module has no filename");
+			this.assemblyList = assemblyList;
+			this.fileName = module.Location;
+			Debug.Assert(module.Assembly != null && module.Assembly.ManifestModule != module, "Use other constructor for net modules or if it's the main module in an assembly");
+
+			this.assemblyTask = Task.Factory.StartNew<ModuleDef>(() => LoadModule(module));
+			this.shortName = Path.GetFileNameWithoutExtension(fileName);
 		}
 		
 		public LoadedAssembly(AssemblyList assemblyList, string fileName)
@@ -129,19 +151,34 @@ namespace ICSharpCode.ILSpy
 		public bool HasLoadError {
 			get { return assemblyTask.IsFaulted; }
 		}
+
+		ModuleDef LoadModule(ModuleDef module)
+		{
+			// runs on background thread
+			module.Context = CreateModuleContext();
+			return InitializeModule(module);
+		}
 		
 		ModuleDef LoadAssembly()
 		{
 			// runs on background thread
+			return InitializeModule(ModuleDefMD.Load(fileName, CreateModuleContext()));
+		}
+
+		ModuleContext CreateModuleContext()
+		{
 			ModuleContext moduleCtx = new ModuleContext();
 			moduleCtx.AssemblyResolver = new MyAssemblyResolver(this);
 			moduleCtx.Resolver = new Resolver(moduleCtx.AssemblyResolver);
+			return moduleCtx;
+		}
 
-			ModuleDefMD module = ModuleDefMD.Load(fileName, moduleCtx);
+		ModuleDef InitializeModule(ModuleDef module)
+		{
 			module.EnableTypeDefFindCache = true;
 			if (DecompilerSettingsPanel.CurrentDecompilerSettings.UseDebugSymbols) {
 				try {
-					LoadSymbols(module);
+					LoadSymbols(module as ModuleDefMD);
 				} catch (IOException) {
 				} catch (UnauthorizedAccessException) {
 				} catch (InvalidOperationException) {
@@ -153,6 +190,9 @@ namespace ICSharpCode.ILSpy
 		
 		private void LoadSymbols(ModuleDefMD module)
 		{
+			if (module == null)
+				return;
+
 			// search for pdb in same directory as dll
 			string pdbName = Path.Combine(Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName) + ".pdb");
 			if (File.Exists(pdbName)) {
