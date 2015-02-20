@@ -62,7 +62,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public static object GetText(PropertyDef property, Language language, bool? isIndexer = null)
 		{
-			return HighlightSearchMatch(language.FormatPropertyName(property, isIndexer), " : " + language.TypeToString(property.PropertySig.GetRetType().ToTypeDefOrRef(), false, property));
+			return HighlightSearchMatch(CleanUpName(language.FormatPropertyName(property, isIndexer)), CleanUpName(" : " + language.TypeToString(property.PropertySig.GetRetType().ToTypeDefOrRef(), false, property)));
 		}
 		
 		public override object Icon

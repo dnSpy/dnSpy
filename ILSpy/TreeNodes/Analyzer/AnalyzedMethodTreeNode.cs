@@ -44,7 +44,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			get
 			{
-				return prefix + Language.TypeToString(analyzedMethod.DeclaringType, true) + "." + MethodTreeNode.GetText(analyzedMethod, Language);
+				return ILSpyTreeNode.CleanUpName(prefix + Language.TypeToString(analyzedMethod.DeclaringType, true) + "." + MethodTreeNode.GetText(analyzedMethod, Language));
 			}
 		}
 

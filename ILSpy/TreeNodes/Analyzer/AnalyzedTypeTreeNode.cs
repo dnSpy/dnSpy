@@ -42,7 +42,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			get
 			{
-				return Language.TypeToString(analyzedType, true);
+				return ILSpyTreeNode.CleanUpName(Language.TypeToString(analyzedType, true));
 			}
 		}
 

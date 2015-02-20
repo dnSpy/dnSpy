@@ -34,7 +34,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Text
 		{
-			get { return this.key; }
+			get { return CleanUpName(this.key); }
 		}
 
 		public override object Icon

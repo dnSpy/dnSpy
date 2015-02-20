@@ -49,7 +49,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Text {
-			get { return r.Name; }
+			get { return CleanUpName(r.Name); }
 		}
 		
 		public override object Icon {

@@ -74,13 +74,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			get {
 				if (!assembly.IsLoaded)
-					return HighlightSearchMatch(assembly.ShortName);
+					return HighlightSearchMatch(CleanUpName(assembly.ShortName));
 
 				if (assembly.ModuleDefinition == null)
-					return HighlightSearchMatch(assembly.ShortName);
+					return HighlightSearchMatch(CleanUpName(assembly.ShortName));
 				if (Parent is AssemblyTreeNode || assembly.AssemblyDefinition == null)
-					return HighlightSearchMatch(assembly.ModuleDefinition.Name);
-				return HighlightSearchMatch(assembly.AssemblyDefinition.Name);
+					return HighlightSearchMatch(CleanUpName(assembly.ModuleDefinition.Name));
+				return HighlightSearchMatch(CleanUpName(assembly.AssemblyDefinition.Name));
 			}
 		}
 

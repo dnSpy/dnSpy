@@ -20,6 +20,7 @@ using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 
@@ -178,6 +179,23 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				else
 					return System.Windows.SystemColors.GrayTextBrush;
 			}
+		}
+
+		internal static string CleanUpName(string n)
+		{
+			if (n == null)
+				return n;
+			const int MAX_LEN = 256;
+			if (n.Length > MAX_LEN)
+				n = n.Substring(0, MAX_LEN);
+			var sb = new StringBuilder(n.Length);
+			for (int i = 0; i < n.Length; i++) {
+				var c = n[i];
+				if ((ushort)c < 0x20)
+					c = '_';
+				sb.Append(c);
+			}
+			return sb.ToString();
 		}
 	}
 }

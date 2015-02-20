@@ -48,7 +48,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			get
 			{
 				// TODO: This way of formatting is not suitable for properties which explicitly implement interfaces.
-				return prefix + Language.TypeToString(analyzedProperty.DeclaringType, true) + "." + PropertyTreeNode.GetText(analyzedProperty, Language, isIndexer);
+				return ILSpyTreeNode.CleanUpName(prefix + Language.TypeToString(analyzedProperty.DeclaringType, true) + "." + PropertyTreeNode.GetText(analyzedProperty, Language, isIndexer));
 			}
 		}
 

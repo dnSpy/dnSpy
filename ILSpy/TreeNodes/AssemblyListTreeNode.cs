@@ -50,7 +50,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Text
 		{
-			get { return assemblyList.ListName; }
+			get { return CleanUpName(assemblyList.ListName); }
 		}
 
 		void BindToObservableCollection(ObservableCollection<LoadedAssembly> collection)

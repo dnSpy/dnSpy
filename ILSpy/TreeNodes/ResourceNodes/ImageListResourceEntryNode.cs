@@ -62,7 +62,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Text
 		{
-			get { return key; }
+			get { return CleanUpName(key); }
 		}
 
 		public override object Icon

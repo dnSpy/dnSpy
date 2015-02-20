@@ -49,7 +49,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			get
 			{
 				// TODO: This way of formatting is not suitable for events which explicitly implement interfaces.
-				return prefix + Language.TypeToString(analyzedEvent.DeclaringType, true) + "." + EventTreeNode.GetText(analyzedEvent, Language);
+				return ILSpyTreeNode.CleanUpName(prefix + Language.TypeToString(analyzedEvent.DeclaringType, true) + "." + EventTreeNode.GetText(analyzedEvent, Language));
 			}
 		}
 
