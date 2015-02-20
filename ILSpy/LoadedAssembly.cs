@@ -87,7 +87,7 @@ namespace ICSharpCode.ILSpy
 
 		public string Text {
 			get {
-				if (IsLoaded && AssemblyDefinition != null) {
+				if (AssemblyDefinition != null) {
 					return String.Format("{0} ({1})", ShortName, AssemblyDefinition.Name.Version);
 				} else {
 					return ShortName;
