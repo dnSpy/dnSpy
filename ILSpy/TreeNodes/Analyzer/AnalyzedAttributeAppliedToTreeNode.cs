@@ -350,7 +350,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 					foreach (var assembly in assemblies) {
 						ct.ThrowIfCancellationRequested();
-						if (friendAssemblies.Contains(assembly.ShortName)) {
+						if (friendAssemblies.Contains(assembly.AssemblyDefinition.Name)) {
 							var typeref = GetScopeTypeReferenceInAssembly(assembly.AssemblyDefinition);
 							if (typeref != null) {
 								yield return new Tuple<AssemblyDef, ITypeDefOrRef>(assembly.AssemblyDefinition, typeref);

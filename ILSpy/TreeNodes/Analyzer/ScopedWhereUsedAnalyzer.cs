@@ -299,7 +299,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 					foreach (var assembly in assemblies) {
 						ct.ThrowIfCancellationRequested();
-						if (friendAssemblies.Contains(assembly.ShortName) && AssemblyReferencesScopeType(assembly.AssemblyDefinition)) {
+						if (friendAssemblies.Contains(assembly.AssemblyDefinition.Name) && AssemblyReferencesScopeType(assembly.AssemblyDefinition)) {
 							yield return assembly.AssemblyDefinition;
 						}
 					}
