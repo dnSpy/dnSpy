@@ -96,12 +96,40 @@ namespace ICSharpCode.ILSpy.Options
 			}
 		}
 
+		bool showAssemblyVersion;
+
+		public bool ShowAssemblyVersion
+		{
+			get { return showAssemblyVersion; }
+			set {
+				if (showAssemblyVersion != value) {
+					showAssemblyVersion = value;
+					OnPropertyChanged("ShowAssemblyVersion");
+				}
+			}
+		}
+
+		bool showAssemblyPublicKeyToken;
+
+		public bool ShowAssemblyPublicKeyToken
+		{
+			get { return showAssemblyPublicKeyToken; }
+			set {
+				if (showAssemblyPublicKeyToken != value) {
+					showAssemblyPublicKeyToken = value;
+					OnPropertyChanged("ShowAssemblyPublicKeyToken");
+				}
+			}
+		}
+
 		public void CopyValues(DisplaySettings s)
 		{
 			this.SelectedFont = s.selectedFont;
 			this.SelectedFontSize = s.selectedFontSize;
 			this.ShowLineNumbers = s.showLineNumbers;
 			this.ShowMetadataTokens = s.showMetadataTokens;
+			this.ShowAssemblyVersion = s.showAssemblyVersion;
+			this.ShowAssemblyPublicKeyToken = s.showAssemblyPublicKeyToken;
 		}
 	}
 }

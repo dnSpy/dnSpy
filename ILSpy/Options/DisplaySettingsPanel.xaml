@@ -61,6 +61,8 @@
 			<StackPanel Margin="3">
 				<CheckBox IsChecked="{Binding ShowLineNumbers}">Show line numbers</CheckBox>
 				<CheckBox IsChecked="{Binding ShowMetadataTokens}">Show metadata tokens</CheckBox>
+				<CheckBox IsChecked="{Binding ShowAssemblyVersion}">Show assembly version</CheckBox>
+				<CheckBox IsChecked="{Binding ShowAssemblyPublicKeyToken}">Show assembly public key token</CheckBox>
 			</StackPanel>
 		</GroupBox>
 	</Grid>

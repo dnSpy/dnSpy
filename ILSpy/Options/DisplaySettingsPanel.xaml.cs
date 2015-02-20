@@ -101,6 +101,8 @@ namespace ICSharpCode.ILSpy.Options
 			s.SelectedFontSize = (double?)e.Attribute("FontSize") ?? 10.0 * 4 / 3;
 			s.ShowLineNumbers = (bool?)e.Attribute("ShowLineNumbers") ?? false;
 			s.ShowMetadataTokens = (bool?) e.Attribute("ShowMetadataTokens") ?? false;
+			s.ShowAssemblyVersion = (bool?)e.Attribute("ShowAssemblyVersion") ?? false;
+			s.ShowAssemblyPublicKeyToken = (bool?)e.Attribute("ShowAssemblyPublicKeyToken") ?? false;
 			
 			return s;
 		}
@@ -116,6 +118,8 @@ namespace ICSharpCode.ILSpy.Options
 			section.SetAttributeValue("FontSize", s.SelectedFontSize);
 			section.SetAttributeValue("ShowLineNumbers", s.ShowLineNumbers);
 			section.SetAttributeValue("ShowMetadataTokens", s.ShowMetadataTokens);
+			section.SetAttributeValue("ShowAssemblyVersion", s.ShowAssemblyVersion);
+			section.SetAttributeValue("ShowAssemblyPublicKeyToken", s.ShowAssemblyPublicKeyToken);
 			
 			XElement existingElement = root.Element("DisplaySettings");
 			if (existingElement != null)

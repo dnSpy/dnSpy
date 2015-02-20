@@ -21,9 +21,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
@@ -80,8 +82,26 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					return HighlightSearchMatch(CleanUpName(assembly.ShortName));
 				if (Parent is AssemblyTreeNode || assembly.AssemblyDefinition == null)
 					return HighlightSearchMatch(CleanUpName(assembly.ModuleDefinition.Name));
-				return HighlightSearchMatch(CleanUpName(assembly.AssemblyDefinition.Name));
+				return HighlightSearchMatch(CleanUpName(GetAssemblyName()));
 			}
+		}
+
+		string GetAssemblyName()
+		{
+			var asm = assembly.AssemblyDefinition;
+			var sb = new StringBuilder(asm.Name.Length +
+					(DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyVersion ? 5 * 4 + 3 + 2 : 0) +
+					(DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyPublicKeyToken ? 8 * 2 + 2 : 0));
+			sb.Append(asm.Name);
+			if (DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyVersion) {
+				sb.Append(", ");
+				sb.Append(asm.Version.ToString());
+			}
+			if (DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyPublicKeyToken && !PublicKeyBase.IsNullOrEmpty2(asm.PublicKeyToken)) {
+				sb.Append(", ");
+				sb.Append(asm.PublicKeyToken.ToString());
+			}
+			return sb.ToString();
 		}
 
 		public override object Icon
