@@ -19,7 +19,6 @@
     <FileAlignment>4096</FileAlignment>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <OutputPath>bin\Debug\</OutputPath>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <PublishUrl>http://localhost/Debugger.Core/</PublishUrl>
     <Install>true</Install>
@@ -44,12 +43,14 @@
     <DebugType>Full</DebugType>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <Optimize>False</Optimize>
+    <OutputPath>..\..\ILSpy\bin\Debug\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>PdbOnly</DebugType>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>false</DebugSymbols>
+    <OutputPath>..\..\ILSpy\bin\Release\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <StartAction>Project</StartAction>
