@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
@@ -62,17 +63,73 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (!context.Settings.FullyQualifyAmbiguousTypeNames)
 				return;
 			
-			FindAmbiguousTypeNames(context.CurrentModule, internalsVisible: true);
+			FindAmbiguousTypeNames(context.CurrentModule.Types, internalsVisible: true);
 			if (context.CurrentModule is ModuleDefMD) {
+				var asmDict = new Dictionary<AssemblyDef, List<AssemblyDef>>(AssemblyEqualityComparer.Instance);
 				foreach (var r in ((ModuleDefMD)context.CurrentModule).GetAssemblyRefs()) {
 					AssemblyDef d = context.CurrentModule.Context.AssemblyResolver.Resolve(r, context.CurrentModule);
-					if (d != null)
-						FindAmbiguousTypeNames(d.ManifestModule, internalsVisible: false);
+					if (d == null)
+						continue;
+					List<AssemblyDef> list;
+					if (!asmDict.TryGetValue(d, out list))
+						asmDict.Add(d, list = new List<AssemblyDef>());
+					list.Add(d);
+				}
+				foreach (var list in asmDict.Values) {
+					FindAmbiguousTypeNames(GetTypes(list), internalsVisible: false);
 				}
 			}
 			
 			// verify that the SimpleTypes refer to the correct type (no ambiguities)
 			compilationUnit.AcceptVisitor(new FullyQualifyAmbiguousTypeNamesVisitor(this), null);
+		}
+
+		static IEnumerable<TypeDef> GetTypes(List<AssemblyDef> asms)
+		{
+			if (asms.Count == 0)
+				return new TypeDef[0];
+			if (asms.Count == 1)
+				return asms[0].ManifestModule.Types;
+
+			var types = new HashSet<TypeDef>(new TypeEqualityComparer(SigComparerOptions.DontCompareTypeScope));
+			foreach (var asm in asms) {
+				foreach (var type in asm.ManifestModule.Types) {
+					if (types.Add(type))
+						continue;
+					if (!type.IsPublic)
+						continue;
+					types.Remove(type);
+					bool b = types.Add(type);
+					Debug.Assert(b);
+				}
+			}
+			return types;
+		}
+
+		sealed class AssemblyEqualityComparer : IEqualityComparer<AssemblyDef>
+		{
+			public static readonly AssemblyEqualityComparer Instance = new AssemblyEqualityComparer();
+
+			public bool Equals(AssemblyDef x, AssemblyDef y)
+			{
+				if (x == y)
+					return true;
+				if (x == null || y == null)
+					return false;
+				if (!x.Name.String.Equals(y.Name, StringComparison.InvariantCultureIgnoreCase))
+					return false;
+				if (x.PublicKey.IsNullOrEmpty != y.PublicKey.IsNullOrEmpty)
+					return false;
+				if (x.PublicKey.IsNullOrEmpty)
+					return true;
+				return x.PublicKey.Equals(y.PublicKey);
+			}
+
+			public int GetHashCode(AssemblyDef obj)
+			{
+				return unchecked(obj.Name.ToUpperInvariant().GetHashCode() +
+					obj.PublicKey.GetHashCode());
+			}
 		}
 		
 		readonly HashSet<string> declaredNamespaces = new HashSet<string>() { string.Empty };
@@ -128,9 +185,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			}
 		}
 		
-		void FindAmbiguousTypeNames(ModuleDef module, bool internalsVisible)
+		void FindAmbiguousTypeNames(IEnumerable<TypeDef> types, bool internalsVisible)
 		{
-			foreach (TypeDef type in module.Types) {
+			foreach (TypeDef type in types) {
 				if (internalsVisible || type.IsPublic) {
 					if (importedNamespaces.Contains(type.Namespace) || declaredNamespaces.Contains(type.Namespace)) {
 						if (!availableTypeNames.Add(type.Name))
