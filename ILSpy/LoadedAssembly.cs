@@ -85,6 +85,20 @@ namespace ICSharpCode.ILSpy
 			get { return shortName; }
 		}
 		
+		public string Text
+		{
+			get
+			{
+				if (IsLoaded) {
+					return String.Format("{0}, {1}", ShortName, AssemblyDefinition.Name.Version);
+				}
+				else
+				{
+					return ShortName;
+				}
+			}
+		}
+		
 		public bool IsLoaded {
 			get { return assemblyTask.IsCompleted; }
 		}
