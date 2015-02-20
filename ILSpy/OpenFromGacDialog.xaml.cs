@@ -119,7 +119,7 @@ namespace ICSharpCode.ILSpy
 
 		void FetchGacContents()
 		{
-			HashSet<string> fullNames = new HashSet<string>();
+			HashSet<string> fullNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			UpdateProgressBar(pg => { pg.Visibility = System.Windows.Visibility.Visible; pg.IsIndeterminate = true; });
 			var list = GacInterop.GetGacAssemblyFullNames().TakeWhile(_ => !cancelFetchThread).ToList();
 			UpdateProgressBar(pg => { pg.IsIndeterminate = false; pg.Maximum = list.Count; });

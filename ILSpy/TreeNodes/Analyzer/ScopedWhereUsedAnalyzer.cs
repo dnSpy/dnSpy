@@ -256,15 +256,13 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				yield break;
 			yield return asm;
 
-			string requiredAssemblyFullName = asm.FullName;
-
 			IEnumerable<LoadedAssembly> assemblies = MainWindow.Instance.CurrentAssemblyList.GetAssemblies().Where(assy => assy.AssemblyDefinition != null);
 
 			foreach (var assembly in assemblies) {
 				ct.ThrowIfCancellationRequested();
 				bool found = false;
 				foreach (var reference in assembly.AssemblyDefinition.Modules.OfType<ModuleDefMD>().SelectMany(module => module.GetAssemblyRefs())) {
-					if (requiredAssemblyFullName == reference.FullName) {
+					if (AssemblyNameComparer.CompareAll.CompareTo(asm, reference) == 0) {
 						found = true;
 						break;
 					}
