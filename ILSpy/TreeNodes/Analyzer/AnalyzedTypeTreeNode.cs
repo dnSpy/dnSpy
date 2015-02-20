@@ -54,6 +54,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			if (AnalyzedTypeInstantiationsTreeNode.CanShow(analyzedType))
 				this.Children.Add(new AnalyzedTypeInstantiationsTreeNode(analyzedType));
 
+			if (AnalyzedTypeUsedByTreeNode.CanShow(analyzedType))
+				this.Children.Add(new AnalyzedTypeUsedByTreeNode(analyzedType));
+
 			if (AnalyzedTypeExposedByTreeNode.CanShow(analyzedType))
 				this.Children.Add(new AnalyzedTypeExposedByTreeNode(analyzedType));
 
