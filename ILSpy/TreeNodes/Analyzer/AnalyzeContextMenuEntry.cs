@@ -73,9 +73,13 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			if (type != null)
 				AnalyzerTreeView.Instance.ShowOrFocus(new AnalyzedTypeTreeNode(type));
 			FieldDef field = member as FieldDef;
+			if (field == null && member is IField && ((IField)member).IsField)
+				field = ((IField)member).ResolveFieldDef();
 			if (field != null)
 				AnalyzerTreeView.Instance.ShowOrFocus(new AnalyzedFieldTreeNode(field));
 			MethodDef method = member as MethodDef;
+			if (method == null && member is IMethod && ((IMethod)member).IsMethod)
+				method = ((IMethod)member).ResolveMethodDef();
 			if (method != null)
 				AnalyzerTreeView.Instance.ShowOrFocus(new AnalyzedMethodTreeNode(method));
 			var propertyAnalyzer = AnalyzedPropertyTreeNode.TryCreateAnalyzer(member);
