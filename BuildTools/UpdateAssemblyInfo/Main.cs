@@ -43,15 +43,15 @@ namespace UpdateAssemblyInfo
 			},
 			new TemplateFile {
 				Input = ilspyAppConfigTemplateFile,
-				Output = "ILSpy/app.config"
+				Output = "ILSpy/App.config"
 			},
 			new TemplateFile {
 				Input = ilspyAppConfigTemplateFile,
-				Output = "dnSpy-x86/app.config"
+				Output = "dnSpy-x86/App.config"
 			},
 			new TemplateFile {
 				Input = ilspyAppConfigTemplateFile,
-				Output = "dnSpy-x64/app.config"
+				Output = "dnSpy-x64/App.config"
 			},
 		};
 		

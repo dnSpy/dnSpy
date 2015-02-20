@@ -253,7 +253,7 @@
     <Resource Include="Images\Delete.png" />
     <Resource Include="Images\ILSpy.ico" />
     <Resource Include="Images\FindAssembly.png" />
-    <None Include="app.config" />
+    <None Include="App.config" />
     <Resource Include="Images\Breakpoint.png" />
     <Resource Include="Images\CurrentLine.png" />
     <Resource Include="Images\DisabledBreakpoint.png" />
