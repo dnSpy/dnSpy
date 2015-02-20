@@ -75,9 +75,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override object Text
 		{
 			get {
-				if (!assembly.IsLoaded)
-					return HighlightSearchMatch(CleanUpName(assembly.ShortName));
-
 				if (assembly.ModuleDefinition == null)
 					return HighlightSearchMatch(CleanUpName(assembly.ShortName));
 				if (Parent is AssemblyTreeNode || assembly.AssemblyDefinition == null)
