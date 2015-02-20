@@ -215,7 +215,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				assembly.WaitUntilLoaded(); // necessary so that load errors are passed on to the caller
 			} catch (AggregateException ex) {
 				language.WriteCommentLine(output, assembly.FileName);
-				if (ex.InnerException is BadImageFormatException) {
+				if (ex.InnerException is BadImageFormatException || ex.InnerException is IOException) {
 					language.WriteCommentLine(output, "This file does not contain a managed assembly.");
 					return;
 				} else {
