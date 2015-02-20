@@ -346,7 +346,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				}
 
 				if (friendAssemblies.Count > 0) {
-					IEnumerable<LoadedAssembly> assemblies = MainWindow.Instance.CurrentAssemblyList.GetAssemblies();
+					IEnumerable<LoadedAssembly> assemblies = MainWindow.Instance.CurrentAssemblyList.GetAssemblies().Where(assy => assy.AssemblyDefinition != null);
 
 					foreach (var assembly in assemblies) {
 						ct.ThrowIfCancellationRequested();
