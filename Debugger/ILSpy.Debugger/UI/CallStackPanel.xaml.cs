@@ -230,7 +230,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
             if (null == foundAssembly || null == foundAssembly.AssemblyDefinition)
                 return;
             
-			IMemberRef mr = XmlDocKeyProvider.FindMemberByKey(foundAssembly.AssemblyDefinition.ManifestModule, "M:" + selectedItem.Name);
+			IMemberRef mr = XmlDocKeyProvider.FindMemberByKey(foundAssembly.ModuleDefinition, "M:" + selectedItem.Name);
 			if (mr == null)
 				return;
 			MainWindow.Instance.JumpToReference(mr);

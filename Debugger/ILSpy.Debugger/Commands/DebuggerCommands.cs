@@ -190,7 +190,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 					if (a == null)
 						return false;
 					AssemblyDef asm = a.LoadedAssembly.AssemblyDefinition;
-					return asm != null && asm.ManifestModule != null && asm.ManifestModule.EntryPoint != null;
+					return asm != null && asm.ManifestModule != null && (asm.ManifestModule.ManagedEntryPoint != null || asm.ManifestModule.NativeEntryPoint != 0);
 				});
 		}
 		

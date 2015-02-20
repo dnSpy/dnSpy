@@ -29,13 +29,13 @@ namespace TestPlugin
 			if (context.SelectedTreeNodes == null)
 				return;
 			AssemblyTreeNode node = (AssemblyTreeNode)context.SelectedTreeNodes[0];
-			AssemblyDef asm = node.LoadedAssembly.AssemblyDefinition;
-			if (asm != null) {
+			var mod = node.LoadedAssembly.ModuleDefinition;
+			if (mod != null) {
 				SaveFileDialog dlg = new SaveFileDialog();
 				dlg.FileName = node.LoadedAssembly.FileName;
 				dlg.Filter = "Assembly|*.dll;*.exe";
 				if (dlg.ShowDialog(MainWindow.Instance) == true) {
-					asm.ManifestModule.Write(dlg.FileName);
+					mod.Write(dlg.FileName);
 				}
 			}
 		}

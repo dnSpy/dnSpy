@@ -219,7 +219,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<T> FindReferencesInAssembly(AssemblyDef asm, CancellationToken ct)
 		{
-			foreach (TypeDef type in TreeTraversal.PreOrder(asm.ManifestModule.Types, t => t.NestedTypes)) {
+			foreach (TypeDef type in TreeTraversal.PreOrder(asm.Modules.SelectMany(m => m.Types), t => t.NestedTypes)) {
 				ct.ThrowIfCancellationRequested();
 				foreach (var result in typeAnalysisFunction(type)) {
 					ct.ThrowIfCancellationRequested();

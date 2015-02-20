@@ -88,19 +88,24 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		{
 			if (asms.Count == 0)
 				return new TypeDef[0];
-			if (asms.Count == 1)
-				return asms[0].ManifestModule.Types;
+			if (asms.Count == 1) {
+				if (asms[0].Modules.Count == 1)
+					return asms[0].ManifestModule.Types;
+				return asms[0].Modules.SelectMany(m => m.Types);
+			}
 
 			var types = new HashSet<TypeDef>(new TypeEqualityComparer(SigComparerOptions.DontCompareTypeScope));
 			foreach (var asm in asms) {
-				foreach (var type in asm.ManifestModule.Types) {
-					if (types.Add(type))
-						continue;
-					if (!type.IsPublic)
-						continue;
-					types.Remove(type);
-					bool b = types.Add(type);
-					Debug.Assert(b);
+				foreach (var mod in asm.Modules) {
+					foreach (var type in mod.Types) {
+						if (types.Add(type))
+							continue;
+						if (!type.IsPublic)
+							continue;
+						types.Remove(type);
+						bool b = types.Add(type);
+						Debug.Assert(b);
+					}
 				}
 			}
 			return types;
