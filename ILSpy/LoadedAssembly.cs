@@ -293,8 +293,14 @@ namespace ICSharpCode.ILSpy
 		}
 
 		LoadedAssembly TryLoadFromDir(IAssembly asmName, bool exactCheck, string dirPath) {
-			return TryLoadFromDir2(asmName, exactCheck, Path.Combine(dirPath, asmName.Name + ".dll")) ??
-				   TryLoadFromDir2(asmName, exactCheck, Path.Combine(dirPath, asmName.Name + ".exe"));
+			string baseName;
+			try {
+				baseName = Path.Combine(dirPath, asmName.Name);
+			} catch (ArgumentException) { // eg. invalid chars in asmName.Name
+				return null;
+			}
+			return TryLoadFromDir2(asmName, exactCheck, baseName + ".dll") ??
+				   TryLoadFromDir2(asmName, exactCheck, baseName + ".exe");
 		}
 
 		LoadedAssembly TryLoadFromDir2(IAssembly asmName, bool exactCheck, string fileName) {
@@ -339,7 +345,12 @@ namespace ICSharpCode.ILSpy
 				return (LoadedAssembly)App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Func<string, LoadedAssembly>(LookupWinRTMetadata), name);
 			}
 			
-			string file = Path.Combine(Environment.SystemDirectory, "WinMetadata", name + ".winmd");
+			string file;
+			try {
+				file = Path.Combine(Environment.SystemDirectory, "WinMetadata", name + ".winmd");
+			} catch (ArgumentException) {
+				return null;
+			}
 			if (File.Exists(file)) {
 				return assemblyList.OpenAssembly(file, assemblyLoadDisableCount == 0);
 			} else {

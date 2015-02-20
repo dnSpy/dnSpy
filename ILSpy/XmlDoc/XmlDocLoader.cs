@@ -76,6 +76,8 @@ namespace ICSharpCode.ILSpy.XmlDoc
 		
 		static string FindXmlDocumentation(string assemblyFileName, string runtime)
 		{
+			if (string.IsNullOrEmpty(assemblyFileName))
+				return null;
 			if (runtime.StartsWith(MDHeaderRuntimeVersion.MS_CLR_10_PREFIX_X86RETAIL) ||
 				runtime == MDHeaderRuntimeVersion.MS_CLR_10_RETAIL ||
 				runtime == MDHeaderRuntimeVersion.MS_CLR_10_COMPLUS)

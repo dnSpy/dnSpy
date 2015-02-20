@@ -102,6 +102,8 @@ namespace ICSharpCode.ILSpy
 			
 			for (int i = 0; i < 2; i++) {
 				for (int j = 0; j < gacs.Length; j++) {
+					if (string.IsNullOrEmpty(gac_paths [i]))
+						continue;
 					var gac = Path.Combine (gac_paths [i], gacs [j]);
 					var file = GetAssemblyFile (reference, prefixes [i], gac);
 					if (File.Exists (file))
@@ -125,10 +127,15 @@ namespace ICSharpCode.ILSpy
 			for (int i = 0; i < pkt.Data.Length; i++)
 				gac_folder.Append (pkt.Data [i].ToString ("x2"));
 
-			return Path.Combine (
-				Path.Combine (
-					Path.Combine (gac, reference.Name), gac_folder.ToString ()),
-				reference.Name + ".dll");
+			try {
+				return Path.Combine(
+					Path.Combine(
+						Path.Combine(gac, reference.Name), gac_folder.ToString()),
+					reference.Name + ".dll");
+			}
+			catch (ArgumentException) {
+			}
+			return null;
 		}
 		#endregion
 	}

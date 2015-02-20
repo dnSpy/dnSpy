@@ -72,7 +72,11 @@ namespace ICSharpCode.ILSpy
 			: this((string)listElement.Attribute("name"))
 		{
 			foreach (var asm in listElement.Elements("Assembly")) {
-				OpenAssembly((string)asm);
+				try {
+					OpenAssembly((string)asm);
+				}
+				catch (ArgumentException) { // invalid filename
+				}
 			}
 			this.dirty = false; // OpenAssembly() sets dirty, so reset it afterwards
 		}
