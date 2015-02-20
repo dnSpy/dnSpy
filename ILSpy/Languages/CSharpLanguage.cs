@@ -271,13 +271,10 @@ namespace ICSharpCode.ILSpy
 				bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
 				base.DecompileAssembly(assembly, output, options, flags);
 				output.WriteLine();
+				if (decompileMod || decompileAsm)
+					PrintEntryPoint(assembly, output);
 				if (decompileMod) {
 					ModuleDef mainModule = assembly.ModuleDefinition;
-					if (mainModule.EntryPoint != null && mainModule.EntryPoint.DeclaringType != null) {
-						output.Write("// Entry point: ", TextTokenType.Comment);
-						output.WriteReference(mainModule.EntryPoint.DeclaringType.FullName + "." + mainModule.EntryPoint.Name, mainModule.EntryPoint, TextTokenType.Comment);
-						output.WriteLine();
-					}
 					output.WriteLine("// Architecture: " + GetPlatformDisplayName(mainModule), TextTokenType.Comment);
 					if (!mainModule.IsILOnly) {
 						output.WriteLine("// This assembly contains unmanaged code.", TextTokenType.Comment);
@@ -290,8 +287,9 @@ namespace ICSharpCode.ILSpy
 						output.WriteLine("// Runtime: .NET 2.0", TextTokenType.Comment);
 					else if (mainModule.IsClr40)
 						output.WriteLine("// Runtime: .NET 4.0", TextTokenType.Comment);
-					output.WriteLine();
 				}
+				if (decompileMod || decompileAsm)
+					output.WriteLine();
 				
 				// don't automatically load additional assemblies when an assembly node is selected in the tree view
 				using (options.FullDecompilation ? null : LoadedAssembly.DisableAssemblyLoad()) {

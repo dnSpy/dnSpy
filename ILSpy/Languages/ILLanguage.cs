@@ -162,6 +162,8 @@ namespace ICSharpCode.ILSpy
 			bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
 			bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
 			output.WriteLine("// " + assembly.FileName, TextTokenType.Comment);
+			if (decompileMod || decompileAsm)
+				PrintEntryPoint(assembly, output);
 			output.WriteLine();
 			
 			ReflectionDisassembler rd = CreateReflectionDisassembler(output, options);

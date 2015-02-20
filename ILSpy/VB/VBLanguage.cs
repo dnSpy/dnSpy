@@ -69,6 +69,11 @@ namespace ICSharpCode.ILSpy.VB
 			output.WriteLine("' " + comment, TextTokenType.Comment);
 		}
 		
+		public override void WriteComment(ITextOutput output, string comment)
+		{
+			output.Write("' " + comment, TextTokenType.Comment);
+		}
+		
 		public override void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule)
 		{
 			if (options.FullDecompilation && options.SaveAsProjectDirectory != null) {
@@ -81,13 +86,10 @@ namespace ICSharpCode.ILSpy.VB
 				bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
 				base.DecompileAssembly(assembly, output, options, flags);
 				output.WriteLine();
+				if (decompileMod || decompileAsm)
+					PrintEntryPoint(assembly, output);
 				if (decompileMod) {
 					ModuleDef mainModule = assembly.ModuleDefinition;
-					if (mainModule.EntryPoint != null && mainModule.EntryPoint.DeclaringType != null) {
-						output.Write("' Entry point: ", TextTokenType.Comment);
-						output.WriteReference(mainModule.EntryPoint.DeclaringType.FullName + "." + mainModule.EntryPoint.Name, mainModule.EntryPoint, TextTokenType.Comment);
-						output.WriteLine();
-					}
 					WriteCommentLine(output, "Architecture: " + CSharpLanguage.GetPlatformDisplayName(mainModule));
 					if (!mainModule.IsILOnly) {
 						WriteCommentLine(output, "This assembly contains unmanaged code.");
@@ -100,8 +102,9 @@ namespace ICSharpCode.ILSpy.VB
 						WriteCommentLine(output, "Runtime: .NET 2.0");
 					else if (mainModule.IsClr40)
 						WriteCommentLine(output, "Runtime: .NET 4.0");
-					output.WriteLine();
 				}
+				if (decompileMod || decompileAsm)
+					output.WriteLine();
 				
 				// don't automatically load additional assemblies when an assembly node is selected in the tree view
 				using (options.FullDecompilation ? null : LoadedAssembly.DisableAssemblyLoad()) {

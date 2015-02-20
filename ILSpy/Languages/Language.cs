@@ -18,6 +18,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
@@ -110,9 +112,59 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
+		protected void PrintEntryPoint(LoadedAssembly assembly, ITextOutput output)
+		{
+			var ep = GetEntryPoint(assembly.ModuleDefinition);
+			if (ep is uint)
+				WriteCommentLine(output, string.Format("Native Entry point: 0x{0:x8}", (uint)ep));
+			else if (ep is MethodDef) {
+				var epMethod = (MethodDef)ep;
+				WriteComment(output, "Entry point: ");
+				if (epMethod.DeclaringType != null) {
+					output.WriteReference(epMethod.DeclaringType.FullName, epMethod.DeclaringType, TextTokenType.Comment);
+					output.Write('.', TextTokenType.Comment);
+				}
+				output.WriteReference(epMethod.Name, epMethod, TextTokenType.Comment);
+				output.WriteLine();
+			}
+		}
+
+		object GetEntryPoint(ModuleDef module)
+		{
+			int maxIters = 1;
+			for (int i = 0; module != null && i < maxIters; i++) {
+				var rva = module.NativeEntryPoint;
+				if (rva != 0)
+					return (uint)rva;
+
+				var manEp = module.ManagedEntryPoint;
+				var ep = manEp as MethodDef;
+				if (ep != null)
+					return ep;
+
+				var file = manEp as FileDef;
+				if (file == null)
+					return null;
+
+				var asm = module.Assembly;
+				if (asm == null)
+					return null;
+				maxIters = asm.Modules.Count;
+
+				module = asm.Modules.FirstOrDefault(m => Path.GetFileName(m.Location) == file.Name);
+			}
+
+			return null;
+		}
+
 		public virtual void WriteCommentLine(ITextOutput output, string comment)
 		{
 			output.WriteLine("// " + comment, TextTokenType.Comment);
+		}
+
+		public virtual void WriteComment(ITextOutput output, string comment)
+		{
+			output.Write("// " + comment, TextTokenType.Comment);
 		}
 
 		/// <summary>
