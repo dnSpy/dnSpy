@@ -88,18 +88,28 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		string GetAssemblyName()
 		{
 			var asm = assembly.AssemblyDefinition;
-			var sb = new StringBuilder(asm.Name.Length +
-					(DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyVersion ? 5 * 4 + 3 + 2 : 0) +
-					(DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyPublicKeyToken ? 8 * 2 + 2 : 0));
+			int numExtra = (DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyVersion ? 1 : 0) +
+				(DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyPublicKeyToken ? 1 : 0);
+			if (numExtra == 0)
+				return asm.Name;
+
+			var sb = new StringBuilder(asm.Name.Length + 3 /* " ()" */ + (numExtra - 1) * 2 /* ", " */ +
+					(DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyVersion ? 5 * 4 + 3 : 0) +
+					(DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyPublicKeyToken ? 8 * 2 : 0));
 			sb.Append(asm.Name);
+			sb.Append(" (");
+			int len = sb.Length;
 			if (DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyVersion) {
-				sb.Append(", ");
+				if (len != sb.Length)
+					sb.Append(", ");
 				sb.Append(asm.Version.ToString());
 			}
 			if (DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyPublicKeyToken && !PublicKeyBase.IsNullOrEmpty2(asm.PublicKeyToken)) {
-				sb.Append(", ");
+				if (len != sb.Length)
+					sb.Append(", ");
 				sb.Append(asm.PublicKeyToken.ToString());
 			}
+			sb.Append(')');
 			return sb.ToString();
 		}
 
