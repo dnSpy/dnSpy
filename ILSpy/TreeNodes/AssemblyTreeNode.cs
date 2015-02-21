@@ -126,7 +126,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				if (tooltip == null) {
 					tooltip = new TextBlock();
 					tooltip.Inlines.Add(new Bold(new Run("Name: ")));
-					tooltip.Inlines.Add(new Run(assembly.AssemblyDefinition == null ? assembly.ModuleDefinition.Name.String : assembly.AssemblyDefinition.FullName));
+					var name = Parent is AssemblyTreeNode || assembly.AssemblyDefinition == null ?
+								assembly.ModuleDefinition.Name.String :
+								assembly.AssemblyDefinition.FullName;
+					tooltip.Inlines.Add(new Run(name));
 					tooltip.Inlines.Add(new LineBreak());
 					tooltip.Inlines.Add(new Bold(new Run("Location: ")));
 					tooltip.Inlines.Add(new Run(assembly.FileName));
