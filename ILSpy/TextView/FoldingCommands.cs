@@ -15,6 +15,7 @@ using ICSharpCode.AvalonEdit.Folding;
 
 namespace ICSharpCode.ILSpy.TextView
 {
+#if false
   [ExportContextMenuEntryAttribute(Header = "Toggle All Folding", Category = "Folding")]
   internal sealed class ToggleAllContextMenuEntry : IContextMenuEntry
   {
@@ -86,5 +87,5 @@ namespace ICSharpCode.ILSpy.TextView
       }
     }
   }
-  
+#endif  
 }
