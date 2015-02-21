@@ -121,19 +121,19 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			get {
 				if (assembly.HasLoadError)
-					return "Assembly could not be loaded. Click here for details.";
+					return "Assembly could not be loaded.";
 
 				if (tooltip == null) {
 					tooltip = new TextBlock();
 					tooltip.Inlines.Add(new Bold(new Run("Name: ")));
-					tooltip.Inlines.Add(new Run(assembly.AssemblyDefinition.FullName));
+					tooltip.Inlines.Add(new Run(assembly.AssemblyDefinition == null ? assembly.ModuleDefinition.Name.String : assembly.AssemblyDefinition.FullName));
 					tooltip.Inlines.Add(new LineBreak());
 					tooltip.Inlines.Add(new Bold(new Run("Location: ")));
 					tooltip.Inlines.Add(new Run(assembly.FileName));
 					tooltip.Inlines.Add(new LineBreak());
 					tooltip.Inlines.Add(new Bold(new Run("Architecture: ")));
-					tooltip.Inlines.Add(new Run(CSharpLanguage.GetPlatformDisplayName(assembly.AssemblyDefinition.ManifestModule)));
-					string runtimeName = CSharpLanguage.GetRuntimeDisplayName(assembly.AssemblyDefinition.ManifestModule);
+					tooltip.Inlines.Add(new Run(CSharpLanguage.GetPlatformDisplayName(assembly.ModuleDefinition)));
+					string runtimeName = CSharpLanguage.GetRuntimeDisplayName(assembly.ModuleDefinition);
 					if (runtimeName != null) {
 						tooltip.Inlines.Add(new LineBreak());
 						tooltip.Inlines.Add(new Bold(new Run("Runtime: ")));

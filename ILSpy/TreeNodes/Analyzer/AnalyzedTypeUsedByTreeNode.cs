@@ -55,6 +55,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<AnalyzerEntityTreeNode> FindTypeUsage(TypeDef type)
 		{
+			if (type == null)
+				yield break;
 			if (type == analyzedType)
 				yield break;
 
@@ -93,6 +95,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private bool IsUsedInTypeDefinition(TypeDef type)
 		{
+			if (type == null)
+				return false;
+
 			return IsUsedInTypeReference(type)
 				   || TypeMatches(type.BaseType)
 				   || IsUsedInTypeReferences(type.Interfaces.Select(ii => ii.Interface))
@@ -101,7 +106,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private bool IsUsedInFieldReference(IField field)
 		{
-			if (field == null)
+			if (field == null || !field.IsField)
 				return false;
 
 			return TypeMatches(field.DeclaringType)
@@ -116,7 +121,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private bool IsUsedInMethodReference(IMethod method)
 		{
-			if (method == null)
+			if (method == null || !method.IsMethod)
 				return false;
 
 			return TypeMatches(method.DeclaringType)

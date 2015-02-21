@@ -232,18 +232,17 @@ namespace ICSharpCode.ILSpy
 			App.Current.Dispatcher.VerifyAccess();
 			file = Path.GetFullPath(file);
 
-			var target = this.assemblies.FirstOrDefault(asm => file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase));
-			if (target == null)
-				return null;
+			lock (this.assemblies) {
+				var target = this.assemblies.FirstOrDefault(asm => file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase));
+				if (target == null)
+					return null;
 
-			var index = this.assemblies.IndexOf(target);
-			var newAsm = new LoadedAssembly(this, file, stream);
-			lock (assemblies)
-			{
+				var index = this.assemblies.IndexOf(target);
+				var newAsm = new LoadedAssembly(this, file, stream);
 				this.assemblies.Remove(target);
 				this.assemblies.Insert(index, newAsm);
+				return newAsm;
 			}
-			return newAsm;
 		}
 		
 		public void Unload(LoadedAssembly assembly)
