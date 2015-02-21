@@ -166,6 +166,11 @@ namespace ICSharpCode.Decompiler.Ast
 			syntaxTree.AcceptVisitor(new CSharpOutputVisitor(outputFormatter, formattingPolicy));
 		}
 		
+		public void AddAssembly(AssemblyDef assemblyDefinition, bool onlyAssemblyLevel = false)
+		{
+			AddAssembly(assemblyDefinition.ManifestModule, onlyAssemblyLevel, true, true);
+		}
+
 		public void AddAssembly(ModuleDef moduleDefinition, bool onlyAssemblyLevel, bool decompileAsm, bool decompileMod)
 		{
 			if (decompileAsm && moduleDefinition.Assembly != null && moduleDefinition.Assembly.Version != null) {
