@@ -258,6 +258,21 @@ namespace ICSharpCode.ILSpy
 					return module.Machine.ToString();
 			}
 		}
+
+		public static string GetRuntimeDisplayName(ModuleDefinition module)
+		{
+			switch (module.Runtime) {
+				case TargetRuntime.Net_1_0:
+					return ".NET 1.0";
+				case TargetRuntime.Net_1_1:
+					return ".NET 1.1";
+				case TargetRuntime.Net_2_0:
+					return ".NET 2.0";
+				case TargetRuntime.Net_4_0:
+					return ".NET 4.0";
+			}
+			return null;
+		}
 		
 		public override void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule)
 		{
@@ -279,14 +294,9 @@ namespace ICSharpCode.ILSpy
 					if (!mainModule.IsILOnly) {
 						output.WriteLine("// This assembly contains unmanaged code.", TextTokenType.Comment);
 					}
-					if (mainModule.IsClr10)
-						output.WriteLine("// Runtime: .NET 1.0", TextTokenType.Comment);
-					else if (mainModule.IsClr11)
-						output.WriteLine("// Runtime: .NET 1.1", TextTokenType.Comment);
-					else if (mainModule.IsClr20)
-						output.WriteLine("// Runtime: .NET 2.0", TextTokenType.Comment);
-					else if (mainModule.IsClr40)
-						output.WriteLine("// Runtime: .NET 4.0", TextTokenType.Comment);
+					string runtimeName = GetRuntimeDisplayName(mainModule);
+					if (runtimeName != null) {
+						output.WriteLine("// Runtime: " + runtimeName, TextTokenType.Comment);
 				}
 				if (decompileMod || decompileAsm)
 					output.WriteLine();

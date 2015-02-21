@@ -55,6 +55,7 @@ namespace ICSharpCode.ILSpy.Options
 			s.YieldReturn = (bool?)e.Attribute("yieldReturn") ?? s.YieldReturn;
 			s.AsyncAwait = (bool?)e.Attribute("asyncAwait") ?? s.AsyncAwait;
 			s.QueryExpressions = (bool?)e.Attribute("queryExpressions") ?? s.QueryExpressions;
+			s.ExpressionTrees = (bool?)e.Attribute("expressionTrees") ?? s.ExpressionTrees;
 			s.UseDebugSymbols = (bool?)e.Attribute("useDebugSymbols") ?? s.UseDebugSymbols;
 			s.ShowXmlDocumentation = (bool?)e.Attribute("xmlDoc") ?? s.ShowXmlDocumentation;
 			s.FoldBraces = (bool?)e.Attribute("foldBraces") ?? s.FoldBraces;
@@ -70,6 +71,7 @@ namespace ICSharpCode.ILSpy.Options
 			section.SetAttributeValue("yieldReturn", s.YieldReturn);
 			section.SetAttributeValue("asyncAwait", s.AsyncAwait);
 			section.SetAttributeValue("queryExpressions", s.QueryExpressions);
+			section.SetAttributeValue("expressionTrees", s.ExpressionTrees);
 			section.SetAttributeValue("useDebugSymbols", s.UseDebugSymbols);
 			section.SetAttributeValue("xmlDoc", s.ShowXmlDocumentation);
 			section.SetAttributeValue("foldBraces", s.FoldBraces);

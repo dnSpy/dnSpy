@@ -285,9 +285,13 @@ namespace ICSharpCode.Decompiler.Ast
 			if (attrs == MethodAttributes.Private)
 				return false;
 
+			if (baseMember.DeclaringType.Module == derivedType.Module)
+				return true;
+
 			if (attrs == MethodAttributes.Assembly || attrs == MethodAttributes.FamANDAssem) {
 				var derivedTypeAsm = derivedType.Module.Assembly;
 				var asm = baseMember.DeclaringType.Module.Assembly;
+
 				if (derivedTypeAsm != null && asm != null && asm.HasCustomAttributes) {
 					var attributes = asm.CustomAttributes
 						.Where(attr => attr.TypeFullName == "System.Runtime.CompilerServices.InternalsVisibleToAttribute");
@@ -302,11 +306,11 @@ namespace ICSharpCode.Decompiler.Ast
 							return true;
 					}
 				}
+
 				return false;
 			}
 
 			return true;
-
 		}
 
 		private static MethodAttributes GetAccessAttributes(IMemberDef member)

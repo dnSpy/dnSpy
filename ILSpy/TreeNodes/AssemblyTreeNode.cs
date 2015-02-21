@@ -24,6 +24,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TextView;
@@ -110,6 +112,36 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				} else {
 					return Images.AssemblyLoading;
 				}
+			}
+		}
+
+		TextBlock tooltip;
+
+		public override object ToolTip
+		{
+			get {
+				if (assembly.HasLoadError)
+					return "Assembly could not be loaded. Click here for details.";
+
+				if (tooltip == null) {
+					tooltip = new TextBlock();
+					tooltip.Inlines.Add(new Bold(new Run("Name: ")));
+					tooltip.Inlines.Add(new Run(assembly.AssemblyDefinition.FullName));
+					tooltip.Inlines.Add(new LineBreak());
+					tooltip.Inlines.Add(new Bold(new Run("Location: ")));
+					tooltip.Inlines.Add(new Run(assembly.FileName));
+					tooltip.Inlines.Add(new LineBreak());
+					tooltip.Inlines.Add(new Bold(new Run("Architecture: ")));
+					tooltip.Inlines.Add(new Run(CSharpLanguage.GetPlatformDisplayName(assembly.AssemblyDefinition.MainModule)));
+					string runtimeName = CSharpLanguage.GetRuntimeDisplayName(assembly.AssemblyDefinition.MainModule);
+					if (runtimeName != null) {
+						tooltip.Inlines.Add(new LineBreak());
+						tooltip.Inlines.Add(new Bold(new Run("Runtime: ")));
+						tooltip.Inlines.Add(new Run(runtimeName));
+					}
+				}
+
+				return tooltip;
 			}
 		}
 

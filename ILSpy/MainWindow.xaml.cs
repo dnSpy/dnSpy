@@ -542,7 +542,8 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		#region Node Selection
-		internal void SelectNode(SharpTreeNode obj)
+
+		public void SelectNode(SharpTreeNode obj)
 		{
 			if (obj != null) {
 				if (!obj.AncestorsAndSelf().Any(node => node.IsHidden)) {
@@ -561,7 +562,7 @@ namespace ICSharpCode.ILSpy
 		/// <summary>
 		/// Retrieves a node using the .ToString() representations of its ancestors.
 		/// </summary>
-		SharpTreeNode FindNodeByPath(string[] path, bool returnBestMatch)
+		public SharpTreeNode FindNodeByPath(string[] path, bool returnBestMatch)
 		{
 			if (path == null)
 				return null;
@@ -583,7 +584,7 @@ namespace ICSharpCode.ILSpy
 		/// <summary>
 		/// Gets the .ToString() representation of the node's ancestors.
 		/// </summary>
-		string[] GetPathForNode(SharpTreeNode node)
+		public string[] GetPathForNode(SharpTreeNode node)
 		{
 			if (node == null)
 				return null;
@@ -704,6 +705,9 @@ namespace ICSharpCode.ILSpy
 		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			DecompileSelectedNodes();
+
+			if (SelectionChanged != null)
+				SelectionChanged(sender, e);
 		}
 		
 		Task decompilationTask;
@@ -754,7 +758,9 @@ namespace ICSharpCode.ILSpy
 				return sessionSettings.FilterSettings.Language;
 			}
 		}
-		
+
+		public event SelectionChangedEventHandler SelectionChanged;
+
 		public IEnumerable<ILSpyTreeNode> SelectedNodes {
 			get {
 				return treeView.GetTopLevelSelection().OfType<ILSpyTreeNode>();
