@@ -194,6 +194,7 @@
     <Compile Include="TreeNodes\Analyzer\AnalyzedTypeInstantiationsTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedTypeTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedEventAccessorTreeNode.cs" />
+    <Compile Include="TreeNodes\Analyzer\AnalyzedTypeUsedByTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedVirtualMethodUsedByTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzerEntityTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzerSearchTreeNode.cs" />
