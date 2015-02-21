@@ -259,18 +259,16 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		public static string GetRuntimeDisplayName(ModuleDefinition module)
+		public static string GetRuntimeDisplayName(ModuleDef module)
 		{
-			switch (module.Runtime) {
-				case TargetRuntime.Net_1_0:
-					return ".NET 1.0";
-				case TargetRuntime.Net_1_1:
-					return ".NET 1.1";
-				case TargetRuntime.Net_2_0:
-					return ".NET 2.0";
-				case TargetRuntime.Net_4_0:
-					return ".NET 4.0";
-			}
+			if (module.IsClr10)
+				return ".NET 1.0";
+			if (module.IsClr11)
+				return ".NET 1.1";
+			if (module.IsClr20)
+				return ".NET 2.0";
+			if (module.IsClr40)
+				return ".NET 4.0";
 			return null;
 		}
 		
@@ -297,6 +295,7 @@ namespace ICSharpCode.ILSpy
 					string runtimeName = GetRuntimeDisplayName(mainModule);
 					if (runtimeName != null) {
 						output.WriteLine("// Runtime: " + runtimeName, TextTokenType.Comment);
+					}
 				}
 				if (decompileMod || decompileAsm)
 					output.WriteLine();

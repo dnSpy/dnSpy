@@ -43,7 +43,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.LazyLoading = true;
 		}
 
-		public AssemblyNameReference AssemblyNameReference
+		public AssemblyRef AssemblyNameReference
 		{
 			get { return r; }
 		}

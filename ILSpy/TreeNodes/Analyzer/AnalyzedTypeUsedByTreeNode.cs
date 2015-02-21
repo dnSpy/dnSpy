@@ -20,16 +20,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Mono.Cecil;
-using Mono.Cecil.Cil;
+using ICSharpCode.Decompiler;
+using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
 	internal sealed class AnalyzedTypeUsedByTreeNode : AnalyzerSearchTreeNode
 	{
-		private readonly TypeDefinition analyzedType;
+		private readonly TypeDef analyzedType;
 
-		public AnalyzedTypeUsedByTreeNode(TypeDefinition analyzedType)
+		public AnalyzedTypeUsedByTreeNode(TypeDef analyzedType)
 		{
 			if (analyzedType == null)
 				throw new ArgumentNullException("analyzedType");
@@ -52,7 +53,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				.OrderBy(n => n.Text);
 		}
 
-		private IEnumerable<AnalyzerEntityTreeNode> FindTypeUsage(TypeDefinition type)
+		private IEnumerable<AnalyzerEntityTreeNode> FindTypeUsage(TypeDef type)
 		{
 			if (type == analyzedType)
 				yield break;
@@ -67,7 +68,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				yield return HandleSpecialMethodNode(method);
 		}
 
-		private AnalyzerEntityTreeNode HandleSpecialMethodNode(MethodDefinition method)
+		private AnalyzerEntityTreeNode HandleSpecialMethodNode(MethodDef method)
 		{
 			var property = method.DeclaringType.Properties.FirstOrDefault(p => p.GetMethod == method || p.SetMethod == method);
 			if (property != null)
@@ -76,12 +77,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			return new AnalyzedMethodTreeNode(method) { Language = Language };
 		}
 
-		private bool IsUsedInTypeReferences(IEnumerable<TypeReference> types)
+		private bool IsUsedInTypeReferences(IEnumerable<ITypeDefOrRef> types)
 		{
 			return types.Any(IsUsedInTypeReference);
 		}
 
-		private bool IsUsedInTypeReference(TypeReference type)
+		private bool IsUsedInTypeReference(ITypeDefOrRef type)
 		{
 			if (type == null)
 				return false;
@@ -90,65 +91,65 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				|| TypeMatches(type);
 		}
 
-		private bool IsUsedInTypeDefinition(TypeDefinition type)
+		private bool IsUsedInTypeDefinition(TypeDef type)
 		{
 			return IsUsedInTypeReference(type)
 				   || TypeMatches(type.BaseType)
-				   || IsUsedInTypeReferences(type.Interfaces)
+				   || IsUsedInTypeReferences(type.Interfaces.Select(ii => ii.Interface))
 				   || IsUsedInCustomAttributes(type.CustomAttributes);
 		}
 
-		private bool IsUsedInFieldReference(FieldReference field)
+		private bool IsUsedInFieldReference(IField field)
 		{
 			if (field == null)
 				return false;
 
 			return TypeMatches(field.DeclaringType)
-				|| TypeMatches(field.FieldType);
+				|| TypeMatches(field.FieldSig.GetFieldType());
 		}
 
-		private bool IsUsedInFieldDefinition(FieldDefinition field)
+		private bool IsUsedInFieldDefinition(FieldDef field)
 		{
 			return IsUsedInFieldReference(field)
 				   || IsUsedInCustomAttributes(field.CustomAttributes);
 		}
 
-		private bool IsUsedInMethodReference(MethodReference method)
+		private bool IsUsedInMethodReference(IMethod method)
 		{
 			if (method == null)
 				return false;
 
 			return TypeMatches(method.DeclaringType)
-				   || TypeMatches(method.ReturnType)
-				   || IsUsedInMethodParameters(method.Parameters);
+				   || TypeMatches(method.MethodSig.GetRetType())
+				   || IsUsedInMethodParameters(method.GetParameters());
 		}
 
-		private bool IsUsedInMethodDefinition(MethodDefinition method)
+		private bool IsUsedInMethodDefinition(MethodDef method)
 		{
 			return IsUsedInMethodReference(method)
 				   || IsUsedInMethodBody(method.Body)
 				   || IsUsedInCustomAttributes(method.CustomAttributes);
 		}
 
-		private bool IsUsedInMethodBody(MethodBody body)
+		private bool IsUsedInMethodBody(CilBody body)
 		{
 			if (body == null)
 				return false;
 
-			return body.Instructions.Select(ins => ins.Operand as TypeReference).Any(IsUsedInTypeReference)
-				|| body.Instructions.Select(ins => ins.Operand as MethodReference).Any(IsUsedInMethodReference)
-				|| body.Instructions.Select(ins => ins.Operand as FieldReference).Any(IsUsedInFieldReference);
+			return body.Instructions.Select(ins => ins.Operand as ITypeDefOrRef).Any(IsUsedInTypeReference)
+				|| body.Instructions.Select(ins => ins.Operand as IMethod).Any(IsUsedInMethodReference)
+				|| body.Instructions.Select(ins => ins.Operand as IField).Any(IsUsedInFieldReference);
 		}
 
-		private bool IsUsedInMethodParameters(IEnumerable<ParameterDefinition> parameters)
+		private bool IsUsedInMethodParameters(IEnumerable<Parameter> parameters)
 		{
 			return parameters.Any(IsUsedInMethodParameter);
 		}
 
-		private bool IsUsedInMethodParameter(ParameterDefinition parameter)
+		private bool IsUsedInMethodParameter(Parameter parameter)
 		{
-			return TypeMatches(parameter.ParameterType)
-				   || IsUsedInCustomAttributes(parameter.CustomAttributes);
+			return TypeMatches(parameter.Type)
+				   || (parameter.ParamDef != null && IsUsedInCustomAttributes(parameter.ParamDef.CustomAttributes));
 		}
 
 		private bool IsUsedInCustomAttributes(IEnumerable<CustomAttribute> attributes)
@@ -162,12 +163,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			return false;
 		}
 
-		private bool TypeMatches(TypeReference tref)
+		private bool TypeMatches(IType tref)
 		{
 			return tref != null && analyzedType.ToString() == tref.ToString();
 		}
 
-		public static bool CanShow(TypeDefinition type)
+		public static bool CanShow(TypeDef type)
 		{
 			return type != null;
 		}

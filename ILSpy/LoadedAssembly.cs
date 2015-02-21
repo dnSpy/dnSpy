@@ -147,7 +147,7 @@ namespace ICSharpCode.ILSpy
 		public string Text {
 			get {
 				if (AssemblyDefinition != null) {
-					return String.Format("{0} ({1})", ShortName, AssemblyDefinition.Name.Version);
+					return String.Format("{0} ({1})", ShortName, AssemblyDefinition.Version);
 				} else {
 					return ShortName;
 				}
@@ -172,10 +172,10 @@ namespace ICSharpCode.ILSpy
 		ModuleDef LoadAssembly(object state)
 		{
 			var stream = state as Stream;
-			ModuleDefinition module;
+			ModuleDef module;
 
 			// runs on background thread
-			ModuleDef module;
+
 			if (stream != null)
 			{
 				// Read the module from a precrafted stream

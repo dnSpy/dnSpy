@@ -132,8 +132,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					tooltip.Inlines.Add(new Run(assembly.FileName));
 					tooltip.Inlines.Add(new LineBreak());
 					tooltip.Inlines.Add(new Bold(new Run("Architecture: ")));
-					tooltip.Inlines.Add(new Run(CSharpLanguage.GetPlatformDisplayName(assembly.AssemblyDefinition.MainModule)));
-					string runtimeName = CSharpLanguage.GetRuntimeDisplayName(assembly.AssemblyDefinition.MainModule);
+					tooltip.Inlines.Add(new Run(CSharpLanguage.GetPlatformDisplayName(assembly.AssemblyDefinition.ManifestModule)));
+					string runtimeName = CSharpLanguage.GetRuntimeDisplayName(assembly.AssemblyDefinition.ManifestModule);
 					if (runtimeName != null) {
 						tooltip.Inlines.Add(new LineBreak());
 						tooltip.Inlines.Add(new Bold(new Run("Runtime: ")));
