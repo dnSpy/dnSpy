@@ -17,6 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Diagnostics;
+using System.Linq;
 using ICSharpCode.Decompiler;
 using dnlib.DotNet;
 
@@ -56,10 +58,15 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return base.ShowExpander;
 			}
 		}
+
+		AssemblyListTreeNode GetAssemblyListTreeNode() {
+			return parentAssembly.Ancestors().OfType<AssemblyListTreeNode>().FirstOrDefault();
+		}
 		
 		public override void ActivateItem(System.Windows.RoutedEventArgs e)
 		{
-			var assemblyListNode = parentAssembly.Parent as AssemblyListTreeNode;
+			var assemblyListNode = GetAssemblyListTreeNode();
+			Debug.Assert(assemblyListNode != null);
 			if (assemblyListNode != null) {
 				assemblyListNode.Select(assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedAssembly(r)));
 				e.Handled = true;
@@ -68,7 +75,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		protected override void LoadChildren()
 		{
-			var assemblyListNode = parentAssembly.Parent as AssemblyListTreeNode;
+			var assemblyListNode = GetAssemblyListTreeNode();
+			Debug.Assert(assemblyListNode != null);
 			if (assemblyListNode != null) {
 				var refNode = assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedAssembly(r));
 				if (refNode != null) {
