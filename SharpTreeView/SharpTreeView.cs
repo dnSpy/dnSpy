@@ -177,7 +177,7 @@ namespace ICSharpCode.TreeView
 			SharpTreeViewItem container = element as SharpTreeViewItem;
 			container.ParentTreeView = this;
 			// Make sure that the line renderer takes into account the new bound data
-			if (container.NodeView != null) {
+			if (container.NodeView != null && container.NodeView.LinesRenderer != null) {
 				container.NodeView.LinesRenderer.InvalidateVisual();
 			}
 		}
