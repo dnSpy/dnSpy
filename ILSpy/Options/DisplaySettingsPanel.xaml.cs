@@ -101,7 +101,7 @@ namespace ICSharpCode.ILSpy.Options
 			s.SelectedFontSize = (double?)e.Attribute("FontSize") ?? 10.0 * 4 / 3;
 			s.ShowLineNumbers = (bool?)e.Attribute("ShowLineNumbers") ?? false;
 			s.ShowMetadataTokens = (bool?) e.Attribute("ShowMetadataTokens") ?? false;
-			s.ShowAssemblyVersion = (bool?)e.Attribute("ShowAssemblyVersion") ?? false;
+			s.ShowAssemblyVersion = (bool?)e.Attribute("ShowAssemblyVersion") ?? true;
 			s.ShowAssemblyPublicKeyToken = (bool?)e.Attribute("ShowAssemblyPublicKeyToken") ?? false;
 			
 			return s;
