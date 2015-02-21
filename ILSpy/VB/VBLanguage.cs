@@ -94,14 +94,10 @@ namespace ICSharpCode.ILSpy.VB
 					if (!mainModule.IsILOnly) {
 						WriteCommentLine(output, "This assembly contains unmanaged code.");
 					}
-					if (mainModule.IsClr10)
-						WriteCommentLine(output, "Runtime: .NET 1.0");
-					else if (mainModule.IsClr11)
-						WriteCommentLine(output, "Runtime: .NET 1.1");
-					else if (mainModule.IsClr20)
-						WriteCommentLine(output, "Runtime: .NET 2.0");
-					else if (mainModule.IsClr40)
-						WriteCommentLine(output, "Runtime: .NET 4.0");
+					string runtimeName = ICSharpCode.ILSpy.CSharpLanguage.GetRuntimeDisplayName(mainModule);
+					if (runtimeName != null) {
+						WriteCommentLine(output, "Runtime: " + runtimeName);
+					}
 				}
 				if (decompileMod || decompileAsm)
 					output.WriteLine();
