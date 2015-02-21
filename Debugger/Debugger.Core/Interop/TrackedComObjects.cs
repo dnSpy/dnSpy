@@ -42,7 +42,8 @@ namespace Debugger.Interop
 				foreach(WeakReference weakRef in objects) {
 					object obj = weakRef.Target;
 					if (obj != null) {
-						Marshal.FinalReleaseComObject(obj);
+						// TODO: This sometimes (often) causes a hang! Disable it.
+						//Marshal.FinalReleaseComObject(obj);
 						count++;
 					}
 				}
