@@ -93,10 +93,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			if (field.IsPrivate)
 				return false;
 
-			if (Decompiler.DnlibExtensions.Resolve(field.FieldType) == analyzedType)
-				return true;
-
-			return false;
+			return new SigComparer().Equals(analyzedType, field.FieldType);
 		}
 
 		private bool TypeIsExposedBy(PropertyDef property)
@@ -104,10 +101,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			if (IsPrivate(property))
 				return false;
 
-			if (Decompiler.DnlibExtensions.Resolve(property.PropertySig.GetRetType()) == analyzedType)
-				return true;
-
-			return false;
+			return new SigComparer().Equals(analyzedType, property.PropertySig.GetRetType());
 		}
 
 		private bool TypeIsExposedBy(EventDef eventDef)
@@ -115,10 +109,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			if (IsPrivate(eventDef))
 				return false;
 
-			if (eventDef.EventType.ResolveTypeDef() == analyzedType)
-				return true;
-
-			return false;
+			return new SigComparer().Equals(eventDef.EventType, analyzedType);
 		}
 
 		private bool TypeIsExposedBy(MethodDef method)
@@ -139,13 +130,13 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			if (method.SemanticsAttributes != MethodSemanticsAttributes.None)
 				return false;
 
-			if (Decompiler.DnlibExtensions.Resolve(method.ReturnType) == analyzedType)
+			if (new SigComparer().Equals(analyzedType, method.ReturnType))
 				return true;
 
 			foreach (var parameter in method.Parameters) {
 				if (parameter.IsHiddenThisParameter)
 					continue;
-				if (Decompiler.DnlibExtensions.Resolve(parameter.Type) == analyzedType)
+				if (new SigComparer().Equals(analyzedType, parameter.Type))
 					return true;
 			}
 

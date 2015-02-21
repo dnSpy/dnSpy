@@ -78,7 +78,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					Code code = instr.OpCode.Code;
 					if (code == Code.Ldfld || code == Code.Ldflda) {
 						IField fr = instr.Operand as IField;
-						if (fr != null && fr.Name == eventBackingField.Name && fr == eventBackingField) {
+						if (new SigComparer(SigComparerOptions.PrivateScopeFieldIsComparable).Equals(fr, eventBackingField)) {
 							readBackingField = true;
 						}
 					}
@@ -120,7 +120,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 			foreach (var fd in ev.DeclaringType.Fields) {
 				if (fd.Name == fieldName || fd.Name == vbStyleFieldName)
-					if (fd.FieldType != null && fd.FieldType.FullName == fieldType.FullName)
+					if (new SigComparer().Equals(fd.FieldType, fieldType))
 						return fd;
 			}
 

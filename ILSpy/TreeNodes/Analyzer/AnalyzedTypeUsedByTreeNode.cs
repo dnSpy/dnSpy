@@ -170,7 +170,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private bool TypeMatches(IType tref)
 		{
-			return tref != null && analyzedType.ToString() == tref.ToString();
+			return tref != null && new SigComparer().Equals(analyzedType, tref);
 		}
 
 		public static bool CanShow(TypeDef type)

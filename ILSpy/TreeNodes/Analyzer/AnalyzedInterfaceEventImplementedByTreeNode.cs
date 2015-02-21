@@ -58,11 +58,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			if (!type.HasInterfaces || analyzedMethod == null)
 				yield break;
-			var iff = type.Interfaces.FirstOrDefault(i => i.Interface.ResolveTypeDef() == analyzedMethod.DeclaringType);
+			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface, analyzedMethod.DeclaringType));
 			ITypeDefOrRef implementedInterfaceRef = iff == null ? null : iff.Interface;
 			if (implementedInterfaceRef == null)
 				yield break;
 
+			//TODO: Can we compare event types too?
 			foreach (EventDef ev in type.Events.Where(e => e.Name == analyzedEvent.Name)) {
 				MethodDef accessor = ev.AddMethod ?? ev.RemoveMethod;
 				if (accessor != null && TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
@@ -75,7 +76,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 			foreach (EventDef ev in type.Events.Where(e => e.Name.EndsWith(analyzedEvent.Name))) {
 				MethodDef accessor = ev.AddMethod ?? ev.RemoveMethod;
-				if (accessor != null && accessor.HasOverrides && accessor.Overrides.Any(m => Decompiler.DnlibExtensions.Resolve(m.MethodDeclaration) == analyzedMethod)) {
+				if (accessor != null && accessor.HasOverrides &&
+					accessor.Overrides.Any(m => new SigComparer(SigComparerOptions.PrivateScopeMethodIsComparable).Equals(m.MethodDeclaration, analyzedMethod))) {
 					var node = new AnalyzedEventTreeNode(ev);
 					node.Language = this.Language;
 					yield return node;

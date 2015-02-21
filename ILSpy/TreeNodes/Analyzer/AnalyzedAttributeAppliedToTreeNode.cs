@@ -119,7 +119,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					AssemblyDef asm = module.Assembly;
 					if (asm != null && asm.HasCustomAttributes) {
 						foreach (var attribute in asm.CustomAttributes) {
-							if (attribute.AttributeType == tr) {
+							if (new SigComparer().Equals(attribute.AttributeType, tr)) {
 								foundInAssyOrModule = true;
 								break;
 							}
@@ -134,7 +134,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					if ((usage & AttributeTargets.Module) != 0) {
 						if (module.HasCustomAttributes) {
 							foreach (var attribute in module.CustomAttributes) {
-								if (attribute.AttributeType == tr) {
+								if (new SigComparer().Equals(attribute.AttributeType, tr)) {
 									foundInAssyOrModule = true;
 									break;
 								}
@@ -170,7 +170,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			if (searchRequired) {
 				if (type.HasCustomAttributes) {
 					foreach (var attribute in type.CustomAttributes) {
-						if (attribute.AttributeType == attrTypeRef) {
+						if (new SigComparer().Equals(attribute.AttributeType, attrTypeRef)) {
 							var node = new AnalyzedTypeTreeNode(type);
 							node.Language = this.Language;
 							yield return node;
@@ -184,7 +184,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				foreach (var parameter in type.GenericParameters) {
 					if (parameter.HasCustomAttributes) {
 						foreach (var attribute in parameter.CustomAttributes) {
-							if (attribute.AttributeType == attrTypeRef) {
+							if (new SigComparer().Equals(attribute.AttributeType, attrTypeRef)) {
 								var node = new AnalyzedTypeTreeNode(type);
 								node.Language = this.Language;
 								yield return node;
@@ -199,7 +199,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				foreach (var field in type.Fields) {
 					if (field.HasCustomAttributes) {
 						foreach (var attribute in field.CustomAttributes) {
-							if (attribute.AttributeType == attrTypeRef) {
+							if (new SigComparer().Equals(attribute.AttributeType, attrTypeRef)) {
 								var node = new AnalyzedFieldTreeNode(field);
 								node.Language = this.Language;
 								yield return node;
@@ -214,7 +214,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				foreach (var property in type.Properties) {
 					if (property.HasCustomAttributes) {
 						foreach (var attribute in property.CustomAttributes) {
-							if (attribute.AttributeType == attrTypeRef) {
+							if (new SigComparer().Equals(attribute.AttributeType, attrTypeRef)) {
 								var node = new AnalyzedPropertyTreeNode(property);
 								node.Language = this.Language;
 								yield return node;
@@ -228,7 +228,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				foreach (var _event in type.Events) {
 					if (_event.HasCustomAttributes) {
 						foreach (var attribute in _event.CustomAttributes) {
-							if (attribute.AttributeType == attrTypeRef) {
+							if (new SigComparer().Equals(attribute.AttributeType, attrTypeRef)) {
 								var node = new AnalyzedEventTreeNode(_event);
 								node.Language = this.Language;
 								yield return node;
@@ -245,7 +245,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					if ((usage & (AttributeTargets.Method | AttributeTargets.Constructor)) != 0) {
 						if (method.HasCustomAttributes) {
 							foreach (var attribute in method.CustomAttributes) {
-								if (attribute.AttributeType == attrTypeRef) {
+								if (new SigComparer().Equals(attribute.AttributeType, attrTypeRef)) {
 									found = true;
 									break;
 								}
@@ -257,7 +257,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 						method.Parameters.ReturnParameter.HasParamDef &&
 						method.Parameters.ReturnParameter.ParamDef.HasCustomAttributes) {
 						foreach (var attribute in method.Parameters.ReturnParameter.ParamDef.CustomAttributes) {
-							if (attribute.AttributeType == attrTypeRef) {
+							if (new SigComparer().Equals(attribute.AttributeType, attrTypeRef)) {
 								found = true;
 								break;
 							}
@@ -271,7 +271,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 							if (parameter.IsHiddenThisParameter)
 								continue;
 							foreach (var attribute in parameter.ParamDef.CustomAttributes) {
-								if (attribute.AttributeType == attrTypeRef) {
+								if (new SigComparer().Equals(attribute.AttributeType, attrTypeRef)) {
 									found = true;
 									break;
 								}
@@ -368,7 +368,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				if (mod == null)
 					continue;
 				foreach (var typeref in mod.GetTypeRefs()) {
-					if (typeref.Name == analyzedType.Name && typeref.Namespace == analyzedType.Namespace)
+					if (new SigComparer().Equals(analyzedType, typeref))
 						return typeref;
 				}
 			}

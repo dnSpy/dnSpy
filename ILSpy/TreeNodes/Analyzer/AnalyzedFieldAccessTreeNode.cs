@@ -61,8 +61,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type)
 		{
-			string name = analyzedField.Name;
-
 			foreach (MethodDef method in type.Methods) {
 				bool found = false;
 				if (!method.HasBody)
@@ -70,9 +68,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				foreach (Instruction instr in method.Body.Instructions) {
 					if (CanBeReference(instr.OpCode.Code)) {
 						IField fr = instr.Operand as IField;
-						if (fr != null && fr.Name == name &&
-							Helpers.IsReferencedBy(analyzedField.DeclaringType, fr.DeclaringType) &&
-							Decompiler.DnlibExtensions.Resolve(fr) == analyzedField) {
+						if (fr != null && new SigComparer(SigComparerOptions.PrivateScopeFieldIsComparable).Equals(fr, analyzedField) &&
+							Helpers.IsReferencedBy(analyzedField.DeclaringType, fr.DeclaringType)) {
 							found = true;
 							break;
 						}

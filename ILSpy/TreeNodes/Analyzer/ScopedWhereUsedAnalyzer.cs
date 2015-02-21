@@ -312,7 +312,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				if (mod == null)
 					continue;
 				foreach (var typeref in mod.GetTypeRefs()) {
-					if (typeref.Name == typeScope.Name && typeref.Namespace == typeScope.Namespace)
+					if (new SigComparer().Equals(typeScope, typeref))
 						return true;
 				}
 			}

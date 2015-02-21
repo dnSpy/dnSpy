@@ -58,11 +58,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				yield break;
 			if (!type.HasInterfaces)
 				yield break;
-			var iff = type.Interfaces.FirstOrDefault(i => i.Interface.ResolveTypeDef() == analyzedMethod.DeclaringType);
+			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface, analyzedMethod.DeclaringType));
 			ITypeDefOrRef implementedInterfaceRef = iff == null ? null : iff.Interface;
 			if (implementedInterfaceRef == null)
 				yield break;
 
+			//TODO: Can we compare property sigs too?
 			foreach (PropertyDef property in type.Properties.Where(e => e.Name == analyzedProperty.Name)) {
 				MethodDef accessor = property.GetMethod ?? property.SetMethod;
 				if (accessor != null && TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
@@ -75,7 +76,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 			foreach (PropertyDef property in type.Properties.Where(e => e.Name.EndsWith(analyzedProperty.Name))) {
 				MethodDef accessor = property.GetMethod ?? property.SetMethod;
-				if (accessor != null && accessor.HasOverrides && accessor.Overrides.Any(m => Decompiler.DnlibExtensions.Resolve(m.MethodDeclaration) == analyzedMethod)) {
+				if (accessor != null && accessor.HasOverrides && accessor.Overrides.Any(m => new SigComparer(SigComparerOptions.PrivateScopeMethodIsComparable).Equals(m.MethodDeclaration, analyzedMethod))) {
 					var node = new AnalyzedPropertyTreeNode(property);
 					node.Language = this.Language;
 					yield return node;
