@@ -59,12 +59,6 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			else
 				markers = null;
 		}
-
-		public void SetDocument(TextDocument document)
-		{
-			//TODO: Fix this. document has been replaced with textView but did they fix the bug?
-			// this.document = document;
-		}
 		
 		void BookmarkManager_Removed(object sender, BookmarkEventArgs e)
 		{
