@@ -194,9 +194,33 @@
       <Project>{6c55b776-26d4-4db3-a6ab-87e783b2f3d1}</Project>
       <Name>ICSharpCode.AvalonEdit</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Debugger\Debugger.Core\Debugger.Core.csproj">
+      <Project>{1d18d788-f7ee-4585-a23b-34dc8ec63cb8}</Project>
+      <Name>Debugger.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Debugger\ILSpy.Debugger\ILSpy.Debugger.csproj">
+      <Project>{6d3d0f0d-348d-456a-a6ed-e9bd5efabb6a}</Project>
+      <Name>ILSpy.Debugger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnspc\dnspc.csproj">
+      <Project>{da111693-97c8-413b-9102-4dcbee8885b7}</Project>
+      <Name>dnspc</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy-x64\dnSpy-x64.csproj">
+      <Project>{9b194315-7f65-4694-b2b2-e17b4e201ced}</Project>
+      <Name>dnSpy-x64</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy-x86\dnSpy-x86.csproj">
+      <Project>{0f407613-e15d-4fb5-89df-ee866db6a7ec}</Project>
+      <Name>dnSpy-x86</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
       <Project>{984cc812-9470-4a13-aff9-cc44068d666c}</Project>
       <Name>ICSharpCode.Decompiler</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ILSpy.SharpDevelop.LGPL\ILSpy.SharpDevelop.LGPL.csproj">
+      <Project>{704f66f1-5c7f-4326-a7aa-c604a3896d4e}</Project>
+      <Name>ILSpy.SharpDevelop.LGPL</Name>
     </ProjectReference>
     <ProjectReference Include="..\ILSpy\ILSpy.csproj">
       <Project>{1e85eff9-e370-4683-83e4-8a3d063ff791}</Project>
