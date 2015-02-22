@@ -145,6 +145,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 						return node;
 				}
 				else {
+					node.EnsureLazyChildren();
 					foreach (var asmNode in node.Children.OfType<AssemblyTreeNode>()) {
 						if (asmNode.LoadedAssembly.IsLoaded && asmNode.LoadedAssembly.ModuleDefinition == module)
 							return asmNode;
@@ -193,7 +194,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					return decl.Children.OfType<TypeTreeNode>().FirstOrDefault(t => t.TypeDefinition == def && !t.IsHidden);
 				}
 			} else {
-				AssemblyTreeNode asm = FindAssemblyNode(def.Module.Assembly);
+				AssemblyTreeNode asm = FindModuleNode(def.Module);
 				if (asm != null) {
 					return asm.FindTypeNode(def);
 				}
