@@ -296,5 +296,26 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return node;
 		}
 		#endregion
+
+		public LoadedAssembly FindModule(LoadedAssembly asm, string moduleFilename)
+		{
+			App.Current.Dispatcher.VerifyAccess();
+			foreach (AssemblyTreeNode node in this.Children) {
+				if (!node.LoadedAssembly.IsLoaded)
+					continue;
+				if (node.IsNetModule)
+					continue;
+				if (node.LoadedAssembly != asm)
+					continue;
+
+				node.EnsureLazyChildren();
+				foreach (var asmNode in node.Children.OfType<AssemblyTreeNode>()) {
+					if (asmNode.LoadedAssembly.FileName.Equals(moduleFilename, StringComparison.OrdinalIgnoreCase))
+						return asmNode.LoadedAssembly;
+				}
+			}
+
+			return null;
+		}
 	}
 }

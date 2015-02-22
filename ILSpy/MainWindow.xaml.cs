@@ -915,5 +915,24 @@ namespace ICSharpCode.ILSpy
 		{
 			return toolBar.Items;
 		}
+
+		public LoadedAssembly LoadAssembly(string asmFilename, string moduleFilename)
+		{
+			lock (assemblyList.assemblies) {
+				// Get or create the assembly
+				var loadedAsm = assemblyList.OpenAssembly(asmFilename);
+
+				// Common case is a one-file assembly or first module of a multifile assembly
+				if (asmFilename.Equals(moduleFilename, StringComparison.OrdinalIgnoreCase))
+					return loadedAsm;
+
+				var loadedMod = assemblyListTreeNode.FindModule(loadedAsm, moduleFilename);
+				if (loadedMod != null)
+					return loadedMod;
+
+				Debug.Fail("Shouldn't be here.");
+				return assemblyList.OpenAssembly(moduleFilename);
+			}
+		}
 	}
 }

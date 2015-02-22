@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Media;
 
 using Debugger;
+using Debugger.Interop.CorDebug;
 using Debugger.Interop.CorPublish;
 using Debugger.MetaData;
 using ICSharpCode.Decompiler;
@@ -801,6 +802,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 
 				// use most recent stack frame because we don't have the symbols
 				var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
+				var prevFrame = this.prevStackFrame;
+				this.prevStackFrame = frame;
 				
 				if (frame == null)
 					return;
@@ -810,7 +813,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				int line;
 				IMemberRef memberReference;
 				
-				if (DebugInformation.CodeMappings != null && 
+				if ((prevFrame != null && frame.MethodInfo == prevFrame.MethodInfo) &&
+				    DebugInformation.CodeMappings != null &&
 				    DebugInformation.CodeMappings.ContainsKey(token) &&
 				    DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset((uint)ilOffset, out memberReference, out line)) {
 					DebugInformation.DebugStepInformation = null; // we do not need to step into/out
@@ -821,7 +825,10 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					StepIntoUnknownFrame(frame);
 				}
 			}
+			else
+				this.prevStackFrame = null;
 		}
+		StackFrame prevStackFrame = null;
 
 		void StepIntoUnknownFrame(StackFrame frame)
 		{
@@ -832,7 +839,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			var debugModule = debugType.DebugModule;
 			DebugInformation.DebugStepInformation = null;
 			if (!string.IsNullOrEmpty(debugModule.FullPath)) {
-				var loadedMod = MainWindow.Instance.CurrentAssemblyList.OpenAssembly(debugModule.FullPath).ModuleDefinition as ModuleDefMD;
+				var loadedMod = MainWindow.Instance.LoadAssembly(debugModule.AssemblyFullPath, debugModule.FullPath).ModuleDefinition as ModuleDefMD;
 				if (loadedMod != null) {
 					DebugInformation.DebugStepInformation = Tuple.Create(token, ilOffset, loadedMod.ResolveToken(token) as IMemberRef);
 				}

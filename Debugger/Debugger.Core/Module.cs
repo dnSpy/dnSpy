@@ -21,6 +21,7 @@ namespace Debugger
 		bool   unloaded = false;
 		string name;
 		string fullPath = string.Empty;
+		string asmFilename;
 		
 		int orderOfLoading = 0;
 		ICorDebugModule corModule;
@@ -129,6 +130,10 @@ namespace Debugger
 				return fullPath;
 			}
 		}
+
+		public string AssemblyFullPath {
+			get { return asmFilename; }
+		}
 		
 		public bool HasSymbols {
 			get {
@@ -198,6 +203,7 @@ namespace Debugger
 				fullPath = corModule.GetName();
 				name     = System.IO.Path.GetFileName(FullPath);
 			}
+			asmFilename = corModule.GetAssembly().GetName();
 			
 			SetJITCompilerFlags();
 			

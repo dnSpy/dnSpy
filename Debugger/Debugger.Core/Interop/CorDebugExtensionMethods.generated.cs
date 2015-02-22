@@ -505,9 +505,9 @@ namespace Debugger.Interop.CorDebug
 			instance.__GetCodeBase(cchName, out pcchName, szName);
 		}
 		
-		public static void GetName(this ICorDebugAssembly instance, uint cchName, out uint pcchName, IntPtr szName)
+		public static string GetName(this ICorDebugAssembly instance)
 		{
-			instance.__GetName(cchName, out pcchName, szName);
+			return Util.GetString(instance.__GetName, 256, true);
 		}
 		
 		public static int IsFullyTrusted(this ICorDebugAssembly2 instance)

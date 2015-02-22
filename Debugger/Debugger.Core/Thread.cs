@@ -337,9 +337,6 @@ namespace Debugger
 				return selectedStackFrame;
 			}
 			set {
-				if (value != null && !value.HasSymbols) {
-					throw new DebuggerException("SelectedFunction must have symbols");
-				}
 				selectedStackFrame = value;
 			}
 		}
