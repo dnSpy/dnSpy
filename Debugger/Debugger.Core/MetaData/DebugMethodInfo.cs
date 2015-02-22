@@ -694,7 +694,7 @@ namespace Debugger.MetaData
 			return this.FullName;
 		}
 		
-		IntPtr IOverloadable.GetSignarture()
+		IntPtr IOverloadable.GetSignature()
 		{
 			return methodProps.SigBlob.Adress;
 		}

@@ -409,9 +409,9 @@ namespace Debugger.MetaData
 				return applicable[0];
 			} else {
 				// Remove base class definitions
-				IntPtr sig = ((IOverloadable)applicable[0]).GetSignarture();
+				IntPtr sig = ((IOverloadable)applicable[0]).GetSignature();
 				for(int i = 1; i < applicable.Count;) {
-					if (sig == ((IOverloadable)applicable[i]).GetSignarture()) {
+					if (sig == ((IOverloadable)applicable[i]).GetSignature()) {
 						applicable.RemoveAt(i);
 					} else {
 						i++;

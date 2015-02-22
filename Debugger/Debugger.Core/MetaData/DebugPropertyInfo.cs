@@ -230,9 +230,9 @@ namespace Debugger.MetaData
 			return GetIndexParameters();
 		}
 		
-		IntPtr IOverloadable.GetSignarture()
+		IntPtr IOverloadable.GetSignature()
 		{
-			return ((IOverloadable)(getMethod ?? setMethod)).GetSignarture();
+			return ((IOverloadable)(getMethod ?? setMethod)).GetSignature();
 		}
 		
 		/// <inheritdoc/>

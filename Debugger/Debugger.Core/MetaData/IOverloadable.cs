@@ -9,6 +9,6 @@ namespace Debugger.MetaData
 	interface IOverloadable
 	{
 		ParameterInfo[] GetParameters();
-		IntPtr GetSignarture();
+		IntPtr GetSignature();
 	}
 }
