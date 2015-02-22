@@ -3,12 +3,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 
 using Debugger.Interop.CorDebug;
 using Debugger.Interop.CorSym;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Visitors;
+using dnlib.DotNet;
 
 namespace Debugger
 {
@@ -591,12 +593,10 @@ namespace Debugger
 			if (this.SelectedThread != null) {
 				this.SelectedThread.SelectedStackFrame = null;
 				foreach (StackFrame stackFrame in this.SelectedThread.Callstack) {
-					if (stackFrame.HasSymbols) {
-						if (this.Options.StepOverDebuggerAttributes && stackFrame.MethodInfo.IsNonUserCode)
-							continue;
-						this.SelectedThread.SelectedStackFrame = stackFrame;
-						break;
-					}
+					if (this.Options.StepOverDebuggerAttributes && stackFrame.MethodInfo.IsNonUserCode)
+						continue;
+					this.SelectedThread.SelectedStackFrame = stackFrame;
+					break;
 				}
 			}
 		}
@@ -664,11 +664,9 @@ namespace Debugger
 		private void OnModulesAdded(object sender, CollectionItemEventArgs<Module> e)
 		{
 			if (BreakAtBeginning) {
-				if (e.Item.SymReader == null) return; // No symbols
-				
 				try {
 					// create a BP at entry point
-					uint entryPoint = e.Item.SymReader.GetUserEntryPoint();
+					uint entryPoint = GetEntryPointMethodToken(e.Item);
 					if (entryPoint == 0) return; // no EP
 					var mainFunction = e.Item.CorModule.GetFunctionFromToken(entryPoint);
 					var corBreakpoint = mainFunction.CreateBreakpoint();
@@ -690,6 +688,29 @@ namespace Debugger
 			
 			if (ModulesAdded != null)
 				ModulesAdded(this, new ModuleEventArgs(e.Item));
+		}
+
+		uint GetEntryPointMethodToken(Module module)
+		{
+			if (module.SymReader != null)
+				return module.SymReader.GetUserEntryPoint();
+
+			if (module.IsDynamic)
+				return 0;
+			if (module.IsInMemory)
+				return 0;//TODO: Support reading it from memory
+
+			try {
+				using (var mod = ModuleDefMD.Load(module.FullPath)) {
+					var ep = mod.EntryPoint;
+					if (ep != null)
+						return ep.MDToken.ToUInt32();
+				}
+			} catch (IOException) {
+			} catch (BadImageFormatException) {
+			}
+
+			return 0;
 		}
 		
 		#endregion
