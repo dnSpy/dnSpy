@@ -19,6 +19,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using ICSharpCode.Decompiler;
@@ -152,6 +153,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					}
 				}
 			}
+			Debug.Fail("Could not find module node");
 			return null;
 		}
 		
@@ -164,6 +166,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				if (node.LoadedAssembly.IsLoaded && node.LoadedAssembly.AssemblyDefinition == asm)
 					return node;
 			}
+			Debug.Fail("Could not find assembly node");
 			return null;
 		}
 
@@ -176,6 +179,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				if (node.LoadedAssembly == asm)
 					return node;
 			}
+			Debug.Fail("Could not find assembly node");
 			return null;
 		}
 
@@ -199,6 +203,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					return asm.FindTypeNode(def);
 				}
 			}
+			Debug.Fail("Could not find type node");
 			return null;
 		}
 
@@ -236,6 +241,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				}
 			}
 
+			Debug.Fail("Could not find method node");
 			return null;
 		}
 
@@ -251,7 +257,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (typeNode == null)
 				return null;
 			typeNode.EnsureLazyChildren();
-			return typeNode.Children.OfType<FieldTreeNode>().FirstOrDefault(m => m.FieldDefinition == def && !m.IsHidden);
+			var node = typeNode.Children.OfType<FieldTreeNode>().FirstOrDefault(m => m.FieldDefinition == def && !m.IsHidden);
+			Debug.Assert(node != null, "Could not find field node");
+			return node;
 		}
 
 		/// <summary>
@@ -266,7 +274,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (typeNode == null)
 				return null;
 			typeNode.EnsureLazyChildren();
-			return typeNode.Children.OfType<PropertyTreeNode>().FirstOrDefault(m => m.PropertyDefinition == def && !m.IsHidden);
+			var node = typeNode.Children.OfType<PropertyTreeNode>().FirstOrDefault(m => m.PropertyDefinition == def && !m.IsHidden);
+			Debug.Assert(node != null, "Could not find property node");
+			return node;
 		}
 
 		/// <summary>
@@ -281,7 +291,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (typeNode == null)
 				return null;
 			typeNode.EnsureLazyChildren();
-			return typeNode.Children.OfType<EventTreeNode>().FirstOrDefault(m => m.EventDefinition == def && !m.IsHidden);
+			var node = typeNode.Children.OfType<EventTreeNode>().FirstOrDefault(m => m.EventDefinition == def && !m.IsHidden);
+			Debug.Assert(node != null, "Could not find event node");
+			return node;
 		}
 		#endregion
 	}

@@ -252,6 +252,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 						return node;
 				}
 			}
+			Debug.Fail("Could not find type node");
 			return null;
 		}
 
@@ -266,8 +267,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			NamespaceTreeNode node;
 			if (namespaces.TryGetValue(namespaceName, out node))
 				return node;
-			else
-				return null;
+			Debug.Fail("Could not find namespace node");
+			return null;
 		}
 		
 		public override bool CanDrag(SharpTreeNode[] nodes)
