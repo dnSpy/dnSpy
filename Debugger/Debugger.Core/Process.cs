@@ -349,7 +349,7 @@ namespace Debugger
 			AssertPaused();
 			DisableAllSteppers();
 			CheckSelectedStackFrames();
-			SelectMostRecentStackFrameWithLoadedSymbols();
+			SelectMostRecentStackFrame();
 			
 			if (this.PauseSession.PausedReason == PausedReason.Exception) {
 				ExceptionEventArgs args = new ExceptionEventArgs(this, this.SelectedThread.CurrentException, this.SelectedThread.CurrentExceptionType, this.SelectedThread.CurrentExceptionIsUnhandled);
@@ -587,7 +587,7 @@ namespace Debugger
 			}
 		}
 		
-		internal void SelectMostRecentStackFrameWithLoadedSymbols()
+		internal void SelectMostRecentStackFrame()
 		{
 			SelectSomeThread();
 			if (this.SelectedThread != null) {
