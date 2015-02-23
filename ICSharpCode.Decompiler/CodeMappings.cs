@@ -175,11 +175,10 @@ namespace ICSharpCode.Decompiler
 		/// Gets a mapping given a type, a token and an IL offset.
 		/// </summary>
 		/// <param name="codeMappings">Code mappings storage.</param>
-		/// <param name="token">Token.</param>
 		/// <param name="ilOffset">IL offset.</param>
 		/// <param name="isMatch">True, if perfect match.</param>
 		/// <returns>A code mapping.</returns>
-		public static SourceCodeMapping GetInstructionByTokenAndOffset(
+		public static SourceCodeMapping GetInstructionByOffset(
 			this MemberMapping codeMapping,
 			uint ilOffset,
 			out bool isMatch)

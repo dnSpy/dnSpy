@@ -305,7 +305,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			if (cm == null || !cm.ContainsKey(key))
 				return null;
 			
-			return cm[key].GetInstructionByTokenAndOffset((uint)frame.IP, out isMatch);
+			return cm[key].GetInstructionByOffset((uint)frame.IP, out isMatch);
 		}
 		
 		StackFrame GetStackFrame()

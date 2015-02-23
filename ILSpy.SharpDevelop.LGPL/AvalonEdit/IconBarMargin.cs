@@ -301,7 +301,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 						continue;
 
 					bool isMatch;
-					SourceCodeMapping map = storage[key].GetInstructionByTokenAndOffset(breakpoint.ILRange.From, out isMatch);
+					SourceCodeMapping map = storage[key].GetInstructionByOffset(breakpoint.ILRange.From, out isMatch);
 
 					if (map != null) {
 						BreakpointBookmark newBookmark = new BreakpointBookmark(breakpoint.MemberReference,
