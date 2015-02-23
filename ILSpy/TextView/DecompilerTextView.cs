@@ -649,7 +649,11 @@ namespace ICSharpCode.ILSpy.TextView
 					foreach (var r in references) {
 						if (reference.Equals(r.Reference)) {
 							var mark = textMarkerService.Create(r.StartOffset, r.Length);
-							mark.BackgroundColor = r.IsLocalTarget ? Colors.LightSeaGreen : Colors.GreenYellow;
+							mark.HighlightingColor = () => {
+								return (r.IsLocalTarget ?
+									MainWindow.Instance.Theme.GetColor(dntheme.ColorType.LocalDefinition) :
+									MainWindow.Instance.Theme.GetColor(dntheme.ColorType.LocalReference)).TextInheritedColor;
+							};
 							localReferenceMarks.Add(mark);
 						}
 					}

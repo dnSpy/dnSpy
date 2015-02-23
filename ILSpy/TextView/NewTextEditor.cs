@@ -40,6 +40,11 @@ namespace ICSharpCode.ILSpy.TextView
 			FontWeight = textColor.FontWeight ?? FontWeights.Regular;
 			FontStyle = textColor.FontStyle ?? FontStyles.Normal;
 
+			ICSharpCode.ILSpy.Debugger.Bookmarks.BreakpointBookmark.HighlightingColor = theme.GetColor(dntheme.ColorType.BreakpointStatement).TextInheritedColor;
+			ICSharpCode.ILSpy.Debugger.Bookmarks.CurrentLineBookmark.HighlightingColor = theme.GetColor(dntheme.ColorType.CurrentStatement).TextInheritedColor;
+			var specialBox = theme.GetColor(dntheme.ColorType.SpecialCharacterBox).TextInheritedColor;
+			ICSharpCode.AvalonEdit.Rendering.SpecialCharacterTextRunOptions.Brush = specialBox.Background == null ? null : specialBox.Background.GetBrush(null);
+
 			var ln = theme.GetColor(ColorType.LineNumber).InheritedColor;
 			LineNumbersForeground = ln.Foreground == null ? null : ln.Foreground.GetBrush(null);
 

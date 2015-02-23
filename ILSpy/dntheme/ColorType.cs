@@ -305,6 +305,31 @@ namespace ICSharpCode.ILSpy.dntheme
 		Selection,
 
 		/// <summary>
+		/// Local definition
+		/// </summary>
+		LocalDefinition,
+
+		/// <summary>
+		/// Local reference
+		/// </summary>
+		LocalReference,
+
+		/// <summary>
+		/// Current statement (debugger)
+		/// </summary>
+		CurrentStatement,
+
+		/// <summary>
+		/// Breakpoint statement (debugger)
+		/// </summary>
+		BreakpointStatement,
+
+		/// <summary>
+		/// Special character box color. Only background color is used
+		/// </summary>
+		SpecialCharacterBox,
+
+		/// <summary>
 		/// Must be last
 		/// </summary>
 		Last,

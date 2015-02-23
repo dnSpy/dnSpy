@@ -64,6 +64,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		// color inheritance
 		static readonly ColorInfo[] rootColorInfos = new ColorInfo[] {
 			new ColorInfo(ColorType.Selection),
+			new ColorInfo(ColorType.SpecialCharacterBox),
 			new ColorInfo(ColorType.DefaultText,
 				new ColorInfo(ColorType.Text,
 					new ColorInfo(ColorType.Punctuation,
@@ -133,7 +134,11 @@ namespace ICSharpCode.ILSpy.dntheme
 						new ColorInfo(ColorType.ILModule)
 					),
 					new ColorInfo(ColorType.LineNumber),
-					new ColorInfo(ColorType.Link)
+					new ColorInfo(ColorType.Link),
+					new ColorInfo(ColorType.LocalDefinition),
+					new ColorInfo(ColorType.LocalReference),
+					new ColorInfo(ColorType.CurrentStatement),
+					new ColorInfo(ColorType.BreakpointStatement)
 				)
 			)
 		};

@@ -49,5 +49,10 @@
 		<color name="xmlbrokenentity" fg="#999966" />
 		<color name="link" fg="#CCFF33" />
 		<color name="selection" bg="#404040" />
+		<color name="localdefinition" bg="#FFCC99" />
+		<color name="localreference" bg="#FFFF99" />
+		<color name="currentstatement" fg="Black" bg="#FFF181" />
+		<color name="breakpointstatement" fg="White" bg="#963A46" />
+		<color name="specialcharacterbox" bg="#666699" />
 	</colors>
 </theme>

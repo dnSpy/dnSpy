@@ -47,6 +47,7 @@ dnSpy looks for *.dntheme files in a dntheme sub directory.
 
 ```
 Selection
+SpecialCharacterBox
 DefaultText
 	Text
 		Punctuation
@@ -106,6 +107,10 @@ DefaultText
 			ILModule
 		LineNumber
 		Link
+		LocalDefinition
+		LocalReference
+		CurrentStatement
+		BreakpointStatement
 ```
 
 `fg` and `bg` take a color that can be human readable (eg. `Green`) or hexadecimal (eg. `#112233`) or a System.Windows.SystemColors brush name, eg. `SystemColors.ControlText` will use `System.Windows.SystemColors.ControlTextBrush`. Note that the `Brush` part must not be present in the string.

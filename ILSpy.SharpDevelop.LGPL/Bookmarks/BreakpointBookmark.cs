@@ -3,6 +3,7 @@
 
 using System;
 using System.Windows.Media;
+using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.ILSpy.AvalonEdit;
@@ -23,6 +24,10 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 	
 	public class BreakpointBookmark : MarkerBookmark
 	{
+		public static HighlightingColor HighlightingColor = new HighlightingColor {
+			Background = new SimpleHighlightingBrush(Color.FromRgb(0xB4, 0x26, 0x26)),
+			Foreground = new SimpleHighlightingBrush(Colors.White),
+		};
 		bool isHealthy = true;
 		bool isEnabled = true;
 		BreakpointAction action = BreakpointAction.Break;
@@ -102,8 +107,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		public override ITextMarker CreateMarker(ITextMarkerService markerService, int offset, int length)
 		{
 			ITextMarker marker = markerService.Create(offset, length);
-			marker.BackgroundColor = Color.FromRgb(180, 38, 38);
-			marker.ForegroundColor = Colors.White;
+			marker.HighlightingColor = () => HighlightingColor;
 			marker.IsVisible = b => {
 				var cm = DebugInformation.CodeMappings;
 				return cm != null && b is BreakpointBookmark && cm.ContainsKey(((BreakpointBookmark)b).MethodKey);

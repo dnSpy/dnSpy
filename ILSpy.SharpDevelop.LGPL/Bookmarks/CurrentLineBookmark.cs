@@ -3,6 +3,7 @@
 
 using System;
 using System.Windows.Media;
+using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.SharpDevelop;
@@ -14,6 +15,10 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 {
 	public class CurrentLineBookmark : MarkerBookmark
 	{
+		public static HighlightingColor HighlightingColor = new HighlightingColor {
+			Background = new SimpleHighlightingBrush(Colors.Yellow),
+			Foreground = new SimpleHighlightingBrush(Colors.Blue),
+		};
 		static CurrentLineBookmark instance;
 		
 		public static CurrentLineBookmark Instance {
@@ -82,8 +87,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		public override ITextMarker CreateMarker(ITextMarkerService markerService, int offset, int length)
 		{
 			ITextMarker marker = markerService.Create(offset + startColumn - 1, length + 1);
-			marker.BackgroundColor = Colors.Yellow;
-			marker.ForegroundColor = Colors.Blue;
+			marker.HighlightingColor = () => HighlightingColor;
 			marker.IsVisible = b => {
 				var cm = DebugInformation.CodeMappings;
 				return cm != null && b is MarkerBookmark &&

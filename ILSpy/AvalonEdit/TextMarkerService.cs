@@ -26,6 +26,7 @@ using System.Windows.Threading;
 
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
@@ -310,52 +311,32 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			service.Redraw(this);
 		}
 		
-		Color? backgroundColor;
+		/// <summary>
+		/// Gets the highlighting color
+		/// </summary>
+		public Func<HighlightingColor> HighlightingColor {
+			get { return highlightingColor; }
+			set {
+				highlightingColor = value;
+				Redraw();
+			}
+		}
+		Func<HighlightingColor> highlightingColor;
 		
 		public Color? BackgroundColor {
-			get { return backgroundColor; }
-			set {
-				if (backgroundColor != value) {
-					backgroundColor = value;
-					Redraw();
-				}
-			}
+			get { var hl = HighlightingColor(); return hl == null || hl.Background == null ? null : hl.Background.GetColor(null); }
 		}
-		
-		Color? foregroundColor;
 		
 		public Color? ForegroundColor {
-			get { return foregroundColor; }
-			set {
-				if (foregroundColor != value) {
-					foregroundColor = value;
-					Redraw();
-				}
-			}
+			get { var hl = HighlightingColor(); return hl == null || hl.Foreground == null ? null : hl.Foreground.GetColor(null); }
 		}
-		
-		FontWeight? fontWeight;
 		
 		public FontWeight? FontWeight {
-			get { return fontWeight; }
-			set {
-				if (fontWeight != value) {
-					fontWeight = value;
-					Redraw();
-				}
-			}
+			get { var hl = HighlightingColor(); return hl == null ? null : hl.FontWeight; }
 		}
 		
-		FontStyle? fontStyle;
-		
 		public FontStyle? FontStyle {
-			get { return fontStyle; }
-			set {
-				if (fontStyle != value) {
-					fontStyle = value;
-					Redraw();
-				}
-			}
+			get { var hl = HighlightingColor(); return hl == null ? null : hl.FontStyle; }
 		}
 		
 		public object Tag { get; set; }

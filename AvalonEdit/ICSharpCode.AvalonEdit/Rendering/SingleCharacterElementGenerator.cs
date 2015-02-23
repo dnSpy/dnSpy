@@ -228,14 +228,6 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		
 		sealed class SpecialCharacterTextRun : FormattedTextRun
 		{
-			static readonly SolidColorBrush darkGrayBrush;
-			
-			static SpecialCharacterTextRun()
-			{
-				darkGrayBrush = new SolidColorBrush(Color.FromArgb(200, 128, 128, 128));
-				darkGrayBrush.Freeze();
-			}
-			
 			public SpecialCharacterTextRun(FormattedTextElement element, TextRunProperties properties)
 				: base(element, properties)
 			{
@@ -246,7 +238,7 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				Point newOrigin = new Point(origin.X + 1.5, origin.Y);
 				var metrics = base.Format(double.PositiveInfinity);
 				Rect r = new Rect(newOrigin.X - 0.5, newOrigin.Y - metrics.Baseline, metrics.Width + 2, metrics.Height);
-				drawingContext.DrawRoundedRectangle(darkGrayBrush, null, r, 2.5, 2.5);
+				drawingContext.DrawRoundedRectangle(SpecialCharacterTextRunOptions.Brush ?? SpecialCharacterTextRunOptions.DefaultBrush, null, r, 2.5, 2.5);
 				base.Draw(drawingContext, newOrigin, rightToLeft, sideways);
 			}
 			
@@ -263,6 +255,25 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				r.Width += 3;
 				return r;
 			}
+		}
+	}
+
+	/// <summary>
+	/// SpecialCharacterTextRun options
+	/// </summary>
+	public static class SpecialCharacterTextRunOptions
+	{
+		/// <summary>
+		/// Brush used by SpecialCharacterTextRun
+		/// </summary>
+		public static Brush Brush;
+
+		internal static Brush DefaultBrush;
+
+		static SpecialCharacterTextRunOptions()
+		{
+			Brush = DefaultBrush = new SolidColorBrush(Color.FromArgb(200, 128, 128, 128));
+			Brush.Freeze();
 		}
 	}
 }

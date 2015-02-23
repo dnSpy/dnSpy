@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 
+using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.ILSpy.Bookmarks;
 
 namespace ICSharpCode.ILSpy.AvalonEdit
@@ -59,26 +60,31 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		/// Event that occurs when the text marker is deleted.
 		/// </summary>
 		event EventHandler Deleted;
+
+		/// <summary>
+		/// Gets the highlighting color
+		/// </summary>
+		Func<HighlightingColor> HighlightingColor { get; set; }
 		
 		/// <summary>
 		/// Gets/Sets the background color.
 		/// </summary>
-		Color? BackgroundColor { get; set; }
+		Color? BackgroundColor { get; }
 		
 		/// <summary>
 		/// Gets/Sets the foreground color.
 		/// </summary>
-		Color? ForegroundColor { get; set; }
+		Color? ForegroundColor { get; }
 		
 		/// <summary>
 		/// Gets/Sets the font weight.
 		/// </summary>
-		FontWeight? FontWeight { get; set; }
+		FontWeight? FontWeight { get; }
 		
 		/// <summary>
 		/// Gets/Sets the font style.
 		/// </summary>
-		FontStyle? FontStyle { get; set; }
+		FontStyle? FontStyle { get; }
 		
 		/// <summary>
 		/// Gets/Sets the type of the marker. Use TextMarkerType.None for normal markers.
