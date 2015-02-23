@@ -395,6 +395,7 @@ namespace ICSharpCode.ILSpy.TextView
 			
 			// update debugger info
 			DebugInformation.CodeMappings = textOutput.DebuggerMemberMappings.ToDictionary(m => new MethodKey(m.MethodDefinition));
+			UpdateDebugUI();
 			
 			// update class bookmarks
 			var document = textEditor.Document;
@@ -488,7 +489,6 @@ namespace ICSharpCode.ILSpy.TextView
 				delegate (AvalonEditTextOutput textOutput) { // handling the result
 					ShowOutput(textOutput, context.Language.SyntaxHighlighting, context.Options.TextViewState);
 					decompiledNodes = context.TreeNodes;
-					UpdateDebugUI(true);
 				})
 			.Catch<Exception>(exception => {
 					textEditor.SyntaxHighlighting = null;
@@ -501,32 +501,31 @@ namespace ICSharpCode.ILSpy.TextView
 					}
 					ShowOutput(output);
 					decompiledNodes = context.TreeNodes;
-					UpdateDebugUI(false);
 				});
 		}
 		
-		void UpdateDebugUI(bool isDecompilationOk)
+		void UpdateDebugUI()
 		{
 			// sync bookmarks
 			iconMargin.SyncBookmarks();
-			
-			if (isDecompilationOk) {
-				if (DebugInformation.DebugStepInformation != null && DebuggerService.CurrentDebugger != null) {
-					// repaint bookmarks
-					iconMargin.InvalidateVisual();
-					
-					// show the currentline marker
-					var key = DebugInformation.DebugStepInformation.Item1;
-					int ilOffset = DebugInformation.DebugStepInformation.Item2;
-					int line;
-					MethodDef methodDef;
-					var cm = DebugInformation.CodeMappings;
-					if (cm == null || !cm.ContainsKey(key))
-						return;
 
-					if (!cm[key].GetInstructionByTokenAndOffset((uint)ilOffset, out methodDef, out line))
-						return;
-					
+			bool updateDebugInfo =
+					DebuggerService.CurrentDebugger != null &&
+					DebuggerService.CurrentDebugger.IsDebugging &&
+					DebugInformation.DebugStepInformation != null;
+			bool updatedMarker = false;
+			if (updateDebugInfo) {
+				// repaint bookmarks
+				iconMargin.InvalidateVisual();
+
+				// show the currentline marker
+				var key = DebugInformation.DebugStepInformation.Item1;
+				int ilOffset = DebugInformation.DebugStepInformation.Item2;
+				int line;
+				MethodDef methodDef;
+				var cm = DebugInformation.CodeMappings;
+				if (cm != null && cm.ContainsKey(key) &&
+					cm[key].GetInstructionByTokenAndOffset((uint)ilOffset, out methodDef, out line)) {
 					// update marker
 					DebuggerService.JumpToCurrentLine(methodDef, line, 0, line, 0, ilOffset);
 
@@ -535,8 +534,10 @@ namespace ICSharpCode.ILSpy.TextView
 					bm.Marker = bm.CreateMarker(textMarkerService, docline.Offset + 1, docline.Length);
 					
 					UnfoldAndScroll(line);
+					updatedMarker = true;
 				}
-			} else {
+			}
+			if (!updatedMarker) {
 				// remove currentline marker
 				CurrentLineBookmark.Remove();
 			}
