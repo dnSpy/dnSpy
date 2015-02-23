@@ -133,20 +133,19 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 
 			string version = debugger.GetProgramVersion(processStartInfo.FileName);
 			
+			attached = false;
+			if (DebugStarting != null)
+				DebugStarting(this, EventArgs.Empty);
 			if (version.StartsWith("v1.0")) {
-				MessageBox.Show("Net10NotSupported");
+				StartError("Net10NotSupported");
 			} else if (version.StartsWith("v1.1")) {
-				MessageBox.Show("Net1.1NotSupported");
+				StartError("Net1.1NotSupported");
 //					} else if (string.IsNullOrEmpty(version)) {
 //					// Not a managed assembly
 //					MessageBox.Show(".Error.BadAssembly}");
 			} else if (debugger.IsKernelDebuggerEnabled) {
-				MessageBox.Show("KernelDebuggerEnabled");
+				StartError("KernelDebuggerEnabled");
 			} else {
-				attached = false;
-				if (DebugStarting != null)
-					DebugStarting(this, EventArgs.Empty);
-				
 				try {
 					// set the JIT flag for evaluating optimized code
 					Process.DebugMode = DebugModeFlag.Debug;
@@ -178,15 +177,22 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 								msg += origMsg;
 							}
 						}
-						MessageBox.Show(msg);
-						
+						StartError(msg);
+					} else {
 						if (DebugStopped != null)
 							DebugStopped(this, EventArgs.Empty);
-					} else {
 						throw;
 					}
 				}
 			}
+		}
+
+		void StartError(string msg)
+		{
+			MessageBox.Show(msg);
+
+			if (DebugStopped != null)
+				DebugStopped(this, EventArgs.Empty);
 		}
 		
 		public void Attach(System.Diagnostics.Process existingProcess)
