@@ -46,7 +46,7 @@ namespace ICSharpCode.ILSpy
 			
 			XElement activeTreeViewPath = doc.Element("ActiveTreeViewPath");
 			if (activeTreeViewPath != null) {
-				this.ActiveTreeViewPath = activeTreeViewPath.Elements().Select(e => Unescape((string)e)).ToArray();
+				this.ActiveTreeViewPath = activeTreeViewPath.Elements().Select(e => (string)e).ToArray();
 			}
 			
 			this.WindowState = FromString((string)doc.Element("WindowState"), WindowState.Normal);
@@ -90,7 +90,7 @@ namespace ICSharpCode.ILSpy
 				doc.Add(new XElement("ActiveAssemblyList", this.ActiveAssemblyList));
 			}
 			if (this.ActiveTreeViewPath != null) {
-				doc.Add(new XElement("ActiveTreeViewPath", ActiveTreeViewPath.Select(p => new XElement("Node", Escape(p)))));
+				doc.Add(new XElement("ActiveTreeViewPath", ActiveTreeViewPath.Select(p => new XElement("Node", p))));
 			}
 			doc.Add(new XElement("WindowState", ToString(this.WindowState)));
 			doc.Add(new XElement("WindowBounds", ToString(this.WindowBounds)));
@@ -100,25 +100,6 @@ namespace ICSharpCode.ILSpy
 			doc.Add(new XElement("ThemeName", ToString(this.ThemeName)));
 			
 			ILSpySettings.SaveSettings(doc);
-		}
-		
-		static Regex regex = new Regex("\\\\x(?<num>[0-9A-f]{4})");
-		
-		static string Escape(string p)
-		{
-			StringBuilder sb = new StringBuilder();
-			foreach (char ch in p) {
-				if (char.IsLetterOrDigit(ch))
-					sb.Append(ch);
-				else
-					sb.AppendFormat("\\x{0:X4}", (int)ch);
-			}
-			return sb.ToString();
-		}
-		
-		static string Unescape(string p)
-		{
-			return regex.Replace(p, m => ((char)int.Parse(m.Groups["num"].Value, NumberStyles.HexNumber)).ToString());
 		}
 		
 		static T FromString<T>(string s, T defaultValue)
