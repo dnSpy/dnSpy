@@ -3,8 +3,8 @@ dnSpy
 
 dnSpy is [ILSpy](https://github.com/icsharpcode/ILSpy) using [dnlib](https://github.com/0xd4d/dnlib). dnSpy is now able to open assemblies that ILSpy can't.
 
-Differences between dnSpy and ILSpy
-===================================
+Extra features present in dnSpy
+===============================
 
 * More stable, can handle bad input that will crash ILSpy
 * Updated syntax highlighting code
