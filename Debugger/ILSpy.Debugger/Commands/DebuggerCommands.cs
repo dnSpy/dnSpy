@@ -95,19 +95,19 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		protected void StartExecutable(string fileName, string workingDirectory, string arguments)
 		{
 			CurrentDebugger.BreakAtBeginning = DebuggerSettings.Instance.BreakAtBeginning;
+			Finish();
 			CurrentDebugger.Start(new ProcessStartInfo {
 			                      	FileName = fileName,
 			                      	WorkingDirectory = workingDirectory ?? Path.GetDirectoryName(fileName),
 			                      	Arguments = arguments
 			                      });
-			Finish();
 		}
 		
 		protected void StartAttaching(Process process)
 		{
 			CurrentDebugger.BreakAtBeginning = DebuggerSettings.Instance.BreakAtBeginning;
-			CurrentDebugger.Attach(process);
 			Finish();
+			CurrentDebugger.Attach(process);
 		}
 		
 		protected void Finish()
@@ -115,7 +115,6 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			EnableDebuggerUI(false);
 			CurrentDebugger.DebugStopped += OnDebugStopped;
 			CurrentDebugger.IsProcessRunningChanged += CurrentDebugger_IsProcessRunningChanged;
-			DebugInformation.IsDebuggerLoaded = true;
 			
 			MainWindow.Instance.SetStatus("Running...", Brushes.Black);
 		}
@@ -125,7 +124,6 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			EnableDebuggerUI(true);
 			CurrentDebugger.DebugStopped -= OnDebugStopped;
 			CurrentDebugger.IsProcessRunningChanged -= CurrentDebugger_IsProcessRunningChanged;
-			DebugInformation.IsDebuggerLoaded = false;
 			
 			MainWindow.Instance.HideStatus();
 		}
