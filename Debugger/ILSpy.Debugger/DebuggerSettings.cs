@@ -26,7 +26,7 @@ namespace ICSharpCode.ILSpy.Debugger
 		private bool showModuleName = true;
 		private bool showArguments = false;
 		private bool showArgumentValues = false;
-		private bool breakAtBeginning = false;
+		private bool breakAtBeginning = true;
 		
 		private static DebuggerSettings s_instance;
 		#endregion
