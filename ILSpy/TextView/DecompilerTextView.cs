@@ -394,7 +394,7 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 			
 			// update debugger info
-			DebugInformation.CodeMappings = textOutput.DebuggerMemberMappings.ToDictionary(m => m.MetadataToken);
+			DebugInformation.CodeMappings = textOutput.DebuggerMemberMappings.ToDictionary(m => new MethodKey(m.MethodDefinition));
 			
 			// update class bookmarks
 			var document = textEditor.Document;
@@ -516,18 +516,19 @@ namespace ICSharpCode.ILSpy.TextView
 					iconMargin.InvalidateVisual();
 					
 					// show the currentline marker
-					int token = DebugInformation.DebugStepInformation.Item1;
+					var key = DebugInformation.DebugStepInformation.Item1;
 					int ilOffset = DebugInformation.DebugStepInformation.Item2;
 					int line;
-					IMemberRef member;
-					if (DebugInformation.CodeMappings == null || !DebugInformation.CodeMappings.ContainsKey(token))
+					MethodDef methodDef;
+					var cm = DebugInformation.CodeMappings;
+					if (cm == null || !cm.ContainsKey(key))
 						return;
 
-					if (!DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset((uint)ilOffset, out member, out line))
+					if (!cm[key].GetInstructionByTokenAndOffset((uint)ilOffset, out methodDef, out line))
 						return;
 					
 					// update marker
-					DebuggerService.JumpToCurrentLine(member, line, 0, line, 0, ilOffset);
+					DebuggerService.JumpToCurrentLine(methodDef, line, 0, line, 0, ilOffset);
 
 					var bm = CurrentLineBookmark.Instance;
 					DocumentLine docline = textEditor.Document.GetLineByNumber(line);

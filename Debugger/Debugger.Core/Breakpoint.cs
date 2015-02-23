@@ -3,9 +3,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 using Debugger.Interop.CorDebug;
+using ICSharpCode.ILSpy.Debugger;
 
 namespace Debugger
 {
@@ -70,10 +72,6 @@ namespace Debugger
 			}
 		}
 		
-		public string TypeName {
-			get; protected set;
-		}
-		
 		protected virtual void OnHit(BreakpointEventArgs e)
 		{
 			if (Hit != null) {
@@ -101,16 +99,6 @@ namespace Debugger
 		}
 		
 		public Breakpoint() { }
-		
-		public Breakpoint(NDebugger debugger, string fileName, byte[] checkSum, int line, int column, bool enabled)
-		{
-			this.debugger = debugger;
-			this.fileName = fileName;
-			this.checkSum = checkSum;
-			this.line = line;
-			this.column = column;
-			this.enabled = enabled;
-		}
 		
 		internal bool IsOwnerOf(ICorDebugBreakpoint breakpoint)
 		{
@@ -175,23 +163,23 @@ namespace Debugger
 	
 	public class ILBreakpoint : Breakpoint
 	{
-		public ILBreakpoint(NDebugger debugger, string typeName, int line, int metadataToken, uint offset, bool enabled)
+		public ILBreakpoint(NDebugger debugger, int line, MethodKey methodKey, uint offset, bool enabled)
 		{
 			this.Debugger = debugger;
 			this.Line = line;
-			this.TypeName = typeName;
-			this.MetadataToken = metadataToken;
+			this.MethodKey = methodKey;
 			this.ILOffset = offset;
 			this.Enabled = enabled;
 		}
 		
-		public int MetadataToken { get; private set; }
+		public MethodKey MethodKey { get; private set; }
 		
 		public uint ILOffset { get; private set; }
 		
 		public override bool SetBreakpoint(Module module)
 		{
-			SourcecodeSegment segment = SourcecodeSegment.CreateForIL(module, this.Line, (int)MetadataToken, (int)ILOffset);
+			Debug.Assert(MethodKey.IsSameModule(module.FullPath));
+			SourcecodeSegment segment = SourcecodeSegment.CreateForIL(module, this.Line, (int)MethodKey.Token, (int)ILOffset);
 			if (segment == null)
 				return false;
 			try {

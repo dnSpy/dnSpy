@@ -169,12 +169,12 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			}
 		}
 		
-		public static void ToggleBreakpointAt(IMemberRef member, int lineNumber, int functionToken, ILRange range)
+		public static void ToggleBreakpointAt(IMemberRef member, int lineNumber, ILRange range)
 		{
 			BookmarkManager.ToggleBookmark(
 				member.FullName, lineNumber,
 				b => b.CanToggle && b is BreakpointBookmark,
-				location => new BreakpointBookmark(member, location, functionToken, range, BreakpointAction.Break));
+				location => new BreakpointBookmark(member, location, range, BreakpointAction.Break));
 		}
 		
 		/* TODO: reimplement this stuff
@@ -190,9 +190,9 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			CurrentLineBookmark.Remove();
 		}
 		
-		public static void JumpToCurrentLine(IMemberRef memberReference, int startLine, int startColumn, int endLine, int endColumn, int ilOffset)
+		public static void JumpToCurrentLine(MethodDef methodDef, int startLine, int startColumn, int endLine, int endColumn, int ilOffset)
 		{
-			CurrentLineBookmark.SetPosition(memberReference, startLine, startColumn, endLine, endColumn, ilOffset);
+			CurrentLineBookmark.SetPosition(methodDef, startLine, startColumn, endLine, endColumn, ilOffset);
 		}
 		
 		#region Tool tips

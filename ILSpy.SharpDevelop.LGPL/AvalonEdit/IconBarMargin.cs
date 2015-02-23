@@ -71,8 +71,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				Dictionary<int, IBookmark> bookmarkDict = new Dictionary<int, IBookmark>();
 				foreach (var bm in BookmarkManager.Bookmarks) {
 					if (bm is BreakpointBookmark) {
-						if (DebugInformation.CodeMappings == null || DebugInformation.CodeMappings.Count == 0 ||
-						    !DebugInformation.CodeMappings.ContainsKey(((BreakpointBookmark)bm).FunctionToken))
+						var cm = DebugInformation.CodeMappings;
+						if (cm == null || cm.Count == 0 || !cm.ContainsKey(((BreakpointBookmark)bm).MethodKey))
 							continue;
 					}
 					int line = bm.LineNumber;
@@ -142,8 +142,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				if (bm.LineNumber != line)
 					continue;
 				if (bm is BreakpointBookmark) {
-					if (DebugInformation.CodeMappings == null || DebugInformation.CodeMappings.Count == 0 ||
-						!DebugInformation.CodeMappings.ContainsKey(((BreakpointBookmark)bm).FunctionToken))
+					var cm = DebugInformation.CodeMappings;
+					if (cm == null || cm.Count == 0 || !cm.ContainsKey(((BreakpointBookmark)bm).MethodKey))
 						continue;
 				}
 				
@@ -257,7 +257,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			var storage = DebugInformation.CodeMappings;
 			if (storage == null || storage.Count == 0)
 				return;
-			var key = breakpoint.MemberReference.MDToken.ToInt32();
+			var key = new MethodKey(breakpoint.MemberReference);
 			if (storage.ContainsKey(key))
 			{
 				// register to show enabled/disabled state
@@ -274,7 +274,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			var storage = DebugInformation.CodeMappings;
 			if (storage == null || storage.Count == 0)
 				return;
-			var key = breakpoint.MemberReference.MDToken.ToInt32();
+			var key = new MethodKey(breakpoint.MemberReference);
 			if (storage.ContainsKey(key))
 			{
 				breakpoint.ImageChanged -= delegate { InvalidateVisual(); };
@@ -285,69 +285,70 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		public void SyncBookmarks()
 		{
 			var storage = DebugInformation.CodeMappings;
-			if (storage == null || storage.Count == 0)
-				return;
-			
-			// TODO: handle other types of bookmarks
-			// remove existing bookmarks and create new ones
-			// update of existing bookmarks for new position does not update TextMarker
-			// this is only done in TextMarkerService handlers for BookmarkManager.Added/Removed
-			List<BreakpointBookmark> newBookmarks = new List<BreakpointBookmark>();
-			for (int i = BookmarkManager.Bookmarks.Count - 1; i >= 0; --i) {
-				var breakpoint = BookmarkManager.Bookmarks[i] as BreakpointBookmark;
-				if (breakpoint == null)
-					continue;
-				
-				var key = breakpoint.FunctionToken;
-				if (!storage.ContainsKey(key))
-					continue;
-				
-				bool isMatch;
-				SourceCodeMapping map = storage[key].GetInstructionByTokenAndOffset(breakpoint.ILRange.From, out isMatch);
-				
-				if (map != null) {
-					BreakpointBookmark newBookmark = new BreakpointBookmark(breakpoint.MemberReference,
-					                                                        new TextLocation(map.StartLocation.Line, 0),
-					                                                        breakpoint.FunctionToken,
-					                                                        map.ILInstructionOffset,
-					                                                        BreakpointAction.Break);
-					newBookmark.IsEnabled = breakpoint.IsEnabled;
-					
-					newBookmarks.Add(newBookmark);
+			if (storage != null && storage.Count != 0) {
+				// TODO: handle other types of bookmarks
+				// remove existing bookmarks and create new ones
+				// update of existing bookmarks for new position does not update TextMarker
+				// this is only done in TextMarkerService handlers for BookmarkManager.Added/Removed
+				List<BreakpointBookmark> newBookmarks = new List<BreakpointBookmark>();
+				for (int i = BookmarkManager.Bookmarks.Count - 1; i >= 0; --i) {
+					var breakpoint = BookmarkManager.Bookmarks[i] as BreakpointBookmark;
+					if (breakpoint == null)
+						continue;
 
-					BookmarkManager.RemoveMark(breakpoint);
+					var key = breakpoint.MethodKey;
+					if (!storage.ContainsKey(key))
+						continue;
+
+					bool isMatch;
+					SourceCodeMapping map = storage[key].GetInstructionByTokenAndOffset(breakpoint.ILRange.From, out isMatch);
+
+					if (map != null) {
+						BreakpointBookmark newBookmark = new BreakpointBookmark(breakpoint.MemberReference,
+																				new TextLocation(map.StartLocation.Line, 0),
+																				map.ILInstructionOffset,
+																				BreakpointAction.Break);
+						newBookmark.IsEnabled = breakpoint.IsEnabled;
+
+						newBookmarks.Add(newBookmark);
+
+						BookmarkManager.RemoveMark(breakpoint);
+					}
 				}
+				newBookmarks.ForEach(m => BookmarkManager.AddMark(m));
 			}
-			newBookmarks.ForEach(m => BookmarkManager.AddMark(m));
-			SyncCurrentLineBookmark();
+			if (!SyncCurrentLineBookmark())
+				CurrentLineBookmark.Remove();
 		}
 		
-		void SyncCurrentLineBookmark()
+		bool SyncCurrentLineBookmark()
 		{
 			// checks
 			if (CurrentLineBookmark.Instance == null)
-				return;
+				return false;
 			
 			var codeMappings = DebugInformation.CodeMappings;
 			if (codeMappings == null)
-				return;
+				return false;
 			
 			// 1. Save it's data
-			int line = CurrentLineBookmark.Instance.LineNumber;
 			var markerType = CurrentLineBookmark.Instance.MemberReference;
-			int token = markerType.MDToken.ToInt32();
+			var key = new MethodKey(markerType);
 			int offset = CurrentLineBookmark.Instance.ILOffset;
 			
-			if (!codeMappings.ContainsKey(token))
-				return;
+			if (!codeMappings.ContainsKey(key))
+				return false;
 			
 			// 2. map the marker line
-			IMemberRef memberReference;
+			MethodDef methodDef;
 			int newline;
-			if (codeMappings[token].GetInstructionByTokenAndOffset((uint)offset, out memberReference, out newline)) {
+			if (codeMappings[key].GetInstructionByTokenAndOffset((uint)offset, out methodDef, out newline)) {
 				// 3. create breakpoint for new languages
-				DebuggerService.JumpToCurrentLine(memberReference, newline, 0, newline, 0, offset);
+				DebuggerService.JumpToCurrentLine(methodDef, newline, 0, newline, 0, offset);
+				return true;
 			}
+
+			return false;
 		}
 	}
 }

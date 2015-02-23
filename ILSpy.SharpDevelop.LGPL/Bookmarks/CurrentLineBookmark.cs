@@ -84,8 +84,11 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			ITextMarker marker = markerService.Create(offset + startColumn - 1, length + 1);
 			marker.BackgroundColor = Colors.Yellow;
 			marker.ForegroundColor = Colors.Blue;
-			marker.IsVisible = b => b is MarkerBookmark && DebugInformation.CodeMappings != null &&
-				DebugInformation.CodeMappings.ContainsKey(((MarkerBookmark)b).MemberReference.MDToken.ToInt32());
+			marker.IsVisible = b => {
+				var cm = DebugInformation.CodeMappings;
+				return cm != null && b is MarkerBookmark &&
+					cm.ContainsKey(new MethodKey(((MarkerBookmark)b).MemberReference));
+			};
 			marker.Bookmark = this;
 			this.Marker = marker;
 			return marker;

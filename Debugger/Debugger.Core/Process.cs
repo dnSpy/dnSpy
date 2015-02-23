@@ -701,6 +701,7 @@ namespace Debugger
 				return 0;//TODO: Support reading it from memory
 
 			try {
+				//TODO: You could get this from dnSpy's MainWindow
 				using (var mod = ModuleDefMD.Load(module.FullPath)) {
 					var ep = mod.EntryPoint;
 					if (ep != null)

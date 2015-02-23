@@ -95,27 +95,17 @@ namespace ICSharpCode.Decompiler
 	{
 		IEnumerable<ILRange> invertedList;
 		
-		internal MemberMapping()
-		{
-		}
-		
 		public MemberMapping(MethodDef method)
 		{
-			this.MetadataToken = method.MDToken.ToInt32();
 			this.MemberCodeMappings = new List<SourceCodeMapping>();
-			this.MemberReference = method;
+			this.MethodDefinition = method;
 			this.CodeSize = method.Body.GetCodeSize();
 		}
 		
 		/// <summary>
 		/// Gets or sets the type of the mapping.
 		/// </summary>
-		public IMemberRef MemberReference { get; internal set; }
-		
-		/// <summary>
-		/// Metadata token of the member.
-		/// </summary>
-		public int MetadataToken { get; internal set; }
+		public MethodDef MethodDefinition { get; internal set; }
 		
 		/// <summary>
 		/// Gets or sets the code size for the member mapping.
@@ -173,7 +163,7 @@ namespace ICSharpCode.Decompiler
 			
 			var map = codeMapping.MemberCodeMappings.Find(m => m.StartLocation.Line == lineNumber);
 			if (map != null) {
-				metadataToken = codeMapping.MetadataToken;
+				metadataToken = codeMapping.MethodDefinition.MDToken.ToInt32();
 				return map;
 			}
 			
@@ -219,19 +209,18 @@ namespace ICSharpCode.Decompiler
 		/// <summary>
 		/// Gets the source code and type name from metadata token and offset.
 		/// </summary>
-		/// <param name="codeMappings">Code mapping storage.</param>
-		/// <param name="token">Metadata token.</param>
+		/// <param name="mapping">Code mapping storage.</param>
 		/// <param name="ilOffset">IL offset.</param>
-		/// <param name="typeName">Type definition.</param>
+		/// <param name="methodDef">Method definition.</param>
 		/// <param name="line">Line number.</param>
 		/// <remarks>It is possible to exist to different types from different assemblies with the same metadata token.</remarks>
 		public static bool GetInstructionByTokenAndOffset(
 			this MemberMapping mapping,
 			uint ilOffset,
-			out IMemberRef member,
+			out MethodDef methodDef,
 			out int line)
 		{
-			member = null;
+			methodDef = null;
 			line = 0;
 			
 			if (mapping == null)
@@ -248,7 +237,7 @@ namespace ICSharpCode.Decompiler
 				}
 			}
 			
-			member = mapping.MemberReference;
+			methodDef = mapping.MethodDefinition;
 			line = codeMapping.StartLocation.Line;
 			return true;
 		}

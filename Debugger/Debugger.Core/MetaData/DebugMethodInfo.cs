@@ -13,6 +13,7 @@ using SR = System.Reflection;
 using Debugger.Interop.CorDebug;
 using Debugger.Interop.CorSym;
 using Debugger.Interop.MetaData;
+using ICSharpCode.ILSpy.Debugger;
 using dnlib.DotNet;
 
 namespace Debugger.MetaData
@@ -701,6 +702,15 @@ namespace Debugger.MetaData
 		
 		DebugType IDebugMemberInfo.MemberType {
 			get { return (DebugType)this.ReturnType; }
+		}
+
+		public MethodKey ToMethodKey()
+		{
+			var mod = DebugModule;
+			//TODO: Support dynamic and in-memory modules
+			if (mod.IsDynamic || mod.IsInMemory)
+				throw new InvalidOperationException("Module is dynamic or in-memory: can't create method key");
+			return new MethodKey(MetadataToken, mod.FullPath);
 		}
 	}
 }

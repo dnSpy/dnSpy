@@ -46,7 +46,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		/// In case of properties and events, it's the GetMethod/SetMethod|AddMethod/RemoveMethod token.
 		/// </remarks>
 		/// </summary>
-		public int FunctionToken { get; private set; }
+		public MethodKey MethodKey { get; private set; }
 		
 		public ILRange ILRange { get; private set; }
 		
@@ -82,11 +82,11 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		
 		public string Tooltip { get; private set; }
 		
-		public BreakpointBookmark(IMemberRef member, TextLocation location, int functionToken, ILRange range, BreakpointAction action)
+		public BreakpointBookmark(IMemberRef member, TextLocation location, ILRange range, BreakpointAction action)
 			: base(member, location)
 		{
 			this.action = action;
-			this.FunctionToken = functionToken;
+			this.MethodKey = new MethodKey(member);
 			this.ILRange = range;
 			this.Tooltip = string.Format("Line:{0}, IL range:{1}-{2}", location.Line, range.From, range.To);
 		}
@@ -104,11 +104,12 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			ITextMarker marker = markerService.Create(offset, length);
 			marker.BackgroundColor = Color.FromRgb(180, 38, 38);
 			marker.ForegroundColor = Colors.White;
-			marker.IsVisible = b => b is BreakpointBookmark && DebugInformation.CodeMappings != null &&
-				DebugInformation.CodeMappings.ContainsKey(((BreakpointBookmark)b).FunctionToken);
+			marker.IsVisible = b => {
+				var cm = DebugInformation.CodeMappings;
+				return cm != null && b is BreakpointBookmark && cm.ContainsKey(((BreakpointBookmark)b).MethodKey);
+			};
 			marker.Bookmark = this;
 			this.Marker = marker;
-			
 			return marker;
 		}
 	}

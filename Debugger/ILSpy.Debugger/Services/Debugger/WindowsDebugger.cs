@@ -291,13 +291,15 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		{
 			isMatch = false;
 			frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
-			int key = frame.MethodInfo.MetadataToken;
+			var key = frame.MethodInfo.ToMethodKey();
 			
 			// get the mapped instruction from the current line marker or the next one
-			if (DebugInformation.CodeMappings == null || !DebugInformation.CodeMappings.ContainsKey(key))
+			//TODO: Could fail to find mapping if user has switched to another method than we're debugging
+			var cm = DebugInformation.CodeMappings;
+			if (cm == null || !cm.ContainsKey(key))
 				return null;
 			
-			return DebugInformation.CodeMappings[key].GetInstructionByTokenAndOffset((uint)frame.IP, out isMatch);
+			return cm[key].GetInstructionByTokenAndOffset((uint)frame.IP, out isMatch);
 		}
 		
 		StackFrame GetStackFrame()
@@ -561,9 +563,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			
 			breakpoint = new ILBreakpoint(
 				debugger,
-				bookmark.MemberReference.DeclaringType.FullName,
 				bookmark.LineNumber,
-				bookmark.FunctionToken,
+				bookmark.MethodKey,
 				bookmark.ILRange.From,
 				bookmark.IsEnabled);
 			
@@ -732,15 +733,13 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 
 		void debuggedProcess_ModulesAdded(object sender, ModuleEventArgs e)
 		{
-			var currentModuleTypes = e.Module.GetNamesOfDefinedTypes();
 			foreach (var bookmark in DebuggerService.Breakpoints) {
 				var breakpoint =
 					debugger.Breakpoints.FirstOrDefault(
-						b => b.Line == bookmark.LineNumber && (b as ILBreakpoint).MetadataToken == bookmark.MemberReference.MDToken.ToInt32());
+						b => b.Line == bookmark.LineNumber &&
+							(b as ILBreakpoint).MethodKey.IsSameModule(e.Module.FullPath) &&
+							(b as ILBreakpoint).MethodKey == bookmark.MethodKey);
 				if (breakpoint == null)
-					continue;
-				// set the breakpoint only if the module contains the type
-				if (!currentModuleTypes.Contains(breakpoint.TypeName))
 					continue;
 				
 				breakpoint.SetBreakpoint(e.Module);
@@ -802,38 +801,31 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 
 				// use most recent stack frame because we don't have the symbols
 				var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
-				var prevFrame = this.prevStackFrame;
-				this.prevStackFrame = frame;
-				
 				if (frame == null)
 					return;
 				
-				int token = frame.MethodInfo.MetadataToken;
+				var key = frame.MethodInfo.ToMethodKey();
 				int ilOffset = frame.IP;
 				int line;
-				IMemberRef memberReference;
+				MethodDef methodDef;
 				
-				if ((prevFrame != null && frame.MethodInfo == prevFrame.MethodInfo) &&
-				    DebugInformation.CodeMappings != null &&
-				    DebugInformation.CodeMappings.ContainsKey(token) &&
-				    DebugInformation.CodeMappings[token].GetInstructionByTokenAndOffset((uint)ilOffset, out memberReference, out line)) {
+				var cm = DebugInformation.CodeMappings;
+				if (cm != null && cm.ContainsKey(key) &&
+					cm[key].GetInstructionByTokenAndOffset((uint)ilOffset, out methodDef, out line)) {
 					DebugInformation.DebugStepInformation = null; // we do not need to step into/out
 					DebuggerService.RemoveCurrentLineMarker();
-					DebuggerService.JumpToCurrentLine(memberReference, line, 0, line, 0, ilOffset);
+					DebuggerService.JumpToCurrentLine(methodDef, line, 0, line, 0, ilOffset);
 				}
 				else {
 					StepIntoUnknownFrame(frame);
 				}
 			}
-			else
-				this.prevStackFrame = null;
 		}
-		StackFrame prevStackFrame = null;
 
 		void StepIntoUnknownFrame(StackFrame frame)
 		{
 			var debugType = (DebugType)frame.MethodInfo.DeclaringType;
-			int token = frame.MethodInfo.MetadataToken;
+			var key = frame.MethodInfo.ToMethodKey();
 			int ilOffset = frame.IP;
 
 			var debugModule = debugType.DebugModule;
@@ -841,11 +833,13 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			if (!string.IsNullOrEmpty(debugModule.FullPath)) {
 				var loadedMod = MainWindow.Instance.LoadAssembly(debugModule.AssemblyFullPath, debugModule.FullPath).ModuleDefinition as ModuleDefMD;
 				if (loadedMod != null) {
-					DebugInformation.DebugStepInformation = Tuple.Create(token, ilOffset, loadedMod.ResolveToken(token) as IMemberRef);
+					DebugInformation.DebugStepInformation = Tuple.Create(key, ilOffset, loadedMod.ResolveToken(key.Token) as IMemberRef);
 				}
 			}
-			if (DebugInformation.DebugStepInformation == null)
+			if (DebugInformation.DebugStepInformation == null) {
+				DebuggerService.RemoveCurrentLineMarker();
 				Debug.Fail("No type was found!");
+			}
 		}
 		
 		public void ShowAttachDialog()

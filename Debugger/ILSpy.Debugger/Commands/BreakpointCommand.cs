@@ -23,12 +23,12 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		
 		public void Execute(int line)
 		{
-			if (DebugInformation.CodeMappings != null && DebugInformation.CodeMappings.Count > 0) {
+			var cm = DebugInformation.CodeMappings;
+			if (cm != null && cm.Count > 0) {
 				
 				// check if the codemappings exists for this line
-				var storage = DebugInformation.CodeMappings;
 				int token = 0;
-				foreach (var storageEntry in storage.Values) {
+				foreach (var storageEntry in cm.Values) {
 					var instruction = storageEntry.GetInstructionByLineNumber(line, out token);
 					
 					if (instruction == null) {
@@ -37,9 +37,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 					
 					// no bookmark on the line: create a new breakpoint
 					DebuggerService.ToggleBreakpointAt(
-						instruction.MemberMapping.MemberReference,
+						instruction.MemberMapping.MethodDefinition,
 						line,
-						token, 
 						instruction.ILInstructionOffset);
 					break;
 				}

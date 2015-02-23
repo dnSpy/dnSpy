@@ -153,7 +153,7 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 			Value val;
 			try {
 				var frame = WindowsDebugger.DebuggedProcess.SelectedThread.MostRecentStackFrame;
-				int token = frame.MethodInfo.MetadataToken;
+				var key = frame.MethodInfo.ToMethodKey();
 				// get the target name
 				int index = Name.IndexOf('.');
 				string targetName = Name;
@@ -163,7 +163,8 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 				
 				// get local variable index
 				MemberMapping mapping;
-				if (DebugInformation.CodeMappings != null && DebugInformation.CodeMappings.TryGetValue(token, out mapping)) {
+				var cm = DebugInformation.CodeMappings;
+				if (cm != null && cm.TryGetValue(key, out mapping)) {
 					var variable = mapping.LocalVariables.FirstOrDefault(v => v.Name == targetName);
 					if (variable != null && variable.OriginalVariable != null) {
 						if (expression is MemberReferenceExpression) {
