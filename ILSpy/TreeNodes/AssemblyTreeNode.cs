@@ -199,6 +199,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					else {
 						var loadAsm = new LoadedAssembly(AssemblyList, mod);
 						this.Children.Add(new AssemblyTreeNode(loadAsm));
+						// Make sure IsLoaded is set to true
+						var dummy = loadAsm.ModuleDefinition;
 					}
 				}
 			}
