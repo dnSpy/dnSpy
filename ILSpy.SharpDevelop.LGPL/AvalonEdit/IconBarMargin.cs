@@ -290,7 +290,6 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				// remove existing bookmarks and create new ones
 				// update of existing bookmarks for new position does not update TextMarker
 				// this is only done in TextMarkerService handlers for BookmarkManager.Added/Removed
-				List<BreakpointBookmark> newBookmarks = new List<BreakpointBookmark>();
 				for (int i = BookmarkManager.Bookmarks.Count - 1; i >= 0; --i) {
 					var breakpoint = BookmarkManager.Bookmarks[i] as BreakpointBookmark;
 					if (breakpoint == null)
@@ -310,12 +309,9 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 																				BreakpointAction.Break);
 						newBookmark.IsEnabled = breakpoint.IsEnabled;
 
-						newBookmarks.Add(newBookmark);
-
-						BookmarkManager.RemoveMark(breakpoint);
+						BookmarkManager.ReplaceMark(i, newBookmark);
 					}
 				}
-				newBookmarks.ForEach(m => BookmarkManager.AddMark(m));
 			}
 			if (!SyncCurrentLineBookmark())
 				CurrentLineBookmark.Remove();

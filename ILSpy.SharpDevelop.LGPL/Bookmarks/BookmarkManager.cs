@@ -61,6 +61,16 @@ namespace ICSharpCode.ILSpy.Bookmarks
 				return false;
 			return a.LineNumber == b.LineNumber;
 		}
+
+		public static void ReplaceMark(int index, BookmarkBase bookmark)
+		{
+			var removedBookmark = bookmarks[index];
+			bookmarks.RemoveAt(index);
+			OnRemoved(new BookmarkEventArgs(removedBookmark));
+
+			bookmarks.Insert(index, bookmark);
+			OnAdded(new BookmarkEventArgs(bookmark));
+		}
 		
 		public static void RemoveMark(BookmarkBase bookmark)
 		{
