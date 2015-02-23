@@ -127,7 +127,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			CurrentDebugger.IsProcessRunningChanged -= CurrentDebugger_IsProcessRunningChanged;
 			DebugInformation.IsDebuggerLoaded = false;
 			
-			MainWindow.Instance.SetStatus("Stand by...", Brushes.Black);
+			MainWindow.Instance.HideStatus();
 		}
 		
 		protected void EnableDebuggerUI(bool enable)

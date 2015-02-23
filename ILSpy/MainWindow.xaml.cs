@@ -901,6 +901,11 @@ namespace ICSharpCode.ILSpy
 			this.StatusLabel.Foreground = foreground;
 			this.StatusLabel.Text = status;
 		}
+
+		public void HideStatus()
+		{
+			this.statusBar.Visibility = Visibility.Collapsed;
+		}
 		
 		public ItemCollection GetMainMenuItems()
 		{
