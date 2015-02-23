@@ -262,7 +262,7 @@ namespace ICSharpCode.Decompiler.Ast
 				result = node;
 			
 			if (result != null)
-				result = result.WithAnnotation(new TypeInformation(expr.InferredType));
+				result = result.WithAnnotation(new TypeInformation(expr.InferredType, expr.ExpectedType));
 			
 			if (result != null)
 				return result.WithAnnotation(ilRanges);

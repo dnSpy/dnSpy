@@ -10,10 +10,12 @@ namespace ICSharpCode.Decompiler.Ast
 	public class TypeInformation
 	{
 		public readonly TypeReference InferredType;
+		public readonly TypeReference ExpectedType;
 		
-		public TypeInformation(TypeReference inferredType)
+		public TypeInformation(TypeReference inferredType, TypeReference expectedType)
 		{
 			this.InferredType = inferredType;
+			this.ExpectedType = expectedType;
 		}
 	}
 	
