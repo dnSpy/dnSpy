@@ -26,6 +26,11 @@ namespace ICSharpCode.ILSpy.Debugger
 		/// Gets or sets the current method key, IL offset and member reference. Used for step in/out.
 		/// </summary>
 		public static Tuple<MethodKey, int, IMemberRef> DebugStepInformation { get; set; }
+
+		/// <summary>
+		/// true if we must call JumpToReference() due to new stack frame
+		/// </summary>
+		public static bool MustJumpToReference { get; set; }
 	}
 
 	public sealed class MethodKey : IEquatable<MethodKey>

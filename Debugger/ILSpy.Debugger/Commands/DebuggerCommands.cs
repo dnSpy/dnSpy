@@ -170,7 +170,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			SendWpfWindowPos(inst, HWND_TOP); inst.Activate();
 			
 			// jump to type & expand folding
-			if (DebugInformation.DebugStepInformation != null)
+			if (DebugInformation.MustJumpToReference && DebugInformation.DebugStepInformation != null)
 				inst.JumpToReference(DebugInformation.DebugStepInformation.Item3);
 			
 			inst.SetStatus("Debugging...", Brushes.Red);

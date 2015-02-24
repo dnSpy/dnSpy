@@ -818,7 +818,10 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				var cm = DebugInformation.CodeMappings;
 				if (cm != null && cm.ContainsKey(key) &&
 					cm[key].GetInstructionByTokenAndOffset((uint)ilOffset, out methodDef, out line)) {
-					DebugInformation.DebugStepInformation = null; // we do not need to step into/out
+					var info = DebugInformation.DebugStepInformation;
+					if (info != null)
+						DebugInformation.DebugStepInformation = Tuple.Create(info.Item1, ilOffset, info.Item3);
+					DebugInformation.MustJumpToReference = false; // we do not need to step into/out
 					DebuggerService.RemoveCurrentLineMarker();
 					DebuggerService.JumpToCurrentLine(methodDef, line, 0, line, 0, ilOffset);
 				}
@@ -835,14 +838,16 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			int ilOffset = frame.IP;
 
 			var debugModule = debugType.DebugModule;
-			DebugInformation.DebugStepInformation = null;
+			DebugInformation.MustJumpToReference = false;
 			if (!string.IsNullOrEmpty(debugModule.FullPath)) {
 				var loadedMod = MainWindow.Instance.LoadAssembly(debugModule.AssemblyFullPath, debugModule.FullPath).ModuleDefinition as ModuleDefMD;
 				if (loadedMod != null) {
 					DebugInformation.DebugStepInformation = Tuple.Create(key, ilOffset, loadedMod.ResolveToken(key.Token) as IMemberRef);
+					DebugInformation.MustJumpToReference = true;
 				}
 			}
-			if (DebugInformation.DebugStepInformation == null) {
+			if (!DebugInformation.MustJumpToReference) {
+				DebugInformation.DebugStepInformation = null;
 				DebuggerService.RemoveCurrentLineMarker();
 				Debug.Fail("No type was found!");
 			}
