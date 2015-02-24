@@ -185,11 +185,7 @@
     <Compile Include="VBParser.cs" />
     <Compile Include="Visitors\CSharpToVBConverterVisitor.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Ast\" />
-    <Folder Include="Lexer\" />
-    <Folder Include="PrettyPrinter\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="Lexer\ExpressionFinder.atg">
       <Generator>CocoParserGenerator</Generator>
@@ -213,6 +209,10 @@
     <ProjectReference Include="..\..\dnlib\src\dnlib.csproj">
       <Project>{FDFC1237-143F-4919-8318-4926901F4639}</Project>
       <Name>dnlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
+      <Project>{984CC812-9470-4A13-AFF9-CC44068D666C}</Project>
+      <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
     <ProjectReference Include="..\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj">
       <Project>{53DCA265-3C3C-42F9-B647-F72BA678122B}</Project>

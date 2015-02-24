@@ -96,10 +96,16 @@ namespace ICSharpCode.Decompiler
 		IEnumerable<ILRange> invertedList;
 		
 		public MemberMapping(MethodDef method)
+			: this(method, null)
+		{
+		}
+		
+		public MemberMapping(MethodDef method, IEnumerable<ILVariable> localVariables)
 		{
 			this.MemberCodeMappings = new List<SourceCodeMapping>();
 			this.MethodDefinition = method;
 			this.CodeSize = method.Body.GetCodeSize();
+			this.LocalVariables = localVariables;
 		}
 		
 		/// <summary>

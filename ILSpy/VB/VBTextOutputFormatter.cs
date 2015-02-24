@@ -42,6 +42,10 @@ namespace ICSharpCode.ILSpy.VB
 			this.output = output;
 		}
 		
+		Stack<TextLocation> startLocations = new Stack<TextLocation>();
+		MemberMapping currentMemberMapping;
+		Stack<MemberMapping> parentMemberMappings = new Stack<MemberMapping>();
+		
 		public void StartNode(AstNode node)
 		{
 //			var ranges = node.Annotation<List<ILRange>>();
@@ -67,12 +71,44 @@ namespace ICSharpCode.ILSpy.VB
 //			}
 			
 			nodeStack.Push(node);
+			startLocations.Push(output.Location);
+			
+			MemberMapping mapping = node.Annotation<MemberMapping>();
+			if (mapping != null) {
+				parentMemberMappings.Push(currentMemberMapping);
+				currentMemberMapping = mapping;
+			}
 		}
 		
 		public void EndNode(AstNode node)
 		{
 			if (nodeStack.Pop() != node)
 				throw new InvalidOperationException();
+			
+			var startLocation = startLocations.Pop();
+			
+			// code mappings
+			if (currentMemberMapping != null) {
+				var ranges = node.Annotation<List<ILRange>>();
+				if (ranges != null && ranges.Count > 0) {
+					// add all ranges
+					foreach (var range in ranges) {
+						currentMemberMapping.MemberCodeMappings.Add(
+							new SourceCodeMapping {
+								ILInstructionOffset = range,
+								StartLocation = startLocation,
+								EndLocation = output.Location,
+								MemberMapping = currentMemberMapping
+							});
+					}
+				}
+			}
+			
+			
+			if (node.Annotation<MemberMapping>() != null) {
+				output.AddDebuggerMemberMapping(currentMemberMapping);
+				currentMemberMapping = parentMemberMappings.Pop();
+			}
 		}
 		
 		public void WriteIdentifier(string identifier, TextTokenType tokenType)
