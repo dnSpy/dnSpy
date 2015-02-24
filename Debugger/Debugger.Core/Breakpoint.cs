@@ -15,8 +15,8 @@ namespace Debugger
 	{
 		NDebugger debugger;
 		
-		string fileName;
-		byte[] checkSum;
+		string fileName = null;
+		byte[] checkSum = null;
 		int    line;
 		int    column;
 		bool   enabled;
