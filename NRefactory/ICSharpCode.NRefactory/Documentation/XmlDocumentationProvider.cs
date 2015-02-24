@@ -275,7 +275,7 @@ namespace ICSharpCode.NRefactory.Documentation
 		public string GetDocumentation(string key)
 		{
 			if (key == null)
-				throw new ArgumentNullException("key");
+				return null;
 			
 			int hashcode = key.GetHashCode();
 			// index is sorted, so we can use binary search

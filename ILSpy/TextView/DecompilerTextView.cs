@@ -221,13 +221,46 @@ namespace ICSharpCode.ILSpy.TextView
 				renderer.AppendText(MainWindow.Instance.CurrentLanguage.GetTooltip(mr));
 				XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(mr.Module);
 				if (docProvider != null) {
-					string documentation = docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr));
+					string documentation = GetDocumentation(docProvider, mr);
 					if (documentation != null) {
 						renderer.AppendText(Environment.NewLine);
 						renderer.AddXmlDocumentation(documentation);
 					}
 				}
 				return renderer.CreateTextBlock();
+			}
+			return null;
+		}
+
+		string GetDocumentation(XmlDocumentationProvider docProvider, IMemberRef mr)
+		{
+			var doc = docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr));
+			if (doc != null)
+				return doc;
+			var method = mr as IMethod;
+			if (method == null)
+				return null;
+			string name = method.Name;
+			if (name.StartsWith("set_") || name.StartsWith("get_")) {
+				var md = ICSharpCode.Decompiler.DnlibExtensions.Resolve(method);
+				if (md == null)
+					return null;
+				mr = md.DeclaringType.Properties.FirstOrDefault(p => p.GetMethod == md || p.SetMethod == md);
+				return docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr));
+			}
+			else if (name.StartsWith("add_")) {
+				var md = ICSharpCode.Decompiler.DnlibExtensions.Resolve(method);
+				if (md == null)
+					return null;
+				mr = md.DeclaringType.Events.FirstOrDefault(p => p.AddMethod == md);
+				return docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr));
+			}
+			else if (name.StartsWith("remove_")) {
+				var md = ICSharpCode.Decompiler.DnlibExtensions.Resolve(method);
+				if (md == null)
+					return null;
+				mr = md.DeclaringType.Events.FirstOrDefault(p => p.RemoveMethod == md);
+				return docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr));
 			}
 			return null;
 		}
