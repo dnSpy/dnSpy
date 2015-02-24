@@ -321,11 +321,13 @@ namespace ICSharpCode.Decompiler.Ast
 			if (typeDef.IsEnum) {
 				long expectedEnumMemberValue = 0;
 				bool forcePrintingInitializers = IsFlagsEnum(typeDef);
+				TypeCode baseType = TypeCode.Int32;
 				foreach (FieldDefinition field in typeDef.Fields) {
 					if (!field.IsStatic) {
 						// the value__ field
 						if (field.FieldType != typeDef.Module.TypeSystem.Int32) {
 							astType.AddChild(ConvertType(field.FieldType), Roles.BaseType);
+							baseType = TypeAnalysis.GetTypeCode(field.FieldType);
 						}
 					} else {
 						EnumMemberDeclaration enumMember = new EnumMemberDeclaration();
@@ -333,7 +335,7 @@ namespace ICSharpCode.Decompiler.Ast
 						enumMember.Name = CleanName(field.Name);
 						long memberValue = (long)CSharpPrimitiveCast.Cast(TypeCode.Int64, field.Constant, false);
 						if (forcePrintingInitializers || memberValue != expectedEnumMemberValue) {
-							enumMember.AddChild(new PrimitiveExpression(field.Constant), EnumMemberDeclaration.InitializerRole);
+							enumMember.AddChild(new PrimitiveExpression(CSharpPrimitiveCast.Cast(baseType, field.Constant, false)), EnumMemberDeclaration.InitializerRole);
 						}
 						expectedEnumMemberValue = memberValue + 1;
 						astType.AddChild(enumMember, Roles.TypeMemberRole);
