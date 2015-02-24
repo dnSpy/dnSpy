@@ -172,7 +172,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 								if (errCode == 0x80131C30)
 									msg = "Use dnSpy-x86.exe to debug 32-bit applications.";
 								else
-									msg = "Use dnSpy-x64.exe to debug 64-bit applications.";
+									msg = "Use dnSpy.exe to debug 64-bit applications.";
 								msg += Environment.NewLine + Environment.NewLine;
 								msg += origMsg;
 							}

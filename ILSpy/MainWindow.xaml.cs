@@ -474,10 +474,8 @@ namespace ICSharpCode.ILSpy
 			var name = System.Reflection.Assembly.GetEntryAssembly().GetName().Name;
 			if (name == "dnSpy-x86")
 				return "x86";
-			if (name == "dnSpy-x64")
-				return "x64";
 			if (name == "dnSpy")
-				return "AnyCPU - " + (IntPtr.Size == 4 ? "x86" : "x64");
+				return IntPtr.Size == 4 ? "x86" : "x64";
 			Debug.Fail("Unknown entry assembly name" + name);
 			return string.Empty;
 		}

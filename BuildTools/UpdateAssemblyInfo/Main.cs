@@ -34,10 +34,6 @@ namespace UpdateAssemblyInfo
 				Output = "dnSpy-x86/Properties/AssemblyInfo.cs"
 			},
 			new TemplateFile {
-				Input = globalAssemblyInfoTemplateFile,
-				Output = "dnSpy-x64/Properties/AssemblyInfo.cs"
-			},
-			new TemplateFile {
 				Input = "ICSharpCode.Decompiler/Properties/AssemblyInfo.template.cs",
 				Output = "ICSharpCode.Decompiler/Properties/AssemblyInfo.cs"
 			},
@@ -48,10 +44,6 @@ namespace UpdateAssemblyInfo
 			new TemplateFile {
 				Input = ilspyAppConfigTemplateFile,
 				Output = "dnSpy-x86/App.config"
-			},
-			new TemplateFile {
-				Input = ilspyAppConfigTemplateFile,
-				Output = "dnSpy-x64/App.config"
 			},
 		};
 		
