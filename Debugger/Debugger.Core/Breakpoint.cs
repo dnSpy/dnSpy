@@ -178,7 +178,10 @@ namespace Debugger
 		
 		public override bool SetBreakpoint(Module module)
 		{
-			Debug.Assert(MethodKey.IsSameModule(module.FullPath));
+			bool okMod = MethodKey.IsSameModule(module.FullPath);
+			Debug.Assert(okMod, "Trying to set a BP that belongs in another module");
+			if (!okMod)
+				return false;
 			SourcecodeSegment segment = SourcecodeSegment.CreateForIL(module, this.Line, (int)MethodKey.Token, (int)ILOffset);
 			if (segment == null)
 				return false;

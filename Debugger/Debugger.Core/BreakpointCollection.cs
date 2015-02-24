@@ -45,7 +45,7 @@ namespace Debugger
 						if (!ilbp.MethodKey.IsSameModule(module.FullPath))
 							continue;
 
-						breakpoint.SetBreakpoint(module);
+						ilbp.SetBreakpoint(module);
 					}
 				}
 			}

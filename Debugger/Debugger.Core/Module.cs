@@ -278,7 +278,13 @@ namespace Debugger
 				collection.AddRange(this.Debugger.Breakpoints);
 				
 				foreach (Breakpoint b in collection) {
-					b.SetBreakpoint(this);
+					var ilbp = b as ILBreakpoint;
+					if (ilbp != null) {
+						if (ilbp.MethodKey.IsSameModule(this.FullPath))
+							ilbp.SetBreakpoint(this);
+					}
+					else
+						b.SetBreakpoint(this);
 				}
 			}
 		}
