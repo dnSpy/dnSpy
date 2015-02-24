@@ -48,12 +48,32 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
+		static readonly List<string> otherGacPaths = new List<string>();
+
+		static LoadedAssembly() {
+			var windir = Environment.GetEnvironmentVariable("WINDIR");
+			if (!string.IsNullOrEmpty(windir)) {
+				AddIfExists(otherGacPaths, windir, @"Microsoft.NET\Framework\v1.1.4322");
+				AddIfExists(otherGacPaths, windir, @"Microsoft.NET\Framework\v1.0.3705");
+			}
+		}
+
+		static void AddIfExists(IList<string> paths, string basePath, string extraPath) {
+			var path = Path.Combine(basePath, extraPath);
+			if (Directory.Exists(path))
+				paths.Add(path);
+		}
+
 		/// <summary>
 		/// true if this assembly is located in the GAC
 		/// </summary>
 		public bool IsGAC {
 			get {
 				foreach (var p in GacPaths) {
+					if (IsSubPath(p, fileName))
+						return true;
+				}
+				foreach (var p in otherGacPaths) {
 					if (IsSubPath(p, fileName))
 						return true;
 				}
@@ -331,6 +351,11 @@ namespace ICSharpCode.ILSpy
 				var file = GacInterop.FindAssemblyInNetGac(name);
 				if (file != null)
 					return assemblyList.OpenAssembly(file, assemblyLoadDisableCount == 0);
+				foreach (var path in otherGacPaths) {
+					loadedAsm = TryLoadFromDir(name, true, path);
+					if (loadedAsm != null)
+						return assemblyList.AddAssembly(loadedAsm, assemblyLoadDisableCount == 0);
+				}
 			}
 
 			loadedAsm = LookupFromSearchPaths(name, sourceModule, false);
