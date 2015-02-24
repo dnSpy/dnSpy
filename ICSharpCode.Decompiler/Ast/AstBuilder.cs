@@ -322,6 +322,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (typeDef.IsEnum) {
 				long expectedEnumMemberValue = 0;
 				bool forcePrintingInitializers = IsFlagsEnum(typeDef);
+				var enumType = typeDef.Fields.FirstOrDefault(f => !f.IsStatic);
 				foreach (FieldDef field in typeDef.Fields) {
 					if (!field.IsStatic) {
 						// the value__ field
@@ -338,7 +339,7 @@ namespace ICSharpCode.Decompiler.Ast
 							continue;
 						long memberValue = (long)CSharpPrimitiveCast.Cast(TypeCode.Int64, constant, false);
 						if (forcePrintingInitializers || memberValue != expectedEnumMemberValue) {
-							enumMember.AddChild(new PrimitiveExpression(constant), EnumMemberDeclaration.InitializerRole);
+							enumMember.AddChild(new PrimitiveExpression(ConvertConstant(enumType.FieldSig.GetFieldType(), constant)), EnumMemberDeclaration.InitializerRole);
 						}
 						expectedEnumMemberValue = memberValue + 1;
 						astType.AddChild(enumMember, Roles.TypeMemberRole);
@@ -1103,9 +1104,41 @@ namespace ICSharpCode.Decompiler.Ast
 			SetNewModifier(astField);
 			return astField;
 		}
+
+		static object ConvertConstant(TypeSig type, object constant)
+		{
+			if (type == null || constant == null)
+				return constant;
+			TypeCode c = ToTypeCode(type);
+			if (c >= TypeCode.Char && c <= TypeCode.Double)
+				return CSharpPrimitiveCast.Cast(c, constant, false);
+			return constant;
+		}
+
+		static TypeCode ToTypeCode(TypeSig type)
+		{
+			switch (type.GetElementType()) {
+			case ElementType.Boolean: return TypeCode.Boolean;
+			case ElementType.Char: return TypeCode.Char;
+			case ElementType.I1: return TypeCode.SByte;
+			case ElementType.U1: return TypeCode.Byte;
+			case ElementType.I2: return TypeCode.Int16;
+			case ElementType.U2: return TypeCode.UInt16;
+			case ElementType.I4: return TypeCode.Int32;
+			case ElementType.U4: return TypeCode.UInt32;
+			case ElementType.I8: return TypeCode.Int64;
+			case ElementType.U8: return TypeCode.UInt64;
+			case ElementType.R4: return TypeCode.Single;
+			case ElementType.R8: return TypeCode.Double;
+			case ElementType.String: return TypeCode.String;
+			case ElementType.Object: return TypeCode.Object;
+			}
+			return TypeCode.Empty;
+		}
 		
 		static Expression CreateExpressionForConstant(object constant, TypeSig type, bool isEnumMemberDeclaration = false)
 		{
+			constant = ConvertConstant(type, constant);
 			if (constant == null) {
 				if (DnlibExtensions.IsValueType(type) && !(type.Namespace == "System" && type.TypeName == "Nullable`1"))
 					return new DefaultValueExpression(ConvertType(type));
