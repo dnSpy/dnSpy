@@ -463,7 +463,7 @@ namespace ICSharpCode.ILSpy
 		{
 			RefreshTreeViewFilter();
 			if (e.PropertyName == "Language") {
-				DecompileSelectedNodes();
+				DecompileSelectedNodes(recordHistory: false);
 			}
 		}
 		
