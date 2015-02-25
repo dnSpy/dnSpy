@@ -104,7 +104,7 @@ namespace ICSharpCode.ILSpy.TextView
 			DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
 			
 			// Bookmarks context menu
-			textEditor.TextArea.DefaultInputHandler.NestedInputHandlers.Add(new SearchInputHandler(textEditor.TextArea));
+			SearchPanel.Install(textEditor.TextArea);
 			
 			ShowLineMargin();
 			
