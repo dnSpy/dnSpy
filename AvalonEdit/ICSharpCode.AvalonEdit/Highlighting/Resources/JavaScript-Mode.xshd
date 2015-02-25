@@ -2,15 +2,15 @@
 <!-- syntaxdefinition for JavaScript 2.0 by Svante Lidman -->
 <!-- converted to AvalonEdit format by Siegfried Pammer in 2010 -->
 <SyntaxDefinition name="JavaScript" extensions=".js" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
-	<Color name="Digits" foreground="DarkBlue" />
-	<Color name="Comment" foreground="Green" />
-	<Color name="String" foreground="Sienna" />
-	<Color name="Character" foreground="Sienna" />
-	<Color name="Regex" foreground="Sienna" />
-	<Color name="JavaScriptKeyWords" foreground="Blue" />
-	<Color name="JavaScriptIntrinsics" foreground="Blue" />
-	<Color name="JavaScriptLiterals" foreground="Blue" />
-	<Color name="JavaScriptGlobalFunctions" foreground="Blue" />
+	<Color name="Digits" foreground="DarkBlue" exampleText="3.14" />
+	<Color name="Comment" foreground="Green" exampleText="// comment" />
+	<Color name="String" foreground="Sienna" exampleText="var text = &quot;Hello, World!&quot;;" />
+	<Color name="Character" foreground="Sienna" exampleText="var char = 'a';" />
+	<Color name="Regex" foreground="Sienna" exampleText="/abc/m" />
+	<Color name="JavaScriptKeyWords" foreground="Blue" exampleText="return myVariable;" />
+	<Color name="JavaScriptIntrinsics" foreground="Blue" exampleText="Math.random()" />
+	<Color name="JavaScriptLiterals" foreground="Blue" exampleText="return false;" />
+	<Color name="JavaScriptGlobalFunctions" foreground="Blue" exampleText="escape(myString);" />
 	<RuleSet ignoreCase="false">
 		<Keywords color="JavaScriptKeyWords">
 			<Word>break</Word>

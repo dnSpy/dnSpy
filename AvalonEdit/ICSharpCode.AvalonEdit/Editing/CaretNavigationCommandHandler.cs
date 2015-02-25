@@ -1,9 +1,25 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -14,6 +30,24 @@ using ICSharpCode.AvalonEdit.Utils;
 
 namespace ICSharpCode.AvalonEdit.Editing
 {
+	enum CaretMovementType
+	{
+		None,
+		CharLeft,
+		CharRight,
+		Backspace,
+		WordLeft,
+		WordRight,
+		LineUp,
+		LineDown,
+		PageUp,
+		PageDown,
+		LineStart,
+		LineEnd,
+		DocumentStart,
+		DocumentEnd
+	}
+	
 	static class CaretNavigationCommandHandler
 	{
 		/// <summary>
@@ -41,21 +75,28 @@ namespace ICSharpCode.AvalonEdit.Editing
 			const ModifierKeys None = ModifierKeys.None;
 			const ModifierKeys Ctrl = ModifierKeys.Control;
 			const ModifierKeys Shift = ModifierKeys.Shift;
+			const ModifierKeys Alt = ModifierKeys.Alt;
 			
 			AddBinding(EditingCommands.MoveLeftByCharacter, None, Key.Left, OnMoveCaret(CaretMovementType.CharLeft));
 			AddBinding(EditingCommands.SelectLeftByCharacter, Shift, Key.Left, OnMoveCaretExtendSelection(CaretMovementType.CharLeft));
+			AddBinding(RectangleSelection.BoxSelectLeftByCharacter, Alt | Shift, Key.Left, OnMoveCaretBoxSelection(CaretMovementType.CharLeft));
 			AddBinding(EditingCommands.MoveRightByCharacter, None, Key.Right, OnMoveCaret(CaretMovementType.CharRight));
 			AddBinding(EditingCommands.SelectRightByCharacter, Shift, Key.Right, OnMoveCaretExtendSelection(CaretMovementType.CharRight));
+			AddBinding(RectangleSelection.BoxSelectRightByCharacter, Alt | Shift, Key.Right, OnMoveCaretBoxSelection(CaretMovementType.CharRight));
 			
 			AddBinding(EditingCommands.MoveLeftByWord, Ctrl, Key.Left, OnMoveCaret(CaretMovementType.WordLeft));
 			AddBinding(EditingCommands.SelectLeftByWord, Ctrl | Shift, Key.Left, OnMoveCaretExtendSelection(CaretMovementType.WordLeft));
+			AddBinding(RectangleSelection.BoxSelectLeftByWord, Ctrl | Alt | Shift, Key.Left, OnMoveCaretBoxSelection(CaretMovementType.WordLeft));
 			AddBinding(EditingCommands.MoveRightByWord, Ctrl, Key.Right, OnMoveCaret(CaretMovementType.WordRight));
 			AddBinding(EditingCommands.SelectRightByWord, Ctrl | Shift, Key.Right, OnMoveCaretExtendSelection(CaretMovementType.WordRight));
+			AddBinding(RectangleSelection.BoxSelectRightByWord, Ctrl | Alt | Shift, Key.Right, OnMoveCaretBoxSelection(CaretMovementType.WordRight));
 			
 			AddBinding(EditingCommands.MoveUpByLine, None, Key.Up, OnMoveCaret(CaretMovementType.LineUp));
 			AddBinding(EditingCommands.SelectUpByLine, Shift, Key.Up, OnMoveCaretExtendSelection(CaretMovementType.LineUp));
+			AddBinding(RectangleSelection.BoxSelectUpByLine, Alt | Shift, Key.Up, OnMoveCaretBoxSelection(CaretMovementType.LineUp));
 			AddBinding(EditingCommands.MoveDownByLine, None, Key.Down, OnMoveCaret(CaretMovementType.LineDown));
 			AddBinding(EditingCommands.SelectDownByLine, Shift, Key.Down, OnMoveCaretExtendSelection(CaretMovementType.LineDown));
+			AddBinding(RectangleSelection.BoxSelectDownByLine, Alt | Shift, Key.Down, OnMoveCaretBoxSelection(CaretMovementType.LineDown));
 			
 			AddBinding(EditingCommands.MoveDownByPage, None, Key.PageDown, OnMoveCaret(CaretMovementType.PageDown));
 			AddBinding(EditingCommands.SelectDownByPage, Shift, Key.PageDown, OnMoveCaretExtendSelection(CaretMovementType.PageDown));
@@ -64,8 +105,10 @@ namespace ICSharpCode.AvalonEdit.Editing
 			
 			AddBinding(EditingCommands.MoveToLineStart, None, Key.Home, OnMoveCaret(CaretMovementType.LineStart));
 			AddBinding(EditingCommands.SelectToLineStart, Shift, Key.Home, OnMoveCaretExtendSelection(CaretMovementType.LineStart));
+			AddBinding(RectangleSelection.BoxSelectToLineStart, Alt | Shift, Key.Home, OnMoveCaretBoxSelection(CaretMovementType.LineStart));
 			AddBinding(EditingCommands.MoveToLineEnd, None, Key.End, OnMoveCaret(CaretMovementType.LineEnd));
 			AddBinding(EditingCommands.SelectToLineEnd, Shift, Key.End, OnMoveCaretExtendSelection(CaretMovementType.LineEnd));
+			AddBinding(RectangleSelection.BoxSelectToLineEnd, Alt | Shift, Key.End, OnMoveCaretBoxSelection(CaretMovementType.LineEnd));
 			
 			AddBinding(EditingCommands.MoveToDocumentStart, Ctrl, Key.Home, OnMoveCaret(CaretMovementType.DocumentStart));
 			AddBinding(EditingCommands.SelectToDocumentStart, Ctrl | Shift, Key.Home, OnMoveCaretExtendSelection(CaretMovementType.DocumentStart));
@@ -90,22 +133,6 @@ namespace ICSharpCode.AvalonEdit.Editing
 		static TextArea GetTextArea(object target)
 		{
 			return target as TextArea;
-		}
-		
-		enum CaretMovementType
-		{
-			CharLeft,
-			CharRight,
-			WordLeft,
-			WordRight,
-			LineUp,
-			LineDown,
-			PageUp,
-			PageDown,
-			LineStart,
-			LineEnd,
-			DocumentStart,
-			DocumentEnd
 		}
 		
 		static ExecutedRoutedEventHandler OnMoveCaret(CaretMovementType direction)
@@ -135,44 +162,81 @@ namespace ICSharpCode.AvalonEdit.Editing
 			};
 		}
 		
-		#region Caret movement
-		static void MoveCaret(TextArea textArea, CaretMovementType direction)
+		static ExecutedRoutedEventHandler OnMoveCaretBoxSelection(CaretMovementType direction)
 		{
-			DocumentLine caretLine = textArea.Document.GetLineByNumber(textArea.Caret.Line);
-			VisualLine visualLine = textArea.TextView.GetOrConstructVisualLine(caretLine);
-			TextViewPosition caretPosition = textArea.Caret.Position;
-			TextLine textLine = visualLine.GetTextLine(caretPosition.VisualColumn);
+			return (target, args) => {
+				TextArea textArea = GetTextArea(target);
+				if (textArea != null && textArea.Document != null) {
+					args.Handled = true;
+					// First, convert the selection into a rectangle selection
+					// (this is required so that virtual space gets enabled for the caret movement)
+					if (textArea.Options.EnableRectangularSelection && !(textArea.Selection is RectangleSelection)) {
+						if (textArea.Selection.IsEmpty) {
+							textArea.Selection = new RectangleSelection(textArea, textArea.Caret.Position, textArea.Caret.Position);
+						} else {
+							// Convert normal selection to rectangle selection
+							textArea.Selection = new RectangleSelection(textArea, textArea.Selection.StartPosition, textArea.Caret.Position);
+						}
+					}
+					// Now move the caret and extend the selection
+					TextViewPosition oldPosition = textArea.Caret.Position;
+					MoveCaret(textArea, direction);
+					textArea.Selection = textArea.Selection.StartSelectionOrSetEndpoint(oldPosition, textArea.Caret.Position);
+					textArea.Caret.BringCaretToView();
+				}
+			};
+		}
+		
+		#region Caret movement
+		internal static void MoveCaret(TextArea textArea, CaretMovementType direction)
+		{
+			double desiredXPos = textArea.Caret.DesiredXPos;
+			textArea.Caret.Position = GetNewCaretPosition(textArea.TextView, textArea.Caret.Position, direction, textArea.Selection.EnableVirtualSpace, ref desiredXPos);
+			textArea.Caret.DesiredXPos = desiredXPos;
+		}
+		
+		internal static TextViewPosition GetNewCaretPosition(TextView textView, TextViewPosition caretPosition, CaretMovementType direction, bool enableVirtualSpace, ref double desiredXPos)
+		{
+			switch (direction) {
+				case CaretMovementType.None:
+					return caretPosition;
+				case CaretMovementType.DocumentStart:
+					desiredXPos = double.NaN;
+					return new TextViewPosition(0, 0);
+				case CaretMovementType.DocumentEnd:
+					desiredXPos = double.NaN;
+					return new TextViewPosition(textView.Document.GetLocation(textView.Document.TextLength));
+			}
+			DocumentLine caretLine = textView.Document.GetLineByNumber(caretPosition.Line);
+			VisualLine visualLine = textView.GetOrConstructVisualLine(caretLine);
+			TextLine textLine = visualLine.GetTextLine(caretPosition.VisualColumn, caretPosition.IsAtEndOfLine);
 			switch (direction) {
 				case CaretMovementType.CharLeft:
-					MoveCaretLeft(textArea, caretPosition, visualLine, CaretPositioningMode.Normal);
-					break;
+					desiredXPos = double.NaN;
+					return GetPrevCaretPosition(textView, caretPosition, visualLine, CaretPositioningMode.Normal, enableVirtualSpace);
+				case CaretMovementType.Backspace:
+					desiredXPos = double.NaN;
+					return GetPrevCaretPosition(textView, caretPosition, visualLine, CaretPositioningMode.EveryCodepoint, enableVirtualSpace);
 				case CaretMovementType.CharRight:
-					MoveCaretRight(textArea, caretPosition, visualLine, CaretPositioningMode.Normal);
-					break;
+					desiredXPos = double.NaN;
+					return GetNextCaretPosition(textView, caretPosition, visualLine, CaretPositioningMode.Normal, enableVirtualSpace);
 				case CaretMovementType.WordLeft:
-					MoveCaretLeft(textArea, caretPosition, visualLine, CaretPositioningMode.WordStart);
-					break;
+					desiredXPos = double.NaN;
+					return GetPrevCaretPosition(textView, caretPosition, visualLine, CaretPositioningMode.WordStart, enableVirtualSpace);
 				case CaretMovementType.WordRight:
-					MoveCaretRight(textArea, caretPosition, visualLine, CaretPositioningMode.WordStart);
-					break;
+					desiredXPos = double.NaN;
+					return GetNextCaretPosition(textView, caretPosition, visualLine, CaretPositioningMode.WordStart, enableVirtualSpace);
 				case CaretMovementType.LineUp:
 				case CaretMovementType.LineDown:
 				case CaretMovementType.PageUp:
 				case CaretMovementType.PageDown:
-					MoveCaretUpDown(textArea, direction, visualLine, textLine, caretPosition.VisualColumn);
-					break;
-				case CaretMovementType.DocumentStart:
-					SetCaretPosition(textArea, 0, 0);
-					break;
-				case CaretMovementType.DocumentEnd:
-					SetCaretPosition(textArea, -1, textArea.Document.TextLength);
-					break;
+					return GetUpDownCaretPosition(textView, caretPosition, direction, visualLine, textLine, enableVirtualSpace, ref desiredXPos);
 				case CaretMovementType.LineStart:
-					MoveCaretToStartOfLine(textArea, visualLine);
-					break;
+					desiredXPos = double.NaN;
+					return GetStartOfLineCaretPosition(caretPosition.VisualColumn, visualLine, textLine, enableVirtualSpace);
 				case CaretMovementType.LineEnd:
-					MoveCaretToEndOfLine(textArea, visualLine);
-					break;
+					desiredXPos = double.NaN;
+					return GetEndOfLineCaretPosition(visualLine, textLine);
 				default:
 					throw new NotSupportedException(direction.ToString());
 			}
@@ -180,79 +244,80 @@ namespace ICSharpCode.AvalonEdit.Editing
 		#endregion
 		
 		#region Home/End
-		static void MoveCaretToStartOfLine(TextArea textArea, VisualLine visualLine)
+		static TextViewPosition GetStartOfLineCaretPosition(int oldVC, VisualLine visualLine, TextLine textLine, bool enableVirtualSpace)
 		{
-			int newVC = visualLine.GetNextCaretPosition(-1, LogicalDirection.Forward, CaretPositioningMode.WordStart, textArea.Selection.EnableVirtualSpace);
+			int newVC = visualLine.GetTextLineVisualStartColumn(textLine);
+			if (newVC == 0)
+				newVC = visualLine.GetNextCaretPosition(newVC - 1, LogicalDirection.Forward, CaretPositioningMode.WordStart, enableVirtualSpace);
 			if (newVC < 0)
 				throw ThrowUtil.NoValidCaretPosition();
 			// when the caret is already at the start of the text, jump to start before whitespace
-			if (newVC == textArea.Caret.VisualColumn)
+			if (newVC == oldVC)
 				newVC = 0;
-			int offset = visualLine.FirstDocumentLine.Offset + visualLine.GetRelativeOffset(newVC);
-			SetCaretPosition(textArea, newVC, offset);
+			return visualLine.GetTextViewPosition(newVC);
 		}
 		
-		static void MoveCaretToEndOfLine(TextArea textArea, VisualLine visualLine)
+		static TextViewPosition GetEndOfLineCaretPosition(VisualLine visualLine, TextLine textLine)
 		{
-			int newVC = visualLine.VisualLength;
-			int offset = visualLine.FirstDocumentLine.Offset + visualLine.GetRelativeOffset(newVC);
-			SetCaretPosition(textArea, newVC, offset);
+			int newVC = visualLine.GetTextLineVisualStartColumn(textLine) + textLine.Length - textLine.TrailingWhitespaceLength;
+			TextViewPosition pos = visualLine.GetTextViewPosition(newVC);
+			pos.IsAtEndOfLine = true;
+			return pos;
 		}
 		#endregion
 		
 		#region By-character / By-word movement
-		static void MoveCaretRight(TextArea textArea, TextViewPosition caretPosition, VisualLine visualLine, CaretPositioningMode mode)
+		static TextViewPosition GetNextCaretPosition(TextView textView, TextViewPosition caretPosition, VisualLine visualLine, CaretPositioningMode mode, bool enableVirtualSpace)
 		{
-			int pos = visualLine.GetNextCaretPosition(caretPosition.VisualColumn, LogicalDirection.Forward, mode, textArea.Selection.EnableVirtualSpace);
+			int pos = visualLine.GetNextCaretPosition(caretPosition.VisualColumn, LogicalDirection.Forward, mode, enableVirtualSpace);
 			if (pos >= 0) {
-				SetCaretPosition(textArea, pos, visualLine.GetRelativeOffset(pos) + visualLine.FirstDocumentLine.Offset);
+				return visualLine.GetTextViewPosition(pos);
 			} else {
 				// move to start of next line
 				DocumentLine nextDocumentLine = visualLine.LastDocumentLine.NextLine;
 				if (nextDocumentLine != null) {
-					VisualLine nextLine = textArea.TextView.GetOrConstructVisualLine(nextDocumentLine);
-					pos = nextLine.GetNextCaretPosition(-1, LogicalDirection.Forward, mode, textArea.Selection.EnableVirtualSpace);
+					VisualLine nextLine = textView.GetOrConstructVisualLine(nextDocumentLine);
+					pos = nextLine.GetNextCaretPosition(-1, LogicalDirection.Forward, mode, enableVirtualSpace);
 					if (pos < 0)
 						throw ThrowUtil.NoValidCaretPosition();
-					SetCaretPosition(textArea, pos, nextLine.GetRelativeOffset(pos) + nextLine.FirstDocumentLine.Offset);
+					return nextLine.GetTextViewPosition(pos);
 				} else {
 					// at end of document
-					Debug.Assert(visualLine.LastDocumentLine.Offset + visualLine.LastDocumentLine.TotalLength == textArea.Document.TextLength);
-					SetCaretPosition(textArea, -1, textArea.Document.TextLength);
+					Debug.Assert(visualLine.LastDocumentLine.Offset + visualLine.LastDocumentLine.TotalLength == textView.Document.TextLength);
+					return new TextViewPosition(textView.Document.GetLocation(textView.Document.TextLength));
 				}
 			}
 		}
 		
-		static void MoveCaretLeft(TextArea textArea, TextViewPosition caretPosition, VisualLine visualLine, CaretPositioningMode mode)
+		static TextViewPosition GetPrevCaretPosition(TextView textView, TextViewPosition caretPosition, VisualLine visualLine, CaretPositioningMode mode, bool enableVirtualSpace)
 		{
-			int pos = visualLine.GetNextCaretPosition(caretPosition.VisualColumn, LogicalDirection.Backward, mode, textArea.Selection.EnableVirtualSpace);
+			int pos = visualLine.GetNextCaretPosition(caretPosition.VisualColumn, LogicalDirection.Backward, mode, enableVirtualSpace);
 			if (pos >= 0) {
-				SetCaretPosition(textArea, pos, visualLine.GetRelativeOffset(pos) + visualLine.FirstDocumentLine.Offset);
+				return visualLine.GetTextViewPosition(pos);
 			} else {
 				// move to end of previous line
 				DocumentLine previousDocumentLine = visualLine.FirstDocumentLine.PreviousLine;
 				if (previousDocumentLine != null) {
-					VisualLine previousLine = textArea.TextView.GetOrConstructVisualLine(previousDocumentLine);
-					pos = previousLine.GetNextCaretPosition(previousLine.VisualLength + 1, LogicalDirection.Backward, mode, textArea.Selection.EnableVirtualSpace);
+					VisualLine previousLine = textView.GetOrConstructVisualLine(previousDocumentLine);
+					pos = previousLine.GetNextCaretPosition(previousLine.VisualLength + 1, LogicalDirection.Backward, mode, enableVirtualSpace);
 					if (pos < 0)
 						throw ThrowUtil.NoValidCaretPosition();
-					SetCaretPosition(textArea, pos, previousLine.GetRelativeOffset(pos) + previousLine.FirstDocumentLine.Offset);
+					return previousLine.GetTextViewPosition(pos);
 				} else {
 					// at start of document
 					Debug.Assert(visualLine.FirstDocumentLine.Offset == 0);
-					SetCaretPosition(textArea, 0, 0);
+					return new TextViewPosition(0, 0);
 				}
 			}
 		}
 		#endregion
 
 		#region Line+Page up/down
-		static void MoveCaretUpDown(TextArea textArea, CaretMovementType direction, VisualLine visualLine, TextLine textLine, int caretVisualColumn)
+		static TextViewPosition GetUpDownCaretPosition(TextView textView, TextViewPosition caretPosition, CaretMovementType direction, VisualLine visualLine, TextLine textLine, bool enableVirtualSpace, ref double xPos)
 		{
 			// moving up/down happens using the desired visual X position
-			double xPos = textArea.Caret.DesiredXPos;
 			if (double.IsNaN(xPos))
-				xPos = visualLine.GetTextLineVisualXPosition(textLine, caretVisualColumn);
+				xPos = visualLine.GetTextLineVisualXPosition(textLine, caretPosition.VisualColumn);
 			// now find the TextLine+VisualLine where the caret will end up in
 			VisualLine targetVisualLine = visualLine;
 			TextLine targetLine;
@@ -266,8 +331,8 @@ namespace ICSharpCode.AvalonEdit.Editing
 						if (textLineIndex > 0) {
 							targetLine = visualLine.TextLines[textLineIndex - 1];
 						} else if (prevLineNumber >= 1) {
-							DocumentLine prevLine = textArea.Document.GetLineByNumber(prevLineNumber);
-							targetVisualLine = textArea.TextView.GetOrConstructVisualLine(prevLine);
+							DocumentLine prevLine = textView.Document.GetLineByNumber(prevLineNumber);
+							targetVisualLine = textView.GetOrConstructVisualLine(prevLine);
 							targetLine = targetVisualLine.TextLines[targetVisualLine.TextLines.Count - 1];
 						} else {
 							targetLine = null;
@@ -281,9 +346,9 @@ namespace ICSharpCode.AvalonEdit.Editing
 						int nextLineNumber = visualLine.LastDocumentLine.LineNumber + 1;
 						if (textLineIndex < visualLine.TextLines.Count - 1) {
 							targetLine = visualLine.TextLines[textLineIndex + 1];
-						} else if (nextLineNumber <= textArea.Document.LineCount) {
-							DocumentLine nextLine = textArea.Document.GetLineByNumber(nextLineNumber);
-							targetVisualLine = textArea.TextView.GetOrConstructVisualLine(nextLine);
+						} else if (nextLineNumber <= textView.Document.LineCount) {
+							DocumentLine nextLine = textView.Document.GetLineByNumber(nextLineNumber);
+							targetVisualLine = textView.GetOrConstructVisualLine(nextLine);
 							targetLine = targetVisualLine.TextLines[0];
 						} else {
 							targetLine = null;
@@ -296,11 +361,11 @@ namespace ICSharpCode.AvalonEdit.Editing
 						// Page up/down: find the target line using its visual position
 						double yPos = visualLine.GetTextLineVisualYPosition(textLine, VisualYPosition.LineMiddle);
 						if (direction == CaretMovementType.PageUp)
-							yPos -= textArea.TextView.RenderSize.Height;
+							yPos -= textView.RenderSize.Height;
 						else
-							yPos += textArea.TextView.RenderSize.Height;
-						DocumentLine newLine = textArea.TextView.GetDocumentLineByVisualTop(yPos);
-						targetVisualLine = textArea.TextView.GetOrConstructVisualLine(newLine);
+							yPos += textView.RenderSize.Height;
+						DocumentLine newLine = textView.GetDocumentLineByVisualTop(yPos);
+						targetVisualLine = textView.GetOrConstructVisualLine(newLine);
 						targetLine = targetVisualLine.GetTextLineByVisualYPosition(yPos);
 						break;
 					}
@@ -309,30 +374,18 @@ namespace ICSharpCode.AvalonEdit.Editing
 			}
 			if (targetLine != null) {
 				double yPos = targetVisualLine.GetTextLineVisualYPosition(targetLine, VisualYPosition.LineMiddle);
-				int newVisualColumn = targetVisualLine.GetVisualColumn(new Point(xPos, yPos), textArea.Selection.EnableVirtualSpace);
-				SetCaretPosition(textArea, targetVisualLine, targetLine, newVisualColumn, false);
-				textArea.Caret.DesiredXPos = xPos;
+				int newVisualColumn = targetVisualLine.GetVisualColumn(new Point(xPos, yPos), enableVirtualSpace);
+				
+				// prevent wrapping to the next line; TODO: could 'IsAtEnd' help here?
+				int targetLineStartCol = targetVisualLine.GetTextLineVisualStartColumn(targetLine);
+				if (newVisualColumn >= targetLineStartCol + targetLine.Length) {
+					if (newVisualColumn <= targetVisualLine.VisualLength)
+						newVisualColumn = targetLineStartCol + targetLine.Length - 1;
+				}
+				return targetVisualLine.GetTextViewPosition(newVisualColumn);
+			} else {
+				return caretPosition;
 			}
-		}
-		#endregion
-		
-		#region SetCaretPosition
-		static void SetCaretPosition(TextArea textArea, VisualLine targetVisualLine, TextLine targetLine,
-		                             int newVisualColumn, bool allowWrapToNextLine)
-		{
-			int targetLineStartCol = targetVisualLine.GetTextLineVisualStartColumn(targetLine);
-			if (!allowWrapToNextLine && newVisualColumn >= targetLineStartCol + targetLine.Length) {
-				if (newVisualColumn <= targetVisualLine.VisualLength)
-					newVisualColumn = targetLineStartCol + targetLine.Length - 1;
-			}
-			int newOffset = targetVisualLine.GetRelativeOffset(newVisualColumn) + targetVisualLine.FirstDocumentLine.Offset;
-			SetCaretPosition(textArea, newVisualColumn, newOffset);
-		}
-		
-		static void SetCaretPosition(TextArea textArea, int newVisualColumn, int newOffset)
-		{
-			textArea.Caret.Position = new TextViewPosition(textArea.Document.GetLocation(newOffset), newVisualColumn);
-			textArea.Caret.DesiredXPos = double.NaN;
 		}
 		#endregion
 	}

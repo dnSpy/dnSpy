@@ -3,51 +3,79 @@
   <PropertyGroup>
     <ProjectGuid>{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">Net40</Platform>
     <OutputType>Library</OutputType>
     <RootNamespace>ICSharpCode.AvalonEdit</RootNamespace>
     <AssemblyName>ICSharpCode.AvalonEdit</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <SourceAnalysisOverrideSettingsFile>"C:\Program Files\SharpDevelop\3.0\bin\..\AddIns\AddIns\Misc\SourceAnalysis\Settings.SourceAnalysis"</SourceAnalysisOverrideSettingsFile>
     <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
     <NoStdLib>False</NoStdLib>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>ICSharpCode.AvalonEdit.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
     <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
     <RunCodeAnalysis>False</RunCodeAnalysis>
     <CodeAnalysisRules>-Microsoft.Design#CA1020;-Microsoft.Design#CA1033;-Microsoft.Performance#CA1805;-Microsoft.Performance#CA1810</CodeAnalysisRules>
-    <OutputPath>bin\$(Configuration)</OutputPath>
-    <DocumentationFile>bin\$(Configuration)\ICSharpCode.AvalonEdit.xml</DocumentationFile>
     <NoWarn>1607</NoWarn>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>Full</DebugType>
-    <Optimize>False</Optimize>
-    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-    <DefineConstants>DEBUG;TRACE;DOTNET4</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <DebugSymbols>false</DebugSymbols>
-    <DebugType>PdbOnly</DebugType>
-    <Optimize>True</Optimize>
-    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
-    <DefineConstants>TRACE;DOTNET4</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Platform)' == 'AnyCPU' ">
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <NoWin32Manifest>False</NoWin32Manifest>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <RegisterForComInterop>False</RegisterForComInterop>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <BaseAddress>4194304</BaseAddress>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <FileAlignment>4096</FileAlignment>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'Net35' ">
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'Net40' ">
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <DefineConstants>DOTNET4</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'WithNRefactory' ">
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <DefineConstants>DOTNET4;NREFACTORY</DefineConstants>
+    <AssemblyOriginatorKeyFile>..\..\NRefactory\ICSharpCode.NRefactory.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>bin\Debug\ICSharpCode.AvalonEdit.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>False</Optimize>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
+    <DebugType>Full</DebugType>
+    <DefineDebug>True</DefineDebug>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>bin\Release\ICSharpCode.AvalonEdit.xml</DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <Optimize>True</Optimize>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <DebugType>Full</DebugType>
+    <DefineTrace>True</DefineTrace>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|WithNRefactory'">
+    <DefineConstants>DOTNET4;NREFACTORY</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|WithNRefactory'">
+    <DefineConstants>DOTNET4;NREFACTORY</DefineConstants>
+  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
   <ItemGroup>
+    <ProjectReference Include="..\..\NRefactory\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj" Condition="$(DefineConstants.Contains('NREFACTORY'))">
+      <Project>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</Project>
+      <Name>ICSharpCode.NRefactory</Name>
+    </ProjectReference>
+    <Reference Include="Microsoft.CSharp">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="PresentationCore">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -63,6 +91,10 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Printing">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web" Condition="!$(DefineConstants.Contains('DOTNET4'))" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
@@ -94,13 +126,16 @@
     <Compile Include="CodeCompletion\IOverloadProvider.cs" />
     <Compile Include="CodeCompletion\OverloadInsightWindow.cs" />
     <Compile Include="CodeCompletion\OverloadViewer.cs" />
-    <Compile Include="Document\ChangeTrackingCheckpoint.cs" />
     <Compile Include="Document\DocumentChangeOperation.cs">
       <DependentUpon>UndoStack.cs</DependentUpon>
     </Compile>
+    <Compile Include="Document\DocumentTextWriter.cs" />
+    <Compile Include="Document\IDocument.cs" />
     <Compile Include="Document\ILineTracker.cs" />
-    <Compile Include="Document\ISegment.cs" />
+    <Compile Include="Document\ITextAnchor.cs" />
     <Compile Include="Document\ITextSource.cs" />
+    <Compile Include="Document\SimpleSegment.cs" />
+    <Compile Include="Document\RopeTextSource.cs" />
     <Compile Include="Document\IUndoableOperation.cs">
       <DependentUpon>UndoStack.cs</DependentUpon>
     </Compile>
@@ -112,6 +147,7 @@
     <Compile Include="Document\TextDocumentWeakEventManager.cs">
       <DependentUpon>TextDocument.cs</DependentUpon>
     </Compile>
+    <Compile Include="Document\TextLocation.cs" />
     <Compile Include="Document\TextSegmentCollection.cs" />
     <Compile Include="Document\TextAnchor.cs" />
     <Compile Include="Document\TextAnchorNode.cs">
@@ -120,8 +156,8 @@
     <Compile Include="Document\TextAnchorTree.cs">
       <DependentUpon>TextAnchor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Document\TextLocation.cs" />
     <Compile Include="Document\TextSegment.cs" />
+    <Compile Include="Document\TextSourceVersionProvider.cs" />
     <Compile Include="Document\TextUtilities.cs" />
     <Compile Include="Document\UndoOperationGroup.cs">
       <DependentUpon>UndoStack.cs</DependentUpon>
@@ -144,8 +180,9 @@
     <Compile Include="Editing\EmptySelection.cs">
       <DependentUpon>Selection.cs</DependentUpon>
     </Compile>
+    <Compile Include="Editing\ImeNativeWrapper.cs" />
     <Compile Include="Editing\SelectionSegment.cs" />
-    <Compile Include="Folding\AbstractFoldingStrategy.cs" />
+    <Compile Include="Editing\ImeSupport.cs" />
     <Compile Include="Folding\FoldingElementGenerator.cs" />
     <Compile Include="Folding\FoldingManager.cs" />
     <Compile Include="Folding\FoldingMargin.cs" />
@@ -189,8 +226,11 @@
     <Compile Include="Highlighting\HighlightingColorizer.cs" />
     <Compile Include="Highlighting\HighlightingDefinitionInvalidException.cs" />
     <Compile Include="Highlighting\HighlightingDefinitionTypeConverter.cs" />
+    <Compile Include="Highlighting\HighlightingEngine.cs" />
     <Compile Include="Highlighting\HighlightingManager.cs" />
     <Compile Include="Highlighting\HtmlClipboard.cs" />
+    <Compile Include="Highlighting\HtmlOptions.cs" />
+    <Compile Include="Highlighting\HtmlRichTextWriter.cs" />
     <Compile Include="Highlighting\IHighlighter.cs" />
     <Compile Include="Highlighting\IHighlightingDefinition.cs" />
     <Compile Include="Highlighting\HighlightingRule.cs" />
@@ -199,6 +239,10 @@
     <Compile Include="Highlighting\HighlightingSpan.cs" />
     <Compile Include="Highlighting\IHighlightingDefinitionReferenceResolver.cs">
     </Compile>
+    <Compile Include="Highlighting\RichText.cs" />
+    <Compile Include="Highlighting\RichTextColorizer.cs" />
+    <Compile Include="Highlighting\RichTextModel.cs" />
+    <Compile Include="Highlighting\RichTextModelWriter.cs" />
     <Compile Include="Highlighting\Xshd\HighlightingLoader.cs" />
     <Compile Include="Highlighting\Xshd\IXshdVisitor.cs" />
     <Compile Include="Highlighting\Xshd\SaveXshdVisitor.cs" />
@@ -207,6 +251,7 @@
     <Compile Include="Highlighting\Xshd\XmlHighlightingDefinition.cs" />
     <Compile Include="Highlighting\Xshd\XshdColor.cs" />
     <Compile Include="Highlighting\Xshd\XshdImport.cs" />
+    <Compile Include="Highlighting\Xshd\XshdProperty.cs" />
     <Compile Include="Highlighting\Xshd\XshdReference.cs" />
     <Compile Include="Highlighting\Xshd\XshdElement.cs" />
     <Compile Include="Highlighting\Xshd\XshdKeywords.cs" />
@@ -219,7 +264,6 @@
     <Compile Include="Indentation\CSharp\DocumentAccessor.cs" />
     <Compile Include="Indentation\DefaultIndentationStrategy.cs" />
     <Compile Include="Indentation\IIndentationStrategy.cs" />
-    <Compile Include="Properties\GlobalAssemblyInfo.cs" />
     <Compile Include="Rendering\BackgroundGeometryBuilder.cs">
       <DependentUpon>IBackgroundRenderer.cs</DependentUpon>
     </Compile>
@@ -229,6 +273,9 @@
     <Compile Include="Rendering\ColorizingTransformer.cs">
       <DependentUpon>IVisualLineTransformer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Rendering\ColumnRulerRenderer.cs" />
+    <Compile Include="Rendering\CurrentLineHighlightRenderer.cs" />
+    <Compile Include="Rendering\DefaultTextRunTypographyProperties.cs" />
     <Compile Include="Rendering\DocumentColorizingTransformer.cs">
       <DependentUpon>IVisualLineTransformer.cs</DependentUpon>
     </Compile>
@@ -337,22 +384,23 @@
     </Compile>
     <Compile Include="TextViewPosition.cs" />
     <Compile Include="Utils\Boxes.cs" />
-    <Compile Include="Utils\BusyManager.cs">
-      <DependentUpon>ObserveAddRemoveCollection.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Utils\CallbackOnDispose.cs" />
     <Compile Include="Utils\CharRope.cs" />
     <Compile Include="Utils\CompressingTreeList.cs" />
     <Compile Include="Utils\Constants.cs" />
     <Compile Include="Utils\DelayedEvents.cs" />
-    <Compile Include="Utils\CallbackOnDispose.cs" />
     <Compile Include="Utils\Deque.cs" />
+    <Compile Include="Utils\DocumentPrinter.cs" />
     <Compile Include="Utils\Empty.cs" />
     <Compile Include="Utils\ExtensionMethods.cs" />
     <Compile Include="Utils\FileReader.cs" />
+    <Compile Include="Utils\IFreezable.cs" />
     <Compile Include="Utils\ImmutableStack.cs" />
     <Compile Include="Utils\NullSafeCollection.cs" />
     <Compile Include="Utils\ObserveAddRemoveCollection.cs" />
+    <Compile Include="Utils\PlainRichTextWriter.cs" />
     <Compile Include="Utils\PropertyChangedWeakEventManager.cs" />
+    <Compile Include="Utils\RichTextWriter.cs" />
     <Compile Include="Utils\Rope.cs" />
     <Compile Include="Utils\RopeNode.cs" />
     <Compile Include="Utils\RopeTextReader.cs" />
@@ -363,41 +411,6 @@
     <Compile Include="Utils\ThrowUtil.cs" />
     <Compile Include="Utils\Win32.cs" />
     <CodeAnalysisDictionary Include="Properties\CodeAnalysisDictionary.xml" />
-    <Compile Include="Xml\AbstractAXmlVisitor.cs" />
-    <Compile Include="Xml\AXmlAttribute.cs" />
-    <Compile Include="Xml\AXmlAttributeCollection.cs" />
-    <Compile Include="Xml\AXmlContainer.cs" />
-    <Compile Include="Xml\AXmlDocument.cs" />
-    <Compile Include="Xml\AXmlElement.cs" />
-    <Compile Include="Xml\AXmlObject.cs" />
-    <Compile Include="Xml\AXmlObjectCollection.cs" />
-    <Compile Include="Xml\AXmlObjectEventArgs.cs" />
-    <Compile Include="Xml\AXmlParser.cs" />
-    <Compile Include="Xml\AXmlTag.cs" />
-    <Compile Include="Xml\AXmlText.cs" />
-    <Compile Include="Xml\CanonicalPrintAXmlVisitor.cs" />
-    <Compile Include="Xml\InternalException.cs" />
-    <Compile Include="Xml\TrackedSegmentCollection.cs">
-      <DependentUpon>AXmlParser.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Xml\ExtensionMethods.cs" />
-    <Compile Include="Xml\FilteredCollection.cs" />
-    <Compile Include="Xml\IAXmlVisitor.cs" />
-    <Compile Include="Xml\MergedCollection.cs" />
-    <Compile Include="Xml\PrettyPrintAXmlVisitor.cs" />
-    <Compile Include="Xml\SyntaxError.cs" />
-    <Compile Include="Xml\TagMatchingHeuristics.cs">
-      <DependentUpon>AXmlParser.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Xml\TagReader.cs">
-      <DependentUpon>AXmlParser.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Xml\TextType.cs">
-      <DependentUpon>AXmlText.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Xml\TokenReader.cs">
-      <DependentUpon>AXmlParser.cs</DependentUpon>
-    </Compile>
     <Resource Include="themes\RightArrow.cur" />
     <EmbeddedResource Include="Highlighting\Resources\ASPX.xshd" />
     <EmbeddedResource Include="Highlighting\Resources\Boo.xshd" />
@@ -409,7 +422,7 @@
     <EmbeddedResource Include="Highlighting\Resources\Patch-Mode.xshd" />
     <EmbeddedResource Include="Highlighting\Resources\PHP-Mode.xshd" />
     <EmbeddedResource Include="Highlighting\Resources\Tex-Mode.xshd" />
-    <EmbeddedResource Include="Highlighting\Resources\VBNET-Mode.xshd" />
+    <EmbeddedResource Include="Highlighting\Resources\VB-Mode.xshd" />
     <EmbeddedResource Include="Highlighting\Resources\XML-Mode.xshd" />
     <EmbeddedResource Include="Highlighting\Resources\ModeV1.xsd" />
     <EmbeddedResource Include="Highlighting\Resources\ModeV2.xsd" />
@@ -432,10 +445,13 @@
     <EmbeddedResource Include="Highlighting\Resources\CSS-Mode.xshd" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Search" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Search\next.png" />
     <Resource Include="Search\prev.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Highlighting\Resources\PowerShell.xshd" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Highlighting\Resources\MarkDown-Mode.xshd" />
   </ItemGroup>
 </Project>

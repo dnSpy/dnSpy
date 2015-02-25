@@ -41,13 +41,13 @@
 	<section>
 	  <title>System requirements</title>
 	  <content>
-	    <para>AvalonEdit requires the
+	    <para>There are two versions of AvalonEdit - the normal one requires
 			<externalLink>
-			<linkText>.NET Framework 3.5 SP1</linkText>
-			<linkUri>http://www.microsoft.com/downloads/details.aspx?FamilyID=ab99342f-5d1a-413d-8319-81da479ab0d7&amp;DisplayLang=en</linkUri>
+			<linkText>.NET Framework 4.0</linkText>
+			<linkUri>http://msdn.microsoft.com/en-us/library/w0x726c2.aspx</linkUri>
 			<linkTarget>_blank</linkTarget>
-			</externalLink>.
-			For compiling AvalonEdit inside Visual Studio 2008, VS08 SP1 is required.
+			</externalLink> or higher; but we also offer a modified version for .NET 3.5 SP1.
+			For compiling AvalonEdit, you will need a C# 4.0 compiler (SharpDevelop 4.x or Visual Studio 2010).
 		</para>
 		<para>AvalonEdit requires FullTrust and will not run as XBAP.</para>
 	  </content>

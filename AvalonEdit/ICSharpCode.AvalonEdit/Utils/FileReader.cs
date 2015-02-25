@@ -1,5 +1,20 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.IO;
@@ -33,6 +48,22 @@ namespace ICSharpCode.AvalonEdit.Utils
 					return true;
 				default:
 					return false;
+			}
+		}
+		
+		static bool IsASCIICompatible(Encoding encoding)
+		{
+			byte[] bytes = encoding.GetBytes("Az");
+			return bytes.Length == 2 && bytes[0] == 'A' && bytes[1] == 'z';
+		}
+		
+		static Encoding RemoveBOM(Encoding encoding)
+		{
+			switch (encoding.CodePage) {
+				case 65001: // UTF-8
+					return UTF8NoBOM;
+				default:
+					return encoding;
 			}
 		}
 		
@@ -125,6 +156,8 @@ namespace ICSharpCode.AvalonEdit.Utils
 			}
 		}
 		
+		static readonly Encoding UTF8NoBOM = new UTF8Encoding(false);
+		
 		static StreamReader AutoDetect(Stream fs, byte firstByte, byte secondByte, Encoding defaultEncoding)
 		{
 			int max = (int)Math.Min(fs.Length, 500000); // look at max. 500 KB
@@ -187,21 +220,20 @@ namespace ICSharpCode.AvalonEdit.Utils
 			fs.Position = 0;
 			switch (state) {
 				case ASCII:
+					return new StreamReader(fs, IsASCIICompatible(defaultEncoding) ? RemoveBOM(defaultEncoding) : Encoding.ASCII);
 				case Error:
-					// when the file seems to be ASCII or non-UTF8,
+					// When the file seems to be non-UTF8,
 					// we read it using the user-specified encoding so it is saved again
 					// using that encoding.
 					if (IsUnicode(defaultEncoding)) {
 						// the file is not Unicode, so don't read it using Unicode even if the
 						// user has choosen Unicode as the default encoding.
 						
-						// If we don't do this, SD will end up always adding a Byte Order Mark
-						// to ASCII files.
 						defaultEncoding = Encoding.Default; // use system encoding instead
 					}
-					return new StreamReader(fs, defaultEncoding);
+					return new StreamReader(fs, RemoveBOM(defaultEncoding));
 				default:
-					return new StreamReader(fs);
+					return new StreamReader(fs, UTF8NoBOM);
 			}
 		}
 	}

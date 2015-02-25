@@ -1,5 +1,20 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Windows;
@@ -15,14 +30,17 @@ namespace ICSharpCode.AvalonEdit.Editing
 {
 	sealed class CaretLayer : Layer
 	{
+		TextArea textArea;
+		
 		bool isVisible;
 		Rect caretRectangle;
 		
 		DispatcherTimer caretBlinkTimer = new DispatcherTimer();
 		bool blink;
 		
-		public CaretLayer(TextView textView) : base(textView, KnownLayer.Caret)
+		public CaretLayer(TextArea textArea) : base(textArea.TextView, KnownLayer.Caret)
 		{
+			this.textArea = textArea;
 			this.IsHitTestVisible = false;
 			caretBlinkTimer.Tick += new EventHandler(caretBlinkTimer_Tick);
 		}
@@ -75,6 +93,17 @@ namespace ICSharpCode.AvalonEdit.Editing
 				Brush caretBrush = this.CaretBrush;
 				if (caretBrush == null)
 					caretBrush = (Brush)textView.GetValue(TextBlock.ForegroundProperty);
+				
+				if (this.textArea.OverstrikeMode) {
+					SolidColorBrush scBrush = caretBrush as SolidColorBrush;
+					if (scBrush != null) {
+						Color brushColor = scBrush.Color;
+						Color newColor = Color.FromArgb(100, brushColor.R, brushColor.G, brushColor.B);
+						caretBrush = new SolidColorBrush(newColor);
+						caretBrush.Freeze();
+					}
+				}
+				
 				Rect r = new Rect(caretRectangle.X - textView.HorizontalOffset,
 				                  caretRectangle.Y - textView.VerticalOffset,
 				                  caretRectangle.Width,

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsd:schema targetNamespace="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<xsd:schema version="2" elementFormDefault="qualified" targetNamespace="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 	<!-- Font Weight -->
 	<xsd:simpleType name="FontWeight">
 		<xsd:union>
@@ -14,7 +14,7 @@
 					<xsd:enumeration value="bold"/>
 					<xsd:enumeration value="normal"/>
 					<xsd:enumeration value="regular"/>
-					<!-- should we support other font weigth names? -->
+					<!-- should we support other font weight names? -->
 				</xsd:restriction>
 			</xsd:simpleType>
 		</xsd:union>
@@ -35,6 +35,8 @@
 		<xsd:attribute name="background" type="xsd:string" use="optional" />
 		<xsd:attribute name="fontWeight" type="FontWeight" use="optional" />
 		<xsd:attribute name="fontStyle" type="FontStyle" use="optional" />
+		<xsd:attribute name="underline" type="xsd:boolean" use="optional" />
+		<xsd:anyAttribute namespace="##other" processContents="lax" />
 	</xsd:attributeGroup>
 	
 	<xsd:attributeGroup name="ColorReferenceAttributes">
@@ -47,6 +49,14 @@
 			<xsd:attribute name="name" type="xsd:string" use="required" />
 			<xsd:attribute name="exampleText" type="xsd:string" use="optional" />
 			<xsd:attributeGroup ref="ColorAttributes"/>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="Property">
+		<xsd:complexType>
+			<xsd:attribute name="name" type="xsd:string" use="required" />
+			<xsd:attribute name="value" type="xsd:string" use="required" />
+			<xsd:anyAttribute namespace="##other" processContents="lax" />
 		</xsd:complexType>
 	</xsd:element>
 	
@@ -69,7 +79,15 @@
 		</xsd:complexType>
 	</xsd:element>
 	
-	<xsd:element name="Word" type="xsd:string"/>
+	<xsd:element name="Word">
+		<xsd:complexType>
+			<xsd:simpleContent>
+				<xsd:extension base="xsd:string">
+					<xsd:anyAttribute namespace="##other" processContents="lax" />
+				</xsd:extension>
+			</xsd:simpleContent>
+		</xsd:complexType>
+	</xsd:element>
 	
 	<!-- Spans -->
 	<xsd:element name="Span">
@@ -125,9 +143,11 @@
 				<xsd:element ref="Span"/>
 				<xsd:element ref="Import"/>
 				<xsd:element ref="Rule"/>
+				<xsd:any namespace="##other" processContents="lax" />
 			</xsd:choice>
 			<xsd:attribute name="name" type="xsd:string" use="optional" />
 			<xsd:attribute name="ignoreCase" type="xsd:boolean" use="optional" />
+			<xsd:anyAttribute namespace="##other" processContents="lax" />
 		</xsd:complexType>
 	</xsd:element>
 	
@@ -135,11 +155,14 @@
 	<xsd:element name="SyntaxDefinition">
 		<xsd:complexType>
 			<xsd:choice minOccurs="1" maxOccurs="unbounded">
+				<xsd:element ref="Property"/>
 				<xsd:element ref="Color"/>
 				<xsd:element ref="RuleSet"/>
+				<xsd:any namespace="##other" processContents="lax" />
 			</xsd:choice>
 			<xsd:attribute name="name" type="xsd:string" use="optional" />
 			<xsd:attribute name="extensions" type="xsd:string" use="optional" />
+			<xsd:anyAttribute namespace="##other" processContents="lax" />
 		</xsd:complexType>
 	</xsd:element>
 </xsd:schema>

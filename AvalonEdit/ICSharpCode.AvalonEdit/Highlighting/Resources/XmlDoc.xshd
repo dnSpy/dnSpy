@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <SyntaxDefinition name="XmlDoc" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
-	<Color name="XmlString" foreground="Silver" fontWeight="bold" />
-	<Color name="DocComment" foreground="Gray" />
-	<Color name="XmlPunctuation" fontWeight="bold" />
-	<Color name="KnownDocTags" fontWeight="bold" />
+	<Color name="XmlString" foreground="Silver" fontWeight="bold" exampleText="${DocCommentMarker} &lt;exception cref=&quot;System.Exception&quot; /&gt;" />
+	<Color name="DocComment" foreground="Gray" exampleText="${DocCommentMarker} &lt;exception cref=&quot;System.Exception&quot; /&gt;" />
+	<Color name="XmlPunctuation" fontWeight="bold" exampleText="${DocCommentMarker} &lt;exception cref=&quot;System.Exception&quot; /&gt;" />
+	<Color name="KnownDocTags" fontWeight="bold" exampleText="${DocCommentMarker} &lt;exception cref=&quot;System.Exception&quot; /&gt;" />
 	
 	<RuleSet name="DocCommentSet">
 		<Span color="DocComment">

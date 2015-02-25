@@ -1,8 +1,24 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Globalization;
+using System.IO;
 using System.Text;
 
 namespace ICSharpCode.AvalonEdit.Utils
@@ -34,6 +50,10 @@ namespace ICSharpCode.AvalonEdit.Utils
 		{
 			if (rope == null)
 				throw new ArgumentNullException("rope");
+			#if DEBUG
+			if (length < 0)
+				throw new ArgumentOutOfRangeException("length", length, "Value must be >= 0");
+			#endif
 			if (length == 0)
 				return string.Empty;
 			char[] buffer = new char[length];
@@ -42,14 +62,14 @@ namespace ICSharpCode.AvalonEdit.Utils
 		}
 		
 		/// <summary>
-		/// Retrieves the text for a portion of the rope and writes it to the specified string builder.
+		/// Retrieves the text for a portion of the rope and writes it to the specified text writer.
 		/// Runs in O(lg N + M), where M=<paramref name="length"/>.
 		/// </summary>
 		/// <exception cref="ArgumentOutOfRangeException">offset or length is outside the valid range.</exception>
 		/// <remarks>
 		/// This method counts as a read access and may be called concurrently to other read accesses.
 		/// </remarks>
-		public static void WriteTo(this Rope<char> rope, StringBuilder output, int startIndex, int length)
+		public static void WriteTo(this Rope<char> rope, TextWriter output, int startIndex, int length)
 		{
 			if (rope == null)
 				throw new ArgumentNullException("rope");
@@ -111,7 +131,7 @@ namespace ICSharpCode.AvalonEdit.Utils
 			}
 		}
 		
-		internal static void WriteTo(this RopeNode<char> node, int index, StringBuilder output, int count)
+		internal static void WriteTo(this RopeNode<char> node, int index, TextWriter output, int count)
 		{
 			if (node.height == 0) {
 				if (node.contents == null) {
@@ -119,7 +139,7 @@ namespace ICSharpCode.AvalonEdit.Utils
 					node.GetContentNode().WriteTo(index, output, count);
 				} else {
 					// leaf node: append data
-					output.Append(node.contents, index, count);
+					output.Write(node.contents, index, count);
 				}
 			} else {
 				// concat node: do recursive calls
@@ -152,7 +172,7 @@ namespace ICSharpCode.AvalonEdit.Utils
 			rope.VerifyRange(startIndex, length);
 			
 			while (length > 0) {
-				var entry = rope.FindNodeUsingCache(startIndex).UnsafePeek();
+				var entry = rope.FindNodeUsingCache(startIndex).PeekOrDefault();
 				char[] contents = entry.node.contents;
 				int startWithinNode = startIndex - entry.nodeStartIndex;
 				int nodeLength = Math.Min(entry.node.length, startWithinNode + length);
@@ -167,6 +187,40 @@ namespace ICSharpCode.AvalonEdit.Utils
 				startIndex = entry.nodeStartIndex + nodeLength;
 			}
 			return -1;
+		}
+		
+		/// <summary>
+		/// Gets the index of the first occurrence of the search text.
+		/// </summary>
+		public static int IndexOf(this Rope<char> rope, string searchText, int startIndex, int length, StringComparison comparisonType)
+		{
+			if (rope == null)
+				throw new ArgumentNullException("rope");
+			if (searchText == null)
+				throw new ArgumentNullException("searchText");
+			rope.VerifyRange(startIndex, length);
+			int pos = rope.ToString(startIndex, length).IndexOf(searchText, comparisonType);
+			if (pos < 0)
+				return -1;
+			else
+				return pos + startIndex;
+		}
+		
+		/// <summary>
+		/// Gets the index of the last occurrence of the search text.
+		/// </summary>
+		public static int LastIndexOf(this Rope<char> rope, string searchText, int startIndex, int length, StringComparison comparisonType)
+		{
+			if (rope == null)
+				throw new ArgumentNullException("rope");
+			if (searchText == null)
+				throw new ArgumentNullException("searchText");
+			rope.VerifyRange(startIndex, length);
+			int pos = rope.ToString(startIndex, length).LastIndexOf(searchText, comparisonType);
+			if (pos < 0)
+				return -1;
+			else
+				return pos + startIndex;
 		}
 	}
 }

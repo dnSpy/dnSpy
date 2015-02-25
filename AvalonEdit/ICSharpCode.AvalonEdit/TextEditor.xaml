@@ -37,7 +37,7 @@
 		</Setter>
 	</Style>
 	
-	<Style TargetType="{x:Type editing:TextArea}">
+	<Style TargetType="{x:Type editing:TextArea}" x:Shared="False">
 		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
 		<Setter Property="SelectionBrush">
 			<Setter.Value>

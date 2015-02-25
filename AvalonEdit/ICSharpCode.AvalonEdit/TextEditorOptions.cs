@@ -1,5 +1,20 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.ComponentModel;
@@ -194,7 +209,7 @@ namespace ICSharpCode.AvalonEdit
 		// The fields should be accessed only by their property - the fields might not be used
 		// if someone overrides the property.
 		
-		int _indentationSize = 4;
+		int indentationSize = 4;
 		
 		/// <summary>
 		/// Gets/Sets the width of one indentation unit.
@@ -202,7 +217,7 @@ namespace ICSharpCode.AvalonEdit
 		/// <remarks>The default value is 4.</remarks>
 		[DefaultValue(4)]
 		public virtual int IndentationSize {
-			get { return _indentationSize; }
+			get { return indentationSize; }
 			set {
 				if (value < 1)
 					throw new ArgumentOutOfRangeException("value", value, "value must be positive");
@@ -210,15 +225,15 @@ namespace ICSharpCode.AvalonEdit
 				// (it only crashed in the hundred thousands for me; but might crash earlier with larger fonts)
 				if (value > 1000)
 					throw new ArgumentOutOfRangeException("value", value, "indentation size is too large");
-				if (_indentationSize != value) {
-					_indentationSize = value;
+				if (indentationSize != value) {
+					indentationSize = value;
 					OnPropertyChanged("IndentationSize");
 					OnPropertyChanged("IndentationString");
 				}
 			}
 		}
 		
-		bool _convertTabsToSpaces;
+		bool convertTabsToSpaces;
 		
 		/// <summary>
 		/// Gets/Sets whether to use spaces for indentation instead of tabs.
@@ -226,10 +241,10 @@ namespace ICSharpCode.AvalonEdit
 		/// <remarks>The default value is <c>false</c>.</remarks>
 		[DefaultValue(false)]
 		public virtual bool ConvertTabsToSpaces {
-			get { return _convertTabsToSpaces; }
+			get { return convertTabsToSpaces; }
 			set {
-				if (_convertTabsToSpaces != value) {
-					_convertTabsToSpaces = value;
+				if (convertTabsToSpaces != value) {
+					convertTabsToSpaces = value;
 					OnPropertyChanged("ConvertTabsToSpaces");
 					OnPropertyChanged("IndentationString");
 				}
@@ -378,6 +393,103 @@ namespace ICSharpCode.AvalonEdit
 				if (enableVirtualSpace != value) {
 					enableVirtualSpace = value;
 					OnPropertyChanged("EnableVirtualSpace");
+				}
+			}
+		}
+		
+		bool enableImeSupport = true;
+		
+		/// <summary>
+		/// Gets/Sets whether the support for Input Method Editors (IME)
+		/// for non-alphanumeric scripts (Chinese, Japanese, Korean, ...) is enabled.
+		/// </summary>
+		[DefaultValue(true)]
+		public virtual bool EnableImeSupport {
+			get { return enableImeSupport; }
+			set {
+				if (enableImeSupport != value) {
+					enableImeSupport = value;
+					OnPropertyChanged("EnableImeSupport");
+				}
+			}
+		}
+		
+		bool showColumnRuler = false;
+		
+		/// <summary>
+		/// Gets/Sets whether the column ruler should be shown.
+		/// </summary>
+		[DefaultValue(false)]
+		public virtual bool ShowColumnRuler {
+			get { return showColumnRuler; }
+			set {
+				if (showColumnRuler != value) {
+					showColumnRuler = value;
+					OnPropertyChanged("ShowColumnRuler");
+				}
+			}
+		}
+		
+		int columnRulerPosition = 80;
+		
+		/// <summary>
+		/// Gets/Sets where the column ruler should be shown.
+		/// </summary>
+		[DefaultValue(80)]
+		public virtual int ColumnRulerPosition {
+			get { return columnRulerPosition; }
+			set {
+				if (columnRulerPosition != value) {
+					columnRulerPosition = value;
+					OnPropertyChanged("ColumnRulerPosition");
+				}
+			}
+		}
+		
+		bool highlightCurrentLine = false;
+		
+		/// <summary>
+		/// Gets/Sets if current line should be shown.
+		/// </summary>
+		[DefaultValue(false)]
+		public virtual bool HighlightCurrentLine {
+			get { return highlightCurrentLine; }
+			set {
+				if (highlightCurrentLine != value) {
+					highlightCurrentLine = value;
+					OnPropertyChanged("HighlightCurrentLine");
+				}
+			}
+		}
+		
+		bool hideCursorWhileTyping = true;
+		
+		/// <summary>
+		/// Gets/Sets if mouse cursor should be hidden while user is typing.
+		/// </summary>
+		[DefaultValue(true)]
+		public bool HideCursorWhileTyping {
+			get { return hideCursorWhileTyping; }
+			set {
+				if (hideCursorWhileTyping != value) {
+					hideCursorWhileTyping = value;
+					OnPropertyChanged("HideCursorWhileTyping");
+				}
+			}
+		}
+		
+		bool allowToggleOverstrikeMode = false;
+		
+		/// <summary>
+		/// Gets/Sets if the user is allowed to enable/disable overstrike mode.
+		/// </summary>
+		[DefaultValue(false)]
+		public bool AllowToggleOverstrikeMode {
+			get { return allowToggleOverstrikeMode; }
+			set {
+				if (allowToggleOverstrikeMode != value) {
+					allowToggleOverstrikeMode = value;
+					OnPropertyChanged("AllowToggleOverstrikeMode");
 				}
 			}
 		}

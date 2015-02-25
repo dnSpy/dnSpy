@@ -1,8 +1,22 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -11,16 +25,16 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Indentation;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Utils;
+using ICSharpCode.NRefactory;
+using ICSharpCode.NRefactory.Editor;
 
 namespace ICSharpCode.AvalonEdit.Editing
 {
@@ -29,6 +43,8 @@ namespace ICSharpCode.AvalonEdit.Editing
 	/// </summary>
 	public class TextArea : Control, IScrollInfo, IWeakEventListener, ITextEditorComponent, IServiceProvider
 	{
+		internal readonly ImeSupport ime;
+		
 		#region Constructor
 		static TextArea()
 		{
@@ -68,6 +84,9 @@ namespace ICSharpCode.AvalonEdit.Editing
 			
 			caret = new Caret(this);
 			caret.PositionChanged += (sender, e) => RequestSelectionValidation();
+			caret.PositionChanged += CaretPositionChanged;
+			AttachTypingEvents();
+			ime = new ImeSupport(this);
 			
 			leftMargins.CollectionChanged += leftMargins_CollectionChanged;
 			
@@ -557,6 +576,14 @@ namespace ICSharpCode.AvalonEdit.Editing
 			get { return caret; }
 		}
 		
+		void CaretPositionChanged(object sender, EventArgs e)
+		{
+			if (textView == null)
+				return;
+			
+			this.textView.HighlightedLine = this.Caret.Line;
+		}
+		
 		ObservableCollection<UIElement> leftMargins = new ObservableCollection<UIElement>();
 		
 		/// <summary>
@@ -593,6 +620,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 				if (value == null)
 					throw new ArgumentNullException("value");
 				readOnlySectionProvider = value;
+				CommandManager.InvalidateRequerySuggested(); // the read-only status effects Paste.CanExecute and the IME
 			}
 		}
 		#endregion
@@ -754,6 +782,8 @@ namespace ICSharpCode.AvalonEdit.Editing
 		protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)
 		{
 			base.OnGotKeyboardFocus(e);
+			// First activate IME, then show caret
+			ime.OnGotKeyboardFocus(e);
 			caret.Show();
 		}
 		
@@ -762,6 +792,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 		{
 			base.OnLostKeyboardFocus(e);
 			caret.Hide();
+			ime.OnLostKeyboardFocus(e);
 		}
 		#endregion
 		
@@ -817,6 +848,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 					// We have to ignore those (not handle them) to keep the shortcut working.
 					return;
 				}
+				HideMouseCursor();
 				PerformTextInput(e);
 				e.Handled = true;
 			}
@@ -850,8 +882,11 @@ namespace ICSharpCode.AvalonEdit.Editing
 			if (!e.Handled) {
 				if (e.Text == "\n" || e.Text == "\r" || e.Text == "\r\n")
 					ReplaceSelectionWithNewLine();
-				else
+				else {
+					if (OverstrikeMode && Selection.IsEmpty && Document.GetLineByNumber(Caret.Line).EndOffset > Caret.Offset)
+						EditingCommands.SelectRightByCharacter.Execute(null, this);
 					ReplaceSelectionWithText(e.Text);
+				}
 				OnTextEntered(e);
 				caret.BringCaretToView();
 			}
@@ -936,6 +971,13 @@ namespace ICSharpCode.AvalonEdit.Editing
 		protected override void OnPreviewKeyDown(KeyEventArgs e)
 		{
 			base.OnPreviewKeyDown(e);
+			
+			if (!e.Handled && e.Key == Key.Insert && this.Options.AllowToggleOverstrikeMode) {
+				this.OverstrikeMode = !this.OverstrikeMode;
+				e.Handled = true;
+				return;
+			}
+			
 			foreach (TextAreaStackedInputHandler h in stackedInputHandlers) {
 				if (e.Handled)
 					break;
@@ -959,15 +1001,68 @@ namespace ICSharpCode.AvalonEdit.Editing
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			base.OnKeyDown(e);
-			TextView.InvalidateCursor();
+			TextView.InvalidateCursorIfMouseWithinTextView();
 		}
 		
 		/// <inheritdoc/>
 		protected override void OnKeyUp(KeyEventArgs e)
 		{
 			base.OnKeyUp(e);
-			TextView.InvalidateCursor();
+			TextView.InvalidateCursorIfMouseWithinTextView();
 		}
+		#endregion
+		
+		#region Hide Mouse Cursor While Typing
+		
+		bool isMouseCursorHidden;
+		
+		void AttachTypingEvents()
+		{
+			// Use the PreviewMouseMove event in case some other editor layer consumes the MouseMove event (e.g. SD's InsertionCursorLayer)
+			this.MouseEnter += delegate { ShowMouseCursor(); };
+			this.MouseLeave += delegate { ShowMouseCursor(); };
+			this.PreviewMouseMove += delegate { ShowMouseCursor(); };
+			#if DOTNET4
+			this.TouchEnter += delegate { ShowMouseCursor(); };
+			this.TouchLeave += delegate { ShowMouseCursor(); };
+			this.PreviewTouchMove += delegate { ShowMouseCursor(); };
+			#endif
+		}
+		
+		void ShowMouseCursor()
+		{
+			if (this.isMouseCursorHidden) {
+				System.Windows.Forms.Cursor.Show();
+				this.isMouseCursorHidden = false;
+			}
+		}
+		
+		void HideMouseCursor() {
+			if (Options.HideCursorWhileTyping && !this.isMouseCursorHidden && this.IsMouseOver) {
+				this.isMouseCursorHidden = true;
+				System.Windows.Forms.Cursor.Hide();
+			}
+		}
+		
+		#endregion
+		
+		#region Overstrike mode
+		
+		/// <summary>
+		/// The <see cref="OverstrikeMode"/> dependency property.
+		/// </summary>
+		public static readonly DependencyProperty OverstrikeModeProperty =
+			DependencyProperty.Register("OverstrikeMode", typeof(bool), typeof(TextArea),
+			                            new FrameworkPropertyMetadata(Boxes.False));
+		
+		/// <summary>
+		/// Gets/Sets whether overstrike mode is active.
+		/// </summary>
+		public bool OverstrikeMode {
+			get { return (bool)GetValue(OverstrikeModeProperty); }
+			set { SetValue(OverstrikeModeProperty, value); }
+		}
+		
 		#endregion
 		
 		/// <inheritdoc/>
@@ -987,6 +1082,8 @@ namespace ICSharpCode.AvalonEdit.Editing
 			    || e.Property == SelectionCornerRadiusProperty)
 			{
 				textView.Redraw();
+			} else if (e.Property == OverstrikeModeProperty) {
+				caret.UpdateIfVisible();
 			}
 		}
 		
@@ -996,7 +1093,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 		/// <returns>Returns the requested service instance, or null if the service cannot be found.</returns>
 		public virtual object GetService(Type serviceType)
 		{
-			return textView.Services.GetService(serviceType);
+			return textView.GetService(serviceType);
 		}
 		
 		/// <summary>

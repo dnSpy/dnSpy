@@ -1,12 +1,30 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Diagnostics;
 using System.Text;
-using System.Windows.Threading;
+#if NREFACTORY
+using ICSharpCode.NRefactory.Editor;
+#endif
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
+using ICSharpCode.AvalonEdit.Utils;
 
 namespace ICSharpCode.AvalonEdit.Folding
 {
@@ -28,41 +46,10 @@ namespace ICSharpCode.AvalonEdit.Folding
 			set {
 				if (isFolded != value) {
 					isFolded = value;
-					if (value) {
-						// Create collapsed sections
-						if (manager != null) {
-							DocumentLine startLine = manager.document.GetLineByOffset(StartOffset);
-							DocumentLine endLine = manager.document.GetLineByOffset(EndOffset);
-							if (startLine != endLine) {
-								DocumentLine startLinePlusOne = startLine.NextLine;
-								collapsedSections = new CollapsedLineSection[manager.textViews.Count];
-								for (int i = 0; i < collapsedSections.Length; i++) {
-									collapsedSections[i] = manager.textViews[i].CollapseLines(startLinePlusOne, endLine);
-								}
-							}
-						}
-					} else {
-						// Destroy collapsed sections
-						RemoveCollapsedLineSection();
-					}
-					if (manager != null)
+					ValidateCollapsedLineSections(); // create/destroy CollapsedLineSection
 						manager.Redraw(this);
 				}
 			}
-		}
-		
-		/// <summary>
-		/// Creates new collapsed section when a text view is added to the folding manager.
-		/// </summary>
-		internal CollapsedLineSection CollapseSection(TextView textView)
-		{
-			DocumentLine startLine = manager.document.GetLineByOffset(StartOffset);
-			DocumentLine endLine = manager.document.GetLineByOffset(EndOffset);
-			if (startLine != endLine) {
-				DocumentLine startLinePlusOne = startLine.NextLine;
-				return textView.CollapseLines(startLinePlusOne, endLine);
-			}
-			return null;
 		}
 		
 		internal void ValidateCollapsedLineSections()
@@ -71,8 +58,10 @@ namespace ICSharpCode.AvalonEdit.Folding
 				RemoveCollapsedLineSection();
 				return;
 			}
-			DocumentLine startLine = manager.document.GetLineByOffset(StartOffset);
-			DocumentLine endLine = manager.document.GetLineByOffset(EndOffset);
+			// It is possible that StartOffset/EndOffset get set to invalid values via the property setters in TextSegment,
+			// so we coerce those values into the valid range.
+			DocumentLine startLine = manager.document.GetLineByOffset(StartOffset.CoerceValue(0, manager.document.TextLength));
+			DocumentLine endLine = manager.document.GetLineByOffset(EndOffset.CoerceValue(0, manager.document.TextLength));
 			if (startLine == endLine) {
 				RemoveCollapsedLineSection();
 			} else {
@@ -84,13 +73,24 @@ namespace ICSharpCode.AvalonEdit.Folding
 					var collapsedSection = collapsedSections[i];
 					if (collapsedSection == null || collapsedSection.Start != startLinePlusOne || collapsedSection.End != endLine) {
 						// recreate this collapsed section
-						Debug.WriteLine("CollapsedLineSection validation - recreate collapsed section from " + startLinePlusOne + " to " + endLine);
-						if (collapsedSection != null)
+						if (collapsedSection != null) {
+							Debug.WriteLine("CollapsedLineSection validation - recreate collapsed section from " + startLinePlusOne + " to " + endLine);
 							collapsedSection.Uncollapse();
+						}
 						collapsedSections[i] = manager.textViews[i].CollapseLines(startLinePlusOne, endLine);
 					}
 				}
 			}
+		}
+		
+		/// <inheritdoc/>
+		protected override void OnSegmentChanged()
+		{
+			ValidateCollapsedLineSections();
+			base.OnSegmentChanged();
+			// don't redraw if the FoldingSection wasn't added to the FoldingManager's collection yet
+			if (IsConnectedToCollection)
+				manager.Redraw(this);
 		}
 		
 		/// <summary>
@@ -103,7 +103,7 @@ namespace ICSharpCode.AvalonEdit.Folding
 			set {
 				if (title != value) {
 					title = value;
-					if (this.IsFolded && manager != null)
+					if (this.IsFolded)
 						manager.Redraw(this);
 				}
 			}
@@ -183,6 +183,7 @@ namespace ICSharpCode.AvalonEdit.Folding
 		
 		internal FoldingSection(FoldingManager manager, int startOffset, int endOffset)
 		{
+			Debug.Assert(manager != null);
 			this.manager = manager;
 			this.StartOffset = startOffset;
 			this.Length = endOffset - startOffset;

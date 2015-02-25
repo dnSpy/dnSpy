@@ -1,14 +1,28 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Text;
 using System.Windows;
-
 using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.NRefactory.Editor;
 
 namespace ICSharpCode.AvalonEdit.Highlighting
 {
@@ -23,7 +37,7 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 		static string BuildHeader(int startHTML, int endHTML, int startFragment, int endFragment)
 		{
 			StringBuilder b = new StringBuilder();
-			b.AppendLine("Version:1.0");
+			b.AppendLine("Version:0.9");
 			b.AppendLine("StartHTML:" + startHTML.ToString("d8", CultureInfo.InvariantCulture));
 			b.AppendLine("EndHTML:" + endHTML.ToString("d8", CultureInfo.InvariantCulture));
 			b.AppendLine("StartFragment:" + startFragment.ToString("d8", CultureInfo.InvariantCulture));
@@ -66,7 +80,7 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 		/// <param name="segment">The part of the document to create HTML for. You can pass <c>null</c> to create HTML for the whole document.</param>
 		/// <param name="options">The options for the HTML creation.</param>
 		/// <returns>HTML code for the document part.</returns>
-		public static string CreateHtmlFragment(TextDocument document, IHighlighter highlighter, ISegment segment, HtmlOptions options)
+		public static string CreateHtmlFragment(IDocument document, IHighlighter highlighter, ISegment segment, HtmlOptions options)
 		{
 			if (document == null)
 				throw new ArgumentNullException("document");
@@ -79,123 +93,20 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 			
 			StringBuilder html = new StringBuilder();
 			int segmentEndOffset = segment.EndOffset;
-			DocumentLine line = document.GetLineByOffset(segment.Offset);
+			IDocumentLine line = document.GetLineByOffset(segment.Offset);
 			while (line != null && line.Offset < segmentEndOffset) {
 				HighlightedLine highlightedLine;
 				if (highlighter != null)
 					highlightedLine = highlighter.HighlightLine(line.LineNumber);
 				else
 					highlightedLine = new HighlightedLine(document, line);
-				SimpleSegment s = segment.GetOverlap(line);
+				SimpleSegment s = SimpleSegment.GetOverlap(segment, line);
 				if (html.Length > 0)
 					html.AppendLine("<br>");
 				html.Append(highlightedLine.ToHtml(s.Offset, s.EndOffset, options));
 				line = line.NextLine;
 			}
 			return html.ToString();
-		}
-		
-		/// <summary>
-		/// Escapes text and writes the result to the StringBuilder.
-		/// </summary>
-		internal static void EscapeHtml(StringWriter w, string text, HtmlOptions options)
-		{
-			int spaceCount = -1;
-			foreach (char c in text) {
-				if (c == ' ') {
-					if (spaceCount < 0)
-						w.Write("&nbsp;");
-					else
-						spaceCount++;
-				} else if (c == '\t') {
-					if (spaceCount < 0)
-						spaceCount = 0;
-					spaceCount += options.TabSize;
-				} else {
-					if (spaceCount == 1) {
-						w.Write(' ');
-					} else if (spaceCount >= 1) {
-						for (int i = 0; i < spaceCount; i++) {
-							w.Write("&nbsp;");
-						}
-					}
-					spaceCount = 0;
-					switch (c) {
-						case '<':
-							w.Write("&lt;");
-							break;
-						case '>':
-							w.Write("&gt;");
-							break;
-						case '&':
-							w.Write("&amp;");
-							break;
-						case '"':
-							w.Write("&quot;");
-							break;
-						default:
-							w.Write(c);
-							break;
-					}
-				}
-			}
-			for (int i = 0; i < spaceCount; i++) {
-				w.Write("&nbsp;");
-			}
-		}
-	}
-	
-	/// <summary>
-	/// Holds options for converting text to HTML.
-	/// </summary>
-	public class HtmlOptions
-	{
-		/// <summary>
-		/// Creates a default HtmlOptions instance.
-		/// </summary>
-		public HtmlOptions()
-		{
-			this.TabSize = 4;
-		}
-		
-		/// <summary>
-		/// Creates a new HtmlOptions instance that copies applicable options from the <see cref="TextEditorOptions"/>.
-		/// </summary>
-		public HtmlOptions(TextEditorOptions options)
-			: this()
-		{
-			if (options == null)
-				throw new ArgumentNullException("options");
-			this.TabSize = options.IndentationSize;
-		}
-		
-		/// <summary>
-		/// The amount of spaces a tab gets converted to.
-		/// </summary>
-		public int TabSize { get; set; }
-		
-		/// <summary>
-		/// Writes the HTML attribute for the style to the text writer.
-		/// </summary>
-		public virtual void WriteStyleAttributeForColor(TextWriter writer, HighlightingColor color)
-		{
-			if (writer == null)
-				throw new ArgumentNullException("writer");
-			if (color == null)
-				throw new ArgumentNullException("color");
-			writer.Write(" style=\"");
-			writer.Write(color.ToCss());
-			writer.Write("\"");
-		}
-		
-		/// <summary>
-		/// Gets whether the color needs to be written out to HTML.
-		/// </summary>
-		public virtual bool ColorNeedsSpanForStyling(HighlightingColor color)
-		{
-			if (color == null)
-				throw new ArgumentNullException("color");
-			return !string.IsNullOrEmpty(color.ToCss());
 		}
 	}
 }

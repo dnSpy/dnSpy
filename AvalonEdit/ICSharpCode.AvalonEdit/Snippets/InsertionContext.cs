@@ -1,14 +1,27 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Input;
-
+using ICSharpCode.NRefactory.Editor;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
-using ICSharpCode.AvalonEdit.Utils;
 
 namespace ICSharpCode.AvalonEdit.Snippets
 {
@@ -57,7 +70,7 @@ namespace ICSharpCode.AvalonEdit.Snippets
 		/// <summary>
 		/// Gets the text document.
 		/// </summary>
-		public TextDocument Document { get; private set; }
+		public ICSharpCode.AvalonEdit.Document.TextDocument Document { get; private set; }
 		
 		/// <summary>
 		/// Gets the text that was selected before the insertion of the snippet.
@@ -85,7 +98,7 @@ namespace ICSharpCode.AvalonEdit.Snippets
 		public int InsertionPosition { get; set; }
 		
 		readonly int startPosition;
-		AnchorSegment wholeSnippetAnchor;
+		ICSharpCode.AvalonEdit.Document.AnchorSegment wholeSnippetAnchor;
 		bool deactivateIfSnippetEmpty;
 		
 		/// <summary>
@@ -264,6 +277,26 @@ namespace ICSharpCode.AvalonEdit.Snippets
 				return true;
 			}
 			return false;
+		}
+		
+		/// <summary>
+		/// Adds existing segments as snippet elements.
+		/// </summary>
+		public void Link(ISegment mainElement, ISegment[] boundElements)
+		{
+			var main = new SnippetReplaceableTextElement { Text = Document.GetText(mainElement) };
+			RegisterActiveElement(main, new ReplaceableActiveElement(this, mainElement.Offset, mainElement.EndOffset));
+			foreach (var boundElement in boundElements) {
+				var bound = new SnippetBoundElement { TargetElement = main };
+				var start = Document.CreateAnchor(boundElement.Offset);
+				start.MovementType = AnchorMovementType.BeforeInsertion;
+				start.SurviveDeletion = true;
+				var end = Document.CreateAnchor(boundElement.EndOffset);
+				end.MovementType = AnchorMovementType.BeforeInsertion;
+				end.SurviveDeletion = true;
+				
+				RegisterActiveElement(bound, new BoundActiveElement(this, main, bound, new AnchorSegment(start, end)));
+			}
 		}
 	}
 }
