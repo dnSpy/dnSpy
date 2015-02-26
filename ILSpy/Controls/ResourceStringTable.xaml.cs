@@ -30,32 +30,32 @@ namespace ICSharpCode.ILSpy.Controls
 	/// </summary>
 	public partial class ResourceStringTable : UserControl
 	{
-    public ResourceStringTable(IEnumerable strings, ContentPresenter contentPresenter)
-    {
+		public ResourceStringTable(IEnumerable strings, ContentPresenter contentPresenter)
+		{
 			InitializeComponent();
 			// set size to fit decompiler window
-      contentPresenter.SizeChanged += OnParentSizeChanged;
-      Width = contentPresenter.ActualWidth - 45;
-      MaxHeight = contentPresenter.ActualHeight;
-      resourceListView.ItemsSource = strings;
-    }
+			contentPresenter.SizeChanged += OnParentSizeChanged;
+			Width = contentPresenter.ActualWidth - 45;
+			MaxHeight = contentPresenter.ActualHeight;
+			resourceListView.ItemsSource = strings;
+		}
 
-    private void OnParentSizeChanged(object sender, SizeChangedEventArgs e)
-    {
-      if (e.WidthChanged)
-			  Width = e.NewSize.Width - 45;
-      if (e.HeightChanged)
-        MaxHeight = e.NewSize.Height;
-    }
+		private void OnParentSizeChanged(object sender, SizeChangedEventArgs e)
+		{
+			if (e.WidthChanged)
+				Width = e.NewSize.Width - 45;
+			if (e.HeightChanged)
+				MaxHeight = e.NewSize.Height;
+		}
 		
 		void ExecuteCopy(object sender, ExecutedRoutedEventArgs args)
 		{
-		  StringBuilder sb = new StringBuilder();
-		  foreach (var item in resourceListView.SelectedItems)
-		  {
-		    sb.AppendLine(item.ToString());
-		  }
-		  Clipboard.SetText(sb.ToString());
+			StringBuilder sb = new StringBuilder();
+			foreach (var item in resourceListView.SelectedItems)
+			{
+				sb.AppendLine(item.ToString());
+			}
+			Clipboard.SetText(sb.ToString());
 		}
 		
 		void CanExecuteCopy(object sender, CanExecuteRoutedEventArgs args)
