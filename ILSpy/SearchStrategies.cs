@@ -316,9 +316,8 @@ namespace ICSharpCode.ILSpy
 
 		public override void Search(TypeDefinition type, Language language, Action<SearchResult> addResult)
 		{
-			if (IsMatch(type.Name)) {
-				addResult(new SearchResult
-				{
+			if (IsMatch(type.Name) || IsMatch(type.FullName)) {
+				addResult(new SearchResult {
 					Member = type,
 					Image = TypeTreeNode.GetIcon(type),
 					Name = language.TypeToString(type, includeNamespace: false),

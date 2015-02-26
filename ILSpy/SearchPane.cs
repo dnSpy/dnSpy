@@ -55,17 +55,13 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		public const int SearchMode_Type = 0;
-		public const int SearchMode_Member = 1;
-		public const int SearchMode_Literal = 2;
-		
 		private SearchPane()
 		{
 			InitializeComponent();
 			searchModeComboBox.Items.Add(new { Image = Images.Class, Name = "Type" });
 			searchModeComboBox.Items.Add(new { Image = Images.Property, Name = "Member" });
 			searchModeComboBox.Items.Add(new { Image = Images.Literal, Name = "Constant" });
-			searchModeComboBox.SelectedIndex = SearchMode_Type;
+			searchModeComboBox.SelectedIndex = (int)SearchMode.Type;
 			
 			MainWindow.Instance.CurrentAssemblyListChanged += MainWindow_Instance_CurrentAssemblyListChanged;
 		}
@@ -129,7 +125,7 @@ namespace ICSharpCode.ILSpy
 				listBox.ItemsSource = null;
 			} else {
 				MainWindow mainWindow = MainWindow.Instance;
-				currentSearch = new RunningSearch(mainWindow.CurrentAssemblyList.GetAssemblies(), searchTerm, searchModeComboBox.SelectedIndex, mainWindow.CurrentLanguage);
+				currentSearch = new RunningSearch(mainWindow.CurrentAssemblyList.GetAssemblies(), searchTerm, (SearchMode)searchModeComboBox.SelectedIndex, mainWindow.CurrentLanguage);
 				listBox.ItemsSource = currentSearch.Results;
 				new Thread(currentSearch.Run).Start();
 			}
@@ -166,13 +162,13 @@ namespace ICSharpCode.ILSpy
 		{
 			base.OnKeyDown(e);
 			if (e.Key == Key.T && e.KeyboardDevice.Modifiers == ModifierKeys.Control) {
-				searchModeComboBox.SelectedIndex = SearchMode_Type;
+				searchModeComboBox.SelectedIndex = (int)SearchMode.Type;
 				e.Handled = true;
 			} else if (e.Key == Key.M && e.KeyboardDevice.Modifiers == ModifierKeys.Control) {
-				searchModeComboBox.SelectedIndex = SearchMode_Member;
+				searchModeComboBox.SelectedIndex = (int)SearchMode.Member;
 				e.Handled = true;
 			} else if (e.Key == Key.S && e.KeyboardDevice.Modifiers == ModifierKeys.Control) {
-				searchModeComboBox.SelectedIndex = SearchMode_Literal;
+				searchModeComboBox.SelectedIndex = (int)SearchMode.Literal;
 				e.Handled = true;
 			}
 		}
@@ -192,12 +188,12 @@ namespace ICSharpCode.ILSpy
 			readonly CancellationTokenSource cts = new CancellationTokenSource();
 			readonly LoadedAssembly[] assemblies;
 			readonly string[] searchTerm;
-			readonly int searchMode;
+			readonly SearchMode searchMode;
 			readonly Language language;
 			public readonly ObservableCollection<SearchResult> Results = new ObservableCollection<SearchResult>();
 			int resultCount;
-			
-			public RunningSearch(LoadedAssembly[] assemblies, string searchTerm, int searchMode, Language language)
+
+			public RunningSearch(LoadedAssembly[] assemblies, string searchTerm, SearchMode searchMode, Language language)
 			{
 				this.dispatcher = Dispatcher.CurrentDispatcher;
 				this.assemblies = assemblies;
@@ -248,8 +244,8 @@ namespace ICSharpCode.ILSpy
 					new Action(delegate { this.Results.Insert(this.Results.Count - 1, result); }));
 				cts.Token.ThrowIfCancellationRequested();
 			}
-		
-			AbstractSearchStrategy GetSearchStrategy(int mode, string[] terms)
+
+			AbstractSearchStrategy GetSearchStrategy(SearchMode mode, string[] terms)
 			{
 				if (terms.Length == 1) {
 					if (terms[0].StartsWith("t:"))
@@ -263,11 +259,11 @@ namespace ICSharpCode.ILSpy
 				}
 
 				switch (mode) {
-					case SearchMode_Type:
+					case SearchMode.Type:
 						return new TypeSearchStrategy(terms);
-					case SearchMode_Member:
+					case SearchMode.Member:
 						return new MemberSearchStrategy(terms);
-					case SearchMode_Literal:
+					case SearchMode.Literal:
 						return new LiteralSearchStrategy(terms);
 				}
 
@@ -304,5 +300,12 @@ namespace ICSharpCode.ILSpy
 			: base(NavigationCommands.Search)
 		{
 		}
+	}
+
+	public enum SearchMode
+	{
+		Type,
+		Member,
+		Literal
 	}
 }
