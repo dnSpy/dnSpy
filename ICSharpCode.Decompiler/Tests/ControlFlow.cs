@@ -85,13 +85,11 @@ public static class ControlFlow
 		{
 			Console.WriteLine("condition");
 		} 
-		else
-			if (input == null)
+		else if (input == null)
 		{
 			Console.WriteLine("condition2");
 		}
-		else
-			if (index > 1)
+		else if (index > 1)
 		{
 			Console.WriteLine("condition3");
 		}
