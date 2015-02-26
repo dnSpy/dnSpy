@@ -25,6 +25,10 @@ using System.Threading.Tasks;
 
 public class Async
 {
+	public async void EmptyAsyncMethod()
+	{
+	}
+
 	public async void SimpleVoidMethod()
 	{
 		Console.WriteLine("Before");
