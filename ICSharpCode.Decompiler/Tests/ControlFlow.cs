@@ -78,4 +78,22 @@ public static class ControlFlow
 			_headers.Add(1, "else");
 		}
 	}
+
+	public static void CascadingIfElse(bool condition, string input, int index)
+	{
+		if (condition)
+		{
+			Console.WriteLine("condition");
+		} 
+		else
+			if (input == null)
+		{
+			Console.WriteLine("condition2");
+		}
+		else
+			if (index > 1)
+		{
+			Console.WriteLine("condition3");
+		}
+	}
 }
