@@ -1,6 +1,5 @@
 ﻿
 using System;
-using System.Diagnostics;
 using dnlib.DotNet;
 
 namespace ICSharpCode.NRefactory
@@ -205,10 +204,8 @@ namespace ICSharpCode.NRefactory
 	{
 		public static TextTokenType GetTextTokenType(TypeDef td)
 		{
-			if (td == null) {
-				Debug.Fail("Unknown token");
+			if (td == null)
 				return TextTokenType.Text;
-			}
 
 			if (td.IsInterface)
 				return TextTokenType.Interface;
@@ -229,10 +226,8 @@ namespace ICSharpCode.NRefactory
 
 		public static TextTokenType GetTextTokenType(TypeRef tr)
 		{
-			if (tr == null) {
-				Debug.Fail("Unknown token");
+			if (tr == null)
 				return TextTokenType.Text;
-			}
 
 			var td = tr.Resolve();
 			if (td != null)
@@ -243,10 +238,8 @@ namespace ICSharpCode.NRefactory
 
 		public static TextTokenType GetTextTokenType(IMemberRef r)
 		{
-			if (r == null) {
-				Debug.Fail("Unknown token");
+			if (r == null)
 				return TextTokenType.Text;
-			}
 
 			if (r.IsField) {
 				var fd = ((IField)r).ResolveFieldDef();
@@ -305,7 +298,6 @@ namespace ICSharpCode.NRefactory
 			if (r.IsMemberRef)
 				return TextTokenType.Text;
 
-			Debug.Fail("Unknown token");
 			return TextTokenType.Text;
 		}
 
@@ -342,20 +334,16 @@ namespace ICSharpCode.NRefactory
 
 		public static TextTokenType GetTextTokenType(ExportedType et)
 		{
-			if (et == null) {
-				Debug.Fail("Unknown token");
+			if (et == null)
 				return TextTokenType.Text;
-			}
 
 			return GetTextTokenType(et.ToTypeRef());
 		}
 
 		public static TextTokenType GetTextTokenType(TypeSig ts)
 		{
-			if (ts == null) {
-				Debug.Fail("Unknown token");
+			if (ts == null)
 				return TextTokenType.Text;
-			}
 
 			var tdr = ts as TypeDefOrRefSig;
 			if (tdr != null)
@@ -365,16 +353,13 @@ namespace ICSharpCode.NRefactory
 			if (gsig != null)
 				return GetTextTokenType(gsig);
 
-			Debug.Fail("Unknown token");
 			return TextTokenType.Text;
 		}
 
 		public static TextTokenType GetTextTokenType(object op)
 		{
-			if (op == null) {
-				Debug.Fail("Unknown token");
+			if (op == null)
 				return TextTokenType.Text;
-			}
 
 			if (op is byte || op is sbyte ||
 				op is ushort || op is short ||
@@ -408,10 +393,8 @@ namespace ICSharpCode.NRefactory
 			if (op is dnlib.DotNet.Emit.Local)
 				return TextTokenType.Local;
 
-			if (op is MethodSig) {
-				Debug.Fail("token is a MethodSig. Fix this");
+			if (op is MethodSig)
 				return TextTokenType.Text;//TODO:
-			}
 
 			if (op.GetType().ToString() == "ICSharpCode.Decompiler.ILAst.ILVariable")
 				return TextTokenType.Local;
@@ -419,7 +402,6 @@ namespace ICSharpCode.NRefactory
 			if (op is string)
 				return TextTokenType.String;
 
-			Debug.Fail("Unknown token");
 			return TextTokenType.Text;
 		}
 
