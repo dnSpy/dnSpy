@@ -325,7 +325,7 @@ namespace ICSharpCode.AvalonEdit.Search
 			}
 		}
 		
-		ToolTip messageView = new ToolTip { Placement = PlacementMode.Bottom, StaysOpen = false };
+		ToolTip messageView = new ToolTip { Placement = PlacementMode.Bottom, StaysOpen = true, Focusable = false };
 
 		void DoSearch(bool changeSelection)
 		{
@@ -370,7 +370,6 @@ namespace ICSharpCode.AvalonEdit.Search
 			switch (e.Key) {
 				case Key.Enter:
 					e.Handled = true;
-					messageView.IsOpen = false;
 					if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
 						FindPrevious();
 					else
