@@ -590,7 +590,9 @@ namespace ICSharpCode.Decompiler.ILAst
 		void RemoveEndFinally(ILBlock method)
 		{
 			// Go thought the list in reverse so that we do the nested blocks first
-			foreach(var tryCatch in method.GetSelfAndChildrenRecursive<ILTryCatchBlock>(tc => tc.FinallyBlock != null).Reverse()) {
+			var list = method.GetSelfAndChildrenRecursive<ILTryCatchBlock>(tc => tc.FinallyBlock != null);
+			for (int j = list.Count - 1; j >= 0; j--) {
+				var tryCatch = list[j];
 				ILLabel label = new ILLabel() { Name = "EndFinally_" + nextLabelIndex++ };
 				tryCatch.FinallyBlock.Body.Add(label);
 				foreach(var block in tryCatch.FinallyBlock.GetSelfAndChildrenRecursive<ILBlock>()) {

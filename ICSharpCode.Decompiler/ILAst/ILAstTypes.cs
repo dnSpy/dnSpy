@@ -39,7 +39,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			return GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.ILRanges);
 		}
 
-		public IEnumerable<T> GetSelfAndChildrenRecursive<T>(Func<T, bool> predicate = null) where T: ILNode
+		public List<T> GetSelfAndChildrenRecursive<T>(Func<T, bool> predicate = null) where T: ILNode
 		{
 			List<T> result = new List<T>(16);
 			AccumulateSelfAndChildrenRecursive(result, predicate);

@@ -28,6 +28,7 @@ namespace ICSharpCode.Decompiler.ILAst
 	{
 		Dictionary<ILNode, ILNode> parent = new Dictionary<ILNode, ILNode>();
 		Dictionary<ILNode, ILNode> nextSibling = new Dictionary<ILNode, ILNode>();
+		Dictionary<ILNode, ILNode> prevSibling = new Dictionary<ILNode, ILNode>();
 		
 		public void RemoveGotos(ILBlock method)
 		{
@@ -41,6 +42,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					parent[child] = node;
 					if (previousChild != null)
 						nextSibling[previousChild] = child;
+					prevSibling[child] = previousChild;
 					previousChild = child;
 				}
 				if (previousChild != null)
@@ -51,7 +53,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			bool modified;
 			do {
 				modified = false;
-				foreach (ILExpression gotoExpr in method.GetSelfAndChildrenRecursive<ILExpression>(e => e.Code == ILCode.Br || e.Code == ILCode.Leave)) {
+				var list = method.GetSelfAndChildrenRecursive<ILExpression>(e => e.Code == ILCode.Br || e.Code == ILCode.Leave);
+				for (int i = list.Count - 1; i >= 0; i--) {
+					var gotoExpr = list[i];
 					modified |= TrySimplifyGoto(gotoExpr);
 				}
 			} while(modified);
@@ -151,8 +155,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (target == Exit(gotoExpr, new HashSet<ILNode>() { gotoExpr })) {
 				gotoExpr.Code = ILCode.Nop;
 				gotoExpr.Operand = null;
-				if (target is ILExpression)
-					((ILExpression)target).ILRanges.AddRange(gotoExpr.ILRanges);
+				var prev = prevSibling[gotoExpr] as ILExpression ?? target;
+				if (prev is ILExpression)
+					((ILExpression)prev).ILRanges.AddRange(gotoExpr.ILRanges);
 				gotoExpr.ILRanges.Clear();
 				return true;
 			}
