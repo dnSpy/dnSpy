@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 
 namespace ICSharpCode.NRefactory.CSharp
 {
@@ -56,6 +57,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		void WriteComment(CommentType commentType, string content);
 		void WritePreProcessorDirective(PreProcessorDirectiveType type, string argument);
+
+		void DebugStart(AstNode node);
+		void DebugExpression(AstNode node);
+		void DebugExpressions(IEnumerable<AstNode> nodes);
+		void DebugEnd(AstNode node);
 	}
 
 	public static class Extensions

@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace ICSharpCode.NRefactory.CSharp
@@ -229,6 +230,22 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		
 		public virtual void EndNode(AstNode node)
+		{
+		}
+
+		public void DebugStart(AstNode node)
+		{
+		}
+
+		public void DebugExpression(AstNode node)
+		{
+		}
+
+		public void DebugExpressions(IEnumerable<AstNode> nodes)
+		{
+		}
+
+		public void DebugEnd(AstNode node)
 		{
 		}
 	}

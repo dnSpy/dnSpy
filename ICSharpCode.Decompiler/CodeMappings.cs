@@ -217,16 +217,17 @@ namespace ICSharpCode.Decompiler
 		/// <param name="mapping">Code mapping storage.</param>
 		/// <param name="ilOffset">IL offset.</param>
 		/// <param name="methodDef">Method definition.</param>
-		/// <param name="line">Line number.</param>
+		/// <param name="location">Start location</param>
+		/// <param name="endLocation">End location</param>
 		/// <remarks>It is possible to exist to different types from different assemblies with the same metadata token.</remarks>
 		public static bool GetInstructionByTokenAndOffset(
 			this MemberMapping mapping,
 			uint ilOffset,
 			out MethodDef methodDef,
-			out int line)
+			out TextLocation location,
+			out TextLocation endLocation)
 		{
 			methodDef = null;
-			line = 0;
 			
 			if (mapping == null)
 				throw new ArgumentException("CodeMappings storage must be valid!");
@@ -237,13 +238,17 @@ namespace ICSharpCode.Decompiler
 				codeMapping = mapping.MemberCodeMappings.Find(cm => cm.ILInstructionOffset.From > ilOffset);
 				if (codeMapping == null) {
 					codeMapping = mapping.MemberCodeMappings.LastOrDefault();
-					if (codeMapping == null)
+					if (codeMapping == null) {
+						location = new TextLocation();
+						endLocation = new TextLocation();
 						return false;
+					}
 				}
 			}
 			
 			methodDef = mapping.MethodDefinition;
-			line = codeMapping.StartLocation.Line;
+			location = codeMapping.StartLocation;
+			endLocation = codeMapping.EndLocation;
 			return true;
 		}
 	}

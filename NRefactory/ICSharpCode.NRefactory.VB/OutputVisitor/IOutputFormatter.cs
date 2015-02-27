@@ -2,6 +2,7 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Generic;
 
 namespace ICSharpCode.NRefactory.VB
 {
@@ -40,5 +41,10 @@ namespace ICSharpCode.NRefactory.VB
 		
 		void MarkFoldStart();
 		void MarkFoldEnd();
+
+		void DebugStart(AstNode node);
+		void DebugExpression(AstNode node);
+		void DebugExpressions(IEnumerable<AstNode> nodes);
+		void DebugEnd(AstNode node);
 	}
 }

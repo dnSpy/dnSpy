@@ -19,6 +19,7 @@
 using System;
 using System.Windows.Input;
 using System.Windows.Media;
+using ICSharpCode.AvalonEdit.Document;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.Bookmarks
@@ -38,10 +39,10 @@ namespace ICSharpCode.ILSpy.Bookmarks
 			}
 		}
 		
-		public MemberBookmark(IMemberRef member, int line)
+		public MemberBookmark(IMemberRef member, TextLocation location)
 		{
 			this.member = member;
-			LineNumber = line;
+			LineNumber = location.Line;
 		}
 		
 		public virtual ImageSource Image {

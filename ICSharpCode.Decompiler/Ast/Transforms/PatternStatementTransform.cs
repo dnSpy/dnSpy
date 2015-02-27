@@ -1022,7 +1022,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				DestructorDeclaration dd = new DestructorDeclaration();
 				methodDef.Attributes.MoveTo(dd.Attributes);
 				dd.Modifiers = methodDef.Modifiers & ~(Modifiers.Protected | Modifiers.Override);
+				var mm = methodDef.Body.Annotation<MemberMapping>();
 				dd.Body = m.Get<BlockStatement>("body").Single().Detach();
+				if (mm != null)
+					dd.Body.AddAnnotation(mm);
 				dd.NameToken = Identifier.Create(AstBuilder.CleanName(context.CurrentType.Name)).WithAnnotation(context.CurrentType);
 				methodDef.ReplaceWith(dd);
 				return dd;

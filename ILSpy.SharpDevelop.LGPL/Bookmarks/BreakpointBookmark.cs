@@ -88,7 +88,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		public string Tooltip { get; private set; }
 		
 		public BreakpointBookmark(IMemberRef member, TextLocation location, ILRange range, BreakpointAction action)
-			: base(member, location)
+			: base(member, location, new TextLocation())//TODO: Pass in correct end location
 		{
 			this.action = action;
 			this.MethodKey = new MethodKey(member);
@@ -106,7 +106,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		
 		public override ITextMarker CreateMarker(ITextMarkerService markerService, int offset, int length)
 		{
-			ITextMarker marker = markerService.Create(offset, length);
+			ITextMarker marker = CreateMarkerInternal(markerService, offset, length);
 			marker.HighlightingColor = () => HighlightingColor;
 			marker.IsVisible = b => {
 				var cm = DebugInformation.CodeMappings;

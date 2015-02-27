@@ -213,7 +213,7 @@ namespace ICSharpCode.Decompiler.Ast
 								Type = AstBuilder.ConvertType(catchClause.ExceptionType),
 								VariableNameToken = catchClause.ExceptionVariable == null ? null : Identifier.Create(catchClause.ExceptionVariable.Name).WithAnnotation(catchClause.ExceptionVariable.IsParameter ? TextTokenType.Parameter : TextTokenType.Local),
 								Body = TransformBlock(catchClause)
-							}.WithAnnotation(catchClause.ExceptionVariable));
+							}.WithAnnotation(catchClause.ExceptionVariable).WithAnnotation(catchClause.StlocILRanges));
 					}
 				}
 				if (tryCatchNode.FinallyBlock != null)

@@ -104,6 +104,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						ILVariable v2;
 						ILExpression ldException;
 						if (body[0].Match(ILCode.Stloc, out v2, out ldException) && ldException.MatchLdloc(v)) {
+							((ILTryCatchBlock.CatchBlock)block).StlocILRanges.AddRange(body[0].GetSelfAndChildrenRecursiveILRanges());
 							body.RemoveAt(0);
 							((ILTryCatchBlock.CatchBlock)block).ExceptionVariable = v2;
 							modified = true;

@@ -59,7 +59,7 @@ namespace ICSharpCode.ILSpy.Bookmarks
 				return false;
 			if (a.MemberReference.FullName != b.MemberReference.FullName)
 				return false;
-			return a.LineNumber == b.LineNumber;
+			return a.Location == b.Location && a.EndLocation == b.EndLocation;
 		}
 
 		public static void ReplaceMark(int index, BookmarkBase bookmark)

@@ -46,7 +46,10 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (ForwardScanInitializeArrayRuntimeHelper(body, pos + 1, v, new SZArraySig(elementType.ToTypeSig()), arrayLength, out newArr, out initArrayPos)) {
 					var arrayType = new ArraySig(elementType.ToTypeSig(), 1, new uint[1], new int[1]);
 					arrayType.Sizes[0] = (uint)(arrayLength + 1);
-					body[pos] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, arrayType.ToTypeDefOrRef(), newArr));
+					var newStloc = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, arrayType.ToTypeDefOrRef(), newArr));
+					newStloc.ILRanges.AddRange(body[pos].GetSelfAndChildrenRecursiveILRanges());
+					newStloc.ILRanges.AddRange(body[initArrayPos].GetSelfAndChildrenRecursiveILRanges());
+					body[pos] = newStloc;
 					body.RemoveAt(initArrayPos);
 				}
 				// Put in a limit so that we don't consume too much memory if the code allocates a huge array
@@ -78,6 +81,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					var arrayType = new ArraySig(elementType.ToTypeSig(), 1, new uint[1], new int[1]);
 					arrayType.Sizes[0] = (uint)(arrayLength + 1);
 					expr.Arguments[0] = new ILExpression(ILCode.InitArray, arrayType.ToTypeDefOrRef(), operands);
+					expr.ILRanges.AddRange(newarrExpr.GetSelfAndChildrenRecursiveILRanges());
+					for (int i = 0; i < numberOfInstructionsToRemove; i++)
+						expr.ILRanges.AddRange(body[pos + 1 + i].GetSelfAndChildrenRecursiveILRanges());
 					body.RemoveRange(pos + 1, numberOfInstructionsToRemove);
 
 					new ILInlining(method).InlineIfPossible(body, ref pos);
@@ -114,7 +120,10 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression[] newArr;
 				int initArrayPos;
 				if (ForwardScanInitializeArrayRuntimeHelper(body, pos + 1, v, multAry, totalElements, out newArr, out initArrayPos)) {
-					body[pos] = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, multAry.ToTypeDefOrRef(), newArr));
+					var newStloc = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, multAry.ToTypeDefOrRef(), newArr));
+					newStloc.ILRanges.AddRange(body[pos].GetSelfAndChildrenRecursiveILRanges());
+					newStloc.ILRanges.AddRange(body[initArrayPos].GetSelfAndChildrenRecursiveILRanges());
+					body[pos] = newStloc;
 					body.RemoveAt(initArrayPos);
 					return true;
 				}

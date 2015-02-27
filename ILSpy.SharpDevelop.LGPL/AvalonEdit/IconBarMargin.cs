@@ -337,10 +337,10 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			
 			// 2. map the marker line
 			MethodDef methodDef;
-			int newline;
-			if (codeMappings[key].GetInstructionByTokenAndOffset((uint)offset, out methodDef, out newline)) {
+			TextLocation location, endLocation;
+			if (codeMappings[key].GetInstructionByTokenAndOffset((uint)offset, out methodDef, out location, out endLocation)) {
 				// 3. create breakpoint for new languages
-				DebuggerService.JumpToCurrentLine(methodDef, newline, 0, newline, 0, offset);
+				DebuggerService.JumpToCurrentLine(methodDef, location.Line, location.Column, endLocation.Line, endLocation.Column, offset);
 				return true;
 			}
 

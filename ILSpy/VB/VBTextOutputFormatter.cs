@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory;
@@ -42,7 +43,6 @@ namespace ICSharpCode.ILSpy.VB
 			this.output = output;
 		}
 		
-		Stack<TextLocation> startLocations = new Stack<TextLocation>();
 		MemberMapping currentMemberMapping;
 		Stack<MemberMapping> parentMemberMappings = new Stack<MemberMapping>();
 		
@@ -71,7 +71,6 @@ namespace ICSharpCode.ILSpy.VB
 //			}
 			
 			nodeStack.Push(node);
-			startLocations.Push(output.Location);
 			
 			MemberMapping mapping = node.Annotation<MemberMapping>();
 			if (mapping != null) {
@@ -84,26 +83,6 @@ namespace ICSharpCode.ILSpy.VB
 		{
 			if (nodeStack.Pop() != node)
 				throw new InvalidOperationException();
-			
-			var startLocation = startLocations.Pop();
-			
-			// code mappings
-			if (currentMemberMapping != null) {
-				var ranges = node.Annotation<List<ILRange>>();
-				if (ranges != null && ranges.Count > 0) {
-					// add all ranges
-					foreach (var range in ranges) {
-						currentMemberMapping.MemberCodeMappings.Add(
-							new SourceCodeMapping {
-								ILInstructionOffset = range,
-								StartLocation = startLocation,
-								EndLocation = output.Location,
-								MemberMapping = currentMemberMapping
-							});
-					}
-				}
-			}
-			
 			
 			if (node.Annotation<MemberMapping>() != null) {
 				output.AddDebuggerMemberMapping(currentMemberMapping);
@@ -274,6 +253,46 @@ namespace ICSharpCode.ILSpy.VB
 				node is OperatorDeclaration||
 				node is MemberDeclaration ||
 				node is TypeDeclaration;
+		}
+
+		class DebugState
+		{
+			public List<AstNode> Nodes = new List<AstNode>();
+			public TextLocation StartLocation;
+		}
+		readonly Stack<DebugState> debugStack = new Stack<DebugState>();
+		public void DebugStart(AstNode node)
+		{
+			debugStack.Push(new DebugState { StartLocation = output.Location });
+		}
+
+		public void DebugExpression(AstNode node)
+		{
+			debugStack.Peek().Nodes.Add(node);
+		}
+
+		public void DebugExpressions(IEnumerable<AstNode> nodes)
+		{
+			debugStack.Peek().Nodes.AddRange(nodes);
+		}
+
+		static readonly IEnumerable<ILRange> emptyILRange = new ILRange[0];
+		public void DebugEnd(AstNode node)
+		{
+			var state = debugStack.Pop();
+			if (currentMemberMapping == null)
+				return;
+			var ranges = state.Nodes.Select(n => n.Annotation<List<ILRange>>()).SelectMany(n => n == null ? emptyILRange : n);
+			// add all ranges
+			foreach (var range in ILRange.OrderAndJoint(ranges)) {
+				currentMemberMapping.MemberCodeMappings.Add(
+					new SourceCodeMapping {
+						ILInstructionOffset = range,
+						StartLocation = state.StartLocation,
+						EndLocation = output.Location,
+						MemberMapping = currentMemberMapping
+					});
+			}
 		}
 	}
 }

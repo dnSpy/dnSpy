@@ -104,6 +104,35 @@ namespace ICSharpCode.NRefactory.CSharp
 		}
 		#endregion
 		
+		#region debug statements
+		void DebugStart(AstNode node)
+		{
+			formatter.DebugStart(node);
+		}
+
+		AstNode DebugExpression(AstNode node)
+		{
+			formatter.DebugExpression(node);
+			return node;
+		}
+
+		IEnumerable<AstNode> DebugExpressions(IEnumerable<AstNode> nodes)
+		{
+			formatter.DebugExpressions(nodes);
+			return nodes;
+		}
+
+		void SemicolonDebugEnd(AstNode node)
+		{
+			Semicolon(node);
+		}
+
+		void DebugEnd(AstNode node)
+		{
+			formatter.DebugEnd(node);
+		}
+		#endregion
+
 		#region WriteSpecials
 		/// <summary>
 		/// Writes all specials from start to end (exclusive). Does not touch the positionStack.
@@ -380,12 +409,15 @@ namespace ICSharpCode.NRefactory.CSharp
 		/// <summary>
 		/// Marks the end of a statement
 		/// </summary>
-		void Semicolon()
+		/// <param name="node">Statement node or null</param>
+		void Semicolon(AstNode node = null)
 		{
 			Role role = containerStack.Peek().Role;
 			// get the role of the current node
 			if (!(role == ForStatement.InitializerRole || role == ForStatement.IteratorRole || role == UsingStatement.ResourceAcquisitionRole)) {
 				WriteToken(Roles.Semicolon);
+				if (node != null)
+					DebugEnd(node);
 				NewLine();
 			}
 		}
@@ -1614,8 +1646,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void VisitBreakStatement(BreakStatement breakStatement)
 		{
 			StartNode(breakStatement);
+			DebugStart(breakStatement);
 			WriteKeyword("break");
-			Semicolon();
+			DebugExpression(breakStatement);
+			SemicolonDebugEnd(breakStatement);
 			EndNode(breakStatement);
 		}
 		
@@ -1630,8 +1664,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void VisitContinueStatement(ContinueStatement continueStatement)
 		{
 			StartNode(continueStatement);
+			DebugStart(continueStatement);
 			WriteKeyword("continue");
-			Semicolon();
+			DebugExpression(continueStatement);
+			SemicolonDebugEnd(continueStatement);
 			EndNode(continueStatement);
 		}
 		
@@ -1640,14 +1676,15 @@ namespace ICSharpCode.NRefactory.CSharp
 			StartNode(doWhileStatement);
 			WriteKeyword(DoWhileStatement.DoKeywordRole);
 			WriteEmbeddedStatement(doWhileStatement.EmbeddedStatement);
+			DebugStart(doWhileStatement);
 			WriteKeyword(DoWhileStatement.WhileKeywordRole);
 			Space(policy.SpaceBeforeWhileParentheses);
 			LPar();
 			Space(policy.SpacesWithinWhileParentheses);
-			doWhileStatement.Condition.AcceptVisitor(this);
+			DebugExpression(doWhileStatement.Condition).AcceptVisitor(this);
 			Space(policy.SpacesWithinWhileParentheses);
 			RPar();
-			Semicolon();
+			SemicolonDebugEnd(doWhileStatement);
 			EndNode(doWhileStatement);
 		}
 		
@@ -1661,8 +1698,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void VisitExpressionStatement(ExpressionStatement expressionStatement)
 		{
 			StartNode(expressionStatement);
-			expressionStatement.Expression.AcceptVisitor(this);
-			Semicolon();
+			DebugStart(expressionStatement);
+			DebugExpression(expressionStatement.Expression).AcceptVisitor(this);
+			DebugExpression(expressionStatement);
+			SemicolonDebugEnd(expressionStatement);
 			EndNode(expressionStatement);
 		}
 		
@@ -1673,9 +1712,11 @@ namespace ICSharpCode.NRefactory.CSharp
 			Space(policy.SpaceBeforeUsingParentheses);
 			LPar();
 			Space(policy.SpacesWithinUsingParentheses);
-			fixedStatement.Type.AcceptVisitor(this);
+			DebugStart(fixedStatement);
+			DebugExpression(fixedStatement.Type).AcceptVisitor(this);
 			Space();
-			WriteCommaSeparatedList(fixedStatement.Variables);
+			WriteCommaSeparatedList(DebugExpressions(fixedStatement.Variables));
+			DebugEnd(fixedStatement);
 			Space(policy.SpacesWithinUsingParentheses);
 			RPar();
 			WriteEmbeddedStatement(fixedStatement.EmbeddedStatement);
@@ -1689,12 +1730,16 @@ namespace ICSharpCode.NRefactory.CSharp
 			Space(policy.SpaceBeforeForeachParentheses);
 			LPar();
 			Space(policy.SpacesWithinForeachParentheses);
-			foreachStatement.VariableType.AcceptVisitor(this);
+			DebugStart(foreachStatement);
+			DebugExpression(foreachStatement.VariableType).AcceptVisitor(this);
 			Space();
-			foreachStatement.VariableNameToken.AcceptVisitor(this);
+			DebugExpression(foreachStatement.VariableNameToken).AcceptVisitor(this);
+			DebugEnd(foreachStatement);
 			WriteKeyword(ForeachStatement.InKeywordRole);
 			Space();
-			foreachStatement.InExpression.AcceptVisitor(this);
+			DebugStart(foreachStatement);
+			DebugExpression(foreachStatement.InExpression).AcceptVisitor(this);
+			DebugEnd(foreachStatement);
 			Space(policy.SpacesWithinForeachParentheses);
 			RPar();
 			WriteEmbeddedStatement(foreachStatement.EmbeddedStatement);
@@ -1709,17 +1754,23 @@ namespace ICSharpCode.NRefactory.CSharp
 			LPar();
 			Space(policy.SpacesWithinForParentheses);
 			
-			WriteCommaSeparatedList(forStatement.Initializers);
+			DebugStart(forStatement);
+			WriteCommaSeparatedList(DebugExpressions(forStatement.Initializers));
 			Space(policy.SpaceBeforeForSemicolon);
 			WriteToken(Roles.Semicolon);
+			DebugEnd(forStatement);
 			Space(policy.SpaceAfterForSemicolon);
 			
-			forStatement.Condition.AcceptVisitor(this);
+			DebugStart(forStatement);
+			DebugExpression(forStatement.Condition).AcceptVisitor(this);
+			DebugEnd(forStatement);
 			Space(policy.SpaceBeforeForSemicolon);
 			WriteToken(Roles.Semicolon);
 			if (forStatement.Iterators.Any()) {
 				Space(policy.SpaceAfterForSemicolon);
-				WriteCommaSeparatedList(forStatement.Iterators);
+				DebugStart(forStatement);
+				WriteCommaSeparatedList(DebugExpressions(forStatement.Iterators));
+				DebugEnd(forStatement);
 			}
 			
 			Space(policy.SpacesWithinForParentheses);
@@ -1731,42 +1782,50 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void VisitGotoCaseStatement(GotoCaseStatement gotoCaseStatement)
 		{
 			StartNode(gotoCaseStatement);
+			DebugStart(gotoCaseStatement);
 			WriteKeyword(GotoCaseStatement.GotoKeywordRole);
 			WriteKeyword(GotoCaseStatement.CaseKeywordRole);
 			Space();
-			gotoCaseStatement.LabelExpression.AcceptVisitor(this);
-			Semicolon();
+			DebugExpression(gotoCaseStatement.LabelExpression).AcceptVisitor(this);
+			DebugExpression(gotoCaseStatement);
+			SemicolonDebugEnd(gotoCaseStatement);
 			EndNode(gotoCaseStatement);
 		}
 		
 		public void VisitGotoDefaultStatement(GotoDefaultStatement gotoDefaultStatement)
 		{
 			StartNode(gotoDefaultStatement);
+			DebugStart(gotoDefaultStatement);
 			WriteKeyword(GotoDefaultStatement.GotoKeywordRole);
 			WriteKeyword(GotoDefaultStatement.DefaultKeywordRole);
-			Semicolon();
+			DebugExpression(gotoDefaultStatement);
+			SemicolonDebugEnd(gotoDefaultStatement);
 			EndNode(gotoDefaultStatement);
 		}
 		
 		public void VisitGotoStatement(GotoStatement gotoStatement)
 		{
 			StartNode(gotoStatement);
+			DebugStart(gotoStatement);
 			WriteKeyword(GotoStatement.GotoKeywordRole);
 			WriteIdentifier(gotoStatement.Label, TextTokenType.Label);
-			Semicolon();
+			DebugExpression(gotoStatement);
+			SemicolonDebugEnd(gotoStatement);
 			EndNode(gotoStatement);
 		}
 		
 		public void VisitIfElseStatement(IfElseStatement ifElseStatement)
 		{
 			StartNode(ifElseStatement);
+			DebugStart(ifElseStatement);
 			WriteKeyword(IfElseStatement.IfKeywordRole);
 			Space(policy.SpaceBeforeIfParentheses);
 			LPar();
 			Space(policy.SpacesWithinIfParentheses);
-			ifElseStatement.Condition.AcceptVisitor(this);
+			DebugExpression(ifElseStatement.Condition).AcceptVisitor(this);
 			Space(policy.SpacesWithinIfParentheses);
 			RPar();
+			DebugEnd(ifElseStatement);
 			WriteEmbeddedStatement(ifElseStatement.TrueStatement);
 			if (!ifElseStatement.FalseStatement.IsNull) {
 				WriteKeyword(IfElseStatement.ElseKeywordRole);
@@ -1797,13 +1856,15 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void VisitLockStatement(LockStatement lockStatement)
 		{
 			StartNode(lockStatement);
+			DebugStart(lockStatement);
 			WriteKeyword(LockStatement.LockKeywordRole);
 			Space(policy.SpaceBeforeLockParentheses);
 			LPar();
 			Space(policy.SpacesWithinLockParentheses);
-			lockStatement.Expression.AcceptVisitor(this);
+			DebugExpression(lockStatement.Expression).AcceptVisitor(this);
 			Space(policy.SpacesWithinLockParentheses);
 			RPar();
+			DebugEnd(lockStatement);
 			WriteEmbeddedStatement(lockStatement.EmbeddedStatement);
 			EndNode(lockStatement);
 		}
@@ -1811,25 +1872,29 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void VisitReturnStatement(ReturnStatement returnStatement)
 		{
 			StartNode(returnStatement);
+			DebugStart(returnStatement);
 			WriteKeyword(ReturnStatement.ReturnKeywordRole);
 			if (!returnStatement.Expression.IsNull) {
 				Space();
-				returnStatement.Expression.AcceptVisitor(this);
+				DebugExpression(returnStatement.Expression).AcceptVisitor(this);
 			}
-			Semicolon();
+			DebugExpression(returnStatement);
+			SemicolonDebugEnd(returnStatement);
 			EndNode(returnStatement);
 		}
 		
 		public void VisitSwitchStatement(SwitchStatement switchStatement)
 		{
 			StartNode(switchStatement);
+			DebugStart(switchStatement);
 			WriteKeyword(SwitchStatement.SwitchKeywordRole);
 			Space(policy.SpaceBeforeSwitchParentheses);
 			LPar();
 			Space(policy.SpacesWithinSwitchParentheses);
-			switchStatement.Expression.AcceptVisitor(this);
+			DebugExpression(switchStatement.Expression).AcceptVisitor(this);
 			Space(policy.SpacesWithinSwitchParentheses);
 			RPar();
+			DebugEnd(switchStatement);
 			OpenBrace(policy.StatementBraceStyle);
 			if (!policy.IndentSwitchBody) {
 				formatter.Unindent();
@@ -1894,12 +1959,14 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void VisitThrowStatement(ThrowStatement throwStatement)
 		{
 			StartNode(throwStatement);
+			DebugStart(throwStatement);
 			WriteKeyword(ThrowStatement.ThrowKeywordRole);
 			if (!throwStatement.Expression.IsNull) {
 				Space();
-				throwStatement.Expression.AcceptVisitor(this);
+				DebugExpression(throwStatement.Expression).AcceptVisitor(this);
 			}
-			Semicolon();
+			DebugExpression(throwStatement);
+			SemicolonDebugEnd(throwStatement);
 			EndNode(throwStatement);
 		}
 		
@@ -1921,18 +1988,23 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void VisitCatchClause(CatchClause catchClause)
 		{
 			StartNode(catchClause);
-			WriteKeyword(CatchClause.CatchKeywordRole);
-			if (!catchClause.Type.IsNull) {
+			if (catchClause.Type.IsNull)
+				WriteKeyword(CatchClause.CatchKeywordRole);
+			else {
+				DebugStart(catchClause);
+				WriteKeyword(CatchClause.CatchKeywordRole);
 				Space(policy.SpaceBeforeCatchParentheses);
 				LPar();
 				Space(policy.SpacesWithinCatchParentheses);
-				catchClause.Type.AcceptVisitor(this);
+				DebugExpression(catchClause.Type).AcceptVisitor(this);
 				if (!string.IsNullOrEmpty(catchClause.VariableName)) {
 					Space();
-					catchClause.VariableNameToken.AcceptVisitor(this);
+					DebugExpression(catchClause.VariableNameToken).AcceptVisitor(this);
 				}
 				Space(policy.SpacesWithinCatchParentheses);
 				RPar();
+				DebugExpression(catchClause);	// Add ILRanges for stloc instruction
+				DebugEnd(catchClause);
 			}
 			catchClause.Body.AcceptVisitor(this);
 			EndNode(catchClause);
@@ -1962,7 +2034,9 @@ namespace ICSharpCode.NRefactory.CSharp
 			LPar();
 			Space(policy.SpacesWithinUsingParentheses);
 			
-			usingStatement.ResourceAcquisition.AcceptVisitor(this);
+			DebugStart(usingStatement);
+			DebugExpression(usingStatement.ResourceAcquisition).AcceptVisitor(this);
+			DebugEnd(usingStatement);
 			
 			Space(policy.SpacesWithinUsingParentheses);
 			RPar();
@@ -1975,24 +2049,28 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void VisitVariableDeclarationStatement(VariableDeclarationStatement variableDeclarationStatement)
 		{
 			StartNode(variableDeclarationStatement);
+			DebugStart(variableDeclarationStatement);
 			WriteModifiers(variableDeclarationStatement.GetChildrenByRole(VariableDeclarationStatement.ModifierRole));
-			variableDeclarationStatement.Type.AcceptVisitor(this);
+			DebugExpression(variableDeclarationStatement.Type).AcceptVisitor(this);
 			Space();
-			WriteCommaSeparatedList(variableDeclarationStatement.Variables);
-			Semicolon();
+			WriteCommaSeparatedList(DebugExpressions(variableDeclarationStatement.Variables));
+			DebugExpression(variableDeclarationStatement);
+			SemicolonDebugEnd(variableDeclarationStatement);
 			EndNode(variableDeclarationStatement);
 		}
 		
 		public void VisitWhileStatement(WhileStatement whileStatement)
 		{
 			StartNode(whileStatement);
+			DebugStart(whileStatement);
 			WriteKeyword(WhileStatement.WhileKeywordRole);
 			Space(policy.SpaceBeforeWhileParentheses);
 			LPar();
 			Space(policy.SpacesWithinWhileParentheses);
-			whileStatement.Condition.AcceptVisitor(this);
+			DebugExpression(whileStatement.Condition).AcceptVisitor(this);
 			Space(policy.SpacesWithinWhileParentheses);
 			RPar();
+			DebugEnd(whileStatement);
 			WriteEmbeddedStatement(whileStatement.EmbeddedStatement);
 			EndNode(whileStatement);
 		}
@@ -2000,20 +2078,24 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void VisitYieldBreakStatement(YieldBreakStatement yieldBreakStatement)
 		{
 			StartNode(yieldBreakStatement);
+			DebugStart(yieldBreakStatement);
 			WriteKeyword(YieldBreakStatement.YieldKeywordRole);
 			WriteKeyword(YieldBreakStatement.BreakKeywordRole);
-			Semicolon();
+			DebugExpression(yieldBreakStatement);
+			SemicolonDebugEnd(yieldBreakStatement);
 			EndNode(yieldBreakStatement);
 		}
 		
 		public void VisitYieldReturnStatement(YieldReturnStatement yieldReturnStatement)
 		{
 			StartNode(yieldReturnStatement);
+			DebugStart(yieldReturnStatement);
 			WriteKeyword(YieldReturnStatement.YieldKeywordRole);
 			WriteKeyword(YieldReturnStatement.ReturnKeywordRole);
 			Space();
-			yieldReturnStatement.Expression.AcceptVisitor(this);
-			Semicolon();
+			DebugExpression(yieldReturnStatement.Expression).AcceptVisitor(this);
+			DebugExpression(yieldReturnStatement);
+			SemicolonDebugEnd(yieldReturnStatement);
 			EndNode(yieldReturnStatement);
 		}
 

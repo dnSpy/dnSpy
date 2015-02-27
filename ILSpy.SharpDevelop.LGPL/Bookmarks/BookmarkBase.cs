@@ -4,6 +4,7 @@
 using System;
 using System.Windows.Input;
 using System.Windows.Media;
+using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using dnlib.DotNet;
@@ -16,6 +17,7 @@ namespace ICSharpCode.ILSpy.Bookmarks
 	public class BookmarkBase : IBookmark
 	{
 		TextLocation location;
+		TextLocation endLocation;
 		
 		protected virtual void RemoveMark()
 		{
@@ -25,6 +27,11 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		public TextLocation Location {
 			get { return location; }
 			set { location = value; }
+		}
+		
+		public TextLocation EndLocation {
+			get { return endLocation; }
+			set { endLocation = value; }
 		}
 		
 		public event EventHandler DocumentChanged;
@@ -47,10 +54,6 @@ namespace ICSharpCode.ILSpy.Bookmarks
 			get { return location.Line; }
 		}
 		
-		public int ColumnNumber {
-			get {  return location.Column; }
-		}
-		
 		public virtual int ZOrder {
 			get { return 0; }
 		}
@@ -64,10 +67,11 @@ namespace ICSharpCode.ILSpy.Bookmarks
 			}
 		}
 		
-		public BookmarkBase(IMemberRef member, TextLocation location)
+		public BookmarkBase(IMemberRef member, TextLocation location, TextLocation endLocation)
 		{
 			this.MemberReference = member;
 			this.Location = location;
+			this.EndLocation = endLocation;
 		}
 		
 		public virtual ImageSource Image {
@@ -92,6 +96,20 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		
 		public virtual void Drop(int lineNumber)
 		{
+		}
+
+		protected ITextMarker CreateMarkerInternal(ITextMarkerService markerService, int lineOffset, int lineLength)
+		{
+			int startCol, endCol;
+			startCol = location.Column;
+			if (endLocation.Line == 0 && endLocation.Column == 0)
+				endCol = lineLength;
+			else if (location.Line == endLocation.Line)
+				endCol = endLocation.Column;
+			else
+				endCol = lineLength;
+
+			return markerService.Create(lineOffset + startCol, endCol - startCol);
 		}
 	}
 }

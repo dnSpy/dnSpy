@@ -812,18 +812,18 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				
 				var key = frame.MethodInfo.ToMethodKey();
 				int ilOffset = frame.IP;
-				int line;
+				TextLocation location, endLocation;
 				MethodDef methodDef;
 				
 				var cm = DebugInformation.CodeMappings;
 				if (cm != null && cm.ContainsKey(key) &&
-					cm[key].GetInstructionByTokenAndOffset((uint)ilOffset, out methodDef, out line)) {
+					cm[key].GetInstructionByTokenAndOffset((uint)ilOffset, out methodDef, out location, out endLocation)) {
 					var info = DebugInformation.DebugStepInformation;
 					if (info != null)
 						DebugInformation.DebugStepInformation = Tuple.Create(info.Item1, ilOffset, info.Item3);
 					DebugInformation.MustJumpToReference = false; // we do not need to step into/out
 					DebuggerService.RemoveCurrentLineMarker();
-					DebuggerService.JumpToCurrentLine(methodDef, line, 0, line, 0, ilOffset);
+					DebuggerService.JumpToCurrentLine(methodDef, location.Line, location.Column, endLocation.Line, endLocation.Column, ilOffset);
 				}
 				else {
 					StepIntoUnknownFrame(frame);

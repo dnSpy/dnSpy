@@ -34,6 +34,11 @@ namespace ICSharpCode.Decompiler.ILAst
 {
 	public abstract class ILNode
 	{
+		public IEnumerable<ILRange> GetSelfAndChildrenRecursiveILRanges()
+		{
+			return GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.ILRanges);
+		}
+
 		public IEnumerable<T> GetSelfAndChildrenRecursive<T>(Func<T, bool> predicate = null) where T: ILNode
 		{
 			List<T> result = new List<T>(16);
@@ -139,6 +144,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			public bool IsFilter;
 			public TypeSig ExceptionType;
 			public ILVariable ExceptionVariable;
+			public List<ILRange> StlocILRanges = new List<ILRange>();
 			
 			public override void WriteTo(ITextOutput output)
 			{

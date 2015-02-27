@@ -437,8 +437,8 @@ namespace ICSharpCode.ILSpy.TextView
 				IMemberRef member = pair.Key as IMemberRef;
 				int offset = pair.Value;
 				if (member != null) {
-					int line = document.GetLocation(offset).Line;
-					manager.Bookmarks.Add(new MemberBookmark(member, line));
+					var location = document.GetLocation(offset);
+					manager.Bookmarks.Add(new MemberBookmark(member, location));
 				}
 			}
 		}
@@ -554,19 +554,15 @@ namespace ICSharpCode.ILSpy.TextView
 				// show the currentline marker
 				var key = DebugInformation.DebugStepInformation.Item1;
 				int ilOffset = DebugInformation.DebugStepInformation.Item2;
-				int line;
+				ICSharpCode.NRefactory.TextLocation location, endLocation;
 				MethodDef methodDef;
 				var cm = DebugInformation.CodeMappings;
 				if (cm != null && cm.ContainsKey(key) &&
-					cm[key].GetInstructionByTokenAndOffset((uint)ilOffset, out methodDef, out line)) {
+					cm[key].GetInstructionByTokenAndOffset((uint)ilOffset, out methodDef, out location, out endLocation)) {
 					// update marker
-					DebuggerService.JumpToCurrentLine(methodDef, line, 0, line, 0, ilOffset);
+					DebuggerService.JumpToCurrentLine(methodDef, location.Line, location.Column, endLocation.Line, endLocation.Column, ilOffset);
 
-					var bm = CurrentLineBookmark.Instance;
-					DocumentLine docline = textEditor.Document.GetLineByNumber(line);
-					bm.Marker = bm.CreateMarker(textMarkerService, docline.Offset + 1, docline.Length);
-					
-					UnfoldAndScroll(line);
+					UnfoldAndScroll(location.Line);
 					updatedMarker = true;
 				}
 			}

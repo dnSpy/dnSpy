@@ -11,7 +11,7 @@ namespace ICSharpCode.ILSpy.Bookmarks
 {
 	public abstract class MarkerBookmark : BookmarkBase
 	{
-		public MarkerBookmark(IMemberRef member, TextLocation location) : base(member, location)
+		public MarkerBookmark(IMemberRef member, TextLocation location, TextLocation endLocation) : base(member, location, endLocation)
 		{
 		}
 		

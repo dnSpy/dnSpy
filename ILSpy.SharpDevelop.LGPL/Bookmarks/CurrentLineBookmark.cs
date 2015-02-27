@@ -25,21 +25,13 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			get { return instance; }
 		}
 		
-		static int startLine;
-		static int startColumn;
-		static int endLine;
 		static int endColumn;
 		
 		public static void SetPosition(IMemberRef memberReference, int makerStartLine, int makerStartColumn, int makerEndLine, int makerEndColumn, int ilOffset)
 		{
 			Remove();
 			
-			startLine   = makerStartLine;
-			startColumn = makerStartColumn;
-			endLine     = makerEndLine;
-			endColumn   = makerEndColumn;
-			
-			instance = new CurrentLineBookmark(memberReference, new TextLocation(startLine, startColumn), ilOffset);
+			instance = new CurrentLineBookmark(memberReference, new TextLocation(makerStartLine, makerStartColumn), new TextLocation(makerEndLine, makerEndColumn), ilOffset);
 			BookmarkManager.AddMark(instance);
 		}
 		
@@ -59,7 +51,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			get { return 100; }
 		}
 		
-		private CurrentLineBookmark(IMemberRef member, TextLocation location, int ilOffset) : base(member, location)
+		private CurrentLineBookmark(IMemberRef member, TextLocation location, TextLocation endLocation, int ilOffset) : base(member, location, endLocation)
 		{
 			this.ILOffset = ilOffset;
 		}
@@ -86,7 +78,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		
 		public override ITextMarker CreateMarker(ITextMarkerService markerService, int offset, int length)
 		{
-			ITextMarker marker = markerService.Create(offset + startColumn - 1, length + 1);
+			ITextMarker marker = CreateMarkerInternal(markerService, offset - 1, length + 1);
 			marker.HighlightingColor = () => HighlightingColor;
 			marker.IsVisible = b => {
 				var cm = DebugInformation.CodeMappings;
