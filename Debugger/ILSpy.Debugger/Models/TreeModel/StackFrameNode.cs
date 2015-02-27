@@ -33,12 +33,15 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 				expression.ImageName = imageName;
 				yield return expression;
 			}
-			foreach(DebugLocalVariableInfo locVar in stackFrame.MethodInfo.GetLocalVariables(this.StackFrame.IP)) {
-				string imageName;
-				var image = ExpressionNode.GetImageForLocalVariable(out imageName);
-				var expression = new ExpressionNode(image, locVar.Name, locVar.GetExpression());
-				expression.ImageName = imageName;
-				yield return expression;
+			var ip = this.StackFrame.IP;
+			if (ip.IsValid) {
+				foreach (DebugLocalVariableInfo locVar in stackFrame.MethodInfo.GetLocalVariables(ip.Offset)) {
+					string imageName;
+					var image = ExpressionNode.GetImageForLocalVariable(out imageName);
+					var expression = new ExpressionNode(image, locVar.Name, locVar.GetExpression());
+					expression.ImageName = imageName;
+					yield return expression;
+				}
 			}
 			if (stackFrame.Thread.CurrentException != null) {
 				yield return new ExpressionNode(null, "__exception", new IdentifierExpression("__exception"));

@@ -298,6 +298,9 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			isMatch = false;
 			frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
 			var key = frame.MethodInfo.ToMethodKey();
+			var ip = frame.IP;
+			if (ip.IsInvalid)
+				return null;
 			
 			// get the mapped instruction from the current line marker or the next one
 			//TODO: Could fail to find mapping if user has switched to another method than we're debugging
@@ -305,7 +308,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			if (cm == null || !cm.ContainsKey(key))
 				return null;
 			
-			return cm[key].GetInstructionByOffset((uint)frame.IP, out isMatch);
+			return cm[key].GetInstructionByOffset((uint)ip.Offset, out isMatch);
 		}
 		
 		StackFrame GetStackFrame()
@@ -809,21 +812,22 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
 				if (frame == null)
 					return;
+				var ip = frame.IP;
 				
 				var key = frame.MethodInfo.ToMethodKey();
-				int ilOffset = frame.IP;
 				TextLocation location, endLocation;
 				MethodDef methodDef;
 				
 				var cm = DebugInformation.CodeMappings;
 				if (cm != null && cm.ContainsKey(key) &&
-					cm[key].GetInstructionByTokenAndOffset((uint)ilOffset, out methodDef, out location, out endLocation)) {
+					ip.IsValid &&
+					cm[key].GetInstructionByTokenAndOffset((uint)ip.Offset, out methodDef, out location, out endLocation)) {
 					var info = DebugInformation.DebugStepInformation;
 					if (info != null)
-						DebugInformation.DebugStepInformation = Tuple.Create(info.Item1, ilOffset, info.Item3);
+						DebugInformation.DebugStepInformation = Tuple.Create(info.Item1, ip.Offset, info.Item3);
 					DebugInformation.MustJumpToReference = false; // we do not need to step into/out
 					DebuggerService.RemoveCurrentLineMarker();
-					DebuggerService.JumpToCurrentLine(methodDef, location.Line, location.Column, endLocation.Line, endLocation.Column, ilOffset);
+					DebuggerService.JumpToCurrentLine(methodDef, location.Line, location.Column, endLocation.Line, endLocation.Column, ip.Offset);
 				}
 				else {
 					StepIntoUnknownFrame(frame);
@@ -835,14 +839,14 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		{
 			var debugType = (DebugType)frame.MethodInfo.DeclaringType;
 			var key = frame.MethodInfo.ToMethodKey();
-			int ilOffset = frame.IP;
+			var ip = frame.IP;
 
 			var debugModule = debugType.DebugModule;
 			DebugInformation.MustJumpToReference = false;
 			if (!string.IsNullOrEmpty(debugModule.FullPath)) {
 				var loadedMod = MainWindow.Instance.LoadAssembly(debugModule.AssemblyFullPath, debugModule.FullPath).ModuleDefinition as ModuleDefMD;
 				if (loadedMod != null) {
-					DebugInformation.DebugStepInformation = Tuple.Create(key, ilOffset, loadedMod.ResolveToken(key.Token) as IMemberRef);
+					DebugInformation.DebugStepInformation = Tuple.Create(key, ip.IsInvalid ? int.MaxValue : ip.Offset, loadedMod.ResolveToken(key.Token) as IMemberRef);
 					DebugInformation.MustJumpToReference = true;
 				}
 			}

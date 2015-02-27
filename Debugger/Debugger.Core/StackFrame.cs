@@ -128,14 +128,32 @@ namespace Debugger
 				return corILFrame;
 			}
 		}
+
+		public struct IPResult {
+			public readonly int Offset;
+			public readonly CorDebugMappingResult Flags;
+
+			public bool IsValid {
+				get { return (Flags & CorDebugMappingResult.MAPPING_UNMAPPED_ADDRESS) == 0; }
+			}
+
+			public bool IsInvalid {
+				get { return !IsValid; }
+			}
+
+			public IPResult(uint ip, CorDebugMappingResult result) {
+				this.Offset = (int)ip;
+				this.Flags = result;
+			}
+		}
 		
 		[Debugger.Tests.Ignore]
-		public int IP {
+		public IPResult IP {
 			get {
 				uint corInstructionPtr;
 				CorDebugMappingResult mappingResult;
 				CorILFrame.GetIP(out corInstructionPtr, out mappingResult);
-				return (int)corInstructionPtr;
+				return new IPResult(corInstructionPtr, mappingResult);
 			}
 		}
 		
@@ -224,7 +242,8 @@ namespace Debugger
 		/// </summary>
 		public SourcecodeSegment NextStatement {
 			get {
-				return GetSegmentForOffet(IP);
+				var ip = IP;
+				return ip.IsInvalid ? null : GetSegmentForOffet(ip.Offset);
 			}
 		}
 		
@@ -361,7 +380,10 @@ namespace Debugger
 		/// <returns> Null if not found </returns>
 		public Value GetLocalVariableValue(string name)
 		{
-			DebugLocalVariableInfo loc = this.MethodInfo.GetLocalVariable(this.IP, name);
+			var ip = this.IP;
+			if (ip.IsInvalid)
+				return null;
+			DebugLocalVariableInfo loc = this.MethodInfo.GetLocalVariable(ip.Offset, name);
 			if (loc == null)
 				return null;
 			return loc.GetValue(this);
