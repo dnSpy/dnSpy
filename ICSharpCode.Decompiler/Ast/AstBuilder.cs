@@ -339,7 +339,7 @@ namespace ICSharpCode.Decompiler.Ast
 							continue;
 						long memberValue = (long)CSharpPrimitiveCast.Cast(TypeCode.Int64, constant, false);
 						if (forcePrintingInitializers || memberValue != expectedEnumMemberValue) {
-							enumMember.AddChild(new PrimitiveExpression(ConvertConstant(enumType.FieldSig.GetFieldType(), constant)), EnumMemberDeclaration.InitializerRole);
+							enumMember.AddChild(new PrimitiveExpression(ConvertConstant(enumType == null ? null : enumType.FieldSig.GetFieldType(), constant)), EnumMemberDeclaration.InitializerRole);
 						}
 						expectedEnumMemberValue = memberValue + 1;
 						astType.AddChild(enumMember, Roles.TypeMemberRole);
