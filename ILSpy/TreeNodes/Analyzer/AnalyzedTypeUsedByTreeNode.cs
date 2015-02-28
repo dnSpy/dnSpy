@@ -164,7 +164,13 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private bool TypeMatches(TypeReference tref)
 		{
-			return tref != null && analyzedType.ToString() == tref.ToString();
+			if (tref != null && tref.Name == analyzedType.Name) {
+				var tdef = tref.Resolve();
+				if (tdef != null) {
+					return (tdef == analyzedType);
+				}
+			}
+			return false;
 		}
 
 		public static bool CanShow(TypeDefinition type)
