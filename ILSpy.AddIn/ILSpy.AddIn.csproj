@@ -206,10 +206,6 @@
       <Project>{da111693-97c8-413b-9102-4dcbee8885b7}</Project>
       <Name>dnspc</Name>
     </ProjectReference>
-    <ProjectReference Include="..\dnSpy-x64\dnSpy-x64.csproj">
-      <Project>{9b194315-7f65-4694-b2b2-e17b4e201ced}</Project>
-      <Name>dnSpy-x64</Name>
-    </ProjectReference>
     <ProjectReference Include="..\dnSpy-x86\dnSpy-x86.csproj">
       <Project>{0f407613-e15d-4fb5-89df-ee866db6a7ec}</Project>
       <Name>dnSpy-x86</Name>
