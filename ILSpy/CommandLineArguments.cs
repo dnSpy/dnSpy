@@ -30,6 +30,8 @@ namespace ICSharpCode.ILSpy
 		public string Search;
 		public string Language;
 		public bool NoActivate;
+		public Guid? FixedGuid;
+		public string SaveDirectory;
 		
 		public CommandLineArguments(IEnumerable<string> arguments)
 		{
@@ -49,6 +51,18 @@ namespace ICSharpCode.ILSpy
 						this.Language = arg.Substring("/language:".Length);
 					else if (arg.Equals("/noActivate", StringComparison.OrdinalIgnoreCase))
 						this.NoActivate = true;
+					else if (arg.StartsWith("/fixedGuid:", StringComparison.OrdinalIgnoreCase)) {
+						string guid = arg.Substring("/fixedGuid:".Length);
+						try {
+							if (guid.Length < 32)
+								guid = guid + new string('0', 32 - guid.Length);
+							this.FixedGuid = new Guid(guid);
+						} catch {
+							this.FixedGuid = null;
+						}
+					}
+					else if (arg.StartsWith("/saveDir:", StringComparison.OrdinalIgnoreCase))
+						this.SaveDirectory = arg.Substring("/saveDir:".Length);
 				} else {
 					this.AssembliesToLoad.Add(arg);
 				}

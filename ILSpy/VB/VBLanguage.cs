@@ -127,6 +127,7 @@ namespace ICSharpCode.ILSpy.VB
 		{
 			const string ns = "http://schemas.microsoft.com/developer/msbuild/2003";
 			string platformName = CSharpLanguage.GetPlatformName(module);
+			Guid guid = App.CommandLineArguments.FixedGuid ?? Guid.NewGuid();
 			using (XmlTextWriter w = new XmlTextWriter(writer)) {
 				w.Formatting = Formatting.Indented;
 				w.WriteStartDocument();
@@ -135,7 +136,7 @@ namespace ICSharpCode.ILSpy.VB
 				w.WriteAttributeString("DefaultTargets", "Build");
 
 				w.WriteStartElement("PropertyGroup");
-				w.WriteElementString("ProjectGuid", Guid.NewGuid().ToString("B").ToUpperInvariant());
+				w.WriteElementString("ProjectGuid", guid.ToString("B").ToUpperInvariant());
 
 				w.WriteStartElement("Configuration");
 				w.WriteAttributeString("Condition", " '$(Configuration)' == '' ");
