@@ -168,4 +168,21 @@ public static class ValueTypes
 			Console.WriteLine("true");
 		}
 	}
+
+	public static void CompareNotEqual0IsReallyNotEqual(IComparable<int> a)
+	{
+		if (a.CompareTo(0) != 0)
+		{
+			Console.WriteLine("true");
+		}
+	}
+
+	public static void CompareEqual0IsReallyEqual(IComparable<int> a)
+	{
+		if (a.CompareTo(0) == 0)
+		{
+			Console.WriteLine("true");
+		}
+	}
+
 }
