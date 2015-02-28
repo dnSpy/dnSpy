@@ -25,8 +25,6 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			get { return instance; }
 		}
 		
-		static int endColumn;
-		
 		public static void SetPosition(IMemberRef memberReference, int makerStartLine, int makerStartColumn, int makerEndLine, int makerEndColumn, int ilOffset)
 		{
 			Remove();
