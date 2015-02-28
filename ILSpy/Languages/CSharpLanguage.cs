@@ -215,7 +215,14 @@ namespace ICSharpCode.ILSpy
 				additionalTransform.Run(astBuilder.SyntaxTree);
 			}
 			if (options.DecompilerSettings.ShowXmlDocumentation) {
-				AddXmlDocTransform.Run(astBuilder.SyntaxTree);
+				try {
+					AddXmlDocTransform.Run(astBuilder.SyntaxTree);
+				} catch (XmlException ex) {
+					string[] msg = (" Exception while reading XmlDoc: " + ex.ToString()).Split(new[]{'\r', '\n'}, StringSplitOptions.RemoveEmptyEntries);
+					var insertionPoint = astBuilder.SyntaxTree.FirstChild;
+					for (int i = 0; i < msg.Length; i++)
+						astBuilder.SyntaxTree.InsertChildBefore(insertionPoint, new Comment(msg[i], CommentType.Documentation), Roles.Comment);
+				}
 			}
 			astBuilder.GenerateCode(output);
 		}
