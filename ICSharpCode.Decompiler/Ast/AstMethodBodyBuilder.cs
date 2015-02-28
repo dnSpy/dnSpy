@@ -206,7 +206,7 @@ namespace ICSharpCode.Decompiler.Ast
 					if (catchClause.ExceptionVariable == null
 					    && (catchClause.ExceptionType == null || catchClause.ExceptionType.GetElementType() == ElementType.Object))
 					{
-						tryCatchStmt.CatchClauses.Add(new Ast.CatchClause { Body = TransformBlock(catchClause) });
+						tryCatchStmt.CatchClauses.Add(new Ast.CatchClause { Body = TransformBlock(catchClause) }.WithAnnotation(catchClause.StlocILRanges));
 					} else {
 						tryCatchStmt.CatchClauses.Add(
 							new Ast.CatchClause {

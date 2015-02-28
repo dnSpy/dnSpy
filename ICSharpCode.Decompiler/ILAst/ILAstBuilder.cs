@@ -715,9 +715,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					ehs.ExceptWith(nestedEHs);
 					List<ILNode> handlerAst = ConvertToAst(body.CutRange(startIdx, endIdx - startIdx), nestedEHs);
 					if (eh.HandlerType == ExceptionHandlerType.Catch) {
-						ILTryCatchBlock.CatchBlock catchBlock = new ILTryCatchBlock.CatchBlock() {
+						ILTryCatchBlock.CatchBlock catchBlock = new ILTryCatchBlock.CatchBlock(handlerAst) {
 							ExceptionType = eh.CatchType.ToTypeSig(),
-							Body = handlerAst
 						};
 						// Handle the automatically pushed exception on the stack
 						ByteCode ldexception = ldexceptions[eh];
@@ -728,9 +727,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					} else if (eh.HandlerType == ExceptionHandlerType.Fault) {
 						tryCatchBlock.FaultBlock = new ILBlock(handlerAst);
 					} else if (useNewFilterCode && eh.HandlerType == ExceptionHandlerType.Filter) {
-						ILTryCatchBlock.CatchBlock catchBlock = new ILTryCatchBlock.CatchBlock() {
+						ILTryCatchBlock.CatchBlock catchBlock = new ILTryCatchBlock.CatchBlock(handlerAst) {
 							ExceptionType = eh.CatchType.ToTypeSig(),
-							Body = handlerAst
 						};
 						// Handle the automatically pushed exception on the stack
 						ByteCode ldexception = ldexceptions[eh];
@@ -748,6 +746,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						ByteCode ldfilter = ldfilters[eh];
 						ConvertExceptionVariable(eh, filterBlock, ldfilter);
 						filterBlock.HandlerBlock = catchBlock;
+						filterBlock.StlocILRanges.AddRange(catchBlock.StlocILRanges);
 
 						tryCatchBlock.FilterBlock = filterBlock;
 					} else {

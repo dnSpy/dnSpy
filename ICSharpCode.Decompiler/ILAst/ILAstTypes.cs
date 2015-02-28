@@ -159,6 +159,17 @@ namespace ICSharpCode.Decompiler.ILAst
 			public TypeSig ExceptionType;
 			public ILVariable ExceptionVariable;
 			public List<ILRange> StlocILRanges = new List<ILRange>();
+
+			public CatchBlock()
+			{
+			}
+
+			public CatchBlock(List<ILNode> body)
+			{
+				this.Body = body;
+				if (body.Count > 0 && body[0].Match(ILCode.Pop))
+					StlocILRanges.AddRange(body[0].GetSelfAndChildrenRecursiveILRanges());
+			}
 			
 			public override void WriteTo(ITextOutput output, MemberMapping memberMapping)
 			{

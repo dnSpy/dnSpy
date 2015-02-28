@@ -1988,11 +1988,9 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void VisitCatchClause(CatchClause catchClause)
 		{
 			StartNode(catchClause);
-			if (catchClause.Type.IsNull)
-				WriteKeyword(CatchClause.CatchKeywordRole);
-			else {
-				DebugStart(catchClause);
-				WriteKeyword(CatchClause.CatchKeywordRole);
+			DebugStart(catchClause);
+			WriteKeyword(CatchClause.CatchKeywordRole);
+			if (!catchClause.Type.IsNull) {
 				Space(policy.SpaceBeforeCatchParentheses);
 				LPar();
 				Space(policy.SpacesWithinCatchParentheses);
@@ -2003,9 +2001,9 @@ namespace ICSharpCode.NRefactory.CSharp
 				}
 				Space(policy.SpacesWithinCatchParentheses);
 				RPar();
-				DebugExpression(catchClause);	// Add ILRanges for stloc instruction
-				DebugEnd(catchClause);
 			}
+			DebugExpression(catchClause);	// Add ILRanges for stloc instruction
+			DebugEnd(catchClause);
 			catchClause.Body.AcceptVisitor(this);
 			EndNode(catchClause);
 		}
