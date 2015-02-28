@@ -109,7 +109,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 							new SourceCodeMapping() {
 								StartLocation = output.Location,
 								EndLocation = output.Location,
-								ILInstructionOffset = new ILRange { From = inst.Offset, To = next == null ? (uint)method.Body.GetCodeSize() : next.Offset },
+								ILInstructionOffset = new ILRange(inst.Offset, next == null ? (uint)method.Body.GetCodeSize() : next.Offset),
 								MemberMapping = methodMapping
 							});
 					}
@@ -221,7 +221,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 							new SourceCodeMapping() {
 								StartLocation = startLocation,
 								EndLocation = output.Location,
-								ILInstructionOffset = new ILRange { From = inst.Offset, To = next == null ? (uint)codeSize : next.Offset },
+								ILInstructionOffset = new ILRange(inst.Offset, next == null ? (uint)codeSize : next.Offset),
 								MemberMapping = currentMethodMapping
 							});
 					}

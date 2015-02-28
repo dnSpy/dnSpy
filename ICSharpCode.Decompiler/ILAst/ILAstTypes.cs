@@ -288,10 +288,47 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 	}
 	
-	public class ILRange
+	public struct ILRange : IEquatable<ILRange>
 	{
-		public uint From;
-		public uint To;   // Exlusive
+		public readonly uint From;
+		public readonly uint To;   // Exlusive
+
+		public static bool operator ==(ILRange a, ILRange b)
+		{
+			return a.Equals(b);
+		}
+
+		public static bool operator !=(ILRange a, ILRange b)
+		{
+			return !a.Equals(b);
+		}
+
+		public bool IsDefault {
+			get { return From == 0 && To == 0; }
+		}
+
+		public ILRange(uint from, uint to)
+		{
+			this.From = from;
+			this.To = to;
+		}
+
+		public bool Equals(ILRange other)
+		{
+			return From == other.From && To == other.To;
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (!(obj is ILRange))
+				return false;
+			return Equals((ILRange)obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return (int)(((From << 16) | From >> 32) | To);
+		}
 		
 		public override string ToString()
 		{
@@ -303,13 +340,13 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (input == null)
 				throw new ArgumentNullException("Input is null!");
 			
-			List<ILRange> ranges = input.Where(r => r != null).OrderBy(r => r.From).ToList();
+			List<ILRange> ranges = input.OrderBy(r => r.From).ToList();
 			for (int i = 0; i < ranges.Count - 1;) {
 				ILRange curr = ranges[i];
 				ILRange next = ranges[i + 1];
 				// Merge consequtive ranges if they intersect
 				if (curr.From <= next.From && next.From <= curr.To) {
-					curr.To = Math.Max(curr.To, next.To);
+					ranges[i] = new ILRange(curr.From, Math.Max(curr.To, next.To));
 					ranges.RemoveAt(i + 1);
 				} else {
 					i++;
@@ -328,20 +365,20 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			var ordered = OrderAndJoint(input);
 			if (ordered.Count == 0) {
-				yield return new ILRange() { From = 0, To = (uint)codeSize };
+				yield return new ILRange(0, (uint)codeSize);
 			} else {
 				// Gap before the first element
 				if (ordered.First().From != 0)
-					yield return new ILRange() { From = 0, To = ordered.First().From };
+					yield return new ILRange(0, ordered.First().From);
 				
 				// Gaps between elements
 				for (int i = 0; i < ordered.Count - 1; i++)
-					yield return new ILRange() { From = ordered[i].To, To = ordered[i + 1].From };
+					yield return new ILRange(ordered[i].To, ordered[i + 1].From);
 				
 				// Gap after the last element
 				Debug.Assert(ordered.Last().To <= codeSize);
 				if (ordered.Last().To != codeSize)
-					yield return new ILRange() { From = ordered.Last().To, To = (uint)codeSize };
+					yield return new ILRange(ordered.Last().To, (uint)codeSize);
 			}
 		}
 	}

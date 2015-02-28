@@ -73,7 +73,7 @@ namespace ICSharpCode.Decompiler
 			} else {
 				// if the current list contains the last mapping, add also the last gap
 				var lastInverted = MemberMapping.InvertedList.LastOrDefault();
-				if (lastInverted != null && lastInverted.From == currentList[currentList.Count - 1].To)
+				if (!lastInverted.IsDefault && lastInverted.From == currentList[currentList.Count - 1].To)
 					currentList.Add(lastInverted);
 			}
 			
@@ -137,8 +137,7 @@ namespace ICSharpCode.Decompiler
 		{
 			get {
 				if (invertedList == null) {
-					var list = MemberCodeMappings.ConvertAll<ILRange>(
-						s => new ILRange { From = s.ILInstructionOffset.From, To = s.ILInstructionOffset.To });
+					var list = MemberCodeMappings.ConvertAll<ILRange>(s => s.ILInstructionOffset);
 					invertedList = ILRange.OrderAndJoint(ILRange.Invert(list, CodeSize));
 				}
 				return invertedList;

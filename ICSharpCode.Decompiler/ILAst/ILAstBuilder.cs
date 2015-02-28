@@ -801,7 +801,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			// Convert stack-based IL code to ILAst tree
 			foreach(ByteCode byteCode in body) {
-				ILRange ilRange = new ILRange() { From = byteCode.Offset, To = byteCode.EndOffset };
+				ILRange ilRange = new ILRange(byteCode.Offset, byteCode.EndOffset);
 				
 				if (byteCode.StackBefore == null) {
 					// Unreachable code
