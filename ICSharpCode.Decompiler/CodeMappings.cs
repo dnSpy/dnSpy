@@ -63,9 +63,7 @@ namespace ICSharpCode.Decompiler
 			var currentList = new List<ILRange>();
 			
 			// add list for the current source code line
-			currentList.AddRange(ILRange.OrderAndJoint(MemberMapping.MemberCodeMappings
-			                                           .FindAll(m => m.StartLocation.Line == this.StartLocation.Line)
-			                                           .ConvertAll<ILRange>(m => m.ILInstructionOffset)));
+			currentList.Add(ILInstructionOffset);
 			
 			if (!isMatch) {
 				// add inverted
@@ -175,14 +173,16 @@ namespace ICSharpCode.Decompiler
 			if (codeMapping == null)
 				throw new ArgumentException("CodeMappings storage must be valid!");
 			
-			var map = codeMapping.MemberCodeMappings.Find(m => m.StartLocation.Line == lineNumber);
-			if (map != null) {
-				metadataToken = codeMapping.MethodDefinition.MDToken.ToInt32();
-				return map;
+			SourceCodeMapping map = null;
+			foreach (var m in codeMapping.MemberCodeMappings) {
+				if (m.StartLocation.Line != lineNumber)
+					continue;
+				if (map == null || m.ILInstructionOffset.From < map.ILInstructionOffset.From)
+					map = m;
 			}
 			
-			metadataToken = 0;
-			return null;
+			metadataToken = map == null ? 0 : codeMapping.MethodDefinition.MDToken.ToInt32();
+			return map;
 		}
 		
 		/// <summary>
