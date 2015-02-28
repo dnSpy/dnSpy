@@ -89,10 +89,12 @@ namespace ICSharpCode.ILSpy
 			}
 			output.WriteLine();
 			
+			var memberMapping = new MemberMapping(method);
 			foreach (ILNode node in ilMethod.Body) {
-				node.WriteTo(output);
+				node.WriteTo(output, memberMapping);
 				output.WriteLine();
 			}
+			output.AddDebuggerMemberMapping(memberMapping);
 		}
 		
 		internal static IEnumerable<ILAstLanguage> GetDebugLanguages()
