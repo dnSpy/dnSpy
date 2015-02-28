@@ -86,6 +86,15 @@ namespace ICSharpCode.Decompiler
 			
 			return resultList.ToArray();
 		}
+
+		public override string ToString()
+		{
+			return string.Format("{0} {1},{2} - {3},{4}",
+				ILInstructionOffset,
+				StartLocation.Line, StartLocation.Column,
+				EndLocation.Line, EndLocation.Column
+				);
+		}
 	}
 	
 	/// <summary>
