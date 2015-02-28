@@ -53,15 +53,12 @@ namespace ICSharpCode.ILSpy
 						this.NoActivate = true;
 					else if (arg.StartsWith("/fixedGuid:", StringComparison.OrdinalIgnoreCase)) {
 						string guid = arg.Substring("/fixedGuid:".Length);
-						try {
-							if (guid.Length < 32)
-								guid = guid + new string('0', 32 - guid.Length);
-							this.FixedGuid = new Guid(guid);
-						} catch {
-							this.FixedGuid = null;
-						}
-					}
-					else if (arg.StartsWith("/saveDir:", StringComparison.OrdinalIgnoreCase))
+						if (guid.Length < 32)
+							guid = guid + new string('0', 32 - guid.Length);
+						Guid fixedGuid;
+						if (Guid.TryParse(guid, out fixedGuid))
+							this.FixedGuid = fixedGuid;
+					} else if (arg.StartsWith("/saveDir:", StringComparison.OrdinalIgnoreCase))
 						this.SaveDirectory = arg.Substring("/saveDir:".Length);
 				} else {
 					this.AssembliesToLoad.Add(arg);
