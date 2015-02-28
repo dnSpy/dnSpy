@@ -813,7 +813,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (byteCode.Prefixes != null && byteCode.Prefixes.Length > 0) {
 					ILExpressionPrefix[] prefixes = new ILExpressionPrefix[byteCode.Prefixes.Length];
 					for (int i = 0; i < prefixes.Length; i++) {
-						prefixes[i] = new ILExpressionPrefix((ILCode)byteCode.Prefixes[i].OpCode.Code, byteCode.Prefixes[i].Operand);
+						prefixes[i] = new ILExpressionPrefix(ilCodeTranslation[byteCode.Prefixes[i].OpCode.Code], byteCode.Prefixes[i].Operand);
 					}
 					expr.Prefixes = prefixes;
 				}
