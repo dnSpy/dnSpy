@@ -450,7 +450,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					return (TypeReference)expr.Operand;
 				case ILCode.Localloc:
 					if (forceInferChildren) {
-						InferTypeForExpression(expr.Arguments[0], typeSystem.Int32);
+						InferTypeForExpression(expr.Arguments[0], null);
 					}
 					if (expectedType is PointerType)
 						return expectedType;
@@ -1013,7 +1013,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			TypeReference leftPreferred = DoInferTypeForExpression(left, expectedType);
 			if (leftPreferred is PointerType) {
 				left.InferredType = left.ExpectedType = leftPreferred;
-				InferTypeForExpression(right, typeSystem.IntPtr);
+				InferTypeForExpression(right, null);
 				return leftPreferred;
 			}
 			if (IsEnum(leftPreferred)) {
@@ -1024,7 +1024,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			TypeReference rightPreferred = DoInferTypeForExpression(right, expectedType);
 			if (rightPreferred is PointerType) {
-				InferTypeForExpression(left, typeSystem.IntPtr);
+				InferTypeForExpression(left, null);
 				right.InferredType = right.ExpectedType = rightPreferred;
 				return rightPreferred;
 			}
@@ -1044,7 +1044,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			TypeReference leftPreferred = DoInferTypeForExpression(left, expectedType);
 			if (leftPreferred is PointerType) {
 				left.InferredType = left.ExpectedType = leftPreferred;
-				InferTypeForExpression(right, typeSystem.IntPtr);
+				InferTypeForExpression(right, null);
 				return leftPreferred;
 			}
 			if (IsEnum(leftPreferred)) {

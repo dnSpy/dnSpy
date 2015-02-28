@@ -291,16 +291,10 @@ namespace ICSharpCode.Decompiler.Ast
 					{
 						BinaryOperatorExpression boe;
 						if (byteCode.InferredType is PointerType) {
-							if (byteCode.Arguments[0].ExpectedType is PointerType) {
-								arg2 = DivideBySize(arg2, ((PointerType)byteCode.InferredType).ElementType);
-								boe = new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
+							boe = new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
+							if (byteCode.Arguments[0].ExpectedType is PointerType ||
+								byteCode.Arguments[1].ExpectedType is PointerType) {
 								boe.AddAnnotation(IntroduceUnsafeModifier.PointerArithmeticAnnotation);
-							} else if (byteCode.Arguments[1].ExpectedType is PointerType) {
-								arg1 = DivideBySize(arg1, ((PointerType)byteCode.InferredType).ElementType);
-								boe = new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
-								boe.AddAnnotation(IntroduceUnsafeModifier.PointerArithmeticAnnotation);
-							} else {
-								boe = new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
 							}
 						} else {
 							boe = new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
@@ -314,12 +308,9 @@ namespace ICSharpCode.Decompiler.Ast
 					{
 						BinaryOperatorExpression boe;
 						if (byteCode.InferredType is PointerType) {
+							boe = new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
 							if (byteCode.Arguments[0].ExpectedType is PointerType) {
-								arg2 = DivideBySize(arg2, ((PointerType)byteCode.InferredType).ElementType);
-								boe = new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
 								boe.WithAnnotation(IntroduceUnsafeModifier.PointerArithmeticAnnotation);
-							} else {
-								boe = new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
 							}
 						} else {
 							boe = new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
@@ -724,7 +715,7 @@ namespace ICSharpCode.Decompiler.Ast
 						}
 						return new StackAllocExpression {
 							Type = AstBuilder.ConvertType(type),
-							CountExpression = DivideBySize(arg1, type)
+                            CountExpression = arg1
 						};
 					}
 				case ILCode.Mkrefany:
@@ -918,45 +909,6 @@ namespace ICSharpCode.Decompiler.Ast
 			{
 				return other is InitializedObjectExpression;
 			}
-		}
-		
-		/// <summary>
-		/// Divides expr by the size of 'type'.
-		/// </summary>
-		Expression DivideBySize(Expression expr, TypeReference type)
-		{
-			CastExpression cast = expr as CastExpression;
-			if (cast != null && cast.Type is PrimitiveType && ((PrimitiveType)cast.Type).Keyword == "int")
-				expr = cast.Expression.Detach();
-			
-			Expression sizeOfExpression;
-			switch (TypeAnalysis.GetInformationAmount(type)) {
-				case 1:
-				case 8:
-					sizeOfExpression = new PrimitiveExpression(1);
-					break;
-				case 16:
-					sizeOfExpression = new PrimitiveExpression(2);
-					break;
-				case 32:
-					sizeOfExpression = new PrimitiveExpression(4);
-					break;
-				case 64:
-					sizeOfExpression = new PrimitiveExpression(8);
-					break;
-				default:
-					sizeOfExpression = new SizeOfExpression { Type = AstBuilder.ConvertType(type) };
-					break;
-			}
-			
-			BinaryOperatorExpression boe = expr as BinaryOperatorExpression;
-			if (boe != null && boe.Operator == BinaryOperatorType.Multiply && sizeOfExpression.IsMatch(boe.Right))
-				return boe.Left.Detach();
-			
-			if (sizeOfExpression.IsMatch(expr))
-				return new PrimitiveExpression(1);
-			
-			return new BinaryOperatorExpression(expr, BinaryOperatorType.Divide, sizeOfExpression);
 		}
 		
 		Expression MakeDefaultValue(TypeReference type)

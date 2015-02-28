@@ -39,6 +39,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		PropertyAccessInstructions,
 		SplitToMovableBlocks,
 		TypeInference,
+		HandlePointerArithmetic,
 		SimplifyShortCircuit,
 		SimplifyTernaryOperator,
 		SimplifyNullCoalescing,
@@ -125,6 +126,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			// Types are needed for the ternary operator optimization
 			TypeAnalysis.Run(context, method);
 			
+			if (abortBeforeStep == ILAstOptimizationStep.HandlePointerArithmetic) return;
+			HandlePointerArithmetic(method);
+
 			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
 				bool modified;
 				do {
@@ -663,6 +667,107 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 					return combinedVariable;
 				});
+		}
+
+		static void HandlePointerArithmetic(ILNode method)
+		{
+			foreach (ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
+				List<ILExpression> args = expr.Arguments;
+				switch (expr.Code) {
+					case ILCode.Localloc:
+						args[0] = DivideBySize(args[0], ((PointerType)expr.InferredType).ElementType);
+						break;
+					case ILCode.Add:
+					case ILCode.Add_Ovf:
+					case ILCode.Add_Ovf_Un:
+						if (expr.InferredType is PointerType) {
+							if (args[0].ExpectedType is PointerType)
+								args[1] = DivideBySize(args[1], ((PointerType)expr.InferredType).ElementType);
+							else if (args[1].ExpectedType is PointerType)
+								args[0] = DivideBySize(args[0], ((PointerType)expr.InferredType).ElementType);
+						}
+						break;
+					case ILCode.Sub:
+					case ILCode.Sub_Ovf:
+					case ILCode.Sub_Ovf_Un:
+						if (expr.InferredType is PointerType) {
+							if (args[0].ExpectedType is PointerType)
+								args[1] = DivideBySize(args[1], ((PointerType)expr.InferredType).ElementType);
+						}
+						break;
+				}
+			}
+		}
+
+		static ILExpression UnwrapIntPtrCast(ILExpression expr)
+		{
+			if (expr.Code != ILCode.Conv_I && expr.Code != ILCode.Conv_U)
+				return expr;
+
+			ILExpression arg = expr.Arguments[0];
+			switch (arg.InferredType.MetadataType) {
+				case MetadataType.Byte:
+				case MetadataType.SByte:
+				case MetadataType.UInt16:
+				case MetadataType.Int16:
+				case MetadataType.UInt32:
+				case MetadataType.Int32:
+				case MetadataType.UInt64:
+				case MetadataType.Int64:
+					return arg;
+			}
+
+			return expr;
+		}
+
+		static ILExpression DivideBySize(ILExpression expr, TypeReference type)
+		{
+			expr = UnwrapIntPtrCast(expr);
+
+			ILExpression sizeOfExpression;
+			switch (TypeAnalysis.GetInformationAmount(type)) {
+				case 1:
+				case 8:
+					sizeOfExpression = new ILExpression(ILCode.Ldc_I4, 1);
+					break;
+				case 16:
+					sizeOfExpression = new ILExpression(ILCode.Ldc_I4, 2);
+					break;
+				case 32:
+					sizeOfExpression = new ILExpression(ILCode.Ldc_I4, 4);
+					break;
+				case 64:
+					sizeOfExpression = new ILExpression(ILCode.Ldc_I4, 8);
+					break;
+				default:
+					sizeOfExpression = new ILExpression(ILCode.Sizeof, type);
+					break;
+			}
+
+			if (expr.Code == ILCode.Mul || expr.Code == ILCode.Mul_Ovf || expr.Code == ILCode.Mul_Ovf_Un) {
+				ILExpression mulArg = expr.Arguments[1];
+				if (mulArg.Code == sizeOfExpression.Code && sizeOfExpression.Operand.Equals(mulArg.Operand))
+					return UnwrapIntPtrCast(expr.Arguments[0]);
+			}
+
+			if (expr.Code == sizeOfExpression.Code) {
+				if (sizeOfExpression.Operand.Equals(expr.Operand))
+					return new ILExpression(ILCode.Ldc_I4, 1);
+
+				if (expr.Code == ILCode.Ldc_I4) {
+					int offsetInBytes = (int)expr.Operand;
+					int elementSize = (int)sizeOfExpression.Operand;
+					int offsetInElements = offsetInBytes / elementSize;
+
+					// ensure integer division
+					if (offsetInElements * elementSize == offsetInBytes) {
+						expr.Operand = offsetInElements;
+						return expr;
+					}
+				}
+			}
+
+			return new ILExpression(ILCode.Div_Un, null, expr, sizeOfExpression);
 		}
 		
 		public static void ReplaceVariables(ILNode node, Func<ILVariable, ILVariable> variableMapping)
