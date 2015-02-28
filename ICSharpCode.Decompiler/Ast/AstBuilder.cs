@@ -1160,7 +1160,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (method.CallingConvention == dnlib.DotNet.CallingConvention.VarArg) {
 				var pd = new ParameterDeclaration {
 					Type = new PrimitiveType("__arglist"),
-					NameToken = Identifier.Create("__arglist").WithAnnotation(TextTokenType.Parameter)
+					NameToken = Identifier.Create("").WithAnnotation(TextTokenType.Parameter)
 				};
 				return parameters.Concat(new[] { pd });
 			} else {
