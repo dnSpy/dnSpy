@@ -176,6 +176,37 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			inst.SetStatus("Debugging...", Brushes.Red);
 		}
 	}
+
+	class SavedDebuggedOptions
+	{
+		static readonly SavedDebuggedOptions Instance = new SavedDebuggedOptions();
+
+		string Executable;
+		string WorkingDirectory;
+		string Arguments;
+
+		public static ExecuteProcessWindow CreateExecWindow(string fileName, out bool? result)
+		{
+			var window = new ExecuteProcessWindow {
+				Owner = MainWindow.Instance
+			};
+			var fn = fileName ?? Instance.Executable;
+			if (fn != null) {
+				window.SelectedExecutable = fn;
+				if (fileName == null && !string.IsNullOrEmpty(Instance.WorkingDirectory))
+					window.WorkingDirectory = Instance.WorkingDirectory;
+			}
+			window.Arguments = Instance.Arguments ?? string.Empty;
+
+			result = window.ShowDialog();
+			if (result == true) {
+				Instance.Executable = window.SelectedExecutable;
+				Instance.WorkingDirectory = window.WorkingDirectory;
+				Instance.Arguments = window.Arguments;
+			}
+			return window;
+		}
+	}
 	
 	[ExportContextMenuEntryAttribute(Header = "_Debug Assembly", Icon = "Images/application-x-executable.png")]
 	internal sealed class DebugExecutableNodeCommand : DebuggerCommand, IContextMenuEntry
@@ -207,9 +238,9 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				AssemblyTreeNode n = context.SelectedTreeNodes[0] as AssemblyTreeNode;
 				
 				if (DebuggerSettings.Instance.AskForArguments) {
-					var window = new ExecuteProcessWindow { Owner = MainWindow.Instance, 
-						SelectedExecutable = n.LoadedAssembly.FileName };
-					if (window.ShowDialog() == true) {
+					bool? result;
+					var window = SavedDebuggedOptions.CreateExecWindow(n.LoadedAssembly.FileName, out result);
+					if (result == true) {
 						string fileName = window.SelectedExecutable;
 						
 						// execute the process
@@ -239,8 +270,9 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (!CurrentDebugger.IsDebugging) {
 				if (DebuggerSettings.Instance.AskForArguments)
 				{
-					var window = new ExecuteProcessWindow { Owner = MainWindow.Instance };
-					if (window.ShowDialog() == true) {
+					bool? result;
+					var window = SavedDebuggedOptions.CreateExecWindow(null, out result);
+					if (result == true) {
 						string fileName = window.SelectedExecutable;
 						
 						// add it to references

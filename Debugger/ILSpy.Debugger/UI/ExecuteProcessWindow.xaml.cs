@@ -43,6 +43,9 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 			get {
 				return argumentsTextBox.Text;
 			}
+			set {
+				argumentsTextBox.Text = value;
+			}
 		}
 		
 		void pathButton_Click(object sender, RoutedEventArgs e)
