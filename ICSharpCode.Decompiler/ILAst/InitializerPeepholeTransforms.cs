@@ -291,8 +291,10 @@ namespace ICSharpCode.Decompiler.ILAst
 					isValueType = true;
 					newObjType = ctor.DeclaringType;
 					ctorArgs = new List<ILExpression>(ctorArgs);
+					var old = ctorArgs[0];
 					ctorArgs.RemoveAt(0);
 					newObjExpr = new ILExpression(ILCode.Newobj, ctor, ctorArgs);
+					newObjExpr.ILRanges.AddRange(old.GetSelfAndChildrenRecursiveILRanges());
 				} else {
 					return false;
 				}
@@ -545,10 +547,14 @@ namespace ICSharpCode.Decompiler.ILAst
 				if (element.Code == ILCode.InitCollection || element.Code == ILCode.InitObject) {
 					// nested collection/object initializer
 					ILExpression getCollection = element.Arguments[0];
-					getCollection.Arguments[0] = new ILExpression(ILCode.InitializedObject, null);
+					var newExpr = new ILExpression(ILCode.InitializedObject, null);
+					newExpr.ILRanges.AddRange(getCollection.Arguments[0].GetSelfAndChildrenRecursiveILRanges());
+					getCollection.Arguments[0] = newExpr;
 					ChangeFirstArgumentToInitializedObject(element); // handle the collection elements
 				} else {
-					element.Arguments[0] = new ILExpression(ILCode.InitializedObject, null);
+					var newExpr = new ILExpression(ILCode.InitializedObject, null);
+					newExpr.ILRanges.AddRange(element.Arguments[0].GetSelfAndChildrenRecursiveILRanges());
+					element.Arguments[0] = newExpr;
 				}
 			}
 		}
