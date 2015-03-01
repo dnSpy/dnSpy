@@ -67,14 +67,19 @@ namespace ICSharpCode.ILSpy.AddIn
 			OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
 			if (null != mcs) {
 				// Create the command for the menu item.
-				CommandID menuCommandID = new CommandID(GuidList.guidILSpyAddInCmdSet, (int)PkgCmdIDList.cmdidOpenInILSpy);
-				MenuCommand menuItem = new MenuCommand(OpenInILSpyCallback, menuCommandID);
+				CommandID menuCommandID = new CommandID(GuidList.guidILSpyAddInCmdSet, (int)PkgCmdIDList.cmdidOpenReferenceInILSpy);
+				MenuCommand menuItem = new MenuCommand(OpenReferenceInILSpyCallback, menuCommandID);
 				mcs.AddCommand(menuItem);
 
 				// Create the command for the menu item.
-				CommandID menuCommandID2 = new CommandID(GuidList.guidILSpyAddInCmdSet, (int)PkgCmdIDList.cmdidOpenILSpy);
-				MenuCommand menuItem2 = new MenuCommand(OpenILSpyCallback, menuCommandID2);
+				CommandID menuCommandID2 = new CommandID(GuidList.guidILSpyAddInCmdSet, (int)PkgCmdIDList.cmdidOpenProjectOutputInILSpy);
+				MenuCommand menuItem2 = new MenuCommand(OpenProjectOutputInILSpyCallback, menuCommandID2);
 				mcs.AddCommand(menuItem2);
+
+				// Create the command for the menu item.
+				CommandID menuCommandID3 = new CommandID(GuidList.guidILSpyAddInCmdSet, (int)PkgCmdIDList.cmdidOpenILSpy);
+				MenuCommand menuItem3 = new MenuCommand(OpenILSpyCallback, menuCommandID3);
+				mcs.AddCommand(menuItem3);
 			}
 		}
 		#endregion
@@ -84,7 +89,7 @@ namespace ICSharpCode.ILSpy.AddIn
 		/// See the Initialize method to see how the menu item is associated to this function using
 		/// the OleMenuCommandService service and the MenuCommand class.
 		/// </summary>
-		private void OpenInILSpyCallback(object sender, EventArgs e)
+		private void OpenReferenceInILSpyCallback(object sender, EventArgs e)
 		{
 			var explorer = ((EnvDTE80.DTE2)GetGlobalService(typeof(EnvDTE.DTE))).ToolWindows.SolutionExplorer;
 			var items =(object[]) explorer.SelectedItems;
@@ -99,6 +104,21 @@ namespace ICSharpCode.ILSpy.AddIn
 				if (path == null)
 					path = reference.Path;
 				OpenAssemblyInILSpy(path);
+			}
+		}
+
+		private void OpenProjectOutputInILSpyCallback(object sender, EventArgs e)
+		{
+			var explorer = ((EnvDTE80.DTE2)GetGlobalService(typeof(EnvDTE.DTE))).ToolWindows.SolutionExplorer;
+			var items = (object[])explorer.SelectedItems;
+
+			foreach (EnvDTE.UIHierarchyItem item in items) {
+				EnvDTE.Project project = (EnvDTE.Project)item.Object;
+				EnvDTE.Configuration config = project.ConfigurationManager.ActiveConfiguration;
+				string projectPath = Path.GetDirectoryName(project.FileName);
+				string outputPath = config.Properties.Item("OutputPath").Value.ToString();
+				string assemblyFileName = project.Properties.Item("OutputFileName").Value.ToString();
+				OpenAssemblyInILSpy(Path.Combine(projectPath, outputPath, assemblyFileName));
 			}
 		}
 
