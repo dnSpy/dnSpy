@@ -385,6 +385,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitSimpleNameExpression(SimpleNameExpression simpleNameExpression, object data)
 		{
+			DebugExpression(simpleNameExpression);
 			StartNode(simpleNameExpression);
 			
 			simpleNameExpression.Identifier.AcceptVisitor(this, data);
@@ -395,6 +396,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitPrimitiveExpression(PrimitiveExpression primitiveExpression, object data)
 		{
+			DebugExpression(primitiveExpression);
 			StartNode(primitiveExpression);
 			
 			if (lastWritten == LastWritten.KeywordOrIdentifier)
@@ -406,6 +408,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitInstanceExpression(InstanceExpression instanceExpression, object data)
 		{
+			DebugExpression(instanceExpression);
 			StartNode(instanceExpression);
 			
 			switch (instanceExpression.Type) {
@@ -427,6 +430,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitParenthesizedExpression(ParenthesizedExpression parenthesizedExpression, object data)
 		{
+			DebugExpression(parenthesizedExpression);
 			StartNode(parenthesizedExpression);
 			
 			LPar();
@@ -438,6 +442,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitGetTypeExpression(GetTypeExpression getTypeExpression, object data)
 		{
+			DebugExpression(getTypeExpression);
 			StartNode(getTypeExpression);
 			
 			WriteKeyword("GetType");
@@ -450,6 +455,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitTypeOfIsExpression(TypeOfIsExpression typeOfIsExpression, object data)
 		{
+			DebugExpression(typeOfIsExpression);
 			StartNode(typeOfIsExpression);
 			
 			WriteKeyword("TypeOf");
@@ -467,6 +473,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitMemberAccessExpression(MemberAccessExpression memberAccessExpression, object data)
 		{
+			DebugExpression(memberAccessExpression);
 			StartNode(memberAccessExpression);
 			
 			memberAccessExpression.Target.AcceptVisitor(this, data);
@@ -479,6 +486,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitTypeReferenceExpression(TypeReferenceExpression typeReferenceExpression, object data)
 		{
+			DebugExpression(typeReferenceExpression);
 			StartNode(typeReferenceExpression);
 			
 			typeReferenceExpression.Type.AcceptVisitor(this, data);
@@ -710,9 +718,11 @@ namespace ICSharpCode.NRefactory.VB
 		#endregion
 		
 		#region debug statements
+		int preventDebugStart = 0;
 		void DebugStart(AstNode node)
 		{
-			formatter.DebugStart(node);
+			if (++preventDebugStart == 1)
+				formatter.DebugStart(node);
 		}
 
 		void DebugStart(AstNode node, string keyword)
@@ -732,9 +742,12 @@ namespace ICSharpCode.NRefactory.VB
 			return nodes;
 		}
 
-		void DebugEnd(AstNode node)
+		void DebugEnd(AstNode node, bool addSelf = true)
 		{
-			formatter.DebugEnd(node);
+			if (addSelf)
+				formatter.DebugExpression(node);
+			if (--preventDebugStart == 0)
+				formatter.DebugEnd(node);
 		}
 		#endregion
 		
@@ -1378,7 +1391,7 @@ namespace ICSharpCode.NRefactory.VB
 			DebugStart(localDeclarationStatement);
 			if (localDeclarationStatement.ModifierToken != null && !localDeclarationStatement.ModifierToken.IsNull)
 				WriteModifiers(new [] { localDeclarationStatement.ModifierToken });
-			WriteCommaSeparatedList(localDeclarationStatement.Variables);
+			WriteCommaSeparatedList(DebugExpressions(localDeclarationStatement.Variables));
 			DebugEnd(localDeclarationStatement);
 			
 			return EndNode(localDeclarationStatement);
@@ -1473,6 +1486,7 @@ namespace ICSharpCode.NRefactory.VB
 			
 			DebugStart(throwStatement, "Throw");
 			DebugExpression(throwStatement.Expression).AcceptVisitor(this, data);
+			DebugExpression(throwStatement);
 			DebugEnd(throwStatement);
 			
 			return EndNode(throwStatement);
@@ -1513,6 +1527,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitBinaryOperatorExpression(BinaryOperatorExpression binaryOperatorExpression, object data)
 		{
+			DebugExpression(binaryOperatorExpression);
 			StartNode(binaryOperatorExpression);
 			binaryOperatorExpression.Left.AcceptVisitor(this, data);
 			Space();
@@ -1602,6 +1617,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitIdentifierExpression(IdentifierExpression identifierExpression, object data)
 		{
+			DebugExpression(identifierExpression);
 			StartNode(identifierExpression);
 			identifierExpression.Identifier.AcceptVisitor(this, data);
 			WriteTypeArguments(identifierExpression.TypeArguments);
@@ -1610,6 +1626,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitAssignmentExpression(AssignmentExpression assignmentExpression, object data)
 		{
+			DebugExpression(assignmentExpression);
 			StartNode(assignmentExpression);
 			assignmentExpression.Left.AcceptVisitor(this, data);
 			Space();
@@ -1654,6 +1671,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitInvocationExpression(InvocationExpression invocationExpression, object data)
 		{
+			DebugExpression(invocationExpression);
 			StartNode(invocationExpression);
 			invocationExpression.Target.AcceptVisitor(this, data);
 			WriteCommaSeparatedListInParenthesis(invocationExpression.Arguments, false);
@@ -1662,6 +1680,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitArrayInitializerExpression(ArrayInitializerExpression arrayInitializerExpression, object data)
 		{
+			DebugExpression(arrayInitializerExpression);
 			StartNode(arrayInitializerExpression);
 			WriteToken("{", ArrayInitializerExpression.Roles.LBrace);
 			Space();
@@ -1673,6 +1692,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitArrayCreateExpression(ArrayCreateExpression arrayCreateExpression, object data)
 		{
+			DebugExpression(arrayCreateExpression);
 			StartNode(arrayCreateExpression);
 			WriteKeyword("New");
 			Space();
@@ -1694,6 +1714,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitObjectCreationExpression(ObjectCreationExpression objectCreationExpression, object data)
 		{
+			DebugExpression(objectCreationExpression);
 			StartNode(objectCreationExpression);
 			
 			WriteKeyword("New");
@@ -1714,6 +1735,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitCastExpression(CastExpression castExpression, object data)
 		{
+			DebugExpression(castExpression);
 			StartNode(castExpression);
 			
 			switch (castExpression.CastType) {
@@ -1840,6 +1862,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitUnaryOperatorExpression(UnaryOperatorExpression unaryOperatorExpression, object data)
 		{
+			DebugExpression(unaryOperatorExpression);
 			StartNode(unaryOperatorExpression);
 			
 			switch (unaryOperatorExpression.Operator) {
@@ -1869,6 +1892,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitFieldInitializerExpression(FieldInitializerExpression fieldInitializerExpression, object data)
 		{
+			DebugExpression(fieldInitializerExpression);
 			StartNode(fieldInitializerExpression);
 			
 			if (fieldInitializerExpression.IsKey && fieldInitializerExpression.Parent is AnonymousObjectCreationExpression) {
@@ -1889,11 +1913,13 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitNamedArgumentExpression(NamedArgumentExpression namedArgumentExpression, object data)
 		{
+			DebugExpression(namedArgumentExpression);
 			throw new NotImplementedException();
 		}
 		
 		public object VisitConditionalExpression(ConditionalExpression conditionalExpression, object data)
 		{
+			DebugExpression(conditionalExpression);
 			StartNode(conditionalExpression);
 			
 			WriteKeyword("If");
@@ -1980,15 +2006,15 @@ namespace ICSharpCode.NRefactory.VB
 			
 			DebugStart(forStatement, "For");
 			DebugExpression(forStatement.Variable).AcceptVisitor(this, data);
-			DebugEnd(forStatement);
+			DebugEnd(forStatement, false);
 			DebugStart(forStatement, "To");
 			DebugExpression(forStatement.ToExpression).AcceptVisitor(this, data);
-			DebugEnd(forStatement);
+			DebugEnd(forStatement, false);
 			if (!forStatement.StepExpression.IsNull) {
 				DebugStart(forStatement, "Step");
 				Space();
 				DebugExpression(forStatement.StepExpression).AcceptVisitor(this, data);
-				DebugEnd(forStatement);
+				DebugEnd(forStatement, false);
 			}
 			NewLine();
 			Indent();
@@ -2007,12 +2033,12 @@ namespace ICSharpCode.NRefactory.VB
 			WriteKeyword("Each");
 			DebugStart(forEachStatement);
 			DebugExpression(forEachStatement.Variable).AcceptVisitor(this, data);
-			DebugEnd(forEachStatement);
+			DebugEnd(forEachStatement, false);
 			Space();
 			WriteKeyword("In");
 			DebugStart(forEachStatement);
 			DebugExpression(forEachStatement.InExpression).AcceptVisitor(this, data);
-			DebugEnd(forEachStatement);
+			DebugEnd(forEachStatement, false);
 			NewLine();
 			Indent();
 			forEachStatement.Body.AcceptVisitor(this, data);
@@ -2507,6 +2533,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitEmptyExpression(EmptyExpression emptyExpression, object data)
 		{
+			DebugExpression(emptyExpression);
 			StartNode(emptyExpression);
 			
 			return EndNode(emptyExpression);
@@ -2514,6 +2541,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitAnonymousObjectCreationExpression(AnonymousObjectCreationExpression anonymousObjectCreationExpression, object data)
 		{
+			DebugExpression(anonymousObjectCreationExpression);
 			StartNode(anonymousObjectCreationExpression);
 			
 			WriteKeyword("New");
@@ -2530,6 +2558,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitCollectionRangeVariableDeclaration(CollectionRangeVariableDeclaration collectionRangeVariableDeclaration, object data)
 		{
+			DebugExpression(collectionRangeVariableDeclaration);
 			StartNode(collectionRangeVariableDeclaration);
 			
 			collectionRangeVariableDeclaration.Identifier.AcceptVisitor(this, data);

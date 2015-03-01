@@ -105,9 +105,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		#endregion
 		
 		#region debug statements
+		int preventDebugStart = 0;
 		void DebugStart(AstNode node)
 		{
-			formatter.DebugStart(node);
+			if (++preventDebugStart == 1)
+				formatter.DebugStart(node);
 		}
 
 		AstNode DebugExpression(AstNode node)
@@ -129,7 +131,8 @@ namespace ICSharpCode.NRefactory.CSharp
 
 		void DebugEnd(AstNode node)
 		{
-			formatter.DebugEnd(node);
+			if (--preventDebugStart == 0)
+				formatter.DebugEnd(node);
 		}
 		#endregion
 

@@ -1182,10 +1182,13 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 						Type = (AstType)((CSharp.VariableDeclarationStatement)init).Type.AcceptVisitor(this, data),
 						Expression = (Expression)var.Initializer.AcceptVisitor(this, data)
 					};
+					CopyAnnotations(var, iteratorVariable);
 				} else if (init is CSharp.ExpressionStatement) {
 					iteratorVariable = init.AcceptVisitor(this, data);
 				} else goto end;
 				
+				bool copiedCondAnns = false;
+				bool copiedIncAnns = false;
 				Expression toExpr = Expression.Null;
 				
 				var cond = match.Get<CSharp.BinaryOperatorExpression>("condition").SingleOrDefault();
@@ -1210,6 +1213,24 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 					stepExpr = factorExpr;
 				if (increment.Operator == CSharp.AssignmentOperatorType.Subtract)
 					stepExpr = new UnaryOperatorExpression(UnaryOperatorType.Minus, factorExpr);
+
+				// Copy all IL ranges
+				if (!toExpr.IsNull) {
+					CopyAnnotations(cond, toExpr);
+					copiedCondAnns = true;
+				}
+				if (!stepExpr.IsNull) {
+					CopyAnnotations(increment, stepExpr);
+					copiedIncAnns = true;
+				}
+				if (!copiedCondAnns) {
+					if (!stepExpr.IsNull)
+						CopyAnnotations(cond, stepExpr);
+				}
+				if (!copiedIncAnns) {
+					if (!toExpr.IsNull)
+						CopyAnnotations(increment, toExpr);
+				}
 				
 				return new ForStatement() {
 					Variable = iteratorVariable,

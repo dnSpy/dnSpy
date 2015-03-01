@@ -268,12 +268,14 @@ namespace ICSharpCode.ILSpy.VB
 
 		public void DebugExpression(AstNode node)
 		{
-			debugStack.Peek().Nodes.Add(node);
+			if (debugStack.Count > 0)
+				debugStack.Peek().Nodes.Add(node);
 		}
 
 		public void DebugExpressions(IEnumerable<AstNode> nodes)
 		{
-			debugStack.Peek().Nodes.AddRange(nodes);
+			if (debugStack.Count > 0)
+				debugStack.Peek().Nodes.AddRange(nodes);
 		}
 
 		static readonly IEnumerable<ILRange> emptyILRange = new ILRange[0];
@@ -282,9 +284,8 @@ namespace ICSharpCode.ILSpy.VB
 			var state = debugStack.Pop();
 			if (currentMemberMapping == null)
 				return;
-			var ranges = state.Nodes.Select(n => n.Annotation<List<ILRange>>()).SelectMany(n => n == null ? emptyILRange : n);
 			// add all ranges
-			foreach (var range in ILRange.OrderAndJoint(ranges)) {
+			foreach (var range in ILRange.OrderAndJoint(GetILRanges(state))) {
 				currentMemberMapping.MemberCodeMappings.Add(
 					new SourceCodeMapping {
 						ILInstructionOffset = range,
@@ -292,6 +293,19 @@ namespace ICSharpCode.ILSpy.VB
 						EndLocation = output.Location,
 						MemberMapping = currentMemberMapping
 					});
+			}
+		}
+
+		static IEnumerable<ILRange> GetILRanges(DebugState state)
+		{
+			foreach (var node in state.Nodes) {
+				foreach (var ann in node.Annotations) {
+					var list = ann as List<ILRange>;
+					if (list == null)
+						continue;
+					foreach (var range in list)
+						yield return range;
+				}
 			}
 		}
 	}
