@@ -54,7 +54,7 @@ namespace ICSharpCode.ILSpy
 			this.SplitterPosition = FromString((string)doc.Element("SplitterPosition"), 0.4);
 			this.TopPaneSplitterPosition = FromString((string)doc.Element("TopPaneSplitterPosition"), 0.3);
 			this.BottomPaneSplitterPosition = FromString((string)doc.Element("BottomPaneSplitterPosition"), 0.3);
-			this.ThemeName = (string)doc.Element("ThemeName") ?? "dark";
+			this.ThemeName = (string)doc.Element("ThemeName") ?? "light";
 		}
 		
 		public event PropertyChangedEventHandler PropertyChanged;

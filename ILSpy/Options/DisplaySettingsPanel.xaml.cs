@@ -99,8 +99,8 @@ namespace ICSharpCode.ILSpy.Options
 			DisplaySettings s = new DisplaySettings();
 			s.SelectedFont = new FontFamily((string)e.Attribute("Font") ?? "Consolas");
 			s.SelectedFontSize = (double?)e.Attribute("FontSize") ?? 10.0 * 4 / 3;
-			s.ShowLineNumbers = (bool?)e.Attribute("ShowLineNumbers") ?? false;
-			s.ShowMetadataTokens = (bool?) e.Attribute("ShowMetadataTokens") ?? false;
+			s.ShowLineNumbers = (bool?)e.Attribute("ShowLineNumbers") ?? true;
+			s.ShowMetadataTokens = (bool?)e.Attribute("ShowMetadataTokens") ?? true;
 			s.ShowAssemblyVersion = (bool?)e.Attribute("ShowAssemblyVersion") ?? true;
 			s.ShowAssemblyPublicKeyToken = (bool?)e.Attribute("ShowAssemblyPublicKeyToken") ?? false;
 			
