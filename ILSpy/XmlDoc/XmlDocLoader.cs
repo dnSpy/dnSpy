@@ -40,7 +40,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 			string xmlDocFile = FindXmlDocumentation("mscorlib.dll", MDHeaderRuntimeVersion.MS_CLR_40)
 				?? FindXmlDocumentation("mscorlib.dll", MDHeaderRuntimeVersion.MS_CLR_20);
 			if (xmlDocFile != null)
-				return new XmlDocumentationProvider(xmlDocFile);
+				return XmlDocumentationProvider.Create(xmlDocFile);
 			else
 				return null;
 		}
@@ -61,7 +61,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 						xmlDocFile = FindXmlDocumentation(Path.GetFileName(module.Location), module.RuntimeVersion);
 					}
 					if (xmlDocFile != null) {
-						xmlDoc = new XmlDocumentationProvider(xmlDocFile);
+						xmlDoc = XmlDocumentationProvider.Create(xmlDocFile);
 						cache.Add(module, xmlDoc);
 					} else {
 						xmlDoc = null;

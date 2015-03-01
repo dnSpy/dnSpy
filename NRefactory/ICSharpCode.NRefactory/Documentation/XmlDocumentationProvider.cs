@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Security;
 using System.Xml;
 using ICSharpCode.NRefactory.Editor;
 using ICSharpCode.NRefactory.TypeSystem;
@@ -102,13 +103,32 @@ namespace ICSharpCode.NRefactory.Documentation
 		readonly string fileName;
 		DateTime lastWriteDate;
 		IndexEntry[] index; // SORTED array of index entries
+
+		/// <summary>
+		/// Creates a new XmlDocumentationProvider. Can return null if we couldn't read the file.
+		/// </summary>
+		/// <param name="fileName">Name of the .xml file.</param>
+		/// <returns>null if we couldn't create it</returns>
+		public static XmlDocumentationProvider Create(string fileName)
+		{
+			if (fileName == null)
+				return null;
+			try {
+				return new XmlDocumentationProvider(fileName);
+			} catch (UnauthorizedAccessException) {
+			} catch (SecurityException) {
+			} catch (IOException) {
+			} catch (XmlException) {
+			}
+			return null;
+		}
 		
 		#region Constructor / Redirection support
 		/// <summary>
 		/// Creates a new XmlDocumentationProvider.
 		/// </summary>
 		/// <param name="fileName">Name of the .xml file.</param>
-		public XmlDocumentationProvider(string fileName)
+		XmlDocumentationProvider(string fileName)
 		{
 			if (fileName == null)
 				throw new ArgumentNullException("fileName");
