@@ -23,6 +23,7 @@
 			Executed="OpenCommandExecuted" />
 		<CommandBinding
 			Command="Refresh"
+			CanExecute="RefreshCommandCanExecute"
 			Executed="RefreshCommandExecuted" />
 		<CommandBinding
 			Command="Save"

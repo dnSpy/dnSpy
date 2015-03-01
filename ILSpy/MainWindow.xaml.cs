@@ -32,6 +32,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.dntheme;
 using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.TextView;
@@ -687,6 +688,12 @@ namespace ICSharpCode.ILSpy
 			var path = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
 			ShowAssemblyList(assemblyListManager.LoadList(ILSpySettings.Load(), assemblyList.ListName));
 			SelectNode(FindNodeByPath(path, true));
+		}
+
+		private void RefreshCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			var cd = DebuggerService.CurrentDebugger;
+			e.CanExecute = cd == null || !cd.IsDebugging;
 		}
 		
 		void SearchCommandExecuted(object sender, ExecutedRoutedEventArgs e)
