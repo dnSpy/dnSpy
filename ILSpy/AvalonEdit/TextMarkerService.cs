@@ -150,15 +150,24 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		
 		public event EventHandler RedrawRequested;
 		#endregion
+
+		IEnumerable<TextMarker> GetSortedTextMarkers(int lineStart, int lineLength)
+		{
+			if (markers == null)
+				return new TextMarker[0];
+			var list = new List<TextMarker>(markers.FindOverlappingSegments(lineStart, lineLength));
+			list.Sort((a, b) => a.ZOrder.CompareTo(b.ZOrder));
+			return list;
+		}
 		
 		#region DocumentColorizingTransformer
 		protected override void ColorizeLine(DocumentLine line)
 		{
-			if (markers == null)
+			if (markers == null || markers.Count == 0)
 				return;
 			int lineStart = line.Offset;
 			int lineEnd = lineStart + line.Length;
-			foreach (TextMarker marker in markers.FindOverlappingSegments(lineStart, line.Length)) {
+			foreach (TextMarker marker in GetSortedTextMarkers(lineStart, line.Length)) {
 				if (marker.Bookmark != null && !marker.IsVisible(marker.Bookmark))
 					continue;
 				
@@ -201,14 +210,14 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				throw new ArgumentNullException("textView");
 			if (drawingContext == null)
 				throw new ArgumentNullException("drawingContext");
-			if (markers == null || !textView.VisualLinesValid)
+			if (markers == null || markers.Count == 0 || !textView.VisualLinesValid)
 				return;
 			var visualLines = textView.VisualLines;
 			if (visualLines.Count == 0)
 				return;
 			int viewStart = visualLines.First().FirstDocumentLine.Offset;
 			int viewEnd = visualLines.Last().LastDocumentLine.EndOffset;
-			foreach (TextMarker marker in markers.FindOverlappingSegments(viewStart, viewEnd - viewStart)) {
+			foreach (TextMarker marker in GetSortedTextMarkers(viewStart, viewEnd - viewStart)) {
 				if (marker.Bookmark != null && !marker.IsVisible(marker.Bookmark))
 					continue;
 				
@@ -372,5 +381,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		
 		/// <inheritdoc/>
 		public IBookmark Bookmark { get; set; }
+
+		/// <inheritdoc/>
+		public int ZOrder { get; set; }
 	}
 }

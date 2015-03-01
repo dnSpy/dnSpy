@@ -115,6 +115,11 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		/// Gets or sets the bookmark.
 		/// </summary>
 		IBookmark Bookmark { get; set; }
+
+		/// <summary>
+		/// Gets or sets the Z-order
+		/// </summary>
+		int ZOrder { get; set; }
 	}
 	
 	[Flags]

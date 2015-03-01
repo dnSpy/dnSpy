@@ -68,7 +68,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			ICSharpCode.AvalonEdit.Rendering.TextView textView = this.TextView;
 			if (textView != null && textView.VisualLinesValid) {
 				// create a dictionary line number => first bookmark
-				Dictionary<int, IBookmark> bookmarkDict = new Dictionary<int, IBookmark>();
+				Dictionary<int, List<IBookmark>> bookmarkDict = new Dictionary<int, List<IBookmark>>();
 				foreach (var bm in BookmarkManager.Bookmarks) {
 					if (bm is BreakpointBookmark) {
 						var cm = DebugInformation.CodeMappings;
@@ -76,24 +76,29 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 							continue;
 					}
 					int line = bm.LineNumber;
-					IBookmark existingBookmark;
-					if (!bookmarkDict.TryGetValue(line, out existingBookmark) || bm.ZOrder > existingBookmark.ZOrder)
-						bookmarkDict[line] = bm;
+					List<IBookmark> list;
+					if (!bookmarkDict.TryGetValue(line, out list))
+						bookmarkDict[line] = list = new List<IBookmark>();
+					list.Add(bm);
 				}
 				
 				foreach (var bm in manager.Bookmarks) {
 					int line = bm.LineNumber;
-					IBookmark existingBookmark;
-					if (!bookmarkDict.TryGetValue(line, out existingBookmark) || bm.ZOrder > existingBookmark.ZOrder)
-						bookmarkDict[line] = bm;
+					List<IBookmark> list;
+					if (!bookmarkDict.TryGetValue(line, out list))
+						bookmarkDict[line] = list = new List<IBookmark>();
+					list.Add(bm);
 				}
 
 				const double imagePadding = 1.0;
 				Size pixelSize = PixelSnapHelpers.GetPixelSize(this);
 				foreach (VisualLine line in textView.VisualLines) {
 					int lineNumber = line.FirstDocumentLine.LineNumber;
-					IBookmark bm;
-					if (bookmarkDict.TryGetValue(lineNumber, out bm)) {
+					List<IBookmark> list;
+					if (!bookmarkDict.TryGetValue(lineNumber, out list))
+						continue;
+					list.Sort((a, b) => a.ZOrder.CompareTo(b.ZOrder));
+					foreach (var bm in list) {
 						Rect rect = new Rect(imagePadding, PixelSnapHelpers.Round(line.VisualTop - textView.VerticalOffset, pixelSize.Height), 16, 16);
 						if (dragDropBookmark == bm && dragStarted)
 							drawingContext.PushOpacity(0.5);
