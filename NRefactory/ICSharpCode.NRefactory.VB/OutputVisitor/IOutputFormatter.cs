@@ -44,7 +44,6 @@ namespace ICSharpCode.NRefactory.VB
 
 		void DebugStart(AstNode node);
 		void DebugExpression(AstNode node);
-		void DebugExpressions(IEnumerable<AstNode> nodes);
 		void DebugEnd(AstNode node);
 	}
 }

@@ -730,16 +730,9 @@ namespace ICSharpCode.NRefactory.VB
 			WriteKeyword(keyword, null, node);
 		}
 
-		AstNode DebugExpression(AstNode node)
+		void DebugExpression(AstNode node)
 		{
 			formatter.DebugExpression(node);
-			return node;
-		}
-
-		IEnumerable<AstNode> DebugExpressions(IEnumerable<AstNode> nodes)
-		{
-			formatter.DebugExpressions(nodes);
-			return nodes;
 		}
 
 		void DebugEnd(AstNode node, bool addSelf = true)
@@ -1376,6 +1369,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitLabelDeclarationStatement(LabelDeclarationStatement labelDeclarationStatement, object data)
 		{
+			DebugExpression(labelDeclarationStatement);
 			StartNode(labelDeclarationStatement);
 			
 			labelDeclarationStatement.Label.AcceptVisitor(this, data);
@@ -1391,7 +1385,7 @@ namespace ICSharpCode.NRefactory.VB
 			DebugStart(localDeclarationStatement);
 			if (localDeclarationStatement.ModifierToken != null && !localDeclarationStatement.ModifierToken.IsNull)
 				WriteModifiers(new [] { localDeclarationStatement.ModifierToken });
-			WriteCommaSeparatedList(DebugExpressions(localDeclarationStatement.Variables));
+			WriteCommaSeparatedList(localDeclarationStatement.Variables);
 			DebugEnd(localDeclarationStatement);
 			
 			return EndNode(localDeclarationStatement);
@@ -1401,7 +1395,7 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			StartNode(withStatement);
 			DebugStart(withStatement, "With");
-			DebugExpression(withStatement.Expression).AcceptVisitor(this, data);
+			withStatement.Expression.AcceptVisitor(this, data);
 			DebugEnd(withStatement);
 			NewLine();
 			Indent();
@@ -1416,7 +1410,7 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			StartNode(syncLockStatement);
 			DebugStart(syncLockStatement, "SyncLock");
-			DebugExpression(syncLockStatement.Expression).AcceptVisitor(this, data);
+			syncLockStatement.Expression.AcceptVisitor(this, data);
 			DebugEnd(syncLockStatement);
 			NewLine();
 			Indent();
@@ -1454,12 +1448,11 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			StartNode(catchBlock);
 			DebugStart(catchBlock, "Catch");
-			DebugExpression(catchBlock.ExceptionVariable).AcceptVisitor(this, data);
+			catchBlock.ExceptionVariable.AcceptVisitor(this, data);
 			if (!catchBlock.ExceptionType.IsNull) {
 				WriteKeyword("As");
-				DebugExpression(catchBlock.ExceptionType).AcceptVisitor(this, data);
+				catchBlock.ExceptionType.AcceptVisitor(this, data);
 			}
-			DebugExpression(catchBlock);	// Add ILRanges for stloc instruction
 			DebugEnd(catchBlock);
 			NewLine();
 			Indent();
@@ -1475,7 +1468,7 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			StartNode(expressionStatement);
 			DebugStart(expressionStatement);
-			DebugExpression(expressionStatement.Expression).AcceptVisitor(this, data);
+			expressionStatement.Expression.AcceptVisitor(this, data);
 			DebugEnd(expressionStatement);
 			return EndNode(expressionStatement);
 		}
@@ -1485,8 +1478,7 @@ namespace ICSharpCode.NRefactory.VB
 			StartNode(throwStatement);
 			
 			DebugStart(throwStatement, "Throw");
-			DebugExpression(throwStatement.Expression).AcceptVisitor(this, data);
-			DebugExpression(throwStatement);
+			throwStatement.Expression.AcceptVisitor(this, data);
 			DebugEnd(throwStatement);
 			
 			return EndNode(throwStatement);
@@ -1496,7 +1488,7 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			StartNode(ifElseStatement);
 			DebugStart(ifElseStatement, "If");
-			DebugExpression(ifElseStatement.Condition).AcceptVisitor(this, data);
+			ifElseStatement.Condition.AcceptVisitor(this, data);
 			DebugEnd(ifElseStatement);
 			Space();
 			WriteKeyword("Then");
@@ -1520,7 +1512,7 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			StartNode(returnStatement);
 			DebugStart(returnStatement, "Return");
-			DebugExpression(returnStatement.Expression).AcceptVisitor(this, data);
+			returnStatement.Expression.AcceptVisitor(this, data);
 			DebugEnd(returnStatement);
 			return EndNode(returnStatement);
 		}
@@ -1948,7 +1940,7 @@ namespace ICSharpCode.NRefactory.VB
 			
 			DebugStart(whileStatement, "While");
 			Space();
-			DebugExpression(whileStatement.Condition).AcceptVisitor(this, data);
+			whileStatement.Condition.AcceptVisitor(this, data);
 			DebugEnd(whileStatement);
 			NewLine();
 			Indent();
@@ -1994,7 +1986,6 @@ namespace ICSharpCode.NRefactory.VB
 				default:
 					throw new Exception("Invalid value for ExitKind");
 			}
-			DebugExpression(exitStatement);
 			DebugEnd(exitStatement);
 			
 			return EndNode(exitStatement);
@@ -2005,15 +1996,15 @@ namespace ICSharpCode.NRefactory.VB
 			StartNode(forStatement);
 			
 			DebugStart(forStatement, "For");
-			DebugExpression(forStatement.Variable).AcceptVisitor(this, data);
+			forStatement.Variable.AcceptVisitor(this, data);
 			DebugEnd(forStatement, false);
 			DebugStart(forStatement, "To");
-			DebugExpression(forStatement.ToExpression).AcceptVisitor(this, data);
+			forStatement.ToExpression.AcceptVisitor(this, data);
 			DebugEnd(forStatement, false);
 			if (!forStatement.StepExpression.IsNull) {
 				DebugStart(forStatement, "Step");
 				Space();
-				DebugExpression(forStatement.StepExpression).AcceptVisitor(this, data);
+				forStatement.StepExpression.AcceptVisitor(this, data);
 				DebugEnd(forStatement, false);
 			}
 			NewLine();
@@ -2032,12 +2023,12 @@ namespace ICSharpCode.NRefactory.VB
 			WriteKeyword("For");
 			WriteKeyword("Each");
 			DebugStart(forEachStatement);
-			DebugExpression(forEachStatement.Variable).AcceptVisitor(this, data);
+			forEachStatement.Variable.AcceptVisitor(this, data);
 			DebugEnd(forEachStatement, false);
 			Space();
 			WriteKeyword("In");
 			DebugStart(forEachStatement);
-			DebugExpression(forEachStatement.InExpression).AcceptVisitor(this, data);
+			forEachStatement.InExpression.AcceptVisitor(this, data);
 			DebugEnd(forEachStatement, false);
 			NewLine();
 			Indent();
@@ -2161,7 +2152,7 @@ namespace ICSharpCode.NRefactory.VB
 			
 			DebugStart(selectStatement, "Select");
 			WriteKeyword("Case");
-			DebugExpression(selectStatement.Expression).AcceptVisitor(this, data);
+			selectStatement.Expression.AcceptVisitor(this, data);
 			DebugEnd(selectStatement);
 			NewLine();
 			Indent();
@@ -2179,6 +2170,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitCaseStatement(CaseStatement caseStatement, object data)
 		{
+			DebugExpression(caseStatement);
 			StartNode(caseStatement);
 			
 			WriteKeyword("Case");
@@ -2200,7 +2192,7 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			StartNode(simpleCaseClause);
 			DebugStart(simpleCaseClause);
-			DebugExpression(simpleCaseClause.Expression).AcceptVisitor(this, data);
+			simpleCaseClause.Expression.AcceptVisitor(this, data);
 			DebugEnd(simpleCaseClause);
 			return EndNode(simpleCaseClause);
 		}
@@ -2209,9 +2201,9 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			StartNode(rangeCaseClause);
 			DebugStart(rangeCaseClause);
-			DebugExpression(rangeCaseClause.Expression).AcceptVisitor(this, data);
+			rangeCaseClause.Expression.AcceptVisitor(this, data);
 			WriteKeyword("To");
-			DebugExpression(rangeCaseClause.ToExpression).AcceptVisitor(this, data);
+			rangeCaseClause.ToExpression.AcceptVisitor(this, data);
 			DebugEnd(rangeCaseClause);
 			return EndNode(rangeCaseClause);
 		}
@@ -2243,7 +2235,7 @@ namespace ICSharpCode.NRefactory.VB
 					throw new Exception("Invalid value for ComparisonOperator");
 			}
 			Space();
-			DebugExpression(comparisonCaseClause.Expression).AcceptVisitor(this, data);
+			comparisonCaseClause.Expression.AcceptVisitor(this, data);
 			DebugEnd(comparisonCaseClause);
 			return EndNode(comparisonCaseClause);
 		}
@@ -2253,7 +2245,7 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			StartNode(yieldStatement);
 			DebugStart(yieldStatement, "Yield");
-			DebugExpression(yieldStatement.Expression).AcceptVisitor(this, data);
+			yieldStatement.Expression.AcceptVisitor(this, data);
 			DebugEnd(yieldStatement);
 			return EndNode(yieldStatement);
 		}
@@ -2263,18 +2255,18 @@ namespace ICSharpCode.NRefactory.VB
 			StartNode(variableInitializer);
 			
 			DebugStart(variableInitializer);
-			DebugExpression(variableInitializer.Identifier).AcceptVisitor(this, data);
+			variableInitializer.Identifier.AcceptVisitor(this, data);
 			if (!variableInitializer.Type.IsNull) {
 				if (lastWritten != LastWritten.Whitespace)
 					Space();
 				WriteKeyword("As");
-				DebugExpression(variableInitializer.Type).AcceptVisitor(this, data);
+				variableInitializer.Type.AcceptVisitor(this, data);
 			}
 			if (!variableInitializer.Expression.IsNull) {
 				Space();
 				WriteToken("=", VariableInitializer.Roles.Assign);
 				Space();
-				DebugExpression(variableInitializer.Expression).AcceptVisitor(this, data);
+				variableInitializer.Expression.AcceptVisitor(this, data);
 			}
 			DebugEnd(variableInitializer);
 			
@@ -2288,16 +2280,16 @@ namespace ICSharpCode.NRefactory.VB
 			if (lastWritten != LastWritten.Whitespace)
 				Space();
 			DebugStart(variableDeclaratorWithTypeAndInitializer);
-			WriteCommaSeparatedList(DebugExpressions(variableDeclaratorWithTypeAndInitializer.Identifiers));
+			WriteCommaSeparatedList(variableDeclaratorWithTypeAndInitializer.Identifiers);
 			if (lastWritten != LastWritten.Whitespace)
 				Space();
 			WriteKeyword("As");
-			DebugExpression(variableDeclaratorWithTypeAndInitializer.Type).AcceptVisitor(this, data);
+			variableDeclaratorWithTypeAndInitializer.Type.AcceptVisitor(this, data);
 			if (!variableDeclaratorWithTypeAndInitializer.Initializer.IsNull) {
 				Space();
 				WriteToken("=", VariableDeclarator.Roles.Assign);
 				Space();
-				DebugExpression(variableDeclaratorWithTypeAndInitializer.Initializer).AcceptVisitor(this, data);
+				variableDeclaratorWithTypeAndInitializer.Initializer.AcceptVisitor(this, data);
 			}
 			DebugEnd(variableDeclaratorWithTypeAndInitializer);
 			
@@ -2311,11 +2303,11 @@ namespace ICSharpCode.NRefactory.VB
 			if (lastWritten != LastWritten.Whitespace)
 				Space();
 			DebugStart(variableDeclaratorWithObjectCreation);
-			WriteCommaSeparatedList(DebugExpressions(variableDeclaratorWithObjectCreation.Identifiers));
+			WriteCommaSeparatedList(variableDeclaratorWithObjectCreation.Identifiers);
 			if (lastWritten != LastWritten.Whitespace)
 				Space();
 			WriteKeyword("As");
-			DebugExpression(variableDeclaratorWithObjectCreation.Initializer).AcceptVisitor(this, data);
+			variableDeclaratorWithObjectCreation.Initializer.AcceptVisitor(this, data);
 			DebugEnd(variableDeclaratorWithObjectCreation);
 			
 			return EndNode(variableDeclaratorWithObjectCreation);
@@ -2328,13 +2320,13 @@ namespace ICSharpCode.NRefactory.VB
 			if (doLoopStatement.ConditionType == ConditionType.DoUntil) {
 				DebugStart(doLoopStatement, "Do");
 				WriteKeyword("Until");
-				DebugExpression(doLoopStatement.Expression).AcceptVisitor(this, data);
+				doLoopStatement.Expression.AcceptVisitor(this, data);
 				DebugEnd(doLoopStatement);
 			}
 			else if (doLoopStatement.ConditionType == ConditionType.DoWhile) {
 				DebugStart(doLoopStatement, "Do");
 				WriteKeyword("While");
-				DebugExpression(doLoopStatement.Expression).AcceptVisitor(this, data);
+				doLoopStatement.Expression.AcceptVisitor(this, data);
 				DebugEnd(doLoopStatement);
 			}
 			else
@@ -2346,13 +2338,13 @@ namespace ICSharpCode.NRefactory.VB
 			if (doLoopStatement.ConditionType == ConditionType.LoopUntil) {
 				DebugStart(doLoopStatement, "Loop");
 				WriteKeyword("Until");
-				DebugExpression(doLoopStatement.Expression).AcceptVisitor(this, data);
+				doLoopStatement.Expression.AcceptVisitor(this, data);
 				DebugEnd(doLoopStatement);
 			}
 			else if (doLoopStatement.ConditionType == ConditionType.LoopWhile) {
 				DebugStart(doLoopStatement, "Loop");
 				WriteKeyword("While");
-				DebugExpression(doLoopStatement.Expression).AcceptVisitor(this, data);
+				doLoopStatement.Expression.AcceptVisitor(this, data);
 				DebugEnd(doLoopStatement);
 			}
 			else
@@ -2366,7 +2358,7 @@ namespace ICSharpCode.NRefactory.VB
 			StartNode(usingStatement);
 			
 			DebugStart(usingStatement, "Using");
-			WriteCommaSeparatedList(DebugExpressions(usingStatement.Resources));
+			WriteCommaSeparatedList(usingStatement.Resources);
 			DebugEnd(usingStatement);
 			NewLine();
 			Indent();
@@ -2383,8 +2375,7 @@ namespace ICSharpCode.NRefactory.VB
 			StartNode(goToStatement);
 			
 			DebugStart(goToStatement, "GoTo");
-			DebugExpression(goToStatement.Label).AcceptVisitor(this, data);
-			DebugExpression(goToStatement);
+			goToStatement.Label.AcceptVisitor(this, data);
 			DebugEnd(goToStatement);
 			
 			return EndNode(goToStatement);
@@ -2392,6 +2383,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitSingleLineSubLambdaExpression(SingleLineSubLambdaExpression singleLineSubLambdaExpression, object data)
 		{
+			DebugExpression(singleLineSubLambdaExpression);
 			StartNode(singleLineSubLambdaExpression);
 			
 			WriteModifiers(singleLineSubLambdaExpression.ModifierTokens);
@@ -2405,6 +2397,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitSingleLineFunctionLambdaExpression(SingleLineFunctionLambdaExpression singleLineFunctionLambdaExpression, object data)
 		{
+			DebugExpression(singleLineFunctionLambdaExpression);
 			StartNode(singleLineFunctionLambdaExpression);
 			
 			WriteModifiers(singleLineFunctionLambdaExpression.ModifierTokens);
@@ -2469,7 +2462,6 @@ namespace ICSharpCode.NRefactory.VB
 				default:
 					throw new Exception("Invalid value for ContinueKind");
 			}
-			DebugExpression(continueStatement);
 			DebugEnd(continueStatement);
 			
 			return EndNode(continueStatement);
@@ -2574,6 +2566,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitFromQueryOperator(FromQueryOperator fromQueryOperator, object data)
 		{
+			DebugExpression(fromQueryOperator);
 			StartNode(fromQueryOperator);
 			
 			WriteKeyword("From");
@@ -2584,6 +2577,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitAggregateQueryOperator(AggregateQueryOperator aggregateQueryOperator, object data)
 		{
+			DebugExpression(aggregateQueryOperator);
 			StartNode(aggregateQueryOperator);
 			
 			WriteKeyword("Aggregate");
@@ -2601,6 +2595,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitSelectQueryOperator(SelectQueryOperator selectQueryOperator, object data)
 		{
+			DebugExpression(selectQueryOperator);
 			StartNode(selectQueryOperator);
 			
 			WriteKeyword("Select");
@@ -2611,6 +2606,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitDistinctQueryOperator(DistinctQueryOperator distinctQueryOperator, object data)
 		{
+			DebugExpression(distinctQueryOperator);
 			StartNode(distinctQueryOperator);
 			
 			WriteKeyword("Distinct");
@@ -2620,6 +2616,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitWhereQueryOperator(WhereQueryOperator whereQueryOperator, object data)
 		{
+			DebugExpression(whereQueryOperator);
 			StartNode(whereQueryOperator);
 			
 			WriteKeyword("Where");
@@ -2630,6 +2627,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitPartitionQueryOperator(PartitionQueryOperator partitionQueryOperator, object data)
 		{
+			DebugExpression(partitionQueryOperator);
 			StartNode(partitionQueryOperator);
 			
 			switch (partitionQueryOperator.Kind) {
@@ -2658,6 +2656,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitOrderExpression(OrderExpression orderExpression, object data)
 		{
+			DebugExpression(orderExpression);
 			StartNode(orderExpression);
 			
 			orderExpression.Expression.AcceptVisitor(this, data);
@@ -2680,6 +2679,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitOrderByQueryOperator(OrderByQueryOperator orderByQueryOperator, object data)
 		{
+			DebugExpression(orderByQueryOperator);
 			StartNode(orderByQueryOperator);
 			
 			WriteKeyword("Order");
@@ -2691,6 +2691,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitLetQueryOperator(LetQueryOperator letQueryOperator, object data)
 		{
+			DebugExpression(letQueryOperator);
 			StartNode(letQueryOperator);
 			
 			WriteKeyword("Let");
@@ -2701,6 +2702,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitGroupByQueryOperator(GroupByQueryOperator groupByQueryOperator, object data)
 		{
+			DebugExpression(groupByQueryOperator);
 			StartNode(groupByQueryOperator);
 			
 			WriteKeyword("Group");
@@ -2715,6 +2717,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitJoinQueryOperator(JoinQueryOperator joinQueryOperator, object data)
 		{
+			DebugExpression(joinQueryOperator);
 			StartNode(joinQueryOperator);
 			
 			WriteKeyword("Join");
@@ -2737,6 +2740,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitJoinCondition(JoinCondition joinCondition, object data)
 		{
+			DebugExpression(joinCondition);
 			StartNode(joinCondition);
 			
 			joinCondition.Left.AcceptVisitor(this, data);
@@ -2748,6 +2752,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitGroupJoinQueryOperator(GroupJoinQueryOperator groupJoinQueryOperator, object data)
 		{
+			DebugExpression(groupJoinQueryOperator);
 			StartNode(groupJoinQueryOperator);
 			
 			WriteKeyword("Group");
@@ -2773,6 +2778,7 @@ namespace ICSharpCode.NRefactory.VB
 		
 		public object VisitAddRemoveHandlerStatement(AddRemoveHandlerStatement addRemoveHandlerStatement, object data)
 		{
+			DebugExpression(addRemoveHandlerStatement);
 			StartNode(addRemoveHandlerStatement);
 			
 			if (addRemoveHandlerStatement.IsAddHandler)

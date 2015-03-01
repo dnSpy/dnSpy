@@ -107,10 +107,6 @@ namespace ICSharpCode.NRefactory.VB
 		{
 		}
 
-		public void DebugExpressions(IEnumerable<AstNode> nodes)
-		{
-		}
-
 		public void DebugEnd(AstNode node)
 		{
 		}

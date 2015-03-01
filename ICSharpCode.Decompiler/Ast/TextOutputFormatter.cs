@@ -337,12 +337,6 @@ namespace ICSharpCode.Decompiler.Ast
 				debugStack.Peek().Nodes.Add(node);
 		}
 
-		public void DebugExpressions(IEnumerable<AstNode> nodes)
-		{
-			if (debugStack.Count > 0)
-				debugStack.Peek().Nodes.AddRange(nodes);
-		}
-
 		static readonly IEnumerable<ILRange> emptyILRange = new ILRange[0];
 		public void DebugEnd(AstNode node)
 		{
