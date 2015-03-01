@@ -572,7 +572,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			
 			breakpoint = new ILBreakpoint(
 				debugger,
-				bookmark.LineNumber,
+				bookmark.Location,
+				bookmark.EndLocation,
 				bookmark.MethodKey,
 				bookmark.ILRange.From,
 				bookmark.IsEnabled);
@@ -620,7 +621,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			EventHandler<CollectionItemEventArgs<Process>> bp_debugger_ProcessStarted = (sender, e) => {
 				//setBookmarkColor();
 				// User can change line number by inserting or deleting lines
-				breakpoint.Line = bookmark.LineNumber;
+				breakpoint.Location = bookmark.Location;
+				breakpoint.EndLocation = bookmark.EndLocation;
 			};
 			EventHandler<CollectionItemEventArgs<Process>> bp_debugger_ProcessExited = (sender, e) => {
 				//setBookmarkColor();
@@ -745,7 +747,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			foreach (var bookmark in DebuggerService.Breakpoints) {
 				var breakpoint =
 					debugger.Breakpoints.FirstOrDefault(
-						b => b.Line == bookmark.LineNumber &&
+						b => b.Location == bookmark.Location && b.EndLocation == bookmark.EndLocation &&
 							(b as ILBreakpoint).MethodKey.IsSameModule(e.Module.FullPath) &&
 							(b as ILBreakpoint).MethodKey == bookmark.MethodKey);
 				if (breakpoint == null)

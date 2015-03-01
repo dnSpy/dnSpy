@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 using Debugger.Interop.CorDebug;
+using ICSharpCode.NRefactory;
 using ICSharpCode.ILSpy.Debugger;
 
 namespace Debugger
@@ -17,8 +18,8 @@ namespace Debugger
 		
 		string fileName = null;
 		byte[] checkSum = null;
-		int    line;
-		int    column;
+		TextLocation location;
+		TextLocation endLocation;
 		bool   enabled;
 
 		protected SourcecodeSegment originalLocation;
@@ -42,14 +43,14 @@ namespace Debugger
 			get { return checkSum; }
 		}
 		
-		public int Line {
-			get { return line; }
-			set { line = value; }
+		public TextLocation Location {
+			get { return location; }
+			set { location = value; }
 		}
 		
-		public int Column {
-			get { return column; }
-			protected set { column = value; }
+		public TextLocation EndLocation {
+			get { return endLocation; }
+			set { endLocation = value; }
 		}
 		
 		public bool Enabled {
@@ -139,7 +140,7 @@ namespace Debugger
 			if (this.fileName == null)
 				return false;
 			
-			SourcecodeSegment segment = SourcecodeSegment.Resolve(module, FileName, CheckSum, Line, Column);
+			SourcecodeSegment segment = SourcecodeSegment.Resolve(module, FileName, CheckSum, Location.Line, Location.Column);
 			if (segment == null) return false;
 			
 			originalLocation = segment;
@@ -163,10 +164,11 @@ namespace Debugger
 	
 	public class ILBreakpoint : Breakpoint
 	{
-		public ILBreakpoint(NDebugger debugger, int line, MethodKey methodKey, uint offset, bool enabled)
+		public ILBreakpoint(NDebugger debugger, TextLocation location, TextLocation endLocation, MethodKey methodKey, uint offset, bool enabled)
 		{
 			this.Debugger = debugger;
-			this.Line = line;
+			this.Location = location;
+			this.EndLocation = endLocation;
 			this.MethodKey = methodKey;
 			this.ILOffset = offset;
 			this.Enabled = enabled;
@@ -182,7 +184,7 @@ namespace Debugger
 			Debug.Assert(okMod, "Trying to set a BP that belongs in another module");
 			if (!okMod)
 				return false;
-			SourcecodeSegment segment = SourcecodeSegment.CreateForIL(module, this.Line, (int)MethodKey.Token, (int)ILOffset);
+			SourcecodeSegment segment = SourcecodeSegment.CreateForIL(module, this.Location.Line, (int)MethodKey.Token, (int)ILOffset);
 			if (segment == null)
 				return false;
 			try {

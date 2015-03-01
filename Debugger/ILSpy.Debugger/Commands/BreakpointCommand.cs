@@ -36,10 +36,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 					}
 					
 					// no bookmark on the line: create a new breakpoint
-					DebuggerService.ToggleBreakpointAt(
-						instruction.MemberMapping.MethodDefinition,
-						line,
-						instruction.ILInstructionOffset);
+					DebuggerService.ToggleBreakpointAt(instruction);
 					break;
 				}
 				

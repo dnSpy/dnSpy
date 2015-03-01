@@ -304,7 +304,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 
 					if (map != null) {
 						BreakpointBookmark newBookmark = new BreakpointBookmark(breakpoint.MemberReference,
-																				new TextLocation(map.StartLocation.Line, 0),
+																				map.StartLocation,
+																				map.EndLocation,
 																				map.ILInstructionOffset,
 																				BreakpointAction.Break);
 						newBookmark.IsEnabled = breakpoint.IsEnabled;
