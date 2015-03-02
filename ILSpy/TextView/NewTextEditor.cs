@@ -56,6 +56,7 @@ namespace ICSharpCode.ILSpy.TextView
 			TextArea.SelectionForeground = sel.Foreground == null ? null : sel.Foreground.GetBrush(null);
 
 			UpdateDefaultHighlighter();
+			TextArea.TextView.Redraw();
 		}
 
 		static readonly Tuple<string, Dictionary<string, ColorType>>[] langFixes = new Tuple<string, Dictionary<string, ColorType>>[] {
