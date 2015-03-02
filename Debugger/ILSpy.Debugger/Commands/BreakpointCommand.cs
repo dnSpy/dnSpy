@@ -1,6 +1,7 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 
@@ -23,29 +24,43 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		
 		public void Execute(int line)
 		{
+			if (line <= 0)
+				return;
 			var cm = DebugInformation.CodeMappings;
 			if (cm != null && cm.Count > 0) {
-				
-				// check if the codemappings exists for this line
 				int token = 0;
 				foreach (var storageEntry in cm.Values) {
-					var instruction = storageEntry.GetInstructionByLineNumber(line, out token);
-					
-					if (instruction == null) {
-						continue;
+					var bp = storageEntry.GetInstructionByLineNumber(line, out token);
+					if (bp != null) {
+						DebuggerService.ToggleBreakpointAt(bp);
+						break;
 					}
-					
-					// no bookmark on the line: create a new breakpoint
-					DebuggerService.ToggleBreakpointAt(instruction);
-					break;
 				}
-				
 				if (token == 0) {
-					MessageBox.Show(string.Format("Missing code mappings at line {0}.", line),
-					                "Code mappings", MessageBoxButton.OK, MessageBoxImage.Information);
-					return;
+					var bp = GetClosest(cm, line, out token);
+					if (bp != null)
+						DebuggerService.ToggleBreakpointAt(bp);
 				}
 			}
+		}
+
+		SourceCodeMapping GetClosest(Dictionary<MethodKey, MemberMapping> cm, int line, out int token)
+		{
+			SourceCodeMapping closest = null;
+			foreach (var entry in cm.Values) {
+				SourceCodeMapping map = null;
+				foreach (var m in entry.MemberCodeMappings) {
+					if (line > m.EndLocation.Line)
+						continue;
+					if (map == null || m.StartLocation < map.StartLocation)
+						map = m;
+				}
+				if (closest == null || map.StartLocation < closest.StartLocation)
+					closest = map;
+			}
+
+			token = closest == null ? 0 : closest.MemberMapping.MethodDefinition.MDToken.ToInt32();
+			return closest;
 		}
 	}
 	

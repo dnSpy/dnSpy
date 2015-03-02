@@ -175,7 +175,7 @@ namespace ICSharpCode.Decompiler
 			
 			SourceCodeMapping map = null;
 			foreach (var m in codeMapping.MemberCodeMappings) {
-				if (m.StartLocation.Line != lineNumber)
+				if (lineNumber < m.StartLocation.Line || lineNumber > m.EndLocation.Line)
 					continue;
 				if (map == null || m.ILInstructionOffset.From < map.ILInstructionOffset.From)
 					map = m;
