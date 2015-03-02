@@ -212,9 +212,6 @@ namespace ICSharpCode.Decompiler.ILAst
 					case ILCode.Br:
 					case ILCode.Leave:
 						ranges[(ILLabel)expr.Operand].UnionWith(nodeRange);
-						if (i == bodyLength - 1)
-							// no states
-							goto default;
 						break;
 					case ILCode.Brtrue:
 						{
