@@ -82,6 +82,10 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		[ImportMany(typeof(ITextEditorListener))]
 		IEnumerable<ITextEditorListener> textEditorListeners = null;
+
+		public TextEditor TextEditor {
+			get { return textEditor; }
+		}
 		
 		#region Constructor
 		public DecompilerTextView()
@@ -561,8 +565,10 @@ namespace ICSharpCode.ILSpy.TextView
 					cm[key].GetInstructionByTokenAndOffset((uint)ilOffset, out methodDef, out location, out endLocation)) {
 					// update marker
 					DebuggerService.JumpToCurrentLine(methodDef, location.Line, location.Column, endLocation.Line, endLocation.Column, ilOffset);
+					textEditor.ScrollTo(location.Line, location.Column);
+					textEditor.TextArea.Caret.Location = new ICSharpCode.AvalonEdit.Document.TextLocation(location.Line, location.Column);
 
-					UnfoldAndScroll(location.Line);
+					UnfoldAndScroll(location.Line, false);
 					updatedMarker = true;
 				}
 			}
@@ -867,7 +873,7 @@ namespace ICSharpCode.ILSpy.TextView
 		}
 		
 		#region Unfold
-		public void UnfoldAndScroll(int lineNumber)
+		public void UnfoldAndScroll(int lineNumber, bool scroll = true)
 		{
 			if (lineNumber <= 0 || lineNumber > textEditor.Document.LineCount)
 				return;
@@ -884,7 +890,8 @@ namespace ICSharpCode.ILSpy.TextView
 				}
 			}
 			// scroll to
-			textEditor.ScrollTo(lineNumber, 0);
+			if (scroll)
+				textEditor.ScrollTo(lineNumber, 0);
 		}
 		
 		public FoldingManager FoldingManager
