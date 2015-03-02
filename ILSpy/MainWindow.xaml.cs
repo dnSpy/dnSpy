@@ -89,10 +89,8 @@ namespace ICSharpCode.ILSpy
 			App.CompositionContainer.ComposeParts(this);
 			mainPane.Content = decompilerTextView;
 			
-			if (sessionSettings.SplitterPosition > 0 && sessionSettings.SplitterPosition < 1) {
-				leftColumn.Width = new GridLength(sessionSettings.SplitterPosition, GridUnitType.Star);
-				rightColumn.Width = new GridLength(1 - sessionSettings.SplitterPosition, GridUnitType.Star);
-			}
+			if (sessionSettings.LeftColumnWidth > 0)
+				leftColumn.Width = new GridLength(sessionSettings.LeftColumnWidth, GridUnitType.Pixel);
 			sessionSettings.FilterSettings.PropertyChanged += filterSettings_PropertyChanged;
 			
 			InitMainMenu();
@@ -834,7 +832,7 @@ namespace ICSharpCode.ILSpy
 			sessionSettings.ActiveAssemblyList = assemblyList.ListName;
 			sessionSettings.ActiveTreeViewPath = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
 			sessionSettings.WindowBounds = this.RestoreBounds;
-			sessionSettings.SplitterPosition = leftColumn.Width.Value / (leftColumn.Width.Value + rightColumn.Width.Value);
+			sessionSettings.LeftColumnWidth = leftColumn.Width.Value;
 			if (topPane.Visibility == Visibility.Visible)
 				sessionSettings.BottomPaneSplitterPosition = topPaneRow.Height.Value / (topPaneRow.Height.Value + textViewRow.Height.Value);
 			if (bottomPane.Visibility == Visibility.Visible)

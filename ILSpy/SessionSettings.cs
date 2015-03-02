@@ -51,7 +51,7 @@ namespace ICSharpCode.ILSpy
 			
 			this.WindowState = FromString((string)doc.Element("WindowState"), WindowState.Normal);
 			this.WindowBounds = FromString((string)doc.Element("WindowBounds"), DefaultWindowBounds);
-			this.SplitterPosition = FromString((string)doc.Element("SplitterPosition"), 0.4);
+			this.LeftColumnWidth = FromString((string)doc.Element("LeftColumnWidth"), 0.0);
 			this.TopPaneSplitterPosition = FromString((string)doc.Element("TopPaneSplitterPosition"), 0.3);
 			this.BottomPaneSplitterPosition = FromString((string)doc.Element("BottomPaneSplitterPosition"), 0.3);
 			this.ThemeName = (string)doc.Element("ThemeName") ?? "light";
@@ -74,10 +74,7 @@ namespace ICSharpCode.ILSpy
 		public WindowState WindowState = WindowState.Normal;
 		public Rect WindowBounds;
 		internal static Rect DefaultWindowBounds =  new Rect(10, 10, 750, 550);
-		/// <summary>
-		/// position of the left/right splitter
-		/// </summary>
-		public double SplitterPosition;
+		public double LeftColumnWidth;
 		public double TopPaneSplitterPosition, BottomPaneSplitterPosition;
 
 		public string ThemeName;
@@ -94,7 +91,7 @@ namespace ICSharpCode.ILSpy
 			}
 			doc.Add(new XElement("WindowState", ToString(this.WindowState)));
 			doc.Add(new XElement("WindowBounds", ToString(this.WindowBounds)));
-			doc.Add(new XElement("SplitterPosition", ToString(this.SplitterPosition)));
+			doc.Add(new XElement("LeftColumnWidth", ToString(this.LeftColumnWidth)));
 			doc.Add(new XElement("TopPaneSplitterPosition", ToString(this.TopPaneSplitterPosition)));
 			doc.Add(new XElement("BottomPaneSplitterPosition", ToString(this.BottomPaneSplitterPosition)));
 			doc.Add(new XElement("ThemeName", ToString(this.ThemeName)));

@@ -100,13 +100,13 @@
 				<ColumnDefinition
 					Name="leftColumn"
 					MinWidth="100"
-					Width="0.4*" />
+					Width="250" />
 				<ColumnDefinition
 					Width="3" />
 				<ColumnDefinition
 					Name="rightColumn"
 					MinWidth="100"
-					Width="0.6*" />
+					Width="*" />
 			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
 				<RowDefinition
