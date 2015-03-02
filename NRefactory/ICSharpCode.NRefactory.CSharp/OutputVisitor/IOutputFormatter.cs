@@ -47,8 +47,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		void WriteToken(string token, TextTokenType tokenType);
 		void Space();
 		
-		void OpenBrace(BraceStyle style);
-		void CloseBrace(BraceStyle style);
+		void OpenBrace(BraceStyle style, out TextLocation? start, out TextLocation? end);
+		void CloseBrace(BraceStyle style, out TextLocation? start, out TextLocation? end);
 		
 		void Indent();
 		void Unindent();
@@ -58,9 +58,10 @@ namespace ICSharpCode.NRefactory.CSharp
 		void WriteComment(CommentType commentType, string content);
 		void WritePreProcessorDirective(PreProcessorDirectiveType type, string argument);
 
-		void DebugStart(AstNode node);
+		void DebugStart(AstNode node, TextLocation? start);
+		void DebugHidden(AstNode hiddenNode);
 		void DebugExpression(AstNode node);
-		void DebugEnd(AstNode node);
+		void DebugEnd(AstNode node, TextLocation? end);
 	}
 
 	public static class Extensions

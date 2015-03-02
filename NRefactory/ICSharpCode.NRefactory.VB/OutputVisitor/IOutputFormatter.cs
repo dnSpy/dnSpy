@@ -43,6 +43,7 @@ namespace ICSharpCode.NRefactory.VB
 		void MarkFoldEnd();
 
 		void DebugStart(AstNode node);
+		void DebugHidden(object hiddenILRanges);
 		void DebugExpression(AstNode node);
 		void DebugEnd(AstNode node);
 	}

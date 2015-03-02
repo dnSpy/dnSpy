@@ -215,6 +215,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			node.Remove();
 			
 			UsingStatement usingStatement = new UsingStatement();
+			tryCatch.TryBlock.HiddenEnd = tryCatch.FinallyBlock.Detach();
 			usingStatement.EmbeddedStatement = tryCatch.TryBlock.Detach();
 			tryCatch.ReplaceWith(usingStatement);
 			
@@ -234,6 +235,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			} else {
 				// the variable is never used; eliminate it:
 				usingStatement.ResourceAcquisition = m1.Get<Expression>("initializer").Single().Detach();
+				usingStatement.ResourceAcquisition.AddAnnotation(node.Expression.GetAllRecursiveILRanges());
 			}
 			return usingStatement;
 		}
@@ -343,7 +345,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 							Left = new IdentifierExpression(Pattern.AnyString).WithName("itemVariable"),
 							Operator = AssignmentOperatorType.Assign,
 							Right = new IdentifierExpressionBackreference("enumeratorVariable").ToExpression().Member("Current", TextTokenType.InstanceProperty)
-						},
+						}.WithName("getCurrent"),
 						new Repeat(new AnyNode("statement")).ToStatement()
 					}
 				}.WithName("loop")
@@ -358,7 +360,6 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				// if there are variables outside the loop, we need to put those into the parent block, and that won't work if the direct parent isn't a block
 				return null;
 			}
-			VariableInitializer enumeratorVar = m.Get<VariableInitializer>("enumeratorVariable").Single();
 			IdentifierExpression itemVar = m.Get<IdentifierExpression>("itemVariable").Single();
 			WhileStatement loop = m.Get<WhileStatement>("loop").Single();
 			
@@ -382,6 +383,12 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				newBody.Add(stmt.Detach());
 			foreach (Statement stmt in m.Get<Statement>("statement"))
 				newBody.Add(stmt.Detach());
+
+			var oldBody = node.EmbeddedStatement as BlockStatement;
+			if (oldBody != null) {
+				newBody.HiddenStart = oldBody.HiddenStart;
+				newBody.HiddenEnd = oldBody.HiddenEnd;
+			}
 			
 			ForeachStatement foreachStatement = new ForeachStatement {
 				VariableType = (AstType)itemVarDecl.Type.Clone(),
@@ -392,6 +399,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (foreachStatement.InExpression is BaseReferenceExpression) {
 				foreachStatement.InExpression = new ThisReferenceExpression().CopyAnnotationsFrom(foreachStatement.InExpression);
 			}
+			foreachStatement.HiddenGetEnumeratorNode = m.Get<VariableInitializer>("enumeratorVariable").Single();
+			foreachStatement.HiddenGetCurrentNode = m.Get<AstNode>("getCurrent").Single();
+			foreachStatement.HiddenMoveNextNode = loop.Condition;
 			node.ReplaceWith(foreachStatement);
 			foreach (Statement stmt in m.Get<Statement>("variablesOutsideLoop")) {
 				((BlockStatement)foreachStatement.Parent).Statements.InsertAfter(null, stmt.Detach());

@@ -82,6 +82,10 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.EmbeddedStatement); }
 			set { SetChildByRole (Roles.EmbeddedStatement, value); }
 		}
+
+		public AstNode HiddenGetEnumeratorNode { get; set; }	// foreach (var c in |args|)
+		public AstNode HiddenMoveNextNode { get; set; }			// foreach (var c |in| args)
+		public AstNode HiddenGetCurrentNode { get; set; }		// foreach (|var c| in args)
 		
 		public override void AcceptVisitor (IAstVisitor visitor)
 		{

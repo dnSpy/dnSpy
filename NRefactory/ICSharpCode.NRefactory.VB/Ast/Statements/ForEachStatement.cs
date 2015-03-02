@@ -2,7 +2,9 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using ICSharpCode.Decompiler.ILAst;
 
 namespace ICSharpCode.NRefactory.VB.Ast
 {
@@ -25,6 +27,10 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			set { SetChildByRole(Roles.Body, value); }
 		}
 		
+		public IList<ILRange> HiddenGetEnumeratorILRanges { get; set; }	// foreach (var c in |args|)
+		public IList<ILRange> HiddenMoveNextILRanges { get; set; }		// foreach (var c |in| args)
+		public IList<ILRange> HiddenGetCurrentILRanges { get; set; }	// foreach (|var c| in args)
+
 		protected internal override bool DoMatch(AstNode other, ICSharpCode.NRefactory.PatternMatching.Match match)
 		{
 			throw new NotImplementedException();

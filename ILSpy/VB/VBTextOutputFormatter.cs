@@ -258,12 +258,22 @@ namespace ICSharpCode.ILSpy.VB
 		class DebugState
 		{
 			public List<AstNode> Nodes = new List<AstNode>();
+			public List<ILRange> ExtraILRanges = new List<ILRange>();
 			public TextLocation StartLocation;
 		}
 		readonly Stack<DebugState> debugStack = new Stack<DebugState>();
 		public void DebugStart(AstNode node)
 		{
 			debugStack.Push(new DebugState { StartLocation = output.Location });
+		}
+
+		public void DebugHidden(object hiddenILRanges)
+		{
+			var list = hiddenILRanges as IList<ILRange>;
+			if (list != null) {
+				if (debugStack.Count > 0)
+					debugStack.Peek().ExtraILRanges.AddRange(list);
+			}
 		}
 
 		public void DebugExpression(AstNode node)
@@ -294,13 +304,15 @@ namespace ICSharpCode.ILSpy.VB
 		{
 			foreach (var node in state.Nodes) {
 				foreach (var ann in node.Annotations) {
-					var list = ann as List<ILRange>;
+					var list = ann as IList<ILRange>;
 					if (list == null)
 						continue;
 					foreach (var range in list)
 						yield return range;
 				}
 			}
+			foreach (var range in state.ExtraILRanges)
+				yield return range;
 		}
 	}
 }

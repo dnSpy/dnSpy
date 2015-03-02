@@ -106,10 +106,15 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		#region debug statements
 		int preventDebugStart = 0;
-		void DebugStart(AstNode node)
+		void DebugStart(AstNode node, TextLocation? start = null)
 		{
 			if (++preventDebugStart == 1)
-				formatter.DebugStart(node);
+				formatter.DebugStart(node, start);
+		}
+
+		void DebugHidden(AstNode hiddenNode)
+		{
+			formatter.DebugHidden(hiddenNode);
 		}
 
 		void DebugExpression(AstNode node)
@@ -124,10 +129,15 @@ namespace ICSharpCode.NRefactory.CSharp
 
 		void DebugEnd(AstNode node, bool addSelf = true)
 		{
+			DebugEnd(node, null, addSelf);
+		}
+
+		void DebugEnd(AstNode node, TextLocation? end, bool addSelf = true)
+		{
 			if (addSelf)
 				formatter.DebugExpression(node);
 			if (--preventDebugStart == 0)
-				formatter.DebugEnd(node);
+				formatter.DebugEnd(node, end);
 		}
 		#endregion
 
@@ -441,15 +451,27 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		void OpenBrace(BraceStyle style)
 		{
+			TextLocation? start, end;
+			OpenBrace(style, out start, out end);
+		}
+
+		void CloseBrace(BraceStyle style)
+		{
+			TextLocation? start, end;
+			CloseBrace(style, out start, out end);
+		}
+		
+		void OpenBrace(BraceStyle style, out TextLocation? start, out TextLocation? end)
+		{
 			WriteSpecialsUpToRole(Roles.LBrace);
-			formatter.OpenBrace(style);
+			formatter.OpenBrace(style, out start, out end);
 			lastWritten = LastWritten.Other;
 		}
 		
-		void CloseBrace(BraceStyle style)
+		void CloseBrace(BraceStyle style, out TextLocation? start, out TextLocation? end)
 		{
 			WriteSpecialsUpToRole(Roles.RBrace);
-			formatter.CloseBrace(style);
+			formatter.CloseBrace(style, out start, out end);
 			lastWritten = LastWritten.Other;
 		}
 
@@ -1678,11 +1700,22 @@ namespace ICSharpCode.NRefactory.CSharp
 			} else {
 				style = policy.StatementBraceStyle;
 			}
-			OpenBrace(style);
+			TextLocation? start, end;
+			OpenBrace(style, out start, out end);
+			if (blockStatement.HiddenStart != null) {
+				DebugStart(blockStatement, start);
+				DebugHidden(blockStatement.HiddenStart);
+				DebugEnd(blockStatement, end);
+			}
 			foreach (var node in blockStatement.Statements) {
 				node.AcceptVisitor(this);
 			}
-			CloseBrace(style);
+			CloseBrace(style, out start, out end);
+			if (blockStatement.HiddenEnd != null) {
+				DebugStart(blockStatement, start);
+				DebugHidden(blockStatement.HiddenEnd);
+				DebugEnd(blockStatement, end);
+			}
 			if (!(blockStatement.Parent is Expression))
 				NewLine();
 			EndNode(blockStatement);
@@ -1778,11 +1811,17 @@ namespace ICSharpCode.NRefactory.CSharp
 			foreachStatement.VariableType.AcceptVisitor(this);
 			Space();
 			foreachStatement.VariableNameToken.AcceptVisitor(this);
+			DebugHidden(foreachStatement.HiddenGetCurrentNode);
 			DebugEnd(foreachStatement, false);
+			Space();
+			DebugStart(foreachStatement);
 			WriteKeyword(ForeachStatement.InKeywordRole);
+			DebugHidden(foreachStatement.HiddenMoveNextNode);
+			DebugEnd(foreachStatement, false);
 			Space();
 			DebugStart(foreachStatement);
 			foreachStatement.InExpression.AcceptVisitor(this);
+			DebugHidden(foreachStatement.HiddenGetEnumeratorNode);
 			DebugEnd(foreachStatement, false);
 			Space(policy.SpacesWithinForeachParentheses);
 			RPar();

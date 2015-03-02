@@ -123,6 +123,9 @@ namespace ICSharpCode.NRefactory.CSharp
 		public CSharpTokenNode RBraceToken {
 			get { return GetChildByRole (Roles.RBrace); }
 		}
+
+		public AstNode HiddenStart { get; set; }
+		public AstNode HiddenEnd { get; set; }
 		
 		public override void AcceptVisitor (IAstVisitor visitor)
 		{

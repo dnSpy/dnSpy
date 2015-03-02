@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using ICSharpCode.Decompiler.ILAst;
 
 namespace ICSharpCode.NRefactory.VB.Ast
 {
@@ -70,6 +71,9 @@ namespace ICSharpCode.NRefactory.VB.Ast
 		public AstNodeCollection<Statement> Statements {
 			get { return GetChildrenByRole (StatementRole); }
 		}
+
+		public IList<ILRange> HiddenStart { get; set; }
+		public IList<ILRange> HiddenEnd { get; set; }
 		
 		public override S AcceptVisitor<T, S> (IAstVisitor<T, S> visitor, T data)
 		{

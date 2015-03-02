@@ -78,8 +78,9 @@ namespace ICSharpCode.NRefactory.CSharp
 			textWriter.Write(' ');
 		}
 		
-		public void OpenBrace(BraceStyle style)
+		public void OpenBrace(BraceStyle style, out TextLocation? start, out TextLocation? end)
 		{
+			start = end = null;
 			switch (style) {
 				case BraceStyle.DoNotChange:
 				case BraceStyle.EndOfLine:
@@ -120,8 +121,9 @@ namespace ICSharpCode.NRefactory.CSharp
 			NewLine();
 		}
 		
-		public void CloseBrace(BraceStyle style)
+		public void CloseBrace(BraceStyle style, out TextLocation? start, out TextLocation? end)
 		{
+			start = end = null;
 			switch (style) {
 				case BraceStyle.DoNotChange:
 				case BraceStyle.EndOfLine:
@@ -233,7 +235,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 		}
 
-		public void DebugStart(AstNode node)
+		public void DebugHidden(AstNode hiddenNode)
+		{
+		}
+
+		public void DebugStart(AstNode node, TextLocation? start)
 		{
 		}
 
@@ -241,7 +247,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		{
 		}
 
-		public void DebugEnd(AstNode node)
+		public void DebugEnd(AstNode node, TextLocation? end)
 		{
 		}
 	}

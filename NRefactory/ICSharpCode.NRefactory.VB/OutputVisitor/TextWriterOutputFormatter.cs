@@ -99,6 +99,10 @@ namespace ICSharpCode.NRefactory.VB
 		{
 		}
 
+		public void DebugHidden(object hiddenILRanges)
+		{
+		}
+
 		public void DebugStart(AstNode node)
 		{
 		}

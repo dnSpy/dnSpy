@@ -17,13 +17,15 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
+using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
 using dnlib.DotNet;
 
 namespace ICSharpCode.Decompiler.Ast
 {
-	static class NRefactoryExtensions
+	public static class NRefactoryExtensions
 	{
 		public static T WithAnnotation<T>(this T node, object annotation) where T : AstNode
 		{
@@ -94,6 +96,22 @@ namespace ICSharpCode.Decompiler.Ast
 			while (next != null && !(next is Statement))
 				next = next.NextSibling;
 			return (Statement)next;
+		}
+
+		public static List<ILRange> GetAllRecursiveILRanges(this AstNode node)
+		{
+			if (node == null)
+				return new List<ILRange>();
+
+			var ilRanges = new List<ILRange>();
+			foreach (var d in node.DescendantsAndSelf) {
+				foreach (var ann in d.Annotations) {
+					var list = ann as IList<ILRange>;
+					if (list != null)
+						ilRanges.AddRange(list);
+				}
+			}
+			return ilRanges;
 		}
 	}
 }

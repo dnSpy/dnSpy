@@ -725,6 +725,11 @@ namespace ICSharpCode.NRefactory.VB
 				formatter.DebugStart(node);
 		}
 
+		void DebugHidden(object hiddenILRanges)
+		{
+			formatter.DebugHidden(hiddenILRanges);
+		}
+
 		void DebugStart(AstNode node, string keyword)
 		{
 			WriteKeyword(keyword, null, node);
@@ -1138,14 +1143,17 @@ namespace ICSharpCode.NRefactory.VB
 			if (embeddedStatement.IsNull)
 				return;
 			BlockStatement block = embeddedStatement as BlockStatement;
-			if (block != null)
+			if (block != null) {
+				Debug.Assert((block.HiddenStart == null || block.HiddenStart.Count == 0) && (block.HiddenEnd == null || block.HiddenEnd.Count == 0), "Block has hidden code. Needs to be handled by caller");
 				VisitBlockStatement(block, null);
+			}
 			else
 				embeddedStatement.AcceptVisitor(this, null);
 		}
 		
 		void WriteBlock(BlockStatement body)
 		{
+			Debug.Assert((body.HiddenStart == null || body.HiddenStart.Count == 0) && (body.HiddenEnd == null || body.HiddenEnd.Count == 0), "Block has hidden code. Needs to be handled by caller");
 			if (body.IsNull)
 				NewLine();
 			else
@@ -2020,21 +2028,34 @@ namespace ICSharpCode.NRefactory.VB
 		{
 			StartNode(forEachStatement);
 			
+			DebugStart(forEachStatement);
 			WriteKeyword("For");
 			WriteKeyword("Each");
-			DebugStart(forEachStatement);
-			forEachStatement.Variable.AcceptVisitor(this, data);
+			DebugHidden(forEachStatement.Body.HiddenStart);
 			DebugEnd(forEachStatement, false);
 			Space();
+			DebugStart(forEachStatement);
+			forEachStatement.Variable.AcceptVisitor(this, data);
+			DebugHidden(forEachStatement.HiddenGetCurrentILRanges);
+			DebugEnd(forEachStatement, false);
+			Space();
+			DebugStart(forEachStatement);
 			WriteKeyword("In");
+			DebugHidden(forEachStatement.HiddenMoveNextILRanges);
+			DebugEnd(forEachStatement, false);
+			Space();
 			DebugStart(forEachStatement);
 			forEachStatement.InExpression.AcceptVisitor(this, data);
+			DebugHidden(forEachStatement.HiddenGetEnumeratorILRanges);
 			DebugEnd(forEachStatement, false);
 			NewLine();
 			Indent();
 			forEachStatement.Body.AcceptVisitor(this, data);
 			Unindent();
+			DebugStart(forEachStatement);
 			WriteKeyword("Next");
+			DebugHidden(forEachStatement.Body.HiddenEnd);
+			DebugEnd(forEachStatement, false);
 			
 			return EndNode(forEachStatement);
 		}
@@ -2358,14 +2379,18 @@ namespace ICSharpCode.NRefactory.VB
 			StartNode(usingStatement);
 			
 			DebugStart(usingStatement, "Using");
+			DebugHidden(usingStatement.Body.HiddenStart);
 			WriteCommaSeparatedList(usingStatement.Resources);
-			DebugEnd(usingStatement);
+			DebugEnd(usingStatement, false);
 			NewLine();
 			Indent();
 			usingStatement.Body.AcceptVisitor(this, data);
 			Unindent();
+			DebugStart(usingStatement);
+			DebugHidden(usingStatement.Body.HiddenEnd);
 			WriteKeyword("End");
 			WriteKeyword("Using");
+			DebugEnd(usingStatement, false);
 			
 			return EndNode(usingStatement);
 		}

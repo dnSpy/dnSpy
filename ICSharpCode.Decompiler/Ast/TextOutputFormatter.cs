@@ -186,7 +186,7 @@ namespace ICSharpCode.Decompiler.Ast
 			output.WriteSpace();
 		}
 		
-		public void OpenBrace(BraceStyle style)
+		public void OpenBrace(BraceStyle style, out TextLocation? start, out TextLocation? end)
 		{
 			if (braceLevelWithinType >= 0 || nodeStack.Peek() is TypeDeclaration)
 				braceLevelWithinType++;
@@ -194,14 +194,19 @@ namespace ICSharpCode.Decompiler.Ast
 				output.MarkFoldStart(defaultCollapsed: braceLevelWithinType == 1);
 			}
 			output.WriteLine();
-			output.WriteLineLeftBrace();
+			start = output.Location;
+			output.WriteLeftBrace();
+			end = output.Location;
+			output.WriteLine();
 			output.Indent();
 		}
 		
-		public void CloseBrace(BraceStyle style)
+		public void CloseBrace(BraceStyle style, out TextLocation? start, out TextLocation? end)
 		{
 			output.Unindent();
+			start = output.Location;
 			output.WriteRightBrace();
+			end = output.Location;
 			if (nodeStack.OfType<BlockStatement>().Count() <= 1 || FoldBraces)
 				output.MarkFoldEnd();
 			if (braceLevelWithinType >= 0)
@@ -326,9 +331,17 @@ namespace ICSharpCode.Decompiler.Ast
 			public TextLocation StartLocation;
 		}
 		readonly Stack<DebugState> debugStack = new Stack<DebugState>();
-		public void DebugStart(AstNode node)
+		public void DebugStart(AstNode node, TextLocation? start)
 		{
-			debugStack.Push(new DebugState { StartLocation = output.Location });
+			debugStack.Push(new DebugState { StartLocation = start ?? output.Location });
+		}
+
+		public void DebugHidden(AstNode hiddenNode)
+		{
+			if (hiddenNode == null || hiddenNode.IsNull)
+				return;
+			if (debugStack.Count > 0)
+				debugStack.Peek().Nodes.AddRange(hiddenNode.DescendantsAndSelf);
 		}
 
 		public void DebugExpression(AstNode node)
@@ -338,7 +351,7 @@ namespace ICSharpCode.Decompiler.Ast
 		}
 
 		static readonly IEnumerable<ILRange> emptyILRange = new ILRange[0];
-		public void DebugEnd(AstNode node)
+		public void DebugEnd(AstNode node, TextLocation? end)
 		{
 			var state = debugStack.Pop();
 			if (currentMemberMapping == null)
@@ -349,7 +362,7 @@ namespace ICSharpCode.Decompiler.Ast
 					new SourceCodeMapping {
 						ILInstructionOffset = range,
 						StartLocation = state.StartLocation,
-						EndLocation = output.Location,
+						EndLocation = end ?? output.Location,
 						MemberMapping = currentMemberMapping
 					});
 			}
@@ -359,7 +372,7 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			foreach (var node in state.Nodes) {
 				foreach (var ann in node.Annotations) {
-					var list = ann as List<ILRange>;
+					var list = ann as IList<ILRange>;
 					if (list == null)
 						continue;
 					foreach (var range in list)

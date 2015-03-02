@@ -965,6 +965,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		{
 			var block = new BlockStatement();
 			blocks.Push(block);
+			block.HiddenStart = ICSharpCode.Decompiler.Ast.NRefactoryExtensions.GetAllRecursiveILRanges(blockStatement.HiddenStart);
+			block.HiddenEnd = ICSharpCode.Decompiler.Ast.NRefactoryExtensions.GetAllRecursiveILRanges(blockStatement.HiddenEnd);
 			ConvertNodes(blockStatement, block.Statements);
 			blocks.Pop();
 			return EndNode(blockStatement, block);
@@ -1111,6 +1113,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 					Type = (AstType)foreachStatement.VariableType.AcceptVisitor(this, data)
 				}
 			};
+			stmt.HiddenGetEnumeratorILRanges = ICSharpCode.Decompiler.Ast.NRefactoryExtensions.GetAllRecursiveILRanges(foreachStatement.HiddenGetEnumeratorNode);
+			stmt.HiddenMoveNextILRanges = ICSharpCode.Decompiler.Ast.NRefactoryExtensions.GetAllRecursiveILRanges(foreachStatement.HiddenMoveNextNode);
+			stmt.HiddenGetCurrentILRanges = ICSharpCode.Decompiler.Ast.NRefactoryExtensions.GetAllRecursiveILRanges(foreachStatement.HiddenGetCurrentNode);
 			
 			return EndNode(foreachStatement, stmt);
 		}
