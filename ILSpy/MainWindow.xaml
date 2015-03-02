@@ -53,6 +53,8 @@
 						<Image Width="16" Height="16" Source="pack://application:,,,/dnSpy;component/Images/PrivateInternal.png" />
 					</MenuItem.Icon>
 				</MenuItem>
+				<Separator />
+				<MenuItem Header="_Word wrap" IsCheckable="True" IsChecked="{Binding ElementName=mainPane, Path=Content.TextEditor.WordWrap}" />
 			</MenuItem>
 			<MenuItem Header="_Themes" Name="themeMenu" />
 		</Menu>
