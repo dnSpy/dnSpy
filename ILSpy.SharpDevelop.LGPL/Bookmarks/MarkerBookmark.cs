@@ -17,6 +17,6 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		
 		public ITextMarker Marker { get; set; }
 		
-		public abstract ITextMarker CreateMarker(ITextMarkerService markerService, int offset, int length);
+		public abstract ITextMarker CreateMarker(ITextMarkerService markerService);
 	}
 }

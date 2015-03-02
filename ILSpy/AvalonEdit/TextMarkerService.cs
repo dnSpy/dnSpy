@@ -41,6 +41,10 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 	{
 		TextSegmentCollection<TextMarker> markers;
 		TextView textView;
+
+		public TextView TextView {
+			get { return textView; }
+		}
 		
 		public TextMarkerService(TextView textView)
 		{
@@ -78,10 +82,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			if (e.Bookmark is MarkerBookmark) {
 				var bm = (MarkerBookmark)e.Bookmark;
 				// add bookmark for the current type
-				if (bm.LineNumber < textView.Document.LineCount) {
-					DocumentLine line = textView.Document.GetLineByNumber(bm.LineNumber);
-					bm.CreateMarker(this, line.Offset, line.Length);
-				}
+				if (bm.LineNumber < textView.Document.LineCount)
+					bm.CreateMarker(this);
 			}
 		}
 

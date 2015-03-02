@@ -98,18 +98,14 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		{
 		}
 
-		protected ITextMarker CreateMarkerInternal(ITextMarkerService markerService, int lineOffset, int lineLength)
+		protected ITextMarker CreateMarkerInternal(ITextMarkerService markerService)
 		{
-			int startCol, endCol;
-			startCol = location.Column;
-			if (endLocation.Line == 0 && endLocation.Column == 0)
-				endCol = lineLength;
-			else if (location.Line == endLocation.Line)
-				endCol = endLocation.Column;
-			else
-				endCol = lineLength;
+			var line = markerService.TextView.Document.GetLineByNumber(location.Line);
+			var endLine = markerService.TextView.Document.GetLineByNumber(endLocation.Line);
+			int startOffset = line.Offset + location.Column - 1;
+			int endOffset = endLine.Offset + endLocation.Column - 1;
 
-			return markerService.Create(lineOffset + startCol, endCol - startCol);
+			return markerService.Create(startOffset, endOffset - startOffset);
 		}
 	}
 }

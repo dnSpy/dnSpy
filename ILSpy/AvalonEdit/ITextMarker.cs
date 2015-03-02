@@ -22,6 +22,7 @@ using System.Windows;
 using System.Windows.Media;
 
 using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.ILSpy.Bookmarks;
 
 namespace ICSharpCode.ILSpy.AvalonEdit
@@ -162,6 +163,11 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 	
 	public interface ITextMarkerService
 	{
+		/// <summary>
+		/// Gets the text view
+		/// </summary>
+		TextView TextView { get; }
+
 		/// <summary>
 		/// Creates a new text marker. The text marker will be invisible at first,
 		/// you need to set one of the Color properties to make it visible.

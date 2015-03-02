@@ -104,9 +104,9 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		
 		public event EventHandler ImageChanged;
 		
-		public override ITextMarker CreateMarker(ITextMarkerService markerService, int offset, int length)
+		public override ITextMarker CreateMarker(ITextMarkerService markerService)
 		{
-			ITextMarker marker = CreateMarkerInternal(markerService, offset - 1, length + 1);
+			ITextMarker marker = CreateMarkerInternal(markerService);
 			marker.HighlightingColor = () => HighlightingColor;
 			marker.IsVisible = b => {
 				var cm = DebugInformation.CodeMappings;
