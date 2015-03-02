@@ -430,6 +430,9 @@ namespace ICSharpCode.ILSpy.TextView
 				Debug.WriteLine("  Updating folding: {0}", w.Elapsed); w.Restart();
 			}
 			
+			if (DisplaySettingsPanel.CurrentDisplaySettings.AutoFocusTextView)
+				textEditor.Focus();
+
 			// update debugger info
 			DebugInformation.CodeMappings = textOutput.DebuggerMemberMappings.ToDictionary(m => new MethodKey(m.MethodDefinition));
 			UpdateDebugUI();

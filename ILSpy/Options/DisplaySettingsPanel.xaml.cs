@@ -103,6 +103,7 @@ namespace ICSharpCode.ILSpy.Options
 			s.ShowMetadataTokens = (bool?)e.Attribute("ShowMetadataTokens") ?? true;
 			s.ShowAssemblyVersion = (bool?)e.Attribute("ShowAssemblyVersion") ?? true;
 			s.ShowAssemblyPublicKeyToken = (bool?)e.Attribute("ShowAssemblyPublicKeyToken") ?? false;
+			s.AutoFocusTextView = (bool?)e.Attribute("AutoFocusTextView") ?? true;
 			
 			return s;
 		}
@@ -120,6 +121,7 @@ namespace ICSharpCode.ILSpy.Options
 			section.SetAttributeValue("ShowMetadataTokens", s.ShowMetadataTokens);
 			section.SetAttributeValue("ShowAssemblyVersion", s.ShowAssemblyVersion);
 			section.SetAttributeValue("ShowAssemblyPublicKeyToken", s.ShowAssemblyPublicKeyToken);
+			section.SetAttributeValue("AutoFocusTextView", s.AutoFocusTextView);
 			
 			XElement existingElement = root.Element("DisplaySettings");
 			if (existingElement != null)

@@ -63,6 +63,7 @@
 				<CheckBox IsChecked="{Binding ShowMetadataTokens}">Show metadata tokens</CheckBox>
 				<CheckBox IsChecked="{Binding ShowAssemblyVersion}">Show assembly version</CheckBox>
 				<CheckBox IsChecked="{Binding ShowAssemblyPublicKeyToken}">Show assembly public key token</CheckBox>
+				<CheckBox IsChecked="{Binding AutoFocusTextView}">Auto focus text view</CheckBox>
 			</StackPanel>
 		</GroupBox>
 	</Grid>

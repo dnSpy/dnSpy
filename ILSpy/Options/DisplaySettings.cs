@@ -122,6 +122,19 @@ namespace ICSharpCode.ILSpy.Options
 			}
 		}
 
+		bool autoFocusTextView;
+
+		public bool AutoFocusTextView
+		{
+			get { return autoFocusTextView; }
+			set {
+				if (autoFocusTextView != value) {
+					autoFocusTextView = value;
+					OnPropertyChanged("AutoFocusTextView");
+				}
+			}
+		}
+
 		public void CopyValues(DisplaySettings s)
 		{
 			this.SelectedFont = s.selectedFont;
@@ -130,6 +143,7 @@ namespace ICSharpCode.ILSpy.Options
 			this.ShowMetadataTokens = s.showMetadataTokens;
 			this.ShowAssemblyVersion = s.showAssemblyVersion;
 			this.ShowAssemblyPublicKeyToken = s.showAssemblyPublicKeyToken;
+			this.AutoFocusTextView = s.autoFocusTextView;
 		}
 	}
 }
