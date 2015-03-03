@@ -562,7 +562,8 @@ namespace ICSharpCode.ILSpy.TextView
 			bool updateDebugInfo =
 					DebuggerService.CurrentDebugger != null &&
 					DebuggerService.CurrentDebugger.IsDebugging &&
-					DebugInformation.DebugStepInformation != null;
+					DebugInformation.DebugStepInformation != null &&
+					DebugInformation.DebugStepInformation.Item2 != int.MaxValue;
 			bool updatedMarker = false;
 			if (updateDebugInfo) {
 				// repaint bookmarks
