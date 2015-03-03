@@ -133,13 +133,17 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		public ModuleDef ModuleDefinition {
 			get {
+				if (wasException)
+					return null;
 				try {
 					return assemblyTask.Result;
 				} catch (AggregateException) {
+					wasException = true;
 					return null;
 				}
 			}
 		}
+		bool wasException;
 		
 		/// <summary>
 		/// Gets the Cecil AssemblyDefinition.
@@ -367,8 +371,10 @@ namespace ICSharpCode.ILSpy
 
 		LoadedAssembly LookupFromSearchPaths(IAssembly asmName, ModuleDef sourceModule, bool exactCheck) {
 			LoadedAssembly asm;
+			string sourceModuleDir = null;
 			if (sourceModule != null && !string.IsNullOrEmpty(sourceModule.Location)) {
-				asm = TryLoadFromDir(asmName, exactCheck, Path.GetDirectoryName(sourceModule.Location));
+				sourceModuleDir = Path.GetDirectoryName(sourceModule.Location);
+				asm = TryLoadFromDir(asmName, exactCheck, sourceModuleDir);
 				if (asm != null)
 					return asm;
 			}
@@ -379,7 +385,13 @@ namespace ICSharpCode.ILSpy
 						return asm;
 				}
 			}
-			return TryLoadFromDir(asmName, exactCheck, Path.GetDirectoryName(this.fileName));
+
+			// Don't try the same path again
+			var currentDir = Path.GetDirectoryName(this.fileName);
+			if (string.IsNullOrEmpty(sourceModuleDir) || !currentDir.Equals(sourceModuleDir, StringComparison.OrdinalIgnoreCase))
+				return TryLoadFromDir(asmName, exactCheck, currentDir);
+
+			return null;
 		}
 
 		LoadedAssembly TryLoadFromDir(IAssembly asmName, bool exactCheck, string dirPath) {
