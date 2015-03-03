@@ -59,14 +59,6 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		{
 			this.RequireControlModifierForClick = true;
 		}
-
-		/// <summary>
-		/// Default link color properties
-		/// </summary>
-		public static HighlightingColor DefaultLinkColor = new HighlightingColor {
-			Name = "Default Clickable Link",
-			Foreground = new SimpleHighlightingBrush(Brushes.Blue),
-		};
 		
 		/// <inheritdoc/>
 		public override TextRun CreateTextRun(int startVisualColumn, ITextRunConstructionContext context)

@@ -47,6 +47,7 @@ using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Services;
+using ICSharpCode.ILSpy.dntheme;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.XmlDoc;
@@ -79,6 +80,8 @@ namespace ICSharpCode.ILSpy.TextView
 		readonly IconBarMargin iconMargin;
 		readonly TextMarkerService textMarkerService;
 		readonly List<ITextMarker> localReferenceMarks = new List<ITextMarker>();
+
+		readonly SearchPanel searchPanel;
 		
 		[ImportMany(typeof(ITextEditorListener))]
 		IEnumerable<ITextEditorListener> textEditorListeners = null;
@@ -126,7 +129,7 @@ namespace ICSharpCode.ILSpy.TextView
 			
 			// Bookmarks context menu
 			IconMarginActionsProvider.Add(iconMargin);
-			SearchPanel.Install(textEditor.TextArea);
+			searchPanel = SearchPanel.Install(textEditor.TextArea);
 			
 			this.Loaded += new RoutedEventHandler(DecompilerTextView_Loaded);
 		}
@@ -155,6 +158,9 @@ namespace ICSharpCode.ILSpy.TextView
 		internal void OnThemeUpdated()
 		{
 			textEditor.OnThemeUpdated();
+			var theme = MainWindow.Instance.Theme;
+			var marker = theme.GetColor(ColorType.SearchResultMarker).InheritedColor;
+			searchPanel.MarkerBrush = marker.Background == null ? Brushes.LightGreen : marker.Background.GetBrush(null);
 		}
 		
 		#region Line margin

@@ -330,6 +330,11 @@ namespace ICSharpCode.ILSpy.dntheme
 		SpecialCharacterBox,
 
 		/// <summary>
+		/// Search result marker. Only background color is used.
+		/// </summary>
+		SearchResultMarker,
+
+		/// <summary>
 		/// Must be last
 		/// </summary>
 		Last,

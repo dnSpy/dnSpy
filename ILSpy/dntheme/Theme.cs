@@ -65,6 +65,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		static readonly ColorInfo[] rootColorInfos = new ColorInfo[] {
 			new ColorInfo(ColorType.Selection),
 			new ColorInfo(ColorType.SpecialCharacterBox),
+			new ColorInfo(ColorType.SearchResultMarker),
 			new ColorInfo(ColorType.DefaultText,
 				new ColorInfo(ColorType.Text,
 					new ColorInfo(ColorType.Punctuation,

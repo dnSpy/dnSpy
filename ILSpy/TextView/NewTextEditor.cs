@@ -48,7 +48,9 @@ namespace ICSharpCode.ILSpy.TextView
 			var ln = theme.GetColor(ColorType.LineNumber).InheritedColor;
 			LineNumbersForeground = ln.Foreground == null ? null : ln.Foreground.GetBrush(null);
 
-			ICSharpCode.AvalonEdit.Rendering.VisualLineLinkText.DefaultLinkColor = theme.GetColor(ColorType.Link).TextInheritedColor;
+			var linkColor = theme.GetColor(ColorType.Link).TextInheritedColor;
+			TextArea.TextView.LinkTextForegroundBrush = (linkColor.Foreground ?? textColor.Foreground).GetBrush(null);
+			TextArea.TextView.LinkTextBackgroundBrush = linkColor.Background == null ? Brushes.Transparent : linkColor.Background.GetBrush(null);
 
 			var sel = theme.GetColor(ColorType.Selection).InheritedColor;
 			TextArea.SelectionBorder = null;

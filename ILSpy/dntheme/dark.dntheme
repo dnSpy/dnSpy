@@ -54,5 +54,6 @@
 		<color name="currentstatement" fg="Black" bg="#FFF181" />
 		<color name="breakpointstatement" fg="White" bg="#963A46" />
 		<color name="specialcharacterbox" bg="#666699" />
+		<color name="searchresultmarker" bg="#FFFFB7" />
 	</colors>
 </theme>

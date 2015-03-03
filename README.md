@@ -48,6 +48,7 @@ dnSpy looks for *.dntheme files in a dntheme sub directory.
 ```
 Selection
 SpecialCharacterBox
+SearchResultMarker
 DefaultText
 	Text
 		Punctuation
