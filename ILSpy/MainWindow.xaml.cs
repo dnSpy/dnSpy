@@ -340,9 +340,38 @@ namespace ICSharpCode.ILSpy
 				// Select the newly loaded assembly
 				JumpToReference(commandLineLoadedAssemblies[0].ModuleDefinition);
 			}
+			if (args.Search != null)
+			{
+				SearchPane.Instance.SearchTerm = args.Search;
+				SearchPane.Instance.Show();
+			}
+			if (!string.IsNullOrEmpty(args.SaveDirectory)) {
+				foreach (var x in commandLineLoadedAssemblies) {
+					x.ContinueWhenLoaded( (Task<ModuleDefinition> moduleTask) => {
+						OnExportAssembly(moduleTask, args.SaveDirectory);
+					}, TaskScheduler.FromCurrentSynchronizationContext());
+				}
+			}
 			commandLineLoadedAssemblies.Clear(); // clear references once we don't need them anymore
 		}
 		
+		void OnExportAssembly(Task<ModuleDefinition> moduleTask, string path)
+		{
+			AssemblyTreeNode asmNode = assemblyListTreeNode.FindAssemblyNode(moduleTask.Result);
+			if (asmNode != null) {
+				string file = DecompilerTextView.CleanUpName(asmNode.LoadedAssembly.ShortName);
+				Language language = sessionSettings.FilterSettings.Language;
+				DecompilationOptions options = new DecompilationOptions();
+				options.FullDecompilation = true;
+				options.SaveAsProjectDirectory = Path.Combine(App.CommandLineArguments.SaveDirectory, file);
+				if (!Directory.Exists(options.SaveAsProjectDirectory)) {
+					Directory.CreateDirectory(options.SaveAsProjectDirectory);
+				}
+				string fullFile = Path.Combine(options.SaveAsProjectDirectory, file + language.ProjectFileExtension);
+				TextView.SaveToDisk(language, new[] { asmNode }, options, fullFile);
+			}
+		}
+
 		void MainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
 			BuildThemeMenu();
@@ -522,7 +551,7 @@ namespace ICSharpCode.ILSpy
 		{
 			RefreshTreeViewFilter();
 			if (e.PropertyName == "Language") {
-				DecompileSelectedNodes();
+				DecompileSelectedNodes(recordHistory: false);
 			}
 		}
 		

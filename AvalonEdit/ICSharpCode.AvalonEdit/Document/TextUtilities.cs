@@ -1,9 +1,27 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Globalization;
 using System.Windows.Documents;
+#if NREFACTORY
+using ICSharpCode.NRefactory.Editor;
+#endif
 
 namespace ICSharpCode.AvalonEdit.Document
 {
@@ -13,7 +31,7 @@ namespace ICSharpCode.AvalonEdit.Document
 	public enum CaretPositioningMode
 	{
 		/// <summary>
-		/// Normal positioning (stop at every caret position)
+		/// Normal positioning (stop after every grapheme)
 		/// </summary>
 		Normal,
 		/// <summary>
@@ -31,7 +49,12 @@ namespace ICSharpCode.AvalonEdit.Document
 		/// <summary>
 		/// Stop only on word borders, and anywhere in the middle of symbols.
 		/// </summary>
-		WordBorderOrSymbol
+		WordBorderOrSymbol,
+		/// <summary>
+		/// Stop between every Unicode codepoint, even within the same grapheme.
+		/// This is used to implement deleting the previous grapheme when Backspace is pressed.
+		/// </summary>
+		EveryCodepoint
 	}
 	
 	/// <summary>
@@ -198,12 +221,43 @@ namespace ICSharpCode.AvalonEdit.Document
 		{
 			if (c == '\r' || c == '\n')
 				return CharacterClass.LineTerminator;
-			else if (char.IsWhiteSpace(c))
-				return CharacterClass.Whitespace;
-			else if (char.IsLetterOrDigit(c) || c == '_')
+			if (c == '_')
 				return CharacterClass.IdentifierPart;
-			else
+			return GetCharacterClass(char.GetUnicodeCategory(c));
+		}
+		
+		static CharacterClass GetCharacterClass(char highSurrogate, char lowSurrogate)
+		{
+			if (char.IsSurrogatePair(highSurrogate, lowSurrogate)) {
+				return GetCharacterClass(char.GetUnicodeCategory(highSurrogate.ToString() + lowSurrogate.ToString(), 0));
+			} else {
+				// malformed surrogate pair
 				return CharacterClass.Other;
+			}
+		}
+		
+		static CharacterClass GetCharacterClass(UnicodeCategory c)
+		{
+			switch (c) {
+				case UnicodeCategory.SpaceSeparator:
+				case UnicodeCategory.LineSeparator:
+				case UnicodeCategory.ParagraphSeparator:
+				case UnicodeCategory.Control:
+					return CharacterClass.Whitespace;
+				case UnicodeCategory.UppercaseLetter:
+				case UnicodeCategory.LowercaseLetter:
+				case UnicodeCategory.TitlecaseLetter:
+				case UnicodeCategory.ModifierLetter:
+				case UnicodeCategory.OtherLetter:
+				case UnicodeCategory.DecimalDigitNumber:
+					return CharacterClass.IdentifierPart;
+				case UnicodeCategory.NonSpacingMark:
+				case UnicodeCategory.SpacingCombiningMark:
+				case UnicodeCategory.EnclosingMark:
+					return CharacterClass.CombiningMark;
+				default:
+					return CharacterClass.Other;
+			}
 		}
 		#endregion
 		
@@ -226,13 +280,16 @@ namespace ICSharpCode.AvalonEdit.Document
 		{
 			if (textSource == null)
 				throw new ArgumentNullException("textSource");
-			if (mode != CaretPositioningMode.Normal
-			    && mode != CaretPositioningMode.WordBorder
-			    && mode != CaretPositioningMode.WordStart
-			    && mode != CaretPositioningMode.WordBorderOrSymbol
-			    && mode != CaretPositioningMode.WordStartOrSymbol)
-			{
-				throw new ArgumentException("Unsupported CaretPositioningMode: " + mode, "mode");
+			switch (mode) {
+				case CaretPositioningMode.Normal:
+				case CaretPositioningMode.EveryCodepoint:
+				case CaretPositioningMode.WordBorder:
+				case CaretPositioningMode.WordBorderOrSymbol:
+				case CaretPositioningMode.WordStart:
+				case CaretPositioningMode.WordStartOrSymbol:
+					break; // OK
+				default:
+					throw new ArgumentException("Unsupported CaretPositioningMode: " + mode, "mode");
 			}
 			if (direction != LogicalDirection.Backward
 			    && direction != LogicalDirection.Forward)
@@ -242,7 +299,7 @@ namespace ICSharpCode.AvalonEdit.Document
 			int textLength = textSource.TextLength;
 			if (textLength <= 0) {
 				// empty document? has a normal caret position at 0, though no word borders
-				if (mode == CaretPositioningMode.Normal) {
+				if (IsNormal(mode)) {
 					if (offset > 0 && direction == LogicalDirection.Backward) return 0;
 					if (offset < 0 && direction == LogicalDirection.Forward) return 0;
 				}
@@ -256,44 +313,36 @@ namespace ICSharpCode.AvalonEdit.Document
 				if (nextPos < 0 || nextPos > textLength)
 					return -1;
 				
-				// stop at every caret position? we can stop immediately.
-				if (mode == CaretPositioningMode.Normal)
-					return nextPos;
-				// not normal mode? we're looking for word borders...
-				
 				// check if we've run against the textSource borders.
 				// a 'textSource' usually isn't the whole document, but a single VisualLineElement.
 				if (nextPos == 0) {
 					// at the document start, there's only a word border
 					// if the first character is not whitespace
-					if (!char.IsWhiteSpace(textSource.GetCharAt(0)))
+					if (IsNormal(mode) || !char.IsWhiteSpace(textSource.GetCharAt(0)))
 						return nextPos;
 				} else if (nextPos == textLength) {
 					// at the document end, there's never a word start
 					if (mode != CaretPositioningMode.WordStart && mode != CaretPositioningMode.WordStartOrSymbol) {
 						// at the document end, there's only a word border
 						// if the last character is not whitespace
-						if (!char.IsWhiteSpace(textSource.GetCharAt(textLength - 1)))
+						if (IsNormal(mode) || !char.IsWhiteSpace(textSource.GetCharAt(textLength - 1)))
 							return nextPos;
 					}
 				} else {
-					CharacterClass charBefore = GetCharacterClass(textSource.GetCharAt(nextPos - 1));
-					CharacterClass charAfter = GetCharacterClass(textSource.GetCharAt(nextPos));
-					if (charBefore == charAfter) {
-						if (charBefore == CharacterClass.Other &&
-						    (mode == CaretPositioningMode.WordBorderOrSymbol || mode == CaretPositioningMode.WordStartOrSymbol))
-						{
-							// With the "OrSymbol" modes, there's a word border and start between any two unknown characters
-							return nextPos;
+					char charBefore = textSource.GetCharAt(nextPos - 1);
+					char charAfter = textSource.GetCharAt(nextPos);
+					// Don't stop in the middle of a surrogate pair
+					if (!char.IsSurrogatePair(charBefore, charAfter)) {
+						CharacterClass classBefore = GetCharacterClass(charBefore);
+						CharacterClass classAfter = GetCharacterClass(charAfter);
+						// get correct class for characters outside BMP:
+						if (char.IsLowSurrogate(charBefore) && nextPos >= 2) {
+							classBefore = GetCharacterClass(textSource.GetCharAt(nextPos - 2), charBefore);
 						}
-					} else {
-						// this looks like a possible border
-						
-						// if we're looking for word starts, check that this is a word start (and not a word end)
-						// if we're just checking for word borders, accept unconditionally
-						if (!((mode == CaretPositioningMode.WordStart || mode == CaretPositioningMode.WordStartOrSymbol)
-						      && (charAfter == CharacterClass.Whitespace || charAfter == CharacterClass.LineTerminator)))
-						{
+						if (char.IsHighSurrogate(charAfter) && nextPos + 1 < textLength) {
+							classAfter = GetCharacterClass(charAfter, textSource.GetCharAt(nextPos + 1));
+						}
+						if (StopBetweenCharacters(mode, classBefore, classAfter)) {
 							return nextPos;
 						}
 					}
@@ -301,6 +350,42 @@ namespace ICSharpCode.AvalonEdit.Document
 				// we'll have to continue searching...
 				offset = nextPos;
 			}
+		}
+		
+		static bool IsNormal(CaretPositioningMode mode)
+		{
+			return mode == CaretPositioningMode.Normal || mode == CaretPositioningMode.EveryCodepoint;
+		}
+		
+		static bool StopBetweenCharacters(CaretPositioningMode mode, CharacterClass charBefore, CharacterClass charAfter)
+		{
+			if (mode == CaretPositioningMode.EveryCodepoint)
+				return true;
+			// Don't stop in the middle of a grapheme
+			if (charAfter == CharacterClass.CombiningMark)
+				return false;
+			// Stop after every grapheme in normal mode
+			if (mode == CaretPositioningMode.Normal)
+				return true;
+			if (charBefore == charAfter) {
+				if (charBefore == CharacterClass.Other &&
+				    (mode == CaretPositioningMode.WordBorderOrSymbol || mode == CaretPositioningMode.WordStartOrSymbol))
+				{
+					// With the "OrSymbol" modes, there's a word border and start between any two unknown characters
+					return true;
+				}
+			} else {
+				// this looks like a possible border
+				
+				// if we're looking for word starts, check that this is a word start (and not a word end)
+				// if we're just checking for word borders, accept unconditionally
+				if (!((mode == CaretPositioningMode.WordStart || mode == CaretPositioningMode.WordStartOrSymbol)
+				      && (charAfter == CharacterClass.Whitespace || charAfter == CharacterClass.LineTerminator)))
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 		#endregion
 	}
@@ -327,6 +412,11 @@ namespace ICSharpCode.AvalonEdit.Document
 		/// <summary>
 		/// The character is line terminator (\r or \n).
 		/// </summary>
-		LineTerminator
+		LineTerminator,
+		/// <summary>
+		/// The character is a unicode combining mark that modifies the previous character.
+		/// Corresponds to the Unicode designations "Mn", "Mc" and "Me".
+		/// </summary>
+		CombiningMark
 	}
 }

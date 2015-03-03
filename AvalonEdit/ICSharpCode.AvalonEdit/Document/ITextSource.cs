@@ -1,29 +1,61 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
-using ICSharpCode.AvalonEdit.Utils;
+using System.Collections.Generic;
 using System;
 using System.IO;
 
 namespace ICSharpCode.AvalonEdit.Document
 {
+	#if !NREFACTORY
 	/// <summary>
-	/// Interface for read-only access to a text source.
+	/// A read-only view on a (potentially mutable) text source.
+	/// The IDocument interface derives from this interface.
 	/// </summary>
-	/// <seealso cref="TextDocument"/>
-	/// <seealso cref="StringTextSource"/>
 	public interface ITextSource
 	{
 		/// <summary>
-		/// Gets the whole text as string.
+		/// Gets a version identifier for this text source.
+		/// Returns null for unversioned text sources.
 		/// </summary>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods")]
-		string Text { get; }
+		ITextSourceVersion Version { get; }
 		
 		/// <summary>
-		/// Is raised when the Text property changes.
+		/// Creates an immutable snapshot of this text source.
+		/// Unlike all other methods in this interface, this method is thread-safe.
 		/// </summary>
-		event EventHandler TextChanged;
+		ITextSource CreateSnapshot();
+		
+		/// <summary>
+		/// Creates an immutable snapshot of a part of this text source.
+		/// Unlike all other methods in this interface, this method is thread-safe.
+		/// </summary>
+		ITextSource CreateSnapshot(int offset, int length);
+		
+		/// <summary>
+		/// Creates a new TextReader to read from this text source.
+		/// </summary>
+		TextReader CreateReader();
+		
+		/// <summary>
+		/// Creates a new TextReader to read from this text source.
+		/// </summary>
+		TextReader CreateReader(int offset, int length);
 		
 		/// <summary>
 		/// Gets the total text length.
@@ -34,23 +66,20 @@ namespace ICSharpCode.AvalonEdit.Document
 		int TextLength { get; }
 		
 		/// <summary>
+		/// Gets the whole text as string.
+		/// </summary>
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods")]
+		string Text { get; }
+		
+		/// <summary>
 		/// Gets a character at the specified position in the document.
 		/// </summary>
 		/// <paramref name="offset">The index of the character to get.</paramref>
 		/// <exception cref="ArgumentOutOfRangeException">Offset is outside the valid range (0 to TextLength-1).</exception>
 		/// <returns>The character at the specified position.</returns>
 		/// <remarks>This is the same as Text[offset], but is more efficient because
-		/// it doesn't require creating a String object.</remarks>
+		///  it doesn't require creating a String object.</remarks>
 		char GetCharAt(int offset);
-		
-		/// <summary>
-		/// Gets the index of the first occurrence of any character in the specified array.
-		/// </summary>
-		/// <param name="anyOf"></param>
-		/// <param name="startIndex">Start index of the search.</param>
-		/// <param name="count">Length of the area to search.</param>
-		/// <returns>The first index where any character was found; or -1 if no occurrence was found.</returns>
-		int IndexOfAny(char[] anyOf, int startIndex, int count);
 		
 		/// <summary>
 		/// Retrieves the text for a portion of the document.
@@ -61,121 +90,149 @@ namespace ICSharpCode.AvalonEdit.Document
 		string GetText(int offset, int length);
 		
 		/// <summary>
-		/// Creates a snapshot of the current text.
+		/// Retrieves the text for a portion of the document.
 		/// </summary>
-		/// <remarks>
-		/// This method is generally not thread-safe when called on a mutable text buffer, but the resulting text buffer is immutable and thread-safe.
-		/// However, some implementing classes may provide additional thread-safety guarantees, see <see cref="TextDocument.CreateSnapshot()">TextDocument.CreateSnapshot</see>.
-		/// </remarks>
-		ITextSource CreateSnapshot();
+		/// <exception cref="ArgumentOutOfRangeException">offset or length is outside the valid range.</exception>
+		string GetText(ISegment segment);
 		
 		/// <summary>
-		/// Creates a snapshot of a part of the current text.
+		/// Writes the text from this document into the TextWriter.
 		/// </summary>
-		/// <remarks>
-		/// This method is generally not thread-safe when called on a mutable text buffer, but the resulting text buffer is immutable and thread-safe.
-		/// However, some implementing classes may provide additional thread-safety guarantees, see <see cref="TextDocument.CreateSnapshot()">TextDocument.CreateSnapshot</see>.
-		/// </remarks>
-		ITextSource CreateSnapshot(int offset, int length);
+		void WriteTextTo(TextWriter writer);
 		
 		/// <summary>
-		/// Creates a text reader.
-		/// If the text is changed while a reader is active, the reader will continue to read from the old text version.
+		/// Writes the text from this document into the TextWriter.
 		/// </summary>
-		TextReader CreateReader();
+		void WriteTextTo(TextWriter writer, int offset, int length);
+		
+		/// <summary>
+		/// Gets the index of the first occurrence of the character in the specified array.
+		/// </summary>
+		/// <param name="c">Character to search for</param>
+		/// <param name="startIndex">Start index of the area to search.</param>
+		/// <param name="count">Length of the area to search.</param>
+		/// <returns>The first index where the character was found; or -1 if no occurrence was found.</returns>
+		int IndexOf(char c, int startIndex, int count);
+		
+		/// <summary>
+		/// Gets the index of the first occurrence of any character in the specified array.
+		/// </summary>
+		/// <param name="anyOf">Characters to search for</param>
+		/// <param name="startIndex">Start index of the area to search.</param>
+		/// <param name="count">Length of the area to search.</param>
+		/// <returns>The first index where any character was found; or -1 if no occurrence was found.</returns>
+		int IndexOfAny(char[] anyOf, int startIndex, int count);
+		
+		/// <summary>
+		/// Gets the index of the first occurrence of the specified search text in this text source.
+		/// </summary>
+		/// <param name="searchText">The search text</param>
+		/// <param name="startIndex">Start index of the area to search.</param>
+		/// <param name="count">Length of the area to search.</param>
+		/// <param name="comparisonType">String comparison to use.</param>
+		/// <returns>The first index where the search term was found; or -1 if no occurrence was found.</returns>
+		int IndexOf(string searchText, int startIndex, int count, StringComparison comparisonType);
+		
+		/// <summary>
+		/// Gets the index of the last occurrence of the specified character in this text source.
+		/// </summary>
+		/// <param name="c">The search character</param>
+		/// <param name="startIndex">Start index of the area to search.</param>
+		/// <param name="count">Length of the area to search.</param>
+		/// <returns>The last index where the search term was found; or -1 if no occurrence was found.</returns>
+		/// <remarks>The search proceeds backwards from (startIndex+count) to startIndex.
+		/// This is different than the meaning of the parameters on string.LastIndexOf!</remarks>
+		int LastIndexOf(char c, int startIndex, int count);
+		
+		/// <summary>
+		/// Gets the index of the last occurrence of the specified search text in this text source.
+		/// </summary>
+		/// <param name="searchText">The search text</param>
+		/// <param name="startIndex">Start index of the area to search.</param>
+		/// <param name="count">Length of the area to search.</param>
+		/// <param name="comparisonType">String comparison to use.</param>
+		/// <returns>The last index where the search term was found; or -1 if no occurrence was found.</returns>
+		/// <remarks>The search proceeds backwards from (startIndex+count) to startIndex.
+		/// This is different than the meaning of the parameters on string.LastIndexOf!</remarks>
+		int LastIndexOf(string searchText, int startIndex, int count, StringComparison comparisonType);
+		
+		/* What about:
+		void Insert (int offset, string value);
+		void Remove (int offset, int count);
+		void Remove (ISegment segment);
+		
+		void Replace (int offset, int count, string value);
+		
+		Or more search operations:
+		
+		IEnumerable<int> SearchForward (string pattern, int startIndex);
+		IEnumerable<int> SearchForwardIgnoreCase (string pattern, int startIndex);
+		
+		IEnumerable<int> SearchBackward (string pattern, int startIndex);
+		IEnumerable<int> SearchBackwardIgnoreCase (string pattern, int startIndex);
+		*/
 	}
 	
 	/// <summary>
-	/// Implements the ITextSource interface by wrapping another TextSource
-	/// and viewing only a part of the text.
+	/// Represents a version identifier for a text source.
 	/// </summary>
-	[Obsolete("This class will be removed in a future version of AvalonEdit")]
-	public sealed class TextSourceView : ITextSource
+	/// <remarks>
+	/// Verions can be used to efficiently detect whether a document has changed and needs reparsing;
+	/// or even to implement incremental parsers.
+	/// It is a separate class from ITextSource to allow the GC to collect the text source while
+	/// the version checkpoint is still in use.
+	/// </remarks>
+	public interface ITextSourceVersion
 	{
-		readonly ITextSource baseTextSource;
-		readonly ISegment viewedSegment;
+		/// <summary>
+		/// Gets whether this checkpoint belongs to the same document as the other checkpoint.
+		/// </summary>
+		/// <remarks>
+		/// Returns false when given <c>null</c>.
+		/// </remarks>
+		bool BelongsToSameDocumentAs(ITextSourceVersion other);
 		
 		/// <summary>
-		/// Creates a new TextSourceView object.
+		/// Compares the age of this checkpoint to the other checkpoint.
 		/// </summary>
-		/// <param name="baseTextSource">The base text source.</param>
-		/// <param name="viewedSegment">A text segment from the base text source</param>
-		public TextSourceView(ITextSource baseTextSource, ISegment viewedSegment)
-		{
-			if (baseTextSource == null)
-				throw new ArgumentNullException("baseTextSource");
-			if (viewedSegment == null)
-				throw new ArgumentNullException("viewedSegment");
-			this.baseTextSource = baseTextSource;
-			this.viewedSegment = viewedSegment;
-		}
+		/// <remarks>This method is thread-safe.</remarks>
+		/// <exception cref="ArgumentException">Raised if 'other' belongs to a different document than this version.</exception>
+		/// <returns>-1 if this version is older than <paramref name="other"/>.
+		/// 0 if <c>this</c> version instance represents the same version as <paramref name="other"/>.
+		/// 1 if this version is newer than <paramref name="other"/>.</returns>
+		int CompareAge(ITextSourceVersion other);
 		
-		/// <inheritdoc/>
-		public event EventHandler TextChanged {
-			add { baseTextSource.TextChanged += value; }
-			remove { baseTextSource.TextChanged -= value; }
-		}
+		/// <summary>
+		/// Gets the changes from this checkpoint to the other checkpoint.
+		/// If 'other' is older than this checkpoint, reverse changes are calculated.
+		/// </summary>
+		/// <remarks>This method is thread-safe.</remarks>
+		/// <exception cref="ArgumentException">Raised if 'other' belongs to a different document than this checkpoint.</exception>
+		IEnumerable<TextChangeEventArgs> GetChangesTo(ITextSourceVersion other);
 		
-		/// <inheritdoc/>
-		public string Text {
-			get {
-				return baseTextSource.GetText(viewedSegment.Offset, viewedSegment.Length);
-			}
-		}
-		
-		/// <inheritdoc/>
-		public int TextLength {
-			get { return viewedSegment.Length; }
-		}
-		
-		/// <inheritdoc/>
-		public char GetCharAt(int offset)
-		{
-			return baseTextSource.GetCharAt(viewedSegment.Offset + offset);
-		}
-		
-		/// <inheritdoc/>
-		public string GetText(int offset, int length)
-		{
-			return baseTextSource.GetText(viewedSegment.Offset + offset, length);
-		}
-		
-		/// <inheritdoc/>
-		public ITextSource CreateSnapshot()
-		{
-			return baseTextSource.CreateSnapshot(viewedSegment.Offset, viewedSegment.Length);
-		}
-		
-		/// <inheritdoc/>
-		public ITextSource CreateSnapshot(int offset, int length)
-		{
-			return baseTextSource.CreateSnapshot(viewedSegment.Offset + offset, length);
-		}
-		
-		/// <inheritdoc/>
-		public TextReader CreateReader()
-		{
-			return CreateSnapshot().CreateReader();
-		}
-		
-		/// <inheritdoc/>
-		public int IndexOfAny(char[] anyOf, int startIndex, int count)
-		{
-			int offset = viewedSegment.Offset;
-			int result = baseTextSource.IndexOfAny(anyOf, startIndex + offset, count);
-			return result >= 0 ? result - offset : result;
-		}
+		/// <summary>
+		/// Calculates where the offset has moved in the other buffer version.
+		/// </summary>
+		/// <exception cref="ArgumentException">Raised if 'other' belongs to a different document than this checkpoint.</exception>
+		int MoveOffsetTo(ITextSourceVersion other, int oldOffset, AnchorMovementType movement = AnchorMovementType.Default);
 	}
 	
 	/// <summary>
 	/// Implements the ITextSource interface using a string.
 	/// </summary>
-	public sealed class StringTextSource : ITextSource
+	[Serializable]
+	public class StringTextSource : ITextSource
 	{
+		/// <summary>
+		/// Gets a text source containing the empty string.
+		/// </summary>
+		public static readonly StringTextSource Empty = new StringTextSource(string.Empty);
+		
 		readonly string text;
+		readonly ITextSourceVersion version;
 		
 		/// <summary>
-		/// Creates a new StringTextSource.
+		/// Creates a new StringTextSource with the given text.
 		/// </summary>
 		public StringTextSource(string text)
 		{
@@ -184,12 +241,20 @@ namespace ICSharpCode.AvalonEdit.Document
 			this.text = text;
 		}
 		
-		// Text can never change
-		event EventHandler ITextSource.TextChanged { add {} remove {} }
+		/// <summary>
+		/// Creates a new StringTextSource with the given text.
+		/// </summary>
+		public StringTextSource(string text, ITextSourceVersion version)
+		{
+			if (text == null)
+				throw new ArgumentNullException("text");
+			this.text = text;
+			this.version = version;
+		}
 		
 		/// <inheritdoc/>
-		public string Text {
-			get { return text; }
+		public ITextSourceVersion Version {
+			get { return version; }
 		}
 		
 		/// <inheritdoc/>
@@ -198,11 +263,49 @@ namespace ICSharpCode.AvalonEdit.Document
 		}
 		
 		/// <inheritdoc/>
+		public string Text {
+			get { return text; }
+		}
+		
+		/// <inheritdoc/>
+		public ITextSource CreateSnapshot()
+		{
+			return this; // StringTextSource is immutable
+		}
+		
+		/// <inheritdoc/>
+		public ITextSource CreateSnapshot(int offset, int length)
+		{
+			return new StringTextSource(text.Substring(offset, length));
+		}
+		
+		/// <inheritdoc/>
+		public TextReader CreateReader()
+		{
+			return new StringReader(text);
+		}
+		
+		/// <inheritdoc/>
+		public TextReader CreateReader(int offset, int length)
+		{
+			return new StringReader(text.Substring(offset, length));
+		}
+		
+		/// <inheritdoc/>
+		public void WriteTextTo(TextWriter writer)
+		{
+			writer.Write(text);
+		}
+		
+		/// <inheritdoc/>
+		public void WriteTextTo(TextWriter writer, int offset, int length)
+		{
+			writer.Write(text.Substring(offset, length));
+		}
+		
+		/// <inheritdoc/>
 		public char GetCharAt(int offset)
 		{
-			// GetCharAt must throw ArgumentOutOfRangeException, not IndexOutOfRangeException
-			if (offset < 0 || offset >= text.Length)
-				throw new ArgumentOutOfRangeException("offset", offset, "offset must be between 0 and " + (text.Length - 1));
 			return text[offset];
 		}
 		
@@ -213,21 +316,17 @@ namespace ICSharpCode.AvalonEdit.Document
 		}
 		
 		/// <inheritdoc/>
-		public TextReader CreateReader()
+		public string GetText(ISegment segment)
 		{
-			return new StringReader(text);
+			if (segment == null)
+				throw new ArgumentNullException("segment");
+			return text.Substring(segment.Offset, segment.Length);
 		}
 		
 		/// <inheritdoc/>
-		public ITextSource CreateSnapshot()
+		public int IndexOf(char c, int startIndex, int count)
 		{
-			return this; // StringTextSource already is immutable
-		}
-		
-		/// <inheritdoc/>
-		public ITextSource CreateSnapshot(int offset, int length)
-		{
-			return new StringTextSource(text.Substring(offset, length));
+			return text.IndexOf(c, startIndex, count);
 		}
 		
 		/// <inheritdoc/>
@@ -235,86 +334,24 @@ namespace ICSharpCode.AvalonEdit.Document
 		{
 			return text.IndexOfAny(anyOf, startIndex, count);
 		}
-	}
-	
-	/// <summary>
-	/// Implements the ITextSource interface using a rope.
-	/// </summary>
-	public sealed class RopeTextSource : ITextSource
-	{
-		readonly Rope<char> rope;
-		
-		/// <summary>
-		/// Creates a new RopeTextSource.
-		/// </summary>
-		public RopeTextSource(Rope<char> rope)
-		{
-			if (rope == null)
-				throw new ArgumentNullException("rope");
-			this.rope = rope;
-		}
-		
-		/// <summary>
-		/// Returns a clone of the rope used for this text source.
-		/// </summary>
-		/// <remarks>
-		/// RopeTextSource only publishes a copy of the contained rope to ensure that the underlying rope cannot be modified.
-		/// Unless the creator of the RopeTextSource still has a reference on the rope, RopeTextSource is immutable.
-		/// </remarks>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification="Not a property because it creates a clone")]
-		public Rope<char> GetRope()
-		{
-			return rope.Clone();
-		}
-		
-		// Change event is not supported
-		event EventHandler ITextSource.TextChanged { add {} remove {} }
 		
 		/// <inheritdoc/>
-		public string Text {
-			get { return rope.ToString(); }
+		public int IndexOf(string searchText, int startIndex, int count, StringComparison comparisonType)
+		{
+			return text.IndexOf(searchText, startIndex, count, comparisonType);
 		}
 		
 		/// <inheritdoc/>
-		public int TextLength {
-			get { return rope.Length; }
+		public int LastIndexOf(char c, int startIndex, int count)
+		{
+			return text.LastIndexOf(c, startIndex + count - 1, count);
 		}
 		
 		/// <inheritdoc/>
-		public char GetCharAt(int offset)
+		public int LastIndexOf(string searchText, int startIndex, int count, StringComparison comparisonType)
 		{
-			return rope[offset];
-		}
-		
-		/// <inheritdoc/>
-		public string GetText(int offset, int length)
-		{
-			return rope.ToString(offset, length);
-		}
-		
-		/// <inheritdoc/>
-		public TextReader CreateReader()
-		{
-			return new RopeTextReader(rope);
-		}
-		
-		/// <inheritdoc/>
-		public ITextSource CreateSnapshot()
-		{
-			// we clone the underlying rope because the creator of the RopeTextSource might be modifying it
-			return new RopeTextSource(rope.Clone());
-		}
-		
-		/// <inheritdoc/>
-		public ITextSource CreateSnapshot(int offset, int length)
-		{
-			return new RopeTextSource(rope.GetRange(offset, length));
-		}
-		
-		/// <inheritdoc/>
-		public int IndexOfAny(char[] anyOf, int startIndex, int count)
-		{
-			return rope.IndexOfAny(anyOf, startIndex, count);
+			return text.LastIndexOf(searchText, startIndex + count - 1, count, comparisonType);
 		}
 	}
+	#endif
 }

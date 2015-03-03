@@ -127,9 +127,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				if (null != smartOutput) {
 					smartOutput.AddUIElement(
 						delegate {
-							return new ResourceStringTable(stringTableEntries,
-								new System.Windows.Size(MainWindow.Instance.mainPane.ActualWidth - 45,
-														MainWindow.Instance.mainPane.ActualHeight));
+							return new ResourceStringTable(stringTableEntries, MainWindow.Instance.mainPane);
 						}
 					);
 				}
@@ -141,9 +139,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				if (null != smartOutput) {
 					smartOutput.AddUIElement(
 						delegate {
-							return new ResourceObjectTable(otherEntries,
-								new System.Windows.Size(MainWindow.Instance.mainPane.ActualWidth - 45,
-														MainWindow.Instance.mainPane.ActualHeight));
+							return new ResourceObjectTable(otherEntries, MainWindow.Instance.mainPane);
 						}
 					);
 				}

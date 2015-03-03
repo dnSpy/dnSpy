@@ -17,7 +17,7 @@
 				<controls:SearchBox x:Name="searchBox" DockPanel.Dock="Top" Grid.Column="0" Grid.Row="0" Margin="1"
 						PreviewKeyDown="SearchBox_PreviewKeyDown"
 						Text="{Binding SearchTerm, ElementName=self}" ToolTip="Search" UpdateDelay="0:0:0.1"
-						WatermarkColor="Gray" WatermarkText="Search" />
+						WatermarkColor="Gray" WatermarkText="Search for t:TypeName, m:Member or c:Constant; use /reg(ular)?Ex(pressions)?/ or both - t:/Type(Name)?/..." />
 				<StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal">
 					<Label Margin="0,-1">Search _for:</Label>
 					<ComboBox Width="100" Name="searchModeComboBox" Margin="1"

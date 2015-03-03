@@ -126,7 +126,7 @@ namespace ICSharpCode.ILSpy.TextView
 			
 			// Bookmarks context menu
 			IconMarginActionsProvider.Add(iconMargin);
-			textEditor.TextArea.DefaultInputHandler.NestedInputHandlers.Add(new SearchInputHandler(textEditor.TextArea));
+			SearchPanel.Install(textEditor.TextArea);
 			
 			this.Loaded += new RoutedEventHandler(DecompilerTextView_Loaded);
 		}
@@ -223,13 +223,17 @@ namespace ICSharpCode.ILSpy.TextView
 				}
 				XmlDocRenderer renderer = new XmlDocRenderer();
 				renderer.AppendText(MainWindow.Instance.CurrentLanguage.GetTooltip(mr));
-				XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(mr.Module);
-				if (docProvider != null) {
-					string documentation = GetDocumentation(docProvider, mr);
-					if (documentation != null) {
-						renderer.AppendText(Environment.NewLine);
-						renderer.AddXmlDocumentation(documentation);
+				try {
+					XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(mr.Module);
+					if (docProvider != null) {
+						string documentation = GetDocumentation(docProvider, mr);
+						if (documentation != null) {
+							renderer.AppendText(Environment.NewLine);
+							renderer.AddXmlDocumentation(documentation);
+						}
 					}
+				} catch (XmlException) {
+					// ignore
 				}
 				return renderer.CreateTextBlock();
 			}

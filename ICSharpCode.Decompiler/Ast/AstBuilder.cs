@@ -161,7 +161,7 @@ namespace ICSharpCode.Decompiler.Ast
 				RunTransformations();
 			
 			syntaxTree.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true });
-			var outputFormatter = new TextOutputFormatter(output) { FoldBraces = context.Settings.FoldBraces };
+			var outputFormatter = new TextOutputFormatter(output, context) { FoldBraces = context.Settings.FoldBraces };
 			var formattingPolicy = context.Settings.CSharpFormattingOptions;
 			syntaxTree.AcceptVisitor(new CSharpOutputVisitor(outputFormatter, formattingPolicy));
 		}
@@ -328,6 +328,7 @@ namespace ICSharpCode.Decompiler.Ast
 						// the value__ field
 						if (!new SigComparer().Equals(field.FieldType, typeDef.Module.CorLibTypes.Int32)) {
 							astType.AddChild(ConvertType(field.FieldType), Roles.BaseType);
+							baseType = TypeAnalysis.GetTypeCode(field.FieldType);
 						}
 					} else {
 						EnumMemberDeclaration enumMember = new EnumMemberDeclaration();

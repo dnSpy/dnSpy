@@ -216,7 +216,14 @@ namespace ICSharpCode.ILSpy
 				additionalTransform.Run(astBuilder.SyntaxTree);
 			}
 			if (options.DecompilerSettings.ShowXmlDocumentation) {
-				AddXmlDocTransform.Run(astBuilder.SyntaxTree);
+				try {
+					AddXmlDocTransform.Run(astBuilder.SyntaxTree);
+				} catch (XmlException ex) {
+					string[] msg = (" Exception while reading XmlDoc: " + ex.ToString()).Split(new[]{'\r', '\n'}, StringSplitOptions.RemoveEmptyEntries);
+					var insertionPoint = astBuilder.SyntaxTree.FirstChild;
+					for (int i = 0; i < msg.Length; i++)
+						astBuilder.SyntaxTree.InsertChildBefore(insertionPoint, new Comment(msg[i], CommentType.Documentation), Roles.Comment);
+				}
 			}
 			astBuilder.GenerateCode(output);
 		}
@@ -316,6 +323,7 @@ namespace ICSharpCode.ILSpy
 			var module = assembly.ModuleDefinition;
 			const string ns = "http://schemas.microsoft.com/developer/msbuild/2003";
 			string platformName = GetPlatformName(module);
+			Guid guid = App.CommandLineArguments.FixedGuid ?? Guid.NewGuid();
 			using (XmlTextWriter w = new XmlTextWriter(writer)) {
 				var asmRefs = GetAssemblyRefs(options, assembly);
 
@@ -326,7 +334,7 @@ namespace ICSharpCode.ILSpy
 				w.WriteAttributeString("DefaultTargets", "Build");
 
 				w.WriteStartElement("PropertyGroup");
-				w.WriteElementString("ProjectGuid", (options.ProjectGuid ?? Guid.NewGuid()).ToString("B").ToUpperInvariant());
+				w.WriteElementString("ProjectGuid", (options.ProjectGuid ?? guid).ToString("B").ToUpperInvariant());
 
 				w.WriteStartElement("Configuration");
 				w.WriteAttributeString("Condition", " '$(Configuration)' == '' ");

@@ -1,0 +1,256 @@
+<?xml version="1.0"?>
+
+<!-- Syntaxdefinition for VB.NET, v0.1 Rev 1 by Christian Holm -->
+<!-- Updated 2005 by Daniel Grunwald for VB.NET 2.0 -->
+<!-- Converted to AvalonEdit format by Daniel Grunwald in 2010 -->
+<!-- Updated 2010 by Siegfried Oleg Pammer for VB.NET 9 and 10 -->
+<!-- Updated 2011 by Siegfried Oleg Pammer for VB 11 CTP -->
+<SyntaxDefinition name="VB" extensions=".vb" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+	<Color name="Comment" foreground="Green" exampleText="' comment" />
+	<Color name="String" exampleText="text = &quot;Hello, World!&quot;" />
+	
+	<Color name="DateLiteral" foreground="Blue" exampleText="endOfWorld = #2012-12-21#" />
+	<Color name="Preprocessor" foreground="Maroon" exampleText="#Region &quot;Title&quot;" />
+	<Color name="DataTypes" foreground="#FF6F002F" exampleText="Dim b As Boolean = True" />
+	<Color name="Operators" foreground="#FF8515EA" exampleText="If a OrElse b Then"/>
+	<Color name="Constants" foreground="Blue" exampleText="b = False" />
+	<Color name="Keywords" foreground="Blue" exampleText="If a OrElse b Then" />
+	<Color name="FunctionKeywords" foreground="Blue" exampleText="CInt(a)" />
+	<Color name="ContextKeywords" foreground="Blue" exampleText="Declare Unicode Sub SomeMethod" />
+	
+	<Property name="DocCommentMarker" value="'''" />
+	
+	<RuleSet ignoreCase="true">
+		<Span color="String">
+			<Begin>"</Begin>
+			<End>"</End>
+			<RuleSet>
+				<Span begin="&quot;&quot;" end="" />
+			</RuleSet>
+		</Span>
+		<Span color="Preprocessor" ruleSet="PreprocessorSet">
+			<Begin>(?&lt;=(^\s*))\#</Begin>
+		</Span>
+		<Span color="DateLiteral">
+			<Begin>(?&lt;!(^\s*))\#</Begin>
+			<End>\#</End>
+		</Span>
+		<Span color="Comment" ruleSet="XmlDoc/DocCommentSet">
+			<Begin color="XmlDoc/DocComment">'''</Begin>
+		</Span>
+		<Span color="Comment">
+			<Begin>'</Begin>
+		</Span>
+		<Span color="Comment">
+			<Begin>\bREM\b</Begin>
+		</Span>
+		<Keywords color="DataTypes">
+			<Word>Boolean</Word>
+			<Word>Byte</Word>
+			<Word>Char</Word>
+			<Word>Date</Word>
+			<Word>Decimal</Word>
+			<Word>Double</Word>
+			<Word>Integer</Word>
+			<Word>Long</Word>
+			<Word>Object</Word>
+			<Word>SByte</Word>
+			<Word>Short</Word>
+			<Word>Single</Word>
+			<Word>String</Word>
+			<Word>UInteger</Word>
+			<Word>ULong</Word>
+			<Word>UShort</Word>
+			<Word>Variant</Word>
+		</Keywords>
+		<Keywords color="Operators">
+			<Word>AddressOf</Word>
+			<Word>And</Word>
+			<Word>AndAlso</Word>
+			<Word>Await</Word>
+			<Word>Is</Word>
+			<Word>IsNot</Word>
+			<Word>Like</Word>
+			<Word>Mod</Word>
+			<Word>New</Word>
+			<Word>Not</Word>
+			<Word>Or</Word>
+			<Word>OrElse</Word>
+			<Word>Xor</Word>
+		</Keywords>
+		<Keywords color="Constants">
+			<Word>False</Word>
+			<Word>Me</Word>
+			<Word>MyBase</Word>
+			<Word>MyClass</Word>
+			<Word>Nothing</Word>
+			<Word>True</Word>
+		</Keywords>
+		<Keywords color="FunctionKeywords">
+			<Word>CBool</Word>
+			<Word>CByte</Word>
+			<Word>CChar</Word>
+			<Word>CDate</Word>
+			<Word>CDbl</Word>
+			<Word>CDec</Word>
+			<Word>CInt</Word>
+			<Word>CLng</Word>
+			<Word>CObj</Word>
+			<Word>CSByte</Word>
+			<Word>CShort</Word>
+			<Word>CSng</Word>
+			<Word>CStr</Word>
+			<Word>CType</Word>
+			<Word>CUInt</Word>
+			<Word>CULng</Word>
+			<Word>CUShort</Word>
+			<Word>DirectCast</Word>
+			<Word>GetType</Word>
+			<Word>GetXmlNamespace</Word>
+			<Word>IIf</Word>
+			<Word>TryCast</Word>
+			<Word>TypeOf</Word>
+		</Keywords>
+		<Keywords color="Keywords">
+			<Word>AddHandler</Word>
+			<Word>Alias</Word>
+			<Word>As</Word>
+			<Word>ByRef</Word>
+			<Word>ByVal</Word>
+			<Word>Call</Word>
+			<Word>Case</Word>
+			<Word>Catch</Word>
+			<Word>Class</Word>
+			<Word>Const</Word>
+			<Word>Continue</Word>
+			<Word>Declare</Word>
+			<Word>Default</Word>
+			<Word>Delegate</Word>
+			<Word>Dim</Word>
+			<Word>Do</Word>
+			<Word>Each</Word>
+			<Word>Else</Word>
+			<Word>ElseIf</Word>
+			<Word>End</Word>
+			<Word>EndIf</Word>
+			<Word>Enum</Word>
+			<Word>Erase</Word>
+			<Word>Error</Word>
+			<Word>Event</Word>
+			<Word>Exit</Word>
+			<Word>Finally</Word>
+			<Word>For</Word>
+			<Word>Friend</Word>
+			<Word>Function</Word>
+			<Word>Get</Word>
+			<Word>Global</Word>
+			<Word>GoSub</Word>
+			<Word>GoTo</Word>
+			<Word>Handles</Word>
+			<Word>If</Word>
+			<Word>Implements</Word>
+			<Word>Imports</Word>
+			<Word>In</Word>
+			<Word>Inherits</Word>
+			<Word>Interface</Word>
+			<Word>Let</Word>
+			<Word>Lib</Word>
+			<Word>Loop</Word>
+			<Word>Module</Word>
+			<Word>MustInherit</Word>
+			<Word>MustOverride</Word>
+			<Word>Namespace</Word>
+			<Word>Narrowing</Word>
+			<Word>New</Word>
+			<Word>Next</Word>
+			<Word>NotInheritable</Word>
+			<Word>NotOverridable</Word>
+			<Word>Of</Word>
+			<Word>On</Word>
+			<Word>Operator</Word>
+			<Word>Option</Word>
+			<Word>Optional</Word>
+			<Word>Overloads</Word>
+			<Word>Overridable</Word>
+			<Word>Overrides</Word>
+			<Word>ParamArray</Word>
+			<Word>Partial</Word>
+			<Word>Private</Word>
+			<Word>Property</Word>
+			<Word>Protected</Word>
+			<Word>Public</Word>
+			<Word>RaiseEvent</Word>
+			<Word>ReadOnly</Word>
+			<Word>ReDim</Word>
+			<Word>RemoveHandler</Word>
+			<Word>Resume</Word>
+			<Word>Return</Word>
+			<Word>Select</Word>
+			<Word>Set</Word>
+			<Word>Shadows</Word>
+			<Word>Shared</Word>
+			<Word>Static</Word>
+			<Word>Step</Word>
+			<Word>Stop</Word>
+			<Word>Structure</Word>
+			<Word>Sub</Word>
+			<Word>SyncLock</Word>
+			<Word>Then</Word>
+			<Word>Throw</Word>
+			<Word>To</Word>
+			<Word>Try</Word>
+			<Word>Using</Word>
+			<Word>Wend</Word>
+			<Word>When</Word>
+			<Word>While</Word>
+			<Word>Widening</Word>
+			<Word>With</Word>
+			<Word>WithEvents</Word>
+			<Word>WriteOnly</Word>
+		</Keywords>
+		<Keywords color="ContextKeywords">
+			<Word>Aggregate</Word>
+			<Word>Ansi</Word>
+			<Word>Ascending</Word>
+			<Word>Async</Word>
+			<Word>Auto</Word>
+			<Word>Binary</Word>
+			<Word>By</Word>
+			<Word>Compare</Word>
+			<Word>Custom</Word>
+			<Word>Descending</Word>
+			<Word>Distinct</Word>
+			<Word>Equals</Word>
+			<Word>Explicit</Word>
+			<Word>From</Word>
+			<Word>Group</Word>
+			<Word>Infer</Word>
+			<Word>Into</Word>
+			<Word>Iterator</Word>
+			<Word>Join</Word>
+			<Word>Key</Word>
+			<Word>Off</Word>
+			<Word>Preserve</Word>
+			<Word>Skip</Word>
+			<Word>Strict</Word>
+			<Word>Take</Word>
+			<Word>Text</Word>
+			<Word>Unicode</Word>
+			<Word>Until</Word>
+			<Word>Where</Word>
+			<Word>Yield</Word>
+		</Keywords>
+	</RuleSet>
+	<RuleSet name="PreprocessorSet" ignoreCase="true">
+		<Keywords fontWeight="bold">
+			<Word>Const</Word>
+			<Word>Else</Word>
+			<Word>ElseIf</Word>
+			<Word>End</Word>
+			<Word>ExternalChecksum</Word>
+			<Word>ExternalSource</Word>
+			<Word>If</Word>
+			<Word>Region</Word>
+		</Keywords>
+	</RuleSet>
+</SyntaxDefinition>

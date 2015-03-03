@@ -455,7 +455,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					return ((ITypeDefOrRef)expr.Operand).ToTypeSig();
 				case ILCode.Localloc:
 					if (forceInferChildren) {
-						InferTypeForExpression(expr.Arguments[0], corLib.Int32);
+						InferTypeForExpression(expr.Arguments[0], null);
 					}
 					if (expectedType is PtrSig)
 						return expectedType;
@@ -968,7 +968,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			TypeSig leftPreferred = DoInferTypeForExpression(left, expectedType);
 			if (leftPreferred is PtrSig) {
 				left.InferredType = left.ExpectedType = leftPreferred;
-				InferTypeForExpression(right, corLib.IntPtr);
+				InferTypeForExpression(right, null);
 				return leftPreferred;
 			}
 			if (IsEnum(leftPreferred)) {
@@ -979,7 +979,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 			TypeSig rightPreferred = DoInferTypeForExpression(right, expectedType);
 			if (rightPreferred is PtrSig) {
-				InferTypeForExpression(left, corLib.IntPtr);
+				InferTypeForExpression(left, null);
 				right.InferredType = right.ExpectedType = rightPreferred;
 				return rightPreferred;
 			}
@@ -999,7 +999,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			TypeSig leftPreferred = DoInferTypeForExpression(left, expectedType);
 			if (leftPreferred is PtrSig) {
 				left.InferredType = left.ExpectedType = leftPreferred;
-				InferTypeForExpression(right, corLib.IntPtr);
+				InferTypeForExpression(right, null);
 				return leftPreferred;
 			}
 			if (IsEnum(leftPreferred)) {

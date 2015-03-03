@@ -187,6 +187,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Commands\SimpleCommand.cs" />
+    <Compile Include="SearchStrategies.cs" />
     <Compile Include="TaskHelper.cs" />
     <Compile Include="TextView\FoldingCommands.cs" />
     <Compile Include="TextView\LanguageTokens.cs" />

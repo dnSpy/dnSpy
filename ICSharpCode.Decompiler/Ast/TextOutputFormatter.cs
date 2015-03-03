@@ -30,6 +30,7 @@ namespace ICSharpCode.Decompiler.Ast
 	public class TextOutputFormatter : IOutputFormatter
 	{
 		readonly ITextOutput output;
+		readonly DecompilerContext context;
 		readonly Stack<AstNode> nodeStack = new Stack<AstNode>();
 		int braceLevelWithinType = -1;
 		bool inDocumentationComment = false;
@@ -38,11 +39,14 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public bool FoldBraces = false;
 		
-		public TextOutputFormatter(ITextOutput output)
+		public TextOutputFormatter(ITextOutput output, DecompilerContext context)
 		{
 			if (output == null)
 				throw new ArgumentNullException("output");
+			if (context == null)
+				throw new ArgumentNullException("context");
 			this.output = output;
+			this.context = context;
 		}
 		
 		public void WriteIdentifier(string identifier, TextTokenType tokenType)
@@ -89,6 +93,19 @@ namespace ICSharpCode.Decompiler.Ast
 			{
 				memberRef = node.Parent.Annotation<IMemberRef>();
 			}
+			return FilterMemberReference(memberRef);
+		}
+
+		MemberReference FilterMemberReference(MemberReference memberRef)
+		{
+			if (memberRef == null)
+				return null;
+
+			if (context.Settings.AutomaticEvents && memberRef is FieldDefinition) {
+				var field = (FieldDefinition)memberRef;
+				return field.DeclaringType.Events.FirstOrDefault(ev => ev.Name == field.Name) ?? memberRef;
+			}
+
 			return memberRef;
 		}
 
