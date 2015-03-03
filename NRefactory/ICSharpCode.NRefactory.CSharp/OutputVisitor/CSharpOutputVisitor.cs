@@ -2211,8 +2211,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteModifiers(constructorDeclaration.ModifierTokens);
 			TypeDeclaration type = constructorDeclaration.Parent as TypeDeclaration;
 			StartNode(constructorDeclaration.NameToken);
-			var obj = (type == null ? null : type.Annotation<object>()) ?? constructorDeclaration.Annotation<object>();
-			WriteIdentifier(type != null ? type.Name : constructorDeclaration.Name, TextTokenHelper.GetTextTokenType(obj));
+			var method = constructorDeclaration.Annotation<dnlib.DotNet.MethodDef>();
+			WriteIdentifier(type != null ? type.Name : constructorDeclaration.Name, method == null ? TextTokenType.Type : TextTokenHelper.GetTextTokenType(method.DeclaringType));
 			EndNode(constructorDeclaration.NameToken);
 			Space(policy.SpaceBeforeConstructorDeclarationParentheses);
 			WriteCommaSeparatedListInParenthesis(constructorDeclaration.Parameters, policy.SpaceWithinMethodDeclarationParentheses);
@@ -2247,8 +2247,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteToken(DestructorDeclaration.TildeRole);
 			TypeDeclaration type = destructorDeclaration.Parent as TypeDeclaration;
 			StartNode(destructorDeclaration.NameToken);
-			var obj = (type == null ? null : type.Annotation<object>()) ?? destructorDeclaration.Annotation<object>();
-			WriteIdentifier(type != null ? type.Name : destructorDeclaration.Name, TextTokenHelper.GetTextTokenType(obj));
+			var method = destructorDeclaration.Annotation<dnlib.DotNet.MethodDef>();
+			WriteIdentifier(type != null ? type.Name : destructorDeclaration.Name, method == null ? TextTokenType.Type : TextTokenHelper.GetTextTokenType(method.DeclaringType));
 			EndNode(destructorDeclaration.NameToken);
 			Space(policy.SpaceBeforeConstructorDeclarationParentheses);
 			LPar();

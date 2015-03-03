@@ -1033,6 +1033,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			Match m = destructorPattern.Match(methodDef);
 			if (m.Success) {
 				DestructorDeclaration dd = new DestructorDeclaration();
+				dd.AddAnnotation(methodDef.Annotation<MethodDef>());
 				methodDef.Attributes.MoveTo(dd.Attributes);
 				dd.Modifiers = methodDef.Modifiers & ~(Modifiers.Protected | Modifiers.Override);
 				var mm = methodDef.Body.Annotation<MemberMapping>();
