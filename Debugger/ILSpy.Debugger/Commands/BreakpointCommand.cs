@@ -55,7 +55,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 					if (map == null || m.StartLocation < map.StartLocation)
 						map = m;
 				}
-				if (map != null && closest == null || map.StartLocation < closest.StartLocation)
+				if (map != null && (closest == null || map.StartLocation < closest.StartLocation))
 					closest = map;
 			}
 
