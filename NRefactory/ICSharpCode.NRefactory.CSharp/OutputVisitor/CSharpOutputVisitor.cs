@@ -112,6 +112,11 @@ namespace ICSharpCode.NRefactory.CSharp
 				formatter.DebugStart(node, start);
 		}
 
+		void DebugStart(AstNode node, TokenRole role)
+		{
+			WriteKeyword(role.Token, role, node);
+		}
+
 		void DebugHidden(AstNode hiddenNode)
 		{
 			formatter.DebugHidden(hiddenNode);
@@ -329,7 +334,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			WriteKeyword(tokenRole.Token, tokenRole);
 		}
 		
-		void WriteKeyword(string token, Role tokenRole = null)
+		void WriteKeyword(string token, Role tokenRole = null, AstNode node = null)
 		{
 			if (tokenRole != null) {
 				WriteSpecialsUpToRole(tokenRole);
@@ -337,6 +342,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			if (lastWritten == LastWritten.KeywordOrIdentifier) {
 				formatter.Space();
 			}
+			if (node != null)
+				DebugStart(node);
 			formatter.WriteKeyword(token);
 			lastWritten = LastWritten.KeywordOrIdentifier;
 		}
@@ -1899,8 +1906,7 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void VisitIfElseStatement(IfElseStatement ifElseStatement)
 		{
 			StartNode(ifElseStatement);
-			DebugStart(ifElseStatement);
-			WriteKeyword(IfElseStatement.IfKeywordRole);
+			DebugStart(ifElseStatement, IfElseStatement.IfKeywordRole);
 			Space(policy.SpaceBeforeIfParentheses);
 			LPar();
 			Space(policy.SpacesWithinIfParentheses);
