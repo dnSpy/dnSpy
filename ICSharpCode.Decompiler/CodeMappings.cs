@@ -64,11 +64,11 @@ namespace ICSharpCode.Decompiler
 			
 			// add list for the current source code line
 			currentList.Add(ILInstructionOffset);
-			
-			if (!isMatch) {
-				// add inverted
-				currentList.AddRange(MemberMapping.InvertedList);
-			} else {
+
+			// add inverted
+			currentList.AddRange(MemberMapping.InvertedList);
+
+			if (isMatch) {
 				// if the current list contains the last mapping, add also the last gap
 				var lastInverted = MemberMapping.InvertedList.LastOrDefault();
 				if (!lastInverted.IsDefault && lastInverted.From == currentList[currentList.Count - 1].To)
