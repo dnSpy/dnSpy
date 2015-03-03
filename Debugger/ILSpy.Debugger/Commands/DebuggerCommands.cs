@@ -32,14 +32,14 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		void OnKeyUp(object sender, KeyEventArgs e)
 		{
-			switch (e.Key) {
+			switch (e.SystemKey == Key.F10 ? e.SystemKey : e.Key) {
 				case Key.F5:
 					if (this is ContinueDebuggingCommand) {
 						((ContinueDebuggingCommand)this).Execute(null);
 						e.Handled = true;
 					}
 					break;
-				case Key.System:
+				case Key.F10:
 					if (this is StepOverCommand) {
 						((StepOverCommand)this).Execute(null);
 						e.Handled = true;
