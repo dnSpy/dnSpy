@@ -1,5 +1,20 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
@@ -8,7 +23,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
-
+using ICSharpCode.NRefactory.Editor;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Utils;
@@ -61,25 +76,44 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				throw new ArgumentNullException("textView");
 			Size pixelSize = PixelSnapHelpers.GetPixelSize(textView);
 			foreach (Rect r in GetRectsForSegment(textView, segment, ExtendToFullWidthAtLineEnd)) {
-				if (AlignToWholePixels) {
-					AddRectangle(PixelSnapHelpers.Round(r.Left, pixelSize.Width),
-					             PixelSnapHelpers.Round(r.Top + 1, pixelSize.Height),
-					             PixelSnapHelpers.Round(r.Right, pixelSize.Width),
-					             PixelSnapHelpers.Round(r.Bottom + 1, pixelSize.Height));
-				} else if (AlignToMiddleOfPixels) {
-					AddRectangle(PixelSnapHelpers.PixelAlign(r.Left, pixelSize.Width),
-					             PixelSnapHelpers.PixelAlign(r.Top + 1, pixelSize.Height),
-					             PixelSnapHelpers.PixelAlign(r.Right, pixelSize.Width),
-					             PixelSnapHelpers.PixelAlign(r.Bottom + 1, pixelSize.Height));
-				} else {
-					AddRectangle(r.Left, r.Top + 1, r.Right, r.Bottom + 1);
-				}
+				AddRectangle(pixelSize, r);
+			}
+		}
+		
+		/// <summary>
+		/// Adds a rectangle to the geometry.
+		/// </summary>
+		/// <remarks>
+		/// This overload will align the coordinates according to
+		/// <see cref="AlignToWholePixels"/> or <see cref="AlignToMiddleOfPixels"/>.
+		/// Use the <see cref="AddRectangle(double,double,double,double)"/>-overload instead if the coordinates should not be aligned.
+		/// </remarks>
+		public void AddRectangle(TextView textView, Rect rectangle)
+		{
+			AddRectangle(PixelSnapHelpers.GetPixelSize(textView), rectangle);
+		}
+
+		void AddRectangle(Size pixelSize, Rect r)
+		{
+			if (AlignToWholePixels) {
+				AddRectangle(PixelSnapHelpers.Round(r.Left, pixelSize.Width),
+				             PixelSnapHelpers.Round(r.Top + 1, pixelSize.Height),
+				             PixelSnapHelpers.Round(r.Right, pixelSize.Width),
+				             PixelSnapHelpers.Round(r.Bottom + 1, pixelSize.Height));
+			} else if (AlignToMiddleOfPixels) {
+				AddRectangle(PixelSnapHelpers.PixelAlign(r.Left, pixelSize.Width),
+				             PixelSnapHelpers.PixelAlign(r.Top + 1, pixelSize.Height),
+				             PixelSnapHelpers.PixelAlign(r.Right, pixelSize.Width),
+				             PixelSnapHelpers.PixelAlign(r.Bottom + 1, pixelSize.Height));
+			} else {
+				AddRectangle(r.Left, r.Top + 1, r.Right, r.Bottom + 1);
 			}
 		}
 		
 		/// <summary>
 		/// Calculates the list of rectangle where the segment in shown.
-		/// This returns one rectangle for each line inside the segment.
+		/// This method usually returns one rectangle for each line inside the segment
+		/// (but potentially more, e.g. when bidirectional text is involved).
 		/// </summary>
 		public static IEnumerable<Rect> GetRectsForSegment(TextView textView, ISegment segment, bool extendToFullWidthAtLineEnd = false)
 		{
@@ -92,7 +126,6 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		
 		static IEnumerable<Rect> GetRectsForSegmentImpl(TextView textView, ISegment segment, bool extendToFullWidthAtLineEnd)
 		{
-			Vector scrollOffset = textView.ScrollOffset;
 			int segmentStart = segment.Offset;
 			int segmentEnd = segment.Offset + segment.Length;
 			
@@ -107,8 +140,8 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				start = new TextViewPosition(textView.Document.GetLocation(sel.StartOffset), sel.StartVisualColumn);
 				end = new TextViewPosition(textView.Document.GetLocation(sel.EndOffset), sel.EndVisualColumn);
 			} else {
-				start = new TextViewPosition(textView.Document.GetLocation(segmentStart), -1);
-				end = new TextViewPosition(textView.Document.GetLocation(segmentEnd), -1);
+				start = new TextViewPosition(textView.Document.GetLocation(segmentStart));
+				end = new TextViewPosition(textView.Document.GetLocation(segmentEnd));
 			}
 			
 			foreach (VisualLine vl in textView.VisualLines) {
@@ -131,65 +164,85 @@ namespace ICSharpCode.AvalonEdit.Rendering
 				else
 					segmentEndVC = vl.ValidateVisualColumn(end, extendToFullWidthAtLineEnd);
 				
-				TextLine lastTextLine = vl.TextLines.Last();
+				foreach (var rect in ProcessTextLines(textView, vl, segmentStartVC, segmentEndVC))
+					yield return rect;
+			}
+		}
+		
+		/// <summary>
+		/// Calculates the rectangles for the visual column segment.
+		/// This returns one rectangle for each line inside the segment.
+		/// </summary>
+		public static IEnumerable<Rect> GetRectsFromVisualSegment(TextView textView, VisualLine line, int startVC, int endVC)
+		{
+			if (textView == null)
+				throw new ArgumentNullException("textView");
+			if (line == null)
+				throw new ArgumentNullException("line");
+			return ProcessTextLines(textView, line, startVC, endVC);
+		}
+
+		static IEnumerable<Rect> ProcessTextLines(TextView textView, VisualLine visualLine, int segmentStartVC, int segmentEndVC)
+		{
+			TextLine lastTextLine = visualLine.TextLines.Last();
+			Vector scrollOffset = textView.ScrollOffset;
+			
+			for (int i = 0; i < visualLine.TextLines.Count; i++) {
+				TextLine line = visualLine.TextLines[i];
+				double y = visualLine.GetTextLineVisualYPosition(line, VisualYPosition.LineTop);
+				int visualStartCol = visualLine.GetTextLineVisualStartColumn(line);
+				int visualEndCol = visualStartCol + line.Length;
+				if (line != lastTextLine)
+					visualEndCol -= line.TrailingWhitespaceLength;
 				
-				for (int i = 0; i < vl.TextLines.Count; i++) {
-					TextLine line = vl.TextLines[i];
-					double y = vl.GetTextLineVisualYPosition(line, VisualYPosition.LineTop);
-					int visualStartCol = vl.GetTextLineVisualStartColumn(line);
-					int visualEndCol = visualStartCol + line.Length;
-					if (line != lastTextLine)
-						visualEndCol -= line.TrailingWhitespaceLength;
-					
-					if (segmentEndVC < visualStartCol)
-						break;
-					if (lastTextLine != line && segmentStartVC > visualEndCol)
+				if (segmentEndVC < visualStartCol)
+					break;
+				if (lastTextLine != line && segmentStartVC > visualEndCol)
+					continue;
+				int segmentStartVCInLine = Math.Max(segmentStartVC, visualStartCol);
+				int segmentEndVCInLine = Math.Min(segmentEndVC, visualEndCol);
+				y -= scrollOffset.Y;
+				if (segmentStartVCInLine == segmentEndVCInLine) {
+					// GetTextBounds crashes for length=0, so we'll handle this case with GetDistanceFromCharacterHit
+					// We need to return a rectangle to ensure empty lines are still visible
+					double pos = visualLine.GetTextLineVisualXPosition(line, segmentStartVCInLine);
+					pos -= scrollOffset.X;
+					// The following special cases are necessary to get rid of empty rectangles at the end of a TextLine if "Show Spaces" is active.
+					// If not excluded once, the same rectangle is calculated (and added) twice (since the offset could be mapped to two visual positions; end/start of line), if there is no trailing whitespace.
+					// Skip this TextLine segment, if it is at the end of this line and this line is not the last line of the VisualLine and the selection continues and there is no trailing whitespace.
+					if (segmentEndVCInLine == visualEndCol && i < visualLine.TextLines.Count - 1 && segmentEndVC > segmentEndVCInLine && line.TrailingWhitespaceLength == 0)
 						continue;
-					int segmentStartVCInLine = Math.Max(segmentStartVC, visualStartCol);
-					int segmentEndVCInLine = Math.Min(segmentEndVC, visualEndCol);
-					y -= scrollOffset.Y;
-					if (segmentStartVCInLine == segmentEndVCInLine) {
-						// GetTextBounds crashes for length=0, so we'll handle this case with GetDistanceFromCharacterHit
-						// We need to return a rectangle to ensure empty lines are still visible
-						double pos = vl.GetTextLineVisualXPosition(line, segmentStartVCInLine);
-						pos -= scrollOffset.X;
-						// The following special cases are necessary to get rid of empty rectangles at the end of a TextLine if "Show Spaces" is active.
-						// If not excluded once, the same rectangle is calculated (and added) twice (since the offset could be mapped to two visual positions; end/start of line), if there is no trailing whitespace.
-						// Skip this TextLine segment, if it is at the end of this line and this line is not the last line of the VisualLine and the selection continues and there is no trailing whitespace.
-						if (segmentEndVCInLine == visualEndCol && i < vl.TextLines.Count - 1 && segmentEndVC > segmentEndVCInLine && line.TrailingWhitespaceLength == 0)
-							continue;
-						if (segmentStartVCInLine == visualStartCol && i > 0 && segmentStartVC < segmentStartVCInLine && vl.TextLines[i - 1].TrailingWhitespaceLength == 0)
-							continue;
-						yield return new Rect(pos, y, 1, line.Height);
-					} else {
-						Rect lastRect = Rect.Empty;
-						if (segmentStartVCInLine <= visualEndCol) {
-							foreach (TextBounds b in line.GetTextBounds(segmentStartVCInLine, segmentEndVCInLine - segmentStartVCInLine)) {
-								double left = b.Rectangle.Left - scrollOffset.X;
-								double right = b.Rectangle.Right - scrollOffset.X;
-								if (!lastRect.IsEmpty)
-									yield return lastRect;
-								// left>right is possible in RTL languages
-								lastRect = new Rect(Math.Min(left, right), y, Math.Abs(right - left), line.Height);
-							}
+					if (segmentStartVCInLine == visualStartCol && i > 0 && segmentStartVC < segmentStartVCInLine && visualLine.TextLines[i - 1].TrailingWhitespaceLength == 0)
+						continue;
+					yield return new Rect(pos, y, 1, line.Height);
+				} else {
+					Rect lastRect = Rect.Empty;
+					if (segmentStartVCInLine <= visualEndCol) {
+						foreach (TextBounds b in line.GetTextBounds(segmentStartVCInLine, segmentEndVCInLine - segmentStartVCInLine)) {
+							double left = b.Rectangle.Left - scrollOffset.X;
+							double right = b.Rectangle.Right - scrollOffset.X;
+							if (!lastRect.IsEmpty)
+								yield return lastRect;
+							// left>right is possible in RTL languages
+							lastRect = new Rect(Math.Min(left, right), y, Math.Abs(right - left), line.Height);
 						}
-						if (segmentEndVC >= vl.VisualLengthWithEndOfLineMarker) {
-							double left = (segmentStartVC > vl.VisualLengthWithEndOfLineMarker ? vl.GetTextLineVisualXPosition(lastTextLine, segmentStartVC) : line.Width) - scrollOffset.X;
-							double right = ((segmentEndVC == int.MaxValue || line != lastTextLine) ? Math.Max(((IScrollInfo)textView).ExtentWidth, ((IScrollInfo)textView).ViewportWidth) : vl.GetTextLineVisualXPosition(lastTextLine, segmentEndVC)) - scrollOffset.X;
-							Rect extendSelection = new Rect(Math.Min(left, right), y, Math.Abs(right - left), line.Height);
-							if (!lastRect.IsEmpty) {
-								if (extendSelection.IntersectsWith(lastRect)) {
-									lastRect.Union(extendSelection);
-									yield return lastRect;
-								} else {
-									yield return lastRect;
-									yield return extendSelection;
-								}
-							} else
-								yield return extendSelection;
-						} else
-							yield return lastRect;
 					}
+					if (segmentEndVC >= visualLine.VisualLengthWithEndOfLineMarker) {
+						double left = (segmentStartVC > visualLine.VisualLengthWithEndOfLineMarker ? visualLine.GetTextLineVisualXPosition(lastTextLine, segmentStartVC) : line.Width) - scrollOffset.X;
+						double right = ((segmentEndVC == int.MaxValue || line != lastTextLine) ? Math.Max(((IScrollInfo)textView).ExtentWidth, ((IScrollInfo)textView).ViewportWidth) : visualLine.GetTextLineVisualXPosition(lastTextLine, segmentEndVC)) - scrollOffset.X;
+						Rect extendSelection = new Rect(Math.Min(left, right), y, Math.Abs(right - left), line.Height);
+						if (!lastRect.IsEmpty) {
+							if (extendSelection.IntersectsWith(lastRect)) {
+								lastRect.Union(extendSelection);
+								yield return lastRect;
+							} else {
+								yield return lastRect;
+								yield return extendSelection;
+							}
+						} else
+							yield return extendSelection;
+					} else
+						yield return lastRect;
 				}
 			}
 		}
@@ -203,6 +256,11 @@ namespace ICSharpCode.AvalonEdit.Rendering
 		/// <summary>
 		/// Adds a rectangle to the geometry.
 		/// </summary>
+		/// <remarks>
+		/// This overload assumes that the coordinates are aligned properly
+		/// (see <see cref="AlignToWholePixels"/>, <see cref="AlignToMiddleOfPixels"/>).
+		/// Use the <see cref="AddRectangle(TextView,Rect)"/>-overload instead if the coordinates are not yet aligned.
+		/// </remarks>
 		public void AddRectangle(double left, double top, double right, double bottom)
 		{
 			if (!top.IsClose(lastBottom)) {

@@ -2,30 +2,26 @@
 <!-- syntaxdefinition for HTML 2000 by Mike Krueger -->
 <!-- converted to AvalonEdit format by Siegfried Pammer in 2010 -->
 <SyntaxDefinition name="HTML" extensions=".htm;.html" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
-	<Color name="Comment" foreground="DarkSlateGray" />
-	<Color name="Digits" foreground="DarkBlue" />
-	<Color name="ScriptTag" foreground="#FF8B008B" />
-	<Color name="JavaScriptTag" foreground="#FF8B008B" />
-	<Color name="JScriptTag" foreground="#FF8B008B" />
-	<Color name="VBScriptTag" foreground="#FF8B008B" />
-	<Color name="UnknownScriptTag" foreground="#FF8B008B" />
-	<Color name="HtmlTag" foreground="#FF8B008B" />
-	<Color name="Tags" foreground="#FF8B008B" />
-	<Color name="Attributes" foreground="Red" />
-	<Color name="Slash" foreground="DarkMagenta" />
-	<Color name="Assignment" foreground="Blue" />
-	<Color name="String" foreground="Blue" />
-	<Color name="EntityReference" foreground="Blue" />
-	<Color name="Entities" foreground="#FF008000" />
-	<Color name="UnknownAttribute" foreground="Blue" />
+	<Color name="Comment" foreground="DarkSlateGray" exampleText="&lt;!-- comment --&gt;" />
+	<Color name="Digits" foreground="DarkBlue" exampleText="&lt;digits&gt;0123456789&lt;/digits&gt;" />
+	<Color name="ScriptTag" foreground="#FF8B008B" exampleText="&lt;script&gt;alert('Hello World!');&lt;/script&gt;" />
+	<Color name="JavaScriptTag" foreground="#FF8B008B" exampleText="&lt;script lang=&quot;JavaScript&quot;&gt;alert('Hello World!');&lt;/script&gt;" />
+	<Color name="JScriptTag" foreground="#FF8B008B" exampleText="&lt;script lang=&quot;JScript&quot;&gt;Response.Write(&quot;Hello World!&quot;);&lt;/script&gt;" />
+	<Color name="VBScriptTag" foreground="#FF8B008B" exampleText="&lt;script lang=&quot;VBScript&quot;&gt;Response.Write(&quot;Hello World!&quot;)&lt;/script&gt;" />
+	<Color name="UnknownScriptTag" foreground="#FF8B008B" exampleText="&lt;script la&gt;alert('Hello World!');&lt;/script&gt;" />
+	<Color name="HtmlTag" foreground="#FF8B008B" exampleText="&lt;html&gt;Hello World!/html&gt;" />
+	<Color name="Tags" foreground="#FF8B008B" exampleText="&lt;html&gt;Hello World! &lt;test /&gt;&lt;/html&gt;" />
+	<Color name="Attributes" foreground="Red" exampleText="&lt;html background='green'&gt;Hello World! &lt;test /&gt;&lt;/html&gt;" />
+	<Color name="Slash" foreground="DarkMagenta" exampleText="&lt;html background='green'&gt;Hello World! &lt;test /&gt;&lt;/html&gt;" />
+	<Color name="Assignment" foreground="Blue" exampleText="&lt;html background='green'&gt;Hello World! &lt;test /&gt;&lt;/html&gt;" />
+	<Color name="String" foreground="Blue" exampleText="&lt;html background='green'&gt;Hello World! &lt;test /&gt;&lt;/html&gt;" />
+	<Color name="EntityReference" foreground="Blue" exampleText="&lt;html background='green'&gt;Hello&amp;nbsp;World! &lt;test /&gt;&lt;/html&gt;" />
+	<Color name="Entities" foreground="#FF008000" exampleText="&lt;html background='green'&gt;Hello&amp;nbsp;World! &lt;test /&gt;&lt;/html&gt;" />
+	<Color name="UnknownAttribute" foreground="Blue" exampleText="&lt;html foo='bar' background='green'&gt;Hello&amp;nbsp;World! &lt;test /&gt;&lt;/html&gt;" />
 	<RuleSet ignoreCase="true">
 		<Span color="Comment" multiline="true">
 			<Begin>&lt;!--</Begin>
 			<End>--&gt;</End>
-		</Span>
-		<Span ruleSet="JavaScriptSet" multiline="true">
-			<Begin color="ScriptTag">&lt;script&gt;</Begin>
-			<End color="ScriptTag">&lt;/script&gt;</End>
 		</Span>
 		<Span ruleSet="JavaScriptSet" multiline="true">
 			<Begin color="JavaScriptTag">&lt;script\ lang="JavaScript"&gt;</Begin>
@@ -42,6 +38,10 @@
 		<Span multiline="true">
 			<Begin color="VBScriptTag">&lt;script\ lang="VBScript"&gt;</Begin>
 			<End color="VBScriptTag">&lt;/script&gt;</End>
+		</Span>
+		<Span ruleSet="JavaScriptSet" multiline="true">
+			<Begin color="ScriptTag">&lt;script&gt;</Begin>
+			<End color="ScriptTag">&lt;/script&gt;</End>
 		</Span>
 		<Span multiline="true">
 			<Begin color="UnknownScriptTag">&lt;script[^\w\d_]</Begin>

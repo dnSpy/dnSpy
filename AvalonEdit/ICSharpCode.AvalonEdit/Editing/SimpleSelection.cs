@@ -1,12 +1,28 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Utils;
+#if NREFACTORY
+using ICSharpCode.NRefactory.Editor;
+#endif
 
 namespace ICSharpCode.AvalonEdit.Editing
 {
@@ -56,10 +72,16 @@ namespace ICSharpCode.AvalonEdit.Editing
 						if (segmentsToDelete[i].Offset == SurroundingSegment.Offset && segmentsToDelete[i].Length == SurroundingSegment.Length) {
 							newText = AddSpacesIfRequired(newText, start, end);
 						}
-						int vc = textArea.Caret.VisualColumn;
-						textArea.Caret.Offset = segmentsToDelete[i].EndOffset;
-						if (string.IsNullOrEmpty(newText))
-							textArea.Caret.VisualColumn = vc;
+						if (string.IsNullOrEmpty(newText)) {
+							// place caret at the beginning of the selection
+							if (start.CompareTo(end) <= 0)
+								textArea.Caret.Position = start;
+							else
+								textArea.Caret.Position = end;
+						} else {
+							// place caret so that it ends up behind the new text
+							textArea.Caret.Offset = segmentsToDelete[i].EndOffset;
+						}
 						textArea.Document.Replace(segmentsToDelete[i], newText);
 					} else {
 						textArea.Document.Remove(segmentsToDelete[i]);
@@ -71,18 +93,12 @@ namespace ICSharpCode.AvalonEdit.Editing
 			}
 		}
 		
-		/// <summary>
-		/// Gets the start offset.
-		/// </summary>
-		public int StartOffset {
-			get { return startOffset; }
+		public override TextViewPosition StartPosition {
+			get { return start; }
 		}
 		
-		/// <summary>
-		/// Gets the end offset.
-		/// </summary>
-		public int EndOffset {
-			get { return endOffset; }
+		public override TextViewPosition EndPosition {
+			get { return end; }
 		}
 		
 		/// <inheritdoc/>
@@ -90,16 +106,24 @@ namespace ICSharpCode.AvalonEdit.Editing
 		{
 			if (e == null)
 				throw new ArgumentNullException("e");
+			int newStartOffset, newEndOffset;
+			if (startOffset <= endOffset) {
+				newStartOffset = e.GetNewOffset(startOffset, AnchorMovementType.Default);
+				newEndOffset = Math.Max(newStartOffset, e.GetNewOffset(endOffset, AnchorMovementType.BeforeInsertion));
+			} else {
+				newEndOffset = e.GetNewOffset(endOffset, AnchorMovementType.Default);
+				newStartOffset = Math.Max(newEndOffset, e.GetNewOffset(startOffset, AnchorMovementType.BeforeInsertion));
+			}
 			return Selection.Create(
 				textArea,
-				new TextViewPosition(textArea.Document.GetLocation(e.GetNewOffset(startOffset, AnchorMovementType.Default)), start.VisualColumn),
-				new TextViewPosition(textArea.Document.GetLocation(e.GetNewOffset(endOffset, AnchorMovementType.Default)), end.VisualColumn)
+				new TextViewPosition(textArea.Document.GetLocation(newStartOffset), start.VisualColumn),
+				new TextViewPosition(textArea.Document.GetLocation(newEndOffset), end.VisualColumn)
 			);
 		}
 		
 		/// <inheritdoc/>
 		public override bool IsEmpty {
-			get { return startOffset == endOffset; }
+			get { return startOffset == endOffset && start.VisualColumn == end.VisualColumn; }
 		}
 		
 		/// <inheritdoc/>

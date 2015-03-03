@@ -52,8 +52,8 @@ namespace ICSharpCode.Decompiler.Ast
 		/// These are used to update the parameter names when the decompiler generates names for the parameters.</param>
 		/// <returns>Block for the method body</returns>
 		public static BlockStatement CreateMethodBody(MethodDefinition methodDef,
-		                                              DecompilerContext context,
-		                                              IEnumerable<ParameterDeclaration> parameters = null)
+													  DecompilerContext context,
+													  IEnumerable<ParameterDeclaration> parameters = null)
 		{
 			MethodDefinition oldCurrentMethod = context.CurrentMethod;
 			Debug.Assert(oldCurrentMethod == null || oldCurrentMethod == methodDef);
@@ -103,8 +103,8 @@ namespace ICSharpCode.Decompiler.Ast
 			
 			if (parameters != null) {
 				foreach (var pair in (from p in parameters
-				                      join v in astBuilder.Parameters on p.Annotation<ParameterDefinition>() equals v.OriginalParameter
-				                      select new { p, v.Name }))
+									  join v in astBuilder.Parameters on p.Annotation<ParameterDefinition>() equals v.OriginalParameter
+									  select new { p, v.Name }))
 				{
 					pair.p.Name = pair.Name;
 				}
@@ -204,7 +204,7 @@ namespace ICSharpCode.Decompiler.Ast
 				tryCatchStmt.TryBlock = TransformBlock(tryCatchNode.TryBlock);
 				foreach (var catchClause in tryCatchNode.CatchBlocks) {
 					if (catchClause.ExceptionVariable == null
-					    && (catchClause.ExceptionType == null || catchClause.ExceptionType.MetadataType == MetadataType.Object))
+						&& (catchClause.ExceptionType == null || catchClause.ExceptionType.MetadataType == MetadataType.Object))
 					{
 						tryCatchStmt.CatchClauses.Add(new Ast.CatchClause { Body = TransformBlock(catchClause) });
 					} else {
@@ -262,7 +262,7 @@ namespace ICSharpCode.Decompiler.Ast
 				result = node;
 			
 			if (result != null)
-				result = result.WithAnnotation(new TypeInformation(expr.InferredType));
+				result = result.WithAnnotation(new TypeInformation(expr.InferredType, expr.ExpectedType));
 			
 			if (result != null)
 				return result.WithAnnotation(ilRanges);
@@ -291,16 +291,10 @@ namespace ICSharpCode.Decompiler.Ast
 					{
 						BinaryOperatorExpression boe;
 						if (byteCode.InferredType is PointerType) {
-							if (byteCode.Arguments[0].ExpectedType is PointerType) {
-								arg2 = DivideBySize(arg2, ((PointerType)byteCode.InferredType).ElementType);
-								boe = new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
+							boe = new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
+							if (byteCode.Arguments[0].ExpectedType is PointerType ||
+								byteCode.Arguments[1].ExpectedType is PointerType) {
 								boe.AddAnnotation(IntroduceUnsafeModifier.PointerArithmeticAnnotation);
-							} else if (byteCode.Arguments[1].ExpectedType is PointerType) {
-								arg1 = DivideBySize(arg1, ((PointerType)byteCode.InferredType).ElementType);
-								boe = new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
-								boe.AddAnnotation(IntroduceUnsafeModifier.PointerArithmeticAnnotation);
-							} else {
-								boe = new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
 							}
 						} else {
 							boe = new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
@@ -314,12 +308,9 @@ namespace ICSharpCode.Decompiler.Ast
 					{
 						BinaryOperatorExpression boe;
 						if (byteCode.InferredType is PointerType) {
+							boe = new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
 							if (byteCode.Arguments[0].ExpectedType is PointerType) {
-								arg2 = DivideBySize(arg2, ((PointerType)byteCode.InferredType).ElementType);
-								boe = new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
 								boe.WithAnnotation(IntroduceUnsafeModifier.PointerArithmeticAnnotation);
-							} else {
-								boe = new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
 							}
 						} else {
 							boe = new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
@@ -460,12 +451,30 @@ namespace ICSharpCode.Decompiler.Ast
 						// can also mean Inequality, when used with object references
 						TypeReference arg1Type = byteCode.Arguments[0].InferredType;
 						if (arg1Type != null && !arg1Type.IsValueType) goto case ILCode.Cne;
+
+						// when comparing signed integral values using Cgt_Un with 0
+						// the Ast should actually contain InEquality since "(uint)a > 0u" is identical to "a != 0"
+						if (arg1Type.IsSignedIntegralType())
+						{
+							var p = arg2 as Ast.PrimitiveExpression;
+							if (p != null && p.Value.IsZero()) goto case ILCode.Cne;
+						}
+
 						goto case ILCode.Cgt;
 					}
 					case ILCode.Cle_Un: {
 						// can also mean Equality, when used with object references
 						TypeReference arg1Type = byteCode.Arguments[0].InferredType;
 						if (arg1Type != null && !arg1Type.IsValueType) goto case ILCode.Ceq;
+
+						// when comparing signed integral values using Cle_Un with 0
+						// the Ast should actually contain Equality since "(uint)a <= 0u" is identical to "a == 0"
+						if (arg1Type.IsSignedIntegralType())
+						{
+							var p = arg2 as Ast.PrimitiveExpression;
+							if (p != null && p.Value.IsZero()) goto case ILCode.Ceq;
+						}
+
 						goto case ILCode.Cle;
 					}
 					case ILCode.Cle: return new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.LessThanOrEqual, arg2);
@@ -706,7 +715,7 @@ namespace ICSharpCode.Decompiler.Ast
 						}
 						return new StackAllocExpression {
 							Type = AstBuilder.ConvertType(type),
-							CountExpression = DivideBySize(arg1, type)
+                            CountExpression = arg1
 						};
 					}
 				case ILCode.Mkrefany:
@@ -900,45 +909,6 @@ namespace ICSharpCode.Decompiler.Ast
 			{
 				return other is InitializedObjectExpression;
 			}
-		}
-		
-		/// <summary>
-		/// Divides expr by the size of 'type'.
-		/// </summary>
-		Expression DivideBySize(Expression expr, TypeReference type)
-		{
-			CastExpression cast = expr as CastExpression;
-			if (cast != null && cast.Type is PrimitiveType && ((PrimitiveType)cast.Type).Keyword == "int")
-				expr = cast.Expression.Detach();
-			
-			Expression sizeOfExpression;
-			switch (TypeAnalysis.GetInformationAmount(type)) {
-				case 1:
-				case 8:
-					sizeOfExpression = new PrimitiveExpression(1);
-					break;
-				case 16:
-					sizeOfExpression = new PrimitiveExpression(2);
-					break;
-				case 32:
-					sizeOfExpression = new PrimitiveExpression(4);
-					break;
-				case 64:
-					sizeOfExpression = new PrimitiveExpression(8);
-					break;
-				default:
-					sizeOfExpression = new SizeOfExpression { Type = AstBuilder.ConvertType(type) };
-					break;
-			}
-			
-			BinaryOperatorExpression boe = expr as BinaryOperatorExpression;
-			if (boe != null && boe.Operator == BinaryOperatorType.Multiply && sizeOfExpression.IsMatch(boe.Right))
-				return boe.Left.Detach();
-			
-			if (sizeOfExpression.IsMatch(expr))
-				return new PrimitiveExpression(1);
-			
-			return new BinaryOperatorExpression(expr, BinaryOperatorType.Divide, sizeOfExpression);
 		}
 		
 		Expression MakeDefaultValue(TypeReference type)

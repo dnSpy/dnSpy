@@ -1,5 +1,20 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
@@ -11,6 +26,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Linq;
+using ICSharpCode.AvalonEdit.Utils;
 
 namespace ICSharpCode.AvalonEdit.CodeCompletion
 {
@@ -165,14 +181,21 @@ namespace ICSharpCode.AvalonEdit.CodeCompletion
 		{
 			base.OnMouseDoubleClick(e);
 			if (e.ChangedButton == MouseButton.Left) {
-				e.Handled = true;
-				RequestInsertion(e);
+				// only process double clicks on the ListBoxItems, not on the scroll bar
+				if (ExtensionMethods.VisualAncestorsAndSelf(e.OriginalSource as DependencyObject).TakeWhile(obj => obj != this).Any(obj => obj is ListBoxItem)) {
+					e.Handled = true;
+					RequestInsertion(e);
+				}
 			}
 		}
 		
 		/// <summary>
 		/// Gets/Sets the selected item.
 		/// </summary>
+		/// <remarks>
+		/// The setter of this property does not scroll to the selected item.
+		/// You might want to also call <see cref="ScrollIntoView"/>.
+		/// </remarks>
 		public ICompletionData SelectedItem {
 			get {
 				return (listBox != null ? listBox.SelectedItem : null) as ICompletionData;
@@ -180,8 +203,20 @@ namespace ICSharpCode.AvalonEdit.CodeCompletion
 			set {
 				if (listBox == null && value != null)
 					ApplyTemplate();
-				listBox.SelectedItem = value;
+				if (listBox != null) // may still be null if ApplyTemplate fails, or if listBox and value both are null
+					listBox.SelectedItem = value;
 			}
+		}
+		
+		/// <summary>
+		/// Scrolls the specified item into view.
+		/// </summary>
+		public void ScrollIntoView(ICompletionData item)
+		{
+			if (listBox == null)
+				ApplyTemplate();
+			if (listBox != null)
+				listBox.ScrollIntoView(item);
 		}
 		
 		/// <summary>
@@ -324,7 +359,7 @@ namespace ICSharpCode.AvalonEdit.CodeCompletion
 			//		5 = match start
 			//		4 = match CamelCase when length of query is 1 or 2 characters
 			// 		3 = match substring case sensitive
-			//		2 = match sustring
+			//		2 = match substring
 			//		1 = match CamelCase
 			//		-1 = no match
 			if (query == itemText)
@@ -361,11 +396,15 @@ namespace ICSharpCode.AvalonEdit.CodeCompletion
 		
 		static bool CamelCaseMatch(string text, string query)
 		{
+			// We take the first letter of the text regardless of whether or not it's upper case so we match
+			// against camelCase text as well as PascalCase text ("cct" matches "camelCaseText")
+			var theFirstLetterOfEachWord = text.Take(1).Concat(text.Skip(1).Where(char.IsUpper));
+			
 			int i = 0;
-			foreach (char upper in text.Where(c => char.IsUpper(c))) {
+			foreach (var letter in theFirstLetterOfEachWord) {
 				if (i > query.Length - 1)
 					return true;	// return true here for CamelCase partial match ("CQ" matches "CodeQualityAnalysis")
-				if (char.ToUpper(query[i], CultureInfo.InvariantCulture) != upper)
+				if (char.ToUpperInvariant(query[i]) != char.ToUpperInvariant(letter))
 					return false;
 				i++;
 			}

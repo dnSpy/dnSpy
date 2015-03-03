@@ -32,9 +32,11 @@ namespace ICSharpCode.Decompiler.Ast
 			if (resolveTypeArguments)
 				return BaseTypes(derivedType).Any(t => t.Item == baseType);
 			else {
-				var comparableBaseType = baseType.ResolveOrThrow();
+				var comparableBaseType = baseType.Resolve();
+				if (comparableBaseType == null)
+					return false;
 				while (derivedType.BaseType != null) {
-					var resolvedBaseType = derivedType.BaseType.ResolveOrThrow();
+					var resolvedBaseType = derivedType.BaseType.Resolve();
 					if (resolvedBaseType == null)
 						return false;
 					if (comparableBaseType == resolvedBaseType)

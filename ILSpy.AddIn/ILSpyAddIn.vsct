@@ -40,12 +40,12 @@
          group as the part of a menu contained between two lines. The parent of a group 
          must be a menu. -->
     <Groups>
-      <Group guid="guidILSpyAddInCmdSet" id="ILSpyAddInGroup" priority="0x0200">
-        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_REFERENCE"/>
-      </Group>
-
       <Group guid="guidILSpyAddInCmdSet" id="OpenILSpyGroup" priority="0x0200">
         <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS"/>
+      </Group>
+
+      <Group guid="guidILSpyAddInCmdSet" id="OpenILSpyProjGroup" priority="0x0200">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE"/>
       </Group>
     </Groups>
     
@@ -61,16 +61,25 @@
               <CommandFlag>DynamicVisibility</CommandFlag>
           If you do not want an image next to your command, remove the Icon node /> -->
 
-      <Button guid="guidILSpyAddInCmdSet" id="cmdidOpenInILSpy" priority="0x0600" type="Button">
-        <Parent guid="guidILSpyAddInCmdSet" id="ILSpyAddInGroup" />
-        <Icon guid="guidImages" id="bmpPicSearch" />
+      <Button guid="guidILSpyAddInCmdSet" id="cmdidOpenReferenceInILSpy" priority="0x0600" type="Button">
+        <Parent guid="guidILSpyAddInCmdSet" id="OpenILSpyRefGroup" />
+        <Icon guid="guidImages" id="bmpLogo" />
         <Strings>
           <ButtonText>Open in ILSpy</ButtonText>
         </Strings>
       </Button>
 
+      <Button guid="guidILSpyAddInCmdSet" id="cmdidOpenProjectOutputInILSpy" priority="0x0600" type="Button">
+        <Parent guid="guidILSpyAddInCmdSet" id="OpenILSpyProjGroup" />
+        <Icon guid="guidImages" id="bmpLogo" />
+        <Strings>
+          <ButtonText>Open output in ILSpy</ButtonText>
+        </Strings>
+      </Button>
+
       <Button guid="guidILSpyAddInCmdSet" id="cmdidOpenILSpy" priority="0x0600" type="Button">
         <Parent guid="guidILSpyAddInCmdSet" id="OpenILSpyGroup" />
+        <Icon guid="guidImages" id="bmpLogo" />
         <Strings>
           <ButtonText>ILSpy</ButtonText>
         </Strings>
@@ -85,9 +94,15 @@
             bitmap strip containing the bitmaps and then there are the numeric ids of the elements used 
             inside a button definition. An important aspect of this declaration is that the element id 
             must be the actual index (1-based) of the bitmap inside the bitmap strip. -->
-      <Bitmap guid="guidImages" href="Resources\Images.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows"/>
+      <Bitmap guid="guidImages" href="Resources\Images.png" usedList="bmpLogo, bmpPic1, bmpPic2, bmpPicX, bmpPicArrows"/>
     </Bitmaps>
   </Commands>
+
+  <CommandPlacements>
+    <CommandPlacement guid="guidILSpyAddInCmdSet" id="cmdidOpenReferenceInILSpy" priority="0x0600">
+      <Parent guid="guidSHLMainMenu" id="IDG_VS_CTXT_REFERENCE"/>
+    </CommandPlacement>
+  </CommandPlacements>
 
   <Symbols>
     <!-- This is the package guid. -->
@@ -96,16 +111,18 @@
     <!-- This is the guid used to group the menu commands together -->
     <GuidSymbol name="guidILSpyAddInCmdSet" value="{85ddb8ca-a842-4b1c-ba1a-94141fdf19d0}">
 
-      <IDSymbol name="ILSpyAddInGroup" value="0x1020" />
-      <IDSymbol name="OpenILSpyGroup" value="0x1030" />
+      <IDSymbol name="OpenILSpyGroup" value="0x1010" />
+      <IDSymbol name="OpenILSpyRefGroup" value="0x1020" />
+      <IDSymbol name="OpenILSpyProjGroup" value="0x1030" />
       <IDSymbol name="cmdidOpenILSpy" value="0x0100" />
-      <IDSymbol name="cmdidOpenInILSpy" value="0x0200" />
+      <IDSymbol name="cmdidOpenReferenceInILSpy" value="0x0200" />
+      <IDSymbol name="cmdidOpenProjectOutputInILSpy" value="0x0300" />
     </GuidSymbol>
      
     <GuidSymbol name="guidImages" value="{2f654db9-4641-4638-9937-27c6202b2a6a}" >
-      <IDSymbol name="bmpPic1" value="1" />
-      <IDSymbol name="bmpPic2" value="2" />
-      <IDSymbol name="bmpPicSearch" value="3" />
+      <IDSymbol name="bmpLogo" value="1" />
+      <IDSymbol name="bmpPic1" value="2" />
+      <IDSymbol name="bmpPic2" value="3" />
       <IDSymbol name="bmpPicX" value="4" />
       <IDSymbol name="bmpPicArrows" value="5" />
       <IDSymbol name="bmpPicStrikethrough" value="6" />

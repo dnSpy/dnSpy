@@ -126,18 +126,38 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		private bool IsUsedInMethodDefinition(MethodDefinition method)
 		{
 			return IsUsedInMethodReference(method)
-				   || IsUsedInMethodBody(method.Body)
+				   || IsUsedInMethodBody(method)
 				   || IsUsedInCustomAttributes(method.CustomAttributes);
 		}
 
-		private bool IsUsedInMethodBody(MethodBody body)
+		private bool IsUsedInMethodBody(MethodDefinition method)
 		{
-			if (body == null)
+			if (method.Body == null)
 				return false;
 
-			return body.Instructions.Select(ins => ins.Operand as TypeReference).Any(IsUsedInTypeReference)
-				|| body.Instructions.Select(ins => ins.Operand as MethodReference).Any(IsUsedInMethodReference)
-				|| body.Instructions.Select(ins => ins.Operand as FieldReference).Any(IsUsedInFieldReference);
+			bool found = false;
+
+			foreach (var instruction in method.Body.Instructions) {
+				TypeReference tr = instruction.Operand as TypeReference;
+				if (IsUsedInTypeReference(tr)) {
+					found = true;
+					break;
+				}
+				FieldReference fr = instruction.Operand as FieldReference;
+				if (IsUsedInFieldReference(fr)) {
+					found = true;
+					break;
+				}
+				MethodReference mr = instruction.Operand as MethodReference;
+				if (IsUsedInMethodReference(mr)) {
+					found = true;
+					break;
+				}
+			}
+
+			method.Body = null; // discard body to reduce memory pressure & higher GC gen collections
+
+			return found;
 		}
 
 		private bool IsUsedInMethodParameters(IEnumerable<ParameterDefinition> parameters)
@@ -164,7 +184,13 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private bool TypeMatches(TypeReference tref)
 		{
-			return tref != null && analyzedType.ToString() == tref.ToString();
+			if (tref != null && tref.Name == analyzedType.Name) {
+				var tdef = tref.Resolve();
+				if (tdef != null) {
+					return (tdef == analyzedType);
+				}
+			}
+			return false;
 		}
 
 		public static bool CanShow(TypeDefinition type)

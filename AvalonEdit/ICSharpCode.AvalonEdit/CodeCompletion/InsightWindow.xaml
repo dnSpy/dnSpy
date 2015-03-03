@@ -65,8 +65,8 @@
 											<ControlTemplate TargetType="{x:Type Button}">
 												<Border Name="bd"
 												        Background="{TemplateBinding Background}" CornerRadius="2">
-													<ContentControl Margin="{TemplateBinding Padding}"
-													                Content="{TemplateBinding Content}"/>
+													<ContentPresenter Margin="{TemplateBinding Padding}"
+													                  Content="{TemplateBinding Content}"/>
 												</Border>
 												<ControlTemplate.Triggers>
 													<Trigger Property="IsMouseOver" Value="true">

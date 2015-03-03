@@ -6,8 +6,8 @@
 	<Color name="Char" foreground="Magenta" exampleText="char linefeed = '\n';"/>
 	<Color name="Preprocessor" foreground="Green" exampleText="#region Title" />
 	<Color name="Punctuation" exampleText="a(b.c);" />
-	<Color name="ValueTypes" fontWeight="bold" foreground="Red" exampleText="bool b = true;" />
-	<Color name="ReferenceTypes" foreground="Red" exampleText="object o;" />
+	<Color name="ValueTypeKeywords" fontWeight="bold" foreground="Red" exampleText="bool b = true;" />
+	<Color name="ReferenceTypeKeywords" foreground="Red" exampleText="object o;" />
 	<Color name="MethodCall" foreground="MidnightBlue" fontWeight="bold" exampleText="o.ToString();"/>
 	<Color name="NumberLiteral" foreground="DarkBlue" exampleText="3.1415f"/>
 	<Color name="ThisOrBaseReference" fontWeight="bold" exampleText="this.Do(); base.Do();"/>
@@ -27,6 +27,8 @@
 	<Color name="TrueFalse" fontWeight="bold" foreground="DarkCyan" exampleText="b = false; a = true;" />
 	<Color name="TypeKeywords" fontWeight="bold" foreground="DarkCyan" exampleText="if (x is int) { a = x as int; type = typeof(int); size = sizeof(int); c = new object(); }"/>
 	
+	<Property name="DocCommentMarker" value="///" />
+	
 	<RuleSet name="CommentMarkerSet">
 		<Keywords fontWeight="bold" foreground="Red">
 			<Word>TODO</Word>
@@ -43,7 +45,7 @@
 		<Span color="Preprocessor">
 			<Begin>\#</Begin>
 			<RuleSet name="PreprocessorSet">
-				<Span> <!-- preprocessor directives that allow comments -->
+				<Span> <!-- preprocessor directives that allows comments -->
 					<Begin fontWeight="bold">
 						(define|undef|if|elif|else|endif|line)\b
 					</Begin>
@@ -62,7 +64,7 @@
 		</Span>
 		
 		<Span color="Comment">
-			<Begin color="XmlDoc/DocComment">///</Begin>
+			<Begin color="XmlDoc/DocComment">///(?!/)</Begin>
 			<RuleSet>
 				<Import ruleSet="XmlDoc/DocCommentSet"/>
 				<Import ruleSet="CommentMarkerSet"/>
@@ -97,7 +99,7 @@
 		</Span>
 		
 		<Span color="String" multiline="true">
-			<Begin color="String">@"</Begin>
+			<Begin>@"</Begin>
 			<End>"</End>
 			<RuleSet>
 				<!-- span for escape sequences -->
@@ -189,7 +191,7 @@
 			<Word>unsafe</Word>
 		</Keywords>
 		
-		<Keywords color="ValueTypes">
+		<Keywords color="ValueTypeKeywords">
 			<Word>bool</Word>
 			<Word>byte</Word>
 			<Word>char</Word>
@@ -207,7 +209,7 @@
 			<Word>ulong</Word>
 		</Keywords>
 		
-		<Keywords color="ReferenceTypes">
+		<Keywords color="ReferenceTypeKeywords">
 			<Word>class</Word>
 			<Word>interface</Word>
 			<Word>delegate</Word>

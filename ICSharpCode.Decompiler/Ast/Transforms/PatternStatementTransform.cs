@@ -99,6 +99,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				if (result != null)
 					return result;
 			}
+			AstNode simplifiedIfElse = SimplifyCascadingIfElseStatements(ifElseStatement);
+			if (simplifiedIfElse != null)
+				return simplifiedIfElse;
 			return base.VisitIfElseStatement(ifElseStatement, data);
 		}
 		
@@ -1044,6 +1047,37 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				tryCatch.CatchClauses.MoveTo(tryFinally.CatchClauses);
 			}
 			// Since the tryFinally instance is not changed, we can continue in the visitor as usual, so return null
+			return null;
+		}
+		#endregion
+
+		#region Simplify cascading if-else-if statements
+		static readonly IfElseStatement cascadingIfElsePattern = new IfElseStatement
+		{
+			Condition = new AnyNode(),
+			TrueStatement = new AnyNode(),
+			FalseStatement = new BlockStatement {
+				Statements = {
+					new NamedNode(
+						"nestedIfStatement",
+						new IfElseStatement {
+							Condition = new AnyNode(),
+							TrueStatement = new AnyNode(),
+							FalseStatement = new OptionalNode(new AnyNode())
+						}
+					)
+				}
+			}
+		};
+
+		AstNode SimplifyCascadingIfElseStatements(IfElseStatement node)
+		{
+			Match m = cascadingIfElsePattern.Match(node);
+			if (m.Success) {
+				IfElseStatement elseIf = m.Get<IfElseStatement>("nestedIfStatement").Single();
+				node.FalseStatement = elseIf.Detach();
+			}
+			
 			return null;
 		}
 		#endregion

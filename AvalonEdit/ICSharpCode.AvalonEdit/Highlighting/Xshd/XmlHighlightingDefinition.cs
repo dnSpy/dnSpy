@@ -1,13 +1,28 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
-
 using ICSharpCode.AvalonEdit.Utils;
 
 namespace ICSharpCode.AvalonEdit.Highlighting.Xshd
@@ -37,6 +52,9 @@ namespace ICSharpCode.AvalonEdit.Highlighting.Xshd
 				throw new HighlightingDefinitionInvalidException("Could not find main RuleSet.");
 			// Translate elements within the rulesets (resolving references and processing imports)
 			xshd.AcceptElements(new TranslateElementVisitor(this, rnev.ruleSets, resolver));
+			
+			foreach (var p in xshd.Elements.OfType<XshdProperty>())
+				propDict.Add(p.Name, p.Value);
 		}
 		
 		#region RegisterNamedElements
@@ -186,6 +204,7 @@ namespace ICSharpCode.AvalonEdit.Highlighting.Xshd
 				c.Name = color.Name;
 				c.Foreground = color.Foreground;
 				c.Background = color.Background;
+				c.Underline = color.Underline;
 				c.FontStyle = color.FontStyle;
 				c.FontWeight = color.FontWeight;
 				return c;
@@ -317,22 +336,11 @@ namespace ICSharpCode.AvalonEdit.Highlighting.Xshd
 					StartExpression = CreateRegex(span, span.BeginRegex, span.BeginRegexType),
 					EndExpression = CreateRegex(span, endRegex, span.EndRegexType),
 					RuleSet = GetRuleSet(span, span.RuleSetReference),
-					StartColor = MergeColor(wholeSpanColor, GetColor(span, span.BeginColorReference)),
+					StartColor = GetColor(span, span.BeginColorReference),
 					SpanColor = wholeSpanColor,
-					EndColor = MergeColor(wholeSpanColor, GetColor(span, span.EndColorReference)),
-				};
-			}
-			
-			static HighlightingColor MergeColor(HighlightingColor baseColor, HighlightingColor newColor)
-			{
-				if (baseColor == null)
-					return newColor;
-				if (newColor == null)
-					return baseColor;
-				return new HighlightingColor {
-					Foreground = newColor.Foreground ?? baseColor.Foreground,
-					FontWeight = newColor.FontWeight ?? baseColor.FontWeight,
-					FontStyle = newColor.FontStyle ?? baseColor.FontStyle,
+					EndColor = GetColor(span, span.EndColorReference),
+					SpanColorIncludesStart = true,
+					SpanColorIncludesEnd = true
 				};
 			}
 			
@@ -369,6 +377,8 @@ namespace ICSharpCode.AvalonEdit.Highlighting.Xshd
 		
 		Dictionary<string, HighlightingRuleSet> ruleSetDict = new Dictionary<string, HighlightingRuleSet>();
 		Dictionary<string, HighlightingColor> colorDict = new Dictionary<string, HighlightingColor>();
+		[OptionalField]
+		Dictionary<string, string> propDict = new Dictionary<string, string>();
 		
 		public HighlightingRuleSet MainRuleSet { get; private set; }
 		
@@ -401,6 +411,12 @@ namespace ICSharpCode.AvalonEdit.Highlighting.Xshd
 		public override string ToString()
 		{
 			return this.Name;
+		}
+		
+		public IDictionary<string, string> Properties {
+			get {
+				return propDict;
+			}
 		}
 	}
 }

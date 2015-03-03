@@ -1,5 +1,20 @@
-﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
-// This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this
+// software and associated documentation files (the "Software"), to deal in the Software
+// without restriction, including without limitation the rights to use, copy, modify, merge,
+// publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
+// to whom the Software is furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in all copies or
+// substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+// INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+// FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
 
 using System;
 using System.ComponentModel;
@@ -331,7 +346,8 @@ namespace ICSharpCode.AvalonEdit
 			}
 			if (newValue != null) {
 				colorizer = CreateColorizer(newValue);
-				this.TextArea.TextView.LineTransformers.Insert(0, colorizer);
+				if (colorizer != null)
+					this.TextArea.TextView.LineTransformers.Insert(0, colorizer);
 			}
 		}
 		
@@ -344,7 +360,7 @@ namespace ICSharpCode.AvalonEdit
 		{
 			if (highlightingDefinition == null)
 				throw new ArgumentNullException("highlightingDefinition");
-			return new HighlightingColorizer(highlightingDefinition.MainRuleSet);
+			return new HighlightingColorizer(highlightingDefinition);
 		}
 		#endregion
 		
@@ -392,7 +408,7 @@ namespace ICSharpCode.AvalonEdit
 			TextEditor editor = d as TextEditor;
 			if (editor != null) {
 				if ((bool)e.NewValue)
-					editor.TextArea.ReadOnlySectionProvider = ReadOnlyDocument.Instance;
+					editor.TextArea.ReadOnlySectionProvider = ReadOnlySectionDocument.Instance;
 				else
 					editor.TextArea.ReadOnlySectionProvider = NoReadOnlySections.Instance;
 				
@@ -889,7 +905,7 @@ namespace ICSharpCode.AvalonEdit
 			if (start < 0 || start > documentLength)
 				throw new ArgumentOutOfRangeException("start", start, "Value must be between 0 and " + documentLength);
 			if (length < 0 || start + length > documentLength)
-				throw new ArgumentOutOfRangeException("length", length, "Value must be between 0 and " + (documentLength - length));
+				throw new ArgumentOutOfRangeException("length", length, "Value must be between 0 and " + (documentLength - start));
 			textArea.Selection = SimpleSelection.Create(textArea, start, start + length);
 			textArea.Caret.Offset = start + length;
 		}
@@ -928,9 +944,9 @@ namespace ICSharpCode.AvalonEdit
 		{
 			using (StreamReader reader = FileReader.OpenStream(stream, this.Encoding ?? Encoding.UTF8)) {
 				this.Text = reader.ReadToEnd();
-				this.Encoding = reader.CurrentEncoding; // assign encoding after ReadToEnd() so that the StreamReader can autodetect the encoding
+				SetCurrentValue(EncodingProperty, reader.CurrentEncoding); // assign encoding after ReadToEnd() so that the StreamReader can autodetect the encoding
 			}
-			this.IsModified = false;
+			SetCurrentValue(IsModifiedProperty, Boxes.False);
 		}
 		
 		/// <summary>
@@ -946,10 +962,23 @@ namespace ICSharpCode.AvalonEdit
 		}
 		
 		/// <summary>
+		/// Encoding dependency property.
+		/// </summary>
+		public static readonly DependencyProperty EncodingProperty =
+			DependencyProperty.Register("Encoding", typeof(Encoding), typeof(TextEditor));
+		
+		/// <summary>
 		/// Gets/sets the encoding used when the file is saved.
 		/// </summary>
+		/// <remarks>
+		/// The <see cref="Load(Stream)"/> method autodetects the encoding of the file and sets this property accordingly.
+		/// The <see cref="Save(Stream)"/> method uses the encoding specified in this property.
+		/// </remarks>
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public Encoding Encoding { get; set; }
+		public Encoding Encoding {
+			get { return (Encoding)GetValue(EncodingProperty); }
+			set { SetValue(EncodingProperty, value); }
+		}
 		
 		/// <summary>
 		/// Saves the text to the stream.
@@ -961,11 +990,14 @@ namespace ICSharpCode.AvalonEdit
 		{
 			if (stream == null)
 				throw new ArgumentNullException("stream");
-			StreamWriter writer = new StreamWriter(stream, this.Encoding ?? Encoding.UTF8);
-			writer.Write(this.Text);
+			var encoding = this.Encoding;
+			var document = this.Document;
+			StreamWriter writer = encoding != null ? new StreamWriter(stream, encoding) : new StreamWriter(stream);
+			if (document != null)
+				document.WriteTextTo(writer);
 			writer.Flush();
 			// do not close the stream
-			this.IsModified = false;
+			SetCurrentValue(IsModifiedProperty, Boxes.False);
 		}
 		
 		/// <summary>
