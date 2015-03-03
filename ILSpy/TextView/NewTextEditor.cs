@@ -111,7 +111,7 @@ namespace ICSharpCode.ILSpy.TextView
 		protected override IVisualLineTransformer CreateColorizer(IHighlightingDefinition highlightingDefinition)
 		{
 			Debug.Assert(LanguageTokens != null);
-			if (highlightingDefinition.Name == "C#" || highlightingDefinition.Name == "VBNET" ||
+			if (highlightingDefinition.Name == "C#" || highlightingDefinition.Name == "VB" ||
 				highlightingDefinition.Name == "ILAsm")
 				return new NewHighlightingColorizer(this);
 			return base.CreateColorizer(highlightingDefinition);
