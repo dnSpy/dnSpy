@@ -89,6 +89,7 @@ namespace ICSharpCode.ILSpy
 			App.CompositionContainer.ComposeParts(this);
 			mainPane.Content = decompilerTextView;
 			decompilerTextView.TextEditor.WordWrap = sessionSettings.WordWrap;
+			decompilerTextView.TextEditor.Options.HighlightCurrentLine = sessionSettings.HighlightCurrentLine;
 			
 			if (sessionSettings.LeftColumnWidth > 0)
 				leftColumn.Width = new GridLength(sessionSettings.LeftColumnWidth, GridUnitType.Pixel);
@@ -864,6 +865,7 @@ namespace ICSharpCode.ILSpy
 			sessionSettings.WindowBounds = this.RestoreBounds;
 			sessionSettings.LeftColumnWidth = leftColumn.Width.Value;
 			sessionSettings.WordWrap = decompilerTextView.TextEditor.WordWrap;
+			sessionSettings.HighlightCurrentLine = decompilerTextView.TextEditor.Options.HighlightCurrentLine;
 			if (topPane.Visibility == Visibility.Visible)
 				sessionSettings.BottomPaneSplitterPosition = topPaneRow.Height.Value / (topPaneRow.Height.Value + textViewRow.Height.Value);
 			if (bottomPane.Visibility == Visibility.Visible)

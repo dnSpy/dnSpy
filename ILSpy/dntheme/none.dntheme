@@ -2,5 +2,8 @@
 	<colors>
 		<color name="defaulttext" fg="Black" bg="White" />
 		<color name="selection" bg="#ADD6FF" />
+		<color name="searchresultmarker" bg="#FFFFB7" />
+		<color name="currentline" bg="#F3F3F3" />
+		<color name="currentlineborder" bg="#C0C0C0" />
 	</colors>
 </theme>

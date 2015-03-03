@@ -55,6 +55,7 @@
 				</MenuItem>
 				<Separator />
 				<MenuItem Header="_Word wrap" IsCheckable="True" IsChecked="{Binding ElementName=mainPane, Path=Content.TextEditor.WordWrap}" />
+				<MenuItem Header="_Highlight current line" IsCheckable="True" IsChecked="{Binding ElementName=mainPane, Path=Content.TextEditor.Options.HighlightCurrentLine}" />
 			</MenuItem>
 			<MenuItem Header="_Themes" Name="themeMenu" />
 		</Menu>

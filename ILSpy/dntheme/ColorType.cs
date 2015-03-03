@@ -335,6 +335,16 @@ namespace ICSharpCode.ILSpy.dntheme
 		SearchResultMarker,
 
 		/// <summary>
+		/// Current line. Only background color is used.
+		/// </summary>
+		CurrentLine,
+
+		/// <summary>
+		/// Current line border color. Only background color is used.
+		/// </summary>
+		CurrentLineBorder,
+
+		/// <summary>
 		/// Must be last
 		/// </summary>
 		Last,
