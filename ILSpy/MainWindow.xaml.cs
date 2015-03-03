@@ -347,7 +347,7 @@ namespace ICSharpCode.ILSpy
 			}
 			if (!string.IsNullOrEmpty(args.SaveDirectory)) {
 				foreach (var x in commandLineLoadedAssemblies) {
-					x.ContinueWhenLoaded( (Task<ModuleDefinition> moduleTask) => {
+					x.ContinueWhenLoaded( (Task<ModuleDef> moduleTask) => {
 						OnExportAssembly(moduleTask, args.SaveDirectory);
 					}, TaskScheduler.FromCurrentSynchronizationContext());
 				}
@@ -355,9 +355,9 @@ namespace ICSharpCode.ILSpy
 			commandLineLoadedAssemblies.Clear(); // clear references once we don't need them anymore
 		}
 		
-		void OnExportAssembly(Task<ModuleDefinition> moduleTask, string path)
+		void OnExportAssembly(Task<ModuleDef> moduleTask, string path)
 		{
-			AssemblyTreeNode asmNode = assemblyListTreeNode.FindAssemblyNode(moduleTask.Result);
+			AssemblyTreeNode asmNode = assemblyListTreeNode.FindModuleNode(moduleTask.Result);
 			if (asmNode != null) {
 				string file = DecompilerTextView.CleanUpName(asmNode.LoadedAssembly.ShortName);
 				Language language = sessionSettings.FilterSettings.Language;

@@ -206,7 +206,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			return true;
 		}
 
-		static bool IsDelegate(TypeDefinition type)
+		static bool IsDelegate(TypeDef type)
 		{
 			if (type.BaseType != null && type.BaseType.Namespace == "System") {
 				if (type.BaseType.Name == "MulticastDelegate")

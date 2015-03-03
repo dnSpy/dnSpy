@@ -96,13 +96,13 @@ namespace ICSharpCode.Decompiler.Ast
 			return FilterMemberReference(memberRef);
 		}
 
-		MemberReference FilterMemberReference(MemberReference memberRef)
+		IMemberRef FilterMemberReference(IMemberRef memberRef)
 		{
 			if (memberRef == null)
 				return null;
 
-			if (context.Settings.AutomaticEvents && memberRef is FieldDefinition) {
-				var field = (FieldDefinition)memberRef;
+			if (context.Settings.AutomaticEvents && memberRef is FieldDef) {
+				var field = (FieldDef)memberRef;
 				return field.DeclaringType.Events.FirstOrDefault(ev => ev.Name == field.Name) ?? memberRef;
 			}
 

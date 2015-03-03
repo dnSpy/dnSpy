@@ -292,8 +292,8 @@ namespace ICSharpCode.Decompiler.Ast
 						BinaryOperatorExpression boe;
 						if (byteCode.InferredType is PtrSig) {
 							boe = new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Add, arg2);
-							if (byteCode.Arguments[0].ExpectedType is PointerType ||
-								byteCode.Arguments[1].ExpectedType is PointerType) {
+							if (byteCode.Arguments[0].ExpectedType is PtrSig ||
+								byteCode.Arguments[1].ExpectedType is PtrSig) {
 								boe.AddAnnotation(IntroduceUnsafeModifier.PointerArithmeticAnnotation);
 							}
 						} else {
@@ -309,7 +309,7 @@ namespace ICSharpCode.Decompiler.Ast
 						BinaryOperatorExpression boe;
 						if (byteCode.InferredType is PtrSig) {
 							boe = new Ast.BinaryOperatorExpression(arg1, BinaryOperatorType.Subtract, arg2);
-							if (byteCode.Arguments[0].ExpectedType is PointerType) {
+							if (byteCode.Arguments[0].ExpectedType is PtrSig) {
 								boe.WithAnnotation(IntroduceUnsafeModifier.PointerArithmeticAnnotation);
 							}
 						} else {

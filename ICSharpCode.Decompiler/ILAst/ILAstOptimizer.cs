@@ -678,24 +678,24 @@ namespace ICSharpCode.Decompiler.ILAst
 				List<ILExpression> args = expr.Arguments;
 				switch (expr.Code) {
 					case ILCode.Localloc:
-						args[0] = DivideBySize(args[0], ((PointerType)expr.InferredType).ElementType);
+						args[0] = DivideBySize(args[0], ((PtrSig)expr.InferredType).Next);
 						break;
 					case ILCode.Add:
 					case ILCode.Add_Ovf:
 					case ILCode.Add_Ovf_Un:
-						if (expr.InferredType is PointerType) {
-							if (args[0].ExpectedType is PointerType)
-								args[1] = DivideBySize(args[1], ((PointerType)expr.InferredType).ElementType);
-							else if (args[1].ExpectedType is PointerType)
-								args[0] = DivideBySize(args[0], ((PointerType)expr.InferredType).ElementType);
+						if (expr.InferredType is PtrSig) {
+							if (args[0].ExpectedType is PtrSig)
+								args[1] = DivideBySize(args[1], ((PtrSig)expr.InferredType).Next);
+							else if (args[1].ExpectedType is PtrSig)
+								args[0] = DivideBySize(args[0], ((PtrSig)expr.InferredType).Next);
 						}
 						break;
 					case ILCode.Sub:
 					case ILCode.Sub_Ovf:
 					case ILCode.Sub_Ovf_Un:
-						if (expr.InferredType is PointerType) {
-							if (args[0].ExpectedType is PointerType)
-								args[1] = DivideBySize(args[1], ((PointerType)expr.InferredType).ElementType);
+						if (expr.InferredType is PtrSig) {
+							if (args[0].ExpectedType is PtrSig)
+								args[1] = DivideBySize(args[1], ((PtrSig)expr.InferredType).Next);
 						}
 						break;
 				}
@@ -708,22 +708,22 @@ namespace ICSharpCode.Decompiler.ILAst
 				return expr;
 
 			ILExpression arg = expr.Arguments[0];
-			switch (arg.InferredType.MetadataType) {
-				case MetadataType.Byte:
-				case MetadataType.SByte:
-				case MetadataType.UInt16:
-				case MetadataType.Int16:
-				case MetadataType.UInt32:
-				case MetadataType.Int32:
-				case MetadataType.UInt64:
-				case MetadataType.Int64:
+			switch (arg.InferredType.ElementType) {
+				case ElementType.U1:
+				case ElementType.I1:
+				case ElementType.U2:
+				case ElementType.I2:
+				case ElementType.U4:
+				case ElementType.I4:
+				case ElementType.U8:
+				case ElementType.I8:
 					return arg;
 			}
 
 			return expr;
 		}
 
-		static ILExpression DivideBySize(ILExpression expr, TypeReference type)
+		static ILExpression DivideBySize(ILExpression expr, TypeSig type)
 		{
 			expr = UnwrapIntPtrCast(expr);
 

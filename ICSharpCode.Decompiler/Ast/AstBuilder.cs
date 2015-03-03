@@ -328,7 +328,6 @@ namespace ICSharpCode.Decompiler.Ast
 						// the value__ field
 						if (!new SigComparer().Equals(field.FieldType, typeDef.Module.CorLibTypes.Int32)) {
 							astType.AddChild(ConvertType(field.FieldType), Roles.BaseType);
-							baseType = TypeAnalysis.GetTypeCode(field.FieldType);
 						}
 					} else {
 						EnumMemberDeclaration enumMember = new EnumMemberDeclaration();

@@ -48,6 +48,8 @@ namespace ICSharpCode.Decompiler.Ast
 				var comparableBaseType = baseType.Resolve();
 				if (comparableBaseType == null)
 					return false;
+				while (derivedType.BaseType != null) {
+					var resolvedBaseType = derivedType.BaseType.Resolve();
 					if (resolvedBaseType == null)
 						return false;
 					if (comparableBaseType == resolvedBaseType)

@@ -136,7 +136,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				   || IsUsedInCustomAttributes(method.CustomAttributes);
 		}
 
-		private bool IsUsedInMethodBody(MethodDefinition method)
+		private bool IsUsedInMethodBody(MethodDef method)
 		{
 			if (method.Body == null)
 				return false;
@@ -144,17 +144,17 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			bool found = false;
 
 			foreach (var instruction in method.Body.Instructions) {
-				TypeReference tr = instruction.Operand as TypeReference;
+				ITypeDefOrRef tr = instruction.Operand as ITypeDefOrRef;
 				if (IsUsedInTypeReference(tr)) {
 					found = true;
 					break;
 				}
-				FieldReference fr = instruction.Operand as FieldReference;
+				IField fr = instruction.Operand as IField;
 				if (IsUsedInFieldReference(fr)) {
 					found = true;
 					break;
 				}
-				MethodReference mr = instruction.Operand as MethodReference;
+				IMethod mr = instruction.Operand as IMethod;
 				if (IsUsedInMethodReference(mr)) {
 					found = true;
 					break;

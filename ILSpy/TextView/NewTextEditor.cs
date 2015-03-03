@@ -106,7 +106,7 @@ namespace ICSharpCode.ILSpy.TextView
 			Debug.Assert(LanguageTokens != null);
 			if (highlightingDefinition.Name == "C#" || highlightingDefinition.Name == "VBNET" ||
 				highlightingDefinition.Name == "ILAsm")
-				return new NewHighlightingColorizer(this, highlightingDefinition.MainRuleSet);
+				return new NewHighlightingColorizer(this);
 			return base.CreateColorizer(highlightingDefinition);
 		}
 
@@ -114,8 +114,7 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			readonly NewTextEditor textEditor;
 
-			public NewHighlightingColorizer(NewTextEditor textEditor, HighlightingRuleSet ruleSet)
-				: base(ruleSet) {
+			public NewHighlightingColorizer(NewTextEditor textEditor) {
 				this.textEditor = textEditor;
 			}
 
@@ -134,14 +133,9 @@ namespace ICSharpCode.ILSpy.TextView
 				this.document = document;
 			}
 
-			public TextDocument Document
+			public IDocument Document
 			{
 				get { return document; }
-			}
-
-			public ImmutableStack<HighlightingSpan> GetSpanStack(int lineNumber)
-			{
-				return null;	// return value is currently never used
 			}
 
 			public HighlightedLine HighlightLine(int lineNumber)
@@ -184,6 +178,39 @@ namespace ICSharpCode.ILSpy.TextView
 			HighlightingColor GetColor(TextTokenType tokenType)
 			{
 				return MainWindow.Instance.Theme.GetColor(tokenType).TextInheritedColor;
+			}
+
+			public IEnumerable<HighlightingColor> GetColorStack(int lineNumber)
+			{
+				return new HighlightingColor[0];
+			}
+
+			public void UpdateHighlightingState(int lineNumber)
+			{
+			}
+
+			public event HighlightingStateChangedEventHandler HighlightingStateChanged;
+
+			public void BeginHighlighting()
+			{
+			}
+
+			public void EndHighlighting()
+			{
+			}
+
+			public HighlightingColor GetNamedColor(string name)
+			{
+				return null;
+			}
+
+			public HighlightingColor DefaultTextColor
+			{
+				get { return null; }
+			}
+
+			public void Dispose()
+			{
 			}
 		}
 	}
