@@ -126,7 +126,7 @@ namespace ICSharpCode.ILSpy.VB
 			var module = assembly.ModuleDefinition;
 			const string ns = "http://schemas.microsoft.com/developer/msbuild/2003";
 			string platformName = CSharpLanguage.GetPlatformName(module);
-			Guid guid = App.CommandLineArguments.FixedGuid ?? Guid.NewGuid();
+			Guid guid = (App.CommandLineArguments == null ? null : App.CommandLineArguments.FixedGuid) ?? Guid.NewGuid();
 			using (XmlTextWriter w = new XmlTextWriter(writer)) {
 				var asmRefs = CSharpLanguage.GetAssemblyRefs(options, assembly);
 

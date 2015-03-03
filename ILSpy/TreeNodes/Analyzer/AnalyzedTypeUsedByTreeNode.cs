@@ -138,6 +138,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private bool IsUsedInMethodBody(MethodDef method)
 		{
+			if (method == null)
+				return false;
 			if (method.Body == null)
 				return false;
 
@@ -161,7 +163,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				}
 			}
 
-			method.Body = null; // discard body to reduce memory pressure & higher GC gen collections
+			Helpers.FreeMethodBody(method); // discard body to reduce memory pressure & higher GC gen collections
 
 			return found;
 		}

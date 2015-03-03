@@ -52,6 +52,8 @@ namespace ICSharpCode.Decompiler
 		/// </summary>
 		public static bool IsSignedIntegralType(this TypeSig type)
 		{
+			if (type == null)
+				return false;
 			return type.ElementType == ElementType.I1 ||
 				   type.ElementType == ElementType.I2 ||
 				   type.ElementType == ElementType.I4 ||
@@ -65,6 +67,8 @@ namespace ICSharpCode.Decompiler
 		/// </summary>
 		public static bool IsZero(this object value)
 		{
+			if (value == null)
+				return false;
 			return value.Equals((sbyte)0) ||
 				   value.Equals((short)0) ||
 				   value.Equals(0) ||

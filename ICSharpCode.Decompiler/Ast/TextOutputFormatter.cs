@@ -103,7 +103,7 @@ namespace ICSharpCode.Decompiler.Ast
 
 			if (context.Settings.AutomaticEvents && memberRef is FieldDef) {
 				var field = (FieldDef)memberRef;
-				return field.DeclaringType.Events.FirstOrDefault(ev => ev.Name == field.Name) ?? memberRef;
+				return field.DeclaringType.FindEvent(field.Name) ?? memberRef;
 			}
 
 			return memberRef;

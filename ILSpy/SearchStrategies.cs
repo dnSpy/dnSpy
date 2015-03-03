@@ -32,6 +32,8 @@ namespace ICSharpCode.ILSpy
 
 		protected bool IsMatch(string text)
 		{
+			if (text == null)
+				return false;
 			if (regex != null)
 				return regex.IsMatch(text);
 

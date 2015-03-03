@@ -678,7 +678,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				List<ILExpression> args = expr.Arguments;
 				switch (expr.Code) {
 					case ILCode.Localloc:
-						args[0] = DivideBySize(args[0], ((PtrSig)expr.InferredType).Next);
+						if (expr.InferredType is PtrSig)
+							args[0] = DivideBySize(args[0], ((PtrSig)expr.InferredType).Next);
 						break;
 					case ILCode.Add:
 					case ILCode.Add_Ovf:
@@ -708,7 +709,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				return expr;
 
 			ILExpression arg = expr.Arguments[0];
-			switch (arg.InferredType.ElementType) {
+			switch (arg.InferredType.GetElementType()) {
 				case ElementType.U1:
 				case ElementType.I1:
 				case ElementType.U2:
@@ -743,7 +744,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					sizeOfExpression = new ILExpression(ILCode.Ldc_I4, 8);
 					break;
 				default:
-					sizeOfExpression = new ILExpression(ILCode.Sizeof, type);
+					sizeOfExpression = new ILExpression(ILCode.Sizeof, type.ToTypeDefOrRef());
 					break;
 			}
 

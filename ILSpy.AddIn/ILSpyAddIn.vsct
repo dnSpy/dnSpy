@@ -73,7 +73,7 @@
         <Parent guid="guidILSpyAddInCmdSet" id="OpenILSpyProjGroup" />
         <Icon guid="guidImages" id="bmpLogo" />
         <Strings>
-          <ButtonText>Open output in ILSpy</ButtonText>
+          <ButtonText>Open output in dnSpy</ButtonText>
         </Strings>
       </Button>
 
