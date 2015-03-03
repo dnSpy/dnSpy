@@ -1509,6 +1509,8 @@ namespace ICSharpCode.NRefactory.VB
 				NewLine();
 				Indent();
 				ifElseStatement.ElseBlock.AcceptVisitor(this, data);
+				if (!(ifElseStatement.ElseBlock is BlockStatement))
+					NewLine();
 				Unindent();
 			}
 			WriteKeyword("End");
