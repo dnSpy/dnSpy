@@ -371,6 +371,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	[ExportContextMenuEntryAttribute(Header = "_Remove", Icon = "images/Delete.png")]
 	sealed class RemoveAssembly : IContextMenuEntry
 	{
+		public string GetMenuHeader(TextViewContext context)
+		{
+			if (context.SelectedTreeNodes.Length == 1)
+				return string.Format("_Remove {0}", ((AssemblyTreeNode)context.SelectedTreeNodes[0]).LoadedAssembly.ShortName);
+			return string.Format("_Remove {0} assemblies", context.SelectedTreeNodes.Length);
+		}
+
 		public bool IsVisible(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)

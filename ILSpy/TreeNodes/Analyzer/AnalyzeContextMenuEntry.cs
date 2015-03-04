@@ -27,6 +27,11 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	[ExportContextMenuEntryAttribute(Header = "Analyze", Icon = "images/Search.png")]
 	internal sealed class AnalyzeContextMenuEntry : IContextMenuEntry
 	{
+		public string GetMenuHeader(TextViewContext context)
+		{
+			return null;
+		}
+
 		public bool IsVisible(TextViewContext context)
 		{
 			if (context.TreeView is AnalyzerTreeView && context.SelectedTreeNodes != null && context.SelectedTreeNodes.All(n => n.Parent.IsRoot))

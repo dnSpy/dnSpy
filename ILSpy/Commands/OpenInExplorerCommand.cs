@@ -8,6 +8,11 @@ namespace ICSharpCode.ILSpy.Commands {
 	[ExportContextMenuEntryAttribute(Header = "_Show in Explorer")]
 	class OpenInExplorerCommand : IContextMenuEntry
 	{
+		public string GetMenuHeader(TextViewContext context)
+		{
+			return null;
+		}
+
 		public bool IsVisible(TextViewContext context)
 		{
 			return context.SelectedTreeNodes != null &&

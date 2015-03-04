@@ -31,6 +31,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	{
 		private static string msdnAddress = "http://msdn.microsoft.com/en-us/library/{0}";
 
+		public string GetMenuHeader(TextViewContext context)
+		{
+			return null;
+		}
+
 		public bool IsVisible(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes == null)

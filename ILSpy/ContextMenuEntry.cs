@@ -33,6 +33,7 @@ namespace ICSharpCode.ILSpy
 		bool IsVisible(TextViewContext context);
 		bool IsEnabled(TextViewContext context);
 		void Execute(TextViewContext context);
+		string GetMenuHeader(TextViewContext context);
 	}
 	
 	public class TextViewContext
@@ -178,7 +179,7 @@ namespace ICSharpCode.ILSpy
 							needSeparatorForCategory = false;
 						}
 						MenuItem menuItem = new MenuItem();
-						menuItem.Header = entryPair.Metadata.Header;
+						menuItem.Header = entry.GetMenuHeader(context) ?? entryPair.Metadata.Header;
 						if (!string.IsNullOrEmpty(entryPair.Metadata.Icon)) {
 							menuItem.Icon = new Image {
 								Width = 16,

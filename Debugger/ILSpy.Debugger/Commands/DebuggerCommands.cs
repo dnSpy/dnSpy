@@ -211,6 +211,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportContextMenuEntryAttribute(Header = "_Debug Assembly", Icon = "Images/application-x-executable.png")]
 	internal sealed class DebugExecutableNodeCommand : DebuggerCommand, IContextMenuEntry
 	{
+		public string GetMenuHeader(TextViewContext context)
+		{
+			return string.Format("_Debug {0}", ((AssemblyTreeNode)context.SelectedTreeNodes[0]).LoadedAssembly.ShortName);
+		}
+
 		public bool IsVisible(TextViewContext context)
 		{
 			return DebuggerService.CurrentDebugger != null && !DebuggerService.CurrentDebugger.IsDebugging &&
@@ -227,7 +232,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		public bool IsEnabled(TextViewContext context)
 		{
 			return DebuggerService.CurrentDebugger != null && !DebuggerService.CurrentDebugger.IsDebugging &&
-				context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length == 1;
+				context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length == 1 &&
+				context.SelectedTreeNodes[0] is AssemblyTreeNode;
 		}
 		
 		public void Execute(TextViewContext context)
