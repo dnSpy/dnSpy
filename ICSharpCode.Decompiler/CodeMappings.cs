@@ -163,26 +163,45 @@ namespace ICSharpCode.Decompiler
 		/// <param name="codeMappings">Code mappings storage.</param>
 		/// <param name="typeName">Member reference name.</param>
 		/// <param name="lineNumber">Line number.</param>
-		/// <param name="metadataToken">Metadata token.</param>
+		/// <param name="columnNumber">Column number or 0 for any column.</param>
 		/// <returns></returns>
 		public static SourceCodeMapping GetInstructionByLineNumber(
 			this MemberMapping codeMapping,
 			int lineNumber,
-			out int metadataToken)
+			int columnNumber)
 		{
 			if (codeMapping == null)
 				throw new ArgumentException("CodeMappings storage must be valid!");
 			
-			SourceCodeMapping map = null;
-			foreach (var m in codeMapping.MemberCodeMappings) {
-				if (lineNumber < m.StartLocation.Line || lineNumber > m.EndLocation.Line)
-					continue;
-				if (map == null || m.ILInstructionOffset.From < map.ILInstructionOffset.From)
-					map = m;
+			if (columnNumber != 0) {
+				var loc = new TextLocation(lineNumber, columnNumber);
+				foreach (var m in codeMapping.MemberCodeMappings) {
+					if (m.StartLocation <= loc && loc <= m.EndLocation)
+						return m;
+				}
+				var list = new List<SourceCodeMapping>(codeMapping.MemberCodeMappings.FindAll(a => a.StartLocation.Line <= lineNumber && lineNumber <= a.EndLocation.Line));
+				list.Sort((a, b) => GetDist(a.StartLocation, lineNumber, columnNumber).CompareTo(GetDist(b.StartLocation, lineNumber, columnNumber)));
+				if (list.Count > 0)
+					return list[0];
+				return null;
 			}
-			
-			metadataToken = map == null ? 0 : codeMapping.MethodDefinition.MDToken.ToInt32();
-			return map;
+			else {
+				SourceCodeMapping map = null;
+				foreach (var m in codeMapping.MemberCodeMappings) {
+					if (lineNumber < m.StartLocation.Line || lineNumber > m.EndLocation.Line)
+						continue;
+					if (map == null || m.ILInstructionOffset.From < map.ILInstructionOffset.From)
+						map = m;
+				}
+				return map;
+			}
+		}
+
+		static int GetDist(TextLocation loc, int line, int column)
+		{
+			int hi = Math.Min(Math.Abs(loc.Line - line), short.MaxValue);
+			int lo = Math.Min(Math.Abs(loc.Column - column), short.MaxValue);
+			return (hi << 16) | lo;
 		}
 		
 		/// <summary>

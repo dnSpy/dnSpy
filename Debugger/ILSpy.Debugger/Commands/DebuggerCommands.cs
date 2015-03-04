@@ -39,6 +39,12 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 						e.Handled = true;
 					}
 					break;
+				case Key.F9:
+					if (this is ToggleBreakpointCommand) {
+						((ToggleBreakpointCommand)this).Execute(null);
+						e.Handled = true;
+					}
+					break;
 				case Key.F10:
 					if (this is StepOverCommand) {
 						((StepOverCommand)this).Execute(null);
@@ -138,7 +144,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			foreach (var item in items.First().Items.OfType<MenuItem>()) {
 				string header = ((string)item.Header).Replace("_", string.Empty);
 				
-				if (header.StartsWith("Remove") || header.StartsWith("Show")) continue;
+				if (header.StartsWith("Remove") || header.StartsWith("Show") || header.StartsWith("Toggle")) continue;
 				
 				if (header.StartsWith("Attach") || header.StartsWith("Debug"))
 					item.IsEnabled = enable;
@@ -441,7 +447,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuIcon = "Images/DeleteAllBreakpoints.png",
 	                       MenuCategory = "Others",
 	                       Header = "Remove all _breakpoints",
-	                       MenuOrder = 7)]
+	                       MenuOrder = 7.9)]
 	internal sealed class RemoveBreakpointsCommand : DebuggerCommand
 	{
 		public override void Execute(object parameter)
@@ -452,6 +458,20 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 					BookmarkManager.RemoveMark(bookmark);
 				}
 			}
+		}
+	}
+
+	[ExportMainMenuCommand(Menu = "_Debug",
+	                       MenuCategory = "Others",
+	                       Header = "To_ggle Breakpoint",
+						   InputGestureText = "F9",
+	                       MenuOrder = 7)]
+	internal sealed class ToggleBreakpointCommand : DebuggerCommand
+	{
+		public override void Execute(object parameter)
+		{
+			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
+			BreakpointHelper.Toggle(location.Line, location.Column);
 		}
 	}
 }

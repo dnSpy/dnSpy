@@ -24,28 +24,41 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		
 		public void Execute(int line)
 		{
+			BreakpointHelper.Toggle(line, 0);
+		}
+	}
+
+	static class BreakpointHelper
+	{
+		public static void Toggle(int line, int column)
+		{
 			if (line <= 0)
 				return;
 			var cm = DebugInformation.CodeMappings;
-			if (cm != null && cm.Count > 0) {
-				int token = 0;
-				foreach (var storageEntry in cm.Values) {
-					var bp = storageEntry.GetInstructionByLineNumber(line, out token);
-					if (bp != null) {
-						DebuggerService.ToggleBreakpointAt(bp);
-						break;
-					}
-				}
-				if (token == 0) {
-					var bp = GetClosest(cm, line, out token);
-					if (bp != null)
-						DebuggerService.ToggleBreakpointAt(bp);
-				}
-			}
+			if (cm == null || cm.Count == 0)
+				return;
+
+			var bp = FindByLineColumn(cm, line, column);
+			if (bp == null && column != 0)
+				bp = FindByLineColumn(cm, line, 0);
+			if (bp == null)
+				bp = GetClosest(cm, line);
+
+			if (bp != null)
+				DebuggerService.ToggleBreakpointAt(bp);
 		}
 
-		SourceCodeMapping GetClosest(Dictionary<MethodKey, MemberMapping> cm, int line, out int token)
+		static SourceCodeMapping FindByLineColumn(Dictionary<MethodKey, MemberMapping> cm, int line, int column)
 		{
+			foreach (var storageEntry in cm.Values) {
+				var bp = storageEntry.GetInstructionByLineNumber(line, column);
+				if (bp != null)
+					return bp;
+			}
+			return null;
+		}
+
+		static SourceCodeMapping GetClosest(Dictionary<MethodKey, MemberMapping> cm, int line) {
 			SourceCodeMapping closest = null;
 			foreach (var entry in cm.Values) {
 				SourceCodeMapping map = null;
@@ -59,7 +72,6 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 					closest = map;
 			}
 
-			token = closest == null ? 0 : closest.MemberMapping.MethodDefinition.MDToken.ToInt32();
 			return closest;
 		}
 	}
