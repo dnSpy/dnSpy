@@ -144,6 +144,15 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						if (TryConvertAssignmentExpressionIntoVariableDeclaration((Expression)usingStmt.ResourceAcquisition, type, variableName))
 							continue;
 					}
+					IfElseStatement ies = stmt as IfElseStatement;
+					if (ies != null) {
+						foreach (var child in IfElseChainChildren(ies)) {
+							BlockStatement subBlock = child as BlockStatement;
+							if (subBlock != null)
+								DeclareVariableInBlock(daa, subBlock, type, variableName, v, allowPassIntoLoops);
+						}
+						continue;
+					}
 					foreach (AstNode child in stmt.Children) {
 						BlockStatement subBlock = child as BlockStatement;
 						if (subBlock != null) {
@@ -268,6 +277,15 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					}
 				}
 			}
+
+			IfElseStatement ies = stmt as IfElseStatement;
+			if (ies != null) {
+				foreach (var child in IfElseChainChildren(ies)) {
+					if (!(child is BlockStatement) && UsesVariable(child, variableName))
+						return false;
+				}
+				return true;
+			}
 			
 			// We can move the variable into a sub-block only if the variable is used in only that sub-block (and not in expressions such as the loop condition)
 			for (AstNode child = stmt.FirstChild; child != null; child = child.NextSibling) {
@@ -284,6 +302,19 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				}
 			}
 			return true;
+		}
+
+		static IEnumerable<AstNode> IfElseChainChildren(IfElseStatement ies)
+		{
+			IfElseStatement prev;
+			do {
+				yield return ies.Condition;
+				yield return ies.TrueStatement;
+				prev = ies;
+				ies = ies.FalseStatement as IfElseStatement;
+			} while (ies != null);
+			if (!prev.FalseStatement.IsNull)
+				yield return prev.FalseStatement;
 		}
 		
 		static bool HasNestedBlocks(AstNode node)
