@@ -268,5 +268,12 @@ namespace ICSharpCode.ILSpy.Debugger.UI
         {
             CallStackPanel.Instance.Show();
         }
+
+		public override bool CanExecute(object parameter)
+		{
+			return DebuggerService.CurrentDebugger != null &&
+				DebuggerService.CurrentDebugger.IsDebugging &&
+				!DebuggerService.CurrentDebugger.IsProcessRunning;
+		}
     }
 }

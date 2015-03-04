@@ -58,7 +58,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			return null;
 		}
 
-		static SourceCodeMapping GetClosest(Dictionary<MethodKey, MemberMapping> cm, int line) {
+		static SourceCodeMapping GetClosest(Dictionary<MethodKey, MemberMapping> cm, int line)
+		{
 			SourceCodeMapping closest = null;
 			foreach (var entry in cm.Values) {
 				SourceCodeMapping map = null;

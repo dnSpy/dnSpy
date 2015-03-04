@@ -25,8 +25,13 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 {
 	public abstract class DebuggerCommand : SimpleCommand
 	{
-		public DebuggerCommand()
+		readonly bool? needsDebuggerActive;
+		readonly bool? mustBePaused;
+
+		protected DebuggerCommand(bool? needsDebuggerActive, bool? mustBePaused = null)
 		{
+			this.needsDebuggerActive = needsDebuggerActive;
+			this.mustBePaused = mustBePaused;
 			MainWindow.Instance.KeyUp += OnKeyUp;
 		}
 
@@ -86,6 +91,20 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			SetWindowPos(hWnd, place, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
 		}
 		#endregion
+
+		public override bool CanExecute(object parameter)
+		{
+			if (needsDebuggerActive == null)
+				return true;
+			bool b = needsDebuggerActive == (DebuggerService.CurrentDebugger != null &&
+											DebuggerService.CurrentDebugger.IsDebugging);
+			if (!b)
+				return false;
+
+			if (mustBePaused == null)
+				return true;
+			return mustBePaused == !DebuggerService.CurrentDebugger.IsProcessRunning;
+		}
 		
 		public override void Execute(object parameter)
 		{
@@ -136,30 +155,9 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		
 		protected void EnableDebuggerUI(bool enable)
 		{
-			var menuItems = MainWindow.Instance.GetMainMenuItems();
-			var toolbarItems = MainWindow.Instance.GetToolBarItems();
-			
-			// menu
-			var items = menuItems.OfType<MenuItem>().Where(m => (m.Header as string) == "_Debug");
-			foreach (var item in items.First().Items.OfType<MenuItem>()) {
-				string header = ((string)item.Header).Replace("_", string.Empty);
-				
-				if (header.StartsWith("Remove") || header.StartsWith("Show") || header.StartsWith("Toggle")) continue;
-				
-				if (header.StartsWith("Attach") || header.StartsWith("Debug"))
-					item.IsEnabled = enable;
-				else
-					item.IsEnabled = !enable;
-			}
-			
-			//toolbar
-			var buttons = toolbarItems.OfType<Button>().Where(b => (b.Tag as string) == "Debugger");
-			foreach (var item in buttons) {
-				item.IsEnabled = enable;
-			}
-			
 			// internal types
-			MainWindow.Instance.SessionSettings.FilterSettings.ShowInternalApi = true;
+			if (enable)
+				MainWindow.Instance.SessionSettings.FilterSettings.ShowInternalApi = true;
 		}
 		
 		void CurrentDebugger_IsProcessRunningChanged(object sender, EventArgs e)
@@ -217,6 +215,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportContextMenuEntryAttribute(Header = "_Debug Assembly", Icon = "Images/application-x-executable.png")]
 	internal sealed class DebugExecutableNodeCommand : DebuggerCommand, IContextMenuEntry
 	{
+		public DebugExecutableNodeCommand()
+			: base(false) {
+		}
+
 		public string GetMenuHeader(TextViewContext context)
 		{
 			return string.Format("_Debug {0}", ((AssemblyTreeNode)context.SelectedTreeNodes[0]).LoadedAssembly.ShortName);
@@ -277,6 +279,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuOrder = 0)]
 	internal sealed class DebugExecutableCommand : DebuggerCommand
 	{
+		public DebugExecutableCommand()
+			: base(false) {
+		}
+
 		public override void Execute(object parameter)
 		{
 			if (!CurrentDebugger.IsDebugging) {
@@ -319,6 +325,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuOrder = 1)]
 	internal sealed class AttachCommand : DebuggerCommand
 	{
+		public AttachCommand()
+			: base(false) {
+		}
+
 		public override void Execute(object parameter)
 		{
 			if (!CurrentDebugger.IsDebugging) {
@@ -340,10 +350,13 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuCategory = "SteppingArea",
 	                       Header = "_Continue",
 	                       InputGestureText = "F5",
-	                       IsEnabled = false,
 	                       MenuOrder = 2)]
 	internal sealed class ContinueDebuggingCommand : DebuggerCommand
 	{
+		public ContinueDebuggingCommand()
+			: base(true, true) {
+		}
+
 		public override void Execute(object parameter)
 		{
 			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
@@ -355,13 +368,16 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	}
 
 	[ExportMainMenuCommand(Menu = "_Debug",
-												 MenuIcon = "Images/Break.png",
-												 MenuCategory = "SteppingArea",
-												 Header = "Brea_k",
-												 IsEnabled = false,
-												 MenuOrder = 2.1)]
+						   MenuIcon = "Images/Break.png",
+						   MenuCategory = "SteppingArea",
+						   Header = "Brea_k",
+						   MenuOrder = 2.1)]
 	internal sealed class BreakDebuggingCommand : DebuggerCommand
 	{
+		public BreakDebuggingCommand()
+			: base(true, false) {
+		}
+
 		public override void Execute(object parameter)
 		{
 			if (CurrentDebugger.IsDebugging && CurrentDebugger.IsProcessRunning)
@@ -377,10 +393,13 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuCategory = "SteppingArea",
 	                       Header = "Step _Into",
 	                       InputGestureText = "F11",
-	                       IsEnabled = false,
 	                       MenuOrder = 3)]
 	internal sealed class StepIntoCommand : DebuggerCommand
 	{
+		public StepIntoCommand()
+			: base(true, true) {
+		}
+
 		public override void Execute(object parameter)
 		{
 			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
@@ -395,10 +414,13 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuCategory = "SteppingArea",
 	                       Header = "Step _Over",
 	                       InputGestureText = "F10",
-	                       IsEnabled = false,
 	                       MenuOrder = 4)]
 	internal sealed class StepOverCommand : DebuggerCommand
 	{
+		public StepOverCommand()
+			: base(true, true) {
+		}
+
 		public override void Execute(object parameter)
 		{
 			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
@@ -412,10 +434,13 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuIcon = "Images/StepOut.png",
 	                       MenuCategory = "SteppingArea",
 	                       Header = "Step Ou_t",
-	                       IsEnabled = false,
 	                       MenuOrder = 5)]
 	internal sealed class StepOutCommand : DebuggerCommand
 	{
+		public StepOutCommand()
+			: base(true, true) {
+		}
+
 		public override void Execute(object parameter)
 		{
 			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
@@ -428,10 +453,13 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportMainMenuCommand(Menu = "_Debug",
 	                       MenuCategory = "SteppingArea",
 	                       Header = "_Detach from running application",
-	                       IsEnabled = false,
 	                       MenuOrder = 6)]
 	internal sealed class DetachCommand : DebuggerCommand
 	{
+		public DetachCommand()
+			: base(true) {
+		}
+
 		public override void Execute(object parameter)
 		{
 			if (CurrentDebugger.IsDebugging){
@@ -450,6 +478,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuOrder = 7.9)]
 	internal sealed class RemoveBreakpointsCommand : DebuggerCommand
 	{
+		public RemoveBreakpointsCommand()
+			: base(null) {
+		}
+
 		public override void Execute(object parameter)
 		{
 			for (int i = BookmarkManager.Bookmarks.Count - 1; i >= 0; --i) {
@@ -468,6 +500,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuOrder = 7)]
 	internal sealed class ToggleBreakpointCommand : DebuggerCommand
 	{
+		public ToggleBreakpointCommand()
+			: base(null) {
+		}
+
 		public override void Execute(object parameter)
 		{
 			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
