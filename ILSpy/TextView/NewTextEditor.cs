@@ -24,6 +24,7 @@ namespace ICSharpCode.ILSpy.TextView
 		public NewTextEditor()
 		{
 			Loaded += NewTextEditor_Loaded;
+			Options.AllowToggleOverstrikeMode = true;
 		}
 
 		void NewTextEditor_Loaded(object sender, RoutedEventArgs e)
