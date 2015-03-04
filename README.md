@@ -13,6 +13,19 @@ Extra features present in dnSpy
 * Command line decompiler (dnspc.exe)
 * Other minor updates / fixes
 
+Debugger
+========
+
+This is a slightly updated debugger that was removed from ILSpy. It's lacking many useful features I plan to add in the future.
+
+Updates to the Debugger
+=======================
+
+* Can debug VB code
+* Can debug ILAst code (this language is only available in Debug builds)
+* Only the current statement is highlighted instead of the whole line
+* Other minor updates / fixes
+
 Credits
 =======
 
