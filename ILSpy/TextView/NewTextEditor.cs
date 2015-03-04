@@ -60,7 +60,7 @@ namespace ICSharpCode.ILSpy.TextView
 			var currentLine = theme.GetColor(ColorType.CurrentLine).InheritedColor;
 			TextArea.TextView.CurrentLineBackground = currentLine.Background == null ? null : currentLine.Background.GetBrush(null);
 			var currentLineBorder = theme.GetColor(ColorType.CurrentLineBorder).InheritedColor;
-			TextArea.TextView.CurrentLineBorder = new Pen(currentLineBorder.Background == null ? null : currentLineBorder.Background.GetBrush(null), 1);
+			TextArea.TextView.CurrentLineBorder = new Pen(currentLineBorder.Background == null ? null : currentLineBorder.Background.GetBrush(null), 2);
 
 			UpdateDefaultHighlighter();
 			TextArea.TextView.Redraw();
