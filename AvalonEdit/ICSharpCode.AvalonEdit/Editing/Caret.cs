@@ -441,7 +441,7 @@ namespace ICSharpCode.AvalonEdit.Editing
 		/// <summary>
 		/// Minimum distance of the caret to the view border.
 		/// </summary>
-		internal const double MinimumDistanceToViewBorder = 30;
+		internal const double MinimumDistanceToViewBorder = 0;
 		
 		/// <summary>
 		/// Scrolls the text view so that the caret is visible.
