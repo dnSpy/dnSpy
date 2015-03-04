@@ -165,7 +165,7 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 				MemberMapping mapping;
 				var cm = DebugInformation.CodeMappings;
 				if (cm != null && cm.TryGetValue(key, out mapping)) {
-					var variable = mapping.LocalVariables.FirstOrDefault(v => v.Name == targetName);
+					var variable = mapping.LocalVariables == null ? null : mapping.LocalVariables.FirstOrDefault(v => v.Name == targetName);
 					if (variable != null && variable.OriginalVariable != null) {
 						if (expression is MemberReferenceExpression) {
 							var memberExpression = (MemberReferenceExpression)expression;
