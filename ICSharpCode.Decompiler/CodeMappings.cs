@@ -204,18 +204,12 @@ namespace ICSharpCode.Decompiler
 			
 			// try find an exact match
 			var map = codeMapping.MemberCodeMappings.Find(m => m.ILInstructionOffset.From <= ilOffset && ilOffset < m.ILInstructionOffset.To);
-			
+			isMatch = map != null;
 			if (map == null) {
 				// get the immediate next one
 				map = codeMapping.MemberCodeMappings.Find(m => m.ILInstructionOffset.From > ilOffset);
-				isMatch = false;
-				if (map == null)
-					map = codeMapping.MemberCodeMappings.LastOrDefault(); // get the last
-				
-				return map;
 			}
 			
-			isMatch = true;
 			return map;
 		}
 		
@@ -245,12 +239,9 @@ namespace ICSharpCode.Decompiler
 			if (codeMapping == null) {
 				codeMapping = mapping.MemberCodeMappings.Find(cm => cm.ILInstructionOffset.From > ilOffset);
 				if (codeMapping == null) {
-					codeMapping = mapping.MemberCodeMappings.LastOrDefault();
-					if (codeMapping == null) {
-						location = new TextLocation();
-						endLocation = new TextLocation();
-						return false;
-					}
+					location = new TextLocation();
+					endLocation = new TextLocation();
+					return false;
 				}
 			}
 			
