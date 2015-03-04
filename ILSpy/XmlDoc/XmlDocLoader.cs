@@ -60,12 +60,8 @@ namespace ICSharpCode.ILSpy.XmlDoc
 					if (xmlDocFile == null) {
 						xmlDocFile = FindXmlDocumentation(Path.GetFileName(module.Location), module.RuntimeVersion);
 					}
-					if (xmlDocFile != null) {
-						xmlDoc = XmlDocumentationProvider.Create(xmlDocFile);
-						cache.Add(module, xmlDoc);
-					} else {
-						xmlDoc = null;
-					}
+					xmlDoc = xmlDocFile == null ? null : XmlDocumentationProvider.Create(xmlDocFile);
+					cache.Add(module, xmlDoc);
 				}
 				return xmlDoc;
 			}
