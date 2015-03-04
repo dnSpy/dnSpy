@@ -48,7 +48,7 @@
 		<color name="xmlentity" fg="Teal" />
 		<color name="xmlbrokenentity" fg="Olive" />
 		<color name="link" fg="Blue" />
-		<color name="selection" bg="#ADD6FF" />
+		<color name="selection" bg="#663399FF" />
 		<color name="localdefinition" bg="LightSeaGreen" />
 		<color name="localreference" bg="GreenYellow" />
 		<color name="currentstatement" fg="Black" bg="#FFF181" />
