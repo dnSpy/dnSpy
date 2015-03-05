@@ -691,12 +691,16 @@ namespace ICSharpCode.ILSpy.TextView
 		/// </summary>
 		internal void JumpToReference(ReferenceSegment referenceSegment)
 		{
+			var localTarget = FindLocalTarget(referenceSegment);
+			if (localTarget != null)
+				referenceSegment = localTarget;
+
 			object reference = referenceSegment.Reference;
 			if (referenceSegment.IsLocal) {
 				ClearLocalReferenceMarks();
 				if (references != null && reference != null) {
 					foreach (var r in references) {
-						if (reference.Equals(r.Reference)) {
+						if (RefSegEquals(referenceSegment, r)) {
 							var mark = textMarkerService.Create(r.StartOffset, r.Length);
 							mark.HighlightingColor = () => {
 								return (r.IsLocalTarget ?
@@ -709,19 +713,22 @@ namespace ICSharpCode.ILSpy.TextView
 				}
 				return;
 			}
-			if (definitionLookup != null) {
-				int pos = definitionLookup.GetDefinitionPosition(reference);
-				if (pos >= 0) {
-					textEditor.TextArea.Focus();
-					textEditor.Select(pos, 0);
-					textEditor.ScrollTo(textEditor.TextArea.Caret.Line, textEditor.TextArea.Caret.Column);
-					Dispatcher.Invoke(DispatcherPriority.Background, new Action(
-						delegate {
-							CaretHighlightAdorner.DisplayCaretHighlightAnimation(textEditor.TextArea);
-						}));
-					return;
-				}
+			int pos = -1;
+			if (referenceSegment.IsLocalTarget)
+				pos = referenceSegment.EndOffset;
+			if (pos < 0 && definitionLookup != null)
+				pos = definitionLookup.GetDefinitionPosition(reference);
+			if (pos >= 0) {
+				textEditor.TextArea.Focus();
+				textEditor.Select(pos, 0);
+				textEditor.ScrollTo(textEditor.TextArea.Caret.Line, textEditor.TextArea.Caret.Column);
+				Dispatcher.Invoke(DispatcherPriority.Background, new Action(
+					delegate {
+						CaretHighlightAdorner.DisplayCaretHighlightAnimation(textEditor.TextArea);
+					}));
+				return;
 			}
+
 			MainWindow.Instance.JumpToReference(reference);
 		}
 
@@ -950,11 +957,28 @@ namespace ICSharpCode.ILSpy.TextView
 
 		ReferenceSegment FindLocalTarget(ReferenceSegment refSeg)
 		{
+			if (references == null)
+				return null;
 			foreach (var r in references) {
-				if (r.IsLocalTarget && r.Reference.Equals(refSeg.Reference))
+				if (r.IsLocalTarget && RefSegEquals(r, refSeg))
 					return r;
 			}
 			return null;
+		}
+
+		static bool RefSegEquals(ReferenceSegment a, ReferenceSegment b)
+		{
+			if (a == b)
+				return true;
+			if (a == null || b == null)
+				return false;
+			if (a.Reference == b.Reference)
+				return true;
+			if (a.Reference == null || b.Reference == null)
+				return false;
+			var ma = a.Reference as IMemberRef;
+			var mb = b.Reference as IMemberRef;
+			return ma != null && mb != null && new SigComparer().Equals(ma, mb);
 		}
 	}
 
