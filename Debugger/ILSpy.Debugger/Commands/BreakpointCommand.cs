@@ -44,8 +44,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (bp == null)
 				bp = GetClosest(cm, line);
 
-			if (bp != null)
+			if (bp != null) {
 				DebuggerService.ToggleBreakpointAt(bp);
+				MainWindow.Instance.TextView.ScrollAndMoveCaretTo(bp.StartLocation.Line, bp.StartLocation.Column);
+			}
 		}
 
 		static SourceCodeMapping FindByLineColumn(Dictionary<MethodKey, MemberMapping> cm, int line, int column)

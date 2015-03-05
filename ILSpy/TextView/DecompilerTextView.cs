@@ -579,8 +579,7 @@ namespace ICSharpCode.ILSpy.TextView
 					cm[key].GetInstructionByTokenAndOffset((uint)ilOffset, out methodDef, out location, out endLocation)) {
 					// update marker
 					DebuggerService.JumpToCurrentLine(methodDef, location.Line, location.Column, endLocation.Line, endLocation.Column, ilOffset);
-					textEditor.ScrollTo(location.Line, location.Column);
-					textEditor.TextArea.Caret.Location = new ICSharpCode.AvalonEdit.Document.TextLocation(location.Line, location.Column);
+					ScrollAndMoveCaretTo(location.Line, location.Column);
 
 					UnfoldAndScroll(location.Line, false);
 					updatedMarker = true;
@@ -915,6 +914,12 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 		#endregion
+
+		public void ScrollAndMoveCaretTo(int line, int column)
+		{
+			TextEditor.ScrollTo(line, column);
+			TextEditor.TextArea.Caret.Location = new ICSharpCode.AvalonEdit.Document.TextLocation(line, column);
+		}
 	}
 
 	public class DecompilerTextViewState

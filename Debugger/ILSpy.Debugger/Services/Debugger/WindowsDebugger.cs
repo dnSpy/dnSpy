@@ -841,8 +841,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					DebugInformation.MustJumpToReference = false; // we do not need to step into/out
 					DebuggerService.RemoveCurrentLineMarker();
 					DebuggerService.JumpToCurrentLine(methodDef, location.Line, location.Column, endLocation.Line, endLocation.Column, ip.Offset);
-					MainWindow.Instance.TextView.TextEditor.ScrollTo(location.Line, location.Column);
-					MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location = new ICSharpCode.AvalonEdit.Document.TextLocation(location.Line, location.Column);
+					MainWindow.Instance.TextView.ScrollAndMoveCaretTo(location.Line, location.Column);
 				}
 				else {
 					StepIntoUnknownFrame(frame);
