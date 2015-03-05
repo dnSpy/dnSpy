@@ -208,12 +208,12 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				InitializeService();
 			}
 			
+			if (DebugStarting != null)
+				DebugStarting(this, EventArgs.Empty);
 			string version = debugger.GetProgramVersion(existingProcess.MainModule.FileName);
 			if (version.StartsWith("v1.0")) {
-				MessageBox.Show("Net10NotSupported");
+				StartError("Net10NotSupported");
 			} else {
-				if (DebugStarting != null)
-					DebugStarting(this, EventArgs.Empty);
 				
 				try {
 					// set the JIT flag for evaluating optimized code
@@ -226,11 +226,11 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					// CORDBG_E_DEBUGGER_ALREADY_ATTACHED
 					if (e is COMException || e is UnauthorizedAccessException) {
 						string msg = "CannotAttachToProcess";
-						MessageBox.Show(msg + " " + e.Message);
+						StartError(msg + " " + e.Message);
 						
+					} else {
 						if (DebugStopped != null)
 							DebugStopped(this, EventArgs.Empty);
-					} else {
 						throw;
 					}
 				}
