@@ -317,8 +317,14 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			StackFrame frame;
 			var map = GetCurrentCodeMapping(out frame, out isMatch);
 			if (map == null) {
-				frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
-				frame.ILRanges = new [] { 0, 1 };
+				// The user has selected another method and pressed F10/F11 while in that method
+				// instead of the current method. Make sure the debugged method is shown before
+				// we continue.
+				StepIntoUnknownFrame(frame);
+				var info = DebugInformation.DebugStepInformation;
+				if (info != null)
+					MainWindow.Instance.JumpToReference(info.Item3);
+				return null;
 			} else {
 				//var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
 				frame.SourceCodeLine = map.StartLocation.Line;
