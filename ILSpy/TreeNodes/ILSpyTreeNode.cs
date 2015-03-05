@@ -89,6 +89,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		protected override void OnChildrenChanged(NotifyCollectionChangedEventArgs e)
 		{
+			// Make sure to call the base before executing the other code. ApplyFilterToChild()
+			// could result in an assembly resolve which could then add a new assembly to the
+			// assembly list and trigger a new OnChildrenChanged(). This would then lead to an
+			// exception.
+			base.OnChildrenChanged(e);
+
 			if (e.NewItems != null) {
 				if (IsVisible) {
 					foreach (ILSpyTreeNode node in e.NewItems)
@@ -97,7 +103,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					childrenNeedFiltering = true;
 				}
 			}
-			base.OnChildrenChanged(e);
 		}
 
 		void ApplyFilterToChild(ILSpyTreeNode child)
