@@ -65,24 +65,7 @@ namespace ICSharpCode.Decompiler
 			// add list for the current source code line
 			currentList.Add(ILInstructionOffset);
 
-			// add inverted
-			currentList.AddRange(MemberMapping.InvertedList);
-
-			if (isMatch) {
-				// if the current list contains the last mapping, add also the last gap
-				var lastInverted = MemberMapping.InvertedList.LastOrDefault();
-				if (!lastInverted.IsDefault && lastInverted.From == currentList[currentList.Count - 1].To)
-					currentList.Add(lastInverted);
-			}
-			
-			// set the output
-			var resultList = new List<int>();
-			foreach (var element in ILRange.OrderAndJoint(currentList)) {
-				resultList.Add((int)element.From);
-				resultList.Add((int)element.To);
-			}
-			
-			return resultList.ToArray();
+			return MemberMapping.ToArray(currentList, isMatch);
 		}
 
 		public override string ToString()
@@ -149,6 +132,31 @@ namespace ICSharpCode.Decompiler
 				}
 				return invertedList;
 			}
+		}
+
+		public int[] ToArray(List<ILRange> currentList, bool isMatch)
+		{
+			if (currentList == null)
+				currentList = new List<ILRange>();
+
+			// add inverted
+			currentList.AddRange(InvertedList);
+
+			if (isMatch) {
+				// if the current list contains the last mapping, add also the last gap
+				var lastInverted = InvertedList.LastOrDefault();
+				if (!lastInverted.IsDefault && lastInverted.From == currentList[currentList.Count - 1].To)
+					currentList.Add(lastInverted);
+			}
+			
+			// set the output
+			var resultList = new List<int>();
+			foreach (var element in ILRange.OrderAndJoint(currentList)) {
+				resultList.Add((int)element.From);
+				resultList.Add((int)element.To);
+			}
+			
+			return resultList.ToArray();
 		}
 	}
 	

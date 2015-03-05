@@ -293,40 +293,53 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		
 		// Stepping:
 		
-		SourceCodeMapping GetCurrentCodeMapping(out StackFrame frame, out bool isMatch)
+		SourceCodeMapping GetCurrentCodeMapping(out StackFrame frame, out bool isMatch, out bool methodExists)
 		{
 			isMatch = false;
+			methodExists = false;
 			frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
 			var key = frame.MethodInfo.ToMethodKey();
-			var ip = frame.IP;
-			if (ip.IsInvalid)
-				return null;
 			
 			// get the mapped instruction from the current line marker or the next one
-			//TODO: Could fail to find mapping if user has switched to another method than we're debugging
 			var cm = DebugInformation.CodeMappings;
 			if (cm == null || !cm.ContainsKey(key))
 				return null;
-			
+			methodExists = true;
+
+			var ip = frame.IP;
+			if (ip.IsInvalid)
+				return null;
+
 			return cm[key].GetInstructionByOffset((uint)ip.Offset, out isMatch);
 		}
 		
 		StackFrame GetStackFrame()
 		{
-			bool isMatch;
+			bool isMatch, methodExists;
 			StackFrame frame;
-			var map = GetCurrentCodeMapping(out frame, out isMatch);
+			var map = GetCurrentCodeMapping(out frame, out isMatch, out methodExists);
 			if (map == null) {
-				// The user has selected another method and pressed F10/F11 while in that method
-				// instead of the current method. Make sure the debugged method is shown before
-				// we continue.
-				StepIntoUnknownFrame(frame);
-				var info = DebugInformation.DebugStepInformation;
-				if (info != null)
-					MainWindow.Instance.JumpToReference(info.Item3);
-				return null;
+				if (frame.IP.IsInvalid) {
+					frame.SourceCodeLine = -1;
+					frame.ILRanges = new[] { 0, 1 };
+				}
+				else if (methodExists) {
+					frame.SourceCodeLine = -1;
+					frame.ILRanges = DebugInformation.CodeMappings[frame.MethodInfo.ToMethodKey()].ToArray(null, false);
+					if (frame.ILRanges.Length == 0)
+						frame.ILRanges = new[] { 0, 1 };
+				}
+				else {
+					// The user has selected another method and pressed F10/F11 while in that method
+					// instead of the current method. Make sure the debugged method is shown before
+					// we continue.
+					StepIntoUnknownFrame(frame);
+					var info = DebugInformation.DebugStepInformation;
+					if (info != null)
+						MainWindow.Instance.JumpToReference(info.Item3);
+					return null;
+				}
 			} else {
-				//var frame = debuggedProcess.SelectedThread.MostRecentStackFrame;
 				frame.SourceCodeLine = map.StartLocation.Line;
 				frame.ILRanges = map.ToArray(isMatch);
 			}
