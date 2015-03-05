@@ -88,8 +88,8 @@ namespace ICSharpCode.ILSpy
 		string Icon { get; }
 		string Header { get; }
 		string Category { get; }
-		
 		double Order { get; }
+		string InputGestureText { get; }
 	}
 	
 	[MetadataAttribute]
@@ -105,6 +105,7 @@ namespace ICSharpCode.ILSpy
 		public string Header { get; set; }
 		public string Category { get; set; }
 		public double Order { get; set; }
+		public string InputGestureText { get; set; }
 	}
 	
 	internal class ContextMenuProvider
@@ -191,6 +192,7 @@ namespace ICSharpCode.ILSpy
 							menuItem.Click += delegate { entry.Execute(context); };
 						} else
 							menuItem.IsEnabled = false;
+						menuItem.InputGestureText = entryPair.Metadata.InputGestureText ?? string.Empty;
 						menu.Items.Add(menuItem);
 					}
 				}

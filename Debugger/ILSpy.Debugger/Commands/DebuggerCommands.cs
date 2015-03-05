@@ -11,6 +11,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Xml.Linq;
 using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
@@ -20,6 +21,8 @@ using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
 using dnlib.DotNet;
+
+using NR = ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.Debugger.Commands
 {
@@ -140,16 +143,23 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			SendWpfWindowPos(inst, HWND_TOP); inst.Activate();
 			
 			// jump to type & expand folding
-			if (DebugInformation.MustJumpToReference && DebugInformation.DebugStepInformation != null) {
-				var method = DebugInformation.DebugStepInformation.Item3;
-				if (!inst.JumpToReference(method)) {
-					MessageBox.Show(MainWindow.Instance,
-						string.Format("Could not find {0}\n" +
-						"Make sure that it's visible in the treeview and not a hidden method or part of a hidden class. You could also try to debug the method in IL mode.", method));
-				}
-			}
+			if (DebugInformation.MustJumpToReference)
+				JumpToMethod();
 			
 			inst.SetStatus("Debugging...", Brushes.Red);
+		}
+
+		public static void JumpToMethod()
+		{
+			var info = DebugInformation.DebugStepInformation;
+			if (info == null)
+				return;
+			var method = info.Item3;
+			if (!MainWindow.Instance.JumpToReference(method)) {
+				MessageBox.Show(MainWindow.Instance,
+					string.Format("Could not find {0}\n" +
+					"Make sure that it's visible in the treeview and not a hidden method or part of a hidden class. You could also try to debug the method in IL mode.", method));
+			}
 		}
 	}
 
@@ -558,6 +568,117 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		{
 			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
 			BreakpointHelper.Toggle(location.Line, location.Column);
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Insert B_reakpoint",
+							Icon = "images/Breakpoint.png",
+							InputGestureText = "F9",
+							Category = "Debug",
+							Order = 1.0)]
+	internal sealed class InsertBreakpointContextMenuEntry : IContextMenuEntry
+	{
+		public bool IsVisible(TextViewContext context)
+		{
+			return context.SelectedTreeNodes == null &&
+				DebuggerService.CurrentDebugger != null;
+		}
+
+		public bool IsEnabled(TextViewContext context)
+		{
+			return IsVisible(context);
+		}
+
+		public void Execute(TextViewContext context)
+		{
+			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
+			BreakpointHelper.Toggle(location.Line, location.Column);
+		}
+
+		public string GetMenuHeader(TextViewContext context)
+		{
+			return null;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "S_how Next Statement",
+							InputGestureText = "Alt+Num *",
+							Category = "Debug",
+							Order = 2.0)]
+	internal sealed class ShowNextStatementContextMenuEntry : IContextMenuEntry
+	{
+		public ShowNextStatementContextMenuEntry() {
+			MainWindow.Instance.KeyDown += OnKeyDown;
+		}
+
+		void OnKeyDown(object sender, KeyEventArgs e)
+		{
+			if (Keyboard.Modifiers == ModifierKeys.Alt && e.SystemKey == Key.Multiply) {
+				if (IsEnabled(null)) {
+					Execute();
+					e.Handled = true;
+				}
+			}
+		}
+
+		public bool IsVisible(TextViewContext context)
+		{
+			return (context == null || context.SelectedTreeNodes == null) &&
+				DebuggerService.CurrentDebugger != null &&
+				DebuggerService.CurrentDebugger.IsDebugging &&
+				!DebuggerService.CurrentDebugger.IsProcessRunning;
+		}
+
+		public bool IsEnabled(TextViewContext context)
+		{
+			return IsVisible(context);
+		}
+
+		public void Execute(TextViewContext context)
+		{
+			Execute();
+		}
+
+		void Execute()
+		{
+			if (!TryExecute())
+				DecompileDebuggedMethod();
+		}
+
+		bool TryExecute()
+		{
+			var info = DebugInformation.DebugStepInformation;
+			var nodes = MainWindow.Instance.SelectedNodes.ToArray();
+			if (nodes.Length != 1)
+				return false;
+			var methodNode = nodes[0] as MethodTreeNode;
+			if (methodNode == null)
+				return false;
+			var currentKey = new MethodKey(methodNode.MethodDefinition);
+			if (!currentKey.Equals(info.Item1))
+				return false;
+
+			var cm = DebugInformation.CodeMappings;
+			if (cm == null || !cm.ContainsKey(currentKey))
+				return false;
+
+			MethodDef methodDef;
+			NR.TextLocation location, endLocation;
+			if (!cm[currentKey].GetInstructionByTokenAndOffset((uint)info.Item2, out methodDef, out location, out endLocation))
+				return false;
+
+			MainWindow.Instance.TextView.ScrollAndMoveCaretTo(location.Line, location.Column);
+			return true;
+		}
+
+		void DecompileDebuggedMethod()
+		{
+			DebuggerCommand.JumpToMethod();
+		}
+
+		public string GetMenuHeader(TextViewContext context)
+		{
+			return null;
 		}
 	}
 }
