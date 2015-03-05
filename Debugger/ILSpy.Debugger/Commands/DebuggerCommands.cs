@@ -33,17 +33,20 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			this.needsDebuggerActive = needsDebuggerActive;
 			this.mustBePaused = mustBePaused;
 			MainWindow.Instance.KeyUp += OnKeyUp;
+			MainWindow.Instance.KeyDown += OnKeyDown;
 		}
 
 		void OnKeyUp(object sender, KeyEventArgs e)
 		{
+			if (e.Key == Key.F5 && this is ContinueDebuggingCommand) {
+				((ContinueDebuggingCommand)this).Execute(null);
+				e.Handled = true;
+			}
+		}
+
+		void OnKeyDown(object sender, KeyEventArgs e)
+		{
 			switch (e.SystemKey == Key.F10 ? e.SystemKey : e.Key) {
-				case Key.F5:
-					if (this is ContinueDebuggingCommand) {
-						((ContinueDebuggingCommand)this).Execute(null);
-						e.Handled = true;
-					}
-					break;
 				case Key.F9:
 					if (this is ToggleBreakpointCommand) {
 						((ToggleBreakpointCommand)this).Execute(null);
