@@ -646,9 +646,11 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		public void JumpToReference(object reference)
+		public bool JumpToReference(object reference)
 		{
-			JumpToReferenceAsync(reference).HandleExceptions();
+			bool retVal;
+			JumpToReferenceAsync(reference, out retVal).HandleExceptions();
+			return retVal;
 		}
 		
 		/// <summary>
@@ -658,12 +660,13 @@ namespace ICSharpCode.ILSpy
 		/// Returns a task that will signal completion when the decompilation of the jump target has finished.
 		/// The task will be marked as canceled if the decompilation is canceled.
 		/// </returns>
-		public Task JumpToReferenceAsync(object reference)
+		public Task JumpToReferenceAsync(object reference, out bool success)
 		{
 			decompilationTask = TaskHelper.CompletedTask;
 			ILSpyTreeNode treeNode = FindTreeNode(reference);
 			if (treeNode != null) {
 				SelectNode(treeNode);
+				success = true;
 			} else if (reference is dnlib.DotNet.Emit.OpCode) {
 				string link = "http://msdn.microsoft.com/library/system.reflection.emit.opcodes." + ((dnlib.DotNet.Emit.OpCode)reference).Code.ToString().ToLowerInvariant() + ".aspx";
 				try {
@@ -671,7 +674,10 @@ namespace ICSharpCode.ILSpy
 				} catch {
 					
 				}
+				success = true;
 			}
+			else
+				success = false;
 			return decompilationTask;
 		}
 		#endregion

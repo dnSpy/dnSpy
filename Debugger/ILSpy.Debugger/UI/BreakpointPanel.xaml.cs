@@ -82,9 +82,10 @@ namespace ICSharpCode.ILSpy.Debugger.UI
             var selectedItem = view.SelectedItem as BookmarkBase;
             if (null == selectedItem)
                 return;
-            MainWindow.Instance.JumpToReference(selectedItem.MemberReference);
-            MainWindow.Instance.TextView.UnfoldAndScroll(selectedItem.LineNumber);
-            e.Handled = true;
+			if (MainWindow.Instance.JumpToReference(selectedItem.MemberReference)) {
+				MainWindow.Instance.TextView.UnfoldAndScroll(selectedItem.LineNumber);
+				e.Handled = true;
+			}
 		}
         
         void view_KeyUp(object sender, KeyEventArgs e)

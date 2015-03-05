@@ -177,8 +177,14 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			SendWpfWindowPos(inst, HWND_TOP); inst.Activate();
 			
 			// jump to type & expand folding
-			if (DebugInformation.MustJumpToReference && DebugInformation.DebugStepInformation != null)
-				inst.JumpToReference(DebugInformation.DebugStepInformation.Item3);
+			if (DebugInformation.MustJumpToReference && DebugInformation.DebugStepInformation != null) {
+				var method = DebugInformation.DebugStepInformation.Item3;
+				if (!inst.JumpToReference(method)) {
+					MessageBox.Show(MainWindow.Instance,
+						string.Format("Could not find {0}\n" +
+						"Make sure that it's visible in the treeview and not a hidden method or part of a hidden class. You could also try to debug the method in IL mode.", method));
+				}
+			}
 			
 			inst.SetStatus("Debugging...", Brushes.Red);
 		}

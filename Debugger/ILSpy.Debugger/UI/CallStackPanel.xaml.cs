@@ -233,10 +233,11 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 			IMemberRef mr = XmlDocKeyProvider.FindMemberByKey(foundAssembly.ModuleDefinition, "M:" + selectedItem.Name);
 			if (mr == null)
 				return;
-			MainWindow.Instance.JumpToReference(mr);
-			// TODO: jump to associated line
-            // MainWindow.Instance.TextView.UnfoldAndScroll(selectedItem.LineNumber);
-            e.Handled = true;
+			if (MainWindow.Instance.JumpToReference(mr)) {
+				// TODO: jump to associated line
+				// MainWindow.Instance.TextView.UnfoldAndScroll(selectedItem.LineNumber);
+				e.Handled = true;
+			}
         }
         
         void SwitchIsChecked(object sender, EventArgs args)
