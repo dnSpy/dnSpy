@@ -108,6 +108,7 @@ namespace ICSharpCode.ILSpy.TextView
 			
 			this.referenceElementGenerator = new ReferenceElementGenerator(this.JumpToReference, this.IsLink);
 			textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
+			textEditor.KeyDown += F12JumpToReference;
 			this.uiElementGenerator = new UIElementGenerator();
 			textEditor.TextArea.TextView.ElementGenerators.Add(uiElementGenerator);
 			textEditor.Options.RequireControlModifierForHyperlinkClick = false;
@@ -919,6 +920,41 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			TextEditor.ScrollTo(line, column);
 			TextEditor.TextArea.Caret.Location = new ICSharpCode.AvalonEdit.Document.TextLocation(line, column);
+		}
+
+		void F12JumpToReference(object sender, KeyEventArgs e)
+		{
+			if (e.Key != Key.F12)
+				return;
+			int offset = textEditor.TextArea.Caret.Offset;
+			var refSeg = referenceElementGenerator.References.FindSegmentsContaining(offset).FirstOrDefault();
+			if (refSeg == null)
+				return;
+			var localTarget = FindLocalTarget(refSeg);
+			if (localTarget != null)
+				refSeg = localTarget;
+
+			if (refSeg.IsLocalTarget) {
+				var line = textEditor.Document.GetLineByOffset(refSeg.StartOffset);
+				int column = refSeg.StartOffset - line.Offset + 1;
+				ScrollAndMoveCaretTo(line.LineNumber, column);
+				e.Handled = true;
+				return;
+			}
+
+			if (refSeg.IsLocal)
+				return;
+			MainWindow.Instance.JumpToReference(refSeg.Reference);
+			e.Handled = true;
+		}
+
+		ReferenceSegment FindLocalTarget(ReferenceSegment refSeg)
+		{
+			foreach (var r in references) {
+				if (r.IsLocalTarget && r.Reference.Equals(refSeg.Reference))
+					return r;
+			}
+			return null;
 		}
 	}
 
