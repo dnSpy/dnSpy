@@ -153,6 +153,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			CurrentDebugger.DebugStopped -= OnDebugStopped;
 			CurrentDebugger.IsProcessRunningChanged -= CurrentDebugger_IsProcessRunningChanged;
 			
+			DebugInformation.DebugStepInformation = null;
 			MainWindow.Instance.HideStatus();
 		}
 		
