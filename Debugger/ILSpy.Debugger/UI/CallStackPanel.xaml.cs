@@ -262,7 +262,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		}
 	}
 	
-    [ExportMainMenuCommand(Menu="_Debug", Header="Show _Callstack", MenuCategory="View", MenuOrder=9)]
+    [ExportMainMenuCommand(Menu="_Debug", Header="_Show Callstack", MenuCategory="View", MenuOrder=9)]
     public class CallstackPanelcommand : SimpleCommand
     {
         public override void Execute(object parameter)

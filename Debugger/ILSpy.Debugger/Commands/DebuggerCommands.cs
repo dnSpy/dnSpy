@@ -32,43 +32,6 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		{
 			this.needsDebuggerActive = needsDebuggerActive;
 			this.mustBePaused = mustBePaused;
-			MainWindow.Instance.KeyUp += OnKeyUp;
-			MainWindow.Instance.KeyDown += OnKeyDown;
-		}
-
-		void OnKeyUp(object sender, KeyEventArgs e)
-		{
-			if (e.Key == Key.F5 && this is ContinueDebuggingCommand) {
-				((ContinueDebuggingCommand)this).Execute(null);
-				e.Handled = true;
-			}
-		}
-
-		void OnKeyDown(object sender, KeyEventArgs e)
-		{
-			switch (e.SystemKey == Key.F10 ? e.SystemKey : e.Key) {
-				case Key.F9:
-					if (this is ToggleBreakpointCommand) {
-						((ToggleBreakpointCommand)this).Execute(null);
-						e.Handled = true;
-					}
-					break;
-				case Key.F10:
-					if (this is StepOverCommand) {
-						((StepOverCommand)this).Execute(null);
-						e.Handled = true;
-					}
-					break;
-				case Key.F11:
-					if (this is StepIntoCommand) {
-						((StepIntoCommand)this).Execute(null);
-						e.Handled = true;
-					}
-					break;
-				default:
-					// do nothing
-					break;
-			}
 		}
 		
 		#region Static members
@@ -153,7 +116,6 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			CurrentDebugger.DebugStopped -= OnDebugStopped;
 			CurrentDebugger.IsProcessRunningChanged -= CurrentDebugger_IsProcessRunningChanged;
 			
-			DebugInformation.DebugStepInformation = null;
 			MainWindow.Instance.HideStatus();
 		}
 		
@@ -331,7 +293,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	
 	[ExportMainMenuCommand(Menu = "_Debug",
 	                       MenuCategory = "Start",
-	                       Header = "Attach to _running application",
+	                       Header = "Attach to _Process...",
 	                       MenuOrder = 1)]
 	internal sealed class AttachCommand : DebuggerCommand
 	{
@@ -365,6 +327,15 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	{
 		public ContinueDebuggingCommand()
 			: base(true, true) {
+			MainWindow.Instance.KeyUp += OnKeyUp;
+		}
+
+		void OnKeyUp(object sender, KeyEventArgs e)
+		{
+			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F5) {
+				this.Execute(null);
+				e.Handled = true;
+			}
 		}
 
 		public override void Execute(object parameter)
@@ -381,11 +352,23 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 						   MenuIcon = "Images/Break.png",
 						   MenuCategory = "SteppingArea",
 						   Header = "Brea_k",
+						   InputGestureText = "Ctrl+Break",
 						   MenuOrder = 2.1)]
 	internal sealed class BreakDebuggingCommand : DebuggerCommand
 	{
 		public BreakDebuggingCommand()
 			: base(true, false) {
+			MainWindow.Instance.KeyDown += OnKeyDown;
+		}
+
+		void OnKeyDown(object sender, KeyEventArgs e)
+		{
+			if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.Pause) {
+				if (CanExecute(null)) {
+					this.Execute(null);
+					e.Handled = true;
+				}
+			}
 		}
 
 		public override void Execute(object parameter)
@@ -408,6 +391,17 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	{
 		public StepIntoCommand()
 			: base(true, true) {
+			MainWindow.Instance.KeyDown += OnKeyDown;
+		}
+
+		void OnKeyDown(object sender, KeyEventArgs e)
+		{
+			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F11) {
+				if (CanExecute(null)) {
+					this.Execute(null);
+					e.Handled = true;
+				}
+			}
 		}
 
 		public override void Execute(object parameter)
@@ -429,6 +423,17 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	{
 		public StepOverCommand()
 			: base(true, true) {
+			MainWindow.Instance.KeyDown += OnKeyDown;
+		}
+
+		void OnKeyDown(object sender, KeyEventArgs e)
+		{
+			if (Keyboard.Modifiers == ModifierKeys.None && (e.SystemKey == Key.F10 ? e.SystemKey : e.Key) == Key.F10) {
+				if (CanExecute(null)) {
+					this.Execute(null);
+					e.Handled = true;
+				}
+			}
 		}
 
 		public override void Execute(object parameter)
@@ -444,11 +449,23 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuIcon = "Images/StepOut.png",
 	                       MenuCategory = "SteppingArea",
 	                       Header = "Step Ou_t",
+						   InputGestureText = "Shift+F11",
 	                       MenuOrder = 5)]
 	internal sealed class StepOutCommand : DebuggerCommand
 	{
 		public StepOutCommand()
 			: base(true, true) {
+			MainWindow.Instance.KeyDown += OnKeyDown;
+		}
+
+		void OnKeyDown(object sender, KeyEventArgs e)
+		{
+			if (Keyboard.Modifiers == ModifierKeys.Shift && e.Key == Key.F11) {
+				if (CanExecute(null)) {
+					this.Execute(null);
+					e.Handled = true;
+				}
+			}
 		}
 
 		public override void Execute(object parameter)
@@ -462,7 +479,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	
 	[ExportMainMenuCommand(Menu = "_Debug",
 	                       MenuCategory = "SteppingArea",
-	                       Header = "_Detach from running application",
+	                       Header = "Det_ach",
 	                       MenuOrder = 6)]
 	internal sealed class DetachCommand : DebuggerCommand
 	{
@@ -484,12 +501,24 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportMainMenuCommand(Menu = "_Debug",
 	                       MenuIcon = "Images/DeleteAllBreakpoints.png",
 	                       MenuCategory = "Others",
-	                       Header = "Remove all _breakpoints",
+	                       Header = "_Delete all breakpoints",
+						   InputGestureText = "Ctrl+Shift+F9",
 	                       MenuOrder = 7.9)]
 	internal sealed class RemoveBreakpointsCommand : DebuggerCommand
 	{
 		public RemoveBreakpointsCommand()
 			: base(null) {
+			MainWindow.Instance.KeyDown += OnKeyDown;
+		}
+
+		void OnKeyDown(object sender, KeyEventArgs e)
+		{
+			if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.F9) {
+				if (CanExecute(null)) {
+					this.Execute(null);
+					e.Handled = true;
+				}
+			}
 		}
 
 		public override void Execute(object parameter)
@@ -512,6 +541,17 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	{
 		public ToggleBreakpointCommand()
 			: base(null) {
+			MainWindow.Instance.KeyDown += OnKeyDown;
+		}
+
+		void OnKeyDown(object sender, KeyEventArgs e)
+		{
+			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F9) {
+				if (CanExecute(null)) {
+					this.Execute(null);
+					e.Handled = true;
+				}
+			}
 		}
 
 		public override void Execute(object parameter)
