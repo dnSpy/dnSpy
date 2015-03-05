@@ -108,7 +108,7 @@ namespace ICSharpCode.ILSpy.TextView
 			
 			this.referenceElementGenerator = new ReferenceElementGenerator(this.JumpToReference, this.IsLink);
 			textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
-			textEditor.KeyDown += F12JumpToReference;
+			textEditor.PreviewKeyDown += TextEditor_PreviewKeyDown;
 			this.uiElementGenerator = new UIElementGenerator();
 			textEditor.TextArea.TextView.ElementGenerators.Add(uiElementGenerator);
 			textEditor.Options.RequireControlModifierForHyperlinkClick = false;
@@ -929,30 +929,62 @@ namespace ICSharpCode.ILSpy.TextView
 			TextEditor.TextArea.Caret.Location = new ICSharpCode.AvalonEdit.Document.TextLocation(line, column);
 		}
 
-		void F12JumpToReference(object sender, KeyEventArgs e)
+		void TextEditor_PreviewKeyDown(object sender, KeyEventArgs e)
 		{
-			if (e.Key != Key.F12)
+			bool isOnlyCtrl = Keyboard.Modifiers == ModifierKeys.Control;
+			if (isOnlyCtrl && e.Key == Key.PageUp) {
+				var textView = TextEditor.TextArea.TextView;
+				textView.EnsureVisualLines();
+				if (textView.VisualLines.Count > 0) {
+					var line = textView.VisualLines[0];
+					// If the full height isn't visible, pick the next one
+					if (line.VisualTop < textView.VerticalOffset && textView.VisualLines.Count > 1)
+						line = textView.VisualLines[1];
+					var docLine = line.FirstDocumentLine;
+					var caret = TextEditor.TextArea.Caret;
+					caret.Location = new ICSharpCode.AvalonEdit.Document.TextLocation(docLine.LineNumber, caret.Location.Column);
+				}
+				e.Handled = true;
 				return;
-			int offset = textEditor.TextArea.Caret.Offset;
-			var refSeg = referenceElementGenerator.References.FindSegmentsContaining(offset).FirstOrDefault();
-			if (refSeg == null)
-				return;
-			var localTarget = FindLocalTarget(refSeg);
-			if (localTarget != null)
-				refSeg = localTarget;
-
-			if (refSeg.IsLocalTarget) {
-				var line = textEditor.Document.GetLineByOffset(refSeg.StartOffset);
-				int column = refSeg.StartOffset - line.Offset + 1;
-				ScrollAndMoveCaretTo(line.LineNumber, column);
+			}
+			if (isOnlyCtrl && e.Key == Key.PageDown) {
+				var textView = TextEditor.TextArea.TextView;
+				textView.EnsureVisualLines();
+				if (textView.VisualLines.Count > 0) {
+					var line = textView.VisualLines[textView.VisualLines.Count - 1];
+					// If the full height isn't visible, pick the previous one
+					if (line.VisualTop - textView.VerticalOffset + line.Height > textView.ActualHeight && textView.VisualLines.Count > 1)
+						line = textView.VisualLines[textView.VisualLines.Count - 2];
+					var docLine = line.LastDocumentLine;
+					var caret = TextEditor.TextArea.Caret;
+					caret.Location = new ICSharpCode.AvalonEdit.Document.TextLocation(docLine.LineNumber, caret.Location.Column);
+				}
 				e.Handled = true;
 				return;
 			}
 
-			if (refSeg.IsLocal)
-				return;
-			MainWindow.Instance.JumpToReference(refSeg.Reference);
-			e.Handled = true;
+			if (e.Key == Key.F12) {
+				int offset = textEditor.TextArea.Caret.Offset;
+				var refSeg = referenceElementGenerator.References.FindSegmentsContaining(offset).FirstOrDefault();
+				if (refSeg == null)
+					return;
+				var localTarget = FindLocalTarget(refSeg);
+				if (localTarget != null)
+					refSeg = localTarget;
+
+				if (refSeg.IsLocalTarget) {
+					var line = textEditor.Document.GetLineByOffset(refSeg.StartOffset);
+					int column = refSeg.StartOffset - line.Offset + 1;
+					ScrollAndMoveCaretTo(line.LineNumber, column);
+					e.Handled = true;
+					return;
+				}
+
+				if (refSeg.IsLocal)
+					return;
+				MainWindow.Instance.JumpToReference(refSeg.Reference);
+				e.Handled = true;
+			}
 		}
 
 		ReferenceSegment FindLocalTarget(ReferenceSegment refSeg)
