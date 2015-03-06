@@ -79,8 +79,13 @@ namespace ICSharpCode.ILSpy.Debugger
 
 		public bool Equals(MethodKey other)
 		{
-			return token == other.token &&
-				moduleFullPath.Equals(other.moduleFullPath, StringComparison.OrdinalIgnoreCase);
+			if (token != other.token)
+				return false;
+			if (moduleFullPath == other.moduleFullPath)
+				return true;
+			if (moduleFullPath == null || other.moduleFullPath == null)
+				return false;
+			return moduleFullPath.Equals(other.moduleFullPath, StringComparison.OrdinalIgnoreCase);
 		}
 
 		public override bool Equals(object obj)
@@ -92,7 +97,7 @@ namespace ICSharpCode.ILSpy.Debugger
 
 		public override int GetHashCode()
 		{
-			return token ^ moduleFullPath.GetHashCode();
+			return token ^ (moduleFullPath == null ? 0 : moduleFullPath.GetHashCode());
 		}
 
 		public override string ToString()
@@ -102,6 +107,10 @@ namespace ICSharpCode.ILSpy.Debugger
 
 		public bool IsSameModule(string moduleFullPath)
 		{
+			if (this.moduleFullPath == moduleFullPath)
+				return true;
+			if (this.moduleFullPath == null)
+				return false;
 			return this.moduleFullPath.Equals(moduleFullPath, StringComparison.OrdinalIgnoreCase);
 		}
 	}

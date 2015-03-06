@@ -754,10 +754,16 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		void OnKeyDown(object sender, KeyEventArgs e)
 		{
 			if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && (e.SystemKey == Key.F10 ? e.SystemKey : e.Key) == Key.F10) {
-				if (IsEnabled(null)) {
+				if (IsEnabled(null))
 					Execute();
-					e.Handled = true;
+				else {
+					// Show the error message
+					SourceCodeMapping mapping;
+					string errMsg;
+					if (!GetSourceCodeMapping(out errMsg, out mapping))
+						MessageBox.Show(MainWindow.Instance, errMsg);
 				}
+				e.Handled = true;
 			}
 		}
 
@@ -769,10 +775,9 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				DebuggerService.CurrentDebugger.IsProcessRunning)
 				return false;
 
-			Tuple<MethodKey, int, IMemberRef> info;
-			MethodKey currentKey;
-			Dictionary<MethodKey, MemberMapping> cm;
-			return DebuggerUtils.VerifyAndGetCurrentDebuggedMethod(out info, out currentKey, out cm);
+			SourceCodeMapping mapping;
+			string errMsg;
+			return GetSourceCodeMapping(out errMsg, out mapping);
 		}
 
 		public bool IsEnabled(TextViewContext context)
@@ -797,7 +802,27 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		bool Execute(out string errMsg)
 		{
+			SourceCodeMapping mapping;
+			if (!GetSourceCodeMapping(out errMsg, out mapping))
+				return false;
+
+			int ilOffset = (int)mapping.ILInstructionOffset.From;
+			if (!DebuggerService.CurrentDebugger.CanSetInstructionPointer(ilOffset)) {
+				errMsg = "It's not safe to set the next statement here";
+				return false;
+			}
+			if (!DebuggerService.CurrentDebugger.SetInstructionPointer(ilOffset)) {
+				errMsg = "Setting the next statement failed.";
+				return false;
+			}
+
+			return true;
+		}
+
+		bool GetSourceCodeMapping(out string errMsg, out SourceCodeMapping mapping)
+		{
 			errMsg = string.Empty;
+			mapping = null;
 
 			if (DebuggerService.CurrentDebugger == null) {
 				errMsg = "No debugger exists";
@@ -821,19 +846,13 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			}
 
 			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
-			var mapping = BreakpointHelper.Find(cm, location.Line, location.Column);
+			mapping = BreakpointHelper.Find(cm, location.Line, location.Column);
 			if (mapping == null) {
 				errMsg = "It's not possible to set the next statement here";
 				return false;
 			}
-
-			int ilOffset = (int)mapping.ILInstructionOffset.From;
-			if (!DebuggerService.CurrentDebugger.CanSetInstructionPointer(ilOffset)) {
-				errMsg = "It's not safe to set the next statement here";
-				return false;
-			}
-			if (!DebuggerService.CurrentDebugger.SetInstructionPointer(ilOffset)) {
-				errMsg = "Setting the next statement failed.";
+			if (mapping.MemberMapping.MethodDefinition != info.Item3) {
+				errMsg = "The next statement cannot be set to another method";
 				return false;
 			}
 
@@ -864,16 +883,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 			if (info == null)
 				return false;
-			var nodes = MainWindow.Instance.SelectedNodes.ToArray();
-			if (nodes.Length != 1)
-				return false;
-			var methodNode = nodes[0] as MethodTreeNode;
-			if (methodNode == null)
-				return false;
-			currentKey = new MethodKey(methodNode.MethodDefinition);
-			if (currentKey != info.Item1)
-				return false;
 
+			currentKey = info.Item1;
 			if (codeMappings == null || !codeMappings.ContainsKey(currentKey))
 				return false;
 
