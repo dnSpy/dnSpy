@@ -374,7 +374,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		void OnKeyDown(object sender, KeyEventArgs e)
 		{
-			if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.Pause) {
+			if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.Cancel) {
 				if (CanExecute(null)) {
 					this.Execute(null);
 					e.Handled = true;
