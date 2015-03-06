@@ -32,6 +32,7 @@ Known issues
 * Debugger break command doesn't always work. Keep breaking until it finally gets it.
 * Stepping over an `endfinally` instruction causes the current line to be hidden. The reason is that the IP is unknown. Press F10 a few times and the IP should be known again.
 * The decompiler doesn't preserve all IL ranges which could cause some weird things happening while debugging, eg. you press F10 but remain on the same statement.
+* Debugger + IL mode: BPs can be set on any IL offset but the BPs are only triggered if they're at the start of statements (eg. offsets where the IL stack is empty and offsets following method calls).
 
 Credits
 =======

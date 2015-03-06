@@ -289,6 +289,44 @@ namespace Debugger
 			}
 			return null;
 		}
+
+		/// <summary>
+		/// Determine whether the instruction pointer can be set to a given IL offset
+		/// </summary>
+		/// <returns>false if not possible</returns>
+		public bool CanSetIP(int ilOffset)
+		{
+			return SetIP(ilOffset, true);
+		}
+
+		/// <summary>
+		/// Set the instruction pointer to a given IL offset
+		/// </summary>
+		/// <returns>false if not possible</returns>
+		public bool SetIP(int ilOffset)
+		{
+			return SetIP(ilOffset, false);
+		}
+
+		bool SetIP(int ilOffset, bool simulate)
+		{
+			process.AssertPaused();
+
+			try {
+				if (simulate) {
+					CorILFrame.CanSetIP((uint)ilOffset);
+				} else {
+					// Invalidates all frames and chains for the current thread
+					CorILFrame.SetIP((uint)ilOffset);
+					process.NotifyResumed(DebuggeeStateAction.Keep);
+					process.NotifyPaused(PausedReason.SetIP);
+					process.RaisePausedEvents();
+				}
+			} catch {
+				return false;
+			}
+			return true;
+		}
 		
 		/// <summary> 
 		/// Gets the instance of the class asociated with the current frame.

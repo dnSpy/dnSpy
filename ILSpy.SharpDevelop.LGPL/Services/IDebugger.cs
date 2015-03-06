@@ -98,6 +98,18 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		/// </summary>
 		/// <returns>True if successful. False otherwise</returns>
 		bool SetInstructionPointer(string filename, int line, int column);
+
+		/// <summary>
+		/// Queries the debugger whether it is possible to set the instruction pointer to a given position.
+		/// </summary>
+		/// <returns>True if possible. False otherwise</returns>
+		bool CanSetInstructionPointer(int ilOffset);
+
+		/// <summary>
+		/// Set the instruction pointer to a given position.
+		/// </summary>
+		/// <returns>True if successful. False otherwise</returns>
+		bool SetInstructionPointer(int ilOffset);
 		
 		/// <summary>
 		/// Ocurrs when the debugger is starting.

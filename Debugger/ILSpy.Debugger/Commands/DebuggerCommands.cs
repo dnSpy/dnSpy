@@ -1,6 +1,7 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -580,7 +581,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	{
 		public bool IsVisible(TextViewContext context)
 		{
-			return context.SelectedTreeNodes == null &&
+			return context.TextView != null &&
 				DebuggerService.CurrentDebugger != null;
 		}
 
@@ -623,7 +624,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public bool IsVisible(TextViewContext context)
 		{
-			return (context == null || context.SelectedTreeNodes == null) &&
+			return (context == null || context.TextView != null) &&
 				DebuggerService.CurrentDebugger != null &&
 				DebuggerService.CurrentDebugger.IsDebugging &&
 				!DebuggerService.CurrentDebugger.IsProcessRunning;
@@ -647,19 +648,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		bool TryExecute()
 		{
-			var info = DebugInformation.DebugStepInformation;
-			var nodes = MainWindow.Instance.SelectedNodes.ToArray();
-			if (nodes.Length != 1)
-				return false;
-			var methodNode = nodes[0] as MethodTreeNode;
-			if (methodNode == null)
-				return false;
-			var currentKey = new MethodKey(methodNode.MethodDefinition);
-			if (currentKey != info.Item1)
-				return false;
-
-			var cm = DebugInformation.CodeMappings;
-			if (cm == null || !cm.ContainsKey(currentKey))
+			Tuple<MethodKey, int, IMemberRef> info;
+			MethodKey currentKey;
+			Dictionary<MethodKey, MemberMapping> cm;
+			if (!DebuggerUtils.VerifyAndGetCurrentDebuggedMethod(out info, out currentKey, out cm))
 				return false;
 
 			MethodDef methodDef;
@@ -679,6 +671,143 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		public string GetMenuHeader(TextViewContext context)
 		{
 			return null;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Set Ne_xt Statement",
+							InputGestureText = "Ctrl+Shift+F10",
+							Category = "Debug",
+							Order = 3.0)]
+	internal sealed class SetNextStatementContextMenuEntry : IContextMenuEntry
+	{
+		public SetNextStatementContextMenuEntry() {
+			MainWindow.Instance.KeyDown += OnKeyDown;
+		}
+
+		void OnKeyDown(object sender, KeyEventArgs e)
+		{
+			if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && (e.SystemKey == Key.F10 ? e.SystemKey : e.Key) == Key.F10) {
+				if (IsEnabled(null)) {
+					Execute();
+					e.Handled = true;
+				}
+			}
+		}
+
+		public bool IsVisible(TextViewContext context)
+		{
+			if ((context != null && context.TextView == null) ||
+				DebuggerService.CurrentDebugger == null ||
+				!DebuggerService.CurrentDebugger.IsDebugging ||
+				DebuggerService.CurrentDebugger.IsProcessRunning)
+				return false;
+
+			Tuple<MethodKey, int, IMemberRef> info;
+			MethodKey currentKey;
+			Dictionary<MethodKey, MemberMapping> cm;
+			return DebuggerUtils.VerifyAndGetCurrentDebuggedMethod(out info, out currentKey, out cm);
+		}
+
+		public bool IsEnabled(TextViewContext context)
+		{
+			return IsVisible(context);
+		}
+
+		public void Execute(TextViewContext context)
+		{
+			Execute();
+		}
+
+		void Execute() {
+			string errMsg;
+			if (!Execute(out errMsg)) {
+				if (string.IsNullOrEmpty(errMsg))
+					errMsg = "Could not set next statement (unknown reason)";
+				MessageBox.Show(MainWindow.Instance, errMsg);
+			}
+		}
+
+		bool Execute(out string errMsg)
+		{
+			errMsg = string.Empty;
+
+			if (DebuggerService.CurrentDebugger == null) {
+				errMsg = "No debugger exists";
+				return false;
+			}
+			if (!DebuggerService.CurrentDebugger.IsDebugging) {
+				errMsg = "We're not debugging";
+				return false;
+			}
+			if (DebuggerService.CurrentDebugger.IsProcessRunning) {
+				errMsg = "Can't set next statement when the process is running";
+				return false;
+			}
+
+			Tuple<MethodKey, int, IMemberRef> info;
+			MethodKey currentKey;
+			Dictionary<MethodKey, MemberMapping> cm;
+			if (!DebuggerUtils.VerifyAndGetCurrentDebuggedMethod(out info, out currentKey, out cm)) {
+				errMsg = "No debug information found. Make sure that only the debugged method is selected in the treeview (press 'Alt+Num *' to go to current statement)";
+				return false;
+			}
+
+			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
+			var mapping = BreakpointHelper.Find(cm, location.Line, location.Column);
+			if (mapping == null) {
+				errMsg = "It's not possible to set the next statement here";
+				return false;
+			}
+
+			int ilOffset = (int)mapping.ILInstructionOffset.From;
+			if (!DebuggerService.CurrentDebugger.CanSetInstructionPointer(ilOffset)) {
+				errMsg = "It's not safe to set the next statement here";
+				return false;
+			}
+			if (!DebuggerService.CurrentDebugger.SetInstructionPointer(ilOffset)) {
+				errMsg = "Setting the next statement failed.";
+				return false;
+			}
+
+			return true;
+		}
+
+		public string GetMenuHeader(TextViewContext context)
+		{
+			return null;
+		}
+	}
+
+	static class DebuggerUtils
+	{
+		/// <summary>
+		/// Gets the current debugged method. It verifies that the current method in the text editor
+		/// is the same as the debugged method.
+		/// </summary>
+		/// <param name="info"></param>
+		/// <param name="currentKey"></param>
+		/// <param name="codeMappings"></param>
+		/// <returns></returns>
+		public static bool VerifyAndGetCurrentDebuggedMethod(out Tuple<MethodKey, int, IMemberRef> info, out MethodKey currentKey, out Dictionary<MethodKey, MemberMapping> codeMappings)
+		{
+			currentKey = default(MethodKey);
+			codeMappings = DebugInformation.CodeMappings;
+			info = DebugInformation.DebugStepInformation;
+
+			var nodes = MainWindow.Instance.SelectedNodes.ToArray();
+			if (nodes.Length != 1)
+				return false;
+			var methodNode = nodes[0] as MethodTreeNode;
+			if (methodNode == null)
+				return false;
+			currentKey = new MethodKey(methodNode.MethodDefinition);
+			if (currentKey != info.Item1)
+				return false;
+
+			if (codeMappings == null || !codeMappings.ContainsKey(currentKey))
+				return false;
+
+			return true;
 		}
 	}
 }

@@ -543,6 +543,21 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				return false;
 			}
 		}
+
+		public bool CanSetInstructionPointer(int ilOffset)
+		{
+			if (debuggedProcess != null && debuggedProcess.IsPaused &&
+			    debuggedProcess.SelectedThread != null && debuggedProcess.SelectedThread.MostRecentStackFrame != null) {
+				return debuggedProcess.SelectedThread.MostRecentStackFrame.CanSetIP(ilOffset);
+			} else {
+				return false;
+			}
+		}
+
+		public bool SetInstructionPointer(int ilOffset)
+		{
+			return debuggedProcess.SelectedThread.MostRecentStackFrame.SetIP(ilOffset);
+		}
 		
 		public void Dispose()
 		{

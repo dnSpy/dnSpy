@@ -32,11 +32,24 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	{
 		public static void Toggle(int line, int column)
 		{
+			var bp = Find(line, column);
+			if (bp != null) {
+				DebuggerService.ToggleBreakpointAt(bp);
+				MainWindow.Instance.TextView.ScrollAndMoveCaretTo(bp.StartLocation.Line, bp.StartLocation.Column);
+			}
+		}
+
+		public static SourceCodeMapping Find(int line, int column)
+		{
+			return Find(DebugInformation.CodeMappings, line, column);
+		}
+
+		public static SourceCodeMapping Find(Dictionary<MethodKey, MemberMapping> cm, int line, int column)
+		{
 			if (line <= 0)
-				return;
-			var cm = DebugInformation.CodeMappings;
+				return null;
 			if (cm == null || cm.Count == 0)
-				return;
+				return null;
 
 			var bp = FindByLineColumn(cm, line, column);
 			if (bp == null && column != 0)
@@ -44,10 +57,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (bp == null)
 				bp = GetClosest(cm, line);
 
-			if (bp != null) {
-				DebuggerService.ToggleBreakpointAt(bp);
-				MainWindow.Instance.TextView.ScrollAndMoveCaretTo(bp.StartLocation.Line, bp.StartLocation.Column);
-			}
+			return bp;
 		}
 
 		static SourceCodeMapping FindByLineColumn(Dictionary<MethodKey, MemberMapping> cm, int line, int column)
