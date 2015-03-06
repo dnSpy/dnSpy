@@ -67,13 +67,12 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		
 		void BookmarkManager_Removed(object sender, BookmarkEventArgs e)
 		{
-			if (e.Bookmark is BreakpointBookmark) {
-				var bm = (MarkerBookmark)e.Bookmark;
-				Remove(bm.Marker);
-			}
-			
 			if (e.Bookmark is CurrentLineBookmark) {
 				RemoveAll(m => m.Bookmark is CurrentLineBookmark);
+			}
+			else if (e.Bookmark is MarkerBookmark) {
+				var bm = (MarkerBookmark)e.Bookmark;
+				Remove(bm.Marker);
 			}
 		}
 

@@ -92,6 +92,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			debuggerStarted = false;
 			
 			RemoveCurrentLineMarker();
+			ReturnStatementBookmark.UpdateReturnStatementBookmarks();
 			
 			if (DebugStopped != null)
 				DebugStopped(null, e);

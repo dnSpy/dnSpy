@@ -77,7 +77,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		public override ITextMarker CreateMarker(ITextMarkerService markerService)
 		{
 			ITextMarker marker = CreateMarkerInternal(markerService);
-			marker.ZOrder = 300;
+			marker.ZOrder = ZOrder;
 			marker.HighlightingColor = () => HighlightingColor;
 			marker.IsVisible = b => {
 				var cm = DebugInformation.CodeMappings;

@@ -56,7 +56,7 @@
 		<color name="disabledbreakpointstatement" bg="#30963A46" />
 		<color name="specialcharacterbox" bg="#666699" />
 		<color name="searchresultmarker" bg="#FFFFB7" />
-		<color name="currentline" bg="#1614DCE0" />
-		<color name="currentlineborder" bg="#3400FF6E" />
+		<color name="currentline" fg="#3400FF6E" bg="#1614DCE0" />
+		<color name="returnstatement" fg="Black" bg="#68B4E4B4" />
 	</colors>
 </theme>

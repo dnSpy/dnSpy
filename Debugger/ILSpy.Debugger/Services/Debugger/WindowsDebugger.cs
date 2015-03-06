@@ -1,6 +1,7 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
@@ -801,6 +802,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		{
 			OnIsProcessRunningChanged(EventArgs.Empty);
 			DebuggerService.RemoveCurrentLineMarker();
+			ReturnStatementBookmark.Remove();
 		}
 		
 		void debuggedProcess_ExceptionThrown(object sender, CorDbg.ExceptionEventArgs e)
@@ -871,6 +873,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				else {
 					StepIntoUnknownFrame(frame);
 				}
+
+				ReturnStatementBookmark.UpdateReturnStatementBookmarks();
 			}
 		}
 
@@ -894,11 +898,24 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				DebuggerService.RemoveCurrentLineMarker();
 				Debug.Fail("No type was found!");
 			}
+			ReturnStatementBookmark.UpdateReturnStatementBookmarks();
 		}
 		
 		public void ShowAttachDialog()
 		{
 			throw new NotImplementedException();
+		}
+
+		public IEnumerable<DebugStackFrame> GetStackFrames(int count)
+		{
+			if (debuggedProcess == null || !debuggedProcess.IsPaused || debuggedProcess.SelectedThread == null)
+				yield break;
+			foreach (StackFrame frame in debuggedProcess.SelectedThread.GetCallstack(count)) {
+				yield return new DebugStackFrame {
+					MethodKey = frame.MethodInfo.ToMethodKey(),
+					ILOffset = frame.IP.IsValid ? new int?(frame.IP.Offset) : null,
+				};
+			}
 		}
 	}
 }

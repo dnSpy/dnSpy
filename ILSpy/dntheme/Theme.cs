@@ -67,7 +67,6 @@ namespace ICSharpCode.ILSpy.dntheme
 			new ColorInfo(ColorType.SpecialCharacterBox),
 			new ColorInfo(ColorType.SearchResultMarker),
 			new ColorInfo(ColorType.CurrentLine),
-			new ColorInfo(ColorType.CurrentLineBorder),
 			new ColorInfo(ColorType.DefaultText,
 				new ColorInfo(ColorType.Text,
 					new ColorInfo(ColorType.Punctuation,
@@ -141,6 +140,7 @@ namespace ICSharpCode.ILSpy.dntheme
 					new ColorInfo(ColorType.LocalDefinition),
 					new ColorInfo(ColorType.LocalReference),
 					new ColorInfo(ColorType.CurrentStatement),
+					new ColorInfo(ColorType.ReturnStatement),
 					new ColorInfo(ColorType.BreakpointStatement),
 					new ColorInfo(ColorType.DisabledBreakpointStatement)
 				)

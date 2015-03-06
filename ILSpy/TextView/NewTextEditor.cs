@@ -44,6 +44,7 @@ namespace ICSharpCode.ILSpy.TextView
 			ICSharpCode.ILSpy.Debugger.Bookmarks.BreakpointBookmark.HighlightingColor = theme.GetColor(dntheme.ColorType.BreakpointStatement).TextInheritedColor;
 			ICSharpCode.ILSpy.Debugger.Bookmarks.BreakpointBookmark.DisabledHighlightingColor = theme.GetColor(dntheme.ColorType.DisabledBreakpointStatement).TextInheritedColor;
 			ICSharpCode.ILSpy.Debugger.Bookmarks.CurrentLineBookmark.HighlightingColor = theme.GetColor(dntheme.ColorType.CurrentStatement).TextInheritedColor;
+			ICSharpCode.ILSpy.Debugger.Bookmarks.ReturnStatementBookmark.HighlightingColor = theme.GetColor(dntheme.ColorType.ReturnStatement).TextInheritedColor;
 			var specialBox = theme.GetColor(dntheme.ColorType.SpecialCharacterBox).TextInheritedColor;
 			ICSharpCode.AvalonEdit.Rendering.SpecialCharacterTextRunOptions.Brush = specialBox.Background == null ? null : specialBox.Background.GetBrush(null);
 
@@ -61,8 +62,7 @@ namespace ICSharpCode.ILSpy.TextView
 
 			var currentLine = theme.GetColor(ColorType.CurrentLine).InheritedColor;
 			TextArea.TextView.CurrentLineBackground = currentLine.Background == null ? null : currentLine.Background.GetBrush(null);
-			var currentLineBorder = theme.GetColor(ColorType.CurrentLineBorder).InheritedColor;
-			TextArea.TextView.CurrentLineBorder = new Pen(currentLineBorder.Background == null ? null : currentLineBorder.Background.GetBrush(null), 2);
+			TextArea.TextView.CurrentLineBorder = new Pen(currentLine.Foreground == null ? null : currentLine.Foreground.GetBrush(null), 2);
 
 			UpdateDefaultHighlighter();
 			TextArea.TextView.Redraw();

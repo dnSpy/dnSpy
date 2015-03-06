@@ -348,6 +348,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		{
 			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
 				CurrentLineBookmark.Remove();
+				ReturnStatementBookmark.Remove();
 				CurrentDebugger.Continue();
 				MainWindow.Instance.SetStatus("Running...", Brushes.Black);
 			}

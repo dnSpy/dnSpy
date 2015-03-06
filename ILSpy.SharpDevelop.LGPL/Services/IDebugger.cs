@@ -2,6 +2,7 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
@@ -9,6 +10,12 @@ using ICSharpCode.NRefactory.CSharp;
 
 namespace ICSharpCode.ILSpy.Debugger.Services
 {
+	public class DebugStackFrame
+	{
+		public MethodKey MethodKey;
+		public int? ILOffset;
+	}
+
 	public interface IDebugger : IDisposable
 	{
 		/// <summary>
@@ -110,6 +117,13 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		/// </summary>
 		/// <returns>True if successful. False otherwise</returns>
 		bool SetInstructionPointer(int ilOffset);
+
+		/// <summary>
+		/// Gets stack frames
+		/// </summary>
+		/// <param name="count">Max number of stack frames to return.</param>
+		/// <returns></returns>
+		IEnumerable<DebugStackFrame> GetStackFrames(int count);
 		
 		/// <summary>
 		/// Ocurrs when the debugger is starting.

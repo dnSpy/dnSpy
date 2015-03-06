@@ -591,6 +591,8 @@ namespace ICSharpCode.ILSpy.TextView
 				CurrentLineBookmark.Remove();
 			}
 
+			ReturnStatementBookmark.UpdateReturnStatementBookmarks();
+
 			if (DebugInformation.JumpToThisLine != null) {
 				if (DebugInformation.JumpToThisLine is ICSharpCode.NRefactory.TextLocation) {
 					var loc = (ICSharpCode.NRefactory.TextLocation)DebugInformation.JumpToThisLine;

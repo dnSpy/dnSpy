@@ -82,6 +82,7 @@
     <Compile Include="Bookmarks\CurrentLineBookmark.cs" />
     <Compile Include="Bookmarks\IBookmark.cs" />
     <Compile Include="Bookmarks\MarkerBookmark.cs" />
+    <Compile Include="Bookmarks\ReturnStatementBookmark.cs" />
     <Compile Include="DebugInformation.cs" />
     <Compile Include="Images.cs" />
     <Compile Include="Models\ToolTipRequestEventArgs.cs" />

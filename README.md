@@ -71,7 +71,6 @@ Selection
 SpecialCharacterBox
 SearchResultMarker
 CurrentLine
-CurrentLineBorder
 DefaultText
 	Text
 		Punctuation
@@ -134,6 +133,7 @@ DefaultText
 		LocalDefinition
 		LocalReference
 		CurrentStatement
+		ReturnStatement
 		BreakpointStatement
 		DisabledBreakpointStatement
 ```

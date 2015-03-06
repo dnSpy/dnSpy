@@ -6,7 +6,6 @@
 		<color name="breakpointstatement" fg="White" bg="#963A46" />
 		<color name="disabledbreakpointstatement" bg="#30963A46" />
 		<color name="searchresultmarker" bg="#FFFFB7" />
-		<color name="currentline" bg="#00000000" />
-		<color name="currentlineborder" bg="#EAEAF2" />
+		<color name="currentline" fg="#EAEAF2" bg="#00000000" />
 	</colors>
 </theme>

@@ -49,14 +49,14 @@
 		<color name="xmlbrokenentity" fg="Olive" />
 		<color name="link" fg="Blue" />
 		<color name="selection" bg="#663399FF" />
-		<color name="localdefinition" bg="LightSeaGreen" />
-		<color name="localreference" bg="GreenYellow" />
+		<color name="localdefinition" bg="#68AFB3A3" />
+		<color name="localreference" bg="#68DBE0CC" />
 		<color name="currentstatement" fg="Black" bg="#FFF181" />
 		<color name="breakpointstatement" fg="White" bg="#963A46" />
 		<color name="disabledbreakpointstatement" bg="#30963A46" />
 		<color name="specialcharacterbox" bg="#C8808080" />
 		<color name="searchresultmarker" bg="#FFFFB7" />
-		<color name="currentline" bg="#00000000" />
-		<color name="currentlineborder" bg="#EAEAF2" />
+		<color name="currentline" fg="#EAEAF2" bg="#00000000" />
+		<color name="returnstatement" fg="Black" bg="#68B4E4B4" />
 	</colors>
 </theme>
