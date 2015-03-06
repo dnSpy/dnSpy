@@ -27,7 +27,27 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                </GridView>
+                    <GridViewColumn
+                        Header="RID">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    Text="{Binding Rid}"
+                                    Foreground="{Binding FontColor}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+					<GridViewColumn
+                        Header="IL Offset">
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<TextBlock
+                                    Text="{Binding ILOffset, StringFormat={}0x{0:X4}}"
+                                    Foreground="{Binding FontColor}" />
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
+				</GridView>
             </ListView.View>
             <ListView.ContextMenu>
                 <ContextMenu>

@@ -239,6 +239,23 @@ namespace ICSharpCode.Decompiler
 			
 			return map;
 		}
+
+		/// <summary>
+		/// Gets the source code and type name from metadata token and offset.
+		/// </summary>
+		/// <param name="mapping">Code mapping storage.</param>
+		/// <param name="ilOffset">IL offset.</param>
+		/// <param name="location">Start location</param>
+		/// <param name="endLocation">End location</param>
+		public static bool GetInstructionByTokenAndOffset(
+			this MemberMapping mapping,
+			uint ilOffset,
+			out TextLocation location,
+			out TextLocation endLocation)
+		{
+			MethodDef methodDef;
+			return mapping.GetInstructionByTokenAndOffset(ilOffset, out methodDef, out location, out endLocation);
+		}
 		
 		/// <summary>
 		/// Gets the source code and type name from metadata token and offset.
@@ -248,7 +265,6 @@ namespace ICSharpCode.Decompiler
 		/// <param name="methodDef">Method definition.</param>
 		/// <param name="location">Start location</param>
 		/// <param name="endLocation">End location</param>
-		/// <remarks>It is possible to exist to different types from different assemblies with the same metadata token.</remarks>
 		public static bool GetInstructionByTokenAndOffset(
 			this MemberMapping mapping,
 			uint ilOffset,

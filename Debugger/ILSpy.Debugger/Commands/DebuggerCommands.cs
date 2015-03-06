@@ -155,24 +155,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			var info = DebugInformation.DebugStepInformation;
 			if (info == null)
 				return;
-			var method = info.Item3;
-			IMemberRef whatToCompile = method;
-			var md = method as MethodDef;
-			if (md != null && DebuggerSettings.Instance.DecompileFullType) {
-				var type = md.DeclaringType;
-				for (int i = 0; i < 100; i++) {
-					var declType = type.DeclaringType;
-					if (declType == null)
-						break;
-					type = declType;
-				}
-				whatToCompile = type;
-			}
-			if (!MainWindow.Instance.JumpToReference(whatToCompile)) {
-				MessageBox.Show(MainWindow.Instance,
-					string.Format("Could not find {0}\n" +
-					"Make sure that it's visible in the treeview and not a hidden method or part of a hidden class. You could also try to debug the method in IL mode.", method));
-			}
+			DebugUtils.JumpToReference(info.Item3);
 		}
 	}
 
@@ -729,12 +712,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			Tuple<MethodKey, int, IMemberRef> info;
 			MethodKey currentKey;
 			Dictionary<MethodKey, MemberMapping> cm;
-			if (!DebuggerUtils.VerifyAndGetCurrentDebuggedMethod(out info, out currentKey, out cm))
+			if (!DebugUtils.VerifyAndGetCurrentDebuggedMethod(out info, out currentKey, out cm))
 				return false;
 
-			MethodDef methodDef;
 			NR.TextLocation location, endLocation;
-			if (!cm[currentKey].GetInstructionByTokenAndOffset((uint)info.Item2, out methodDef, out location, out endLocation))
+			if (!cm[currentKey].GetInstructionByTokenAndOffset((uint)info.Item2, out location, out endLocation))
 				return false;
 
 			MainWindow.Instance.TextView.ScrollAndMoveCaretTo(location.Line, location.Column);
@@ -852,7 +834,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			Tuple<MethodKey, int, IMemberRef> info;
 			MethodKey currentKey;
 			Dictionary<MethodKey, MemberMapping> cm;
-			if (!DebuggerUtils.VerifyAndGetCurrentDebuggedMethod(out info, out currentKey, out cm)) {
+			if (!DebugUtils.VerifyAndGetCurrentDebuggedMethod(out info, out currentKey, out cm)) {
 				errMsg = "No debug information found. Make sure that only the debugged method is selected in the treeview (press 'Alt+Num *' to go to current statement)";
 				return false;
 			}
@@ -874,33 +856,6 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		public string GetMenuHeader(TextViewContext context)
 		{
 			return null;
-		}
-	}
-
-	static class DebuggerUtils
-	{
-		/// <summary>
-		/// Gets the current debugged method. It verifies that the current method in the text editor
-		/// is the same as the debugged method.
-		/// </summary>
-		/// <param name="info"></param>
-		/// <param name="currentKey"></param>
-		/// <param name="codeMappings"></param>
-		/// <returns></returns>
-		public static bool VerifyAndGetCurrentDebuggedMethod(out Tuple<MethodKey, int, IMemberRef> info, out MethodKey currentKey, out Dictionary<MethodKey, MemberMapping> codeMappings)
-		{
-			currentKey = default(MethodKey);
-			codeMappings = DebugInformation.CodeMappings;
-			info = DebugInformation.DebugStepInformation;
-
-			if (info == null)
-				return false;
-
-			currentKey = info.Item1;
-			if (codeMappings == null || !codeMappings.ContainsKey(currentKey))
-				return false;
-
-			return true;
 		}
 	}
 }

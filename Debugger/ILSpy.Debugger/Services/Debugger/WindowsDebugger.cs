@@ -336,7 +336,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					StepIntoUnknownFrame(frame);
 					var info = DebugInformation.DebugStepInformation;
 					if (info != null)
-						MainWindow.Instance.JumpToReference(info.Item3);
+						DebugUtils.JumpToReference(info.Item3);
 					return null;
 				}
 			} else {

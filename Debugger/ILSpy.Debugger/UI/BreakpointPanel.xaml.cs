@@ -82,8 +82,13 @@ namespace ICSharpCode.ILSpy.Debugger.UI
             var selectedItem = view.SelectedItem as BookmarkBase;
             if (null == selectedItem)
                 return;
-			if (MainWindow.Instance.JumpToReference(selectedItem.MemberReference)) {
-				MainWindow.Instance.TextView.UnfoldAndScroll(selectedItem.LineNumber);
+			bool alreadySelected;
+			if (DebugUtils.JumpToReference(selectedItem.MemberReference, out alreadySelected)) {
+				if (alreadySelected)
+					MainWindow.Instance.TextView.ScrollAndMoveCaretTo(selectedItem.Location.Line, selectedItem.Location.Column);
+				else
+					DebugInformation.JumpToThisLine = selectedItem.Location;
+				MainWindow.Instance.TextView.TextEditor.TextArea.Focus();
 				e.Handled = true;
 			}
 		}

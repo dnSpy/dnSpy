@@ -31,6 +31,8 @@ namespace ICSharpCode.ILSpy.Debugger
 		/// true if we must call JumpToReference() due to new stack frame
 		/// </summary>
 		public static bool MustJumpToReference { get; set; }
+
+		public static object JumpToThisLine;
 	}
 
 	public struct MethodKey : IEquatable<MethodKey>

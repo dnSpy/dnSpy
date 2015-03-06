@@ -590,6 +590,28 @@ namespace ICSharpCode.ILSpy.TextView
 				// remove currentline marker
 				CurrentLineBookmark.Remove();
 			}
+
+			if (DebugInformation.JumpToThisLine != null) {
+				if (DebugInformation.JumpToThisLine is ICSharpCode.NRefactory.TextLocation) {
+					var loc = (ICSharpCode.NRefactory.TextLocation)DebugInformation.JumpToThisLine;
+					ScrollAndMoveCaretTo(loc.Line, loc.Column);
+				}
+				else if (DebugInformation.JumpToThisLine is Tuple<MethodKey, int>) {
+					var tuple = (Tuple<MethodKey, int>)DebugInformation.JumpToThisLine;
+					var key = tuple.Item1;
+					int offset = tuple.Item2;
+					var cm = DebugInformation.CodeMappings;
+					ICSharpCode.NRefactory.TextLocation location, endLocation;
+					if (cm != null && cm.ContainsKey(key) &&
+						cm[key].GetInstructionByTokenAndOffset((uint)offset, out location, out endLocation)) {
+						ScrollAndMoveCaretTo(location.Line, location.Column);
+					}
+				}
+				else {
+					Debug.Fail(string.Format("Unknown type: {0} = {1}", DebugInformation.JumpToThisLine.GetType(), DebugInformation.JumpToThisLine));
+				}
+			}
+			DebugInformation.JumpToThisLine = null;
 		}
 		
 		Task<AvalonEditTextOutput> DecompileAsync(DecompilationContext context, int outputLengthLimit)

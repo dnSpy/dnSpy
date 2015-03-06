@@ -76,6 +76,7 @@
     <Compile Include="Commands\BreakpointCommand.cs" />
     <Compile Include="Commands\DebuggerCommands.cs" />
     <Compile Include="DebuggerSettings.cs" />
+    <Compile Include="DebugUtils.cs" />
     <Compile Include="Models\TreeModel\ArrayRangeNode.cs" />
     <Compile Include="Models\TreeModel\ChildNodesOfObject.cs" />
     <Compile Include="Models\TreeModel\ExpressionNode.cs" />

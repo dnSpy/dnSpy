@@ -14,12 +14,16 @@ using System.Windows.Media;
 using System.Xml.Linq;
 
 using Debugger;
+using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.Debugger.Commands;
 using ICSharpCode.ILSpy.Debugger.Models.TreeModel;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.XmlDoc;
 using dnlib.DotNet;
 using Mono.CSharp;
+
+using NR = ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.Debugger.UI
 {
@@ -154,11 +158,12 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 			foreach (StackFrame frame in debuggedProcess.SelectedThread.GetCallstack(100)) {
 				CallStackItem item;
 				
-				// show modules names
-				string moduleName = frame.MethodInfo.DebugModule.ToString();
-				
     			item = new CallStackItem() {
-					Name = GetFullName(frame), ModuleName = moduleName
+					Name = GetFullName(frame),
+					ModuleName = frame.MethodInfo.DebugModule.ToString(),
+					Rid = frame.MethodInfo.MetadataToken & 0x00FFFFFF,
+					ILOffset = frame.IP.IsValid ? frame.IP.Offset : -1,
+					MethodKey = frame.MethodInfo.ToMethodKey(),
 				};
 				item.Frame = frame;
 				items.Add(item);
@@ -233,9 +238,23 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 			IMemberRef mr = XmlDocKeyProvider.FindMemberByKey(foundAssembly.ModuleDefinition, "M:" + selectedItem.Name);
 			if (mr == null)
 				return;
-			if (MainWindow.Instance.JumpToReference(mr)) {
-				// TODO: jump to associated line
-				// MainWindow.Instance.TextView.UnfoldAndScroll(selectedItem.LineNumber);
+			bool alreadySelected;
+			if (DebugUtils.JumpToReference(mr, out alreadySelected)) {
+				var cm = DebugInformation.CodeMappings;
+				var key = selectedItem.MethodKey;
+				NR.TextLocation location, endLocation;
+				if (cm != null && cm.ContainsKey(key) &&
+					cm[key].GetInstructionByTokenAndOffset((uint)selectedItem.ILOffset, out location, out endLocation)) {
+
+					if (alreadySelected)
+						MainWindow.Instance.TextView.ScrollAndMoveCaretTo(location.Line, location.Column);
+					else // should never happen
+						DebugInformation.JumpToThisLine = location;
+				}
+				else {
+					DebugInformation.JumpToThisLine = Tuple.Create(selectedItem.MethodKey, selectedItem.ILOffset);
+				}
+				MainWindow.Instance.TextView.TextEditor.TextArea.Focus();
 				e.Handled = true;
 			}
         }
@@ -252,10 +271,11 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 	public class CallStackItem
 	{
 		public string Name { get; set; }
-		public string Language { get; set; }
 		public StackFrame Frame { get; set; }
-		public string Line { get; set; }
 		public string ModuleName { get; set; }
+		public int Rid { get; set; }
+		public int ILOffset { get; set; }
+		public MethodKey MethodKey { get; set; }
 		
 		public Brush FontColor {
 			get { return Brushes.Black; }
