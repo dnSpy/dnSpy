@@ -103,7 +103,9 @@ namespace ICSharpCode.ILSpy
 		public bool HasLoadError {
 			get { return assemblyTask.IsFaulted; }
 		}
-		
+
+		public bool IsAutoLoaded { get; set; }
+
 		ModuleDefinition LoadAssembly(object state)
 		{
 			var stream = state as Stream;
@@ -253,7 +255,9 @@ namespace ICSharpCode.ILSpy
 					file = Path.Combine(dir, name.Name + ".exe");
 			}
 			if (file != null) {
-				return assemblyList.OpenAssembly(file);
+				var loaded = assemblyList.OpenAssembly(file);
+				loaded.IsAutoLoaded = true;
+				return loaded;
 			} else {
 				return null;
 			}
@@ -298,15 +302,24 @@ namespace ICSharpCode.ILSpy
 		{
 			public override int Compare(LoadedAssembly x, LoadedAssembly y)
 			{
-				// correctly loaded assemblies sort first, then assemblies with errors
+				// sort order:
+				//   explicitly loaded assemblies
+				//   auto-loaded assemblies
+				//   assemblies with errors
 				if (x.IsLoaded && y.HasLoadError)
 					return -1;
 				if (x.HasLoadError && y.IsLoaded)
+					return 1;
+
+				if (!x.IsAutoLoaded && y.IsAutoLoaded)
+					return -1;
+				if (x.IsAutoLoaded && !y.IsAutoLoaded)
 					return 1;
 
 				// within above groups, sort by assembly name 
 				return x.Text.CompareTo(y.Text);
 			}
 		}
+
 	}
 }

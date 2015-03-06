@@ -88,7 +88,7 @@ namespace ICSharpCode.ILSpy
 			return new XElement(
 				"List",
 				new XAttribute("name", this.ListName),
-				assemblies.Select(asm => new XElement("Assembly", asm.FileName))
+				assemblies.Where(asm => !asm.IsAutoLoaded).Select(asm => new XElement("Assembly", asm.FileName))
 			);
 		}
 		
