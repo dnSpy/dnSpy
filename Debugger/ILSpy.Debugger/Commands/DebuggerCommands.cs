@@ -772,7 +772,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 			SourceCodeMapping mapping;
 			string errMsg;
-			return GetSourceCodeMapping(out errMsg, out mapping);
+			if (!GetSourceCodeMapping(out errMsg, out mapping))
+				return false;
+
+			var info = DebugInformation.DebugStepInformation;
+			return info == null || info.Item2 != mapping.ILInstructionOffset.From;
 		}
 
 		public bool IsEnabled(TextViewContext context)
@@ -802,10 +806,6 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				return false;
 
 			int ilOffset = (int)mapping.ILInstructionOffset.From;
-			if (!DebuggerService.CurrentDebugger.CanSetInstructionPointer(ilOffset)) {
-				errMsg = "It's not safe to set the next statement here";
-				return false;
-			}
 			if (!DebuggerService.CurrentDebugger.SetInstructionPointer(ilOffset)) {
 				errMsg = "Setting the next statement failed.";
 				return false;
@@ -848,6 +848,12 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			}
 			if (mapping.MemberMapping.MethodDefinition != info.Item3) {
 				errMsg = "The next statement cannot be set to another method";
+				return false;
+			}
+
+			int ilOffset = (int)mapping.ILInstructionOffset.From;
+			if (!DebuggerService.CurrentDebugger.CanSetInstructionPointer(ilOffset)) {
+				errMsg = "It's not safe to set the next statement here";
 				return false;
 			}
 
