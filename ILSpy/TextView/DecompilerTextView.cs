@@ -925,6 +925,8 @@ namespace ICSharpCode.ILSpy.TextView
 
 		public void ScrollAndMoveCaretTo(int line, int column)
 		{
+			// Make sure the lines have been re-initialized or the ScrollTo() method could fail
+			TextEditor.TextArea.TextView.EnsureVisualLines();
 			TextEditor.ScrollTo(line, column);
 			TextEditor.TextArea.Caret.Location = new ICSharpCode.AvalonEdit.Document.TextLocation(line, column);
 		}
