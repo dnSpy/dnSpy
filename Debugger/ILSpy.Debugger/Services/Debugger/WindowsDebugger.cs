@@ -859,13 +859,10 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					ip.IsValid &&
 					cm[key].GetInstructionByTokenAndOffset((uint)ip.Offset, out methodDef, out location, out endLocation)) {
 					var info = DebugInformation.DebugStepInformation;
-					Debug.Assert(info != null);
-					if (info != null) {
-						if (info.Item1 != key)
-							StepIntoUnknownFrame(frame);
-						else
-							DebugInformation.DebugStepInformation = Tuple.Create(info.Item1, ip.Offset, info.Item3);
-					}
+					if (info == null || info.Item1 != key)
+						StepIntoUnknownFrame(frame);
+					else
+						DebugInformation.DebugStepInformation = Tuple.Create(info.Item1, ip.Offset, info.Item3);
 					DebugInformation.MustJumpToReference = false; // we do not need to step into/out
 					DebuggerService.RemoveCurrentLineMarker();
 					DebuggerService.JumpToCurrentLine(methodDef, location.Line, location.Column, endLocation.Line, endLocation.Column, ip.Offset);

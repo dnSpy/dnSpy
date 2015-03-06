@@ -862,6 +862,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			codeMappings = DebugInformation.CodeMappings;
 			info = DebugInformation.DebugStepInformation;
 
+			if (info == null)
+				return false;
 			var nodes = MainWindow.Instance.SelectedNodes.ToArray();
 			if (nodes.Length != 1)
 				return false;
