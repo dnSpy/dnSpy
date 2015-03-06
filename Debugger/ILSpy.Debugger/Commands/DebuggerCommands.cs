@@ -156,7 +156,19 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (info == null)
 				return;
 			var method = info.Item3;
-			if (!MainWindow.Instance.JumpToReference(method)) {
+			IMemberRef whatToCompile = method;
+			var md = method as MethodDef;
+			if (md != null && DebuggerSettings.Instance.DecompileFullType) {
+				var type = md.DeclaringType;
+				for (int i = 0; i < 100; i++) {
+					var declType = type.DeclaringType;
+					if (declType == null)
+						break;
+					type = declType;
+				}
+				whatToCompile = type;
+			}
+			if (!MainWindow.Instance.JumpToReference(whatToCompile)) {
 				MessageBox.Show(MainWindow.Instance,
 					string.Format("Could not find {0}\n" +
 					"Make sure that it's visible in the treeview and not a hidden method or part of a hidden class. You could also try to debug the method in IL mode.", method));
