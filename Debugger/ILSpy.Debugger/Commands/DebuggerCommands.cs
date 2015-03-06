@@ -198,8 +198,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportContextMenuEntryAttribute(Header = "_Debug Assembly", Icon = "Images/application-x-executable.png")]
 	internal sealed class DebugExecutableNodeCommand : DebuggerCommand, IContextMenuEntry
 	{
-		public DebugExecutableNodeCommand()
-			: base(false) {
+		public DebugExecutableNodeCommand() : base(false)
+		{
 		}
 
 		public string GetMenuHeader(TextViewContext context)
@@ -262,8 +262,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuOrder = 0)]
 	internal sealed class DebugExecutableCommand : DebuggerCommand
 	{
-		public DebugExecutableCommand()
-			: base(false) {
+		public DebugExecutableCommand() : base(false)
+		{
 		}
 
 		public override void Execute(object parameter)
@@ -308,8 +308,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuOrder = 1)]
 	internal sealed class AttachCommand : DebuggerCommand
 	{
-		public AttachCommand()
-			: base(false) {
+		public AttachCommand() : base(false)
+		{
 		}
 
 		public override void Execute(object parameter)
@@ -336,8 +336,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuOrder = 2)]
 	internal sealed class ContinueDebuggingCommand : DebuggerCommand
 	{
-		public ContinueDebuggingCommand()
-			: base(true, true) {
+		public ContinueDebuggingCommand() : base(true, true)
+		{
 			MainWindow.Instance.KeyUp += OnKeyUp;
 		}
 
@@ -367,8 +367,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 						   MenuOrder = 2.1)]
 	internal sealed class BreakDebuggingCommand : DebuggerCommand
 	{
-		public BreakDebuggingCommand()
-			: base(true, false) {
+		public BreakDebuggingCommand() : base(true, false)
+		{
 			MainWindow.Instance.KeyDown += OnKeyDown;
 		}
 
@@ -400,8 +400,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuOrder = 3)]
 	internal sealed class StepIntoCommand : DebuggerCommand
 	{
-		public StepIntoCommand()
-			: base(true, true) {
+		public StepIntoCommand() : base(true, true)
+		{
 			MainWindow.Instance.KeyDown += OnKeyDown;
 		}
 
@@ -432,8 +432,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuOrder = 4)]
 	internal sealed class StepOverCommand : DebuggerCommand
 	{
-		public StepOverCommand()
-			: base(true, true) {
+		public StepOverCommand() : base(true, true)
+		{
 			MainWindow.Instance.KeyDown += OnKeyDown;
 		}
 
@@ -464,8 +464,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuOrder = 5)]
 	internal sealed class StepOutCommand : DebuggerCommand
 	{
-		public StepOutCommand()
-			: base(true, true) {
+		public StepOutCommand() : base(true, true)
+		{
 			MainWindow.Instance.KeyDown += OnKeyDown;
 		}
 
@@ -494,8 +494,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuOrder = 6)]
 	internal sealed class DetachCommand : DebuggerCommand
 	{
-		public DetachCommand()
-			: base(true) {
+		public DetachCommand() : base(true)
+		{
 		}
 
 		public override void Execute(object parameter)
@@ -517,8 +517,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuOrder = 7.9)]
 	internal sealed class RemoveBreakpointsCommand : DebuggerCommand
 	{
-		public RemoveBreakpointsCommand()
-			: base(null) {
+		public RemoveBreakpointsCommand() : base(null)
+		{
 			MainWindow.Instance.KeyDown += OnKeyDown;
 		}
 
@@ -550,8 +550,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuOrder = 7)]
 	internal sealed class ToggleBreakpointCommand : DebuggerCommand
 	{
-		public ToggleBreakpointCommand()
-			: base(null) {
+		public ToggleBreakpointCommand() : base(null)
+		{
 			MainWindow.Instance.KeyDown += OnKeyDown;
 		}
 
@@ -572,8 +572,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Insert B_reakpoint",
-							Icon = "images/Breakpoint.png",
+	[ExportContextMenuEntry(Icon = "images/Breakpoint.png",
 							InputGestureText = "F9",
 							Category = "Debug",
 							Order = 1.0)]
@@ -582,7 +581,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		public bool IsVisible(TextViewContext context)
 		{
 			return context.TextView != null &&
-				DebuggerService.CurrentDebugger != null;
+				DebuggerService.CurrentDebugger != null &&
+				CanToggleBP();
 		}
 
 		public bool IsEnabled(TextViewContext context)
@@ -598,7 +598,72 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public string GetMenuHeader(TextViewContext context)
 		{
-			return null;
+			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
+			var bpm = BreakpointHelper.GetBreakpointBookmark(location.Line, location.Column);
+			return bpm == null ? "_Add Breakpoint" : "_Clear Breakpoint";
+		}
+
+		bool CanToggleBP()
+		{
+			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
+			return BreakpointHelper.Find(location.Line, location.Column) != null;
+		}
+	}
+
+	[ExportContextMenuEntry(Icon = "images/DisabledBreakpoint.png",
+							InputGestureText = "Shift+F9",
+							Category = "Debug",
+							Order = 1.1)]
+	internal sealed class DisableBreakpointContextMenuEntry : IContextMenuEntry
+	{
+		public DisableBreakpointContextMenuEntry()
+		{
+			MainWindow.Instance.KeyDown += OnKeyDown;
+		}
+
+		void OnKeyDown(object sender, KeyEventArgs e)
+		{
+			if (Keyboard.Modifiers == ModifierKeys.Shift && e.Key == Key.F9) {
+				if (IsEnabled(null)) {
+					this.Execute(null);
+					e.Handled = true;
+				}
+			}
+		}
+
+		public bool IsVisible(TextViewContext context)
+		{
+			return (context == null || context.TextView != null) &&
+				DebuggerService.CurrentDebugger != null &&
+				HasBP();
+		}
+
+		public bool IsEnabled(TextViewContext context)
+		{
+			return IsVisible(context);
+		}
+
+		public void Execute(TextViewContext context)
+		{
+			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
+			var bpm = BreakpointHelper.GetBreakpointBookmark(location.Line, location.Column);
+			if (bpm != null)
+				bpm.IsEnabled = !bpm.IsEnabled;
+		}
+
+		public string GetMenuHeader(TextViewContext context)
+		{
+			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
+			var bpm = BreakpointHelper.GetBreakpointBookmark(location.Line, location.Column);
+			if (bpm == null)
+				return null;
+			return bpm.IsEnabled ? "Disable _Breakpoint" : "Enable _Breakpoint";
+		}
+
+		bool HasBP()
+		{
+			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
+			return BreakpointHelper.GetBreakpointBookmark(location.Line, location.Column) != null;
 		}
 	}
 
@@ -608,7 +673,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 							Order = 2.0)]
 	internal sealed class ShowNextStatementContextMenuEntry : IContextMenuEntry
 	{
-		public ShowNextStatementContextMenuEntry() {
+		public ShowNextStatementContextMenuEntry()
+		{
 			MainWindow.Instance.KeyDown += OnKeyDown;
 		}
 
@@ -680,7 +746,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 							Order = 3.0)]
 	internal sealed class SetNextStatementContextMenuEntry : IContextMenuEntry
 	{
-		public SetNextStatementContextMenuEntry() {
+		public SetNextStatementContextMenuEntry()
+		{
 			MainWindow.Instance.KeyDown += OnKeyDown;
 		}
 
@@ -718,7 +785,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			Execute();
 		}
 
-		void Execute() {
+		void Execute()
+		{
 			string errMsg;
 			if (!Execute(out errMsg)) {
 				if (string.IsNullOrEmpty(errMsg))

@@ -317,7 +317,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				Deleted(this, EventArgs.Empty);
 		}
 		
-		void Redraw()
+		public void Redraw()
 		{
 			service.Redraw(this);
 		}

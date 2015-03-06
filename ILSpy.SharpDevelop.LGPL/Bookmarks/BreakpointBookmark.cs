@@ -28,6 +28,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			Background = new SimpleHighlightingBrush(Color.FromRgb(0xB4, 0x26, 0x26)),
 			Foreground = new SimpleHighlightingBrush(Colors.White),
 		};
+		public static HighlightingColor DisabledHighlightingColor = HighlightingColor;
 		bool isHealthy = true;
 		bool isEnabled = true;
 		BreakpointAction action = BreakpointAction.Break;
@@ -107,7 +108,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		public override ITextMarker CreateMarker(ITextMarkerService markerService)
 		{
 			ITextMarker marker = CreateMarkerInternal(markerService);
-			marker.HighlightingColor = () => HighlightingColor;
+			marker.HighlightingColor = () => IsEnabled ? HighlightingColor : DisabledHighlightingColor;
 			marker.IsVisible = b => {
 				var cm = DebugInformation.CodeMappings;
 				return cm != null && b is BreakpointBookmark && cm.ContainsKey(((BreakpointBookmark)b).MethodKey);
@@ -115,6 +116,14 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			marker.Bookmark = this;
 			this.Marker = marker;
 			return marker;
+		}
+
+		protected override void Redraw()
+		{
+			base.Redraw();
+			var marker = this.Marker;
+			if (marker != null)
+				marker.Redraw();
 		}
 	}
 }

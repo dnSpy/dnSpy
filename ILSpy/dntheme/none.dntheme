@@ -4,6 +4,7 @@
 		<color name="selection" bg="#663399FF" />
 		<color name="currentstatement" fg="Black" bg="#FFF181" />
 		<color name="breakpointstatement" fg="White" bg="#963A46" />
+		<color name="disabledbreakpointstatement" bg="#30963A46" />
 		<color name="searchresultmarker" bg="#FFFFB7" />
 		<color name="currentline" bg="#00000000" />
 		<color name="currentlineborder" bg="#EAEAF2" />

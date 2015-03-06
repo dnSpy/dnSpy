@@ -141,7 +141,8 @@ namespace ICSharpCode.ILSpy.dntheme
 					new ColorInfo(ColorType.LocalDefinition),
 					new ColorInfo(ColorType.LocalReference),
 					new ColorInfo(ColorType.CurrentStatement),
-					new ColorInfo(ColorType.BreakpointStatement)
+					new ColorInfo(ColorType.BreakpointStatement),
+					new ColorInfo(ColorType.DisabledBreakpointStatement)
 				)
 			)
 		};

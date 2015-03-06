@@ -30,6 +30,28 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 	static class BreakpointHelper
 	{
+		public static BreakpointBookmark GetBreakpointBookmark(int line, int column)
+		{
+			return GetBreakpointBookmark(Find(line, column));
+		}
+
+		public static BreakpointBookmark GetBreakpointBookmark(SourceCodeMapping mapping)
+		{
+			if (mapping == null)
+				return null;
+			foreach (var bm in BookmarkManager.Bookmarks) {
+				var bpm = bm as BreakpointBookmark;
+				if (bpm == null)
+					continue;
+				if (bpm.Location != mapping.StartLocation || bpm.EndLocation != mapping.EndLocation)
+					continue;
+
+				return bpm;
+			}
+
+			return null;
+		}
+
 		public static void Toggle(int line, int column)
 		{
 			var bp = Find(line, column);

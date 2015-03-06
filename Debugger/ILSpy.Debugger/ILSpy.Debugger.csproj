@@ -125,7 +125,6 @@
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Page Include="ToolTips\DebuggerTooltipControl.xaml" />
     <Page Include="ToolTips\PinControlsDictionary.xaml" />
@@ -177,6 +176,7 @@
   <ItemGroup>
     <Resource Include="Images\Breakpoint.png" />
     <Resource Include="Images\CurrentLine.png" />
+    <Resource Include="Images\DisabledBreakpoint.png" />
     <Resource Include="Images\Icons.16x16.Class.png" />
     <Resource Include="Images\Icons.16x16.Delegate.png" />
     <Resource Include="Images\Icons.16x16.Enum.png" />

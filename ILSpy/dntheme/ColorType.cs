@@ -325,6 +325,11 @@ namespace ICSharpCode.ILSpy.dntheme
 		BreakpointStatement,
 
 		/// <summary>
+		/// Disabled breakpoint statement (debugger)
+		/// </summary>
+		DisabledBreakpointStatement,
+
+		/// <summary>
 		/// Special character box color. Only background color is used
 		/// </summary>
 		SpecialCharacterBox,

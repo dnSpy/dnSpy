@@ -53,6 +53,7 @@
 		<color name="localreference" bg="#FFFF99" />
 		<color name="currentstatement" fg="Black" bg="#FFF181" />
 		<color name="breakpointstatement" fg="White" bg="#963A46" />
+		<color name="disabledbreakpointstatement" bg="#30963A46" />
 		<color name="specialcharacterbox" bg="#666699" />
 		<color name="searchresultmarker" bg="#FFFFB7" />
 		<color name="currentline" bg="#1614DCE0" />

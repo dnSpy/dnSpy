@@ -121,6 +121,11 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		/// Gets or sets the Z-order
 		/// </summary>
 		int ZOrder { get; set; }
+
+		/// <summary>
+		/// Forces a redraw
+		/// </summary>
+		void Redraw();
 	}
 	
 	[Flags]
