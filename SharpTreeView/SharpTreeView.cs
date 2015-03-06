@@ -652,5 +652,10 @@ namespace ICSharpCode.TreeView
 		}
 
 		#endregion
+
+		public void SetSelectedNodes(IEnumerable<SharpTreeNode> nodes)
+		{
+			this.SetSelectedItems(nodes.ToList());
+		}
 	}
 }

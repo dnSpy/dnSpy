@@ -106,6 +106,7 @@
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Commands\ExitCommand.cs" />
     <Compile Include="Commands\CommandWrapper.cs" />
+    <Compile Include="Commands\SortListCommand.cs" />
     <Compile Include="Commands\OpenListCommand.cs" />
     <Compile Include="Controls\MarkupExtensions.cs" />
     <Compile Include="Controls\ResourceObjectTable.xaml.cs">
@@ -363,6 +364,7 @@
     <Resource Include="Images\OverlayStatic.png" />
     <Resource Include="Images\VirtualMethod.png" />
     <Resource Include="Images\PInvokeMethod.png" />
+    <Resource Include="Images\Sort.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
@@ -397,9 +399,6 @@
       <Project>{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}</Project>
       <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="AvalonEdit" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\ResourceXml.png" />

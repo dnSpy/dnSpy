@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Threading;
@@ -291,6 +292,21 @@ namespace ICSharpCode.ILSpy
 		public void WaitUntilLoaded()
 		{
 			assemblyTask.Wait();
+		}
+
+		public class NameComparer : Comparer<LoadedAssembly>
+		{
+			public override int Compare(LoadedAssembly x, LoadedAssembly y)
+			{
+				// correctly loaded assemblies sort first, then assemblies with errors
+				if (x.IsLoaded && y.HasLoadError)
+					return -1;
+				if (x.HasLoadError && y.IsLoaded)
+					return 1;
+
+				// within above groups, sort by assembly name 
+				return x.Text.CompareTo(y.Text);
+			}
 		}
 	}
 }
