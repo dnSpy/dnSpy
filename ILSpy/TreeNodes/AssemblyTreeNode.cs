@@ -310,4 +310,34 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 	}
+	[ExportContextMenuEntryAttribute(Header = "_Load Dependencies")]
+	sealed class LoadDependencies : IContextMenuEntry
+	{
+		public bool IsVisible(TextViewContext context)
+		{
+			if (context.SelectedTreeNodes == null)
+				return false;
+			return context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
+		}
+
+		public bool IsEnabled(TextViewContext context)
+		{
+			return true;
+		}
+
+		public void Execute(TextViewContext context)
+		{
+			if (context.SelectedTreeNodes == null)
+				return;
+			foreach (var node in context.SelectedTreeNodes) {
+				var la = ((AssemblyTreeNode)node).LoadedAssembly;
+				if (!la.HasLoadError) {
+					foreach (var assyRef in la.ModuleDefinition.AssemblyReferences) {
+						la.LookupReferencedAssembly(assyRef.FullName);
+					}
+				}
+			}
+			MainWindow.Instance.RefreshDecompiledView();
+		}
+	}
 }
