@@ -846,7 +846,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					var info = DebugInformation.DebugStepInformation;
 					Debug.Assert(info != null);
 					if (info != null) {
-						if (!info.Item1.Equals(key))
+						if (info.Item1 != key)
 							StepIntoUnknownFrame(frame);
 						else
 							DebugInformation.DebugStepInformation = Tuple.Create(info.Item1, ip.Offset, info.Item3);

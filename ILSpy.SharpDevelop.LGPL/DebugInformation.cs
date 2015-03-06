@@ -33,7 +33,7 @@ namespace ICSharpCode.ILSpy.Debugger
 		public static bool MustJumpToReference { get; set; }
 	}
 
-	public sealed class MethodKey : IEquatable<MethodKey>
+	public struct MethodKey : IEquatable<MethodKey>
 	{
 		readonly int token;
 		readonly string moduleFullPath;
@@ -67,17 +67,27 @@ namespace ICSharpCode.ILSpy.Debugger
 			this.moduleFullPath = Path.GetFullPath(module.Location);
 		}
 
+		public static bool operator ==(MethodKey a, MethodKey b)
+		{
+			return a.Equals(b);
+		}
+
+		public static bool operator !=(MethodKey a, MethodKey b)
+		{
+			return !a.Equals(b);
+		}
+
 		public bool Equals(MethodKey other)
 		{
-			if (other == null)
-				return false;
 			return token == other.token &&
 				moduleFullPath.Equals(other.moduleFullPath, StringComparison.OrdinalIgnoreCase);
 		}
 
 		public override bool Equals(object obj)
 		{
-			return Equals(obj as MethodKey);
+			if (!(obj is MethodKey))
+				return false;
+			return Equals((MethodKey)obj);
 		}
 
 		public override int GetHashCode()

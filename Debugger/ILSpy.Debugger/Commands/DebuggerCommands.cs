@@ -655,7 +655,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (methodNode == null)
 				return false;
 			var currentKey = new MethodKey(methodNode.MethodDefinition);
-			if (!currentKey.Equals(info.Item1))
+			if (currentKey != info.Item1)
 				return false;
 
 			var cm = DebugInformation.CodeMappings;
