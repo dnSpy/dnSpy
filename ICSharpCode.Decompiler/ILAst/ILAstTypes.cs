@@ -301,8 +301,13 @@ namespace ICSharpCode.Decompiler.ILAst
 	
 	public struct ILRange : IEquatable<ILRange>
 	{
-		public readonly uint From;
-		public readonly uint To;   // Exlusive
+		readonly uint from, to;
+		public uint From {
+			get { return from; }
+		}
+		public uint To {	// Exlusive
+			get { return to; }
+		}
 
 		public static bool operator ==(ILRange a, ILRange b)
 		{
@@ -315,18 +320,18 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 
 		public bool IsDefault {
-			get { return From == 0 && To == 0; }
+			get { return from == 0 && to == 0; }
 		}
 
 		public ILRange(uint from, uint to)
 		{
-			this.From = from;
-			this.To = to;
+			this.from = from;
+			this.to = to;
 		}
 
 		public bool Equals(ILRange other)
 		{
-			return From == other.From && To == other.To;
+			return from == other.from && to == other.to;
 		}
 
 		public override bool Equals(object obj)
@@ -338,12 +343,12 @@ namespace ICSharpCode.Decompiler.ILAst
 
 		public override int GetHashCode()
 		{
-			return (int)(((From << 16) | From >> 32) | To);
+			return (int)(((from << 16) | from >> 32) | to);
 		}
 		
 		public override string ToString()
 		{
-			return string.Format("{0}-{1}", From.ToString("X"), To.ToString("X"));
+			return string.Format("{0}-{1}", from.ToString("X"), to.ToString("X"));
 		}
 		
 		public static List<ILRange> OrderAndJoint(IEnumerable<ILRange> input)
@@ -351,13 +356,13 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (input == null)
 				throw new ArgumentNullException("Input is null!");
 			
-			List<ILRange> ranges = input.OrderBy(r => r.From).ToList();
+			List<ILRange> ranges = input.OrderBy(r => r.from).ToList();
 			for (int i = 0; i < ranges.Count - 1;) {
 				ILRange curr = ranges[i];
 				ILRange next = ranges[i + 1];
 				// Merge consequtive ranges if they intersect
-				if (curr.From <= next.From && next.From <= curr.To) {
-					ranges[i] = new ILRange(curr.From, Math.Max(curr.To, next.To));
+				if (curr.from <= next.from && next.from <= curr.to) {
+					ranges[i] = new ILRange(curr.from, Math.Max(curr.to, next.to));
 					ranges.RemoveAt(i + 1);
 				} else {
 					i++;
@@ -379,17 +384,17 @@ namespace ICSharpCode.Decompiler.ILAst
 				yield return new ILRange(0, (uint)codeSize);
 			} else {
 				// Gap before the first element
-				if (ordered.First().From != 0)
-					yield return new ILRange(0, ordered.First().From);
+				if (ordered.First().from != 0)
+					yield return new ILRange(0, ordered.First().from);
 				
 				// Gaps between elements
 				for (int i = 0; i < ordered.Count - 1; i++)
-					yield return new ILRange(ordered[i].To, ordered[i + 1].From);
+					yield return new ILRange(ordered[i].to, ordered[i + 1].from);
 				
 				// Gap after the last element
-				Debug.Assert(ordered.Last().To <= codeSize);
-				if (ordered.Last().To != codeSize)
-					yield return new ILRange(ordered.Last().To, (uint)codeSize);
+				Debug.Assert(ordered.Last().to <= codeSize);
+				if (ordered.Last().to != codeSize)
+					yield return new ILRange(ordered.Last().to, (uint)codeSize);
 			}
 		}
 	}

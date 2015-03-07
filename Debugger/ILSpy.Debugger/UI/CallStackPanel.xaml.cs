@@ -59,7 +59,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
                 DebuggerSettings.Instance.PropertyChanged += new PropertyChangedEventHandler(OnDebuggerSettingChanged);
                 
                 SwitchModuleColumn();
-			    MainWindow.Instance.ShowInBottomPane("Callstack", this);
+			    MainWindow.Instance.ShowInBottomPane("Call Stack", this);
                 
                 DebuggerService.DebugStarted += new EventHandler(OnDebugStarted);
                 DebuggerService.DebugStopped += new EventHandler(OnDebugStopped);
@@ -161,10 +161,23 @@ namespace ICSharpCode.ILSpy.Debugger.UI
     			item = new CallStackItem() {
 					Name = GetFullName(frame),
 					ModuleName = frame.MethodInfo.DebugModule.ToString(),
-					Rid = frame.MethodInfo.MetadataToken & 0x00FFFFFF,
+					Token = (uint)frame.MethodInfo.MetadataToken,
 					ILOffset = frame.IP.IsValid ? frame.IP.Offset : -1,
 					MethodKey = frame.MethodInfo.ToMethodKey(),
 				};
+				var module = frame.MethodInfo.DebugModule;
+				if (module.IsDynamic || module.IsInMemory) {
+					//TODO: support this
+				}
+				else {
+					var loadedMod = MainWindow.Instance.LoadAssembly(module.AssemblyFullPath, module.FullPath).ModuleDefinition as ModuleDef;
+					if (loadedMod != null) {
+						item.ModuleName = loadedMod.FullName;
+						var asm = loadedMod.Assembly;
+						if (asm != null) // Should never fail
+							item.AssemblyName = asm.FullName;
+					}
+				}
 				item.Frame = frame;
 				items.Add(item);
 				Utils.DoEvents(debuggedProcess);
@@ -232,7 +245,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
             	return;
             
             var foundAssembly = MainWindow.Instance.CurrentAssemblyList.OpenAssembly(selectedItem.Frame.MethodInfo.DebugModule.FullPath);
-            if (null == foundAssembly || null == foundAssembly.AssemblyDefinition)
+            if (null == foundAssembly)
                 return;
             
 			IMemberRef mr = XmlDocKeyProvider.FindMemberByKey(foundAssembly.ModuleDefinition, "M:" + selectedItem.Name);
@@ -243,10 +256,11 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 				var cm = DebugInformation.CodeMappings;
 				var key = selectedItem.MethodKey;
 				NR.TextLocation location, endLocation;
-				if (cm != null && cm.ContainsKey(key) &&
-					cm[key].GetInstructionByTokenAndOffset((uint)selectedItem.ILOffset, out location, out endLocation)) {
-
-					if (alreadySelected)
+				if (cm != null && cm.ContainsKey(key)) {
+					if (!cm[key].GetInstructionByTokenAndOffset((uint)selectedItem.ILOffset, out location, out endLocation)) {
+						//TODO: Missing IL ranges
+					}
+					else if (alreadySelected)
 						MainWindow.Instance.TextView.ScrollAndMoveCaretTo(location.Line, location.Column);
 					else // should never happen
 						DebugInformation.JumpToThisLine = location;
@@ -273,7 +287,8 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		public string Name { get; set; }
 		public StackFrame Frame { get; set; }
 		public string ModuleName { get; set; }
-		public int Rid { get; set; }
+		public string AssemblyName { get; set; }
+		public uint Token { get; set; }
 		public int ILOffset { get; set; }
 		public MethodKey MethodKey { get; set; }
 		
@@ -282,7 +297,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		}
 	}
 	
-    [ExportMainMenuCommand(Menu="_Debug", Header="_Show Callstack", MenuCategory="View", MenuOrder=9)]
+    [ExportMainMenuCommand(Menu="_Debug", Header="_Show Call Stack", MenuCategory="View", MenuOrder=9)]
     public class CallstackPanelcommand : SimpleCommand
     {
         public override void Execute(object parameter)

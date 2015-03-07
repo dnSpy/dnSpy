@@ -28,11 +28,11 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn
-                        Header="RID">
+                        Header="Token">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock
-                                    Text="{Binding Rid}"
+                                    Text="{Binding Token, StringFormat={}0x{0:X8}}"
                                     Foreground="{Binding FontColor}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
@@ -47,6 +47,16 @@
 							</DataTemplate>
 						</GridViewColumn.CellTemplate>
 					</GridViewColumn>
+                    <GridViewColumn
+                        Header="Assembly">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    Text="{Binding AssemblyName}"
+                                    Foreground="{Binding FontColor}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
 				</GridView>
             </ListView.View>
             <ListView.ContextMenu>
