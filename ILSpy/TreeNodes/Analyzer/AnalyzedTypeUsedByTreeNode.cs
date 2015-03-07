@@ -60,7 +60,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			if (IsUsedInTypeDefinition(type))
 				yield return new AnalyzedTypeTreeNode(type) { Language = Language };
 
-			foreach (var field in type.Fields.Where(IsUsedInFieldDefinition))
+			foreach (var field in type.Fields.Where(IsUsedInFieldReference))
 				yield return new AnalyzedFieldTreeNode(field) { Language = Language };
 
 			foreach (var method in type.Methods.Where(IsUsedInMethodDefinition))
@@ -94,8 +94,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		{
 			return IsUsedInTypeReference(type)
 				   || TypeMatches(type.BaseType)
-				   || IsUsedInTypeReferences(type.Interfaces)
-				   || IsUsedInCustomAttributes(type.CustomAttributes);
+				   || IsUsedInTypeReferences(type.Interfaces);
 		}
 
 		private bool IsUsedInFieldReference(FieldReference field)
@@ -105,12 +104,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 			return TypeMatches(field.DeclaringType)
 				|| TypeMatches(field.FieldType);
-		}
-
-		private bool IsUsedInFieldDefinition(FieldDefinition field)
-		{
-			return IsUsedInFieldReference(field)
-				   || IsUsedInCustomAttributes(field.CustomAttributes);
 		}
 
 		private bool IsUsedInMethodReference(MethodReference method)
@@ -126,8 +119,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		private bool IsUsedInMethodDefinition(MethodDefinition method)
 		{
 			return IsUsedInMethodReference(method)
-				   || IsUsedInMethodBody(method)
-				   || IsUsedInCustomAttributes(method.CustomAttributes);
+				   || IsUsedInMethodBody(method);
 		}
 
 		private bool IsUsedInMethodBody(MethodDefinition method)
@@ -167,19 +159,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private bool IsUsedInMethodParameter(ParameterDefinition parameter)
 		{
-			return TypeMatches(parameter.ParameterType)
-				   || IsUsedInCustomAttributes(parameter.CustomAttributes);
-		}
-
-		private bool IsUsedInCustomAttributes(IEnumerable<CustomAttribute> attributes)
-		{
-			return attributes.Any(IsUsedInCustomAttribute);
-		}
-
-		private bool IsUsedInCustomAttribute(CustomAttribute attribute)
-		{
-			// No need search in custom attribute, ILSpy already provide an "Applied To" search.
-			return false;
+			return TypeMatches(parameter.ParameterType);
 		}
 
 		private bool TypeMatches(TypeReference tref)
