@@ -62,6 +62,7 @@ namespace ICSharpCode.ILSpy
 			searchModeComboBox.Items.Add(new { Image = Images.Property, Name = "Member" });
 			searchModeComboBox.Items.Add(new { Image = Images.Literal, Name = "Constant" });
 			searchModeComboBox.SelectedIndex = (int)SearchMode.Type;
+			ContextMenuProvider.Add(listBox);
 			
 			MainWindow.Instance.CurrentAssemblyListChanged += MainWindow_Instance_CurrentAssemblyListChanged;
 		}
