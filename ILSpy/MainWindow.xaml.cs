@@ -637,12 +637,15 @@ namespace ICSharpCode.ILSpy
 				return null;
 			SharpTreeNode node = treeView.Root;
 			SharpTreeNode bestMatch = node;
-			foreach (var element in path) {
+			for (int i = 0; i < path.Length; i++) {
 				if (node == null)
 					break;
 				bestMatch = node;
 				((ILSpyTreeNode)node).EnsureChildrenFiltered();
-				node = node.Children.FirstOrDefault(c => c.ToString() == element);
+				if (i <= 1)	// Check if it's the assembly or module nodes
+					node = node.Children.FirstOrDefault(c => c is AssemblyTreeNode && ((AssemblyTreeNode)c).LoadedAssembly.FileName == path[i]);
+				else
+					node = node.Children.FirstOrDefault(c => c.ToString() == path[i]);
 			}
 			if (returnBestMatch)
 				return node ?? bestMatch;
@@ -659,7 +662,11 @@ namespace ICSharpCode.ILSpy
 				return null;
 			List<string> path = new List<string>();
 			while (node.Parent != null) {
-				path.Add(node.ToString());
+				var asmNode = node as AssemblyTreeNode;
+				if (asmNode != null)
+					path.Add(asmNode.LoadedAssembly.FileName);
+				else
+					path.Add(node.ToString());
 				node = node.Parent;
 			}
 			path.Reverse();
