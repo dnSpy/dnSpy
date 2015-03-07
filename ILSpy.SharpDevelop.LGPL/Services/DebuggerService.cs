@@ -159,14 +159,14 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			}
 		}
 		
-		public static void ToggleBreakpointAt(SourceCodeMapping instruction)
+		public static bool ToggleBreakpointAt(SourceCodeMapping instruction)
 		{
 			var member = instruction.MemberMapping.MethodDefinition;
 			var location = instruction.StartLocation;
 			var endLocation = instruction.EndLocation;
 			var range = instruction.ILInstructionOffset;
 
-			BookmarkManager.ToggleBookmark(
+			return BookmarkManager.ToggleBookmark(
 				location, endLocation,
 				b => b.CanToggle && b is BreakpointBookmark,
 				(location2, endLocation2) => new BreakpointBookmark(member, location2, endLocation2, range));

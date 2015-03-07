@@ -56,8 +56,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		{
 			var bp = Find(line, column);
 			if (bp != null) {
-				DebuggerService.ToggleBreakpointAt(bp);
-				MainWindow.Instance.TextView.ScrollAndMoveCaretTo(bp.StartLocation.Line, bp.StartLocation.Column);
+				if (DebuggerService.ToggleBreakpointAt(bp))
+					MainWindow.Instance.TextView.ScrollAndMoveCaretTo(bp.StartLocation.Line, bp.StartLocation.Column);
 			}
 		}
 

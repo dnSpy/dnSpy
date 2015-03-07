@@ -85,19 +85,20 @@ namespace ICSharpCode.ILSpy.Bookmarks
 			}
 		}
 		
-		public static void ToggleBookmark(TextLocation location, TextLocation endLocation,
+		public static bool ToggleBookmark(TextLocation location, TextLocation endLocation,
 		                                  Predicate<BookmarkBase> canToggle,
 										  Func<TextLocation, TextLocation, BookmarkBase> bookmarkFactory)
 		{
 			foreach (BookmarkBase bookmark in Bookmarks) {
 				if (canToggle(bookmark) && bookmark.Location == location && bookmark.EndLocation == endLocation) {
 					BookmarkManager.RemoveMark(bookmark);
-					return;
+					return false;
 				}
 			}
 			
 			// no bookmark at that line: create a new bookmark
 			BookmarkManager.AddMark(bookmarkFactory(location, endLocation));
+			return true;
 		}
 		
 		public static event BookmarkEventHandler Removed;
