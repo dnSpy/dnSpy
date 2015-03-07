@@ -255,8 +255,7 @@ namespace ICSharpCode.ILSpy
 					file = Path.Combine(dir, name.Name + ".exe");
 			}
 			if (file != null) {
-				var loaded = assemblyList.OpenAssembly(file);
-				loaded.IsAutoLoaded = true;
+				var loaded = assemblyList.OpenAssembly(file, true);
 				return loaded;
 			} else {
 				return null;
@@ -278,7 +277,7 @@ namespace ICSharpCode.ILSpy
 			
 			string file = Path.Combine(Environment.SystemDirectory, "WinMetadata", name + ".winmd");
 			if (File.Exists(file)) {
-				return assemblyList.OpenAssembly(file);
+				return assemblyList.OpenAssembly(file, true);
 			} else {
 				return null;
 			}
