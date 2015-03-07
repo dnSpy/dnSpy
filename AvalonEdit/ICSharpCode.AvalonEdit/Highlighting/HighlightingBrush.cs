@@ -139,7 +139,6 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 		{
 			return property.Name;
 		}
-#pragma warning restore 1591
 		
 		SystemColorHighlightingBrush(SerializationInfo info, StreamingContext context)
 		{
@@ -165,5 +164,6 @@ namespace ICSharpCode.AvalonEdit.Highlighting
 		{
 			return property.GetHashCode();
 		}
+#pragma warning restore 1591
 	}
 }

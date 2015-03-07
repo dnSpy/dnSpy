@@ -198,7 +198,9 @@ namespace ICSharpCode.ILSpy.TextView
 			{
 			}
 
+#pragma warning disable 0067
 			public event HighlightingStateChangedEventHandler HighlightingStateChanged;
+#pragma warning restore 0067
 
 			public void BeginHighlighting()
 			{
