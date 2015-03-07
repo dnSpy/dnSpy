@@ -57,6 +57,12 @@ namespace ICSharpCode.ILSpy
 		public DecompilerTextView TextView { get; private set; }
 		
 		/// <summary>
+		/// Returns the list box the context menu is assigned to.
+		/// Returns null, if context menu is not assigned to a list box.
+		/// </summary>
+		public ListBox ListBox { get; private set; }
+		
+		/// <summary>
 		/// Returns the reference the mouse cursor is currently hovering above.
 		/// Returns null, if there was no reference found.
 		/// </summary>
@@ -68,9 +74,15 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		public TextViewPosition? Position { get; private set; }
 		
-		public static TextViewContext Create(SharpTreeView treeView = null, DecompilerTextView textView = null)
+		public static TextViewContext Create(SharpTreeView treeView = null, DecompilerTextView textView = null, ListBox listBox = null)
 		{
-			var reference = textView != null ? textView.GetReferenceSegmentAtMousePosition() : null;
+			ReferenceSegment reference;
+			if (textView != null)
+				reference = textView.GetReferenceSegmentAtMousePosition();
+			else if (listBox != null)
+				reference = new ReferenceSegment { Reference = ((SearchResult)listBox.SelectedItem).Member };
+			else
+				reference = null;
 			var position = textView != null ? textView.GetPositionFromMousePosition() : null;
 			var selectedTreeNodes = treeView != null ? treeView.GetTopLevelSelection().ToArray() : null;
 			return new TextViewContext {
@@ -128,8 +140,16 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
+		public static void Add(ListBox listBox)
+		{
+			var provider = new ContextMenuProvider(listBox);
+			listBox.ContextMenuOpening += provider.listBox_ContextMenuOpening;
+			listBox.ContextMenu = new ContextMenu();
+		}
+		
 		readonly SharpTreeView treeView;
 		readonly DecompilerTextView textView;
+		readonly ListBox listBox;
 		
 		[ImportMany(typeof(IContextMenuEntry))]
 		Lazy<IContextMenuEntry, IContextMenuEntryMetadata>[] entries = null;
@@ -144,6 +164,12 @@ namespace ICSharpCode.ILSpy
 			foreach (var e in entries) {
 				var v = e.Value;
 			}
+		}
+		
+		ContextMenuProvider(ListBox listBox)
+		{
+			this.listBox = listBox;
+			App.CompositionContainer.ComposeParts(this);
 		}
 		
 		void treeView_ContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -172,6 +198,17 @@ namespace ICSharpCode.ILSpy
 				e.Handled = true;
 		}
 
+		void listBox_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+		{
+			TextViewContext context = TextViewContext.Create(listBox: listBox);
+			ContextMenu menu;
+			if (ShowContextMenu(context, out menu))
+				listBox.ContextMenu = menu;
+			else
+				// hide the context menu.
+				e.Handled = true;
+		}
+		
 		bool ShowContextMenu(TextViewContext context, out ContextMenu menu)
 		{
 			menu = new ContextMenu();

@@ -193,6 +193,8 @@ namespace ICSharpCode.ILSpy
 			return InitializeModule(module);
 		}
 		
+		public bool IsAutoLoaded { get; set; }
+
 		ModuleDef LoadAssembly(object state)
 		{
 			var stream = state as Stream;
@@ -354,7 +356,7 @@ namespace ICSharpCode.ILSpy
 			if (assemblyList.UseGAC) {
 				var file = GacInterop.FindAssemblyInNetGac(name);
 				if (file != null)
-					return assemblyList.OpenAssembly(file, assemblyLoadDisableCount == 0);
+					return assemblyList.OpenAssembly(file, assemblyLoadDisableCount == 0, true);
 				foreach (var path in otherGacPaths) {
 					loadedAsm = TryLoadFromDir(name, true, path);
 					if (loadedAsm != null)
@@ -454,7 +456,7 @@ namespace ICSharpCode.ILSpy
 				return null;
 			}
 			if (File.Exists(file)) {
-				return assemblyList.OpenAssembly(file, assemblyLoadDisableCount == 0);
+				return assemblyList.OpenAssembly(file, assemblyLoadDisableCount == 0, true);
 			} else {
 				return null;
 			}
@@ -473,5 +475,29 @@ namespace ICSharpCode.ILSpy
 		{
 			assemblyTask.Wait();
 		}
+
+		public class NameComparer : Comparer<LoadedAssembly>
+		{
+			public override int Compare(LoadedAssembly x, LoadedAssembly y)
+			{
+				// sort order:
+				//   explicitly loaded assemblies
+				//   auto-loaded assemblies
+				//   assemblies with errors
+				if (x.IsLoaded && y.HasLoadError)
+					return -1;
+				if (x.HasLoadError && y.IsLoaded)
+					return 1;
+
+				if (!x.IsAutoLoaded && y.IsAutoLoaded)
+					return -1;
+				if (x.IsAutoLoaded && !y.IsAutoLoaded)
+					return 1;
+
+				// within above groups, sort by assembly name 
+				return x.Text.CompareTo(y.Text);
+			}
+		}
+
 	}
 }

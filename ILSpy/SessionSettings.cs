@@ -48,6 +48,7 @@ namespace ICSharpCode.ILSpy
 			if (activeTreeViewPath != null) {
 				this.ActiveTreeViewPath = activeTreeViewPath.Elements().Select(e => (string)e).ToArray();
 			}
+			this.ActiveAutoLoadedAssembly = (string)doc.Element("ActiveAutoLoadedAssembly");
 			
 			this.WindowState = FromString((string)doc.Element("WindowState"), WindowState.Normal);
 			this.WindowBounds = FromString((string)doc.Element("WindowBounds"), DefaultWindowBounds);
@@ -70,6 +71,7 @@ namespace ICSharpCode.ILSpy
 		public FilterSettings FilterSettings { get; private set; }
 		
 		public string[] ActiveTreeViewPath;
+		public string ActiveAutoLoadedAssembly;
 		
 		public string ActiveAssemblyList;
 		
@@ -91,6 +93,9 @@ namespace ICSharpCode.ILSpy
 			}
 			if (this.ActiveTreeViewPath != null) {
 				doc.Add(new XElement("ActiveTreeViewPath", ActiveTreeViewPath.Select(p => new XElement("Node", p))));
+			}
+			if (this.ActiveAutoLoadedAssembly != null) {
+				doc.Add(new XElement("ActiveAutoLoadedAssembly", this.ActiveAutoLoadedAssembly));
 			}
 			doc.Add(new XElement("WindowState", ToString(this.WindowState)));
 			doc.Add(new XElement("WindowBounds", ToString(this.WindowBounds)));

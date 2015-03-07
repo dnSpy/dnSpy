@@ -35,7 +35,7 @@
 								<Image Width="16" Height="16" Stretch="Fill" Source="next.png" />
 							</Button>
 							<Button Height="16" Width="16" HorizontalAlignment="Right" VerticalAlignment="Top" Command="search:SearchCommands.CloseSearchPanel"
-							        VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+							        VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Focusable="False">
 								<Path Data="M 0,0 L 8,8 M 8,0 L 0,8" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" />
 							</Button>
 						</StackPanel>

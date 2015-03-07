@@ -635,6 +635,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		static readonly AstNode lockTryCatchPattern = new TryCatchStatement {
 			TryBlock = new BlockStatement {
+				new OptionalNode(new VariableDeclarationStatement()).ToStatement(),
 				new TypePattern(typeof(System.Threading.Monitor)).ToType().Invoke2(
 					TextTokenType.StaticMethod,
 					"Enter", new AnyNode("enter"),
@@ -648,21 +649,57 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				new IfElseStatement {
 					Condition = new Backreference("flag"),
 					TrueStatement = new BlockStatement {
-						new TypePattern(typeof(System.Threading.Monitor)).ToType().Invoke2(TextTokenType.StaticMethod, "Exit", new NamedNode("exit", new IdentifierExpression(Pattern.AnyString)))
+						new TypePattern(typeof(System.Threading.Monitor)).ToType().Invoke2(TextTokenType.StaticMethod, "Exit", new AnyNode("exit"))
 					}
 				}
 			}};
+
+		static readonly AstNode oldMonitorCallPattern = new ExpressionStatement(
+			new TypePattern(typeof(System.Threading.Monitor)).ToType().Invoke("Enter", new AnyNode("enter"))
+		);
+
+		static readonly AstNode oldLockTryCatchPattern = new TryCatchStatement
+		{
+			TryBlock = new BlockStatement {
+				new Repeat(new AnyNode()).ToStatement()
+			},
+			FinallyBlock = new BlockStatement {
+				new TypePattern(typeof(System.Threading.Monitor)).ToType().Invoke("Exit", new AnyNode("exit"))
+			}
+		};
+
+		bool AnalyzeLockV2(ExpressionStatement node, out Expression enter, out Expression exit)
+		{
+			enter = null;
+			exit = null;
+			Match m1 = oldMonitorCallPattern.Match(node);
+			if (!m1.Success) return false;
+			Match m2 = oldLockTryCatchPattern.Match(node.NextSibling);
+			if (!m2.Success) return false;
+			enter = m1.Get<Expression>("enter").Single();
+			exit = m2.Get<Expression>("exit").Single();
+			return true;
+		}
+
+		bool AnalyzeLockV4(ExpressionStatement node, out Expression enter, out Expression exit)
+		{
+			enter = null;
+			exit = null;
+			Match m1 = lockFlagInitPattern.Match(node);
+			if (!m1.Success) return false;
+			Match m2 = lockTryCatchPattern.Match(node.NextSibling);
+			if (!m2.Success) return false;
+			enter = m2.Get<Expression>("enter").Single();
+			exit = m2.Get<Expression>("exit").Single();
+			return m1.Get<IdentifierExpression>("variable").Single().Identifier == m2.Get<IdentifierExpression>("flag").Single().Identifier;
+		}
 		
 		public LockStatement TransformLock(ExpressionStatement node)
 		{
-			Match m1 = lockFlagInitPattern.Match(node);
-			if (!m1.Success) return null;
-			AstNode tryCatch = node.NextSibling;
-			Match m2 = lockTryCatchPattern.Match(tryCatch);
-			if (!m2.Success) return null;
-			if (m1.Get<IdentifierExpression>("variable").Single().Identifier == m2.Get<IdentifierExpression>("flag").Single().Identifier) {
-				Expression enter = m2.Get<Expression>("enter").Single();
-				IdentifierExpression exit = m2.Get<IdentifierExpression>("exit").Single();
+			Expression enter, exit;
+			bool isV2 = AnalyzeLockV2(node, out enter, out exit);
+			if (isV2 || AnalyzeLockV4(node, out enter, out exit)) {
+				AstNode tryCatch = node.NextSibling;
 				if (!exit.IsMatch(enter)) {
 					// If exit and enter are not the same, then enter must be "exit = ..."
 					AssignmentExpression assign = enter as AssignmentExpression;
@@ -678,7 +715,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				LockStatement l = new LockStatement();
 				l.Expression = enter.Detach();
 				l.EmbeddedStatement = ((TryCatchStatement)tryCatch).TryBlock.Detach();
-				((BlockStatement)l.EmbeddedStatement).Statements.First().Remove(); // Remove 'Enter()' call
+				if (!isV2) // Remove 'Enter()' call
+					((BlockStatement)l.EmbeddedStatement).Statements.First().Remove(); 
 				tryCatch.ReplaceWith(l);
 				node.Remove(); // remove flag variable
 				return l;

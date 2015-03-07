@@ -114,6 +114,13 @@ namespace ICSharpCode.Decompiler.Tests
 		}
 		
 		[Test]
+		public void Lock()
+		{
+			//TestFile(@"..\..\Tests\Lock.cs", compilerVersion: 2);
+			TestFile(@"..\..\Tests\Lock.cs", compilerVersion: 4);
+		}
+		
+		[Test]
 		public void Loops()
 		{
 			TestFile(@"..\..\Tests\Loops.cs");
@@ -179,12 +186,12 @@ namespace ICSharpCode.Decompiler.Tests
 			TestFile(@"..\..\Tests\TypeAnalysisTests.cs");
 		}
 		
-		static void TestFile(string fileName, bool useDebug = false)
+		static void TestFile(string fileName, bool useDebug = false, int compilerVersion = 4)
 		{
-			AssertRoundtripCode(fileName, optimize: false, useDebug: useDebug);
-			AssertRoundtripCode(fileName, optimize: true, useDebug: useDebug);
-			AssertRoundtripCode(fileName, optimize: false, useDebug: useDebug);
-			AssertRoundtripCode(fileName, optimize: true, useDebug: useDebug);
+			AssertRoundtripCode(fileName, optimize: false, useDebug: useDebug, compilerVersion: compilerVersion);
+			AssertRoundtripCode(fileName, optimize: true, useDebug: useDebug, compilerVersion: compilerVersion);
+			AssertRoundtripCode(fileName, optimize: false, useDebug: useDebug, compilerVersion: compilerVersion);
+			AssertRoundtripCode(fileName, optimize: true, useDebug: useDebug, compilerVersion: compilerVersion);
 		}
 	}
 }

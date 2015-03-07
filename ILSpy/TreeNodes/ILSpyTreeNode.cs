@@ -176,11 +176,22 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public virtual bool IsPublicAPI {
 			get { return true; }
 		}
+
+		public virtual bool IsAutoLoaded
+		{
+			get { return false; }
+		}
 		
 		public override System.Windows.Media.Brush Foreground {
 			get {
 				if (IsPublicAPI)
-					return base.Foreground;
+					if (IsAutoLoaded) {
+						// HACK: should not be hard coded?
+						return System.Windows.Media.Brushes.SteelBlue;
+					}
+					else {
+						return base.Foreground;
+					}
 				else
 					return System.Windows.SystemColors.GrayTextBrush;
 			}

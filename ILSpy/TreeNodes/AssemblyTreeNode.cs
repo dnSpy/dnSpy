@@ -74,6 +74,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return assembly.AssemblyDefinition == null; }
 		}
 
+		public override bool IsAutoLoaded
+		{
+			get { 
+				return assembly.IsAutoLoaded; 
+			}
+		}
+
 		public override object Text
 		{
 			get {
@@ -397,6 +404,76 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			foreach (var node in context.SelectedTreeNodes) {
 				node.Delete();
 			}
+		}
+	}
+
+	[ExportContextMenuEntryAttribute(Header = "_Load Dependencies")]
+	sealed class LoadDependencies : IContextMenuEntry
+	{
+		public bool IsVisible(TextViewContext context)
+		{
+			if (context.SelectedTreeNodes == null)
+				return false;
+			return context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
+		}
+
+		public bool IsEnabled(TextViewContext context)
+		{
+			return true;
+		}
+
+		public void Execute(TextViewContext context)
+		{
+			if (context.SelectedTreeNodes == null)
+				return;
+			foreach (var node in context.SelectedTreeNodes) {
+				var la = ((AssemblyTreeNode)node).LoadedAssembly;
+				if (!la.HasLoadError && la.ModuleDefinition is ModuleDefMD) {
+					foreach (var assyRef in ((ModuleDefMD)la.ModuleDefinition).GetAssemblyRefs()) {
+						la.LookupReferencedAssembly(assyRef);
+					}
+				}
+			}
+			MainWindow.Instance.RefreshDecompiledView();
+		}
+
+		public string GetMenuHeader(TextViewContext context)
+		{
+			return null;
+		}
+	}
+
+	[ExportContextMenuEntryAttribute(Header = "_Add To Main List")]
+	sealed class AddToMainList : IContextMenuEntry
+	{
+		public bool IsVisible(TextViewContext context)
+		{
+			if (context.SelectedTreeNodes == null)
+				return false;
+			return context.SelectedTreeNodes.Where(n => n is AssemblyTreeNode).Any(n=>((AssemblyTreeNode)n).IsAutoLoaded);
+		}
+
+		public bool IsEnabled(TextViewContext context)
+		{
+			return true;
+		}
+
+		public void Execute(TextViewContext context)
+		{
+			if (context.SelectedTreeNodes == null)
+				return;
+			foreach (var node in context.SelectedTreeNodes) {
+				var loadedAssm = ((AssemblyTreeNode)node).LoadedAssembly;
+				if (!loadedAssm.HasLoadError) {
+					loadedAssm.IsAutoLoaded = false;
+					node.RaisePropertyChanged("Foreground");
+				}
+			}
+		}
+
+		public string GetMenuHeader(TextViewContext context)
+		{
+			return null;
 		}
 	}
 }

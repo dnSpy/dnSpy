@@ -120,6 +120,7 @@ namespace ICSharpCode.TreeView
 		}
 
 		TreeFlattener flattener;
+		bool updatesLocked;
 
 		void Reload()
 		{
@@ -148,16 +149,23 @@ namespace ICSharpCode.TreeView
 						selectedOldItems.Add(node);
 					}
 				}
-				if (selectedOldItems != null) {
+				if (!updatesLocked && selectedOldItems != null) {
 					var list = SelectedItems.Cast<SharpTreeNode>().Except(selectedOldItems).ToList();
-					SetSelectedItems(list);
-					if (SelectedItem == null) {
-						// if we removed all selected nodes, then move the focus to the node 
-						// preceding the first of the old selected nodes
-						SelectedIndex = Math.Max(0, e.OldStartingIndex - 1);
-						FocusNode((SharpTreeNode)SelectedItem);
-					}
+					UpdateFocusedNode(list, Math.Max(0, e.OldStartingIndex - 1));
 				}
+			}
+		}
+
+		void UpdateFocusedNode(List<SharpTreeNode> newSelection, int topSelectedIndex)
+		{
+			if (updatesLocked) return;
+			SetSelectedItems(newSelection ?? Enumerable.Empty<SharpTreeNode>());
+			if (SelectedItem == null) {
+				// if we removed all selected nodes, then move the focus to the node 
+				// preceding the first of the old selected nodes
+				SelectedIndex = topSelectedIndex;
+				if (SelectedItem != null)
+					FocusNode((SharpTreeNode)SelectedItem);
 			}
 		}
 		
@@ -631,8 +639,18 @@ namespace ICSharpCode.TreeView
 		static void HandleExecuted_Delete(object sender, ExecutedRoutedEventArgs e)
 		{
 			SharpTreeView treeView = (SharpTreeView)sender;
-			foreach (SharpTreeNode node in treeView.GetTopLevelSelection().ToArray())
-				node.Delete();
+			treeView.updatesLocked = true;
+			int selectedIndex = -1;
+			try {
+				foreach (SharpTreeNode node in treeView.GetTopLevelSelection().ToArray()) {
+					if (selectedIndex == -1)
+						selectedIndex = treeView.flattener.IndexOf(node);
+					node.Delete();
+				}
+			} finally {
+				treeView.updatesLocked = false;
+				treeView.UpdateFocusedNode(null, Math.Max(0, selectedIndex - 1));
+			}
 		}
 
 		static void HandleCanExecute_Delete(object sender, CanExecuteRoutedEventArgs e)
@@ -652,5 +670,10 @@ namespace ICSharpCode.TreeView
 		}
 
 		#endregion
+
+		public void SetSelectedNodes(IEnumerable<SharpTreeNode> nodes)
+		{
+			this.SetSelectedItems(nodes.ToList());
+		}
 	}
 }

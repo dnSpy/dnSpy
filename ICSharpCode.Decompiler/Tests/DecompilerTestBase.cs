@@ -44,10 +44,10 @@ namespace ICSharpCode.Decompiler.Tests
 			return CodeSampleFileParser.ConcatLines(lines.Where(l => !CodeSampleFileParser.IsCommentOrBlank(l)));
 		}
 
-		protected static void AssertRoundtripCode(string fileName, bool optimize = false, bool useDebug = false)
+		protected static void AssertRoundtripCode(string fileName, bool optimize = false, bool useDebug = false, int compilerVersion = 4)
 		{
 			var code = RemoveIgnorableLines(File.ReadLines(fileName));
-			AssemblyDef assembly = CompileLegacy(code, optimize, useDebug);
+			AssemblyDef assembly = CompileLegacy(code, optimize, useDebug, compilerVersion);
 
 			AstBuilder decompiler = new AstBuilder(new DecompilerContext(assembly.ManifestModule));
 			decompiler.AddAssembly(assembly);
@@ -58,12 +58,13 @@ namespace ICSharpCode.Decompiler.Tests
 			CodeAssert.AreEqual(code, output.ToString());
 		}
 
-		protected static AssemblyDef CompileLegacy(string code, bool optimize, bool useDebug)
+		protected static AssemblyDef CompileLegacy(string code, bool optimize, bool useDebug, int compilerVersion)
 		{
-			CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string, string> { { "CompilerVersion", "v4.0" } });
+			CSharpCodeProvider provider = new CSharpCodeProvider(new Dictionary<string, string> { { "CompilerVersion", "v" + new Version(compilerVersion, 0) } });
 			CompilerParameters options = new CompilerParameters();
 			options.CompilerOptions = "/unsafe /o" + (optimize ? "+" : "-") + (useDebug ? " /debug" : "");
-			options.ReferencedAssemblies.Add("System.Core.dll");
+			if (compilerVersion >= 4)
+				options.ReferencedAssemblies.Add("System.Core.dll");
 			CompilerResults results = provider.CompileAssemblyFromSource(options, code);
 			try
 			{
