@@ -180,6 +180,7 @@
     <Compile Include="Commands\SimpleCommand.cs" />
     <Compile Include="SearchStrategies.cs" />
     <Compile Include="TaskHelper.cs" />
+    <Compile Include="TextView\EditorCommands.cs" />
     <Compile Include="TextView\FoldingCommands.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzeContextMenuEntry.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedAssemblyTreeNode.cs" />
