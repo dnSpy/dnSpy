@@ -984,8 +984,7 @@ namespace ICSharpCode.ILSpy.TextView
 
 		void TextEditor_PreviewKeyDown(object sender, KeyEventArgs e)
 		{
-			bool isOnlyCtrl = Keyboard.Modifiers == ModifierKeys.Control;
-			if (isOnlyCtrl && e.Key == Key.PageUp) {
+			if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.PageUp) {
 				var textView = TextEditor.TextArea.TextView;
 				textView.EnsureVisualLines();
 				if (textView.VisualLines.Count > 0) {
@@ -1000,7 +999,8 @@ namespace ICSharpCode.ILSpy.TextView
 				e.Handled = true;
 				return;
 			}
-			if (isOnlyCtrl && e.Key == Key.PageDown) {
+
+			if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.PageDown) {
 				var textView = TextEditor.TextArea.TextView;
 				textView.EnsureVisualLines();
 				if (textView.VisualLines.Count > 0) {
@@ -1016,7 +1016,13 @@ namespace ICSharpCode.ILSpy.TextView
 				return;
 			}
 
-			if (e.Key == Key.F12) {
+			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Escape) {
+				ClearLocalReferenceMarks();
+				e.Handled = true;
+				return;
+			}
+
+			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F12) {
 				int offset = textEditor.TextArea.Caret.Offset;
 				var refSeg = referenceElementGenerator.References.FindSegmentsContaining(offset).FirstOrDefault();
 				if (refSeg == null)
