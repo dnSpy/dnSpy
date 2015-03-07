@@ -100,7 +100,6 @@
     <Compile Include="Interop\MetaData.cs" />
     <Compile Include="Interop\MetaDataWrapper.cs" />
     <Compile Include="Interop\NativeMethods.cs" />
-    <Compile Include="Interop\TrackedComObjects.cs" />
     <Compile Include="Interop\Util.cs" />
     <Compile Include="MetaData\DebugFieldInfo.cs" />
     <Compile Include="MetaData\DebugLocalVariableInfo.cs" />

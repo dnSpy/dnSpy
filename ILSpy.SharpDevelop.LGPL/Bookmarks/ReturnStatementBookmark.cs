@@ -33,10 +33,6 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			get { return 80; }
 		}
 
-		public override bool CanDragDrop {
-			get { return false; }
-		}
-
 		public override ImageSource Image {
 			get { return Images.CurrentLine; }//TODO: Use another similar image
 		}

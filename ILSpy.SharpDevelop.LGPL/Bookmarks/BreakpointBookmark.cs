@@ -15,13 +15,6 @@ using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 {
-	public enum BreakpointAction
-	{
-		Break,
-		Trace,
-		Condition
-	}
-	
 	public class BreakpointBookmark : MarkerBookmark
 	{
 		public static HighlightingColor HighlightingColor = new HighlightingColor {
@@ -29,21 +22,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			Foreground = new SimpleHighlightingBrush(Colors.White),
 		};
 		public static HighlightingColor DisabledHighlightingColor = HighlightingColor;
-		bool isHealthy = true;
 		bool isEnabled = true;
-		BreakpointAction action = BreakpointAction.Break;
-		
-		public BreakpointAction Action {
-			get {
-				return action;
-			}
-			set {
-				if (action != value) {
-					action = value;
-					Redraw();
-				}
-			}
-		}
 		
 		/// <summary>
 		/// Gets the function/method where the breakpoint is set.
@@ -55,18 +34,6 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		public MethodKey MethodKey { get; private set; }
 		
 		public ILRange ILRange { get; private set; }
-		
-		public virtual bool IsHealthy {
-			get {
-				return isHealthy;
-			}
-			set {
-				if (isHealthy != value) {
-					isHealthy = value;
-					Redraw();
-				}
-			}
-		}
 		
 		public virtual bool IsEnabled {
 			get {
@@ -86,15 +53,11 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		
 		public event EventHandler IsEnabledChanged;
 		
-		public string Tooltip { get; private set; }
-		
-		public BreakpointBookmark(IMemberRef member, TextLocation location, TextLocation endLocation, ILRange range, BreakpointAction action)
+		public BreakpointBookmark(IMemberRef member, TextLocation location, TextLocation endLocation, ILRange range)
 			: base(member, location, endLocation)
 		{
-			this.action = action;
 			this.MethodKey = new MethodKey(member);
 			this.ILRange = range;
-			this.Tooltip = string.Format("Line:{0}, IL range:{1}-{2}", location.Line, range.From, range.To);
 		}
 		
 		public override ImageSource Image {

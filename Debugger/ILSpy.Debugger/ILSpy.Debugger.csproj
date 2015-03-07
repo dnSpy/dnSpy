@@ -91,7 +91,6 @@
     <Compile Include="Models\TreeModel\TreeNode.cs" />
     <Compile Include="Models\TreeModel\Utils.cs" />
     <Compile Include="Services\Debugger\DebuggerHelper.cs" />
-    <Compile Include="Services\Debugger\ListHelper.cs" />
     <Compile Include="Services\Debugger\TypeResolverExtension.cs" />
     <Compile Include="Services\Debugger\WindowsDebugger.cs" />
     <Compile Include="Services\ExtensionMethods.cs" />
@@ -102,6 +101,7 @@
     <Compile Include="ToolTips\DebuggerTooltipControl.xaml.cs">
       <DependentUpon>DebuggerTooltipControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ToolTips\IToolTip.cs" />
     <Compile Include="ToolTips\LazyItemsControl.cs" />
     <Compile Include="ToolTips\TextEditorListener.cs" />
     <Compile Include="ToolTips\VirtualizingIEnumerable.cs" />

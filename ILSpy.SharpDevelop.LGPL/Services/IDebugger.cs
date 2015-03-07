@@ -50,8 +50,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		/// </summary>
 		void Start(ProcessStartInfo processStartInfo);
 		
-		void StartWithoutDebugging(ProcessStartInfo processStartInfo);
-		
 		/// <summary>
 		/// Stops/terminates attached process
 		/// </summary>
@@ -70,11 +68,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		void StepOver();
 		
 		void StepOut();
-	
-		/// <summary>
-		/// Shows a dialog so the user can attach to a process.
-		/// </summary>
-		void ShowAttachDialog();
 		
 		/// <summary>
 		/// Used to attach to an existing process.
@@ -93,18 +86,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		/// Return null if no tooltip is available.
 		/// </summary>
 		object GetTooltipControl(TextLocation logicalPosition, string variable);
-		
-		/// <summary>
-		/// Queries the debugger whether it is possible to set the instruction pointer to a given position.
-		/// </summary>
-		/// <returns>True if possible. False otherwise</returns>
-		bool CanSetInstructionPointer(string filename, int line, int column);
-		
-		/// <summary>
-		/// Set the instruction pointer to a given position.
-		/// </summary>
-		/// <returns>True if successful. False otherwise</returns>
-		bool SetInstructionPointer(string filename, int line, int column);
 
 		/// <summary>
 		/// Queries the debugger whether it is possible to set the instruction pointer to a given position.

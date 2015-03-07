@@ -12,28 +12,24 @@ namespace Debugger.Interop.CorSym
 		public static int GetReaderForFile(this CorSymBinder_SxSClass instance, object importer, IntPtr filename, IntPtr searchPath, ref object retVal)
 		{
 			int returnValue = instance.__GetReaderForFile(importer, filename, searchPath, ref retVal);
-			ProcessOutParameter(retVal);
 			return returnValue;
 		}
 		
 		public static ISymUnmanagedReader GetReaderFromStream(this CorSymBinder_SxSClass instance, object importer, IStream pstream)
 		{
 			ISymUnmanagedReader returnValue = instance.__GetReaderFromStream(importer, pstream);
-			ProcessOutParameter(returnValue);
 			return returnValue;
 		}
 		
 		public static ISymUnmanagedDocument GetDocument(this CorSymReader_SxSClass instance, IntPtr url, Guid language, Guid languageVendor, Guid documentType)
 		{
 			ISymUnmanagedDocument returnValue = instance.__GetDocument(url, language, languageVendor, documentType);
-			ProcessOutParameter(returnValue);
 			return returnValue;
 		}
 		
 		public static void GetDocuments(this CorSymReader_SxSClass instance, uint cDocs, out uint pcDocs, ISymUnmanagedDocument[] pDocs)
 		{
 			instance.__GetDocuments(cDocs, out pcDocs, pDocs);
-			ProcessOutParameter(pDocs);
 		}
 		
 		public static void GetDocumentVersion(this CorSymReader_SxSClass instance, ISymUnmanagedDocument pDoc, out int version, out int pbCurrent)
@@ -49,21 +45,18 @@ namespace Debugger.Interop.CorSym
 		public static ISymUnmanagedMethod GetMethod(this CorSymReader_SxSClass instance, uint token)
 		{
 			ISymUnmanagedMethod returnValue = instance.__GetMethod(token);
-			ProcessOutParameter(returnValue);
 			return returnValue;
 		}
 		
 		public static ISymUnmanagedMethod GetMethodByVersion(this CorSymReader_SxSClass instance, uint token, int version)
 		{
 			ISymUnmanagedMethod returnValue = instance.__GetMethodByVersion(token, version);
-			ProcessOutParameter(returnValue);
 			return returnValue;
 		}
 		
 		public static ISymUnmanagedMethod GetMethodFromDocumentPosition(this CorSymReader_SxSClass instance, ISymUnmanagedDocument document, uint line, uint column)
 		{
 			ISymUnmanagedMethod returnValue = instance.__GetMethodFromDocumentPosition(document, line, column);
-			ProcessOutParameter(returnValue);
 			return returnValue;
 		}
 		
@@ -82,7 +75,6 @@ namespace Debugger.Interop.CorSym
 		public static void GetNamespaces(this CorSymReader_SxSClass instance, uint cNameSpaces, out uint pcNameSpaces, ISymUnmanagedNamespace[] namespaces)
 		{
 			instance.__GetNamespaces(cNameSpaces, out pcNameSpaces, namespaces);
-			ProcessOutParameter(namespaces);
 		}
 		
 		public static void GetSymAttribute(this CorSymReader_SxSClass instance, uint parent, IntPtr name, uint cBuffer, out uint pcBuffer, IntPtr buffer)
@@ -148,33 +140,28 @@ namespace Debugger.Interop.CorSym
 		public static void DefineConstant(this CorSymWriter_SxSClass instance, IntPtr name, object value, uint cSig, ref byte signature)
 		{
 			instance.__DefineConstant(name, value, cSig, ref signature);
-			ProcessOutParameter(signature);
 		}
 		
 		public static ISymUnmanagedDocumentWriter DefineDocument(this CorSymWriter_SxSClass instance, IntPtr url, ref Guid language, ref Guid languageVendor, ref Guid documentType)
 		{
 			ISymUnmanagedDocumentWriter returnValue = instance.__DefineDocument(url, ref language, ref languageVendor, ref documentType);
-			ProcessOutParameter(returnValue);
 			return returnValue;
 		}
 		
 		public static void DefineField(this CorSymWriter_SxSClass instance, uint parent, IntPtr name, uint attributes, uint cSig, ref byte signature, uint addrKind, uint addr1, uint addr2, uint addr3)
 		{
 			instance.__DefineField(parent, name, attributes, cSig, ref signature, addrKind, addr1, addr2, addr3);
-			ProcessOutParameter(signature);
 		}
 		
 		public static void DefineGlobalVariable(this CorSymWriter_SxSClass instance, IntPtr name, uint attributes, uint cSig, ref byte signature, uint addrKind, uint addr1, uint addr2, uint addr3)
 		{
 			instance.__DefineGlobalVariable(name, attributes, cSig, ref signature, addrKind, addr1, addr2, addr3);
-			ProcessOutParameter(signature);
 		}
 		
 		public static void DefineLocalVariable(this CorSymWriter_SxSClass instance, IntPtr name, uint attributes, uint cSig, ref byte signature, uint addrKind, uint addr1, uint addr2, uint addr3, uint startOffset,
 		uint endOffset)
 		{
 			instance.__DefineLocalVariable(name, attributes, cSig, ref signature, addrKind, addr1, addr2, addr3, startOffset, endOffset);
-			ProcessOutParameter(signature);
 		}
 		
 		public static void DefineParameter(this CorSymWriter_SxSClass instance, IntPtr name, uint attributes, uint sequence, uint addrKind, uint addr1, uint addr2, uint addr3)
@@ -235,7 +222,6 @@ namespace Debugger.Interop.CorSym
 		public static void SetSymAttribute(this CorSymWriter_SxSClass instance, uint parent, IntPtr name, uint cData, ref byte data)
 		{
 			instance.__SetSymAttribute(parent, name, cData, ref data);
-			ProcessOutParameter(data);
 		}
 		
 		public static void SetUserEntryPoint(this CorSymWriter_SxSClass instance, uint entryMethod)
@@ -251,14 +237,12 @@ namespace Debugger.Interop.CorSym
 		public static int GetReaderForFile(this ISymUnmanagedBinder instance, object importer, IntPtr filename, IntPtr searchPath, ref object retVal)
 		{
 			int returnValue = instance.__GetReaderForFile(importer, filename, searchPath, ref retVal);
-			ProcessOutParameter(retVal);
 			return returnValue;
 		}
 		
 		public static ISymUnmanagedReader GetReaderFromStream(this ISymUnmanagedBinder instance, object importer, IStream pstream)
 		{
 			ISymUnmanagedReader returnValue = instance.__GetReaderFromStream(importer, pstream);
-			ProcessOutParameter(returnValue);
 			return returnValue;
 		}
 		
@@ -320,13 +304,11 @@ namespace Debugger.Interop.CorSym
 		public static void SetSource(this ISymUnmanagedDocumentWriter instance, uint sourceSize, ref byte source)
 		{
 			instance.__SetSource(sourceSize, ref source);
-			ProcessOutParameter(source);
 		}
 		
 		public static void SetCheckSum(this ISymUnmanagedDocumentWriter instance, Guid algorithmId, uint checkSumSize, ref byte checkSum)
 		{
 			instance.__SetCheckSum(algorithmId, checkSumSize, ref checkSum);
-			ProcessOutParameter(checkSum);
 		}
 		
 		public static uint GetToken(this ISymUnmanagedMethod instance)
@@ -342,14 +324,12 @@ namespace Debugger.Interop.CorSym
 		public static ISymUnmanagedScope GetRootScope(this ISymUnmanagedMethod instance)
 		{
 			ISymUnmanagedScope returnValue = instance.__GetRootScope();
-			ProcessOutParameter(returnValue);
 			return returnValue;
 		}
 		
 		public static ISymUnmanagedScope GetScopeFromOffset(this ISymUnmanagedMethod instance, uint offset)
 		{
 			ISymUnmanagedScope returnValue = instance.__GetScopeFromOffset(offset);
-			ProcessOutParameter(returnValue);
 			return returnValue;
 		}
 		
@@ -372,7 +352,6 @@ namespace Debugger.Interop.CorSym
 		{
 			ISymUnmanagedNamespace pRetVal;
 			instance.__GetNamespace(out pRetVal);
-			ProcessOutParameter(pRetVal);
 			return pRetVal;
 		}
 		
@@ -380,14 +359,12 @@ namespace Debugger.Interop.CorSym
 		{
 			int pRetVal;
 			instance.__GetSourceStartEnd(docs, lines, columns, out pRetVal);
-			ProcessOutParameter(docs);
 			return pRetVal;
 		}
 		
 		public static void GetSequencePoints(this ISymUnmanagedMethod instance, uint cPoints, out uint pcPoints, uint[] offsets, ISymUnmanagedDocument[] documents, uint[] lines, uint[] columns, uint[] endLines, uint[] endColumns)
 		{
 			instance.__GetSequencePoints(cPoints, out pcPoints, offsets, documents, lines, columns, endLines, endColumns);
-			ProcessOutParameter(documents);
 		}
 		
 		public static void GetName(this ISymUnmanagedNamespace instance, uint cchName, out uint pcchName, IntPtr szName)
@@ -408,14 +385,12 @@ namespace Debugger.Interop.CorSym
 		public static ISymUnmanagedDocument GetDocument(this ISymUnmanagedReader instance, IntPtr url, Guid language, Guid languageVendor, Guid documentType)
 		{
 			ISymUnmanagedDocument returnValue = instance.__GetDocument(url, language, languageVendor, documentType);
-			ProcessOutParameter(returnValue);
 			return returnValue;
 		}
 		
 		public static void GetDocuments(this ISymUnmanagedReader instance, uint cDocs, out uint pcDocs, ISymUnmanagedDocument[] pDocs)
 		{
 			instance.__GetDocuments(cDocs, out pcDocs, pDocs);
-			ProcessOutParameter(pDocs);
 		}
 		
 		public static uint GetUserEntryPoint(this ISymUnmanagedReader instance)
@@ -426,14 +401,12 @@ namespace Debugger.Interop.CorSym
 		public static ISymUnmanagedMethod GetMethod(this ISymUnmanagedReader instance, uint token)
 		{
 			ISymUnmanagedMethod returnValue = instance.__GetMethod(token);
-			ProcessOutParameter(returnValue);
 			return returnValue;
 		}
 		
 		public static ISymUnmanagedMethod GetMethodByVersion(this ISymUnmanagedReader instance, uint token, int version)
 		{
 			ISymUnmanagedMethod returnValue = instance.__GetMethodByVersion(token, version);
-			ProcessOutParameter(returnValue);
 			return returnValue;
 		}
 		
@@ -450,7 +423,6 @@ namespace Debugger.Interop.CorSym
 		public static ISymUnmanagedMethod GetMethodFromDocumentPosition(this ISymUnmanagedReader instance, ISymUnmanagedDocument document, uint line, uint column)
 		{
 			ISymUnmanagedMethod returnValue = instance.__GetMethodFromDocumentPosition(document, line, column);
-			ProcessOutParameter(returnValue);
 			return returnValue;
 		}
 		
@@ -462,7 +434,6 @@ namespace Debugger.Interop.CorSym
 		public static void GetNamespaces(this ISymUnmanagedReader instance, uint cNameSpaces, out uint pcNameSpaces, ISymUnmanagedNamespace[] namespaces)
 		{
 			instance.__GetNamespaces(cNameSpaces, out pcNameSpaces, namespaces);
-			ProcessOutParameter(namespaces);
 		}
 		
 		public static void Initialize(this ISymUnmanagedReader instance, object importer, IntPtr filename, IntPtr searchPath, IStream pIStream)
@@ -512,27 +483,23 @@ namespace Debugger.Interop.CorSym
 		public static void GetSymbolSearchInfo(this ISymUnmanagedReaderSymbolSearchInfo instance, uint cSearchInfo, out uint pcSearchInfo, out ISymUnmanagedSymbolSearchInfo rgpSearchInfo)
 		{
 			instance.__GetSymbolSearchInfo(cSearchInfo, out pcSearchInfo, out rgpSearchInfo);
-			ProcessOutParameter(rgpSearchInfo);
 		}
 		
 		public static ISymUnmanagedMethod GetMethod(this ISymUnmanagedScope instance)
 		{
 			ISymUnmanagedMethod returnValue = instance.__GetMethod();
-			ProcessOutParameter(returnValue);
 			return returnValue;
 		}
 		
 		public static ISymUnmanagedScope GetParent(this ISymUnmanagedScope instance)
 		{
 			ISymUnmanagedScope returnValue = instance.__GetParent();
-			ProcessOutParameter(returnValue);
 			return returnValue;
 		}
 		
 		public static void GetChildren(this ISymUnmanagedScope instance, uint cChildren, out uint pcChildren, ISymUnmanagedScope[] children)
 		{
 			instance.__GetChildren(cChildren, out pcChildren, children);
-			ProcessOutParameter(children);
 		}
 		
 		public static uint GetStartOffset(this ISymUnmanagedScope instance)
@@ -553,13 +520,11 @@ namespace Debugger.Interop.CorSym
 		public static void GetLocals(this ISymUnmanagedScope instance, uint cLocals, out uint pcLocals, ISymUnmanagedVariable[] locals)
 		{
 			instance.__GetLocals(cLocals, out pcLocals, locals);
-			ProcessOutParameter(locals);
 		}
 		
 		public static void GetNamespaces(this ISymUnmanagedScope instance, uint cNameSpaces, out uint pcNameSpaces, ISymUnmanagedNamespace[] namespaces)
 		{
 			instance.__GetNamespaces(cNameSpaces, out pcNameSpaces, namespaces);
-			ProcessOutParameter(namespaces);
 		}
 		
 		public static uint GetSearchPathLength(this ISymUnmanagedSymbolSearchInfo instance)
@@ -629,7 +594,6 @@ namespace Debugger.Interop.CorSym
 		public static ISymUnmanagedDocumentWriter DefineDocument(this ISymUnmanagedWriter instance, IntPtr url, ref Guid language, ref Guid languageVendor, ref Guid documentType)
 		{
 			ISymUnmanagedDocumentWriter returnValue = instance.__DefineDocument(url, ref language, ref languageVendor, ref documentType);
-			ProcessOutParameter(returnValue);
 			return returnValue;
 		}
 		
@@ -667,7 +631,6 @@ namespace Debugger.Interop.CorSym
 		uint endOffset)
 		{
 			instance.__DefineLocalVariable(name, attributes, cSig, ref signature, addrKind, addr1, addr2, addr3, startOffset, endOffset);
-			ProcessOutParameter(signature);
 		}
 		
 		public static void DefineParameter(this ISymUnmanagedWriter instance, IntPtr name, uint attributes, uint sequence, uint addrKind, uint addr1, uint addr2, uint addr3)
@@ -678,13 +641,11 @@ namespace Debugger.Interop.CorSym
 		public static void DefineField(this ISymUnmanagedWriter instance, uint parent, IntPtr name, uint attributes, uint cSig, ref byte signature, uint addrKind, uint addr1, uint addr2, uint addr3)
 		{
 			instance.__DefineField(parent, name, attributes, cSig, ref signature, addrKind, addr1, addr2, addr3);
-			ProcessOutParameter(signature);
 		}
 		
 		public static void DefineGlobalVariable(this ISymUnmanagedWriter instance, IntPtr name, uint attributes, uint cSig, ref byte signature, uint addrKind, uint addr1, uint addr2, uint addr3)
 		{
 			instance.__DefineGlobalVariable(name, attributes, cSig, ref signature, addrKind, addr1, addr2, addr3);
-			ProcessOutParameter(signature);
 		}
 		
 		public static void Close(this ISymUnmanagedWriter instance)
@@ -695,7 +656,6 @@ namespace Debugger.Interop.CorSym
 		public static void SetSymAttribute(this ISymUnmanagedWriter instance, uint parent, IntPtr name, uint cData, ref byte data)
 		{
 			instance.__SetSymAttribute(parent, name, cData, ref data);
-			ProcessOutParameter(data);
 		}
 		
 		public static void OpenNamespace(this ISymUnmanagedWriter instance, IntPtr name)
@@ -746,7 +706,6 @@ namespace Debugger.Interop.CorSym
 		public static void DefineConstant(this ISymUnmanagedWriter instance, IntPtr name, object value, uint cSig, ref byte signature)
 		{
 			instance.__DefineConstant(name, value, cSig, ref signature);
-			ProcessOutParameter(signature);
 		}
 		
 		public static void Abort(this ISymUnmanagedWriter instance)
@@ -757,7 +716,6 @@ namespace Debugger.Interop.CorSym
 		public static ISymUnmanagedDocumentWriter DefineDocument(this ISymUnmanagedWriter2 instance, IntPtr url, ref Guid language, ref Guid languageVendor, ref Guid documentType)
 		{
 			ISymUnmanagedDocumentWriter returnValue = instance.__DefineDocument(url, ref language, ref languageVendor, ref documentType);
-			ProcessOutParameter(returnValue);
 			return returnValue;
 		}
 		
@@ -795,7 +753,6 @@ namespace Debugger.Interop.CorSym
 		uint endOffset)
 		{
 			instance.__DefineLocalVariable(name, attributes, cSig, ref signature, addrKind, addr1, addr2, addr3, startOffset, endOffset);
-			ProcessOutParameter(signature);
 		}
 		
 		public static void DefineParameter(this ISymUnmanagedWriter2 instance, IntPtr name, uint attributes, uint sequence, uint addrKind, uint addr1, uint addr2, uint addr3)
@@ -806,13 +763,11 @@ namespace Debugger.Interop.CorSym
 		public static void DefineField(this ISymUnmanagedWriter2 instance, uint parent, IntPtr name, uint attributes, uint cSig, ref byte signature, uint addrKind, uint addr1, uint addr2, uint addr3)
 		{
 			instance.__DefineField(parent, name, attributes, cSig, ref signature, addrKind, addr1, addr2, addr3);
-			ProcessOutParameter(signature);
 		}
 		
 		public static void DefineGlobalVariable(this ISymUnmanagedWriter2 instance, IntPtr name, uint attributes, uint cSig, ref byte signature, uint addrKind, uint addr1, uint addr2, uint addr3)
 		{
 			instance.__DefineGlobalVariable(name, attributes, cSig, ref signature, addrKind, addr1, addr2, addr3);
-			ProcessOutParameter(signature);
 		}
 		
 		public static void Close(this ISymUnmanagedWriter2 instance)
@@ -823,7 +778,6 @@ namespace Debugger.Interop.CorSym
 		public static void SetSymAttribute(this ISymUnmanagedWriter2 instance, uint parent, IntPtr name, uint cData, ref byte data)
 		{
 			instance.__SetSymAttribute(parent, name, cData, ref data);
-			ProcessOutParameter(data);
 		}
 		
 		public static void OpenNamespace(this ISymUnmanagedWriter2 instance, IntPtr name)
@@ -874,7 +828,6 @@ namespace Debugger.Interop.CorSym
 		public static void DefineConstant(this ISymUnmanagedWriter2 instance, IntPtr name, object value, uint cSig, ref byte signature)
 		{
 			instance.__DefineConstant(name, value, cSig, ref signature);
-			ProcessOutParameter(signature);
 		}
 		
 		public static void Abort(this ISymUnmanagedWriter2 instance)

@@ -50,15 +50,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			}
 		}
 		
-		/// <summary>
-		/// Returns true if debugger is already loaded.
-		/// </summary>
-		public static bool IsDebuggerLoaded {
-			get {
-				return currentDebugger != null;
-			}
-		}
-		
 		static bool debuggerStarted;
 		
 		/// <summary>
@@ -100,12 +91,10 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		
 		public static void ClearDebugMessages()
 		{
-			
 		}
 
 		public static void PrintDebugMessage(string msg)
 		{
-			
 		}
 
 		public static event EventHandler<BreakpointBookmarkEventArgs> BreakPointChanged;
@@ -178,18 +167,10 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			var range = instruction.ILInstructionOffset;
 
 			BookmarkManager.ToggleBookmark(
-				member.FullName, location, endLocation,
+				location, endLocation,
 				b => b.CanToggle && b is BreakpointBookmark,
-				(location2, endLocation2) => new BreakpointBookmark(member, location2, endLocation2, range, BreakpointAction.Break));
+				(location2, endLocation2) => new BreakpointBookmark(member, location2, endLocation2, range));
 		}
-		
-		/* TODO: reimplement this stuff
-		static void ViewContentOpened(object sender, ViewContentEventArgs e)
-		{
-				textArea.IconBarMargin.MouseDown += IconBarMouseDown;
-				textArea.ToolTipRequest          += TextAreaToolTipRequest;
-				textArea.MouseLeave              += TextAreaMouseLeave;
-		}*/
 		
 		public static void RemoveCurrentLineMarker()
 		{
@@ -237,162 +218,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					return;
 				}
 			}
-			
-			// FIXME Do proper parsing
-//
-//			using (var sr = new StringReader(doc.Text))
-//			{
-//				var parser = new CSharpParser();
-//				parser.Parse(sr);
-//
-//				IExpressionFinder expressionFinder = ParserService.GetExpressionFinder();
-//				if (expressionFinder == null)
-//					return;
-//				var currentLine = doc.GetLine(logicPos.Y);
-//				if (logicPos.X > currentLine.Length)
-//					return;
-//				string textContent = doc.Text;
-//				ExpressionResult expressionResult = expressionFinder.FindFullExpression(textContent, doc.GetOffset(new TextLocation(logicPos.Line, logicPos.Column)));
-//				string expression = (expressionResult.Expression ?? "").Trim();
-//				if (expression.Length > 0) {
-//					// Look if it is variable
-//					ResolveResult result = ParserService.Resolve(expressionResult, logicPos.Y, logicPos.X, e.Editor.FileName, textContent);
-//					bool debuggerCanShowValue;
-//					string toolTipText = GetText(result, expression, out debuggerCanShowValue);
-//					if (Control.ModifierKeys == Keys.Control) {
-//						toolTipText = "expr: " + expressionResult.ToString() + "\n" + toolTipText;
-//						debuggerCanShowValue = false;
-//					}
-//					if (toolTipText != null) {
-//						if (debuggerCanShowValue && currentDebugger != null) {
-//							object toolTip = currentDebugger.GetTooltipControl(e.LogicalPosition, expressionResult.Expression);
-//							if (toolTip != null)
-//								e.SetToolTip(toolTip);
-//							else
-//								e.SetToolTip(toolTipText);
-//						} else {
-//							e.SetToolTip(toolTipText);
-//						}
-//					}
-//				}
-//				else {
-//					#if DEBUG
-//					if (Control.ModifierKeys == Keys.Control) {
-//						e.SetToolTip("no expr: " + expressionResult.ToString());
-//					}
-//					#endif
-//				}
-//			}
 		}
-
-		static string GetText(ResolveResult result, string expression, out bool debuggerCanShowValue)
-		{
-			debuggerCanShowValue = false;
-			return "FIXME";
-			
-			// FIXME
-//			debuggerCanShowValue = false;
-//			if (result == null) {
-//				// when pressing control, show the expression even when it could not be resolved
-//				return (Control.ModifierKeys == Keys.Control) ? "" : null;
-//			}
-//			if (result is MixedResolveResult)
-//				return GetText(((MixedResolveResult)result).PrimaryResult, expression, out debuggerCanShowValue);
-//			else if (result is DelegateCallResolveResult)
-//				return GetText(((DelegateCallResolveResult)result).Target, expression, out debuggerCanShowValue);
-//
-//			IAmbience ambience = AmbienceService.GetCurrentAmbience();
-//			ambience.ConversionFlags = ConversionFlags.StandardConversionFlags | ConversionFlags.UseFullyQualifiedMemberNames;
-//			if (result is MemberResolveResult) {
-//				return GetMemberText(ambience, ((MemberResolveResult)result).ResolvedMember, expression, out debuggerCanShowValue);
-//			} else if (result is LocalResolveResult) {
-//				LocalResolveResult rr = (LocalResolveResult)result;
-//				ambience.ConversionFlags = ConversionFlags.UseFullyQualifiedTypeNames
-//					| ConversionFlags.ShowReturnType | ConversionFlags.ShowDefinitionKeyWord;
-//				StringBuilder b = new StringBuilder();
-//				if (rr.IsParameter)
-//					b.Append("parameter ");
-//				else
-//					b.Append("local variable ");
-//				b.Append(ambience.Convert(rr.Field));
-//				if (currentDebugger != null) {
-//					string currentValue = currentDebugger.GetValueAsString(rr.VariableName);
-//					if (currentValue != null) {
-//						debuggerCanShowValue = true;
-//						b.Append(" = ");
-//						if (currentValue.Length > 256)
-//							currentValue = currentValue.Substring(0, 256) + "...";
-//						b.Append(currentValue);
-//					}
-//				}
-//				return b.ToString();
-//			} else if (result is NamespaceResolveResult) {
-//				return "namespace " + ((NamespaceResolveResult)result).Name;
-//			} else if (result is TypeResolveResult) {
-//				IClass c = ((TypeResolveResult)result).ResolvedClass;
-//				if (c != null)
-//					return GetMemberText(ambience, c, expression, out debuggerCanShowValue);
-//				else
-//					return ambience.Convert(result.ResolvedType);
-//			} else if (result is MethodGroupResolveResult) {
-//				MethodGroupResolveResult mrr = result as MethodGroupResolveResult;
-//				IMethod m = mrr.GetMethodIfSingleOverload();
-//				IMethod m2 = mrr.GetMethodWithEmptyParameterList();
-//				if (m != null)
-//					return GetMemberText(ambience, m, expression, out debuggerCanShowValue);
-//				else if (ambience is VBNetAmbience && m2 != null)
-//					return GetMemberText(ambience, m2, expression, out debuggerCanShowValue);
-//				else
-//					return "Overload of " + ambience.Convert(mrr.ContainingType) + "." + mrr.Name;
-//			} else {
-//				if (Control.ModifierKeys == Keys.Control) {
-//					if (result.ResolvedType != null)
-//						return "expression of type " + ambience.Convert(result.ResolvedType);
-//					else
-//						return "ResolveResult without ResolvedType";
-//				} else {
-//					return null;
-//				}
-//			}
-		}
-
-//		static string GetMemberText(IAmbience ambience, IEntity member, string expression, out bool debuggerCanShowValue)
-//		{
-//			bool tryDisplayValue = false;
-//			debuggerCanShowValue = false;
-//			StringBuilder text = new StringBuilder();
-//			if (member is IField) {
-//				text.Append(ambience.Convert(member as IField));
-//				tryDisplayValue = true;
-//			} else if (member is IProperty) {
-//				text.Append(ambience.Convert(member as IProperty));
-//				tryDisplayValue = true;
-//			} else if (member is IEvent) {
-//				text.Append(ambience.Convert(member as IEvent));
-//			} else if (member is IMethod) {
-//				text.Append(ambience.Convert(member as IMethod));
-//			} else if (member is IClass) {
-//				text.Append(ambience.Convert(member as IClass));
-//			} else {
-//				text.Append("unknown member ");
-//				text.Append(member.ToString());
-//			}
-//			if (tryDisplayValue && currentDebugger != null) {
-//				LoggingService.Info("asking debugger for value of '" + expression + "'");
-//				string currentValue = currentDebugger.GetValueAsString(expression);
-//				if (currentValue != null) {
-//					debuggerCanShowValue = true;
-//					text.Append(" = ");
-//					text.Append(currentValue);
-//				}
-//			}
-//			string documentation = member.Documentation;
-//			if (documentation != null && documentation.Length > 0) {
-//				text.Append('\n');
-//				text.Append(ICSharpCode.SharpDevelop.Editor.CodeCompletion.CodeCompletionItem.ConvertDocumentation(documentation));
-//			}
-//			return text.ToString();
-//		}
 		#endregion
 		
 		public static void SetDebugger(Lazy<IDebugger> debugger)

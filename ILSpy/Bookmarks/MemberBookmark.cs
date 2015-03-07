@@ -81,14 +81,5 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		int IBookmark.ZOrder {
 			get { return -10; }
 		}
-		
-		bool IBookmark.CanDragDrop {
-			get { return false; }
-		}
-		
-		void IBookmark.Drop(int lineNumber)
-		{
-			throw new NotSupportedException();
-		}
 	}
 }

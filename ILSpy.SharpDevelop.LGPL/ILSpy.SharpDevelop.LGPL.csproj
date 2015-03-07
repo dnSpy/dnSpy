@@ -72,7 +72,6 @@
     <Compile Include="AvalonEdit\IconBarManager.cs" />
     <Compile Include="AvalonEdit\IconBarMargin.cs" />
     <Compile Include="AvalonEdit\ITextEditorListener.cs" />
-    <Compile Include="AvalonEdit\IToolTip.cs" />
     <Compile Include="AvalonEdit\TextEditorWeakEventManager.cs" />
     <Compile Include="Bookmarks\BookmarkBase.cs" />
     <Compile Include="Bookmarks\BookmarkEventHandler.cs" />

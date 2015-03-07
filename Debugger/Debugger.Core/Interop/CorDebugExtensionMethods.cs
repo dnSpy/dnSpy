@@ -11,11 +11,6 @@ namespace Debugger.Interop.CorDebug
 	{
 		const int EnumerateBufferSize = 16;
 		
-		static void ProcessOutParameter(object parameter)
-		{
-			TrackedComObjects.ProcessOutParameter(parameter);
-		}
-		
 		// ICorDebugArrayValue
 		
 		public static unsafe uint[] GetDimensions(this ICorDebugArrayValue corArray)

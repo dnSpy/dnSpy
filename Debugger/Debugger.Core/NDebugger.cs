@@ -124,7 +124,6 @@ namespace Debugger
 			}
 			
 			corDebug = NativeMethods.CreateDebuggingInterfaceFromVersion(debuggerVersion, debuggeeVersion);
-			TrackedComObjects.Track(corDebug);
 			
 			managedCallbackSwitch = new ManagedCallbackSwitch(this);
 			managedCallbackProxy = new ManagedCallbackProxy(this, managedCallbackSwitch);
@@ -147,10 +146,6 @@ namespace Debugger
 			corDebug.Terminate();
 			
 			TraceMessage("ICorDebug terminated");
-			
-			int released = TrackedComObjects.ReleaseAll();
-			
-			TraceMessage("Released " + released + " tracked COM objects");
 		}
 		
 		/// <summary>

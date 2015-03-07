@@ -60,20 +60,6 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			get { return Images.CurrentLine; }
 		}
 		
-		public override bool CanDragDrop {
-			get { return false; }
-		}
-		
-		public override void Drop(int lineNumber)
-		{
-			// call async because the Debugger seems to use Application.DoEvents(), but we don't want to process events
-			// because Drag'N'Drop operation has finished
-//			WorkbenchSingleton.SafeThreadAsyncCall(
-//				delegate {
-//					DebuggerService.CurrentDebugger.SetInstructionPointer(this.FileName, lineNumber, 1);
-//				});
-		}
-		
 		public override ITextMarker CreateMarker(ITextMarkerService markerService)
 		{
 			ITextMarker marker = CreateMarkerInternal(markerService);

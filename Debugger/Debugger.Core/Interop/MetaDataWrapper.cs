@@ -28,14 +28,12 @@ namespace Debugger.Interop.MetaData
 		{
 			Guid guid = new Guid("{ 0x7dac8207, 0xd3ae, 0x4c75, { 0x9b, 0x67, 0x92, 0x80, 0x1a, 0x49, 0x7d, 0x44 } }");
 			metaData = (IMetaDataImport)pModule.GetMetaDataInterface(ref guid);
-			TrackedComObjects.Track(metaData);
 		}
 		
 		public ISymUnmanagedReader GetSymReader(string fullname, string searchPath)
 		{
 			try {
 				ISymUnmanagedBinder symBinder = new Debugger.Interop.CorSym.CorSymBinder_SxSClass();
-				TrackedComObjects.Track(symBinder);
 				return symBinder.GetReaderForFile(metaData, fullname, searchPath);
 			} catch (COMException) {
 				return null;
@@ -46,7 +44,6 @@ namespace Debugger.Interop.MetaData
 		{
 			try {
 				ISymUnmanagedBinder symBinder = new Debugger.Interop.CorSym.CorSymBinder_SxSClass();
-				TrackedComObjects.Track(symBinder);
 				return symBinder.GetReaderFromStream(metaData, stream);
 			} catch (COMException) {
 				return null;

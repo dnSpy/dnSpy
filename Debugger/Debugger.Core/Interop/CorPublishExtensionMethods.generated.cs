@@ -14,7 +14,6 @@ namespace Debugger.Interop.CorPublish
 		{
 			ICorPublishEnum ppEnum;
 			instance.__Clone(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -22,7 +21,6 @@ namespace Debugger.Interop.CorPublish
 		{
 			ICorPublishAppDomainEnum ppEnum;
 			instance.__EnumAppDomains(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -30,7 +28,6 @@ namespace Debugger.Interop.CorPublish
 		{
 			ICorPublishProcessEnum ppIEnum;
 			instance.__EnumProcesses(Type, out ppIEnum);
-			ProcessOutParameter(ppIEnum);
 			return ppIEnum;
 		}
 		
@@ -62,7 +59,6 @@ namespace Debugger.Interop.CorPublish
 		{
 			ICorPublishProcess ppProcess;
 			instance.__GetProcess(pid, out ppProcess);
-			ProcessOutParameter(ppProcess);
 			return ppProcess;
 		}
 		
@@ -77,7 +73,6 @@ namespace Debugger.Interop.CorPublish
 		{
 			ICorPublishEnum ppEnum;
 			instance.__ICorPublishAppDomainEnum_Clone(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -108,13 +103,11 @@ namespace Debugger.Interop.CorPublish
 		public static void Next(this CorpubPublishClass instance, uint celt, out ICorPublishAppDomain objects, out uint pceltFetched)
 		{
 			instance.__Next(celt, out objects, out pceltFetched);
-			ProcessOutParameter(objects);
 		}
 		
 		public static void Next(this CorpubPublishClass instance, uint celt, out ICorPublishProcess objects, out uint pceltFetched)
 		{
 			instance.__Next(celt, out objects, out pceltFetched);
-			ProcessOutParameter(objects);
 		}
 		
 		public static void Reset(this CorpubPublishClass instance)
@@ -131,7 +124,6 @@ namespace Debugger.Interop.CorPublish
 		{
 			ICorPublishProcessEnum ppIEnum;
 			instance.__EnumProcesses(Type, out ppIEnum);
-			ProcessOutParameter(ppIEnum);
 			return ppIEnum;
 		}
 		
@@ -139,7 +131,6 @@ namespace Debugger.Interop.CorPublish
 		{
 			ICorPublishProcess ppProcess;
 			instance.__GetProcess(pid, out ppProcess);
-			ProcessOutParameter(ppProcess);
 			return ppProcess;
 		}
 		
@@ -169,7 +160,6 @@ namespace Debugger.Interop.CorPublish
 		{
 			ICorPublishEnum ppEnum;
 			instance.__Clone(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -183,7 +173,6 @@ namespace Debugger.Interop.CorPublish
 		public static void Next(this ICorPublishAppDomainEnum instance, uint celt, out ICorPublishAppDomain objects, out uint pceltFetched)
 		{
 			instance.__Next(celt, out objects, out pceltFetched);
-			ProcessOutParameter(objects);
 		}
 		
 		public static void Skip(this ICorPublishEnum instance, uint celt)
@@ -200,7 +189,6 @@ namespace Debugger.Interop.CorPublish
 		{
 			ICorPublishEnum ppEnum;
 			instance.__Clone(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -222,7 +210,6 @@ namespace Debugger.Interop.CorPublish
 		{
 			ICorPublishAppDomainEnum ppEnum;
 			instance.__EnumAppDomains(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -252,7 +239,6 @@ namespace Debugger.Interop.CorPublish
 		{
 			ICorPublishEnum ppEnum;
 			instance.__Clone(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -266,7 +252,6 @@ namespace Debugger.Interop.CorPublish
 		public static void Next(this ICorPublishProcessEnum instance, uint celt, out ICorPublishProcess objects, out uint pceltFetched)
 		{
 			instance.__Next(celt, out objects, out pceltFetched);
-			ProcessOutParameter(objects);
 		}
 		
 	}

@@ -20,9 +20,6 @@ namespace Debugger.Interop.CorDebug
 			ICorDebugProcess ppProcess;
 			instance.__CreateProcess(lpApplicationName, lpCommandLine, ref lpProcessAttributes, ref lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation,
 			debuggingFlags, out ppProcess);
-			ProcessOutParameter(lpProcessAttributes);
-			ProcessOutParameter(lpThreadAttributes);
-			ProcessOutParameter(ppProcess);
 			return ppProcess;
 		}
 		
@@ -30,7 +27,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugProcess ppProcess;
 			instance.__DebugActiveProcess(id, win32Attach, out ppProcess);
-			ProcessOutParameter(ppProcess);
 			return ppProcess;
 		}
 		
@@ -38,7 +34,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugProcessEnum ppProcess;
 			instance.__EnumerateProcesses(out ppProcess);
-			ProcessOutParameter(ppProcess);
 			return ppProcess;
 		}
 		
@@ -46,7 +41,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugProcess ppProcess;
 			instance.__GetProcess(dwProcessId, out ppProcess);
-			ProcessOutParameter(ppProcess);
 			return ppProcess;
 		}
 		
@@ -81,9 +75,6 @@ namespace Debugger.Interop.CorDebug
 			ICorDebugProcess ppProcess;
 			instance.__CreateProcess(lpApplicationName, lpCommandLine, ref lpProcessAttributes, ref lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation,
 			debuggingFlags, out ppProcess);
-			ProcessOutParameter(lpProcessAttributes);
-			ProcessOutParameter(lpThreadAttributes);
-			ProcessOutParameter(ppProcess);
 			return ppProcess;
 		}
 		
@@ -91,7 +82,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugProcess ppProcess;
 			instance.__DebugActiveProcess(id, win32Attach, out ppProcess);
-			ProcessOutParameter(ppProcess);
 			return ppProcess;
 		}
 		
@@ -99,7 +89,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugProcessEnum ppProcess;
 			instance.__EnumerateProcesses(out ppProcess);
-			ProcessOutParameter(ppProcess);
 			return ppProcess;
 		}
 		
@@ -107,7 +96,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugProcess ppProcess;
 			instance.__GetProcess(dwProcessId, out ppProcess);
-			ProcessOutParameter(ppProcess);
 			return ppProcess;
 		}
 		
@@ -157,9 +145,6 @@ namespace Debugger.Interop.CorDebug
 			ICorDebugProcess ppProcess;
 			instance.__CreateProcess(lpApplicationName, lpCommandLine, ref lpProcessAttributes, ref lpThreadAttributes, bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory, lpStartupInfo, lpProcessInformation,
 			debuggingFlags, out ppProcess);
-			ProcessOutParameter(lpProcessAttributes);
-			ProcessOutParameter(lpThreadAttributes);
-			ProcessOutParameter(ppProcess);
 			return ppProcess;
 		}
 		
@@ -167,7 +152,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugProcess ppProcess;
 			instance.__DebugActiveProcess(id, win32Attach, out ppProcess);
-			ProcessOutParameter(ppProcess);
 			return ppProcess;
 		}
 		
@@ -175,7 +159,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugProcessEnum ppProcess;
 			instance.__EnumerateProcesses(out ppProcess);
-			ProcessOutParameter(ppProcess);
 			return ppProcess;
 		}
 		
@@ -183,7 +166,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugProcess ppProcess;
 			instance.__GetProcess(dwProcessId, out ppProcess);
-			ProcessOutParameter(ppProcess);
 			return ppProcess;
 		}
 		
@@ -220,7 +202,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugThreadEnum ppThreads;
 			instance.__EnumerateThreads(out ppThreads);
-			ProcessOutParameter(ppThreads);
 			return ppThreads;
 		}
 		
@@ -243,8 +224,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugErrorInfoEnum pError;
 			instance.__CanCommitChanges(cSnapshots, ref pSnapshots, out pError);
-			ProcessOutParameter(pSnapshots);
-			ProcessOutParameter(pError);
 			return pError;
 		}
 		
@@ -252,8 +231,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugErrorInfoEnum pError;
 			instance.__CommitChanges(cSnapshots, ref pSnapshots, out pError);
-			ProcessOutParameter(pSnapshots);
-			ProcessOutParameter(pError);
 			return pError;
 		}
 		
@@ -261,7 +238,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugProcess ppProcess;
 			instance.__GetProcess(out ppProcess);
-			ProcessOutParameter(ppProcess);
 			return ppProcess;
 		}
 		
@@ -269,7 +245,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugAssemblyEnum ppAssemblies;
 			instance.__EnumerateAssemblies(out ppAssemblies);
-			ProcessOutParameter(ppAssemblies);
 			return ppAssemblies;
 		}
 		
@@ -277,7 +252,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugModule ppModule;
 			instance.__GetModuleFromMetaDataInterface(pIMetaData, out ppModule);
-			ProcessOutParameter(ppModule);
 			return ppModule;
 		}
 		
@@ -285,7 +259,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugBreakpointEnum ppBreakpoints;
 			instance.__EnumerateBreakpoints(out ppBreakpoints);
-			ProcessOutParameter(ppBreakpoints);
 			return ppBreakpoints;
 		}
 		
@@ -293,7 +266,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugStepperEnum ppSteppers;
 			instance.__EnumerateSteppers(out ppSteppers);
-			ProcessOutParameter(ppSteppers);
 			return ppSteppers;
 		}
 		
@@ -313,7 +285,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppObject;
 			instance.__GetObject(out ppObject);
-			ProcessOutParameter(ppObject);
 			return ppObject;
 		}
 		
@@ -333,7 +304,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugType ppType;
 			instance.__GetArrayOrPointerType(elementType, nRank, pTypeArg, out ppType);
-			ProcessOutParameter(ppType);
 			return ppType;
 		}
 		
@@ -341,8 +311,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugType ppType;
 			instance.__GetFunctionPointerType(nTypeArgs, ref ppTypeArgs, out ppType);
-			ProcessOutParameter(ppTypeArgs);
-			ProcessOutParameter(ppType);
 			return ppType;
 		}
 		
@@ -360,7 +328,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugEnum ppEnum;
 			instance.__Clone(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -403,7 +370,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValueBreakpoint ppBreakpoint;
 			instance.__CreateBreakpoint(out ppBreakpoint);
-			ProcessOutParameter(ppBreakpoint);
 			return ppBreakpoint;
 		}
 		
@@ -418,7 +384,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValueBreakpoint ppBreakpoint;
 			instance.__CreateRelocBreakpoint(out ppBreakpoint);
-			ProcessOutParameter(ppBreakpoint);
 			return ppBreakpoint;
 		}
 		
@@ -464,7 +429,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__GetElement(cdim, indices, out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
@@ -472,7 +436,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__GetElementAtPosition(nPosition, out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
@@ -480,7 +443,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugProcess ppProcess;
 			instance.__GetProcess(out ppProcess);
-			ProcessOutParameter(ppProcess);
 			return ppProcess;
 		}
 		
@@ -488,7 +450,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugAppDomain ppAppDomain;
 			instance.__GetAppDomain(out ppAppDomain);
-			ProcessOutParameter(ppAppDomain);
 			return ppAppDomain;
 		}
 		
@@ -496,7 +457,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugModuleEnum ppModules;
 			instance.__EnumerateModules(out ppModules);
-			ProcessOutParameter(ppModules);
 			return ppModules;
 		}
 		
@@ -531,7 +491,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugEnum ppEnum;
 			instance.__Clone(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -574,7 +533,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValueBreakpoint ppBreakpoint;
 			instance.__CreateBreakpoint(out ppBreakpoint);
-			ProcessOutParameter(ppBreakpoint);
 			return ppBreakpoint;
 		}
 		
@@ -589,7 +547,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValueBreakpoint ppBreakpoint;
 			instance.__CreateRelocBreakpoint(out ppBreakpoint);
-			ProcessOutParameter(ppBreakpoint);
 			return ppBreakpoint;
 		}
 		
@@ -597,7 +554,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugObjectValue ppObject;
 			instance.__GetObject(out ppObject);
-			ProcessOutParameter(ppObject);
 			return ppObject;
 		}
 		
@@ -627,7 +583,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugEnum ppEnum;
 			instance.__Clone(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -649,7 +604,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugThread ppThread;
 			instance.__GetThread(out ppThread);
-			ProcessOutParameter(ppThread);
 			return ppThread;
 		}
 		
@@ -662,7 +616,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugContext ppContext;
 			instance.__GetContext(out ppContext);
-			ProcessOutParameter(ppContext);
 			return ppContext;
 		}
 		
@@ -670,7 +623,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugChain ppChain;
 			instance.__GetCaller(out ppChain);
-			ProcessOutParameter(ppChain);
 			return ppChain;
 		}
 		
@@ -678,7 +630,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugChain ppChain;
 			instance.__GetCallee(out ppChain);
-			ProcessOutParameter(ppChain);
 			return ppChain;
 		}
 		
@@ -686,7 +637,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugChain ppChain;
 			instance.__GetPrevious(out ppChain);
-			ProcessOutParameter(ppChain);
 			return ppChain;
 		}
 		
@@ -694,7 +644,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugChain ppChain;
 			instance.__GetNext(out ppChain);
-			ProcessOutParameter(ppChain);
 			return ppChain;
 		}
 		
@@ -709,7 +658,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFrameEnum ppFrames;
 			instance.__EnumerateFrames(out ppFrames);
-			ProcessOutParameter(ppFrames);
 			return ppFrames;
 		}
 		
@@ -717,7 +665,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFrame ppFrame;
 			instance.__GetActiveFrame(out ppFrame);
-			ProcessOutParameter(ppFrame);
 			return ppFrame;
 		}
 		
@@ -725,7 +672,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugRegisterSet ppRegisters;
 			instance.__GetRegisterSet(out ppRegisters);
-			ProcessOutParameter(ppRegisters);
 			return ppRegisters;
 		}
 		
@@ -733,7 +679,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			CorDebugChainReason pReason;
 			instance.__GetReason(out pReason);
-			ProcessOutParameter(pReason);
 			return pReason;
 		}
 		
@@ -751,7 +696,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugEnum ppEnum;
 			instance.__Clone(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -766,7 +710,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			uint pceltFetched;
 			instance.__Next(celt, chains, out pceltFetched);
-			ProcessOutParameter(chains);
 			return pceltFetched;
 		}
 		
@@ -774,7 +717,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugModule pModule;
 			instance.__GetModule(out pModule);
-			ProcessOutParameter(pModule);
 			return pModule;
 		}
 		
@@ -789,7 +731,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__GetStaticFieldValue(fieldDef, pFrame, out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
@@ -797,8 +738,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugType ppType;
 			instance.__GetParameterizedType(elementType, nTypeArgs, ppTypeArgs, out ppType);
-			ProcessOutParameter(ppTypeArgs);
-			ProcessOutParameter(ppType);
 			return ppType;
 		}
 		
@@ -818,7 +757,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFunction ppFunction;
 			instance.__GetFunction(out ppFunction);
-			ProcessOutParameter(ppFunction);
 			return ppFunction;
 		}
 		
@@ -840,7 +778,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFunctionBreakpoint ppBreakpoint;
 			instance.__CreateBreakpoint(offset, out ppBreakpoint);
-			ProcessOutParameter(ppBreakpoint);
 			return ppBreakpoint;
 		}
 		
@@ -882,7 +819,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugEnum ppEnum;
 			instance.__Clone(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -925,7 +861,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValueBreakpoint ppBreakpoint;
 			instance.__CreateBreakpoint(out ppBreakpoint);
-			ProcessOutParameter(ppBreakpoint);
 			return ppBreakpoint;
 		}
 		
@@ -933,7 +868,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugClass ppClass;
 			instance.__GetClass(out ppClass);
-			ProcessOutParameter(ppClass);
 			return ppClass;
 		}
 		
@@ -941,7 +875,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__GetFieldValue(pClass, fieldDef, out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
@@ -949,7 +882,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFunction ppFunction;
 			instance.__GetVirtualMethod(memberRef, out ppFunction);
-			ProcessOutParameter(ppFunction);
 			return ppFunction;
 		}
 		
@@ -957,7 +889,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugContext ppContext;
 			instance.__GetContext(out ppContext);
-			ProcessOutParameter(ppContext);
 			return ppContext;
 		}
 		
@@ -972,7 +903,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			object ppObject;
 			instance.__GetManagedCopy(out ppObject);
-			ProcessOutParameter(ppObject);
 			return ppObject;
 		}
 		
@@ -1009,7 +939,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugThreadEnum ppThreads;
 			instance.__EnumerateThreads(out ppThreads);
-			ProcessOutParameter(ppThreads);
 			return ppThreads;
 		}
 		
@@ -1032,8 +961,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugErrorInfoEnum pError;
 			instance.__CanCommitChanges(cSnapshots, ref pSnapshots, out pError);
-			ProcessOutParameter(pSnapshots);
-			ProcessOutParameter(pError);
 			return pError;
 		}
 		
@@ -1041,8 +968,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugErrorInfoEnum pError;
 			instance.__CommitChanges(cSnapshots, ref pSnapshots, out pError);
-			ProcessOutParameter(pSnapshots);
-			ProcessOutParameter(pError);
 			return pError;
 		}
 		
@@ -1082,7 +1007,6 @@ namespace Debugger.Interop.CorDebug
 		public static void SetILMap(this ICorDebugEditAndContinueSnapshot instance, uint mdFunction, uint cMapSize, ref _COR_IL_MAP map)
 		{
 			instance.__SetILMap(mdFunction, cMapSize, ref map);
-			ProcessOutParameter(map);
 		}
 		
 		public static void SetPESymbolBytes(this ICorDebugEditAndContinueSnapshot instance, IStream pIStream)
@@ -1104,7 +1028,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugEnum ppEnum;
 			instance.__Clone(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -1129,7 +1052,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugEnum ppEnum;
 			instance.__Clone(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -1150,13 +1072,11 @@ namespace Debugger.Interop.CorDebug
 		public static void CallFunction(this ICorDebugEval instance, ICorDebugFunction pFunction, uint nArgs, ICorDebugValue[] ppArgs)
 		{
 			instance.__CallFunction(pFunction, nArgs, ppArgs);
-			ProcessOutParameter(ppArgs);
 		}
 		
 		public static void NewObject(this ICorDebugEval instance, ICorDebugFunction pConstructor, uint nArgs, ref ICorDebugValue ppArgs)
 		{
 			instance.__NewObject(pConstructor, nArgs, ref ppArgs);
-			ProcessOutParameter(ppArgs);
 		}
 		
 		public static void NewObjectNoConstructor(this ICorDebugEval instance, ICorDebugClass pClass)
@@ -1190,7 +1110,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppResult;
 			instance.__GetResult(out ppResult);
-			ProcessOutParameter(ppResult);
 			return ppResult;
 		}
 		
@@ -1198,7 +1117,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugThread ppThread;
 			instance.__GetThread(out ppThread);
-			ProcessOutParameter(ppThread);
 			return ppThread;
 		}
 		
@@ -1206,36 +1124,29 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__CreateValue(elementType, pElementClass, out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
 		public static void CallParameterizedFunction(this ICorDebugEval2 instance, ICorDebugFunction pFunction, uint nTypeArgs, ICorDebugType[] ppTypeArgs, uint nArgs, ICorDebugValue[] ppArgs)
 		{
 			instance.__CallParameterizedFunction(pFunction, nTypeArgs, ppTypeArgs, nArgs, ppArgs);
-			ProcessOutParameter(ppTypeArgs);
-			ProcessOutParameter(ppArgs);
 		}
 		
 		public static ICorDebugValue CreateValueForType(this ICorDebugEval2 instance, ICorDebugType pType)
 		{
 			ICorDebugValue ppValue;
 			instance.__CreateValueForType(pType, out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
 		public static void NewParameterizedObject(this ICorDebugEval2 instance, ICorDebugFunction pConstructor, uint nTypeArgs, ICorDebugType[] ppTypeArgs, uint nArgs, ICorDebugValue[] ppArgs)
 		{
 			instance.__NewParameterizedObject(pConstructor, nTypeArgs, ppTypeArgs, nArgs, ppArgs);
-			ProcessOutParameter(ppTypeArgs);
-			ProcessOutParameter(ppArgs);
 		}
 		
 		public static void NewParameterizedObjectNoConstructor(this ICorDebugEval2 instance, ICorDebugClass pClass, uint nTypeArgs, ICorDebugType[] ppTypeArgs)
 		{
 			instance.__NewParameterizedObjectNoConstructor(pClass, nTypeArgs, ppTypeArgs);
-			ProcessOutParameter(ppTypeArgs);
 		}
 		
 		public static void NewParameterizedArray(this ICorDebugEval2 instance, ICorDebugType pElementType, uint rank, uint[] dims, uint[] lowBounds)
@@ -1257,7 +1168,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugChain ppChain;
 			instance.__GetChain(out ppChain);
-			ProcessOutParameter(ppChain);
 			return ppChain;
 		}
 		
@@ -1265,7 +1175,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugCode ppCode;
 			instance.__GetCode(out ppCode);
-			ProcessOutParameter(ppCode);
 			return ppCode;
 		}
 		
@@ -1273,7 +1182,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFunction ppFunction;
 			instance.__GetFunction(out ppFunction);
-			ProcessOutParameter(ppFunction);
 			return ppFunction;
 		}
 		
@@ -1293,7 +1201,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFrame ppFrame;
 			instance.__GetCaller(out ppFrame);
-			ProcessOutParameter(ppFrame);
 			return ppFrame;
 		}
 		
@@ -1301,7 +1208,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFrame ppFrame;
 			instance.__GetCallee(out ppFrame);
-			ProcessOutParameter(ppFrame);
 			return ppFrame;
 		}
 		
@@ -1309,7 +1215,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugStepper ppStepper;
 			instance.__CreateStepper(out ppStepper);
-			ProcessOutParameter(ppStepper);
 			return ppStepper;
 		}
 		
@@ -1327,7 +1232,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugEnum ppEnum;
 			instance.__Clone(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -1342,7 +1246,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			uint pceltFetched;
 			instance.__Next(celt, frames, out pceltFetched);
-			ProcessOutParameter(frames);
 			return pceltFetched;
 		}
 		
@@ -1350,7 +1253,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugModule ppModule;
 			instance.__GetModule(out ppModule);
-			ProcessOutParameter(ppModule);
 			return ppModule;
 		}
 		
@@ -1358,7 +1260,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugClass ppClass;
 			instance.__GetClass(out ppClass);
-			ProcessOutParameter(ppClass);
 			return ppClass;
 		}
 		
@@ -1373,7 +1274,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugCode ppCode;
 			instance.__GetILCode(out ppCode);
-			ProcessOutParameter(ppCode);
 			return ppCode;
 		}
 		
@@ -1381,7 +1281,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugCode ppCode;
 			instance.__GetNativeCode(out ppCode);
-			ProcessOutParameter(ppCode);
 			return ppCode;
 		}
 		
@@ -1389,7 +1288,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFunctionBreakpoint ppBreakpoint;
 			instance.__CreateBreakpoint(out ppBreakpoint);
-			ProcessOutParameter(ppBreakpoint);
 			return ppBreakpoint;
 		}
 		
@@ -1423,7 +1321,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugCodeEnum ppCodeEnum;
 			instance.__EnumerateNativeCode(out ppCodeEnum);
-			ProcessOutParameter(ppCodeEnum);
 			return ppCodeEnum;
 		}
 		
@@ -1450,7 +1347,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFunction ppFunction;
 			instance.__GetFunction(out ppFunction);
-			ProcessOutParameter(ppFunction);
 			return ppFunction;
 		}
 		
@@ -1486,7 +1382,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValueBreakpoint ppBreakpoint;
 			instance.__CreateBreakpoint(out ppBreakpoint);
-			ProcessOutParameter(ppBreakpoint);
 			return ppBreakpoint;
 		}
 		
@@ -1525,7 +1420,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValueBreakpoint ppBreakpoint;
 			instance.__CreateBreakpoint(out ppBreakpoint);
-			ProcessOutParameter(ppBreakpoint);
 			return ppBreakpoint;
 		}
 		
@@ -1552,7 +1446,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__Dereference(out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
@@ -1560,7 +1453,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__DereferenceStrong(out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
@@ -1568,7 +1460,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			CorDebugHandleType pType;
 			instance.__GetHandleType(out pType);
-			ProcessOutParameter(pType);
 			return pType;
 		}
 		
@@ -1602,7 +1493,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValueBreakpoint ppBreakpoint;
 			instance.__CreateBreakpoint(out ppBreakpoint);
-			ProcessOutParameter(ppBreakpoint);
 			return ppBreakpoint;
 		}
 		
@@ -1617,7 +1507,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValueBreakpoint ppBreakpoint;
 			instance.__CreateRelocBreakpoint(out ppBreakpoint);
-			ProcessOutParameter(ppBreakpoint);
 			return ppBreakpoint;
 		}
 		
@@ -1625,7 +1514,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugHandleValue ppHandle;
 			instance.__CreateHandle(type, out ppHandle);
-			ProcessOutParameter(ppHandle);
 			return ppHandle;
 		}
 		
@@ -1633,7 +1521,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugChain ppChain;
 			instance.__GetChain(out ppChain);
-			ProcessOutParameter(ppChain);
 			return ppChain;
 		}
 		
@@ -1641,7 +1528,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugCode ppCode;
 			instance.__GetCode(out ppCode);
-			ProcessOutParameter(ppCode);
 			return ppCode;
 		}
 		
@@ -1649,7 +1535,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFunction ppFunction;
 			instance.__GetFunction(out ppFunction);
-			ProcessOutParameter(ppFunction);
 			return ppFunction;
 		}
 		
@@ -1669,7 +1554,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFrame ppFrame;
 			instance.__GetCaller(out ppFrame);
-			ProcessOutParameter(ppFrame);
 			return ppFrame;
 		}
 		
@@ -1677,7 +1561,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFrame ppFrame;
 			instance.__GetCallee(out ppFrame);
-			ProcessOutParameter(ppFrame);
 			return ppFrame;
 		}
 		
@@ -1685,14 +1568,12 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugStepper ppStepper;
 			instance.__CreateStepper(out ppStepper);
-			ProcessOutParameter(ppStepper);
 			return ppStepper;
 		}
 		
 		public static void GetIP(this ICorDebugILFrame instance, out uint pnOffset, out CorDebugMappingResult pMappingResult)
 		{
 			instance.__GetIP(out pnOffset, out pMappingResult);
-			ProcessOutParameter(pMappingResult);
 		}
 		
 		public static void SetIP(this ICorDebugILFrame instance, uint nOffset)
@@ -1704,7 +1585,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValueEnum ppValueEnum;
 			instance.__EnumerateLocalVariables(out ppValueEnum);
-			ProcessOutParameter(ppValueEnum);
 			return ppValueEnum;
 		}
 		
@@ -1712,7 +1592,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__GetLocalVariable(dwIndex, out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
@@ -1720,7 +1599,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValueEnum ppValueEnum;
 			instance.__EnumerateArguments(out ppValueEnum);
-			ProcessOutParameter(ppValueEnum);
 			return ppValueEnum;
 		}
 		
@@ -1728,7 +1606,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__GetArgument(dwIndex, out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
@@ -1743,7 +1620,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__GetStackValue(dwIndex, out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
@@ -1761,7 +1637,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugTypeEnum ppTyParEnum;
 			instance.__EnumerateTypeParameters(out ppTyParEnum);
-			ProcessOutParameter(ppTyParEnum);
 			return ppTyParEnum;
 		}
 		
@@ -1769,7 +1644,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugChain ppChain;
 			instance.__GetChain(out ppChain);
-			ProcessOutParameter(ppChain);
 			return ppChain;
 		}
 		
@@ -1777,7 +1651,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugCode ppCode;
 			instance.__GetCode(out ppCode);
-			ProcessOutParameter(ppCode);
 			return ppCode;
 		}
 		
@@ -1785,7 +1658,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFunction ppFunction;
 			instance.__GetFunction(out ppFunction);
-			ProcessOutParameter(ppFunction);
 			return ppFunction;
 		}
 		
@@ -1805,7 +1677,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFrame ppFrame;
 			instance.__GetCaller(out ppFrame);
-			ProcessOutParameter(ppFrame);
 			return ppFrame;
 		}
 		
@@ -1813,7 +1684,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFrame ppFrame;
 			instance.__GetCallee(out ppFrame);
-			ProcessOutParameter(ppFrame);
 			return ppFrame;
 		}
 		
@@ -1821,7 +1691,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugStepper ppStepper;
 			instance.__CreateStepper(out ppStepper);
-			ProcessOutParameter(ppStepper);
 			return ppStepper;
 		}
 		
@@ -1829,7 +1698,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			CorDebugInternalFrameType pType;
 			instance.__GetFrameType(out pType);
-			ProcessOutParameter(pType);
 			return pType;
 		}
 		
@@ -1851,7 +1719,6 @@ namespace Debugger.Interop.CorDebug
 		public static void GetFlags(this ICorDebugMDA instance, ref CorDebugMDAFlags pFlags)
 		{
 			instance.__GetFlags(ref pFlags);
-			ProcessOutParameter(pFlags);
 		}
 		
 		public static uint GetOSThreadId(this ICorDebugMDA instance)
@@ -2035,7 +1902,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugProcess ppProcess;
 			instance.__GetProcess(out ppProcess);
-			ProcessOutParameter(ppProcess);
 			return ppProcess;
 		}
 		
@@ -2050,7 +1916,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugAssembly ppAssembly;
 			instance.__GetAssembly(out ppAssembly);
-			ProcessOutParameter(ppAssembly);
 			return ppAssembly;
 		}
 		
@@ -2073,7 +1938,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFunction ppFunction;
 			instance.__GetFunctionFromToken(methodDef, out ppFunction);
-			ProcessOutParameter(ppFunction);
 			return ppFunction;
 		}
 		
@@ -2081,7 +1945,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFunction ppFunction;
 			instance.__GetFunctionFromRVA(rva, out ppFunction);
-			ProcessOutParameter(ppFunction);
 			return ppFunction;
 		}
 		
@@ -2089,7 +1952,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugClass ppClass;
 			instance.__GetClassFromToken(typeDef, out ppClass);
-			ProcessOutParameter(ppClass);
 			return ppClass;
 		}
 		
@@ -2097,7 +1959,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugModuleBreakpoint ppBreakpoint;
 			instance.__CreateBreakpoint(out ppBreakpoint);
-			ProcessOutParameter(ppBreakpoint);
 			return ppBreakpoint;
 		}
 		
@@ -2105,7 +1966,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugEditAndContinueSnapshot ppEditAndContinueSnapshot;
 			instance.__GetEditAndContinueSnapshot(out ppEditAndContinueSnapshot);
-			ProcessOutParameter(ppEditAndContinueSnapshot);
 			return ppEditAndContinueSnapshot;
 		}
 		
@@ -2113,7 +1973,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			object ppObj;
 			instance.__GetMetaDataInterface(ref riid, out ppObj);
-			ProcessOutParameter(ppObj);
 			return ppObj;
 		}
 		
@@ -2135,7 +1994,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__GetGlobalVariableValue(fieldDef, out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
@@ -2161,8 +2019,6 @@ namespace Debugger.Interop.CorDebug
 		public static void ApplyChanges(this ICorDebugModule2 instance, uint cbMetadata, byte[] pbMetadata, uint cbIL, byte[] pbIL)
 		{
 			instance.__ApplyChanges(cbMetadata, pbMetadata, cbIL, pbIL);
-			ProcessOutParameter(pbMetadata);
-			ProcessOutParameter(pbIL);
 		}
 		
 		public static void SetJITCompilerFlags(this ICorDebugModule2 instance, uint dwFlags)
@@ -2180,14 +2036,12 @@ namespace Debugger.Interop.CorDebug
 		public static void ResolveAssembly(this ICorDebugModule2 instance, uint tkAssemblyRef, ref ICorDebugAssembly ppAssembly)
 		{
 			instance.__ResolveAssembly(tkAssemblyRef, ref ppAssembly);
-			ProcessOutParameter(ppAssembly);
 		}
 		
 		public static object CreateReaderForInMemorySymbols(this ICorDebugModule3 instance, ref Guid riid)
 		{
 			object ppObj;
 			instance.__CreateReaderForInMemorySymbols(ref riid, out ppObj);
-			ProcessOutParameter(ppObj);
 			return ppObj;
 		}
 		
@@ -2207,7 +2061,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugModule ppModule;
 			instance.__GetModule(out ppModule);
-			ProcessOutParameter(ppModule);
 			return ppModule;
 		}
 		
@@ -2225,7 +2078,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugEnum ppEnum;
 			instance.__Clone(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -2247,7 +2099,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugChain ppChain;
 			instance.__GetChain(out ppChain);
-			ProcessOutParameter(ppChain);
 			return ppChain;
 		}
 		
@@ -2255,7 +2106,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugCode ppCode;
 			instance.__GetCode(out ppCode);
-			ProcessOutParameter(ppCode);
 			return ppCode;
 		}
 		
@@ -2263,7 +2113,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFunction ppFunction;
 			instance.__GetFunction(out ppFunction);
-			ProcessOutParameter(ppFunction);
 			return ppFunction;
 		}
 		
@@ -2283,7 +2132,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFrame ppFrame;
 			instance.__GetCaller(out ppFrame);
-			ProcessOutParameter(ppFrame);
 			return ppFrame;
 		}
 		
@@ -2291,7 +2139,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFrame ppFrame;
 			instance.__GetCallee(out ppFrame);
-			ProcessOutParameter(ppFrame);
 			return ppFrame;
 		}
 		
@@ -2299,7 +2146,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugStepper ppStepper;
 			instance.__CreateStepper(out ppStepper);
-			ProcessOutParameter(ppStepper);
 			return ppStepper;
 		}
 		
@@ -2319,7 +2165,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugRegisterSet ppRegisters;
 			instance.__GetRegisterSet(out ppRegisters);
-			ProcessOutParameter(ppRegisters);
 			return ppRegisters;
 		}
 		
@@ -2327,7 +2172,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__GetLocalRegisterValue(reg, cbSigBlob, pvSigBlob, out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
@@ -2335,7 +2179,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__GetLocalDoubleRegisterValue(highWordReg, lowWordReg, cbSigBlob, pvSigBlob, out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
@@ -2343,7 +2186,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__GetLocalMemoryValue(address, cbSigBlob, pvSigBlob, out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
@@ -2351,7 +2193,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__GetLocalRegisterMemoryValue(highWordReg, lowWordAddress, cbSigBlob, pvSigBlob, out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
@@ -2359,7 +2200,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__GetLocalMemoryRegisterValue(highWordAddress, lowWordRegister, cbSigBlob, pvSigBlob, out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
@@ -2382,7 +2222,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugEnum ppEnum;
 			instance.__Clone(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -2425,7 +2264,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValueBreakpoint ppBreakpoint;
 			instance.__CreateBreakpoint(out ppBreakpoint);
-			ProcessOutParameter(ppBreakpoint);
 			return ppBreakpoint;
 		}
 		
@@ -2433,7 +2271,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugClass ppClass;
 			instance.__GetClass(out ppClass);
-			ProcessOutParameter(ppClass);
 			return ppClass;
 		}
 		
@@ -2441,7 +2278,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__GetFieldValue(pClass, fieldDef, out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
@@ -2449,7 +2285,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFunction ppFunction;
 			instance.__GetVirtualMethod(memberRef, out ppFunction);
-			ProcessOutParameter(ppFunction);
 			return ppFunction;
 		}
 		
@@ -2457,7 +2292,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugContext ppContext;
 			instance.__GetContext(out ppContext);
-			ProcessOutParameter(ppContext);
 			return ppContext;
 		}
 		
@@ -2472,7 +2306,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			object ppObject;
 			instance.__GetManagedCopy(out ppObject);
-			ProcessOutParameter(ppObject);
 			return ppObject;
 		}
 		
@@ -2484,8 +2317,6 @@ namespace Debugger.Interop.CorDebug
 		public static void GetVirtualMethodAndType(this ICorDebugObjectValue2 instance, uint memberRef, out ICorDebugFunction ppFunction, out ICorDebugType ppType)
 		{
 			instance.__GetVirtualMethodAndType(memberRef, out ppFunction, out ppType);
-			ProcessOutParameter(ppFunction);
-			ProcessOutParameter(ppType);
 		}
 		
 		public static void Stop(this ICorDebugProcess instance, uint dwTimeoutIgnored)
@@ -2516,7 +2347,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugThreadEnum ppThreads;
 			instance.__EnumerateThreads(out ppThreads);
-			ProcessOutParameter(ppThreads);
 			return ppThreads;
 		}
 		
@@ -2539,8 +2369,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugErrorInfoEnum pError;
 			instance.__CanCommitChanges(cSnapshots, ref pSnapshots, out pError);
-			ProcessOutParameter(pSnapshots);
-			ProcessOutParameter(pError);
 			return pError;
 		}
 		
@@ -2548,8 +2376,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugErrorInfoEnum pError;
 			instance.__CommitChanges(cSnapshots, ref pSnapshots, out pError);
-			ProcessOutParameter(pSnapshots);
-			ProcessOutParameter(pError);
 			return pError;
 		}
 		
@@ -2571,7 +2397,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugThread ppThread;
 			instance.__GetThread(dwThreadId, out ppThread);
-			ProcessOutParameter(ppThread);
 			return ppThread;
 		}
 		
@@ -2579,7 +2404,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugObjectEnum ppObjects;
 			instance.__EnumerateObjects(out ppObjects);
-			ProcessOutParameter(ppObjects);
 			return ppObjects;
 		}
 		
@@ -2640,7 +2464,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugAppDomainEnum ppAppDomains;
 			instance.__EnumerateAppDomains(out ppAppDomains);
-			ProcessOutParameter(ppAppDomains);
 			return ppAppDomains;
 		}
 		
@@ -2648,7 +2471,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppObject;
 			instance.__GetObject(out ppObject);
-			ProcessOutParameter(ppObject);
 			return ppObject;
 		}
 		
@@ -2656,7 +2478,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugThread ppThread;
 			instance.__ThreadForFiberCookie(fiberCookie, out ppThread);
-			ProcessOutParameter(ppThread);
 			return ppThread;
 		}
 		
@@ -2671,7 +2492,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugThread2 ppThread;
 			instance.__GetThreadForTaskID(taskid, out ppThread);
-			ProcessOutParameter(ppThread);
 			return ppThread;
 		}
 		
@@ -2679,7 +2499,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			_COR_VERSION version;
 			instance.__GetVersion(out version);
-			ProcessOutParameter(version);
 			return version;
 		}
 		
@@ -2711,7 +2530,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugReferenceValue pOutValue;
 			instance.__GetReferenceValueFromGCHandle(handle, out pOutValue);
-			ProcessOutParameter(pOutValue);
 			return pOutValue;
 		}
 		
@@ -2729,7 +2547,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugEnum ppEnum;
 			instance.__Clone(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -2772,7 +2589,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValueBreakpoint ppBreakpoint;
 			instance.__CreateBreakpoint(out ppBreakpoint);
-			ProcessOutParameter(ppBreakpoint);
 			return ppBreakpoint;
 		}
 		
@@ -2799,7 +2615,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__Dereference(out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
@@ -2807,7 +2622,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__DereferenceStrong(out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
@@ -2899,7 +2713,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugEnum ppEnum;
 			instance.__Clone(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -2942,7 +2755,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValueBreakpoint ppBreakpoint;
 			instance.__CreateBreakpoint(out ppBreakpoint);
-			ProcessOutParameter(ppBreakpoint);
 			return ppBreakpoint;
 		}
 		
@@ -2957,7 +2769,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValueBreakpoint ppBreakpoint;
 			instance.__CreateRelocBreakpoint(out ppBreakpoint);
-			ProcessOutParameter(ppBreakpoint);
 			return ppBreakpoint;
 		}
 		
@@ -2977,7 +2788,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugProcess ppProcess;
 			instance.__GetProcess(out ppProcess);
-			ProcessOutParameter(ppProcess);
 			return ppProcess;
 		}
 		
@@ -2999,7 +2809,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugAppDomain ppAppDomain;
 			instance.__GetAppDomain(out ppAppDomain);
-			ProcessOutParameter(ppAppDomain);
 			return ppAppDomain;
 		}
 		
@@ -3012,7 +2821,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			CorDebugThreadState pState;
 			instance.__GetDebugState(out pState);
-			ProcessOutParameter(pState);
 			return pState;
 		}
 		
@@ -3020,7 +2828,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			CorDebugUserState pState;
 			instance.__GetUserState(out pState);
-			ProcessOutParameter(pState);
 			return pState;
 		}
 		
@@ -3028,7 +2835,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppExceptionObject;
 			instance.__GetCurrentException(out ppExceptionObject);
-			ProcessOutParameter(ppExceptionObject);
 			return ppExceptionObject;
 		}
 		
@@ -3041,7 +2847,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugStepper ppStepper;
 			instance.__CreateStepper(out ppStepper);
-			ProcessOutParameter(ppStepper);
 			return ppStepper;
 		}
 		
@@ -3049,7 +2854,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugChainEnum ppChains;
 			instance.__EnumerateChains(out ppChains);
-			ProcessOutParameter(ppChains);
 			return ppChains;
 		}
 		
@@ -3057,7 +2861,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugChain ppChain;
 			instance.__GetActiveChain(out ppChain);
-			ProcessOutParameter(ppChain);
 			return ppChain;
 		}
 		
@@ -3065,7 +2868,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugFrame ppFrame;
 			instance.__GetActiveFrame(out ppFrame);
-			ProcessOutParameter(ppFrame);
 			return ppFrame;
 		}
 		
@@ -3073,7 +2875,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugRegisterSet ppRegisters;
 			instance.__GetRegisterSet(out ppRegisters);
-			ProcessOutParameter(ppRegisters);
 			return ppRegisters;
 		}
 		
@@ -3081,7 +2882,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugEval ppEval;
 			instance.__CreateEval(out ppEval);
-			ProcessOutParameter(ppEval);
 			return ppEval;
 		}
 		
@@ -3089,7 +2889,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppObject;
 			instance.__GetObject(out ppObject);
-			ProcessOutParameter(ppObject);
 			return ppObject;
 		}
 		
@@ -3138,7 +2937,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugEnum ppEnum;
 			instance.__Clone(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -3153,7 +2951,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			uint pceltFetched;
 			instance.__Next(celt, threads, out pceltFetched);
-			ProcessOutParameter(threads);
 			return pceltFetched;
 		}
 		
@@ -3168,7 +2965,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugClass ppClass;
 			instance.__GetClass(out ppClass);
-			ProcessOutParameter(ppClass);
 			return ppClass;
 		}
 		
@@ -3176,7 +2972,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugTypeEnum ppTyParEnum;
 			instance.__EnumerateTypeParameters(out ppTyParEnum);
-			ProcessOutParameter(ppTyParEnum);
 			return ppTyParEnum;
 		}
 		
@@ -3184,7 +2979,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugType value;
 			instance.__GetFirstTypeParameter(out value);
-			ProcessOutParameter(value);
 			return value;
 		}
 		
@@ -3192,7 +2986,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugType pBase;
 			instance.__GetBase(out pBase);
-			ProcessOutParameter(pBase);
 			return pBase;
 		}
 		
@@ -3200,7 +2993,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__GetStaticFieldValue(fieldDef, pFrame, out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
@@ -3225,7 +3017,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugEnum ppEnum;
 			instance.__Clone(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		
@@ -3240,7 +3031,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			uint pceltFetched;
 			instance.__Next(celt, values, out pceltFetched);
-			ProcessOutParameter(values);
 			return pceltFetched;
 		}
 		
@@ -3274,7 +3064,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValueBreakpoint ppBreakpoint;
 			instance.__CreateBreakpoint(out ppBreakpoint);
-			ProcessOutParameter(ppBreakpoint);
 			return ppBreakpoint;
 		}
 		
@@ -3282,7 +3071,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugType ppType;
 			instance.__GetExactType(out ppType);
-			ProcessOutParameter(ppType);
 			return ppType;
 		}
 		
@@ -3302,7 +3090,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugValue ppValue;
 			instance.__GetValue(out ppValue);
-			ProcessOutParameter(ppValue);
 			return ppValue;
 		}
 		
@@ -3320,7 +3107,6 @@ namespace Debugger.Interop.CorDebug
 		{
 			ICorDebugEnum ppEnum;
 			instance.__Clone(out ppEnum);
-			ProcessOutParameter(ppEnum);
 			return ppEnum;
 		}
 		

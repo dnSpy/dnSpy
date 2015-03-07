@@ -210,9 +210,7 @@ namespace Debugger
 				return Marshal.PtrToStringAuto((IntPtr)param);
 			}
 			// Marshal a COM object
-			object comObject = Marshal.GetObjectForIUnknown(param);
-			Debugger.Interop.TrackedComObjects.Track(comObject);
-			return comObject;
+			return Marshal.GetObjectForIUnknown(param);
 		}
 		
 		/// <summary>

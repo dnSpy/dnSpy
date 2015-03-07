@@ -40,7 +40,7 @@ namespace ICSharpCode.ILSpy.Debugger.Tooltips
 			this.logicalPosition = logicalPosition;
 			InitializeComponent();
 			
-			Loaded += new RoutedEventHandler(OnLoaded);
+			Loaded += OnLoaded;
 		}
 
 		public DebuggerTooltipControl(TextLocation logicalPosition, ITreeNode node)
@@ -91,27 +91,6 @@ namespace ICSharpCode.ILSpy.Debugger.Tooltips
 			this.itemsSource = value;
 			this.lazyGrid = new LazyItemsControl<ITreeNode>(this.dataGrid, InitialItemsCount);
 			
-//			// HACK for updating the pins in tooltip
-//			var observable = new List<ITreeNode>();
-//			this.itemsSource.ForEach(item => observable.Add(item));
-//			
-//			// verify if at the line of the root there's a pin bookmark
-//			ITextEditorProvider provider = WorkbenchSingleton.Workbench.ActiveViewContent as ITextEditorProvider;
-//			var editor = provider.TextEditor;
-//			if (editor != null) {
-//				var pin = BookmarkManager.Bookmarks.Find(
-//					b => b is PinBookmark &&
-//					b.Location.Line == logicalPosition.Line &&
-//					b.FileName == editor.FileName) as PinBookmark;
-//				
-//				if (pin != null) {
-//					observable.ForEach(item => { // TODO: find a way not to use "observable"
-//					                   	if (pin.ContainsNode(item))
-//					                   		item.IsPinned = true;
-//					                   });
-//				}
-//			}
-			
 			var source = new VirtualizingIEnumerable<ITreeNode>(value);
 			lazyGrid.ItemsSource = source;
 			this.dataGrid.AddHandler(ScrollViewer.ScrollChangedEvent, new ScrollChangedEventHandler(handleScroll));
@@ -122,8 +101,6 @@ namespace ICSharpCode.ILSpy.Debugger.Tooltips
 					this.lazyGrid.ItemsSourceTotalCount.Value <= VisibleItemsCount ? Visibility.Collapsed : Visibility.Visible;
 			}
 		}
-		
-		//public Location LogicalPosition { get; set; }
 
 		/// <inheritdoc/>
 		public bool ShowAsPopup
@@ -296,70 +273,10 @@ namespace ICSharpCode.ILSpy.Debugger.Tooltips
 		
 		void PinButton_Checked(object sender, RoutedEventArgs e)
 		{
-//			ITextEditorProvider provider = WorkbenchSingleton.Workbench.ActiveViewContent as ITextEditorProvider;
-//			var editor = provider.TextEditor;
-//			if (editor == null) return;
-//			var node = (ITreeNode)(((ToggleButton)(e.OriginalSource)).DataContext);
-//			
-//			if (!string.IsNullOrEmpty(editor.FileName)) {
-//				
-//				// verify if at the line of the root there's a pin bookmark
-//				var pin = BookmarkManager.Bookmarks.Find(
-//					b => b is PinBookmark &&
-//					b.LineNumber == logicalPosition.Line &&
-//					b.FileName == editor.FileName) as PinBookmark;
-//				
-//				if (pin == null) {
-//					pin = new PinBookmark(editor.FileName, logicalPosition);
-//					// show pinned DebuggerPopup
-//					if (pin.Popup == null) {
-//						pin.Popup = new PinDebuggerControl();
-//						pin.Popup.Mark = pin;
-//						Rect rect = new Rect(this.DesiredSize);
-//						var point = this.PointToScreen(rect.TopRight);
-//						pin.Popup.Location = new Point { X = 500, Y = point.Y - 150 };
-//						pin.Nodes.Add(node);
-//						pin.Popup.ItemsSource = pin.Nodes;
-//					}
-//					
-//					// do actions
-//					pin.Popup.Open();
-//					BookmarkManager.AddMark(pin);
-//				}
-//				else
-//				{
-//					if (!pin.ContainsNode(node)) {
-//						pin.Nodes.Add(node);
-//						pin.Popup.ItemsSource = pin.Nodes;
-//					}
-//				}
-//			}
 		}
 		
 		void PinButton_Unchecked(object sender, RoutedEventArgs e)
 		{
-//			ITextEditorProvider provider = WorkbenchSingleton.Workbench.ActiveViewContent as ITextEditorProvider;
-//			var editor = provider.TextEditor;
-//			if (editor == null) return;
-//			
-//			if (!string.IsNullOrEmpty(editor.FileName)) {
-//				// remove from pinned DebuggerPopup
-//				var pin = BookmarkManager.Bookmarks.Find(
-//					b => b is PinBookmark &&
-//					b.LineNumber == logicalPosition.Line &&
-//					b.FileName == editor.FileName) as PinBookmark;
-//				if (pin == null) return;
-//				
-//				ToggleButton button = (ToggleButton)e.OriginalSource;
-//				pin.RemoveNode((ITreeNode)button.DataContext);
-//				pin.Popup.ItemsSource = pin.Nodes;
-//				// remove if no more data pins are available
-//				if (pin.Nodes.Count == 0) {
-//					pin.Popup.Close();
-//					
-//					BookmarkManager.RemoveMark(pin);
-//				}
-//			}
 		}
 		
 		#endregion

@@ -8,11 +8,6 @@ namespace Debugger.Interop.CorSym
 {
 	public static partial class CorSymExtensionMethods
 	{
-		static void ProcessOutParameter(object parameter)
-		{
-			TrackedComObjects.ProcessOutParameter(parameter);
-		}
-		
 		// ISymUnmanagedBinder
 		
 		public static ISymUnmanagedReader GetReaderForFile(this ISymUnmanagedBinder symBinder, object importer, string filename, string searchPath)

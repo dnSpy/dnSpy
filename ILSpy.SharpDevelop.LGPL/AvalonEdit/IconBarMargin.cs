@@ -100,24 +100,11 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 					list.Sort((a, b) => a.ZOrder.CompareTo(b.ZOrder));
 					foreach (var bm in list) {
 						Rect rect = new Rect(imagePadding, PixelSnapHelpers.Round(line.VisualTop - textView.VerticalOffset, pixelSize.Height), 16, 16);
-						if (dragDropBookmark == bm && dragStarted)
-							drawingContext.PushOpacity(0.5);
 						drawingContext.DrawImage(bm.Image, rect);
-						if (dragDropBookmark == bm && dragStarted)
-							drawingContext.Pop();
 					}
-				}
-				if (dragDropBookmark != null && dragStarted) {
-					Rect rect = new Rect(imagePadding, PixelSnapHelpers.Round(dragDropCurrentPoint - 8, pixelSize.Height), 16, 16);
-					drawingContext.DrawImage(dragDropBookmark.Image, rect);
 				}
 			}
 		}
-		
-		IBookmark dragDropBookmark; // bookmark being dragged (!=null if drag'n'drop is active)
-		double dragDropStartPoint;
-		double dragDropCurrentPoint;
-		bool dragStarted; // whether drag'n'drop operation has started (mouse was moved minimum distance)
 		
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
@@ -125,15 +112,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			int line = GetLineFromMousePosition(e);
 			if (!e.Handled && line > 0) {
 				IBookmark bm = GetBookmarkFromLine(line);
-				if (bm != null) {
+				if (bm != null)
 					bm.MouseDown(e);
-					if (!e.Handled) {
-						if (e.ChangedButton == MouseButton.Left && bm.CanDragDrop && CaptureMouse()) {
-							StartDragDrop(bm, e);
-							e.Handled = true;
-						}
-					}
-				}
 			}
 			// don't allow selecting text through the IconBarMargin
 			if (e.ChangedButton == MouseButton.Left)
@@ -159,46 +139,6 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			return manager.Bookmarks.FirstOrDefault(b => b.LineNumber == line);
 		}
 		
-		protected override void OnLostMouseCapture(MouseEventArgs e)
-		{
-			CancelDragDrop();
-			base.OnLostMouseCapture(e);
-		}
-		
-		void StartDragDrop(IBookmark bm, MouseEventArgs e)
-		{
-			dragDropBookmark = bm;
-			dragDropStartPoint = dragDropCurrentPoint = e.GetPosition(this).Y;
-			if (TextView != null) {
-				TextArea area = TextView.Services.GetService(typeof(TextArea)) as TextArea;
-				if (area != null)
-					area.PreviewKeyDown += TextArea_PreviewKeyDown;
-			}
-		}
-		
-		void CancelDragDrop()
-		{
-			if (dragDropBookmark != null) {
-				dragDropBookmark = null;
-				dragStarted = false;
-				if (TextView != null) {
-					TextArea area = TextView.Services.GetService(typeof(TextArea)) as TextArea;
-					if (area != null)
-						area.PreviewKeyDown -= TextArea_PreviewKeyDown;
-				}
-				ReleaseMouseCapture();
-				InvalidateVisual();
-			}
-		}
-		
-		void TextArea_PreviewKeyDown(object sender, KeyEventArgs e)
-		{
-			// any key press cancels drag'n'drop
-			CancelDragDrop();
-			if (e.Key == Key.Escape)
-				e.Handled = true;
-		}
-		
 		public int GetLineFromMousePosition(MouseEventArgs e)
 		{
 			ICSharpCode.AvalonEdit.Rendering.TextView textView = this.TextView;
@@ -210,29 +150,10 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			return vl.FirstDocumentLine.LineNumber;
 		}
 		
-		protected override void OnMouseMove(MouseEventArgs e)
-		{
-			base.OnMouseMove(e);
-			if (dragDropBookmark != null) {
-				dragDropCurrentPoint = e.GetPosition(this).Y;
-				if (Math.Abs(dragDropCurrentPoint - dragDropStartPoint) > SystemParameters.MinimumVerticalDragDistance)
-					dragStarted = true;
-				InvalidateVisual();
-			}
-		}
-		
 		protected override void OnMouseUp(MouseButtonEventArgs e)
 		{
 			base.OnMouseUp(e);
 			int line = GetLineFromMousePosition(e);
-			if (!e.Handled && dragDropBookmark != null) {
-				if (dragStarted) {
-					if (line != 0)
-						dragDropBookmark.Drop(line);
-					e.Handled = true;
-				}
-				CancelDragDrop();
-			}
 			if (!e.Handled && line != 0) {
 				var bm = GetBookmarkFromLine(line);
 				if (bm != null) {
@@ -311,8 +232,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 						BreakpointBookmark newBookmark = new BreakpointBookmark(breakpoint.MemberReference,
 																				map.StartLocation,
 																				map.EndLocation,
-																				map.ILInstructionOffset,
-																				BreakpointAction.Break);
+																				map.ILInstructionOffset);
 						newBookmark.IsEnabled = breakpoint.IsEnabled;
 
 						BookmarkManager.ReplaceMark(i, newBookmark);

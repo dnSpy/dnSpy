@@ -19,11 +19,6 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		TextLocation location;
 		TextLocation endLocation;
 		
-		protected virtual void RemoveMark()
-		{
-			
-		}
-		
 		public TextLocation Location {
 			get { return location; }
 			set { location = value; }
@@ -34,18 +29,8 @@ namespace ICSharpCode.ILSpy.Bookmarks
 			set { endLocation = value; }
 		}
 		
-		public event EventHandler DocumentChanged;
-		
-		protected virtual void OnDocumentChanged(EventArgs e)
-		{
-			if (DocumentChanged != null) {
-				DocumentChanged(this, e);
-			}
-		}
-		
 		protected virtual void Redraw()
 		{
-			
 		}
 		
 		public IMemberRef MemberReference { get; set; }
@@ -83,18 +68,6 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		}
 		
 		public virtual void MouseUp(MouseButtonEventArgs e)
-		{
-			if (e.ChangedButton == MouseButton.Left && CanToggle) {
-				RemoveMark();
-				e.Handled = true;
-			}
-		}
-		
-		public virtual bool CanDragDrop {
-			get { return false; }
-		}
-		
-		public virtual void Drop(int lineNumber)
 		{
 		}
 

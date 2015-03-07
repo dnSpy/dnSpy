@@ -24,22 +24,6 @@ namespace ICSharpCode.ILSpy.Bookmarks
 			}
 		}
 		
-		public static List<BookmarkBase> GetBookmarks(string typeName)
-		{
-			if (typeName == null)
-				throw new ArgumentNullException("typeName");
-			
-			List<BookmarkBase> marks = new List<BookmarkBase>();
-			
-			foreach (BookmarkBase mark in bookmarks) {
-				if (typeName == mark.MemberReference.FullName) {
-					marks.Add(mark);
-				}
-			}
-			
-			return marks;
-		}
-		
 		public static void AddMark(BookmarkBase bookmark)
 		{
 			if (bookmark == null) return;
@@ -57,7 +41,7 @@ namespace ICSharpCode.ILSpy.Bookmarks
 				return false;
 			if (a.GetType() != b.GetType())
 				return false;
-			if (a.MemberReference.FullName != b.MemberReference.FullName)
+			if (a.MemberReference != b.MemberReference)
 				return false;
 			return a.Location == b.Location && a.EndLocation == b.EndLocation;
 		}
@@ -87,11 +71,6 @@ namespace ICSharpCode.ILSpy.Bookmarks
 			}
 		}
 		
-		internal static void Initialize()
-		{
-			
-		}
-		
 		static void OnRemoved(BookmarkEventArgs e)
 		{
 			if (Removed != null) {
@@ -106,11 +85,11 @@ namespace ICSharpCode.ILSpy.Bookmarks
 			}
 		}
 		
-		public static void ToggleBookmark(string typeName, TextLocation location, TextLocation endLocation,
+		public static void ToggleBookmark(TextLocation location, TextLocation endLocation,
 		                                  Predicate<BookmarkBase> canToggle,
 										  Func<TextLocation, TextLocation, BookmarkBase> bookmarkFactory)
 		{
-			foreach (BookmarkBase bookmark in GetBookmarks(typeName)) {
+			foreach (BookmarkBase bookmark in Bookmarks) {
 				if (canToggle(bookmark) && bookmark.Location == location && bookmark.EndLocation == endLocation) {
 					BookmarkManager.RemoveMark(bookmark);
 					return;

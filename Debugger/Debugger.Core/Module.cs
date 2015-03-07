@@ -254,7 +254,6 @@ namespace Debugger
 					}
 					throw;
 				}
-				TrackedComObjects.Track(symReader);
 				process.TraceMessage("Loaded dynamic symbols for " + this.Name);
 				OnSymbolsUpdated();
 			}

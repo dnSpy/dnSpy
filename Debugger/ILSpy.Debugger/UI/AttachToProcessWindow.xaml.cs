@@ -46,6 +46,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 					if (currentProcess.Id != process.Id) {
 						bool managed = false;
 						try {
+							//TODO: Why isn't WindowsDebugger.IsManaged() used?
 							var modules = process.Modules.Cast<ProcessModule>().Where(
 								m => m.ModuleName.StartsWith("mscor", StringComparison.OrdinalIgnoreCase));
 							

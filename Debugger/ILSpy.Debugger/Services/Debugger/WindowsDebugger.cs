@@ -41,11 +41,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		
 		bool attached;
 		NDebugger debugger;
-		ICorPublish corPublish;
 		Process debuggedProcess;
-		
-		//DynamicTreeDebuggerRow currentTooltipRow;
-		//Expression             currentTooltipExpression;
 		
 		public event EventHandler<ProcessEventArgs> ProcessSelected;
 		
@@ -93,16 +89,15 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		
 		public WindowsDebugger()
 		{
-			
 		}
 		
 		#region IDebugger Members
 		
-		string errorDebugging      = "Error.Debugging";
-		string errorNotDebugging   = "Error.NotDebugging";
-		string errorProcessRunning = "Error.ProcessRunning";
-		string errorProcessPaused  = "Error.ProcessPaused";
-		string errorCannotStepNoActiveFunction = "Threads.CannotStepNoActiveFunction";
+		const string errorDebugging      = "Error.Debugging";
+		const string errorNotDebugging   = "Error.NotDebugging";
+		const string errorProcessRunning = "Error.ProcessRunning";
+		const string errorProcessPaused  = "Error.ProcessPaused";
+		const string errorCannotStepNoActiveFunction = "Threads.CannotStepNoActiveFunction";
 		
 		public bool IsDebugging {
 			get {
@@ -141,9 +136,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				StartError("Net10NotSupported");
 			} else if (version.StartsWith("v1.1")) {
 				StartError("Net1.1NotSupported");
-//					} else if (string.IsNullOrEmpty(version)) {
-//					// Not a managed assembly
-//					MessageBox.Show(".Error.BadAssembly}");
 			} else if (debugger.IsKernelDebuggerEnabled) {
 				StartError("KernelDebuggerEnabled");
 			} else {
@@ -165,7 +157,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					if (e is COMException || e is BadImageFormatException || e is UnauthorizedAccessException) {
 						string msg = "CannotStartProcess";
 						msg += " " + e.Message;
-						// TODO: Remove
 						if (e is COMException) {
 							uint errCode = unchecked((uint)((COMException)e).ErrorCode);
 							if (errCode == 0x80070032 || errCode == 0x80131C30) {
@@ -244,11 +235,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				return;
 			
 			debugger.Detach();
-		}
-		
-		public void StartWithoutDebugging(ProcessStartInfo processStartInfo)
-		{
-			System.Diagnostics.Process.Start(processStartInfo);
 		}
 		
 		public void Stop()
@@ -444,11 +430,9 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			return ExpressionEvaluator.ParseExpression(variableName, SupportedLanguage.CSharp);
 		}
 		
-		public bool IsManaged(int processId)
+		public static bool IsManaged(int processId)//TODO: Why isn't this method used by AttachToProcessWindow?
 		{
-			corPublish = new CorpubPublishClass();
-			CorDbg.Interop.TrackedComObjects.Track(corPublish);
-			
+			var corPublish = new CorpubPublishClass();
 			ICorPublishProcess process = corPublish.GetProcess((uint)processId);
 			if (process != null) {
 				return process.IsManaged() != 0;
@@ -523,27 +507,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				return null;
 			}
 		}
-		
-		public bool CanSetInstructionPointer(string filename, int line, int column)
-		{
-			if (debuggedProcess != null && debuggedProcess.IsPaused &&
-			    debuggedProcess.SelectedThread != null && debuggedProcess.SelectedThread.MostRecentStackFrame != null) {
-				SourcecodeSegment seg = debuggedProcess.SelectedThread.MostRecentStackFrame.CanSetIP(filename, line, column);
-				return seg != null;
-			} else {
-				return false;
-			}
-		}
-		
-		public bool SetInstructionPointer(string filename, int line, int column)
-		{
-			if (CanSetInstructionPointer(filename, line, column)) {
-				SourcecodeSegment seg = debuggedProcess.SelectedThread.MostRecentStackFrame.SetIP(filename, line, column);
-				return seg != null;
-			} else {
-				return false;
-			}
-		}
 
 		public bool CanSetInstructionPointer(int ilOffset)
 		{
@@ -573,8 +536,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		{
 			debugger = new NDebugger();
 			
-			//debugger.Options = DebuggingOptions.Instance;
-			
 			debugger.DebuggerTraceMessage    += debugger_TraceMessage;
 			debugger.Processes.Added         += debugger_ProcessStarted;
 			debugger.Processes.Removed       += debugger_ProcessExited;
@@ -592,15 +553,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			}
 		}
 		
-		bool Compare(byte[] a, byte[] b)
-		{
-			if (a.Length != b.Length) return false;
-			for(int i = 0; i < a.Length; i++) {
-				if (a[i] != b[i]) return false;
-			}
-			return true;
-		}
-		
 		void AddBreakpoint(BreakpointBookmark bookmark)
 		{
 			Breakpoint breakpoint = null;
@@ -614,75 +566,19 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				bookmark.IsEnabled);
 			
 			debugger.Breakpoints.Add(breakpoint);
-//			Action setBookmarkColor = delegate {
-//				if (debugger.Processes.Count == 0) {
-//					bookmark.IsHealthy = true;
-//					bookmark.Tooltip = null;
-//				} else if (!breakpoint.IsSet) {
-//					bookmark.IsHealthy = false;
-//					bookmark.Tooltip = "Breakpoint was not found in any loaded modules";
-//				} else if (breakpoint.OriginalLocation.CheckSum == null) {
-//					bookmark.IsHealthy = true;
-//					bookmark.Tooltip = null;
-//				} else {
-//					byte[] fileMD5;
-//					IEditable file = FileService.GetOpenFile(bookmark.FileName) as IEditable;
-//					if (file != null) {
-//						byte[] fileContent = Encoding.UTF8.GetBytesWithPreamble(file.Text);
-//						fileMD5 = new MD5CryptoServiceProvider().ComputeHash(fileContent);
-//					} else {
-//						fileMD5 = new MD5CryptoServiceProvider().ComputeHash(File.ReadAllBytes(bookmark.FileName));
-//					}
-//					if (Compare(fileMD5, breakpoint.OriginalLocation.CheckSum)) {
-//						bookmark.IsHealthy = true;
-//						bookmark.Tooltip = null;
-//					} else {
-//						bookmark.IsHealthy = false;
-//						bookmark.Tooltip = "Check sum or file does not match to the original";
-//					}
-//				}
-//			};
 			
 			// event handlers on bookmark and breakpoint don't need deregistration
 			bookmark.IsEnabledChanged += delegate {
 				breakpoint.Enabled = bookmark.IsEnabled;
 			};
-			breakpoint.Set += delegate {
-				//setBookmarkColor();
-			};
-			
-			//setBookmarkColor();
 			
 			EventHandler<CollectionItemEventArgs<Process>> bp_debugger_ProcessStarted = (sender, e) => {
-				//setBookmarkColor();
 				// User can change line number by inserting or deleting lines
 				breakpoint.Location = bookmark.Location;
 				breakpoint.EndLocation = bookmark.EndLocation;
 			};
 			EventHandler<CollectionItemEventArgs<Process>> bp_debugger_ProcessExited = (sender, e) => {
-				//setBookmarkColor();
 			};
-			
-			EventHandler<BreakpointEventArgs> bp_debugger_BreakpointHit =
-				new EventHandler<BreakpointEventArgs>(
-					delegate(object sender, BreakpointEventArgs e)
-					{
-						//LoggingService.Debug(bookmark.Action + " " + bookmark.ScriptLanguage + " " + bookmark.Condition);
-						
-						switch (bookmark.Action) {
-							case BreakpointAction.Break:
-								break;
-							case BreakpointAction.Condition:
-//								if (Evaluate(bookmark.Condition, bookmark.ScriptLanguage))
-//									DebuggerService.PrintDebugMessage(string.Format(StringParser.Parse("${res:MainWindow.Windows.Debug.Conditional.Breakpoints.BreakpointHitAtBecause}") + "\n", bookmark.LineNumber, bookmark.FileName, bookmark.Condition));
-//								else
-//									this.debuggedProcess.AsyncContinue();
-								break;
-							case BreakpointAction.Trace:
-								//DebuggerService.PrintDebugMessage(string.Format(StringParser.Parse("${res:MainWindow.Windows.Debug.Conditional.Breakpoints.BreakpointHitAt}") + "\n", bookmark.LineNumber, bookmark.FileName));
-								break;
-						}
-					});
 			
 			BookmarkEventHandler bp_bookmarkManager_Removed = null;
 			bp_bookmarkManager_Removed = (sender, e) => {
@@ -692,43 +588,23 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					// unregister the events
 					debugger.Processes.Added -= bp_debugger_ProcessStarted;
 					debugger.Processes.Removed -= bp_debugger_ProcessExited;
-					breakpoint.Hit -= bp_debugger_BreakpointHit;
 					BookmarkManager.Removed -= bp_bookmarkManager_Removed;
 				}
 			};
 			// register the events
 			debugger.Processes.Added += bp_debugger_ProcessStarted;
 			debugger.Processes.Removed += bp_debugger_ProcessExited;
-			breakpoint.Hit += bp_debugger_BreakpointHit;
 			BookmarkManager.Removed += bp_bookmarkManager_Removed;
-		}
-		
-		bool Evaluate(string code, string language)
-		{
-			try {
-				SupportedLanguage supportedLanguage = (SupportedLanguage)Enum.Parse(typeof(SupportedLanguage), language, true);
-				Value val = ExpressionEvaluator.Evaluate(code, supportedLanguage, debuggedProcess.SelectedThread.MostRecentStackFrame);
-				
-				if (val != null && val.Type.IsPrimitive && val.PrimitiveValue is bool)
-					return (bool)val.PrimitiveValue;
-				else
-					return false;
-			} catch (GetValueException e) {
-				string errorMessage = "Error while evaluating breakpoint condition " + code + ":\n" + e.Message + "\n";
-				//DebuggerService.PrintDebugMessage(errorMessage);
-				//WorkbenchSingleton.SafeThreadAsyncCall(MessageService.ShowWarning, errorMessage);
-				return true;
-			}
 		}
 		
 		void LogMessage(object sender, MessageEventArgs e)
 		{
-			//DebuggerService.PrintDebugMessage(e.Message);
+			//TODO: Log it
 		}
 		
 		void debugger_TraceMessage(object sender, MessageEventArgs e)
 		{
-			//LoggingService.Debug("Debugger: " + e.Message);
+			//TODO: Log it
 		}
 		
 		void debugger_ProcessStarted(object sender, CollectionItemEventArgs<Process> e)
@@ -812,8 +688,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				e.Process.AsyncContinue();
 				return;
 			}
-			
-			//JumpToCurrentLine();
 			
 			StringBuilder stacktraceBuilder = new StringBuilder();
 			
@@ -899,11 +773,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				Debug.Fail("No type was found!");
 			}
 			ReturnStatementBookmark.UpdateReturnStatementBookmarks();
-		}
-		
-		public void ShowAttachDialog()
-		{
-			throw new NotImplementedException();
 		}
 
 		public IEnumerable<DebugStackFrame> GetStackFrames(int count)
