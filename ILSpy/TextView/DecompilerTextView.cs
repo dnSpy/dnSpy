@@ -713,12 +713,38 @@ namespace ICSharpCode.ILSpy.TextView
 		/// <summary>
 		/// Jumps to the definition referred to by the <see cref="ReferenceSegment"/>.
 		/// </summary>
-		internal void JumpToReference(ReferenceSegment referenceSegment)
+		internal bool JumpToReference(ReferenceSegment referenceSegment)
 		{
 			var localTarget = FindLocalTarget(referenceSegment);
 			if (localTarget != null)
 				referenceSegment = localTarget;
 
+			int pos = -1;
+			if (referenceSegment.IsLocalTarget)
+				pos = referenceSegment.EndOffset;
+			if (pos < 0 && definitionLookup != null)
+				pos = definitionLookup.GetDefinitionPosition(referenceSegment.Reference);
+			if (pos >= 0) {
+				MarkLocals(referenceSegment);
+				textEditor.TextArea.Focus();
+				textEditor.Select(pos, 0);
+				textEditor.ScrollTo(textEditor.TextArea.Caret.Line, textEditor.TextArea.Caret.Column);
+				Dispatcher.Invoke(DispatcherPriority.Background, new Action(
+					delegate {
+						CaretHighlightAdorner.DisplayCaretHighlightAnimation(textEditor.TextArea);
+					}));
+				return true;
+			}
+
+			if (MarkLocals(referenceSegment))
+				return true;
+
+			MainWindow.Instance.JumpToReference(referenceSegment.Reference);
+			return true;
+		}
+
+		bool MarkLocals(ReferenceSegment referenceSegment)
+		{
 			object reference = referenceSegment.Reference;
 			if (referenceSegment.IsLocal) {
 				ClearLocalReferenceMarks();
@@ -735,25 +761,10 @@ namespace ICSharpCode.ILSpy.TextView
 						}
 					}
 				}
-				return;
-			}
-			int pos = -1;
-			if (referenceSegment.IsLocalTarget)
-				pos = referenceSegment.EndOffset;
-			if (pos < 0 && definitionLookup != null)
-				pos = definitionLookup.GetDefinitionPosition(reference);
-			if (pos >= 0) {
-				textEditor.TextArea.Focus();
-				textEditor.Select(pos, 0);
-				textEditor.ScrollTo(textEditor.TextArea.Caret.Line, textEditor.TextArea.Caret.Column);
-				Dispatcher.Invoke(DispatcherPriority.Background, new Action(
-					delegate {
-						CaretHighlightAdorner.DisplayCaretHighlightAnimation(textEditor.TextArea);
-					}));
-				return;
+				return true;
 			}
 
-			MainWindow.Instance.JumpToReference(reference);
+			return false;
 		}
 
 		void ClearLocalReferenceMarks()
@@ -1017,6 +1028,8 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			if (references == null)
 				return null;
+			if (refSeg.IsLocalTarget)
+				return refSeg;
 			foreach (var r in references) {
 				if (r.IsLocalTarget && RefSegEquals(r, refSeg))
 					return r;
@@ -1034,9 +1047,20 @@ namespace ICSharpCode.ILSpy.TextView
 				return true;
 			if (a.Reference == null || b.Reference == null)
 				return false;
+
 			var ma = a.Reference as IMemberRef;
 			var mb = b.Reference as IMemberRef;
-			return ma != null && mb != null && new SigComparer().Equals(ma, mb);
+			if (ma != null && mb != null)
+				return new SigComparer(SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable).Equals(ma, mb);
+
+			// Labels are strings, but the strings might not be the same reference, so make sure
+			// to do the comparison as strings.
+			var sa = a.Reference as string;
+			var sb = b.Reference as string;
+			if (sa != null && sb != null)
+				return sa == sb;
+
+			return false;
 		}
 	}
 
