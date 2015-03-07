@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows.Controls;
@@ -28,9 +29,10 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 	#region Context menu extensibility
 	public interface IBookmarkContextMenuEntry
 	{
-		bool IsVisible(IBookmark bookmarks);
-		bool IsEnabled(IBookmark bookmarks);
-		void Execute(IBookmark bookmarks);
+		bool IsVisible(IBookmark bookmark);
+		bool IsEnabled(IBookmark bookmark);
+		void Execute(IBookmark bookmark);
+		string GetHeader(IBookmark bookmark);
 	}
 	
 	public interface IBookmarkContextMenuEntryMetadata
@@ -133,8 +135,9 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			}
 			
 			// context menu entries
-			var bookmarks = margin.Manager.Bookmarks.ToArray();
-			if (bookmarks.Length == 0) {
+			var bookmarks = new List<IBookmark>(margin.Manager.Bookmarks);
+			bookmarks.AddRange(BookmarkManager.Bookmarks);
+			if (bookmarks.Count == 0) {
 				// don't show the menu
 				e.Handled = true;
 				this.margin.ContextMenu = null;
@@ -163,7 +166,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 							}
 							
 							MenuItem menuItem = new MenuItem();
-							menuItem.Header = entryPair.Metadata.Header;
+							menuItem.Header = entry.GetHeader(bookmark) ?? entryPair.Metadata.Header;
 							if (!string.IsNullOrEmpty(entryPair.Metadata.Icon)) {
 								menuItem.Icon = new Image {
 									Width = 16,

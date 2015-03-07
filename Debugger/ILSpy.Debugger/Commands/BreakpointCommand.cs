@@ -14,7 +14,7 @@ using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.Debugger.Commands
 {
-	[ExportBookmarkActionEntry(Icon = "images/Breakpoint.png", Category="Debugger")]
+	[ExportBookmarkActionEntry(Icon = "images/Breakpoint.png", Category="Debug")]
 	public class BreakpointCommand : IBookmarkActionEntry
 	{
 		public bool IsEnabled()
@@ -110,24 +110,31 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			return closest;
 		}
 	}
-	
-	/*
-	[ExportBookmarkContextMenuEntry(Header="Disable Breakpoint", Category="Debugger")]
-	public class DisableBreakpointCommand : IBookmarkContextMenuEntry
+
+	[ExportBookmarkContextMenuEntry(Category = "Debug", Icon = "images/DisabledBreakpoint.png")]
+	public class EnableAndDisableBreakpointCommand : IBookmarkContextMenuEntry
 	{
-    public bool IsVisible(IBookmark bookmark)
-    {
-      return b => b is BreakpointBookmark && (b as BreakpointBookmark).IsEnabled;
-    }
-  	  
-    public bool IsEnabled(IBookmark[] bookmarks)
-    {
-      return true;
-    }
-  	  
-    public void Execute(IBookmark[] bookmarks)
-    {
-      throw new NotImplementedException();
-    }
-	}*/
+		public bool IsVisible(IBookmark bookmark)
+		{
+			return bookmark is BreakpointBookmark;
+		}
+
+		public bool IsEnabled(IBookmark bookmark)
+		{
+			return IsVisible(bookmark);
+		}
+
+		public void Execute(IBookmark bookmark)
+		{
+			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
+			var bpm = BreakpointHelper.GetBreakpointBookmark(location.Line, location.Column);
+			if (bpm != null)
+				bpm.IsEnabled = !bpm.IsEnabled;
+		}
+
+		public string GetHeader(IBookmark bookmark)
+		{
+			return ((BreakpointBookmark)bookmark).IsEnabled ? "Disable _Breakpoint" : "Enable _Breakpoint";
+		}
+	}
 }
