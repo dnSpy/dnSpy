@@ -180,10 +180,10 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		public LoadedAssembly OpenAssembly(string file, bool isAutoLoaded=false)
 		{
-			return OpenAssembly(file, true, isAutoLoaded);
+			return OpenAssemblyInternal(file, true, isAutoLoaded);
 		}
 
-		internal LoadedAssembly OpenAssembly(string file, bool canAdd, bool isAutoLoaded) {
+		internal LoadedAssembly OpenAssemblyInternal(string file, bool canAdd, bool isAutoLoaded) {
 			if (App.Current != null)
 				App.Current.Dispatcher.VerifyAccess();
 

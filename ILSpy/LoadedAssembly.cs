@@ -356,7 +356,7 @@ namespace ICSharpCode.ILSpy
 			if (assemblyList.UseGAC) {
 				var file = GacInterop.FindAssemblyInNetGac(name);
 				if (file != null)
-					return assemblyList.OpenAssembly(file, assemblyLoadDisableCount == 0, true);
+					return assemblyList.OpenAssemblyInternal(file, assemblyLoadDisableCount == 0, true);
 				foreach (var path in otherGacPaths) {
 					loadedAsm = TryLoadFromDir(name, true, path);
 					if (loadedAsm != null)
@@ -456,7 +456,7 @@ namespace ICSharpCode.ILSpy
 				return null;
 			}
 			if (File.Exists(file)) {
-				return assemblyList.OpenAssembly(file, assemblyLoadDisableCount == 0, true);
+				return assemblyList.OpenAssemblyInternal(file, assemblyLoadDisableCount == 0, true);
 			} else {
 				return null;
 			}
