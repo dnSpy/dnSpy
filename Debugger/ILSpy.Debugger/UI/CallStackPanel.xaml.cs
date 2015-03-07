@@ -252,7 +252,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
             if (null == selectedItem)
             	return;
             
-            var foundAssembly = MainWindow.Instance.CurrentAssemblyList.OpenAssembly(selectedItem.Frame.MethodInfo.DebugModule.FullPath);
+            var foundAssembly = MainWindow.Instance.CurrentAssemblyList.OpenAssembly(selectedItem.Frame.MethodInfo.DebugModule.FullPath, true);
             if (null == foundAssembly)
                 return;
             

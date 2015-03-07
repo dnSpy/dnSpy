@@ -240,6 +240,7 @@ namespace ICSharpCode.ILSpy
 
 				var index = this.assemblies.IndexOf(target);
 				var newAsm = new LoadedAssembly(this, file, stream);
+				newAsm.IsAutoLoaded = target.IsAutoLoaded;
 				this.assemblies.Remove(target);
 				this.assemblies.Insert(index, newAsm);
 				return newAsm;

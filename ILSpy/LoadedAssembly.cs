@@ -415,6 +415,7 @@ namespace ICSharpCode.ILSpy
 			ModuleDef mod = null;
 			bool error = true;
 			try {
+				loadedAsm.IsAutoLoaded = true;
 				mod = loadedAsm.ModuleDefinition;
 				if (mod == null)
 					return null;

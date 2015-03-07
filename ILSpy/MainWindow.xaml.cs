@@ -1043,7 +1043,7 @@ namespace ICSharpCode.ILSpy
 		{
 			lock (assemblyList.assemblies) {
 				// Get or create the assembly
-				var loadedAsm = assemblyList.OpenAssembly(asmFilename);
+				var loadedAsm = assemblyList.OpenAssembly(asmFilename, true);
 
 				// Common case is a one-file assembly or first module of a multifile assembly
 				if (asmFilename.Equals(moduleFilename, StringComparison.OrdinalIgnoreCase))
@@ -1054,7 +1054,7 @@ namespace ICSharpCode.ILSpy
 					return loadedMod;
 
 				Debug.Fail("Shouldn't be here.");
-				return assemblyList.OpenAssembly(moduleFilename);
+				return assemblyList.OpenAssembly(moduleFilename, true);
 			}
 		}
 	}
