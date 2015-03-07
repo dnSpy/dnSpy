@@ -164,7 +164,8 @@ namespace ICSharpCode.TreeView
 				// if we removed all selected nodes, then move the focus to the node 
 				// preceding the first of the old selected nodes
 				SelectedIndex = topSelectedIndex;
-				FocusNode((SharpTreeNode)SelectedItem);
+				if (SelectedItem != null)
+					FocusNode((SharpTreeNode)SelectedItem);
 			}
 		}
 		
