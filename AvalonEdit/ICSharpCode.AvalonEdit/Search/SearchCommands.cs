@@ -83,6 +83,13 @@ namespace ICSharpCode.AvalonEdit.Search
 			this.panel = panel;
 		}
 		
+		internal void RegisterGlobalCommands(CommandBindingCollection commandBindings)
+		{
+			commandBindings.Add(new CommandBinding(ApplicationCommands.Find, ExecuteFind));
+			commandBindings.Add(new CommandBinding(SearchCommands.FindNext, ExecuteFindNext, CanExecuteWithOpenSearchPanel));
+			commandBindings.Add(new CommandBinding(SearchCommands.FindPrevious, ExecuteFindPrevious, CanExecuteWithOpenSearchPanel));
+		}
+
 		void RegisterCommands(ICollection<CommandBinding> commandBindings)
 		{
 			commandBindings.Add(new CommandBinding(ApplicationCommands.Find, ExecuteFind));

@@ -179,8 +179,7 @@ namespace ICSharpCode.AvalonEdit.Search
 		/// <summary>
 		/// Creates a new SearchPanel.
 		/// </summary>
-		[Obsolete("Use the Install method instead")]
-		public SearchPanel()
+		SearchPanel()
 		{
 		}
 		
@@ -213,12 +212,16 @@ namespace ICSharpCode.AvalonEdit.Search
 		{
 			if (textArea == null)
 				throw new ArgumentNullException("textArea");
-			#pragma warning disable 618
 			SearchPanel panel = new SearchPanel();
 			panel.AttachInternal(textArea);
 			panel.handler = new SearchInputHandler(textArea, panel);
 			textArea.DefaultInputHandler.NestedInputHandlers.Add(panel.handler);
 			return panel;
+		}
+
+		public void RegisterCommands(CommandBindingCollection commandBindings)
+		{
+			handler.RegisterGlobalCommands(commandBindings);
 		}
 		
 		/// <summary>

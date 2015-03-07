@@ -102,10 +102,12 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
 			textEditor.ShowLineNumbers = true;
 			DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
+
+			// SearchPanel
+			SearchPanel.Install(textEditor.TextArea)
+				.RegisterCommands(Application.Current.MainWindow.CommandBindings);
 			
 			// Bookmarks context menu
-			SearchPanel.Install(textEditor.TextArea);
-			
 			ShowLineMargin();
 			
 			// add marker service & margin

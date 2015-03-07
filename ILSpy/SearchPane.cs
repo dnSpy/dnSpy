@@ -294,12 +294,15 @@ namespace ICSharpCode.ILSpy
 	}
 
 	[ExportMainMenuCommand(Menu = "_View", Header = "_Search", MenuIcon = "Images/Find.png", MenuCategory = "ShowPane", MenuOrder = 100)]
-	[ExportToolbarCommand(ToolTip = "Search (F3)", ToolbarIcon = "Images/Find.png", ToolbarCategory = "View", ToolbarOrder = 100)]
+	[ExportToolbarCommand(ToolTip = "Search (Ctrl+Shift+F or Ctrl+E)", ToolbarIcon = "Images/Find.png", ToolbarCategory = "View", ToolbarOrder = 100)]
 	sealed class ShowSearchCommand : CommandWrapper
 	{
 		public ShowSearchCommand()
 			: base(NavigationCommands.Search)
 		{
+			NavigationCommands.Search.InputGestures.Clear();
+			NavigationCommands.Search.InputGestures.Add(new KeyGesture(Key.F, ModifierKeys.Control | ModifierKeys.Shift));
+			NavigationCommands.Search.InputGestures.Add(new KeyGesture(Key.E, ModifierKeys.Control));
 		}
 	}
 
