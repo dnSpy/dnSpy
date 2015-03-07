@@ -77,7 +77,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			foreach (EventDef ev in type.Events.Where(e => e.Name.EndsWith(analyzedEvent.Name))) {
 				MethodDef accessor = ev.AddMethod ?? ev.RemoveMethod;
 				if (accessor != null && accessor.HasOverrides &&
-					accessor.Overrides.Any(m => new SigComparer(SigComparerOptions.PrivateScopeMethodIsComparable).Equals(m.MethodDeclaration, analyzedMethod))) {
+					accessor.Overrides.Any(m => new SigComparer(SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable).Equals(m.MethodDeclaration, analyzedMethod))) {
 					var node = new AnalyzedEventTreeNode(ev);
 					node.Language = this.Language;
 					yield return node;

@@ -76,7 +76,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 			foreach (PropertyDef property in type.Properties.Where(e => e.Name.EndsWith(analyzedProperty.Name))) {
 				MethodDef accessor = property.GetMethod ?? property.SetMethod;
-				if (accessor != null && accessor.HasOverrides && accessor.Overrides.Any(m => new SigComparer(SigComparerOptions.PrivateScopeMethodIsComparable).Equals(m.MethodDeclaration, analyzedMethod))) {
+				if (accessor != null && accessor.HasOverrides && accessor.Overrides.Any(m => new SigComparer(SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable).Equals(m.MethodDeclaration, analyzedMethod))) {
 					var node = new AnalyzedPropertyTreeNode(property);
 					node.Language = this.Language;
 					yield return node;

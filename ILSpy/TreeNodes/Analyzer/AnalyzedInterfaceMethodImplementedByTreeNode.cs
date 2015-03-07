@@ -68,7 +68,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 
 			foreach (MethodDef method in type.Methods) {
-				if (method.HasOverrides && method.Overrides.Any(m => new SigComparer(SigComparerOptions.PrivateScopeMethodIsComparable).Equals(m.MethodDeclaration, analyzedMethod))) {
+				if (method.HasOverrides && method.Overrides.Any(m => new SigComparer(SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable).Equals(m.MethodDeclaration, analyzedMethod))) {
 					var node =  new AnalyzedMethodTreeNode(method);
 					node.Language = this.Language;
 					yield return node;

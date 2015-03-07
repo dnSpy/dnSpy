@@ -68,7 +68,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				foreach (Instruction instr in method.Body.Instructions) {
 					if (CanBeReference(instr.OpCode.Code)) {
 						IField fr = instr.Operand as IField;
-						if (fr != null && new SigComparer(SigComparerOptions.PrivateScopeFieldIsComparable).Equals(fr, analyzedField) &&
+						if (fr != null && new SigComparer(SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable).Equals(fr, analyzedField) &&
 							Helpers.IsReferencedBy(analyzedField.DeclaringType, fr.DeclaringType)) {
 							found = true;
 							break;
