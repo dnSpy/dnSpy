@@ -433,12 +433,16 @@ namespace ICSharpCode.ILSpy.TextView
 			if (textOutput.Foldings.Count > 0) {
 				if (state != null) {
 					state.RestoreFoldings(textOutput.Foldings);
-					textEditor.ScrollToVerticalOffset(state.VerticalOffset);
-					textEditor.ScrollToHorizontalOffset(state.HorizontalOffset);
 				}
 				foldingManager = FoldingManager.Install(textEditor.TextArea);
 				foldingManager.UpdateFoldings(textOutput.Foldings.OrderBy(f => f.StartOffset), -1);
 				Debug.WriteLine("  Updating folding: {0}", w.Elapsed); w.Restart();
+			}
+			if (state != null) {
+				textEditor.ScrollToVerticalOffset(state.VerticalOffset);
+				textEditor.ScrollToHorizontalOffset(state.HorizontalOffset);
+				textEditor.TextArea.Caret.Position = state.TextViewPosition;
+				textEditor.TextArea.Caret.DesiredXPos = state.DesiredXPos;
 			}
 			
 			if (DisplaySettingsPanel.CurrentDisplaySettings.AutoFocusTextView)
@@ -446,7 +450,7 @@ namespace ICSharpCode.ILSpy.TextView
 
 			// update debugger info
 			DebugInformation.CodeMappings = textOutput.DebuggerMemberMappings.ToDictionary(m => new MethodKey(m.MethodDefinition));
-			UpdateDebugUI();
+			UpdateDebugUI(state);
 			
 			// update class bookmarks
 			var document = textEditor.Document;
@@ -555,7 +559,7 @@ namespace ICSharpCode.ILSpy.TextView
 				});
 		}
 		
-		void UpdateDebugUI()
+		void UpdateDebugUI(DecompilerTextViewState state)
 		{
 			// sync bookmarks
 			iconMargin.SyncBookmarks();
@@ -580,7 +584,8 @@ namespace ICSharpCode.ILSpy.TextView
 					cm[key].GetInstructionByTokenAndOffset((uint)ilOffset, out methodDef, out location, out endLocation)) {
 					// update marker
 					DebuggerService.JumpToCurrentLine(methodDef, location.Line, location.Column, endLocation.Line, endLocation.Column, ilOffset);
-					ScrollAndMoveCaretTo(location.Line, location.Column);
+					if (state == null)
+						ScrollAndMoveCaretTo(location.Line, location.Column);
 
 					UnfoldAndScroll(location.Line, false);
 					updatedMarker = true;
@@ -593,7 +598,7 @@ namespace ICSharpCode.ILSpy.TextView
 
 			ReturnStatementBookmark.UpdateReturnStatementBookmarks();
 
-			if (DebugInformation.JumpToThisLine != null) {
+			if (state == null && DebugInformation.JumpToThisLine != null) {
 				if (DebugInformation.JumpToThisLine is ICSharpCode.NRefactory.TextLocation) {
 					var loc = (ICSharpCode.NRefactory.TextLocation)DebugInformation.JumpToThisLine;
 					ScrollAndMoveCaretTo(loc.Line, loc.Column);
@@ -919,6 +924,8 @@ namespace ICSharpCode.ILSpy.TextView
 				state.SaveFoldingsState(foldingManager.AllFoldings);
 			state.VerticalOffset = textEditor.VerticalOffset;
 			state.HorizontalOffset = textEditor.HorizontalOffset;
+			state.TextViewPosition = textEditor.TextArea.Caret.Position;
+			state.DesiredXPos = textEditor.TextArea.Caret.DesiredXPos;
 			state.DecompiledNodes = decompiledNodes;
 			return state;
 		}
@@ -966,10 +973,10 @@ namespace ICSharpCode.ILSpy.TextView
 			SetCaretPosition(line, column);
 		}
 
-		void SetCaretPosition(int line, int column)
+		void SetCaretPosition(int line, int column, double desiredXPos = double.NaN)
 		{
 			TextEditor.TextArea.Caret.Location = new ICSharpCode.AvalonEdit.Document.TextLocation(line, column);
-			TextEditor.TextArea.Caret.DesiredXPos = double.NaN;
+			TextEditor.TextArea.Caret.DesiredXPos = desiredXPos;
 		}
 
 		void TextEditor_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -1076,6 +1083,8 @@ namespace ICSharpCode.ILSpy.TextView
 		private int FoldingsChecksum;
 		public double VerticalOffset;
 		public double HorizontalOffset;
+		public TextViewPosition TextViewPosition;
+		public double DesiredXPos;
 		public ILSpyTreeNode[] DecompiledNodes;
 
 		public void SaveFoldingsState(IEnumerable<FoldingSection> foldings)
