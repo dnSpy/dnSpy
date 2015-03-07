@@ -58,9 +58,17 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		
 		public override bool HandleAssemblyListChanged(ICollection<LoadedAssembly> removedAssemblies, ICollection<LoadedAssembly> addedAssemblies)
 		{
-			this.LazyLoading = true;
-			threading.Cancel();
-			this.Children.Clear();
+			// only cancel a running analysis if user has manually added/removed assemblies
+			bool manualAdd = false;
+			foreach (var asm in addedAssemblies) {
+				if (!asm.IsAutoLoaded)
+					manualAdd = true;
+			}
+			if (removedAssemblies.Count > 0 || manualAdd) {
+				this.LazyLoading = true;
+				threading.Cancel();
+				this.Children.Clear();
+			}
 			return true;
 		}
 	}
