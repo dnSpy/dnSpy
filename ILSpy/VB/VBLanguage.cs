@@ -433,7 +433,7 @@ namespace ICSharpCode.ILSpy.VB
 		
 		public override void DecompileMethod(MethodDef method, ITextOutput output, DecompilationOptions options)
 		{
-			WriteCommentLine(output, TypeToString(method.DeclaringType, includeNamespace: true));
+			WriteCommentLineDeclaringType(output, method);
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: method.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddMethod(method);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options, method.Module);
@@ -441,7 +441,7 @@ namespace ICSharpCode.ILSpy.VB
 		
 		public override void DecompileProperty(PropertyDef property, ITextOutput output, DecompilationOptions options)
 		{
-			WriteCommentLine(output, TypeToString(property.DeclaringType, includeNamespace: true));
+			WriteCommentLineDeclaringType(output, property);
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: property.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddProperty(property);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options, property.Module);
@@ -449,7 +449,7 @@ namespace ICSharpCode.ILSpy.VB
 		
 		public override void DecompileField(FieldDef field, ITextOutput output, DecompilationOptions options)
 		{
-			WriteCommentLine(output, TypeToString(field.DeclaringType, includeNamespace: true));
+			WriteCommentLineDeclaringType(output, field);
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: field.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddField(field);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options, field.Module);
@@ -457,7 +457,7 @@ namespace ICSharpCode.ILSpy.VB
 		
 		public override void DecompileEvent(EventDef ev, ITextOutput output, DecompilationOptions options)
 		{
-			WriteCommentLine(output, TypeToString(ev.DeclaringType, includeNamespace: true));
+			WriteCommentLineDeclaringType(output, ev);
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: ev.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddEvent(ev);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options, ev.Module);

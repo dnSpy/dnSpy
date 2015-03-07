@@ -157,6 +157,13 @@ namespace ICSharpCode.ILSpy
 			return null;
 		}
 
+		public void WriteCommentLineDeclaringType(ITextOutput output, IMemberDef member)
+		{
+			WriteComment(output, string.Empty);
+			output.WriteReference(TypeToString(member.DeclaringType, includeNamespace: true), member.DeclaringType, TextTokenType.Comment);
+			output.WriteLine();
+		}
+
 		public virtual void WriteCommentLine(ITextOutput output, string comment)
 		{
 			output.WriteLine("// " + comment, TextTokenType.Comment);
