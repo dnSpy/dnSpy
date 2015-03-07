@@ -125,6 +125,7 @@
 				BorderThickness="5,0"
 				HorizontalAlignment="Center"
 				VerticalAlignment="Stretch"
+				Focusable="False"
 				BorderBrush="Transparent" />
 			<!-- Right pane: Text Editor -->
 			<Grid Grid.Column="2">
@@ -162,6 +163,7 @@
 					BorderBrush="Transparent"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Center"
+					Focusable="False"
 					Visibility="{Binding Visibility, ElementName=topPane}" />
 				
 				<!-- decompilerTextView is into the mainPane by code -->
@@ -175,6 +177,7 @@
 					BorderBrush="Transparent"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Center"
+					Focusable="False"
 					Visibility="{Binding Visibility, ElementName=bottomPane}" />
 				
 				<controls:DockedPane x:Name="bottomPane" Grid.Row="5" Title="Bottom" Visibility="Collapsed"

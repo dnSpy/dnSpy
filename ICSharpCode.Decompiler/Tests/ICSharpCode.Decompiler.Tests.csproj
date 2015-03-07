@@ -75,6 +75,7 @@
     <Compile Include="CustomShortCircuitOperators.cs" />
     <Compile Include="Helpers\CodeAssert.cs" />
     <Compile Include="IncrementDecrement.cs" />
+    <Compile Include="Lock.cs" />
     <Compile Include="PInvoke.cs" />
     <Compile Include="QueryExpressions.cs" />
     <Compile Include="Switch.cs" />

@@ -63,6 +63,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return assembly; }
 		}
 
+		public override bool IsAutoLoaded
+		{
+			get { 
+				return assembly.IsAutoLoaded; 
+			}
+		}
+
 		public override object Text
 		{
 			get { return HighlightSearchMatch(assembly.Text); }
@@ -307,6 +314,66 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return;
 			foreach (var node in context.SelectedTreeNodes) {
 				node.Delete();
+			}
+		}
+	}
+
+	[ExportContextMenuEntryAttribute(Header = "_Load Dependencies")]
+	sealed class LoadDependencies : IContextMenuEntry
+	{
+		public bool IsVisible(TextViewContext context)
+		{
+			if (context.SelectedTreeNodes == null)
+				return false;
+			return context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
+		}
+
+		public bool IsEnabled(TextViewContext context)
+		{
+			return true;
+		}
+
+		public void Execute(TextViewContext context)
+		{
+			if (context.SelectedTreeNodes == null)
+				return;
+			foreach (var node in context.SelectedTreeNodes) {
+				var la = ((AssemblyTreeNode)node).LoadedAssembly;
+				if (!la.HasLoadError) {
+					foreach (var assyRef in la.ModuleDefinition.AssemblyReferences) {
+						la.LookupReferencedAssembly(assyRef.FullName);
+					}
+				}
+			}
+			MainWindow.Instance.RefreshDecompiledView();
+		}
+	}
+
+	[ExportContextMenuEntryAttribute(Header = "_Add To Main List")]
+	sealed class AddToMainList : IContextMenuEntry
+	{
+		public bool IsVisible(TextViewContext context)
+		{
+			if (context.SelectedTreeNodes == null)
+				return false;
+			return context.SelectedTreeNodes.Where(n => n is AssemblyTreeNode).Any(n=>((AssemblyTreeNode)n).IsAutoLoaded);
+		}
+
+		public bool IsEnabled(TextViewContext context)
+		{
+			return true;
+		}
+
+		public void Execute(TextViewContext context)
+		{
+			if (context.SelectedTreeNodes == null)
+				return;
+			foreach (var node in context.SelectedTreeNodes) {
+				var loadedAssm = ((AssemblyTreeNode)node).LoadedAssembly;
+				if (!loadedAssm.HasLoadError) {
+					loadedAssm.IsAutoLoaded = false;
+					node.RaisePropertyChanged("Foreground");
+				}
 			}
 		}
 	}

@@ -38,24 +38,23 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		public void Run(AstNode compilationUnit)
 		{
-			if (!context.Settings.UsingDeclarations)
-				return;
-			
 			// First determine all the namespaces that need to be imported:
 			compilationUnit.AcceptVisitor(new FindRequiredImports(this), null);
 			
 			importedNamespaces.Add("System"); // always import System, even when not necessary
 			
-			// Now add using declarations for those namespaces:
-			foreach (string ns in importedNamespaces.OrderByDescending(n => n)) {
-				// we go backwards (OrderByDescending) through the list of namespaces because we insert them backwards
-				// (always inserting at the start of the list)
-				string[] parts = ns.Split('.');
-				AstType nsType = new SimpleType(parts[0]);
-				for (int i = 1; i < parts.Length; i++) {
-					nsType = new MemberType { Target = nsType, MemberName = parts[i] };
+			if (context.Settings.UsingDeclarations) {
+				// Now add using declarations for those namespaces:
+				foreach (string ns in importedNamespaces.OrderByDescending(n => n)) {
+					// we go backwards (OrderByDescending) through the list of namespaces because we insert them backwards
+					// (always inserting at the start of the list)
+					string[] parts = ns.Split('.');
+					AstType nsType = new SimpleType(parts[0]);
+					for (int i = 1; i < parts.Length; i++) {
+						nsType = new MemberType { Target = nsType, MemberName = parts[i] };
+					}
+					compilationUnit.InsertChildAfter(null, new UsingDeclaration { Import = nsType }, SyntaxTree.MemberRole);
 				}
-				compilationUnit.InsertChildAfter(null, new UsingDeclaration { Import = nsType }, SyntaxTree.MemberRole);
 			}
 			
 			if (!context.Settings.FullyQualifyAmbiguousTypeNames)

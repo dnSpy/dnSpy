@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Text;
 using System.Xml;
 using ICSharpCode.NRefactory.Editor;
 using ICSharpCode.NRefactory.TypeSystem;
@@ -100,6 +101,7 @@ namespace ICSharpCode.NRefactory.Documentation
 		XmlDocumentationCache cache = new XmlDocumentationCache();
 		
 		readonly string fileName;
+		readonly Encoding encoding;
 		DateTime lastWriteDate;
 		IndexEntry[] index; // SORTED array of index entries
 		
@@ -119,6 +121,7 @@ namespace ICSharpCode.NRefactory.Documentation
 					xmlReader.MoveToContent();
 					if (string.IsNullOrEmpty(xmlReader.GetAttribute("redirect"))) {
 						this.fileName = fileName;
+						this.encoding = xmlReader.Encoding;
 						ReadXmlDoc(xmlReader);
 					} else {
 						string redirectionTarget = GetRedirectionTarget(fileName, xmlReader.GetAttribute("redirect"));
@@ -126,7 +129,10 @@ namespace ICSharpCode.NRefactory.Documentation
 							Debug.WriteLine("XmlDoc " + fileName + " is redirecting to " + redirectionTarget);
 							using (FileStream redirectedFs = new FileStream(redirectionTarget, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete)) {
 								using (XmlTextReader redirectedXmlReader = new XmlTextReader(redirectedFs)) {
+									redirectedXmlReader.XmlResolver = null; // no DTD resolving
+									redirectedXmlReader.MoveToContent();
 									this.fileName = redirectionTarget;
+									this.encoding = redirectedXmlReader.Encoding;
 									ReadXmlDoc(redirectedXmlReader);
 								}
 							}
@@ -204,7 +210,7 @@ namespace ICSharpCode.NRefactory.Documentation
 			lastWriteDate = File.GetLastWriteTimeUtc(fileName);
 			// Open up a second file stream for the line<->position mapping
 			using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete)) {
-				LinePositionMapper linePosMapper = new LinePositionMapper(fs);
+				LinePositionMapper linePosMapper = new LinePositionMapper(fs, encoding);
 				List<IndexEntry> indexList = new List<IndexEntry>();
 				while (reader.Read()) {
 					if (reader.IsStartElement()) {
@@ -223,21 +229,29 @@ namespace ICSharpCode.NRefactory.Documentation
 		sealed class LinePositionMapper
 		{
 			readonly FileStream fs;
+			readonly Decoder decoder;
 			int currentLine = 1;
 			
-			public LinePositionMapper(FileStream fs)
+			public LinePositionMapper(FileStream fs, Encoding enc)
 			{
 				this.fs = fs;
+				this.decoder = enc.GetDecoder();
 			}
 			
 			public int GetPositionForLine(int line)
 			{
 				Debug.Assert(line >= currentLine);
+				var input = new byte[1];
+				var output = new char[1];
 				while (line > currentLine) {
 					int b = fs.ReadByte();
 					if (b < 0)
 						throw new EndOfStreamException();
-					if (b == '\n') {
+					int bytesUsed, charsUsed;
+					bool completed;
+					input[0] = (byte)b;
+					decoder.Convert(input, 0, 1, output, 0, 1, false, out bytesUsed, out charsUsed, out completed);
+					if (charsUsed == 1 && output[0] == '\n') {
 						currentLine++;
 					}
 				}
@@ -323,7 +337,8 @@ namespace ICSharpCode.NRefactory.Documentation
 		{
 			using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete)) {
 				fs.Position = positionInFile;
-				using (XmlTextReader r = new XmlTextReader(fs, XmlNodeType.Element, null)) {
+				var context = new XmlParserContext(null, null, null, XmlSpace.None) { Encoding = encoding };
+				using (XmlTextReader r = new XmlTextReader(fs, XmlNodeType.Element, context)) {
 					r.XmlResolver = null; // no DTD resolving
 					while (r.Read()) {
 						if (r.NodeType == XmlNodeType.Element) {

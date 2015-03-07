@@ -114,13 +114,16 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
 			textEditor.ShowLineNumbers = true;
 			DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
+
+			// SearchPanel
+			SearchPanel.Install(textEditor.TextArea)
+				.RegisterCommands(Application.Current.MainWindow.CommandBindings);
 			
 			textEditor.TextArea.LeftMargins.Insert(0, iconMargin);
 			textEditor.TextArea.TextView.VisualLinesChanged += delegate { iconMargin.InvalidateVisual(); };
 			
 			// Bookmarks context menu
 			IconMarginActionsProvider.Add(iconMargin);
-			SearchPanel.Install(textEditor.TextArea);
 			
 			this.Loaded += new RoutedEventHandler(DecompilerTextView_Loaded);
 		}

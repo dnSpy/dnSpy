@@ -349,7 +349,14 @@ namespace ICSharpCode.ILSpy
 			
 			HandleCommandLineArgumentsAfterShowList(App.CommandLineArguments);
 			if (App.CommandLineArguments.NavigateTo == null && App.CommandLineArguments.AssembliesToLoad.Count != 1) {
-				SharpTreeNode node = FindNodeByPath(sessionSettings.ActiveTreeViewPath, true);
+				SharpTreeNode node = null;
+				if (sessionSettings.ActiveTreeViewPath != null) {
+					node = FindNodeByPath(sessionSettings.ActiveTreeViewPath, true);
+					if (node == this.assemblyListTreeNode & sessionSettings.ActiveAutoLoadedAssembly != null) {
+						this.assemblyList.OpenAssembly(sessionSettings.ActiveAutoLoadedAssembly, true);
+						node = FindNodeByPath(sessionSettings.ActiveTreeViewPath, true);
+					}
+				}
 				if (node != null) {
 					SelectNode(node);
 					
@@ -359,8 +366,6 @@ namespace ICSharpCode.ILSpy
 					AboutPage.Display(decompilerTextView);
 				}
 			}
-			
-			NavigationCommands.Search.InputGestures.Add(new KeyGesture(Key.E, ModifierKeys.Control));
 			
 			AvalonEditTextOutput output = new AvalonEditTextOutput();
 			if (FormatExceptions(App.StartupExceptions.ToArray(), output))
@@ -800,6 +805,7 @@ namespace ICSharpCode.ILSpy
 			base.OnClosing(e);
 			sessionSettings.ActiveAssemblyList = assemblyList.ListName;
 			sessionSettings.ActiveTreeViewPath = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
+			sessionSettings.ActiveAutoLoadedAssembly = GetAutoLoadedAssemblyNode(treeView.SelectedItem as SharpTreeNode);
 			sessionSettings.WindowBounds = this.RestoreBounds;
 			sessionSettings.SplitterPosition = leftColumn.Width.Value / (leftColumn.Width.Value + rightColumn.Width.Value);
 			if (topPane.Visibility == Visibility.Visible)
@@ -807,6 +813,22 @@ namespace ICSharpCode.ILSpy
 			if (bottomPane.Visibility == Visibility.Visible)
 				sessionSettings.BottomPaneSplitterPosition = bottomPaneRow.Height.Value / (bottomPaneRow.Height.Value + textViewRow.Height.Value);
 			sessionSettings.Save();
+		}
+
+		private string GetAutoLoadedAssemblyNode(SharpTreeNode node)
+		{
+			if (node == null)
+				return null;
+			while (!(node is TreeNodes.AssemblyTreeNode) && node.Parent != null) {
+				node = node.Parent;
+			}
+			//this should be an assembly node
+			var assyNode = node as TreeNodes.AssemblyTreeNode;
+			var loadedAssy = assyNode.LoadedAssembly;
+			if (!(loadedAssy.IsLoaded && loadedAssy.IsAutoLoaded))
+				return null;
+
+			return loadedAssy.FileName;
 		}
 		
 		#region Top/Bottom Pane management

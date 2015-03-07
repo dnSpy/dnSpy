@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Threading;
@@ -102,7 +103,9 @@ namespace ICSharpCode.ILSpy
 		public bool HasLoadError {
 			get { return assemblyTask.IsFaulted; }
 		}
-		
+
+		public bool IsAutoLoaded { get; set; }
+
 		ModuleDefinition LoadAssembly(object state)
 		{
 			var stream = state as Stream;
@@ -252,7 +255,8 @@ namespace ICSharpCode.ILSpy
 					file = Path.Combine(dir, name.Name + ".exe");
 			}
 			if (file != null) {
-				return assemblyList.OpenAssembly(file);
+				var loaded = assemblyList.OpenAssembly(file, true);
+				return loaded;
 			} else {
 				return null;
 			}
@@ -273,7 +277,7 @@ namespace ICSharpCode.ILSpy
 			
 			string file = Path.Combine(Environment.SystemDirectory, "WinMetadata", name + ".winmd");
 			if (File.Exists(file)) {
-				return assemblyList.OpenAssembly(file);
+				return assemblyList.OpenAssembly(file, true);
 			} else {
 				return null;
 			}
@@ -292,5 +296,29 @@ namespace ICSharpCode.ILSpy
 		{
 			assemblyTask.Wait();
 		}
+
+		public class NameComparer : Comparer<LoadedAssembly>
+		{
+			public override int Compare(LoadedAssembly x, LoadedAssembly y)
+			{
+				// sort order:
+				//   explicitly loaded assemblies
+				//   auto-loaded assemblies
+				//   assemblies with errors
+				if (x.IsLoaded && y.HasLoadError)
+					return -1;
+				if (x.HasLoadError && y.IsLoaded)
+					return 1;
+
+				if (!x.IsAutoLoaded && y.IsAutoLoaded)
+					return -1;
+				if (x.IsAutoLoaded && !y.IsAutoLoaded)
+					return 1;
+
+				// within above groups, sort by assembly name 
+				return x.Text.CompareTo(y.Text);
+			}
+		}
+
 	}
 }

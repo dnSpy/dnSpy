@@ -88,7 +88,7 @@ namespace ICSharpCode.ILSpy
 			return new XElement(
 				"List",
 				new XAttribute("name", this.ListName),
-				assemblies.Select(asm => new XElement("Assembly", asm.FileName))
+				assemblies.Where(asm => !asm.IsAutoLoaded).Select(asm => new XElement("Assembly", asm.FileName))
 			);
 		}
 		
@@ -128,7 +128,7 @@ namespace ICSharpCode.ILSpy
 		/// Opens an assembly from disk.
 		/// Returns the existing assembly node if it is already loaded.
 		/// </summary>
-		public LoadedAssembly OpenAssembly(string file)
+		public LoadedAssembly OpenAssembly(string file, bool isAutoLoaded=false)
 		{
 			App.Current.Dispatcher.VerifyAccess();
 			
@@ -140,6 +140,7 @@ namespace ICSharpCode.ILSpy
 			}
 			
 			var newAsm = new LoadedAssembly(this, file);
+			newAsm.IsAutoLoaded = isAutoLoaded;
 			lock (assemblies) {
 				this.assemblies.Add(newAsm);
 			}
