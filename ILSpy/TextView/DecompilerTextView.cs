@@ -963,7 +963,13 @@ namespace ICSharpCode.ILSpy.TextView
 			// Make sure the lines have been re-initialized or the ScrollTo() method could fail
 			TextEditor.TextArea.TextView.EnsureVisualLines();
 			TextEditor.ScrollTo(line, column);
+			SetCaretPosition(line, column);
+		}
+
+		void SetCaretPosition(int line, int column)
+		{
 			TextEditor.TextArea.Caret.Location = new ICSharpCode.AvalonEdit.Document.TextLocation(line, column);
+			TextEditor.TextArea.Caret.DesiredXPos = double.NaN;
 		}
 
 		void TextEditor_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -979,7 +985,7 @@ namespace ICSharpCode.ILSpy.TextView
 						line = textView.VisualLines[1];
 					var docLine = line.FirstDocumentLine;
 					var caret = TextEditor.TextArea.Caret;
-					caret.Location = new ICSharpCode.AvalonEdit.Document.TextLocation(docLine.LineNumber, caret.Location.Column);
+					SetCaretPosition(docLine.LineNumber, caret.Location.Column);
 				}
 				e.Handled = true;
 				return;
@@ -994,7 +1000,7 @@ namespace ICSharpCode.ILSpy.TextView
 						line = textView.VisualLines[textView.VisualLines.Count - 2];
 					var docLine = line.LastDocumentLine;
 					var caret = TextEditor.TextArea.Caret;
-					caret.Location = new ICSharpCode.AvalonEdit.Document.TextLocation(docLine.LineNumber, caret.Location.Column);
+					SetCaretPosition(docLine.LineNumber, caret.Location.Column);
 				}
 				e.Handled = true;
 				return;
