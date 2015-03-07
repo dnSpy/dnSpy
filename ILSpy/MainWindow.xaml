@@ -122,7 +122,6 @@
 				ShowRoot="False"
 				AllowDropOrder="True"
 				AllowDrop="True"
-				VirtualizingStackPanel.IsVirtualizing="false"
 				BorderThickness="0,1,1,1" Visibility="Visible" />
 			<GridSplitter
 				Grid.ZIndex="1"
