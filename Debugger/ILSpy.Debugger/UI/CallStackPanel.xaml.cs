@@ -53,6 +53,12 @@ namespace ICSharpCode.ILSpy.Debugger.UI
         {
             InitializeComponent();
         }
+
+		public void CloseIfActive()
+		{
+			if (MainWindow.Instance.BottomPaneContent == Instance)
+				MainWindow.Instance.CloseBottomPane();
+		}
   
 		public void Show()
 		{

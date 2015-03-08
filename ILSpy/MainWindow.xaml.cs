@@ -1045,6 +1045,11 @@ namespace ICSharpCode.ILSpy
 		
 		void TopPane_CloseButtonClicked(object sender, EventArgs e)
 		{
+			CloseTopPane();
+		}
+
+		public void CloseTopPane()
+		{
 			sessionSettings.TopPaneSplitterPosition = topPaneRow.Height.Value / (topPaneRow.Height.Value + textViewRow.Height.Value);
 			topPaneRow.MinHeight = 0;
 			topPaneRow.Height = new GridLength(0);
@@ -1054,6 +1059,10 @@ namespace ICSharpCode.ILSpy
 			topPane.Content = null;
 			if (pane != null)
 				pane.Closed();
+		}
+
+		public object TopPaneContent {
+			get { return topPane.Content; }
 		}
 		
 		public void ShowInBottomPane(string title, object content)
@@ -1070,6 +1079,11 @@ namespace ICSharpCode.ILSpy
 		
 		void BottomPane_CloseButtonClicked(object sender, EventArgs e)
 		{
+			CloseBottomPane();
+		}
+
+		public void CloseBottomPane()
+		{
 			sessionSettings.BottomPaneSplitterPosition = bottomPaneRow.Height.Value / (bottomPaneRow.Height.Value + textViewRow.Height.Value);
 			bottomPaneRow.MinHeight = 0;
 			bottomPaneRow.Height = new GridLength(0);
@@ -1079,6 +1093,10 @@ namespace ICSharpCode.ILSpy
 			bottomPane.Content = null;
 			if (pane != null)
 				pane.Closed();
+		}
+
+		public object BottomPaneContent {
+			get { return bottomPane.Content; }
 		}
 		#endregion
 		
