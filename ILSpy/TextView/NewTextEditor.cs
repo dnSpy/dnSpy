@@ -45,6 +45,7 @@ namespace ICSharpCode.ILSpy.TextView
 			ICSharpCode.ILSpy.Debugger.Bookmarks.BreakpointBookmark.DisabledHighlightingColor = theme.GetColor(dntheme.ColorType.DisabledBreakpointStatement).TextInheritedColor;
 			ICSharpCode.ILSpy.Debugger.Bookmarks.CurrentLineBookmark.HighlightingColor = theme.GetColor(dntheme.ColorType.CurrentStatement).TextInheritedColor;
 			ICSharpCode.ILSpy.Debugger.Bookmarks.ReturnStatementBookmark.HighlightingColor = theme.GetColor(dntheme.ColorType.ReturnStatement).TextInheritedColor;
+			ICSharpCode.ILSpy.Debugger.Bookmarks.ReturnStatementBookmark.SelectedHighlightingColor = theme.GetColor(dntheme.ColorType.SelectedReturnStatement).TextInheritedColor;
 			var specialBox = theme.GetColor(dntheme.ColorType.SpecialCharacterBox).TextInheritedColor;
 			ICSharpCode.AvalonEdit.Rendering.SpecialCharacterTextRunOptions.Brush = specialBox.Background == null ? null : specialBox.Background.GetBrush(null);
 

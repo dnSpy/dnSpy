@@ -348,7 +348,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		{
 			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
 				CurrentLineBookmark.Remove();
-				ReturnStatementBookmark.Remove();
+				ReturnStatementBookmark.Remove(true);
 				CurrentDebugger.Continue();
 				MainWindow.Instance.SetStatus("Running...", Brushes.Black);
 			}
@@ -710,6 +710,9 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		bool TryExecute()
 		{
+			// Always reset the selected frame
+			ReturnStatementBookmark.SelectedFrame = 0;
+
 			Tuple<MethodKey, int, IMemberRef> info;
 			MethodKey currentKey;
 			Dictionary<MethodKey, MemberMapping> cm;

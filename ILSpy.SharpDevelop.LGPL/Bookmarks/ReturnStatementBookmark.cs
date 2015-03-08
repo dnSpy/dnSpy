@@ -16,13 +16,20 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 	public class ReturnStatementBookmark : MarkerBookmark
 	{
 		public static HighlightingColor HighlightingColor = new HighlightingColor {
+			Background = new SimpleHighlightingBrush(Color.FromArgb(0x62, 0xEE, 0xEF, 0xE6)),
+			Foreground = new SimpleHighlightingBrush(Colors.Transparent),
+		};
+		public static HighlightingColor SelectedHighlightingColor = new HighlightingColor {
 			Background = new SimpleHighlightingBrush(Color.FromArgb(0x68, 0xB4, 0xE4, 0xB4)),
 			Foreground = new SimpleHighlightingBrush(Colors.Black),
 		};
 
-		public ReturnStatementBookmark(IMemberRef member, TextLocation location, TextLocation endLocation)
+		bool isSelected;
+
+		public ReturnStatementBookmark(IMemberRef member, TextLocation location, TextLocation endLocation, bool isSelected)
 			: base(member, location, endLocation)
 		{
+			this.isSelected = isSelected;
 		}
 
 		public override bool CanToggle {
@@ -30,18 +37,18 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		}
 
 		public override int ZOrder {
-			get { return 80; }
+			get { return isSelected ? 80 : 70; }
 		}
 
 		public override ImageSource Image {
-			get { return Images.CurrentLine; }//TODO: Use another similar image
+			get { return isSelected ? Images.CurrentLine : null; }//TODO: Use another similar image
 		}
 
 		public override ITextMarker CreateMarker(ITextMarkerService markerService)
 		{
 			ITextMarker marker = CreateMarkerInternal(markerService);
 			marker.ZOrder = ZOrder;
-			marker.HighlightingColor = () => HighlightingColor;
+			marker.HighlightingColor = () => isSelected ? SelectedHighlightingColor : HighlightingColor;
 			marker.IsVisible = b => {
 				var cm = DebugInformation.CodeMappings;
 				return cm != null && b is MarkerBookmark &&
@@ -52,8 +59,24 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			return marker;
 		}
 
-		public static void Remove()
+		/// <summary>
+		/// Gets/sets the selected frame number. 0 is the current frame.
+		/// </summary>
+		public static int SelectedFrame {
+			get { return selectedFrame; }
+			set {
+				if (value != selectedFrame) {
+					selectedFrame = value;
+					UpdateReturnStatementBookmarks(false);
+				}
+			}
+		}
+		static int selectedFrame = 0;
+
+		public static void Remove(bool removeSelected)
 		{
+			if (removeSelected)
+				selectedFrame = 0;
 			foreach (var rs in returnStatementBookmarks)
 				BookmarkManager.RemoveMark(rs);
 			returnStatementBookmarks.Clear();
@@ -62,9 +85,9 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		/// <summary>
 		/// Should be called each time the IL offset has been updated
 		/// </summary>
-		public static void UpdateReturnStatementBookmarks()
+		public static void UpdateReturnStatementBookmarks(bool removeSelected)
 		{
-			Remove();
+			Remove(removeSelected);
 			bool updateReturnStatements =
 				DebugInformation.CodeMappings != null &&
 				DebuggerService.CurrentDebugger != null &&
@@ -73,7 +96,10 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			if (updateReturnStatements) {
 				var cm = DebugInformation.CodeMappings;
 				// The first frame is the current frame. Ignore it.
-				foreach (var frame in DebuggerService.CurrentDebugger.GetStackFrames(100).Skip(1)) {
+				int frameNo = 1;
+				foreach (var frame in DebuggerService.CurrentDebugger.GetStackFrames(100).Skip(frameNo)) {
+					bool isSelected = selectedFrame == frameNo;
+					frameNo++;
 					if (frame.ILOffset == null)
 						continue;
 					var key = frame.MethodKey;
@@ -82,7 +108,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 					ICSharpCode.NRefactory.TextLocation location, endLocation;
 					if (cm != null && cm.ContainsKey(key) &&
 						cm[key].GetInstructionByTokenAndOffset((uint)offset, out methodDef, out location, out endLocation)) {
-						var rs = new ReturnStatementBookmark(methodDef, location, endLocation);
+						var rs = new ReturnStatementBookmark(methodDef, location, endLocation, isSelected);
 						returnStatementBookmarks.Add(rs);
 						BookmarkManager.AddMark(rs);
 					}

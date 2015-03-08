@@ -599,7 +599,7 @@ namespace ICSharpCode.ILSpy.TextView
 				CurrentLineBookmark.Remove();
 			}
 
-			ReturnStatementBookmark.UpdateReturnStatementBookmarks();
+			ReturnStatementBookmark.UpdateReturnStatementBookmarks(false);
 
 			if (state == null && DebugInformation.JumpToThisLine != null) {
 				if (DebugInformation.JumpToThisLine is ICSharpCode.NRefactory.TextLocation) {

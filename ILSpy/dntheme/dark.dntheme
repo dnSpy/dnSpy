@@ -57,6 +57,7 @@
 		<color name="specialcharacterbox" bg="#666699" />
 		<color name="searchresultmarker" bg="#FFFFB7" />
 		<color name="currentline" fg="#3400FF6E" bg="#1614DCE0" />
-		<color name="returnstatement" fg="Black" bg="#68B4E4B4" />
+		<color name="selectedreturnstatement" fg="Black" bg="#68B4E4B4" />
+		<color name="returnstatement" bg="#62404040" />
 	</colors>
 </theme>

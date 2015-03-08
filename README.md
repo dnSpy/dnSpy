@@ -135,6 +135,7 @@ DefaultText
 		LocalReference
 		CurrentStatement
 		ReturnStatement
+		SelectedReturnStatement
 		BreakpointStatement
 		DisabledBreakpointStatement
 ```

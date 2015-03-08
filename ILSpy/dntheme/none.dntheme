@@ -7,5 +7,7 @@
 		<color name="disabledbreakpointstatement" bg="#30963A46" />
 		<color name="searchresultmarker" bg="#FFFFB7" />
 		<color name="currentline" fg="#EAEAF2" bg="#00000000" />
+		<color name="selectedreturnstatement" fg="Black" bg="#68B4E4B4" />
+		<color name="returnstatement" bg="#62EEEFE6" />
 	</colors>
 </theme>

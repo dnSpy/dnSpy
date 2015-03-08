@@ -325,6 +325,11 @@ namespace ICSharpCode.ILSpy.dntheme
 		ReturnStatement,
 
 		/// <summary>
+		/// A selected return statement (it's been double clicked in the call stack window) (debugger)
+		/// </summary>
+		SelectedReturnStatement,
+
+		/// <summary>
 		/// Breakpoint statement (debugger)
 		/// </summary>
 		BreakpointStatement,

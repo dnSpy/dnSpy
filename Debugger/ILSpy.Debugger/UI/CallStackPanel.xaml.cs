@@ -163,10 +163,12 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		IList<CallStackItem> CreateItems(Process debuggedProcess)
 		{
 		    List<CallStackItem> items = new List<CallStackItem>();
+			int frameNumber = 0;
 			foreach (StackFrame frame in debuggedProcess.SelectedThread.GetCallstack(100)) {
 				CallStackItem item;
 				
     			item = new CallStackItem() {
+					FrameNumber = frameNumber++,
 					Name = GetFullName(frame),
 					ModuleName = frame.MethodInfo.DebugModule.ToString(),
 					Token = (uint)frame.MethodInfo.MetadataToken,
@@ -251,6 +253,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
             var selectedItem = view.SelectedItem as CallStackItem;
             if (null == selectedItem)
             	return;
+			ICSharpCode.ILSpy.Debugger.Bookmarks.ReturnStatementBookmark.SelectedFrame = selectedItem.FrameNumber;
             
             var foundAssembly = MainWindow.Instance.CurrentAssemblyList.OpenAssembly(selectedItem.Frame.MethodInfo.DebugModule.FullPath, true);
             if (null == foundAssembly)
@@ -295,6 +298,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
     
 	public class CallStackItem
 	{
+		public int FrameNumber { get; set; }
 		public string Name { get; set; }
 		public StackFrame Frame { get; set; }
 		public string ModuleName { get; set; }

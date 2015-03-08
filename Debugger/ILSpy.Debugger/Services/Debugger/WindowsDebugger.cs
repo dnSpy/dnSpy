@@ -688,7 +688,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		{
 			OnIsProcessRunningChanged(EventArgs.Empty);
 			DebuggerService.RemoveCurrentLineMarker();
-			ReturnStatementBookmark.Remove();
+			ReturnStatementBookmark.Remove(true);
 		}
 		
 		void debuggedProcess_ExceptionThrown(object sender, CorDbg.ExceptionEventArgs e)
@@ -758,7 +758,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					StepIntoUnknownFrame(frame);
 				}
 
-				ReturnStatementBookmark.UpdateReturnStatementBookmarks();
+				ReturnStatementBookmark.UpdateReturnStatementBookmarks(true);
 			}
 		}
 
@@ -782,7 +782,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				DebuggerService.RemoveCurrentLineMarker();
 				Debug.Fail("No type was found!");
 			}
-			ReturnStatementBookmark.UpdateReturnStatementBookmarks();
 		}
 
 		public IEnumerable<DebugStackFrame> GetStackFrames(int count)
