@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media;
@@ -67,9 +68,12 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 				if (value != selectedFrame) {
 					selectedFrame = value;
 					UpdateReturnStatementBookmarks(false);
+					if (SelectedFrameChanged != null)
+						SelectedFrameChanged(null, EventArgs.Empty);
 				}
 			}
 		}
+		public static event EventHandler SelectedFrameChanged;
 		static int selectedFrame = 0;
 
 		public static void Remove(bool removeSelected)

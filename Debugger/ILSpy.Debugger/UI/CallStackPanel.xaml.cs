@@ -11,11 +11,13 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Xml.Linq;
 
 using Debugger;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Commands;
 using ICSharpCode.ILSpy.Debugger.Models.TreeModel;
 using ICSharpCode.ILSpy.Debugger.Services;
@@ -63,6 +65,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
                 
                 DebuggerService.DebugStarted += new EventHandler(OnDebugStarted);
                 DebuggerService.DebugStopped += new EventHandler(OnDebugStopped);
+				ReturnStatementBookmark.SelectedFrameChanged += new EventHandler(OnSelectedFrameChanged);
                 if (DebuggerService.IsDebuggerStarted)
                 	OnDebugStarted(null, EventArgs.Empty);
 			}
@@ -72,6 +75,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		{
             DebuggerService.DebugStarted -= new EventHandler(OnDebugStarted);
             DebuggerService.DebugStopped -= new EventHandler(OnDebugStopped);
+			ReturnStatementBookmark.SelectedFrameChanged -= new EventHandler(OnSelectedFrameChanged);
             if (null != m_currentDebugger)
                 OnDebugStopped(null, EventArgs.Empty);
             
@@ -120,6 +124,11 @@ namespace ICSharpCode.ILSpy.Debugger.UI
         		return;
         	RefreshPad();
         }
+
+		void OnSelectedFrameChanged(object sender, EventArgs e)
+		{
+			RefreshPad();
+		}
         
         void SwitchModuleColumn()
         {
@@ -168,13 +177,16 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 				CallStackItem item;
 				
     			item = new CallStackItem() {
-					FrameNumber = frameNumber++,
+					FrameNumber = frameNumber,
 					Name = GetFullName(frame),
 					ModuleName = frame.MethodInfo.DebugModule.ToString(),
 					Token = (uint)frame.MethodInfo.MetadataToken,
 					ILOffset = frame.IP.IsValid ? frame.IP.Offset : -1,
 					MethodKey = frame.MethodInfo.ToMethodKey(),
 				};
+				if (frameNumber == ReturnStatementBookmark.SelectedFrame)
+					item.Image = new BitmapImage(new Uri("pack://application:,,,/dnSpy;component/Images/CurrentLine.png", UriKind.Absolute));
+				frameNumber++;
 				var module = frame.MethodInfo.DebugModule;
 				if (module.IsDynamic || module.IsInMemory) {
 					//TODO: support this
@@ -253,7 +265,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
             var selectedItem = view.SelectedItem as CallStackItem;
             if (null == selectedItem)
             	return;
-			ICSharpCode.ILSpy.Debugger.Bookmarks.ReturnStatementBookmark.SelectedFrame = selectedItem.FrameNumber;
+			ReturnStatementBookmark.SelectedFrame = selectedItem.FrameNumber;
             
             var foundAssembly = MainWindow.Instance.CurrentAssemblyList.OpenAssembly(selectedItem.Frame.MethodInfo.DebugModule.FullPath, true);
             if (null == foundAssembly)
@@ -298,6 +310,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
     
 	public class CallStackItem
 	{
+		public ImageSource Image { get; set; }
 		public int FrameNumber { get; set; }
 		public string Name { get; set; }
 		public StackFrame Frame { get; set; }

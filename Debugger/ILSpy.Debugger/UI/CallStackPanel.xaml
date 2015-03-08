@@ -8,6 +8,14 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn
+                        Header="">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding Image}" Stretch="None" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn
                         Header="Module">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
