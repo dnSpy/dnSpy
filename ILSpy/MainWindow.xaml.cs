@@ -721,6 +721,11 @@ namespace ICSharpCode.ILSpy
 		/// </returns>
 		public Task JumpToReferenceAsync(object reference, out bool success, out bool alreadySelected)
 		{
+			return JumpToReferenceAsyncInternal(true, reference, out success, out alreadySelected);
+		}
+
+		Task JumpToReferenceAsyncInternal(bool canLoad, object reference, out bool success, out bool alreadySelected)
+		{
 			alreadySelected = false;
 			decompilationTask = TaskHelper.CompletedTask;
 			ILSpyTreeNode treeNode = FindTreeNode(reference);
@@ -739,9 +744,58 @@ namespace ICSharpCode.ILSpy
 				}
 				success = true;
 			}
+			else if (canLoad && reference is IMemberDef) {
+				// Here if the module was removed. It's possible that the user has re-added it.
+
+				var member = (IMemberDef)reference;
+				var module = member.Module;
+				var mainModule = module;
+				if (module.Assembly != null)
+					mainModule = module.Assembly.ManifestModule;
+				// Check if the module was removed and then added again
+				foreach (var m in assemblyList.GetAllModules()) {
+					if (mainModule.Location.Equals(m.Location, StringComparison.OrdinalIgnoreCase)) {
+						foreach (var asmMod in GetAssemblyModules(m)) {
+							if (!module.Location.Equals(asmMod.Location, StringComparison.OrdinalIgnoreCase))
+								continue;
+
+							// Found the module
+							var modDef = asmMod as ModuleDefMD;
+							if (modDef != null) {
+								member = modDef.ResolveToken(member.MDToken) as IMemberDef;
+								if (member != null) // should never fail
+									return JumpToReferenceAsyncInternal(false, member, out success, out alreadySelected);
+							}
+
+							break;
+						}
+
+						success = false;
+						return decompilationTask;
+					}
+				}
+
+				// The module has been removed. Add it again
+				var loadedAsm = new LoadedAssembly(assemblyList, mainModule);
+				loadedAsm.IsAutoLoaded = true;
+				assemblyList.AddAssembly(loadedAsm, true);
+				return JumpToReferenceAsyncInternal(false, reference, out success, out alreadySelected);
+			}
 			else
 				success = false;
 			return decompilationTask;
+		}
+		IEnumerable<ModuleDef> GetAssemblyModules(ModuleDef module)
+		{
+			if (module == null)
+				yield break;
+			var asm = module.Assembly;
+			if (asm == null)
+				yield return module;
+			else {
+				foreach (var mod in asm.Modules)
+					yield return mod;
+			}
 		}
 		#endregion
 		

@@ -108,7 +108,6 @@ namespace ICSharpCode.ILSpy
 				throw new ArgumentException("module has no filename");
 			this.assemblyList = assemblyList;
 			this.fileName = module.Location;
-			Debug.Assert(module.Assembly != null && module.Assembly.ManifestModule != module, "Use other constructor for net modules or if it's the main module in an assembly");
 
 			this.assemblyTask = Task.Factory.StartNew<ModuleDef>(() => LoadModule(module));
 			this.shortName = Path.GetFileNameWithoutExtension(fileName);
