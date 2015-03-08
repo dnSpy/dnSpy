@@ -31,6 +31,132 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[Export(typeof(IPlugin))]
 	public class DebuggerPlugin : IPlugin
 	{
+		#region Static members
+		[System.Runtime.InteropServices.DllImport("user32.dll")]
+		static extern bool SetWindowPos(
+			IntPtr hWnd,
+			IntPtr hWndInsertAfter,
+			int X,
+			int Y,
+			int cx,
+			int cy,
+			uint uFlags);
+
+		const UInt32 SWP_NOSIZE = 0x0001;
+		const UInt32 SWP_NOMOVE = 0x0002;
+
+		static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
+		static readonly IntPtr HWND_TOP = new IntPtr(0);
+
+		static void SendWpfWindowPos(Window window, IntPtr place)
+		{
+			var hWnd = new WindowInteropHelper(window).Handle;
+			SetWindowPos(hWnd, place, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+		}
+		#endregion
+
+		public static void StartExecutable(string fileName, string workingDirectory, string arguments)
+		{
+			var debugger = DebuggerService.CurrentDebugger;
+			if (debugger == null)
+				return;
+			debugger.BreakAtBeginning = DebuggerSettings.Instance.BreakAtBeginning;
+			Finish();
+			debugger.Start(new ProcessStartInfo {
+			                      	FileName = fileName,
+			                      	WorkingDirectory = workingDirectory ?? Path.GetDirectoryName(fileName),
+			                      	Arguments = arguments
+			                      });
+		}
+
+		public static void StartAttaching(Process process)
+		{
+			var debugger = DebuggerService.CurrentDebugger;
+			if (debugger == null)
+				return;
+			debugger.BreakAtBeginning = DebuggerSettings.Instance.BreakAtBeginning;
+			Finish();
+			debugger.Attach(process);
+		}
+
+		public static bool Detach()
+		{
+			var debugger = DebuggerService.CurrentDebugger;
+			if (debugger == null)
+				return false;
+			if (debugger.IsDebugging) {
+				debugger.Detach();
+
+				DebuggerPlugin.EnableDebuggerUI(true);
+				debugger.DebugStopped -= OnDebugStopped;
+				return true;
+			}
+
+			return false;
+		}
+
+		static void Finish()
+		{
+			var debugger = DebuggerService.CurrentDebugger;
+			if (debugger == null)
+				return;
+			EnableDebuggerUI(false);
+			debugger.DebugStopped += OnDebugStopped;
+			debugger.IsProcessRunningChanged += CurrentDebugger_IsProcessRunningChanged;
+			
+			MainWindow.Instance.SetStatus("Running...", Brushes.Black);
+		}
+
+		static void OnDebugStopped(object sender, EventArgs e)
+		{
+			var debugger = DebuggerService.CurrentDebugger;
+			if (debugger == null)
+				return;
+			EnableDebuggerUI(true);
+			debugger.DebugStopped -= OnDebugStopped;
+			debugger.IsProcessRunningChanged -= CurrentDebugger_IsProcessRunningChanged;
+			
+			MainWindow.Instance.HideStatus();
+		}
+
+		static void EnableDebuggerUI(bool enable)
+		{
+			// internal types
+			if (enable)
+				MainWindow.Instance.SessionSettings.FilterSettings.ShowInternalApi = true;
+		}
+
+		static void CurrentDebugger_IsProcessRunningChanged(object sender, EventArgs e)
+		{
+			var debugger = DebuggerService.CurrentDebugger;
+			if (debugger == null)
+				return;
+			if (debugger.IsProcessRunning) {
+				//SendWpfWindowPos(this, HWND_BOTTOM);
+				MainWindow.Instance.SetStatus("Running...", Brushes.Black);
+				return;
+			}
+			
+			var inst = MainWindow.Instance;
+			
+			// breakpoint was hit => bring to front the main window
+			SendWpfWindowPos(inst, HWND_TOP); inst.Activate();
+			
+			// jump to type & expand folding
+			if (DebugInformation.MustJumpToReference)
+				JumpToMethod();
+			
+			inst.SetStatus("Debugging...", Brushes.Red);
+		}
+
+		static void JumpToMethod()
+		{
+			var info = DebugInformation.DebugStepInformation;
+			if (info == null)
+				return;
+			DebugUtils.JumpToReference(info.Item3);
+		}
+
 		void IPlugin.OnLoaded()
 		{
 			MainWindow.Instance.KeyUp += OnKeyUp;
@@ -211,7 +337,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		public static bool DebugShowNextStatement()
 		{
 			if (!TryShowNextStatement()) {
-				DebuggerCommand.JumpToMethod();
+				JumpToMethod();
 				return true;
 			}
 
@@ -348,30 +474,6 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			this.needsDebuggerActive = needsDebuggerActive;
 			this.mustBePaused = mustBePaused;
 		}
-		
-		#region Static members
-		[System.Runtime.InteropServices.DllImport("user32.dll")]
-		static extern bool SetWindowPos(
-			IntPtr hWnd,
-			IntPtr hWndInsertAfter,
-			int X,
-			int Y,
-			int cx,
-			int cy,
-			uint uFlags);
-
-		const UInt32 SWP_NOSIZE = 0x0001;
-		const UInt32 SWP_NOMOVE = 0x0002;
-
-		static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
-		static readonly IntPtr HWND_TOP = new IntPtr(0);
-
-		static void SendWpfWindowPos(Window window, IntPtr place)
-		{
-			var hWnd = new WindowInteropHelper(window).Handle;
-			SetWindowPos(hWnd, place, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
-		}
-		#endregion
 
 		public override bool CanExecute(object parameter)
 		{
@@ -389,84 +491,6 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		
 		public override void Execute(object parameter)
 		{
-			
-		}
-		
-		protected static IDebugger CurrentDebugger {
-			get {
-				return DebuggerService.CurrentDebugger;
-			}
-		}
-		
-		protected void StartExecutable(string fileName, string workingDirectory, string arguments)
-		{
-			CurrentDebugger.BreakAtBeginning = DebuggerSettings.Instance.BreakAtBeginning;
-			Finish();
-			CurrentDebugger.Start(new ProcessStartInfo {
-			                      	FileName = fileName,
-			                      	WorkingDirectory = workingDirectory ?? Path.GetDirectoryName(fileName),
-			                      	Arguments = arguments
-			                      });
-		}
-		
-		protected void StartAttaching(Process process)
-		{
-			CurrentDebugger.BreakAtBeginning = DebuggerSettings.Instance.BreakAtBeginning;
-			Finish();
-			CurrentDebugger.Attach(process);
-		}
-		
-		protected void Finish()
-		{
-			EnableDebuggerUI(false);
-			CurrentDebugger.DebugStopped += OnDebugStopped;
-			CurrentDebugger.IsProcessRunningChanged += CurrentDebugger_IsProcessRunningChanged;
-			
-			MainWindow.Instance.SetStatus("Running...", Brushes.Black);
-		}
-		
-		protected void OnDebugStopped(object sender, EventArgs e)
-		{
-			EnableDebuggerUI(true);
-			CurrentDebugger.DebugStopped -= OnDebugStopped;
-			CurrentDebugger.IsProcessRunningChanged -= CurrentDebugger_IsProcessRunningChanged;
-			
-			MainWindow.Instance.HideStatus();
-		}
-		
-		protected void EnableDebuggerUI(bool enable)
-		{
-			// internal types
-			if (enable)
-				MainWindow.Instance.SessionSettings.FilterSettings.ShowInternalApi = true;
-		}
-		
-		void CurrentDebugger_IsProcessRunningChanged(object sender, EventArgs e)
-		{
-			if (CurrentDebugger.IsProcessRunning) {
-				//SendWpfWindowPos(this, HWND_BOTTOM);
-				MainWindow.Instance.SetStatus("Running...", Brushes.Black);
-				return;
-			}
-			
-			var inst = MainWindow.Instance;
-			
-			// breakpoint was hit => bring to front the main window
-			SendWpfWindowPos(inst, HWND_TOP); inst.Activate();
-			
-			// jump to type & expand folding
-			if (DebugInformation.MustJumpToReference)
-				JumpToMethod();
-			
-			inst.SetStatus("Debugging...", Brushes.Red);
-		}
-
-		public static void JumpToMethod()
-		{
-			var info = DebugInformation.DebugStepInformation;
-			if (info == null)
-				return;
-			DebugUtils.JumpToReference(info.Item3);
 		}
 	}
 
@@ -537,7 +561,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		{
 			if (context.SelectedTreeNodes == null)
 				return;
-			if (!CurrentDebugger.IsDebugging) {
+			if (DebuggerService.CurrentDebugger != null && !DebuggerService.CurrentDebugger.IsDebugging) {
 				AssemblyTreeNode n = context.SelectedTreeNodes[0] as AssemblyTreeNode;
 				
 				if (DebuggerSettings.Instance.AskForArguments) {
@@ -547,10 +571,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 						string fileName = window.SelectedExecutable;
 						
 						// execute the process
-						this.StartExecutable(fileName, window.WorkingDirectory, window.Arguments);
+						DebuggerPlugin.StartExecutable(fileName, window.WorkingDirectory, window.Arguments);
 					}
 				} else {
-					this.StartExecutable(n.LoadedAssembly.FileName, null, null);
+					DebuggerPlugin.StartExecutable(n.LoadedAssembly.FileName, null, null);
 				}
 			}
 		}
@@ -574,7 +598,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public override void Execute(object parameter)
 		{
-			if (!CurrentDebugger.IsDebugging) {
+			if (DebuggerService.CurrentDebugger != null && !DebuggerService.CurrentDebugger.IsDebugging) {
 				if (DebuggerSettings.Instance.AskForArguments)
 				{
 					bool? result;
@@ -586,7 +610,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 						MainWindow.Instance.OpenFiles(new [] { fileName }, false);
 						
 						// execute the process
-						this.StartExecutable(fileName, window.WorkingDirectory, window.Arguments);
+						DebuggerPlugin.StartExecutable(fileName, window.WorkingDirectory, window.Arguments);
 					}
 				} else {
 					OpenFileDialog dialog = new OpenFileDialog() {
@@ -601,7 +625,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 						MainWindow.Instance.OpenFiles(new [] { fileName }, false);
 						
 						// execute the process
-						this.StartExecutable(fileName, null, null);
+						DebuggerPlugin.StartExecutable(fileName, null, null);
 					}
 				}
 			}
@@ -620,7 +644,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public override void Execute(object parameter)
 		{
-			if (!CurrentDebugger.IsDebugging) {
+			if (DebuggerService.CurrentDebugger != null && !DebuggerService.CurrentDebugger.IsDebugging) {
 				
 				if (DebuggerSettings.Instance.ShowWarnings)
 					MessageBox.Show("Warning: When attaching to an application, some local variables might not be available. If possible, use the \"Start Executable\" command.",
@@ -628,7 +652,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				
 				var window = new AttachToProcessWindow { Owner = MainWindow.Instance };
 				if (window.ShowDialog() == true) {
-					StartAttaching(window.SelectedProcess);
+					DebuggerPlugin.StartAttaching(window.SelectedProcess);
 				}
 			}
 		}
@@ -736,12 +760,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public override void Execute(object parameter)
 		{
-			if (CurrentDebugger.IsDebugging){
-				CurrentDebugger.Detach();
-				
-				EnableDebuggerUI(true);
-				CurrentDebugger.DebugStopped -= OnDebugStopped;
-			}
+			DebuggerPlugin.Detach();
 		}
 	}
 	

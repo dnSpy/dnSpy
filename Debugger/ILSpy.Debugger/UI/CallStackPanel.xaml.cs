@@ -177,7 +177,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 					MethodKey = frame.MethodInfo.ToMethodKey(),
 				};
 				if (frameNumber == ReturnStatementBookmark.SelectedFrame)
-					item.Image = new BitmapImage(new Uri("pack://application:,,,/dnSpy;component/Images/CurrentLine.png", UriKind.Absolute));
+					item.Image = ImageService.CurrentLine;
 				frameNumber++;
 				var module = frame.MethodInfo.DebugModule;
 				if (module.IsDynamic || module.IsInMemory) {
