@@ -176,7 +176,14 @@ namespace Debugger.MetaData
 				if (this.IsPointer || corElementType == CorElementType.VOID) {
 					return null;
 				}
-				ICorDebugType baseType = corType.GetBase();
+				ICorDebugType baseType;
+				try {
+					baseType = corType.GetBase();
+				}
+				catch (ArgumentException) {
+					// Here if it's a ByRef. It should have a null base type
+					baseType = null;
+				}
 				if (baseType != null) {
 					return CreateFromCorType(this.AppDomain, baseType);
 				} else {
@@ -1047,7 +1054,9 @@ namespace Debugger.MetaData
 			}
 
 			if (sigType is ByRefSig) {
-				//TODO:
+				ByRefSig byRefSig = (ByRefSig)sigType;
+				DebugType elementType = CreateFromSignature(module, byRefSig.Next, declaringType);
+				return (DebugType)elementType.MakeByRefType();
 			}
 			
 			throw new NotImplementedException(sigType.ElementType.ToString());
