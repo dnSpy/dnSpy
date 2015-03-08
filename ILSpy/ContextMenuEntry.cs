@@ -159,11 +159,6 @@ namespace ICSharpCode.ILSpy
 			this.treeView = treeView;
 			this.textView = textView;
 			App.CompositionContainer.ComposeParts(this);
-			// Create all objects now because some may need to hook eg. KeyDown even if the menu
-			// hasn't been shown yet.
-			foreach (var e in entries) {
-				var v = e.Value;
-			}
 		}
 		
 		ContextMenuProvider(ListBox listBox)

@@ -109,10 +109,6 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 
         void OnDebugStopped(object sender, EventArgs args)
         {
-			if (m_currentDebugger == null) {
-				System.Diagnostics.Debug.Fail("m_currentDebugger is null #1");
-				return;
-			}
         	m_currentDebugger.IsProcessRunningChanged -= new EventHandler(OnProcessRunningChanged);
         	m_currentDebugger = null;
 			view.ItemsSource = null;
@@ -141,10 +137,6 @@ namespace ICSharpCode.ILSpy.Debugger.UI
         
        	void RefreshPad()
 		{
-			if (m_currentDebugger == null) {
-				System.Diagnostics.Debug.Fail("m_currentDebugger is null #2");
-				return;
-			}
        	    Process debuggedProcess = ((WindowsDebugger)m_currentDebugger).DebuggedProcess;
 			if (debuggedProcess == null || debuggedProcess.IsRunning || debuggedProcess.SelectedThread == null) {
 				view.ItemsSource = null;

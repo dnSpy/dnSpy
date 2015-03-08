@@ -2,6 +2,7 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -27,6 +28,316 @@ using NR = ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.Debugger.Commands
 {
+	[Export(typeof(IPlugin))]
+	public class DebuggerPlugin : IPlugin
+	{
+		void IPlugin.OnLoaded()
+		{
+			MainWindow.Instance.KeyUp += OnKeyUp;
+			MainWindow.Instance.KeyDown += OnKeyDown;
+		}
+
+		void OnKeyUp(object sender, KeyEventArgs e)
+		{
+			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F5) {
+				DebugContinue();
+				e.Handled = true;
+				return;
+			}
+		}
+
+		void OnKeyDown(object sender, KeyEventArgs e)
+		{
+			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F9) {
+				DebugToggleBreakpoint();
+				e.Handled = true;
+				return;
+			}
+			if (Keyboard.Modifiers == ModifierKeys.Shift && e.Key == Key.F9) {
+				if (DebugEnableDisableBreakpointPossible())
+					DebugEnableDisableBreakpoint();
+				e.Handled = true;
+				return;
+			}
+			if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.F9) {
+				DebugDeleteAllBreakpoints();
+				e.Handled = true;
+				return;
+			}
+			if (Keyboard.Modifiers == ModifierKeys.None && (e.SystemKey == Key.F10 ? e.SystemKey : e.Key) == Key.F10) {
+				DebugStepOver();
+				e.Handled = true;
+				return;
+			}
+			if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && (e.SystemKey == Key.F10 ? e.SystemKey : e.Key) == Key.F10) {
+				if (DebugCanSetNextStatement())
+					DebugSetNextStatement();
+				else {
+					// Show the error message
+					SourceCodeMapping mapping;
+					string errMsg;
+					if (!DebugGetSourceCodeMappingForSetNextStatement(out errMsg, out mapping))
+						MessageBox.Show(MainWindow.Instance, errMsg);
+				}
+				e.Handled = true;
+				return;
+			}
+			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F11) {
+				DebugStepInto();
+				e.Handled = true;
+				return;
+			}
+			if (Keyboard.Modifiers == ModifierKeys.Shift && e.Key == Key.F11) {
+				DebugStepOut();
+				e.Handled = true;
+				return;
+			}
+			if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.Cancel) {
+				DebugBreak();
+				e.Handled = true;
+				return;
+			}
+			if (Keyboard.Modifiers == ModifierKeys.Alt && e.SystemKey == Key.Multiply) {
+				if (DebugShowNextStatementPossible())
+					DebugShowNextStatement();
+				e.Handled = true;
+				return;
+			}
+		}
+
+		public static bool DebugContinue()
+		{
+			var debugger = DebuggerService.CurrentDebugger;
+			if (debugger != null && debugger.IsDebugging && !debugger.IsProcessRunning) {
+				CurrentLineBookmark.Remove();
+				ReturnStatementBookmark.Remove(true);
+				debugger.Continue();
+				MainWindow.Instance.SetStatus("Running...", Brushes.Black);
+				return true;
+			}
+
+			return false;
+		}
+
+		public static bool DebugBreak()
+		{
+			var debugger = DebuggerService.CurrentDebugger;
+			if (debugger != null && debugger.IsDebugging && debugger.IsProcessRunning) {
+				debugger.Break();
+				MainWindow.Instance.SetStatus("Debugging...", Brushes.Red);
+				return true;
+			}
+
+			return false;
+		}
+
+		public static bool DebugStepInto()
+		{
+			var debugger = DebuggerService.CurrentDebugger;
+			if (debugger != null && debugger.IsDebugging && !debugger.IsProcessRunning) {
+				debugger.StepInto();
+				return true;
+			}
+
+			return false;
+		}
+
+		public static bool DebugStepOver()
+		{
+			var debugger = DebuggerService.CurrentDebugger;
+			if (debugger != null && debugger.IsDebugging && !debugger.IsProcessRunning) {
+				debugger.StepOver();
+				return true;
+			}
+			return false;
+		}
+
+		public static bool DebugStepOut()
+		{
+			var debugger = DebuggerService.CurrentDebugger;
+			if (debugger != null && debugger.IsDebugging && !debugger.IsProcessRunning) {
+				debugger.StepOut();
+				return true;
+			}
+
+			return false;
+		}
+
+		public static bool DebugDeleteAllBreakpoints()
+		{
+			for (int i = BookmarkManager.Bookmarks.Count - 1; i >= 0; --i) {
+				var bookmark = BookmarkManager.Bookmarks[i];
+				if (bookmark is BreakpointBookmark) {
+					BookmarkManager.RemoveMark(bookmark);
+				}
+			}
+			return true;
+		}
+
+		public static bool DebugToggleBreakpoint()
+		{
+			if (DebuggerService.CurrentDebugger != null) {
+				var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
+				BreakpointHelper.Toggle(location.Line, location.Column);
+				return true;
+			}
+
+			return false;
+		}
+
+		public static bool DebugEnableDisableBreakpoint()
+		{
+			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
+			var bpm = BreakpointHelper.GetBreakpointBookmark(location.Line, location.Column);
+			if (bpm != null) {
+				bpm.IsEnabled = !bpm.IsEnabled;
+				return true;
+			}
+
+			return false;
+		}
+
+		public static bool DebugEnableDisableBreakpointPossible()
+		{
+			return DebuggerService.CurrentDebugger != null && HasBPAtCurrentCaretPosition();
+		}
+
+		public static bool HasBPAtCurrentCaretPosition()
+		{
+			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
+			return BreakpointHelper.GetBreakpointBookmark(location.Line, location.Column) != null;
+		}
+
+		public static bool DebugShowNextStatement()
+		{
+			if (!TryShowNextStatement()) {
+				DebuggerCommand.JumpToMethod();
+				return true;
+			}
+
+			return false;
+		}
+
+		public static bool DebugShowNextStatementPossible()
+		{
+			return DebuggerService.CurrentDebugger != null &&
+			DebuggerService.CurrentDebugger.IsDebugging &&
+			!DebuggerService.CurrentDebugger.IsProcessRunning;
+		}
+
+		static bool TryShowNextStatement()
+		{
+			if (!DebugShowNextStatementPossible())
+				return false;
+
+			// Always reset the selected frame
+			ReturnStatementBookmark.SelectedFrame = 0;
+
+			Tuple<MethodKey, int, IMemberRef> info;
+			MethodKey currentKey;
+			Dictionary<MethodKey, MemberMapping> cm;
+			if (!DebugUtils.VerifyAndGetCurrentDebuggedMethod(out info, out currentKey, out cm))
+				return false;
+
+			NR.TextLocation location, endLocation;
+			if (!cm[currentKey].GetInstructionByTokenAndOffset((uint)info.Item2, out location, out endLocation))
+				return false;
+
+			MainWindow.Instance.TextView.ScrollAndMoveCaretTo(location.Line, location.Column);
+			return true;
+		}
+
+		public static bool DebugCanSetNextStatement()
+		{
+			if (DebuggerService.CurrentDebugger == null ||
+				!DebuggerService.CurrentDebugger.IsDebugging ||
+				DebuggerService.CurrentDebugger.IsProcessRunning)
+				return false;
+
+			SourceCodeMapping mapping;
+			string errMsg;
+			if (!DebugGetSourceCodeMappingForSetNextStatement(out errMsg, out mapping))
+				return false;
+
+			var info = DebugInformation.DebugStepInformation;
+			return info == null || info.Item2 != mapping.ILInstructionOffset.From;
+		}
+
+		public static bool DebugSetNextStatement()
+		{
+			string errMsg;
+			if (!DebugSetNextStatement(out errMsg)) {
+				if (string.IsNullOrEmpty(errMsg))
+					errMsg = "Could not set next statement (unknown reason)";
+				MessageBox.Show(MainWindow.Instance, errMsg);
+				return false;
+			}
+
+			return true;
+		}
+
+		public static bool DebugSetNextStatement(out string errMsg)
+		{
+			SourceCodeMapping mapping;
+			if (!DebugGetSourceCodeMappingForSetNextStatement(out errMsg, out mapping))
+				return false;
+
+			int ilOffset = (int)mapping.ILInstructionOffset.From;
+			if (!DebuggerService.CurrentDebugger.SetInstructionPointer(ilOffset)) {
+				errMsg = "Setting the next statement failed.";
+				return false;
+			}
+
+			return true;
+		}
+
+		public static bool DebugGetSourceCodeMappingForSetNextStatement(out string errMsg, out SourceCodeMapping mapping)
+		{
+			errMsg = string.Empty;
+			mapping = null;
+
+			if (DebuggerService.CurrentDebugger == null) {
+				errMsg = "No debugger exists";
+				return false;
+			}
+			if (!DebuggerService.CurrentDebugger.IsDebugging) {
+				errMsg = "We're not debugging";
+				return false;
+			}
+			if (DebuggerService.CurrentDebugger.IsProcessRunning) {
+				errMsg = "Can't set next statement when the process is running";
+				return false;
+			}
+
+			Tuple<MethodKey, int, IMemberRef> info;
+			MethodKey currentKey;
+			Dictionary<MethodKey, MemberMapping> cm;
+			if (!DebugUtils.VerifyAndGetCurrentDebuggedMethod(out info, out currentKey, out cm)) {
+				errMsg = "No debug information found. Make sure that only the debugged method is selected in the treeview (press 'Alt+Num *' to go to current statement)";
+				return false;
+			}
+
+			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
+			mapping = BreakpointHelper.Find(cm, location.Line, location.Column);
+			if (mapping == null) {
+				errMsg = "It's not possible to set the next statement here";
+				return false;
+			}
+			if (mapping.MemberMapping.MethodDefinition != info.Item3) {
+				errMsg = "The next statement cannot be set to another method";
+				return false;
+			}
+
+			int ilOffset = (int)mapping.ILInstructionOffset.From;
+			if (!DebuggerService.CurrentDebugger.CanSetInstructionPointer(ilOffset)) {
+				errMsg = "It's not safe to set the next statement here";
+				return false;
+			}
+
+			return true;
+		}
+	}
+
 	public abstract class DebuggerCommand : SimpleCommand
 	{
 		readonly bool? needsDebuggerActive;
@@ -333,25 +644,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	{
 		public ContinueDebuggingCommand() : base(true, true)
 		{
-			MainWindow.Instance.KeyUp += OnKeyUp;
-		}
-
-		void OnKeyUp(object sender, KeyEventArgs e)
-		{
-			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F5) {
-				this.Execute(null);
-				e.Handled = true;
-			}
 		}
 
 		public override void Execute(object parameter)
 		{
-			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
-				CurrentLineBookmark.Remove();
-				ReturnStatementBookmark.Remove(true);
-				CurrentDebugger.Continue();
-				MainWindow.Instance.SetStatus("Running...", Brushes.Black);
-			}
+			DebuggerPlugin.DebugContinue();
 		}
 	}
 
@@ -365,26 +662,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	{
 		public BreakDebuggingCommand() : base(true, false)
 		{
-			MainWindow.Instance.KeyDown += OnKeyDown;
-		}
-
-		void OnKeyDown(object sender, KeyEventArgs e)
-		{
-			if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.Cancel) {
-				if (CanExecute(null)) {
-					this.Execute(null);
-					e.Handled = true;
-				}
-			}
 		}
 
 		public override void Execute(object parameter)
 		{
-			if (CurrentDebugger.IsDebugging && CurrentDebugger.IsProcessRunning)
-			{
-				CurrentDebugger.Break();
-				MainWindow.Instance.SetStatus("Debugging...", Brushes.Red);
-			}
+			DebuggerPlugin.DebugBreak();
 		}
 	}
 
@@ -398,25 +680,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	{
 		public StepIntoCommand() : base(true, true)
 		{
-			MainWindow.Instance.KeyDown += OnKeyDown;
-		}
-
-		void OnKeyDown(object sender, KeyEventArgs e)
-		{
-			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F11) {
-				if (CanExecute(null)) {
-					this.Execute(null);
-					e.Handled = true;
-				}
-			}
 		}
 
 		public override void Execute(object parameter)
 		{
-			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
-				base.Execute(null);
-				CurrentDebugger.StepInto();
-			}
+			DebuggerPlugin.DebugStepInto();
 		}
 	}
 	
@@ -430,25 +698,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	{
 		public StepOverCommand() : base(true, true)
 		{
-			MainWindow.Instance.KeyDown += OnKeyDown;
-		}
-
-		void OnKeyDown(object sender, KeyEventArgs e)
-		{
-			if (Keyboard.Modifiers == ModifierKeys.None && (e.SystemKey == Key.F10 ? e.SystemKey : e.Key) == Key.F10) {
-				if (CanExecute(null)) {
-					this.Execute(null);
-					e.Handled = true;
-				}
-			}
 		}
 
 		public override void Execute(object parameter)
 		{
-			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
-				base.Execute(null);
-				CurrentDebugger.StepOver();
-			}
+			DebuggerPlugin.DebugStepOver();
 		}
 	}
 	
@@ -462,25 +716,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	{
 		public StepOutCommand() : base(true, true)
 		{
-			MainWindow.Instance.KeyDown += OnKeyDown;
-		}
-
-		void OnKeyDown(object sender, KeyEventArgs e)
-		{
-			if (Keyboard.Modifiers == ModifierKeys.Shift && e.Key == Key.F11) {
-				if (CanExecute(null)) {
-					this.Execute(null);
-					e.Handled = true;
-				}
-			}
 		}
 
 		public override void Execute(object parameter)
 		{
-			if (CurrentDebugger.IsDebugging && !CurrentDebugger.IsProcessRunning) {
-				base.Execute(null);
-				CurrentDebugger.StepOut();
-			}
+			DebuggerPlugin.DebugStepOut();
 		}
 	}
 	
@@ -515,27 +755,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	{
 		public RemoveBreakpointsCommand() : base(null)
 		{
-			MainWindow.Instance.KeyDown += OnKeyDown;
-		}
-
-		void OnKeyDown(object sender, KeyEventArgs e)
-		{
-			if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.F9) {
-				if (CanExecute(null)) {
-					this.Execute(null);
-					e.Handled = true;
-				}
-			}
 		}
 
 		public override void Execute(object parameter)
 		{
-			for (int i = BookmarkManager.Bookmarks.Count - 1; i >= 0; --i) {
-				var bookmark = BookmarkManager.Bookmarks[i];
-				if (bookmark is BreakpointBookmark) {
-					BookmarkManager.RemoveMark(bookmark);
-				}
-			}
+			DebuggerPlugin.DebugDeleteAllBreakpoints();
 		}
 	}
 
@@ -548,23 +772,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	{
 		public ToggleBreakpointCommand() : base(null)
 		{
-			MainWindow.Instance.KeyDown += OnKeyDown;
-		}
-
-		void OnKeyDown(object sender, KeyEventArgs e)
-		{
-			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F9) {
-				if (CanExecute(null)) {
-					this.Execute(null);
-					e.Handled = true;
-				}
-			}
 		}
 
 		public override void Execute(object parameter)
 		{
-			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
-			BreakpointHelper.Toggle(location.Line, location.Column);
+			DebuggerPlugin.DebugToggleBreakpoint();
 		}
 	}
 
@@ -588,8 +800,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public void Execute(TextViewContext context)
 		{
-			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
-			BreakpointHelper.Toggle(location.Line, location.Column);
+			DebuggerPlugin.DebugToggleBreakpoint();
 		}
 
 		public string GetMenuHeader(TextViewContext context)
@@ -612,26 +823,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 							Order = 1.1)]
 	internal sealed class DisableBreakpointContextMenuEntry : IContextMenuEntry
 	{
-		public DisableBreakpointContextMenuEntry()
-		{
-			MainWindow.Instance.KeyDown += OnKeyDown;
-		}
-
-		void OnKeyDown(object sender, KeyEventArgs e)
-		{
-			if (Keyboard.Modifiers == ModifierKeys.Shift && e.Key == Key.F9) {
-				if (IsEnabled(null)) {
-					this.Execute(null);
-					e.Handled = true;
-				}
-			}
-		}
-
 		public bool IsVisible(TextViewContext context)
 		{
 			return (context == null || context.TextView != null) &&
-				DebuggerService.CurrentDebugger != null &&
-				HasBP();
+				DebuggerPlugin.DebugEnableDisableBreakpointPossible();
 		}
 
 		public bool IsEnabled(TextViewContext context)
@@ -641,10 +836,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public void Execute(TextViewContext context)
 		{
-			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
-			var bpm = BreakpointHelper.GetBreakpointBookmark(location.Line, location.Column);
-			if (bpm != null)
-				bpm.IsEnabled = !bpm.IsEnabled;
+			DebuggerPlugin.DebugEnableDisableBreakpoint();
 		}
 
 		public string GetMenuHeader(TextViewContext context)
@@ -655,12 +847,6 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				return null;
 			return bpm.IsEnabled ? "Disable _Breakpoint" : "Enable _Breakpoint";
 		}
-
-		bool HasBP()
-		{
-			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
-			return BreakpointHelper.GetBreakpointBookmark(location.Line, location.Column) != null;
-		}
 	}
 
 	[ExportContextMenuEntry(Header = "S_how Next Statement",
@@ -669,27 +855,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 							Order = 2.0)]
 	internal sealed class ShowNextStatementContextMenuEntry : IContextMenuEntry
 	{
-		public ShowNextStatementContextMenuEntry()
-		{
-			MainWindow.Instance.KeyDown += OnKeyDown;
-		}
-
-		void OnKeyDown(object sender, KeyEventArgs e)
-		{
-			if (Keyboard.Modifiers == ModifierKeys.Alt && e.SystemKey == Key.Multiply) {
-				if (IsEnabled(null)) {
-					Execute();
-					e.Handled = true;
-				}
-			}
-		}
-
 		public bool IsVisible(TextViewContext context)
 		{
 			return (context == null || context.TextView != null) &&
-				DebuggerService.CurrentDebugger != null &&
-				DebuggerService.CurrentDebugger.IsDebugging &&
-				!DebuggerService.CurrentDebugger.IsProcessRunning;
+				DebuggerPlugin.DebugShowNextStatementPossible();
 		}
 
 		public bool IsEnabled(TextViewContext context)
@@ -699,37 +868,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public void Execute(TextViewContext context)
 		{
-			Execute();
-		}
-
-		void Execute()
-		{
-			if (!TryExecute())
-				DecompileDebuggedMethod();
-		}
-
-		bool TryExecute()
-		{
-			// Always reset the selected frame
-			ReturnStatementBookmark.SelectedFrame = 0;
-
-			Tuple<MethodKey, int, IMemberRef> info;
-			MethodKey currentKey;
-			Dictionary<MethodKey, MemberMapping> cm;
-			if (!DebugUtils.VerifyAndGetCurrentDebuggedMethod(out info, out currentKey, out cm))
-				return false;
-
-			NR.TextLocation location, endLocation;
-			if (!cm[currentKey].GetInstructionByTokenAndOffset((uint)info.Item2, out location, out endLocation))
-				return false;
-
-			MainWindow.Instance.TextView.ScrollAndMoveCaretTo(location.Line, location.Column);
-			return true;
-		}
-
-		void DecompileDebuggedMethod()
-		{
-			DebuggerCommand.JumpToMethod();
+			DebuggerPlugin.DebugShowNextStatement();
 		}
 
 		public string GetMenuHeader(TextViewContext context)
@@ -744,42 +883,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 							Order = 3.0)]
 	internal sealed class SetNextStatementContextMenuEntry : IContextMenuEntry
 	{
-		public SetNextStatementContextMenuEntry()
-		{
-			MainWindow.Instance.KeyDown += OnKeyDown;
-		}
-
-		void OnKeyDown(object sender, KeyEventArgs e)
-		{
-			if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && (e.SystemKey == Key.F10 ? e.SystemKey : e.Key) == Key.F10) {
-				if (IsEnabled(null))
-					Execute();
-				else {
-					// Show the error message
-					SourceCodeMapping mapping;
-					string errMsg;
-					if (!GetSourceCodeMapping(out errMsg, out mapping))
-						MessageBox.Show(MainWindow.Instance, errMsg);
-				}
-				e.Handled = true;
-			}
-		}
-
 		public bool IsVisible(TextViewContext context)
 		{
-			if ((context != null && context.TextView == null) ||
-				DebuggerService.CurrentDebugger == null ||
-				!DebuggerService.CurrentDebugger.IsDebugging ||
-				DebuggerService.CurrentDebugger.IsProcessRunning)
-				return false;
-
-			SourceCodeMapping mapping;
-			string errMsg;
-			if (!GetSourceCodeMapping(out errMsg, out mapping))
-				return false;
-
-			var info = DebugInformation.DebugStepInformation;
-			return info == null || info.Item2 != mapping.ILInstructionOffset.From;
+			return (context == null || context.TextView != null) &&
+				DebuggerPlugin.DebugCanSetNextStatement();
 		}
 
 		public bool IsEnabled(TextViewContext context)
@@ -789,78 +896,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public void Execute(TextViewContext context)
 		{
-			Execute();
-		}
-
-		void Execute()
-		{
-			string errMsg;
-			if (!Execute(out errMsg)) {
-				if (string.IsNullOrEmpty(errMsg))
-					errMsg = "Could not set next statement (unknown reason)";
-				MessageBox.Show(MainWindow.Instance, errMsg);
-			}
-		}
-
-		bool Execute(out string errMsg)
-		{
-			SourceCodeMapping mapping;
-			if (!GetSourceCodeMapping(out errMsg, out mapping))
-				return false;
-
-			int ilOffset = (int)mapping.ILInstructionOffset.From;
-			if (!DebuggerService.CurrentDebugger.SetInstructionPointer(ilOffset)) {
-				errMsg = "Setting the next statement failed.";
-				return false;
-			}
-
-			return true;
-		}
-
-		bool GetSourceCodeMapping(out string errMsg, out SourceCodeMapping mapping)
-		{
-			errMsg = string.Empty;
-			mapping = null;
-
-			if (DebuggerService.CurrentDebugger == null) {
-				errMsg = "No debugger exists";
-				return false;
-			}
-			if (!DebuggerService.CurrentDebugger.IsDebugging) {
-				errMsg = "We're not debugging";
-				return false;
-			}
-			if (DebuggerService.CurrentDebugger.IsProcessRunning) {
-				errMsg = "Can't set next statement when the process is running";
-				return false;
-			}
-
-			Tuple<MethodKey, int, IMemberRef> info;
-			MethodKey currentKey;
-			Dictionary<MethodKey, MemberMapping> cm;
-			if (!DebugUtils.VerifyAndGetCurrentDebuggedMethod(out info, out currentKey, out cm)) {
-				errMsg = "No debug information found. Make sure that only the debugged method is selected in the treeview (press 'Alt+Num *' to go to current statement)";
-				return false;
-			}
-
-			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
-			mapping = BreakpointHelper.Find(cm, location.Line, location.Column);
-			if (mapping == null) {
-				errMsg = "It's not possible to set the next statement here";
-				return false;
-			}
-			if (mapping.MemberMapping.MethodDefinition != info.Item3) {
-				errMsg = "The next statement cannot be set to another method";
-				return false;
-			}
-
-			int ilOffset = (int)mapping.ILInstructionOffset.From;
-			if (!DebuggerService.CurrentDebugger.CanSetInstructionPointer(ilOffset)) {
-				errMsg = "It's not safe to set the next statement here";
-				return false;
-			}
-
-			return true;
+			DebuggerPlugin.DebugSetNextStatement();
 		}
 
 		public string GetMenuHeader(TextViewContext context)

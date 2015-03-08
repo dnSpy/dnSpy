@@ -47,6 +47,17 @@ using dnlib.DotNet;
 namespace ICSharpCode.ILSpy
 {
 	/// <summary>
+	/// A plugin can implement this interface to get notified at startup
+	/// </summary>
+	public interface IPlugin
+	{
+		/// <summary>
+		/// Called when MainWindow has been loaded
+		/// </summary>
+		void OnLoaded();
+	}
+
+	/// <summary>
 	/// The main window of the application.
 	/// </summary>
 	partial class MainWindow : Window
@@ -61,6 +72,9 @@ namespace ICSharpCode.ILSpy
 		
 		[Import]
 		DecompilerTextView decompilerTextView = null;
+
+		[ImportMany]
+		IEnumerable<IPlugin> plugins = null;
 		
 		static MainWindow instance;
 		
@@ -459,6 +473,9 @@ namespace ICSharpCode.ILSpy
 			AvalonEditTextOutput output = new AvalonEditTextOutput();
 			if (FormatExceptions(App.StartupExceptions.ToArray(), output))
 				decompilerTextView.ShowText(output);
+
+			foreach (var plugin in plugins)
+				plugin.OnLoaded();
 		}
 		
 		bool FormatExceptions(App.ExceptionData[] exceptions, ITextOutput output)
