@@ -314,17 +314,27 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					frame.SourceCodeLine = -1;
 					frame.ILRanges = DebugInformation.CodeMappings[frame.MethodInfo.ToMethodKey()].ToArray(null, false);
 					if (frame.ILRanges.Length == 0)
-						frame.ILRanges = new[] { 0, 1 };
+						frame.ILRanges = new[] { frame.IP.Offset, frame.IP.Offset + 1 };
 				}
 				else {
-					// The user has selected another method and pressed F10/F11 while in that method
-					// instead of the current method. Make sure the debugged method is shown before
-					// we continue.
+					// The user has probably selected another method and pressed F10/F11 while in
+					// that method instead of the current method. Make sure the debugged method is
+					// shown before we continue. It could also be that it's a hidden method with
+					// no IL ranges (eg. a hidden .cctor).
+					var old = DebugInformation.DebugStepInformation;
 					StepIntoUnknownFrame(frame);
 					var info = DebugInformation.DebugStepInformation;
-					if (info != null)
-						DebugUtils.JumpToReference(info.Item3);
-					return null;
+					// This condition is true if the method we're in is hidden and there are no
+					// IL ranges at all.
+					if (old != null && info != null && old.Item1 == info.Item1 && old.Item2 == info.Item2 && old.Item3 == info.Item3) {
+						frame.SourceCodeLine = -1;
+						frame.ILRanges = new[] { 0, int.MaxValue };
+					}
+					else {
+						if (info != null)
+							DebugUtils.JumpToReference(info.Item3);
+						return null;
+					}
 				}
 			} else {
 				frame.SourceCodeLine = map.StartLocation.Line;
