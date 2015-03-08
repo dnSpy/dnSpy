@@ -149,10 +149,6 @@
       <Project>{984CC812-9470-4A13-AFF9-CC44068D666C}</Project>
       <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ILSpy.SharpDevelop.LGPL\ILSpy.SharpDevelop.LGPL.csproj">
-      <Project>{704F66F1-5C7F-4326-A7AA-C604A3896D4E}</Project>
-      <Name>ILSpy.SharpDevelop.LGPL</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\ILSpy\ILSpy.csproj">
       <Project>{1E85EFF9-E370-4683-83E4-8A3D063FF791}</Project>
       <Name>ILSpy</Name>

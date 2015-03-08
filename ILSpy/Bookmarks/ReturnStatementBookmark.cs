@@ -6,7 +6,6 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Services;
-using ICSharpCode.ILSpy.SharpDevelop;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 using dnlib.DotNet;

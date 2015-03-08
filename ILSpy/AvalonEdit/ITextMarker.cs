@@ -171,7 +171,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		/// <summary>
 		/// Gets the text view
 		/// </summary>
-		TextView TextView { get; }
+		ICSharpCode.AvalonEdit.Rendering.TextView TextView { get; }
 
 		/// <summary>
 		/// Creates a new text marker. The text marker will be invisible at first,

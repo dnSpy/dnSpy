@@ -164,9 +164,9 @@
       <Project>{FDFC1237-143F-4919-8318-4926901F4639}</Project>
       <Name>dnlib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ILSpy.SharpDevelop.LGPL\ILSpy.SharpDevelop.LGPL.csproj">
-      <Project>{704F66F1-5C7F-4326-A7AA-C604A3896D4E}</Project>
-      <Name>ILSpy.SharpDevelop.LGPL</Name>
+    <ProjectReference Include="..\..\ILSpy\ILSpy.csproj">
+      <Project>{1E85EFF9-E370-4683-83E4-8A3D063FF791}</Project>
+      <Name>ILSpy</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\NRefactory\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj">
       <Project>{53DCA265-3C3C-42F9-B647-F72BA678122B}</Project>

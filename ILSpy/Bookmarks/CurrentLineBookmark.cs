@@ -6,7 +6,6 @@ using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Bookmarks;
-using ICSharpCode.ILSpy.SharpDevelop;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using dnlib.DotNet;

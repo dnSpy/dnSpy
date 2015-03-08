@@ -8,7 +8,6 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Bookmarks;
-using ICSharpCode.ILSpy.SharpDevelop;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using dnlib.DotNet;

@@ -105,8 +105,23 @@
     </Compile>
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
+    <Compile Include="AvalonEdit\IconBarManager.cs" />
+    <Compile Include="AvalonEdit\IconBarMargin.cs" />
     <Compile Include="AvalonEdit\IconMarginActionsProvider.cs" />
+    <Compile Include="AvalonEdit\ITextEditorListener.cs" />
+    <Compile Include="AvalonEdit\ITextMarker.cs" />
+    <Compile Include="AvalonEdit\TextEditorWeakEventManager.cs" />
+    <Compile Include="AvalonEdit\TextMarkerService.cs" />
+    <Compile Include="Bookmarks\BookmarkBase.cs" />
+    <Compile Include="Bookmarks\BookmarkEventHandler.cs" />
+    <Compile Include="Bookmarks\BookmarkManager.cs" />
+    <Compile Include="Bookmarks\BreakpointBookmark.cs" />
+    <Compile Include="Bookmarks\BreakpointBookmarkEventArgs.cs" />
+    <Compile Include="Bookmarks\CurrentLineBookmark.cs" />
+    <Compile Include="Bookmarks\IBookmark.cs" />
+    <Compile Include="Bookmarks\MarkerBookmark.cs" />
     <Compile Include="Bookmarks\MemberBookmark.cs" />
+    <Compile Include="Bookmarks\ReturnStatementBookmark.cs" />
     <Compile Include="Commands\BrowseBackCommand.cs" />
     <Compile Include="Commands\BrowseForwardCommand.cs" />
     <Compile Include="CommandLineArguments.cs" />
@@ -128,6 +143,7 @@
     <Compile Include="CreateListDialog.xaml.cs">
       <DependentUpon>CreateListDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DebugInformation.cs" />
     <Compile Include="dntheme\ColorType.cs" />
     <Compile Include="dntheme\Theme.cs" />
     <Compile Include="dntheme\Themes.cs" />
@@ -152,6 +168,7 @@
     <Compile Include="Images\Images.cs" />
     <Compile Include="Languages\Languages.cs" />
     <Compile Include="LoadedAssembly.cs" />
+    <Compile Include="Models\ToolTipRequestEventArgs.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="NavigationHistory.cs" />
     <Compile Include="NavigationState.cs" />
@@ -189,6 +206,9 @@
     </Compile>
     <Compile Include="Commands\SimpleCommand.cs" />
     <Compile Include="SearchStrategies.cs" />
+    <Compile Include="Services\DebuggerService.cs" />
+    <Compile Include="Services\IDebugger.cs" />
+    <Compile Include="Services\ParserService.cs" />
     <Compile Include="TaskHelper.cs" />
     <Compile Include="TextView\EditorCommands.cs" />
     <Compile Include="TextView\FoldingCommands.cs" />
@@ -393,10 +413,6 @@
     <ProjectReference Include="..\dnlib\src\dnlib.csproj">
       <Project>{FDFC1237-143F-4919-8318-4926901F4639}</Project>
       <Name>dnlib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ILSpy.SharpDevelop.LGPL\ILSpy.SharpDevelop.LGPL.csproj">
-      <Project>{704F66F1-5C7F-4326-A7AA-C604A3896D4E}</Project>
-      <Name>ILSpy.SharpDevelop.LGPL</Name>
     </ProjectReference>
     <ProjectReference Include="..\AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
       <Project>{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}</Project>

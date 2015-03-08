@@ -28,8 +28,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPlugin", "TestPlugin\Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.VB", "NRefactory\ICSharpCode.NRefactory.VB\ICSharpCode.NRefactory.VB.csproj", "{7B82B671-419F-45F4-B778-D9286F996EFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ILSpy.SharpDevelop.LGPL", "ILSpy.SharpDevelop.LGPL\ILSpy.SharpDevelop.LGPL.csproj", "{704F66F1-5C7F-4326-A7AA-C604A3896D4E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.CSharp", "NRefactory\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj", "{53DCA265-3C3C-42F9-B647-F72BA678122B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnlib", "dnlib\src\dnlib.csproj", "{FDFC1237-143F-4919-8318-4926901F4639}"
@@ -173,18 +171,6 @@ Global
 		{7B82B671-419F-45F4-B778-D9286F996EFA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{7B82B671-419F-45F4-B778-D9286F996EFA}.Release|x86.ActiveCfg = Release|Any CPU
 		{7B82B671-419F-45F4-B778-D9286F996EFA}.Release|x86.Build.0 = Release|Any CPU
-		{704F66F1-5C7F-4326-A7AA-C604A3896D4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{704F66F1-5C7F-4326-A7AA-C604A3896D4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{704F66F1-5C7F-4326-A7AA-C604A3896D4E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{704F66F1-5C7F-4326-A7AA-C604A3896D4E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{704F66F1-5C7F-4326-A7AA-C604A3896D4E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{704F66F1-5C7F-4326-A7AA-C604A3896D4E}.Debug|x86.Build.0 = Debug|Any CPU
-		{704F66F1-5C7F-4326-A7AA-C604A3896D4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{704F66F1-5C7F-4326-A7AA-C604A3896D4E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{704F66F1-5C7F-4326-A7AA-C604A3896D4E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{704F66F1-5C7F-4326-A7AA-C604A3896D4E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{704F66F1-5C7F-4326-A7AA-C604A3896D4E}.Release|x86.ActiveCfg = Release|Any CPU
-		{704F66F1-5C7F-4326-A7AA-C604A3896D4E}.Release|x86.Build.0 = Release|Any CPU
 		{53DCA265-3C3C-42F9-B647-F72BA678122B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{53DCA265-3C3C-42F9-B647-F72BA678122B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53DCA265-3C3C-42F9-B647-F72BA678122B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
