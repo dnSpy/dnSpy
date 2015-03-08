@@ -255,8 +255,11 @@ namespace ICSharpCode.ILSpy.Debugger.UI
             var foundAssembly = MainWindow.Instance.CurrentAssemblyList.OpenAssembly(selectedItem.Frame.MethodInfo.DebugModule.FullPath, true);
             if (null == foundAssembly)
                 return;
+			var module = foundAssembly.ModuleDefinition as ModuleDefMD;
+			if (module == null)
+				return;
             
-			IMemberRef mr = XmlDocKeyProvider.FindMemberByKey(foundAssembly.ModuleDefinition, "M:" + selectedItem.Name);
+			IMemberRef mr = module.ResolveToken(selectedItem.Token) as IMemberRef;
 			if (mr == null)
 				return;
 			bool alreadySelected;
