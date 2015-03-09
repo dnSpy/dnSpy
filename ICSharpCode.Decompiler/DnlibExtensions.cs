@@ -63,7 +63,7 @@ namespace ICSharpCode.Decompiler
 
 		/// <summary>
 		/// checks if the given value is a numeric zero-value.
-		/// NOTE that this only works for types: [sbyte, short, int, long, IntPtr, byte, ushort, uint, ulong, float, double and decimal]
+		/// NOTE that this only works for types: [sbyte, short, int, long, IntPtr, byte, ushort, uint, ulong, UIntPtr, float, double and decimal]
 		/// </summary>
 		public static bool IsZero(this object value)
 		{
@@ -78,6 +78,7 @@ namespace ICSharpCode.Decompiler
 				   value.Equals((ushort)0) ||
 				   value.Equals(0u) ||
 				   value.Equals(0UL) ||
+				   value.Equals(UIntPtr.Zero) ||
 				   value.Equals(0.0f) ||
 				   value.Equals(0.0) ||
 				   value.Equals((decimal)0);
