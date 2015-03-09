@@ -291,6 +291,9 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public static bool DebugDeleteAllBreakpoints()
 		{
+			if (MessageBox.Show(MainWindow.Instance, "Do you want to delete all breakpoints?", "dnSpy", MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
+				return false;
+
 			for (int i = BookmarkManager.Bookmarks.Count - 1; i >= 0; --i) {
 				var bookmark = BookmarkManager.Bookmarks[i];
 				if (bookmark is BreakpointBookmark) {
@@ -298,6 +301,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				}
 			}
 			return true;
+		}
+
+		public static bool DebugDeleteAllBreakpointsPossible()
+		{
+			return BookmarkManager.Bookmarks.Any(b => b is BreakpointBookmark);
 		}
 
 		public static bool DebugToggleBreakpoint()
@@ -766,7 +774,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	
 	[ExportMainMenuCommand(Menu = "_Debug",
 	                       MenuIcon = "Images/DeleteAllBreakpoints.png",
-	                       MenuCategory = "Others",
+						   MenuCategory = "Breakpoints",
 	                       Header = "_Delete all breakpoints",
 						   InputGestureText = "Ctrl+Shift+F9",
 	                       MenuOrder = 7.9)]
@@ -780,10 +788,16 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		{
 			DebuggerPlugin.DebugDeleteAllBreakpoints();
 		}
+
+		public override bool CanExecute(object parameter)
+		{
+			return base.CanExecute(parameter) &&
+				DebuggerPlugin.DebugDeleteAllBreakpointsPossible();
+		}
 	}
 
 	[ExportMainMenuCommand(Menu = "_Debug",
-	                       MenuCategory = "Others",
+	                       MenuCategory = "Breakpoints",
 	                       Header = "To_ggle Breakpoint",
 						   InputGestureText = "F9",
 	                       MenuOrder = 7)]
