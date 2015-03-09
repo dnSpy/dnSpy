@@ -55,8 +55,8 @@ namespace ICSharpCode.ILSpy
 			this.LeftColumnWidth = FromString((string)doc.Element("LeftColumnWidth"), 0.0);
 			this.WordWrap = FromString((string)doc.Element("WordWrap"), false);
 			this.HighlightCurrentLine = FromString((string)doc.Element("HighlightCurrentLine"), true);
-			this.TopPaneSplitterPosition = FromString((string)doc.Element("TopPaneSplitterPosition"), 0.3);
-			this.BottomPaneSplitterPosition = FromString((string)doc.Element("BottomPaneSplitterPosition"), 0.3);
+			this.TopPaneHeight = FromString((string)doc.Element("TopPaneHeight"), 200);
+			this.BottomPaneHeight = FromString((string)doc.Element("BottomPaneHeight"), 200);
 			this.ThemeName = (string)doc.Element("ThemeName") ?? "light";
 		}
 		
@@ -79,7 +79,7 @@ namespace ICSharpCode.ILSpy
 		public Rect WindowBounds;
 		internal static Rect DefaultWindowBounds =  new Rect(10, 10, 750, 550);
 		public double LeftColumnWidth;
-		public double TopPaneSplitterPosition, BottomPaneSplitterPosition;
+		public double TopPaneHeight, BottomPaneHeight;
 		public bool WordWrap, HighlightCurrentLine;
 
 		public string ThemeName;
@@ -102,8 +102,8 @@ namespace ICSharpCode.ILSpy
 			doc.Add(new XElement("WordWrap", ToString(this.WordWrap)));
 			doc.Add(new XElement("HighlightCurrentLine", ToString(this.HighlightCurrentLine)));
 			doc.Add(new XElement("LeftColumnWidth", ToString(this.LeftColumnWidth)));
-			doc.Add(new XElement("TopPaneSplitterPosition", ToString(this.TopPaneSplitterPosition)));
-			doc.Add(new XElement("BottomPaneSplitterPosition", ToString(this.BottomPaneSplitterPosition)));
+			doc.Add(new XElement("TopPaneHeight", ToString(this.TopPaneHeight)));
+			doc.Add(new XElement("BottomPaneHeight", ToString(this.BottomPaneHeight)));
 			doc.Add(new XElement("ThemeName", ToString(this.ThemeName)));
 			
 			ILSpySettings.SaveSettings(doc);

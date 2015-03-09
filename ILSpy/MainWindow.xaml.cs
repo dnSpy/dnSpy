@@ -1032,9 +1032,9 @@ namespace ICSharpCode.ILSpy
 			sessionSettings.WordWrap = decompilerTextView.TextEditor.WordWrap;
 			sessionSettings.HighlightCurrentLine = decompilerTextView.TextEditor.Options.HighlightCurrentLine;
 			if (topPane.Visibility == Visibility.Visible)
-				sessionSettings.BottomPaneSplitterPosition = topPaneRow.Height.Value / (topPaneRow.Height.Value + textViewRow.Height.Value);
+				sessionSettings.TopPaneHeight = topPaneRow.Height.Value;
 			if (bottomPane.Visibility == Visibility.Visible)
-				sessionSettings.BottomPaneSplitterPosition = bottomPaneRow.Height.Value / (bottomPaneRow.Height.Value + textViewRow.Height.Value);
+				sessionSettings.BottomPaneHeight = bottomPaneRow.Height.Value;
 			sessionSettings.Save();
 		}
 
@@ -1058,10 +1058,8 @@ namespace ICSharpCode.ILSpy
 		public void ShowInTopPane(string title, object content)
 		{
 			topPaneRow.MinHeight = 100;
-			if (sessionSettings.TopPaneSplitterPosition > 0 && sessionSettings.TopPaneSplitterPosition < 1) {
-				textViewRow.Height = new GridLength(1 - sessionSettings.TopPaneSplitterPosition, GridUnitType.Star);
-				topPaneRow.Height = new GridLength(sessionSettings.TopPaneSplitterPosition, GridUnitType.Star);
-			}
+			if (sessionSettings.TopPaneHeight > 0)
+				topPaneRow.Height = new GridLength(sessionSettings.TopPaneHeight, GridUnitType.Pixel);
 			topPane.Title = title;
 			topPane.Content = content;
 			topPane.Visibility = Visibility.Visible;
@@ -1074,7 +1072,7 @@ namespace ICSharpCode.ILSpy
 
 		public void CloseTopPane()
 		{
-			sessionSettings.TopPaneSplitterPosition = topPaneRow.Height.Value / (topPaneRow.Height.Value + textViewRow.Height.Value);
+			sessionSettings.TopPaneHeight = topPaneRow.Height.Value;
 			topPaneRow.MinHeight = 0;
 			topPaneRow.Height = new GridLength(0);
 			topPane.Visibility = Visibility.Collapsed;
@@ -1092,10 +1090,8 @@ namespace ICSharpCode.ILSpy
 		public void ShowInBottomPane(string title, object content)
 		{
 			bottomPaneRow.MinHeight = 100;
-			if (sessionSettings.BottomPaneSplitterPosition > 0 && sessionSettings.BottomPaneSplitterPosition < 1) {
-				textViewRow.Height = new GridLength(1 - sessionSettings.BottomPaneSplitterPosition, GridUnitType.Star);
-				bottomPaneRow.Height = new GridLength(sessionSettings.BottomPaneSplitterPosition, GridUnitType.Star);
-			}
+			if (sessionSettings.BottomPaneHeight > 0)
+				bottomPaneRow.Height = new GridLength(sessionSettings.BottomPaneHeight, GridUnitType.Pixel);
 			bottomPane.Title = title;
 			bottomPane.Content = content;
 			bottomPane.Visibility = Visibility.Visible;
@@ -1108,7 +1104,7 @@ namespace ICSharpCode.ILSpy
 
 		public void CloseBottomPane()
 		{
-			sessionSettings.BottomPaneSplitterPosition = bottomPaneRow.Height.Value / (bottomPaneRow.Height.Value + textViewRow.Height.Value);
+			sessionSettings.BottomPaneHeight = bottomPaneRow.Height.Value;
 			bottomPaneRow.MinHeight = 0;
 			bottomPaneRow.Height = new GridLength(0);
 			bottomPane.Visibility = Visibility.Collapsed;

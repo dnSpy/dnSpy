@@ -142,7 +142,7 @@
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="0" Name="topPaneRow" />
 					<RowDefinition Height="0" />
-					<RowDefinition Height="0.7*" MinHeight="100" Name="textViewRow" />
+					<RowDefinition Height="0.7*" MinHeight="100" Name="textViefwRow" />
 					<RowDefinition Height="0" />
 					<RowDefinition Height="0" Name="bottomPaneRow" />
 				</Grid.RowDefinitions>
