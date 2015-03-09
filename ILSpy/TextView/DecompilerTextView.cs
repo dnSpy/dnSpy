@@ -131,6 +131,7 @@ namespace ICSharpCode.ILSpy.TextView
 			
 			textEditor.TextArea.LeftMargins.Insert(0, iconMargin);
 			textEditor.TextArea.TextView.VisualLinesChanged += delegate { iconMargin.InvalidateVisual(); };
+			textEditor.PreviewMouseDown += delegate { ClosePopups(); };
 			
 			// Bookmarks context menu
 			IconMarginActionsProvider.Add(iconMargin);
@@ -538,7 +539,7 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 		
-		Task DoDecompile(DecompilationContext context, int outputLengthLimit)
+		public void ClosePopups()
 		{
 			// close popup
 			if (textEditorListeners != null) {
@@ -546,6 +547,11 @@ namespace ICSharpCode.ILSpy.TextView
 					listener.ClosePopup();
 				}
 			}
+		}
+
+		Task DoDecompile(DecompilationContext context, int outputLengthLimit)
+		{
+			ClosePopups();
 
 			return RunWithCancellation(
 				delegate (CancellationToken ct) { // creation of the background task
@@ -1030,6 +1036,7 @@ namespace ICSharpCode.ILSpy.TextView
 
 			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Escape) {
 				ClearLocalReferenceMarks();
+				ClosePopups();
 				e.Handled = true;
 				return;
 			}
