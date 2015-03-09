@@ -79,30 +79,48 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		{
             if (MouseButton.Left != e.ChangedButton)
                 return;
-            var selectedItem = view.SelectedItem as BookmarkBase;
-            if (null == selectedItem)
+			if (view.SelectedItems.Count > 0)
+				GoToBookmark(view.SelectedItems[0] as BookmarkBase);
+			e.Handled = true;
+		}
+
+		void GoToBookmark(BookmarkBase bm)
+		{
+            if (null == bm)
                 return;
 			bool alreadySelected;
-			if (DebugUtils.JumpToReference(selectedItem.MemberReference, out alreadySelected)) {
+			if (DebugUtils.JumpToReference(bm.MemberReference, out alreadySelected)) {
 				if (alreadySelected)
-					MainWindow.Instance.TextView.ScrollAndMoveCaretTo(selectedItem.Location.Line, selectedItem.Location.Column);
+					MainWindow.Instance.TextView.ScrollAndMoveCaretTo(bm.Location.Line, bm.Location.Column);
 				else
-					DebugInformation.JumpToThisLine = selectedItem.Location;
+					DebugInformation.JumpToThisLine = bm.Location;
 				MainWindow.Instance.TextView.TextEditor.TextArea.Focus();
-				e.Handled = true;
 			}
 		}
         
-        void view_KeyUp(object sender, KeyEventArgs e)
+        void view_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key != Key.Delete)
-                return;
-            var selectedItem = view.SelectedItem as BookmarkBase;
-            if (null == selectedItem)
-                return;
-            BookmarkManager.RemoveMark(selectedItem);
-            e.Handled = true;
-        }
+			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Delete) {
+				foreach (BookmarkBase bm in Convert(view.SelectedItems))
+					BookmarkManager.RemoveMark(bm);
+				e.Handled = true;
+				return;
+			}
+			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Enter) {
+				if (view.SelectedItems.Count > 0)
+					GoToBookmark(view.SelectedItems[0] as BookmarkBase);
+				e.Handled = true;
+				return;
+			}
+		}
+
+		static List<object> Convert(System.Collections.IList list)
+		{
+			var l = new List<object>(list.Count);
+			foreach (var i in list)
+				l.Add(i);
+			return l;
+		}
     }
 
     [ExportMainMenuCommand(Menu="_Debug", Header="Show _Breakpoints", MenuCategory="View", MenuOrder=8)]

@@ -5,9 +5,9 @@
         <ListView
             Name="view"
             HorizontalContentAlignment="Stretch"
-            SelectionMode="Single"
+            SelectionMode="Extended"
             MouseDoubleClick="view_MouseDoubleClick"
-            KeyUp="view_KeyUp">
+            KeyDown="view_KeyDown">
             <ListView.View>
                 <GridView
                     AllowsColumnReorder="False">

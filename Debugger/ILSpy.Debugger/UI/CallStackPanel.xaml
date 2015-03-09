@@ -4,7 +4,9 @@
     <Grid>
         <ListView
             Name="view"
-            MouseDoubleClick="view_MouseDoubleClick">
+			SelectionMode="Single"
+            MouseDoubleClick="view_MouseDoubleClick"
+			KeyDown="view_KeyDown">
             <ListView.View>
                 <GridView>
                     <GridViewColumn

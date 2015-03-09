@@ -149,12 +149,11 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 				return;
 			}
 			
+			int selectedIndex = view.SelectedIndex;
 			IList<CallStackItem> items = null;
-			StackFrame activeFrame = null;
 			try {
 				Utils.DoEvents(debuggedProcess);
 				items = CreateItems(debuggedProcess);
-				activeFrame = debuggedProcess.SelectedThread.SelectedStackFrame;
 			} catch(AbortedBecauseDebuggeeResumedException) {
 			} catch(System.Exception) {
 				if (debuggedProcess == null || debuggedProcess.HasExited) {
@@ -164,7 +163,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 				}
 			}
 			view.ItemsSource = items;
-			view.SelectedItem = items != null ? items.FirstOrDefault(item => object.Equals(activeFrame, item.Frame)) : null;
+			view.SelectedIndex = items == null ? -1 : Math.Min(selectedIndex, items.Count - 1);
 		}
 		
 		IList<CallStackItem> CreateItems(Process debuggedProcess)
@@ -260,28 +259,32 @@ namespace ICSharpCode.ILSpy.Debugger.UI
         {
             if (MouseButton.Left != e.ChangedButton)
                 return;
-            var selectedItem = view.SelectedItem as CallStackItem;
-            if (null == selectedItem)
+			GoToStatement(view.SelectedItem as CallStackItem);
+		}
+
+		void GoToStatement(CallStackItem item)
+		{
+            if (null == item)
             	return;
-			StackFrameStatementBookmark.SelectedFrame = selectedItem.FrameNumber;
+			StackFrameStatementBookmark.SelectedFrame = item.FrameNumber;
             
-            var foundAssembly = MainWindow.Instance.CurrentAssemblyList.OpenAssembly(selectedItem.Frame.MethodInfo.DebugModule.FullPath, true);
+            var foundAssembly = MainWindow.Instance.CurrentAssemblyList.OpenAssembly(item.Frame.MethodInfo.DebugModule.FullPath, true);
             if (null == foundAssembly)
                 return;
 			var module = foundAssembly.ModuleDefinition as ModuleDefMD;
 			if (module == null)
 				return;
             
-			IMemberRef mr = module.ResolveToken(selectedItem.Token) as IMemberRef;
+			IMemberRef mr = module.ResolveToken(item.Token) as IMemberRef;
 			if (mr == null)
 				return;
 			bool alreadySelected;
 			if (DebugUtils.JumpToReference(mr, out alreadySelected)) {
 				var cm = DebugInformation.CodeMappings;
-				var key = selectedItem.MethodKey;
+				var key = item.MethodKey;
 				NR.TextLocation location, endLocation;
 				if (cm != null && cm.ContainsKey(key)) {
-					if (!cm[key].GetInstructionByTokenAndOffset((uint)selectedItem.ILOffset, out location, out endLocation)) {
+					if (!cm[key].GetInstructionByTokenAndOffset((uint)item.ILOffset, out location, out endLocation)) {
 						//TODO: Missing IL ranges
 					}
 					else if (alreadySelected)
@@ -290,12 +293,20 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 						DebugInformation.JumpToThisLine = location;
 				}
 				else {
-					DebugInformation.JumpToThisLine = Tuple.Create(selectedItem.MethodKey, selectedItem.ILOffset);
+					DebugInformation.JumpToThisLine = Tuple.Create(item.MethodKey, item.ILOffset);
 				}
 				MainWindow.Instance.TextView.TextEditor.TextArea.Focus();
-				e.Handled = true;
 			}
         }
+
+		void view_KeyDown(object sender, KeyEventArgs e)
+        {
+			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Enter) {
+				GoToStatement(view.SelectedItem as CallStackItem);
+				e.Handled = true;
+				return;
+			}
+		}
         
         void SwitchIsChecked(object sender, EventArgs args)
         {
