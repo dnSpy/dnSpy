@@ -719,29 +719,44 @@ namespace ICSharpCode.ILSpy
 		public bool JumpToReference(object reference)
 		{
 			bool alreadySelected;
-			return JumpToReference(reference, out alreadySelected);
+			return JumpToReference(reference, true, out alreadySelected);
 		}
 
-		public bool JumpToReference(object reference, out bool alreadySelected)
+		public bool JumpToReference(object reference, bool goToReference, out bool alreadySelected)
 		{
+			IMemberDef member = null;
+			if (reference is ITypeDefOrRef)
+				member = ((ITypeDefOrRef)reference).ResolveTypeDef();
+			else if (reference is IMethod && ((IMethod)reference).MethodSig != null)
+				member = ((IMethod)reference).Resolve();
+			else if (reference is IField)
+				member = ((IField)reference).Resolve();
+			else if (reference is PropertyDef)
+				member = (PropertyDef)reference;
+			else if (reference is EventDef)
+				member = (EventDef)reference;
+
+			if (member != null && ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.AutoFocusTextView) {
+				var type = member.DeclaringType;
+				if (type == null)
+					reference = member;
+				else {
+					for (int i = 0; i < 100; i++) {
+						var declType = type.DeclaringType;
+						if (declType == null)
+							break;
+						type = declType;
+					}
+					reference = type;
+				}
+			}
+
 			bool retVal;
-			JumpToReferenceAsync(reference, out retVal, out alreadySelected).HandleExceptions();
+			JumpToReferenceAsyncInternal(true, reference, goToReference ? member : null, out retVal, out alreadySelected).HandleExceptions();
 			return retVal;
 		}
-		
-		/// <summary>
-		/// Jumps to the specified reference.
-		/// </summary>
-		/// <returns>
-		/// Returns a task that will signal completion when the decompilation of the jump target has finished.
-		/// The task will be marked as canceled if the decompilation is canceled.
-		/// </returns>
-		public Task JumpToReferenceAsync(object reference, out bool success, out bool alreadySelected)
-		{
-			return JumpToReferenceAsyncInternal(true, reference, out success, out alreadySelected);
-		}
 
-		Task JumpToReferenceAsyncInternal(bool canLoad, object reference, out bool success, out bool alreadySelected)
+		Task JumpToReferenceAsyncInternal(bool canLoad, object reference, IMemberDef originalMember, out bool success, out bool alreadySelected)
 		{
 			alreadySelected = false;
 			decompilationTask = TaskHelper.CompletedTask;
@@ -749,8 +764,10 @@ namespace ICSharpCode.ILSpy
 			if (treeNode != null) {
 				if (treeView.SelectedItem == treeNode)
 					alreadySelected = true;
-				else
+				else {
+					DebugInformation.JumpToThisLine = originalMember;
 					SelectNode(treeNode);
+				}
 				success = true;
 			} else if (reference is dnlib.DotNet.Emit.OpCode) {
 				string link = "http://msdn.microsoft.com/library/system.reflection.emit.opcodes." + ((dnlib.DotNet.Emit.OpCode)reference).Code.ToString().ToLowerInvariant() + ".aspx";
@@ -781,7 +798,7 @@ namespace ICSharpCode.ILSpy
 							if (modDef != null) {
 								member = modDef.ResolveToken(member.MDToken) as IMemberDef;
 								if (member != null) // should never fail
-									return JumpToReferenceAsyncInternal(false, member, out success, out alreadySelected);
+									return JumpToReferenceAsyncInternal(false, member, null, out success, out alreadySelected);
 							}
 
 							break;
@@ -796,7 +813,7 @@ namespace ICSharpCode.ILSpy
 				var loadedAsm = new LoadedAssembly(assemblyList, mainModule);
 				loadedAsm.IsAutoLoaded = true;
 				assemblyList.AddAssembly(loadedAsm, true);
-				return JumpToReferenceAsyncInternal(false, reference, out success, out alreadySelected);
+				return JumpToReferenceAsyncInternal(false, reference, null, out success, out alreadySelected);
 			}
 			else
 				success = false;

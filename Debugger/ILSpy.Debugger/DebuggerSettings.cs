@@ -18,7 +18,6 @@ namespace ICSharpCode.ILSpy.Debugger
 		private static readonly string SHOW_ARGUMENTS = "showArguments";
 		private static readonly string SHOW_ARGUMENTVALUE = "showArgumentValues";
 		private static readonly string BREAK_AT_BEGINNING = "breakAtBeginning";
-		private static readonly string DECOMPILE_FULL_TYPE = "decompileFullType";
 	 	
 		private bool showWarnings = true;
 		private bool askArguments = true;
@@ -28,7 +27,6 @@ namespace ICSharpCode.ILSpy.Debugger
 		private bool showArguments = false;
 		private bool showArgumentValues = false;
 		private bool breakAtBeginning = true;
-		private bool decompileFullType = true;
 		
 		private static DebuggerSettings s_instance;
 		#endregion
@@ -59,7 +57,6 @@ namespace ICSharpCode.ILSpy.Debugger
 			ShowArguments = (bool?)e.Attribute(SHOW_ARGUMENTS) ?? ShowArguments;
 			ShowArgumentValues = (bool?)e.Attribute(SHOW_ARGUMENTVALUE) ?? ShowArgumentValues;
 			BreakAtBeginning = (bool?)e.Attribute(BREAK_AT_BEGINNING) ?? BreakAtBeginning;
-			DecompileFullType = (bool?)e.Attribute(DECOMPILE_FULL_TYPE) ?? DecompileFullType;
 		}
 		
 		public void Save(XElement root)
@@ -72,7 +69,6 @@ namespace ICSharpCode.ILSpy.Debugger
 			section.SetAttributeValue(SHOW_ARGUMENTS, ShowArguments);
 			section.SetAttributeValue(SHOW_ARGUMENTVALUE, ShowArgumentValues);
 			section.SetAttributeValue(BREAK_AT_BEGINNING, BreakAtBeginning);
-			section.SetAttributeValue(DECOMPILE_FULL_TYPE, DecompileFullType);
 	
 			XElement existingElement = root.Element(DEBUGGER_SETTINGS);
 			if (existingElement != null)
@@ -190,20 +186,6 @@ namespace ICSharpCode.ILSpy.Debugger
 		        if (breakAtBeginning != value) {
 		            breakAtBeginning = value;
 					OnPropertyChanged("BreakAtBeginning");
-		        }
-		    }
-		}
-
-		/// <summary>
-		/// Decompile the full type and all its methods instead of just one method at a time
-		/// </summary>
-		[DefaultValue(true)]
-		public bool DecompileFullType {
-			get { return decompileFullType; }
-		    set {
-				if (decompileFullType != value) {
-					decompileFullType = value;
-					OnPropertyChanged("DecompileFullType");
 		        }
 		    }
 		}

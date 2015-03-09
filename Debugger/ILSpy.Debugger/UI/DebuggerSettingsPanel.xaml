@@ -8,7 +8,6 @@
 			<CheckBox IsChecked="{Binding AskForArguments}">Ask for arguments and working directory before executing a process</CheckBox>
 			<CheckBox IsChecked="{Binding ShowAllBookmarks}">Show all bookmarks in breakpoints window</CheckBox>
 			<CheckBox IsChecked="{Binding BreakAtBeginning}">Break debugged process at start or attach</CheckBox>
-			<CheckBox IsChecked="{Binding DecompileFullType}">Decompile the full type instead of only the current method</CheckBox>
     </StackPanel>
 	</Grid>
 </UserControl>

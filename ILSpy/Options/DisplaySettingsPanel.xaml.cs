@@ -104,6 +104,7 @@ namespace ICSharpCode.ILSpy.Options
 			s.ShowAssemblyVersion = (bool?)e.Attribute("ShowAssemblyVersion") ?? true;
 			s.ShowAssemblyPublicKeyToken = (bool?)e.Attribute("ShowAssemblyPublicKeyToken") ?? false;
 			s.AutoFocusTextView = (bool?)e.Attribute("AutoFocusTextView") ?? true;
+			s.DecompileFullType = (bool?)e.Attribute("DecompileFullType") ?? true;
 			
 			return s;
 		}
@@ -122,6 +123,7 @@ namespace ICSharpCode.ILSpy.Options
 			section.SetAttributeValue("ShowAssemblyVersion", s.ShowAssemblyVersion);
 			section.SetAttributeValue("ShowAssemblyPublicKeyToken", s.ShowAssemblyPublicKeyToken);
 			section.SetAttributeValue("AutoFocusTextView", s.AutoFocusTextView);
+			section.SetAttributeValue("DecompileFullType", s.DecompileFullType);
 			
 			XElement existingElement = root.Element("DisplaySettings");
 			if (existingElement != null)

@@ -9,7 +9,7 @@ namespace ICSharpCode.ILSpy.Debugger
 	static class DebugUtils
 	{
 		/// <summary>
-		/// Jumps to the reference, honoring DecompileFullType option
+		/// Jumps to the reference
 		/// </summary>
 		/// <param name="mr"></param>
 		/// <returns></returns>
@@ -20,26 +20,14 @@ namespace ICSharpCode.ILSpy.Debugger
 		}
 
 		/// <summary>
-		/// Jumps to the reference, honoring DecompileFullType option
+		/// Jumps to the reference
 		/// </summary>
 		/// <param name="mr"></param>
 		/// <param name="alreadySelected"></param>
 		/// <returns></returns>
 		public static bool JumpToReference(IMemberRef mr, out bool alreadySelected)
 		{
-			IMemberRef whatToCompile = mr;
-			var md = mr as IMemberDef;
-			if (md != null && DebuggerSettings.Instance.DecompileFullType) {
-				var type = md.DeclaringType;
-				for (int i = 0; i < 100; i++) {
-					var declType = type.DeclaringType;
-					if (declType == null)
-						break;
-					type = declType;
-				}
-				whatToCompile = type;
-			}
-			bool retVal = MainWindow.Instance.JumpToReference(whatToCompile, out alreadySelected);
+			bool retVal = MainWindow.Instance.JumpToReference(mr, false, out alreadySelected);
 			if (!retVal) {
 				MessageBox.Show(MainWindow.Instance,
 					string.Format("Could not find {0}\n" +

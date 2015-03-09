@@ -135,6 +135,19 @@ namespace ICSharpCode.ILSpy.Options
 			}
 		}
 
+		bool decompileFullType;
+
+		public bool DecompileFullType
+		{
+			get { return decompileFullType; }
+			set {
+				if (decompileFullType != value) {
+					decompileFullType = value;
+					OnPropertyChanged("DecompileFullType");
+				}
+			}
+		}
+
 		public void CopyValues(DisplaySettings s)
 		{
 			this.SelectedFont = s.selectedFont;
@@ -144,6 +157,7 @@ namespace ICSharpCode.ILSpy.Options
 			this.ShowAssemblyVersion = s.showAssemblyVersion;
 			this.ShowAssemblyPublicKeyToken = s.showAssemblyPublicKeyToken;
 			this.AutoFocusTextView = s.autoFocusTextView;
+			this.DecompileFullType = s.decompileFullType;
 		}
 	}
 }

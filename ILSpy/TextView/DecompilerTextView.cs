@@ -573,10 +573,8 @@ namespace ICSharpCode.ILSpy.TextView
 					DebugInformation.DebugStepInformation != null &&
 					DebugInformation.DebugStepInformation.Item2 != int.MaxValue;
 			if (updateDebugInfo) {
-				// repaint bookmarks
 				iconMargin.InvalidateVisual();
 
-				// show the currentline marker
 				var key = DebugInformation.DebugStepInformation.Item1;
 				int ilOffset = DebugInformation.DebugStepInformation.Item2;
 				ICSharpCode.NRefactory.TextLocation location, endLocation;
@@ -607,6 +605,19 @@ namespace ICSharpCode.ILSpy.TextView
 						cm[key].GetInstructionByTokenAndOffset((uint)offset, out location, out endLocation)) {
 						ScrollAndMoveCaretTo(location.Line, location.Column);
 					}
+				}
+				else if (DebugInformation.JumpToThisLine is IMemberDef) {
+					var member = DebugInformation.JumpToThisLine as IMemberDef;
+					ReferenceSegment refSeg = null;
+					if (references != null) {
+						foreach (var r in references) {
+							if (r.IsLocalTarget && r.Reference == member) {
+								refSeg = r;
+								break;
+							}
+						}
+					}
+					GoToTarget(refSeg, false);
 				}
 				else {
 					Debug.Fail(string.Format("Unknown type: {0} = {1}", DebugInformation.JumpToThisLine.GetType(), DebugInformation.JumpToThisLine));
@@ -1016,25 +1027,34 @@ namespace ICSharpCode.ILSpy.TextView
 			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F12) {
 				int offset = textEditor.TextArea.Caret.Offset;
 				var refSeg = referenceElementGenerator.References.FindSegmentsContaining(offset).FirstOrDefault();
-				if (refSeg == null)
-					return;
-				var localTarget = FindLocalTarget(refSeg);
-				if (localTarget != null)
-					refSeg = localTarget;
-
-				if (refSeg.IsLocalTarget) {
-					var line = textEditor.Document.GetLineByOffset(refSeg.StartOffset);
-					int column = refSeg.StartOffset - line.Offset + 1;
-					ScrollAndMoveCaretTo(line.LineNumber, column);
-					e.Handled = true;
-					return;
-				}
-
-				if (refSeg.IsLocal)
-					return;
-				MainWindow.Instance.JumpToReference(refSeg.Reference);
+				GoToTarget(refSeg, true);
 				e.Handled = true;
 			}
+		}
+
+		bool GoToTarget(ReferenceSegment refSeg, bool canJumpToReference)
+		{
+			if (refSeg == null)
+				return false;
+			var localTarget = FindLocalTarget(refSeg);
+			if (localTarget != null)
+				refSeg = localTarget;
+
+			if (refSeg.IsLocalTarget) {
+				var line = textEditor.Document.GetLineByOffset(refSeg.StartOffset);
+				int column = refSeg.StartOffset - line.Offset + 1;
+				ScrollAndMoveCaretTo(line.LineNumber, column);
+				return true;
+			}
+
+			if (refSeg.IsLocal)
+				return false;
+			if (canJumpToReference) {
+				MainWindow.Instance.JumpToReference(refSeg.Reference);
+				return true;
+			}
+
+			return false;
 		}
 
 		ReferenceSegment FindLocalTarget(ReferenceSegment refSeg)
