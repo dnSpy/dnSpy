@@ -687,8 +687,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		void debuggedProcess_DebuggingResumed(object sender, CorDbg.ProcessEventArgs e)
 		{
 			OnIsProcessRunningChanged(EventArgs.Empty);
-			DebuggerService.RemoveCurrentLineMarker();
-			ReturnStatementBookmark.Remove(true);
+			StackFrameStatementBookmark.Remove(true);
 		}
 		
 		void debuggedProcess_ExceptionThrown(object sender, CorDbg.ExceptionEventArgs e)
@@ -738,27 +737,24 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				
 				var key = frame.MethodInfo.ToMethodKey();
 				TextLocation location, endLocation;
-				MethodDef methodDef;
 				
 				var cm = DebugInformation.CodeMappings;
 				if (cm != null && cm.ContainsKey(key) &&
 					ip.IsValid &&
-					cm[key].GetInstructionByTokenAndOffset((uint)ip.Offset, out methodDef, out location, out endLocation)) {
+					cm[key].GetInstructionByTokenAndOffset((uint)ip.Offset, out location, out endLocation)) {
 					var info = DebugInformation.DebugStepInformation;
 					if (info == null || info.Item1 != key)
 						StepIntoUnknownFrame(frame);
 					else
 						DebugInformation.DebugStepInformation = Tuple.Create(info.Item1, ip.Offset, info.Item3);
 					DebugInformation.MustJumpToReference = false; // we do not need to step into/out
-					DebuggerService.RemoveCurrentLineMarker();
-					DebuggerService.JumpToCurrentLine(methodDef, location.Line, location.Column, endLocation.Line, endLocation.Column, ip.Offset);
 					MainWindow.Instance.TextView.ScrollAndMoveCaretTo(location.Line, location.Column);
 				}
 				else {
 					StepIntoUnknownFrame(frame);
 				}
 
-				ReturnStatementBookmark.UpdateReturnStatementBookmarks(true);
+				StackFrameStatementBookmark.UpdateReturnStatementBookmarks(true);
 			}
 		}
 
@@ -779,7 +775,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			}
 			if (!DebugInformation.MustJumpToReference) {
 				DebugInformation.DebugStepInformation = null;
-				DebuggerService.RemoveCurrentLineMarker();
 				Debug.Fail("No type was found!");
 			}
 		}

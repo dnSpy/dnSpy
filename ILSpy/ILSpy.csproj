@@ -117,11 +117,10 @@
     <Compile Include="Bookmarks\BookmarkManager.cs" />
     <Compile Include="Bookmarks\BreakpointBookmark.cs" />
     <Compile Include="Bookmarks\BreakpointBookmarkEventArgs.cs" />
-    <Compile Include="Bookmarks\CurrentLineBookmark.cs" />
     <Compile Include="Bookmarks\IBookmark.cs" />
     <Compile Include="Bookmarks\MarkerBookmark.cs" />
     <Compile Include="Bookmarks\MemberBookmark.cs" />
-    <Compile Include="Bookmarks\ReturnStatementBookmark.cs" />
+    <Compile Include="Bookmarks\StackFrameStatementBookmark.cs" />
     <Compile Include="Commands\BrowseBackCommand.cs" />
     <Compile Include="Commands\BrowseForwardCommand.cs" />
     <Compile Include="CommandLineArguments.cs" />

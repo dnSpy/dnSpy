@@ -572,7 +572,6 @@ namespace ICSharpCode.ILSpy.TextView
 					DebuggerService.CurrentDebugger.IsDebugging &&
 					DebugInformation.DebugStepInformation != null &&
 					DebugInformation.DebugStepInformation.Item2 != int.MaxValue;
-			bool updatedMarker = false;
 			if (updateDebugInfo) {
 				// repaint bookmarks
 				iconMargin.InvalidateVisual();
@@ -581,25 +580,17 @@ namespace ICSharpCode.ILSpy.TextView
 				var key = DebugInformation.DebugStepInformation.Item1;
 				int ilOffset = DebugInformation.DebugStepInformation.Item2;
 				ICSharpCode.NRefactory.TextLocation location, endLocation;
-				MethodDef methodDef;
 				var cm = DebugInformation.CodeMappings;
 				if (cm != null && cm.ContainsKey(key) &&
-					cm[key].GetInstructionByTokenAndOffset((uint)ilOffset, out methodDef, out location, out endLocation)) {
-					// update marker
-					DebuggerService.JumpToCurrentLine(methodDef, location.Line, location.Column, endLocation.Line, endLocation.Column, ilOffset);
+					cm[key].GetInstructionByTokenAndOffset((uint)ilOffset, out location, out endLocation)) {
 					if (state == null)
 						ScrollAndMoveCaretTo(location.Line, location.Column);
 
 					UnfoldAndScroll(location.Line, false);
-					updatedMarker = true;
 				}
 			}
-			if (!updatedMarker) {
-				// remove currentline marker
-				CurrentLineBookmark.Remove();
-			}
 
-			ReturnStatementBookmark.UpdateReturnStatementBookmarks(false);
+			StackFrameStatementBookmark.UpdateReturnStatementBookmarks(false);
 
 			if (state == null && DebugInformation.JumpToThisLine != null) {
 				if (DebugInformation.JumpToThisLine is ICSharpCode.NRefactory.TextLocation) {

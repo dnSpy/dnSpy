@@ -236,8 +236,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		{
 			var debugger = DebuggerService.CurrentDebugger;
 			if (debugger != null && debugger.IsDebugging && !debugger.IsProcessRunning) {
-				CurrentLineBookmark.Remove();
-				ReturnStatementBookmark.Remove(true);
+				StackFrameStatementBookmark.Remove(true);
 				debugger.Continue();
 				MainWindow.Instance.SetStatus("Running...", Brushes.Black);
 				return true;
@@ -358,7 +357,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				return false;
 
 			// Always reset the selected frame
-			ReturnStatementBookmark.SelectedFrame = 0;
+			StackFrameStatementBookmark.SelectedFrame = 0;
 
 			Tuple<MethodKey, int, IMemberRef> info;
 			MethodKey currentKey;

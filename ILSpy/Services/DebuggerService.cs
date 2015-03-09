@@ -82,8 +82,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		{
 			debuggerStarted = false;
 			
-			RemoveCurrentLineMarker();
-			ReturnStatementBookmark.UpdateReturnStatementBookmarks(true);
+			StackFrameStatementBookmark.UpdateReturnStatementBookmarks(true);
 			
 			if (DebugStopped != null)
 				DebugStopped(null, e);
@@ -170,16 +169,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				location, endLocation,
 				b => b.CanToggle && b is BreakpointBookmark,
 				(location2, endLocation2) => new BreakpointBookmark(member, location2, endLocation2, range));
-		}
-		
-		public static void RemoveCurrentLineMarker()
-		{
-			CurrentLineBookmark.Remove();
-		}
-		
-		public static void JumpToCurrentLine(MethodDef methodDef, int startLine, int startColumn, int endLine, int endColumn, int ilOffset)
-		{
-			CurrentLineBookmark.SetPosition(methodDef, startLine, startColumn, endLine, endColumn, ilOffset);
 		}
 		
 		#region Tool tips

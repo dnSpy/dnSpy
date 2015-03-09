@@ -13,9 +13,9 @@ using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 {
-	public class ReturnStatementBookmark : MarkerBookmark
+	public class StackFrameStatementBookmark : MarkerBookmark
 	{
-		public static HighlightingColor HighlightingColor = new HighlightingColor {
+		public static HighlightingColor ReturnHighlightingColor = new HighlightingColor {
 			Background = new SimpleHighlightingBrush(Color.FromArgb(0x62, 0xEE, 0xEF, 0xE6)),
 			Foreground = new SimpleHighlightingBrush(Colors.Transparent),
 		};
@@ -23,13 +23,35 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			Background = new SimpleHighlightingBrush(Color.FromArgb(0x68, 0xB4, 0xE4, 0xB4)),
 			Foreground = new SimpleHighlightingBrush(Colors.Black),
 		};
+		public static HighlightingColor CurrentHighlightingColor = new HighlightingColor {
+			Background = new SimpleHighlightingBrush(Colors.Yellow),
+			Foreground = new SimpleHighlightingBrush(Colors.Blue),
+		};
 
-		bool isSelected;
+		public enum Type
+		{
+			/// <summary>
+			/// This is the statement that will be executed next
+			/// </summary>
+			CurrentStatement,
 
-		public ReturnStatementBookmark(IMemberRef member, TextLocation location, TextLocation endLocation, bool isSelected)
+			/// <summary>
+			/// One of the return statements
+			/// </summary>
+			ReturnStatement,
+
+			/// <summary>
+			/// A selected return statement. See <see cref="SelectedFrame"/>.
+			/// </summary>
+			SelectedReturnStatement,
+		}
+
+		Type type;
+
+		public StackFrameStatementBookmark(IMemberRef member, TextLocation location, TextLocation endLocation, Type type)
 			: base(member, location, endLocation)
 		{
-			this.isSelected = isSelected;
+			this.type = type;
 		}
 
 		public override bool CanToggle {
@@ -37,18 +59,51 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		}
 
 		public override int ZOrder {
-			get { return isSelected ? 80 : 70; }
+			get {
+				switch (type) {
+				case Type.CurrentStatement:
+					return 100;
+				case Type.SelectedReturnStatement:
+					return 90;
+				case Type.ReturnStatement:
+					return 80;
+				default:
+					throw new InvalidOperationException();
+				}
+			}
 		}
 
 		public override ImageSource Image {
-			get { return isSelected ? Images.CurrentLine : null; }//TODO: Use another similar image
+			get {
+				switch (type) {
+				case Type.CurrentStatement:
+					return Images.CurrentLine;
+				case Type.SelectedReturnStatement:
+					return Images.CurrentLine;//TODO: Use another similar image
+				case Type.ReturnStatement:
+					return null;
+				default:
+					throw new InvalidOperationException();
+				}
+			}
 		}
 
 		public override ITextMarker CreateMarker(ITextMarkerService markerService)
 		{
 			ITextMarker marker = CreateMarkerInternal(markerService);
 			marker.ZOrder = ZOrder;
-			marker.HighlightingColor = () => isSelected ? SelectedHighlightingColor : HighlightingColor;
+			marker.HighlightingColor = () => {
+				switch (type) {
+				case Type.CurrentStatement:
+					return CurrentHighlightingColor;
+				case Type.SelectedReturnStatement:
+					return SelectedHighlightingColor;
+				case Type.ReturnStatement:
+					return ReturnHighlightingColor;
+				default:
+					throw new InvalidOperationException();
+				}
+			};
 			marker.IsVisible = b => {
 				var cm = DebugInformation.CodeMappings;
 				return cm != null && b is MarkerBookmark &&
@@ -98,9 +153,13 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 				!DebuggerService.CurrentDebugger.IsProcessRunning;
 			if (updateReturnStatements) {
 				var cm = DebugInformation.CodeMappings;
-				// The first frame is the current frame. Ignore it.
-				int frameNo = 1;
-				foreach (var frame in DebuggerService.CurrentDebugger.GetStackFrames(100).Skip(frameNo)) {
+				int frameNo = 0;
+				foreach (var frame in DebuggerService.CurrentDebugger.GetStackFrames(100)) {
+					Type type;
+					if (frameNo == 0)
+						type = Type.CurrentStatement;
+					else
+						type = selectedFrame == frameNo ? Type.SelectedReturnStatement : Type.ReturnStatement;
 					bool isSelected = selectedFrame == frameNo;
 					frameNo++;
 					if (frame.ILOffset == null)
@@ -111,13 +170,13 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 					ICSharpCode.NRefactory.TextLocation location, endLocation;
 					if (cm != null && cm.ContainsKey(key) &&
 						cm[key].GetInstructionByTokenAndOffset((uint)offset, out methodDef, out location, out endLocation)) {
-						var rs = new ReturnStatementBookmark(methodDef, location, endLocation, isSelected);
+						var rs = new StackFrameStatementBookmark(methodDef, location, endLocation, type);
 						returnStatementBookmarks.Add(rs);
 						BookmarkManager.AddMark(rs);
 					}
 				}
 			}
 		}
-		static readonly List<ReturnStatementBookmark> returnStatementBookmarks = new List<ReturnStatementBookmark>();
+		static readonly List<StackFrameStatementBookmark> returnStatementBookmarks = new List<StackFrameStatementBookmark>();
 	}
 }

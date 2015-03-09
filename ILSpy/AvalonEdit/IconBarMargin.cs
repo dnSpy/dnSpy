@@ -239,38 +239,6 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 					}
 				}
 			}
-			if (!SyncCurrentLineBookmark())
-				CurrentLineBookmark.Remove();
-		}
-		
-		bool SyncCurrentLineBookmark()
-		{
-			// checks
-			if (CurrentLineBookmark.Instance == null)
-				return false;
-			
-			var codeMappings = DebugInformation.CodeMappings;
-			if (codeMappings == null)
-				return false;
-			
-			// 1. Save it's data
-			var markerType = CurrentLineBookmark.Instance.MemberReference;
-			var key = new MethodKey(markerType);
-			int offset = CurrentLineBookmark.Instance.ILOffset;
-			
-			if (!codeMappings.ContainsKey(key))
-				return false;
-			
-			// 2. map the marker line
-			MethodDef methodDef;
-			TextLocation location, endLocation;
-			if (codeMappings[key].GetInstructionByTokenAndOffset((uint)offset, out methodDef, out location, out endLocation)) {
-				// 3. create breakpoint for new languages
-				DebuggerService.JumpToCurrentLine(methodDef, location.Line, location.Column, endLocation.Line, endLocation.Column, offset);
-				return true;
-			}
-
-			return false;
 		}
 	}
 }

@@ -71,7 +71,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
                 
                 DebuggerService.DebugStarted += new EventHandler(OnDebugStarted);
                 DebuggerService.DebugStopped += new EventHandler(OnDebugStopped);
-				ReturnStatementBookmark.SelectedFrameChanged += new EventHandler(OnSelectedFrameChanged);
+				StackFrameStatementBookmark.SelectedFrameChanged += new EventHandler(OnSelectedFrameChanged);
                 if (DebuggerService.IsDebuggerStarted)
                 	OnDebugStarted(null, EventArgs.Empty);
 			}
@@ -81,7 +81,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		{
             DebuggerService.DebugStarted -= new EventHandler(OnDebugStarted);
             DebuggerService.DebugStopped -= new EventHandler(OnDebugStopped);
-			ReturnStatementBookmark.SelectedFrameChanged -= new EventHandler(OnSelectedFrameChanged);
+			StackFrameStatementBookmark.SelectedFrameChanged -= new EventHandler(OnSelectedFrameChanged);
             if (null != m_currentDebugger)
                 OnDebugStopped(null, EventArgs.Empty);
             
@@ -182,7 +182,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 					ILOffset = frame.IP.IsValid ? frame.IP.Offset : -1,
 					MethodKey = frame.MethodInfo.ToMethodKey(),
 				};
-				if (frameNumber == ReturnStatementBookmark.SelectedFrame)
+				if (frameNumber == StackFrameStatementBookmark.SelectedFrame)
 					item.Image = ImageService.CurrentLine;
 				frameNumber++;
 				var module = frame.MethodInfo.DebugModule;
@@ -263,7 +263,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
             var selectedItem = view.SelectedItem as CallStackItem;
             if (null == selectedItem)
             	return;
-			ReturnStatementBookmark.SelectedFrame = selectedItem.FrameNumber;
+			StackFrameStatementBookmark.SelectedFrame = selectedItem.FrameNumber;
             
             var foundAssembly = MainWindow.Instance.CurrentAssemblyList.OpenAssembly(selectedItem.Frame.MethodInfo.DebugModule.FullPath, true);
             if (null == foundAssembly)
