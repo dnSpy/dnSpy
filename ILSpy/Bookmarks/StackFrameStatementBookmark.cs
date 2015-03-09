@@ -160,7 +160,6 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 						type = Type.CurrentStatement;
 					else
 						type = selectedFrame == frameNo ? Type.SelectedReturnStatement : Type.ReturnStatement;
-					bool isSelected = selectedFrame == frameNo;
 					frameNo++;
 					if (frame.ILOffset == null)
 						continue;
