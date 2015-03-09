@@ -348,7 +348,8 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		{
 			return DebuggerService.CurrentDebugger != null &&
 				DebuggerService.CurrentDebugger.IsDebugging &&
-				!DebuggerService.CurrentDebugger.IsProcessRunning;
+				!DebuggerService.CurrentDebugger.IsProcessRunning &&
+				MainWindow.Instance.BottomPaneContent != CallStackPanel.Instance;
 		}
     }
 }

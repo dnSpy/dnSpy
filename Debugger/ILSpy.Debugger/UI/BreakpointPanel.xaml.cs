@@ -130,5 +130,11 @@ namespace ICSharpCode.ILSpy.Debugger.UI
         {
             BreakpointPanel.Instance.Show();
         }
+
+		public override bool CanExecute(object parameter)
+		{
+			return base.CanExecute(parameter) &&
+				MainWindow.Instance.BottomPaneContent != BreakpointPanel.Instance;
+		}
     }
 }
