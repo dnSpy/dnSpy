@@ -70,6 +70,8 @@ namespace ICSharpCode.ILSpy.TextView
 
 		public void Finish()
 		{
+			if (tokenInfosList == null)
+				return;
 			EndCurrentToken(0);
 			tokenInfos = tokenInfosList.ToArray();
 			tokenInfosList = null;

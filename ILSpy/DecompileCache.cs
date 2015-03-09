@@ -1,0 +1,188 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.TextView;
+using ICSharpCode.ILSpy.TreeNodes;
+
+namespace ICSharpCode.ILSpy
+{
+	/// <summary>
+	/// Caches decompiled output
+	/// </summary>
+	sealed class DecompileCache
+	{
+		public static readonly DecompileCache Instance = new DecompileCache();
+
+		// How often ClearOld() is called
+		const int CLEAR_OLD_ITEMS_EVERY_MS = 30 * 1000;
+
+		// All items older than this value automatically get deleted in ClearOld()
+		const int OLD_ITEM_MS = 5 * 60 * 1000;
+
+		readonly object lockObj = new object();
+		readonly Dictionary<Key, Item> cachedItems = new Dictionary<Key, Item>();
+
+		sealed class Item
+		{
+			public AvalonEditTextOutput TextOutput;
+			public WeakReference WeakTextOutput;
+			DateTime LastHitUTC;
+
+			/// <summary>
+			/// Age since last hit
+			/// </summary>
+			public TimeSpan Age {
+				get { return DateTime.UtcNow - LastHitUTC; }
+			}
+
+			public Item(AvalonEditTextOutput textOutput)
+			{
+				this.TextOutput = textOutput;
+				this.LastHitUTC = DateTime.UtcNow;
+			}
+
+			public void Hit()
+			{
+				LastHitUTC = DateTime.UtcNow;
+				if (WeakTextOutput != null) {
+					TextOutput = (AvalonEditTextOutput)WeakTextOutput.Target;
+					WeakTextOutput = null;
+				}
+			}
+
+			public void MakeWeakReference()
+			{
+				var textOutput = Interlocked.CompareExchange(ref this.TextOutput, null, this.TextOutput);
+				if (textOutput != null)
+					this.WeakTextOutput = new WeakReference(textOutput);
+			}
+		}
+
+		struct Key : IEquatable<Key>
+		{
+			public readonly Language Language;
+			public readonly ILSpyTreeNode[] TreeNodes;
+			public readonly DecompilationOptions Options;
+
+			public Key(Language language, ILSpyTreeNode[] treeNodes, DecompilationOptions options)
+			{
+				this.Language = language;
+				this.TreeNodes = new List<ILSpyTreeNode>(treeNodes).ToArray();
+				this.Options = Clone(options);
+			}
+
+			static DecompilationOptions Clone(DecompilationOptions options)
+			{
+				var newOpts = options.SimpleClone();
+				newOpts.DecompilerSettings = (DecompilerSettings)options.DecompilerSettings.Clone();
+				newOpts.TextViewState = null;	// Ignore it; we don't use it
+				return newOpts;
+			}
+
+			public bool Equals(Key other)
+			{
+				if (Language != other.Language)
+					return false;
+
+				if (TreeNodes.Length != other.TreeNodes.Length)
+					return false;
+				for (int i = 0; i < TreeNodes.Length; i++) {
+					if ((object)TreeNodes[i] != (object)other.TreeNodes[i])
+						return false;
+				}
+
+				if (!Options.Equals(other.Options))
+					return false;
+
+				return true;
+			}
+
+			public override bool Equals(object obj)
+			{
+				if (!(obj is Key))
+					return false;
+				return Equals((Key)obj);
+			}
+
+			public override int GetHashCode()
+			{
+				int h = 0;
+				h = Language.Name.GetHashCode();
+				foreach (var node in TreeNodes)
+					h ^= node.GetHashCode();
+				h ^= Options.GetHashCode();
+				return h;
+			}
+		}
+
+		public DecompileCache()
+		{
+			AddTimerWait();
+		}
+
+		void AddTimerWait()
+		{
+			Timer timer = null;
+			SynchronizationContext context = SynchronizationContext.Current;
+			WeakReference self = new WeakReference(this);
+			timer = new Timer(a => {
+				timer.Dispose();
+				context.Post(b => ClearOldCallback(self), null);
+			}, null, CLEAR_OLD_ITEMS_EVERY_MS, Timeout.Infinite);
+		}
+
+		static void ClearOldCallback(WeakReference weakSelf)
+		{
+			var self = (DecompileCache)weakSelf.Target;
+			if (self != null) {
+				self.ClearOld();
+				self.AddTimerWait();
+			}
+		}
+
+		public AvalonEditTextOutput Lookup(Language language, ILSpyTreeNode[] treeNodes, DecompilationOptions options)
+		{
+			lock (lockObj) {
+				var key = new Key(language, treeNodes, options);
+
+				Item item;
+				if (cachedItems.TryGetValue(key, out item)) {
+					item.Hit();
+					var to = item.TextOutput;
+					if (to == null)
+						cachedItems.Remove(key);
+					return to;
+				}
+			}
+			return null;
+		}
+
+		public void Cache(Language language, ILSpyTreeNode[] treeNodes, DecompilationOptions options, AvalonEditTextOutput textOutput)
+		{
+			lock (lockObj) {
+				var key = new Key(language, treeNodes, options);
+				cachedItems[key] = new Item(textOutput);
+			}
+		}
+
+		public void ClearOld()
+		{
+			lock (lockObj) {
+				foreach (var kv in new List<KeyValuePair<Key, Item>>(cachedItems)) {
+					if (kv.Value.Age.TotalMilliseconds > OLD_ITEM_MS) {
+						kv.Value.MakeWeakReference();
+						if (kv.Value.WeakTextOutput != null && kv.Value.WeakTextOutput.Target == null)
+							cachedItems.Remove(kv.Key);
+					}
+				}
+			}
+		}
+
+		public void ClearAll()
+		{
+			lock (lockObj)
+				cachedItems.Clear();
+		}
+	}
+}

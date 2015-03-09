@@ -494,11 +494,19 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			// Some actions like loading an assembly list cause several selection changes in the tree view,
 			// and each of those will start a decompilation action.
+
+			var newContext = new DecompilationContext(language, treeNodes.ToArray(), options);
+			var textOutput = DecompileCache.Instance.Lookup(newContext.Language, newContext.TreeNodes, newContext.Options);
+			if (textOutput != null) {
+				ShowOutput(textOutput, newContext.Language.SyntaxHighlighting, newContext.Options.TextViewState);
+				decompiledNodes = newContext.TreeNodes;
+				return completedTask;
+			}
 			
 			bool isDecompilationScheduled = this.nextDecompilationRun != null;
 			if (this.nextDecompilationRun != null)
 				this.nextDecompilationRun.TaskCompletionSource.TrySetCanceled();
-			this.nextDecompilationRun = new DecompilationContext(language, treeNodes.ToArray(), options);
+			this.nextDecompilationRun = newContext;
 			var task = this.nextDecompilationRun.TaskCompletionSource.Task;
 			if (!isDecompilationScheduled) {
 				Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(
@@ -513,6 +521,7 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 			return task;
 		}
+		static readonly Task completedTask = Task.Factory.StartNew(() => { });
 		
 		sealed class DecompilationContext
 		{
@@ -545,6 +554,7 @@ namespace ICSharpCode.ILSpy.TextView
 				})
 			.Then(
 				delegate (AvalonEditTextOutput textOutput) { // handling the result
+					DecompileCache.Instance.Cache(context.Language, context.TreeNodes, context.Options, textOutput);
 					ShowOutput(textOutput, context.Language.SyntaxHighlighting, context.Options.TextViewState);
 					decompiledNodes = context.TreeNodes;
 				})

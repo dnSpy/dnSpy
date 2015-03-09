@@ -24,18 +24,41 @@ using ICSharpCode.ILSpy.Options;
 
 namespace ICSharpCode.ILSpy
 {
-	public class ProjectInfo
+	public class ProjectInfo : IEquatable<ProjectInfo>
 	{
 		public string AssemblyFileName { get; set; }
 		public string AssemblySimpleName { get; set; }
 		public string ProjectFileName { get; set; }
 		public Guid ProjectGuid { get; set; }
+
+		public bool Equals(ProjectInfo other)
+		{
+			if (other == null)
+				return false;
+			return (AssemblyFileName ?? string.Empty).ToUpperInvariant() == (other.AssemblyFileName ?? string.Empty).ToUpperInvariant() &&
+				(AssemblySimpleName ?? string.Empty).ToUpperInvariant() == (other.AssemblySimpleName ?? string.Empty).ToUpperInvariant() &&
+				(ProjectFileName ?? string.Empty).ToUpperInvariant() == (other.ProjectFileName ?? string.Empty).ToUpperInvariant() &&
+				ProjectGuid == other.ProjectGuid;
+		}
+
+		public override bool Equals(object obj)
+		{
+			return Equals(obj as ProjectInfo);
+		}
+
+		public override int GetHashCode()
+		{
+			return (AssemblyFileName ?? string.Empty).ToUpperInvariant().GetHashCode() ^
+				(AssemblySimpleName ?? string.Empty).ToUpperInvariant().GetHashCode() ^
+				(ProjectFileName ?? string.Empty).ToUpperInvariant().GetHashCode() ^
+				ProjectGuid.GetHashCode();
+		}
 	}
 
 	/// <summary>
 	/// Options passed to the decompiler.
 	/// </summary>
-	public class DecompilationOptions
+	public class DecompilationOptions : IEquatable<DecompilationOptions>
 	{
 		/// <summary>
 		/// Gets whether a full decompilation (all members recursively) is desired.
@@ -96,6 +119,74 @@ namespace ICSharpCode.ILSpy
 		public DecompilationOptions()
 		{
 			this.DecompilerSettings = DecompilerSettingsPanel.CurrentDecompilerSettings;
+		}
+
+		public bool Equals(DecompilationOptions other)
+		{
+			if (other == null)
+				return false;
+
+			if (FullDecompilation != other.FullDecompilation)
+				return false;
+			if ((SaveAsProjectDirectory ?? string.Empty).ToUpperInvariant() != (other.SaveAsProjectDirectory ?? string.Empty).ToUpperInvariant())
+				return false;
+			if (DontReferenceStdLib != other.DontReferenceStdLib)
+				return false;
+			if (ProjectFiles == null) {
+				if (other.ProjectFiles != null)
+					return false;
+			}
+			else {
+				if (ProjectFiles.Count != other.ProjectFiles.Count)
+					return false;
+				for (int i = 0; i < ProjectFiles.Count; i++) {
+					if (!ProjectFiles[i].Equals(other.ProjectFiles[i]))
+						return false;
+				}
+			}
+			if (ProjectGuid != other.ProjectGuid)
+				return false;
+			if (DontShowCreateMethodBodyExceptions != other.DontShowCreateMethodBodyExceptions)
+				return false;
+			// Ignore: CancellationToken
+			if (!DecompilerSettings.Equals(other.DecompilerSettings))
+				return false;
+			// Ignore: TextViewState
+
+			return true;
+		}
+
+		public override bool Equals(object obj)
+		{
+			return Equals(obj as DecompilationOptions);
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked {
+				uint h = 0;
+
+				h ^= FullDecompilation ? 0 : 0x80000000U;
+				h ^= (uint)(SaveAsProjectDirectory ?? string.Empty).ToUpperInvariant().GetHashCode();
+				h ^= DontReferenceStdLib ? 0 : 0x40000000U;
+				if (ProjectFiles != null) {
+					foreach (var projFile in ProjectFiles)
+						h ^= (uint)projFile.GetHashCode();
+				}
+				if (ProjectGuid != null)
+					h ^= (uint)ProjectGuid.Value.GetHashCode();
+				h ^= DontShowCreateMethodBodyExceptions ? 0 : 0x20000000U;
+				// Ignore: CancellationToken
+				h ^= (uint)DecompilerSettings.GetHashCode();
+				// Ignore: TextViewState
+
+				return (int)h;
+			}
+		}
+
+		internal DecompilationOptions SimpleClone()
+		{
+			return (DecompilationOptions)this.MemberwiseClone();
 		}
 	}
 }

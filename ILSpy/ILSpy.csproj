@@ -143,6 +143,7 @@
       <DependentUpon>CreateListDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="DebugInformation.cs" />
+    <Compile Include="DecompileCache.cs" />
     <Compile Include="dntheme\ColorType.cs" />
     <Compile Include="dntheme\Theme.cs" />
     <Compile Include="dntheme\Themes.cs" />
