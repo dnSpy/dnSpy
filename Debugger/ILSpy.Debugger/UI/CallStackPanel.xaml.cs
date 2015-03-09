@@ -179,6 +179,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 					ModuleName = frame.MethodInfo.DebugModule.ToString(),
 					Token = (uint)frame.MethodInfo.MetadataToken,
 					ILOffset = frame.IP.IsValid ? frame.IP.Offset : -1,
+					ILOffsetString = frame.IP.IsValid ? string.Format("0x{0:X4}", frame.IP.Offset) : "????",
 					MethodKey = frame.MethodInfo.ToMethodKey(),
 				};
 				if (frameNumber == StackFrameStatementBookmark.SelectedFrame)
@@ -327,6 +328,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		public string AssemblyName { get; set; }
 		public uint Token { get; set; }
 		public int ILOffset { get; set; }
+		public string ILOffsetString { get; set; }
 		public MethodKey MethodKey { get; set; }
 		
 		public Brush FontColor {

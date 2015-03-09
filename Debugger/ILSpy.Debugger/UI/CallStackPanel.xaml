@@ -52,7 +52,7 @@
 						<GridViewColumn.CellTemplate>
 							<DataTemplate>
 								<TextBlock
-                                    Text="{Binding ILOffset, StringFormat={}0x{0:X4}}"
+                                    Text="{Binding ILOffsetString}"
                                     Foreground="{Binding FontColor}" />
 							</DataTemplate>
 						</GridViewColumn.CellTemplate>
