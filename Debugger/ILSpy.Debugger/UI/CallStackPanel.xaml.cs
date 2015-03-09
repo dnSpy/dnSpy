@@ -284,7 +284,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 				var key = item.MethodKey;
 				NR.TextLocation location, endLocation;
 				if (cm != null && cm.ContainsKey(key)) {
-					if (!cm[key].GetInstructionByTokenAndOffset((uint)item.ILOffset, out location, out endLocation)) {
+					if (!cm[key].GetInstructionByTokenAndOffset(unchecked((uint)item.ILOffset), out location, out endLocation)) {
 						//TODO: Missing IL ranges
 					}
 					else if (alreadySelected)
