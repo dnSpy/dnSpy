@@ -118,27 +118,21 @@ namespace ICSharpCode.ILSpy
 
 		public DecompileCache()
 		{
-			AddTimerWait();
+			AddTimerWait(this);
 		}
 
-		void AddTimerWait()
+		static void AddTimerWait(DecompileCache dc)
 		{
 			Timer timer = null;
-			SynchronizationContext context = SynchronizationContext.Current;
-			WeakReference self = new WeakReference(this);
+			WeakReference weakSelf = new WeakReference(dc);
 			timer = new Timer(a => {
 				timer.Dispose();
-				context.Post(b => ClearOldCallback(self), null);
+				var self = (DecompileCache)weakSelf.Target;
+				if (self != null) {
+					self.ClearOld();
+					AddTimerWait(self);
+				}
 			}, null, CLEAR_OLD_ITEMS_EVERY_MS, Timeout.Infinite);
-		}
-
-		static void ClearOldCallback(WeakReference weakSelf)
-		{
-			var self = (DecompileCache)weakSelf.Target;
-			if (self != null) {
-				self.ClearOld();
-				self.AddTimerWait();
-			}
 		}
 
 		public AvalonEditTextOutput Lookup(Language language, ILSpyTreeNode[] treeNodes, DecompilationOptions options)
