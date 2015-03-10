@@ -171,8 +171,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\application-x-executable.png" />
+    <Resource Include="Images\Break.png" />
     <Resource Include="Images\Breakpoint.png" />
+    <Resource Include="Images\ContinueDebugging.png" />
     <Resource Include="Images\CurrentLine.png" />
+    <Resource Include="Images\DeleteAllBreakpoints.PNG" />
     <Resource Include="Images\DisabledBreakpoint.png" />
     <Resource Include="Images\Icons.16x16.Class.png" />
     <Resource Include="Images\Icons.16x16.Delegate.png" />
@@ -225,23 +229,12 @@
     <Resource Include="Images\Icons.16x16.ProtectedStruct.png" />
     <Resource Include="Images\Icons.16x16.Reference.png" />
     <Resource Include="Images\Icons.16x16.Struct.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\DeleteAllBreakpoints.PNG" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\ContinueDebugging.png" />
-  </ItemGroup>
-  <ItemGroup>
+    <Resource Include="Images\RestartProcess.png" />
+    <Resource Include="Images\StartDebugging.png" />
     <Resource Include="Images\StepInto.png" />
     <Resource Include="Images\StepOut.png" />
     <Resource Include="Images\StepOver.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\application-x-executable.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Break.png" />
+    <Resource Include="Images\StopProcess.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

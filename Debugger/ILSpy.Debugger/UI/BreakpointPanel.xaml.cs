@@ -123,7 +123,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		}
     }
 
-    [ExportMainMenuCommand(Menu="_Debug", Header="Show _Breakpoints", MenuCategory="Breakpoints", MenuOrder=8)]
+    [ExportMainMenuCommand(Menu="_Debug", Header="Show _Breakpoints", MenuCategory="Breakpoints", MenuOrder=2)]
     public class BookmarkManagerPanelCommand : SimpleCommand
     {
         public override void Execute(object parameter)

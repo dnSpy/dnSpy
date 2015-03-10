@@ -55,13 +55,139 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		}
 		#endregion
 
+		sealed class SavedDebuggedOptions
+		{
+			public static readonly SavedDebuggedOptions Instance = new SavedDebuggedOptions();
+
+			public string Executable;
+			public string WorkingDirectory;
+			public string Arguments;
+
+			public static ExecuteProcessWindow CreateExecWindow(string fileName, out bool? result)
+			{
+				var window = new ExecuteProcessWindow {
+					Owner = MainWindow.Instance
+				};
+				var fn = fileName ?? Instance.Executable;
+				if (fn != null) {
+					window.SelectedExecutable = fn;
+					if (fileName == null && !string.IsNullOrEmpty(Instance.WorkingDirectory))
+						window.WorkingDirectory = Instance.WorkingDirectory;
+				}
+				window.Arguments = Instance.Arguments ?? string.Empty;
+
+				result = window.ShowDialog();
+				if (result == true) {
+					Instance.Executable = window.SelectedExecutable;
+					Instance.WorkingDirectory = window.WorkingDirectory;
+					Instance.Arguments = window.Arguments;
+				}
+				return window;
+			}
+		}
+
+		public static bool Start()
+		{
+			if (DebuggerService.CurrentDebugger == null || DebuggerService.CurrentDebugger.IsDebugging)
+				return false;
+
+			if (DebuggerSettings.Instance.AskForArguments) {
+				bool? result;
+				var window = SavedDebuggedOptions.CreateExecWindow(null, out result);
+				if (result == true) {
+					MainWindow.Instance.OpenFiles(new[] { window.SelectedExecutable }, false);
+					DebuggerPlugin.StartExecutable(window.SelectedExecutable, window.WorkingDirectory, window.Arguments);
+					return true;
+				}
+			}
+			else {
+				OpenFileDialog dialog = new OpenFileDialog() {
+					Filter = ".NET Executable (*.exe) | *.exe",
+					RestoreDirectory = true,
+					DefaultExt = "exe"
+				};
+				if (dialog.ShowDialog() == true) {
+					MainWindow.Instance.OpenFiles(new[] { dialog.FileName }, false);
+					DebuggerPlugin.StartExecutable(dialog.FileName, null, null);
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public static bool Start(string filename)
+		{
+			var debugger = DebuggerService.CurrentDebugger;
+			if (debugger == null || debugger.IsDebugging)
+				return false;
+
+			if (DebuggerSettings.Instance.AskForArguments) {
+				bool? result;
+				var window = SavedDebuggedOptions.CreateExecWindow(filename, out result);
+				if (result == true) {
+					DebuggerPlugin.StartExecutable(window.SelectedExecutable, window.WorkingDirectory, window.Arguments);
+					return true;
+				}
+				return false;
+			}
+			else {
+				DebuggerPlugin.StartExecutable(filename, null, null);
+				return true;
+			}
+		}
+
+		public static bool Stop()
+		{
+			var debugger = DebuggerService.CurrentDebugger;
+			if (debugger == null || !debugger.IsDebugging)
+				return false;
+
+			debugger.Stop();
+			return true;
+		}
+
+		public static bool RestartPossible()
+		{
+			return DebuggerService.CurrentDebugger != null &&
+				DebuggerService.CurrentDebugger.IsDebugging;
+		}
+
+		public static bool Restart()
+		{
+			if (!Stop())
+				return false;
+
+			var inst = SavedDebuggedOptions.Instance;
+			MainWindow.Instance.OpenFiles(new[] { inst.Executable }, false);
+			DebuggerPlugin.StartExecutable(inst.Executable, inst.WorkingDirectory, inst.Arguments);
+			return true;
+		}
+
+		public static bool Attach()
+		{
+			if (DebuggerService.CurrentDebugger == null || DebuggerService.CurrentDebugger.IsDebugging)
+				return false;
+
+			if (DebuggerSettings.Instance.ShowWarnings)
+				MessageBox.Show("Warning: When attaching to an application, some local variables might not be available. If possible, use the \"Debug an Executable\" command.",
+							"Attach to a process", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+			var window = new AttachToProcessWindow { Owner = MainWindow.Instance };
+			if (window.ShowDialog() == true) {
+				DebuggerPlugin.StartAttaching(window.SelectedProcess);
+				return true;
+			}
+
+			return false;
+		}
+
 		public static void StartExecutable(string fileName, string workingDirectory, string arguments)
 		{
 			var debugger = DebuggerService.CurrentDebugger;
 			if (debugger == null)
 				return;
 			debugger.BreakAtBeginning = DebuggerSettings.Instance.BreakAtBeginning;
-			Finish();
+			DebugStarted();
 			debugger.Start(new ProcessStartInfo {
 			                      	FileName = fileName,
 			                      	WorkingDirectory = workingDirectory ?? Path.GetDirectoryName(fileName),
@@ -75,7 +201,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (debugger == null)
 				return;
 			debugger.BreakAtBeginning = DebuggerSettings.Instance.BreakAtBeginning;
-			Finish();
+			DebugStarted();
 			debugger.Attach(process);
 		}
 
@@ -88,33 +214,27 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				debugger.Detach();
 
 				DebuggerPlugin.EnableDebuggerUI(true);
-				debugger.DebugStopped -= OnDebugStopped;
+				DebuggerService.DebugStopped -= OnDebugStopped;
 				return true;
 			}
 
 			return false;
 		}
 
-		static void Finish()
+		static void DebugStarted()
 		{
-			var debugger = DebuggerService.CurrentDebugger;
-			if (debugger == null)
-				return;
 			EnableDebuggerUI(false);
-			debugger.DebugStopped += OnDebugStopped;
-			debugger.IsProcessRunningChanged += CurrentDebugger_IsProcessRunningChanged;
+			DebuggerService.DebugStopped += OnDebugStopped;
+			DebuggerService.ProcessRunningChanged += OnProcessRunningChanged;
 			
 			MainWindow.Instance.SetStatus("Running...", Brushes.Black);
 		}
 
 		static void OnDebugStopped(object sender, EventArgs e)
 		{
-			var debugger = DebuggerService.CurrentDebugger;
-			if (debugger == null)
-				return;
 			EnableDebuggerUI(true);
-			debugger.DebugStopped -= OnDebugStopped;
-			debugger.IsProcessRunningChanged -= CurrentDebugger_IsProcessRunningChanged;
+			DebuggerService.DebugStopped -= OnDebugStopped;
+			DebuggerService.ProcessRunningChanged -= OnProcessRunningChanged;
 			
 			MainWindow.Instance.HideStatus();
 			CallStackPanel.Instance.CloseIfActive();
@@ -127,7 +247,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				MainWindow.Instance.SessionSettings.FilterSettings.ShowInternalApi = true;
 		}
 
-		static void CurrentDebugger_IsProcessRunningChanged(object sender, EventArgs e)
+		static void OnProcessRunningChanged(object sender, EventArgs e)
 		{
 			var debugger = DebuggerService.CurrentDebugger;
 			if (debugger == null)
@@ -175,6 +295,17 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		void OnKeyDown(object sender, KeyEventArgs e)
 		{
+			if (Keyboard.Modifiers == ModifierKeys.Shift && e.Key == Key.F5) {
+				Stop();
+				e.Handled = true;
+				return;
+			}
+			if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.F5) {
+				if (RestartPossible())
+					Restart();
+				e.Handled = true;
+				return;
+			}
 			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F9) {
 				DebugToggleBreakpoint();
 				e.Handled = true;
@@ -472,18 +603,50 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		}
 	}
 
-	public abstract class DebuggerCommand : SimpleCommand
+	public abstract class DebuggerCommand : ICommand
 	{
 		readonly bool? needsDebuggerActive;
 		readonly bool? mustBePaused;
+
+		public event EventHandler CanExecuteChanged;
 
 		protected DebuggerCommand(bool? needsDebuggerActive, bool? mustBePaused = null)
 		{
 			this.needsDebuggerActive = needsDebuggerActive;
 			this.mustBePaused = mustBePaused;
+			DebuggerService.DebugStarting += OnDebugStarting;
+			DebuggerService.DebugStarted += OnDebugStarted;
+			DebuggerService.DebugStopped += OnDebugStopped;
+			DebuggerService.ProcessRunningChanged += OnProcessRunningChanged;
 		}
 
-		public override bool CanExecute(object parameter)
+		void OnDebugStarting(object sender, EventArgs e)
+		{
+			UpdateState();
+		}
+
+		void OnDebugStarted(object sender, EventArgs e)
+		{
+			UpdateState();
+		}
+
+		void OnDebugStopped(object sender, EventArgs e)
+		{
+			UpdateState();
+		}
+
+		void OnProcessRunningChanged(object sender, EventArgs e)
+		{
+			UpdateState();
+		}
+
+		protected void UpdateState()
+		{
+			if (CanExecuteChanged != null)
+				CanExecuteChanged(this, EventArgs.Empty);
+		}
+
+		public virtual bool CanExecute(object parameter)
 		{
 			if (needsDebuggerActive == null)
 				return true;
@@ -496,44 +659,13 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				return true;
 			return mustBePaused == !DebuggerService.CurrentDebugger.IsProcessRunning;
 		}
-		
-		public override void Execute(object parameter)
+
+		public virtual void Execute(object parameter)
 		{
-		}
-	}
-
-	class SavedDebuggedOptions
-	{
-		static readonly SavedDebuggedOptions Instance = new SavedDebuggedOptions();
-
-		string Executable;
-		string WorkingDirectory;
-		string Arguments;
-
-		public static ExecuteProcessWindow CreateExecWindow(string fileName, out bool? result)
-		{
-			var window = new ExecuteProcessWindow {
-				Owner = MainWindow.Instance
-			};
-			var fn = fileName ?? Instance.Executable;
-			if (fn != null) {
-				window.SelectedExecutable = fn;
-				if (fileName == null && !string.IsNullOrEmpty(Instance.WorkingDirectory))
-					window.WorkingDirectory = Instance.WorkingDirectory;
-			}
-			window.Arguments = Instance.Arguments ?? string.Empty;
-
-			result = window.ShowDialog();
-			if (result == true) {
-				Instance.Executable = window.SelectedExecutable;
-				Instance.WorkingDirectory = window.WorkingDirectory;
-				Instance.Arguments = window.Arguments;
-			}
-			return window;
 		}
 	}
 	
-	[ExportContextMenuEntryAttribute(Header = "_Debug Assembly", Icon = "Images/application-x-executable.png")]
+	[ExportContextMenuEntryAttribute(Header = "_Debug Assembly", Icon = "Images/application-x-executable.png", Order = 0)]
 	internal sealed class DebugExecutableNodeCommand : DebuggerCommand, IContextMenuEntry
 	{
 		public DebugExecutableNodeCommand() : base(false)
@@ -569,34 +701,19 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		{
 			if (context.SelectedTreeNodes == null)
 				return;
-			if (DebuggerService.CurrentDebugger != null && !DebuggerService.CurrentDebugger.IsDebugging) {
-				AssemblyTreeNode n = context.SelectedTreeNodes[0] as AssemblyTreeNode;
-				
-				if (DebuggerSettings.Instance.AskForArguments) {
-					bool? result;
-					var window = SavedDebuggedOptions.CreateExecWindow(n.LoadedAssembly.FileName, out result);
-					if (result == true) {
-						string fileName = window.SelectedExecutable;
-						
-						// execute the process
-						DebuggerPlugin.StartExecutable(fileName, window.WorkingDirectory, window.Arguments);
-					}
-				} else {
-					DebuggerPlugin.StartExecutable(n.LoadedAssembly.FileName, null, null);
-				}
-			}
+			AssemblyTreeNode n = context.SelectedTreeNodes[0] as AssemblyTreeNode;
+			DebuggerPlugin.Start(n.LoadedAssembly.FileName);
 		}
 	}
 	
-	[ExportToolbarCommand(ToolTip = "Debug an executable",
+	[ExportToolbarCommand(ToolTip = "Debug an Executable",
 	                      ToolbarIcon = "Images/application-x-executable.png",
-	                      ToolbarCategory = "Debugger",
-	                      Tag = "Debugger",
+	                      ToolbarCategory = "Debug1",
 	                      ToolbarOrder = 0)]
 	[ExportMainMenuCommand(Menu = "_Debug",
 	                       MenuIcon = "Images/application-x-executable.png",
 	                       MenuCategory = "Start",
-	                       Header = "Debug an _executable",
+	                       Header = "Debug an _Executable",
 	                       MenuOrder = 0)]
 	internal sealed class DebugExecutableCommand : DebuggerCommand
 	{
@@ -606,37 +723,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public override void Execute(object parameter)
 		{
-			if (DebuggerService.CurrentDebugger != null && !DebuggerService.CurrentDebugger.IsDebugging) {
-				if (DebuggerSettings.Instance.AskForArguments)
-				{
-					bool? result;
-					var window = SavedDebuggedOptions.CreateExecWindow(null, out result);
-					if (result == true) {
-						string fileName = window.SelectedExecutable;
-						
-						// add it to references
-						MainWindow.Instance.OpenFiles(new [] { fileName }, false);
-						
-						// execute the process
-						DebuggerPlugin.StartExecutable(fileName, window.WorkingDirectory, window.Arguments);
-					}
-				} else {
-					OpenFileDialog dialog = new OpenFileDialog() {
-						Filter = ".NET Executable (*.exe) | *.exe",
-						RestoreDirectory = true,
-						DefaultExt = "exe"
-					};
-					if (dialog.ShowDialog() == true) {
-						string fileName = dialog.FileName;
-						
-						// add it to references
-						MainWindow.Instance.OpenFiles(new [] { fileName }, false);
-						
-						// execute the process
-						DebuggerPlugin.StartExecutable(fileName, null, null);
-					}
-				}
-			}
+			DebuggerPlugin.Start();
 		}
 	}
 	
@@ -652,26 +739,20 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public override void Execute(object parameter)
 		{
-			if (DebuggerService.CurrentDebugger != null && !DebuggerService.CurrentDebugger.IsDebugging) {
-				
-				if (DebuggerSettings.Instance.ShowWarnings)
-					MessageBox.Show("Warning: When attaching to an application, some local variables might not be available. If possible, use the \"Start Executable\" command.",
-				                "Attach to a process", MessageBoxButton.OK, MessageBoxImage.Warning);
-				
-				var window = new AttachToProcessWindow { Owner = MainWindow.Instance };
-				if (window.ShowDialog() == true) {
-					DebuggerPlugin.StartAttaching(window.SelectedProcess);
-				}
-			}
+			DebuggerPlugin.Attach();
 		}
 	}
 	
+	[ExportToolbarCommand(ToolTip = "Continue (F5)",
+						  ToolbarIcon = "Images/ContinueDebugging.png",
+	                      ToolbarCategory = "Debug2",
+	                      ToolbarOrder = 0)]
 	[ExportMainMenuCommand(Menu = "_Debug",
 	                       MenuIcon = "Images/ContinueDebugging.png",
-	                       MenuCategory = "SteppingArea",
+	                       MenuCategory = "Debug1",
 	                       Header = "_Continue",
 	                       InputGestureText = "F5",
-	                       MenuOrder = 2)]
+	                       MenuOrder = 0)]
 	internal sealed class ContinueDebuggingCommand : DebuggerCommand
 	{
 		public ContinueDebuggingCommand() : base(true, true)
@@ -684,12 +765,16 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		}
 	}
 
+	[ExportToolbarCommand(ToolTip = "Break (Ctrl+Break)",
+						  ToolbarIcon = "Images/Break.png",
+						  ToolbarCategory = "Debug2",
+						  ToolbarOrder = 1)]
 	[ExportMainMenuCommand(Menu = "_Debug",
 						   MenuIcon = "Images/Break.png",
-						   MenuCategory = "SteppingArea",
+						   MenuCategory = "Debug1",
 						   Header = "Brea_k",
 						   InputGestureText = "Ctrl+Break",
-						   MenuOrder = 2.1)]
+						   MenuOrder = 1)]
 	internal sealed class BreakDebuggingCommand : DebuggerCommand
 	{
 		public BreakDebuggingCommand() : base(true, false)
@@ -702,12 +787,60 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		}
 	}
 
+	[ExportToolbarCommand(ToolTip = "Stop Debugging (Shift+F5)",
+						  ToolbarIcon = "Images/StopProcess.png",
+						  ToolbarCategory = "Debug2",
+						  ToolbarOrder = 2)]
+	[ExportMainMenuCommand(Menu = "_Debug",
+						   MenuIcon = "Images/StopProcess.png",
+						   MenuCategory = "Debug1",
+						   Header = "Stop D_ebugging",
+						   InputGestureText = "Shift+F5",
+						   MenuOrder = 2)]
+	internal sealed class StopDebuggingCommand : DebuggerCommand
+	{
+		public StopDebuggingCommand() : base(true, null)
+		{
+		}
+
+		public override void Execute(object parameter)
+		{
+			DebuggerPlugin.Stop();
+		}
+	}
+
+	[ExportToolbarCommand(ToolTip = "Restart (Ctrl+Shift+F5)",
+						  ToolbarIcon = "Images/RestartProcess.png",
+						  ToolbarCategory = "Debug2",
+						  ToolbarOrder = 3)]
+	[ExportMainMenuCommand(Menu = "_Debug",
+						   MenuIcon = "Images/RestartProcess.png",
+						   MenuCategory = "Debug1",
+						   Header = "_Restart",
+						   InputGestureText = "Ctrl+Shift+F5",
+						   MenuOrder = 4)]
+	internal sealed class RestartDebuggingCommand : DebuggerCommand
+	{
+		public RestartDebuggingCommand() : base(true, null)
+		{
+		}
+
+		public override void Execute(object parameter)
+		{
+			DebuggerPlugin.Restart();
+		}
+	}
+
+	[ExportToolbarCommand(ToolTip = "Step Into (F11)",
+						  ToolbarIcon = "Images/StepInto.png",
+						  ToolbarCategory = "Debug3",
+						  ToolbarOrder = 1)]
 	[ExportMainMenuCommand(Menu = "_Debug",
 	                       MenuIcon = "Images/StepInto.png",
-	                       MenuCategory = "SteppingArea",
+						   MenuCategory = "Debug2",
 	                       Header = "Step _Into",
 	                       InputGestureText = "F11",
-	                       MenuOrder = 3)]
+	                       MenuOrder = 0)]
 	internal sealed class StepIntoCommand : DebuggerCommand
 	{
 		public StepIntoCommand() : base(true, true)
@@ -720,12 +853,16 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		}
 	}
 	
+	[ExportToolbarCommand(ToolTip = "Step Over (F10)",
+						  ToolbarIcon = "Images/StepOver.png",
+						  ToolbarCategory = "Debug3",
+						  ToolbarOrder = 2)]
 	[ExportMainMenuCommand(Menu = "_Debug",
 	                       MenuIcon = "Images/StepOver.png",
-	                       MenuCategory = "SteppingArea",
+						   MenuCategory = "Debug2",
 	                       Header = "Step _Over",
 	                       InputGestureText = "F10",
-	                       MenuOrder = 4)]
+	                       MenuOrder = 1)]
 	internal sealed class StepOverCommand : DebuggerCommand
 	{
 		public StepOverCommand() : base(true, true)
@@ -738,12 +875,16 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		}
 	}
 	
+	[ExportToolbarCommand(ToolTip = "Step Out (Shift+F11)",
+						  ToolbarIcon = "Images/StepOut.png",
+						  ToolbarCategory = "Debug3",
+						  ToolbarOrder = 3)]
 	[ExportMainMenuCommand(Menu = "_Debug",
 	                       MenuIcon = "Images/StepOut.png",
-	                       MenuCategory = "SteppingArea",
+						   MenuCategory = "Debug2",
 	                       Header = "Step Ou_t",
 						   InputGestureText = "Shift+F11",
-	                       MenuOrder = 5)]
+	                       MenuOrder = 2)]
 	internal sealed class StepOutCommand : DebuggerCommand
 	{
 		public StepOutCommand() : base(true, true)
@@ -757,9 +898,9 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	}
 	
 	[ExportMainMenuCommand(Menu = "_Debug",
-	                       MenuCategory = "SteppingArea",
+						   MenuCategory = "Debug1",
 	                       Header = "Det_ach",
-	                       MenuOrder = 6)]
+	                       MenuOrder = 3)]
 	internal sealed class DetachCommand : DebuggerCommand
 	{
 		public DetachCommand() : base(true)
@@ -777,11 +918,13 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 						   MenuCategory = "Breakpoints",
 	                       Header = "_Delete all breakpoints",
 						   InputGestureText = "Ctrl+Shift+F9",
-	                       MenuOrder = 7.9)]
+	                       MenuOrder = 1)]
 	internal sealed class RemoveBreakpointsCommand : DebuggerCommand
 	{
 		public RemoveBreakpointsCommand() : base(null)
 		{
+			BookmarkManager.Added += delegate { UpdateState(); };
+			BookmarkManager.Removed += delegate { UpdateState(); };
 		}
 
 		public override void Execute(object parameter)
@@ -800,7 +943,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuCategory = "Breakpoints",
 	                       Header = "To_ggle Breakpoint",
 						   InputGestureText = "F9",
-	                       MenuOrder = 7)]
+	                       MenuOrder = 0)]
 	internal sealed class ToggleBreakpointCommand : DebuggerCommand
 	{
 		public ToggleBreakpointCommand() : base(null)
@@ -882,7 +1025,24 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "S_how Next Statement",
+	[ExportToolbarCommand(ToolTip = "Show Next Statement (Alt+Num *)",
+						  ToolbarIcon = "Images/CurrentLine.png",
+						  ToolbarCategory = "Debug3",
+						  ToolbarOrder = 0)]
+	internal sealed class ShowNextStatementCommand : DebuggerCommand
+	{
+		public ShowNextStatementCommand() : base(true, true)
+		{
+		}
+
+		public override void Execute(object parameter)
+		{
+			DebuggerPlugin.DebugShowNextStatement();
+		}
+	}
+
+	[ExportContextMenuEntry(Icon = "images/CurrentLine.png",
+							Header = "S_how Next Statement",
 							InputGestureText = "Alt+Num *",
 							Category = "Debug",
 							Order = 2.0)]

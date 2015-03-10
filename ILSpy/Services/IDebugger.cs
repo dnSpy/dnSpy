@@ -119,7 +119,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		/// <summary>
 		/// Ocurrs when the value of IsProcessRunning changes.
 		/// </summary>
-		event EventHandler IsProcessRunningChanged;
+		event EventHandler ProcessRunningChanged;
 		
 		/// <summary>
 		/// Ocurrs after the debugging of program is finished.

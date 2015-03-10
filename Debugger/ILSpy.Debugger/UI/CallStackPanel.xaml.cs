@@ -108,14 +108,14 @@ namespace ICSharpCode.ILSpy.Debugger.UI
         void OnDebugStarted(object sender, EventArgs args)
         {
         	m_currentDebugger = DebuggerService.CurrentDebugger;
-        	m_currentDebugger.IsProcessRunningChanged += new EventHandler(OnProcessRunningChanged);
+			DebuggerService.ProcessRunningChanged += new EventHandler(OnProcessRunningChanged);
         	
         	OnProcessRunningChanged(null, EventArgs.Empty);
         }
 
         void OnDebugStopped(object sender, EventArgs args)
         {
-        	m_currentDebugger.IsProcessRunningChanged -= new EventHandler(OnProcessRunningChanged);
+        	DebuggerService.ProcessRunningChanged -= new EventHandler(OnProcessRunningChanged);
         	m_currentDebugger = null;
 			view.ItemsSource = null;
         }

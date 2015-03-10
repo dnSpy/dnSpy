@@ -45,6 +45,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					currentDebugger.DebugStarting += new EventHandler(OnDebugStarting);
 					currentDebugger.DebugStarted += new EventHandler(OnDebugStarted);
 					currentDebugger.DebugStopped += new EventHandler(OnDebugStopped);
+					currentDebugger.ProcessRunningChanged += new EventHandler(OnProcessRunningChanged);
 				}
 				return currentDebugger;
 			}
@@ -62,6 +63,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		public static event EventHandler DebugStarting;
 		public static event EventHandler DebugStarted;
 		public static event EventHandler DebugStopped;
+		public static event EventHandler ProcessRunningChanged;
 		
 		static void OnDebugStarting(object sender, EventArgs e)
 		{
@@ -86,6 +88,12 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			
 			if (DebugStopped != null)
 				DebugStopped(null, e);
+		}
+
+		static void OnProcessRunningChanged(object sender, EventArgs e)
+		{
+			if (ProcessRunningChanged != null)
+				ProcessRunningChanged(null, e);
 		}
 		
 		public static void ClearDebugMessages()
@@ -217,6 +225,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				currentDebugger.DebugStarting -= new EventHandler(OnDebugStarting);
 				currentDebugger.DebugStarted -= new EventHandler(OnDebugStarted);
 				currentDebugger.DebugStopped -= new EventHandler(OnDebugStopped);
+				currentDebugger.ProcessRunningChanged -= new EventHandler(OnProcessRunningChanged);
 			}
 			currentDebugger = debugger.Value;
 			if (currentDebugger != null)
@@ -224,6 +233,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				currentDebugger.DebugStarting += new EventHandler(OnDebugStarting);
 				currentDebugger.DebugStarted += new EventHandler(OnDebugStarted);
 				currentDebugger.DebugStopped += new EventHandler(OnDebugStopped);
+				currentDebugger.ProcessRunningChanged += new EventHandler(OnProcessRunningChanged);
 			}
 		}
 	}

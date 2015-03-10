@@ -406,12 +406,12 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		public event EventHandler DebugStarting;
 		public event EventHandler DebugStarted;
 		public event EventHandler DebugStopped;
-		public event EventHandler IsProcessRunningChanged;
+		public event EventHandler ProcessRunningChanged;
 		
-		protected virtual void OnIsProcessRunningChanged(EventArgs e)
+		protected virtual void OnProcessRunningChanged(EventArgs e)
 		{
-			if (IsProcessRunningChanged != null) {
-				IsProcessRunningChanged(this, e);
+			if (ProcessRunningChanged != null) {
+				ProcessRunningChanged(this, e);
 			}
 		}
 		
@@ -682,12 +682,12 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		void debuggedProcess_DebuggingPaused(object sender, ProcessEventArgs e)
 		{
 			JumpToCurrentLine();
-			OnIsProcessRunningChanged(EventArgs.Empty);
+			OnProcessRunningChanged(EventArgs.Empty);
 		}
 		
 		void debuggedProcess_DebuggingResumed(object sender, CorDbg.ProcessEventArgs e)
 		{
-			OnIsProcessRunningChanged(EventArgs.Empty);
+			OnProcessRunningChanged(EventArgs.Empty);
 			StackFrameStatementBookmark.Remove(true);
 		}
 		
