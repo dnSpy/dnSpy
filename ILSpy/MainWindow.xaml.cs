@@ -840,7 +840,12 @@ namespace ICSharpCode.ILSpy
 				topPaneRow.Height = new GridLength(sessionSettings.TopPaneSplitterPosition, GridUnitType.Star);
 			}
 			topPane.Title = title;
-			topPane.Content = content;
+			if (topPane.Content != content) {
+				IPane pane = topPane.Content as IPane;
+				if (pane != null)
+					pane.Closed();
+				topPane.Content = content;
+			}
 			topPane.Visibility = Visibility.Visible;
 		}
 		
@@ -865,7 +870,12 @@ namespace ICSharpCode.ILSpy
 				bottomPaneRow.Height = new GridLength(sessionSettings.BottomPaneSplitterPosition, GridUnitType.Star);
 			}
 			bottomPane.Title = title;
-			bottomPane.Content = content;
+			if (bottomPane.Content != content) {
+				IPane pane = bottomPane.Content as IPane;
+				if (pane != null)
+					pane.Closed();
+				bottomPane.Content = content;
+			}
 			bottomPane.Visibility = Visibility.Visible;
 		}
 		

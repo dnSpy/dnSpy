@@ -162,6 +162,7 @@ namespace ICSharpCode.ILSpy
 
 			var index = this.assemblies.IndexOf(target);
 			var newAsm = new LoadedAssembly(this, file, stream);
+			newAsm.IsAutoLoaded = target.IsAutoLoaded;
 			lock (assemblies)
 			{
 				this.assemblies.Remove(target);

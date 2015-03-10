@@ -80,6 +80,11 @@ namespace ICSharpCode.ILSpy.VB
 				base.DecompileAssembly(assembly, output, options);
 				output.WriteLine();
 				ModuleDefinition mainModule = assembly.ModuleDefinition;
+				if (mainModule.Types.Count > 0) {
+					output.Write("// Global type: ");
+					output.WriteReference(mainModule.Types[0].FullName, mainModule.Types[0]);
+					output.WriteLine();
+				}
 				if (mainModule.EntryPoint != null) {
 					output.Write("' Entry point: ");
 					output.WriteReference(mainModule.EntryPoint.DeclaringType.FullName + "." + mainModule.EntryPoint.Name, mainModule.EntryPoint);
