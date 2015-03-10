@@ -614,30 +614,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		{
 			this.needsDebuggerActive = needsDebuggerActive;
 			this.mustBePaused = mustBePaused;
-			DebuggerService.DebugStarting += OnDebugStarting;
-			DebuggerService.DebugStarted += OnDebugStarted;
-			DebuggerService.DebugStopped += OnDebugStopped;
-			DebuggerService.ProcessRunningChanged += OnProcessRunningChanged;
-		}
-
-		void OnDebugStarting(object sender, EventArgs e)
-		{
-			UpdateState();
-		}
-
-		void OnDebugStarted(object sender, EventArgs e)
-		{
-			UpdateState();
-		}
-
-		void OnDebugStopped(object sender, EventArgs e)
-		{
-			UpdateState();
-		}
-
-		void OnProcessRunningChanged(object sender, EventArgs e)
-		{
-			UpdateState();
+			DebuggerService.DebugStarting += delegate { UpdateState(); };
+			DebuggerService.DebugStarted += delegate { UpdateState(); };
+			DebuggerService.DebugStopped += delegate { UpdateState(); };
+			DebuggerService.ProcessRunningChanged += delegate { UpdateState(); };
 		}
 
 		protected void UpdateState()
