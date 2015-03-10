@@ -292,7 +292,7 @@ namespace ICSharpCode.ILSpy
 				base.DecompileAssembly(assembly, output, options, flags);
 				output.WriteLine();
 				ModuleDef mainModule = assembly.ModuleDefinition;
-				if (mainModule.Types.Count > 0) {
+				if (decompileMod && mainModule.Types.Count > 0) {
 					output.Write("// Global type: ", TextTokenType.Comment);
 					output.WriteReference(mainModule.GlobalType.FullName, mainModule.GlobalType, TextTokenType.Comment);
 					output.WriteLine();

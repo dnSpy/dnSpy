@@ -523,5 +523,18 @@ namespace ICSharpCode.Decompiler
 				return ts.IsValueType;
 			}
 		}
+
+		public static bool IsDelegate(this TypeDef type)
+		{
+			if (type == null)
+				return false;
+			if (type.BaseType != null && type.BaseType.Namespace == "System") {
+				if (type.BaseType.Name == "MulticastDelegate")
+					return true;
+				if (type.BaseType.Name == "Delegate" && type.Name != "MulticastDelegate")
+					return true;
+			}
+			return false;
+		}
 	}
 }

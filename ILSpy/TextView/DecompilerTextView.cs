@@ -132,7 +132,6 @@ namespace ICSharpCode.ILSpy.TextView
 			
 			textEditor.TextArea.LeftMargins.Insert(0, iconMargin);
 			textEditor.TextArea.TextView.VisualLinesChanged += delegate { iconMargin.InvalidateVisual(); };
-			textEditor.PreviewMouseDown += delegate { ClosePopups(); };
 			
 			// Bookmarks context menu
 			IconMarginActionsProvider.Add(iconMargin);
@@ -798,6 +797,7 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			if (GetReferenceSegmentAtMousePosition() == null)
 				ClearLocalReferenceMarks();
+			ClosePopups();
 		}
 
 		void ClearLocalReferenceMarks()
