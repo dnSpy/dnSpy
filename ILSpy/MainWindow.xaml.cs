@@ -573,13 +573,7 @@ namespace ICSharpCode.ILSpy
 
 		static string GetCpuType()
 		{
-			var name = System.Reflection.Assembly.GetEntryAssembly().GetName().Name;
-			if (name == "dnSpy-x86")
-				return "x86";
-			if (name == "dnSpy")
-				return IntPtr.Size == 4 ? "x86" : "x64";
-			Debug.Fail("Unknown entry assembly name" + name);
-			return string.Empty;
+			return IntPtr.Size == 4 ? "x86" : "x64";
 		}
 		
 		void assemblyList_Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
