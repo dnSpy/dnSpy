@@ -376,13 +376,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	}
 
 	[ExportContextMenuEntryAttribute(Header = "_Remove", Icon = "images/Delete.png", Order = 2)]
-	sealed class RemoveAssembly : IContextMenuEntry
+	sealed class RemoveAssembly : IContextMenuEntry2
 	{
-		public string GetMenuHeader(TextViewContext context)
+		public void Initialize(TextViewContext context, MenuItem menuItem)
 		{
 			if (context.SelectedTreeNodes.Length == 1)
-				return string.Format("_Remove {0}", ((AssemblyTreeNode)context.SelectedTreeNodes[0]).LoadedAssembly.ShortName);
-			return string.Format("_Remove {0} assemblies", context.SelectedTreeNodes.Length);
+				menuItem.Header = string.Format("_Remove {0}", ((AssemblyTreeNode)context.SelectedTreeNodes[0]).LoadedAssembly.ShortName);
+			else
+				menuItem.Header = string.Format("_Remove {0} assemblies", context.SelectedTreeNodes.Length);
 		}
 
 		public bool IsVisible(TextViewContext context)
@@ -436,11 +437,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 			MainWindow.Instance.RefreshDecompiledView();
 		}
-
-		public string GetMenuHeader(TextViewContext context)
-		{
-			return null;
-		}
 	}
 
 	[ExportContextMenuEntryAttribute(Header = "_Add To Main List")]
@@ -469,11 +465,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					node.RaisePropertyChanged("Foreground");
 				}
 			}
-		}
-
-		public string GetMenuHeader(TextViewContext context)
-		{
-			return null;
 		}
 	}
 }

@@ -23,11 +23,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	[ExportContextMenuEntryAttribute(Header = "Remove", Icon = "images/Delete.png")]
 	internal sealed class RemoveAnalyzeContextMenuEntry : IContextMenuEntry
 	{
-		public string GetMenuHeader(TextViewContext context)
-		{
-			return null;
-		}
-
 		public bool IsVisible(TextViewContext context)
 		{
 			if (context.TreeView is AnalyzerTreeView && context.SelectedTreeNodes != null && context.SelectedTreeNodes.All(n => n.Parent.IsRoot))

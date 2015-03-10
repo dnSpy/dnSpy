@@ -116,7 +116,6 @@ namespace ICSharpCode.ILSpy
 			decompilerTextView.TextEditor.TextArea.MouseRightButtonDown += editorTextArea_MouseRightButtonDown;
 			
 			this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
-			this.themeMenu.Click += new RoutedEventHandler(themeMenu_Click);
 		}
 
 		void editorTextArea_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -157,11 +156,6 @@ namespace ICSharpCode.ILSpy
 			return -1;
 		}
 
-		void themeMenu_Click(object sender, RoutedEventArgs e)
-		{
-			BuildThemeMenu();
-		}
-
 		void BuildThemeMenu() {
 			themeMenu.Items.Clear();
 			foreach (var theme in Themes.AllThemes.OrderBy(x => x.Sort)) {
@@ -178,6 +172,8 @@ namespace ICSharpCode.ILSpy
 
 		void ThemeMenuItem_Click(object sender, RoutedEventArgs e) {
 			var mi = (MenuItem)sender;
+			foreach (MenuItem menuItem in themeMenu.Items)
+				menuItem.IsChecked = menuItem == mi;
 			SetTheme((Theme)mi.Tag);
 		}
 
@@ -208,11 +204,18 @@ namespace ICSharpCode.ILSpy
 		[ImportMany("ToolbarCommand", typeof(ICommand))]
 		Lazy<ICommand, IToolbarCommandMetadata>[] toolbarCommands = null;
 		
-		void InitToolbar()
+		/// <summary>
+		/// Call this when a toolbar button's visibility has changed. The toolbar items will be
+		/// re-created.
+		/// </summary>
+		public void UpdateToolbar()
 		{
+			toolBar.Items.Clear();
+			foreach (var o in mtbState.OriginalToolbarItems)
+				toolBar.Items.Add(o);
 			int navigationPos = 0;
 			int openPos = 1;
-			foreach (var commandGroup in toolbarCommands.OrderBy(c => c.Metadata.ToolbarOrder).GroupBy(c => c.Metadata.ToolbarCategory)) {
+			foreach (var commandGroup in mtbState.Groupings) {
 				if (commandGroup.Key == "Navigation") {
 					foreach (var command in commandGroup) {
 						toolBar.Items.Insert(navigationPos++, MakeToolbarItem(command));
@@ -223,13 +226,40 @@ namespace ICSharpCode.ILSpy
 						toolBar.Items.Insert(openPos++, MakeToolbarItem(command));
 					}
 				} else {
-					toolBar.Items.Add(new Separator());
+					var items = new List<Button>();
 					foreach (var command in commandGroup) {
-						toolBar.Items.Add(MakeToolbarItem(command));
+						var tbarCmd = command.Value as IToolbarCommand;
+						if (tbarCmd == null || tbarCmd.IsVisible)
+							items.Add(MakeToolbarItem(command));
+					}
+
+					if (items.Count > 0) {
+						toolBar.Items.Add(new Separator());
+						foreach (var item in items)
+							toolBar.Items.Add(item);
 					}
 				}
 			}
-			
+
+			// We must tell it to re-check all commands again. If we don't, some of the toolbar
+			// buttons will be disabled until the user clicks with the mouse or presses a key.
+			// This happens when debugging and you press F5 and the program exits.
+			CommandManager.InvalidateRequerySuggested();
+		}
+
+		class MainToolbarState
+		{
+			public object[] OriginalToolbarItems;
+			public IGrouping<string, Lazy<ICommand, IToolbarCommandMetadata>>[] Groupings;
+		}
+		MainToolbarState mtbState = new MainToolbarState();
+		void InitToolbar()
+		{
+			mtbState.OriginalToolbarItems = new object[toolBar.Items.Count];
+			for (int i = 0; i < toolBar.Items.Count; i++)
+				mtbState.OriginalToolbarItems[i] = toolBar.Items[i];
+			mtbState.Groupings = toolbarCommands.OrderBy(c => c.Metadata.ToolbarOrder).GroupBy(c => c.Metadata.ToolbarCategory).ToArray();
+			UpdateToolbar();
 		}
 		
 		Button MakeToolbarItem(Lazy<ICommand, IToolbarCommandMetadata> command)
@@ -251,35 +281,82 @@ namespace ICSharpCode.ILSpy
 		[ImportMany("MainMenuCommand", typeof(ICommand))]
 		Lazy<ICommand, IMainMenuCommandMetadata>[] mainMenuCommands = null;
 		
+		class MainSubMenuState
+		{
+			public MenuItem TopLevelMenuItem;
+			public IGrouping<string, Lazy<ICommand, IMainMenuCommandMetadata>>[] Groupings;
+			public List<object> OriginalItems = new List<object>();
+		}
+		readonly Dictionary<string, MainSubMenuState> subMenusDict = new Dictionary<string, MainSubMenuState>();
 		void InitMainMenu()
 		{
 			foreach (var topLevelMenu in mainMenuCommands.OrderBy(c => c.Metadata.MenuOrder).GroupBy(c => c.Metadata.Menu)) {
 				var topLevelMenuItem = mainMenu.Items.OfType<MenuItem>().FirstOrDefault(m => (m.Header as string) == topLevelMenu.Key);
-				foreach (var category in topLevelMenu.GroupBy(c => c.Metadata.MenuCategory)) {
-					if (topLevelMenuItem == null) {
-						topLevelMenuItem = new MenuItem();
-						topLevelMenuItem.Header = topLevelMenu.Key;
-						mainMenu.Items.Add(topLevelMenuItem);
-					} else if (topLevelMenuItem.Items.Count > 0) {
+				var state = new MainSubMenuState();
+				if (topLevelMenuItem == null) {
+					topLevelMenuItem = new MenuItem();
+					topLevelMenuItem.Header = topLevelMenu.Key;
+					mainMenu.Items.Add(topLevelMenuItem);
+				}
+				subMenusDict.Add((string)topLevelMenuItem.Header, state);
+				state.TopLevelMenuItem = topLevelMenuItem;
+				state.Groupings = topLevelMenu.GroupBy(c => c.Metadata.MenuCategory).ToArray();
+				foreach (object o in state.TopLevelMenuItem.Items)
+					state.OriginalItems.Add(o);
+				InitializeMainSubMenu(state);
+			}
+		}
+
+		/// <summary>
+		/// If a menu item gets hidden, this method should be called to re-create the sub menu.
+		/// </summary>
+		/// <param name="menuHeader">The exact display name of the sub menu (eg. "_Debug")</param>
+		public void UpdateMainSubMenu(string menuHeader)
+		{
+			var state = subMenusDict[menuHeader];
+			int index = mainMenu.Items.IndexOf(state.TopLevelMenuItem);
+			mainMenu.Items.RemoveAt(index);
+			var newItem = new MenuItem();
+			newItem.Header = state.TopLevelMenuItem.Header;
+			newItem.Name = state.TopLevelMenuItem.Name;
+			state.TopLevelMenuItem = newItem;
+			mainMenu.Items.Insert(index, newItem);
+			InitializeMainSubMenu(state);
+		}
+
+		static void InitializeMainSubMenu(MainSubMenuState state)
+		{
+			var topLevelMenuItem = state.TopLevelMenuItem;
+			topLevelMenuItem.Items.Clear();
+			foreach (var o in state.OriginalItems)
+				state.TopLevelMenuItem.Items.Add(o);
+			foreach (var category in state.Groupings) {
+				var items = new List<object>();
+				foreach (var entry in category) {
+					var menuCmd = entry.Value as IMainMenuCommand;
+					if (menuCmd != null && !menuCmd.IsVisible)
+						continue;
+					MenuItem menuItem = new MenuItem();
+					menuItem.Command = CommandWrapper.Unwrap(entry.Value);
+					if (!string.IsNullOrEmpty(entry.Metadata.Header))
+						menuItem.Header = entry.Metadata.Header;
+					if (!string.IsNullOrEmpty(entry.Metadata.MenuIcon)) {
+						menuItem.Icon = new Image {
+							Width = 16,
+							Height = 16,
+							Source = Images.LoadImage(entry.Value, entry.Metadata.MenuIcon)
+						};
+					}
+
+					menuItem.IsEnabled = entry.Metadata.IsEnabled;
+					menuItem.InputGestureText = entry.Metadata.InputGestureText;
+					items.Add(menuItem);
+				}
+				if (items.Count > 0) {
+					if (topLevelMenuItem.Items.Count > 0)
 						topLevelMenuItem.Items.Add(new Separator());
-					}
-					foreach (var entry in category) {
-						MenuItem menuItem = new MenuItem();
-						menuItem.Command = CommandWrapper.Unwrap(entry.Value);
-						if (!string.IsNullOrEmpty(entry.Metadata.Header))
-							menuItem.Header = entry.Metadata.Header;
-						if (!string.IsNullOrEmpty(entry.Metadata.MenuIcon)) {
-							menuItem.Icon = new Image {
-								Width = 16,
-								Height = 16,
-								Source = Images.LoadImage(entry.Value, entry.Metadata.MenuIcon)
-							};
-						}
-						
-						menuItem.IsEnabled = entry.Metadata.IsEnabled;
-						menuItem.InputGestureText = entry.Metadata.InputGestureText;
-						topLevelMenuItem.Items.Add(menuItem);
-					}
+					foreach (var item in items)
+						topLevelMenuItem.Items.Add(item);
 				}
 			}
 		}

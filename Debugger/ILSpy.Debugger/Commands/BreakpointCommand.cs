@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.AvalonEdit;
@@ -111,8 +112,9 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		}
 	}
 
-	[ExportBookmarkContextMenuEntry(Category = "Debug", Icon = "images/DisabledBreakpoint.png")]
-	public class EnableAndDisableBreakpointCommand : IBookmarkContextMenuEntry
+	[ExportBookmarkContextMenuEntry(InputGestureText = "Shift+F9",
+									Category = "Debug")]
+	public class EnableAndDisableBreakpointCommand : IBookmarkContextMenuEntry2
 	{
 		public bool IsVisible(IBookmark bookmark)
 		{
@@ -126,15 +128,27 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public void Execute(IBookmark bookmark)
 		{
-			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
-			var bpm = BreakpointHelper.GetBreakpointBookmark(location.Line, location.Column);
+			var bpm = bookmark as BreakpointBookmark;
 			if (bpm != null)
 				bpm.IsEnabled = !bpm.IsEnabled;
 		}
 
-		public string GetHeader(IBookmark bookmark)
+		public void Initialize(IBookmark bookmark, MenuItem menuItem)
 		{
-			return ((BreakpointBookmark)bookmark).IsEnabled ? "Disable _Breakpoint" : "Enable _Breakpoint";
+			InitializeMenuItem(bookmark as BreakpointBookmark, menuItem);
+		}
+
+		public static void InitializeMenuItem(BreakpointBookmark bpm, MenuItem menuItem)
+		{
+			menuItem.IsEnabled = bpm != null;
+			if (bpm == null || bpm.IsEnabled) {
+				menuItem.Header = "Disable _Breakpoint";
+				menuItem.Icon = ImageService.LoadImage(ImageService.DisabledBreakpoint, 16, 16);
+			}
+			else {
+				menuItem.Header = "Enable _Breakpoint";
+				menuItem.Icon = ImageService.LoadImage(ImageService.Breakpoint, 16, 16);
+			}
 		}
 	}
 }

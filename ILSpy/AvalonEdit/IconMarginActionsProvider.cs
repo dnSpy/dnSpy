@@ -27,12 +27,11 @@ using ICSharpCode.ILSpy.Bookmarks;
 namespace ICSharpCode.ILSpy.AvalonEdit
 {
 	#region Context menu extensibility
-	public interface IBookmarkContextMenuEntry
+	public interface IBookmarkContextMenuEntry : IContextMenuEntry<IBookmark>
 	{
-		bool IsVisible(IBookmark bookmark);
-		bool IsEnabled(IBookmark bookmark);
-		void Execute(IBookmark bookmark);
-		string GetHeader(IBookmark bookmark);
+	}
+	public interface IBookmarkContextMenuEntry2 : IBookmarkContextMenuEntry, IContextMenuEntry2<IBookmark>
+	{
 	}
 	
 	public interface IBookmarkContextMenuEntryMetadata
@@ -40,7 +39,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		string Icon { get; }
 		string Header { get; }
 		string Category { get; }
-		
+		string InputGestureText { get; }
 		double Order { get; }
 	}
 	
@@ -56,6 +55,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		public string Icon { get; set; }
 		public string Header { get; set; }
 		public string Category { get; set; }
+		public string InputGestureText { get; set; }
 		public double Order { get; set; }
 	}
 	#endregion
@@ -166,7 +166,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 							}
 							
 							MenuItem menuItem = new MenuItem();
-							menuItem.Header = entry.GetHeader(bookmark) ?? entryPair.Metadata.Header;
+							menuItem.Header = entryPair.Metadata.Header;
 							if (!string.IsNullOrEmpty(entryPair.Metadata.Icon)) {
 								menuItem.Icon = new Image {
 									Width = 16,
@@ -178,6 +178,10 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 								menuItem.Click += delegate { entry.Execute(bookmark); };
 							} else
 								menuItem.IsEnabled = false;
+							menuItem.InputGestureText = entryPair.Metadata.InputGestureText ?? string.Empty;
+							var entry2 = entry as IBookmarkContextMenuEntry2;
+							if (entry2 != null)
+								entry2.Initialize(bookmark, menuItem);
 							menu.Items.Add(menuItem);
 						}
 					}

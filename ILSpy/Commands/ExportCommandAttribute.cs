@@ -31,6 +31,14 @@ namespace ICSharpCode.ILSpy
 		object Tag { get; }
 		double ToolbarOrder { get; }
 	}
+
+	public interface IToolbarCommand : ICommand
+	{
+		/// <summary>
+		/// true if it should be added to the toolbar
+		/// </summary>
+		bool IsVisible { get; }
+	}
 	
 	[MetadataAttribute]
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
@@ -60,6 +68,14 @@ namespace ICSharpCode.ILSpy
 		bool IsEnabled { get; }
 		
 		double MenuOrder { get; }
+	}
+
+	public interface IMainMenuCommand
+	{
+		/// <summary>
+		/// true if it should be added to the menu
+		/// </summary>
+		bool IsVisible { get; }
 	}
 	
 	[MetadataAttribute]

@@ -40,10 +40,5 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			context.TextView.textEditor.Copy();
 		}
-
-		public string GetMenuHeader(TextViewContext context)
-		{
-			return null;
-		}
 	}
 }

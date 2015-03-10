@@ -2,6 +2,7 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -25,11 +26,32 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		}
 		
 		public static readonly BitmapImage Breakpoint = LoadBitmap("Breakpoint");
+		public static readonly BitmapImage DisabledBreakpoint = LoadBitmap("DisabledBreakpoint");
 		public static readonly BitmapImage CurrentLine = LoadBitmap("CurrentLine");
 		
 		public static ImageSource GetImage(string imageName)
 		{
 			return LoadBitmap(imageName);
+		}
+
+		public static BitmapImage LoadImage(object part, string icon)
+		{
+			Uri uri;
+			var assembly = part.GetType().Assembly;
+			var name = assembly.GetName();
+			uri = new Uri("pack://application:,,,/" + name.Name + ";v" + name.Version + ";component/" + icon);
+			BitmapImage image = new BitmapImage(uri);
+			image.Freeze();
+			return image;
+		}
+
+		public static Image LoadImage(BitmapImage source, int width, int height)
+		{
+			return new Image {
+				Width = width,
+				Height = height,
+				Source = source
+			};
 		}
 	}
 }

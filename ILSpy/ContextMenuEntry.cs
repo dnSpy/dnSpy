@@ -28,12 +28,45 @@ using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy
 {
-	public interface IContextMenuEntry
+	public interface IContextMenuEntry<TContext>
 	{
-		bool IsVisible(TextViewContext context);
-		bool IsEnabled(TextViewContext context);
-		void Execute(TextViewContext context);
-		string GetMenuHeader(TextViewContext context);
+		/// <summary>
+		/// Returns true if it should be visible in the context menu
+		/// </summary>
+		/// <param name="context"></param>
+		/// <returns></returns>
+		bool IsVisible(TContext context);
+
+		/// <summary>
+		/// Returns true if it's enabled in the context menu. Only called if <see cref="IsVisible"/>
+		/// returns true.
+		/// </summary>
+		/// <param name="context"></param>
+		/// <returns></returns>
+		bool IsEnabled(TContext context);
+
+		/// <summary>
+		/// Called when the menu item has been clicked
+		/// </summary>
+		/// <param name="context"></param>
+		void Execute(TContext context);
+	}
+
+	public interface IContextMenuEntry2<TContext> : IContextMenuEntry<TContext>
+	{
+		/// <summary>
+		/// Called before the context menu is shown. Can be used to update the menu item before it's
+		/// shown.
+		/// </summary>
+		/// <param name="context"></param>
+		/// <param name="menuItem"></param>
+		void Initialize(TContext context, MenuItem menuItem);
+	}
+	public interface IContextMenuEntry : IContextMenuEntry<TextViewContext>
+	{
+	}
+	public interface IContextMenuEntry2 : IContextMenuEntry, IContextMenuEntry2<TextViewContext>
+	{
 	}
 	
 	public class TextViewContext
@@ -217,7 +250,7 @@ namespace ICSharpCode.ILSpy
 							needSeparatorForCategory = false;
 						}
 						MenuItem menuItem = new MenuItem();
-						menuItem.Header = entry.GetMenuHeader(context) ?? entryPair.Metadata.Header;
+						menuItem.Header = entryPair.Metadata.Header;
 						if (!string.IsNullOrEmpty(entryPair.Metadata.Icon)) {
 							menuItem.Icon = new Image {
 								Width = 16,
@@ -230,6 +263,9 @@ namespace ICSharpCode.ILSpy
 						} else
 							menuItem.IsEnabled = false;
 						menuItem.InputGestureText = entryPair.Metadata.InputGestureText ?? string.Empty;
+						var entry2 = entry as IContextMenuEntry2;
+						if (entry2 != null)
+							entry2.Initialize(context, menuItem);
 						menu.Items.Add(menuItem);
 					}
 				}
