@@ -128,7 +128,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		public void Remove(ITextMarker marker)
 		{
 			if (marker == null)
-				throw new ArgumentNullException("marker");
+				return;	// Can be null if the bookmark was never inserted into the bookmarks list
 			TextMarker m = marker as TextMarker;
 			if (markers != null && markers.Remove(m)) {
 				Redraw(m);

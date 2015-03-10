@@ -28,22 +28,8 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		{
 			if (bookmark == null) return;
 			if (bookmarks.Contains(bookmark)) return;
-			if (bookmarks.Exists(b => IsEqualBookmark(b, bookmark))) return;
 			bookmarks.Add(bookmark);
 			OnAdded(new BookmarkEventArgs(bookmark));
-		}
-		
-		static bool IsEqualBookmark(BookmarkBase a, BookmarkBase b)
-		{
-			if (a == b)
-				return true;
-			if (a == null || b == null)
-				return false;
-			if (a.GetType() != b.GetType())
-				return false;
-			if (a.MemberReference != b.MemberReference)
-				return false;
-			return a.Location == b.Location && a.EndLocation == b.EndLocation;
 		}
 
 		public static void ReplaceMark(int index, BookmarkBase bookmark)
