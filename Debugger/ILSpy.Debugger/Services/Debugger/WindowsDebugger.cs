@@ -630,16 +630,13 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		void debugger_ProcessExited(object sender, CollectionItemEventArgs<Process> e)
 		{
 			if (debugger.Processes.Count == 0) {
-				if (DebugStopped != null) {
-					DebugStopped(this, e);
-				}
-				SelectProcess(null);
+				SelectProcess(null, e);
 			} else {
 				SelectProcess(debugger.Processes[0]);
 			}
 		}
 		
-		public void SelectProcess(Process process)
+		public void SelectProcess(Process process, CollectionItemEventArgs<Process> e = null)
 		{
 			if (debuggedProcess != null) {
 				debuggedProcess.Paused          -= debuggedProcess_DebuggingPaused;
@@ -655,6 +652,10 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				debuggedProcess.ModulesAdded 	+= debuggedProcess_ModulesAdded;
 				
 				debuggedProcess.BreakAtBeginning = BreakAtBeginning;
+			}
+			else {
+				if (DebugStopped != null)
+					DebugStopped(this, e ?? EventArgs.Empty);
 			}
 			// reset
 			BreakAtBeginning = false;

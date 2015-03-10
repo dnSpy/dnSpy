@@ -387,11 +387,11 @@ namespace Debugger
 		}
 		
 		public bool IsRunning {
-			get { return pauseSession == null; }
+			get { return !hasExited && pauseSession == null; }
 		}
 		
 		public bool IsPaused {
-			get { return !IsRunning; }
+			get { return !hasExited && pauseSession != null; }
 		}
 		
 		bool hasExited = false;
