@@ -1061,7 +1061,12 @@ namespace ICSharpCode.ILSpy
 			if (sessionSettings.TopPaneHeight > 0)
 				topPaneRow.Height = new GridLength(sessionSettings.TopPaneHeight, GridUnitType.Pixel);
 			topPane.Title = title;
-			topPane.Content = content;
+			if (topPane.Content != content) {
+				IPane pane = topPane.Content as IPane;
+				if (pane != null)
+					pane.Closed();
+				topPane.Content = content;
+			}
 			topPane.Visibility = Visibility.Visible;
 		}
 		
@@ -1093,7 +1098,12 @@ namespace ICSharpCode.ILSpy
 			if (sessionSettings.BottomPaneHeight > 0)
 				bottomPaneRow.Height = new GridLength(sessionSettings.BottomPaneHeight, GridUnitType.Pixel);
 			bottomPane.Title = title;
-			bottomPane.Content = content;
+			if (bottomPane.Content != content) {
+				IPane pane = bottomPane.Content as IPane;
+				if (pane != null)
+					pane.Closed();
+				bottomPane.Content = content;
+			}
 			bottomPane.Visibility = Visibility.Visible;
 		}
 		

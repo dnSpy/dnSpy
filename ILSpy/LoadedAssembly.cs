@@ -476,28 +476,5 @@ namespace ICSharpCode.ILSpy
 			assemblyTask.Wait();
 		}
 
-		public class NameComparer : Comparer<LoadedAssembly>
-		{
-			public override int Compare(LoadedAssembly x, LoadedAssembly y)
-			{
-				// sort order:
-				//   explicitly loaded assemblies
-				//   auto-loaded assemblies
-				//   assemblies with errors
-				if (x.IsLoaded && y.HasLoadError)
-					return -1;
-				if (x.HasLoadError && y.IsLoaded)
-					return 1;
-
-				if (!x.IsAutoLoaded && y.IsAutoLoaded)
-					return -1;
-				if (x.IsAutoLoaded && !y.IsAutoLoaded)
-					return 1;
-
-				// within above groups, sort by assembly name 
-				return x.Text.CompareTo(y.Text);
-			}
-		}
-
 	}
 }

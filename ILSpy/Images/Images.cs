@@ -43,7 +43,6 @@ namespace ICSharpCode.ILSpy
 
 		public static readonly BitmapImage Delete = LoadBitmap("Delete");
 		public static readonly BitmapImage Search = LoadBitmap("Search");
-		public static readonly BitmapImage Sort = LoadBitmap("Sort");
 
 		public static readonly BitmapImage Assembly = LoadBitmap("Assembly");
 		public static readonly BitmapImage AssemblyWarning = LoadBitmap("AssemblyWarning");

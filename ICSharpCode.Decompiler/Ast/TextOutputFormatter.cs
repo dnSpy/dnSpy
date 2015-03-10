@@ -93,6 +93,11 @@ namespace ICSharpCode.Decompiler.Ast
 			{
 				memberRef = node.Parent.Annotation<IMemberRef>();
 			}
+			if (node is IdentifierExpression && node.Role == Roles.TargetExpression && node.Parent is InvocationExpression && memberRef != null) {
+				var declaringType = memberRef.DeclaringType.Resolve();
+				if (declaringType != null && declaringType.IsDelegate())
+					return null;
+			}
 			return FilterMemberReference(memberRef);
 		}
 

@@ -87,10 +87,15 @@ namespace ICSharpCode.ILSpy.VB
 				bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
 				base.DecompileAssembly(assembly, output, options, flags);
 				output.WriteLine();
+				ModuleDef mainModule = assembly.ModuleDefinition;
+				if (mainModule.Types.Count > 0) {
+					output.Write("// Global type: ", TextTokenType.Comment);
+					output.WriteReference(mainModule.GlobalType.FullName, mainModule.GlobalType, TextTokenType.Comment);
+					output.WriteLine();
+				}
 				if (decompileMod || decompileAsm)
 					PrintEntryPoint(assembly, output);
 				if (decompileMod) {
-					ModuleDef mainModule = assembly.ModuleDefinition;
 					WriteCommentLine(output, "Architecture: " + CSharpLanguage.GetPlatformDisplayName(mainModule));
 					if (!mainModule.IsILOnly) {
 						WriteCommentLine(output, "This assembly contains unmanaged code.");

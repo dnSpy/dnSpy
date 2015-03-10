@@ -291,10 +291,15 @@ namespace ICSharpCode.ILSpy
 				bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
 				base.DecompileAssembly(assembly, output, options, flags);
 				output.WriteLine();
+				ModuleDef mainModule = assembly.ModuleDefinition;
+				if (mainModule.Types.Count > 0) {
+					output.Write("// Global type: ", TextTokenType.Comment);
+					output.WriteReference(mainModule.GlobalType.FullName, mainModule.GlobalType, TextTokenType.Comment);
+					output.WriteLine();
+				}
 				if (decompileMod || decompileAsm)
 					PrintEntryPoint(assembly, output);
 				if (decompileMod) {
-					ModuleDef mainModule = assembly.ModuleDefinition;
 					output.WriteLine("// Architecture: " + GetPlatformDisplayName(mainModule), TextTokenType.Comment);
 					if (!mainModule.IsILOnly) {
 						output.WriteLine("// This assembly contains unmanaged code.", TextTokenType.Comment);
