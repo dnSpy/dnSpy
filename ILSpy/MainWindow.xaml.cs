@@ -546,6 +546,10 @@ namespace ICSharpCode.ILSpy
 		
 		void ShowAssemblyList(AssemblyList assemblyList)
 		{
+			// Clear the cache since the keys contain tree nodes which get recreated now. The keys
+			// will never match again so shouldn't be in the cache.
+			DecompileCache.Instance.ClearAll();
+
 			history.Clear();
 			this.assemblyList = assemblyList;
 			
@@ -560,6 +564,11 @@ namespace ICSharpCode.ILSpy
 				this.Title = string.Format("dnSpy ({0})", GetCpuType());
 			else
 				this.Title = string.Format("dnSpy ({0}) - {1}", GetCpuType(), assemblyList.ListName);
+
+			// Make sure memory usage doesn't increase out of control. This method allocates lots of
+			// new stuff, but the GC doesn't bother to reclaim that memory for a long time.
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
 		}
 
 		static string GetCpuType()
@@ -871,16 +880,9 @@ namespace ICSharpCode.ILSpy
 		
 		void RefreshCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			// Clear the cache since the keys contain tree nodes which get recreated now. The keys
-			// will never match again so shouldn't be in the cache.
-			DecompileCache.Instance.ClearAll();
 			var path = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
 			ShowAssemblyList(assemblyListManager.LoadList(ILSpySettings.Load(), assemblyList.ListName));
 			SelectNode(FindNodeByPath(path, true));
-			// Make sure memory usage doesn't increase out of control. ShowAssemblyList() allocates
-			// lots of new stuff, but the GC doesn't bother to reclaim that memory for a long time.
-			GC.Collect();
-			GC.WaitForPendingFinalizers();
 		}
 
 		private void RefreshCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
