@@ -79,7 +79,7 @@
 			<Separator />
 			<!-- 'Open' toolbar category is inserted here -->
 			<Separator />
-			<CheckBox IsChecked="{Binding FilterSettings.ShowInternalApi}" ToolTip="Show internal types and members">
+			<CheckBox IsChecked="{Binding FilterSettings.ShowInternalApi}" ToolTip="Show Internal Types and Members">
 				<Image Width="16" Height="16" Source="pack://application:,,,/dnSpy;component/Images/PrivateInternal.png" />
 			</CheckBox>
 			<Separator />
@@ -142,7 +142,7 @@
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="0" Name="topPaneRow" />
 					<RowDefinition Height="0" />
-					<RowDefinition Height="0.7*" MinHeight="100" Name="textViefwRow" />
+					<RowDefinition Height="0.7*" MinHeight="100" Name="textViewRow" />
 					<RowDefinition Height="0" />
 					<RowDefinition Height="0" Name="bottomPaneRow" />
 				</Grid.RowDefinitions>

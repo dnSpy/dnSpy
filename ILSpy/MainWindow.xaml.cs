@@ -644,7 +644,7 @@ namespace ICSharpCode.ILSpy
 				} else {
 					MessageBox.Show("Navigation failed because the target is hidden or a compiler-generated class.\n" +
 						"Please disable all filters that might hide the item (i.e. activate " +
-						"\"View > Show internal types and members\") and try again.",
+						"\"View > Show Internal Types and Members\") and try again.",
 						"dnSpy", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 				}
 			}
