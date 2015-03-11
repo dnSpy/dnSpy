@@ -276,12 +276,12 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		void IPlugin.OnLoaded()
 		{
-			MainWindow.Instance.KeyUp += OnKeyUp;
+			MainWindow.Instance.PreviewKeyDown += OnPreviewKeyDown;
 			MainWindow.Instance.KeyDown += OnKeyDown;
 			BreakpointSettings.Instance.Load();
 		}
 
-		void OnKeyUp(object sender, KeyEventArgs e)
+		void OnPreviewKeyDown(object sender, KeyEventArgs e)
 		{
 			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F5) {
 				DebugContinue();
