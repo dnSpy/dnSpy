@@ -93,7 +93,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			if (mbm == null || !mbm.IsVisible)
 				return;
 
-			mbm.CreateMarker(this);
+			if (mbm.Marker == null)
+				mbm.CreateMarker(this);
 		}
 
 		#region ITextMarkerService
