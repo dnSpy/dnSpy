@@ -85,16 +85,16 @@ namespace ICSharpCode.ILSpy.Debugger.UI
             if (null != m_currentDebugger)
                 OnDebugStopped(null, EventArgs.Empty);
             
-            // save settings
             DebuggerSettings.Instance.PropertyChanged -= new PropertyChangedEventHandler(OnDebuggerSettingChanged);
-            ILSpySettings.Update(
-                delegate (XElement root) {
-                    DebuggerSettings.Instance.Save(root);
-                });
 		}
 		
 		void OnDebuggerSettingChanged(object sender, PropertyChangedEventArgs args)
 		{
+            ILSpySettings.Update(
+                delegate (XElement root) {
+                    DebuggerSettings.Instance.Save(root);
+                });
+
 		    if (args.PropertyName == "ShowModuleName") {
 		        SwitchModuleColumn();
 		    }
