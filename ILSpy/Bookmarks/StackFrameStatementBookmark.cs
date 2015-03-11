@@ -28,6 +28,16 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			Foreground = new SimpleHighlightingBrush(Colors.Blue),
 		};
 
+		static StackFrameStatementBookmark()
+		{
+			MainWindow.Instance.ExecuteAtLoaded(() => MainWindow.Instance.TextView.OnShowOutput += DecompilerTextView_OnShowOutput);
+		}
+
+		static void DecompilerTextView_OnShowOutput(object sender, TextView.DecompilerTextView.ShowOutputEventArgs e)
+		{
+			UpdateReturnStatementBookmarks(false);
+		}
+
 		public enum Type
 		{
 			/// <summary>

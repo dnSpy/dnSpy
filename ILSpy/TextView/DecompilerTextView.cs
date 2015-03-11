@@ -451,16 +451,24 @@ namespace ICSharpCode.ILSpy.TextView
 
 			// update debugger info
 			DebugInformation.CodeMappings = textOutput.DebuggerMemberMappings.ToDictionary(m => new MethodKey(m.MethodDefinition));
-			UpdateDebugUI(state);
 
 			var evt = OnShowOutput;
 			if (evt != null)
-				evt(this, new ShowOutputEventArgs { Nodes = nodes });
+				evt(this, new ShowOutputEventArgs(nodes, highlighting, state));
 		}
 		public event EventHandler<ShowOutputEventArgs> OnShowOutput;
 		public class ShowOutputEventArgs : EventArgs
 		{
-			public ILSpyTreeNode[] Nodes;
+			public readonly ILSpyTreeNode[] Nodes;
+			public readonly IHighlightingDefinition Highlighting;
+			public readonly DecompilerTextViewState State;
+
+			public ShowOutputEventArgs(ILSpyTreeNode[] nodes, IHighlightingDefinition highlighting, DecompilerTextViewState state)
+			{
+				this.Nodes = nodes;
+				this.Highlighting = highlighting;
+				this.State = state;
+			}
 		}
 		#endregion
 		
@@ -569,32 +577,6 @@ namespace ICSharpCode.ILSpy.TextView
 					ShowOutput(output);
 					decompiledNodes = context.TreeNodes;
 				});
-		}
-		
-		void UpdateDebugUI(DecompilerTextViewState state)
-		{
-			bool updateDebugInfo =
-					DebuggerService.CurrentDebugger != null &&
-					DebuggerService.CurrentDebugger.IsDebugging &&
-					DebugInformation.DebugStepInformation != null &&
-					DebugInformation.DebugStepInformation.Item2 != int.MaxValue;
-			if (updateDebugInfo) {
-				iconMargin.InvalidateVisual();
-
-				var key = DebugInformation.DebugStepInformation.Item1;
-				int ilOffset = DebugInformation.DebugStepInformation.Item2;
-				ICSharpCode.NRefactory.TextLocation location, endLocation;
-				var cm = DebugInformation.CodeMappings;
-				if (cm != null && cm.ContainsKey(key) &&
-					cm[key].GetInstructionByTokenAndOffset((uint)ilOffset, out location, out endLocation)) {
-					if (state == null)
-						ScrollAndMoveCaretTo(location.Line, location.Column);
-
-					UnfoldAndScroll(location.Line, false);
-				}
-			}
-
-			StackFrameStatementBookmark.UpdateReturnStatementBookmarks(false);
 		}
 
 		internal void GoToLocation(object destLoc)
@@ -946,36 +928,6 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged -= CurrentDisplaySettings_PropertyChanged;
 		}
-		
-		#region Unfold
-		public void UnfoldAndScroll(int lineNumber, bool scroll = true)
-		{
-			if (lineNumber <= 0 || lineNumber > textEditor.Document.LineCount)
-				return;
-			
-			var line = textEditor.Document.GetLineByNumber(lineNumber);
-			
-			// unfold
-			var foldings = foldingManager == null ? null : foldingManager.GetFoldingsContaining(line.Offset);
-			if (foldings != null) {
-				foreach (var folding in foldings) {
-					if (folding.IsFolded) {
-						folding.IsFolded = false;
-					}
-				}
-			}
-			// scroll to
-			if (scroll)
-				textEditor.ScrollTo(lineNumber, 0);
-		}
-		
-		public FoldingManager FoldingManager
-		{
-			get {
-				return foldingManager;
-			}
-		}
-		#endregion
 
 		public void ScrollAndMoveCaretTo(int line, int column)
 		{
