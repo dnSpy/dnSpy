@@ -114,47 +114,9 @@ namespace ICSharpCode.ILSpy
 			InitMainMenu();
 			InitToolbar();
 			ContextMenuProvider.Add(treeView, decompilerTextView);
-			decompilerTextView.TextEditor.TextArea.MouseRightButtonDown += editorTextArea_MouseRightButtonDown;
+			decompilerTextView.TextEditor.TextArea.MouseRightButtonDown += (sender, e) => decompilerTextView.GoToMousePosition(e);
 			
 			this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
-		}
-
-		void editorTextArea_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-		{
-			int visualColumn;
-			int offset = GetOffsetFromMousePosition(e, out visualColumn);
-			if (offset >= 0) {
-				var textArea = decompilerTextView.TextEditor.TextArea;
-				textArea.Caret.Position = new TextViewPosition(textArea.Document.GetLocation(offset), visualColumn);
-				textArea.Caret.DesiredXPos = double.NaN;
-			}
-		}
-
-		int GetOffsetFromMousePosition(MouseEventArgs e, out int visualColumn)
-		{
-			var textArea = decompilerTextView.TextEditor.TextArea;
-			return GetOffsetFromMousePosition(e.GetPosition(textArea.TextView), out visualColumn);
-		}
-		
-		int GetOffsetFromMousePosition(Point positionRelativeToTextView, out int visualColumn)
-		{
-			var textArea = decompilerTextView.TextEditor.TextArea;
-			visualColumn = 0;
-			var textView = textArea.TextView;
-			Point pos = positionRelativeToTextView;
-			if (pos.Y < 0)
-				pos.Y = 0;
-			if (pos.Y > textView.ActualHeight)
-				pos.Y = textView.ActualHeight;
-			pos += textView.ScrollOffset;
-			if (pos.Y > textView.DocumentHeight)
-				pos.Y = textView.DocumentHeight - 0.01;
-			var line = textView.GetVisualLineFromVisualTop(pos.Y);
-			if (line != null) {
-				visualColumn = line.GetVisualColumn(pos, textArea.Selection.EnableVirtualSpace);
-				return line.GetRelativeOffset(visualColumn) + line.FirstDocumentLine.Offset;
-			}
-			return -1;
 		}
 
 		void BuildThemeMenu() {

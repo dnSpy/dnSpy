@@ -28,7 +28,7 @@ namespace ICSharpCode.ILSpy.TextView
 	/// </summary>
 	sealed class ReferenceElementGenerator : VisualLineElementGenerator
 	{
-		readonly Func<ReferenceSegment, bool> referenceClicked;
+		readonly Action<ReferenceSegment, MouseEventArgs> referenceClicked;
 		readonly Predicate<ReferenceSegment> isLink;
 		
 		/// <summary>
@@ -36,7 +36,7 @@ namespace ICSharpCode.ILSpy.TextView
 		/// </summary>
 		public TextSegmentCollection<ReferenceSegment> References { get; set; }
 		
-		public ReferenceElementGenerator(Func<ReferenceSegment, bool> referenceClicked, Predicate<ReferenceSegment> isLink)
+		public ReferenceElementGenerator(Action<ReferenceSegment, MouseEventArgs> referenceClicked, Predicate<ReferenceSegment> isLink)
 		{
 			if (referenceClicked == null)
 				throw new ArgumentNullException("referenceClicked");
@@ -73,9 +73,9 @@ namespace ICSharpCode.ILSpy.TextView
 			return null;
 		}
 		
-		internal bool JumpToReference(ReferenceSegment referenceSegment)
+		internal void JumpToReference(ReferenceSegment referenceSegment, MouseEventArgs e)
 		{
-			return referenceClicked(referenceSegment);
+			referenceClicked(referenceSegment, e);
 		}
 	}
 	
@@ -109,9 +109,7 @@ namespace ICSharpCode.ILSpy.TextView
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
 			if (e.ChangedButton == MouseButton.Left && !e.Handled) {
-				bool handled = parent.JumpToReference(referenceSegment);
-				if (handled)
-					e.Handled = handled;
+				parent.JumpToReference(referenceSegment, e);
 			}
 		}
 		

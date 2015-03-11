@@ -732,17 +732,19 @@ namespace ICSharpCode.ILSpy.TextView
 		/// <summary>
 		/// Jumps to the definition referred to by the <see cref="ReferenceSegment"/>.
 		/// </summary>
-		internal bool JumpToReference(ReferenceSegment referenceSegment)
+		internal void JumpToReference(ReferenceSegment referenceSegment, MouseEventArgs e)
 		{
 			var localTarget = FindLocalTarget(referenceSegment);
 			if (localTarget != null)
 				referenceSegment = localTarget;
 
 			int pos = -1;
-			if (referenceSegment.IsLocalTarget)
-				pos = referenceSegment.EndOffset;
-			if (pos < 0 && definitionLookup != null)
-				pos = definitionLookup.GetDefinitionPosition(referenceSegment.Reference);
+			if (!referenceSegment.IsLocal) {
+				if (referenceSegment.IsLocalTarget)
+					pos = referenceSegment.EndOffset;
+				if (pos < 0 && definitionLookup != null)
+					pos = definitionLookup.GetDefinitionPosition(referenceSegment.Reference);
+			}
 			if (pos >= 0) {
 				MarkLocals(referenceSegment);
 				textEditor.TextArea.Focus();
@@ -752,14 +754,19 @@ namespace ICSharpCode.ILSpy.TextView
 					delegate {
 						CaretHighlightAdorner.DisplayCaretHighlightAnimation(textEditor.TextArea);
 					}));
-				return true;
+				e.Handled = true;
+				return;
 			}
 
-			if (MarkLocals(referenceSegment))
-				return true;
+			if (MarkLocals(referenceSegment)) {
+				e.Handled = false;	// Allow another handler to set a new caret position
+				return;
+			}
 
+			GoToMousePosition(e);
 			MainWindow.Instance.JumpToReference(referenceSegment.Reference);
-			return true;
+			e.Handled = true;
+			return;
 		}
 
 		bool MarkLocals(ReferenceSegment referenceSegment)
@@ -1121,6 +1128,44 @@ namespace ICSharpCode.ILSpy.TextView
 				textEditor.TextArea.Caret.Position = value.TextViewPosition;
 				textEditor.TextArea.Caret.DesiredXPos = value.DesiredXPos;
 			}
+		}
+
+		public void GoToMousePosition(MouseEventArgs e)
+		{
+			int visualColumn;
+			int offset = GetOffsetFromMousePosition(e, out visualColumn);
+			if (offset >= 0) {
+				var textArea = textEditor.TextArea;
+				textArea.Caret.Position = new TextViewPosition(textArea.Document.GetLocation(offset), visualColumn);
+				textArea.Caret.DesiredXPos = double.NaN;
+			}
+		}
+
+		int GetOffsetFromMousePosition(MouseEventArgs e, out int visualColumn)
+		{
+			var textArea = textEditor.TextArea;
+			return GetOffsetFromMousePosition(e.GetPosition(textArea.TextView), out visualColumn);
+		}
+		
+		int GetOffsetFromMousePosition(Point positionRelativeToTextView, out int visualColumn)
+		{
+			var textArea = textEditor.TextArea;
+			visualColumn = 0;
+			var textView = textArea.TextView;
+			Point pos = positionRelativeToTextView;
+			if (pos.Y < 0)
+				pos.Y = 0;
+			if (pos.Y > textView.ActualHeight)
+				pos.Y = textView.ActualHeight;
+			pos += textView.ScrollOffset;
+			if (pos.Y > textView.DocumentHeight)
+				pos.Y = textView.DocumentHeight - 0.01;
+			var line = textView.GetVisualLineFromVisualTop(pos.Y);
+			if (line != null) {
+				visualColumn = line.GetVisualColumn(pos, textArea.Selection.EnableVirtualSpace);
+				return line.GetRelativeOffset(visualColumn) + line.FirstDocumentLine.Offset;
+			}
+			return -1;
 		}
 	}
 
