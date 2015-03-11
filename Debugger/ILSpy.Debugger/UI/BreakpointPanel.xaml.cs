@@ -50,12 +50,40 @@ namespace ICSharpCode.ILSpy.Debugger.UI
                 SetItemSource();
                 
 			    MainWindow.Instance.ShowInBottomPane("Breakpoints", this);
-			    
-                BookmarkManager.Added += delegate { SetItemSource(); };
-                BookmarkManager.Removed += delegate { SetItemSource(); };
+
+				foreach (var m in BookmarkManager.Bookmarks) {
+					var bpm = m as BreakpointBookmark;
+					if (bpm != null)
+						bpm.OnModified += BreakpointBookmark_OnModified;
+				}
+				BookmarkManager.Added += BookmarkManager_Added;
+				BookmarkManager.Removed += BookmarkManager_Removed;
                 DebuggerSettings.Instance.PropertyChanged += 
                 	delegate(object s, PropertyChangedEventArgs e) { if (e.PropertyName == "ShowAllBookmarks") SetItemSource(); };
 			}
+		}
+
+		void BookmarkManager_Added(object sender, BookmarkEventArgs e)
+		{
+			var bpm = e.Bookmark as BreakpointBookmark;
+			if (bpm == null)
+				return;
+			bpm.OnModified += BreakpointBookmark_OnModified;
+			SetItemSource();
+		}
+
+		void BookmarkManager_Removed(object sender, BookmarkEventArgs e)
+		{
+			var bpm = e.Bookmark as BreakpointBookmark;
+			if (bpm == null)
+				return;
+			bpm.OnModified += BreakpointBookmark_OnModified;
+			SetItemSource();
+		}
+
+		void BreakpointBookmark_OnModified(object sender, EventArgs e)
+		{
+			SetItemSource();
 		}
 		
 		private void SetItemSource()
@@ -73,6 +101,11 @@ namespace ICSharpCode.ILSpy.Debugger.UI
         	BookmarkManager.Removed -= delegate { SetItemSource(); };
         	DebuggerSettings.Instance.PropertyChanged -= 
         		delegate(object s, PropertyChangedEventArgs e) { if (e.PropertyName == "ShowAllBookmarks") SetItemSource(); };
+			foreach (var m in BookmarkManager.Bookmarks) {
+				var bpm = m as BreakpointBookmark;
+				if (bpm != null)
+					bpm.OnModified -= BreakpointBookmark_OnModified;
+			}
         }
         
 		void view_MouseDoubleClick(object sender, MouseButtonEventArgs e)

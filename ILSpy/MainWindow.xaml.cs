@@ -506,6 +506,15 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
+		public void ExecuteAtLoaded(Action func)
+		{
+			if (callAtLoaded == null)
+				func();
+			else
+				callAtLoaded.Add(func);
+		}
+		List<Action> callAtLoaded = new List<Action>();
+
 		void MainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
 			BuildThemeMenu();
@@ -554,6 +563,11 @@ namespace ICSharpCode.ILSpy
 
 			foreach (var plugin in plugins)
 				plugin.OnLoaded();
+
+			var list = callAtLoaded;
+			callAtLoaded = null;
+			foreach (var func in list)
+				func();
 		}
 
 		void decompilerTextView_OnShowOutput(object sender, DecompilerTextView.ShowOutputEventArgs e)

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Xml.Linq;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.ILSpy.AvalonEdit;
@@ -13,10 +14,34 @@ namespace ICSharpCode.ILSpy.Debugger
 	sealed class BreakpointSettings
 	{
 		public static readonly BreakpointSettings Instance = new BreakpointSettings();
+		int disableSaveCounter;
 
 		BreakpointSettings() {
-			BookmarkManager.Added += delegate { Save(); };
-			BookmarkManager.Removed += delegate { Save(); };
+			BookmarkManager.Added += BookmarkManager_Added;
+			BookmarkManager.Removed += BookmarkManager_Removed;
+		}
+
+		void BookmarkManager_Added(object sender, BookmarkEventArgs e)
+		{
+			var bpm = e.Bookmark as BreakpointBookmark;
+			if (bpm == null)
+				return;
+			bpm.IsEnabledChanged += BreakpointBookmark_OnIsEnabledChanged;
+			Save();
+		}
+
+		void BookmarkManager_Removed(object sender, BookmarkEventArgs e)
+		{
+			var bpm = e.Bookmark as BreakpointBookmark;
+			if (bpm == null)
+				return;
+			bpm.IsEnabledChanged -= BreakpointBookmark_OnIsEnabledChanged;
+			Save();
+		}
+
+		void BreakpointBookmark_OnIsEnabledChanged(object sender, System.EventArgs e)
+		{
+			Save();
 		}
 
 		void Save()
@@ -25,6 +50,17 @@ namespace ICSharpCode.ILSpy.Debugger
 		}
 
 		public void Load()
+		{
+			Interlocked.Increment(ref disableSaveCounter);
+			try {
+				LoadInternal();
+			}
+			finally {
+				Interlocked.Decrement(ref disableSaveCounter);
+			}
+		}
+
+		public void LoadInternal()
 		{
 			ILSpySettings settings = ILSpySettings.Load();
 			var bpsx = settings["Breakpoints"];
@@ -40,10 +76,11 @@ namespace ICSharpCode.ILSpy.Debugger
 				int? locationColumn = (int?)bpx.Attribute("LocationColumn");
 				int? endLocationLine = (int?)bpx.Attribute("EndLocationLine");
 				int? endLocationColumn = (int?)bpx.Attribute("EndLocationColumn");
+				string methodFullName = (string)bpx.Attribute("MethodFullName");
 
 				if (token == null) continue;
 				if (string.IsNullOrEmpty(moduleFullPath)) continue;
-				if (string.IsNullOrEmpty(assemblyFullPath)) continue;
+				if (assemblyFullPath == null) continue;
 				if (from == null || to == null || from.Value >= to.Value) continue;
 				if (isEnabled == null) continue;
 				if (locationLine == null || locationLine.Value < 1) continue;
@@ -68,13 +105,22 @@ namespace ICSharpCode.ILSpy.Debugger
 				if (method == null)
 					continue;
 
-				var bpm = new BreakpointBookmark(method, location, endLocation, new ILRange(from.Value, to.Value));
+				// Add an extra check to make sure that the file hasn't been re-created. This check
+				// isn't perfect but should work most of the time unless the file was re-compiled
+				// with the same tools and no methods were added or removed.
+				if (method.FullName != methodFullName) continue;
+
+				var bpm = new BreakpointBookmark(method, location, endLocation, new ILRange(from.Value, to.Value), isEnabled.Value);
 				BookmarkManager.AddMark(bpm);
 			}
 		}
 
 		public void Save(XElement root)
 		{
+			// Prevent Load() from saving the settings every time a new BP is added
+			if (disableSaveCounter != 0)
+				return;
+
 			var bps = new XElement("Breakpoints");
 			var existingElement = root.Element("Breakpoints");
 			if (existingElement != null)
@@ -91,16 +137,12 @@ namespace ICSharpCode.ILSpy.Debugger
 					continue;
 
 				var asm = method.Module.Assembly;
-				if (asm == null)
-					continue;
-				var mainModule = asm.ManifestModule;
-				if (mainModule == null)
-					continue;
+				var mainModule = asm == null ? null : asm.ManifestModule;
 
 				var bpx = new XElement("Breakpoint");
 				bpx.SetAttributeValue("Token", bp.MethodKey.Token);
 				bpx.SetAttributeValue("ModuleFullPath", bp.MethodKey.ModuleFullPath);
-				bpx.SetAttributeValue("AssemblyFullPath", mainModule.Location);
+				bpx.SetAttributeValue("AssemblyFullPath", mainModule == null ? bp.MethodKey.ModuleFullPath : mainModule.Location);
 				bpx.SetAttributeValue("From", bp.ILRange.From);
 				bpx.SetAttributeValue("To", bp.ILRange.To);
 				bpx.SetAttributeValue("IsEnabled", bp.IsEnabled);
@@ -108,6 +150,7 @@ namespace ICSharpCode.ILSpy.Debugger
 				bpx.SetAttributeValue("LocationColumn", bp.Location.Column);
 				bpx.SetAttributeValue("EndLocationLine", bp.EndLocation.Line);
 				bpx.SetAttributeValue("EndLocationColumn", bp.EndLocation.Column);
+				bpx.SetAttributeValue("MethodFullName", method.FullName);
 				bps.Add(bpx);
 			}
 		}

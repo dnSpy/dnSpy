@@ -212,10 +212,6 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		{
 			var storage = DebugInformation.CodeMappings;
 			if (storage != null && storage.Count != 0) {
-				// TODO: handle other types of bookmarks
-				// remove existing bookmarks and create new ones
-				// update of existing bookmarks for new position does not update TextMarker
-				// this is only done in TextMarkerService handlers for BookmarkManager.Added/Removed
 				for (int i = BookmarkManager.Bookmarks.Count - 1; i >= 0; --i) {
 					var breakpoint = BookmarkManager.Bookmarks[i] as BreakpointBookmark;
 					if (breakpoint == null)
@@ -228,15 +224,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 					bool isMatch;
 					SourceCodeMapping map = storage[key].GetInstructionByOffset(breakpoint.ILRange.From, out isMatch);
 
-					if (map != null) {
-						BreakpointBookmark newBookmark = new BreakpointBookmark(breakpoint.MemberReference,
-																				map.StartLocation,
-																				map.EndLocation,
-																				map.ILInstructionOffset);
-						newBookmark.IsEnabled = breakpoint.IsEnabled;
-
-						BookmarkManager.ReplaceMark(i, newBookmark);
-					}
+					breakpoint.UpdateLocation(map.StartLocation, map.EndLocation);
 				}
 			}
 		}

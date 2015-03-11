@@ -18,22 +18,39 @@ namespace ICSharpCode.ILSpy.Bookmarks
 	{
 		TextLocation location;
 		TextLocation endLocation;
+
+		protected void Modified()
+		{
+			if (OnModified != null)
+				OnModified(this, EventArgs.Empty);
+		}
+		public event EventHandler OnModified;
 		
 		public TextLocation Location {
 			get { return location; }
-			set { location = value; }
+			set {
+				if (location != value) {
+					location = value;
+					Modified();
+				}
+			}
 		}
 		
 		public TextLocation EndLocation {
 			get { return endLocation; }
-			set { endLocation = value; }
+			set {
+				if (endLocation != value) {
+					endLocation = value;
+					Modified();
+				}
+			}
 		}
 		
 		protected virtual void Redraw()
 		{
 		}
 		
-		public IMemberRef MemberReference { get; set; }
+		public IMemberRef MemberReference { get; private set; }
 		
 		public int LineNumber {
 			get { return location.Line; }
@@ -41,6 +58,13 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		
 		public virtual int ZOrder {
 			get { return 0; }
+		}
+
+		/// <summary>
+		/// true if the bookmark is visible in the displayed document
+		/// </summary>
+		public virtual bool IsVisible {
+			get { return true; }
 		}
 		
 		/// <summary>
@@ -79,6 +103,15 @@ namespace ICSharpCode.ILSpy.Bookmarks
 			int endOffset = endLine.Offset + endLocation.Column - 1;
 
 			return markerService.Create(startOffset, endOffset - startOffset);
+		}
+
+		public void UpdateLocation(TextLocation location, TextLocation endLocation)
+		{
+			if (this.location == location && this.endLocation == endLocation)
+				return;
+			this.location = location;
+			this.endLocation = endLocation;
+			Modified();
 		}
 	}
 }

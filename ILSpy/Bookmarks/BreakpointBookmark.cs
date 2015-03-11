@@ -45,6 +45,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 						IsEnabledChanged(this, EventArgs.Empty);
 					if (ImageChanged != null)
 					    ImageChanged(this, EventArgs.Empty); // Image property reflects IsEnabled property
+					Modified();
 					Redraw();
 				}
 			}
@@ -52,11 +53,12 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		
 		public event EventHandler IsEnabledChanged;
 		
-		public BreakpointBookmark(IMemberRef member, TextLocation location, TextLocation endLocation, ILRange range)
+		public BreakpointBookmark(IMemberRef member, TextLocation location, TextLocation endLocation, ILRange range, bool isEnabled = true)
 			: base(member, location, endLocation)
 		{
 			this.MethodKey = new MethodKey(member);
 			this.ILRange = range;
+			this.isEnabled = isEnabled;
 		}
 		
 		public override ImageSource Image {
@@ -66,6 +68,21 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		}
 		
 		public event EventHandler ImageChanged;
+
+		public override bool IsVisible {
+			get {
+				var key = new MethodKey(MemberReference);
+				uint ilOffset = ILRange.From;
+				TextLocation location, endLocation;
+				var cm = DebugInformation.CodeMappings;
+				if (cm == null || !cm.ContainsKey(key))
+					return false;
+				if (!cm[key].GetInstructionByTokenAndOffset((uint)ilOffset, out location, out endLocation))
+					return false;
+
+				return true;
+			}
+		}
 		
 		public override ITextMarker CreateMarker(ITextMarkerService markerService)
 		{
