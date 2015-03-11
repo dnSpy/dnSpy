@@ -506,7 +506,7 @@ namespace ICSharpCode.ILSpy.TextView
 			if (textOutput != null) {
 				ShowOutput(textOutput, newContext.Language.SyntaxHighlighting, newContext.Options.TextViewState, newContext.TreeNodes);
 				decompiledNodes = newContext.TreeNodes;
-				return completedTask;
+				return TaskHelper.CompletedTask;
 			}
 			
 			bool isDecompilationScheduled = this.nextDecompilationRun != null;
@@ -527,7 +527,6 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 			return task;
 		}
-		static readonly Task completedTask = Task.Factory.StartNew(() => { });
 		
 		sealed class DecompilationContext
 		{
@@ -610,41 +609,33 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 
 			StackFrameStatementBookmark.UpdateReturnStatementBookmarks(false);
+		}
 
-			if (state == null && DebugInformation.JumpToThisLine != null) {
-				if (DebugInformation.JumpToThisLine is ICSharpCode.NRefactory.TextLocation) {
-					var loc = (ICSharpCode.NRefactory.TextLocation)DebugInformation.JumpToThisLine;
-					ScrollAndMoveCaretTo(loc.Line, loc.Column);
-				}
-				else if (DebugInformation.JumpToThisLine is Tuple<MethodKey, int>) {
-					var tuple = (Tuple<MethodKey, int>)DebugInformation.JumpToThisLine;
-					var key = tuple.Item1;
-					int offset = tuple.Item2;
-					var cm = DebugInformation.CodeMappings;
-					ICSharpCode.NRefactory.TextLocation location, endLocation;
-					if (cm != null && cm.ContainsKey(key) &&
-						cm[key].GetInstructionByTokenAndOffset((uint)offset, out location, out endLocation)) {
-						ScrollAndMoveCaretTo(location.Line, location.Column);
-					}
-				}
-				else if (DebugInformation.JumpToThisLine is IMemberDef) {
-					var member = DebugInformation.JumpToThisLine as IMemberDef;
-					ReferenceSegment refSeg = null;
-					if (references != null) {
-						foreach (var r in references) {
-							if (r.IsLocalTarget && r.Reference == member) {
-								refSeg = r;
-								break;
-							}
+		internal void GoToLocation(object destLoc)
+		{
+			if (destLoc == null)
+				return;
+
+			if (destLoc is ICSharpCode.NRefactory.TextLocation) {
+				var loc = (ICSharpCode.NRefactory.TextLocation)destLoc;
+				ScrollAndMoveCaretTo(loc.Line, loc.Column);
+			}
+			else if (destLoc is IMemberDef) {
+				var member = destLoc as IMemberDef;
+				ReferenceSegment refSeg = null;
+				if (references != null) {
+					foreach (var r in references) {
+						if (r.IsLocalTarget && r.Reference == member) {
+							refSeg = r;
+							break;
 						}
 					}
-					GoToTarget(refSeg, false);
 				}
-				else {
-					Debug.Fail(string.Format("Unknown type: {0} = {1}", DebugInformation.JumpToThisLine.GetType(), DebugInformation.JumpToThisLine));
-				}
+				GoToTarget(refSeg, false);
 			}
-			DebugInformation.JumpToThisLine = null;
+			else {
+				Debug.Fail(string.Format("Unknown type: {0} = {1}", destLoc.GetType(), destLoc));
+			}
 		}
 		
 		Task<AvalonEditTextOutput> DecompileAsync(DecompilationContext context, int outputLengthLimit)

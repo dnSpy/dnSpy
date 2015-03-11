@@ -279,25 +279,8 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 			IMemberRef mr = module.ResolveToken(item.Token) as IMemberRef;
 			if (mr == null)
 				return;
-			bool alreadySelected;
-			if (DebugUtils.JumpToReference(mr, out alreadySelected)) {
-				var cm = DebugInformation.CodeMappings;
-				var key = item.MethodKey;
-				NR.TextLocation location, endLocation;
-				if (cm != null && cm.ContainsKey(key)) {
-					if (!cm[key].GetInstructionByTokenAndOffset(unchecked((uint)item.ILOffset), out location, out endLocation)) {
-						//TODO: Missing IL ranges
-					}
-					else if (alreadySelected)
-						MainWindow.Instance.TextView.ScrollAndMoveCaretTo(location.Line, location.Column);
-					else // should never happen
-						DebugInformation.JumpToThisLine = location;
-				}
-				else {
-					DebugInformation.JumpToThisLine = Tuple.Create(item.MethodKey, item.ILOffset);
-				}
+			if (DebugUtils.JumpTo(mr, item.MethodKey, item.ILOffset))
 				MainWindow.Instance.TextView.TextEditor.TextArea.Focus();
-			}
         }
 
 		void view_KeyDown(object sender, KeyEventArgs e)

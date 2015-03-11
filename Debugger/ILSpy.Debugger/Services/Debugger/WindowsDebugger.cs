@@ -331,8 +331,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 						frame.ILRanges = new[] { 0, int.MaxValue };
 					}
 					else {
-						if (info != null)
-							DebugUtils.JumpToReference(info.Item3);
+						DebugUtils.JumpToCurrentStatement();
 						return null;
 					}
 				}

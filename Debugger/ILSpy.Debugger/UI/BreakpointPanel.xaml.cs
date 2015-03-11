@@ -88,14 +88,8 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		{
             if (null == bm)
                 return;
-			bool alreadySelected;
-			if (DebugUtils.JumpToReference(bm.MemberReference, out alreadySelected)) {
-				if (alreadySelected)
-					MainWindow.Instance.TextView.ScrollAndMoveCaretTo(bm.Location.Line, bm.Location.Column);
-				else
-					DebugInformation.JumpToThisLine = bm.Location;
+			if (DebugUtils.JumpToReference(bm.MemberReference, bm.Location))
 				MainWindow.Instance.TextView.TextEditor.TextArea.Focus();
-			}
 		}
         
         void view_KeyDown(object sender, KeyEventArgs e)

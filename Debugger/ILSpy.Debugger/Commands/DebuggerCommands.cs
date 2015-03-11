@@ -263,19 +263,15 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			// breakpoint was hit => bring to front the main window
 			SendWpfWindowPos(inst, HWND_TOP); inst.Activate();
 			
-			// jump to type & expand folding
 			if (DebugInformation.MustJumpToReference)
-				JumpToMethod();
+				JumpToCurrentStatement();
 			
 			inst.SetStatus("Debugging...", Brushes.Red);
 		}
 
-		static void JumpToMethod()
+		static void JumpToCurrentStatement()
 		{
-			var info = DebugInformation.DebugStepInformation;
-			if (info == null)
-				return;
-			DebugUtils.JumpToReference(info.Item3);
+			DebugUtils.JumpToCurrentStatement();
 		}
 
 		void IPlugin.OnLoaded()
@@ -477,7 +473,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		public static bool DebugShowNextStatement()
 		{
 			if (!TryShowNextStatement()) {
-				JumpToMethod();
+				JumpToCurrentStatement();
 				return true;
 			}
 

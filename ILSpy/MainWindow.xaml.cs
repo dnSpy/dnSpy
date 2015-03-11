@@ -828,27 +828,24 @@ namespace ICSharpCode.ILSpy
 				return null;
 			}
 		}
-		
-		public bool JumpToReference(object reference)
-		{
-			bool alreadySelected;
-			return JumpToReference(reference, true, out alreadySelected);
+
+		static IMemberDef ResolveReference(object reference) {
+			if (reference is ITypeDefOrRef)
+				return ((ITypeDefOrRef)reference).ResolveTypeDef();
+			else if (reference is IMethod && ((IMethod)reference).MethodSig != null)
+				return ((IMethod)reference).Resolve();
+			else if (reference is IField)
+				return ((IField)reference).Resolve();
+			else if (reference is PropertyDef)
+				return (PropertyDef)reference;
+			else if (reference is EventDef)
+				return (EventDef)reference;
+			return null;
 		}
 
-		public bool JumpToReference(object reference, bool goToReference, out bool alreadySelected)
+		object FixReference(object reference)
 		{
-			IMemberDef member = null;
-			if (reference is ITypeDefOrRef)
-				member = ((ITypeDefOrRef)reference).ResolveTypeDef();
-			else if (reference is IMethod && ((IMethod)reference).MethodSig != null)
-				member = ((IMethod)reference).Resolve();
-			else if (reference is IField)
-				member = ((IField)reference).Resolve();
-			else if (reference is PropertyDef)
-				member = (PropertyDef)reference;
-			else if (reference is EventDef)
-				member = (EventDef)reference;
-
+			IMemberDef member = ResolveReference(reference);
 			if (member != null && ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.AutoFocusTextView) {
 				var type = member.DeclaringType;
 				if (type == null)
@@ -864,24 +861,66 @@ namespace ICSharpCode.ILSpy
 				}
 			}
 
-			bool retVal;
-			JumpToReferenceAsyncInternal(true, reference, goToReference ? member : null, out retVal, out alreadySelected).HandleExceptions();
-			return retVal;
+			return reference;
 		}
 
-		Task JumpToReferenceAsyncInternal(bool canLoad, object reference, IMemberDef originalMember, out bool success, out bool alreadySelected)
+		public bool JumpToReference(object reference)
 		{
-			alreadySelected = false;
+			return JumpToReferenceAsyncInternal(true, FixReference(reference), success => GoToLocation(success, ResolveReference(reference)));
+		}
+
+		public bool JumpToReference(object reference, TextLocation location)
+		{
+			return JumpToReferenceAsyncInternal(true, FixReference(reference), success => GoToLocation(success, location));
+		}
+
+		public bool JumpToReference(object reference, Action<bool> onDecompileFinished)
+		{
+			return JumpToReferenceAsyncInternal(true, FixReference(reference), onDecompileFinished);
+		}
+
+		void GoToLocation(bool success, object destLoc)
+		{
+			if (!success || destLoc == null)
+				return;
+			decompilerTextView.GoToLocation(destLoc);
+		}
+
+		sealed class OnShowOutputHelper
+		{
+			readonly MainWindow mainWindow;
+			readonly Action<bool> onDecompileFinished;
+			readonly ILSpyTreeNode node;
+			public OnShowOutputHelper(MainWindow mainWindow, Action<bool> onDecompileFinished, ILSpyTreeNode node)
+			{
+				this.mainWindow = mainWindow;
+				this.onDecompileFinished = onDecompileFinished;
+				this.node = node;
+			}
+
+			public void OnShowOutput(object sender, DecompilerTextView.ShowOutputEventArgs e)
+			{
+				mainWindow.decompilerTextView.OnShowOutput -= OnShowOutput;
+				bool success = e.Nodes != null && e.Nodes.Length == 1 && e.Nodes[0] == node;
+				onDecompileFinished(success);
+			}
+		}
+
+		bool JumpToReferenceAsyncInternal(bool canLoad, object reference, Action<bool> onDecompileFinished)
+		{
 			decompilationTask = TaskHelper.CompletedTask;
 			ILSpyTreeNode treeNode = FindTreeNode(reference);
 			if (treeNode != null) {
 				if (treeView.SelectedItem == treeNode)
-					alreadySelected = true;
+					onDecompileFinished(true);
 				else {
-					DebugInformation.JumpToThisLine = originalMember;
+					if (onDecompileFinished != null) {
+						var helper = new OnShowOutputHelper(this, onDecompileFinished, treeNode);
+						decompilerTextView.OnShowOutput += helper.OnShowOutput;
+					}
 					SelectNode(treeNode);
 				}
-				success = true;
+				return true;
 			} else if (reference is dnlib.DotNet.Emit.OpCode) {
 				string link = "http://msdn.microsoft.com/library/system.reflection.emit.opcodes." + ((dnlib.DotNet.Emit.OpCode)reference).Code.ToString().ToLowerInvariant() + ".aspx";
 				try {
@@ -889,7 +928,7 @@ namespace ICSharpCode.ILSpy
 				} catch {
 					
 				}
-				success = true;
+				return true;
 			}
 			else if (canLoad && reference is IMemberDef) {
 				// Here if the module was removed. It's possible that the user has re-added it.
@@ -911,14 +950,13 @@ namespace ICSharpCode.ILSpy
 							if (modDef != null) {
 								member = modDef.ResolveToken(member.MDToken) as IMemberDef;
 								if (member != null) // should never fail
-									return JumpToReferenceAsyncInternal(false, member, null, out success, out alreadySelected);
+									return JumpToReferenceAsyncInternal(false, member, onDecompileFinished);
 							}
 
 							break;
 						}
 
-						success = false;
-						return decompilationTask;
+						return false;
 					}
 				}
 
@@ -926,12 +964,12 @@ namespace ICSharpCode.ILSpy
 				var loadedAsm = new LoadedAssembly(assemblyList, mainModule);
 				loadedAsm.IsAutoLoaded = true;
 				assemblyList.AddAssembly(loadedAsm, true);
-				return JumpToReferenceAsyncInternal(false, reference, null, out success, out alreadySelected);
+				return JumpToReferenceAsyncInternal(false, reference, onDecompileFinished);
 			}
 			else
-				success = false;
-			return decompilationTask;
+				return false;
 		}
+
 		IEnumerable<ModuleDef> GetAssemblyModules(ModuleDef module)
 		{
 			if (module == null)
