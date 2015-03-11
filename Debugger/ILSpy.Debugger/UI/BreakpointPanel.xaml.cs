@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -19,6 +20,17 @@ using ICSharpCode.ILSpy.Options;
 
 namespace ICSharpCode.ILSpy.Debugger.UI
 {
+	[Export(typeof(IPaneCreator))]
+	public class BreakpointPanelCreator : IPaneCreator
+	{
+		public IPane Create(string name)
+		{
+			if (name == BreakpointPanel.Instance.PaneName)
+				return BreakpointPanel.Instance;
+			return null;
+		}
+	}
+
     /// <summary>
     /// Interaction logic for BreakpointPanel.xaml
     /// </summary>
@@ -37,6 +49,14 @@ namespace ICSharpCode.ILSpy.Debugger.UI
                 return s_instance;
             }
         }
+
+		public string PaneName {
+			get { return "breakpoint window"; }
+		}
+
+		public string PaneTitle {
+			get { return "Breakpoints"; }
+		}
         
         private BreakpointPanel()
         {
@@ -46,21 +66,22 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		public void Show()
 		{
 			if (!IsVisible)
-			{
-                SetItemSource();
-                
-			    MainWindow.Instance.ShowInBottomPane("Breakpoints", this);
+				MainWindow.Instance.ShowInBottomPane(PaneTitle, this);
+		}
 
-				foreach (var m in BookmarkManager.Bookmarks) {
-					var bpm = m as BreakpointBookmark;
-					if (bpm != null)
-						bpm.OnModified += BreakpointBookmark_OnModified;
-				}
-				BookmarkManager.Added += BookmarkManager_Added;
-				BookmarkManager.Removed += BookmarkManager_Removed;
-                DebuggerSettings.Instance.PropertyChanged += 
-                	delegate(object s, PropertyChangedEventArgs e) { if (e.PropertyName == "ShowAllBookmarks") SetItemSource(); };
+		public void Opened()
+		{
+			SetItemSource();
+
+			foreach (var m in BookmarkManager.Bookmarks) {
+				var bpm = m as BreakpointBookmark;
+				if (bpm != null)
+					bpm.OnModified += BreakpointBookmark_OnModified;
 			}
+			BookmarkManager.Added += BookmarkManager_Added;
+			BookmarkManager.Removed += BookmarkManager_Removed;
+			DebuggerSettings.Instance.PropertyChanged +=
+				delegate(object s, PropertyChangedEventArgs e) { if (e.PropertyName == "ShowAllBookmarks") SetItemSource(); };
 		}
 
 		void BookmarkManager_Added(object sender, BookmarkEventArgs e)

@@ -22,6 +22,19 @@ namespace ICSharpCode.ILSpy
 {
 	public interface IPane
 	{
+		string PaneName { get; }
+		string PaneTitle { get; }
+		void Opened();
 		void Closed();
+	}
+
+	public interface IPaneCreator
+	{
+		/// <summary>
+		/// Returns an <see cref="IPane"/> or null if <paramref name="name"/> is not a known pane
+		/// </summary>
+		/// <param name="name">Name of the pane. Same value as returned by <see cref="IPane.PaneName"/></param>
+		/// <returns></returns>
+		IPane Create(string name);
 	}
 }

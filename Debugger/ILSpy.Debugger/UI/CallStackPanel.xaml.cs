@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -29,6 +30,20 @@ using NR = ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.Debugger.UI
 {
+	[Export(typeof(IPaneCreator))]
+	public class CallStackPanelCreator : IPaneCreator
+	{
+		public IPane Create(string name)
+		{
+			if (name == CallStackPanel.Instance.PaneName &&
+				DebuggerService.CurrentDebugger != null &&
+				DebuggerService.CurrentDebugger.IsDebugging) {
+				return CallStackPanel.Instance;
+			}
+			return null;
+		}
+	}
+
     /// <summary>
     /// Interaction logic for CallStackPanel.xaml
     /// </summary>
@@ -48,6 +63,14 @@ namespace ICSharpCode.ILSpy.Debugger.UI
     	        return s_instance;
     	    }
     	}
+
+		public string PaneName {
+			get { return "call stack window"; }
+		}
+
+		public string PaneTitle {
+			get { return "Call Stack"; }
+		}
     	
         private CallStackPanel()
         {
@@ -63,18 +86,20 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		public void Show()
 		{
 			if (!IsVisible)
-			{
-                DebuggerSettings.Instance.PropertyChanged += new PropertyChangedEventHandler(OnDebuggerSettingChanged);
-                
-                SwitchModuleColumn();
-			    MainWindow.Instance.ShowInBottomPane("Call Stack", this);
-                
-                DebuggerService.DebugStarted += new EventHandler(OnDebugStarted);
-                DebuggerService.DebugStopped += new EventHandler(OnDebugStopped);
-				StackFrameStatementBookmark.SelectedFrameChanged += new EventHandler(OnSelectedFrameChanged);
-                if (DebuggerService.IsDebuggerStarted)
-                	OnDebugStarted(null, EventArgs.Empty);
-			}
+				MainWindow.Instance.ShowInBottomPane(PaneTitle, this);
+		}
+
+		public void Opened()
+		{
+			DebuggerSettings.Instance.PropertyChanged += new PropertyChangedEventHandler(OnDebuggerSettingChanged);
+
+			SwitchModuleColumn();
+
+			DebuggerService.DebugStarted += new EventHandler(OnDebugStarted);
+			DebuggerService.DebugStopped += new EventHandler(OnDebugStopped);
+			StackFrameStatementBookmark.SelectedFrameChanged += new EventHandler(OnSelectedFrameChanged);
+			if (DebuggerService.IsDebuggerStarted)
+				OnDebugStarted(null, EventArgs.Empty);
 		}
 		
 		public void Closed()

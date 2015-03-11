@@ -34,6 +34,7 @@ using System.Windows.Media.Imaging;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.AvalonEdit;
+using ICSharpCode.ILSpy.Controls;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.dntheme;
 using ICSharpCode.ILSpy.Debugger;
@@ -76,6 +77,9 @@ namespace ICSharpCode.ILSpy
 
 		[ImportMany]
 		IEnumerable<IPlugin> plugins = null;
+
+		[ImportMany]
+		IEnumerable<IPaneCreator> paneCreators = null;
 		
 		static MainWindow instance;
 		
@@ -523,6 +527,14 @@ namespace ICSharpCode.ILSpy
 			if (FormatExceptions(App.StartupExceptions.ToArray(), output))
 				decompilerTextView.ShowText(output);
 
+			IPane pane;
+			pane = GetPane(topPane, sessionSettings.TopPaneSettings.Name);
+			if (pane != null)
+				ShowInTopPane(pane.PaneName, pane);
+			pane = GetPane(bottomPane, sessionSettings.BottomPaneSettings.Name);
+			if (pane != null)
+				ShowInBottomPane(pane.PaneName, pane);
+
 			foreach (var plugin in plugins)
 				plugin.OnLoaded();
 
@@ -530,6 +542,18 @@ namespace ICSharpCode.ILSpy
 			callAtLoaded = null;
 			foreach (var func in list)
 				func();
+		}
+
+		IPane GetPane(DockedPane dockedPane, string name)
+		{
+			if (string.IsNullOrEmpty(name))
+				return null;
+			foreach (var creator in paneCreators) {
+				var pane = creator.Create(name);
+				if (pane != null)
+					return pane;
+			}
+			return null;
 		}
 
 		void decompilerTextView_OnShowOutput(object sender, DecompilerTextView.ShowOutputEventArgs e)
@@ -1157,11 +1181,31 @@ namespace ICSharpCode.ILSpy
 			sessionSettings.WordWrap = decompilerTextView.TextEditor.WordWrap;
 			sessionSettings.HighlightCurrentLine = decompilerTextView.TextEditor.Options.HighlightCurrentLine;
 			sessionSettings.EditorPositionState = TextView.EditorPositionState;
-			if (topPane.Visibility == Visibility.Visible)
-				sessionSettings.TopPaneHeight = topPaneRow.Height.Value;
-			if (bottomPane.Visibility == Visibility.Visible)
-				sessionSettings.BottomPaneHeight = bottomPaneRow.Height.Value;
+			sessionSettings.TopPaneSettings = GetPaneSettings(topPane, topPaneRow);
+			sessionSettings.BottomPaneSettings = GetPaneSettings(bottomPane, bottomPaneRow);
 			sessionSettings.Save();
+		}
+
+		static SessionSettings.PaneSettings GetPaneSettings(DockedPane dockedPane, RowDefinition row)
+		{
+			var settings = new SessionSettings.PaneSettings();
+
+			if (dockedPane.Visibility == Visibility.Visible)
+				settings.Height = row.Height.Value;
+			else
+				settings.Height = dockedPane.Height;
+			if (double.IsNaN(settings.Height))
+				settings.Height = 250;
+
+			settings.Name = GetPaneName(dockedPane);
+
+			return settings;
+		}
+
+		static string GetPaneName(DockedPane dockedPane)
+		{
+			var pane = dockedPane.Content as IPane;
+			return pane == null ? string.Empty : pane.PaneName;
 		}
 
 		private string GetAutoLoadedAssemblyNode(SharpTreeNode node)
@@ -1184,8 +1228,8 @@ namespace ICSharpCode.ILSpy
 		public void ShowInTopPane(string title, object content)
 		{
 			topPaneRow.MinHeight = 100;
-			if (sessionSettings.TopPaneHeight > 0)
-				topPaneRow.Height = new GridLength(sessionSettings.TopPaneHeight, GridUnitType.Pixel);
+			if (sessionSettings.TopPaneSettings.Height > 0)
+				topPaneRow.Height = new GridLength(sessionSettings.TopPaneSettings.Height, GridUnitType.Pixel);
 			topPane.Title = title;
 			if (topPane.Content != content) {
 				IPane pane = topPane.Content as IPane;
@@ -1194,6 +1238,8 @@ namespace ICSharpCode.ILSpy
 				topPane.Content = content;
 			}
 			topPane.Visibility = Visibility.Visible;
+			if (content is IPane)
+				((IPane)content).Opened();
 		}
 		
 		void TopPane_CloseButtonClicked(object sender, EventArgs e)
@@ -1203,7 +1249,7 @@ namespace ICSharpCode.ILSpy
 
 		public void CloseTopPane()
 		{
-			sessionSettings.TopPaneHeight = topPaneRow.Height.Value;
+			sessionSettings.TopPaneSettings.Height = topPaneRow.Height.Value;
 			topPaneRow.MinHeight = 0;
 			topPaneRow.Height = new GridLength(0);
 			topPane.Visibility = Visibility.Collapsed;
@@ -1221,8 +1267,8 @@ namespace ICSharpCode.ILSpy
 		public void ShowInBottomPane(string title, object content)
 		{
 			bottomPaneRow.MinHeight = 100;
-			if (sessionSettings.BottomPaneHeight > 0)
-				bottomPaneRow.Height = new GridLength(sessionSettings.BottomPaneHeight, GridUnitType.Pixel);
+			if (sessionSettings.BottomPaneSettings.Height > 0)
+				bottomPaneRow.Height = new GridLength(sessionSettings.BottomPaneSettings.Height, GridUnitType.Pixel);
 			bottomPane.Title = title;
 			if (bottomPane.Content != content) {
 				IPane pane = bottomPane.Content as IPane;
@@ -1231,6 +1277,8 @@ namespace ICSharpCode.ILSpy
 				bottomPane.Content = content;
 			}
 			bottomPane.Visibility = Visibility.Visible;
+			if (content is IPane)
+				((IPane)content).Opened();
 		}
 		
 		void BottomPane_CloseButtonClicked(object sender, EventArgs e)
@@ -1240,7 +1288,7 @@ namespace ICSharpCode.ILSpy
 
 		public void CloseBottomPane()
 		{
-			sessionSettings.BottomPaneHeight = bottomPaneRow.Height.Value;
+			sessionSettings.BottomPaneSettings.Height = bottomPaneRow.Height.Value;
 			bottomPaneRow.MinHeight = 0;
 			bottomPaneRow.Height = new GridLength(0);
 			bottomPane.Visibility = Visibility.Collapsed;

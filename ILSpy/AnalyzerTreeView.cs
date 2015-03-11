@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
@@ -26,6 +27,17 @@ using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy
 {
+	[Export(typeof(IPaneCreator))]
+	public class AnalyzerTreeViewCreator : IPaneCreator
+	{
+		public IPane Create(string name)
+		{
+			if (name == AnalyzerTreeView.Instance.PaneName)
+				return AnalyzerTreeView.Instance;
+			return null;
+		}
+	}
+
 	/// <summary>
 	/// Analyzer tree view.
 	/// </summary>
@@ -43,6 +55,14 @@ namespace ICSharpCode.ILSpy
 				}
 				return instance;
 			}
+		}
+
+		public string PaneName {
+			get { return "analyzer treeview window"; }
+		}
+
+		public string PaneTitle {
+			get { return "Analyzer"; }
 		}
 
 		private AnalyzerTreeView()
@@ -72,7 +92,11 @@ namespace ICSharpCode.ILSpy
 		public void Show()
 		{
 			if (!IsVisible)
-				MainWindow.Instance.ShowInBottomPane("Analyzer", this);
+				MainWindow.Instance.ShowInBottomPane(PaneTitle, this);
+		}
+
+		public void Opened()
+		{
 		}
 
 		public void Show(AnalyzerTreeNode node)

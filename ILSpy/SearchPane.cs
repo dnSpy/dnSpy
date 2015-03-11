@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -37,6 +38,17 @@ using dnlib.DotNet.Emit;
 
 namespace ICSharpCode.ILSpy
 {
+	[Export(typeof(IPaneCreator))]
+	public class SearchPaneCreator : IPaneCreator
+	{
+		public IPane Create(string name)
+		{
+			if (name == SearchPane.Instance.PaneName)
+				return SearchPane.Instance;
+			return null;
+		}
+	}
+
 	/// <summary>
 	/// Search pane
 	/// </summary>
@@ -53,6 +65,14 @@ namespace ICSharpCode.ILSpy
 				}
 				return instance;
 			}
+		}
+
+		public string PaneName {
+			get { return "search window"; }
+		}
+
+		public string PaneTitle {
+			get { return "Search"; }
 		}
 		
 		private SearchPane()
@@ -81,12 +101,15 @@ namespace ICSharpCode.ILSpy
 		
 		public void Show()
 		{
-			if (!IsVisible) {
-				MainWindow.Instance.ShowInTopPane("Search", this);
-				if (runSearchOnNextShow) {
-					runSearchOnNextShow = false;
-					StartSearch(this.SearchTerm);
-				}
+			if (!IsVisible)
+				MainWindow.Instance.ShowInTopPane(PaneTitle, this);
+		}
+
+		public void Opened()
+		{
+			if (runSearchOnNextShow) {
+				runSearchOnNextShow = false;
+				StartSearch(this.SearchTerm);
 			}
 			Dispatcher.BeginInvoke(
 				DispatcherPriority.Background,

@@ -57,8 +57,10 @@ namespace ICSharpCode.ILSpy
 			this.WordWrap = FromString((string)doc.Element("WordWrap"), false);
 			this.HighlightCurrentLine = FromString((string)doc.Element("HighlightCurrentLine"), true);
 			this.EditorPositionState = EditorPositionState.FromXml(doc.Element("EditorPositionState"));
-			this.TopPaneHeight = FromString((string)doc.Element("TopPaneHeight"), 200);
-			this.BottomPaneHeight = FromString((string)doc.Element("BottomPaneHeight"), 200);
+			this.TopPaneSettings.Name = FromString((string)doc.Element("TopPaneName"), string.Empty);
+			this.TopPaneSettings.Height = FromString((string)doc.Element("TopPaneHeight"), 200);
+			this.BottomPaneSettings.Name = FromString((string)doc.Element("BottomPaneName"), string.Empty);
+			this.BottomPaneSettings.Height = FromString((string)doc.Element("BottomPaneHeight"), 200);
 			this.ThemeName = (string)doc.Element("ThemeName") ?? "light";
 		}
 		
@@ -81,10 +83,17 @@ namespace ICSharpCode.ILSpy
 		public Rect WindowBounds;
 		internal static Rect DefaultWindowBounds =  new Rect(10, 10, 750, 550);
 		public double LeftColumnWidth;
-		public double TopPaneHeight, BottomPaneHeight;
+		public PaneSettings TopPaneSettings;
+		public PaneSettings BottomPaneSettings;
 		public bool WordWrap, HighlightCurrentLine;
 		public string ThemeName;
 		public EditorPositionState EditorPositionState;
+
+		public struct PaneSettings
+		{
+			public double Height;
+			public string Name;
+		}
 		
 		public void Save()
 		{
@@ -105,8 +114,10 @@ namespace ICSharpCode.ILSpy
 			doc.Add(new XElement("HighlightCurrentLine", ToString(this.HighlightCurrentLine)));
 			doc.Add(this.EditorPositionState.ToXml(new XElement("EditorPositionState")));
 			doc.Add(new XElement("LeftColumnWidth", ToString(this.LeftColumnWidth)));
-			doc.Add(new XElement("TopPaneHeight", ToString(this.TopPaneHeight)));
-			doc.Add(new XElement("BottomPaneHeight", ToString(this.BottomPaneHeight)));
+			doc.Add(new XElement("TopPaneHeight", ToString(this.TopPaneSettings.Height)));
+			doc.Add(new XElement("TopPaneName", ToString(this.TopPaneSettings.Name)));
+			doc.Add(new XElement("BottomPaneHeight", ToString(this.BottomPaneSettings.Height)));
+			doc.Add(new XElement("BottomPaneName", ToString(this.BottomPaneSettings.Name)));
 			doc.Add(new XElement("ThemeName", ToString(this.ThemeName)));
 			
 			ILSpySettings.SaveSettings(doc);
