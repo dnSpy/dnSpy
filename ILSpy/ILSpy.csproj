@@ -60,6 +60,9 @@
   <PropertyGroup>
     <StartupObject>ICSharpCode.ILSpy.StartUpClass</StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
@@ -282,6 +285,7 @@
     <Resource Include="Images\Breakpoint.png" />
     <Resource Include="Images\CurrentLine.png" />
     <Resource Include="Images\DisabledBreakpoint.png" />
+    <None Include="app.manifest" />
     <None Include="dntheme\dark.dntheme">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
