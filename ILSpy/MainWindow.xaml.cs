@@ -791,10 +791,15 @@ namespace ICSharpCode.ILSpy
 					break;
 				bestMatch = node;
 				((ILSpyTreeNode)node).EnsureChildrenFiltered();
-				if (i <= 1)	// Check if it's the assembly or module nodes
-					node = node.Children.FirstOrDefault(c => c is AssemblyTreeNode && ((AssemblyTreeNode)c).LoadedAssembly.FileName == path[i]);
-				else
-					node = node.Children.FirstOrDefault(c => c.ToString() == path[i]);
+				if (i <= 1) { // Check if it's the assembly or module nodes
+					var newNode = node.Children.FirstOrDefault(c => c is AssemblyTreeNode && ((AssemblyTreeNode)c).LoadedAssembly.FileName == path[i]);
+					// Should only fail if it's a netmodule
+					if (newNode != null) {
+						node = newNode;
+						continue;
+					}
+				}
+				node = node.Children.FirstOrDefault(c => c.ToString() == path[i]);
 			}
 			if (returnBestMatch)
 				return node ?? bestMatch;
