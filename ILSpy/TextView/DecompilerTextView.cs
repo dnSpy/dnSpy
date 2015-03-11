@@ -109,6 +109,7 @@ namespace ICSharpCode.ILSpy.TextView
 			this.referenceElementGenerator = new ReferenceElementGenerator(this.JumpToReference, this.IsLink);
 			textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
 			textEditor.PreviewKeyDown += TextEditor_PreviewKeyDown;
+			textEditor.KeyDown += TextEditor_KeyDown;
 			this.uiElementGenerator = new UIElementGenerator();
 			textEditor.TextArea.TextView.ElementGenerators.Add(uiElementGenerator);
 			textEditor.Options.RequireControlModifierForHyperlinkClick = false;
@@ -795,8 +796,6 @@ namespace ICSharpCode.ILSpy.TextView
 
 		void TextViewMouseDown(object sender, MouseButtonEventArgs e)
 		{
-			if (GetReferenceSegmentAtMousePosition() == null)
-				ClearLocalReferenceMarks();
 			ClosePopups();
 		}
 
@@ -1040,7 +1039,10 @@ namespace ICSharpCode.ILSpy.TextView
 				e.Handled = true;
 				return;
 			}
+		}
 
+		void TextEditor_KeyDown(object sender, KeyEventArgs e)
+		{
 			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Escape) {
 				ClearLocalReferenceMarks();
 				ClosePopups();
