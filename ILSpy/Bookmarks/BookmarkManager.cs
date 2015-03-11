@@ -47,6 +47,14 @@ namespace ICSharpCode.ILSpy.Bookmarks
 			bookmarks.Remove(bookmark);
 			OnRemoved(new BookmarkEventArgs(bookmark));
 		}
+
+		public static void RemoveMarks<T>() where T : BookmarkBase
+		{
+			for (int i = Bookmarks.Count - 1; i >= 0; i--) {
+				if (BookmarkManager.Bookmarks[i] is T)
+					BookmarkManager.RemoveMark(BookmarkManager.Bookmarks[i]);
+			}
+		}
 		
 		public static void Clear()
 		{

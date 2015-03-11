@@ -282,6 +282,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		{
 			MainWindow.Instance.KeyUp += OnKeyUp;
 			MainWindow.Instance.KeyDown += OnKeyDown;
+			BreakpointSettings.Instance.Load();
 		}
 
 		void OnKeyUp(object sender, KeyEventArgs e)

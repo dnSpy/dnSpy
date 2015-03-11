@@ -40,6 +40,10 @@ namespace ICSharpCode.ILSpy.Debugger
 		readonly int token;
 		readonly string moduleFullPath;
 
+		public string ModuleFullPath {
+			get { return moduleFullPath; }
+		}
+
 		public int Token
 		{
 			get { return token; }

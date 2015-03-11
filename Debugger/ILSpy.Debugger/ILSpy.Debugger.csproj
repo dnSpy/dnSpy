@@ -73,6 +73,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BreakpointSettings.cs" />
     <Compile Include="Commands\BreakpointCommand.cs" />
     <Compile Include="Commands\DebuggerCommands.cs" />
     <Compile Include="DebuggerSettings.cs" />
