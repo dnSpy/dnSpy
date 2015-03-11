@@ -54,6 +54,10 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			textView.DocumentChanged += OnDocumentChanged;
 			BookmarkManager.Added += new BookmarkEventHandler(BookmarkManager_Added);
 			BookmarkManager.Removed += new BookmarkEventHandler(BookmarkManager_Removed);
+			MainWindow.Instance.ExecuteAtLoaded(() => {
+				MainWindow.Instance.TextView.OnShowOutput += delegate { RecreateMarkers(); };
+				RecreateMarkers();
+			});
 			OnDocumentChanged(null, null);
 		}
 
@@ -75,12 +79,21 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 
 		void BookmarkManager_Added(object sender, BookmarkEventArgs e)
 		{
-			if (e.Bookmark is MarkerBookmark) {
-				var bm = (MarkerBookmark)e.Bookmark;
-				// add bookmark for the current type
-				if (bm.LineNumber < textView.Document.LineCount)
-					bm.CreateMarker(this);
-			}
+			CreateMarker(e.Bookmark as MarkerBookmark);
+		}
+
+		public void RecreateMarkers()
+		{
+			foreach (var bm in BookmarkManager.Bookmarks)
+				CreateMarker(bm as MarkerBookmark);
+		}
+
+		void CreateMarker(MarkerBookmark mbm)
+		{
+			if (mbm == null || !mbm.IsVisible)
+				return;
+
+			mbm.CreateMarker(this);
 		}
 
 		#region ITextMarkerService

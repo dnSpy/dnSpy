@@ -16,6 +16,7 @@ using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Services;
+using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 
@@ -25,12 +26,14 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 	{
 		readonly IconBarManager manager;
 		
-		public IconBarMargin(IconBarManager manager)
+		public IconBarMargin(IconBarManager manager, DecompilerTextView decompilerTextView)
 		{
 			BookmarkManager.Added += new BookmarkEventHandler(OnBookmarkAdded);
 			BookmarkManager.Removed += new BookmarkEventHandler(OnBookmarkRemoved);
+			decompilerTextView.OnShowOutput += delegate { SyncBookmarks(); };
 			
 			this.manager = manager;
+			SyncBookmarks();
 		}
 		
 		public IconBarManager Manager {
@@ -208,7 +211,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			}
 		}
 		
-		public void SyncBookmarks()
+		void SyncBookmarks()
 		{
 			var storage = DebugInformation.CodeMappings;
 			if (storage != null && storage.Count != 0) {

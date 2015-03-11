@@ -120,7 +120,7 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.SetBinding(Control.FontSizeProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = new PropertyPath("SelectedFontSize") });
 			
 			// add marker service & margin
-			iconMargin = new IconBarMargin((manager = new IconBarManager()));
+			iconMargin = new IconBarMargin(manager = new IconBarManager(), this);
 			textMarkerService = new TextMarkerService(textEditor.TextArea.TextView);
 			textEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
 			textEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
@@ -584,9 +584,6 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		void UpdateDebugUI(DecompilerTextViewState state)
 		{
-			// sync bookmarks
-			iconMargin.SyncBookmarks();
-
 			bool updateDebugInfo =
 					DebuggerService.CurrentDebugger != null &&
 					DebuggerService.CurrentDebugger.IsDebugging &&
