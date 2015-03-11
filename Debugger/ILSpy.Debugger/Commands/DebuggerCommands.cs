@@ -698,7 +698,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			menuItem.Header = string.Format("_Debug {0}", ((AssemblyTreeNode)context.SelectedTreeNodes[0]).LoadedAssembly.ShortName);
 		}
 
-		public bool IsVisible(TextViewContext context)
+		public new bool IsVisible(TextViewContext context)
 		{
 			return DebuggerService.CurrentDebugger != null && !DebuggerService.CurrentDebugger.IsDebugging &&
 				context.SelectedTreeNodes != null && context.SelectedTreeNodes.All(
