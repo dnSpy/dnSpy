@@ -24,6 +24,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Xml.Linq;
+using ICSharpCode.ILSpy.AvalonEdit;
 
 namespace ICSharpCode.ILSpy
 {
@@ -55,6 +56,7 @@ namespace ICSharpCode.ILSpy
 			this.LeftColumnWidth = FromString((string)doc.Element("LeftColumnWidth"), 0.0);
 			this.WordWrap = FromString((string)doc.Element("WordWrap"), false);
 			this.HighlightCurrentLine = FromString((string)doc.Element("HighlightCurrentLine"), true);
+			this.EditorPositionState = EditorPositionState.FromXml(doc.Element("EditorPositionState"));
 			this.TopPaneHeight = FromString((string)doc.Element("TopPaneHeight"), 200);
 			this.BottomPaneHeight = FromString((string)doc.Element("BottomPaneHeight"), 200);
 			this.ThemeName = (string)doc.Element("ThemeName") ?? "light";
@@ -81,8 +83,8 @@ namespace ICSharpCode.ILSpy
 		public double LeftColumnWidth;
 		public double TopPaneHeight, BottomPaneHeight;
 		public bool WordWrap, HighlightCurrentLine;
-
 		public string ThemeName;
+		public EditorPositionState EditorPositionState;
 		
 		public void Save()
 		{
@@ -101,6 +103,7 @@ namespace ICSharpCode.ILSpy
 			doc.Add(new XElement("WindowBounds", ToString(this.WindowBounds)));
 			doc.Add(new XElement("WordWrap", ToString(this.WordWrap)));
 			doc.Add(new XElement("HighlightCurrentLine", ToString(this.HighlightCurrentLine)));
+			doc.Add(this.EditorPositionState.ToXml(new XElement("EditorPositionState")));
 			doc.Add(new XElement("LeftColumnWidth", ToString(this.LeftColumnWidth)));
 			doc.Add(new XElement("TopPaneHeight", ToString(this.TopPaneHeight)));
 			doc.Add(new XElement("BottomPaneHeight", ToString(this.BottomPaneHeight)));
@@ -109,7 +112,7 @@ namespace ICSharpCode.ILSpy
 			ILSpySettings.SaveSettings(doc);
 		}
 		
-		static T FromString<T>(string s, T defaultValue)
+		internal static T FromString<T>(string s, T defaultValue)
 		{
 			if (s == null)
 				return defaultValue;
@@ -120,8 +123,8 @@ namespace ICSharpCode.ILSpy
 				return defaultValue;
 			}
 		}
-		
-		static string ToString<T>(T obj)
+
+		internal static string ToString<T>(T obj)
 		{
 			TypeConverter c = TypeDescriptor.GetConverter(typeof(T));
 			return c.ConvertToInvariantString(obj);

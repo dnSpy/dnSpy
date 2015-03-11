@@ -33,6 +33,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.dntheme;
 using ICSharpCode.ILSpy.Debugger;
@@ -540,8 +541,8 @@ namespace ICSharpCode.ILSpy
 				if (node != null) {
 					SelectNode(node);
 					
-					// only if not showing the about page, perform the update check:
-					//ShowMessageIfUpdatesAvailableAsync(spySettings);
+					startNode = node;
+					decompilerTextView.OnShowOutput += decompilerTextView_OnShowOutput;
 				} else {
 					AboutPage.Display(decompilerTextView);
 				}
@@ -553,6 +554,38 @@ namespace ICSharpCode.ILSpy
 
 			foreach (var plugin in plugins)
 				plugin.OnLoaded();
+		}
+
+		void decompilerTextView_OnShowOutput(object sender, DecompilerTextView.ShowOutputEventArgs e)
+		{
+			decompilerTextView.OnShowOutput -= decompilerTextView_OnShowOutput;
+			if (startNode == null)
+				return;
+			var node = startNode;
+			startNode = null;
+			if (e.Nodes == null || e.Nodes.Length != 1 || e.Nodes[0] != node)
+				return;
+
+			if (IsValid(sessionSettings.EditorPositionState))
+				decompilerTextView.EditorPositionState = sessionSettings.EditorPositionState;
+		}
+		SharpTreeNode startNode;
+
+		bool IsValid(EditorPositionState state)
+		{
+			if (state.VerticalOffset < 0 || state.HorizontalOffset < 0)
+				return false;
+			if (state.DesiredXPos < 0)
+				return false;
+			if (state.TextViewPosition.Line < 1 || state.TextViewPosition.Column < 1)
+				return false;
+			if (state.TextViewPosition.VisualColumn < -1)
+				return false;
+
+			if (state.TextViewPosition.Line > TextView.TextEditor.LineCount)
+				return false;
+
+			return true;
 		}
 		
 		bool FormatExceptions(App.ExceptionData[] exceptions, ITextOutput output)
@@ -1104,6 +1137,7 @@ namespace ICSharpCode.ILSpy
 			sessionSettings.LeftColumnWidth = leftColumn.Width.Value;
 			sessionSettings.WordWrap = decompilerTextView.TextEditor.WordWrap;
 			sessionSettings.HighlightCurrentLine = decompilerTextView.TextEditor.Options.HighlightCurrentLine;
+			sessionSettings.EditorPositionState = TextView.EditorPositionState;
 			if (topPane.Visibility == Visibility.Visible)
 				sessionSettings.TopPaneHeight = topPaneRow.Height.Value;
 			if (bottomPane.Visibility == Visibility.Visible)

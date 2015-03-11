@@ -105,6 +105,7 @@
     </Compile>
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
+    <Compile Include="AvalonEdit\EditorPositionState.cs" />
     <Compile Include="AvalonEdit\IconBarManager.cs" />
     <Compile Include="AvalonEdit\IconBarMargin.cs" />
     <Compile Include="AvalonEdit\IconMarginActionsProvider.cs" />

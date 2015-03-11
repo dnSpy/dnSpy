@@ -401,7 +401,7 @@ namespace ICSharpCode.ILSpy.TextView
 		/// <summary>
 		/// Shows the given output in the text view.
 		/// </summary>
-		void ShowOutput(AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting = null, DecompilerTextViewState state = null)
+		void ShowOutput(AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting = null, DecompilerTextViewState state = null, ILSpyTreeNode[] nodes = null)
 		{
 			Debug.WriteLine("Showing {0} characters of output", textOutput.TextLength);
 			Stopwatch w = Stopwatch.StartNew();
@@ -443,12 +443,8 @@ namespace ICSharpCode.ILSpy.TextView
 				foldingManager.UpdateFoldings(textOutput.Foldings.OrderBy(f => f.StartOffset), -1);
 				Debug.WriteLine("  Updating folding: {0}", w.Elapsed); w.Restart();
 			}
-			if (state != null) {
-				textEditor.ScrollToVerticalOffset(state.VerticalOffset);
-				textEditor.ScrollToHorizontalOffset(state.HorizontalOffset);
-				textEditor.TextArea.Caret.Position = state.TextViewPosition;
-				textEditor.TextArea.Caret.DesiredXPos = state.DesiredXPos;
-			}
+			if (state != null)
+				EditorPositionState = state.EditorPositionState;
 			
 			if (DisplaySettingsPanel.CurrentDisplaySettings.AutoFocusTextView)
 				textEditor.Focus();
@@ -468,6 +464,14 @@ namespace ICSharpCode.ILSpy.TextView
 					manager.Bookmarks.Add(new MemberBookmark(member, location));
 				}
 			}
+			var evt = OnShowOutput;
+			if (evt != null)
+				evt(this, new ShowOutputEventArgs { Nodes = nodes });
+		}
+		public event EventHandler<ShowOutputEventArgs> OnShowOutput;
+		public class ShowOutputEventArgs : EventArgs
+		{
+			public ILSpyTreeNode[] Nodes;
 		}
 		#endregion
 		
@@ -500,7 +504,7 @@ namespace ICSharpCode.ILSpy.TextView
 			var newContext = new DecompilationContext(language, treeNodes.ToArray(), options);
 			var textOutput = DecompileCache.Instance.Lookup(newContext.Language, newContext.TreeNodes, newContext.Options);
 			if (textOutput != null) {
-				ShowOutput(textOutput, newContext.Language.SyntaxHighlighting, newContext.Options.TextViewState);
+				ShowOutput(textOutput, newContext.Language.SyntaxHighlighting, newContext.Options.TextViewState, newContext.TreeNodes);
 				decompiledNodes = newContext.TreeNodes;
 				return completedTask;
 			}
@@ -562,7 +566,7 @@ namespace ICSharpCode.ILSpy.TextView
 			.Then(
 				delegate (AvalonEditTextOutput textOutput) { // handling the result
 					DecompileCache.Instance.Cache(context.Language, context.TreeNodes, context.Options, textOutput);
-					ShowOutput(textOutput, context.Language.SyntaxHighlighting, context.Options.TextViewState);
+					ShowOutput(textOutput, context.Language.SyntaxHighlighting, context.Options.TextViewState, context.TreeNodes);
 					decompiledNodes = context.TreeNodes;
 				})
 			.Catch<Exception>(exception => {
@@ -949,10 +953,7 @@ namespace ICSharpCode.ILSpy.TextView
 			var state = new DecompilerTextViewState();
 			if (foldingManager != null)
 				state.SaveFoldingsState(foldingManager.AllFoldings);
-			state.VerticalOffset = textEditor.VerticalOffset;
-			state.HorizontalOffset = textEditor.HorizontalOffset;
-			state.TextViewPosition = textEditor.TextArea.Caret.Position;
-			state.DesiredXPos = textEditor.TextArea.Caret.DesiredXPos;
+			state.EditorPositionState = new EditorPositionState(textEditor);
 			state.DecompiledNodes = decompiledNodes;
 			return state;
 		}
@@ -1121,16 +1122,25 @@ namespace ICSharpCode.ILSpy.TextView
 
 			return false;
 		}
+
+		public EditorPositionState EditorPositionState {
+			get {
+				return new EditorPositionState(textEditor);
+			}
+			set {
+				textEditor.ScrollToVerticalOffset(value.VerticalOffset);
+				textEditor.ScrollToHorizontalOffset(value.HorizontalOffset);
+				textEditor.TextArea.Caret.Position = value.TextViewPosition;
+				textEditor.TextArea.Caret.DesiredXPos = value.DesiredXPos;
+			}
+		}
 	}
 
 	public class DecompilerTextViewState
 	{
 		private List<Tuple<int, int>> ExpandedFoldings;
 		private int FoldingsChecksum;
-		public double VerticalOffset;
-		public double HorizontalOffset;
-		public TextViewPosition TextViewPosition;
-		public double DesiredXPos;
+		public EditorPositionState EditorPositionState;
 		public ILSpyTreeNode[] DecompiledNodes;
 
 		public void SaveFoldingsState(IEnumerable<FoldingSection> foldings)
