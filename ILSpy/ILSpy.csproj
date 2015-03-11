@@ -123,7 +123,6 @@
     <Compile Include="Bookmarks\BreakpointBookmarkEventArgs.cs" />
     <Compile Include="Bookmarks\IBookmark.cs" />
     <Compile Include="Bookmarks\MarkerBookmark.cs" />
-    <Compile Include="Bookmarks\MemberBookmark.cs" />
     <Compile Include="Bookmarks\StackFrameStatementBookmark.cs" />
     <Compile Include="Commands\BrowseBackCommand.cs" />
     <Compile Include="Commands\BrowseForwardCommand.cs" />

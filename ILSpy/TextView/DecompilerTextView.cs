@@ -452,18 +452,7 @@ namespace ICSharpCode.ILSpy.TextView
 			// update debugger info
 			DebugInformation.CodeMappings = textOutput.DebuggerMemberMappings.ToDictionary(m => new MethodKey(m.MethodDefinition));
 			UpdateDebugUI(state);
-			
-			// update class bookmarks
-			var document = textEditor.Document;
-			manager.Bookmarks.Clear();
-			foreach (var pair in textOutput.DefinitionLookup.definitions) {
-				IMemberRef member = pair.Key as IMemberRef;
-				int offset = pair.Value;
-				if (member != null) {
-					var location = document.GetLocation(offset);
-					manager.Bookmarks.Add(new MemberBookmark(member, location));
-				}
-			}
+
 			var evt = OnShowOutput;
 			if (evt != null)
 				evt(this, new ShowOutputEventArgs { Nodes = nodes });
