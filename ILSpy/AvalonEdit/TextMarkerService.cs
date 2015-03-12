@@ -67,6 +67,11 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				markers = new TextSegmentCollection<TextMarker>(textView.Document);
 			else
 				markers = null;
+			foreach (var bm in BookmarkManager.Bookmarks) {
+				var bmb = bm as MarkerBookmark;
+				if (bmb != null)
+					bmb.Marker = null;
+			}
 		}
 		
 		void BookmarkManager_Removed(object sender, BookmarkEventArgs e)
