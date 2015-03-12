@@ -897,9 +897,8 @@ namespace ICSharpCode.ILSpy.TextView
 		}
 		#endregion
 
-		internal ReferenceSegment GetReferenceSegmentAtMousePosition()
+		internal ReferenceSegment GetReferenceSegmentAt(TextViewPosition? position)
 		{
-			TextViewPosition? position = GetPositionFromMousePosition();
 			if (position == null)
 				return null;
 			int offset = textEditor.Document.GetOffset(position.Value.Location);

@@ -102,21 +102,24 @@ namespace ICSharpCode.ILSpy
 		public ReferenceSegment Reference { get; private set; }
 		
 		/// <summary>
-		/// Returns the position in TextView the mouse cursor is currently hovering above.
+		/// Returns the position in TextView the mouse cursor is currently hovering above or if
+		/// the context menu was opened from the keyboard, the current caret location.
 		/// Returns null, if TextView returns null;
 		/// </summary>
 		public TextViewPosition? Position { get; private set; }
 		
-		public static TextViewContext Create(SharpTreeView treeView = null, DecompilerTextView textView = null, ListBox listBox = null)
+		public static TextViewContext Create(SharpTreeView treeView = null, DecompilerTextView textView = null, ListBox listBox = null, bool openedFromKeyboard = false)
 		{
+			TextViewPosition? position = null;
+			if (textView != null)
+				position = openedFromKeyboard ? textView.TextEditor.TextArea.Caret.Position : textView.GetPositionFromMousePosition();
 			ReferenceSegment reference;
 			if (textView != null)
-				reference = textView.GetReferenceSegmentAtMousePosition();
+				reference = textView.GetReferenceSegmentAt(position);
 			else if (listBox != null && listBox.SelectedItem != null)
 				reference = new ReferenceSegment { Reference = ((SearchResult)listBox.SelectedItem).Member };
 			else
 				reference = null;
-			var position = textView != null ? textView.GetPositionFromMousePosition() : null;
 			var selectedTreeNodes = treeView != null ? treeView.GetTopLevelSelection().ToArray() : null;
 			return new TextViewContext {
 				TreeView = treeView,
@@ -217,7 +220,8 @@ namespace ICSharpCode.ILSpy
 		
 		void textView_ContextMenuOpening(object sender, ContextMenuEventArgs e)
 		{
-			TextViewContext context = TextViewContext.Create(textView: textView);
+			bool openedFromKeyboard = e.CursorLeft == -1 && e.CursorTop == -1;
+			TextViewContext context = TextViewContext.Create(textView: textView, openedFromKeyboard: openedFromKeyboard);
 			ContextMenu menu;
 			if (ShowContextMenu(context, out menu))
 				textView.ContextMenu = menu;
