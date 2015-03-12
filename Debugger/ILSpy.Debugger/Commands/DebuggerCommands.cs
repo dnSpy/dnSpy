@@ -944,8 +944,14 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	{
 		public RemoveBreakpointsCommand() : base(null)
 		{
-			BookmarkManager.Added += delegate { UpdateState(); };
-			BookmarkManager.Removed += delegate { UpdateState(); };
+			BookmarkManager.Added += (sender, e) => {
+				if (e.Bookmark is BreakpointBookmark)
+					UpdateState();
+			};
+			BookmarkManager.Removed += (sender, e) => {
+				if (e.Bookmark is BreakpointBookmark)
+					UpdateState();
+			};
 		}
 
 		public override void Execute(object parameter)

@@ -118,8 +118,8 @@ namespace ICSharpCode.ILSpy.Debugger.UI
         
         public void Closed()
         {
-        	BookmarkManager.Added -= delegate { SetItemSource(); };
-        	BookmarkManager.Removed -= delegate { SetItemSource(); };
+			BookmarkManager.Added -= BookmarkManager_Added;
+			BookmarkManager.Removed -= BookmarkManager_Removed;
         	DebuggerSettings.Instance.PropertyChanged -= 
         		delegate(object s, PropertyChangedEventArgs e) { if (e.PropertyName == "ShowAllBookmarks") SetItemSource(); };
 			foreach (var m in BookmarkManager.Bookmarks) {
