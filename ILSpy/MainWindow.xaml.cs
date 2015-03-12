@@ -24,6 +24,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -1373,6 +1374,44 @@ namespace ICSharpCode.ILSpy
 		private void GoToTokenCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.CanExecute = GoToTokenContextMenuEntry.GetModule(this.SelectedNodes.ToArray()) != null;
+		}
+
+		private void GoToLineExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			var ask = new AskForInput();
+			ask.Owner = this;
+			ask.Title = "Go to Line";
+			ask.textBlock.Text = "Line [, column]";
+			ask.textBox.Text = "";
+			ask.ToolTip = "Enter a line and/or column\n10 => line 10, column 1\n,5 => column 5\n10,5 => line 10, column 5";
+			ask.ShowDialog();
+			if (ask.DialogResult != true)
+				return;
+
+			string lineText = ask.textBox.Text;
+			int? line = null, column = null;
+			Match match;
+			if ((match = goToLineRegex1.Match(lineText)) != null && match.Groups.Count == 4) {
+				line = TryParse(match.Groups[1].Value);
+				column = match.Groups[3].Value != string.Empty ? TryParse(match.Groups[3].Value) : 1;
+			}
+			else if ((match = goToLineRegex2.Match(lineText)) != null && match.Groups.Count == 2) {
+				line = decompilerTextView.TextEditor.TextArea.Caret.Line;
+				column = TryParse(match.Groups[1].Value);
+			}
+			if (line == null || column == null) {
+				MessageBox.Show(this, string.Format("Invalid line: {0}", lineText));
+				return;
+			}
+			decompilerTextView.ScrollAndMoveCaretTo(line.Value, column.Value);
+		}
+		static readonly Regex goToLineRegex1 = new Regex(@"^\s*(\d+)\s*(,\s*(\d+))?\s*$");
+		static readonly Regex goToLineRegex2 = new Regex(@"^\s*,\s*(\d+)\s*$");
+
+		static int? TryParse(string valText)
+		{
+			int val;
+			return int.TryParse(valText, out val) ? (int?)val : null;
 		}
 	}
 }

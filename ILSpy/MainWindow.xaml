@@ -17,15 +17,20 @@
 	<Window.Resources>
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 		<RoutedUICommand x:Key="GoToToken" Text="Go to Token" />
+		<RoutedUICommand x:Key="GoToLine" Text="Go to Line" />
 	</Window.Resources>
 	<Window.InputBindings>
 		<KeyBinding Gesture="Ctrl+D" Command="{StaticResource GoToToken}" />
+		<KeyBinding Gesture="Ctrl+G" Command="{StaticResource GoToLine}" />
 	</Window.InputBindings>
 	<Window.CommandBindings>
 		<CommandBinding
 			Command="{StaticResource GoToToken}"
 			CanExecute="GoToTokenCanExecute"
 			Executed="GoToTokenExecuted" />
+		<CommandBinding
+			Command="{StaticResource GoToLine}"
+			Executed="GoToLineExecuted" />
 		<CommandBinding
 			Command="Open"
 			Executed="OpenCommandExecuted" />
