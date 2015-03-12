@@ -118,7 +118,7 @@ namespace ICSharpCode.ILSpy
 			InitMainMenu();
 			InitToolbar();
 			ContextMenuProvider.Add(treeView, decompilerTextView);
-			decompilerTextView.TextEditor.TextArea.MouseRightButtonDown += (sender, e) => decompilerTextView.GoToMousePosition(e);
+			decompilerTextView.TextEditor.TextArea.MouseRightButtonDown += (sender, e) => decompilerTextView.GoToMousePosition();
 			
 			this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
 

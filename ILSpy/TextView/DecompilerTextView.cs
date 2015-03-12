@@ -734,7 +734,7 @@ namespace ICSharpCode.ILSpy.TextView
 				return;
 			}
 
-			GoToMousePosition(e);
+			GoToMousePosition();
 			MainWindow.Instance.JumpToReference(referenceSegment.Reference);
 			e.Handled = true;
 			return;
@@ -1070,42 +1070,14 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 
-		public void GoToMousePosition(MouseEventArgs e)
+		public void GoToMousePosition()
 		{
-			int visualColumn;
-			int offset = GetOffsetFromMousePosition(e, out visualColumn);
-			if (offset >= 0) {
+			var pos = GetPositionFromMousePosition();
+			if (pos != null) {
 				var textArea = textEditor.TextArea;
-				textArea.Caret.Position = new TextViewPosition(textArea.Document.GetLocation(offset), visualColumn);
+				textArea.Caret.Position = pos.Value;
 				textArea.Caret.DesiredXPos = double.NaN;
 			}
-		}
-
-		int GetOffsetFromMousePosition(MouseEventArgs e, out int visualColumn)
-		{
-			var textArea = textEditor.TextArea;
-			return GetOffsetFromMousePosition(e.GetPosition(textArea.TextView), out visualColumn);
-		}
-		
-		int GetOffsetFromMousePosition(Point positionRelativeToTextView, out int visualColumn)
-		{
-			var textArea = textEditor.TextArea;
-			visualColumn = 0;
-			var textView = textArea.TextView;
-			Point pos = positionRelativeToTextView;
-			if (pos.Y < 0)
-				pos.Y = 0;
-			if (pos.Y > textView.ActualHeight)
-				pos.Y = textView.ActualHeight;
-			pos += textView.ScrollOffset;
-			if (pos.Y > textView.DocumentHeight)
-				pos.Y = textView.DocumentHeight - 0.01;
-			var line = textView.GetVisualLineFromVisualTop(pos.Y);
-			if (line != null) {
-				visualColumn = line.GetVisualColumn(pos, textArea.Selection.EnableVirtualSpace);
-				return line.GetRelativeOffset(visualColumn) + line.FirstDocumentLine.Offset;
-			}
-			return -1;
 		}
 	}
 
