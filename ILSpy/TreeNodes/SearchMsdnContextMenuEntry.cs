@@ -33,84 +33,215 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public bool IsVisible(TextViewContext context)
 		{
-			if (context.SelectedTreeNodes == null)
+			if (context.SelectedTreeNodes != null)
+				return context.SelectedTreeNodes.All(n => n is NamespaceTreeNode || n is IMemberTreeNode);
+
+			if (context.Reference != null && context.Reference.Reference is IMemberRef)
+				return IsPublic(context.Reference.Reference as IMemberRef);
+
+			return false;
+		}
+
+		static IMemberDef Resolve(IMemberRef memberRef)
+		{
+			var member = MainWindow.ResolveReference(memberRef);
+			var md = member as MethodDef;
+			if (md == null)
+				return member;
+
+			if (md.SemanticsAttributes == 0)
+				return member;
+
+			// Find the property or event and return it instead
+
+			foreach (var prop in md.DeclaringType.Properties) {
+				foreach (var md2 in prop.GetMethods) {
+					if (md2 == md)
+						return prop;
+				}
+				foreach (var md2 in prop.SetMethods) {
+					if (md2 == md)
+						return prop;
+				}
+				foreach (var md2 in prop.OtherMethods) {
+					if (md2 == md)
+						return prop;
+				}
+			}
+
+			foreach (var evt in md.DeclaringType.Events) {
+				if (evt.AddMethod == md)
+					return evt;
+				if (evt.InvokeMethod == md)
+					return evt;
+				if (evt.RemoveMethod == md)
+					return evt;
+				foreach (var md2 in evt.OtherMethods) {
+					if (md2 == md)
+						return evt;
+				}
+			}
+
+			// Shouldn't be here
+			return member;
+		}
+
+		static bool IsPublic(IMemberRef memberRef)
+		{
+			var def = Resolve(memberRef);
+			if (def is TypeDef)
+				return IsAccessible((TypeDef)def);
+
+			var md = def as IMemberDef;
+			if (md == null)
+				return false;
+			if (!IsAccessible(md.DeclaringType))
 				return false;
 
-			return context.SelectedTreeNodes.All(
-				n => n is NamespaceTreeNode
-				|| n is TypeTreeNode
-				|| n is EventTreeNode
-				|| n is FieldTreeNode
-				|| n is PropertyTreeNode
-				|| n is MethodTreeNode);
+			var method = def as MethodDef;
+			if (method != null)
+				return IsAccessible(method);
+
+			var field = def as FieldDef;
+			if (field != null)
+				return IsAccessible(field);
+
+			var prop = def as PropertyDef;
+			if (prop != null)
+				return IsAccessible(prop);
+
+			var evt = def as EventDef;
+			if (evt != null)
+				return IsAccessible(evt);
+
+			return false;
+		}
+
+		static bool IsAccessible(TypeDef type)
+		{
+			if (type == null)
+				return false;
+			while (true) {
+				if (type.DeclaringType == null)
+					break;
+				switch (type.Visibility) {
+				case TypeAttributes.NotPublic:
+				case TypeAttributes.NestedPrivate:
+				case TypeAttributes.NestedAssembly:
+				case TypeAttributes.NestedFamANDAssem:
+					return false;
+
+				case TypeAttributes.Public:
+				case TypeAttributes.NestedPublic:
+				case TypeAttributes.NestedFamily:
+				case TypeAttributes.NestedFamORAssem:
+				default:// never reached
+					break;
+				}
+
+				type = type.DeclaringType;
+			}
+
+			return type.IsPublic;
+		}
+
+		static bool IsAccessible(MethodDef method)
+		{
+			return method != null && (method.IsPublic || method.IsFamily || method.IsFamilyOrAssembly);
+		}
+
+		static bool IsAccessible(FieldDef field)
+		{
+			return field != null && (field.IsPublic || field.IsFamily || field.IsFamilyOrAssembly);
+		}
+
+		static bool IsAccessible(PropertyDef prop)
+		{
+			return prop.GetMethods.Any(m => IsAccessible(m)) ||
+				prop.SetMethods.Any(m => IsAccessible(m)) ||
+				prop.OtherMethods.Any(m => IsAccessible(m));
+		}
+
+		static bool IsAccessible(EventDef evt)
+		{
+			return IsAccessible(evt.AddMethod) ||
+				IsAccessible(evt.InvokeMethod) ||
+				IsAccessible(evt.RemoveMethod) ||
+				evt.OtherMethods.Any(m => IsAccessible(m));
 		}
 
 		public bool IsEnabled(TextViewContext context)
 		{
-			if (context.SelectedTreeNodes == null)
-				return false;
+			if (context.SelectedTreeNodes != null) {
+				foreach (var node in context.SelectedTreeNodes) {
+					var mrNode = node as IMemberTreeNode;
+					if (mrNode != null && !IsPublic(mrNode.Member))
+						return false;
 
-			foreach (var node in context.SelectedTreeNodes)
-			{
-				var typeNode = node as TypeTreeNode;
-				if (typeNode != null && !typeNode.IsPublicAPI)
-					return false;
+					var namespaceNode = node as NamespaceTreeNode;
+					if (namespaceNode != null && string.IsNullOrEmpty(namespaceNode.Name))
+						return false;
+				}
 
-				var eventNode = node as EventTreeNode;
-				if (eventNode != null && (!eventNode.IsPublicAPI || !eventNode.EventDefinition.DeclaringType.IsPublic))
-					return false;
-
-				var fieldNode = node as FieldTreeNode;
-				if (fieldNode != null && (!fieldNode.IsPublicAPI || !fieldNode.FieldDefinition.DeclaringType.IsPublic))
-					return false;
-
-				var propertyNode = node as PropertyTreeNode;
-				if (propertyNode != null && (!propertyNode.IsPublicAPI || !propertyNode.PropertyDefinition.DeclaringType.IsPublic))
-					return false;
-
-				var methodNode = node as MethodTreeNode;
-				if (methodNode != null && (!methodNode.IsPublicAPI || !methodNode.MethodDefinition.DeclaringType.IsPublic))
-					return false;
-
-				var namespaceNode = node as NamespaceTreeNode;
-				if (namespaceNode != null && string.IsNullOrEmpty(namespaceNode.Name))
-					return false;
+				return true;
 			}
 
-			return true;
+			return context.Reference != null && context.Reference.Reference is IMemberRef;
 		}
 
 		public void Execute(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes != null) {
-				foreach (ILSpyTreeNode node in context.SelectedTreeNodes) {
-					SearchMsdn(node);
+				foreach (var node in context.SelectedTreeNodes) {
+					var nsNode = node as NamespaceTreeNode;
+					if (nsNode != null) {
+						SearchMsdn(string.Format(msdnAddress, nsNode.Name));
+						continue;
+					}
+
+					var mrNode = node as IMemberTreeNode;
+					if (mrNode != null) {
+						SearchMsdn(mrNode.Member);
+						continue;
+					}
 				}
 			}
+
+			if (context.Reference != null)
+				SearchMsdn(context.Reference.Reference as IMemberRef);
 		}
 
-		public static void SearchMsdn(ILSpyTreeNode node)
+		static string GetAddress(IMemberRef memberRef)
 		{
-			var address = string.Empty;
+			var member = Resolve(memberRef);
+			if (member == null)
+				return string.Empty;
 
-			var namespaceNode = node as NamespaceTreeNode;
-			if (namespaceNode != null)
-				address = string.Format(msdnAddress, namespaceNode.Name);
+			//TODO: This code doesn't work with:
+			//	- generic types, eg. IEnumerable<T>
+			//	- constructors
+			if (member is MethodDef && ((MethodDef)member).IsConstructor)
+				member = member.DeclaringType;	//TODO: Use declaring type until we can search for constructors
 
-			var memberNode = node as IMemberTreeNode;
-			if (memberNode != null)
-			{
-				var member = memberNode.Member;
-				var memberName = string.Empty;
+			if (member.DeclaringType != null && member.DeclaringType.IsEnum && member is FieldDef && ((FieldDef)member).IsLiteral)
+				member = member.DeclaringType;
 
-				if (member.DeclaringType == null)
-					memberName = member.FullName;
-				else
-					memberName = string.Format("{0}.{1}", member.DeclaringType.FullName, member.Name);
+			string memberName;
+			if (member.DeclaringType == null)
+				memberName = member.FullName;
+			else
+				memberName = string.Format("{0}.{1}", member.DeclaringType.FullName, member.Name);
 
-				address = string.Format(msdnAddress, memberName);
-			}
+			return string.Format(msdnAddress, memberName.Replace('/', '.'));
+		}
 
+		public static void SearchMsdn(IMemberRef memberRef)
+		{
+			SearchMsdn(GetAddress(memberRef));
+		}
+
+		static void SearchMsdn(string address)
+		{
 			address = address.ToLower();
 			if (!string.IsNullOrEmpty(address))
 				Process.Start(address);
