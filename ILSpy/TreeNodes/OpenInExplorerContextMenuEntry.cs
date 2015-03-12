@@ -4,9 +4,10 @@ using System.Diagnostics;
 using System.IO;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.Commands {
+namespace ICSharpCode.ILSpy.TreeNodes
+{
 	[ExportContextMenuEntryAttribute(Header = "_Show in Explorer", Order = 1)]
-	class OpenInExplorerCommand : IContextMenuEntry
+	class OpenInExplorerContextMenuEntry : IContextMenuEntry
 	{
 		public bool IsVisible(TextViewContext context)
 		{
