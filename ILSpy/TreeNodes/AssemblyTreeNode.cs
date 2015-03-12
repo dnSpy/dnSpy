@@ -375,6 +375,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					node.RaisePropertyChanged("Foreground");
 				}
 			}
+			MainWindow.Instance.CurrentAssemblyList.RefreshSave();
 		}
 	}
 }
