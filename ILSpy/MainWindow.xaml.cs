@@ -874,9 +874,9 @@ namespace ICSharpCode.ILSpy
 			return JumpToReferenceAsyncInternal(true, FixReference(reference), success => GoToLocation(success, ResolveReference(reference)));
 		}
 
-		public bool JumpToReference(object reference, TextLocation location)
+		public bool JumpToReference(object reference, Func<TextLocation> getLocation)
 		{
-			return JumpToReferenceAsyncInternal(true, FixReference(reference), success => GoToLocation(success, location));
+			return JumpToReferenceAsyncInternal(true, FixReference(reference), success => GoToLocation(success, getLocation()));
 		}
 
 		public bool JumpToReference(object reference, Action<bool> onDecompileFinished)

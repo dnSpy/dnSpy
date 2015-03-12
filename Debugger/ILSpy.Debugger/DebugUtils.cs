@@ -49,9 +49,9 @@ namespace ICSharpCode.ILSpy.Debugger
 				MainWindow.Instance.TextView.ScrollAndMoveCaretTo(location.Line, location.Column);
 		}
 
-		public static bool JumpToReference(IMemberRef mr, TextLocation location)
+		public static bool JumpToReference(IMemberRef mr, Func<TextLocation> getLocation)
 		{
-			bool retVal = MainWindow.Instance.JumpToReference(mr, location);
+			bool retVal = MainWindow.Instance.JumpToReference(mr, getLocation);
 			if (!retVal) {
 				MessageBox.Show(MainWindow.Instance,
 					string.Format("Could not find {0}\n" +

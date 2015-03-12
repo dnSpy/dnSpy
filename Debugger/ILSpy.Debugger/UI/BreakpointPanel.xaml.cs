@@ -142,7 +142,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		{
             if (null == bm)
                 return;
-			if (DebugUtils.JumpToReference(bm.MemberReference, bm.Location))
+			if (DebugUtils.JumpToReference(bm.MemberReference, () => bm.Location))
 				MainWindow.Instance.TextView.TextEditor.TextArea.Focus();
 		}
         
