@@ -16,8 +16,16 @@
 >
 	<Window.Resources>
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+		<RoutedUICommand x:Key="GoToToken" Text="Go to Token" />
 	</Window.Resources>
+	<Window.InputBindings>
+		<KeyBinding Gesture="Ctrl+D" Command="{StaticResource GoToToken}" />
+	</Window.InputBindings>
 	<Window.CommandBindings>
+		<CommandBinding
+			Command="{StaticResource GoToToken}"
+			CanExecute="GoToTokenCanExecute"
+			Executed="GoToTokenExecuted" />
 		<CommandBinding
 			Command="Open"
 			Executed="OpenCommandExecuted" />

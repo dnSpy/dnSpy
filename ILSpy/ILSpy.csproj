@@ -106,6 +106,9 @@
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AskForInput.xaml.cs">
+      <DependentUpon>AskForInput.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
     <Compile Include="AvalonEdit\EditorPositionState.cs" />
@@ -129,6 +132,8 @@
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Commands\ExitCommand.cs" />
     <Compile Include="Commands\CommandWrapper.cs" />
+    <Compile Include="TreeNodes\CopyTokenContextMenuEntry.cs" />
+    <Compile Include="TreeNodes\GoToTokenContextMenuEntry.cs" />
     <Compile Include="TreeNodes\OpenInExplorerContextMenuEntry.cs" />
     <Compile Include="Commands\OpenListCommand.cs" />
     <Compile Include="Controls\MarkupExtensions.cs" />
@@ -337,6 +342,10 @@
     <EmbeddedResource Include="TextView\ILAsm-Mode.xshd" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="AskForInput.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\ResourceObjectTable.xaml">
       <SubType>Designer</SubType>
     </Page>

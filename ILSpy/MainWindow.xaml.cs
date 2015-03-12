@@ -121,6 +121,20 @@ namespace ICSharpCode.ILSpy
 			decompilerTextView.TextEditor.TextArea.MouseRightButtonDown += (sender, e) => decompilerTextView.GoToMousePosition(e);
 			
 			this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
+
+			RemoveCommands();
+		}
+
+		void RemoveCommands()
+		{
+			var handler = decompilerTextView.TextEditor.TextArea.DefaultInputHandler;
+			var list = (IList<CommandBinding>)handler.Editing.CommandBindings;
+			for (int i = list.Count - 1; i >= 0; i--) {
+				var binding = list[i];
+				// Ctrl+D: used by GoToToken
+				if (binding.Command == ICSharpCode.AvalonEdit.AvalonEditCommands.DeleteLine)
+					list.RemoveAt(i);
+			}
 		}
 
 		void BuildThemeMenu() {
@@ -834,7 +848,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		static IMemberDef ResolveReference(object reference) {
+		internal static IMemberDef ResolveReference(object reference) {
 			if (reference is ITypeDefOrRef)
 				return ((ITypeDefOrRef)reference).ResolveTypeDef();
 			else if (reference is IMethod && ((IMethod)reference).MethodSig != null)
@@ -1349,6 +1363,16 @@ namespace ICSharpCode.ILSpy
 				Debug.Fail("Shouldn't be here.");
 				return assemblyList.OpenAssembly(moduleFilename, true);
 			}
+		}
+
+		private void GoToTokenExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			GoToTokenContextMenuEntry.Execute(this.SelectedNodes.ToArray());
+		}
+
+		private void GoToTokenCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = GoToTokenContextMenuEntry.GetModule(this.SelectedNodes.ToArray()) != null;
 		}
 	}
 }

@@ -26,7 +26,7 @@ using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
-	[ExportContextMenuEntryAttribute(Header = "Search MSDN...", Icon = "images/Search.png")]
+	[ExportContextMenuEntryAttribute(Header = "Search MSDN", Icon = "images/Search.png", Order = 13)]
 	internal sealed class SearchMsdnContextMenuEntry : IContextMenuEntry
 	{
 		private static string msdnAddress = "http://msdn.microsoft.com/en-us/library/{0}";
