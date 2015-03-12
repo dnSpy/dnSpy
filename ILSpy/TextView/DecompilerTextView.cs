@@ -204,7 +204,7 @@ namespace ICSharpCode.ILSpy.TextView
 			if (position == null)
 				return;
 			int offset = textEditor.Document.GetOffset(position.Value.Location);
-			ReferenceSegment seg = referenceElementGenerator.References.FindSegmentsContaining(offset).FirstOrDefault();
+			ReferenceSegment seg = GetReferenceSegmentAt(offset);
 			if (seg == null)
 				return;
 			object content = GenerateTooltip(seg);
@@ -902,7 +902,17 @@ namespace ICSharpCode.ILSpy.TextView
 			if (position == null)
 				return null;
 			int offset = textEditor.Document.GetOffset(position.Value.Location);
-			return referenceElementGenerator.References.FindSegmentsContaining(offset).FirstOrDefault();
+			return GetReferenceSegmentAt(offset);
+		}
+
+		ReferenceSegment GetReferenceSegmentAt(int offset)
+		{
+			var segs = referenceElementGenerator.References.FindSegmentsContaining(offset).ToArray();
+			foreach (var seg in segs) {
+				if (seg.StartOffset <= offset && offset < seg.EndOffset)
+					return seg;
+			}
+			return segs.Length == 0 ? null : segs[0];
 		}
 		
 		internal TextViewPosition? GetPositionFromMousePosition()
@@ -988,7 +998,7 @@ namespace ICSharpCode.ILSpy.TextView
 
 			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F12) {
 				int offset = textEditor.TextArea.Caret.Offset;
-				var refSeg = referenceElementGenerator.References.FindSegmentsContaining(offset).FirstOrDefault();
+				var refSeg = GetReferenceSegmentAt(offset);
 				GoToTarget(refSeg, true);
 				e.Handled = true;
 			}
