@@ -342,6 +342,7 @@ namespace ICSharpCode.NRefactory
 
 		public static TextTokenType GetTextTokenType(TypeSig ts)
 		{
+			ts = ts.RemovePinnedAndModifiers();
 			if (ts == null)
 				return TextTokenType.Text;
 
