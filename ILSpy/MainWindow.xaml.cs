@@ -472,14 +472,14 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		public void ExecuteAtLoaded(Action func)
+		public void ExecuteWhenLoaded(Action func)
 		{
-			if (callAtLoaded == null)
+			if (callWhenLoaded == null)
 				func();
 			else
-				callAtLoaded.Add(func);
+				callWhenLoaded.Add(func);
 		}
-		List<Action> callAtLoaded = new List<Action>();
+		List<Action> callWhenLoaded = new List<Action>();
 
 		void MainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
@@ -538,8 +538,8 @@ namespace ICSharpCode.ILSpy
 			foreach (var plugin in plugins)
 				plugin.OnLoaded();
 
-			var list = callAtLoaded;
-			callAtLoaded = null;
+			var list = callWhenLoaded;
+			callWhenLoaded = null;
 			foreach (var func in list)
 				func();
 		}

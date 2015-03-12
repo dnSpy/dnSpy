@@ -54,7 +54,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			textView.DocumentChanged += OnDocumentChanged;
 			BookmarkManager.Added += new BookmarkEventHandler(BookmarkManager_Added);
 			BookmarkManager.Removed += new BookmarkEventHandler(BookmarkManager_Removed);
-			MainWindow.Instance.ExecuteAtLoaded(() => {
+			MainWindow.Instance.ExecuteWhenLoaded(() => {
 				MainWindow.Instance.TextView.OnShowOutput += delegate { RecreateMarkers(); };
 				RecreateMarkers();
 			});

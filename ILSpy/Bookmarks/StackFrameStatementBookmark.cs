@@ -30,7 +30,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 
 		static StackFrameStatementBookmark()
 		{
-			MainWindow.Instance.ExecuteAtLoaded(() => MainWindow.Instance.TextView.OnShowOutput += DecompilerTextView_OnShowOutput);
+			MainWindow.Instance.ExecuteWhenLoaded(() => MainWindow.Instance.TextView.OnShowOutput += DecompilerTextView_OnShowOutput);
 		}
 
 		static void DecompilerTextView_OnShowOutput(object sender, TextView.DecompilerTextView.ShowOutputEventArgs e)
