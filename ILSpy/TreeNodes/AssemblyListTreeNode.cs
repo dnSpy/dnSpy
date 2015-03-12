@@ -301,11 +301,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			App.Current.Dispatcher.VerifyAccess();
 			foreach (AssemblyTreeNode node in this.Children) {
-				if (!node.LoadedAssembly.IsLoaded)
+				if (node.LoadedAssembly != asm)
 					continue;
 				if (node.IsNetModule)
-					continue;
-				if (node.LoadedAssembly != asm)
 					continue;
 
 				node.EnsureLazyChildren();
