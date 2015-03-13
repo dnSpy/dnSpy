@@ -542,13 +542,16 @@ namespace ICSharpCode.ILSpy
 			if (FormatExceptions(App.StartupExceptions.ToArray(), output))
 				decompilerTextView.ShowText(output);
 
-			IPane pane;
-			pane = GetPane(topPane, sessionSettings.TopPaneSettings.Name);
-			if (pane != null)
-				ShowInTopPane(pane.PaneName, pane);
-			pane = GetPane(bottomPane, sessionSettings.BottomPaneSettings.Name);
-			if (pane != null)
-				ShowInBottomPane(pane.PaneName, pane);
+			if (topPane.Content == null) {
+				var pane = GetPane(topPane, sessionSettings.TopPaneSettings.Name);
+				if (pane != null)
+					ShowInTopPane(pane.PaneName, pane);
+			}
+			if (bottomPane.Content == null) {
+				var pane = GetPane(bottomPane, sessionSettings.BottomPaneSettings.Name);
+				if (pane != null)
+					ShowInBottomPane(pane.PaneName, pane);
+			}
 
 			foreach (var plugin in plugins)
 				plugin.OnLoaded();
