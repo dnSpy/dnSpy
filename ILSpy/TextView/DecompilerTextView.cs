@@ -403,6 +403,10 @@ namespace ICSharpCode.ILSpy.TextView
 		/// </summary>
 		void ShowOutput(AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting = null, DecompilerTextViewState state = null, ILSpyTreeNode[] nodes = null)
 		{
+			var evt = OnBeforeShowOutput;
+			if (evt != null)
+				evt(this, new ShowOutputEventArgs(nodes, highlighting, state));
+
 			Debug.WriteLine("Showing {0} characters of output", textOutput.TextLength);
 			Stopwatch w = Stopwatch.StartNew();
 			textEditor.LanguageTokens = textOutput.tokens;
@@ -452,10 +456,11 @@ namespace ICSharpCode.ILSpy.TextView
 			// update debugger info
 			DebugInformation.CodeMappings = textOutput.DebuggerMemberMappings.ToDictionary(m => new MethodKey(m.MethodDefinition));
 
-			var evt = OnShowOutput;
+			evt = OnShowOutput;
 			if (evt != null)
 				evt(this, new ShowOutputEventArgs(nodes, highlighting, state));
 		}
+		public event EventHandler<ShowOutputEventArgs> OnBeforeShowOutput;
 		public event EventHandler<ShowOutputEventArgs> OnShowOutput;
 		public class ShowOutputEventArgs : EventArgs
 		{
