@@ -94,6 +94,12 @@ namespace ICSharpCode.ILSpy
 		/// Returns null, if context menu is not assigned to a list box.
 		/// </summary>
 		public ListBox ListBox { get; private set; }
+
+		/// <summary>
+		/// Returns the tab control the context menu is assigned to.
+		/// Returns null, if context menu is not assigned to a tab control.
+		/// </summary>
+		public TabControl TabControl { get; private set; }
 		
 		/// <summary>
 		/// Returns the reference the mouse cursor is currently hovering above.
@@ -108,7 +114,7 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		public TextViewPosition? Position { get; private set; }
 		
-		public static TextViewContext Create(SharpTreeView treeView = null, DecompilerTextView textView = null, ListBox listBox = null, bool openedFromKeyboard = false)
+		public static TextViewContext Create(SharpTreeView treeView = null, DecompilerTextView textView = null, ListBox listBox = null, TabControl tabControl = null, bool openedFromKeyboard = false)
 		{
 			TextViewPosition? position = null;
 			if (textView != null)
@@ -125,6 +131,8 @@ namespace ICSharpCode.ILSpy
 				TreeView = treeView,
 				SelectedTreeNodes = selectedTreeNodes,
 				TextView = textView,
+				TabControl = tabControl,
+				ListBox = listBox,
 				Reference = reference,
 				Position = position
 			};
@@ -156,51 +164,100 @@ namespace ICSharpCode.ILSpy
 		public string InputGestureText { get; set; }
 	}
 	
-	internal class ContextMenuProvider
+	internal class ContextMenuProvider : IDisposable
 	{
 		/// <summary>
 		/// Enables extensible context menu support for the specified tree view.
 		/// </summary>
-		public static void Add(SharpTreeView treeView, DecompilerTextView textView = null)
+		public static ContextMenuProvider Add(SharpTreeView treeView)
 		{
-			var provider = new ContextMenuProvider(treeView, textView);
+			var provider = new ContextMenuProvider(treeView);
 			treeView.ContextMenuOpening += provider.treeView_ContextMenuOpening;
 			// Context menu is shown only when the ContextMenu property is not null before the
 			// ContextMenuOpening event handler is called.
 			treeView.ContextMenu = new ContextMenu();
-			if (textView != null) {
-				textView.ContextMenuOpening += provider.textView_ContextMenuOpening;
-				// Context menu is shown only when the ContextMenu property is not null before the
-				// ContextMenuOpening event handler is called.
-				textView.ContextMenu = new ContextMenu();
-			}
+			return provider;
 		}
-		
-		public static void Add(ListBox listBox)
+
+		/// <summary>
+		/// Enables extensible context menu support for the specified text view.
+		/// </summary>
+		public static ContextMenuProvider Add(DecompilerTextView textView)
+		{
+			var provider = new ContextMenuProvider(textView);
+			textView.ContextMenuOpening += provider.textView_ContextMenuOpening;
+			// Context menu is shown only when the ContextMenu property is not null before the
+			// ContextMenuOpening event handler is called.
+			textView.ContextMenu = new ContextMenu();
+			return provider;
+		}
+
+		public static ContextMenuProvider Add(ListBox listBox)
 		{
 			var provider = new ContextMenuProvider(listBox);
 			listBox.ContextMenuOpening += provider.listBox_ContextMenuOpening;
 			listBox.ContextMenu = new ContextMenu();
+			return provider;
+		}
+
+		public static ContextMenuProvider Add(TabControl tabControl)
+		{
+			var provider = new ContextMenuProvider(tabControl);
+			tabControl.ContextMenuOpening += provider.tabControl_ContextMenuOpening;
+			tabControl.ContextMenu = new ContextMenu();
+			return provider;
+		}
+
+		public void Dispose()
+		{
+			if (treeView != null)
+				treeView.ContextMenuOpening -= this.treeView_ContextMenuOpening;
+			if (textView != null)
+				textView.ContextMenuOpening -= this.textView_ContextMenuOpening;
+			if (listBox != null)
+				listBox.ContextMenuOpening -= listBox_ContextMenuOpening;
 		}
 		
 		readonly SharpTreeView treeView;
 		readonly DecompilerTextView textView;
 		readonly ListBox listBox;
+		readonly TabControl tabControl;
+
+		// Prevent big memory leaks (text editor) because the data is put into some MEF data structure.
+		// All created instances in this class are shared so this one can be shared as well.
+		class MefState
+		{
+			public static readonly MefState Instance = new MefState();
+
+			MefState()
+			{
+				App.CompositionContainer.ComposeParts(this);
+			}
+
+			[ImportMany(typeof(IContextMenuEntry))]
+			public Lazy<IContextMenuEntry, IContextMenuEntryMetadata>[] entries = null;
+		}
 		
-		[ImportMany(typeof(IContextMenuEntry))]
-		Lazy<IContextMenuEntry, IContextMenuEntryMetadata>[] entries = null;
-		
-		ContextMenuProvider(SharpTreeView treeView, DecompilerTextView textView = null)
+		ContextMenuProvider(SharpTreeView treeView)
 		{
 			this.treeView = treeView;
+			this.textView = null;
+		}
+
+		ContextMenuProvider(DecompilerTextView textView)
+		{
+			this.treeView = null;
 			this.textView = textView;
-			App.CompositionContainer.ComposeParts(this);
 		}
 		
 		ContextMenuProvider(ListBox listBox)
 		{
 			this.listBox = listBox;
-			App.CompositionContainer.ComposeParts(this);
+		}
+
+		ContextMenuProvider(TabControl tabControl)
+		{
+			this.tabControl = tabControl;
 		}
 		
 		void treeView_ContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -241,10 +298,21 @@ namespace ICSharpCode.ILSpy
 				e.Handled = true;
 		}
 		
+		void tabControl_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+		{
+			TextViewContext context = TextViewContext.Create(tabControl: tabControl);
+			ContextMenu menu;
+			if (ShowContextMenu(context, out menu))
+				tabControl.ContextMenu = menu;
+			else
+				// hide the context menu.
+				e.Handled = true;
+		}
+
 		bool ShowContextMenu(TextViewContext context, out ContextMenu menu)
 		{
 			menu = new ContextMenu();
-			foreach (var category in entries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
+			foreach (var category in MefState.Instance.entries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
 				bool needSeparatorForCategory = menu.Items.Count > 0;
 				foreach (var entryPair in category) {
 					IContextMenuEntry entry = entryPair.Value;

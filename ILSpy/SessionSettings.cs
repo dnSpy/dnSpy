@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
@@ -45,23 +46,33 @@ namespace ICSharpCode.ILSpy
 			
 			this.ActiveAssemblyList = (string)doc.Element("ActiveAssemblyList");
 			
-			XElement activeTreeViewPath = doc.Element("ActiveTreeViewPath");
-			if (activeTreeViewPath != null) {
-				this.ActiveTreeViewPath = activeTreeViewPath.Elements().Select(e => (string)e).ToArray();
-			}
-			this.ActiveAutoLoadedAssembly = (string)doc.Element("ActiveAutoLoadedAssembly");
-			
 			this.WindowState = FromString((string)doc.Element("WindowState"), WindowState.Normal);
 			this.WindowBounds = FromString((string)doc.Element("WindowBounds"), DefaultWindowBounds);
 			this.LeftColumnWidth = FromString((string)doc.Element("LeftColumnWidth"), 0.0);
 			this.WordWrap = FromString((string)doc.Element("WordWrap"), false);
 			this.HighlightCurrentLine = FromString((string)doc.Element("HighlightCurrentLine"), true);
-			this.EditorPositionState = EditorPositionState.FromXml(doc.Element("EditorPositionState"));
 			this.TopPaneSettings.Name = FromString((string)doc.Element("TopPaneName"), string.Empty);
 			this.TopPaneSettings.Height = FromString((string)doc.Element("TopPaneHeight"), 200);
 			this.BottomPaneSettings.Name = FromString((string)doc.Element("BottomPaneName"), string.Empty);
 			this.BottomPaneSettings.Height = FromString((string)doc.Element("BottomPaneHeight"), 200);
 			this.ThemeName = (string)doc.Element("ThemeName") ?? "light";
+
+			var tabs = doc.Element("Tabs");
+			if (tabs == null) {
+				this.TabsFound = false;
+				this.SavedTabStates = new SavedTabState[0];
+				this.ActiveTabIndex = -1;
+			}
+			else {
+				this.TabsFound = true;
+				this.ActiveTabIndex = FromString((string)tabs.Attribute("index"), -1);
+
+				var list = new List<SavedTabState>();
+				foreach (var child in tabs.Elements("Tab"))
+					list.Add(SavedTabState.FromXml(child));
+
+				this.SavedTabStates = list.ToArray();
+			}
 		}
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -74,9 +85,6 @@ namespace ICSharpCode.ILSpy
 		
 		public FilterSettings FilterSettings { get; private set; }
 		
-		public string[] ActiveTreeViewPath;
-		public string ActiveAutoLoadedAssembly;
-		
 		public string ActiveAssemblyList;
 		
 		public WindowState WindowState = WindowState.Normal;
@@ -85,9 +93,33 @@ namespace ICSharpCode.ILSpy
 		public double LeftColumnWidth;
 		public PaneSettings TopPaneSettings;
 		public PaneSettings BottomPaneSettings;
-		public bool WordWrap, HighlightCurrentLine;
 		public string ThemeName;
-		public EditorPositionState EditorPositionState;
+
+		public SavedTabState[] SavedTabStates;
+		public int ActiveTabIndex;
+		public bool TabsFound;
+
+		public bool WordWrap {
+			get { return wordWrap; }
+			set {
+				if (wordWrap != value) {
+					wordWrap = value;
+					OnPropertyChanged("WordWrap");
+				}
+			}
+		}
+		bool wordWrap;
+
+		public bool HighlightCurrentLine {
+			get { return highlightCurrentLine; }
+			set {
+				if (highlightCurrentLine != value) {
+					highlightCurrentLine = value;
+					OnPropertyChanged("HighlightCurrentLine");
+				}
+			}
+		}
+		bool highlightCurrentLine;
 
 		public struct PaneSettings
 		{
@@ -102,23 +134,24 @@ namespace ICSharpCode.ILSpy
 			if (this.ActiveAssemblyList != null) {
 				doc.Add(new XElement("ActiveAssemblyList", this.ActiveAssemblyList));
 			}
-			if (this.ActiveTreeViewPath != null) {
-				doc.Add(new XElement("ActiveTreeViewPath", ActiveTreeViewPath.Select(p => new XElement("Node", p))));
-			}
-			if (this.ActiveAutoLoadedAssembly != null) {
-				doc.Add(new XElement("ActiveAutoLoadedAssembly", this.ActiveAutoLoadedAssembly));
-			}
 			doc.Add(new XElement("WindowState", ToString(this.WindowState)));
 			doc.Add(new XElement("WindowBounds", ToString(this.WindowBounds)));
 			doc.Add(new XElement("WordWrap", ToString(this.WordWrap)));
 			doc.Add(new XElement("HighlightCurrentLine", ToString(this.HighlightCurrentLine)));
-			doc.Add(this.EditorPositionState.ToXml(new XElement("EditorPositionState")));
 			doc.Add(new XElement("LeftColumnWidth", ToString(this.LeftColumnWidth)));
 			doc.Add(new XElement("TopPaneHeight", ToString(this.TopPaneSettings.Height)));
 			doc.Add(new XElement("TopPaneName", ToString(this.TopPaneSettings.Name)));
 			doc.Add(new XElement("BottomPaneHeight", ToString(this.BottomPaneSettings.Height)));
 			doc.Add(new XElement("BottomPaneName", ToString(this.BottomPaneSettings.Name)));
 			doc.Add(new XElement("ThemeName", ToString(this.ThemeName)));
+
+			if (ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.RestoreTabsAtStartup) {
+				var tabs = new XElement("Tabs");
+				doc.Add(tabs);
+				tabs.SetAttributeValue("index", ActiveTabIndex);
+				foreach (var savedState in SavedTabStates)
+					tabs.Add(savedState.ToXml(new XElement("Tab")));
+			}
 			
 			ILSpySettings.SaveSettings(doc);
 		}

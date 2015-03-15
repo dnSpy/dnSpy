@@ -8,6 +8,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Bookmarks;
+using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using dnlib.DotNet;
@@ -69,41 +70,37 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		
 		public event EventHandler ImageChanged;
 
-		public override bool IsVisible {
-			get {
-				var key = new MethodKey(MemberReference);
-				uint ilOffset = ILRange.From;
-				TextLocation location, endLocation;
-				var cm = DebugInformation.CodeMappings;
-				if (cm == null || !cm.ContainsKey(key))
-					return false;
-				if (!cm[key].GetInstructionByTokenAndOffset((uint)ilOffset, out location, out endLocation))
-					return false;
+		public override bool IsVisible(DecompilerTextView textView) {
+			var key = new MethodKey(MemberReference);
+			uint ilOffset = ILRange.From;
+			TextLocation location, endLocation;
+			var cm = textView == null ? null : textView.CodeMappings;
+			if (cm == null || !cm.ContainsKey(key))
+				return false;
+			if (!cm[key].GetInstructionByTokenAndOffset((uint)ilOffset, out location, out endLocation))
+				return false;
 
-				return true;
-			}
+			return true;
 		}
 		
-		public override ITextMarker CreateMarker(ITextMarkerService markerService)
+		public override ITextMarker CreateMarker(ITextMarkerService markerService, DecompilerTextView textView)
 		{
 			ITextMarker marker = CreateMarkerInternal(markerService);
+			var cm = textView == null ? null : textView.CodeMappings;
 			marker.ZOrder = ZOrder;
 			marker.HighlightingColor = () => IsEnabled ? HighlightingColor : DisabledHighlightingColor;
-			marker.IsVisible = b => {
-				var cm = DebugInformation.CodeMappings;
-				return cm != null && b is BreakpointBookmark && cm.ContainsKey(((BreakpointBookmark)b).MethodKey);
-			};
+			marker.IsVisible = b => cm != null && b is BreakpointBookmark && cm.ContainsKey(((BreakpointBookmark)b).MethodKey);
 			marker.Bookmark = this;
-			this.Marker = marker;
 			return marker;
 		}
 
 		protected override void Redraw()
 		{
 			base.Redraw();
-			var marker = this.Marker;
-			if (marker != null)
-				marker.Redraw();
+			foreach (var marker in Markers.Values) {
+				if (marker != null)
+					marker.Redraw();
+			}
 		}
 	}
 }

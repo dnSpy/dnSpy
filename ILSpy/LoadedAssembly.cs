@@ -111,6 +111,9 @@ namespace ICSharpCode.ILSpy
 
 			this.assemblyTask = Task.Factory.StartNew<ModuleDef>(() => LoadModule(module));
 			this.shortName = Path.GetFileNameWithoutExtension(fileName);
+
+			// Make sure IsLoaded is set to true. The callers depend on IsLoaded to be true.
+			if (ModuleDefinition != null) { }
 		}
 		
 		public LoadedAssembly(AssemblyList assemblyList, string fileName, Stream stream = null)

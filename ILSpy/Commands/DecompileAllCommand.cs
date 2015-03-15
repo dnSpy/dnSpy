@@ -37,7 +37,10 @@ namespace ICSharpCode.ILSpy
 
 		public override void Execute(object parameter)
 		{
-			MainWindow.Instance.TextView.RunWithCancellation(ct => Task<AvalonEditTextOutput>.Factory.StartNew(() => {
+			var textView = MainWindow.Instance.ActiveTextView;
+			if (textView == null)
+				return;
+			textView.RunWithCancellation(ct => Task<AvalonEditTextOutput>.Factory.StartNew(() => {
 				AvalonEditTextOutput output = new AvalonEditTextOutput();
 				Parallel.ForEach(MainWindow.Instance.CurrentAssemblyList.GetAssemblies(), new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount, CancellationToken = ct }, delegate(LoadedAssembly asm) {
 					if (!asm.HasLoadError) {
@@ -63,7 +66,7 @@ namespace ICSharpCode.ILSpy
 					}
 				});
 				return output;
-			}, ct)).Then(output => MainWindow.Instance.TextView.ShowText(output)).HandleExceptions();
+			}, ct)).Then(output => textView.ShowText(output)).HandleExceptions();
 		}
 	}
 }

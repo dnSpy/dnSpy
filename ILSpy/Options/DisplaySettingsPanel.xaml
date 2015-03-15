@@ -64,7 +64,9 @@
 				<CheckBox IsChecked="{Binding ShowAssemblyVersion}">Show assembly version</CheckBox>
 				<CheckBox IsChecked="{Binding ShowAssemblyPublicKeyToken}">Show assembly public key token</CheckBox>
 				<CheckBox IsChecked="{Binding AutoFocusTextView}">Auto focus text view</CheckBox>
-				<CheckBox IsChecked="{Binding DecompileFullType}">Automatically decompile a members type instead of the member</CheckBox>
+				<CheckBox IsChecked="{Binding DecompileFullType}">Automatically decompile a member's type instead of the member</CheckBox>
+				<CheckBox IsChecked="{Binding NewEmptyTabs}">New tabs are empty</CheckBox>
+				<CheckBox IsChecked="{Binding RestoreTabsAtStartup}">Restore tabs at startup</CheckBox>
 			</StackPanel>
 		</GroupBox>
 	</Grid>

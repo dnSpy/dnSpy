@@ -280,7 +280,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		
 		// Stepping:
 		
-		SourceCodeMapping GetCurrentCodeMapping(out StackFrame frame, out bool isMatch, out bool methodExists)
+		SourceCodeMapping GetCurrentCodeMapping(Dictionary<MethodKey, MemberMapping> cm, out StackFrame frame, out bool isMatch, out bool methodExists)
 		{
 			isMatch = false;
 			methodExists = false;
@@ -288,7 +288,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			var key = frame.MethodInfo.ToMethodKey();
 			
 			// get the mapped instruction from the current line marker or the next one
-			var cm = DebugInformation.CodeMappings;
 			if (cm == null || !cm.ContainsKey(key))
 				return null;
 			methodExists = true;
@@ -302,9 +301,11 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		
 		StackFrame GetStackFrame()
 		{
+			var textView = MainWindow.Instance.ActiveTextView;
+			var cm = textView == null ? null : textView.CodeMappings;
 			bool isMatch, methodExists;
 			StackFrame frame;
-			var map = GetCurrentCodeMapping(out frame, out isMatch, out methodExists);
+			var map = GetCurrentCodeMapping(cm, out frame, out isMatch, out methodExists);
 			if (map == null) {
 				if (frame.IP.IsInvalid) {
 					frame.SourceCodeLine = -1;
@@ -312,7 +313,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				}
 				else if (methodExists) {
 					frame.SourceCodeLine = -1;
-					frame.ILRanges = DebugInformation.CodeMappings[frame.MethodInfo.ToMethodKey()].ToArray(null, false);
+					frame.ILRanges = cm[frame.MethodInfo.ToMethodKey()].ToArray(null, false);
 					if (frame.ILRanges.Length == 0)
 						frame.ILRanges = new[] { frame.IP.Offset, frame.IP.Offset + 1 };
 				}
@@ -331,7 +332,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 						frame.ILRanges = new[] { 0, int.MaxValue };
 					}
 					else {
-						DebugUtils.JumpToCurrentStatement();
+						DebugUtils.JumpToCurrentStatement(MainWindow.Instance.SafeActiveTextView);
 						return null;
 					}
 				}
@@ -687,7 +688,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		void debuggedProcess_DebuggingResumed(object sender, CorDbg.ProcessEventArgs e)
 		{
 			OnProcessRunningChanged(EventArgs.Empty);
-			StackFrameStatementBookmark.Remove(true);
+			StackFrameStatementManager.Remove(true);
 		}
 		
 		void debuggedProcess_ExceptionThrown(object sender, CorDbg.ExceptionEventArgs e)
@@ -737,8 +738,9 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				
 				var key = frame.MethodInfo.ToMethodKey();
 				TextLocation location, endLocation;
-				
-				var cm = DebugInformation.CodeMappings;
+
+				var textView = MainWindow.Instance.ActiveTextView;
+				var cm = textView == null ? null : textView.CodeMappings;
 				if (cm != null && cm.ContainsKey(key) &&
 					ip.IsValid &&
 					cm[key].GetInstructionByTokenAndOffset((uint)ip.Offset, out location, out endLocation)) {
@@ -747,14 +749,14 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 						StepIntoUnknownFrame(frame);
 					else
 						DebugInformation.DebugStepInformation = Tuple.Create(info.Item1, ip.Offset, info.Item3);
-					DebugInformation.MustJumpToReference = false; // we do not need to step into/out
-					MainWindow.Instance.TextView.ScrollAndMoveCaretTo(location.Line, location.Column);
+					DebugInformation.MustJumpToReference = false;
+					textView.ScrollAndMoveCaretTo(location.Line, location.Column);
 				}
 				else {
 					StepIntoUnknownFrame(frame);
 				}
 
-				StackFrameStatementBookmark.UpdateReturnStatementBookmarks(true);
+				StackFrameStatementManager.UpdateReturnStatementBookmarks(true);
 			}
 		}
 

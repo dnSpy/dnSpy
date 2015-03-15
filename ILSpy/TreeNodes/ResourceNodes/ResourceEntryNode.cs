@@ -90,5 +90,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 			return true;
 		}
+
+		public override NodePathName NodePathName {
+			get { return new NodePathName("rse", key); }
+		}
 	}
 }

@@ -18,11 +18,6 @@ namespace ICSharpCode.ILSpy.Debugger
 	public static class DebugInformation
 	{
 		/// <summary>
-		/// Gets or sets the current code mappings.
-		/// </summary>
-		public static Dictionary<MethodKey, MemberMapping> CodeMappings { get; set; }
-		
-		/// <summary>
 		/// Gets or sets the current method key, IL offset and member reference. Used for step in/out.
 		/// </summary>
 		public static Tuple<MethodKey, int, IMemberRef> DebugStepInformation { get; set; }

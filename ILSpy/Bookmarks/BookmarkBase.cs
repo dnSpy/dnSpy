@@ -5,6 +5,7 @@ using System;
 using System.Windows.Input;
 using System.Windows.Media;
 using ICSharpCode.ILSpy.AvalonEdit;
+using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using dnlib.DotNet;
@@ -63,8 +64,8 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		/// <summary>
 		/// true if the bookmark is visible in the displayed document
 		/// </summary>
-		public virtual bool IsVisible {
-			get { return true; }
+		public virtual bool IsVisible(DecompilerTextView textView) {
+			return true;
 		}
 		
 		/// <summary>

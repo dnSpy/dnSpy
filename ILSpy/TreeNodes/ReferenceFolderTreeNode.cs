@@ -68,5 +68,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			foreach (var r in module.GetModuleRefs())
 				language.WriteCommentLine(output, r.Name);
 		}
+
+		public override NodePathName NodePathName {
+			get { return new NodePathName("refs"); }
+		}
 	}
 }

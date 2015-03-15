@@ -163,7 +163,8 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 				
 				// get local variable index
 				MemberMapping mapping;
-				var cm = DebugInformation.CodeMappings;
+				var textView = MainWindow.Instance.ActiveTextView;
+				var cm = textView == null ? null : textView.CodeMappings;
 				if (cm != null && cm.TryGetValue(key, out mapping)) {
 					var variable = mapping.LocalVariables == null ? null : mapping.LocalVariables.FirstOrDefault(v => v.Name == targetName);
 					if (variable != null && variable.OriginalVariable != null) {

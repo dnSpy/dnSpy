@@ -86,5 +86,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			EnsureLazyChildren();
 		}
+
+		public override NodePathName NodePathName {
+			get { return new NodePathName("img", key); }
+		}
 	}
 }

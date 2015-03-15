@@ -132,8 +132,10 @@
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Commands\ExitCommand.cs" />
     <Compile Include="Commands\CommandWrapper.cs" />
+    <Compile Include="SavedTabState.cs" />
     <Compile Include="TreeNodes\CopyTokenContextMenuEntry.cs" />
     <Compile Include="TreeNodes\GoToTokenContextMenuEntry.cs" />
+    <Compile Include="TreeNodes\NodePathName.cs" />
     <Compile Include="TreeNodes\OpenInExplorerContextMenuEntry.cs" />
     <Compile Include="Commands\OpenListCommand.cs" />
     <Compile Include="Controls\MarkupExtensions.cs" />

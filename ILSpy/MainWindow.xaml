@@ -18,12 +18,36 @@
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 		<RoutedUICommand x:Key="GoToToken" Text="Go to Token" />
 		<RoutedUICommand x:Key="GoToLine" Text="Go to Line" />
+		<RoutedUICommand x:Key="OpenNewTab" Text="Open a New Tab" />
+		<RoutedUICommand x:Key="CloseActiveTab" Text="Close the Active Tab" />
+		<RoutedUICommand x:Key="SelectNextTab" Text="Select Next Tab" />
+		<RoutedUICommand x:Key="SelectPrevTab" Text="Select Previous Tab" />
 	</Window.Resources>
 	<Window.InputBindings>
 		<KeyBinding Gesture="Ctrl+D" Command="{StaticResource GoToToken}" />
 		<KeyBinding Gesture="Ctrl+G" Command="{StaticResource GoToLine}" />
+		<KeyBinding Gesture="Ctrl+T" Command="{StaticResource OpenNewTab}" />
+		<KeyBinding Gesture="Ctrl+W" Command="{StaticResource CloseActiveTab}" />
+		<KeyBinding Gesture="Ctrl+F4" Command="{StaticResource CloseActiveTab}" />
+		<KeyBinding Gesture="Ctrl+Tab" Command="{StaticResource SelectNextTab}" />
+		<KeyBinding Gesture="Ctrl+Shift+Tab" Command="{StaticResource SelectPrevTab}" />
 	</Window.InputBindings>
 	<Window.CommandBindings>
+		<CommandBinding
+			Command="{StaticResource SelectNextTab}"
+			CanExecute="SelectNextTabCanExecute"
+			Executed="SelectNextTabExecuted" />
+		<CommandBinding
+			Command="{StaticResource SelectPrevTab}"
+			CanExecute="SelectPrevTabCanExecute"
+			Executed="SelectPrevTabExecuted" />
+		<CommandBinding
+			Command="{StaticResource OpenNewTab}"
+			Executed="OpenNewTabExecuted" />
+		<CommandBinding
+			Command="{StaticResource CloseActiveTab}"
+			CanExecute="CloseActiveTabCanExecute"
+			Executed="CloseActiveTabExecuted" />
 		<CommandBinding
 			Command="{StaticResource GoToToken}"
 			CanExecute="GoToTokenCanExecute"
@@ -67,8 +91,8 @@
 					</MenuItem.Icon>
 				</MenuItem>
 				<Separator />
-				<MenuItem Header="_Word wrap" IsCheckable="True" IsChecked="{Binding ElementName=mainPane, Path=Content.TextEditor.WordWrap}" />
-				<MenuItem Header="_Highlight current line" IsCheckable="True" IsChecked="{Binding ElementName=mainPane, Path=Content.TextEditor.Options.HighlightCurrentLine}" />
+				<MenuItem Header="_Word wrap" IsCheckable="True" IsChecked="{Binding WordWrap}" />
+				<MenuItem Header="_Highlight current line" IsCheckable="True" IsChecked="{Binding HighlightCurrentLine}" />
 			</MenuItem>
 			<MenuItem Header="_Themes" Name="themeMenu" />
 		</Menu>
@@ -184,8 +208,7 @@
 					Focusable="False"
 					Visibility="{Binding Visibility, ElementName=topPane}" />
 				
-				<!-- decompilerTextView is into the mainPane by code -->
-				<ContentPresenter Name="mainPane" Grid.Row="3"/>
+				<TabControl Name="tabControl" Grid.Row="3" />
 				
 				<GridSplitter
 					Grid.ZIndex="1"

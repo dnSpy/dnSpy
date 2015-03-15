@@ -63,7 +63,6 @@ namespace ICSharpCode.ILSpy.TextView
 	/// Manages the TextEditor showing the decompiled code.
 	/// Contains all the threading logic that makes the decompiler work in the background.
 	/// </summary>
-	[Export, PartCreationPolicy(CreationPolicy.Shared)]
 	public sealed partial class DecompilerTextView : UserControl, IDisposable
 	{
 		readonly ReferenceElementGenerator referenceElementGenerator;
@@ -82,13 +81,12 @@ namespace ICSharpCode.ILSpy.TextView
 		readonly List<ITextMarker> localReferenceMarks = new List<ITextMarker>();
 
 		readonly SearchPanel searchPanel;
-		
-		[ImportMany(typeof(ITextEditorListener))]
-		IEnumerable<ITextEditorListener> textEditorListeners = null;
 
 		public TextEditor TextEditor {
 			get { return textEditor; }
 		}
+
+		internal object tabState;
 		
 		#region Constructor
 		public DecompilerTextView()
@@ -121,7 +119,7 @@ namespace ICSharpCode.ILSpy.TextView
 			
 			// add marker service & margin
 			iconMargin = new IconBarMargin(manager = new IconBarManager(), this);
-			textMarkerService = new TextMarkerService(textEditor.TextArea.TextView);
+			textMarkerService = new TextMarkerService(this);
 			textEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
 			textEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
 			textEditor.ShowLineNumbers = true;
@@ -129,29 +127,19 @@ namespace ICSharpCode.ILSpy.TextView
 
 			// SearchPanel
 			searchPanel = SearchPanel.Install(textEditor.TextArea);
-			searchPanel.RegisterCommands(Application.Current.MainWindow.CommandBindings);
+			searchPanel.RegisterCommands(this.CommandBindings);
 			
 			textEditor.TextArea.LeftMargins.Insert(0, iconMargin);
 			textEditor.TextArea.TextView.VisualLinesChanged += delegate { iconMargin.InvalidateVisual(); };
 			
 			// Bookmarks context menu
 			IconMarginActionsProvider.Add(iconMargin);
-			
-			this.Loaded += new RoutedEventHandler(DecompilerTextView_Loaded);
 		}
 
 		void DecompilerTextView_Loaded(object sender, RoutedEventArgs e)
 		{
 			ShowLineMargin();
 			
-			// wire the events
-			if (textEditorListeners != null) {
-				foreach (var listener in textEditorListeners) {
-					ICSharpCode.ILSpy.AvalonEdit.TextEditorWeakEventManager.MouseHover.AddListener(textEditor, listener);
-					ICSharpCode.ILSpy.AvalonEdit.TextEditorWeakEventManager.MouseHoverStopped.AddListener(textEditor, listener);
-					ICSharpCode.ILSpy.AvalonEdit.TextEditorWeakEventManager.MouseDown.AddListener(textEditor, listener);
-				}
-			}
 			textEditor.TextArea.TextView.VisualLinesChanged += (s, _) => iconMargin.InvalidateVisual();
 			
 			// add marker service & margin
@@ -389,11 +377,7 @@ namespace ICSharpCode.ILSpy.TextView
 				currentCancellationTokenSource.Cancel();
 				currentCancellationTokenSource = null; // prevent canceled task from producing output
 			}
-			if (this.nextDecompilationRun != null) {
-				// remove scheduled decompilation run
-				this.nextDecompilationRun.TaskCompletionSource.TrySetCanceled();
-				this.nextDecompilationRun = null;
-			}
+			CancelDecompileAsync();
 			ShowOutput(textOutput, highlighting);
 			decompiledNodes = nodes;
 		}
@@ -453,13 +437,13 @@ namespace ICSharpCode.ILSpy.TextView
 			if (DisplaySettingsPanel.CurrentDisplaySettings.AutoFocusTextView)
 				textEditor.Focus();
 
-			// update debugger info
-			DebugInformation.CodeMappings = textOutput.DebuggerMemberMappings.ToDictionary(m => new MethodKey(m.MethodDefinition));
+			CodeMappings = textOutput.DebuggerMemberMappings.ToDictionary(m => new MethodKey(m.MethodDefinition));
 
 			evt = OnShowOutput;
 			if (evt != null)
 				evt(this, new ShowOutputEventArgs(nodes, highlighting, state));
 		}
+		public Dictionary<MethodKey, MemberMapping> CodeMappings { get; private set; }
 		public event EventHandler<ShowOutputEventArgs> OnBeforeShowOutput;
 		public event EventHandler<ShowOutputEventArgs> OnShowOutput;
 		public class ShowOutputEventArgs : EventArgs
@@ -483,13 +467,35 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		// more than 75M characters can get us into trouble with memory usage
 		public const int ExtendedOutputLengthLimit = 75000000;
-		
+
 		DecompilationContext nextDecompilationRun;
-		
-		[Obsolete("Use DecompileAsync() instead")]
-		public void Decompile(ILSpy.Language language, IEnumerable<ILSpyTreeNode> treeNodes, DecompilationOptions options)
+
+		/// <summary>
+		/// Returns old context
+		/// </summary>
+		/// <returns></returns>
+		internal void CancelDecompileAsync()
 		{
-			DecompileAsync(language, treeNodes, options).HandleExceptions();
+			SetNextDecompilationRun(null);
+		}
+
+		bool CancelDecompileAsyncIf(DecompilationContext context)
+		{
+			var oldContext = Interlocked.CompareExchange(ref nextDecompilationRun, null, context);
+			return oldContext != context;
+		}
+
+		/// <summary>
+		/// Sets new context, and returns old context that has been canceled
+		/// </summary>
+		/// <param name="newContext">New context</param>
+		/// <returns></returns>
+		DecompilationContext SetNextDecompilationRun(DecompilationContext newContext)
+		{
+			var oldContext = Interlocked.CompareExchange(ref nextDecompilationRun, newContext, nextDecompilationRun);
+			if (oldContext != null)
+				oldContext.TaskCompletionSource.TrySetCanceled();
+			return oldContext;
 		}
 		
 		/// <summary>
@@ -506,27 +512,22 @@ namespace ICSharpCode.ILSpy.TextView
 			var newContext = new DecompilationContext(language, treeNodes.ToArray(), options);
 			var textOutput = DecompileCache.Instance.Lookup(newContext.Language, newContext.TreeNodes, newContext.Options);
 			if (textOutput != null) {
+				CancelDecompileAsync();
 				ShowOutput(textOutput, newContext.Language.SyntaxHighlighting, newContext.Options.TextViewState, newContext.TreeNodes);
 				decompiledNodes = newContext.TreeNodes;
 				return TaskHelper.CompletedTask;
 			}
 			
-			bool isDecompilationScheduled = this.nextDecompilationRun != null;
-			if (this.nextDecompilationRun != null)
-				this.nextDecompilationRun.TaskCompletionSource.TrySetCanceled();
-			this.nextDecompilationRun = newContext;
-			var task = this.nextDecompilationRun.TaskCompletionSource.Task;
-			if (!isDecompilationScheduled) {
-				Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(
-					delegate {
-						var context = this.nextDecompilationRun;
-						this.nextDecompilationRun = null;
-						if (context != null)
-							DoDecompile(context, DefaultOutputLengthLimit)
-								.ContinueWith(t => context.TaskCompletionSource.SetFromTask(t)).HandleExceptions();
-					}
-				));
-			}
+			SetNextDecompilationRun(newContext);
+			var task = newContext.TaskCompletionSource.Task;
+			Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(
+				delegate {
+					bool canceled = CancelDecompileAsyncIf(newContext);
+					if (!canceled)
+						DoDecompile(newContext, DefaultOutputLengthLimit)
+							.ContinueWith(t => newContext.TaskCompletionSource.SetFromTask(t)).HandleExceptions();
+				}
+			));
 			return task;
 		}
 		
@@ -544,20 +545,11 @@ namespace ICSharpCode.ILSpy.TextView
 				this.Options = options;
 			}
 		}
-		
-		public void ClosePopups()
-		{
-			// close popup
-			if (textEditorListeners != null) {
-				foreach (var listener in textEditorListeners) {
-					listener.ClosePopup();
-				}
-			}
-		}
 
 		Task DoDecompile(DecompilationContext context, int outputLengthLimit)
 		{
-			ClosePopups();
+			if (this.IsVisible)
+				MainWindow.Instance.ClosePopups();
 
 			return RunWithCancellation(
 				delegate (CancellationToken ct) { // creation of the background task
@@ -740,7 +732,7 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 
 			GoToMousePosition();
-			MainWindow.Instance.JumpToReference(referenceSegment.Reference);
+			MainWindow.Instance.JumpToReference(this, referenceSegment.Reference);
 			e.Handled = true;
 			return;
 		}
@@ -771,7 +763,7 @@ namespace ICSharpCode.ILSpy.TextView
 
 		void TextViewMouseDown(object sender, MouseButtonEventArgs e)
 		{
-			ClosePopups();
+			MainWindow.Instance.ClosePopups();
 		}
 
 		void ClearLocalReferenceMarks()
@@ -996,7 +988,7 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Escape) {
 				ClearLocalReferenceMarks();
-				ClosePopups();
+				MainWindow.Instance.ClosePopups();
 				e.Handled = true;
 				return;
 			}
@@ -1027,7 +1019,7 @@ namespace ICSharpCode.ILSpy.TextView
 			if (refSeg.IsLocal)
 				return false;
 			if (canJumpToReference) {
-				MainWindow.Instance.JumpToReference(refSeg.Reference);
+				MainWindow.Instance.JumpToReference(this, refSeg.Reference);
 				return true;
 			}
 

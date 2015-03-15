@@ -105,17 +105,28 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		}
 		
 		readonly IconBarMargin margin;
-		
-		[ImportMany(typeof(IBookmarkContextMenuEntry))]
-		Lazy<IBookmarkContextMenuEntry, IBookmarkContextMenuEntryMetadata>[] contextEntries = null;
-		
-		[ImportMany(typeof(IBookmarkActionEntry))]
-		Lazy<IBookmarkActionEntry, IBookmarkActionMetadata>[] actionEntries = null;
+
+		// Prevent big memory leaks (text editor) because the data is put into some MEF data structure.
+		// All created instances in this class are shared so this one can be shared as well.
+		class MefState
+		{
+			public static readonly MefState Instance = new MefState();
+
+			MefState()
+			{
+				App.CompositionContainer.ComposeParts(this);
+			}
+
+			[ImportMany(typeof(IBookmarkContextMenuEntry))]
+			public Lazy<IBookmarkContextMenuEntry, IBookmarkContextMenuEntryMetadata>[] contextEntries = null;
+
+			[ImportMany(typeof(IBookmarkActionEntry))]
+			public Lazy<IBookmarkActionEntry, IBookmarkActionMetadata>[] actionEntries = null;
+		}
 		
 		private IconMarginActionsProvider(IconBarMargin margin)
 		{
 			this.margin = margin;
-			App.CompositionContainer.ComposeParts(this);
 		}
 		
 		void HandleMouseEvent(object sender, MouseButtonEventArgs e)
@@ -123,7 +134,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			int line = margin.GetLineFromMousePosition(e);
 			
 			if (e.ChangedButton == MouseButton.Left) {
-				foreach (var category in actionEntries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
+				foreach (var category in MefState.Instance.actionEntries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
 					foreach (var entryPair in category) {
 						IBookmarkActionEntry entry = entryPair.Value;
 
@@ -155,7 +166,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				}
 				
 				ContextMenu menu = new ContextMenu();
-				foreach (var category in contextEntries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
+				foreach (var category in MefState.Instance.contextEntries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
 					bool needSeparatorForCategory = true;
 					foreach (var entryPair in category) {
 						IBookmarkContextMenuEntry entry = entryPair.Value;

@@ -11,6 +11,7 @@ using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Services;
+using ICSharpCode.ILSpy.TextView;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.Debugger.Commands
@@ -20,20 +21,22 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	{
 		public bool IsEnabled()
 		{
-			return true;
+			return MainWindow.Instance.ActiveTextView != null;
 		}
 		
 		public void Execute(int line)
 		{
-			BreakpointHelper.Toggle(line, 0);
+			var textView = MainWindow.Instance.ActiveTextView;
+			if (textView != null)
+				BreakpointHelper.Toggle(textView, line, 0);
 		}
 	}
 
 	static class BreakpointHelper
 	{
-		public static BreakpointBookmark GetBreakpointBookmark(int line, int column)
+		public static BreakpointBookmark GetBreakpointBookmark(DecompilerTextView textView, int line, int column)
 		{
-			return GetBreakpointBookmark(Find(line, column));
+			return GetBreakpointBookmark(Find(textView, line, column));
 		}
 
 		public static BreakpointBookmark GetBreakpointBookmark(SourceCodeMapping mapping)
@@ -53,18 +56,20 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			return null;
 		}
 
-		public static void Toggle(int line, int column)
+		public static void Toggle(DecompilerTextView textView, int line, int column)
 		{
-			var bp = Find(line, column);
+			var bp = Find(textView, line, column);
 			if (bp != null) {
 				if (DebuggerService.ToggleBreakpointAt(bp))
-					MainWindow.Instance.TextView.ScrollAndMoveCaretTo(bp.StartLocation.Line, bp.StartLocation.Column);
+					textView.ScrollAndMoveCaretTo(bp.StartLocation.Line, bp.StartLocation.Column);
 			}
 		}
 
-		public static SourceCodeMapping Find(int line, int column)
+		public static SourceCodeMapping Find(DecompilerTextView textView, int line, int column)
 		{
-			return Find(DebugInformation.CodeMappings, line, column);
+			if (textView == null)
+				return null;
+			return Find(textView.CodeMappings, line, column);
 		}
 
 		public static SourceCodeMapping Find(Dictionary<MethodKey, MemberMapping> cm, int line, int column)

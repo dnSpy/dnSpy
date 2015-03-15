@@ -130,5 +130,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 			return result ?? new ResourceTreeNode(resource);
 		}
+
+		public override NodePathName NodePathName {
+			get { return new NodePathName("rst", r.Name + " - " + r.ResourceType.ToString()); }
+		}
 	}
 }

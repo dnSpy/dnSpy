@@ -3,55 +3,60 @@ using System.Collections.Generic;
 using System.Windows;
 using dnlib.DotNet;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.Debugger
 {
 	static class DebugUtils
 	{
-		public static bool JumpToCurrentStatement()
+		public static bool JumpToCurrentStatement(DecompilerTextView textView)
 		{
+			if (textView == null)
+				return false;
 			var info = DebugInformation.DebugStepInformation;
 			if (info == null)
 				return false;
-			return MainWindow.Instance.JumpToReference(info.Item3, success => {
+			return MainWindow.Instance.JumpToReference(textView, info.Item3, success => {
 				if (success)
-					MoveCaretToCurrentStatement();
+					MoveCaretToCurrentStatement(textView);
 			});
 		}
 
-		public static bool JumpTo(IMemberRef mr, MethodKey key, int ilOffset)
+		public static bool JumpTo(DecompilerTextView textView, IMemberRef mr, MethodKey key, int ilOffset)
 		{
-			return MainWindow.Instance.JumpToReference(mr, success => {
+			return MainWindow.Instance.JumpToReference(textView, mr, success => {
 				if (success)
-					MoveCaretTo(key, ilOffset);
+					MoveCaretTo(textView, key, ilOffset);
 			});
 		}
 
-		static void MoveCaretToCurrentStatement()
+		static void MoveCaretToCurrentStatement(DecompilerTextView textView)
 		{
 			var info = DebugInformation.DebugStepInformation;
 			if (info == null)
 				return;
-			MoveCaretTo(info.Item1, info.Item2);
+			MoveCaretTo(textView, info.Item1, info.Item2);
 		}
 
-		static void MoveCaretTo(MethodKey key, int ilOffset)
+		static void MoveCaretTo(DecompilerTextView textView, MethodKey key, int ilOffset)
 		{
+			if (textView == null)
+				return;
 			TextLocation location, endLocation;
-			var cm = DebugInformation.CodeMappings;
+			var cm = textView.CodeMappings;
 			if (cm == null || !cm.ContainsKey(key))
 				return;
 			if (!cm[key].GetInstructionByTokenAndOffset(unchecked((uint)ilOffset), out location, out endLocation)) {
 				//TODO: Missing IL ranges
 			}
 			else
-				MainWindow.Instance.TextView.ScrollAndMoveCaretTo(location.Line, location.Column);
+				textView.ScrollAndMoveCaretTo(location.Line, location.Column);
 		}
 
-		public static bool JumpToReference(IMemberRef mr, Func<TextLocation> getLocation)
+		public static bool JumpToReference(DecompilerTextView textView, IMemberRef mr, Func<TextLocation> getLocation)
 		{
-			bool retVal = MainWindow.Instance.JumpToReference(mr, getLocation);
+			bool retVal = MainWindow.Instance.JumpToReference(textView, mr, getLocation);
 			if (!retVal) {
 				MessageBox.Show(MainWindow.Instance,
 					string.Format("Could not find {0}\n" +
@@ -67,10 +72,10 @@ namespace ICSharpCode.ILSpy.Debugger
 		/// <param name="currentKey"></param>
 		/// <param name="codeMappings"></param>
 		/// <returns></returns>
-		public static bool VerifyAndGetCurrentDebuggedMethod(out Tuple<MethodKey, int, IMemberRef> info, out MethodKey currentKey, out Dictionary<MethodKey, MemberMapping> codeMappings)
+		public static bool VerifyAndGetCurrentDebuggedMethod(DecompilerTextView textView, out Tuple<MethodKey, int, IMemberRef> info, out MethodKey currentKey, out Dictionary<MethodKey, MemberMapping> codeMappings)
 		{
 			currentKey = default(MethodKey);
-			codeMappings = DebugInformation.CodeMappings;
+			codeMappings = textView == null ? null : textView.CodeMappings;
 			info = DebugInformation.DebugStepInformation;
 
 			if (info == null)

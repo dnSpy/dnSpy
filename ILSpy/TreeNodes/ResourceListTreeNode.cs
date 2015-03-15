@@ -71,5 +71,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				output.WriteLine();
 			}
 		}
+
+		public override NodePathName NodePathName {
+			get { return new NodePathName("res"); }
+		}
 	}
 }

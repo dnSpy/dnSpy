@@ -206,8 +206,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					else {
 						var loadAsm = new LoadedAssembly(AssemblyList, mod);
 						this.Children.Add(new AssemblyTreeNode(loadAsm));
-						// Make sure IsLoaded is set to true
-						var dummy = loadAsm.ModuleDefinition;
 					}
 				}
 			}
@@ -372,6 +370,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				textView.SaveToDisk(language, new[] { this }, options, dlg.FileName);
 			}
 			return true;
+		}
+
+		public override NodePathName NodePathName {
+			get { return new NodePathName("asm", assembly.FileName.ToUpperInvariant()); }
 		}
 	}
 

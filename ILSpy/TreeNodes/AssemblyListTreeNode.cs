@@ -315,5 +315,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 			return null;
 		}
+
+		public override NodePathName NodePathName {
+			get { return new NodePathName("asmlist"); }
+		}
 	}
 }

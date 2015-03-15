@@ -30,6 +30,7 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
+using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy.AvalonEdit
 {
@@ -40,45 +41,75 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 	public sealed class TextMarkerService : DocumentColorizingTransformer, IBackgroundRenderer, ITextMarkerService
 	{
 		TextSegmentCollection<TextMarker> markers;
-		TextView textView;
+		DecompilerTextView textView;
 
 		public TextView TextView {
-			get { return textView; }
+			get { return textView.TextEditor.TextArea.TextView; }
 		}
 		
-		public TextMarkerService(TextView textView)
+		public TextMarkerService(DecompilerTextView textView)
 		{
 			if (textView == null)
 				throw new ArgumentNullException("textView");
 			this.textView = textView;
-			textView.DocumentChanged += OnDocumentChanged;
-			BookmarkManager.Added += new BookmarkEventHandler(BookmarkManager_Added);
-			BookmarkManager.Removed += new BookmarkEventHandler(BookmarkManager_Removed);
+			TextView.DocumentChanged += OnDocumentChanged;
+			BookmarkManager.Added += BookmarkManager_Added;
+			BookmarkManager.Removed += BookmarkManager_Removed;
 			MainWindow.Instance.ExecuteWhenLoaded(() => {
-				MainWindow.Instance.TextView.OnShowOutput += delegate { RecreateMarkers(); };
+				MainWindow.Instance.OnDecompilerTextViewRemoved += OnDecompilerTextViewRemoved;
+				this.textView.OnShowOutput += textView_OnShowOutput;
 				RecreateMarkers();
 			});
 			OnDocumentChanged(null, null);
 		}
 
+		void textView_OnShowOutput(object sender, DecompilerTextView.ShowOutputEventArgs e)
+		{
+			RecreateMarkers();
+		}
+
+		void OnDecompilerTextViewRemoved(object sender, MainWindow.DecompilerTextViewEventArgs e)
+		{
+			if (e.DecompilerTextView != textView)
+				return;
+
+			TextView.DocumentChanged -= OnDocumentChanged;
+			BookmarkManager.Added -= BookmarkManager_Added;
+			BookmarkManager.Removed -= BookmarkManager_Removed;
+			MainWindow.Instance.OnDecompilerTextViewRemoved -= OnDecompilerTextViewRemoved;
+			textView.OnShowOutput -= textView_OnShowOutput;
+			foreach (var bm in BookmarkManager.Bookmarks) {
+				var mbm = bm as MarkerBookmark;
+				if (mbm != null)
+					mbm.Markers.Remove(this);
+			}
+		}
+
 		void OnDocumentChanged(object sender, EventArgs e)
 		{
-			if (textView.Document != null)
-				markers = new TextSegmentCollection<TextMarker>(textView.Document);
+			foreach (var bm in BookmarkManager.Bookmarks) {
+				var mbm = bm as MarkerBookmark;
+				if (mbm != null) {
+					ITextMarker marker;
+					if (mbm.Markers.TryGetValue(this, out marker))
+						Remove(marker);
+					mbm.Markers.Remove(this);
+				}
+			}
+			if (TextView.Document != null)
+				markers = new TextSegmentCollection<TextMarker>(TextView.Document);
 			else
 				markers = null;
-			foreach (var bm in BookmarkManager.Bookmarks) {
-				var bmb = bm as MarkerBookmark;
-				if (bmb != null)
-					bmb.Marker = null;
-			}
 		}
 		
 		void BookmarkManager_Removed(object sender, BookmarkEventArgs e)
 		{
 			if (e.Bookmark is MarkerBookmark) {
-				var bm = (MarkerBookmark)e.Bookmark;
-				Remove(bm.Marker);
+				var mbm = (MarkerBookmark)e.Bookmark;
+				ITextMarker marker;
+				if (mbm.Markers.TryGetValue(this, out marker))
+					Remove(marker);
+				mbm.Markers.Remove(this);
 			}
 		}
 
@@ -95,11 +126,12 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 
 		void CreateMarker(MarkerBookmark mbm)
 		{
-			if (mbm == null || !mbm.IsVisible)
+			if (mbm == null || !mbm.IsVisible(textView))
 				return;
 
-			if (mbm.Marker == null)
-				mbm.CreateMarker(this);
+			ITextMarker marker;
+			if (!mbm.Markers.TryGetValue(this, out marker) || marker == null)
+				mbm.Markers[this] = mbm.CreateMarker(this, textView);
 		}
 
 		#region ITextMarkerService
@@ -108,7 +140,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			if (markers == null)
 				throw new InvalidOperationException("Cannot create a marker when not attached to a document");
 			
-			int textLength = textView.Document.TextLength;
+			int textLength = TextView.Document.TextLength;
 			if (startOffset < 0 || startOffset > textLength)
 				throw new ArgumentOutOfRangeException("startOffset", startOffset, "Value must be between 0 and " + textLength);
 			if (length < 0 || startOffset + length > textLength)
@@ -147,7 +179,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		public void Remove(ITextMarker marker)
 		{
 			if (marker == null)
-				return;	// Can be null if the bookmark was never inserted into the bookmarks list
+				return;
 			TextMarker m = marker as TextMarker;
 			if (markers != null && markers.Remove(m)) {
 				Redraw(m);
@@ -160,7 +192,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		/// </summary>
 		internal void Redraw(ISegment segment)
 		{
-			textView.Redraw(segment, DispatcherPriority.Normal);
+			TextView.Redraw(segment, DispatcherPriority.Normal);
 			if (RedrawRequested != null)
 				RedrawRequested(this, EventArgs.Empty);
 		}

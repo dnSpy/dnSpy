@@ -24,6 +24,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Resources;
+using System.Windows.Controls;
 
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Controls;
@@ -127,7 +128,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				if (null != smartOutput) {
 					smartOutput.AddUIElement(
 						delegate {
-							return new ResourceStringTable(stringTableEntries, MainWindow.Instance.mainPane);
+							var textView = MainWindow.Instance.ActiveTextView;
+							if (textView != null)
+								return new ResourceStringTable(stringTableEntries, textView);
+							return new TextBlock { Text = "no active tab!" };
 						}
 					);
 				}
@@ -139,7 +143,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				if (null != smartOutput) {
 					smartOutput.AddUIElement(
 						delegate {
-							return new ResourceObjectTable(otherEntries, MainWindow.Instance.mainPane);
+							var textView = MainWindow.Instance.ActiveTextView;
+							if (textView != null)
+								return new ResourceObjectTable(otherEntries, textView);
+							return new TextBlock { Text = "no active tab!" };
 						}
 					);
 				}

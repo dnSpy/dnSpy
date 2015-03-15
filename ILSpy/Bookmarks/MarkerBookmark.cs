@@ -2,9 +2,11 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Generic;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.ILSpy.AvalonEdit;
+using ICSharpCode.ILSpy.TextView;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.Bookmarks
@@ -13,10 +15,11 @@ namespace ICSharpCode.ILSpy.Bookmarks
 	{
 		public MarkerBookmark(IMemberRef member, TextLocation location, TextLocation endLocation) : base(member, location, endLocation)
 		{
+			this.Markers = new Dictionary<object, ITextMarker>();
 		}
-		
-		public ITextMarker Marker { get; set; }
-		
-		public abstract ITextMarker CreateMarker(ITextMarkerService markerService);
+
+		public Dictionary<object, ITextMarker> Markers { get; private set; }
+
+		public abstract ITextMarker CreateMarker(ITextMarkerService markerService, DecompilerTextView textView);
 	}
 }

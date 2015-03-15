@@ -220,7 +220,10 @@ namespace ICSharpCode.ILSpy
 						}
 					}
 				}
-				ILSpy.MainWindow.Instance.TextView.ShowText(output);
+				var textView = ILSpy.MainWindow.Instance.SafeActiveTextView;
+				textView.ShowText(output);
+				ILSpy.MainWindow.Instance.SetTitle(textView, e.Uri.AbsolutePath);
+				e.Handled = true;
 			}
 		}
 

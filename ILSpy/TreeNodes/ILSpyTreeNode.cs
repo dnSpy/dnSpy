@@ -213,5 +213,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 			return sb.ToString();
 		}
+
+		public abstract NodePathName NodePathName { get; }
 	}
 }

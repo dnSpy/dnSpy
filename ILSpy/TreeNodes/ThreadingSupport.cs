@@ -126,6 +126,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 			{
 			}
+
+			public override NodePathName NodePathName {
+				get { return new NodePathName("ld"); }
+			}
 		}
 		
 		sealed class ErrorTreeNode : ILSpyTreeNode
@@ -148,6 +152,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			
 			public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 			{
+			}
+
+			public override NodePathName NodePathName {
+				get { return new NodePathName("err", text); }
 			}
 		}
 	}

@@ -84,7 +84,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		{
 			debuggerStarted = false;
 			
-			StackFrameStatementBookmark.UpdateReturnStatementBookmarks(true);
+			StackFrameStatementManager.UpdateReturnStatementBookmarks(true);
 			
 			if (DebugStopped != null)
 				DebugStopped(null, e);

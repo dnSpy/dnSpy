@@ -30,7 +30,7 @@ namespace ICSharpCode.ILSpy.Controls
 	/// </summary>
 	public partial class ResourceStringTable : UserControl
 	{
-		public ResourceStringTable(IEnumerable strings, ContentPresenter contentPresenter)
+		public ResourceStringTable(IEnumerable strings, FrameworkElement contentPresenter)
 		{
 			InitializeComponent();
 			// set size to fit decompiler window

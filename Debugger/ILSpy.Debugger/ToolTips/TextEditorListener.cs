@@ -141,7 +141,7 @@ namespace ICSharpCode.ILSpy.Debugger.Tooltips
 		Popup CreatePopup()
 		{
 			popup = new Popup();
-			popup.Closed += delegate { popup = null; };
+			popup.Closed += delegate { popup = null; editor = null; };
 			popup.AllowsTransparency = true;
 			popup.PlacementTarget = editor;
 			// required for property inheritance

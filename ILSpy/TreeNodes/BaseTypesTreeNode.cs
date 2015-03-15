@@ -69,5 +69,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				child.Decompile(language, output, options);
 			}
 		}
+
+		public override NodePathName NodePathName {
+			get { return new NodePathName("btt"); }
+		}
 	}
 }

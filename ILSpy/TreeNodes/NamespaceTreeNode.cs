@@ -60,5 +60,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			language.DecompileNamespace(name, this.Children.OfType<TypeTreeNode>().Select(t => t.TypeDefinition), output, options);
 		}
+
+		public override NodePathName NodePathName {
+			get { return new NodePathName("ns", name); }
+		}
 	}
 }

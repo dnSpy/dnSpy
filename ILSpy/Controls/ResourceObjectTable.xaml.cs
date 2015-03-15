@@ -30,7 +30,7 @@ namespace ICSharpCode.ILSpy.Controls
 	/// </summary>
 	public partial class ResourceObjectTable : UserControl
 	{
-		public ResourceObjectTable(IEnumerable resources, ContentPresenter contentPresenter)
+		public ResourceObjectTable(IEnumerable resources, FrameworkElement contentPresenter)
 		{
 			InitializeComponent();
 			// set size to fit decompiler window

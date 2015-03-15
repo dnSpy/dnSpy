@@ -48,5 +48,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			language.WriteCommentLine(output, r.Name);
 		}
+
+		public override NodePathName NodePathName {
+			get { return new NodePathName("modref", r.FullName); }
+		}
 	}
 }

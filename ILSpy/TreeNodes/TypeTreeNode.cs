@@ -200,5 +200,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		IMemberRef IMemberTreeNode.Member {
 			get { return type; }
 		}
+
+		public override NodePathName NodePathName {
+			get { return new NodePathName("type", type.Namespace + "." + type.Name); }
+		}
 	}
 }

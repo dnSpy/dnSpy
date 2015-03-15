@@ -24,6 +24,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -60,27 +61,115 @@ namespace ICSharpCode.ILSpy
 		void OnLoaded();
 	}
 
+	class TabState : IDisposable
+	{
+		public readonly DecompilerTextView TextView = new DecompilerTextView();
+		public readonly NavigationHistory<NavigationState> History = new NavigationHistory<NavigationState>();
+		public bool ignoreDecompilationRequests;
+		public ILSpyTreeNode[] DecompiledNodes = new ILSpyTreeNode[0];
+		public TabItem TabItem;
+		public string Title;
+
+		public string Header {
+			get {
+				var nodes = DecompiledNodes;
+				if (nodes == null || nodes.Length == 0)
+					return Title ?? "<empty>";
+
+				if (nodes.Length == 1)
+					return nodes[0].ToString();
+
+				var sb = new StringBuilder();
+				foreach (var node in nodes) {
+					if (sb.Length > 0)
+						sb.Append(", ");
+					sb.Append(node.ToString());
+				}
+				return sb.ToString();
+			}
+		}
+
+		const int MAX_HEADER_LENGTH = 40;
+		string ShortHeader {
+			get {
+				var header = Header;
+				if (header.Length <= MAX_HEADER_LENGTH)
+					return header;
+				return header.Substring(0, MAX_HEADER_LENGTH) + "...";
+			}
+		}
+
+		public TabState(SharpTreeView treeView)
+		{
+			this.TextView.tabState = this;
+			var view = TextView;
+			var tabItem = new TabItem();
+			tabItem.Content = view;
+			tabItem.Tag = this;
+			TabItem = tabItem;
+			InitializeHeader();
+			ContextMenuProvider.Add(view);
+			tabItem.MouseRightButtonDown += tabItem_MouseRightButtonDown;
+		}
+
+		void tabItem_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			MainWindow.Instance.tabControl.SelectedItem = TabItem;
+		}
+
+		public void Dispose()
+		{
+			TextView.Dispose();
+		}
+
+		public void InitializeHeader()
+		{
+			var shortHeader = ShortHeader;
+			var header = Header;
+			TabItem.Header = new TextBlock {
+				Text = shortHeader,
+				ToolTip = shortHeader == header ? null : header,
+			};
+		}
+
+		public bool IsSameNode(ILSpyTreeNode node)
+		{
+			return DecompiledNodes.Length == 1 &&
+				DecompiledNodes[0] == node;
+		}
+
+		public bool IsSameNodes(ILSpyTreeNode[] nodes)
+		{
+			if (DecompiledNodes.Length != nodes.Length)
+				return false;
+			for (int i = 0; i < DecompiledNodes.Length; i++) {
+				if (DecompiledNodes[i] != nodes[i])
+					return false;
+			}
+			return true;
+		}
+	}
+
 	/// <summary>
 	/// The main window of the application.
 	/// </summary>
 	partial class MainWindow : Window
 	{
-		readonly NavigationHistory<NavigationState> history = new NavigationHistory<NavigationState>();
 		ILSpySettings spySettings;
 		internal SessionSettings sessionSettings;
 		
 		internal AssemblyListManager assemblyListManager;
 		AssemblyList assemblyList;
 		AssemblyListTreeNode assemblyListTreeNode;
-		
-		[Import]
-		DecompilerTextView decompilerTextView = null;
 
 		[ImportMany]
 		IEnumerable<IPlugin> plugins = null;
 
 		[ImportMany]
 		IEnumerable<IPaneCreator> paneCreators = null;
+
+		[ImportMany(typeof(ITextEditorListener))]
+		public IEnumerable<ITextEditorListener> textEditorListeners = null;
 		
 		static MainWindow instance;
 		
@@ -93,12 +182,74 @@ namespace ICSharpCode.ILSpy
 		}
 
 		internal Theme Theme { get; private set; }
+
+		TabState SafeActiveTabState {
+			get {
+				var tabState = ActiveTabState;
+				if (tabState != null)
+					return tabState;
+
+				tabState = CreateNewTabState();
+
+				var old = tabControl_SelectionChanged_dont_select;
+				try {
+					tabControl_SelectionChanged_dont_select = true;
+					tabControl.SelectedItem = tabState.TabItem;
+				}
+				finally {
+					tabControl_SelectionChanged_dont_select = old;
+				}
+
+				return tabState;
+			}
+		}
+
+		TabState ActiveTabState {
+			get {
+				int index = tabControl.SelectedIndex == -1 ? 0 : tabControl.SelectedIndex;
+				if (index >= tabControl.Items.Count)
+					return null;
+				var item = tabControl.Items[index] as TabItem;
+				return item == null ? null : (TabState)item.Tag;
+			}
+		}
+
+		IEnumerable<TabState> AllTabStates {
+			get {
+				foreach (var item in tabControl.Items) {
+					var tabItem = item as TabItem;
+					if (tabItem == null)
+						continue;
+					Debug.Assert(tabItem.Tag is TabState);
+					yield return (TabState)tabItem.Tag;
+				}
+			}
+		}
+
+		public DecompilerTextView SafeActiveTextView {
+			get { return SafeActiveTabState.TextView; }
+		}
+
+		public DecompilerTextView ActiveTextView {
+			get {
+				var tabState = ActiveTabState;
+				return tabState == null ? null : tabState.TextView;
+			}
+		}
+
+		public IEnumerable<DecompilerTextView> AllTextViews {
+			get {
+				foreach (var tabState in AllTabStates)
+					yield return tabState.TextView;
+			}
+		}
 		
 		public MainWindow()
 		{
 			instance = this;
 			spySettings = ILSpySettings.Load();
 			this.sessionSettings = new SessionSettings(spySettings);
+			this.sessionSettings.PropertyChanged += sessionSettings_PropertyChanged;
 			this.assemblyListManager = new AssemblyListManager(spySettings);
 			Theme = Themes.GetThemeOrDefault(sessionSettings.ThemeName);
 			
@@ -108,9 +259,7 @@ namespace ICSharpCode.ILSpy
 			
 			InitializeComponent();
 			App.CompositionContainer.ComposeParts(this);
-			mainPane.Content = decompilerTextView;
-			decompilerTextView.TextEditor.WordWrap = sessionSettings.WordWrap;
-			decompilerTextView.TextEditor.Options.HighlightCurrentLine = sessionSettings.HighlightCurrentLine;
+			tabControl.SelectionChanged += tabControl_SelectionChanged;
 			
 			if (sessionSettings.LeftColumnWidth > 0)
 				leftColumn.Width = new GridLength(sessionSettings.LeftColumnWidth, GridUnitType.Pixel);
@@ -118,17 +267,23 @@ namespace ICSharpCode.ILSpy
 			
 			InitMainMenu();
 			InitToolbar();
-			ContextMenuProvider.Add(treeView, decompilerTextView);
-			decompilerTextView.TextEditor.TextArea.MouseRightButtonDown += (sender, e) => decompilerTextView.GoToMousePosition();
 			
-			this.Loaded += new RoutedEventHandler(MainWindow_Loaded);
-
-			RemoveCommands();
+			this.Loaded += MainWindow_Loaded;
 		}
 
-		void RemoveCommands()
+		void sessionSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			var handler = decompilerTextView.TextEditor.TextArea.DefaultInputHandler;
+			if (e.PropertyName == "WordWrap" || e.PropertyName == "HighlightCurrentLine") {
+				foreach (var textView in AllTextViews) {
+					textView.TextEditor.WordWrap = sessionSettings.WordWrap;
+					textView.TextEditor.Options.HighlightCurrentLine = sessionSettings.HighlightCurrentLine;
+				}
+			}
+		}
+
+		static void RemoveCommands(DecompilerTextView view)
+		{
+			var handler = view.TextEditor.TextArea.DefaultInputHandler;
 			var list = (IList<CommandBinding>)handler.Editing.CommandBindings;
 			for (int i = list.Count - 1; i >= 0; i--) {
 				var binding = list[i];
@@ -138,7 +293,197 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		void BuildThemeMenu() {
+		TabState CreateNewTabState()
+		{
+			TabState tabState = new TabState(treeView);
+			tabControl.Items.Add(tabState.TabItem);
+
+			var view = tabState.TextView;
+			RemoveCommands(view);
+			view.TextEditor.TextArea.MouseRightButtonDown += delegate { view.GoToMousePosition(); };
+			view.TextEditor.WordWrap = sessionSettings.WordWrap;
+			view.TextEditor.Options.HighlightCurrentLine = sessionSettings.HighlightCurrentLine;
+
+			if (OnDecompilerTextViewAdded != null)
+				OnDecompilerTextViewAdded(this, new DecompilerTextViewEventArgs(view));
+
+			return tabState;
+		}
+
+		void RemoveTabState(TabState tabState)
+		{
+			if (tabState == null)
+				return;
+			int index = tabControl.Items.IndexOf(tabState.TabItem);
+			Debug.Assert(index >= 0);
+			if (index < 0)
+				return;
+
+			tabControl.SelectedIndex = index - 1;
+			tabControl.Items.RemoveAt(index);
+
+			RemoveTabStateInternal(tabState);
+		}
+
+		void RemoveAllTabStates()
+		{
+			var allTabStates = AllTabStates.ToArray();
+			tabControl.Items.Clear();
+			foreach (var tabState in allTabStates)
+				RemoveTabStateInternal(tabState);
+		}
+
+		void RemoveTabStateInternal(TabState tabState)
+		{
+			if (OnDecompilerTextViewRemoved != null)
+				OnDecompilerTextViewRemoved(this, new DecompilerTextViewEventArgs(tabState.TextView));
+			tabState.Dispose();
+		}
+
+		public event EventHandler<DecompilerTextViewEventArgs> OnDecompilerTextViewAdded;
+		public event EventHandler<DecompilerTextViewEventArgs> OnDecompilerTextViewRemoved;
+		public class DecompilerTextViewEventArgs : EventArgs
+		{
+			public readonly DecompilerTextView DecompilerTextView;
+
+			public DecompilerTextViewEventArgs(DecompilerTextView decompilerTextView)
+			{
+				this.DecompilerTextView = decompilerTextView;
+			}
+		}
+
+		bool tabControl_SelectionChanged_dont_select = false;
+		void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (sender != tabControl || e.Source != tabControl)
+				return;
+			Debug.Assert(e.RemovedItems.Count <= 1);
+			Debug.Assert(e.AddedItems.Count <= 1);
+
+			var oldState = e.RemovedItems.Count >= 1 ? (TabState)((TabItem)e.RemovedItems[0]).Tag : null;
+			var newState = e.AddedItems.Count >= 1 ? (TabState)((TabItem)e.AddedItems[0]).Tag : null;
+
+			var oldView = oldState == null ? null : oldState.TextView;
+			var newView = newState == null ? null : newState.TextView;
+
+			if (oldView != null) {
+				foreach (CommandBinding binding in oldView.CommandBindings)
+					this.CommandBindings.Remove(binding);
+			}
+			if (newView != null)
+				this.CommandBindings.AddRange(newView.CommandBindings);
+
+			if (tabControl_SelectionChanged_dont_select) {
+			}
+			else if (newState == null) {
+				treeView.SelectedItems.Clear();
+			}
+			else {
+				var old = newState.ignoreDecompilationRequests;
+				try {
+					newState.ignoreDecompilationRequests = true;
+
+					treeView.SelectedItems.Clear();
+					if (newState.DecompiledNodes.Length > 0) {
+						treeView.FocusNode(newState.DecompiledNodes[0]);
+						// This can happen when pressing Ctrl+Shift+Tab when the treeview has keyboard focus
+						if (treeView.SelectedItems.Count != 0)
+							treeView.SelectedItems.Clear();
+						treeView.SelectedItem = newState.DecompiledNodes[0];
+					}
+					foreach (var node in newState.DecompiledNodes)
+						treeView.SelectedItems.Add(node);
+				}
+				finally {
+					newState.ignoreDecompilationRequests = old;
+				}
+			}
+
+			ClosePopups();
+			if (oldView != null)
+				UninstallTextEditorListeners(oldView);
+			if (newView != null)
+				InstallTextEditorListeners(newView);
+
+			// Set focus to the text area whenever the view is selected
+			if (newView != null) {
+				var textArea = newView.TextEditor.TextArea;
+				if (!textArea.IsVisible)
+					textArea.IsVisibleChanged += TextArea_IsVisibleChanged;
+				else
+					textArea.Focus();
+			}
+
+			if (OnActiveDecompilerTextViewChanged != null)
+				OnActiveDecompilerTextViewChanged(this, new ActiveDecompilerTextViewChangedEventArgs(oldView, newView));
+		}
+
+		void TextArea_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			var textArea = (ICSharpCode.AvalonEdit.Editing.TextArea)sender;
+			textArea.IsVisibleChanged -= TextArea_IsVisibleChanged;
+			textArea.Focus();
+		}
+
+		public event EventHandler<ActiveDecompilerTextViewChangedEventArgs> OnActiveDecompilerTextViewChanged;
+		public class ActiveDecompilerTextViewChangedEventArgs : EventArgs
+		{
+			/// <summary>
+			/// Old view. Can be null
+			/// </summary>
+			public readonly DecompilerTextView OldView;
+
+			/// <summary>
+			/// New view. Can be null
+			/// </summary>
+			public readonly DecompilerTextView NewView;
+
+			public ActiveDecompilerTextViewChangedEventArgs(DecompilerTextView oldView, DecompilerTextView newView)
+			{
+				this.OldView = oldView;
+				this.NewView = newView;
+			}
+		}
+
+		void InstallTextEditorListeners(DecompilerTextView textView)
+		{
+			if (textEditorListeners == null)
+				return;
+			foreach (var listener in textEditorListeners) {
+				ICSharpCode.ILSpy.AvalonEdit.TextEditorWeakEventManager.MouseHover.AddListener(textView.TextEditor, listener);
+				ICSharpCode.ILSpy.AvalonEdit.TextEditorWeakEventManager.MouseHoverStopped.AddListener(textView.TextEditor, listener);
+				ICSharpCode.ILSpy.AvalonEdit.TextEditorWeakEventManager.MouseDown.AddListener(textView.TextEditor, listener);
+			}
+		}
+
+		void UninstallTextEditorListeners(DecompilerTextView textView)
+		{
+			if (textEditorListeners == null)
+				return;
+			foreach (var listener in textEditorListeners) {
+				ICSharpCode.ILSpy.AvalonEdit.TextEditorWeakEventManager.MouseHover.RemoveListener(textView.TextEditor, listener);
+				ICSharpCode.ILSpy.AvalonEdit.TextEditorWeakEventManager.MouseHoverStopped.RemoveListener(textView.TextEditor, listener);
+				ICSharpCode.ILSpy.AvalonEdit.TextEditorWeakEventManager.MouseDown.RemoveListener(textView.TextEditor, listener);
+			}
+		}
+
+		public void SetTitle(DecompilerTextView textView, string title)
+		{
+			var tabState = (TabState)textView.tabState;
+			tabState.Title = title;
+			tabState.InitializeHeader();
+		}
+
+		internal void ClosePopups()
+		{
+			if (textEditorListeners == null)
+				return;
+			foreach (var listener in textEditorListeners)
+				listener.ClosePopup();
+		}
+
+		void BuildThemeMenu()
+		{
 			themeMenu.Items.Clear();
 			foreach (var theme in Themes.AllThemes.OrderBy(x => x.Sort)) {
 				var mi = new MenuItem {
@@ -147,12 +492,13 @@ namespace ICSharpCode.ILSpy
 				};
 				if (Theme == theme)
 					mi.IsChecked = true;
-				mi.Click += new RoutedEventHandler(ThemeMenuItem_Click);
+				mi.Click += ThemeMenuItem_Click;
 				themeMenu.Items.Add(mi);
 			}
 		}
 
-		void ThemeMenuItem_Click(object sender, RoutedEventArgs e) {
+		void ThemeMenuItem_Click(object sender, RoutedEventArgs e)
+		{
 			var mi = (MenuItem)sender;
 			foreach (MenuItem menuItem in themeMenu.Items)
 				menuItem.IsChecked = menuItem == mi;
@@ -171,7 +517,8 @@ namespace ICSharpCode.ILSpy
 
 		void OnThemeUpdated()
 		{
-			decompilerTextView.OnThemeUpdated();
+			foreach (var view in AllTextViews)
+				view.OnThemeUpdated();
 		}
 		
 		void SetWindowBounds(Rect bounds)
@@ -448,7 +795,7 @@ namespace ICSharpCode.ILSpy
 				if (!found) {
 					AvalonEditTextOutput output = new AvalonEditTextOutput();
 					output.Write(string.Format("Cannot find '{0}' in command line specified assemblies.", args.NavigateTo), TextTokenType.Text);
-					decompilerTextView.ShowText(output);
+					SafeActiveTextView.ShowText(output);
 				}
 			} else if (commandLineLoadedAssemblies.Count == 1) {
 				// NavigateTo == null and an assembly was given on the command-line:
@@ -472,6 +819,9 @@ namespace ICSharpCode.ILSpy
 		
 		void OnExportAssembly(Task<ModuleDef> moduleTask, string path)
 		{
+			var textView = ActiveTextView;
+			if (textView == null)
+				return;
 			AssemblyTreeNode asmNode = assemblyListTreeNode.FindModuleNode(moduleTask.Result);
 			if (asmNode != null) {
 				string file = DecompilerTextView.CleanUpName(asmNode.LoadedAssembly.ShortName);
@@ -483,7 +833,7 @@ namespace ICSharpCode.ILSpy
 					Directory.CreateDirectory(options.SaveAsProjectDirectory);
 				}
 				string fullFile = Path.Combine(options.SaveAsProjectDirectory, file + language.ProjectFileExtension);
-				TextView.SaveToDisk(language, new[] { asmNode }, options, fullFile);
+				textView.SaveToDisk(language, new[] { asmNode }, options, fullFile);
 			}
 		}
 
@@ -498,6 +848,8 @@ namespace ICSharpCode.ILSpy
 
 		void MainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
+			ContextMenuProvider.Add(treeView);
+			ContextMenuProvider.Add(tabControl);
 			BuildThemeMenu();
 			OnThemeUpdated();
 
@@ -520,27 +872,24 @@ namespace ICSharpCode.ILSpy
 			
 			HandleCommandLineArgumentsAfterShowList(App.CommandLineArguments);
 			if (App.CommandLineArguments.NavigateTo == null && App.CommandLineArguments.AssembliesToLoad.Count != 1) {
-				SharpTreeNode node = null;
-				if (sessionSettings.ActiveTreeViewPath != null) {
-					node = FindNodeByPath(sessionSettings.ActiveTreeViewPath, true);
-					if (node == this.assemblyListTreeNode & sessionSettings.ActiveAutoLoadedAssembly != null) {
-						this.assemblyList.OpenAssembly(sessionSettings.ActiveAutoLoadedAssembly, true);
-						node = FindNodeByPath(sessionSettings.ActiveTreeViewPath, true);
-					}
+				if (ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.RestoreTabsAtStartup) {
+					foreach (var savedState in sessionSettings.SavedTabStates)
+						CreateTabState(savedState);
+					if (!sessionSettings.TabsFound)
+						AboutPage.Display(SafeActiveTextView);
+
+					int selectedIndex = unchecked((uint)sessionSettings.ActiveTabIndex) < (uint)tabControl.Items.Count ?
+								sessionSettings.ActiveTabIndex : tabControl.Items.Count == 0 ? -1 : 0;
+					tabControl.SelectedIndex = selectedIndex;
 				}
-				if (node != null) {
-					SelectNode(node);
-					
-					startNode = node;
-					decompilerTextView.OnShowOutput += decompilerTextView_OnShowOutput;
-				} else {
-					AboutPage.Display(decompilerTextView);
+				else {
+					AboutPage.Display(SafeActiveTextView);
 				}
 			}
 			
 			AvalonEditTextOutput output = new AvalonEditTextOutput();
 			if (FormatExceptions(App.StartupExceptions.ToArray(), output))
-				decompilerTextView.ShowText(output);
+				SafeActiveTextView.ShowText(output);
 
 			if (topPane.Content == null) {
 				var pane = GetPane(topPane, sessionSettings.TopPaneSettings.Name);
@@ -572,38 +921,6 @@ namespace ICSharpCode.ILSpy
 					return pane;
 			}
 			return null;
-		}
-
-		void decompilerTextView_OnShowOutput(object sender, DecompilerTextView.ShowOutputEventArgs e)
-		{
-			decompilerTextView.OnShowOutput -= decompilerTextView_OnShowOutput;
-			if (startNode == null)
-				return;
-			var node = startNode;
-			startNode = null;
-			if (e.Nodes == null || e.Nodes.Length != 1 || e.Nodes[0] != node)
-				return;
-
-			if (IsValid(sessionSettings.EditorPositionState))
-				decompilerTextView.EditorPositionState = sessionSettings.EditorPositionState;
-		}
-		SharpTreeNode startNode;
-
-		bool IsValid(EditorPositionState state)
-		{
-			if (state.VerticalOffset < 0 || state.HorizontalOffset < 0)
-				return false;
-			if (state.DesiredXPos < 0)
-				return false;
-			if (state.TextViewPosition.Line < 1 || state.TextViewPosition.Column < 1)
-				return false;
-			if (state.TextViewPosition.VisualColumn < -1)
-				return false;
-
-			if (state.TextViewPosition.Line > TextView.TextEditor.LineCount)
-				return false;
-
-			return true;
 		}
 		
 		bool FormatExceptions(App.ExceptionData[] exceptions, ITextOutput output)
@@ -678,8 +995,13 @@ namespace ICSharpCode.ILSpy
 			// will never match again so shouldn't be in the cache.
 			DecompileCache.Instance.ClearAll();
 
-			history.Clear();
+			RemoveAllTabStates();
 			this.assemblyList = assemblyList;
+
+			// Make sure memory usage doesn't increase out of control. This method allocates lots of
+			// new stuff, but the GC doesn't bother to reclaim that memory for a long time.
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
 			
 			assemblyList.assemblies.CollectionChanged += assemblyList_Assemblies_CollectionChanged;
 			
@@ -692,11 +1014,6 @@ namespace ICSharpCode.ILSpy
 				this.Title = string.Format("dnSpy ({0})", GetCpuType());
 			else
 				this.Title = string.Format("dnSpy ({0}) - {1}", GetCpuType(), assemblyList.ListName);
-
-			// Make sure memory usage doesn't increase out of control. This method allocates lots of
-			// new stuff, but the GC doesn't bother to reclaim that memory for a long time.
-			GC.Collect();
-			GC.WaitForPendingFinalizers();
 		}
 
 		static string GetCpuType()
@@ -706,14 +1023,23 @@ namespace ICSharpCode.ILSpy
 		
 		void assemblyList_Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (e.Action == NotifyCollectionChangedAction.Reset) {
-				history.RemoveAll(_ => true);
-			}
+			if (e.Action == NotifyCollectionChangedAction.Reset)
+				RemoveAllTabStates();
 			if (e.OldItems != null) {
 				var oldAssemblies = new HashSet<LoadedAssembly>(e.OldItems.Cast<LoadedAssembly>());
-				history.RemoveAll(n => n.TreeNodes.Any(
-					nd => nd.AncestorsAndSelf().OfType<AssemblyTreeNode>().Any(
-						a => oldAssemblies.Contains(a.LoadedAssembly))));
+				foreach (var tabState in AllTabStates.ToArray()) {
+					tabState.History.RemoveAll(n => n.TreeNodes.Any(
+						nd => nd.AncestorsAndSelf().OfType<AssemblyTreeNode>().Any(
+							a => oldAssemblies.Contains(a.LoadedAssembly))));
+
+					foreach (var node in tabState.DecompiledNodes) {
+						var asmNode = GetAssemblyTreeNode(node);
+						if (asmNode != null && oldAssemblies.Contains(asmNode.LoadedAssembly)) {
+							RemoveTabState(tabState);
+							break;
+						}
+					}
+				}
 			}
 			if (CurrentAssemblyListChanged != null)
 				CurrentAssemblyListChanged(this, e);
@@ -746,7 +1072,9 @@ namespace ICSharpCode.ILSpy
 		{
 			RefreshTreeViewFilter();
 			if (e.PropertyName == "Language") {
-				DecompileSelectedNodes(recordHistory: false);
+				//TODO: Restore the caret too
+				foreach (var tabState in AllTabStates)
+					DecompileSelectedNodes(tabState, recordHistory: false);
 			}
 		}
 		
@@ -767,11 +1095,18 @@ namespace ICSharpCode.ILSpy
 
 		public void SelectNode(SharpTreeNode obj)
 		{
+			SelectNodeInternal(obj);
+		}
+
+		bool? SelectNodeInternal(SharpTreeNode obj)
+		{
 			if (obj != null) {
 				if (!obj.AncestorsAndSelf().Any(node => node.IsHidden)) {
 					// Set both the selection and focus to ensure that keyboard navigation works as expected.
 					treeView.FocusNode(obj);
+					bool willDecompile = treeView.SelectedItem != obj;
 					treeView.SelectedItem = obj;
+					return willDecompile;
 				} else {
 					MessageBox.Show("Navigation failed because the target is hidden or a compiler-generated class.\n" +
 						"Please disable all filters that might hide the item (i.e. activate " +
@@ -779,56 +1114,38 @@ namespace ICSharpCode.ILSpy
 						"dnSpy", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 				}
 			}
+			return null;
 		}
 		
 		/// <summary>
-		/// Retrieves a node using the .ToString() representations of its ancestors.
+		/// Retrieves a node using the NodePathName property of its ancestors.
 		/// </summary>
-		public SharpTreeNode FindNodeByPath(string[] path, bool returnBestMatch)
+		public ILSpyTreeNode FindNodeByPath(FullNodePathName fullPath)
 		{
-			if (path == null)
-				return null;
-			SharpTreeNode node = treeView.Root;
-			SharpTreeNode bestMatch = node;
-			for (int i = 0; i < path.Length; i++) {
+			var node = (ILSpyTreeNode)treeView.Root;
+			foreach (var name in fullPath.Names) {
 				if (node == null)
 					break;
-				bestMatch = node;
-				((ILSpyTreeNode)node).EnsureChildrenFiltered();
-				if (i <= 1) { // Check if it's the assembly or module nodes
-					var newNode = node.Children.FirstOrDefault(c => c is AssemblyTreeNode && ((AssemblyTreeNode)c).LoadedAssembly.FileName == path[i]);
-					// Should only fail if it's a netmodule
-					if (newNode != null) {
-						node = newNode;
-						continue;
-					}
-				}
-				node = node.Children.FirstOrDefault(c => c.ToString() == path[i]);
+				node.EnsureChildrenFiltered();
+				node = (ILSpyTreeNode)node.Children.FirstOrDefault(c => ((ILSpyTreeNode)c).NodePathName == name);
 			}
-			if (returnBestMatch)
-				return node ?? bestMatch;
-			else
-				return node;
+			return node == treeView.Root ? null : node;
 		}
 		
 		/// <summary>
-		/// Gets the .ToString() representation of the node's ancestors.
+		/// Gets full node path name of the node's ancestors.
 		/// </summary>
-		public string[] GetPathForNode(SharpTreeNode node)
+		public static FullNodePathName GetPathForNode(ILSpyTreeNode node)
 		{
+			var fullPath = new FullNodePathName();
 			if (node == null)
-				return null;
-			List<string> path = new List<string>();
+				return fullPath;
 			while (node.Parent != null) {
-				var asmNode = node as AssemblyTreeNode;
-				if (asmNode != null)
-					path.Add(asmNode.LoadedAssembly.FileName);
-				else
-					path.Add(node.ToString());
-				node = node.Parent;
+				fullPath.Names.Add(node.NodePathName);
+				node = (ILSpyTreeNode)node.Parent;
 			}
-			path.Reverse();
-			return path.ToArray();
+			fullPath.Names.Reverse();
+			return fullPath;
 		}
 		
 		public ILSpyTreeNode FindTreeNode(object reference)
@@ -869,7 +1186,7 @@ namespace ICSharpCode.ILSpy
 		object FixReference(object reference)
 		{
 			IMemberDef member = ResolveReference(reference);
-			if (member != null && ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.AutoFocusTextView) {
+			if (member != null && ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.DecompileFullType) {
 				var type = member.DeclaringType;
 				if (type == null)
 					reference = member;
@@ -889,20 +1206,29 @@ namespace ICSharpCode.ILSpy
 
 		public bool JumpToReference(object reference)
 		{
-			return JumpToReferenceAsyncInternal(true, FixReference(reference), success => GoToLocation(success, ResolveReference(reference)));
+			var tabState = SafeActiveTabState;
+			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), success => GoToLocation(tabState.TextView, success, ResolveReference(reference)));
 		}
 
-		public bool JumpToReference(object reference, Func<TextLocation> getLocation)
+		public bool JumpToReference(DecompilerTextView textView, object reference)
 		{
-			return JumpToReferenceAsyncInternal(true, FixReference(reference), success => GoToLocation(success, getLocation()));
+			var tabState = (TabState)textView.tabState;
+			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), success => GoToLocation(tabState.TextView, success, ResolveReference(reference)));
 		}
 
-		public bool JumpToReference(object reference, Action<bool> onDecompileFinished)
+		public bool JumpToReference(DecompilerTextView textView, object reference, Func<TextLocation> getLocation)
 		{
-			return JumpToReferenceAsyncInternal(true, FixReference(reference), onDecompileFinished);
+			var tabState = (TabState)textView.tabState;
+			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), success => GoToLocation(tabState.TextView, success, getLocation()));
 		}
 
-		void GoToLocation(bool success, object destLoc)
+		public bool JumpToReference(DecompilerTextView textView, object reference, Action<bool> onDecompileFinished)
+		{
+			var tabState = (TabState)textView.tabState;
+			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), onDecompileFinished);
+		}
+
+		void GoToLocation(DecompilerTextView decompilerTextView, bool success, object destLoc)
 		{
 			if (!success || destLoc == null)
 				return;
@@ -911,39 +1237,58 @@ namespace ICSharpCode.ILSpy
 
 		sealed class OnShowOutputHelper
 		{
-			readonly MainWindow mainWindow;
+			DecompilerTextView decompilerTextView;
 			readonly Action<bool> onDecompileFinished;
-			readonly ILSpyTreeNode node;
-			public OnShowOutputHelper(MainWindow mainWindow, Action<bool> onDecompileFinished, ILSpyTreeNode node)
+			readonly ILSpyTreeNode[] nodes;
+			public OnShowOutputHelper(DecompilerTextView decompilerTextView, Action<bool> onDecompileFinished, ILSpyTreeNode node)
+				: this(decompilerTextView, onDecompileFinished, new[] { node })
 			{
-				this.mainWindow = mainWindow;
+			}
+
+			public OnShowOutputHelper(DecompilerTextView decompilerTextView, Action<bool> onDecompileFinished, ILSpyTreeNode[] nodes)
+			{
+				this.decompilerTextView = decompilerTextView;
 				this.onDecompileFinished = onDecompileFinished;
-				this.node = node;
+				this.nodes = nodes;
+				decompilerTextView.OnShowOutput += OnShowOutput;
 			}
 
 			public void OnShowOutput(object sender, DecompilerTextView.ShowOutputEventArgs e)
 			{
-				mainWindow.decompilerTextView.OnShowOutput -= OnShowOutput;
-				bool success = e.Nodes != null && e.Nodes.Length == 1 && e.Nodes[0] == node;
-				onDecompileFinished(success);
+				decompilerTextView.OnShowOutput -= OnShowOutput;
+				bool success = Equals(e.Nodes, nodes);
+				if (onDecompileFinished != null)
+					onDecompileFinished(success);
+			}
+
+			static bool Equals(ILSpyTreeNode[] a, ILSpyTreeNode[] b)
+			{
+				if (a == b)
+					return true;
+				if (a == null || b == null)
+					return false;
+				if (a.Length != b.Length)
+					return false;
+				for (int i = 0; i < a.Length; i++) {
+					if (a[i] != b[i])
+						return false;
+				}
+				return true;
+			}
+
+			public void Abort()
+			{
+				decompilerTextView.OnShowOutput -= OnShowOutput;
+				if (onDecompileFinished != null)
+					onDecompileFinished(false);
 			}
 		}
 
-		bool JumpToReferenceAsyncInternal(bool canLoad, object reference, Action<bool> onDecompileFinished)
+		bool JumpToReferenceAsyncInternal(TabState tabState, bool canLoad, object reference, Action<bool> onDecompileFinished)
 		{
-			decompilationTask = TaskHelper.CompletedTask;
 			ILSpyTreeNode treeNode = FindTreeNode(reference);
 			if (treeNode != null) {
-				if (treeView.SelectedItem == treeNode)
-					onDecompileFinished(true);
-				else {
-					if (onDecompileFinished != null) {
-						var helper = new OnShowOutputHelper(this, onDecompileFinished, treeNode);
-						decompilerTextView.OnShowOutput += helper.OnShowOutput;
-					}
-					SelectNode(treeNode);
-				}
-				return true;
+				return DecompileTreeNode(tabState, treeNode, onDecompileFinished);
 			} else if (reference is dnlib.DotNet.Emit.OpCode) {
 				string link = "http://msdn.microsoft.com/library/system.reflection.emit.opcodes." + ((dnlib.DotNet.Emit.OpCode)reference).Code.ToString().ToLowerInvariant() + ".aspx";
 				try {
@@ -973,7 +1318,7 @@ namespace ICSharpCode.ILSpy
 							if (modDef != null) {
 								member = modDef.ResolveToken(member.MDToken) as IMemberDef;
 								if (member != null) // should never fail
-									return JumpToReferenceAsyncInternal(false, member, onDecompileFinished);
+									return JumpToReferenceAsyncInternal(tabState, false, member, onDecompileFinished);
 							}
 
 							break;
@@ -987,10 +1332,36 @@ namespace ICSharpCode.ILSpy
 				var loadedAsm = new LoadedAssembly(assemblyList, mainModule);
 				loadedAsm.IsAutoLoaded = true;
 				assemblyList.AddAssembly(loadedAsm, true);
-				return JumpToReferenceAsyncInternal(false, reference, onDecompileFinished);
+				return JumpToReferenceAsyncInternal(tabState, false, reference, onDecompileFinished);
 			}
 			else
 				return false;
+		}
+
+		bool DecompileTreeNode(TabState tabState, ILSpyTreeNode treeNode, Action<bool> onDecompileFinished)
+		{
+			if (tabState.IsSameNode(treeNode) && treeView.SelectedItems.Count == 1 && treeView.SelectedItems[0] == treeNode) {
+				// No need to decompile it again. The contents is already visible.
+				onDecompileFinished(true);
+			}
+			else {
+				// Must create it before setting the new node since that will trigger a decompile
+				var helper = new OnShowOutputHelper(tabState.TextView, onDecompileFinished, treeNode);
+				bool? willDecompile = SelectNodeInternal(treeNode);
+				if (willDecompile == true) {
+					// It will be (or has already been) decompiled
+				}
+				else if (willDecompile == false) {
+					// The node is selected in the treeview but the current text editor doesn't
+					// contain the decompiled code. Force a decompile.
+					DecompileNodes(tabState, null, true, new[] { treeNode });
+				}
+				else {
+					// It's a hidden member
+					helper.Abort();
+				}
+			}
+			return true;
 		}
 
 		IEnumerable<ModuleDef> GetAssemblyModules(ModuleDef module)
@@ -1045,9 +1416,24 @@ namespace ICSharpCode.ILSpy
 		
 		void RefreshCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			var path = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
-			ShowAssemblyList(assemblyListManager.LoadList(ILSpySettings.Load(), assemblyList.ListName));
-			SelectNode(FindNodeByPath(path, true));
+			int selectedIndex = tabControl.SelectedIndex;
+
+			var allTabsState = new List<SavedTabState>();
+			foreach (var tabState in AllTabStates.ToArray())
+				allTabsState.Add(CreateSavedTabState(tabState));
+
+			try {
+				TreeView_SelectionChanged_ignore = true;
+				ShowAssemblyList(assemblyListManager.LoadList(ILSpySettings.Load(), assemblyList.ListName));
+			}
+			finally {
+				TreeView_SelectionChanged_ignore = false;
+			}
+
+			foreach (var savedState in allTabsState)
+				CreateTabState(savedState);
+
+			tabControl.SelectedIndex = selectedIndex;
 		}
 
 		private void RefreshCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -1063,55 +1449,66 @@ namespace ICSharpCode.ILSpy
 		#endregion
 		
 		#region Decompile (TreeView_SelectionChanged)
+		bool TreeView_SelectionChanged_ignore = false;
 		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			DecompileSelectedNodes();
+			if (TreeView_SelectionChanged_ignore)
+				return;
+			DecompileSelectedNodes(SafeActiveTabState);
 
 			if (SelectionChanged != null)
 				SelectionChanged(sender, e);
 		}
 		
-		Task decompilationTask;
-		bool ignoreDecompilationRequests;
-		
-		void DecompileSelectedNodes(DecompilerTextViewState state = null, bool recordHistory = true)
+		void DecompileSelectedNodes(TabState tabState, DecompilerTextViewState state = null, bool recordHistory = true)
 		{
-			if (ignoreDecompilationRequests)
+			DecompileNodes(tabState, state, recordHistory, this.SelectedNodes.ToArray());
+		}
+
+		void DecompileNodes(TabState tabState, DecompilerTextViewState state, bool recordHistory, ILSpyTreeNode[] nodes)
+		{
+			if (tabState.ignoreDecompilationRequests)
 				return;
+			if (tabState.IsSameNodes(nodes))
+				return;
+			tabState.DecompiledNodes = nodes ?? new ILSpyTreeNode[0];
+			tabState.Title = null;
+			tabState.InitializeHeader();
 			
 			if (recordHistory) {
-				var dtState = decompilerTextView.GetState();
+				var dtState = tabState.TextView.GetState();
 				if(dtState != null)
-					history.UpdateCurrent(new NavigationState(dtState));
-				history.Record(new NavigationState(treeView.SelectedItems.OfType<SharpTreeNode>()));
+					tabState.History.UpdateCurrent(new NavigationState(dtState));
+				tabState.History.Record(new NavigationState(treeView.SelectedItems.OfType<SharpTreeNode>()));
 			}
-			
-			if (treeView.SelectedItems.Count == 1) {
-				ILSpyTreeNode node = treeView.SelectedItem as ILSpyTreeNode;
-				if (node != null && node.View(decompilerTextView))
-					return;
+
+			if (nodes.Length == 1 && nodes[0].View(tabState.TextView)) {
+				tabState.TextView.CancelDecompileAsync();
+				return;
 			}
-			decompilationTask = decompilerTextView.DecompileAsync(this.CurrentLanguage, this.SelectedNodes, new DecompilationOptions() { TextViewState = state });
+			tabState.TextView.DecompileAsync(this.CurrentLanguage, nodes, new DecompilationOptions() { TextViewState = state });
 		}
 		
 		void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
+			var textView = ActiveTextView;
+			if (textView == null)
+				return;
 			if (this.SelectedNodes.Count() == 1) {
-				if (this.SelectedNodes.Single().Save(this.TextView))
+				if (this.SelectedNodes.Single().Save(textView))
 					return;
 			}
-			this.TextView.SaveToDisk(this.CurrentLanguage,
+			textView.SaveToDisk(this.CurrentLanguage,
 				this.SelectedNodes,
 				new DecompilationOptions() { FullDecompilation = true });
 		}
 		
 		public void RefreshDecompiledView()
 		{
-			DecompileSelectedNodes();
-		}
-		
-		public DecompilerTextView TextView {
-			get { return decompilerTextView; }
+			foreach (var tabState in AllTabStates) {
+				//TODO: Restore the caret too
+				DecompileSelectedNodes(tabState);
+			}
 		}
 		
 		public Language CurrentLanguage {
@@ -1132,49 +1529,57 @@ namespace ICSharpCode.ILSpy
 		#region Back/Forward navigation
 		void BackCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
+			var tabState = ActiveTabState;
 			e.Handled = true;
-			e.CanExecute = history.CanNavigateBack;
+			e.CanExecute = tabState != null && tabState.History.CanNavigateBack;
 		}
 		
 		void BackCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (history.CanNavigateBack) {
+			var tabState = ActiveTabState;
+			if (tabState == null)
+				return;
+			if (tabState.History.CanNavigateBack) {
 				e.Handled = true;
-				NavigateHistory(false);
+				NavigateHistory(tabState, false);
 			}
 		}
 		
 		void ForwardCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
+			var tabState = ActiveTabState;
 			e.Handled = true;
-			e.CanExecute = history.CanNavigateForward;
+			e.CanExecute = tabState != null && tabState.History.CanNavigateForward;
 		}
 		
 		void ForwardCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (history.CanNavigateForward) {
+			var tabState = ActiveTabState;
+			if (tabState == null)
+				return;
+			if (tabState.History.CanNavigateForward) {
 				e.Handled = true;
-				NavigateHistory(true);
+				NavigateHistory(tabState, true);
 			}
 		}
 		
-		void NavigateHistory(bool forward)
+		void NavigateHistory(TabState tabState, bool forward)
 		{
-			var dtState = decompilerTextView.GetState();
+			var dtState = tabState.TextView.GetState();
 			if(dtState != null)
-				history.UpdateCurrent(new NavigationState(dtState));
-			var newState = forward ? history.GoForward() : history.GoBack();
-			
-			ignoreDecompilationRequests = true;
+				tabState.History.UpdateCurrent(new NavigationState(dtState));
+			var newState = forward ? tabState.History.GoForward() : tabState.History.GoBack();
+
+			tabState.ignoreDecompilationRequests = true;
 			treeView.SelectedItems.Clear();
+			if (newState.TreeNodes.Any())
+				treeView.FocusNode(newState.TreeNodes.First());
 			foreach (var node in newState.TreeNodes)
 			{
 				treeView.SelectedItems.Add(node);
 			}
-			if (newState.TreeNodes.Any())
-				treeView.FocusNode(newState.TreeNodes.First());
-			ignoreDecompilationRequests = false;
-			DecompileSelectedNodes(newState.ViewState, false);
+			tabState.ignoreDecompilationRequests = false;
+			DecompileSelectedNodes(tabState, newState.ViewState, false);
 		}
 		
 		#endregion
@@ -1192,16 +1597,88 @@ namespace ICSharpCode.ILSpy
 			base.OnClosing(e);
 			sessionSettings.ThemeName = Theme.Name;
 			sessionSettings.ActiveAssemblyList = assemblyList.ListName;
-			sessionSettings.ActiveTreeViewPath = GetPathForNode(treeView.SelectedItem as SharpTreeNode);
-			sessionSettings.ActiveAutoLoadedAssembly = GetAutoLoadedAssemblyNode(treeView.SelectedItem as SharpTreeNode);
 			sessionSettings.WindowBounds = this.RestoreBounds;
 			sessionSettings.LeftColumnWidth = leftColumn.Width.Value;
-			sessionSettings.WordWrap = decompilerTextView.TextEditor.WordWrap;
-			sessionSettings.HighlightCurrentLine = decompilerTextView.TextEditor.Options.HighlightCurrentLine;
-			sessionSettings.EditorPositionState = TextView.EditorPositionState;
 			sessionSettings.TopPaneSettings = GetPaneSettings(topPane, topPaneRow);
 			sessionSettings.BottomPaneSettings = GetPaneSettings(bottomPane, bottomPaneRow);
+
+			var allTabStates = AllTabStates.ToArray();
+			sessionSettings.ActiveTabIndex = tabControl.SelectedIndex;
+			sessionSettings.SavedTabStates = new SavedTabState[allTabStates.Length];
+			for (int i = 0; i < allTabStates.Length; i++)
+				sessionSettings.SavedTabStates[i] = CreateSavedTabState(allTabStates[i]);
+
 			sessionSettings.Save();
+		}
+
+		static SavedTabState CreateSavedTabState(TabState tabState)
+		{
+			var savedState = new SavedTabState();
+			savedState.Paths = new List<FullNodePathName>();
+			savedState.ActiveAutoLoadedAssemblies = new List<string>();
+			foreach (var node in tabState.DecompiledNodes) {
+				savedState.Paths.Add(GetPathForNode(node));
+				var autoAsm = GetAutoLoadedAssemblyNode(node);
+				if (!string.IsNullOrEmpty(autoAsm))
+					savedState.ActiveAutoLoadedAssemblies.Add(autoAsm);
+			}
+			savedState.EditorPositionState = tabState.TextView.EditorPositionState;
+			return savedState;
+		}
+
+		TabState CreateTabState(SavedTabState savedState, IList<ILSpyTreeNode> newNodes = null)
+		{
+			var tabState = CreateNewTabState();
+			var nodes = new List<ILSpyTreeNode>(savedState.Paths.Count);
+			if (newNodes != null)
+				nodes.AddRange(newNodes);
+			else {
+				foreach (var asm in savedState.ActiveAutoLoadedAssemblies)
+					this.assemblyList.OpenAssembly(asm, true);
+				foreach (var path in savedState.Paths) {
+					var node = FindNodeByPath(path);
+					if (node == null) {
+						nodes = null;
+						break;
+					}
+					nodes.Add(node);
+				}
+			}
+			if (nodes != null) {
+				var tmpNodes = nodes.ToArray();
+				var helper = new OnShowOutputHelper(tabState.TextView, success => decompilerTextView_OnShowOutput(success, tabState.TextView, savedState), tmpNodes);
+				DecompileNodes(tabState, null, true, tmpNodes);
+			}
+			else
+				AboutPage.Display(tabState.TextView);
+
+			return tabState;
+		}
+
+		void decompilerTextView_OnShowOutput(bool success, DecompilerTextView textView, SavedTabState savedState)
+		{
+			if (!success)
+				return;
+
+			if (IsValid(textView, savedState.EditorPositionState))
+				textView.EditorPositionState = savedState.EditorPositionState;
+		}
+
+		bool IsValid(DecompilerTextView decompilerTextView, EditorPositionState state)
+		{
+			if (state.VerticalOffset < 0 || state.HorizontalOffset < 0)
+				return false;
+			if (state.DesiredXPos < 0)
+				return false;
+			if (state.TextViewPosition.Line < 1 || state.TextViewPosition.Column < 1)
+				return false;
+			if (state.TextViewPosition.VisualColumn < -1)
+				return false;
+
+			if (state.TextViewPosition.Line > decompilerTextView.TextEditor.LineCount)
+				return false;
+
+			return true;
 		}
 
 		static SessionSettings.PaneSettings GetPaneSettings(DockedPane dockedPane, RowDefinition row)
@@ -1226,15 +1703,23 @@ namespace ICSharpCode.ILSpy
 			return pane == null ? string.Empty : pane.PaneName;
 		}
 
-		private string GetAutoLoadedAssemblyNode(SharpTreeNode node)
+		static AssemblyTreeNode GetAssemblyTreeNode(SharpTreeNode node)
 		{
 			if (node == null)
 				return null;
 			while (!(node is TreeNodes.AssemblyTreeNode) && node.Parent != null) {
 				node = node.Parent;
 			}
-			//this should be an assembly node
-			var assyNode = node as TreeNodes.AssemblyTreeNode;
+			if (node.Parent is AssemblyTreeNode)
+				node = node.Parent;
+			return node as AssemblyTreeNode;
+		}
+
+		static string GetAutoLoadedAssemblyNode(SharpTreeNode node)
+		{
+			var assyNode = GetAssemblyTreeNode(node);
+			if (assyNode == null)
+				return null;
 			var loadedAssy = assyNode.LoadedAssembly;
 			if (!(loadedAssy.IsLoaded && loadedAssy.IsAutoLoaded))
 				return null;
@@ -1381,6 +1866,10 @@ namespace ICSharpCode.ILSpy
 
 		private void GoToLineExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
+			var decompilerTextView = ActiveTextView;
+			if (decompilerTextView == null)
+				return;
+
 			var ask = new AskForInput();
 			ask.Owner = this;
 			ask.Title = "Go to Line";
@@ -1415,6 +1904,210 @@ namespace ICSharpCode.ILSpy
 		{
 			int val;
 			return int.TryParse(valText, out val) ? (int?)val : null;
+		}
+
+		private void OpenNewTabExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			OpenNewTab();
+		}
+
+		private void CloseActiveTabExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			CloseActiveTab();
+		}
+
+		private void CloseActiveTabCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = CloseActiveTabPossible();
+		}
+
+		// This method is only executed when the text editor does NOT have keyboard focus
+		void SelectTab(int index)
+		{
+			if (tabControl.Items.Count == 0)
+				return;
+			if (index < 0)
+				index += tabControl.Items.Count;
+			index = index % tabControl.Items.Count;
+			tabControl.SelectedIndex = index;
+		}
+
+		void SelectNextTab()
+		{
+			SelectTab(tabControl.SelectedIndex + 1);
+		}
+
+		bool SelectNextTabPossible()
+		{
+			return tabControl.Items.Count > 1;
+		}
+
+		void SelectPreviousTab()
+		{
+			SelectTab(tabControl.SelectedIndex - 1);
+		}
+
+		bool SelectPreviousTabPossible()
+		{
+			return tabControl.Items.Count > 1;
+		}
+
+		private void SelectNextTabExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			SelectNextTab();
+		}
+
+		private void SelectNextTabCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = SelectNextTabPossible();
+		}
+
+		private void SelectPrevTabExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			SelectPreviousTab();
+		}
+
+		private void SelectPrevTabCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = SelectPreviousTabPossible();
+		}
+
+		TabState CloneTab(TabState tabState)
+		{
+			if (tabState == null)
+				return null;
+			return CreateTabState(CreateSavedTabState(tabState), tabState.DecompiledNodes);
+		}
+
+		internal void OpenNewTab()
+		{
+			TabState tabState;
+			var currenTabState = ActiveTabState;
+			if (currenTabState != null && !ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.NewEmptyTabs)
+				tabState = CloneTab(currenTabState);
+			else
+				tabState = CreateNewTabState();
+
+			tabControl.SelectedItem = tabState.TabItem;
+		}
+
+		internal void CloseActiveTab()
+		{
+			RemoveTabState(ActiveTabState);
+		}
+
+		internal bool CloseActiveTabPossible()
+		{
+			return ActiveTabState != null;
+		}
+
+		internal void CloseAllButActiveTab()
+		{
+			var activeTab = ActiveTabState;
+			if (activeTab == null)
+				return;
+			foreach (var tabState in AllTabStates.ToArray()) {
+				if (tabState != activeTab)
+					RemoveTabState(tabState);
+			}
+		}
+
+		internal bool CloseAllButActiveTabPossible()
+		{
+			return tabControl.Items.Count > 1;
+		}
+
+		internal void CloneActiveTab()
+		{
+			var tabState = CloneTab(ActiveTabState);
+			if (tabState != null)
+				tabControl.SelectedItem = tabState.TabItem;
+		}
+
+		internal bool CloneActiveTabPossible()
+		{
+			return ActiveTabState != null;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Open in _New Tab", Order = 0.8, InputGestureText = "Ctrl+T")]
+	class OpenInNewTabContextMenuEntry : IContextMenuEntry
+	{
+		public bool IsVisible(TextViewContext context)
+		{
+			return context.SelectedTreeNodes != null &&
+				context.SelectedTreeNodes.Length > 0 &&
+				context.TreeView == MainWindow.Instance.treeView;
+		}
+
+		public bool IsEnabled(TextViewContext context)
+		{
+			return true;
+		}
+
+		public void Execute(TextViewContext context)
+		{
+			MainWindow.Instance.OpenNewTab();
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "_Close", Order = 0.5, InputGestureText = "Ctrl+W", Category = "Tabs")]
+	class CloseTabContextMenuEntry : IContextMenuEntry
+	{
+		public bool IsVisible(TextViewContext context)
+		{
+			return context.TabControl == MainWindow.Instance.tabControl &&
+				MainWindow.Instance.CloseActiveTabPossible();
+		}
+
+		public bool IsEnabled(TextViewContext context)
+		{
+			return true;
+		}
+
+		public void Execute(TextViewContext context)
+		{
+			MainWindow.Instance.CloseActiveTab();
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Close _All But This", Order = 0.6, Category = "Tabs")]
+	class CloseAllTabsButThisContextMenuEntry : IContextMenuEntry
+	{
+		public bool IsVisible(TextViewContext context)
+		{
+			return context.TabControl == MainWindow.Instance.tabControl &&
+				MainWindow.Instance.CloseAllButActiveTabPossible();
+		}
+
+		public bool IsEnabled(TextViewContext context)
+		{
+			return true;
+		}
+
+		public void Execute(TextViewContext context)
+		{
+			MainWindow.Instance.CloseAllButActiveTab();
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Clone _Tab", Order = 0.7, Category = "Tabs")]
+	class CloneTabContextMenuEntry : IContextMenuEntry
+	{
+		public bool IsVisible(TextViewContext context)
+		{
+			return context.TabControl == MainWindow.Instance.tabControl &&
+				MainWindow.Instance.CloneActiveTabPossible();
+		}
+
+		public bool IsEnabled(TextViewContext context)
+		{
+			return true;
+		}
+
+		public void Execute(TextViewContext context)
+		{
+			MainWindow.Instance.CloneActiveTab();
 		}
 	}
 }

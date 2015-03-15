@@ -25,15 +25,36 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 	public class IconBarMargin : AbstractMargin, IDisposable
 	{
 		readonly IconBarManager manager;
+		readonly DecompilerTextView decompilerTextView;
 		
 		public IconBarMargin(IconBarManager manager, DecompilerTextView decompilerTextView)
 		{
-			BookmarkManager.Added += new BookmarkEventHandler(OnBookmarkAdded);
-			BookmarkManager.Removed += new BookmarkEventHandler(OnBookmarkRemoved);
-			decompilerTextView.OnShowOutput += delegate { SyncBookmarks(); };
+			this.decompilerTextView = decompilerTextView;
+			BookmarkManager.Added += OnBookmarkAdded;
+			BookmarkManager.Removed += OnBookmarkRemoved;
+			decompilerTextView.OnShowOutput += decompilerTextView_OnShowOutput;
+			MainWindow.Instance.ExecuteWhenLoaded(() => {
+				MainWindow.Instance.OnDecompilerTextViewRemoved += OnDecompilerTextViewRemoved;
+			});
 			
 			this.manager = manager;
 			SyncBookmarks();
+		}
+
+		void decompilerTextView_OnShowOutput(object sender, DecompilerTextView.ShowOutputEventArgs e)
+		{
+			SyncBookmarks();
+		}
+
+		void OnDecompilerTextViewRemoved(object sender, MainWindow.DecompilerTextViewEventArgs e)
+		{
+			if (e.DecompilerTextView != decompilerTextView)
+				return;
+
+			BookmarkManager.Added -= OnBookmarkAdded;
+			BookmarkManager.Removed -= OnBookmarkRemoved;
+			decompilerTextView.OnShowOutput -= decompilerTextView_OnShowOutput;
+			MainWindow.Instance.OnDecompilerTextViewRemoved -= OnDecompilerTextViewRemoved;
 		}
 		
 		public IconBarManager Manager {
@@ -72,9 +93,9 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			if (textView != null && textView.VisualLinesValid) {
 				// create a dictionary line number => first bookmark
 				Dictionary<int, List<IBookmark>> bookmarkDict = new Dictionary<int, List<IBookmark>>();
+				var cm = decompilerTextView.CodeMappings;
 				foreach (var bm in BookmarkManager.Bookmarks) {
 					if (bm is BreakpointBookmark) {
-						var cm = DebugInformation.CodeMappings;
 						if (cm == null || cm.Count == 0 || !cm.ContainsKey(((BreakpointBookmark)bm).MethodKey))
 							continue;
 					}
@@ -125,12 +146,12 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		
 		IBookmark GetBookmarkFromLine(int line)
 		{
+			var cm = decompilerTextView.CodeMappings;
 			BookmarkBase result = null;
 			foreach (BookmarkBase bm in BookmarkManager.Bookmarks) {
 				if (bm.LineNumber != line)
 					continue;
 				if (bm is BreakpointBookmark) {
-					var cm = DebugInformation.CodeMappings;
 					if (cm == null || cm.Count == 0 || !cm.ContainsKey(((BreakpointBookmark)bm).MethodKey))
 						continue;
 				}
@@ -183,7 +204,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			var breakpoint = args.Bookmark as BreakpointBookmark;
 			if (null == breakpoint)
 				return;
-			var storage = DebugInformation.CodeMappings;
+			var storage = decompilerTextView.CodeMappings;
 			if (storage == null || storage.Count == 0)
 				return;
 			var key = new MethodKey(breakpoint.MemberReference);
@@ -200,7 +221,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			var breakpoint = args.Bookmark as BreakpointBookmark;
 			if (null == breakpoint)
 				return;
-			var storage = DebugInformation.CodeMappings;
+			var storage = decompilerTextView.CodeMappings;
 			if (storage == null || storage.Count == 0)
 				return;
 			var key = new MethodKey(breakpoint.MemberReference);
@@ -213,7 +234,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		
 		void SyncBookmarks()
 		{
-			var storage = DebugInformation.CodeMappings;
+			var storage = decompilerTextView.CodeMappings;
 			if (storage != null && storage.Count != 0) {
 				for (int i = BookmarkManager.Bookmarks.Count - 1; i >= 0; --i) {
 					var breakpoint = BookmarkManager.Bookmarks[i] as BreakpointBookmark;

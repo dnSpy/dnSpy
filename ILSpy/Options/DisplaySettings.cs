@@ -148,6 +148,32 @@ namespace ICSharpCode.ILSpy.Options
 			}
 		}
 
+		bool newEmptyTabs;
+
+		public bool NewEmptyTabs
+		{
+			get { return newEmptyTabs; }
+			set {
+				if (newEmptyTabs != value) {
+					newEmptyTabs = value;
+					OnPropertyChanged("NewEmptyTabs");
+				}
+			}
+		}
+
+		bool restoreTabsAtStartup;
+
+		public bool RestoreTabsAtStartup
+		{
+			get { return restoreTabsAtStartup; }
+			set {
+				if (restoreTabsAtStartup != value) {
+					restoreTabsAtStartup = value;
+					OnPropertyChanged("RestoreTabsAtStartup");
+				}
+			}
+		}
+
 		public void CopyValues(DisplaySettings s)
 		{
 			this.SelectedFont = s.selectedFont;
@@ -158,6 +184,8 @@ namespace ICSharpCode.ILSpy.Options
 			this.ShowAssemblyPublicKeyToken = s.showAssemblyPublicKeyToken;
 			this.AutoFocusTextView = s.autoFocusTextView;
 			this.DecompileFullType = s.decompileFullType;
+			this.NewEmptyTabs = s.newEmptyTabs;
+			this.RestoreTabsAtStartup = s.restoreTabsAtStartup;
 		}
 	}
 }

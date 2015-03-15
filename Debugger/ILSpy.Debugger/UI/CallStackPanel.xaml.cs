@@ -97,7 +97,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 
 			DebuggerService.DebugStarted += new EventHandler(OnDebugStarted);
 			DebuggerService.DebugStopped += new EventHandler(OnDebugStopped);
-			StackFrameStatementBookmark.SelectedFrameChanged += new EventHandler(OnSelectedFrameChanged);
+			StackFrameStatementManager.SelectedFrameChanged += OnSelectedFrameChanged;
 			if (DebuggerService.IsDebuggerStarted)
 				OnDebugStarted(null, EventArgs.Empty);
 		}
@@ -106,7 +106,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		{
             DebuggerService.DebugStarted -= new EventHandler(OnDebugStarted);
             DebuggerService.DebugStopped -= new EventHandler(OnDebugStopped);
-			StackFrameStatementBookmark.SelectedFrameChanged -= new EventHandler(OnSelectedFrameChanged);
+			StackFrameStatementManager.SelectedFrameChanged -= OnSelectedFrameChanged;
             if (null != m_currentDebugger)
                 OnDebugStopped(null, EventArgs.Empty);
             
@@ -207,7 +207,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 					ILOffsetString = frame.IP.IsValid ? string.Format("0x{0:X4}", frame.IP.Offset) : "????",
 					MethodKey = frame.MethodInfo.ToMethodKey(),
 				};
-				if (frameNumber == StackFrameStatementBookmark.SelectedFrame)
+				if (frameNumber == StackFrameStatementManager.SelectedFrame)
 					item.Image = ImageService.CurrentLine;
 				frameNumber++;
 				var module = frame.MethodInfo.DebugModule;
@@ -292,7 +292,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		{
             if (null == item)
             	return;
-			StackFrameStatementBookmark.SelectedFrame = item.FrameNumber;
+			StackFrameStatementManager.SelectedFrame = item.FrameNumber;
             
             var foundAssembly = MainWindow.Instance.CurrentAssemblyList.OpenAssembly(item.Frame.MethodInfo.DebugModule.FullPath, true);
             if (null == foundAssembly)
@@ -304,8 +304,9 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 			IMemberRef mr = module.ResolveToken(item.Token) as IMemberRef;
 			if (mr == null)
 				return;
-			if (DebugUtils.JumpTo(mr, item.MethodKey, item.ILOffset))
-				MainWindow.Instance.TextView.TextEditor.TextArea.Focus();
+			var textView = MainWindow.Instance.SafeActiveTextView;
+			if (DebugUtils.JumpTo(textView, mr, item.MethodKey, item.ILOffset))
+				textView.TextEditor.TextArea.Focus();
         }
 
 		void view_KeyDown(object sender, KeyEventArgs e)

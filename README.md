@@ -7,8 +7,9 @@ Extra features present in dnSpy
 ===============================
 
 * More stable, can handle bad input that will crash ILSpy
-* Updated syntax highlighting code
 * Debugger
+* Tabs
+* Updated syntax highlighting code
 * Multifile assembly support
 * Command line decompiler (dnspc.exe)
 * Other minor updates / fixes

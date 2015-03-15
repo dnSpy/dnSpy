@@ -41,13 +41,10 @@ namespace ICSharpCode.ILSpy
 	[ExportMainMenuCommand(Menu = "_Help", Header = "_About", MenuOrder = 99999)]
 	sealed class AboutPage : SimpleCommand
 	{
-		[Import]
-		DecompilerTextView decompilerTextView = null;
-		
 		public override void Execute(object parameter)
 		{
 			MainWindow.Instance.UnselectAll();
-			Display(decompilerTextView);
+			Display(MainWindow.Instance.SafeActiveTextView);
 		}
 		
 		static readonly Uri UpdateUrl = new Uri("http://www.ilspy.net/updates.xml");
@@ -100,6 +97,7 @@ namespace ICSharpCode.ILSpy
 			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("MIT License", "resource:license.txt"));
 			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("LGPL", "resource:LGPL.txt"));
 			textView.ShowText(output);
+			MainWindow.Instance.SetTitle(textView, "About");
 			
 			//reset icon bar
 			textView.manager.Bookmarks.Clear();

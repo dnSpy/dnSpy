@@ -19,6 +19,7 @@ using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.Debugger.UI;
+using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
@@ -264,14 +265,9 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			SendWpfWindowPos(inst, HWND_TOP); inst.Activate();
 			
 			if (DebugInformation.MustJumpToReference)
-				JumpToCurrentStatement();
+				DebugUtils.JumpToCurrentStatement(MainWindow.Instance.SafeActiveTextView);
 			
 			inst.SetStatus("Debugging...", Brushes.Red);
-		}
-
-		static void JumpToCurrentStatement()
-		{
-			DebugUtils.JumpToCurrentStatement();
 		}
 
 		void IPlugin.OnLoaded()
@@ -364,7 +360,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		{
 			var debugger = DebuggerService.CurrentDebugger;
 			if (debugger != null && debugger.IsDebugging && !debugger.IsProcessRunning) {
-				StackFrameStatementBookmark.Remove(true);
+				StackFrameStatementManager.Remove(true);
 				debugger.Continue();
 				MainWindow.Instance.SetStatus("Running...", Brushes.Black);
 				return true;
@@ -439,8 +435,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		public static bool DebugToggleBreakpoint()
 		{
 			if (DebuggerService.CurrentDebugger != null) {
-				var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
-				BreakpointHelper.Toggle(location.Line, location.Column);
+				var textView = MainWindow.Instance.ActiveTextView;
+				if (textView == null)
+					return false;
+				var location = textView.TextEditor.TextArea.Caret.Location;
+				BreakpointHelper.Toggle(textView, location.Line, location.Column);
 				return true;
 			}
 
@@ -449,8 +448,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public static bool DebugEnableDisableBreakpoint()
 		{
-			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
-			var bpm = BreakpointHelper.GetBreakpointBookmark(location.Line, location.Column);
+			var textView = MainWindow.Instance.ActiveTextView;
+			if (textView == null)
+				return false;
+			var location = textView.TextEditor.TextArea.Caret.Location;
+			var bpm = BreakpointHelper.GetBreakpointBookmark(textView, location.Line, location.Column);
 			if (bpm != null) {
 				bpm.IsEnabled = !bpm.IsEnabled;
 				return true;
@@ -466,14 +468,18 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public static bool HasBPAtCurrentCaretPosition()
 		{
-			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
-			return BreakpointHelper.GetBreakpointBookmark(location.Line, location.Column) != null;
+			var textView = MainWindow.Instance.ActiveTextView;
+			if (textView == null)
+				return false;
+			var location = textView.TextEditor.TextArea.Caret.Location;
+			return BreakpointHelper.GetBreakpointBookmark(textView, location.Line, location.Column) != null;
 		}
 
 		public static bool DebugShowNextStatement()
 		{
-			if (!TryShowNextStatement()) {
-				JumpToCurrentStatement();
+			var textView = MainWindow.Instance.SafeActiveTextView;
+			if (!TryShowNextStatement(textView)) {
+				DebugUtils.JumpToCurrentStatement(textView);
 				return true;
 			}
 
@@ -487,25 +493,28 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			!DebuggerService.CurrentDebugger.IsProcessRunning;
 		}
 
-		static bool TryShowNextStatement()
+		static bool TryShowNextStatement(DecompilerTextView textView)
 		{
 			if (!DebugShowNextStatementPossible())
 				return false;
 
 			// Always reset the selected frame
-			StackFrameStatementBookmark.SelectedFrame = 0;
+			StackFrameStatementManager.SelectedFrame = 0;
+
+			if (textView == null)
+				return false;
 
 			Tuple<MethodKey, int, IMemberRef> info;
 			MethodKey currentKey;
 			Dictionary<MethodKey, MemberMapping> cm;
-			if (!DebugUtils.VerifyAndGetCurrentDebuggedMethod(out info, out currentKey, out cm))
+			if (!DebugUtils.VerifyAndGetCurrentDebuggedMethod(textView, out info, out currentKey, out cm))
 				return false;
 
 			NR.TextLocation location, endLocation;
 			if (!cm[currentKey].GetInstructionByTokenAndOffset((uint)info.Item2, out location, out endLocation))
 				return false;
 
-			MainWindow.Instance.TextView.ScrollAndMoveCaretTo(location.Line, location.Column);
+			textView.ScrollAndMoveCaretTo(location.Line, location.Column);
 			return true;
 		}
 
@@ -571,15 +580,21 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				return false;
 			}
 
+			var textView = MainWindow.Instance.ActiveTextView;
+			if (textView == null) {
+				errMsg = "No tab is available. Decompile the current method!";
+				return false;
+			}
+
 			Tuple<MethodKey, int, IMemberRef> info;
 			MethodKey currentKey;
 			Dictionary<MethodKey, MemberMapping> cm;
-			if (!DebugUtils.VerifyAndGetCurrentDebuggedMethod(out info, out currentKey, out cm)) {
+			if (!DebugUtils.VerifyAndGetCurrentDebuggedMethod(textView, out info, out currentKey, out cm)) {
 				errMsg = "No debug information found. Make sure that only the debugged method is selected in the treeview (press 'Alt+Num *' to go to current statement)";
 				return false;
 			}
 
-			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
+			var location = textView.TextEditor.TextArea.Caret.Location;
 			mapping = BreakpointHelper.Find(cm, location.Line, location.Column);
 			if (mapping == null) {
 				errMsg = "It's not possible to set the next statement here";
@@ -1008,15 +1023,21 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public void Initialize(TextViewContext context, MenuItem menuItem)
 		{
-			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
-			var bpm = BreakpointHelper.GetBreakpointBookmark(location.Line, location.Column);
+			var textView = MainWindow.Instance.ActiveTextView;
+			if (textView == null)
+				return;
+			var location = textView.TextEditor.TextArea.Caret.Location;
+			var bpm = BreakpointHelper.GetBreakpointBookmark(textView, location.Line, location.Column);
 			menuItem.Header = bpm == null ? "_Add Breakpoint" : "_Clear Breakpoint";
 		}
 
 		bool CanToggleBP()
 		{
-			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
-			return BreakpointHelper.Find(location.Line, location.Column) != null;
+			var textView = MainWindow.Instance.ActiveTextView;
+			if (textView == null)
+				return false;
+			var location = textView.TextEditor.TextArea.Caret.Location;
+			return BreakpointHelper.Find(textView, location.Line, location.Column) != null;
 		}
 	}
 
@@ -1043,8 +1064,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public void Initialize(TextViewContext context, MenuItem menuItem)
 		{
-			var location = MainWindow.Instance.TextView.TextEditor.TextArea.Caret.Location;
-			var bpm = BreakpointHelper.GetBreakpointBookmark(location.Line, location.Column);
+			var textView = MainWindow.Instance.ActiveTextView;
+			if (textView == null)
+				return;
+			var location = textView.TextEditor.TextArea.Caret.Location;
+			var bpm = BreakpointHelper.GetBreakpointBookmark(textView, location.Line, location.Column);
 			EnableAndDisableBreakpointCommand.InitializeMenuItem(bpm, menuItem);
 		}
 	}

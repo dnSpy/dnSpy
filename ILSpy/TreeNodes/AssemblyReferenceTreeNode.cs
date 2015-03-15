@@ -102,5 +102,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				language.WriteCommentLine(output, r.FullName);
 			}
 		}
+
+		public override NodePathName NodePathName {
+			get { return new NodePathName("asmref", r.FullName); }
+		}
 	}
 }

@@ -61,8 +61,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken cancellationToken)
 		{
 			// FetchChildren() runs on the main thread; but the enumerator will be consumed on a background thread
-			var modules = list.GetAllModules().Select(mod => mod).Where(mod => mod != null).ToArray();
-			return FindDerivedTypes(type, modules, cancellationToken);
+			return FindDerivedTypes(type, list.GetAllModules(), cancellationToken);
 		}
 
 		internal static IEnumerable<DerivedTypesEntryNode> FindDerivedTypes(TypeDef type, ModuleDef[] modules, CancellationToken cancellationToken)
@@ -90,6 +89,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			threading.Decompile(language, output, options, EnsureLazyChildren);
+		}
+
+		public override NodePathName NodePathName {
+			get { return new NodePathName("dtt", type.FullName); }
 		}
 	}
 }

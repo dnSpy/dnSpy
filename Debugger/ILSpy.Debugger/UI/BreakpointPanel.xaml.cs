@@ -142,8 +142,9 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		{
             if (null == bm)
                 return;
-			if (DebugUtils.JumpToReference(bm.MemberReference, () => bm.Location))
-				MainWindow.Instance.TextView.TextEditor.TextArea.Focus();
+			var textView = MainWindow.Instance.SafeActiveTextView;
+			if (DebugUtils.JumpToReference(textView, bm.MemberReference, () => bm.Location))
+				textView.TextEditor.TextArea.Focus();
 		}
         
         void view_KeyDown(object sender, KeyEventArgs e)
