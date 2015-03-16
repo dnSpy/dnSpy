@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
@@ -30,23 +31,34 @@ namespace ICSharpCode.ILSpy.Options
 	/// </summary>
 	public partial class OptionsDialog : Window
 	{
-		[ImportMany("OptionPages", typeof(UIElement), RequiredCreationPolicy = CreationPolicy.NonShared)]
-		Lazy<UIElement, IOptionsMetadata>[] optionPages = null;
+		class MefState
+		{
+			public static readonly MefState Instance = new MefState();
+
+			MefState()
+			{
+				App.CompositionContainer.ComposeParts(this);
+			}
+
+			[ImportMany(typeof(IOptionPageCreator))]
+			public Lazy<IOptionPageCreator, IOptionPageCreatorMetadata>[] optionPages = null;
+		}
+
+		readonly IOptionPage[] optionPages;
 		
 		public OptionsDialog()
 		{
 			InitializeComponent();
-			App.CompositionContainer.ComposeParts(this);
 			ILSpySettings settings = ILSpySettings.Load();
-			foreach (var optionPage in optionPages.OrderBy(p => p.Metadata.Order)) {
+			var creators = MefState.Instance.optionPages.OrderBy(p => p.Metadata.Order).ToArray();
+			optionPages = creators.Select(p => p.Value.Create()).ToArray();
+			for (int i = 0; i < creators.Length; i++) {
 				TabItem tabItem = new TabItem();
-				tabItem.Header = optionPage.Metadata.Title;
-				tabItem.Content = optionPage.Value;
+				tabItem.Header = creators[i].Metadata.Title;
+				tabItem.Content = optionPages[i];
 				tabControl.Items.Add(tabItem);
 				
-				IOptionPage page = optionPage.Value as IOptionPage;
-				if (page != null)
-					page.Load(settings);
+				optionPages[i].Load(settings);
 			}
 		}
 		
@@ -54,18 +66,20 @@ namespace ICSharpCode.ILSpy.Options
 		{
 			ILSpySettings.Update(
 				delegate (XElement root) {
-					foreach (var optionPage in optionPages) {
-						IOptionPage page = optionPage.Value as IOptionPage;
-						if (page != null)
-							page.Save(root);
-					}
+					foreach (var optionPage in optionPages)
+						optionPage.Save(root);
 				});
 			this.DialogResult = true;
 			Close();
 		}
 	}
+
+	public interface IOptionPageCreator
+	{
+		IOptionPage Create();
+	}
 	
-	public interface IOptionsMetadata
+	public interface IOptionPageCreatorMetadata
 	{
 		string Title { get; }
 		int Order { get; }
@@ -79,9 +93,9 @@ namespace ICSharpCode.ILSpy.Options
 	
 	[MetadataAttribute]
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
-	public class ExportOptionPageAttribute : ExportAttribute
+	public class ExportOptionPageAttribute : ExportAttribute, IOptionPageCreatorMetadata
 	{
-		public ExportOptionPageAttribute() : base("OptionPages", typeof(UIElement))
+		public ExportOptionPageAttribute() : base(typeof(IOptionPageCreator))
 		{ }
 		
 		public string Title { get; set; }

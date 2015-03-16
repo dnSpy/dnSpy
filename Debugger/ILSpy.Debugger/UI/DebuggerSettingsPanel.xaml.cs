@@ -17,6 +17,14 @@ using ICSharpCode.ILSpy.Debugger;
 namespace ICSharpCode.ILSpy.Options
 {
 	[ExportOptionPage(Title = "Debugger", Order = 2)]
+	class DebuggerSettingsPanelCreator : IOptionPageCreator
+	{
+		public IOptionPage Create()
+		{
+			return new DebuggerSettingsPanel();
+		}
+	}
+
 	partial class DebuggerSettingsPanel : UserControl, IOptionPage
 	{
 		public DebuggerSettingsPanel()
