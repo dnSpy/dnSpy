@@ -81,21 +81,6 @@
 		<TaskbarItemInfo />
 	</Window.TaskbarItemInfo>
 	<DockPanel>
-		<!-- Main menu -->
-		<Menu DockPanel.Dock="Top" Name="mainMenu" Height="23">
-			<MenuItem Header="_File" /> <!-- contents of file menu are added using MEF -->
-			<MenuItem Header="_View">
-				<MenuItem Header="Show _internal types and members" IsCheckable="True" IsChecked="{Binding FilterSettings.ShowInternalApi}">
-					<MenuItem.Icon>
-						<Image Width="16" Height="16" Source="pack://application:,,,/dnSpy;component/Images/PrivateInternal.png" />
-					</MenuItem.Icon>
-				</MenuItem>
-				<Separator />
-				<MenuItem Header="_Word wrap" IsCheckable="True" IsChecked="{Binding WordWrap}" />
-				<MenuItem Header="_Highlight current line" IsCheckable="True" IsChecked="{Binding HighlightCurrentLine}" />
-			</MenuItem>
-			<MenuItem Header="_Themes" Name="themeMenu" />
-		</Menu>
 		<!-- ToolBar -->
 		<ToolBar
 			Name="toolBar"
@@ -112,6 +97,22 @@
 					</Style.Triggers>
 				</Style>
 			</ToolBar.Resources>
+			<!-- Main menu -->
+			<Menu Name="mainMenu" Height="23" Background="Transparent">
+				<MenuItem Header="_File" /> <!-- contents of file menu are added using MEF -->
+				<MenuItem Header="_View">
+					<MenuItem Header="Show _internal types and members" IsCheckable="True" IsChecked="{Binding FilterSettings.ShowInternalApi}">
+						<MenuItem.Icon>
+							<Image Width="16" Height="16" Source="pack://application:,,,/dnSpy;component/Images/PrivateInternal.png" />
+						</MenuItem.Icon>
+					</MenuItem>
+					<Separator />
+					<MenuItem Header="_Word wrap" IsCheckable="True" IsChecked="{Binding WordWrap}" />
+					<MenuItem Header="_Highlight current line" IsCheckable="True" IsChecked="{Binding HighlightCurrentLine}" />
+				</MenuItem>
+				<MenuItem Header="_Themes" Name="themeMenu" />
+			</Menu>
+			
 			<!-- 'Navigation' toolbar category is inserted here -->
 			<Separator />
 			<!-- 'Open' toolbar category is inserted here -->

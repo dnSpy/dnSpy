@@ -554,8 +554,8 @@ namespace ICSharpCode.ILSpy
 			toolBar.Items.Clear();
 			foreach (var o in mtbState.OriginalToolbarItems)
 				toolBar.Items.Add(o);
-			int navigationPos = 0;
-			int openPos = 1;
+			int navigationPos = 1;
+			int openPos = 2;
 			foreach (var commandGroup in mtbState.Groupings) {
 				if (commandGroup.Key == "Navigation") {
 					foreach (var command in commandGroup) {
