@@ -906,12 +906,12 @@ namespace ICSharpCode.ILSpy
 			if (topPane.Content == null) {
 				var pane = GetPane(topPane, sessionSettings.TopPaneSettings.Name);
 				if (pane != null)
-					ShowInTopPane(pane.PaneName, pane);
+					ShowInTopPane(pane.PaneTitle, pane);
 			}
 			if (bottomPane.Content == null) {
 				var pane = GetPane(bottomPane, sessionSettings.BottomPaneSettings.Name);
 				if (pane != null)
-					ShowInBottomPane(pane.PaneName, pane);
+					ShowInBottomPane(pane.PaneTitle, pane);
 			}
 
 			foreach (var plugin in plugins)
