@@ -1492,16 +1492,6 @@ namespace ICSharpCode.ILSpy
 				new DecompilationOptions() { FullDecompilation = true });
 		}
 		
-		public void RefreshDecompiledView()
-		{
-			foreach (var tabState in AllTabStates) {
-				//TODO: Restore the caret too
-				var origNodes = tabState.DecompiledNodes;
-				tabState.DecompiledNodes = new ILSpyTreeNode[0];
-				DecompileNodes(tabState, null, false, origNodes);
-			}
-		}
-		
 		public Language CurrentLanguage {
 			get {
 				return sessionSettings.FilterSettings.Language;

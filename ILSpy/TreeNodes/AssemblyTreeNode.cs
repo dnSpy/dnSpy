@@ -437,7 +437,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					}
 				}
 			}
-			MainWindow.Instance.RefreshDecompiledView();
 		}
 	}
 
