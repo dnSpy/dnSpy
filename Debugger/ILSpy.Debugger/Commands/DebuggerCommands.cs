@@ -278,7 +278,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		void OnPreviewKeyDown(object sender, KeyEventArgs e)
 		{
-			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F5) {
+			var debugger = DebuggerService.CurrentDebugger;
+			bool debugging = debugger != null && debugger.IsDebugging;
+
+			if (debugging && Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F5) {
 				DebugContinue();
 				e.Handled = true;
 				return;
@@ -287,12 +290,15 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		void OnKeyDown(object sender, KeyEventArgs e)
 		{
-			if (Keyboard.Modifiers == ModifierKeys.Shift && e.Key == Key.F5) {
+			var debugger = DebuggerService.CurrentDebugger;
+			bool debugging = debugger != null && debugger.IsDebugging;
+
+			if (debugging && Keyboard.Modifiers == ModifierKeys.Shift && e.Key == Key.F5) {
 				Stop();
 				e.Handled = true;
 				return;
 			}
-			if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.F5) {
+			if (debugging && Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.F5) {
 				if (RestartPossible())
 					Restart();
 				e.Handled = true;
@@ -314,12 +320,12 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				e.Handled = true;
 				return;
 			}
-			if (Keyboard.Modifiers == ModifierKeys.None && (e.SystemKey == Key.F10 ? e.SystemKey : e.Key) == Key.F10) {
+			if (debugging && Keyboard.Modifiers == ModifierKeys.None && (e.SystemKey == Key.F10 ? e.SystemKey : e.Key) == Key.F10) {
 				DebugStepOver();
 				e.Handled = true;
 				return;
 			}
-			if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && (e.SystemKey == Key.F10 ? e.SystemKey : e.Key) == Key.F10) {
+			if (debugging && Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && (e.SystemKey == Key.F10 ? e.SystemKey : e.Key) == Key.F10) {
 				if (DebugCanSetNextStatement())
 					DebugSetNextStatement();
 				else {
@@ -332,22 +338,22 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				e.Handled = true;
 				return;
 			}
-			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F11) {
+			if (debugging && Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F11) {
 				DebugStepInto();
 				e.Handled = true;
 				return;
 			}
-			if (Keyboard.Modifiers == ModifierKeys.Shift && e.Key == Key.F11) {
+			if (debugging && Keyboard.Modifiers == ModifierKeys.Shift && e.Key == Key.F11) {
 				DebugStepOut();
 				e.Handled = true;
 				return;
 			}
-			if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.Cancel) {
+			if (debugging && Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.Cancel) {
 				DebugBreak();
 				e.Handled = true;
 				return;
 			}
-			if (Keyboard.Modifiers == ModifierKeys.Alt && e.SystemKey == Key.Multiply) {
+			if (debugging && Keyboard.Modifiers == ModifierKeys.Alt && e.SystemKey == Key.Multiply) {
 				if (DebugShowNextStatementPossible())
 					DebugShowNextStatement();
 				e.Handled = true;
