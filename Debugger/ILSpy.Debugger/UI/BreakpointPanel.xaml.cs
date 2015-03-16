@@ -182,8 +182,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 
 		public override bool CanExecute(object parameter)
 		{
-			return base.CanExecute(parameter) &&
-				MainWindow.Instance.BottomPaneContent != BreakpointPanel.Instance;
+			return MainWindow.Instance.BottomPaneContent != BreakpointPanel.Instance;
 		}
     }
 }

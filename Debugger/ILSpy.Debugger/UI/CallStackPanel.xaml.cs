@@ -35,11 +35,8 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 	{
 		public IPane Create(string name)
 		{
-			if (name == CallStackPanel.Instance.PaneName &&
-				DebuggerService.CurrentDebugger != null &&
-				DebuggerService.CurrentDebugger.IsDebugging) {
+			if (name == CallStackPanel.Instance.PaneName)
 				return CallStackPanel.Instance;
-			}
 			return null;
 		}
 	}
@@ -76,12 +73,6 @@ namespace ICSharpCode.ILSpy.Debugger.UI
         {
             InitializeComponent();
         }
-
-		public void CloseIfActive()
-		{
-			if (MainWindow.Instance.BottomPaneContent == Instance)
-				MainWindow.Instance.CloseBottomPane();
-		}
   
 		public void Show()
 		{
@@ -355,10 +346,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 
 		public override bool CanExecute(object parameter)
 		{
-			return DebuggerService.CurrentDebugger != null &&
-				DebuggerService.CurrentDebugger.IsDebugging &&
-				!DebuggerService.CurrentDebugger.IsProcessRunning &&
-				MainWindow.Instance.BottomPaneContent != CallStackPanel.Instance;
+			return MainWindow.Instance.BottomPaneContent != CallStackPanel.Instance;
 		}
     }
 }
