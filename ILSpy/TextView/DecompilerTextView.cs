@@ -991,6 +991,12 @@ namespace ICSharpCode.ILSpy.TextView
 				e.Handled = true;
 				return;
 			}
+
+			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Back) {
+				MainWindow.Instance.BackCommand(this);
+				e.Handled = true;
+				return;
+			}
 		}
 
 		void TextEditor_KeyDown(object sender, KeyEventArgs e)
@@ -1007,6 +1013,7 @@ namespace ICSharpCode.ILSpy.TextView
 				var refSeg = GetReferenceSegmentAt(offset);
 				GoToTarget(refSeg, true);
 				e.Handled = true;
+				return;
 			}
 
 			if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.F12) {
@@ -1014,6 +1021,7 @@ namespace ICSharpCode.ILSpy.TextView
 				var refSeg = GetReferenceSegmentAt(offset);
 				MainWindow.Instance.OpenReferenceInNewTab(this, refSeg);
 				e.Handled = true;
+				return;
 			}
 		}
 

@@ -31,6 +31,7 @@
 		<KeyBinding Gesture="Ctrl+F4" Command="{StaticResource CloseActiveTab}" />
 		<KeyBinding Gesture="Ctrl+Tab" Command="{StaticResource SelectNextTab}" />
 		<KeyBinding Gesture="Ctrl+Shift+Tab" Command="{StaticResource SelectPrevTab}" />
+		<KeyBinding Gesture="Backspace" Command="BrowseBack" />
 	</Window.InputBindings>
 	<Window.CommandBindings>
 		<CommandBinding

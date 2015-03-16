@@ -293,7 +293,9 @@ namespace ICSharpCode.ILSpy
 			for (int i = list.Count - 1; i >= 0; i--) {
 				var binding = list[i];
 				// Ctrl+D: used by GoToToken
-				if (binding.Command == ICSharpCode.AvalonEdit.AvalonEditCommands.DeleteLine)
+				// Backspace: used by BrowseBack
+				if (binding.Command == ICSharpCode.AvalonEdit.AvalonEditCommands.DeleteLine ||
+					binding.Command == System.Windows.Documents.EditingCommands.Backspace)
 					list.RemoveAt(i);
 			}
 		}
@@ -1518,13 +1520,24 @@ namespace ICSharpCode.ILSpy
 		
 		void BackCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			var tabState = ActiveTabState;
-			if (tabState == null)
-				return;
-			if (tabState.History.CanNavigateBack) {
+			if (BackCommand(ActiveTabState))
 				e.Handled = true;
+		}
+
+		internal void BackCommand(DecompilerTextView textView)
+		{
+			BackCommand(TabState.GetTabState(textView));
+		}
+
+		bool BackCommand(TabState tabState)
+		{
+			if (tabState == null)
+				return false;
+			if (tabState.History.CanNavigateBack) {
 				NavigateHistory(tabState, false);
+				return true;
 			}
+			return false;
 		}
 		
 		void ForwardCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
