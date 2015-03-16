@@ -87,10 +87,8 @@ namespace ICSharpCode.ILSpy.TextView
 		}
 
 		internal object tabState;
-		
-		#region Constructor
-		public DecompilerTextView()
-		{
+
+		static DecompilerTextView() {
 			HighlightingManager.Instance.RegisterHighlighting(
 				"ILAsm", new string[] { ".il" },
 				delegate {
@@ -100,7 +98,11 @@ namespace ICSharpCode.ILSpy.TextView
 						}
 					}
 				});
-			
+		}
+		
+		#region Constructor
+		public DecompilerTextView()
+		{
 			this.Loaded+= new RoutedEventHandler(DecompilerTextView_Loaded);
 			InitializeComponent();
 			
