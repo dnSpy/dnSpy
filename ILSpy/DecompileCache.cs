@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
@@ -177,6 +178,21 @@ namespace ICSharpCode.ILSpy
 		{
 			lock (lockObj)
 				cachedItems.Clear();
+		}
+
+		public void Clear(HashSet<LoadedAssembly> asms)
+		{
+			lock (lockObj) {
+				foreach (var key in cachedItems.Keys.ToArray()) {
+					foreach (var node in key.TreeNodes) {
+						var asmNode = MainWindow.GetAssemblyTreeNode(node);
+						if (asmNode != null && asms.Contains(asmNode.LoadedAssembly)) {
+							cachedItems.Remove(key);
+							break;
+						}
+					}
+				}
+			}
 		}
 	}
 }

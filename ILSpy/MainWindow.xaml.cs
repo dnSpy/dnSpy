@@ -1052,6 +1052,7 @@ namespace ICSharpCode.ILSpy
 						}
 					}
 				}
+				DecompileCache.Instance.Clear(oldAssemblies);
 			}
 			if (CurrentAssemblyListChanged != null)
 				CurrentAssemblyListChanged(this, e);
@@ -1676,7 +1677,7 @@ namespace ICSharpCode.ILSpy
 			return pane == null ? string.Empty : pane.PaneName;
 		}
 
-		static AssemblyTreeNode GetAssemblyTreeNode(SharpTreeNode node)
+		internal static AssemblyTreeNode GetAssemblyTreeNode(SharpTreeNode node)
 		{
 			if (node == null)
 				return null;
