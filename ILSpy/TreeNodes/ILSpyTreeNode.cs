@@ -51,6 +51,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return filterSettings != null ? filterSettings.Language : Languages.AllLanguages[0]; }
 		}
 
+		public override object ToolTip {
+			get { return CleanUpName(ToString()); }
+		}
+
 		public virtual FilterResult Filter(FilterSettings settings)
 		{
 			if (string.IsNullOrEmpty(settings.SearchTerm))
