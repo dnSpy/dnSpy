@@ -113,6 +113,11 @@ namespace ICSharpCode.ILSpy
 		/// Returns null, if TextView returns null;
 		/// </summary>
 		public TextViewPosition? Position { get; private set; }
+
+		/// <summary>
+		/// true if the context menu was opened from the keyboard instead of from the mouse
+		/// </summary>
+		public bool OpenedFromKeyboard { get; private set; }
 		
 		public static TextViewContext Create(SharpTreeView treeView = null, DecompilerTextView textView = null, ListBox listBox = null, TabControl tabControl = null, bool openedFromKeyboard = false)
 		{
@@ -134,7 +139,8 @@ namespace ICSharpCode.ILSpy
 				TabControl = tabControl,
 				ListBox = listBox,
 				Reference = reference,
-				Position = position
+				Position = position,
+				OpenedFromKeyboard = openedFromKeyboard,
 			};
 		}
 	}

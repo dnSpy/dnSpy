@@ -20,7 +20,7 @@ using System.Linq;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	[ExportContextMenuEntryAttribute(Header = "Remove", Icon = "images/Delete.png", Order = 11)]
+	[ExportContextMenuEntryAttribute(Header = "_Remove", Icon = "images/Delete.png", Order = 940, Category = "Other")]
 	internal sealed class RemoveAnalyzeContextMenuEntry : IContextMenuEntry
 	{
 		public bool IsVisible(TextViewContext context)

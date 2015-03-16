@@ -701,7 +701,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		}
 	}
 	
-	[ExportContextMenuEntryAttribute(Header = "_Debug Assembly", Icon = "Images/application-x-executable.png", Order = 0)]
+	[ExportContextMenuEntryAttribute(Header = "_Debug Assembly",
+									Icon = "Images/application-x-executable.png",
+									Order = 200,
+									Category = "Debug")]
 	internal sealed class DebugExecutableNodeCommand : DebuggerCommand, IContextMenuEntry2
 	{
 		public DebugExecutableNodeCommand() : base(false)
@@ -1001,7 +1004,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportContextMenuEntry(Icon = "images/Breakpoint.png",
 							InputGestureText = "F9",
 							Category = "Debug",
-							Order = 1.0)]
+							Order = 210)]
 	internal sealed class InsertBreakpointContextMenuEntry : IContextMenuEntry2
 	{
 		public bool IsVisible(TextViewContext context)
@@ -1043,7 +1046,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 	[ExportContextMenuEntry(InputGestureText = "Shift+F9",
 							Category = "Debug",
-							Order = 1.1)]
+							Order = 220)]
 	internal sealed class DisableBreakpointContextMenuEntry : IContextMenuEntry2
 	{
 		public bool IsVisible(TextViewContext context)
@@ -1093,7 +1096,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 							Header = "S_how Next Statement",
 							InputGestureText = "Alt+Num *",
 							Category = "Debug",
-							Order = 2.0)]
+							Order = 230)]
 	internal sealed class ShowNextStatementContextMenuEntry : IContextMenuEntry2
 	{
 		public bool IsVisible(TextViewContext context)
@@ -1120,7 +1123,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportContextMenuEntry(Header = "Set Ne_xt Statement",
 							InputGestureText = "Ctrl+Shift+F10",
 							Category = "Debug",
-							Order = 3.0)]
+							Order = 240)]
 	internal sealed class SetNextStatementContextMenuEntry : IContextMenuEntry2
 	{
 		public bool IsVisible(TextViewContext context)

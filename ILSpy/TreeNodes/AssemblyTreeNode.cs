@@ -377,7 +377,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 	}
 
-	[ExportContextMenuEntryAttribute(Header = "_Remove", Icon = "images/Delete.png", Order = 2)]
+	[ExportContextMenuEntryAttribute(Header = "_Remove", Icon = "images/Delete.png", Order = 940, Category = "Other")]
 	sealed class RemoveAssembly : IContextMenuEntry2
 	{
 		public void Initialize(TextViewContext context, MenuItem menuItem)
@@ -410,7 +410,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 	}
 
-	[ExportContextMenuEntryAttribute(Header = "_Load Dependencies", Order = 3)]
+	[ExportContextMenuEntryAttribute(Header = "_Load Dependencies", Order = 930, Category = "Other")]
 	sealed class LoadDependencies : IContextMenuEntry
 	{
 		public bool IsVisible(TextViewContext context)
@@ -441,7 +441,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 	}
 
-	[ExportContextMenuEntryAttribute(Header = "_Add To Main List", Order = 12)]
+	[ExportContextMenuEntryAttribute(Header = "_Add To Main List", Order = 950, Category = "Other")]
 	sealed class AddToMainList : IContextMenuEntry
 	{
 		public bool IsVisible(TextViewContext context)

@@ -434,7 +434,7 @@ namespace ICSharpCode.ILSpy.TextView
 			if (state != null)
 				EditorPositionState = state.EditorPositionState;
 			
-			if (DisplaySettingsPanel.CurrentDisplaySettings.AutoFocusTextView)
+			if (IsVisible && DisplaySettingsPanel.CurrentDisplaySettings.AutoFocusTextView)
 				textEditor.Focus();
 
 			CodeMappings = textOutput.DebuggerMemberMappings.ToDictionary(m => new MethodKey(m.MethodDefinition));
@@ -702,6 +702,13 @@ namespace ICSharpCode.ILSpy.TextView
 		/// </summary>
 		internal void JumpToReference(ReferenceSegment referenceSegment, MouseEventArgs e)
 		{
+			if (Keyboard.Modifiers == ModifierKeys.Control) {
+				GoToMousePosition();
+				MainWindow.Instance.OpenReferenceInNewTab(this, referenceSegment);
+				e.Handled = true;
+				return;
+			}
+
 			var localTarget = FindLocalTarget(referenceSegment);
 			if (localTarget != null)
 				referenceSegment = localTarget;
@@ -999,9 +1006,16 @@ namespace ICSharpCode.ILSpy.TextView
 				GoToTarget(refSeg, true);
 				e.Handled = true;
 			}
+
+			if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.F12) {
+				int offset = textEditor.TextArea.Caret.Offset;
+				var refSeg = GetReferenceSegmentAt(offset);
+				MainWindow.Instance.OpenReferenceInNewTab(this, refSeg);
+				e.Handled = true;
+			}
 		}
 
-		bool GoToTarget(ReferenceSegment refSeg, bool canJumpToReference)
+		internal bool GoToTarget(ReferenceSegment refSeg, bool canJumpToReference)
 		{
 			if (refSeg == null)
 				return false;

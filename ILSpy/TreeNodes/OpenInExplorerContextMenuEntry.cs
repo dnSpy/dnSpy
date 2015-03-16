@@ -6,7 +6,7 @@ using ICSharpCode.ILSpy.TreeNodes;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
-	[ExportContextMenuEntryAttribute(Header = "_Show in Explorer", Order = 1)]
+	[ExportContextMenuEntryAttribute(Header = "_Show in Explorer", Order = 920, Category = "Other")]
 	class OpenInExplorerContextMenuEntry : IContextMenuEntry
 	{
 		public bool IsVisible(TextViewContext context)

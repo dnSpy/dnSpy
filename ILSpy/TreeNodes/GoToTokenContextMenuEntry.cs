@@ -8,7 +8,7 @@ using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
-	[ExportContextMenuEntryAttribute(Header = "Go to _Token...", Order = 0.5, InputGestureText="Ctrl+D")]
+	[ExportContextMenuEntryAttribute(Header = "G_o to Token...", Order = 300, Category = "Tokens", InputGestureText = "Ctrl+D")]
 	class GoToTokenContextMenuEntry : IContextMenuEntry
 	{
 		public bool IsVisible(TextViewContext context)

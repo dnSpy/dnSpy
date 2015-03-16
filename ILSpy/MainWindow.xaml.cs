@@ -357,6 +357,27 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
+		void SelectTreeViewNodes(TabState tabState, ILSpyTreeNode[] nodes)
+		{
+			var old = tabState.ignoreDecompilationRequests;
+			try {
+				tabState.ignoreDecompilationRequests = true;
+				treeView.SelectedItems.Clear();
+				if (nodes.Length > 0) {
+					treeView.FocusNode(nodes[0]);
+					// This can happen when pressing Ctrl+Shift+Tab when the treeview has keyboard focus
+					if (treeView.SelectedItems.Count != 0)
+						treeView.SelectedItems.Clear();
+					treeView.SelectedItem = nodes[0];
+				}
+				foreach (var node in nodes)
+					treeView.SelectedItems.Add(node);
+			}
+			finally {
+				tabState.ignoreDecompilationRequests = old;
+			}
+		}
+
 		bool tabControl_SelectionChanged_dont_select = false;
 		void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -380,29 +401,10 @@ namespace ICSharpCode.ILSpy
 
 			if (tabControl_SelectionChanged_dont_select) {
 			}
-			else if (newState == null) {
+			else if (newState == null)
 				treeView.SelectedItems.Clear();
-			}
-			else {
-				var old = newState.ignoreDecompilationRequests;
-				try {
-					newState.ignoreDecompilationRequests = true;
-
-					treeView.SelectedItems.Clear();
-					if (newState.DecompiledNodes.Length > 0) {
-						treeView.FocusNode(newState.DecompiledNodes[0]);
-						// This can happen when pressing Ctrl+Shift+Tab when the treeview has keyboard focus
-						if (treeView.SelectedItems.Count != 0)
-							treeView.SelectedItems.Clear();
-						treeView.SelectedItem = newState.DecompiledNodes[0];
-					}
-					foreach (var node in newState.DecompiledNodes)
-						treeView.SelectedItems.Add(node);
-				}
-				finally {
-					newState.ignoreDecompilationRequests = old;
-				}
-			}
+			else
+				SelectTreeViewNodes(newState, newState.DecompiledNodes);
 
 			ClosePopups();
 			if (oldView != null)
@@ -410,17 +412,22 @@ namespace ICSharpCode.ILSpy
 			if (newView != null)
 				InstallTextEditorListeners(newView);
 
-			// Set focus to the text area whenever the view is selected
-			if (newView != null) {
-				var textArea = newView.TextEditor.TextArea;
-				if (!textArea.IsVisible)
-					textArea.IsVisibleChanged += TextArea_IsVisibleChanged;
-				else
-					textArea.Focus();
-			}
+			SetTextEditorFocus(newView);
 
 			if (OnActiveDecompilerTextViewChanged != null)
 				OnActiveDecompilerTextViewChanged(this, new ActiveDecompilerTextViewChangedEventArgs(oldView, newView));
+		}
+
+		void SetTextEditorFocus(DecompilerTextView textView) {
+			if (textView == null)
+				return;
+
+			// Set focus to the text area whenever the view is selected
+			var textArea = textView.TextEditor.TextArea;
+			if (!textArea.IsVisible)
+				textArea.IsVisibleChanged += TextArea_IsVisibleChanged;
+			else
+				textArea.Focus();
 		}
 
 		void TextArea_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -1103,18 +1110,11 @@ namespace ICSharpCode.ILSpy
 
 		public void SelectNode(SharpTreeNode obj)
 		{
-			SelectNodeInternal(obj);
-		}
-
-		bool? SelectNodeInternal(SharpTreeNode obj)
-		{
 			if (obj != null) {
 				if (!obj.AncestorsAndSelf().Any(node => node.IsHidden)) {
 					// Set both the selection and focus to ensure that keyboard navigation works as expected.
 					treeView.FocusNode(obj);
-					bool willDecompile = treeView.SelectedItem != obj;
 					treeView.SelectedItem = obj;
-					return willDecompile;
 				} else {
 					MessageBox.Show("Navigation failed because the target is hidden or a compiler-generated class.\n" +
 						"Please disable all filters that might hide the item (i.e. activate " +
@@ -1122,7 +1122,6 @@ namespace ICSharpCode.ILSpy
 						"dnSpy", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 				}
 			}
-			return null;
 		}
 		
 		/// <summary>
@@ -1297,7 +1296,15 @@ namespace ICSharpCode.ILSpy
 		{
 			ILSpyTreeNode treeNode = FindTreeNode(reference);
 			if (treeNode != null) {
-				return DecompileTreeNode(tabState, treeNode, onDecompileFinished);
+				var helper = new OnShowOutputHelper(tabState.TextView, onDecompileFinished, treeNode);
+				var nodes = new[] { treeNode };
+				bool? decompiled = DecompileNodes(tabState, null, true, nodes);
+				if (decompiled == false) {
+					helper.Abort();
+					onDecompileFinished(true);
+				}
+				SelectTreeViewNodes(tabState, nodes);
+				return true;
 			} else if (reference is dnlib.DotNet.Emit.OpCode) {
 				string link = "http://msdn.microsoft.com/library/system.reflection.emit.opcodes." + ((dnlib.DotNet.Emit.OpCode)reference).Code.ToString().ToLowerInvariant() + ".aspx";
 				try {
@@ -1306,8 +1313,7 @@ namespace ICSharpCode.ILSpy
 					
 				}
 				return true;
-			}
-			else if (canLoad && reference is IMemberDef) {
+			} else if (canLoad && reference is IMemberDef) {
 				// Here if the module was removed. It's possible that the user has re-added it.
 
 				var member = (IMemberDef)reference;
@@ -1345,32 +1351,6 @@ namespace ICSharpCode.ILSpy
 			}
 			else
 				return false;
-		}
-
-		bool DecompileTreeNode(TabState tabState, ILSpyTreeNode treeNode, Action<bool> onDecompileFinished)
-		{
-			if (tabState.IsSameNode(treeNode) && treeView.SelectedItems.Count == 1 && treeView.SelectedItems[0] == treeNode) {
-				// No need to decompile it again. The contents is already visible.
-				onDecompileFinished(true);
-			}
-			else {
-				// Must create it before setting the new node since that will trigger a decompile
-				var helper = new OnShowOutputHelper(tabState.TextView, onDecompileFinished, treeNode);
-				bool? willDecompile = SelectNodeInternal(treeNode);
-				if (willDecompile == true) {
-					// It will be (or has already been) decompiled
-				}
-				else if (willDecompile == false) {
-					// The node is selected in the treeview but the current text editor doesn't
-					// contain the decompiled code. Force a decompile.
-					DecompileNodes(tabState, null, true, new[] { treeNode });
-				}
-				else {
-					// It's a hidden member
-					helper.Abort();
-				}
-			}
-			return true;
 		}
 
 		IEnumerable<ModuleDef> GetAssemblyModules(ModuleDef module)
@@ -1463,23 +1443,22 @@ namespace ICSharpCode.ILSpy
 		{
 			if (TreeView_SelectionChanged_ignore)
 				return;
-			DecompileSelectedNodes(SafeActiveTabState);
+			var tabState = SafeActiveTabState;
+			DecompileNodes(tabState, null, true, this.SelectedNodes.ToArray());
 
 			if (SelectionChanged != null)
 				SelectionChanged(sender, e);
+
+			if (ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.AutoFocusTextView)
+				SetTextEditorFocus(tabState.TextView);
 		}
 		
-		void DecompileSelectedNodes(TabState tabState, DecompilerTextViewState state = null, bool recordHistory = true)
-		{
-			DecompileNodes(tabState, state, recordHistory, this.SelectedNodes.ToArray());
-		}
-
-		void DecompileNodes(TabState tabState, DecompilerTextViewState state, bool recordHistory, ILSpyTreeNode[] nodes)
+		bool? DecompileNodes(TabState tabState, DecompilerTextViewState state, bool recordHistory, ILSpyTreeNode[] nodes)
 		{
 			if (tabState.ignoreDecompilationRequests)
-				return;
+				return null;
 			if (tabState.IsSameNodes(nodes))
-				return;
+				return false;
 			tabState.DecompiledNodes = nodes ?? new ILSpyTreeNode[0];
 			tabState.Title = null;
 			tabState.InitializeHeader();
@@ -1488,14 +1467,15 @@ namespace ICSharpCode.ILSpy
 				var dtState = tabState.TextView.GetState();
 				if(dtState != null)
 					tabState.History.UpdateCurrent(new NavigationState(dtState));
-				tabState.History.Record(new NavigationState(treeView.SelectedItems.OfType<SharpTreeNode>()));
+				tabState.History.Record(new NavigationState(tabState.DecompiledNodes));
 			}
 
 			if (nodes.Length == 1 && nodes[0].View(tabState.TextView)) {
 				tabState.TextView.CancelDecompileAsync();
-				return;
+				return true;
 			}
 			tabState.TextView.DecompileAsync(this.CurrentLanguage, nodes, new DecompilationOptions() { TextViewState = state });
+			return true;
 		}
 		
 		void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -1580,17 +1560,9 @@ namespace ICSharpCode.ILSpy
 			if(dtState != null)
 				tabState.History.UpdateCurrent(new NavigationState(dtState));
 			var newState = forward ? tabState.History.GoForward() : tabState.History.GoBack();
-
-			tabState.ignoreDecompilationRequests = true;
-			treeView.SelectedItems.Clear();
-			if (newState.TreeNodes.Any())
-				treeView.FocusNode(newState.TreeNodes.First());
-			foreach (var node in newState.TreeNodes)
-			{
-				treeView.SelectedItems.Add(node);
-			}
-			tabState.ignoreDecompilationRequests = false;
-			DecompileSelectedNodes(tabState, newState.ViewState, false);
+			var nodes = newState.TreeNodes.Cast<ILSpyTreeNode>().ToArray();
+			SelectTreeViewNodes(tabState, nodes);
+			DecompileNodes(tabState, newState.ViewState, false, nodes);
 		}
 		
 		#endregion
@@ -2010,6 +1982,15 @@ namespace ICSharpCode.ILSpy
 			tabControl.SelectedItem = tabState.TabItem;
 		}
 
+		internal void OpenReferenceInNewTab(DecompilerTextView textView, ReferenceSegment reference)
+		{
+			if (textView == null || reference == null)
+				return;
+			var tabState = TabState.GetTabState(textView);
+			var clonedTabState = MainWindow.Instance.CloneTabMakeActive(tabState);
+			clonedTabState.TextView.GoToTarget(reference, true);
+		}
+
 		internal void CloseActiveTab()
 		{
 			RemoveTabState(ActiveTabState);
@@ -2047,7 +2028,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Open in _New Tab", Order = 0.8, InputGestureText = "Ctrl+T")]
+	[ExportContextMenuEntry(Header = "Open in New _Tab", Order = 130, InputGestureText = "Ctrl+T", Category = "Tabs")]
 	class OpenInNewTabContextMenuEntry : IContextMenuEntry
 	{
 		public bool IsVisible(TextViewContext context)
@@ -2068,7 +2049,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Close", Order = 0.5, InputGestureText = "Ctrl+W", Category = "Tabs")]
+	[ExportContextMenuEntry(Header = "_Close", Order = 100, InputGestureText = "Ctrl+W", Category = "Tabs")]
 	class CloseTabContextMenuEntry : IContextMenuEntry
 	{
 		public bool IsVisible(TextViewContext context)
@@ -2088,7 +2069,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Close _All But This", Order = 0.6, Category = "Tabs")]
+	[ExportContextMenuEntry(Header = "Close _All But This", Order = 110, Category = "Tabs")]
 	class CloseAllTabsButThisContextMenuEntry : IContextMenuEntry
 	{
 		public bool IsVisible(TextViewContext context)
@@ -2108,7 +2089,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Clone _Tab", Order = 0.7, Category = "Tabs")]
+	[ExportContextMenuEntry(Header = "Clone _Tab", Order = 120, Category = "Tabs")]
 	class CloneTabContextMenuEntry : IContextMenuEntry
 	{
 		public bool IsVisible(TextViewContext context)
@@ -2125,6 +2106,31 @@ namespace ICSharpCode.ILSpy
 		public void Execute(TextViewContext context)
 		{
 			MainWindow.Instance.CloneActiveTab();
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Open in New _Tab", Order = 130, Category = "Tabs")]
+	class OpenReferenceInNewTabContextMenuEntry : IContextMenuEntry2
+	{
+		public bool IsVisible(TextViewContext context)
+		{
+			return context.TextView != null &&
+				context.Reference != null;
+		}
+
+		public bool IsEnabled(TextViewContext context)
+		{
+			return true;
+		}
+
+		public void Execute(TextViewContext context)
+		{
+			MainWindow.Instance.OpenReferenceInNewTab(context.TextView, context.Reference);
+		}
+
+		public void Initialize(TextViewContext context, MenuItem menuItem)
+		{
+			menuItem.InputGestureText = context.OpenedFromKeyboard ? "Ctrl+F12" : "Ctrl+Click";
 		}
 	}
 }
