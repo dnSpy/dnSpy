@@ -24,6 +24,9 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 {
 	public class IconBarMargin : AbstractMargin, IDisposable
 	{
+		// 16px wide icon + 1px each side padding + 1px right-side border
+		public const int WIDTH = 1 + 16 + 1 + 1;
+
 		readonly IconBarManager manager;
 		readonly DecompilerTextView decompilerTextView;
 		
@@ -76,8 +79,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		/// <inheritdoc/>
 		protected override Size MeasureOverride(Size availableSize)
 		{
-			// 16px wide icon + 1px each side padding + 1px right-side border
-			return new Size(19, 0);
+			return new Size(WIDTH, 0);
 		}
 		
 		protected override void OnRender(DrawingContext drawingContext)

@@ -30,12 +30,14 @@ namespace ICSharpCode.ILSpy.Controls
 	/// </summary>
 	public partial class ResourceObjectTable : UserControl
 	{
+		const int MAGIC = 46 + ICSharpCode.ILSpy.AvalonEdit.IconBarMargin.WIDTH;
+
 		public ResourceObjectTable(IEnumerable resources, FrameworkElement contentPresenter)
 		{
 			InitializeComponent();
 			// set size to fit decompiler window
 			contentPresenter.SizeChanged += OnParentSizeChanged;
-			Width = contentPresenter.ActualWidth - 45;
+			Width = contentPresenter.ActualWidth - MAGIC;
 			MaxHeight = contentPresenter.ActualHeight;
 			resourceListView.ItemsSource = resources;
 		}
@@ -43,7 +45,7 @@ namespace ICSharpCode.ILSpy.Controls
 		private void OnParentSizeChanged(object sender, SizeChangedEventArgs e)
 		{
 			if (e.WidthChanged)
-				Width = e.NewSize.Width - 45;
+				Width = e.NewSize.Width - MAGIC;
 			if (e.HeightChanged)
 				MaxHeight = e.NewSize.Height;
 		}
