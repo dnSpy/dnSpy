@@ -213,9 +213,14 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			if (storage.ContainsKey(key))
 			{
 				// register to show enabled/disabled state
-				breakpoint.ImageChanged += delegate { InvalidateVisual(); };
+				breakpoint.ImageChanged += breakpoint_ImageChanged;
 				InvalidateVisual();
 			}
+		}
+
+		void breakpoint_ImageChanged(object sender, EventArgs e)
+		{
+			InvalidateVisual();
 		}
 		
 		public void OnBookmarkRemoved(object sender, BookmarkEventArgs args)
@@ -229,7 +234,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			var key = new MethodKey(breakpoint.MemberReference);
 			if (storage.ContainsKey(key))
 			{
-				breakpoint.ImageChanged -= delegate { InvalidateVisual(); };
+				breakpoint.ImageChanged -= breakpoint_ImageChanged;
 				InvalidateVisual();
 			}
 		}

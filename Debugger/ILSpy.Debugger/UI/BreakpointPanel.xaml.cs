@@ -80,8 +80,13 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 			}
 			BookmarkManager.Added += BookmarkManager_Added;
 			BookmarkManager.Removed += BookmarkManager_Removed;
-			DebuggerSettings.Instance.PropertyChanged +=
-				delegate(object s, PropertyChangedEventArgs e) { if (e.PropertyName == "ShowAllBookmarks") SetItemSource(); };
+			DebuggerSettings.Instance.PropertyChanged += DebuggerSettings_PropertyChanged;
+		}
+
+		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "ShowAllBookmarks")
+				SetItemSource();
 		}
 
 		void BookmarkManager_Added(object sender, BookmarkEventArgs e)
@@ -120,8 +125,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
         {
 			BookmarkManager.Added -= BookmarkManager_Added;
 			BookmarkManager.Removed -= BookmarkManager_Removed;
-        	DebuggerSettings.Instance.PropertyChanged -= 
-        		delegate(object s, PropertyChangedEventArgs e) { if (e.PropertyName == "ShowAllBookmarks") SetItemSource(); };
+			DebuggerSettings.Instance.PropertyChanged -= DebuggerSettings_PropertyChanged;
 			foreach (var m in BookmarkManager.Bookmarks) {
 				var bpm = m as BreakpointBookmark;
 				if (bpm != null)
