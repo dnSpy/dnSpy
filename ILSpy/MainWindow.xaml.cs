@@ -1460,18 +1460,17 @@ namespace ICSharpCode.ILSpy
 		{
 			if (tabState.ignoreDecompilationRequests)
 				return null;
-			if (tabState.IsSameNodes(nodes))
+			if (tabState.IsSameNodes(nodes)) {
+				if (state != null)
+					tabState.TextView.EditorPositionState = state.EditorPositionState;
 				return false;
+			}
 			tabState.DecompiledNodes = nodes ?? new ILSpyTreeNode[0];
 			tabState.Title = null;
 			tabState.InitializeHeader();
 			
-			if (recordHistory) {
-				var dtState = tabState.TextView.GetState();
-				if(dtState != null)
-					tabState.History.UpdateCurrent(new NavigationState(dtState));
-				tabState.History.Record(new NavigationState(tabState.DecompiledNodes));
-			}
+			if (recordHistory)
+				RecordHistory(tabState);
 
 			if (nodes.Length == 1 && nodes[0].View(tabState.TextView)) {
 				tabState.TextView.CancelDecompileAsync();
@@ -1479,6 +1478,21 @@ namespace ICSharpCode.ILSpy
 			}
 			tabState.TextView.DecompileAsync(this.CurrentLanguage, nodes, new DecompilationOptions() { TextViewState = state });
 			return true;
+		}
+
+		internal void RecordHistory(DecompilerTextView textView)
+		{
+			RecordHistory(TabState.GetTabState(textView));
+		}
+
+		void RecordHistory(TabState tabState)
+		{
+			if (tabState == null)
+				return;
+			var dtState = tabState.TextView.GetState();
+			if (dtState != null)
+				tabState.History.UpdateCurrent(new NavigationState(dtState));
+			tabState.History.Record(new NavigationState(tabState.DecompiledNodes));
 		}
 		
 		void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -1992,7 +2006,7 @@ namespace ICSharpCode.ILSpy
 				return;
 			var tabState = TabState.GetTabState(textView);
 			var clonedTabState = MainWindow.Instance.CloneTabMakeActive(tabState);
-			clonedTabState.TextView.GoToTarget(reference, true);
+			clonedTabState.TextView.GoToTarget(reference, true, false);
 		}
 
 		internal void CloseActiveTab()

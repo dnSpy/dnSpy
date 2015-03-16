@@ -598,7 +598,7 @@ namespace ICSharpCode.ILSpy.TextView
 						}
 					}
 				}
-				GoToTarget(refSeg, false);
+				GoToTarget(refSeg, false, false);
 			}
 			else {
 				Debug.Fail(string.Format("Unknown type: {0} = {1}", destLoc.GetType(), destLoc));
@@ -723,6 +723,8 @@ namespace ICSharpCode.ILSpy.TextView
 					pos = definitionLookup.GetDefinitionPosition(referenceSegment.Reference);
 			}
 			if (pos >= 0) {
+				GoToMousePosition();
+				MainWindow.Instance.RecordHistory(this);
 				MarkLocals(referenceSegment);
 				textEditor.TextArea.Focus();
 				textEditor.Select(pos, 0);
@@ -1011,7 +1013,7 @@ namespace ICSharpCode.ILSpy.TextView
 			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F12) {
 				int offset = textEditor.TextArea.Caret.Offset;
 				var refSeg = GetReferenceSegmentAt(offset);
-				GoToTarget(refSeg, true);
+				GoToTarget(refSeg, true, true);
 				e.Handled = true;
 				return;
 			}
@@ -1025,7 +1027,7 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 
-		internal bool GoToTarget(ReferenceSegment refSeg, bool canJumpToReference)
+		internal bool GoToTarget(ReferenceSegment refSeg, bool canJumpToReference, bool canRecordHistory)
 		{
 			if (refSeg == null)
 				return false;
@@ -1034,6 +1036,8 @@ namespace ICSharpCode.ILSpy.TextView
 				refSeg = localTarget;
 
 			if (refSeg.IsLocalTarget) {
+				if (canRecordHistory)
+					MainWindow.Instance.RecordHistory(this);
 				var line = textEditor.Document.GetLineByOffset(refSeg.StartOffset);
 				int column = refSeg.StartOffset - line.Offset + 1;
 				ScrollAndMoveCaretTo(line.LineNumber, column);
@@ -1112,7 +1116,7 @@ namespace ICSharpCode.ILSpy.TextView
 		}
 	}
 
-	public class DecompilerTextViewState
+	public class DecompilerTextViewState : IEquatable<DecompilerTextViewState>
 	{
 		private List<Tuple<int, int>> ExpandedFoldings;
 		private int FoldingsChecksum;
@@ -1131,6 +1135,29 @@ namespace ICSharpCode.ILSpy.TextView
 			if (FoldingsChecksum == checksum)
 				foreach (var folding in list)
 					folding.DefaultClosed = !ExpandedFoldings.Any(f => f.Item1 == folding.StartOffset && f.Item2 == folding.EndOffset);
+		}
+
+		public bool Equals(DecompilerTextViewState other)
+		{
+			if (other == null)
+				return false;
+			return EditorPositionState.Equals(other.EditorPositionState) &&
+				Equals(DecompiledNodes, other.DecompiledNodes);
+		}
+
+		static bool Equals(ILSpyTreeNode[] a, ILSpyTreeNode[] b)
+		{
+			if (a == b)
+				return true;
+			if (a == null || b == null)
+				return false;
+			if (a.Length != b.Length)
+				return false;
+			for (int i = 0; i < a.Length; i++) {
+				if (a[i] != b[i])
+					return false;
+			}
+			return true;
 		}
 	}
 }

@@ -44,8 +44,11 @@ namespace ICSharpCode.ILSpy
 
 		public bool Equals(NavigationState other)
 		{
-			// TODO: should this care about the view state as well?
-			return this.treeNodes.SetEquals(other.treeNodes);
+			if (ViewState == other.ViewState)
+				return true;
+			if (ViewState == null || other.ViewState == null)
+				return false;
+			return this.ViewState.Equals(other.ViewState);
 		}
 	}
 }

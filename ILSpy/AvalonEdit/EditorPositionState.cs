@@ -1,9 +1,10 @@
-﻿using System.Xml.Linq;
+﻿using System;
+using System.Xml.Linq;
 using ICSharpCode.AvalonEdit;
 
 namespace ICSharpCode.ILSpy.AvalonEdit
 {
-	public struct EditorPositionState
+	public struct EditorPositionState : IEquatable<EditorPositionState>
 	{
 		public double VerticalOffset, HorizontalOffset;
 		public TextViewPosition TextViewPosition;
@@ -48,6 +49,14 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				state.DesiredXPos = SessionSettings.FromString((string)doc.Attribute("DesiredXPos"), 0.0);
 			}
 			return state;
+		}
+
+		public bool Equals(EditorPositionState other)
+		{
+			return VerticalOffset == other.VerticalOffset &&
+				HorizontalOffset == other.HorizontalOffset &&
+				TextViewPosition == other.TextViewPosition &&
+				DesiredXPos == other.DesiredXPos;
 		}
 	}
 }
