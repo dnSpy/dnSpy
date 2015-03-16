@@ -99,6 +99,11 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
+		public static TabState GetTabState(DecompilerTextView textView)
+		{
+			return (TabState)textView.tabState;
+		}
+
 		public TabState(SharpTreeView treeView)
 		{
 			this.TextView.tabState = this;
@@ -469,7 +474,7 @@ namespace ICSharpCode.ILSpy
 
 		public void SetTitle(DecompilerTextView textView, string title)
 		{
-			var tabState = (TabState)textView.tabState;
+			var tabState = TabState.GetTabState(textView);
 			tabState.Title = title;
 			tabState.InitializeHeader();
 		}
@@ -1072,9 +1077,12 @@ namespace ICSharpCode.ILSpy
 		{
 			RefreshTreeViewFilter();
 			if (e.PropertyName == "Language") {
-				//TODO: Restore the caret too
-				foreach (var tabState in AllTabStates)
-					DecompileSelectedNodes(tabState, recordHistory: false);
+				foreach (var tabState in AllTabStates) {
+					//TODO: Restore the caret too
+					var origNodes = tabState.DecompiledNodes;
+					tabState.DecompiledNodes = new ILSpyTreeNode[0];
+					DecompileNodes(tabState, null, false, origNodes);
+				}
 			}
 		}
 		
@@ -1212,19 +1220,19 @@ namespace ICSharpCode.ILSpy
 
 		public bool JumpToReference(DecompilerTextView textView, object reference)
 		{
-			var tabState = (TabState)textView.tabState;
+			var tabState = TabState.GetTabState(textView);
 			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), success => GoToLocation(tabState.TextView, success, ResolveReference(reference)));
 		}
 
 		public bool JumpToReference(DecompilerTextView textView, object reference, Func<TextLocation> getLocation)
 		{
-			var tabState = (TabState)textView.tabState;
+			var tabState = TabState.GetTabState(textView);
 			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), success => GoToLocation(tabState.TextView, success, getLocation()));
 		}
 
 		public bool JumpToReference(DecompilerTextView textView, object reference, Action<bool> onDecompileFinished)
 		{
-			var tabState = (TabState)textView.tabState;
+			var tabState = TabState.GetTabState(textView);
 			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), onDecompileFinished);
 		}
 
@@ -1284,6 +1292,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
+		// Returns true if we could decompile the reference
 		bool JumpToReferenceAsyncInternal(TabState tabState, bool canLoad, object reference, Action<bool> onDecompileFinished)
 		{
 			ILSpyTreeNode treeNode = FindTreeNode(reference);
@@ -1507,7 +1516,9 @@ namespace ICSharpCode.ILSpy
 		{
 			foreach (var tabState in AllTabStates) {
 				//TODO: Restore the caret too
-				DecompileSelectedNodes(tabState);
+				var origNodes = tabState.DecompiledNodes;
+				tabState.DecompiledNodes = new ILSpyTreeNode[0];
+				DecompileNodes(tabState, null, false, origNodes);
 			}
 		}
 		
@@ -1972,11 +1983,19 @@ namespace ICSharpCode.ILSpy
 			e.CanExecute = SelectPreviousTabPossible();
 		}
 
-		TabState CloneTab(TabState tabState)
+		internal TabState CloneTab(TabState tabState)
 		{
 			if (tabState == null)
 				return null;
 			return CreateTabState(CreateSavedTabState(tabState), tabState.DecompiledNodes);
+		}
+
+		internal TabState CloneTabMakeActive(TabState tabState)
+		{
+			var clonedTabState = CloneTab(tabState);
+			if (clonedTabState != null)
+				tabControl.SelectedItem = clonedTabState.TabItem;
+			return clonedTabState;
 		}
 
 		internal void OpenNewTab()
@@ -2019,9 +2038,7 @@ namespace ICSharpCode.ILSpy
 
 		internal void CloneActiveTab()
 		{
-			var tabState = CloneTab(ActiveTabState);
-			if (tabState != null)
-				tabControl.SelectedItem = tabState.TabItem;
+			CloneTabMakeActive(ActiveTabState);
 		}
 
 		internal bool CloneActiveTabPossible()
