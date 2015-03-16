@@ -53,7 +53,7 @@ namespace ICSharpCode.ILSpy
 			if (!DisplaySettingsPanel.CurrentDisplaySettings.ShowMetadataTokens)
 				return string.Empty;
 			
-			return " @" + token.ToInt32().ToString("x8");
+			return " @" + token.ToInt32().ToString("X8");
 		}
 	}
 }
