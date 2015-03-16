@@ -747,9 +747,10 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					var info = DebugInformation.DebugStepInformation;
 					if (info == null || info.Item1 != key)
 						StepIntoUnknownFrame(frame);
-					else
+					else {
 						DebugInformation.DebugStepInformation = Tuple.Create(info.Item1, ip.Offset, info.Item3);
-					DebugInformation.MustJumpToReference = false;
+						DebugInformation.MustJumpToReference = false;
+					}
 					textView.ScrollAndMoveCaretTo(location.Line, location.Column);
 				}
 				else {
