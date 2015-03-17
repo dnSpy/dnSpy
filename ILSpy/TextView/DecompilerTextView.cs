@@ -109,6 +109,7 @@ namespace ICSharpCode.ILSpy.TextView
 			this.referenceElementGenerator = new ReferenceElementGenerator(this.JumpToReference, this.IsLink);
 			textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
 			textEditor.PreviewKeyDown += TextEditor_PreviewKeyDown;
+			textEditor.KeyDown += TextEditor_KeyDown;
 			this.uiElementGenerator = new UIElementGenerator();
 			textEditor.TextArea.TextView.ElementGenerators.Add(uiElementGenerator);
 			textEditor.Options.RequireControlModifierForHyperlinkClick = false;
@@ -1004,13 +1005,6 @@ namespace ICSharpCode.ILSpy.TextView
 				return;
 			}
 
-			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Escape) {
-				ClearLocalReferenceMarks();
-				MainWindow.Instance.ClosePopups();
-				e.Handled = true;
-				return;
-			}
-
 			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F12 ||
 				Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Enter) {
 				int offset = textEditor.TextArea.Caret.Offset;
@@ -1025,6 +1019,16 @@ namespace ICSharpCode.ILSpy.TextView
 				int offset = textEditor.TextArea.Caret.Offset;
 				var refSeg = GetReferenceSegmentAt(offset);
 				MainWindow.Instance.OpenReferenceInNewTab(this, refSeg);
+				e.Handled = true;
+				return;
+			}
+		}
+
+		void TextEditor_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Escape) {
+				ClearLocalReferenceMarks();
+				MainWindow.Instance.ClosePopups();
 				e.Handled = true;
 				return;
 			}
