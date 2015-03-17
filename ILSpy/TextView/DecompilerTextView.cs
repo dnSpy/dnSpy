@@ -109,7 +109,6 @@ namespace ICSharpCode.ILSpy.TextView
 			this.referenceElementGenerator = new ReferenceElementGenerator(this.JumpToReference, this.IsLink);
 			textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
 			textEditor.PreviewKeyDown += TextEditor_PreviewKeyDown;
-			textEditor.KeyDown += TextEditor_KeyDown;
 			this.uiElementGenerator = new UIElementGenerator();
 			textEditor.TextArea.TextView.ElementGenerators.Add(uiElementGenerator);
 			textEditor.Options.RequireControlModifierForHyperlinkClick = false;
@@ -999,10 +998,7 @@ namespace ICSharpCode.ILSpy.TextView
 				e.Handled = true;
 				return;
 			}
-		}
 
-		void TextEditor_KeyDown(object sender, KeyEventArgs e)
-		{
 			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Escape) {
 				ClearLocalReferenceMarks();
 				MainWindow.Instance.ClosePopups();
@@ -1010,7 +1006,8 @@ namespace ICSharpCode.ILSpy.TextView
 				return;
 			}
 
-			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F12) {
+			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F12 ||
+				Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Enter) {
 				int offset = textEditor.TextArea.Caret.Offset;
 				var refSeg = GetReferenceSegmentAt(offset);
 				GoToTarget(refSeg, true, true);
@@ -1018,7 +1015,8 @@ namespace ICSharpCode.ILSpy.TextView
 				return;
 			}
 
-			if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.F12) {
+			if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.F12 ||
+				Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.Enter) {
 				int offset = textEditor.TextArea.Caret.Offset;
 				var refSeg = GetReferenceSegmentAt(offset);
 				MainWindow.Instance.OpenReferenceInNewTab(this, refSeg);
