@@ -926,6 +926,11 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			return textEditor.TextArea.TextView.GetPosition(Mouse.GetPosition(textEditor.TextArea.TextView) + textEditor.TextArea.TextView.ScrollOffset);
 		}
+
+		internal void ClearState()
+		{
+			decompiledNodes = null;
+		}
 		
 		public DecompilerTextViewState GetState()
 		{

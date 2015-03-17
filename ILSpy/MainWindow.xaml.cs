@@ -137,12 +137,6 @@ namespace ICSharpCode.ILSpy
 			};
 		}
 
-		public bool IsSameNode(ILSpyTreeNode node)
-		{
-			return DecompiledNodes.Length == 1 &&
-				DecompiledNodes[0] == node;
-		}
-
 		public bool IsSameNodes(ILSpyTreeNode[] nodes)
 		{
 			if (DecompiledNodes.Length != nodes.Length)
@@ -152,6 +146,13 @@ namespace ICSharpCode.ILSpy
 					return false;
 			}
 			return true;
+		}
+
+		public void ClearHistory()
+		{
+			DecompiledNodes = new ILSpyTreeNode[0];
+			History.Clear();
+			TextView.ClearState();
 		}
 	}
 
@@ -1627,7 +1628,7 @@ namespace ICSharpCode.ILSpy
 			return savedState;
 		}
 
-		TabState CreateTabState(SavedTabState savedState, IList<ILSpyTreeNode> newNodes = null)
+		TabState CreateTabState(SavedTabState savedState, IList<ILSpyTreeNode> newNodes = null, bool decompile = true)
 		{
 			var tabState = CreateNewTabState();
 			var nodes = new List<ILSpyTreeNode>(savedState.Paths.Count);
@@ -1645,13 +1646,15 @@ namespace ICSharpCode.ILSpy
 					nodes.Add(node);
 				}
 			}
-			if (nodes != null) {
-				var tmpNodes = nodes.ToArray();
-				var helper = new OnShowOutputHelper(tabState.TextView, success => decompilerTextView_OnShowOutput(success, tabState.TextView, savedState), tmpNodes);
-				DecompileNodes(tabState, null, true, tmpNodes);
+			if (decompile) {
+				if (nodes != null) {
+					var tmpNodes = nodes.ToArray();
+					var helper = new OnShowOutputHelper(tabState.TextView, success => decompilerTextView_OnShowOutput(success, tabState.TextView, savedState), tmpNodes);
+					DecompileNodes(tabState, null, true, tmpNodes);
+				}
+				else
+					AboutPage.Display(tabState.TextView);
 			}
-			else
-				AboutPage.Display(tabState.TextView);
 
 			return tabState;
 		}
@@ -1973,16 +1976,16 @@ namespace ICSharpCode.ILSpy
 			e.CanExecute = SelectPreviousTabPossible();
 		}
 
-		internal TabState CloneTab(TabState tabState)
+		internal TabState CloneTab(TabState tabState, bool decompile = true)
 		{
 			if (tabState == null)
 				return null;
-			return CreateTabState(CreateSavedTabState(tabState), tabState.DecompiledNodes);
+			return CreateTabState(CreateSavedTabState(tabState), tabState.DecompiledNodes, decompile);
 		}
 
-		internal TabState CloneTabMakeActive(TabState tabState)
+		internal TabState CloneTabMakeActive(TabState tabState, bool decompile = true)
 		{
-			var clonedTabState = CloneTab(tabState);
+			var clonedTabState = CloneTab(tabState, decompile);
 			if (clonedTabState != null)
 				tabControl.SelectedItem = clonedTabState.TabItem;
 			return clonedTabState;
@@ -2005,7 +2008,8 @@ namespace ICSharpCode.ILSpy
 			if (textView == null || reference == null)
 				return;
 			var tabState = TabState.GetTabState(textView);
-			var clonedTabState = MainWindow.Instance.CloneTabMakeActive(tabState);
+			var clonedTabState = CloneTabMakeActive(tabState, false);
+			clonedTabState.ClearHistory();
 			clonedTabState.TextView.GoToTarget(reference, true, false);
 		}
 

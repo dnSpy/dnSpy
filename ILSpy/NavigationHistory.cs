@@ -27,9 +27,6 @@ namespace ICSharpCode.ILSpy
 	internal sealed class NavigationHistory<T>
 		where T : class, IEquatable<T>
 	{
-		private const double NavigationSecondsBeforeNewEntry = 0.5;
-
-		private DateTime lastNavigationTime = DateTime.MinValue;
 		T current;
 		List<T> back = new List<T>();
 		List<T> forward = new List<T>();
@@ -77,23 +74,11 @@ namespace ICSharpCode.ILSpy
 		
 		public void Record(T node)
 		{
-			var navigationTime = DateTime.Now;
-			var period = navigationTime - lastNavigationTime;
+			if (current != null)
+				back.Add(current);
 
-			if (period.TotalSeconds < NavigationSecondsBeforeNewEntry) {
-				current = node;
-			} else {
-				if (current != null)
-					back.Add(current);
-
-				// We only store a record once, and ensure it is on the top of the stack, so we just remove the old record
-				back.Remove(node);
-				current = node;
-			}
-
+			current = node;
 			forward.Clear();
-
-			lastNavigationTime = navigationTime;
 		}
 	}
 }
