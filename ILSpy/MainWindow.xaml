@@ -102,7 +102,7 @@
 			<Menu Name="mainMenu" Height="23" Background="Transparent">
 				<MenuItem Header="_File" /> <!-- contents of file menu are added using MEF -->
 				<MenuItem Header="_View">
-					<MenuItem Header="Show _internal types and members" IsCheckable="True" IsChecked="{Binding FilterSettings.ShowInternalApi}">
+					<MenuItem Header="Show _Internal Types and Members" IsCheckable="True" IsChecked="{Binding FilterSettings.ShowInternalApi}">
 						<MenuItem.Icon>
 							<Image Width="16" Height="16" Source="pack://application:,,,/dnSpy;component/Images/PrivateInternal.png" />
 						</MenuItem.Icon>

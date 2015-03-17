@@ -960,7 +960,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportMainMenuCommand(Menu = "_Debug",
 	                       MenuIcon = "Images/DeleteAllBreakpoints.png",
 						   MenuCategory = "Breakpoints",
-	                       Header = "_Delete all breakpoints",
+						   Header = "_Delete All Breakpoints",
 						   InputGestureText = "Ctrl+Shift+F9",
 	                       MenuOrder = 1)]
 	internal sealed class RemoveBreakpointsCommand : DebuggerCommand, IMainMenuCommand
