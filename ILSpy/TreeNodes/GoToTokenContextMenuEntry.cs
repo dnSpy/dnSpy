@@ -13,7 +13,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	{
 		public bool IsVisible(TextViewContext context)
 		{
-			return GetModule(context) != null;
+			return CanExecute();
 		}
 
 		public bool IsEnabled(TextViewContext context)
@@ -21,20 +21,17 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return true;
 		}
 
-		static ModuleDefMD GetModule(TextViewContext context)
+		public void Execute(TextViewContext context)
 		{
-			if (context.SelectedTreeNodes != null)
-				return GetModule(context.SelectedTreeNodes);
-			if (context.TextView != null)
-				return GetModule(MainWindow.Instance.SelectedNodes.ToArray());
-			return null;
+			Execute();
 		}
 
-		public void Execute(TextViewContext context) {
-			if (context.SelectedTreeNodes != null)
-				Execute(context.SelectedTreeNodes);
-			else if (context.TextView != null)
-				Execute(MainWindow.Instance.SelectedNodes.ToArray());
+		static ModuleDefMD GetModule(out TabState tabState)
+		{
+			tabState = MainWindow.Instance.ActiveTabState;
+			if (tabState == null)
+				return null;
+			return GetModule(tabState.DecompiledNodes);
 		}
 
 		internal static ModuleDefMD GetModule(SharpTreeNode[] nodes)
@@ -51,9 +48,16 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return null;
 		}
 
-		internal static void Execute(SharpTreeNode[] nodes)
+		internal static bool CanExecute()
 		{
-			var module = GetModule(nodes);
+			TabState tabState;
+			return GetModule(out tabState) != null;
+		}
+
+		internal static void Execute()
+		{
+			TabState tabState;
+			var module = GetModule(out tabState);
 			if (module == null)
 				return;
 
@@ -85,7 +89,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return;
 			}
 
-			MainWindow.Instance.JumpToReference(member);
+			MainWindow.Instance.JumpToReference(tabState.TextView, member);
 		}
 	}
 }

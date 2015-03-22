@@ -189,7 +189,7 @@ namespace ICSharpCode.ILSpy
 
 		internal Theme Theme { get; private set; }
 
-		TabState SafeActiveTabState {
+		internal TabState SafeActiveTabState {
 			get {
 				var tabState = ActiveTabState;
 				if (tabState != null)
@@ -210,7 +210,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		TabState ActiveTabState {
+		internal TabState ActiveTabState {
 			get {
 				int index = tabControl.SelectedIndex == -1 ? 0 : tabControl.SelectedIndex;
 				if (index >= tabControl.Items.Count)
@@ -1860,12 +1860,12 @@ namespace ICSharpCode.ILSpy
 
 		private void GoToTokenExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			GoToTokenContextMenuEntry.Execute(this.SelectedNodes.ToArray());
+			GoToTokenContextMenuEntry.Execute();
 		}
 
 		private void GoToTokenCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = GoToTokenContextMenuEntry.GetModule(this.SelectedNodes.ToArray()) != null;
+			e.CanExecute = GoToTokenContextMenuEntry.CanExecute();
 		}
 
 		private void GoToLineExecuted(object sender, ExecutedRoutedEventArgs e)
