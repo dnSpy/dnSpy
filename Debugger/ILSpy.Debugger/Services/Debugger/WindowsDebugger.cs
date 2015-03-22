@@ -660,8 +660,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			// reset
 			BreakAtBeginning = false;
 			
-			//JumpToCurrentLine();
 			OnProcessSelected(new ProcessEventArgs(process));
+			OnProcessRunningChanged(EventArgs.Empty);
 		}
 
 		void debuggedProcess_ModulesAdded(object sender, ModuleEventArgs e)
