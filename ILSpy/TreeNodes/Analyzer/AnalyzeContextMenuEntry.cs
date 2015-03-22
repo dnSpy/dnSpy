@@ -24,7 +24,7 @@ using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	[ExportContextMenuEntryAttribute(Header = "_Analyze", Icon = "images/Search.png", Order = 900, Category = "Other")]
+	[ExportContextMenuEntryAttribute(Header = "Analy_ze", Icon = "images/Search.png", Order = 900, Category = "Other")]
 	internal sealed class AnalyzeContextMenuEntry : IContextMenuEntry
 	{
 		public bool IsVisible(TextViewContext context)

@@ -108,8 +108,8 @@
 						</MenuItem.Icon>
 					</MenuItem>
 					<Separator />
-					<MenuItem Header="_Word wrap" IsCheckable="True" IsChecked="{Binding WordWrap}" />
-					<MenuItem Header="_Highlight current line" IsCheckable="True" IsChecked="{Binding HighlightCurrentLine}" />
+					<MenuItem Header="_Word Wrap" IsCheckable="True" IsChecked="{Binding WordWrap}" />
+					<MenuItem Header="_Highlight Current Line" IsCheckable="True" IsChecked="{Binding HighlightCurrentLine}" />
 				</MenuItem>
 				<MenuItem Header="_Themes" Name="themeMenu" />
 			</Menu>

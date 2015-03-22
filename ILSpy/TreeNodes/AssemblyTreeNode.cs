@@ -440,7 +440,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 	}
 
-	[ExportContextMenuEntryAttribute(Header = "_Add To Main List", Order = 950, Category = "Other")]
+	[ExportContextMenuEntryAttribute(Header = "_Add to Main List", Order = 950, Category = "Other")]
 	sealed class AddToMainList : IContextMenuEntry
 	{
 		public bool IsVisible(TextViewContext context)
