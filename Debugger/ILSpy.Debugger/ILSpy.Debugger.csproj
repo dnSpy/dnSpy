@@ -122,8 +122,8 @@
       <DependentUpon>DebuggerSettingsPanel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UI\ExecuteProcessWindow.xaml.cs">
-      <DependentUpon>ExecuteProcessWindow.xaml</DependentUpon>
+    <Compile Include="UI\DebugProcessWindow.xaml.cs">
+      <DependentUpon>DebugProcessWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -135,7 +135,7 @@
     <Page Include="UI\BreakpointPanel.xaml" />
     <Page Include="UI\CallStackPanel.xaml" />
     <Page Include="UI\DebuggerSettingsPanel.xaml" />
-    <Page Include="UI\ExecuteProcessWindow.xaml" />
+    <Page Include="UI\DebugProcessWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">

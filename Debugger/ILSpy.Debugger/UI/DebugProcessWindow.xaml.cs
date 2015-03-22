@@ -11,11 +11,11 @@ using System.Windows.Forms;
 namespace ICSharpCode.ILSpy.Debugger.UI
 {
 	/// <summary>
-	/// Interaction logic for ExecuteProcessWindow.xaml
+	/// Interaction logic for DebugProcessWindow.xaml
 	/// </summary>
-	public partial class ExecuteProcessWindow : Window
+	public partial class DebugProcessWindow : Window
 	{
-		public ExecuteProcessWindow()
+		public DebugProcessWindow()
 		{
 			InitializeComponent();
 		}
@@ -47,6 +47,15 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 				argumentsTextBox.Text = value;
 			}
 		}
+
+		public bool BreakAtBeginning {
+			get {
+				return breakAtStartChkBox.IsChecked.Value;
+			}
+			set {
+				breakAtStartChkBox.IsChecked = value;
+			}
+		}
 		
 		void pathButton_Click(object sender, RoutedEventArgs e)
 		{
@@ -62,7 +71,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 			}
 		}
 		
-		void ExecuteButton_Click(object sender, RoutedEventArgs e)
+		void DebugButton_Click(object sender, RoutedEventArgs e)
 		{
 			if (string.IsNullOrEmpty(SelectedExecutable))
 				return;

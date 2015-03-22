@@ -63,10 +63,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			public string Executable;
 			public string WorkingDirectory;
 			public string Arguments;
+			public bool BreakAtBeginning;
 
-			public static ExecuteProcessWindow CreateExecWindow(string fileName, out bool? result)
+			public static SavedDebuggedOptions ShowDebugExecutableDialogBox(string fileName, out bool? result)
 			{
-				var window = new ExecuteProcessWindow {
+				var window = new DebugProcessWindow {
 					Owner = MainWindow.Instance
 				};
 				var fn = fileName ?? Instance.Executable;
@@ -76,14 +77,16 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 						window.WorkingDirectory = Instance.WorkingDirectory;
 				}
 				window.Arguments = Instance.Arguments ?? string.Empty;
+				window.BreakAtBeginning = DebuggerSettings.Instance.BreakAtBeginning;
 
 				result = window.ShowDialog();
 				if (result == true) {
 					Instance.Executable = window.SelectedExecutable;
 					Instance.WorkingDirectory = window.WorkingDirectory;
 					Instance.Arguments = window.Arguments;
+					Instance.BreakAtBeginning = window.BreakAtBeginning;
 				}
-				return window;
+				return Instance;
 			}
 		}
 
@@ -94,10 +97,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 			if (DebuggerSettings.Instance.AskForArguments) {
 				bool? result;
-				var window = SavedDebuggedOptions.CreateExecWindow(null, out result);
+				var debugOpts = SavedDebuggedOptions.ShowDebugExecutableDialogBox(null, out result);
 				if (result == true) {
-					MainWindow.Instance.OpenFiles(new[] { window.SelectedExecutable }, false);
-					DebuggerPlugin.StartExecutable(window.SelectedExecutable, window.WorkingDirectory, window.Arguments);
+					MainWindow.Instance.OpenFiles(new[] { debugOpts.Executable }, false);
+					DebuggerPlugin.StartExecutable(debugOpts.Executable, debugOpts.WorkingDirectory, debugOpts.Arguments, debugOpts.BreakAtBeginning);
 					return true;
 				}
 			}
@@ -109,7 +112,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				};
 				if (dialog.ShowDialog() == true) {
 					MainWindow.Instance.OpenFiles(new[] { dialog.FileName }, false);
-					DebuggerPlugin.StartExecutable(dialog.FileName, null, null);
+					DebuggerPlugin.StartExecutable(dialog.FileName, null, null, DebuggerSettings.Instance.BreakAtBeginning);
 					return true;
 				}
 			}
@@ -124,15 +127,15 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 			if (DebuggerSettings.Instance.AskForArguments) {
 				bool? result;
-				var window = SavedDebuggedOptions.CreateExecWindow(filename, out result);
+				var debugOpts = SavedDebuggedOptions.ShowDebugExecutableDialogBox(filename, out result);
 				if (result == true) {
-					DebuggerPlugin.StartExecutable(window.SelectedExecutable, window.WorkingDirectory, window.Arguments);
+					DebuggerPlugin.StartExecutable(debugOpts.Executable, debugOpts.WorkingDirectory, debugOpts.Arguments, debugOpts.BreakAtBeginning);
 					return true;
 				}
 				return false;
 			}
 			else {
-				DebuggerPlugin.StartExecutable(filename, null, null);
+				DebuggerPlugin.StartExecutable(filename, null, null, DebuggerSettings.Instance.BreakAtBeginning);
 				return true;
 			}
 		}
@@ -160,7 +163,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 			var inst = SavedDebuggedOptions.Instance;
 			MainWindow.Instance.OpenFiles(new[] { inst.Executable }, false);
-			DebuggerPlugin.StartExecutable(inst.Executable, inst.WorkingDirectory, inst.Arguments);
+			DebuggerPlugin.StartExecutable(inst.Executable, inst.WorkingDirectory, inst.Arguments, inst.BreakAtBeginning);
 			return true;
 		}
 
@@ -182,17 +185,17 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			return false;
 		}
 
-		public static void StartExecutable(string fileName, string workingDirectory, string arguments)
+		public static void StartExecutable(string fileName, string workingDirectory, string arguments, bool breakAtBeginning)
 		{
 			var debugger = DebuggerService.CurrentDebugger;
 			if (debugger == null)
 				return;
-			debugger.BreakAtBeginning = DebuggerSettings.Instance.BreakAtBeginning;
+			debugger.BreakAtBeginning = breakAtBeginning;
 			DebugStarted();
 			debugger.Start(new ProcessStartInfo {
 			                      	FileName = fileName,
 			                      	WorkingDirectory = workingDirectory ?? Path.GetDirectoryName(fileName),
-			                      	Arguments = arguments
+			                      	Arguments = arguments ?? string.Empty,
 			                      });
 		}
 

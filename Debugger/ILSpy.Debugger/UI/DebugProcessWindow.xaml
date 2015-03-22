@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Window
-	x:Class="ICSharpCode.ILSpy.Debugger.UI.ExecuteProcessWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	x:Class="ICSharpCode.ILSpy.Debugger.UI.DebugProcessWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	Title="Select executable to debug..."
 	WindowStartupLocation="CenterOwner"
 	WindowState="Normal"
 	WindowStyle="ToolWindow"
 	ShowInTaskbar="False"
-	Height="171"
+	Height="176"
 	Width="509">
 	<Grid>
 		<Grid.RowDefinitions>
@@ -85,26 +85,25 @@
 			HorizontalAlignment="Left"
 			VerticalAlignment="Top"
 			Margin="5,77.42,0,0" />
-		<StackPanel
-			Margin="4"
-			Orientation="Horizontal"
-			HorizontalAlignment="Right"
+		<DockPanel
+			Margin="19.5,0,0,5"
 			Grid.Row="1"
 			Grid.ColumnSpan="3">
 			<Button
 				Margin="0,0,4,0"
-				DockPanel.Dock="Left"
-				HorizontalAlignment="Center"
-				x:Name="ExecuteButton"
-				IsDefault="True"
-				Click="ExecuteButton_Click"
-				Content="Execute" />
-			<Button
 				DockPanel.Dock="Right"
 				IsCancel="True"
 				x:Name="CancelButton"
-				Content="Cancel"
+				Content="_Cancel"
 				Click="CancelButton_Click" />
-		</StackPanel>
+			<Button
+				Margin="4,0,4,0"
+				DockPanel.Dock="Right"
+				x:Name="DebugButton"
+				IsDefault="True"
+				Click="DebugButton_Click"
+				Content="_Debug" />
+			<CheckBox Name="breakAtStartChkBox" Content="_Break debugged process at start" DockPanel.Dock="Left" />
+		</DockPanel>
 	</Grid>
 </Window>
