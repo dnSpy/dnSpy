@@ -67,23 +67,31 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		public static void Analyze(MemberReference member)
 		{
-			TypeDefinition type = null;
-			if (member is TypeReference)
-				type = ((TypeReference)member).Resolve();
-			if (type != null)
-				AnalyzerTreeView.Instance.ShowOrFocus(new AnalyzedTypeTreeNode(type.Resolve()));
-			FieldDefinition field = member as FieldDefinition;
-			if (field != null)
-				AnalyzerTreeView.Instance.ShowOrFocus(new AnalyzedFieldTreeNode(field));
-			MethodDefinition method = member as MethodDefinition;
-			if (method != null)
-				AnalyzerTreeView.Instance.ShowOrFocus(new AnalyzedMethodTreeNode(method));
-			var propertyAnalyzer = AnalyzedPropertyTreeNode.TryCreateAnalyzer(member);
-			if (propertyAnalyzer != null)
-				AnalyzerTreeView.Instance.ShowOrFocus(propertyAnalyzer);
-			var eventAnalyzer = AnalyzedEventTreeNode.TryCreateAnalyzer(member);
-			if (eventAnalyzer != null)
-				AnalyzerTreeView.Instance.ShowOrFocus(eventAnalyzer);
+			if (member is TypeReference) {
+				TypeDefinition type = ((TypeReference)member).Resolve();
+				if (type != null)
+					AnalyzerTreeView.Instance.ShowOrFocus(new AnalyzedTypeTreeNode(type));
+			}
+			else if (member is FieldReference) {
+				FieldDefinition field = ((FieldReference)member).Resolve();
+				if (field != null)
+					AnalyzerTreeView.Instance.ShowOrFocus(new AnalyzedFieldTreeNode(field));
+			}
+			else if (member is MethodReference) {
+				MethodDefinition method = ((MethodReference)member).Resolve();
+				if (method != null)
+					AnalyzerTreeView.Instance.ShowOrFocus(new AnalyzedMethodTreeNode(method));
+			}
+			else if (member is PropertyReference) {
+				PropertyDefinition property = ((PropertyReference)member).Resolve();
+				if (property != null)
+					AnalyzerTreeView.Instance.ShowOrFocus(new AnalyzedPropertyTreeNode(property));
+			}
+			else if (member is EventReference) {
+				EventDefinition @event = ((EventReference)member).Resolve();
+				if (@event != null)
+					AnalyzerTreeView.Instance.ShowOrFocus(new AnalyzedEventTreeNode(@event));
+			}
 		}
 	}
 }
