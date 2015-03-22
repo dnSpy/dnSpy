@@ -8,7 +8,7 @@ using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
-	[ExportContextMenuEntryAttribute(Header = "G_o to Token...", Order = 300, Category = "Tokens", InputGestureText = "Ctrl+D")]
+	[ExportContextMenuEntryAttribute(Header = "G_o to MD Token...", Order = 300, Category = "Tokens", InputGestureText = "Ctrl+D")]
 	class GoToTokenContextMenuEntry : IContextMenuEntry
 	{
 		public bool IsVisible(TextViewContext context)
@@ -63,10 +63,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 			var ask = new AskForInput();
 			ask.Owner = MainWindow.Instance;
-			ask.Title = "Go to Token";
-			ask.textBlock.Text = "Enter token";
+			ask.Title = "Go to MD Token";
+			ask.textBlock.Text = "Metadata token";
 			ask.textBox.Text = "";
-			ask.ToolTip = "Enter a hexadecimal token: 0x06001234 or 0200ABCD";
+			ask.ToolTip = "Enter a hexadecimal MD token: 0x06001234 or 0200ABCD";
 			ask.ShowDialog();
 			if (ask.DialogResult != true)
 				return;
