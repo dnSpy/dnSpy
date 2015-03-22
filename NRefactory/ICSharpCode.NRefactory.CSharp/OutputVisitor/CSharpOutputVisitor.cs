@@ -336,6 +336,11 @@ namespace ICSharpCode.NRefactory.CSharp
 		
 		void WriteKeyword(string token, Role tokenRole = null, AstNode node = null)
 		{
+			WriteKeywordIdentifier(token, tokenRole, node, false);
+		}
+		
+		void WriteKeywordIdentifier(string token, Role tokenRole = null, AstNode node = null, bool isId = true)
+		{
 			if (tokenRole != null) {
 				WriteSpecialsUpToRole(tokenRole);
 			}
@@ -344,7 +349,10 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 			if (node != null)
 				DebugStart(node);
-			formatter.WriteKeyword(token);
+			if (isId)
+				formatter.WriteIdentifier(token, TextTokenType.Keyword);
+			else
+				formatter.WriteKeyword(token);
 			lastWritten = LastWritten.KeywordOrIdentifier;
 		}
 		
@@ -2201,13 +2209,13 @@ namespace ICSharpCode.NRefactory.CSharp
 			if (isDefault)
 				DebugStart(accessor);
 			if (accessor.Role == PropertyDeclaration.GetterRole) {
-				WriteKeyword("get");
+				WriteKeywordIdentifier("get");
 			} else if (accessor.Role == PropertyDeclaration.SetterRole) {
-				WriteKeyword("set");
+				WriteKeywordIdentifier("set");
 			} else if (accessor.Role == CustomEventDeclaration.AddAccessorRole) {
-				WriteKeyword("add");
+				WriteKeywordIdentifier("add");
 			} else if (accessor.Role == CustomEventDeclaration.RemoveAccessorRole) {
-				WriteKeyword("remove");
+				WriteKeywordIdentifier("remove");
 			}
 			if (isDefault)
 				SemicolonDebugEnd(accessor);
@@ -2416,7 +2424,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			} else {
 				operatorDeclaration.ReturnType.AcceptVisitor(this);
 			}
-			WriteKeyword(OperatorDeclaration.OperatorKeywordRole);
+			WriteKeywordIdentifier(OperatorDeclaration.OperatorKeywordRole.Token, OperatorDeclaration.OperatorKeywordRole);
 			Space();
 			if (operatorDeclaration.OperatorType == OperatorType.Explicit
 				|| operatorDeclaration.OperatorType == OperatorType.Implicit) {

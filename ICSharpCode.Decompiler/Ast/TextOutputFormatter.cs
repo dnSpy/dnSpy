@@ -174,8 +174,11 @@ namespace ICSharpCode.Decompiler.Ast
 				return null;
 			
 			var node = nodeStack.Peek();
-			if (node is Identifier)
+			if (node is Identifier) {
 				node = node.Parent;
+				if (node is VariableInitializer)
+					node = node.Parent;		// get FieldDeclaration / EventDeclaration
+			}
 			if (IsDefinition(node))
 				return node.Annotation<IMemberRef>();
 			
@@ -313,9 +316,6 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 			}
 			nodeStack.Push(node);
-			
-			if (node is EntityDeclaration && node.Annotation<IMemberRef>() != null && node.GetChildByRole(Roles.Identifier).IsNull)
-				output.WriteDefinition("", node.Annotation<IMemberRef>(), TextTokenType.Text, false);
 			
 			MemberMapping mapping = node.Annotation<MemberMapping>();
 			if (mapping != null) {
