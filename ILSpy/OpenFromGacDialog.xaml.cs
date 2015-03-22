@@ -25,6 +25,7 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 using ICSharpCode.ILSpy.Controls;
@@ -183,6 +184,14 @@ namespace ICSharpCode.ILSpy
 		public string[] SelectedFileNames {
 			get {
 				return listView.SelectedItems.OfType<GacEntry>().Select(e => e.FileName).ToArray();
+			}
+		}
+
+		private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			if (listView.SelectedItems.Count > 0) {
+				this.DialogResult = true;
+				Close();
 			}
 		}
 	}

@@ -24,7 +24,7 @@
 			<Label DockPanel.Dock="Left" Target="{Binding ElementName=filterTextBox}">_Search:</Label>
 			<TextBox Name="filterTextBox" TextChanged="FilterTextBox_TextChanged" />
 		</DockPanel>
-		<ListView Name="listView" Grid.Row="1" Margin="0, 8" controls:SortableGridViewColumn.SortMode="Automatic" SelectionChanged="ListView_SelectionChanged">
+		<ListView Name="listView" Grid.Row="1" Margin="0, 8" controls:SortableGridViewColumn.SortMode="Automatic" SelectionChanged="ListView_SelectionChanged" MouseDoubleClick="listView_MouseDoubleClick">
 			<ListView.View>
 				<GridView>
 					<controls:SortableGridViewColumn x:Name="nameColumn" Width="300" Header="Reference Name" DisplayMemberBinding="{Binding ShortName}" />
