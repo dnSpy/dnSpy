@@ -18,6 +18,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				var blockStatement = switchSection.Statements.First() as BlockStatement;
 				if (blockStatement == null || blockStatement.Statements.Any(st => st is VariableDeclarationStatement))
 					continue;
+				if (blockStatement.HiddenStart != null || blockStatement.HiddenEnd != null)
+					continue;
+				if (blockStatement.GetAllILRanges().Count > 0)
+					continue;
 
 				blockStatement.Remove();
 				blockStatement.Statements.MoveTo(switchSection.Statements);

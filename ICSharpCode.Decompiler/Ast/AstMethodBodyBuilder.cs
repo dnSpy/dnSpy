@@ -135,6 +135,8 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			Ast.BlockStatement astBlock = new BlockStatement();
 			if (block != null) {
+				astBlock.HiddenStart = NRefactoryExtensions.CreateHidden(block.ILRanges, astBlock.HiddenStart);
+				astBlock.HiddenEnd = NRefactoryExtensions.CreateHidden(block.EndILRanges, astBlock.HiddenEnd);
 				foreach(ILNode node in block.GetChildren()) {
 					astBlock.Statements.AddRange(TransformNode(node));
 				}
@@ -145,12 +147,10 @@ namespace ICSharpCode.Decompiler.Ast
 		IEnumerable<Statement> TransformNode(ILNode node)
 		{
 			if (node is ILLabel) {
-				yield return new Ast.LabelStatement { Label = ((ILLabel)node).Name };
+				yield return new Ast.LabelStatement { Label = ((ILLabel)node).Name }.WithAnnotation(node.ILRanges);
 			} else if (node is ILExpression) {
-				List<ILRange> ilRanges = ILRange.OrderAndJoint(node.GetSelfAndChildrenRecursiveILRanges());
 				AstNode codeExpr = TransformExpression((ILExpression)node);
 				if (codeExpr != null) {
-					codeExpr = codeExpr.WithAnnotation(ilRanges);
 					if (codeExpr is Ast.Expression) {
 						yield return new Ast.ExpressionStatement { Expression = (Ast.Expression)codeExpr };
 					} else if (codeExpr is Ast.Statement) {
@@ -161,19 +161,26 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 			} else if (node is ILWhileLoop) {
 				ILWhileLoop ilLoop = (ILWhileLoop)node;
+				Expression expr;
 				WhileStatement whileStmt = new WhileStatement() {
-					Condition = ilLoop.Condition != null ? (Expression)TransformExpression(ilLoop.Condition) : new PrimitiveExpression(true),
+					Condition = expr = ilLoop.Condition != null ? (Expression)TransformExpression(ilLoop.Condition) : new PrimitiveExpression(true),
 					EmbeddedStatement = TransformBlock(ilLoop.BodyBlock)
 				};
+				expr.AddAnnotation(ilLoop.ILRanges);
 				yield return whileStmt;
 			} else if (node is ILCondition) {
 				ILCondition conditionalNode = (ILCondition)node;
 				bool hasFalseBlock = conditionalNode.FalseBlock.EntryGoto != null || conditionalNode.FalseBlock.Body.Count > 0;
-				yield return new Ast.IfElseStatement {
+				BlockStatement trueStmt;
+				var ifElseStmt = new Ast.IfElseStatement {
 					Condition = (Expression)TransformExpression(conditionalNode.Condition),
-					TrueStatement = TransformBlock(conditionalNode.TrueBlock),
+					TrueStatement = trueStmt = TransformBlock(conditionalNode.TrueBlock),
 					FalseStatement = hasFalseBlock ? TransformBlock(conditionalNode.FalseBlock) : null
 				};
+				ifElseStmt.Condition.AddAnnotation(conditionalNode.ILRanges);
+				if (ifElseStmt.FalseStatement == null)
+					trueStmt.HiddenEnd = NRefactoryExtensions.CreateHidden(conditionalNode.FalseBlock.GetSelfAndChildrenRecursiveILRanges(), trueStmt.HiddenEnd);
+				yield return ifElseStmt;
 			} else if (node is ILSwitch) {
 				ILSwitch ilSwitch = (ILSwitch)node;
 				if (ilSwitch.Condition.InferredType.GetElementType() == ElementType.Boolean && (
@@ -187,6 +194,8 @@ namespace ICSharpCode.Decompiler.Ast
 					ilSwitch.Condition.ExpectedType = corLib.Int32;
 				}
 				SwitchStatement switchStmt = new SwitchStatement() { Expression = (Expression)TransformExpression(ilSwitch.Condition) };
+				switchStmt.Expression.AddAnnotation(ilSwitch.ILRanges);
+				switchStmt.HiddenEnd = NRefactoryExtensions.CreateHidden(ilSwitch.EndILRanges, switchStmt.HiddenEnd);
 				foreach (var caseBlock in ilSwitch.CaseBlocks) {
 					SwitchSection section = new SwitchSection();
 					if (caseBlock.Values != null) {
@@ -202,6 +211,7 @@ namespace ICSharpCode.Decompiler.Ast
 				ILTryCatchBlock tryCatchNode = ((ILTryCatchBlock)node);
 				var tryCatchStmt = new Ast.TryCatchStatement();
 				tryCatchStmt.TryBlock = TransformBlock(tryCatchNode.TryBlock);
+				tryCatchStmt.TryBlock.HiddenStart = NRefactoryExtensions.CreateHidden(tryCatchNode.ILRanges, tryCatchStmt.TryBlock.HiddenStart);
 				foreach (var catchClause in tryCatchNode.CatchBlocks) {
 					if (catchClause.ExceptionVariable == null
 					    && (catchClause.ExceptionType == null || catchClause.ExceptionType.GetElementType() == ElementType.Object))
@@ -228,14 +238,19 @@ namespace ICSharpCode.Decompiler.Ast
 			} else if (node is ILFixedStatement) {
 				ILFixedStatement fixedNode = (ILFixedStatement)node;
 				FixedStatement fixedStatement = new FixedStatement();
-				foreach (ILExpression initializer in fixedNode.Initializers) {
+				for (int i = 0; i < fixedNode.Initializers.Count; i++) {
+					var initializer = fixedNode.Initializers[i];
 					Debug.Assert(initializer.Code == ILCode.Stloc);
 					ILVariable v = (ILVariable)initializer.Operand;
-					fixedStatement.Variables.Add(
+					VariableInitializer vi;
+					fixedStatement.Variables.Add(vi =
 						new VariableInitializer {
 							NameToken = Identifier.Create(v.Name).WithAnnotation(v.IsParameter ? TextTokenType.Parameter : TextTokenType.Local),
 							Initializer = (Expression)TransformExpression(initializer.Arguments[0])
 						}.WithAnnotation(v));
+					vi.AddAnnotation(ILRange.OrderAndJoint(initializer.GetSelfAndChildrenRecursiveILRanges()));
+					if (i == 0)
+						vi.AddAnnotation(ILRange.OrderAndJoint(fixedNode.ILRanges));
 				}
 				fixedStatement.Type = AstBuilder.ConvertType(((ILVariable)fixedNode.Initializers[0].Operand).Type);
 				fixedStatement.EmbeddedStatement = TransformBlock(fixedNode.BodyBlock);
@@ -249,11 +264,11 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		AstNode TransformExpression(ILExpression expr)
 		{
+			List<ILRange> ilRanges = ILRange.OrderAndJoint(expr.GetSelfAndChildrenRecursiveILRanges());
+
 			AstNode node = TransformByteCode(expr);
 			Expression astExpr = node as Expression;
 			
-			// get IL ranges - used in debugger
-			List<ILRange> ilRanges = ILRange.OrderAndJoint(expr.GetSelfAndChildrenRecursiveILRanges());
 			AstNode result;
 			
 			if (astExpr != null)

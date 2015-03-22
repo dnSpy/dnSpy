@@ -22,8 +22,8 @@ This is a slightly updated debugger that was removed from ILSpy. It's lacking ma
 Updates to the Debugger
 =======================
 
-* Can debug VB code
-* Can debug ILAst code (this language is only available in Debug builds)
+* Improved stepping
+* C#, VB, IL code can be debugged
 * Breakpoints are automatically saved
 * Current statement is highlighted instead of the whole line
 * Many other minor updates / fixes

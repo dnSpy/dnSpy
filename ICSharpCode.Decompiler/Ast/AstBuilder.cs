@@ -1081,7 +1081,10 @@ namespace ICSharpCode.Decompiler.Ast
 							Environment.NewLine, method.MDToken.ToUInt32(), ex.ToString());
 				}
 				var bs = new BlockStatement();
-				bs.Statements.Add(new EmptyStatement());
+				var emptyStmt = new EmptyStatement();
+				if (method.Body != null)
+					emptyStmt.AddAnnotation(new List<ILRange> { new ILRange(0, (uint)method.Body.GetCodeSize()) });
+				bs.Statements.Add(emptyStmt);
 				bs.InsertChildAfter(null, new Comment(msg, CommentType.MultiLine), Roles.Comment);
 				return bs;
 			}

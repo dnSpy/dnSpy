@@ -28,7 +28,6 @@ namespace ICSharpCode.Decompiler.ILAst
 	{
 		Dictionary<ILNode, ILNode> parent = new Dictionary<ILNode, ILNode>();
 		Dictionary<ILNode, ILNode> nextSibling = new Dictionary<ILNode, ILNode>();
-		Dictionary<ILNode, ILNode> prevSibling = new Dictionary<ILNode, ILNode>();
 		
 		public void RemoveGotos(ILBlock method)
 		{
@@ -42,7 +41,6 @@ namespace ICSharpCode.Decompiler.ILAst
 					parent[child] = node;
 					if (previousChild != null)
 						nextSibling[previousChild] = child;
-					prevSibling[child] = previousChild;
 					previousChild = child;
 				}
 				if (previousChild != null)
@@ -67,14 +65,25 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			// Remove dead lables and nops
 			HashSet<ILLabel> liveLabels = new HashSet<ILLabel>(method.GetSelfAndChildrenRecursive<ILExpression>(e => e.IsBranch()).SelectMany(e => e.GetBranchTargets()));
-			foreach(ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
-				block.Body = block.Body.Where(n => !n.Match(ILCode.Nop) && !(n is ILLabel && !liveLabels.Contains((ILLabel)n))).ToList();
+			foreach (ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
+				var newBody = new List<ILNode>(block.Body.Count);
+				for (int i = 0; i < block.Body.Count; i++) {
+					var node = block.Body[i];
+					if (node.Match(ILCode.Nop))
+						Utils.NopMergeILRanges(block, newBody, i);
+					else if (node is ILLabel && !liveLabels.Contains((ILLabel)node))
+						Utils.LabelMergeILRanges(block, newBody, i);
+					else
+						newBody.Add(node);
+				}
+				block.Body = newBody;
 			}
 			
 			// Remove redundant continue
 			foreach(ILWhileLoop loop in method.GetSelfAndChildrenRecursive<ILWhileLoop>()) {
 				var body = loop.BodyBlock.Body;
 				if (body.Count > 0 && body.Last().Match(ILCode.LoopContinue)) {
+					loop.EndILRanges.AddRange(body[body.Count - 1].GetSelfAndChildrenRecursiveILRanges());
 					body.RemoveAt(body.Count - 1);
 				}
 			}
@@ -90,6 +99,8 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (ilCase.Body[count - 2].IsUnconditionalControlFlow() &&
 						    ilCase.Body[count - 1].Match(ILCode.LoopOrSwitchBreak)) 
 						{
+							var prev = ilCase.Body[count - 2];
+							prev.EndILRanges.AddRange(ilCase.Body[count - 1].GetSelfAndChildrenRecursiveILRanges());
 							ilCase.Body.RemoveAt(count - 1);
 						}
 					}
@@ -98,12 +109,19 @@ namespace ICSharpCode.Decompiler.ILAst
 				var defaultCase = ilSwitch.CaseBlocks.SingleOrDefault(cb => cb.Values == null);
 				// If there is no default block, remove empty case blocks
 				if (defaultCase == null || (defaultCase.Body.Count == 1 && defaultCase.Body.Single().Match(ILCode.LoopOrSwitchBreak))) {
-					ilSwitch.CaseBlocks.RemoveAll(b => b.Body.Count == 1 && b.Body.Single().Match(ILCode.LoopOrSwitchBreak));
+					for (int i = ilSwitch.CaseBlocks.Count - 1; i >= 0; i--) {
+						var caseBlock = ilSwitch.CaseBlocks[i];
+						if (caseBlock.Body.Count != 1 || !caseBlock.Body.Single().Match(ILCode.LoopOrSwitchBreak))
+							continue;
+						ilSwitch.EndILRanges.AddRange(caseBlock.Body[0].GetSelfAndChildrenRecursiveILRanges());
+						ilSwitch.CaseBlocks.RemoveAt(i);
+					}
 				}
 			}
 			
 			// Remove redundant return at the end of method
 			if (method.Body.Count > 0 && method.Body.Last().Match(ILCode.Ret) && ((ILExpression)method.Body.Last()).Arguments.Count == 0) {
+				method.EndILRanges.AddRange(method.Body[method.Body.Count - 1].GetSelfAndChildrenRecursiveILRanges());
 				method.Body.RemoveAt(method.Body.Count - 1);
 			}
 			
@@ -113,6 +131,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				for (int i = 0; i < block.Body.Count - 1;) {
 					if (block.Body[i].IsUnconditionalControlFlow() && block.Body[i+1].Match(ILCode.Ret)) {
 						modified = true;
+						block.EndILRanges.AddRange(block.Body[i+1].GetSelfAndChildrenRecursiveILRanges());
 						block.Body.RemoveAt(i+1);
 					} else {
 						i++;
@@ -155,10 +174,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (target == Exit(gotoExpr, new HashSet<ILNode>() { gotoExpr })) {
 				gotoExpr.Code = ILCode.Nop;
 				gotoExpr.Operand = null;
-				var prev = prevSibling[gotoExpr] as ILExpression ?? target;
-				if (prev is ILExpression)
-					((ILExpression)prev).ILRanges.AddRange(gotoExpr.ILRanges);
-				gotoExpr.ILRanges.Clear();
 				return true;
 			}
 			

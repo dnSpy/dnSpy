@@ -127,7 +127,15 @@ namespace ICSharpCode.Decompiler.ILAst
 					newExpr = new ILExpression(ILCode.TernaryOp, null, condExpr, trueExpr, falseExpr);
 				}
 				
-				head.Body.RemoveTail(ILCode.Brtrue, ILCode.Br);
+				var tail = head.Body.RemoveTail(ILCode.Brtrue, ILCode.Br);
+				var newExprNodes = newExpr.GetSelfAndChildrenRecursive<ILNode>().ToArray();
+				foreach (var node in labelToBasicBlock[trueLabel].GetSelfAndChildrenRecursive<ILNode>().Except(newExprNodes))
+					newExpr.ILRanges.AddRange(node.AllILRanges);
+				foreach (var node in labelToBasicBlock[falseLabel].GetSelfAndChildrenRecursive<ILNode>().Except(newExprNodes))
+					newExpr.ILRanges.AddRange(node.AllILRanges);
+				newExpr.ILRanges.AddRange(tail[0].ILRanges);
+				newExpr.ILRanges.AddRange(tail[1].GetSelfAndChildrenRecursiveILRanges());
+
 				head.Body.Add(new ILExpression(opCode, trueLocVar, newExpr));
 				if (isStloc)
 					head.Body.Add(new ILExpression(ILCode.Br, trueFall));
@@ -177,9 +185,17 @@ namespace ICSharpCode.Decompiler.ILAst
 			    body.Contains(rightBB)
 			   )
 			{
-				head.Body.RemoveTail(ILCode.Stloc, ILCode.Brtrue, ILCode.Br);
-				head.Body.Add(new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.NullCoalescing, null, leftExpr, rightExpr)));
+				var tail = head.Body.RemoveTail(ILCode.Stloc, ILCode.Brtrue, ILCode.Br);
+				ILExpression nullCoal, stloc;
+				head.Body.Add(stloc = new ILExpression(ILCode.Stloc, v, nullCoal = new ILExpression(ILCode.NullCoalescing, null, leftExpr, rightExpr)));
 				head.Body.Add(new ILExpression(ILCode.Br, endBBLabel));
+				stloc.ILRanges.AddRange(tail[0].GetSelfAndChildrenRecursiveILRanges());
+				nullCoal.ILRanges.AddRange(tail[1].ILRanges);	// no recursive add
+				rightExpr.ILRanges.AddRange(tail[2].GetSelfAndChildrenRecursiveILRanges());	// br (to rightBB)
+				rightExpr.ILRanges.AddRange(rightBB.AllILRanges);
+				rightExpr.ILRanges.AddRange(rightBB.Body[0].GetSelfAndChildrenRecursiveILRanges());	// label
+				rightExpr.ILRanges.AddRange(rightBB.Body[1].ILRanges);		// stloc: no recursive add
+				rightExpr.ILRanges.AddRange(rightBB.Body[2].GetSelfAndChildrenRecursiveILRanges());	// br
 				
 				body.RemoveOrThrow(labelToBasicBlock[rightBBLabel]);
 				return true;
@@ -220,9 +236,18 @@ namespace ICSharpCode.Decompiler.ILAst
 						} else {
 							logicExpr = MakeLeftAssociativeShortCircuit(ILCode.LogicOr, negate ? condExpr : new ILExpression(ILCode.LogicNot, null, condExpr), nextCondExpr);
 						}
-						head.Body.RemoveTail(ILCode.Brtrue, ILCode.Br);
+						var tail = head.Body.RemoveTail(ILCode.Brtrue, ILCode.Br);
+						nextCondExpr.ILRanges.AddRange(tail[0].ILRanges);	// brtrue
+						nextCondExpr.ILRanges.AddRange(nextBasicBlock.ILRanges);
+						nextCondExpr.ILRanges.AddRange(nextBasicBlock.Body[0].GetSelfAndChildrenRecursiveILRanges());	// label
+						nextCondExpr.ILRanges.AddRange(nextBasicBlock.Body[1].ILRanges);	// brtrue
+
 						head.Body.Add(new ILExpression(ILCode.Brtrue, nextTrueLablel, logicExpr));
-						head.Body.Add(new ILExpression(ILCode.Br, nextFalseLabel));
+						ILExpression brFalseLbl;
+						head.Body.Add(brFalseLbl = new ILExpression(ILCode.Br, nextFalseLabel));
+						brFalseLbl.ILRanges.AddRange(nextBasicBlock.Body[2].GetSelfAndChildrenRecursiveILRanges());	// br
+						brFalseLbl.ILRanges.AddRange(nextBasicBlock.EndILRanges);
+						brFalseLbl.ILRanges.AddRange(tail[1].GetSelfAndChildrenRecursiveILRanges()); // br
 						
 						// Remove the inlined branch from scope
 						body.RemoveOrThrow(nextBasicBlock);
@@ -327,7 +352,10 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression shortCircuitExpr = MakeLeftAssociativeShortCircuit(op, opFalseArg, rightExpression);
 			shortCircuitExpr.Operand = opBitwise;
 			
-			head.Body.RemoveTail(ILCode.Stloc, ILCode.Brtrue, ILCode.Br);
+			Debug.Fail("Preserve ILRanges");//TODO: Could never trigger this code path. Tested many asms.
+			var tail = head.Body.RemoveTail(ILCode.Stloc, ILCode.Brtrue, ILCode.Br);
+			//TODO: Keep tail's ILRanges
+			//TODO: Keep ILRanges of other things that are removed by this method
 			head.Body.Add(new ILExpression(ILCode.Stloc, targetVar, shortCircuitExpr));
 			head.Body.Add(new ILExpression(ILCode.Br, exitLabel));
 			body.Remove(followingBasicBlock);
@@ -343,6 +371,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression current = right;
 				while(current.Arguments[0].Match(code))
 					current = current.Arguments[0];
+				current.ILRanges.AddRange(current.Arguments[0].GetSelfAndChildrenRecursiveILRanges());
 				current.Arguments[0] = new ILExpression(code, null, left, current.Arguments[0]) { InferredType = corLib.Boolean };
 				return right;
 			} else {
@@ -363,8 +392,15 @@ namespace ICSharpCode.Decompiler.ILAst
 			    !nextBB.Body.OfType<ILTryCatchBlock>().Any()
 			   )
 			{
-				head.Body.RemoveTail(ILCode.Br);
+				var tail = head.Body.RemoveTail(ILCode.Br);
+				nextBB.ILRanges.AddRange(tail[0].GetSelfAndChildrenRecursiveILRanges());
+				nextBB.ILRanges.AddRange(nextBB.Body[0].GetSelfAndChildrenRecursiveILRanges());
 				nextBB.Body.RemoveAt(0);  // Remove label
+				if (head.Body.Count > 0)
+					head.Body[head.Body.Count - 1].EndILRanges.AddRange(nextBB.ILRanges);
+				else
+					head.ILRanges.AddRange(nextBB.ILRanges);
+				head.EndILRanges.AddRange(nextBB.EndILRanges);
 				head.Body.AddRange(nextBB.Body);
 				
 				body.RemoveOrThrow(nextBB);

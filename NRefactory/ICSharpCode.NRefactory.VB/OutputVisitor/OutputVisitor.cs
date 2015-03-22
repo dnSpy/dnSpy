@@ -524,7 +524,11 @@ namespace ICSharpCode.NRefactory.VB
 			WriteAttributes(constructorDeclaration.Attributes);
 			WriteModifiers(constructorDeclaration.ModifierTokens);
 			WriteKeyword("Sub");
+			Space();
+			DebugStart(constructorDeclaration);
+			DebugHidden(constructorDeclaration.Body.HiddenStart);
 			WriteKeyword("New");
+			DebugEnd(constructorDeclaration, false);
 			WriteCommaSeparatedListInParenthesis(constructorDeclaration.Parameters, false);
 			MarkFoldStart();
 			NewLine();
@@ -533,8 +537,11 @@ namespace ICSharpCode.NRefactory.VB
 			WriteBlock(constructorDeclaration.Body);
 			Unindent();
 			
+			DebugStart(constructorDeclaration);
+			DebugHidden(constructorDeclaration.Body.HiddenEnd);
 			WriteKeyword("End");
 			WriteKeyword("Sub");
+			DebugEnd(constructorDeclaration, false);
 			MarkFoldEnd();
 			NewLine();
 			
@@ -547,10 +554,13 @@ namespace ICSharpCode.NRefactory.VB
 			
 			WriteAttributes(methodDeclaration.Attributes);
 			WriteModifiers(methodDeclaration.ModifierTokens);
+			DebugStart(methodDeclaration);
+			DebugHidden(methodDeclaration.Body.HiddenStart);
 			if (methodDeclaration.IsSub)
 				WriteKeyword("Sub");
 			else
 				WriteKeyword("Function");
+			DebugEnd(methodDeclaration, false);
 			methodDeclaration.Name.AcceptVisitor(this, data);
 			WriteTypeParameters(methodDeclaration.TypeParameters);
 			WriteCommaSeparatedListInParenthesis(methodDeclaration.Parameters, false);
@@ -568,11 +578,14 @@ namespace ICSharpCode.NRefactory.VB
 				Indent();
 				WriteBlock(methodDeclaration.Body);
 				Unindent();
+				DebugStart(methodDeclaration);
+				DebugHidden(methodDeclaration.Body.HiddenEnd);
 				WriteKeyword("End");
 				if (methodDeclaration.IsSub)
 					WriteKeyword("Sub");
 				else
 					WriteKeyword("Function");
+				DebugEnd(methodDeclaration, false);
 				MarkFoldEnd();
 			}
 			NewLine();
@@ -1339,6 +1352,8 @@ namespace ICSharpCode.NRefactory.VB
 			StartNode(accessor);
 			WriteAttributes(accessor.Attributes);
 			WriteModifiers(accessor.ModifierTokens);
+			DebugStart(accessor);
+			DebugHidden(accessor.Body.HiddenStart);
 			if (accessor.Role == PropertyDeclaration.GetterRole) {
 				WriteKeyword("Get");
 			} else if (accessor.Role == PropertyDeclaration.SetterRole) {
@@ -1350,12 +1365,15 @@ namespace ICSharpCode.NRefactory.VB
 			} else if (accessor.Role == EventDeclaration.RaiseEventRole) {
 				WriteKeyword("RaiseEvent");
 			}
+			DebugEnd(accessor, false);
 			if (accessor.Parameters.Any())
 				WriteCommaSeparatedListInParenthesis(accessor.Parameters, false);
 			NewLine();
 			Indent();
 			WriteBlock(accessor.Body);
 			Unindent();
+			DebugStart(accessor);
+			DebugHidden(accessor.Body.HiddenEnd);
 			WriteKeyword("End");
 
 			if (accessor.Role == PropertyDeclaration.GetterRole) {
@@ -1369,6 +1387,7 @@ namespace ICSharpCode.NRefactory.VB
 			} else if (accessor.Role == EventDeclaration.RaiseEventRole) {
 				WriteKeyword("RaiseEvent");
 			}
+			DebugEnd(accessor, false);
 			NewLine();
 			
 			return EndNode(accessor);
@@ -2068,6 +2087,8 @@ namespace ICSharpCode.NRefactory.VB
 			
 			WriteAttributes(operatorDeclaration.Attributes);
 			WriteModifiers(operatorDeclaration.ModifierTokens);
+			DebugStart(operatorDeclaration);
+			DebugHidden(operatorDeclaration.Body.HiddenStart);
 			WriteKeyword("Operator");
 			switch (operatorDeclaration.Operator) {
 				case OverloadableOperatorType.Add:
@@ -2147,6 +2168,7 @@ namespace ICSharpCode.NRefactory.VB
 				default:
 					throw new Exception("Invalid value for OverloadableOperatorType");
 			}
+			DebugEnd(operatorDeclaration, false);
 			WriteCommaSeparatedListInParenthesis(operatorDeclaration.Parameters, false);
 			if (!operatorDeclaration.ReturnType.IsNull) {
 				Space();
@@ -2154,14 +2176,17 @@ namespace ICSharpCode.NRefactory.VB
 				WriteAttributes(operatorDeclaration.ReturnTypeAttributes);
 				operatorDeclaration.ReturnType.AcceptVisitor(this, data);
 			}
-			if (!operatorDeclaration.Body.IsNull) {
+			if (!operatorDeclaration.Body.IsNull || operatorDeclaration.Body.HiddenEnd.Count > 0) {
 				MarkFoldStart();
 				NewLine();
 				Indent();
 				WriteBlock(operatorDeclaration.Body);
 				Unindent();
+				DebugStart(operatorDeclaration);
+				DebugHidden(operatorDeclaration.Body.HiddenEnd);
 				WriteKeyword("End");
 				WriteKeyword("Operator");
+				DebugEnd(operatorDeclaration, false);
 				MarkFoldEnd();
 			}
 			NewLine();
@@ -2185,8 +2210,11 @@ namespace ICSharpCode.NRefactory.VB
 			}
 			
 			Unindent();
+			DebugStart(selectStatement);
+			DebugHidden(selectStatement.HiddenEnd);
 			WriteKeyword("End");
 			WriteKeyword("Select");
+			DebugEnd(selectStatement, false);
 			
 			return EndNode(selectStatement);
 		}

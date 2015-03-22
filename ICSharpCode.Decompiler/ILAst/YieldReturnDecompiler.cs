@@ -71,7 +71,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			#endif
 			method.Body.Clear();
 			method.EntryGoto = null;
-			method.Body.AddRange(yrd.newBody);
+			method.Body.AddRange(yrd.newBody);//TODO: Make sure that the removed ILRanges from Clear() above is saved in the new body
 			
 			// Repeat the inlining/copy propagation optimization because the conversion of field access
 			// to local variables can open up additional inlining possibilities.
@@ -570,7 +570,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			List<ILExpression> args;
 			if (block.Body.Count > 0 && block.Body[0].Match(ILCode.Stfld, out stfld, out args)) {
 				if (GetFieldDefinition(stfld) == stateField && args[0].MatchThis())
-					block.Body.RemoveAt(0);
+					block.Body.RemoveAt(0);//TODO: Save ILRanges?
 			}
 			// Convert ret to endfinally
 			foreach (ILExpression expr in block.GetSelfAndChildrenRecursive<ILExpression>()) {
@@ -603,7 +603,7 @@ namespace ICSharpCode.Decompiler.ILAst
 									} else {
 										expr.Operand = fieldToLocalMap[field];
 									}
-									expr.Arguments.Clear();
+									expr.Arguments.Clear();//TODO: Save ILRanges?
 								}
 								break;
 							case ILCode.Stfld:
@@ -614,7 +614,7 @@ namespace ICSharpCode.Decompiler.ILAst
 									} else {
 										expr.Operand = fieldToLocalMap[field];
 									}
-									expr.Arguments.RemoveAt(0);
+									expr.Arguments.RemoveAt(0);//TODO: Save ILRanges?
 								}
 								break;
 							case ILCode.Ldflda:
@@ -625,7 +625,7 @@ namespace ICSharpCode.Decompiler.ILAst
 									} else {
 										expr.Operand = fieldToLocalMap[field];
 									}
-									expr.Arguments.Clear();
+									expr.Arguments.Clear();//TODO: Save ILRanges?
 								}
 								break;
 						}

@@ -22,6 +22,8 @@ using System.Linq;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 
+//TODO: Verify that no ILRanges have been removed from this file
+
 namespace ICSharpCode.Decompiler.Ast.Transforms
 {
 	/// <summary>

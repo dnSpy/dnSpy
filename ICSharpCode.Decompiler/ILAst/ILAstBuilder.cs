@@ -319,8 +319,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					}
 					agenda.Push(handlerStart);
 					
-					if (ex.HandlerType == ExceptionHandlerType.Filter && ex.FilterStart != null)
-					{
+					if (ex.HandlerType == ExceptionHandlerType.Filter && ex.FilterStart != null) {
 						ByteCode filterStart = instrToByteCode[ex.FilterStart];
 						ByteCode ldexception = new ByteCode() {
 							Code = ILCode.Ldexception,
@@ -781,6 +780,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						catchBlock.ExceptionVariable = new ILVariable() { Name = "ex_" + eh.HandlerStart.GetOffset().ToString("X2"), IsGenerated = true };
 					else
 						catchBlock.ExceptionVariable = null;
+					catchBlock.StlocILRanges.AddRange(catchBlock.Body[0].GetSelfAndChildrenRecursiveILRanges());
 					catchBlock.Body.RemoveAt(0);
 				} else {
 					catchBlock.ExceptionVariable = ldexception.StoreTo[0];

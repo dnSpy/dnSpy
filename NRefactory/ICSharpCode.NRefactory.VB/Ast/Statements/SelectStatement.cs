@@ -2,7 +2,9 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using ICSharpCode.Decompiler.ILAst;
 
 namespace ICSharpCode.NRefactory.VB.Ast
 {
@@ -12,6 +14,8 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			get { return GetChildByRole(Roles.Expression); }
 			set { SetChildByRole(Roles.Expression, value); }
 		}
+
+		public IList<ILRange> HiddenEnd { get; set; }
 		
 		public AstNodeCollection<CaseStatement> Cases {
 			get { return GetChildrenByRole(CaseStatement.CaseStatementRole); }

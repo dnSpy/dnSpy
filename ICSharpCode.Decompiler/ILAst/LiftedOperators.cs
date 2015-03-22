@@ -26,12 +26,12 @@ namespace ICSharpCode.Decompiler.ILAst
 {
 	partial class ILAstOptimizer
 	{
-		bool SimplifyLiftedOperators(List<ILNode> body, ILExpression expr, int pos)
+		bool SimplifyLiftedOperators(ILBlockBase block, List<ILNode> body, ILExpression expr, int pos)
 		{
 			if (!new PatternMatcher(corLib).SimplifyLiftedOperators(expr)) return false;
 
 			var inlining = new ILInlining(method);
-			while (--pos >= 0 && inlining.InlineIfPossible(body, ref pos)) ;
+			while (--pos >= 0 && inlining.InlineIfPossible(block, body, ref pos)) ;
 
 			return true;
 		}
@@ -498,7 +498,9 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (n.Code == ILCode.NullCoalescing) {
 							// if both operands are nullable then the result is also nullable
 							if (n.Arguments[1].Code == ILCode.ValueOf) {
+								n.Arguments[0].Arguments[0].ILRanges.AddRange(n.Arguments[0].ILRanges);
 								n.Arguments[0] = n.Arguments[0].Arguments[0];
+								n.Arguments[1].Arguments[0].ILRanges.AddRange(n.Arguments[1].ILRanges);
 								n.Arguments[1] = n.Arguments[1].Arguments[0];
 							}
 						} else if (n.Code != ILCode.Ceq && n.Code != ILCode.Cne) {

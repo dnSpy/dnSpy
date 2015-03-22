@@ -221,6 +221,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			tryCatch.TryBlock.HiddenEnd = tryCatch.FinallyBlock.Detach();
 			usingStatement.EmbeddedStatement = tryCatch.TryBlock.Detach();
 			tryCatch.ReplaceWith(usingStatement);
+			tryCatch.AddAllRecursiveILRangesTo(usingStatement);
 			
 			// If possible, we'll eliminate the variable completely:
 			if (usingStatement.EmbeddedStatement.Descendants.OfType<IdentifierExpression>().Any(ident => ident.Identifier == variableName)) {
@@ -234,7 +235,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						}.CopyAnnotationsFrom(node.Expression)
 							.WithAnnotation(m1.Get<AstNode>("variable").Single().Annotation<ILVariable>())
 					}
-				}.CopyAnnotationsFrom(node);
+				}.CopyAnnotationsFrom(node).WithAnnotation(node.Expression.GetAllRecursiveILRanges());
 			} else {
 				// the variable is never used; eliminate it:
 				usingStatement.ResourceAcquisition = m1.Get<Expression>("initializer").Single().Detach();
@@ -418,7 +419,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			new AssignmentExpression(
 				new NamedNode("left", new IdentifierExpression(Pattern.AnyString)),
 				new AnyNode("collection").ToExpression().Invoke("GetEnumerator")
-			));
+			).WithName("getEnumeratorAssignment"));
 		
 		TryCatchStatement nonGenericForeachPattern = new TryCatchStatement {
 			TryBlock = new BlockStatement {
@@ -434,7 +435,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 									Expression = new Backreference("enumerator").ToExpression().Member("Current", TextTokenType.InstanceProperty)
 								}
 							}
-						),
+						).WithName("getCurrent"),
 						new Repeat(new AnyNode("stmt")).ToStatement()
 					}
 				}.WithName("loop")
@@ -513,11 +514,23 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				foreachStatement.ReplaceWith(tryCatch);
 				return null;
 			}
+
+			var tc = (TryCatchStatement)tryCatch;
+			foreachStatement.HiddenGetEnumeratorNode = NRefactoryExtensions.CreateHidden(tc.TryBlock.HiddenStart, m1.Get<AssignmentExpression>("getEnumeratorAssignment").Single());
+			foreachStatement.HiddenGetEnumeratorNode = NRefactoryExtensions.CreateHidden(tc.TryBlock.GetAllILRanges(), foreachStatement.HiddenGetEnumeratorNode);
+			foreachStatement.HiddenMoveNextNode = loop.Condition;
+			foreachStatement.HiddenGetCurrentNode = m2.Get<AstNode>("getCurrent").Single();
+			var oldBody = loop.EmbeddedStatement as BlockStatement;
+			if (oldBody != null) {
+				body.HiddenStart = oldBody.HiddenStart;
+				body.HiddenEnd = oldBody.HiddenEnd;
+			}
+			body.HiddenEnd = NRefactoryExtensions.CreateHidden(body.HiddenEnd, tc.TryBlock.HiddenEnd, tc.FinallyBlock);
 			
 			// Now create the correct body for the foreach statement:
 			foreachStatement.InExpression = m1.Get<Expression>("collection").Single().Detach();
 			if (foreachStatement.InExpression is BaseReferenceExpression) {
-				foreachStatement.InExpression = new ThisReferenceExpression().CopyAnnotationsFrom(foreachStatement.InExpression);
+				foreachStatement.InExpression = new ThisReferenceExpression().CopyAnnotationsFrom(foreachStatement.InExpression).WithAnnotation(foreachStatement.InExpression.GetAllRecursiveILRanges());
 			}
 			body.Statements.Clear();
 			body.Statements.AddRange(m2.Get<Statement>("stmt").Select(stmt => stmt.Detach()));
@@ -568,6 +581,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			forStatement.Iterators.Add(m2.Get<Statement>("increment").Single().Detach());
 			forStatement.EmbeddedStatement = newBody;
 			loop.ReplaceWith(forStatement);
+			var oldBody = loop.EmbeddedStatement as BlockStatement;
+			if (oldBody != null) {
+				newBody.HiddenStart = oldBody.HiddenStart;
+				newBody.HiddenEnd = oldBody.HiddenEnd;
+			}
 			return forStatement;
 		}
 		#endregion
@@ -593,9 +611,12 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				doLoop.Condition = new UnaryOperatorExpression(UnaryOperatorType.Not, m.Get<Expression>("condition").Single().Detach());
 				doLoop.Condition.AcceptVisitor(new PushNegation(), null);
 				BlockStatement block = (BlockStatement)whileLoop.EmbeddedStatement;
-				block.Statements.Last().Remove(); // remove if statement
+				var ifStmt = block.Statements.Last();
+				ifStmt.Remove();
+				ifStmt.AddAllRecursiveILRangesTo(doLoop.Condition);
 				doLoop.EmbeddedStatement = block.Detach();
 				whileLoop.ReplaceWith(doLoop);
+				block.HiddenStart = NRefactoryExtensions.CreateHidden(whileLoop.Condition.GetAllRecursiveILRanges(), block.HiddenStart);
 				
 				// we may have to extract variable definitions out of the loop if they were used in the condition:
 				foreach (var varDecl in block.Statements.OfType<VariableDeclarationStatement>()) {
@@ -613,7 +634,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						assign.CopyAnnotationsFrom(v);
 						v.RemoveAnnotations<object>();
 						// remove varDecl with assignment; and move annotations from varDecl to the ExpressionStatement:
-						varDecl.ReplaceWith(new ExpressionStatement(assign).CopyAnnotationsFrom(varDecl));
+						varDecl.ReplaceWith(new ExpressionStatement(assign).CopyAnnotationsFrom(varDecl).WithAnnotation(varDecl.GetAllRecursiveILRanges()));
 						varDecl.RemoveAnnotations<object>();
 						
 						// insert the varDecl above the do-while loop:
@@ -699,7 +720,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			Expression enter, exit;
 			bool isV2 = AnalyzeLockV2(node, out enter, out exit);
 			if (isV2 || AnalyzeLockV4(node, out enter, out exit)) {
-				AstNode tryCatch = node.NextSibling;
+				TryCatchStatement tryCatch = (TryCatchStatement)node.NextSibling;
 				if (!exit.IsMatch(enter)) {
 					// If exit and enter are not the same, then enter must be "exit = ..."
 					AssignmentExpression assign = enter as AssignmentExpression;
@@ -714,10 +735,20 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				// transform the code into a lock statement:
 				LockStatement l = new LockStatement();
 				l.Expression = enter.Detach();
-				l.EmbeddedStatement = ((TryCatchStatement)tryCatch).TryBlock.Detach();
-				if (!isV2) // Remove 'Enter()' call
-					((BlockStatement)l.EmbeddedStatement).Statements.First().Remove(); 
+				l.EmbeddedStatement = tryCatch.TryBlock.Detach();
+				var block = (BlockStatement)l.EmbeddedStatement;
+				if (block.HiddenStart != null) {
+					block.HiddenStart.AddAllRecursiveILRangesTo(l.Expression);
+					block.HiddenStart = null;
+				}
+				if (!isV2) { // Remove 'Enter()' call
+					var enterCall = block.Statements.First();
+					enterCall.Remove();
+					enterCall.AddAllRecursiveILRangesTo(l.Expression);
+				}
 				tryCatch.ReplaceWith(l);
+				block.HiddenEnd = NRefactoryExtensions.CreateHidden(block.HiddenEnd, tryCatch.FinallyBlock);
+				node.AddAllRecursiveILRangesTo(l.Expression);
 				node.Remove(); // remove flag variable
 				return l;
 			}
@@ -781,7 +812,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			List<Statement> dictCreation = m.Get<BlockStatement>("dictCreation").Single().Statements.ToList();
 			List<KeyValuePair<string, int>> dict = BuildDictionary(dictCreation);
 			SwitchStatement sw = m.Get<SwitchStatement>("switch").Single();
+			var oldExpr = sw.Expression;
 			sw.Expression = m.Get<Expression>("switchExpr").Single().Detach();
+			oldExpr.AddAllRecursiveILRangesTo(sw.Expression);
 			foreach (SwitchSection section in sw.SwitchSections) {
 				List<CaseLabel> labels = section.CaseLabels.ToList();
 				section.CaseLabels.Clear();
@@ -820,6 +853,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				sw.SwitchSections.Add(section);
 			}
 			node.ReplaceWith(sw);
+			node.AddAllRecursiveILRangesTo(sw.Expression);
 			return sw;
 		}
 		
@@ -932,8 +966,18 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				if (field != null && field.IsCompilerGenerated() && field.DeclaringType == cecilProperty.DeclaringType) {
 					RemoveCompilerGeneratedAttribute(property.Getter.Attributes);
 					RemoveCompilerGeneratedAttribute(property.Setter.Attributes);
+					var getterMM = property.Getter.Body.Annotation<MemberMapping>();
+					var setterMM = property.Setter.Body.Annotation<MemberMapping>();
+					if (getterMM != null)
+						property.Getter.AddAnnotation(getterMM);
+					if (setterMM != null)
+						property.Setter.AddAnnotation(setterMM);
 					property.Getter.Body = null;
 					property.Setter.Body = null;
+					if (cecilProperty.GetMethod.Body != null)
+						property.Getter.AddAnnotation(new List<ILRange> { new ILRange(0, (uint)cecilProperty.GetMethod.Body.GetCodeSize()) });
+					if (cecilProperty.SetMethod.Body != null)
+						property.Setter.AddAnnotation(new List<ILRange> { new ILRange(0, (uint)cecilProperty.SetMethod.Body.GetCodeSize()) });
 				}
 			}
 			// Since the event instance is not changed, we can continue in the visitor as usual, so return null
@@ -1046,6 +1090,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			}
 			
 			ev.ReplaceWith(ed);
+			ev.AddAllRecursiveILRangesTo(ev);
 			return ed;
 		}
 		#endregion
@@ -1074,10 +1119,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				dd.AddAnnotation(methodDef.Annotation<MethodDef>());
 				methodDef.Attributes.MoveTo(dd.Attributes);
 				dd.Modifiers = methodDef.Modifiers & ~(Modifiers.Protected | Modifiers.Override);
-				var mm = methodDef.Body.Annotation<MemberMapping>();
 				dd.Body = m.Get<BlockStatement>("body").Single().Detach();
-				if (mm != null)
-					dd.Body.AddAnnotation(mm);
+				dd.Body.AddAnnotation(methodDef.Body.Annotation<MemberMapping>());
+				var tc = (TryCatchStatement)methodDef.Body.FirstChild;
+				dd.Body.HiddenStart = NRefactoryExtensions.CreateHidden(dd.Body.HiddenStart, methodDef.Body.HiddenStart);
+				dd.Body.HiddenEnd = NRefactoryExtensions.CreateHidden(dd.Body.HiddenEnd, methodDef.Body.HiddenEnd, tc.FinallyBlock);
 				dd.NameToken = Identifier.Create(AstBuilder.CleanName(context.CurrentType.Name)).WithAnnotation(context.CurrentType);
 				methodDef.ReplaceWith(dd);
 				return dd;
@@ -1105,6 +1151,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		{
 			if (tryCatchFinallyPattern.IsMatch(tryFinally)) {
 				TryCatchStatement tryCatch = (TryCatchStatement)tryFinally.TryBlock.Statements.Single();
+				tryCatch.TryBlock.HiddenStart = NRefactoryExtensions.CreateHidden(tryCatch.TryBlock.HiddenStart, tryFinally.TryBlock.HiddenStart);
+				tryCatch.TryBlock.HiddenEnd = NRefactoryExtensions.CreateHidden(tryCatch.TryBlock.HiddenEnd, tryFinally.TryBlock.HiddenEnd);
 				tryFinally.TryBlock = tryCatch.TryBlock.Detach();
 				tryCatch.CatchClauses.MoveTo(tryFinally.CatchClauses);
 			}
@@ -1137,7 +1185,17 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			Match m = cascadingIfElsePattern.Match(node);
 			if (m.Success) {
 				IfElseStatement elseIf = m.Get<IfElseStatement>("nestedIfStatement").Single();
+				var block = (BlockStatement)node.FalseStatement;
 				node.FalseStatement = elseIf.Detach();
+				block.HiddenStart.AddAllRecursiveILRangesTo(node.Condition);
+				if (block.HiddenEnd != null) {
+					var stmt = elseIf.FalseStatement.IsNull ? elseIf.TrueStatement : elseIf.FalseStatement;
+					var block2 = stmt as BlockStatement;
+					if (block2 != null)
+						block2.HiddenEnd = NRefactoryExtensions.CreateHidden(block2.HiddenEnd, block.HiddenEnd);
+					else
+						block.HiddenEnd.AddAllRecursiveILRangesTo(stmt);
+				}
 			}
 			
 			return null;

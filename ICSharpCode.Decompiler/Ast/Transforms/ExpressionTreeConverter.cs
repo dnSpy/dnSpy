@@ -27,6 +27,8 @@ using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
 using dnlib.DotNet;
 
+//TODO: Verify that no ILRanges have been removed from this file
+
 namespace ICSharpCode.Decompiler.Ast.Transforms
 {
 	public class ExpressionTreeConverter

@@ -34,9 +34,30 @@ namespace ICSharpCode.Decompiler.ILAst
 {
 	public abstract class ILNode
 	{
+		public readonly List<ILRange> ILRanges = new List<ILRange>(1);
+
+		public virtual List<ILRange> EndILRanges {
+			get { return ILRanges; }
+		}
+		public virtual IEnumerable<ILRange> AllILRanges {
+			get { return ILRanges; }
+		}
+
+		public bool HasEndILRanges {
+			get { return ILRanges != EndILRanges; }
+		}
+
+		public bool WritesNewLine {
+			get { return !(this is ILLabel || this is ILExpression || this is ILSwitch.CaseBlock); }
+		}
+
+		public virtual bool SafeToAddToEndILRanges {
+			get { return false; }
+		}
+
 		public IEnumerable<ILRange> GetSelfAndChildrenRecursiveILRanges()
 		{
-			return GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.ILRanges);
+			return GetSelfAndChildrenRecursive<ILNode>().SelectMany(e => e.AllILRanges);
 		}
 
 		public List<T> GetSelfAndChildrenRecursive<T>(Func<T, bool> predicate = null) where T: ILNode
@@ -85,22 +106,97 @@ namespace ICSharpCode.Decompiler.ILAst
 				});
 			}
 		}
+
+		protected void WriteHiddenStart(ITextOutput output, MemberMapping memberMapping, IEnumerable<ILRange> extraIlRanges = null)
+		{
+			var location = output.Location;
+			output.WriteLeftBrace();
+			var ilr = new List<ILRange>(ILRanges);
+			if (extraIlRanges != null)
+				ilr.AddRange(extraIlRanges);
+			UpdateMemberMapping(memberMapping, location, output.Location, ilr);
+			output.WriteLine();
+			output.Indent();
+		}
+
+		protected void WriteHiddenEnd(ITextOutput output, MemberMapping memberMapping)
+		{
+			output.Unindent();
+			var location = output.Location;
+			output.WriteRightBrace();
+			UpdateMemberMapping(memberMapping, location, output.Location, EndILRanges);
+			output.WriteLine();
+		}
 	}
 	
-	public class ILBlock: ILNode
+	public abstract class ILBlockBase: ILNode
 	{
-		public ILExpression EntryGoto;
-		
 		public List<ILNode> Body;
-		
-		public ILBlock(params ILNode[] body)
+		public List<ILRange> endILRanges = new List<ILRange>(1);
+
+		public override List<ILRange> EndILRanges {
+			get { return endILRanges; }
+		}
+		public override IEnumerable<ILRange> AllILRanges {
+			get {
+				foreach (var ilr in ILRanges)
+					yield return ilr;
+				foreach (var ilr in endILRanges)
+					yield return ilr;
+			}
+		}
+
+		public override bool SafeToAddToEndILRanges {
+			get { return true; }
+		}
+
+		public ILBlockBase()
+		{
+			this.Body = new List<ILNode>();
+		}
+
+		public ILBlockBase(params ILNode[] body)
 		{
 			this.Body = new List<ILNode>(body);
 		}
-		
-		public ILBlock(List<ILNode> body)
+
+		public ILBlockBase(List<ILNode> body)
 		{
 			this.Body = body;
+		}
+
+		public override IEnumerable<ILNode> GetChildren()
+		{
+			return this.Body;
+		}
+		
+		public override void WriteTo(ITextOutput output, MemberMapping memberMapping)
+		{
+			WriteTo(output, memberMapping, null);
+		}
+
+		internal void WriteTo(ITextOutput output, MemberMapping memberMapping, IEnumerable<ILRange> ilRanges)
+		{
+			WriteHiddenStart(output, memberMapping, ilRanges);
+			foreach(ILNode child in this.GetChildren()) {
+				child.WriteTo(output, memberMapping);
+				if (!child.WritesNewLine)
+					output.WriteLine();
+			}
+			WriteHiddenEnd(output, memberMapping);
+		}
+	}
+	
+	public class ILBlock: ILBlockBase
+	{
+		public ILExpression EntryGoto;
+		
+		public ILBlock(params ILNode[] body) : base(body)
+		{
+		}
+		
+		public ILBlock(List<ILNode> body) : base(body)
+		{
 		}
 		
 		public override IEnumerable<ILNode> GetChildren()
@@ -111,43 +207,27 @@ namespace ICSharpCode.Decompiler.ILAst
 				yield return child;
 			}
 		}
-		
-		public override void WriteTo(ITextOutput output, MemberMapping memberMapping)
-		{
-			foreach(ILNode child in this.GetChildren()) {
-				child.WriteTo(output, memberMapping);
-				output.WriteLine();
-			}
-		}
 	}
 	
-	public class ILBasicBlock: ILNode
+	public class ILBasicBlock: ILBlockBase
 	{
-		/// <remarks> Body has to start with a label and end with unconditional control flow </remarks>
-		public List<ILNode> Body = new List<ILNode>();
-		
-		public override IEnumerable<ILNode> GetChildren()
-		{
-			return this.Body;
-		}
-		
-		public override void WriteTo(ITextOutput output, MemberMapping memberMapping)
-		{
-			foreach(ILNode child in this.GetChildren()) {
-				child.WriteTo(output, memberMapping);
-				output.WriteLine();
-			}
-		}
+		// Body has to start with a label and end with unconditional control flow
 	}
 	
 	public class ILLabel: ILNode
 	{
 		public string Name;
 
+		public override bool SafeToAddToEndILRanges {
+			get { return true; }
+		}
+
 		public override void WriteTo(ITextOutput output, MemberMapping memberMapping)
 		{
+			var location = output.Location;
 			output.WriteDefinition(Name, this, TextTokenType.Label);
 			output.Write(':', TextTokenType.Operator);
+			UpdateMemberMapping(memberMapping, location, output.Location, ILRanges);
 		}
 	}
 	
@@ -158,7 +238,16 @@ namespace ICSharpCode.Decompiler.ILAst
 			public bool IsFilter;
 			public TypeSig ExceptionType;
 			public ILVariable ExceptionVariable;
-			public List<ILRange> StlocILRanges = new List<ILRange>();
+			public List<ILRange> StlocILRanges = new List<ILRange>(1);
+
+			public override IEnumerable<ILRange> AllILRanges {
+				get {
+					foreach (var ilr in base.AllILRanges)
+						yield return ilr;
+					foreach (var ilr in StlocILRanges)
+						yield return ilr;
+				}
+			}
 
 			public CatchBlock()
 			{
@@ -195,11 +284,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 				UpdateMemberMapping(memberMapping, startLoc, output.Location, StlocILRanges);
 				output.WriteSpace();
-				output.WriteLineLeftBrace();
-				output.Indent();
 				base.WriteTo(output, memberMapping);
-				output.Unindent();
-				output.WriteLineRightBrace();
 			}
 		}
 		public class FilterILBlock: CatchBlock
@@ -245,33 +330,23 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			output.Write(".try", TextTokenType.Keyword);
 			output.WriteSpace();
-			output.WriteLineLeftBrace();
-			output.Indent();
-			TryBlock.WriteTo(output, memberMapping);
-			output.Unindent();
-			output.WriteLineRightBrace();
+			TryBlock.WriteTo(output, memberMapping, ILRanges);
 			foreach (CatchBlock block in CatchBlocks) {
 				block.WriteTo(output, memberMapping);
 			}
 			if (FaultBlock != null) {
 				output.Write("fault", TextTokenType.Keyword);
 				output.WriteSpace();
-				output.WriteLineLeftBrace();
-				output.Indent();
 				FaultBlock.WriteTo(output, memberMapping);
-				output.Unindent();
-				output.WriteLineRightBrace();
 			}
 			if (FinallyBlock != null) {
 				output.Write("finally", TextTokenType.Keyword);
 				output.WriteSpace();
-				output.WriteLineLeftBrace();
-				output.Indent();
 				FinallyBlock.WriteTo(output, memberMapping);
-				output.Unindent();
-				output.WriteLineRightBrace();
 			}
 			if (FilterBlock != null) {
+				output.Write("filter", TextTokenType.Keyword);
+				output.WriteSpace();
 				FilterBlock.WriteTo(output, memberMapping);
 			}
 		}
@@ -356,8 +431,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (input == null)
 				throw new ArgumentNullException("Input is null!");
 			
-			List<ILRange> ranges = input.OrderBy(r => r.from).ToList();
-			for (int i = 0; i < ranges.Count - 1;) {
+			List<ILRange> ranges = ranges = input.ToList();
+			ranges.Sort((a, b) => a.from.CompareTo(b.from));
+			for (int i = 0; i < ranges.Count - 1; ) {
 				ILRange curr = ranges[i];
 				ILRange next = ranges[i + 1];
 				// Merge consequtive ranges if they intersect
@@ -417,11 +493,13 @@ namespace ICSharpCode.Decompiler.ILAst
 		public object Operand { get; set; }
 		public List<ILExpression> Arguments { get; set; }
 		public ILExpressionPrefix[] Prefixes { get; set; }
-		// Mapping to the original instructions (useful for debugging)
-		public List<ILRange> ILRanges { get; set; }
 		
 		public TypeSig ExpectedType { get; set; }
 		public TypeSig InferredType { get; set; }
+
+		public override bool SafeToAddToEndILRanges {
+			get { return true; }
+		}
 		
 		public static readonly object AnyOperand = new object();
 		
@@ -433,7 +511,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			this.Code = code;
 			this.Operand = operand;
 			this.Arguments = new List<ILExpression>(args);
-			this.ILRanges  = new List<ILRange>(1);
 		}
 		
 		public ILExpression(ILCode code, object operand, params ILExpression[] args)
@@ -444,7 +521,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			this.Code = code;
 			this.Operand = operand;
 			this.Arguments = new List<ILExpression>(args);
-			this.ILRanges  = new List<ILRange>(1);
 		}
 		
 		public void AddPrefix(ILExpressionPrefix prefix)
@@ -608,7 +684,6 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public override void WriteTo(ITextOutput output, MemberMapping memberMapping)
 		{
-			output.WriteLine("", TextTokenType.Text);
 			var startLoc = output.Location;
 			output.Write("loop", TextTokenType.Keyword);
 			output.WriteSpace();
@@ -616,14 +691,12 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (this.Condition != null)
 				this.Condition.WriteTo(output, null);
 			output.Write(')', TextTokenType.Operator);
+			var ilRanges = new List<ILRange>(ILRanges);
 			if (this.Condition != null)
-				UpdateMemberMapping(memberMapping, startLoc, output.Location, this.Condition.GetSelfAndChildrenRecursiveILRanges());
+				ilRanges.AddRange(this.Condition.GetSelfAndChildrenRecursiveILRanges());
+			UpdateMemberMapping(memberMapping, startLoc, output.Location, ilRanges);
 			output.WriteSpace();
-			output.WriteLineLeftBrace();
-			output.Indent();
 			this.BodyBlock.WriteTo(output, memberMapping);
-			output.Unindent();
-			output.WriteLineRightBrace();
 		}
 	}
 	
@@ -651,22 +724,15 @@ namespace ICSharpCode.Decompiler.ILAst
 			output.Write('(', TextTokenType.Operator);
 			Condition.WriteTo(output, null);
 			output.Write(')', TextTokenType.Operator);
-			UpdateMemberMapping(memberMapping, startLoc, output.Location, Condition.GetSelfAndChildrenRecursiveILRanges());
+			var ilRanges = new List<ILRange>(ILRanges);
+			ilRanges.AddRange(Condition.GetSelfAndChildrenRecursiveILRanges());
+			UpdateMemberMapping(memberMapping, startLoc, output.Location, ilRanges);
 			output.WriteSpace();
-			output.WriteLineLeftBrace();
-			output.Indent();
 			TrueBlock.WriteTo(output, memberMapping);
-			output.Unindent();
-			output.WriteRightBrace();
 			if (FalseBlock != null) {
-				output.WriteSpace();
 				output.Write("else", TextTokenType.Keyword);
 				output.WriteSpace();
-				output.WriteLineLeftBrace();
-				output.Indent();
 				FalseBlock.WriteTo(output, memberMapping);
-				output.Unindent();
-				output.WriteLineRightBrace();
 			}
 		}
 	}
@@ -698,6 +764,23 @@ namespace ICSharpCode.Decompiler.ILAst
 		
 		public ILExpression Condition;
 		public List<CaseBlock> CaseBlocks = new List<CaseBlock>();
+		public List<ILRange> endILRanges = new List<ILRange>(1);
+
+		public override List<ILRange> EndILRanges {
+			get { return endILRanges; }
+		}
+		public override IEnumerable<ILRange> AllILRanges {
+			get {
+				foreach (var ilr in ILRanges)
+					yield return ilr;
+				foreach (var ilr in endILRanges)
+					yield return ilr;
+			}
+		}
+
+		public override bool SafeToAddToEndILRanges {
+			get { return true; }
+		}
 		
 		public override IEnumerable<ILNode> GetChildren()
 		{
@@ -716,15 +799,15 @@ namespace ICSharpCode.Decompiler.ILAst
 			output.Write('(', TextTokenType.Operator);
 			Condition.WriteTo(output, null);
 			output.Write(')', TextTokenType.Operator);
-			UpdateMemberMapping(memberMapping, startLoc, output.Location, Condition.GetSelfAndChildrenRecursiveILRanges());
+			var ilRanges = new List<ILRange>(ILRanges);
+			ilRanges.AddRange(Condition.GetSelfAndChildrenRecursiveILRanges());
+			UpdateMemberMapping(memberMapping, startLoc, output.Location, ilRanges);
 			output.WriteSpace();
-			output.WriteLineLeftBrace();
-			output.Indent();
+			WriteHiddenStart(output, memberMapping);
 			foreach (CaseBlock caseBlock in this.CaseBlocks) {
 				caseBlock.WriteTo(output, memberMapping);
 			}
-			output.Unindent();
-			output.WriteLineRightBrace();
+			WriteHiddenEnd(output, memberMapping);
 		}
 	}
 	
@@ -755,13 +838,12 @@ namespace ICSharpCode.Decompiler.ILAst
 				this.Initializers[i].WriteTo(output, null);
 			}
 			output.Write(')', TextTokenType.Operator);
-			UpdateMemberMapping(memberMapping, startLoc, output.Location, Initializers.SelectMany(a => a.GetSelfAndChildrenRecursiveILRanges()));
+			var ilRanges = new List<ILRange>(ILRanges);
+			foreach (var i in Initializers)
+				ilRanges.AddRange(i.GetSelfAndChildrenRecursiveILRanges());
+			UpdateMemberMapping(memberMapping, startLoc, output.Location, ilRanges);
 			output.WriteSpace();
-			output.WriteLineLeftBrace();
-			output.Indent();
 			this.BodyBlock.WriteTo(output, memberMapping);
-			output.Unindent();
-			output.WriteLineRightBrace();
 		}
 	}
 }

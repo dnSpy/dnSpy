@@ -48,12 +48,19 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 								var firstArgument = invocation.Arguments.First();
 								if (firstArgument is NullReferenceExpression)
 									firstArgument = firstArgument.ReplaceWith(expr => expr.CastTo(AstBuilder.ConvertType(d.Parameters.SkipNonNormal().First().Type)));
-								else
+								else {
+									var ilRanges = mre.Target.GetAllRecursiveILRanges();
 									mre.Target = firstArgument.Detach();
+									if (ilRanges.Count > 0)
+										mre.Target.AddAnnotation(ilRanges);
+								}
 								if (invocation.Arguments.Any()) {
 									// HACK: removing type arguments should be done indepently from whether a method is an extension method,
 									// just by testing whether the arguments can be inferred
+									var ilRanges = mre.TypeArguments.GetAllRecursiveILRanges();
 									mre.TypeArguments.Clear();
+									if (ilRanges.Count > 0)
+										mre.AddAnnotation(ilRanges);
 								}
 								break;
 							}

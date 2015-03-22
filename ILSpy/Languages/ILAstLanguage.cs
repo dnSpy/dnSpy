@@ -97,7 +97,8 @@ namespace ICSharpCode.ILSpy
 			var memberMapping = new MemberMapping(method);
 			foreach (ILNode node in ilMethod.Body) {
 				node.WriteTo(output, memberMapping);
-				output.WriteLine();
+				if (!node.WritesNewLine)
+					output.WriteLine();
 			}
 			output.AddDebuggerMemberMapping(memberMapping);
 			EndKeywordBlock(output);

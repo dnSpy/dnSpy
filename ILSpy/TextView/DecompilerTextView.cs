@@ -439,7 +439,13 @@ namespace ICSharpCode.ILSpy.TextView
 			if (IsVisible && DisplaySettingsPanel.CurrentDisplaySettings.AutoFocusTextView)
 				textEditor.Focus();
 
-			CodeMappings = textOutput.DebuggerMemberMappings.ToDictionary(m => new MethodKey(m.MethodDefinition));
+			var cm = new Dictionary<MethodKey, MemberMapping>();
+			foreach (var m in textOutput.DebuggerMemberMappings) {
+				var key = new MethodKey(m.MethodDefinition);
+				Debug.Assert(!cm.ContainsKey(key), "DebuggerMemberMappings contains the same method twice");
+				cm[key] = m;
+			}
+			CodeMappings = cm;
 
 			evt = OnShowOutput;
 			if (evt != null)

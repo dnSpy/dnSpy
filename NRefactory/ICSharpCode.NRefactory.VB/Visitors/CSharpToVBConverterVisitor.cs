@@ -1331,6 +1331,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		{
 			var stmt = new SelectStatement() { Expression = (Expression)switchStatement.Expression.AcceptVisitor(this, data) };
 			ConvertNodes(switchStatement.SwitchSections, stmt.Cases);
+			stmt.HiddenEnd = ICSharpCode.Decompiler.Ast.NRefactoryExtensions.GetAllRecursiveILRanges(switchStatement.HiddenEnd);
 			
 			return EndNode(switchStatement, stmt);
 		}

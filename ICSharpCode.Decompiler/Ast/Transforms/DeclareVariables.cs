@@ -82,7 +82,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					if (es != null) {
 						// Note: if this crashes with 'Cannot replace the root node', check whether two variables were assigned the same name
 						es.ReplaceWith(varDecl.CopyAnnotationsFrom(es));
+						varDecl.AddAnnotation(es.GetAllRecursiveILRanges());
 					} else {
+						varDecl.AddAnnotation(v.ReplacedAssignment.GetAllRecursiveILRanges());
 						v.ReplacedAssignment.ReplaceWith(varDecl);
 					}
 				}

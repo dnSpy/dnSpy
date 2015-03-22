@@ -72,6 +72,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					expr = new BinaryOperatorExpression(expr, BinaryOperatorType.Add, arguments[i]);
 				}
 				invocationExpression.ReplaceWith(expr);
+				expr.AddAnnotation(invocationExpression.GetAllRecursiveILRanges());
 				return;
 			}
 			
@@ -79,7 +80,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				case "System.Type System.Type::GetTypeFromHandle(System.RuntimeTypeHandle)":
 					if (arguments.Length == 1) {
 						if (typeHandleOnTypeOfPattern.IsMatch(arguments[0])) {
-							invocationExpression.ReplaceWith(((MemberReferenceExpression)arguments[0]).Target);
+							invocationExpression.ReplaceWith(((MemberReferenceExpression)arguments[0]).Target
+								.WithAnnotation(invocationExpression.GetAllRecursiveILRanges()));
 							return;
 						}
 					}
@@ -88,7 +90,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					if (arguments.Length == 1) {
 						MemberReferenceExpression mre = arguments[0] as MemberReferenceExpression;
 						if (mre != null && mre.MemberName == "FieldHandle" && mre.Target.Annotation<LdTokenAnnotation>() != null) {
-							invocationExpression.ReplaceWith(mre.Target);
+							invocationExpression.ReplaceWith(mre.Target
+								.WithAnnotation(invocationExpression.GetAllRecursiveILRanges()));
 							return;
 						}
 					}
@@ -102,9 +105,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 								Expression oldArg = ((InvocationExpression)mre1.Target).Arguments.Single();
 								IField field = oldArg.Annotation<IField>();
 								if (field != null) {
+									var ilRanges = invocationExpression.GetAllRecursiveILRanges();
 									AstType declaringType = ((TypeOfExpression)mre2.Target).Type.Detach();
 									oldArg.ReplaceWith(declaringType.Member(field.Name, field).WithAnnotation(field));
-									invocationExpression.ReplaceWith(mre1.Target);
+									invocationExpression.ReplaceWith(mre1.Target.WithAnnotation(ilRanges));
 									return;
 								}
 							}
@@ -118,6 +122,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				invocationExpression.Arguments.Clear(); // detach arguments from invocationExpression
 				invocationExpression.ReplaceWith(
 					new BinaryOperatorExpression(arguments[0], bop.Value, arguments[1]).WithAnnotation(methodRef)
+							.WithAnnotation(invocationExpression.GetAllRecursiveILRanges())
 				);
 				return;
 			}
@@ -126,6 +131,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				arguments[0].Remove(); // detach argument
 				invocationExpression.ReplaceWith(
 					new UnaryOperatorExpression(uop.Value, arguments[0]).WithAnnotation(methodRef)
+							.WithAnnotation(invocationExpression.GetAllRecursiveILRanges())
 				);
 				return;
 			}
@@ -134,15 +140,16 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				invocationExpression.ReplaceWith(
 					arguments[0].CastTo(AstBuilder.ConvertType(methodRef.MethodSig.GetRetType()))
 					.WithAnnotation(methodRef)
+					.WithAnnotation(invocationExpression.GetAllRecursiveILRanges())
 				);
 				return;
 			}
 			if (methodRef.Name == "op_Implicit" && arguments.Length == 1) {
-				invocationExpression.ReplaceWith(arguments[0]);
+				invocationExpression.ReplaceWith(arguments[0].WithAnnotation(invocationExpression.GetAllRecursiveILRanges()));
 				return;
 			}
 			if (methodRef.Name == "op_True" && arguments.Length == 1 && invocationExpression.Role == Roles.Condition) {
-				invocationExpression.ReplaceWith(arguments[0]);
+				invocationExpression.ReplaceWith(arguments[0].WithAnnotation(invocationExpression.GetAllRecursiveILRanges()));
 				return;
 			}
 			
@@ -225,6 +232,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			
 			public AssignmentExpression Restore(Expression expression)
 			{
+				var ilRanges = expression.GetAllRecursiveILRanges();
 				expression.RemoveAnnotations<RestoreOriginalAssignOperatorAnnotation>();
 				AssignmentExpression assign = expression as AssignmentExpression;
 				if (assign == null) {
@@ -235,6 +243,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				}
 				binaryOperatorExpression.Right = assign.Right.Detach();
 				assign.Right = binaryOperatorExpression;
+				assign.AddAnnotation(ilRanges);
 				return assign;
 			}
 		}
@@ -250,7 +259,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					if (assignment.Operator != AssignmentOperatorType.Assign) {
 						// If we found a shorter operator, get rid of the BinaryOperatorExpression:
 						assignment.CopyAnnotationsFrom(binary);
-						assignment.Right = binary.Right;
+						assignment.Right = binary.Right.WithAnnotation(assignment.Right.GetAllRecursiveILRanges());
 						assignment.AddAnnotation(new RestoreOriginalAssignOperatorAnnotation(binary));
 					}
 				}
@@ -267,7 +276,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 							type = (assignment.Operator == AssignmentOperatorType.Add) ? UnaryOperatorType.PostIncrement : UnaryOperatorType.PostDecrement;
 						else
 							type = (assignment.Operator == AssignmentOperatorType.Add) ? UnaryOperatorType.Increment : UnaryOperatorType.Decrement;
-						assignment.ReplaceWith(new UnaryOperatorExpression(type, assignment.Left.Detach()).CopyAnnotationsFrom(assignment));
+						assignment.ReplaceWith(new UnaryOperatorExpression(type, assignment.Left.Detach()).CopyAnnotationsFrom(assignment).WithAnnotation(assignment.GetAllRecursiveILRanges()));
 					}
 				}
 			}
@@ -338,6 +347,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			// Handle methodof
 			Match m = getMethodOrConstructorFromHandlePattern.Match(castExpression);
 			if (m.Success) {
+				var ilRanges = castExpression.GetAllRecursiveILRanges();
 				IMethod method = m.Get<AstNode>("method").Single().Annotation<IMethod>();
 				if (method != null && m.Has("declaringType")) {
 					Expression newNode = m.Get<AstType>("declaringType").Single().Detach().Member(method.Name, method);
@@ -345,7 +355,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					newNode.AddAnnotation(method);
 					m.Get<AstNode>("method").Single().ReplaceWith(newNode);
 				}
-				castExpression.ReplaceWith(m.Get<AstNode>("ldtokenNode").Single());
+				castExpression.ReplaceWith(m.Get<AstNode>("ldtokenNode").Single().WithAnnotation(ilRanges));
 			}
 			return null;
 		}

@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
 using dnlib.DotNet;
@@ -49,9 +50,14 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					return null;
 				// Move arguments from invocation to initializer:
 				invocation.Arguments.MoveTo(ci.Arguments);
+				var ilRanges = stmt.GetAllRecursiveILRanges();
 				// Add the initializer: (unless it is the default 'base()')
-				if (!(ci.ConstructorInitializerType == ConstructorInitializerType.Base && ci.Arguments.Count == 0))
+				if (!(ci.ConstructorInitializerType == ConstructorInitializerType.Base && ci.Arguments.Count == 0)) {
 					constructorDeclaration.Initializer = ci.WithAnnotation(invocation.Annotation<IMethod>());
+					ci.AddAnnotation(ilRanges);
+				}
+				else
+					constructorDeclaration.Body.HiddenStart = NRefactoryExtensions.CreateHidden(ilRanges, constructorDeclaration.Body.HiddenStart);
 				// Remove the statement:
 				stmt.Remove();
 			}
@@ -117,13 +123,24 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					
 					allSame = true;
 					for (int i = 1; i < instanceCtorsNotChainingWithThis.Length; i++) {
-						if (!instanceCtors[0].Body.First().IsMatch(instanceCtorsNotChainingWithThis[i].Body.FirstOrDefault()))
+						if (!instanceCtors[0].Body.First().IsMatch(instanceCtorsNotChainingWithThis[i].Body.FirstOrDefault())) {
 							allSame = false;
+							break;
+						}
 					}
 					if (allSame) {
-						foreach (var ctor in instanceCtorsNotChainingWithThis)
-							ctor.Body.First().Remove();
-						fieldOrEventDecl.GetChildrenByRole(Roles.Variable).Single().Initializer = initializer.Detach();
+						var ctorIlRanges = new List<ILRange>[instanceCtorsNotChainingWithThis.Length];
+						for (int i = 0; i < instanceCtorsNotChainingWithThis.Length; i++) {
+							var stmt = instanceCtorsNotChainingWithThis[i].Body.First();
+							stmt.Remove();
+							ctorIlRanges[i] = stmt.GetAllRecursiveILRanges();
+						}
+						var varInit = fieldOrEventDecl.GetChildrenByRole(Roles.Variable).Single();
+						initializer.Remove();
+						initializer.RemoveAllILRangesRecursive();
+						foreach (var ilRanges in ctorIlRanges)
+							initializer.AddAnnotation(ilRanges);
+						varInit.Initializer = initializer;
 					}
 				} while (allSame);
 			}
@@ -161,7 +178,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						FieldDeclaration fieldDecl = members.OfType<FieldDeclaration>().FirstOrDefault(f => f.Annotation<FieldDef>() == fieldDef);
 						if (fieldDecl == null)
 							break;
-						fieldDecl.Variables.Single().Initializer = assignment.Right.Detach();
+						var ilRanges = assignment.GetAllRecursiveILRanges();
+						assignment.RemoveAllILRangesRecursive();
+						var varInit = fieldDecl.Variables.Single();
+						varInit.Initializer = assignment.Right.Detach();
+						varInit.Initializer.AddAnnotation(ilRanges);
 						es.Remove();
 					}
 					if (staticCtor.Body.Statements.Count == 0)

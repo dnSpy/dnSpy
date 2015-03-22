@@ -71,6 +71,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					indexer.Arguments.Add(bop.Right.Detach());
 					indexer.CopyAnnotationsFrom(unaryOperatorExpression);
 					indexer.CopyAnnotationsFrom(bop);
+					indexer.AddAnnotation(unaryOperatorExpression.GetAllRecursiveILRanges());
 					unaryOperatorExpression.ReplaceWith(indexer);
 				}
 				return true;
@@ -92,6 +93,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				memberReferenceExpression.TypeArguments.MoveTo(pre.TypeArguments);
 				pre.CopyAnnotationsFrom(uoe);
 				pre.CopyAnnotationsFrom(memberReferenceExpression);
+				pre.AddAnnotation(memberReferenceExpression.GetAllRecursiveILRanges());
 				memberReferenceExpression.ReplaceWith(pre);
 			}
 			return result;

@@ -95,7 +95,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			method.Body.Clear();
 			method.EntryGoto = null;
-			method.Body.AddRange(yrd.newTopLevelBody);
+			method.Body.AddRange(yrd.newTopLevelBody);//TODO: Make sure that the removed ILRanges from Clear() above is saved in the new body
 			ILAstOptimizer.RemoveRedundantCode(method);
 		}
 		
@@ -485,9 +485,9 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILExpression condition;
 				if (MatchLogicNot(ceqExpr, out condition)) {
 					if (condition.MatchLdloc(doFinallyBodies)) {
-						newBody.RemoveAt(0);
+						newBody.RemoveAt(0);//TODO: Preserve ILRanges?
 					} else if (condition.Code == ILCode.Clt && condition.Arguments[0].MatchLdloc(cachedStateVar) && condition.Arguments[1].MatchLdcI4(0)) {
-						newBody.RemoveAt(0);
+						newBody.RemoveAt(0);//TODO: Preserve ILRanges?
 					}
 				}
 			}
@@ -518,11 +518,13 @@ namespace ICSharpCode.Decompiler.ILAst
 				int val;
 				if (!(dfbInitExpr.Match(ILCode.Ldc_I4, out val) && val == 0))
 					throw new SymbolicAnalysisFailedException();
+				//TODO: Preserve ILRanges?
 				newBody.RemoveAt(newBody.Count - 1); // remove doFinallyBodies assignment
 			}
 			
 			// call(AsyncTaskMethodBuilder::AwaitUnsafeOnCompleted, ldflda(StateMachine::<>t__builder, ldloc(this)), ldloca(CS$0$0001), ldloc(this))
 			ILExpression callAwaitUnsafeOnCompleted = newBody.LastOrDefault() as ILExpression;
+			//TODO: Preserve ILRanges?
 			newBody.RemoveAt(newBody.Count - 1); // remove AwaitUnsafeOnCompleted call
 			if (callAwaitUnsafeOnCompleted == null || callAwaitUnsafeOnCompleted.Code != ILCode.Call)
 				throw new SymbolicAnalysisFailedException();
@@ -539,6 +541,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression loadThis, loadAwaiterVar;
 			if (!newBody.LastOrDefault().Match(ILCode.Stfld, out awaiterFieldRef, out loadThis, out loadAwaiterVar))
 				throw new SymbolicAnalysisFailedException();
+			//TODO: Preserve ILRanges?
 			newBody.RemoveAt(newBody.Count - 1); // remove awaiter field assignment
 			awaiterField = awaiterFieldRef.ResolveFieldWithinSameModule();
 			if (!(awaiterField != null && loadThis.MatchThis() && loadAwaiterVar.MatchLdloc(awaiterVar)))
@@ -546,8 +549,10 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			// stfld(StateMachine::<>1__state, ldloc(this), ldc.i4(0))
 			if (MatchStateAssignment(newBody.LastOrDefault(), out targetStateID))
+				//TODO: Preserve ILRanges?
 				newBody.RemoveAt(newBody.Count - 1); // remove awaiter field assignment
 			else if (MatchRoslynStateAssignment(newBody, newBody.Count - 3, out targetStateID))
+				//TODO: Preserve ILRanges?
 				newBody.RemoveRange(newBody.Count - 3, 3); // remove awaiter field assignment
 		}
 		#endregion
@@ -677,20 +682,22 @@ namespace ICSharpCode.Decompiler.ILAst
 				return false;
 			
 			pos -= 2; // also delete 'stloc', 'brtrue' and 'await'
-			body.RemoveRange(pos, labelPos - pos);
+			body.RemoveRange(pos, labelPos - pos);//TODO: Preserve ILRanges?
 			Debug.Assert(body[pos] == label);
 			
 			pos++;
 			if (isResultAssignment) {
 				Debug.Assert(body[pos] == resultAssignment);
+				//TODO: Preserve ILRanges?
 				resultAssignment.Arguments[0] = new ILExpression(ILCode.Await, null, awaitedExpr);
 			} else {
+				//TODO: Preserve ILRanges?
 				body[pos] = new ILExpression(ILCode.Await, null, awaitedExpr);
 			}
 			
 			// if the awaiter variable is cleared out in the next instruction, remove that instruction
 			if (IsVariableReset(body.ElementAtOrDefault(pos + 1), awaiterVar)) {
-				body.RemoveAt(pos + 1);
+				body.RemoveAt(pos + 1);//TODO: Preserve ILRanges?
 			}
 			
 			return true;

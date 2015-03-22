@@ -1995,7 +1995,13 @@ namespace ICSharpCode.NRefactory.CSharp
 			if (!policy.IndentSwitchBody) {
 				formatter.Indent();
 			}
-			CloseBrace(policy.StatementBraceStyle);
+			TextLocation? start, end;
+			CloseBrace(policy.StatementBraceStyle, out start, out end);
+			if (switchStatement.HiddenEnd != null) {
+				DebugStart(switchStatement, start);
+				DebugHidden(switchStatement.HiddenEnd);
+				DebugEnd(switchStatement, end);
+			}
 			NewLine();
 			EndNode(switchStatement);
 		}
@@ -2191,6 +2197,9 @@ namespace ICSharpCode.NRefactory.CSharp
 			StartNode(accessor);
 			WriteAttributes(accessor.Attributes);
 			WriteModifiers(accessor.ModifierTokens);
+			bool isDefault = accessor.Body.IsNull;
+			if (isDefault)
+				DebugStart(accessor);
 			if (accessor.Role == PropertyDeclaration.GetterRole) {
 				WriteKeyword("get");
 			} else if (accessor.Role == PropertyDeclaration.SetterRole) {
@@ -2200,7 +2209,10 @@ namespace ICSharpCode.NRefactory.CSharp
 			} else if (accessor.Role == CustomEventDeclaration.RemoveAccessorRole) {
 				WriteKeyword("remove");
 			}
-			WriteMethodBody(accessor.Body);
+			if (isDefault)
+				SemicolonDebugEnd(accessor);
+			else
+				WriteMethodBody(accessor.Body);
 			EndNode(accessor);
 		}
 		
@@ -2229,6 +2241,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			StartNode(constructorInitializer);
 			WriteToken(Roles.Colon);
 			Space();
+			DebugStart(constructorInitializer);
 			if (constructorInitializer.ConstructorInitializerType == ConstructorInitializerType.This) {
 				WriteKeyword(ConstructorInitializer.ThisKeywordRole);
 			} else {
@@ -2236,6 +2249,7 @@ namespace ICSharpCode.NRefactory.CSharp
 			}
 			Space(policy.SpaceBeforeMethodCallParentheses);
 			WriteCommaSeparatedListInParenthesis(constructorInitializer.Arguments, policy.SpaceWithinMethodCallParentheses);
+			DebugEnd(constructorInitializer);
 			EndNode(constructorInitializer);
 		}
 		
@@ -2476,8 +2490,8 @@ namespace ICSharpCode.NRefactory.CSharp
 		#region Other nodes
 		public void VisitVariableInitializer(VariableInitializer variableInitializer)
 		{
-			DebugExpression(variableInitializer);
 			StartNode(variableInitializer);
+			DebugStart(variableInitializer);
 			variableInitializer.NameToken.AcceptVisitor(this);
 			if (!variableInitializer.Initializer.IsNull) {
 				Space(policy.SpaceAroundAssignment);
@@ -2485,6 +2499,7 @@ namespace ICSharpCode.NRefactory.CSharp
 				Space(policy.SpaceAroundAssignment);
 				variableInitializer.Initializer.AcceptVisitor(this);
 			}
+			DebugEnd(variableInitializer);
 			EndNode(variableInitializer);
 		}
 		

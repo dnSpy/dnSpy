@@ -72,6 +72,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					if (method != null) {
 						if (HandleAnonymousMethod(objectCreateExpression, obj, method))
 							return null;
+						var ilRanges = objectCreateExpression.GetAllRecursiveILRanges();
 						// Perform the transformation to "new Action(obj.func)".
 						obj.Remove();
 						methodIdent.Remove();
@@ -107,6 +108,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						mre.AddAnnotation(method);
 						objectCreateExpression.Arguments.Clear();
 						objectCreateExpression.Arguments.Add(mre);
+						objectCreateExpression.AddAnnotation(ilRanges);
 						return null;
 					}
 				}
@@ -134,6 +136,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			MethodDef method = methodRef.ResolveMethodWithinSameModule();
 			if (!IsAnonymousMethod(context, method))
 				return false;
+
+			var ilRanges = objectCreateExpression.GetAllRecursiveILRanges();
 			
 			// Create AnonymousMethodExpression and prepare parameters
 			AnonymousMethodExpression ame = new AnonymousMethodExpression();
@@ -161,7 +165,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			
 			bool isLambda = false;
 			if (ame.Parameters.All(p => p.ParameterModifier == ParameterModifier.None)) {
-				isLambda = (body.Statements.Count == 1 && body.Statements.Single() is ReturnStatement);
+				isLambda = body.Statements.Count == 1 && body.Statements.Single() is ReturnStatement &&
+						body.HiddenStart == null && body.HiddenEnd == null;
 			}
 			// Remove the parameter list from an AnonymousMethodExpression if the original method had no names,
 			// and the parameters are not used in the method body
@@ -172,6 +177,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					where v != null && v.IsParameter && method.Parameters.Contains(v.OriginalParameter)
 					select ident;
 				if (!parameterReferencingIdentifiers.Any()) {
+					ame.AddAnnotation(ame.Parameters.GetAllRecursiveILRanges());
 					ame.Parameters.Clear();
 					ame.HasParameterList = false;
 				}
@@ -179,15 +185,22 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			
 			// Replace all occurrences of 'this' in the method body with the delegate's target:
 			foreach (AstNode node in body.Descendants) {
-				if (node is ThisReferenceExpression)
-					node.ReplaceWith(target.Clone());
+				if (node is ThisReferenceExpression) {
+					var newTarget = target.Clone();
+					newTarget.RemoveAllILRangesRecursive();
+					newTarget.AddAnnotation(node.GetAllRecursiveILRanges());
+					node.ReplaceWith(newTarget);
+				}
 			}
 			Expression replacement;
 			if (isLambda) {
 				LambdaExpression lambda = new LambdaExpression();
 				lambda.CopyAnnotationsFrom(ame);
 				ame.Parameters.MoveTo(lambda.Parameters);
+				var stmtIlRanges = body.Statements.Single().GetAllILRanges();
 				Expression returnExpr = ((ReturnStatement)body.Statements.Single()).Expression;
+				if (stmtIlRanges.Count > 0)
+					returnExpr.AddAnnotation(stmtIlRanges);
 				returnExpr.Remove();
 				lambda.Body = returnExpr;
 				replacement = lambda;
@@ -203,6 +216,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				replacement = simplifiedDelegateCreation;
 			}
 			objectCreateExpression.ReplaceWith(replacement);
+			replacement.AddAnnotation(ilRanges);
 			return true;
 		}
 		
@@ -224,6 +238,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (context.Settings.ExpressionTrees && ExpressionTreeConverter.CouldBeExpressionTree(invocationExpression)) {
 				Expression converted = ExpressionTreeConverter.TryConvert(context, invocationExpression);
 				if (converted != null) {
+					//TODO: Do we need to preserve ILRanges or is it taken care of by TryConvert?
 					invocationExpression.ReplaceWith(converted);
 					return converted.AcceptVisitor(this, data);
 				}
@@ -340,11 +355,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				// Delete the variable declaration statement:
 				VariableDeclarationStatement displayClassVarDecl = PatternStatementTransform.FindVariableDeclaration(stmt, variable.Name);
 				if (displayClassVarDecl != null)
-					displayClassVarDecl.Remove();
+					displayClassVarDecl.Remove();//TODO: Save ILRanges
 				
 				// Delete the assignment statement:
 				AstNode cur = stmt.NextSibling;
-				stmt.Remove();
+				stmt.Remove();//TODO: Save ILRanges
 				
 				// Delete any following statements as long as they assign parameters to the display class
 				BlockStatement rootBlock = blockStatement.Ancestors.OfType<BlockStatement>().LastOrDefault() ?? blockStatement;
@@ -402,7 +417,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						if (isParameter || isDisplayClassParentPointerAssignment) {
 							if (fieldDef != null)
 								dict[fieldDef] = right;
-							cur.Remove();
+							cur.Remove();//TODO: Save ILRanges
 						} else {
 							break;
 						}
@@ -440,7 +455,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						AstNode replacement;
 						var fieldDef = mre.Annotation<IField>().ResolveFieldWithinSameModule();
 						if (fieldDef != null && dict.TryGetValue(fieldDef, out replacement)) {
-							mre.ReplaceWith(replacement.Clone());
+							var newReplacement = replacement.Clone();
+							newReplacement.AddAnnotation(mre.GetAllRecursiveILRanges());
+							mre.ReplaceWith(newReplacement);
 						}
 					}
 				}

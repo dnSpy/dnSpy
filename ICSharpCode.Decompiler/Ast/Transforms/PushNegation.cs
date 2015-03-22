@@ -45,7 +45,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			    (unary.Expression as UnaryOperatorExpression).Operator == UnaryOperatorType.Not)
 			{
 				AstNode newNode = (unary.Expression as UnaryOperatorExpression).Expression;
-				unary.ReplaceWith(newNode);
+				unary.ReplaceWith(newNode.WithAnnotation(unary.GetAllILRanges()));
 				return newNode.AcceptVisitor(this, data);
 			}
 			
@@ -78,7 +78,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						break;
 				}
 				if (successful) {
-					unary.ReplaceWith(binaryOp);
+					unary.ReplaceWith(binaryOp.WithAnnotation(unary.GetAllILRanges()));
 					return binaryOp.AcceptVisitor(this, data);
 				}
 				
@@ -97,7 +97,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				if (successful) {
 					binaryOp.Left.ReplaceWith(e => new UnaryOperatorExpression(UnaryOperatorType.Not, e));
 					binaryOp.Right.ReplaceWith(e => new UnaryOperatorExpression(UnaryOperatorType.Not, e));
-					unary.ReplaceWith(binaryOp);
+					unary.ReplaceWith(binaryOp.WithAnnotation(unary.GetAllILRanges()));
 					return binaryOp.AcceptVisitor(this, data);
 				}
 			}
@@ -128,15 +128,18 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				rightOperand = ((PrimitiveExpression)binaryOperatorExpression.Right).Value as bool?;
 			if (op == BinaryOperatorType.Equality && rightOperand == true || op == BinaryOperatorType.InEquality && rightOperand == false) {
 				// 'b == true' or 'b != false' is useless
+				var ilRanges = binaryOperatorExpression.GetAllRecursiveILRanges();
 				binaryOperatorExpression.Left.AcceptVisitor(this, data);
-				binaryOperatorExpression.ReplaceWith(binaryOperatorExpression.Left);
+				binaryOperatorExpression.ReplaceWith(binaryOperatorExpression.Left.WithAnnotation(ilRanges));
 				return null;
 			} else if (op == BinaryOperatorType.Equality && rightOperand == false || op == BinaryOperatorType.InEquality && rightOperand == true) {
 				// 'b == false' or 'b != true' is a negation:
 				Expression left = binaryOperatorExpression.Left;
 				left.Remove();
+				var ilRanges = binaryOperatorExpression.GetAllRecursiveILRanges();
 				UnaryOperatorExpression uoe = new UnaryOperatorExpression(UnaryOperatorType.Not, left);
 				binaryOperatorExpression.ReplaceWith(uoe);
+				uoe.AddAnnotation(ilRanges);
 				return uoe.AcceptVisitor(this, data);
 			} else {
 				bool negate = false;
@@ -150,6 +153,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					if (negate)
 						expr = new UnaryOperatorExpression(UnaryOperatorType.Not, expr);
 					binaryOperatorExpression.ReplaceWith(expr);
+					expr.AddAnnotation(binaryOperatorExpression.GetAllRecursiveILRanges());
 					return expr.AcceptVisitor(this, data);
 				} else {
 					return base.VisitBinaryOperatorExpression(binaryOperatorExpression, data);

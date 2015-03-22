@@ -183,12 +183,17 @@ namespace ICSharpCode.Decompiler
 			
 			if (columnNumber != 0) {
 				var loc = new TextLocation(lineNumber, columnNumber);
-				foreach (var m in codeMapping.MemberCodeMappings) {
+				foreach (var m in codeMapping.MemberCodeMappings.OrderBy(a => a.ILInstructionOffset.From)) {
 					if (m.StartLocation <= loc && loc <= m.EndLocation)
 						return m;
 				}
 				var list = new List<SourceCodeMapping>(codeMapping.MemberCodeMappings.FindAll(a => a.StartLocation.Line <= lineNumber && lineNumber <= a.EndLocation.Line));
-				list.Sort((a, b) => GetDist(a.StartLocation, lineNumber, columnNumber).CompareTo(GetDist(b.StartLocation, lineNumber, columnNumber)));
+				list.Sort((a, b) => {
+					var d = GetDist(a.StartLocation, lineNumber, columnNumber).CompareTo(GetDist(b.StartLocation, lineNumber, columnNumber));
+					if (d != 0)
+						return d;
+					return a.ILInstructionOffset.From.CompareTo(b.ILInstructionOffset.From);
+				});
 				if (list.Count > 0)
 					return list[0];
 				return null;

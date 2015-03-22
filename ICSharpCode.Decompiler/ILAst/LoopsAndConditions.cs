@@ -47,6 +47,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				graph = BuildGraph(block.Body, (ILLabel)block.EntryGoto.Operand);
 				graph.ComputeDominance(context.CancellationToken);
 				graph.ComputeDominanceFrontier();
+				//TODO: Keep ILRanges when writing to Body
 				block.Body = FindLoops(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint, false);
 			}
 		}
@@ -58,6 +59,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				graph = BuildGraph(block.Body, (ILLabel)block.EntryGoto.Operand);
 				graph.ComputeDominance(context.CancellationToken);
 				graph.ComputeDominanceFrontier();
+				//TODO: Keep ILRanges when writing to Body
 				block.Body = FindConditions(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint);
 			}
 		}
@@ -173,14 +175,17 @@ namespace ICSharpCode.Decompiler.ILAst
 							}
 							
 							// Use loop to implement the brtrue
-							basicBlock.Body.RemoveTail(ILCode.Brtrue, ILCode.Br);
-							basicBlock.Body.Add(new ILWhileLoop() {
+							var tail = basicBlock.Body.RemoveTail(ILCode.Brtrue, ILCode.Br);
+							ILWhileLoop whileLoop;
+							basicBlock.Body.Add(whileLoop = new ILWhileLoop() {
 								Condition = condExpr,
 								BodyBlock = new ILBlock() {
 									EntryGoto = new ILExpression(ILCode.Br, trueLabel),
 									Body = FindLoops(loopContents, node, false)
 								}
 							});
+							whileLoop.ILRanges.AddRange(tail[0].ILRanges);	// no recursive add
+							whileLoop.ILRanges.AddRange(tail[1].GetSelfAndChildrenRecursiveILRanges());
 							basicBlock.Body.Add(new ILExpression(ILCode.Br, falseLabel));
 							result.Add(basicBlock);
 							
@@ -247,7 +252,9 @@ namespace ICSharpCode.Decompiler.ILAst
 							
 							// Replace the switch code with ILSwitch
 							ILSwitch ilSwitch = new ILSwitch() { Condition = switchArg };
-							block.Body.RemoveTail(ILCode.Switch, ILCode.Br);
+							var tail = block.Body.RemoveTail(ILCode.Switch, ILCode.Br);
+							ilSwitch.ILRanges.AddRange(tail[0].ILRanges);	// no recursive add
+							ilSwitch.ILRanges.AddRange(tail[1].GetSelfAndChildrenRecursiveILRanges());
 							block.Body.Add(ilSwitch);
 							block.Body.Add(new ILExpression(ILCode.Br, fallLabel));
 							result.Add(block);
@@ -259,7 +266,11 @@ namespace ICSharpCode.Decompiler.ILAst
 							int addValue = 0;
 							List<ILExpression> subArgs;
 							if (ilSwitch.Condition.Match(ILCode.Sub, out subArgs) && subArgs[1].Match(ILCode.Ldc_I4, out addValue)) {
+								var old = ilSwitch.Condition;
 								ilSwitch.Condition = subArgs[0];
+								ilSwitch.Condition.ILRanges.AddRange(old.ILRanges);	// no recursive add
+								for (int i = 1; i < subArgs.Count; i++)
+									ilSwitch.Condition.ILRanges.AddRange(subArgs[i].GetSelfAndChildrenRecursiveILRanges());
 							}
 							
 							// Pull in code of cases
@@ -313,7 +324,8 @@ namespace ICSharpCode.Decompiler.ILAst
 								if (content.Any()) {
 									var caseBlock = new ILSwitch.CaseBlock() { EntryGoto = new ILExpression(ILCode.Br, fallLabel) };
 									ilSwitch.CaseBlocks.Add(caseBlock);
-									block.Body.RemoveTail(ILCode.Br);
+									tail = block.Body.RemoveTail(ILCode.Br);
+									caseBlock.ILRanges.AddRange(tail[0].GetSelfAndChildrenRecursiveILRanges());
 									
 									scope.ExceptWith(content);
 									caseBlock.Body.AddRange(FindConditions(content, fallTarget));
@@ -346,7 +358,9 @@ namespace ICSharpCode.Decompiler.ILAst
 								TrueBlock  = new ILBlock() { EntryGoto = new ILExpression(ILCode.Br, trueLabel) },
 								FalseBlock = new ILBlock() { EntryGoto = new ILExpression(ILCode.Br, falseLabel) }
 							};
-							block.Body.RemoveTail(ILCode.Brtrue, ILCode.Br);
+							var tail = block.Body.RemoveTail(ILCode.Brtrue, ILCode.Br);
+							condExpr.ILRanges.AddRange(tail[0].ILRanges);	// no recursive add
+							ilCond.FalseBlock.ILRanges.AddRange(tail[1].GetSelfAndChildrenRecursiveILRanges());
 							block.Body.Add(ilCond);
 							result.Add(block);
 							

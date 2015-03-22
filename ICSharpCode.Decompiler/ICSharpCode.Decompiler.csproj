@@ -119,6 +119,7 @@
     <Compile Include="ILAst\StateRange.cs" />
     <Compile Include="ILAst\SymbolicExecution.cs" />
     <Compile Include="ILAst\TypeAnalysis.cs" />
+    <Compile Include="ILAst\Utils.cs" />
     <Compile Include="ILAst\YieldReturnDecompiler.cs" />
     <Compile Include="ITextOutput.cs" />
     <Compile Include="PlainTextOutput.cs" />

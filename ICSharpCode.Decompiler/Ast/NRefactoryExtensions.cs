@@ -98,20 +98,114 @@ namespace ICSharpCode.Decompiler.Ast
 			return (Statement)next;
 		}
 
+		public static void AddAllRecursiveILRangesTo(this AstNode node, AstNode target)
+		{
+			if (node == null)
+				return;
+			var ilRanges = node.GetAllRecursiveILRanges();
+			if (ilRanges.Count > 0)
+				target.AddAnnotation(ilRanges);
+		}
+
+		public static void AddAllRecursiveILRangesTo(this IEnumerable<AstNode> nodes, AstNode target)
+		{
+			if (nodes == null)
+				return;
+			var ilRanges = nodes.GetAllRecursiveILRanges();
+			if (ilRanges.Count > 0)
+				target.AddAnnotation(ilRanges);
+		}
+
 		public static List<ILRange> GetAllRecursiveILRanges(this AstNode node)
 		{
 			if (node == null)
 				return new List<ILRange>();
 
 			var ilRanges = new List<ILRange>();
-			foreach (var d in node.DescendantsAndSelf) {
-				foreach (var ann in d.Annotations) {
-					var list = ann as IList<ILRange>;
-					if (list != null)
-						ilRanges.AddRange(list);
-				}
+			foreach (var d in node.DescendantsAndSelf)
+				d.GetAllILRanges(ilRanges);
+			return ilRanges;
+		}
+
+		public static List<ILRange> GetAllRecursiveILRanges(this IEnumerable<AstNode> nodes)
+		{
+			if (nodes == null)
+				return new List<ILRange>();
+
+			var ilRanges = new List<ILRange>();
+			foreach (var node in nodes) {
+				foreach (var d in node.DescendantsAndSelf)
+					d.GetAllILRanges(ilRanges);
 			}
 			return ilRanges;
+		}
+
+		public static List<ILRange> GetAllILRanges(this AstNode node)
+		{
+			if (node == null)
+				return new List<ILRange>();
+
+			var ilRanges = new List<ILRange>();
+			node.GetAllILRanges(ilRanges);
+			return ilRanges;
+		}
+
+		static void GetAllILRanges(this AstNode node, List<ILRange> ilRanges)
+		{
+			if (node == null)
+				return;
+			var block = node as BlockStatement;
+			if (block != null) {
+				ilRanges.AddRange(block.HiddenStart.GetAllRecursiveILRanges());
+				ilRanges.AddRange(block.HiddenEnd.GetAllRecursiveILRanges());
+			}
+			var fe = node as ForeachStatement;
+			if (fe != null) {
+				ilRanges.AddRange(fe.HiddenGetCurrentNode.GetAllRecursiveILRanges());
+				ilRanges.AddRange(fe.HiddenMoveNextNode.GetAllRecursiveILRanges());
+				ilRanges.AddRange(fe.HiddenGetEnumeratorNode.GetAllRecursiveILRanges());
+			}
+			var sw = node as SwitchStatement;
+			if (sw != null)
+				ilRanges.AddRange(sw.HiddenEnd.GetAllRecursiveILRanges());
+			foreach (var ann in node.Annotations) {
+				var list = ann as IList<ILRange>;
+				if (list != null)
+					ilRanges.AddRange(list);
+			}
+		}
+
+		public static AstNode CreateHidden(IEnumerable<ILRange> ilRanges, AstNode stmt)
+		{
+			var list = ILRange.OrderAndJoint(ilRanges);
+			if (list.Count == 0)
+				return stmt;
+			if (stmt == null)
+				stmt = new EmptyStatement();
+			stmt.AddAnnotation(list);
+			return stmt;
+		}
+
+		public static AstNode CreateHidden(AstNode stmt, params AstNode[] otherNodes)
+		{
+			var list = new List<ILRange>();
+			foreach (var node in otherNodes) {
+				if (node == null)
+					continue;
+				list.AddRange(node.GetAllRecursiveILRanges());
+			}
+			if (list.Count > 0) {
+				if (stmt == null)
+					stmt = new EmptyStatement();
+				stmt.AddAnnotation(list);
+			}
+			return stmt;
+		}
+
+		public static void RemoveAllILRangesRecursive(this AstNode node)
+		{
+			foreach (var d in node.DescendantsAndSelf)
+				d.RemoveAnnotations(typeof(IList<ILRange>));
 		}
 	}
 }

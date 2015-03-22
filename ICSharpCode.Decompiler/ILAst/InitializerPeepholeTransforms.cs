@@ -30,7 +30,7 @@ namespace ICSharpCode.Decompiler.ILAst
 	partial class ILAstOptimizer
 	{
 		#region Array Initializers
-		bool TransformArrayInitializers(List<ILNode> body, ILExpression expr, int pos)
+		bool TransformArrayInitializers(ILBlockBase block, List<ILNode> body, ILExpression expr, int pos)
 		{
 			ILVariable v, v3;
 			ILExpression newarrExpr;
@@ -86,14 +86,14 @@ namespace ICSharpCode.Decompiler.ILAst
 						expr.ILRanges.AddRange(body[pos + 1 + i].GetSelfAndChildrenRecursiveILRanges());
 					body.RemoveRange(pos + 1, numberOfInstructionsToRemove);
 
-					new ILInlining(method).InlineIfPossible(body, ref pos);
+					new ILInlining(method).InlineIfPossible(block, body, ref pos);
 					return true;
 				}
 			}
 			return false;
 		}
 
-		bool TransformMultidimensionalArrayInitializers(List<ILNode> body, ILExpression expr, int pos)
+		bool TransformMultidimensionalArrayInitializers(ILBlockBase block, List<ILNode> body, ILExpression expr, int pos)
 		{
 			ILVariable v;
 			ILExpression newarrExpr;
@@ -262,7 +262,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		/// <summary>
 		/// Handles both object and collection initializers.
 		/// </summary>
-		bool TransformObjectInitializers(List<ILNode> body, ILExpression expr, int pos)
+		bool TransformObjectInitializers(ILBlockBase block, List<ILNode> body, ILExpression expr, int pos)
 		{
 			if (!context.Settings.ObjectOrCollectionInitializers)
 				return false;
@@ -345,22 +345,27 @@ namespace ICSharpCode.Decompiler.ILAst
 				return false;
 
 			if (expr.Code == ILCode.Stloc) {
+				initializer.ILRanges.AddRange(expr.Arguments[0].GetSelfAndChildrenRecursiveILRanges());
 				expr.Arguments[0] = initializer;
 			} else {
 				Debug.Assert(expr.Code == ILCode.Call);
 				expr.Code = ILCode.Stloc;
 				expr.Operand = v;
+				foreach (var arg in expr.Arguments)
+					initializer.ILRanges.AddRange(arg.GetSelfAndChildrenRecursiveILRanges());
 				expr.Arguments.Clear();
 				expr.Arguments.Add(initializer);
 			}
 			// remove all the instructions that were pulled into the initializer
+			for (int i = originalPos + 1; i < pos; i++)
+				initializer.ILRanges.AddRange(body[i].GetSelfAndChildrenRecursiveILRanges());
 			body.RemoveRange(originalPos + 1, pos - originalPos - 1);
 
 			// now that we know that it's an object initializer, change all the first arguments to 'InitializedObject'
 			ChangeFirstArgumentToInitializedObject(initializer);
 
 			inlining = new ILInlining(method);
-			inlining.InlineIfPossible(body, ref originalPos);
+			inlining.InlineIfPossible(block, body, ref originalPos);
 
 			return true;
 		}
@@ -534,6 +539,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			while (initializerStack.Count > 1 && initializerStack[initializerStack.Count - 1].Arguments.Count == 1) {
 				ILExpression parent = initializerStack[initializerStack.Count - 2];
 				Debug.Assert(parent.Arguments.Last() == initializerStack[initializerStack.Count - 1]);
+				parent.ILRanges.AddRange(parent.Arguments[parent.Arguments.Count - 1].GetSelfAndChildrenRecursiveILRanges());
 				parent.Arguments.RemoveAt(parent.Arguments.Count - 1);
 				initializerStack.RemoveAt(initializerStack.Count - 1);
 			}

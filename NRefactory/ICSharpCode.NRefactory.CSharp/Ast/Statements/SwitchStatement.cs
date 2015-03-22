@@ -66,6 +66,8 @@ namespace ICSharpCode.NRefactory.CSharp
 			get { return GetChildByRole (Roles.RBrace); }
 		}
 		
+		public AstNode HiddenEnd { get; set; }
+
 		public override void AcceptVisitor (IAstVisitor visitor)
 		{
 			visitor.VisitSwitchStatement (this);
