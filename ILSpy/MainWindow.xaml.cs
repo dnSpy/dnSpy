@@ -147,13 +147,6 @@ namespace ICSharpCode.ILSpy
 			}
 			return true;
 		}
-
-		public void ClearHistory()
-		{
-			DecompiledNodes = new ILSpyTreeNode[0];
-			History.Clear();
-			TextView.ClearState();
-		}
 	}
 
 	/// <summary>
@@ -1090,9 +1083,7 @@ namespace ICSharpCode.ILSpy
 			if (e.PropertyName == "Language") {
 				foreach (var tabState in AllTabStates) {
 					//TODO: Restore the caret too
-					var origNodes = tabState.DecompiledNodes;
-					tabState.DecompiledNodes = new ILSpyTreeNode[0];
-					DecompileNodes(tabState, null, false, origNodes);
+					DecompileNodes(tabState, null, false, tabState.DecompiledNodes, true);
 				}
 			}
 		}
@@ -1457,11 +1448,11 @@ namespace ICSharpCode.ILSpy
 				SetTextEditorFocus(tabState.TextView);
 		}
 		
-		bool? DecompileNodes(TabState tabState, DecompilerTextViewState state, bool recordHistory, ILSpyTreeNode[] nodes)
+		bool? DecompileNodes(TabState tabState, DecompilerTextViewState state, bool recordHistory, ILSpyTreeNode[] nodes, bool forceDecompile = false)
 		{
 			if (tabState.ignoreDecompilationRequests)
 				return null;
-			if (tabState.IsSameNodes(nodes)) {
+			if (!forceDecompile && tabState.IsSameNodes(nodes)) {
 				if (state != null)
 					tabState.TextView.EditorPositionState = state.EditorPositionState;
 				return false;
@@ -2008,8 +1999,7 @@ namespace ICSharpCode.ILSpy
 			if (textView == null || reference == null)
 				return;
 			var tabState = TabState.GetTabState(textView);
-			var clonedTabState = CloneTabMakeActive(tabState, false);
-			clonedTabState.ClearHistory();
+			var clonedTabState = CloneTabMakeActive(tabState, true);
 			clonedTabState.TextView.GoToTarget(reference, true, false);
 		}
 
