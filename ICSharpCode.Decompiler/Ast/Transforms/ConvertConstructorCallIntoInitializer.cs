@@ -31,6 +31,13 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 	/// </summary>
 	public class ConvertConstructorCallIntoInitializer : DepthFirstAstVisitor<object, object>, IAstTransform
 	{
+		readonly DecompilerContext context;
+
+		public ConvertConstructorCallIntoInitializer(DecompilerContext context)
+		{
+			this.context = context;
+		}
+
 		public override object VisitConstructorDeclaration(ConstructorDeclaration constructorDeclaration, object data)
 		{
 			ExpressionStatement stmt = constructorDeclaration.Body.Statements.FirstOrDefault() as ExpressionStatement;
@@ -148,6 +155,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		void RemoveSingleEmptyConstructor(TypeDeclaration typeDeclaration)
 		{
+			if (!context.Settings.RemoveEmptyDefaultConstructors)
+				return;
 			var instanceCtors = typeDeclaration.Members.OfType<ConstructorDeclaration>().Where(c => (c.Modifiers & Modifiers.Static) == 0).ToArray();
 			if (instanceCtors.Length == 1) {
 				ConstructorDeclaration emptyCtor = new ConstructorDeclaration();
@@ -185,7 +194,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						varInit.Initializer.AddAnnotation(ilRanges);
 						es.Remove();
 					}
-					if (staticCtor.Body.Statements.Count == 0)
+					if (context.Settings.RemoveEmptyDefaultConstructors && staticCtor.Body.Statements.Count == 0)
 						staticCtor.Remove();
 				}
 			}

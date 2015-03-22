@@ -39,7 +39,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				new IntroduceUnsafeModifier(),
 				new AddCheckedBlocks(),
 				new DeclareVariables(context), // should run after most transforms that modify statements
-				new ConvertConstructorCallIntoInitializer(), // must run after DeclareVariables
+				new ConvertConstructorCallIntoInitializer(context), // must run after DeclareVariables
 				new DecimalConstantTransform(),
 				new IntroduceUsingDeclarations(context),
 				new IntroduceExtensionMethods(context), // must run after IntroduceUsingDeclarations

@@ -68,6 +68,7 @@ namespace ICSharpCode.ILSpy.Options
 			s.ShowXmlDocumentation = (bool?)e.Attribute("xmlDoc") ?? s.ShowXmlDocumentation;
 			s.FoldBraces = (bool?)e.Attribute("foldBraces") ?? s.FoldBraces;
 			s.AddILComments = (bool?)e.Attribute("addILComments") ?? s.AddILComments;
+			s.RemoveEmptyDefaultConstructors = (bool?)e.Attribute("removeEmptyDefaultConstructors") ?? s.RemoveEmptyDefaultConstructors;
 			return s;
 		}
 		
@@ -84,6 +85,7 @@ namespace ICSharpCode.ILSpy.Options
 			section.SetAttributeValue("xmlDoc", s.ShowXmlDocumentation);
 			section.SetAttributeValue("foldBraces", s.FoldBraces);
 			section.SetAttributeValue("addILComments", s.AddILComments);
+			section.SetAttributeValue("removeEmptyDefaultConstructors", s.RemoveEmptyDefaultConstructors);
 			
 			XElement existingElement = root.Element("DecompilerSettings");
 			if (existingElement != null)

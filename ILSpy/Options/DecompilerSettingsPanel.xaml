@@ -12,5 +12,6 @@
 		<CheckBox IsChecked="{Binding ShowXmlDocumentation}">Show XML documentation in decompiled code</CheckBox>
 		<CheckBox IsChecked="{Binding FoldBraces}">Enable folding on all blocks in braces</CheckBox>
 		<CheckBox IsChecked="{Binding AddILComments}">Add IL opcode comments</CheckBox>
+		<CheckBox IsChecked="{Binding RemoveEmptyDefaultConstructors}">Remove empty default constructors</CheckBox>
 	</StackPanel>
 </UserControl>

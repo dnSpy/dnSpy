@@ -278,6 +278,18 @@ namespace ICSharpCode.Decompiler
 				}
 			}
 		}
+
+		bool removeEmptyDefaultConstructors = true;
+
+		public bool RemoveEmptyDefaultConstructors {
+			get { return removeEmptyDefaultConstructors; }
+			set {
+				if (removeEmptyDefaultConstructors != value) {
+					removeEmptyDefaultConstructors = value;
+					OnPropertyChanged("RemoveEmptyDefaultConstructors");
+				}
+			}
+		}
 		
 		#region Options to aid VB decompilation
 		bool introduceIncrementAndDecrement = true;
@@ -387,6 +399,7 @@ namespace ICSharpCode.Decompiler
 			if (ShowXmlDocumentation != other.ShowXmlDocumentation) return false;
 			if (FoldBraces != other.FoldBraces) return false;
 			if (AddILComments != other.AddILComments) return false;
+			if (RemoveEmptyDefaultConstructors != other.RemoveEmptyDefaultConstructors) return false;
 			if (IntroduceIncrementAndDecrement != other.IntroduceIncrementAndDecrement) return false;
 			if (MakeAssignmentExpressions != other.MakeAssignmentExpressions) return false;
 			if (AlwaysGenerateExceptionVariableForCatchBlocks != other.AlwaysGenerateExceptionVariableForCatchBlocks) return false;
@@ -427,6 +440,7 @@ namespace ICSharpCode.Decompiler
 				h ^= IntroduceIncrementAndDecrement	? 0 : 0x00002000U;
 				h ^= MakeAssignmentExpressions		? 0 : 0x00001000U;
 				h ^= AlwaysGenerateExceptionVariableForCatchBlocks ? 0 : 0x00000800U;
+				h ^= RemoveEmptyDefaultConstructors	? 0 : 0x00000400U;
 
 				//TODO: CSharpFormattingOptions. This isn't currently used but it has a ton of properties
 
