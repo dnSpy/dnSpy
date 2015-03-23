@@ -1165,7 +1165,6 @@ namespace ICSharpCode.NRefactory.VB
 		
 		void WriteBlock(BlockStatement body)
 		{
-			Debug.Assert((body.HiddenStart == null || body.HiddenStart.Count == 0) && (body.HiddenEnd == null || body.HiddenEnd.Count == 0), "Block has hidden code. Needs to be handled by caller");
 			if (body.IsNull)
 				NewLine();
 			else
