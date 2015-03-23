@@ -13,7 +13,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	{
 		public bool IsVisible(TextViewContext context)
 		{
-			return CanExecute();
+			return CanExecute() &&
+				(context.SelectedTreeNodes != null || context.TextView != null);
 		}
 
 		public bool IsEnabled(TextViewContext context)
