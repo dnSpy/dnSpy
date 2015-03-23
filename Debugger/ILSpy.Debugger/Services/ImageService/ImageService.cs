@@ -28,6 +28,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		public static readonly BitmapImage Breakpoint = LoadBitmap("Breakpoint");
 		public static readonly BitmapImage DisabledBreakpoint = LoadBitmap("DisabledBreakpoint");
 		public static readonly BitmapImage CurrentLine = LoadBitmap("CurrentLine");
+		public static readonly BitmapImage SelectedReturnLine = LoadBitmap("SelectedReturnLine");
 		
 		public static ImageSource GetImage(string imageName)
 		{

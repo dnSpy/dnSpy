@@ -177,6 +177,8 @@
     <Resource Include="Images\Breakpoint.png" />
     <Resource Include="Images\ContinueDebugging.png" />
     <Resource Include="Images\CurrentLine.png" />
+    <Resource Include="Images\CurrentLineToolBar.png" />
+    <Resource Include="Images\SelectedReturnLine.png" />
     <Resource Include="Images\DeleteAllBreakpoints.PNG" />
     <Resource Include="Images\DisabledBreakpoint.png" />
     <Resource Include="Images\Icons.16x16.Class.png" />

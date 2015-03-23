@@ -189,7 +189,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 				case StackFrameStatementType.CurrentStatement:
 					return Images.CurrentLine;
 				case StackFrameStatementType.SelectedReturnStatement:
-					return Images.CurrentLine;//TODO: Use another similar image
+					return Images.SelectedReturnLine;
 				case StackFrameStatementType.ReturnStatement:
 					return null;
 				default:

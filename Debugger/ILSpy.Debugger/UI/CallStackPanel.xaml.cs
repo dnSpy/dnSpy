@@ -198,8 +198,10 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 					ILOffsetString = frame.IP.IsValid ? string.Format("0x{0:X4}", frame.IP.Offset) : "????",
 					MethodKey = frame.MethodInfo.ToMethodKey(),
 				};
-				if (frameNumber == StackFrameStatementManager.SelectedFrame)
+				if (frameNumber == 0)
 					item.Image = ImageService.CurrentLine;
+				else if (frameNumber == StackFrameStatementManager.SelectedFrame)
+					item.Image = ImageService.SelectedReturnLine;
 				frameNumber++;
 				var module = frame.MethodInfo.DebugModule;
 				if (module.IsDynamic || module.IsInMemory) {

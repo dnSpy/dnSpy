@@ -36,6 +36,7 @@ namespace ICSharpCode.ILSpy
 		public static readonly BitmapImage Breakpoint = LoadBitmap("Breakpoint");
 		public static readonly BitmapImage DisabledBreakpoint = LoadBitmap("DisabledBreakpoint");
 		public static readonly BitmapImage CurrentLine = LoadBitmap("CurrentLine");
+		public static readonly BitmapImage SelectedReturnLine = LoadBitmap("SelectedReturnLine");
 
 		public static readonly BitmapImage ViewCode = LoadBitmap("ViewCode");
 		public static readonly BitmapImage Save = LoadBitmap("SaveFile");

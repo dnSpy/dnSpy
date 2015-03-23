@@ -291,6 +291,7 @@
     <None Include="App.config" />
     <Resource Include="Images\Breakpoint.png" />
     <Resource Include="Images\CurrentLine.png" />
+    <Resource Include="Images\SelectedReturnLine.png" />
     <Resource Include="Images\DisabledBreakpoint.png" />
     <None Include="app.manifest" />
     <None Include="dntheme\dark.dntheme">

@@ -1085,7 +1085,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	}
 
 	[ExportToolbarCommand(ToolTip = "Show Next Statement (Alt+Num *)",
-						  ToolbarIcon = "Images/CurrentLine.png",
+						  ToolbarIcon = "Images/CurrentLineToolBar.png",
 						  ToolbarCategory = "Debug3",
 						  ToolbarOrder = 0)]
 	internal sealed class ShowNextStatementCommand : DebuggerCommand, IToolbarCommand
