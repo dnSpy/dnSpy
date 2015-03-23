@@ -4,6 +4,7 @@
         Style="{DynamicResource DialogWindow}"
         WindowStartupLocation="CenterOwner"
         ResizeMode="CanResizeWithGrip"
+        MinHeight="300" MinWidth="400"
         Title="Options" Height="400" Width="500">
 	<Grid>
 		<Grid.RowDefinitions>
@@ -14,8 +15,8 @@
 		</Grid.RowDefinitions>
 		<TabControl Name="tabControl" />
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="12,8">
-			<Button IsDefault="True" Margin="2,0" Name="okButton" Click="OKButton_Click">OK</Button>
-			<Button IsCancel="True" Margin="2,0">Cancel</Button>
+			<Button IsDefault="True" Margin="2,0" Name="okButton" Click="OKButton_Click">_OK</Button>
+			<Button IsCancel="True" Margin="2,0">_Cancel</Button>
 		</StackPanel>
 	</Grid>
 </Window>

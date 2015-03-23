@@ -15,8 +15,8 @@
 			<TextBox Name="textBox" Height="23" VerticalAlignment="Center" />
 		</DockPanel>
 		<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-			<Button Content="OK" Click="okButton_Click" IsDefault="True" Height="23" Name="okButton" Width="75" Margin="0,0,5,0" />
-			<Button Content="Cancel" Click="cancelButton_Click" IsCancel="True" Height="23" Name="cancelButton" Width="75" Margin="0,0,10,0" />
+			<Button Content="_OK" Click="okButton_Click" IsDefault="True" Height="23" Name="okButton" Width="75" Margin="0,0,5,0" />
+			<Button Content="_Cancel" Click="cancelButton_Click" IsCancel="True" Height="23" Name="cancelButton" Width="75" Margin="0,0,10,0" />
 		</StackPanel>
 	</StackPanel>
 </Window>

@@ -38,7 +38,7 @@
 				HorizontalAlignment="Center"
 				x:Name="RefreshButton"
 				Click="RefreshButton_Click"
-				Content="Refresh"
+				Content="_Refresh"
 				Width="100" />
 			<Button
 				DockPanel.Dock="Right"
@@ -46,12 +46,12 @@
 				x:Name="AttachButton"
 				Click="AttachButton_Click"
 				IsDefault="True"
-				Content="Attach"
+				Content="_Attach"
 				Width="100" />
 			<Button
 				DockPanel.Dock="Right"
 				x:Name="CancelButton"
-				Content="Cancel"
+				Content="_Cancel"
 				IsCancel="True"
 				Click="CancelButton_Click"
 				Width="100" />

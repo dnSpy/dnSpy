@@ -91,7 +91,7 @@
 				<Style TargetType="{x:Type Image}">
 					<Style.Triggers>
 						<DataTrigger
-							Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ButtonBase}, AncestorLevel=1}, Path=IsEnabled}"
+							Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Control}, AncestorLevel=1}, Path=IsEnabled}"
 							Value="False">
 							<Setter Property="Opacity" Value="0.30" />
 						</DataTrigger>

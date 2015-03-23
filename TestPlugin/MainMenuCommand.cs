@@ -16,7 +16,7 @@ namespace TestPlugin
 	// ToolbarIcon: The icon. Must be embedded as "Resource" (WPF-style resource) in the same assembly as the command type.
 	// ToolbarCategory: optional, used for grouping related toolbar items together. A separator is added between different groups.
 	// ToolbarOrder: controls the order in which the items appear (items are sorted by this value)
-	[ExportToolbarCommand(ToolTip = "Clears the current assembly list", ToolbarIcon = "Clear.png", ToolbarCategory = "Open", ToolbarOrder = 1.5)]
+	[ExportToolbarCommand(ToolTip = "Clears the Current Assembly List", ToolbarIcon = "Clear.png", ToolbarCategory = "Open", ToolbarOrder = 1.5)]
 	public class UnloadAllAssembliesCommand : SimpleCommand
 	{
 		public override void Execute(object parameter)

@@ -13,12 +13,12 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <StackPanel>
-            <Label>Enter a list name:</Label>
+            <Label Target="{Binding ElementName=ListName}">E_nter a list name:</Label>
             <TextBox Margin="8,8" Name="ListName" TextChanged="TextBox_TextChanged"></TextBox>
         </StackPanel>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="8,0">
-            <Button IsDefault="True" Margin="2,0" IsEnabled="False" Name="okButton" Click="OKButton_Click">Create</Button>
-            <Button IsCancel="True" Margin="2,0">Cancel</Button>
+            <Button IsDefault="True" Margin="2,0" IsEnabled="False" Name="okButton" Click="OKButton_Click">Cr_eate</Button>
+            <Button IsCancel="True" Margin="2,0">_Cancel</Button>
         </StackPanel>
     </Grid>
 </Window>
