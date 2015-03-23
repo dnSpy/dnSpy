@@ -1055,7 +1055,7 @@ namespace ICSharpCode.ILSpy.TextView
 			if (refSeg.IsLocal)
 				return false;
 			if (canJumpToReference) {
-				MainWindow.Instance.JumpToReference(this, refSeg.Reference);
+				MainWindow.Instance.JumpToReference(this, refSeg.Reference, canRecordHistory);
 				return true;
 			}
 

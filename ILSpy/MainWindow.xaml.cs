@@ -1206,27 +1206,35 @@ namespace ICSharpCode.ILSpy
 			return reference;
 		}
 
-		public bool JumpToReference(object reference)
+		public bool JumpToReference(object reference, bool canRecordHistory = true)
 		{
 			var tabState = SafeActiveTabState;
+			if (canRecordHistory)
+				RecordHistory(tabState);
 			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), success => GoToLocation(tabState.TextView, success, ResolveReference(reference)));
 		}
 
-		public bool JumpToReference(DecompilerTextView textView, object reference)
+		public bool JumpToReference(DecompilerTextView textView, object reference, bool canRecordHistory = true)
 		{
 			var tabState = TabState.GetTabState(textView);
+			if (canRecordHistory)
+				RecordHistory(tabState);
 			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), success => GoToLocation(tabState.TextView, success, ResolveReference(reference)));
 		}
 
-		public bool JumpToReference(DecompilerTextView textView, object reference, Func<TextLocation> getLocation)
+		public bool JumpToReference(DecompilerTextView textView, object reference, Func<TextLocation> getLocation, bool canRecordHistory = true)
 		{
 			var tabState = TabState.GetTabState(textView);
+			if (canRecordHistory)
+				RecordHistory(tabState);
 			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), success => GoToLocation(tabState.TextView, success, getLocation()));
 		}
 
-		public bool JumpToReference(DecompilerTextView textView, object reference, Action<bool> onDecompileFinished)
+		public bool JumpToReference(DecompilerTextView textView, object reference, Action<bool> onDecompileFinished, bool canRecordHistory = true)
 		{
 			var tabState = TabState.GetTabState(textView);
+			if (canRecordHistory)
+				RecordHistory(tabState);
 			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), onDecompileFinished);
 		}
 
@@ -1281,8 +1289,6 @@ namespace ICSharpCode.ILSpy
 			public void Abort()
 			{
 				decompilerTextView.OnShowOutput -= OnShowOutput;
-				if (onDecompileFinished != null)
-					onDecompileFinished(false);
 			}
 		}
 
@@ -1293,7 +1299,7 @@ namespace ICSharpCode.ILSpy
 			if (treeNode != null) {
 				var helper = new OnShowOutputHelper(tabState.TextView, onDecompileFinished, treeNode);
 				var nodes = new[] { treeNode };
-				bool? decompiled = DecompileNodes(tabState, null, true, nodes);
+				bool? decompiled = DecompileNodes(tabState, null, false, nodes);
 				if (decompiled == false) {
 					helper.Abort();
 					onDecompileFinished(true);
@@ -2000,6 +2006,7 @@ namespace ICSharpCode.ILSpy
 				return;
 			var tabState = TabState.GetTabState(textView);
 			var clonedTabState = CloneTabMakeActive(tabState, true);
+			clonedTabState.History.Clear();
 			clonedTabState.TextView.GoToTarget(reference, true, false);
 		}
 
