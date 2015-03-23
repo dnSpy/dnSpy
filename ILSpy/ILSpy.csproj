@@ -134,6 +134,7 @@
     <Compile Include="Commands\CommandWrapper.cs" />
     <Compile Include="SavedTabState.cs" />
     <Compile Include="TreeNodes\CopyTokenContextMenuEntry.cs" />
+    <Compile Include="TreeNodes\CopyXmlDocNameMenuEntry.cs" />
     <Compile Include="TreeNodes\GoToTokenContextMenuEntry.cs" />
     <Compile Include="TreeNodes\NodePathName.cs" />
     <Compile Include="TreeNodes\OpenInExplorerContextMenuEntry.cs" />
