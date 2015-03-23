@@ -119,9 +119,16 @@ namespace ICSharpCode.ILSpy.Options
 			return s;
 		}
 		
-		public void Save(XElement root)
+		public RefreshFlags Save(XElement root)
 		{
 			DisplaySettings s = (DisplaySettings)this.DataContext;
+
+			var flags = RefreshFlags.None;
+			if (currentDisplaySettings.ShowMetadataTokens != s.ShowMetadataTokens ||
+				currentDisplaySettings.ShowAssemblyVersion != s.ShowAssemblyVersion ||
+				currentDisplaySettings.ShowAssemblyPublicKeyToken != s.ShowAssemblyPublicKeyToken) {
+				flags |= RefreshFlags.TreeViewNodeNames;
+			}
 			
 			currentDisplaySettings.CopyValues(s);
 			
@@ -142,6 +149,8 @@ namespace ICSharpCode.ILSpy.Options
 				existingElement.ReplaceWith(section);
 			else
 				root.Add(section);
+
+			return flags;
 		}
 	}
 	

@@ -45,6 +45,7 @@ namespace ICSharpCode.ILSpy.Options
 		}
 
 		readonly IOptionPage[] optionPages;
+		public RefreshFlags RefreshFlags { get; private set; }
 		
 		public OptionsDialog()
 		{
@@ -64,10 +65,11 @@ namespace ICSharpCode.ILSpy.Options
 		
 		void OKButton_Click(object sender, RoutedEventArgs e)
 		{
+			RefreshFlags = RefreshFlags.None;
 			ILSpySettings.Update(
 				delegate (XElement root) {
 					foreach (var optionPage in optionPages)
-						optionPage.Save(root);
+						RefreshFlags |= optionPage.Save(root);
 				});
 			this.DialogResult = true;
 			Close();
@@ -88,7 +90,26 @@ namespace ICSharpCode.ILSpy.Options
 	public interface IOptionPage
 	{
 		void Load(ILSpySettings settings);
-		void Save(XElement root);
+		RefreshFlags Save(XElement root);
+	}
+
+	[Flags]
+	public enum RefreshFlags
+	{
+		/// <summary>
+		/// Nothing needs to be refreshed
+		/// </summary>
+		None = 0,
+
+		/// <summary>
+		/// Tree view node names need to be updated
+		/// </summary>
+		TreeViewNodeNames = 0x00000001,
+
+		/// <summary>
+		/// Text editor needs to re-decompile the code
+		/// </summary>
+		Decompile = 0x00000002,
 	}
 	
 	[MetadataAttribute]
@@ -111,7 +132,11 @@ namespace ICSharpCode.ILSpy.Options
 			OptionsDialog dlg = new OptionsDialog();
 			dlg.Owner = MainWindow.Instance;
 			if (dlg.ShowDialog() == true) {
-				MainWindow.Instance.Refresh();
+				var inst = MainWindow.Instance;
+				if ((dlg.RefreshFlags & RefreshFlags.Decompile) != 0)
+					inst.RefreshDecompile();
+				if ((dlg.RefreshFlags & RefreshFlags.TreeViewNodeNames) != 0)
+					inst.RefreshTreeViewNodeNames();
 			}
 		}
 	}

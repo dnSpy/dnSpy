@@ -47,7 +47,7 @@ namespace TestPlugin
 			this.DataContext = s;
 		}
 		
-		public void Save(XElement root)
+		public RefreshFlags Save(XElement root)
 		{
 			Options s = (Options)this.DataContext;
 			// Save the options back into XML:
@@ -62,6 +62,8 @@ namespace TestPlugin
 				existingElement.ReplaceWith(section);
 			else
 				root.Add(section);
+
+			return RefreshFlags.None;	// Nothing needs to be refreshed
 		}
 	}
 	

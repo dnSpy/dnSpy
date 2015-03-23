@@ -72,9 +72,12 @@ namespace ICSharpCode.ILSpy.Options
 			return s;
 		}
 		
-		public void Save(XElement root)
+		public RefreshFlags Save(XElement root)
 		{
 			DecompilerSettings s = (DecompilerSettings)this.DataContext;
+			var flags = RefreshFlags.None;
+			if (!CurrentDecompilerSettings.Equals(s))
+				flags |= RefreshFlags.Decompile;
 			XElement section = new XElement("DecompilerSettings");
 			section.SetAttributeValue("anonymousMethods", s.AnonymousMethods);
 			section.SetAttributeValue("yieldReturn", s.YieldReturn);
@@ -94,6 +97,7 @@ namespace ICSharpCode.ILSpy.Options
 				root.Add(section);
 			
 			currentDecompilerSettings = null; // invalidate cached settings
+			return flags;
 		}
 	}
 }

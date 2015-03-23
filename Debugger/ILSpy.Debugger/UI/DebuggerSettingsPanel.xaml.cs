@@ -39,10 +39,11 @@ namespace ICSharpCode.ILSpy.Options
 			this.DataContext = s;
 		}
 		
-		public void Save(XElement root)
+		public RefreshFlags Save(XElement root)
 		{
 			var s = (DebuggerSettings)this.DataContext;
 			s.Save(root);
+			return RefreshFlags.None;
 		}
 	}
 }

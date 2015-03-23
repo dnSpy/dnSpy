@@ -1427,11 +1427,6 @@ namespace ICSharpCode.ILSpy
 		
 		void RefreshCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			Refresh();
-		}
-
-		internal void Refresh()
-		{
 			int selectedIndex = tabControl.SelectedIndex;
 
 			var allTabsState = new List<SavedTabState>();
@@ -2074,6 +2069,17 @@ namespace ICSharpCode.ILSpy
 		internal bool CloneActiveTabPossible()
 		{
 			return ActiveTabState != null;
+		}
+
+		internal void RefreshDecompile()
+		{
+			foreach (var tabState in AllTabStates)
+				DecompileNodes(tabState, null, false, tabState.DecompiledNodes, true);
+		}
+
+		internal void RefreshTreeViewNodeNames()
+		{
+			RefreshTreeViewFilter();
 		}
 	}
 
