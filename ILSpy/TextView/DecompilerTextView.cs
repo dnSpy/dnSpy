@@ -108,8 +108,7 @@ namespace ICSharpCode.ILSpy.TextView
 			
 			this.referenceElementGenerator = new ReferenceElementGenerator(this.JumpToReference, this.IsLink);
 			textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
-			textEditor.PreviewKeyDown += TextEditor_PreviewKeyDown;
-			textEditor.KeyDown += TextEditor_KeyDown;
+			textEditor.TextArea.KeyDown += TextEditor_KeyDown;
 			this.uiElementGenerator = new UIElementGenerator();
 			textEditor.TextArea.TextView.ElementGenerators.Add(uiElementGenerator);
 			textEditor.Options.RequireControlModifierForHyperlinkClick = false;
@@ -966,7 +965,7 @@ namespace ICSharpCode.ILSpy.TextView
 			TextEditor.TextArea.Caret.DesiredXPos = desiredXPos;
 		}
 
-		void TextEditor_PreviewKeyDown(object sender, KeyEventArgs e)
+		void TextEditor_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.PageUp) {
 				var textView = TextEditor.TextArea.TextView;
@@ -1023,10 +1022,7 @@ namespace ICSharpCode.ILSpy.TextView
 				e.Handled = true;
 				return;
 			}
-		}
 
-		void TextEditor_KeyDown(object sender, KeyEventArgs e)
-		{
 			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Escape) {
 				ClearLocalReferenceMarks();
 				MainWindow.Instance.ClosePopups();

@@ -283,14 +283,35 @@ namespace ICSharpCode.ILSpy
 		static void RemoveCommands(DecompilerTextView view)
 		{
 			var handler = view.TextEditor.TextArea.DefaultInputHandler;
-			var list = (IList<CommandBinding>)handler.Editing.CommandBindings;
-			for (int i = list.Count - 1; i >= 0; i--) {
-				var binding = list[i];
-				// Ctrl+D: used by GoToToken
-				// Backspace: used by BrowseBack
-				if (binding.Command == ICSharpCode.AvalonEdit.AvalonEditCommands.DeleteLine ||
-					binding.Command == System.Windows.Documents.EditingCommands.Backspace)
-					list.RemoveAt(i);
+
+			RemoveCommands(handler.Editing);
+			RemoveCommands(handler.CaretNavigation);
+		}
+
+		static void RemoveCommands(ICSharpCode.AvalonEdit.Editing.TextAreaInputHandler handler)
+		{
+			var commands = new HashSet<ICommand>();
+			var inputList = (IList<InputBinding>)handler.InputBindings;
+			for (int i = inputList.Count - 1; i >= 0; i--) {
+				var kb = inputList[i] as KeyBinding;
+				if (kb == null)
+					continue;
+				if ((kb.Modifiers == ModifierKeys.None && kb.Key == Key.Back) ||
+					(kb.Modifiers == ModifierKeys.None && kb.Key == Key.Enter) ||
+					(kb.Modifiers == ModifierKeys.Control && kb.Key == Key.Enter)) {
+					inputList.RemoveAt(i);
+					commands.Add(kb.Command);
+				}
+			}
+
+			var bindingList = (IList<CommandBinding>)handler.CommandBindings;
+			for (int i = bindingList.Count - 1; i >= 0; i--) {
+				var binding = bindingList[i];
+				// Ctrl+D: GoToToken
+				if (binding.Command == ICSharpCode.AvalonEdit.AvalonEditCommands.DeleteLine)
+					bindingList.RemoveAt(i);
+				else if (commands.Contains(binding.Command))
+					bindingList.RemoveAt(i);
 			}
 		}
 
