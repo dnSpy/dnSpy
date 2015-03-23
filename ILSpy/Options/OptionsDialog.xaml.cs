@@ -111,7 +111,7 @@ namespace ICSharpCode.ILSpy.Options
 			OptionsDialog dlg = new OptionsDialog();
 			dlg.Owner = MainWindow.Instance;
 			if (dlg.ShowDialog() == true) {
-				new RefreshCommand().Execute(parameter);
+				MainWindow.Instance.Refresh();
 			}
 		}
 	}

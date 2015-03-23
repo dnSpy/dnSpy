@@ -1406,6 +1406,11 @@ namespace ICSharpCode.ILSpy
 		
 		void RefreshCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
+			Refresh();
+		}
+
+		internal void Refresh()
+		{
 			int selectedIndex = tabControl.SelectedIndex;
 
 			var allTabsState = new List<SavedTabState>();
