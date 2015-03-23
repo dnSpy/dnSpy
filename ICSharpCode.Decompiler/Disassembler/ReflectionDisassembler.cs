@@ -136,7 +136,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			// write method header
 			WriteXmlDocComment(method);
-			output.WriteDefinition(".method", method, TextTokenType.ILDirective);
+			output.WriteDefinition(".method", method, TextTokenType.ILDirective, false);
 			output.WriteSpace();
 			DisassembleMethodInternal(method);
 		}
@@ -971,7 +971,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		public void DisassembleField(FieldDef field)
 		{
 			WriteXmlDocComment(field);
-			output.WriteDefinition(".field", field, TextTokenType.ILDirective);
+			output.WriteDefinition(".field", field, TextTokenType.ILDirective, false);
 			output.WriteSpace();
 			if (field.HasLayoutInfo && field.FieldOffset.HasValue) {
 				output.Write('[', TextTokenType.Operator);
@@ -1027,7 +1027,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			currentMember = property;
 			
 			WriteXmlDocComment(property);
-			output.WriteDefinition(".property", property, TextTokenType.ILDirective);
+			output.WriteDefinition(".property", property, TextTokenType.ILDirective, false);
 			output.WriteSpace();
 			WriteFlags(property.Attributes, propertyAttributes);
 			if (property.PropertySig != null && property.PropertySig.HasThis) {
@@ -1083,7 +1083,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			currentMember = ev;
 			
 			WriteXmlDocComment(ev);
-			output.WriteDefinition(".event", ev, TextTokenType.ILDirective);
+			output.WriteDefinition(".event", ev, TextTokenType.ILDirective, false);
 			output.WriteSpace();
 			WriteFlags(ev.Attributes, eventAttributes);
 			ev.EventType.WriteTo(output, ILNameSyntax.TypeName);
@@ -1140,7 +1140,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			// start writing IL
 			WriteXmlDocComment(type);
-			output.WriteDefinition(".class", type, TextTokenType.ILDirective);
+			output.WriteDefinition(".class", type, TextTokenType.ILDirective, false);
 			output.WriteSpace();
 			
 			if ((type.Attributes & TypeAttributes.ClassSemanticMask) == TypeAttributes.Interface) {

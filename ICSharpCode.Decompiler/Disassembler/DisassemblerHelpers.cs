@@ -79,7 +79,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		
 		public static void WriteTo(this Instruction instruction, ITextOutput writer, Func<OpCode, string> getOpCodeDocumentation)
 		{
-			writer.WriteDefinition(DnlibExtensions.OffsetToString(instruction.GetOffset()), instruction, TextTokenType.Label);
+			writer.WriteDefinition(DnlibExtensions.OffsetToString(instruction.GetOffset()), instruction, TextTokenType.Label, false);
 			writer.Write(':', TextTokenType.Operator);
 			writer.WriteSpace();
 			writer.WriteReference(instruction.OpCode.Name, instruction.OpCode, TextTokenType.OpCode);
