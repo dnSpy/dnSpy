@@ -608,7 +608,15 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				errMsg = "It's not possible to set the next statement here";
 				return false;
 			}
-			if (mapping.MemberMapping.MethodDefinition != info.Item3) {
+			// The method def could be different now if the debugged assembly was reloaded from disk
+			// so use SigComparer and not object references to compare the methods.
+			var flags = SigComparerOptions.CompareDeclaringTypes |
+				SigComparerOptions.CompareSentinelParams |
+				SigComparerOptions.CompareAssemblyPublicKeyToken |
+				SigComparerOptions.CompareAssemblyVersion |
+				SigComparerOptions.CompareAssemblyLocale |
+				SigComparerOptions.PrivateScopeIsComparable;
+			if (!new SigComparer(flags).Equals(mapping.MemberMapping.MethodDefinition, info.Item3)) {
 				errMsg = "The next statement cannot be set to another method";
 				return false;
 			}
