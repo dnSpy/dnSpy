@@ -523,10 +523,9 @@ namespace ICSharpCode.NRefactory.VB
 			
 			WriteAttributes(constructorDeclaration.Attributes);
 			WriteModifiers(constructorDeclaration.ModifierTokens);
-			WriteKeyword("Sub");
-			Space();
 			DebugStart(constructorDeclaration);
 			DebugHidden(constructorDeclaration.Body.HiddenStart);
+			WriteKeyword("Sub");
 			WriteKeyword("New");
 			DebugEnd(constructorDeclaration, false);
 			WriteCommaSeparatedListInParenthesis(constructorDeclaration.Parameters, false);
