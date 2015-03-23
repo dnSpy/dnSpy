@@ -459,6 +459,12 @@ namespace ICSharpCode.ILSpy.TextView
 			public readonly IHighlightingDefinition Highlighting;
 			public readonly DecompilerTextViewState State;
 
+			/// <summary>
+			/// Code that moves the caret should set this to true if the caret was moved. Other code
+			/// can then decide not to move the caret if it's already been moved.
+			/// </summary>
+			public bool HasMovedCaret;
+
 			public ShowOutputEventArgs(ILSpyTreeNode[] nodes, IHighlightingDefinition highlighting, DecompilerTextViewState state)
 			{
 				this.Nodes = nodes;
@@ -583,14 +589,15 @@ namespace ICSharpCode.ILSpy.TextView
 				});
 		}
 
-		internal void GoToLocation(object destLoc)
+		internal bool GoToLocation(object destLoc)
 		{
 			if (destLoc == null)
-				return;
+				return false;
 
 			if (destLoc is ICSharpCode.NRefactory.TextLocation) {
 				var loc = (ICSharpCode.NRefactory.TextLocation)destLoc;
 				ScrollAndMoveCaretTo(loc.Line, loc.Column);
+				return true;
 			}
 			else if (destLoc is IMemberDef) {
 				var member = destLoc as IMemberDef;
@@ -603,10 +610,11 @@ namespace ICSharpCode.ILSpy.TextView
 						}
 					}
 				}
-				GoToTarget(refSeg, false, false);
+				return GoToTarget(refSeg, false, false);
 			}
 			else {
 				Debug.Fail(string.Format("Unknown type: {0} = {1}", destLoc.GetType(), destLoc));
+				return false;
 			}
 		}
 		

@@ -1232,7 +1232,7 @@ namespace ICSharpCode.ILSpy
 			var tabState = SafeActiveTabState;
 			if (canRecordHistory)
 				RecordHistory(tabState);
-			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), success => GoToLocation(tabState.TextView, success, ResolveReference(reference)));
+			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), (success, hasMovedCaret) => GoToLocation(tabState.TextView, success, hasMovedCaret, ResolveReference(reference)));
 		}
 
 		public bool JumpToReference(DecompilerTextView textView, object reference, bool canRecordHistory = true)
@@ -1240,7 +1240,7 @@ namespace ICSharpCode.ILSpy
 			var tabState = TabState.GetTabState(textView);
 			if (canRecordHistory)
 				RecordHistory(tabState);
-			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), success => GoToLocation(tabState.TextView, success, ResolveReference(reference)));
+			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), (success, hasMovedCaret) => GoToLocation(tabState.TextView, success, hasMovedCaret, ResolveReference(reference)));
 		}
 
 		public bool JumpToReference(DecompilerTextView textView, object reference, Func<TextLocation> getLocation, bool canRecordHistory = true)
@@ -1248,10 +1248,10 @@ namespace ICSharpCode.ILSpy
 			var tabState = TabState.GetTabState(textView);
 			if (canRecordHistory)
 				RecordHistory(tabState);
-			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), success => GoToLocation(tabState.TextView, success, getLocation()));
+			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), (success, hasMovedCaret) => GoToLocation(tabState.TextView, success, hasMovedCaret, getLocation()));
 		}
 
-		public bool JumpToReference(DecompilerTextView textView, object reference, Action<bool> onDecompileFinished, bool canRecordHistory = true)
+		public bool JumpToReference(DecompilerTextView textView, object reference, Func<bool, bool, bool> onDecompileFinished, bool canRecordHistory = true)
 		{
 			var tabState = TabState.GetTabState(textView);
 			if (canRecordHistory)
@@ -1259,24 +1259,24 @@ namespace ICSharpCode.ILSpy
 			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), onDecompileFinished);
 		}
 
-		void GoToLocation(DecompilerTextView decompilerTextView, bool success, object destLoc)
+		bool GoToLocation(DecompilerTextView decompilerTextView, bool success, bool hasMovedCaret, object destLoc)
 		{
 			if (!success || destLoc == null)
-				return;
-			decompilerTextView.GoToLocation(destLoc);
+				return false;
+			return decompilerTextView.GoToLocation(destLoc);
 		}
 
 		sealed class OnShowOutputHelper
 		{
 			DecompilerTextView decompilerTextView;
-			readonly Action<bool> onDecompileFinished;
+			readonly Func<bool, bool, bool> onDecompileFinished;
 			readonly ILSpyTreeNode[] nodes;
-			public OnShowOutputHelper(DecompilerTextView decompilerTextView, Action<bool> onDecompileFinished, ILSpyTreeNode node)
+			public OnShowOutputHelper(DecompilerTextView decompilerTextView, Func<bool, bool, bool> onDecompileFinished, ILSpyTreeNode node)
 				: this(decompilerTextView, onDecompileFinished, new[] { node })
 			{
 			}
 
-			public OnShowOutputHelper(DecompilerTextView decompilerTextView, Action<bool> onDecompileFinished, ILSpyTreeNode[] nodes)
+			public OnShowOutputHelper(DecompilerTextView decompilerTextView, Func<bool, bool, bool> onDecompileFinished, ILSpyTreeNode[] nodes)
 			{
 				this.decompilerTextView = decompilerTextView;
 				this.onDecompileFinished = onDecompileFinished;
@@ -1289,7 +1289,7 @@ namespace ICSharpCode.ILSpy
 				decompilerTextView.OnShowOutput -= OnShowOutput;
 				bool success = Equals(e.Nodes, nodes);
 				if (onDecompileFinished != null)
-					onDecompileFinished(success);
+					e.HasMovedCaret |= onDecompileFinished(success, e.HasMovedCaret);
 			}
 
 			static bool Equals(ILSpyTreeNode[] a, ILSpyTreeNode[] b)
@@ -1314,7 +1314,7 @@ namespace ICSharpCode.ILSpy
 		}
 
 		// Returns true if we could decompile the reference
-		bool JumpToReferenceAsyncInternal(TabState tabState, bool canLoad, object reference, Action<bool> onDecompileFinished)
+		bool JumpToReferenceAsyncInternal(TabState tabState, bool canLoad, object reference, Func<bool, bool, bool> onDecompileFinished)
 		{
 			ILSpyTreeNode treeNode = FindTreeNode(reference);
 			if (treeNode != null) {
@@ -1323,7 +1323,7 @@ namespace ICSharpCode.ILSpy
 				bool? decompiled = DecompileNodes(tabState, null, false, nodes);
 				if (decompiled == false) {
 					helper.Abort();
-					onDecompileFinished(true);
+					onDecompileFinished(true, false);
 				}
 				SelectTreeViewNodes(tabState, nodes);
 				return true;
@@ -1672,7 +1672,7 @@ namespace ICSharpCode.ILSpy
 			if (decompile) {
 				if (nodes != null) {
 					var tmpNodes = nodes.ToArray();
-					var helper = new OnShowOutputHelper(tabState.TextView, success => decompilerTextView_OnShowOutput(success, tabState.TextView, savedState), tmpNodes);
+					var helper = new OnShowOutputHelper(tabState.TextView, (success, hasMovedCaret) => decompilerTextView_OnShowOutput(success, hasMovedCaret, tabState.TextView, savedState), tmpNodes);
 					DecompileNodes(tabState, null, true, tmpNodes);
 				}
 				else
@@ -1682,13 +1682,17 @@ namespace ICSharpCode.ILSpy
 			return tabState;
 		}
 
-		void decompilerTextView_OnShowOutput(bool success, DecompilerTextView textView, SavedTabState savedState)
+		bool decompilerTextView_OnShowOutput(bool success, bool hasMovedCaret, DecompilerTextView textView, SavedTabState savedState)
 		{
 			if (!success)
-				return;
+				return false;
 
-			if (IsValid(textView, savedState.EditorPositionState))
+			if (IsValid(textView, savedState.EditorPositionState)) {
 				textView.EditorPositionState = savedState.EditorPositionState;
+				return true;
+			}
+
+			return false;
 		}
 
 		bool IsValid(DecompilerTextView decompilerTextView, EditorPositionState state)

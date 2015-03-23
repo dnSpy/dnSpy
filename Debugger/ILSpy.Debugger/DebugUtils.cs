@@ -17,41 +17,46 @@ namespace ICSharpCode.ILSpy.Debugger
 			var info = DebugInformation.DebugStepInformation;
 			if (info == null)
 				return false;
-			return MainWindow.Instance.JumpToReference(textView, info.Item3, success => {
+			return MainWindow.Instance.JumpToReference(textView, info.Item3, (success, hasMovedCaret) => {
 				if (success)
-					MoveCaretToCurrentStatement(textView);
+					return MoveCaretToCurrentStatement(textView);
+				return false;
 			});
 		}
 
 		public static bool JumpTo(DecompilerTextView textView, IMemberRef mr, MethodKey key, int ilOffset)
 		{
-			return MainWindow.Instance.JumpToReference(textView, mr, success => {
+			return MainWindow.Instance.JumpToReference(textView, mr, (success, hasMovedCaret) => {
 				if (success)
-					MoveCaretTo(textView, key, ilOffset);
+					return MoveCaretTo(textView, key, ilOffset);
+				return false;
 			});
 		}
 
-		static void MoveCaretToCurrentStatement(DecompilerTextView textView)
+		static bool MoveCaretToCurrentStatement(DecompilerTextView textView)
 		{
 			var info = DebugInformation.DebugStepInformation;
 			if (info == null)
-				return;
-			MoveCaretTo(textView, info.Item1, info.Item2);
+				return false;
+			return MoveCaretTo(textView, info.Item1, info.Item2);
 		}
 
-		static void MoveCaretTo(DecompilerTextView textView, MethodKey key, int ilOffset)
+		static bool MoveCaretTo(DecompilerTextView textView, MethodKey key, int ilOffset)
 		{
 			if (textView == null)
-				return;
+				return false;
 			TextLocation location, endLocation;
 			var cm = textView.CodeMappings;
 			if (cm == null || !cm.ContainsKey(key))
-				return;
+				return false;
 			if (!cm[key].GetInstructionByTokenAndOffset(unchecked((uint)ilOffset), out location, out endLocation)) {
 				//TODO: Missing IL ranges
+				return false;
 			}
-			else
+			else {
 				textView.ScrollAndMoveCaretTo(location.Line, location.Column);
+				return true;
+			}
 		}
 
 		public static bool JumpToReference(DecompilerTextView textView, IMemberRef mr, Func<TextLocation> getLocation)

@@ -71,7 +71,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		static void DecompilerTextView_OnShowOutput(object sender, TextView.DecompilerTextView.ShowOutputEventArgs e)
 		{
 			Debug.Assert(decompilerTextView == sender);
-			UpdateReturnStatementBookmarks(false);
+			e.HasMovedCaret |= UpdateReturnStatementBookmarks(false, !e.HasMovedCaret);
 		}
 
 		/// <summary>
@@ -103,9 +103,10 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		/// <summary>
 		/// Should be called each time the IL offset has been updated
 		/// </summary>
-		public static void UpdateReturnStatementBookmarks(bool removeSelected)
+		public static bool UpdateReturnStatementBookmarks(bool removeSelected, bool moveCaret = false)
 		{
 			Remove(removeSelected);
+			bool movedCaret = false;
 			var cm = decompilerTextView == null ? null : decompilerTextView.CodeMappings;
 			bool updateReturnStatements =
 				cm != null &&
@@ -120,7 +121,6 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 						type = StackFrameStatementType.CurrentStatement;
 					else
 						type = selectedFrame == frameNo ? StackFrameStatementType.SelectedReturnStatement : StackFrameStatementType.ReturnStatement;
-					frameNo++;
 					if (frame.ILOffset == null)
 						continue;
 					var key = frame.MethodKey;
@@ -132,9 +132,16 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 						var rs = new StackFrameStatementBookmark(decompilerTextView, methodDef, location, endLocation, type);
 						returnStatementBookmarks.Add(rs);
 						BookmarkManager.AddMark(rs);
+
+						if (moveCaret && frameNo == selectedFrame) {
+							decompilerTextView.ScrollAndMoveCaretTo(location.Line, location.Column);
+							movedCaret = true;
+						}
 					}
+					frameNo++;
 				}
 			}
+			return movedCaret;
 		}
 		static readonly List<StackFrameStatementBookmark> returnStatementBookmarks = new List<StackFrameStatementBookmark>();
 	}
