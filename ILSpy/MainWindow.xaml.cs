@@ -696,6 +696,10 @@ namespace ICSharpCode.ILSpy
 						continue;
 					MenuItem menuItem = new MenuItem();
 					menuItem.Command = CommandWrapper.Unwrap(entry.Value);
+					// We must initialize CommandTarget or the menu items for the standard commands
+					// (Ctrl+C, Ctrl+O etc) will be disabled after we stop debugging. We didn't
+					// need to do this when the menu wasn't in the toolbar.
+					menuItem.CommandTarget = MainWindow.Instance;
 					if (!string.IsNullOrEmpty(entry.Metadata.Header))
 						menuItem.Header = entry.Metadata.Header;
 					if (!string.IsNullOrEmpty(entry.Metadata.MenuIcon)) {
@@ -2080,6 +2084,8 @@ namespace ICSharpCode.ILSpy
 		internal void RefreshTreeViewNodeNames()
 		{
 			RefreshTreeViewFilter();
+			foreach (var tabState in AllTabStates)
+				tabState.InitializeHeader();
 		}
 	}
 
