@@ -523,6 +523,8 @@ namespace ICSharpCode.NRefactory.VB
 			
 			WriteAttributes(constructorDeclaration.Attributes);
 			WriteModifiers(constructorDeclaration.ModifierTokens);
+			if (lastWritten != LastWritten.Whitespace)
+				Space();
 			DebugStart(constructorDeclaration);
 			DebugHidden(constructorDeclaration.Body.HiddenStart);
 			WriteKeyword("Sub");
@@ -598,7 +600,11 @@ namespace ICSharpCode.NRefactory.VB
 			
 			WriteAttributes(fieldDeclaration.Attributes);
 			WriteModifiers(fieldDeclaration.ModifierTokens);
+			if (lastWritten != LastWritten.Whitespace)
+				Space();
+			DebugStart(fieldDeclaration);
 			WriteCommaSeparatedList(fieldDeclaration.Variables);
+			DebugEnd(fieldDeclaration);
 			NewLine();
 			
 			return EndNode(fieldDeclaration);

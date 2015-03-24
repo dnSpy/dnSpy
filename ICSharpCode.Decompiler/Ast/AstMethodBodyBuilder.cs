@@ -53,7 +53,8 @@ namespace ICSharpCode.Decompiler.Ast
 		/// <returns>Block for the method body</returns>
 		public static BlockStatement CreateMethodBody(MethodDef methodDef,
 		                                              DecompilerContext context,
-		                                              IEnumerable<ParameterDeclaration> parameters = null)
+		                                              IEnumerable<ParameterDeclaration> parameters,
+		                                              out MemberMapping mm)
 		{
 			MethodDef oldCurrentMethod = context.CurrentMethod;
 			Debug.Assert(oldCurrentMethod == null || oldCurrentMethod == methodDef);
@@ -65,10 +66,10 @@ namespace ICSharpCode.Decompiler.Ast
 				builder.context = context;
 				builder.corLib = methodDef.Module.CorLibTypes;
 				if (Debugger.IsAttached) {
-					return builder.CreateMethodBody(parameters);
+					return builder.CreateMethodBody(parameters, out mm);
 				} else {
 					try {
-						return builder.CreateMethodBody(parameters);
+						return builder.CreateMethodBody(parameters, out mm);
 					} catch (OperationCanceledException) {
 						throw;
 					} catch (Exception ex) {
@@ -80,9 +81,10 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
-		public BlockStatement CreateMethodBody(IEnumerable<ParameterDeclaration> parameters)
+		public BlockStatement CreateMethodBody(IEnumerable<ParameterDeclaration> parameters, out MemberMapping mm)
 		{
 			if (methodDef.Body == null) {
+				mm = null;
 				return null;
 			}
 			
@@ -126,7 +128,7 @@ namespace ICSharpCode.Decompiler.Ast
 				astBlock.Statements.InsertBefore(insertionPoint, newVarDecl);
 			}
 			
-			astBlock.AddAnnotation(new MemberMapping(methodDef, localVariables));
+			mm = new MemberMapping(methodDef, localVariables);
 			
 			return astBlock;
 		}

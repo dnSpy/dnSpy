@@ -441,8 +441,11 @@ namespace ICSharpCode.ILSpy.TextView
 			var cm = new Dictionary<MethodKey, MemberMapping>();
 			foreach (var m in textOutput.DebuggerMemberMappings) {
 				var key = new MethodKey(m.MethodDefinition);
-				Debug.Assert(!cm.ContainsKey(key), "DebuggerMemberMappings contains the same method twice");
-				cm[key] = m;
+				MemberMapping oldMm;
+				if (cm.TryGetValue(key, out oldMm))
+					Debug.Assert(oldMm == m);
+				else
+					cm[key] = m;
 			}
 			CodeMappings = cm;
 

@@ -34,15 +34,31 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 	static class BreakpointHelper
 	{
-		public static BreakpointBookmark GetBreakpointBookmark(DecompilerTextView textView, int line, int column)
+		public static bool IsEnabled(this IEnumerable<BreakpointBookmark> bps)
 		{
-			return GetBreakpointBookmark(Find(textView, line, column));
+			foreach (var bp in bps) {
+				if (bp.IsEnabled)
+					return true;
+			}
+			return false;
 		}
 
-		public static BreakpointBookmark GetBreakpointBookmark(SourceCodeMapping mapping)
+		public static bool IsDisabled(this IEnumerable<BreakpointBookmark> bps)
 		{
-			if (mapping == null)
-				return null;
+			return !bps.IsEnabled();
+		}
+
+		public static List<BreakpointBookmark> GetBreakpointBookmarks(DecompilerTextView textView, int line, int column)
+		{
+			return GetBreakpointBookmarks(Find(textView, line, column));
+		}
+
+		static List<BreakpointBookmark> GetBreakpointBookmarks(IList<SourceCodeMapping> mappings)
+		{
+			var list = new List<BreakpointBookmark>();
+			if (mappings.Count == 0)
+				return list;
+			var mapping = mappings[0];
 			foreach (var bm in BookmarkManager.Bookmarks) {
 				var bpm = bm as BreakpointBookmark;
 				if (bpm == null)
@@ -50,34 +66,40 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				if (bpm.Location != mapping.StartLocation || bpm.EndLocation != mapping.EndLocation)
 					continue;
 
-				return bpm;
+				list.Add(bpm);
 			}
 
-			return null;
+			return list;
 		}
 
 		public static void Toggle(DecompilerTextView textView, int line, int column)
 		{
-			var bp = Find(textView, line, column);
-			if (bp != null) {
-				if (DebuggerService.ToggleBreakpointAt(bp))
-					textView.ScrollAndMoveCaretTo(bp.StartLocation.Line, bp.StartLocation.Column);
+			var bps = Find(textView, line, column);
+			var bpms = GetBreakpointBookmarks(bps);
+			if (bpms.Count > 0) {
+				foreach (var bpm in bpms)
+					BookmarkManager.RemoveMark(bpm);
+			}
+			else if (bps.Count > 0) {
+				foreach (var bp in bps)
+					BookmarkManager.AddMark(new BreakpointBookmark(bp.MemberMapping.MethodDefinition, bp.StartLocation, bp.EndLocation, bp.ILInstructionOffset));
+				textView.ScrollAndMoveCaretTo(bps[0].StartLocation.Line, bps[0].StartLocation.Column);
 			}
 		}
 
-		public static SourceCodeMapping Find(DecompilerTextView textView, int line, int column)
+		public static IList<SourceCodeMapping> Find(DecompilerTextView textView, int line, int column)
 		{
 			if (textView == null)
 				return null;
 			return Find(textView.CodeMappings, line, column);
 		}
 
-		public static SourceCodeMapping Find(Dictionary<MethodKey, MemberMapping> cm, int line, int column)
+		public static IList<SourceCodeMapping> Find(Dictionary<MethodKey, MemberMapping> cm, int line, int column)
 		{
 			if (line <= 0)
-				return null;
+				return new SourceCodeMapping[0];
 			if (cm == null || cm.Count == 0)
-				return null;
+				return new SourceCodeMapping[0];
 
 			var bp = FindByLineColumn(cm, line, column);
 			if (bp == null && column != 0)
@@ -85,22 +107,28 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (bp == null)
 				bp = GetClosest(cm, line);
 
-			return bp;
+			if (bp != null)
+				return bp;
+			return new SourceCodeMapping[0];
 		}
 
-		static SourceCodeMapping FindByLineColumn(Dictionary<MethodKey, MemberMapping> cm, int line, int column)
+		static List<SourceCodeMapping> FindByLineColumn(Dictionary<MethodKey, MemberMapping> cm, int line, int column)
 		{
+			List<SourceCodeMapping> list = null;
 			foreach (var storageEntry in cm.Values) {
 				var bp = storageEntry.GetInstructionByLineNumber(line, column);
-				if (bp != null)
-					return bp;
+				if (bp != null) {
+					if (list == null)
+						list = new List<SourceCodeMapping>();
+					list.Add(bp);
+				}
 			}
-			return null;
+			return list;
 		}
 
-		static SourceCodeMapping GetClosest(Dictionary<MethodKey, MemberMapping> cm, int line)
+		static List<SourceCodeMapping> GetClosest(Dictionary<MethodKey, MemberMapping> cm, int line)
 		{
-			SourceCodeMapping closest = null;
+			List<SourceCodeMapping> list = new List<SourceCodeMapping>();
 			foreach (var entry in cm.Values) {
 				SourceCodeMapping map = null;
 				foreach (var m in entry.MemberCodeMappings) {
@@ -109,11 +137,21 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 					if (map == null || m.StartLocation < map.StartLocation)
 						map = m;
 				}
-				if (map != null && (closest == null || map.StartLocation < closest.StartLocation))
-					closest = map;
+				if (map != null) {
+					if (list.Count == 0)
+						list.Add(map);
+					else if (map.StartLocation == list[0].StartLocation)
+						list.Add(map);
+					else if (map.StartLocation < list[0].StartLocation) {
+						list.Clear();
+						list.Add(map);
+					}
+				}
 			}
 
-			return closest;
+			if (list.Count == 0)
+				return null;
+			return list;
 		}
 	}
 
@@ -140,18 +178,20 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public void Initialize(IBookmark bookmark, MenuItem menuItem)
 		{
-			InitializeMenuItem(bookmark as BreakpointBookmark, menuItem);
+			var bpm = bookmark as BreakpointBookmark;
+			if (bpm != null)
+				InitializeMenuItem(new[] { bpm }, menuItem);
 		}
 
-		public static void InitializeMenuItem(BreakpointBookmark bpm, MenuItem menuItem)
+		public static void InitializeMenuItem(IList<BreakpointBookmark> bpms, MenuItem menuItem)
 		{
-			menuItem.IsEnabled = bpm != null;
-			if (bpm == null || bpm.IsEnabled) {
-				menuItem.Header = "Disable _Breakpoint";
+			menuItem.IsEnabled = bpms.Count > 0;
+			if (bpms.IsEnabled()) {
+				menuItem.Header = bpms.Count <= 1 ? "Disable _Breakpoint" : "Disable _Breakpoints";
 				menuItem.Icon = ImageService.LoadImage(ImageService.DisabledBreakpoint, 16, 16);
 			}
 			else {
-				menuItem.Header = "Enable _Breakpoint";
+				menuItem.Header = bpms.Count <= 1 ? "Enable _Breakpoint" : "Enable _Breakpoints";
 				menuItem.Icon = ImageService.LoadImage(ImageService.Breakpoint, 16, 16);
 			}
 		}

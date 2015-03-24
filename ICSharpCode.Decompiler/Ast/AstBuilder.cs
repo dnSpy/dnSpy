@@ -821,7 +821,9 @@ namespace ICSharpCode.Decompiler.Ast
 					if (methodDef.IsVirtual == methodDef.IsNewSlot)
 						SetNewModifier(astMethod);
 				}
-				astMethod.Body = CreateMethodBody(methodDef, astMethod.Parameters);
+				MemberMapping mm;
+				astMethod.Body = CreateMethodBody(methodDef, astMethod.Parameters, out mm);
+				astMethod.AddAnnotation(mm);
 				if (context.CurrentMethodIsAsync) {
 					astMethod.Modifiers |= Modifiers.Async;
 					context.CurrentMethodIsAsync = false;
@@ -910,7 +912,9 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			astMethod.NameToken = Identifier.Create(CleanName(methodDef.DeclaringType.Name)).WithAnnotation(methodDef.DeclaringType);
 			astMethod.Parameters.AddRange(MakeParameters(methodDef));
-			astMethod.Body = CreateMethodBody(methodDef, astMethod.Parameters);
+			MemberMapping mm;
+			astMethod.Body = CreateMethodBody(methodDef, astMethod.Parameters, out mm);
+			astMethod.AddAnnotation(mm);
 			ConvertAttributes(astMethod, methodDef);
 			if (methodDef.IsStatic && methodDef.DeclaringType.IsBeforeFieldInit && !astMethod.Body.IsNull) {
 				astMethod.Body.InsertChildAfter(null, new Comment(" Note: this type is marked as 'beforefieldinit'."), Roles.Comment);
@@ -966,10 +970,12 @@ namespace ICSharpCode.Decompiler.Ast
 			astProp.NameToken = Identifier.Create(CleanName(propDef.Name)).WithAnnotation(propDef);
 			astProp.ReturnType = ConvertType(propDef.PropertySig.GetRetType(), propDef);
 			
+			MemberMapping mm;
 			if (propDef.GetMethod != null) {
 				astProp.Getter = new Accessor();
-				astProp.Getter.Body = CreateMethodBody(propDef.GetMethod);
+				astProp.Getter.Body = CreateMethodBody(propDef.GetMethod, null, out mm);
 				astProp.Getter.AddAnnotation(propDef.GetMethod);
+				astProp.Getter.AddAnnotation(mm);
 				ConvertAttributes(astProp.Getter, propDef.GetMethod);
 				
 				if ((getterModifiers & Modifiers.VisibilityMask) != (astProp.Modifiers & Modifiers.VisibilityMask))
@@ -977,8 +983,9 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			if (propDef.SetMethod != null) {
 				astProp.Setter = new Accessor();
-				astProp.Setter.Body = CreateMethodBody(propDef.SetMethod);
+				astProp.Setter.Body = CreateMethodBody(propDef.SetMethod, null, out mm);
 				astProp.Setter.AddAnnotation(propDef.SetMethod);
+				astProp.Setter.AddAnnotation(mm);
 				ConvertAttributes(astProp.Setter, propDef.SetMethod);
 				Parameter lastParam = propDef.SetMethod.Parameters.SkipNonNormal().LastOrDefault();
 				if (lastParam != null) {
@@ -1041,16 +1048,19 @@ namespace ICSharpCode.Decompiler.Ast
 					astEvent.PrivateImplementationType = ConvertType(methDecl == null ? null : methDecl.DeclaringType);
 				}
 				
+				MemberMapping mm;
 				if (eventDef.AddMethod != null) {
 					astEvent.AddAccessor = new Accessor {
-						Body = CreateMethodBody(eventDef.AddMethod)
+						Body = CreateMethodBody(eventDef.AddMethod, null, out mm)
 					}.WithAnnotation(eventDef.AddMethod);
+					astEvent.AddAccessor.AddAnnotation(mm);
 					ConvertAttributes(astEvent.AddAccessor, eventDef.AddMethod);
 				}
 				if (eventDef.RemoveMethod != null) {
 					astEvent.RemoveAccessor = new Accessor {
-						Body = CreateMethodBody(eventDef.RemoveMethod)
+						Body = CreateMethodBody(eventDef.RemoveMethod, null, out mm)
 					}.WithAnnotation(eventDef.RemoveMethod);
+					astEvent.RemoveAccessor.AddAnnotation(mm);
 					ConvertAttributes(astEvent.RemoveAccessor, eventDef.RemoveMethod);
 				}
 				MethodDef accessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
@@ -1064,12 +1074,12 @@ namespace ICSharpCode.Decompiler.Ast
 		public bool DecompileMethodBodies { get; set; }
 		public bool DontShowCreateMethodBodyExceptions { get; set; }
 		
-		BlockStatement CreateMethodBody(MethodDef method, IEnumerable<ParameterDeclaration> parameters = null)
+		BlockStatement CreateMethodBody(MethodDef method, IEnumerable<ParameterDeclaration> parameters, out MemberMapping mm)
 		{
 			if (DecompileMethodBodies) {
 				string msg;
 				try {
-					return AstMethodBodyBuilder.CreateMethodBody(method, context, parameters);
+					return AstMethodBodyBuilder.CreateMethodBody(method, context, parameters, out mm);
 				}
 				catch (OperationCanceledException) {
 					throw;
@@ -1086,10 +1096,13 @@ namespace ICSharpCode.Decompiler.Ast
 					emptyStmt.AddAnnotation(new List<ILRange> { new ILRange(0, (uint)method.Body.GetCodeSize()) });
 				bs.Statements.Add(emptyStmt);
 				bs.InsertChildAfter(null, new Comment(msg, CommentType.MultiLine), Roles.Comment);
+				mm = new MemberMapping(method);
 				return bs;
 			}
-			else
+			else {
+				mm = null;
 				return null;
+			}
 		}
 
 		FieldDeclaration CreateField(FieldDef fieldDef)

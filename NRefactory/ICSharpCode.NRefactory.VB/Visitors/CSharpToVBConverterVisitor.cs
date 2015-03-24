@@ -2268,13 +2268,8 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 
 		void CopyAnnotations<T>(CSharp.AstNode node, T result) where T : VB.AstNode
 		{
-			foreach (var ann in node.Annotations) {
-				var mm = ann as MemberMapping;
-				if (mm != null)
-					result.AddAnnotation(new MemberMapping(mm.MethodDefinition, mm.LocalVariables));
-				else
-					result.AddAnnotation(ann);
-			}
+			foreach (var ann in node.Annotations)
+				result.AddAnnotation(ann);
 		}
 		
 		bool HasAttribute(CSharp.AstNodeCollection<CSharp.AttributeSection> attributes, string name, out CSharp.Attribute foundAttribute)

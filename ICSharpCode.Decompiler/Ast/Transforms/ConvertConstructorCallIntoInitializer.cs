@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
@@ -136,18 +137,21 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						}
 					}
 					if (allSame) {
-						var ctorIlRanges = new List<ILRange>[instanceCtorsNotChainingWithThis.Length];
+						var ctorIlRanges = new List<Tuple<MemberMapping, List<ILRange>>>(instanceCtorsNotChainingWithThis.Length);
 						for (int i = 0; i < instanceCtorsNotChainingWithThis.Length; i++) {
-							var stmt = instanceCtorsNotChainingWithThis[i].Body.First();
+							var ctor = instanceCtorsNotChainingWithThis[i];
+							var stmt = ctor.Body.First();
 							stmt.Remove();
-							ctorIlRanges[i] = stmt.GetAllRecursiveILRanges();
+							var mm = ctor.Annotation<MemberMapping>() ?? ctor.Body.Annotation<MemberMapping>();
+							Debug.Assert(mm != null);
+							if (mm != null)
+								ctorIlRanges.Add(Tuple.Create(mm, stmt.GetAllRecursiveILRanges()));
 						}
 						var varInit = fieldOrEventDecl.GetChildrenByRole(Roles.Variable).Single();
 						initializer.Remove();
 						initializer.RemoveAllILRangesRecursive();
-						foreach (var ilRanges in ctorIlRanges)
-							initializer.AddAnnotation(ilRanges);
 						varInit.Initializer = initializer;
+						fieldOrEventDecl.AddAnnotation(ctorIlRanges);
 					}
 				} while (allSame);
 			}
@@ -174,6 +178,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (staticCtor != null) {
 				MethodDef ctorMethodDef = staticCtor.Annotation<MethodDef>();
 				if (ctorMethodDef != null && ctorMethodDef.DeclaringType.IsBeforeFieldInit) {
+					var mm = staticCtor.Annotation<MemberMapping>() ?? staticCtor.Body.Annotation<MemberMapping>();
+					Debug.Assert(mm != null);
 					while (true) {
 						ExpressionStatement es = staticCtor.Body.Statements.FirstOrDefault() as ExpressionStatement;
 						if (es == null)
@@ -191,7 +197,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						assignment.RemoveAllILRangesRecursive();
 						var varInit = fieldDecl.Variables.Single();
 						varInit.Initializer = assignment.Right.Detach();
-						varInit.Initializer.AddAnnotation(ilRanges);
+						var ctorIlRanges = new List<Tuple<MemberMapping, List<ILRange>>>(1);
+						if (mm != null)
+							ctorIlRanges.Add(Tuple.Create(mm, ilRanges));
+						fieldDecl.AddAnnotation(ctorIlRanges);
 						es.Remove();
 					}
 					if (context.Settings.RemoveEmptyDefaultConstructors && staticCtor.Body.Statements.Count == 0)

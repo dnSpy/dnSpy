@@ -158,7 +158,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			subContext.CurrentMethod = method;
 			subContext.CurrentMethodIsAsync = false;
 			subContext.ReservedVariableNames.AddRange(currentlyUsedVariableNames);
-			BlockStatement body = AstMethodBodyBuilder.CreateMethodBody(method, subContext, ame.Parameters);
+			MemberMapping mm;
+			BlockStatement body = AstMethodBodyBuilder.CreateMethodBody(method, subContext, ame.Parameters, out mm);
+			body.AddAnnotation(mm);
 			TransformationPipeline.RunTransformationsUntil(body, v => v is DelegateConstruction, subContext);
 			body.AcceptVisitor(this, null);
 			

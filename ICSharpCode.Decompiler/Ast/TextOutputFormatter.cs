@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
@@ -303,6 +304,7 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		MemberMapping currentMemberMapping;
 		Stack<MemberMapping> parentMemberMappings = new Stack<MemberMapping>();
+		List<Tuple<MemberMapping, List<ILRange>>> multiMappings;
 		
 		public void StartNode(AstNode node)
 		{
@@ -322,6 +324,12 @@ namespace ICSharpCode.Decompiler.Ast
 				parentMemberMappings.Push(currentMemberMapping);
 				currentMemberMapping = mapping;
 			}
+			// For ctor/cctor field initializers
+			var mms = node.Annotation<List<Tuple<MemberMapping, List<ILRange>>>>();
+			if (mms != null) {
+				Debug.Assert(multiMappings == null);
+				multiMappings = mms;
+			}
 		}
 		
 		private bool IsUsingDeclaration(AstNode node)
@@ -337,6 +345,15 @@ namespace ICSharpCode.Decompiler.Ast
 			if (node.Annotation<MemberMapping>() != null) {
 				output.AddDebuggerMemberMapping(currentMemberMapping);
 				currentMemberMapping = parentMemberMappings.Pop();
+			}
+			var mms = node.Annotation<List<Tuple<MemberMapping, List<ILRange>>>>();
+			if (mms != null) {
+				Debug.Assert(mms == multiMappings);
+				if (mms == multiMappings) {
+					foreach (var mm in mms)
+						output.AddDebuggerMemberMapping(mm.Item1);
+					multiMappings = null;
+				}
 			}
 		}
 		
@@ -376,17 +393,29 @@ namespace ICSharpCode.Decompiler.Ast
 		public void DebugEnd(AstNode node, TextLocation? end)
 		{
 			var state = debugStack.Pop();
-			if (currentMemberMapping == null)
-				return;
-			// add all ranges
-			foreach (var range in ILRange.OrderAndJoint(GetILRanges(state))) {
-				currentMemberMapping.MemberCodeMappings.Add(
-					new SourceCodeMapping {
-						ILInstructionOffset = range,
-						StartLocation = state.StartLocation,
-						EndLocation = end ?? output.Location,
-						MemberMapping = currentMemberMapping
-					});
+			if (currentMemberMapping != null) {
+				foreach (var range in ILRange.OrderAndJoint(GetILRanges(state))) {
+					currentMemberMapping.MemberCodeMappings.Add(
+						new SourceCodeMapping {
+							ILInstructionOffset = range,
+							StartLocation = state.StartLocation,
+							EndLocation = end ?? output.Location,
+							MemberMapping = currentMemberMapping
+						});
+				}
+			}
+			else if (multiMappings != null) {
+				foreach (var mm in multiMappings) {
+					foreach (var range in ILRange.OrderAndJoint(mm.Item2)) {
+						mm.Item1.MemberCodeMappings.Add(
+							new SourceCodeMapping {
+								ILInstructionOffset = range,
+								StartLocation = state.StartLocation,
+								EndLocation = end ?? output.Location,
+								MemberMapping = mm.Item1
+							});
+					}
+				}
 			}
 		}
 

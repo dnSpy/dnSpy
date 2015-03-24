@@ -2334,10 +2334,13 @@ namespace ICSharpCode.NRefactory.CSharp
 			StartNode(fieldDeclaration);
 			WriteAttributes(fieldDeclaration.Attributes);
 			WriteModifiers(fieldDeclaration.ModifierTokens);
+			if (lastWritten != LastWritten.Whitespace)
+				Space();
+			DebugStart(fieldDeclaration);
 			fieldDeclaration.ReturnType.AcceptVisitor(this);
 			Space();
 			WriteCommaSeparatedList(fieldDeclaration.Variables);
-			Semicolon();
+			SemicolonDebugEnd(fieldDeclaration);
 			EndNode(fieldDeclaration);
 		}
 		
@@ -2499,7 +2502,6 @@ namespace ICSharpCode.NRefactory.CSharp
 		public void VisitVariableInitializer(VariableInitializer variableInitializer)
 		{
 			StartNode(variableInitializer);
-			DebugStart(variableInitializer);
 			variableInitializer.NameToken.AcceptVisitor(this);
 			if (!variableInitializer.Initializer.IsNull) {
 				Space(policy.SpaceAroundAssignment);
@@ -2507,7 +2509,6 @@ namespace ICSharpCode.NRefactory.CSharp
 				Space(policy.SpaceAroundAssignment);
 				variableInitializer.Initializer.AcceptVisitor(this);
 			}
-			DebugEnd(variableInitializer);
 			EndNode(variableInitializer);
 		}
 		

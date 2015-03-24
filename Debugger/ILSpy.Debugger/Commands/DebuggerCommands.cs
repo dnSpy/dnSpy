@@ -460,13 +460,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (textView == null)
 				return false;
 			var location = textView.TextEditor.TextArea.Caret.Location;
-			var bpm = BreakpointHelper.GetBreakpointBookmark(textView, location.Line, location.Column);
-			if (bpm != null) {
-				bpm.IsEnabled = !bpm.IsEnabled;
-				return true;
-			}
-
-			return false;
+			var bpms = BreakpointHelper.GetBreakpointBookmarks(textView, location.Line, location.Column);
+			bool isEnabled = bpms.IsEnabled();
+			foreach (var bpm in bpms)
+				bpm.IsEnabled = !isEnabled;
+			return bpms.Count > 0;
 		}
 
 		public static bool DebugEnableDisableBreakpointPossible()
@@ -480,7 +478,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (textView == null)
 				return false;
 			var location = textView.TextEditor.TextArea.Caret.Location;
-			return BreakpointHelper.GetBreakpointBookmark(textView, location.Line, location.Column) != null;
+			return BreakpointHelper.GetBreakpointBookmarks(textView, location.Line, location.Column).Count != 0;
 		}
 
 		public static bool DebugShowNextStatement()
@@ -603,20 +601,26 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			}
 
 			var location = textView.TextEditor.TextArea.Caret.Location;
-			mapping = BreakpointHelper.Find(cm, location.Line, location.Column);
-			if (mapping == null) {
+			var bps = BreakpointHelper.Find(cm, location.Line, location.Column);
+			if (bps.Count == 0) {
 				errMsg = "It's not possible to set the next statement here";
 				return false;
 			}
+
 			// The method def could be different now if the debugged assembly was reloaded from disk
 			// so use SigComparer and not object references to compare the methods.
 			var flags = SigComparerOptions.CompareDeclaringTypes |
-				SigComparerOptions.CompareSentinelParams |
 				SigComparerOptions.CompareAssemblyPublicKeyToken |
 				SigComparerOptions.CompareAssemblyVersion |
 				SigComparerOptions.CompareAssemblyLocale |
 				SigComparerOptions.PrivateScopeIsComparable;
-			if (!new SigComparer(flags).Equals(mapping.MemberMapping.MethodDefinition, info.Item3)) {
+			foreach (var bp in bps) {
+				if (new SigComparer(flags).Equals(bp.MemberMapping.MethodDefinition, info.Item3)) {
+					mapping = bp;
+					break;
+				}
+			}
+			if (mapping == null) {
 				errMsg = "The next statement cannot be set to another method";
 				return false;
 			}
@@ -1046,8 +1050,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (textView == null)
 				return;
 			var location = textView.TextEditor.TextArea.Caret.Location;
-			var bpm = BreakpointHelper.GetBreakpointBookmark(textView, location.Line, location.Column);
-			menuItem.Header = bpm == null ? "_Add Breakpoint" : "C_lear Breakpoint";
+			var bpms = BreakpointHelper.GetBreakpointBookmarks(textView, location.Line, location.Column);
+			if (bpms.Count <= 1)
+				menuItem.Header = bpms.IsDisabled() ? "_Add Breakpoint" : "C_lear Breakpoint";
+			else
+				menuItem.Header = bpms.IsDisabled() ? "_Add Breakpoints" : "C_lear Breakpoints";
 		}
 
 		bool CanToggleBP()
@@ -1056,7 +1063,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (textView == null)
 				return false;
 			var location = textView.TextEditor.TextArea.Caret.Location;
-			return BreakpointHelper.Find(textView, location.Line, location.Column) != null;
+			return BreakpointHelper.Find(textView, location.Line, location.Column).Count != 0;
 		}
 	}
 
@@ -1087,8 +1094,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (textView == null)
 				return;
 			var location = textView.TextEditor.TextArea.Caret.Location;
-			var bpm = BreakpointHelper.GetBreakpointBookmark(textView, location.Line, location.Column);
-			EnableAndDisableBreakpointCommand.InitializeMenuItem(bpm, menuItem);
+			var bpms = BreakpointHelper.GetBreakpointBookmarks(textView, location.Line, location.Column);
+			EnableAndDisableBreakpointCommand.InitializeMenuItem(bpms, menuItem);
 		}
 	}
 
