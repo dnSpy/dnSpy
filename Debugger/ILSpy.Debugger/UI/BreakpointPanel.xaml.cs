@@ -115,10 +115,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		private void SetItemSource()
 		{
           	view.ItemsSource = null;
-          	if (DebuggerSettings.Instance.ShowAllBookmarks)
-				view.ItemsSource = BookmarkManager.Bookmarks;
-          	else
-          		view.ItemsSource = BookmarkManager.Bookmarks.Where(b => b is BreakpointBookmark);
+          	view.ItemsSource = BookmarkManager.Bookmarks.Where(b => b is BreakpointBookmark);
 		}
         
         public void Closed()

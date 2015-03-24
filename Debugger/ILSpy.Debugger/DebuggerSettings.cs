@@ -13,7 +13,6 @@ namespace ICSharpCode.ILSpy.Debugger
 		private static readonly string DEBUGGER_SETTINGS = "DebuggerSettings";
 		private static readonly string SHOW_WARNINGS = "showWarnings";
 		private static readonly string ASK_ARGUMENTS = "askForArguments";
-		private static readonly string SHOW_BOOKMARKS = "showAllBookmarks";
 		private static readonly string SHOW_MODULE = "showModuleName";
 		private static readonly string SHOW_ARGUMENTS = "showArguments";
 		private static readonly string SHOW_ARGUMENTVALUE = "showArgumentValues";
@@ -22,7 +21,6 @@ namespace ICSharpCode.ILSpy.Debugger
 		private bool showWarnings = true;
 		private bool askArguments = true;
 		private bool debugWholeTypesOnly = false;
-		private bool showAllBookmarks = false;
 		private bool showModuleName = true;
 		private bool showArguments = false;
 		private bool showArgumentValues = false;
@@ -52,7 +50,6 @@ namespace ICSharpCode.ILSpy.Debugger
 			XElement e = settings[DEBUGGER_SETTINGS];
 			ShowWarnings = (bool?)e.Attribute(SHOW_WARNINGS) ?? ShowWarnings;
 			AskForArguments = (bool?)e.Attribute(ASK_ARGUMENTS) ?? AskForArguments;
-			ShowAllBookmarks = (bool?)e.Attribute(SHOW_BOOKMARKS) ?? ShowAllBookmarks;
 			ShowModuleName = (bool?)e.Attribute(SHOW_MODULE) ?? ShowModuleName;
 			ShowArguments = (bool?)e.Attribute(SHOW_ARGUMENTS) ?? ShowArguments;
 			ShowArgumentValues = (bool?)e.Attribute(SHOW_ARGUMENTVALUE) ?? ShowArgumentValues;
@@ -64,7 +61,6 @@ namespace ICSharpCode.ILSpy.Debugger
 			XElement section = new XElement(DEBUGGER_SETTINGS);
 			section.SetAttributeValue(SHOW_WARNINGS, ShowWarnings);
 			section.SetAttributeValue(ASK_ARGUMENTS, AskForArguments);
-			section.SetAttributeValue(SHOW_BOOKMARKS, ShowAllBookmarks);
 			section.SetAttributeValue(SHOW_MODULE, ShowModuleName);
 			section.SetAttributeValue(SHOW_ARGUMENTS, ShowArguments);
 			section.SetAttributeValue(SHOW_ARGUMENTVALUE, ShowArgumentValues);
@@ -117,20 +113,6 @@ namespace ICSharpCode.ILSpy.Debugger
 				if (debugWholeTypesOnly != value) {
 					debugWholeTypesOnly = value;
 					OnPropertyChanged("DebugWholeTypesOnly");
-				}
-			}
-		}
-		
-		/// <summary>
-		/// Show all bookmarks in breakpoints window. 
-		/// </summary>
-		[DefaultValue(false)]
-		public bool ShowAllBookmarks {
-			get { return showAllBookmarks; }
-			set {
-				if (showAllBookmarks != value) {
-					showAllBookmarks = value;
-					OnPropertyChanged("ShowAllBookmarks");
 				}
 			}
 		}
