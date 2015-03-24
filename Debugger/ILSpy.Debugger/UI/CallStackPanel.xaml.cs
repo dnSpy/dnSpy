@@ -138,8 +138,6 @@ namespace ICSharpCode.ILSpy.Debugger.UI
         
         void OnProcessRunningChanged(object sender, EventArgs args)
         {
-        	if (m_currentDebugger.IsProcessRunning)
-        		return;
         	RefreshPad();
         }
 
