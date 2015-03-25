@@ -190,7 +190,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				head.Body.Add(stloc = new ILExpression(ILCode.Stloc, v, nullCoal = new ILExpression(ILCode.NullCoalescing, null, leftExpr, rightExpr)));
 				head.Body.Add(new ILExpression(ILCode.Br, endBBLabel));
 				stloc.ILRanges.AddRange(tail[0].GetSelfAndChildrenRecursiveILRanges());
-				nullCoal.ILRanges.AddRange(tail[1].ILRanges);	// no recursive add
+				nullCoal.ILRanges.AddRange(tail[1].GetSelfAndChildrenRecursiveILRanges());
 				rightExpr.ILRanges.AddRange(tail[2].GetSelfAndChildrenRecursiveILRanges());	// br (to rightBB)
 				rightExpr.ILRanges.AddRange(rightBB.AllILRanges);
 				rightExpr.ILRanges.AddRange(rightBB.Body[0].GetSelfAndChildrenRecursiveILRanges());	// label
