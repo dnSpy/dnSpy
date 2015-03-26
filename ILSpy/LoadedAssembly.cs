@@ -301,7 +301,7 @@ namespace ICSharpCode.ILSpy
 
 			public AssemblyDef Resolve(IAssembly assembly, ModuleDef sourceModule)
 			{
-				var node = parent.LookupReferencedAssembly(assembly, sourceModule);
+				var node = parent.LookupReferencedAssembly(assembly, sourceModule, true);
 				return node != null ? node.AssemblyDefinition : null;
 			}
 
@@ -309,36 +309,26 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		public IAssemblyResolver GetAssemblyResolver()
-		{
-			return new MyAssemblyResolver(this);
-		}
-		
-		public LoadedAssembly LookupReferencedAssembly(IAssembly name)
-		{
-			return LookupReferencedAssembly(name, null);
-		}
-
-		public LoadedAssembly LookupReferencedAssembly(IAssembly name, ModuleDef sourceModule)
+		public LoadedAssembly LookupReferencedAssembly(IAssembly name, ModuleDef sourceModule = null, bool delay = false)
 		{
 			if (name == null)
 				throw new ArgumentNullException("name");
 			if (name.IsContentTypeWindowsRuntime) {
-				return assemblyList.winRTMetadataLookupCache.GetOrAdd(name.Name, LookupWinRTMetadata);
+				return assemblyList.winRTMetadataLookupCache.GetOrAdd(name.Name, n => LookupWinRTMetadata(n, delay));
 			} else {
-				return LookupReferencedAssembly(name.FullName, sourceModule);
+				return LookupReferencedAssembly(name.FullName, sourceModule, delay);
 			}
 		}
 		
-		public LoadedAssembly LookupReferencedAssembly(string fullName, ModuleDef sourceModule)
+		LoadedAssembly LookupReferencedAssembly(string fullName, ModuleDef sourceModule, bool delay)
 		{
-			var asm = assemblyList.assemblyLookupCache.GetOrAdd(fullName, n => LookupReferencedAssemblyInternal(n, sourceModule));
+			var asm = assemblyList.assemblyLookupCache.GetOrAdd(fullName, n => LookupReferencedAssemblyInternal(n, sourceModule, delay));
 			if (asm != null && asm.AssemblyDefinition != null && !asm.AssemblyDefinition.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase))
 				assemblyList.assemblyLookupCache.TryAdd(asm.AssemblyDefinition.FullName, asm);
 			return asm;
 		}
 		
-		LoadedAssembly LookupReferencedAssemblyInternal(string fullName, ModuleDef sourceModule)
+		LoadedAssembly LookupReferencedAssemblyInternal(string fullName, ModuleDef sourceModule, bool delay)
 		{
 			foreach (LoadedAssembly asm in assemblyList.GetAssemblies()) {
 				if (asm.AssemblyDefinition != null && fullName.Equals(asm.AssemblyDefinition.FullName, StringComparison.OrdinalIgnoreCase))
@@ -347,28 +337,28 @@ namespace ICSharpCode.ILSpy
 			
 			if (App.Current != null && !App.Current.Dispatcher.CheckAccess()) {
 				// Call this method on the GUI thread.
-				return (LoadedAssembly)App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Func<string, LoadedAssembly>(n => LookupReferencedAssembly(n, sourceModule)), fullName);
+				return (LoadedAssembly)App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Func<string, LoadedAssembly>(n => LookupReferencedAssembly(n, sourceModule, delay)), fullName);
 			}
 			
 			var name = new AssemblyNameInfo(fullName);
 			var loadedAsm = LookupFromSearchPaths(name, sourceModule, true);
 			if (loadedAsm != null)
-				return assemblyList.AddAssembly(loadedAsm, assemblyLoadDisableCount == 0, true);
+				return assemblyList.AddAssembly(loadedAsm, assemblyLoadDisableCount == 0, delay);
 
 			if (assemblyList.UseGAC) {
 				var file = GacInterop.FindAssemblyInNetGac(name);
 				if (file != null)
-					return assemblyList.OpenAssemblyInternal(file, assemblyLoadDisableCount == 0, true, true);
+					return assemblyList.OpenAssemblyInternal(file, assemblyLoadDisableCount == 0, true, delay);
 				foreach (var path in otherGacPaths) {
 					loadedAsm = TryLoadFromDir(name, true, path);
 					if (loadedAsm != null)
-						return assemblyList.AddAssembly(loadedAsm, assemblyLoadDisableCount == 0, true);
+						return assemblyList.AddAssembly(loadedAsm, assemblyLoadDisableCount == 0, delay);
 				}
 			}
 
 			loadedAsm = LookupFromSearchPaths(name, sourceModule, false);
 			if (loadedAsm != null)
-				return assemblyList.AddAssembly(loadedAsm, assemblyLoadDisableCount == 0, true);
+				return assemblyList.AddAssembly(loadedAsm, assemblyLoadDisableCount == 0, delay);
 
 			return null;
 		}
@@ -441,7 +431,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		LoadedAssembly LookupWinRTMetadata(string name)
+		LoadedAssembly LookupWinRTMetadata(string name, bool delay)
 		{
 			foreach (LoadedAssembly asm in assemblyList.GetAssemblies()) {
 				if (asm.AssemblyDefinition != null && name.Equals(asm.AssemblyDefinition.Name, StringComparison.OrdinalIgnoreCase))
@@ -449,7 +439,7 @@ namespace ICSharpCode.ILSpy
 			}
 			if (App.Current != null && !App.Current.Dispatcher.CheckAccess()) {
 				// Call this method on the GUI thread.
-				return (LoadedAssembly)App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Func<string, LoadedAssembly>(LookupWinRTMetadata), name);
+				return (LoadedAssembly)App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Func<string, LoadedAssembly>(n => LookupWinRTMetadata(n, delay)), name);
 			}
 			
 			string file;
@@ -459,7 +449,7 @@ namespace ICSharpCode.ILSpy
 				return null;
 			}
 			if (File.Exists(file)) {
-				return assemblyList.OpenAssemblyInternal(file, assemblyLoadDisableCount == 0, true, true);
+				return assemblyList.OpenAssemblyInternal(file, assemblyLoadDisableCount == 0, true, delay);
 			} else {
 				return null;
 			}
