@@ -84,7 +84,7 @@ namespace ICSharpCode.ILSpy
 				AddToList(dotnet4, "PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
 				AddToList(dotnet4, "WindowsBase, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
 
-				if (dotnet4.assemblies.Count > 0)
+				if (dotnet4.Count_NoLock > 0)
 				{
 					manager.CreateList(dotnet4);
 				}
@@ -104,7 +104,7 @@ namespace ICSharpCode.ILSpy
 				AddToList(dotnet35, "PresentationFramework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
 				AddToList(dotnet35, "WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
 
-				if (dotnet35.assemblies.Count > 0)
+				if (dotnet35.Count_NoLock > 0)
 				{
 					manager.CreateList(dotnet35);
 				}
@@ -138,7 +138,7 @@ namespace ICSharpCode.ILSpy
 				AddToList(mvc, "System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 				AddToList(mvc, "Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
 
-				if (mvc.assemblies.Count > 0)
+				if (mvc.Count_NoLock > 0)
 				{
 					manager.CreateList(mvc);
 				}

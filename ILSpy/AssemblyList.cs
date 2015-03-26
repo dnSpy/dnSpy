@@ -58,7 +58,40 @@ namespace ICSharpCode.ILSpy
 		/// Technically read accesses need locking when done on non-GUI threads... but whenever possible, use the
 		/// thread-safe <see cref="GetAssemblies()"/> method.
 		/// </remarks>
-		internal readonly ObservableCollection<LoadedAssembly> assemblies = new ObservableCollection<LoadedAssembly>();
+		readonly ObservableCollection<LoadedAssembly> assemblies = new ObservableCollection<LoadedAssembly>();
+
+		internal int Count_NoLock {
+			get { return assemblies.Count; }
+		}
+
+		internal int IndexOf_NoLock(LoadedAssembly asm)
+		{
+			return assemblies.IndexOf(asm);
+		}
+
+		internal void RemoveAt_NoLock(int index)
+		{
+			assemblies.RemoveAt(index);
+		}
+
+		internal void Insert_NoLock(int index, LoadedAssembly asm)
+		{
+			assemblies.Insert(index, asm);
+		}
+
+		internal object GetLockObj()
+		{
+			return assemblies;
+		}
+
+		public event NotifyCollectionChangedEventHandler CollectionChanged {
+			add {
+				assemblies.CollectionChanged += value;
+			}
+			remove {
+				assemblies.CollectionChanged -= value;
+			}
+		}
 		
 		public AssemblyList(string listName)
 		{

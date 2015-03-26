@@ -1036,7 +1036,7 @@ namespace ICSharpCode.ILSpy
 			GC.Collect();
 			GC.WaitForPendingFinalizers();
 			
-			assemblyList.assemblies.CollectionChanged += assemblyList_Assemblies_CollectionChanged;
+			assemblyList.CollectionChanged += assemblyList_Assemblies_CollectionChanged;
 			
 			assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
 			assemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
@@ -1867,7 +1867,7 @@ namespace ICSharpCode.ILSpy
 
 		public LoadedAssembly LoadAssembly(string asmFilename, string moduleFilename)
 		{
-			lock (assemblyList.assemblies) {
+			lock (assemblyList.GetLockObj()) {
 				// Get or create the assembly
 				var loadedAsm = assemblyList.OpenAssemblyDelay(asmFilename, true);
 

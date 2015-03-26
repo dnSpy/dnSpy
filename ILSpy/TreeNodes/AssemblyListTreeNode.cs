@@ -46,7 +46,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (assemblyList == null)
 				throw new ArgumentNullException("assemblyList");
 			this.assemblyList = assemblyList;
-			BindToObservableCollection(assemblyList.assemblies);
+			BindToObservableCollection();
 		}
 
 		public override object Text
@@ -54,11 +54,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return CleanUpName(assemblyList.ListName); }
 		}
 
-		void BindToObservableCollection(ObservableCollection<LoadedAssembly> collection)
+		void BindToObservableCollection()
 		{
 			this.Children.Clear();
-			this.Children.AddRange(collection.Select(a => new AssemblyTreeNode(a)));
-			collection.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e) {
+			this.Children.AddRange(assemblyList.GetAssemblies().Select(a => new AssemblyTreeNode(a)));
+			assemblyList.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e) {
 				switch (e.Action) {
 					case NotifyCollectionChangedAction.Add:
 						this.Children.InsertRange(e.NewStartingIndex, e.NewItems.Cast<LoadedAssembly>().Select(a => new AssemblyTreeNode(a)));
@@ -71,7 +71,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 						throw new NotImplementedException();
 					case NotifyCollectionChangedAction.Reset:
 						this.Children.Clear();
-						this.Children.AddRange(collection.Select(a => new AssemblyTreeNode(a)));
+						this.Children.AddRange(assemblyList.GetAssemblies().Select(a => new AssemblyTreeNode(a)));
 						break;
 					default:
 						throw new NotSupportedException("Invalid value for NotifyCollectionChangedAction");
@@ -98,21 +98,21 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (files == null)
 				files = e.Data.GetData(DataFormats.FileDrop) as string[];
 			if (files != null) {
-				lock (assemblyList.assemblies) {
+				lock (assemblyList.GetLockObj()) {
 					var assemblies = (from file in files
 									  where file != null
 									  select assemblyList.OpenAssembly(file) into node
 									  where node != null
 									  select node).Distinct().ToList();
 					foreach (LoadedAssembly asm in assemblies) {
-						int nodeIndex = assemblyList.assemblies.IndexOf(asm);
+						int nodeIndex = assemblyList.IndexOf_NoLock(asm);
 						if (nodeIndex < index)
 							index--;
-						assemblyList.assemblies.RemoveAt(nodeIndex);
+						assemblyList.RemoveAt_NoLock(nodeIndex);
 					}
 					assemblies.Reverse();
 					foreach (LoadedAssembly asm in assemblies) {
-						assemblyList.assemblies.Insert(index, asm);
+						assemblyList.Insert_NoLock(index, asm);
 					}
 				}
 			}
