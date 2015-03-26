@@ -180,10 +180,16 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		public LoadedAssembly OpenAssembly(string file, bool isAutoLoaded=false)
 		{
-			return OpenAssemblyInternal(file, true, isAutoLoaded);
+			return OpenAssemblyInternal(file, true, isAutoLoaded, false);
 		}
 
-		internal LoadedAssembly OpenAssemblyInternal(string file, bool canAdd, bool isAutoLoaded) {
+		public LoadedAssembly OpenAssemblyDelay(string file, bool isAutoLoaded)
+		{
+			return OpenAssemblyInternal(file, true, isAutoLoaded, true);
+		}
+
+		internal LoadedAssembly OpenAssemblyInternal(string file, bool canAdd, bool isAutoLoaded, bool delay)
+		{
 			if (App.Current != null)
 				App.Current.Dispatcher.VerifyAccess();
 
@@ -197,13 +203,11 @@ namespace ICSharpCode.ILSpy
 
 				var newAsm = new LoadedAssembly(this, file);
 				newAsm.IsAutoLoaded = isAutoLoaded;
-				if (canAdd)
-					this.assemblies.Add(newAsm);
-				return newAsm;
+				return AddAssemblyToList(newAsm, canAdd, delay);
 			}
 		}
 
-		internal LoadedAssembly AddAssembly(LoadedAssembly newAsm, bool canAdd)
+		internal LoadedAssembly AddAssembly(LoadedAssembly newAsm, bool canAdd, bool delay)
 		{
 			if (App.Current != null)
 				App.Current.Dispatcher.VerifyAccess();
@@ -218,10 +222,21 @@ namespace ICSharpCode.ILSpy
 					}
 				}
 
-				if (canAdd)
-					this.assemblies.Add(newAsm);
-				return newAsm;
+				return AddAssemblyToList(newAsm, canAdd, delay);
 			}
+		}
+
+		LoadedAssembly AddAssemblyToList(LoadedAssembly newAsm, bool canAdd, bool delay)
+		{
+			if (canAdd) {
+				// Sometimes the treeview will completely mess up if we immediately add the asm.
+				// Wait a little while for the treeview to finish its things before we add it.
+				if (delay && App.Current != null)
+					App.Current.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() => this.assemblies.Add(newAsm)));
+				else
+					this.assemblies.Add(newAsm);
+			}
+			return newAsm;
 		}
 
 		/// <summary>

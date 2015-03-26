@@ -1372,7 +1372,7 @@ namespace ICSharpCode.ILSpy
 				// The module has been removed. Add it again
 				var loadedAsm = new LoadedAssembly(assemblyList, mainModule);
 				loadedAsm.IsAutoLoaded = true;
-				assemblyList.AddAssembly(loadedAsm, true);
+				assemblyList.AddAssembly(loadedAsm, true, false);
 				return JumpToReferenceAsyncInternal(tabState, false, reference, onDecompileFinished);
 			}
 			else
@@ -1869,7 +1869,7 @@ namespace ICSharpCode.ILSpy
 		{
 			lock (assemblyList.assemblies) {
 				// Get or create the assembly
-				var loadedAsm = assemblyList.OpenAssembly(asmFilename, true);
+				var loadedAsm = assemblyList.OpenAssemblyDelay(asmFilename, true);
 
 				// Common case is a one-file assembly or first module of a multifile assembly
 				if (asmFilename.Equals(moduleFilename, StringComparison.OrdinalIgnoreCase))
@@ -1880,7 +1880,7 @@ namespace ICSharpCode.ILSpy
 					return loadedMod;
 
 				Debug.Fail("Shouldn't be here.");
-				return assemblyList.OpenAssembly(moduleFilename, true);
+				return assemblyList.OpenAssemblyDelay(moduleFilename, true);
 			}
 		}
 

@@ -353,22 +353,22 @@ namespace ICSharpCode.ILSpy
 			var name = new AssemblyNameInfo(fullName);
 			var loadedAsm = LookupFromSearchPaths(name, sourceModule, true);
 			if (loadedAsm != null)
-				return assemblyList.AddAssembly(loadedAsm, assemblyLoadDisableCount == 0);
+				return assemblyList.AddAssembly(loadedAsm, assemblyLoadDisableCount == 0, true);
 
 			if (assemblyList.UseGAC) {
 				var file = GacInterop.FindAssemblyInNetGac(name);
 				if (file != null)
-					return assemblyList.OpenAssemblyInternal(file, assemblyLoadDisableCount == 0, true);
+					return assemblyList.OpenAssemblyInternal(file, assemblyLoadDisableCount == 0, true, true);
 				foreach (var path in otherGacPaths) {
 					loadedAsm = TryLoadFromDir(name, true, path);
 					if (loadedAsm != null)
-						return assemblyList.AddAssembly(loadedAsm, assemblyLoadDisableCount == 0);
+						return assemblyList.AddAssembly(loadedAsm, assemblyLoadDisableCount == 0, true);
 				}
 			}
 
 			loadedAsm = LookupFromSearchPaths(name, sourceModule, false);
 			if (loadedAsm != null)
-				return assemblyList.AddAssembly(loadedAsm, assemblyLoadDisableCount == 0);
+				return assemblyList.AddAssembly(loadedAsm, assemblyLoadDisableCount == 0, true);
 
 			return null;
 		}
@@ -459,7 +459,7 @@ namespace ICSharpCode.ILSpy
 				return null;
 			}
 			if (File.Exists(file)) {
-				return assemblyList.OpenAssemblyInternal(file, assemblyLoadDisableCount == 0, true);
+				return assemblyList.OpenAssemblyInternal(file, assemblyLoadDisableCount == 0, true, true);
 			} else {
 				return null;
 			}
