@@ -19,6 +19,7 @@
 		</Grid.RowDefinitions>
 		<ListView
 			MouseDoubleClick="RunningProcesses_MouseDoubleClick"
+			VirtualizingStackPanel.IsVirtualizing="False"
 			x:Name="RunningProcesses">
 			<ListView.View>
 				<GridView>
