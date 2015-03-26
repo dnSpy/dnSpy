@@ -47,14 +47,8 @@ namespace ICSharpCode.ILSpy
 				StringBuilder name = new StringBuilder((int)nChars);
 				assemblyName.GetDisplayName(name, ref nChars, 0);
 				
-				AssemblyNameInfo r = null;
-				try {
-					r = new AssemblyNameInfo(name.ToString());
-				} catch (ArgumentException) {
-				} catch (FormatException) {
-				} catch (OverflowException) {
-				}
-				if (r != null)
+				var r = new AssemblyNameInfo(name.ToString());
+				if (r.Version != null)
 					yield return r;
 			}
 		}
