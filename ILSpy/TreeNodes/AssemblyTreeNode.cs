@@ -205,6 +205,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 						this.Children.Add(new AssemblyTreeNode(assembly));
 					else {
 						var loadAsm = new LoadedAssembly(AssemblyList, mod);
+						loadAsm.IsAutoLoaded = assembly.IsAutoLoaded;
 						this.Children.Add(new AssemblyTreeNode(loadAsm));
 					}
 				}
@@ -460,11 +461,25 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (context.SelectedTreeNodes == null)
 				return;
 			foreach (var node in context.SelectedTreeNodes) {
-				var loadedAssm = ((AssemblyTreeNode)node).LoadedAssembly;
-				if (!loadedAssm.HasLoadError) {
-					loadedAssm.IsAutoLoaded = false;
-					node.RaisePropertyChanged("Foreground");
+				foreach (var asmNode in GetAllRelatedNodes((AssemblyTreeNode)node)) {
+					var loadedAsm = asmNode.LoadedAssembly;
+					if (!loadedAsm.HasLoadError) {
+						loadedAsm.IsAutoLoaded = false;
+						asmNode.RaisePropertyChanged("Foreground");
+					}
 				}
+			}
+		}
+
+		static IEnumerable<AssemblyTreeNode> GetAllRelatedNodes(AssemblyTreeNode node)
+		{
+			if (node.Parent is AssemblyTreeNode)
+				node = (AssemblyTreeNode)node.Parent;
+			yield return node;
+			foreach (var child in node.Children) {
+				var asmChild = child as AssemblyTreeNode;
+				if (asmChild != null)
+					yield return asmChild;
 			}
 		}
 	}
