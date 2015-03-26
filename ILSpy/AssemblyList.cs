@@ -206,6 +206,51 @@ namespace ICSharpCode.ILSpy
 			assemblyLookupCache.Clear();
 			winRTMetadataLookupCache.Clear();
 		}
+
+		internal LoadedAssembly FindAssemblyByAssemblyName(string asmName)
+		{
+			lock (assemblies)
+				return FindAssemblyByAssemblyName_NoLock(asmName);
+		}
+
+		LoadedAssembly FindAssemblyByAssemblyName_NoLock(string asmName)
+		{
+			foreach (LoadedAssembly asm in this.assemblies) {
+				if (asm.AssemblyDefinition != null && asm.AssemblyDefinition.FullName.Equals(asmName, StringComparison.OrdinalIgnoreCase))
+					return asm;
+			}
+			return null;
+		}
+
+		internal LoadedAssembly FindAssemblyByAssemblySimplName(string asmSimpleName)
+		{
+			lock (assemblies)
+				return FindAssemblyByAssemblySimplName_NoLock(asmSimpleName);
+		}
+
+		LoadedAssembly FindAssemblyByAssemblySimplName_NoLock(string asmSimpleName)
+		{
+			foreach (LoadedAssembly asm in this.assemblies) {
+				if (asm.AssemblyDefinition != null && asmSimpleName.Equals(asm.AssemblyDefinition.Name, StringComparison.OrdinalIgnoreCase))
+					return asm;
+			}
+			return null;
+		}
+
+		internal LoadedAssembly FindAssemblyByFileName(string fileName)
+		{
+			lock (assemblies)
+				return FindAssemblyByFileName_NoLock(fileName);
+		}
+
+		LoadedAssembly FindAssemblyByFileName_NoLock(string fileName)
+		{
+			foreach (LoadedAssembly asm in this.assemblies) {
+				if (asm.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase))
+					return asm;
+			}
+			return null;
+		}
 		
 		/// <summary>
 		/// Opens an assembly from disk.
@@ -223,16 +268,12 @@ namespace ICSharpCode.ILSpy
 
 		internal LoadedAssembly OpenAssemblyInternal(string file, bool canAdd, bool isAutoLoaded, bool delay)
 		{
-			if (App.Current != null)
-				App.Current.Dispatcher.VerifyAccess();
-
 			file = Path.GetFullPath(file);
 
 			lock (assemblies) {
-				foreach (LoadedAssembly asm in this.assemblies) {
-					if (file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase))
-						return asm;
-				}
+				var asm = FindAssemblyByFileName_NoLock(file);
+				if (asm != null)
+					return asm;
 
 				var newAsm = new LoadedAssembly(this, file);
 				newAsm.IsAutoLoaded = isAutoLoaded;
@@ -242,17 +283,13 @@ namespace ICSharpCode.ILSpy
 
 		internal LoadedAssembly AddAssembly(LoadedAssembly newAsm, bool canAdd, bool delay)
 		{
-			if (App.Current != null)
-				App.Current.Dispatcher.VerifyAccess();
-
 			lock (assemblies) {
-				foreach (LoadedAssembly asm in this.assemblies) {
-					if (newAsm.FileName.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase)) {
-						var mod = newAsm.ModuleDefinition;
-						if (mod != null)
-							mod.Dispose();
-						return asm;
-					}
+				var asm = FindAssemblyByFileName_NoLock(newAsm.FileName);
+				if (asm != null) {
+					var mod = newAsm.ModuleDefinition;
+					if (mod != null)
+						mod.Dispose();
+					return asm;
 				}
 
 				return AddAssemblyToList(newAsm, canAdd, delay);
@@ -261,15 +298,63 @@ namespace ICSharpCode.ILSpy
 
 		LoadedAssembly AddAssemblyToList(LoadedAssembly newAsm, bool canAdd, bool delay)
 		{
-			if (canAdd) {
-				// Sometimes the treeview will completely mess up if we immediately add the asm.
-				// Wait a little while for the treeview to finish its things before we add it.
-				if (delay && App.Current != null)
-					App.Current.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() => this.assemblies.Add(newAsm)));
-				else
-					this.assemblies.Add(newAsm);
-			}
+			if (!canAdd)
+				return newAsm;
+
+			if (App.Current == null)
+				delay = false;
+			else if (!App.Current.CheckAccess())
+				delay = true;
+
+			// Sometimes the treeview will completely mess up if we immediately add the asm.
+			// Wait a little while for the treeview to finish its things before we add it.
+			if (delay)
+				return DelayLoadAssembly(newAsm);
+			this.assemblies.Add(newAsm);
 			return newAsm;
+		}
+
+		Dictionary<string, LoadedAssembly> delayLoadedAsms = new Dictionary<string, LoadedAssembly>(StringComparer.OrdinalIgnoreCase);
+		LoadedAssembly DelayLoadAssembly(LoadedAssembly newAsm)
+		{
+			bool startThread;
+			lock (delayLoadedAsms) {
+				LoadedAssembly delayAsm;
+				if (delayLoadedAsms.TryGetValue(newAsm.FileName, out delayAsm)) {
+					var mod = newAsm.ModuleDefinition;
+					if (mod != null)
+						mod.Dispose();
+					return delayAsm;
+				}
+				delayLoadedAsms.Add(newAsm.FileName, newAsm);
+				startThread = delayLoadedAsms.Count == 1;
+			}
+			if (startThread)
+				App.Current.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() => DelayLoadAssemblyMainThread()));
+			return newAsm;
+		}
+
+		void DelayLoadAssemblyMainThread()
+		{
+			App.Current.Dispatcher.VerifyAccess();
+			List<LoadedAssembly> newAsms;
+			lock (delayLoadedAsms) {
+				newAsms = new List<LoadedAssembly>(delayLoadedAsms.Values);
+				delayLoadedAsms.Clear();
+			}
+
+			lock (assemblies) {
+				foreach (var newAsm in newAsms) {
+					var asm = FindAssemblyByFileName_NoLock(newAsm.FileName);
+					if (asm == null)
+						assemblies.Add(newAsm);
+					else {
+						var mod = newAsm.ModuleDefinition;
+						if (mod != null)
+							mod.Dispose();
+					}
+				}
+			}
 		}
 
 		/// <summary>

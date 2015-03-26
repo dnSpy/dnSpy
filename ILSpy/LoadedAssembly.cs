@@ -330,15 +330,9 @@ namespace ICSharpCode.ILSpy
 		
 		LoadedAssembly LookupReferencedAssemblyInternal(string fullName, ModuleDef sourceModule, bool delay)
 		{
-			foreach (LoadedAssembly asm in assemblyList.GetAssemblies()) {
-				if (asm.AssemblyDefinition != null && fullName.Equals(asm.AssemblyDefinition.FullName, StringComparison.OrdinalIgnoreCase))
-					return asm;
-			}
-			
-			if (App.Current != null && !App.Current.Dispatcher.CheckAccess()) {
-				// Call this method on the GUI thread.
-				return (LoadedAssembly)App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Func<string, LoadedAssembly>(n => LookupReferencedAssembly(n, sourceModule, delay)), fullName);
-			}
+			var asm = assemblyList.FindAssemblyByAssemblyName(fullName);
+			if (asm != null)
+				return asm;
 			
 			var name = new AssemblyNameInfo(fullName);
 			var loadedAsm = LookupFromSearchPaths(name, sourceModule, true);
@@ -433,14 +427,9 @@ namespace ICSharpCode.ILSpy
 		
 		LoadedAssembly LookupWinRTMetadata(string name, bool delay)
 		{
-			foreach (LoadedAssembly asm in assemblyList.GetAssemblies()) {
-				if (asm.AssemblyDefinition != null && name.Equals(asm.AssemblyDefinition.Name, StringComparison.OrdinalIgnoreCase))
-					return asm;
-			}
-			if (App.Current != null && !App.Current.Dispatcher.CheckAccess()) {
-				// Call this method on the GUI thread.
-				return (LoadedAssembly)App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Func<string, LoadedAssembly>(n => LookupWinRTMetadata(n, delay)), name);
-			}
+			var asm = assemblyList.FindAssemblyByAssemblySimplName(name);
+			if (asm != null)
+				return asm;
 			
 			string file;
 			try {
