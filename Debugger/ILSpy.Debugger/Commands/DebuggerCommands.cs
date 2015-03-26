@@ -1051,10 +1051,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				return;
 			var location = textView.TextEditor.TextArea.Caret.Location;
 			var bpms = BreakpointHelper.GetBreakpointBookmarks(textView, location.Line, location.Column);
-			if (bpms.Count <= 1)
-				menuItem.Header = bpms.IsDisabled() ? "_Add Breakpoint" : "C_lear Breakpoint";
+			if (bpms.Count == 0)
+				menuItem.Header = "_Add Breakpoint";
 			else
-				menuItem.Header = bpms.IsDisabled() ? "_Add Breakpoints" : "C_lear Breakpoints";
+				menuItem.Header = bpms.Count == 1 ? "C_lear Breakpoint" : "C_lear Breakpoints";
 		}
 
 		bool CanToggleBP()
