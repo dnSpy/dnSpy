@@ -29,21 +29,26 @@ namespace ICSharpCode.ILSpy
 
 		public IEnumerable<SharpTreeNode> TreeNodes { get { return treeNodes; } }
 		public DecompilerTextViewState ViewState { get; private set; }
+		public Language Language { get; private set; }
 
-		public NavigationState(DecompilerTextViewState viewState)
+		public NavigationState(DecompilerTextViewState viewState, Language language)
 		{
 			this.treeNodes = new HashSet<SharpTreeNode>(viewState.DecompiledNodes);
 			ViewState = viewState;
+			Language = language;
 		}
 
-		public NavigationState(IEnumerable<SharpTreeNode> treeNodes)
+		public NavigationState(IEnumerable<SharpTreeNode> treeNodes, Language language)
 		{
 			this.treeNodes = new HashSet<SharpTreeNode>(treeNodes);
+			Language = language;
 		}
 
 
 		public bool Equals(NavigationState other)
 		{
+			if (Language != other.Language)
+				return false;
 			if (ViewState == other.ViewState)
 				return true;
 			if (ViewState == null || other.ViewState == null)

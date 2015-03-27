@@ -1523,8 +1523,8 @@ namespace ICSharpCode.ILSpy
 				return;
 			var dtState = tabState.TextView.GetState();
 			if (dtState != null)
-				tabState.History.UpdateCurrent(new NavigationState(dtState));
-			tabState.History.Record(new NavigationState(tabState.DecompiledNodes));
+				tabState.History.UpdateCurrent(new NavigationState(dtState, tabState.Language));
+			tabState.History.Record(new NavigationState(tabState.DecompiledNodes, tabState.Language));
 		}
 		
 		void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -1612,11 +1612,12 @@ namespace ICSharpCode.ILSpy
 		{
 			var dtState = tabState.TextView.GetState();
 			if(dtState != null)
-				tabState.History.UpdateCurrent(new NavigationState(dtState));
+				tabState.History.UpdateCurrent(new NavigationState(dtState, tabState.Language));
 			var newState = forward ? tabState.History.GoForward() : tabState.History.GoBack();
 			var nodes = newState.TreeNodes.Cast<ILSpyTreeNode>().ToArray();
 			SelectTreeViewNodes(tabState, nodes);
-			DecompileNodes(tabState, newState.ViewState, false, tabState.Language, nodes);
+			DecompileNodes(tabState, newState.ViewState, false, newState.Language, nodes);
+			SetLanguage(newState.Language);
 		}
 		
 		#endregion
