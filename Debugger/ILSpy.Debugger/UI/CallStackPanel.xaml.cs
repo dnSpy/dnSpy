@@ -166,13 +166,13 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 			int selectedIndex = view.SelectedIndex;
 			IList<CallStackItem> items = null;
 			try {
-				Utils.DoEvents(debuggedProcess);
 				items = CreateItems(debuggedProcess);
-			} catch(AbortedBecauseDebuggeeResumedException) {
-			} catch(System.Exception) {
+			} catch {
 				if (debuggedProcess == null || debuggedProcess.HasExited) {
 					// Process unexpectedly exited
-				} else {
+					return;
+				}
+				else {
 					throw;
 				}
 			}
@@ -216,7 +216,6 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 				}
 				item.Frame = frame;
 				items.Add(item);
-				Utils.DoEvents(debuggedProcess);
 			}
 		    return items;
 		}

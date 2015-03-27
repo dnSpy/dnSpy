@@ -90,7 +90,6 @@
     <Compile Include="Models\TreeModel\SavedTreeNode.cs" />
     <Compile Include="Models\TreeModel\StackFrameNode.cs" />
     <Compile Include="Models\TreeModel\TreeNode.cs" />
-    <Compile Include="Models\TreeModel\Utils.cs" />
     <Compile Include="Services\Debugger\DebuggerHelper.cs" />
     <Compile Include="Services\Debugger\TypeResolverExtension.cs" />
     <Compile Include="Services\Debugger\WindowsDebugger.cs" />
