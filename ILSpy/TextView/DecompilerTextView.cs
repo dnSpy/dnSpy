@@ -279,20 +279,6 @@ namespace ICSharpCode.ILSpy.TextView
 		/// <summary>
 		/// Switches the GUI into "waiting" mode, then calls <paramref name="taskCreation"/> to create
 		/// the task.
-		/// When the task completes without being cancelled, the <paramref name="taskCompleted"/>
-		/// callback is called on the GUI thread.
-		/// When the task is cancelled before completing, the callback is not called; and any result
-		/// of the task (including exceptions) are ignored.
-		/// </summary>
-		[Obsolete("RunWithCancellation(taskCreation).ContinueWith(taskCompleted) instead")]
-		public void RunWithCancellation<T>(Func<CancellationToken, Task<T>> taskCreation, Action<Task<T>> taskCompleted)
-		{
-			RunWithCancellation(taskCreation).ContinueWith(taskCompleted, CancellationToken.None, TaskContinuationOptions.NotOnCanceled, TaskScheduler.FromCurrentSynchronizationContext());
-		}
-		
-		/// <summary>
-		/// Switches the GUI into "waiting" mode, then calls <paramref name="taskCreation"/> to create
-		/// the task.
 		/// If another task is started before the previous task finishes running, the previous task is cancelled.
 		/// </summary>
 		public Task<T> RunWithCancellation<T>(Func<CancellationToken, Task<T>> taskCreation)
@@ -373,14 +359,20 @@ namespace ICSharpCode.ILSpy.TextView
 		/// </summary>
 		public void ShowNodes(AvalonEditTextOutput textOutput, ILSpyTreeNode[] nodes, IHighlightingDefinition highlighting = null)
 		{
+			CancelDecompilation();
+			ShowOutput(textOutput, highlighting);
+			decompiledNodes = nodes;
+		}
+
+		void CancelDecompilation()
+		{
 			// Cancel the decompilation task:
 			if (currentCancellationTokenSource != null) {
 				currentCancellationTokenSource.Cancel();
 				currentCancellationTokenSource = null; // prevent canceled task from producing output
 			}
 			CancelDecompileAsync();
-			ShowOutput(textOutput, highlighting);
-			decompiledNodes = nodes;
+			waitAdorner.Visibility = Visibility.Collapsed;
 		}
 		
 		/// <summary>
@@ -525,10 +517,12 @@ namespace ICSharpCode.ILSpy.TextView
 			// Some actions like loading an assembly list cause several selection changes in the tree view,
 			// and each of those will start a decompilation action.
 
+			Interlocked.Increment(ref decompilationId);
+
 			var newContext = new DecompilationContext(language, treeNodes.ToArray(), options);
 			var textOutput = DecompileCache.Instance.Lookup(newContext.Language, newContext.TreeNodes, newContext.Options);
 			if (textOutput != null) {
-				CancelDecompileAsync();
+				CancelDecompilation();
 				ShowOutput(textOutput, newContext.Language.SyntaxHighlighting, newContext.Options.TextViewState, newContext.TreeNodes);
 				decompiledNodes = newContext.TreeNodes;
 				return TaskHelper.CompletedTask;
@@ -546,6 +540,8 @@ namespace ICSharpCode.ILSpy.TextView
 			));
 			return task;
 		}
+
+		int decompilationId;
 		
 		sealed class DecompilationContext
 		{
@@ -567,6 +563,8 @@ namespace ICSharpCode.ILSpy.TextView
 			if (this.IsVisible)
 				MainWindow.Instance.ClosePopups();
 
+			int id = Interlocked.Increment(ref decompilationId);
+
 			return RunWithCancellation(
 				delegate (CancellationToken ct) { // creation of the background task
 					context.Options.CancellationToken = ct;
@@ -575,20 +573,25 @@ namespace ICSharpCode.ILSpy.TextView
 			.Then(
 				delegate (AvalonEditTextOutput textOutput) { // handling the result
 					DecompileCache.Instance.Cache(context.Language, context.TreeNodes, context.Options, textOutput);
-					ShowOutput(textOutput, context.Language.SyntaxHighlighting, context.Options.TextViewState, context.TreeNodes);
-					decompiledNodes = context.TreeNodes;
+					if (id == decompilationId) {
+						ShowOutput(textOutput, context.Language.SyntaxHighlighting, context.Options.TextViewState, context.TreeNodes);
+						decompiledNodes = context.TreeNodes;
+					}
 				})
 			.Catch<Exception>(exception => {
-					textEditor.SyntaxHighlighting = null;
-					Debug.WriteLine("Decompiler crashed: " + exception.ToString());
-					AvalonEditTextOutput output = new AvalonEditTextOutput();
-					if (exception is OutputLengthExceededException) {
-						WriteOutputLengthExceededMessage(output, context, outputLengthLimit == DefaultOutputLengthLimit);
-					} else {
-						output.WriteLine(exception.ToString(), TextTokenType.Text);
+					if (id == decompilationId) {
+						textEditor.SyntaxHighlighting = null;
+						Debug.WriteLine("Decompiler crashed: " + exception.ToString());
+						AvalonEditTextOutput output = new AvalonEditTextOutput();
+						if (exception is OutputLengthExceededException) {
+							WriteOutputLengthExceededMessage(output, context, outputLengthLimit == DefaultOutputLengthLimit);
+						}
+						else {
+							output.WriteLine(exception.ToString(), TextTokenType.Text);
+						}
+						ShowOutput(output);
+						decompiledNodes = context.TreeNodes;
 					}
-					ShowOutput(output);
-					decompiledNodes = context.TreeNodes;
 				});
 		}
 
