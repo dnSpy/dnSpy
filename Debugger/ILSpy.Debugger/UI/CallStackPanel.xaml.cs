@@ -284,11 +284,9 @@ namespace ICSharpCode.ILSpy.Debugger.UI
             if (null == item)
             	return;
 			StackFrameStatementManager.SelectedFrame = item.FrameNumber;
-            
-            var foundAssembly = MainWindow.Instance.CurrentAssemblyList.OpenAssembly(item.Frame.MethodInfo.DebugModule.FullPath, true);
-            if (null == foundAssembly)
-                return;
-			var module = foundAssembly.ModuleDefinition as ModuleDefMD;
+
+			var debugModule = item.Frame.MethodInfo.DebugModule;
+			var module = MainWindow.Instance.LoadAssembly(debugModule.AssemblyFullPath, debugModule.FullPath).ModuleDefinition as ModuleDefMD;
 			if (module == null)
 				return;
             
