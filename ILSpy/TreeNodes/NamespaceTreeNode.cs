@@ -41,7 +41,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Text {
-			get { return HighlightSearchMatch(name.Length == 0 ? "-" : CleanUpName(name)); }
+			get { return ToString(Language); }
+		}
+
+		public override string ToString(Language language)
+		{
+			return name.Length == 0 ? "-" : CleanUpName(name);
 		}
 		
 		public override object Icon {

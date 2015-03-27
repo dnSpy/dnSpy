@@ -83,13 +83,16 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Text
 		{
-			get {
-				if (assembly.ModuleDefinition == null)
-					return HighlightSearchMatch(CleanUpName(assembly.ShortName));
-				if (Parent is AssemblyTreeNode || assembly.AssemblyDefinition == null)
-					return HighlightSearchMatch(CleanUpName(assembly.ModuleDefinition.Name));
-				return HighlightSearchMatch(CleanUpName(GetAssemblyName()));
-			}
+			get { return ToString(Language); }
+		}
+
+		public override string ToString(Language language)
+		{
+			if (assembly.ModuleDefinition == null)
+				return CleanUpName(assembly.ShortName);
+			if (Parent is AssemblyTreeNode || assembly.AssemblyDefinition == null)
+				return CleanUpName(assembly.ModuleDefinition.Name);
+			return CleanUpName(GetAssemblyName());
 		}
 
 		string GetAssemblyName()

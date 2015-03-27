@@ -115,7 +115,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		sealed class LoadingTreeNode : ILSpyTreeNode
 		{
 			public override object Text {
-				get { return "Loading..."; }
+				get { return ToString(Language); }
+			}
+
+			public override string ToString(Language language)
+			{
+				return "Loading...";
 			}
 			
 			public override FilterResult Filter(FilterSettings settings)
@@ -137,7 +142,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			readonly string text;
 			
 			public override object Text {
-				get { return text; }
+				get { return ToString(Language); }
+			}
+
+			public override string ToString(Language language)
+			{
+				return text;
 			}
 			
 			public ErrorTreeNode(string text)

@@ -39,7 +39,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Text
 		{
-			get { return "Base Types"; }
+			get { return ToString(Language); }
+		}
+
+		public override string ToString(Language language)
+		{
+			return "Base Types";
 		}
 
 		public override object Icon

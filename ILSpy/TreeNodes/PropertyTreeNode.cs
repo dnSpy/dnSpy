@@ -57,12 +57,17 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Text
 		{
-			get { return GetText(property, Language, isIndexer) + property.MDToken.ToSuffixString(); }
+			get { return ToString(Language); }
 		}
 
-		public static object GetText(PropertyDef property, Language language, bool? isIndexer = null)
+		public override string ToString(Language language)
 		{
-			return HighlightSearchMatch(CleanUpName(language.FormatPropertyName(property, isIndexer)), CleanUpName(" : " + language.TypeToString(property.PropertySig.GetRetType().ToTypeDefOrRef(), false, property)));
+			return GetText(property, language, isIndexer) + property.MDToken.ToSuffixString();
+		}
+
+		public static string GetText(PropertyDef property, Language language, bool? isIndexer = null)
+		{
+			return CleanUpName(language.FormatPropertyName(property, isIndexer)) + CleanUpName(" : " + language.TypeToString(property.PropertySig.GetRetType().ToTypeDefOrRef(), false, property));
 		}
 		
 		public override object Icon

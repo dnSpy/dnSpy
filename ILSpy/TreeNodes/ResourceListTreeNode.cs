@@ -38,7 +38,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Text {
-			get { return "Resources"; }
+			get { return ToString(Language); }
+		}
+
+		public override string ToString(Language language)
+		{
+			return "Resources";
 		}
 		
 		public override object Icon {

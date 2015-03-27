@@ -63,12 +63,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return FilterResult.Hidden;
 		}
 
-		protected static object HighlightSearchMatch(string text, string suffix = null)
-		{
-			// TODO: implement highlighting the search match
-			return text + suffix;
-		}
-
 		public abstract void Decompile(Language language, ITextOutput output, DecompilationOptions options);
 
 		/// <summary>
@@ -219,5 +213,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 
 		public abstract NodePathName NodePathName { get; }
+
+		public abstract string ToString(Language language);
 	}
 }

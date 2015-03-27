@@ -51,7 +51,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Text
 		{
-			get { return CleanUpName(assemblyList.ListName); }
+			get { return ToString(Language); }
+		}
+
+		public override string ToString(Language language)
+		{
+			return CleanUpName(assemblyList.ListName);
 		}
 
 		void BindToObservableCollection()

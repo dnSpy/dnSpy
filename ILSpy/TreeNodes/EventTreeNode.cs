@@ -55,12 +55,17 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override object Text
 		{
-			get { return GetText(ev, this.Language) + ev.MDToken.ToSuffixString(); }
+			get { return ToString(Language); }
+		}
+
+		public override string ToString(Language language)
+		{
+			return GetText(ev, language) + ev.MDToken.ToSuffixString();
 		}
 
 		public static object GetText(EventDef eventDef, Language language)
 		{
-			return HighlightSearchMatch(CleanUpName(eventDef.Name), CleanUpName(" : " + language.TypeToString(eventDef.EventType, false, eventDef)));
+			return CleanUpName(eventDef.Name) + CleanUpName(" : " + language.TypeToString(eventDef.EventType, false, eventDef));
 		}
 		
 		public override object Icon

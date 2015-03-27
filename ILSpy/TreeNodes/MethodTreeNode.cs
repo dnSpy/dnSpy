@@ -46,13 +46,15 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Text
 		{
-			get
-			{
-				return GetText(method, Language);
-			}
+			get { return ToString(Language); }
 		}
 
-		public static object GetText(MethodDef method, Language language)
+		public override string ToString(Language language)
+		{
+			return GetText(method, language);
+		}
+
+		public static string GetText(MethodDef method, Language language)
 		{
 			StringBuilder b = new StringBuilder();
 			b.Append('(');
@@ -71,7 +73,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			b.Append(") : ");
 			b.Append(language.TypeToString(method.ReturnType.ToTypeDefOrRef(), false, method.Parameters.ReturnParameter.ParamDef));
 			b.Append(method.MDToken.ToSuffixString());
-			return HighlightSearchMatch(CleanUpName(method.Name), CleanUpName(b.ToString()));
+			return CleanUpName(method.Name) + CleanUpName(b.ToString());
 		}
 
 		public override object Icon

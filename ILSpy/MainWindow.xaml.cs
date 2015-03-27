@@ -78,13 +78,13 @@ namespace ICSharpCode.ILSpy
 					return Title ?? "<empty>";
 
 				if (nodes.Length == 1)
-					return nodes[0].ToString();
+					return nodes[0].ToString(Language);
 
 				var sb = new StringBuilder();
 				foreach (var node in nodes) {
 					if (sb.Length > 0)
 						sb.Append(", ");
-					sb.Append(node.ToString());
+					sb.Append(node.ToString(Language));
 				}
 				return sb.ToString();
 			}
@@ -139,8 +139,10 @@ namespace ICSharpCode.ILSpy
 			};
 		}
 
-		public bool IsSameNodes(ILSpyTreeNode[] nodes)
+		public bool Equals(ILSpyTreeNode[] nodes, Language language)
 		{
+			if (Language != language)
+				return false;
 			if (DecompiledNodes.Length != nodes.Length)
 				return false;
 			for (int i = 0; i < DecompiledNodes.Length; i++) {
@@ -317,9 +319,9 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		TabState CreateNewTabState()
+		TabState CreateNewTabState(Language language = null)
 		{
-			TabState tabState = new TabState(treeView, sessionSettings.FilterSettings.Language);
+			TabState tabState = new TabState(treeView, language ?? sessionSettings.FilterSettings.Language);
 			tabControl.Items.Add(tabState.TabItem);
 
 			var view = tabState.TextView;
@@ -1491,7 +1493,7 @@ namespace ICSharpCode.ILSpy
 		{
 			if (tabState.ignoreDecompilationRequests)
 				return null;
-			if (!forceDecompile && tabState.IsSameNodes(nodes) && tabState.Language == language) {
+			if (!forceDecompile && tabState.Equals(nodes, language)) {
 				if (state != null)
 					tabState.TextView.EditorPositionState = state.EditorPositionState;
 				return false;
@@ -1667,8 +1669,7 @@ namespace ICSharpCode.ILSpy
 
 		TabState CreateTabState(SavedTabState savedState, IList<ILSpyTreeNode> newNodes = null, bool decompile = true)
 		{
-			var tabState = CreateNewTabState();
-			tabState.Language = Languages.GetLanguage(savedState.Language);
+			var tabState = CreateNewTabState(Languages.GetLanguage(savedState.Language));
 			var nodes = new List<ILSpyTreeNode>(savedState.Paths.Count);
 			if (newNodes != null)
 				nodes.AddRange(newNodes);
