@@ -125,7 +125,15 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get
 			{
 				if (assembly.IsLoaded) {
-					return assembly.HasLoadError ? Images.AssemblyWarning : Images.Assembly;
+					if (assembly.HasLoadError)
+						return Images.AssemblyWarning;
+					if (Parent is AssemblyTreeNode || (assembly.ModuleDefinition != null && assembly.ModuleDefinition.Kind == ModuleKind.NetModule))
+						return Images.AssemblyModule;
+					return assembly.ModuleDefinition != null &&
+						assembly.ModuleDefinition.IsManifestModule &&
+						(assembly.ModuleDefinition.Kind == ModuleKind.Console ||
+						assembly.ModuleDefinition.Kind == ModuleKind.Windows) ?
+						Images.AssemblyExe : Images.Assembly;
 				} else {
 					return Images.AssemblyLoading;
 				}

@@ -46,6 +46,8 @@ namespace ICSharpCode.ILSpy
 		public static readonly BitmapImage Search = LoadBitmap("Search");
 
 		public static readonly BitmapImage Assembly = LoadBitmap("Assembly");
+		public static readonly BitmapImage AssemblyExe = LoadBitmap("AssemblyExe");
+		public static readonly BitmapImage AssemblyModule = LoadBitmap("AssemblyModule");
 		public static readonly BitmapImage AssemblyWarning = LoadBitmap("AssemblyWarning");
 		public static readonly BitmapImage AssemblyLoading = LoadBitmap("FindAssembly");
 

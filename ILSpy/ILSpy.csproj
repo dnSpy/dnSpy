@@ -394,6 +394,8 @@
     <Resource Include="Images\NameSpace.png" />
     <Resource Include="Images\Open.png" />
     <Resource Include="Images\Assembly.png" />
+    <Resource Include="Images\AssemblyExe.png" />
+    <Resource Include="Images\AssemblyModule.png" />
     <Resource Include="Images\Struct.png" />
     <Resource Include="Images\ReferenceFolder.Closed.png" />
     <Resource Include="Images\ReferenceFolder.Open.png" />
