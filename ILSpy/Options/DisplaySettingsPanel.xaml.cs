@@ -152,6 +152,11 @@ namespace ICSharpCode.ILSpy.Options
 
 			return flags;
 		}
+
+		void enableAllWarnings_Click(object sender, RoutedEventArgs e)
+		{
+			MainWindow.Instance.SessionSettings.IgnoredWarnings.Clear();
+		}
 	}
 	
 	public class FontSizeConverter : IValueConverter

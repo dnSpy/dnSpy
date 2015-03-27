@@ -11,14 +11,12 @@ namespace ICSharpCode.ILSpy.Debugger
 	{
 		#region members
 		private static readonly string DEBUGGER_SETTINGS = "DebuggerSettings";
-		private static readonly string SHOW_WARNINGS = "showWarnings";
 		private static readonly string ASK_ARGUMENTS = "askForArguments";
 		private static readonly string SHOW_MODULE = "showModuleName";
 		private static readonly string SHOW_ARGUMENTS = "showArguments";
 		private static readonly string SHOW_ARGUMENTVALUE = "showArgumentValues";
 		private static readonly string BREAK_AT_BEGINNING = "breakAtBeginning";
 	 	
-		private bool showWarnings = true;
 		private bool askArguments = true;
 		private bool debugWholeTypesOnly = false;
 		private bool showModuleName = true;
@@ -48,7 +46,6 @@ namespace ICSharpCode.ILSpy.Debugger
 		public void Load(ILSpySettings settings)
 		{
 			XElement e = settings[DEBUGGER_SETTINGS];
-			ShowWarnings = (bool?)e.Attribute(SHOW_WARNINGS) ?? ShowWarnings;
 			AskForArguments = (bool?)e.Attribute(ASK_ARGUMENTS) ?? AskForArguments;
 			ShowModuleName = (bool?)e.Attribute(SHOW_MODULE) ?? ShowModuleName;
 			ShowArguments = (bool?)e.Attribute(SHOW_ARGUMENTS) ?? ShowArguments;
@@ -59,7 +56,6 @@ namespace ICSharpCode.ILSpy.Debugger
 		public void Save(XElement root)
 		{
 			XElement section = new XElement(DEBUGGER_SETTINGS);
-			section.SetAttributeValue(SHOW_WARNINGS, ShowWarnings);
 			section.SetAttributeValue(ASK_ARGUMENTS, AskForArguments);
 			section.SetAttributeValue(SHOW_MODULE, ShowModuleName);
 			section.SetAttributeValue(SHOW_ARGUMENTS, ShowArguments);
@@ -71,21 +67,6 @@ namespace ICSharpCode.ILSpy.Debugger
 				existingElement.ReplaceWith(section);
 			else
 				root.Add(section);
-		}
-
-		/// <summary>
-		/// Show warnings messages.
-		/// <remarks>Default value is true.</remarks>
-		/// </summary>
-		[DefaultValue(true)]
-		public bool ShowWarnings {
-			get { return showWarnings; }
-			set {
-				if (showWarnings != value) {
-					showWarnings = value;
-					OnPropertyChanged("ShowWarnings");
-				}
-			}
 		}
 		
 		/// <summary>

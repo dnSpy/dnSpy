@@ -2087,6 +2087,45 @@ namespace ICSharpCode.ILSpy
 			foreach (var tabState in AllTabStates)
 				tabState.InitializeHeader();
 		}
+
+		public MsgBoxButton? ShowWarningMessage(string id, string msg, MessageBoxButton buttons)
+		{
+			if (sessionSettings.IgnoredWarnings.Contains(id))
+				return null;
+
+			var msgBox = new MsgBox();
+			msgBox.textBlock.Text = msg;
+			msgBox.Owner = this;
+
+			switch (buttons) {
+			case MessageBoxButton.OK:
+				msgBox.noButton.Visibility = Visibility.Collapsed;
+				msgBox.cancelButton.Visibility = Visibility.Collapsed;
+				break;
+
+			case MessageBoxButton.OKCancel:
+				msgBox.noButton.Visibility = Visibility.Collapsed;
+				break;
+
+			case MessageBoxButton.YesNoCancel:
+				msgBox.okButton.Content = "_Yes";
+				break;
+
+			case MessageBoxButton.YesNo:
+				msgBox.okButton.Content = "_Yes";
+				msgBox.cancelButton.Visibility = Visibility.Collapsed;
+				break;
+
+			default:
+				throw new ArgumentException("Invalid buttons arg", "buttons");
+			}
+
+			msgBox.ShowDialog();
+			if (msgBox.ButtonClicked != MsgBoxButton.None && msgBox.dontShowCheckBox.IsChecked == true)
+				sessionSettings.IgnoredWarnings.Add(id);
+
+			return msgBox.ButtonClicked;
+		}
 	}
 
 	[ExportContextMenuEntry(Header = "Open in New _Tab", Order = 130, InputGestureText = "Ctrl+T", Category = "Tabs")]

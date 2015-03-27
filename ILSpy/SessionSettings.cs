@@ -57,6 +57,15 @@ namespace ICSharpCode.ILSpy
 			this.BottomPaneSettings.Height = FromString((string)doc.Element("BottomPaneHeight"), 200);
 			this.ThemeName = (string)doc.Element("ThemeName") ?? "light";
 
+			var ignoreXml = doc.Element("IgnoredWarnings");
+			if (ignoreXml != null) {
+				foreach (var child in ignoreXml.Elements("Warning")) {
+					var id = FromString((string)child, (string)null);
+					if (id != null)
+						IgnoredWarnings.Add(id);
+				}
+			}
+
 			var tabs = doc.Element("Tabs");
 			if (tabs == null) {
 				this.TabsFound = false;
@@ -94,6 +103,7 @@ namespace ICSharpCode.ILSpy
 		public PaneSettings TopPaneSettings;
 		public PaneSettings BottomPaneSettings;
 		public string ThemeName;
+		public HashSet<string> IgnoredWarnings = new HashSet<string>();
 
 		public SavedTabState[] SavedTabStates;
 		public int ActiveTabIndex;
@@ -144,6 +154,7 @@ namespace ICSharpCode.ILSpy
 			doc.Add(new XElement("BottomPaneHeight", ToString(this.BottomPaneSettings.Height)));
 			doc.Add(new XElement("BottomPaneName", ToString(this.BottomPaneSettings.Name)));
 			doc.Add(new XElement("ThemeName", ToString(this.ThemeName)));
+			doc.Add(new XElement("IgnoredWarnings", IgnoredWarnings.Select(id => new XElement("Warning", id))));
 
 			if (ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.RestoreTabsAtStartup) {
 				var tabs = new XElement("Tabs");

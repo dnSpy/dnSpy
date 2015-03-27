@@ -67,6 +67,7 @@
 				<CheckBox IsChecked="{Binding DecompileFullType}">Automatically decompile a member's type instead of the member</CheckBox>
 				<CheckBox IsChecked="{Binding NewEmptyTabs}">New tabs are empty</CheckBox>
 				<CheckBox IsChecked="{Binding RestoreTabsAtStartup}">Restore tabs at startup</CheckBox>
+				<Button Content="Enable all warning messages" Click="enableAllWarnings_Click" />
 			</StackPanel>
 		</GroupBox>
 	</Grid>

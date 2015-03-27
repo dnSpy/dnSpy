@@ -177,9 +177,9 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (DebuggerService.CurrentDebugger == null || DebuggerService.CurrentDebugger.IsDebugging)
 				return false;
 
-			if (DebuggerSettings.Instance.ShowWarnings)
-				MessageBox.Show("Warning: When attaching to an application, some local variables might not be available. If possible, use the \"Debug an Executable\" command.",
-							"Attach to a process", MessageBoxButton.OK, MessageBoxImage.Warning);
+			MainWindow.Instance.ShowWarningMessage("debug: attach warning",
+					"Warning: When attaching to an application, some local variables might not be available. If possible, use the \"Debug an Executable\" command.",
+					MessageBoxButton.OK);
 
 			var window = new AttachToProcessWindow { Owner = MainWindow.Instance };
 			if (window.ShowDialog() == true) {
