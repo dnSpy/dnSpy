@@ -112,16 +112,95 @@ namespace ICSharpCode.ILSpy
 			var tabItem = new TabItem();
 			tabItem.Content = view;
 			tabItem.Tag = this;
+			tabItem.AllowDrop = true;
 			TabItem = tabItem;
 			Language = language;
 			InitializeHeader();
 			ContextMenuProvider.Add(view);
 			tabItem.MouseRightButtonDown += tabItem_MouseRightButtonDown;
+			tabItem.PreviewMouseDown += tabItem_PreviewMouseDown;
+			tabItem.DragOver += tabItem_DragOver;
+			tabItem.Drop += tabItem_Drop;
+			view.DragOver += view_DragOver;
 		}
 
 		void tabItem_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
 		{
 			MainWindow.Instance.tabControl.SelectedItem = TabItem;
+		}
+
+		void view_DragOver(object sender, DragEventArgs e)
+		{
+			// The text editor seems to allow anything
+			if (e.Data.GetDataPresent(typeof(TabItem))) {
+				e.Effects = DragDropEffects.None;
+				e.Handled = true;
+				return;
+			}
+		}
+
+		void tabItem_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+		{
+			var tabItem = sender as TabItem;
+			if (tabItem == null || tabItem != TabItem)
+				return;
+
+			var mousePos = e.GetPosition(tabItem);
+			var tabSize = new Point(tabItem.ActualWidth, tabItem.ActualHeight);
+			if (mousePos.X >= tabSize.X || mousePos.Y > tabSize.Y)
+				return;
+
+			var tabControl = tabItem.Parent as TabControl;
+			if (tabControl == null)
+				return;
+
+			if (e.LeftButton == MouseButtonState.Pressed) {
+				tabControl.SelectedItem = tabItem;//TODO: Doesn't work immediately!
+				DragDrop.DoDragDrop(tabItem, tabItem, DragDropEffects.Move);
+			}
+		}
+
+		void tabItem_DragOver(object sender, DragEventArgs e)
+		{
+			bool canDrag = false;
+
+			if (e.Data.GetDataPresent(typeof(TabItem))) {
+				var tabItem = (TabItem)e.Data.GetData(typeof(TabItem));
+				//TODO: Moving to another tab control is not supported at the moment (hasn't been tested)
+				if (tabItem.Parent == TabItem.Parent)
+					canDrag = true;
+			}
+
+			e.Effects = canDrag ? DragDropEffects.Move : DragDropEffects.None;
+			e.Handled = true;
+		}
+
+		void tabItem_Drop(object sender, DragEventArgs e)
+		{
+			if (!e.Data.GetDataPresent(typeof(TabItem)))
+				return;
+			var target = sender as TabItem;
+			var source = (TabItem)e.Data.GetData(typeof(TabItem));
+			if (target == null || source == null || target == source)
+				return;
+			var tabControlTarget = target.Parent as TabControl;
+			if (tabControlTarget == null)
+				return;
+			var tabControlSource = source.Parent as TabControl;
+			if (tabControlSource == null)
+				return;
+
+			var old = MainWindow.Instance.tabControl_SelectionChanged_dont_select;
+			MainWindow.Instance.tabControl_SelectionChanged_dont_select = true;
+			try {
+				int index = tabControlTarget.Items.IndexOf(target);
+				tabControlSource.Items.Remove(source);
+				tabControlTarget.Items.Insert(index, source);
+				tabControlTarget.SelectedItem = source;
+			}
+			finally {
+				MainWindow.Instance.tabControl_SelectionChanged_dont_select = old;
+			}
 		}
 
 		public void Dispose()
@@ -399,7 +478,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		bool tabControl_SelectionChanged_dont_select = false;
+		internal bool tabControl_SelectionChanged_dont_select = false;
 		void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (sender != tabControl || e.Source != tabControl)
