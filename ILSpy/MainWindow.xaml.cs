@@ -69,6 +69,7 @@ namespace ICSharpCode.ILSpy
 		public ILSpyTreeNode[] DecompiledNodes = new ILSpyTreeNode[0];
 		public TabItem TabItem;
 		public string Title;
+		public Language Language;
 
 		public string Header {
 			get {
@@ -104,7 +105,7 @@ namespace ICSharpCode.ILSpy
 			return (TabState)textView.tabState;
 		}
 
-		public TabState(SharpTreeView treeView)
+		public TabState(SharpTreeView treeView, Language language)
 		{
 			this.TextView.tabState = this;
 			var view = TextView;
@@ -112,6 +113,7 @@ namespace ICSharpCode.ILSpy
 			tabItem.Content = view;
 			tabItem.Tag = this;
 			TabItem = tabItem;
+			Language = language;
 			InitializeHeader();
 			ContextMenuProvider.Add(view);
 			tabItem.MouseRightButtonDown += tabItem_MouseRightButtonDown;
@@ -317,7 +319,7 @@ namespace ICSharpCode.ILSpy
 
 		TabState CreateNewTabState()
 		{
-			TabState tabState = new TabState(treeView);
+			TabState tabState = new TabState(treeView, sessionSettings.FilterSettings.Language);
 			tabControl.Items.Add(tabState.TabItem);
 
 			var view = tabState.TextView;
@@ -413,8 +415,10 @@ namespace ICSharpCode.ILSpy
 				foreach (CommandBinding binding in oldView.CommandBindings)
 					this.CommandBindings.Remove(binding);
 			}
-			if (newView != null)
+			if (newView != null) {
 				this.CommandBindings.AddRange(newView.CommandBindings);
+				SetLanguage(newState.Language);
+			}
 
 			if (tabControl_SelectionChanged_dont_select) {
 			}
@@ -1106,11 +1110,15 @@ namespace ICSharpCode.ILSpy
 		{
 			RefreshTreeViewFilter();
 			if (e.PropertyName == "Language") {
-				foreach (var tabState in AllTabStates) {
-					//TODO: Restore the caret too
-					DecompileNodes(tabState, null, false, tabState.DecompiledNodes, true);
-				}
+				var tabState = ActiveTabState;
+				if (tabState != null)
+					DecompileNodes(tabState, null, false, sessionSettings.FilterSettings.Language, tabState.DecompiledNodes);
 			}
+		}
+
+		void SetLanguage(Language language)
+		{
+			languageComboBox.SelectedItem = language;
 		}
 		
 		public void RefreshTreeViewFilter()
@@ -1324,7 +1332,7 @@ namespace ICSharpCode.ILSpy
 			if (treeNode != null) {
 				var helper = new OnShowOutputHelper(tabState.TextView, onDecompileFinished, treeNode);
 				var nodes = new[] { treeNode };
-				bool? decompiled = DecompileNodes(tabState, null, false, nodes);
+				bool? decompiled = DecompileNodes(tabState, null, false, tabState.Language, nodes);
 				if (decompiled == false) {
 					helper.Abort();
 					onDecompileFinished(true, false);
@@ -1470,7 +1478,7 @@ namespace ICSharpCode.ILSpy
 			if (TreeView_SelectionChanged_ignore)
 				return;
 			var tabState = SafeActiveTabState;
-			DecompileNodes(tabState, null, true, this.SelectedNodes.ToArray());
+			DecompileNodes(tabState, null, true, tabState.Language, this.SelectedNodes.ToArray());
 
 			if (SelectionChanged != null)
 				SelectionChanged(sender, e);
@@ -1479,15 +1487,16 @@ namespace ICSharpCode.ILSpy
 				SetTextEditorFocus(tabState.TextView);
 		}
 		
-		bool? DecompileNodes(TabState tabState, DecompilerTextViewState state, bool recordHistory, ILSpyTreeNode[] nodes, bool forceDecompile = false)
+		bool? DecompileNodes(TabState tabState, DecompilerTextViewState state, bool recordHistory, Language language, ILSpyTreeNode[] nodes, bool forceDecompile = false)
 		{
 			if (tabState.ignoreDecompilationRequests)
 				return null;
-			if (!forceDecompile && tabState.IsSameNodes(nodes)) {
+			if (!forceDecompile && tabState.IsSameNodes(nodes) && tabState.Language == language) {
 				if (state != null)
 					tabState.TextView.EditorPositionState = state.EditorPositionState;
 				return false;
 			}
+			tabState.Language = language;
 			tabState.DecompiledNodes = nodes ?? new ILSpyTreeNode[0];
 			tabState.Title = null;
 			tabState.InitializeHeader();
@@ -1499,7 +1508,7 @@ namespace ICSharpCode.ILSpy
 				tabState.TextView.CancelDecompileAsync();
 				return true;
 			}
-			tabState.TextView.DecompileAsync(this.CurrentLanguage, nodes, new DecompilationOptions() { TextViewState = state });
+			tabState.TextView.DecompileAsync(language, nodes, new DecompilationOptions() { TextViewState = state });
 			return true;
 		}
 
@@ -1520,20 +1529,24 @@ namespace ICSharpCode.ILSpy
 		
 		void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			var textView = ActiveTextView;
-			if (textView == null)
+			var tabState = ActiveTabState;
+			if (tabState == null)
 				return;
+			var textView = tabState.TextView;
 			if (this.SelectedNodes.Count() == 1) {
 				if (this.SelectedNodes.Single().Save(textView))
 					return;
 			}
-			textView.SaveToDisk(this.CurrentLanguage,
+			textView.SaveToDisk(tabState.Language,
 				this.SelectedNodes,
 				new DecompilationOptions() { FullDecompilation = true });
 		}
 		
 		public Language CurrentLanguage {
 			get {
+				var tabState = ActiveTabState;
+				if (tabState != null)
+					return tabState.Language;
 				return sessionSettings.FilterSettings.Language;
 			}
 		}
@@ -1603,7 +1616,7 @@ namespace ICSharpCode.ILSpy
 			var newState = forward ? tabState.History.GoForward() : tabState.History.GoBack();
 			var nodes = newState.TreeNodes.Cast<ILSpyTreeNode>().ToArray();
 			SelectTreeViewNodes(tabState, nodes);
-			DecompileNodes(tabState, newState.ViewState, false, nodes);
+			DecompileNodes(tabState, newState.ViewState, false, tabState.Language, nodes);
 		}
 		
 		#endregion
@@ -1638,6 +1651,7 @@ namespace ICSharpCode.ILSpy
 		static SavedTabState CreateSavedTabState(TabState tabState)
 		{
 			var savedState = new SavedTabState();
+			savedState.Language = tabState.Language.Name;
 			savedState.Paths = new List<FullNodePathName>();
 			savedState.ActiveAutoLoadedAssemblies = new List<string>();
 			foreach (var node in tabState.DecompiledNodes) {
@@ -1653,6 +1667,7 @@ namespace ICSharpCode.ILSpy
 		TabState CreateTabState(SavedTabState savedState, IList<ILSpyTreeNode> newNodes = null, bool decompile = true)
 		{
 			var tabState = CreateNewTabState();
+			tabState.Language = Languages.GetLanguage(savedState.Language);
 			var nodes = new List<ILSpyTreeNode>(savedState.Paths.Count);
 			if (newNodes != null)
 				nodes.AddRange(newNodes);
@@ -1672,7 +1687,7 @@ namespace ICSharpCode.ILSpy
 				if (nodes != null) {
 					var tmpNodes = nodes.ToArray();
 					var helper = new OnShowOutputHelper(tabState.TextView, (success, hasMovedCaret) => decompilerTextView_OnShowOutput(success, hasMovedCaret, tabState.TextView, savedState), tmpNodes);
-					DecompileNodes(tabState, null, true, tmpNodes);
+					DecompileNodes(tabState, null, true, tabState.Language, tmpNodes);
 				}
 				else
 					AboutPage.Display(tabState.TextView);
@@ -1936,6 +1951,11 @@ namespace ICSharpCode.ILSpy
 			return int.TryParse(valText, out val) ? (int?)val : null;
 		}
 
+		internal Language GetLanguage(DecompilerTextView textView)
+		{
+			return TabState.GetTabState(textView).Language;
+		}
+
 		private void OpenNewTabExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			OpenNewTab();
@@ -2078,7 +2098,7 @@ namespace ICSharpCode.ILSpy
 		internal void RefreshDecompile()
 		{
 			foreach (var tabState in AllTabStates)
-				DecompileNodes(tabState, null, false, tabState.DecompiledNodes, true);
+				DecompileNodes(tabState, null, false, tabState.Language, tabState.DecompiledNodes, true);
 		}
 
 		internal void RefreshTreeViewNodeNames()

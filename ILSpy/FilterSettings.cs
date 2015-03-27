@@ -35,15 +35,14 @@ namespace ICSharpCode.ILSpy
 		public FilterSettings(XElement element)
 		{
 			this.ShowInternalApi = (bool?)element.Element("ShowInternalAPI") ?? true;
-			this.Language = Languages.GetLanguage((string)element.Element("Language"));
+			this.Language = Languages.GetLanguage("C#");
 		}
 		
 		public XElement SaveAsXml()
 		{
 			return new XElement(
 				"FilterSettings",
-				new XElement("ShowInternalAPI", this.ShowInternalApi),
-				new XElement("Language", this.Language.Name)
+				new XElement("ShowInternalAPI", this.ShowInternalApi)
 			);
 		}
 		

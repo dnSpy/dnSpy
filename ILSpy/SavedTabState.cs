@@ -10,9 +10,12 @@ namespace ICSharpCode.ILSpy {
 		public List<FullNodePathName> Paths = new List<FullNodePathName>();
 		public List<string> ActiveAutoLoadedAssemblies;
 		public EditorPositionState EditorPositionState;
+		public string Language;
 
 		public XElement ToXml(XElement xml)
 		{
+			xml.SetAttributeValue("language", Language);
+
 			foreach (var path in Paths)
 				xml.Add(path.ToXml(new XElement("Path")));
 
@@ -27,6 +30,8 @@ namespace ICSharpCode.ILSpy {
 		public static SavedTabState FromXml(XElement child)
 		{
 			var savedState = new SavedTabState();
+
+			savedState.Language = (string)child.Attribute("language") ?? "C#";
 
 			foreach (var path in child.Elements("Path"))
 				savedState.Paths.Add(FullNodePathName.FromXml(path));

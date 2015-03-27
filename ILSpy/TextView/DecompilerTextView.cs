@@ -223,7 +223,7 @@ namespace ICSharpCode.ILSpy.TextView
 					mr = ((IField)mr).ResolveFieldDef() ?? mr;
 				}
 				XmlDocRenderer renderer = new XmlDocRenderer();
-				renderer.AppendText(MainWindow.Instance.CurrentLanguage.GetTooltip(mr));
+				renderer.AppendText(MainWindow.Instance.GetLanguage(this).GetTooltip(mr));
 				try {
 					XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(mr.Module);
 					if (docProvider != null) {
