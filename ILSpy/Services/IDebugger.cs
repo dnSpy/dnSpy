@@ -19,6 +19,11 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 	public interface IDebugger : IDisposable
 	{
 		/// <summary>
+		/// Gets the process id of the debugged process
+		/// </summary>
+		int DebuggedProcessId { get; }
+
+		/// <summary>
 		/// Gets whether the debugger can evaluate the expression.
 		/// </summary>
 		bool CanEvaluate { get; }

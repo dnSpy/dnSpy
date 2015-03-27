@@ -61,6 +61,10 @@ namespace Debugger
 		internal ICorDebugProcess CorProcess {
 			get { return corProcess; }
 		}
+
+		public int ProcessId {
+			get { return (int)corProcess.GetID(); }
+		}
 		
 		public Options Options {
 			get { return debugger.Options; }

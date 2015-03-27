@@ -464,6 +464,15 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				return null;
 			}
 		}
+
+		public int DebuggedProcessId {
+			get {
+				var p = debuggedProcess;
+				if (p == null)
+					return -1;
+				return p.ProcessId;
+			}
+		}
 		
 		/// <inheritdoc/>
 		public bool CanEvaluate

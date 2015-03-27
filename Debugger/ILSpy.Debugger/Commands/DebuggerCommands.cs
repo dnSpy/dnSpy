@@ -6,6 +6,8 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -33,7 +35,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	public class DebuggerPlugin : IPlugin
 	{
 		#region Static members
-		[System.Runtime.InteropServices.DllImport("user32.dll")]
+		[DllImport("user32.dll")]
 		static extern bool SetWindowPos(
 			IntPtr hWnd,
 			IntPtr hWndInsertAfter,
@@ -42,6 +44,9 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			int cx,
 			int cy,
 			uint uFlags);
+		[return: MarshalAs(UnmanagedType.Bool)]
+		[DllImport("user32")]
+		static extern bool SetForegroundWindow(IntPtr hWnd);
 
 		const UInt32 SWP_NOSIZE = 0x0001;
 		const UInt32 SWP_NOMOVE = 0x0002;
@@ -277,6 +282,66 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			MainWindow.Instance.PreviewKeyDown += OnPreviewKeyDown;
 			MainWindow.Instance.KeyDown += OnKeyDown;
 			BreakpointSettings.Instance.Load();
+			new BringDebuggedProgramWindowToFront();
+		}
+
+		sealed class BringDebuggedProgramWindowToFront
+		{
+			// Millisecs to wait before we bring the debugged process' window to the front
+			const int WAIT_TIME_MS = 1000;
+
+			public BringDebuggedProgramWindowToFront()
+			{
+				DebuggerService.ProcessRunningChanged += DebuggerService_ProcessRunningChanged;
+			}
+
+			bool isRunning;
+			int isRunningId;
+
+			void DebuggerService_ProcessRunningChanged(object sender, EventArgs e)
+			{
+				var debugger = DebuggerService.CurrentDebugger;
+				bool newIsRunning = debugger != null && debugger.IsProcessRunning;
+				if (newIsRunning == isRunning)
+					return;
+
+				isRunning = newIsRunning;
+				int id = Interlocked.Increment(ref isRunningId);
+				if (!isRunning)
+					return;
+
+				var process = GetProcessById(debugger.DebuggedProcessId);
+				if (process == null)
+					return;
+
+				Timer timer = null;
+				timer = new Timer(a => {
+					timer.Dispose();
+					if (id == isRunningId)
+						SwitchToDebuggedProcessWindow(process);
+				}, null, WAIT_TIME_MS, Timeout.Infinite);
+			}
+
+			Process GetProcessById(int pid)
+			{
+				try {
+					return Process.GetProcessById(pid);
+				}
+				catch {
+				}
+				return null;
+			}
+
+			void SwitchToDebuggedProcessWindow(Process process)
+			{
+				try {
+					var hWnd = process.MainWindowHandle;
+					if (hWnd != IntPtr.Zero)
+						SetForegroundWindow(hWnd);
+				}
+				catch {
+				}
+			}
 		}
 
 		void OnPreviewKeyDown(object sender, KeyEventArgs e)
