@@ -2,6 +2,7 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
@@ -281,8 +282,19 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		{
 			MainWindow.Instance.PreviewKeyDown += OnPreviewKeyDown;
 			MainWindow.Instance.KeyDown += OnKeyDown;
+			MainWindow.Instance.Closing += OnClosing;
 			BreakpointSettings.Instance.Load();
 			new BringDebuggedProgramWindowToFront();
+		}
+
+		void OnClosing(object sender, CancelEventArgs e)
+		{
+			var debugger = DebuggerService.CurrentDebugger;
+			if (debugger != null && debugger.IsDebugging) {
+				var result = MainWindow.Instance.ShowWarningMessage("debug: exit program", "Do you want to stop debugging?", MessageBoxButton.YesNo);
+				if (result == MsgBoxButton.None || result == MsgBoxButton.No)
+					e.Cancel = true;
+			}
 		}
 
 		sealed class BringDebuggedProgramWindowToFront
