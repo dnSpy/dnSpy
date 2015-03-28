@@ -707,7 +707,7 @@ namespace ICSharpCode.ILSpy
 		
 		Button MakeToolbarItem(Lazy<ICommand, IToolbarCommandMetadata> command)
 		{
-			return new Button {
+			var button = new Button {
 				Command = CommandWrapper.Unwrap(command.Value),
 				ToolTip = command.Metadata.ToolTip,
 				Tag = command.Metadata.Tag,
@@ -717,6 +717,8 @@ namespace ICSharpCode.ILSpy
 					Source = Images.LoadImage(command.Value, command.Metadata.ToolbarIcon)
 				}
 			};
+			ToolTipService.SetShowOnDisabled(button, true);
+			return button;
 		}
 		#endregion
 		
