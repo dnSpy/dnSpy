@@ -86,8 +86,6 @@ namespace ICSharpCode.ILSpy.TextView
 			get { return textEditor; }
 		}
 
-		internal object tabState;
-
 		static DecompilerTextView() {
 			HighlightingManager.Instance.RegisterHighlighting(
 				"ILAsm", new string[] { ".il" },

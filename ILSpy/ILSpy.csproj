@@ -132,10 +132,14 @@
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Commands\ExitCommand.cs" />
     <Compile Include="Commands\CommandWrapper.cs" />
+    <Compile Include="IPlugin.cs" />
     <Compile Include="MsgBox.xaml.cs">
       <DependentUpon>MsgBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="SavedTabState.cs" />
+    <Compile Include="TabContextMenuEntries.cs" />
+    <Compile Include="TabManager.cs" />
+    <Compile Include="TabState.cs" />
     <Compile Include="TreeNodes\CopyTokenContextMenuEntry.cs" />
     <Compile Include="TreeNodes\CopyXmlDocNameMenuEntry.cs" />
     <Compile Include="TreeNodes\GoToTokenContextMenuEntry.cs" />
