@@ -2191,7 +2191,7 @@ namespace ICSharpCode.ILSpy
 				tabState.InitializeHeader();
 		}
 
-		public MsgBoxButton? ShowWarningMessage(string id, string msg, MessageBoxButton buttons)
+		public MsgBoxButton? ShowIgnorableMessageBox(string id, string msg, MessageBoxButton buttons)
 		{
 			if (sessionSettings.IgnoredWarnings.Contains(id))
 				return null;

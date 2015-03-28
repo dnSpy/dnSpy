@@ -178,7 +178,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (DebuggerService.CurrentDebugger == null || DebuggerService.CurrentDebugger.IsDebugging)
 				return false;
 
-			MainWindow.Instance.ShowWarningMessage("debug: attach warning",
+			MainWindow.Instance.ShowIgnorableMessageBox("debug: attach warning",
 					"Warning: When attaching to an application, some local variables might not be available. If possible, use the \"Debug an Executable\" command.",
 					MessageBoxButton.OK);
 
@@ -291,7 +291,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		{
 			var debugger = DebuggerService.CurrentDebugger;
 			if (debugger != null && debugger.IsDebugging) {
-				var result = MainWindow.Instance.ShowWarningMessage("debug: exit program", "Do you want to stop debugging?", MessageBoxButton.YesNo);
+				var result = MainWindow.Instance.ShowIgnorableMessageBox("debug: exit program", "Do you want to stop debugging?", MessageBoxButton.YesNo);
 				if (result == MsgBoxButton.None || result == MsgBoxButton.No)
 					e.Cancel = true;
 			}
