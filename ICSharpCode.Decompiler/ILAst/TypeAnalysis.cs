@@ -1044,7 +1044,10 @@ namespace ICSharpCode.Decompiler.ILAst
 			TypeReference leftPreferred = DoInferTypeForExpression(left, expectedType);
 			if (leftPreferred is PointerType) {
 				left.InferredType = left.ExpectedType = leftPreferred;
-				InferTypeForExpression(right, null);
+				TypeReference rightPreferred = InferTypeForExpression(right, null);
+				// subtracting two pointers is not a pointer
+				if (rightPreferred is PointerType)
+					return typeSystem.IntPtr;
 				return leftPreferred;
 			}
 			if (IsEnum(leftPreferred)) {
