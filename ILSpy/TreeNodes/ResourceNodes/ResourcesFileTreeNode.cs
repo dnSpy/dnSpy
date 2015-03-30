@@ -128,7 +128,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				if (null != smartOutput) {
 					smartOutput.AddUIElement(
 						delegate {
-							var textView = MainWindow.Instance.ActiveTextView;
+							var textView = options.DecompilerTextView;
 							if (textView != null)
 								return new ResourceStringTable(stringTableEntries, textView);
 							return new TextBlock { Text = "no active tab!" };
@@ -143,7 +143,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				if (null != smartOutput) {
 					smartOutput.AddUIElement(
 						delegate {
-							var textView = MainWindow.Instance.ActiveTextView;
+							var textView = options.DecompilerTextView;
 							if (textView != null)
 								return new ResourceObjectTable(otherEntries, textView);
 							return new TextBlock { Text = "no active tab!" };

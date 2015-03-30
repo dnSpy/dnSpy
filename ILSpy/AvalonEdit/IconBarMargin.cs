@@ -101,7 +101,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 						if (cm == null || cm.Count == 0 || !cm.ContainsKey(((BreakpointBookmark)bm).MethodKey))
 							continue;
 					}
-					int line = bm.LineNumber;
+					int line = bm.GetLineNumber(decompilerTextView);
 					List<IBookmark> list;
 					if (!bookmarkDict.TryGetValue(line, out list))
 						bookmarkDict[line] = list = new List<IBookmark>();
@@ -109,7 +109,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				}
 				
 				foreach (var bm in manager.Bookmarks) {
-					int line = bm.LineNumber;
+					int line = BookmarkBase.GetLineNumber(bm, decompilerTextView);
 					List<IBookmark> list;
 					if (!bookmarkDict.TryGetValue(line, out list))
 						bookmarkDict[line] = list = new List<IBookmark>();
@@ -151,7 +151,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			var cm = decompilerTextView.CodeMappings;
 			BookmarkBase result = null;
 			foreach (BookmarkBase bm in BookmarkManager.Bookmarks) {
-				if (bm.LineNumber != line)
+				if (bm.GetLineNumber(decompilerTextView) != line)
 					continue;
 				if (bm is BreakpointBookmark) {
 					if (cm == null || cm.Count == 0 || !cm.ContainsKey(((BreakpointBookmark)bm).MethodKey))
@@ -162,7 +162,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 					return result;
 			}
 			
-			return manager.Bookmarks.FirstOrDefault(b => b.LineNumber == line);
+			return manager.Bookmarks.FirstOrDefault(b => BookmarkBase.GetLineNumber(b, decompilerTextView) == line);
 		}
 		
 		public int GetLineFromMousePosition(MouseEventArgs e)
@@ -241,6 +241,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		
 		void SyncBookmarks()
 		{
+			if (MainWindow.Instance.ActiveTextView != decompilerTextView)
+				return;
 			var storage = decompilerTextView.CodeMappings;
 			if (storage != null && storage.Count != 0) {
 				for (int i = BookmarkManager.Bookmarks.Count - 1; i >= 0; --i) {

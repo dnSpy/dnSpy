@@ -66,21 +66,14 @@ namespace ICSharpCode.ILSpy
 				}
 			}
 
-			var tabs = doc.Element("Tabs");
-			if (tabs == null) {
+			var groups = doc.Element("TabGroups");
+			if (groups == null) {
 				this.TabsFound = false;
-				this.SavedTabStates = new SavedTabState[0];
-				this.ActiveTabIndex = -1;
+				this.SavedTabGroupsState = new SavedTabGroupsState();
 			}
 			else {
 				this.TabsFound = true;
-				this.ActiveTabIndex = FromString((string)tabs.Attribute("index"), -1);
-
-				var list = new List<SavedTabState>();
-				foreach (var child in tabs.Elements("Tab"))
-					list.Add(SavedTabState.FromXml(child));
-
-				this.SavedTabStates = list.ToArray();
+				this.SavedTabGroupsState = SavedTabGroupsState.FromXml(groups);
 			}
 		}
 		
@@ -105,8 +98,7 @@ namespace ICSharpCode.ILSpy
 		public string ThemeName;
 		public HashSet<string> IgnoredWarnings = new HashSet<string>();
 
-		public SavedTabState[] SavedTabStates;
-		public int ActiveTabIndex;
+		public SavedTabGroupsState SavedTabGroupsState;
 		public bool TabsFound;
 
 		public bool WordWrap {
@@ -156,13 +148,8 @@ namespace ICSharpCode.ILSpy
 			doc.Add(new XElement("ThemeName", ToString(this.ThemeName)));
 			doc.Add(new XElement("IgnoredWarnings", IgnoredWarnings.Select(id => new XElement("Warning", id))));
 
-			if (ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.RestoreTabsAtStartup) {
-				var tabs = new XElement("Tabs");
-				doc.Add(tabs);
-				tabs.SetAttributeValue("index", ActiveTabIndex);
-				foreach (var savedState in SavedTabStates)
-					tabs.Add(savedState.ToXml(new XElement("Tab")));
-			}
+			if (ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.RestoreTabsAtStartup)
+				doc.Add(SavedTabGroupsState.ToXml(new XElement("TabGroups")));
 			
 			ILSpySettings.SaveSettings(doc);
 		}

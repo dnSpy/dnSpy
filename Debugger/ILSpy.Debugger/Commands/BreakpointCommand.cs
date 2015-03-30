@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
@@ -19,16 +20,14 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportBookmarkActionEntry(Icon = "images/Breakpoint.png", Category="Debug")]
 	public class BreakpointCommand : IBookmarkActionEntry
 	{
-		public bool IsEnabled()
+		public bool IsEnabled(DecompilerTextView textView)
 		{
-			return MainWindow.Instance.ActiveTextView != null;
+			return true;
 		}
 		
-		public void Execute(int line)
+		public void Execute(DecompilerTextView textView, int line)
 		{
-			var textView = MainWindow.Instance.ActiveTextView;
-			if (textView != null)
-				BreakpointHelper.Toggle(textView, line, 0);
+			BreakpointHelper.Toggle(textView, line, 0);
 		}
 	}
 
@@ -50,10 +49,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public static List<BreakpointBookmark> GetBreakpointBookmarks(DecompilerTextView textView, int line, int column)
 		{
-			return GetBreakpointBookmarks(Find(textView, line, column));
+			return GetBreakpointBookmarks(textView, Find(textView, line, column));
 		}
 
-		static List<BreakpointBookmark> GetBreakpointBookmarks(IList<SourceCodeMapping> mappings)
+		static List<BreakpointBookmark> GetBreakpointBookmarks(DecompilerTextView textView, IList<SourceCodeMapping> mappings)
 		{
 			var list = new List<BreakpointBookmark>();
 			if (mappings.Count == 0)
@@ -63,7 +62,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				var bpm = bm as BreakpointBookmark;
 				if (bpm == null)
 					continue;
-				if (bpm.Location != mapping.StartLocation || bpm.EndLocation != mapping.EndLocation)
+				TextLocation location, endLocation;
+				if (!bpm.GetLocation(textView, out location, out endLocation))
+					continue;
+				if (location != mapping.StartLocation || endLocation != mapping.EndLocation)
 					continue;
 
 				list.Add(bpm);
@@ -75,7 +77,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		public static void Toggle(DecompilerTextView textView, int line, int column)
 		{
 			var bps = Find(textView, line, column);
-			var bpms = GetBreakpointBookmarks(bps);
+			var bpms = GetBreakpointBookmarks(textView, bps);
 			if (bpms.Count > 0) {
 				foreach (var bpm in bpms)
 					BookmarkManager.RemoveMark(bpm);

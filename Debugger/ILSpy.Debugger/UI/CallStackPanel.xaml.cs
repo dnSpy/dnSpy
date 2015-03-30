@@ -294,7 +294,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 				return;
 			var textView = MainWindow.Instance.SafeActiveTextView;
 			if (DebugUtils.JumpTo(textView, mr, item.MethodKey, item.ILOffset))
-				textView.TextEditor.TextArea.Focus();
+				MainWindow.Instance.SetTextEditorFocus(textView);
         }
 
 		void view_KeyDown(object sender, KeyEventArgs e)
@@ -332,8 +332,11 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 			get { return Brushes.Black; }
 		}
 	}
-	
-    [ExportMainMenuCommand(Menu="_Debug", Header="_Show Call Stack", MenuCategory="View", MenuOrder=9)]
+
+	[ExportMainMenuCommand(Menu = "_Debug",
+						   Header = "_Show Call Stack",
+						   MenuCategory = "View",
+						   MenuOrder = 4400)]
     public class CallstackPanelcommand : SimpleCommand
     {
         public override void Execute(object parameter)

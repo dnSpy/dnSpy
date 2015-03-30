@@ -4,7 +4,9 @@
 using System;
 using System.Windows.Input;
 using System.Windows.Media;
+using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.AvalonEdit;
+using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
@@ -20,6 +22,14 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		TextLocation location;
 		TextLocation endLocation;
 
+		public static int GetLineNumber(IBookmark b, DecompilerTextView textView)
+		{
+			var bm = b as BookmarkBase;
+			if (bm != null)
+				return bm.GetLineNumber(textView);
+			return b.LineNumber;
+		}
+
 		protected void Modified()
 		{
 			if (OnModified != null)
@@ -27,6 +37,10 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		}
 		public event EventHandler OnModified;
 		
+		/// <summary>
+		/// Start location. DON'T USE this if you need an exact location. This is valid in ONE of
+		/// the active text views. Use <see cref="GetLocation"/> instead.
+		/// </summary>
 		public TextLocation Location {
 			get { return location; }
 			set {
@@ -37,6 +51,10 @@ namespace ICSharpCode.ILSpy.Bookmarks
 			}
 		}
 		
+		/// <summary>
+		/// End location. DON'T USE this if you need an exact location. This is valid in ONE of
+		/// the active text views. Use <see cref="GetLocation"/> instead.
+		/// </summary>
 		public TextLocation EndLocation {
 			get { return endLocation; }
 			set {
@@ -53,6 +71,10 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		
 		public IMemberRef MemberReference { get; private set; }
 		
+		/// <summary>
+		/// Line number. DON'T USE this if you need an exact location. This is valid in ONE of
+		/// the active text views. Use <see cref="GetLineNumber"/> instead.
+		/// </summary>
 		public int LineNumber {
 			get { return location.Line; }
 		}
@@ -76,10 +98,16 @@ namespace ICSharpCode.ILSpy.Bookmarks
 				return true;
 			}
 		}
+
+		public uint ILOffset {
+			get { return ilOffset; }
+		}
+		readonly uint ilOffset;
 		
-		public BookmarkBase(IMemberRef member, TextLocation location, TextLocation endLocation)
+		public BookmarkBase(IMemberRef member, uint ilOffset, TextLocation location, TextLocation endLocation)
 		{
 			this.MemberReference = member;
+			this.ilOffset = ilOffset;
 			this.Location = location;
 			this.EndLocation = endLocation;
 		}
@@ -96,8 +124,50 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		{
 		}
 
-		protected ITextMarker CreateMarkerInternal(ITextMarkerService markerService)
+		/// <summary>
+		/// Gets line number. Returns -1 if it's unknown
+		/// </summary>
+		/// <param name="textView"></param>
+		/// <returns></returns>
+		public int GetLineNumber(DecompilerTextView textView)
 		{
+			TextLocation location, endLocation;
+			if (GetLocation(textView, out location, out endLocation))
+				return location.Line;
+			return -1;
+		}
+
+		public TextLocation GetLocation(DecompilerTextView textView)
+		{
+			TextLocation location, endLocation;
+			if (GetLocation(textView, out location, out endLocation))
+				return location;
+			return new TextLocation();
+		}
+
+		public bool GetLocation(DecompilerTextView textView, out TextLocation location, out TextLocation endLocation)
+		{
+			var cm = textView == null ? null : textView.CodeMappings;
+			MemberMapping mapping;
+			if (cm == null || !cm.TryGetValue(new MethodKey(MemberReference), out mapping)) {
+				location = endLocation = new TextLocation();
+				return false;
+			}
+
+			bool isMatch;
+			SourceCodeMapping map = mapping.GetInstructionByOffset(ilOffset, out isMatch);
+
+			location = map.StartLocation;
+			endLocation = map.EndLocation;
+			return true;
+		}
+
+		protected ITextMarker CreateMarkerInternal(ITextMarkerService markerService, DecompilerTextView textView)
+		{
+			TextLocation location, endLocation;
+			if (!GetLocation(textView, out location, out endLocation))
+				throw new InvalidOperationException();
+
 			var line = markerService.TextView.Document.GetLineByNumber(location.Line);
 			var endLine = markerService.TextView.Document.GetLineByNumber(endLocation.Line);
 			int startOffset = line.Offset + location.Column - 1;

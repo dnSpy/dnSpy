@@ -23,6 +23,7 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 using ICSharpCode.ILSpy.Bookmarks;
+using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy.AvalonEdit
 {
@@ -64,8 +65,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 	
 	public interface IBookmarkActionEntry
 	{
-		bool IsEnabled();
-		void Execute(int line);
+		bool IsEnabled(DecompilerTextView textView);
+		void Execute(DecompilerTextView textView, int line);
 	}
 	
 	public interface IBookmarkActionMetadata
@@ -97,14 +98,15 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		/// <summary>
 		/// Enables extensible context menu support for the specified icon margin.
 		/// </summary>
-		public static void Add(IconBarMargin margin)
+		public static void Add(IconBarMargin margin, DecompilerTextView textView)
 		{
-			var provider = new IconMarginActionsProvider(margin);
+			var provider = new IconMarginActionsProvider(margin, textView);
 			margin.MouseUp += provider.HandleMouseEvent;
 			margin.ContextMenu = new ContextMenu();
 		}
 		
 		readonly IconBarMargin margin;
+		readonly DecompilerTextView textView;
 
 		// Prevent big memory leaks (text editor) because the data is put into some MEF data structure.
 		// All created instances in this class are shared so this one can be shared as well.
@@ -124,9 +126,10 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			public Lazy<IBookmarkActionEntry, IBookmarkActionMetadata>[] actionEntries = null;
 		}
 		
-		private IconMarginActionsProvider(IconBarMargin margin)
+		private IconMarginActionsProvider(IconBarMargin margin, DecompilerTextView textView)
 		{
 			this.margin = margin;
+			this.textView = textView;
 		}
 		
 		void HandleMouseEvent(object sender, MouseButtonEventArgs e)
@@ -138,8 +141,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 					foreach (var entryPair in category) {
 						IBookmarkActionEntry entry = entryPair.Value;
 
-						if (entryPair.Value.IsEnabled()) {
-							entry.Execute(line);
+						if (entryPair.Value.IsEnabled(textView)) {
+							entry.Execute(textView, line);
 						}
 					}
 				}
@@ -157,7 +160,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			
 			if (e.ChangedButton == MouseButton.Right) {
 				// check if we are on a Member
-				var bookmark = bookmarks.FirstOrDefault(b => b.LineNumber == line);
+				var bookmark = bookmarks.FirstOrDefault(b => BookmarkBase.GetLineNumber(b, textView) == line);
 				if (bookmark == null) {
 					// don't show the menu
 					e.Handled = true;

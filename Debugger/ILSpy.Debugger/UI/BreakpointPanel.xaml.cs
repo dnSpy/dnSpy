@@ -144,8 +144,8 @@ namespace ICSharpCode.ILSpy.Debugger.UI
             if (null == bm)
                 return;
 			var textView = MainWindow.Instance.SafeActiveTextView;
-			if (DebugUtils.JumpToReference(textView, bm.MemberReference, () => bm.Location))
-				textView.TextEditor.TextArea.Focus();
+			if (DebugUtils.JumpToReference(textView, bm.MemberReference, () => bm.GetLocation(textView)))
+				MainWindow.Instance.SetTextEditorFocus(textView);
 		}
         
         void view_KeyDown(object sender, KeyEventArgs e)
@@ -173,7 +173,10 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		}
     }
 
-    [ExportMainMenuCommand(Menu="_Debug", Header="Show _Breakpoints", MenuCategory="Breakpoints", MenuOrder=2)]
+	[ExportMainMenuCommand(Menu = "_Debug",
+						   Header = "Show _Breakpoints",
+						   MenuCategory = "Breakpoints",
+						   MenuOrder = 4320)]
     public class BookmarkManagerPanelCommand : SimpleCommand
     {
         public override void Execute(object parameter)

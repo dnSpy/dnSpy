@@ -675,16 +675,10 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 
 		void debuggedProcess_ModulesAdded(object sender, ModuleEventArgs e)
 		{
-			foreach (var bookmark in DebuggerService.Breakpoints) {
-				var breakpoint =
-					debugger.Breakpoints.FirstOrDefault(
-						b => b.Location == bookmark.Location && b.EndLocation == bookmark.EndLocation &&
-							(b as ILBreakpoint).MethodKey.IsSameModule(e.Module.FullPath) &&
-							(b as ILBreakpoint).MethodKey == bookmark.MethodKey);
-				if (breakpoint == null)
-					continue;
-				
-				breakpoint.SetBreakpoint(e.Module);
+			foreach (var bp in debugger.Breakpoints) {
+				var breakpoint = bp as ILBreakpoint;
+				if (breakpoint != null && breakpoint.MethodKey.IsSameModule(e.Module.FullPath))
+					breakpoint.SetBreakpoint(e.Module);
 			}
 		}
 		

@@ -55,7 +55,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		public event EventHandler IsEnabledChanged;
 		
 		public BreakpointBookmark(IMemberRef member, TextLocation location, TextLocation endLocation, ILRange range, bool isEnabled = true)
-			: base(member, location, endLocation)
+			: base(member, range.From, location, endLocation)
 		{
 			this.MethodKey = new MethodKey(member);
 			this.ILRange = range;
@@ -85,7 +85,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		
 		public override ITextMarker CreateMarker(ITextMarkerService markerService, DecompilerTextView textView)
 		{
-			ITextMarker marker = CreateMarkerInternal(markerService);
+			ITextMarker marker = CreateMarkerInternal(markerService, textView);
 			var cm = textView == null ? null : textView.CodeMappings;
 			marker.ZOrder = ZOrder;
 			marker.HighlightingColor = () => IsEnabled ? HighlightingColor : DisabledHighlightingColor;

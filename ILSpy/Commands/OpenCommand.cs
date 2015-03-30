@@ -22,7 +22,7 @@ using System.Windows.Input;
 namespace ICSharpCode.ILSpy
 {
 	[ExportToolbarCommand(ToolTip = "Open (Ctrl+O)", ToolbarIcon = "Images/Open.png", ToolbarCategory = "Open", ToolbarOrder = 0)]
-	[ExportMainMenuCommand(Menu = "_File", Header = "_Open", MenuIcon = "Images/Open.png", MenuCategory = "Open", MenuOrder = 0)]
+	[ExportMainMenuCommand(Menu = "_File", Header = "_Open", MenuIcon = "Images/Open.png", MenuCategory = "Open", MenuOrder = 1100)]
 	sealed class OpenCommand : CommandWrapper
 	{
 		public OpenCommand()

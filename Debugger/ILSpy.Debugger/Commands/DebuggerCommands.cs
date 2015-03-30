@@ -729,33 +729,30 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			DebuggerService.DebugStarted += delegate { UpdateState(); };
 			DebuggerService.DebugStopped += delegate { UpdateState(); };
 			DebuggerService.ProcessRunningChanged += delegate { UpdateState(); };
-			UpdateState();
+			cachedCanExecuteState = CanExecuteInternal();
+			cachedIsVisibleState = IsVisibleInternal;
 		}
 
 		protected void UpdateState()
 		{
 			var newState = CanExecuteInternal();
 			var oldState = cachedCanExecuteState;
-			if (oldState == null || oldState.Value != newState) {
+			if (oldState.Value != newState) {
 				cachedCanExecuteState = newState;
 
-				// Don't notify when we've been called from the ctor
-				if (oldState != null && CanExecuteChanged != null)
+				if (CanExecuteChanged != null)
 					CanExecuteChanged(this, EventArgs.Empty);
 			}
 
 			newState = IsVisibleInternal;
 			oldState = cachedIsVisibleState;
-			if (oldState == null || oldState.Value != newState) {
+			if (oldState.Value != newState) {
 				cachedIsVisibleState = newState;
 
-				// Don't notify when we've been called from the ctor
-				if (oldState != null) {
-					if (this is IToolbarCommand)
-						MainWindow.Instance.UpdateToolbar();
-					if (this is IMainMenuCommand)
-						MainWindow.Instance.UpdateMainSubMenu("_Debug");
-				}
+				if (this is IToolbarCommand)
+					MainWindow.Instance.UpdateToolbar();
+				if (this is IMainMenuCommand)
+					MainWindow.Instance.UpdateMainSubMenu("_Debug");
 			}
 		}
 
@@ -850,7 +847,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuIcon = "Images/application-x-executable.png",
 	                       MenuCategory = "Start",
 	                       Header = "Debug an _Executable",
-	                       MenuOrder = 0)]
+	                       MenuOrder = 4000)]
 	internal sealed class DebugExecutableCommand : DebuggerCommand, IToolbarCommand, IMainMenuCommand
 	{
 		public DebugExecutableCommand() : base(false)
@@ -866,7 +863,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportMainMenuCommand(Menu = "_Debug",
 	                       MenuCategory = "Start",
 	                       Header = "Attach to _Process...",
-	                       MenuOrder = 1)]
+	                       MenuOrder = 4010)]
 	internal sealed class AttachCommand : DebuggerCommand, IMainMenuCommand
 	{
 		public AttachCommand() : base(false)
@@ -888,7 +885,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuCategory = "Debug1",
 	                       Header = "_Continue",
 	                       InputGestureText = "F5",
-	                       MenuOrder = 0)]
+	                       MenuOrder = 4100)]
 	internal sealed class ContinueDebuggingCommand : DebuggerCommand, IToolbarCommand, IMainMenuCommand
 	{
 		public ContinueDebuggingCommand() : base(true, true)
@@ -910,7 +907,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 						   MenuCategory = "Debug1",
 						   Header = "Brea_k",
 						   InputGestureText = "Ctrl+Break",
-						   MenuOrder = 1)]
+						   MenuOrder = 4110)]
 	internal sealed class BreakDebuggingCommand : DebuggerCommand, IToolbarCommand, IMainMenuCommand
 	{
 		public BreakDebuggingCommand() : base(true, false)
@@ -932,7 +929,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 						   MenuCategory = "Debug1",
 						   Header = "Stop D_ebugging",
 						   InputGestureText = "Shift+F5",
-						   MenuOrder = 2)]
+						   MenuOrder = 4120)]
 	internal sealed class StopDebuggingCommand : DebuggerCommand, IToolbarCommand, IMainMenuCommand
 	{
 		public StopDebuggingCommand() : base(true, null)
@@ -954,7 +951,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 						   MenuCategory = "Debug1",
 						   Header = "_Restart",
 						   InputGestureText = "Ctrl+Shift+F5",
-						   MenuOrder = 4)]
+						   MenuOrder = 4140)]
 	internal sealed class RestartDebuggingCommand : DebuggerCommand, IToolbarCommand, IMainMenuCommand
 	{
 		public RestartDebuggingCommand() : base(true, null)
@@ -976,7 +973,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 						   MenuCategory = "Debug2",
 	                       Header = "Step _Into",
 	                       InputGestureText = "F11",
-	                       MenuOrder = 0)]
+	                       MenuOrder = 4200)]
 	internal sealed class StepIntoCommand : DebuggerCommand, IToolbarCommand, IMainMenuCommand
 	{
 		public StepIntoCommand() : base(true, true)
@@ -998,7 +995,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 						   MenuCategory = "Debug2",
 	                       Header = "Step _Over",
 	                       InputGestureText = "F10",
-	                       MenuOrder = 1)]
+	                       MenuOrder = 4210)]
 	internal sealed class StepOverCommand : DebuggerCommand, IToolbarCommand, IMainMenuCommand
 	{
 		public StepOverCommand() : base(true, true)
@@ -1020,7 +1017,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 						   MenuCategory = "Debug2",
 	                       Header = "Step Ou_t",
 						   InputGestureText = "Shift+F11",
-	                       MenuOrder = 2)]
+	                       MenuOrder = 4220)]
 	internal sealed class StepOutCommand : DebuggerCommand, IToolbarCommand, IMainMenuCommand
 	{
 		public StepOutCommand() : base(true, true)
@@ -1036,7 +1033,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportMainMenuCommand(Menu = "_Debug",
 						   MenuCategory = "Debug1",
 	                       Header = "Det_ach",
-	                       MenuOrder = 3)]
+	                       MenuOrder = 4130)]
 	internal sealed class DetachCommand : DebuggerCommand, IMainMenuCommand
 	{
 		public DetachCommand() : base(true)
@@ -1054,7 +1051,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 						   MenuCategory = "Breakpoints",
 						   Header = "_Delete All Breakpoints",
 						   InputGestureText = "Ctrl+Shift+F9",
-	                       MenuOrder = 1)]
+	                       MenuOrder = 4310)]
 	internal sealed class RemoveBreakpointsCommand : DebuggerCommand, IMainMenuCommand
 	{
 		public RemoveBreakpointsCommand() : base(null)
@@ -1085,7 +1082,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	                       MenuCategory = "Breakpoints",
 	                       Header = "To_ggle Breakpoint",
 						   InputGestureText = "F9",
-	                       MenuOrder = 0)]
+	                       MenuOrder = 4300)]
 	internal sealed class ToggleBreakpointCommand : DebuggerCommand, IMainMenuCommand
 	{
 		public ToggleBreakpointCommand() : base(null)

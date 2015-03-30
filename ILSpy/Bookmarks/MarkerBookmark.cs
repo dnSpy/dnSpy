@@ -13,7 +13,7 @@ namespace ICSharpCode.ILSpy.Bookmarks
 {
 	public abstract class MarkerBookmark : BookmarkBase
 	{
-		public MarkerBookmark(IMemberRef member, TextLocation location, TextLocation endLocation) : base(member, location, endLocation)
+		public MarkerBookmark(IMemberRef member, uint ilOffset, TextLocation location, TextLocation endLocation) : base(member, ilOffset, location, endLocation)
 		{
 			this.Markers = new Dictionary<object, ITextMarker>();
 		}

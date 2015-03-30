@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Options;
+using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy
 {
@@ -60,6 +61,11 @@ namespace ICSharpCode.ILSpy
 	/// </summary>
 	public class DecompilationOptions : IEquatable<DecompilationOptions>
 	{
+		/// <summary>
+		/// Gets the active text view
+		/// </summary>
+		public DecompilerTextView DecompilerTextView { get; set; }
+
 		/// <summary>
 		/// Gets whether a full decompilation (all members recursively) is desired.
 		/// If this option is false, language bindings are allowed to show the only headers of the decompiled element's children.

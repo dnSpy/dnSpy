@@ -132,7 +132,7 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.TextArea.TextView.VisualLinesChanged += delegate { iconMargin.InvalidateVisual(); };
 			
 			// Bookmarks context menu
-			IconMarginActionsProvider.Add(iconMargin);
+			IconMarginActionsProvider.Add(iconMargin, this);
 		}
 
 		void DecompilerTextView_Loaded(object sender, RoutedEventArgs e)
@@ -425,7 +425,7 @@ namespace ICSharpCode.ILSpy.TextView
 			if (state != null)
 				EditorPositionState = state.EditorPositionState;
 			
-			if (IsVisible && DisplaySettingsPanel.CurrentDisplaySettings.AutoFocusTextView)
+			if (MainWindow.Instance.ActiveTextView == this && IsVisible && DisplaySettingsPanel.CurrentDisplaySettings.AutoFocusTextView)
 				textEditor.Focus();
 
 			var cm = new Dictionary<MethodKey, MemberMapping>();
@@ -743,7 +743,7 @@ namespace ICSharpCode.ILSpy.TextView
 				GoToMousePosition();
 				MainWindow.Instance.RecordHistory(this);
 				MarkLocals(referenceSegment);
-				textEditor.TextArea.Focus();
+				MainWindow.Instance.SetTextEditorFocus(this);
 				textEditor.Select(pos, 0);
 				textEditor.ScrollTo(textEditor.TextArea.Caret.Line, textEditor.TextArea.Caret.Column);
 				Dispatcher.Invoke(DispatcherPriority.Background, new Action(

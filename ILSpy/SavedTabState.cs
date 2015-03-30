@@ -4,7 +4,67 @@ using System.Xml.Linq;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy {
+namespace ICSharpCode.ILSpy
+{
+	public class SavedTabGroupsState
+	{
+		public List<SavedTabGroupState> Groups = new List<SavedTabGroupState>();
+		public int Index;
+		public bool IsHorizontal;
+
+		public XElement ToXml(XElement xml)
+		{
+			xml.SetAttributeValue("index", Index);
+			xml.SetAttributeValue("is-horizontal", IsHorizontal);
+
+			foreach (var group in Groups)
+				xml.Add(group.ToXml(new XElement("TabGroup")));
+
+			return xml;
+		}
+
+		public static SavedTabGroupsState FromXml(XElement child)
+		{
+			var savedState = new SavedTabGroupsState();
+
+			savedState.Index = (int)child.Attribute("index");
+			savedState.IsHorizontal = (bool)child.Attribute("is-horizontal");
+
+			foreach (var group in child.Elements("TabGroup"))
+				savedState.Groups.Add(SavedTabGroupState.FromXml(group));
+
+			return savedState;
+		}
+	}
+
+	public class SavedTabGroupState
+	{
+		public List<SavedTabState> Tabs = new List<SavedTabState>();
+		public int Index;
+
+		public XElement ToXml(XElement xml)
+		{
+			xml.SetAttributeValue("index", Index);
+
+			foreach (var tab in Tabs)
+				xml.Add(tab.ToXml(new XElement("Tab")));
+
+			return xml;
+		}
+
+		public static SavedTabGroupState FromXml(XElement child)
+		{
+			var savedState = new SavedTabGroupState();
+
+			savedState.Index = (int)child.Attribute("index");
+
+			foreach (var tab in child.Elements("Tab"))
+				savedState.Tabs.Add(SavedTabState.FromXml(tab));
+
+			return savedState;
+		}
+	}
+
 	public class SavedTabState
 	{
 		public List<FullNodePathName> Paths = new List<FullNodePathName>();

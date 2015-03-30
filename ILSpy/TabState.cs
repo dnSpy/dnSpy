@@ -14,6 +14,8 @@ namespace ICSharpCode.ILSpy
 		public abstract string Header { get; }
 		public TabItem TabItem;
 
+		internal TabManagerBase Owner;
+
 		const int MAX_HEADER_LENGTH = 40;
 		string ShortHeader {
 			get {
@@ -29,89 +31,13 @@ namespace ICSharpCode.ILSpy
 			var tabItem = new TabItem();
 			TabItem = tabItem;
 			tabItem.Tag = this;
-			tabItem.AllowDrop = true;
-
-			tabItem.MouseRightButtonDown += tabItem_MouseRightButtonDown;
-			tabItem.PreviewMouseDown += tabItem_PreviewMouseDown;
-			tabItem.DragOver += tabItem_DragOver;
-			tabItem.Drop += tabItem_Drop;
 		}
 
 		public static TabState GetTabState(FrameworkElement elem)
 		{
-			return (TabState)elem.Tag;
-		}
-
-		void tabItem_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-		{
-			var tabControl = TabItem.Parent as TabControl;
-			if (tabControl != null)
-				tabControl.SelectedItem = TabItem;
-		}
-
-		void tabItem_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-		{
-			var tabItem = sender as TabItem;
-			if (tabItem == null || tabItem != TabItem)
-				return;
-
-			var mousePos = e.GetPosition(tabItem);
-			var tabSize = new Point(tabItem.ActualWidth, tabItem.ActualHeight);
-			if (mousePos.X >= tabSize.X || mousePos.Y > tabSize.Y)
-				return;
-
-			var tabControl = tabItem.Parent as TabControl;
-			if (tabControl == null)
-				return;
-
-			if (e.LeftButton == MouseButtonState.Pressed) {
-				tabControl.SelectedItem = tabItem;//TODO: Doesn't work immediately!
-				DragDrop.DoDragDrop(tabItem, tabItem, DragDropEffects.Move);
-			}
-		}
-
-		void tabItem_DragOver(object sender, DragEventArgs e)
-		{
-			bool canDrag = false;
-
-			if (e.Data.GetDataPresent(typeof(TabItem))) {
-				var tabItem = (TabItem)e.Data.GetData(typeof(TabItem));
-				//TODO: Moving to another tab control is not supported at the moment (hasn't been tested)
-				if (tabItem.Parent == TabItem.Parent)
-					canDrag = true;
-			}
-
-			e.Effects = canDrag ? DragDropEffects.Move : DragDropEffects.None;
-			e.Handled = true;
-		}
-
-		void tabItem_Drop(object sender, DragEventArgs e)
-		{
-			if (!e.Data.GetDataPresent(typeof(TabItem)))
-				return;
-			var target = sender as TabItem;
-			var source = (TabItem)e.Data.GetData(typeof(TabItem));
-			if (target == null || source == null || target == source)
-				return;
-			var tabControlTarget = target.Parent as TabControl;
-			if (tabControlTarget == null)
-				return;
-			var tabControlSource = source.Parent as TabControl;
-			if (tabControlSource == null)
-				return;
-
-			//TODO: Remove MainWindow.Instance reference
-			var old = MainWindow.Instance.tabManager_SelectionChanged_dont_select;
-			MainWindow.Instance.tabManager_SelectionChanged_dont_select = true;
-			try {
-				int index = tabControlTarget.Items.IndexOf(target);
-				tabControlSource.Items.Remove(source);
-				tabControlTarget.Items.Insert(index, source);
-				tabControlTarget.SelectedItem = source;
-			}
-			finally {
-				MainWindow.Instance.tabManager_SelectionChanged_dont_select = old;
-			}
+			if (elem == null)
+				return null;
+			return elem.Tag as TabState;
 		}
 
 		public void InitializeHeader()
@@ -164,7 +90,9 @@ namespace ICSharpCode.ILSpy
 
 		public static TabStateDecompile GetTabStateDecompile(FrameworkElement elem)
 		{
-			return (TabStateDecompile)elem.Tag;
+			if (elem == null)
+				return null;
+			return elem.Tag as TabStateDecompile;
 		}
 
 		public TabStateDecompile(Language language)

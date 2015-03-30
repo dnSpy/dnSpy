@@ -210,7 +210,7 @@
 					Focusable="False"
 					Visibility="{Binding Visibility, ElementName=topPane}" />
 				
-				<TabControl Name="tabControl" Grid.Row="3" />
+				<ContentPresenter Name="tabGroupsContentPresenter" Grid.Row="3" />
 				
 				<GridSplitter
 					Grid.ZIndex="1"

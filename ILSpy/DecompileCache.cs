@@ -155,6 +155,9 @@ namespace ICSharpCode.ILSpy
 
 		public void Cache(Language language, ILSpyTreeNode[] treeNodes, DecompilationOptions options, AvalonEditTextOutput textOutput)
 		{
+			// Don't cache it if it has UI elements. ResourcesFileTreeNode depends on it.
+			if (textOutput.UIElements.Count > 0)
+				return;
 			lock (lockObj) {
 				var key = new Key(language, treeNodes, options);
 				cachedItems[key] = new Item(textOutput);

@@ -138,6 +138,7 @@
     </Compile>
     <Compile Include="SavedTabState.cs" />
     <Compile Include="TabContextMenuEntries.cs" />
+    <Compile Include="TabGroupsManager.cs" />
     <Compile Include="TabManager.cs" />
     <Compile Include="TabState.cs" />
     <Compile Include="TreeNodes\CopyTokenContextMenuEntry.cs" />

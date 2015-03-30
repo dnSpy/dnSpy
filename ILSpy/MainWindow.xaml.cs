@@ -34,6 +34,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Controls;
@@ -83,7 +84,7 @@ namespace ICSharpCode.ILSpy
 
 		internal Theme Theme { get; private set; }
 
-		readonly TabManager<TabStateDecompile> tabManager;
+		readonly TabGroupsManager<TabStateDecompile> tabGroupsManager;
 
 		internal TabStateDecompile SafeActiveTabState {
 			get {
@@ -93,13 +94,12 @@ namespace ICSharpCode.ILSpy
 
 				tabState = CreateNewTabState();
 
-				var old = tabManager_SelectionChanged_dont_select;
+				var old = IgnoreSelectionChanged_HACK(tabState);
 				try {
-					tabManager_SelectionChanged_dont_select = true;
-					tabManager.SetSelectedTab(tabState);
+					tabGroupsManager.ActiveTabGroup.SetSelectedTab(tabState);
 				}
 				finally {
-					tabManager_SelectionChanged_dont_select = old;
+					RestoreIgnoreSelectionChanged_HACK(tabState, old);
 				}
 
 				return tabState;
@@ -107,11 +107,21 @@ namespace ICSharpCode.ILSpy
 		}
 
 		internal TabStateDecompile ActiveTabState {
-			get { return tabManager.ActiveTabState; }
+			get { return tabGroupsManager.ActiveTabGroup.ActiveTabState; }
 		}
 
 		IEnumerable<TabStateDecompile> AllTabStates {
-			get { return tabManager.AllTabStates; }
+			get { return tabGroupsManager.AllTabStates; }
+		}
+
+		IEnumerable<TabStateDecompile> AllVisibleTabStates {
+			get {
+				foreach (var tabManager in tabGroupsManager.AllTabGroups) {
+					var tabState = tabManager.ActiveTabState;
+					if (tabState != null)
+						yield return tabState;
+				}
+			}
 		}
 
 		public DecompilerTextView SafeActiveTextView {
@@ -122,6 +132,13 @@ namespace ICSharpCode.ILSpy
 			get {
 				var tabState = ActiveTabState;
 				return tabState == null ? null : tabState.TextView;
+			}
+		}
+
+		public IEnumerable<DecompilerTextView> AllVisibleTextViews {
+			get {
+				foreach (var tabState in AllVisibleTabStates)
+					yield return tabState.TextView;
 			}
 		}
 
@@ -152,11 +169,17 @@ namespace ICSharpCode.ILSpy
 				leftColumn.Width = new GridLength(sessionSettings.LeftColumnWidth, GridUnitType.Pixel);
 			sessionSettings.FilterSettings.PropertyChanged += filterSettings_PropertyChanged;
 			
+			tabGroupsManager = new TabGroupsManager<TabStateDecompile>(tabGroupsContentPresenter, tabManager_OnSelectionChanged, tabManager_OnAddRemoveTabState);
+			tabGroupsManager.OnTabGroupSelected += tabGroupsManager_OnTabGroupSelected;
 			InitMainMenu();
 			InitToolbar();
-			tabManager = new TabManager<TabStateDecompile>(tabControl, tabManager_OnSelectionChanged, tabManager_OnCreateNewTabState, tabManager_OnRemoveTabState);
 			
 			this.Loaded += MainWindow_Loaded;
+		}
+
+		internal bool IsDecompilerTabControl(TabControl tabControl)
+		{
+			return tabGroupsManager.IsTabGroup(tabControl);
 		}
 
 		void sessionSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -204,22 +227,32 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		void tabManager_OnRemoveTabState(TabStateDecompile tabState)
-		{
-			if (OnDecompilerTextViewRemoved != null)
-				OnDecompilerTextViewRemoved(this, new DecompilerTextViewEventArgs(tabState.TextView));
-		}
-
-		void tabManager_OnCreateNewTabState(TabStateDecompile tabState)
+		void tabManager_OnAddRemoveTabState(TabManager<TabStateDecompile> tabManager, TabManagerAddType addType, TabStateDecompile tabState)
 		{
 			var view = tabState.TextView;
-			RemoveCommands(view);
-			view.TextEditor.TextArea.MouseRightButtonDown += delegate { view.GoToMousePosition(); };
-			view.TextEditor.WordWrap = sessionSettings.WordWrap;
-			view.TextEditor.Options.HighlightCurrentLine = sessionSettings.HighlightCurrentLine;
+			if (addType == TabManagerAddType.Add) {
+				RemoveCommands(view);
+				view.TextEditor.TextArea.MouseRightButtonDown += delegate { view.GoToMousePosition(); };
+				view.TextEditor.WordWrap = sessionSettings.WordWrap;
+				view.TextEditor.Options.HighlightCurrentLine = sessionSettings.HighlightCurrentLine;
 
-			if (OnDecompilerTextViewAdded != null)
-				OnDecompilerTextViewAdded(this, new DecompilerTextViewEventArgs(view));
+				if (OnDecompilerTextViewAdded != null)
+					OnDecompilerTextViewAdded(this, new DecompilerTextViewEventArgs(view));
+			}
+			else if (addType == TabManagerAddType.Remove) {
+				if (OnDecompilerTextViewRemoved != null)
+					OnDecompilerTextViewRemoved(this, new DecompilerTextViewEventArgs(view));
+			}
+			else if (addType == TabManagerAddType.Attach) {
+				if (OnDecompilerTextViewAdded != null)
+					OnDecompilerTextViewAdded(this, new DecompilerTextViewEventArgs(view));
+			}
+			else if (addType == TabManagerAddType.Detach) {
+				if (OnDecompilerTextViewRemoved != null)
+					OnDecompilerTextViewRemoved(this, new DecompilerTextViewEventArgs(view));
+			}
+			else
+				throw new InvalidOperationException();
 		}
 
 		public event EventHandler<DecompilerTextViewEventArgs> OnDecompilerTextViewAdded;
@@ -234,8 +267,51 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
+		public event EventHandler<TabGroupEventArgs> OnTabGroupAdded {
+			add {
+				tabGroupsManager.OnTabGroupAdded += value;
+			}
+			remove {
+				tabGroupsManager.OnTabGroupAdded -= value;
+			}
+		}
+
+		public event EventHandler<TabGroupEventArgs> OnTabGroupRemoved {
+			add {
+				tabGroupsManager.OnTabGroupRemoved += value;
+			}
+			remove {
+				tabGroupsManager.OnTabGroupRemoved -= value;
+			}
+		}
+
+		public event EventHandler<TabGroupSelectedEventArgs> OnTabGroupSelected {
+			add {
+				tabGroupsManager.OnTabGroupSelected += value;
+			}
+			remove {
+				tabGroupsManager.OnTabGroupSelected -= value;
+			}
+		}
+
+		public event EventHandler<TabGroupSwappedEventArgs> OnTabGroupSwapped {
+			add {
+				tabGroupsManager.OnTabGroupSwapped += value;
+			}
+			remove {
+				tabGroupsManager.OnTabGroupSwapped -= value;
+			}
+		}
+
+		bool IsActiveTab(TabStateDecompile tabState)
+		{
+			return tabGroupsManager.ActiveTabGroup.ActiveTabState == tabState;
+		}
+
 		void SelectTreeViewNodes(TabStateDecompile tabState, ILSpyTreeNode[] nodes)
 		{
+			if (!IsActiveTab(tabState))
+				return;
 			var old = tabState.ignoreDecompilationRequests;
 			try {
 				tabState.ignoreDecompilationRequests = true;
@@ -255,61 +331,156 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		internal bool tabManager_SelectionChanged_dont_select = false;
-		internal void tabManager_OnSelectionChanged(TabStateDecompile oldState, TabStateDecompile newState)
+		//TODO: HACK alert
+		Dictionary<TabManagerBase, bool> tabManager_dontSelectHack = new Dictionary<TabManagerBase, bool>();
+		internal bool IgnoreSelectionChanged_HACK(TabState tabState)
+		{
+			var tabManager = tabState.Owner;
+			bool value;
+			tabManager_dontSelectHack.TryGetValue(tabManager, out value);
+			tabManager_dontSelectHack[tabManager] = true;
+			return value;
+		}
+		internal void RestoreIgnoreSelectionChanged_HACK(TabState tabState, bool oldValue)
+		{
+			var tabManager = tabState.Owner;
+			if (!oldValue)
+				tabManager_dontSelectHack.Remove(tabManager);
+			else
+				tabManager_dontSelectHack[tabManager] = oldValue;
+		}
+
+		int debug_CommandBindings_Count;
+		void InitializeActiveTab(TabStateDecompile tabState, bool forceIsInActiveTabGroup)
+		{
+			var tabManager = tabState == null ? null : tabState.Owner as TabManager<TabStateDecompile>;
+			bool isInActiveTabGroup = tabGroupsManager.ActiveTabGroup == tabManager || forceIsInActiveTabGroup;
+
+			var newView = tabState == null ? null : tabState.TextView;
+
+			if (newView != null) {
+				if (isInActiveTabGroup) {
+					Debug.Assert(debug_CommandBindings_Count == this.CommandBindings.Count);
+					this.CommandBindings.AddRange(newView.CommandBindings);
+					SetLanguage(tabState.Language);
+				}
+			}
+
+			bool dontSelect;
+			if (tabManager != null && tabManager_dontSelectHack.TryGetValue(tabManager, out dontSelect) && dontSelect) {
+			}
+			else if (tabState == null) {
+				if ((tabGroupsManager.AllTabGroups.Count == 1 && tabGroupsManager.ActiveTabGroup.ActiveTabState == null)) {
+					var old = TreeView_SelectionChanged_ignore;
+					try {
+						TreeView_SelectionChanged_ignore = true;
+						treeView.SelectedItems.Clear();
+					}
+					finally {
+						TreeView_SelectionChanged_ignore = old;
+					}
+				}
+				else if (isInActiveTabGroup)
+					treeView.SelectedItems.Clear();
+			}
+			else
+				SelectTreeViewNodes(tabState, tabState.DecompiledNodes);
+
+			if (isInActiveTabGroup)
+				ClosePopups();
+			if (newView != null && isInActiveTabGroup)
+				InstallTextEditorListeners(newView);
+		}
+
+		void UninitializeActiveTab(TabStateDecompile tabState, bool forceIsInActiveTabGroup)
+		{
+			var tabManager = tabState == null ? null : tabState.Owner as TabManager<TabStateDecompile>;
+			bool isInActiveTabGroup = tabGroupsManager.ActiveTabGroup == tabManager || forceIsInActiveTabGroup;
+
+			var oldView = tabState == null ? null : tabState.TextView;
+
+			if (oldView != null && isInActiveTabGroup) {
+				Debug.Assert(debug_CommandBindings_Count + oldView.CommandBindings.Count == this.CommandBindings.Count);
+				foreach (CommandBinding binding in oldView.CommandBindings)
+					this.CommandBindings.Remove(binding);
+				Debug.Assert(debug_CommandBindings_Count == this.CommandBindings.Count);
+				UninstallTextEditorListeners(oldView);
+			}
+		}
+
+		internal void tabManager_OnSelectionChanged(TabManager<TabStateDecompile> tabManager, TabStateDecompile oldState, TabStateDecompile newState)
 		{
 			var oldView = oldState == null ? null : oldState.TextView;
 			var newView = newState == null ? null : newState.TextView;
 
-			if (oldView != null) {
-				foreach (CommandBinding binding in oldView.CommandBindings)
-					this.CommandBindings.Remove(binding);
-			}
-			if (newView != null) {
-				this.CommandBindings.AddRange(newView.CommandBindings);
-				SetLanguage(newState.Language);
-			}
+			UninitializeActiveTab(oldState, false);
+			InitializeActiveTab(newState, false);
 
-			if (tabManager_SelectionChanged_dont_select) {
-			}
-			else if (newState == null)
-				treeView.SelectedItems.Clear();
-			else
-				SelectTreeViewNodes(newState, newState.DecompiledNodes);
+			if (IsActiveTab(newState))
+				SetTextEditorFocus(newView);
 
-			ClosePopups();
-			if (oldView != null)
-				UninstallTextEditorListeners(oldView);
-			if (newView != null)
-				InstallTextEditorListeners(newView);
-
-			SetTextEditorFocus(newView);
-
-			if (OnActiveDecompilerTextViewChanged != null)
-				OnActiveDecompilerTextViewChanged(this, new ActiveDecompilerTextViewChangedEventArgs(oldView, newView));
+			if (OnDecompilerTextViewChanged != null)
+				OnDecompilerTextViewChanged(this, new DecompilerTextViewChangedEventArgs(oldView, newView));
 		}
 
-		void SetTextEditorFocus(DecompilerTextView textView) {
-			if (textView == null)
+		void tabGroupsManager_OnTabGroupSelected(object sender, TabGroupSelectedEventArgs e)
+		{
+			var oldTabManager = tabGroupsManager.AllTabGroups[e.OldIndex];
+			var newTabManager = tabGroupsManager.AllTabGroups[e.NewIndex];
+
+			UninitializeActiveTab(oldTabManager.ActiveTabState, true);
+			InitializeActiveTab(newTabManager.ActiveTabState, true);
+
+			var activeTabState = newTabManager.ActiveTabState;
+			if (activeTabState != null)
+				SetTextEditorFocus(activeTabState.TextView);
+
+			if (OnActiveDecompilerTextViewChanged != null) {
+				var oldView = oldTabManager.ActiveTabState == null ? null : oldTabManager.ActiveTabState.TextView;
+				var newView = newTabManager.ActiveTabState == null ? null : newTabManager.ActiveTabState.TextView;
+				OnActiveDecompilerTextViewChanged(this, new DecompilerTextViewChangedEventArgs(oldView, newView));
+			}
+		}
+
+		public void SetTextEditorFocus(DecompilerTextView textView) {
+			var tabState = TabStateDecompile.GetTabStateDecompile(textView);
+			if (tabState == null)
+				return;
+			if (!IsActiveTab(tabState))
 				return;
 
 			// Set focus to the text area whenever the view is selected
 			var textArea = textView.TextEditor.TextArea;
-			if (!textArea.IsVisible)
-				textArea.IsVisibleChanged += TextArea_IsVisibleChanged;
+			if (!textArea.IsVisible) {
+				new SetFocusWhenVisible(textArea, tabState);
+			}
 			else
 				textArea.Focus();
 		}
 
-		void TextArea_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		class SetFocusWhenVisible
 		{
-			var textArea = (ICSharpCode.AvalonEdit.Editing.TextArea)sender;
-			textArea.IsVisibleChanged -= TextArea_IsVisibleChanged;
-			textArea.Focus();
+			readonly TextArea textArea;
+			readonly TabStateDecompile tabState;
+
+			public SetFocusWhenVisible(TextArea textArea, TabStateDecompile tabState)
+			{
+				this.textArea = textArea;
+				this.tabState = tabState;
+				textArea.IsVisibleChanged += textArea_IsVisibleChanged;
+			}
+
+			void textArea_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+			{
+				textArea.IsVisibleChanged -= textArea_IsVisibleChanged;
+				if (MainWindow.Instance.IsActiveTab(tabState))
+					textArea.Focus();
+			}
 		}
 
-		public event EventHandler<ActiveDecompilerTextViewChangedEventArgs> OnActiveDecompilerTextViewChanged;
-		public class ActiveDecompilerTextViewChangedEventArgs : EventArgs
+		public event EventHandler<DecompilerTextViewChangedEventArgs> OnDecompilerTextViewChanged;
+		public event EventHandler<DecompilerTextViewChangedEventArgs> OnActiveDecompilerTextViewChanged;
+		public class DecompilerTextViewChangedEventArgs : EventArgs
 		{
 			/// <summary>
 			/// Old view. Can be null
@@ -321,7 +492,7 @@ namespace ICSharpCode.ILSpy
 			/// </summary>
 			public readonly DecompilerTextView NewView;
 
-			public ActiveDecompilerTextViewChangedEventArgs(DecompilerTextView oldView, DecompilerTextView newView)
+			public DecompilerTextViewChangedEventArgs(DecompilerTextView oldView, DecompilerTextView newView)
 			{
 				this.OldView = oldView;
 				this.NewView = newView;
@@ -737,8 +908,8 @@ namespace ICSharpCode.ILSpy
 
 		void MainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
+			debug_CommandBindings_Count = this.CommandBindings.Count;
 			ContextMenuProvider.Add(treeView);
-			ContextMenuProvider.Add(tabControl);
 			BuildThemeMenu();
 			OnThemeUpdated();
 
@@ -762,12 +933,9 @@ namespace ICSharpCode.ILSpy
 			HandleCommandLineArgumentsAfterShowList(App.CommandLineArguments);
 			if (App.CommandLineArguments.NavigateTo == null && App.CommandLineArguments.AssembliesToLoad.Count != 1) {
 				if (ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.RestoreTabsAtStartup) {
-					foreach (var savedState in sessionSettings.SavedTabStates)
-						CreateTabState(savedState);
+					RestoreTabGroups(sessionSettings.SavedTabGroupsState);
 					if (!sessionSettings.TabsFound)
 						AboutPage.Display(SafeActiveTextView);
-
-					tabManager.SetSelectedIndex(sessionSettings.ActiveTabIndex);
 				}
 				else {
 					AboutPage.Display(SafeActiveTextView);
@@ -882,7 +1050,8 @@ namespace ICSharpCode.ILSpy
 			// will never match again so shouldn't be in the cache.
 			DecompileCache.Instance.ClearAll();
 
-			tabManager.RemoveAllTabStates();
+			foreach (var tabManager in tabGroupsManager.AllTabGroups.ToArray())
+				tabManager.RemoveAllTabStates();
 			this.assemblyList = assemblyList;
 
 			// Make sure memory usage doesn't increase out of control. This method allocates lots of
@@ -910,8 +1079,10 @@ namespace ICSharpCode.ILSpy
 		
 		void assemblyList_Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (e.Action == NotifyCollectionChangedAction.Reset)
-				tabManager.RemoveAllTabStates();
+			if (e.Action == NotifyCollectionChangedAction.Reset) {
+				foreach (var tabManager in tabGroupsManager.AllTabGroups)
+					tabManager.RemoveAllTabStates();
+			}
 			if (e.OldItems != null) {
 				var oldAssemblies = new HashSet<LoadedAssembly>(e.OldItems.Cast<LoadedAssembly>());
 				foreach (var tabState in AllTabStates.ToArray()) {
@@ -922,6 +1093,7 @@ namespace ICSharpCode.ILSpy
 					foreach (var node in tabState.DecompiledNodes) {
 						var asmNode = GetAssemblyTreeNode(node);
 						if (asmNode != null && oldAssemblies.Contains(asmNode.LoadedAssembly)) {
+							var tabManager = (TabManager<TabStateDecompile>)tabState.Owner;
 							tabManager.RemoveTabState(tabState);
 							break;
 						}
@@ -1289,11 +1461,7 @@ namespace ICSharpCode.ILSpy
 		
 		void RefreshCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			int selectedIndex = tabManager.GetSelectedIndex();
-
-			var allTabsState = new List<SavedTabState>();
-			foreach (var tabState in AllTabStates.ToArray())
-				allTabsState.Add(CreateSavedTabState(tabState));
+			var savedState = CreateSavedTabGroupsState();
 
 			try {
 				TreeView_SelectionChanged_ignore = true;
@@ -1303,10 +1471,7 @@ namespace ICSharpCode.ILSpy
 				TreeView_SelectionChanged_ignore = false;
 			}
 
-			foreach (var savedState in allTabsState)
-				CreateTabState(savedState);
-
-			tabManager.SetSelectedIndex(selectedIndex);
+			RestoreTabGroups(savedState);
 		}
 
 		private void RefreshCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -1322,6 +1487,7 @@ namespace ICSharpCode.ILSpy
 		#endregion
 		
 		#region Decompile (TreeView_SelectionChanged)
+		//TODO: HACK alert
 		bool TreeView_SelectionChanged_ignore = false;
 		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -1358,7 +1524,7 @@ namespace ICSharpCode.ILSpy
 				tabState.TextView.CancelDecompileAsync();
 				return true;
 			}
-			tabState.TextView.DecompileAsync(language, nodes, new DecompilationOptions() { TextViewState = state });
+			tabState.TextView.DecompileAsync(language, nodes, new DecompilationOptions() { TextViewState = state, DecompilerTextView = tabState.TextView });
 			return true;
 		}
 
@@ -1489,14 +1655,48 @@ namespace ICSharpCode.ILSpy
 			sessionSettings.LeftColumnWidth = leftColumn.Width.Value;
 			sessionSettings.TopPaneSettings = GetPaneSettings(topPane, topPaneRow);
 			sessionSettings.BottomPaneSettings = GetPaneSettings(bottomPane, bottomPaneRow);
-
-			var allTabStates = AllTabStates.ToArray();
-			sessionSettings.ActiveTabIndex = tabManager.GetSelectedIndex();
-			sessionSettings.SavedTabStates = new SavedTabState[allTabStates.Length];
-			for (int i = 0; i < allTabStates.Length; i++)
-				sessionSettings.SavedTabStates[i] = CreateSavedTabState(allTabStates[i]);
-
+			sessionSettings.SavedTabGroupsState = CreateSavedTabGroupsState();
 			sessionSettings.Save();
+		}
+
+		void RestoreTabGroups(SavedTabGroupsState savedGroups)
+		{
+			Debug.Assert(tabGroupsManager.AllTabGroups.Count == 1);
+			bool first = true;
+			foreach (var savedGroupState in savedGroups.Groups) {
+				var tabManager = first ? tabGroupsManager.ActiveTabGroup : tabGroupsManager.CreateTabGroup(savedGroups.IsHorizontal);
+				first = false;
+				foreach (var savedTabState in savedGroupState.Tabs) {
+					var tabState = CreateNewTabState(tabManager, Languages.GetLanguage(savedTabState.Language));
+					CreateTabState(tabState, savedTabState);
+				}
+
+				tabManager.SetSelectedIndex(savedGroupState.Index);
+			}
+
+			tabGroupsManager.SetSelectedIndex(savedGroups.Index);
+		}
+
+		SavedTabGroupsState CreateSavedTabGroupsState()
+		{
+			var state = new SavedTabGroupsState();
+			state.IsHorizontal = tabGroupsManager.IsHorizontal;
+			state.Index = tabGroupsManager.ActiveIndex;
+			foreach (var tabManager in tabGroupsManager.AllTabGroups)
+				state.Groups.Add(CreateSavedTabGroupState(tabManager));
+			return state;
+		}
+
+		static SavedTabGroupState CreateSavedTabGroupState(TabManager<TabStateDecompile> tabManager)
+		{
+			var savedState = new SavedTabGroupState();
+
+			savedState.Index = tabManager.GetSelectedIndex();
+
+			foreach (var tabState in tabManager.AllTabStates)
+				savedState.Tabs.Add(CreateSavedTabState(tabState));
+
+			return savedState;
 		}
 
 		static SavedTabState CreateSavedTabState(TabStateDecompile tabState)
@@ -1517,6 +1717,11 @@ namespace ICSharpCode.ILSpy
 
 		TabStateDecompile CreateNewTabState(Language language = null)
 		{
+			return CreateNewTabState(tabGroupsManager.ActiveTabGroup, language);
+		}
+
+		TabStateDecompile CreateNewTabState(TabManager<TabStateDecompile> tabManager, Language language = null)
+		{
 			var tabState = new TabStateDecompile(language ?? sessionSettings.FilterSettings.Language);
 			return tabManager.AddNewTabState(tabState);
 		}
@@ -1524,6 +1729,11 @@ namespace ICSharpCode.ILSpy
 		TabStateDecompile CreateTabState(SavedTabState savedState, IList<ILSpyTreeNode> newNodes = null, bool decompile = true)
 		{
 			var tabState = CreateNewTabState(Languages.GetLanguage(savedState.Language));
+			return CreateTabState(tabState, savedState, newNodes, decompile);
+		}
+
+		TabStateDecompile CreateTabState(TabStateDecompile tabState, SavedTabState savedState, IList<ILSpyTreeNode> newNodes = null, bool decompile = true)
+		{
 			var nodes = new List<ILSpyTreeNode>(savedState.Paths.Count);
 			if (newNodes != null)
 				nodes.AddRange(newNodes);
@@ -1824,27 +2034,27 @@ namespace ICSharpCode.ILSpy
 
 		private void CloseActiveTabCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = CloseActiveTabPossible();
+			e.CanExecute = CloseActiveTabCanExecute();
 		}
 
 		private void SelectNextTabExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			tabManager.SelectNextTab();
+			tabGroupsManager.ActiveTabGroup.SelectNextTab();
 		}
 
 		private void SelectNextTabCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = tabManager.SelectNextTabPossible();
+			e.CanExecute = tabGroupsManager.ActiveTabGroup.SelectNextTabCanExecute();
 		}
 
 		private void SelectPrevTabExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			tabManager.SelectPreviousTab();
+			tabGroupsManager.ActiveTabGroup.SelectPreviousTab();
 		}
 
 		private void SelectPrevTabCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = tabManager.SelectPreviousTabPossible();
+			e.CanExecute = tabGroupsManager.ActiveTabGroup.SelectPreviousTabCanExecute();
 		}
 
 		internal TabStateDecompile CloneTab(TabStateDecompile tabState, bool decompile = true)
@@ -1858,7 +2068,7 @@ namespace ICSharpCode.ILSpy
 		{
 			var clonedTabState = CloneTab(tabState, decompile);
 			if (clonedTabState != null)
-				tabManager.SetSelectedTab(clonedTabState);
+				tabGroupsManager.ActiveTabGroup.SetSelectedTab(clonedTabState);
 			return clonedTabState;
 		}
 
@@ -1871,7 +2081,7 @@ namespace ICSharpCode.ILSpy
 			else
 				tabState = CreateNewTabState();
 
-			tabManager.SetSelectedTab(tabState);
+			tabGroupsManager.ActiveTabGroup.SetSelectedTab(tabState);
 		}
 
 		internal void OpenReferenceInNewTab(DecompilerTextView textView, ReferenceSegment reference)
@@ -1886,22 +2096,37 @@ namespace ICSharpCode.ILSpy
 
 		internal void CloseActiveTab()
 		{
-			tabManager.CloseActiveTab();
+			tabGroupsManager.ActiveTabGroup.CloseActiveTab();
 		}
 
-		internal bool CloseActiveTabPossible()
+		internal bool CloseActiveTabCanExecute()
 		{
-			return tabManager.CloseActiveTabPossible();
+			return tabGroupsManager.ActiveTabGroup.CloseActiveTabCanExecute();
 		}
 
 		internal void CloseAllButActiveTab()
 		{
-			tabManager.CloseAllButActiveTab();
+			tabGroupsManager.ActiveTabGroup.CloseAllButActiveTab();
 		}
 
-		internal bool CloseAllButActiveTabPossible()
+		internal bool CloseAllButActiveTabCanExecute()
 		{
-			return tabManager.CloseAllButActiveTabPossible();
+			return tabGroupsManager.ActiveTabGroup.CloseAllButActiveTabCanExecute();
+		}
+
+		internal bool CloseAllTabsCanExecute()
+		{
+			foreach (var tabManager in tabGroupsManager.AllTabGroups) {
+				if (tabManager.CloseAllTabsCanExecute())
+					return true;
+			}
+			return false;
+		}
+
+		internal void CloseAllTabs()
+		{
+			foreach (var tabManager in tabGroupsManager.AllTabGroups.ToArray())
+				tabManager.CloseAllTabs();
 		}
 
 		internal void CloneActiveTab()
@@ -1909,7 +2134,7 @@ namespace ICSharpCode.ILSpy
 			CloneTabMakeActive(ActiveTabState);
 		}
 
-		internal bool CloneActiveTabPossible()
+		internal bool CloneActiveTabCanExecute()
 		{
 			return ActiveTabState != null;
 		}
@@ -1925,6 +2150,136 @@ namespace ICSharpCode.ILSpy
 			RefreshTreeViewFilter();
 			foreach (var tabState in AllTabStates)
 				tabState.InitializeHeader();
+		}
+
+		internal bool NewHorizontalTabGroupCanExecute()
+		{
+			return tabGroupsManager.NewHorizontalTabGroupCanExecute();
+		}
+
+		internal void NewHorizontalTabGroup()
+		{
+			tabGroupsManager.NewHorizontalTabGroup();
+		}
+
+		internal bool NewVerticalTabGroupCanExecute()
+		{
+			return tabGroupsManager.NewVerticalTabGroupCanExecute();
+		}
+
+		internal void NewVerticalTabGroup()
+		{
+			tabGroupsManager.NewVerticalTabGroup();
+		}
+
+		internal bool MoveToNextTabGroupCanExecute()
+		{
+			return tabGroupsManager.MoveToNextTabGroupCanExecute();
+		}
+
+		internal void MoveToNextTabGroup()
+		{
+			tabGroupsManager.MoveToNextTabGroup();
+		}
+
+		internal bool MoveToPreviousTabGroupCanExecute()
+		{
+			return tabGroupsManager.MoveToPreviousTabGroupCanExecute();
+		}
+
+		internal void MoveToPreviousTabGroup()
+		{
+			tabGroupsManager.MoveToPreviousTabGroup();
+		}
+
+		internal bool MoveAllToNextTabGroupCanExecute()
+		{
+			return tabGroupsManager.MoveAllToNextTabGroupCanExecute();
+		}
+
+		internal void MoveAllToNextTabGroup()
+		{
+			tabGroupsManager.MoveAllToNextTabGroup();
+		}
+
+		internal bool MoveAllToPreviousTabGroupCanExecute()
+		{
+			return tabGroupsManager.MoveAllToPreviousTabGroupCanExecute();
+		}
+
+		internal void MoveAllToPreviousTabGroup()
+		{
+			tabGroupsManager.MoveAllToPreviousTabGroup();
+		}
+
+		internal bool MergeAllTabGroupsCanExecute()
+		{
+			return tabGroupsManager.MergeAllTabGroupsCanExecute();
+		}
+
+		internal void MergeAllTabGroups()
+		{
+			tabGroupsManager.MergeAllTabGroups();
+		}
+
+		internal bool SwitchToVerticalTabGroupsCanExecute()
+		{
+			return tabGroupsManager.SwitchToVerticalTabGroupsCanExecute();
+		}
+
+		internal void SwitchToVerticalTabGroups()
+		{
+			tabGroupsManager.SwitchToVerticalTabGroups();
+		}
+
+		internal bool SwitchToHorizontalTabGroupsCanExecute()
+		{
+			return tabGroupsManager.SwitchToHorizontalTabGroupsCanExecute();
+		}
+
+		internal void SwitchToHorizontalTabGroups()
+		{
+			tabGroupsManager.SwitchToHorizontalTabGroups();
+		}
+
+		internal bool CloseTabGroupCanExecute()
+		{
+			return tabGroupsManager.CloseTabGroupCanExecute();
+		}
+
+		internal void CloseTabGroup()
+		{
+			tabGroupsManager.CloseTabGroup();
+		}
+
+		internal bool CloseAllTabGroupsButThisCanExecute()
+		{
+			return tabGroupsManager.CloseAllTabGroupsButThisCanExecute();
+		}
+
+		internal void CloseAllTabGroupsButThis()
+		{
+			tabGroupsManager.CloseAllTabGroupsButThis();
+		}
+
+		internal bool MoveTabGroupAfterNextTabGroupCanExecute()
+		{
+			return tabGroupsManager.MoveTabGroupAfterNextTabGroupCanExecute();
+		}
+
+		internal void MoveTabGroupAfterNextTabGroup()
+		{
+			tabGroupsManager.MoveTabGroupAfterNextTabGroup();
+		}
+
+		internal bool MoveTabGroupBeforePreviousTabGroupCanExecute()
+		{
+			return tabGroupsManager.MoveTabGroupBeforePreviousTabGroupCanExecute();
+		}
+
+		internal void MoveTabGroupBeforePreviousTabGroup()
+		{
+			tabGroupsManager.MoveTabGroupBeforePreviousTabGroup();
 		}
 
 		public MsgBoxButton? ShowIgnorableMessageBox(string id, string msg, MessageBoxButton buttons)
