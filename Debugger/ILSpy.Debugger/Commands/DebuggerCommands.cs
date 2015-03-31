@@ -396,7 +396,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				return;
 			}
 			if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.F9) {
-				DebugDeleteAllBreakpoints();
+				if (DebugDeleteAllBreakpointsPossible())
+					DebugDeleteAllBreakpoints();
 				e.Handled = true;
 				return;
 			}
