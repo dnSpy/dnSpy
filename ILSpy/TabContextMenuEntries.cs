@@ -414,6 +414,9 @@ namespace ICSharpCode.ILSpy
 					cmd.cachedIsVisibleState = newState;
 					updateWindowsMenu = true;
 				}
+
+				if (cmd.MustUpdateWindowsMenu())
+					updateWindowsMenu = true;
 			}
 
 			if (updateWindowsMenu)
@@ -431,6 +434,11 @@ namespace ICSharpCode.ILSpy
 		protected virtual bool IsEnabledInternal()
 		{
 			return true;
+		}
+
+		protected virtual bool MustUpdateWindowsMenu()
+		{
+			return false;
 		}
 	}
 
@@ -651,6 +659,48 @@ namespace ICSharpCode.ILSpy
 		protected override void ExecuteInternal()
 		{
 			MainWindow.Instance.UseHorizontalTabGroups();
+		}
+	}
+
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsWindows", MenuOrder = 9500)]
+	sealed class DecompilerWindowsCommand : TabGroupCommand, IMenuItemProvider
+	{
+		protected override bool CanExecuteInternal()
+		{
+			return true;
+		}
+
+		protected override void ExecuteInternal()
+		{
+		}
+
+		protected override bool MustUpdateWindowsMenu()
+		{
+			return true;
+		}
+
+		public IEnumerable<MenuItem> CreateMenuItems()
+		{
+			MenuItem menuItem;
+			const int MAX_TABS = 10;
+			int index = 0;
+			foreach (var tabState in MainWindow.Instance.GetTabStateInOrder()) {
+				menuItem = new MenuItem();
+				menuItem.IsChecked = index == 0;
+				menuItem.Header = string.Format("_{0} {1}", index + 1, tabState.ShortHeader);
+
+				var tabStateTmp = tabState;
+				menuItem.Click += (s, e) => MainWindow.Instance.SetActiveTab(tabStateTmp);
+				yield return menuItem;
+
+				if (++index >= MAX_TABS)
+					break;
+			}
+
+			menuItem = new MenuItem();
+			menuItem.Header = "_Windows...";
+			menuItem.Click += (s, e) => MainWindow.Instance.ShowDecompilerTabsWindow();
+			yield return menuItem;
 		}
 	}
 }

@@ -132,6 +132,9 @@
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Commands\ExitCommand.cs" />
     <Compile Include="Commands\CommandWrapper.cs" />
+    <Compile Include="DecompilerTabsWindow.xaml.cs">
+      <DependentUpon>DecompilerTabsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="IPlugin.cs" />
     <Compile Include="MsgBox.xaml.cs">
       <DependentUpon>MsgBox.xaml</DependentUpon>
@@ -272,6 +275,7 @@
     <Compile Include="VB\ILSpyEnvironmentProvider.cs" />
     <Compile Include="VB\VBLanguage.cs" />
     <Compile Include="VB\VBTextOutputFormatter.cs" />
+    <Compile Include="WindowExtensions.cs" />
     <Compile Include="XmlDoc\AddXmlDocTransform.cs" />
     <Compile Include="XmlDoc\XmlDocKeyProvider.cs" />
     <Compile Include="XmlDoc\XmlDocLoader.cs" />
@@ -369,6 +373,10 @@
       <DependentUpon>SearchBox.cs</DependentUpon>
     </Page>
     <Page Include="CreateListDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DecompilerTabsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

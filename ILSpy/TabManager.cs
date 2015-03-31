@@ -34,6 +34,10 @@ namespace ICSharpCode.ILSpy
 			get { return tabControl.Items.Count; }
 		}
 
+		public int ActiveIndex {
+			get { return tabControl.SelectedIndex; }
+		}
+
 		internal TState ActiveTabState {
 			get {
 				int index = tabControl.SelectedIndex == -1 ? 0 : tabControl.SelectedIndex;
@@ -247,11 +251,6 @@ namespace ICSharpCode.ILSpy
 			tabControl.SelectedIndex = selectedIndex;
 		}
 
-		public int GetSelectedIndex()
-		{
-			return tabControl.SelectedIndex;
-		}
-
 		public void SetSelectedTab(TabState tabState)
 		{
 			tabControl.SelectedItem = tabState.TabItem;
@@ -298,6 +297,11 @@ namespace ICSharpCode.ILSpy
 			return ActiveTabState != null;
 		}
 
+		public void CloseTab(TState tabState)
+		{
+			RemoveTabState(tabState);
+		}
+
 		public void CloseAllButActiveTab()
 		{
 			var activeTab = ActiveTabState;
@@ -338,6 +342,7 @@ namespace ICSharpCode.ILSpy
 		{
 			if (tabState == null)
 				return;
+			Debug.Assert(tabControl.Items.Contains(tabState.TabItem));
 			DetachNoEvents(tabState);
 			RemoveTabStateInternal(tabState);
 			NotifyIfEmtpy();
@@ -421,6 +426,14 @@ namespace ICSharpCode.ILSpy
 
 			DetachTabState(srcTabState);
 			dstTabManager.AttachTabState(srcTabState, insertIndex);
+			return true;
+		}
+
+		public bool SetActiveTab(TState tabState)
+		{
+			if (tabState == null || !this.TabControl.Items.Contains(tabState.TabItem))
+				return false;
+			this.TabControl.SelectedItem = tabState.TabItem;
 			return true;
 		}
 	}

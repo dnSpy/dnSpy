@@ -17,12 +17,14 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
+using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
@@ -215,5 +217,19 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public abstract NodePathName NodePathName { get; }
 
 		public abstract string ToString(Language language);
+
+		internal static ModuleDef GetModule(IList<SharpTreeNode> nodes)
+		{
+			if (nodes == null || nodes.Count < 1)
+				return null;
+			var node = nodes[0];
+			while (node != null) {
+				var asmNode = node as AssemblyTreeNode;
+				if (asmNode != null)
+					return asmNode.LoadedAssembly.ModuleDefinition;
+				node = node.Parent;
+			}
+			return null;
+		}
 	}
 }

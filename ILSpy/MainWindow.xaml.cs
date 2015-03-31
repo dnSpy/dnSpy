@@ -453,7 +453,8 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		public void SetTextEditorFocus(DecompilerTextView textView) {
+		public void SetTextEditorFocus(DecompilerTextView textView)
+		{
 			var tabState = TabStateDecompile.GetTabStateDecompile(textView);
 			if (tabState == null)
 				return;
@@ -732,25 +733,30 @@ namespace ICSharpCode.ILSpy
 					var menuCmd = entry.Value as IMainMenuCommand;
 					if (menuCmd != null && !menuCmd.IsVisible)
 						continue;
-					MenuItem menuItem = new MenuItem();
-					menuItem.Command = CommandWrapper.Unwrap(entry.Value);
-					// We must initialize CommandTarget or the menu items for the standard commands
-					// (Ctrl+C, Ctrl+O etc) will be disabled after we stop debugging. We didn't
-					// need to do this when the menu wasn't in the toolbar.
-					menuItem.CommandTarget = MainWindow.Instance;
-					if (!string.IsNullOrEmpty(entry.Metadata.Header))
-						menuItem.Header = entry.Metadata.Header;
-					if (!string.IsNullOrEmpty(entry.Metadata.MenuIcon)) {
-						menuItem.Icon = new Image {
-							Width = 16,
-							Height = 16,
-							Source = Images.LoadImage(entry.Value, entry.Metadata.MenuIcon)
-						};
-					}
+					var provider = entry.Value as IMenuItemProvider;
+					if (provider != null)
+						items.AddRange(provider.CreateMenuItems());
+					else {
+						MenuItem menuItem = new MenuItem();
+						menuItem.Command = CommandWrapper.Unwrap(entry.Value);
+						// We must initialize CommandTarget or the menu items for the standard commands
+						// (Ctrl+C, Ctrl+O etc) will be disabled after we stop debugging. We didn't
+						// need to do this when the menu wasn't in the toolbar.
+						menuItem.CommandTarget = MainWindow.Instance;
+						if (!string.IsNullOrEmpty(entry.Metadata.Header))
+							menuItem.Header = entry.Metadata.Header;
+						if (!string.IsNullOrEmpty(entry.Metadata.MenuIcon)) {
+							menuItem.Icon = new Image {
+								Width = 16,
+								Height = 16,
+								Source = Images.LoadImage(entry.Value, entry.Metadata.MenuIcon)
+							};
+						}
 
-					menuItem.IsEnabled = entry.Metadata.IsEnabled;
-					menuItem.InputGestureText = entry.Metadata.InputGestureText;
-					items.Add(menuItem);
+						menuItem.IsEnabled = entry.Metadata.IsEnabled;
+						menuItem.InputGestureText = entry.Metadata.InputGestureText;
+						items.Add(menuItem);
+					}
 				}
 				if (items.Count > 0) {
 					if (topLevelMenuItem.Items.Count > 0)
@@ -1702,7 +1708,7 @@ namespace ICSharpCode.ILSpy
 		{
 			var savedState = new SavedTabGroupState();
 
-			savedState.Index = tabManager.GetSelectedIndex();
+			savedState.Index = tabManager.ActiveIndex;
 
 			foreach (var tabState in tabManager.AllTabStates)
 				savedState.Tabs.Add(CreateSavedTabState(tabState));
@@ -2333,6 +2339,52 @@ namespace ICSharpCode.ILSpy
 		internal void MoveTabGroupBeforePreviousTabGroup()
 		{
 			tabGroupsManager.MoveTabGroupBeforePreviousTabGroup();
+		}
+
+		internal IEnumerable<TabStateDecompile> GetTabStateInOrder()
+		{
+			var tabGroups = tabGroupsManager.AllTabGroups.ToArray();
+			int active = tabGroupsManager.ActiveIndex;
+			for (int i = 0; i < tabGroups.Length; i++) {
+				var tabGroup = tabGroups[(i + active) % tabGroups.Length];
+
+				var tabStates = tabGroup.AllTabStates.ToArray();
+				int activeTabIndex = tabGroup.ActiveIndex;
+				for (int j = 0; j < tabStates.Length; j++)
+					yield return tabStates[(j + activeTabIndex) % tabStates.Length];
+			}
+		}
+
+		internal bool SetActiveTab(TabStateDecompile tabState)
+		{
+			if (tabGroupsManager.SetActiveTab(tabState)) {
+				SetTextEditorFocus(tabState.TextView);
+				return true;
+			}
+			return false;
+		}
+
+		internal void CloseTab(TabStateDecompile tabState)
+		{
+			var tabManager = (TabManager<TabStateDecompile>)tabState.Owner;
+			tabManager.CloseTab(tabState);
+		}
+
+		internal void ShowDecompilerTabsWindow()
+		{
+			var win = new DecompilerTabsWindow();
+			win.Owner = this;
+			win.LastActivatedTabState = ActiveTabState;
+			win.ShowDialog();
+
+			// The original tab group gets back its keyboard focus by ShowDialog(). Make sure that
+			// the correct tab is activated.
+			if (win.LastActivatedTabState != null) {
+				if (!SetActiveTab(win.LastActivatedTabState)) {
+					// Last activated window was deleted
+					SetTextEditorFocus(ActiveTextView);
+				}
+			}
 		}
 
 		public MsgBoxButton? ShowIgnorableMessageBox(string id, string msg, MessageBoxButton buttons)

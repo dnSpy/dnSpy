@@ -17,7 +17,7 @@ namespace ICSharpCode.ILSpy
 		internal TabManagerBase Owner;
 
 		const int MAX_HEADER_LENGTH = 40;
-		string ShortHeader {
+		public string ShortHeader {
 			get {
 				var header = Header;
 				if (header.Length <= MAX_HEADER_LENGTH)

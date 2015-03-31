@@ -32,21 +32,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			tabState = MainWindow.Instance.ActiveTabState;
 			if (tabState == null)
 				return null;
-			return GetModule(tabState.DecompiledNodes);
-		}
-
-		internal static ModuleDefMD GetModule(SharpTreeNode[] nodes)
-		{
-			if (nodes == null || nodes.Length < 1)
-				return null;
-			var node = nodes[0];
-			while (node != null) {
-				var asmNode = node as AssemblyTreeNode;
-				if (asmNode != null)
-					return asmNode.LoadedAssembly.ModuleDefinition as ModuleDefMD;
-				node = node.Parent;
-			}
-			return null;
+			return ILSpyTreeNode.GetModule(tabState.DecompiledNodes) as ModuleDefMD;
 		}
 
 		internal static bool CanExecute()

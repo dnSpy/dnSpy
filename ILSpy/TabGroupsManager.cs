@@ -514,5 +514,16 @@ namespace ICSharpCode.ILSpy
 			UpdateGrid(horizontal);
 			UpdateOrientation(horizontal);
 		}
+
+		public bool SetActiveTab(TState tabState)
+		{
+			var tabManager = tabState.Owner as TabManager<TState>;
+			if (tabManager == null || !tabManagers.Contains(tabManager))
+				return false;
+			if (!tabManager.SetActiveTab(tabState))
+				return false;
+			SetActive(tabManager);
+			return true;
+		}
 	}
 }

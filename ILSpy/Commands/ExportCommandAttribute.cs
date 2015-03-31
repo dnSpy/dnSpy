@@ -17,7 +17,9 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace ICSharpCode.ILSpy
@@ -76,6 +78,11 @@ namespace ICSharpCode.ILSpy
 		/// true if it should be added to the menu
 		/// </summary>
 		bool IsVisible { get; }
+	}
+
+	public interface IMenuItemProvider
+	{
+		IEnumerable<MenuItem> CreateMenuItems();
 	}
 	
 	[MetadataAttribute]
