@@ -132,18 +132,18 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			this.textView = textView;
 		}
 
-		IBookmark GetBookmark(IList<IBookmark> bookmarks, int line)
+		List<IBookmark> GetBookmark(IList<IBookmark> bookmarks, int line)
 		{
-			IBookmark bookmark = null;
+			var list = new List<IBookmark>();
 			foreach (var b in bookmarks) {
 				if (BookmarkBase.GetLineNumber(b, textView) != line)
 					continue;
 				if (b.Image == null)
 					continue;
-				if (bookmark == null || b.ZOrder > bookmark.ZOrder)
-					bookmark = b;
+				list.Add(b);
 			}
-			return bookmark;
+			list.Sort((a, b) => b.ZOrder.CompareTo(a.ZOrder));
+			return list;
 		}
 		
 		void HandleMouseEvent(object sender, MouseButtonEventArgs e)
@@ -174,51 +174,55 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			
 			if (e.ChangedButton == MouseButton.Right) {
 				// check if we are on a Member
-				var bookmark = GetBookmark(bookmarks, line);
-				if (bookmark == null) {
+				var bms = GetBookmark(bookmarks, line);
+				if (bms.Count == 0) {
 					// don't show the menu
 					e.Handled = true;
 					this.margin.ContextMenu = null;
 					return;
 				}
-				
-				ContextMenu menu = new ContextMenu();
-				foreach (var category in MefState.Instance.contextEntries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
-					bool needSeparatorForCategory = true;
-					foreach (var entryPair in category) {
-						IBookmarkContextMenuEntry entry = entryPair.Value;
-						if (entry.IsVisible(bookmark)) {
-							if (needSeparatorForCategory && menu.Items.Count > 0) {
-								menu.Items.Add(new Separator());
-								needSeparatorForCategory = false;
+
+				foreach (var bookmark in bms) {
+					ContextMenu menu = new ContextMenu();
+					foreach (var category in MefState.Instance.contextEntries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
+						bool needSeparatorForCategory = true;
+						foreach (var entryPair in category) {
+							IBookmarkContextMenuEntry entry = entryPair.Value;
+							if (entry.IsVisible(bookmark)) {
+								if (needSeparatorForCategory && menu.Items.Count > 0) {
+									menu.Items.Add(new Separator());
+									needSeparatorForCategory = false;
+								}
+
+								MenuItem menuItem = new MenuItem();
+								menuItem.Header = entryPair.Metadata.Header;
+								if (!string.IsNullOrEmpty(entryPair.Metadata.Icon)) {
+									menuItem.Icon = new Image {
+										Width = 16,
+										Height = 16,
+										Source = Images.LoadImage(entry, entryPair.Metadata.Icon)
+									};
+								}
+								if (entryPair.Value.IsEnabled(bookmark)) {
+									menuItem.Click += delegate { entry.Execute(bookmark); };
+								}
+								else
+									menuItem.IsEnabled = false;
+								menuItem.InputGestureText = entryPair.Metadata.InputGestureText ?? string.Empty;
+								var entry2 = entry as IBookmarkContextMenuEntry2;
+								if (entry2 != null)
+									entry2.Initialize(bookmark, menuItem);
+								menu.Items.Add(menuItem);
 							}
-							
-							MenuItem menuItem = new MenuItem();
-							menuItem.Header = entryPair.Metadata.Header;
-							if (!string.IsNullOrEmpty(entryPair.Metadata.Icon)) {
-								menuItem.Icon = new Image {
-									Width = 16,
-									Height = 16,
-									Source = Images.LoadImage(entry, entryPair.Metadata.Icon)
-								};
-							}
-							if (entryPair.Value.IsEnabled(bookmark)) {
-								menuItem.Click += delegate { entry.Execute(bookmark); };
-							} else
-								menuItem.IsEnabled = false;
-							menuItem.InputGestureText = entryPair.Metadata.InputGestureText ?? string.Empty;
-							var entry2 = entry as IBookmarkContextMenuEntry2;
-							if (entry2 != null)
-								entry2.Initialize(bookmark, menuItem);
-							menu.Items.Add(menuItem);
 						}
 					}
+					if (menu.Items.Count > 0) {
+						margin.ContextMenu = menu;
+						return;
+					}
 				}
-				if (menu.Items.Count > 0)
-					margin.ContextMenu = menu;
-				else
-					// hide the context menu.
-					e.Handled = true;
+				// hide the context menu.
+				e.Handled = true;
 			}
 		}
 	}
