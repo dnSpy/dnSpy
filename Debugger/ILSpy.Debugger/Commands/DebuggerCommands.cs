@@ -721,39 +721,68 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public event EventHandler CanExecuteChanged;
 
-		protected DebuggerCommand(bool? needsDebuggerActive, bool? mustBePaused = null)
+		static void Register(DebuggerCommand cmd)
 		{
-			this.needsDebuggerActive = needsDebuggerActive;
-			this.mustBePaused = mustBePaused;
+			commands.Add(cmd);
+		}
+		static readonly List<DebuggerCommand> commands = new List<DebuggerCommand>();
+
+		static DebuggerCommand()
+		{
 			DebuggerService.DebugStarting += delegate { UpdateState(); };
 			DebuggerService.DebugStarted += delegate { UpdateState(); };
 			DebuggerService.DebugStopped += delegate { UpdateState(); };
 			DebuggerService.ProcessRunningChanged += delegate { UpdateState(); };
-			cachedCanExecuteState = CanExecuteInternal();
-			cachedIsVisibleState = IsVisibleInternal;
 		}
 
-		protected void UpdateState()
+		protected DebuggerCommand(bool? needsDebuggerActive, bool? mustBePaused = null)
 		{
-			var newState = CanExecuteInternal();
-			var oldState = cachedCanExecuteState;
-			if (oldState.Value != newState) {
-				cachedCanExecuteState = newState;
+			this.needsDebuggerActive = needsDebuggerActive;
+			this.mustBePaused = mustBePaused;
+			cachedCanExecuteState = CanExecuteInternal();
+			cachedIsVisibleState = IsVisibleInternal;
+			Register(this);
+		}
 
-				if (CanExecuteChanged != null)
-					CanExecuteChanged(this, EventArgs.Empty);
+		protected static void UpdateState(DebuggerCommand cmd)
+		{
+			UpdateState(new[] { cmd });
+		}
+
+		static void UpdateState()
+		{
+			UpdateState(commands);
+		}
+
+		static void UpdateState(IList<DebuggerCommand> commands)
+		{
+			bool updateToolbar = false;
+			bool updateMainMenu = false;
+			foreach (var cmd in commands) {
+				var newState = cmd.CanExecuteInternal();
+				var oldState = cmd.cachedCanExecuteState;
+				if (oldState.Value != newState) {
+					cmd.cachedCanExecuteState = newState;
+
+					if (cmd.CanExecuteChanged != null)
+						cmd.CanExecuteChanged(cmd, EventArgs.Empty);
+				}
+
+				newState = cmd.IsVisibleInternal;
+				oldState = cmd.cachedIsVisibleState;
+				if (oldState.Value != newState) {
+					cmd.cachedIsVisibleState = newState;
+
+					if (cmd is IToolbarCommand)
+						updateToolbar = true;
+					if (cmd is IMainMenuCommand)
+						updateMainMenu = true;
+				}
 			}
-
-			newState = IsVisibleInternal;
-			oldState = cachedIsVisibleState;
-			if (oldState.Value != newState) {
-				cachedIsVisibleState = newState;
-
-				if (this is IToolbarCommand)
-					MainWindow.Instance.UpdateToolbar();
-				if (this is IMainMenuCommand)
-					MainWindow.Instance.UpdateMainSubMenu("_Debug");
-			}
+			if (updateToolbar)
+				MainWindow.Instance.UpdateToolbar();
+			if (updateMainMenu)
+				MainWindow.Instance.UpdateMainSubMenu("_Debug");
 		}
 
 		public bool IsVisible {
@@ -1058,11 +1087,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		{
 			BookmarkManager.Added += (sender, e) => {
 				if (e.Bookmark is BreakpointBookmark)
-					UpdateState();
+					UpdateState(this);
 			};
 			BookmarkManager.Removed += (sender, e) => {
 				if (e.Bookmark is BreakpointBookmark)
-					UpdateState();
+					UpdateState(this);
 			};
 		}
 

@@ -303,6 +303,15 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
+		public event EventHandler<TabGroupEventArgs> OnTabGroupsOrientationChanged {
+			add {
+				tabGroupsManager.OnOrientationChanged += value;
+			}
+			remove {
+				tabGroupsManager.OnOrientationChanged -= value;
+			}
+		}
+
 		bool IsActiveTab(TabStateDecompile tabState)
 		{
 			return tabGroupsManager.ActiveTabGroup.ActiveTabState == tabState;
@@ -2217,24 +2226,24 @@ namespace ICSharpCode.ILSpy
 			tabGroupsManager.MergeAllTabGroups();
 		}
 
-		internal bool SwitchToVerticalTabGroupsCanExecute()
+		internal bool UseVerticalTabGroupsCanExecute()
 		{
-			return tabGroupsManager.SwitchToVerticalTabGroupsCanExecute();
+			return tabGroupsManager.UseVerticalTabGroupsCanExecute();
 		}
 
-		internal void SwitchToVerticalTabGroups()
+		internal void UseVerticalTabGroups()
 		{
-			tabGroupsManager.SwitchToVerticalTabGroups();
+			tabGroupsManager.UseVerticalTabGroups();
 		}
 
-		internal bool SwitchToHorizontalTabGroupsCanExecute()
+		internal bool UseHorizontalTabGroupsCanExecute()
 		{
-			return tabGroupsManager.SwitchToHorizontalTabGroupsCanExecute();
+			return tabGroupsManager.UseHorizontalTabGroupsCanExecute();
 		}
 
-		internal void SwitchToHorizontalTabGroups()
+		internal void UseHorizontalTabGroups()
 		{
-			tabGroupsManager.SwitchToHorizontalTabGroups();
+			tabGroupsManager.UseHorizontalTabGroups();
 		}
 
 		internal bool CloseTabGroupCanExecute()

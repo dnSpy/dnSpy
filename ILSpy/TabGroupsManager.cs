@@ -54,7 +54,7 @@ namespace ICSharpCode.ILSpy
 
 	sealed class TabGroupsManager<TState> where TState : TabState
 	{
-		bool? isHorizontal = null;
+		bool isHorizontal;
 		readonly ContentPresenter contentPresenter;
 		readonly List<TabManager<TState>> tabManagers = new List<TabManager<TState>>();
 		readonly Action<TabManager<TState>, TState, TState> onSelectionChanged;
@@ -79,11 +79,11 @@ namespace ICSharpCode.ILSpy
 		}
 
 		public bool IsHorizontal {
-			get { return isHorizontal == true; }
+			get { return isHorizontal; }
 		}
 
 		public bool IsVertical {
-			get { return isHorizontal == false; }
+			get { return !isHorizontal; }
 		}
 
 		public IEnumerable<TState> AllTabStates {
@@ -108,13 +108,23 @@ namespace ICSharpCode.ILSpy
 		public event EventHandler<TabGroupEventArgs> OnTabGroupRemoved;
 		public event EventHandler<TabGroupSelectedEventArgs> OnTabGroupSelected;
 		public event EventHandler<TabGroupSwappedEventArgs> OnTabGroupSwapped;
+		public event EventHandler<TabGroupEventArgs> OnOrientationChanged;
+
+		void UpdateOrientation(bool horizontal)
+		{
+			if (this.isHorizontal == horizontal)
+				return;
+			this.isHorizontal = horizontal;
+			if (OnOrientationChanged != null)
+				OnOrientationChanged(this, TabGroupEventArgs.Empty);
+		}
 
 		internal TabManager<TState> CreateTabGroup(bool horizontal)
 		{
-			Debug.Assert(this.isHorizontal == null || this.isHorizontal == horizontal);
+			Debug.Assert(tabManagers.Count == 1 || this.isHorizontal == horizontal);
 			var tabManager = CreateTabManager(tabManagers.Count);
-			this.isHorizontal = horizontal;
-			UpdateGrid();
+			UpdateGrid(horizontal);
+			UpdateOrientation(horizontal);
 			return tabManager;
 		}
 
@@ -176,14 +186,12 @@ namespace ICSharpCode.ILSpy
 			Debug.Assert(activeIndex >= 0);
 			if (OnTabGroupRemoved != null)
 				OnTabGroupRemoved(this, TabGroupEventArgs.Empty);
-			if (tabManagers.Count <= 1)
-				isHorizontal = null;
 			UpdateGrid();
 		}
 
 		public bool NewHorizontalTabGroupCanExecute()
 		{
-			return (tabManagers.Count == 1 || isHorizontal == true) &&
+			return (tabManagers.Count == 1 || isHorizontal) &&
 				tabManagers[activeIndex].Count > 1;
 		}
 
@@ -196,7 +204,7 @@ namespace ICSharpCode.ILSpy
 
 		public bool NewVerticalTabGroupCanExecute()
 		{
-			return (tabManagers.Count == 1 || isHorizontal == false) &&
+			return (tabManagers.Count == 1 || !isHorizontal) &&
 				tabManagers[activeIndex].Count > 1;
 		}
 
@@ -209,13 +217,12 @@ namespace ICSharpCode.ILSpy
 
 		void AddNewTabGroup(bool horizontal)
 		{
-			Debug.Assert((tabManagers.Count == 1 && isHorizontal == null) ||
-						(tabManagers.Count > 1 && isHorizontal == horizontal));
+			Debug.Assert(tabManagers.Count == 1 || isHorizontal == horizontal);
 
 			var newTabManager = CreateTabManager(activeIndex + 1);
 
 			UpdateGrid(horizontal);
-			isHorizontal = horizontal;
+			UpdateOrientation(horizontal);
 
 			Move(newTabManager, tabManagers[activeIndex], tabManagers[activeIndex].ActiveTabState);
 			SetActive(newTabManager);
@@ -334,26 +341,26 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		internal bool SwitchToVerticalTabGroupsCanExecute()
+		internal bool UseVerticalTabGroupsCanExecute()
 		{
-			return tabManagers.Count > 1 && isHorizontal == true;
+			return tabManagers.Count > 1 && isHorizontal;
 		}
 
-		internal void SwitchToVerticalTabGroups()
+		internal void UseVerticalTabGroups()
 		{
-			if (!SwitchToVerticalTabGroupsCanExecute())
+			if (!UseVerticalTabGroupsCanExecute())
 				return;
 			SwitchGridOrientation(false);
 		}
 
-		internal bool SwitchToHorizontalTabGroupsCanExecute()
+		internal bool UseHorizontalTabGroupsCanExecute()
 		{
-			return tabManagers.Count > 1 && isHorizontal == false;
+			return tabManagers.Count > 1 && !isHorizontal;
 		}
 
-		internal void SwitchToHorizontalTabGroups()
+		internal void UseHorizontalTabGroups()
 		{
-			if (!SwitchToHorizontalTabGroupsCanExecute())
+			if (!UseHorizontalTabGroupsCanExecute())
 				return;
 			SwitchGridOrientation(true);
 		}
@@ -430,7 +437,7 @@ namespace ICSharpCode.ILSpy
 
 		void UpdateGrid()
 		{
-			UpdateGrid(isHorizontal ?? true);
+			UpdateGrid(isHorizontal);
 		}
 
 		void UpdateGrid(bool horizontal)
@@ -505,7 +512,7 @@ namespace ICSharpCode.ILSpy
 			if (isHorizontal == horizontal)
 				return;
 			UpdateGrid(horizontal);
-			isHorizontal = horizontal;
+			UpdateOrientation(horizontal);
 		}
 	}
 }
