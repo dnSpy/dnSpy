@@ -301,6 +301,9 @@
     <Resource Include="Images\CurrentLine.png" />
     <Resource Include="Images\SelectedReturnLine.png" />
     <Resource Include="Images\DisabledBreakpoint.png" />
+    <Resource Include="Images\HorizontalTabGroup.png" />
+    <Resource Include="Images\VerticalTabGroup.png" />
+    <Resource Include="Images\NewWindow.png" />
     <None Include="app.manifest" />
     <None Include="dntheme\dark.dntheme">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

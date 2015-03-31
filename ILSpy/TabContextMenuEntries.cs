@@ -164,7 +164,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "New Hori_zontal Tab Group", Order = 160, Category = "TabGroups")]
+	[ExportContextMenuEntry(Header = "New Hori_zontal Tab Group", Order = 160, Category = "TabGroups", Icon = "images/HorizontalTabGroup.png")]
 	sealed class NewHorizontalTabGroupContextMenuEntry : TabGroupContextMenuEntry
 	{
 		protected override bool IsVisibleInternal()
@@ -178,7 +178,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "New _Vertical Tab Group", Order = 170, Category = "TabGroups")]
+	[ExportContextMenuEntry(Header = "New _Vertical Tab Group", Order = 170, Category = "TabGroups", Icon = "images/VerticalTabGroup.png")]
 	sealed class NewVerticalTabGroupContextMenuEntry : TabGroupContextMenuEntry
 	{
 		protected override bool IsVisibleInternal()
@@ -318,7 +318,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Use Vertical Tab Groups", Order = 300, Category = "TabGroupsMisc2")]
+	[ExportContextMenuEntry(Header = "Use Vertical Tab Groups", Order = 300, Category = "TabGroupsMisc2", Icon = "images/VerticalTabGroup.png")]
 	sealed class UseVerticalTabGroupsContextMenuEntry : TabGroupContextMenuEntry
 	{
 		protected override bool IsVisibleInternal()
@@ -332,7 +332,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Use Horizontal Tab Groups", Order = 310, Category = "TabGroupsMisc2")]
+	[ExportContextMenuEntry(Header = "Use Horizontal Tab Groups", Order = 310, Category = "TabGroupsMisc2", Icon = "images/HorizontalTabGroup.png")]
 	sealed class UseHorizontalTabGroupsContextMenuEntry : TabGroupContextMenuEntry
 	{
 		protected override bool IsVisibleInternal()
@@ -432,7 +432,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "Window", Header = "_New Window", MenuOrder = 9000)]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "Window", Header = "_New Window", MenuOrder = 9000, MenuIcon = "images/NewWindow.png")]
 	sealed class NewWindowCommand : TabGroupCommand
 	{
 		protected override bool IsVisibleInternal()
@@ -451,7 +451,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroups", Header = "New Hori_zontal Tab Group", MenuOrder = 9200)]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroups", Header = "New Hori_zontal Tab Group", MenuOrder = 9200, MenuIcon = "images/HorizontalTabGroup.png")]
 	sealed class NewHorizontalTabGroupCommand : TabGroupCommand
 	{
 		protected override bool CanExecuteInternal()
@@ -465,7 +465,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroups", Header = "New _Vertical Tab Group", MenuOrder = 9210)]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroups", Header = "New _Vertical Tab Group", MenuOrder = 9210, MenuIcon = "images/VerticalTabGroup.png")]
 	sealed class NewVerticalTabGroupCommand : TabGroupCommand
 	{
 		protected override bool CanExecuteInternal()
@@ -624,7 +624,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsMisc2", Header = "Use Vertical Tab Groups", MenuOrder = 9400)]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsMisc2", Header = "Use Vertical Tab Groups", MenuOrder = 9400, MenuIcon = "images/VerticalTabGroup.png")]
 	sealed class UseVerticalTabGroupsCommand : TabGroupCommand
 	{
 		protected override bool CanExecuteInternal()
@@ -638,7 +638,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsMisc2", Header = "Use Horizontal Tab Groups", MenuOrder = 9410)]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsMisc2", Header = "Use Horizontal Tab Groups", MenuOrder = 9410, MenuIcon = "images/HorizontalTabGroup.png")]
 	sealed class UseHorizontalTabGroupsCommand : TabGroupCommand
 	{
 		protected override bool CanExecuteInternal()
