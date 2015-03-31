@@ -92,7 +92,7 @@ namespace ICSharpCode.ILSpy
 				if (tabState != null)
 					return tabState;
 
-				tabState = CreateNewTabState();
+				tabState = CreateEmptyTabState();
 
 				var old = IgnoreSelectionChanged_HACK(tabState);
 				try {
@@ -1524,11 +1524,12 @@ namespace ICSharpCode.ILSpy
 		{
 			if (tabState.ignoreDecompilationRequests)
 				return null;
-			if (!forceDecompile && tabState.Equals(nodes, language)) {
+			if (tabState.HasDecompiled && !forceDecompile && tabState.Equals(nodes, language)) {
 				if (state != null)
 					tabState.TextView.EditorPositionState = state.EditorPositionState;
 				return false;
 			}
+			tabState.HasDecompiled = true;
 			tabState.Language = language;
 			tabState.DecompiledNodes = nodes ?? new ILSpyTreeNode[0];
 			tabState.Title = null;
@@ -1735,6 +1736,13 @@ namespace ICSharpCode.ILSpy
 		TabStateDecompile CreateNewTabState(Language language = null)
 		{
 			return CreateNewTabState(tabGroupsManager.ActiveTabGroup, language);
+		}
+
+		TabStateDecompile CreateEmptyTabState(Language language = null)
+		{
+			var tabState = CreateNewTabState(tabGroupsManager.ActiveTabGroup, language);
+			DecompileNodes(tabState, null, true, tabState.Language, new ILSpyTreeNode[0]);
+			return tabState;
 		}
 
 		TabStateDecompile CreateNewTabState(TabManager<TabStateDecompile> tabManager, Language language = null)
@@ -2096,7 +2104,7 @@ namespace ICSharpCode.ILSpy
 			if (currenTabState != null && !ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.NewEmptyTabs)
 				tabState = CloneTab(currenTabState);
 			else
-				tabState = CreateNewTabState();
+				tabState = CreateEmptyTabState();
 
 			tabGroupsManager.ActiveTabGroup.SetSelectedTab(tabState);
 		}

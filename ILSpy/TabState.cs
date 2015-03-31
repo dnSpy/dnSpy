@@ -68,6 +68,7 @@ namespace ICSharpCode.ILSpy
 		public ILSpyTreeNode[] DecompiledNodes = new ILSpyTreeNode[0];
 		public string Title;
 		public Language Language;
+		public bool HasDecompiled;
 
 		public override string Header {
 			get {
