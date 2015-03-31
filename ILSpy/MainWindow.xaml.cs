@@ -2145,10 +2145,57 @@ namespace ICSharpCode.ILSpy
 			return ActiveTabState != null;
 		}
 
-		internal void RefreshDecompile()
+		internal void RefreshCodeCSharp(bool disassembleIL, bool decompileILAst, bool decompileCSharp, bool decompileVB)
 		{
-			foreach (var tabState in AllTabStates)
-				DecompileNodes(tabState, null, false, tabState.Language, tabState.DecompiledNodes, true);
+			if (decompileILAst)
+				decompileCSharp = decompileVB = true;
+			if (decompileCSharp)
+				decompileVB = true;
+			if (disassembleIL)
+				RefreshCodeIL();
+			if (decompileILAst)
+				RefreshCodeILAst();
+			if (decompileCSharp)
+				RefreshCodeCSharp();
+			if (decompileVB)
+				RefreshCodeVB();
+		}
+
+		void RefreshCodeIL()
+		{
+			foreach (var tabState in AllTabStates) {
+				if (tabState.Language.Name == "IL")
+					ForceDecompile(tabState);
+			}
+		}
+
+		void RefreshCodeILAst()
+		{
+			foreach (var tabState in AllTabStates) {
+				if (tabState.Language.Name.StartsWith("ILAst (") && tabState.Language.Name.EndsWith(")"))
+					ForceDecompile(tabState);
+			}
+		}
+
+		void RefreshCodeCSharp()
+		{
+			foreach (var tabState in AllTabStates) {
+				if (tabState.Language.Name == "C#" || tabState.Language.Name.StartsWith("C# - "))
+					ForceDecompile(tabState);
+			}
+		}
+
+		void RefreshCodeVB()
+		{
+			foreach (var tabState in AllTabStates) {
+				if (tabState.Language.Name == "VB")
+					ForceDecompile(tabState);
+			}
+		}
+
+		void ForceDecompile(TabStateDecompile tabState)
+		{
+			DecompileNodes(tabState, null, false, tabState.Language, tabState.DecompiledNodes, true);
 		}
 
 		internal void RefreshTreeViewNodeNames()

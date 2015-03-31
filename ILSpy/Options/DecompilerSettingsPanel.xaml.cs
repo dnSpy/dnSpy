@@ -76,8 +76,30 @@ namespace ICSharpCode.ILSpy.Options
 		{
 			DecompilerSettings s = (DecompilerSettings)this.DataContext;
 			var flags = RefreshFlags.None;
-			if (!CurrentDecompilerSettings.Equals(s))
-				flags |= RefreshFlags.Decompile;
+
+			if (CurrentDecompilerSettings.AnonymousMethods != s.AnonymousMethods) flags |= RefreshFlags.ILAst;
+			if (CurrentDecompilerSettings.ExpressionTrees != s.ExpressionTrees) flags |= RefreshFlags.ILAst;
+			if (CurrentDecompilerSettings.YieldReturn != s.YieldReturn) flags |= RefreshFlags.ILAst;
+			if (CurrentDecompilerSettings.AsyncAwait != s.AsyncAwait) flags |= RefreshFlags.ILAst;
+			if (CurrentDecompilerSettings.AutomaticProperties != s.AutomaticProperties) flags |= RefreshFlags.CSharp;
+			if (CurrentDecompilerSettings.AutomaticEvents != s.AutomaticEvents) flags |= RefreshFlags.CSharp;
+			if (CurrentDecompilerSettings.UsingStatement != s.UsingStatement) flags |= RefreshFlags.CSharp;
+			if (CurrentDecompilerSettings.ForEachStatement != s.ForEachStatement) flags |= RefreshFlags.CSharp;
+			if (CurrentDecompilerSettings.LockStatement != s.LockStatement) flags |= RefreshFlags.CSharp;
+			if (CurrentDecompilerSettings.SwitchStatementOnString != s.SwitchStatementOnString) flags |= RefreshFlags.CSharp;
+			if (CurrentDecompilerSettings.UsingDeclarations != s.UsingDeclarations) flags |= RefreshFlags.CSharp;
+			if (CurrentDecompilerSettings.QueryExpressions != s.QueryExpressions) flags |= RefreshFlags.CSharp;
+			if (CurrentDecompilerSettings.FullyQualifyAmbiguousTypeNames != s.FullyQualifyAmbiguousTypeNames) flags |= RefreshFlags.CSharp;
+			if (CurrentDecompilerSettings.UseDebugSymbols != s.UseDebugSymbols) flags |= RefreshFlags.DecompileAll;
+			if (CurrentDecompilerSettings.ObjectOrCollectionInitializers != s.ObjectOrCollectionInitializers) flags |= RefreshFlags.ILAst;
+			if (CurrentDecompilerSettings.ShowXmlDocumentation != s.ShowXmlDocumentation) flags |= RefreshFlags.DecompileAll;
+			if (CurrentDecompilerSettings.FoldBraces != s.FoldBraces) flags |= RefreshFlags.CSharp;
+			if (CurrentDecompilerSettings.AddILComments != s.AddILComments) flags |= RefreshFlags.IL;
+			if (CurrentDecompilerSettings.RemoveEmptyDefaultConstructors != s.RemoveEmptyDefaultConstructors) flags |= RefreshFlags.CSharp;
+			if (CurrentDecompilerSettings.IntroduceIncrementAndDecrement != s.IntroduceIncrementAndDecrement) flags |= RefreshFlags.ILAst;
+			if (CurrentDecompilerSettings.MakeAssignmentExpressions != s.MakeAssignmentExpressions) flags |= RefreshFlags.ILAst;
+			if (CurrentDecompilerSettings.AlwaysGenerateExceptionVariableForCatchBlocks != s.AlwaysGenerateExceptionVariableForCatchBlocks) flags |= RefreshFlags.ILAst;
+
 			XElement section = new XElement("DecompilerSettings");
 			section.SetAttributeValue("anonymousMethods", s.AnonymousMethods);
 			section.SetAttributeValue("yieldReturn", s.YieldReturn);

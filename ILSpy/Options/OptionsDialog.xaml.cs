@@ -107,9 +107,26 @@ namespace ICSharpCode.ILSpy.Options
 		TreeViewNodeNames = 0x00000001,
 
 		/// <summary>
-		/// Text editor needs to re-decompile the code
+		/// Text editor needs to re-disassemble IL
 		/// </summary>
-		Decompile = 0x00000002,
+		IL = 0x00000002,
+
+		/// <summary>
+		/// Text editor needs to re-decompile ILAst, C# and VB code
+		/// </summary>
+		ILAst = 0x00000004,
+
+		/// <summary>
+		/// Text editor needs to re-decompile C# and VB code
+		/// </summary>
+		CSharp = 0x00000008,
+
+		/// <summary>
+		/// Text editor needs to re-decompile VB code
+		/// </summary>
+		VB = 0x00000010,
+
+		DecompileAll = IL | ILAst | CSharp | VB,
 	}
 	
 	[MetadataAttribute]
@@ -133,8 +150,11 @@ namespace ICSharpCode.ILSpy.Options
 			dlg.Owner = MainWindow.Instance;
 			if (dlg.ShowDialog() == true) {
 				var inst = MainWindow.Instance;
-				if ((dlg.RefreshFlags & RefreshFlags.Decompile) != 0)
-					inst.RefreshDecompile();
+				bool disassembleIL = (dlg.RefreshFlags & RefreshFlags.IL) != 0;
+				bool decompileILAst = (dlg.RefreshFlags & RefreshFlags.ILAst) != 0;
+				bool decompileCSharp = (dlg.RefreshFlags & RefreshFlags.CSharp) != 0;
+				bool decompileVB = (dlg.RefreshFlags & RefreshFlags.VB) != 0;
+				inst.RefreshCodeCSharp(disassembleIL, decompileILAst, decompileCSharp, decompileVB);
 				if ((dlg.RefreshFlags & RefreshFlags.TreeViewNodeNames) != 0)
 					inst.RefreshTreeViewNodeNames();
 			}
