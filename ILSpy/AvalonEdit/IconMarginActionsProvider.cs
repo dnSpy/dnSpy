@@ -131,6 +131,20 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			this.margin = margin;
 			this.textView = textView;
 		}
+
+		IBookmark GetBookmark(IList<IBookmark> bookmarks, int line)
+		{
+			IBookmark bookmark = null;
+			foreach (var b in bookmarks) {
+				if (BookmarkBase.GetLineNumber(b, textView) != line)
+					continue;
+				if (b.Image == null)
+					continue;
+				if (bookmark == null || b.ZOrder > bookmark.ZOrder)
+					bookmark = b;
+			}
+			return bookmark;
+		}
 		
 		void HandleMouseEvent(object sender, MouseButtonEventArgs e)
 		{
@@ -160,7 +174,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			
 			if (e.ChangedButton == MouseButton.Right) {
 				// check if we are on a Member
-				var bookmark = bookmarks.FirstOrDefault(b => BookmarkBase.GetLineNumber(b, textView) == line);
+				var bookmark = GetBookmark(bookmarks, line);
 				if (bookmark == null) {
 					// don't show the menu
 					e.Handled = true;
