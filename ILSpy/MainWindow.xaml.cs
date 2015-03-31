@@ -2116,17 +2116,12 @@ namespace ICSharpCode.ILSpy
 
 		internal bool CloseAllTabsCanExecute()
 		{
-			foreach (var tabManager in tabGroupsManager.AllTabGroups) {
-				if (tabManager.CloseAllTabsCanExecute())
-					return true;
-			}
-			return false;
+			return tabGroupsManager.CloseAllTabsCanExecute();
 		}
 
 		internal void CloseAllTabs()
 		{
-			foreach (var tabManager in tabGroupsManager.AllTabGroups.ToArray())
-				tabManager.CloseAllTabs();
+			tabGroupsManager.CloseAllTabs();
 		}
 
 		internal void CloneActiveTab()

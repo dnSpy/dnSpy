@@ -290,6 +290,23 @@ namespace ICSharpCode.ILSpy
 			SetActive(dst);
 		}
 
+		internal bool CloseAllTabsCanExecute()
+		{
+			foreach (var tabManager in AllTabGroups) {
+				if (tabManager.CloseAllTabsCanExecute())
+					return true;
+			}
+			return false;
+		}
+
+		internal void CloseAllTabs()
+		{
+			if (!CloseAllTabsCanExecute())
+				return;
+			foreach (var tabManager in AllTabGroups.ToArray())
+				tabManager.CloseAllTabs();
+		}
+
 		void Merge(TabManager<TState> dstTabManager, TabManager<TState> srcTabManager, int insertIndex)
 		{
 			if (dstTabManager == srcTabManager)
