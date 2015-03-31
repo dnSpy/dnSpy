@@ -340,6 +340,7 @@ namespace ICSharpCode.ILSpy
 				return;
 			DetachNoEvents(tabState);
 			RemoveTabStateInternal(tabState);
+			NotifyIfEmtpy();
 		}
 
 		void DetachNoEvents(TState tabState)
@@ -363,7 +364,6 @@ namespace ICSharpCode.ILSpy
 				tabControl.SelectedIndex = index - 1;
 				tabControl.Items.RemoveAt(index);
 			}
-			NotifyIfEmtpy();
 		}
 
 		public void DetachTabState(TState tabState)
@@ -371,6 +371,7 @@ namespace ICSharpCode.ILSpy
 			DetachNoEvents(tabState);
 			RemoveEvents(tabState);
 			OnAddRemoveTabState(this, TabManagerAddType.Detach, tabState);
+			NotifyIfEmtpy();
 		}
 
 		void RemoveTabStateInternal(TState tabState)

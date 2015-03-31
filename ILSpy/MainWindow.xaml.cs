@@ -244,12 +244,12 @@ namespace ICSharpCode.ILSpy
 					OnDecompilerTextViewRemoved(this, new DecompilerTextViewEventArgs(view));
 			}
 			else if (addType == TabManagerAddType.Attach) {
-				if (OnDecompilerTextViewAdded != null)
-					OnDecompilerTextViewAdded(this, new DecompilerTextViewEventArgs(view));
+				if (OnDecompilerTextViewAttached != null)
+					OnDecompilerTextViewAttached(this, new DecompilerTextViewEventArgs(view));
 			}
 			else if (addType == TabManagerAddType.Detach) {
-				if (OnDecompilerTextViewRemoved != null)
-					OnDecompilerTextViewRemoved(this, new DecompilerTextViewEventArgs(view));
+				if (OnDecompilerTextViewDetached != null)
+					OnDecompilerTextViewDetached(this, new DecompilerTextViewEventArgs(view));
 			}
 			else
 				throw new InvalidOperationException();
@@ -257,6 +257,8 @@ namespace ICSharpCode.ILSpy
 
 		public event EventHandler<DecompilerTextViewEventArgs> OnDecompilerTextViewAdded;
 		public event EventHandler<DecompilerTextViewEventArgs> OnDecompilerTextViewRemoved;
+		public event EventHandler<DecompilerTextViewEventArgs> OnDecompilerTextViewAttached;
+		public event EventHandler<DecompilerTextViewEventArgs> OnDecompilerTextViewDetached;
 		public class DecompilerTextViewEventArgs : EventArgs
 		{
 			public readonly DecompilerTextView DecompilerTextView;

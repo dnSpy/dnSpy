@@ -363,6 +363,8 @@ namespace ICSharpCode.ILSpy
 			MainWindow.Instance.OnDecompilerTextViewChanged += (s, e) => UpdateState();
 			MainWindow.Instance.OnDecompilerTextViewAdded += (s, e) => UpdateState();
 			MainWindow.Instance.OnDecompilerTextViewRemoved += (s, e) => UpdateState();
+			MainWindow.Instance.OnDecompilerTextViewAttached += (s, e) => UpdateState();
+			MainWindow.Instance.OnDecompilerTextViewDetached += (s, e) => UpdateState();
 			MainWindow.Instance.OnTabGroupAdded += (s, e) => UpdateState();
 			MainWindow.Instance.OnTabGroupRemoved += (s, e) => UpdateState();
 			MainWindow.Instance.OnTabGroupSelected += (s, e) => UpdateState();
