@@ -255,18 +255,6 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 
-		bool foldBraces = false;
-		
-		public bool FoldBraces {
-			get { return foldBraces; }
-			set {
-				if (foldBraces != value) {
-					foldBraces = value;
-					OnPropertyChanged("FoldBraces");
-				}
-			}
-		}
-
 		bool addILComments = false;
 
 		public bool AddILComments {
@@ -397,7 +385,6 @@ namespace ICSharpCode.Decompiler
 			if (UseDebugSymbols != other.UseDebugSymbols) return false;
 			if (ObjectOrCollectionInitializers != other.ObjectOrCollectionInitializers) return false;
 			if (ShowXmlDocumentation != other.ShowXmlDocumentation) return false;
-			if (FoldBraces != other.FoldBraces) return false;
 			if (AddILComments != other.AddILComments) return false;
 			if (RemoveEmptyDefaultConstructors != other.RemoveEmptyDefaultConstructors) return false;
 			if (IntroduceIncrementAndDecrement != other.IntroduceIncrementAndDecrement) return false;
@@ -435,12 +422,11 @@ namespace ICSharpCode.Decompiler
 				h ^= UseDebugSymbols				? 0 : 0x00040000U;
 				h ^= ObjectOrCollectionInitializers	? 0 : 0x00020000U;
 				h ^= ShowXmlDocumentation			? 0 : 0x00010000U;
-				h ^= FoldBraces						? 0 : 0x00008000U;
-				h ^= AddILComments					? 0 : 0x00004000U;
-				h ^= IntroduceIncrementAndDecrement	? 0 : 0x00002000U;
-				h ^= MakeAssignmentExpressions		? 0 : 0x00001000U;
-				h ^= AlwaysGenerateExceptionVariableForCatchBlocks ? 0 : 0x00000800U;
-				h ^= RemoveEmptyDefaultConstructors	? 0 : 0x00000400U;
+				h ^= AddILComments					? 0 : 0x00008000U;
+				h ^= IntroduceIncrementAndDecrement	? 0 : 0x00004000U;
+				h ^= MakeAssignmentExpressions		? 0 : 0x00002000U;
+				h ^= AlwaysGenerateExceptionVariableForCatchBlocks ? 0 : 0x00001000U;
+				h ^= RemoveEmptyDefaultConstructors	? 0 : 0x00000800U;
 
 				//TODO: CSharpFormattingOptions. This isn't currently used but it has a ton of properties
 
