@@ -500,7 +500,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public static bool DebugDeleteAllBreakpoints()
 		{
-			if (MessageBox.Show(MainWindow.Instance, "Do you want to delete all breakpoints?", "dnSpy", MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
+			var res = MainWindow.Instance.ShowIgnorableMessageBox("debug: delete all bps", "Do you want to delete all breakpoints?", MessageBoxButton.YesNo);
+			if (res != null && res != MsgBoxButton.OK)
 				return false;
 
 			for (int i = BookmarkManager.Bookmarks.Count - 1; i >= 0; --i) {
