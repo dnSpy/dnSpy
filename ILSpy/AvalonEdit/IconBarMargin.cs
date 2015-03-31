@@ -228,15 +228,13 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			var breakpoint = args.Bookmark as BreakpointBookmark;
 			if (null == breakpoint)
 				return;
+			breakpoint.ImageChanged -= breakpoint_ImageChanged;
 			var storage = decompilerTextView.CodeMappings;
 			if (storage == null || storage.Count == 0)
 				return;
 			var key = new MethodKey(breakpoint.MemberReference);
 			if (storage.ContainsKey(key))
-			{
-				breakpoint.ImageChanged -= breakpoint_ImageChanged;
 				InvalidateVisual();
-			}
 		}
 		
 		void SyncBookmarks()
