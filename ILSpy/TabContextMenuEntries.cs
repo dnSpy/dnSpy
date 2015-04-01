@@ -679,6 +679,11 @@ namespace ICSharpCode.ILSpy
 	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsWindows", MenuOrder = 9500)]
 	sealed class DecompilerWindowsCommand : TabGroupCommand, IMenuItemProvider
 	{
+		public DecompilerWindowsCommand()
+		{
+			MainWindow.Instance.OnTabHeaderChanged += (s, e) => MainWindow.Instance.UpdateMainSubMenu("_Window");
+		}
+
 		protected override bool CanExecuteInternal()
 		{
 			return true;

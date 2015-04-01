@@ -539,8 +539,16 @@ namespace ICSharpCode.ILSpy
 		{
 			var tabState = TabStateDecompile.GetTabStateDecompile(textView);
 			tabState.Title = title;
-			tabState.InitializeHeader();
+			InitializeHeader(tabState);
 		}
+
+		void InitializeHeader(TabStateDecompile tabState)
+		{
+			tabState.InitializeHeader();
+			if (OnTabHeaderChanged != null)
+				OnTabHeaderChanged(null, EventArgs.Empty);
+		}
+		public event EventHandler OnTabHeaderChanged;
 
 		internal void ClosePopups()
 		{
@@ -1501,7 +1509,7 @@ namespace ICSharpCode.ILSpy
 			tabState.Language = language;
 			tabState.DecompiledNodes = nodes ?? new ILSpyTreeNode[0];
 			tabState.Title = null;
-			tabState.InitializeHeader();
+			InitializeHeader(tabState);
 			
 			if (recordHistory)
 				RecordHistory(tabState);
@@ -2188,7 +2196,7 @@ namespace ICSharpCode.ILSpy
 		{
 			RefreshTreeViewFilter();
 			foreach (var tabState in AllTabStates)
-				tabState.InitializeHeader();
+				InitializeHeader(tabState);
 		}
 
 		internal bool NewHorizontalTabGroupCanExecute()
