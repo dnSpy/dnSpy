@@ -131,6 +131,8 @@ namespace ICSharpCode.ILSpy
 			closeWindowsButton.Content = listView.SelectedItems.Count <= 1 ? "_Close Window" : "_Close Windows";
 			activateButton.IsEnabled = listView.SelectedItems.Count == 1;
 			closeWindowsButton.IsEnabled = listView.SelectedItems.Count != 0;
+			var tabs = GetSelectedItems();
+			saveButton.IsEnabled = tabs.Length == 1 && tabs[0].TabState.DecompiledNodes.Length > 0;
 		}
 
 		private void activateButton_Click(object sender, RoutedEventArgs e)
@@ -138,6 +140,13 @@ namespace ICSharpCode.ILSpy
 			var tabs = GetSelectedItems();
 			if (tabs.Length > 0)
 				ActivateWindow(tabs[0]);
+		}
+
+		private void saveButton_Click(object sender, RoutedEventArgs e)
+		{
+			var tabs = GetSelectedItems();
+			if (tabs.Length > 0)
+				MainWindow.Instance.Save(tabs[0].TabState);
 		}
 
 		private void closeWindowsButton_Click(object sender, RoutedEventArgs e)

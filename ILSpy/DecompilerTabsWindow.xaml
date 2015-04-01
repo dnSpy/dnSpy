@@ -42,6 +42,7 @@
 
 		<StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical" Margin="0 0 0 13" Width="130">
 			<Button Name="activateButton" Content="_Activate" IsDefault="True" Click="activateButton_Click" Margin="0 0 0 13" />
+			<Button Name="saveButton" Content="_Save" Click="saveButton_Click" Margin="0 0 0 13" />
 			<Button Name="closeWindowsButton" Content="_Close Window" Click="closeWindowsButton_Click" Margin="0 0 0 13" />
 		</StackPanel>
 		<Button Grid.Row="1" Grid.Column="1" Name="okButton" Content="_OK" Click="okButton_Click" />

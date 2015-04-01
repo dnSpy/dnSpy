@@ -1563,16 +1563,20 @@ namespace ICSharpCode.ILSpy
 		
 		void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			var tabState = ActiveTabState;
+			Save(ActiveTabState);
+		}
+
+		internal void Save(TabStateDecompile tabState)
+		{
 			if (tabState == null)
 				return;
 			var textView = tabState.TextView;
-			if (this.SelectedNodes.Count() == 1) {
-				if (this.SelectedNodes.Single().Save(textView))
+			if (tabState.DecompiledNodes.Length == 1) {
+				if (tabState.DecompiledNodes[0].Save(textView))
 					return;
 			}
 			textView.SaveToDisk(tabState.Language,
-				this.SelectedNodes,
+				tabState.DecompiledNodes,
 				new DecompilationOptions() { FullDecompilation = true });
 		}
 		
@@ -1587,7 +1591,7 @@ namespace ICSharpCode.ILSpy
 
 		public event SelectionChangedEventHandler SelectionChanged;
 
-		public IEnumerable<ILSpyTreeNode> SelectedNodes {
+		IEnumerable<ILSpyTreeNode> SelectedNodes {
 			get {
 				return treeView.GetTopLevelSelection().OfType<ILSpyTreeNode>();
 			}
