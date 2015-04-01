@@ -110,6 +110,8 @@ namespace ICSharpCode.ILSpy
 
 		private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
+			if (e.ChangedButton != MouseButton.Left)
+				return;
 			if (GetListViewItem(e.OriginalSource) == null)
 				return;
 			var tabs = GetSelectedItems();

@@ -146,6 +146,8 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		
 		void RunningProcesses_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
+			if (e.ChangedButton != System.Windows.Input.MouseButton.Left)
+				return;
 			Attach();
 		}
 	}
