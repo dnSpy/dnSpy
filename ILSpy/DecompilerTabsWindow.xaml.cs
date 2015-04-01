@@ -74,7 +74,7 @@ namespace ICSharpCode.ILSpy
 				}
 				list.Add(info);
 			}
-			list.Sort((a, b) => a.TabState.ShortHeader.CompareTo(b.TabState.ShortHeader));
+			list.Sort((a, b) => a.TabState.ShortHeader.ToUpperInvariant().CompareTo(b.TabState.ShortHeader.ToUpperInvariant()));
 			return new ObservableCollection<TabInfo>(list);
 		}
 
