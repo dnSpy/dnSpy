@@ -86,20 +86,37 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 
 			SwitchModuleColumn();
 
-			DebuggerService.DebugStarted += new EventHandler(OnDebugStarted);
-			DebuggerService.DebugStopped += new EventHandler(OnDebugStopped);
+			DebuggerService.DebugEvent += OnDebugEvent;
 			StackFrameStatementManager.SelectedFrameChanged += OnSelectedFrameChanged;
 			if (DebuggerService.IsDebuggerStarted)
-				OnDebugStarted(null, EventArgs.Empty);
+				OnDebugStarted();
+		}
+
+		void OnDebugEvent(object sender, Services.DebuggerEventArgs e)
+		{
+			switch (e.DebuggerEvent) {
+			case DebuggerEvent.Started:
+				OnDebugStarted();
+				break;
+
+			case DebuggerEvent.Stopped:
+				OnDebugStopped();
+				break;
+
+			case DebuggerEvent.Paused:
+			case DebuggerEvent.Resumed:
+			case DebuggerEvent.ProcessSelected:
+				RefreshPad();
+				break;
+			}
 		}
 		
 		public void Closed()
 		{
-            DebuggerService.DebugStarted -= new EventHandler(OnDebugStarted);
-            DebuggerService.DebugStopped -= new EventHandler(OnDebugStopped);
+			DebuggerService.DebugEvent -= OnDebugEvent;
 			StackFrameStatementManager.SelectedFrameChanged -= OnSelectedFrameChanged;
             if (null != m_currentDebugger)
-                OnDebugStopped(null, EventArgs.Empty);
+                OnDebugStopped();
             
             DebuggerSettings.Instance.PropertyChanged -= new PropertyChangedEventHandler(OnDebuggerSettingChanged);
 		}
@@ -121,24 +138,16 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		        
 		}
         
-        void OnDebugStarted(object sender, EventArgs args)
+        void OnDebugStarted()
         {
         	m_currentDebugger = DebuggerService.CurrentDebugger;
-			DebuggerService.ProcessRunningChanged += new EventHandler(OnProcessRunningChanged);
-        	
-        	OnProcessRunningChanged(null, EventArgs.Empty);
+			RefreshPad();
         }
 
-        void OnDebugStopped(object sender, EventArgs args)
+        void OnDebugStopped()
         {
-        	DebuggerService.ProcessRunningChanged -= new EventHandler(OnProcessRunningChanged);
         	m_currentDebugger = null;
 			view.ItemsSource = null;
-        }
-        
-        void OnProcessRunningChanged(object sender, EventArgs args)
-        {
-        	RefreshPad();
         }
 
 		void OnSelectedFrameChanged(object sender, EventArgs e)

@@ -197,7 +197,6 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (debugger == null)
 				return;
 			debugger.BreakAtBeginning = breakAtBeginning;
-			DebugStarted();
 			debugger.Start(new ProcessStartInfo {
 			                      	FileName = fileName,
 			                      	WorkingDirectory = workingDirectory ?? Path.GetDirectoryName(fileName),
@@ -211,7 +210,6 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (debugger == null)
 				return;
 			debugger.BreakAtBeginning = DebuggerSettings.Instance.BreakAtBeginning;
-			DebugStarted();
 			debugger.Attach(process);
 		}
 
@@ -222,47 +220,38 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				return false;
 			if (debugger.IsDebugging) {
 				debugger.Detach();
-
-				DebuggerPlugin.EnableDebuggerUI(true);
-				DebuggerService.DebugStopped -= OnDebugStopped;
 				return true;
 			}
 
 			return false;
 		}
 
-		static void DebugStarted()
+		void DebuggerService_DebugEvent(object sender, DebuggerEventArgs e)
 		{
-			EnableDebuggerUI(false);
-			DebuggerService.DebugStopped += OnDebugStopped;
-			DebuggerService.ProcessRunningChanged += OnProcessRunningChanged;
-			
-			MainWindow.Instance.SetStatus("Running...", Brushes.Black);
-		}
-
-		static void OnDebugStopped(object sender, EventArgs e)
-		{
-			EnableDebuggerUI(true);
-			DebuggerService.DebugStopped -= OnDebugStopped;
-			DebuggerService.ProcessRunningChanged -= OnProcessRunningChanged;
-			
-			MainWindow.Instance.HideStatus();
-		}
-
-		static void EnableDebuggerUI(bool enable)
-		{
-			// internal types
-			if (enable)
+			switch (e.DebuggerEvent) {
+			case DebuggerEvent.Started:
 				MainWindow.Instance.SessionSettings.FilterSettings.ShowInternalApi = true;
+				MainWindow.Instance.SetStatus("Running...", Brushes.Black);
+				break;
+
+			case DebuggerEvent.Stopped:
+				MainWindow.Instance.HideStatus();
+				break;
+
+			case DebuggerEvent.Paused:
+			case DebuggerEvent.Resumed:
+			case DebuggerEvent.ProcessSelected:
+				OnProcessRunningChanged();
+				break;
+			}
 		}
 
-		static void OnProcessRunningChanged(object sender, EventArgs e)
+		static void OnProcessRunningChanged()
 		{
 			var debugger = DebuggerService.CurrentDebugger;
 			if (debugger == null)
 				return;
 			if (debugger.IsProcessRunning) {
-				//SendWpfWindowPos(this, HWND_BOTTOM);
 				MainWindow.Instance.SetStatus("Running...", Brushes.Black);
 				return;
 			}
@@ -270,7 +259,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			var inst = MainWindow.Instance;
 			
 			// breakpoint was hit => bring to front the main window
-			SendWpfWindowPos(inst, HWND_TOP); inst.Activate();
+			SendWpfWindowPos(inst, HWND_TOP);
+			inst.Activate();
 			
 			if (DebugInformation.MustJumpToReference)
 				DebugUtils.JumpToCurrentStatement(MainWindow.Instance.SafeActiveTextView);
@@ -284,6 +274,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			MainWindow.Instance.KeyDown += OnKeyDown;
 			MainWindow.Instance.Closing += OnClosing;
 			BreakpointSettings.Instance.Load();
+			DebuggerService.DebugEvent += DebuggerService_DebugEvent;
 			new BringDebuggedProgramWindowToFront();
 		}
 
@@ -304,13 +295,13 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 			public BringDebuggedProgramWindowToFront()
 			{
-				DebuggerService.ProcessRunningChanged += DebuggerService_ProcessRunningChanged;
+				DebuggerService.DebugEvent += DebuggerService_DebugEvent;
 			}
 
 			bool isRunning;
 			int isRunningId;
 
-			void DebuggerService_ProcessRunningChanged(object sender, EventArgs e)
+			void DebuggerService_DebugEvent(object sender, DebuggerEventArgs e)
 			{
 				var debugger = DebuggerService.CurrentDebugger;
 				bool newIsRunning = debugger != null && debugger.IsProcessRunning;
@@ -731,10 +722,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		static DebuggerCommand()
 		{
-			DebuggerService.DebugStarting += delegate { UpdateState(); };
-			DebuggerService.DebugStarted += delegate { UpdateState(); };
-			DebuggerService.DebugStopped += delegate { UpdateState(); };
-			DebuggerService.ProcessRunningChanged += delegate { UpdateState(); };
+			DebuggerService.DebugEvent += (s, e) => UpdateState();
 		}
 
 		protected DebuggerCommand(bool? needsDebuggerActive, bool? mustBePaused = null)

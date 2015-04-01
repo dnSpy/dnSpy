@@ -16,6 +16,54 @@ using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.Debugger.Services
 {
+	public enum DebuggerEvent
+	{
+		/// <summary>
+		/// Just before attaching or starting the process
+		/// </summary>
+		Starting,
+
+		/// <summary>
+		/// The debugged process has started
+		/// </summary>
+		Started,
+
+		/// <summary>
+		/// The debugged process has stopped
+		/// </summary>
+		Stopped,
+
+		/// <summary>
+		/// The debugged process is being detached
+		/// </summary>
+		Detaching,
+
+		/// <summary>
+		/// The debugged process has paused
+		/// </summary>
+		Paused,
+
+		/// <summary>
+		/// The debugged process has resumed
+		/// </summary>
+		Resumed,
+
+		/// <summary>
+		/// A new process has been attached / started or the process has just stopped
+		/// </summary>
+		ProcessSelected,
+	}
+
+	public class DebuggerEventArgs : EventArgs
+	{
+		public DebuggerEvent DebuggerEvent { get; private set; }
+
+		public DebuggerEventArgs(DebuggerEvent debuggerEvent)
+		{
+			this.DebuggerEvent = debuggerEvent;
+		}
+	}
+
 	public static class DebuggerService
 	{
 		static IDebugger   currentDebugger;
@@ -42,10 +90,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 					currentDebugger = GetCompatibleDebugger();
 					if (currentDebugger == null)
 						return null;
-					currentDebugger.DebugStarting += new EventHandler(OnDebugStarting);
-					currentDebugger.DebugStarted += new EventHandler(OnDebugStarted);
-					currentDebugger.DebugStopped += new EventHandler(OnDebugStopped);
-					currentDebugger.ProcessRunningChanged += new EventHandler(OnProcessRunningChanged);
+					currentDebugger.DebugEvent += OnDebugEvent;
 				}
 				return currentDebugger;
 			}
@@ -59,41 +104,28 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		public static bool IsDebuggerStarted {
 			get { return debuggerStarted; }
 		}
-		
-		public static event EventHandler DebugStarting;
-		public static event EventHandler DebugStarted;
-		public static event EventHandler DebugStopped;
-		public static event EventHandler ProcessRunningChanged;
-		
-		static void OnDebugStarting(object sender, EventArgs e)
-		{
-			ClearDebugMessages();
-			
-			if (DebugStarting != null)
-				DebugStarting(null, e);
-		}
-		
-		static void OnDebugStarted(object sender, EventArgs e)
-		{
-			debuggerStarted = true;
-			if (DebugStarted != null)
-				DebugStarted(null, e);
-		}
-		
-		static void OnDebugStopped(object sender, EventArgs e)
-		{
-			debuggerStarted = false;
-			
-			StackFrameStatementManager.UpdateReturnStatementBookmarks(true);
-			
-			if (DebugStopped != null)
-				DebugStopped(null, e);
-		}
 
-		static void OnProcessRunningChanged(object sender, EventArgs e)
+		public static event EventHandler<DebuggerEventArgs> DebugEvent;
+
+		static void OnDebugEvent(object sender, DebuggerEventArgs e)
 		{
-			if (ProcessRunningChanged != null)
-				ProcessRunningChanged(null, e);
+			switch (e.DebuggerEvent) {
+			case DebuggerEvent.Starting:
+				ClearDebugMessages();
+				break;
+
+			case DebuggerEvent.Started:
+				debuggerStarted = true;
+				break;
+
+			case DebuggerEvent.Stopped:
+				debuggerStarted = false;
+				StackFrameStatementManager.UpdateReturnStatementBookmarks(true);
+				break;
+			}
+
+			if (DebugEvent != null)
+				DebugEvent(sender, e);
 		}
 		
 		public static void ClearDebugMessages()
@@ -208,20 +240,10 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		public static void SetDebugger(Lazy<IDebugger> debugger)
 		{
 			if (currentDebugger != null)
-			{
-				currentDebugger.DebugStarting -= new EventHandler(OnDebugStarting);
-				currentDebugger.DebugStarted -= new EventHandler(OnDebugStarted);
-				currentDebugger.DebugStopped -= new EventHandler(OnDebugStopped);
-				currentDebugger.ProcessRunningChanged -= new EventHandler(OnProcessRunningChanged);
-			}
+				currentDebugger.DebugEvent -= OnDebugEvent;
 			currentDebugger = debugger.Value;
 			if (currentDebugger != null)
-			{
-				currentDebugger.DebugStarting += new EventHandler(OnDebugStarting);
-				currentDebugger.DebugStarted += new EventHandler(OnDebugStarted);
-				currentDebugger.DebugStopped += new EventHandler(OnDebugStopped);
-				currentDebugger.ProcessRunningChanged += new EventHandler(OnProcessRunningChanged);
-			}
+				currentDebugger.DebugEvent += OnDebugEvent;
 		}
 	}
 }

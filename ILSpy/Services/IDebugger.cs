@@ -110,25 +110,10 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		/// <param name="count">Max number of stack frames to return.</param>
 		/// <returns></returns>
 		IEnumerable<DebugStackFrame> GetStackFrames(int count);
-		
+
 		/// <summary>
-		/// Ocurrs when the debugger is starting.
+		/// Sent by the debugger at various times
 		/// </summary>
-		event EventHandler DebugStarting;
-		
-		/// <summary>
-		/// Ocurrs after the debugger has started.
-		/// </summary>
-		event EventHandler DebugStarted;
-		
-		/// <summary>
-		/// Ocurrs when the value of IsProcessRunning changes.
-		/// </summary>
-		event EventHandler ProcessRunningChanged;
-		
-		/// <summary>
-		/// Ocurrs after the debugging of program is finished.
-		/// </summary>
-		event EventHandler DebugStopped;
+		event EventHandler<DebuggerEventArgs> DebugEvent;
 	}
 }

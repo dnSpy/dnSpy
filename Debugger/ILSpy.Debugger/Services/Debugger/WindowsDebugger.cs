@@ -43,8 +43,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		NDebugger debugger;
 		Process debuggedProcess;
 		
-		public event EventHandler<ProcessEventArgs> ProcessSelected;
-		
 		public NDebugger DebuggerCore {
 			get {
 				return debugger;
@@ -72,13 +70,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		public bool BreakAtBeginning {
 			get;
 			set;
-		}
-		
-		protected virtual void OnProcessSelected(ProcessEventArgs e)
-		{
-			if (ProcessSelected != null) {
-				ProcessSelected(this, e);
-			}
 		}
 		
 		public bool ServiceInitialized {
@@ -130,8 +121,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			string version = debugger.GetProgramVersion(processStartInfo.FileName);
 			
 			attached = false;
-			if (DebugStarting != null)
-				DebugStarting(this, EventArgs.Empty);
+			if (DebugEvent != null)
+				DebugEvent(this, new DebuggerEventArgs(DebuggerEvent.Starting));
 			if (version.StartsWith("v1.0")) {
 				StartError("Net10NotSupported");
 			} else if (version.StartsWith("v1.1")) {
@@ -171,8 +162,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 						}
 						StartError(msg);
 					} else {
-						if (DebugStopped != null)
-							DebugStopped(this, EventArgs.Empty);
+						if (DebugEvent != null)
+							DebugEvent(this, new DebuggerEventArgs(DebuggerEvent.Stopped));
 						throw;
 					}
 				}
@@ -183,8 +174,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		{
 			MessageBox.Show(msg);
 
-			if (DebugStopped != null)
-				DebugStopped(this, EventArgs.Empty);
+			if (DebugEvent != null)
+				DebugEvent(this, new DebuggerEventArgs(DebuggerEvent.Stopped));
 		}
 		
 		public void Attach(System.Diagnostics.Process existingProcess)
@@ -200,8 +191,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				InitializeService();
 			}
 			
-			if (DebugStarting != null)
-				DebugStarting(this, EventArgs.Empty);
+			if (DebugEvent != null)
+				DebugEvent(this, new DebuggerEventArgs(DebuggerEvent.Starting));
 			string version = debugger.GetProgramVersion(existingProcess.MainModule.FileName);
 			if (version.StartsWith("v1.0")) {
 				StartError("Net10NotSupported");
@@ -221,8 +212,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 						StartError(msg + " " + e.Message);
 						
 					} else {
-						if (DebugStopped != null)
-							DebugStopped(this, EventArgs.Empty);
+						if (DebugEvent != null)
+							DebugEvent(this, new DebuggerEventArgs(DebuggerEvent.Stopped));
 						throw;
 					}
 				}
@@ -233,7 +224,9 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		{
 			if (debuggedProcess == null)
 				return;
-			
+
+			if (DebugEvent != null)
+				DebugEvent(this, new DebuggerEventArgs(DebuggerEvent.Detaching));
 			debugger.Detach();
 		}
 		
@@ -403,17 +396,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			}
 		}
 		
-		public event EventHandler DebugStarting;
-		public event EventHandler DebugStarted;
-		public event EventHandler DebugStopped;
-		public event EventHandler ProcessRunningChanged;
-		
-		protected virtual void OnProcessRunningChanged(EventArgs e)
-		{
-			if (ProcessRunningChanged != null) {
-				ProcessRunningChanged(this, e);
-			}
-		}
+		public event EventHandler<DebuggerEventArgs> DebugEvent;
 		
 		/// <summary>
 		/// Gets variable of given name.
@@ -629,9 +612,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		void debugger_ProcessStarted(object sender, CollectionItemEventArgs<Process> e)
 		{
 			if (debugger.Processes.Count == 1) {
-				if (DebugStarted != null) {
-					DebugStarted(this, EventArgs.Empty);
-				}
+				if (DebugEvent != null)
+					DebugEvent(this, new DebuggerEventArgs(DebuggerEvent.Started));
 			}
 			e.Item.LogMessage += LogMessage;
 		}
@@ -661,16 +643,16 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				debuggedProcess.ModulesAdded 	+= debuggedProcess_ModulesAdded;
 				
 				debuggedProcess.BreakAtBeginning = BreakAtBeginning;
+				if (DebugEvent != null)
+					DebugEvent(this, new DebuggerEventArgs(DebuggerEvent.ProcessSelected));
 			}
 			else {
-				if (DebugStopped != null)
-					DebugStopped(this, e ?? EventArgs.Empty);
+				if (DebugEvent != null)
+					DebugEvent(this, new DebuggerEventArgs(DebuggerEvent.ProcessSelected));
+				if (DebugEvent != null)
+					DebugEvent(this, new DebuggerEventArgs(DebuggerEvent.Stopped));
 			}
-			// reset
 			BreakAtBeginning = false;
-			
-			OnProcessSelected(new ProcessEventArgs(process));
-			OnProcessRunningChanged(EventArgs.Empty);
 		}
 
 		void debuggedProcess_ModulesAdded(object sender, ModuleEventArgs e)
@@ -685,12 +667,14 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		void debuggedProcess_DebuggingPaused(object sender, ProcessEventArgs e)
 		{
 			JumpToCurrentLine();
-			OnProcessRunningChanged(EventArgs.Empty);
+			if (DebugEvent != null)
+				DebugEvent(this, new DebuggerEventArgs(DebuggerEvent.Paused));
 		}
 		
 		void debuggedProcess_DebuggingResumed(object sender, CorDbg.ProcessEventArgs e)
 		{
-			OnProcessRunningChanged(EventArgs.Empty);
+			if (DebugEvent != null)
+				DebugEvent(this, new DebuggerEventArgs(DebuggerEvent.Resumed));
 			StackFrameStatementManager.Remove(true);
 		}
 		
