@@ -687,19 +687,15 @@ namespace ICSharpCode.ILSpy
 		/// <param name="menuHeader">The exact display name of the sub menu (eg. "_Debug")</param>
 		public void UpdateMainSubMenu(string menuHeader)
 		{
-			var state = subMenusDict[menuHeader];
-			int index = mainMenu.Items.IndexOf(state.TopLevelMenuItem);
-			mainMenu.Items.RemoveAt(index);
-			var newItem = new MenuItem();
-			newItem.Header = state.TopLevelMenuItem.Header;
-			newItem.Name = state.TopLevelMenuItem.Name;
-			state.TopLevelMenuItem = newItem;
-			mainMenu.Items.Insert(index, newItem);
-			InitializeMainSubMenu(state);
+			InitializeMainSubMenu(subMenusDict[menuHeader]);
 		}
 
 		static void InitializeMainSubMenu(MainSubMenuState state)
 		{
+			//TODO: This code generates errors at runtime, except the first time it's called
+			//		System.Windows.Data Error: 4 : Cannot find source for binding with reference 'RelativeSource FindAncestor, AncestorType='System.Windows.Controls.ItemsControl', AncestorLevel='1''. BindingExpression:Path=HorizontalContentAlignment; DataItem=null; target element is 'MenuItem' (Name=''); target property is 'HorizontalContentAlignment' (type 'HorizontalAlignment')
+			//		System.Windows.Data Error: 4 : Cannot find source for binding with reference 'RelativeSource FindAncestor, AncestorType='System.Windows.Controls.ItemsControl', AncestorLevel='1''. BindingExpression:Path=VerticalContentAlignment; DataItem=null; target element is 'MenuItem' (Name=''); target property is 'VerticalContentAlignment' (type 'VerticalAlignment')
+			// Seems to be harmless, the menu items seem to work as expected.
 			var topLevelMenuItem = state.TopLevelMenuItem;
 			topLevelMenuItem.Items.Clear();
 			foreach (var o in state.OriginalItems)
