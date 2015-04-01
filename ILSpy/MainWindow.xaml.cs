@@ -1727,7 +1727,7 @@ namespace ICSharpCode.ILSpy
 		TabStateDecompile CreateEmptyTabState(Language language = null)
 		{
 			var tabState = CreateNewTabState(tabGroupsManager.ActiveTabGroup, language);
-			DecompileNodes(tabState, null, true, tabState.Language, new ILSpyTreeNode[0]);
+			DecompileNodes(tabState, null, false, tabState.Language, new ILSpyTreeNode[0]);
 			return tabState;
 		}
 
