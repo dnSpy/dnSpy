@@ -697,12 +697,6 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				return false;
 			}
 
-			int ilOffset = (int)mapping.ILInstructionOffset.From;
-			if (!DebuggerService.CurrentDebugger.CanSetInstructionPointer(ilOffset)) {
-				errMsg = "It's not safe to set the next statement here";
-				return false;
-			}
-
 			return true;
 		}
 	}
