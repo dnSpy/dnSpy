@@ -133,6 +133,14 @@ namespace ICSharpCode.ILSpy.TextView
 			
 			// Bookmarks context menu
 			IconMarginActionsProvider.Add(iconMargin, this);
+
+			// Make sure it's not possible to right-click something under the wait adorner or to
+			// move the caret.
+			waitAdorner.MouseDown += (s, e) => e.Handled = true;
+			waitAdorner.MouseUp += (s, e) => e.Handled = true;
+			waitAdorner.KeyDown += (s, e) => e.Handled = true;
+			waitAdorner.KeyUp += (s, e) => e.Handled = true;
+			waitAdornerButton.IsVisibleChanged += waitAdornerButton_IsVisibleChanged;
 		}
 
 		void DecompilerTextView_Loaded(object sender, RoutedEventArgs e)
@@ -274,6 +282,12 @@ namespace ICSharpCode.ILSpy.TextView
 		#endregion
 		
 		#region RunWithCancellation
+		void waitAdornerButton_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			if (waitAdornerButton.IsVisible && this == MainWindow.Instance.ActiveTextView)
+				waitAdornerButton.Focus();
+		}
+
 		/// <summary>
 		/// Switches the GUI into "waiting" mode, then calls <paramref name="taskCreation"/> to create
 		/// the task.
@@ -284,6 +298,8 @@ namespace ICSharpCode.ILSpy.TextView
 			if (waitAdorner.Visibility != Visibility.Visible) {
 				waitAdorner.Visibility = Visibility.Visible;
 				waitAdorner.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, new Duration(TimeSpan.FromSeconds(0.5)), FillBehavior.Stop));
+				if (this == MainWindow.Instance.ActiveTextView)
+					waitAdornerButton.Focus();
 				var taskBar = MainWindow.Instance.TaskbarItemInfo;
 				if (taskBar != null) {
 					taskBar.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
@@ -310,6 +326,8 @@ namespace ICSharpCode.ILSpy.TextView
 					if (currentCancellationTokenSource == myCancellationTokenSource) {
 						currentCancellationTokenSource = null;
 						waitAdorner.Visibility = Visibility.Collapsed;
+						if (waitAdornerButton.IsKeyboardFocused)
+							MainWindow.Instance.SetTextEditorFocus(this);
 						var taskBar = MainWindow.Instance.TaskbarItemInfo;
 						if (taskBar != null) {
 							taskBar.ProgressState = System.Windows.Shell.TaskbarItemProgressState.None;

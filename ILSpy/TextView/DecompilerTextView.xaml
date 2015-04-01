@@ -21,7 +21,7 @@
 					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 						<TextBlock FontSize="14pt">Decompiling...</TextBlock>
 						<ProgressBar IsIndeterminate="True" Height="16" Margin="0, 4" />
-						<Button Click="cancelButton_Click" HorizontalAlignment="Center">Cancel</Button>
+						<Button Name="waitAdornerButton" Click="cancelButton_Click" HorizontalAlignment="Center">Cancel</Button>
 					</StackPanel>
 				</Border>
 			</Grid>

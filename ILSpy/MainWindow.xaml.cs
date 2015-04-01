@@ -461,10 +461,15 @@ namespace ICSharpCode.ILSpy
 			if (!IsActiveTab(tabState))
 				return;
 
+			if (textView.waitAdornerButton.IsVisible) {
+				textView.waitAdornerButton.Focus();
+				return;
+			}
+
 			// Set focus to the text area whenever the view is selected
 			var textArea = textView.TextEditor.TextArea;
 			if (!textArea.IsVisible) {
-				new SetFocusWhenVisible(textArea, tabState);
+				new SetFocusWhenVisible(tabState);
 			}
 			else
 				textArea.Focus();
@@ -472,18 +477,17 @@ namespace ICSharpCode.ILSpy
 
 		class SetFocusWhenVisible
 		{
-			readonly TextArea textArea;
 			readonly TabStateDecompile tabState;
 
-			public SetFocusWhenVisible(TextArea textArea, TabStateDecompile tabState)
+			public SetFocusWhenVisible(TabStateDecompile tabState)
 			{
-				this.textArea = textArea;
 				this.tabState = tabState;
-				textArea.IsVisibleChanged += textArea_IsVisibleChanged;
+				tabState.TextView.TextEditor.TextArea.IsVisibleChanged += textArea_IsVisibleChanged;
 			}
 
 			void textArea_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
 			{
+				var textArea = tabState.TextView.TextEditor.TextArea;
 				textArea.IsVisibleChanged -= textArea_IsVisibleChanged;
 				if (MainWindow.Instance.IsActiveTab(tabState))
 					textArea.Focus();
