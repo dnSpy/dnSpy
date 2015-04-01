@@ -437,7 +437,6 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		{
 			var debugger = DebuggerService.CurrentDebugger;
 			if (debugger != null && debugger.IsDebugging && !debugger.IsProcessRunning) {
-				StackFrameStatementManager.Remove(true);
 				debugger.Continue();
 				MainWindow.Instance.SetStatus("Running...", Brushes.Black);
 				return true;

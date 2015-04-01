@@ -166,6 +166,10 @@ namespace ICSharpCode.ILSpy.Debugger.UI
         
        	void RefreshPad()
 		{
+			if (m_currentDebugger == null) {
+				view.ItemsSource = null;
+				return;
+			}
        	    Process debuggedProcess = ((WindowsDebugger)m_currentDebugger).DebuggedProcess;
 			if (debuggedProcess == null || debuggedProcess.IsRunning || debuggedProcess.SelectedThread == null) {
 				view.ItemsSource = null;

@@ -675,7 +675,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		{
 			if (DebugEvent != null)
 				DebugEvent(this, new DebuggerEventArgs(DebuggerEvent.Resumed));
-			StackFrameStatementManager.Remove(true);
 		}
 		
 		void debuggedProcess_ExceptionThrown(object sender, CorDbg.ExceptionEventArgs e)
@@ -743,8 +742,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				else {
 					StepIntoUnknownFrame(frame);
 				}
-
-				StackFrameStatementManager.UpdateReturnStatementBookmarks(true);
 			}
 		}
 

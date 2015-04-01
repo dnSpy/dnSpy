@@ -120,7 +120,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 
 			case DebuggerEvent.Stopped:
 				debuggerStarted = false;
-				StackFrameStatementManager.UpdateReturnStatementBookmarks(true);
 				break;
 			}
 

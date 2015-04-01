@@ -37,11 +37,30 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 	{
 		static StackFrameStatementManager()
 		{
+			DebuggerService.DebugEvent += OnDebugEvent;
 			MainWindow.Instance.ExecuteWhenLoaded(() => {
 				MainWindow.Instance.OnDecompilerTextViewChanged += (sender, e) => OnDecompilerTextViewChanged(e.OldView, e.NewView);
 				foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
 					OnDecompilerTextViewChanged(null, textView);
 			});
+		}
+
+		static void OnDebugEvent(object sender, DebuggerEventArgs e)
+		{
+			switch (e.DebuggerEvent) {
+			case DebuggerEvent.Resumed:
+				SelectedFrame = 0;
+				foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
+					Remove(textView);
+				break;
+
+			case DebuggerEvent.Stopped:
+			case DebuggerEvent.Paused:
+				SelectedFrame = 0;
+				foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
+					UpdateReturnStatementBookmarks(textView, false);
+				break;
+			}
 		}
 
 		static void OnDecompilerTextViewChanged(DecompilerTextView oldView, DecompilerTextView newView)
@@ -87,14 +106,6 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		public static event EventHandler SelectedFrameChanged;
 		static int selectedFrame = 0;
 
-		public static void Remove(bool removeSelected)
-		{
-			if (removeSelected)
-				SelectedFrame = 0;
-			foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
-				Remove(textView);
-		}
-
 		static void Remove(DecompilerTextView decompilerTextView)
 		{
 			for (int i = returnStatementBookmarks.Count - 1; i >= 0; i--) {
@@ -103,16 +114,6 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 					returnStatementBookmarks.RemoveAt(i);
 				}
 			}
-		}
-
-		public static bool UpdateReturnStatementBookmarks(bool removeSelected, bool moveCaret = false)
-		{
-			bool result = false;
-			if (removeSelected)
-				SelectedFrame = 0;
-			foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
-				result |= UpdateReturnStatementBookmarks(textView, moveCaret);
-			return result;
 		}
 
 		/// <summary>
