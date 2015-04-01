@@ -156,14 +156,17 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			return true;
 		}
 
-		public static bool RestartPossible()
+		public static bool RestartCanExecute()
 		{
 			return DebuggerService.CurrentDebugger != null &&
-				DebuggerService.CurrentDebugger.IsDebugging;
+				DebuggerService.CurrentDebugger.IsDebugging &&
+				!DebuggerService.CurrentDebugger.WasAttached;
 		}
 
 		public static bool Restart()
 		{
+			if (!RestartCanExecute())
+				return false;
 			if (!Stop())
 				return false;
 
@@ -370,7 +373,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				return;
 			}
 			if (debugging && Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.F5) {
-				if (RestartPossible())
+				if (RestartCanExecute())
 					Restart();
 				e.Handled = true;
 				return;
@@ -381,13 +384,13 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				return;
 			}
 			if (Keyboard.Modifiers == ModifierKeys.Shift && e.Key == Key.F9) {
-				if (DebugEnableDisableBreakpointPossible())
+				if (DebugEnableDisableBreakpointCanExecute())
 					DebugEnableDisableBreakpoint();
 				e.Handled = true;
 				return;
 			}
 			if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.F9) {
-				if (DebugDeleteAllBreakpointsPossible())
+				if (DebugDeleteAllBreakpointsCanExecute())
 					DebugDeleteAllBreakpoints();
 				e.Handled = true;
 				return;
@@ -426,7 +429,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				return;
 			}
 			if (debugging && Keyboard.Modifiers == ModifierKeys.Alt && e.SystemKey == Key.Multiply) {
-				if (DebugShowNextStatementPossible())
+				if (DebugShowNextStatementCanExecute())
 					DebugShowNextStatement();
 				e.Handled = true;
 				return;
@@ -504,7 +507,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			return true;
 		}
 
-		public static bool DebugDeleteAllBreakpointsPossible()
+		public static bool DebugDeleteAllBreakpointsCanExecute()
 		{
 			return BookmarkManager.Bookmarks.Any(b => b is BreakpointBookmark);
 		}
@@ -536,7 +539,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			return bpms.Count > 0;
 		}
 
-		public static bool DebugEnableDisableBreakpointPossible()
+		public static bool DebugEnableDisableBreakpointCanExecute()
 		{
 			return DebuggerService.CurrentDebugger != null && HasBPAtCurrentCaretPosition();
 		}
@@ -561,7 +564,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			return false;
 		}
 
-		public static bool DebugShowNextStatementPossible()
+		public static bool DebugShowNextStatementCanExecute()
 		{
 			return DebuggerService.CurrentDebugger != null &&
 			DebuggerService.CurrentDebugger.IsDebugging &&
@@ -570,7 +573,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		static bool TryShowNextStatement(DecompilerTextView textView)
 		{
-			if (!DebugShowNextStatementPossible())
+			if (!DebugShowNextStatementCanExecute())
 				return false;
 
 			// Always reset the selected frame
@@ -976,6 +979,12 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		{
 		}
 
+		protected override bool CanExecuteInternal()
+		{
+			return base.CanExecuteInternal() &&
+				DebuggerPlugin.RestartCanExecute();
+		}
+
 		public override void Execute(object parameter)
 		{
 			DebuggerPlugin.Restart();
@@ -1092,7 +1101,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		protected override bool CanExecuteInternal()
 		{
 			return base.CanExecuteInternal() &&
-				DebuggerPlugin.DebugDeleteAllBreakpointsPossible();
+				DebuggerPlugin.DebugDeleteAllBreakpointsCanExecute();
 		}
 	}
 
@@ -1167,7 +1176,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		public bool IsVisible(TextViewContext context)
 		{
 			return (context == null || context.TextView != null) &&
-				DebuggerPlugin.DebugEnableDisableBreakpointPossible();
+				DebuggerPlugin.DebugEnableDisableBreakpointCanExecute();
 		}
 
 		public bool IsEnabled(TextViewContext context)
@@ -1217,7 +1226,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		public bool IsVisible(TextViewContext context)
 		{
 			return (context == null || context.TextView != null) &&
-				DebuggerPlugin.DebugShowNextStatementPossible();
+				DebuggerPlugin.DebugShowNextStatementCanExecute();
 		}
 
 		public bool IsEnabled(TextViewContext context)

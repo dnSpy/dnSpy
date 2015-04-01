@@ -34,6 +34,13 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		bool IsDebugging {
 			get;
 		}
+
+		/// <summary>
+		/// Returns true if the process was attached instead of started by the debugger
+		/// </summary>
+		bool WasAttached {
+			get;
+		}
 		
 		/// <summary>
 		/// Returns true if process is running

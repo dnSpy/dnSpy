@@ -96,7 +96,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			}
 		}
 		
-		public bool IsAttached {
+		public bool WasAttached {
 			get {
 				return ServiceInitialized && attached;
 			}
@@ -236,7 +236,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				MessageBox.Show(errorNotDebugging, "Stop");
 				return;
 			}
-			if (IsAttached) {
+			if (WasAttached) {
 				Detach();
 			} else {
 				debuggedProcess.Terminate();
