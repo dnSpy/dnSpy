@@ -863,7 +863,6 @@ namespace ICSharpCode.ILSpy.TextView
 					context.Options.CancellationToken = ct;
 					return SaveToDiskAsync(context, fileName);
 				})
-				.Then(output => ShowOutput(output))
 				.Catch((Exception ex) => {
 					textEditor.SyntaxHighlighting = null;
 					Debug.WriteLine("Decompiler crashed: " + ex.ToString());
@@ -875,9 +874,9 @@ namespace ICSharpCode.ILSpy.TextView
 				}).HandleExceptions();
 		}
 
-		Task<AvalonEditTextOutput> SaveToDiskAsync(DecompilationContext context, string fileName)
+		Task<int> SaveToDiskAsync(DecompilationContext context, string fileName)
 		{
-			TaskCompletionSource<AvalonEditTextOutput> tcs = new TaskCompletionSource<AvalonEditTextOutput>();
+			TaskCompletionSource<int> tcs = new TaskCompletionSource<int>();
 			Thread thread = new Thread(new ThreadStart(
 				delegate {
 					try {
@@ -888,17 +887,12 @@ namespace ICSharpCode.ILSpy.TextView
 								DecompileNodes(context, new PlainTextOutput(w));
 							} catch (OperationCanceledException) {
 								w.WriteLine();
-								w.WriteLine("Decompiled was cancelled.");
+								w.WriteLine("Decompilation was canceled.");
 								throw;
 							}
 						}
 						stopwatch.Stop();
-						AvalonEditTextOutput output = new AvalonEditTextOutput();
-						output.WriteLine("Decompilation complete in " + stopwatch.Elapsed.TotalSeconds.ToString("F1") + " seconds.", TextTokenType.Text);
-						output.WriteLine();
-						output.AddButton(null, "Open Explorer", delegate { Process.Start("explorer", "/select,\"" + fileName + "\""); });
-						output.WriteLine();
-						tcs.SetResult(output);
+						tcs.SetResult(0);
 					} catch (OperationCanceledException) {
 						tcs.SetCanceled();
 						#if DEBUG
