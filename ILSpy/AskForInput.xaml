@@ -8,6 +8,7 @@
              Icon="Images/ILSpy.ico"
              Title="dnSpy"
              WindowStartupLocation="CenterOwner"
+             Style="{DynamicResource DialogWindow}"
              mc:Ignorable="d" >
 	<StackPanel FocusManager.FocusedElement="{Binding ElementName=textBox}">
 		<DockPanel LastChildFill="True" Margin="10,20,10,10">

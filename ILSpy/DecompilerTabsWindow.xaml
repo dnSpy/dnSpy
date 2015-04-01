@@ -11,6 +11,8 @@
              ResizeMode="CanResizeWithGrip"
              Title="Windows"
              KeyDown="Window_KeyDown"
+             Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+             Style="{DynamicResource DialogWindow}"
              mc:Ignorable="d">
     <Grid Margin="13">
 		<Grid.ColumnDefinitions>

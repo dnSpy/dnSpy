@@ -9,6 +9,7 @@
              Icon="Images/ILSpy.ico"
              Title="dnSpy"
              WindowStartupLocation="CenterOwner"
+             Style="{DynamicResource DialogWindow}"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="400">
 	<StackPanel FocusManager.FocusedElement="{Binding ElementName=okButton}">
