@@ -110,7 +110,7 @@ namespace ICSharpCode.ILSpy
 			this.fileName = module.Location;
 
 			this.assemblyTask = Task.Factory.StartNew<ModuleDef>(() => LoadModule(module));
-			this.shortName = Path.GetFileNameWithoutExtension(fileName);
+			this.shortName = GetShortName(fileName);
 
 			// Make sure IsLoaded is set to true. The callers depend on IsLoaded to be true.
 			if (ModuleDefinition != null) { }
@@ -126,7 +126,18 @@ namespace ICSharpCode.ILSpy
 			this.fileName = fileName;
 			
 			this.assemblyTask = Task.Factory.StartNew<ModuleDef>(LoadAssembly, stream); // requires that this.fileName is set
-			this.shortName = Path.GetFileNameWithoutExtension(fileName);
+			this.shortName = GetShortName(fileName);
+		}
+
+		static string GetShortName(string fileName)
+		{
+			var s = Path.GetFileNameWithoutExtension(fileName);
+			if (!string.IsNullOrWhiteSpace(s))
+				return s;
+			s = Path.GetFileName(fileName);
+			if (!string.IsNullOrWhiteSpace(s))
+				return s;
+			return fileName;
 		}
 		
 		/// <summary>
