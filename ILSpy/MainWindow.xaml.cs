@@ -2358,6 +2358,8 @@ namespace ICSharpCode.ILSpy
 
 				var tabStates = tabGroup.AllTabStates.ToArray();
 				int activeTabIndex = tabGroup.ActiveIndex;
+				if (activeTabIndex < 0)
+					activeTabIndex = 0;
 				for (int j = 0; j < tabStates.Length; j++)
 					yield return tabStates[(j + activeTabIndex) % tabStates.Length];
 			}
