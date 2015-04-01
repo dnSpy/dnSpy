@@ -461,6 +461,20 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "Window", Header = "_Close", MenuOrder = 9010, InputGestureText = "Ctrl+W")]
+	class CloseTabCommand : TabGroupCommand
+	{
+		protected override bool CanExecuteInternal()
+		{
+			return MainWindow.Instance.CloseActiveTabCanExecute();
+		}
+
+		protected override void ExecuteInternal()
+		{
+			MainWindow.Instance.CloseActiveTab();
+		}
+	}
+
 	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroups", Header = "New Hori_zontal Tab Group", MenuOrder = 9200, MenuIcon = "images/HorizontalTabGroup.png")]
 	sealed class NewHorizontalTabGroupCommand : TabGroupCommand
 	{
