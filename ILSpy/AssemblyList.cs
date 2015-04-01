@@ -43,6 +43,11 @@ namespace ICSharpCode.ILSpy
 		internal readonly ConcurrentDictionary<string, LoadedAssembly> winRTMetadataLookupCache = new ConcurrentDictionary<string, LoadedAssembly>(StringComparer.OrdinalIgnoreCase);
 		internal List<string> assemblySearchPaths = new List<string>();
 
+		/// <summary>
+		/// true if we're rearranging the list, eg. moving assemblies or sorting the list
+		/// </summary>
+		public bool IsReArranging { get; internal set; }
+
 		public bool UseGAC {
 			get { return useGAC; }
 			set { useGAC = value; }

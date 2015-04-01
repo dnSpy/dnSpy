@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -35,11 +36,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	sealed class AssemblyListTreeNode : ILSpyTreeNode
 	{
 		readonly AssemblyList assemblyList;
-
-		public AssemblyList AssemblyList
-		{
-			get { return assemblyList; }
-		}
 
 		public AssemblyListTreeNode(AssemblyList assemblyList)
 		{
@@ -103,22 +99,59 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (files == null)
 				files = e.Data.GetData(DataFormats.FileDrop) as string[];
 			if (files != null) {
-				lock (assemblyList.GetLockObj()) {
-					var assemblies = (from file in files
-									  where file != null
-									  select assemblyList.OpenAssembly(file) into node
-									  where node != null
-									  select node).Distinct().ToList();
-					foreach (LoadedAssembly asm in assemblies) {
-						int nodeIndex = assemblyList.IndexOf_NoLock(asm);
-						if (nodeIndex < index)
-							index--;
-						assemblyList.RemoveAt_NoLock(nodeIndex);
+				LoadedAssembly newSelectedAsm = null;
+				bool newSelectedAsmExisted = false;
+				var oldIgnoreSelChg = MainWindow.Instance.TreeView_SelectionChanged_ignore;
+				try {
+					lock (assemblyList.GetLockObj()) {
+						int numFiles = assemblyList.Count_NoLock;
+						var old = assemblyList.IsReArranging;
+						try {
+							MainWindow.Instance.TreeView_SelectionChanged_ignore = true;
+							var assemblies = (from file in files
+											  where file != null
+											  select assemblyList.OpenAssembly(file) into node
+											  where node != null
+											  select node).Distinct().ToList();
+							var oldAsm = new Dictionary<LoadedAssembly, bool>(assemblies.Count);
+							foreach (LoadedAssembly asm in assemblies) {
+								int nodeIndex = assemblyList.IndexOf_NoLock(asm);
+								oldAsm[asm] = nodeIndex < numFiles;
+								if (newSelectedAsm == null) {
+									newSelectedAsm = asm;
+									newSelectedAsmExisted = oldAsm[asm];
+								}
+								if (nodeIndex < index)
+									index--;
+								numFiles--;
+								assemblyList.IsReArranging = oldAsm[asm];
+								assemblyList.RemoveAt_NoLock(nodeIndex);
+								assemblyList.IsReArranging = old;
+							}
+							assemblies.Reverse();
+							foreach (LoadedAssembly asm in assemblies) {
+								assemblyList.IsReArranging = oldAsm[asm];
+								assemblyList.Insert_NoLock(index, asm);
+								assemblyList.IsReArranging = old;
+							}
+						}
+						finally {
+							assemblyList.IsReArranging = old;
+						}
 					}
-					assemblies.Reverse();
-					foreach (LoadedAssembly asm in assemblies) {
-						assemblyList.Insert_NoLock(index, asm);
+					if (newSelectedAsm != null) {
+						if (!newSelectedAsmExisted)
+							MainWindow.Instance.TreeView_SelectionChanged_ignore = oldIgnoreSelChg;
+						var node = MainWindow.Instance.FindTreeNode(newSelectedAsm.AssemblyDefinition) ??
+							MainWindow.Instance.FindTreeNode(newSelectedAsm.ModuleDefinition);
+						if (node != null) {
+							MainWindow.Instance.treeView.FocusNode(node);
+							MainWindow.Instance.treeView.SelectedItem = node;
+						}
 					}
+				}
+				finally {
+					MainWindow.Instance.TreeView_SelectionChanged_ignore = oldIgnoreSelChg;
 				}
 			}
 		}

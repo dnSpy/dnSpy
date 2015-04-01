@@ -1068,27 +1068,29 @@ namespace ICSharpCode.ILSpy
 		
 		void assemblyList_Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (e.Action == NotifyCollectionChangedAction.Reset) {
-				foreach (var tabManager in tabGroupsManager.AllTabGroups)
-					tabManager.RemoveAllTabStates();
-			}
-			if (e.OldItems != null) {
-				var oldAssemblies = new HashSet<LoadedAssembly>(e.OldItems.Cast<LoadedAssembly>());
-				foreach (var tabState in AllTabStates.ToArray()) {
-					tabState.History.RemoveAll(n => n.TreeNodes.Any(
-						nd => nd.AncestorsAndSelf().OfType<AssemblyTreeNode>().Any(
-							a => oldAssemblies.Contains(a.LoadedAssembly))));
+			if (!assemblyList.IsReArranging) {
+				if (e.Action == NotifyCollectionChangedAction.Reset) {
+					foreach (var tabManager in tabGroupsManager.AllTabGroups)
+						tabManager.RemoveAllTabStates();
+				}
+				if (e.OldItems != null) {
+					var oldAssemblies = new HashSet<LoadedAssembly>(e.OldItems.Cast<LoadedAssembly>());
+					foreach (var tabState in AllTabStates.ToArray()) {
+						tabState.History.RemoveAll(n => n.TreeNodes.Any(
+							nd => nd.AncestorsAndSelf().OfType<AssemblyTreeNode>().Any(
+								a => oldAssemblies.Contains(a.LoadedAssembly))));
 
-					foreach (var node in tabState.DecompiledNodes) {
-						var asmNode = GetAssemblyTreeNode(node);
-						if (asmNode != null && oldAssemblies.Contains(asmNode.LoadedAssembly)) {
-							var tabManager = (TabManager<TabStateDecompile>)tabState.Owner;
-							tabManager.RemoveTabState(tabState);
-							break;
+						foreach (var node in tabState.DecompiledNodes) {
+							var asmNode = GetAssemblyTreeNode(node);
+							if (asmNode != null && oldAssemblies.Contains(asmNode.LoadedAssembly)) {
+								var tabManager = (TabManager<TabStateDecompile>)tabState.Owner;
+								tabManager.RemoveTabState(tabState);
+								break;
+							}
 						}
 					}
+					DecompileCache.Instance.Clear(oldAssemblies);
 				}
-				DecompileCache.Instance.Clear(oldAssemblies);
 			}
 			if (CurrentAssemblyListChanged != null)
 				CurrentAssemblyListChanged(this, e);
@@ -1477,7 +1479,7 @@ namespace ICSharpCode.ILSpy
 		
 		#region Decompile (TreeView_SelectionChanged)
 		//TODO: HACK alert
-		bool TreeView_SelectionChanged_ignore = false;
+		internal bool TreeView_SelectionChanged_ignore = false;
 		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (TreeView_SelectionChanged_ignore)

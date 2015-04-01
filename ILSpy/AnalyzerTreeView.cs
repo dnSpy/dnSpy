@@ -76,6 +76,8 @@ namespace ICSharpCode.ILSpy
 
 		void MainWindow_Instance_CurrentAssemblyListChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
+			if (MainWindow.Instance.CurrentAssemblyList.IsReArranging)
+				return;
 			if (e.Action == NotifyCollectionChangedAction.Reset) {
 				this.Root.Children.Clear();
 			} else {
