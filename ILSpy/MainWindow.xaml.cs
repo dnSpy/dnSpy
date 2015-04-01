@@ -660,6 +660,8 @@ namespace ICSharpCode.ILSpy
 			public MenuItem TopLevelMenuItem;
 			public IGrouping<string, Lazy<ICommand, IMainMenuCommandMetadata>>[] Groupings;
 			public List<object> OriginalItems = new List<object>();
+			public Dictionary<ICommand, MenuItem> CachedMenuItems = new Dictionary<ICommand, MenuItem>();
+			public bool DirtyMenu = true;
 		}
 		readonly Dictionary<string, MainSubMenuState> subMenusDict = new Dictionary<string, MainSubMenuState>();
 		void InitMainMenu()
@@ -677,7 +679,14 @@ namespace ICSharpCode.ILSpy
 				state.Groupings = topLevelMenu.GroupBy(c => c.Metadata.MenuCategory).ToArray();
 				foreach (object o in state.TopLevelMenuItem.Items)
 					state.OriginalItems.Add(o);
-				InitializeMainSubMenu(state);
+				foreach (var category in state.Groupings) {
+					foreach (var entry in category)
+						state.CachedMenuItems[entry.Value] = new MenuItem();
+				}
+				var stateTmp = state;
+				// Make sure it's not empty or it will always be empty
+				state.TopLevelMenuItem.Loaded += (s, e) => stateTmp.TopLevelMenuItem.Items.Add(new MenuItem());
+				state.TopLevelMenuItem.SubmenuOpened += (s, e) => InitializeMainSubMenu(stateTmp);
 			}
 		}
 
@@ -687,15 +696,14 @@ namespace ICSharpCode.ILSpy
 		/// <param name="menuHeader">The exact display name of the sub menu (eg. "_Debug")</param>
 		public void UpdateMainSubMenu(string menuHeader)
 		{
-			InitializeMainSubMenu(subMenusDict[menuHeader]);
+			subMenusDict[menuHeader].DirtyMenu = true;
 		}
 
 		static void InitializeMainSubMenu(MainSubMenuState state)
 		{
-			//TODO: This code generates errors at runtime, except the first time it's called
-			//		System.Windows.Data Error: 4 : Cannot find source for binding with reference 'RelativeSource FindAncestor, AncestorType='System.Windows.Controls.ItemsControl', AncestorLevel='1''. BindingExpression:Path=HorizontalContentAlignment; DataItem=null; target element is 'MenuItem' (Name=''); target property is 'HorizontalContentAlignment' (type 'HorizontalAlignment')
-			//		System.Windows.Data Error: 4 : Cannot find source for binding with reference 'RelativeSource FindAncestor, AncestorType='System.Windows.Controls.ItemsControl', AncestorLevel='1''. BindingExpression:Path=VerticalContentAlignment; DataItem=null; target element is 'MenuItem' (Name=''); target property is 'VerticalContentAlignment' (type 'VerticalAlignment')
-			// Seems to be harmless, the menu items seem to work as expected.
+			if (!state.DirtyMenu)
+				return;
+			state.DirtyMenu = false;
 			var topLevelMenuItem = state.TopLevelMenuItem;
 			topLevelMenuItem.Items.Clear();
 			foreach (var o in state.OriginalItems)
@@ -710,7 +718,7 @@ namespace ICSharpCode.ILSpy
 					if (provider != null)
 						items.AddRange(provider.CreateMenuItems());
 					else {
-						MenuItem menuItem = new MenuItem();
+						var menuItem = state.CachedMenuItems[entry.Value];
 						menuItem.Command = CommandWrapper.Unwrap(entry.Value);
 						// We must initialize CommandTarget or the menu items for the standard commands
 						// (Ctrl+C, Ctrl+O etc) will be disabled after we stop debugging. We didn't

@@ -679,9 +679,19 @@ namespace ICSharpCode.ILSpy
 	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsWindows", MenuOrder = 9500)]
 	sealed class DecompilerWindowsCommand : TabGroupCommand, IMenuItemProvider
 	{
+		readonly MenuItem cachedLastMenuItem;
+		readonly MenuItem[] cachedMenuItems = new MenuItem[10];
+
 		public DecompilerWindowsCommand()
 		{
 			MainWindow.Instance.OnTabHeaderChanged += (s, e) => MainWindow.Instance.UpdateMainSubMenu("_Window");
+
+			cachedLastMenuItem = new MenuItem();
+			cachedLastMenuItem.Header = "_Windows...";
+			cachedLastMenuItem.Click += (s, e) => MainWindow.Instance.ShowDecompilerTabsWindow();
+
+			for (int i = 0; i < cachedMenuItems.Length; i++)
+				cachedMenuItems[i] = new MenuItem();
 		}
 
 		protected override bool CanExecuteInternal()
@@ -704,7 +714,7 @@ namespace ICSharpCode.ILSpy
 			const int MAX_TABS = 10;
 			int index = 0;
 			foreach (var tabState in MainWindow.Instance.GetTabStateInOrder()) {
-				menuItem = new MenuItem();
+				menuItem = cachedMenuItems[index];
 				menuItem.IsChecked = index == 0;
 				menuItem.Header = string.Format("{0} {1}", index + 1 == 10 ? "1_0" : string.Format("_{0}", index + 1), tabState.ShortHeader);
 
@@ -716,10 +726,7 @@ namespace ICSharpCode.ILSpy
 					break;
 			}
 
-			menuItem = new MenuItem();
-			menuItem.Header = "_Windows...";
-			menuItem.Click += (s, e) => MainWindow.Instance.ShowDecompilerTabsWindow();
-			yield return menuItem;
+			yield return cachedLastMenuItem;
 		}
 	}
 }
