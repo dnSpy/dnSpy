@@ -1075,18 +1075,26 @@ namespace ICSharpCode.ILSpy
 				}
 				if (e.OldItems != null) {
 					var oldAssemblies = new HashSet<LoadedAssembly>(e.OldItems.Cast<LoadedAssembly>());
+					var newNodes = new List<ILSpyTreeNode>();
 					foreach (var tabState in AllTabStates.ToArray()) {
 						tabState.History.RemoveAll(n => n.TreeNodes.Any(
 							nd => nd.AncestorsAndSelf().OfType<AssemblyTreeNode>().Any(
 								a => oldAssemblies.Contains(a.LoadedAssembly))));
 
+						newNodes.Clear();
 						foreach (var node in tabState.DecompiledNodes) {
 							var asmNode = GetAssemblyTreeNode(node);
-							if (asmNode != null && oldAssemblies.Contains(asmNode.LoadedAssembly)) {
-								var tabManager = (TabManager<TabStateDecompile>)tabState.Owner;
-								tabManager.RemoveTabState(tabState);
-								break;
-							}
+							if (asmNode != null && !oldAssemblies.Contains(asmNode.LoadedAssembly))
+								newNodes.Add(asmNode);
+						}
+						if (newNodes.Count == 0 && ActiveTabState != tabState) {
+							var tabManager = (TabManager<TabStateDecompile>)tabState.Owner;
+							tabManager.RemoveTabState(tabState);
+						}
+						else {
+							tabState.History.UpdateCurrent(null);
+							tabState.TextView.ClearState();
+							DecompileNodes(tabState, null, false, tabState.Language, newNodes.ToArray());
 						}
 					}
 					DecompileCache.Instance.Clear(oldAssemblies);
