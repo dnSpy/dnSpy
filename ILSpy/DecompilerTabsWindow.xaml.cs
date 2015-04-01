@@ -110,8 +110,18 @@ namespace ICSharpCode.ILSpy
 				newIndex = 0;
 			if (allTabs.Count == 0)
 				listView.SelectedIndex = -1;
-			else
+			else {
 				listView.SelectedIndex = newIndex;
+				Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() => {
+					if (listView.SelectedIndex != newIndex)
+						return;
+					var item = listView.ItemContainerGenerator.ContainerFromIndex(newIndex) as ListViewItem;
+					if (item != null) {
+						item.Focus();
+						listView.ScrollIntoView(item);
+					}
+				}));
+			}
 		}
 
 		ListViewItem GetListViewItem(object o)
