@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Media;
@@ -33,8 +34,18 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		SelectedReturnStatement,
 	}
 
-	public class StackFrameStatementManager
+	[Export(typeof(IPlugin))]
+	public class StackFrameStatementManager : IPlugin
 	{
+		StackFrameStatementManager()
+		{
+		}
+
+		public void OnLoaded()
+		{
+			// Do nothing, we just want to load the cctor
+		}
+
 		static StackFrameStatementManager()
 		{
 			DebuggerService.DebugEvent += OnDebugEvent;
