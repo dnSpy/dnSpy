@@ -20,6 +20,7 @@ using System.Windows;
 using System.Windows.Controls;
 using dnlib.DotNet;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace ICSharpCode.ILSpy
 {
@@ -181,11 +182,25 @@ namespace ICSharpCode.ILSpy
 				manager.DeleteList(listView.SelectedItem.ToString());
 		}
 
-    private void listView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-    {
-      if (e.ChangedButton == MouseButton.Left && listView.SelectedItem != null)
-        this.DialogResult = true;
-    }
+		ListViewItem GetListViewItem(object o)
+		{
+			var depo = o as DependencyObject;
+			while (depo != null && !(depo is ListViewItem) && depo != listView)
+				depo = VisualTreeHelper.GetParent(depo);
+			return depo as ListViewItem;
+		}
 
+		private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			if (MouseButton.Left != e.ChangedButton)
+				return;
+			if (GetListViewItem(e.OriginalSource) == null)
+				return;
+			if (listView.SelectedItem != null) {
+				this.DialogResult = true;
+				e.Handled = true;
+				return;
+			}
+		}
 	}
 }

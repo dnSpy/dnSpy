@@ -159,9 +159,21 @@ namespace ICSharpCode.ILSpy
 		{
 			this.SearchTerm = string.Empty;
 		}
-		
+
+		ListBoxItem GetListBoxItem(object o)
+		{
+			var depo = o as DependencyObject;
+			while (depo != null && !(depo is ListBoxItem) && depo != listBox)
+				depo = VisualTreeHelper.GetParent(depo);
+			return depo as ListBoxItem;
+		}
+
 		void ListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
+			if (MouseButton.Left != e.ChangedButton)
+				return;
+			if (GetListBoxItem(e.OriginalSource) == null)
+				return;
 			JumpToSelectedItem();
 			e.Handled = true;
 		}

@@ -10,6 +10,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Microsoft.Win32.SafeHandles;
 
@@ -143,10 +145,20 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		{
 			RefreshProcessList();
 		}
-		
-		void RunningProcesses_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+
+		ListViewItem GetListViewItem(object o)
 		{
-			if (e.ChangedButton != System.Windows.Input.MouseButton.Left)
+			var depo = o as DependencyObject;
+			while (depo != null && !(depo is ListViewItem) && depo != RunningProcesses)
+				depo = VisualTreeHelper.GetParent(depo);
+			return depo as ListViewItem;
+		}
+
+		void RunningProcesses_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			if (e.ChangedButton != MouseButton.Left)
+				return;
+			if (GetListViewItem(e.OriginalSource) == null)
 				return;
 			Attach();
 		}

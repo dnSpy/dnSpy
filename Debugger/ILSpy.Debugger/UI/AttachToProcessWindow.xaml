@@ -10,7 +10,7 @@
 	ShowInTaskbar="False"
 	Height="300"
 	Width="596">
-	<Grid>
+	<Grid Margin="13">
 		<Grid.RowDefinitions>
 			<RowDefinition
 				Height="1*" />
@@ -33,28 +33,30 @@
 			</ListView.View>
 		</ListView>
 		<DockPanel
+			Margin="0 13 0 0"
+			LastChildFill="False"
 			Grid.Row="1">
-			<Button
-				DockPanel.Dock="Left"
-				HorizontalAlignment="Center"
-				x:Name="RefreshButton"
-				Click="RefreshButton_Click"
-				Content="_Refresh"
-				Width="100" />
-			<Button
-				DockPanel.Dock="Right"
-				HorizontalAlignment="Center"
-				x:Name="AttachButton"
-				Click="AttachButton_Click"
-				IsDefault="True"
-				Content="_Attach"
-				Width="100" />
 			<Button
 				DockPanel.Dock="Right"
 				x:Name="CancelButton"
 				Content="_Cancel"
 				IsCancel="True"
 				Click="CancelButton_Click"
+				Width="100" />
+			<Button
+				Margin="0 0 5 0"
+				DockPanel.Dock="Right"
+				x:Name="AttachButton"
+				Click="AttachButton_Click"
+				IsDefault="True"
+				Content="_Attach"
+				Width="100" />
+			<Button
+				Margin="0 0 5 0"
+				DockPanel.Dock="Right"
+				x:Name="RefreshButton"
+				Click="RefreshButton_Click"
+				Content="_Refresh"
 				Width="100" />
 		</DockPanel>
 	</Grid>
