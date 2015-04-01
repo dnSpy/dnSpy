@@ -94,10 +94,24 @@ namespace ICSharpCode.ILSpy
 
 		void CloseWindows(IList<TabInfo> tabs)
 		{
+			int newIndex = listView.SelectedIndex;
 			foreach (var info in tabs) {
 				MainWindow.Instance.CloseTab(info.TabState);
-				allTabs.Remove(info);
+				int removedIndex = allTabs.IndexOf(info);
+				allTabs.RemoveAt(removedIndex);
+				if (newIndex == removedIndex) {
+					if (newIndex >= allTabs.Count)
+						newIndex--;
+				}
+				else if (newIndex > removedIndex)
+					newIndex--;
 			}
+			if (newIndex < 0 || newIndex >= allTabs.Count)
+				newIndex = 0;
+			if (allTabs.Count == 0)
+				listView.SelectedIndex = -1;
+			else
+				listView.SelectedIndex = newIndex;
 		}
 
 		ListViewItem GetListViewItem(object o)
