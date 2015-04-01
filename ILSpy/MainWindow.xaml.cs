@@ -82,8 +82,6 @@ namespace ICSharpCode.ILSpy
 			get { return sessionSettings; }
 		}
 
-		internal Theme Theme { get; private set; }
-
 		readonly TabGroupsManager<TabStateDecompile> tabGroupsManager;
 
 		internal TabStateDecompile SafeActiveTabState {
@@ -156,7 +154,7 @@ namespace ICSharpCode.ILSpy
 			this.sessionSettings = new SessionSettings(spySettings);
 			this.sessionSettings.PropertyChanged += sessionSettings_PropertyChanged;
 			this.assemblyListManager = new AssemblyListManager(spySettings);
-			Theme = Themes.GetThemeOrDefault(sessionSettings.ThemeName);
+			Themes.ThemeChanged += Themes_ThemeChanged;
 			
 			this.Icon = new BitmapImage(new Uri("pack://application:,,,/dnSpy;component/images/ILSpy.ico"));
 			
@@ -552,40 +550,7 @@ namespace ICSharpCode.ILSpy
 				listener.ClosePopup();
 		}
 
-		void BuildThemeMenu()
-		{
-			themeMenu.Items.Clear();
-			foreach (var theme in Themes.AllThemes.OrderBy(x => x.Sort)) {
-				var mi = new MenuItem {
-					Header = theme.MenuName,
-					Tag = theme,
-				};
-				if (Theme == theme)
-					mi.IsChecked = true;
-				mi.Click += ThemeMenuItem_Click;
-				themeMenu.Items.Add(mi);
-			}
-		}
-
-		void ThemeMenuItem_Click(object sender, RoutedEventArgs e)
-		{
-			var mi = (MenuItem)sender;
-			foreach (MenuItem menuItem in themeMenu.Items)
-				menuItem.IsChecked = menuItem == mi;
-			SetTheme((Theme)mi.Tag);
-		}
-
-		void SetTheme(Theme theme)
-		{
-			if (theme == null)
-				return;
-			if (theme == Theme)
-				return;
-			Theme = theme;
-			OnThemeUpdated();
-		}
-
-		void OnThemeUpdated()
+		void Themes_ThemeChanged(object sender, EventArgs e)
 		{
 			foreach (var view in AllTextViews)
 				view.OnThemeUpdated();
@@ -931,8 +896,7 @@ namespace ICSharpCode.ILSpy
 		{
 			debug_CommandBindings_Count = this.CommandBindings.Count;
 			ContextMenuProvider.Add(treeView);
-			BuildThemeMenu();
-			OnThemeUpdated();
+			Themes.Theme = Themes.GetThemeOrDefault(sessionSettings.ThemeName);
 
 			ILSpySettings spySettings = this.spySettings;
 			this.spySettings = null;
@@ -1675,7 +1639,7 @@ namespace ICSharpCode.ILSpy
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			base.OnClosing(e);
-			sessionSettings.ThemeName = Theme.Name;
+			sessionSettings.ThemeName = Themes.Theme.Name;
 			sessionSettings.ActiveAssemblyList = assemblyList.ListName;
 			sessionSettings.WindowBounds = this.RestoreBounds;
 			sessionSettings.LeftColumnWidth = leftColumn.Width.Value;

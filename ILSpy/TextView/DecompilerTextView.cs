@@ -159,7 +159,7 @@ namespace ICSharpCode.ILSpy.TextView
 		internal void OnThemeUpdated()
 		{
 			textEditor.OnThemeUpdated();
-			var theme = MainWindow.Instance.Theme;
+			var theme = Themes.Theme;
 			var marker = theme.GetColor(ColorType.SearchResultMarker).InheritedColor;
 			searchPanel.MarkerBrush = marker.Background == null ? Brushes.LightGreen : marker.Background.GetBrush(null);
 		}
@@ -794,8 +794,8 @@ namespace ICSharpCode.ILSpy.TextView
 							var mark = textMarkerService.Create(r.StartOffset, r.Length);
 							mark.HighlightingColor = () => {
 								return (r.IsLocalTarget ?
-									MainWindow.Instance.Theme.GetColor(dntheme.ColorType.LocalDefinition) :
-									MainWindow.Instance.Theme.GetColor(dntheme.ColorType.LocalReference)).TextInheritedColor;
+									Themes.Theme.GetColor(dntheme.ColorType.LocalDefinition) :
+									Themes.Theme.GetColor(dntheme.ColorType.LocalReference)).TextInheritedColor;
 							};
 							localReferenceMarks.Add(mark);
 						}

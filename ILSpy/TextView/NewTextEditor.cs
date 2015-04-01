@@ -34,7 +34,7 @@ namespace ICSharpCode.ILSpy.TextView
 
 		internal void OnThemeUpdated()
 		{
-			var theme = MainWindow.Instance.Theme;
+			var theme = Themes.Theme;
 			var textColor = theme.GetColor(ColorType.Text).InheritedColor;
 			Background = textColor.Background == null ? null : textColor.Background.GetBrush(null);
 			Foreground = textColor.Foreground == null ? null : textColor.Foreground.GetBrush(null);
@@ -103,7 +103,7 @@ namespace ICSharpCode.ILSpy.TextView
 				Debug.Assert(b);
 				if (!b)
 					continue;
-				var ourColor = MainWindow.Instance.Theme.GetColor(colorType).TextInheritedColor;
+				var ourColor = Themes.Theme.GetColor(colorType).TextInheritedColor;
 				color.Background = ourColor.Background;
 				color.Foreground = ourColor.Foreground;
 				color.FontWeight = ourColor.FontWeight;
@@ -187,7 +187,7 @@ namespace ICSharpCode.ILSpy.TextView
 
 			HighlightingColor GetColor(TextTokenType tokenType)
 			{
-				return MainWindow.Instance.Theme.GetColor(tokenType).TextInheritedColor;
+				return Themes.Theme.GetColor(tokenType).TextInheritedColor;
 			}
 
 			public IEnumerable<HighlightingColor> GetColorStack(int lineNumber)
