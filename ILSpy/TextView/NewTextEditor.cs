@@ -23,11 +23,11 @@ namespace ICSharpCode.ILSpy.TextView
 
 		public NewTextEditor()
 		{
-			Loaded += NewTextEditor_Loaded;
+			Initialized += NewTextEditor_Initialized;
 			Options.AllowToggleOverstrikeMode = true;
 		}
 
-		void NewTextEditor_Loaded(object sender, RoutedEventArgs e)
+		void NewTextEditor_Initialized(object sender, EventArgs e)
 		{
 			OnThemeUpdated();
 		}
