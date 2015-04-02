@@ -132,6 +132,7 @@
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Commands\ExitCommand.cs" />
     <Compile Include="Commands\CommandWrapper.cs" />
+    <Compile Include="Commands\ViewCommands.cs" />
     <Compile Include="DecompilerTabsWindow.xaml.cs">
       <DependentUpon>DecompilerTabsWindow.xaml</DependentUpon>
     </Compile>

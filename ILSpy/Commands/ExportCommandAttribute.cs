@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace ICSharpCode.ILSpy
@@ -80,9 +81,31 @@ namespace ICSharpCode.ILSpy
 		bool IsVisible { get; }
 	}
 
+	public interface IMainMenuCheckableCommand
+	{
+		/// <summary>
+		/// null if it's not checkable. Else it returns the checked state
+		/// </summary>
+		bool? IsChecked { get; }
+
+		/// <summary>
+		/// Gets the binding or null. Only called when <see cref="IsChecked"/> is not null
+		/// </summary>
+		Binding Binding { get; }
+	}
+
 	public interface IMenuItemProvider
 	{
-		IEnumerable<MenuItem> CreateMenuItems();
+		/// <summary>
+		/// Creates all menu items
+		/// </summary>
+		/// <param name="cachedMenuItem">The cached menu item for this command handler. It can be
+		/// ignored if this command's menu items can never be the first menu items in the menu. Else
+		/// this menu item should be the first returned menu item by this method. This is required
+		/// or the first menu item won't be highlighted when the menu is opened from the keyboard
+		/// the first time after this method is called.</param>
+		/// <returns></returns>
+		IEnumerable<MenuItem> CreateMenuItems(MenuItem cachedMenuItem);
 	}
 	
 	[MetadataAttribute]

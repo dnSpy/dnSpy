@@ -708,7 +708,7 @@ namespace ICSharpCode.ILSpy
 			return true;
 		}
 
-		public IEnumerable<MenuItem> CreateMenuItems()
+		public IEnumerable<MenuItem> CreateMenuItems(MenuItem cachedMenuItem)
 		{
 			MenuItem menuItem;
 			const int MAX_TABS = 10;

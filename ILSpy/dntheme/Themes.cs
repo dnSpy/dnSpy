@@ -96,17 +96,40 @@ namespace ICSharpCode.ILSpy.dntheme
 		{
 		}
 
-		public IEnumerable<MenuItem> CreateMenuItems()
+		public IEnumerable<MenuItem> CreateMenuItems(MenuItem cachedMenuItem)
 		{
+			int index = 0;
 			foreach (var theme in Themes.AllThemesSorted) {
-				var item = new MenuItem {
-					Header = theme.MenuName,
-					Tag = theme,
-					IsChecked = theme == Themes.Theme,
-				};
-				var themeTmp = theme;
-				item.Click += (s, e) => Themes.Theme = themeTmp;
+				var item = index++ == 0 ? cachedMenuItem : new MenuItem();
+				item.Header = theme.MenuName;
+				item.IsChecked = theme == Themes.Theme;
+				item.Command = new SetThemeCommand(theme);
 				yield return item;
+			}
+		}
+
+		sealed class SetThemeCommand : ICommand
+		{
+			readonly Theme theme;
+
+			public SetThemeCommand(Theme theme)
+			{
+				this.theme = theme;
+			}
+
+			public bool CanExecute(object parameter)
+			{
+				return true;
+			}
+
+			public event EventHandler CanExecuteChanged {
+				add { }
+				remove { }
+			}
+
+			public void Execute(object parameter)
+			{
+				Themes.Theme = theme;
 			}
 		}
 	}

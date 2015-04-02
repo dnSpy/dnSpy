@@ -29,6 +29,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -659,9 +660,8 @@ namespace ICSharpCode.ILSpy
 		{
 			public MenuItem TopLevelMenuItem;
 			public IGrouping<string, Lazy<ICommand, IMainMenuCommandMetadata>>[] Groupings;
-			public List<object> OriginalItems = new List<object>();
-			public Dictionary<ICommand, MenuItem> CachedMenuItems = new Dictionary<ICommand, MenuItem>();
-			public bool DirtyMenu = true;
+			public List<MenuItem> CachedMenuItems = new List<MenuItem>();
+			public bool Recreate = true;
 		}
 		readonly Dictionary<string, MainSubMenuState> subMenusDict = new Dictionary<string, MainSubMenuState>();
 		void InitMainMenu()
@@ -677,16 +677,16 @@ namespace ICSharpCode.ILSpy
 				subMenusDict.Add((string)topLevelMenuItem.Header, state);
 				state.TopLevelMenuItem = topLevelMenuItem;
 				state.Groupings = topLevelMenu.GroupBy(c => c.Metadata.MenuCategory).ToArray();
-				foreach (object o in state.TopLevelMenuItem.Items)
-					state.OriginalItems.Add(o);
 				foreach (var category in state.Groupings) {
 					foreach (var entry in category)
-						state.CachedMenuItems[entry.Value] = new MenuItem();
+						state.CachedMenuItems.Add(new MenuItem());
 				}
 				var stateTmp = state;
-				// Make sure it's not empty or it will always be empty
-				state.TopLevelMenuItem.Loaded += (s, e) => stateTmp.TopLevelMenuItem.Items.Add(new MenuItem());
 				state.TopLevelMenuItem.SubmenuOpened += (s, e) => InitializeMainSubMenu(stateTmp);
+
+				// Make sure it's not empty or it will always be empty
+				state.TopLevelMenuItem.Items.Clear();
+				state.TopLevelMenuItem.Items.Add(state.CachedMenuItems[0]);
 			}
 		}
 
@@ -696,36 +696,64 @@ namespace ICSharpCode.ILSpy
 		/// <param name="menuHeader">The exact display name of the sub menu (eg. "_Debug")</param>
 		public void UpdateMainSubMenu(string menuHeader)
 		{
-			subMenusDict[menuHeader].DirtyMenu = true;
+			subMenusDict[menuHeader].Recreate = true;
 		}
 
 		static void InitializeMainSubMenu(MainSubMenuState state)
 		{
-			if (!state.DirtyMenu)
+			if (!state.Recreate)
 				return;
-			state.DirtyMenu = false;
+			state.Recreate = false;
 			var topLevelMenuItem = state.TopLevelMenuItem;
-			topLevelMenuItem.Items.Clear();
-			foreach (var o in state.OriginalItems)
-				state.TopLevelMenuItem.Items.Add(o);
+
+			// Don't remove the first one or opening the menu from the keyboard (Alt+XXX) won't
+			// highlight the first menu item.
+			for (int i = topLevelMenuItem.Items.Count - 1; i >= 1; i--)
+				topLevelMenuItem.Items.RemoveAt(i);
+
+			// Clear all properties that are set by our code
+			foreach (var item in state.CachedMenuItems) {
+				item.ClearValue(MenuItem.CommandProperty);
+				item.ClearValue(MenuItem.CommandTargetProperty);
+				item.ClearValue(MenuItem.HeaderProperty);
+				item.ClearValue(MenuItem.IconProperty);
+				item.ClearValue(MenuItem.IsEnabledProperty);
+				item.ClearValue(MenuItem.InputGestureTextProperty);
+				item.ClearValue(MenuItem.IsCheckableProperty);
+				item.ClearValue(MenuItem.IsCheckedProperty);
+				BindingOperations.ClearBinding(item, MenuItem.IsCheckedProperty);
+			}
+
+			int cachedIndex = 0;
+			int added = 0;
+			var items = new List<object>();
 			foreach (var category in state.Groupings) {
-				var items = new List<object>();
+				items.Clear();
 				foreach (var entry in category) {
 					var menuCmd = entry.Value as IMainMenuCommand;
 					if (menuCmd != null && !menuCmd.IsVisible)
 						continue;
 					var provider = entry.Value as IMenuItemProvider;
-					if (provider != null)
-						items.AddRange(provider.CreateMenuItems());
+					if (provider != null) {
+						var cached = state.CachedMenuItems[cachedIndex++];
+						items.AddRange(provider.CreateMenuItems(cached));
+						// This condition should never be true. The called code should make sure that
+						// the cached menu item is always used if it's the first item in the menu.
+						if (items.Count > 0 && items[0] != cached && added == 0) {
+							Debug.Fail("The first returned menu item is not the cached menu item. It won't be selected when opened with Alt+XXX the first time.");
+							// We can't clear topLevelMenuItem.Items since it must always contain
+							// the first cached menu item (== cached). Just disable it instead.
+							cached.IsEnabled = false;
+						}
+					}
 					else {
-						var menuItem = state.CachedMenuItems[entry.Value];
+						var menuItem = state.CachedMenuItems[cachedIndex++];
 						menuItem.Command = CommandWrapper.Unwrap(entry.Value);
 						// We must initialize CommandTarget or the menu items for the standard commands
 						// (Ctrl+C, Ctrl+O etc) will be disabled after we stop debugging. We didn't
 						// need to do this when the menu wasn't in the toolbar.
 						menuItem.CommandTarget = MainWindow.Instance;
-						if (!string.IsNullOrEmpty(entry.Metadata.Header))
-							menuItem.Header = entry.Metadata.Header;
+						menuItem.Header = entry.Metadata.Header;
 						if (!string.IsNullOrEmpty(entry.Metadata.MenuIcon)) {
 							menuItem.Icon = new Image {
 								Width = 16,
@@ -736,14 +764,30 @@ namespace ICSharpCode.ILSpy
 
 						menuItem.IsEnabled = entry.Metadata.IsEnabled;
 						menuItem.InputGestureText = entry.Metadata.InputGestureText;
+
+						var checkable = entry.Value as IMainMenuCheckableCommand;
+						bool? checkState = checkable == null ? null : checkable.IsChecked;
+						menuItem.IsCheckable = checkState != null;
+						if (checkState != null) {
+							var binding = checkable.Binding;
+							if (binding != null)
+								menuItem.SetBinding(MenuItem.IsCheckedProperty, binding);
+							else
+								menuItem.IsChecked = checkState.Value;
+						}
+
 						items.Add(menuItem);
 					}
 				}
 				if (items.Count > 0) {
-					if (topLevelMenuItem.Items.Count > 0)
+					if (added > 0)
 						topLevelMenuItem.Items.Add(new Separator());
-					foreach (var item in items)
-						topLevelMenuItem.Items.Add(item);
+					added += items.Count;
+					foreach (var item in items) {
+						// The first one is never removed from the Items collection so don't try to re-add it
+						if (topLevelMenuItem.Items.Count == 0 || topLevelMenuItem.Items[0] != item)
+							topLevelMenuItem.Items.Add(item);
+					}
 				}
 			}
 		}
@@ -1953,16 +1997,6 @@ namespace ICSharpCode.ILSpy
 		public void HideStatus()
 		{
 			this.statusBar.Visibility = Visibility.Collapsed;
-		}
-		
-		public ItemCollection GetMainMenuItems()
-		{
-			return mainMenu.Items;
-		}
-		
-		public ItemCollection GetToolBarItems()
-		{
-			return toolBar.Items;
 		}
 
 		public LoadedAssembly LoadAssembly(string asmFilename, string moduleFilename)
