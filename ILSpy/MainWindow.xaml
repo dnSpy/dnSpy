@@ -3,7 +3,7 @@
 	x:Class="ICSharpCode.ILSpy.MainWindow"
 	x:ClassModifier="public"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
-	xmlns:local="clr-namespace:ICSharpCode.ILSpy" xmlns:textView="clr-namespace:ICSharpCode.ILSpy.TextView"
+	xmlns:textView="clr-namespace:ICSharpCode.ILSpy.TextView"
 	xmlns:controls="clr-namespace:ICSharpCode.ILSpy.Controls"
 	Title="dnSpy"
 	MinWidth="250"
@@ -98,20 +98,6 @@
 					</Style.Triggers>
 				</Style>
 			</ToolBar.Resources>
-			<!-- Main menu -->
-			<Menu Name="mainMenu" Background="Transparent" />
-			
-			<!-- 'Navigation' toolbar category is inserted here -->
-			<Separator />
-			<!-- 'Open' toolbar category is inserted here -->
-			<Separator />
-			<CheckBox IsChecked="{Binding FilterSettings.ShowInternalApi}" ToolTip="Show Internal Types and Members">
-				<Image Width="16" Height="16" Source="pack://application:,,,/dnSpy;component/Images/PrivateInternal.png" />
-			</CheckBox>
-			<Separator />
-			<ComboBox Name="languageComboBox" DisplayMemberPath="Name" Width="100"
-			          ItemsSource="{x:Static local:Languages.AllLanguages}"
-			          SelectedItem="{Binding FilterSettings.Language}"/>
 		</ToolBar>
 		<!-- Status bar -->
 		<StatusBar x:Name="statusBar" DockPanel.Dock="Bottom" Height="26" Visibility="Collapsed">

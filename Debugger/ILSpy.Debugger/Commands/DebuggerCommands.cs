@@ -857,7 +857,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportToolbarCommand(ToolTip = "Debug an Executable",
 	                      ToolbarIcon = "Images/application-x-executable.png",
 	                      ToolbarCategory = "Debug1",
-	                      ToolbarOrder = 0)]
+	                      ToolbarOrder = 5000)]
 	[ExportMainMenuCommand(Menu = "_Debug",
 	                       MenuIcon = "Images/application-x-executable.png",
 	                       MenuCategory = "Start",
@@ -894,7 +894,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportToolbarCommand(ToolTip = "Continue (F5)",
 						  ToolbarIcon = "Images/ContinueDebugging.png",
 	                      ToolbarCategory = "Debug2",
-	                      ToolbarOrder = 0)]
+	                      ToolbarOrder = 6000)]
 	[ExportMainMenuCommand(Menu = "_Debug",
 	                       MenuIcon = "Images/ContinueDebugging.png",
 	                       MenuCategory = "Debug1",
@@ -916,7 +916,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportToolbarCommand(ToolTip = "Break (Ctrl+Break)",
 						  ToolbarIcon = "Images/Break.png",
 						  ToolbarCategory = "Debug2",
-						  ToolbarOrder = 1)]
+						  ToolbarOrder = 6100)]
 	[ExportMainMenuCommand(Menu = "_Debug",
 						   MenuIcon = "Images/Break.png",
 						   MenuCategory = "Debug1",
@@ -938,7 +938,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportToolbarCommand(ToolTip = "Stop Debugging (Shift+F5)",
 						  ToolbarIcon = "Images/StopProcess.png",
 						  ToolbarCategory = "Debug2",
-						  ToolbarOrder = 2)]
+						  ToolbarOrder = 6200)]
 	[ExportMainMenuCommand(Menu = "_Debug",
 						   MenuIcon = "Images/StopProcess.png",
 						   MenuCategory = "Debug1",
@@ -960,7 +960,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportToolbarCommand(ToolTip = "Restart (Ctrl+Shift+F5)",
 						  ToolbarIcon = "Images/RestartProcess.png",
 						  ToolbarCategory = "Debug2",
-						  ToolbarOrder = 3)]
+						  ToolbarOrder = 6300)]
 	[ExportMainMenuCommand(Menu = "_Debug",
 						   MenuIcon = "Images/RestartProcess.png",
 						   MenuCategory = "Debug1",
@@ -988,7 +988,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportToolbarCommand(ToolTip = "Step Into (F11)",
 						  ToolbarIcon = "Images/StepInto.png",
 						  ToolbarCategory = "Debug3",
-						  ToolbarOrder = 1)]
+						  ToolbarOrder = 7100)]
 	[ExportMainMenuCommand(Menu = "_Debug",
 	                       MenuIcon = "Images/StepInto.png",
 						   MenuCategory = "Debug2",
@@ -1010,7 +1010,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportToolbarCommand(ToolTip = "Step Over (F10)",
 						  ToolbarIcon = "Images/StepOver.png",
 						  ToolbarCategory = "Debug3",
-						  ToolbarOrder = 2)]
+						  ToolbarOrder = 7200)]
 	[ExportMainMenuCommand(Menu = "_Debug",
 	                       MenuIcon = "Images/StepOver.png",
 						   MenuCategory = "Debug2",
@@ -1032,7 +1032,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportToolbarCommand(ToolTip = "Step Out (Shift+F11)",
 						  ToolbarIcon = "Images/StepOut.png",
 						  ToolbarCategory = "Debug3",
-						  ToolbarOrder = 3)]
+						  ToolbarOrder = 7300)]
 	[ExportMainMenuCommand(Menu = "_Debug",
 	                       MenuIcon = "Images/StepOut.png",
 						   MenuCategory = "Debug2",
@@ -1197,7 +1197,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportToolbarCommand(ToolTip = "Show Next Statement (Alt+Num *)",
 						  ToolbarIcon = "Images/CurrentLineToolBar.png",
 						  ToolbarCategory = "Debug3",
-						  ToolbarOrder = 0)]
+						  ToolbarOrder = 7000)]
 	internal sealed class ShowNextStatementCommand : DebuggerCommand, IToolbarCommand
 	{
 		public ShowNextStatementCommand() : base(true, true)

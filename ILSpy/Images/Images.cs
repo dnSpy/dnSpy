@@ -103,6 +103,8 @@ namespace ICSharpCode.ILSpy
 
 		private static readonly BitmapImage OverlayStatic = LoadBitmap("OverlayStatic");
 
+		public static readonly BitmapImage PrivateInternal = LoadBitmap("PrivateInternal");
+
 		public static BitmapImage LoadImage(object part, string icon)
 		{
 			Uri uri;

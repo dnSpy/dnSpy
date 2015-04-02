@@ -31,7 +31,6 @@ namespace ICSharpCode.ILSpy
 		string ToolbarIcon { get; }
 		string ToolTip { get; }
 		string ToolbarCategory { get; }
-		object Tag { get; }
 		double ToolbarOrder { get; }
 	}
 
@@ -41,6 +40,11 @@ namespace ICSharpCode.ILSpy
 		/// true if it should be added to the toolbar
 		/// </summary>
 		bool IsVisible { get; }
+	}
+
+	public interface IToolbarItemCreator
+	{
+		object CreateToolbarItem();
 	}
 	
 	[MetadataAttribute]
@@ -56,7 +60,6 @@ namespace ICSharpCode.ILSpy
 		public string ToolbarIcon { get; set; }
 		public string ToolbarCategory { get; set; }
 		public double ToolbarOrder { get; set; }
-		public object Tag { get; set; }
 	}
 	#endregion
 	

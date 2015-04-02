@@ -63,6 +63,8 @@ namespace ICSharpCode.ILSpy
 		internal AssemblyListManager assemblyListManager;
 		AssemblyList assemblyList;
 		AssemblyListTreeNode assemblyListTreeNode;
+		internal readonly Menu mainMenu;
+		internal readonly ComboBox languageComboBox;
 
 		[ImportMany]
 		IEnumerable<IPlugin> plugins = null;
@@ -151,11 +153,21 @@ namespace ICSharpCode.ILSpy
 		public MainWindow()
 		{
 			instance = this;
+			mainMenu = new Menu() { Background = Brushes.Transparent };
 			spySettings = ILSpySettings.Load();
 			this.sessionSettings = new SessionSettings(spySettings);
 			this.sessionSettings.PropertyChanged += sessionSettings_PropertyChanged;
 			this.assemblyListManager = new AssemblyListManager(spySettings);
 			Themes.ThemeChanged += Themes_ThemeChanged;
+
+			languageComboBox = new ComboBox() {
+				DisplayMemberPath = "Name",
+				Width = 100,
+				ItemsSource = Languages.AllLanguages,
+			};
+			languageComboBox.SetBinding(ComboBox.SelectedItemProperty, new Binding("FilterSettings.Language") {
+				Source = sessionSettings,
+			});
 			
 			this.Icon = new BitmapImage(new Uri("pack://application:,,,/dnSpy;component/images/ILSpy.ico"));
 			
@@ -584,33 +596,24 @@ namespace ICSharpCode.ILSpy
 		public void UpdateToolbar()
 		{
 			toolBar.Items.Clear();
-			foreach (var o in mtbState.OriginalToolbarItems)
-				toolBar.Items.Add(o);
-			int navigationPos = 1;
-			int openPos = 2;
 			foreach (var commandGroup in mtbState.Groupings) {
-				if (commandGroup.Key == "Navigation") {
-					foreach (var command in commandGroup) {
-						toolBar.Items.Insert(navigationPos++, MakeToolbarItem(command));
-						openPos++;
-					}
-				} else if (commandGroup.Key == "Open") {
-					foreach (var command in commandGroup) {
-						toolBar.Items.Insert(openPos++, MakeToolbarItem(command));
-					}
-				} else {
-					var items = new List<Button>();
-					foreach (var command in commandGroup) {
-						var tbarCmd = command.Value as IToolbarCommand;
-						if (tbarCmd == null || tbarCmd.IsVisible)
-							items.Add(MakeToolbarItem(command));
-					}
+				var items = new List<object>();
+				foreach (var command in commandGroup) {
+					var tbarCmd = command.Value as IToolbarCommand;
+					if (tbarCmd != null && !tbarCmd.IsVisible)
+						continue;
+					var itemCreator = command.Value as IToolbarItemCreator;
+					if (itemCreator != null)
+						items.Add(itemCreator.CreateToolbarItem());
+					else
+						items.Add(MakeToolbarItem(command));
+				}
 
-					if (items.Count > 0) {
+				if (items.Count > 0) {
+					if (toolBar.Items.Count > 0)
 						toolBar.Items.Add(new Separator());
-						foreach (var item in items)
-							toolBar.Items.Add(item);
-					}
+					foreach (var item in items)
+						toolBar.Items.Add(item);
 				}
 			}
 
@@ -622,15 +625,11 @@ namespace ICSharpCode.ILSpy
 
 		class MainToolbarState
 		{
-			public object[] OriginalToolbarItems;
 			public IGrouping<string, Lazy<ICommand, IToolbarCommandMetadata>>[] Groupings;
 		}
 		MainToolbarState mtbState = new MainToolbarState();
 		void InitToolbar()
 		{
-			mtbState.OriginalToolbarItems = new object[toolBar.Items.Count];
-			for (int i = 0; i < toolBar.Items.Count; i++)
-				mtbState.OriginalToolbarItems[i] = toolBar.Items[i];
 			mtbState.Groupings = toolbarCommands.OrderBy(c => c.Metadata.ToolbarOrder).GroupBy(c => c.Metadata.ToolbarCategory).ToArray();
 			UpdateToolbar();
 		}
@@ -640,7 +639,6 @@ namespace ICSharpCode.ILSpy
 			var button = new Button {
 				Command = CommandWrapper.Unwrap(command.Value),
 				ToolTip = command.Metadata.ToolTip,
-				Tag = command.Metadata.Tag,
 				Content = new Image {
 					Width = 16,
 					Height = 16,
