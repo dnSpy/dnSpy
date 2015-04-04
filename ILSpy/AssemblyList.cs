@@ -205,6 +205,21 @@ namespace ICSharpCode.ILSpy
 				}
 			}
 		}
+
+		internal void RefreshSave()
+		{
+			if (!dirty) {
+				dirty = true;
+				App.Current.Dispatcher.BeginInvoke(
+					DispatcherPriority.Background,
+					new Action(
+						delegate {
+							dirty = false;
+							AssemblyListManager.SaveList(this);
+						})
+				);
+			}
+		}
 		
 		internal void ClearCache()
 		{

@@ -480,6 +480,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					}
 				}
 			}
+			MainWindow.Instance.CurrentAssemblyList.RefreshSave();
 		}
 
 		static IEnumerable<AssemblyTreeNode> GetAllRelatedNodes(AssemblyTreeNode node)
