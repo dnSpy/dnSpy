@@ -185,7 +185,8 @@ namespace ICSharpCode.ILSpy
 			InitMainMenu();
 			InitToolbar();
 			
-			this.Loaded += MainWindow_Loaded;
+			this.ContentRendered += MainWindow_ContentRendered;
+			this.IsEnabled = false;
 		}
 
 		internal bool IsDecompilerTabControl(TabControl tabControl)
@@ -946,8 +947,13 @@ namespace ICSharpCode.ILSpy
 		}
 		List<Action> callWhenLoaded = new List<Action>();
 
-		void MainWindow_Loaded(object sender, RoutedEventArgs e)
+		void MainWindow_ContentRendered(object sender, EventArgs e)
 		{
+			this.ContentRendered -= MainWindow_ContentRendered;
+			this.IsEnabled = true;
+			loadingControl.Visibility = Visibility.Collapsed;
+			mainGrid.Visibility = Visibility.Visible;
+
 			debug_CommandBindings_Count = this.CommandBindings.Count;
 			ContextMenuProvider.Add(treeView);
 			Themes.Theme = Themes.GetThemeOrDefault(sessionSettings.ThemeName);
