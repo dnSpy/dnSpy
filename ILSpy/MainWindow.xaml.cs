@@ -242,6 +242,7 @@ namespace ICSharpCode.ILSpy
 		{
 			var view = tabState.TextView;
 			if (addType == TabManagerAddType.Add) {
+				tabState.HeaderChanged += tabState_HeaderChanged;
 				RemoveCommands(view);
 				view.TextEditor.TextArea.MouseRightButtonDown += delegate { view.GoToMousePosition(); };
 				view.TextEditor.WordWrap = sessionSettings.WordWrap;
@@ -251,6 +252,7 @@ namespace ICSharpCode.ILSpy
 					OnDecompilerTextViewAdded(this, new DecompilerTextViewEventArgs(view));
 			}
 			else if (addType == TabManagerAddType.Remove) {
+				tabState.HeaderChanged -= tabState_HeaderChanged;
 				if (OnDecompilerTextViewRemoved != null)
 					OnDecompilerTextViewRemoved(this, new DecompilerTextViewEventArgs(view));
 			}
@@ -265,6 +267,13 @@ namespace ICSharpCode.ILSpy
 			else
 				throw new InvalidOperationException();
 		}
+
+		void tabState_HeaderChanged(object sender, EventArgs e)
+		{
+			if (OnTabHeaderChanged != null)
+				OnTabHeaderChanged(sender, e);
+		}
+		public event EventHandler OnTabHeaderChanged;
 
 		public event EventHandler<DecompilerTextViewEventArgs> OnDecompilerTextViewAdded;
 		public event EventHandler<DecompilerTextViewEventArgs> OnDecompilerTextViewRemoved;
@@ -552,16 +561,7 @@ namespace ICSharpCode.ILSpy
 		{
 			var tabState = TabStateDecompile.GetTabStateDecompile(textView);
 			tabState.Title = title;
-			InitializeHeader(tabState);
 		}
-
-		void InitializeHeader(TabStateDecompile tabState)
-		{
-			tabState.InitializeHeader();
-			if (OnTabHeaderChanged != null)
-				OnTabHeaderChanged(null, EventArgs.Empty);
-		}
-		public event EventHandler OnTabHeaderChanged;
 
 		internal void ClosePopups()
 		{
@@ -1562,10 +1562,7 @@ namespace ICSharpCode.ILSpy
 				return false;
 			}
 			tabState.HasDecompiled = true;
-			tabState.Language = language;
-			tabState.DecompiledNodes = nodes ?? new ILSpyTreeNode[0];
-			tabState.Title = null;
-			InitializeHeader(tabState);
+			tabState.SetDecompileProps(language, nodes);
 			
 			if (recordHistory)
 				RecordHistory(tabState);
@@ -2241,8 +2238,6 @@ namespace ICSharpCode.ILSpy
 		internal void RefreshTreeViewNodeNames()
 		{
 			RefreshTreeViewFilter();
-			foreach (var tabState in AllTabStates)
-				InitializeHeader(tabState);
 		}
 
 		internal bool NewHorizontalTabGroupCanExecute()

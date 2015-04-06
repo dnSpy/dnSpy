@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,6 +16,11 @@ namespace ICSharpCode.ILSpy
 		public TabItem TabItem;
 
 		internal TabManagerBase Owner;
+
+		/// <summary>
+		/// Called when <see cref="Header"/> or <see cref="ShortHeader"/> has changed
+		/// </summary>
+		public event EventHandler HeaderChanged;
 
 		const int MAX_HEADER_LENGTH = 40;
 		public string ShortHeader {
@@ -40,7 +46,7 @@ namespace ICSharpCode.ILSpy
 			return elem.Tag as TabState;
 		}
 
-		public void InitializeHeader()
+		protected void UpdateHeader()
 		{
 			var shortHeader = ShortHeader;
 			var header = Header;
@@ -48,6 +54,8 @@ namespace ICSharpCode.ILSpy
 				Text = shortHeader,
 				ToolTip = shortHeader == header ? null : header,
 			};
+			if (HeaderChanged != null)
+				HeaderChanged(this, EventArgs.Empty);
 		}
 
 		public void Dispose()
@@ -65,10 +73,28 @@ namespace ICSharpCode.ILSpy
 		public readonly DecompilerTextView TextView = new DecompilerTextView();
 		public readonly NavigationHistory<NavigationState> History = new NavigationHistory<NavigationState>();
 		public bool ignoreDecompilationRequests;
-		public ILSpyTreeNode[] DecompiledNodes = new ILSpyTreeNode[0];
-		public string Title;
-		public Language Language;
 		public bool HasDecompiled;
+
+		public ILSpyTreeNode[] DecompiledNodes {
+			get { return decompiledNodes; }
+		}
+		ILSpyTreeNode[] decompiledNodes = new ILSpyTreeNode[0];
+
+		public string Title {
+			get { return title; }
+			set {
+				if (title != value) {
+					title = value;
+					UpdateHeader();
+				}
+			}
+		}
+		string title;
+
+		public Language Language {
+			get { return language; }
+		}
+		Language language;
 
 		public override string Header {
 			get {
@@ -89,6 +115,34 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
+		internal void SetDecompileProps(Language language, ILSpyTreeNode[] nodes)
+		{
+			this.language = language;
+			UnhookEvents();
+			this.decompiledNodes = nodes ?? new ILSpyTreeNode[0];
+			HookEvents();
+			this.title = null;
+			UpdateHeader();
+		}
+
+		void HookEvents()
+		{
+			foreach (var node in decompiledNodes)
+				node.PropertyChanged += node_PropertyChanged;
+		}
+
+		void UnhookEvents()
+		{
+			foreach (var node in decompiledNodes)
+				node.PropertyChanged -= node_PropertyChanged;
+		}
+
+		void node_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "Text")
+				UpdateHeader();
+		}
+
 		public static TabStateDecompile GetTabStateDecompile(FrameworkElement elem)
 		{
 			if (elem == null)
@@ -101,8 +155,8 @@ namespace ICSharpCode.ILSpy
 			this.TextView.Tag = this;
 			var view = TextView;
 			TabItem.Content = view;
-			Language = language;
-			InitializeHeader();
+			this.language = language;
+			UpdateHeader();
 			ContextMenuProvider.Add(view);
 			view.DragOver += view_DragOver;
 		}
@@ -121,6 +175,8 @@ namespace ICSharpCode.ILSpy
 		{
 			if (isDisposing)
 				TextView.Dispose();
+			UnhookEvents();
+			decompiledNodes = new ILSpyTreeNode[0];
 		}
 
 		public bool Equals(ILSpyTreeNode[] nodes, Language language)
