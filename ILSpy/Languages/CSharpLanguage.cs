@@ -895,7 +895,7 @@ namespace ICSharpCode.ILSpy
 			EventDef ed = member as EventDef;
 			FieldDef fd = member as FieldDef;
 			if (md != null || pd != null || ed != null || fd != null) {
-				AstBuilder b = new AstBuilder(new DecompilerContext(member.Module) { Settings = new DecompilerSettings { UsingDeclarations = false } });
+				AstBuilder b = new AstBuilder(new DecompilerContext(member.Module) { Settings = new DecompilerSettings { UsingDeclarations = false, FullyQualifyAmbiguousTypeNames = false } });
 				b.DecompileMethodBodies = false;
 				if (md != null)
 					b.AddMethod(md);
