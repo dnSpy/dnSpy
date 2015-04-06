@@ -88,6 +88,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override string ToString(Language language)
 		{
+			if (!assembly.IsLoaded)
+				return assembly.ShortName;
 			if (assembly.ModuleDefinition == null)
 				return CleanUpName(assembly.ShortName);
 			if (Parent is AssemblyTreeNode || assembly.AssemblyDefinition == null)
@@ -143,33 +145,31 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 
-		TextBlock tooltip;
-
 		public override object ToolTip
 		{
 			get {
+				if (!assembly.IsLoaded)
+					return assembly.FileName;
 				if (assembly.HasLoadError)
 					return "Assembly could not be loaded.";
 
-				if (tooltip == null) {
-					tooltip = new TextBlock();
-					tooltip.Inlines.Add(new Bold(new Run("Name: ")));
-					var name = Parent is AssemblyTreeNode || assembly.AssemblyDefinition == null ?
-								assembly.ModuleDefinition.Name.String :
-								assembly.AssemblyDefinition.FullName;
-					tooltip.Inlines.Add(new Run(name));
+				var tooltip = new TextBlock();
+				tooltip.Inlines.Add(new Bold(new Run("Name: ")));
+				var name = Parent is AssemblyTreeNode || assembly.AssemblyDefinition == null ?
+							assembly.ModuleDefinition.Name.String :
+							assembly.AssemblyDefinition.FullName;
+				tooltip.Inlines.Add(new Run(name));
+				tooltip.Inlines.Add(new LineBreak());
+				tooltip.Inlines.Add(new Bold(new Run("Location: ")));
+				tooltip.Inlines.Add(new Run(assembly.FileName));
+				tooltip.Inlines.Add(new LineBreak());
+				tooltip.Inlines.Add(new Bold(new Run("Architecture: ")));
+				tooltip.Inlines.Add(new Run(CSharpLanguage.GetPlatformDisplayName(assembly.ModuleDefinition)));
+				string runtimeName = CSharpLanguage.GetRuntimeDisplayName(assembly.ModuleDefinition);
+				if (runtimeName != null) {
 					tooltip.Inlines.Add(new LineBreak());
-					tooltip.Inlines.Add(new Bold(new Run("Location: ")));
-					tooltip.Inlines.Add(new Run(assembly.FileName));
-					tooltip.Inlines.Add(new LineBreak());
-					tooltip.Inlines.Add(new Bold(new Run("Architecture: ")));
-					tooltip.Inlines.Add(new Run(CSharpLanguage.GetPlatformDisplayName(assembly.ModuleDefinition)));
-					string runtimeName = CSharpLanguage.GetRuntimeDisplayName(assembly.ModuleDefinition);
-					if (runtimeName != null) {
-						tooltip.Inlines.Add(new LineBreak());
-						tooltip.Inlines.Add(new Bold(new Run("Runtime: ")));
-						tooltip.Inlines.Add(new Run(runtimeName));
-					}
+					tooltip.Inlines.Add(new Bold(new Run("Runtime: ")));
+					tooltip.Inlines.Add(new Run(runtimeName));
 				}
 
 				return tooltip;
@@ -186,6 +186,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			// change from "Loading" icon to final icon
 			RaisePropertyChanged("Icon");
 			RaisePropertyChanged("ExpandedIcon");
+			RaisePropertyChanged("ToolTip");
 			if (moduleTask.IsFaulted) {
 				RaisePropertyChanged("ShowExpander"); // cannot expand assemblies with load error
 				// observe the exception so that the Task's finalizer doesn't re-throw it
