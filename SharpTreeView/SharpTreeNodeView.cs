@@ -150,6 +150,11 @@ namespace ICSharpCode.TreeView
 			else {
 				result -= 19;
 			}
+			if (result < 0) {
+				// BUG: Node is sometimes an already deleted node so result will be set to 0 above
+				//		and will eventually get a negative value.
+				result = 0;
+			}
 			if (result < 0)
 				throw new InvalidOperationException();
 			return result;
