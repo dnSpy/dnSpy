@@ -37,6 +37,7 @@ using System.Windows.Media.Imaging;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.AsmEditor;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Controls;
 using ICSharpCode.ILSpy.Debugger.Services;
@@ -80,6 +81,11 @@ namespace ICSharpCode.ILSpy
 		public static MainWindow Instance {
 			get { return instance; }
 		}
+
+		public UndoCommandManager UndoCommandManager {
+			get { return undoCommandManager; }
+		}
+		UndoCommandManager undoCommandManager = new UndoCommandManager();
 		
 		public SessionSettings SessionSettings {
 			get { return sessionSettings; }
@@ -210,6 +216,7 @@ namespace ICSharpCode.ILSpy
 
 			RemoveCommands(handler.Editing);
 			RemoveCommands(handler.CaretNavigation);
+			RemoveCommands(handler.CommandBindings);
 		}
 
 		static void RemoveCommands(ICSharpCode.AvalonEdit.Editing.TextAreaInputHandler handler)
@@ -227,14 +234,24 @@ namespace ICSharpCode.ILSpy
 					commands.Add(kb.Command);
 				}
 			}
-
+			RemoveCommands(handler.CommandBindings);
 			var bindingList = (IList<CommandBinding>)handler.CommandBindings;
 			for (int i = bindingList.Count - 1; i >= 0; i--) {
 				var binding = bindingList[i];
-				// Ctrl+D: GoToToken
-				if (binding.Command == ICSharpCode.AvalonEdit.AvalonEditCommands.DeleteLine)
+				if (commands.Contains(binding.Command))
 					bindingList.RemoveAt(i);
-				else if (commands.Contains(binding.Command))
+			}
+		}
+
+		static void RemoveCommands(ICollection<CommandBinding> commandBindings)
+		{
+			var bindingList = (IList<CommandBinding>)commandBindings;
+			for (int i = bindingList.Count - 1; i >= 0; i--) {
+				var binding = bindingList[i];
+				// Ctrl+D: GoToToken
+				if (binding.Command == ICSharpCode.AvalonEdit.AvalonEditCommands.DeleteLine ||
+					binding.Command == ApplicationCommands.Undo ||
+					binding.Command == ApplicationCommands.Redo)
 					bindingList.RemoveAt(i);
 			}
 		}
@@ -596,6 +613,9 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		public void UpdateToolbar()
 		{
+			// Clear the Command property so they can unhook the event handlers
+			foreach (DependencyObject item in toolBar.Items)
+				item.ClearValue(System.Windows.Controls.Primitives.ButtonBase.CommandProperty);
 			toolBar.Items.Clear();
 			foreach (var commandGroup in mtbState.Groupings) {
 				var items = new List<object>();
@@ -661,6 +681,7 @@ namespace ICSharpCode.ILSpy
 			public IGrouping<string, Lazy<ICommand, IMainMenuCommandMetadata>>[] Groupings;
 			public List<MenuItem> CachedMenuItems = new List<MenuItem>();
 			public bool Recreate = true;
+			public bool AlwaysRecreate = false;
 		}
 		readonly Dictionary<string, MainSubMenuState> subMenusDict = new Dictionary<string, MainSubMenuState>();
 		void InitMainMenu()
@@ -682,6 +703,10 @@ namespace ICSharpCode.ILSpy
 				}
 				var stateTmp = state;
 				state.TopLevelMenuItem.SubmenuOpened += (s, e) => InitializeMainSubMenu(stateTmp);
+				state.TopLevelMenuItem.SubmenuClosed += (s, e) => {
+					if (stateTmp.AlwaysRecreate)
+						ClearMainSubMenu(stateTmp);
+				};
 
 				// Make sure it's not empty or it will always be empty
 				state.TopLevelMenuItem.Items.Clear();
@@ -698,18 +723,14 @@ namespace ICSharpCode.ILSpy
 			subMenusDict[menuHeader].Recreate = true;
 		}
 
-		static void InitializeMainSubMenu(MainSubMenuState state)
+		public void SetMenuAlwaysRegenerate(string menuHeader)
 		{
-			if (!state.Recreate)
-				return;
-			state.Recreate = false;
-			var topLevelMenuItem = state.TopLevelMenuItem;
+			UpdateMainSubMenu(menuHeader);
+			subMenusDict[menuHeader].AlwaysRecreate = true;
+		}
 
-			// Don't remove the first one or opening the menu from the keyboard (Alt+XXX) won't
-			// highlight the first menu item.
-			for (int i = topLevelMenuItem.Items.Count - 1; i >= 1; i--)
-				topLevelMenuItem.Items.RemoveAt(i);
-
+		static void ClearMainSubMenu(MainSubMenuState state)
+		{
 			// Clear all properties that are set by our code
 			foreach (var item in state.CachedMenuItems) {
 				item.ClearValue(MenuItem.CommandProperty);
@@ -722,6 +743,21 @@ namespace ICSharpCode.ILSpy
 				item.ClearValue(MenuItem.IsCheckedProperty);
 				BindingOperations.ClearBinding(item, MenuItem.IsCheckedProperty);
 			}
+		}
+
+		static void InitializeMainSubMenu(MainSubMenuState state)
+		{
+			if (!state.Recreate)
+				return;
+			state.Recreate = state.AlwaysRecreate;
+			var topLevelMenuItem = state.TopLevelMenuItem;
+
+			// Don't remove the first one or opening the menu from the keyboard (Alt+XXX) won't
+			// highlight the first menu item.
+			for (int i = topLevelMenuItem.Items.Count - 1; i >= 1; i--)
+				topLevelMenuItem.Items.RemoveAt(i);
+
+			ClearMainSubMenu(state);
 
 			int cachedIndex = 0;
 			int added = 0;
@@ -774,6 +810,10 @@ namespace ICSharpCode.ILSpy
 							else
 								menuItem.IsChecked = checkState.Value;
 						}
+
+						var initMenu = entry.Value as IMainMenuCommandInitialize;
+						if (initMenu != null)
+							initMenu.Initialize(menuItem);
 
 						items.Add(menuItem);
 					}
@@ -1094,6 +1134,7 @@ namespace ICSharpCode.ILSpy
 			// Clear the cache since the keys contain tree nodes which get recreated now. The keys
 			// will never match again so shouldn't be in the cache.
 			DecompileCache.Instance.ClearAll();
+			undoCommandManager.Clear();
 
 			foreach (var tabManager in tabGroupsManager.AllTabGroups.ToArray())
 				tabManager.RemoveAllTabStates();
@@ -1549,7 +1590,7 @@ namespace ICSharpCode.ILSpy
 			if (TreeView_SelectionChanged_ignore)
 				return;
 			var tabState = SafeActiveTabState;
-			DecompileNodes(tabState, null, true, tabState.Language, this.SelectedNodes.ToArray());
+			DecompileNodes(tabState, null, true, tabState.Language, this.SelectedNodes);
 
 			if (SelectionChanged != null)
 				SelectionChanged(sender, e);
@@ -1626,10 +1667,8 @@ namespace ICSharpCode.ILSpy
 
 		public event SelectionChangedEventHandler SelectionChanged;
 
-		IEnumerable<ILSpyTreeNode> SelectedNodes {
-			get {
-				return treeView.GetTopLevelSelection().OfType<ILSpyTreeNode>();
-			}
+		public ILSpyTreeNode[] SelectedNodes {
+			get { return treeView.GetTopLevelSelection().OfType<ILSpyTreeNode>().ToArray(); }
 		}
 		#endregion
 		
@@ -2422,6 +2461,31 @@ namespace ICSharpCode.ILSpy
 					SetTextEditorFocus(ActiveTextView);
 				}
 			}
+		}
+
+		private void UndoCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = undoCommandManager.CanUndo;
+		}
+
+		private void UndoExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			undoCommandManager.Undo();
+		}
+
+		private void RedoCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = undoCommandManager.CanRedo;
+		}
+
+		private void RedoExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			undoCommandManager.Redo();
+		}
+
+		public void AddUndoCommand(IUndoCommand command)
+		{
+			undoCommandManager.Add(command);
 		}
 
 		public MsgBoxButton? ShowIgnorableMessageBox(string id, string msg, MessageBoxButton buttons)

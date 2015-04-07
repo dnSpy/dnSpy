@@ -69,7 +69,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Themes", Header = "_Options", MenuCategory = "Options", MenuOrder = 3000)]
+	[ExportMainMenuCommand(Menu = "_Themes", Header = "_Options", MenuCategory = "Options", MenuOrder = 4000)]
 	class ThemesMenu : ICommand, IMenuItemProvider
 	{
 		public ThemesMenu()

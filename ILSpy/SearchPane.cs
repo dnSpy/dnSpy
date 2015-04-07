@@ -329,8 +329,8 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_View", Header = "_Search", MenuIcon = "Images/Find.png", MenuCategory = "ShowPane", MenuOrder = 2200)]
-	[ExportToolbarCommand(ToolTip = "Search (Ctrl+Shift+F or Ctrl+E)", ToolbarIcon = "Images/Find.png", ToolbarCategory = "View", ToolbarOrder = 8000)]
+	[ExportMainMenuCommand(Menu = "_View", Header = "_Search", MenuIcon = "Images/Find.png", MenuCategory = "ShowPane", MenuOrder = 3200)]
+	[ExportToolbarCommand(ToolTip = "Search (Ctrl+Shift+F or Ctrl+E)", ToolbarIcon = "Images/Find.png", ToolbarCategory = "View", ToolbarOrder = 9000)]
 	sealed class ShowSearchCommand : CommandWrapper
 	{
 		public ShowSearchCommand()

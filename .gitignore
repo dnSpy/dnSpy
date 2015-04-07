@@ -14,3 +14,4 @@ _ReSharper*/
 *.patch
 /packages
 *.ide/
+*.tmp_proj

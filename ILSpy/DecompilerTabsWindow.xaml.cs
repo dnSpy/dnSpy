@@ -158,7 +158,7 @@ namespace ICSharpCode.ILSpy
 			activateButton.IsEnabled = listView.SelectedItems.Count == 1;
 			closeWindowsButton.IsEnabled = listView.SelectedItems.Count != 0;
 			var tabs = GetSelectedItems();
-			saveButton.IsEnabled = tabs.Length == 1 && tabs[0].TabState.DecompiledNodes.Length > 0;
+			saveCodeButton.IsEnabled = tabs.Length == 1 && tabs[0].TabState.DecompiledNodes.Length > 0;
 		}
 
 		private void activateButton_Click(object sender, RoutedEventArgs e)
@@ -168,7 +168,7 @@ namespace ICSharpCode.ILSpy
 				ActivateWindow(tabs[0]);
 		}
 
-		private void saveButton_Click(object sender, RoutedEventArgs e)
+		private void saveCodeButton_Click(object sender, RoutedEventArgs e)
 		{
 			var tabs = GetSelectedItems();
 			if (tabs.Length > 0)

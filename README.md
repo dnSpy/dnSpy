@@ -1,24 +1,23 @@
 dnSpy
 =====
 
-dnSpy is [ILSpy](https://github.com/icsharpcode/ILSpy) using [dnlib](https://github.com/0xd4d/dnlib). dnSpy is now able to open assemblies that ILSpy can't.
+dnSpy is a .NET assembly editor, decompiler, and debugger forked from [ILSpy](https://github.com/icsharpcode/ILSpy).
 
 Extra features present in dnSpy
 ===============================
 
-* More stable, can handle bad input that will crash ILSpy
+* Assembly editor
 * Debugger
 * Tabs
 * Horizontal/vertical tab groups
 * Updated syntax highlighting code
 * Multifile assembly support
 * Command line decompiler (dnspc.exe)
+* More stable, can handle bad input that will crash ILSpy
 * Other minor updates / fixes
 
 Debugger
 ========
-
-This is a slightly updated debugger that was removed from ILSpy. It's lacking many useful features I plan to add in the future.
 
 Updates to the Debugger
 =======================
@@ -80,6 +79,9 @@ Ctrl+Click	| (Text view) Follow the clicked reference in a new tab
 Ctrl+C		| (Text view) Copy selected text
 Ctrl+S		| Save code
 Ctrl+O		| Open assembly
+Ctrl+Z		| (Assembly Editor) Undo
+Ctrl+Y		| (Assembly Editor) Redo
+Ctrl+Shift+Z| (Assembly Editor) Redo
 
 Credits
 =======

@@ -358,7 +358,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 	[ExportMainMenuCommand(Menu = "_Debug",
 						   Header = "_Show Call Stack",
 						   MenuCategory = "View",
-						   MenuOrder = 4400)]
+						   MenuOrder = 5400)]
     public class CallstackPanelcommand : SimpleCommand
     {
         public override void Execute(object parameter)

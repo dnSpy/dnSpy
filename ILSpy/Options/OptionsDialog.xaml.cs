@@ -141,7 +141,7 @@ namespace ICSharpCode.ILSpy.Options
 		public int Order { get; set; }
 	}
 	
-	[ExportMainMenuCommand(Menu = "_View", Header = "_Options", MenuCategory = "Options", MenuOrder = 2999)]
+	[ExportMainMenuCommand(Menu = "_View", Header = "_Options", MenuCategory = "Options", MenuOrder = 3999)]
 	sealed class ShowOptionsCommand : SimpleCommand
 	{
 		public override void Execute(object parameter)

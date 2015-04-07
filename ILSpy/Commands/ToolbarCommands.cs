@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -12,7 +13,7 @@ namespace ICSharpCode.ILSpy.Commands
 			return true;
 		}
 
-		public event System.EventHandler CanExecuteChanged {
+		public event EventHandler CanExecuteChanged {
 			add { }
 			remove { }
 		}

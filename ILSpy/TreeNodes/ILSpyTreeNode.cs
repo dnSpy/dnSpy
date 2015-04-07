@@ -222,7 +222,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			if (nodes == null || nodes.Count < 1)
 				return null;
-			var node = nodes[0];
+			return GetModule(nodes[0]);
+		}
+
+		internal static ModuleDef GetModule(SharpTreeNode node)
+		{
+			if (node == null)
+				return null;
 			while (node != null) {
 				var asmNode = node as AssemblyTreeNode;
 				if (asmNode != null)

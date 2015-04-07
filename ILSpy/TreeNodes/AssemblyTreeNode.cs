@@ -42,7 +42,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	public sealed class AssemblyTreeNode : ILSpyTreeNode
 	{
 		readonly LoadedAssembly assembly;
-		readonly Dictionary<string, NamespaceTreeNode> namespaces = new Dictionary<string, NamespaceTreeNode>();
+		readonly Dictionary<string, NamespaceTreeNode> namespaces = new Dictionary<string, NamespaceTreeNode>(StringComparer.Ordinal);
 
 		public AssemblyTreeNode(LoadedAssembly assembly)
 		{
@@ -248,7 +248,41 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					this.Children.Add(ns);
 			}
 		}
-		
+
+		internal void OnRemoved(NamespaceTreeNode nsNode)
+		{
+			bool b = namespaces.Remove(nsNode.Name);
+			Debug.Assert(b);
+			if (!b)
+				throw new InvalidOperationException();
+
+			foreach (TypeTreeNode typeNode in nsNode.Children)
+				OnRemoved(typeNode);
+		}
+
+		internal void OnReadded(NamespaceTreeNode nsNode)
+		{
+			Debug.Assert(!namespaces.ContainsKey(nsNode.Name));
+			namespaces.Add(nsNode.Name, nsNode);
+
+			foreach (TypeTreeNode typeNode in nsNode.Children)
+				OnReadded(typeNode);
+		}
+
+		internal void OnRemoved(TypeTreeNode typeNode)
+		{
+			bool b = typeDict.Remove(typeNode.TypeDefinition);
+			Debug.Assert(b);
+			if (!b)
+				throw new InvalidOperationException();
+		}
+
+		internal void OnReadded(TypeTreeNode typeNode)
+		{
+			Debug.Assert(!typeDict.ContainsKey(typeNode.TypeDefinition));
+			typeDict.Add(typeNode.TypeDefinition, typeNode);
+		}
+
 		public override bool CanExpandRecursively {
 			get { return true; }
 		}

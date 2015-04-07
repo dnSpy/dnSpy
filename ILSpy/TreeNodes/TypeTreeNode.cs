@@ -209,5 +209,27 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override NodePathName NodePathName {
 			get { return new NodePathName("type", type.Namespace + "." + type.Name); }
 		}
+
+		AssemblyTreeNode GetAssemblyIfNonNestedType()
+		{
+			var nsNode = Parent as NamespaceTreeNode;
+			if (nsNode == null)
+				return null;
+			return nsNode.Parent as AssemblyTreeNode;
+		}
+
+		internal void OnBeforeRemoved()
+		{
+			var asmNode = GetAssemblyIfNonNestedType();
+			if (asmNode != null)
+				asmNode.OnRemoved(this);
+		}
+
+		internal void OnReadded()
+		{
+			var asmNode = GetAssemblyIfNonNestedType();
+			if (asmNode != null)
+				asmNode.OnReadded(this);
+		}
 	}
 }

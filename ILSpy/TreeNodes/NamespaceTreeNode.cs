@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.Decompiler;
 
@@ -64,6 +65,36 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			language.DecompileNamespace(name, this.Children.OfType<TypeTreeNode>().Select(t => t.TypeDefinition), output, options);
+		}
+
+		internal void OnBeforeRemoved()
+		{
+			((AssemblyTreeNode)Parent).OnRemoved(this);
+		}
+
+		internal void OnReadded()
+		{
+			((AssemblyTreeNode)Parent).OnReadded(this);
+		}
+
+		internal void Append(TypeTreeNode typeNode)
+		{
+			bool b = name.Equals(typeNode.Namespace, StringComparison.Ordinal);
+			Debug.Assert(b);
+			if (!b)
+				throw new InvalidOperationException();
+			Children.Add(typeNode);
+			((AssemblyTreeNode)Parent).OnReadded(typeNode);
+		}
+
+		internal TypeTreeNode RemoveLast()
+		{
+			Debug.Assert(Children.Count > 0);
+			int index = Children.Count - 1;
+			var typeNode = (TypeTreeNode)Children[index];
+			Children.RemoveAt(index);
+			((AssemblyTreeNode)Parent).OnRemoved(typeNode);
+			return typeNode;
 		}
 
 		public override NodePathName NodePathName {

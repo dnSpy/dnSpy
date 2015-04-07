@@ -97,6 +97,11 @@ namespace ICSharpCode.ILSpy
 		Binding Binding { get; }
 	}
 
+	public interface IMainMenuCommandInitialize
+	{
+		void Initialize(MenuItem menuItem);
+	}
+
 	public interface IMenuItemProvider
 	{
 		/// <summary>

@@ -109,6 +109,16 @@
     <Compile Include="AskForInput.xaml.cs">
       <DependentUpon>AskForInput.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AsmEditor\DeletableNodes.cs" />
+    <Compile Include="AsmEditor\Extensions.cs" />
+    <Compile Include="AsmEditor\IUndoCommand.cs" />
+    <Compile Include="AsmEditor\NamespaceCommands.cs" />
+    <Compile Include="AsmEditor\ToolbarCommands.cs" />
+    <Compile Include="AsmEditor\TreeNodeCommand.cs" />
+    <Compile Include="AsmEditor\TreeNodeContextMenu.cs" />
+    <Compile Include="AsmEditor\TreeNodeMainMenu.cs" />
+    <Compile Include="AsmEditor\UndoCommandManager.cs" />
+    <Compile Include="AsmEditor\UndoRedoMenuCommands.cs" />
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
     <Compile Include="AvalonEdit\EditorPositionState.cs" />
@@ -302,6 +312,9 @@
     <Resource Include="Images\Delete.png" />
     <Resource Include="Images\ILSpy.ico" />
     <Resource Include="Images\FindAssembly.png" />
+    <Resource Include="Images\Undo.png" />
+    <Resource Include="Images\Redo.png" />
+    <Resource Include="Images\DeleteHistory.png" />
     <None Include="App.config" />
     <Resource Include="Images\Breakpoint.png" />
     <Resource Include="Images\CurrentLine.png" />

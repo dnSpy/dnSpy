@@ -25,6 +25,7 @@ using System.Windows.Controls;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.TreeView;
+using ICSharpCode.ILSpy.TreeNodes;
 
 namespace ICSharpCode.ILSpy
 {
@@ -75,7 +76,7 @@ namespace ICSharpCode.ILSpy
 		/// Returns the selected nodes in the tree view.
 		/// Returns null, if context menu does not belong to a tree view.
 		/// </summary>
-		public SharpTreeNode[] SelectedTreeNodes { get; private set; }
+		public ILSpyTreeNode[] SelectedTreeNodes { get; private set; }
 		
 		/// <summary>
 		/// Returns the tree view the context menu is assigned to.
@@ -131,7 +132,7 @@ namespace ICSharpCode.ILSpy
 				reference = new ReferenceSegment { Reference = ((SearchResult)listBox.SelectedItem).Member };
 			else
 				reference = null;
-			var selectedTreeNodes = treeView != null ? treeView.GetTopLevelSelection().ToArray() : null;
+			var selectedTreeNodes = treeView != null ? treeView.GetTopLevelSelection().OfType<ILSpyTreeNode>().ToArray() : null;
 			return new TextViewContext {
 				TreeView = treeView,
 				SelectedTreeNodes = selectedTreeNodes,
