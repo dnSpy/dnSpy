@@ -676,13 +676,16 @@ namespace ICSharpCode.Decompiler.ILAst
 				switch (expr.Code) {
 					case ILCode.Localloc:
 				    {
-				        ILExpression arg0 = args[0];
-                        ILExpression expr2 = expr;
-				        DivideOrMultiplyBySize(ref expr2, ref arg0, ((PointerType)expr.InferredType).ElementType, true);
-                        // expr shouldn't change
-				        if (expr2 != expr)
-				            throw new InvalidOperationException();
-				        args[0] = arg0;
+				        PointerType type = expr.InferredType as PointerType;
+				        if (type != null) {
+				            ILExpression arg0 = args[0];
+				            ILExpression expr2 = expr;
+				            DivideOrMultiplyBySize(ref expr2, ref arg0, type.ElementType, true);
+				            // expr shouldn't change
+				            if (expr2 != expr)
+				                throw new InvalidOperationException();
+				            args[0] = arg0;
+				        }
 				        break;
 				    }
 				    case ILCode.Add:
