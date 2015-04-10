@@ -59,6 +59,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return;
 			uint token;
 			string tokenText = ask.textBox.Text;
+			tokenText = tokenText.Trim();
+			if (string.IsNullOrEmpty(tokenText))
+				return;
 			if (tokenText.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
 				tokenText = tokenText.Substring(2);
 			if (!uint.TryParse(tokenText, NumberStyles.HexNumber, null, out token)) {
