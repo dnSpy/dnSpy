@@ -217,7 +217,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public bool KeepWin32Resources {
 			get { return keepWin32Resources; }
 			set {
-				if (keepWin32Resources != null) {
+				if (keepWin32Resources != value) {
 					keepWin32Resources = value;
 					OnPropertyChanged("KeepWin32Resources");
 				}
