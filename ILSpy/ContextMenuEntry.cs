@@ -21,6 +21,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.ILSpy.TextView;
@@ -349,6 +350,7 @@ namespace ICSharpCode.ILSpy
 					}
 				}
 			}
+			menu.Background = Brushes.White;
 			return menu.Items.Count > 0;
 		}
 	}
