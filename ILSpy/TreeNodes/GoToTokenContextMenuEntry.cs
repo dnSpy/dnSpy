@@ -51,7 +51,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			var ask = new AskForInput();
 			ask.Owner = MainWindow.Instance;
 			ask.Title = "Go to MD Token";
-			ask.textBlock.Text = "Metadata token";
+			ask.label.Content = "_Metadata token";
 			ask.textBox.Text = "";
 			ask.ToolTip = "Enter a hexadecimal MD token: 0x06001234 or 0200ABCD";
 			ask.ShowDialog();

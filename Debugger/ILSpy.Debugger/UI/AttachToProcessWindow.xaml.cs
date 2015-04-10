@@ -27,7 +27,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		public AttachToProcessWindow()
 		{
 			InitializeComponent();
-			
+			SourceInitialized += (s, e) => this.HideMinimizeAndMaximizeButtons();
 			Loaded += OnLoaded;
 		}
 		

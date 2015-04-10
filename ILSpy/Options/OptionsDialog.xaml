@@ -6,17 +6,17 @@
         ResizeMode="CanResizeWithGrip"
         MinHeight="300" MinWidth="400"
         Title="Options" Height="400" Width="500">
-	<Grid>
+	<Grid Margin="5">
 		<Grid.RowDefinitions>
 			<RowDefinition
 				Height="1*" />
 			<RowDefinition
 				Height="Auto" />
 		</Grid.RowDefinitions>
-		<TabControl Name="tabControl" />
-		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="12,8">
-			<Button IsDefault="True" Margin="2,0" Name="okButton" Click="OKButton_Click">_OK</Button>
-			<Button IsCancel="True" Margin="2,0">_Cancel</Button>
+		<TabControl Name="tabControl" Margin="0 0 0 5"/>
+		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+			<Button IsDefault="True" Margin="0 0 5 0" Name="okButton" Click="OKButton_Click">_OK</Button>
+			<Button IsCancel="True" >_Cancel</Button>
 		</StackPanel>
 	</Grid>
 </Window>

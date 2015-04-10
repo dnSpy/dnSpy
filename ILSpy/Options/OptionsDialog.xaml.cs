@@ -50,6 +50,7 @@ namespace ICSharpCode.ILSpy.Options
 		public OptionsDialog()
 		{
 			InitializeComponent();
+			SourceInitialized += (s, e) => this.HideMinimizeAndMaximizeButtons();
 			ILSpySettings settings = ILSpySettings.Load();
 			var creators = MefState.Instance.optionPages.OrderBy(p => p.Metadata.Order).ToArray();
 			optionPages = creators.Select(p => p.Value.Create()).ToArray();
@@ -141,7 +142,7 @@ namespace ICSharpCode.ILSpy.Options
 		public int Order { get; set; }
 	}
 	
-	[ExportMainMenuCommand(Menu = "_View", Header = "_Options", MenuCategory = "Options", MenuOrder = 3999)]
+	[ExportMainMenuCommand(Menu = "_View", Header = "_Options...", MenuCategory = "Options", MenuOrder = 3999)]
 	sealed class ShowOptionsCommand : SimpleCommand
 	{
 		public override void Execute(object parameter)

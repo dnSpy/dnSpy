@@ -3,21 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             Width="300" Height="130"
+             Width="300"
              ResizeMode="NoResize"
              Icon="Images/ILSpy.ico"
+             SizeToContent="Height"
              Title="dnSpy"
              WindowStartupLocation="CenterOwner"
              Style="{DynamicResource DialogWindow}"
              mc:Ignorable="d" >
-	<StackPanel FocusManager.FocusedElement="{Binding ElementName=textBox}">
-		<DockPanel LastChildFill="True" Margin="10,20,10,10">
-			<TextBlock Name="textBlock" Height="23" Margin="0,0,5,0" VerticalAlignment="Center" />
+	<StackPanel FocusManager.FocusedElement="{Binding ElementName=textBox}" Margin="5">
+		<DockPanel LastChildFill="True" Margin="0,15,0,10">
+			<Label Name="label" Target="{Binding ElementName=textBox}" Margin="0,0,5,0" VerticalAlignment="Center" />
 			<TextBox Name="textBox" Height="23" VerticalAlignment="Center" />
 		</DockPanel>
 		<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 			<Button Content="_OK" Click="okButton_Click" IsDefault="True" Height="23" Name="okButton" Width="75" Margin="0,0,5,0" />
-			<Button Content="_Cancel" Click="cancelButton_Click" IsCancel="True" Height="23" Name="cancelButton" Width="75" Margin="0,0,10,0" />
+			<Button Content="_Cancel" Click="cancelButton_Click" IsCancel="True" Height="23" Name="cancelButton" Width="75" Margin="0,0,0,0" />
 		</StackPanel>
 	</StackPanel>
 </Window>

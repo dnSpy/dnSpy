@@ -6,7 +6,7 @@ using System.Windows;
 namespace ICSharpCode.ILSpy
 {
 	// From http://stackoverflow.com/a/339635
-	internal static class WindowExtensions
+	public static class WindowExtensions
 	{
 		private const int GWL_STYLE = -16,
 						  WS_MAXIMIZEBOX = 0x10000,
@@ -18,7 +18,7 @@ namespace ICSharpCode.ILSpy
 		[DllImport("user32")]
 		extern private static int SetWindowLong(IntPtr hwnd, int index, int value);
 
-		internal static void HideMinimizeAndMaximizeButtons(this Window window)
+		public static void HideMinimizeAndMaximizeButtons(this Window window)
 		{
 			IntPtr hwnd = new System.Windows.Interop.WindowInteropHelper(window).Handle;
 			var currentStyle = GetWindowLong(hwnd, GWL_STYLE);

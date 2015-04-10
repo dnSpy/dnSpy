@@ -1,13 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Window
 	x:Class="ICSharpCode.ILSpy.Debugger.UI.DebugProcessWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	Title="Select executable to debug..."
+	Title="Select Executable to Debug"
+	Icon="pack://application:,,,/dnSpy;component/images/ILSpy.ico"
 	WindowStartupLocation="CenterOwner"
 	WindowState="Normal"
-	WindowStyle="ToolWindow"
 	ShowInTaskbar="False"
-	Height="176"
-	Width="509">
+	MinHeight="180"
+	MaxHeight="200"
+	MinWidth="400"
+	Height="180"
+	Width="500">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition
@@ -93,14 +96,16 @@
 			Grid.Row="1"
 			Grid.ColumnSpan="3">
 			<Button
-				Margin="0,0,4,0"
+				Margin="0,0,5,0"
+				Width="75"
 				DockPanel.Dock="Right"
 				IsCancel="True"
 				x:Name="CancelButton"
 				Content="_Cancel"
 				Click="CancelButton_Click" />
 			<Button
-				Margin="4,0,4,0"
+				Width="75"
+				Margin="5,0,5,0"
 				DockPanel.Dock="Right"
 				x:Name="DebugButton"
 				IsDefault="True"

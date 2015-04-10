@@ -861,7 +861,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportMainMenuCommand(Menu = "_Debug",
 	                       MenuIcon = "Images/application-x-executable.png",
 	                       MenuCategory = "Start",
-	                       Header = "Debug an _Executable",
+	                       Header = "Debug an _Executable...",
 	                       MenuOrder = 5000)]
 	internal sealed class DebugExecutableCommand : DebuggerCommand, IToolbarCommand, IMainMenuCommand
 	{

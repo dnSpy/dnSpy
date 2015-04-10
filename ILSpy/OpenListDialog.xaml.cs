@@ -39,6 +39,7 @@ namespace ICSharpCode.ILSpy
 		public OpenListDialog()
 		{
 			InitializeComponent();
+			SourceInitialized += (s, e) => this.HideMinimizeAndMaximizeButtons();
 			manager = MainWindow.Instance.assemblyListManager;
 		}
 

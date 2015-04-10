@@ -47,6 +47,7 @@ namespace ICSharpCode.ILSpy
 		public OpenFromGacDialog()
 		{
 			InitializeComponent();
+			SourceInitialized += (s, e) => this.HideMinimizeAndMaximizeButtons();
 			listView.ItemsSource = filteredEntries;
 			SortableGridViewColumn.SetCurrentSortColumn(listView, nameColumn);
 			SortableGridViewColumn.SetSortDirection(listView, ColumnSortDirection.Ascending);
