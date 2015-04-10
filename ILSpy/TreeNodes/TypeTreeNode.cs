@@ -185,7 +185,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					overlay = AccessOverlayIcon.Private;
 					break;
 				default:
-					throw new NotSupportedException();
+					overlay = AccessOverlayIcon.Public;
+					break;
 			}
 			return overlay;
 		}

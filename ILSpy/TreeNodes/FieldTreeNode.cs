@@ -107,7 +107,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				case FieldAttributes.CompilerControlled:
 					return AccessOverlayIcon.CompilerControlled;
 				default:
-					throw new NotSupportedException();
+					return AccessOverlayIcon.Public;
 			}
 		}
 
