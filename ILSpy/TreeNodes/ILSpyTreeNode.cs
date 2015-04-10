@@ -227,12 +227,18 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		internal static ModuleDef GetModule(SharpTreeNode node)
 		{
+			var asmNode = GetAssemblyTreeNode(node);
+			return asmNode == null ? null : asmNode.LoadedAssembly.ModuleDefinition;
+		}
+
+		internal static AssemblyTreeNode GetAssemblyTreeNode(SharpTreeNode node)
+		{
 			if (node == null)
 				return null;
 			while (node != null) {
 				var asmNode = node as AssemblyTreeNode;
 				if (asmNode != null)
-					return asmNode.LoadedAssembly.ModuleDefinition;
+					return asmNode;
 				node = node.Parent;
 			}
 			return null;

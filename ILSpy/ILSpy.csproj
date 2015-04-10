@@ -109,10 +109,27 @@
     <Compile Include="AskForInput.xaml.cs">
       <DependentUpon>AskForInput.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AsmEditor\BooleanToGridrowLengthConverter.cs" />
     <Compile Include="AsmEditor\DeletableNodes.cs" />
     <Compile Include="AsmEditor\Extensions.cs" />
+    <Compile Include="AsmEditor\HexNullableConverter.cs" />
     <Compile Include="AsmEditor\IUndoCommand.cs" />
+    <Compile Include="AsmEditor\ModuleSaver.cs" />
     <Compile Include="AsmEditor\NamespaceCommands.cs" />
+    <Compile Include="AsmEditor\RelayCommand.cs" />
+    <Compile Include="AsmEditor\SaveModuleCommand.cs" />
+    <Compile Include="AsmEditor\SaveModuleOptions.xaml.cs">
+      <DependentUpon>SaveModuleOptions.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\SaveModuleOptionsVM.cs" />
+    <Compile Include="AsmEditor\SaveModuleWindow.cs" />
+    <Compile Include="AsmEditor\SaveMultiModule.xaml.cs">
+      <DependentUpon>SaveMultiModule.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\SaveMultiModuleVM.cs" />
+    <Compile Include="AsmEditor\SaveSingleModule.xaml.cs">
+      <DependentUpon>SaveSingleModule.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AsmEditor\ToolbarCommands.cs" />
     <Compile Include="AsmEditor\TreeNodeCommand.cs" />
     <Compile Include="AsmEditor\TreeNodeContextMenu.cs" />
@@ -377,6 +394,18 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="AskForInput.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\SaveModuleOptions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\SaveMultiModule.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\SaveSingleModule.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

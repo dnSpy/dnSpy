@@ -10,6 +10,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			if (nodes == null || nodes.Length == 0)
 				return false;
 			var module = ILSpyTreeNode.GetModule(nodes[0]);
+			if (module == null)
+				return false;
 			for (int i = 0; i < nodes.Length; i++) {
 				if (module != ILSpyTreeNode.GetModule(nodes[i]))
 					return false;
