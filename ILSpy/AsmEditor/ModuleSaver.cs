@@ -157,6 +157,14 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				fileIndex = i;
 				var state = filesToSave[fileIndex];
 				var vm = state.File;
+
+				// If the user tries to save to the same file as the module, disable mmap'd I/O so
+				// we can write to the file.
+				//TODO: Make sure that no other code tries to use this module, eg. background decompilation
+				var mod = vm.Module as ModuleDefMD;
+				if (mod != null && vm.FileName.Equals(mod.Location, StringComparison.OrdinalIgnoreCase))
+					mod.MetaData.PEImage.UnsafeDisableMemoryMappedIO();
+
 				var opts = vm.CreateWriterOptions();
 				opts.Listener = this;
 				opts.Logger = this;
