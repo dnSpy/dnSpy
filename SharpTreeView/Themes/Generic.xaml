@@ -12,28 +12,41 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ToggleButton}">
-                    <Border Width="9"
+					<Grid Width="16" Height="16" Background="Transparent">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="*" />
+							<RowDefinition Height="9" />
+							<RowDefinition Height="*" />
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="9" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+						<Border Grid.Row="1" Grid.Column="1"
+							Width="9"
                             Height="9"
                             BorderThickness="1"
                             BorderBrush="#FF7898B5"
                             CornerRadius="1"
                             SnapsToDevicePixels="True">
-                        <Border.Background>
-                            <LinearGradientBrush StartPoint="0,0"
+							<Border.Background>
+								<LinearGradientBrush StartPoint="0,0"
                                                  EndPoint="1,1">
-                                <LinearGradientBrush.GradientStops>
-                                    <GradientStop Color="White"
+									<LinearGradientBrush.GradientStops>
+										<GradientStop Color="White"
                                                   Offset=".2" />
-                                    <GradientStop Color="#FFC0B7A6"
+										<GradientStop Color="#FFC0B7A6"
                                                   Offset="1" />
-                                </LinearGradientBrush.GradientStops>
-                            </LinearGradientBrush>
-                        </Border.Background>
-                        <Path Name="ExpandPath"
+									</LinearGradientBrush.GradientStops>
+								</LinearGradientBrush>
+							</Border.Background>
+							<Path Name="ExpandPath"
                               Margin="1,1,1,1"
                               Fill="Black"
                               Data="M 0 2 L 0 3 L 2 3 L 2 5 L 3 5 L 3 3 L 5 3 L 5 2 L 3 2 L 3 0 L 2 0 L 2 2 Z" />
-                    </Border>
+						</Border>
+					</Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked"
                                  Value="True">
