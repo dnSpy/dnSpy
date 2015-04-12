@@ -38,15 +38,15 @@ namespace ICSharpCode.ILSpy.AsmEditor
 	{
 		protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
 		{
-			return MainWindow.Instance.UndoCommandManager.CanUndo ||
-				MainWindow.Instance.UndoCommandManager.CanRedo;
+			return UndoCommandManager.Instance.CanUndo ||
+				UndoCommandManager.Instance.CanRedo;
 		}
 
 		protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
 		{
 			var res = MainWindow.Instance.ShowIgnorableMessageBox("undo: clear history", "Do you want to clear the undo/redo history?", MessageBoxButton.YesNo);
 			if (res == null || res == MsgBoxButton.OK)
-				MainWindow.Instance.UndoCommandManager.Clear();
+				UndoCommandManager.Instance.Clear();
 		}
 	}
 }

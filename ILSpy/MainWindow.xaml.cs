@@ -81,11 +81,6 @@ namespace ICSharpCode.ILSpy
 		public static MainWindow Instance {
 			get { return instance; }
 		}
-
-		public UndoCommandManager UndoCommandManager {
-			get { return undoCommandManager; }
-		}
-		UndoCommandManager undoCommandManager = new UndoCommandManager();
 		
 		public SessionSettings SessionSettings {
 			get { return sessionSettings; }
@@ -1134,7 +1129,7 @@ namespace ICSharpCode.ILSpy
 			// Clear the cache since the keys contain tree nodes which get recreated now. The keys
 			// will never match again so shouldn't be in the cache.
 			DecompileCache.Instance.ClearAll();
-			undoCommandManager.Clear();
+			ICSharpCode.ILSpy.AsmEditor.UndoCommandManager.Instance.Clear();
 
 			foreach (var tabManager in tabGroupsManager.AllTabGroups.ToArray())
 				tabManager.RemoveAllTabStates();
@@ -2461,31 +2456,6 @@ namespace ICSharpCode.ILSpy
 					SetTextEditorFocus(ActiveTextView);
 				}
 			}
-		}
-
-		private void UndoCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.CanExecute = undoCommandManager.CanUndo;
-		}
-
-		private void UndoExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
-			undoCommandManager.Undo();
-		}
-
-		private void RedoCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.CanExecute = undoCommandManager.CanRedo;
-		}
-
-		private void RedoExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
-			undoCommandManager.Redo();
-		}
-
-		public void AddUndoCommand(IUndoCommand command)
-		{
-			undoCommandManager.Add(command);
 		}
 
 		public MsgBoxButton? ShowIgnorableMessageBox(string id, string msg, MessageBoxButton buttons)

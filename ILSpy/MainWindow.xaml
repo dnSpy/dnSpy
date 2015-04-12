@@ -32,19 +32,8 @@
 		<KeyBinding Gesture="Ctrl+Tab" Command="{StaticResource SelectNextTab}" />
 		<KeyBinding Gesture="Ctrl+Shift+Tab" Command="{StaticResource SelectPrevTab}" />
 		<KeyBinding Gesture="Backspace" Command="BrowseBack" />
-		<KeyBinding Gesture="Ctrl+Shift+Z" Command="Redo" />
 	</Window.InputBindings>
 	<Window.CommandBindings>
-		<CommandBinding
-			Command="Undo"
-			CanExecute="UndoCanExecute"
-			Executed="UndoExecuted"
-			/>
-		<CommandBinding
-			Command="Redo"
-			CanExecute="RedoCanExecute"
-			Executed="RedoExecuted"
-			/>
 		<CommandBinding
 			Command="{StaticResource SelectNextTab}"
 			CanExecute="SelectNextTabCanExecute"

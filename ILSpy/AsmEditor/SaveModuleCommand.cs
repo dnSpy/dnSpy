@@ -81,7 +81,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		{
 			foreach (var asm in nodes) {
 				if (vm.WasSaved(asm.ModuleDefinition))
-					MainWindow.Instance.UndoCommandManager.MarkAsSaved(asm);
+					UndoCommandManager.Instance.MarkAsSaved(asm);
 			}
 		}
 	}
@@ -95,15 +95,13 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public SaveAllToolbarCommand()
 		{
 			MainWindow.Instance.SetMenuAlwaysRegenerate("_File");
-			var keyBinding = new KeyBinding(this, Key.S, ModifierKeys.Control | ModifierKeys.Shift);
-			keyBinding.Command = this;
-			MainWindow.Instance.InputBindings.Add(keyBinding);
+			MainWindow.Instance.InputBindings.Add(new KeyBinding(this, Key.S, ModifierKeys.Control | ModifierKeys.Shift));
 		}
 
 		static LoadedAssembly[] GetDirtyAssemblies()
 		{
 			var list = new List<LoadedAssembly>();
-			foreach (var asmNode in MainWindow.Instance.UndoCommandManager.GetModifiedAssemblyTreeNodes())
+			foreach (var asmNode in UndoCommandManager.Instance.GetModifiedAssemblyTreeNodes())
 				list.Add(asmNode.LoadedAssembly);
 			return list.ToArray();
 		}

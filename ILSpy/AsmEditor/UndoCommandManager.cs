@@ -1,15 +1,50 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace ICSharpCode.ILSpy.AsmEditor
 {
+	[Export(typeof(IPlugin))]
+	sealed class UndoCommandManagerLoader : IPlugin
+	{
+		void IPlugin.OnLoaded()
+		{
+			MainWindow.Instance.InputBindings.Add(new KeyBinding(ApplicationCommands.Redo, Key.Z, ModifierKeys.Control | ModifierKeys.Shift));
+			MainWindow.Instance.CommandBindings.Add(new CommandBinding(ApplicationCommands.Undo, UndoExecuted, UndoCanExecute));
+			MainWindow.Instance.CommandBindings.Add(new CommandBinding(ApplicationCommands.Redo, RedoExecuted, RedoCanExecute));
+		}
+
+		void UndoCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = UndoCommandManager.Instance.CanUndo;
+		}
+
+		void UndoExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			UndoCommandManager.Instance.Undo();
+		}
+
+		void RedoCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = UndoCommandManager.Instance.CanRedo;
+		}
+
+		void RedoExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			UndoCommandManager.Instance.Redo();
+		}
+	}
+
 	public sealed class UndoCommandManager
 	{
+		public static readonly UndoCommandManager Instance = new UndoCommandManager();
+
 		List<UndoState> undoCommands = new List<UndoState>();
 		List<UndoState> redoCommands = new List<UndoState>();
 		UndoState currentCommands;

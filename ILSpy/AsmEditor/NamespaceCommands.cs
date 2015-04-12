@@ -64,7 +64,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			if (!CanExecute(nodes))
 				return;
 
-			MainWindow.Instance.AddUndoCommand(new DeleteNamespaceCommand(nodes));
+			UndoCommandManager.Instance.Add(new DeleteNamespaceCommand(nodes));
 		}
 
 		public struct DeleteModelNodes
@@ -218,7 +218,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			if (!CanExecute(nodes))
 				return;
 
-			MainWindow.Instance.AddUndoCommand(new MoveNamespaceTypesToEmptypNamespaceCommand(nodes));
+			UndoCommandManager.Instance.Add(new MoveNamespaceTypesToEmptypNamespaceCommand(nodes));
 		}
 
 		public MoveNamespaceTypesToEmptypNamespaceCommand(ILSpyTreeNode[] nodes)
