@@ -2463,9 +2463,28 @@ namespace ICSharpCode.ILSpy
 			if (sessionSettings.IgnoredWarnings.Contains(id))
 				return null;
 
+			bool? dontShowIsChecked;
+			var button = ShowMessageBoxInternal(msg, buttons, true, out dontShowIsChecked);
+			if (button != MsgBoxButton.None && dontShowIsChecked == true)
+				sessionSettings.IgnoredWarnings.Add(id);
+
+			return button;
+		}
+
+		public MsgBoxButton ShowMessageBox(string msg, MessageBoxButton buttons)
+		{
+			bool? dontShowIsChecked;
+			return ShowMessageBoxInternal(msg, buttons, false, out dontShowIsChecked);
+		}
+
+		MsgBoxButton ShowMessageBoxInternal(string msg, MessageBoxButton buttons, bool showDontShowCheckBox, out bool? dontShowIsChecked)
+		{
 			var msgBox = new MsgBox();
 			msgBox.textBlock.Text = msg;
 			msgBox.Owner = this;
+
+			if (!showDontShowCheckBox)
+				msgBox.dontShowCheckBox.Visibility = Visibility.Collapsed;
 
 			switch (buttons) {
 			case MessageBoxButton.OK:
@@ -2491,9 +2510,7 @@ namespace ICSharpCode.ILSpy
 			}
 
 			msgBox.ShowDialog();
-			if (msgBox.ButtonClicked != MsgBoxButton.None && msgBox.dontShowCheckBox.IsChecked == true)
-				sessionSettings.IgnoredWarnings.Add(id);
-
+			dontShowIsChecked = msgBox.dontShowCheckBox.IsChecked;
 			return msgBox.ButtonClicked;
 		}
 	}

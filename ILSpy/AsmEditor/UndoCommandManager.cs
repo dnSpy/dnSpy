@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
@@ -18,6 +19,18 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			MainWindow.Instance.InputBindings.Add(new KeyBinding(ApplicationCommands.Redo, Key.Z, ModifierKeys.Control | ModifierKeys.Shift));
 			MainWindow.Instance.CommandBindings.Add(new CommandBinding(ApplicationCommands.Undo, UndoExecuted, UndoCanExecute));
 			MainWindow.Instance.CommandBindings.Add(new CommandBinding(ApplicationCommands.Redo, RedoExecuted, RedoCanExecute));
+			MainWindow.Instance.Closing += MainWindow_Closing;
+		}
+
+		void MainWindow_Closing(object sender, CancelEventArgs e)
+		{
+			var nodes = UndoCommandManager.Instance.GetModifiedAssemblyTreeNodes().ToArray();
+			if (nodes.Length != 0) {
+				var msg = nodes.Length == 1 ? "There is an unsaved file." : string.Format("There are {0} unsaved files.", nodes.Length);
+				var res = MainWindow.Instance.ShowMessageBox(string.Format("{0} Are you sure you want to exit?", msg), System.Windows.MessageBoxButton.YesNo);
+				if (res == MsgBoxButton.No)
+					e.Cancel = true;
+			}
 		}
 
 		void UndoCanExecute(object sender, CanExecuteRoutedEventArgs e)
