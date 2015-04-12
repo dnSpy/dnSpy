@@ -234,19 +234,19 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				moduleSaver.OnLogMessage += moduleSaver_OnLogMessage;
 				moduleSaver.OnWritingFile += moduleSaver_OnWritingFile;
 				moduleSaver.SaveAll();
-				AsyncAddMessage("All files written to disk.", false);
+				AsyncAddMessage("All files written to disk.", false, false);
 			}
 			catch (TaskCanceledException) {
-				AsyncAddMessage("Save was canceled by user.", true);
+				AsyncAddMessage("Save was canceled by user.", true, false);
 			}
 			catch (UnauthorizedAccessException ex) {
-				AsyncAddMessage(string.Format("Access error: {0}", ex.Message), true);
+				AsyncAddMessage(string.Format("Access error: {0}", ex.Message), true, false);
 			}
 			catch (IOException ex) {
-				AsyncAddMessage(string.Format("File error: {0}", ex.Message), true);
+				AsyncAddMessage(string.Format("File error: {0}", ex.Message), true, false);
 			}
 			catch (Exception ex) {
-				AsyncAddMessage(string.Format("An exception occurred\n\n{0}", ex), true);
+				AsyncAddMessage(string.Format("An exception occurred\n\n{0}", ex), true, false);
 			}
 			moduleSaver = null;
 
@@ -262,10 +262,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				ExecInOldThread(() => {
 					CurrentFileName = e.File.FileName;
 				});
-				AsyncAddMessage(string.Format("Writing {0}...", e.File.FileName), false);
+				AsyncAddMessage(string.Format("Writing {0}...", e.File.FileName), false, false);
 			}
-			else
+			else {
+				shownMessages.Clear();
 				savedFile.Add(e.File, true);
+			}
 		}
 		Dictionary<SaveModuleOptionsVM, bool> savedFile = new Dictionary<SaveModuleOptionsVM, bool>();
 
@@ -282,18 +284,46 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		void moduleSaver_OnLogMessage(object sender, ModuleSaverLogEventArgs e)
 		{
-			AsyncAddMessage(e.Message, e.Event == ModuleSaverLogEvent.Error || e.Event == ModuleSaverLogEvent.Warning);
+			AsyncAddMessage(e.Message, e.Event == ModuleSaverLogEvent.Error || e.Event == ModuleSaverLogEvent.Warning, true);
 		}
 
-		void AsyncAddMessage(string msg, bool isError)
+		void AsyncAddMessage(string msg, bool isError, bool canIgnore)
 		{
-			ExecInOldThread(() => {
+			// If there are a lot of errors, we don't want to add a ton of extra delegates to be
+			// called in the old thread. Just use one so we don't slow down everything to a crawl.
+			lock (addMessageStringBuilder) {
+				if (!canIgnore || !shownMessages.Contains(msg)) {
+					addMessageStringBuilder.AppendLine(msg);
+					if (canIgnore)
+						shownMessages.Add(msg);
+				}
 				if (isError)
-					ErrorCount++;
-				logMessage.AppendLine(string.Format("{0}", msg));
-				OnPropertyChanged("LogMessage");
-			});
+					errors++;
+				if (!hasAddedMessage) {
+					hasAddedMessage = true;
+					ExecInOldThread(() => {
+						string logMsgTmp;
+						int errorsTmp;
+						lock (addMessageStringBuilder) {
+							logMsgTmp = addMessageStringBuilder.ToString();
+							errorsTmp = errors;
+
+							hasAddedMessage = false;
+							addMessageStringBuilder.Clear();
+							errors = 0;
+						}
+
+						ErrorCount += errorsTmp;
+						logMessage.Append(logMsgTmp);
+						OnPropertyChanged("LogMessage");
+					});
+				}
+			}
 		}
+		HashSet<string> shownMessages = new HashSet<string>(StringComparer.Ordinal);
+		StringBuilder addMessageStringBuilder = new StringBuilder();
+		int errors;
+		bool hasAddedMessage;
 
 		public void CancelSave()
 		{
