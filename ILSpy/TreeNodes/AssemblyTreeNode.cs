@@ -439,7 +439,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			if (context.SelectedTreeNodes == null)
 				return false;
-			return context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
+			return context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
 		}
 
 		public bool IsEnabled(TextViewContext context)
@@ -464,7 +464,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			if (context.SelectedTreeNodes == null)
 				return false;
-			return context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
+			return context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
 		}
 
 		public bool IsEnabled(TextViewContext context)

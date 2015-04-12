@@ -271,10 +271,6 @@ namespace ICSharpCode.ILSpy
 		void treeView_ContextMenuOpening(object sender, ContextMenuEventArgs e)
 		{
 			TextViewContext context = TextViewContext.Create(treeView);
-			if (context.SelectedTreeNodes.Length == 0) {
-				e.Handled = true; // don't show the menu
-				return;
-			}
 			ContextMenu menu;
 			if (ShowContextMenu(context, out menu))
 				treeView.ContextMenu = menu;

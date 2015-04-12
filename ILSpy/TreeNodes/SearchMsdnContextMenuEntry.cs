@@ -34,7 +34,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public bool IsVisible(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes != null)
-				return context.SelectedTreeNodes.All(n => n is NamespaceTreeNode || n is IMemberTreeNode);
+				return context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n is NamespaceTreeNode || n is IMemberTreeNode);
 
 			if (context.Reference != null && context.Reference.Reference is IMemberRef)
 				return IsPublic(context.Reference.Reference as IMemberRef);

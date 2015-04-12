@@ -828,7 +828,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		public new bool IsVisible(TextViewContext context)
 		{
 			return DebuggerService.CurrentDebugger != null && !DebuggerService.CurrentDebugger.IsDebugging &&
-				context.SelectedTreeNodes != null && context.SelectedTreeNodes.All(
+				context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length > 0 &&
+				context.SelectedTreeNodes.All(
 				delegate (SharpTreeNode n) {
 					AssemblyTreeNode a = n as AssemblyTreeNode;
 					if (a == null)
