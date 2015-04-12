@@ -65,6 +65,11 @@ namespace ICSharpCode.ILSpy
 		}
 
 		/// <summary>
+		/// Don't read or write. Updated by UndoCommandManager.
+		/// </summary>
+		internal bool IsDirty;
+
+		/// <summary>
 		/// true if this assembly is located in the GAC
 		/// </summary>
 		public bool IsGAC {

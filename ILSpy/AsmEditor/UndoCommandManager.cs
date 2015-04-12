@@ -10,9 +10,15 @@ namespace ICSharpCode.ILSpy.AsmEditor
 {
 	public sealed class UndoCommandManager
 	{
-		List<IUndoCommand[]> undoCommands = new List<IUndoCommand[]>();
-		List<IUndoCommand[]> redoCommands = new List<IUndoCommand[]>();
-		List<IUndoCommand> currentCommands;
+		List<UndoState> undoCommands = new List<UndoState>();
+		List<UndoState> redoCommands = new List<UndoState>();
+		UndoState currentCommands;
+
+		sealed class UndoState
+		{
+			public readonly Dictionary<AssemblyTreeNode, bool> ModifiedAssemblies = new Dictionary<AssemblyTreeNode, bool>();
+			public readonly List<IUndoCommand> Commands = new List<IUndoCommand>();
+		}
 
 		public struct BeginEndAdder : IDisposable
 		{
@@ -63,10 +69,11 @@ namespace ICSharpCode.ILSpy.AsmEditor
 					Add(command);
 			}
 			else {
-				var modules = GetModules(command);
+				foreach (var asmNode in GetAssemblyTreeNodes(command))
+					currentCommands.ModifiedAssemblies[asmNode] = asmNode.LoadedAssembly.IsDirty;
 				command.Execute();
-				OnExecuted(command, modules);
-				currentCommands.Add(command);
+				OnExecutedOneCommand(currentCommands);
+				currentCommands.Commands.Add(command);
 			}
 		}
 
@@ -89,7 +96,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			if (currentCommands != null)
 				throw new InvalidOperationException();
 
-			currentCommands = new List<IUndoCommand>();
+			currentCommands = new UndoState();
 		}
 
 		void EndAddInternal()
@@ -98,8 +105,10 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			if (currentCommands == null)
 				throw new InvalidOperationException();
 
-			undoCommands.Add(currentCommands.ToArray());
+			currentCommands.Commands.TrimExcess();
+			undoCommands.Add(currentCommands);
 			redoCommands.Clear();
+			UpdateAssemblySavedStateRedo(currentCommands);
 			currentCommands = null;
 		}
 
@@ -108,32 +117,14 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		/// </summary>
 		public void Clear()
 		{
-			ClearUndo();
-			ClearRedo();
-		}
-
-		/// <summary>
-		/// Clears undo history
-		/// </summary>
-		public void ClearUndo()
-		{
 			Debug.Assert(currentCommands == null);
 			if (currentCommands != null)
 				throw new InvalidOperationException();
 
 			undoCommands.Clear();
-		}
-
-		/// <summary>
-		/// Clears redo history
-		/// </summary>
-		public void ClearRedo()
-		{
-			Debug.Assert(currentCommands == null);
-			if (currentCommands != null)
-				throw new InvalidOperationException();
-
+			undoCommands.TrimExcess();
 			redoCommands.Clear();
+			redoCommands.TrimExcess();
 		}
 
 		/// <summary>
@@ -148,14 +139,13 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			if (undoCommands.Count == 0)
 				return;
 			var group = undoCommands[undoCommands.Count - 1];
-			for (int i = group.Length - 1; i >= 0; i--) {
-				var command = group[i];
-				var modules = GetModules(command);
-				command.Undo();
-				OnExecuted(command, modules);
+			for (int i = group.Commands.Count - 1; i >= 0; i--) {
+				group.Commands[i].Undo();
+				OnExecutedOneCommand(group);
 			}
 			undoCommands.RemoveAt(undoCommands.Count - 1);
 			redoCommands.Add(group);
+			UpdateAssemblySavedStateUndo(group);
 		}
 
 		/// <summary>
@@ -170,32 +160,89 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			if (redoCommands.Count == 0)
 				return;
 			var group = redoCommands[redoCommands.Count - 1];
-			for (int i = 0; i < group.Length; i++) {
-				var command = group[i];
-				var modules = GetModules(command);
-				command.Execute();
-				OnExecuted(command, modules);
+			foreach (var asmNode in group.ModifiedAssemblies.Keys.ToArray())
+				group.ModifiedAssemblies[asmNode] = asmNode.LoadedAssembly.IsDirty;
+			for (int i = 0; i < group.Commands.Count; i++) {
+				group.Commands[i].Execute();
+				OnExecutedOneCommand(group);
 			}
 			redoCommands.RemoveAt(redoCommands.Count - 1);
 			undoCommands.Add(group);
+			UpdateAssemblySavedStateRedo(group);
 		}
 
-		static HashSet<ModuleDef> GetModules(IUndoCommand command, HashSet<ModuleDef> modules = null)
+		/// <summary>
+		/// Gets all modified <see cref="AssemblyTreeNode"/>s
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<AssemblyTreeNode> GetModifiedAssemblyTreeNodes()
 		{
-			if (modules == null)
-				modules = new HashSet<ModuleDef>();
-			foreach (var node in command.TreeNodes) {
-				var module = ILSpyTreeNode.GetModule(node);
-				if (module != null)	// null if it's been removed
-					modules.Add(module);
+			if (MainWindow.Instance.AssemblyListTreeNode == null)
+				yield break;
+			foreach (AssemblyTreeNode asmNode in MainWindow.Instance.AssemblyListTreeNode.Children) {
+				// If it's a netmodule it has no asm children. If it's an asm and its children haven't
+				// been initialized yet, they can't be modified.
+				if (asmNode.Children.Count == 0 || !(asmNode.Children[0] is AssemblyTreeNode)) {
+					if (IsModified(asmNode))
+						yield return asmNode;
+				}
+				else {
+					foreach (AssemblyTreeNode childNode in asmNode.Children) {
+						if (IsModified(childNode))
+							yield return childNode;
+					}
+				}
 			}
-			return modules;
 		}
 
-		void OnExecuted(IUndoCommand command, HashSet<ModuleDef> modules)
+		public bool IsModified(AssemblyTreeNode asmNode)
 		{
-			foreach (var module in GetModules(command, modules))
-				module.ResetTypeDefFindCache();
+			return IsModified(asmNode.LoadedAssembly);
+		}
+
+		public bool IsModified(LoadedAssembly asm)
+		{
+			return asm.IsDirty;
+		}
+
+		public void MarkAsSaved(AssemblyTreeNode asmNode)
+		{
+			MarkAsSaved(asmNode.LoadedAssembly);
+		}
+
+		public void MarkAsSaved(LoadedAssembly asm)
+		{
+			asm.IsDirty = false;
+		}
+
+		void UpdateAssemblySavedStateRedo(UndoState executedGroup)
+		{
+			foreach (var kv in executedGroup.ModifiedAssemblies)
+				kv.Key.LoadedAssembly.IsDirty = true;
+		}
+
+		void UpdateAssemblySavedStateUndo(UndoState executedGroup)
+		{
+			foreach (var kv in executedGroup.ModifiedAssemblies) {
+				// If it wasn't dirty, then it's now dirty, else use the previous value
+				kv.Key.LoadedAssembly.IsDirty = !kv.Key.LoadedAssembly.IsDirty ? true : kv.Value;
+			}
+		}
+
+		static IEnumerable<AssemblyTreeNode> GetAssemblyTreeNodes(IUndoCommand command)
+		{
+			foreach (var node in command.TreeNodes) {
+				var asmNode = ILSpyTreeNode.GetAssemblyTreeNode(node);
+				Debug.Assert(asmNode != null);
+				if (asmNode != null)
+					yield return asmNode;
+			}
+		}
+
+		void OnExecutedOneCommand(UndoState group)
+		{
+			foreach (var asmNode in group.ModifiedAssemblies.Keys)
+				asmNode.LoadedAssembly.ModuleDefinition.ResetTypeDefFindCache();
 		}
 	}
 }

@@ -323,6 +323,7 @@
     <Resource Include="Images\AssemblyWarning.png" />
     <Resource Include="Images\ViewCode.png" />
     <Resource Include="Images\SaveFile.png" />
+    <Resource Include="Images\SaveAll.png" />
     <Resource Include="Images\OK.png" />
     <Resource Include="Images\ClearSearch.png" />
     <Resource Include="Images\Search.png" />

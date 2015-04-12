@@ -20,7 +20,7 @@ using System;
 
 namespace ICSharpCode.ILSpy
 {
-	[ExportMainMenuCommand(Menu = "_File", Header = "Open _List...", MenuIcon = "Images/AssemblyList.png", MenuCategory = "Open", MenuOrder = 1130)]
+	[ExportMainMenuCommand(Menu = "_File", Header = "Open L_ist...", MenuIcon = "Images/AssemblyList.png", MenuCategory = "Open", MenuOrder = 1130)]
 	sealed class OpenListCommand : SimpleCommand
 	{
 		public override void Execute(object parameter)
