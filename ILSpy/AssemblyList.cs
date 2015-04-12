@@ -376,29 +376,6 @@ namespace ICSharpCode.ILSpy
 				}
 			}
 		}
-
-		/// <summary>
-		/// Replace the assembly object model from a crafted stream, without disk I/O
-		/// Returns null if it is not already loaded.
-		/// </summary>
-		public LoadedAssembly HotReplaceAssembly(string file, Stream stream)
-		{
-			App.Current.Dispatcher.VerifyAccess();
-			file = Path.GetFullPath(file);
-
-			lock (this.assemblies) {
-				var target = this.assemblies.FirstOrDefault(asm => file.Equals(asm.FileName, StringComparison.OrdinalIgnoreCase));
-				if (target == null)
-					return null;
-
-				var index = this.assemblies.IndexOf(target);
-				var newAsm = new LoadedAssembly(this, file, stream);
-				newAsm.IsAutoLoaded = target.IsAutoLoaded;
-				this.assemblies.Remove(target);
-				this.assemblies.Insert(index, newAsm);
-				return newAsm;
-			}
-		}
 		
 		public void Unload(LoadedAssembly assembly)
 		{
