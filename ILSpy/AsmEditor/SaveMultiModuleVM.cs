@@ -54,6 +54,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 					OnPropertyChanged("CanCancel");
 					OnPropertyChanged("CanClose");
 					OnPropertyChanged("IsSavingOrCanceling");
+					OnModuleSettingsSaved();
 
 					if (saveState == SaveState.Saved && OnSavedEvent != null)
 						OnSavedEvent(this, EventArgs.Empty);
@@ -63,7 +64,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		SaveState saveState = SaveState.Loaded;
 
 		public ICommand SaveCommand {
-			get { return saveCommand ?? (saveCommand = new RelayCommand(a => Save(), a => IsLoaded)); }
+			get { return saveCommand ?? (saveCommand = new RelayCommand(a => Save(), a => CanExecuteSave)); }
 		}
 		ICommand saveCommand;
 
@@ -104,6 +105,36 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		public bool IsSavingOrCanceling {
 			get { return IsSaving || IsCanceling; }
+		}
+
+		public bool CanExecuteSave {
+			get { return string.IsNullOrEmpty(CanExecuteSaveError); }
+		}
+
+		public bool CanShowModuleErrors {
+			get { return IsLoaded && !CanExecuteSave; }
+		}
+
+		public string CanExecuteSaveError {
+			get {
+				if (!IsLoaded)
+					return "It's only possible to save when loaded";
+
+				for (int i = 0; i < modules.Count; i++) {
+					var module = modules[i];
+					if (module.HasError)
+						return string.Format("File #{0} ({1}) has errors", i + 1, module.FileName.Trim() == string.Empty ? "<empty filename>" : module.FileName);
+				}
+
+				return null;
+			}
+		}
+
+		public void OnModuleSettingsSaved()
+		{
+			OnPropertyChanged("CanExecuteSaveError");
+			OnPropertyChanged("CanExecuteSave");
+			OnPropertyChanged("CanShowModuleErrors");
 		}
 
 		public bool HasError {
@@ -206,7 +237,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		public void Save()
 		{
-			if (!IsLoaded)
+			if (!CanExecuteSave)
 				return;
 			State = SaveState.Saving;
 			TotalProgress = 0;

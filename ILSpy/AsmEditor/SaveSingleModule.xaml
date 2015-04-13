@@ -40,6 +40,7 @@
 			<Label Grid.Row="0" Content="There are errors in the log:" />
 
 			<TextBox Grid.Row="1"
+				 Background="Pink"
 				 TextWrapping="Wrap"
 				 IsReadOnly="True"
 				 Text="{Binding LogMessage, Mode=OneWay}"

@@ -33,6 +33,7 @@
 			<RowDefinition Height="{Binding HasError, Converter={StaticResource BooleanToGridrowLengthConverter}, ConverterParameter=2.0}" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
 		<Label Content="Files that will be saved:" Margin="5 5 5 5" />
@@ -52,6 +53,7 @@
 			<Label Grid.Row="0" Content="There are errors in the log:" />
 
 			<TextBox Grid.Row="1"
+				 Background="Pink"
 				 TextWrapping="Wrap"
 				 IsReadOnly="True"
 				 Text="{Binding LogMessage, Mode=OneWay}"
@@ -66,7 +68,19 @@
 				   Visibility="{Binding IsSaving, Converter={StaticResource BooleanToVisibilityConverter}}"
 				   />
 
-		<Grid Grid.Row="4" Margin="5 0 5 5">
+		<StackPanel Grid.Row="4"
+					Margin="5 0 5 5"
+					Orientation="Horizontal"
+					Background="Pink"
+					Visibility="{Binding CanShowModuleErrors, Converter={StaticResource BooleanToVisibilityConverter}}"
+					>
+			<TextBlock Margin="0 0 5 0" Background="Pink">
+				Fix the error by editing the options:
+			</TextBlock>
+			<TextBlock Background="Pink" Text="{Binding CanExecuteSaveError}" />
+		</StackPanel>
+		
+		<Grid Grid.Row="5" Margin="5 0 5 5">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />

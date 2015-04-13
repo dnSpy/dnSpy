@@ -4,12 +4,18 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnlib.DotNet.Writer;
 using dnlib.PE;
 using dnlib.W32Resources;
+
+// NOTE: A lot of the properties always call OnPropertyChanged() when the property setter is called.
+//		 It's to make sure that the Restore button can restore everything to the default values when
+//		 one of the fields was eg. an invalid number. In that case this code (the view model) doesn't
+//		 know about the error, but the view must be updated to use the restored value.
 
 namespace ICSharpCode.ILSpy.AsmEditor
 {
@@ -109,7 +115,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 	}
 
-	sealed class SaveModuleOptionsVM : INotifyPropertyChanged
+	sealed class SaveModuleOptionsVM : INotifyPropertyChanged, IDataErrorInfo
 	{
 		public ModuleDef Module {
 			get { return module; }
@@ -146,11 +152,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			set {
 				if (value == null)
 					throw new ArgumentNullException();
-				// Use Ordinal and not OrdinalIgnoreCase so it gets updated in the UI
-				if (!filename.Equals(value, StringComparison.Ordinal)) {
-					filename = value;
-					OnPropertyChanged("FileName");
-				}
+				filename = value;
+				OnPropertyChanged("FileName");
 			}
 		}
 		string filename = string.Empty;
@@ -384,6 +387,30 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propName));
 		}
+
+		public string Error {
+			get { throw new NotImplementedException(); }
+		}
+
+		public string this[string columnName] {
+			get {
+				if (columnName == "FileName")
+					return filename.ValidateFileName() ?? string.Empty;
+
+				return string.Empty;
+			}
+		}
+
+		public bool HasError {
+			get {
+				if (!string.IsNullOrEmpty(this["FileName"]))
+					return true;
+
+				return peHeadersOptions.HasError ||
+						cor20HeaderOptions.HasError ||
+						metaDataOptions.HasError;
+			}
+		}
 	}
 
 	sealed class PEHeadersOptionsVM : INotifyPropertyChanged
@@ -406,10 +433,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public uint? TimeDateStamp {
 			get { return timeDateStamp; }
 			set {
-				if (timeDateStamp != value) {
-					timeDateStamp = value;
-					OnPropertyChanged("TimeDateStamp");
-				}
+				timeDateStamp = value;
+				OnPropertyChanged("TimeDateStamp");
 			}
 		}
 		uint? timeDateStamp;
@@ -539,10 +564,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public byte? MajorLinkerVersion {
 			get { return majorLinkerVersion; }
 			set {
-				if (majorLinkerVersion != value) {
-					majorLinkerVersion = value;
-					OnPropertyChanged("MajorLinkerVersion");
-				}
+				majorLinkerVersion = value;
+				OnPropertyChanged("MajorLinkerVersion");
 			}
 		}
 		byte? majorLinkerVersion;
@@ -550,10 +573,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public byte? MinorLinkerVersion {
 			get { return minorLinkerVersion; }
 			set {
-				if (minorLinkerVersion != value) {
-					minorLinkerVersion = value;
-					OnPropertyChanged("MinorLinkerVersion");
-				}
+				minorLinkerVersion = value;
+				OnPropertyChanged("MinorLinkerVersion");
 			}
 		}
 		byte? minorLinkerVersion;
@@ -561,10 +582,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public ulong? ImageBase {
 			get { return imageBase; }
 			set {
-				if (imageBase != value) {
-					imageBase = value;
-					OnPropertyChanged("ImageBase");
-				}
+				imageBase = value;
+				OnPropertyChanged("ImageBase");
 			}
 		}
 		ulong? imageBase;
@@ -572,10 +591,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public uint? SectionAlignment {
 			get { return sectionAlignment; }
 			set {
-				if (sectionAlignment != value) {
-					sectionAlignment = value;
-					OnPropertyChanged("SectionAlignment");
-				}
+				sectionAlignment = value;
+				OnPropertyChanged("SectionAlignment");
 			}
 		}
 		uint? sectionAlignment;
@@ -583,10 +600,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public uint? FileAlignment {
 			get { return fileAlignment; }
 			set {
-				if (fileAlignment != value) {
-					fileAlignment = value;
-					OnPropertyChanged("FileAlignment");
-				}
+				fileAlignment = value;
+				OnPropertyChanged("FileAlignment");
 			}
 		}
 		uint? fileAlignment;
@@ -594,10 +609,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public ushort? MajorOperatingSystemVersion {
 			get { return majorOperatingSystemVersion; }
 			set {
-				if (majorOperatingSystemVersion != value) {
-					majorOperatingSystemVersion = value;
-					OnPropertyChanged("MajorOperatingSystemVersion");
-				}
+				majorOperatingSystemVersion = value;
+				OnPropertyChanged("MajorOperatingSystemVersion");
 			}
 		}
 		ushort? majorOperatingSystemVersion;
@@ -605,10 +618,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public ushort? MinorOperatingSystemVersion {
 			get { return minorOperatingSystemVersion; }
 			set {
-				if (minorOperatingSystemVersion != value) {
-					minorOperatingSystemVersion = value;
-					OnPropertyChanged("MinorOperatingSystemVersion");
-				}
+				minorOperatingSystemVersion = value;
+				OnPropertyChanged("MinorOperatingSystemVersion");
 			}
 		}
 		ushort? minorOperatingSystemVersion;
@@ -616,10 +627,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public ushort? MajorImageVersion {
 			get { return majorImageVersion; }
 			set {
-				if (majorImageVersion != value) {
-					majorImageVersion = value;
-					OnPropertyChanged("MajorImageVersion");
-				}
+				majorImageVersion = value;
+				OnPropertyChanged("MajorImageVersion");
 			}
 		}
 		ushort? majorImageVersion;
@@ -627,10 +636,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public ushort? MinorImageVersion {
 			get { return minorImageVersion; }
 			set {
-				if (minorImageVersion != value) {
-					minorImageVersion = value;
-					OnPropertyChanged("MinorImageVersion");
-				}
+				minorImageVersion = value;
+				OnPropertyChanged("MinorImageVersion");
 			}
 		}
 		ushort? minorImageVersion;
@@ -638,10 +645,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public ushort? MajorSubsystemVersion {
 			get { return majorSubsystemVersion; }
 			set {
-				if (majorSubsystemVersion != value) {
-					majorSubsystemVersion = value;
-					OnPropertyChanged("MajorSubsystemVersion");
-				}
+				majorSubsystemVersion = value;
+				OnPropertyChanged("MajorSubsystemVersion");
 			}
 		}
 		ushort? majorSubsystemVersion;
@@ -649,10 +654,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public ushort? MinorSubsystemVersion {
 			get { return minorSubsystemVersion; }
 			set {
-				if (minorSubsystemVersion != value) {
-					minorSubsystemVersion = value;
-					OnPropertyChanged("MinorSubsystemVersion");
-				}
+				minorSubsystemVersion = value;
+				OnPropertyChanged("MinorSubsystemVersion");
 			}
 		}
 		ushort? minorSubsystemVersion;
@@ -660,10 +663,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public uint? Win32VersionValue {
 			get { return win32VersionValue; }
 			set {
-				if (win32VersionValue != value) {
-					win32VersionValue = value;
-					OnPropertyChanged("Win32VersionValue");
-				}
+				win32VersionValue = value;
+				OnPropertyChanged("Win32VersionValue");
 			}
 		}
 		uint? win32VersionValue;
@@ -799,10 +800,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public ulong? SizeOfStackReserve {
 			get { return sizeOfStackReserve; }
 			set {
-				if (sizeOfStackReserve != value) {
-					sizeOfStackReserve = value;
-					OnPropertyChanged("SizeOfStackReserve");
-				}
+				sizeOfStackReserve = value;
+				OnPropertyChanged("SizeOfStackReserve");
 			}
 		}
 		ulong? sizeOfStackReserve;
@@ -810,10 +809,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public ulong? SizeOfStackCommit {
 			get { return sizeOfStackCommit; }
 			set {
-				if (sizeOfStackCommit != value) {
-					sizeOfStackCommit = value;
-					OnPropertyChanged("SizeOfStackCommit");
-				}
+				sizeOfStackCommit = value;
+				OnPropertyChanged("SizeOfStackCommit");
 			}
 		}
 		ulong? sizeOfStackCommit;
@@ -821,10 +818,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public ulong? SizeOfHeapReserve {
 			get { return sizeOfHeapReserve; }
 			set {
-				if (sizeOfHeapReserve != value) {
-					sizeOfHeapReserve = value;
-					OnPropertyChanged("SizeOfHeapReserve");
-				}
+				sizeOfHeapReserve = value;
+				OnPropertyChanged("SizeOfHeapReserve");
 			}
 		}
 		ulong? sizeOfHeapReserve;
@@ -832,10 +827,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public ulong? SizeOfHeapCommit {
 			get { return sizeOfHeapCommit; }
 			set {
-				if (sizeOfHeapCommit != value) {
-					sizeOfHeapCommit = value;
-					OnPropertyChanged("SizeOfHeapCommit");
-				}
+				sizeOfHeapCommit = value;
+				OnPropertyChanged("SizeOfHeapCommit");
 			}
 		}
 		ulong? sizeOfHeapCommit;
@@ -843,10 +836,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public uint? LoaderFlags {
 			get { return loaderFlags; }
 			set {
-				if (loaderFlags != value) {
-					loaderFlags = value;
-					OnPropertyChanged("LoaderFlags");
-				}
+				loaderFlags = value;
+				OnPropertyChanged("LoaderFlags");
 			}
 		}
 		uint? loaderFlags;
@@ -854,10 +845,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public uint? NumberOfRvaAndSizes {
 			get { return numberOfRvaAndSizes; }
 			set {
-				if (numberOfRvaAndSizes != value) {
-					numberOfRvaAndSizes = value;
-					OnPropertyChanged("NumberOfRvaAndSizes");
-				}
+				numberOfRvaAndSizes = value;
+				OnPropertyChanged("NumberOfRvaAndSizes");
 			}
 		}
 		uint? numberOfRvaAndSizes;
@@ -923,6 +912,10 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propName));
 		}
+
+		public bool HasError {
+			get { return false; }
+		}
 	}
 
 	sealed class Cor20HeaderOptionsVM : INotifyPropertyChanged
@@ -930,10 +923,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public ushort? MajorRuntimeVersion {
 			get { return majorRuntimeVersion; }
 			set {
-				if (majorRuntimeVersion != value) {
-					majorRuntimeVersion = value;
-					OnPropertyChanged("MajorRuntimeVersion");
-				}
+				majorRuntimeVersion = value;
+				OnPropertyChanged("MajorRuntimeVersion");
 			}
 		}
 		ushort? majorRuntimeVersion;
@@ -941,10 +932,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public ushort? MinorRuntimeVersion {
 			get { return minorRuntimeVersion; }
 			set {
-				if (minorRuntimeVersion != value) {
-					minorRuntimeVersion = value;
-					OnPropertyChanged("MinorRuntimeVersion");
-				}
+				minorRuntimeVersion = value;
+				OnPropertyChanged("MinorRuntimeVersion");
 			}
 		}
 		ushort? minorRuntimeVersion;
@@ -1020,10 +1009,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public uint? EntryPoint {
 			get { return entryPoint; }
 			set {
-				if (entryPoint != value) {
-					entryPoint = value;
-					OnPropertyChanged("EntryPoint");
-				}
+				entryPoint = value;
+				OnPropertyChanged("EntryPoint");
 			}
 		}
 		uint? entryPoint;
@@ -1050,6 +1037,10 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		{
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propName));
+		}
+
+		public bool HasError {
+			get { return false; }
 		}
 	}
 
@@ -1275,17 +1266,22 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propName));
 		}
+
+		public bool HasError {
+			get {
+				return metaDataHeaderOptions.HasError ||
+						tablesHeapOptions.HasError;
+			}
+		}
 	}
 
-	sealed class MetaDataHeaderOptionsVM : INotifyPropertyChanged
+	sealed class MetaDataHeaderOptionsVM : INotifyPropertyChanged, IDataErrorInfo
 	{
 		public uint? Signature {
 			get { return signature; }
 			set {
-				if (signature != value) {
-					signature = value;
-					OnPropertyChanged("Signature");
-				}
+				signature = value;
+				OnPropertyChanged("Signature");
 			}
 		}
 		uint? signature;
@@ -1293,10 +1289,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public ushort? MajorVersion {
 			get { return majorVersion; }
 			set {
-				if (majorVersion != value) {
-					majorVersion = value;
-					OnPropertyChanged("MajorVersion");
-				}
+				majorVersion = value;
+				OnPropertyChanged("MajorVersion");
 			}
 		}
 		ushort? majorVersion;
@@ -1304,10 +1298,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public ushort? MinorVersion {
 			get { return minorVersion; }
 			set {
-				if (minorVersion != value) {
-					minorVersion = value;
-					OnPropertyChanged("MinorVersion");
-				}
+				minorVersion = value;
+				OnPropertyChanged("MinorVersion");
 			}
 		}
 		ushort? minorVersion;
@@ -1315,10 +1307,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public uint? Reserved1 {
 			get { return reserved1; }
 			set {
-				if (reserved1 != value) {
-					reserved1 = value;
-					OnPropertyChanged("Reserved1");
-				}
+				reserved1 = value;
+				OnPropertyChanged("Reserved1");
 			}
 		}
 		uint? reserved1;
@@ -1326,10 +1316,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public string VersionString {
 			get { return versionString; }
 			set {
-				if (versionString != value) {
-					versionString = value;
-					OnPropertyChanged("VersionString");
-				}
+				versionString = value;
+				OnPropertyChanged("VersionString");
 			}
 		}
 		string versionString;
@@ -1337,10 +1325,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public byte? StorageFlags {
 			get { return storageFlags; }
 			set {
-				if (storageFlags != value) {
-					storageFlags = value;
-					OnPropertyChanged("StorageFlags");
-				}
+				storageFlags = value;
+				OnPropertyChanged("StorageFlags");
 			}
 		}
 		byte? storageFlags;
@@ -1348,10 +1334,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public byte? Reserved2 {
 			get { return reserved2; }
 			set {
-				if (reserved2 != value) {
-					reserved2 = value;
-					OnPropertyChanged("Reserved2");
-				}
+				reserved2 = value;
+				OnPropertyChanged("Reserved2");
 			}
 		}
 		byte? reserved2;
@@ -1385,6 +1369,31 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propName));
 		}
+
+		public string Error {
+			get { throw new NotImplementedException(); }
+		}
+
+		public string this[string columnName] {
+			get {
+				if (columnName == "VersionString") {
+					var bytes = Encoding.UTF8.GetBytes(versionString + "\0");
+					if (bytes.Length > 256)
+						return "Version string is too long";
+				}
+
+				return string.Empty;
+			}
+		}
+
+		public bool HasError {
+			get {
+				if (!string.IsNullOrEmpty(this["VersionString"]))
+					return true;
+
+				return false;
+			}
+		}
 	}
 
 	sealed class TablesHeapOptionsVM : INotifyPropertyChanged
@@ -1392,10 +1401,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public uint? Reserved1 {
 			get { return reserved1; }
 			set {
-				if (reserved1 != value) {
-					reserved1 = value;
-					OnPropertyChanged("Reserved1");
-				}
+				reserved1 = value;
+				OnPropertyChanged("Reserved1");
 			}
 		}
 		uint? reserved1;
@@ -1403,10 +1410,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public byte? MajorVersion {
 			get { return majorVersion; }
 			set {
-				if (majorVersion != value) {
-					majorVersion = value;
-					OnPropertyChanged("MajorVersion");
-				}
+				majorVersion = value;
+				OnPropertyChanged("MajorVersion");
 			}
 		}
 		byte? majorVersion;
@@ -1414,10 +1419,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public byte? MinorVersion {
 			get { return minorVersion; }
 			set {
-				if (minorVersion != value) {
-					minorVersion = value;
-					OnPropertyChanged("MinorVersion");
-				}
+				minorVersion = value;
+				OnPropertyChanged("MinorVersion");
 			}
 		}
 		byte? minorVersion;
@@ -1425,10 +1428,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public bool? UseENC {
 			get { return useENC; }
 			set {
-				if (useENC != value) {
-					useENC = value;
-					OnPropertyChanged("UseENC");
-				}
+				useENC = value;
+				OnPropertyChanged("UseENC");
 			}
 		}
 		bool? useENC;
@@ -1436,10 +1437,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public uint? ExtraData {
 			get { return extraData; }
 			set {
-				if (extraData != value) {
-					extraData = value;
-					OnPropertyChanged("ExtraData");
-				}
+				extraData = value;
+				OnPropertyChanged("ExtraData");
 			}
 		}
 		uint? extraData;
@@ -1447,10 +1446,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public bool? HasDeletedRows {
 			get { return hasDeletedRows; }
 			set {
-				if (hasDeletedRows != value) {
-					hasDeletedRows = value;
-					OnPropertyChanged("HasDeletedRows");
-				}
+				hasDeletedRows = value;
+				OnPropertyChanged("HasDeletedRows");
 			}
 		}
 		bool? hasDeletedRows;
@@ -1481,6 +1478,10 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		{
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propName));
+		}
+
+		public bool HasError {
+			get { return false; }
 		}
 	}
 }

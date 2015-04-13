@@ -73,8 +73,10 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			var clone = data.Clone();
 			win.DataContext = clone;
 			var res = win.ShowDialog();
-			if (res == true)
+			if (res == true) {
 				clone.CopyTo(data);
+				((SaveMultiModuleVM)DataContext).OnModuleSettingsSaved();
+			}
 		}
 	}
 }

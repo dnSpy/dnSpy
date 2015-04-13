@@ -26,10 +26,25 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			SourceInitialized += (s, e) => this.HideMinimizeAndMaximizeButtons();
 		}
 
-		private void okButton_Click(object sender, RoutedEventArgs e)
+		void Ok_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = !HasError;
+		}
+
+		void Ok_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 			this.DialogResult = true;
 			Close();
+		}
+
+		public bool HasError {
+			get {
+				var data = (SaveModuleOptionsVM)DataContext;
+				if (data != null && data.HasError)
+					return true;
+
+				return this.HasError();
+			}
 		}
 
 		private void filenameButton_Click(object sender, RoutedEventArgs e)
