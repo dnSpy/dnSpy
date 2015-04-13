@@ -1037,6 +1037,7 @@ namespace ICSharpCode.ILSpy
 					ShowInBottomPane(pane.PaneTitle, pane);
 			}
 
+			var debug_CommandBindings_Count2 = this.CommandBindings.Count;
 			foreach (var plugin in plugins)
 				plugin.OnLoaded();
 
@@ -1044,6 +1045,8 @@ namespace ICSharpCode.ILSpy
 			callWhenLoaded = null;
 			foreach (var func in list)
 				func();
+
+			debug_CommandBindings_Count += this.CommandBindings.Count - debug_CommandBindings_Count2;
 		}
 
 		IPane GetPane(DockedPane dockedPane, string name)
