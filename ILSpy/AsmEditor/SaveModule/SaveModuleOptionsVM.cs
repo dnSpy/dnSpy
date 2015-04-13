@@ -17,7 +17,7 @@ using dnlib.W32Resources;
 //		 one of the fields was eg. an invalid number. In that case this code (the view model) doesn't
 //		 know about the error, but the view must be updated to use the restored value.
 
-namespace ICSharpCode.ILSpy.AsmEditor
+namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 {
 	sealed class EnumVM
 	{

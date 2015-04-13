@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace ICSharpCode.ILSpy.AsmEditor
+namespace ICSharpCode.ILSpy.AsmEditor.Converters
 {
 	sealed class HexNullableConverter : IValueConverter
 	{

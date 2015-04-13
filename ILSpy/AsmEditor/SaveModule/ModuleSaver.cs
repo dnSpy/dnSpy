@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using dnlib.DotNet;
 using dnlib.DotNet.Writer;
 
-namespace ICSharpCode.ILSpy.AsmEditor
+namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 {
 	enum ModuleSaverLogEvent
 	{

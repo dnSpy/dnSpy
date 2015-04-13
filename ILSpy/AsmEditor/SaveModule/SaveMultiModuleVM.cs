@@ -12,7 +12,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor
+namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 {
 	sealed class SaveMultiModuleVM : INotifyPropertyChanged
 	{

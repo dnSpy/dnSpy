@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.AsmEditor
+namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 {
 	[ExportMainMenuCommand(Menu = "_File", MenuCategory = "Save", MenuOrder = 1010)]
 	sealed class SaveModuleCommand : TreeNodeCommand, IMainMenuCommandInitialize

@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace ICSharpCode.ILSpy.AsmEditor
+namespace ICSharpCode.ILSpy.AsmEditor.Converters
 {
 	/// <summary>
 	/// Converts a <see cref="bool"/> to a <see cref="GridLength"/>. If the value is true, it's

@@ -1,19 +1,20 @@
-﻿<local:SaveModuleWindow x:Class="ICSharpCode.ILSpy.AsmEditor.SaveSingleModule"
+﻿<local:SaveModuleWindow x:Class="ICSharpCode.ILSpy.AsmEditor.SaveModule.SaveSingleModule"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
+             xmlns:local="clr-namespace:ICSharpCode.ILSpy.AsmEditor.SaveModule"
+             xmlns:vc="clr-namespace:ICSharpCode.ILSpy.AsmEditor.Converters"
              Height="200" Width="400"
              ResizeMode="CanResizeWithGrip"
-             Icon="../images/ILSpy.ico"
+             Icon="../../images/ILSpy.ico"
              Title="Save Module"
              WindowStartupLocation="CenterOwner"
              Style="{DynamicResource DialogWindow}"
              MinHeight="200" MinWidth="400">
 	<local:SaveModuleWindow.Resources>
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-		<local:BooleanToGridrowLengthConverter x:Key="BooleanToGridrowLengthConverter" />
+		<vc:BooleanToGridrowLengthConverter x:Key="BooleanToGridrowLengthConverter" />
 	</local:SaveModuleWindow.Resources>
     <Grid>
 		<Grid.ColumnDefinitions>
