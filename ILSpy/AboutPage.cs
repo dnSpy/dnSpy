@@ -96,6 +96,7 @@ namespace ICSharpCode.ILSpy
 			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("SharpDevelop", "http://www.icsharpcode.net/opensource/sd/"));
 			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("MIT License", "resource:license.txt"));
 			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("LGPL", "resource:LGPL.txt"));
+			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("COPYING", "resource:COPYING"));
 			textView.ShowText(output);
 			MainWindow.Instance.SetTitle(textView, "About");
 			
