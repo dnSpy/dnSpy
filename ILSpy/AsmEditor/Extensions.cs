@@ -52,6 +52,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		{
 			if (string.IsNullOrEmpty(filename))
 				return "Filename can't be empty.";
+			if (string.IsNullOrWhiteSpace(filename))
+				return "Filename can't contain only white space";
 
 			if (filename.Length >= 260)
 				return "Filename is too long.";

@@ -71,10 +71,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			var data = (SaveModuleOptionsVM)DataContext;
 			var dialog = new SaveFileDialog() {
 				Filter = ".NET Executable (*.exe, *.dll, *.netmodule)|*.exe;*.dll;*.netmodule|All files (*.*)|*.*",
-				InitialDirectory = System.IO.Path.GetDirectoryName(filenameTextBox.Text),
 				RestoreDirectory = true,
 				DefaultExt = data.Extension,
 			};
+			var dir = filenameTextBox.Text;
+			if (!string.IsNullOrWhiteSpace(dir))
+				dialog.InitialDirectory = System.IO.Path.GetDirectoryName(dir);
 
 			if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 				filenameTextBox.Text = dialog.FileName;
