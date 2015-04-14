@@ -168,7 +168,7 @@ namespace ICSharpCode.ILSpy
 				return new XElement(
 					"List",
 					new XAttribute("name", this.ListName),
-					assemblies.Where(asm => !asm.IsAutoLoaded).Select(asm => new XElement("Assembly", asm.FileName))
+					assemblies.Where(asm => !asm.IsAutoLoaded && !string.IsNullOrWhiteSpace(asm.FileName)).Select(asm => new XElement("Assembly", asm.FileName))
 				);
 			}
 		}
@@ -266,6 +266,8 @@ namespace ICSharpCode.ILSpy
 		LoadedAssembly FindAssemblyByFileName_NoLock(string fileName)
 		{
 			foreach (LoadedAssembly asm in this.assemblies) {
+				if (string.IsNullOrWhiteSpace(asm.FileName))
+					continue;
 				if (asm.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase))
 					return asm;
 			}
@@ -297,7 +299,7 @@ namespace ICSharpCode.ILSpy
 
 				var newAsm = new LoadedAssembly(this, file);
 				newAsm.IsAutoLoaded = isAutoLoaded;
-				return AddAssemblyToList(newAsm, canAdd, delay);
+				return ForceAddAssemblyToList(newAsm, canAdd, delay);
 			}
 		}
 
@@ -312,11 +314,11 @@ namespace ICSharpCode.ILSpy
 					return asm;
 				}
 
-				return AddAssemblyToList(newAsm, canAdd, delay);
+				return ForceAddAssemblyToList(newAsm, canAdd, delay);
 			}
 		}
 
-		LoadedAssembly AddAssemblyToList(LoadedAssembly newAsm, bool canAdd, bool delay)
+		internal LoadedAssembly ForceAddAssemblyToList(LoadedAssembly newAsm, bool canAdd, bool delay)
 		{
 			if (!canAdd)
 				return newAsm;
@@ -337,6 +339,7 @@ namespace ICSharpCode.ILSpy
 		Dictionary<string, LoadedAssembly> delayLoadedAsms = new Dictionary<string, LoadedAssembly>(StringComparer.OrdinalIgnoreCase);
 		LoadedAssembly DelayLoadAssembly(LoadedAssembly newAsm)
 		{
+			System.Diagnostics.Debug.Assert(!string.IsNullOrWhiteSpace(newAsm.FileName));
 			bool startThread;
 			lock (delayLoadedAsms) {
 				LoadedAssembly delayAsm;

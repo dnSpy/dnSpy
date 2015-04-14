@@ -29,31 +29,14 @@ namespace ICSharpCode.ILSpy.AsmEditor
 {
 	sealed class DeleteNamespaceCommand : IUndoCommand
 	{
+		const string CMD_NAME_SINGULAR = "Delete Namespace";
+		const string CMD_NAME_PLURAL_FORMAT = "Delete {0} Namespaces";
 		[ExportContextMenuEntry(Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
-		sealed class ContextMenuentry : TreeNodeContextMenu
-		{
-			public override bool IsVisible(TextViewContext context)
-			{
-				return base.IsVisible(context) &&
-					DeleteNamespaceCommand.CanExecute(context.SelectedTreeNodes);
-			}
-
-			public override void Execute(TextViewContext context)
-			{
-				DeleteNamespaceCommand.Execute(context.SelectedTreeNodes);
-			}
-
-			public override void Initialize(TextViewContext context, MenuItem menuItem)
-			{
-				SetHeader(context, menuItem, "Delete Namespace", "Delete Namespaces");
-			}
-		}
-
 		[ExportMainMenuCommand(Menu = "_Edit",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
-		sealed class MainMenuEntry : TreeNodeMainMenu, IMainMenuCommandInitialize
+		sealed class MainMenuEntry : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
 			{
@@ -65,10 +48,17 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				DeleteNamespaceCommand.Execute(nodes);
 			}
 
-			public void Initialize(MenuItem menuItem)
+			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
 			{
-				SetHeader(menuItem, "Delete Namespace", "Delete Namespaces");
+				menuItem.Header = GetCommandName(nodes.Length);
 			}
+		}
+
+		static string GetCommandName(int count)
+		{
+			return count == 1 ?
+				CMD_NAME_SINGULAR :
+				string.Format(CMD_NAME_PLURAL_FORMAT, count);
 		}
 
 		static bool CanExecute(ILSpyTreeNode[] nodes)
@@ -157,11 +147,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		DeletableNodes nodes;
 		DeleteModelNodes modelNodes;
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
-			get { return nodes.Nodes; }
-		}
-
-		public DeleteNamespaceCommand(ILSpyTreeNode[] nodes)
+		DeleteNamespaceCommand(ILSpyTreeNode[] nodes)
 		{
 			if (!CanExecute(nodes))
 				throw new ArgumentException();
@@ -170,7 +156,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 
 		public string Description {
-			get { return nodes.Count == 1 ? "Delete namespace" : string.Format("Delete {0} namespaces", nodes.Count); }
+			get { return GetCommandName(nodes.Count); }
 		}
 
 		public void Execute()
@@ -184,32 +170,27 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			nodes.Restore();
 			modelNodes.Restore(nodes.Nodes);
 		}
+
+		public IEnumerable<ILSpyTreeNode> TreeNodes {
+			get { return nodes.Nodes; }
+		}
+
+		public void Dispose()
+		{
+		}
 	}
 
 	sealed class MoveNamespaceTypesToEmptypNamespaceCommand : IUndoCommand
 	{
-		[ExportContextMenuEntry(Header = "Move Types to Empty Namespace",
+		const string CMD_NAME = "Move Types to Empty Namespace";
+		[ExportContextMenuEntry(Header = CMD_NAME,
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
-		sealed class ContextMenuentry : TreeNodeContextMenu
-		{
-			public override bool IsVisible(TextViewContext context)
-			{
-				return base.IsVisible(context) &&
-					MoveNamespaceTypesToEmptypNamespaceCommand.CanExecute(context.SelectedTreeNodes);
-			}
-
-			public override void Execute(TextViewContext context)
-			{
-				MoveNamespaceTypesToEmptypNamespaceCommand.Execute(context.SelectedTreeNodes);
-			}
-		}
-
-		[ExportMainMenuCommand(Header = "Move Types to Empty Namespace",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
 							   Menu = "_Edit",
 							   MenuCategory = "AsmEd",
 							   MenuOrder = 2100)]//TODO: Set menu order
-		sealed class MainMenuEntry : TreeNodeMainMenu
+		sealed class MainMenuEntry : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
 			{
@@ -239,7 +220,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			UndoCommandManager.Instance.Add(new MoveNamespaceTypesToEmptypNamespaceCommand(nodes));
 		}
 
-		public MoveNamespaceTypesToEmptypNamespaceCommand(ILSpyTreeNode[] nodes)
+		MoveNamespaceTypesToEmptypNamespaceCommand(ILSpyTreeNode[] nodes)
 		{
 			if (!CanExecute(nodes))
 				throw new ArgumentException();
@@ -250,20 +231,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 
 		public string Description {
-			get { return "Move Types to Empty Namespace"; }
+			get { return CMD_NAME; }
 		}
 
 		readonly NamespaceTreeNode nsTarget;
 		DeletableNodes nodes;
 		ModelInfo[] infos;
-
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
-			get {
-				yield return nsTarget;
-				foreach (var n in nodes.Nodes)
-					yield return n;
-			}
-		}
 
 		class ModelInfo
 		{
@@ -327,6 +300,18 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			nodes.Restore();
 
 			infos = null;
+		}
+
+		public IEnumerable<ILSpyTreeNode> TreeNodes {
+			get {
+				yield return nsTarget;
+				foreach (var n in nodes.Nodes)
+					yield return n;
+			}
+		}
+
+		public void Dispose()
+		{
 		}
 	}
 }

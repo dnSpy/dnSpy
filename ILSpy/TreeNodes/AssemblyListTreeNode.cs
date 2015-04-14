@@ -58,11 +58,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		void BindToObservableCollection()
 		{
 			this.Children.Clear();
-			this.Children.AddRange(assemblyList.GetAssemblies().Select(a => new AssemblyTreeNode(a)));
+			this.Children.AddRange(assemblyList.GetAssemblies().Select(a => CreateAssemblyTreeNode(a)));
 			assemblyList.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e) {
 				switch (e.Action) {
 					case NotifyCollectionChangedAction.Add:
-						this.Children.InsertRange(e.NewStartingIndex, e.NewItems.Cast<LoadedAssembly>().Select(a => new AssemblyTreeNode(a)));
+					this.Children.InsertRange(e.NewStartingIndex, e.NewItems.Cast<LoadedAssembly>().Select(a => CreateAssemblyTreeNode(a)));
 						break;
 					case NotifyCollectionChangedAction.Remove:
 						this.Children.RemoveRange(e.OldStartingIndex, e.OldItems.Count);
@@ -72,12 +72,38 @@ namespace ICSharpCode.ILSpy.TreeNodes
 						throw new NotImplementedException();
 					case NotifyCollectionChangedAction.Reset:
 						this.Children.Clear();
-						this.Children.AddRange(assemblyList.GetAssemblies().Select(a => new AssemblyTreeNode(a)));
+						this.Children.AddRange(assemblyList.GetAssemblies().Select(a => CreateAssemblyTreeNode(a)));
 						break;
 					default:
 						throw new NotSupportedException("Invalid value for NotifyCollectionChangedAction");
 				}
 			};
+		}
+
+		AssemblyTreeNode CreateAssemblyTreeNode(LoadedAssembly asm)
+		{
+			AssemblyTreeNode asmNode;
+			if (cachedAsmTreeNodes.TryGetValue(asm, out asmNode)) {
+				Debug.Assert(asmNode.Parent == null);
+				if (asmNode.Parent != null)
+					throw new InvalidOperationException();
+				return asmNode;
+			}
+			return new AssemblyTreeNode(asm);
+		}
+
+		readonly Dictionary<LoadedAssembly, AssemblyTreeNode> cachedAsmTreeNodes = new Dictionary<LoadedAssembly, AssemblyTreeNode>();
+
+		public void RegisterCached(LoadedAssembly asm, AssemblyTreeNode asmNode)
+		{
+			cachedAsmTreeNodes.Add(asm, asmNode);
+		}
+
+		public void UnregisterCached(LoadedAssembly asm)
+		{
+			if (!cachedAsmTreeNodes.ContainsKey(asm))
+				throw new InvalidOperationException();
+			cachedAsmTreeNodes.Remove(asm);
 		}
 
 		public override bool CanDrop(DragEventArgs e, int index)
@@ -98,7 +124,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			string[] files = e.Data.GetData(AssemblyTreeNode.DataFormat) as string[];
 			if (files == null)
 				files = e.Data.GetData(DataFormats.FileDrop) as string[];
-			if (files != null) {
+			if (files != null && files.Length > 0) {
 				LoadedAssembly newSelectedAsm = null;
 				bool newSelectedAsmExisted = false;
 				var oldIgnoreSelChg = MainWindow.Instance.TreeView_SelectionChanged_ignore;
@@ -346,6 +372,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 				node.EnsureLazyChildren();
 				foreach (var asmNode in node.Children.OfType<AssemblyTreeNode>()) {
+					if (string.IsNullOrWhiteSpace(asmNode.LoadedAssembly.FileName))
+						continue;
 					if (asmNode.LoadedAssembly.FileName.Equals(moduleFilename, StringComparison.OrdinalIgnoreCase))
 						return asmNode.LoadedAssembly;
 				}

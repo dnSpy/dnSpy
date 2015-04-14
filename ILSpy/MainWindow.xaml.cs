@@ -783,7 +783,7 @@ namespace ICSharpCode.ILSpy
 						// (Ctrl+C, Ctrl+O etc) will be disabled after we stop debugging. We didn't
 						// need to do this when the menu wasn't in the toolbar.
 						menuItem.CommandTarget = MainWindow.Instance;
-						menuItem.Header = entry.Metadata.Header;
+						menuItem.Header = entry.Metadata.MenuHeader;
 						if (!string.IsNullOrEmpty(entry.Metadata.MenuIcon)) {
 							menuItem.Icon = new Image {
 								Width = 16,
@@ -792,8 +792,7 @@ namespace ICSharpCode.ILSpy
 							};
 						}
 
-						menuItem.IsEnabled = entry.Metadata.IsEnabled;
-						menuItem.InputGestureText = entry.Metadata.InputGestureText;
+						menuItem.InputGestureText = entry.Metadata.MenuInputGestureText;
 
 						var checkable = entry.Value as IMainMenuCheckableCommand;
 						bool? checkState = checkable == null ? null : checkable.IsChecked;
@@ -1471,25 +1470,27 @@ namespace ICSharpCode.ILSpy
 				var mainModule = module;
 				if (module.Assembly != null)
 					mainModule = module.Assembly.ManifestModule;
-				// Check if the module was removed and then added again
-				foreach (var m in assemblyList.GetAllModules()) {
-					if (mainModule.Location.Equals(m.Location, StringComparison.OrdinalIgnoreCase)) {
-						foreach (var asmMod in GetAssemblyModules(m)) {
-							if (!module.Location.Equals(asmMod.Location, StringComparison.OrdinalIgnoreCase))
-								continue;
+				if (!string.IsNullOrEmpty(mainModule.Location) && !string.IsNullOrEmpty(module.Location)) {
+					// Check if the module was removed and then added again
+					foreach (var m in assemblyList.GetAllModules()) {
+						if (mainModule.Location.Equals(m.Location, StringComparison.OrdinalIgnoreCase)) {
+							foreach (var asmMod in GetAssemblyModules(m)) {
+								if (!module.Location.Equals(asmMod.Location, StringComparison.OrdinalIgnoreCase))
+									continue;
 
-							// Found the module
-							var modDef = asmMod as ModuleDefMD;
-							if (modDef != null) {
-								member = modDef.ResolveToken(member.MDToken) as IMemberDef;
-								if (member != null) // should never fail
-									return JumpToReferenceAsyncInternal(tabState, false, member, onDecompileFinished);
+								// Found the module
+								var modDef = asmMod as ModuleDefMD;
+								if (modDef != null) {
+									member = modDef.ResolveToken(member.MDToken) as IMemberDef;
+									if (member != null) // should never fail
+										return JumpToReferenceAsyncInternal(tabState, false, member, onDecompileFinished);
+								}
+
+								break;
 							}
 
-							break;
+							return false;
 						}
-
-						return false;
 					}
 				}
 
@@ -1553,8 +1554,10 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		void RefreshCommandExecuted(object sender, ExecutedRoutedEventArgs e)
+		internal void ReloadList()
 		{
+			if (!ReloadListCanExecute())
+				return;
 			var savedState = CreateSavedTabGroupsState();
 
 			try {
@@ -1568,10 +1571,10 @@ namespace ICSharpCode.ILSpy
 			RestoreTabGroups(savedState);
 		}
 
-		private void RefreshCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		internal bool ReloadListCanExecute()
 		{
 			var cd = DebuggerService.CurrentDebugger;
-			e.CanExecute = cd == null || !cd.IsDebugging;
+			return cd == null || !cd.IsDebugging;
 		}
 		
 		void SearchCommandExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -2223,6 +2226,24 @@ namespace ICSharpCode.ILSpy
 		internal bool CloneActiveTabCanExecute()
 		{
 			return ActiveTabState != null;
+		}
+
+		internal void RefreshCode(LoadedAssembly asm)
+		{
+			foreach (var tabState in AllTabStates) {
+				if (MustRefresh(tabState, asm))
+					ForceDecompile(tabState);
+			}
+		}
+
+		static bool MustRefresh(TabStateDecompile tabState, LoadedAssembly asm)
+		{
+			foreach (var node in tabState.DecompiledNodes) {
+				var asmNode = ILSpyTreeNode.GetAssemblyTreeNode(node);
+				if (asmNode == null || asmNode.LoadedAssembly == asm)
+					return true;
+			}
+			return false;
 		}
 
 		internal void RefreshCodeCSharp(bool disassembleIL, bool decompileILAst, bool decompileCSharp, bool decompileVB)

@@ -82,7 +82,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				if (Directory.Exists(filename))
 					return "A folder with the same name as the filename already exists.";
 				var dir = Path.GetDirectoryName(filename);
-				if (!Directory.Exists(dir))
+				if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
 					return string.Format("Folder '{0}' doesn't exist.", dir);
 			}
 

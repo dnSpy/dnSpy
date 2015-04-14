@@ -1,0 +1,758 @@
+﻿/*
+    Copyright (C) 2014-2015 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using ICSharpCode.ILSpy.TreeNodes;
+using dnlib.DotNet;
+using dnlib.PE;
+
+namespace ICSharpCode.ILSpy.AsmEditor.Module
+{
+	sealed class CreateNetModuleCommand : IUndoCommand
+	{
+		const string CMD_NAME = "Create NetModule";
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+								Icon = "Images/AssemblyModule.png",
+								Category = "AsmEd",
+								Order = 240)]//TODO: Update Order
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+							Menu = "_Edit",
+							MenuIcon = "Images/AssemblyModule.png",
+							MenuCategory = "AsmEd",
+							MenuOrder = 2100)]//TODO: Set menu order
+		sealed class MainMenuEntry : EditCommand
+		{
+			public MainMenuEntry()
+				: base(true)
+			{
+			}
+
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				return CreateNetModuleCommand.CanExecute(nodes);
+			}
+
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				CreateNetModuleCommand.Execute(nodes);
+			}
+		}
+
+		static bool CanExecute(ILSpyTreeNode[] nodes)
+		{
+			return nodes != null &&
+				(nodes.Length == 0 || nodes.Any(a => a is AssemblyTreeNode));
+		}
+
+		static void Execute(ILSpyTreeNode[] nodes)
+		{
+			if (!CanExecute(nodes))
+				return;
+
+			var win = new NetModuleOptionsDlg();
+			var data = new NetModuleOptionsVM();
+			win.DataContext = data;
+			win.Owner = MainWindow.Instance;
+			if (win.ShowDialog() != true)
+				return;
+
+			UndoCommandManager.Instance.Add(new CreateNetModuleCommand(data.CreateNetModuleOptions()));
+		}
+
+		AssemblyTreeNodeCreator asmNodeCreator;
+
+		CreateNetModuleCommand(NetModuleOptions options)
+		{
+			var module = ModuleUtils.CreateNetModule(options.Name, options.Mvid, options.ClrVersion);
+			this.asmNodeCreator = new AssemblyTreeNodeCreator(new LoadedAssembly(MainWindow.Instance.CurrentAssemblyList, module));
+		}
+
+		public string Description {
+			get { return CMD_NAME; }
+		}
+
+		public void Execute()
+		{
+			asmNodeCreator.Add();
+			UndoCommandManager.Instance.MarkAsModified(asmNodeCreator.AssemblyTreeNode.LoadedAssembly);
+		}
+
+		public void Undo()
+		{
+			asmNodeCreator.Remove();
+		}
+
+		public IEnumerable<ILSpyTreeNode> TreeNodes {
+			get { return new ILSpyTreeNode[0]; }
+		}
+
+		public void Dispose()
+		{
+			if (asmNodeCreator != null)
+				asmNodeCreator.Dispose();
+			asmNodeCreator = null;
+		}
+	}
+
+	sealed class ConvertNetModuleToAssemblyCommand : IUndoCommand
+	{
+		const string CMD_NAME = "Convert NetModule to Assembly";
+		[ExportContextMenuEntry(Header = CMD_NAME,
+								Category = "AsmEd",
+								Order = 240)]//TODO: Update Order
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
+							Menu = "_Edit",
+							MenuCategory = "AsmEd",
+							MenuOrder = 2100)]//TODO: Set menu order
+		sealed class MainMenuEntry : EditCommand
+		{
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				return ConvertNetModuleToAssemblyCommand.CanExecute(nodes);
+			}
+
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				ConvertNetModuleToAssemblyCommand.Execute(nodes);
+			}
+		}
+
+		static bool CanExecute(ILSpyTreeNode[] nodes)
+		{
+			return nodes != null &&
+				nodes.Length > 0 &&
+				nodes.All(n => n is AssemblyTreeNode && ((AssemblyTreeNode)n).IsNetModule);
+		}
+
+		static void Execute(ILSpyTreeNode[] nodes)
+		{
+			if (!CanExecute(nodes))
+				return;
+
+			UndoCommandManager.Instance.Add(new ConvertNetModuleToAssemblyCommand(nodes));
+		}
+
+		readonly AssemblyTreeNode[] nodes;
+		SavedState[] savedStates;
+		bool hasExecuted;
+		sealed class SavedState
+		{
+			public ModuleKind ModuleKind;
+			public Characteristics Characteristics;
+			public AssemblyTreeNode AssemblyTreeNode;
+		}
+
+		ConvertNetModuleToAssemblyCommand(ILSpyTreeNode[] nodes)
+		{
+			this.nodes = nodes.Select(n => (AssemblyTreeNode)n).ToArray();
+			this.savedStates = new SavedState[this.nodes.Length];
+			for (int i = 0; i < this.savedStates.Length; i++)
+				this.savedStates[i] = new SavedState();
+		}
+
+		public string Description {
+			get { return CMD_NAME; }
+		}
+
+		public void Execute()
+		{
+			Debug.Assert(!hasExecuted);
+			if (hasExecuted)
+				throw new InvalidOperationException();
+			for (int i = 0; i < nodes.Length; i++) {
+				var node = nodes[i];
+				var savedState = savedStates[i];
+
+				var module = node.LoadedAssembly.ModuleDefinition;
+				bool b = module != null && module.Assembly == null;
+				Debug.Assert(b);
+				if (!b)
+					throw new InvalidOperationException();
+
+				savedState.ModuleKind = module.Kind;
+				ModuleUtils.AddToNewAssemblyDef(module, ModuleKind.Dll, out savedState.Characteristics);
+				node.OnConvertedToAssembly(savedState.AssemblyTreeNode);
+				Utils.InvalidateDecompilationCache(node);
+			}
+			hasExecuted = true;
+		}
+
+		public void Undo()
+		{
+			Debug.Assert(hasExecuted);
+			if (!hasExecuted)
+				throw new InvalidOperationException();
+
+			for (int i = nodes.Length - 1; i >= 0; i--) {
+				var node = nodes[i];
+				var savedState = savedStates[i];
+				var module = node.LoadedAssembly.ModuleDefinition;
+				bool b = module != null && module.Assembly != null &&
+						module.Assembly.Modules.Count == 1 &&
+						module.Assembly.ManifestModule == module;
+				Debug.Assert(b);
+				if (!b)
+					throw new InvalidOperationException();
+				module.Assembly.Modules.Remove(module);
+				module.Kind = savedState.ModuleKind;
+				module.Characteristics = savedState.Characteristics;
+				savedState.AssemblyTreeNode = node.OnConvertedToNetModule();
+				Utils.InvalidateDecompilationCache(node);
+			}
+			hasExecuted = false;
+		}
+
+		public IEnumerable<ILSpyTreeNode> TreeNodes {
+			get { return nodes; }
+		}
+
+		public void Dispose()
+		{
+		}
+	}
+
+	sealed class ConvertAssemblyToNetModuleCommand : IUndoCommand
+	{
+		const string CMD_NAME = "Convert Assembly to NetModule";
+		[ExportContextMenuEntry(Header = CMD_NAME,
+								Category = "AsmEd",
+								Order = 240)]//TODO: Update Order
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
+							Menu = "_Edit",
+							MenuCategory = "AsmEd",
+							MenuOrder = 2100)]//TODO: Set menu order
+		sealed class MainMenuEntry : EditCommand
+		{
+			protected override bool IsVisible(ILSpyTreeNode[] nodes)
+			{
+				return ConvertAssemblyToNetModuleCommand.IsVisible(nodes);
+			}
+
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				return ConvertAssemblyToNetModuleCommand.CanExecute(nodes);
+			}
+
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				ConvertAssemblyToNetModuleCommand.Execute(nodes);
+			}
+		}
+
+		static bool IsVisible(ILSpyTreeNode[] nodes)
+		{
+			return nodes != null &&
+				nodes.Length > 0 &&
+				nodes.All(n => n is AssemblyTreeNode && ((AssemblyTreeNode)n).IsAssembly);
+		}
+
+		static bool CanExecute(ILSpyTreeNode[] nodes)
+		{
+			return nodes != null &&
+				nodes.Length > 0 &&
+				nodes.All(n => n is AssemblyTreeNode && ((AssemblyTreeNode)n).IsAssembly &&
+					((AssemblyTreeNode)n).LoadedAssembly.AssemblyDefinition.Modules.Count == 1);
+		}
+
+		static void Execute(ILSpyTreeNode[] nodes)
+		{
+			if (!CanExecute(nodes))
+				return;
+
+			UndoCommandManager.Instance.Add(new ConvertAssemblyToNetModuleCommand(nodes));
+		}
+
+		readonly AssemblyTreeNode[] nodes;
+		SavedState[] savedStates;
+		sealed class SavedState
+		{
+			public AssemblyDef AssemblyDef;
+			public ModuleKind ModuleKind;
+			public Characteristics Characteristics;
+			public AssemblyTreeNode ModuleNode;
+		}
+
+		ConvertAssemblyToNetModuleCommand(ILSpyTreeNode[] nodes)
+		{
+			this.nodes = nodes.Select(n => (AssemblyTreeNode)n).ToArray();
+		}
+
+		public string Description {
+			get { return CMD_NAME; }
+		}
+
+		public void Execute()
+		{
+			Debug.Assert(savedStates == null);
+			if (savedStates != null)
+				throw new InvalidOperationException();
+			this.savedStates = new SavedState[this.nodes.Length];
+			for (int i = 0; i < nodes.Length; i++) {
+				var node = nodes[i];
+				savedStates[i] = new SavedState();
+				var savedState = savedStates[i];
+				var module = node.LoadedAssembly.ModuleDefinition;
+				bool b = module != null && module.Assembly != null &&
+						module.Assembly.Modules.Count == 1 &&
+						module.Assembly.ManifestModule == module;
+				Debug.Assert(b);
+				if (!b)
+					throw new InvalidOperationException();
+				node.EnsureLazyChildren();
+				savedState.AssemblyDef = module.Assembly;
+				module.Assembly.Modules.Remove(module);
+				savedState.ModuleKind = module.Kind;
+				ModuleUtils.WriteNewModuleKind(module, ModuleKind.NetModule, out savedState.Characteristics);
+				savedState.ModuleNode = node.OnConvertedToNetModule();
+				Utils.InvalidateDecompilationCache(node);
+			}
+		}
+
+		public void Undo()
+		{
+			Debug.Assert(savedStates != null);
+			if (savedStates == null)
+				throw new InvalidOperationException();
+
+			for (int i = nodes.Length - 1; i >= 0; i--) {
+				var node = nodes[i];
+				var savedState = savedStates[i];
+
+				var module = node.LoadedAssembly.ModuleDefinition;
+				bool b = module != null && module.Assembly == null;
+				Debug.Assert(b);
+				if (!b)
+					throw new InvalidOperationException();
+
+				module.Kind = savedState.ModuleKind;
+				module.Characteristics = savedState.Characteristics;
+				savedState.AssemblyDef.Modules.Add(module);
+				node.OnConvertedToAssembly(savedState.ModuleNode);
+				Utils.InvalidateDecompilationCache(node);
+			}
+			savedStates = null;
+		}
+
+		public IEnumerable<ILSpyTreeNode> TreeNodes {
+			get { return nodes; }
+		}
+
+		public void Dispose()
+		{
+		}
+	}
+
+	abstract class AddNetModuleToAssemblyCommand : IUndoCommand
+	{
+		internal static bool CanExecute(ILSpyTreeNode[] nodes)
+		{
+			return nodes != null &&
+				nodes.Length == 1 &&
+				nodes[0] is AssemblyTreeNode &&
+				(((AssemblyTreeNode)nodes[0]).IsAssembly || ((AssemblyTreeNode)nodes[0]).IsModuleInAssembly);
+		}
+
+		readonly AssemblyTreeNode asmNode;
+		readonly AssemblyTreeNode modNode;
+		readonly bool modNodeWasCreated;
+
+		protected AddNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, AssemblyTreeNode modNode, bool modNodeWasCreated)
+		{
+			if (asmNode.Parent is AssemblyTreeNode)
+				asmNode = (AssemblyTreeNode)asmNode.Parent;
+			Debug.Assert(!(asmNode.Parent is AssemblyTreeNode));
+			Debug.Assert(asmNode.IsAssembly);
+			this.asmNode = asmNode;
+			this.modNode = modNode;
+			this.modNodeWasCreated = modNodeWasCreated;
+		}
+
+		public abstract string Description { get; }
+
+		public void Execute()
+		{
+			Debug.Assert(modNode.Parent == null);
+			if (modNode.Parent != null)
+				throw new InvalidOperationException();
+			asmNode.EnsureLazyChildren();
+			asmNode.LoadedAssembly.AssemblyDefinition.Modules.Add(modNode.LoadedAssembly.ModuleDefinition);
+			asmNode.Children.Add(modNode);
+			if (modNodeWasCreated)
+				UndoCommandManager.Instance.MarkAsModified(modNode.LoadedAssembly);
+		}
+
+		public void Undo()
+		{
+			Debug.Assert(modNode.Parent != null);
+			if (modNode.Parent == null)
+				throw new InvalidOperationException();
+			asmNode.LoadedAssembly.AssemblyDefinition.Modules.Remove(modNode.LoadedAssembly.ModuleDefinition);
+			bool b = asmNode.Children.Remove(modNode);
+			Debug.Assert(b);
+			if (!b)
+				throw new InvalidOperationException();
+		}
+
+		//TODO: Should also return modNode but it should be marked as "not modified" if modNodeWasCreated is false
+		public IEnumerable<ILSpyTreeNode> TreeNodes {
+			get { yield return asmNode; }
+		}
+
+		public void Dispose()
+		{
+		}
+	}
+
+	sealed class AddNewNetModuleToAssemblyCommand : AddNetModuleToAssemblyCommand
+	{
+		const string CMD_NAME = "Add New NetModule to Assembly";
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+								Icon = "Images/AssemblyModule.png",
+								Category = "AsmEd",
+								Order = 240)]//TODO: Update Order
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+							Menu = "_Edit",
+							MenuIcon = "Images/AssemblyModule.png",
+							MenuCategory = "AsmEd",
+							MenuOrder = 2100)]//TODO: Set menu order
+		sealed class MainMenuEntry : EditCommand
+		{
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				return AddNetModuleToAssemblyCommand.CanExecute(nodes);
+			}
+
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				AddNewNetModuleToAssemblyCommand.Execute(nodes);
+			}
+		}
+
+		static void Execute(ILSpyTreeNode[] nodes)
+		{
+			if (!AddNetModuleToAssemblyCommand.CanExecute(nodes))
+				return;
+
+			var win = new NetModuleOptionsDlg();
+			var data = new NetModuleOptionsVM();
+			win.DataContext = data;
+			win.Owner = MainWindow.Instance;
+			if (win.ShowDialog() != true)
+				return;
+
+			UndoCommandManager.Instance.Add(new AddNewNetModuleToAssemblyCommand((AssemblyTreeNode)nodes[0], data.CreateNetModuleOptions()));
+		}
+
+		AddNewNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, NetModuleOptions options)
+			: base(asmNode, new AssemblyTreeNode(new LoadedAssembly(MainWindow.Instance.CurrentAssemblyList, ModuleUtils.CreateNetModule(options.Name, options.Mvid, options.ClrVersion))), true)
+		{
+		}
+
+		public override string Description {
+			get { return CMD_NAME; }
+		}
+	}
+
+	sealed class AddExistingNetModuleToAssemblyCommand : AddNetModuleToAssemblyCommand
+	{
+		const string CMD_NAME = "Add Existing NetModule to Assembly";
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+								Icon = "Images/AssemblyModule.png",
+								Category = "AsmEd",
+								Order = 240)]//TODO: Update Order
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+							Menu = "_Edit",
+							MenuIcon = "Images/AssemblyModule.png",
+							MenuCategory = "AsmEd",
+							MenuOrder = 2100)]//TODO: Set menu order
+		sealed class MainMenuEntry : EditCommand
+		{
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				return AddNetModuleToAssemblyCommand.CanExecute(nodes);
+			}
+
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				AddExistingNetModuleToAssemblyCommand.Execute(nodes);
+			}
+		}
+
+		static void Execute(ILSpyTreeNode[] nodes)
+		{
+			if (!AddNetModuleToAssemblyCommand.CanExecute(nodes))
+				return;
+
+			var dialog = new System.Windows.Forms.OpenFileDialog() {
+				Filter = ".NET NetModule (*.netmodule)|*.netmodule|All files (*.*)|*.*",
+				RestoreDirectory = true,
+			};
+			if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+				return;
+			if (string.IsNullOrEmpty(dialog.FileName))
+				return;
+
+			var asm = new LoadedAssembly(MainWindow.Instance.CurrentAssemblyList, dialog.FileName);
+			if (asm.ModuleDefinition == null || asm.AssemblyDefinition != null) {
+				MainWindow.Instance.ShowMessageBox(string.Format("{0} is not a NetModule", asm.FileName), System.Windows.MessageBoxButton.OK);
+				if (asm.ModuleDefinition != null)
+					asm.ModuleDefinition.Dispose();
+				return;
+			}
+
+			UndoCommandManager.Instance.Add(new AddExistingNetModuleToAssemblyCommand((AssemblyTreeNode)nodes[0], asm));
+		}
+
+		AddExistingNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, LoadedAssembly asm)
+			: base(asmNode, new AssemblyTreeNode(asm), false)
+		{
+		}
+
+		public override string Description {
+			get { return CMD_NAME; }
+		}
+	}
+
+	sealed class RemoveNetModuleFromAssemblyCommand : IUndoCommand
+	{
+		const string CMD_NAME = "Remove NetModule from Assembly";
+		[ExportContextMenuEntry(Header = CMD_NAME,
+								Icon = "Images/Delete.png",
+								Category = "AsmEd",
+								Order = 240)]//TODO: Update Order
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
+							Menu = "_Edit",
+							MenuIcon = "Images/Delete.png",
+							MenuCategory = "AsmEd",
+							MenuOrder = 2100)]//TODO: Set menu order
+		sealed class MainMenuEntry : EditCommand
+		{
+			protected override bool IsVisible(ILSpyTreeNode[] nodes)
+			{
+				return RemoveNetModuleFromAssemblyCommand.IsVisible(nodes);
+			}
+
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				return RemoveNetModuleFromAssemblyCommand.CanExecute(nodes);
+			}
+
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				RemoveNetModuleFromAssemblyCommand.Execute(nodes);
+			}
+		}
+
+		static bool IsVisible(ILSpyTreeNode[] nodes)
+		{
+			return nodes != null &&
+				nodes.Length == 1 &&
+				nodes[0] is AssemblyTreeNode &&
+				((AssemblyTreeNode)nodes[0]).IsModuleInAssembly;
+		}
+
+		static bool CanExecute(ILSpyTreeNode[] nodes)
+		{
+			return nodes != null &&
+				nodes.Length == 1 &&
+				nodes[0] is AssemblyTreeNode &&
+				((AssemblyTreeNode)nodes[0]).IsNetModuleInAssembly;
+		}
+
+		static void Execute(ILSpyTreeNode[] nodes)
+		{
+			if (!CanExecute(nodes))
+				return;
+
+			var asmNode = (AssemblyTreeNode)nodes[0];
+			if (!SaveModule.Saver.AskUserToSaveIfModified(asmNode))
+				return;
+
+			UndoCommandManager.Instance.Add(new RemoveNetModuleFromAssemblyCommand(asmNode));
+		}
+
+		readonly AssemblyTreeNode asmNode;
+		readonly AssemblyTreeNode modNode;
+		readonly int removeIndex;
+
+		RemoveNetModuleFromAssemblyCommand(AssemblyTreeNode modNode)
+		{
+			this.asmNode = (AssemblyTreeNode)modNode.Parent;
+			Debug.Assert(this.asmNode != null);
+			this.modNode = modNode;
+			this.removeIndex = asmNode.Children.IndexOf(modNode);
+			Debug.Assert(this.removeIndex > 0);
+			Debug.Assert(asmNode.LoadedAssembly.AssemblyDefinition != null &&
+				asmNode.LoadedAssembly.AssemblyDefinition.Modules.IndexOf(modNode.LoadedAssembly.ModuleDefinition) == this.removeIndex);
+		}
+
+		public string Description {
+			get { return CMD_NAME; }
+		}
+
+		public void Execute()
+		{
+			Debug.Assert(modNode.Parent != null);
+			if (modNode.Parent == null)
+				throw new InvalidOperationException();
+			bool b = removeIndex < asmNode.Children.Count && asmNode.Children[removeIndex] == modNode &&
+				removeIndex < asmNode.LoadedAssembly.AssemblyDefinition.Modules.Count &&
+				asmNode.LoadedAssembly.AssemblyDefinition.Modules[removeIndex] == modNode.LoadedAssembly.ModuleDefinition;
+			Debug.Assert(b);
+			if (!b)
+				throw new InvalidOperationException();
+			asmNode.LoadedAssembly.AssemblyDefinition.Modules.RemoveAt(removeIndex);
+			asmNode.Children.RemoveAt(removeIndex);
+			UndoCommandManager.Instance.MarkAsModified(asmNode.LoadedAssembly);
+		}
+
+		public void Undo()
+		{
+			Debug.Assert(modNode.Parent == null);
+			if (modNode.Parent != null)
+				throw new InvalidOperationException();
+			asmNode.LoadedAssembly.AssemblyDefinition.Modules.Insert(removeIndex, modNode.LoadedAssembly.ModuleDefinition);
+			asmNode.Children.Insert(removeIndex, modNode);
+		}
+
+		//TODO: Should also return modNode but it should be marked as "not modified"
+		public IEnumerable<ILSpyTreeNode> TreeNodes {
+			get { yield return asmNode; }
+		}
+
+		public void Dispose()
+		{
+		}
+	}
+
+	sealed class ModuleSettingsCommand : IUndoCommand
+	{
+		const string CMD_NAME = "Module Settings";
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+								Icon = "Images/Settings.png",
+								Category = "AsmEd",
+								Order = 240)]//TODO: Update Order
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+							Menu = "_Edit",
+							MenuIcon = "Images/Settings.png",
+							MenuCategory = "AsmEd",
+							MenuOrder = 2100)]//TODO: Set menu order
+		sealed class MainMenuEntry : EditCommand
+		{
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				return ModuleSettingsCommand.CanExecute(nodes);
+			}
+
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				ModuleSettingsCommand.Execute(nodes);
+			}
+		}
+
+		static bool CanExecute(ILSpyTreeNode[] nodes)
+		{
+			return nodes != null &&
+				nodes.Length == 1 &&
+				nodes[0] is AssemblyTreeNode &&
+				(((AssemblyTreeNode)nodes[0]).IsModuleInAssembly || ((AssemblyTreeNode)nodes[0]).IsNetModule);
+		}
+
+		static void Execute(ILSpyTreeNode[] nodes)
+		{
+			if (!CanExecute(nodes))
+				return;
+
+			var asmNode = (AssemblyTreeNode)nodes[0];
+
+			var data = new ModuleOptionsVM(new ModuleOptions(asmNode.LoadedAssembly.ModuleDefinition));
+			var win = new ModuleOptionsDlg();
+			win.DataContext = data;
+			win.Owner = MainWindow.Instance;
+			if (win.ShowDialog() != true)
+				return;
+
+			UndoCommandManager.Instance.Add(new ModuleSettingsCommand(asmNode, data.CreateModuleOptions()));
+		}
+
+		readonly AssemblyTreeNode modNode;
+		readonly ModuleOptions newOptions;
+		readonly ModuleOptions origOptions;
+
+		ModuleSettingsCommand(AssemblyTreeNode modNode, ModuleOptions newOptions)
+		{
+			this.modNode = modNode;
+			this.newOptions = newOptions;
+			this.origOptions = new ModuleOptions(modNode.LoadedAssembly.ModuleDefinition);
+		}
+
+		public string Description {
+			get { return CMD_NAME; }
+		}
+
+		public void Execute()
+		{
+			var module = modNode.LoadedAssembly.ModuleDefinition;
+			module.Mvid = newOptions.Mvid;
+			module.EncId = newOptions.EncId;
+			module.EncBaseId = newOptions.EncBaseId;
+			module.Name = newOptions.Name;
+			module.Kind = newOptions.Kind;
+			module.Characteristics = newOptions.Characteristics;
+			module.DllCharacteristics = newOptions.DllCharacteristics;
+			module.RuntimeVersion = newOptions.RuntimeVersion;
+			module.Machine = newOptions.Machine;
+			module.Cor20HeaderFlags = newOptions.Cor20HeaderFlags;
+			module.Cor20HeaderRuntimeVersion = newOptions.Cor20HeaderRuntimeVersion;
+			module.TablesHeaderVersion = newOptions.TablesHeaderVersion;
+			modNode.OnModulePropertiesChanged();
+			Utils.InvalidateDecompilationCache(modNode);
+		}
+
+		public void Undo()
+		{
+			var module = modNode.LoadedAssembly.ModuleDefinition;
+			module.Mvid = origOptions.Mvid;
+			module.EncId = origOptions.EncId;
+			module.EncBaseId = origOptions.EncBaseId;
+			module.Name = origOptions.Name;
+			module.Kind = origOptions.Kind;
+			module.Characteristics = origOptions.Characteristics;
+			module.DllCharacteristics = origOptions.DllCharacteristics;
+			module.RuntimeVersion = origOptions.RuntimeVersion;
+			module.Machine = origOptions.Machine;
+			module.Cor20HeaderFlags = origOptions.Cor20HeaderFlags;
+			module.Cor20HeaderRuntimeVersion = origOptions.Cor20HeaderRuntimeVersion;
+			module.TablesHeaderVersion = origOptions.TablesHeaderVersion;
+			modNode.OnModulePropertiesChanged();
+			Utils.InvalidateDecompilationCache(modNode);
+		}
+
+		public IEnumerable<ILSpyTreeNode> TreeNodes {
+			get { yield return modNode; }
+		}
+
+		public void Dispose()
+		{
+		}
+	}
+}

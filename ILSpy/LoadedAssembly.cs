@@ -35,8 +35,8 @@ namespace ICSharpCode.ILSpy
 	{
 		readonly Task<ModuleDef> assemblyTask;
 		readonly AssemblyList assemblyList;
-		readonly string fileName;
-		readonly string shortName;
+		string fileName;
+		string shortName;
 
 		static string[] gacPaths;
 		static string[] GacPaths {
@@ -74,6 +74,8 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		public bool IsGAC {
 			get {
+				if (string.IsNullOrWhiteSpace(fileName))
+					return false;
 				foreach (var p in GacPaths) {
 					if (IsSubPath(p, fileName))
 						return true;
@@ -109,15 +111,15 @@ namespace ICSharpCode.ILSpy
 				throw new ArgumentNullException("assemblyList");
 			if (module == null)
 				throw new ArgumentNullException("module");
-			if (string.IsNullOrEmpty(module.Location))
-				throw new ArgumentException("module has no filename");
 			this.assemblyList = assemblyList;
-			this.fileName = module.Location;
+			this.fileName = module.Location ?? string.Empty;
 
 			this.assemblyTask = Task.Factory.StartNew<ModuleDef>(() => LoadModule(module));
 			this.shortName = GetShortName(fileName);
+			if (string.IsNullOrEmpty(this.shortName))
+				this.shortName = module.Name;
 
-			// Make sure IsLoaded is set to true. The callers depend on IsLoaded to be true.
+			// Make sure IsLoaded is set to true
 			if (ModuleDefinition != null) { }
 		}
 		
@@ -177,9 +179,15 @@ namespace ICSharpCode.ILSpy
 		public AssemblyList AssemblyList {
 			get { return assemblyList; }
 		}
-		
+
 		public string FileName {
 			get { return fileName; }
+			internal set {// Called when a created module has been saved
+				Debug.Assert(string.IsNullOrEmpty(this.fileName));
+				Debug.Assert(!string.IsNullOrEmpty(value));
+				this.fileName = value;
+				this.shortName = GetShortName(fileName);
+			}
 		}
 		
 		public string ShortName {
@@ -259,7 +267,7 @@ namespace ICSharpCode.ILSpy
 		
 		private void LoadSymbols(ModuleDefMD module)
 		{
-			if (module == null)
+			if (module == null || string.IsNullOrWhiteSpace(fileName))
 				return;
 
 			// search for pdb in same directory as dll
@@ -376,7 +384,7 @@ namespace ICSharpCode.ILSpy
 		LoadedAssembly LookupFromSearchPaths(IAssembly asmName, ModuleDef sourceModule, bool exactCheck) {
 			LoadedAssembly asm;
 			string sourceModuleDir = null;
-			if (sourceModule != null && !string.IsNullOrEmpty(sourceModule.Location)) {
+			if (sourceModule != null && !string.IsNullOrWhiteSpace(sourceModule.Location)) {
 				sourceModuleDir = Path.GetDirectoryName(sourceModule.Location);
 				asm = TryLoadFromDir(asmName, exactCheck, sourceModuleDir);
 				if (asm != null)
@@ -391,9 +399,11 @@ namespace ICSharpCode.ILSpy
 			}
 
 			// Don't try the same path again
-			var currentDir = Path.GetDirectoryName(this.fileName);
-			if (string.IsNullOrEmpty(sourceModuleDir) || !currentDir.Equals(sourceModuleDir, StringComparison.OrdinalIgnoreCase))
-				return TryLoadFromDir(asmName, exactCheck, currentDir);
+			if (!string.IsNullOrWhiteSpace(this.fileName)) {
+				var currentDir = Path.GetDirectoryName(this.fileName);
+				if (string.IsNullOrEmpty(sourceModuleDir) || !currentDir.Equals(sourceModuleDir, StringComparison.OrdinalIgnoreCase))
+					return TryLoadFromDir(asmName, exactCheck, currentDir);
+			}
 
 			return null;
 		}

@@ -25,6 +25,18 @@ namespace ICSharpCode.ILSpy.AsmEditor
 {
 	public abstract class TreeNodeCommand : ICommand
 	{
+		readonly bool canAcceptEmptySelectedNodes;
+
+		protected TreeNodeCommand()
+			: this(false)
+		{
+		}
+
+		protected TreeNodeCommand(bool canAcceptEmptySelectedNodes)
+		{
+			this.canAcceptEmptySelectedNodes = canAcceptEmptySelectedNodes;
+		}
+
 		protected static ILSpyTreeNode[] GetSelectedNodes()
 		{
 			return MainWindow.Instance.SelectedNodes;
@@ -40,10 +52,10 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return CanExecute(GetSelectedNodes());
 		}
 
-		bool CanExecute(ILSpyTreeNode[] nodes)
+		protected bool CanExecute(ILSpyTreeNode[] nodes)
 		{
 			return nodes != null &&
-				nodes.Length > 0 &&
+				(canAcceptEmptySelectedNodes || nodes.Length > 0) &&
 				CanExecuteInternal(nodes);
 		}
 
@@ -52,7 +64,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			Execute(GetSelectedNodes());
 		}
 
-		void Execute(ILSpyTreeNode[] nodes)
+		protected void Execute(ILSpyTreeNode[] nodes)
 		{
 			if (CanExecute(nodes))
 				ExecuteInternal(nodes);

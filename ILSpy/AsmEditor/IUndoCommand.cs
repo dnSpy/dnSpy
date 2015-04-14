@@ -17,12 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace ICSharpCode.ILSpy.AsmEditor
 {
-	public interface IUndoCommand
+	/// <summary>
+	/// An assembly editor command that can be undone. Dispose() is called when the history is cleared.
+	/// </summary>
+	public interface IUndoCommand : IDisposable
 	{
 		/// <summary>
 		/// Gets a description of the command

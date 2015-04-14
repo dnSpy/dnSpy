@@ -21,8 +21,8 @@ using System.Windows.Input;
 
 namespace ICSharpCode.ILSpy.AsmEditor
 {
-	[ExportMainMenuCommand(Header = "Undo",
-						   InputGestureText = "Ctrl+Z",
+	[ExportMainMenuCommand(MenuHeader = "Undo",
+						   MenuInputGestureText = "Ctrl+Z",
 						   MenuIcon = "Images/Undo.png",
 						   Menu = "_Edit",
 						   MenuCategory = "UndoRedo",
@@ -35,8 +35,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 	}
 
-	[ExportMainMenuCommand(Header = "Redo",
-						   InputGestureText = "Ctrl+Y",
+	[ExportMainMenuCommand(MenuHeader = "Redo",
+						   MenuInputGestureText = "Ctrl+Y",
 						   MenuIcon = "Images/Redo.png",
 						   Menu = "_Edit",
 						   MenuCategory = "UndoRedo",

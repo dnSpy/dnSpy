@@ -29,13 +29,13 @@
 		</ListView>
 		<DockPanel Grid.Row="2">
 			<StackPanel DockPanel.Dock="Right"  Orientation="Horizontal" HorizontalAlignment="Right">
-				<Button IsDefault="True" Margin="2,0" IsEnabled="False" Name="okButton" Click="OKButton_Click">_Open</Button>
-				<Button IsCancel="True" Margin="2,0">_Cancel</Button>
+				<Button IsDefault="True" Height="23" Width="75" Margin="0,0,5,0" IsEnabled="False" Name="okButton" Click="OKButton_Click">_Open</Button>
+				<Button IsCancel="True" Height="23" Width="75">_Cancel</Button>
 			</StackPanel>
 
 			<StackPanel DockPanel.Dock="Left"  Orientation="Horizontal" HorizontalAlignment="Left">
-				<Button Margin="2,0" Click="CreateButton_Click">Cr_eate</Button>
-				<Button Margin="2,0" IsEnabled="False" Name="removeButton" Click="RemoveButton_Click">_Remove</Button>
+				<Button Height="23" Width="75" Margin="0,0,5,0" Click="CreateButton_Click">Cr_eate</Button>
+				<Button Height="23" Width="75" IsEnabled="False" Name="removeButton" Click="RemoveButton_Click">_Remove</Button>
 			</StackPanel>
 		</DockPanel>
 	</Grid>

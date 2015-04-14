@@ -80,7 +80,7 @@
 			Executed="Ok_Executed"
 			/>
 	</Window.CommandBindings>
-	<Grid>
+	<Grid FocusManager.FocusedElement="{Binding ElementName=filenameTextBox}">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition />
 		</Grid.ColumnDefinitions>
@@ -131,7 +131,7 @@
 			<TabItem Header="MD Writer Options">
 				<ScrollViewer VerticalScrollBarVisibility="Auto">
 					<StackPanel>
-						<GroupBox ToolTip="If the file is still obfuscated, RIDs might need to be preserved.">
+						<GroupBox ToolTip="If the file is still obfuscated, RIDs might need to be preserved." IsEnabled="{Binding CanSaveMixedModeModule}">
 							<GroupBox.Header>
 								<CheckBox IsThreeState="False" IsChecked="{Binding MetaDataOptions.PreserveRids}" Content="P_reserve All MD Tokens" />
 							</GroupBox.Header>
@@ -161,7 +161,7 @@
 								<CheckBox Grid.Row="5" Grid.Column="0" Content="Metho_dSpec" IsChecked="{Binding MetaDataOptions.PreserveMethodSpecRids}" />
 							</Grid>
 						</GroupBox>
-						<GroupBox Header="Preserve Heap Offsets">
+						<GroupBox Header="Preserve Heap Offsets" IsEnabled="{Binding CanSaveMixedModeModule}">
 							<Grid>
 								<Grid.RowDefinitions>
 									<RowDefinition />
@@ -204,7 +204,7 @@
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition />
 								</Grid.ColumnDefinitions>
-								<CheckBox Grid.Row="0" Grid.Column="0" Content="Preserve E_xtra Signature Data" IsChecked="{Binding MetaDataOptions.PreserveExtraSignatureData}" ToolTip="Preserve any extra data after the signatures.&#x0A;Some obfuscators put data there." />
+								<CheckBox Grid.Row="0" Grid.Column="0" Content="Preserve E_xtra Signature Data" IsChecked="{Binding MetaDataOptions.PreserveExtraSignatureData}" ToolTip="Preserve any extra data after the signatures.&#x0A;Some obfuscators put data there." IsEnabled="{Binding CanSaveMixedModeModule}" />
 								<CheckBox Grid.Row="1" Grid.Column="0" Content="_Keep Old MaxStack Value" IsChecked="{Binding MetaDataOptions.KeepOldMaxStack}" ToolTip="Use the MaxStack value from the method instead of calculating a new MaxStack value.&#x0A;Needed if the methods are still obfuscated." />
 							</Grid>
 						</GroupBox>

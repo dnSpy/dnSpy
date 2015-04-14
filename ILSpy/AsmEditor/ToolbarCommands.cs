@@ -54,6 +54,11 @@ namespace ICSharpCode.ILSpy.AsmEditor
 						  ToolbarOrder = 5020)]
 	sealed class DeleteHistoryAsmEdCommand : TreeNodeCommand
 	{
+		public DeleteHistoryAsmEdCommand()
+			: base(true)
+		{
+		}
+
 		protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
 		{
 			return UndoCommandManager.Instance.CanUndo ||

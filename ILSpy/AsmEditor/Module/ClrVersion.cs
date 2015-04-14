@@ -17,30 +17,28 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows.Controls;
-using ICSharpCode.ILSpy.TreeNodes;
-
-namespace ICSharpCode.ILSpy.AsmEditor
+namespace ICSharpCode.ILSpy.AsmEditor.Module
 {
-	public abstract class TreeNodeMainMenu : TreeNodeCommand, IMainMenuCommand
+	enum ClrVersion
 	{
-		protected TreeNodeMainMenu()
-		{
-			MainWindow.Instance.SetMenuAlwaysRegenerate("_Edit");
-		}
+		/// <summary>
+		/// .NET 1.0
+		/// </summary>
+		CLR10,
 
-		public bool IsVisible {
-			get { return CanExecute(GetSelectedNodes()); }
-		}
+		/// <summary>
+		/// .NET 1.1
+		/// </summary>
+		CLR11,
 
-		protected void SetHeader(MenuItem menuItem, string singular, string plural)
-		{
-			SetHeader(GetSelectedNodes(), menuItem, singular, plural);
-		}
+		/// <summary>
+		/// .NET 2.0 - 3.5
+		/// </summary>
+		CLR20,
 
-		protected void SetHeader(ILSpyTreeNode[] nodes, MenuItem menuItem, string singular, string plural)
-		{
-			menuItem.Header = nodes != null && nodes.Length == 1 ? singular : plural;
-		}
+		/// <summary>
+		/// .NET 4.0 - 4.5
+		/// </summary>
+		CLR40,
 	}
 }

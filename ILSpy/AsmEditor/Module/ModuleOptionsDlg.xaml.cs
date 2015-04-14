@@ -25,21 +25,20 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
+namespace ICSharpCode.ILSpy.AsmEditor.Module
 {
 	/// <summary>
-	/// Interaction logic for SaveModuleOptions.xaml
+	/// Interaction logic for ModuleOptionsDlg.xaml
 	/// </summary>
-	public partial class SaveModuleOptions : Window
+	public partial class ModuleOptionsDlg : Window
 	{
-		public SaveModuleOptions()
+		public ModuleOptionsDlg()
 		{
 			InitializeComponent();
 			SourceInitialized += (s, e) => this.HideMinimizeAndMaximizeButtons();
@@ -58,29 +57,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 
 		public bool HasError {
 			get {
-				var data = (SaveModuleOptionsVM)DataContext;
+				var data = (ModuleOptionsVM)DataContext;
 				if (data != null && data.HasError)
 					return true;
 
 				return this.HasError();
 			}
-		}
-
-		private void filenameButton_Click(object sender, RoutedEventArgs e)
-		{
-			var data = (SaveModuleOptionsVM)DataContext;
-			var dialog = new SaveFileDialog() {
-				Filter = ".NET Executable (*.exe, *.dll, *.netmodule)|*.exe;*.dll;*.netmodule|All files (*.*)|*.*",
-				RestoreDirectory = true,
-				DefaultExt = data.Extension,
-				ValidateNames = true,
-			};
-			var dir = filenameTextBox.Text;
-			if (!string.IsNullOrWhiteSpace(dir))
-				dialog.InitialDirectory = System.IO.Path.GetDirectoryName(dir);
-
-			if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-				filenameTextBox.Text = dialog.FileName;
 		}
 	}
 }

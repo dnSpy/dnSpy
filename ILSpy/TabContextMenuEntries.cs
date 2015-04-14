@@ -461,7 +461,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "Window", Header = "_New Window", MenuOrder = 9000, MenuIcon = "images/NewWindow.png")]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "Window", MenuHeader = "_New Window", MenuOrder = 9000, MenuIcon = "images/NewWindow.png")]
 	sealed class NewWindowCommand : TabGroupCommand
 	{
 		protected override bool IsVisibleInternal()
@@ -480,7 +480,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "Window", Header = "_Close", MenuOrder = 9010, InputGestureText = "Ctrl+W")]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "Window", MenuHeader = "_Close", MenuOrder = 9010, MenuInputGestureText = "Ctrl+W")]
 	class CloseTabCommand : TabGroupCommand
 	{
 		protected override bool CanExecuteInternal()
@@ -494,7 +494,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroups", Header = "New Hori_zontal Tab Group", MenuOrder = 9200, MenuIcon = "images/HorizontalTabGroup.png")]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroups", MenuHeader = "New Hori_zontal Tab Group", MenuOrder = 9200, MenuIcon = "images/HorizontalTabGroup.png")]
 	sealed class NewHorizontalTabGroupCommand : TabGroupCommand
 	{
 		protected override bool CanExecuteInternal()
@@ -508,7 +508,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroups", Header = "New _Vertical Tab Group", MenuOrder = 9210, MenuIcon = "images/VerticalTabGroup.png")]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroups", MenuHeader = "New _Vertical Tab Group", MenuOrder = 9210, MenuIcon = "images/VerticalTabGroup.png")]
 	sealed class NewVerticalTabGroupCommand : TabGroupCommand
 	{
 		protected override bool CanExecuteInternal()
@@ -522,7 +522,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroups", Header = "Move to Ne_xt Tab Group", MenuOrder = 9220)]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroups", MenuHeader = "Move to Ne_xt Tab Group", MenuOrder = 9220)]
 	sealed class MoveToNextTabGroupCommand : TabGroupCommand
 	{
 		protected override bool CanExecuteInternal()
@@ -536,7 +536,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroups", Header = "Move All to Next Tab Group", MenuOrder = 9230)]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroups", MenuHeader = "Move All to Next Tab Group", MenuOrder = 9230)]
 	sealed class MoveAllToNextTabGroupCommand : TabGroupCommand
 	{
 		protected override bool CanExecuteInternal()
@@ -550,7 +550,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroups", Header = "Move to P_revious Tab Group", MenuOrder = 9240)]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroups", MenuHeader = "Move to P_revious Tab Group", MenuOrder = 9240)]
 	sealed class MoveToPreviousTabGroupCommand : TabGroupCommand
 	{
 		protected override bool CanExecuteInternal()
@@ -564,7 +564,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroups", Header = "Move All to Previous Tab Group", MenuOrder = 9250)]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroups", MenuHeader = "Move All to Previous Tab Group", MenuOrder = 9250)]
 	sealed class MoveAllToPreviousTabGroupCommand : TabGroupCommand
 	{
 		protected override bool CanExecuteInternal()
@@ -578,7 +578,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroups", Header = "C_lose All Tabs", MenuOrder = 9260)]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroups", MenuHeader = "C_lose All Tabs", MenuOrder = 9260)]
 	sealed class CloseAllTabsCommand : TabGroupCommand
 	{
 		protected override bool IsVisibleInternal()
@@ -597,7 +597,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsMisc", Header = "Close Tab Group", MenuOrder = 9270)]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsMisc", MenuHeader = "Close Tab Group", MenuOrder = 9270)]
 	sealed class CloseTabGroupCommand : TabGroupCommand
 	{
 		protected override bool CanExecuteInternal()
@@ -611,7 +611,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsMisc", Header = "Close All Tab Groups But This", MenuOrder = 9280)]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsMisc", MenuHeader = "Close All Tab Groups But This", MenuOrder = 9280)]
 	sealed class CloseAllTabGroupsButThisCommand : TabGroupCommand
 	{
 		protected override bool CanExecuteInternal()
@@ -625,7 +625,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsMisc", Header = "Move Tab Group After Next Tab Group", MenuOrder = 9290)]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsMisc", MenuHeader = "Move Tab Group After Next Tab Group", MenuOrder = 9290)]
 	sealed class MoveTabGroupAfterNextTabGroupCommand : TabGroupCommand
 	{
 		protected override bool CanExecuteInternal()
@@ -639,7 +639,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsMisc", Header = "Move Tab Group Before Previous Tab Group", MenuOrder = 9300)]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsMisc", MenuHeader = "Move Tab Group Before Previous Tab Group", MenuOrder = 9300)]
 	sealed class MoveTabGroupBeforePreviousTabGroupCommand : TabGroupCommand
 	{
 		protected override bool CanExecuteInternal()
@@ -653,7 +653,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsMisc", Header = "Merge All Tab Groups", MenuOrder = 9310)]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsMisc", MenuHeader = "Merge All Tab Groups", MenuOrder = 9310)]
 	sealed class MergeAllTabGroupsCommand : TabGroupCommand
 	{
 		protected override bool CanExecuteInternal()
@@ -667,7 +667,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsMisc2", Header = "Use Vertical Tab Groups", MenuOrder = 9400, MenuIcon = "images/VerticalTabGroup.png")]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsMisc2", MenuHeader = "Use Vertical Tab Groups", MenuOrder = 9400, MenuIcon = "images/VerticalTabGroup.png")]
 	sealed class UseVerticalTabGroupsCommand : TabGroupCommand
 	{
 		protected override bool CanExecuteInternal()
@@ -681,7 +681,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsMisc2", Header = "Use Horizontal Tab Groups", MenuOrder = 9410, MenuIcon = "images/HorizontalTabGroup.png")]
+	[ExportMainMenuCommand(Menu = "_Window", MenuCategory = "TabGroupsMisc2", MenuHeader = "Use Horizontal Tab Groups", MenuOrder = 9410, MenuIcon = "images/HorizontalTabGroup.png")]
 	sealed class UseHorizontalTabGroupsCommand : TabGroupCommand
 	{
 		protected override bool CanExecuteInternal()

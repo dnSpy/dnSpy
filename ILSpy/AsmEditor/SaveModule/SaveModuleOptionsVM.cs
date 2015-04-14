@@ -20,8 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using dnlib.DotNet;
@@ -30,109 +28,8 @@ using dnlib.DotNet.Writer;
 using dnlib.PE;
 using dnlib.W32Resources;
 
-// NOTE: A lot of the properties always call OnPropertyChanged() when the property setter is called.
-//		 It's to make sure that the Restore button can restore everything to the default values when
-//		 one of the fields was eg. an invalid number. In that case this code (the view model) doesn't
-//		 know about the error, but the view must be updated to use the restored value.
-
 namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 {
-	sealed class EnumVM
-	{
-		readonly object value;
-		readonly string name;
-
-		public object Value {
-			get { return value; }
-		}
-
-		public string Name {
-			get { return name; }
-		}
-
-		public EnumVM(object value)
-		{
-			this.value = value;
-			this.name = Enum.GetName(value.GetType(), value);
-		}
-
-		public static EnumVM[] Create(Type enumType, params object[] values)
-		{
-			var list = new List<EnumVM>();
-			foreach (var value in enumType.GetEnumValues()) {
-				if (values.Any(a => a.Equals(value)))
-					continue;
-				list.Add(new EnumVM(value));
-			}
-			list.Sort((a, b) => a.Name.ToUpperInvariant().CompareTo(b.Name.ToUpperInvariant()));
-			for (int i = 0; i < values.Length; i++)
-				list.Insert(i, new EnumVM(values[i]));
-			return list.ToArray();
-		}
-	}
-
-	sealed class EnumListVM : INotifyPropertyChanged
-	{
-		readonly IList<EnumVM> list;
-		readonly Action onChanged;
-		int index;
-
-		public IList<EnumVM> Items {
-			get { return list; }
-		}
-
-		public int SelectedIndex {
-			get { return index; }
-			set {
-				if (index != value) {
-					Debug.Assert(value >= 0 && value < list.Count);
-					index = value;
-					OnPropertyChanged("SelectedIndex");
-					OnPropertyChanged("SelectedItem");
-					if (onChanged != null)
-						onChanged();
-				}
-			}
-		}
-
-		public object SelectedItem {
-			get {
-				if (index < 0 || index >= list.Count)
-					return null;
-				return list[index].Value;
-			}
-			set {
-				if (SelectedItem != value)
-					SelectedIndex = GetIndex(value);
-			}
-		}
-
-		public EnumListVM(IList<EnumVM> list, Action onChanged = null)
-		{
-			this.list = list;
-			this.index = 0;
-			this.onChanged = onChanged;
-		}
-
-		int GetIndex(object value)
-		{
-			for (int i = 0; i < list.Count; i++) {
-				if (list[i].Value.Equals(value))
-					return i;
-			}
-			Debug.Fail(string.Format("Could not find {0}", value));
-			return -1;
-		}
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		void OnPropertyChanged(string propName)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propName));
-		}
-	}
-
 	sealed class SaveModuleOptionsVM : INotifyPropertyChanged, IDataErrorInfo
 	{
 		public ModuleDef Module {
@@ -246,7 +143,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 		bool keepWin32Resources;
 
-		static readonly EnumVM[] moduleKindList = EnumVM.Create(typeof(dnlib.DotNet.ModuleKind));
+		internal static readonly EnumVM[] moduleKindList = EnumVM.Create(typeof(dnlib.DotNet.ModuleKind));
 
 		public EnumListVM ModuleKind {
 			get { return moduleKindVM; }
@@ -291,6 +188,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			moduleKindVM = new EnumListVM(moduleKindList, () => {
 				OnPropertyChanged("Extension");
 				PEHeadersOptions.Subsystem.SelectedItem = GetSubsystem((dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem);
+				PEHeadersOptions.Characteristics = CharacteristicsHelper.GetCharacteristics(PEHeadersOptions.Characteristics ?? 0, (dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem);
 			});
 
 			Reinitialize();
@@ -387,6 +285,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 
 		void InitializeFromInternal(ModuleWriterOptionsBase options)
 		{
+			// Writing to it triggers a write to Subsystem so write it first
+			moduleKindVM.SelectedItem = options.ModuleKind;
+
 			peHeadersOptions.InitializeFrom(options.PEHeadersOptions);
 			cor20HeaderOptions.InitializeFrom(options.Cor20HeaderOptions);
 			metaDataOptions.InitializeFrom(options.MetaDataOptions);
@@ -395,7 +296,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			ShareMethodBodies = options.ShareMethodBodies;
 			AddCheckSum = options.AddCheckSum;
 			Win32Resources = options.Win32Resources;
-			moduleKindVM.SelectedItem = options.ModuleKind;
+
+			// Writing to Machine and ModuleKind triggers code that updates Characteristics
+			peHeadersOptions.Characteristics = options.PEHeadersOptions.Characteristics;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -440,13 +343,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		{
 			this.defaultMachine = defaultMachine;
 			this.defaultSubsystem = defaultSubsystem;
+			this.machineVM = new EnumListVM(machineList, () => {
+				Characteristics = CharacteristicsHelper.GetCharacteristics(Characteristics ?? 0, (dnlib.PE.Machine)Machine.SelectedItem);
+			});
 		}
 
 		public EnumListVM Machine {
 			get { return machineVM; }
 		}
-		static readonly EnumVM[] machineList = EnumVM.Create(typeof(dnlib.PE.Machine), dnlib.PE.Machine.I386, dnlib.PE.Machine.AMD64, dnlib.PE.Machine.IA64, dnlib.PE.Machine.ARMNT, dnlib.PE.Machine.ARM64);
-		readonly EnumListVM machineVM = new EnumListVM(machineList);
+		internal static readonly EnumVM[] machineList = EnumVM.Create(typeof(dnlib.PE.Machine), dnlib.PE.Machine.I386, dnlib.PE.Machine.AMD64, dnlib.PE.Machine.IA64, dnlib.PE.Machine.ARMNT, dnlib.PE.Machine.ARM64);
+		readonly EnumListVM machineVM;
 
 		public uint? TimeDateStamp {
 			get { return timeDateStamp; }
@@ -1394,14 +1300,20 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 
 		public string this[string columnName] {
 			get {
-				if (columnName == "VersionString") {
-					var bytes = Encoding.UTF8.GetBytes(versionString + "\0");
-					if (bytes.Length > 256)
-						return "Version string is too long";
-				}
+				if (columnName == "VersionString")
+					return ValidateVersionString(versionString);
 
 				return string.Empty;
 			}
+		}
+
+		internal static string ValidateVersionString(string versionString)
+		{
+			var bytes = Encoding.UTF8.GetBytes(versionString + "\0");
+			if (bytes.Length > 256)
+				return "Version string is too long";
+
+			return string.Empty;
 		}
 
 		public bool HasError {

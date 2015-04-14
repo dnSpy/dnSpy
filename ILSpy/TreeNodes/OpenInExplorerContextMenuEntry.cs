@@ -31,7 +31,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			return context.SelectedTreeNodes != null &&
 				context.SelectedTreeNodes.Length == 1 &&
-				context.SelectedTreeNodes[0] is AssemblyTreeNode;
+				context.SelectedTreeNodes[0] is AssemblyTreeNode &&
+				!string.IsNullOrWhiteSpace(((AssemblyTreeNode)context.SelectedTreeNodes[0]).LoadedAssembly.FileName);
 		}
 
 		public bool IsEnabled(TextViewContext context)

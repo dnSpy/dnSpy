@@ -109,11 +109,29 @@
     <Compile Include="AskForInput.xaml.cs">
       <DependentUpon>AskForInput.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AsmEditor\AssemblyTreeNodeCreator.cs" />
     <Compile Include="AsmEditor\Converters\BooleanToGridrowLengthConverter.cs" />
+    <Compile Include="AsmEditor\Converters\GuidNullableConverter.cs" />
     <Compile Include="AsmEditor\DeletableNodes.cs" />
+    <Compile Include="AsmEditor\EditCommand.cs" />
+    <Compile Include="AsmEditor\EnumVM.cs" />
     <Compile Include="AsmEditor\Extensions.cs" />
     <Compile Include="AsmEditor\Converters\HexNullableConverter.cs" />
     <Compile Include="AsmEditor\IUndoCommand.cs" />
+    <Compile Include="AsmEditor\Module\ClrVersion.cs" />
+    <Compile Include="AsmEditor\Module\ModuleCommands.cs" />
+    <Compile Include="AsmEditor\Module\ModuleOptions.cs" />
+    <Compile Include="AsmEditor\Module\ModuleOptionsDlg.xaml.cs">
+      <DependentUpon>ModuleOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Module\ModuleOptionsVM.cs" />
+    <Compile Include="AsmEditor\Module\ModuleUtils.cs" />
+    <Compile Include="AsmEditor\Module\NetModuleOptions.cs" />
+    <Compile Include="AsmEditor\Module\NetModuleOptionsDlg.xaml.cs">
+      <DependentUpon>NetModuleOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Module\NetModuleOptionsVM.cs" />
+    <Compile Include="AsmEditor\SaveModule\CharacteristicsHelper.cs" />
     <Compile Include="AsmEditor\SaveModule\ModuleSaver.cs" />
     <Compile Include="AsmEditor\NamespaceCommands.cs" />
     <Compile Include="AsmEditor\RelayCommand.cs" />
@@ -127,15 +145,15 @@
       <DependentUpon>SaveMultiModule.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\SaveModule\SaveMultiModuleVM.cs" />
+    <Compile Include="AsmEditor\SaveModule\Saver.cs" />
     <Compile Include="AsmEditor\SaveModule\SaveSingleModule.xaml.cs">
       <DependentUpon>SaveSingleModule.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\ToolbarCommands.cs" />
     <Compile Include="AsmEditor\TreeNodeCommand.cs" />
-    <Compile Include="AsmEditor\TreeNodeContextMenu.cs" />
-    <Compile Include="AsmEditor\TreeNodeMainMenu.cs" />
     <Compile Include="AsmEditor\UndoCommandManager.cs" />
     <Compile Include="AsmEditor\UndoRedoMenuCommands.cs" />
+    <Compile Include="AsmEditor\Utils.cs" />
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
     <Compile Include="AvalonEdit\EditorPositionState.cs" />
@@ -330,6 +348,7 @@
     <Resource Include="Images\OK.png" />
     <Resource Include="Images\ClearSearch.png" />
     <Resource Include="Images\Search.png" />
+    <Resource Include="Images\Settings.png" />
     <Resource Include="Images\Delete.png" />
     <Resource Include="Images\ILSpy.ico" />
     <Resource Include="Images\FindAssembly.png" />
@@ -398,6 +417,14 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="AskForInput.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\Module\ModuleOptionsDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\Module\NetModuleOptionsDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

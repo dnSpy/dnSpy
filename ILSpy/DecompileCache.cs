@@ -202,13 +202,18 @@ namespace ICSharpCode.ILSpy
 				cachedItems.Clear();
 		}
 
+		public void Clear(LoadedAssembly asm)
+		{
+			Clear(new HashSet<LoadedAssembly>(new[] { asm }));
+		}
+
 		public void Clear(HashSet<LoadedAssembly> asms)
 		{
 			lock (lockObj) {
 				foreach (var key in cachedItems.Keys.ToArray()) {
 					foreach (var node in key.TreeNodes) {
 						var asmNode = MainWindow.GetAssemblyTreeNode(node);
-						if (asmNode != null && asms.Contains(asmNode.LoadedAssembly)) {
+						if (asmNode == null || asms.Contains(asmNode.LoadedAssembly)) {
 							cachedItems.Remove(key);
 							break;
 						}

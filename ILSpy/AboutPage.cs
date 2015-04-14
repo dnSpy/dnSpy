@@ -38,7 +38,7 @@ using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy
 {
-	[ExportMainMenuCommand(Menu = "_Help", Header = "_About", MenuOrder = 99999)]
+	[ExportMainMenuCommand(Menu = "_Help", MenuHeader = "_About", MenuOrder = 99999)]
 	sealed class AboutPage : SimpleCommand
 	{
 		public override void Execute(object parameter)

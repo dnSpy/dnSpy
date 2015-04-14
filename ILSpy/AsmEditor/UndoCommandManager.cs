@@ -24,6 +24,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
+using System.Windows.Threading;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.TreeNodes;
 
@@ -173,7 +174,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 			currentCommands.Commands.TrimExcess();
 			undoCommands.Add(currentCommands);
-			redoCommands.Clear();
+			Clear(redoCommands);
 			UpdateAssemblySavedStateRedo(currentCommands);
 			currentCommands = null;
 		}
@@ -187,10 +188,30 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			if (currentCommands != null)
 				throw new InvalidOperationException();
 
-			undoCommands.Clear();
-			undoCommands.TrimExcess();
-			redoCommands.Clear();
-			redoCommands.TrimExcess();
+			bool callGc = undoCommands.Count != 0 || redoCommands.Count != 0;
+			Clear(undoCommands);
+			Clear(redoCommands);
+
+			if (callGc && !callingGc) {
+				callingGc = true;
+				// Some removed assemblies need to be GC'd. The AssemblyList already does this but
+				// we might cache them so we need to call the GC again.
+				App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(delegate {
+					GC.Collect();
+					callingGc = false;
+				}));
+			}
+		}
+		bool callingGc = false;
+
+		static void Clear(List<UndoState> list)
+		{
+			foreach (var group in list) {
+				foreach (var cmd in group.Commands)
+					cmd.Dispose();
+			}
+			list.Clear();
+			list.TrimExcess();
 		}
 
 		/// <summary>
@@ -269,6 +290,11 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public bool IsModified(LoadedAssembly asm)
 		{
 			return asm.IsDirty;
+		}
+
+		internal void MarkAsModified(LoadedAssembly asm)
+		{
+			asm.IsDirty = true;
 		}
 
 		public void MarkAsSaved(AssemblyTreeNode asmNode)

@@ -17,35 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows.Controls;
+using ICSharpCode.ILSpy.TreeNodes;
 
 namespace ICSharpCode.ILSpy.AsmEditor
 {
-	public abstract class TreeNodeContextMenu : IContextMenuEntry2
+	static class Utils
 	{
-		public virtual bool IsVisible(TextViewContext context)
+		public static void InvalidateDecompilationCache(AssemblyTreeNode asmNode)
 		{
-			return context.TreeView == MainWindow.Instance.treeView &&
-				context.SelectedTreeNodes != null &&
-				context.SelectedTreeNodes.Length > 0;
+			InvalidateDecompilationCache(asmNode.LoadedAssembly);
 		}
 
-		public virtual bool IsEnabled(TextViewContext context)
+		public static void InvalidateDecompilationCache(LoadedAssembly asm)
 		{
-			return IsVisible(context);
-		}
+			DecompileCache.Instance.Clear(asm);
 
-		public abstract void Execute(TextViewContext context);
-
-		public virtual void Initialize(TextViewContext context, MenuItem menuItem)
-		{
-		}
-
-		protected void SetHeader(TextViewContext context, MenuItem menuItem, string singular, string plural)
-		{
-			menuItem.Header = context.SelectedTreeNodes != null &&
-						context.SelectedTreeNodes.Length == 1 ?
-						singular : plural;
+			//TODO: User should be able to disable this:
+			MainWindow.Instance.RefreshCode(asm);
 		}
 	}
 }

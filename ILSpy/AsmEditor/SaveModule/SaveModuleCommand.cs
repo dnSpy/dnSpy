@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -54,53 +55,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
 		{
 			var asmNodes = GetAssemblyNodes(nodes);
-			SaveAssemblies(asmNodes);
+			Saver.SaveAssemblies(asmNodes);
 		}
 
 		public void Initialize(MenuItem menuItem)
 		{
 			menuItem.Header = GetAssemblyNodes(GetSelectedNodes()).Count <= 1 ? "Save _Module..." : "Save _Modules...";
-		}
-
-		public static void SaveAssemblies(IEnumerable<LoadedAssembly> asms)
-		{
-			var asmsAry = asms.ToArray();
-			if (asmsAry.Length == 0)
-				return;
-
-			if (asmsAry.Length == 1) {
-				var optsData = new SaveModuleOptionsVM(asmsAry[0].ModuleDefinition);
-				var optsWin = new SaveModuleOptions();
-				optsWin.Owner = MainWindow.Instance;
-				optsWin.DataContext = optsData;
-				var res = optsWin.ShowDialog();
-				if (res != true)
-					return;
-
-				var data = new SaveMultiModuleVM(optsData);
-				var win = new SaveSingleModule();
-				win.Owner = MainWindow.Instance;
-				win.DataContext = data;
-				data.Save();
-				win.ShowDialog();
-				MarkAsSaved(data, asmsAry);
-			}
-			else {
-				var data = new SaveMultiModuleVM(asmsAry.Select(a => a.ModuleDefinition));
-				var win = new SaveMultiModule();
-				win.Owner = MainWindow.Instance;
-				win.DataContext = data;
-				win.ShowDialog();
-				MarkAsSaved(data, asmsAry);
-			}
-		}
-
-		static void MarkAsSaved(SaveMultiModuleVM vm, LoadedAssembly[] nodes)
-		{
-			foreach (var asm in nodes) {
-				if (vm.WasSaved(asm.ModuleDefinition))
-					UndoCommandManager.Instance.MarkAsSaved(asm);
-			}
 		}
 	}
 
@@ -146,11 +106,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 
 		public static void Execute()
 		{
-			SaveModuleCommand.SaveAssemblies(GetDirtyAssemblies());
+			Saver.SaveAssemblies(GetDirtyAssemblies());
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_File", Header = "Save A_ll...", InputGestureText = "Ctrl+Shift+S", MenuCategory = "Save", MenuOrder = 1020, MenuIcon = "Images/SaveAll.png")]
+	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "Save A_ll...", MenuInputGestureText = "Ctrl+Shift+S", MenuCategory = "Save", MenuOrder = 1020, MenuIcon = "Images/SaveAll.png")]
 	sealed class SaveAllCommand : ICommand
 	{
 		public event EventHandler CanExecuteChanged {

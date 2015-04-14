@@ -20,7 +20,7 @@ using System;
 
 namespace ICSharpCode.ILSpy
 {
-	[ExportMainMenuCommand(Menu = "_File", Header = "E_xit", MenuOrder = 1999, MenuCategory = "Exit")]
+	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "E_xit", MenuOrder = 1999, MenuCategory = "Exit")]
 	sealed class ExitCommand : SimpleCommand
 	{
 		public override void Execute(object parameter)

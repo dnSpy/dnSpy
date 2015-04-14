@@ -243,14 +243,25 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			this.modules.AddRange(modules.Select(m => new SaveModuleOptionsVM(m)));
 		}
 
+		SaveModuleOptionsVM GetSaveModuleOptionsVM(ModuleDef module)
+		{
+			return modules.FirstOrDefault(a => a.Module == module);
+		}
+
 		public bool WasSaved(ModuleDef module)
 		{
-			var data = modules.FirstOrDefault(a => a.Module == module);
+			var data = GetSaveModuleOptionsVM(module);
 			if (data == null)
 				return false;
 			bool saved;
 			savedFile.TryGetValue(data, out saved);
 			return saved;
+		}
+
+		public string GetSavedFileName(ModuleDef module)
+		{
+			var data = GetSaveModuleOptionsVM(module);
+			return data == null ? null : data.FileName;
 		}
 
 		public void Save()

@@ -21,12 +21,17 @@ using System.Windows.Input;
 
 namespace ICSharpCode.ILSpy
 {
-	[ExportMainMenuCommand(Menu = "_File", Header = "_Reload", MenuIcon = "Images/Refresh.png", MenuCategory = "Open", MenuOrder = 1140)]
-	sealed class RefreshCommand : CommandWrapper
+	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "_Reload All Assemblies", MenuCategory = "Open", MenuOrder = 1140)]
+	sealed class ReloadCommand : SimpleCommand
 	{
-		public RefreshCommand()
-			: base(NavigationCommands.Refresh)
+		public override bool CanExecute(object parameter)
 		{
+			return MainWindow.Instance.ReloadListCanExecute();
+		}
+
+		public override void Execute(object parameter)
+		{
+			MainWindow.Instance.ReloadList();
 		}
 	}
 }

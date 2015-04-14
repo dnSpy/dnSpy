@@ -30,15 +30,19 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	public sealed class AssemblyReferenceTreeNode : ILSpyTreeNode
 	{
 		readonly AssemblyRef r;
+		readonly AssemblyListTreeNode assemblyListTreeNode;
 		readonly AssemblyTreeNode parentAssembly;
 		
-		public AssemblyReferenceTreeNode(AssemblyRef r, AssemblyTreeNode parentAssembly)
+		internal AssemblyReferenceTreeNode(AssemblyRef r, AssemblyTreeNode parentAssembly, AssemblyListTreeNode assemblyListTreeNode)
 		{
 			if (parentAssembly == null)
 				throw new ArgumentNullException("parentAssembly");
+			if (assemblyListTreeNode == null)
+				throw new ArgumentNullException("assemblyListTreeNode");
 			if (r == null)
 				throw new ArgumentNullException("r");
 			this.r = r;
+			this.assemblyListTreeNode = assemblyListTreeNode;
 			this.parentAssembly = parentAssembly;
 			this.LazyLoading = true;
 		}
@@ -68,14 +72,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return base.ShowExpander;
 			}
 		}
-
-		AssemblyListTreeNode GetAssemblyListTreeNode() {
-			return parentAssembly.Ancestors().OfType<AssemblyListTreeNode>().FirstOrDefault();
-		}
 		
 		public override void ActivateItem(System.Windows.RoutedEventArgs e)
 		{
-			var assemblyListNode = GetAssemblyListTreeNode();
+			var assemblyListNode = assemblyListTreeNode;
 			Debug.Assert(assemblyListNode != null);
 			if (assemblyListNode != null) {
 				assemblyListNode.Select(assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedAssembly(r)));
@@ -85,7 +85,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		protected override void LoadChildren()
 		{
-			var assemblyListNode = GetAssemblyListTreeNode();
+			var assemblyListNode = assemblyListTreeNode;
 			Debug.Assert(assemblyListNode != null);
 			if (assemblyListNode != null) {
 				var refNode = assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedAssembly(r));
@@ -93,7 +93,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					ModuleDef module = refNode.LoadedAssembly.ModuleDefinition;
 					if (module is ModuleDefMD) {
 						foreach (var childRef in ((ModuleDefMD)module).GetAssemblyRefs())
-							this.Children.Add(new AssemblyReferenceTreeNode(childRef, refNode));
+							this.Children.Add(new AssemblyReferenceTreeNode(childRef, refNode, assemblyListTreeNode));
 					}
 				}
 			}
