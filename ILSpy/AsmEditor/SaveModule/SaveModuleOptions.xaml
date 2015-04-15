@@ -21,7 +21,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:vc="clr-namespace:ICSharpCode.ILSpy.AsmEditor.Converters"
              Height="350" Width="400"
              ResizeMode="CanResizeWithGrip"
              Icon="../../images/ILSpy.ico"
@@ -30,39 +29,6 @@
              Style="{DynamicResource DialogWindow}"
              MinHeight="350" MinWidth="400">
 	<Window.Resources>
-		<vc:HexNullableConverter x:Key="HexNullableConverter1" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter2" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter3" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter4" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter5" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter6" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter7" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter8" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter9" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter10" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter11" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter12" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter13" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter14" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter15" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter16" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter17" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter18" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter19" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter20" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter21" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter22" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter23" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter24" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter25" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter26" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter27" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter28" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter29" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter30" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter31" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter32" />
-		<RoutedUICommand x:Key="OkCommand" Text="OK" />
 		<Style TargetType="{x:Type TextBox}">
 			<Style.Triggers>
 				<Trigger Property="Validation.HasError" Value="true">
@@ -73,13 +39,6 @@
 			</Style.Triggers>
 		</Style>
 	</Window.Resources>
-	<Window.CommandBindings>
-		<CommandBinding
-			Command="{StaticResource OkCommand}"
-			CanExecute="Ok_CanExecute"
-			Executed="Ok_Executed"
-			/>
-	</Window.CommandBindings>
 	<Grid FocusManager.FocusedElement="{Binding ElementName=filenameTextBox}">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition />
@@ -230,19 +189,19 @@
 									<ColumnDefinition Width="*" />
 								</Grid.ColumnDefinitions>
 								<Label Grid.Row="0" Grid.Column="0" Target="{Binding ElementName=signatureTextBox}" Content="_Signature" />
-								<TextBox Grid.Row="0" Grid.Column="1" Name="signatureTextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.Signature, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter1}}" />
+								<TextBox Grid.Row="0" Grid.Column="1" Name="signatureTextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.Signature.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 								<Label Grid.Row="0" Grid.Column="2" Target="{Binding ElementName=versionStringTextBox}" Content="_VersionString" />
 								<TextBox Grid.Row="0" Grid.Column="3" Name="versionStringTextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.VersionString, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 								<Label Grid.Row="1" Grid.Column="0" Target="{Binding ElementName=majorVersionTextBox}" Content="_MajorVersion" />
-								<TextBox Grid.Row="1" Grid.Column="1" Name="majorVersionTextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.MajorVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter2}}" />
+								<TextBox Grid.Row="1" Grid.Column="1" Name="majorVersionTextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.MajorVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 								<Label Grid.Row="1" Grid.Column="2" Target="{Binding ElementName=minorVersionTextBox}" Content="MinorVe_rsion" />
-								<TextBox Grid.Row="1" Grid.Column="3" Name="minorVersionTextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.MinorVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter3}}" />
+								<TextBox Grid.Row="1" Grid.Column="3" Name="minorVersionTextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.MinorVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 								<Label Grid.Row="2" Grid.Column="0" Target="{Binding ElementName=reserved1TextBox}" Content="Reserved_1" />
-								<TextBox Grid.Row="2" Grid.Column="1" Name="reserved1TextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.Reserved1, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter4}}" />
+								<TextBox Grid.Row="2" Grid.Column="1" Name="reserved1TextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.Reserved1.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 								<Label Grid.Row="2" Grid.Column="2" Target="{Binding ElementName=reserved2TextBox}" Content="Reserved_2" />
-								<TextBox Grid.Row="2" Grid.Column="3" Name="reserved2TextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.Reserved2, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter5}}" />
+								<TextBox Grid.Row="2" Grid.Column="3" Name="reserved2TextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.Reserved2.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 								<Label Grid.Row="3" Grid.Column="0" Target="{Binding ElementName=storageFlagsTextBox}" Content="S_torageFlags" />
-								<TextBox Grid.Row="3" Grid.Column="1" Name="storageFlagsTextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.StorageFlags, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter6}}" ToolTip="Leave this blank or set it only to 0.&#x0A;Any other value will crash the assembly." />
+								<TextBox Grid.Row="3" Grid.Column="1" Name="storageFlagsTextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.StorageFlags.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="Leave this blank or set it only to 0.&#x0A;Any other value will crash the assembly." />
 							</Grid>
 						</GroupBox>
 						<GroupBox Header="Tables Heap Options">
@@ -262,13 +221,13 @@
 									<ColumnDefinition Width="*" />
 								</Grid.ColumnDefinitions>
 								<Label Grid.Row="0" Grid.Column="0" Target="{Binding ElementName=majorVersionTextBox2}" Content="M_ajorVersion" />
-								<TextBox Grid.Row="0" Grid.Column="1" Name="majorVersionTextBox2" Text="{Binding MetaDataOptions.TablesHeapOptions.MajorVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter7}}" />
+								<TextBox Grid.Row="0" Grid.Column="1" Name="majorVersionTextBox2" Text="{Binding MetaDataOptions.TablesHeapOptions.MajorVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 								<Label Grid.Row="0" Grid.Column="2" Target="{Binding ElementName=minorVersionTextBox2}" Content="MinorVers_ion" />
-								<TextBox Grid.Row="0" Grid.Column="3" Name="minorVersionTextBox2" Text="{Binding MetaDataOptions.TablesHeapOptions.MinorVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter8}}" />
+								<TextBox Grid.Row="0" Grid.Column="3" Name="minorVersionTextBox2" Text="{Binding MetaDataOptions.TablesHeapOptions.MinorVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 								<Label Grid.Row="1" Grid.Column="0" Target="{Binding ElementName=reserved1TextBox2}" Content="Reserv_ed1" />
-								<TextBox Grid.Row="1" Grid.Column="1" Name="reserved1TextBox2" Text="{Binding MetaDataOptions.TablesHeapOptions.Reserved1, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter9}}" />
+								<TextBox Grid.Row="1" Grid.Column="1" Name="reserved1TextBox2" Text="{Binding MetaDataOptions.TablesHeapOptions.Reserved1.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 								<Label Grid.Row="1" Grid.Column="2" Target="{Binding ElementName=extraDataTextBox}" Content="Extra_Data" />
-								<TextBox Grid.Row="1" Grid.Column="3" Name="extraDataTextBox" Text="{Binding MetaDataOptions.TablesHeapOptions.ExtraData, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter10}}" />
+								<TextBox Grid.Row="1" Grid.Column="3" Name="extraDataTextBox" Text="{Binding MetaDataOptions.TablesHeapOptions.ExtraData.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 								<CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" IsThreeState="True" Content="_HasDeletedRows" IsChecked="{Binding MetaDataOptions.TablesHeapOptions.HasDeletedRows}" />
 								<CheckBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" IsThreeState="True" Content="_Use #- Table" IsChecked="{Binding MetaDataOptions.TablesHeapOptions.UseENC}" />
 							</Grid>
@@ -293,11 +252,11 @@
 								<ColumnDefinition Width="*" />
 							</Grid.ColumnDefinitions>
 							<Label Grid.Row="0" Grid.Column="0" Target="{Binding ElementName=majorRuntimeVersionTextBox}" Content="_Major RT Ver" />
-							<TextBox Grid.Row="0" Grid.Column="1" Name="majorRuntimeVersionTextBox" Text="{Binding Cor20HeaderOptions.MajorRuntimeVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter11}}" />
+							<TextBox Grid.Row="0" Grid.Column="1" Name="majorRuntimeVersionTextBox" Text="{Binding Cor20HeaderOptions.MajorRuntimeVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 							<Label Grid.Row="0" Grid.Column="2" Target="{Binding ElementName=minorRuntimeVersionTextBox}" Content="Mino_r RT Ver" />
-							<TextBox Grid.Row="0" Grid.Column="3" Name="minorRuntimeVersionTextBox" Text="{Binding Cor20HeaderOptions.MinorRuntimeVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter12}}" />
+							<TextBox Grid.Row="0" Grid.Column="3" Name="minorRuntimeVersionTextBox" Text="{Binding Cor20HeaderOptions.MinorRuntimeVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 							<Label Grid.Row="0" Grid.Column="4" Target="{Binding ElementName=entryPointTextBox}" Content="_Entry Point" />
-							<TextBox Grid.Row="0" Grid.Column="5" Name="entryPointTextBox" Text="{Binding Cor20HeaderOptions.EntryPoint, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter13}}" />
+							<TextBox Grid.Row="0" Grid.Column="5" Name="entryPointTextBox" Text="{Binding Cor20HeaderOptions.EntryPoint.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 						</Grid>
 						<GroupBox Header="Flags">
 							<Grid>
@@ -364,7 +323,7 @@
 							</StackPanel>
 
 							<Label Grid.Row="1" Grid.Column="0" Target="{Binding ElementName=timeDateStampTextBox}" Content="_TimeDateStamp" />
-							<TextBox Grid.Row="1" Grid.Column="1" Name="timeDateStampTextBox" Text="{Binding PEHeadersOptions.TimeDateStamp, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter14}}" />
+							<TextBox Grid.Row="1" Grid.Column="1" Name="timeDateStampTextBox" Text="{Binding PEHeadersOptions.TimeDateStamp.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
 							<GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Header="Characteristics">
 								<Grid>
@@ -402,40 +361,40 @@
 							</GroupBox>
 
 							<Label Grid.Row="3" Grid.Column="0" Content="MajorLinkerVersion" />
-							<TextBox Grid.Row="3" Grid.Column="1" Text="{Binding PEHeadersOptions.MajorLinkerVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter15}}" />
+							<TextBox Grid.Row="3" Grid.Column="1" Text="{Binding PEHeadersOptions.MajorLinkerVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
 							<Label Grid.Row="4" Grid.Column="0" Content="MinorLinkerVersion" />
-							<TextBox Grid.Row="4" Grid.Column="1" Text="{Binding PEHeadersOptions.MinorLinkerVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter16}}" />
+							<TextBox Grid.Row="4" Grid.Column="1" Text="{Binding PEHeadersOptions.MinorLinkerVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
 							<Label Grid.Row="5" Grid.Column="0" Content="ImageBase" />
-							<TextBox Grid.Row="5" Grid.Column="1" Text="{Binding PEHeadersOptions.ImageBase, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter17}}" />
+							<TextBox Grid.Row="5" Grid.Column="1" Text="{Binding PEHeadersOptions.ImageBase.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
 							<Label Grid.Row="6" Grid.Column="0" Content="SectionAlignment" />
-							<TextBox Grid.Row="6" Grid.Column="1" Text="{Binding PEHeadersOptions.SectionAlignment, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter18}}" />
+							<TextBox Grid.Row="6" Grid.Column="1" Text="{Binding PEHeadersOptions.SectionAlignment.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
 							<Label Grid.Row="7" Grid.Column="0" Content="FileAlignment" />
-							<TextBox Grid.Row="7" Grid.Column="1" Text="{Binding PEHeadersOptions.FileAlignment, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter19}}" />
+							<TextBox Grid.Row="7" Grid.Column="1" Text="{Binding PEHeadersOptions.FileAlignment.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
 							<Label Grid.Row="8" Grid.Column="0" Content="MajorOperatingSystemVersion" />
-							<TextBox Grid.Row="8" Grid.Column="1" Text="{Binding PEHeadersOptions.MajorOperatingSystemVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter20}}" />
+							<TextBox Grid.Row="8" Grid.Column="1" Text="{Binding PEHeadersOptions.MajorOperatingSystemVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
 							<Label Grid.Row="9" Grid.Column="0" Content="MinorOperatingSystemVersion" />
-							<TextBox Grid.Row="9" Grid.Column="1" Text="{Binding PEHeadersOptions.MinorOperatingSystemVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter21}}" />
+							<TextBox Grid.Row="9" Grid.Column="1" Text="{Binding PEHeadersOptions.MinorOperatingSystemVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
 							<Label Grid.Row="10" Grid.Column="0" Content="MajorImageVersion" />
-							<TextBox Grid.Row="10" Grid.Column="1" Text="{Binding PEHeadersOptions.MajorImageVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter22}}" />
+							<TextBox Grid.Row="10" Grid.Column="1" Text="{Binding PEHeadersOptions.MajorImageVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
 							<Label Grid.Row="11" Grid.Column="0" Content="MinorImageVersion" />
-							<TextBox Grid.Row="11" Grid.Column="1" Text="{Binding PEHeadersOptions.MinorImageVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter23}}" />
+							<TextBox Grid.Row="11" Grid.Column="1" Text="{Binding PEHeadersOptions.MinorImageVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
 							<Label Grid.Row="12" Grid.Column="0" Content="MajorSubsystemVersion" />
-							<TextBox Grid.Row="12" Grid.Column="1" Text="{Binding PEHeadersOptions.MajorSubsystemVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter24}}" />
+							<TextBox Grid.Row="12" Grid.Column="1" Text="{Binding PEHeadersOptions.MajorSubsystemVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
 							<Label Grid.Row="13" Grid.Column="0" Content="MinorSubsystemVersion" />
-							<TextBox Grid.Row="13" Grid.Column="1" Text="{Binding PEHeadersOptions.MinorSubsystemVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter25}}" />
+							<TextBox Grid.Row="13" Grid.Column="1" Text="{Binding PEHeadersOptions.MinorSubsystemVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
 							<Label Grid.Row="14" Grid.Column="0" Content="Win32VersionValue" />
-							<TextBox Grid.Row="14" Grid.Column="1" Text="{Binding PEHeadersOptions.Win32VersionValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter26}}" />
+							<TextBox Grid.Row="14" Grid.Column="1" Text="{Binding PEHeadersOptions.Win32VersionValue.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
 							<StackPanel Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
 								<Label Content="_Subsystem" Target="{Binding ElementName=subsystemComboBox}" />
@@ -478,29 +437,29 @@
 							</GroupBox>
 
 							<Label Grid.Row="17" Grid.Column="0" Content="SizeOfStackReserve" />
-							<TextBox Grid.Row="17" Grid.Column="1" Text="{Binding PEHeadersOptions.SizeOfStackReserve, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter27}}" />
+							<TextBox Grid.Row="17" Grid.Column="1" Text="{Binding PEHeadersOptions.SizeOfStackReserve.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
 							<Label Grid.Row="18" Grid.Column="0" Content="SizeOfStackCommit" />
-							<TextBox Grid.Row="18" Grid.Column="1" Text="{Binding PEHeadersOptions.SizeOfStackCommit, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter28}}" />
+							<TextBox Grid.Row="18" Grid.Column="1" Text="{Binding PEHeadersOptions.SizeOfStackCommit.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
 							<Label Grid.Row="19" Grid.Column="0" Content="SizeOfHeapReserve" />
-							<TextBox Grid.Row="19" Grid.Column="1" Text="{Binding PEHeadersOptions.SizeOfHeapReserve, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter29}}" />
+							<TextBox Grid.Row="19" Grid.Column="1" Text="{Binding PEHeadersOptions.SizeOfHeapReserve.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
 							<Label Grid.Row="20" Grid.Column="0" Content="SizeOfHeapCommit" />
-							<TextBox Grid.Row="20" Grid.Column="1" Text="{Binding PEHeadersOptions.SizeOfHeapCommit, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter30}}" />
+							<TextBox Grid.Row="20" Grid.Column="1" Text="{Binding PEHeadersOptions.SizeOfHeapCommit.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
 							<Label Grid.Row="21" Grid.Column="0" Content="LoaderFlags" />
-							<TextBox Grid.Row="21" Grid.Column="1" Text="{Binding PEHeadersOptions.LoaderFlags, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter31}}" />
+							<TextBox Grid.Row="21" Grid.Column="1" Text="{Binding PEHeadersOptions.LoaderFlags.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
 							<Label Grid.Row="22" Grid.Column="0" Target="{Binding ElementName=numberOfRvaAndSizesTextBox}" Content="_NumberOfRvaAndSizes" />
-							<TextBox Grid.Row="22" Grid.Column="1" Name="numberOfRvaAndSizesTextBox" Text="{Binding PEHeadersOptions.NumberOfRvaAndSizes, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter32}}" />
+							<TextBox Grid.Row="22" Grid.Column="1" Name="numberOfRvaAndSizesTextBox" Text="{Binding PEHeadersOptions.NumberOfRvaAndSizes.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 						</Grid>
 					</StackPanel>
 				</ScrollViewer>
 			</TabItem>
 		</TabControl>
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">
-			<Button Content="_OK" IsDefault="True" Height="23" Width="75" Margin="0,0,5,0" Command="{StaticResource OkCommand}" />
+			<Button Content="_OK" IsEnabled="{Binding HasNoError}" IsDefault="True" Height="23" Width="75" Margin="0,0,5,0" Click="okButton_Click" />
 			<Button Content="_Cancel" IsCancel="True" Height="23" Width="75" Margin="0,0,5,0" />
 			<Button Content="Restore" Height="23" Width="75" Command="{Binding ReinitializeCommand}" ToolTip="Restore all options." />
 		</StackPanel>

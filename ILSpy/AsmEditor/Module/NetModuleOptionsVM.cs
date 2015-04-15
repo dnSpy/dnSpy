@@ -23,7 +23,7 @@ using System.Windows.Input;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Module
 {
-	sealed class NetModuleOptionsVM : INotifyPropertyChanged
+	sealed class NetModuleOptionsVM : INotifyPropertyChanged, IDataErrorInfo
 	{
 		public string Name {
 			get { return name; }
@@ -48,26 +48,20 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		}
 		readonly EnumListVM clrVersionVM = new EnumListVM(clrVersionList);
 
-		public Guid Mvid {
+		public GuidVM Mvid {
 			get { return mvid; }
-			set {
-				if (mvid != value) {
-					mvid = value;
-					OnPropertyChanged("Mvid");
-				}
-			}
 		}
-		Guid mvid;
+		GuidVM mvid;
 
 		public ICommand GenerateNewMvidCommand {
-			get { return generateNewMvidCommand ?? (generateNewMvidCommand = new RelayCommand(a => Mvid = Guid.NewGuid())); }
+			get { return generateNewMvidCommand ?? (generateNewMvidCommand = new RelayCommand(a => Mvid.Value = Guid.NewGuid())); }
 		}
 		ICommand generateNewMvidCommand;
 
 		public NetModuleOptionsVM()
 		{
 			Name = "MyNetModule.netmodule";
-			Mvid = Guid.NewGuid();
+			mvid = new GuidVM(Guid.NewGuid(), a => HasErrorUpdated());
 			ClrVersion.SelectedItem = Module.ClrVersion.CLR40;
 		}
 
@@ -76,7 +70,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			var options = new NetModuleOptions();
 			options.Name = Name;
 			options.ClrVersion = (ClrVersion)ClrVersion.SelectedItem;
-			options.Mvid = Mvid;
+			options.Mvid = Mvid.Value;
 			return options;
 		}
 
@@ -86,6 +80,36 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		{
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propName));
+		}
+
+		public string Error {
+			get { throw new NotImplementedException(); }
+		}
+
+		public string this[string columnName] {
+			get {
+				HasErrorUpdated();
+				return Verify(columnName);
+			}
+		}
+
+		string Verify(string columnName)
+		{
+			return string.Empty;
+		}
+
+		void HasErrorUpdated()
+		{
+			OnPropertyChanged("HasError");
+			OnPropertyChanged("HasNoError");
+		}
+
+		public bool HasNoError {
+			get { return !HasError; }
+		}
+
+		public bool HasError {
+			get { return mvid.HasError; }
 		}
 	}
 }

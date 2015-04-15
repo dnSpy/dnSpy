@@ -95,22 +95,5 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			"COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
 			"LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9",
 		};
-
-		public static bool HasError(this DependencyObject depo)
-		{
-			if (depo == null)
-				return false;
-
-			if (Validation.GetHasError(depo))
-				return true;
-
-			foreach (var child in LogicalTreeHelper.GetChildren(depo)) {
-				var depoChild = child as DependencyObject;
-				if (depoChild != null && depoChild.HasError())
-					return true;
-			}
-
-			return false;
-		}
 	}
 }

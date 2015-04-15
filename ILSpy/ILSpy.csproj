@@ -111,12 +111,11 @@
     </Compile>
     <Compile Include="AsmEditor\AssemblyTreeNodeCreator.cs" />
     <Compile Include="AsmEditor\Converters\BooleanToGridrowLengthConverter.cs" />
-    <Compile Include="AsmEditor\Converters\GuidNullableConverter.cs" />
+    <Compile Include="AsmEditor\DataFieldVM.cs" />
     <Compile Include="AsmEditor\DeletableNodes.cs" />
     <Compile Include="AsmEditor\EditCommand.cs" />
     <Compile Include="AsmEditor\EnumVM.cs" />
     <Compile Include="AsmEditor\Extensions.cs" />
-    <Compile Include="AsmEditor\Converters\HexNullableConverter.cs" />
     <Compile Include="AsmEditor\IUndoCommand.cs" />
     <Compile Include="AsmEditor\Module\ClrVersion.cs" />
     <Compile Include="AsmEditor\Module\ModuleCommands.cs" />

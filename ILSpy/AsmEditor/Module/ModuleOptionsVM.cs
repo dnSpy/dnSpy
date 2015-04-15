@@ -37,43 +37,34 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		ICommand reinitializeCommand;
 
 		public ICommand GenerateNewMvidCommand {
-			get { return generateNewMvidCommand ?? (generateNewMvidCommand = new RelayCommand(a => Mvid = Guid.NewGuid())); }
+			get { return generateNewMvidCommand ?? (generateNewMvidCommand = new RelayCommand(a => Mvid.Value = Guid.NewGuid())); }
 		}
 		ICommand generateNewMvidCommand;
 
 		public ICommand GenerateNewEncIdCommand {
-			get { return generateNewEncIdCommand ?? (generateNewEncIdCommand = new RelayCommand(a => EncId = Guid.NewGuid())); }
+			get { return generateNewEncIdCommand ?? (generateNewEncIdCommand = new RelayCommand(a => EncId.Value = Guid.NewGuid())); }
 		}
 		ICommand generateNewEncIdCommand;
 
 		public ICommand GenerateNewEncBaseIdCommand {
-			get { return generateNewEncBaseIdCommand ?? (generateNewEncBaseIdCommand = new RelayCommand(a => EncBaseId = Guid.NewGuid())); }
+			get { return generateNewEncBaseIdCommand ?? (generateNewEncBaseIdCommand = new RelayCommand(a => EncBaseId.Value = Guid.NewGuid())); }
 		}
 		ICommand generateNewEncBaseIdCommand;
 
-		public Guid? Mvid {
-			get { return options.Mvid; }
-			set {
-				options.Mvid = value;
-				OnPropertyChanged("Mvid");
-			}
+		public NullableGuidVM Mvid {
+			get { return mvid; }
 		}
+		NullableGuidVM mvid;
 
-		public Guid? EncId {
-			get { return options.EncId; }
-			set {
-				options.EncId = value;
-				OnPropertyChanged("EncId");
-			}
+		public NullableGuidVM EncId {
+			get { return encId; }
 		}
+		NullableGuidVM encId;
 
-		public Guid? EncBaseId {
-			get { return options.EncBaseId; }
-			set {
-				options.EncBaseId = value;
-				OnPropertyChanged("EncBaseId");
-			}
+		public NullableGuidVM EncBaseId {
+			get { return encBaseId; }
 		}
+		NullableGuidVM encBaseId;
 
 		public string Name {
 			get { return options.Name; }
@@ -404,21 +395,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 				Cor20HeaderFlags &= ~flag;
 		}
 
-		public uint? Cor20HeaderRuntimeVersion {
-			get { return options.Cor20HeaderRuntimeVersion; }
-			set {
-				options.Cor20HeaderRuntimeVersion = value;
-				OnPropertyChanged("Cor20HeaderRuntimeVersion");
-			}
+		public NullableUInt32VM Cor20HeaderRuntimeVersion {
+			get { return cor20HeaderRuntimeVersion; }
 		}
+		NullableUInt32VM cor20HeaderRuntimeVersion;
 
-		public ushort? TablesHeaderVersion {
-			get { return options.TablesHeaderVersion; }
-			set {
-				options.TablesHeaderVersion = value;
-				OnPropertyChanged("TablesHeaderVersion");
-			}
+		public NullableUInt16VM TablesHeaderVersion {
+			get { return tablesHeaderVersion; }
 		}
+		NullableUInt16VM tablesHeaderVersion;
 
 		public ModuleOptionsVM()
 			: this(new ModuleOptions())
@@ -435,6 +420,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			this.machineVM = new EnumListVM(SaveModule.PEHeadersOptionsVM.machineList, () => {
 				Characteristics = SaveModule.CharacteristicsHelper.GetCharacteristics(Characteristics, (dnlib.PE.Machine)Machine.SelectedItem);
 			});
+			mvid = new NullableGuidVM(a => HasErrorUpdated());
+			encId = new NullableGuidVM(a => HasErrorUpdated());
+			encBaseId = new NullableGuidVM(a => HasErrorUpdated());
+			cor20HeaderRuntimeVersion = new NullableUInt32VM(a => HasErrorUpdated());
+			tablesHeaderVersion = new NullableUInt16VM(a => HasErrorUpdated());
 			Reinitialize();
 		}
 
@@ -450,17 +440,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 
 		void InitializeFrom(ModuleOptions options)
 		{
-			Mvid = options.Mvid;
-			EncId = options.EncId;
-			EncBaseId = options.EncBaseId;
+			Mvid.Value = options.Mvid;
+			EncId.Value = options.EncId;
+			EncBaseId.Value = options.EncBaseId;
 			Name = options.Name;
 			ModuleKind.SelectedItem = options.Kind;
 			DllCharacteristics = options.DllCharacteristics;
 			RuntimeVersion = options.RuntimeVersion;
 			Machine.SelectedItem = options.Machine;
 			Cor20HeaderFlags = options.Cor20HeaderFlags;
-			Cor20HeaderRuntimeVersion = options.Cor20HeaderRuntimeVersion;
-			TablesHeaderVersion = options.TablesHeaderVersion;
+			Cor20HeaderRuntimeVersion.Value = options.Cor20HeaderRuntimeVersion;
+			TablesHeaderVersion.Value = options.TablesHeaderVersion;
 
 			// Writing to Machine and ModuleKind triggers code that updates Characteristics so write
 			// this last.
@@ -469,9 +459,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 
 		ModuleOptions CopyTo(ModuleOptions options)
 		{
-			options.Mvid = Mvid;
-			options.EncId = EncId;
-			options.EncBaseId = EncBaseId;
+			options.Mvid = Mvid.Value;
+			options.EncId = EncId.Value;
+			options.EncBaseId = EncBaseId.Value;
 			options.Name = Name;
 			options.Kind = (ModuleKind)ModuleKind.SelectedItem;
 			options.Characteristics = Characteristics;
@@ -479,8 +469,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			options.RuntimeVersion = RuntimeVersion;
 			options.Machine = (dnlib.PE.Machine)Machine.SelectedItem;
 			options.Cor20HeaderFlags = Cor20HeaderFlags;
-			options.Cor20HeaderRuntimeVersion = Cor20HeaderRuntimeVersion;
-			options.TablesHeaderVersion = TablesHeaderVersion;
+			options.Cor20HeaderRuntimeVersion = Cor20HeaderRuntimeVersion.Value;
+			options.TablesHeaderVersion = TablesHeaderVersion.Value;
 			return options;
 		}
 
@@ -498,19 +488,38 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 
 		public string this[string columnName] {
 			get {
-				if (columnName == "RuntimeVersion")
-					return SaveModule.MetaDataHeaderOptionsVM.ValidateVersionString(options.RuntimeVersion);
-
-				return string.Empty;
+				HasErrorUpdated();
+				return Verify(columnName);
 			}
+		}
+
+		string Verify(string columnName)
+		{
+			if (columnName == "RuntimeVersion")
+				return SaveModule.MetaDataHeaderOptionsVM.ValidateVersionString(options.RuntimeVersion);
+
+			return string.Empty;
+		}
+
+		void HasErrorUpdated()
+		{
+			OnPropertyChanged("HasError");
+			OnPropertyChanged("HasNoError");
+		}
+
+		public bool HasNoError {
+			get { return !HasError; }
 		}
 
 		public bool HasError {
 			get {
-				if (!string.IsNullOrEmpty(this["RuntimeVersion"]))
+				if (!string.IsNullOrEmpty(Verify("RuntimeVersion")))
 					return true;
-
-				return false;
+				return mvid.HasError ||
+					encId.HasError ||
+					encBaseId.HasError ||
+					cor20HeaderRuntimeVersion.HasError ||
+					tablesHeaderVersion.HasError;
 			}
 		}
 	}

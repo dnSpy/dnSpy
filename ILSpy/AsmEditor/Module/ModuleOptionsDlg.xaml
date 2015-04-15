@@ -21,7 +21,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:vc="clr-namespace:ICSharpCode.ILSpy.AsmEditor.Converters"
              Height="350" Width="400"
              ResizeMode="CanResizeWithGrip"
              Icon="../../images/ILSpy.ico"
@@ -30,10 +29,6 @@
              Style="{DynamicResource DialogWindow}"
              MinHeight="350" MinWidth="400">
 	<Window.Resources>
-		<vc:HexNullableConverter x:Key="HexNullableConverter1" />
-		<vc:HexNullableConverter x:Key="HexNullableConverter2" />
-		<vc:GuidNullableConverter x:Key="GuidNullableConverter" />
-		<RoutedUICommand x:Key="OkCommand" Text="OK" />
 		<Style TargetType="{x:Type TextBox}">
 			<Style.Triggers>
 				<Trigger Property="Validation.HasError" Value="true">
@@ -44,13 +39,6 @@
 			</Style.Triggers>
 		</Style>
 	</Window.Resources>
-	<Window.CommandBindings>
-		<CommandBinding
-			Command="{StaticResource OkCommand}"
-			CanExecute="Ok_CanExecute"
-			Executed="Ok_Executed"
-			/>
-	</Window.CommandBindings>
 	<Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition />
@@ -85,15 +73,15 @@
 							<ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Name="moduleKindComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ModuleKind.Items}" SelectedIndex="{Binding ModuleKind.SelectedIndex}" Width="100" VerticalContentAlignment="Center" />
 
 							<Label Grid.Row="2" Grid.Column="0" Target="{Binding ElementName=mvidTextBox}" Content="_Mvid" />
-							<TextBox Grid.Row="2" Grid.Column="1" Name="mvidTextBox" Text="{Binding Mvid, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource GuidNullableConverter}}" />
+							<TextBox Grid.Row="2" Grid.Column="1" Name="mvidTextBox" Text="{Binding Mvid.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 							<Button Grid.Row="2" Grid.Column="2" Content="Ne_w" Command="{Binding GenerateNewMvidCommand}" />
 
 							<Label Grid.Row="3" Grid.Column="0" Target="{Binding ElementName=encIdTextBox}" Content="EncI_d" />
-							<TextBox Grid.Row="3" Grid.Column="1" Name="encIdTextBox" Text="{Binding EncId, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource GuidNullableConverter}}" />
+							<TextBox Grid.Row="3" Grid.Column="1" Name="encIdTextBox" Text="{Binding EncId.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 							<Button Grid.Row="3" Grid.Column="2" Content="_New" Command="{Binding GenerateNewEncIdCommand}" />
 
 							<Label Grid.Row="4" Grid.Column="0" Target="{Binding ElementName=encBaseIdTextBox}" Content="Enc_BaseId" />
-							<TextBox Grid.Row="4" Grid.Column="1" Name="encBaseIdTextBox" Text="{Binding EncBaseId, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource GuidNullableConverter}}" />
+							<TextBox Grid.Row="4" Grid.Column="1" Name="encBaseIdTextBox" Text="{Binding EncBaseId.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 							<Button Grid.Row="4" Grid.Column="2" Content="N_ew" Command="{Binding GenerateNewEncBaseIdCommand}" />
 						</Grid>
 					</StackPanel>
@@ -114,7 +102,7 @@
 							<Label Grid.Row="0" Grid.Column="0" Target="{Binding ElementName=versionStringTextBox}" Content="_VersionString" />
 							<TextBox Grid.Row="0" Grid.Column="1" Name="versionStringTextBox" Text="{Binding RuntimeVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 							<Label Grid.Row="1" Grid.Column="0" Target="{Binding ElementName=headerVersionTextBox}" Content="_Header Version" />
-							<TextBox Grid.Row="1" Grid.Column="1" Name="headerVersionTextBox" Text="{Binding TablesHeaderVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter1}}" ToolTip="Major version is in the high 8 bits, minor version is in the low 8 bits." />
+							<TextBox Grid.Row="1" Grid.Column="1" Name="headerVersionTextBox" Text="{Binding TablesHeaderVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 						</Grid>
 					</StackPanel>
 				</ScrollViewer>
@@ -132,7 +120,7 @@
 								<ColumnDefinition Width="*" />
 							</Grid.ColumnDefinitions>
 							<Label Grid.Row="0" Grid.Column="0" Target="{Binding ElementName=runtimeVersionTextBox}" Content="_Runtime Version" />
-							<TextBox Grid.Row="0" Grid.Column="1" Name="runtimeVersionTextBox" Text="{Binding Cor20HeaderRuntimeVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource HexNullableConverter2}}" ToolTip="Major version is in the high 16 bits, minor version is in the low 16 bits." />
+							<TextBox Grid.Row="0" Grid.Column="1" Name="runtimeVersionTextBox" Text="{Binding Cor20HeaderRuntimeVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 						</Grid>
 						<GroupBox Header="Flags">
 							<Grid>
@@ -252,7 +240,7 @@
 		</TabControl>
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">
-			<Button Content="_OK" IsDefault="True" Height="23" Width="75" Margin="0,0,5,0" Command="{StaticResource OkCommand}" />
+			<Button Content="_OK" IsEnabled="{Binding HasNoError}" IsDefault="True" Height="23" Width="75" Margin="0,0,5,0" Click="okButton_Click" />
 			<Button Content="_Cancel" IsCancel="True" Height="23" Width="75" Margin="0,0,5,0" />
 			<Button Content="Restore" Height="23" Width="75" Command="{Binding ReinitializeCommand}" ToolTip="Restore all options." />
 		</StackPanel>

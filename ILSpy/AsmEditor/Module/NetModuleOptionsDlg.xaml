@@ -29,7 +29,6 @@
              Style="{DynamicResource DialogWindow}"
              MinHeight="180" MinWidth="400">
 	<Window.Resources>
-		<RoutedUICommand x:Key="OkCommand" Text="OK" />
 		<Style TargetType="{x:Type TextBox}">
 			<Style.Triggers>
 				<Trigger Property="Validation.HasError" Value="true">
@@ -40,13 +39,6 @@
 			</Style.Triggers>
 		</Style>
 	</Window.Resources>
-	<Window.CommandBindings>
-		<CommandBinding
-			Command="{StaticResource OkCommand}"
-			CanExecute="Ok_CanExecute"
-			Executed="Ok_Executed"
-			/>
-	</Window.CommandBindings>
 	<Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*" />
@@ -72,7 +64,7 @@
 			<TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
 			<Label Grid.Row="1" Grid.Column="0" Target="{Binding ElementName=mvidTextBox}" Content="_Mvid" />
-			<TextBox Grid.Row="1" Grid.Column="1" Name="mvidTextBox" Text="{Binding Mvid, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+			<TextBox Grid.Row="1" Grid.Column="1" Name="mvidTextBox" Text="{Binding Mvid.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 			<Button Grid.Row="1" Grid.Column="2" Content="Ne_w" Command="{Binding GenerateNewMvidCommand}" />
 
 			<Label Grid.Row="2" Grid.Column="0" Content=".NET _Version" Target="{Binding ElementName=clrVersionComboBox}" />
@@ -80,7 +72,7 @@
 		</Grid>
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">
-			<Button Content="_OK" IsDefault="True" Height="23" Width="75" Margin="0,0,5,0" Command="{StaticResource OkCommand}" />
+			<Button Content="_OK" IsEnabled="{Binding HasNoError}" IsDefault="True" Height="23" Width="75" Margin="0,0,5,0" Click="okButton_Click" />
 			<Button Content="_Cancel" IsCancel="True" Height="23" Width="75" Margin="0,0,0,0" />
 		</StackPanel>
     </Grid>

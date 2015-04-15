@@ -173,17 +173,19 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		public Cor20HeaderOptionsVM Cor20HeaderOptions {
 			get { return cor20HeaderOptions; }
 		}
-		readonly Cor20HeaderOptionsVM cor20HeaderOptions = new Cor20HeaderOptionsVM();
+		readonly Cor20HeaderOptionsVM cor20HeaderOptions;
 
 		public MetaDataOptionsVM MetaDataOptions {
 			get { return metaDataOptions; }
 		}
-		readonly MetaDataOptionsVM metaDataOptions = new MetaDataOptionsVM();
+		readonly MetaDataOptionsVM metaDataOptions;
 
 		public SaveModuleOptionsVM(ModuleDef module)
 		{
 			this.module = module;
-			this.peHeadersOptions = new PEHeadersOptionsVM(module.Machine, GetSubsystem(module.Kind));
+			this.peHeadersOptions = new PEHeadersOptionsVM(module.Machine, GetSubsystem(module.Kind), () => HasErrorUpdated());
+			this.cor20HeaderOptions = new Cor20HeaderOptionsVM(() => HasErrorUpdated());
+			this.metaDataOptions = new MetaDataOptionsVM(() => HasErrorUpdated());
 
 			moduleKindVM = new EnumListVM(moduleKindList, () => {
 				OnPropertyChanged("Extension");
@@ -315,16 +317,32 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 
 		public string this[string columnName] {
 			get {
-				if (columnName == "FileName")
-					return filename.ValidateFileName() ?? string.Empty;
-
-				return string.Empty;
+				HasErrorUpdated();
+				return Verify(columnName);
 			}
+		}
+
+		string Verify(string columnName)
+		{
+			if (columnName == "FileName")
+				return filename.ValidateFileName() ?? string.Empty;
+
+			return string.Empty;
+		}
+
+		void HasErrorUpdated()
+		{
+			OnPropertyChanged("HasError");
+			OnPropertyChanged("HasNoError");
+		}
+
+		public bool HasNoError {
+			get { return !HasError; }
 		}
 
 		public bool HasError {
 			get {
-				if (!string.IsNullOrEmpty(this["FileName"]))
+				if (!string.IsNullOrEmpty(Verify("FileName")))
 					return true;
 
 				return peHeadersOptions.HasError ||
@@ -334,18 +352,39 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 	}
 
-	sealed class PEHeadersOptionsVM : INotifyPropertyChanged
+	sealed class PEHeadersOptionsVM : INotifyPropertyChanged, IDataErrorInfo
 	{
 		readonly Machine defaultMachine;
 		readonly Subsystem defaultSubsystem;
+		readonly Action onUpdated;
 
-		public PEHeadersOptionsVM(Machine defaultMachine, Subsystem defaultSubsystem)
+		public PEHeadersOptionsVM(Machine defaultMachine, Subsystem defaultSubsystem, Action onUpdated)
 		{
 			this.defaultMachine = defaultMachine;
 			this.defaultSubsystem = defaultSubsystem;
+			this.onUpdated = onUpdated;
 			this.machineVM = new EnumListVM(machineList, () => {
 				Characteristics = CharacteristicsHelper.GetCharacteristics(Characteristics ?? 0, (dnlib.PE.Machine)Machine.SelectedItem);
 			});
+			this.timeDateStamp = new NullableUInt32VM(a => HasErrorUpdated());
+			this.majorLinkerVersion = new NullableByteVM(a => HasErrorUpdated());
+			this.minorLinkerVersion = new NullableByteVM(a => HasErrorUpdated());
+			this.imageBase = new NullableUInt64VM(a => HasErrorUpdated());
+			this.sectionAlignment = new NullableUInt32VM(a => HasErrorUpdated());
+			this.fileAlignment = new NullableUInt32VM(a => HasErrorUpdated());
+			this.majorOperatingSystemVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			this.minorOperatingSystemVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			this.majorImageVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			this.minorImageVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			this.majorSubsystemVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			this.minorSubsystemVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			this.win32VersionValue = new NullableUInt32VM(a => HasErrorUpdated());
+			this.sizeOfStackReserve = new NullableUInt64VM(a => HasErrorUpdated());
+			this.sizeOfStackCommit = new NullableUInt64VM(a => HasErrorUpdated());
+			this.sizeOfHeapReserve = new NullableUInt64VM(a => HasErrorUpdated());
+			this.sizeOfHeapCommit = new NullableUInt64VM(a => HasErrorUpdated());
+			this.loaderFlags = new NullableUInt32VM(a => HasErrorUpdated());
+			this.numberOfRvaAndSizes = new NullableUInt32VM(a => HasErrorUpdated());
 		}
 
 		public EnumListVM Machine {
@@ -354,14 +393,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		internal static readonly EnumVM[] machineList = EnumVM.Create(typeof(dnlib.PE.Machine), dnlib.PE.Machine.I386, dnlib.PE.Machine.AMD64, dnlib.PE.Machine.IA64, dnlib.PE.Machine.ARMNT, dnlib.PE.Machine.ARM64);
 		readonly EnumListVM machineVM;
 
-		public uint? TimeDateStamp {
+		public NullableUInt32VM TimeDateStamp {
 			get { return timeDateStamp; }
-			set {
-				timeDateStamp = value;
-				OnPropertyChanged("TimeDateStamp");
-			}
 		}
-		uint? timeDateStamp;
+		NullableUInt32VM timeDateStamp;
 
 		public Characteristics? Characteristics {
 			get { return characteristics; }
@@ -485,113 +520,65 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 				Characteristics &= ~flag;
 		}
 
-		public byte? MajorLinkerVersion {
+		public NullableByteVM MajorLinkerVersion {
 			get { return majorLinkerVersion; }
-			set {
-				majorLinkerVersion = value;
-				OnPropertyChanged("MajorLinkerVersion");
-			}
 		}
-		byte? majorLinkerVersion;
+		NullableByteVM majorLinkerVersion;
 
-		public byte? MinorLinkerVersion {
+		public NullableByteVM MinorLinkerVersion {
 			get { return minorLinkerVersion; }
-			set {
-				minorLinkerVersion = value;
-				OnPropertyChanged("MinorLinkerVersion");
-			}
 		}
-		byte? minorLinkerVersion;
+		NullableByteVM minorLinkerVersion;
 
-		public ulong? ImageBase {
+		public NullableUInt64VM ImageBase {
 			get { return imageBase; }
-			set {
-				imageBase = value;
-				OnPropertyChanged("ImageBase");
-			}
 		}
-		ulong? imageBase;
+		NullableUInt64VM imageBase;
 
-		public uint? SectionAlignment {
+		public NullableUInt32VM SectionAlignment {
 			get { return sectionAlignment; }
-			set {
-				sectionAlignment = value;
-				OnPropertyChanged("SectionAlignment");
-			}
 		}
-		uint? sectionAlignment;
+		NullableUInt32VM sectionAlignment;
 
-		public uint? FileAlignment {
+		public NullableUInt32VM FileAlignment {
 			get { return fileAlignment; }
-			set {
-				fileAlignment = value;
-				OnPropertyChanged("FileAlignment");
-			}
 		}
-		uint? fileAlignment;
+		NullableUInt32VM fileAlignment;
 
-		public ushort? MajorOperatingSystemVersion {
+		public NullableUInt16VM MajorOperatingSystemVersion {
 			get { return majorOperatingSystemVersion; }
-			set {
-				majorOperatingSystemVersion = value;
-				OnPropertyChanged("MajorOperatingSystemVersion");
-			}
 		}
-		ushort? majorOperatingSystemVersion;
+		NullableUInt16VM majorOperatingSystemVersion;
 
-		public ushort? MinorOperatingSystemVersion {
+		public NullableUInt16VM MinorOperatingSystemVersion {
 			get { return minorOperatingSystemVersion; }
-			set {
-				minorOperatingSystemVersion = value;
-				OnPropertyChanged("MinorOperatingSystemVersion");
-			}
 		}
-		ushort? minorOperatingSystemVersion;
+		NullableUInt16VM minorOperatingSystemVersion;
 
-		public ushort? MajorImageVersion {
+		public NullableUInt16VM MajorImageVersion {
 			get { return majorImageVersion; }
-			set {
-				majorImageVersion = value;
-				OnPropertyChanged("MajorImageVersion");
-			}
 		}
-		ushort? majorImageVersion;
+		NullableUInt16VM majorImageVersion;
 
-		public ushort? MinorImageVersion {
+		public NullableUInt16VM MinorImageVersion {
 			get { return minorImageVersion; }
-			set {
-				minorImageVersion = value;
-				OnPropertyChanged("MinorImageVersion");
-			}
 		}
-		ushort? minorImageVersion;
+		NullableUInt16VM minorImageVersion;
 
-		public ushort? MajorSubsystemVersion {
+		public NullableUInt16VM MajorSubsystemVersion {
 			get { return majorSubsystemVersion; }
-			set {
-				majorSubsystemVersion = value;
-				OnPropertyChanged("MajorSubsystemVersion");
-			}
 		}
-		ushort? majorSubsystemVersion;
+		NullableUInt16VM majorSubsystemVersion;
 
-		public ushort? MinorSubsystemVersion {
+		public NullableUInt16VM MinorSubsystemVersion {
 			get { return minorSubsystemVersion; }
-			set {
-				minorSubsystemVersion = value;
-				OnPropertyChanged("MinorSubsystemVersion");
-			}
 		}
-		ushort? minorSubsystemVersion;
+		NullableUInt16VM minorSubsystemVersion;
 
-		public uint? Win32VersionValue {
+		public NullableUInt32VM Win32VersionValue {
 			get { return win32VersionValue; }
-			set {
-				win32VersionValue = value;
-				OnPropertyChanged("Win32VersionValue");
-			}
 		}
-		uint? win32VersionValue;
+		NullableUInt32VM win32VersionValue;
 
 		public EnumListVM Subsystem {
 			get { return subsystemVM; }
@@ -721,112 +708,88 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 				DllCharacteristics &= ~flag;
 		}
 
-		public ulong? SizeOfStackReserve {
+		public NullableUInt64VM SizeOfStackReserve {
 			get { return sizeOfStackReserve; }
-			set {
-				sizeOfStackReserve = value;
-				OnPropertyChanged("SizeOfStackReserve");
-			}
 		}
-		ulong? sizeOfStackReserve;
+		NullableUInt64VM sizeOfStackReserve;
 
-		public ulong? SizeOfStackCommit {
+		public NullableUInt64VM SizeOfStackCommit {
 			get { return sizeOfStackCommit; }
-			set {
-				sizeOfStackCommit = value;
-				OnPropertyChanged("SizeOfStackCommit");
-			}
 		}
-		ulong? sizeOfStackCommit;
+		NullableUInt64VM sizeOfStackCommit;
 
-		public ulong? SizeOfHeapReserve {
+		public NullableUInt64VM SizeOfHeapReserve {
 			get { return sizeOfHeapReserve; }
-			set {
-				sizeOfHeapReserve = value;
-				OnPropertyChanged("SizeOfHeapReserve");
-			}
 		}
-		ulong? sizeOfHeapReserve;
+		NullableUInt64VM sizeOfHeapReserve;
 
-		public ulong? SizeOfHeapCommit {
+		public NullableUInt64VM SizeOfHeapCommit {
 			get { return sizeOfHeapCommit; }
-			set {
-				sizeOfHeapCommit = value;
-				OnPropertyChanged("SizeOfHeapCommit");
-			}
 		}
-		ulong? sizeOfHeapCommit;
+		NullableUInt64VM sizeOfHeapCommit;
 
-		public uint? LoaderFlags {
+		public NullableUInt32VM LoaderFlags {
 			get { return loaderFlags; }
-			set {
-				loaderFlags = value;
-				OnPropertyChanged("LoaderFlags");
-			}
 		}
-		uint? loaderFlags;
+		NullableUInt32VM loaderFlags;
 
-		public uint? NumberOfRvaAndSizes {
+		public NullableUInt32VM NumberOfRvaAndSizes {
 			get { return numberOfRvaAndSizes; }
-			set {
-				numberOfRvaAndSizes = value;
-				OnPropertyChanged("NumberOfRvaAndSizes");
-			}
 		}
-		uint? numberOfRvaAndSizes;
+		NullableUInt32VM numberOfRvaAndSizes;
 
 		public void CopyTo(PEHeadersOptions options)
 		{
 			options.Machine = (dnlib.PE.Machine)machineVM.SelectedItem;
-			options.TimeDateStamp = TimeDateStamp;
+			options.TimeDateStamp = TimeDateStamp.Value;
 			options.Characteristics = Characteristics;
-			options.MajorLinkerVersion = MajorLinkerVersion;
-			options.MinorLinkerVersion = MinorLinkerVersion;
-			options.ImageBase = ImageBase;
-			options.SectionAlignment = SectionAlignment;
-			options.FileAlignment = FileAlignment;
-			options.MajorOperatingSystemVersion = MajorOperatingSystemVersion;
-			options.MinorOperatingSystemVersion = MinorOperatingSystemVersion;
-			options.MajorImageVersion = MajorImageVersion;
-			options.MinorImageVersion = MinorImageVersion;
-			options.MajorSubsystemVersion = MajorSubsystemVersion;
-			options.MinorSubsystemVersion = MinorSubsystemVersion;
-			options.Win32VersionValue = Win32VersionValue;
+			options.MajorLinkerVersion = MajorLinkerVersion.Value;
+			options.MinorLinkerVersion = MinorLinkerVersion.Value;
+			options.ImageBase = ImageBase.Value;
+			options.SectionAlignment = SectionAlignment.Value;
+			options.FileAlignment = FileAlignment.Value;
+			options.MajorOperatingSystemVersion = MajorOperatingSystemVersion.Value;
+			options.MinorOperatingSystemVersion = MinorOperatingSystemVersion.Value;
+			options.MajorImageVersion = MajorImageVersion.Value;
+			options.MinorImageVersion = MinorImageVersion.Value;
+			options.MajorSubsystemVersion = MajorSubsystemVersion.Value;
+			options.MinorSubsystemVersion = MinorSubsystemVersion.Value;
+			options.Win32VersionValue = Win32VersionValue.Value;
 			options.Subsystem = (dnlib.PE.Subsystem)Subsystem.SelectedItem;
 			options.DllCharacteristics = DllCharacteristics;
-			options.SizeOfStackReserve = SizeOfStackReserve;
-			options.SizeOfStackCommit = SizeOfStackCommit;
-			options.SizeOfHeapReserve = SizeOfHeapReserve;
-			options.SizeOfHeapCommit = SizeOfHeapCommit;
-			options.LoaderFlags = LoaderFlags;
-			options.NumberOfRvaAndSizes = NumberOfRvaAndSizes;
+			options.SizeOfStackReserve = SizeOfStackReserve.Value;
+			options.SizeOfStackCommit = SizeOfStackCommit.Value;
+			options.SizeOfHeapReserve = SizeOfHeapReserve.Value;
+			options.SizeOfHeapCommit = SizeOfHeapCommit.Value;
+			options.LoaderFlags = LoaderFlags.Value;
+			options.NumberOfRvaAndSizes = NumberOfRvaAndSizes.Value;
 		}
 
 		public void InitializeFrom(PEHeadersOptions options)
 		{
 			machineVM.SelectedItem = options.Machine ?? defaultMachine;
-			TimeDateStamp = options.TimeDateStamp;
+			TimeDateStamp.Value = options.TimeDateStamp;
 			Characteristics = options.Characteristics;
-			MajorLinkerVersion = options.MajorLinkerVersion;
-			MinorLinkerVersion = options.MinorLinkerVersion;
-			ImageBase = options.ImageBase;
-			SectionAlignment = options.SectionAlignment;
-			FileAlignment = options.FileAlignment;
-			MajorOperatingSystemVersion = options.MajorOperatingSystemVersion;
-			MinorOperatingSystemVersion = options.MinorOperatingSystemVersion;
-			MajorImageVersion = options.MajorImageVersion;
-			MinorImageVersion = options.MinorImageVersion;
-			MajorSubsystemVersion = options.MajorSubsystemVersion;
-			MinorSubsystemVersion = options.MinorSubsystemVersion;
-			Win32VersionValue = options.Win32VersionValue;
+			MajorLinkerVersion.Value = options.MajorLinkerVersion;
+			MinorLinkerVersion.Value = options.MinorLinkerVersion;
+			ImageBase.Value = options.ImageBase;
+			SectionAlignment.Value = options.SectionAlignment;
+			FileAlignment.Value = options.FileAlignment;
+			MajorOperatingSystemVersion.Value = options.MajorOperatingSystemVersion;
+			MinorOperatingSystemVersion.Value = options.MinorOperatingSystemVersion;
+			MajorImageVersion.Value = options.MajorImageVersion;
+			MinorImageVersion.Value = options.MinorImageVersion;
+			MajorSubsystemVersion.Value = options.MajorSubsystemVersion;
+			MinorSubsystemVersion.Value = options.MinorSubsystemVersion;
+			Win32VersionValue.Value = options.Win32VersionValue;
 			Subsystem.SelectedItem = options.Subsystem ?? defaultSubsystem;
 			DllCharacteristics = options.DllCharacteristics;
-			SizeOfStackReserve = options.SizeOfStackReserve;
-			SizeOfStackCommit = options.SizeOfStackCommit;
-			SizeOfHeapReserve = options.SizeOfHeapReserve;
-			SizeOfHeapCommit = options.SizeOfHeapCommit;
-			LoaderFlags = options.LoaderFlags;
-			NumberOfRvaAndSizes = options.NumberOfRvaAndSizes;
+			SizeOfStackReserve.Value = options.SizeOfStackReserve;
+			SizeOfStackCommit.Value = options.SizeOfStackCommit;
+			SizeOfHeapReserve.Value = options.SizeOfHeapReserve;
+			SizeOfHeapCommit.Value = options.SizeOfHeapCommit;
+			LoaderFlags.Value = options.LoaderFlags;
+			NumberOfRvaAndSizes.Value = options.NumberOfRvaAndSizes;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -837,30 +800,79 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 				PropertyChanged(this, new PropertyChangedEventArgs(propName));
 		}
 
+		public string Error {
+			get { throw new NotImplementedException(); }
+		}
+
+		public string this[string columnName] {
+			get {
+				HasErrorUpdated();
+				return Verify(columnName);
+			}
+		}
+
+		string Verify(string columnName)
+		{
+			return string.Empty;
+		}
+
+		void HasErrorUpdated()
+		{
+			OnPropertyChanged("HasError");
+			OnPropertyChanged("HasNoError");
+			onUpdated();
+		}
+
+		public bool HasNoError {
+			get { return !HasError; }
+		}
+
 		public bool HasError {
-			get { return false; }
+			get {
+				return timeDateStamp.HasError ||
+					majorLinkerVersion.HasError ||
+					minorLinkerVersion.HasError ||
+					imageBase.HasError ||
+					sectionAlignment.HasError ||
+					fileAlignment.HasError ||
+					majorOperatingSystemVersion.HasError ||
+					minorOperatingSystemVersion.HasError ||
+					majorImageVersion.HasError ||
+					minorImageVersion.HasError ||
+					majorSubsystemVersion.HasError ||
+					minorSubsystemVersion.HasError ||
+					win32VersionValue.HasError ||
+					sizeOfStackReserve.HasError ||
+					sizeOfStackCommit.HasError ||
+					sizeOfHeapReserve.HasError ||
+					sizeOfHeapCommit.HasError ||
+					loaderFlags.HasError ||
+					numberOfRvaAndSizes.HasError;
+			}
 		}
 	}
 
-	sealed class Cor20HeaderOptionsVM : INotifyPropertyChanged
+	sealed class Cor20HeaderOptionsVM : INotifyPropertyChanged, IDataErrorInfo
 	{
-		public ushort? MajorRuntimeVersion {
-			get { return majorRuntimeVersion; }
-			set {
-				majorRuntimeVersion = value;
-				OnPropertyChanged("MajorRuntimeVersion");
-			}
-		}
-		ushort? majorRuntimeVersion;
+		readonly Action onUpdated;
 
-		public ushort? MinorRuntimeVersion {
-			get { return minorRuntimeVersion; }
-			set {
-				minorRuntimeVersion = value;
-				OnPropertyChanged("MinorRuntimeVersion");
-			}
+		public Cor20HeaderOptionsVM(Action onUpdated)
+		{
+			this.onUpdated = onUpdated;
+			this.majorRuntimeVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			this.minorRuntimeVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			this.entryPoint = new NullableUInt32VM(a => HasErrorUpdated());
 		}
-		ushort? minorRuntimeVersion;
+
+		public NullableUInt16VM MajorRuntimeVersion {
+			get { return majorRuntimeVersion; }
+		}
+		NullableUInt16VM majorRuntimeVersion;
+
+		public NullableUInt16VM MinorRuntimeVersion {
+			get { return minorRuntimeVersion; }
+		}
+		NullableUInt16VM minorRuntimeVersion;
 
 		public ComImageFlags? Flags {
 			get { return flags; }
@@ -930,29 +942,25 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 				Flags &= ~flag;
 		}
 
-		public uint? EntryPoint {
+		public NullableUInt32VM EntryPoint {
 			get { return entryPoint; }
-			set {
-				entryPoint = value;
-				OnPropertyChanged("EntryPoint");
-			}
 		}
-		uint? entryPoint;
+		NullableUInt32VM entryPoint;
 
 		public void CopyTo(Cor20HeaderOptions options)
 		{
-			options.MajorRuntimeVersion = MajorRuntimeVersion;
-			options.MinorRuntimeVersion = MinorRuntimeVersion;
+			options.MajorRuntimeVersion = MajorRuntimeVersion.Value;
+			options.MinorRuntimeVersion = MinorRuntimeVersion.Value;
 			options.Flags = Flags;
-			options.EntryPoint = EntryPoint;
+			options.EntryPoint = EntryPoint.Value;
 		}
 
 		public void InitializeFrom(Cor20HeaderOptions options)
 		{
-			MajorRuntimeVersion = options.MajorRuntimeVersion;
-			MinorRuntimeVersion = options.MinorRuntimeVersion;
+			MajorRuntimeVersion.Value = options.MajorRuntimeVersion;
+			MinorRuntimeVersion.Value = options.MinorRuntimeVersion;
 			Flags = options.Flags;
-			EntryPoint = options.EntryPoint;
+			EntryPoint.Value = options.EntryPoint;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -963,22 +971,62 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 				PropertyChanged(this, new PropertyChangedEventArgs(propName));
 		}
 
+		public string Error {
+			get { throw new NotImplementedException(); }
+		}
+
+		public string this[string columnName] {
+			get {
+				HasErrorUpdated();
+				return Verify(columnName);
+			}
+		}
+
+		string Verify(string columnName)
+		{
+			return string.Empty;
+		}
+
+		void HasErrorUpdated()
+		{
+			OnPropertyChanged("HasError");
+			OnPropertyChanged("HasNoError");
+			onUpdated();
+		}
+
+		public bool HasNoError {
+			get { return !HasError; }
+		}
+
 		public bool HasError {
-			get { return false; }
+			get {
+				return majorRuntimeVersion.HasError ||
+					minorRuntimeVersion.HasError ||
+					entryPoint.HasError;
+			}
 		}
 	}
 
-	sealed class MetaDataOptionsVM : INotifyPropertyChanged
+	sealed class MetaDataOptionsVM : INotifyPropertyChanged, IDataErrorInfo
 	{
+		readonly Action onUpdated;
+
+		public MetaDataOptionsVM(Action onUpdated)
+		{
+			this.onUpdated = onUpdated;
+			this.metaDataHeaderOptions = new MetaDataHeaderOptionsVM(() => HasErrorUpdated());
+			this.tablesHeapOptions = new TablesHeapOptionsVM(() => HasErrorUpdated());
+		}
+
 		public MetaDataHeaderOptionsVM MetaDataHeaderOptions {
 			get { return metaDataHeaderOptions; }
 		}
-		MetaDataHeaderOptionsVM metaDataHeaderOptions = new MetaDataHeaderOptionsVM();
+		MetaDataHeaderOptionsVM metaDataHeaderOptions;
 
 		public TablesHeapOptionsVM TablesHeapOptions {
 			get { return tablesHeapOptions; }
 		}
-		TablesHeapOptionsVM tablesHeapOptions = new TablesHeapOptionsVM();
+		TablesHeapOptionsVM tablesHeapOptions;
 
 		public MetaDataFlags Flags {
 			get { return flags; }
@@ -1191,51 +1239,73 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 				PropertyChanged(this, new PropertyChangedEventArgs(propName));
 		}
 
+		public string Error {
+			get { throw new NotImplementedException(); }
+		}
+
+		public string this[string columnName] {
+			get {
+				HasErrorUpdated();
+				return Verify(columnName);
+			}
+		}
+
+		string Verify(string columnName) {
+			return string.Empty;
+		}
+
+		void HasErrorUpdated() {
+			OnPropertyChanged("HasError");
+			OnPropertyChanged("HasNoError");
+			onUpdated();
+		}
+
+		public bool HasNoError {
+			get { return !HasError; }
+		}
+
 		public bool HasError {
 			get {
 				return metaDataHeaderOptions.HasError ||
-						tablesHeapOptions.HasError;
+					tablesHeapOptions.HasError;
 			}
 		}
 	}
 
 	sealed class MetaDataHeaderOptionsVM : INotifyPropertyChanged, IDataErrorInfo
 	{
-		public uint? Signature {
+		readonly Action onUpdated;
+
+		public MetaDataHeaderOptionsVM(Action onUpdated)
+		{
+			this.onUpdated = onUpdated;
+			this.signature = new NullableUInt32VM(a => HasErrorUpdated());
+			this.majorVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			this.minorVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			this.reserved1 = new NullableUInt32VM(a => HasErrorUpdated());
+			this.storageFlags = new NullableByteVM(a => HasErrorUpdated());
+			this.reserved2 = new NullableByteVM(a => HasErrorUpdated());
+		}
+
+		public NullableUInt32VM Signature {
 			get { return signature; }
-			set {
-				signature = value;
-				OnPropertyChanged("Signature");
-			}
 		}
-		uint? signature;
+		NullableUInt32VM signature;
 
-		public ushort? MajorVersion {
+		public NullableUInt16VM MajorVersion {
 			get { return majorVersion; }
-			set {
-				majorVersion = value;
-				OnPropertyChanged("MajorVersion");
-			}
 		}
-		ushort? majorVersion;
+		NullableUInt16VM majorVersion;
 
-		public ushort? MinorVersion {
+		public NullableUInt16VM MinorVersion {
 			get { return minorVersion; }
-			set {
-				minorVersion = value;
-				OnPropertyChanged("MinorVersion");
-			}
 		}
-		ushort? minorVersion;
+		NullableUInt16VM minorVersion;
 
-		public uint? Reserved1 {
+		public NullableUInt32VM Reserved1 {
 			get { return reserved1; }
-			set {
-				reserved1 = value;
-				OnPropertyChanged("Reserved1");
-			}
 		}
-		uint? reserved1;
+		NullableUInt32VM reserved1;
 
 		public string VersionString {
 			get { return versionString; }
@@ -1246,44 +1316,36 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 		string versionString;
 
-		public byte? StorageFlags {
+		public NullableByteVM StorageFlags {
 			get { return storageFlags; }
-			set {
-				storageFlags = value;
-				OnPropertyChanged("StorageFlags");
-			}
 		}
-		byte? storageFlags;
+		NullableByteVM storageFlags;
 
-		public byte? Reserved2 {
+		public NullableByteVM Reserved2 {
 			get { return reserved2; }
-			set {
-				reserved2 = value;
-				OnPropertyChanged("Reserved2");
-			}
 		}
-		byte? reserved2;
+		NullableByteVM reserved2;
 
 		public void CopyTo(MetaDataHeaderOptions options)
 		{
-			options.Signature = Signature;
-			options.MajorVersion = MajorVersion;
-			options.MinorVersion = MinorVersion;
-			options.Reserved1 = Reserved1;
+			options.Signature = Signature.Value;
+			options.MajorVersion = MajorVersion.Value;
+			options.MinorVersion = MinorVersion.Value;
+			options.Reserved1 = Reserved1.Value;
 			options.VersionString = string.IsNullOrEmpty(VersionString) ? null : VersionString;
-			options.StorageFlags = (StorageFlags?)StorageFlags;
-			options.Reserved2 = Reserved2;
+			options.StorageFlags = (StorageFlags?)StorageFlags.Value;
+			options.Reserved2 = Reserved2.Value;
 		}
 
 		public void InitializeFrom(MetaDataHeaderOptions options)
 		{
-			Signature = options.Signature;
-			MajorVersion = options.MajorVersion;
-			MinorVersion = options.MinorVersion;
-			Reserved1 = options.Reserved1;
+			Signature.Value = options.Signature;
+			MajorVersion.Value = options.MajorVersion;
+			MinorVersion.Value = options.MinorVersion;
+			Reserved1.Value = options.Reserved1;
 			VersionString = options.VersionString;
-			StorageFlags = (byte?)options.StorageFlags;
-			Reserved2 = options.Reserved2;
+			StorageFlags.Value = (byte?)options.StorageFlags;
+			Reserved2.Value = options.Reserved2;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -1300,10 +1362,41 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 
 		public string this[string columnName] {
 			get {
-				if (columnName == "VersionString")
-					return ValidateVersionString(versionString);
+				HasErrorUpdated();
+				return Verify(columnName);
+			}
+		}
 
-				return string.Empty;
+		string Verify(string columnName)
+		{
+			if (columnName == "VersionString")
+				return ValidateVersionString(versionString);
+
+			return string.Empty;
+		}
+
+		void HasErrorUpdated()
+		{
+			OnPropertyChanged("HasError");
+			OnPropertyChanged("HasNoError");
+			onUpdated();
+		}
+
+		public bool HasNoError {
+			get { return !HasError; }
+		}
+
+		public bool HasError {
+			get {
+				if (!string.IsNullOrEmpty(Verify("VersionString")))
+					return true;
+
+				return signature.HasError ||
+					majorVersion.HasError ||
+					minorVersion.HasError ||
+					reserved1.HasError ||
+					storageFlags.HasError ||
+					reserved2.HasError;
 			}
 		}
 
@@ -1315,45 +1408,35 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 
 			return string.Empty;
 		}
-
-		public bool HasError {
-			get {
-				if (!string.IsNullOrEmpty(this["VersionString"]))
-					return true;
-
-				return false;
-			}
-		}
 	}
 
-	sealed class TablesHeapOptionsVM : INotifyPropertyChanged
+	sealed class TablesHeapOptionsVM : INotifyPropertyChanged, IDataErrorInfo
 	{
-		public uint? Reserved1 {
+		readonly Action onUpdated;
+
+		public TablesHeapOptionsVM(Action onUpdated)
+		{
+			this.onUpdated = onUpdated;
+			this.reserved1 = new NullableUInt32VM(a => HasErrorUpdated());
+			this.majorVersion = new NullableByteVM(a => HasErrorUpdated());
+			this.minorVersion = new NullableByteVM(a => HasErrorUpdated());
+			this.extraData = new NullableUInt32VM(a => HasErrorUpdated());
+		}
+
+		public NullableUInt32VM Reserved1 {
 			get { return reserved1; }
-			set {
-				reserved1 = value;
-				OnPropertyChanged("Reserved1");
-			}
 		}
-		uint? reserved1;
+		NullableUInt32VM reserved1;
 
-		public byte? MajorVersion {
+		public NullableByteVM MajorVersion {
 			get { return majorVersion; }
-			set {
-				majorVersion = value;
-				OnPropertyChanged("MajorVersion");
-			}
 		}
-		byte? majorVersion;
+		NullableByteVM majorVersion;
 
-		public byte? MinorVersion {
+		public NullableByteVM MinorVersion {
 			get { return minorVersion; }
-			set {
-				minorVersion = value;
-				OnPropertyChanged("MinorVersion");
-			}
 		}
-		byte? minorVersion;
+		NullableByteVM minorVersion;
 
 		public bool? UseENC {
 			get { return useENC; }
@@ -1364,14 +1447,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 		bool? useENC;
 
-		public uint? ExtraData {
+		public NullableUInt32VM ExtraData {
 			get { return extraData; }
-			set {
-				extraData = value;
-				OnPropertyChanged("ExtraData");
-			}
 		}
-		uint? extraData;
+		NullableUInt32VM extraData;
 
 		public bool? HasDeletedRows {
 			get { return hasDeletedRows; }
@@ -1384,21 +1463,21 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 
 		public void CopyTo(TablesHeapOptions options)
 		{
-			options.Reserved1 = Reserved1;
-			options.MajorVersion = MajorVersion;
-			options.MinorVersion = MinorVersion;
+			options.Reserved1 = Reserved1.Value;
+			options.MajorVersion = MajorVersion.Value;
+			options.MinorVersion = MinorVersion.Value;
 			options.UseENC = UseENC;
-			options.ExtraData = ExtraData;
+			options.ExtraData = ExtraData.Value;
 			options.HasDeletedRows = HasDeletedRows;
 		}
 
 		public void InitializeFrom(TablesHeapOptions options)
 		{
-			Reserved1 = options.Reserved1;
-			MajorVersion = options.MajorVersion;
-			MinorVersion = options.MinorVersion;
+			Reserved1.Value = options.Reserved1;
+			MajorVersion.Value = options.MajorVersion;
+			MinorVersion.Value = options.MinorVersion;
 			UseENC = options.UseENC;
-			ExtraData = options.ExtraData;
+			ExtraData.Value = options.ExtraData;
 			HasDeletedRows = options.HasDeletedRows;
 		}
 
@@ -1410,8 +1489,40 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 				PropertyChanged(this, new PropertyChangedEventArgs(propName));
 		}
 
+		public string Error {
+			get { throw new NotImplementedException(); }
+		}
+
+		public string this[string columnName] {
+			get {
+				HasErrorUpdated();
+				return Verify(columnName);
+			}
+		}
+
+		string Verify(string columnName)
+		{
+			return string.Empty;
+		}
+
+		void HasErrorUpdated()
+		{
+			OnPropertyChanged("HasError");
+			OnPropertyChanged("HasNoError");
+			onUpdated();
+		}
+
+		public bool HasNoError {
+			get { return !HasError; }
+		}
+
 		public bool HasError {
-			get { return false; }
+			get {
+				return reserved1.HasError ||
+					majorVersion.HasError ||
+					minorVersion.HasError ||
+					extraData.HasError;
+			}
 		}
 	}
 }
