@@ -37,40 +37,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 
 		public static ModuleDef CreateModuleDef(string name, Guid mvid, ClrVersion clrVersion)
 		{
-			var module = new ModuleDefUser(name, mvid, GetCorLib(clrVersion));
-			module.RuntimeVersion = GetRuntimeVersion(clrVersion);
-			if (clrVersion <= ClrVersion.CLR11) {
-				module.Cor20HeaderRuntimeVersion = 0x00020000;
-				module.TablesHeaderVersion = 0x0100;
-			}
-			else {
-				module.Cor20HeaderRuntimeVersion = 0x00020005;
-				module.TablesHeaderVersion = 0x0200;
-			}
+			var clrValues = ClrVersionValues.GetValues(clrVersion);
+			var module = new ModuleDefUser(name, mvid, clrValues.CorLibRef);
+			module.RuntimeVersion = clrValues.RuntimeVersion;
+			module.Cor20HeaderRuntimeVersion = clrValues.Cor20HeaderRuntimeVersion;
+			module.TablesHeaderVersion = clrValues.TablesHeaderVersion;
 			module.Location = string.Empty;
 			return module;
-		}
-
-		static AssemblyRef GetCorLib(ClrVersion version)
-		{
-			switch (version) {
-			case ClrVersion.CLR10: return AssemblyRefUser.CreateMscorlibReferenceCLR10();
-			case ClrVersion.CLR11: return AssemblyRefUser.CreateMscorlibReferenceCLR11();
-			case ClrVersion.CLR20: return AssemblyRefUser.CreateMscorlibReferenceCLR20();
-			case ClrVersion.CLR40: return AssemblyRefUser.CreateMscorlibReferenceCLR40();
-			default: throw new InvalidOperationException();
-			}
-		}
-
-		static string GetRuntimeVersion(ClrVersion version)
-		{
-			switch (version) {
-			case ClrVersion.CLR10: return MDHeaderRuntimeVersion.MS_CLR_10;
-			case ClrVersion.CLR11: return MDHeaderRuntimeVersion.MS_CLR_11;
-			case ClrVersion.CLR20: return MDHeaderRuntimeVersion.MS_CLR_20;
-			case ClrVersion.CLR40: return MDHeaderRuntimeVersion.MS_CLR_40;
-			default: throw new InvalidOperationException();
-			}
 		}
 
 		public static AssemblyDef AddToNewAssemblyDef(ModuleDef module, ModuleKind moduleKind, out Characteristics characteristics)

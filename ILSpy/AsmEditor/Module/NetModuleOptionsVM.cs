@@ -36,7 +36,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		}
 		string name;
 
-		static readonly EnumVM[] clrVersionList = new EnumVM[] {
+		internal static readonly EnumVM[] clrVersionList = new EnumVM[] {
 			new EnumVM(Module.ClrVersion.CLR10, "1.0"),
 			new EnumVM(Module.ClrVersion.CLR11, "1.1"),
 			new EnumVM(Module.ClrVersion.CLR20, "2.0 - 3.5"),

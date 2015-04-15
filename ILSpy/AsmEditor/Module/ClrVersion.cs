@@ -22,6 +22,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 	enum ClrVersion
 	{
 		/// <summary>
+		/// Unknown version
+		/// </summary>
+		Unknown,
+
+		/// <summary>
 		/// .NET 1.0
 		/// </summary>
 		CLR10,

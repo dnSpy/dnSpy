@@ -74,6 +74,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			}
 		}
 
+		public EnumListVM ClrVersion {
+			get { return clrVersionVM; }
+		}
+		readonly EnumListVM clrVersionVM;
+
 		public EnumListVM ModuleKind {
 			get { return moduleKindVM; }
 		}
@@ -322,6 +327,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			set {
 				options.RuntimeVersion = value;
 				OnPropertyChanged("RuntimeVersion");
+				UpdateClrVersion();
 			}
 		}
 
@@ -423,9 +429,39 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			mvid = new NullableGuidVM(a => HasErrorUpdated());
 			encId = new NullableGuidVM(a => HasErrorUpdated());
 			encBaseId = new NullableGuidVM(a => HasErrorUpdated());
-			cor20HeaderRuntimeVersion = new NullableUInt32VM(a => HasErrorUpdated());
-			tablesHeaderVersion = new NullableUInt16VM(a => HasErrorUpdated());
+			clrVersionVM = new EnumListVM(NetModuleOptionsVM.clrVersionList, OnClrVersionChanged);
+			clrVersionVM.Items.Add(new EnumVM(Module.ClrVersion.Unknown, "Unknown"));
+			clrVersionVM.SelectedItem = Module.ClrVersion.Unknown;
+			cor20HeaderRuntimeVersion = new NullableUInt32VM(a => { HasErrorUpdated(); UpdateClrVersion(); });
+			tablesHeaderVersion = new NullableUInt16VM(a => { HasErrorUpdated(); UpdateClrVersion(); });
 			Reinitialize();
+		}
+
+		void OnClrVersionChanged()
+		{
+			var clrVersion = (Module.ClrVersion)clrVersionVM.SelectedItem;
+			var clrValues = ClrVersionValues.GetValues(clrVersion);
+			if (clrValues == null)
+				return;
+
+			if (cor20HeaderRuntimeVersion != null)
+				cor20HeaderRuntimeVersion.Value = clrValues.Cor20HeaderRuntimeVersion;
+			if (tablesHeaderVersion != null)
+				tablesHeaderVersion.Value = clrValues.TablesHeaderVersion;
+			RuntimeVersion = clrValues.RuntimeVersion;
+		}
+
+		void UpdateClrVersion()
+		{
+			ClrVersion clrVersion = Module.ClrVersion.Unknown;
+			if (cor20HeaderRuntimeVersion != null && !cor20HeaderRuntimeVersion.HasError && cor20HeaderRuntimeVersion.Value != null &&
+				tablesHeaderVersion != null && !tablesHeaderVersion.HasError && tablesHeaderVersion.Value != null) {
+				var clrValues = ClrVersionValues.Find(cor20HeaderRuntimeVersion.Value.Value, tablesHeaderVersion.Value.Value, RuntimeVersion);
+				if (clrValues != null)
+					clrVersion = clrValues.ClrVersion;
+			}
+			if (clrVersionVM != null)
+				clrVersionVM.SelectedItem = clrVersion;
 		}
 
 		void Reinitialize()

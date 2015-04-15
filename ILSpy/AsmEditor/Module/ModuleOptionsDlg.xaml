@@ -64,6 +64,7 @@
 								<RowDefinition Height="Auto" />
 								<RowDefinition Height="Auto" />
 								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
 							</Grid.RowDefinitions>
 
 							<Label Grid.Row="0" Grid.Column="0" Target="{Binding ElementName=nameTextBox}" Content="N_ame" />
@@ -72,17 +73,20 @@
 							<Label Grid.Row="1" Grid.Column="0" Content="Module _Type" Target="{Binding ElementName=moduleKindComboBox}" />
 							<ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" Name="moduleKindComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ModuleKind.Items}" SelectedIndex="{Binding ModuleKind.SelectedIndex}" Width="100" VerticalContentAlignment="Center" />
 
-							<Label Grid.Row="2" Grid.Column="0" Target="{Binding ElementName=mvidTextBox}" Content="_Mvid" />
-							<TextBox Grid.Row="2" Grid.Column="1" Name="mvidTextBox" Text="{Binding Mvid.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-							<Button Grid.Row="2" Grid.Column="2" Content="Ne_w" Command="{Binding GenerateNewMvidCommand}" />
+							<Label Grid.Row="2" Grid.Column="0" Content=".NET _Version" Target="{Binding ElementName=clrVersionComboBox}" />
+							<ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Name="clrVersionComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ClrVersion.Items}" SelectedIndex="{Binding ClrVersion.SelectedIndex}" Width="100" VerticalContentAlignment="Center" HorizontalAlignment="Left" />
 
-							<Label Grid.Row="3" Grid.Column="0" Target="{Binding ElementName=encIdTextBox}" Content="EncI_d" />
-							<TextBox Grid.Row="3" Grid.Column="1" Name="encIdTextBox" Text="{Binding EncId.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-							<Button Grid.Row="3" Grid.Column="2" Content="_New" Command="{Binding GenerateNewEncIdCommand}" />
+							<Label Grid.Row="3" Grid.Column="0" Target="{Binding ElementName=mvidTextBox}" Content="_Mvid" />
+							<TextBox Grid.Row="3" Grid.Column="1" Name="mvidTextBox" Text="{Binding Mvid.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+							<Button Grid.Row="3" Grid.Column="2" Content="Ne_w" Command="{Binding GenerateNewMvidCommand}" />
 
-							<Label Grid.Row="4" Grid.Column="0" Target="{Binding ElementName=encBaseIdTextBox}" Content="Enc_BaseId" />
-							<TextBox Grid.Row="4" Grid.Column="1" Name="encBaseIdTextBox" Text="{Binding EncBaseId.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-							<Button Grid.Row="4" Grid.Column="2" Content="N_ew" Command="{Binding GenerateNewEncBaseIdCommand}" />
+							<Label Grid.Row="4" Grid.Column="0" Target="{Binding ElementName=encIdTextBox}" Content="EncI_d" />
+							<TextBox Grid.Row="4" Grid.Column="1" Name="encIdTextBox" Text="{Binding EncId.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+							<Button Grid.Row="4" Grid.Column="2" Content="_New" Command="{Binding GenerateNewEncIdCommand}" />
+
+							<Label Grid.Row="5" Grid.Column="0" Target="{Binding ElementName=encBaseIdTextBox}" Content="Enc_BaseId" />
+							<TextBox Grid.Row="5" Grid.Column="1" Name="encBaseIdTextBox" Text="{Binding EncBaseId.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+							<Button Grid.Row="5" Grid.Column="2" Content="N_ew" Command="{Binding GenerateNewEncBaseIdCommand}" />
 						</Grid>
 					</StackPanel>
 				</ScrollViewer>
