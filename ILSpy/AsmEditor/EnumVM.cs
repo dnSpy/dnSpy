@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -67,7 +68,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 	sealed class EnumListVM : INotifyPropertyChanged
 	{
-		readonly IList<EnumVM> list;
+		readonly ObservableCollection<EnumVM> list;
 		readonly Action onChanged;
 		int index;
 
@@ -103,7 +104,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		public EnumListVM(IList<EnumVM> list, Action onChanged = null)
 		{
-			this.list = list;
+			this.list = new ObservableCollection<EnumVM>(list);
 			this.index = 0;
 			this.onChanged = onChanged;
 		}
@@ -114,8 +115,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				if (list[i].Value.Equals(value))
 					return i;
 			}
-			Debug.Fail(string.Format("Could not find {0}", value));
-			return -1;
+
+			list.Add(new EnumVM(value, string.Format("0x{0:X}", value)));
+			return list.Count - 1;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
