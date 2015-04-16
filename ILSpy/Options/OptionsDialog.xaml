@@ -16,8 +16,8 @@
 		</Grid.RowDefinitions>
 		<TabControl Name="tabControl" Margin="0 0 0 5"/>
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-			<Button IsDefault="True" Height="23" Width="75" Margin="0,0,5,0" Name="okButton" Click="OKButton_Click">_OK</Button>
-			<Button IsCancel="True" Height="23" Width="75">_Cancel</Button>
+			<Button IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Name="okButton" Click="OKButton_Click">_OK</Button>
+			<Button IsCancel="True" Style="{StaticResource DialogButton}">_Cancel</Button>
 		</StackPanel>
 	</Grid>
 </Window>

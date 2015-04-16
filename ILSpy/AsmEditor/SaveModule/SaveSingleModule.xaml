@@ -98,13 +98,13 @@
 					Content="_Cancel"
 					IsCancel="False"
 					Command="{Binding CancelSaveCommand}"
-					Height="23" Width="75"
+					Style="{StaticResource DialogButton}"
 					Visibility="{Binding IsSavingOrCanceling, Converter={StaticResource BooleanToVisibilityConverter}}"
 					/>
 			<Button Grid.Column="1"
 					Content="_Close"
 					IsCancel="True"
-					Height="23" Width="75"
+					Style="{StaticResource DialogButton}"
 					Click="closeButton_Click"
 					Visibility="{Binding IsSaved, Converter={StaticResource BooleanToVisibilityConverter}}"
 					/>

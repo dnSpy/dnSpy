@@ -46,8 +46,8 @@
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 			<ProgressBar Grid.Column="0" Name="gacReadingProgressBar" Visibility="Hidden" Margin="0 0 5 0" />
-			<Button Grid.Column="1" IsDefault="True" Height="23" Width="75" Margin="0 0 5 0" IsEnabled="False" Name="okButton" Click="OKButton_Click">_Open</Button>
-			<Button Grid.Column="2" IsCancel="True" Height="23" Width="75">_Cancel</Button>
+			<Button Grid.Column="1" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0 0 5 0" IsEnabled="False" Name="okButton" Click="OKButton_Click">_Open</Button>
+			<Button Grid.Column="2" IsCancel="True" Style="{StaticResource DialogButton}">_Cancel</Button>
 		</Grid>
 	</Grid>
 </Window>

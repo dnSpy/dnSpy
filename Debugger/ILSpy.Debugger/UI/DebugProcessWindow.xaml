@@ -97,14 +97,14 @@
 			Grid.ColumnSpan="3">
 			<Button
 				Margin="0,0,5,0"
-				Width="75"
+				Height="23" Width="75"
 				DockPanel.Dock="Right"
 				IsCancel="True"
 				x:Name="CancelButton"
 				Content="_Cancel"
 				Click="CancelButton_Click" />
 			<Button
-				Width="75"
+				Height="23" Width="75"
 				Margin="5,0,5,0"
 				DockPanel.Dock="Right"
 				x:Name="DebugButton"

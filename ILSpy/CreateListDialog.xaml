@@ -18,8 +18,8 @@
             <TextBox Margin="8,8" Name="ListName" TextChanged="TextBox_TextChanged"></TextBox>
         </StackPanel>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="8,0">
-			<Button IsDefault="True" Height="23" Width="75" Margin="0,0,5,0" IsEnabled="False" Name="okButton" Click="OKButton_Click">Cr_eate</Button>
-			<Button IsCancel="True" Height="23" Width="75">_Cancel</Button>
+			<Button IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" IsEnabled="False" Name="okButton" Click="OKButton_Click">Cr_eate</Button>
+			<Button IsCancel="True" Style="{StaticResource DialogButton}">_Cancel</Button>
         </StackPanel>
     </Grid>
 </Window>

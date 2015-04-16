@@ -35,9 +35,9 @@
 			<TextBlock Name="textBlock" TextWrapping="Wrap" />
 		</Grid>
 		<DockPanel LastChildFill="True" Margin="10,0,10,10">
-			<Button Content="_Cancel" Click="cancelButton_Click" IsCancel="True" Height="23" Name="cancelButton" Width="75" Margin="5,0,0,0" DockPanel.Dock="Right" />
-			<Button Content="_No" Click="noButton_Click" Height="23" Name="noButton" Width="75" Margin="5,0,0,0" DockPanel.Dock="Right" />
-			<Button Content="_OK" Click="okButton_Click" IsDefault="True" Height="23" Name="okButton" Width="75" Margin="5,0,0,0" DockPanel.Dock="Right" />
+			<Button Content="_Cancel" Click="cancelButton_Click" IsCancel="True" Style="{StaticResource DialogButton}" Name="cancelButton" Margin="5,0,0,0" DockPanel.Dock="Right" />
+			<Button Content="_No" Click="noButton_Click" Style="{StaticResource DialogButton}" Name="noButton" Margin="5,0,0,0" DockPanel.Dock="Right" />
+			<Button Content="_OK" Click="okButton_Click" IsDefault="True" Style="{StaticResource DialogButton}" Name="okButton" Margin="5,0,0,0" DockPanel.Dock="Right" />
 			<CheckBox Name="dontShowCheckBox" Content="_Don't show again" DockPanel.Dock="Left" />
 		</DockPanel>
 	</StackPanel>

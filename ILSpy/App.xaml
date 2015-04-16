@@ -14,5 +14,9 @@
 			<Setter Property="BorderThickness" Value="1"/>
 			<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
 		</Style>
+		<Style x:Key="DialogButton" TargetType="{x:Type Button}">
+			<Setter Property="Height" Value="23"/>
+			<Setter Property="Width" Value="75"/>
+		</Style>
 	</Application.Resources>
 </Application>

@@ -74,8 +74,8 @@
 		</Border>
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">
-			<Button Content="_OK" IsEnabled="{Binding HasNoError}" IsDefault="True" Height="23" Width="75" Margin="0,0,5,0" Click="okButton_Click" />
-			<Button Content="_Cancel" IsCancel="True" Height="23" Width="75" Margin="0,0,0,0" />
+			<Button Content="_OK" IsEnabled="{Binding HasNoError}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
+			<Button Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0,0,0,0" />
 		</StackPanel>
     </Grid>
 </Window>

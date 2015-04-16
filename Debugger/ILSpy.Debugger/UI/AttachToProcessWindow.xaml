@@ -44,7 +44,7 @@
 				Content="_Cancel"
 				IsCancel="True"
 				Click="CancelButton_Click"
-				Width="75" />
+				Height="23" Width="75"/>
 			<Button
 				Margin="0 0 5 0"
 				DockPanel.Dock="Right"
@@ -52,14 +52,14 @@
 				Click="AttachButton_Click"
 				IsDefault="True"
 				Content="_Attach"
-				Width="75" />
+				Height="23" Width="75"/>
 			<Button
 				Margin="0 0 5 0"
 				DockPanel.Dock="Right"
 				x:Name="RefreshButton"
 				Click="RefreshButton_Click"
 				Content="_Refresh"
-				Width="75" />
+				Height="23" Width="75"/>
 		</DockPanel>
 	</Grid>
 </Window>
