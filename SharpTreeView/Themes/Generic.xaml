@@ -15,15 +15,16 @@
 					<Grid Width="16" Height="16" Background="Transparent">
 						<Grid.RowDefinitions>
 							<RowDefinition Height="*" />
-							<RowDefinition Height="9" />
+							<RowDefinition Height="Auto" />
 							<RowDefinition Height="*" />
 						</Grid.RowDefinitions>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="9" />
+							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
 						<Border Grid.Row="1" Grid.Column="1"
+							Name="border"
 							Width="9"
                             Height="9"
                             BorderThickness="1"
@@ -54,6 +55,10 @@
                                     TargetName="ExpandPath"
                                     Value="M 0 2 L 0 3 L 5 3 L 5 2 Z" />
                         </Trigger>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter Property="Fill" TargetName="ExpandPath" Value="#37CAF7"/>
+							<Setter Property="BorderBrush" TargetName="border" Value="#37CAF7"/>
+						</Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
