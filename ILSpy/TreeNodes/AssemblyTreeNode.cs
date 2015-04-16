@@ -406,6 +406,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			RaiseAsmPropsChanged();
 		}
 
+		internal void OnAssemblyPropertiesChanged()
+		{
+			RaiseAsmPropsChanged();
+		}
+
 		public override bool CanExpandRecursively {
 			get { return true; }
 		}
@@ -544,39 +549,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override NodePathName NodePathName {
 			get { return new NodePathName("asm", assembly.FileName.ToUpperInvariant()); }
-		}
-	}
-
-	[ExportContextMenuEntryAttribute(Header = "_Remove", Icon = "images/Delete.png", Order = 940, Category = "Other")]
-	sealed class RemoveAssembly : IContextMenuEntry2
-	{
-		public void Initialize(TextViewContext context, MenuItem menuItem)
-		{
-			if (context.SelectedTreeNodes.Length == 1)
-				menuItem.Header = string.Format("_Remove {0}", ((AssemblyTreeNode)context.SelectedTreeNodes[0]).LoadedAssembly.ShortName);
-			else
-				menuItem.Header = string.Format("_Remove {0} assemblies", context.SelectedTreeNodes.Length);
-		}
-
-		public bool IsVisible(TextViewContext context)
-		{
-			if (context.SelectedTreeNodes == null)
-				return false;
-			return context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n is AssemblyTreeNode && !(n.Parent is AssemblyTreeNode));
-		}
-
-		public bool IsEnabled(TextViewContext context)
-		{
-			return true;
-		}
-
-		public void Execute(TextViewContext context)
-		{
-			if (context.SelectedTreeNodes == null)
-				return;
-			foreach (var node in context.SelectedTreeNodes) {
-				node.Delete();
-			}
 		}
 	}
 

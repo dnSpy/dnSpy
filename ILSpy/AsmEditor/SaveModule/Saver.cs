@@ -38,7 +38,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 
 		public static bool AskUserToSaveIfModified(IEnumerable<LoadedAssembly> asmNodes)
 		{
-			var modifiedAsms = asmNodes.Where(n => UndoCommandManager.Instance.IsModified(n)).ToArray();
+			var modifiedAsms = asmNodes.Where(n => UndoCommandManager.Instance.IsModified(n)).Distinct().ToArray();
 			if (modifiedAsms.Length == 0)
 				return true;
 

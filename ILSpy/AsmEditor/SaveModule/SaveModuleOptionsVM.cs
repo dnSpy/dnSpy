@@ -27,6 +27,7 @@ using dnlib.DotNet.MD;
 using dnlib.DotNet.Writer;
 using dnlib.PE;
 using dnlib.W32Resources;
+using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
 namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 {
@@ -36,6 +37,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			get { return module; }
 		}
 		readonly ModuleDef module;
+
+		public IPickNetExecutableFileName PickNetExecutableFileName {
+			set { pickNetExecutableFileName = value; }
+		}
+		IPickNetExecutableFileName pickNetExecutableFileName;
+
+		public ICommand PickNetExecutableFileNameCommand {
+			get { return pickNetExecutableFileNameCommand ?? (pickNetExecutableFileNameCommand = new RelayCommand(a => OnPickNetExecutableFileName())); }
+		}
+		ICommand pickNetExecutableFileNameCommand;
 
 		public ICommand ReinitializeCommand {
 			get { return reinitializeCommand ?? (reinitializeCommand = new RelayCommand(a => Reinitialize())); }
@@ -301,6 +312,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 
 			// Writing to Machine and ModuleKind triggers code that updates Characteristics
 			peHeadersOptions.Characteristics = options.PEHeadersOptions.Characteristics;
+		}
+
+		void OnPickNetExecutableFileName()
+		{
+			if (pickNetExecutableFileName == null)
+				throw new InvalidOperationException();
+			var newFileName = pickNetExecutableFileName.GetFileName(FileName, Extension);
+			if (newFileName == null)
+				return;
+			FileName = newFileName;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

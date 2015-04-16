@@ -82,8 +82,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		AssemblyTreeNode CreateAssemblyTreeNode(LoadedAssembly asm)
 		{
-			AssemblyTreeNode asmNode;
-			if (cachedAsmTreeNodes.TryGetValue(asm, out asmNode)) {
+			CachedAssemblyTreeNode cachedInfo;
+			if (cachedAsmTreeNodes.TryGetValue(asm, out cachedInfo)) {
+				var asmNode = cachedInfo.AssemblyTreeNode;
 				Debug.Assert(asmNode.Parent == null);
 				if (asmNode.Parent != null)
 					throw new InvalidOperationException();
@@ -92,18 +93,37 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return new AssemblyTreeNode(asm);
 		}
 
-		readonly Dictionary<LoadedAssembly, AssemblyTreeNode> cachedAsmTreeNodes = new Dictionary<LoadedAssembly, AssemblyTreeNode>();
+		sealed class CachedAssemblyTreeNode
+		{
+			public AssemblyTreeNode AssemblyTreeNode;
+			public int Counter;
+
+			public CachedAssemblyTreeNode(AssemblyTreeNode asmNode)
+			{
+				this.AssemblyTreeNode = asmNode;
+			}
+		}
+
+		readonly Dictionary<LoadedAssembly, CachedAssemblyTreeNode> cachedAsmTreeNodes = new Dictionary<LoadedAssembly, CachedAssemblyTreeNode>();
 
 		public void RegisterCached(LoadedAssembly asm, AssemblyTreeNode asmNode)
 		{
-			cachedAsmTreeNodes.Add(asm, asmNode);
+			CachedAssemblyTreeNode cachedInfo;
+			if (!cachedAsmTreeNodes.TryGetValue(asm, out cachedInfo))
+				cachedAsmTreeNodes.Add(asm, cachedInfo = new CachedAssemblyTreeNode(asmNode));
+			else {
+				Debug.Assert(cachedInfo.AssemblyTreeNode == asmNode);
+				if (cachedInfo.AssemblyTreeNode != asmNode)
+					throw new InvalidOperationException();
+			}
+			cachedInfo.Counter++;
 		}
 
 		public void UnregisterCached(LoadedAssembly asm)
 		{
-			if (!cachedAsmTreeNodes.ContainsKey(asm))
-				throw new InvalidOperationException();
-			cachedAsmTreeNodes.Remove(asm);
+			var cachedInfo = cachedAsmTreeNodes[asm];
+			if (cachedInfo.Counter-- == 1)
+				cachedAsmTreeNodes.Remove(asm);
 		}
 
 		public override bool CanDrop(DragEventArgs e, int index)

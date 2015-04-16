@@ -2482,30 +2482,30 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		public MsgBoxButton? ShowIgnorableMessageBox(string id, string msg, MessageBoxButton buttons)
+		public MsgBoxButton? ShowIgnorableMessageBox(string id, string msg, MessageBoxButton buttons, Window ownerWindow = null)
 		{
 			if (sessionSettings.IgnoredWarnings.Contains(id))
 				return null;
 
 			bool? dontShowIsChecked;
-			var button = ShowMessageBoxInternal(msg, buttons, true, out dontShowIsChecked);
+			var button = ShowMessageBoxInternal(ownerWindow, msg, buttons, true, out dontShowIsChecked);
 			if (button != MsgBoxButton.None && dontShowIsChecked == true)
 				sessionSettings.IgnoredWarnings.Add(id);
 
 			return button;
 		}
 
-		public MsgBoxButton ShowMessageBox(string msg, MessageBoxButton buttons)
+		public MsgBoxButton ShowMessageBox(string msg, MessageBoxButton buttons, Window ownerWindow = null)
 		{
 			bool? dontShowIsChecked;
-			return ShowMessageBoxInternal(msg, buttons, false, out dontShowIsChecked);
+			return ShowMessageBoxInternal(ownerWindow, msg, buttons, false, out dontShowIsChecked);
 		}
 
-		MsgBoxButton ShowMessageBoxInternal(string msg, MessageBoxButton buttons, bool showDontShowCheckBox, out bool? dontShowIsChecked)
+		MsgBoxButton ShowMessageBoxInternal(Window ownerWindow, string msg, MessageBoxButton buttons, bool showDontShowCheckBox, out bool? dontShowIsChecked)
 		{
 			var msgBox = new MsgBox();
 			msgBox.textBlock.Text = msg;
-			msgBox.Owner = this;
+			msgBox.Owner = ownerWindow ?? this;
 
 			if (!showDontShowCheckBox)
 				msgBox.dontShowCheckBox.Visibility = Visibility.Collapsed;

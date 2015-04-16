@@ -48,28 +48,30 @@
 			<ColumnDefinition />
 		</Grid.ColumnDefinitions>
 
-		<Grid Grid.Row="0" Margin="5">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
+		<Border Grid.Row="0" Margin="5" Style="{StaticResource DialogBorderStyle}">
+			<Grid Margin="5">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
 
-			<Label Grid.Row="0" Grid.Column="0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
-			<TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+				<Label Grid.Row="0" Grid.Column="0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
+				<TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
-			<Label Grid.Row="1" Grid.Column="0" Target="{Binding ElementName=mvidTextBox}" Content="_Mvid" />
-			<TextBox Grid.Row="1" Grid.Column="1" Name="mvidTextBox" Text="{Binding Mvid.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-			<Button Grid.Row="1" Grid.Column="2" Content="Ne_w" Command="{Binding GenerateNewMvidCommand}" />
+				<Label Grid.Row="1" Grid.Column="0" Target="{Binding ElementName=mvidTextBox}" Content="_Mvid" />
+				<TextBox Grid.Row="1" Grid.Column="1" Name="mvidTextBox" Text="{Binding Mvid.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+				<Button Grid.Row="1" Grid.Column="2" Content="Ne_w" Command="{Binding GenerateNewMvidCommand}" />
 
-			<Label Grid.Row="2" Grid.Column="0" Content=".NET _Version" Target="{Binding ElementName=clrVersionComboBox}" />
-			<ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Name="clrVersionComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ClrVersion.Items}" SelectedIndex="{Binding ClrVersion.SelectedIndex}" Width="100" VerticalContentAlignment="Center" HorizontalAlignment="Left" />
-		</Grid>
+				<Label Grid.Row="2" Grid.Column="0" Content=".NET _Version" Target="{Binding ElementName=clrVersionComboBox}" />
+				<ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Name="clrVersionComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ClrVersion.Items}" SelectedIndex="{Binding ClrVersion.SelectedIndex}" Width="100" VerticalContentAlignment="Center" HorizontalAlignment="Left" />
+			</Grid>
+		</Border>
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">
 			<Button Content="_OK" IsEnabled="{Binding HasNoError}" IsDefault="True" Height="23" Width="75" Margin="0,0,5,0" Click="okButton_Click" />

@@ -503,7 +503,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 				return;
 
 			var dialog = new System.Windows.Forms.OpenFileDialog() {
-				Filter = ".NET NetModule (*.netmodule)|*.netmodule|All files (*.*)|*.*",
+				Filter = ".NET NetModules (*.netmodule)|*.netmodule|All files (*.*)|*.*",
 				RestoreDirectory = true,
 			};
 			if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)

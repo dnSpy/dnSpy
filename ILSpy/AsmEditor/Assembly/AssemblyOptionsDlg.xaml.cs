@@ -32,18 +32,17 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
-{
+namespace ICSharpCode.ILSpy.AsmEditor.Assembly {
 	/// <summary>
-	/// Interaction logic for SaveModuleOptions.xaml
+	/// Interaction logic for AssemblyOptionsDlg.xaml
 	/// </summary>
-	public partial class SaveModuleOptions : Window
+	public partial class AssemblyOptionsDlg : Window
 	{
-		public SaveModuleOptions()
+		public AssemblyOptionsDlg()
 		{
 			InitializeComponent();
 			SourceInitialized += (s, e) => this.HideMinimizeAndMaximizeButtons();
-			Loaded += (s, e) => ((SaveModuleOptionsVM)DataContext).PickNetExecutableFileName = new PickNetExecutableFileName();
+			Loaded += (s, e) => ((AssemblyOptionsVM)DataContext).OpenPublicKeyFile = new OpenPublicKeyFile(this);
 		}
 
 		private void okButton_Click(object sender, RoutedEventArgs e)

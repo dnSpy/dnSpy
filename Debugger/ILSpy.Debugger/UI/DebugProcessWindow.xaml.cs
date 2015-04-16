@@ -61,7 +61,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		void pathButton_Click(object sender, RoutedEventArgs e)
 		{
 			OpenFileDialog dialog = new OpenFileDialog() {
-				Filter = ".NET Executable (*.exe) | *.exe",
+				Filter = ".NET Executables (*.exe) | *.exe",
 				InitialDirectory = workingDirectoryTextBox.Text,
 				RestoreDirectory = true,
 				DefaultExt = "exe"

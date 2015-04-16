@@ -37,10 +37,19 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 
 		public AssemblyTreeNodeCreator(LoadedAssembly asm)
+			: this(asm, null)
 		{
-			Debug.Assert(asm.ModuleDefinition != null);
-			this.asmNode = new AssemblyTreeNode(asm);
-			MainWindow.Instance.AssemblyListTreeNode.RegisterCached(asm, asmNode);
+		}
+
+		public AssemblyTreeNodeCreator(AssemblyTreeNode asmNode)
+			: this(asmNode.LoadedAssembly, asmNode)
+		{
+		}
+
+		AssemblyTreeNodeCreator(LoadedAssembly asm, AssemblyTreeNode asmNode)
+		{
+			this.asmNode = asmNode ?? new AssemblyTreeNode(asm);
+			MainWindow.Instance.AssemblyListTreeNode.RegisterCached(asm, this.asmNode);
 		}
 
 		public void Add()

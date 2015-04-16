@@ -25,9 +25,59 @@ namespace ICSharpCode.ILSpy.AsmEditor
 {
 	static class NumberVMUtils
 	{
-		public static string ToString(ulong value)
+		public static byte[] ParseByteArray(string s)
 		{
-			if (value <= 9)
+			s = s.Replace(" ", string.Empty);
+			s = s.Replace("\t", string.Empty);
+			s = s.Replace("\r", string.Empty);
+			s = s.Replace("\n", string.Empty);
+			if (s.Length % 2 != 0)
+				throw new FormatException("A hex string must contain an even number of hex digits.");
+			var bytes = new byte[s.Length / 2];
+			for (int i = 0; i < s.Length; i += 2) {
+				int upper = TryParseHexChar(s[i]);
+				int lower = TryParseHexChar(s[i + 1]);
+				if (upper < 0 || lower < 0)
+					throw new FormatException("A hex string must contain only hex digits: 0-9 and A-F.");
+				bytes[i / 2] = (byte)((upper << 4) | lower);
+			}
+			return bytes;
+		}
+
+		static int TryParseHexChar(char c)
+		{
+			if ('0' <= c && c <= '9')
+				return (ushort)c - (ushort)'0';
+			if ('a' <= c && c <= 'f')
+				return 10 + (ushort)c - (ushort)'a';
+			if ('A' <= c && c <= 'F')
+				return 10 + (ushort)c - (ushort)'A';
+			return -1;
+		}
+
+		public static string ToString(byte[] value, bool upper = true)
+		{
+			if (value == null)
+				return string.Empty;
+			var chars = new char[value.Length * 2];
+			for (int i = 0, j = 0; i < value.Length; i++) {
+				byte b = value[i];
+				chars[j++] = ToHexChar(b >> 4, upper);
+				chars[j++] = ToHexChar(b & 0x0F, upper);
+			}
+			return new string(chars);
+		}
+
+		static char ToHexChar(int val, bool upper)
+		{
+			if (0 <= val && val <= 9)
+				return (char)(val + (int)'0');
+			return (char)(val - 10 + (upper ? (int)'A' : (int)'a'));
+		}
+
+		public static string ToString(ulong value, bool useDecimal)
+		{
+			if (value <= 9 || useDecimal)
 				return value.ToString();
 			return string.Format("0x{0:X}", value);
 		}
@@ -139,6 +189,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public string StringValue {
 			get { return stringValue; }
 			set {
+				if (value == null)
+					throw new ArgumentNullException();
 				if (stringValue != value) {
 					stringValue = value;
 					cachedError.Invalidate();
@@ -147,7 +199,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				}
 			}
 		}
-		string stringValue;
+		string stringValue = string.Empty;
 
 		/// <summary>
 		/// true if the value is null (<see cref="StringValue"/> is empty)
@@ -206,6 +258,19 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 	}
 
+	abstract class NumberDataFieldVM<T> : DataFieldVM<T>
+	{
+		/// <summary>
+		/// Use decimal by default if it's a number
+		/// </summary>
+		public bool UseDecimal { get; set; }
+
+		protected NumberDataFieldVM(Action<DataFieldVM<T>> onUpdated)
+			: base(onUpdated)
+		{
+		}
+	}
+
 	sealed class NullableGuidVM : DataFieldVM<Guid?>
 	{
 		public NullableGuidVM(Action<DataFieldVM<Guid?>> onUpdated)
@@ -234,7 +299,34 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 	}
 
-	sealed class NullableByteVM : DataFieldVM<byte?>
+	sealed class HexStringVM : DataFieldVM<byte[]>
+	{
+		public bool UpperCaseHex { get; set; }
+
+		public HexStringVM(Action<DataFieldVM<byte[]>> onUpdated)
+			: this(null, onUpdated)
+		{
+		}
+
+		public HexStringVM(byte[] value, Action<DataFieldVM<byte[]>> onUpdated)
+			: base(onUpdated)
+		{
+			SetValue(value);
+		}
+
+		protected override void SetValue(byte[] value)
+		{
+			this.StringValue = NumberVMUtils.ToString(value, UpperCaseHex);
+		}
+
+		protected override string ConvertToValue(out byte[] value)
+		{
+			value = NumberVMUtils.ParseByteArray(StringValue);
+			return null;
+		}
+	}
+
+	sealed class NullableByteVM : NumberDataFieldVM<byte?>
 	{
 		public NullableByteVM(Action<DataFieldVM<byte?>> onUpdated)
 			: this(null, onUpdated)
@@ -249,7 +341,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override void SetValue(byte? value)
 		{
-			this.StringValue = value == null ? string.Empty : NumberVMUtils.ToString(value.Value);
+			this.StringValue = value == null ? string.Empty : NumberVMUtils.ToString(value.Value, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out byte? value)
@@ -262,7 +354,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 	}
 
-	sealed class NullableUInt16VM : DataFieldVM<ushort?>
+	sealed class NullableUInt16VM : NumberDataFieldVM<ushort?>
 	{
 		public NullableUInt16VM(Action<DataFieldVM<ushort?>> onUpdated)
 			: this(null, onUpdated)
@@ -277,7 +369,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override void SetValue(ushort? value)
 		{
-			this.StringValue = value == null ? string.Empty : NumberVMUtils.ToString(value.Value);
+			this.StringValue = value == null ? string.Empty : NumberVMUtils.ToString(value.Value, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out ushort? value)
@@ -290,7 +382,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 	}
 
-	sealed class NullableUInt32VM : DataFieldVM<uint?>
+	sealed class NullableUInt32VM : NumberDataFieldVM<uint?>
 	{
 		public NullableUInt32VM(Action<DataFieldVM<uint?>> onUpdated)
 			: this(null, onUpdated)
@@ -305,7 +397,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override void SetValue(uint? value)
 		{
-			this.StringValue = value == null ? string.Empty : NumberVMUtils.ToString(value.Value);
+			this.StringValue = value == null ? string.Empty : NumberVMUtils.ToString(value.Value, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out uint? value)
@@ -318,7 +410,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 	}
 
-	sealed class NullableUInt64VM : DataFieldVM<ulong?>
+	sealed class NullableUInt64VM : NumberDataFieldVM<ulong?>
 	{
 		public NullableUInt64VM(Action<DataFieldVM<ulong?>> onUpdated)
 			: this(null, onUpdated)
@@ -333,7 +425,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override void SetValue(ulong? value)
 		{
-			this.StringValue = value == null ? string.Empty : NumberVMUtils.ToString(value.Value);
+			this.StringValue = value == null ? string.Empty : NumberVMUtils.ToString(value.Value, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out ulong? value)
@@ -342,6 +434,31 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				value = null;
 			else
 				value = NumberVMUtils.ParseUInt64(StringValue);
+			return null;
+		}
+	}
+
+	sealed class UInt16VM : NumberDataFieldVM<ushort>
+	{
+		public UInt16VM(Action<DataFieldVM<ushort>> onUpdated)
+			: this(0, onUpdated)
+		{
+		}
+
+		public UInt16VM(ushort value, Action<DataFieldVM<ushort>> onUpdated)
+			: base(onUpdated)
+		{
+			SetValue(value);
+		}
+
+		protected override void SetValue(ushort value)
+		{
+			this.StringValue = NumberVMUtils.ToString(value, UseDecimal);
+		}
+
+		protected override string ConvertToValue(out ushort value)
+		{
+			value = NumberVMUtils.ParseUInt16(StringValue);
 			return null;
 		}
 	}

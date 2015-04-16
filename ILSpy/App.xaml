@@ -8,5 +8,11 @@
 			<Setter Property="UseLayoutRounding" Value="True"/>
 			<Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
 		</Style>
+		<Style x:Key="DialogBorderStyle" TargetType="{x:Type Border}">
+			<!-- Same color as TabControl's border brush -->
+			<Setter Property="BorderBrush" Value="#8C8E94"/>
+			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+		</Style>
 	</Application.Resources>
 </Application>

@@ -110,6 +110,12 @@
       <DependentUpon>AskForInput.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\AssemblyTreeNodeCreator.cs" />
+    <Compile Include="AsmEditor\Assembly\AssemblyCommands.cs" />
+    <Compile Include="AsmEditor\Assembly\AssemblyOptions.cs" />
+    <Compile Include="AsmEditor\Assembly\AssemblyOptionsDlg.xaml.cs">
+      <DependentUpon>AssemblyOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Assembly\AssemblyOptionsVM.cs" />
     <Compile Include="AsmEditor\Converters\BooleanToGridrowLengthConverter.cs" />
     <Compile Include="AsmEditor\DataFieldVM.cs" />
     <Compile Include="AsmEditor\DeletableNodes.cs" />
@@ -154,6 +160,10 @@
     <Compile Include="AsmEditor\UndoCommandManager.cs" />
     <Compile Include="AsmEditor\UndoRedoMenuCommands.cs" />
     <Compile Include="AsmEditor\Utils.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\IOpenPublicKeyFile.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\IPickNetExecutableFileName.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\OpenPublicKeyFile.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\PickNetExecutableFileName.cs" />
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
     <Compile Include="AvalonEdit\EditorPositionState.cs" />
@@ -417,6 +427,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="AskForInput.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\Assembly\AssemblyOptionsDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

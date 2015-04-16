@@ -333,8 +333,11 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		void OnExecutedOneCommand(UndoState group)
 		{
-			foreach (var asmNode in group.ModifiedAssemblies.Keys)
-				asmNode.LoadedAssembly.ModuleDefinition.ResetTypeDefFindCache();
+			foreach (var asmNode in group.ModifiedAssemblies.Keys) {
+				var module = asmNode.LoadedAssembly.ModuleDefinition;
+				if (module != null)
+					module.ResetTypeDefFindCache();
+			}
 		}
 	}
 }
