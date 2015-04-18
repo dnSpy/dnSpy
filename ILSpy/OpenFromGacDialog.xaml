@@ -10,6 +10,8 @@
 	MinHeight="300"
 	Height="350"
 	Width="750"
+	xmlns:mm="clr-namespace:ICSharpCode.ILSpy"
+	mm:HideWindowsButtons.MaxMinButtons="True"
 	FocusManager.FocusedElement="{Binding ElementName=filterTextBox}">
 	<Grid
 		Margin="5">

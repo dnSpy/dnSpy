@@ -50,7 +50,6 @@ namespace ICSharpCode.ILSpy.Options
 		public OptionsDialog()
 		{
 			InitializeComponent();
-			SourceInitialized += (s, e) => this.HideMinimizeAndMaximizeButtons();
 			ILSpySettings settings = ILSpySettings.Load();
 			var creators = MefState.Instance.optionPages.OrderBy(p => p.Metadata.Order).ToArray();
 			optionPages = creators.Select(p => p.Value.Create()).ToArray();

@@ -41,7 +41,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.TypeSig
 		public MemberPickerDlg()
 		{
 			InitializeComponent();
-			SourceInitialized += (s, e) => this.HideMinimizeAndMaximizeButtons();
 		}
 
 		private void okButton_Click(object sender, RoutedEventArgs e)

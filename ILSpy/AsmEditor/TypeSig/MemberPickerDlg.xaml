@@ -23,6 +23,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vc="clr-namespace:ICSharpCode.ILSpy.AsmEditor.Converters"
              xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
+             xmlns:mm="clr-namespace:ICSharpCode.ILSpy"
+             mm:HideWindowsButtons.MaxMinButtons="True"
              Height="500" Width="600"
              ResizeMode="CanResizeWithGrip"
              Icon="../../images/ILSpy.ico"

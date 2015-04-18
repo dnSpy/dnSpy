@@ -55,7 +55,6 @@ namespace ICSharpCode.ILSpy
 		{
 			InitializeComponent();
 			UpdateButtonState();
-			SourceInitialized += (s, e) => this.HideMinimizeAndMaximizeButtons();
 			allTabs = CreateCollection();
 			listView.ItemsSource = allTabs;
 

@@ -18,7 +18,6 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		public DebugProcessWindow()
 		{
 			InitializeComponent();
-			SourceInitialized += (s, e) => this.HideMinimizeAndMaximizeButtons();
 		}
 		
 		public string SelectedExecutable {

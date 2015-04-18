@@ -9,6 +9,8 @@
 	MinHeight="250"
 	Height="350"
 	Width="380"
+	xmlns:mm="clr-namespace:ICSharpCode.ILSpy"
+	mm:HideWindowsButtons.MaxMinButtons="True"
 	FocusManager.FocusedElement="{Binding ElementName=listView}">
 	<Grid Margin="12,8">
 		<Grid.RowDefinitions>

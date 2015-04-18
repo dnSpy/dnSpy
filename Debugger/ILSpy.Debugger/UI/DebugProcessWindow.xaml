@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Window
 	x:Class="ICSharpCode.ILSpy.Debugger.UI.DebugProcessWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:mm="clr-namespace:ICSharpCode.ILSpy;assembly=dnSpy"
+	mm:HideWindowsButtons.MaxMinButtons="True"
 	Title="Select Executable to Debug"
 	Icon="pack://application:,,,/dnSpy;component/images/ILSpy.ico"
 	WindowStartupLocation="CenterOwner"

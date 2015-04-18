@@ -41,7 +41,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly {
 		public AssemblyOptionsDlg()
 		{
 			InitializeComponent();
-			SourceInitialized += (s, e) => this.HideMinimizeAndMaximizeButtons();
 			Loaded += (s, e) => ((AssemblyOptionsVM)DataContext).OpenPublicKeyFile = new OpenPublicKeyFile(this);
 		}
 

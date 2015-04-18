@@ -42,7 +42,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		public SaveModuleOptions()
 		{
 			InitializeComponent();
-			SourceInitialized += (s, e) => this.HideMinimizeAndMaximizeButtons();
 			Loaded += (s, e) => ((SaveModuleOptionsVM)DataContext).PickNetExecutableFileName = new PickNetExecutableFileName();
 		}
 

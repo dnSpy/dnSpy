@@ -198,6 +198,7 @@
     <Compile Include="DecompilerTabsWindow.xaml.cs">
       <DependentUpon>DecompilerTabsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="HideWindowsButtons.cs" />
     <Compile Include="IPlugin.cs" />
     <Compile Include="MsgBox.xaml.cs">
       <DependentUpon>MsgBox.xaml</DependentUpon>

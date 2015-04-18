@@ -38,7 +38,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 	{
 		public SaveModuleWindow()
 		{
-			SourceInitialized += (s, e) => this.HideMinimizeAndMaximizeButtons();
 			Loaded += SaveMultiModule_Loaded;
 		}
 
