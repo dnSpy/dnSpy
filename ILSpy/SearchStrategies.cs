@@ -75,7 +75,8 @@ namespace ICSharpCode.ILSpy
 						Image = image(item),
 						Name = item.Name,
 						LocationImage = TypeTreeNode.GetIcon(type),
-						Location = language.TypeToString(type, includeNamespace: true)
+						Location = language.TypeToString(type, includeNamespace: true),
+						Module = type.Module,
 					});
 				}
 			}
@@ -324,12 +325,9 @@ namespace ICSharpCode.ILSpy
 					Image = TypeTreeNode.GetIcon(type),
 					Name = language.TypeToString(type, includeNamespace: false),
 					LocationImage = type.DeclaringType != null ? TypeTreeNode.GetIcon(type.DeclaringType) : Images.Namespace,
-					Location = type.DeclaringType != null ? language.TypeToString(type.DeclaringType, includeNamespace: true) : type.Namespace.String
+					Location = type.DeclaringType != null ? language.TypeToString(type.DeclaringType, includeNamespace: true) : type.Namespace.String,
+					Module = type.Module,
 				});
-			}
-
-			foreach (TypeDef nestedType in type.NestedTypes) {
-				Search(nestedType, language, addResult);
 			}
 		}
 	}

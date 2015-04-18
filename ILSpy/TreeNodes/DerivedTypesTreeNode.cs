@@ -58,6 +58,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return Images.SubTypes; }
 		}
 
+		public override FilterResult Filter(FilterSettings settings)
+		{
+			var visibleFlags = VisibleMembersFlags.DerivedTypes;
+			if ((settings.Flags & visibleFlags) == 0)
+				return FilterResult.Hidden;
+			return base.Filter(settings);
+		}
+
 		protected override void LoadChildren()
 		{
 			threading.LoadChildren(this, FetchChildren);

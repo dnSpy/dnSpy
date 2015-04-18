@@ -72,6 +72,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return base.ShowExpander;
 			}
 		}
+
+		public override FilterResult Filter(FilterSettings settings)
+		{
+			var visibleFlags = VisibleMembersFlags.AssemblyRef;
+			if ((settings.Flags & visibleFlags) == 0)
+				return FilterResult.Hidden;
+			return base.Filter(settings);
+		}
 		
 		public override void ActivateItem(System.Windows.RoutedEventArgs e)
 		{

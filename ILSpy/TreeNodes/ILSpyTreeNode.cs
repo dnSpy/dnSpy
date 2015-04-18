@@ -243,5 +243,20 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 			return null;
 		}
+
+		/// <summary>
+		/// Gets full node path name of the node's ancestors.
+		/// </summary>
+		public FullNodePathName CreateFullNodePathName()
+		{
+			var fullPath = new FullNodePathName();
+			ILSpyTreeNode node = this;
+			while (node.Parent != null) {
+				fullPath.Names.Add(node.NodePathName);
+				node = (ILSpyTreeNode)node.Parent;
+			}
+			fullPath.Names.Reverse();
+			return fullPath;
+		}
 	}
 }

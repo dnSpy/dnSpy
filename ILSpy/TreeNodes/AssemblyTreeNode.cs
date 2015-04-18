@@ -79,6 +79,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return assembly.AssemblyDefinition != null && !(Parent is AssemblyTreeNode); }
 		}
 
+		public bool IsModule {
+			get { return IsModuleInAssembly || IsNetModule; }
+		}
+
 		public bool IsModuleInAssembly
 		{
 			get { return assembly.ModuleDefinition != null && Parent is AssemblyTreeNode; }
@@ -210,7 +214,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override bool ShowExpander
 		{
-			get { return !assembly.HasLoadError; }
+			get { return !assembly.HasLoadError && base.ShowExpander; }
 		}
 
 		void OnAssemblyLoaded(Task<ModuleDef> moduleTask)
@@ -411,10 +415,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			RaiseAsmPropsChanged();
 		}
 
-		public override bool CanExpandRecursively {
-			get { return true; }
-		}
-
 		/// <summary>
 		/// Finds the node for a top-level type.
 		/// </summary>
@@ -489,7 +489,40 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			if (settings.SearchTermMatches(assembly.ShortName))
+			VisibleMembersFlags thisFlag;
+			if (IsAssembly) {
+				thisFlag = VisibleMembersFlags.AssemblyDef;
+				var visibleFlags = thisFlag | VisibleMembersFlags.ModuleDef |
+						VisibleMembersFlags.Namespace | VisibleMembersFlags.TypeDef |
+						VisibleMembersFlags.FieldDef | VisibleMembersFlags.MethodDef |
+						VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef |
+						VisibleMembersFlags.AssemblyRef | VisibleMembersFlags.BaseTypes |
+						VisibleMembersFlags.DerivedTypes | VisibleMembersFlags.ModuleRef |
+						VisibleMembersFlags.Resources;
+				if ((settings.Flags & visibleFlags) == 0)
+					return FilterResult.Hidden;
+			}
+			else if (IsModule) {
+				thisFlag = VisibleMembersFlags.ModuleDef;
+				var visibleFlags = thisFlag |
+						VisibleMembersFlags.Namespace | VisibleMembersFlags.TypeDef |
+						VisibleMembersFlags.FieldDef | VisibleMembersFlags.MethodDef |
+						VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef |
+						VisibleMembersFlags.AssemblyRef | VisibleMembersFlags.BaseTypes |
+						VisibleMembersFlags.DerivedTypes | VisibleMembersFlags.ModuleRef |
+						VisibleMembersFlags.Resources;
+				if ((settings.Flags & visibleFlags) == 0)
+					return FilterResult.Hidden;
+			}
+			else {
+				thisFlag = VisibleMembersFlags.NonNetFile;
+				var visibleFlags = thisFlag;
+				if ((settings.Flags & visibleFlags) == 0)
+					return FilterResult.Hidden;
+			}
+			if ((settings.Flags & thisFlag) != 0)
+				return FilterResult.Match;	// Make sure it's not hidden
+			else if (settings.SearchTermMatches(assembly.ShortName))
 				return FilterResult.Match;
 			else
 				return FilterResult.Recurse;

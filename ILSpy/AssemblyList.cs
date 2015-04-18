@@ -35,6 +35,11 @@ namespace ICSharpCode.ILSpy
 	public sealed class AssemblyList
 	{
 		readonly string listName;
+		readonly bool canSave;
+
+		public bool CanSave {
+			get { return canSave; }
+		}
 		
 		/// <summary>Dirty flag, used to mark modifications so that the list is saved later</summary>
 		bool dirty;
@@ -98,9 +103,10 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		public AssemblyList(string listName)
+		public AssemblyList(string listName, bool canSave = true)
 		{
 			this.listName = listName;
+			this.canSave = canSave;
 			assemblies.CollectionChanged += Assemblies_CollectionChanged;
 		}
 		

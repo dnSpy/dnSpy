@@ -76,6 +76,8 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		public static void SaveList(AssemblyList list)
 		{
+			if (!list.CanSave)
+				return;
 			ILSpySettings.Update(
 				delegate (XElement root) {
 					XElement doc = root.Element("AssemblyLists");

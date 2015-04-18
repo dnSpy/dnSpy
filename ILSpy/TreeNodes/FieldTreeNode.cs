@@ -113,6 +113,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override FilterResult Filter(FilterSettings settings)
 		{
+			var visibleFlags = VisibleMembersFlags.FieldDef;
+			if ((settings.Flags & visibleFlags) == 0)
+				return FilterResult.Hidden;
 			if (settings.SearchTermMatches(field.Name) && settings.Language.ShowMember(field))
 				return FilterResult.Match;
 			else

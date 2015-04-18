@@ -38,7 +38,8 @@
 				MouseDoubleClick="ListBox_MouseDoubleClick" Name="listBox" SelectionMode="Single">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<Grid>
+					<!-- Use Transparent background so tooltip is shown when hovering anywhere in the ListBoxItem -->
+					<Grid ToolTip="{Binding ToolTip}" Background="Transparent">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="20" />
 							<ColumnDefinition Width="Auto" />

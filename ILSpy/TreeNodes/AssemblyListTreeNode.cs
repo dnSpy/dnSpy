@@ -126,8 +126,15 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				cachedAsmTreeNodes.Remove(asm);
 		}
 
+		internal bool DisableDrop { get; set; }
+
 		public override bool CanDrop(DragEventArgs e, int index)
 		{
+			if (DisableDrop) {
+				e.Effects = DragDropEffects.None;
+				return false;
+			}
+
 			e.Effects = DragDropEffects.Move;
 			if (e.Data.GetDataPresent(AssemblyTreeNode.DataFormat))
 				return true;
@@ -141,6 +148,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override void Drop(DragEventArgs e, int index)
 		{
+			Debug.Assert(!DisableDrop);
+			if (DisableDrop)
+				return;
 			string[] files = e.Data.GetData(AssemblyTreeNode.DataFormat) as string[];
 			if (files == null)
 				files = e.Data.GetData(DataFormats.FileDrop) as string[];
@@ -400,6 +410,41 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 
 			return null;
+		}
+
+		/// <summary>
+		/// Retrieves a node using the NodePathName property of its ancestors.
+		/// </summary>
+		public ILSpyTreeNode FindNodeByPath(FullNodePathName fullPath)
+		{
+			ILSpyTreeNode node = this;
+			foreach (var name in fullPath.Names) {
+				if (node == null)
+					break;
+				node.EnsureChildrenFiltered();
+				node = (ILSpyTreeNode)node.Children.FirstOrDefault(c => ((ILSpyTreeNode)c).NodePathName == name);
+			}
+			return node == this ? null : node;
+		}
+
+		public ILSpyTreeNode FindTreeNode(object reference)
+		{
+			if (reference is ITypeDefOrRef)
+				return FindTypeNode(((ITypeDefOrRef)reference).ResolveTypeDef());
+			else if (reference is IMethod && ((IMethod)reference).MethodSig != null)
+				return FindMethodNode(((IMethod)reference).Resolve());
+			else if (reference is IField)
+				return FindFieldNode(((IField)reference).Resolve());
+			else if (reference is PropertyDef)
+				return FindPropertyNode((PropertyDef)reference);
+			else if (reference is EventDef)
+				return FindEventNode((EventDef)reference);
+			else if (reference is AssemblyDef)
+				return FindAssemblyNode((AssemblyDef)reference);
+			else if (reference is ModuleDef)
+				return FindModuleNode((ModuleDef)reference);
+			else
+				return null;
 		}
 
 		public override NodePathName NodePathName {

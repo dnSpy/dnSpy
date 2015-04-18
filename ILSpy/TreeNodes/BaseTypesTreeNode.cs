@@ -52,6 +52,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return Images.SuperTypes; }
 		}
 
+		public override FilterResult Filter(FilterSettings settings)
+		{
+			var visibleFlags = VisibleMembersFlags.BaseTypes;
+			if ((settings.Flags & visibleFlags) == 0)
+				return FilterResult.Hidden;
+			return base.Filter(settings);
+		}
+
 		protected override void LoadChildren()
 		{
 			AddBaseTypes(this.Children, type);

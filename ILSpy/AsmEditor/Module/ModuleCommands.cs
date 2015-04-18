@@ -674,7 +674,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			return nodes != null &&
 				nodes.Length == 1 &&
 				nodes[0] is AssemblyTreeNode &&
-				(((AssemblyTreeNode)nodes[0]).IsModuleInAssembly || ((AssemblyTreeNode)nodes[0]).IsNetModule);
+				((AssemblyTreeNode)nodes[0]).IsModule;
 		}
 
 		static void Execute(ILSpyTreeNode[] nodes)

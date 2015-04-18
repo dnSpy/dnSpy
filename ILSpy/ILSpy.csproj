@@ -117,6 +117,7 @@
     </Compile>
     <Compile Include="AsmEditor\Assembly\AssemblyOptionsVM.cs" />
     <Compile Include="AsmEditor\Converters\BooleanToGridrowLengthConverter.cs" />
+    <Compile Include="AsmEditor\Converters\VisibleMembersFlagsToTitleConverter.cs" />
     <Compile Include="AsmEditor\DataFieldVM.cs" />
     <Compile Include="AsmEditor\DeletableNodes.cs" />
     <Compile Include="AsmEditor\EditCommand.cs" />
@@ -157,6 +158,10 @@
     </Compile>
     <Compile Include="AsmEditor\ToolbarCommands.cs" />
     <Compile Include="AsmEditor\TreeNodeCommand.cs" />
+    <Compile Include="AsmEditor\TypeSig\MemberPickerDlg.xaml.cs">
+      <DependentUpon>MemberPickerDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\TypeSig\MemberPickerVM.cs" />
     <Compile Include="AsmEditor\UndoCommandManager.cs" />
     <Compile Include="AsmEditor\UndoRedoMenuCommands.cs" />
     <Compile Include="AsmEditor\Utils.cs" />
@@ -451,6 +456,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\SaveModule\SaveSingleModule.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\TypeSig\MemberPickerDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

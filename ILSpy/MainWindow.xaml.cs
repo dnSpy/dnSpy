@@ -1267,56 +1267,9 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		/// <summary>
-		/// Retrieves a node using the NodePathName property of its ancestors.
-		/// </summary>
-		public ILSpyTreeNode FindNodeByPath(FullNodePathName fullPath)
-		{
-			var node = (ILSpyTreeNode)treeView.Root;
-			foreach (var name in fullPath.Names) {
-				if (node == null)
-					break;
-				node.EnsureChildrenFiltered();
-				node = (ILSpyTreeNode)node.Children.FirstOrDefault(c => ((ILSpyTreeNode)c).NodePathName == name);
-			}
-			return node == treeView.Root ? null : node;
-		}
-		
-		/// <summary>
-		/// Gets full node path name of the node's ancestors.
-		/// </summary>
-		public static FullNodePathName GetPathForNode(ILSpyTreeNode node)
-		{
-			var fullPath = new FullNodePathName();
-			if (node == null)
-				return fullPath;
-			while (node.Parent != null) {
-				fullPath.Names.Add(node.NodePathName);
-				node = (ILSpyTreeNode)node.Parent;
-			}
-			fullPath.Names.Reverse();
-			return fullPath;
-		}
-		
 		public ILSpyTreeNode FindTreeNode(object reference)
 		{
-			if (reference is ITypeDefOrRef) {
-				return assemblyListTreeNode.FindTypeNode(((ITypeDefOrRef)reference).ResolveTypeDef());
-			} else if (reference is IMethod && ((IMethod)reference).MethodSig != null) {
-				return assemblyListTreeNode.FindMethodNode(((IMethod)reference).Resolve());
-			} else if (reference is IField) {
-				return assemblyListTreeNode.FindFieldNode(((IField)reference).Resolve());
-			} else if (reference is PropertyDef) {
-				return assemblyListTreeNode.FindPropertyNode((PropertyDef)reference);
-			} else if (reference is EventDef) {
-				return assemblyListTreeNode.FindEventNode((EventDef)reference);
-			} else if (reference is AssemblyDef) {
-				return assemblyListTreeNode.FindAssemblyNode((AssemblyDef)reference);
-			} else if (reference is ModuleDef) {
-				return assemblyListTreeNode.FindModuleNode((ModuleDef)reference);
-			} else {
-				return null;
-			}
+			return assemblyListTreeNode.FindTreeNode(reference);
 		}
 
 		internal static IMemberDef ResolveReference(object reference) {
@@ -1803,7 +1756,7 @@ namespace ICSharpCode.ILSpy
 			savedState.Paths = new List<FullNodePathName>();
 			savedState.ActiveAutoLoadedAssemblies = new List<string>();
 			foreach (var node in tabState.DecompiledNodes) {
-				savedState.Paths.Add(GetPathForNode(node));
+				savedState.Paths.Add(node.CreateFullNodePathName());
 				var autoAsm = GetAutoLoadedAssemblyNode(node);
 				if (!string.IsNullOrEmpty(autoAsm))
 					savedState.ActiveAutoLoadedAssemblies.Add(autoAsm);
@@ -1845,7 +1798,7 @@ namespace ICSharpCode.ILSpy
 				foreach (var asm in savedState.ActiveAutoLoadedAssemblies)
 					this.assemblyList.OpenAssembly(asm, true);
 				foreach (var path in savedState.Paths) {
-					var node = FindNodeByPath(path);
+					var node = assemblyListTreeNode.FindNodeByPath(path);
 					if (node == null) {
 						nodes = null;
 						break;

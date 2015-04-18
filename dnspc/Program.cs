@@ -413,7 +413,7 @@ namespace ilspc {
 			if (string.IsNullOrEmpty(fileName))
 				throw new Exception(".NET module filename is empty or null");
 
-			var asmList = new AssemblyList("dnspc.exe");
+			var asmList = new AssemblyList("dnspc.exe", false);
 			asmList.UseGAC = !noGac;
 			asmList.AddSearchPath(Path.GetDirectoryName(fileName));
 			foreach (var path in asmPaths)

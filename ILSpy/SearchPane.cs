@@ -220,24 +220,26 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		sealed class RunningSearch
+		internal sealed class RunningSearch
 		{
 			readonly Dispatcher dispatcher;
 			readonly CancellationTokenSource cts = new CancellationTokenSource();
 			readonly ModuleDef[] modules;
 			readonly string[] searchTerm;
 			readonly SearchMode searchMode;
+			readonly bool canOverrideSearchMode;
 			readonly Language language;
 			public readonly ObservableCollection<SearchResult> Results = new ObservableCollection<SearchResult>();
 			int resultCount;
 
-			public RunningSearch(ModuleDef[] modules, string searchTerm, SearchMode searchMode, Language language)
+			public RunningSearch(ModuleDef[] modules, string searchTerm, SearchMode searchMode, Language language, bool canOverrideSearchMode = true)
 			{
 				this.dispatcher = Dispatcher.CurrentDispatcher;
 				this.modules = modules;
 				this.searchTerm = searchTerm.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 				this.language = language;
 				this.searchMode = searchMode;
+				this.canOverrideSearchMode = canOverrideSearchMode;
 				
 				this.Results.Add(new SearchResult { Name = "Searching..." });
 			}
@@ -256,7 +258,7 @@ namespace ICSharpCode.ILSpy
 							continue;
 						CancellationToken cancellationToken = cts.Token;
 
-						foreach (TypeDef type in module.Types) {
+						foreach (TypeDef type in module.GetTypes()) {
 							cancellationToken.ThrowIfCancellationRequested();
 							searcher.Search(type, language, AddResult);
 						}
@@ -272,7 +274,7 @@ namespace ICSharpCode.ILSpy
 			
 			void AddResult(SearchResult result)
 			{
-				if (++resultCount == 1000) {
+				if (++resultCount > 1000) {
 					result = new SearchResult { Name = "Search aborted, more than 1000 results found." };
 					cts.Cancel();
 				}
@@ -284,7 +286,7 @@ namespace ICSharpCode.ILSpy
 
 			AbstractSearchStrategy GetSearchStrategy(SearchMode mode, string[] terms)
 			{
-				if (terms.Length == 1) {
+				if (canOverrideSearchMode && terms.Length == 1) {
 					if (terms[0].StartsWith("t:"))
 						return new TypeSearchStrategy(terms[0].Substring(2));
 
@@ -322,6 +324,21 @@ namespace ICSharpCode.ILSpy
 		public string Name { get; set; }
 		public ImageSource Image { get; set; }
 		public ImageSource LocationImage { get; set; }
+		public ModuleDef Module { get; set; }
+		public string ToolTip {
+			get {
+				var module = Module;
+				if (module == null)
+					return null;
+				if (!string.IsNullOrWhiteSpace(module.Location))
+					return module.Location;
+				if (!string.IsNullOrWhiteSpace(module.Name))
+					return module.Name;
+				if (module.Assembly != null && !string.IsNullOrWhiteSpace(module.Assembly.Name))
+					return module.Assembly.Name;
+				return null;
+			}
+		}
 			
 		public override string ToString()
 		{

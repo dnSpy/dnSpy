@@ -83,9 +83,17 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override FilterResult Filter(FilterSettings settings)
 		{
+			var visibleFlags = VisibleMembersFlags.TypeDef |
+					VisibleMembersFlags.FieldDef | VisibleMembersFlags.MethodDef |
+					VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef |
+					VisibleMembersFlags.BaseTypes | VisibleMembersFlags.DerivedTypes;
+			if ((settings.Flags & visibleFlags) == 0)
+				return FilterResult.Hidden;
 			if (!settings.ShowInternalApi && !IsPublicAPI)
 				return FilterResult.Hidden;
-			if (settings.SearchTermMatches(type.Name)) {
+			if ((settings.Flags & VisibleMembersFlags.TypeDef) != 0)
+				return FilterResult.Match;	// Make sure it's not hidden
+			else if (settings.SearchTermMatches(type.Name)) {
 				if (settings.Language.ShowMember(type))
 					return FilterResult.Match;
 				else
@@ -120,10 +128,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					this.Children.Add(new MethodTreeNode(method));
 				}
 			}
-		}
-		
-		public override bool CanExpandRecursively {
-			get { return true; }
 		}
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)

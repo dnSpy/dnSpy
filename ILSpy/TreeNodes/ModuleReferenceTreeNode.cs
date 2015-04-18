@@ -28,6 +28,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	sealed class ModuleReferenceTreeNode : ILSpyTreeNode
 	{
 		readonly ModuleRef r;
+
+		public ModuleRef ModuleReference {
+			get { return r; }
+		}
 		
 		public ModuleReferenceTreeNode(ModuleRef r)
 		{
@@ -47,6 +51,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override object Icon {
 			get { return Images.Library; }
+		}
+
+		public override FilterResult Filter(FilterSettings settings)
+		{
+			var visibleFlags = VisibleMembersFlags.ModuleRef;
+			if ((settings.Flags & visibleFlags) == 0)
+				return FilterResult.Hidden;
+			return base.Filter(settings);
 		}
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)

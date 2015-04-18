@@ -57,6 +57,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override object ExpandedIcon {
 			get { return Images.ReferenceFolderOpen; }
 		}
+
+		public override FilterResult Filter(FilterSettings settings)
+		{
+			var visibleFlags = VisibleMembersFlags.AssemblyRef | VisibleMembersFlags.ModuleRef;
+			if ((settings.Flags & visibleFlags) == 0)
+				return FilterResult.Hidden;
+			return base.Filter(settings);
+		}
 		
 		protected override void LoadChildren()
 		{

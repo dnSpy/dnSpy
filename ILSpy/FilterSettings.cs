@@ -18,10 +18,73 @@
 
 using System;
 using System.ComponentModel;
+using System.Text;
 using System.Xml.Linq;
 
 namespace ICSharpCode.ILSpy
 {
+	[Flags]
+	enum VisibleMembersFlags
+	{
+		AssemblyDef		= 0x00000001,
+		ModuleDef		= 0x00000002,
+		Namespace		= 0x00000004,
+		TypeDef			= 0x00000008,
+		FieldDef		= 0x00000010,
+		MethodDef		= 0x00000020,
+		PropertyDef		= 0x00000040,
+		EventDef		= 0x00000080,
+		AssemblyRef		= 0x00000100,
+		BaseTypes		= 0x00000200,
+		DerivedTypes	= 0x00000400,
+		ModuleRef		= 0x00000800,
+		Resources		= 0x00001000,
+		NonNetFile		= 0x00002000,
+		All				= AssemblyDef | ModuleDef | Namespace | TypeDef |
+						  FieldDef | MethodDef | PropertyDef | EventDef |
+						  AssemblyRef | BaseTypes | DerivedTypes | ModuleRef |
+						  Resources | NonNetFile,
+	}
+
+	static class VisibleMembersFlagsExtensions
+	{
+		public static string GetListString(this VisibleMembersFlags flags)
+		{
+			int count;
+			return flags.GetListString(out count);
+		}
+
+		public static string GetListString(this VisibleMembersFlags flags, out int count)
+		{
+			var sb = new StringBuilder();
+			count = 0;
+
+			if ((flags & VisibleMembersFlags.AssemblyDef) != 0) AddString(sb, "AssemblyDef", ref count);
+			if ((flags & VisibleMembersFlags.ModuleDef) != 0) AddString(sb, "ModuleDef", ref count);
+			if ((flags & VisibleMembersFlags.Namespace) != 0) AddString(sb, "Namespace", ref count);
+			if ((flags & VisibleMembersFlags.TypeDef) != 0) AddString(sb, "TypeDef", ref count);
+			if ((flags & VisibleMembersFlags.FieldDef) != 0) AddString(sb, "FieldDef", ref count);
+			if ((flags & VisibleMembersFlags.MethodDef) != 0) AddString(sb, "MethodDef", ref count);
+			if ((flags & VisibleMembersFlags.PropertyDef) != 0) AddString(sb, "PropertyDef", ref count);
+			if ((flags & VisibleMembersFlags.EventDef) != 0) AddString(sb, "EventDef", ref count);
+			if ((flags & VisibleMembersFlags.AssemblyRef) != 0) AddString(sb, "AssemblyRef", ref count);
+			if ((flags & VisibleMembersFlags.BaseTypes) != 0) AddString(sb, "BaseTypes", ref count);
+			if ((flags & VisibleMembersFlags.DerivedTypes) != 0) AddString(sb, "DerivedTypes", ref count);
+			if ((flags & VisibleMembersFlags.ModuleRef) != 0) AddString(sb, "ModuleRef", ref count);
+			if ((flags & VisibleMembersFlags.Resources) != 0) AddString(sb, "Resources", ref count);
+			if ((flags & VisibleMembersFlags.NonNetFile) != 0) AddString(sb, "NonNetFile", ref count);
+
+			return sb.ToString();
+		}
+
+		static void AddString(StringBuilder sb, string text, ref int count)
+		{
+			if (count++ != 0)
+				sb.Append(", ");
+			sb.Append(text);
+		}
+	}
+
 	/// <summary>
 	/// Represents the filters applied to the tree view.
 	/// </summary>
@@ -32,10 +95,18 @@ namespace ICSharpCode.ILSpy
 	/// </remarks>
 	public class FilterSettings : INotifyPropertyChanged
 	{
+		internal FilterSettings(VisibleMembersFlags flags, Language language, bool showInternalApi)
+		{
+			this.ShowInternalApi = showInternalApi;
+			this.Language = language ?? Languages.GetLanguage("C#");
+			this.Flags = flags;
+		}
+
 		public FilterSettings(XElement element)
 		{
 			this.ShowInternalApi = (bool?)element.Element("ShowInternalAPI") ?? true;
 			this.Language = Languages.GetLanguage("C#");
+			this.Flags = VisibleMembersFlags.All;
 		}
 		
 		public XElement SaveAsXml()
@@ -44,6 +115,18 @@ namespace ICSharpCode.ILSpy
 				"FilterSettings",
 				new XElement("ShowInternalAPI", this.ShowInternalApi)
 			);
+		}
+
+		VisibleMembersFlags flags;
+
+		internal VisibleMembersFlags Flags {
+			get { return flags; }
+			set {
+				if (flags != value) {
+					flags = value;
+					OnPropertyChanged("Flags");
+				}
+			}
 		}
 		
 		string searchTerm;
