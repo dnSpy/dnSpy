@@ -149,6 +149,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			var visibleFlags = VisibleMembersFlags.PropertyDef | VisibleMembersFlags.MethodDef;
 			if ((settings.Flags & visibleFlags) == 0)
 				return FilterResult.Hidden;
+			if (!settings.ShowInternalApi && !IsPublicAPI)
+				return FilterResult.Hidden;
 			if (settings.SearchTermMatches(property.Name) && settings.Language.ShowMember(property))
 				return FilterResult.Match;
 			else
