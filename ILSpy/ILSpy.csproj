@@ -219,7 +219,6 @@
       <DependentUpon>ResourceObjectTable.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DockedPane.cs" />
-    <Compile Include="Commands\DecompileAllCommand.cs" />
     <Compile Include="Commands\ExportCommandAttribute.cs" />
     <Compile Include="Controls\ExtensionMethods.cs" />
     <Compile Include="Controls\SearchBox.cs" />
