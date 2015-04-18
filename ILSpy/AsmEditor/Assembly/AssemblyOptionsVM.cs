@@ -223,8 +223,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			this.versionMinor = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }) { UseDecimal = true };
 			this.versionBuild = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }) { UseDecimal = true };
 			this.versionRevision = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }) { UseDecimal = true };
-			this.publicKey = new HexStringVM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }) { UpperCaseHex = false };
+			this.publicKey = new HexStringVM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); UpdatePublicKeyFlag(); }) { UpperCaseHex = false };
 			Reinitialize();
+		}
+
+		void UpdatePublicKeyFlag()
+		{
+			FlagsPublicKey = !publicKey.IsNull;
 		}
 
 		void Reinitialize()
@@ -239,6 +244,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 
 		void InitializeFrom(AssemblyOptions options)
 		{
+			PublicKey.Value = options.PublicKey.Data;
 			HashAlgorithm.SelectedItem = options.HashAlgorithm;
 			VersionMajor.Value = checked((ushort)options.Version.Major);
 			VersionMinor.Value = checked((ushort)options.Version.Minor);
@@ -247,7 +253,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			Flags = options.Attributes;
 			ProcessArchitecture.SelectedItem = (AsmProcArch)((uint)(options.Attributes & AssemblyAttributes.PA_Mask) >> (int)AssemblyAttributes.PA_Shift);
 			ContentType.SelectedItem = (AsmContType)((uint)(options.Attributes & AssemblyAttributes.ContentType_Mask) >> 9);
-			PublicKey.Value = options.PublicKey.Data;
 			Name = options.Name;
 			Culture = options.Culture;
 		}
