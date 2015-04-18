@@ -27,7 +27,7 @@ using ICSharpCode.ILSpy.TreeNodes;
 
 namespace ICSharpCode.ILSpy.AsmEditor.TypeSig
 {
-	sealed class MemberPickerVM : INotifyPropertyChanged, IDataErrorInfo
+	sealed class MemberPickerVM : ViewModelBase
 	{
 		public object SelectedItem {
 			get { return selectedItem; }
@@ -220,25 +220,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.TypeSig
 			return SearchMode.Member;
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		void OnPropertyChanged(string propName) {
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propName));
-		}
-
-		public string Error {
-			get { throw new NotImplementedException(); }
-		}
-
-		public string this[string columnName] {
-			get {
-				HasErrorUpdated();
-				return Verify(columnName);
-			}
-		}
-
-		string Verify(string columnName)
+		protected override string Verify(string columnName)
 		{
 			if (columnName == "SelectedItem" || columnName == "SearchResult") {
 				if (SelectedItem == null && SearchResult == null)
@@ -259,16 +241,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.TypeSig
 				string.Format("You must select one of {0}", s);
 		}
 
-		void HasErrorUpdated() {
-			OnPropertyChanged("HasError");
-			OnPropertyChanged("HasNoError");
-		}
-
-		public bool HasNoError {
-			get { return !HasError; }
-		}
-
-		public bool HasError {
+		public override bool HasError {
 			get {
 				if (!string.IsNullOrEmpty(Verify("SelectedItem")))
 					return true;

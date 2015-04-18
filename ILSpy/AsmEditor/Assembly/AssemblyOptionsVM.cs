@@ -43,7 +43,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 		WindowsRuntime = (int)((uint)AssemblyAttributes.ContentType_WindowsRuntime >> 9),
 	}
 
-	sealed class AssemblyOptionsVM : INotifyPropertyChanged, IDataErrorInfo
+	sealed class AssemblyOptionsVM : ViewModelBase
 	{
 		readonly AssemblyOptions options;
 		readonly AssemblyOptions origOptions;
@@ -273,41 +273,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			publicKey.Value = newPublicKey.Data;
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		void OnPropertyChanged(string propName)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propName));
-		}
-
-		public string Error {
-			get { throw new NotImplementedException(); }
-		}
-
-		public string this[string columnName] {
-			get {
-				HasErrorUpdated();
-				return Verify(columnName);
-			}
-		}
-
-		string Verify(string columnName)
+		protected override string Verify(string columnName)
 		{
 			return string.Empty;
 		}
 
-		void HasErrorUpdated()
-		{
-			OnPropertyChanged("HasError");
-			OnPropertyChanged("HasNoError");
-		}
-
-		public bool HasNoError {
-			get { return !HasError; }
-		}
-
-		public bool HasError {
+		public override bool HasError {
 			get {
 				return versionMajor.HasError ||
 					versionMinor.HasError ||

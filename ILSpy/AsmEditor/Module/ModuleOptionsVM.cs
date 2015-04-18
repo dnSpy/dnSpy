@@ -26,7 +26,7 @@ using dnlib.PE;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Module
 {
-	sealed class ModuleOptionsVM : INotifyPropertyChanged, IDataErrorInfo
+	sealed class ModuleOptionsVM : ViewModelBase
 	{
 		readonly ModuleOptions options;
 		readonly ModuleOptions origOptions;
@@ -510,26 +510,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			return options;
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		void OnPropertyChanged(string propName)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propName));
-		}
-
-		public string Error {
-			get { throw new NotImplementedException(); }
-		}
-
-		public string this[string columnName] {
-			get {
-				HasErrorUpdated();
-				return Verify(columnName);
-			}
-		}
-
-		string Verify(string columnName)
+		protected override string Verify(string columnName)
 		{
 			if (columnName == "RuntimeVersion")
 				return SaveModule.MetaDataHeaderOptionsVM.ValidateVersionString(options.RuntimeVersion);
@@ -537,17 +518,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			return string.Empty;
 		}
 
-		void HasErrorUpdated()
-		{
-			OnPropertyChanged("HasError");
-			OnPropertyChanged("HasNoError");
-		}
-
-		public bool HasNoError {
-			get { return !HasError; }
-		}
-
-		public bool HasError {
+		public override bool HasError {
 			get {
 				if (!string.IsNullOrEmpty(Verify("RuntimeVersion")))
 					return true;

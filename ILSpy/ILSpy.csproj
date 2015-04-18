@@ -169,6 +169,7 @@
     <Compile Include="AsmEditor\ViewHelpers\IPickNetExecutableFileName.cs" />
     <Compile Include="AsmEditor\ViewHelpers\OpenPublicKeyFile.cs" />
     <Compile Include="AsmEditor\ViewHelpers\PickNetExecutableFileName.cs" />
+    <Compile Include="AsmEditor\ViewModelBase.cs" />
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
     <Compile Include="AvalonEdit\EditorPositionState.cs" />

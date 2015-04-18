@@ -31,7 +31,7 @@ using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
 namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 {
-	sealed class SaveModuleOptionsVM : INotifyPropertyChanged, IDataErrorInfo
+	sealed class SaveModuleOptionsVM : ViewModelBase
 	{
 		public ModuleDef Module {
 			get { return module; }
@@ -324,26 +324,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			FileName = newFileName;
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		void OnPropertyChanged(string propName)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propName));
-		}
-
-		public string Error {
-			get { throw new NotImplementedException(); }
-		}
-
-		public string this[string columnName] {
-			get {
-				HasErrorUpdated();
-				return Verify(columnName);
-			}
-		}
-
-		string Verify(string columnName)
+		protected override string Verify(string columnName)
 		{
 			if (columnName == "FileName")
 				return filename.ValidateFileName() ?? string.Empty;
@@ -351,17 +332,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			return string.Empty;
 		}
 
-		void HasErrorUpdated()
-		{
-			OnPropertyChanged("HasError");
-			OnPropertyChanged("HasNoError");
-		}
-
-		public bool HasNoError {
-			get { return !HasError; }
-		}
-
-		public bool HasError {
+		public override bool HasError {
 			get {
 				if (!string.IsNullOrEmpty(Verify("FileName")))
 					return true;
@@ -373,7 +344,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 	}
 
-	sealed class PEHeadersOptionsVM : INotifyPropertyChanged, IDataErrorInfo
+	sealed class PEHeadersOptionsVM : ViewModelBase
 	{
 		readonly Machine defaultMachine;
 		readonly Subsystem defaultSubsystem;
@@ -813,42 +784,18 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			NumberOfRvaAndSizes.Value = options.NumberOfRvaAndSizes;
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		void OnPropertyChanged(string propName)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propName));
-		}
-
-		public string Error {
-			get { throw new NotImplementedException(); }
-		}
-
-		public string this[string columnName] {
-			get {
-				HasErrorUpdated();
-				return Verify(columnName);
-			}
-		}
-
-		string Verify(string columnName)
+		protected override string Verify(string columnName)
 		{
 			return string.Empty;
 		}
 
-		void HasErrorUpdated()
+		protected override void HasErrorUpdated()
 		{
-			OnPropertyChanged("HasError");
-			OnPropertyChanged("HasNoError");
+			base.HasErrorUpdated();
 			onUpdated();
 		}
 
-		public bool HasNoError {
-			get { return !HasError; }
-		}
-
-		public bool HasError {
+		public override bool HasError {
 			get {
 				return timeDateStamp.HasError ||
 					majorLinkerVersion.HasError ||
@@ -873,7 +820,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 	}
 
-	sealed class Cor20HeaderOptionsVM : INotifyPropertyChanged, IDataErrorInfo
+	sealed class Cor20HeaderOptionsVM : ViewModelBase
 	{
 		readonly Action onUpdated;
 
@@ -984,42 +931,18 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			EntryPoint.Value = options.EntryPoint;
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		void OnPropertyChanged(string propName)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propName));
-		}
-
-		public string Error {
-			get { throw new NotImplementedException(); }
-		}
-
-		public string this[string columnName] {
-			get {
-				HasErrorUpdated();
-				return Verify(columnName);
-			}
-		}
-
-		string Verify(string columnName)
+		protected override string Verify(string columnName)
 		{
 			return string.Empty;
 		}
 
-		void HasErrorUpdated()
+		protected override void HasErrorUpdated()
 		{
-			OnPropertyChanged("HasError");
-			OnPropertyChanged("HasNoError");
+			base.HasErrorUpdated();
 			onUpdated();
 		}
 
-		public bool HasNoError {
-			get { return !HasError; }
-		}
-
-		public bool HasError {
+		public override bool HasError {
 			get {
 				return majorRuntimeVersion.HasError ||
 					minorRuntimeVersion.HasError ||
@@ -1028,7 +951,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 	}
 
-	sealed class MetaDataOptionsVM : INotifyPropertyChanged, IDataErrorInfo
+	sealed class MetaDataOptionsVM : ViewModelBase
 	{
 		readonly Action onUpdated;
 
@@ -1252,40 +1175,18 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			OnPropertyChanged("AlwaysCreateBlobHeap");
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		void OnPropertyChanged(string propName)
+		protected override string Verify(string columnName)
 		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propName));
-		}
-
-		public string Error {
-			get { throw new NotImplementedException(); }
-		}
-
-		public string this[string columnName] {
-			get {
-				HasErrorUpdated();
-				return Verify(columnName);
-			}
-		}
-
-		string Verify(string columnName) {
 			return string.Empty;
 		}
 
-		void HasErrorUpdated() {
-			OnPropertyChanged("HasError");
-			OnPropertyChanged("HasNoError");
+		protected override void HasErrorUpdated()
+		{
+			base.HasErrorUpdated();
 			onUpdated();
 		}
 
-		public bool HasNoError {
-			get { return !HasError; }
-		}
-
-		public bool HasError {
+		public override bool HasError {
 			get {
 				return metaDataHeaderOptions.HasError ||
 					tablesHeapOptions.HasError;
@@ -1293,7 +1194,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 	}
 
-	sealed class MetaDataHeaderOptionsVM : INotifyPropertyChanged, IDataErrorInfo
+	sealed class MetaDataHeaderOptionsVM : ViewModelBase
 	{
 		readonly Action onUpdated;
 
@@ -1369,26 +1270,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			Reserved2.Value = options.Reserved2;
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		void OnPropertyChanged(string propName)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propName));
-		}
-
-		public string Error {
-			get { throw new NotImplementedException(); }
-		}
-
-		public string this[string columnName] {
-			get {
-				HasErrorUpdated();
-				return Verify(columnName);
-			}
-		}
-
-		string Verify(string columnName)
+		protected override string Verify(string columnName)
 		{
 			if (columnName == "VersionString")
 				return ValidateVersionString(versionString);
@@ -1396,18 +1278,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			return string.Empty;
 		}
 
-		void HasErrorUpdated()
+		protected override void HasErrorUpdated()
 		{
-			OnPropertyChanged("HasError");
-			OnPropertyChanged("HasNoError");
+			base.HasErrorUpdated();
 			onUpdated();
 		}
 
-		public bool HasNoError {
-			get { return !HasError; }
-		}
-
-		public bool HasError {
+		public override bool HasError {
 			get {
 				if (!string.IsNullOrEmpty(Verify("VersionString")))
 					return true;
@@ -1431,7 +1308,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 	}
 
-	sealed class TablesHeapOptionsVM : INotifyPropertyChanged, IDataErrorInfo
+	sealed class TablesHeapOptionsVM : ViewModelBase
 	{
 		readonly Action onUpdated;
 
@@ -1502,42 +1379,18 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			HasDeletedRows = options.HasDeletedRows;
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		void OnPropertyChanged(string propName)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propName));
-		}
-
-		public string Error {
-			get { throw new NotImplementedException(); }
-		}
-
-		public string this[string columnName] {
-			get {
-				HasErrorUpdated();
-				return Verify(columnName);
-			}
-		}
-
-		string Verify(string columnName)
+		protected override string Verify(string columnName)
 		{
 			return string.Empty;
 		}
 
-		void HasErrorUpdated()
+		protected override void HasErrorUpdated()
 		{
-			OnPropertyChanged("HasError");
-			OnPropertyChanged("HasNoError");
+			base.HasErrorUpdated();
 			onUpdated();
 		}
 
-		public bool HasNoError {
-			get { return !HasError; }
-		}
-
-		public bool HasError {
+		public override bool HasError {
 			get {
 				return reserved1.HasError ||
 					majorVersion.HasError ||

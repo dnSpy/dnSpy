@@ -166,7 +166,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 	}
 
-	abstract class DataFieldVM<T> : INotifyPropertyChanged, IDataErrorInfo
+	abstract class DataFieldVM<T> : ViewModelBase
 	{
 		readonly Action<DataFieldVM<T>> onUpdated;
 		CachedValidationError cachedError;
@@ -232,28 +232,15 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			}
 		}
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		void OnPropertyChanged(string propName)
+		protected override string Verify(string columnName)
 		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propName));
+			if (columnName == "StringValue")
+				return cachedError.ErrorMessage;
+
+			return string.Empty;
 		}
 
-		public string Error {
-			get { throw new NotImplementedException(); }
-		}
-
-		public string this[string columnName] {
-			get {
-				if (columnName == "StringValue")
-					return cachedError.ErrorMessage;
-
-				return string.Empty;
-			}
-		}
-
-		public bool HasError {
+		public override bool HasError {
 			get { return cachedError.HasError; }
 		}
 	}
