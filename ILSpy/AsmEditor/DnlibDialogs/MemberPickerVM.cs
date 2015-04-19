@@ -22,7 +22,7 @@ using System.Threading;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.AsmEditor.TypeSig
+namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
 	sealed class MemberPickerVM : ViewModelBase
 	{

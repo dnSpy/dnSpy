@@ -19,7 +19,7 @@
 
 using System.Windows;
 
-namespace ICSharpCode.ILSpy.AsmEditor.TypeSig
+namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
 	/// <summary>
 	/// Interaction logic for MemberPickerDlg.xaml
