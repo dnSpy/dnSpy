@@ -143,6 +143,11 @@ public class UnsafeCode
 		return (long*)((byte*)p + 3);
 	}
 
+	public unsafe int PointerArithmetic5(void* p, byte* q, int i)
+	{
+		return (int)(q[i] + *(byte*)p);
+	}
+
 	public unsafe int PointerSubtraction(long* p, long* q)
 	{
 		return (int)((long)(p - q));

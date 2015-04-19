@@ -839,7 +839,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				}
 			}
 
-			adjustmentExpr = new ILExpression(divide ? ILCode.Div_Un : ILCode.Mul, null, adjustmentExpr, sizeOfExpression);
+			if (!(sizeOfExpression.Code == ILCode.Ldc_I4 && (int)sizeOfExpression.Operand == 1))
+				adjustmentExpr = new ILExpression(divide ? ILCode.Div_Un : ILCode.Mul, null, adjustmentExpr, sizeOfExpression);
 		}
 		
 		public static void ReplaceVariables(ILNode node, Func<ILVariable, ILVariable> variableMapping)
