@@ -94,13 +94,20 @@ namespace ICSharpCode.ILSpy.AsmEditor.TypeSig
 			get { return searchText; }
 			set {
 				if (searchText != value) {
+					bool hasSearchTextChanged = string.IsNullOrEmpty(searchText) != string.IsNullOrEmpty(value);
 					searchText = value;
 					OnPropertyChanged("SearchText");
+					if (hasSearchTextChanged)
+						OnPropertyChanged("HasSearchText");
 					StartSearch(SearchText);
 				}
 			}
 		}
-		string searchText;
+		string searchText = string.Empty;
+
+		public bool HasSearchText {
+			get { return !string.IsNullOrEmpty(searchText); }
+		}
 
 		public object SearchItemsSource {
 			get { return searchItemsSource; }
@@ -174,8 +181,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.TypeSig
 
 		public MemberPickerVM(Language language, VisibleMembersFlags visibleMembersFlags, IEnumerable<LoadedAssembly> assemblies)
 		{
-			this.language = language;
-			this.showInternalApi = true;
+			this.Language = language;
+			this.ShowInternalApi = true;
 			this.visibleMembersFlags = visibleMembersFlags;
 
 			assemblyList = new AssemblyList("Member Picker List", false);
@@ -191,7 +198,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.TypeSig
 
 		void CreateNewFilterSettings()
 		{
-			this.assemblyListTreeNode.FilterSettings = new FilterSettings(visibleMembersFlags, language, ShowInternalApi);
+			this.assemblyListTreeNode.FilterSettings = new FilterSettings(VisibleMembersFlags, Language, ShowInternalApi);
 		}
 
 		SearchPane.RunningSearch currentSearch;

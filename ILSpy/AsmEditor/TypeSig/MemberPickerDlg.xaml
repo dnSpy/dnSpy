@@ -49,8 +49,8 @@
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
-			<RowDefinition Height="{Binding ElementName=searchListBox, Path=HasItems, Converter={StaticResource BooleanToGridrowLengthConverter}, ConverterParameter=1}" />
-			<RowDefinition Height="3*" />
+			<RowDefinition Height="{Binding HasSearchText, Converter={StaticResource BooleanToGridrowLengthConverter}, ConverterParameter=1}" />
+			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
@@ -74,7 +74,6 @@
 		</Grid>
 
 		<ListBox Grid.Row="1"
-				 Name="searchListBox"
 				 Margin="5 0 5 5"
 				 HorizontalContentAlignment="Stretch"
 				 SelectionMode="Single"
