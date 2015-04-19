@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.ComponentModel;
 using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;

@@ -25,7 +25,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using System.Windows.Threading;
-using dnlib.DotNet;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace ICSharpCode.ILSpy.AsmEditor

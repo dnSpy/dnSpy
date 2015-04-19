@@ -19,12 +19,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
 using ICSharpCode.ILSpy.TreeNodes;
-using dnlib.DotNet;
-using dnlib.PE;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 {

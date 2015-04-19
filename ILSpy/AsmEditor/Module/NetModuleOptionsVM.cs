@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.ComponentModel;
 using System.Windows.Input;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Module

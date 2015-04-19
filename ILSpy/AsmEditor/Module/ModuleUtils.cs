@@ -19,7 +19,6 @@
 
 using System;
 using dnlib.DotNet;
-using dnlib.DotNet.MD;
 using dnlib.PE;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Module
