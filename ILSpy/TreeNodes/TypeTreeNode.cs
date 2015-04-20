@@ -83,16 +83,30 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			var visibleFlags = VisibleMembersFlags.TypeDef |
-					VisibleMembersFlags.FieldDef | VisibleMembersFlags.MethodDef |
+			var childrenFlags = VisibleMembersFlags.FieldDef | VisibleMembersFlags.MethodDef |
 					VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef |
 					VisibleMembersFlags.BaseTypes | VisibleMembersFlags.DerivedTypes;
+			var visibleFlags = VisibleMembersFlags.AnyTypeDef | childrenFlags;
 			if ((settings.Flags & visibleFlags) == 0)
 				return FilterResult.Hidden;
 			if (!settings.ShowInternalApi && !IsPublicAPI)
 				return FilterResult.Hidden;
-			if ((settings.Flags & VisibleMembersFlags.TypeDef) != 0)
-				return FilterResult.Match;	// Make sure it's not hidden
+			if ((settings.Flags & VisibleMembersFlags.GenericTypeDef) != 0 && type.GenericParameters.Count > 0)
+				return FilterResult.Match;
+			else if ((settings.Flags & VisibleMembersFlags.NonGenericTypeDef) != 0 && type.GenericParameters.Count == 0)
+				return FilterResult.Match;
+			else if ((settings.Flags & VisibleMembersFlags.EnumTypeDef) != 0 && type.IsEnum)
+				return FilterResult.Match;
+			else if ((settings.Flags & VisibleMembersFlags.InterfaceTypeDef) != 0 && type.IsInterface)
+				return FilterResult.Match;
+			else if ((settings.Flags & VisibleMembersFlags.ClassTypeDef) != 0 && !type.IsValueType)
+				return FilterResult.Match;
+			else if ((settings.Flags & VisibleMembersFlags.ValueTypeDef) != 0 && type.IsValueType)
+				return FilterResult.Match;
+			else if ((settings.Flags & VisibleMembersFlags.TypeDef) != 0)
+				return FilterResult.Match;
+			else if ((settings.Flags & childrenFlags) == 0)
+				return FilterResult.Hidden;
 			else if (settings.SearchTermMatches(type.Name)) {
 				if (settings.Language.ShowMember(type))
 					return FilterResult.Match;

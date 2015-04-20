@@ -117,13 +117,24 @@
     </Compile>
     <Compile Include="AsmEditor\Assembly\AssemblyOptionsVM.cs" />
     <Compile Include="AsmEditor\Converters\BooleanToGridrowLengthConverter.cs" />
-    <Compile Include="AsmEditor\Converters\VisibleMembersFlagsToTitleConverter.cs" />
     <Compile Include="AsmEditor\DataFieldVM.cs" />
     <Compile Include="AsmEditor\DeletableNodes.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\CreateTypeSigArrayDlg.xaml.cs">
+      <DependentUpon>CreateTypeSigArrayDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\CreateTypeSigArrayVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\MemberPickerDlg.xaml.cs">
       <DependentUpon>MemberPickerDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\DnlibDialogs\MemberPickerVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\TypeSigCreatorControl.xaml.cs">
+      <DependentUpon>TypeSigCreatorControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\TypeSigCreatorDlg.xaml.cs">
+      <DependentUpon>TypeSigCreatorDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\TypeSigCreatorOptions.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\TypeSigCreatorVM.cs" />
     <Compile Include="AsmEditor\EditCommand.cs" />
     <Compile Include="AsmEditor\EnumVM.cs" />
     <Compile Include="AsmEditor\Extensions.cs" />
@@ -165,10 +176,16 @@
     <Compile Include="AsmEditor\UndoCommandManager.cs" />
     <Compile Include="AsmEditor\UndoRedoMenuCommands.cs" />
     <Compile Include="AsmEditor\Utils.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\CreateTypeSigArray.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\DnlibTypePicker.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\ICreateTypeSigArray.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\IDnlibTypePicker.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IOpenPublicKeyFile.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IPickNetExecutableFileName.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\IShowWarningMessage.cs" />
     <Compile Include="AsmEditor\ViewHelpers\OpenPublicKeyFile.cs" />
     <Compile Include="AsmEditor\ViewHelpers\PickNetExecutableFileName.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\ShowWarningMessage.cs" />
     <Compile Include="AsmEditor\ViewModelBase.cs" />
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
@@ -440,7 +457,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="AsmEditor\DnlibDialogs\CreateTypeSigArrayDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AsmEditor\DnlibDialogs\MemberPickerDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\TypeSigCreatorControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\TypeSigCreatorDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

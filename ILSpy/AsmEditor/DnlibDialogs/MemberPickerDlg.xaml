@@ -28,11 +28,11 @@
              Height="500" Width="600"
              ResizeMode="CanResizeWithGrip"
              Icon="../../images/ILSpy.ico"
+             Title="{Binding Title}"
              WindowStartupLocation="CenterOwner"
              Style="{DynamicResource DialogWindow}"
              MinHeight="200" MinWidth="400">
 	<Window.Resources>
-		<vc:VisibleMembersFlagsToTitleConverter x:Key="VisibleMembersFlagsToTitleConverter" />
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 		<vc:BooleanToGridrowLengthConverter x:Key="BooleanToGridrowLengthConverter" />
 		<ControlTemplate x:Key="noRedBorderOnValidationError">
@@ -40,9 +40,6 @@
 			<AdornedElementPlaceholder/>
 		</ControlTemplate>
 	</Window.Resources>
-	<Window.Title>
-		<Binding Path="VisibleMembersFlags" Converter="{StaticResource VisibleMembersFlagsToTitleConverter}"/>
-	</Window.Title>
 	<Grid FocusManager.FocusedElement="{Binding ElementName=searchTextBox}">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition />

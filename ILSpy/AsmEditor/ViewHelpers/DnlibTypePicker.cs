@@ -18,25 +18,35 @@
 */
 
 using System.Windows;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnlib.DotNet;
+using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
 
-namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
+namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 {
-	/// <summary>
-	/// Interaction logic for SaveModuleOptions.xaml
-	/// </summary>
-	public partial class SaveModuleOptions : Window
+	sealed class DnlibTypePicker : IDnlibTypePicker
 	{
-		public SaveModuleOptions()
+		readonly Window ownerWindow;
+
+		public DnlibTypePicker()
+			: this(null)
 		{
-			InitializeComponent();
-			DataContextChanged += (s, e) => ((SaveModuleOptionsVM)DataContext).PickNetExecutableFileName = new PickNetExecutableFileName();
 		}
 
-		private void okButton_Click(object sender, RoutedEventArgs e)
+		public DnlibTypePicker(Window ownerWindow)
 		{
-			this.DialogResult = true;
-			Close();
+			this.ownerWindow = ownerWindow;
+		}
+
+		public T GetDnlibType<T>(VisibleMembersFlags flags) where T : class
+		{
+			var data = new MemberPickerVM(MainWindow.Instance.CurrentLanguage, flags);
+			var win = new MemberPickerDlg();
+			win.DataContext = data;
+			win.Owner = ownerWindow ?? MainWindow.Instance;
+			if (win.ShowDialog() != true)
+				return null;
+
+			return data.SelectedDnlibObject as T;
 		}
 	}
 }

@@ -18,25 +18,26 @@
 */
 
 using System.Windows;
+using System.Windows.Controls;
 using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
+namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
 	/// <summary>
-	/// Interaction logic for SaveModuleOptions.xaml
+	/// Interaction logic for TypeSigCreatorControl.xaml
 	/// </summary>
-	public partial class SaveModuleOptions : Window
+	public partial class TypeSigCreatorControl : UserControl
 	{
-		public SaveModuleOptions()
+		public TypeSigCreatorControl()
 		{
 			InitializeComponent();
-			DataContextChanged += (s, e) => ((SaveModuleOptionsVM)DataContext).PickNetExecutableFileName = new PickNetExecutableFileName();
-		}
-
-		private void okButton_Click(object sender, RoutedEventArgs e)
-		{
-			this.DialogResult = true;
-			Close();
+			DataContextChanged += (s, e) => {
+				var data = (TypeSigCreatorVM)DataContext;
+				var ownerWindow = Window.GetWindow(this);
+				data.DnlibTypePicker = new DnlibTypePicker(ownerWindow);
+				data.ShowWarningMessage = new ShowWarningMessage(ownerWindow);
+				data.CreateTypeSigArray = new CreateTypeSigArray(ownerWindow);
+			};
 		}
 	}
 }

@@ -18,5 +18,8 @@
 			<Setter Property="Height" Value="23"/>
 			<Setter Property="Width" Value="75"/>
 		</Style>
+		<Style x:Key="OtherDialogButton" TargetType="{x:Type Button}">
+			<Setter Property="Height" Value="23"/>
+		</Style>
 	</Application.Resources>
 </Application>

@@ -493,7 +493,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (IsAssembly) {
 				thisFlag = VisibleMembersFlags.AssemblyDef;
 				var visibleFlags = thisFlag | VisibleMembersFlags.ModuleDef |
-						VisibleMembersFlags.Namespace | VisibleMembersFlags.TypeDef |
+						VisibleMembersFlags.Namespace | VisibleMembersFlags.AnyTypeDef |
 						VisibleMembersFlags.FieldDef | VisibleMembersFlags.MethodDef |
 						VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef |
 						VisibleMembersFlags.AssemblyRef | VisibleMembersFlags.BaseTypes |
@@ -505,7 +505,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			else if (IsModule) {
 				thisFlag = VisibleMembersFlags.ModuleDef;
 				var visibleFlags = thisFlag |
-						VisibleMembersFlags.Namespace | VisibleMembersFlags.TypeDef |
+						VisibleMembersFlags.Namespace | VisibleMembersFlags.AnyTypeDef |
 						VisibleMembersFlags.FieldDef | VisibleMembersFlags.MethodDef |
 						VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef |
 						VisibleMembersFlags.AssemblyRef | VisibleMembersFlags.BaseTypes |

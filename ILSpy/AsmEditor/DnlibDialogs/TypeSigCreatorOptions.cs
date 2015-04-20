@@ -17,26 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
+namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
-	/// <summary>
-	/// Interaction logic for SaveModuleOptions.xaml
-	/// </summary>
-	public partial class SaveModuleOptions : Window
+	public sealed class TypeSigCreatorOptions
 	{
-		public SaveModuleOptions()
-		{
-			InitializeComponent();
-			DataContextChanged += (s, e) => ((SaveModuleOptionsVM)DataContext).PickNetExecutableFileName = new PickNetExecutableFileName();
-		}
+		public bool IsLocal { get; set; }
+		public bool CanAddGenericTypeVar { get; set; }
+		public bool CanAddGenericMethodVar { get; set; }
+		public int GenericNumber { get; set; }
+		public GenericParamContext GenericParamContext { get; set; }
+		public ModuleDef Module { get; set; }
+		public Language Language { get; set; }
 
-		private void okButton_Click(object sender, RoutedEventArgs e)
+		public TypeSigCreatorOptions Clone()
 		{
-			this.DialogResult = true;
-			Close();
+			return (TypeSigCreatorOptions)MemberwiseClone();
 		}
 	}
 }

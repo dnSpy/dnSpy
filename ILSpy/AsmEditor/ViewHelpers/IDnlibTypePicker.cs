@@ -17,26 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
+namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 {
-	/// <summary>
-	/// Interaction logic for SaveModuleOptions.xaml
-	/// </summary>
-	public partial class SaveModuleOptions : Window
+	interface IDnlibTypePicker
 	{
-		public SaveModuleOptions()
-		{
-			InitializeComponent();
-			DataContextChanged += (s, e) => ((SaveModuleOptionsVM)DataContext).PickNetExecutableFileName = new PickNetExecutableFileName();
-		}
-
-		private void okButton_Click(object sender, RoutedEventArgs e)
-		{
-			this.DialogResult = true;
-			Close();
-		}
+		/// <summary>
+		/// Asks user to pick a type, method etc in an assembly
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="flags">Decides which type nodes to show to the user</param>
+		/// <returns></returns>
+		T GetDnlibType<T>(VisibleMembersFlags flags) where T : class;
 	}
 }

@@ -633,9 +633,6 @@ namespace ICSharpCode.ILSpy
 				}
 			}
 
-			// We must tell it to re-check all commands again. If we don't, some of the toolbar
-			// buttons will be disabled until the user clicks with the mouse or presses a key.
-			// This happens when debugging and you press F5 and the program exits.
 			CommandManager.InvalidateRequerySuggested();
 		}
 

@@ -40,6 +40,14 @@ namespace ICSharpCode.ILSpy
 		ModuleRef		= 0x00000800,
 		Resources		= 0x00001000,
 		NonNetFile		= 0x00002000,
+		GenericTypeDef	= 0x00004000,
+		NonGenericTypeDef=0x00008000,
+		EnumTypeDef		= 0x00010000,
+		InterfaceTypeDef= 0x00020000,
+		ClassTypeDef	= 0x00040000,
+		ValueTypeDef	= 0x00080000,
+		TypeDefOther	= GenericTypeDef | NonGenericTypeDef | EnumTypeDef | InterfaceTypeDef | ClassTypeDef | ValueTypeDef,
+		AnyTypeDef		= TypeDef | TypeDefOther,
 		All				= AssemblyDef | ModuleDef | Namespace | TypeDef |
 						  FieldDef | MethodDef | PropertyDef | EventDef |
 						  AssemblyRef | BaseTypes | DerivedTypes | ModuleRef |
@@ -73,6 +81,12 @@ namespace ICSharpCode.ILSpy
 			if ((flags & VisibleMembersFlags.ModuleRef) != 0) AddString(sb, "ModuleRef", ref count);
 			if ((flags & VisibleMembersFlags.Resources) != 0) AddString(sb, "Resources", ref count);
 			if ((flags & VisibleMembersFlags.NonNetFile) != 0) AddString(sb, "NonNetFile", ref count);
+			if ((flags & VisibleMembersFlags.GenericTypeDef) != 0) AddString(sb, "Generic TypeDef", ref count);
+			if ((flags & VisibleMembersFlags.NonGenericTypeDef) != 0) AddString(sb, "Non-Generic TypeDef", ref count);
+			if ((flags & VisibleMembersFlags.EnumTypeDef) != 0) AddString(sb, "Enum TypeDef", ref count);
+			if ((flags & VisibleMembersFlags.InterfaceTypeDef) != 0) AddString(sb, "Interface TypeDef", ref count);
+			if ((flags & VisibleMembersFlags.ClassTypeDef) != 0) AddString(sb, "Class TypeDef", ref count);
+			if ((flags & VisibleMembersFlags.ValueTypeDef) != 0) AddString(sb, "Value Type TypeDef", ref count);
 
 			return sb.ToString();
 		}

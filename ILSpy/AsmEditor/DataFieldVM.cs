@@ -18,7 +18,9 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Text;
 
 namespace ICSharpCode.ILSpy.AsmEditor
 {
@@ -54,7 +56,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return -1;
 		}
 
-		public static string ToString(byte[] value, bool upper = true)
+		public static string ByteArrayToString(byte[] value, bool upper = true)
 		{
 			if (value == null)
 				return string.Empty;
@@ -81,23 +83,44 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return string.Format("0x{0:X}", value);
 		}
 
-		static ulong ParseUnsigned(string s, ulong max)
+		public static string ToString(long value, bool useDecimal)
+		{
+			if (-9 <= value && value <= 9 || useDecimal)
+				return value.ToString();
+			if (value < 0)
+				return string.Format("-0x{0:X}", -value);
+			return string.Format("0x{0:X}", value);
+		}
+
+		static string TryParseUnsigned(string s, ulong max, out ulong value)
 		{
 			const ulong min = 0;
-			ulong value;
+			value = 0;
 			bool isValid;
 			s = s.Trim();
-			if (s.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
-				isValid = ulong.TryParse(s.Substring(2), NumberStyles.HexNumber, null, out value);
+			if (s.StartsWith("0x", StringComparison.OrdinalIgnoreCase)) {
+				var s2 = s.Substring(2);
+				isValid = s2.Trim() == s2 && ulong.TryParse(s2, NumberStyles.HexNumber, null, out value);
+			}
 			else
 				isValid = ulong.TryParse(s, NumberStyles.Integer, null, out value);
 			if (!isValid) {
 				if (s.StartsWith("-"))
-					throw new FormatException("Only non-negative integers are allowed.");
-				throw new FormatException("The value is not an unsigned hexadecimal or decimal integer.");
+					return "Only non-negative integers are allowed.";
+				return "The value is not an unsigned hexadecimal or decimal integer.";
 			}
 			if (value < min || value > max)
-				throw new FormatException(string.Format("Value must be between {0} and {1} (0x{1:X}) inclusive.", min, max));
+				return string.Format("Value must be between {0} and {1} (0x{1:X}) inclusive.", min, max);
+
+			return null;
+		}
+
+		static ulong ParseUnsigned(string s, ulong max)
+		{
+			ulong value;
+			var err = TryParseUnsigned(s, max, out value);
+			if (err != null)
+				throw new FormatException(err);
 			return value;
 		}
 
@@ -119,6 +142,179 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public static ulong ParseUInt64(string s)
 		{
 			return ParseUnsigned(s, ulong.MaxValue);
+		}
+
+		static string TryParseSigned(string s, long min, long max, out long value)
+		{
+			value = 0;
+			bool isValid;
+			s = s.Trim();
+			bool isSigned = s.StartsWith("-", StringComparison.OrdinalIgnoreCase);
+			if (isSigned)
+				s = s.Substring(1);
+			ulong value2 = 0;
+			if (s.Trim() != s)
+				isValid = false;
+			else if (s.StartsWith("0x", StringComparison.OrdinalIgnoreCase)) {
+				var s2 = s.Substring(2);
+				isValid = s2.Trim() == s2 && ulong.TryParse(s2, NumberStyles.HexNumber, null, out value2);
+			}
+			else
+				isValid = ulong.TryParse(s, NumberStyles.Integer, null, out value2);
+			if (!isValid)
+				return "The value is not a hexadecimal or decimal integer.";
+			if (isSigned) {
+				if (value2 > (ulong)long.MaxValue + 1)
+					return "The value is too small.";
+				value = unchecked(-(long)value2);
+			}
+			else {
+				if (value2 > (ulong)long.MaxValue)
+					return "The value is too big.";
+				value = (long)value2;
+			}
+			if (value < min || value > max)
+				return string.Format("Value must be between {0} (0x{0:X}) and {1} (0x{1:X}) inclusive.", min, max);
+
+			return null;
+		}
+
+		static long ParseSigned(string s, long min, long max)
+		{
+			long value;
+			var err = TryParseSigned(s, min, max, out value);
+			if (err != null)
+				throw new FormatException(err);
+			return value;
+		}
+
+		public static sbyte ParseSByte(string s)
+		{
+			return (sbyte)ParseSigned(s, sbyte.MinValue, sbyte.MaxValue);
+		}
+
+		public static short ParseInt16(string s)
+		{
+			return (short)ParseSigned(s, short.MinValue, short.MaxValue);
+		}
+
+		public static int ParseInt32(string s)
+		{
+			return (int)ParseSigned(s, int.MinValue, int.MaxValue);
+		}
+
+		public static long ParseInt64(string s)
+		{
+			return (long)ParseSigned(s, long.MinValue, long.MaxValue);
+		}
+
+		static string ToString<T>(T[] list, Func<T,string> toString)
+		{
+			var sb = new StringBuilder();
+			for (int i = 0; i < list.Length; i++) {
+				if (i != 0)
+					sb.Append(", ");
+				sb.Append(toString(list[i]));
+			}
+			return sb.ToString();
+		}
+
+		public static string ToString(byte[] values, bool useDecimal)
+		{
+			return ToString(values, v => ToString(v, useDecimal));
+		}
+
+		public static string ToString(ushort[] values, bool useDecimal)
+		{
+			return ToString(values, v => ToString(v, useDecimal));
+		}
+
+		public static string ToString(uint[] values, bool useDecimal)
+		{
+			return ToString(values, v => ToString(v, useDecimal));
+		}
+
+		public static string ToString(ulong[] values, bool useDecimal)
+		{
+			return ToString(values, v => ToString(v, useDecimal));
+		}
+
+		public static string ToString(sbyte[] values, bool useDecimal)
+		{
+			return ToString(values, v => ToString(v, useDecimal));
+		}
+
+		public static string ToString(short[] values, bool useDecimal)
+		{
+			return ToString(values, v => ToString(v, useDecimal));
+		}
+
+		public static string ToString(int[] values, bool useDecimal)
+		{
+			return ToString(values, v => ToString(v, useDecimal));
+		}
+
+		public static string ToString(long[] values, bool useDecimal)
+		{
+			return ToString(values, v => ToString(v, useDecimal));
+		}
+
+		static T[] ParseList<T>(string s, Func<string, T> parseValue)
+		{
+			var list = new List<T>();
+
+			s = s.Trim();
+			if (s == string.Empty)
+				return list.ToArray();
+
+			foreach (var elem in s.Split(',')) {
+				var value = elem.Trim();
+				if (value == string.Empty)
+					throw new FormatException("Value in list can't be empty.");
+				list.Add(parseValue(value));
+			}
+
+			return list.ToArray();
+		}
+
+		public static byte[] ParseByteList(string s)
+		{
+			return ParseList<byte>(s, v => ParseByte(v));
+		}
+
+		public static ushort[] ParseUInt16List(string s)
+		{
+			return ParseList<ushort>(s, v => ParseUInt16(v));
+		}
+
+		public static uint[] ParseUInt32List(string s)
+		{
+			return ParseList<uint>(s, v => ParseUInt32(v));
+		}
+
+		public static ulong[] ParseUInt64List(string s)
+		{
+			return ParseList<ulong>(s, v => ParseUInt64(v));
+		}
+
+		public static sbyte[] ParseSByteList(string s)
+		{
+			return ParseList<sbyte>(s, v => ParseSByte(v));
+		}
+
+		public static short[] ParseInt16List(string s)
+		{
+			return ParseList<short>(s, v => ParseInt16(v));
+		}
+
+		public static int[] ParseInt32List(string s)
+		{
+			return ParseList<int>(s, v => ParseInt32(v));
+		}
+
+		public static long[] ParseInt64List(string s)
+		{
+			return ParseList<long>(s, v => ParseInt64(v));
 		}
 	}
 
@@ -302,7 +498,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override void SetValue(byte[] value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value, UpperCaseHex);
+			this.StringValue = NumberVMUtils.ByteArrayToString(value, UpperCaseHex);
 		}
 
 		protected override string ConvertToValue(out byte[] value)
@@ -449,6 +645,31 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 	}
 
+	sealed class UInt32VM : NumberDataFieldVM<uint>
+	{
+		public UInt32VM(Action<DataFieldVM<uint>> onUpdated)
+			: this(0, onUpdated)
+		{
+		}
+
+		public UInt32VM(uint value, Action<DataFieldVM<uint>> onUpdated)
+			: base(onUpdated)
+		{
+			SetValue(value);
+		}
+
+		protected override void SetValue(uint value)
+		{
+			this.StringValue = NumberVMUtils.ToString(value, UseDecimal);
+		}
+
+		protected override string ConvertToValue(out uint value)
+		{
+			value = NumberVMUtils.ParseUInt32(StringValue);
+			return null;
+		}
+	}
+
 	sealed class GuidVM : DataFieldVM<Guid>
 	{
 		public GuidVM(Action<DataFieldVM<Guid>> onUpdated)
@@ -470,6 +691,56 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		protected override string ConvertToValue(out Guid value)
 		{
 			value = Guid.Parse(StringValue);
+			return null;
+		}
+	}
+
+	sealed class UInt32ListDataFieldVM : NumberDataFieldVM<uint[]>
+	{
+		public UInt32ListDataFieldVM(Action<DataFieldVM<uint[]>> onUpdated)
+			: this(new uint[0], onUpdated)
+		{
+		}
+
+		public UInt32ListDataFieldVM(uint[] value, Action<DataFieldVM<uint[]>> onUpdated)
+			: base(onUpdated)
+		{
+			SetValue(value);
+		}
+
+		protected override void SetValue(uint[] value)
+		{
+			this.StringValue = NumberVMUtils.ToString(value, UseDecimal);
+		}
+
+		protected override string ConvertToValue(out uint[] value)
+		{
+			value = NumberVMUtils.ParseUInt32List(StringValue);
+			return null;
+		}
+	}
+
+	sealed class Int32ListDataFieldVM : NumberDataFieldVM<int[]>
+	{
+		public Int32ListDataFieldVM(Action<DataFieldVM<int[]>> onUpdated)
+			: this(new int[0], onUpdated)
+		{
+		}
+
+		public Int32ListDataFieldVM(int[] value, Action<DataFieldVM<int[]>> onUpdated)
+			: base(onUpdated)
+		{
+			SetValue(value);
+		}
+
+		protected override void SetValue(int[] value)
+		{
+			this.StringValue = NumberVMUtils.ToString(value, UseDecimal);
+		}
+
+		protected override string ConvertToValue(out int[] value)
+		{
+			value = NumberVMUtils.ParseInt32List(StringValue);
 			return null;
 		}
 	}

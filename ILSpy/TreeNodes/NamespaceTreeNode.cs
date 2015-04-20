@@ -56,7 +56,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			var visibleFlags = VisibleMembersFlags.Namespace | VisibleMembersFlags.TypeDef |
+			var visibleFlags = VisibleMembersFlags.Namespace | VisibleMembersFlags.AnyTypeDef |
 					VisibleMembersFlags.FieldDef | VisibleMembersFlags.MethodDef |
 					VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef |
 					VisibleMembersFlags.BaseTypes | VisibleMembersFlags.DerivedTypes;

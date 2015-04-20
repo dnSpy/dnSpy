@@ -17,23 +17,36 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Globalization;
-using System.Windows.Data;
+using System.Windows;
+using dnlib.DotNet;
+using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Converters
+namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 {
-	sealed class VisibleMembersFlagsToTitleConverter : IValueConverter
+	sealed class CreateTypeSigArray : ICreateTypeSigArray
 	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		readonly Window ownerWindow;
+
+		public CreateTypeSigArray()
+			: this(null)
 		{
-			var flags = (VisibleMembersFlags)value;
-			return string.Format("Pick a {0}", flags.GetListString());
 		}
 
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		public CreateTypeSigArray(Window ownerWindow)
 		{
-			throw new NotImplementedException();
+			this.ownerWindow = ownerWindow;
+		}
+
+		public TypeSig[] Create(TypeSigCreatorOptions options, int? count)
+		{
+			var data = new CreateTypeSigArrayVM(options, count);
+			var win = new CreateTypeSigArrayDlg();
+			win.DataContext = data;
+			win.Owner = ownerWindow ?? MainWindow.Instance;
+			if (win.ShowDialog() != true)
+				return null;
+
+			return data.TypeSigArray;
 		}
 	}
 }

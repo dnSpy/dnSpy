@@ -18,19 +18,20 @@
 */
 
 using System.Windows;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
+namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
 	/// <summary>
-	/// Interaction logic for SaveModuleOptions.xaml
+	/// Interaction logic for CreateTypeSigArrayDlg.xaml
 	/// </summary>
-	public partial class SaveModuleOptions : Window
+	public partial class CreateTypeSigArrayDlg : Window
 	{
-		public SaveModuleOptions()
+		public CreateTypeSigArrayDlg()
 		{
 			InitializeComponent();
-			DataContextChanged += (s, e) => ((SaveModuleOptionsVM)DataContext).PickNetExecutableFileName = new PickNetExecutableFileName();
 		}
 
 		private void okButton_Click(object sender, RoutedEventArgs e)

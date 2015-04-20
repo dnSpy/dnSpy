@@ -47,7 +47,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				if (res != null) {
 					var mr = res.Member;
 
-					if ((visibleMembersFlags & VisibleMembersFlags.TypeDef) != 0 && mr is TypeDef)
+					if ((visibleMembersFlags & VisibleMembersFlags.AnyTypeDef) != 0 && IsValidTypeDef(mr))
 						return mr;
 					if ((visibleMembersFlags & VisibleMembersFlags.FieldDef) != 0 && mr is FieldDef)
 						return mr;
@@ -67,7 +67,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 						return ((AssemblyTreeNode)item).LoadedAssembly;
 					if ((visibleMembersFlags & VisibleMembersFlags.Namespace) != 0 && item is NamespaceTreeNode)
 						return ((NamespaceTreeNode)item).Name;
-					if ((visibleMembersFlags & VisibleMembersFlags.TypeDef) != 0 && item is TypeTreeNode)
+					if ((visibleMembersFlags & VisibleMembersFlags.AnyTypeDef) != 0 && item is TypeTreeNode && IsValidTypeDef(((TypeTreeNode)item).TypeDefinition))
 						return ((TypeTreeNode)item).TypeDefinition;
 					if ((visibleMembersFlags & VisibleMembersFlags.FieldDef) != 0 && item is FieldTreeNode)
 						return ((FieldTreeNode)item).FieldDefinition;
@@ -85,6 +85,30 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 				return null;
 			}
+		}
+
+		bool IsValidTypeDef(IMemberRef mr)
+		{
+			var td = mr as TypeDef;
+			if (td == null)
+				return false;
+
+			if ((visibleMembersFlags & VisibleMembersFlags.GenericTypeDef) != 0 && td.GenericParameters.Count > 0)
+				return true;
+			if ((visibleMembersFlags & VisibleMembersFlags.NonGenericTypeDef) != 0 && td.GenericParameters.Count == 0)
+				return true;
+			if ((visibleMembersFlags & VisibleMembersFlags.EnumTypeDef) != 0 && td.IsEnum)
+				return true;
+			if ((visibleMembersFlags & VisibleMembersFlags.InterfaceTypeDef) != 0 && td.IsInterface)
+				return true;
+			if ((visibleMembersFlags & VisibleMembersFlags.ClassTypeDef) != 0 && !td.IsValueType)
+				return true;
+			if ((visibleMembersFlags & VisibleMembersFlags.ValueTypeDef) != 0 && td.IsValueType)
+				return true;
+			if ((visibleMembersFlags & VisibleMembersFlags.TypeDef) != 0)
+				return true;
+
+			return false;
 		}
 
 		public string SearchText {
@@ -159,6 +183,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		readonly VisibleMembersFlags visibleMembersFlags;
 
+		public string Title {
+			get { return string.Format("Pick a {0}", VisibleMembersFlags.GetListString()); }
+		}
+
 		public bool ShowInternalApi {
 			get { return showInternalApi; }
 			set {
@@ -195,7 +223,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		void CreateNewFilterSettings()
 		{
-			this.assemblyListTreeNode.FilterSettings = new FilterSettings(VisibleMembersFlags, Language, ShowInternalApi);
+			if (assemblyListTreeNode != null)
+				assemblyListTreeNode.FilterSettings = new FilterSettings(VisibleMembersFlags, Language, ShowInternalApi);
 		}
 
 		SearchPane.RunningSearch currentSearch;
@@ -219,7 +248,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			//TODO: Update searcher. SearchMode should be flags and it should support more stuff.
 			//		Eg. the Member value should be split up into Field, Method, etc. It also shouldn't
 			//		be a nested class of SearchPane!
-			if ((VisibleMembersFlags & ILSpy.VisibleMembersFlags.TypeDef) != 0)
+			if ((VisibleMembersFlags & ILSpy.VisibleMembersFlags.AnyTypeDef) != 0)
 				return SearchMode.Type;
 			return SearchMode.Member;
 		}

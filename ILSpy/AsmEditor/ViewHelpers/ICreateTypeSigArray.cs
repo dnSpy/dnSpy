@@ -17,26 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnlib.DotNet;
+using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
 
-namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
+namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 {
-	/// <summary>
-	/// Interaction logic for SaveModuleOptions.xaml
-	/// </summary>
-	public partial class SaveModuleOptions : Window
+	interface ICreateTypeSigArray
 	{
-		public SaveModuleOptions()
-		{
-			InitializeComponent();
-			DataContextChanged += (s, e) => ((SaveModuleOptionsVM)DataContext).PickNetExecutableFileName = new PickNetExecutableFileName();
-		}
-
-		private void okButton_Click(object sender, RoutedEventArgs e)
-		{
-			this.DialogResult = true;
-			Close();
-		}
+		/// <summary>
+		/// Returns a created TypeSig array or null if user canceled.
+		/// </summary>
+		/// <param name="options">Type sig creator options</param>
+		/// <param name="count">Number of types to create or null if any number of types can be
+		/// created</param>
+		/// <returns></returns>
+		TypeSig[] Create(TypeSigCreatorOptions options, int? count);
 	}
 }

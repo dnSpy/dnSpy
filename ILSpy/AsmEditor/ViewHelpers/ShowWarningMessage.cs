@@ -18,25 +18,29 @@
 */
 
 using System.Windows;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
+namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 {
-	/// <summary>
-	/// Interaction logic for SaveModuleOptions.xaml
-	/// </summary>
-	public partial class SaveModuleOptions : Window
+	sealed class ShowWarningMessage : IShowWarningMessage
 	{
-		public SaveModuleOptions()
+		readonly Window ownerWindow;
+
+		public ShowWarningMessage()
+			: this(null)
 		{
-			InitializeComponent();
-			DataContextChanged += (s, e) => ((SaveModuleOptionsVM)DataContext).PickNetExecutableFileName = new PickNetExecutableFileName();
 		}
 
-		private void okButton_Click(object sender, RoutedEventArgs e)
+		public ShowWarningMessage(Window ownerWindow)
 		{
-			this.DialogResult = true;
-			Close();
+			this.ownerWindow = ownerWindow;
+		}
+
+		public void Show(string key, string msg)
+		{
+			if (key == null)
+				MainWindow.Instance.ShowMessageBox(msg, MessageBoxButton.OK, ownerWindow);
+			else
+				MainWindow.Instance.ShowIgnorableMessageBox(key, msg, MessageBoxButton.OK, ownerWindow);
 		}
 	}
 }
