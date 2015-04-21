@@ -204,6 +204,7 @@
     <Compile Include="AsmEditor\ViewHelpers\ShowWarningMessage.cs" />
     <Compile Include="AsmEditor\ViewHelpers\TypeSigCreator.cs" />
     <Compile Include="AsmEditor\ViewModelBase.cs" />
+    <Compile Include="AsmEditor\WindowBase.cs" />
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
     <Compile Include="AvalonEdit\EditorPositionState.cs" />

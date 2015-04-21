@@ -25,7 +25,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 	/// <summary>
 	/// Interaction logic for SaveModuleOptions.xaml
 	/// </summary>
-	public partial class SaveModuleOptions : Window
+	public partial class SaveModuleOptions : WindowBase
 	{
 		public SaveModuleOptions()
 		{
@@ -35,12 +35,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 				if (data != null)
 					data.PickNetExecutableFileName = new PickNetExecutableFileName();
 			};
-		}
-
-		private void okButton_Click(object sender, RoutedEventArgs e)
-		{
-			this.DialogResult = true;
-			Close();
 		}
 	}
 }

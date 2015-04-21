@@ -24,17 +24,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 	/// <summary>
 	/// Interaction logic for ModuleOptionsDlg.xaml
 	/// </summary>
-	public partial class ModuleOptionsDlg : Window
+	public partial class ModuleOptionsDlg : WindowBase
 	{
 		public ModuleOptionsDlg()
 		{
 			InitializeComponent();
-		}
-
-		private void okButton_Click(object sender, RoutedEventArgs e)
-		{
-			this.DialogResult = true;
-			Close();
 		}
 	}
 }

@@ -24,18 +24,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly {
 	/// <summary>
 	/// Interaction logic for AssemblyOptionsDlg.xaml
 	/// </summary>
-	public partial class AssemblyOptionsDlg : Window
+	public partial class AssemblyOptionsDlg : WindowBase
 	{
 		public AssemblyOptionsDlg()
 		{
 			InitializeComponent();
 			Loaded += (s, e) => ((AssemblyOptionsVM)DataContext).OpenPublicKeyFile = new OpenPublicKeyFile(this);
-		}
-
-		private void okButton_Click(object sender, RoutedEventArgs e)
-		{
-			this.DialogResult = true;
-			Close();
 		}
 	}
 }

@@ -23,7 +23,7 @@ using System.Windows;
 
 namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 {
-	public class SaveModuleWindow : Window
+	public class SaveModuleWindow : WindowBase
 	{
 		public SaveModuleWindow()
 		{
@@ -40,13 +40,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		{
 			var data = (SaveMultiModuleVM)DataContext;
 			if (!data.HasError)
-				closeButton_Click(null, null);
-		}
-
-		protected void closeButton_Click(object sender, RoutedEventArgs e)
-		{
-			this.DialogResult = true;
-			Close();
+				okButton_Click(null, null);
 		}
 
 		protected override void OnClosing(CancelEventArgs e)

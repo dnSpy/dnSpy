@@ -25,7 +25,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 	/// <summary>
 	/// Interaction logic for MemberPickerDlg.xaml
 	/// </summary>
-	public partial class MemberPickerDlg : Window
+	public partial class MemberPickerDlg : WindowBase
 	{
 		public MemberPickerDlg()
 		{
@@ -35,12 +35,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				if (data != null)
 					data.OpenAssembly = new OpenAssembly();
 			};
-		}
-
-		private void okButton_Click(object sender, RoutedEventArgs e)
-		{
-			this.DialogResult = true;
-			Close();
 		}
 	}
 }

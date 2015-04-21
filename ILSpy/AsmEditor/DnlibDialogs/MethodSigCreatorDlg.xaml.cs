@@ -24,17 +24,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 	/// <summary>
 	/// Interaction logic for MethodSigCreatorDlg.xaml
 	/// </summary>
-	public partial class MethodSigCreatorDlg : Window
+	public partial class MethodSigCreatorDlg : WindowBase
 	{
 		public MethodSigCreatorDlg()
 		{
 			InitializeComponent();
-		}
-
-		private void okButton_Click(object sender, RoutedEventArgs e)
-		{
-			this.DialogResult = true;
-			Close();
 		}
 	}
 }

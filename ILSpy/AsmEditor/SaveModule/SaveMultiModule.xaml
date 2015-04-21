@@ -173,7 +173,7 @@
 					Content="_Close"
 					IsCancel="True"
 					Style="{StaticResource DialogButton}"
-					Click="closeButton_Click"
+					Click="okButton_Click"
 					Visibility="{Binding IsSaved, Converter={StaticResource BooleanToVisibilityConverter}}"
 					/>
 		</Grid>

@@ -18,20 +18,15 @@
 */
 
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
+namespace ICSharpCode.ILSpy.AsmEditor
 {
-	/// <summary>
-	/// Interaction logic for CreateTypeSigArrayDlg.xaml
-	/// </summary>
-	public partial class CreateTypeSigArrayDlg : WindowBase
+	public abstract class WindowBase : Window
 	{
-		public CreateTypeSigArrayDlg()
+		protected void okButton_Click(object sender, RoutedEventArgs e)
 		{
-			InitializeComponent();
+			this.DialogResult = true;
+			Close();
 		}
 	}
 }

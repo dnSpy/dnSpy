@@ -16,11 +16,12 @@
     You should have received a copy of the GNU General Public License
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<Window x:Class="ICSharpCode.ILSpy.AsmEditor.Module.NetModuleOptionsDlg"
+<winlocal:WindowBase x:Class="ICSharpCode.ILSpy.AsmEditor.Module.NetModuleOptionsDlg"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              xmlns:mm="clr-namespace:ICSharpCode.ILSpy"
              mm:HideWindowsButtons.MaxMinButtons="True"
              Height="180" Width="400"
@@ -30,7 +31,7 @@
              WindowStartupLocation="CenterOwner"
              Style="{DynamicResource DialogWindow}"
              MinHeight="180" MinWidth="400">
-	<Window.Resources>
+	<winlocal:WindowBase.Resources>
 		<Style TargetType="{x:Type TextBox}">
 			<Style.Triggers>
 				<Trigger Property="Validation.HasError" Value="true">
@@ -40,7 +41,7 @@
 				</Trigger>
 			</Style.Triggers>
 		</Style>
-	</Window.Resources>
+	</winlocal:WindowBase.Resources>
 	<Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*" />
@@ -80,4 +81,4 @@
 			<Button Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0,0,0,0" />
 		</StackPanel>
     </Grid>
-</Window>
+</winlocal:WindowBase>

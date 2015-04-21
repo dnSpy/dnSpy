@@ -16,12 +16,13 @@
     You should have received a copy of the GNU General Public License
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<Window x:Class="ICSharpCode.ILSpy.AsmEditor.DnlibDialogs.CreateTypeSigArrayDlg"
+<winlocal:WindowBase x:Class="ICSharpCode.ILSpy.AsmEditor.DnlibDialogs.CreateTypeSigArrayDlg"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
+             xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              xmlns:mm="clr-namespace:ICSharpCode.ILSpy"
              mm:HideWindowsButtons.MaxMinButtons="True"
              Height="400" Width="500"
@@ -31,9 +32,9 @@
              WindowStartupLocation="CenterOwner"
              Style="{DynamicResource DialogWindow}"
              MinHeight="400" MinWidth="500">
-	<Window.Resources>
+	<winlocal:WindowBase.Resources>
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-	</Window.Resources>
+	</winlocal:WindowBase.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition />
@@ -62,4 +63,4 @@
 			<Button Grid.Column="4" Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" />
 		</Grid>
 	</Grid>
-</Window>
+</winlocal:WindowBase>
