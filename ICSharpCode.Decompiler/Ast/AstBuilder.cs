@@ -1173,7 +1173,8 @@ namespace ICSharpCode.Decompiler.Ast
 		public static IEnumerable<ParameterDeclaration> MakeParameters(MethodDef method, bool isLambda = false)
 		{
 			var parameters = MakeParameters(method.Parameters, isLambda);
-			if (method.CallingConvention == dnlib.DotNet.CallingConvention.VarArg) {
+			if (method.CallingConvention == dnlib.DotNet.CallingConvention.VarArg ||
+				method.CallingConvention == dnlib.DotNet.CallingConvention.NativeVarArg) {
 				var pd = new ParameterDeclaration {
 					Type = new PrimitiveType("__arglist"),
 					NameToken = Identifier.Create("").WithAnnotation(TextTokenType.Parameter)

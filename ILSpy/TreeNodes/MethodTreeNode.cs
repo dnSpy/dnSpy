@@ -65,7 +65,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					b.Append(", ");
 				b.Append(language.TypeToString(method.Parameters[i].Type.ToTypeDefOrRef(), false, method.Parameters[i].ParamDef));
 			}
-			if (method.CallingConvention == CallingConvention.VarArg) {
+			if (method.CallingConvention == CallingConvention.VarArg || method.CallingConvention == CallingConvention.NativeVarArg) {
 				if (method.MethodSig.GetParamCount() > 0)
 					b.Append(", ");
 				b.Append("...");

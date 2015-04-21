@@ -100,6 +100,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			{ CallingConvention.ThisCall, "unmanaged thiscall" },
 			{ CallingConvention.FastCall, "unmanaged fastcall" },
 			{ CallingConvention.VarArg, "vararg" },
+			{ CallingConvention.NativeVarArg, "nativevararg" },
 			{ CallingConvention.Generic, null },
 		};
 		
