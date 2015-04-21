@@ -24,13 +24,13 @@
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              xmlns:mm="clr-namespace:ICSharpCode.ILSpy"
              mm:HideWindowsButtons.MaxMinButtons="True"
-             Height="180" Width="400"
+             Height="195" Width="400"
              ResizeMode="CanResizeWithGrip"
              Icon="../../images/ILSpy.ico"
              Title="Create NetModule"
              WindowStartupLocation="CenterOwner"
              Style="{DynamicResource DialogWindow}"
-             MinHeight="180" MinWidth="400">
+             MinHeight="195" MinWidth="400">
 	<winlocal:WindowBase.Resources>
 		<Style TargetType="{x:Type TextBox}">
 			<Style.Triggers>
@@ -64,15 +64,15 @@
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
 
-				<Label Grid.Row="0" Grid.Column="0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
-				<TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+				<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
+				<TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
-				<Label Grid.Row="1" Grid.Column="0" Target="{Binding ElementName=mvidTextBox}" Content="_Mvid" />
-				<TextBox Grid.Row="1" Grid.Column="1" Name="mvidTextBox" Text="{Binding Mvid.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-				<Button Grid.Row="1" Grid.Column="2" Content="Ne_w" Command="{Binding GenerateNewMvidCommand}" />
+				<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=mvidTextBox}" Content="_Mvid" />
+				<TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="mvidTextBox" Text="{Binding Mvid.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+				<Button Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Content="Ne_w" Command="{Binding GenerateNewMvidCommand}" />
 
-				<Label Grid.Row="2" Grid.Column="0" Content=".NET _Version" Target="{Binding ElementName=clrVersionComboBox}" />
-				<ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Name="clrVersionComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ClrVersion.Items}" SelectedIndex="{Binding ClrVersion.SelectedIndex}" Width="100" VerticalContentAlignment="Center" HorizontalAlignment="Left" />
+				<Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Content=".NET _Version" Target="{Binding ElementName=clrVersionComboBox}" />
+				<ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5 5 0 0" Name="clrVersionComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ClrVersion.Items}" SelectedIndex="{Binding ClrVersion.SelectedIndex}" Width="100" VerticalContentAlignment="Center" HorizontalAlignment="Left" />
 			</Grid>
 		</Border>
 

@@ -24,13 +24,13 @@
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              xmlns:mm="clr-namespace:ICSharpCode.ILSpy"
              mm:HideWindowsButtons.MaxMinButtons="True"
-             Height="370" Width="400"
+             Height="420" Width="400"
              ResizeMode="CanResizeWithGrip"
              Icon="../../images/ILSpy.ico"
              Title="Assembly Settings"
              WindowStartupLocation="CenterOwner"
              Style="{DynamicResource DialogWindow}"
-             MinHeight="370" MinWidth="400">
+             MinHeight="420" MinWidth="400">
 	<winlocal:WindowBase.Resources>
 		<Style TargetType="{x:Type TextBox}">
 			<Style.Triggers>
@@ -76,13 +76,13 @@
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 
-					<Label Grid.Row="0" Grid.Column="0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
-					<TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-					<Label Grid.Row="1" Grid.Column="0" Target="{Binding ElementName=cultureTextBox}" Content="C_ulture" />
-					<TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Name="cultureTextBox" Text="{Binding Culture, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-					<Label Grid.Row="2" Grid.Column="0" Target="{Binding ElementName=publicKeyTextBox}" Content="_PublicKey" />
-					<TextBox Grid.Row="2" Grid.Column="1" Name="publicKeyTextBox" Text="{Binding PublicKey.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-					<Button Grid.Row="2" Grid.Column="2" MinWidth="25" Content="..." Command="{Binding OpenPublicKeyFileCommand}"  />
+					<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
+					<TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+					<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=cultureTextBox}" Content="C_ulture" />
+					<TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="5 5 0 0" Name="cultureTextBox" Text="{Binding Culture, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+					<Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=publicKeyTextBox}" Content="_PublicKey" />
+					<TextBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="publicKeyTextBox" Text="{Binding PublicKey.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+					<Button Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" MinWidth="25" Content="..." Command="{Binding OpenPublicKeyFileCommand}"  />
 				</Grid>
 
 				<Grid Grid.Row="1">
@@ -97,12 +97,12 @@
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 
-					<Label Grid.Row="0" Grid.Column="0" Content="_Hash Algorithm" Target="{Binding ElementName=hashAlgorithmComboBox}" />
-					<ComboBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Name="hashAlgorithmComboBox" DisplayMemberPath="Name" ItemsSource="{Binding HashAlgorithm.Items}" SelectedIndex="{Binding HashAlgorithm.SelectedIndex}" VerticalContentAlignment="Center" />
-					<Label Grid.Row="0" Grid.Column="2" Content="Proce_ssor Arch" Target="{Binding ElementName=processArchitectureComboBox}" />
-					<ComboBox Grid.Row="0" Grid.Column="3" HorizontalAlignment="Stretch" Name="processArchitectureComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ProcessArchitecture.Items}" SelectedIndex="{Binding ProcessArchitecture.SelectedIndex}" VerticalContentAlignment="Center" />
-					<Label Grid.Row="1" Grid.Column="0" Content="Content _Type" Target="{Binding ElementName=contentTypeComboBox}" />
-					<ComboBox Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Name="contentTypeComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ContentType.Items}" SelectedIndex="{Binding ContentType.SelectedIndex}" VerticalContentAlignment="Center" />
+					<Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="_Hash Algorithm" Target="{Binding ElementName=hashAlgorithmComboBox}" />
+					<ComboBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="hashAlgorithmComboBox" DisplayMemberPath="Name" ItemsSource="{Binding HashAlgorithm.Items}" SelectedIndex="{Binding HashAlgorithm.SelectedIndex}" VerticalContentAlignment="Center" />
+					<Label Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Content="Proce_ssor Arch" Target="{Binding ElementName=processArchitectureComboBox}" />
+					<ComboBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="processArchitectureComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ProcessArchitecture.Items}" SelectedIndex="{Binding ProcessArchitecture.SelectedIndex}" VerticalContentAlignment="Center" />
+					<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="Content _Type" Target="{Binding ElementName=contentTypeComboBox}" />
+					<ComboBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="contentTypeComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ContentType.Items}" SelectedIndex="{Binding ContentType.SelectedIndex}" VerticalContentAlignment="Center" />
 				</Grid>
 
 				<Grid Grid.Row="2">
@@ -120,14 +120,14 @@
 						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
 
-					<Label Grid.Column="0" Target="{Binding ElementName=majorVersionTextBox}" Content="_Version" />
-					<TextBox Grid.Column="1" Text="{Binding VersionMajor.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Name="majorVersionTextBox" />
-					<Label Grid.Column="2" Content="." />
-					<TextBox Grid.Column="3" Text="{Binding VersionMinor.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-					<Label Grid.Column="4" Content="." />
-					<TextBox Grid.Column="5" Text="{Binding VersionBuild.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-					<Label Grid.Column="6" Content="." />
-					<TextBox Grid.Column="7" Text="{Binding VersionRevision.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+					<Label Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=majorVersionTextBox}" Content="_Version" />
+					<TextBox Grid.Column="1" Margin="0 5 0 0" Text="{Binding VersionMajor.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Name="majorVersionTextBox" />
+					<Label Grid.Column="2" Margin="0 5 0 0" Content="." />
+					<TextBox Grid.Column="3" Margin="0 5 0 0" Text="{Binding VersionMinor.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+					<Label Grid.Column="4" Margin="0 5 0 0" Content="." />
+					<TextBox Grid.Column="5" Margin="0 5 0 0" Text="{Binding VersionBuild.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+					<Label Grid.Column="6" Margin="0 5 0 0" Content="." />
+					<TextBox Grid.Column="7" Margin="0 5 0 0" Text="{Binding VersionRevision.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 				</Grid>
 
 				<GroupBox Grid.Row="3" Header="Flags">
@@ -141,15 +141,15 @@
 							<ColumnDefinition />
 							<ColumnDefinition />
 						</Grid.ColumnDefinitions>
-						<CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding FlagsPublicKey}" Content="Public_Key" />
-						<CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding PA_Specified}" Content="Proc_essor Arch Specified" />
-						<CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding Retargetable}" Content="_Retargetable" />
-						<CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding EnableJITcompileTracking}" Content="Enable _JIT Compile Tracking" />
-						<CheckBox Grid.Row="2" Grid.Column="0" IsChecked="{Binding DisableJITcompileOptimizer}" Content="_Disable JIT Compile Optimizer" />
+						<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding FlagsPublicKey}" Content="Public_Key" />
+						<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding PA_Specified}" Content="Proc_essor Arch Specified" />
+						<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Retargetable}" Content="_Retargetable" />
+						<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding EnableJITcompileTracking}" Content="Enable _JIT Compile Tracking" />
+						<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding DisableJITcompileOptimizer}" Content="_Disable JIT Compile Optimizer" />
 					</Grid>
 				</GroupBox>
 
-				<TextBox Grid.Row="4" IsReadOnly="True" TextWrapping="Wrap" Text="{Binding AssemblyFullName, Mode=OneWay}" />
+				<TextBox Grid.Row="4" Margin="0 5 0 0" Background="{x:Null}" IsReadOnly="True" TextWrapping="Wrap" Text="{Binding AssemblyFullName, Mode=OneWay}" />
 			</Grid>
 		</Border>
 

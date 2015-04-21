@@ -63,11 +63,11 @@
 							<Grid.RowDefinitions>
 								<RowDefinition Height="Auto" />
 							</Grid.RowDefinitions>
-							<Label Grid.Row="0" Grid.Column="0" Target="{Binding ElementName=nameTextBox}" Content="N_ame" />
-							<TextBox Grid.Row="0" Grid.Column="1" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+							<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="N_ame" />
+							<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 						</Grid>
 
-						<Grid>
+						<Grid Margin="0 5 0 0">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto" />
 								<ColumnDefinition Width="*" />
@@ -77,14 +77,14 @@
 							<Grid.RowDefinitions>
 								<RowDefinition Height="Auto" />
 							</Grid.RowDefinitions>
-							<Label Grid.Column="0" Content="Module _Type" Target="{Binding ElementName=moduleKindComboBox}" />
-							<ComboBox Grid.Column="1" HorizontalAlignment="Stretch" Name="moduleKindComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ModuleKind.Items}" SelectedIndex="{Binding ModuleKind.SelectedIndex}" VerticalContentAlignment="Center" />
+							<Label Grid.Column="0" Margin="0 0 0 0" Content="Module _Type" Target="{Binding ElementName=moduleKindComboBox}" />
+							<ComboBox Grid.Column="1" Margin="5 0 0 0" HorizontalAlignment="Stretch" Name="moduleKindComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ModuleKind.Items}" SelectedIndex="{Binding ModuleKind.SelectedIndex}" VerticalContentAlignment="Center" />
 
-							<Label Grid.Column="2" Content=".NET _Version" Target="{Binding ElementName=clrVersionComboBox}" />
-							<ComboBox Grid.Column="3" HorizontalAlignment="Stretch" Name="clrVersionComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ClrVersion.Items}" SelectedIndex="{Binding ClrVersion.SelectedIndex}" VerticalContentAlignment="Center" />
+							<Label Grid.Column="2" Margin="5 0 0 0" Content=".NET _Version" Target="{Binding ElementName=clrVersionComboBox}" />
+							<ComboBox Grid.Column="3" Margin="5 0 0 0" HorizontalAlignment="Stretch" Name="clrVersionComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ClrVersion.Items}" SelectedIndex="{Binding ClrVersion.SelectedIndex}" VerticalContentAlignment="Center" />
 						</Grid>
 
-						<GroupBox Header="GUIDs">
+						<GroupBox Header="GUIDs" Margin="0 5 0 0">
 							<Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3">
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition Width="Auto" />
@@ -97,17 +97,17 @@
 									<RowDefinition Height="Auto" />
 								</Grid.RowDefinitions>
 
-								<Label Grid.Row="0" Grid.Column="0" Target="{Binding ElementName=mvidTextBox}" Content="_Mvid" />
-								<TextBox Grid.Row="0" Grid.Column="1" Name="mvidTextBox" Text="{Binding Mvid.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-								<Button Grid.Row="0" Grid.Column="2" Content="Ne_w" Command="{Binding GenerateNewMvidCommand}" />
+								<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=mvidTextBox}" Content="_Mvid" />
+								<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="mvidTextBox" Text="{Binding Mvid.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+								<Button Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="Ne_w" Command="{Binding GenerateNewMvidCommand}" />
 
-								<Label Grid.Row="1" Grid.Column="0" Target="{Binding ElementName=encIdTextBox}" Content="EncI_d" />
-								<TextBox Grid.Row="1" Grid.Column="1" Name="encIdTextBox" Text="{Binding EncId.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-								<Button Grid.Row="1" Grid.Column="2" Content="_New" Command="{Binding GenerateNewEncIdCommand}" />
+								<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=encIdTextBox}" Content="EncI_d" />
+								<TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="encIdTextBox" Text="{Binding EncId.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+								<Button Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Content="_New" Command="{Binding GenerateNewEncIdCommand}" />
 
-								<Label Grid.Row="2" Grid.Column="0" Target="{Binding ElementName=encBaseIdTextBox}" Content="Enc_BaseId" />
-								<TextBox Grid.Row="2" Grid.Column="1" Name="encBaseIdTextBox" Text="{Binding EncBaseId.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-								<Button Grid.Row="2" Grid.Column="2" Content="N_ew" Command="{Binding GenerateNewEncBaseIdCommand}" />
+								<Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=encBaseIdTextBox}" Content="Enc_BaseId" />
+								<TextBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="encBaseIdTextBox" Text="{Binding EncBaseId.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+								<Button Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Content="N_ew" Command="{Binding GenerateNewEncBaseIdCommand}" />
 							</Grid>
 						</GroupBox>
 					</StackPanel>
@@ -125,10 +125,10 @@
 								<ColumnDefinition Width="Auto" />
 								<ColumnDefinition Width="*" />
 							</Grid.ColumnDefinitions>
-							<Label Grid.Row="0" Grid.Column="0" Target="{Binding ElementName=versionStringTextBox}" Content="_VersionString" />
-							<TextBox Grid.Row="0" Grid.Column="1" Name="versionStringTextBox" Text="{Binding RuntimeVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-							<Label Grid.Row="1" Grid.Column="0" Target="{Binding ElementName=headerVersionTextBox}" Content="_Header Version" />
-							<TextBox Grid.Row="1" Grid.Column="1" Name="headerVersionTextBox" Text="{Binding TablesHeaderVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+							<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=versionStringTextBox}" Content="_VersionString" />
+							<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="versionStringTextBox" Text="{Binding RuntimeVersion, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+							<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=headerVersionTextBox}" Content="_Header Version" />
+							<TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="headerVersionTextBox" Text="{Binding TablesHeaderVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 						</Grid>
 					</StackPanel>
 				</ScrollViewer>
@@ -145,10 +145,10 @@
 								<ColumnDefinition Width="Auto" />
 								<ColumnDefinition Width="*" />
 							</Grid.ColumnDefinitions>
-							<Label Grid.Row="0" Grid.Column="0" Target="{Binding ElementName=runtimeVersionTextBox}" Content="_Runtime Version" />
-							<TextBox Grid.Row="0" Grid.Column="1" Name="runtimeVersionTextBox" Text="{Binding Cor20HeaderRuntimeVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+							<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=runtimeVersionTextBox}" Content="_Runtime Version" />
+							<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="runtimeVersionTextBox" Text="{Binding Cor20HeaderRuntimeVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 						</Grid>
-						<GroupBox Header="Flags">
+						<GroupBox Header="Flags" Margin="0 5 0 0">
 							<Grid>
 								<Grid.RowDefinitions>
 									<RowDefinition />
@@ -160,13 +160,13 @@
 									<ColumnDefinition />
 									<ColumnDefinition />
 								</Grid.ColumnDefinitions>
-								<CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding ILOnly}" Content="_IL Only" />
-								<CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding ILLibrary}" Content="IL _Library" />
-								<CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding Bit32Required}" Content="_32-Bit Required" />
-								<CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding Bit32Preferred}" Content="32-Bit _Preferred" />
-								<CheckBox Grid.Row="2" Grid.Column="0" IsChecked="{Binding NativeEntryPoint}" Content="_Native Entry Point" />
-								<CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding TrackDebugData}" Content="_Track Debug Data" />
-								<CheckBox Grid.Row="3" Grid.Column="0" IsChecked="{Binding StrongNameSigned}" Content="_Strong Name Signed" />
+								<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" IsChecked="{Binding ILOnly}" Content="_IL Only" />
+								<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" IsChecked="{Binding ILLibrary}" Content="IL _Library" />
+								<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Bit32Required}" Content="_32-Bit Required" />
+								<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Bit32Preferred}" Content="32-Bit _Preferred" />
+								<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding NativeEntryPoint}" Content="_Native Entry Point" />
+								<CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding TrackDebugData}" Content="_Track Debug Data" />
+								<CheckBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding StrongNameSigned}" Content="_Strong Name Signed" />
 							</Grid>
 						</GroupBox>
 					</StackPanel>
@@ -186,11 +186,11 @@
 							</Grid.ColumnDefinitions>
 
 							<StackPanel Grid.Row="0" Orientation="Horizontal">
-								<Label Content="_Machine" Target="{Binding ElementName=machineComboBox}" />
-								<ComboBox Name="machineComboBox" DisplayMemberPath="Name" ItemsSource="{Binding Machine.Items}" SelectedIndex="{Binding Machine.SelectedIndex}" Width="100" VerticalContentAlignment="Center" />
+								<Label Content="_Machine" Margin="0 0 0 0" Target="{Binding ElementName=machineComboBox}" />
+								<ComboBox Name="machineComboBox" Margin="5 0 0 0" DisplayMemberPath="Name" ItemsSource="{Binding Machine.Items}" SelectedIndex="{Binding Machine.SelectedIndex}" Width="100" VerticalContentAlignment="Center" />
 							</StackPanel>
 
-							<GroupBox Grid.Row="1" Header="Characteristics">
+							<GroupBox Grid.Row="1" Header="Characteristics" Margin="0 5 0 0">
 								<Grid>
 									<Grid.RowDefinitions>
 										<RowDefinition />
@@ -206,26 +206,26 @@
 										<ColumnDefinition />
 										<ColumnDefinition />
 									</Grid.ColumnDefinitions>
-									<CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding RelocsStripped}" Content="Relocs Stripped" />
-									<CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding ExecutableImage}" Content="_Executable Image" />
-									<CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding LineNumsStripped}" Content="Line Nums Stripped" />
-									<CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding LocalSymsStripped}" Content="Local Syms Stripped" />
-									<CheckBox Grid.Row="2" Grid.Column="0" IsChecked="{Binding AggressiveWsTrim}" Content="Aggressive WS Trim" />
-									<CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding LargeAddressAware}" Content="_Large Address Aware" />
-									<CheckBox Grid.Row="3" Grid.Column="0" IsChecked="{Binding CharacteristicsReserved1}" Content="Reserved 0040h" />
-									<CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding BytesReversedLo}" Content="Bytes Reversed Lo" />
-									<CheckBox Grid.Row="4" Grid.Column="0" IsChecked="{Binding Bit32Machine}" Content="_32-Bit Machine" />
-									<CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding DebugStripped}" Content="Debug Stripped" />
-									<CheckBox Grid.Row="5" Grid.Column="0" IsChecked="{Binding RemovableRunFromSwap}" Content="Removable Run From Swap" />
-									<CheckBox Grid.Row="5" Grid.Column="1" IsChecked="{Binding NetRunFromSwap}" Content="Net Run From Swap" />
-									<CheckBox Grid.Row="6" Grid.Column="0" IsChecked="{Binding System}" Content="System" />
-									<CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding Dll}" Content="_Dll" />
-									<CheckBox Grid.Row="7" Grid.Column="0" IsChecked="{Binding UpSystemOnly}" Content="Up System Only" />
-									<CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding BytesReversedHi}" Content="Bytes Reversed Hi" />
+									<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" IsChecked="{Binding RelocsStripped}" Content="Relocs Stripped" />
+									<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" IsChecked="{Binding ExecutableImage}" Content="_Executable Image" />
+									<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding LineNumsStripped}" Content="Line Nums Stripped" />
+									<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding LocalSymsStripped}" Content="Local Syms Stripped" />
+									<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding AggressiveWsTrim}" Content="Aggressive WS Trim" />
+									<CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding LargeAddressAware}" Content="_Large Address Aware" />
+									<CheckBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding CharacteristicsReserved1}" Content="Reserved 0040h" />
+									<CheckBox Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding BytesReversedLo}" Content="Bytes Reversed Lo" />
+									<CheckBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Bit32Machine}" Content="_32-Bit Machine" />
+									<CheckBox Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding DebugStripped}" Content="Debug Stripped" />
+									<CheckBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding RemovableRunFromSwap}" Content="Removable Run From Swap" />
+									<CheckBox Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding NetRunFromSwap}" Content="Net Run From Swap" />
+									<CheckBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding System}" Content="System" />
+									<CheckBox Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Dll}" Content="_Dll" />
+									<CheckBox Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding UpSystemOnly}" Content="Up System Only" />
+									<CheckBox Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding BytesReversedHi}" Content="Bytes Reversed Hi" />
 								</Grid>
 							</GroupBox>
 
-							<GroupBox Grid.Row="2" Header="DllCharacteristics">
+							<GroupBox Grid.Row="2" Header="DllCharacteristics" Margin="0 5 0 0">
 								<Grid>
 									<Grid.RowDefinitions>
 										<RowDefinition />
@@ -241,22 +241,22 @@
 										<ColumnDefinition />
 										<ColumnDefinition />
 									</Grid.ColumnDefinitions>
-									<CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding DllCharacteristicsReserved1}" Content="Reserved1" />
-									<CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding DllCharacteristicsReserved2}" Content="Reserved2" />
-									<CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding DllCharacteristicsReserved3}" Content="Reserved3" />
-									<CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding DllCharacteristicsReserved4}" Content="Reserved4" />
-									<CheckBox Grid.Row="2" Grid.Column="0" IsChecked="{Binding DllCharacteristicsReserved5}" Content="Reserved5" />
-									<CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding HighEntropyVA}" Content="High Entropy VA" />
-									<CheckBox Grid.Row="3" Grid.Column="0" IsChecked="{Binding DynamicBase}" Content="Dynamic Base" />
-									<CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding ForceIntegrity}" Content="Force Integrity" />
-									<CheckBox Grid.Row="4" Grid.Column="0" IsChecked="{Binding NxCompat}" Content="NX Compat" />
-									<CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding NoIsolation}" Content="No Isolation" />
-									<CheckBox Grid.Row="5" Grid.Column="0" IsChecked="{Binding NoSeh}" Content="No SEH" />
-									<CheckBox Grid.Row="5" Grid.Column="1" IsChecked="{Binding NoBind}" Content="No Bind" />
-									<CheckBox Grid.Row="6" Grid.Column="0" IsChecked="{Binding AppContainer}" Content="AppContainer" />
-									<CheckBox Grid.Row="6" Grid.Column="1" IsChecked="{Binding WdmDriver}" Content="WDM Driver" />
-									<CheckBox Grid.Row="7" Grid.Column="0" IsChecked="{Binding GuardCf}" Content="Guard CF" />
-									<CheckBox Grid.Row="7" Grid.Column="1" IsChecked="{Binding TerminalServerAware}" Content="Terminal Server Aware" />
+									<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" IsChecked="{Binding DllCharacteristicsReserved1}" Content="Reserved1" />
+									<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" IsChecked="{Binding DllCharacteristicsReserved2}" Content="Reserved2" />
+									<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding DllCharacteristicsReserved3}" Content="Reserved3" />
+									<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding DllCharacteristicsReserved4}" Content="Reserved4" />
+									<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding DllCharacteristicsReserved5}" Content="Reserved5" />
+									<CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding HighEntropyVA}" Content="High Entropy VA" />
+									<CheckBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding DynamicBase}" Content="Dynamic Base" />
+									<CheckBox Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding ForceIntegrity}" Content="Force Integrity" />
+									<CheckBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding NxCompat}" Content="NX Compat" />
+									<CheckBox Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding NoIsolation}" Content="No Isolation" />
+									<CheckBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding NoSeh}" Content="No SEH" />
+									<CheckBox Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding NoBind}" Content="No Bind" />
+									<CheckBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding AppContainer}" Content="AppContainer" />
+									<CheckBox Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding WdmDriver}" Content="WDM Driver" />
+									<CheckBox Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding GuardCf}" Content="Guard CF" />
+									<CheckBox Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding TerminalServerAware}" Content="Terminal Server Aware" />
 								</Grid>
 							</GroupBox>
 						</Grid>
