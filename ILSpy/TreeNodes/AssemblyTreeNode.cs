@@ -487,42 +487,22 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return dataObject;
 		}
 
+		internal AssemblyFilterType AssemblyFilterType {
+			get {
+				if (IsAssembly)
+					return AssemblyFilterType.Assembly;
+				if (IsModule)
+					return AssemblyFilterType.NetModule;
+				return AssemblyFilterType.NonNetFile;
+			}
+		}
+
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			VisibleMembersFlags thisFlag;
-			if (IsAssembly) {
-				thisFlag = VisibleMembersFlags.AssemblyDef;
-				var visibleFlags = thisFlag | VisibleMembersFlags.ModuleDef |
-						VisibleMembersFlags.Namespace | VisibleMembersFlags.AnyTypeDef |
-						VisibleMembersFlags.FieldDef | VisibleMembersFlags.MethodDef |
-						VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef |
-						VisibleMembersFlags.AssemblyRef | VisibleMembersFlags.BaseTypes |
-						VisibleMembersFlags.DerivedTypes | VisibleMembersFlags.ModuleRef |
-						VisibleMembersFlags.Resources;
-				if ((settings.Flags & visibleFlags) == 0)
-					return FilterResult.Hidden;
-			}
-			else if (IsModule) {
-				thisFlag = VisibleMembersFlags.ModuleDef;
-				var visibleFlags = thisFlag |
-						VisibleMembersFlags.Namespace | VisibleMembersFlags.AnyTypeDef |
-						VisibleMembersFlags.FieldDef | VisibleMembersFlags.MethodDef |
-						VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef |
-						VisibleMembersFlags.AssemblyRef | VisibleMembersFlags.BaseTypes |
-						VisibleMembersFlags.DerivedTypes | VisibleMembersFlags.ModuleRef |
-						VisibleMembersFlags.Resources;
-				if ((settings.Flags & visibleFlags) == 0)
-					return FilterResult.Hidden;
-			}
-			else {
-				thisFlag = VisibleMembersFlags.NonNetFile;
-				var visibleFlags = thisFlag;
-				if ((settings.Flags & visibleFlags) == 0)
-					return FilterResult.Hidden;
-			}
-			if ((settings.Flags & thisFlag) != 0)
-				return FilterResult.Match;	// Make sure it's not hidden
-			else if (settings.SearchTermMatches(assembly.ShortName))
+			var res = settings.Filter.GetFilterResult(this.LoadedAssembly, AssemblyFilterType);
+			if (res.FilterResult != null)
+				return res.FilterResult.Value;
+			if (settings.SearchTermMatches(assembly.ShortName))
 				return FilterResult.Match;
 			else
 				return FilterResult.Recurse;

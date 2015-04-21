@@ -139,11 +139,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			var visibleFlags = VisibleMembersFlags.MethodDef;
-			if ((settings.Flags & visibleFlags) == 0)
-				return FilterResult.Hidden;
-			if (!settings.ShowInternalApi && !IsPublicAPI)
-				return FilterResult.Hidden;
+			var res = settings.Filter.GetFilterResult(this.MethodDefinition);
+			if (res.FilterResult != null)
+				return res.FilterResult.Value;
 			if (settings.SearchTermMatches(method.Name) && settings.Language.ShowMember(method))
 				return FilterResult.Match;
 			else
@@ -151,9 +149,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 
 		public override bool IsPublicAPI {
-			get {
-				return method.IsPublic || method.IsFamily || method.IsFamilyOrAssembly;
-			}
+			get { return IsPublicAPIInternal(method); }
+		}
+
+		internal static bool IsPublicAPIInternal(MethodDef method)
+		{
+			return method.IsPublic || method.IsFamily || method.IsFamilyOrAssembly;
 		}
 		
 		IMemberRef IMemberTreeNode.Member

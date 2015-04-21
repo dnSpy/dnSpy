@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.ILSpy.TreeNodes.Filters;
 
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
@@ -242,7 +243,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 
-			var type = dnlibTypePicker.GetDnlibType<ITypeDefOrRef>(flags);
+			var type = dnlibTypePicker.GetDnlibType<ITypeDefOrRef>(new FlagsTreeViewNodeFilter(flags));
 			if (type == null)
 				return null;
 

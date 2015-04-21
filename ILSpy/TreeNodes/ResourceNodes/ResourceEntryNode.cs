@@ -96,6 +96,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return true;
 		}
 
+		public override FilterResult Filter(FilterSettings settings)
+		{
+			var res = settings.Filter.GetFilterResult(this);
+			if (res.FilterResult != null)
+				return res.FilterResult.Value;
+			return base.Filter(settings);
+		}
+
 		public override NodePathName NodePathName {
 			get { return new NodePathName("rse", key); }
 		}

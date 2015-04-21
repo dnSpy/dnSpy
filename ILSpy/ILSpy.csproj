@@ -245,7 +245,14 @@
     <Compile Include="TabState.cs" />
     <Compile Include="TreeNodes\CopyTokenContextMenuEntry.cs" />
     <Compile Include="TreeNodes\CopyXmlDocNameMenuEntry.cs" />
+    <Compile Include="TreeNodes\Filters\ChainTreeViewNodeFilter.cs" />
+    <Compile Include="TreeNodes\Filters\FilterNothingTreeViewNodeFilter.cs" />
+    <Compile Include="TreeNodes\Filters\FlagsTreeViewNodeFilter.cs" />
+    <Compile Include="TreeNodes\Filters\PublicApiTreeViewNodeFilter.cs" />
+    <Compile Include="TreeNodes\Filters\TreeViewNodeFilterBase.cs" />
+    <Compile Include="TreeNodes\Filters\VisibleMembersFlags.cs" />
     <Compile Include="TreeNodes\GoToTokenContextMenuEntry.cs" />
+    <Compile Include="TreeNodes\ITreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\NodePathName.cs" />
     <Compile Include="TreeNodes\OpenInExplorerContextMenuEntry.cs" />
     <Compile Include="Commands\OpenListCommand.cs" />

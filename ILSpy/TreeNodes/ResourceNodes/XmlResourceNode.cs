@@ -107,5 +107,13 @@ namespace ICSharpCode.ILSpy.Xaml
 			).Then(t => textView.ShowNode(t, this, highlighting)).HandleExceptions();
 			return true;
 		}
+
+		public override FilterResult Filter(FilterSettings settings)
+		{
+			var res = settings.Filter.GetFilterResult(this);
+			if (res.FilterResult != null)
+				return res.FilterResult.Value;
+			return base.Filter(settings);
+		}
 	}
 }

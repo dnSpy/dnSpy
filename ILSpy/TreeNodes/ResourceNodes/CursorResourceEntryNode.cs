@@ -100,5 +100,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return false;
 			}
 		}
+
+		public override FilterResult Filter(FilterSettings settings)
+		{
+			var res = settings.Filter.GetFilterResult(this);
+			if (res.FilterResult != null)
+				return res.FilterResult.Value;
+			return base.Filter(settings);
+		}
 	}
 }

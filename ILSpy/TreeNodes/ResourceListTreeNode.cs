@@ -62,12 +62,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			var visibleFlags = VisibleMembersFlags.Resources;
-			if ((settings.Flags & visibleFlags) == 0)
-				return FilterResult.Hidden;
-			if ((settings.Flags & VisibleMembersFlags.Resources) != 0)
-				return FilterResult.Match;	// Make sure it's not hidden
-			else if (string.IsNullOrEmpty(settings.SearchTerm))
+			var res = settings.Filter.GetFilterResult(this);
+			if (res.FilterResult != null)
+				return res.FilterResult.Value;
+			if (string.IsNullOrEmpty(settings.SearchTerm))
 				return FilterResult.MatchAndRecurse;
 			else
 				return FilterResult.Recurse;

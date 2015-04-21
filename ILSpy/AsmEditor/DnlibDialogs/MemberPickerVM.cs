@@ -22,8 +22,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.ILSpy.TreeNodes;
+using ICSharpCode.ILSpy.TreeNodes.Filters;
 
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
@@ -70,68 +71,42 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				if (res != null) {
 					var mr = res.Member;
 
-					if ((visibleMembersFlags & VisibleMembersFlags.AnyTypeDef) != 0 && IsValidTypeDef(mr))
+					if (mr is TypeDef && filter.GetFilterResult(mr as TypeDef).IsMatch)
 						return mr;
-					if ((visibleMembersFlags & VisibleMembersFlags.FieldDef) != 0 && mr is FieldDef)
+					if (mr is FieldDef && filter.GetFilterResult(mr as FieldDef).IsMatch)
 						return mr;
-					if ((visibleMembersFlags & VisibleMembersFlags.MethodDef) != 0 && mr is MethodDef)
+					if (mr is MethodDef && filter.GetFilterResult(mr as MethodDef).IsMatch)
 						return mr;
-					if ((visibleMembersFlags & VisibleMembersFlags.PropertyDef) != 0 && mr is PropertyDef)
+					if (mr is PropertyDef && filter.GetFilterResult(mr as PropertyDef).IsMatch)
 						return mr;
-					if ((visibleMembersFlags & VisibleMembersFlags.EventDef) != 0 && mr is EventDef)
+					if (mr is EventDef && filter.GetFilterResult(mr as EventDef).IsMatch)
 						return mr;
 				}
 
 				var item = SelectedItem;
 				if (item != null) {
-					if ((visibleMembersFlags & VisibleMembersFlags.AssemblyDef) != 0 && item is AssemblyTreeNode && ((AssemblyTreeNode)item).IsAssembly)
+					if (item is AssemblyTreeNode && filter.GetFilterResult((item as AssemblyTreeNode).LoadedAssembly, (item as AssemblyTreeNode).AssemblyFilterType).IsMatch)
 						return ((AssemblyTreeNode)item).LoadedAssembly;
-					if ((visibleMembersFlags & VisibleMembersFlags.ModuleDef) != 0 && item is AssemblyTreeNode && ((AssemblyTreeNode)item).IsModule)
-						return ((AssemblyTreeNode)item).LoadedAssembly;
-					if ((visibleMembersFlags & VisibleMembersFlags.Namespace) != 0 && item is NamespaceTreeNode)
+					if (item is NamespaceTreeNode && filter.GetFilterResult((item as NamespaceTreeNode).Name).IsMatch)
 						return ((NamespaceTreeNode)item).Name;
-					if ((visibleMembersFlags & VisibleMembersFlags.AnyTypeDef) != 0 && item is TypeTreeNode && IsValidTypeDef(((TypeTreeNode)item).TypeDefinition))
+					if (item is TypeTreeNode && filter.GetFilterResult((item as TypeTreeNode).TypeDefinition).IsMatch)
 						return ((TypeTreeNode)item).TypeDefinition;
-					if ((visibleMembersFlags & VisibleMembersFlags.FieldDef) != 0 && item is FieldTreeNode)
+					if (item is FieldTreeNode && filter.GetFilterResult((item as FieldTreeNode).FieldDefinition).IsMatch)
 						return ((FieldTreeNode)item).FieldDefinition;
-					if ((visibleMembersFlags & VisibleMembersFlags.MethodDef) != 0 && item is MethodTreeNode)
+					if (item is MethodTreeNode && filter.GetFilterResult((item as MethodTreeNode).MethodDefinition).IsMatch)
 						return ((MethodTreeNode)item).MethodDefinition;
-					if ((visibleMembersFlags & VisibleMembersFlags.PropertyDef) != 0 && item is PropertyTreeNode)
+					if (item is PropertyTreeNode && filter.GetFilterResult((item as PropertyTreeNode).PropertyDefinition).IsMatch)
 						return ((PropertyTreeNode)item).PropertyDefinition;
-					if ((visibleMembersFlags & VisibleMembersFlags.EventDef) != 0 && item is EventTreeNode)
+					if (item is EventTreeNode && filter.GetFilterResult((item as EventTreeNode).EventDefinition).IsMatch)
 						return ((EventTreeNode)item).EventDefinition;
-					if ((visibleMembersFlags & VisibleMembersFlags.AssemblyRef) != 0 && item is AssemblyReferenceTreeNode)
+					if (item is AssemblyReferenceTreeNode && filter.GetFilterResult((item as AssemblyReferenceTreeNode).AssemblyNameReference).IsMatch)
 						return ((AssemblyReferenceTreeNode)item).AssemblyNameReference;
-					if ((visibleMembersFlags & VisibleMembersFlags.ModuleRef) != 0 && item is ModuleReferenceTreeNode)
+					if (item is ModuleReferenceTreeNode && filter.GetFilterResult((item as ModuleReferenceTreeNode).ModuleReference).IsMatch)
 						return ((ModuleReferenceTreeNode)item).ModuleReference;
 				}
 
 				return null;
 			}
-		}
-
-		bool IsValidTypeDef(IMemberRef mr)
-		{
-			var td = mr as TypeDef;
-			if (td == null)
-				return false;
-
-			if ((visibleMembersFlags & VisibleMembersFlags.GenericTypeDef) != 0 && td.GenericParameters.Count > 0)
-				return true;
-			if ((visibleMembersFlags & VisibleMembersFlags.NonGenericTypeDef) != 0 && td.GenericParameters.Count == 0)
-				return true;
-			if ((visibleMembersFlags & VisibleMembersFlags.EnumTypeDef) != 0 && td.IsEnum)
-				return true;
-			if ((visibleMembersFlags & VisibleMembersFlags.InterfaceTypeDef) != 0 && td.IsInterface)
-				return true;
-			if ((visibleMembersFlags & VisibleMembersFlags.ClassTypeDef) != 0 && !td.IsValueType)
-				return true;
-			if ((visibleMembersFlags & VisibleMembersFlags.ValueTypeDef) != 0 && td.IsValueType)
-				return true;
-			if ((visibleMembersFlags & VisibleMembersFlags.TypeDef) != 0)
-				return true;
-
-			return false;
 		}
 
 		public string SearchText {
@@ -201,13 +176,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		AssemblyListTreeNode assemblyListTreeNode;
 		readonly AssemblyList assemblyList;
 
-		public VisibleMembersFlags VisibleMembersFlags {
-			get { return visibleMembersFlags; }
-		}
-		readonly VisibleMembersFlags visibleMembersFlags;
+		readonly ITreeViewNodeFilter filter;
 
 		public string Title {
-			get { return string.Format("Pick a {0}", VisibleMembersFlags.GetListString()); }
+			get {
+				var text = filter.Text;
+				if (!string.IsNullOrEmpty(text))
+					return string.Format("Pick a {0}", text);
+				return "Pick a Node";
+			}
 		}
 
 		public bool ShowInternalApi {
@@ -222,16 +199,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		bool showInternalApi;
 
-		public MemberPickerVM(Language language, VisibleMembersFlags visibleMembersFlags)
-			: this(language, visibleMembersFlags, MainWindow.Instance.CurrentAssemblyList.GetAssemblies())
+		public MemberPickerVM(Language language, ITreeViewNodeFilter filter)
+			: this(language, filter, MainWindow.Instance.CurrentAssemblyList.GetAssemblies())
 		{
 		}
 
-		public MemberPickerVM(Language language, VisibleMembersFlags visibleMembersFlags, IEnumerable<LoadedAssembly> assemblies)
+		public MemberPickerVM(Language language, ITreeViewNodeFilter filter, IEnumerable<LoadedAssembly> assemblies)
 		{
 			this.Language = language;
 			this.ShowInternalApi = true;
-			this.visibleMembersFlags = visibleMembersFlags;
+			this.filter = filter;
 
 			assemblyList = new AssemblyList("Member Picker List", false);
 			foreach (var asm in assemblies)
@@ -247,7 +224,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		void CreateNewFilterSettings()
 		{
 			if (assemblyListTreeNode != null)
-				assemblyListTreeNode.FilterSettings = new FilterSettings(VisibleMembersFlags, Language, ShowInternalApi);
+				assemblyListTreeNode.FilterSettings = new FilterSettings(filter, Language, ShowInternalApi);
 		}
 
 		void OpenNewAssembly()
@@ -283,7 +260,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			//TODO: Update searcher. SearchMode should be flags and it should support more stuff.
 			//		Eg. the Member value should be split up into Field, Method, etc. It also shouldn't
 			//		be a nested class of SearchPane!
-			if ((VisibleMembersFlags & ILSpy.VisibleMembersFlags.AnyTypeDef) != 0)
+			if (filter.GetFilterResult((TypeDef)null).IsMatch)//TODO: Hack until above has been fixed
 				return SearchMode.Type;
 			return SearchMode.Member;
 		}
@@ -302,11 +279,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		string GetErrorMessage()
 		{
-			int count;
-			string s = visibleMembersFlags.GetListString(out count);
-			return count == 1 ?
-				string.Format("You must select a {0}", s) :
-				string.Format("You must select one of {0}", s);
+			string s = filter.Text;
+			return string.IsNullOrEmpty(s) ?
+				"You must select a correct node" :
+				string.Format("You must select: {0}", s);
 		}
 
 		public override bool HasError {

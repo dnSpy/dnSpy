@@ -20,6 +20,7 @@
 using System.Windows;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using ICSharpCode.ILSpy.TreeNodes;
 
 namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 {
@@ -37,9 +38,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 			this.ownerWindow = ownerWindow;
 		}
 
-		public T GetDnlibType<T>(VisibleMembersFlags flags) where T : class
+		public T GetDnlibType<T>(ITreeViewNodeFilter filter) where T : class
 		{
-			var data = new MemberPickerVM(MainWindow.Instance.CurrentLanguage, flags);
+			var data = new MemberPickerVM(MainWindow.Instance.CurrentLanguage, filter);
 			var win = new MemberPickerDlg();
 			win.DataContext = data;
 			win.Owner = ownerWindow ?? MainWindow.Instance;

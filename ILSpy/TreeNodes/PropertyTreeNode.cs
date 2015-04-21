@@ -146,11 +146,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			var visibleFlags = VisibleMembersFlags.PropertyDef | VisibleMembersFlags.MethodDef;
-			if ((settings.Flags & visibleFlags) == 0)
-				return FilterResult.Hidden;
-			if (!settings.ShowInternalApi && !IsPublicAPI)
-				return FilterResult.Hidden;
+			var res = settings.Filter.GetFilterResult(this.PropertyDefinition);
+			if (res.FilterResult != null)
+				return res.FilterResult.Value;
 			if (settings.SearchTermMatches(property.Name) && settings.Language.ShowMember(property))
 				return FilterResult.Match;
 			else
@@ -163,15 +161,18 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override bool IsPublicAPI {
-			get {
-				switch (GetAttributesOfMostAccessibleMethod(property) & MethodAttributes.MemberAccessMask) {
-					case MethodAttributes.Public:
-					case MethodAttributes.Family:
-					case MethodAttributes.FamORAssem:
-						return true;
-					default:
-						return false;
-				}
+			get { return IsPublicAPIInternal(property); }
+		}
+
+		internal static bool IsPublicAPIInternal(PropertyDef property)
+		{
+			switch (GetAttributesOfMostAccessibleMethod(property) & MethodAttributes.MemberAccessMask) {
+			case MethodAttributes.Public:
+			case MethodAttributes.Family:
+			case MethodAttributes.FamORAssem:
+				return true;
+			default:
+				return false;
 			}
 		}
 

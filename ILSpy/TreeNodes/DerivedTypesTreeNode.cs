@@ -60,9 +60,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			var visibleFlags = VisibleMembersFlags.DerivedTypes;
-			if ((settings.Flags & visibleFlags) == 0)
-				return FilterResult.Hidden;
+			var res = settings.Filter.GetFilterResult(this);
+			if (res.FilterResult != null)
+				return res.FilterResult.Value;
 			return base.Filter(settings);
 		}
 

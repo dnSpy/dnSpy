@@ -154,6 +154,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 
+		public override FilterResult Filter(FilterSettings settings)
+		{
+			var res = settings.Filter.GetFilterResult(this);
+			if (res.FilterResult != null)
+				return res.FilterResult.Value;
+			return base.Filter(settings);
+		}
+
 		internal class SerializedObjectRepresentation
 		{
 			public SerializedObjectRepresentation(string key, string type, string value)

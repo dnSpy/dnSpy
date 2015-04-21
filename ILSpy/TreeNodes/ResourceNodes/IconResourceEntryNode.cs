@@ -90,5 +90,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			output.AddUIElement(() => new Image { Source = frame });
 		}
+
+		public override FilterResult Filter(FilterSettings settings)
+		{
+			var res = settings.Filter.GetFilterResult(this);
+			if (res.FilterResult != null)
+				return res.FilterResult.Value;
+			return base.Filter(settings);
+		}
 	}
 }

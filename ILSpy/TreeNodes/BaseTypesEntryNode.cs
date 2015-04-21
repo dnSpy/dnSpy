@@ -66,6 +66,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 
+		public override FilterResult Filter(FilterSettings settings)
+		{
+			var res = settings.Filter.GetFilterResult(this);
+			if (res.FilterResult != null)
+				return res.FilterResult.Value;
+			return base.Filter(settings);
+		}
+
 		protected override void LoadChildren()
 		{
 			if (def != null)

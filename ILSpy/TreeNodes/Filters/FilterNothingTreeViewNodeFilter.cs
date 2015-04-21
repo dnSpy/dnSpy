@@ -17,19 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnlib.DotNet;
-using ICSharpCode.ILSpy.TreeNodes;
-
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
+namespace ICSharpCode.ILSpy.TreeNodes.Filters
 {
-	interface IDnlibTypePicker
+	sealed class FilterNothingTreeViewNodeFilter : TreeViewNodeFilterBase
 	{
-		/// <summary>
-		/// Asks user to pick a type, method etc in an assembly
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="filter">Decides which nodes to show to the user</param>
-		/// <returns></returns>
-		T GetDnlibType<T>(ITreeViewNodeFilter filter) where T : class;
+		public static readonly FilterNothingTreeViewNodeFilter Instance = new FilterNothingTreeViewNodeFilter();
 	}
 }
