@@ -17,15 +17,38 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.TreeNodes;
+using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
 	sealed class MemberPickerVM : ViewModelBase
 	{
+		public IOpenAssembly OpenAssembly {
+			set { openAssembly = value; }
+		}
+		IOpenAssembly openAssembly;
+
+		public ICommand OpenCommand {
+			get { return new RelayCommand(a => OpenNewAssembly(), a => CanOpenAssembly); }
+		}
+
+		public bool CanOpenAssembly {
+			get { return true; }
+			set {
+				if (canOpenAssembly != value) {
+					canOpenAssembly = value;
+					OnPropertyChanged("CanOpenAssembly");
+				}
+			}
+		}
+		bool canOpenAssembly = true;
+
 		public object SelectedItem {
 			get { return selectedItem; }
 			set {
@@ -225,6 +248,18 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		{
 			if (assemblyListTreeNode != null)
 				assemblyListTreeNode.FilterSettings = new FilterSettings(VisibleMembersFlags, Language, ShowInternalApi);
+		}
+
+		void OpenNewAssembly()
+		{
+			if (openAssembly == null)
+				throw new InvalidOperationException();
+
+			var asm = openAssembly.Open();
+			if (asm == null)
+				return;
+
+			assemblyList.AddAssembly(asm, true, false);
 		}
 
 		SearchPane.RunningSearch currentSearch;

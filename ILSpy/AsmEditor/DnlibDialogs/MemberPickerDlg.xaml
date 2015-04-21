@@ -34,6 +34,7 @@
              MinHeight="200" MinWidth="400">
 	<Window.Resources>
 		<vc:BooleanToGridrowLengthConverter x:Key="BooleanToGridrowLengthConverter" />
+		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 		<ControlTemplate x:Key="noRedBorderOnValidationError">
 			<!-- Don't show the red border when the user hasn't selected a valid node -->
 			<AdornedElementPlaceholder/>
@@ -56,6 +57,7 @@
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
@@ -63,10 +65,13 @@
 
 			<Label Grid.Column="0" Content="_Search" Target="{Binding ElementName=searchTextBox}"/>
 			<TextBox Grid.Column="1" Margin="5 0 0 0" Name="searchTextBox" Text="{Binding SearchText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-			<CheckBox Grid.Column="2" Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" IsChecked="{Binding ShowInternalApi}" ToolTip="Show Internal Types and Members">
+			<Button Grid.Column="2" Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding OpenCommand}" ToolTip="Open Assembly or NetModule" Visibility="{Binding CanOpenAssembly, Converter={StaticResource BooleanToVisibilityConverter}}">
+				<Image Source="../../Images/Open.png" Width="16" Height="16"/>
+			</Button>
+			<CheckBox Grid.Column="3" Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" IsChecked="{Binding ShowInternalApi}" ToolTip="Show Internal Types and Members">
 				<Image Source="../../Images/PrivateInternal.png" Width="16" Height="16"/>
 			</CheckBox>
-			<ComboBox Grid.Column="3" Margin="5 0 0 0" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" DisplayMemberPath="Name" Width="100" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" VerticalContentAlignment="Center" />
+			<ComboBox Grid.Column="4" Margin="5 0 0 0" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" DisplayMemberPath="Name" Width="100" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" VerticalContentAlignment="Center" />
 		</Grid>
 
 		<ListBox Grid.Row="1"

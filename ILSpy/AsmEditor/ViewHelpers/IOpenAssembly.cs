@@ -17,30 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
-
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
+namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 {
-	/// <summary>
-	/// Interaction logic for MemberPickerDlg.xaml
-	/// </summary>
-	public partial class MemberPickerDlg : Window
+	interface IOpenAssembly
 	{
-		public MemberPickerDlg()
-		{
-			InitializeComponent();
-			DataContextChanged += (s, e) => {
-				var data = DataContext as MemberPickerVM;
-				if (data != null)
-					data.OpenAssembly = new OpenAssembly();
-			};
-		}
-
-		private void okButton_Click(object sender, RoutedEventArgs e)
-		{
-			this.DialogResult = true;
-			Close();
-		}
+		/// <summary>
+		/// Asks user to pick a file and returns it or null if user canceled.
+		/// </summary>
+		/// <returns></returns>
+		LoadedAssembly Open();
 	}
 }
