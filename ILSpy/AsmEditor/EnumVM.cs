@@ -109,7 +109,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			this.onChanged = onChanged;
 		}
 
-		int GetIndex(object value)
+		public int GetIndex(object value)
 		{
 			for (int i = 0; i < list.Count; i++) {
 				if (list[i].Value.Equals(value))

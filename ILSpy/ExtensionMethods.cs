@@ -31,8 +31,7 @@ namespace ICSharpCode.ILSpy
 		public static void AddRange<T>(this ICollection<T> list, IEnumerable<T> items)
 		{
 			foreach (T item in items)
-				if (!list.Contains(item))
-					list.Add(item);
+				list.Add(item);
 		}
 
 		public static bool IsCustomAttribute(this TypeDef type)

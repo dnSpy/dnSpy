@@ -32,11 +32,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		{
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = (TypeSigCreatorVM)DataContext;
-				var ownerWindow = Window.GetWindow(this);
-				data.DnlibTypePicker = new DnlibTypePicker(ownerWindow);
-				data.ShowWarningMessage = new ShowWarningMessage(ownerWindow);
-				data.CreateTypeSigArray = new CreateTypeSigArray(ownerWindow);
+				var data = DataContext as TypeSigCreatorVM;
+				if (data != null) {
+					var ownerWindow = Window.GetWindow(this);
+					data.DnlibTypePicker = new DnlibTypePicker(ownerWindow);
+					data.ShowWarningMessage = new ShowWarningMessage(ownerWindow);
+					data.CreateTypeSigArray = new CreateTypeSigArray(ownerWindow);
+					data.CreateMethodPropertySig = new CreateMethodPropertySig(ownerWindow);
+				}
 			};
 		}
 	}

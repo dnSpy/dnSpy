@@ -33,13 +33,13 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			s = s.Replace("\r", string.Empty);
 			s = s.Replace("\n", string.Empty);
 			if (s.Length % 2 != 0)
-				throw new FormatException("A hex string must contain an even number of hex digits.");
+				throw new FormatException("A hex string must contain an even number of hex digits");
 			var bytes = new byte[s.Length / 2];
 			for (int i = 0; i < s.Length; i += 2) {
 				int upper = TryParseHexChar(s[i]);
 				int lower = TryParseHexChar(s[i + 1]);
 				if (upper < 0 || lower < 0)
-					throw new FormatException("A hex string must contain only hex digits: 0-9 and A-F.");
+					throw new FormatException("A hex string must contain only hex digits: 0-9 and A-F");
 				bytes[i / 2] = (byte)((upper << 4) | lower);
 			}
 			return bytes;
@@ -106,11 +106,11 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				isValid = ulong.TryParse(s, NumberStyles.Integer, null, out value);
 			if (!isValid) {
 				if (s.StartsWith("-"))
-					return "Only non-negative integers are allowed.";
-				return "The value is not an unsigned hexadecimal or decimal integer.";
+					return "Only non-negative integers are allowed";
+				return "The value is not an unsigned hexadecimal or decimal integer";
 			}
 			if (value < min || value > max)
-				return string.Format("Value must be between {0} and {1} (0x{1:X}) inclusive.", min, max);
+				return string.Format("Value must be between {0} and {1} (0x{1:X}) inclusive", min, max);
 
 			return null;
 		}
@@ -162,19 +162,19 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			else
 				isValid = ulong.TryParse(s, NumberStyles.Integer, null, out value2);
 			if (!isValid)
-				return "The value is not a hexadecimal or decimal integer.";
+				return "The value is not a hexadecimal or decimal integer";
 			if (isSigned) {
 				if (value2 > (ulong)long.MaxValue + 1)
-					return "The value is too small.";
+					return "The value is too small";
 				value = unchecked(-(long)value2);
 			}
 			else {
 				if (value2 > (ulong)long.MaxValue)
-					return "The value is too big.";
+					return "The value is too big";
 				value = (long)value2;
 			}
 			if (value < min || value > max)
-				return string.Format("Value must be between {0} (0x{0:X}) and {1} (0x{1:X}) inclusive.", min, max);
+				return string.Format("Value must be between {0} (0x{0:X}) and {1} (0x{1:X}) inclusive", min, max);
 
 			return null;
 		}
@@ -270,7 +270,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			foreach (var elem in s.Split(',')) {
 				var value = elem.Trim();
 				if (value == string.Empty)
-					throw new FormatException("Value in list can't be empty.");
+					throw new FormatException("Value in list can't be empty");
 				list.Add(parseValue(value));
 			}
 
@@ -423,7 +423,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			catch (Exception ex) {
 				if (!string.IsNullOrEmpty(ex.Message))
 					return ex.Message;
-				return string.Format("Could not convert '{0}'.", StringValue);
+				return string.Format("Could not convert '{0}'", StringValue);
 			}
 		}
 

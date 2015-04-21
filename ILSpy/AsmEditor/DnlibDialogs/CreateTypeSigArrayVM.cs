@@ -34,6 +34,28 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			get { return new RelayCommand(a => RemoveCurrent(), a => RemoveCurrentCanExecute()); }
 		}
 
+		public ICommand MoveUpCommand {
+			get { return new RelayCommand(a => MoveCurrentUp(), a => MoveCurrentUpCanExecute()); }
+		}
+
+		public ICommand MoveDownCommand {
+			get { return new RelayCommand(a => MoveCurrentDown(), a => MoveCurrentDownCanExecute()); }
+		}
+
+		public bool IsEnabled {
+			get { return isEnabled; }
+			set {
+				if (isEnabled != value) {
+					isEnabled = value;
+					typeSigCreator.IsEnabled = value;
+					OnPropertyChanged("IsEnabled");
+					OnPropertyChanged("CanAddMore");
+					OnPropertyChanged("CanNotAddMore");
+				}
+			}
+		}
+		bool isEnabled = true;
+
 		public TypeSig[] TypeSigArray {
 			get { return TypeSigCollection.ToArray(); }
 		}
@@ -61,6 +83,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		public string Title {
 			get {
+				if (!string.IsNullOrEmpty(title))
+					return title;
 				if (IsUnlimitedCount)
 					return "Create TypeSigs";
 				else if (RequiredCount.Value == 1)
@@ -69,6 +93,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 					return string.Format("Create {0} TypeSigs", RequiredCount.Value);
 			}
 		}
+		string title;
 
 		public int? RequiredCount {
 			get { return requiredCount; }
@@ -102,7 +127,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 
 		public bool CanAddMore {
-			get { return IsUnlimitedCount || NumberOfTypesLeft > 0; }
+			get { return IsEnabled && (IsUnlimitedCount || NumberOfTypesLeft > 0); }
 		}
 
 		public string NumberOfTypesLeftString {
@@ -116,12 +141,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		readonly TypeSigCreatorOptions options;
-
 		public CreateTypeSigArrayVM(TypeSigCreatorOptions options, int? requiredCount)
 		{
+			this.title = options.Title;
 			this.typeSigCreator = new TypeSigCreatorVM(options);
-			this.options = options.Clone();
 			this.RequiredCount = requiredCount;
 			this.TypeSigCollection.CollectionChanged += (s, e) => UpdateNumberLeftProperties();
 		}
@@ -148,7 +171,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		bool AddCurrentCanExecute()
 		{
-			return (IsUnlimitedCount || NumberOfTypesLeft > 0) &&
+			return IsEnabled &&
+				(IsUnlimitedCount || NumberOfTypesLeft > 0) &&
 				TypeSigCreator.TypeSig != null;
 		}
 
@@ -169,7 +193,39 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		bool RemoveCurrentCanExecute()
 		{
-			return SelectedItem != null;
+			return IsEnabled && SelectedItem != null;
+		}
+
+		void MoveCurrentUp()
+		{
+			if (!MoveCurrentUpCanExecute())
+				return;
+			var item = SelectedItem;
+			int index = TypeSigCollection.IndexOf(item);
+			TypeSigCollection.RemoveAt(index);
+			TypeSigCollection.Insert(index - 1, item);
+			SelectedItem = item;
+		}
+
+		bool MoveCurrentUpCanExecute()
+		{
+			return IsEnabled && SelectedItem != null && TypeSigCollection.IndexOf(SelectedItem) > 0;
+		}
+
+		void MoveCurrentDown()
+		{
+			if (!MoveCurrentDownCanExecute())
+				return;
+			var item = SelectedItem;
+			int index = TypeSigCollection.IndexOf(item);
+			TypeSigCollection.RemoveAt(index);
+			TypeSigCollection.Insert(index + 1, item);
+			SelectedItem = item;
+		}
+
+		bool MoveCurrentDownCanExecute()
+		{
+			return IsEnabled && SelectedItem != null && TypeSigCollection.IndexOf(SelectedItem) != TypeSigCollection.Count - 1;
 		}
 
 		protected override string Verify(string columnName)

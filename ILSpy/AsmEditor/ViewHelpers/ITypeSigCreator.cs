@@ -17,38 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
 
 namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 {
-	sealed class CreateTypeSigArray : ICreateTypeSigArray
+	interface ITypeSigCreator
 	{
-		readonly Window ownerWindow;
-
-		public CreateTypeSigArray()
-			: this(null)
-		{
-		}
-
-		public CreateTypeSigArray(Window ownerWindow)
-		{
-			this.ownerWindow = ownerWindow;
-		}
-
-		public TypeSig[] Create(TypeSigCreatorOptions options, int? count, TypeSig[] typeSigs)
-		{
-			var data = new CreateTypeSigArrayVM(options, count);
-			if (typeSigs != null)
-				data.TypeSigCollection.AddRange(typeSigs);
-			var win = new CreateTypeSigArrayDlg();
-			win.DataContext = data;
-			win.Owner = ownerWindow ?? MainWindow.Instance;
-			if (win.ShowDialog() != true)
-				return null;
-
-			return data.TypeSigArray;
-		}
+		/// <summary>
+		/// Creates a TypeSig. Returns null if user canceled.
+		/// </summary>
+		/// <param name="options">Type sig creator options</param>
+		/// <param name="typeSig">Existing TypeSig or null</param>
+		/// <returns></returns>
+		TypeSig Create(TypeSigCreatorOptions options, TypeSig typeSig);
 	}
 }

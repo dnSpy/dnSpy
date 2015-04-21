@@ -17,38 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
 
 namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 {
-	sealed class CreateTypeSigArray : ICreateTypeSigArray
+	interface ICreateMethodPropertySig
 	{
-		readonly Window ownerWindow;
-
-		public CreateTypeSigArray()
-			: this(null)
-		{
-		}
-
-		public CreateTypeSigArray(Window ownerWindow)
-		{
-			this.ownerWindow = ownerWindow;
-		}
-
-		public TypeSig[] Create(TypeSigCreatorOptions options, int? count, TypeSig[] typeSigs)
-		{
-			var data = new CreateTypeSigArrayVM(options, count);
-			if (typeSigs != null)
-				data.TypeSigCollection.AddRange(typeSigs);
-			var win = new CreateTypeSigArrayDlg();
-			win.DataContext = data;
-			win.Owner = ownerWindow ?? MainWindow.Instance;
-			if (win.ShowDialog() != true)
-				return null;
-
-			return data.TypeSigArray;
-		}
+		/// <summary>
+		/// Creates a <see cref="MethodSig"/> or a <see cref="PropertySig"/>
+		/// </summary>
+		/// <param name="options">Create-options</param>
+		/// <returns></returns>
+		MethodBaseSig Create(MethodSigCreatorOptions options);
 	}
 }

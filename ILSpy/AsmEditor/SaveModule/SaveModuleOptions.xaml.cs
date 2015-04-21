@@ -30,7 +30,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		public SaveModuleOptions()
 		{
 			InitializeComponent();
-			DataContextChanged += (s, e) => ((SaveModuleOptionsVM)DataContext).PickNetExecutableFileName = new PickNetExecutableFileName();
+			DataContextChanged += (s, e) => {
+				var data = DataContext as SaveModuleOptionsVM;
+				if (data != null)
+					data.PickNetExecutableFileName = new PickNetExecutableFileName();
+			};
 		}
 
 		private void okButton_Click(object sender, RoutedEventArgs e)

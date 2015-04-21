@@ -27,7 +27,7 @@
              Height="350" Width="500"
              ResizeMode="CanResizeWithGrip"
              Icon="../../images/ILSpy.ico"
-             Title="Create TypeSig"
+             Title="{Binding Title}"
              WindowStartupLocation="CenterOwner"
              Style="{DynamicResource DialogWindow}"
              MinHeight="350" MinWidth="500">

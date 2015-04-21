@@ -18,37 +18,23 @@
 */
 
 using System.Windows;
-using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
+namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
-	sealed class CreateTypeSigArray : ICreateTypeSigArray
+	/// <summary>
+	/// Interaction logic for MethodSigCreatorDlg.xaml
+	/// </summary>
+	public partial class MethodSigCreatorDlg : Window
 	{
-		readonly Window ownerWindow;
-
-		public CreateTypeSigArray()
-			: this(null)
+		public MethodSigCreatorDlg()
 		{
+			InitializeComponent();
 		}
 
-		public CreateTypeSigArray(Window ownerWindow)
+		private void okButton_Click(object sender, RoutedEventArgs e)
 		{
-			this.ownerWindow = ownerWindow;
-		}
-
-		public TypeSig[] Create(TypeSigCreatorOptions options, int? count, TypeSig[] typeSigs)
-		{
-			var data = new CreateTypeSigArrayVM(options, count);
-			if (typeSigs != null)
-				data.TypeSigCollection.AddRange(typeSigs);
-			var win = new CreateTypeSigArrayDlg();
-			win.DataContext = data;
-			win.Owner = ownerWindow ?? MainWindow.Instance;
-			if (win.ShowDialog() != true)
-				return null;
-
-			return data.TypeSigArray;
+			this.DialogResult = true;
+			Close();
 		}
 	}
 }

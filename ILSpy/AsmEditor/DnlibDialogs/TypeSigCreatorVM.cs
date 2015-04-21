@@ -42,6 +42,19 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		ICreateTypeSigArray createTypeSigArray;
 
+		public ICreateMethodPropertySig CreateMethodPropertySig {
+			set { createMethodPropertySig = value; }
+		}
+		ICreateMethodPropertySig createMethodPropertySig;
+
+		public string Title {
+			get {
+				if (!string.IsNullOrEmpty(options.Title))
+					return options.Title;
+				return "Create TypeSig";
+			}
+		}
+
 		public bool IsEnabled {
 			get { return isEnabled; }
 			set {
@@ -50,6 +63,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 					OnPropertyChanged("IsEnabled");
 					OnPropertyChanged("CanAddLeafTypeSig");
 					OnPropertyChanged("CanAddNonLeafTypeSig");
+					OnPropertyChanged("CanAddGeneric");
 				}
 			}
 		}
@@ -76,6 +90,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 		TypeSig typeSig;
+
+		public bool CanAddGeneric {
+			get { return IsEnabled && (options.CanAddGenericTypeVar || options.CanAddGenericMethodVar); }
+		}
 
 		public bool IsValidTypeSig {
 			get { return TypeSig != null; }
@@ -180,18 +198,20 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
+		public UInt32VM GenericVariableNumber {
+			get { return genericVariableNumber; }
+		}
+		readonly UInt32VM genericVariableNumber;
+
 		readonly TypeSigCreatorOptions options;
 
 		public TypeSigCreatorVM(TypeSigCreatorOptions options)
 		{
-			if (options.Module == null)
-				throw new ArgumentNullException();
-			if (options.Language == null)
-				throw new ArgumentNullException();
 			this.options = options.Clone();
 			this.arrayRank = new UInt32VM(2, a => { });
 			this.arraySizes = new UInt32ListDataFieldVM(a => { });
 			this.arrayLowerBounds = new Int32ListDataFieldVM(a => { });
+			this.genericVariableNumber = new UInt32VM(0, a => { });
 		}
 
 		void ShowWarning(string key, string msg)
@@ -256,32 +276,42 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		void AddGenericVar()
 		{
-			TypeSig = new GenericVar(options.GenericNumber, options.GenericParamContext.Type);
+			TypeSig = new GenericVar(genericVariableNumber.Value, options.OwnerType);
 		}
 
 		bool AddGenericVarCanExecute()
 		{
-			return options.CanAddGenericTypeVar && CanAddLeafTypeSig;
+			return !genericVariableNumber.HasError && options.CanAddGenericTypeVar && CanAddLeafTypeSig;
 		}
 
 		void AddGenericMVar()
 		{
-			TypeSig = new GenericMVar(options.GenericNumber, options.GenericParamContext.Method);
+			TypeSig = new GenericMVar(genericVariableNumber.Value, options.OwnerMethod);
 		}
 
 		bool AddGenericMVarCanExecute()
 		{
-			return options.CanAddGenericMethodVar && CanAddLeafTypeSig;
+			return !genericVariableNumber.HasError && options.CanAddGenericMethodVar && CanAddLeafTypeSig;
 		}
 
 		void AddFnPtrSig()
 		{
-			//TODO:
+			if (createMethodPropertySig == null)
+				throw new InvalidOperationException();
+
+			var createOptions = new MethodSigCreatorOptions(options.Clone("Create FnPtr Method Signature"));
+			createOptions.IsPropertySig = false;
+			createOptions.CanHaveSentinel = true;
+			var sig = createMethodPropertySig.Create(createOptions);
+			if (sig == null)
+				return;
+
+			TypeSig = new FnPtrSig(sig);
 		}
 
 		bool AddFnPtrSigCanExecute()
 		{
-			return CanAddLeafTypeSig && false/*TODO:*/;
+			return CanAddLeafTypeSig;
 		}
 
 		void AddGenericInstSig()
@@ -304,7 +334,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				return;
 			}
 
-			var genArgs = createTypeSigArray.Create(options.Clone(), genericType.GenericParameters.Count);
+			var genArgs = createTypeSigArray.Create(options.Clone("Create Generic Instance Type Arguments"), genericType.GenericParameters.Count, null);
 			if (genArgs == null)
 				return;
 

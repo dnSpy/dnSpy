@@ -23,32 +23,31 @@ using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
 
 namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 {
-	sealed class CreateTypeSigArray : ICreateTypeSigArray
+	sealed class TypeSigCreator : ITypeSigCreator
 	{
 		readonly Window ownerWindow;
 
-		public CreateTypeSigArray()
+		public TypeSigCreator()
 			: this(null)
 		{
 		}
 
-		public CreateTypeSigArray(Window ownerWindow)
+		public TypeSigCreator(Window ownerWindow)
 		{
 			this.ownerWindow = ownerWindow;
 		}
 
-		public TypeSig[] Create(TypeSigCreatorOptions options, int? count, TypeSig[] typeSigs)
+		public TypeSig Create(TypeSigCreatorOptions options, TypeSig typeSig)
 		{
-			var data = new CreateTypeSigArrayVM(options, count);
-			if (typeSigs != null)
-				data.TypeSigCollection.AddRange(typeSigs);
-			var win = new CreateTypeSigArrayDlg();
+			var data = new TypeSigCreatorVM(options);
+			data.TypeSig = typeSig;
+			var win = new TypeSigCreatorDlg();
 			win.DataContext = data;
 			win.Owner = ownerWindow ?? MainWindow.Instance;
 			if (win.ShowDialog() != true)
 				return null;
 
-			return data.TypeSigArray;
+			return data.TypeSig;
 		}
 	}
 }

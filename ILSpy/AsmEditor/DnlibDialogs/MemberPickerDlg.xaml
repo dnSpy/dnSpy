@@ -33,7 +33,6 @@
              Style="{DynamicResource DialogWindow}"
              MinHeight="200" MinWidth="400">
 	<Window.Resources>
-		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 		<vc:BooleanToGridrowLengthConverter x:Key="BooleanToGridrowLengthConverter" />
 		<ControlTemplate x:Key="noRedBorderOnValidationError">
 			<!-- Don't show the red border when the user hasn't selected a valid node -->

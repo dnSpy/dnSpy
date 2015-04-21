@@ -119,6 +119,9 @@
     <Compile Include="AsmEditor\Converters\BooleanToGridrowLengthConverter.cs" />
     <Compile Include="AsmEditor\DataFieldVM.cs" />
     <Compile Include="AsmEditor\DeletableNodes.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\CreateTypeSigArrayControl.xaml.cs">
+      <DependentUpon>CreateTypeSigArrayControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AsmEditor\DnlibDialogs\CreateTypeSigArrayDlg.xaml.cs">
       <DependentUpon>CreateTypeSigArrayDlg.xaml</DependentUpon>
     </Compile>
@@ -127,6 +130,14 @@
       <DependentUpon>MemberPickerDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\DnlibDialogs\MemberPickerVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\MethodSigCreatorControl.xaml.cs">
+      <DependentUpon>MethodSigCreatorControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\MethodSigCreatorDlg.xaml.cs">
+      <DependentUpon>MethodSigCreatorDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\MethodSigCreatorOptions.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\MethodSigCreatorVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\TypeSigCreatorControl.xaml.cs">
       <DependentUpon>TypeSigCreatorControl.xaml</DependentUpon>
     </Compile>
@@ -176,16 +187,20 @@
     <Compile Include="AsmEditor\UndoCommandManager.cs" />
     <Compile Include="AsmEditor\UndoRedoMenuCommands.cs" />
     <Compile Include="AsmEditor\Utils.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\CreateMethodPropertySig.cs" />
     <Compile Include="AsmEditor\ViewHelpers\CreateTypeSigArray.cs" />
     <Compile Include="AsmEditor\ViewHelpers\DnlibTypePicker.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\ICreateMethodPropertySig.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ICreateTypeSigArray.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IDnlibTypePicker.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IOpenPublicKeyFile.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IPickNetExecutableFileName.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IShowWarningMessage.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\ITypeSigCreator.cs" />
     <Compile Include="AsmEditor\ViewHelpers\OpenPublicKeyFile.cs" />
     <Compile Include="AsmEditor\ViewHelpers\PickNetExecutableFileName.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ShowWarningMessage.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\TypeSigCreator.cs" />
     <Compile Include="AsmEditor\ViewModelBase.cs" />
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
@@ -372,6 +387,8 @@
     <EmbeddedResource Include="..\COPYING">
       <Link>COPYING</Link>
     </EmbeddedResource>
+    <Resource Include="Images\ArrowUp.png" />
+    <Resource Include="Images\ArrowDown.png" />
     <Resource Include="Images\AssemblyList.png" />
     <Resource Include="Images\AssemblyListGAC.png" />
     <Resource Include="Images\AssemblyWarning.png" />
@@ -457,11 +474,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="AsmEditor\DnlibDialogs\CreateTypeSigArrayControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AsmEditor\DnlibDialogs\CreateTypeSigArrayDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\DnlibDialogs\MemberPickerDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\MethodSigCreatorControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\MethodSigCreatorDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -17,21 +17,27 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using System.Windows;
+using System.Windows.Controls;
+using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
+namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
-	interface ICreateTypeSigArray
+	/// <summary>
+	/// Interaction logic for MethodSigCreatorControl.xaml
+	/// </summary>
+	public partial class MethodSigCreatorControl : UserControl
 	{
-		/// <summary>
-		/// Returns a created TypeSig array or null if user canceled.
-		/// </summary>
-		/// <param name="options">Type sig creator options</param>
-		/// <param name="count">Number of types to create or null if any number of types can be
-		/// created</param>
-		/// <param name="typeSigs">Existing type sigs or null</param>
-		/// <returns></returns>
-		TypeSig[] Create(TypeSigCreatorOptions options, int? count, TypeSig[] typeSigs);
+		public MethodSigCreatorControl()
+		{
+			InitializeComponent();
+			DataContextChanged += (s, e) => {
+				var data = DataContext as MethodSigCreatorVM;
+				if (data != null) {
+					var ownerWindow = Window.GetWindow(this);
+					data.TypeSigCreator = new TypeSigCreator(ownerWindow);
+				}
+			};
+		}
 	}
 }

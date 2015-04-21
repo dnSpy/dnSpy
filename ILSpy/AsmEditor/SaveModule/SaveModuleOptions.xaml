@@ -63,8 +63,8 @@
 								<ColumnDefinition />
 							</Grid.ColumnDefinitions>
 							<CheckBox Grid.Row="0" Grid.Column="0" IsEnabled="{Binding CanWritePdb}" IsChecked="{Binding WritePdb}" Content="Save _PDB File" />
-							<CheckBox Grid.Row="0" Grid.Column="1" IsEnabled="{Binding CanSaveMixedModeModule}" IsChecked="{Binding UseMixedMode}" Content="_Mixed-Mode Module" ToolTip="Should be checked if it's a mixed-mode module (eg. C++/.NET).&#x0A;Most options will be re-initialized when this checkbox is clicked." />
-							<CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding ShareMethodBodies}" Content="Shared Method _Bodies" ToolTip=".NET methods that have the exact same code will share method bodies.&#x0A;The output file will be a little bit smaller." />
+							<CheckBox Grid.Row="0" Grid.Column="1" IsEnabled="{Binding CanSaveMixedModeModule}" IsChecked="{Binding UseMixedMode}" Content="_Mixed-Mode Module" ToolTip="Should be checked if it's a mixed-mode module (eg. C++/.NET).&#x0A;Most options will be re-initialized when this checkbox is clicked" />
+							<CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding ShareMethodBodies}" Content="Shared Method _Bodies" ToolTip=".NET methods that have the exact same code will share method bodies.&#x0A;The output file will be a little bit smaller" />
 						</Grid>
 
 						<StackPanel Orientation="Horizontal">
@@ -92,7 +92,7 @@
 			<TabItem Header="MD Writer Options">
 				<ScrollViewer VerticalScrollBarVisibility="Auto">
 					<StackPanel>
-						<GroupBox ToolTip="If the file is still obfuscated, RIDs might need to be preserved." IsEnabled="{Binding CanSaveMixedModeModule}">
+						<GroupBox ToolTip="If the file is still obfuscated, RIDs might need to be preserved" IsEnabled="{Binding CanSaveMixedModeModule}">
 							<GroupBox.Header>
 								<CheckBox IsThreeState="False" IsChecked="{Binding MetaDataOptions.PreserveRids}" Content="P_reserve All MD Tokens" />
 							</GroupBox.Header>
@@ -165,8 +165,8 @@
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition />
 								</Grid.ColumnDefinitions>
-								<CheckBox Grid.Row="0" Grid.Column="0" Content="Preserve E_xtra Signature Data" IsChecked="{Binding MetaDataOptions.PreserveExtraSignatureData}" ToolTip="Preserve any extra data after the signatures.&#x0A;Some obfuscators put data there." IsEnabled="{Binding CanSaveMixedModeModule}" />
-								<CheckBox Grid.Row="1" Grid.Column="0" Content="_Keep Old MaxStack Value" IsChecked="{Binding MetaDataOptions.KeepOldMaxStack}" ToolTip="Use the MaxStack value from the method instead of calculating a new MaxStack value.&#x0A;Needed if the methods are still obfuscated." />
+								<CheckBox Grid.Row="0" Grid.Column="0" Content="Preserve E_xtra Signature Data" IsChecked="{Binding MetaDataOptions.PreserveExtraSignatureData}" ToolTip="Preserve any extra data after the signatures.&#x0A;Some obfuscators put data there" IsEnabled="{Binding CanSaveMixedModeModule}" />
+								<CheckBox Grid.Row="1" Grid.Column="0" Content="_Keep Old MaxStack Value" IsChecked="{Binding MetaDataOptions.KeepOldMaxStack}" ToolTip="Use the MaxStack value from the method instead of calculating a new MaxStack value.&#x0A;Needed if the methods are still obfuscated" />
 							</Grid>
 						</GroupBox>
 					</StackPanel>
@@ -203,7 +203,7 @@
 								<Label Grid.Row="2" Grid.Column="2" Target="{Binding ElementName=reserved2TextBox}" Content="Reserved_2" />
 								<TextBox Grid.Row="2" Grid.Column="3" Name="reserved2TextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.Reserved2.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 								<Label Grid.Row="3" Grid.Column="0" Target="{Binding ElementName=storageFlagsTextBox}" Content="S_torageFlags" />
-								<TextBox Grid.Row="3" Grid.Column="1" Name="storageFlagsTextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.StorageFlags.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="Leave this blank or set it only to 0.&#x0A;Any other value will crash the assembly." />
+								<TextBox Grid.Row="3" Grid.Column="1" Name="storageFlagsTextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.StorageFlags.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="Leave this blank or set it only to 0.&#x0A;Any other value will crash the assembly" />
 							</Grid>
 						</GroupBox>
 						<GroupBox Header="Tables Heap Options">
@@ -463,7 +463,7 @@
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">
 			<Button Content="_OK" IsEnabled="{Binding HasNoError}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
 			<Button Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" />
-			<Button Content="Restore" Style="{StaticResource DialogButton}" Command="{Binding ReinitializeCommand}" ToolTip="Restore all options." />
+			<Button Content="Restore" Style="{StaticResource DialogButton}" Command="{Binding ReinitializeCommand}" ToolTip="Restore all options" />
 		</StackPanel>
 	</Grid>
 </Window>

@@ -17,23 +17,67 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
-	public sealed class TypeSigCreatorOptions
+	public sealed class TypeSigCreatorOptions : ICloneable
 	{
+		public string Title { get; set; }
 		public bool IsLocal { get; set; }
 		public bool CanAddGenericTypeVar { get; set; }
 		public bool CanAddGenericMethodVar { get; set; }
-		public int GenericNumber { get; set; }
-		public GenericParamContext GenericParamContext { get; set; }
-		public ModuleDef Module { get; set; }
-		public Language Language { get; set; }
+
+		public TypeDef OwnerType {
+			get { return ownerType ?? (OwnerMethod == null ? null : OwnerMethod.DeclaringType); }
+			set { ownerType = value; }
+		}
+		TypeDef ownerType;
+
+		public MethodDef OwnerMethod { get; set; }
+
+		public ModuleDef Module {
+			get { return module; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException();
+				module = value;
+			}
+		}
+		ModuleDef module;
+
+		public Language Language {
+			get { return language; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException();
+				language = value;
+			}
+		}
+		Language language;
+
+		public TypeSigCreatorOptions(ModuleDef module, Language language)
+		{
+			this.Module = module;
+			this.Language = language;
+		}
 
 		public TypeSigCreatorOptions Clone()
 		{
 			return (TypeSigCreatorOptions)MemberwiseClone();
+		}
+
+		public TypeSigCreatorOptions Clone(string title)
+		{
+			var clone = Clone();
+			clone.Title = title;
+			return clone;
+		}
+
+		object ICloneable.Clone()
+		{
+			return Clone();
 		}
 	}
 }

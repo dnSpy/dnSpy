@@ -57,8 +57,8 @@
 			</Grid.RowDefinitions>
 
 			<StackPanel Grid.Row="0" Margin="0 0 0 0" Orientation="Horizontal">
-				<Button Grid.Column="0" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Content="C_lear" Command="{Binding ClearTypeSigCommand}" ToolTip="Clear type."/>
-				<Button Grid.Column="1" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Content="_Remove" Command="{Binding RemoveLastTypeSigCommand}" ToolTip="Remove last added type."/>
+				<Button Grid.Column="0" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Content="Cl_ear" Command="{Binding ClearTypeSigCommand}" ToolTip="Clear type"/>
+				<Button Grid.Column="1" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Content="_Remove" Command="{Binding RemoveLastTypeSigCommand}" ToolTip="Remove last added type"/>
 				<ComboBox Grid.Column="2" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" Margin="0 0 0 0" DisplayMemberPath="Name" Width="100" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" />
 			</StackPanel>
 
@@ -69,12 +69,21 @@
 					<ColumnDefinition />
 					<ColumnDefinition />
 					<ColumnDefinition />
+					<ColumnDefinition />
 				</Grid.ColumnDefinitions>
-				<Button Grid.Column="0" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="_Type" Command="{Binding AddTypeDefOrRefCommand}" ToolTip="Add a type."/>
-				<Button Grid.Column="1" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="_Var" Command="{Binding AddGenericVarCommand}" ToolTip="Add a type generic variable."/>
-				<Button Grid.Column="2" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="_MVar" Command="{Binding AddGenericMVarCommand}" ToolTip="Add a method generic variable."/>
-				<Button Grid.Column="3" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="_FnPtr" Command="{Binding AddFnPtrSigCommand}" ToolTip="Add a function pointer."/>
-				<Button Grid.Column="4" Style="{StaticResource OtherDialogButton}" Margin="0 0 0 0" Content="_GenericInst" Command="{Binding AddGenericInstSigCommand}" ToolTip="Add a generic instance type."/>
+				<Button Grid.Column="0" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="_Type" Command="{Binding AddTypeDefOrRefCommand}" ToolTip="Add a type"/>
+				<Button Grid.Column="1" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="_Var" Command="{Binding AddGenericVarCommand}" ToolTip="Add a type generic variable"/>
+				<Button Grid.Column="2" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="_MVar" Command="{Binding AddGenericMVarCommand}" ToolTip="Add a method generic variable"/>
+				<Grid Grid.Column="3" Margin="0 0 5 0" IsEnabled="{Binding CanAddGeneric}">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<Label Grid.Column="0" Content="#" Target="{Binding ElementName=genVarNumberTextBox}" />
+					<TextBox Grid.Column="1" Name="genVarNumberTextBox" Text="{Binding GenericVariableNumber.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="Type/method generic variable number" />
+				</Grid>
+				<Button Grid.Column="4" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="_GenericInst" Command="{Binding AddGenericInstSigCommand}" ToolTip="Add a generic instance type"/>
+				<Button Grid.Column="5" Style="{StaticResource OtherDialogButton}" Margin="0 0 0 0" Content="_FnPtr" Command="{Binding AddFnPtrSigCommand}" ToolTip="Add a function pointer"/>
 			</Grid>
 			<Grid Grid.Row="2" Margin="0 5 0 0" Visibility="{Binding AddingNonLeafTypeSig, Converter={StaticResource BooleanToVisibilityConverter}}">
 				<Grid.ColumnDefinitions>
@@ -85,16 +94,16 @@
 					<ColumnDefinition />
 					<ColumnDefinition />
 				</Grid.ColumnDefinitions>
-				<Button Grid.Column="0" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="_Pointer" Command="{Binding AddPtrSigCommand}" ToolTip="Convert type to a pointer."/>
-				<Button Grid.Column="1" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="_ByRef" Command="{Binding AddByRefSigCommand}" ToolTip="Convert type to a by-reference."/>
-				<Button Grid.Column="2" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="_SZ Array" Command="{Binding AddSZArraySigCommand}" ToolTip="Convert type to a single-dimension, zero lower-bound array."/>
-				<Button Grid.Column="3" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="C_ModReqd" Command="{Binding AddCModReqdSigCommand}" ToolTip="Add a required C modifier."/>
-				<Button Grid.Column="4" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="CModOp_t" Command="{Binding AddCModOptSigCommand}" ToolTip="Add an optional C modifier."/>
-				<Button Grid.Column="5" Style="{StaticResource OtherDialogButton}" Margin="0 0 0 0" Content="Pi_nned" Command="{Binding AddPinnedSigCommand}" ToolTip="Turn it into a pinned variable."/>
+				<Button Grid.Column="0" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="_Pointer" Command="{Binding AddPtrSigCommand}" ToolTip="Convert type to a pointer"/>
+				<Button Grid.Column="1" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="_ByRef" Command="{Binding AddByRefSigCommand}" ToolTip="Convert type to a by-reference"/>
+				<Button Grid.Column="2" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="S_Z Array" Command="{Binding AddSZArraySigCommand}" ToolTip="Convert type to a single-dimension, zero lower-bound array"/>
+				<Button Grid.Column="3" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="C_ModReqd" Command="{Binding AddCModReqdSigCommand}" ToolTip="Add a required C modifier"/>
+				<Button Grid.Column="4" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="CModOp_t" Command="{Binding AddCModOptSigCommand}" ToolTip="Add an optional C modifier"/>
+				<Button Grid.Column="5" Style="{StaticResource OtherDialogButton}" Margin="0 0 0 0" Content="Pi_nned" Command="{Binding AddPinnedSigCommand}" ToolTip="Turn it into a pinned variable"/>
 			</Grid>
 			<GroupBox Grid.Row="3" Margin="0 5 0 0" Header="Multidimensional Array"
 					  Visibility="{Binding AddingNonLeafTypeSig, Converter={StaticResource BooleanToVisibilityConverter}}">
-				<Grid>
+				<Grid IsEnabled="{Binding IsEnabled}" >
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto" />
 						<ColumnDefinition Width="Auto" />
@@ -105,17 +114,31 @@
 						<RowDefinition />
 						<RowDefinition />
 					</Grid.RowDefinitions>
-					<Button Grid.Row="0" Grid.Column="0" Margin="0 0 5 0" Style="{StaticResource OtherDialogButton}" Name="arrayButton" Content="Arra_y" Command="{Binding AddArraySigCommand}" ToolTip="Convert type to a multidimensional array."/>
+					<Button Grid.Row="0" Grid.Column="0" Margin="0 0 5 0" Style="{StaticResource OtherDialogButton}" Name="arrayButton" Content="Arra_y" Command="{Binding AddArraySigCommand}" ToolTip="Convert type to a multidimensional array"/>
 					<Label Grid.Row="0" Grid.Column="1" Margin="0 5 5 0" Target="{Binding ElementName=rankTextBox}" Content="Ran_k" />
 					<TextBox Grid.Row="0" Grid.Column="2" Margin="0 5 0 0" Name="rankTextBox" Text="{Binding ArrayRank.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
 					<Label Grid.Row="1" Grid.Column="0" Margin="0 5 5 0" Target="{Binding ElementName=arraySizesTextBox}" Content="S_izes" />
-					<TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="0 5 0 0" Name="arraySizesTextBox" Text="{Binding ArraySizes.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" ToolTip="Comma separated list of array sizes (unsigned integers)." />
-					<Label Grid.Row="2" Grid.Column="0" Margin="0 5 5 0" Target="{Binding ElementName=arrayLowerBoundsTextBox}" Content="Lower Bo_unds" />
-					<TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="0 5 0 0" Name="arrayLowerBoundsTextBox" Text="{Binding ArrayLowerBounds.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" ToolTip="Comma separated list of array lower bounds (signed integers)." />
+					<TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="0 5 0 0" Name="arraySizesTextBox" Text="{Binding ArraySizes.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" ToolTip="Comma separated list of array sizes (unsigned integers)" />
+					<Label Grid.Row="2" Grid.Column="0" Margin="0 5 5 0" Target="{Binding ElementName=arrayLowerBoundsTextBox}" Content="Lo_wer Bounds" />
+					<TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="0 5 0 0" Name="arrayLowerBoundsTextBox" Text="{Binding ArrayLowerBounds.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" ToolTip="Comma separated list of array lower bounds (signed integers)" />
 				</Grid>
 			</GroupBox>
-			<TextBox Grid.Row="4" Margin="0 5 0 0" IsReadOnly="True" TextWrapping="Wrap" Text="{Binding TypeSigDnlibFullName, Mode=OneWay}"/>
-			<TextBox Grid.Row="5" Margin="0 5 0 0" IsReadOnly="True" TextWrapping="Wrap" Text="{Binding TypeSigLanguageFullName, Mode=OneWay}"/>
+			<TextBox Grid.Row="4"
+					 Visibility="{Binding IsValidTypeSig, Converter={StaticResource BooleanToVisibilityConverter}}"
+					 Margin="0 5 0 0"
+					 Background="{x:Null}"
+					 IsEnabled="{Binding IsEnabled}"
+					 IsReadOnly="True"
+					 TextWrapping="Wrap"
+					 Text="{Binding TypeSigDnlibFullName, Mode=OneWay}"/>
+			<TextBox Grid.Row="5"
+					 Visibility="{Binding IsValidTypeSig, Converter={StaticResource BooleanToVisibilityConverter}}"
+					 Margin="0 5 0 0"
+					 Background="{x:Null}"
+					 IsEnabled="{Binding IsEnabled}"
+					 IsReadOnly="True"
+					 TextWrapping="Wrap"
+					 Text="{Binding TypeSigLanguageFullName, Mode=OneWay}"/>
 		</Grid>
 	</Grid>
 </UserControl>
