@@ -43,6 +43,13 @@
     <StartProgram>bin\Release\ILSpy.exe</StartProgram>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.NRefactory">
+      <HintPath>..\packages\ICSharpCode.NRefactory.5.5.1\lib\Net40\ICSharpCode.NRefactory.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ICSharpCode.NRefactory.CSharp">
+      <HintPath>..\packages\ICSharpCode.NRefactory.5.5.1\lib\Net40\ICSharpCode.NRefactory.CSharp.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -79,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Clear.png" />
+    <None Include="packages.config" />
     <None Include="Readme.txt" />
   </ItemGroup>
   <ItemGroup>

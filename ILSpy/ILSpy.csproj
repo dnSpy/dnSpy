@@ -58,6 +58,9 @@
     <Reference Include="ICSharpCode.NRefactory">
       <HintPath>..\packages\ICSharpCode.NRefactory.5.5.1\lib\Net40\ICSharpCode.NRefactory.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.NRefactory.Cecil">
+      <HintPath>..\packages\ICSharpCode.NRefactory.5.5.1\lib\Net40\ICSharpCode.NRefactory.Cecil.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.NRefactory.CSharp">
       <HintPath>..\packages\ICSharpCode.NRefactory.5.5.1\lib\Net40\ICSharpCode.NRefactory.CSharp.dll</HintPath>
     </Reference>

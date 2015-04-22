@@ -291,7 +291,7 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public override void WritePrimitiveValue(object value, string literalValue = null)
 		{
-			
+			new TextWriterTokenWriter(new TextOutputWriter(output)).WritePrimitiveValue(value, literalValue);
 		}
 		
 		public override void WritePrimitiveType(string type)

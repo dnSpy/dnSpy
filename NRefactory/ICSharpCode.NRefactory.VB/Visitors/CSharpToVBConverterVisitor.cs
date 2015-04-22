@@ -714,11 +714,6 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			return EndNode(uncheckedExpression, uncheckedExpression.Expression.AcceptVisitor(this, data));
 		}
 		
-		public AstNode VisitEmptyExpression(CSharp.EmptyExpression emptyExpression, object data)
-		{
-			return EndNode(emptyExpression, new EmptyExpression());
-		}
-		
 		public AstNode VisitQueryExpression(CSharp.QueryExpression queryExpression, object data)
 		{
 			var expr = new QueryExpression();
@@ -842,7 +837,9 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		{
 			var newNamespace = new NamespaceDeclaration();
 			
-			ConvertNodes(namespaceDeclaration.Identifiers, newNamespace.Identifiers);
+			foreach (string id in namespaceDeclaration.Identifiers) {
+				newNamespace.Identifiers.Add(new Identifier(id, TextLocation.Empty));
+			}
 			ConvertNodes(namespaceDeclaration.Members, newNamespace.Members);
 			
 			return EndNode(namespaceDeclaration, newNamespace);
@@ -1656,7 +1653,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			
 			foreach (var type in current.ImplementsTypes) {
 				var resolved = provider.ResolveType(type, current);
-				var found = resolved.GetMembers(m => m.EntityType == EntityType.Method && m.Name == result.Name.Name);
+				var found = resolved.GetMembers(m => m.SymbolKind == SymbolKind.Method && m.Name == result.Name.Name);
 				if (found.FirstOrDefault() != null) {
 					result.ImplementsClause.Add(new InterfaceMemberSpecifier((AstType)type.Clone(), found.FirstOrDefault().Name));
 				}
@@ -1672,7 +1669,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			
 			foreach (var type in current.ImplementsTypes) {
 				var resolved = provider.ResolveType(type, current);
-				var found = resolved.GetMembers(m => m.EntityType == EntityType.Event && m.Name == result.Name.Name);
+				var found = resolved.GetMembers(m => m.SymbolKind == SymbolKind.Event && m.Name == result.Name.Name);
 				if (found.FirstOrDefault() != null) {
 					result.ImplementsClause.Add(new InterfaceMemberSpecifier((AstType)type.Clone(), found.FirstOrDefault().Name));
 				}
@@ -2268,6 +2265,16 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		}
 		
 		public AstNode VisitText(CSharp.TextNode textNode, object data)
+		{
+			return null;
+		}
+		
+		public AstNode VisitNullNode(ICSharpCode.NRefactory.CSharp.AstNode nullNode, object data)
+		{
+			return null;
+		}
+		
+		public AstNode VisitErrorNode(ICSharpCode.NRefactory.CSharp.AstNode errorNode, object data)
 		{
 			return null;
 		}
