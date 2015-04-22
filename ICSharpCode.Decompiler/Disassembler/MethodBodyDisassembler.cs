@@ -47,7 +47,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			this.cancellationToken = cancellationToken;
 		}
 		
-		public void Disassemble(MethodBody body, MemberMapping methodMapping)
+		public void Disassemble(MethodBody body, MethodDebugSymbols debugSymbols)
 		{
 			// start writing IL code
 			MethodDefinition method = body.Method;
@@ -82,20 +82,19 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (detectControlStructure && body.Instructions.Count > 0) {
 				Instruction inst = body.Instructions[0];
 				HashSet<int> branchTargets = GetBranchTargets(body.Instructions);
-				WriteStructureBody(new ILStructure(body), branchTargets, ref inst, methodMapping, method.Body.CodeSize);
+				WriteStructureBody(new ILStructure(body), branchTargets, ref inst, debugSymbols, method.Body.CodeSize);
 			} else {
 				foreach (var inst in method.Body.Instructions) {
 					var startLocation = output.Location;
 					inst.WriteTo(output);
 					
-					if (methodMapping != null) {
+					if (debugSymbols != null) {
 						// add IL code mappings - used in debugger
-						methodMapping.MemberCodeMappings.Add(
-							new SourceCodeMapping() {
+						debugSymbols.SequencePoints.Add(
+							new SequencePoint() {
 								StartLocation = output.Location,
 								EndLocation = output.Location,
-								ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Next == null ? method.Body.CodeSize : inst.Next.Offset },
-								MemberMapping = methodMapping
+								ILRanges = new ILRange[] { new ILRange(inst.Offset, inst.Next == null ? method.Body.CodeSize : inst.Next.Offset) }
 							});
 					}
 					
@@ -174,7 +173,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Indent();
 		}
 		
-		void WriteStructureBody(ILStructure s, HashSet<int> branchTargets, ref Instruction inst, MemberMapping currentMethodMapping, int codeSize)
+		void WriteStructureBody(ILStructure s, HashSet<int> branchTargets, ref Instruction inst, MethodDebugSymbols debugSymbols, int codeSize)
 		{
 			bool isFirstInstructionInStructure = true;
 			bool prevInstructionWasBranch = false;
@@ -184,7 +183,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				if (childIndex < s.Children.Count && s.Children[childIndex].StartOffset <= offset && offset < s.Children[childIndex].EndOffset) {
 					ILStructure child = s.Children[childIndex++];
 					WriteStructureHeader(child);
-					WriteStructureBody(child, branchTargets, ref inst, currentMethodMapping, codeSize);
+					WriteStructureBody(child, branchTargets, ref inst, debugSymbols, codeSize);
 					WriteStructureFooter(child);
 				} else {
 					if (!isFirstInstructionInStructure && (prevInstructionWasBranch || branchTargets.Contains(offset))) {
@@ -194,13 +193,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 					inst.WriteTo(output);
 					
 					// add IL code mappings - used in debugger
-					if (currentMethodMapping != null) {
-						currentMethodMapping.MemberCodeMappings.Add(
-							new SourceCodeMapping() {
+					if (debugSymbols != null) {
+						debugSymbols.SequencePoints.Add(
+							new SequencePoint() {
 								StartLocation = startLocation,
 								EndLocation = output.Location,
-								ILInstructionOffset = new ILRange { From = inst.Offset, To = inst.Next == null ? codeSize : inst.Next.Offset },
-								MemberMapping = currentMethodMapping
+								ILRanges = new ILRange[] { new ILRange(inst.Offset, inst.Next == null ? codeSize : inst.Next.Offset) }
 							});
 					}
 					

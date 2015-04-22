@@ -65,7 +65,7 @@
     <Compile Include="Ast\DecompilerContext.cs" />
     <Compile Include="Ast\NameVariables.cs" />
     <Compile Include="Ast\NRefactoryExtensions.cs" />
-    <Compile Include="Ast\TextOutputFormatter.cs" />
+    <Compile Include="Ast\TextTokenWriter.cs" />
     <Compile Include="Ast\Transforms\AddCheckedBlocks.cs" />
     <Compile Include="Ast\Transforms\CombineQueryExpressions.cs" />
     <Compile Include="Ast\Transforms\ContextTrackingVisitor.cs" />

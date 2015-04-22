@@ -126,7 +126,7 @@ namespace ICSharpCode.Decompiler.Ast
 				astBlock.Statements.InsertBefore(insertionPoint, newVarDecl);
 			}
 			
-			astBlock.AddAnnotation(new MemberMapping(methodDef) { LocalVariables = localVariables });
+			astBlock.AddAnnotation(new MethodDebugSymbols(methodDef) { LocalVariables = localVariables.ToList() });
 			
 			return astBlock;
 		}
@@ -147,7 +147,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (node is ILLabel) {
 				yield return new Ast.LabelStatement { Label = ((ILLabel)node).Name };
 			} else if (node is ILExpression) {
-				List<ILRange> ilRanges = ILRange.OrderAndJoint(node.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.ILRanges));
+				List<ILRange> ilRanges = ILRange.OrderAndJoin(node.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.ILRanges));
 				AstNode codeExpr = TransformExpression((ILExpression)node);
 				if (codeExpr != null) {
 					codeExpr = codeExpr.WithAnnotation(ilRanges);
@@ -253,7 +253,7 @@ namespace ICSharpCode.Decompiler.Ast
 			Expression astExpr = node as Expression;
 			
 			// get IL ranges - used in debugger
-			List<ILRange> ilRanges = ILRange.OrderAndJoint(expr.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.ILRanges));
+			List<ILRange> ilRanges = ILRange.OrderAndJoin(expr.GetSelfAndChildrenRecursive<ILExpression>().SelectMany(e => e.ILRanges));
 			AstNode result;
 			
 			if (astExpr != null)

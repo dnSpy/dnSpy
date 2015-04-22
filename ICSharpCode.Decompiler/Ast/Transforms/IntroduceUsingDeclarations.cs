@@ -114,8 +114,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			public override object VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, object data)
 			{
 				string oldNamespace = currentNamespace;
-				foreach (Identifier ident in namespaceDeclaration.Identifiers) {
-					currentNamespace = NamespaceDeclaration.BuildQualifiedName(currentNamespace, ident.Name);
+				foreach (string ident in namespaceDeclaration.Identifiers) {
+					currentNamespace = NamespaceDeclaration.BuildQualifiedName(currentNamespace, ident);
 					transform.declaredNamespaces.Add(currentNamespace);
 				}
 				base.VisitNamespaceDeclaration(namespaceDeclaration, data);
@@ -153,8 +153,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			public override object VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, object data)
 			{
 				string oldNamespace = currentNamespace;
-				foreach (Identifier ident in namespaceDeclaration.Identifiers) {
-					currentNamespace = NamespaceDeclaration.BuildQualifiedName(currentNamespace, ident.Name);
+				foreach (string ident in namespaceDeclaration.Identifiers) {
+					currentNamespace = NamespaceDeclaration.BuildQualifiedName(currentNamespace, ident);
 				}
 				base.VisitNamespaceDeclaration(namespaceDeclaration, data);
 				currentNamespace = oldNamespace;

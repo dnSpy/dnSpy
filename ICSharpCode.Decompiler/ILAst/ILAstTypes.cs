@@ -221,37 +221,43 @@ namespace ICSharpCode.Decompiler.ILAst
 		}
 	}
 	
-	public class ILRange
+	public struct ILRange
 	{
-		public int From;
-		public int To;   // Exlusive
+		public readonly int From;
+		public readonly int To;   // Exlusive
+		
+		public ILRange(int @from, int to)
+		{
+			this.From = @from;
+			this.To = to;
+		}
 		
 		public override string ToString()
 		{
-			return string.Format("{0}-{1}", From.ToString("X"), To.ToString("X"));
+			return string.Format("{0:X2}-{1:X2}", From, To);
 		}
 		
-		public static List<ILRange> OrderAndJoint(IEnumerable<ILRange> input)
+		public static List<ILRange> OrderAndJoin(IEnumerable<ILRange> input)
 		{
 			if (input == null)
 				throw new ArgumentNullException("Input is null!");
 			
-			List<ILRange> ranges = input.Where(r => r != null).OrderBy(r => r.From).ToList();
-			for (int i = 0; i < ranges.Count - 1;) {
-				ILRange curr = ranges[i];
-				ILRange next = ranges[i + 1];
-				// Merge consequtive ranges if they intersect
-				if (curr.From <= next.From && next.From <= curr.To) {
-					curr.To = Math.Max(curr.To, next.To);
-					ranges.RemoveAt(i + 1);
-				} else {
-					i++;
+			List<ILRange> result = new List<ILRange>();
+			foreach(ILRange curr in input.OrderBy(r => r.From)) {
+				if (result.Count > 0) {
+					// Merge consequtive ranges if possible
+					ILRange last = result[result.Count - 1];
+					if (curr.From <= last.To) {
+						result[result.Count - 1] = new ILRange(last.From, Math.Max(last.To, curr.To));
+						continue;
+					}
 				}
+				result.Add(curr);
 			}
-			return ranges;
+			return result;
 		}
 		
-		public static IEnumerable<ILRange> Invert(IEnumerable<ILRange> input, int codeSize)
+		public static List<ILRange> Invert(IEnumerable<ILRange> input, int codeSize)
 		{
 			if (input == null)
 				throw new ArgumentNullException("Input is null!");
@@ -259,23 +265,25 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (codeSize <= 0)
 				throw new ArgumentException("Code size must be grater than 0");
 			
-			var ordered = OrderAndJoint(input);
+			List<ILRange> ordered = OrderAndJoin(input);
+			List<ILRange> result = new List<ILRange>(ordered.Count + 1);
 			if (ordered.Count == 0) {
-				yield return new ILRange() { From = 0, To = codeSize };
+				result.Add(new ILRange(0, codeSize));
 			} else {
 				// Gap before the first element
 				if (ordered.First().From != 0)
-					yield return new ILRange() { From = 0, To = ordered.First().From };
+					result.Add(new ILRange(0, ordered.First().From));
 				
 				// Gaps between elements
 				for (int i = 0; i < ordered.Count - 1; i++)
-					yield return new ILRange() { From = ordered[i].To, To = ordered[i + 1].From };
+					result.Add(new ILRange(ordered[i].To, ordered[i + 1].From));
 				
 				// Gap after the last element
 				Debug.Assert(ordered.Last().To <= codeSize);
 				if (ordered.Last().To != codeSize)
-					yield return new ILRange() { From = ordered.Last().To, To = codeSize };
+					result.Add(new ILRange(ordered.Last().To, codeSize));
 			}
+			return result;
 		}
 	}
 	

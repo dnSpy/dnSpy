@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using ICSharpCode.NRefactory;
 using Mono.Cecil;
 using Mono.Collections.Generic;
 
@@ -114,6 +115,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 			//               instance default class [mscorlib]System.IO.TextWriter get_BaseWriter ()  cil managed
 			//
 			
+			TextLocation startLocation = output.Location;
+			
 			//emit flags
 			WriteEnum(method.Attributes & MethodAttributes.MemberAccessMask, methodVisibility);
 			WriteFlags(method.Attributes & ~MethodAttributes.MemberAccessMask, methodAttributeFlags);
@@ -123,10 +126,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 				output.Write("pinvokeimpl");
 				if (method.HasPInvokeInfo && method.PInvokeInfo != null) {
 					PInvokeInfo info = method.PInvokeInfo;
-					output.Write("(\"" + NRefactory.CSharp.CSharpOutputVisitor.ConvertString(info.Module.Name) + "\"");
+					output.Write("(\"" + NRefactory.CSharp.TextWriterTokenWriter.ConvertString(info.Module.Name) + "\"");
 					
 					if (!string.IsNullOrEmpty(info.EntryPoint) && info.EntryPoint != method.Name)
-						output.Write(" as \"" + NRefactory.CSharp.CSharpOutputVisitor.ConvertString(info.EntryPoint) + "\"");
+						output.Write(" as \"" + NRefactory.CSharp.TextWriterTokenWriter.ConvertString(info.EntryPoint) + "\"");
 					
 					if (info.IsNoMangle)
 						output.Write(" nomangle");
@@ -217,9 +220,11 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			if (method.HasBody) {
 				// create IL code mappings - used in debugger
-				MemberMapping methodMapping = new MemberMapping(method);
-				methodBodyDisassembler.Disassemble(method.Body, methodMapping);
-				output.AddDebuggerMemberMapping(methodMapping);
+				MethodDebugSymbols debugSymbols = new MethodDebugSymbols(method);
+				debugSymbols.StartLocation = startLocation;
+				methodBodyDisassembler.Disassemble(method.Body, debugSymbols);
+				debugSymbols.EndLocation = output.Location;
+				output.AddDebugSymbols(debugSymbols);
 			}
 			
 			CloseBlock("end of method " + DisassemblerHelpers.Escape(method.DeclaringType.Name) + "::" + DisassemblerHelpers.Escape(method.Name));
@@ -341,7 +346,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Write(" = ");
 			if (na.Argument.Value is string) {
 				// secdecls use special syntax for strings
-				output.Write("string('{0}')", NRefactory.CSharp.CSharpOutputVisitor.ConvertString((string)na.Argument.Value).Replace("'", "\'"));
+				output.Write("string('{0}')", NRefactory.CSharp.TextWriterTokenWriter.ConvertString((string)na.Argument.Value).Replace("'", "\'"));
 			} else {
 				WriteConstant(na.Argument.Value);
 			}
@@ -569,10 +574,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 					if (cmi == null)
 						goto default;
 					output.Write("custom(\"{0}\", \"{1}\"",
-					             NRefactory.CSharp.CSharpOutputVisitor.ConvertString(cmi.ManagedType.FullName),
-					             NRefactory.CSharp.CSharpOutputVisitor.ConvertString(cmi.Cookie));
+					             NRefactory.CSharp.TextWriterTokenWriter.ConvertString(cmi.ManagedType.FullName),
+					             NRefactory.CSharp.TextWriterTokenWriter.ConvertString(cmi.Cookie));
 					if (cmi.Guid != Guid.Empty || !string.IsNullOrEmpty(cmi.UnmanagedType)) {
-						output.Write(", \"{0}\", \"{1}\"", cmi.Guid.ToString(), NRefactory.CSharp.CSharpOutputVisitor.ConvertString(cmi.UnmanagedType));
+						output.Write(", \"{0}\", \"{1}\"", cmi.Guid.ToString(), NRefactory.CSharp.TextWriterTokenWriter.ConvertString(cmi.UnmanagedType));
 					}
 					output.Write(')');
 					break;

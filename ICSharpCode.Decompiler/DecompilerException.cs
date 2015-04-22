@@ -23,7 +23,7 @@ using Mono.Cecil;
 namespace ICSharpCode.Decompiler
 {
 	/// <summary>
-	/// Desctiption of DecompilerException.
+	/// Description of DecompilerException.
 	/// </summary>
 	public class DecompilerException : Exception, ISerializable
 	{
