@@ -1,6 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
+# Visual Studio 2012
+# SharpDevelop 5.1
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{F45DB999-7E72-4000-B5AD-3A7B485A0896}"
@@ -18,8 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.AvalonEdit", "A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.Decompiler", "ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj", "{984CC812-9470-4A13-AFF9-CC44068D666C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory", "NRefactory\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj", "{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.Decompiler.Tests", "ICSharpCode.Decompiler\Tests\ICSharpCode.Decompiler.Tests.csproj", "{FEC0DA52-C4A6-4710-BE36-B484A20C5E22}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestPlugin", "TestPlugin\TestPlugin.csproj", "{F32EBCC8-0E53-4421-867E-05B3D6E10C70}"
@@ -31,8 +30,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ILSpy.BamlDecompiler", "ILSpy.BamlDecompiler\ILSpy.BamlDecompiler.csproj", "{A6BAD2BA-76BA-461C-8B6D-418607591247}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ILSpy.BamlDecompiler.Tests", "ILSpy.BamlDecompiler\Tests\ILSpy.BamlDecompiler.Tests.csproj", "{1169E6D1-1899-43D4-A500-07CE4235B388}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.CSharp", "NRefactory\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj", "{53DCA265-3C3C-42F9-B647-F72BA678122B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ILSpy.AddIn", "ILSpy.AddIn\ILSpy.AddIn.csproj", "{9D7BE6C0-B7B3-4A50-A54E-18A2D84A3384}"
 EndProject
@@ -89,14 +86,6 @@ Global
 		{984CC812-9470-4A13-AFF9-CC44068D666C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{984CC812-9470-4A13-AFF9-CC44068D666C}.Release|x86.ActiveCfg = Release|Any CPU
 		{984CC812-9470-4A13-AFF9-CC44068D666C}.Release|x86.Build.0 = Release|Any CPU
-		{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}.Debug|x86.Build.0 = Debug|Any CPU
-		{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}.Release|x86.ActiveCfg = Release|Any CPU
-		{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}.Release|x86.Build.0 = Release|Any CPU
 		{FEC0DA52-C4A6-4710-BE36-B484A20C5E22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FEC0DA52-C4A6-4710-BE36-B484A20C5E22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEC0DA52-C4A6-4710-BE36-B484A20C5E22}.Debug|x86.ActiveCfg = Debug|x86
@@ -145,14 +134,6 @@ Global
 		{1169E6D1-1899-43D4-A500-07CE4235B388}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1169E6D1-1899-43D4-A500-07CE4235B388}.Release|x86.ActiveCfg = Release|x86
 		{1169E6D1-1899-43D4-A500-07CE4235B388}.Release|x86.Build.0 = Release|x86
-		{53DCA265-3C3C-42F9-B647-F72BA678122B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{53DCA265-3C3C-42F9-B647-F72BA678122B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{53DCA265-3C3C-42F9-B647-F72BA678122B}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{53DCA265-3C3C-42F9-B647-F72BA678122B}.Debug|x86.Build.0 = Debug|Any CPU
-		{53DCA265-3C3C-42F9-B647-F72BA678122B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{53DCA265-3C3C-42F9-B647-F72BA678122B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{53DCA265-3C3C-42F9-B647-F72BA678122B}.Release|x86.ActiveCfg = Release|Any CPU
-		{53DCA265-3C3C-42F9-B647-F72BA678122B}.Release|x86.Build.0 = Release|Any CPU
 		{9D7BE6C0-B7B3-4A50-A54E-18A2D84A3384}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9D7BE6C0-B7B3-4A50-A54E-18A2D84A3384}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D7BE6C0-B7B3-4A50-A54E-18A2D84A3384}.Debug|x86.ActiveCfg = Debug|Any CPU
