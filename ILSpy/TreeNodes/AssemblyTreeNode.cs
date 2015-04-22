@@ -237,7 +237,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		protected override void LoadChildren()
 		{
 			ModuleDef moduleDefinition = assembly.ModuleDefinition;
-			Debug.Assert(moduleDefinition != null, "dnSpy crashed on loading");
 			if (moduleDefinition == null) {
 				// if we crashed on loading, then we don't have any children
 				return;

@@ -233,6 +233,7 @@
     <Compile Include="DecompilerTabsWindow.xaml.cs">
       <DependentUpon>DecompilerTabsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FilterSearcher.cs" />
     <Compile Include="HideWindowsButtons.cs" />
     <Compile Include="IPlugin.cs" />
     <Compile Include="MsgBox.xaml.cs">
@@ -331,7 +332,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Commands\SimpleCommand.cs" />
-    <Compile Include="SearchStrategies.cs" />
     <Compile Include="Services\DebuggerService.cs" />
     <Compile Include="Services\IDebugger.cs" />
     <Compile Include="Services\ParserService.cs" />

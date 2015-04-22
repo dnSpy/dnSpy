@@ -103,6 +103,16 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			return new TreeViewNodeFilterResult();
 		}
 
+		public virtual TreeViewNodeFilterResult GetFilterResultBody(MethodDef method)
+		{
+			return new TreeViewNodeFilterResult();
+		}
+
+		public virtual TreeViewNodeFilterResult GetFilterResultParamDef(MethodDef method)
+		{
+			return new TreeViewNodeFilterResult();
+		}
+
 		public virtual TreeViewNodeFilterResult GetFilterResult(CursorResourceEntryNode node)
 		{
 			return new TreeViewNodeFilterResult();

@@ -191,9 +191,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return overlay;
 		}
 
-		private static bool IsDelegate(TypeDef type)
+		internal static bool IsDelegate(TypeDef type)
 		{
-			return type.BaseType != null && type.BaseType.FullName == typeof(MulticastDelegate).FullName;
+			return type.BaseType != null && type.BaseType.FullName == typeof(MulticastDelegate).FullName && type.BaseType.Module.Assembly.IsCorLib();
 		}
 
 		private static bool IsStaticClass(TypeDef type)

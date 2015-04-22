@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Windows.Input;
 using dnlib.DotNet;
@@ -69,18 +70,26 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			get {
 				var res = SearchResult;
 				if (res != null) {
-					var mr = res.Member;
+					var obj = res.Object;
 
-					if (mr is TypeDef && filter.GetFilterResult(mr as TypeDef).IsMatch)
-						return mr;
-					if (mr is FieldDef && filter.GetFilterResult(mr as FieldDef).IsMatch)
-						return mr;
-					if (mr is MethodDef && filter.GetFilterResult(mr as MethodDef).IsMatch)
-						return mr;
-					if (mr is PropertyDef && filter.GetFilterResult(mr as PropertyDef).IsMatch)
-						return mr;
-					if (mr is EventDef && filter.GetFilterResult(mr as EventDef).IsMatch)
-						return mr;
+					if (obj is AssemblyTreeNode && filter.GetFilterResult((obj as AssemblyTreeNode).LoadedAssembly, (obj as AssemblyTreeNode).AssemblyFilterType).IsMatch)
+						return ((AssemblyTreeNode)obj).LoadedAssembly;
+					if (obj is string && filter.GetFilterResult((string)obj).IsMatch)
+						return (string)obj;
+					if (obj is TypeDef && filter.GetFilterResult(obj as TypeDef).IsMatch)
+						return obj;
+					if (obj is FieldDef && filter.GetFilterResult(obj as FieldDef).IsMatch)
+						return obj;
+					if (obj is MethodDef && filter.GetFilterResult(obj as MethodDef).IsMatch)
+						return obj;
+					if (obj is PropertyDef && filter.GetFilterResult(obj as PropertyDef).IsMatch)
+						return obj;
+					if (obj is EventDef && filter.GetFilterResult(obj as EventDef).IsMatch)
+						return obj;
+					if (obj is AssemblyRef && filter.GetFilterResult((AssemblyRef)obj).IsMatch)
+						return (AssemblyRef)obj;
+					if (obj is ModuleRef && filter.GetFilterResult((ModuleRef)obj).IsMatch)
+						return (ModuleRef)obj;
 				}
 
 				var item = SelectedItem;
@@ -118,7 +127,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 					OnPropertyChanged("SearchText");
 					if (hasSearchTextChanged)
 						OnPropertyChanged("HasSearchText");
-					StartSearch(SearchText);
+					RestartSearch();
 				}
 			}
 		}
@@ -176,7 +185,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		AssemblyListTreeNode assemblyListTreeNode;
 		readonly AssemblyList assemblyList;
 
-		readonly ITreeViewNodeFilter filter;
+		ITreeViewNodeFilter filter;
+		readonly ITreeViewNodeFilter origFilter;
 
 		public string Title {
 			get {
@@ -209,6 +219,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			this.Language = language;
 			this.ShowInternalApi = true;
 			this.filter = filter;
+			this.origFilter = filter;
 
 			assemblyList = new AssemblyList("Member Picker List", false);
 			foreach (var asm in assemblies)
@@ -218,13 +229,21 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			this.assemblyListTreeNode.DisableDrop = true;
 			if (assemblyListTreeNode.Children.Count > 0)
 				SelectedItem = assemblyListTreeNode.Children[0];
+
+			// Make sure we don't hook this event before the assembly list node because we depend
+			// on the new asm node being present when we restart the search.
+			assemblyList.CollectionChanged += (s, e) => RestartSearch();
+
 			CreateNewFilterSettings();
 		}
 
 		void CreateNewFilterSettings()
 		{
-			if (assemblyListTreeNode != null)
-				assemblyListTreeNode.FilterSettings = new FilterSettings(filter, Language, ShowInternalApi);
+			if (assemblyListTreeNode != null) {
+				assemblyListTreeNode.FilterSettings = new FilterSettings(origFilter, Language, ShowInternalApi);
+				filter = assemblyListTreeNode.FilterSettings.Filter;
+				RestartSearch();
+			}
 		}
 
 		void OpenNewAssembly()
@@ -239,7 +258,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			assemblyList.AddAssembly(asm, true, false);
 		}
 
-		SearchPane.RunningSearch currentSearch;
+		RunningSearch currentSearch;
 		void StartSearch(string searchTerm)
 		{
 			if (currentSearch != null)
@@ -249,20 +268,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				SearchItemsSource = null;
 			}
 			else {
-				currentSearch = new SearchPane.RunningSearch(assemblyList.GetAllModules(), searchTerm, GetSearchMode(), Language, false);
+				currentSearch = new RunningSearch(AssemblyListTreeNode.Children.Cast<AssemblyTreeNode>(), RunningSearch.CreateSearchComparer(searchTerm), filter, Language);
 				SearchItemsSource = currentSearch.Results;
 				new Thread(currentSearch.Run).Start();
 			}
 		}
 
-		SearchMode GetSearchMode()
+		void RestartSearch()
 		{
-			//TODO: Update searcher. SearchMode should be flags and it should support more stuff.
-			//		Eg. the Member value should be split up into Field, Method, etc. It also shouldn't
-			//		be a nested class of SearchPane!
-			if (filter.GetFilterResult((TypeDef)null).IsMatch)//TODO: Hack until above has been fixed
-				return SearchMode.Type;
-			return SearchMode.Member;
+			StartSearch(SearchText);
 		}
 
 		protected override string Verify(string columnName)

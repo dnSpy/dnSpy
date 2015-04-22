@@ -45,9 +45,13 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 		InterfaceTypeDef= 0x00020000,
 		ClassTypeDef	= 0x00040000,
 		ValueTypeDef	= 0x00080000,
-		TypeDefOther	= GenericTypeDef | NonGenericTypeDef | EnumTypeDef | InterfaceTypeDef | ClassTypeDef | ValueTypeDef,
+		DelegateTypeDef	= 0x00100000,
+		MethodBody		= 0x00200000,
+		ParamDef		= 0x00400000,
+		TypeDefOther	= GenericTypeDef | NonGenericTypeDef | EnumTypeDef | InterfaceTypeDef | ClassTypeDef | ValueTypeDef | DelegateTypeDef,
 		AnyTypeDef		= TypeDef | TypeDefOther,
-		All				= AssemblyDef | ModuleDef | Namespace | TypeDef |
+		// What's shown in the normal treeview
+		TreeViewAll		= AssemblyDef | ModuleDef | Namespace | TypeDef |
 						  FieldDef | MethodDef | PropertyDef | EventDef |
 						  AssemblyRef | BaseTypes | DerivedTypes | ModuleRef |
 						  ResourceList | NonNetFile,
@@ -66,26 +70,29 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			var sb = new StringBuilder();
 			count = 0;
 
-			if ((flags & VisibleMembersFlags.AssemblyDef) != 0) AddString(sb, "AssemblyDef", ref count);
-			if ((flags & VisibleMembersFlags.ModuleDef) != 0) AddString(sb, "ModuleDef", ref count);
+			if ((flags & VisibleMembersFlags.AssemblyDef) != 0) AddString(sb, "Assembly", ref count);
+			if ((flags & VisibleMembersFlags.ModuleDef) != 0) AddString(sb, "Module", ref count);
 			if ((flags & VisibleMembersFlags.Namespace) != 0) AddString(sb, "Namespace", ref count);
-			if ((flags & VisibleMembersFlags.TypeDef) != 0) AddString(sb, "TypeDef", ref count);
-			if ((flags & VisibleMembersFlags.FieldDef) != 0) AddString(sb, "FieldDef", ref count);
-			if ((flags & VisibleMembersFlags.MethodDef) != 0) AddString(sb, "MethodDef", ref count);
-			if ((flags & VisibleMembersFlags.PropertyDef) != 0) AddString(sb, "PropertyDef", ref count);
-			if ((flags & VisibleMembersFlags.EventDef) != 0) AddString(sb, "EventDef", ref count);
+			if ((flags & VisibleMembersFlags.TypeDef) != 0) AddString(sb, "Type", ref count);
+			if ((flags & VisibleMembersFlags.FieldDef) != 0) AddString(sb, "Field", ref count);
+			if ((flags & VisibleMembersFlags.MethodDef) != 0) AddString(sb, "Method", ref count);
+			if ((flags & VisibleMembersFlags.PropertyDef) != 0) AddString(sb, "Property", ref count);
+			if ((flags & VisibleMembersFlags.EventDef) != 0) AddString(sb, "Event", ref count);
 			if ((flags & VisibleMembersFlags.AssemblyRef) != 0) AddString(sb, "AssemblyRef", ref count);
 			if ((flags & VisibleMembersFlags.BaseTypes) != 0) AddString(sb, "BaseTypes", ref count);
 			if ((flags & VisibleMembersFlags.DerivedTypes) != 0) AddString(sb, "DerivedTypes", ref count);
 			if ((flags & VisibleMembersFlags.ModuleRef) != 0) AddString(sb, "ModuleRef", ref count);
 			if ((flags & VisibleMembersFlags.ResourceList) != 0) AddString(sb, "Resources", ref count);
-			if ((flags & VisibleMembersFlags.NonNetFile) != 0) AddString(sb, "NonNetFile", ref count);
-			if ((flags & VisibleMembersFlags.GenericTypeDef) != 0) AddString(sb, "Generic TypeDef", ref count);
-			if ((flags & VisibleMembersFlags.NonGenericTypeDef) != 0) AddString(sb, "Non-Generic TypeDef", ref count);
-			if ((flags & VisibleMembersFlags.EnumTypeDef) != 0) AddString(sb, "Enum TypeDef", ref count);
-			if ((flags & VisibleMembersFlags.InterfaceTypeDef) != 0) AddString(sb, "Interface TypeDef", ref count);
-			if ((flags & VisibleMembersFlags.ClassTypeDef) != 0) AddString(sb, "Class TypeDef", ref count);
-			if ((flags & VisibleMembersFlags.ValueTypeDef) != 0) AddString(sb, "Value Type TypeDef", ref count);
+			if ((flags & VisibleMembersFlags.NonNetFile) != 0) AddString(sb, "Non-.NET File", ref count);
+			if ((flags & VisibleMembersFlags.GenericTypeDef) != 0) AddString(sb, "Generic Type", ref count);
+			if ((flags & VisibleMembersFlags.NonGenericTypeDef) != 0) AddString(sb, "Non-Generic Type", ref count);
+			if ((flags & VisibleMembersFlags.EnumTypeDef) != 0) AddString(sb, "Enum", ref count);
+			if ((flags & VisibleMembersFlags.InterfaceTypeDef) != 0) AddString(sb, "Interface", ref count);
+			if ((flags & VisibleMembersFlags.ClassTypeDef) != 0) AddString(sb, "Class", ref count);
+			if ((flags & VisibleMembersFlags.ValueTypeDef) != 0) AddString(sb, "Value Type", ref count);
+			if ((flags & VisibleMembersFlags.DelegateTypeDef) != 0) AddString(sb, "Delegate", ref count);
+			if ((flags & VisibleMembersFlags.MethodBody) != 0) AddString(sb, "Method Body", ref count);
+			if ((flags & VisibleMembersFlags.ParamDef) != 0) AddString(sb, "ParamDef", ref count);
 
 			return sb.ToString();
 		}

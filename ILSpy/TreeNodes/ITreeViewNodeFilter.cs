@@ -55,6 +55,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	interface ITreeViewNodeFilter
 	{
 		string Text { get; }
+		// NOTE: Any node arguments (not dnlib types) can be null when called.
 		TreeViewNodeFilterResult GetFilterResult(AssemblyRef asmRef);
 		TreeViewNodeFilterResult GetFilterResult(LoadedAssembly asm, AssemblyFilterType type);
 		TreeViewNodeFilterResult GetFilterResult(BaseTypesEntryNode node);
@@ -70,6 +71,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		TreeViewNodeFilterResult GetFilterResult(ReferenceFolderTreeNode node);
 		TreeViewNodeFilterResult GetFilterResult(ResourceListTreeNode node);
 		TreeViewNodeFilterResult GetFilterResult(TypeDef type);
+		TreeViewNodeFilterResult GetFilterResultBody(MethodDef method);
+		TreeViewNodeFilterResult GetFilterResultParamDef(MethodDef method);
 		TreeViewNodeFilterResult GetFilterResult(CursorResourceEntryNode node);
 		TreeViewNodeFilterResult GetFilterResult(IconResourceEntryNode node);
 		TreeViewNodeFilterResult GetFilterResult(ImageListResourceEntryNode node);
