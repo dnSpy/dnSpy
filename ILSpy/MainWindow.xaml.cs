@@ -2419,6 +2419,16 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
+		internal bool SetActiveView(DecompilerTextView view)
+		{
+			var tabState = TabStateDecompile.GetTabStateDecompile(view);
+			if (tabState == null)
+				return false;
+
+			tabGroupsManager.SetActiveTab(tabState);
+			return true;
+		}
+
 		internal bool SetActiveTab(TabStateDecompile tabState)
 		{
 			if (tabGroupsManager.SetActiveTab(tabState)) {

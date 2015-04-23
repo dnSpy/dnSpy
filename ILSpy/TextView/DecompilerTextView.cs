@@ -740,6 +740,7 @@ namespace ICSharpCode.ILSpy.TextView
 		internal void JumpToReference(ReferenceSegment referenceSegment, MouseEventArgs e)
 		{
 			if (Keyboard.Modifiers == ModifierKeys.Control) {
+				MainWindow.Instance.SetActiveView(this);
 				GoToMousePosition();
 				MainWindow.Instance.OpenReferenceInNewTab(this, referenceSegment);
 				e.Handled = true;
@@ -758,6 +759,7 @@ namespace ICSharpCode.ILSpy.TextView
 					pos = definitionLookup.GetDefinitionPosition(referenceSegment.Reference);
 			}
 			if (pos >= 0) {
+				MainWindow.Instance.SetActiveView(this);
 				GoToMousePosition();
 				MainWindow.Instance.RecordHistory(this);
 				MarkLocals(referenceSegment);
@@ -777,6 +779,7 @@ namespace ICSharpCode.ILSpy.TextView
 				return;
 			}
 
+			MainWindow.Instance.SetActiveView(this);
 			GoToMousePosition();
 			MainWindow.Instance.JumpToReference(this, referenceSegment.Reference);
 			e.Handled = true;
