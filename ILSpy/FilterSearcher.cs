@@ -41,19 +41,33 @@ namespace ICSharpCode.ILSpy
 		bool IsMatch(string text, object obj);
 	}
 
-	sealed class StringLiteralSearchComparer : ISearchComparer
+	sealed class RegExStringLiteralSearchComparer : ISearchComparer
 	{
 		readonly Regex regex;
-		readonly string str;
-		readonly StringComparison stringComparison;
-		readonly bool matchWholeString;
 
-		public StringLiteralSearchComparer(Regex regex)
+		public RegExStringLiteralSearchComparer(Regex regex)
 		{
 			if (regex == null)
 				throw new ArgumentNullException();
 			this.regex = regex;
 		}
+
+		public bool IsMatch(string text, object obj)
+		{
+			var hc = obj as IHasConstant;
+			if (hc != null && hc.Constant != null)
+				obj = hc.Constant.Value;
+
+			text = obj as string;
+			return text != null && regex.IsMatch(text);
+		}
+	}
+
+	sealed class StringLiteralSearchComparer : ISearchComparer
+	{
+		readonly string str;
+		readonly StringComparison stringComparison;
+		readonly bool matchWholeString;
 
 		public StringLiteralSearchComparer(string s, bool caseSensitive = false, bool matchWholeString = false)
 		{
@@ -66,22 +80,13 @@ namespace ICSharpCode.ILSpy
 
 		public bool IsMatch(string text, object obj)
 		{
-			if (obj == null)
-				return false;
-
 			var hc = obj as IHasConstant;
-			if (hc != null && hc.Constant != null) {
+			if (hc != null && hc.Constant != null)
 				obj = hc.Constant.Value;
-				if (obj == null)
-					return false;
-			}
 
-			var t = Type.GetTypeCode(obj.GetType());
-			if (t != TypeCode.String)
+			text = obj as string;
+			if (text == null)
 				return false;
-			text = (string)obj;
-			if (regex != null)
-				return regex.IsMatch(text);
 			if (matchWholeString)
 				return text.Equals(str, stringComparison);
 			return text.IndexOf(str, stringComparison) >= 0;
@@ -90,40 +95,31 @@ namespace ICSharpCode.ILSpy
 
 	sealed class IntegerLiteralSearchComparer : ISearchComparer
 	{
-		readonly long intValue;
+		readonly long searchValue;
 
 		public IntegerLiteralSearchComparer(long value)
 		{
-			this.intValue = value;
+			this.searchValue = value;
 		}
 
 		public bool IsMatch(string text, object obj)
 		{
+			var hc = obj as IHasConstant;
+			if (hc != null && hc.Constant != null)
+				obj = hc.Constant.Value;
 			if (obj == null)
 				return false;
 
-			var hc = obj as IHasConstant;
-			if (hc != null && hc.Constant != null) {
-				obj = hc.Constant.Value;
-				if (obj == null)
-					return false;
+			switch (Type.GetTypeCode(obj.GetType())) {
+			case TypeCode.SByte:	return searchValue == (sbyte)obj;
+			case TypeCode.Byte:		return searchValue == (byte)obj;
+			case TypeCode.Int16:	return searchValue == (short)obj;
+			case TypeCode.UInt16:	return searchValue == (ushort)obj;
+			case TypeCode.Int32:	return searchValue == (int)obj;
+			case TypeCode.UInt32:	return searchValue == (uint)obj;
+			case TypeCode.Int64:	return searchValue == (long)obj;
+			case TypeCode.UInt64:	return searchValue == unchecked((long)(ulong)obj);
 			}
-
-			var t = Type.GetTypeCode(obj.GetType());
-			long? value;
-			switch (t) {
-			case TypeCode.SByte: value = (sbyte)obj; break;
-			case TypeCode.Byte: value = (byte)obj; break;
-			case TypeCode.Int16: value = (short)obj; break;
-			case TypeCode.UInt16: value = (ushort)obj; break;
-			case TypeCode.Int32: value = (int)obj; break;
-			case TypeCode.UInt32: value = (uint)obj; break;
-			case TypeCode.Int64: value = (long)obj; break;
-			case TypeCode.UInt64: value = unchecked((long)(ulong)obj); break;
-			default: value = null; break;
-			}
-			if (value != null && value.Value == intValue)
-				return true;
 
 			return false;
 		}
@@ -131,36 +127,23 @@ namespace ICSharpCode.ILSpy
 
 	sealed class DoubleLiteralSearchComparer : ISearchComparer
 	{
-		readonly double dblValue;
+		readonly double searchValue;
 
 		public DoubleLiteralSearchComparer(double value)
 		{
-			this.dblValue = value;
+			this.searchValue = value;
 		}
 
 		public bool IsMatch(string text, object obj)
 		{
-			if (obj == null)
-				return false;
-
 			var hc = obj as IHasConstant;
-			if (hc != null && hc.Constant != null) {
+			if (hc != null && hc.Constant != null)
 				obj = hc.Constant.Value;
-				if (obj == null)
-					return false;
-			}
 
-			var t = Type.GetTypeCode(obj.GetType());
-			double? value;
-			if (t == TypeCode.Single)
-				value = (float)obj;
-			else if (t == TypeCode.Double)
-				value = (double)obj;
-			else
-				value = null;
-			if (value != null && value.Value == dblValue)
-				return true;
-
+			if (obj is float)
+				return searchValue == (float)obj;
+			if (obj is double)
+				return searchValue == (double)obj;
 			return false;
 		}
 	}
@@ -491,7 +474,6 @@ namespace ICSharpCode.ILSpy
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
 
-			// Name is part of FullName but if the user searches full words, we need to check both
 			if (res.IsMatch && (IsMatch(type.FullName, type) || IsMatch(type.Name, type))) {
 				onMatch(new SearchResult {
 					Object = type,
@@ -517,7 +499,6 @@ namespace ICSharpCode.ILSpy
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
 
-			// Name is part of FullName but if the user searches full words, we need to check both
 			if (res.IsMatch && (IsMatch(type.FullName, type) || IsMatch(type.Name, type))) {
 				onMatch(new SearchResult {
 					Object = type,
@@ -536,10 +517,13 @@ namespace ICSharpCode.ILSpy
 		{
 			foreach (var method in type.Methods)
 				Search(ownerModule, type, method);
+			cancellationToken.ThrowIfCancellationRequested();
 			foreach (var field in type.Fields)
 				Search(ownerModule, type, field);
+			cancellationToken.ThrowIfCancellationRequested();
 			foreach (var prop in type.Properties)
 				Search(ownerModule, type, prop);
+			cancellationToken.ThrowIfCancellationRequested();
 			foreach (var evt in type.Events)
 				Search(ownerModule, type, evt);
 		}

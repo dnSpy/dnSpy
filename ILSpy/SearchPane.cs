@@ -237,7 +237,7 @@ namespace ICSharpCode.ILSpy
 				else {
 					var regex = RunningSearch.TryCreateRegEx(s, caseSensitiveCheckBox.IsChecked.Value);
 					if (regex != null)
-						return new StringLiteralSearchComparer(regex);
+						return new RegExStringLiteralSearchComparer(regex);
 				}
 				return new StringLiteralSearchComparer(s, caseSensitiveCheckBox.IsChecked.Value, matchWholeWordsCheckBox.IsChecked.Value);
 			}

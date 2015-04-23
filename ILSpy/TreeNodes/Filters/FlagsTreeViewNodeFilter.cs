@@ -199,7 +199,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 				return new TreeViewNodeFilterResult(FilterResult.Match, true);
 			else if ((flags & VisibleMembersFlags.InterfaceTypeDef) != 0 && type.IsInterface)
 				return new TreeViewNodeFilterResult(FilterResult.Match, true);
-			else if ((flags & VisibleMembersFlags.ClassTypeDef) != 0 && !type.IsValueType)
+			else if ((flags & VisibleMembersFlags.ClassTypeDef) != 0 && !type.IsValueType && !type.IsInterface)
 				return new TreeViewNodeFilterResult(FilterResult.Match, true);
 			else if ((flags & VisibleMembersFlags.ValueTypeDef) != 0 && type.IsValueType)
 				return new TreeViewNodeFilterResult(FilterResult.Match, true);
