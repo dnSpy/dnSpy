@@ -29,6 +29,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	public abstract class AnalyzerEntityTreeNode : AnalyzerTreeNode, IMemberTreeNode
 	{
 		public abstract IMemberRef Member { get; }
+		public abstract IMDTokenProvider MDTokenProvider { get; }
 		
 		public override void ActivateItem(System.Windows.RoutedEventArgs e)
 		{

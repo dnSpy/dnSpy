@@ -26,7 +26,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// (both in main tree view and in analyzer)
 	/// that represent Cecil members.
 	/// </summary>
-	public interface IMemberTreeNode
+	public interface IMemberTreeNode : ITokenTreeNode
 	{
 		IMemberRef Member { get; }
 	}

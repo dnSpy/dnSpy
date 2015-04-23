@@ -39,6 +39,10 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			get { return analyzedEvent; }
 		}
 
+		public override IMDTokenProvider MDTokenProvider {
+			get { return analyzedEvent; }
+		}
+
 		public override object Icon
 		{
 			get { return EventTreeNode.GetIcon(analyzedEvent); }

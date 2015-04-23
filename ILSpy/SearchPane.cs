@@ -459,7 +459,20 @@ namespace ICSharpCode.ILSpy
 	sealed class SearchResult : IMemberTreeNode
 	{
 		public IMemberRef Member {
-			get { return Object as IMemberRef; }
+			get { return MDTokenProvider as IMemberRef; }
+		}
+
+		public IMDTokenProvider MDTokenProvider {
+			get {
+				var obj = Object;
+				var asmNode = obj as AssemblyTreeNode;
+				if (asmNode != null)
+					obj = asmNode.LoadedAssembly.AssemblyDefinition;
+				var asm = obj as LoadedAssembly;
+				if (asm != null)
+					obj = asm.ModuleDefinition;
+				return obj as IMDTokenProvider;	// returns null if it's a namespace (a string)
+			}
 		}
 
 		/// <summary>

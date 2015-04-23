@@ -57,5 +57,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		public override IMemberRef Member {
 			get { return analyzedField; }
 		}
+
+		public override IMDTokenProvider MDTokenProvider {
+			get { return analyzedField; }
+		}
 	}
 }

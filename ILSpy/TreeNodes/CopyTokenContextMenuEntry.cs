@@ -23,9 +23,18 @@ using dnlib.DotNet;
 namespace ICSharpCode.ILSpy.TreeNodes {
 	abstract class CopyTokenContextMenuEntryBase : IContextMenuEntry
 	{
-		public virtual bool IsVisible(TextViewContext context)
+		public abstract bool IsVisible(TextViewContext context);
+
+		protected IMDTokenProvider GetReference(TextViewContext context)
 		{
-			return context.Reference != null && context.Reference.Reference is IMemberRef;
+			if (context.Reference != null)
+				return context.Reference.Reference as IMDTokenProvider;
+			if (context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length != 0 &&
+					context.SelectedTreeNodes[0] is ITokenTreeNode) {
+				return ((ITokenTreeNode)context.SelectedTreeNodes[0]).MDTokenProvider;
+			}
+
+			return null;
 		}
 
 		public bool IsEnabled(TextViewContext context)
@@ -35,12 +44,10 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		public abstract void Execute(TextViewContext context);
 
-		protected void Execute(IMemberRef member)
+		protected void Execute(IMDTokenProvider member)
 		{
-			if (member == null) {
-				MessageBox.Show(MainWindow.Instance, "Could not resolve member definition");
+			if (member == null)
 				return;
-			}
 
 			Clipboard.SetText(string.Format("0x{0:X8}", member.MDToken.Raw));
 		}
@@ -51,20 +58,14 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	{
 		public override bool IsVisible(TextViewContext context)
 		{
-			if (base.IsVisible(context))
-				return true;
-
-			return context.SelectedTreeNodes != null &&
-				context.SelectedTreeNodes.Length != 0 &&
-				context.SelectedTreeNodes[0] is IMemberTreeNode;
+			return GetReference(context) != null;
 		}
 
 		public override void Execute(TextViewContext context)
 		{
-			if (context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length != 0 && context.SelectedTreeNodes[0] is IMemberTreeNode)
-				Execute(((IMemberTreeNode)context.SelectedTreeNodes[0]).Member);
-			else
-				Execute(context.Reference.Reference as IMemberRef);
+			var obj = GetReference(context);
+			if (obj != null)
+				Execute(obj);
 		}
 	}
 
@@ -73,22 +74,20 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	{
 		public override bool IsVisible(TextViewContext context)
 		{
-			if (base.IsVisible(context))
-				return true;
-
-			return context.SelectedTreeNodes != null &&
-				context.SelectedTreeNodes.Length != 0 &&
-				context.SelectedTreeNodes[0] is IMemberTreeNode &&
-				((IMemberTreeNode)context.SelectedTreeNodes[0]).Member is IMemberRef &&
-				!(((IMemberTreeNode)context.SelectedTreeNodes[0]).Member is IMemberDef);
+			var obj = GetReference(context);
+			return obj is IMemberRef && !(obj is IMemberDef);
 		}
 
 		public override void Execute(TextViewContext context)
 		{
-			if (context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length != 0 && context.SelectedTreeNodes[0] is IMemberTreeNode)
-				Execute(MainWindow.ResolveReference(((IMemberTreeNode)context.SelectedTreeNodes[0]).Member));
-			else
-				Execute(MainWindow.ResolveReference(context.Reference.Reference as IMemberRef));
+			var obj = GetReference(context);
+			if (obj != null) {
+				var member = MainWindow.ResolveReference(obj);
+				if (member == null)
+					MessageBox.Show(MainWindow.Instance, "Could not resolve member definition");
+				else
+					Execute(member);
+			}
 		}
 	}
 }

@@ -162,6 +162,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return method; }
 		}
 
+		IMDTokenProvider ITokenTreeNode.MDTokenProvider {
+			get { return method; }
+		}
+
 		public override NodePathName NodePathName {
 			get { return new NodePathName("method", method.FullName); }
 		}
