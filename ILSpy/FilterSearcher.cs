@@ -447,7 +447,7 @@ namespace ICSharpCode.ILSpy
 
 		void Search(LoadedAssembly ownerModule, string ns, List<TypeDef> types)
 		{
-			var res = filter.GetFilterResult(ns);
+			var res = filter.GetFilterResult(ns, ownerModule);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
 

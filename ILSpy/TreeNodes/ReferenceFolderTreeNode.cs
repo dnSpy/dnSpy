@@ -76,7 +76,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(EnsureLazyChildren));
+			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(EnsureChildrenFiltered));
 			// Show metadata order of references
 			foreach (var r in module.GetAssemblyRefs())
 				new AssemblyReferenceTreeNode(r, parentAssembly, assemblyListTreeNode).Decompile(language, output, options);

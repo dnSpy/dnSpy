@@ -19,22 +19,32 @@
 
 using System.Windows;
 using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
 	/// <summary>
 	/// Interaction logic for MemberPickerDlg.xaml
 	/// </summary>
-	public partial class MemberPickerDlg : WindowBase
+	public partial class MemberPickerDlg : WindowBase, IMakeVisible
 	{
 		public MemberPickerDlg()
 		{
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as MemberPickerVM;
-				if (data != null)
+				if (data != null) {
 					data.OpenAssembly = new OpenAssembly();
+					data.MakeVisible = this;
+				}
 			};
+		}
+
+		void IMakeVisible.ScrollIntoView(object item)
+		{
+			var node = item as SharpTreeNode;
+			if (node != null)
+				treeView.ScrollIntoView(node);
 		}
 	}
 }

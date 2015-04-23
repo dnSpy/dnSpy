@@ -119,6 +119,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				case FilterResult.Match:
 					child.FilterSettings = StripSearchTerm(this.FilterSettings);
 					child.IsHidden = false;
+					if (child.childrenNeedFiltering && child.Children.Count > 0)
+						child.EnsureChildrenFiltered();
 					break;
 				case FilterResult.Recurse:
 					child.FilterSettings = this.FilterSettings;
@@ -160,7 +162,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		protected override void OnIsVisibleChanged()
 		{
 			base.OnIsVisibleChanged();
-			EnsureChildrenFiltered();
+			if (childrenNeedFiltering && Children.Count > 0)
+				EnsureChildrenFiltered();
 		}
 
 		public void EnsureChildrenFiltered()

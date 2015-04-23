@@ -56,23 +56,23 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	{
 		string Text { get; }
 		// NOTE: Any node arguments (not dnlib types) can be null when called.
-		TreeViewNodeFilterResult GetFilterResult(AssemblyRef asmRef);
 		TreeViewNodeFilterResult GetFilterResult(LoadedAssembly asm, AssemblyFilterType type);
+		TreeViewNodeFilterResult GetFilterResult(string ns, LoadedAssembly owner);
+		TreeViewNodeFilterResult GetFilterResult(TypeDef type);
+		TreeViewNodeFilterResult GetFilterResult(FieldDef field);
+		TreeViewNodeFilterResult GetFilterResult(MethodDef method);
+		TreeViewNodeFilterResult GetFilterResult(PropertyDef prop);
+		TreeViewNodeFilterResult GetFilterResult(EventDef evt);
+		TreeViewNodeFilterResult GetFilterResultBody(MethodDef method);
+		TreeViewNodeFilterResult GetFilterResultParamDef(MethodDef method);
+		TreeViewNodeFilterResult GetFilterResult(AssemblyRef asmRef);
+		TreeViewNodeFilterResult GetFilterResult(ModuleRef modRef);
 		TreeViewNodeFilterResult GetFilterResult(BaseTypesEntryNode node);
 		TreeViewNodeFilterResult GetFilterResult(BaseTypesTreeNode node);
 		TreeViewNodeFilterResult GetFilterResult(DerivedTypesEntryNode node);
 		TreeViewNodeFilterResult GetFilterResult(DerivedTypesTreeNode node);
-		TreeViewNodeFilterResult GetFilterResult(EventDef evt);
-		TreeViewNodeFilterResult GetFilterResult(FieldDef field);
-		TreeViewNodeFilterResult GetFilterResult(MethodDef method);
-		TreeViewNodeFilterResult GetFilterResult(ModuleRef modRef);
-		TreeViewNodeFilterResult GetFilterResult(string ns);
-		TreeViewNodeFilterResult GetFilterResult(PropertyDef prop);
 		TreeViewNodeFilterResult GetFilterResult(ReferenceFolderTreeNode node);
 		TreeViewNodeFilterResult GetFilterResult(ResourceListTreeNode node);
-		TreeViewNodeFilterResult GetFilterResult(TypeDef type);
-		TreeViewNodeFilterResult GetFilterResultBody(MethodDef method);
-		TreeViewNodeFilterResult GetFilterResultParamDef(MethodDef method);
 		TreeViewNodeFilterResult GetFilterResult(CursorResourceEntryNode node);
 		TreeViewNodeFilterResult GetFilterResult(IconResourceEntryNode node);
 		TreeViewNodeFilterResult GetFilterResult(ImageListResourceEntryNode node);

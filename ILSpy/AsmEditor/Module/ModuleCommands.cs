@@ -317,7 +317,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 				Debug.Assert(b);
 				if (!b)
 					throw new InvalidOperationException();
-				node.EnsureLazyChildren();
+				node.EnsureChildrenFiltered();
 				savedState.AssemblyDef = module.Assembly;
 				module.Assembly.Modules.Remove(module);
 				savedState.ModuleKind = module.Kind;
@@ -393,7 +393,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			Debug.Assert(modNode.Parent == null);
 			if (modNode.Parent != null)
 				throw new InvalidOperationException();
-			asmNode.EnsureLazyChildren();
+			asmNode.EnsureChildrenFiltered();
 			asmNode.LoadedAssembly.AssemblyDefinition.Modules.Add(modNode.LoadedAssembly.ModuleDefinition);
 			asmNode.Children.Add(modNode);
 			if (modNodeWasCreated)
@@ -684,7 +684,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 
 			var asmNode = (AssemblyTreeNode)nodes[0];
 
-			var data = new ModuleOptionsVM(new ModuleOptions(asmNode.LoadedAssembly.ModuleDefinition));
+			var data = new ModuleOptionsVM(asmNode.LoadedAssembly.ModuleDefinition);
 			var win = new ModuleOptionsDlg();
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
@@ -709,42 +709,37 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
+		void WriteModuleOptions(ModuleOptions theOptions)
 		{
 			var module = modNode.LoadedAssembly.ModuleDefinition;
-			module.Mvid = newOptions.Mvid;
-			module.EncId = newOptions.EncId;
-			module.EncBaseId = newOptions.EncBaseId;
-			module.Name = newOptions.Name;
-			module.Kind = newOptions.Kind;
-			module.Characteristics = newOptions.Characteristics;
-			module.DllCharacteristics = newOptions.DllCharacteristics;
-			module.RuntimeVersion = newOptions.RuntimeVersion;
-			module.Machine = newOptions.Machine;
-			module.Cor20HeaderFlags = newOptions.Cor20HeaderFlags;
-			module.Cor20HeaderRuntimeVersion = newOptions.Cor20HeaderRuntimeVersion;
-			module.TablesHeaderVersion = newOptions.TablesHeaderVersion;
+			module.Mvid = theOptions.Mvid;
+			module.EncId = theOptions.EncId;
+			module.EncBaseId = theOptions.EncBaseId;
+			module.Name = theOptions.Name;
+			module.Kind = theOptions.Kind;
+			module.Characteristics = theOptions.Characteristics;
+			module.DllCharacteristics = theOptions.DllCharacteristics;
+			module.RuntimeVersion = theOptions.RuntimeVersion;
+			module.Machine = theOptions.Machine;
+			module.Cor20HeaderFlags = theOptions.Cor20HeaderFlags;
+			module.Cor20HeaderRuntimeVersion = theOptions.Cor20HeaderRuntimeVersion;
+			module.TablesHeaderVersion = theOptions.TablesHeaderVersion;
+			if (theOptions.ManagedEntryPoint != null)
+				module.ManagedEntryPoint = theOptions.ManagedEntryPoint;
+			else
+				module.NativeEntryPoint = theOptions.NativeEntryPoint;
 			modNode.OnModulePropertiesChanged();
 			Utils.InvalidateDecompilationCache(modNode);
 		}
 
+		public void Execute()
+		{
+			WriteModuleOptions(newOptions);
+		}
+
 		public void Undo()
 		{
-			var module = modNode.LoadedAssembly.ModuleDefinition;
-			module.Mvid = origOptions.Mvid;
-			module.EncId = origOptions.EncId;
-			module.EncBaseId = origOptions.EncBaseId;
-			module.Name = origOptions.Name;
-			module.Kind = origOptions.Kind;
-			module.Characteristics = origOptions.Characteristics;
-			module.DllCharacteristics = origOptions.DllCharacteristics;
-			module.RuntimeVersion = origOptions.RuntimeVersion;
-			module.Machine = origOptions.Machine;
-			module.Cor20HeaderFlags = origOptions.Cor20HeaderFlags;
-			module.Cor20HeaderRuntimeVersion = origOptions.Cor20HeaderRuntimeVersion;
-			module.TablesHeaderVersion = origOptions.TablesHeaderVersion;
-			modNode.OnModulePropertiesChanged();
-			Utils.InvalidateDecompilationCache(modNode);
+			WriteModuleOptions(origOptions);
 		}
 
 		public IEnumerable<ILSpyTreeNode> TreeNodes {

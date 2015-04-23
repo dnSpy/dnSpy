@@ -242,6 +242,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			else {
 				var options = new ModuleWriterOptions();
 				CopyTo(options);
+				if (module.ManagedEntryPoint != null || module.NativeEntryPoint == 0)
+					options.Cor20HeaderOptions.Flags &= ~ComImageFlags.NativeEntryPoint;
 				return options;
 			}
 		}
@@ -850,7 +852,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 					OnPropertyChanged("Bit32Required");
 					OnPropertyChanged("ILLibrary");
 					OnPropertyChanged("StrongNameSigned");
-					OnPropertyChanged("NativeEntryPoint");
 					OnPropertyChanged("TrackDebugData");
 					OnPropertyChanged("Bit32Preferred");
 				}
@@ -876,11 +877,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		public bool? StrongNameSigned {
 			get { return GetFlagValue(ComImageFlags.StrongNameSigned); }
 			set { SetFlagValue(ComImageFlags.StrongNameSigned, value); }
-		}
-
-		public bool? NativeEntryPoint {
-			get { return GetFlagValue(ComImageFlags.NativeEntryPoint); }
-			set { SetFlagValue(ComImageFlags.NativeEntryPoint, value); }
 		}
 
 		public bool? TrackDebugData {

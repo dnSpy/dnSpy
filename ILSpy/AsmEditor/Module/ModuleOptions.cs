@@ -38,6 +38,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		public ComImageFlags Cor20HeaderFlags;
 		public uint? Cor20HeaderRuntimeVersion;
 		public ushort? TablesHeaderVersion;
+		public IManagedEntryPoint ManagedEntryPoint;
+		public RVA NativeEntryPoint;
 
 		public ModuleOptions()
 		{
@@ -57,6 +59,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			Cor20HeaderFlags = module.Cor20HeaderFlags;
 			Cor20HeaderRuntimeVersion = module.Cor20HeaderRuntimeVersion;
 			TablesHeaderVersion = module.TablesHeaderVersion;
+			ManagedEntryPoint = module.ManagedEntryPoint;
+			NativeEntryPoint = module.NativeEntryPoint;
 		}
 	}
 }

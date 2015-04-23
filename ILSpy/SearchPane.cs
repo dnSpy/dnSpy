@@ -415,7 +415,7 @@ namespace ICSharpCode.ILSpy
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.asmNodes = asmNodes.ToArray();
 			foreach (var asmNode in this.asmNodes)
-				asmNode.EnsureLazyChildren();
+				asmNode.EnsureChildrenFiltered();
 			this.searchComparer = searchComparer;
 			this.language = language;
 			this.filter = filter;

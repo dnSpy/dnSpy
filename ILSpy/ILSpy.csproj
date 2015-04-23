@@ -117,6 +117,7 @@
     </Compile>
     <Compile Include="AsmEditor\Assembly\AssemblyOptionsVM.cs" />
     <Compile Include="AsmEditor\Converters\BooleanToGridrowLengthConverter.cs" />
+    <Compile Include="AsmEditor\Converters\RadioButtonConverter.cs" />
     <Compile Include="AsmEditor\DataFieldVM.cs" />
     <Compile Include="AsmEditor\DeletableNodes.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\CreateTypeSigArrayControl.xaml.cs">
@@ -193,11 +194,14 @@
     <Compile Include="AsmEditor\ViewHelpers\ICreateMethodPropertySig.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ICreateTypeSigArray.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IDnlibTypePicker.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\IMakeVisible.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\IManagedEntryPointPicker.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IOpenAssembly.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IOpenPublicKeyFile.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IPickNetExecutableFileName.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IShowWarningMessage.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ITypeSigCreator.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\ManagedEntryPointPicker.cs" />
     <Compile Include="AsmEditor\ViewHelpers\OpenAssembly.cs" />
     <Compile Include="AsmEditor\ViewHelpers\OpenPublicKeyFile.cs" />
     <Compile Include="AsmEditor\ViewHelpers\PickNetExecutableFileName.cs" />
@@ -247,9 +251,11 @@
     <Compile Include="TreeNodes\CopyTokenContextMenuEntry.cs" />
     <Compile Include="TreeNodes\CopyXmlDocNameMenuEntry.cs" />
     <Compile Include="TreeNodes\Filters\ChainTreeViewNodeFilter.cs" />
+    <Compile Include="TreeNodes\Filters\EntryPointTreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\Filters\FilterNothingTreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\Filters\FlagsTreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\Filters\PublicApiTreeViewNodeFilter.cs" />
+    <Compile Include="TreeNodes\Filters\ShowNothingTreeViewNodeFilterBase.cs" />
     <Compile Include="TreeNodes\Filters\TreeViewNodeFilterBase.cs" />
     <Compile Include="TreeNodes\Filters\VisibleMembersFlags.cs" />
     <Compile Include="TreeNodes\GoToTokenContextMenuEntry.cs" />

@@ -17,26 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using System;
+using System.Globalization;
+using System.Windows.Data;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Module
+namespace ICSharpCode.ILSpy.AsmEditor.Converters
 {
-	/// <summary>
-	/// Interaction logic for ModuleOptionsDlg.xaml
-	/// </summary>
-	public partial class ModuleOptionsDlg : WindowBase
+	sealed class RadioButtonConverter : IValueConverter
 	{
-		public ModuleOptionsDlg()
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			InitializeComponent();
-			DataContextChanged += (s, e) => {
-				var data = DataContext as ModuleOptionsVM;
-				if (data != null) {
-					var ownerWindow = Window.GetWindow(this);
-					data.ManagedEntryPointPicker = new ManagedEntryPointPicker(ownerWindow);
-				}
-			};
+			return value.Equals(parameter);
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return value.Equals(true) ? parameter : Binding.DoNothing;
 		}
 	}
 }

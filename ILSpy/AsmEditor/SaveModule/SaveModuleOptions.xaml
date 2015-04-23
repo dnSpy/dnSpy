@@ -277,9 +277,8 @@
 								<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.ILLibrary}" Content="IL _Library" />
 								<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.Bit32Required}" Content="_32-Bit Required" />
 								<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.Bit32Preferred}" Content="32-Bit _Preferred" />
-								<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.NativeEntryPoint}" Content="_Native Entry Point" />
-								<CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.TrackDebugData}" Content="_Track Debug Data" />
-								<CheckBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.StrongNameSigned}" Content="_Strong Name Signed" />
+								<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.TrackDebugData}" Content="_Track Debug Data" />
+								<CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.StrongNameSigned}" Content="_Strong Name Signed" />
 							</Grid>
 						</GroupBox>
 					</StackPanel>

@@ -17,26 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Module
+namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 {
-	/// <summary>
-	/// Interaction logic for ModuleOptionsDlg.xaml
-	/// </summary>
-	public partial class ModuleOptionsDlg : WindowBase
+	interface IManagedEntryPointPicker
 	{
-		public ModuleOptionsDlg()
-		{
-			InitializeComponent();
-			DataContextChanged += (s, e) => {
-				var data = DataContext as ModuleOptionsVM;
-				if (data != null) {
-					var ownerWindow = Window.GetWindow(this);
-					data.ManagedEntryPointPicker = new ManagedEntryPointPicker(ownerWindow);
-				}
-			};
-		}
+		/// <summary>
+		/// Asks user to select a managed entry point. Returns null if user canceled.
+		/// </summary>
+		/// <param name="module">Module</param>
+		/// <param name="selectedItem">Item that should be shown as selected or null if none</param>
+		/// <returns></returns>
+		IManagedEntryPoint GetEntryPoint(ModuleDef module, object selectedItem);
 	}
 }

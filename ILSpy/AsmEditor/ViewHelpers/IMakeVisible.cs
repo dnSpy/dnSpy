@@ -17,26 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
-
-namespace ICSharpCode.ILSpy.AsmEditor.Module
+namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 {
-	/// <summary>
-	/// Interaction logic for ModuleOptionsDlg.xaml
-	/// </summary>
-	public partial class ModuleOptionsDlg : WindowBase
+	interface IMakeVisible
 	{
-		public ModuleOptionsDlg()
-		{
-			InitializeComponent();
-			DataContextChanged += (s, e) => {
-				var data = DataContext as ModuleOptionsVM;
-				if (data != null) {
-					var ownerWindow = Window.GetWindow(this);
-					data.ManagedEntryPointPicker = new ManagedEntryPointPicker(ownerWindow);
-				}
-			};
-		}
+		/// <summary>
+		/// Scroll (or similar) the item into view so the user can see it.
+		/// </summary>
+		/// <param name="item">Item</param>
+		void ScrollIntoView(object item);
 	}
 }

@@ -89,7 +89,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			EnsureLazyChildren();
+			EnsureChildrenFiltered();
 		}
 
 		public override FilterResult Filter(FilterSettings settings)

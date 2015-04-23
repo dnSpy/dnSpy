@@ -138,7 +138,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			return new TreeViewNodeFilterResult(null, isMatch);
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(string ns)
+		public override TreeViewNodeFilterResult GetFilterResult(string ns, LoadedAssembly owner)
 		{
 			var visibleFlags = VisibleMembersFlags.Namespace | VisibleMembersFlags.AnyTypeDef |
 					VisibleMembersFlags.FieldDef | VisibleMembersFlags.MethodDef |

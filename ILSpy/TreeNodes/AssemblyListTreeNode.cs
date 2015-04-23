@@ -240,7 +240,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 						return node;
 				}
 				else {
-					node.EnsureLazyChildren();
+					node.EnsureChildrenFiltered();
 					foreach (var asmNode in node.Children.OfType<AssemblyTreeNode>()) {
 						if (asmNode.LoadedAssembly.IsLoaded && asmNode.LoadedAssembly.ModuleDefinition == module)
 							return asmNode;
@@ -288,7 +288,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (def.DeclaringType != null) {
 				TypeTreeNode decl = FindTypeNode(def.DeclaringType);
 				if (decl != null) {
-					decl.EnsureLazyChildren();
+					decl.EnsureChildrenFiltered();
 					return decl.Children.OfType<TypeTreeNode>().FirstOrDefault(t => t.TypeDefinition == def && !t.IsHidden);
 				}
 			} else {
@@ -312,7 +312,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
 			if (typeNode == null)
 				return null;
-			typeNode.EnsureLazyChildren();
+			typeNode.EnsureChildrenFiltered();
 			MethodTreeNode methodNode = typeNode.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def && !m.IsHidden);
 			if (methodNode != null)
 				return methodNode;
@@ -322,7 +322,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 				// method might be a child of a property or event
 				if (p is PropertyTreeNode || p is EventTreeNode) {
-					p.EnsureLazyChildren();
+					p.EnsureChildrenFiltered();
 					methodNode = p.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def);
 					if (methodNode != null) {
 						// If the requested method is a property or event accessor, and accessors are
@@ -350,7 +350,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
 			if (typeNode == null)
 				return null;
-			typeNode.EnsureLazyChildren();
+			typeNode.EnsureChildrenFiltered();
 			var node = typeNode.Children.OfType<FieldTreeNode>().FirstOrDefault(m => m.FieldDefinition == def && !m.IsHidden);
 			Debug.Assert(node != null, "Could not find field node");
 			return node;
@@ -367,7 +367,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
 			if (typeNode == null)
 				return null;
-			typeNode.EnsureLazyChildren();
+			typeNode.EnsureChildrenFiltered();
 			var node = typeNode.Children.OfType<PropertyTreeNode>().FirstOrDefault(m => m.PropertyDefinition == def && !m.IsHidden);
 			Debug.Assert(node != null, "Could not find property node");
 			return node;
@@ -384,7 +384,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
 			if (typeNode == null)
 				return null;
-			typeNode.EnsureLazyChildren();
+			typeNode.EnsureChildrenFiltered();
 			var node = typeNode.Children.OfType<EventTreeNode>().FirstOrDefault(m => m.EventDefinition == def && !m.IsHidden);
 			Debug.Assert(node != null, "Could not find event node");
 			return node;
@@ -400,7 +400,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				if (node.IsNetModule)
 					continue;
 
-				node.EnsureLazyChildren();
+				node.EnsureChildrenFiltered();
 				foreach (var asmNode in node.Children.OfType<AssemblyTreeNode>()) {
 					if (string.IsNullOrWhiteSpace(asmNode.LoadedAssembly.FileName))
 						continue;

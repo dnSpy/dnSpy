@@ -22,13 +22,31 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnlib.PE;
+using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Module
 {
+	enum EntryPointType
+	{
+		None,
+		Managed,
+		Native,
+	}
+
 	sealed class ModuleOptionsVM : ViewModelBase
 	{
 		readonly ModuleOptions options;
 		readonly ModuleOptions origOptions;
+
+		public IManagedEntryPointPicker ManagedEntryPointPicker {
+			set { managedEntryPointPicker = value; }
+		}
+		IManagedEntryPointPicker managedEntryPointPicker;
+
+		public ICommand PickManagedEntryPointCommand {
+			get { return pickManagedEntryPointCommand ?? (pickManagedEntryPointCommand = new RelayCommand(a => PickManagedEntryPoint())); }
+		}
+		ICommand pickManagedEntryPointCommand;
 
 		public ICommand ReinitializeCommand {
 			get { return reinitializeCommand ?? (reinitializeCommand = new RelayCommand(a => Reinitialize())); }
@@ -345,7 +363,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 					OnPropertyChanged("Bit32Required");
 					OnPropertyChanged("ILLibrary");
 					OnPropertyChanged("StrongNameSigned");
-					OnPropertyChanged("NativeEntryPoint");
 					OnPropertyChanged("TrackDebugData");
 					OnPropertyChanged("Bit32Preferred");
 				}
@@ -370,11 +387,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		public bool StrongNameSigned {
 			get { return GetFlagValue(ComImageFlags.StrongNameSigned); }
 			set { SetFlagValue(ComImageFlags.StrongNameSigned, value); }
-		}
-
-		public bool NativeEntryPoint {
-			get { return GetFlagValue(ComImageFlags.NativeEntryPoint); }
-			set { SetFlagValue(ComImageFlags.NativeEntryPoint, value); }
 		}
 
 		public bool TrackDebugData {
@@ -410,13 +422,80 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		}
 		NullableUInt16VM tablesHeaderVersion;
 
-		public ModuleOptionsVM()
-			: this(new ModuleOptions())
+		public EntryPointType EntryPointEnum {
+			get { return entryPointEnum; }
+			set {
+				if (entryPointEnum != value) {
+					entryPointEnum = value;
+					OnPropertyChanged("EntryPointEnum");
+					if (entryPointEnum == EntryPointType.Native)
+						Cor20HeaderFlags |= ComImageFlags.NativeEntryPoint;
+					else
+						Cor20HeaderFlags &= ~ComImageFlags.NativeEntryPoint;
+				}
+			}
+		}
+		EntryPointType entryPointEnum;
+
+		public IManagedEntryPoint ManagedEntryPoint {
+			get { return managedEntryPoint; }
+			set {
+				if (managedEntryPoint != value) {
+					managedEntryPoint = value;
+					OnPropertyChanged("ManagedEntryPoint");
+					OnPropertyChanged("EntryPointName");
+					OnPropertyChanged("EntryPointNameToolTip");
+				}
+			}
+		}
+		IManagedEntryPoint managedEntryPoint;
+
+		public string EntryPointName {
+			get { return GetEntryPointString(80); }
+		}
+
+		public string EntryPointNameToolTip {
+			get { return GetEntryPointString(500); }
+		}
+
+		string GetEntryPointString(int maxChars)
+		{
+			var ep = ManagedEntryPoint;
+			if (ep == null)
+				return string.Empty;
+			string s;
+			var method = ep as MethodDef;
+			if (method != null) {
+				var declType = method.DeclaringType;
+				if (declType != null)
+					s = string.Format("{0} ({1})", method.Name, declType.FullName);
+				else
+					s = method.Name;
+			}
+			else {
+				//TODO: Support EP in other module
+				s = string.Empty;
+			}
+			if (s.Length > maxChars)
+				s = s.Substring(0, maxChars) + "...";
+			return s;
+		}
+
+		public UInt32VM NativeEntryPointRva {
+			get { return nativeEntryPointRva; }
+		}
+		UInt32VM nativeEntryPointRva;
+
+		public ModuleOptionsVM(ModuleDef module)
+			: this(module, new ModuleOptions(module))
 		{
 		}
 
-		public ModuleOptionsVM(ModuleOptions options)
+		readonly ModuleDef module;
+
+		public ModuleOptionsVM(ModuleDef module, ModuleOptions options)
 		{
+			this.module = module;
 			this.options = new ModuleOptions();
 			this.origOptions = options;
 			moduleKindVM = new EnumListVM(SaveModule.SaveModuleOptionsVM.moduleKindList, () => {
@@ -433,6 +512,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			clrVersionVM.SelectedItem = Module.ClrVersion.Unknown;
 			cor20HeaderRuntimeVersion = new NullableUInt32VM(a => { HasErrorUpdated(); UpdateClrVersion(); });
 			tablesHeaderVersion = new NullableUInt16VM(a => { HasErrorUpdated(); UpdateClrVersion(); });
+			nativeEntryPointRva = new UInt32VM(a => HasErrorUpdated());
 			Reinitialize();
 		}
 
@@ -487,8 +567,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			Cor20HeaderRuntimeVersion.Value = options.Cor20HeaderRuntimeVersion;
 			TablesHeaderVersion.Value = options.TablesHeaderVersion;
 
+			ManagedEntryPoint = options.ManagedEntryPoint;
+			NativeEntryPointRva.Value = (uint)options.NativeEntryPoint;
+			if (options.ManagedEntryPoint != null)
+				EntryPointEnum = EntryPointType.Managed;
+			else if (options.NativeEntryPoint != 0)
+				EntryPointEnum = EntryPointType.Native;
+			else
+				EntryPointEnum = EntryPointType.None;
+
 			// Writing to Machine and ModuleKind triggers code that updates Characteristics so write
-			// this last.
+			// this property last.
 			Characteristics = options.Characteristics;
 		}
 
@@ -506,7 +595,34 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			options.Cor20HeaderFlags = Cor20HeaderFlags;
 			options.Cor20HeaderRuntimeVersion = Cor20HeaderRuntimeVersion.Value;
 			options.TablesHeaderVersion = TablesHeaderVersion.Value;
+
+			if (EntryPointEnum == EntryPointType.None) {
+				options.ManagedEntryPoint = null;
+				options.NativeEntryPoint = 0;
+			}
+			else if (EntryPointEnum == EntryPointType.Managed) {
+				options.ManagedEntryPoint = ManagedEntryPoint;
+				options.NativeEntryPoint = 0;
+			}
+			else if (EntryPointEnum == EntryPointType.Native) {
+				options.ManagedEntryPoint = null;
+				options.NativeEntryPoint = (RVA)NativeEntryPointRva.Value;
+			}
+			else
+				throw new InvalidOperationException();
+
 			return options;
+		}
+
+		void PickManagedEntryPoint()
+		{
+			if (managedEntryPointPicker == null)
+				throw new InvalidOperationException();
+			var ep = managedEntryPointPicker.GetEntryPoint(module, ManagedEntryPoint);
+			if (ep != null) {
+				ManagedEntryPoint = ep;
+				EntryPointEnum = EntryPointType.Managed;
+			}
 		}
 
 		protected override string Verify(string columnName)
@@ -521,11 +637,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			get {
 				if (!string.IsNullOrEmpty(Verify("RuntimeVersion")))
 					return true;
-				return mvid.HasError ||
-					encId.HasError ||
-					encBaseId.HasError ||
-					cor20HeaderRuntimeVersion.HasError ||
-					tablesHeaderVersion.HasError;
+				return Mvid.HasError ||
+					EncId.HasError ||
+					EncBaseId.HasError ||
+					Cor20HeaderRuntimeVersion.HasError ||
+					TablesHeaderVersion.HasError ||
+					NativeEntryPointRva.HasError;
 			}
 		}
 	}

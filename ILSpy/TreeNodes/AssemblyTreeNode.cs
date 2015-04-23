@@ -421,7 +421,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			if (def == null)
 				return null;
-			EnsureLazyChildren();
+			EnsureChildrenFiltered();
 			TypeTreeNode node;
 			if (typeDict.TryGetValue(def, out node))
 				return node;
@@ -444,7 +444,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			if (namespaceName == null)
 				return null;
-			EnsureLazyChildren();
+			EnsureChildrenFiltered();
 			NamespaceTreeNode node;
 			if (namespaces.TryGetValue(namespaceName, out node))
 				return node;

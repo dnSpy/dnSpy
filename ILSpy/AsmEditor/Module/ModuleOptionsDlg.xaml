@@ -21,17 +21,20 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vc="clr-namespace:ICSharpCode.ILSpy.AsmEditor.Converters"
+             xmlns:local="clr-namespace:ICSharpCode.ILSpy.AsmEditor.Module"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              xmlns:mm="clr-namespace:ICSharpCode.ILSpy"
              mm:HideWindowsButtons.MaxMinButtons="True"
-             Height="350" Width="400"
+             Height="380" Width="400"
              ResizeMode="CanResizeWithGrip"
              Icon="../../images/ILSpy.ico"
              Title="Module Settings"
              WindowStartupLocation="CenterOwner"
              Style="{DynamicResource DialogWindow}"
-             MinHeight="350" MinWidth="400">
+             MinHeight="380" MinWidth="400">
 	<winlocal:WindowBase.Resources>
+		<vc:RadioButtonConverter x:Key="RadioButtonConverter" />
 		<Style TargetType="{x:Type TextBox}">
 			<Style.Triggers>
 				<Trigger Property="Validation.HasError" Value="true">
@@ -110,6 +113,24 @@
 								<Button Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Content="N_ew" Command="{Binding GenerateNewEncBaseIdCommand}" />
 							</Grid>
 						</GroupBox>
+						<GroupBox Header="Entry Point" Margin="0 5 0 0">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
+								<RadioButton Grid.Row="0" Grid.Column="0" Margin="5 5 0 0" GroupName="EntryPoint" Content="None" IsChecked="{Binding EntryPointEnum, Converter={StaticResource RadioButtonConverter}, ConverterParameter={x:Static local:EntryPointType.None}}" />
+								<RadioButton Grid.Row="1" Grid.Column="0" Margin="5 5 0 0" GroupName="EntryPoint" Content="Mana_ged" IsChecked="{Binding EntryPointEnum, Converter={StaticResource RadioButtonConverter}, ConverterParameter={x:Static local:EntryPointType.Managed}}" />
+								<Button Grid.Row="1" Grid.Column="1" Margin="5 0 0 0" Content="{Binding EntryPointName}" Command="{Binding PickManagedEntryPointCommand}" ToolTip="{Binding EntryPointNameToolTip}" />
+								<RadioButton Grid.Row="2" Grid.Column="0" Margin="5 5 0 5" GroupName="EntryPoint" Content="Native" IsChecked="{Binding EntryPointEnum, Converter={StaticResource RadioButtonConverter}, ConverterParameter={x:Static local:EntryPointType.Native}}"/>
+								<TextBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 5" Text="{Binding NativeEntryPointRva.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"/>
+							</Grid>
+						</GroupBox>
 					</StackPanel>
 				</ScrollViewer>
 			</TabItem>
@@ -164,9 +185,8 @@
 								<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" IsChecked="{Binding ILLibrary}" Content="IL _Library" />
 								<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Bit32Required}" Content="_32-Bit Required" />
 								<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Bit32Preferred}" Content="32-Bit _Preferred" />
-								<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding NativeEntryPoint}" Content="_Native Entry Point" />
-								<CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding TrackDebugData}" Content="_Track Debug Data" />
-								<CheckBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding StrongNameSigned}" Content="_Strong Name Signed" />
+								<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding TrackDebugData}" Content="_Track Debug Data" />
+								<CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding StrongNameSigned}" Content="_Strong Name Signed" />
 							</Grid>
 						</GroupBox>
 					</StackPanel>

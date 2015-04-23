@@ -78,7 +78,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			return new TreeViewNodeFilterResult();
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(string ns)
+		public virtual TreeViewNodeFilterResult GetFilterResult(string ns, LoadedAssembly owner)
 		{
 			return new TreeViewNodeFilterResult();
 		}

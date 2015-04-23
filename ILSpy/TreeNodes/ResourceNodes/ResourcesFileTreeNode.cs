@@ -121,7 +121,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			EnsureLazyChildren();
+			EnsureChildrenFiltered();
 			base.Decompile(language, output, options);
 			if (stringTableEntries.Count != 0) {
 				ISmartTextOutput smartOutput = output as ISmartTextOutput;

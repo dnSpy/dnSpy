@@ -36,6 +36,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		IOpenAssembly openAssembly;
 
+		public IMakeVisible MakeVisible {
+			set { makeVisible = value; }
+		}
+		IMakeVisible makeVisible;
+
 		public ICommand OpenCommand {
 			get { return new RelayCommand(a => OpenNewAssembly(), a => CanOpenAssembly); }
 		}
@@ -74,7 +79,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 					if (obj is AssemblyTreeNode && filter.GetFilterResult((obj as AssemblyTreeNode).LoadedAssembly, (obj as AssemblyTreeNode).AssemblyFilterType).IsMatch)
 						return ((AssemblyTreeNode)obj).LoadedAssembly;
-					if (obj is string && filter.GetFilterResult((string)obj).IsMatch)
+					if (obj is LoadedAssembly && filter.GetFilterResult(obj as LoadedAssembly, (obj as LoadedAssembly).ModuleDefinition != null ? AssemblyFilterType.NetModule : AssemblyFilterType.NonNetFile).IsMatch)
+						return (LoadedAssembly)obj;
+					if (obj is string && filter.GetFilterResult((string)obj, res.LoadedAssembly).IsMatch)
 						return (string)obj;
 					if (obj is TypeDef && filter.GetFilterResult(obj as TypeDef).IsMatch)
 						return obj;
@@ -96,7 +103,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				if (item != null) {
 					if (item is AssemblyTreeNode && filter.GetFilterResult((item as AssemblyTreeNode).LoadedAssembly, (item as AssemblyTreeNode).AssemblyFilterType).IsMatch)
 						return ((AssemblyTreeNode)item).LoadedAssembly;
-					if (item is NamespaceTreeNode && filter.GetFilterResult((item as NamespaceTreeNode).Name).IsMatch)
+					if (item is NamespaceTreeNode && filter.GetFilterResult((item as NamespaceTreeNode).Name, ((item as NamespaceTreeNode).Parent as AssemblyTreeNode).LoadedAssembly).IsMatch)
 						return ((NamespaceTreeNode)item).Name;
 					if (item is TypeTreeNode && filter.GetFilterResult((item as TypeTreeNode).TypeDefinition).IsMatch)
 						return ((TypeTreeNode)item).TypeDefinition;
@@ -235,6 +242,20 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			assemblyList.CollectionChanged += (s, e) => RestartSearch();
 
 			CreateNewFilterSettings();
+		}
+
+		public bool SelectItem(object item)
+		{
+			if (makeVisible == null)
+				throw new InvalidOperationException("Call SelectItem(item) after DataContext has been initialized!");
+
+			var node = assemblyListTreeNode.FindTreeNode(item);
+			if (node == null)
+				return false;
+
+			SelectedItem = node;
+			makeVisible.ScrollIntoView(node);
+			return true;
 		}
 
 		void CreateNewFilterSettings()
