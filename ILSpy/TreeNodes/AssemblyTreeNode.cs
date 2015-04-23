@@ -442,7 +442,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		/// </summary>
 		public NamespaceTreeNode FindNamespaceNode(string namespaceName)
 		{
-			if (string.IsNullOrEmpty(namespaceName))
+			if (namespaceName == null)
 				return null;
 			EnsureLazyChildren();
 			NamespaceTreeNode node;

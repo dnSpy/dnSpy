@@ -337,6 +337,11 @@ namespace ICSharpCode.ILSpy
 					obj = ((AssemblyTreeNode)obj).LoadedAssembly.AssemblyDefinition;
 				else if (obj is LoadedAssembly)
 					obj = ((LoadedAssembly)obj).ModuleDefinition;
+				else if (obj is string) {
+					var ns = (string)obj;
+					MainWindow.Instance.JumpToNamespace(result.LoadedAssembly, ns);
+					return;
+				}
 				MainWindow.Instance.JumpToReference(obj);
 			}
 		}

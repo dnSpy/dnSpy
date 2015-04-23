@@ -1304,6 +1304,25 @@ namespace ICSharpCode.ILSpy
 			return reference;
 		}
 
+		public bool JumpToNamespace(LoadedAssembly asm, string ns, bool canRecordHistory = true)
+		{
+			var asmNode = FindTreeNode(asm.ModuleDefinition) as AssemblyTreeNode;
+			if (asmNode == null)
+				return false;
+			var nsNode = asmNode.FindNamespaceNode(ns);
+			if (nsNode == null)
+				return false;
+
+			var tabState = SafeActiveTabState;
+			if (canRecordHistory)
+				RecordHistory(tabState);
+
+			var nodes = new[] { nsNode };
+			DecompileNodes(tabState, null, false, tabState.Language, nodes);
+			SelectTreeViewNodes(tabState, nodes);
+			return true;
+		}
+
 		public bool JumpToReference(object reference, bool canRecordHistory = true)
 		{
 			var tabState = SafeActiveTabState;
