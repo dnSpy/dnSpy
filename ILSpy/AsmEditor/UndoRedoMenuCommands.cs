@@ -30,7 +30,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 	sealed class UndoMainMenuEntryCommand : CommandWrapper
 	{
 		public UndoMainMenuEntryCommand()
-			: base(ApplicationCommands.Undo)
+			: base(UndoCommandManagerLoader.Undo)
 		{
 		}
 	}
@@ -44,7 +44,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 	sealed class RedoMainMenuEntryCommand : CommandWrapper
 	{
 		public RedoMainMenuEntryCommand()
-			: base(ApplicationCommands.Redo)
+			: base(UndoCommandManagerLoader.Redo)
 		{
 		}
 	}

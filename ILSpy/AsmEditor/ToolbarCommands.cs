@@ -30,7 +30,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 	sealed class UndoAsmEdCommand : CommandWrapper
 	{
 		public UndoAsmEdCommand()
-			: base(ApplicationCommands.Undo)
+			: base(UndoCommandManagerLoader.Undo)
 		{
 		}
 	}
@@ -42,7 +42,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 	sealed class RedoAsmEdCommand : CommandWrapper
 	{
 		public RedoAsmEdCommand()
-			: base(ApplicationCommands.Redo)
+			: base(UndoCommandManagerLoader.Redo)
 		{
 		}
 	}

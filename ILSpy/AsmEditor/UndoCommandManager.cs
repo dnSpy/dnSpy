@@ -32,11 +32,24 @@ namespace ICSharpCode.ILSpy.AsmEditor
 	[Export(typeof(IPlugin))]
 	sealed class UndoCommandManagerLoader : IPlugin
 	{
+		public static readonly RoutedUICommand Undo;
+		public static readonly RoutedUICommand Redo;
+
+		static UndoCommandManagerLoader()
+		{
+			// Create our own Undo/Redo commands because if a text box has the focus (eg. search
+			// pane), it will send undo/redo events and the undo/redo toolbar buttons will be
+			// enabled/disabled based on the text box's undo/redo state, not the asm editor's
+			// undo/redo state.
+			ApplicationCommands.Redo.InputGestures.Add(new KeyGesture(Key.Z, ModifierKeys.Control | ModifierKeys.Shift));
+			Undo = new RoutedUICommand("Undo", "Undo", typeof(UndoCommandManagerLoader), new InputGestureCollection(ApplicationCommands.Undo.InputGestures));
+			Redo = new RoutedUICommand("Redo", "Redo", typeof(UndoCommandManagerLoader), new InputGestureCollection(ApplicationCommands.Redo.InputGestures));
+		}
+
 		void IPlugin.OnLoaded()
 		{
-			MainWindow.Instance.InputBindings.Add(new KeyBinding(ApplicationCommands.Redo, Key.Z, ModifierKeys.Control | ModifierKeys.Shift));
-			MainWindow.Instance.CommandBindings.Add(new CommandBinding(ApplicationCommands.Undo, UndoExecuted, UndoCanExecute));
-			MainWindow.Instance.CommandBindings.Add(new CommandBinding(ApplicationCommands.Redo, RedoExecuted, RedoCanExecute));
+			MainWindow.Instance.CommandBindings.Add(new CommandBinding(Undo, UndoExecuted, UndoCanExecute));
+			MainWindow.Instance.CommandBindings.Add(new CommandBinding(Redo, RedoExecuted, RedoCanExecute));
 			MainWindow.Instance.Closing += MainWindow_Closing;
 		}
 

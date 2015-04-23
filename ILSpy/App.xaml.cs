@@ -26,6 +26,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 
@@ -73,6 +74,9 @@ namespace ICSharpCode.ILSpy
 		public App()
 		{
 			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+
+			// Add Ctrl+Shift+Z as a redo command. Don't know why it isn't enabled by default.
+			ApplicationCommands.Redo.InputGestures.Add(new KeyGesture(Key.Z, ModifierKeys.Control | ModifierKeys.Shift));
 
 			var cmdArgs = Environment.GetCommandLineArgs().Skip(1);
 			App.CommandLineArguments = new CommandLineArguments(cmdArgs);
