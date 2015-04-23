@@ -138,8 +138,6 @@ namespace ICSharpCode.ILSpy.TextView
 			// move the caret.
 			waitAdorner.MouseDown += (s, e) => e.Handled = true;
 			waitAdorner.MouseUp += (s, e) => e.Handled = true;
-			waitAdorner.KeyDown += (s, e) => e.Handled = true;
-			waitAdorner.KeyUp += (s, e) => e.Handled = true;
 			waitAdornerButton.IsVisibleChanged += waitAdornerButton_IsVisibleChanged;
 		}
 
