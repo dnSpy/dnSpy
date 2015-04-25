@@ -2180,7 +2180,7 @@ namespace ICSharpCode.NRefactory.VB
 				WriteAttributes(operatorDeclaration.ReturnTypeAttributes);
 				operatorDeclaration.ReturnType.AcceptVisitor(this, data);
 			}
-			if (!operatorDeclaration.Body.IsNull || operatorDeclaration.Body.HiddenEnd.Count > 0) {
+			if (!operatorDeclaration.Body.IsNull || (operatorDeclaration.Body.HiddenEnd != null && operatorDeclaration.Body.HiddenEnd.Count > 0)) {
 				MarkFoldStart();
 				NewLine();
 				Indent();
