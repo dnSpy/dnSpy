@@ -95,7 +95,7 @@ namespace ICSharpCode.ILSpy.TextView
 		/// <summary>Embedded UIElements, see <see cref="UIElementGenerator"/>.</summary>
 		internal readonly List<KeyValuePair<int, Lazy<UIElement>>> UIElements = new List<KeyValuePair<int, Lazy<UIElement>>>();
 		
-		internal readonly List<MethodDebugSymbols> DebuggerMemberMappings = new List<MethodDebugSymbols>();
+		internal readonly List<MemberMapping> DebuggerMemberMappings = new List<MemberMapping>();
 		
 		public AvalonEditTextOutput()
 		{
@@ -258,7 +258,7 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 		
-		public void AddDebugSymbols(MethodDebugSymbols methodDebugSymbols)
+		public void AddDebugSymbols(MemberMapping methodDebugSymbols)
 		{
 			DebuggerMemberMappings.Add(methodDebugSymbols);
 		}

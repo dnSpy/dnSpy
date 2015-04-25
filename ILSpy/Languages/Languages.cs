@@ -50,7 +50,23 @@ namespace ICSharpCode.ILSpy
 				languages.Add(new CSharpLanguage());
 				languages.Add(new VB.VBLanguage());
 			}
-			languages.Add(new ILLanguage(true));
+
+			// Fix order: C#, VB, IL
+			var langs2 = new List<Language>();
+			var lang = languages.FirstOrDefault(a => a is CSharpLanguage);
+			if (lang != null) {
+				languages.Remove(lang);
+				langs2.Add(lang);
+			}
+			lang = languages.FirstOrDefault(a => a is VB.VBLanguage);
+			if (lang != null) {
+				languages.Remove(lang);
+				langs2.Add(lang);
+			}
+			langs2.Add(new ILLanguage(true));
+			for (int i = 0; i < langs2.Count; i++)
+				languages.Insert(i, langs2[i]);
+
 			#if DEBUG
 			languages.AddRange(ILAstLanguage.GetDebugLanguages());
 			languages.AddRange(CSharpLanguage.GetDebugLanguages());

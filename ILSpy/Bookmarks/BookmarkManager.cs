@@ -7,7 +7,6 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using dnlib.DotNet;
-using Mono.CSharp;
 
 namespace ICSharpCode.ILSpy.Bookmarks
 {

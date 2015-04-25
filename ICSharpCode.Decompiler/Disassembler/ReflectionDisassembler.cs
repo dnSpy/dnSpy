@@ -293,10 +293,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			if (method.HasBody) {
 				// create IL code mappings - used in debugger
-				MethodDebugSymbols debugSymbols = new MethodDebugSymbols(method);
-				debugSymbols.StartLocation = startLocation;
-				methodBodyDisassembler.Disassemble(method.Body, debugSymbols);
-				debugSymbols.EndLocation = output.Location;
+				MemberMapping debugSymbols = new MemberMapping(method);
+				methodBodyDisassembler.Disassemble(method, debugSymbols);
 				output.AddDebugSymbols(debugSymbols);
 			}
 			

@@ -48,7 +48,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			this.options = options;
 		}
 		
-		public void Disassemble(MethodDef method, MethodDebugSymbols methodMapping)
+		public void Disassemble(MethodDef method, MemberMapping debugSymbols)
 		{
 			// start writing IL code
 			CilBody body = method.Body;
@@ -191,7 +191,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Indent();
 		}
 		
-		void WriteStructureBody(CilBody body, ILStructure s, HashSet<uint> branchTargets, ref int index, MethodDebugSymbols debugSymbols, int codeSize)
+		void WriteStructureBody(CilBody body, ILStructure s, HashSet<uint> branchTargets, ref int index, MemberMapping debugSymbols, int codeSize)
 		{
 			bool isFirstInstructionInStructure = true;
 			bool prevInstructionWasBranch = false;

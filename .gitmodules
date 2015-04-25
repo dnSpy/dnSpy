@@ -1,3 +1,6 @@
 [submodule "dnlib"]
 	path = dnlib
 	url = https://github.com/0xd4d/dnlib.git
+[submodule "NRefactory2"]
+	path = NRefactory2
+	url = https://0xd4d@bitbucket.org/0xd4d/nrefactory.git

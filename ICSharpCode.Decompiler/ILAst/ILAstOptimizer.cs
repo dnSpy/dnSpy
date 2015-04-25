@@ -24,7 +24,6 @@ using ICSharpCode.Decompiler.FlowAnalysis;
 using ICSharpCode.NRefactory.Utils;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using Mono.CSharp;
 
 namespace ICSharpCode.Decompiler.ILAst
 {

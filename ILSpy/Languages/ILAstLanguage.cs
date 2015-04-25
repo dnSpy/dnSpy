@@ -100,7 +100,7 @@ namespace ICSharpCode.ILSpy
 				if (!node.WritesNewLine)
 					output.WriteLine();
 			}
-			output.AddDebuggerMemberMapping(memberMapping);
+			output.AddDebugSymbols(memberMapping);
 			EndKeywordBlock(output);
 		}
 

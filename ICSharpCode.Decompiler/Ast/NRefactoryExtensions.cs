@@ -177,7 +177,7 @@ namespace ICSharpCode.Decompiler.Ast
 
 		public static AstNode CreateHidden(IEnumerable<ILRange> ilRanges, AstNode stmt)
 		{
-			var list = ILRange.OrderAndJoint(ilRanges);
+			var list = ILRange.OrderAndJoin(ilRanges);
 			if (list.Count == 0)
 				return stmt;
 			if (stmt == null)

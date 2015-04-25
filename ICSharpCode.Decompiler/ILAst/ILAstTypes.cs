@@ -28,7 +28,6 @@ using ICSharpCode.NRefactory.Utils;
 using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using Mono.CSharp;
 
 namespace ICSharpCode.Decompiler.ILAst
 {
@@ -97,7 +96,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			if (memberMapping == null)
 				return;
-			foreach (var range in ILRange.OrderAndJoint(ranges)) {
+			foreach (var range in ILRange.OrderAndJoin(ranges)) {
 				memberMapping.MemberCodeMappings.Add(new SourceCodeMapping {
 					StartLocation = startLoc,
 					EndLocation = endLoc,
@@ -443,9 +442,8 @@ namespace ICSharpCode.Decompiler.ILAst
 				} else {
 					i++;
 				}
-				result.Add(curr);
 			}
-			return result;
+			return ranges;
 		}
 		
 		public static List<ILRange> Invert(IEnumerable<ILRange> input, int codeSize)

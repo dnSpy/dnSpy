@@ -54,6 +54,9 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public override void WriteIdentifier(Identifier identifier, TextTokenType tokenType)
 		{
+			if (tokenType == TextTokenType.Text)
+				tokenType = TextTokenHelper.GetTextTokenType(identifier.AnnotationVT<TextTokenType>() ?? identifier.Annotation<object>());
+
 			var definition = GetCurrentDefinition();
 			if (definition != null) {
 				output.WriteDefinition(identifier.Name, definition, tokenType, false);
@@ -188,6 +191,11 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public override void WriteKeyword(Role role, string keyword)
 		{
+			WriteKeyword(keyword);
+		}
+
+		void WriteKeyword(string keyword)
+		{
 			IMemberRef memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
 			if (memberRef != null && node is PrimitiveType)
@@ -303,23 +311,24 @@ namespace ICSharpCode.Decompiler.Ast
 			output.WriteLine();
 		}
 		
-		public override void WritePrimitiveValue(object value, string literalValue = null)
+		public override void WritePrimitiveValue(object value, TextTokenType? tokenType = null, string literalValue = null)
 		{
-			new TextWriterTokenWriter(new TextOutputWriter(output)).WritePrimitiveValue(value, literalValue);
+			int column = 0;
+			TextWriterTokenWriter.WritePrimitiveValue(value, tokenType, literalValue, ref column, (a, b) => output.Write(a, b), (a, b, c) => WriteToken(a, b, c));
 		}
 		
 		public override void WritePrimitiveType(string type)
 		{
-			output.Write(type);
+			WriteKeyword(type);
 			if (type == "new") {
-				output.Write("()");
+				output.Write('(', TextTokenType.Operator);
+				output.Write(')', TextTokenType.Operator);
 			}
 		}
 		
 		MemberMapping currentMemberMapping;
 		Stack<MemberMapping> parentMemberMappings = new Stack<MemberMapping>();
-		List<Tuple<MemberMapping, List<ILRange>>> multiMappings;//TODO: New code uses below var:
-		//TODO: New code uses: Stack<MethodDebugSymbols> symbolsStack = new Stack<MethodDebugSymbols>();
+		List<Tuple<MemberMapping, List<ILRange>>> multiMappings;
 		
 		public override void StartNode(AstNode node)
 		{
@@ -366,7 +375,7 @@ namespace ICSharpCode.Decompiler.Ast
 				Debug.Assert(mms == multiMappings);
 				if (mms == multiMappings) {
 					foreach (var mm in mms)
-						output.AddDebuggerMemberMapping(mm.Item1);
+						output.AddDebugSymbols(mm.Item1);
 					multiMappings = null;
 				}
 			}
@@ -385,12 +394,12 @@ namespace ICSharpCode.Decompiler.Ast
 			public TextLocation StartLocation;
 		}
 		readonly Stack<DebugState> debugStack = new Stack<DebugState>();
-		public void DebugStart(AstNode node, TextLocation? start)
+		public override void DebugStart(AstNode node, TextLocation? start)
 		{
 			debugStack.Push(new DebugState { StartLocation = start ?? output.Location });
 		}
 
-		public void DebugHidden(AstNode hiddenNode)
+		public override void DebugHidden(AstNode hiddenNode)
 		{
 			if (hiddenNode == null || hiddenNode.IsNull)
 				return;
@@ -398,18 +407,18 @@ namespace ICSharpCode.Decompiler.Ast
 				debugStack.Peek().Nodes.AddRange(hiddenNode.DescendantsAndSelf);
 		}
 
-		public void DebugExpression(AstNode node)
+		public override void DebugExpression(AstNode node)
 		{
 			if (debugStack.Count > 0)
 				debugStack.Peek().Nodes.Add(node);
 		}
 
 		static readonly IEnumerable<ILRange> emptyILRange = new ILRange[0];
-		public void DebugEnd(AstNode node, TextLocation? end)
+		public override void DebugEnd(AstNode node, TextLocation? end)
 		{
 			var state = debugStack.Pop();
 			if (currentMemberMapping != null) {
-				foreach (var range in ILRange.OrderAndJoint(GetILRanges(state))) {
+				foreach (var range in ILRange.OrderAndJoin(GetILRanges(state))) {
 					currentMemberMapping.MemberCodeMappings.Add(
 						new SourceCodeMapping {
 							ILInstructionOffset = range,
@@ -421,7 +430,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			else if (multiMappings != null) {
 				foreach (var mm in multiMappings) {
-					foreach (var range in ILRange.OrderAndJoint(mm.Item2)) {
+					foreach (var range in ILRange.OrderAndJoin(mm.Item2)) {
 						mm.Item1.MemberCodeMappings.Add(
 							new SourceCodeMapping {
 								ILInstructionOffset = range,
@@ -445,6 +454,11 @@ namespace ICSharpCode.Decompiler.Ast
 						yield return range;
 				}
 			}
+		}
+
+		public override TextLocation? GetLocation()
+		{
+			return output.Location;
 		}
 	}
 }

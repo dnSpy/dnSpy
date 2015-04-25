@@ -24,7 +24,6 @@ using ICSharpCode.ILSpy.Debugger.Models.TreeModel;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.XmlDoc;
 using dnlib.DotNet;
-using Mono.CSharp;
 
 using NR = ICSharpCode.NRefactory;
 

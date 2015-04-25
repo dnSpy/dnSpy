@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Globalization;
 using System.Linq;
@@ -33,10 +32,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.TreeNodes.Filters;
-using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.Utils;
 using dnlib.DotNet;
-using dnlib.DotNet.Emit;
 
 namespace ICSharpCode.ILSpy
 {

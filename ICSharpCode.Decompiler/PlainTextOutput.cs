@@ -115,7 +115,7 @@ namespace ICSharpCode.Decompiler
 		{
 		}
 		
-		void ITextOutput.AddDebugSymbols(MethodDebugSymbols methodDebugSymbols)
+		void ITextOutput.AddDebugSymbols(MemberMapping methodDebugSymbols)
 		{
 		}
 	}

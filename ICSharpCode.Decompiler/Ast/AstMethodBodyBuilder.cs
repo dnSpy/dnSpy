@@ -54,7 +54,7 @@ namespace ICSharpCode.Decompiler.Ast
 		public static BlockStatement CreateMethodBody(MethodDef methodDef,
 		                                              DecompilerContext context,
 		                                              IEnumerable<ParameterDeclaration> parameters,
-													  out MethodDebugSymbols mm)
+													  out MemberMapping mm)
 		{
 			MethodDef oldCurrentMethod = context.CurrentMethod;
 			Debug.Assert(oldCurrentMethod == null || oldCurrentMethod == methodDef);
@@ -128,7 +128,7 @@ namespace ICSharpCode.Decompiler.Ast
 				astBlock.Statements.InsertBefore(insertionPoint, newVarDecl);
 			}
 			
-			mm = new MethodDebugSymbols(methodDef) { LocalVariables = localVariables.ToList() };
+			mm = new MemberMapping(methodDef) { LocalVariables = localVariables.ToList() };
 			
 			return astBlock;
 		}
@@ -250,9 +250,9 @@ namespace ICSharpCode.Decompiler.Ast
 							NameToken = Identifier.Create(v.Name).WithAnnotation(v.IsParameter ? TextTokenType.Parameter : TextTokenType.Local),
 							Initializer = (Expression)TransformExpression(initializer.Arguments[0])
 						}.WithAnnotation(v));
-					vi.AddAnnotation(ILRange.OrderAndJoint(initializer.GetSelfAndChildrenRecursiveILRanges()));
+					vi.AddAnnotation(ILRange.OrderAndJoin(initializer.GetSelfAndChildrenRecursiveILRanges()));
 					if (i == 0)
-						vi.AddAnnotation(ILRange.OrderAndJoint(fixedNode.ILRanges));
+						vi.AddAnnotation(ILRange.OrderAndJoin(fixedNode.ILRanges));
 				}
 				fixedStatement.Type = AstBuilder.ConvertType(((ILVariable)fixedNode.Initializers[0].Operand).Type);
 				fixedStatement.EmbeddedStatement = TransformBlock(fixedNode.BodyBlock);
@@ -266,7 +266,7 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		AstNode TransformExpression(ILExpression expr)
 		{
-			List<ILRange> ilRanges = ILRange.OrderAndJoint(expr.GetSelfAndChildrenRecursiveILRanges());
+			List<ILRange> ilRanges = ILRange.OrderAndJoin(expr.GetSelfAndChildrenRecursiveILRanges());
 
 			AstNode node = TransformByteCode(expr);
 			Expression astExpr = node as Expression;

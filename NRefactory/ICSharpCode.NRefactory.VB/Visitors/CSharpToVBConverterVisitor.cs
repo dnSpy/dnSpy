@@ -839,7 +839,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 			var newNamespace = new NamespaceDeclaration();
 			
 			foreach (string id in namespaceDeclaration.Identifiers) {
-				newNamespace.Identifiers.Add(new Identifier(id, TextLocation.Empty));
+				newNamespace.Identifiers.Add(new Identifier(TextTokenType.NamespacePart, id, TextLocation.Empty));
 			}
 			ConvertNodes(namespaceDeclaration.Members, newNamespace.Members);
 			

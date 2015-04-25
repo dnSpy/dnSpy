@@ -93,7 +93,7 @@ namespace ICSharpCode.ILSpy.VB
 				throw new InvalidOperationException();
 			
 			if (node.Annotation<MemberMapping>() != null) {
-				output.AddDebuggerMemberMapping(currentMemberMapping);
+				output.AddDebugSymbols(currentMemberMapping);
 				currentMemberMapping = parentMemberMappings.Pop();
 			}
 			var mms = node.Annotation<List<Tuple<MemberMapping, List<ILRange>>>>();
@@ -101,7 +101,7 @@ namespace ICSharpCode.ILSpy.VB
 				Debug.Assert(mms == multiMappings);
 				if (mms == multiMappings) {
 					foreach (var mm in mms)
-						output.AddDebuggerMemberMapping(mm.Item1);
+						output.AddDebugSymbols(mm.Item1);
 					multiMappings = null;
 				}
 			}
@@ -304,7 +304,7 @@ namespace ICSharpCode.ILSpy.VB
 		{
 			var state = debugStack.Pop();
 			if (currentMemberMapping != null) {
-				foreach (var range in ILRange.OrderAndJoint(GetILRanges(state))) {
+				foreach (var range in ILRange.OrderAndJoin(GetILRanges(state))) {
 					currentMemberMapping.MemberCodeMappings.Add(
 						new SourceCodeMapping {
 							ILInstructionOffset = range,
@@ -316,7 +316,7 @@ namespace ICSharpCode.ILSpy.VB
 			}
 			else if (multiMappings != null) {
 				foreach (var mm in multiMappings) {
-					foreach (var range in ILRange.OrderAndJoint(mm.Item2)) {
+					foreach (var range in ILRange.OrderAndJoin(mm.Item2)) {
 						mm.Item1.MemberCodeMappings.Add(
 							new SourceCodeMapping {
 								ILInstructionOffset = range,

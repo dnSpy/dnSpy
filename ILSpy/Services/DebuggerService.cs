@@ -4,15 +4,9 @@
 using System;
 using System.Collections.Generic;
 using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.ILAst;
-using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Tooltips;
-using ICSharpCode.NRefactory.CSharp.Resolver;
-using ICSharpCode.NRefactory.Semantics;
-using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.Debugger.Services
 {
