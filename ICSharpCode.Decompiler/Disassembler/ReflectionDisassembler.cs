@@ -148,6 +148,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 			//               instance default class [mscorlib]System.IO.TextWriter get_BaseWriter ()  cil managed
 			//
 			
+			TextLocation startLocation = output.Location;
+			
 			//emit flags
 			WriteEnum(method.Attributes & MethodAttributes.MemberAccessMask, methodVisibility);
 			WriteFlags(method.Attributes & ~MethodAttributes.MemberAccessMask, methodAttributeFlags);
@@ -161,13 +163,13 @@ namespace ICSharpCode.Decompiler.Disassembler
 				if (method.HasImplMap) {
 					ImplMap info = method.ImplMap;
 					output.Write('(', TextTokenType.Operator);
-					output.Write("\"" + NRefactory.CSharp.CSharpOutputVisitor.ConvertString(info.Module == null ? string.Empty : info.Module.Name.String) + "\"", TextTokenType.String);
+					output.Write("\"" + NRefactory.CSharp.TextWriterTokenWriter.ConvertString(info.Module == null ? string.Empty : info.Module.Name.String) + "\"", TextTokenType.String);
 
 					if (!string.IsNullOrEmpty(info.Name) && info.Name != method.Name) {
 						output.WriteSpace();
 						output.Write("as", TextTokenType.Keyword);
 						output.WriteSpace();
-						output.Write("\"" + NRefactory.CSharp.CSharpOutputVisitor.ConvertString(info.Name) + "\"", TextTokenType.String);
+						output.Write("\"" + NRefactory.CSharp.TextWriterTokenWriter.ConvertString(info.Name) + "\"", TextTokenType.String);
 					}
 
 					if (info.IsNoMangle) {
@@ -291,9 +293,11 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			if (method.HasBody) {
 				// create IL code mappings - used in debugger
-				MemberMapping methodMapping = new MemberMapping(method);
-				methodBodyDisassembler.Disassemble(method, methodMapping);
-				output.AddDebuggerMemberMapping(methodMapping);
+				MethodDebugSymbols debugSymbols = new MethodDebugSymbols(method);
+				debugSymbols.StartLocation = startLocation;
+				methodBodyDisassembler.Disassemble(method.Body, debugSymbols);
+				debugSymbols.EndLocation = output.Location;
+				output.AddDebugSymbols(debugSymbols);
 			}
 			
 			CloseBlock("end of method " + DisassemblerHelpers.Escape(method.DeclaringType.Name) + "::" + DisassemblerHelpers.Escape(method.Name));
@@ -440,7 +444,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				// secdecls use special syntax for strings
 				output.Write("string", TextTokenType.Keyword);
 				output.Write('(', TextTokenType.Operator);
-				output.Write(string.Format("'{0}'", NRefactory.CSharp.CSharpOutputVisitor.ConvertString((UTF8String)na.Argument.Value).Replace("'", "\'")), TextTokenType.String);
+				output.Write(string.Format("'{0}'", NRefactory.CSharp.TextWriterTokenWriter.ConvertString((UTF8String)na.Argument.Value).Replace("'", "\'")), TextTokenType.String);
 				output.Write(')', TextTokenType.Operator);
 			} else {
 				WriteConstant(na.Argument.Value);
@@ -759,7 +763,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 						if (sami.IsUserDefinedSubTypeValid) {
 							output.Write(',', TextTokenType.Operator);
 							output.WriteSpace();
-							output.Write("\"" + NRefactory.CSharp.CSharpOutputVisitor.ConvertString(sami.UserDefinedSubType.FullName) + "\"", TextTokenType.String);
+							output.Write("\"" + NRefactory.CSharp.TextWriterTokenWriter.ConvertString(sami.UserDefinedSubType.FullName) + "\"", TextTokenType.String);
 						}
 					}
 					break;
@@ -810,17 +814,17 @@ namespace ICSharpCode.Decompiler.Disassembler
 						goto default;
 					output.Write("custom", TextTokenType.Keyword);
 					output.Write('(', TextTokenType.Operator);
-					output.Write(string.Format("\"{0}\"", NRefactory.CSharp.CSharpOutputVisitor.ConvertString(cmi.CustomMarshaler == null ? string.Empty : cmi.CustomMarshaler.FullName)), TextTokenType.String);
+					output.Write(string.Format("\"{0}\"", NRefactory.CSharp.TextWriterTokenWriter.ConvertString(cmi.CustomMarshaler == null ? string.Empty : cmi.CustomMarshaler.FullName)), TextTokenType.String);
 					output.Write(',', TextTokenType.Operator);
 					output.WriteSpace();
-					output.Write(string.Format("\"{0}\"", NRefactory.CSharp.CSharpOutputVisitor.ConvertString(cmi.Cookie)), TextTokenType.String);
+					output.Write(string.Format("\"{0}\"", NRefactory.CSharp.TextWriterTokenWriter.ConvertString(cmi.Cookie)), TextTokenType.String);
 					if (!UTF8String.IsNullOrEmpty(cmi.Guid) || !UTF8String.IsNullOrEmpty(cmi.NativeTypeName)) {
 						output.Write(',', TextTokenType.Operator);
 						output.WriteSpace();
-						output.Write(string.Format("\"{0}\"", NRefactory.CSharp.CSharpOutputVisitor.ConvertString(cmi.Guid)), TextTokenType.String);
+						output.Write(string.Format("\"{0}\"", NRefactory.CSharp.TextWriterTokenWriter.ConvertString(cmi.Guid)), TextTokenType.String);
 						output.Write(',', TextTokenType.Operator);
 						output.WriteSpace();
-						output.Write(string.Format("\"{0}\"", NRefactory.CSharp.CSharpOutputVisitor.ConvertString(cmi.NativeTypeName)), TextTokenType.String);
+						output.Write(string.Format("\"{0}\"", NRefactory.CSharp.TextWriterTokenWriter.ConvertString(cmi.NativeTypeName)), TextTokenType.String);
 					}
 					output.Write(')', TextTokenType.Operator);
 					break;

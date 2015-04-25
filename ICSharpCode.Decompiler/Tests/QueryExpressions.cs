@@ -52,8 +52,7 @@ public class QueryExpressions
 	
 	public object MultipleWhere()
 	{
-		return
-			from c in this.customers
+		return from c in this.customers
 			where c.Orders.Count<QueryExpressions.Order>() > 10
 			where c.Country == "DE"
 			select c;
@@ -61,8 +60,7 @@ public class QueryExpressions
 	
 	public object SelectManyFollowedBySelect()
 	{
-		return
-			from c in this.customers
+		return from c in this.customers
 			from o in c.Orders
 			select new
 			{
@@ -74,8 +72,7 @@ public class QueryExpressions
 	
 	public object SelectManyFollowedByOrderBy()
 	{
-		return
-			from c in this.customers
+		return from c in this.customers
 			from o in c.Orders
 			orderby o.Total descending
 			select new
@@ -88,8 +85,7 @@ public class QueryExpressions
 	
 	public object MultipleSelectManyFollowedBySelect()
 	{
-		return
-			from c in this.customers
+		return from c in this.customers
 			from o in c.Orders
 			from d in o.Details
 			select new
@@ -102,8 +98,7 @@ public class QueryExpressions
 	
 	public object MultipleSelectManyFollowedByLet()
 	{
-		return
-			from c in this.customers
+		return from c in this.customers
 			from o in c.Orders
 			from d in o.Details
 			let x = d.Quantity * d.UnitPrice
@@ -117,8 +112,7 @@ public class QueryExpressions
 	
 	public object FromLetWhereSelect()
 	{
-		return
-			from o in this.orders
+		return from o in this.orders
 			let t = o.Details.Sum((QueryExpressions.OrderDetail d) => d.UnitPrice * d.Quantity)
 			where t >= 1000m
 			select new
@@ -130,8 +124,7 @@ public class QueryExpressions
 	
 	public object MultipleLet()
 	{
-		return
-			from a in this.customers
+		return from a in this.customers
 			let b = a.Country
 			let c = a.Name
 			select b + c;
@@ -139,8 +132,7 @@ public class QueryExpressions
 	
 	public object Join()
 	{
-		return
-			from c in this.customers
+		return from c in this.customers
 			join o in this.orders on c.CustomerID equals o.CustomerID
 			select new
 			{
@@ -152,8 +144,7 @@ public class QueryExpressions
 	
 	public object JoinInto()
 	{
-		return
-			from c in this.customers
+		return from c in this.customers
 			join o in this.orders on c.CustomerID equals o.CustomerID into co
 			let n = co.Count<QueryExpressions.Order>()
 			where n >= 10
@@ -166,31 +157,27 @@ public class QueryExpressions
 	
 	public object OrderBy()
 	{
-		return
-			from o in this.orders
+		return from o in this.orders
 			orderby o.Customer.Name, o.Total descending
 			select o;
 	}
 	
 	public object GroupBy()
 	{
-		return
-			from c in this.customers
+		return from c in this.customers
 			group c.Name by c.Country;
 	}
 	
 	public object ExplicitType()
 	{
-		return
-			from QueryExpressions.Customer c in this.customers
+		return from QueryExpressions.Customer c in this.customers
 			where c.City == "London"
 			select c;
 	}
 	
 	public object QueryContinuation()
 	{
-		return
-			from c in this.customers
+		return from c in this.customers
 			group c by c.Country into g
 			select new
 			{

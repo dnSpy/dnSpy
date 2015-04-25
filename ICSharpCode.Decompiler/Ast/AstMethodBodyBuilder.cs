@@ -54,7 +54,7 @@ namespace ICSharpCode.Decompiler.Ast
 		public static BlockStatement CreateMethodBody(MethodDef methodDef,
 		                                              DecompilerContext context,
 		                                              IEnumerable<ParameterDeclaration> parameters,
-		                                              out MemberMapping mm)
+													  out MethodDebugSymbols mm)
 		{
 			MethodDef oldCurrentMethod = context.CurrentMethod;
 			Debug.Assert(oldCurrentMethod == null || oldCurrentMethod == methodDef);
@@ -128,7 +128,7 @@ namespace ICSharpCode.Decompiler.Ast
 				astBlock.Statements.InsertBefore(insertionPoint, newVarDecl);
 			}
 			
-			mm = new MemberMapping(methodDef, localVariables);
+			mm = new MethodDebugSymbols(methodDef) { LocalVariables = localVariables.ToList() };
 			
 			return astBlock;
 		}

@@ -35,7 +35,7 @@ namespace ICSharpCode.Decompiler
 		void WriteDefinition(string text, object definition, TextTokenType tokenType, bool isLocal = true);
 		void WriteReference(string text, object reference, TextTokenType tokenType, bool isLocal = false);
 		
-		void AddDebuggerMemberMapping(MemberMapping memberMapping);
+		void AddDebugSymbols(MethodDebugSymbols methodDebugSymbols);
 		
 		void MarkFoldStart(string collapsedText = "...", bool defaultCollapsed = false);
 		void MarkFoldEnd();

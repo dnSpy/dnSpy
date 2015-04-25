@@ -48,7 +48,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			this.options = options;
 		}
 		
-		public void Disassemble(MethodDef method, MemberMapping methodMapping)
+		public void Disassemble(MethodDef method, MethodDebugSymbols methodMapping)
 		{
 			// start writing IL code
 			CilBody body = method.Body;
@@ -94,7 +94,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (detectControlStructure && body.Instructions.Count > 0) {
 				int index = 0;
 				HashSet<uint> branchTargets = GetBranchTargets(body.Instructions);
-				WriteStructureBody(body, new ILStructure(body), branchTargets, ref index, methodMapping, method.Body.GetCodeSize());
+				WriteStructureBody(body, new ILStructure(body), branchTargets, ref index, debugSymbols, method.Body.GetCodeSize());
 			} else {
 				var instructions = method.Body.Instructions;
 				for (int i = 0; i < instructions.Count; i++) {
@@ -102,15 +102,15 @@ namespace ICSharpCode.Decompiler.Disassembler
 					var startLocation = output.Location;
 					inst.WriteTo(output, options.GetOpCodeDocumentation);
 					
-					if (methodMapping != null) {
+					if (debugSymbols != null) {
 						// add IL code mappings - used in debugger
 						var next = i + 1 < instructions.Count ? instructions[i + 1] : null;
-						methodMapping.MemberCodeMappings.Add(
+						debugSymbols.MemberCodeMappings.Add(
 							new SourceCodeMapping() {
 								StartLocation = output.Location,
 								EndLocation = output.Location,
 								ILInstructionOffset = new ILRange(inst.Offset, next == null ? (uint)method.Body.GetCodeSize() : next.Offset),
-								MemberMapping = methodMapping
+								MemberMapping = debugSymbols
 							});
 					}
 					
@@ -191,7 +191,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Indent();
 		}
 		
-		void WriteStructureBody(CilBody body, ILStructure s, HashSet<uint> branchTargets, ref int index, MemberMapping currentMethodMapping, int codeSize)
+		void WriteStructureBody(CilBody body, ILStructure s, HashSet<uint> branchTargets, ref int index, MethodDebugSymbols debugSymbols, int codeSize)
 		{
 			bool isFirstInstructionInStructure = true;
 			bool prevInstructionWasBranch = false;
@@ -205,7 +205,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				if (childIndex < s.Children.Count && s.Children[childIndex].StartOffset <= offset && offset < s.Children[childIndex].EndOffset) {
 					ILStructure child = s.Children[childIndex++];
 					WriteStructureHeader(child);
-					WriteStructureBody(body, child, branchTargets, ref index, currentMethodMapping, codeSize);
+					WriteStructureBody(body, child, branchTargets, ref index, debugSymbols, codeSize);
 					WriteStructureFooter(child);
 				} else {
 					if (!isFirstInstructionInStructure && (prevInstructionWasBranch || branchTargets.Contains(offset))) {
@@ -215,14 +215,14 @@ namespace ICSharpCode.Decompiler.Disassembler
 					inst.WriteTo(output, options.GetOpCodeDocumentation);
 					
 					// add IL code mappings - used in debugger
-					if (currentMethodMapping != null) {
+					if (debugSymbols != null) {
 						var next = index + 1 < instructions.Count ? instructions[index + 1] : null;
-						currentMethodMapping.MemberCodeMappings.Add(
+						debugSymbols.MemberCodeMappings.Add(
 							new SourceCodeMapping() {
 								StartLocation = startLocation,
 								EndLocation = output.Location,
 								ILInstructionOffset = new ILRange(inst.Offset, next == null ? (uint)codeSize : next.Offset),
-								MemberMapping = currentMethodMapping
+								MemberMapping = debugSymbols
 							});
 					}
 					

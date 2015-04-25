@@ -333,6 +333,7 @@ namespace ICSharpCode.Decompiler
 				if (csharpFormattingOptions == null) {
 					csharpFormattingOptions = FormattingOptionsFactory.CreateAllman();
 					csharpFormattingOptions.IndentSwitchBody = false;
+					csharpFormattingOptions.ArrayInitializerWrapping = Wrapping.WrapAlways;
 				}
 				return csharpFormattingOptions;
 			}

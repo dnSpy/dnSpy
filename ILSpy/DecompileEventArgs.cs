@@ -33,11 +33,6 @@ namespace ICSharpCode.ILSpy
 	public sealed class DecompileEventArgs : EventArgs
 	{
 		/// <summary>
-		/// Gets or sets the code mappings
-		/// </summary>
-		public Dictionary<int, List<MemberMapping>> CodeMappings { get; internal set; }
-		
-		/// <summary>
 		/// Gets or sets the local variables.
 		/// </summary>
 		public ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; internal set; }

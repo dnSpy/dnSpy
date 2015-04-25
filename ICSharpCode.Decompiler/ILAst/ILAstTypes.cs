@@ -426,7 +426,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			return string.Format("{0}-{1}", from.ToString("X"), to.ToString("X"));
 		}
 		
-		public static List<ILRange> OrderAndJoint(IEnumerable<ILRange> input)
+		public static List<ILRange> OrderAndJoin(IEnumerable<ILRange> input)
 		{
 			if (input == null)
 				throw new ArgumentNullException("Input is null!");
@@ -443,11 +443,12 @@ namespace ICSharpCode.Decompiler.ILAst
 				} else {
 					i++;
 				}
+				result.Add(curr);
 			}
-			return ranges;
+			return result;
 		}
 		
-		public static IEnumerable<ILRange> Invert(IEnumerable<ILRange> input, int codeSize)
+		public static List<ILRange> Invert(IEnumerable<ILRange> input, int codeSize)
 		{
 			if (input == null)
 				throw new ArgumentNullException("Input is null!");
@@ -455,23 +456,25 @@ namespace ICSharpCode.Decompiler.ILAst
 			if (codeSize <= 0)
 				throw new ArgumentException("Code size must be grater than 0");
 			
-			var ordered = OrderAndJoint(input);
+			List<ILRange> ordered = OrderAndJoin(input);
+			List<ILRange> result = new List<ILRange>(ordered.Count + 1);
 			if (ordered.Count == 0) {
-				yield return new ILRange(0, (uint)codeSize);
+				result.Add(new ILRange(0, (uint)codeSize));
 			} else {
 				// Gap before the first element
-				if (ordered.First().from != 0)
-					yield return new ILRange(0, ordered.First().from);
+				if (ordered.First().From != 0)
+					result.Add(new ILRange(0, ordered.First().From));
 				
 				// Gaps between elements
 				for (int i = 0; i < ordered.Count - 1; i++)
-					yield return new ILRange(ordered[i].to, ordered[i + 1].from);
+					result.Add(new ILRange(ordered[i].To, ordered[i + 1].From));
 				
 				// Gap after the last element
-				Debug.Assert(ordered.Last().to <= codeSize);
-				if (ordered.Last().to != codeSize)
-					yield return new ILRange(ordered.Last().to, (uint)codeSize);
+				Debug.Assert(ordered.Last().To <= codeSize);
+				if (ordered.Last().To != codeSize)
+					result.Add(new ILRange(ordered.Last().To, (uint)codeSize));
 			}
+			return result;
 		}
 	}
 	
