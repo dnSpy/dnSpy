@@ -34,6 +34,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.Decompiler;
@@ -1565,8 +1566,15 @@ namespace ICSharpCode.ILSpy
 			if (SelectionChanged != null)
 				SelectionChanged(sender, e);
 
-			if (ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.AutoFocusTextView)
-				SetTextEditorFocus(tabState.TextView);
+			if (ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.AutoFocusTextView) {
+				// The TreeView steals the focus so we can't just set the focus to the text view
+				// right here, we have to wait a little bit.
+				this.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(delegate {
+					var tabState2 = ActiveTabState;
+					if (tabState2 != null)
+						SetTextEditorFocus(tabState2.TextView);
+				}));
+			}
 		}
 		
 		bool? DecompileNodes(TabStateDecompile tabState, DecompilerTextViewState state, bool recordHistory, Language language, ILSpyTreeNode[] nodes, bool forceDecompile = false)
