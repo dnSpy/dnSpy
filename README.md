@@ -93,7 +93,9 @@ Build instructions
 
 You need [dnlib](https://github.com/0xd4d/dnlib) and you must define `THREAD_SAFE` when compiling it. dnSpy will immediately exit if it detects that dnlib isn't thread safe.
 
-Use Visual Studio 2010 or later or run `debugbuild.bat` / `releasebuild.bat` to build it.
+My modified [NRefactory](https://github.com/0xd4d/NRefactory) is another dependency.
+
+Use Visual Studio 2010 or later or run `debugbuild.bat` / `releasebuild.bat` to build it once you have all dependencies.
 
 You need the Visual Studio SDK to build ILSpy.AddIn.
 
