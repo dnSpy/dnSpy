@@ -1,0 +1,13 @@
+﻿
+Parser:
+- put newlines into the AST
+- eliminate the global lock
+
+Type System:
+- Reduce memory usage
+- Interface Implementation Map
+
+Resolver:
+- Port all #D resolver unit tests to NR
+- Port all MD resolver unit tests to NR
+

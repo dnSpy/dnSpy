@@ -9,21 +9,24 @@ How to download:
 
 How to compile:
 	1. Get Mono.Cecil
-		Download Cecil from https://github.com/jbevain/cecil/ and unzip it into a directory named "Mono.Cecil"
+		Get Cecil from https://github.com/jbevain/cecil ('git clone git://github.com/jbevain/cecil.git')
+		or download Cecil from https://github.com/jbevain/cecil/ and unzip it into a directory named "cecil"
 		next to the directory containing NRefactory.
-	2. Open NRefactory.sln in your favorite .NET IDE and compile.
+	2. If you need the IKVM binding get it from https://github.com/mono/ikvm-fork and put it next to the NRefactory directory
+		like Mono.Cecil - name it "ikvm".
+	3. Open NRefactory.sln in your favorite .NET IDE and compile.
 
 Features:
 	- C# Parser
 	- Abstract Syntax Tree with pattern-matching support
-	- Semantic Analysis for C# (supports C# 4.0 + async/await)
+	- Semantic Analysis for C# (supports C# 5.0)
 	- Code Completion for C#
 	- Pretty Printer for C#
 	- Lots of C# refactorings
 	
 Non-Features:
 	- VB support is not implemented yet.
-	- NRefactory cannot generate IL code
+	- NRefactory cannot generate IL code -- it's a compiler frontend, not a full compiler
 
 Dependencies:
 	.NET 4.0
@@ -120,7 +123,6 @@ Q:  What is the difference between NRefactory and Roslyn?
 	- NRefactory does not have VB support.
 	- NRefactory cannot compile code to IL; it's not a full compiler, just a frontend.
 	- NRefactory C# AST is mutable and supports pattern matching; Roslyn is immutable and does not have built-in pattern matching.
-	- NRefactory is Open Source, if you somehow can't get at the information you need, you can modify the code.
 
 Q:	What is the difference between types and type definitions?
 
@@ -206,7 +208,7 @@ A:	This question is a bit difficult to answer.
 		-> this is being worked on; for the time being, NRefactory uses a global lock during parsing;
 		   so it's thread-safe but slow.
 	
-	Some instance methods may use hidden instance state, so it is not safe to e.g use an instance
+	Some instance methods may use hidden instance state, so it is not safe to e.g. use an instance
 	of the CSharp.Resolver.TypeInference class concurrently.
 	Instead, you need to create an instance on every thread.
 	

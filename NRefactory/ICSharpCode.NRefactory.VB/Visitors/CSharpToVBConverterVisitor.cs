@@ -33,7 +33,7 @@ namespace ICSharpCode.NRefactory.VB.Visitors
 		Stack<BlockStatement> blocks;
 		Stack<TypeDeclaration> types;
 		Stack<MemberInfo> members;
-
+		
 		class MemberInfo
 		{
 			public bool inIterator;
