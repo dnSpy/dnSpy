@@ -572,21 +572,40 @@ namespace ICSharpCode.ILSpy
 		
 		public ILSpyTreeNode FindTreeNode(object reference)
 		{
-			if (reference is TypeReference) {
+			if (reference is TypeReference)
+			{
 				return assemblyListTreeNode.FindTypeNode(((TypeReference)reference).Resolve());
-			} else if (reference is MethodReference) {
+			}
+			else if (reference is MethodReference)
+			{
 				return assemblyListTreeNode.FindMethodNode(((MethodReference)reference).Resolve());
-			} else if (reference is FieldReference) {
+			}
+			else if (reference is FieldReference)
+			{
 				return assemblyListTreeNode.FindFieldNode(((FieldReference)reference).Resolve());
-			} else if (reference is PropertyReference) {
+			}
+			else if (reference is PropertyReference)
+			{
 				return assemblyListTreeNode.FindPropertyNode(((PropertyReference)reference).Resolve());
-			} else if (reference is EventReference) {
+			}
+			else if (reference is EventReference)
+			{
 				return assemblyListTreeNode.FindEventNode(((EventReference)reference).Resolve());
-			} else if (reference is AssemblyDefinition) {
+			}
+			else if (reference is AssemblyDefinition)
+			{
 				return assemblyListTreeNode.FindAssemblyNode((AssemblyDefinition)reference);
-			} else if (reference is ModuleDefinition) {
+			}
+			else if (reference is ModuleDefinition)
+			{
 				return assemblyListTreeNode.FindAssemblyNode((ModuleDefinition)reference);
-			} else {
+			}
+			else if (reference is Resource)
+			{
+				return assemblyListTreeNode.FindResourceNode((Resource)reference);
+			}
+			else
+			{
 				return null;
 			}
 		}
