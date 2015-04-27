@@ -82,6 +82,9 @@ Ctrl+O		| Open assembly
 Ctrl+Z		| (Assembly Editor) Undo
 Ctrl+Y		| (Assembly Editor) Redo
 Ctrl+Shift+Z| (Assembly Editor) Redo
+Ctrl++		| (Text view) Zoom In
+Ctrl+-		| (Text view) Zoom Out
+Ctrl+0		| (Text view) Zoom Reset
 
 Credits
 =======

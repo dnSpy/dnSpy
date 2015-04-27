@@ -22,6 +22,9 @@
 		<RoutedUICommand x:Key="CloseActiveTab" Text="Close the Active Tab" />
 		<RoutedUICommand x:Key="SelectNextTab" Text="Select Next Tab" />
 		<RoutedUICommand x:Key="SelectPrevTab" Text="Select Previous Tab" />
+		<RoutedUICommand x:Key="ZoomIncrease" Text="Zoom In" />
+		<RoutedUICommand x:Key="ZoomDecrease" Text="Zoom Out" />
+		<RoutedUICommand x:Key="ZoomReset" Text="Zoom Reset" />
 	</Window.Resources>
 	<Window.InputBindings>
 		<KeyBinding Gesture="Ctrl+D" Command="{StaticResource GoToToken}" />
@@ -32,8 +35,26 @@
 		<KeyBinding Gesture="Ctrl+Tab" Command="{StaticResource SelectNextTab}" />
 		<KeyBinding Gesture="Ctrl+Shift+Tab" Command="{StaticResource SelectPrevTab}" />
 		<KeyBinding Gesture="Backspace" Command="BrowseBack" />
+		<KeyBinding Gesture="Ctrl+OemPlus" Command="{StaticResource ZoomIncrease}" />
+		<KeyBinding Gesture="Ctrl+Add" Command="{StaticResource ZoomIncrease}" />
+		<KeyBinding Gesture="Ctrl+OemMinus" Command="{StaticResource ZoomDecrease}" />
+		<KeyBinding Gesture="Ctrl+Subtract" Command="{StaticResource ZoomDecrease}" />
+		<KeyBinding Gesture="Ctrl+D0" Command="{StaticResource ZoomReset}" />
+		<KeyBinding Gesture="Ctrl+NumPad0" Command="{StaticResource ZoomReset}" />
 	</Window.InputBindings>
 	<Window.CommandBindings>
+		<CommandBinding
+			Command="{StaticResource ZoomIncrease}"
+			CanExecute="ZoomIncreaseCanExecute"
+			Executed="ZoomIncreaseExecuted" />
+		<CommandBinding
+			Command="{StaticResource ZoomDecrease}"
+			CanExecute="ZoomDecreaseCanExecute"
+			Executed="ZoomDecreaseExecuted" />
+		<CommandBinding
+			Command="{StaticResource ZoomReset}"
+			CanExecute="ZoomResetCanExecute"
+			Executed="ZoomResetExecuted" />
 		<CommandBinding
 			Command="{StaticResource SelectNextTab}"
 			CanExecute="SelectNextTabCanExecute"

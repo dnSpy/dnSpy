@@ -2128,6 +2128,110 @@ namespace ICSharpCode.ILSpy
 			e.CanExecute = tabGroupsManager.ActiveTabGroup.SelectPreviousTabCanExecute();
 		}
 
+		private void ZoomIncreaseExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			ZoomIncrease(ActiveTabState);
+		}
+
+		private void ZoomIncreaseCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = ActiveTabState != null;
+		}
+
+		private void ZoomDecreaseExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			ZoomDecrease(ActiveTabState);
+		}
+
+		private void ZoomDecreaseCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = ActiveTabState != null;
+		}
+
+		private void ZoomResetExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			ZoomReset(ActiveTabState);
+		}
+
+		private void ZoomResetCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = ActiveTabState != null;
+		}
+
+		const double MIN_ZOOM = 0.2;
+		const double MAX_ZOOM = 4.0;
+
+		void ZoomIncrease(TabStateDecompile tabState)
+		{
+			if (tabState == null)
+				return;
+
+			var scale = GetScaleValue(tabState);
+			scale += scale / 10;
+			SetScaleValue(tabState, scale);
+		}
+
+		void ZoomDecrease(TabStateDecompile tabState)
+		{
+			if (tabState == null)
+				return;
+
+			var scale = GetScaleValue(tabState);
+			scale -= scale / 10;
+			SetScaleValue(tabState, scale);
+		}
+
+		void ZoomReset(TabStateDecompile tabState)
+		{
+			if (tabState == null)
+				return;
+
+			SetScaleValue(tabState, 1);
+		}
+
+		double GetScaleValue(TabStateDecompile tabState)
+		{
+			var st = tabState.TextView.TextEditor.TextArea.LayoutTransform as ScaleTransform;
+			if (st != null)
+				return st.ScaleX;
+			return 1;
+		}
+
+		void SetScaleValue(TabStateDecompile tabState, double scale)
+		{
+			if (scale == 1) {
+				tabState.TextView.TextEditor.TextArea.LayoutTransform = Transform.Identity;
+				tabState.TextView.TextEditor.TextArea.ClearValue(TextOptions.TextFormattingModeProperty);
+			}
+			else {
+				var st = tabState.TextView.TextEditor.TextArea.LayoutTransform as ScaleTransform;
+				if (st == null)
+					tabState.TextView.TextEditor.TextArea.LayoutTransform = st = new ScaleTransform();
+
+				if (scale < MIN_ZOOM)
+					scale = MIN_ZOOM;
+				else if (scale > MAX_ZOOM)
+					scale = MAX_ZOOM;
+
+				// We must set it to Ideal or the text will be blurry
+				TextOptions.SetTextFormattingMode(tabState.TextView.TextEditor.TextArea, TextFormattingMode.Ideal);
+				st.ScaleX = scale;
+				st.ScaleY = scale;
+			}
+		}
+
+		internal void ZoomMouseWheel(DecompilerTextView textView, int delta)
+		{
+			var tabState = TabStateDecompile.GetTabStateDecompile(textView);
+			if (tabState == null)
+				return;
+
+			if (delta > 0)
+				ZoomIncrease(tabState);
+			else if (delta < 0)
+				ZoomDecrease(tabState);
+		}
+
 		internal TabStateDecompile CloneTab(TabStateDecompile tabState, bool decompile = true)
 		{
 			if (tabState == null)
