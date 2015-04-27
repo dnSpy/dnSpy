@@ -97,10 +97,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			base.OnChildrenChanged(e);
 
 			if (e.NewItems != null) {
-				if (IsHidden) {
-					var parent = this.Parent as ILSpyTreeNode ?? this;
-					parent.ApplyFilterToChild(this);
-				}
+				if (IsHidden)
+					ReapplyFilter();
 				if (IsVisible) {
 					foreach (ILSpyTreeNode node in e.NewItems)
 						ApplyFilterToChild(node);
@@ -108,6 +106,15 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					childrenNeedFiltering = true;
 				}
 			}
+
+			if (IsVisible && Children.Count == 0)
+				ReapplyFilter();
+		}
+
+		void ReapplyFilter()
+		{
+			var parent = this.Parent as ILSpyTreeNode ?? this;
+			parent.ApplyFilterToChild(this);
 		}
 
 		void ApplyFilterToChild(ILSpyTreeNode child)
