@@ -148,8 +148,10 @@ namespace ICSharpCode.ILSpy.AsmEditor
 					Add(command);
 			}
 			else {
-				foreach (var asmNode in GetAssemblyTreeNodes(command))
-					currentCommands.ModifiedAssemblies[asmNode] = asmNode.LoadedAssembly.IsDirty;
+				foreach (var asmNode in GetAssemblyTreeNodes(command)) {
+					if (!currentCommands.ModifiedAssemblies.ContainsKey(asmNode))
+						currentCommands.ModifiedAssemblies.Add(asmNode, asmNode.LoadedAssembly.IsDirty);
+				}
 				command.Execute();
 				OnExecutedOneCommand(currentCommands);
 				currentCommands.Commands.Add(command);
@@ -317,6 +319,10 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public void MarkAsSaved(LoadedAssembly asm)
 		{
 			asm.IsDirty = false;
+			foreach (var group in undoCommands) {
+				foreach (var key in group.ModifiedAssemblies.Keys.ToArray())
+					group.ModifiedAssemblies[key] = true;
+			}
 		}
 
 		void UpdateAssemblySavedStateRedo(UndoState executedGroup)
