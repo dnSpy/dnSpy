@@ -324,7 +324,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		internal LoadedAssembly ForceAddAssemblyToList(LoadedAssembly newAsm, bool canAdd, bool delay)
+		internal LoadedAssembly ForceAddAssemblyToList(LoadedAssembly newAsm, bool canAdd, bool delay, int index = -1)
 		{
 			if (!canAdd)
 				return newAsm;
@@ -337,25 +337,33 @@ namespace ICSharpCode.ILSpy
 			// Sometimes the treeview will completely mess up if we immediately add the asm.
 			// Wait a little while for the treeview to finish its things before we add it.
 			if (delay)
-				return DelayLoadAssembly(newAsm);
-			this.assemblies.Add(newAsm);
+				return DelayLoadAssembly(newAsm, index);
+			AddToList(newAsm, index);
 			return newAsm;
 		}
 
-		Dictionary<string, LoadedAssembly> delayLoadedAsms = new Dictionary<string, LoadedAssembly>(StringComparer.OrdinalIgnoreCase);
-		LoadedAssembly DelayLoadAssembly(LoadedAssembly newAsm)
+		void AddToList(LoadedAssembly newAsm, int index)
+		{
+			if (index >= 0 && index < assemblies.Count)
+				assemblies.Insert(index, newAsm);
+			else
+				assemblies.Add(newAsm);
+		}
+
+		Dictionary<string, Tuple<LoadedAssembly, int>> delayLoadedAsms = new Dictionary<string, Tuple<LoadedAssembly, int>>(StringComparer.OrdinalIgnoreCase);
+		LoadedAssembly DelayLoadAssembly(LoadedAssembly newAsm, int index)
 		{
 			System.Diagnostics.Debug.Assert(!string.IsNullOrWhiteSpace(newAsm.FileName));
 			bool startThread;
 			lock (delayLoadedAsms) {
-				LoadedAssembly delayAsm;
-				if (delayLoadedAsms.TryGetValue(newAsm.FileName, out delayAsm)) {
+				Tuple<LoadedAssembly, int> info;
+				if (delayLoadedAsms.TryGetValue(newAsm.FileName, out info)) {
 					var mod = newAsm.ModuleDefinition;
 					if (mod != null)
 						mod.Dispose();
-					return delayAsm;
+					return info.Item1;
 				}
-				delayLoadedAsms.Add(newAsm.FileName, newAsm);
+				delayLoadedAsms.Add(newAsm.FileName, Tuple.Create(newAsm, index));
 				startThread = delayLoadedAsms.Count == 1;
 			}
 			if (startThread)
@@ -366,17 +374,18 @@ namespace ICSharpCode.ILSpy
 		void DelayLoadAssemblyMainThread()
 		{
 			App.Current.Dispatcher.VerifyAccess();
-			List<LoadedAssembly> newAsms;
+			List<Tuple<LoadedAssembly, int>> newAsms;
 			lock (delayLoadedAsms) {
-				newAsms = new List<LoadedAssembly>(delayLoadedAsms.Values);
+				newAsms = new List<Tuple<LoadedAssembly, int>>(delayLoadedAsms.Values);
 				delayLoadedAsms.Clear();
 			}
 
 			lock (assemblies) {
-				foreach (var newAsm in newAsms) {
+				foreach (var info in newAsms) {
+					var newAsm = info.Item1;
 					var asm = FindAssemblyByFileName_NoLock(newAsm.FileName);
 					if (asm == null)
-						assemblies.Add(newAsm);
+						AddToList(info.Item1, info.Item2);
 					else {
 						var mod = newAsm.ModuleDefinition;
 						if (mod != null)

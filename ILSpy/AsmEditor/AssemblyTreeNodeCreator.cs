@@ -29,24 +29,27 @@ namespace ICSharpCode.ILSpy.AsmEditor
 	sealed class AssemblyTreeNodeCreator : IDisposable
 	{
 		AssemblyTreeNode asmNode;
+		bool restoreIndex;
+		int origIndex = -1;
 
 		public AssemblyTreeNode AssemblyTreeNode {
 			get { return asmNode; }
 		}
 
 		public AssemblyTreeNodeCreator(LoadedAssembly asm)
-			: this(asm, null)
+			: this(asm, null, false)
 		{
 		}
 
 		public AssemblyTreeNodeCreator(AssemblyTreeNode asmNode)
-			: this(asmNode.LoadedAssembly, asmNode)
+			: this(asmNode.LoadedAssembly, asmNode, true)
 		{
 		}
 
-		AssemblyTreeNodeCreator(LoadedAssembly asm, AssemblyTreeNode asmNode)
+		AssemblyTreeNodeCreator(LoadedAssembly asm, AssemblyTreeNode asmNode, bool restoreIndex)
 		{
 			this.asmNode = asmNode ?? new AssemblyTreeNode(asm);
+			this.restoreIndex = restoreIndex;
 			MainWindow.Instance.AssemblyListTreeNode.RegisterCached(asm, this.asmNode);
 		}
 
@@ -55,8 +58,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			Debug.Assert(asmNode.Parent == null);
 			if (asmNode.Parent != null)
 				throw new InvalidOperationException();
+			Debug.Assert(restoreIndex && origIndex >= 0);
 
-			MainWindow.Instance.CurrentAssemblyList.ForceAddAssemblyToList(asmNode.LoadedAssembly, true, false);
+			MainWindow.Instance.CurrentAssemblyList.ForceAddAssemblyToList(asmNode.LoadedAssembly, true, false, origIndex);
 
 			bool b = asmNode.LoadedAssembly.ModuleDefinition == null ||
 				(MainWindow.Instance.FindTreeNode(
@@ -73,6 +77,13 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			Debug.Assert(asmNode.Parent != null);
 			if (asmNode.Parent == null)
 				throw new InvalidOperationException();
+
+			if (restoreIndex && origIndex == -1) {
+				origIndex = MainWindow.Instance.AssemblyListTreeNode.Children.IndexOf(asmNode);
+				Debug.Assert(origIndex >= 0);
+				if (origIndex < 0)
+					throw new InvalidOperationException();
+			}
 
 			asmNode.Delete();
 		}
