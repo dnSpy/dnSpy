@@ -419,8 +419,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		readonly TypeDefOptions newOptions;
 		readonly TypeDefOptions origOptions;
 		readonly NamespaceTreeNodeCreator nsNodeCreator;
-		readonly NamespaceTreeNode origNsNode;
-		readonly int origNsIndex;
+		readonly ILSpyTreeNode origParentNode;
+		readonly int origParentChildIndex;
+		readonly bool nameChanged;
 
 		TypeDefSettingsCommand(TypeTreeNode typeNode, TypeDefOptions options)
 		{
@@ -428,13 +429,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			this.newOptions = options;
 			this.origOptions = new TypeDefOptions(typeNode.TypeDefinition);
 
-			this.origNsNode = typeNode.Parent as NamespaceTreeNode;
-			if (this.origNsNode != null) {
-				var asmNode = (AssemblyTreeNode)this.origNsNode.Parent;
-				this.origNsIndex = this.origNsNode.Children.IndexOf(typeNode);
-				Debug.Assert(this.origNsIndex >= 0);
-				if (this.origNsIndex < 0)
-					throw new InvalidOperationException();
+			this.origParentNode = (ILSpyTreeNode)typeNode.Parent;
+			this.origParentChildIndex = this.origParentNode.Children.IndexOf(typeNode);
+			Debug.Assert(this.origParentChildIndex >= 0);
+			if (this.origParentChildIndex < 0)
+				throw new InvalidOperationException();
+
+			this.nameChanged = origOptions.Name != newOptions.Name;
+			if (this.origParentNode is NamespaceTreeNode) {
+				var asmNode = (AssemblyTreeNode)this.origParentNode.Parent;
 				if (AssemblyTreeNode.NamespaceStringComparer.Compare(newOptions.Namespace, origOptions.Namespace) != 0)
 					this.nsNodeCreator = new NamespaceTreeNodeCreator(newOptions.Namespace, asmNode);
 			}
@@ -448,20 +451,31 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		{
 			if (nsNodeCreator != null) {
 				typeNode.OnBeforeRemoved();
-				bool b = origNsIndex < origNsNode.Children.Count && origNsNode.Children[origNsIndex] == typeNode;
+				bool b = origParentChildIndex < origParentNode.Children.Count && origParentNode.Children[origParentChildIndex] == typeNode;
 				Debug.Assert(b);
 				if (!b)
 					throw new InvalidOperationException();
-				origNsNode.Children.RemoveAt(origNsIndex);
+				origParentNode.Children.RemoveAt(origParentChildIndex);
 				newOptions.CopyTo(typeNode.TypeDefinition);
 
 				nsNodeCreator.Add();
 				nsNodeCreator.NamespaceTreeNode.AddToChildren(typeNode);
 				typeNode.OnReadded();
 			}
-			else {
+			else if (nameChanged) {
+				typeNode.OnBeforeRemoved();
+				bool b = origParentChildIndex < origParentNode.Children.Count && origParentNode.Children[origParentChildIndex] == typeNode;
+				Debug.Assert(b);
+				if (!b)
+					throw new InvalidOperationException();
+				origParentNode.Children.RemoveAt(origParentChildIndex);
 				newOptions.CopyTo(typeNode.TypeDefinition);
+
+				origParentNode.AddToChildren(typeNode);
+				typeNode.OnReadded();
 			}
+			else
+				newOptions.CopyTo(typeNode.TypeDefinition);
 			typeNode.RaiseUIPropsChanged();
 		}
 
@@ -476,12 +490,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 				nsNodeCreator.Remove();
 
 				origOptions.CopyTo(typeNode.TypeDefinition);
-				origNsNode.Children.Insert(origNsIndex, typeNode);
+				origParentNode.Children.Insert(origParentChildIndex, typeNode);
 				typeNode.OnReadded();
 			}
-			else {
+			else if (nameChanged) {
+				typeNode.OnBeforeRemoved();
+				bool b = origParentNode.Children.Remove(typeNode);
+				Debug.Assert(b);
+				if (!b)
+					throw new InvalidOperationException();
+
 				origOptions.CopyTo(typeNode.TypeDefinition);
+				origParentNode.Children.Insert(origParentChildIndex, typeNode);
+				typeNode.OnReadded();
 			}
+			else
+				origOptions.CopyTo(typeNode.TypeDefinition);
 			typeNode.RaiseUIPropsChanged();
 		}
 
