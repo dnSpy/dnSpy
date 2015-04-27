@@ -102,7 +102,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		}
 		readonly EnumListVM typeKindVM;
 
-		static readonly EnumVM[] typeVisibilityList = EnumVM.Create(typeof(TypeVisibility));
+		static readonly EnumVM[] typeVisibilityList = new EnumVM[] {
+			new EnumVM(Types.TypeVisibility.NotPublic, "NotPublic"),
+			new EnumVM(Types.TypeVisibility.Public, "Public"),
+			new EnumVM(Types.TypeVisibility.NestedPublic, "Public"),
+			new EnumVM(Types.TypeVisibility.NestedPrivate, "Private"),
+			new EnumVM(Types.TypeVisibility.NestedFamily, "Family"),
+			new EnumVM(Types.TypeVisibility.NestedAssembly, "Assembly"),
+			new EnumVM(Types.TypeVisibility.NestedFamANDAssem, "Family and Assembly"),
+			new EnumVM(Types.TypeVisibility.NestedFamORAssem, "Family or Assembly"),
+		};
 		public EnumListVM TypeVisibility {
 			get { return typeVisibilityVM; }
 		}
