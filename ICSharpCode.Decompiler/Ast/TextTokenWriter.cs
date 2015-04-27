@@ -57,7 +57,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (tokenType == TextTokenType.Text)
 				tokenType = TextTokenHelper.GetTextTokenType(identifier.AnnotationVT<TextTokenType>() ?? identifier.Annotation<object>());
 
-			var definition = GetCurrentDefinition();
+			var definition = GetCurrentDefinition(identifier);
 			if (definition != null) {
 				output.WriteDefinition(identifier.Name, definition, tokenType, false);
 				return;
@@ -172,12 +172,18 @@ namespace ICSharpCode.Decompiler.Ast
 			return null;
 		}
 		
-		object GetCurrentDefinition()
+		object GetCurrentDefinition(Identifier identifier)
 		{
-			if (nodeStack == null || nodeStack.Count == 0)
-				return null;
-			
-			var node = nodeStack.Peek();
+			if (nodeStack != null && nodeStack.Count != 0) {
+				var data = GetDefinition(nodeStack.Peek());
+				if (data != null)
+					return data;
+			}
+			return GetDefinition(identifier);
+		}
+
+		object GetDefinition(AstNode node)
+		{
 			if (node is Identifier) {
 				node = node.Parent;
 				if (node is VariableInitializer)
