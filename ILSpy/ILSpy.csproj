@@ -448,7 +448,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Images\ResourceXsl.png" />
-    <None Include="packages.config" />
     <None Include="Properties\app.config.template" />
     <None Include="Properties\AssemblyInfo.template.cs" />
     <Compile Include="Properties\WPFAssemblyInfo.cs" />
@@ -645,6 +644,10 @@
       <Name>ICSharpCode.AvalonEdit</Name>
     </ProjectReference>
     <ProjectReference Include="..\NRefactory2\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj">
+      <Project>{53DCA265-3C3C-42F9-B647-F72BA678122B}</Project>
+      <Name>ICSharpCode.NRefactory.CSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NRefactory\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj">
       <Project>{53DCA265-3C3C-42F9-B647-F72BA678122B}</Project>
       <Name>ICSharpCode.NRefactory.CSharp</Name>
     </ProjectReference>

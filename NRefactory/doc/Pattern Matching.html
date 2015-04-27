@@ -1,0 +1,115 @@
+<html>
+<head><title>NRefactory Pattern Matching</title></head>
+<body>
+    The pattern matching API for the C# AST is similar to how regular
+    expressions work in .NET, except that it's working with AstNodes
+    instead of characters.<br>
+    First you declare a pattern, for example: "X a = new X(...);".<br>
+    <span style="color: #000080; ">var</span>&nbsp;pattern =&nbsp;<span
+      style="color: #008b8b; font-weight: bold; ">new</span>&nbsp;VariableDeclarationStatement&nbsp;<span
+      style="color: #235100; font-weight: normal; font-style: normal; ">{</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Type =&nbsp;<span style="color: #008b8b; font-weight: bold; ">new</span>&nbsp;<span
+      style="color: #191970; font-weight: bold; ">AnyNode</span><span
+      style="color: #235100; font-weight: normal; font-style: normal; ">(</span><span
+      style="color: #0000ff; ">"type"</span><span style="color: #235100;
+      font-weight: normal; font-style: normal; ">),</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Variables =&nbsp;<span style="color: #235100; font-weight: normal;
+      font-style: normal; ">{</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #008b8b; font-weight: bold; ">new</span>&nbsp;VariableInitializer&nbsp;<span
+      style="color: #235100; font-weight: normal; font-style: normal; ">{</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Name = Pattern<span style="color: #235100; font-weight:
+      normal; font-style: normal; ">.</span>AnyString<span style="color:
+      #235100; font-weight: normal; font-style: normal; ">,</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializer =&nbsp;<span style="color: #008b8b; font-weight:
+      bold; ">new</span>&nbsp;ObjectCreateExpression&nbsp;<span style="color:
+      #235100; font-weight: normal; font-style: normal; ">{</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Type =&nbsp;<span style="color: #008b8b; font-weight:
+      bold; ">new</span>&nbsp;<span style="color: #191970; font-weight: bold;
+      ">Backreference</span><span style="color: #235100; font-weight:
+      normal; font-style: normal; ">(</span><span style="color: #0000ff;
+      ">"type"</span><span style="color: #235100; font-weight: normal;
+      font-style: normal; ">),</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Arguments =&nbsp;<span style="color: #235100;
+      font-weight: normal; font-style: normal; ">{</span>&nbsp;<span
+      style="color: #008b8b; font-weight: bold; ">new</span>&nbsp;<span
+      style="color: #191970; font-weight: bold; ">Repeat</span><span
+      style="color: #235100; font-weight: normal; font-style: normal; ">(</span><span
+      style="color: #008b8b; font-weight: bold; ">new</span>&nbsp;<span
+      style="color: #191970; font-weight: bold; ">AnyNode</span><span
+      style="color: #235100; font-weight: normal; font-style: normal; ">())</span>&nbsp;<span
+      style="color: #235100; font-weight: normal; font-style: normal; ">}</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Initializer =&nbsp;<span style="color: #008b8b;
+      font-weight: bold; ">new</span>&nbsp;<span style="color: #191970;
+      font-weight: bold; ">OptionalNode</span><span style="color:
+      #235100; font-weight: normal; font-style: normal; ">(</span><span
+      style="color: #008b8b; font-weight: bold; ">new</span>&nbsp;<span
+      style="color: #191970; font-weight: bold; ">AnyNode</span><span
+      style="color: #235100; font-weight: normal; font-style: normal; ">())</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #235100; font-weight: normal;
+      font-style: normal; ">}</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #235100; font-weight: normal;
+      font-style: normal; ">}</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #235100; font-weight: normal; font-style:
+      normal; ">}};</span><br>
+    <br>
+    This is a <b>pattern AST</b> - it is a C# AST using the normal C#
+    AST classes, but also contains special <b>pattern nodes</b>
+    (AnyNode, Repeat, OptionalNode, Backreference, NamedNode, Choice,
+    ...).<br>
+    If you call<br>
+    &nbsp;Match m = pattern<span style="color: #235100; font-weight: normal;
+      font-style: normal; ">.</span><span style="color: #191970;
+      font-weight: bold; ">Match</span><span style="color: #235100;
+      font-weight: normal; font-style: normal; ">(</span>someNode<span
+      style="color: rgb(35, 81, 0); font-weight: normal; font-style:
+      normal;">);<br>
+    </span>then m.Success will be true if someNode is a
+    VariableDeclarationStatement that declares a single variable, which
+    is initialized to a new object of the variable type.<br>
+    Basically, Match performs a comparison of the pattern AST with
+    someNode. If the pattern AST does not contain any pattern nodes, the
+    match will be successful if the ASTs are syntactically identical
+    (whitespace/comments are not compared).<br>
+    &nbsp; AnyNode will match any non-null node, and optionally store the
+    node it was matched against in a named <b>capture group</b>.<br>
+    &nbsp; Backreference will match any node that is syntactically identical
+    to the node that was previously stored in the named capture group.<br>
+    &nbsp; Repeat can be used only in AstNodeCollections and will try to
+    match its child pattern against any number of nodes - this is
+    equivalent to * (Kleene star) in regular expressions.<br>
+    &nbsp; OptionalNode will match null nodes, or will try to match its child
+    pattern against the node. OptionalNode can also be used in
+    AstNodeCollections, where it is equivalent to a Repeat with
+    MinCount=0 and MaxCount=1.<br>
+    <br>
+    The resulting match object can also be used to retrieve the nodes
+    stored in the capture groups:<br>
+    <span style="color: #0000ff; font-weight: bold; ">if</span>&nbsp;<span
+      style="color: #235100; font-weight: normal; font-style: normal; ">(</span>m<span
+      style="color: #235100; font-weight: normal; font-style: normal; ">.</span>Success<span
+      style="color: #235100; font-weight: normal; font-style: normal; ">)</span>&nbsp;<span
+      style="color: #235100; font-weight: normal; font-style: normal; ">{</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;m<span style="color: #235100; font-weight: normal; font-style:
+      normal; ">.</span>Get<span style="color: #235100; font-weight:
+      normal; font-style: normal; ">&lt;</span>AstType<span
+      style="color: #235100; font-weight: normal; font-style: normal; ">&gt;(</span><span
+      style="color: #0000ff; ">"type"</span><span style="color: #235100;
+      font-weight: normal; font-style: normal; ">).</span><span
+      style="color: #191970; font-weight: bold; ">Single</span><span
+      style="color: #235100; font-weight: normal; font-style: normal; ">().</span><span
+      style="color: #191970; font-weight: bold; ">ReplaceWith</span><span
+      style="color: #235100; font-weight: normal; font-style: normal; ">(</span><span
+      style="color: #008b8b; font-weight: bold; ">new</span>&nbsp;<span
+      style="color: #191970; font-weight: bold; ">SimpleType</span><span
+      style="color: #235100; font-weight: normal; font-style: normal; ">(</span><span
+      style="color: #0000ff; ">"var"</span><span style="color: #235100;
+      font-weight: normal; font-style: normal; ">));</span><br>
+    <span style="color: #235100; font-weight: normal; font-style:
+      normal; ">}</span><br>
+    <br>
+    This feature was originally written for the decompiler in ILSpy, but
+    it is also very useful for refactorings. You can also implement
+    custom pattern nodes (derive from the Pattern base class) with
+    custom match logic - for example if you want to check the semantics
+    of a node.<br>
+</body></html>
