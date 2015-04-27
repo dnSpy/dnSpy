@@ -42,7 +42,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	public sealed class AssemblyTreeNode : ILSpyTreeNode
 	{
 		readonly LoadedAssembly assembly;
-		readonly Dictionary<string, NamespaceTreeNode> namespaces = new Dictionary<string, NamespaceTreeNode>(StringComparer.Ordinal);
+		internal static readonly StringComparer NamespaceStringComparer = StringComparer.Ordinal;
+		internal static readonly StringComparer TypeStringComparer = StringComparer.OrdinalIgnoreCase;
+		readonly Dictionary<string, NamespaceTreeNode> namespaces = new Dictionary<string, NamespaceTreeNode>(NamespaceStringComparer);
 
 		public AssemblyTreeNode(LoadedAssembly assembly)
 		{
@@ -270,7 +272,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			foreach (NamespaceTreeNode ns in namespaces.Values) {
 				ns.Children.Clear();
 			}
-			foreach (TypeDef type in moduleDefinition.Types.OrderBy(t => t.FullName)) {
+			foreach (TypeDef type in moduleDefinition.Types.OrderBy(t => t.FullName, TypeStringComparer)) {
 				NamespaceTreeNode ns;
 				if (!namespaces.TryGetValue(type.Namespace, out ns)) {
 					ns = new NamespaceTreeNode(type.Namespace);
@@ -284,6 +286,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				if (ns.Children.Count > 0)
 					this.Children.Add(ns);
 			}
+		}
+
+		protected override int GetNewChildIndex(SharpTreeNode node)
+		{
+			if (node is NamespaceTreeNode)
+				return GetNewChildIndex(node, NamespaceStringComparer, n => ((NamespaceTreeNode)n).Name);
+			return base.GetNewChildIndex(node);
 		}
 
 		internal void OnRemoved(NamespaceTreeNode nsNode)
@@ -356,23 +365,15 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 			Debug.Assert(typeDict.Count == 0);
 			Debug.Assert(namespaces.Count == 0);
-			RaiseAsmPropsChanged();
+			RaiseUIPropsChanged();
 		}
 
-		void RaiseAsmPropsChanged()
+		public override void RaiseUIPropsChanged()
 		{
-			RaiseAsmPropsChangedInternal();
+			base.RaiseUIPropsChanged();
 			var parent = Parent as AssemblyTreeNode;
 			if (parent != null && parent.Children[0] == this)
-				parent.RaiseAsmPropsChangedInternal();
-		}
-
-		void RaiseAsmPropsChangedInternal()
-		{
-			RaisePropertyChanged("Icon");
-			RaisePropertyChanged("ExpandedIcon");
-			RaisePropertyChanged("ToolTip");
-			RaisePropertyChanged("Text");
+				parent.RaiseUIPropsChanged();
 		}
 
 		/// <summary>
@@ -400,18 +401,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			modNode.Children.Clear();
 			Children.AddRange(oldChildren);
 
-			RaiseAsmPropsChanged();
+			RaiseUIPropsChanged();
 			return modNode;
-		}
-
-		internal void OnModulePropertiesChanged()
-		{
-			RaiseAsmPropsChanged();
-		}
-
-		internal void OnAssemblyPropertiesChanged()
-		{
-			RaiseAsmPropsChanged();
 		}
 
 		/// <summary>

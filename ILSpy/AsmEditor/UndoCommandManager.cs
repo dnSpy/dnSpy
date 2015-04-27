@@ -336,7 +336,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		static IEnumerable<AssemblyTreeNode> GetAssemblyTreeNodes(IUndoCommand command)
 		{
 			foreach (var node in command.TreeNodes) {
-				var asmNode = ILSpyTreeNode.GetAssemblyTreeNode(node);
+				var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
 				Debug.Assert(asmNode != null);
 				if (asmNode != null)
 					yield return asmNode;
@@ -349,6 +349,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				var module = asmNode.LoadedAssembly.ModuleDefinition;
 				if (module != null)
 					module.ResetTypeDefFindCache();
+				Utils.InvalidateDecompilationCache(asmNode);
 			}
 		}
 	}

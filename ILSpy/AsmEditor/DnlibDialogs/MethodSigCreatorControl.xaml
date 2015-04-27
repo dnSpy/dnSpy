@@ -26,15 +26,6 @@
              d:DesignHeight="800" d:DesignWidth="550">
 	<UserControl.Resources>
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-		<Style TargetType="{x:Type TextBox}">
-			<Style.Triggers>
-				<Trigger Property="Validation.HasError" Value="true">
-					<Setter Property="ToolTip"
-							Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
-					<Setter Property="Background" Value="Pink"/>
-				</Trigger>
-			</Style.Triggers>
-		</Style>
 	</UserControl.Resources>
 	<Grid>
 		<Grid.RowDefinitions>

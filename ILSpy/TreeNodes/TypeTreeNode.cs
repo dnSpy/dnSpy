@@ -22,6 +22,7 @@ using System.Linq;
 using System.Windows.Media;
 
 using ICSharpCode.Decompiler;
+using ICSharpCode.TreeView;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -99,31 +100,63 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 		
+		protected override Type[] ChildTypeOrder {
+			get { return typeOrder; }
+		}
+
+		static readonly Type[] typeOrder = new Type[] {
+			typeof(BaseTypesTreeNode),
+			typeof(DerivedTypesTreeNode),
+			typeof(TypeTreeNode),
+			typeof(FieldTreeNode),
+			typeof(PropertyTreeNode),
+			typeof(EventTreeNode),
+			typeof(MethodTreeNode),
+		};
 		protected override void LoadChildren()
 		{
-			if (type.BaseType != null || type.HasInterfaces)
-				this.Children.Add(new BaseTypesTreeNode(type));
-			if (!type.IsSealed)
-				this.Children.Add(new DerivedTypesTreeNode(parentAssemblyNode.AssemblyList, type));
-			foreach (TypeDef nestedType in type.NestedTypes.OrderBy(m => m.Name.String)) {
+			// Make sure the order below matches typeOrder above
+			this.Children.Add(new BaseTypesTreeNode(type));
+			this.Children.Add(new DerivedTypesTreeNode(parentAssemblyNode.AssemblyList, type));
+			foreach (TypeDef nestedType in type.NestedTypes.OrderBy(m => m.Name.String, NestedTypeStringComparer)) {
 				this.Children.Add(new TypeTreeNode(nestedType, parentAssemblyNode));
 			}
-			foreach (FieldDef field in type.Fields.OrderBy(m => m.Name.String)) {
+			foreach (FieldDef field in type.Fields.OrderBy(m => m.Name.String, FieldStringComparer)) {
 				this.Children.Add(new FieldTreeNode(field));
 			}
 			
-			foreach (PropertyDef property in type.Properties.OrderBy(m => m.Name.String)) {
+			foreach (PropertyDef property in type.Properties.OrderBy(m => m.Name.String, PropertyStringComparer)) {
 				this.Children.Add(new PropertyTreeNode(property));
 			}
-			foreach (EventDef ev in type.Events.OrderBy(m => m.Name.String)) {
+			foreach (EventDef ev in type.Events.OrderBy(m => m.Name.String, EventStringComparer)) {
 				this.Children.Add(new EventTreeNode(ev));
 			}
 			HashSet<MethodDef> accessorMethods = type.GetAccessorMethods();
-			foreach (MethodDef method in type.Methods.OrderBy(m => m.Name.String)) {
+			foreach (MethodDef method in type.Methods.OrderBy(m => m.Name.String, MethodStringComparer)) {
 				if (!accessorMethods.Contains(method)) {
 					this.Children.Add(new MethodTreeNode(method));
 				}
 			}
+		}
+		static readonly StringComparer NestedTypeStringComparer = StringComparer.OrdinalIgnoreCase;
+		static readonly StringComparer FieldStringComparer = StringComparer.OrdinalIgnoreCase;
+		static readonly StringComparer PropertyStringComparer = StringComparer.OrdinalIgnoreCase;
+		static readonly StringComparer EventStringComparer = StringComparer.OrdinalIgnoreCase;
+		static readonly StringComparer MethodStringComparer = StringComparer.OrdinalIgnoreCase;
+
+		protected override int GetNewChildIndex(SharpTreeNode node)
+		{
+			if (node is TypeTreeNode)
+				return GetNewChildIndex(node, NestedTypeStringComparer, n => ((TypeTreeNode)n).TypeDefinition.Name);
+			if (node is FieldTreeNode)
+				return GetNewChildIndex(node, FieldStringComparer, n => ((FieldTreeNode)n).FieldDefinition.Name);
+			if (node is PropertyTreeNode)
+				return GetNewChildIndex(node, PropertyStringComparer, n => ((PropertyTreeNode)n).PropertyDefinition.Name);
+			if (node is EventTreeNode)
+				return GetNewChildIndex(node, EventStringComparer, n => ((EventTreeNode)n).EventDefinition.Name);
+			if (node is MethodTreeNode)
+				return GetNewChildIndex(node, MethodStringComparer, n => ((MethodTreeNode)n).MethodDefinition.Name);
+			return base.GetNewChildIndex(node);
 		}
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)

@@ -45,5 +45,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		/// .NET 4.0 - 4.5
 		/// </summary>
 		CLR40,
+
+		/// <summary>
+		/// Default version we should use when initializing fields
+		/// </summary>
+		DefaultVersion = ClrVersion.CLR40,
 	}
 }

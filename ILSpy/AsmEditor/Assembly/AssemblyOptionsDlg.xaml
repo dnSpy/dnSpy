@@ -32,15 +32,7 @@
              Style="{DynamicResource DialogWindow}"
              MinHeight="420" MinWidth="400">
 	<winlocal:WindowBase.Resources>
-		<Style TargetType="{x:Type TextBox}">
-			<Style.Triggers>
-				<Trigger Property="Validation.HasError" Value="true">
-					<Setter Property="ToolTip"
-							Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
-					<Setter Property="Background" Value="Pink"/>
-				</Trigger>
-			</Style.Triggers>
-		</Style>
+		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 	</winlocal:WindowBase.Resources>
 	<Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
 		<Grid.ColumnDefinitions>
@@ -103,6 +95,8 @@
 					<ComboBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="processArchitectureComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ProcessArchitecture.Items}" SelectedIndex="{Binding ProcessArchitecture.SelectedIndex}" VerticalContentAlignment="Center" />
 					<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="Content _Type" Target="{Binding ElementName=contentTypeComboBox}" />
 					<ComboBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="contentTypeComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ContentType.Items}" SelectedIndex="{Binding ContentType.SelectedIndex}" VerticalContentAlignment="Center" />
+					<Label Grid.Row="1" Grid.Column="2" Margin="0 5 0 0" Content=".NET _Version" Target="{Binding ElementName=clrVersionComboBox}" Visibility="{Binding CanShowClrVersion, Converter={StaticResource BooleanToVisibilityConverter}}" />
+					<ComboBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="clrVersionComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ClrVersion.Items}" SelectedIndex="{Binding ClrVersion.SelectedIndex}" VerticalContentAlignment="Center" Visibility="{Binding CanShowClrVersion, Converter={StaticResource BooleanToVisibilityConverter}}" />
 				</Grid>
 
 				<Grid Grid.Row="2">

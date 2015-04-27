@@ -20,6 +20,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.Decompiler;
+using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
@@ -98,6 +99,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			Children.RemoveAt(index);
 			((AssemblyTreeNode)Parent).OnRemoved(typeNode);
 			return typeNode;
+		}
+
+		protected override int GetNewChildIndex(SharpTreeNode node)
+		{
+			if (node is TypeTreeNode)
+				return GetNewChildIndex(node, AssemblyTreeNode.TypeStringComparer, n => ((TypeTreeNode)n).TypeDefinition.FullName);
+			return base.GetNewChildIndex(node);
 		}
 
 		public override NodePathName NodePathName {

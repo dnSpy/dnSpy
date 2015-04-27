@@ -2216,7 +2216,7 @@ namespace ICSharpCode.ILSpy
 		static bool MustRefresh(TabStateDecompile tabState, LoadedAssembly asm)
 		{
 			foreach (var node in tabState.DecompiledNodes) {
-				var asmNode = ILSpyTreeNode.GetAssemblyTreeNode(node);
+				var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
 				if (asmNode == null || asmNode.LoadedAssembly == asm)
 					return true;
 			}

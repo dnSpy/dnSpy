@@ -31,8 +31,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 	{
 		AssemblyTreeNode asmNode;
 
-		public AssemblyTreeNode AssemblyTreeNode
-		{
+		public AssemblyTreeNode AssemblyTreeNode {
 			get { return asmNode; }
 		}
 

@@ -44,29 +44,24 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		IManagedEntryPointPicker managedEntryPointPicker;
 
 		public ICommand PickManagedEntryPointCommand {
-			get { return pickManagedEntryPointCommand ?? (pickManagedEntryPointCommand = new RelayCommand(a => PickManagedEntryPoint())); }
+			get { return new RelayCommand(a => PickManagedEntryPoint()); }
 		}
-		ICommand pickManagedEntryPointCommand;
 
 		public ICommand ReinitializeCommand {
-			get { return reinitializeCommand ?? (reinitializeCommand = new RelayCommand(a => Reinitialize())); }
+			get { return new RelayCommand(a => Reinitialize()); }
 		}
-		ICommand reinitializeCommand;
 
 		public ICommand GenerateNewMvidCommand {
-			get { return generateNewMvidCommand ?? (generateNewMvidCommand = new RelayCommand(a => Mvid.Value = Guid.NewGuid())); }
+			get { return new RelayCommand(a => Mvid.Value = Guid.NewGuid()); }
 		}
-		ICommand generateNewMvidCommand;
 
 		public ICommand GenerateNewEncIdCommand {
-			get { return generateNewEncIdCommand ?? (generateNewEncIdCommand = new RelayCommand(a => EncId.Value = Guid.NewGuid())); }
+			get { return new RelayCommand(a => EncId.Value = Guid.NewGuid()); }
 		}
-		ICommand generateNewEncIdCommand;
 
 		public ICommand GenerateNewEncBaseIdCommand {
-			get { return generateNewEncBaseIdCommand ?? (generateNewEncBaseIdCommand = new RelayCommand(a => EncBaseId.Value = Guid.NewGuid())); }
+			get { return new RelayCommand(a => EncBaseId.Value = Guid.NewGuid()); }
 		}
-		ICommand generateNewEncBaseIdCommand;
 
 		public NullableGuidVM Mvid {
 			get { return mvid; }

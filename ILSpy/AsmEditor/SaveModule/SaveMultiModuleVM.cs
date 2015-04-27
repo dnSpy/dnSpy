@@ -82,14 +82,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		SaveState saveState = SaveState.Loaded;
 
 		public ICommand SaveCommand {
-			get { return saveCommand ?? (saveCommand = new RelayCommand(a => Save(), a => CanExecuteSave)); }
+			get { return new RelayCommand(a => Save(), a => CanExecuteSave); }
 		}
-		ICommand saveCommand;
 
 		public ICommand CancelSaveCommand {
-			get { return cancelSaveCommand ?? (cancelSaveCommand = new RelayCommand(a => CancelSave(), a => IsSaving && moduleSaver != null)); }
+			get { return new RelayCommand(a => CancelSave(), a => IsSaving && moduleSaver != null); }
 		}
-		ICommand cancelSaveCommand;
 
 		public event EventHandler OnSavedEvent;
 

@@ -17,14 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
+namespace ICSharpCode.ILSpy.AsmEditor.Types 
 {
 	/// <summary>
-	/// Interaction logic for TypeSigCreatorDlg.xaml
+	/// Interaction logic for TypeOptionsDlg.xaml
 	/// </summary>
-	public partial class TypeSigCreatorDlg : WindowBase
+	public partial class TypeOptionsDlg : WindowBase
 	{
-		public TypeSigCreatorDlg()
+		public TypeOptionsDlg()
 		{
 			InitializeComponent();
 		}

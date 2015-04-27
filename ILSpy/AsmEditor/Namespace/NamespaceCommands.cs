@@ -25,7 +25,7 @@ using System.Windows.Controls;
 using ICSharpCode.ILSpy.TreeNodes;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor
+namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 {
 	sealed class DeleteNamespaceCommand : IUndoCommand
 	{
@@ -149,8 +149,6 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		DeleteNamespaceCommand(ILSpyTreeNode[] nodes)
 		{
-			if (!CanExecute(nodes))
-				throw new ArgumentException();
 			this.nodes = new DeletableNodes(nodes);
 			this.modelNodes = new DeleteModelNodes();
 		}

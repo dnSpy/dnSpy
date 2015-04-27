@@ -21,5 +21,14 @@
 		<Style x:Key="OtherDialogButton" TargetType="{x:Type Button}">
 			<Setter Property="Height" Value="23"/>
 		</Style>
+		<Style TargetType="{x:Type TextBox}">
+			<Style.Triggers>
+				<Trigger Property="Validation.HasError" Value="true">
+					<Setter Property="ToolTip"
+							Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+					<Setter Property="Background" Value="Pink"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
 	</Application.Resources>
 </Application>

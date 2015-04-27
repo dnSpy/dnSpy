@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
 	/// <summary>

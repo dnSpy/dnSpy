@@ -30,6 +30,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 		public PublicKey PublicKey;
 		public string Name;
 		public string Culture;
+		public Module.ClrVersion ClrVersion;
 
 		public AssemblyOptions()
 		{
@@ -43,6 +44,30 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			this.PublicKey = asm.PublicKey;
 			this.Name = asm.Name;
 			this.Culture = asm.Culture;
+			this.ClrVersion = Module.ClrVersion.DefaultVersion;
+		}
+
+		public void CopyTo(AssemblyDef asm)
+		{
+			asm.HashAlgorithm = this.HashAlgorithm;
+			asm.Version = this.Version;
+			asm.Attributes = this.Attributes;
+			asm.PublicKey = this.PublicKey;
+			asm.Name = this.Name;
+			asm.Culture = this.Culture;
+		}
+
+		public static AssemblyOptions Create(string name)
+		{
+			return new AssemblyOptions {
+				HashAlgorithm = AssemblyHashAlgorithm.SHA1,
+				Version = new Version(0, 0, 0, 0),
+				Attributes = AssemblyAttributes.None,
+				PublicKey = new PublicKey(new byte[0]),
+				Name = name,
+				Culture = string.Empty,
+				ClrVersion = Module.ClrVersion.DefaultVersion,
+			};
 		}
 	}
 }

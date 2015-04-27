@@ -53,15 +53,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		GuidVM mvid;
 
 		public ICommand GenerateNewMvidCommand {
-			get { return generateNewMvidCommand ?? (generateNewMvidCommand = new RelayCommand(a => Mvid.Value = Guid.NewGuid())); }
+			get { return new RelayCommand(a => Mvid.Value = Guid.NewGuid()); }
 		}
-		ICommand generateNewMvidCommand;
 
 		public NetModuleOptionsVM()
 		{
 			Name = "MyNetModule.netmodule";
 			mvid = new GuidVM(Guid.NewGuid(), a => HasErrorUpdated());
-			ClrVersion.SelectedItem = Module.ClrVersion.CLR40;
+			ClrVersion.SelectedItem = Module.ClrVersion.DefaultVersion;
 		}
 
 		public NetModuleOptions CreateNetModuleOptions()

@@ -165,9 +165,10 @@
       <DependentUpon>NetModuleOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Module\NetModuleOptionsVM.cs" />
+    <Compile Include="AsmEditor\NamespaceTreeNodeCreator.cs" />
     <Compile Include="AsmEditor\SaveModule\CharacteristicsHelper.cs" />
     <Compile Include="AsmEditor\SaveModule\ModuleSaver.cs" />
-    <Compile Include="AsmEditor\NamespaceCommands.cs" />
+    <Compile Include="AsmEditor\Namespace\NamespaceCommands.cs" />
     <Compile Include="AsmEditor\RelayCommand.cs" />
     <Compile Include="AsmEditor\SaveModule\SaveModuleCommand.cs" />
     <Compile Include="AsmEditor\SaveModule\SaveModuleOptions.xaml.cs">
@@ -185,6 +186,12 @@
     </Compile>
     <Compile Include="AsmEditor\ToolbarCommands.cs" />
     <Compile Include="AsmEditor\TreeNodeCommand.cs" />
+    <Compile Include="AsmEditor\Types\TypeDefCommands.cs" />
+    <Compile Include="AsmEditor\Types\TypeDefOptions.cs" />
+    <Compile Include="AsmEditor\Types\TypeOptionsDlg.xaml.cs">
+      <DependentUpon>TypeOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Types\TypeOptionsVM.cs" />
     <Compile Include="AsmEditor\UndoCommandManager.cs" />
     <Compile Include="AsmEditor\UndoRedoMenuCommands.cs" />
     <Compile Include="AsmEditor\Utils.cs" />
@@ -537,6 +544,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\SaveModule\SaveSingleModule.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\Types\TypeOptionsDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

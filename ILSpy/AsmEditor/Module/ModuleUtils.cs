@@ -27,9 +27,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 	{
 		public static ModuleDef CreateNetModule(string name, Guid mvid, ClrVersion clrVersion)
 		{
+			return CreateModule(name, mvid, clrVersion, ModuleKind.NetModule);
+		}
+
+		public static ModuleDef CreateModule(string name, Guid mvid, ClrVersion clrVersion, ModuleKind kind)
+		{
 			var module = CreateModuleDef(name, mvid, clrVersion);
-			module.Kind = ModuleKind.NetModule;
-			module.Characteristics = Characteristics.Dll | Characteristics._32BitMachine | Characteristics.ExecutableImage;
+			module.Kind = kind;
+			module.Characteristics = Characteristics._32BitMachine | Characteristics.ExecutableImage;
+			if (kind == ModuleKind.Dll || kind == ModuleKind.NetModule)
+				module.Characteristics |= Characteristics.Dll;
 			module.DllCharacteristics = DllCharacteristics.TerminalServerAware | DllCharacteristics.NoSeh | DllCharacteristics.NxCompat | DllCharacteristics.DynamicBase;
 			return module;
 		}

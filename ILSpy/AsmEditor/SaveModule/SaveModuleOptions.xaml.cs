@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
 using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
 namespace ICSharpCode.ILSpy.AsmEditor.SaveModule

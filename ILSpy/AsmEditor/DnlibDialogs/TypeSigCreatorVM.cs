@@ -82,6 +82,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 					OnPropertyChanged("IsValidTypeSig");
 					OnPropertyChanged("CanAddLeafTypeSig");
 					OnPropertyChanged("CanAddNonLeafTypeSig");
+					OnPropertyChanged("CanShowTypeFullName");
 					if (nullChange) {
 						OnPropertyChanged("AddingLeafTypeSig");
 						OnPropertyChanged("AddingNonLeafTypeSig");
@@ -91,6 +92,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 		TypeSig typeSig;
+
+		public bool CanShowTypeFullName {
+			get { return ShowTypeFullName && IsValidTypeSig; }
+		}
+
+		public bool ShowTypeFullName {
+			get { return showTypeFullName; }
+			set {
+				if (showTypeFullName != value) {
+					showTypeFullName = value;
+					OnPropertyChanged("ShowTypeFullName");
+					OnPropertyChanged("CanShowTypeFullName");
+				}
+			}
+		}
+		bool showTypeFullName = true;
 
 		public bool CanAddGeneric {
 			get { return IsEnabled && (options.CanAddGenericTypeVar || options.CanAddGenericMethodVar); }
@@ -312,8 +329,19 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		bool AddFnPtrSigCanExecute()
 		{
-			return CanAddLeafTypeSig;
+			return CanAddFnPtr && CanAddLeafTypeSig;
 		}
+
+		public bool CanAddFnPtr {
+			get { return canAddFnPtr; }
+			set {
+				if (canAddFnPtr != value) {
+					canAddFnPtr = value;
+					OnPropertyChanged("CanAddFnPtr");
+				}
+			}
+		}
+		bool canAddFnPtr = true;
 
 		void AddGenericInstSig()
 		{

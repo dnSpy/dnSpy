@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using ICSharpCode.Decompiler;
@@ -96,6 +97,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			base.OnChildrenChanged(e);
 
 			if (e.NewItems != null) {
+				if (IsHidden) {
+					var parent = this.Parent as ILSpyTreeNode ?? this;
+					parent.ApplyFilterToChild(this);
+				}
 				if (IsVisible) {
 					foreach (ILSpyTreeNode node in e.NewItems)
 						ApplyFilterToChild(node);
@@ -230,21 +235,109 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		internal static ModuleDef GetModule(SharpTreeNode node)
 		{
-			var asmNode = GetAssemblyTreeNode(node);
+			var asmNode = GetNode<AssemblyTreeNode>(node);
 			return asmNode == null ? null : asmNode.LoadedAssembly.ModuleDefinition;
 		}
 
-		internal static AssemblyTreeNode GetAssemblyTreeNode(SharpTreeNode node)
+		internal static T GetNode<T>(SharpTreeNode node) where T : SharpTreeNode
 		{
-			if (node == null)
-				return null;
 			while (node != null) {
-				var asmNode = node as AssemblyTreeNode;
-				if (asmNode != null)
-					return asmNode;
+				var foundNode = node as T;
+				if (foundNode != null)
+					return foundNode;
 				node = node.Parent;
 			}
 			return null;
+		}
+
+		protected void GetStartIndex(SharpTreeNode node, out int start, out int end)
+		{
+			for (int i = 0; i < Children.Count; i++) {
+				if (node.GetType() == Children[i].GetType()) {
+					start = i;
+					for (i++; i < Children.Count; i++) {
+						if (node.GetType() != Children[i].GetType())
+							break;
+					}
+					end = i;
+					return;
+				}
+			}
+
+			IList<Type> typeOrder = ChildTypeOrder;
+			if (typeOrder != null) {
+				int typeIndex = typeOrder.IndexOf(node.GetType());
+				Debug.Assert(typeIndex >= 0);
+				if (typeIndex >= 0) {
+					Type prevType = null;
+					for (int i = 0; i < Children.Count; i++) {
+						var type = Children[i].GetType();
+						if (prevType == type)
+							continue;
+						prevType = type;
+						int index = typeOrder.IndexOf(type);
+						Debug.Assert(index >= 0);
+						if (typeIndex < index) {
+							start = end = i;
+							return;
+						}
+					}
+				}
+			}
+
+			start = end = Children.Count;
+		}
+
+		protected virtual Type[] ChildTypeOrder {
+			get { return null; }
+		}
+
+		protected int GetNewChildIndex(SharpTreeNode node, StringComparer stringComparer, Func<SharpTreeNode, string> getCompareString)
+		{
+			int start, end;
+			GetStartIndex(node, out start, out end);
+			return GetNewChildIndex(start, end, node, stringComparer, getCompareString);
+		}
+
+		protected int GetNewChildIndex(int start, int end, SharpTreeNode node, StringComparer stringComparer, Func<SharpTreeNode, string> getCompareString)
+		{
+			for (int i = start; i < end; i++) {
+				if (stringComparer.Compare(getCompareString(node), getCompareString(Children[i])) < 0)
+					return i;
+			}
+			return end;
+		}
+
+		/// <summary>
+		/// Gets the index where <paramref name="node"/> should be inserted or -1 if unknown
+		/// </summary>
+		/// <param name="node">New child node</param>
+		/// <returns></returns>
+		protected virtual int GetNewChildIndex(SharpTreeNode node)
+		{
+			return -1;
+		}
+
+		/// <summary>
+		/// Add <paramref name="node"/> to the <see cref="Children"/> collection. The default
+		/// implementation adds <paramref name="node"/> to the end but it could be added anywhere.
+		/// </summary>
+		/// <param name="node">Node to add</param>
+		public void AddToChildren(SharpTreeNode node)
+		{
+			int index = GetNewChildIndex(node);
+			if (index < 0 || index > Children.Count)
+				Children.Add(node);
+			else
+				Children.Insert(index, node);
+		}
+
+		public virtual void RaiseUIPropsChanged()
+		{
+			RaisePropertyChanged("Icon");
+			RaisePropertyChanged("ExpandedIcon");
+			RaisePropertyChanged("ToolTip");
+			RaisePropertyChanged("Text");
 		}
 
 		/// <summary>

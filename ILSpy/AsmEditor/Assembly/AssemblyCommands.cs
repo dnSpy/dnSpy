@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
 using ICSharpCode.ILSpy.TreeNodes;
+using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 {
@@ -78,31 +79,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			UndoCommandManager.Instance.Add(new RemoveAssemblyCommand(asmNodes));
 		}
 
-		sealed class SavedState : IDisposable
-		{
-			public AssemblyTreeNodeCreator AsmNodeCreator;
-
-			public SavedState(AssemblyTreeNode asmNode)
-			{
-				this.AsmNodeCreator = new AssemblyTreeNodeCreator(asmNode);
-			}
-
-			public void Dispose()
-			{
-				if (AsmNodeCreator != null)
-					AsmNodeCreator.Dispose();
-				AsmNodeCreator = null;
-			}
-		}
-
-		SavedState[] savedStates;
+		AssemblyTreeNodeCreator[] savedStates;
 
 		RemoveAssemblyCommand(AssemblyTreeNode[] asmNodes)
 		{
-			this.savedStates = new SavedState[asmNodes.Length];
+			this.savedStates = new AssemblyTreeNodeCreator[asmNodes.Length];
 			try {
 				for (int i = 0; i < this.savedStates.Length; i++)
-					this.savedStates[i] = new SavedState(asmNodes[i]);
+					this.savedStates[i] = new AssemblyTreeNodeCreator(asmNodes[i]);
 			}
 			catch {
 				Dispose();
@@ -117,19 +101,19 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 		public void Execute()
 		{
 			for (int i = 0; i < savedStates.Length; i++)
-				savedStates[i].AsmNodeCreator.Remove();
+				savedStates[i].Remove();
 		}
 
 		public void Undo()
 		{
 			for (int i = savedStates.Length - 1; i >= 0; i--)
-				savedStates[i].AsmNodeCreator.Add();
+				savedStates[i].Add();
 		}
 
 		public IEnumerable<ILSpyTreeNode> TreeNodes {
 			get {
 				foreach (var savedState in savedStates)
-					yield return savedState.AsmNodeCreator.AssemblyTreeNode;
+					yield return savedState.AssemblyTreeNode;
 			}
 		}
 
@@ -212,28 +196,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 
 		public void Execute()
 		{
-			var asm = asmNode.LoadedAssembly.AssemblyDefinition;
-			asm.HashAlgorithm = newOptions.HashAlgorithm;
-			asm.Version = newOptions.Version;
-			asm.Attributes = newOptions.Attributes;
-			asm.PublicKey = newOptions.PublicKey;
-			asm.Name = newOptions.Name;
-			asm.Culture = newOptions.Culture;
-			asmNode.OnAssemblyPropertiesChanged();
-			Utils.InvalidateDecompilationCache(asmNode);
+			newOptions.CopyTo(asmNode.LoadedAssembly.AssemblyDefinition);
+			asmNode.RaiseUIPropsChanged();
 		}
 
 		public void Undo()
 		{
-			var asm = asmNode.LoadedAssembly.AssemblyDefinition;
-			asm.HashAlgorithm = origOptions.HashAlgorithm;
-			asm.Version = origOptions.Version;
-			asm.Attributes = origOptions.Attributes;
-			asm.PublicKey = origOptions.PublicKey;
-			asm.Name = origOptions.Name;
-			asm.Culture = origOptions.Culture;
-			asmNode.OnAssemblyPropertiesChanged();
-			Utils.InvalidateDecompilationCache(asmNode);
+			origOptions.CopyTo(asmNode.LoadedAssembly.AssemblyDefinition);
+			asmNode.RaiseUIPropsChanged();
 		}
 
 		public IEnumerable<ILSpyTreeNode> TreeNodes {
@@ -242,6 +212,92 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 
 		public void Dispose()
 		{
+		}
+	}
+
+	sealed class CreateAssemblyCommand : IUndoCommand
+	{
+		const string CMD_NAME = "Create Assembly";
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+								Icon = "Images/Assembly.png",
+								Category = "AsmEd",
+								Order = 240)]//TODO: Update Order
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+							Menu = "_Edit",
+							MenuIcon = "Images/Assembly.png",
+							MenuCategory = "AsmEd",
+							MenuOrder = 2100)]//TODO: Set menu order
+		sealed class MainMenuEntry : EditCommand
+		{
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				return CreateAssemblyCommand.CanExecute(nodes);
+			}
+
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				CreateAssemblyCommand.Execute(nodes);
+			}
+		}
+
+		static bool CanExecute(ILSpyTreeNode[] nodes)
+		{
+			return nodes != null &&
+				nodes.Length == 0 || nodes[0] is AssemblyTreeNode;
+		}
+
+		static void Execute(ILSpyTreeNode[] nodes)
+		{
+			if (!CanExecute(nodes))
+				return;
+
+			var data = new AssemblyOptionsVM(AssemblyOptions.Create("MyAssembly"));
+			data.CanShowClrVersion = true;
+			var win = new AssemblyOptionsDlg();
+			win.Title = "Create Assembly";
+			win.DataContext = data;
+			win.Owner = MainWindow.Instance;
+			if (win.ShowDialog() != true)
+				return;
+
+			UndoCommandManager.Instance.Add(new CreateAssemblyCommand(data.CreateAssemblyOptions()));
+		}
+
+		AssemblyTreeNodeCreator asmNodeCreator;
+
+		CreateAssemblyCommand(AssemblyOptions options)
+		{
+			var module = Module.ModuleUtils.CreateModule(options.Name, Guid.NewGuid(), options.ClrVersion, ModuleKind.Dll);
+			var asm = new AssemblyDefUser();
+			options.CopyTo(asm);
+			asm.Modules.Add(module);
+			this.asmNodeCreator = new AssemblyTreeNodeCreator(new LoadedAssembly(MainWindow.Instance.CurrentAssemblyList, module));
+		}
+
+		public string Description {
+			get { return CMD_NAME; }
+		}
+
+		public void Execute()
+		{
+			asmNodeCreator.Add();
+			UndoCommandManager.Instance.MarkAsModified(asmNodeCreator.AssemblyTreeNode.LoadedAssembly);
+		}
+
+		public void Undo()
+		{
+			asmNodeCreator.Remove();
+		}
+
+		public IEnumerable<ILSpyTreeNode> TreeNodes {
+			get { return new ILSpyTreeNode[0]; }
+		}
+
+		public void Dispose()
+		{
+			if (asmNodeCreator != null)
+				asmNodeCreator.Dispose();
+			asmNodeCreator = null;
 		}
 	}
 }

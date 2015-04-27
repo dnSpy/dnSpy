@@ -35,15 +35,6 @@
              MinHeight="380" MinWidth="400">
 	<winlocal:WindowBase.Resources>
 		<vc:RadioButtonConverter x:Key="RadioButtonConverter" />
-		<Style TargetType="{x:Type TextBox}">
-			<Style.Triggers>
-				<Trigger Property="Validation.HasError" Value="true">
-					<Setter Property="ToolTip"
-							Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
-					<Setter Property="Background" Value="Pink"/>
-				</Trigger>
-			</Style.Triggers>
-		</Style>
 	</winlocal:WindowBase.Resources>
 	<Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
 		<Grid.ColumnDefinitions>

@@ -446,6 +446,8 @@ namespace ICSharpCode.ILSpy.TextView
 
 			var cm = new Dictionary<MethodKey, MemberMapping>();
 			foreach (var m in textOutput.DebuggerMemberMappings) {
+				if (m.MethodDefinition.Module == null)
+					continue;
 				var key = new MethodKey(m.MethodDefinition);
 				MemberMapping oldMm;
 				if (cm.TryGetValue(key, out oldMm))

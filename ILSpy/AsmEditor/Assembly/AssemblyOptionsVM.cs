@@ -53,14 +53,28 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 		IOpenPublicKeyFile openPublicKeyFile;
 
 		public ICommand OpenPublicKeyFileCommand {
-			get { return openPublicKeyFileCommand ?? (openPublicKeyFileCommand = new RelayCommand(a => OnOpenPublicKeyFile())); }
+			get { return new RelayCommand(a => OnOpenPublicKeyFile()); }
 		}
-		ICommand openPublicKeyFileCommand;
 
 		public ICommand ReinitializeCommand {
-			get { return reinitializeCommand ?? (reinitializeCommand = new RelayCommand(a => Reinitialize())); }
+			get { return new RelayCommand(a => Reinitialize()); }
 		}
-		ICommand reinitializeCommand;
+
+		public bool CanShowClrVersion {
+			get { return canShowClrVersion; }
+			set {
+				if (canShowClrVersion != value) {
+					canShowClrVersion = value;
+					OnPropertyChanged("CanShowClrVersion");
+				}
+			}
+		}
+		bool canShowClrVersion;
+
+		public EnumListVM ClrVersion {
+			get { return clrVersionVM; }
+		}
+		readonly EnumListVM clrVersionVM = new EnumListVM(Module.NetModuleOptionsVM.clrVersionList);
 
 		static readonly EnumVM[] hashAlgorithmList = EnumVM.Create(typeof(AssemblyHashAlgorithm));
 		public EnumListVM HashAlgorithm {
@@ -254,6 +268,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			ContentType.SelectedItem = (AsmContType)((uint)(options.Attributes & AssemblyAttributes.ContentType_Mask) >> 9);
 			Name = options.Name;
 			Culture = options.Culture;
+			ClrVersion.SelectedItem = options.ClrVersion;
 		}
 
 		AssemblyOptions CopyTo(AssemblyOptions options)
@@ -264,6 +279,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			options.PublicKey = new PublicKey(PublicKey.Value);
 			options.Name = Name;
 			options.Culture = Culture;
+			options.ClrVersion = (Module.ClrVersion)ClrVersion.SelectedItem;
 			return options;
 		}
 

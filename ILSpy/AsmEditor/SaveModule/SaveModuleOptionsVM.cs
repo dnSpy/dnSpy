@@ -42,14 +42,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		IPickNetExecutableFileName pickNetExecutableFileName;
 
 		public ICommand PickNetExecutableFileNameCommand {
-			get { return pickNetExecutableFileNameCommand ?? (pickNetExecutableFileNameCommand = new RelayCommand(a => OnPickNetExecutableFileName())); }
+			get { return new RelayCommand(a => OnPickNetExecutableFileName()); }
 		}
-		ICommand pickNetExecutableFileNameCommand;
 
 		public ICommand ReinitializeCommand {
-			get { return reinitializeCommand ?? (reinitializeCommand = new RelayCommand(a => Reinitialize())); }
+			get { return new RelayCommand(a => Reinitialize()); }
 		}
-		ICommand reinitializeCommand;
 
 		public bool CanSaveMixedModeModule {
 			get { return module is ModuleDefMD; }

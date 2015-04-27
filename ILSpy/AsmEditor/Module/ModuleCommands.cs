@@ -191,7 +191,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 				savedState.ModuleKind = module.Kind;
 				ModuleUtils.AddToNewAssemblyDef(module, ModuleKind.Dll, out savedState.Characteristics);
 				node.OnConvertedToAssembly(savedState.AssemblyTreeNode);
-				Utils.InvalidateDecompilationCache(node);
 			}
 			hasExecuted = true;
 		}
@@ -216,7 +215,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 				module.Kind = savedState.ModuleKind;
 				module.Characteristics = savedState.Characteristics;
 				savedState.AssemblyTreeNode = node.OnConvertedToNetModule();
-				Utils.InvalidateDecompilationCache(node);
 			}
 			hasExecuted = false;
 		}
@@ -323,7 +321,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 				savedState.ModuleKind = module.Kind;
 				ModuleUtils.WriteNewModuleKind(module, ModuleKind.NetModule, out savedState.Characteristics);
 				savedState.ModuleNode = node.OnConvertedToNetModule();
-				Utils.InvalidateDecompilationCache(node);
 			}
 		}
 
@@ -347,7 +344,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 				module.Characteristics = savedState.Characteristics;
 				savedState.AssemblyDef.Modules.Add(module);
 				node.OnConvertedToAssembly(savedState.ModuleNode);
-				Utils.InvalidateDecompilationCache(node);
 			}
 			savedStates = null;
 		}
@@ -728,8 +724,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 				module.ManagedEntryPoint = theOptions.ManagedEntryPoint;
 			else
 				module.NativeEntryPoint = theOptions.NativeEntryPoint;
-			modNode.OnModulePropertiesChanged();
-			Utils.InvalidateDecompilationCache(modNode);
+			modNode.RaiseUIPropsChanged();
 		}
 
 		public void Execute()

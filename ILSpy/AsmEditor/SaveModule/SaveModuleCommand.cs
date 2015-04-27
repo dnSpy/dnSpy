@@ -37,7 +37,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		{
 			var hash = new HashSet<LoadedAssembly>();
 			foreach (var node in nodes) {
-				var asmNode = ILSpyTreeNode.GetAssemblyTreeNode(node);
+				var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
 				if (asmNode != null && asmNode.LoadedAssembly.ModuleDefinition != null)
 					hash.Add(asmNode.LoadedAssembly);
 			}

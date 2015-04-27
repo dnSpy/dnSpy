@@ -17,10 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
 using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Assembly {
+namespace ICSharpCode.ILSpy.AsmEditor.Assembly
+{
 	/// <summary>
 	/// Interaction logic for AssemblyOptionsDlg.xaml
 	/// </summary>
