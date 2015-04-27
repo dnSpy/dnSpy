@@ -259,6 +259,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		protected void GetStartIndex(SharpTreeNode node, out int start, out int end)
 		{
+			EnsureChildrenFiltered();
 			for (int i = 0; i < Children.Count; i++) {
 				if (node.GetType() == Children[i].GetType()) {
 					start = i;
@@ -332,6 +333,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		/// <param name="node">Node to add</param>
 		public void AddToChildren(SharpTreeNode node)
 		{
+			EnsureChildrenFiltered();
 			int index = GetNewChildIndex(node);
 			if (index < 0 || index > Children.Count)
 				Children.Add(node);
