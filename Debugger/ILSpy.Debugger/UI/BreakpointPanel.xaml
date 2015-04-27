@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <UserControl
-    x:Class="ICSharpCode.ILSpy.Debugger.UI.BreakpointPanel" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:bm="clr-namespace:ICSharpCode.ILSpy.Bookmarks">
+    x:Class="ICSharpCode.ILSpy.Debugger.UI.BreakpointPanel" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid>
         <ListView
             Name="view"

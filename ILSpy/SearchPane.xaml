@@ -30,7 +30,8 @@
 				<Expander Grid.Column="1" Name="expander" IsExpanded="False" Header="Options" />
 				<Label Grid.Column="2" Margin="0,-1" VerticalContentAlignment="Center">Search For:</Label>
 				<ComboBox Grid.Column="3" Width="130" Name="searchModeComboBox" Margin="1"
-							SelectionChanged="SearchModeComboBox_SelectionChanged">
+						  SelectionChanged="SearchModeComboBox_SelectionChanged"
+						  Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}">
 					<ComboBox.ItemTemplate>
 						<DataTemplate>
 							<StackPanel Orientation="Horizontal">

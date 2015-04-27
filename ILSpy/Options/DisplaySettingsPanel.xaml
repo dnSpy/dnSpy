@@ -23,7 +23,7 @@
 					<RowDefinition Height="50" />
 				</Grid.RowDefinitions>
 				<Label Margin="3,0">Font:</Label>
-				<ComboBox x:Name="fontSelector" VerticalContentAlignment="Center" SelectedItem="{Binding SelectedFont}" Grid.Column="1">
+				<ComboBox x:Name="fontSelector" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" SelectedItem="{Binding SelectedFont}" Grid.Column="1" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}">
 					<ComboBox.ItemTemplate>
 						<DataTemplate>
 							<TextBlock Text="{Binding Source}" />

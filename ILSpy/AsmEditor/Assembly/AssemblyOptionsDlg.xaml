@@ -90,13 +90,13 @@
 					</Grid.RowDefinitions>
 
 					<Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="_Hash Algorithm" Target="{Binding ElementName=hashAlgorithmComboBox}" />
-					<ComboBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="hashAlgorithmComboBox" DisplayMemberPath="Name" ItemsSource="{Binding HashAlgorithm.Items}" SelectedIndex="{Binding HashAlgorithm.SelectedIndex}" VerticalContentAlignment="Center" />
+					<ComboBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="hashAlgorithmComboBox" DisplayMemberPath="Name" ItemsSource="{Binding HashAlgorithm.Items}" SelectedIndex="{Binding HashAlgorithm.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
 					<Label Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Content="Proce_ssor Arch" Target="{Binding ElementName=processArchitectureComboBox}" />
-					<ComboBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="processArchitectureComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ProcessArchitecture.Items}" SelectedIndex="{Binding ProcessArchitecture.SelectedIndex}" VerticalContentAlignment="Center" />
+					<ComboBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="processArchitectureComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ProcessArchitecture.Items}" SelectedIndex="{Binding ProcessArchitecture.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
 					<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="Content _Type" Target="{Binding ElementName=contentTypeComboBox}" />
-					<ComboBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="contentTypeComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ContentType.Items}" SelectedIndex="{Binding ContentType.SelectedIndex}" VerticalContentAlignment="Center" />
+					<ComboBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="contentTypeComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ContentType.Items}" SelectedIndex="{Binding ContentType.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
 					<Label Grid.Row="1" Grid.Column="2" Margin="0 5 0 0" Content=".NET _Version" Target="{Binding ElementName=clrVersionComboBox}" Visibility="{Binding CanShowClrVersion, Converter={StaticResource BooleanToVisibilityConverter}}" />
-					<ComboBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="clrVersionComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ClrVersion.Items}" SelectedIndex="{Binding ClrVersion.SelectedIndex}" VerticalContentAlignment="Center" Visibility="{Binding CanShowClrVersion, Converter={StaticResource BooleanToVisibilityConverter}}" />
+					<ComboBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="clrVersionComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ClrVersion.Items}" SelectedIndex="{Binding ClrVersion.SelectedIndex}" VerticalContentAlignment="Center" Visibility="{Binding CanShowClrVersion, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
 				</Grid>
 
 				<Grid Grid.Row="2">

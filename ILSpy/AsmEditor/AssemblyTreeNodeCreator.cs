@@ -24,8 +24,7 @@ using ICSharpCode.ILSpy.TreeNodes;
 namespace ICSharpCode.ILSpy.AsmEditor
 {
 	/// <summary>
-	/// Creates <see cref="AssemblyTreeNode"/> and makes sure to re-use it if it's deleted and then
-	/// re-added.
+	/// Creates and caches an <see cref="AssemblyTreeNode"/> so the same one is always used.
 	/// </summary>
 	sealed class AssemblyTreeNodeCreator : IDisposable
 	{

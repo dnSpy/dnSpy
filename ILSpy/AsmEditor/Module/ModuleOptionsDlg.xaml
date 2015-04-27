@@ -72,10 +72,10 @@
 								<RowDefinition Height="Auto" />
 							</Grid.RowDefinitions>
 							<Label Grid.Column="0" Margin="0 0 0 0" Content="Module _Type" Target="{Binding ElementName=moduleKindComboBox}" />
-							<ComboBox Grid.Column="1" Margin="5 0 0 0" HorizontalAlignment="Stretch" Name="moduleKindComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ModuleKind.Items}" SelectedIndex="{Binding ModuleKind.SelectedIndex}" VerticalContentAlignment="Center" />
+							<ComboBox Grid.Column="1" Margin="5 0 0 0" HorizontalAlignment="Stretch" Name="moduleKindComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ModuleKind.Items}" SelectedIndex="{Binding ModuleKind.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
 
 							<Label Grid.Column="2" Margin="5 0 0 0" Content=".NET _Version" Target="{Binding ElementName=clrVersionComboBox}" />
-							<ComboBox Grid.Column="3" Margin="5 0 0 0" HorizontalAlignment="Stretch" Name="clrVersionComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ClrVersion.Items}" SelectedIndex="{Binding ClrVersion.SelectedIndex}" VerticalContentAlignment="Center" />
+							<ComboBox Grid.Column="3" Margin="5 0 0 0" HorizontalAlignment="Stretch" Name="clrVersionComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ClrVersion.Items}" SelectedIndex="{Binding ClrVersion.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
 						</Grid>
 
 						<GroupBox Header="GUIDs" Margin="0 5 0 0">
@@ -198,7 +198,7 @@
 
 							<StackPanel Grid.Row="0" Orientation="Horizontal">
 								<Label Content="_Machine" Margin="0 0 0 0" Target="{Binding ElementName=machineComboBox}" />
-								<ComboBox Name="machineComboBox" Margin="5 0 0 0" DisplayMemberPath="Name" ItemsSource="{Binding Machine.Items}" SelectedIndex="{Binding Machine.SelectedIndex}" Width="100" VerticalContentAlignment="Center" />
+								<ComboBox Name="machineComboBox" Margin="5 0 0 0" DisplayMemberPath="Name" ItemsSource="{Binding Machine.Items}" SelectedIndex="{Binding Machine.SelectedIndex}" Width="100" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
 							</StackPanel>
 
 							<GroupBox Grid.Row="1" Header="Characteristics" Margin="0 5 0 0">
