@@ -92,6 +92,26 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return string.Format("0x{0:X}", value);
 		}
 
+		public static string ToString(float value)
+		{
+			return value.ToString();
+		}
+
+		public static string ToString(double value)
+		{
+			return value.ToString();
+		}
+
+		public static string ToString(bool value)
+		{
+			return value.ToString();
+		}
+
+		public static string ToString(char value)
+		{
+			return value.ToString();
+		}
+
 		static string TryParseUnsigned(string s, ulong max, out ulong value)
 		{
 			const ulong min = 0;
@@ -122,6 +142,35 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			if (err != null)
 				throw new FormatException(err);
 			return value;
+		}
+
+		public static float ParseSingle(string s)
+		{
+			float value;
+			if (float.TryParse(s, out value))
+				return value;
+			throw new FormatException("Value must be a 32-bit floating point number");
+		}
+
+		public static double ParseDouble(string s)
+		{
+			double value;
+			if (double.TryParse(s, out value))
+				return value;
+			throw new FormatException("Value must be a 64-bit floating point number");
+		}
+
+		public static bool ParseBoolean(string s)
+		{
+			bool value;
+			if (bool.TryParse(s, out value))
+				return value;
+			throw new FormatException("Value must be a boolean value (True or False)");
+		}
+
+		public static char ParseChar(string s)
+		{
+			return char.Parse(s);
 		}
 
 		public static byte ParseByte(string s)
@@ -620,6 +669,31 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 	}
 
+	sealed class ByteVM : NumberDataFieldVM<byte>
+	{
+		public ByteVM(Action<DataFieldVM<byte>> onUpdated)
+			: this(0, onUpdated)
+		{
+		}
+
+		public ByteVM(byte value, Action<DataFieldVM<byte>> onUpdated)
+			: base(onUpdated)
+		{
+			SetValue(value);
+		}
+
+		protected override void SetValue(byte value)
+		{
+			this.StringValue = NumberVMUtils.ToString(value, UseDecimal);
+		}
+
+		protected override string ConvertToValue(out byte value)
+		{
+			value = NumberVMUtils.ParseByte(StringValue);
+			return null;
+		}
+	}
+
 	sealed class UInt16VM : NumberDataFieldVM<ushort>
 	{
 		public UInt16VM(Action<DataFieldVM<ushort>> onUpdated)
@@ -666,6 +740,231 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		protected override string ConvertToValue(out uint value)
 		{
 			value = NumberVMUtils.ParseUInt32(StringValue);
+			return null;
+		}
+	}
+
+	sealed class UInt64VM : NumberDataFieldVM<ulong>
+	{
+		public UInt64VM(Action<DataFieldVM<ulong>> onUpdated)
+			: this(0, onUpdated)
+		{
+		}
+
+		public UInt64VM(ulong value, Action<DataFieldVM<ulong>> onUpdated)
+			: base(onUpdated)
+		{
+			SetValue(value);
+		}
+
+		protected override void SetValue(ulong value)
+		{
+			this.StringValue = NumberVMUtils.ToString(value, UseDecimal);
+		}
+
+		protected override string ConvertToValue(out ulong value)
+		{
+			value = NumberVMUtils.ParseUInt64(StringValue);
+			return null;
+		}
+	}
+
+	sealed class SByteVM : NumberDataFieldVM<sbyte>
+	{
+		public SByteVM(Action<DataFieldVM<sbyte>> onUpdated)
+			: this(0, onUpdated)
+		{
+		}
+
+		public SByteVM(sbyte value, Action<DataFieldVM<sbyte>> onUpdated)
+			: base(onUpdated)
+		{
+			SetValue(value);
+		}
+
+		protected override void SetValue(sbyte value)
+		{
+			this.StringValue = NumberVMUtils.ToString(value, UseDecimal);
+		}
+
+		protected override string ConvertToValue(out sbyte value)
+		{
+			value = NumberVMUtils.ParseSByte(StringValue);
+			return null;
+		}
+	}
+
+	sealed class Int16VM : NumberDataFieldVM<short>
+	{
+		public Int16VM(Action<DataFieldVM<short>> onUpdated)
+			: this(0, onUpdated)
+		{
+		}
+
+		public Int16VM(short value, Action<DataFieldVM<short>> onUpdated)
+			: base(onUpdated)
+		{
+			SetValue(value);
+		}
+
+		protected override void SetValue(short value)
+		{
+			this.StringValue = NumberVMUtils.ToString(value, UseDecimal);
+		}
+
+		protected override string ConvertToValue(out short value)
+		{
+			value = NumberVMUtils.ParseInt16(StringValue);
+			return null;
+		}
+	}
+
+	sealed class Int32VM : NumberDataFieldVM<int>
+	{
+		public Int32VM(Action<DataFieldVM<int>> onUpdated)
+			: this(0, onUpdated)
+		{
+		}
+
+		public Int32VM(int value, Action<DataFieldVM<int>> onUpdated)
+			: base(onUpdated)
+		{
+			SetValue(value);
+		}
+
+		protected override void SetValue(int value)
+		{
+			this.StringValue = NumberVMUtils.ToString(value, UseDecimal);
+		}
+
+		protected override string ConvertToValue(out int value)
+		{
+			value = NumberVMUtils.ParseInt32(StringValue);
+			return null;
+		}
+	}
+
+	sealed class Int64VM : NumberDataFieldVM<long>
+	{
+		public Int64VM(Action<DataFieldVM<long>> onUpdated)
+			: this(0, onUpdated)
+		{
+		}
+
+		public Int64VM(long value, Action<DataFieldVM<long>> onUpdated)
+			: base(onUpdated)
+		{
+			SetValue(value);
+		}
+
+		protected override void SetValue(long value)
+		{
+			this.StringValue = NumberVMUtils.ToString(value, UseDecimal);
+		}
+
+		protected override string ConvertToValue(out long value)
+		{
+			value = NumberVMUtils.ParseInt64(StringValue);
+			return null;
+		}
+	}
+
+	sealed class SingleVM : DataFieldVM<float>
+	{
+		public SingleVM(Action<DataFieldVM<float>> onUpdated)
+			: this(0, onUpdated)
+		{
+		}
+
+		public SingleVM(float value, Action<DataFieldVM<float>> onUpdated)
+			: base(onUpdated)
+		{
+			SetValue(value);
+		}
+
+		protected override void SetValue(float value)
+		{
+			this.StringValue = NumberVMUtils.ToString(value);
+		}
+
+		protected override string ConvertToValue(out float value)
+		{
+			value = NumberVMUtils.ParseSingle(StringValue);
+			return null;
+		}
+	}
+
+	sealed class DoubleVM : DataFieldVM<double>
+	{
+		public DoubleVM(Action<DataFieldVM<double>> onUpdated)
+			: this(0, onUpdated)
+		{
+		}
+
+		public DoubleVM(double value, Action<DataFieldVM<double>> onUpdated)
+			: base(onUpdated)
+		{
+			SetValue(value);
+		}
+
+		protected override void SetValue(double value)
+		{
+			this.StringValue = NumberVMUtils.ToString(value);
+		}
+
+		protected override string ConvertToValue(out double value)
+		{
+			value = NumberVMUtils.ParseDouble(StringValue);
+			return null;
+		}
+	}
+
+	sealed class BooleanVM : DataFieldVM<bool>
+	{
+		public BooleanVM(Action<DataFieldVM<bool>> onUpdated)
+			: this(false, onUpdated)
+		{
+		}
+
+		public BooleanVM(bool value, Action<DataFieldVM<bool>> onUpdated)
+			: base(onUpdated)
+		{
+			SetValue(value);
+		}
+
+		protected override void SetValue(bool value)
+		{
+			this.StringValue = NumberVMUtils.ToString(value);
+		}
+
+		protected override string ConvertToValue(out bool value)
+		{
+			value = NumberVMUtils.ParseBoolean(StringValue);
+			return null;
+		}
+	}
+
+	sealed class CharVM : DataFieldVM<char>
+	{
+		public CharVM(Action<DataFieldVM<char>> onUpdated)
+			: this((char)0, onUpdated)
+		{
+		}
+
+		public CharVM(char value, Action<DataFieldVM<char>> onUpdated)
+			: base(onUpdated)
+		{
+			SetValue(value);
+		}
+
+		protected override void SetValue(char value)
+		{
+			this.StringValue = NumberVMUtils.ToString(value);
+		}
+
+		protected override string ConvertToValue(out char value)
+		{
+			value = NumberVMUtils.ParseChar(StringValue);
 			return null;
 		}
 	}

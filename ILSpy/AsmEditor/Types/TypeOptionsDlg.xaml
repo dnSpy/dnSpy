@@ -32,17 +32,17 @@
              WindowStartupLocation="CenterOwner"
              Style="{DynamicResource DialogWindow}"
              MinHeight="500" MinWidth="600">
-	<ScrollViewer VerticalScrollBarVisibility="Auto">
-		<Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition />
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="*" />
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
+	<Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
 
-			<Border Grid.Row="0" Margin="5" Style="{StaticResource DialogBorderStyle}">
+		<ScrollViewer VerticalScrollBarVisibility="Auto" Margin="5 0 5 5">
+			<Border Grid.Row="0" Style="{StaticResource DialogBorderStyle}">
 				<Grid Margin="5">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition />
@@ -139,12 +139,12 @@
 					</Expander>
 				</Grid>
 			</Border>
+		</ScrollViewer>
 
-			<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">
-				<Button Content="_OK" IsEnabled="{Binding HasNoError}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
-				<Button Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" />
-				<Button Content="Restore" Style="{StaticResource DialogButton}" Command="{Binding ReinitializeCommand}" ToolTip="Restore all options" />
-			</StackPanel>
-		</Grid>
-	</ScrollViewer>
+		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
+			<Button Content="_OK" IsEnabled="{Binding HasNoError}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
+			<Button Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" />
+			<Button Content="Restore" Style="{StaticResource DialogButton}" Command="{Binding ReinitializeCommand}" ToolTip="Restore all options" />
+		</StackPanel>
+	</Grid>
 </winlocal:WindowBase>

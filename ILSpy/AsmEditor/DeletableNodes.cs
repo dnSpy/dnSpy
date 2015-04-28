@@ -39,6 +39,11 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			get { return nodes; }
 		}
 
+		public DeletableNodes(ILSpyTreeNode node)
+			: this(new[] { node })
+		{
+		}
+
 		public DeletableNodes(IEnumerable<ILSpyTreeNode> nodes)
 		{
 			this.nodes = nodes.ToArray();

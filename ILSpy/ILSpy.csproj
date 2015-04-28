@@ -120,6 +120,10 @@
     <Compile Include="AsmEditor\Converters\RadioButtonConverter.cs" />
     <Compile Include="AsmEditor\DataFieldVM.cs" />
     <Compile Include="AsmEditor\DeletableNodes.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\ConstantControl.xaml.cs">
+      <DependentUpon>ConstantControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\ConstantVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\CreateTypeSigArrayControl.xaml.cs">
       <DependentUpon>CreateTypeSigArrayControl.xaml</DependentUpon>
     </Compile>
@@ -149,6 +153,12 @@
     <Compile Include="AsmEditor\DnlibDialogs\TypeSigCreatorVM.cs" />
     <Compile Include="AsmEditor\EditCommand.cs" />
     <Compile Include="AsmEditor\EnumVM.cs" />
+    <Compile Include="AsmEditor\Event\EventDefCommands.cs" />
+    <Compile Include="AsmEditor\Event\EventDefOptions.cs" />
+    <Compile Include="AsmEditor\Event\EventOptionsDlg.xaml.cs">
+      <DependentUpon>EventOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Event\EventOptionsVM.cs" />
     <Compile Include="AsmEditor\Extensions.cs" />
     <Compile Include="AsmEditor\IUndoCommand.cs" />
     <Compile Include="AsmEditor\Module\ClrVersion.cs" />
@@ -166,6 +176,12 @@
     </Compile>
     <Compile Include="AsmEditor\Module\NetModuleOptionsVM.cs" />
     <Compile Include="AsmEditor\NamespaceTreeNodeCreator.cs" />
+    <Compile Include="AsmEditor\Property\PropertyDefCommands.cs" />
+    <Compile Include="AsmEditor\Property\PropertyDefOptions.cs" />
+    <Compile Include="AsmEditor\Property\PropertyOptionsDlg.xaml.cs">
+      <DependentUpon>PropertyOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Property\PropertyOptionsVM.cs" />
     <Compile Include="AsmEditor\SaveModule\CharacteristicsHelper.cs" />
     <Compile Include="AsmEditor\SaveModule\ModuleSaver.cs" />
     <Compile Include="AsmEditor\Namespace\NamespaceCommands.cs" />
@@ -498,6 +514,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="AsmEditor\DnlibDialogs\ConstantControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AsmEditor\DnlibDialogs\CreateTypeSigArrayControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -526,11 +546,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="AsmEditor\Event\EventOptionsDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AsmEditor\Module\ModuleOptionsDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\Module\NetModuleOptionsDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\Property\PropertyOptionsDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

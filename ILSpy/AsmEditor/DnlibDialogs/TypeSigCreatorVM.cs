@@ -250,11 +250,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return GetTypeSig(VisibleMembersFlags.TypeDef);
 		}
 
-		TypeDefOrRefSig GetGenericTypeSig()
-		{
-			return GetTypeSig(VisibleMembersFlags.GenericTypeDef);
-		}
-
 		TypeDefOrRefSig GetTypeSig(VisibleMembersFlags flags)
 		{
 			if (dnlibTypePicker == null)
@@ -284,7 +279,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		void AddTypeDefOrRef()
 		{
-			TypeSig = GetTypeSig();
+			TypeSig = GetTypeSig(VisibleMembersFlags.NonGenericTypeDef);
 		}
 
 		bool AddTypeDefOrRefCanExecute()
@@ -345,7 +340,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		void AddGenericInstSig()
 		{
-			var origType = GetGenericTypeSig();
+			var origType = GetTypeSig(VisibleMembersFlags.GenericTypeDef);
 			if (origType == null)
 				return;
 			var type = origType as ClassOrValueTypeSig;

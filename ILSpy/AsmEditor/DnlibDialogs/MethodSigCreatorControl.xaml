@@ -39,7 +39,7 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
-		<TextBox Grid.Row="0" IsReadOnly="True" Background="{x:Null}" Text="{Binding SignatureFullName, Mode=OneWay}" TextWrapping="Wrap" />
+		<TextBox Grid.Row="0" IsReadOnly="True" Background="{x:Null}" Text="{Binding SignatureFullName, Mode=OneWay}" TextWrapping="Wrap" Visibility="{Binding ShowSignatureFullName, Converter={StaticResource BooleanToVisibilityConverter}}" />
 		<GroupBox Grid.Row="1"
 				  Margin="0 0 0 0"
 				  Header="Flags">
@@ -63,11 +63,10 @@
 			</Grid>
 		</GroupBox>
 		<Expander Grid.Row="6"
-				  DataContext="{Binding ParametersCreateTypeSigArray}"
 				  Margin="0 5 0 0"
 				  Header="Method Parameter Types"
 				  IsExpanded="True">
-			<Grid>
+			<Grid DataContext="{Binding ParametersCreateTypeSigArray}">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="*" />
 					<RowDefinition Height="Auto" />
@@ -85,11 +84,11 @@
 			</Grid>
 		</Expander>
 		<Expander Grid.Row="7"
-				  DataContext="{Binding SentinelCreateTypeSigArray}"
 				  Margin="0 5 0 0"
+				  Visibility="{Binding CanHaveSentinel, Converter={StaticResource BooleanToVisibilityConverter}}"
 				  Header="Method VarArg Parameter Types"
 				  IsExpanded="False">
-			<Grid>
+			<Grid DataContext="{Binding SentinelCreateTypeSigArray}">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="*" />
 					<RowDefinition Height="Auto" />

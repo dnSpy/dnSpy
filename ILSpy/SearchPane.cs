@@ -105,7 +105,7 @@ namespace ICSharpCode.ILSpy
 			new SearchType("Enum", Images.Enum, SearchMode.EnumTypeDef, VisibleMembersFlags.EnumTypeDef),
 			new SearchType("Interface", Images.Interface, SearchMode.InterfaceTypeDef, VisibleMembersFlags.InterfaceTypeDef),
 			new SearchType("Class", Images.Class, SearchMode.ClassTypeDef, VisibleMembersFlags.ClassTypeDef),
-			new SearchType("Value Type", Images.Struct, SearchMode.ValueTypeDef, VisibleMembersFlags.ValueTypeDef),
+			new SearchType("Struct", Images.Struct, SearchMode.ValueTypeDef, VisibleMembersFlags.ValueTypeDef),
 			new SearchType("Delegate", Images.Delegate, SearchMode.DelegateTypeDef, VisibleMembersFlags.DelegateTypeDef),
 			new SearchType("Member", Images.Property, SearchMode.Member, VisibleMembersFlags.MethodDef | VisibleMembersFlags.FieldDef | VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef),
 			new SearchType("All Above", Images.Class, SearchMode.Any, VisibleMembersFlags.TreeViewAll),

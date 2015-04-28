@@ -22,7 +22,6 @@ using System.ComponentModel;
 using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Types
 {

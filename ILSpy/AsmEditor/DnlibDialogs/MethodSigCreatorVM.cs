@@ -49,14 +49,21 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		public PropertySig PropertySig {
 			get { return CreateSig(new PropertySig()); }
+			set { WriteSignature(value); }
 		}
 
 		public MethodSig MethodSig {
 			get { return CreateSig(new MethodSig()); }
+			set { WriteSignature(value); }
 		}
 
 		public MethodBaseSig MethodBaseSig {
 			get { return IsPropertySig ? (MethodBaseSig)PropertySig : MethodSig; }
+			set { WriteSignature(value); }
+		}
+
+		public bool ShowSignatureFullName {
+			get { return !options.DontShowSignatureFullName; }
 		}
 
 		public bool IsPropertySig {
@@ -210,6 +217,27 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			var sentAry = SentinelCreateTypeSigArray.TypeSigArray;
 			sig.ParamsAfterSentinel = sentAry.Length == 0 ? null : ThreadSafeListCreator.Create<TypeSig>(sentAry);
 			return sig;
+		}
+
+		void WriteSignature(MethodBaseSig sig)
+		{
+			if (sig == null) {
+				CallingConvention = 0;
+				ReturnType = null;
+				ParametersCreateTypeSigArray.TypeSigCollection.Clear();
+				GenericParameterCount.Value = 0;
+				SentinelCreateTypeSigArray.TypeSigCollection.Clear();
+			}
+			else {
+				CallingConvention = sig.CallingConvention;
+				ReturnType = sig.RetType;
+				ParametersCreateTypeSigArray.TypeSigCollection.Clear();
+				ParametersCreateTypeSigArray.TypeSigCollection.AddRange(sig.Params);
+				GenericParameterCount.Value = sig.GenParamCount;
+				SentinelCreateTypeSigArray.TypeSigCollection.Clear();
+				if (sig.ParamsAfterSentinel != null)
+					SentinelCreateTypeSigArray.TypeSigCollection.AddRange(sig.ParamsAfterSentinel);
+			}
 		}
 
 		void AddReturnType()

@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Types
@@ -64,11 +63,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			return type;
 		}
 
-		public TypeDef CreateTypeDef(ModuleDef module)
+		public TypeDef CreateTypeDef()
 		{
-			var td = CopyTo(new TypeDefUser(UTF8String.Empty));
-			td.Module2 = module;
-			return td;
+			return CopyTo(new TypeDefUser(UTF8String.Empty));
 		}
 
 		public static TypeDefOptions Create(UTF8String ns, UTF8String name, ITypeDefOrRef baseType, bool isNestedType)

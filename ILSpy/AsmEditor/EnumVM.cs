@@ -53,16 +53,27 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		public static EnumVM[] Create(Type enumType, params object[] values)
 		{
+			return Create(true, enumType, values);
+		}
+
+		public static EnumVM[] Create(bool sort, Type enumType, params object[] values)
+		{
 			var list = new List<EnumVM>();
 			foreach (var value in enumType.GetEnumValues()) {
 				if (values.Any(a => a.Equals(value)))
 					continue;
 				list.Add(new EnumVM(value));
 			}
-			list.Sort((a, b) => a.Name.ToUpperInvariant().CompareTo(b.Name.ToUpperInvariant()));
+			if (sort)
+				list.Sort((a, b) => StringComparer.InvariantCultureIgnoreCase.Compare(a.Name, b.Name));
 			for (int i = 0; i < values.Length; i++)
 				list.Insert(i, new EnumVM(values[i]));
 			return list.ToArray();
+		}
+
+		public override string ToString()
+		{
+			return name;
 		}
 	}
 

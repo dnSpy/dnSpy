@@ -33,6 +33,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		/// </summary>
 		public bool CanHaveSentinel { get; set; }
 
+		/// <summary>
+		/// true if the signature full name isn't shown
+		/// </summary>
+		public bool DontShowSignatureFullName { get; set; }
+
 		public TypeSigCreatorOptions TypeSigCreatorOptions {
 			get { return typeSigCreatorOptions; }
 			set {

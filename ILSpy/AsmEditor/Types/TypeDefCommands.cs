@@ -221,20 +221,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreateTypeDefCommand(nodes[0], data.CreateTypeDefOptions()));
+			UndoCommandManager.Instance.Add(new CreateTypeDefCommand(module.Types, nodes[0], data.CreateTypeDefOptions()));
 		}
 
+		readonly IList<TypeDef> ownerList;
 		readonly NamespaceTreeNodeCreator nsNodeCreator;
 		readonly TypeTreeNode typeNode;
 
-		CreateTypeDefCommand(ILSpyTreeNode ownerNode, TypeDefOptions options)
+		CreateTypeDefCommand(IList<TypeDef> ownerList, ILSpyTreeNode ownerNode, TypeDefOptions options)
 		{
+			this.ownerList = ownerList;
 			var modNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(ownerNode);
 			Debug.Assert(modNode != null);
 			if (modNode == null)
 				throw new InvalidOperationException();
 			this.nsNodeCreator = new NamespaceTreeNodeCreator(options.Namespace, modNode);
-			this.typeNode = new TypeTreeNode(options.CreateTypeDef(modNode.LoadedAssembly.ModuleDefinition), modNode.Parent as AssemblyTreeNode ?? modNode);
+			this.typeNode = new TypeTreeNode(options.CreateTypeDef(), modNode.Parent as AssemblyTreeNode ?? modNode);
 		}
 
 		public string Description {
@@ -245,13 +247,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		{
 			nsNodeCreator.Add();
 			nsNodeCreator.NamespaceTreeNode.AddToChildren(typeNode);
+			ownerList.Add(typeNode.TypeDefinition);
 			typeNode.OnReadded();
 		}
 
 		public void Undo()
 		{
 			typeNode.OnBeforeRemoved();
-			bool b = nsNodeCreator.NamespaceTreeNode.Children.Remove(typeNode);
+			bool b = ownerList.Remove(typeNode.TypeDefinition) &&
+					nsNodeCreator.NamespaceTreeNode.Children.Remove(typeNode);
 			Debug.Assert(b);
 			if (!b)
 				throw new InvalidOperationException();
@@ -331,7 +335,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			Debug.Assert(modNode != null);
 			if (modNode == null)
 				throw new InvalidOperationException();
-			this.nestedType = new TypeTreeNode(options.CreateTypeDef(modNode.LoadedAssembly.ModuleDefinition), modNode.Parent as AssemblyTreeNode ?? modNode);
+			this.nestedType = new TypeTreeNode(options.CreateTypeDef(), modNode.Parent as AssemblyTreeNode ?? modNode);
 		}
 
 		public string Description {
@@ -341,13 +345,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		public void Execute()
 		{
 			ownerType.AddToChildren(nestedType);
+			ownerType.TypeDefinition.NestedTypes.Add(nestedType.TypeDefinition);
 			nestedType.OnReadded();
 		}
 
 		public void Undo()
 		{
 			nestedType.OnBeforeRemoved();
-			bool b = ownerType.Children.Remove(nestedType);
+			bool b = ownerType.TypeDefinition.NestedTypes.Remove(nestedType.TypeDefinition) &&
+					ownerType.Children.Remove(nestedType);
 			Debug.Assert(b);
 			if (!b)
 				throw new InvalidOperationException();
