@@ -78,6 +78,7 @@ Ctrl+Enter	| (Text view) Follow reference at caret in a new tab
 Ctrl+Click	| (Text view) Follow the clicked reference in a new tab
 Ctrl+C		| (Text view) Copy selected text
 Ctrl+S		| Save code
+Ctrl+Shift+S| Save all modified assemblies and netmodules
 Ctrl+O		| Open assembly
 Ctrl+Z		| (Assembly Editor) Undo
 Ctrl+Y		| (Assembly Editor) Redo
@@ -85,6 +86,7 @@ Ctrl+Shift+Z| (Assembly Editor) Redo
 Ctrl++		| (Text view) Zoom In
 Ctrl+-		| (Text view) Zoom Out
 Ctrl+0		| (Text view) Zoom Reset
+Ctrl+Scroll Wheel| (Text view) Zoom In/Out
 
 Credits
 =======
