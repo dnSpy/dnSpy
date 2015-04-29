@@ -22,14 +22,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:local="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
-             xmlns:mm="clr-namespace:ICSharpCode.ILSpy"
-             mm:HideWindowsButtons.MaxMinButtons="True"
              Height="550" Width="550"
              ResizeMode="CanResizeWithGrip"
-             Icon="../../images/ILSpy.ico"
              Title="{Binding Title}"
-             WindowStartupLocation="CenterOwner"
-             Style="{DynamicResource DialogWindow}"
+             Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
              MinHeight="400" MinWidth="550">
 	<Grid>
 		<Grid.ColumnDefinitions>

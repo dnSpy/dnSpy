@@ -24,14 +24,10 @@
              xmlns:vc="clr-namespace:ICSharpCode.ILSpy.AsmEditor.Converters"
              xmlns:local="clr-namespace:ICSharpCode.ILSpy.AsmEditor.Module"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
-             xmlns:mm="clr-namespace:ICSharpCode.ILSpy"
-             mm:HideWindowsButtons.MaxMinButtons="True"
              Height="380" Width="400"
              ResizeMode="CanResizeWithGrip"
-             Icon="../../images/ILSpy.ico"
              Title="Module Settings"
-             WindowStartupLocation="CenterOwner"
-             Style="{DynamicResource DialogWindow}"
+             Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
              MinHeight="380" MinWidth="400">
 	<winlocal:WindowBase.Resources>
 		<vc:RadioButtonConverter x:Key="RadioButtonConverter" />

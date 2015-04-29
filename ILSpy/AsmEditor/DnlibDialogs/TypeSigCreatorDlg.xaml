@@ -23,14 +23,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
-             xmlns:mm="clr-namespace:ICSharpCode.ILSpy"
-             mm:HideWindowsButtons.MaxMinButtons="True"
              Height="350" Width="500"
              ResizeMode="CanResizeWithGrip"
-             Icon="../../images/ILSpy.ico"
              Title="{Binding Title}"
-             WindowStartupLocation="CenterOwner"
-             Style="{DynamicResource DialogWindow}"
+             Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
              MinHeight="350" MinWidth="500">
 	<Grid>
 		<Grid.RowDefinitions>

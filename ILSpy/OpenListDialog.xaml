@@ -1,16 +1,12 @@
 ﻿<Window
 	x:Class="ICSharpCode.ILSpy.OpenListDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:controls="clr-namespace:ICSharpCode.ILSpy.Controls"
 	Title="Open List"
-	Style="{DynamicResource DialogWindow}"
-	Icon="Images/ILSpy.ico"
-	WindowStartupLocation="CenterOwner"
+	Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
 	ResizeMode="CanResizeWithGrip"
 	MinWidth="380"
 	MinHeight="250"
 	Height="350"
 	Width="380"
-	xmlns:mm="clr-namespace:ICSharpCode.ILSpy"
-	mm:HideWindowsButtons.MaxMinButtons="True"
 	FocusManager.FocusedElement="{Binding ElementName=listView}">
 	<Grid Margin="12,8">
 		<Grid.RowDefinitions>

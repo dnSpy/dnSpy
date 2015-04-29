@@ -23,14 +23,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ICSharpCode.ILSpy.AsmEditor.SaveModule"
              xmlns:vc="clr-namespace:ICSharpCode.ILSpy.AsmEditor.Converters"
-             xmlns:mm="clr-namespace:ICSharpCode.ILSpy"
-             mm:HideWindowsButtons.MaxMinButtons="True"
              Height="200" Width="400"
              ResizeMode="CanResizeWithGrip"
-             Icon="../../images/ILSpy.ico"
              Title="Save Module"
-             WindowStartupLocation="CenterOwner"
-             Style="{DynamicResource DialogWindow}"
+             Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
              MinHeight="200" MinWidth="400">
 	<local:SaveModuleWindow.Resources>
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />

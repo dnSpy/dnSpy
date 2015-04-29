@@ -23,14 +23,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
-             xmlns:mm="clr-namespace:ICSharpCode.ILSpy"
-             mm:HideWindowsButtons.MaxMinButtons="True"
              Height="500" Width="600"
              ResizeMode="CanResizeWithGrip"
-             Icon="../../images/ILSpy.ico"
              Title="Type Settings"
-             WindowStartupLocation="CenterOwner"
-             Style="{DynamicResource DialogWindow}"
+             Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
              MinHeight="500" MinWidth="600">
 	<Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
 		<Grid.ColumnDefinitions>
@@ -41,9 +37,9 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
-		<ScrollViewer VerticalScrollBarVisibility="Auto" Margin="5 0 5 5">
+		<ScrollViewer VerticalScrollBarVisibility="Auto" Margin="5">
 			<Border Grid.Row="0" Style="{StaticResource DialogBorderStyle}">
-				<Grid Margin="5">
+				<Grid Margin="0 5 0 0">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition />
 					</Grid.ColumnDefinitions>
@@ -141,7 +137,7 @@
 			</Border>
 		</ScrollViewer>
 
-		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
+		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">
 			<Button Content="_OK" IsEnabled="{Binding HasNoError}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
 			<Button Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" />
 			<Button Content="Restore" Style="{StaticResource DialogButton}" Command="{Binding ReinitializeCommand}" ToolTip="Restore all options" />

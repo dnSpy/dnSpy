@@ -1,13 +1,9 @@
 ﻿<Window x:Class="ICSharpCode.ILSpy.Options.OptionsDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Style="{DynamicResource DialogWindow}"
-        WindowStartupLocation="CenterOwner"
-        Icon="../Images/ILSpy.ico"
+        Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
         ResizeMode="CanResizeWithGrip"
         MinHeight="300" MinWidth="400"
-        xmlns:mm="clr-namespace:ICSharpCode.ILSpy"
-        mm:HideWindowsButtons.MaxMinButtons="True"
         Title="Options" Height="400" Width="500">
 	<Grid Margin="5">
 		<Grid.RowDefinitions>

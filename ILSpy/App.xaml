@@ -1,12 +1,15 @@
 ﻿<Application x:Class="ICSharpCode.ILSpy.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mm="clr-namespace:ICSharpCode.ILSpy"
              StartupUri="MainWindow.xaml">
 	<Application.Resources>
 		<Style x:Key="DialogWindow" TargetType="{x:Type Window}">
 			<Setter Property="ShowInTaskbar" Value="False"/>
 			<Setter Property="UseLayoutRounding" Value="True"/>
 			<Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+			<Setter Property="Icon" Value="Images/ILSpy.ico"/>
+			<Setter Property="mm:HideWindowsButtons.MaxMinButtons" Value="True"/>
 		</Style>
 		<Style x:Key="DialogBorderStyle" TargetType="{x:Type Border}">
 			<!-- Same color as TabControl's border brush -->

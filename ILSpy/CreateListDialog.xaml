@@ -1,9 +1,7 @@
 ﻿<Window
 	x:Class="ICSharpCode.ILSpy.CreateListDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:controls="clr-namespace:ICSharpCode.ILSpy.Controls"
 	Title="New List"
-	Icon="Images/ILSpy.ico"
-	Style="{DynamicResource DialogWindow}"
-	WindowStartupLocation="CenterOwner"
+	Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
 	ResizeMode="NoResize"
 	SizeToContent="Height"
 	Width="300"
