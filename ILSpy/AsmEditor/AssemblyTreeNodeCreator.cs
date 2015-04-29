@@ -58,7 +58,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			Debug.Assert(asmNode.Parent == null);
 			if (asmNode.Parent != null)
 				throw new InvalidOperationException();
-			Debug.Assert(restoreIndex && origIndex >= 0);
+			Debug.Assert(!restoreIndex || origIndex >= 0);
 
 			MainWindow.Instance.CurrentAssemblyList.ForceAddAssemblyToList(asmNode.LoadedAssembly, true, false, origIndex);
 

@@ -92,11 +92,26 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		List<UndoState> undoCommands = new List<UndoState>();
 		List<UndoState> redoCommands = new List<UndoState>();
 		UndoState currentCommands;
+		int commandCounter;
+		int currentCommandCounter;
+
+		UndoCommandManager()
+		{
+			commandCounter = currentCommandCounter = 1;
+		}
 
 		sealed class UndoState
 		{
-			public readonly Dictionary<AssemblyTreeNode, bool> ModifiedAssemblies = new Dictionary<AssemblyTreeNode, bool>();
+			public readonly HashSet<LoadedAssembly> ModifiedAssemblies = new HashSet<LoadedAssembly>();
 			public readonly List<IUndoCommand> Commands = new List<IUndoCommand>();
+			public readonly int CommandCounter;
+			public readonly int PrevCommandCounter;
+
+			public UndoState(int prevCommandCounter, int commandCounter)
+			{
+				this.PrevCommandCounter = prevCommandCounter;
+				this.CommandCounter = commandCounter;
+			}
 		}
 
 		public struct BeginEndAdder : IDisposable
@@ -148,10 +163,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 					Add(command);
 			}
 			else {
-				foreach (var asmNode in GetAssemblyTreeNodes(command)) {
-					if (!currentCommands.ModifiedAssemblies.ContainsKey(asmNode))
-						currentCommands.ModifiedAssemblies.Add(asmNode, asmNode.LoadedAssembly.IsDirty);
-				}
+				currentCommands.ModifiedAssemblies.AddRange(GetAssemblyTreeNodes(command));
 				command.Execute();
 				OnExecutedOneCommand(currentCommands);
 				currentCommands.Commands.Add(command);
@@ -177,7 +189,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			if (currentCommands != null)
 				throw new InvalidOperationException();
 
-			currentCommands = new UndoState();
+			int prev = currentCommandCounter;
+			commandCounter++;
+			currentCommands = new UndoState(prev, commandCounter);
 		}
 
 		void EndAddInternal()
@@ -215,8 +229,34 @@ namespace ICSharpCode.ILSpy.AsmEditor
 					callingGc = false;
 				}));
 			}
+
+			foreach (var asm in GetAliveModules()) {
+				if (!IsModified(asm))
+					asm.SavedCommand = 0;
+			}
 		}
 		bool callingGc = false;
+
+		IEnumerable<LoadedAssembly> GetAliveModules()
+		{
+			if (MainWindow.Instance.AssemblyListTreeNode == null)
+				yield break;
+			foreach (AssemblyTreeNode asmNode in MainWindow.Instance.AssemblyListTreeNode.Children) {
+				if (asmNode.IsModule)
+					yield return asmNode.LoadedAssembly;
+				else {
+					// Don't force loading of the asms. If they haven't been loaded, we don't need
+					// to return them. We must always return the first one though because the asm
+					// could've been modified even if its children haven't been loaded yet.
+					if (asmNode.Children.Count == 0)
+						yield return asmNode.LoadedAssembly;
+					else {
+						foreach (AssemblyTreeNode modNode in asmNode.Children)
+							yield return asmNode.LoadedAssembly;
+					}
+				}
+			}
+		}
 
 		static void Clear(List<UndoState> list)
 		{
@@ -261,8 +301,6 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			if (redoCommands.Count == 0)
 				return;
 			var group = redoCommands[redoCommands.Count - 1];
-			foreach (var asmNode in group.ModifiedAssemblies.Keys.ToArray())
-				group.ModifiedAssemblies[asmNode] = asmNode.LoadedAssembly.IsDirty;
 			for (int i = 0; i < group.Commands.Count; i++) {
 				group.Commands[i].Execute();
 				OnExecutedOneCommand(group);
@@ -303,59 +341,77 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		public bool IsModified(LoadedAssembly asm)
 		{
-			return asm.IsDirty;
+			return asm.IsDirty && IsModifiedCounter(asm, currentCommandCounter);
+		}
+
+		bool IsModifiedCounter(LoadedAssembly asm, int counter)
+		{
+			return asm.SavedCommand != 0 && asm.SavedCommand != counter;
 		}
 
 		internal void MarkAsModified(LoadedAssembly asm)
 		{
 			asm.IsDirty = true;
-		}
-
-		public void MarkAsSaved(AssemblyTreeNode asmNode)
-		{
-			MarkAsSaved(asmNode.LoadedAssembly);
+			if (asm.SavedCommand == 0)
+				asm.SavedCommand = currentCommandCounter;
 		}
 
 		public void MarkAsSaved(LoadedAssembly asm)
 		{
 			asm.IsDirty = false;
-			foreach (var group in undoCommands) {
-				foreach (var key in group.ModifiedAssemblies.Keys.ToArray())
-					group.ModifiedAssemblies[key] = true;
+			asm.SavedCommand = GetNewSavedCommand(asm);
+		}
+
+		int GetNewSavedCommand(LoadedAssembly asm)
+		{
+			for (int i = undoCommands.Count - 1; i >= 0; i--) {
+				var group = undoCommands[i];
+				if (group.ModifiedAssemblies.Contains(asm))
+					return group.CommandCounter;
 			}
+			if (undoCommands.Count > 0)
+				return undoCommands[0].PrevCommandCounter;
+			return currentCommandCounter;
 		}
 
 		void UpdateAssemblySavedStateRedo(UndoState executedGroup)
 		{
-			foreach (var kv in executedGroup.ModifiedAssemblies)
-				kv.Key.LoadedAssembly.IsDirty = true;
+			UpdateAssemblySavedState(executedGroup.CommandCounter, executedGroup);
 		}
 
 		void UpdateAssemblySavedStateUndo(UndoState executedGroup)
 		{
-			foreach (var kv in executedGroup.ModifiedAssemblies) {
-				// If it wasn't dirty, then it's now dirty, else use the previous value
-				kv.Key.LoadedAssembly.IsDirty = !kv.Key.LoadedAssembly.IsDirty ? true : kv.Value;
+			UpdateAssemblySavedState(executedGroup.PrevCommandCounter, executedGroup);
+		}
+
+		void UpdateAssemblySavedState(int newCurrentCommandCounter, UndoState executedGroup)
+		{
+			currentCommandCounter = newCurrentCommandCounter;
+			foreach (var asm in executedGroup.ModifiedAssemblies) {
+				Debug.Assert(asm.SavedCommand != 0);
+				asm.IsDirty = IsModifiedCounter(asm, currentCommandCounter);
 			}
 		}
 
-		static IEnumerable<AssemblyTreeNode> GetAssemblyTreeNodes(IUndoCommand command)
+		static IEnumerable<LoadedAssembly> GetAssemblyTreeNodes(IUndoCommand command)
 		{
 			foreach (var node in command.TreeNodes) {
 				var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
 				Debug.Assert(asmNode != null);
 				if (asmNode != null)
-					yield return asmNode;
+					yield return asmNode.LoadedAssembly;
 			}
 		}
 
 		void OnExecutedOneCommand(UndoState group)
 		{
-			foreach (var asmNode in group.ModifiedAssemblies.Keys) {
-				var module = asmNode.LoadedAssembly.ModuleDefinition;
+			foreach (var asm in group.ModifiedAssemblies) {
+				var module = asm.ModuleDefinition;
 				if (module != null)
 					module.ResetTypeDefFindCache();
-				Utils.InvalidateDecompilationCache(asmNode);
+				if (asm.SavedCommand == 0)
+					asm.SavedCommand = group.PrevCommandCounter;
+				Utils.InvalidateDecompilationCache(asm);
 			}
 		}
 	}
