@@ -103,7 +103,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 				}
 			}
 
-			public void Delete(ILSpyTreeNode[] nodes)
+			public void Delete(PropertyTreeNode[] nodes)
 			{
 				Debug.Assert(infos == null);
 				if (infos != null)
@@ -112,7 +112,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 				infos = new ModelInfo[nodes.Length];
 
 				for (int i = 0; i < infos.Length; i++) {
-					var node = (PropertyTreeNode)nodes[i];
+					var node = nodes[i];
 
 					var info = new ModelInfo(node.PropertyDefinition);
 					infos[i] = info;
@@ -129,7 +129,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 				}
 			}
 
-			public void Restore(ILSpyTreeNode[] nodes)
+			public void Restore(PropertyTreeNode[] nodes)
 			{
 				Debug.Assert(infos != null);
 				if (infos == null)
@@ -139,7 +139,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 					throw new InvalidOperationException();
 
 				for (int i = infos.Length - 1; i >= 0; i--) {
-					var node = (PropertyTreeNode)nodes[i];
+					var node = nodes[i];
 					var info = infos[i];
 					info.OwnerType.Properties.Insert(info.PropertyIndex, node.PropertyDefinition);
 
@@ -151,12 +151,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			}
 		}
 
-		DeletableNodes nodes;
+		DeletableNodes<PropertyTreeNode> nodes;
 		DeleteModelNodes modelNodes;
 
 		DeletePropertyDefCommand(PropertyTreeNode[] propNodes)
 		{
-			this.nodes = new DeletableNodes(propNodes);
+			this.nodes = new DeletableNodes<PropertyTreeNode>(propNodes);
 		}
 
 		public string Description {
@@ -165,14 +165,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 
 		public void Execute()
 		{
-			modelNodes.Delete(nodes.Nodes);
 			nodes.Delete();
+			modelNodes.Delete(nodes.Nodes);
 		}
 
 		public void Undo()
 		{
-			nodes.Restore();
 			modelNodes.Restore(nodes.Nodes);
+			nodes.Restore();
 		}
 
 		public IEnumerable<ILSpyTreeNode> TreeNodes {
@@ -260,14 +260,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 
 		public void Execute()
 		{
-			ownerNode.AddToChildren(propNode);
+			ownerNode.EnsureChildrenFiltered();
 			ownerNode.TypeDefinition.Properties.Add(propNode.PropertyDefinition);
+			ownerNode.AddToChildren(propNode);
 		}
 
 		public void Undo()
 		{
-			bool b = ownerNode.TypeDefinition.Properties.Remove(propNode.PropertyDefinition) &&
-					ownerNode.Children.Remove(propNode);
+			bool b = ownerNode.Children.Remove(propNode) &&
+					ownerNode.TypeDefinition.Properties.Remove(propNode.PropertyDefinition);
 			Debug.Assert(b);
 			if (!b)
 				throw new InvalidOperationException();

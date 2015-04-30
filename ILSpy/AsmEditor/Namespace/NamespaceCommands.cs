@@ -72,7 +72,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 			if (!CanExecute(nodes))
 				return;
 
-			UndoCommandManager.Instance.Add(new DeleteNamespaceCommand(nodes));
+			var nsNodes = nodes.Select(a => (NamespaceTreeNode)a).ToArray();
+			UndoCommandManager.Instance.Add(new DeleteNamespaceCommand(nsNodes));
 		}
 
 		public struct DeleteModelNodes
@@ -93,8 +94,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 				}
 			}
 
-			public void Delete(ILSpyTreeNode[] nodes)
+			public void Delete(NamespaceTreeNode[] nodes, ILSpyTreeNode[] parents)
 			{
+				Debug.Assert(parents != null && nodes.Length == parents.Length);
 				Debug.Assert(infos == null);
 				if (infos != null)
 					throw new InvalidOperationException();
@@ -102,8 +104,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 				infos = new ModuleInfo[nodes.Length];
 
 				for (int i = 0; i < infos.Length; i++) {
-					var node = (NamespaceTreeNode)nodes[i];
-					var module = ILSpyTreeNode.GetModule(node);
+					var node = nodes[i];
+					var module = ILSpyTreeNode.GetModule(parents[i]);
 					Debug.Assert(module != null);
 					if (module == null)
 						throw new InvalidOperationException();
@@ -124,7 +126,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 				}
 			}
 
-			public void Restore(ILSpyTreeNode[] nodes)
+			public void Restore(NamespaceTreeNode[] nodes, ILSpyTreeNode[] parents)
 			{
 				Debug.Assert(infos != null);
 				if (infos == null)
@@ -144,12 +146,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 			}
 		}
 
-		DeletableNodes nodes;
+		ILSpyTreeNode[] parents;
+		DeletableNodes<NamespaceTreeNode> nodes;
 		DeleteModelNodes modelNodes;
 
-		DeleteNamespaceCommand(ILSpyTreeNode[] nodes)
+		DeleteNamespaceCommand(NamespaceTreeNode[] nodes)
 		{
-			this.nodes = new DeletableNodes(nodes);
+			this.parents = nodes.Select(a => (ILSpyTreeNode)a.Parent).ToArray();
+			this.nodes = new DeletableNodes<NamespaceTreeNode>(nodes);
 			this.modelNodes = new DeleteModelNodes();
 		}
 
@@ -159,14 +163,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 
 		public void Execute()
 		{
-			modelNodes.Delete(nodes.Nodes);
 			nodes.Delete();
+			modelNodes.Delete(nodes.Nodes, parents);
 		}
 
 		public void Undo()
 		{
+			modelNodes.Restore(nodes.Nodes, parents);
 			nodes.Restore();
-			modelNodes.Restore(nodes.Nodes);
 		}
 
 		public IEnumerable<ILSpyTreeNode> TreeNodes {
@@ -222,9 +226,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 		{
 			if (!CanExecute(nodes))
 				throw new ArgumentException();
-			nodes = nodes.Where(a => ((NamespaceTreeNode)a).Name != string.Empty).ToArray();
-			Debug.Assert(nodes.Length > 0);
-			this.nodes = new DeletableNodes(nodes);
+			var nsNodes = nodes.Where(a => ((NamespaceTreeNode)a).Name != string.Empty).Select(a => (NamespaceTreeNode)a).ToArray();
+			Debug.Assert(nsNodes.Length > 0);
+			this.nodes = new DeletableNodes<NamespaceTreeNode>(nsNodes);
 			this.nsTarget = GetTarget();
 		}
 
@@ -233,13 +237,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 		}
 
 		readonly NamespaceTreeNode nsTarget;
-		DeletableNodes nodes;
+		DeletableNodes<NamespaceTreeNode> nodes;
 		ModelInfo[] infos;
 
 		class ModelInfo
 		{
 			public UTF8String[] Namespaces;
-			public DeletableNodes TypeNodes;
+			public DeletableNodes<TypeTreeNode> TypeNodes;
 		}
 
 		NamespaceTreeNode GetTarget()
@@ -257,16 +261,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 
 			infos = new ModelInfo[nodes.Count];
 			for (int i = 0; i < infos.Length; i++) {
-				var nsNode = (NamespaceTreeNode)nodes.Nodes[i];
+				var nsNode = nodes.Nodes[i];
 
 				var info = new ModelInfo();
 				infos[i] = info;
 				info.Namespaces = new UTF8String[nsNode.Children.Count];
-				info.TypeNodes = new DeletableNodes(nsNode.Children.Cast<TypeTreeNode>());
+				info.TypeNodes = new DeletableNodes<TypeTreeNode>(nsNode.Children.Cast<TypeTreeNode>());
 				info.TypeNodes.Delete();
 
 				for (int j = 0; j < info.Namespaces.Length; j++) {
-					var typeNode = (TypeTreeNode)info.TypeNodes.Nodes[j];
+					var typeNode = info.TypeNodes.Nodes[j];
 					info.Namespaces[j] = typeNode.TypeDefinition.Namespace;
 					typeNode.TypeDefinition.Namespace = UTF8String.Empty;
 					nsTarget.Append(typeNode);

@@ -114,7 +114,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 
 		public bool IsValidTypeSig {
-			get { return TypeSig != null; }
+			get { return options.NullTypeSigAllowed || TypeSig != null; }
 		}
 
 		public bool CanAddLeafTypeSig {

@@ -230,8 +230,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 		{
 			this.options = new AssemblyOptions();
 			this.origOptions = options;
-			this.hashAlgorithmVM = new EnumListVM(hashAlgorithmList, () => OnPropertyChanged("AssemblyFullName"));
-			this.contentTypeVM = new EnumListVM(contentTypeList, () => OnPropertyChanged("AssemblyFullName"));
+			this.hashAlgorithmVM = new EnumListVM(hashAlgorithmList, (a, b) => OnPropertyChanged("AssemblyFullName"));
+			this.contentTypeVM = new EnumListVM(contentTypeList, (a, b) => OnPropertyChanged("AssemblyFullName"));
 			this.versionMajor = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }) { UseDecimal = true };
 			this.versionMinor = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }) { UseDecimal = true };
 			this.versionBuild = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }) { UseDecimal = true };

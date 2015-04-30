@@ -191,7 +191,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				if (GenericParameterCount != null && !GenericParameterCount.HasError)
 					IsGeneric = GenericParameterCount.Value != 0;
 			});
-			this.methodCallingConvVM = new EnumListVM(methodCallingConvList, () => {
+			this.methodCallingConvVM = new EnumListVM(methodCallingConvList, (a, b) => {
 				if (!IsMethodSig)
 					throw new InvalidOperationException();
 				CallingConvention = (CallingConvention & ~dnlib.DotNet.CallingConvention.Mask) |

@@ -194,7 +194,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			this.cor20HeaderOptions = new Cor20HeaderOptionsVM(() => HasErrorUpdated());
 			this.metaDataOptions = new MetaDataOptionsVM(() => HasErrorUpdated());
 
-			moduleKindVM = new EnumListVM(moduleKindList, () => {
+			moduleKindVM = new EnumListVM(moduleKindList, (a, b) => {
 				OnPropertyChanged("Extension");
 				PEHeadersOptions.Subsystem.SelectedItem = GetSubsystem((dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem);
 				PEHeadersOptions.Characteristics = CharacteristicsHelper.GetCharacteristics(PEHeadersOptions.Characteristics ?? 0, (dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem);
@@ -353,7 +353,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			this.defaultMachine = defaultMachine;
 			this.defaultSubsystem = defaultSubsystem;
 			this.onUpdated = onUpdated;
-			this.machineVM = new EnumListVM(machineList, () => {
+			this.machineVM = new EnumListVM(machineList, (a, b) => {
 				Characteristics = CharacteristicsHelper.GetCharacteristics(Characteristics ?? 0, (dnlib.PE.Machine)Machine.SelectedItem);
 			});
 			this.timeDateStamp = new NullableUInt32VM(a => HasErrorUpdated());

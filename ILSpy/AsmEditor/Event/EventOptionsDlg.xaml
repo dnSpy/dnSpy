@@ -47,7 +47,6 @@
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 
 					<Grid Grid.Row="0">
@@ -70,16 +69,16 @@
 								<ColumnDefinition />
 								<ColumnDefinition />
 							</Grid.ColumnDefinitions>
-							<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding SpecialName}" Content="SpecialName" />
-							<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding RTSpecialName}" Content="RTSpecialName" />
+							<CheckBox Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding SpecialName}" Content="SpecialName" />
+							<CheckBox Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding RTSpecialName}" Content="RTSpecialName" />
 						</Grid>
 					</GroupBox>
 
-					<Expander Grid.Row="3"
+					<Expander Grid.Row="2"
 							  Margin="0 5 0 0"
 							  IsExpanded="False"
 							  Header="{Binding EventTypeHeader}">
-						<dnlibdlgs:TypeSigCreatorControl Grid.Row="0" Margin="0 5 0 0" DataContext="{Binding TypeSigCreator}" />
+						<dnlibdlgs:TypeSigCreatorControl Margin="0 5 0 0" DataContext="{Binding TypeSigCreator}" />
 					</Expander>
 				</Grid>
 			</Border>

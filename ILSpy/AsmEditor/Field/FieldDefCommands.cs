@@ -25,11 +25,11 @@ using System.Windows.Controls;
 using ICSharpCode.ILSpy.TreeNodes;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Event
+namespace ICSharpCode.ILSpy.AsmEditor.Field
 {
-	sealed class DeleteEventDefCommand : IUndoCommand
+	sealed class DeleteFieldDefCommand : IUndoCommand
 	{
-		const string CMD_NAME = "Delete Event";
+		const string CMD_NAME = "Delete Field";
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Images/Delete.png",
 								Category = "AsmEd",
@@ -43,12 +43,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
 			{
-				return DeleteEventDefCommand.CanExecute(nodes);
+				return DeleteFieldDefCommand.CanExecute(nodes);
 			}
 
 			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
 			{
-				DeleteEventDefCommand.Execute(nodes);
+				DeleteFieldDefCommand.Execute(nodes);
 			}
 
 			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
@@ -56,14 +56,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 				if (nodes.Length == 1)
 					menuItem.Header = string.Format("Delete {0}", nodes[0].Text);
 				else
-					menuItem.Header = string.Format("Delete {0} events", nodes.Length);
+					menuItem.Header = string.Format("Delete {0} fields", nodes.Length);
 			}
 		}
 
 		static bool CanExecute(ILSpyTreeNode[] nodes)
 		{
 			return nodes.Length > 0 &&
-				nodes.All(n => n is EventTreeNode);
+				nodes.All(n => n is FieldTreeNode);
 		}
 
 		static void Execute(ILSpyTreeNode[] nodes)
@@ -71,8 +71,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			if (!CanExecute(nodes))
 				return;
 
-			var eventNodes = nodes.Select(a => (EventTreeNode)a).ToArray();
-			UndoCommandManager.Instance.Add(new DeleteEventDefCommand(eventNodes));
+			var fieldNodes = nodes.Select(a => (FieldTreeNode)a).ToArray();
+			UndoCommandManager.Instance.Add(new DeleteFieldDefCommand(fieldNodes));
 		}
 
 		public struct DeleteModelNodes
@@ -82,29 +82,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			struct ModelInfo
 			{
 				public readonly TypeDef OwnerType;
-				public readonly int EventIndex;
-				public readonly int[] MethodIndexes;
-				public readonly MethodDef[] Methods;
+				public readonly int FieldIndex;
 
-				public ModelInfo(EventDef evt)
+				public ModelInfo(FieldDef field)
 				{
-					this.OwnerType = evt.DeclaringType;
-					this.EventIndex = this.OwnerType.Events.IndexOf(evt);
-					Debug.Assert(this.EventIndex >= 0);
-					this.Methods = new HashSet<MethodDef>(GetMethods(evt)).ToArray();
-					this.MethodIndexes = new int[this.Methods.Length];
-				}
-
-				static IEnumerable<MethodDef> GetMethods(EventDef evt)
-				{
-					if (evt.AddMethod != null) yield return evt.AddMethod;
-					if (evt.InvokeMethod != null) yield return evt.InvokeMethod;
-					if (evt.RemoveMethod != null) yield return evt.RemoveMethod;
-					foreach (var m in evt.OtherMethods) yield return m;
+					this.OwnerType = field.DeclaringType;
+					this.FieldIndex = this.OwnerType.Fields.IndexOf(field);
+					Debug.Assert(this.FieldIndex >= 0);
 				}
 			}
 
-			public void Delete(EventTreeNode[] nodes)
+			public void Delete(FieldTreeNode[] nodes)
 			{
 				Debug.Assert(infos == null);
 				if (infos != null)
@@ -115,22 +103,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 				for (int i = 0; i < infos.Length; i++) {
 					var node = nodes[i];
 
-					var info = new ModelInfo(node.EventDefinition);
+					var info = new ModelInfo(node.FieldDefinition);
 					infos[i] = info;
-					info.OwnerType.Events.RemoveAt(info.EventIndex);
-
-					for (int j = 0; j < info.Methods.Length; j++) {
-						int index = info.OwnerType.Methods.IndexOf(info.Methods[j]);
-						Debug.Assert(index >= 0);
-						if (index < 0)
-							throw new InvalidOperationException();
-						info.OwnerType.Methods.RemoveAt(index);
-						info.MethodIndexes[j] = index;
-					}
+					info.OwnerType.Fields.RemoveAt(info.FieldIndex);
 				}
 			}
 
-			public void Restore(EventTreeNode[] nodes)
+			public void Restore(FieldTreeNode[] nodes)
 			{
 				Debug.Assert(infos != null);
 				if (infos == null)
@@ -142,22 +121,19 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 				for (int i = infos.Length - 1; i >= 0; i--) {
 					var node = nodes[i];
 					var info = infos[i];
-					info.OwnerType.Events.Insert(info.EventIndex, node.EventDefinition);
-
-					for (int j = info.Methods.Length - 1; j >= 0; j--)
-						info.OwnerType.Methods.Insert(info.MethodIndexes[j], info.Methods[j]);
+					info.OwnerType.Fields.Insert(info.FieldIndex, node.FieldDefinition);
 				}
 
 				infos = null;
 			}
 		}
 
-		DeletableNodes<EventTreeNode> nodes;
+		DeletableNodes<FieldTreeNode> nodes;
 		DeleteModelNodes modelNodes;
 
-		DeleteEventDefCommand(EventTreeNode[] eventNodes)
+		DeleteFieldDefCommand(FieldTreeNode[] fieldNodes)
 		{
-			this.nodes = new DeletableNodes<EventTreeNode>(eventNodes);
+			this.nodes = new DeletableNodes<FieldTreeNode>(fieldNodes);
 		}
 
 		public string Description {
@@ -185,9 +161,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 		}
 	}
 
-	sealed class CreateEventDefCommand : IUndoCommand
+	sealed class CreateFieldDefCommand : IUndoCommand
 	{
-		const string CMD_NAME = "Create Event";
+		const string CMD_NAME = "Create Field";
 		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Images/Class.png",
 								Category = "AsmEd",
@@ -201,12 +177,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
 			{
-				return CreateEventDefCommand.CanExecute(nodes);
+				return CreateFieldDefCommand.CanExecute(nodes);
 			}
 
 			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
 			{
-				CreateEventDefCommand.Execute(nodes);
+				CreateFieldDefCommand.Execute(nodes);
 			}
 		}
 
@@ -233,26 +209,26 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			Debug.Assert(module != null);
 			if (module == null)
 				throw new InvalidOperationException();
-			var options = EventDefOptions.Create("MyEvent", module.CorLibTypes.GetTypeRef("System", "EventHandler"));
+			var options = FieldDefOptions.Create("MyField", new FieldSig(module.CorLibTypes.Int32));
 
-			var data = new EventOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, typeNode.TypeDefinition);
-			var win = new EventOptionsDlg();
-			win.Title = "Create Event";
+			var data = new FieldOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, typeNode.TypeDefinition);
+			var win = new FieldOptionsDlg();
+			win.Title = "Create Field";
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreateEventDefCommand((TypeTreeNode)ownerNode, data.CreateEventDefOptions()));
+			UndoCommandManager.Instance.Add(new CreateFieldDefCommand((TypeTreeNode)ownerNode, data.CreateFieldDefOptions()));
 		}
 
 		readonly TypeTreeNode ownerNode;
-		readonly EventTreeNode eventNode;
+		readonly FieldTreeNode fieldNode;
 
-		CreateEventDefCommand(TypeTreeNode ownerNode, EventDefOptions options)
+		CreateFieldDefCommand(TypeTreeNode ownerNode, FieldDefOptions options)
 		{
 			this.ownerNode = ownerNode;
-			this.eventNode = new EventTreeNode(options.CreateEventDef());
+			this.fieldNode = new FieldTreeNode(options.CreateFieldDef());
 		}
 
 		public string Description {
@@ -262,14 +238,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 		public void Execute()
 		{
 			ownerNode.EnsureChildrenFiltered();
-			ownerNode.TypeDefinition.Events.Add(eventNode.EventDefinition);
-			ownerNode.AddToChildren(eventNode);
+			ownerNode.TypeDefinition.Fields.Add(fieldNode.FieldDefinition);
+			ownerNode.AddToChildren(fieldNode);
 		}
 
 		public void Undo()
 		{
-			bool b = ownerNode.Children.Remove(eventNode) &&
-					ownerNode.TypeDefinition.Events.Remove(eventNode.EventDefinition);
+			bool b = ownerNode.Children.Remove(fieldNode) &&
+					ownerNode.TypeDefinition.Fields.Remove(fieldNode.FieldDefinition);
 			Debug.Assert(b);
 			if (!b)
 				throw new InvalidOperationException();
@@ -284,9 +260,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 		}
 	}
 
-	sealed class EventDefSettingsCommand : IUndoCommand
+	sealed class FieldDefSettingsCommand : IUndoCommand
 	{
-		const string CMD_NAME = "Event Settings";
+		const string CMD_NAME = "Field Settings";
 		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Images/Settings.png",
 								Category = "AsmEd",
@@ -300,19 +276,19 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
 			{
-				return EventDefSettingsCommand.CanExecute(nodes);
+				return FieldDefSettingsCommand.CanExecute(nodes);
 			}
 
 			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
 			{
-				EventDefSettingsCommand.Execute(nodes);
+				FieldDefSettingsCommand.Execute(nodes);
 			}
 		}
 
 		static bool CanExecute(ILSpyTreeNode[] nodes)
 		{
 			return nodes.Length == 1 &&
-				nodes[0] is EventTreeNode;
+				nodes[0] is FieldTreeNode;
 		}
 
 		static void Execute(ILSpyTreeNode[] nodes)
@@ -320,38 +296,38 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			if (!CanExecute(nodes))
 				return;
 
-			var eventNode = (EventTreeNode)nodes[0];
+			var fieldNode = (FieldTreeNode)nodes[0];
 
 			var module = ILSpyTreeNode.GetModule(nodes[0]);
 			Debug.Assert(module != null);
 			if (module == null)
 				throw new InvalidOperationException();
 
-			var data = new EventOptionsVM(new EventDefOptions(eventNode.EventDefinition), module, MainWindow.Instance.CurrentLanguage, eventNode.EventDefinition.DeclaringType);
-			var win = new EventOptionsDlg();
+			var data = new FieldOptionsVM(new FieldDefOptions(fieldNode.FieldDefinition), module, MainWindow.Instance.CurrentLanguage, fieldNode.FieldDefinition.DeclaringType);
+			var win = new FieldOptionsDlg();
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new EventDefSettingsCommand(eventNode, data.CreateEventDefOptions()));
+			UndoCommandManager.Instance.Add(new FieldDefSettingsCommand(fieldNode, data.CreateFieldDefOptions()));
 		}
 
-		readonly EventTreeNode eventNode;
-		readonly EventDefOptions newOptions;
-		readonly EventDefOptions origOptions;
+		readonly FieldTreeNode fieldNode;
+		readonly FieldDefOptions newOptions;
+		readonly FieldDefOptions origOptions;
 		readonly ILSpyTreeNode origParentNode;
 		readonly int origParentChildIndex;
 		readonly bool nameChanged;
 
-		EventDefSettingsCommand(EventTreeNode eventNode, EventDefOptions options)
+		FieldDefSettingsCommand(FieldTreeNode fieldNode, FieldDefOptions options)
 		{
-			this.eventNode = eventNode;
+			this.fieldNode = fieldNode;
 			this.newOptions = options;
-			this.origOptions = new EventDefOptions(eventNode.EventDefinition);
+			this.origOptions = new FieldDefOptions(fieldNode.FieldDefinition);
 
-			this.origParentNode = (ILSpyTreeNode)eventNode.Parent;
-			this.origParentChildIndex = this.origParentNode.Children.IndexOf(eventNode);
+			this.origParentNode = (ILSpyTreeNode)fieldNode.Parent;
+			this.origParentChildIndex = this.origParentNode.Children.IndexOf(fieldNode);
 			Debug.Assert(this.origParentChildIndex >= 0);
 			if (this.origParentChildIndex < 0)
 				throw new InvalidOperationException();
@@ -366,38 +342,38 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 		public void Execute()
 		{
 			if (nameChanged) {
-				bool b = origParentChildIndex < origParentNode.Children.Count && origParentNode.Children[origParentChildIndex] == eventNode;
+				bool b = origParentChildIndex < origParentNode.Children.Count && origParentNode.Children[origParentChildIndex] == fieldNode;
 				Debug.Assert(b);
 				if (!b)
 					throw new InvalidOperationException();
 				origParentNode.Children.RemoveAt(origParentChildIndex);
-				newOptions.CopyTo(eventNode.EventDefinition);
+				newOptions.CopyTo(fieldNode.FieldDefinition);
 
-				origParentNode.AddToChildren(eventNode);
+				origParentNode.AddToChildren(fieldNode);
 			}
 			else
-				newOptions.CopyTo(eventNode.EventDefinition);
-			eventNode.RaiseUIPropsChanged();
+				newOptions.CopyTo(fieldNode.FieldDefinition);
+			fieldNode.RaiseUIPropsChanged();
 		}
 
 		public void Undo()
 		{
 			if (nameChanged) {
-				bool b = origParentNode.Children.Remove(eventNode);
+				bool b = origParentNode.Children.Remove(fieldNode);
 				Debug.Assert(b);
 				if (!b)
 					throw new InvalidOperationException();
 
-				origOptions.CopyTo(eventNode.EventDefinition);
-				origParentNode.Children.Insert(origParentChildIndex, eventNode);
+				origOptions.CopyTo(fieldNode.FieldDefinition);
+				origParentNode.Children.Insert(origParentChildIndex, fieldNode);
 			}
 			else
-				origOptions.CopyTo(eventNode.EventDefinition);
-			eventNode.RaiseUIPropsChanged();
+				origOptions.CopyTo(fieldNode.FieldDefinition);
+			fieldNode.RaiseUIPropsChanged();
 		}
 
 		public IEnumerable<ILSpyTreeNode> TreeNodes {
-			get { yield return eventNode; }
+			get { yield return fieldNode; }
 		}
 
 		public void Dispose()

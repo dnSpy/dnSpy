@@ -281,7 +281,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		public ConstantVM(object value, string constantCheckBoxToolTip)
 		{
 			this.ConstantCheckBoxToolTip = constantCheckBoxToolTip;
-			this.constantTypeVM = new EnumListVM(constantTypeList, OnConstantChanged);
+			this.constantTypeVM = new EnumListVM(constantTypeList, (a, b) => OnConstantChanged());
 			this.boolean = new BooleanVM(a => HasErrorUpdated());
 			this.@char = new CharVM(a => HasErrorUpdated());
 			this.@sbyte = new SByteVM(a => HasErrorUpdated());

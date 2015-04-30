@@ -188,7 +188,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			options.Attributes = Attributes;
 			options.Name = Name;
 			options.PropertySig = PropertySig;
-			options.Constant = Constant;
+			options.Constant = HasDefault ? Constant : null;
 			return options;
 		}
 
@@ -200,7 +200,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 		public override bool HasError {
 			get {
 				return MethodSigCreator.HasError ||
-					(HasDefault && constantVM.HasError);
+					(HasDefault && ConstantVM.HasError);
 			}
 		}
 	}

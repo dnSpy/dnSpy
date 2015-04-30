@@ -96,19 +96,24 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			// exception.
 			base.OnChildrenChanged(e);
 
-			if (e.NewItems != null) {
-				if (IsHidden)
-					ReapplyFilter();
-				if (IsVisible) {
-					foreach (ILSpyTreeNode node in e.NewItems)
-						ApplyFilterToChild(node);
-				} else {
-					childrenNeedFiltering = true;
+			if (Parent == null)
+				childrenNeedFiltering = true;
+			else {
+				if (e.NewItems != null) {
+					if (IsHidden)
+						ReapplyFilter();
+					if (IsVisible) {
+						foreach (ILSpyTreeNode node in e.NewItems)
+							ApplyFilterToChild(node);
+					}
+					else {
+						childrenNeedFiltering = true;
+					}
 				}
-			}
 
-			if (IsVisible && Children.Count == 0)
-				ReapplyFilter();
+				if (IsVisible && Children.Count == 0)
+					ReapplyFilter();
+			}
 		}
 
 		void ReapplyFilter()
@@ -347,6 +352,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			RaisePropertyChanged("ExpandedIcon");
 			RaisePropertyChanged("ToolTip");
 			RaisePropertyChanged("Text");
+			RaisePropertyChanged("Foreground");
 		}
 
 		/// <summary>

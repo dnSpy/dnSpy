@@ -25,9 +25,9 @@ using ICSharpCode.ILSpy.TreeNodes;
 
 namespace ICSharpCode.ILSpy.AsmEditor
 {
-	public struct DeletableNodes
+	public struct DeletableNodes<T> where T : ILSpyTreeNode
 	{
-		readonly ILSpyTreeNode[] nodes;
+		readonly T[] nodes;
 		ILSpyTreeNode[] parents;
 		int[] indexes;
 
@@ -35,16 +35,16 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			get { return nodes.Length; }
 		}
 
-		public ILSpyTreeNode[] Nodes {
+		public T[] Nodes {
 			get { return nodes; }
 		}
 
-		public DeletableNodes(ILSpyTreeNode node)
+		public DeletableNodes(T node)
 			: this(new[] { node })
 		{
 		}
 
-		public DeletableNodes(IEnumerable<ILSpyTreeNode> nodes)
+		public DeletableNodes(IEnumerable<T> nodes)
 		{
 			this.nodes = nodes.ToArray();
 			this.parents = null;
@@ -53,6 +53,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		/// <summary>
 		/// Deletes the nodes. An exception is thrown if they've already been deleted but not restored.
+		/// The model (dnlib) elements must be deleted after this method is called, not before.
 		/// </summary>
 		public void Delete()
 		{
@@ -81,6 +82,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		/// <summary>
 		/// Restores the deleted nodes. An exception is thrown if the nodes haven't been deleted.
+		/// The model (dnlib) elements must be restored before this method is called, not after.
 		/// </summary>
 		public void Restore()
 		{

@@ -93,18 +93,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			get { return typeSigCreator; }
 		}
 		readonly TypeSigCreatorVM typeSigCreator;
-		readonly TypeSigCreatorOptions typeSigCreatorOptions;
 
 		public EventOptionsVM(EventDefOptions options, ModuleDef module, Language language, TypeDef ownerType)
 		{
-			this.typeSigCreatorOptions = new TypeSigCreatorOptions(module, language) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(module, language) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = true,
 				OwnerType = ownerType,
 			};
 			if (ownerType != null && ownerType.GenericParameters.Count == 0)
-				this.typeSigCreatorOptions.CanAddGenericTypeVar = false;
+				typeSigCreatorOptions.CanAddGenericTypeVar = false;
 			this.typeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			this.typeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 

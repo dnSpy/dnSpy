@@ -28,6 +28,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		public bool IsLocal { get; set; }
 		public bool CanAddGenericTypeVar { get; set; }
 		public bool CanAddGenericMethodVar { get; set; }
+		public bool NullTypeSigAllowed { get; set; }
 
 		public TypeDef OwnerType {
 			get { return ownerType ?? (OwnerMethod == null ? null : OwnerMethod.DeclaringType); }

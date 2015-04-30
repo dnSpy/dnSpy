@@ -1462,7 +1462,7 @@ namespace ICSharpCode.Decompiler.Ast
 			var attrType = typeof(MarshalAsAttribute);
 			Ast.Attribute attr = CreateNonCustomAttribute(attrType, module);
 			var unmanagedType = module.CorLibTypes.GetTypeRef("System.Runtime.InteropServices", "UnmanagedType");
-			attr.Arguments.Add(MakePrimitive((int)marshalInfo.NativeType, unmanagedType));
+			attr.Arguments.Add(MakePrimitive(unchecked((int)marshalInfo.NativeType), unmanagedType));
 			
 			var fami = marshalInfo as FixedArrayMarshalType;
 			if (fami != null) {

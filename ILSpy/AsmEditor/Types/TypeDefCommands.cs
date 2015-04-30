@@ -97,7 +97,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 				}
 			}
 
-			public void Delete(ILSpyTreeNode[] nodes)
+			public void Delete(TypeTreeNode[] nodes)
 			{
 				Debug.Assert(infos == null);
 				if (infos != null)
@@ -106,7 +106,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 				infos = new ModelInfo[nodes.Length];
 
 				for (int i = 0; i < infos.Length; i++) {
-					var node = (TypeTreeNode)nodes[i];
+					var node = nodes[i];
 
 					var info = new ModelInfo(node.TypeDefinition);
 					infos[i] = info;
@@ -114,7 +114,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 				}
 			}
 
-			public void Restore(ILSpyTreeNode[] nodes)
+			public void Restore(TypeTreeNode[] nodes)
 			{
 				Debug.Assert(infos != null);
 				if (infos == null)
@@ -124,7 +124,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 					throw new InvalidOperationException();
 
 				for (int i = infos.Length - 1; i >= 0; i--) {
-					var node = (TypeTreeNode)nodes[i];
+					var node = nodes[i];
 					var info = infos[i];
 					info.OwnerList.Insert(info.Index, node.TypeDefinition);
 				}
@@ -133,12 +133,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			}
 		}
 
-		DeletableNodes nodes;
+		DeletableNodes<TypeTreeNode> nodes;
 		DeleteModelNodes modelNodes;
 
 		DeleteTypeDefCommand(TypeTreeNode[] asmNodes)
 		{
-			nodes = new DeletableNodes(asmNodes);
+			nodes = new DeletableNodes<TypeTreeNode>(asmNodes);
 		}
 
 		public string Description {
@@ -147,14 +147,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 
 		public void Execute()
 		{
-			modelNodes.Delete(nodes.Nodes);
 			nodes.Delete();
+			modelNodes.Delete(nodes.Nodes);
 		}
 
 		public void Undo()
 		{
-			nodes.Restore();
 			modelNodes.Restore(nodes.Nodes);
+			nodes.Restore();
 		}
 
 		public IEnumerable<ILSpyTreeNode> TreeNodes {
@@ -246,16 +246,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		public void Execute()
 		{
 			nsNodeCreator.Add();
-			nsNodeCreator.NamespaceTreeNode.AddToChildren(typeNode);
+			nsNodeCreator.NamespaceTreeNode.EnsureChildrenFiltered();
 			ownerList.Add(typeNode.TypeDefinition);
+			nsNodeCreator.NamespaceTreeNode.AddToChildren(typeNode);
 			typeNode.OnReadded();
 		}
 
 		public void Undo()
 		{
 			typeNode.OnBeforeRemoved();
-			bool b = ownerList.Remove(typeNode.TypeDefinition) &&
-					nsNodeCreator.NamespaceTreeNode.Children.Remove(typeNode);
+			bool b = nsNodeCreator.NamespaceTreeNode.Children.Remove(typeNode) &&
+					ownerList.Remove(typeNode.TypeDefinition);
 			Debug.Assert(b);
 			if (!b)
 				throw new InvalidOperationException();
@@ -344,16 +345,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 
 		public void Execute()
 		{
-			ownerType.AddToChildren(nestedType);
+			ownerType.EnsureChildrenFiltered();
 			ownerType.TypeDefinition.NestedTypes.Add(nestedType.TypeDefinition);
+			ownerType.AddToChildren(nestedType);
 			nestedType.OnReadded();
 		}
 
 		public void Undo()
 		{
 			nestedType.OnBeforeRemoved();
-			bool b = ownerType.TypeDefinition.NestedTypes.Remove(nestedType.TypeDefinition) &&
-					ownerType.Children.Remove(nestedType);
+			bool b = ownerType.Children.Remove(nestedType) &&
+					ownerType.TypeDefinition.NestedTypes.Remove(nestedType.TypeDefinition);
 			Debug.Assert(b);
 			if (!b)
 				throw new InvalidOperationException();

@@ -131,6 +131,14 @@
       <DependentUpon>CreateTypeSigArrayDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\DnlibDialogs\CreateTypeSigArrayVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\ImplMapControl.xaml.cs">
+      <DependentUpon>ImplMapControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\ImplMapVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\MarshalTypeControl.xaml.cs">
+      <DependentUpon>MarshalTypeControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\MarshalTypeVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\MemberPickerDlg.xaml.cs">
       <DependentUpon>MemberPickerDlg.xaml</DependentUpon>
     </Compile>
@@ -160,6 +168,12 @@
     </Compile>
     <Compile Include="AsmEditor\Event\EventOptionsVM.cs" />
     <Compile Include="AsmEditor\Extensions.cs" />
+    <Compile Include="AsmEditor\Field\FieldDefCommands.cs" />
+    <Compile Include="AsmEditor\Field\FieldDefOptions.cs" />
+    <Compile Include="AsmEditor\Field\FieldOptionsDlg.xaml.cs">
+      <DependentUpon>FieldOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Field\FieldOptionsVM.cs" />
     <Compile Include="AsmEditor\IUndoCommand.cs" />
     <Compile Include="AsmEditor\Module\ClrVersion.cs" />
     <Compile Include="AsmEditor\Module\ClrVersionValues.cs" />
@@ -526,6 +540,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="AsmEditor\DnlibDialogs\ImplMapControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\MarshalTypeControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AsmEditor\DnlibDialogs\MemberPickerDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -547,6 +569,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\Event\EventOptionsDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\Field\FieldOptionsDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

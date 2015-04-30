@@ -300,9 +300,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			this.options = new TypeDefOptions();
 			this.origOptions = options;
 			this.isNestedType = (options.Attributes & TypeAttributes.VisibilityMask) <= TypeAttributes.Public;
-			this.typeKindVM = new EnumListVM(typeKindList, OnTypeKindChanged);
-			this.typeLayoutVM = new EnumListVM(typeLayoutList, InitializeTypeKind);
-			this.typeSemanticsVM = new EnumListVM(typeSemanticsList, InitializeTypeKind);
+			this.typeKindVM = new EnumListVM(typeKindList, (a, b) => OnTypeKindChanged());
+			this.typeLayoutVM = new EnumListVM(typeLayoutList, (a, b) => InitializeTypeKind());
+			this.typeSemanticsVM = new EnumListVM(typeSemanticsList, (a, b) => InitializeTypeKind());
 			this.packingSize = new NullableUInt16VM(a => HasErrorUpdated());
 			this.classSize = new NullableUInt32VM(a => HasErrorUpdated());
 
@@ -319,12 +319,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 				if (t < start || t > end)
 					TypeVisibility.Items.RemoveAt(TypeVisibility.GetIndex(t));
 			}
-
-			TypeVisibility.SelectedItem = (Types.TypeVisibility)(((int)options.Attributes >> 0) & (int)TypeAttributes.VisibilityMask);
-			TypeLayout.SelectedItem = (Types.TypeLayout)(((int)options.Attributes >> 3) & 3);
-			TypeSemantics.SelectedItem = (Types.TypeSemantics)(((int)options.Attributes >> 5) & 1);
-			TypeStringFormat.SelectedItem = (Types.TypeStringFormat)(((int)options.Attributes >> 16) & 3);
-			TypeCustomFormat.SelectedItem = (Types.TypeCustomFormat)(((int)options.Attributes >> 22) & 3);
 
 			InitializeTypeKind();
 			this.typeSigCreator.ShowTypeFullName = false;
@@ -518,6 +512,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			PackingSize.Value = options.PackingSize;
 			ClassSize.Value = options.ClassSize;
 			BaseTypeSig = options.BaseType.ToTypeSig();
+			TypeVisibility.SelectedItem = (Types.TypeVisibility)(((int)options.Attributes >> 0) & (int)TypeAttributes.VisibilityMask);
+			TypeLayout.SelectedItem = (Types.TypeLayout)(((int)options.Attributes >> 3) & 3);
+			TypeSemantics.SelectedItem = (Types.TypeSemantics)(((int)options.Attributes >> 5) & 1);
+			TypeStringFormat.SelectedItem = (Types.TypeStringFormat)(((int)options.Attributes >> 16) & 3);
+			TypeCustomFormat.SelectedItem = (Types.TypeCustomFormat)(((int)options.Attributes >> 22) & 3);
 		}
 
 		TypeDefOptions CopyTo(TypeDefOptions options)

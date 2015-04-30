@@ -80,7 +80,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 	sealed class EnumListVM : INotifyPropertyChanged
 	{
 		readonly ObservableCollection<EnumVM> list;
-		readonly Action onChanged;
+		readonly Action<int, int> onChanged;
 		int index;
 
 		public IList<EnumVM> Items {
@@ -91,12 +91,13 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			get { return index; }
 			set {
 				if (index != value) {
+					int oldIndex = index;
 					Debug.Assert(value >= 0 && value < list.Count);
 					index = value;
 					OnPropertyChanged("SelectedIndex");
 					OnPropertyChanged("SelectedItem");
 					if (onChanged != null)
-						onChanged();
+						onChanged(oldIndex, index);
 				}
 			}
 		}
@@ -113,7 +114,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			}
 		}
 
-		public EnumListVM(IList<EnumVM> list, Action onChanged = null)
+		public EnumListVM(IList<EnumVM> list)
+			: this(list, null)
+		{
+		}
+
+		public EnumListVM(IList<EnumVM> list, Action<int, int> onChanged)
 		{
 			this.list = new ObservableCollection<EnumVM>(list);
 			this.index = 0;

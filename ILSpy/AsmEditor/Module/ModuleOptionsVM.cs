@@ -493,16 +493,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			this.module = module;
 			this.options = new ModuleOptions();
 			this.origOptions = options;
-			moduleKindVM = new EnumListVM(SaveModule.SaveModuleOptionsVM.moduleKindList, () => {
+			moduleKindVM = new EnumListVM(SaveModule.SaveModuleOptionsVM.moduleKindList, (a, b) => {
 				Characteristics = SaveModule.CharacteristicsHelper.GetCharacteristics(Characteristics, (dnlib.DotNet.ModuleKind)ModuleKind.SelectedItem);
 			});
-			this.machineVM = new EnumListVM(SaveModule.PEHeadersOptionsVM.machineList, () => {
+			this.machineVM = new EnumListVM(SaveModule.PEHeadersOptionsVM.machineList, (a, b) => {
 				Characteristics = SaveModule.CharacteristicsHelper.GetCharacteristics(Characteristics, (dnlib.PE.Machine)Machine.SelectedItem);
 			});
 			mvid = new NullableGuidVM(a => HasErrorUpdated());
 			encId = new NullableGuidVM(a => HasErrorUpdated());
 			encBaseId = new NullableGuidVM(a => HasErrorUpdated());
-			clrVersionVM = new EnumListVM(NetModuleOptionsVM.clrVersionList, OnClrVersionChanged);
+			clrVersionVM = new EnumListVM(NetModuleOptionsVM.clrVersionList, (a, b) => OnClrVersionChanged());
 			clrVersionVM.Items.Add(new EnumVM(Module.ClrVersion.Unknown, "Unknown"));
 			clrVersionVM.SelectedItem = Module.ClrVersion.Unknown;
 			cor20HeaderRuntimeVersion = new NullableUInt32VM(a => { HasErrorUpdated(); UpdateClrVersion(); });
