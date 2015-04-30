@@ -254,7 +254,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			this.implMapVM = new ImplMapVM(module);
 			ImplMapVM.PropertyChanged += implMapVM_PropertyChanged;
 
-			this.typeSigCreator.ShowTypeFullName = false;
 			this.typeSigCreator.CanAddFnPtr = false;
 			ConstantVM.IsEnabled = HasDefault;
 			MarshalTypeVM.IsEnabled = HasFieldMarshal;
@@ -311,7 +310,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			InitialValue.Value = options.InitialValue;
 			ImplMap = options.ImplMap;
 			Constant = options.Constant;
-			FieldVisibility.SelectedItem = (Field.FieldVisibility)(((int)options.Attributes >> 0) & (int)FieldAttributes.FieldAccessMask);
+			FieldVisibility.SelectedItem = (Field.FieldVisibility)((int)(options.Attributes & FieldAttributes.FieldAccessMask) >> 0);
 		}
 
 		FieldDefOptions CopyTo(FieldDefOptions options)

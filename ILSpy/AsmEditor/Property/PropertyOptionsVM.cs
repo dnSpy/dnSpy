@@ -101,7 +101,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			get { return methodSigCreator; }
 		}
 		readonly MethodSigCreatorVM methodSigCreator;
-		readonly MethodSigCreatorOptions methodSigCreatorOptions;
 
 		public Constant Constant {
 			get { return HasDefault ? new ConstantUser(constantVM.Value) : null; }
@@ -135,9 +134,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			};
 			if (ownerType != null && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
-			this.methodSigCreatorOptions = new MethodSigCreatorOptions(typeSigCreatorOptions);
-			this.methodSigCreatorOptions.DontShowSignatureFullName = true;
-			this.methodSigCreatorOptions.IsPropertySig = true;
+			var methodSigCreatorOptions = new MethodSigCreatorOptions(typeSigCreatorOptions);
+			methodSigCreatorOptions.DontShowSignatureFullName = true;
+			methodSigCreatorOptions.IsPropertySig = true;
 			this.methodSigCreator = new MethodSigCreatorVM(methodSigCreatorOptions);
 			this.methodSigCreator.PropertyChanged += methodSigCreator_PropertyChanged;
 			this.methodSigCreator.ParametersCreateTypeSigArray.PropertyChanged += methodSigCreator_PropertyChanged;

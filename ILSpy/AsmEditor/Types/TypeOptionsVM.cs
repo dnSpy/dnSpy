@@ -512,7 +512,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			PackingSize.Value = options.PackingSize;
 			ClassSize.Value = options.ClassSize;
 			BaseTypeSig = options.BaseType.ToTypeSig();
-			TypeVisibility.SelectedItem = (Types.TypeVisibility)(((int)options.Attributes >> 0) & (int)TypeAttributes.VisibilityMask);
+			TypeVisibility.SelectedItem = (Types.TypeVisibility)((int)(options.Attributes & TypeAttributes.VisibilityMask) >> 0);
 			TypeLayout.SelectedItem = (Types.TypeLayout)(((int)options.Attributes >> 3) & 3);
 			TypeSemantics.SelectedItem = (Types.TypeSemantics)(((int)options.Attributes >> 5) & 1);
 			TypeStringFormat.SelectedItem = (Types.TypeStringFormat)(((int)options.Attributes >> 16) & 3);

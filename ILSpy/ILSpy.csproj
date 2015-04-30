@@ -175,6 +175,12 @@
     </Compile>
     <Compile Include="AsmEditor\Field\FieldOptionsVM.cs" />
     <Compile Include="AsmEditor\IUndoCommand.cs" />
+    <Compile Include="AsmEditor\Method\MethodDefCommands.cs" />
+    <Compile Include="AsmEditor\Method\MethodDefOptions.cs" />
+    <Compile Include="AsmEditor\Method\MethodOptionsDlg.xaml.cs">
+      <DependentUpon>MethodOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Method\MethodOptionsVM.cs" />
     <Compile Include="AsmEditor\Module\ClrVersion.cs" />
     <Compile Include="AsmEditor\Module\ClrVersionValues.cs" />
     <Compile Include="AsmEditor\Module\ModuleCommands.cs" />
@@ -573,6 +579,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\Field\FieldOptionsDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\Method\MethodOptionsDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -37,106 +37,99 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
-		<ScrollViewer VerticalScrollBarVisibility="Auto" Margin="5 5 5 0">
-			<Border Grid.Row="0" Style="{StaticResource DialogBorderStyle}">
-				<Grid Margin="5">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition />
-					</Grid.ColumnDefinitions>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-					</Grid.RowDefinitions>
-
-					<Grid Grid.Row="0">
+		<TabControl Margin="5 5 5 0">
+			<TabItem Header="Main">
+				<ScrollViewer VerticalScrollBarVisibility="Auto">
+					<Grid Margin="5">
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
+							<ColumnDefinition />
 						</Grid.ColumnDefinitions>
 						<Grid.RowDefinitions>
-							<RowDefinition />
-							<RowDefinition />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
 						</Grid.RowDefinitions>
 
-						<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
-						<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-						<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="Visibility" Target="{Binding ElementName=visibilityComboBox}" />
-						<ComboBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" HorizontalAlignment="Stretch" Name="visibilityComboBox" DisplayMemberPath="Name" ItemsSource="{Binding FieldVisibility.Items}" SelectedIndex="{Binding FieldVisibility.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
-					</Grid>
-
-					<GroupBox Grid.Row="1" Header="Flags">
-						<Grid>
+						<Grid Grid.Row="0">
 							<Grid.ColumnDefinitions>
-								<ColumnDefinition />
-								<ColumnDefinition />
-								<ColumnDefinition />
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
 							</Grid.ColumnDefinitions>
 							<Grid.RowDefinitions>
 								<RowDefinition />
 								<RowDefinition />
 							</Grid.RowDefinitions>
-							<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Static}" Content="Static" />
-							<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding InitOnly}" Content="InitOnly" />
-							<CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Literal}" Content="Literal" />
-							<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding NotSerialized}" Content="NotSerialized" />
-							<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding SpecialName}" Content="SpecialName" />
-							<CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding RTSpecialName}" Content="RTSpecialName" />
+
+							<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
+							<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+							<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="Visibility" Target="{Binding ElementName=visibilityComboBox}" />
+							<ComboBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" HorizontalAlignment="Stretch" Name="visibilityComboBox" DisplayMemberPath="Name" ItemsSource="{Binding FieldVisibility.Items}" SelectedIndex="{Binding FieldVisibility.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
 						</Grid>
-					</GroupBox>
 
-					<dnlibdlgs:ConstantControl Grid.Row="2" Margin="0 5 0 0" DataContext="{Binding ConstantVM}" />
+						<GroupBox Grid.Row="1" Header="Flags">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition />
+									<ColumnDefinition />
+									<ColumnDefinition />
+								</Grid.ColumnDefinitions>
+								<Grid.RowDefinitions>
+									<RowDefinition />
+									<RowDefinition />
+								</Grid.RowDefinitions>
+								<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Static}" Content="Static" />
+								<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding InitOnly}" Content="InitOnly" />
+								<CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Literal}" Content="Literal" />
+								<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding NotSerialized}" Content="NotSerialized" />
+								<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding SpecialName}" Content="SpecialName" />
+								<CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding RTSpecialName}" Content="RTSpecialName" />
+							</Grid>
+						</GroupBox>
 
-					<Expander Grid.Row="3"
-							  Margin="0 5 0 0"
-							  IsExpanded="False"
-							  Header="{Binding MarshalTypeString}">
-						<dnlibdlgs:MarshalTypeControl Margin="0 5 0 0" DataContext="{Binding MarshalTypeVM}" />
-					</Expander>
+						<dnlibdlgs:ConstantControl Grid.Row="2" Margin="0 5 0 0" DataContext="{Binding ConstantVM}" />
 
-					<Grid Grid.Row="4" Margin="0 5 0 0">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-						</Grid.ColumnDefinitions>
-						<Grid.RowDefinitions>
-							<RowDefinition />
-							<RowDefinition />
-						</Grid.RowDefinitions>
-						<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=fieldOffsetTextBox}" Content="Offset" />
-						<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="fieldOffsetTextBox" Text="{Binding FieldOffset.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-						<CheckBox Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" IsChecked="{Binding HasFieldRVA}">
-							<Label Margin="0" Target="{Binding ElementName=initialValueTextBox}" Content="InitialValue" IsEnabled="{Binding HasFieldRVA}" />
-						</CheckBox>
-						<TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="initialValueTextBox" Text="{Binding InitialValue.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding HasFieldRVA}" />
-						<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=rvaTextBox}" Content="RVA" />
-						<TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="rvaTextBox" Text="{Binding RVA.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+						<Grid Grid.Row="3" Margin="0 5 0 0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<RowDefinition />
+								<RowDefinition />
+							</Grid.RowDefinitions>
+							<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=fieldOffsetTextBox}" Content="Offset" />
+							<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="fieldOffsetTextBox" Text="{Binding FieldOffset.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+							<CheckBox Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" IsChecked="{Binding HasFieldRVA}">
+								<Label Margin="0" Target="{Binding ElementName=initialValueTextBox}" Content="InitialValue" IsEnabled="{Binding HasFieldRVA}" />
+							</CheckBox>
+							<TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="initialValueTextBox" Text="{Binding InitialValue.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding HasFieldRVA}" />
+							<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=rvaTextBox}" Content="RVA" />
+							<TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="rvaTextBox" Text="{Binding RVA.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+						</Grid>
 					</Grid>
-
-					<Expander Grid.Row="5"
-							  Margin="0 5 0 0"
-							  IsExpanded="False"
-							  Header="{Binding FieldTypeHeader}">
-						<dnlibdlgs:TypeSigCreatorControl Margin="0 5 0 0" DataContext="{Binding TypeSigCreator}" />
-					</Expander>
-
-					<Expander Grid.Row="6"
-							  Margin="0 5 0 0"
-							  IsExpanded="False"
-							  Header="ImplMap">
-						<dnlibdlgs:ImplMapControl Margin="0 5 0 0" DataContext="{Binding ImplMapVM}" />
-					</Expander>
-				</Grid>
-			</Border>
-		</ScrollViewer>
+				</ScrollViewer>
+			</TabItem>
+			<TabItem Header="Field Type">
+				<ScrollViewer VerticalScrollBarVisibility="Auto">
+					<dnlibdlgs:TypeSigCreatorControl DataContext="{Binding TypeSigCreator}" />
+				</ScrollViewer>
+			</TabItem>
+			<TabItem Header="Marshal Type">
+				<ScrollViewer VerticalScrollBarVisibility="Auto">
+					<dnlibdlgs:MarshalTypeControl Margin="0 5 0 0" DataContext="{Binding MarshalTypeVM}" />
+				</ScrollViewer>
+			</TabItem>
+			<TabItem Header="ImplMap">
+				<ScrollViewer VerticalScrollBarVisibility="Auto">
+					<dnlibdlgs:ImplMapControl DataContext="{Binding ImplMapVM}" />
+				</ScrollViewer>
+			</TabItem>
+		</TabControl>
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
 			<Button Content="_OK" IsEnabled="{Binding HasNoError}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
