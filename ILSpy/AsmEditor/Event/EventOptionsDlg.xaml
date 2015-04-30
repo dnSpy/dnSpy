@@ -23,11 +23,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
-             Height="370" Width="500"
+             Height="400" Width="500"
              ResizeMode="CanResizeWithGrip"
              Title="Event Settings"
              Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
-             MinHeight="370" MinWidth="500">
+             MinHeight="400" MinWidth="500">
 	<Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition />
@@ -37,52 +37,51 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
-		<ScrollViewer VerticalScrollBarVisibility="Auto" Margin="5 5 5 0">
-			<Border Grid.Row="0" Style="{StaticResource DialogBorderStyle}">
-				<Grid Margin="5">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition />
-					</Grid.ColumnDefinitions>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-					</Grid.RowDefinitions>
-
-					<Grid Grid.Row="0">
+		<TabControl Margin="5 5 5 0">
+			<TabItem Header="Main">
+				<ScrollViewer VerticalScrollBarVisibility="Auto">
+					<Grid Margin="5">
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
+							<ColumnDefinition />
 						</Grid.ColumnDefinitions>
 						<Grid.RowDefinitions>
-							<RowDefinition />
-							<RowDefinition />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
 						</Grid.RowDefinitions>
 
-						<Label Grid.Row="0" Grid.Column="0" Margin="5 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
-						<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-					</Grid>
-
-					<GroupBox Grid.Row="1" Header="Flags">
-						<Grid>
+						<Grid Grid.Row="0">
 							<Grid.ColumnDefinitions>
-								<ColumnDefinition />
-								<ColumnDefinition />
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
 							</Grid.ColumnDefinitions>
-							<CheckBox Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding SpecialName}" Content="SpecialName" />
-							<CheckBox Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding RTSpecialName}" Content="RTSpecialName" />
-						</Grid>
-					</GroupBox>
+							<Grid.RowDefinitions>
+								<RowDefinition />
+								<RowDefinition />
+							</Grid.RowDefinitions>
 
-					<Expander Grid.Row="2"
-							  Margin="0 5 0 0"
-							  IsExpanded="False"
-							  Header="{Binding EventTypeHeader}">
-						<dnlibdlgs:TypeSigCreatorControl Margin="0 5 0 0" DataContext="{Binding TypeSigCreator}" />
-					</Expander>
-				</Grid>
-			</Border>
-		</ScrollViewer>
+							<Label Grid.Row="0" Grid.Column="0" Margin="5 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
+							<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+						</Grid>
+
+						<GroupBox Grid.Row="1" Header="Flags">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition />
+									<ColumnDefinition />
+								</Grid.ColumnDefinitions>
+								<CheckBox Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding SpecialName}" Content="SpecialName" />
+								<CheckBox Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding RTSpecialName}" Content="RTSpecialName" />
+							</Grid>
+						</GroupBox>
+					</Grid>
+				</ScrollViewer>
+			</TabItem>
+			<TabItem Header="Event Type">
+				<ScrollViewer VerticalScrollBarVisibility="Auto">
+					<dnlibdlgs:TypeSigCreatorControl Margin="0 5 0 0" DataContext="{Binding TypeSigCreator}" />
+				</ScrollViewer>
+			</TabItem>
+		</TabControl>
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
 			<Button Content="_OK" IsEnabled="{Binding HasNoError}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />

@@ -321,7 +321,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			}
 
 			InitializeTypeKind();
-			this.typeSigCreator.ShowTypeFullName = false;
 			this.typeSigCreator.CanAddFnPtr = false;
 			Reinitialize();
 		}

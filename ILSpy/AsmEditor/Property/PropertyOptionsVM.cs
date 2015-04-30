@@ -135,15 +135,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			if (ownerType != null && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
 			var methodSigCreatorOptions = new MethodSigCreatorOptions(typeSigCreatorOptions);
-			methodSigCreatorOptions.DontShowSignatureFullName = true;
 			methodSigCreatorOptions.IsPropertySig = true;
 			this.methodSigCreator = new MethodSigCreatorVM(methodSigCreatorOptions);
 			this.methodSigCreator.PropertyChanged += methodSigCreator_PropertyChanged;
 			this.methodSigCreator.ParametersCreateTypeSigArray.PropertyChanged += methodSigCreator_PropertyChanged;
-			this.methodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.ShowTypeFullName = false;
 			this.methodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
-			this.methodSigCreator.SentinelCreateTypeSigArray.TypeSigCreator.ShowTypeFullName = false;
-			this.methodSigCreator.SentinelCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
 			this.constantVM = new ConstantVM(options.Constant == null ? null : options.Constant.Value, "Default value for this property");
 			this.constantVM.PropertyChanged += constantVM_PropertyChanged;
 

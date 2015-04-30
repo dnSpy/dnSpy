@@ -23,11 +23,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
-             Height="500" Width="600"
+             Height="400" Width="600"
              ResizeMode="CanResizeWithGrip"
              Title="Type Settings"
              Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
-             MinHeight="500" MinWidth="600">
+             MinHeight="400" MinWidth="600">
 	<Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition />
@@ -37,105 +37,104 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
-		<ScrollViewer VerticalScrollBarVisibility="Auto" Margin="5">
-			<Border Grid.Row="0" Style="{StaticResource DialogBorderStyle}">
-				<Grid Margin="0 5 0 0">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition />
-					</Grid.ColumnDefinitions>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-						<RowDefinition Height="Auto" />
-					</Grid.RowDefinitions>
-
-					<Grid Grid.Row="0">
+		<TabControl Margin="5">
+			<TabItem Header="Main">
+				<ScrollViewer VerticalScrollBarVisibility="Auto">
+					<Grid Margin="0 5 0 0">
 						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
+							<ColumnDefinition />
 						</Grid.ColumnDefinitions>
 						<Grid.RowDefinitions>
-							<RowDefinition />
-							<RowDefinition />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
 						</Grid.RowDefinitions>
 
-						<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nsTextBox}" Content="N_amespace" />
-						<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nsTextBox" Text="{Binding Namespace, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-						<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
-						<TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-						<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=packingSizeTextBox}" Content="Packing Size" />
-						<TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="packingSizeTextBox" Text="{Binding PackingSize.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-						<Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=classSizeTextBox}" Content="Class Size" />
-						<TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Name="classSizeTextBox" Text="{Binding ClassSize.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-					</Grid>
-
-					<GroupBox Grid.Row="1" Header="Flags">
-						<Grid>
+						<Grid Grid.Row="0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
 							<Grid.RowDefinitions>
 								<RowDefinition />
 								<RowDefinition />
-								<RowDefinition />
-								<RowDefinition />
 							</Grid.RowDefinitions>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition />
-								<ColumnDefinition />
-								<ColumnDefinition />
-								<ColumnDefinition />
-							</Grid.ColumnDefinitions>
-							<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Abstract}" Content="Abstract" />
-							<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Sealed}" Content="Sealed" />
-							<CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Serializable}" Content="Serializable" />
-							<CheckBox Grid.Row="0" Grid.Column="4" Margin="5 5 0 0" IsChecked="{Binding Import}" Content="Import" />
-							<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding SpecialName}" Content="SpecialName" />
-							<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding RTSpecialName}" Content="RTSpecialName" />
-							<CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding WindowsRuntime}" Content="WindowsRuntime" />
-							<CheckBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" IsChecked="{Binding BeforeFieldInit}" Content="BeforeFieldInit" />
-							<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Forwarder}" Content="Forwarder" />
-							<CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding HasSecurity}" Content="HasSecurity" />
+
+							<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nsTextBox}" Content="N_amespace" />
+							<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nsTextBox" Text="{Binding Namespace, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+							<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
+							<TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+							<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=packingSizeTextBox}" Content="Packing Size" />
+							<TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="packingSizeTextBox" Text="{Binding PackingSize.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+							<Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=classSizeTextBox}" Content="Class Size" />
+							<TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Name="classSizeTextBox" Text="{Binding ClassSize.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 						</Grid>
-					</GroupBox>
 
-					<Grid Grid.Row="2">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-						</Grid.ColumnDefinitions>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="Auto" />
-						</Grid.RowDefinitions>
+						<GroupBox Grid.Row="1" Header="Flags">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition />
+									<ColumnDefinition />
+									<ColumnDefinition />
+									<ColumnDefinition />
+								</Grid.ColumnDefinitions>
+								<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Abstract}" Content="Abstract" />
+								<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Sealed}" Content="Sealed" />
+								<CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Serializable}" Content="Serializable" />
+								<CheckBox Grid.Row="0" Grid.Column="4" Margin="5 5 0 0" IsChecked="{Binding Import}" Content="Import" />
+								<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding SpecialName}" Content="SpecialName" />
+								<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding RTSpecialName}" Content="RTSpecialName" />
+								<CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding WindowsRuntime}" Content="WindowsRuntime" />
+								<CheckBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" IsChecked="{Binding BeforeFieldInit}" Content="BeforeFieldInit" />
+								<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Forwarder}" Content="Forwarder" />
+								<CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding HasSecurity}" Content="HasSecurity" />
+							</Grid>
+						</GroupBox>
 
-						<Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="Visibility" Target="{Binding ElementName=visibilityComboBox}" />
-						<ComboBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="visibilityComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeVisibility.Items}" SelectedIndex="{Binding TypeVisibility.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
-						<Label Grid.Row="0" Grid.Column="2" Margin="0 5 0 0" Content="Layout" Target="{Binding ElementName=layoutComboBox}" />
-						<ComboBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="layoutComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeLayout.Items}" SelectedIndex="{Binding TypeLayout.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
-						<Label Grid.Row="0" Grid.Column="4" Margin="0 5 0 0" Content="Semantics" Target="{Binding ElementName=semanticsComboBox}" />
-						<ComboBox Grid.Row="0" Grid.Column="5" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="semanticsComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeSemantics.Items}" SelectedIndex="{Binding TypeSemantics.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
-						<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="StringFormat" Target="{Binding ElementName=stringFormatComboBox}" />
-						<ComboBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="stringFormatComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeStringFormat.Items}" SelectedIndex="{Binding TypeStringFormat.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
-						<Label Grid.Row="1" Grid.Column="2" Margin="0 5 0 0" Content="CustomFormat" Target="{Binding ElementName=customFormatComboBox}" />
-						<ComboBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="customFormatComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeCustomFormat.Items}" SelectedIndex="{Binding TypeCustomFormat.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
-						<Label Grid.Row="1" Grid.Column="4" Margin="0 5 0 0" Content="Kind" Target="{Binding ElementName=typeKindComboBox}" />
-						<ComboBox Grid.Row="1" Grid.Column="5" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="typeKindComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeKind.Items}" SelectedIndex="{Binding TypeKind.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
+						<Grid Grid.Row="2">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+
+							<Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="Visibility" Target="{Binding ElementName=visibilityComboBox}" />
+							<ComboBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="visibilityComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeVisibility.Items}" SelectedIndex="{Binding TypeVisibility.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
+							<Label Grid.Row="0" Grid.Column="2" Margin="0 5 0 0" Content="Layout" Target="{Binding ElementName=layoutComboBox}" />
+							<ComboBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="layoutComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeLayout.Items}" SelectedIndex="{Binding TypeLayout.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
+							<Label Grid.Row="0" Grid.Column="4" Margin="0 5 0 0" Content="Semantics" Target="{Binding ElementName=semanticsComboBox}" />
+							<ComboBox Grid.Row="0" Grid.Column="5" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="semanticsComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeSemantics.Items}" SelectedIndex="{Binding TypeSemantics.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
+							<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="StringFormat" Target="{Binding ElementName=stringFormatComboBox}" />
+							<ComboBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="stringFormatComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeStringFormat.Items}" SelectedIndex="{Binding TypeStringFormat.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
+							<Label Grid.Row="1" Grid.Column="2" Margin="0 5 0 0" Content="CustomFormat" Target="{Binding ElementName=customFormatComboBox}" />
+							<ComboBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="customFormatComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeCustomFormat.Items}" SelectedIndex="{Binding TypeCustomFormat.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
+							<Label Grid.Row="1" Grid.Column="4" Margin="0 5 0 0" Content="Kind" Target="{Binding ElementName=typeKindComboBox}" />
+							<ComboBox Grid.Row="1" Grid.Column="5" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="typeKindComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeKind.Items}" SelectedIndex="{Binding TypeKind.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
+						</Grid>
 					</Grid>
-
-					<Expander Grid.Row="3"
-							  Margin="0 5 0 0"
-							  IsExpanded="False"
-							  Header="{Binding BaseTypeHeader}">
-						<dnlibdlgs:TypeSigCreatorControl Grid.Row="0" Margin="0 5 0 0" DataContext="{Binding TypeSigCreator}" />
-					</Expander>
-				</Grid>
-			</Border>
-		</ScrollViewer>
+				</ScrollViewer>
+			</TabItem>
+			<TabItem Header="Base Type">
+				<ScrollViewer VerticalScrollBarVisibility="Auto">
+					<dnlibdlgs:TypeSigCreatorControl Grid.Row="0" Margin="0 5 0 0" DataContext="{Binding TypeSigCreator}" />
+				</ScrollViewer>
+			</TabItem>
+		</TabControl>
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">
 			<Button Content="_OK" IsEnabled="{Binding HasNoError}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />

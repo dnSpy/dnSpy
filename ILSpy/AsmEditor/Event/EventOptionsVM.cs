@@ -110,7 +110,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			this.options = new EventDefOptions();
 			this.origOptions = options;
 
-			this.typeSigCreator.ShowTypeFullName = false;
 			this.typeSigCreator.CanAddFnPtr = false;
 			Reinitialize();
 		}

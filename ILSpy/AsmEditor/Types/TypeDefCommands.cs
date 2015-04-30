@@ -300,7 +300,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		static bool CanExecute(ILSpyTreeNode[] nodes)
 		{
 			return nodes.Length == 1 &&
-				nodes[0] is TypeTreeNode;
+				(nodes[0] is TypeTreeNode || nodes[0].Parent is TypeTreeNode);
 		}
 
 		static void Execute(ILSpyTreeNode[] nodes)
@@ -308,7 +308,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			if (!CanExecute(nodes))
 				return;
 
-			var module = ILSpyTreeNode.GetModule(nodes[0]);
+			var ownerNode = nodes[0];
+			if (!(ownerNode is TypeTreeNode))
+				ownerNode = (ILSpyTreeNode)ownerNode.Parent;
+			var typeNode = ownerNode as TypeTreeNode;
+			Debug.Assert(typeNode != null);
+			if (typeNode == null)
+				throw new InvalidOperationException();
+
+			var module = ILSpyTreeNode.GetModule(typeNode);
 			Debug.Assert(module != null);
 			if (module == null)
 				throw new InvalidOperationException();
@@ -322,7 +330,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreateNestedTypeDefCommand((TypeTreeNode)nodes[0], data.CreateTypeDefOptions()));
+			UndoCommandManager.Instance.Add(new CreateNestedTypeDefCommand(typeNode, data.CreateTypeDefOptions()));
 		}
 
 		readonly TypeTreeNode ownerType;
