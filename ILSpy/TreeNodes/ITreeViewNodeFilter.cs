@@ -42,7 +42,16 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 	struct TreeViewNodeFilterResult
 	{
+		/// <summary>
+		/// null if the <see cref="ILSpyTreeNode"/> should decide what result to return in its
+		/// Filter() method. <see cref="FilterResult.Hidden"/> is returned if the node should be
+		/// hidden and it's not necessary to recurse into this node to find other matches.
+		/// </summary>
 		public FilterResult? FilterResult;
+
+		/// <summary>
+		/// true if this is a node that can be returned as a result to the user
+		/// </summary>
 		public bool IsMatch;
 
 		public TreeViewNodeFilterResult(FilterResult? filterResult, bool isMatch)
@@ -64,7 +73,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		TreeViewNodeFilterResult GetFilterResult(PropertyDef prop);
 		TreeViewNodeFilterResult GetFilterResult(EventDef evt);
 		TreeViewNodeFilterResult GetFilterResultBody(MethodDef method);
-		TreeViewNodeFilterResult GetFilterResultParamDef(MethodDef method);
+		TreeViewNodeFilterResult GetFilterResultParamDefs(MethodDef method);
+		TreeViewNodeFilterResult GetFilterResult(MethodDef method, ParamDef param);
 		TreeViewNodeFilterResult GetFilterResult(AssemblyRef asmRef);
 		TreeViewNodeFilterResult GetFilterResult(ModuleRef modRef);
 		TreeViewNodeFilterResult GetFilterResult(BaseTypesEntryNode node);

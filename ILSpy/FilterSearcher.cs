@@ -119,6 +119,8 @@ namespace ICSharpCode.ILSpy
 			case TypeCode.UInt32:	return searchValue == (uint)obj;
 			case TypeCode.Int64:	return searchValue == (long)obj;
 			case TypeCode.UInt64:	return searchValue == unchecked((long)(ulong)obj);
+			case TypeCode.Single:	return searchValue == (float)obj;
+			case TypeCode.Double:	return searchValue == (double)obj;
 			}
 
 			return false;
@@ -139,11 +141,22 @@ namespace ICSharpCode.ILSpy
 			var hc = obj as IHasConstant;
 			if (hc != null && hc.Constant != null)
 				obj = hc.Constant.Value;
+			if (obj == null)
+				return false;
 
-			if (obj is float)
-				return searchValue == (float)obj;
-			if (obj is double)
-				return searchValue == (double)obj;
+			switch (Type.GetTypeCode(obj.GetType())) {
+			case TypeCode.SByte:	return searchValue == (sbyte)obj;
+			case TypeCode.Byte:		return searchValue == (byte)obj;
+			case TypeCode.Int16:	return searchValue == (short)obj;
+			case TypeCode.UInt16:	return searchValue == (ushort)obj;
+			case TypeCode.Int32:	return searchValue == (int)obj;
+			case TypeCode.UInt32:	return searchValue == (uint)obj;
+			case TypeCode.Int64:	return searchValue == (long)obj;
+			case TypeCode.UInt64:	return searchValue == (ulong)obj;
+			case TypeCode.Single:	return searchValue == (float)obj;
+			case TypeCode.Double:	return searchValue == (double)obj;
+			}
+
 			return false;
 		}
 	}
@@ -546,10 +559,13 @@ namespace ICSharpCode.ILSpy
 				return;
 			}
 
-			res = filter.GetFilterResultParamDef(method);
-			if (res.FilterResult != FilterResult.Hidden && res.IsMatch) {
+			res = filter.GetFilterResultParamDefs(method);
+			if (res.FilterResult != FilterResult.Hidden) {
 				foreach (var pd in method.ParamDefs) {
-					if (IsMatch(null, pd)) {
+					res = filter.GetFilterResult(method, pd);
+					if (res.FilterResult == FilterResult.Hidden)
+						continue;
+					if (res.IsMatch && IsMatch(pd.Name, pd)) {
 						onMatch(new SearchResult {
 							Object = method,
 							Name = method.Name,

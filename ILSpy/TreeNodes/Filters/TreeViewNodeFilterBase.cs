@@ -108,7 +108,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			return new TreeViewNodeFilterResult();
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResultParamDef(MethodDef method)
+		public virtual TreeViewNodeFilterResult GetFilterResultParamDefs(MethodDef method)
+		{
+			return new TreeViewNodeFilterResult();
+		}
+
+		public virtual TreeViewNodeFilterResult GetFilterResult(MethodDef method, ParamDef param)
 		{
 			return new TreeViewNodeFilterResult();
 		}
