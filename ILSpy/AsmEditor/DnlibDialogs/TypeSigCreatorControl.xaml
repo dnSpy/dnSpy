@@ -47,13 +47,30 @@
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
-			<StackPanel Grid.Row="0" Margin="0 0 0 0" Orientation="Horizontal">
+			<TextBox Grid.Row="0"
+					 Visibility="{Binding CanShowTypeFullName, Converter={StaticResource BooleanToVisibilityConverter}}"
+					 Margin="0 0 0 0"
+					 Background="{x:Null}"
+					 IsEnabled="{Binding IsEnabled}"
+					 IsReadOnly="True"
+					 TextWrapping="Wrap"
+					 Text="{Binding TypeSigDnlibFullName, Mode=OneWay}"/>
+			<TextBox Grid.Row="1"
+					 Visibility="{Binding CanShowTypeFullName, Converter={StaticResource BooleanToVisibilityConverter}}"
+					 Margin="0 5 0 0"
+					 Background="{x:Null}"
+					 IsEnabled="{Binding IsEnabled}"
+					 IsReadOnly="True"
+					 TextWrapping="Wrap"
+					 Text="{Binding TypeSigLanguageFullName, Mode=OneWay}"/>
+
+			<StackPanel Grid.Row="2" Margin="0 5 0 0" Orientation="Horizontal">
 				<Button Grid.Column="0" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Content="Cl_ear" Command="{Binding ClearTypeSigCommand}" ToolTip="Clear type"/>
 				<Button Grid.Column="1" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Content="_Remove" Command="{Binding RemoveLastTypeSigCommand}" ToolTip="Remove last added type"/>
 				<ComboBox Grid.Column="2" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" Margin="0 0 0 0" DisplayMemberPath="Name" Width="100" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" Visibility="{Binding CanShowTypeFullName, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 			</StackPanel>
 
-			<Grid Grid.Row="1" Margin="0 5 0 0" Visibility="{Binding AddingLeafTypeSig, Converter={StaticResource BooleanToVisibilityConverter}}">
+			<Grid Grid.Row="3" Margin="0 5 0 0" Visibility="{Binding AddingLeafTypeSig, Converter={StaticResource BooleanToVisibilityConverter}}">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition />
 					<ColumnDefinition />
@@ -76,7 +93,7 @@
 				<Button Grid.Column="4" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="_GenericInst" Command="{Binding AddGenericInstSigCommand}" ToolTip="Add a generic instance type"/>
 				<Button Grid.Column="5" Style="{StaticResource OtherDialogButton}" Margin="0 0 0 0" Content="_FnPtr" Command="{Binding AddFnPtrSigCommand}" ToolTip="Add a function pointer"/>
 			</Grid>
-			<Grid Grid.Row="2" Margin="0 5 0 0" Visibility="{Binding AddingNonLeafTypeSig, Converter={StaticResource BooleanToVisibilityConverter}}">
+			<Grid Grid.Row="4" Margin="0 5 0 0" Visibility="{Binding AddingNonLeafTypeSig, Converter={StaticResource BooleanToVisibilityConverter}}">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition />
 					<ColumnDefinition />
@@ -92,7 +109,7 @@
 				<Button Grid.Column="4" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="CModOp_t" Command="{Binding AddCModOptSigCommand}" ToolTip="Add an optional C modifier"/>
 				<Button Grid.Column="5" Style="{StaticResource OtherDialogButton}" Margin="0 0 0 0" Content="Pi_nned" Command="{Binding AddPinnedSigCommand}" ToolTip="Turn it into a pinned variable"/>
 			</Grid>
-			<GroupBox Grid.Row="3" Margin="0 5 0 0" Header="Multidimensional Array"
+			<GroupBox Grid.Row="5" Margin="0 5 0 0" Header="Multidimensional Array"
 					  Visibility="{Binding AddingNonLeafTypeSig, Converter={StaticResource BooleanToVisibilityConverter}}">
 				<Grid IsEnabled="{Binding IsEnabled}" >
 					<Grid.ColumnDefinitions>
@@ -105,31 +122,23 @@
 						<RowDefinition />
 						<RowDefinition />
 					</Grid.RowDefinitions>
-					<Button Grid.Row="0" Grid.Column="0" Margin="0 0 5 0" Style="{StaticResource OtherDialogButton}" Name="arrayButton" Content="Arra_y" Command="{Binding AddArraySigCommand}" ToolTip="Convert type to a multidimensional array"/>
+					<Button Grid.Row="0" Grid.Column="0" Margin="0 0 5 0" Style="{StaticResource DialogButton}" Name="arrayButton" Content="Arra_y" Command="{Binding AddArraySigCommand}" ToolTip="Convert type to a multidimensional array"/>
 					<Label Grid.Row="0" Grid.Column="1" Margin="0 5 5 0" Target="{Binding ElementName=rankTextBox}" Content="Ran_k" />
 					<TextBox Grid.Row="0" Grid.Column="2" Margin="0 5 0 0" Name="rankTextBox" Text="{Binding ArrayRank.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
-					<Label Grid.Row="1" Grid.Column="0" Margin="0 5 5 0" Target="{Binding ElementName=arraySizesTextBox}" Content="S_izes" />
-					<TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="0 5 0 0" Name="arraySizesTextBox" Text="{Binding ArraySizes.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" ToolTip="Comma separated list of array sizes (unsigned integers)" />
-					<Label Grid.Row="2" Grid.Column="0" Margin="0 5 5 0" Target="{Binding ElementName=arrayLowerBoundsTextBox}" Content="Lo_wer Bounds" />
-					<TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="0 5 0 0" Name="arrayLowerBoundsTextBox" Text="{Binding ArrayLowerBounds.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" ToolTip="Comma separated list of array lower bounds (signed integers)" />
+					<Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+						<Label Grid.Row="0" Grid.Column="0" Margin="0 5 5 0" Target="{Binding ElementName=arraySizesTextBox}" Content="S_izes" ToolTip="Comma separated list of array sizes (unsigned integers)" />
+						<TextBox Grid.Row="0" Grid.Column="1" Margin="0 5 0 0" Name="arraySizesTextBox" Text="{Binding ArraySizes.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+						<Label Grid.Row="1" Grid.Column="2" Margin="0 5 5 0" Target="{Binding ElementName=arrayLowerBoundsTextBox}" Content="Lo_wer Bounds" ToolTip="Comma separated list of array lower bounds (signed integers)" />
+						<TextBox Grid.Row="1" Grid.Column="3" Margin="0 5 0 0" Name="arrayLowerBoundsTextBox" Text="{Binding ArrayLowerBounds.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+					</Grid>
 				</Grid>
 			</GroupBox>
-			<TextBox Grid.Row="4"
-					 Visibility="{Binding CanShowTypeFullName, Converter={StaticResource BooleanToVisibilityConverter}}"
-					 Margin="0 5 0 0"
-					 Background="{x:Null}"
-					 IsEnabled="{Binding IsEnabled}"
-					 IsReadOnly="True"
-					 TextWrapping="Wrap"
-					 Text="{Binding TypeSigDnlibFullName, Mode=OneWay}"/>
-			<TextBox Grid.Row="5"
-					 Visibility="{Binding CanShowTypeFullName, Converter={StaticResource BooleanToVisibilityConverter}}"
-					 Margin="0 5 0 0"
-					 Background="{x:Null}"
-					 IsEnabled="{Binding IsEnabled}"
-					 IsReadOnly="True"
-					 TextWrapping="Wrap"
-					 Text="{Binding TypeSigLanguageFullName, Mode=OneWay}"/>
 		</Grid>
 	</Grid>
 </UserControl>

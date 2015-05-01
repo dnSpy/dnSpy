@@ -23,11 +23,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
-             Height="550" Width="500"
+             Height="400" Width="500"
              ResizeMode="CanResizeWithGrip"
              Title="Property Settings"
              Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
-             MinHeight="550" MinWidth="500">
+             MinHeight="400" MinWidth="500">
 	<Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition />

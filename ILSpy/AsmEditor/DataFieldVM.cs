@@ -562,7 +562,11 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 	sealed class HexStringVM : DataFieldVM<byte[]>
 	{
-		public bool UpperCaseHex { get; set; }
+		public bool UpperCaseHex {
+			get { return upperCaseHex; }
+			set { upperCaseHex = value; }
+		}
+		bool upperCaseHex = true;
 
 		public HexStringVM(Action<DataFieldVM<byte[]>> onUpdated)
 			: this(null, onUpdated)

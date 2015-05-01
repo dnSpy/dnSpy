@@ -116,7 +116,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		}
 		readonly EnumListVM typeVisibilityVM = new EnumListVM(typeVisibilityList);
 
-		static readonly EnumVM[] typeLayoutList = EnumVM.Create(typeof(TypeLayout));
+		static readonly EnumVM[] typeLayoutList = new EnumVM[] {
+			new EnumVM(Types.TypeLayout.AutoLayout, "Auto"),
+			new EnumVM(Types.TypeLayout.SequentialLayout, "Sequential"),
+			new EnumVM(Types.TypeLayout.ExplicitLayout, "Explicit"),
+		};
 		public EnumListVM TypeLayout {
 			get { return typeLayoutVM; }
 		}
@@ -128,7 +132,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		}
 		readonly EnumListVM typeSemanticsVM;
 
-		static readonly EnumVM[] typeStringFormatList = EnumVM.Create(typeof(TypeStringFormat));
+		static readonly EnumVM[] typeStringFormatList = new EnumVM[] {
+			new EnumVM(Types.TypeStringFormat.AnsiClass, "Ansi"),
+			new EnumVM(Types.TypeStringFormat.UnicodeClass, "Unicode"),
+			new EnumVM(Types.TypeStringFormat.AutoClass, "Auto"),
+			new EnumVM(Types.TypeStringFormat.CustomFormatClass, "CustomFormat"),
+		};
 		public EnumListVM TypeStringFormat {
 			get { return typeStringFormatVM; }
 		}

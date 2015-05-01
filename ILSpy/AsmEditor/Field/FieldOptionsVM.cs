@@ -233,7 +233,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(module, language) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
-				CanAddGenericMethodVar = true,
+				CanAddGenericMethodVar = false,
 				OwnerType = ownerType,
 			};
 			if (ownerType != null && ownerType.GenericParameters.Count == 0)

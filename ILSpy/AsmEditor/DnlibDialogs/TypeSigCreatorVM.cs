@@ -227,8 +227,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		{
 			this.options = options.Clone();
 			this.arrayRank = new UInt32VM(2, a => { });
-			this.arraySizes = new UInt32ListDataFieldVM(a => { });
-			this.arrayLowerBounds = new Int32ListDataFieldVM(a => { });
+			this.arraySizes = new UInt32ListDataFieldVM(a => { }) {
+				Min = 0,
+				Max = 0x1FFFFFFF,
+			};
+			this.arrayLowerBounds = new Int32ListDataFieldVM(a => { }) {
+				Min = -0x10000000,
+				Max = 0x0FFFFFFF,
+			};
 			this.genericVariableNumber = new UInt32VM(0, a => { });
 		}
 
