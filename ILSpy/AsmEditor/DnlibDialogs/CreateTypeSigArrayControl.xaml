@@ -60,7 +60,7 @@
 					  Name="listView"
 					  ItemsSource="{Binding TypeSigCollection}"
 					  DisplayMemberPath="FullName"
-					  SelectedItem="{Binding SelectedItem}" />
+					  SelectedIndex="{Binding SelectedIndex}" />
 			<RepeatButton Grid.Row="0" Grid.Column="1"
 					Margin="5 5 0 0"
 					Command="{Binding MoveUpCommand}"

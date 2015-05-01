@@ -65,16 +65,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		readonly ObservableCollection<TypeSig> typeSigCollection = new ObservableCollection<TypeSig>();
 
-		public TypeSig SelectedItem {
-			get { return selectedItem; }
+		public int SelectedIndex {
+			get { return selectedIndex; }
 			set {
-				if (selectedItem != value) {
-					selectedItem = value;
-					OnPropertyChanged("SelectedItem");
+				if (selectedIndex != value) {
+					selectedIndex = value;
+					OnPropertyChanged("SelectedIndex");
 				}
 			}
 		}
-		TypeSig selectedItem;
+		int selectedIndex;
 
 		public TypeSigCreatorVM TypeSigCreator {
 			get { return typeSigCreator; }
@@ -165,7 +165,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				return;
 			var typeSig = TypeSigCreator.TypeSig;
 			TypeSigCollection.Add(typeSig);
-			SelectedItem = typeSig;
+			SelectedIndex = TypeSigCollection.Count - 1;
 			TypeSigCreator.TypeSig = null;
 		}
 
@@ -180,52 +180,51 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		{
 			if (!RemoveCurrentCanExecute())
 				return;
-			var item = SelectedItem;
-			int index = TypeSigCollection.IndexOf(item);
+			int index = SelectedIndex;
 			TypeSigCollection.RemoveAt(index);
 			if (index < TypeSigCollection.Count)
-				SelectedItem = TypeSigCollection[index];
+				SelectedIndex = index;
 			else if (TypeSigCollection.Count > 0)
-				SelectedItem = TypeSigCollection[TypeSigCollection.Count - 1];
+				SelectedIndex = TypeSigCollection.Count - 1;
 			else
-				SelectedItem = null;
+				SelectedIndex = -1;
 		}
 
 		bool RemoveCurrentCanExecute()
 		{
-			return IsEnabled && SelectedItem != null;
+			return IsEnabled && SelectedIndex >= 0 && SelectedIndex < TypeSigCollection.Count;
 		}
 
 		void MoveCurrentUp()
 		{
 			if (!MoveCurrentUpCanExecute())
 				return;
-			var item = SelectedItem;
-			int index = TypeSigCollection.IndexOf(item);
+			int index = SelectedIndex;
+			var item = TypeSigCollection[index];
 			TypeSigCollection.RemoveAt(index);
 			TypeSigCollection.Insert(index - 1, item);
-			SelectedItem = item;
+			SelectedIndex = index - 1;
 		}
 
 		bool MoveCurrentUpCanExecute()
 		{
-			return IsEnabled && SelectedItem != null && TypeSigCollection.IndexOf(SelectedItem) > 0;
+			return IsEnabled && SelectedIndex > 0 && SelectedIndex < TypeSigCollection.Count;
 		}
 
 		void MoveCurrentDown()
 		{
 			if (!MoveCurrentDownCanExecute())
 				return;
-			var item = SelectedItem;
-			int index = TypeSigCollection.IndexOf(item);
+			int index = SelectedIndex;
+			var item = TypeSigCollection[index];
 			TypeSigCollection.RemoveAt(index);
 			TypeSigCollection.Insert(index + 1, item);
-			SelectedItem = item;
+			SelectedIndex = index + 1;
 		}
 
 		bool MoveCurrentDownCanExecute()
 		{
-			return IsEnabled && SelectedItem != null && TypeSigCollection.IndexOf(SelectedItem) != TypeSigCollection.Count - 1;
+			return IsEnabled && SelectedIndex >= 0 && SelectedIndex < TypeSigCollection.Count - 1;
 		}
 
 		protected override string Verify(string columnName)
