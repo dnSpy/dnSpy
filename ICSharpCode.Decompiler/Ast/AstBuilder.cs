@@ -1125,7 +1125,11 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			if (type == null || constant == null)
 				return constant;
-			TypeCode c = ToTypeCode(type);
+			TypeCode c = Type.GetTypeCode(constant.GetType());
+			if (c < TypeCode.Char || c > TypeCode.Double)
+				return constant;
+
+			c = ToTypeCode(type);
 			if (c >= TypeCode.Char && c <= TypeCode.Double)
 				return CSharpPrimitiveCast.Cast(c, constant, false);
 			return constant;
