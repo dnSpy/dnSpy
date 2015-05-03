@@ -37,16 +37,19 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 			this.ownerWindow = ownerWindow;
 		}
 
-		public TypeSig Create(TypeSigCreatorOptions options, TypeSig typeSig)
+		public TypeSig Create(TypeSigCreatorOptions options, TypeSig typeSig, out bool canceled)
 		{
 			var data = new TypeSigCreatorVM(options);
 			data.TypeSig = typeSig;
 			var win = new TypeSigCreatorDlg();
 			win.DataContext = data;
 			win.Owner = ownerWindow ?? MainWindow.Instance;
-			if (win.ShowDialog() != true)
+			if (win.ShowDialog() != true) {
+				canceled = true;
 				return null;
+			}
 
+			canceled = false;
 			return data.TypeSig;
 		}
 	}

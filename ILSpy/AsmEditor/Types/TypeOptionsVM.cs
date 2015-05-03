@@ -339,6 +339,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			InitializeTypeKind();
 			if (e.PropertyName == "TypeSigDnlibFullName")
 				OnPropertyChanged("BaseTypeHeader");
+			HasErrorUpdated();
 		}
 
 		bool IsSystemValueType(IType type)

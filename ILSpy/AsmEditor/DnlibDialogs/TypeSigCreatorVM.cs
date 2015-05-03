@@ -285,7 +285,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		void AddTypeDefOrRef()
 		{
-			TypeSig = GetTypeSig(VisibleMembersFlags.NonGenericTypeDef);
+			TypeSig = GetTypeSig();
 		}
 
 		bool AddTypeDefOrRefCanExecute()

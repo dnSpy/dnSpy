@@ -198,10 +198,21 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		public string Title {
 			get {
 				var text = filter.Text;
-				if (!string.IsNullOrEmpty(text))
+				if (!string.IsNullOrEmpty(text)) {
+					if (StartsWithVowel(text))
+						return string.Format("Pick an {0}", text);
 					return string.Format("Pick a {0}", text);
+				}
 				return "Pick a Node";
 			}
+		}
+
+		static bool StartsWithVowel(string text)
+		{
+			if (string.IsNullOrEmpty(text))
+				return false;
+			var c = char.ToUpperInvariant(text[0]);
+			return c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
 		}
 
 		public bool ShowInternalApi {

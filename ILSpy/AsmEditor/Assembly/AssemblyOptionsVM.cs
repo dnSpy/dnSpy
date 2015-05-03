@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
@@ -214,7 +215,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 				int revision = VersionRevision.HasError ? 0 : VersionRevision.Value;
 				asm.Version = new Version(major, minor, build, revision);
 				asm.Attributes = Flags;
-				asm.PublicKeyOrToken = new PublicKey(publicKey.HasError ? new byte[0] : publicKey.Value);
+				asm.PublicKeyOrToken = new PublicKey(publicKey.HasError ? new byte[0] : publicKey.Value.ToArray());
 				asm.Name = Name;
 				asm.Culture = Culture;
 				return asm.ToString();
@@ -276,7 +277,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			options.HashAlgorithm = (AssemblyHashAlgorithm)HashAlgorithm.SelectedItem;
 			options.Version = new Version(VersionMajor.Value, VersionMinor.Value, VersionBuild.Value, VersionRevision.Value);
 			options.Attributes = Flags;
-			options.PublicKey = new PublicKey(PublicKey.Value);
+			options.PublicKey = new PublicKey(PublicKey.Value.ToArray());
 			options.Name = Name;
 			options.Culture = Culture;
 			options.ClrVersion = (Module.ClrVersion)ClrVersion.SelectedItem;

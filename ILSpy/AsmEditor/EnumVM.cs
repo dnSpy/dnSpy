@@ -119,7 +119,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		{
 		}
 
-		public EnumListVM(IList<EnumVM> list, Action<int, int> onChanged)
+		public EnumListVM(IEnumerable<EnumVM> list, Action<int, int> onChanged)
 		{
 			this.list = new ObservableCollection<EnumVM>(list);
 			this.index = 0;

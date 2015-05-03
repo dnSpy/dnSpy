@@ -20,6 +20,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="30" d:DesignWidth="300">
@@ -29,44 +30,11 @@
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 
 		<CheckBox Grid.Column="0" Margin="0 0 0 0" IsChecked="{Binding IsEnabled}" VerticalAlignment="Center" Content="Constant" ToolTip="{Binding ConstantCheckBoxToolTip}" />
 
-		<ComboBox Grid.Column="1" Margin="5 0 5 0" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" DisplayMemberPath="Name" Width="100" ItemsSource="{Binding ConstantType.Items}" SelectedIndex="{Binding ConstantType.SelectedIndex}" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" />
-
-		<!-- Make sure the combobox doesn't move when Null is selected -->
-		<Label Grid.Column="2" Margin="0 0 0 0" Content="_Value" Visibility="Hidden" />
-		<TextBox Grid.Column="3" Margin="0 0 0 0" Visibility="Hidden" />
-
-		<Label Grid.Column="2" Margin="0 0 0 0" Target="{Binding ElementName=booleanTextBox}" Content="_Value" Visibility="{Binding BooleanIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<TextBox Grid.Column="3" Margin="0 0 0 0" Name="booleanTextBox" Text="{Binding Boolean.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding BooleanIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<Label Grid.Column="2" Margin="0 0 0 0" Target="{Binding ElementName=charTextBox}" Content="_Value" Visibility="{Binding CharIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<TextBox Grid.Column="3" Margin="0 0 0 0" Name="charTextBox" Text="{Binding Char.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding CharIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<Label Grid.Column="2" Margin="0 0 0 0" Target="{Binding ElementName=sbyteTextBox}" Content="_Value" Visibility="{Binding SByteIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<TextBox Grid.Column="3" Margin="0 0 0 0" Name="sbyteTextBox" Text="{Binding SByte.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding SByteIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<Label Grid.Column="2" Margin="0 0 0 0" Target="{Binding ElementName=int16TextBox}" Content="_Value" Visibility="{Binding Int16IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<TextBox Grid.Column="3" Margin="0 0 0 0" Name="int16TextBox" Text="{Binding Int16.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Int16IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<Label Grid.Column="2" Margin="0 0 0 0" Target="{Binding ElementName=int32TextBox}" Content="_Value" Visibility="{Binding Int32IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<TextBox Grid.Column="3" Margin="0 0 0 0" Name="int32TextBox" Text="{Binding Int32.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Int32IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<Label Grid.Column="2" Margin="0 0 0 0" Target="{Binding ElementName=int64TextBox}" Content="_Value" Visibility="{Binding Int64IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<TextBox Grid.Column="3" Margin="0 0 0 0" Name="int64TextBox" Text="{Binding Int64.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Int64IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<Label Grid.Column="2" Margin="0 0 0 0" Target="{Binding ElementName=byteTextBox}" Content="_Value" Visibility="{Binding ByteIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<TextBox Grid.Column="3" Margin="0 0 0 0" Name="byteTextBox" Text="{Binding Byte.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding ByteIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<Label Grid.Column="2" Margin="0 0 0 0" Target="{Binding ElementName=uint16TextBox}" Content="_Value" Visibility="{Binding UInt16IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<TextBox Grid.Column="3" Margin="0 0 0 0" Name="uint16TextBox" Text="{Binding UInt16.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding UInt16IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<Label Grid.Column="2" Margin="0 0 0 0" Target="{Binding ElementName=uint32TextBox}" Content="_Value" Visibility="{Binding UInt32IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<TextBox Grid.Column="3" Margin="0 0 0 0" Name="uint32TextBox" Text="{Binding UInt32.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding UInt32IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<Label Grid.Column="2" Margin="0 0 0 0" Target="{Binding ElementName=uint64TextBox}" Content="_Value" Visibility="{Binding UInt64IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<TextBox Grid.Column="3" Margin="0 0 0 0" Name="uint64TextBox" Text="{Binding UInt64.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding UInt64IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<Label Grid.Column="2" Margin="0 0 0 0" Target="{Binding ElementName=singleTextBox}" Content="_Value" Visibility="{Binding SingleIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<TextBox Grid.Column="3" Margin="0 0 0 0" Name="singleTextBox" Text="{Binding Single.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding SingleIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<Label Grid.Column="2" Margin="0 0 0 0" Target="{Binding ElementName=doubleTextBox}" Content="_Value" Visibility="{Binding DoubleIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<TextBox Grid.Column="3" Margin="0 0 0 0" Name="doubleTextBox" Text="{Binding Double.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding DoubleIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<Label Grid.Column="2" Margin="0 0 0 0" Target="{Binding ElementName=stringTextBox}" Content="_Value" Visibility="{Binding StringIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-		<TextBox Grid.Column="3" Margin="0 0 0 0" Name="stringTextBox" Text="{Binding String, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding StringIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<dnlibdlgs:ConstantTypeControl Grid.Column="2" Margin="5 0 0 0" DataContext="{Binding ConstantTypeVM}" />
 	</Grid>
 </UserControl>

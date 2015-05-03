@@ -17,20 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using System.Windows.Controls;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
+namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
-	interface ITypeSigCreator
+	/// <summary>
+	/// Interaction logic for ConstantTypeControl.xaml
+	/// </summary>
+	public partial class ConstantTypeControl : UserControl
 	{
-		/// <summary>
-		/// Creates a TypeSig
-		/// </summary>
-		/// <param name="options">Type sig creator options</param>
-		/// <param name="typeSig">Existing TypeSig or null</param>
-		/// <param name="canceled">true if user canceled</param>
-		/// <returns></returns>
-		TypeSig Create(TypeSigCreatorOptions options, TypeSig typeSig, out bool canceled);
+		public ConstantTypeControl()
+		{
+			InitializeComponent();
+		}
 	}
 }

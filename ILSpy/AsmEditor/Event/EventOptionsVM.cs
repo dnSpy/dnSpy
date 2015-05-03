@@ -118,6 +118,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 		{
 			if (e.PropertyName == "TypeSigDnlibFullName")
 				OnPropertyChanged("EventTypeHeader");
+			HasErrorUpdated();
 		}
 
 		void Reinitialize()

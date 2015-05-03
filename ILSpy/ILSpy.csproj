@@ -123,6 +123,10 @@
     <Compile Include="AsmEditor\DnlibDialogs\ConstantControl.xaml.cs">
       <DependentUpon>ConstantControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\ConstantTypeControl.xaml.cs">
+      <DependentUpon>ConstantTypeControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\ConstantTypeVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\ConstantVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\CreateTypeSigArrayControl.xaml.cs">
       <DependentUpon>CreateTypeSigArrayControl.xaml</DependentUpon>
@@ -131,6 +135,7 @@
       <DependentUpon>CreateTypeSigArrayDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\DnlibDialogs\CreateTypeSigArrayVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\EnumDataFieldVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\ImplMapControl.xaml.cs">
       <DependentUpon>ImplMapControl.xaml</DependentUpon>
     </Compile>
@@ -159,6 +164,7 @@
     </Compile>
     <Compile Include="AsmEditor\DnlibDialogs\TypeSigCreatorOptions.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\TypeSigCreatorVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\TypeSigVM.cs" />
     <Compile Include="AsmEditor\EditCommand.cs" />
     <Compile Include="AsmEditor\EnumVM.cs" />
     <Compile Include="AsmEditor\Event\EventDefCommands.cs" />
@@ -535,6 +541,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\DnlibDialogs\ConstantControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\ConstantTypeControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

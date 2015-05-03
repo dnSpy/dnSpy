@@ -27,13 +27,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
 	enum MethodCallingConv
 	{
-		Default = CallingConvention.Default,
-		C = CallingConvention.C,
-		StdCall = CallingConvention.StdCall,
-		ThisCall = CallingConvention.ThisCall,
-		FastCall = CallingConvention.FastCall,
-		VarArg = CallingConvention.VarArg,
-		NativeVarArg = CallingConvention.NativeVarArg,
+		Default			= CallingConvention.Default,
+		C				= CallingConvention.C,
+		StdCall			= CallingConvention.StdCall,
+		ThisCall		= CallingConvention.ThisCall,
+		FastCall		= CallingConvention.FastCall,
+		VarArg			= CallingConvention.VarArg,
+		NativeVarArg	= CallingConvention.NativeVarArg,
 	}
 
 	sealed class MethodSigCreatorVM : ViewModelBase
@@ -245,7 +245,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			if (typeSigCreator == null)
 				throw new InvalidOperationException();
 
-			var newTypeSig = typeSigCreator.Create(options.TypeSigCreatorOptions.Clone("Create Return Type"), ReturnType);
+			bool canceled;
+			var newTypeSig = typeSigCreator.Create(options.TypeSigCreatorOptions.Clone("Create Return Type"), ReturnType, out canceled);
 			if (newTypeSig != null)
 				ReturnType = newTypeSig;
 		}

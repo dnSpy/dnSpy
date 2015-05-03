@@ -18,6 +18,7 @@
 */
 
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
@@ -287,6 +288,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 		{
 			if (e.PropertyName == "TypeSigDnlibFullName")
 				OnPropertyChanged("FieldTypeHeader");
+			HasErrorUpdated();
 		}
 
 		void Reinitialize()
@@ -322,7 +324,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			options.FieldOffset = FieldOffset.Value;
 			options.MarshalType = HasFieldMarshal ? MarshalTypeVM.Type : null;
 			options.RVA = (dnlib.PE.RVA)RVA.Value;
-			options.InitialValue = HasFieldRVA ? InitialValue.Value : null;
+			options.InitialValue = HasFieldRVA ? InitialValue.Value.ToArray() : null;
 			options.ImplMap = PinvokeImpl ? ImplMap : null;
 			options.Constant = HasDefault ? Constant : null;
 			return options;

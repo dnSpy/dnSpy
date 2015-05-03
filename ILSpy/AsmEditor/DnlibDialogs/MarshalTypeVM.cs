@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Linq;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
@@ -434,7 +435,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 
 		public string SafeArrayMarshalType_UserDefinedSubType_TypeHeader {
-			get { return string.Format("Type: {0}", safeArrayMarshalType_userDefinedSubType_typeSigCreator.TypeSigDnlibFullName); }
+			get { return string.Format("Type: {0}", SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator.TypeSigDnlibFullName); }
 		}
 
 		public string CustomMarshalType_CustMarshaler_TypeHeader {
@@ -447,6 +448,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				OnPropertyChanged("SafeArrayMarshalType_UserDefinedSubType_TypeHeader");
 			OnSafeArrayMarshalTypeIsEnabledChanged();
 			TypeStringUpdated();
+			HasErrorUpdated();
 		}
 
 		void customMarshalType_custMarshaler_typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -454,6 +456,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			if (e.PropertyName == "TypeSigDnlibFullName")
 				OnPropertyChanged("CustomMarshalType_CustMarshaler_TypeHeader");
 			TypeStringUpdated();
+			HasErrorUpdated();
 		}
 
 		static TypeSigCreatorVM CreateTypeSigCreatorVM(ModuleDef module, Language language, TypeDef ownerType, bool allowNullTypeSig, PropertyChangedEventHandler handler)
@@ -541,7 +544,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 					return null;
 
 				if (IsRawMarshalType) {
-					return new RawMarshalType(RawMarshalType_Data.Value);
+					return new RawMarshalType(RawMarshalType_Data.Value.ToArray());
 				}
 				else if (IsFixedSysStringMarshalType) {
 					int size = FixedSysStringMarshalType_Size_IsEnabled && !FixedSysStringMarshalType_Size.IsNull ?
