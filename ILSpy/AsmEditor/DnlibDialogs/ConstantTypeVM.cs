@@ -45,6 +45,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		Enum,
 		Type,
 
+		ObjectArray,
 		BooleanArray,
 		CharArray,
 		SByteArray,
@@ -78,6 +79,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
+		public ICreateConstantType CreateConstantType {
+			set { objectArray.CreateConstantType = value; }
+		}
+
 		public EnumListVM ConstantTypeEnumList {
 			get { return constantTypeEnumListVM; }
 		}
@@ -100,6 +105,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			{ ConstantType.String,		new EnumVM(ConstantType.String,			"String") },
 			{ ConstantType.Enum,		new EnumVM(ConstantType.Enum,			"Enum") },
 			{ ConstantType.Type,		new EnumVM(ConstantType.Type,			"Type") },
+			{ ConstantType.ObjectArray,	new EnumVM(ConstantType.ObjectArray,	"Object[]") },
 			{ ConstantType.BooleanArray,new EnumVM(ConstantType.BooleanArray,	"Boolean[]") },
 			{ ConstantType.CharArray,	new EnumVM(ConstantType.CharArray,		"Char[]") },
 			{ ConstantType.SByteArray,	new EnumVM(ConstantType.SByteArray,		"SByte[]") },
@@ -129,7 +135,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				}
 			}
 		}
-		bool isEnabled;
+		bool isEnabled = true;
 
 		public object Value {
 			get {
@@ -150,6 +156,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				case ConstantType.String:		return @string.Value;
 				case ConstantType.Enum:			return @enum.Value;
 				case ConstantType.Type:			return type.Value;
+				case ConstantType.ObjectArray:	return ArraysCanBeNull && ObjectArrayIsNull	? null : ObjectArray.Value;
 				case ConstantType.BooleanArray:	return ArraysCanBeNull && BooleanArrayIsNull? null : BooleanArray.Value;
 				case ConstantType.CharArray:	return ArraysCanBeNull && CharArrayIsNull	? null : CharArray.Value;
 				case ConstantType.SByteArray:	return ArraysCanBeNull && SByteArrayIsNull	? null : SByteArray.Value;
@@ -292,8 +299,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 					ConstantTypeEnumList.SelectedItem = ConstantType.TypeArray;
 					typeArray.Value = (IList<TypeSig>)value;
 				}
+				else if (value is IList<object>) {
+					ConstantTypeEnumList.SelectedItem = ConstantType.ObjectArray;
+					objectArray.Value = (IList<object>)value;
+				}
 				else {
-					ConstantTypeEnumList.SelectedItem = ConstantType.Null;
+					if (ConstantTypeEnumList.Has(ConstantType.Null))
+						ConstantTypeEnumList.SelectedItem = ConstantType.Null;
+					else
+						ConstantTypeEnumList.SelectedIndex = 0;
 				}
 			}
 		}
@@ -362,6 +376,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.Type; }
 		}
 
+		public bool ObjectArrayIsSelected {
+			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.ObjectArray; }
+		}
+
 		public bool BooleanArrayIsSelected {
 			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.BooleanArray; }
 		}
@@ -420,6 +438,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		public bool TypeArrayIsSelected {
 			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.TypeArray; }
+		}
+
+		public bool ObjectArrayIsSelectedAndNotNull {
+			get { return (ConstantType)ConstantTypeEnumList.SelectedItem == ConstantType.ObjectArray && !ObjectArrayIsNull; }
 		}
 
 		public bool BooleanArrayIsSelectedAndNotNull {
@@ -557,6 +579,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		TypeSigVM type;
 
+		public ObjectListDataFieldVM ObjectArray {
+			get { return objectArray; }
+		}
+		ObjectListDataFieldVM objectArray;
+
 		public BooleanListDataFieldVM BooleanArray {
 			get { return booleanArray; }
 		}
@@ -631,6 +658,19 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			get { return typeArray; }
 		}
 		TypeSigListDataFieldVM typeArray;
+
+		public bool ObjectArrayIsNull {
+			get { return objectArrayIsNull; }
+			set {
+				if (objectArrayIsNull != value) {
+					objectArrayIsNull = value;
+					OnPropertyChanged("ObjectArrayIsNull");
+					OnPropertyChanged("ObjectArrayIsSelectedAndNotNull");
+					HasErrorUpdated();
+				}
+			}
+		}
+		bool objectArrayIsNull;
 
 		public bool BooleanArrayIsNull {
 			get { return booleanArrayIsNull; }
@@ -836,8 +876,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		{
 			if (options == null) {
 				IList<ConstantType> clist = validConstants;
-				if (clist.IndexOf(ConstantType.Type) >= 0 || clist.IndexOf(ConstantType.TypeArray) >= 0)
+				if (clist.IndexOf(ConstantType.Type) >= 0 ||
+					clist.IndexOf(ConstantType.TypeArray) >= 0 ||
+					clist.IndexOf(ConstantType.ObjectArray) >= 0) {
 					throw new ArgumentNullException();
+				}
 			}
 			this.arraysCanBeNull = arraysCanBeNull;
 			var list = validConstants.Select(a => typeToEnumVM[a]);
@@ -857,6 +900,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			this.@string = new StringVM(a => HasErrorUpdated(), allowNullString);
 			this.@enum = new EnumDataFieldVM(a => HasErrorUpdated());
 			this.type = new TypeSigVM(a => HasErrorUpdated(), options);
+			this.objectArray = new ObjectListDataFieldVM(a => HasErrorUpdated(), options);
 			this.booleanArray = new BooleanListDataFieldVM(a => HasErrorUpdated());
 			this.charArray = new CharListDataFieldVM(a => HasErrorUpdated());
 			this.sbyteArray = new SByteListDataFieldVM(a => HasErrorUpdated());
@@ -893,6 +937,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			OnPropertyChanged("StringIsSelected");
 			OnPropertyChanged("EnumIsSelected");
 			OnPropertyChanged("TypeIsSelected");
+			OnPropertyChanged("ObjectArrayIsSelected");
+			OnPropertyChanged("ObjectArrayIsSelectedAndNotNull");
 			OnPropertyChanged("BooleanArrayIsSelected");
 			OnPropertyChanged("BooleanArrayIsSelectedAndNotNull");
 			OnPropertyChanged("CharArrayIsSelected");
@@ -953,6 +999,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				case ConstantType.String:		if (@string.HasError) return true; break;
 				case ConstantType.Enum:			if (@enum.HasError) return true; break;
 				case ConstantType.Type:			if (type.HasError) return true; break;
+				case ConstantType.ObjectArray:	if (!ObjectArrayIsNull && objectArray.HasError) return true; break;
 				case ConstantType.BooleanArray:	if (!BooleanArrayIsNull && booleanArray.HasError) return true; break;
 				case ConstantType.CharArray:	if (!CharArrayIsNull && charArray.HasError) return true; break;
 				case ConstantType.SByteArray:	if (!SByteArrayIsNull && sbyteArray.HasError) return true; break;

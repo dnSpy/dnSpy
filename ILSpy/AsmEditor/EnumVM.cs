@@ -126,6 +126,15 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			this.onChanged = onChanged;
 		}
 
+		public bool Has(object value)
+		{
+			for (int i = 0; i < list.Count; i++) {
+				if (list[i].Value.Equals(value))
+					return true;
+			}
+			return false;
+		}
+
 		public int GetIndex(object value)
 		{
 			for (int i = 0; i < list.Count; i++) {

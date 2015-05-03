@@ -1,0 +1,88 @@
+﻿/*
+    Copyright (C) 2014-2015 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System.Windows;
+using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+
+namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
+{
+	sealed class CreateConstantType : ICreateConstantType
+	{
+		readonly Window ownerWindow;
+
+		public CreateConstantType()
+			: this(null)
+		{
+		}
+
+		public CreateConstantType(Window ownerWindow)
+		{
+			this.ownerWindow = ownerWindow;
+		}
+
+		static readonly ConstantType[] DefaultConstants = new ConstantType[] {
+			ConstantType.Boolean,
+			ConstantType.Char,
+			ConstantType.SByte,
+			ConstantType.Int16,
+			ConstantType.Int32,
+			ConstantType.Int64,
+			ConstantType.Byte,
+			ConstantType.UInt16,
+			ConstantType.UInt32,
+			ConstantType.UInt64,
+			ConstantType.Single,
+			ConstantType.Double,
+			ConstantType.String,
+			ConstantType.Enum,
+			ConstantType.Type,
+			ConstantType.ObjectArray,
+			ConstantType.BooleanArray,
+			ConstantType.CharArray,
+			ConstantType.SByteArray,
+			ConstantType.Int16Array,
+			ConstantType.Int32Array,
+			ConstantType.Int64Array,
+			ConstantType.ByteArray,
+			ConstantType.UInt16Array,
+			ConstantType.UInt32Array,
+			ConstantType.UInt64Array,
+			ConstantType.SingleArray,
+			ConstantType.DoubleArray,
+			ConstantType.StringArray,
+			ConstantType.EnumArray,
+			ConstantType.TypeArray,
+		};
+
+		public object Create(object value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions options, out bool canceled)
+		{
+			var data = new ConstantTypeVM(value, validConstants ?? DefaultConstants, true, true, options);
+			var win = new ConstantTypeDlg();
+			win.DataContext = data;
+			win.Owner = ownerWindow ?? MainWindow.Instance;
+			if (win.ShowDialog() != true) {
+				canceled = true;
+				return null;
+			}
+
+			canceled = false;
+			return data.Value;
+		}
+	}
+}

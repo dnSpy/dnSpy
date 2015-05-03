@@ -126,6 +126,9 @@
     <Compile Include="AsmEditor\DnlibDialogs\ConstantTypeControl.xaml.cs">
       <DependentUpon>ConstantTypeControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\ConstantTypeDlg.xaml.cs">
+      <DependentUpon>ConstantTypeDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AsmEditor\DnlibDialogs\ConstantTypeVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\ConstantVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\CreateTypeSigArrayControl.xaml.cs">
@@ -156,6 +159,7 @@
     </Compile>
     <Compile Include="AsmEditor\DnlibDialogs\MethodSigCreatorOptions.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\MethodSigCreatorVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\ObjectListDataFieldVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\TypeSigCreatorControl.xaml.cs">
       <DependentUpon>TypeSigCreatorControl.xaml</DependentUpon>
     </Compile>
@@ -237,9 +241,11 @@
     <Compile Include="AsmEditor\UndoCommandManager.cs" />
     <Compile Include="AsmEditor\UndoRedoMenuCommands.cs" />
     <Compile Include="AsmEditor\Utils.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\CreateConstantType.cs" />
     <Compile Include="AsmEditor\ViewHelpers\CreateMethodPropertySig.cs" />
     <Compile Include="AsmEditor\ViewHelpers\CreateTypeSigArray.cs" />
     <Compile Include="AsmEditor\ViewHelpers\DnlibTypePicker.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\ICreateConstantType.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ICreateMethodPropertySig.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ICreateTypeSigArray.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IDnlibTypePicker.cs" />
@@ -545,6 +551,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\DnlibDialogs\ConstantTypeControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\ConstantTypeDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
