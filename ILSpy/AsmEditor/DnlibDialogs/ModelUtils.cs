@@ -64,5 +64,53 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 			return null;
 		}
+
+		public static object GetDefaultValue(TypeSig type, bool classValueTypeIsEnum = false)
+		{
+			var t = type.RemovePinnedAndModifiers();
+			switch (t.GetElementType()) {
+			case ElementType.Boolean:return false;
+			case ElementType.Char:	return (char)0;
+			case ElementType.I1:	return (sbyte)0;
+			case ElementType.U1:	return (byte)0;
+			case ElementType.I2:	return (short)0;
+			case ElementType.U2:	return (ushort)0;
+			case ElementType.I4:	return (int)0;
+			case ElementType.U4:	return (uint)0;
+			case ElementType.I8:	return (long)0;
+			case ElementType.U8:	return (ulong)0;
+			case ElementType.R4:	return (float)0;
+			case ElementType.R8:	return (double)0;
+			case ElementType.Class:
+			case ElementType.ValueType:
+				var tdr = ((ClassOrValueTypeSig)t).TypeDefOrRef;
+				if (tdr.IsSystemType())
+					break;
+				var td = tdr.ResolveTypeDef();
+				if (td == null) {
+					if (classValueTypeIsEnum)
+						return (int)0;
+					break;
+				}
+				if (!td.IsEnum)
+					break;
+				switch (td.GetEnumUnderlyingType().RemovePinnedAndModifiers().GetElementType()) {
+				case ElementType.Boolean:return false;
+				case ElementType.Char:	return (char)0;
+				case ElementType.I1:	return (sbyte)0;
+				case ElementType.U1:	return (byte)0;
+				case ElementType.I2: 	return (short)0;
+				case ElementType.U2: 	return (ushort)0;
+				case ElementType.I4: 	return (int)0;
+				case ElementType.U4: 	return (uint)0;
+				case ElementType.I8: 	return (long)0;
+				case ElementType.U8: 	return (ulong)0;
+				case ElementType.R4: 	return (float)0;
+				case ElementType.R8: 	return (double)0;
+				}
+				break;
+			}
+			return null;
+		}
 	}
 }

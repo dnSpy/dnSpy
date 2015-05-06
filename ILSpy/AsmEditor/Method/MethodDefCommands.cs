@@ -209,7 +209,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			Debug.Assert(module != null);
 			if (module == null)
 				throw new InvalidOperationException();
-			var options = MethodDefOptions.Create("MyMethod", MethodSig.CreateInstance(module.CorLibTypes.Void));
+
+			bool isInstance = !(typeNode.TypeDefinition.IsAbstract && typeNode.TypeDefinition.IsSealed);
+			var sig = isInstance ? MethodSig.CreateInstance(module.CorLibTypes.Void) : MethodSig.CreateStatic(module.CorLibTypes.Void);
+			var options = MethodDefOptions.Create("MyMethod", sig);
 
 			var data = new MethodOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, typeNode.TypeDefinition, null);
 			var win = new MethodOptionsDlg();

@@ -89,7 +89,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			set {
 				enumInfo.EnumType = value;
 				var td = value.ResolveTypeDef();
-				if (td == null)
+				if (td == null || !td.IsEnum)
 					enumUnderlyingTypeField = null;
 				else {
 					enumUnderlyingTypeField = CreateEnumUnderlyingTypeField(td.GetEnumUnderlyingType().RemovePinnedAndModifiers().GetElementType());
@@ -156,7 +156,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				enumUnderlyingTypeField = CreateEnumUnderlyingTypeFieldFromValue(enumInfo.Value);
 			else {
 				var td = enumInfo.EnumType.ResolveTypeDef();
-				if (td != null)
+				if (td != null && td.IsEnum)
 					enumUnderlyingTypeField = CreateEnumUnderlyingTypeField(td.GetEnumUnderlyingType().RemovePinnedAndModifiers().GetElementType());
 			}
 		}

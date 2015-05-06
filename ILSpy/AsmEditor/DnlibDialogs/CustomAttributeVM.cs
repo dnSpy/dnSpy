@@ -200,45 +200,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		static CAArgument CreateCAArgument(TypeSig type)
 		{
-			var t = type.RemovePinnedAndModifiers();
-			switch (t.GetElementType()) {
-			case ElementType.Boolean:return new CAArgument(type, false);
-			case ElementType.Char:	return new CAArgument(type, (char)0);
-			case ElementType.I1:	return new CAArgument(type, (sbyte)0);
-			case ElementType.U1:	return new CAArgument(type, (byte)0);
-			case ElementType.I2:	return new CAArgument(type, (short)0);
-			case ElementType.U2:	return new CAArgument(type, (ushort)0);
-			case ElementType.I4:	return new CAArgument(type, (int)0);
-			case ElementType.U4:	return new CAArgument(type, (uint)0);
-			case ElementType.I8:	return new CAArgument(type, (long)0);
-			case ElementType.U8:	return new CAArgument(type, (ulong)0);
-			case ElementType.R4:	return new CAArgument(type, (float)0);
-			case ElementType.R8:	return new CAArgument(type, (double)0);
-			case ElementType.Class:
-			case ElementType.ValueType:
-				var tdr = ((ClassOrValueTypeSig)t).TypeDefOrRef;
-				if (tdr.IsSystemType())
-					return new CAArgument(type, null);
-				var td = tdr.ResolveTypeDef();
-				if (td == null)
-					return new CAArgument(type, (int)0);
-				switch (td.GetEnumUnderlyingType().RemovePinnedAndModifiers().GetElementType()) {
-				case ElementType.Boolean:	return new CAArgument(type, false);
-				case ElementType.Char:		return new CAArgument(type, (char)0);
-				case ElementType.I1:		return new CAArgument(type, (sbyte)0);
-				case ElementType.U1:		return new CAArgument(type, (byte)0);
-				case ElementType.I2: 		return new CAArgument(type, (short)0);
-				case ElementType.U2: 		return new CAArgument(type, (ushort)0);
-				case ElementType.I4: 		return new CAArgument(type, (int)0);
-				case ElementType.U4: 		return new CAArgument(type, (uint)0);
-				case ElementType.I8: 		return new CAArgument(type, (long)0);
-				case ElementType.U8: 		return new CAArgument(type, (ulong)0);
-				case ElementType.R4: 		return new CAArgument(type, (float)0);
-				case ElementType.R8: 		return new CAArgument(type, (double)0);
-				}
-				break;
-			}
-			return new CAArgument(type, null);
+			return new CAArgument(type, ModelUtils.GetDefaultValue(type, true));
 		}
 
 		void PickConstructor()

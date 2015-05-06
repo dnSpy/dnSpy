@@ -59,12 +59,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			return CopyTo(new PropertyDefUser());
 		}
 
-		public static PropertyDefOptions Create(ModuleDef module, UTF8String name)
+		public static PropertyDefOptions Create(ModuleDef module, UTF8String name, bool isInstance)
 		{
 			return new PropertyDefOptions {
 				Attributes = 0,
 				Name = name,
-				PropertySig = PropertySig.CreateInstance(module.CorLibTypes.Int32),
+				PropertySig = isInstance ?
+								PropertySig.CreateInstance(module.CorLibTypes.Int32) :
+								PropertySig.CreateStatic(module.CorLibTypes.Int32),
 				Constant = null,
 			};
 		}

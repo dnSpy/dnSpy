@@ -22,8 +22,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
-using ICSharpCode.ILSpy.TreeNodes;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using ICSharpCode.ILSpy.TreeNodes;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Field
 {
@@ -209,9 +210,29 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			Debug.Assert(module != null);
 			if (module == null)
 				throw new InvalidOperationException();
-			var options = FieldDefOptions.Create("MyField", new FieldSig(module.CorLibTypes.Int32));
 
-			var data = new FieldOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, typeNode.TypeDefinition);
+			FieldDefOptions options;
+			var type = typeNode.TypeDefinition;
+			if (type.IsEnum) {
+				var ts = type.GetEnumUnderlyingType();
+				if (ts != null) {
+					options = FieldDefOptions.Create("MyField", new FieldSig(new ValueTypeSig(typeNode.TypeDefinition)));
+					options.Constant = new ConstantUser(ModelUtils.GetDefaultValue(ts), ts.RemovePinnedAndModifiers().GetElementType());
+					options.Attributes |= FieldAttributes.Literal | FieldAttributes.Static | FieldAttributes.HasDefault;
+				}
+				else {
+					options = FieldDefOptions.Create("value__", new FieldSig(module.CorLibTypes.Int32));
+					options.Attributes |= FieldAttributes.SpecialName | FieldAttributes.RTSpecialName;
+				}
+			}
+			else if (type.IsAbstract && type.IsSealed) {
+				options = FieldDefOptions.Create("MyField", new FieldSig(module.CorLibTypes.Int32));
+				options.Attributes |= FieldAttributes.Static;
+			}
+			else
+				options = FieldDefOptions.Create("MyField", new FieldSig(module.CorLibTypes.Int32));
+
+			var data = new FieldOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, type);
 			var win = new FieldOptionsDlg();
 			win.Title = "Create Field";
 			win.DataContext = data;

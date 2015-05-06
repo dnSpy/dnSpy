@@ -232,7 +232,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			Debug.Assert(module != null);
 			if (module == null)
 				throw new InvalidOperationException();
-			var options = PropertyDefOptions.Create(module, "MyProperty");
+
+			bool isInstance = !(typeNode.TypeDefinition.IsAbstract && typeNode.TypeDefinition.IsSealed);
+			var options = PropertyDefOptions.Create(module, "MyProperty", isInstance);
 
 			var data = new PropertyOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, typeNode.TypeDefinition);
 			var win = new PropertyOptionsDlg();
