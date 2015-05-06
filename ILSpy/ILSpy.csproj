@@ -227,6 +227,7 @@
     <Compile Include="AsmEditor\Module\NetModuleOptionsVM.cs" />
     <Compile Include="AsmEditor\MyObservableCollection.cs" />
     <Compile Include="AsmEditor\NamespaceTreeNodeCreator.cs" />
+    <Compile Include="AsmEditor\NumberVMUtils.cs" />
     <Compile Include="AsmEditor\Property\PropertyDefCommands.cs" />
     <Compile Include="AsmEditor\Property\PropertyDefOptions.cs" />
     <Compile Include="AsmEditor\Property\PropertyOptionsDlg.xaml.cs">
