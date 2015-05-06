@@ -211,7 +211,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 				throw new InvalidOperationException();
 			var options = MethodDefOptions.Create("MyMethod", MethodSig.CreateInstance(module.CorLibTypes.Void));
 
-			var data = new MethodOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, typeNode.TypeDefinition);
+			var data = new MethodOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, typeNode.TypeDefinition, null);
 			var win = new MethodOptionsDlg();
 			win.Title = "Create Method";
 			win.DataContext = data;
@@ -303,7 +303,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			if (module == null)
 				throw new InvalidOperationException();
 
-			var data = new MethodOptionsVM(new MethodDefOptions(methodNode.MethodDefinition), module, MainWindow.Instance.CurrentLanguage, methodNode.MethodDefinition.DeclaringType);
+			var data = new MethodOptionsVM(new MethodDefOptions(methodNode.MethodDefinition), module, MainWindow.Instance.CurrentLanguage, methodNode.MethodDefinition.DeclaringType, methodNode.MethodDefinition);
 			var win = new MethodOptionsDlg();
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;

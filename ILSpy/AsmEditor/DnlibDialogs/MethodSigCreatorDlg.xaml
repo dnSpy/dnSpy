@@ -20,7 +20,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:local="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
+             xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              Height="550" Width="550"
              ResizeMode="CanResizeWithGrip"
@@ -38,7 +38,7 @@
 
 		<Border Grid.Row="0" Margin="5" Style="{StaticResource DialogBorderStyle}">
 			<ScrollViewer VerticalScrollBarVisibility="Auto">
-				<local:MethodSigCreatorControl Margin="5" />
+				<dnlibdlgs:MethodSigCreatorControl Margin="5" />
 			</ScrollViewer>
 		</Border>
 

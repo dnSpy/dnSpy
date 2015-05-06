@@ -21,7 +21,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
+             xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="500">
 	<UserControl.Resources>
@@ -42,7 +42,7 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 
-		<local:TypeSigCreatorControl Grid.Row="0" DataContext="{Binding TypeSigCreator}" />
+		<dnlibdlgs:TypeSigCreatorControl Grid.Row="0" DataContext="{Binding TypeSigCreator}" />
 
 		<Grid Grid.Row="1">
 			<Grid.ColumnDefinitions>
@@ -60,10 +60,10 @@
 					  Name="listView"
 					  ItemsSource="{Binding TypeSigCollection}"
 					  DisplayMemberPath="FullName"
-					  SelectedIndex="{Binding SelectedIndex}" />
+					  SelectedIndex="{Binding TypeSigCollection.SelectedIndex}" />
 			<RepeatButton Grid.Row="0" Grid.Column="1"
 					Margin="5 5 0 0"
-					Command="{Binding MoveUpCommand}"
+					Command="{Binding TypeSigCollection.MoveUpCommand}"
 					ToolTip="Move Up">
 				<RepeatButton.Content>
 					<Image Width="16" Height="16" Source="../../Images/ArrowUp.png" Style="{StaticResource DisableImageStyle}" />
@@ -71,7 +71,7 @@
 			</RepeatButton>
 			<RepeatButton Grid.Row="2" Grid.Column="1"
 					Margin="5 5 0 0"
-					Command="{Binding MoveDownCommand}"
+					Command="{Binding TypeSigCollection.MoveDownCommand}"
 					ToolTip="Move Down">
 				<RepeatButton.Content>
 					<Image Width="16" Height="16" Source="../../Images/ArrowDown.png" Style="{StaticResource DisableImageStyle}" />

@@ -1068,7 +1068,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				// value type might be an enum
 				TypeDef typeDef = enumType.Resolve();
 				if (typeDef != null && typeDef.IsEnum) {
-					return typeDef.GetEnumUnderlyingType();
+					return typeDef.GetEnumUnderlyingType().RemovePinnedAndModifiers();
 				}
 			}
 			return null;

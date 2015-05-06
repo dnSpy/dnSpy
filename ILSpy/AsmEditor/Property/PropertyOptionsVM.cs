@@ -18,6 +18,7 @@
 */
 
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
@@ -26,7 +27,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 {
 	sealed class PropertyOptionsVM : ViewModelBase
 	{
-		readonly PropertyDefOptions options;
 		readonly PropertyDefOptions origOptions;
 
 		public ICommand ReinitializeCommand {
@@ -121,9 +121,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 		}
 		readonly ConstantVM constantVM;
 
+		public CustomAttributesVM CustomAttributesVM {
+			get { return customAttributesVM; }
+		}
+		CustomAttributesVM customAttributesVM;
+
 		public PropertyOptionsVM(PropertyDefOptions options, ModuleDef module, Language language, TypeDef ownerType)
 		{
-			this.options = new PropertyDefOptions();
 			this.origOptions = options;
 
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(module, language) {
@@ -140,6 +144,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			this.methodSigCreator.PropertyChanged += methodSigCreator_PropertyChanged;
 			this.methodSigCreator.ParametersCreateTypeSigArray.PropertyChanged += methodSigCreator_PropertyChanged;
 			this.methodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
+			this.customAttributesVM = new CustomAttributesVM(module, language);
 			this.constantVM = new ConstantVM(options.Constant == null ? null : options.Constant.Value, "Default value for this property");
 			this.constantVM.PropertyChanged += constantVM_PropertyChanged;
 
@@ -176,6 +181,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			Name = options.Name;
 			PropertySig = options.PropertySig;
 			Constant = options.Constant;
+			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 
 		PropertyDefOptions CopyTo(PropertyDefOptions options)
@@ -184,6 +190,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			options.Name = Name;
 			options.PropertySig = PropertySig;
 			options.Constant = HasDefault ? Constant : null;
+			options.CustomAttributes.Clear();
+			options.CustomAttributes.AddRange(CustomAttributesVM.CustomAttributeCollection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			return options;
 		}
 

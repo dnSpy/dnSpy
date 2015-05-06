@@ -30,24 +30,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			get { return new RelayCommand(a => AddCurrent(), a => AddCurrentCanExecute()); }
 		}
 
-		public ICommand RemoveCommand {
-			get { return new RelayCommand(a => RemoveCurrent(), a => RemoveCurrentCanExecute()); }
-		}
-
-		public ICommand MoveUpCommand {
-			get { return new RelayCommand(a => MoveCurrentUp(), a => MoveCurrentUpCanExecute()); }
-		}
-
-		public ICommand MoveDownCommand {
-			get { return new RelayCommand(a => MoveCurrentDown(), a => MoveCurrentDownCanExecute()); }
-		}
-
 		public bool IsEnabled {
 			get { return isEnabled; }
 			set {
 				if (isEnabled != value) {
 					isEnabled = value;
 					typeSigCreator.IsEnabled = value;
+					TypeSigCollection.IsEnabled = value;
 					OnPropertyChanged("IsEnabled");
 					OnPropertyChanged("CanAddMore");
 					OnPropertyChanged("CanNotAddMore");
@@ -60,21 +49,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			get { return TypeSigCollection.ToArray(); }
 		}
 
-		public ObservableCollection<TypeSig> TypeSigCollection {
+		public MyObservableCollection<TypeSig> TypeSigCollection {
 			get { return typeSigCollection; }
 		}
-		readonly ObservableCollection<TypeSig> typeSigCollection = new ObservableCollection<TypeSig>();
-
-		public int SelectedIndex {
-			get { return selectedIndex; }
-			set {
-				if (selectedIndex != value) {
-					selectedIndex = value;
-					OnPropertyChanged("SelectedIndex");
-				}
-			}
-		}
-		int selectedIndex;
+		readonly MyObservableCollection<TypeSig> typeSigCollection = new MyObservableCollection<TypeSig>();
 
 		public TypeSigCreatorVM TypeSigCreator {
 			get { return typeSigCreator; }
@@ -165,7 +143,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				return;
 			var typeSig = TypeSigCreator.TypeSig;
 			TypeSigCollection.Add(typeSig);
-			SelectedIndex = TypeSigCollection.Count - 1;
+			TypeSigCollection.SelectedIndex = TypeSigCollection.Count - 1;
 			TypeSigCreator.TypeSig = null;
 		}
 
@@ -174,57 +152,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return IsEnabled &&
 				(IsUnlimitedCount || NumberOfTypesLeft > 0) &&
 				TypeSigCreator.TypeSig != null;
-		}
-
-		void RemoveCurrent()
-		{
-			if (!RemoveCurrentCanExecute())
-				return;
-			int index = SelectedIndex;
-			TypeSigCollection.RemoveAt(index);
-			if (index < TypeSigCollection.Count)
-				SelectedIndex = index;
-			else if (TypeSigCollection.Count > 0)
-				SelectedIndex = TypeSigCollection.Count - 1;
-			else
-				SelectedIndex = -1;
-		}
-
-		bool RemoveCurrentCanExecute()
-		{
-			return IsEnabled && SelectedIndex >= 0 && SelectedIndex < TypeSigCollection.Count;
-		}
-
-		void MoveCurrentUp()
-		{
-			if (!MoveCurrentUpCanExecute())
-				return;
-			int index = SelectedIndex;
-			var item = TypeSigCollection[index];
-			TypeSigCollection.RemoveAt(index);
-			TypeSigCollection.Insert(index - 1, item);
-			SelectedIndex = index - 1;
-		}
-
-		bool MoveCurrentUpCanExecute()
-		{
-			return IsEnabled && SelectedIndex > 0 && SelectedIndex < TypeSigCollection.Count;
-		}
-
-		void MoveCurrentDown()
-		{
-			if (!MoveCurrentDownCanExecute())
-				return;
-			int index = SelectedIndex;
-			var item = TypeSigCollection[index];
-			TypeSigCollection.RemoveAt(index);
-			TypeSigCollection.Insert(index + 1, item);
-			SelectedIndex = index + 1;
-		}
-
-		bool MoveCurrentDownCanExecute()
-		{
-			return IsEnabled && SelectedIndex >= 0 && SelectedIndex < TypeSigCollection.Count - 1;
 		}
 
 		protected override string Verify(string columnName)

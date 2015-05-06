@@ -67,11 +67,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			this.objects.Clear();
 			if (value != null)
 				this.objects.AddRange(value);
+			InitializeStringValue();
 		}
 
 		void InitializeStringValue()
 		{
-			this.StringValue = string.Join(", ", objects.Select(a => a == null ? "null" : a.ToString()));
+			this.StringValue = string.Join(", ", objects.Select(a => DlgUtils.ValueToString(a, true)));
 		}
 
 		protected override string ConvertToValue(out IList<object> value)
@@ -80,22 +81,24 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return null;
 		}
 
-		static readonly ConstantType[] ConstantsNoArray = new ConstantType[] {
+		static readonly ConstantType[] Constants = new ConstantType[] {
+			ConstantType.Null,
 			ConstantType.Boolean,
 			ConstantType.Char,
 			ConstantType.SByte,
-			ConstantType.Int16,
-			ConstantType.Int32,
-			ConstantType.Int64,
 			ConstantType.Byte,
+			ConstantType.Int16,
 			ConstantType.UInt16,
+			ConstantType.Int32,
 			ConstantType.UInt32,
+			ConstantType.Int64,
 			ConstantType.UInt64,
 			ConstantType.Single,
 			ConstantType.Double,
 			ConstantType.String,
 			ConstantType.Enum,
 			ConstantType.Type,
+			ConstantType.ObjectArray,
 		};
 
 		void AddObject()
@@ -103,7 +106,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			if (createConstantType == null)
 				throw new InvalidOperationException();
 			bool canceled;
-			var newObject = createConstantType.Create(null, ConstantsNoArray, true, true, options, out canceled);
+			object newObjectNoSpecialNull;
+			var newObject = createConstantType.Create(null, Constants, true, true, options, out newObjectNoSpecialNull, out canceled);
 			if (canceled)
 				return;
 

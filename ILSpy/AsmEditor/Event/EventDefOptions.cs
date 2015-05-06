@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Event
@@ -26,6 +27,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 		public EventAttributes Attributes;
 		public UTF8String Name;
 		public ITypeDefOrRef EventType;
+		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
 		public EventDefOptions()
 		{
@@ -36,6 +38,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			this.Attributes = evt.Attributes;
 			this.Name = evt.Name;
 			this.EventType = evt.EventType;
+			this.CustomAttributes.AddRange(evt.CustomAttributes);
 		}
 
 		public EventDef CopyTo(EventDef evt)
@@ -43,12 +46,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			evt.Attributes = this.Attributes;
 			evt.Name = this.Name;
 			evt.EventType = this.EventType;
+			evt.CustomAttributes.Clear();
+			evt.CustomAttributes.AddRange(CustomAttributes);
 			return evt;
 		}
 
 		public EventDef CreateEventDef()
 		{
-			return new EventDefUser(Name, EventType, Attributes);
+			return CopyTo(new EventDefUser());
 		}
 
 		public static EventDefOptions Create(UTF8String name, ITypeDefOrRef eventType)

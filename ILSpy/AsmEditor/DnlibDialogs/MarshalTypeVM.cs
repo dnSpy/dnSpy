@@ -62,7 +62,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				}
 			}
 		}
-		bool isEnabled;
+		bool isEnabled = true;
 
 		public bool IsMarshalType {
 			get {

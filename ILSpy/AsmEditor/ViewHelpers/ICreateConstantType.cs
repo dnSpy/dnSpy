@@ -33,8 +33,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 		/// <param name="options">TypeSig creator options. Can be null if <paramref name="validConstants"/>
 		/// doesn't contain <see cref="ConstantType.Type"/>, <see cref="ConstantType.TypeArray"/>
 		/// and <see cref="ConstantType.ObjectArray"/>.</param>
+		/// <param name="resultNoSpecialNull">Same as return value except it doesn't contain any
+		/// special Null classes.</param>
 		/// <param name="canceled">true if user canceled</param>
 		/// <returns></returns>
-		object Create(object value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions options, out bool canceled);
+		object Create(object value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions options, out object resultNoSpecialNull, out bool canceled);
 	}
 }

@@ -40,12 +40,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 			ConstantType.Boolean,
 			ConstantType.Char,
 			ConstantType.SByte,
-			ConstantType.Int16,
-			ConstantType.Int32,
-			ConstantType.Int64,
 			ConstantType.Byte,
+			ConstantType.Int16,
 			ConstantType.UInt16,
+			ConstantType.Int32,
 			ConstantType.UInt32,
+			ConstantType.Int64,
 			ConstantType.UInt64,
 			ConstantType.Single,
 			ConstantType.Double,
@@ -56,12 +56,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 			ConstantType.BooleanArray,
 			ConstantType.CharArray,
 			ConstantType.SByteArray,
-			ConstantType.Int16Array,
-			ConstantType.Int32Array,
-			ConstantType.Int64Array,
 			ConstantType.ByteArray,
+			ConstantType.Int16Array,
 			ConstantType.UInt16Array,
+			ConstantType.Int32Array,
 			ConstantType.UInt32Array,
+			ConstantType.Int64Array,
 			ConstantType.UInt64Array,
 			ConstantType.SingleArray,
 			ConstantType.DoubleArray,
@@ -70,7 +70,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 			ConstantType.TypeArray,
 		};
 
-		public object Create(object value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions options, out bool canceled)
+		public object Create(object value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions options, out object resultNoSpecialNull, out bool canceled)
 		{
 			var data = new ConstantTypeVM(value, validConstants ?? DefaultConstants, true, true, options);
 			var win = new ConstantTypeDlg();
@@ -78,10 +78,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 			win.Owner = ownerWindow ?? MainWindow.Instance;
 			if (win.ShowDialog() != true) {
 				canceled = true;
+				resultNoSpecialNull = null;
 				return null;
 			}
 
 			canceled = false;
+			resultNoSpecialNull = data.ValueNoSpecialNull;
 			return data.Value;
 		}
 	}

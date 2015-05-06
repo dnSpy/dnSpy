@@ -21,7 +21,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
+             xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              Height="350" Width="500"
              ResizeMode="CanResizeWithGrip"
@@ -35,7 +35,7 @@
 		</Grid.RowDefinitions>
 
 		<Border Margin="5" Style="{StaticResource DialogBorderStyle}">
-			<local:TypeSigCreatorControl Grid.Row="0" Margin="5" />
+			<dnlibdlgs:TypeSigCreatorControl Grid.Row="0" Margin="5" />
 		</Border>
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">

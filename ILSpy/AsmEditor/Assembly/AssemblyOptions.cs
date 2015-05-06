@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Assembly
@@ -31,6 +32,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 		public string Name;
 		public string Culture;
 		public Module.ClrVersion ClrVersion;
+		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
 		public AssemblyOptions()
 		{
@@ -45,9 +47,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			this.Name = asm.Name;
 			this.Culture = asm.Culture;
 			this.ClrVersion = Module.ClrVersion.DefaultVersion;
+			this.CustomAttributes.AddRange(asm.CustomAttributes);
 		}
 
-		public void CopyTo(AssemblyDef asm)
+		public AssemblyDef CopyTo(AssemblyDef asm)
 		{
 			asm.HashAlgorithm = this.HashAlgorithm;
 			asm.Version = this.Version;
@@ -55,6 +58,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			asm.PublicKey = this.PublicKey;
 			asm.Name = this.Name;
 			asm.Culture = this.Culture;
+			asm.CustomAttributes.Clear();
+			asm.CustomAttributes.AddRange(CustomAttributes);
+			return asm;
+		}
+
+		public AssemblyDef CreateAssemblyDef()
+		{
+			return CopyTo(new AssemblyDefUser());
 		}
 
 		public static AssemblyOptions Create(string name)

@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
@@ -30,6 +31,43 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 	{
 		public ITypeDefOrRef EnumType;
 		public object Value;
+		public bool IsArray;
+
+		public static EnumInfo CreateNullArray(ITypeDefOrRef type)
+		{
+			return new EnumInfo() {
+				EnumType = type,
+				IsArray = true,
+			};
+		}
+
+		public override string ToString()
+		{
+			var td = EnumType.ResolveTypeDef();
+			if (td != null) {
+				var s = ModelUtils.GetEnumFieldName(td, Value);
+				if (s != null)
+					return string.Format("{0}.{1}", EnumType, s);
+			}
+			if (!IsArray)
+				return string.Format("({0}){1}", EnumType == null ? (object)"Unknown Enum" : EnumType, Value);
+
+			var list = Value as System.Collections.IList;
+			if (list == null)
+				return string.Format("({0}[])null", EnumType == null ? (object)"Unknown Enum" : EnumType);
+
+			var sb = new StringBuilder();
+			sb.Append(string.Format("new {0}[] {{", EnumType == null ? (object)"Unknown Enum" : EnumType));
+			for (int i = 0; i < list.Count; i++) {
+				if (i > 0)
+					sb.Append(',');
+				sb.Append(' ');
+				var s = ModelUtils.GetEnumFieldName(td, list[i]);
+				sb.Append(s ?? (Value == null ? "null" : Value.ToString()));
+			}
+			sb.Append(" }");
+			return sb.ToString();
+		}
 	}
 
 	abstract class EnumDataFieldVMBase : DataFieldVM<EnumInfo>
@@ -73,7 +111,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 
 		public EnumInfo NullValue {
-			get { return new EnumInfo { EnumType = enumInfo.EnumType }; }
+			get { return EnumInfo.CreateNullArray(enumInfo.EnumType); }
 		}
 
 		protected EnumDataFieldVMBase(EnumInfo value, Action<DataFieldVM> onUpdated)
@@ -112,17 +150,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		void InitializeEnumUnderlyingTypeField(EnumInfo enumInfo)
 		{
 			this.enumInfo = enumInfo;
+			this.enumUnderlyingTypeField = null;
 
-			// Don't resolve the enum type. It's possible that the resolve will fail. Just check
-			// the value for the underlying type and create the correct text boxes.
-			enumUnderlyingTypeField = CreateEnumUnderlyingTypeFieldFromValue(enumInfo.Value);
+			if (enumInfo.Value != null)
+				enumUnderlyingTypeField = CreateEnumUnderlyingTypeFieldFromValue(enumInfo.Value);
+			else {
+				var td = enumInfo.EnumType.ResolveTypeDef();
+				if (td != null)
+					enumUnderlyingTypeField = CreateEnumUnderlyingTypeField(td.GetEnumUnderlyingType().RemovePinnedAndModifiers().GetElementType());
+			}
 		}
 
 		void PickEnumType()
 		{
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var type = dnlibTypePicker.GetDnlibType<ITypeDefOrRef>(new FlagsTreeViewNodeFilter(VisibleMembersFlags.EnumTypeDef));
+			var type = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.EnumTypeDef), EnumType);
 			if (type != null)
 				EnumType = type;
 		}
@@ -183,7 +226,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 	sealed class EnumListDataFieldVM : EnumDataFieldVMBase
 	{
 		public EnumListDataFieldVM(Action<DataFieldVM> onUpdated)
-			: this(new EnumInfo(), onUpdated)
+			: this(EnumInfo.CreateNullArray(null), onUpdated)
 		{
 		}
 

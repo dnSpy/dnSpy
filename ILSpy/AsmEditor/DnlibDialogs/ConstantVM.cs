@@ -30,7 +30,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		ConstantTypeVM constantTypeVM;
 
 		public object Value {
-			get { return ConstantTypeVM.Value; }
+			get { return ConstantTypeVM.ValueNoSpecialNull; }
 			set { ConstantTypeVM.Value = value; }
 		}
 
@@ -45,7 +45,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				}
 			}
 		}
-		bool isEnabled;
+		bool isEnabled = true;
 
 		public string ConstantCheckBoxToolTip {
 			get { return constantCheckBoxToolTip; }
@@ -59,10 +59,20 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		string constantCheckBoxToolTip;
 
 		static readonly ConstantType[] constantTypes = new ConstantType[] {
-			ConstantType.Null, ConstantType.Boolean, ConstantType.Char,
-			ConstantType.SByte, ConstantType.Int16, ConstantType.Int32, ConstantType.Int64,
-			ConstantType.Byte, ConstantType.UInt16, ConstantType.UInt32, ConstantType.UInt64,
-			ConstantType.Single, ConstantType.Double, ConstantType.String,
+			ConstantType.Null,
+			ConstantType.Boolean,
+			ConstantType.Char,
+			ConstantType.SByte,
+			ConstantType.Byte,
+			ConstantType.Int16,
+			ConstantType.UInt16,
+			ConstantType.Int32,
+			ConstantType.UInt32,
+			ConstantType.Int64,
+			ConstantType.UInt64,
+			ConstantType.Single,
+			ConstantType.Double,
+			ConstantType.String,
 		};
 
 		public ConstantVM(object value, string constantCheckBoxToolTip)

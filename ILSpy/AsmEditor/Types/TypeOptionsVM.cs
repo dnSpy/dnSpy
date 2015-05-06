@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
@@ -79,7 +80,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 
 	sealed class TypeOptionsVM : ViewModelBase
 	{
-		readonly TypeDefOptions options;
 		readonly TypeDefOptions origOptions;
 
 		public ICommand ReinitializeCommand {
@@ -291,22 +291,30 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			get { return typeSigCreator; }
 		}
 		readonly TypeSigCreatorVM typeSigCreator;
-		readonly TypeSigCreatorOptions typeSigCreatorOptions;
+
+		readonly ModuleDef module;
+
+		public CustomAttributesVM CustomAttributesVM {
+			get { return customAttributesVM; }
+		}
+		CustomAttributesVM customAttributesVM;
 
 		public TypeOptionsVM(TypeDefOptions options, ModuleDef module, Language language, TypeDef ownerType)
 		{
-			this.typeSigCreatorOptions = new TypeSigCreatorOptions(module, language) {
+			this.module = module;
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(module, language) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = false,
 				OwnerType = ownerType,
 			};
 			if (ownerType != null && ownerType.GenericParameters.Count == 0)
-				this.typeSigCreatorOptions.CanAddGenericTypeVar = false;
+				typeSigCreatorOptions.CanAddGenericTypeVar = false;
 			this.typeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			this.typeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
-			this.options = new TypeDefOptions();
+			this.customAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.Module, typeSigCreatorOptions.Language);
+
 			this.origOptions = options;
 			this.isNestedType = (options.Attributes & TypeAttributes.VisibilityMask) <= TypeAttributes.Public;
 			this.typeKindVM = new EnumListVM(typeKindList, (a, b) => OnTypeKindChanged());
@@ -344,13 +352,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 
 		bool IsSystemValueType(IType type)
 		{
-			return new SigComparer().Equals(type, typeSigCreatorOptions.Module.CorLibTypes.GetTypeRef("System", "ValueType")) &&
+			return new SigComparer().Equals(type, module.CorLibTypes.GetTypeRef("System", "ValueType")) &&
 				type.DefinitionAssembly.IsCorLib();
 		}
 
 		bool IsSystemEnum(IType type)
 		{
-			return new SigComparer().Equals(type, typeSigCreatorOptions.Module.CorLibTypes.GetTypeRef("System", "Enum")) &&
+			return new SigComparer().Equals(type, module.CorLibTypes.GetTypeRef("System", "Enum")) &&
 				type.DefinitionAssembly.IsCorLib();
 		}
 
@@ -382,7 +390,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 
 		bool IsStaticClass()
 		{
-			return new SigComparer().Equals(BaseTypeSig, typeSigCreatorOptions.Module.CorLibTypes.Object.TypeDefOrRef) &&
+			return new SigComparer().Equals(BaseTypeSig, module.CorLibTypes.Object.TypeDefOrRef) &&
 				BaseTypeSig.DefinitionAssembly.IsCorLib() &&
 				(Types.TypeLayout)TypeLayout.SelectedItem == Types.TypeLayout.AutoLayout &&
 				(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class &&
@@ -418,7 +426,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 
 		bool IsDelegate()
 		{
-			return new SigComparer().Equals(BaseTypeSig, typeSigCreatorOptions.Module.CorLibTypes.GetTypeRef("System", "MulticastDelegate")) &&
+			return new SigComparer().Equals(BaseTypeSig, module.CorLibTypes.GetTypeRef("System", "MulticastDelegate")) &&
 				BaseTypeSig.DefinitionAssembly.IsCorLib() &&
 				(Types.TypeLayout)TypeLayout.SelectedItem == Types.TypeLayout.AutoLayout &&
 				(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class &&
@@ -448,12 +456,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 
 			case Types.TypeKind.Class:
 				if (!IsClassBaseType(BaseTypeSig))
-					BaseTypeSig = typeSigCreatorOptions.Module.CorLibTypes.Object;
+					BaseTypeSig = module.CorLibTypes.Object;
 				TypeSemantics.SelectedItem = Types.TypeSemantics.Class;
 				break;
 
 			case Types.TypeKind.StaticClass:
-				BaseTypeSig = typeSigCreatorOptions.Module.CorLibTypes.Object;
+				BaseTypeSig = module.CorLibTypes.Object;
 				TypeLayout.SelectedItem = Types.TypeLayout.AutoLayout;
 				TypeSemantics.SelectedItem = Types.TypeSemantics.Class;
 				Abstract = true;
@@ -469,14 +477,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 				break;
 
 			case Types.TypeKind.Struct:
-				BaseTypeSig = new ClassSig(typeSigCreatorOptions.Module.CorLibTypes.GetTypeRef("System", "ValueType"));
+				BaseTypeSig = new ClassSig(module.CorLibTypes.GetTypeRef("System", "ValueType"));
 				TypeSemantics.SelectedItem = Types.TypeSemantics.Class;
 				Abstract = false;
 				Sealed = true;
 				break;
 
 			case Types.TypeKind.Enum:
-				BaseTypeSig = new ClassSig(typeSigCreatorOptions.Module.CorLibTypes.GetTypeRef("System", "Enum"));
+				BaseTypeSig = new ClassSig(module.CorLibTypes.GetTypeRef("System", "Enum"));
 				TypeLayout.SelectedItem = Types.TypeLayout.AutoLayout;
 				TypeSemantics.SelectedItem = Types.TypeSemantics.Class;
 				Abstract = false;
@@ -484,7 +492,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 				break;
 
 			case Types.TypeKind.Delegate:
-				BaseTypeSig = new ClassSig(typeSigCreatorOptions.Module.CorLibTypes.GetTypeRef("System", "MulticastDelegate"));
+				BaseTypeSig = new ClassSig(module.CorLibTypes.GetTypeRef("System", "MulticastDelegate"));
 				TypeLayout.SelectedItem = Types.TypeLayout.AutoLayout;
 				TypeSemantics.SelectedItem = Types.TypeSemantics.Class;
 				Abstract = false;
@@ -526,6 +534,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			TypeSemantics.SelectedItem = (Types.TypeSemantics)(((int)options.Attributes >> 5) & 1);
 			TypeStringFormat.SelectedItem = (Types.TypeStringFormat)(((int)options.Attributes >> 16) & 3);
 			TypeCustomFormat.SelectedItem = (Types.TypeCustomFormat)(((int)options.Attributes >> 22) & 3);
+			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 
 		TypeDefOptions CopyTo(TypeDefOptions options)
@@ -536,6 +545,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			options.PackingSize = PackingSize.Value;
 			options.ClassSize = ClassSize.Value;
 			options.BaseType = BaseTypeSig.ToTypeDefOrRef();
+			options.CustomAttributes.Clear();
+			options.CustomAttributes.AddRange(CustomAttributesVM.CustomAttributeCollection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			return options;
 		}
 

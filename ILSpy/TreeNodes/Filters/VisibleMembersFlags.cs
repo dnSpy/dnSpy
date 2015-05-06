@@ -49,6 +49,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 		MethodBody		= 0x00200000,
 		ParamDefs		= 0x00400000,
 		ParamDef		= 0x00800000,
+		Ctor			= 0x01000000,
 		TypeDefOther	= GenericTypeDef | NonGenericTypeDef | EnumTypeDef | InterfaceTypeDef | ClassTypeDef | ValueTypeDef | DelegateTypeDef,
 		AnyTypeDef		= TypeDef | TypeDefOther,
 		// What's shown in the normal treeview
@@ -95,6 +96,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			if ((flags & VisibleMembersFlags.MethodBody) != 0) AddString(sb, "Method Body", ref count);
 			if ((flags & VisibleMembersFlags.ParamDefs) != 0) AddString(sb, "ParamDefs", ref count);
 			if ((flags & VisibleMembersFlags.ParamDef) != 0) AddString(sb, "ParamDef", ref count);
+			if ((flags & VisibleMembersFlags.Ctor) != 0) AddString(sb, "Constructor", ref count);
 
 			return sb.ToString();
 		}

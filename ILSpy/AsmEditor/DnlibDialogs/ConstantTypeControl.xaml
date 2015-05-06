@@ -33,7 +33,7 @@
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 
-		<ComboBox Grid.Column="0" Margin="0 0 0 0" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" DisplayMemberPath="Name" Width="70" ItemsSource="{Binding ConstantTypeEnumList.Items}" SelectedIndex="{Binding ConstantTypeEnumList.SelectedIndex}" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" />
+		<ComboBox Grid.Column="0" Margin="0 0 0 0" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" DisplayMemberPath="Name" Width="70" ItemsSource="{Binding ConstantTypeEnumList.Items}" SelectedIndex="{Binding ConstantTypeEnumList.SelectedIndex}" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" ToolTip="Value type" />
 
 		<!-- Make sure nothing is resized when Null is selected -->
 		<Label Grid.Column="1" Margin="0 0 0 0" Content="_Value" Visibility="Hidden" />

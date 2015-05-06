@@ -17,18 +17,28 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnlib.DotNet;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
+namespace ICSharpCode.ILSpy
 {
-	interface IManagedEntryPointPicker
+	public static class UIUtils
 	{
-		/// <summary>
-		/// Asks user to select a managed entry point. Returns null if user canceled.
-		/// </summary>
-		/// <param name="module">Module</param>
-		/// <param name="selectedItem">Item that should be shown as selected or null if none</param>
-		/// <returns></returns>
-		IManagedEntryPoint GetEntryPoint(ModuleDef module, object selectedItem);
+		static T GetItem<T>(DependencyObject view, object o) where T : class
+		{
+			var depo = o as DependencyObject;
+			while (depo != null && !(depo is T) && depo != view)
+				depo = VisualTreeHelper.GetParent(depo);
+			return depo as T;
+		}
+
+		public static bool IsLeftDoubleClick<T>(DependencyObject view, MouseButtonEventArgs e) where T : class
+        {
+            if (MouseButton.Left != e.ChangedButton)
+                return false;
+			return GetItem<T>(view, e.OriginalSource) != null;
+		}
 	}
 }

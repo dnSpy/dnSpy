@@ -120,6 +120,11 @@
     <Compile Include="AsmEditor\Converters\RadioButtonConverter.cs" />
     <Compile Include="AsmEditor\DataFieldVM.cs" />
     <Compile Include="AsmEditor\DeletableNodes.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\CAArgumentVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\CANamedArgumentControl.xaml.cs">
+      <DependentUpon>CANamedArgumentControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\CANamedArgumentVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\ConstantControl.xaml.cs">
       <DependentUpon>ConstantControl.xaml</DependentUpon>
     </Compile>
@@ -138,6 +143,19 @@
       <DependentUpon>CreateTypeSigArrayDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\DnlibDialogs\CreateTypeSigArrayVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\CustomAttributeControl.xaml.cs">
+      <DependentUpon>CustomAttributeControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\CustomAttributeDlg.xaml.cs">
+      <DependentUpon>CustomAttributeDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\CustomAttributeOptions.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\CustomAttributesControl.xaml.cs">
+      <DependentUpon>CustomAttributesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\CustomAttributesVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\CustomAttributeVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\DlgUtils.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\EnumDataFieldVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\ImplMapControl.xaml.cs">
       <DependentUpon>ImplMapControl.xaml</DependentUpon>
@@ -159,6 +177,8 @@
     </Compile>
     <Compile Include="AsmEditor\DnlibDialogs\MethodSigCreatorOptions.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\MethodSigCreatorVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\ModelUtils.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\Null.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\ObjectListDataFieldVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\TypeSigCreatorControl.xaml.cs">
       <DependentUpon>TypeSigCreatorControl.xaml</DependentUpon>
@@ -205,6 +225,7 @@
       <DependentUpon>NetModuleOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Module\NetModuleOptionsVM.cs" />
+    <Compile Include="AsmEditor\MyObservableCollection.cs" />
     <Compile Include="AsmEditor\NamespaceTreeNodeCreator.cs" />
     <Compile Include="AsmEditor\Property\PropertyDefCommands.cs" />
     <Compile Include="AsmEditor\Property\PropertyDefOptions.cs" />
@@ -245,18 +266,18 @@
     <Compile Include="AsmEditor\ViewHelpers\CreateMethodPropertySig.cs" />
     <Compile Include="AsmEditor\ViewHelpers\CreateTypeSigArray.cs" />
     <Compile Include="AsmEditor\ViewHelpers\DnlibTypePicker.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\EditCustomAttribute.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ICreateConstantType.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ICreateMethodPropertySig.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ICreateTypeSigArray.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IDnlibTypePicker.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\IEditCustomAttribute.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IMakeVisible.cs" />
-    <Compile Include="AsmEditor\ViewHelpers\IManagedEntryPointPicker.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IOpenAssembly.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IOpenPublicKeyFile.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IPickNetExecutableFileName.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IShowWarningMessage.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ITypeSigCreator.cs" />
-    <Compile Include="AsmEditor\ViewHelpers\ManagedEntryPointPicker.cs" />
     <Compile Include="AsmEditor\ViewHelpers\OpenAssembly.cs" />
     <Compile Include="AsmEditor\ViewHelpers\OpenPublicKeyFile.cs" />
     <Compile Include="AsmEditor\ViewHelpers\PickNetExecutableFileName.cs" />
@@ -439,6 +460,7 @@
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyOverridesTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyTreeNode.cs" />
     <Compile Include="TreeNodes\SearchMsdnContextMenuEntry.cs" />
+    <Compile Include="UIUtils.cs" />
     <Compile Include="VB\ILSpyEnvironmentProvider.cs" />
     <Compile Include="VB\VBLanguage.cs" />
     <Compile Include="VB\VBTextOutputFormatter.cs" />
@@ -546,6 +568,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="AsmEditor\DnlibDialogs\CANamedArgumentControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AsmEditor\DnlibDialogs\ConstantControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -563,6 +589,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\DnlibDialogs\CreateTypeSigArrayDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\CustomAttributeControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\CustomAttributeDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\CustomAttributesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

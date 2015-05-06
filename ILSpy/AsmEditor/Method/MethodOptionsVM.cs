@@ -18,6 +18,7 @@
 */
 
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
@@ -57,7 +58,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 
 	sealed class MethodOptionsVM : ViewModelBase
 	{
-		readonly MethodDefOptions options;
 		readonly MethodDefOptions origOptions;
 
 		public ICommand ReinitializeCommand {
@@ -311,13 +311,19 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 		}
 		readonly MethodSigCreatorVM methodSigCreator;
 
-		public MethodOptionsVM(MethodDefOptions options, ModuleDef module, Language language, TypeDef ownerType)
+		public CustomAttributesVM CustomAttributesVM {
+			get { return customAttributesVM; }
+		}
+		CustomAttributesVM customAttributesVM;
+
+		public MethodOptionsVM(MethodDefOptions options, ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
 		{
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(module, language) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
-				CanAddGenericMethodVar = true,
+				CanAddGenericMethodVar = ownerMethod == null || ownerMethod.GenericParameters.Count > 0,
 				OwnerType = ownerType,
+				OwnerMethod = ownerMethod,
 			};
 			if (ownerType != null && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
@@ -330,7 +336,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			this.methodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.ShowTypeFullName = true;
 			this.methodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
 
-			this.options = new MethodDefOptions();
+			this.customAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.Module, typeSigCreatorOptions.Language);
+
 			this.origOptions = options;
 
 			this.implMapVM = new ImplMapVM(module);
@@ -377,6 +384,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			ManagedType.SelectedItem = (Method.ManagedType)((int)(options.ImplAttributes & MethodImplAttributes.ManagedMask) >> 2);
 			MethodVisibility.SelectedItem = (Method.MethodVisibility)((int)(options.Attributes & MethodAttributes.MemberAccessMask) >> 0);
 			VtableLayout.SelectedItem = (Method.VtableLayout)((int)(options.Attributes & MethodAttributes.VtableLayoutMask) >> 8);
+			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 
 		MethodDefOptions CopyTo(MethodDefOptions options)
@@ -386,6 +394,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			options.Name = Name;
 			options.MethodSig = MethodSig;
 			options.ImplMap = PinvokeImpl ? ImplMap : null;
+			options.CustomAttributes.Clear();
+			options.CustomAttributes.AddRange(CustomAttributesVM.CustomAttributeCollection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			return options;
 		}
 

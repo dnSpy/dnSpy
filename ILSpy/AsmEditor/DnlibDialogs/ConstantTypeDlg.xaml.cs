@@ -17,9 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
-
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
 	/// <summary>
@@ -30,15 +27,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		public ConstantTypeDlg()
 		{
 			InitializeComponent();
-			DataContextChanged += (s, e) => {
-				var data = DataContext as ConstantTypeVM;
-				if (data != null) {
-					var ownerWindow = Window.GetWindow(this);
-					data.DnlibTypePicker = new DnlibTypePicker(ownerWindow);
-					data.TypeSigCreator = new TypeSigCreator(ownerWindow);
-					data.CreateConstantType = new CreateConstantType(ownerWindow);
-				}
-			};
 		}
 	}
 }

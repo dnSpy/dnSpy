@@ -129,6 +129,9 @@
 					<dnlibdlgs:ImplMapControl DataContext="{Binding ImplMapVM}" />
 				</ScrollViewer>
 			</TabItem>
+			<TabItem Header="Custom Attributes">
+				<dnlibdlgs:CustomAttributesControl Margin="0 5 0 0" DataContext="{Binding CustomAttributesVM}" />
+			</TabItem>
 		</TabControl>
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">

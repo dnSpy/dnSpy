@@ -22,6 +22,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vc="clr-namespace:ICSharpCode.ILSpy.AsmEditor.Converters"
+             xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              xmlns:local="clr-namespace:ICSharpCode.ILSpy.AsmEditor.Module"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              Height="380" Width="400"
@@ -269,6 +270,9 @@
 						</Grid>
 					</StackPanel>
 				</ScrollViewer>
+			</TabItem>
+			<TabItem Header="Custom Attributes">
+				<dnlibdlgs:CustomAttributesControl Margin="0 5 0 0" DataContext="{Binding CustomAttributesVM}" />
 			</TabItem>
 		</TabControl>
 

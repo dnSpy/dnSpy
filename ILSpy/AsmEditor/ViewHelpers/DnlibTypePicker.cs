@@ -38,12 +38,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 			this.ownerWindow = ownerWindow;
 		}
 
-		public T GetDnlibType<T>(ITreeViewNodeFilter filter) where T : class
+		public T GetDnlibType<T>(ITreeViewNodeFilter filter, T selectedObject) where T : class
 		{
-			var data = new MemberPickerVM(MainWindow.Instance.CurrentLanguage, filter);
+			var data = new MemberPickerVM(MainWindow.Instance.CurrentLanguage, filter, MainWindow.Instance.CurrentAssemblyList.GetAssemblies());
 			var win = new MemberPickerDlg();
 			win.DataContext = data;
 			win.Owner = ownerWindow ?? MainWindow.Instance;
+			data.SelectItem(selectedObject);
 			if (win.ShowDialog() != true)
 				return null;
 

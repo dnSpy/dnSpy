@@ -18,11 +18,14 @@
 */
 
 using System;
+using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnlib.PE;
+using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
 using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.ILSpy.TreeNodes.Filters;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Module
 {
@@ -38,10 +41,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		readonly ModuleOptions options;
 		readonly ModuleOptions origOptions;
 
-		public IManagedEntryPointPicker ManagedEntryPointPicker {
-			set { managedEntryPointPicker = value; }
+		public IDnlibTypePicker DnlibTypePicker {
+			set { dnlibTypePicker = value; }
 		}
-		IManagedEntryPointPicker managedEntryPointPicker;
+		IDnlibTypePicker dnlibTypePicker;
 
 		public ICommand PickManagedEntryPointCommand {
 			get { return new RelayCommand(a => PickManagedEntryPoint()); }
@@ -481,14 +484,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		}
 		UInt32VM nativeEntryPointRva;
 
-		public ModuleOptionsVM(ModuleDef module)
-			: this(module, new ModuleOptions(module))
-		{
-		}
-
 		readonly ModuleDef module;
 
-		public ModuleOptionsVM(ModuleDef module, ModuleOptions options)
+		public CustomAttributesVM CustomAttributesVM {
+			get { return customAttributesVM; }
+		}
+		CustomAttributesVM customAttributesVM;
+
+		public ModuleOptionsVM(ModuleDef module, ModuleOptions options, Language language)
 		{
 			this.module = module;
 			this.options = new ModuleOptions();
@@ -508,6 +511,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			cor20HeaderRuntimeVersion = new NullableUInt32VM(a => { HasErrorUpdated(); UpdateClrVersion(); });
 			tablesHeaderVersion = new NullableUInt16VM(a => { HasErrorUpdated(); UpdateClrVersion(); });
 			nativeEntryPointRva = new UInt32VM(a => HasErrorUpdated());
+			customAttributesVM = new CustomAttributesVM(module, language);
 			Reinitialize();
 		}
 
@@ -574,6 +578,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			// Writing to Machine and ModuleKind triggers code that updates Characteristics so write
 			// this property last.
 			Characteristics = options.Characteristics;
+
+			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 
 		ModuleOptions CopyTo(ModuleOptions options)
@@ -606,14 +612,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			else
 				throw new InvalidOperationException();
 
+			options.CustomAttributes.Clear();
+			options.CustomAttributes.AddRange(CustomAttributesVM.CustomAttributeCollection.Select(a => a.CreateCustomAttributeOptions().Create()));
+
 			return options;
 		}
 
 		void PickManagedEntryPoint()
 		{
-			if (managedEntryPointPicker == null)
+			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var ep = managedEntryPointPicker.GetEntryPoint(module, ManagedEntryPoint);
+			var ep = dnlibTypePicker.GetDnlibType(new EntryPointTreeViewNodeFilter(module), ManagedEntryPoint);
 			if (ep != null) {
 				ManagedEntryPoint = ep;
 				EntryPointEnum = EntryPointType.Managed;

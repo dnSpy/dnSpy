@@ -21,7 +21,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
+             xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              Height="400" Width="500"
              ResizeMode="CanResizeWithGrip"
@@ -41,7 +41,7 @@
 		</Grid.RowDefinitions>
 
 		<Border Margin="5" Style="{StaticResource DialogBorderStyle}">
-			<local:CreateTypeSigArrayControl Margin="5" />
+			<dnlibdlgs:CreateTypeSigArrayControl Margin="5" />
 		</Border>
 
 		<Grid Grid.Row="1" Margin="5 0 5 5">
@@ -54,7 +54,7 @@
 			</Grid.ColumnDefinitions>
 			<Label Grid.Column="0" Content="{Binding NumberOfTypesLeftString}" Visibility="{Binding IsFiniteCount, Converter={StaticResource BooleanToVisibilityConverter}}" />
 			<Button Grid.Column="1" Content="_Add" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Command="{Binding AddCommand}" />
-			<Button Grid.Column="2" Content="_Delete" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Command="{Binding RemoveCommand}" />
+			<Button Grid.Column="2" Content="_Delete" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Command="{Binding TypeSigCollection.RemoveCommand}" />
 			<Button Grid.Column="3" Content="_OK" IsEnabled="{Binding HasNoError}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
 			<Button Grid.Column="4" Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" />
 		</Grid>

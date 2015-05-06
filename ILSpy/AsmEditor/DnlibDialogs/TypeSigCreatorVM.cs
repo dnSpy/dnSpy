@@ -261,7 +261,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 
-			var type = dnlibTypePicker.GetDnlibType<ITypeDefOrRef>(new FlagsTreeViewNodeFilter(flags));
+			var type = dnlibTypePicker.GetDnlibType<ITypeDefOrRef>(new FlagsTreeViewNodeFilter(flags), null);
 			if (type == null)
 				return null;
 

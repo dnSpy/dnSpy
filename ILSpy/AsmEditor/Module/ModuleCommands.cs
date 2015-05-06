@@ -680,7 +680,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 
 			var asmNode = (AssemblyTreeNode)nodes[0];
 
-			var data = new ModuleOptionsVM(asmNode.LoadedAssembly.ModuleDefinition);
+			var module = asmNode.LoadedAssembly.ModuleDefinition;
+			var data = new ModuleOptionsVM(module, new ModuleOptions(module), MainWindow.Instance.CurrentLanguage);
 			var win = new ModuleOptionsDlg();
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
@@ -707,23 +708,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 
 		void WriteModuleOptions(ModuleOptions theOptions)
 		{
-			var module = modNode.LoadedAssembly.ModuleDefinition;
-			module.Mvid = theOptions.Mvid;
-			module.EncId = theOptions.EncId;
-			module.EncBaseId = theOptions.EncBaseId;
-			module.Name = theOptions.Name;
-			module.Kind = theOptions.Kind;
-			module.Characteristics = theOptions.Characteristics;
-			module.DllCharacteristics = theOptions.DllCharacteristics;
-			module.RuntimeVersion = theOptions.RuntimeVersion;
-			module.Machine = theOptions.Machine;
-			module.Cor20HeaderFlags = theOptions.Cor20HeaderFlags;
-			module.Cor20HeaderRuntimeVersion = theOptions.Cor20HeaderRuntimeVersion;
-			module.TablesHeaderVersion = theOptions.TablesHeaderVersion;
-			if (theOptions.ManagedEntryPoint != null)
-				module.ManagedEntryPoint = theOptions.ManagedEntryPoint;
-			else
-				module.NativeEntryPoint = theOptions.NativeEntryPoint;
+			theOptions.CopyTo(modNode.LoadedAssembly.ModuleDefinition);
 			modNode.RaiseUIPropsChanged();
 		}
 

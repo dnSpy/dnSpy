@@ -51,11 +51,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 				visibleFlags = thisFlag | VisibleMembersFlags.ModuleDef |
 						VisibleMembersFlags.Namespace | VisibleMembersFlags.AnyTypeDef |
 						VisibleMembersFlags.FieldDef | VisibleMembersFlags.MethodDef |
-						VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef |
-						VisibleMembersFlags.AssemblyRef | VisibleMembersFlags.BaseTypes |
-						VisibleMembersFlags.DerivedTypes | VisibleMembersFlags.ModuleRef |
-						VisibleMembersFlags.ResourceList | VisibleMembersFlags.MethodBody |
-						VisibleMembersFlags.ParamDefs | VisibleMembersFlags.ParamDef;
+						VisibleMembersFlags.Ctor | VisibleMembersFlags.PropertyDef |
+						VisibleMembersFlags.EventDef | VisibleMembersFlags.AssemblyRef |
+						VisibleMembersFlags.BaseTypes | VisibleMembersFlags.DerivedTypes |
+						VisibleMembersFlags.ModuleRef | VisibleMembersFlags.ResourceList |
+						VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
+						VisibleMembersFlags.ParamDef;
 				break;
 
 			case AssemblyFilterType.NetModule:
@@ -63,11 +64,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 				visibleFlags = thisFlag |
 						VisibleMembersFlags.Namespace | VisibleMembersFlags.AnyTypeDef |
 						VisibleMembersFlags.FieldDef | VisibleMembersFlags.MethodDef |
-						VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef |
-						VisibleMembersFlags.AssemblyRef | VisibleMembersFlags.BaseTypes |
-						VisibleMembersFlags.DerivedTypes | VisibleMembersFlags.ModuleRef |
-						VisibleMembersFlags.ResourceList | VisibleMembersFlags.MethodBody |
-						VisibleMembersFlags.ParamDefs | VisibleMembersFlags.ParamDef;
+						VisibleMembersFlags.Ctor | VisibleMembersFlags.PropertyDef |
+						VisibleMembersFlags.EventDef | VisibleMembersFlags.AssemblyRef |
+						VisibleMembersFlags.BaseTypes | VisibleMembersFlags.DerivedTypes |
+						VisibleMembersFlags.ModuleRef | VisibleMembersFlags.ResourceList |
+						VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
+						VisibleMembersFlags.ParamDef;
 				break;
 
 			case AssemblyFilterType.NonNetFile:
@@ -123,12 +125,18 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 
 		public override TreeViewNodeFilterResult GetFilterResult(MethodDef method)
 		{
-			var visibleFlags = VisibleMembersFlags.MethodDef | VisibleMembersFlags.MethodBody |
-								VisibleMembersFlags.ParamDefs | VisibleMembersFlags.ParamDef;
-			bool isMatch = (flags & VisibleMembersFlags.MethodDef) != 0;
+			var childrenFlags = VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
+								VisibleMembersFlags.ParamDef;
+			var visibleFlags = childrenFlags | VisibleMembersFlags.MethodDef | VisibleMembersFlags.Ctor;
+			bool isMatch = (flags & VisibleMembersFlags.MethodDef) != 0 ||
+							(method.IsInstanceConstructor && (flags & VisibleMembersFlags.Ctor) != 0);
 			if ((flags & visibleFlags) == 0)
-				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
-			return new TreeViewNodeFilterResult(null, isMatch);
+				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
+			if (isMatch)
+				return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);
+			if ((flags & childrenFlags) == 0)
+				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
+			return new TreeViewNodeFilterResult(null, false);
 		}
 
 		public override TreeViewNodeFilterResult GetFilterResult(ModuleRef modRef)
@@ -143,10 +151,10 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 		{
 			var visibleFlags = VisibleMembersFlags.Namespace | VisibleMembersFlags.AnyTypeDef |
 					VisibleMembersFlags.FieldDef | VisibleMembersFlags.MethodDef |
-					VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef |
-					VisibleMembersFlags.BaseTypes | VisibleMembersFlags.DerivedTypes |
-					VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
-					VisibleMembersFlags.ParamDef;
+					VisibleMembersFlags.Ctor | VisibleMembersFlags.PropertyDef |
+					VisibleMembersFlags.EventDef | VisibleMembersFlags.BaseTypes |
+					VisibleMembersFlags.DerivedTypes | VisibleMembersFlags.MethodBody |
+					VisibleMembersFlags.ParamDefs | VisibleMembersFlags.ParamDef;
 			bool isMatch = (flags & VisibleMembersFlags.Namespace) != 0;
 			if ((flags & visibleFlags) == 0)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
@@ -188,10 +196,10 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 		public override TreeViewNodeFilterResult GetFilterResult(TypeDef type)
 		{
 			var childrenFlags = VisibleMembersFlags.FieldDef | VisibleMembersFlags.MethodDef |
-					VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef |
-					VisibleMembersFlags.BaseTypes | VisibleMembersFlags.DerivedTypes |
-					VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
-					VisibleMembersFlags.ParamDef;
+					VisibleMembersFlags.Ctor | VisibleMembersFlags.PropertyDef |
+					VisibleMembersFlags.EventDef | VisibleMembersFlags.BaseTypes |
+					VisibleMembersFlags.DerivedTypes | VisibleMembersFlags.MethodBody |
+					VisibleMembersFlags.ParamDefs | VisibleMembersFlags.ParamDef;
 			var visibleFlags = VisibleMembersFlags.AnyTypeDef | childrenFlags;
 			if ((flags & visibleFlags) == 0)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);

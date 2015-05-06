@@ -164,6 +164,7 @@ namespace ICSharpCode.Decompiler.ILAst
 
 		static bool DecodeArrayInitializer(TypeSig elementTypeRef, byte[] initialValue, ILExpression[] output)
 		{
+			elementTypeRef = elementTypeRef.RemovePinnedAndModifiers();
 			TypeCode elementType = TypeAnalysis.GetTypeCode(elementTypeRef);
 			switch (elementType) {
 				case TypeCode.Boolean:

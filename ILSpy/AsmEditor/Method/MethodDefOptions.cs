@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using dnlib.PE;
 using dnlib.DotNet;
 
@@ -29,6 +30,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 		public UTF8String Name;
 		public MethodSig MethodSig;
 		public ImplMap ImplMap;
+		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
 		public MethodDefOptions()
 		{
@@ -41,6 +43,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			this.Name = method.Name;
 			this.MethodSig = method.MethodSig;
 			this.ImplMap = method.ImplMap;
+			this.CustomAttributes.AddRange(method.CustomAttributes);
 		}
 
 		public MethodDef CopyTo(MethodDef method)
@@ -50,14 +53,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			method.Name = this.Name;
 			method.MethodSig = this.MethodSig;
 			method.ImplMap = this.ImplMap;
+			method.CustomAttributes.Clear();
+			method.CustomAttributes.AddRange(CustomAttributes);
 			return method;
 		}
 
 		public MethodDef CreateMethodDef()
 		{
-			return new MethodDefUser(Name, MethodSig, ImplAttributes, Attributes) {
-				ImplMap = ImplMap,
-			};
+			return CopyTo(new MethodDefUser());
 		}
 
 		public static MethodDefOptions Create(UTF8String name, MethodSig methodSig)

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using dnlib.PE;
 using dnlib.DotNet;
 
@@ -33,6 +34,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 		public byte[] InitialValue;
 		public ImplMap ImplMap;
 		public Constant Constant;
+		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
 		public FieldDefOptions()
 		{
@@ -49,6 +51,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			this.InitialValue = field.InitialValue;
 			this.ImplMap = field.ImplMap;
 			this.Constant = field.Constant;
+			this.CustomAttributes.AddRange(field.CustomAttributes);
 		}
 
 		public FieldDef CopyTo(FieldDef field)
@@ -62,19 +65,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			field.InitialValue = this.InitialValue;
 			field.ImplMap = this.ImplMap;
 			field.Constant = this.Constant;
+			field.CustomAttributes.Clear();
+			field.CustomAttributes.AddRange(CustomAttributes);
 			return field;
 		}
 
 		public FieldDef CreateFieldDef()
 		{
-			return new FieldDefUser(Name, FieldSig, Attributes) {
-				FieldOffset = FieldOffset,
-				MarshalType = MarshalType,
-				RVA = RVA,
-				InitialValue = InitialValue,
-				ImplMap = ImplMap,
-				Constant = Constant,
-			};
+			return CopyTo(new FieldDefUser());
 		}
 
 		public static FieldDefOptions Create(UTF8String name, FieldSig fieldSig)

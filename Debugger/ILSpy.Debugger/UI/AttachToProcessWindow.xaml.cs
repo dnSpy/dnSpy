@@ -145,19 +145,9 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 			RefreshProcessList();
 		}
 
-		ListViewItem GetListViewItem(object o)
-		{
-			var depo = o as DependencyObject;
-			while (depo != null && !(depo is ListViewItem) && depo != RunningProcesses)
-				depo = VisualTreeHelper.GetParent(depo);
-			return depo as ListViewItem;
-		}
-
 		void RunningProcesses_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			if (e.ChangedButton != MouseButton.Left)
-				return;
-			if (GetListViewItem(e.OriginalSource) == null)
+			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(RunningProcesses, e))
 				return;
 			Attach();
 		}

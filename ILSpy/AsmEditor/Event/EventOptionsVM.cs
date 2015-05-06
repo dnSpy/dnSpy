@@ -18,6 +18,7 @@
 */
 
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
@@ -26,7 +27,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 {
 	sealed class EventOptionsVM : ViewModelBase
 	{
-		readonly EventDefOptions options;
 		readonly EventDefOptions origOptions;
 
 		public ICommand ReinitializeCommand {
@@ -94,6 +94,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 		}
 		readonly TypeSigCreatorVM typeSigCreator;
 
+		public CustomAttributesVM CustomAttributesVM {
+			get { return customAttributesVM; }
+		}
+		CustomAttributesVM customAttributesVM;
+
 		public EventOptionsVM(EventDefOptions options, ModuleDef module, Language language, TypeDef ownerType)
 		{
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(module, language) {
@@ -107,7 +112,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			this.typeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			this.typeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
-			this.options = new EventDefOptions();
+			this.customAttributesVM = new CustomAttributesVM(module, language);
+
 			this.origOptions = options;
 
 			this.typeSigCreator.CanAddFnPtr = false;
@@ -136,6 +142,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			Attributes = options.Attributes;
 			Name = options.Name;
 			EventTypeSig = options.EventType.ToTypeSig();
+			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 
 		EventDefOptions CopyTo(EventDefOptions options)
@@ -143,6 +150,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			options.Attributes = Attributes;
 			options.Name = Name;
 			options.EventType = EventTypeSig.ToTypeDefOrRef();
+			options.CustomAttributes.Clear();
+			options.CustomAttributes.AddRange(CustomAttributesVM.CustomAttributeCollection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			return options;
 		}
 

@@ -142,19 +142,9 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		ListViewItem GetListViewItem(object o)
-		{
-			var depo = o as DependencyObject;
-			while (depo != null && !(depo is ListViewItem) && depo != listView)
-				depo = VisualTreeHelper.GetParent(depo);
-			return depo as ListViewItem;
-		}
-
 		private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			if (e.ChangedButton != MouseButton.Left)
-				return;
-			if (GetListViewItem(e.OriginalSource) == null)
+			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
 			var tabs = GetSelectedItems();
 			if (tabs.Length > 0) {

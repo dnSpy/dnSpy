@@ -38,7 +38,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 
 	sealed class FieldOptionsVM : ViewModelBase
 	{
-		readonly FieldDefOptions options;
 		readonly FieldDefOptions origOptions;
 
 		public ICommand ReinitializeCommand {
@@ -229,6 +228,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			get { return string.Format("Marshal Type: {0}", HasFieldMarshal ? MarshalTypeVM.TypeString : "nothing"); }
 		}
 
+		public CustomAttributesVM CustomAttributesVM {
+			get { return customAttributesVM; }
+		}
+		CustomAttributesVM customAttributesVM;
+
 		public FieldOptionsVM(FieldDefOptions options, ModuleDef module, Language language, TypeDef ownerType)
 		{
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(module, language) {
@@ -242,7 +246,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			this.typeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
-			this.options = new FieldDefOptions();
+			this.customAttributesVM = new CustomAttributesVM(module, language);
 			this.origOptions = options;
 
 			this.constantVM = new ConstantVM(options.Constant == null ? null : options.Constant.Value, "Default value for this field");
@@ -313,6 +317,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			ImplMap = options.ImplMap;
 			Constant = options.Constant;
 			FieldVisibility.SelectedItem = (Field.FieldVisibility)((int)(options.Attributes & FieldAttributes.FieldAccessMask) >> 0);
+			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 
 		FieldDefOptions CopyTo(FieldDefOptions options)
@@ -327,6 +332,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			options.InitialValue = HasFieldRVA ? InitialValue.Value.ToArray() : null;
 			options.ImplMap = PinvokeImpl ? ImplMap : null;
 			options.Constant = HasDefault ? Constant : null;
+			options.CustomAttributes.Clear();
+			options.CustomAttributes.AddRange(CustomAttributesVM.CustomAttributeCollection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			return options;
 		}
 

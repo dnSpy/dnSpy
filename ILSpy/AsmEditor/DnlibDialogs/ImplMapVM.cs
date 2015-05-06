@@ -87,7 +87,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				}
 			}
 		}
-		bool isEnabled;
+		bool isEnabled = true;
 
 		public string Name {
 			get { return name; }

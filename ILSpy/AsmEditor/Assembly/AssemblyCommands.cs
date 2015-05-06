@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
 using ICSharpCode.ILSpy.TreeNodes;
@@ -169,7 +170,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 
 			var asmNode = (AssemblyTreeNode)nodes[0];
 
-			var data = new AssemblyOptionsVM(new AssemblyOptions(asmNode.LoadedAssembly.AssemblyDefinition));
+			var module = ILSpyTreeNode.GetModule(nodes[0]);
+			Debug.Assert(module != null);
+			if (module == null)
+				throw new InvalidOperationException();
+
+			var data = new AssemblyOptionsVM(new AssemblyOptions(asmNode.LoadedAssembly.AssemblyDefinition), module, MainWindow.Instance.CurrentLanguage);
 			var win = new AssemblyOptionsDlg();
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
@@ -251,7 +257,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			if (!CanExecute(nodes))
 				return;
 
-			var data = new AssemblyOptionsVM(AssemblyOptions.Create("MyAssembly"));
+			var module = ILSpyTreeNode.GetModule(nodes[0]);
+			Debug.Assert(module != null);
+			if (module == null)
+				throw new InvalidOperationException();
+
+			var data = new AssemblyOptionsVM(AssemblyOptions.Create("MyAssembly"), module, MainWindow.Instance.CurrentLanguage);
 			data.CanShowClrVersion = true;
 			var win = new AssemblyOptionsDlg();
 			win.Title = "Create Assembly";
@@ -268,9 +279,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 		CreateAssemblyCommand(AssemblyOptions options)
 		{
 			var module = Module.ModuleUtils.CreateModule(options.Name, Guid.NewGuid(), options.ClrVersion, ModuleKind.Dll);
-			var asm = new AssemblyDefUser();
-			options.CopyTo(asm);
-			asm.Modules.Add(module);
+			options.CreateAssemblyDef().Modules.Add(module);
 			this.asmNodeCreator = new AssemblyTreeNodeCreator(new LoadedAssembly(MainWindow.Instance.CurrentAssemblyList, module));
 		}
 

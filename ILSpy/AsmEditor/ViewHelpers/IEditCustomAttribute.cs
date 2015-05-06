@@ -17,38 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-using dnlib.DotNet;
 using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
-using ICSharpCode.ILSpy.TreeNodes.Filters;
 
 namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 {
-	sealed class ManagedEntryPointPicker : IManagedEntryPointPicker
+	interface IEditCustomAttribute
 	{
-		readonly Window ownerWindow;
-
-		public ManagedEntryPointPicker()
-			: this(null)
-		{
-		}
-
-		public ManagedEntryPointPicker(Window ownerWindow)
-		{
-			this.ownerWindow = ownerWindow;
-		}
-
-		public IManagedEntryPoint GetEntryPoint(ModuleDef module, object selectedItem)
-		{
-			var data = new MemberPickerVM(MainWindow.Instance.CurrentLanguage, new EntryPointTreeViewNodeFilter(module));
-			var win = new MemberPickerDlg();
-			win.DataContext = data;
-			win.Owner = ownerWindow ?? MainWindow.Instance;
-			data.SelectItem(selectedItem);
-			if (win.ShowDialog() != true)
-				return null;
-
-			return data.SelectedDnlibObject as IManagedEntryPoint;
-		}
+		/// <summary>
+		/// Lets the user edit a custom attribute. Returns null if user canceled.
+		/// </summary>
+		/// <param name="title">Window UI title</param>
+		/// <param name="ca">Custom attribute</param>
+		/// <returns></returns>
+		CustomAttributeVM Edit(string title, CustomAttributeVM ca);
 	}
 }

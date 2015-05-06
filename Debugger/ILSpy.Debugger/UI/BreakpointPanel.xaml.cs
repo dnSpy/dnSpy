@@ -130,19 +130,9 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 			}
         }
 
-		ListViewItem GetListViewItem(object o)
-		{
-			var depo = o as DependencyObject;
-			while (depo != null && !(depo is ListViewItem) && depo != view)
-				depo = VisualTreeHelper.GetParent(depo);
-			return depo as ListViewItem;
-		}
-
 		void view_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-            if (MouseButton.Left != e.ChangedButton)
-                return;
-			if (GetListViewItem(e.OriginalSource) == null)
+			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(view, e))
 				return;
 			if (view.SelectedItems.Count > 0)
 				GoToBookmark(view.SelectedItems[0] as BookmarkBase);

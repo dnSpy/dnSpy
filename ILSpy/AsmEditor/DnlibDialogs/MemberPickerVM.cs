@@ -227,11 +227,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		bool showInternalApi;
 
-		public MemberPickerVM(Language language, ITreeViewNodeFilter filter)
-			: this(language, filter, MainWindow.Instance.CurrentAssemblyList.GetAssemblies())
-		{
-		}
-
 		public MemberPickerVM(Language language, ITreeViewNodeFilter filter, IEnumerable<LoadedAssembly> assemblies)
 		{
 			this.Language = language;

@@ -34,7 +34,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 				var data = DataContext as ModuleOptionsVM;
 				if (data != null) {
 					var ownerWindow = Window.GetWindow(this);
-					data.ManagedEntryPointPicker = new ManagedEntryPointPicker(ownerWindow);
+					data.DnlibTypePicker = new DnlibTypePicker(ownerWindow);
 				}
 			};
 		}

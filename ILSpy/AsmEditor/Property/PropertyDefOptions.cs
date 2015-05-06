@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Property
@@ -27,6 +28,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 		public UTF8String Name;
 		public PropertySig PropertySig;
 		public Constant Constant;
+		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
 		public PropertyDefOptions()
 		{
@@ -38,6 +40,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			this.Name = evt.Name;
 			this.PropertySig = evt.PropertySig;
 			this.Constant = evt.Constant;
+			this.CustomAttributes.AddRange(evt.CustomAttributes);
 		}
 
 		public PropertyDef CopyTo(PropertyDef evt)
@@ -46,14 +49,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			evt.Name = this.Name;
 			evt.PropertySig = this.PropertySig;
 			evt.Constant = this.Constant;
+			evt.CustomAttributes.Clear();
+			evt.CustomAttributes.AddRange(CustomAttributes);
 			return evt;
 		}
 
 		public PropertyDef CreatePropertyDef()
 		{
-			return new PropertyDefUser(Name, PropertySig, Attributes) {
-				Constant = Constant,
-			};
+			return CopyTo(new PropertyDefUser());
 		}
 
 		public static PropertyDefOptions Create(ModuleDef module, UTF8String name)

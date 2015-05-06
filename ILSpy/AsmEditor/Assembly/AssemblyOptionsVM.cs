@@ -21,6 +21,7 @@ using System;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
 using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Assembly
@@ -45,7 +46,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 
 	sealed class AssemblyOptionsVM : ViewModelBase
 	{
-		readonly AssemblyOptions options;
 		readonly AssemblyOptions origOptions;
 
 		public IOpenPublicKeyFile OpenPublicKeyFile {
@@ -222,14 +222,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			}
 		}
 
-		public AssemblyOptionsVM()
-			: this(new AssemblyOptions())
-		{
+		public CustomAttributesVM CustomAttributesVM {
+			get { return customAttributesVM; }
 		}
+		CustomAttributesVM customAttributesVM;
 
-		public AssemblyOptionsVM(AssemblyOptions options)
+		public AssemblyOptionsVM(AssemblyOptions options, ModuleDef module, Language language)
 		{
-			this.options = new AssemblyOptions();
 			this.origOptions = options;
 			this.hashAlgorithmVM = new EnumListVM(hashAlgorithmList, (a, b) => OnPropertyChanged("AssemblyFullName"));
 			this.contentTypeVM = new EnumListVM(contentTypeList, (a, b) => OnPropertyChanged("AssemblyFullName"));
@@ -238,6 +237,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			this.versionBuild = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }) { UseDecimal = true };
 			this.versionRevision = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }) { UseDecimal = true };
 			this.publicKey = new HexStringVM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); UpdatePublicKeyFlag(); }) { UpperCaseHex = false };
+			this.customAttributesVM = new CustomAttributesVM(module, language);
 			Reinitialize();
 		}
 
@@ -270,6 +270,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			Name = options.Name;
 			Culture = options.Culture;
 			ClrVersion.SelectedItem = options.ClrVersion;
+			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 
 		AssemblyOptions CopyTo(AssemblyOptions options)
@@ -281,6 +282,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			options.Name = Name;
 			options.Culture = Culture;
 			options.ClrVersion = (Module.ClrVersion)ClrVersion.SelectedItem;
+			options.CustomAttributes.Clear();
+			options.CustomAttributes.AddRange(CustomAttributesVM.CustomAttributeCollection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			return options;
 		}
 

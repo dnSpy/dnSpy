@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Types
@@ -29,6 +30,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		public ushort? PackingSize;
 		public uint? ClassSize;
 		public ITypeDefOrRef BaseType;
+		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
 		public TypeDefOptions()
 		{
@@ -48,6 +50,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 				ClassSize = type.ClassLayout.ClassSize;
 			}
 			this.BaseType = type.BaseType;
+			this.CustomAttributes.AddRange(type.CustomAttributes);
 		}
 
 		public TypeDef CopyTo(TypeDef type)
@@ -60,6 +63,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			else
 				type.ClassLayout = null;
 			type.BaseType = this.BaseType;
+			type.CustomAttributes.Clear();
+			type.CustomAttributes.AddRange(CustomAttributes);
 			return type;
 		}
 

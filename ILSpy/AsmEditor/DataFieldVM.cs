@@ -497,6 +497,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		static string ToString<T>(IList<T> list, Func<T,string> toString)
 		{
+			if (list == null)
+				return string.Empty;
 			var sb = new StringBuilder();
 			for (int i = 0; i < list.Count; i++) {
 				if (i != 0)
