@@ -189,12 +189,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 	{
 		const string CMD_NAME = "Create Event";
 		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Images/Class.png",
+								Icon = "Images/Event.png",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
-							MenuIcon = "Images/Class.png",
+							MenuIcon = "Images/Event.png",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class MainMenuEntry : EditCommand

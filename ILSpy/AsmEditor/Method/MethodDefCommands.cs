@@ -165,12 +165,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 	{
 		const string CMD_NAME = "Create Method";
 		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Images/Class.png",
+								Icon = "Images/Method.png",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
-							MenuIcon = "Images/Class.png",
+							MenuIcon = "Images/Method.png",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class MainMenuEntry : EditCommand

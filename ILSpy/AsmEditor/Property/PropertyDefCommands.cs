@@ -188,12 +188,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 	{
 		const string CMD_NAME = "Create Property";
 		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Images/Class.png",
+								Icon = "Images/Property.png",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
-							MenuIcon = "Images/Class.png",
+							MenuIcon = "Images/Property.png",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class MainMenuEntry : EditCommand
