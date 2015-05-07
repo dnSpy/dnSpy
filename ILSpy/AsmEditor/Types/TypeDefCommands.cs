@@ -58,6 +58,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 
 			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
 			{
+				nodes = DeleteTypeDefCommand.FilterOutGlobalTypes(nodes);
 				if (nodes.Length == 1)
 					menuItem.Header = string.Format("Delete {0}", nodes[0].Text);
 				else
@@ -68,7 +69,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		static bool CanExecute(ILSpyTreeNode[] nodes)
 		{
 			return nodes.Length > 0 &&
-				nodes.All(n => n is TypeTreeNode);
+				nodes.All(n => n is TypeTreeNode) &&
+				FilterOutGlobalTypes(nodes).Length > 0;
+		}
+
+		static ILSpyTreeNode[] FilterOutGlobalTypes(ILSpyTreeNode[] nodes)
+		{
+			return nodes.Where(a => a is TypeTreeNode && !((TypeTreeNode)a).TypeDefinition.IsGlobalModuleType).ToArray();
 		}
 
 		static void Execute(ILSpyTreeNode[] nodes)
@@ -76,7 +83,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			if (!CanExecute(nodes))
 				return;
 
-			var typeNodes = nodes.Select(a => (TypeTreeNode)a).ToArray();
+			var typeNodes = FilterOutGlobalTypes(nodes).Select(a => (TypeTreeNode)a).ToArray();
 			UndoCommandManager.Instance.Add(new DeleteTypeDefCommand(typeNodes));
 		}
 
