@@ -70,8 +70,8 @@
 									<ColumnDefinition />
 									<ColumnDefinition />
 								</Grid.ColumnDefinitions>
-								<CheckBox Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding SpecialName}" Content="SpecialName" />
-								<CheckBox Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding RTSpecialName}" Content="RTSpecialName" />
+								<CheckBox Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding SpecialName}" Content="_SpecialName" />
+								<CheckBox Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding RTSpecialName}" Content="_RTSpecialName" />
 							</Grid>
 						</GroupBox>
 

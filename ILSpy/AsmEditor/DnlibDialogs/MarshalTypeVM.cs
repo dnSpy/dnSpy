@@ -28,7 +28,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 	{
 		const string NOT_INITIALIZED_ENUM_VALUE = "<Not Initialized>";
 
-		static readonly EnumVM[] nativeTypeList = EnumVM.Create(false, typeof(dnlib.DotNet.NativeType));
+		static readonly EnumVM[] nativeTypeList = EnumVM.Create(typeof(dnlib.DotNet.NativeType));
 		public EnumListVM NativeType {
 			get { return nativeTypeVM; }
 		}

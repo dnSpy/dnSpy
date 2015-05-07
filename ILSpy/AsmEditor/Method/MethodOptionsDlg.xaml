@@ -73,13 +73,13 @@
 									<RowDefinition />
 									<RowDefinition />
 								</Grid.RowDefinitions>
-								<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding ForwardRef}" Content="ForwardRef" />
-								<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding PreserveSig}" Content="PreserveSig" />
-								<CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding InternalCall}" Content="InternalCall" />
-								<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Synchronized}" Content="Synchronized" />
-								<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding NoInlining}" Content="NoInlining" />
-								<CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding AggressiveInlining}" Content="AggressiveInlining" />
-								<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding NoOptimization}" Content="NoOptimization" />
+								<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding ForwardRef}" Content="For_wardRef" />
+								<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding PreserveSig}" Content="Prese_rveSig" />
+								<CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding InternalCall}" Content="Interna_lCall" />
+								<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Synchronized}" Content="Sync_hronized" />
+								<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding NoInlining}" Content="No_Inlining" />
+								<CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding AggressiveInlining}" Content="A_ggressiveInlining" />
+								<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding NoOptimization}" Content="NoOptimi_zation" />
 							</Grid>
 						</GroupBox>
 
@@ -96,16 +96,16 @@
 									<RowDefinition />
 									<RowDefinition />
 								</Grid.RowDefinitions>
-								<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Static}" Content="Static" />
-								<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Final}" Content="Final" />
-								<CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Virtual}" Content="Virtual" />
-								<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding HideBySig}" Content="HideBySig" />
-								<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding CheckAccessOnOverride}" Content="CheckAccessOnOverride" />
-								<CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Abstract}" Content="Abstract" />
-								<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding SpecialName}" Content="SpecialName" />
-								<CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding RTSpecialName}" Content="RTSpecialName" />
-								<CheckBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding UnmanagedExport}" Content="UnmanagedExport" />
-								<CheckBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding RequireSecObject}" Content="RequireSecObject" />
+								<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Static}" Content="_Static" />
+								<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Final}" Content="_Final" />
+								<CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Virtual}" Content="_Virtual" />
+								<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding HideBySig}" Content="Hi_deBySig" />
+								<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding CheckAccessOnOverride}" Content="Chec_kAccessOnOverride" />
+								<CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Abstract}" Content="_Abstract" />
+								<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding SpecialName}" Content="S_pecialName" />
+								<CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding RTSpecialName}" Content="R_TSpecialName" />
+								<CheckBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding UnmanagedExport}" Content="UnmanagedE_xport" />
+								<CheckBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding RequireSecObject}" Content="Re_quireSecObject" />
 							</Grid>
 						</GroupBox>
 
@@ -121,15 +121,15 @@
 								<RowDefinition />
 							</Grid.RowDefinitions>
 
-							<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Content="CodeType" />
-							<ComboBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding CodeType.Items}" SelectedIndex="{Binding CodeType.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
-							<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="ManagedType" />
-							<ComboBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding ManagedType.Items}" SelectedIndex="{Binding ManagedType.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
+							<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=codeTypeComboBox}" Content="Cod_eType" />
+							<ComboBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="codeTypeComboBox" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding CodeType.Items}" SelectedIndex="{Binding CodeType.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
+							<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Target="{Binding ElementName=managedTypeComboBox}" Content="_ManagedType" />
+							<ComboBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="managedTypeComboBox" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding ManagedType.Items}" SelectedIndex="{Binding ManagedType.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
 
-							<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="Visibility" />
-							<ComboBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding MethodVisibility.Items}" SelectedIndex="{Binding MethodVisibility.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
-							<Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Content="VtableLayout" />
-							<ComboBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding VtableLayout.Items}" SelectedIndex="{Binding VtableLayout.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
+							<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=visibilityComboBox}" Content="Visibilit_y" />
+							<ComboBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="visibilityComboBox" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding MethodVisibility.Items}" SelectedIndex="{Binding MethodVisibility.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
+							<Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=vtableLayoutComboBox}" Content="Vta_bleLayout" />
+							<ComboBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Name="vtableLayoutComboBox" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding VtableLayout.Items}" SelectedIndex="{Binding VtableLayout.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
 						</Grid>
 					</Grid>
 				</ScrollViewer>

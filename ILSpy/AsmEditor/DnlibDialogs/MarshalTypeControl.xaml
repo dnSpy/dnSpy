@@ -41,7 +41,7 @@
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
-			<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" IsChecked="{Binding IsEnabled}" VerticalAlignment="Center" Content="Enable" />
+			<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" IsChecked="{Binding IsEnabled}" VerticalAlignment="Center" Content="_Enable" />
 
 			<ComboBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" DisplayMemberPath="Name" ItemsSource="{Binding NativeType.Items}" SelectedIndex="{Binding NativeType.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" IsEnabled="{Binding NativeType_IsEnabled}" />
 
@@ -50,15 +50,15 @@
 			<TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Visibility="Hidden" />
 
 			<!-- RawMarshalType -->
-			<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="Data" Target="{Binding ElementName=rawDataTextBox}" Visibility="{Binding IsRawMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding RawMarshalType_Data_IsEnabled}" />
+			<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="_Data" Target="{Binding ElementName=rawDataTextBox}" Visibility="{Binding IsRawMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding RawMarshalType_Data_IsEnabled}" />
 			<TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="rawDataTextBox" Text="{Binding RawMarshalType_Data.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsRawMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding RawMarshalType_Data_IsEnabled}" />
 
 			<!-- FixedSysStringMarshalType -->
-			<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="Size" Target="{Binding ElementName=fixedSysStrLenTextBox}" Visibility="{Binding IsFixedSysStringMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding FixedSysStringMarshalType_Size_IsEnabled}" />
+			<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="_Size" Target="{Binding ElementName=fixedSysStrLenTextBox}" Visibility="{Binding IsFixedSysStringMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding FixedSysStringMarshalType_Size_IsEnabled}" />
 			<TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="fixedSysStrLenTextBox" Text="{Binding FixedSysStringMarshalType_Size.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsFixedSysStringMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding FixedSysStringMarshalType_Size_IsEnabled}" />
 
 			<!-- SafeArrayMarshalType -->
-			<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="VT" Target="{Binding ElementName=safeArrayVTComboBox}" Visibility="{Binding IsSafeArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding SafeArrayMarshalType_VT_IsEnabled}" />
+			<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="_VT" Target="{Binding ElementName=safeArrayVTComboBox}" Visibility="{Binding IsSafeArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding SafeArrayMarshalType_VT_IsEnabled}" />
 			<ComboBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="safeArrayVTComboBox" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" DisplayMemberPath="Name" ItemsSource="{Binding SafeArrayMarshalType_VariantType.Items}" SelectedIndex="{Binding SafeArrayMarshalType_VariantType.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" Visibility="{Binding IsSafeArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding SafeArrayMarshalType_VT_IsEnabled}" />
 			<Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4">
 				<Grid.ColumnDefinitions>
@@ -67,10 +67,10 @@
 					<ColumnDefinition />
 					<ColumnDefinition />
 				</Grid.ColumnDefinitions>
-				<CheckBox Grid.Column="0" Margin="0 5 0 0" Content="Vector" IsChecked="{Binding SafeArrayMarshalType_VT_Vector}" Visibility="{Binding IsSafeArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding SafeArrayMarshalType_VT_Flags_IsEnabled}" />
-				<CheckBox Grid.Column="1" Margin="5 5 0 0" Content="Array" IsChecked="{Binding SafeArrayMarshalType_VT_Array}" Visibility="{Binding IsSafeArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding SafeArrayMarshalType_VT_Flags_IsEnabled}" />
-				<CheckBox Grid.Column="2" Margin="5 5 0 0" Content="ByRef" IsChecked="{Binding SafeArrayMarshalType_VT_ByRef}" Visibility="{Binding IsSafeArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding SafeArrayMarshalType_VT_Flags_IsEnabled}" />
-				<CheckBox Grid.Column="3" Margin="5 5 0 0" Content="Reserved" IsChecked="{Binding SafeArrayMarshalType_VT_Reserved}" Visibility="{Binding IsSafeArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding SafeArrayMarshalType_VT_Flags_IsEnabled}" />
+				<CheckBox Grid.Column="0" Margin="0 5 0 0" Content="Vec_tor" IsChecked="{Binding SafeArrayMarshalType_VT_Vector}" Visibility="{Binding IsSafeArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding SafeArrayMarshalType_VT_Flags_IsEnabled}" />
+				<CheckBox Grid.Column="1" Margin="5 5 0 0" Content="_Array" IsChecked="{Binding SafeArrayMarshalType_VT_Array}" Visibility="{Binding IsSafeArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding SafeArrayMarshalType_VT_Flags_IsEnabled}" />
+				<CheckBox Grid.Column="2" Margin="5 5 0 0" Content="_ByRef" IsChecked="{Binding SafeArrayMarshalType_VT_ByRef}" Visibility="{Binding IsSafeArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding SafeArrayMarshalType_VT_Flags_IsEnabled}" />
+				<CheckBox Grid.Column="3" Margin="5 5 0 0" Content="_Reserved" IsChecked="{Binding SafeArrayMarshalType_VT_Reserved}" Visibility="{Binding IsSafeArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding SafeArrayMarshalType_VT_Flags_IsEnabled}" />
 			</Grid>
 			<Expander Grid.Row="2"
 				  Grid.Column="0"
@@ -84,27 +84,27 @@
 			</Expander>
 
 			<!-- FixedArrayMarshalType -->
-			<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="Size" Target="{Binding ElementName=fixedArraySizeTextBox}" Visibility="{Binding IsFixedArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding FixedArrayMarshalType_Size_IsEnabled}" />
+			<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="_Size" Target="{Binding ElementName=fixedArraySizeTextBox}" Visibility="{Binding IsFixedArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding FixedArrayMarshalType_Size_IsEnabled}" />
 			<TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="fixedArraySizeTextBox" Text="{Binding FixedArrayMarshalType_Size.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsFixedArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding FixedArrayMarshalType_Size_IsEnabled}" />
-			<Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Content="ElemType" Target="{Binding ElementName=fixedArrayElemTypeComboBox}" Visibility="{Binding IsFixedArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding FixedArrayMarshalType_NativeType_IsEnabled}" />
+			<Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Content="Elem_Type" Target="{Binding ElementName=fixedArrayElemTypeComboBox}" Visibility="{Binding IsFixedArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding FixedArrayMarshalType_NativeType_IsEnabled}" />
 			<ComboBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Name="fixedArrayElemTypeComboBox" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" DisplayMemberPath="Name" ItemsSource="{Binding FixedArrayMarshalType_NativeType.Items}" SelectedIndex="{Binding FixedArrayMarshalType_NativeType.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" Visibility="{Binding IsFixedArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding FixedArrayMarshalType_NativeType_IsEnabled}" />
 
 			<!-- ArrayMarshalType -->
-			<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="ElemType" Target="{Binding ElementName=arrayElemTypeComboBox}" Visibility="{Binding IsArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding ArrayMarshalType_NativeType_IsEnabled}" />
+			<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="Elem_Type" Target="{Binding ElementName=arrayElemTypeComboBox}" Visibility="{Binding IsArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding ArrayMarshalType_NativeType_IsEnabled}" />
 			<ComboBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="arrayElemTypeComboBox" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" DisplayMemberPath="Name" ItemsSource="{Binding ArrayMarshalType_NativeType.Items}" SelectedIndex="{Binding ArrayMarshalType_NativeType.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" Visibility="{Binding IsArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding ArrayMarshalType_NativeType_IsEnabled}" />
-			<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="ParamNum" Target="{Binding ElementName=arrayParamNumTextBox}" Visibility="{Binding IsArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding ArrayMarshalType_ParamNum_IsEnabled}" />
+			<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="_ParamNum" Target="{Binding ElementName=arrayParamNumTextBox}" Visibility="{Binding IsArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding ArrayMarshalType_ParamNum_IsEnabled}" />
 			<TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="arrayParamNumTextBox" Text="{Binding ArrayMarshalType_ParamNum.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding ArrayMarshalType_ParamNum_IsEnabled}" />
-			<Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Content="NumElems" Target="{Binding ElementName=arrayNumElemsTextBox}" Visibility="{Binding IsArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding ArrayMarshalType_NumElems_IsEnabled}" />
+			<Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Content="_NumElems" Target="{Binding ElementName=arrayNumElemsTextBox}" Visibility="{Binding IsArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding ArrayMarshalType_NumElems_IsEnabled}" />
 			<TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Name="arrayNumElemsTextBox" Text="{Binding ArrayMarshalType_NumElems.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding ArrayMarshalType_NumElems_IsEnabled}" />
-			<Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Content="Flags" Target="{Binding ElementName=arrayFlagsTextBox}" Visibility="{Binding IsArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding ArrayMarshalType_Flags_IsEnabled}" />
+			<Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Content="_Flags" Target="{Binding ElementName=arrayFlagsTextBox}" Visibility="{Binding IsArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding ArrayMarshalType_Flags_IsEnabled}" />
 			<TextBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="arrayFlagsTextBox" Text="{Binding ArrayMarshalType_Flags.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding ArrayMarshalType_Flags_IsEnabled}" />
 
 			<!-- CustomMarshalType -->
-			<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="GUID" Target="{Binding ElementName=customGuidTextBox}" Visibility="{Binding IsCustomMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding CustomMarshalType_GUID_IsEnabled}" />
+			<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="_GUID" Target="{Binding ElementName=customGuidTextBox}" Visibility="{Binding IsCustomMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding CustomMarshalType_GUID_IsEnabled}" />
 			<TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="customGuidTextBox" Text="{Binding CustomMarshalType_GUID, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsCustomMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding CustomMarshalType_GUID_IsEnabled}" />
-			<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="NativeType" Target="{Binding ElementName=customNativeTypeNameTextBox}" Visibility="{Binding IsCustomMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding CustomMarshalType_NativeTypeName_IsEnabled}" />
+			<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="_NativeType" Target="{Binding ElementName=customNativeTypeNameTextBox}" Visibility="{Binding IsCustomMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding CustomMarshalType_NativeTypeName_IsEnabled}" />
 			<TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="customNativeTypeNameTextBox" Text="{Binding CustomMarshalType_NativeTypeName, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsCustomMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding CustomMarshalType_NativeTypeName_IsEnabled}" />
-			<Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Content="Cookie" Target="{Binding ElementName=customCookieTextBox}" Visibility="{Binding IsCustomMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding CustomMarshalType_Cookie_IsEnabled}" />
+			<Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Content="Coo_kie" Target="{Binding ElementName=customCookieTextBox}" Visibility="{Binding IsCustomMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding CustomMarshalType_Cookie_IsEnabled}" />
 			<TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Name="customCookieTextBox" Text="{Binding CustomMarshalType_Cookie, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsCustomMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding CustomMarshalType_Cookie_IsEnabled}" />
 			<Expander Grid.Row="2"
 				  Grid.Column="0"
@@ -118,7 +118,7 @@
 			</Expander>
 
 			<!-- InterfaceMarshalType -->
-			<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="ParamIndex" Target="{Binding ElementName=ifaceIndexTextBox}" Visibility="{Binding IsInterfaceMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding InterfaceMarshalType_IidParamIndex_IsEnabled}" />
+			<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="_ParamIndex" Target="{Binding ElementName=ifaceIndexTextBox}" Visibility="{Binding IsInterfaceMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding InterfaceMarshalType_IidParamIndex_IsEnabled}" />
 			<TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="ifaceIndexTextBox" Text="{Binding InterfaceMarshalType_IidParamIndex.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsInterfaceMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding InterfaceMarshalType_IidParamIndex_IsEnabled}" />
 		</Grid>
 	</GroupBox>
