@@ -208,7 +208,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		void InitializeFrom(DeclSecurityOptions options)
 		{
-			SecurityActionEnumList.SelectedItem = (SecAc)(options.Action & SecurityAction.ActionMask);
+			SecurityActionEnumList.SelectedItem = (SecAc)options.Action;
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 			SecurityAttributeCollection.Clear();
 			SecurityAttributeCollection.AddRange(options.SecurityAttributes.Select(a => new SecurityAttributeVM(a, new TypeSigCreatorOptions(module, language))));

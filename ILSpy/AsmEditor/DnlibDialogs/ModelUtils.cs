@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
@@ -111,6 +112,26 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				break;
 			}
 			return null;
+		}
+
+		/// <summary>
+		/// Gets the HasSecurity bit. Should be called each time the <see cref="DeclSecurity"/> list
+		/// or the <see cref="CustomAttribute"/> list has been modified.
+		/// </summary>
+		/// <param name="declSecs">The <see cref="DeclSecurity"/> list</param>
+		/// <param name="cas">The <see cref="CustomAttribute"/> list</param>
+		/// <returns></returns>
+		public static bool GetHasSecurityBit(IList<DeclSecurity> declSecs, IList<CustomAttribute> cas)
+		{
+			if (declSecs.Count > 0)
+				return true;
+
+			foreach (var ca in cas) {
+				if (ca.TypeFullName == "System.Security.SuppressUnmanagedCodeSecurityAttribute")
+					return true;
+			}
+
+			return false;
 		}
 	}
 }

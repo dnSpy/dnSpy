@@ -408,6 +408,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			options.CustomAttributes.AddRange(CustomAttributesVM.CustomAttributeCollection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			options.DeclSecurities.Clear();
 			options.DeclSecurities.AddRange(DeclSecuritiesVM.DeclSecurityCollection.Select(a => a.CreateDeclSecurityOptions().Create(module)));
+			if (ModelUtils.GetHasSecurityBit(options.DeclSecurities, options.CustomAttributes))
+				options.Attributes |= MethodAttributes.HasSecurity;
+			else
+				options.Attributes &= ~MethodAttributes.HasSecurity;
 			return options;
 		}
 
