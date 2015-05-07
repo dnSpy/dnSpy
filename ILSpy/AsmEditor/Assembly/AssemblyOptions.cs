@@ -33,6 +33,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 		public string Culture;
 		public Module.ClrVersion ClrVersion;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
+		public List<DeclSecurity> DeclSecurities = new List<DeclSecurity>();
 
 		public AssemblyOptions()
 		{
@@ -48,6 +49,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			this.Culture = asm.Culture;
 			this.ClrVersion = Module.ClrVersion.DefaultVersion;
 			this.CustomAttributes.AddRange(asm.CustomAttributes);
+			this.DeclSecurities.AddRange(asm.DeclSecurities);
 		}
 
 		public AssemblyDef CopyTo(AssemblyDef asm)
@@ -60,6 +62,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			asm.Culture = this.Culture;
 			asm.CustomAttributes.Clear();
 			asm.CustomAttributes.AddRange(CustomAttributes);
+			asm.DeclSecurities.Clear();
+			asm.DeclSecurities.AddRange(DeclSecurities);
 			return asm;
 		}
 

@@ -125,6 +125,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			var type = valueType.RemovePinnedAndModifiers();
 			var et = type.GetElementType();
 			ITypeDefOrRef tdr;
+			TypeDef td;
 			switch (et) {
 			case ElementType.Boolean:
 			case ElementType.Char:
@@ -159,6 +160,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 						return Null<TypeSig>.Instance;
 					return value;
 				}
+				td = tdr.ResolveTypeDef();
+				if (td != null && !td.IsEnum)
+					break;
 				return new EnumInfo() {
 					EnumType = tdr,
 					Value = value,
@@ -188,6 +192,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 						tdr = ((ClassOrValueTypeSig)elemType).TypeDefOrRef;
 						if (tdr.IsSystemType())
 							return Null<Type[]>.Instance;
+						td = tdr.ResolveTypeDef();
+						if (td != null && !td.IsEnum)
+							break;
 						return EnumInfo.CreateNullArray(tdr);
 					}
 					break;
@@ -216,6 +223,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 					tdr = ((ClassOrValueTypeSig)elemType).TypeDefOrRef;
 					if (tdr.IsSystemType())
 						return ConvertArray<TypeSig>(elemType, oldList);
+					td = tdr.ResolveTypeDef();
+					if (td != null && !td.IsEnum)
+						break;
 					return ConvertEnum(elemType, oldList);
 				}
 				break;

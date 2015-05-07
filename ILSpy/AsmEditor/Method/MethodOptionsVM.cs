@@ -316,8 +316,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 		}
 		CustomAttributesVM customAttributesVM;
 
+		public DeclSecuritiesVM DeclSecuritiesVM {
+			get { return declSecuritiesVM; }
+		}
+		DeclSecuritiesVM declSecuritiesVM;
+
+		readonly ModuleDef module;
+
 		public MethodOptionsVM(MethodDefOptions options, ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
 		{
+			this.module = module;
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(module, language) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
@@ -336,7 +344,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			this.methodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.ShowTypeFullName = true;
 			this.methodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
 
-			this.customAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.Module, typeSigCreatorOptions.Language);
+			this.customAttributesVM = new CustomAttributesVM(module, language);
+			this.declSecuritiesVM = new DeclSecuritiesVM(module, language);
 
 			this.origOptions = options;
 
@@ -385,6 +394,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			MethodVisibility.SelectedItem = (Method.MethodVisibility)((int)(options.Attributes & MethodAttributes.MemberAccessMask) >> 0);
 			VtableLayout.SelectedItem = (Method.VtableLayout)((int)(options.Attributes & MethodAttributes.VtableLayoutMask) >> 8);
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
+			DeclSecuritiesVM.InitializeFrom(options.DeclSecurities);
 		}
 
 		MethodDefOptions CopyTo(MethodDefOptions options)
@@ -396,6 +406,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			options.ImplMap = PinvokeImpl ? ImplMap : null;
 			options.CustomAttributes.Clear();
 			options.CustomAttributes.AddRange(CustomAttributesVM.CustomAttributeCollection.Select(a => a.CreateCustomAttributeOptions().Create()));
+			options.DeclSecurities.Clear();
+			options.DeclSecurities.AddRange(DeclSecuritiesVM.DeclSecurityCollection.Select(a => a.CreateDeclSecurityOptions().Create(module)));
 			return options;
 		}
 

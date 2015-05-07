@@ -155,6 +155,18 @@
     </Compile>
     <Compile Include="AsmEditor\DnlibDialogs\CustomAttributesVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\CustomAttributeVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\DeclSecuritiesControl.xaml.cs">
+      <DependentUpon>DeclSecuritiesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\DeclSecuritiesVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\DeclSecurityControl.xaml.cs">
+      <DependentUpon>DeclSecurityControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\DeclSecurityDlg.xaml.cs">
+      <DependentUpon>DeclSecurityDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\DeclSecurityOptions.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\DeclSecurityVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\DlgUtils.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\EnumDataFieldVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\ImplMapControl.xaml.cs">
@@ -180,6 +192,13 @@
     <Compile Include="AsmEditor\DnlibDialogs\ModelUtils.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\Null.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\ObjectListDataFieldVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\SecurityAttributeControl.xaml.cs">
+      <DependentUpon>SecurityAttributeControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\SecurityAttributeDlg.xaml.cs">
+      <DependentUpon>SecurityAttributeDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\SecurityAttributeVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\TypeSigCreatorControl.xaml.cs">
       <DependentUpon>TypeSigCreatorControl.xaml</DependentUpon>
     </Compile>
@@ -268,11 +287,15 @@
     <Compile Include="AsmEditor\ViewHelpers\CreateTypeSigArray.cs" />
     <Compile Include="AsmEditor\ViewHelpers\DnlibTypePicker.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditCustomAttribute.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\EditDeclSecurity.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\EditSecurityAttribute.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ICreateConstantType.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ICreateMethodPropertySig.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ICreateTypeSigArray.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IDnlibTypePicker.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IEditCustomAttribute.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\IEditDeclSecurity.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\IEditSecurityAttribute.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IMakeVisible.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IOpenAssembly.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IOpenPublicKeyFile.cs" />
@@ -605,6 +628,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="AsmEditor\DnlibDialogs\DeclSecuritiesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\DeclSecurityControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\DeclSecurityDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AsmEditor\DnlibDialogs\ImplMapControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -622,6 +657,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\DnlibDialogs\MethodSigCreatorDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\SecurityAttributeControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\SecurityAttributeDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

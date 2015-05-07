@@ -292,12 +292,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		}
 		readonly TypeSigCreatorVM typeSigCreator;
 
-		readonly ModuleDef module;
-
 		public CustomAttributesVM CustomAttributesVM {
 			get { return customAttributesVM; }
 		}
 		CustomAttributesVM customAttributesVM;
+
+		public DeclSecuritiesVM DeclSecuritiesVM {
+			get { return declSecuritiesVM; }
+		}
+		DeclSecuritiesVM declSecuritiesVM;
+
+		readonly ModuleDef module;
 
 		public TypeOptionsVM(TypeDefOptions options, ModuleDef module, Language language, TypeDef ownerType)
 		{
@@ -313,7 +318,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			this.typeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			this.typeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
-			this.customAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.Module, typeSigCreatorOptions.Language);
+			this.customAttributesVM = new CustomAttributesVM(module, language);
+			this.declSecuritiesVM = new DeclSecuritiesVM(module, language);
 
 			this.origOptions = options;
 			this.isNestedType = (options.Attributes & TypeAttributes.VisibilityMask) <= TypeAttributes.Public;
@@ -535,6 +541,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			TypeStringFormat.SelectedItem = (Types.TypeStringFormat)(((int)options.Attributes >> 16) & 3);
 			TypeCustomFormat.SelectedItem = (Types.TypeCustomFormat)(((int)options.Attributes >> 22) & 3);
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
+			DeclSecuritiesVM.InitializeFrom(options.DeclSecurities);
 		}
 
 		TypeDefOptions CopyTo(TypeDefOptions options)
@@ -547,6 +554,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			options.BaseType = BaseTypeSig.ToTypeDefOrRef();
 			options.CustomAttributes.Clear();
 			options.CustomAttributes.AddRange(CustomAttributesVM.CustomAttributeCollection.Select(a => a.CreateCustomAttributeOptions().Create()));
+			options.DeclSecurities.Clear();
+			options.DeclSecurities.AddRange(DeclSecuritiesVM.DeclSecurityCollection.Select(a => a.CreateDeclSecurityOptions().Create(module)));
 			return options;
 		}
 

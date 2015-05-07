@@ -227,8 +227,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 		}
 		CustomAttributesVM customAttributesVM;
 
+		public DeclSecuritiesVM DeclSecuritiesVM {
+			get { return declSecuritiesVM; }
+		}
+		DeclSecuritiesVM declSecuritiesVM;
+
+		readonly ModuleDef module;
+
 		public AssemblyOptionsVM(AssemblyOptions options, ModuleDef module, Language language)
 		{
+			this.module = module;
 			this.origOptions = options;
 			this.hashAlgorithmVM = new EnumListVM(hashAlgorithmList, (a, b) => OnPropertyChanged("AssemblyFullName"));
 			this.contentTypeVM = new EnumListVM(contentTypeList, (a, b) => OnPropertyChanged("AssemblyFullName"));
@@ -238,6 +246,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			this.versionRevision = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }) { UseDecimal = true };
 			this.publicKey = new HexStringVM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); UpdatePublicKeyFlag(); }) { UpperCaseHex = false };
 			this.customAttributesVM = new CustomAttributesVM(module, language);
+			this.declSecuritiesVM = new DeclSecuritiesVM(module, language);
 			Reinitialize();
 		}
 
@@ -271,6 +280,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			Culture = options.Culture;
 			ClrVersion.SelectedItem = options.ClrVersion;
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
+			DeclSecuritiesVM.InitializeFrom(options.DeclSecurities);
 		}
 
 		AssemblyOptions CopyTo(AssemblyOptions options)
@@ -284,6 +294,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			options.ClrVersion = (Module.ClrVersion)ClrVersion.SelectedItem;
 			options.CustomAttributes.Clear();
 			options.CustomAttributes.AddRange(CustomAttributesVM.CustomAttributeCollection.Select(a => a.CreateCustomAttributeOptions().Create()));
+			options.DeclSecurities.Clear();
+			options.DeclSecurities.AddRange(DeclSecuritiesVM.DeclSecurityCollection.Select(a => a.CreateDeclSecurityOptions().Create(module)));
 			return options;
 		}
 

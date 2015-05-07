@@ -31,6 +31,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		public uint? ClassSize;
 		public ITypeDefOrRef BaseType;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
+		public List<DeclSecurity> DeclSecurities = new List<DeclSecurity>();
 
 		public TypeDefOptions()
 		{
@@ -51,6 +52,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			}
 			this.BaseType = type.BaseType;
 			this.CustomAttributes.AddRange(type.CustomAttributes);
+			this.DeclSecurities.AddRange(type.DeclSecurities);
 		}
 
 		public TypeDef CopyTo(TypeDef type)
@@ -65,6 +67,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			type.BaseType = this.BaseType;
 			type.CustomAttributes.Clear();
 			type.CustomAttributes.AddRange(CustomAttributes);
+			type.DeclSecurities.Clear();
+			type.DeclSecurities.AddRange(DeclSecurities);
 			return type;
 		}
 
