@@ -112,7 +112,7 @@
 
 							<Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="_Kind" Target="{Binding ElementName=typeKindComboBox}" />
 							<ComboBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="typeKindComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeKind.Items}" SelectedIndex="{Binding TypeKind.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
-							<Label Grid.Row="0" Grid.Column="2" Margin="0 5 0 0" Content="_Visibility" Target="{Binding ElementName=visibilityComboBox}" />
+							<Label Grid.Row="0" Grid.Column="2" Margin="0 5 0 0" Content="{Binding VisibilityAccessbilityText}" Target="{Binding ElementName=visibilityComboBox}" />
 							<ComboBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="visibilityComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeVisibility.Items}" SelectedIndex="{Binding TypeVisibility.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
 							<Label Grid.Row="0" Grid.Column="4" Margin="0 5 0 0" Content="Layo_ut" Target="{Binding ElementName=layoutComboBox}" />
 							<ComboBox Grid.Row="0" Grid.Column="5" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="layoutComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeLayout.Items}" SelectedIndex="{Binding TypeLayout.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />

@@ -95,6 +95,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		}
 		readonly bool isNestedType;
 
+		public string VisibilityAccessbilityText {
+			get { return IsNestedType ? "Accessibilit_y" : "Visibilit_y"; }
+		}
+
 		static readonly EnumVM[] typeKindList = EnumVM.Create(typeof(TypeKind));
 		public EnumListVM TypeKind {
 			get { return typeKindVM; }
@@ -322,7 +326,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			this.declSecuritiesVM = new DeclSecuritiesVM(module, language);
 
 			this.origOptions = options;
-			this.isNestedType = (options.Attributes & TypeAttributes.VisibilityMask) <= TypeAttributes.Public;
+			this.isNestedType = (options.Attributes & TypeAttributes.VisibilityMask) > TypeAttributes.Public;
 			this.typeKindVM = new EnumListVM(typeKindList, (a, b) => OnTypeKindChanged());
 			this.typeLayoutVM = new EnumListVM(typeLayoutList, (a, b) => InitializeTypeKind());
 			this.typeSemanticsVM = new EnumListVM(typeSemanticsList, (a, b) => InitializeTypeKind());
@@ -330,7 +334,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			this.classSize = new NullableUInt32VM(a => HasErrorUpdated());
 
 			Types.TypeVisibility start, end;
-			if (IsNestedType) {
+			if (!IsNestedType) {
 				start = Types.TypeVisibility.NotPublic;
 				end = Types.TypeVisibility.Public;
 			}
