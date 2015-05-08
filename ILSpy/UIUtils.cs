@@ -35,9 +35,9 @@ namespace ICSharpCode.ILSpy
 		}
 
 		public static bool IsLeftDoubleClick<T>(DependencyObject view, MouseButtonEventArgs e) where T : class
-        {
-            if (MouseButton.Left != e.ChangedButton)
-                return false;
+		{
+			if (MouseButton.Left != e.ChangedButton)
+				return false;
 			return GetItem<T>(view, e.OriginalSource) != null;
 		}
 	}
