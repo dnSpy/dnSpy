@@ -27,22 +27,27 @@ namespace ICSharpCode.ILSpy.AsmEditor
 {
 	static class NumberVMUtils
 	{
-		public static byte[] ParseByteArray(string s)
+		public static byte[] ParseByteArray(string s, out string error)
 		{
 			s = s.Replace(" ", string.Empty);
 			s = s.Replace("\t", string.Empty);
 			s = s.Replace("\r", string.Empty);
 			s = s.Replace("\n", string.Empty);
-			if (s.Length % 2 != 0)
-				throw new FormatException("A hex string must contain an even number of hex digits");
+			if (s.Length % 2 != 0) {
+				error = "A hex string must contain an even number of hex digits";
+				return null;
+			}
 			var bytes = new byte[s.Length / 2];
 			for (int i = 0; i < s.Length; i += 2) {
 				int upper = TryParseHexChar(s[i]);
 				int lower = TryParseHexChar(s[i + 1]);
-				if (upper < 0 || lower < 0)
-					throw new FormatException("A hex string must contain only hex digits: 0-9 and A-F");
+				if (upper < 0 || lower < 0) {
+					error = "A hex string must contain only hex digits: 0-9 and A-F";
+					return null;
+				}
 				bytes[i / 2] = (byte)((upper << 4) | lower);
 			}
+			error = null;
 			return bytes;
 		}
 
@@ -194,65 +199,79 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return null;
 		}
 
-		static ulong ParseUnsigned(string s, ulong min, ulong max)
+		static ulong ParseUnsigned(string s, ulong min, ulong max, out string error)
 		{
 			ulong value;
-			var err = TryParseUnsigned(s, min, max, out value);
-			if (err != null)
-				throw new FormatException(err);
+			error = TryParseUnsigned(s, min, max, out value);
+			if (error != null)
+				return 0;
 			return value;
 		}
 
-		public static float ParseSingle(string s)
+		public static float ParseSingle(string s, out string error)
 		{
 			float value;
-			if (float.TryParse(s, out value))
+			if (float.TryParse(s, out value)) {
+				error = null;
 				return value;
-			throw new FormatException("Value must be a 32-bit floating point number");
+			}
+			error = "Value must be a 32-bit floating point number";
+			return 0;
 		}
 
-		public static double ParseDouble(string s)
+		public static double ParseDouble(string s, out string error)
 		{
 			double value;
-			if (double.TryParse(s, out value))
+			if (double.TryParse(s, out value)) {
+				error = null;
 				return value;
-			throw new FormatException("Value must be a 64-bit floating point number");
+			}
+			error = "Value must be a 64-bit floating point number";
+			return 0;
 		}
 
-		public static bool ParseBoolean(string s)
+		public static bool ParseBoolean(string s, out string error)
 		{
 			bool value;
-			if (bool.TryParse(s, out value))
+			if (bool.TryParse(s, out value)) {
+				error = null;
 				return value;
-			throw new FormatException("Value must be a boolean value (True or False)");
+			}
+			error = "Value must be a boolean value (True or False)";
+			return false;
 		}
 
-		public static char ParseChar(string s)
+		public static char ParseChar(string s, out string error)
 		{
 			int index = 0;
-			char c = ParseChar(s, ref index);
+			char c = ParseChar(s, ref index, out error);
+			if (error != null)
+				return (char)0;
 			SkipSpaces(s, ref index);
 			if (index != s.Length)
-				ThrowParseCharError();
+				return SetParseCharError(out error);
 			return c;
 		}
 
-		static void ThrowParseCharError()
+		static char SetParseCharError(out string error)
 		{
-			throw new FormatException("A character must be enclosed in single quotes (').");
+			error = "A character must be enclosed in single quotes (').";
+			return (char)0;
 		}
 
-		static char ParseChar(string s, ref int index)
+		static char ParseChar(string s, ref int index, out string error)
 		{
 			SkipSpaces(s, ref index);
 			if (index >= s.Length || s[index] != '\'')
-				ThrowParseCharError();
+				return SetParseCharError(out error);
 
 			index++;
+			if (index >= s.Length)
+				return SetParseCharError(out error);
 			char c = s[index++];
 			if (c == '\\') {
 				if (index >= s.Length)
-					ThrowParseCharError();
+					return SetParseCharError(out error);
 				c = s[index++];
 				switch (c) {
 				case 'a': c = '\a'; break;
@@ -269,58 +288,64 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				case 'x':
 				case 'u':
 					if (index >= s.Length)
-						ThrowParseCharError();
+						return SetParseCharError(out error);
 					char surrogate;
 					int ch = ParseHex(s, ref index, c == 'x' ? -1 : 4, out surrogate);
 					if (ch < 0)
-						ThrowParseCharError();
+						return SetParseCharError(out error);
 					c = (char)ch;
 					break;
 
 				default:
-					throw new FormatException(string.Format("Unknown character escape sequence: \\{0}", c));
+					error = string.Format("Unknown character escape sequence: \\{0}", c);
+					return (char)0;
 				}
 			}
 			if (index >= s.Length)
-				ThrowParseCharError();
+				return SetParseCharError(out error);
 			if (s[index] != '\'')
-				ThrowParseCharError();
+				return SetParseCharError(out error);
 			index++;
 
+			error = null;
 			return c;
 		}
 
-		public static string ParseString(string s, bool canHaveNull)
+		public static string ParseString(string s, bool canHaveNull, out string error)
 		{
 			int index = 0;
-			var res = ParseString(s, canHaveNull, ref index);
+			var res = ParseString(s, canHaveNull, ref index, out error);
+			if (error != null)
+				return null;
 			SkipSpaces(s, ref index);
 			if (index != s.Length)
-				ThrowParseStringError(canHaveNull);
+				return SetParseStringError(canHaveNull, out error);
 			return res;
 		}
 
-		static void ThrowParseStringError(bool canHaveNull)
+		static string SetParseStringError(bool canHaveNull, out string error)
 		{
-			throw new FormatException(canHaveNull ?
+			error = canHaveNull ?
 				"A string must contain the value 'null' or must be enclosed in double quotes (\")" :
-				"A string must be enclosed in double quotes (\")");
+				"A string must be enclosed in double quotes (\")";
+			return null;
 		}
 
-		static string ParseString(string s, bool canHaveNull, ref int index)
+		static string ParseString(string s, bool canHaveNull, ref int index, out string error)
 		{
 			SkipSpaces(s, ref index);
 			if (canHaveNull && s.Substring(index).StartsWith("null")) {
 				index += 4;
+				error = null;
 				return null;
 			}
 			if (index + 2 > s.Length || s[index] != '"')
-				ThrowParseStringError(canHaveNull);
+				return SetParseStringError(canHaveNull, out error);
 			var sb = new StringBuilder(s.Length - index - 2);
 			while (true) {
 				index++;
 				if (index >= s.Length)
-					ThrowParseStringError(canHaveNull);
+					return SetParseStringError(canHaveNull, out error);
 				char c = s[index];
 				if (c == '"') {
 					index++;
@@ -329,7 +354,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				if (c == '\\') {
 					index++;
 					if (index >= s.Length)
-						ThrowParseStringError(canHaveNull);
+						return SetParseStringError(canHaveNull, out error);
 					c = s[index];
 					switch (c) {
 					case 'a': sb.Append('\a'); break;
@@ -348,11 +373,11 @@ namespace ICSharpCode.ILSpy.AsmEditor
 					case 'U':
 						index++;
 						if (index >= s.Length)
-							ThrowParseStringError(canHaveNull);
+							return SetParseStringError(canHaveNull, out error);
 						char surrogate;
 						int ch = ParseHex(s, ref index, c == 'x' ? -1 : c == 'u' ? 4 : 8, out surrogate);
 						if (ch < 0)
-							ThrowParseStringError(canHaveNull);
+							return SetParseStringError(canHaveNull, out error);
 						if (c == 'U' && surrogate != 0)
 							sb.Append(surrogate);
 						sb.Append((char)ch);
@@ -360,13 +385,15 @@ namespace ICSharpCode.ILSpy.AsmEditor
 						break;
 
 					default:
-						throw new FormatException(string.Format("Unknown string escape sequence: \\{0}", c));
+						error = string.Format("Unknown string escape sequence: \\{0}", c);
+						return null;
 					}
 				}
 				else
 					sb.Append(c);
 			}
 
+			error = null;
 			return sb.ToString();
 		}
 
@@ -408,24 +435,24 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return val;
 		}
 
-		public static byte ParseByte(string s, byte min, byte max)
+		public static byte ParseByte(string s, byte min, byte max, out string error)
 		{
-			return (byte)ParseUnsigned(s, min, max);
+			return (byte)ParseUnsigned(s, min, max, out error);
 		}
 
-		public static ushort ParseUInt16(string s, ushort min, ushort max)
+		public static ushort ParseUInt16(string s, ushort min, ushort max, out string error)
 		{
-			return (ushort)ParseUnsigned(s, min, max);
+			return (ushort)ParseUnsigned(s, min, max, out error);
 		}
 
-		public static uint ParseUInt32(string s, uint min, uint max)
+		public static uint ParseUInt32(string s, uint min, uint max, out string error)
 		{
-			return (uint)ParseUnsigned(s, min, max);
+			return (uint)ParseUnsigned(s, min, max, out error);
 		}
 
-		public static ulong ParseUInt64(string s, ulong min, ulong max)
+		public static ulong ParseUInt64(string s, ulong min, ulong max, out string error)
 		{
-			return ParseUnsigned(s, min, max);
+			return ParseUnsigned(s, min, max, out error);
 		}
 
 		static string TryParseSigned(string s, long min, long max, out long value)
@@ -466,33 +493,33 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return null;
 		}
 
-		static long ParseSigned(string s, long min, long max)
+		static long ParseSigned(string s, long min, long max, out string error)
 		{
 			long value;
-			var err = TryParseSigned(s, min, max, out value);
-			if (err != null)
-				throw new FormatException(err);
+			error = TryParseSigned(s, min, max, out value);
+			if (error != null)
+				return 0;
 			return value;
 		}
 
-		public static sbyte ParseSByte(string s, sbyte min, sbyte max)
+		public static sbyte ParseSByte(string s, sbyte min, sbyte max, out string error)
 		{
-			return (sbyte)ParseSigned(s, min, max);
+			return (sbyte)ParseSigned(s, min, max, out error);
 		}
 
-		public static short ParseInt16(string s, short min, short max)
+		public static short ParseInt16(string s, short min, short max, out string error)
 		{
-			return (short)ParseSigned(s, min, max);
+			return (short)ParseSigned(s, min, max, out error);
 		}
 
-		public static int ParseInt32(string s, int min, int max)
+		public static int ParseInt32(string s, int min, int max, out string error)
 		{
-			return (int)ParseSigned(s, min, max);
+			return (int)ParseSigned(s, min, max, out error);
 		}
 
-		public static long ParseInt64(string s, long min, long max)
+		public static long ParseInt64(string s, long min, long max, out string error)
 		{
-			return (long)ParseSigned(s, min, max);
+			return (long)ParseSigned(s, min, max, out error);
 		}
 
 		static string ToString<T>(IList<T> list, Func<T,string> toString)
@@ -573,124 +600,140 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return ToString(values, v => ToString(v, canHaveNull));
 		}
 
-		static T[] ParseList<T>(string s, Func<string, T> parseValue)
+		static T[] ParseList<T>(string s, out string error, Func<string, Tuple<T, string>> parseValue)
 		{
 			var list = new List<T>();
 
 			s = s.Trim();
-			if (s == string.Empty)
+			if (s == string.Empty) {
+				error = null;
 				return list.ToArray();
+			}
 
 			foreach (var elem in s.Split(',')) {
 				var value = elem.Trim();
-				if (value == string.Empty)
-					throw new FormatException("Value in list can't be empty");
-				list.Add(parseValue(value));
+				if (value == string.Empty) {
+					error = "Value in list can't be empty";
+					return null;
+				}
+				var res = parseValue(value);
+				if (res.Item2 != null) {
+					error = res.Item2;
+					return null;
+				}
+				list.Add(res.Item1);
 			}
 
+			error = null;
 			return list.ToArray();
 		}
 
-		delegate T ParseListCallBack<T, U>(U data, string s, ref int index);
+		delegate T ParseListCallBack<T, U>(U data, string s, ref int index, out string error);
 
-		static T[] ParseList<T, U>(string s, ParseListCallBack<T, U> parseValue, U data)
+		static T[] ParseList<T, U>(string s, out string error, ParseListCallBack<T, U> parseValue, U data)
 		{
 			var list = new List<T>();
 
-			if (s.Trim() == string.Empty)
+			if (s.Trim() == string.Empty) {
+				error = null;
 				return list.ToArray();
+			}
 
 			int index = 0;
 			while (true) {
 				int oldIndex = index;
-				list.Add(parseValue(data, s, ref index));
+				list.Add(parseValue(data, s, ref index, out error));
+				if (error != null)
+					return null;
 				Debug.Assert(oldIndex < index);
 				if (oldIndex >= index)
 					throw new InvalidOperationException();
 				SkipSpaces(s, ref index);
 				if (index >= s.Length)
 					break;
-				if (s[index] != ',')
-					throw new FormatException("List elements must be separated with commas");
+				if (s[index] != ',') {
+					error = "List elements must be separated with commas";
+					return null;
+				}
 				index++;
 			}
 
 			return list.ToArray();
 		}
 
-		public static bool[] ParseBooleanList(string s)
+		public static bool[] ParseBooleanList(string s, out string error)
 		{
-			return ParseList(s, v => ParseBoolean(v));
+			return ParseList(s, out error, v => { string err; var res = ParseBoolean(v, out err); return Tuple.Create(res, err); });
 		}
 
-		public static char[] ParseCharList(string s)
+		public static char[] ParseCharList(string s, out string error)
 		{
-			return ParseList(s, ParseCharPart, 0);
+			return ParseList(s, out error, ParseCharPart, 0);
 		}
 
-		static char ParseCharPart(int data, string s, ref int index)
+		static char ParseCharPart(int data, string s, ref int index, out string error)
 		{
-			return ParseChar(s, ref index);
+			return ParseChar(s, ref index, out error);
 		}
 
-		public static byte[] ParseByteList(string s, byte min, byte max)
+		public static byte[] ParseByteList(string s, byte min, byte max, out string error)
 		{
-			return ParseList(s, v => ParseByte(v, min, max));
+			return ParseList(s, out error, v => { string err; var res = ParseByte(v, min, max, out err); return Tuple.Create(res, err); });
 		}
 
-		public static ushort[] ParseUInt16List(string s, ushort min, ushort max)
+		public static ushort[] ParseUInt16List(string s, ushort min, ushort max, out string error)
 		{
-			return ParseList(s, v => ParseUInt16(v, min, max));
+			return ParseList(s, out error, v => { string err; var res = ParseUInt16(v, min, max, out err); return Tuple.Create(res, err); });
 		}
 
-		public static uint[] ParseUInt32List(string s, uint min, uint max)
+		public static uint[] ParseUInt32List(string s, uint min, uint max, out string error)
 		{
-			return ParseList(s, v => ParseUInt32(v, min, max));
+			return ParseList(s, out error, v => { string err; var res = ParseUInt32(v, min, max, out err); return Tuple.Create(res, err); });
 		}
 
-		public static ulong[] ParseUInt64List(string s, ulong min, ulong max)
+		public static ulong[] ParseUInt64List(string s, ulong min, ulong max, out string error)
 		{
-			return ParseList(s, v => ParseUInt64(v, min, max));
+			return ParseList(s, out error, v => { string err; var res = ParseUInt64(v, min, max, out err); return Tuple.Create(res, err); });
 		}
 
-		public static sbyte[] ParseSByteList(string s, sbyte min, sbyte max)
+		public static sbyte[] ParseSByteList(string s, sbyte min, sbyte max, out string error)
 		{
-			return ParseList(s, v => ParseSByte(v, min, max));
+			return ParseList(s, out error, v => { string err; var res = ParseSByte(v, min, max, out err); return Tuple.Create(res, err); });
 		}
 
-		public static short[] ParseInt16List(string s, short min, short max)
+		public static short[] ParseInt16List(string s, short min, short max, out string error)
 		{
-			return ParseList(s, v => ParseInt16(v, min, max));
+			return ParseList(s, out error, v => { string err; var res = ParseInt16(v, min, max, out err); return Tuple.Create(res, err); });
 		}
 
-		public static int[] ParseInt32List(string s, int min, int max)
+		public static int[] ParseInt32List(string s, int min, int max, out string error)
 		{
-			return ParseList(s, v => ParseInt32(v, min, max));
+			return ParseList(s, out error, v => { string err; var res = ParseInt32(v, min, max, out err); return Tuple.Create(res, err); });
 		}
 
-		public static long[] ParseInt64List(string s, long min, long max)
+		public static long[] ParseInt64List(string s, long min, long max, out string error)
 		{
-			return ParseList(s, v => ParseInt64(v, min, max));
+			return ParseList(s, out error, v => { string err; var res = ParseInt64(v, min, max, out err); return Tuple.Create(res, err); });
 		}
 
-		public static float[] ParseSingleList(string s)
+		public static float[] ParseSingleList(string s, out string error)
 		{
-			return ParseList(s, v => ParseSingle(v));
+			return ParseList(s, out error, v => { string err; var res = ParseSingle(v, out err); return Tuple.Create(res, err); });
 		}
 
-		public static double[] ParseDoubleList(string s)
+		public static double[] ParseDoubleList(string s, out string error)
 		{
-			return ParseList(s, v => ParseDouble(v));
+			return ParseList(s, out error, v => { string err; var res = ParseDouble(v, out err); return Tuple.Create(res, err); });
 		}
 
-		public static string[] ParseStringList(string s, bool canHaveNull)
+		public static string[] ParseStringList(string s, bool canHaveNull, out string error)
 		{
-			return ParseList(s, ParseStringPart, canHaveNull);
+			return ParseList(s, out error, ParseStringPart, canHaveNull);
 		}
 
-		static string ParseStringPart(bool canHaveNull, string s, ref int index)
+		static string ParseStringPart(bool canHaveNull, string s, ref int index, out string error)
 		{
-			return ParseString(s, (bool)canHaveNull, ref index);
+			return ParseString(s, (bool)canHaveNull, ref index, out error);
 		}
 	}
 }

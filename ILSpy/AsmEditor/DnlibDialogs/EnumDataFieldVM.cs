@@ -140,11 +140,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		protected override string ConvertToValue(out EnumInfo value)
 		{
+			string error = null;
 			value = enumInfo;
 			if (enumUnderlyingTypeField != null)
-				value.Value = enumUnderlyingTypeField.ObjectValue;
+				error = enumUnderlyingTypeField.ConvertToObjectValue(out value.Value);
 
-			return null;
+			return error;
 		}
 
 		void InitializeEnumUnderlyingTypeField(EnumInfo enumInfo)

@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ICSharpCode.ILSpy.AsmEditor
 {
@@ -117,6 +118,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected abstract string Validate();
 
+		internal abstract string ConvertToObjectValue(out object value);
+
 		protected override string Verify(string columnName)
 		{
 			if (columnName == "StringValue")
@@ -156,6 +159,14 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		protected abstract void SetValue(T value);
 		protected abstract string ConvertToValue(out T value);
 
+		internal override string ConvertToObjectValue(out object value)
+		{
+			T v;
+			var error = ConvertToValue(out v);
+			value = v;
+			return error;
+		}
+
 		protected override string Validate()
 		{
 			T value;
@@ -163,6 +174,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				return ConvertToValue(out value);
 			}
 			catch (Exception ex) {
+				Debug.Fail("Exception caught in Validate(). ConvertToValue() should return an error string instead of throwing for performance reasons! Throwing is SLOOOOW!");
 				if (!string.IsNullOrEmpty(ex.Message))
 					return ex.Message;
 				return string.Format("Could not convert '{0}'", StringValue);
@@ -223,11 +235,24 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out Guid? value)
 		{
+			string error = null;
 			if (IsNull)
 				value = null;
 			else
-				value = Guid.Parse(StringValue);
-			return null;
+				value = ParseGuid(StringValue, out error);
+			return error;
+		}
+
+		internal static Guid ParseGuid(string s, out string error)
+		{
+			Guid res;
+			if (Guid.TryParse(s, out res)) {
+				error = null;
+				return res;
+			}
+
+			error = "Invalid GUID";
+			return Guid.Empty;
 		}
 	}
 
@@ -257,8 +282,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out IList<byte> value)
 		{
-			value = NumberVMUtils.ParseByteArray(StringValue);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseByteArray(StringValue, out error);
+			return error;
 		}
 	}
 
@@ -282,11 +308,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out byte? value)
 		{
+			string error = null;
 			if (IsNull)
 				value = null;
 			else
-				value = NumberVMUtils.ParseByte(StringValue, Min, Max);
-			return null;
+				value = NumberVMUtils.ParseByte(StringValue, Min, Max, out error);
+			return error;
 		}
 	}
 
@@ -310,11 +337,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out ushort? value)
 		{
+			string error = null;
 			if (IsNull)
 				value = null;
 			else
-				value = NumberVMUtils.ParseUInt16(StringValue, Min, Max);
-			return null;
+				value = NumberVMUtils.ParseUInt16(StringValue, Min, Max, out error);
+			return error;
 		}
 	}
 
@@ -338,11 +366,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out uint? value)
 		{
+			string error = null;
 			if (IsNull)
 				value = null;
 			else
-				value = NumberVMUtils.ParseUInt32(StringValue, Min, Max);
-			return null;
+				value = NumberVMUtils.ParseUInt32(StringValue, Min, Max, out error);
+			return error;
 		}
 	}
 
@@ -366,11 +395,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out ulong? value)
 		{
+			string error = null;
 			if (IsNull)
 				value = null;
 			else
-				value = NumberVMUtils.ParseUInt64(StringValue, Min, Max);
-			return null;
+				value = NumberVMUtils.ParseUInt64(StringValue, Min, Max, out error);
+			return error;
 		}
 	}
 
@@ -409,8 +439,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out bool value)
 		{
-			value = NumberVMUtils.ParseBoolean(StringValue);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseBoolean(StringValue, out error);
+			return error;
 		}
 	}
 
@@ -434,8 +465,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out char value)
 		{
-			value = NumberVMUtils.ParseChar(StringValue);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseChar(StringValue, out error);
+			return error;
 		}
 	}
 
@@ -459,8 +491,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out byte value)
 		{
-			value = NumberVMUtils.ParseByte(StringValue, Min, Max);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseByte(StringValue, Min, Max, out error);
+			return error;
 		}
 	}
 
@@ -484,8 +517,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out ushort value)
 		{
-			value = NumberVMUtils.ParseUInt16(StringValue, Min, Max);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseUInt16(StringValue, Min, Max, out error);
+			return error;
 		}
 	}
 
@@ -509,8 +543,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out uint value)
 		{
-			value = NumberVMUtils.ParseUInt32(StringValue, Min, Max);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseUInt32(StringValue, Min, Max, out error);
+			return error;
 		}
 	}
 
@@ -534,8 +569,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out ulong value)
 		{
-			value = NumberVMUtils.ParseUInt64(StringValue, Min, Max);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseUInt64(StringValue, Min, Max, out error);
+			return error;
 		}
 	}
 
@@ -559,8 +595,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out sbyte value)
 		{
-			value = NumberVMUtils.ParseSByte(StringValue, Min, Max);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseSByte(StringValue, Min, Max, out error);
+			return error;
 		}
 	}
 
@@ -584,8 +621,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out short value)
 		{
-			value = NumberVMUtils.ParseInt16(StringValue, Min, Max);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseInt16(StringValue, Min, Max, out error);
+			return error;
 		}
 	}
 
@@ -609,8 +647,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out int value)
 		{
-			value = NumberVMUtils.ParseInt32(StringValue, Min, Max);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseInt32(StringValue, Min, Max, out error);
+			return error;
 		}
 	}
 
@@ -634,8 +673,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out long value)
 		{
-			value = NumberVMUtils.ParseInt64(StringValue, Min, Max);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseInt64(StringValue, Min, Max, out error);
+			return error;
 		}
 	}
 
@@ -659,8 +699,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out float value)
 		{
-			value = NumberVMUtils.ParseSingle(StringValue);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseSingle(StringValue, out error);
+			return error;
 		}
 	}
 
@@ -684,8 +725,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out double value)
 		{
-			value = NumberVMUtils.ParseDouble(StringValue);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseDouble(StringValue, out error);
+			return error;
 		}
 	}
 
@@ -712,8 +754,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out string value)
 		{
-			value = NumberVMUtils.ParseString(StringValue, allowNullString);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseString(StringValue, allowNullString, out error);
+			return error;
 		}
 	}
 
@@ -737,8 +780,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out Guid value)
 		{
-			value = Guid.Parse(StringValue);
-			return null;
+			string error;
+			value = NullableGuidVM.ParseGuid(StringValue, out error);
+			return error;
 		}
 	}
 
@@ -762,8 +806,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out IList<bool> value)
 		{
-			value = NumberVMUtils.ParseBooleanList(StringValue);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseBooleanList(StringValue, out error);
+			return error;
 		}
 	}
 
@@ -787,8 +832,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out IList<char> value)
 		{
-			value = NumberVMUtils.ParseCharList(StringValue);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseCharList(StringValue, out error);
+			return error;
 		}
 	}
 
@@ -812,8 +858,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out IList<byte> value)
 		{
-			value = NumberVMUtils.ParseByteList(StringValue, Min, Max);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseByteList(StringValue, Min, Max, out error);
+			return error;
 		}
 	}
 
@@ -837,8 +884,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out IList<ushort> value)
 		{
-			value = NumberVMUtils.ParseUInt16List(StringValue, Min, Max);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseUInt16List(StringValue, Min, Max, out error);
+			return error;
 		}
 	}
 
@@ -862,8 +910,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out IList<uint> value)
 		{
-			value = NumberVMUtils.ParseUInt32List(StringValue, Min, Max);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseUInt32List(StringValue, Min, Max, out error);
+			return error;
 		}
 	}
 
@@ -887,8 +936,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out IList<ulong> value)
 		{
-			value = NumberVMUtils.ParseUInt64List(StringValue, Min, Max);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseUInt64List(StringValue, Min, Max, out error);
+			return error;
 		}
 	}
 
@@ -912,8 +962,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out IList<sbyte> value)
 		{
-			value = NumberVMUtils.ParseSByteList(StringValue, Min, Max);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseSByteList(StringValue, Min, Max, out error);
+			return error;
 		}
 	}
 
@@ -937,8 +988,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out IList<short> value)
 		{
-			value = NumberVMUtils.ParseInt16List(StringValue, Min, Max);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseInt16List(StringValue, Min, Max, out error);
+			return error;
 		}
 	}
 
@@ -962,8 +1014,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out IList<int> value)
 		{
-			value = NumberVMUtils.ParseInt32List(StringValue, Min, Max);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseInt32List(StringValue, Min, Max, out error);
+			return error;
 		}
 	}
 
@@ -987,8 +1040,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out IList<long> value)
 		{
-			value = NumberVMUtils.ParseInt64List(StringValue, Min, Max);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseInt64List(StringValue, Min, Max, out error);
+			return error;
 		}
 	}
 
@@ -1012,8 +1066,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out IList<float> value)
 		{
-			value = NumberVMUtils.ParseSingleList(StringValue);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseSingleList(StringValue, out error);
+			return error;
 		}
 	}
 
@@ -1037,8 +1092,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out IList<double> value)
 		{
-			value = NumberVMUtils.ParseDoubleList(StringValue);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseDoubleList(StringValue, out error);
+			return error;
 		}
 	}
 
@@ -1065,8 +1121,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		protected override string ConvertToValue(out IList<string> value)
 		{
-			value = NumberVMUtils.ParseStringList(StringValue, allowNullString);
-			return null;
+			string error;
+			value = NumberVMUtils.ParseStringList(StringValue, allowNullString, out error);
+			return error;
 		}
 	}
 }
