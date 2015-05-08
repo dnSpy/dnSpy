@@ -39,9 +39,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 							MenuIcon = "Images/AssemblyModule.png",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
-		sealed class MainMenuEntry : EditCommand
+		sealed class TheEditCommand : EditCommand
 		{
-			public MainMenuEntry()
+			public TheEditCommand()
 				: base(true)
 			{
 			}
@@ -123,7 +123,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 							Menu = "_Edit",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
-		sealed class MainMenuEntry : EditCommand
+		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
 			{
@@ -238,7 +238,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 							Menu = "_Edit",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
-		sealed class MainMenuEntry : EditCommand
+		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool IsVisible(ILSpyTreeNode[] nodes)
 			{
@@ -430,7 +430,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 							MenuIcon = "Images/AssemblyModule.png",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
-		sealed class MainMenuEntry : EditCommand
+		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
 			{
@@ -480,7 +480,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 							MenuIcon = "Images/AssemblyModule.png",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
-		sealed class MainMenuEntry : EditCommand
+		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
 			{
@@ -540,7 +540,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 							MenuIcon = "Images/Delete.png",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
-		sealed class MainMenuEntry : EditCommand
+		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool IsVisible(ILSpyTreeNode[] nodes)
 			{
@@ -652,7 +652,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 							MenuIcon = "Images/Settings.png",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
-		sealed class MainMenuEntry : EditCommand
+		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
 			{

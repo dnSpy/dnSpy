@@ -39,7 +39,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 							MenuIcon = "Images/Delete.png",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
-		sealed class MainMenuEntry : EditCommand
+		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
 			{
@@ -142,7 +142,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 							MenuIcon = "Images/Settings.png",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
-		sealed class MainMenuEntry : EditCommand
+		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
 			{
@@ -233,7 +233,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 							MenuIcon = "Images/Assembly.png",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
-		sealed class MainMenuEntry : EditCommand
+		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
 			{

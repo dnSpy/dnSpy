@@ -38,7 +38,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 							MenuIcon = "Images/Delete.png",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
-		sealed class MainMenuEntry : EditCommand
+		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
 			{
@@ -196,7 +196,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 							   MenuIcon = "Images/NameSpace.png",
 							   MenuCategory = "AsmEd",
 							   MenuOrder = 2100)]//TODO: Set menu order
-		sealed class MainMenuEntry : EditCommand
+		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
 			{
@@ -228,8 +228,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 
 		MoveNamespaceTypesToEmptypNamespaceCommand(ILSpyTreeNode[] nodes)
 		{
-			if (!CanExecute(nodes))
-				throw new ArgumentException();
 			var nsNodes = nodes.Where(a => ((NamespaceTreeNode)a).Name != string.Empty).Select(a => (NamespaceTreeNode)a).ToArray();
 			Debug.Assert(nsNodes.Length > 0);
 			this.nodes = new DeletableNodes<NamespaceTreeNode>(nsNodes);
