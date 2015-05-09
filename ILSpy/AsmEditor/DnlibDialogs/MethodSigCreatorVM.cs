@@ -190,7 +190,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				OnPropertyChanged("SignatureFullName");
 				if (GenericParameterCount != null && !GenericParameterCount.HasError)
 					IsGeneric = GenericParameterCount.Value != 0;
-			});
+			}) {
+				Min = ModelUtils.COMPRESSED_UINT32_MIN,
+				Max = ModelUtils.COMPRESSED_UINT32_MAX,
+			};
 			this.methodCallingConvVM = new EnumListVM(methodCallingConvList, (a, b) => {
 				if (!IsMethodSig)
 					throw new InvalidOperationException();

@@ -25,6 +25,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
 	static class ModelUtils
 	{
+		public const uint COMPRESSED_UINT32_MIN	= 0;
+		public const uint COMPRESSED_UINT32_MAX	= 0x1FFFFFFF;
+		public const int COMPRESSED_INT32_MIN	=-0x10000000;
+		public const int COMPRESSED_INT32_MAX	= 0x0FFFFFFF;
+
 		public static bool IsSystemType(this ITypeDefOrRef tdr)
 		{
 			return tdr != null &&

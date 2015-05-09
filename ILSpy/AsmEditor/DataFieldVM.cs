@@ -420,8 +420,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public NullableCompressedUInt32(uint? value, Action<DataFieldVM> onUpdated)
 			: base(value, onUpdated)
 		{
-			Min = 0;
-			Max = 0x1FFFFFFF;
+			Min = DnlibDialogs.ModelUtils.COMPRESSED_UINT32_MIN;
+			Max = DnlibDialogs.ModelUtils.COMPRESSED_UINT32_MAX;
 		}
 	}
 

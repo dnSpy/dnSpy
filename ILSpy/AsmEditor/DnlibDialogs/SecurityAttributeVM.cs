@@ -141,7 +141,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		bool AddNamedArgumentCanExecute()
 		{
 			// The named args blob length must also be at most 0x1FFFFFFF bytes but we can't verify it here
-			return NamedArguments.Count < 0x1FFFFFFF;
+			return NamedArguments.Count < ModelUtils.COMPRESSED_UINT32_MAX;
 		}
 
 		void Reinitialize()
