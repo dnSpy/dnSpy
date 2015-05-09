@@ -192,6 +192,18 @@
     <Compile Include="AsmEditor\DnlibDialogs\ModelUtils.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\Null.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\ObjectListDataFieldVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\ParamDefControl.xaml.cs">
+      <DependentUpon>ParamDefControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\ParamDefDlg.xaml.cs">
+      <DependentUpon>ParamDefDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\ParamDefOptions.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\ParamDefsControl.xaml.cs">
+      <DependentUpon>ParamDefsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\ParamDefsVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\ParamDefVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\SecurityAttributeControl.xaml.cs">
       <DependentUpon>SecurityAttributeControl.xaml</DependentUpon>
     </Compile>
@@ -288,6 +300,7 @@
     <Compile Include="AsmEditor\ViewHelpers\DnlibTypePicker.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditCustomAttribute.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditDeclSecurity.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\EditParamDef.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditSecurityAttribute.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ICreateConstantType.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ICreateMethodPropertySig.cs" />
@@ -295,6 +308,7 @@
     <Compile Include="AsmEditor\ViewHelpers\IDnlibTypePicker.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IEditCustomAttribute.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IEditDeclSecurity.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\IEditParamDef.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IEditSecurityAttribute.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IMakeVisible.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IOpenAssembly.cs" />
@@ -657,6 +671,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\DnlibDialogs\MethodSigCreatorDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\ParamDefControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\ParamDefDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\ParamDefsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

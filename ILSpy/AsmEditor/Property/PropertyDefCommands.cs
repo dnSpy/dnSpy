@@ -244,7 +244,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreatePropertyDefCommand((TypeTreeNode)ownerNode, data.CreatePropertyDefOptions()));
+			UndoCommandManager.Instance.Add(new CreatePropertyDefCommand(typeNode, data.CreatePropertyDefOptions()));
 		}
 
 		readonly TypeTreeNode ownerNode;
@@ -253,7 +253,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 		CreatePropertyDefCommand(TypeTreeNode ownerNode, PropertyDefOptions options)
 		{
 			this.ownerNode = ownerNode;
-			this.propNode = new PropertyTreeNode(options.CreatePropertyDef());
+			this.propNode = new PropertyTreeNode(options.CreatePropertyDef(ownerNode.TypeDefinition.Module));
 		}
 
 		public string Description {

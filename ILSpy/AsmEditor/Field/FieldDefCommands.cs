@@ -217,7 +217,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 				var ts = type.GetEnumUnderlyingType();
 				if (ts != null) {
 					options = FieldDefOptions.Create("MyField", new FieldSig(new ValueTypeSig(typeNode.TypeDefinition)));
-					options.Constant = new ConstantUser(ModelUtils.GetDefaultValue(ts), ts.RemovePinnedAndModifiers().GetElementType());
+					options.Constant = module.UpdateRowId(new ConstantUser(ModelUtils.GetDefaultValue(ts), ts.RemovePinnedAndModifiers().GetElementType()));
 					options.Attributes |= FieldAttributes.Literal | FieldAttributes.Static | FieldAttributes.HasDefault;
 				}
 				else {
@@ -240,7 +240,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreateFieldDefCommand((TypeTreeNode)ownerNode, data.CreateFieldDefOptions()));
+			UndoCommandManager.Instance.Add(new CreateFieldDefCommand(typeNode, data.CreateFieldDefOptions()));
 		}
 
 		readonly TypeTreeNode ownerNode;
@@ -249,7 +249,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 		CreateFieldDefCommand(TypeTreeNode ownerNode, FieldDefOptions options)
 		{
 			this.ownerNode = ownerNode;
-			this.fieldNode = new FieldTreeNode(options.CreateFieldDef());
+			this.fieldNode = new FieldTreeNode(options.CreateFieldDef(ownerNode.TypeDefinition.Module));
 		}
 
 		public string Description {

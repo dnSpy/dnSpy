@@ -91,7 +91,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 
 		public ModuleDef CreateModuleDef()
 		{
-			return CopyTo(new ModuleDefUser());
+			var module = CopyTo(new ModuleDefUser());
+			return module.UpdateRowId(module);
 		}
 	}
 }

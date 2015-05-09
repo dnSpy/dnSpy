@@ -161,8 +161,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			get {
 				if (!IsEnabled)
 					return null;
-				ModuleRef modRef = ModuleName == null ? null : new ModuleRefUser(module, ModuleName);
-				return new ImplMapUser(modRef, Name, Attributes);
+				ModuleRef modRef = ModuleName == null ? null : module.UpdateRowId(new ModuleRefUser(module, ModuleName));
+				return module.UpdateRowId(new ImplMapUser(modRef, Name, Attributes));
 			}
 			set {
 				IsEnabled = value != null;

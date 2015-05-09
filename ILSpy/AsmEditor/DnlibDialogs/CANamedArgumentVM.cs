@@ -104,7 +104,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				}
 			}
 		}
-		string name;
+		UTF8String name;
 
 		public EnumListVM ConstantTypeEnumList {
 			get { return constantTypeEnumListVM; }

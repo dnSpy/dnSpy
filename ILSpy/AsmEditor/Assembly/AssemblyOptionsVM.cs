@@ -191,7 +191,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 				}
 			}
 		}
-		string name;
+		UTF8String name;
 
 		public string Culture {
 			get { return culture; }

@@ -41,9 +41,6 @@
 			<TabItem Header="Main">
 				<ScrollViewer VerticalScrollBarVisibility="Auto">
 					<Grid Margin="5">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition />
-						</Grid.ColumnDefinitions>
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto" />
 							<RowDefinition Height="Auto" />

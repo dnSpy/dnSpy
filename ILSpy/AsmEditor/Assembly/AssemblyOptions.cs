@@ -29,7 +29,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 		public Version Version;
 		public AssemblyAttributes Attributes;
 		public PublicKey PublicKey;
-		public string Name;
+		public UTF8String Name;
 		public string Culture;
 		public Module.ClrVersion ClrVersion;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
@@ -67,9 +67,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			return asm;
 		}
 
-		public AssemblyDef CreateAssemblyDef()
+		public AssemblyDef CreateAssemblyDef(ModuleDef ownerModule)
 		{
-			return CopyTo(new AssemblyDefUser());
+			return ownerModule.UpdateRowId(CopyTo(new AssemblyDefUser()));
 		}
 
 		public static AssemblyOptions Create(string name)

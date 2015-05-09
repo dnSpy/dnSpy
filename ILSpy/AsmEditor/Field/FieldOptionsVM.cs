@@ -176,15 +176,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 		readonly TypeSigCreatorVM typeSigCreator;
 
 		public Constant Constant {
-			get { return HasDefault ? new ConstantUser(constantVM.Value) : null; }
+			get { return HasDefault ? module.UpdateRowId(new ConstantUser(ConstantVM.Value)) : null; }
 			set {
 				if (value == null) {
 					HasDefault = false;
-					constantVM.Value = null;
+					ConstantVM.Value = null;
 				}
 				else {
 					HasDefault = true;
-					constantVM.Value = value.Value;
+					ConstantVM.Value = value.Value;
 				}
 			}
 		}
@@ -233,8 +233,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 		}
 		CustomAttributesVM customAttributesVM;
 
+		readonly ModuleDef module;
+
 		public FieldOptionsVM(FieldDefOptions options, ModuleDef module, Language language, TypeDef ownerType)
 		{
+			this.module = module;
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(module, language) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
@@ -251,7 +254,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 
 			this.constantVM = new ConstantVM(options.Constant == null ? null : options.Constant.Value, "Default value for this field");
 			ConstantVM.PropertyChanged += constantVM_PropertyChanged;
-			this.marshalTypeVM = new MarshalTypeVM(module, language, ownerType);
+			this.marshalTypeVM = new MarshalTypeVM(module, language, ownerType, null);
 			MarshalTypeVM.PropertyChanged += marshalTypeVM_PropertyChanged;
 			this.fieldOffset = new NullableUInt32VM(a => HasErrorUpdated());
 			this.initialValue = new HexStringVM(a => HasErrorUpdated());

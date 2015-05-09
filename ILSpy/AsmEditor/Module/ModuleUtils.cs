@@ -45,6 +45,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		{
 			var clrValues = ClrVersionValues.GetValues(clrVersion);
 			var module = new ModuleDefUser(name, mvid, clrValues.CorLibRef);
+			module.UpdateRowId(module);
 			module.RuntimeVersion = clrValues.RuntimeVersion;
 			module.Cor20HeaderRuntimeVersion = clrValues.Cor20HeaderRuntimeVersion;
 			module.TablesHeaderVersion = clrValues.TablesHeaderVersion;
@@ -54,7 +55,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 
 		public static AssemblyDef AddToNewAssemblyDef(ModuleDef module, ModuleKind moduleKind, out Characteristics characteristics)
 		{
-			var asmDef = new AssemblyDefUser(GetAssemblyName(module));
+			var asmDef = module.UpdateRowId(new AssemblyDefUser(GetAssemblyName(module)));
 			asmDef.Modules.Add(module);
 			WriteNewModuleKind(module, moduleKind, out characteristics);
 			return asmDef;

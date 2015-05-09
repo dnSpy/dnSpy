@@ -55,13 +55,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			this.DeclSecurities.AddRange(type.DeclSecurities);
 		}
 
-		public TypeDef CopyTo(TypeDef type)
+		public TypeDef CopyTo(TypeDef type, ModuleDef ownerModule)
 		{
 			type.Attributes = this.Attributes;
 			type.Namespace = this.Namespace;
 			type.Name = this.Name;
 			if (PackingSize != null || ClassSize != null)
-				type.ClassLayout = new ClassLayoutUser(PackingSize ?? 0, ClassSize ?? 0);
+				type.ClassLayout = ownerModule.UpdateRowId(new ClassLayoutUser(PackingSize ?? 0, ClassSize ?? 0));
 			else
 				type.ClassLayout = null;
 			type.BaseType = this.BaseType;
@@ -72,9 +72,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			return type;
 		}
 
-		public TypeDef CreateTypeDef()
+		public TypeDef CreateTypeDef(ModuleDef ownerModule)
 		{
-			return CopyTo(new TypeDefUser(UTF8String.Empty));
+			return ownerModule.UpdateRowId(CopyTo(new TypeDefUser(UTF8String.Empty), ownerModule));
 		}
 
 		public static TypeDefOptions Create(UTF8String ns, UTF8String name, ITypeDefOrRef baseType, bool isNestedType)

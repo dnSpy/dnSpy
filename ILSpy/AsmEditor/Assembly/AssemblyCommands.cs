@@ -279,7 +279,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 		CreateAssemblyCommand(AssemblyOptions options)
 		{
 			var module = Module.ModuleUtils.CreateModule(options.Name, Guid.NewGuid(), options.ClrVersion, ModuleKind.Dll);
-			options.CreateAssemblyDef().Modules.Add(module);
+			options.CreateAssemblyDef(module).Modules.Add(module);
 			this.asmNodeCreator = new AssemblyTreeNodeCreator(new LoadedAssembly(MainWindow.Instance.CurrentAssemblyList, module));
 		}
 

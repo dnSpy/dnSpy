@@ -32,6 +32,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 		public ImplMap ImplMap;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 		public List<DeclSecurity> DeclSecurities = new List<DeclSecurity>();
+		public List<ParamDef> ParamDefs = new List<ParamDef>();
 
 		public MethodDefOptions()
 		{
@@ -46,6 +47,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			this.ImplMap = method.ImplMap;
 			this.CustomAttributes.AddRange(method.CustomAttributes);
 			this.DeclSecurities.AddRange(method.DeclSecurities);
+			this.ParamDefs.AddRange(method.ParamDefs);
 		}
 
 		public MethodDef CopyTo(MethodDef method)
@@ -59,12 +61,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			method.CustomAttributes.AddRange(CustomAttributes);
 			method.DeclSecurities.Clear();
 			method.DeclSecurities.AddRange(DeclSecurities);
+			method.ParamDefs.Clear();
+			method.ParamDefs.AddRange(ParamDefs);
+			method.Parameters.UpdateParameterTypes();
 			return method;
 		}
 
-		public MethodDef CreateMethodDef()
+		public MethodDef CreateMethodDef(ModuleDef ownerModule)
 		{
-			return CopyTo(new MethodDefUser());
+			return ownerModule.UpdateRowId(CopyTo(new MethodDefUser()));
 		}
 
 		public static MethodDefOptions Create(UTF8String name, MethodSig methodSig)

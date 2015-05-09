@@ -243,7 +243,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreateEventDefCommand((TypeTreeNode)ownerNode, data.CreateEventDefOptions()));
+			UndoCommandManager.Instance.Add(new CreateEventDefCommand(typeNode, data.CreateEventDefOptions()));
 		}
 
 		readonly TypeTreeNode ownerNode;
@@ -252,7 +252,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 		CreateEventDefCommand(TypeTreeNode ownerNode, EventDefOptions options)
 		{
 			this.ownerNode = ownerNode;
-			this.eventNode = new EventTreeNode(options.CreateEventDef());
+			this.eventNode = new EventTreeNode(options.CreateEventDef(ownerNode.TypeDefinition.Module));
 		}
 
 		public string Description {

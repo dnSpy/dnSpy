@@ -20,49 +20,46 @@
 using System.Collections.Generic;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Event
+namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
-	sealed class EventDefOptions
+	sealed class ParamDefOptions
 	{
-		public EventAttributes Attributes;
 		public UTF8String Name;
-		public ITypeDefOrRef EventType;
+		public ushort Sequence;
+		public ParamAttributes Attributes;
+		public Constant Constant;
+		public MarshalType MarshalType;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
-		public EventDefOptions()
+		public ParamDefOptions()
 		{
 		}
 
-		public EventDefOptions(EventDef evt)
+		public ParamDefOptions(ParamDef pd)
 		{
-			this.Attributes = evt.Attributes;
-			this.Name = evt.Name;
-			this.EventType = evt.EventType;
-			this.CustomAttributes.AddRange(evt.CustomAttributes);
+			this.Name = pd.Name;
+			this.Sequence = pd.Sequence;
+			this.Attributes = pd.Attributes;
+			this.Constant = pd.Constant;
+			this.MarshalType = pd.MarshalType;
+			this.CustomAttributes.AddRange(pd.CustomAttributes);
 		}
 
-		public EventDef CopyTo(EventDef evt)
+		public ParamDef CopyTo(ParamDef pd)
 		{
-			evt.Attributes = this.Attributes;
-			evt.Name = this.Name;
-			evt.EventType = this.EventType;
-			evt.CustomAttributes.Clear();
-			evt.CustomAttributes.AddRange(CustomAttributes);
-			return evt;
+			pd.Name = this.Name;
+			pd.Sequence = this.Sequence;
+			pd.Attributes = this.Attributes;
+			pd.Constant = this.Constant;
+			pd.MarshalType = this.MarshalType;
+			pd.CustomAttributes.Clear();
+			pd.CustomAttributes.AddRange(CustomAttributes);
+			return pd;
 		}
 
-		public EventDef CreateEventDef(ModuleDef ownerModule)
+		public ParamDef CreateParamDef(ModuleDef ownerModule)
 		{
-			return ownerModule.UpdateRowId(CopyTo(new EventDefUser()));
-		}
-
-		public static EventDefOptions Create(UTF8String name, ITypeDefOrRef eventType)
-		{
-			return new EventDefOptions {
-				Attributes = 0,
-				Name = name,
-				EventType = eventType,
-			};
+			return ownerModule.UpdateRowId(CopyTo(new ParamDefUser()));
 		}
 	}
 }

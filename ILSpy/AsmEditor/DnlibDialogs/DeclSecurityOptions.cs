@@ -58,7 +58,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		public DeclSecurity Create(ModuleDef module)
 		{
-			return CopyTo(module, new DeclSecurityUser());
+			return module.UpdateRowId(CopyTo(module, new DeclSecurityUser()));
 		}
 	}
 }

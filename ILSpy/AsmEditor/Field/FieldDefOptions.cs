@@ -70,9 +70,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			return field;
 		}
 
-		public FieldDef CreateFieldDef()
+		public FieldDef CreateFieldDef(ModuleDef ownerModule)
 		{
-			return CopyTo(new FieldDefUser());
+			return ownerModule.UpdateRowId(CopyTo(new FieldDefUser()));
 		}
 
 		public static FieldDefOptions Create(UTF8String name, FieldSig fieldSig)

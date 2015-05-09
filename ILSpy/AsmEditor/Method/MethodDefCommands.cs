@@ -224,7 +224,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreateMethodDefCommand((TypeTreeNode)ownerNode, data.CreateMethodDefOptions()));
+			UndoCommandManager.Instance.Add(new CreateMethodDefCommand(typeNode, data.CreateMethodDefOptions()));
 		}
 
 		readonly TypeTreeNode ownerNode;
@@ -233,7 +233,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 		CreateMethodDefCommand(TypeTreeNode ownerNode, MethodDefOptions options)
 		{
 			this.ownerNode = ownerNode;
-			this.methodNode = new MethodTreeNode(options.CreateMethodDef());
+			this.methodNode = new MethodTreeNode(options.CreateMethodDef(ownerNode.TypeDefinition.Module));
 		}
 
 		public string Description {

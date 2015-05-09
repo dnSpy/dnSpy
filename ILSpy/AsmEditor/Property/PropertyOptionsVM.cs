@@ -103,7 +103,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 		readonly MethodSigCreatorVM methodSigCreator;
 
 		public Constant Constant {
-			get { return HasDefault ? new ConstantUser(constantVM.Value) : null; }
+			get { return HasDefault ? module.UpdateRowId(new ConstantUser(constantVM.Value)) : null; }
 			set {
 				if (value == null) {
 					HasDefault = false;
@@ -126,8 +126,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 		}
 		CustomAttributesVM customAttributesVM;
 
+		readonly ModuleDef module;
+
 		public PropertyOptionsVM(PropertyDefOptions options, ModuleDef module, Language language, TypeDef ownerType)
 		{
+			this.module = module;
 			this.origOptions = options;
 
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(module, language) {

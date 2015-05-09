@@ -243,7 +243,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			if (modNode == null)
 				throw new InvalidOperationException();
 			this.nsNodeCreator = new NamespaceTreeNodeCreator(options.Namespace, modNode);
-			this.typeNode = new TypeTreeNode(options.CreateTypeDef(), modNode.Parent as AssemblyTreeNode ?? modNode);
+			this.typeNode = new TypeTreeNode(options.CreateTypeDef(modNode.LoadedAssembly.ModuleDefinition), modNode.Parent as AssemblyTreeNode ?? modNode);
 		}
 
 		public string Description {
@@ -351,7 +351,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			Debug.Assert(modNode != null);
 			if (modNode == null)
 				throw new InvalidOperationException();
-			this.nestedType = new TypeTreeNode(options.CreateTypeDef(), modNode.Parent as AssemblyTreeNode ?? modNode);
+			this.nestedType = new TypeTreeNode(options.CreateTypeDef(modNode.LoadedAssembly.ModuleDefinition), modNode.Parent as AssemblyTreeNode ?? modNode);
 		}
 
 		public string Description {
@@ -435,9 +435,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new TypeDefSettingsCommand(typeNode, data.CreateTypeDefOptions()));
+			UndoCommandManager.Instance.Add(new TypeDefSettingsCommand(module, typeNode, data.CreateTypeDefOptions()));
 		}
 
+		readonly ModuleDef module;
 		readonly TypeTreeNode typeNode;
 		readonly TypeDefOptions newOptions;
 		readonly TypeDefOptions origOptions;
@@ -446,8 +447,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		readonly int origParentChildIndex;
 		readonly bool nameChanged;
 
-		TypeDefSettingsCommand(TypeTreeNode typeNode, TypeDefOptions options)
+		TypeDefSettingsCommand(ModuleDef module, TypeTreeNode typeNode, TypeDefOptions options)
 		{
+			this.module = module;
 			this.typeNode = typeNode;
 			this.newOptions = options;
 			this.origOptions = new TypeDefOptions(typeNode.TypeDefinition);
@@ -479,7 +481,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 				if (!b)
 					throw new InvalidOperationException();
 				origParentNode.Children.RemoveAt(origParentChildIndex);
-				newOptions.CopyTo(typeNode.TypeDefinition);
+				newOptions.CopyTo(typeNode.TypeDefinition, module);
 
 				nsNodeCreator.Add();
 				nsNodeCreator.NamespaceTreeNode.AddToChildren(typeNode);
@@ -492,13 +494,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 				if (!b)
 					throw new InvalidOperationException();
 				origParentNode.Children.RemoveAt(origParentChildIndex);
-				newOptions.CopyTo(typeNode.TypeDefinition);
+				newOptions.CopyTo(typeNode.TypeDefinition, module);
 
 				origParentNode.AddToChildren(typeNode);
 				typeNode.OnReadded();
 			}
 			else
-				newOptions.CopyTo(typeNode.TypeDefinition);
+				newOptions.CopyTo(typeNode.TypeDefinition, module);
 			typeNode.RaiseUIPropsChanged();
 		}
 
@@ -512,7 +514,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 					throw new InvalidOperationException();
 				nsNodeCreator.Remove();
 
-				origOptions.CopyTo(typeNode.TypeDefinition);
+				origOptions.CopyTo(typeNode.TypeDefinition, module);
 				origParentNode.Children.Insert(origParentChildIndex, typeNode);
 				typeNode.OnReadded();
 			}
@@ -523,12 +525,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 				if (!b)
 					throw new InvalidOperationException();
 
-				origOptions.CopyTo(typeNode.TypeDefinition);
+				origOptions.CopyTo(typeNode.TypeDefinition, module);
 				origParentNode.Children.Insert(origParentChildIndex, typeNode);
 				typeNode.OnReadded();
 			}
 			else
-				origOptions.CopyTo(typeNode.TypeDefinition);
+				origOptions.CopyTo(typeNode.TypeDefinition, module);
 			typeNode.RaiseUIPropsChanged();
 		}
 

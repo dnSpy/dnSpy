@@ -54,9 +54,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			return evt;
 		}
 
-		public PropertyDef CreatePropertyDef()
+		public PropertyDef CreatePropertyDef(ModuleDef ownerModule)
 		{
-			return CopyTo(new PropertyDefUser());
+			return ownerModule.UpdateRowId(CopyTo(new PropertyDefUser()));
 		}
 
 		public static PropertyDefOptions Create(ModuleDef module, UTF8String name, bool isInstance)

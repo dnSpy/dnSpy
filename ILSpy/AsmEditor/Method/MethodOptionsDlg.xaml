@@ -139,6 +139,9 @@
 					<dnlibdlgs:MethodSigCreatorControl Grid.Row="0" Margin="0 5 0 0" DataContext="{Binding MethodSigCreator}" />
 				</ScrollViewer>
 			</TabItem>
+			<TabItem Header="Parameters">
+				<dnlibdlgs:ParamDefsControl Margin="0 5 0 0" DataContext="{Binding ParamDefsVM}" />
+			</TabItem>
 			<TabItem Header="ImplMap">
 				<ScrollViewer VerticalScrollBarVisibility="Auto">
 					<dnlibdlgs:ImplMapControl Margin="0 5 0 0" DataContext="{Binding ImplMapVM}" />

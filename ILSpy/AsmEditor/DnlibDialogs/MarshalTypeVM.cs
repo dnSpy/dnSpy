@@ -380,14 +380,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			OnPropertyChanged("TypeString");
 		}
 
-		public MarshalTypeVM(ModuleDef module, Language language, TypeDef ownerType)
+		public MarshalTypeVM(ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
 		{
 			this.nativeTypeVM = new EnumListVM(nativeTypeList, (a, b) => { OnNativeTypeChanged(); TypeStringUpdated(); });
 			FixNativeTypeEnum(this.NativeType, false);
 			this.rawMarshalType_data = new HexStringVM(a => { HasErrorUpdated(); TypeStringUpdated(); });
 			this.fixedSysStringMarshalType_size = new NullableCompressedUInt32(a => { HasErrorUpdated(); TypeStringUpdated(); });
 			this.safeArrayMarshalType_variantTypeVM = new EnumListVM(variantTypeList, (a, b) => { OnSafeArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
-			this.safeArrayMarshalType_userDefinedSubType_typeSigCreator = CreateTypeSigCreatorVM(module, language, ownerType, true, safeArrayMarshalType_userDefinedSubType_typeSigCreator_PropertyChanged);
+			this.safeArrayMarshalType_userDefinedSubType_typeSigCreator = CreateTypeSigCreatorVM(module, language, ownerType, ownerMethod, true, safeArrayMarshalType_userDefinedSubType_typeSigCreator_PropertyChanged);
 			this.fixedArrayMarshalType_size = new NullableCompressedUInt32(a => { OnFixedArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
 			this.fixedArrayMarshalType_nativeTypeVM = new EnumListVM(nativeTypeList, (a, b) => { OnFixedArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
 			FixNativeTypeEnum(FixedArrayMarshalType_NativeType, true);
@@ -396,7 +396,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			this.arrayMarshalType_paramNum = new NullableCompressedUInt32(a => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
 			this.arrayMarshalType_numElems = new NullableCompressedUInt32(a => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
 			this.arrayMarshalType_flags = new NullableCompressedUInt32(a => { OnArrayMarshalTypeIsEnabledChanged(); TypeStringUpdated(); });
-			this.customMarshalType_custMarshaler_typeSigCreator = CreateTypeSigCreatorVM(module, language, ownerType, true, customMarshalType_custMarshaler_typeSigCreator_PropertyChanged);
+			this.customMarshalType_custMarshaler_typeSigCreator = CreateTypeSigCreatorVM(module, language, ownerType, ownerMethod, true, customMarshalType_custMarshaler_typeSigCreator_PropertyChanged);
 			this.interfaceMarshalType_iidParamIndex = new NullableCompressedUInt32(a => { HasErrorUpdated(); TypeStringUpdated(); });
 		}
 
@@ -459,17 +459,20 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			HasErrorUpdated();
 		}
 
-		static TypeSigCreatorVM CreateTypeSigCreatorVM(ModuleDef module, Language language, TypeDef ownerType, bool allowNullTypeSig, PropertyChangedEventHandler handler)
+		static TypeSigCreatorVM CreateTypeSigCreatorVM(ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod, bool allowNullTypeSig, PropertyChangedEventHandler handler)
 		{
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(module, language) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = false,
 				OwnerType = ownerType,
+				OwnerMethod = ownerMethod,
 				NullTypeSigAllowed = allowNullTypeSig,
 			};
 			if (ownerType != null && ownerType.GenericParameters.Count == 0)
 				typeSigCreatorOptions.CanAddGenericTypeVar = false;
+			if (ownerMethod != null && ownerMethod.GenericParameters.Count > 0)
+				typeSigCreatorOptions.CanAddGenericMethodVar = true;
 			var typeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			typeSigCreator.PropertyChanged += handler;
 			return typeSigCreator;

@@ -321,6 +321,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 		}
 		DeclSecuritiesVM declSecuritiesVM;
 
+		public ParamDefsVM ParamDefsVM {
+			get { return paramDefsVM; }
+		}
+		ParamDefsVM paramDefsVM;
+
 		readonly ModuleDef module;
 
 		public MethodOptionsVM(MethodDefOptions options, ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
@@ -346,6 +351,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 
 			this.customAttributesVM = new CustomAttributesVM(module, language);
 			this.declSecuritiesVM = new DeclSecuritiesVM(module, language);
+			this.paramDefsVM = new ParamDefsVM(module, language, ownerType, ownerMethod);
 
 			this.origOptions = options;
 
@@ -395,6 +401,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			VtableLayout.SelectedItem = (Method.VtableLayout)((int)(options.Attributes & MethodAttributes.VtableLayoutMask) >> 8);
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 			DeclSecuritiesVM.InitializeFrom(options.DeclSecurities);
+			ParamDefsVM.InitializeFrom(options.ParamDefs);
 		}
 
 		MethodDefOptions CopyTo(MethodDefOptions options)
@@ -408,6 +415,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			options.CustomAttributes.AddRange(CustomAttributesVM.CustomAttributeCollection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			options.DeclSecurities.Clear();
 			options.DeclSecurities.AddRange(DeclSecuritiesVM.DeclSecurityCollection.Select(a => a.CreateDeclSecurityOptions().Create(module)));
+			options.ParamDefs.Clear();
+			options.ParamDefs.AddRange(ParamDefsVM.ParamDefCollection.Select(a => a.CreateParamDefOptions().CreateParamDef(module)));
 			if (ModelUtils.GetHasSecurityBit(options.DeclSecurities, options.CustomAttributes))
 				options.Attributes |= MethodAttributes.HasSecurity;
 			else
