@@ -17,26 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-using System.Windows.Controls;
+using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
+namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 {
-	/// <summary>
-	/// Interaction logic for ParamDefControl.xaml
-	/// </summary>
-	public partial class ParamDefControl : UserControl
+	interface IEditGenericParam
 	{
-		public ParamDefControl()
-		{
-			InitializeComponent();
-			Loaded += ParamDefControl_Loaded;
-		}
-
-		void ParamDefControl_Loaded(object sender, RoutedEventArgs e)
-		{
-			// I can't get it to work with XAML so do it with code
-			nameTextBox.Focus();
-		}
+		/// <summary>
+		/// Lets the user edit a generic parameter. Returns null if user canceled.
+		/// </summary>
+		/// <param name="title">Window UI title</param>
+		/// <param name="gp">Generic parameter</param>
+		/// <returns></returns>
+		GenericParamVM Edit(string title, GenericParamVM gp);
 	}
 }

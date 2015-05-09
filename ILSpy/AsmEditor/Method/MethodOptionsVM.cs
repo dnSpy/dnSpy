@@ -326,6 +326,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 		}
 		ParamDefsVM paramDefsVM;
 
+		public GenericParamsVM GenericParamsVM {
+			get { return genericParamsVM; }
+		}
+		GenericParamsVM genericParamsVM;
+
 		readonly ModuleDef module;
 
 		public MethodOptionsVM(MethodDefOptions options, ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
@@ -352,6 +357,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			this.customAttributesVM = new CustomAttributesVM(module, language);
 			this.declSecuritiesVM = new DeclSecuritiesVM(module, language);
 			this.paramDefsVM = new ParamDefsVM(module, language, ownerType, ownerMethod);
+			this.genericParamsVM = new GenericParamsVM(module, language, ownerType, ownerMethod);
 
 			this.origOptions = options;
 
@@ -402,6 +408,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 			DeclSecuritiesVM.InitializeFrom(options.DeclSecurities);
 			ParamDefsVM.InitializeFrom(options.ParamDefs);
+			GenericParamsVM.InitializeFrom(options.GenericParameters);
 		}
 
 		MethodDefOptions CopyTo(MethodDefOptions options)
@@ -417,6 +424,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			options.DeclSecurities.AddRange(DeclSecuritiesVM.DeclSecurityCollection.Select(a => a.CreateDeclSecurityOptions().Create(module)));
 			options.ParamDefs.Clear();
 			options.ParamDefs.AddRange(ParamDefsVM.ParamDefCollection.Select(a => a.CreateParamDefOptions().CreateParamDef(module)));
+			options.GenericParameters.Clear();
+			options.GenericParameters.AddRange(GenericParamsVM.GenericParamCollection.Select(a => a.CreateGenericParamOptions().CreateGenericParam(module)));
 			if (ModelUtils.GetHasSecurityBit(options.DeclSecurities, options.CustomAttributes))
 				options.Attributes |= MethodAttributes.HasSecurity;
 			else

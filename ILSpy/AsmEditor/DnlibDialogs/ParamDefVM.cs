@@ -127,16 +127,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		public Constant Constant {
 			get { return HasDefault ? module.UpdateRowId(new ConstantUser(ConstantVM.Value)) : null; }
-			set {
-				if (value == null) {
-					HasDefault = false;
-					ConstantVM.Value = null;
-				}
-				else {
-					HasDefault = true;
-					ConstantVM.Value = value.Value;
-				}
-			}
 		}
 
 		public ConstantVM ConstantVM {
@@ -207,7 +197,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			Name = options.Name;
 			Sequence.Value = options.Sequence;
 			Attributes = options.Attributes;
-			Constant = options.Constant;
+			if (options.Constant != null) {
+				HasDefault = true;
+				ConstantVM.Value = options.Constant.Type == ElementType.Class ? null : options.Constant.Value;
+			}
+			else {
+				HasDefault = false;
+				ConstantVM.Value = null;
+			}
 			MarshalTypeVM.Type = options.MarshalType;
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}

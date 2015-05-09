@@ -17,26 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-using System.Windows.Controls;
+using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
+namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 {
-	/// <summary>
-	/// Interaction logic for ParamDefControl.xaml
-	/// </summary>
-	public partial class ParamDefControl : UserControl
+	interface IEditTypeDefOrRefAndCA
 	{
-		public ParamDefControl()
-		{
-			InitializeComponent();
-			Loaded += ParamDefControl_Loaded;
-		}
-
-		void ParamDefControl_Loaded(object sender, RoutedEventArgs e)
-		{
-			// I can't get it to work with XAML so do it with code
-			nameTextBox.Focus();
-		}
+		/// <summary>
+		/// Lets the user edit a type and custom attributes. Returns null if user canceled.
+		/// </summary>
+		/// <param name="title">Window UI title</param>
+		/// <param name="obj">Type and CAs</param>
+		/// <returns></returns>
+		TypeDefOrRefAndCAVM Edit(string title, TypeDefOrRefAndCAVM obj);
 	}
 }

@@ -26,12 +26,12 @@ using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
-	sealed class ParamDefsVM : ViewModelBase
+	sealed class GenericParamsVM : ViewModelBase
 	{
-		public IEditParamDef EditParamDef {
-			set { editParamDef = value; }
+		public IEditGenericParam EditGenericParam {
+			set { editGenericParam = value; }
 		}
-		IEditParamDef editParamDef;
+		IEditGenericParam editGenericParam;
 
 		public ICommand EditCommand {
 			get { return new RelayCommand(a => EditCurrent(), a => EditCurrentCanExecute()); }
@@ -41,17 +41,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			get { return new RelayCommand(a => AddCurrent(), a => AddCurrentCanExecute()); }
 		}
 
-		public MyObservableCollection<ParamDefVM> ParamDefCollection {
-			get { return paramDefCollection; }
+		public MyObservableCollection<GenericParamVM> GenericParamCollection {
+			get { return genericParamCollection; }
 		}
-		readonly MyObservableCollection<ParamDefVM> paramDefCollection = new MyObservableCollection<ParamDefVM>();
+		readonly MyObservableCollection<GenericParamVM> genericParamCollection = new MyObservableCollection<GenericParamVM>();
 
 		readonly ModuleDef module;
 		readonly Language language;
 		readonly TypeDef ownerType;
 		readonly MethodDef ownerMethod;
 
-		public ParamDefsVM(ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
+		public GenericParamsVM(ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
 		{
 			this.module = module;
 			this.language = language;
@@ -59,29 +59,29 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			this.ownerMethod = ownerMethod;
 		}
 
-		public void InitializeFrom(IEnumerable<ParamDef> pds)
+		public void InitializeFrom(IEnumerable<GenericParam> gps)
 		{
-			ParamDefCollection.Clear();
-			ParamDefCollection.AddRange(pds.Select(a => new ParamDefVM(new ParamDefOptions(a), module, language, ownerType, ownerMethod)));
+			GenericParamCollection.Clear();
+			GenericParamCollection.AddRange(gps.Select(a => new GenericParamVM(new GenericParamOptions(a), module, language, ownerType, ownerMethod)));
 		}
 
 		public void EditCurrent()
 		{
 			if (!EditCurrentCanExecute())
 				return;
-			if (editParamDef == null)
+			if (editGenericParam == null)
 				throw new InvalidOperationException();
-			int index = ParamDefCollection.SelectedIndex;
-			var pdVm = editParamDef.Edit("Edit Parameter", new ParamDefVM(ParamDefCollection[index].CreateParamDefOptions(), module, language, ownerType, ownerMethod));
-			if (pdVm != null) {
-				ParamDefCollection[index] = pdVm;
-				ParamDefCollection.SelectedIndex = index;
+			int index = GenericParamCollection.SelectedIndex;
+			var gpVm = editGenericParam.Edit("Edit Generic Parameter", new GenericParamVM(GenericParamCollection[index].CreateGenericParamOptions(), module, language, ownerType, ownerMethod));
+			if (gpVm != null) {
+				GenericParamCollection[index] = gpVm;
+				GenericParamCollection.SelectedIndex = index;
 			}
 		}
 
 		bool EditCurrentCanExecute()
 		{
-			return ParamDefCollection.SelectedIndex >= 0 && ParamDefCollection.SelectedIndex < ParamDefCollection.Count;
+			return GenericParamCollection.SelectedIndex >= 0 && GenericParamCollection.SelectedIndex < GenericParamCollection.Count;
 		}
 
 		void AddCurrent()
@@ -89,23 +89,23 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			if (!AddCurrentCanExecute())
 				return;
 
-			if (editParamDef == null)
+			if (editGenericParam == null)
 				throw new InvalidOperationException();
-			var pdVm = editParamDef.Edit("Create Parameter", new ParamDefVM(new ParamDefOptions(), module, language, ownerType, ownerMethod));
-			if (pdVm != null) {
-				int index = GetParamDefCollectionIndex(pdVm.Sequence.Value);
-				ParamDefCollection.Insert(index, pdVm);
-				ParamDefCollection.SelectedIndex = index;
+			var gpVm = editGenericParam.Edit("Create Generic Parameter", new GenericParamVM(new GenericParamOptions(), module, language, ownerType, ownerMethod));
+			if (gpVm != null) {
+				int index = GetGenericParamCollectionIndex(gpVm.Number.Value);
+				GenericParamCollection.Insert(index, gpVm);
+				GenericParamCollection.SelectedIndex = index;
 			}
 		}
 
-		int GetParamDefCollectionIndex(int sequence)
+		int GetGenericParamCollectionIndex(int number)
 		{
-			for (int i = 0; i < ParamDefCollection.Count; i++) {
-				if (sequence < ParamDefCollection[i].Sequence.Value)
+			for (int i = 0; i < GenericParamCollection.Count; i++) {
+				if (number < GenericParamCollection[i].Number.Value)
 					return i;
 			}
-			return ParamDefCollection.Count;
+			return GenericParamCollection.Count;
 		}
 
 		bool AddCurrentCanExecute()

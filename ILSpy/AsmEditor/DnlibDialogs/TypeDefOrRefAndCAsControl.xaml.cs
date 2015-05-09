@@ -19,24 +19,35 @@
 
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
 	/// <summary>
-	/// Interaction logic for ParamDefControl.xaml
+	/// Interaction logic for TypeDefOrRefAndCAsControl.xaml
 	/// </summary>
-	public partial class ParamDefControl : UserControl
+	public partial class TypeDefOrRefAndCAsControl : UserControl
 	{
-		public ParamDefControl()
+		public TypeDefOrRefAndCAsControl()
 		{
 			InitializeComponent();
-			Loaded += ParamDefControl_Loaded;
+			DataContextChanged += (s, e) => {
+				var data = DataContext as TypeDefOrRefAndCAsVM;
+				if (data != null) {
+					var ownerWindow = Window.GetWindow(this);
+					data.EditTypeDefOrRefAndCA = new EditTypeDefOrRefAndCA(ownerWindow);
+				}
+			};
 		}
 
-		void ParamDefControl_Loaded(object sender, RoutedEventArgs e)
+		private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			// I can't get it to work with XAML so do it with code
-			nameTextBox.Focus();
+			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
+				return;
+			var data = DataContext as TypeDefOrRefAndCAsVM;
+			if (data != null)
+				data.EditCurrent();
 		}
 	}
 }

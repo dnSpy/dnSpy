@@ -169,6 +169,18 @@
     <Compile Include="AsmEditor\DnlibDialogs\DeclSecurityVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\DlgUtils.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\EnumDataFieldVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\GenericParamControl.xaml.cs">
+      <DependentUpon>GenericParamControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\GenericParamDlg.xaml.cs">
+      <DependentUpon>GenericParamDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\GenericParamOptions.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\GenericParamsControl.xaml.cs">
+      <DependentUpon>GenericParamsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\GenericParamsVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\GenericParamVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\ImplMapControl.xaml.cs">
       <DependentUpon>ImplMapControl.xaml</DependentUpon>
     </Compile>
@@ -211,6 +223,18 @@
       <DependentUpon>SecurityAttributeDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\DnlibDialogs\SecurityAttributeVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\TypeDefOrRefAndCAControl.xaml.cs">
+      <DependentUpon>TypeDefOrRefAndCAControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\TypeDefOrRefAndCADlg.xaml.cs">
+      <DependentUpon>TypeDefOrRefAndCADlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\TypeDefOrRefAndCAOptions.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\TypeDefOrRefAndCAsControl.xaml.cs">
+      <DependentUpon>TypeDefOrRefAndCAsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\TypeDefOrRefAndCAsVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\TypeDefOrRefAndCAVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\TypeSigCreatorControl.xaml.cs">
       <DependentUpon>TypeSigCreatorControl.xaml</DependentUpon>
     </Compile>
@@ -300,16 +324,20 @@
     <Compile Include="AsmEditor\ViewHelpers\DnlibTypePicker.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditCustomAttribute.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditDeclSecurity.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\EditGenericParam.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditParamDef.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditSecurityAttribute.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\EditTypeDefOrRefAndCA.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ICreateConstantType.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ICreateMethodPropertySig.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ICreateTypeSigArray.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IDnlibTypePicker.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IEditCustomAttribute.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IEditDeclSecurity.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\IEditGenericParam.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IEditParamDef.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IEditSecurityAttribute.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\IEditTypeDefOrRefAndCA.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IMakeVisible.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IOpenAssembly.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IOpenPublicKeyFile.cs" />
@@ -654,6 +682,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="AsmEditor\DnlibDialogs\GenericParamControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\GenericParamDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\GenericParamsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AsmEditor\DnlibDialogs\ImplMapControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -691,6 +731,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\DnlibDialogs\SecurityAttributeDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\TypeDefOrRefAndCAControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\TypeDefOrRefAndCADlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\TypeDefOrRefAndCAsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

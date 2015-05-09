@@ -195,11 +195,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 
 		public override TreeViewNodeFilterResult GetFilterResult(TypeDef type)
 		{
-			var childrenFlags = VisibleMembersFlags.FieldDef | VisibleMembersFlags.MethodDef |
-					VisibleMembersFlags.Ctor | VisibleMembersFlags.PropertyDef |
-					VisibleMembersFlags.EventDef | VisibleMembersFlags.BaseTypes |
-					VisibleMembersFlags.DerivedTypes | VisibleMembersFlags.MethodBody |
-					VisibleMembersFlags.ParamDefs | VisibleMembersFlags.ParamDef;
+			var childrenFlags = VisibleMembersFlags.AnyTypeDef | VisibleMembersFlags.FieldDef |
+					VisibleMembersFlags.MethodDef | VisibleMembersFlags.Ctor |
+					VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef |
+					VisibleMembersFlags.BaseTypes | VisibleMembersFlags.DerivedTypes |
+					VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
+					VisibleMembersFlags.ParamDef;
 			var visibleFlags = VisibleMembersFlags.AnyTypeDef | childrenFlags;
 			if ((flags & visibleFlags) == 0)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);

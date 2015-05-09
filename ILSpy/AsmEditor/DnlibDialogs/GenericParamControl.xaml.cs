@@ -23,11 +23,11 @@ using System.Windows.Controls;
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
 	/// <summary>
-	/// Interaction logic for ParamDefControl.xaml
+	/// Interaction logic for GenericParamControl.xaml
 	/// </summary>
-	public partial class ParamDefControl : UserControl
+	public partial class GenericParamControl : UserControl
 	{
-		public ParamDefControl()
+		public GenericParamControl()
 		{
 			InitializeComponent();
 			Loaded += ParamDefControl_Loaded;

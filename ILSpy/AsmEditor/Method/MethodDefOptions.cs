@@ -33,6 +33,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 		public List<DeclSecurity> DeclSecurities = new List<DeclSecurity>();
 		public List<ParamDef> ParamDefs = new List<ParamDef>();
+		public List<GenericParam> GenericParameters = new List<GenericParam>();
 
 		public MethodDefOptions()
 		{
@@ -48,6 +49,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			this.CustomAttributes.AddRange(method.CustomAttributes);
 			this.DeclSecurities.AddRange(method.DeclSecurities);
 			this.ParamDefs.AddRange(method.ParamDefs);
+			this.GenericParameters.AddRange(method.GenericParameters);
 		}
 
 		public MethodDef CopyTo(MethodDef method)
@@ -64,6 +66,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			method.ParamDefs.Clear();
 			method.ParamDefs.AddRange(ParamDefs);
 			method.Parameters.UpdateParameterTypes();
+			method.GenericParameters.Clear();
+			method.GenericParameters.AddRange(GenericParameters);
 			return method;
 		}
 

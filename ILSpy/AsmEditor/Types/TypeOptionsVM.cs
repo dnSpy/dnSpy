@@ -306,6 +306,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		}
 		DeclSecuritiesVM declSecuritiesVM;
 
+		public GenericParamsVM GenericParamsVM {
+			get { return genericParamsVM; }
+		}
+		GenericParamsVM genericParamsVM;
+
+		public TypeDefOrRefAndCAsVM InterfaceImplsVM {
+			get { return typeDefOrRefAndCAsVM; }
+		}
+		TypeDefOrRefAndCAsVM typeDefOrRefAndCAsVM;
+
 		readonly ModuleDef module;
 
 		public TypeOptionsVM(TypeDefOptions options, ModuleDef module, Language language, TypeDef ownerType)
@@ -324,6 +334,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 
 			this.customAttributesVM = new CustomAttributesVM(module, language);
 			this.declSecuritiesVM = new DeclSecuritiesVM(module, language);
+			this.genericParamsVM = new GenericParamsVM(module, language, ownerType, null);
+			this.typeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM(module, language, ownerType, null, "Edit Interface Impl", "Create Interface Impl");
 
 			this.origOptions = options;
 			this.isNestedType = (options.Attributes & TypeAttributes.VisibilityMask) > TypeAttributes.Public;
@@ -546,6 +558,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			TypeCustomFormat.SelectedItem = (Types.TypeCustomFormat)(((int)options.Attributes >> 22) & 3);
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 			DeclSecuritiesVM.InitializeFrom(options.DeclSecurities);
+			GenericParamsVM.InitializeFrom(options.GenericParameters);
+			InterfaceImplsVM.InitializeFrom(options.Interfaces);
 		}
 
 		TypeDefOptions CopyTo(TypeDefOptions options)
@@ -560,6 +574,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			options.CustomAttributes.AddRange(CustomAttributesVM.CustomAttributeCollection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			options.DeclSecurities.Clear();
 			options.DeclSecurities.AddRange(DeclSecuritiesVM.DeclSecurityCollection.Select(a => a.CreateDeclSecurityOptions().Create(module)));
+			options.GenericParameters.Clear();
+			options.GenericParameters.AddRange(GenericParamsVM.GenericParamCollection.Select(a => a.CreateGenericParamOptions().CreateGenericParam(module)));
+			options.Interfaces.Clear();
+			options.Interfaces.AddRange(InterfaceImplsVM.TypeDefOrRefAndCACollection.Select(a => a.CreateTypeDefOrRefAndCAOptions().CreateInterfaceImpl(module)));
 			if (ModelUtils.GetHasSecurityBit(options.DeclSecurities, options.CustomAttributes))
 				options.Attributes |= TypeAttributes.HasSecurity;
 			else

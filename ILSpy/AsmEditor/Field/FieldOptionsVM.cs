@@ -177,16 +177,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 
 		public Constant Constant {
 			get { return HasDefault ? module.UpdateRowId(new ConstantUser(ConstantVM.Value)) : null; }
-			set {
-				if (value == null) {
-					HasDefault = false;
-					ConstantVM.Value = null;
-				}
-				else {
-					HasDefault = true;
-					ConstantVM.Value = value.Value;
-				}
-			}
 		}
 
 		public ConstantVM ConstantVM {
@@ -318,7 +308,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			RVA.Value = (uint)options.RVA;
 			InitialValue.Value = options.InitialValue;
 			ImplMap = options.ImplMap;
-			Constant = options.Constant;
+			if (options.Constant != null) {
+				HasDefault = true;
+				ConstantVM.Value = options.Constant.Type == ElementType.Class ? null : options.Constant.Value;
+			}
+			else {
+				HasDefault = false;
+				ConstantVM.Value = null;
+			}
 			FieldVisibility.SelectedItem = (Field.FieldVisibility)((int)(options.Attributes & FieldAttributes.FieldAccessMask) >> 0);
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}

@@ -502,6 +502,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			else
 				newOptions.CopyTo(typeNode.TypeDefinition, module);
 			typeNode.RaiseUIPropsChanged();
+			typeNode.InvalidateInterfacesNode();
 		}
 
 		public void Undo()
@@ -532,6 +533,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			else
 				origOptions.CopyTo(typeNode.TypeDefinition, module);
 			typeNode.RaiseUIPropsChanged();
+			typeNode.InvalidateInterfacesNode();
 		}
 
 		public IEnumerable<ILSpyTreeNode> TreeNodes {

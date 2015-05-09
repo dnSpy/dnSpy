@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Media;
 
@@ -105,7 +106,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 
 		static readonly Type[] typeOrder = new Type[] {
-			typeof(BaseTypesTreeNode),
+			typeof(BaseTypesTreeNode),	// InvalidateInterfacesNode() assumes this is first
 			typeof(DerivedTypesTreeNode),
 			typeof(TypeTreeNode),
 			typeof(FieldTreeNode),
@@ -268,6 +269,16 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			var asmNode = GetAssemblyIfNonNestedType();
 			if (asmNode != null)
 				asmNode.OnReadded(this);
+		}
+
+		internal void InvalidateInterfacesNode()
+		{
+			if (Children.Count == 0)
+				return;
+			Debug.Assert(Children[0] is BaseTypesTreeNode);
+			if (!(Children[0] is BaseTypesTreeNode))
+				throw new InvalidOperationException();
+			Children[0] = new BaseTypesTreeNode(type);
 		}
 	}
 }

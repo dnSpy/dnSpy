@@ -32,6 +32,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		public ITypeDefOrRef BaseType;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 		public List<DeclSecurity> DeclSecurities = new List<DeclSecurity>();
+		public List<GenericParam> GenericParameters = new List<GenericParam>();
+		public List<InterfaceImpl> Interfaces = new List<InterfaceImpl>();
 
 		public TypeDefOptions()
 		{
@@ -53,6 +55,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			this.BaseType = type.BaseType;
 			this.CustomAttributes.AddRange(type.CustomAttributes);
 			this.DeclSecurities.AddRange(type.DeclSecurities);
+			this.GenericParameters.AddRange(type.GenericParameters);
+			this.Interfaces.AddRange(type.Interfaces);
 		}
 
 		public TypeDef CopyTo(TypeDef type, ModuleDef ownerModule)
@@ -69,6 +73,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			type.CustomAttributes.AddRange(CustomAttributes);
 			type.DeclSecurities.Clear();
 			type.DeclSecurities.AddRange(DeclSecurities);
+			type.GenericParameters.Clear();
+			type.GenericParameters.AddRange(GenericParameters);
+			type.Interfaces.Clear();
+			type.Interfaces.AddRange(Interfaces);
 			return type;
 		}
 

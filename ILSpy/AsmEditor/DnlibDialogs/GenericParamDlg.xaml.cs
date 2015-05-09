@@ -17,26 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-using System.Windows.Controls;
-
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
 	/// <summary>
-	/// Interaction logic for ParamDefControl.xaml
+	/// Interaction logic for GenericParamDlg.xaml
 	/// </summary>
-	public partial class ParamDefControl : UserControl
+	public partial class GenericParamDlg : WindowBase
 	{
-		public ParamDefControl()
+		public GenericParamDlg()
 		{
 			InitializeComponent();
-			Loaded += ParamDefControl_Loaded;
-		}
-
-		void ParamDefControl_Loaded(object sender, RoutedEventArgs e)
-		{
-			// I can't get it to work with XAML so do it with code
-			nameTextBox.Focus();
 		}
 	}
 }

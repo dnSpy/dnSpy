@@ -104,16 +104,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 
 		public Constant Constant {
 			get { return HasDefault ? module.UpdateRowId(new ConstantUser(constantVM.Value)) : null; }
-			set {
-				if (value == null) {
-					HasDefault = false;
-					constantVM.Value = null;
-				}
-				else {
-					HasDefault = true;
-					constantVM.Value = value.Value;
-				}
-			}
 		}
 
 		public ConstantVM ConstantVM {
@@ -183,7 +173,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			Attributes = options.Attributes;
 			Name = options.Name;
 			PropertySig = options.PropertySig;
-			Constant = options.Constant;
+			if (options.Constant != null) {
+				HasDefault = true;
+				ConstantVM.Value = options.Constant.Type == ElementType.Class ? null : options.Constant.Value;
+			}
+			else {
+				HasDefault = false;
+				ConstantVM.Value = null;
+			}
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 

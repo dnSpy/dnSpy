@@ -23,7 +23,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
-             Height="400" Width="500"
+             Height="400" Width="600"
              ResizeMode="CanResizeWithGrip"
              Title="Type Settings"
              Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
@@ -131,6 +131,12 @@
 				<ScrollViewer VerticalScrollBarVisibility="Auto">
 					<dnlibdlgs:TypeSigCreatorControl Grid.Row="0" Margin="0 5 0 0" DataContext="{Binding TypeSigCreator}" />
 				</ScrollViewer>
+			</TabItem>
+			<TabItem Header="Generic Parameters">
+				<dnlibdlgs:GenericParamsControl Margin="0 5 0 0" DataContext="{Binding GenericParamsVM}" />
+			</TabItem>
+			<TabItem Header="Interfaces">
+				<dnlibdlgs:TypeDefOrRefAndCAsControl Margin="0 5 0 0" DataContext="{Binding InterfaceImplsVM}" />
 			</TabItem>
 			<TabItem Header="Custom Attributes">
 				<dnlibdlgs:CustomAttributesControl Margin="0 5 0 0" DataContext="{Binding CustomAttributesVM}" />

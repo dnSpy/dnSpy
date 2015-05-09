@@ -18,25 +18,35 @@
 */
 
 using System.Windows;
-using System.Windows.Controls;
+using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
+namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 {
-	/// <summary>
-	/// Interaction logic for ParamDefControl.xaml
-	/// </summary>
-	public partial class ParamDefControl : UserControl
+	sealed class EditGenericParam : IEditGenericParam
 	{
-		public ParamDefControl()
+		readonly Window ownerWindow;
+
+		public EditGenericParam()
+			: this(null)
 		{
-			InitializeComponent();
-			Loaded += ParamDefControl_Loaded;
 		}
 
-		void ParamDefControl_Loaded(object sender, RoutedEventArgs e)
+		public EditGenericParam(Window ownerWindow)
 		{
-			// I can't get it to work with XAML so do it with code
-			nameTextBox.Focus();
+			this.ownerWindow = ownerWindow;
+		}
+
+		public GenericParamVM Edit(string title, GenericParamVM pd)
+		{
+			var win = new GenericParamDlg();
+			if (title != null)
+				win.Title = title;
+			win.DataContext = pd;
+			win.Owner = ownerWindow ?? MainWindow.Instance;
+			if (win.ShowDialog() != true)
+				return null;
+
+			return pd;
 		}
 	}
 }
