@@ -39,7 +39,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			new EnumVM(Module.ClrVersion.CLR10, "1.0"),
 			new EnumVM(Module.ClrVersion.CLR11, "1.1"),
 			new EnumVM(Module.ClrVersion.CLR20, "2.0 - 3.5"),
-			new EnumVM(Module.ClrVersion.CLR40, "4.0 - 4.5"),
+			new EnumVM(Module.ClrVersion.CLR40, "4.0 - 4.6"),
 		};
 
 		public EnumListVM ClrVersion {

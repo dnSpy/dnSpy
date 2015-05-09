@@ -42,7 +42,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		CLR20,
 
 		/// <summary>
-		/// .NET 4.0 - 4.5
+		/// .NET 4.0 - 4.6
 		/// </summary>
 		CLR40,
 
