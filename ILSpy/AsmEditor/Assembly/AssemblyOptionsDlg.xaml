@@ -23,7 +23,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
-             Height="450" Width="500"
+             Height="420" Width="500"
              ResizeMode="CanResizeWithGrip"
              Title="Assembly Settings"
              Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
@@ -59,7 +59,6 @@
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto" />
 								<ColumnDefinition Width="*" />
-								<ColumnDefinition Width="Auto" />
 							</Grid.ColumnDefinitions>
 							<Grid.RowDefinitions>
 								<RowDefinition Height="Auto" />
@@ -68,12 +67,26 @@
 							</Grid.RowDefinitions>
 
 							<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
-							<TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-							<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=cultureTextBox}" Content="C_ulture" />
-							<TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="5 5 0 0" Name="cultureTextBox" Text="{Binding Culture, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-							<Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=publicKeyTextBox}" Content="_PublicKey" />
-							<TextBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="publicKeyTextBox" Text="{Binding PublicKey.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-							<Button Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" MinWidth="25" Content="..." Command="{Binding OpenPublicKeyFileCommand}"  />
+							<Grid Grid.Row="0" Grid.Column="1">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="3*" />
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
+								<TextBox Grid.Column="0" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+								<Label Grid.Column="1" Margin="5 0 0 0" Target="{Binding ElementName=cultureTextBox}" Content="C_ulture" />
+								<TextBox Grid.Column="2" Grid.ColumnSpan="2" Margin="5 0 0 0" Name="cultureTextBox" Text="{Binding Culture, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+							</Grid>
+
+							<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=publicKeyTextBox}" Content="_PublicKey" />
+							<Grid Grid.Row="1" Grid.Column="1">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="*" />
+									<ColumnDefinition Width="Auto" />
+								</Grid.ColumnDefinitions>
+								<TextBox Grid.Column="0" Margin="5 5 0 0" Name="publicKeyTextBox" Text="{Binding PublicKey.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+								<Button Grid.Column="1" Margin="5 5 0 0" MinWidth="25" Content="..." Command="{Binding OpenPublicKeyFileCommand}"  />
+							</Grid>
 						</Grid>
 
 						<Grid Grid.Row="1">
