@@ -75,6 +75,35 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return new string(chars);
 		}
 
+		static NumberVMUtils()
+		{
+			for (ulong i = 0; i <= 20; i++)
+				AddNumber(i);
+			ulong n = 10;
+			while (true) {
+				AddNumber(n - 1);
+				AddNumber(n);
+				AddNumber(n + 1);
+
+				ulong a = unchecked(n * 10);
+				if (a < n)
+					break;
+				n = a;
+			}
+		}
+
+		static void AddNumber(ulong n)
+		{
+			decimalUInt64.Add(n);
+			if (n <= long.MaxValue)
+				decimalInt64.Add((long)n);
+			if (n <= (ulong)long.MaxValue + 1)
+				decimalInt64.Add(unchecked(-(long)n));
+		}
+
+		static readonly HashSet<long> decimalInt64 = new HashSet<long>();
+		static readonly HashSet<ulong> decimalUInt64 = new HashSet<ulong>();
+
 		static char ToHexChar(int val, bool upper)
 		{
 			if (0 <= val && val <= 9)
@@ -87,7 +116,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		{
 			if (value < min || value > max)
 				return INVALID_TOSTRING_VALUE;
-			if (value <= 9 || useDecimal)
+			if (useDecimal || decimalUInt64.Contains(value))
 				return value.ToString();
 			return string.Format("0x{0:X}", value);
 		}
@@ -96,7 +125,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		{
 			if (value < min || value > max)
 				return INVALID_TOSTRING_VALUE;
-			if (-9 <= value && value <= 9 || useDecimal)
+			if (useDecimal || decimalInt64.Contains(value))
 				return value.ToString();
 			if (value < 0)
 				return string.Format("-0x{0:X}", -value);
