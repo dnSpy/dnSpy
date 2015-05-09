@@ -255,7 +255,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		static char SetParseCharError(out string error)
 		{
-			error = "A character must be enclosed in single quotes (').";
+			error = "A character must be enclosed in single quotes (')";
 			return (char)0;
 		}
 
@@ -455,7 +455,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return ParseUnsigned(s, min, max, out error);
 		}
 
-		static string TryParseSigned(string s, long min, long max, out long value)
+		static string TryParseSigned(string s, long min, long max, object minObject, out long value)
 		{
 			value = 0;
 			bool isValid;
@@ -487,16 +487,16 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			if (value < min || value > max) {
 				if (min == 0)
 					return string.Format("Value must be between {0} and {1} (0x{1:X}) inclusive", min, max);
-				return string.Format("Value must be between {0} (0x{0:X}) and {1} (0x{1:X}) inclusive", min, max);
+				return string.Format("Value must be between {0} ({2}0x{0:X}) and {1} (0x{1:X}) inclusive", minObject, max, min < 0 ? "-" : string.Empty);
 			}
 
 			return null;
 		}
 
-		static long ParseSigned(string s, long min, long max, out string error)
+		static long ParseSigned(string s, long min, long max, object minObject, out string error)
 		{
 			long value;
-			error = TryParseSigned(s, min, max, out value);
+			error = TryParseSigned(s, min, max, minObject, out value);
 			if (error != null)
 				return 0;
 			return value;
@@ -504,22 +504,22 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		public static sbyte ParseSByte(string s, sbyte min, sbyte max, out string error)
 		{
-			return (sbyte)ParseSigned(s, min, max, out error);
+			return (sbyte)ParseSigned(s, min, max, min, out error);
 		}
 
 		public static short ParseInt16(string s, short min, short max, out string error)
 		{
-			return (short)ParseSigned(s, min, max, out error);
+			return (short)ParseSigned(s, min, max, min, out error);
 		}
 
 		public static int ParseInt32(string s, int min, int max, out string error)
 		{
-			return (int)ParseSigned(s, min, max, out error);
+			return (int)ParseSigned(s, min, max, min, out error);
 		}
 
 		public static long ParseInt64(string s, long min, long max, out string error)
 		{
-			return (long)ParseSigned(s, min, max, out error);
+			return (long)ParseSigned(s, min, max, min, out error);
 		}
 
 		static string ToString<T>(IList<T> list, Func<T,string> toString)

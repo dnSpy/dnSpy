@@ -97,6 +97,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			onUpdated(this);
 		}
 
+		protected void Revalidate()
+		{
+			cachedError.Invalidate();
+			HasErrorUpdated();
+		}
+
 		protected virtual void OnStringValueChanged()
 		{
 		}
@@ -193,7 +199,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			get { return min; }
 			set {
 				min = value;
-				HasErrorUpdated();
+				Revalidate();
 			}
 		}
 		U min;
@@ -202,7 +208,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			get { return max; }
 			set {
 				max = value;
-				HasErrorUpdated();
+				Revalidate();
 			}
 		}
 		U max;
