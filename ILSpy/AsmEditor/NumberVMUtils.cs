@@ -208,7 +208,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			value = 0;
 			bool isValid;
 			s = s.Trim();
-			if (s.StartsWith("0x", StringComparison.OrdinalIgnoreCase)) {
+			if (s.StartsWith("0x", StringComparison.OrdinalIgnoreCase) ||
+				s.StartsWith("&H", StringComparison.OrdinalIgnoreCase)) {
 				var s2 = s.Substring(2);
 				isValid = s2.Trim() == s2 && ulong.TryParse(s2, NumberStyles.HexNumber, null, out value);
 			}
@@ -495,7 +496,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			ulong value2 = 0;
 			if (s.Trim() != s)
 				isValid = false;
-			else if (s.StartsWith("0x", StringComparison.OrdinalIgnoreCase)) {
+			else if (s.StartsWith("0x", StringComparison.OrdinalIgnoreCase) ||
+					 s.StartsWith("&H", StringComparison.OrdinalIgnoreCase)) {
 				var s2 = s.Substring(2);
 				isValid = s2.Trim() == s2 && ulong.TryParse(s2, NumberStyles.HexNumber, null, out value2);
 			}
