@@ -71,7 +71,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 		{
 			return new MethodDefOptions {
 				ImplAttributes = MethodImplAttributes.IL | MethodImplAttributes.Managed,
-				Attributes = MethodAttributes.Public | MethodAttributes.ReuseSlot | (methodSig.HasThis ? 0 : MethodAttributes.Static),
+				Attributes = MethodAttributes.Public | MethodAttributes.ReuseSlot | MethodAttributes.HideBySig | (methodSig.HasThis ? 0 : MethodAttributes.Static),
 				Name = name,
 				MethodSig = methodSig,
 				ImplMap = null,

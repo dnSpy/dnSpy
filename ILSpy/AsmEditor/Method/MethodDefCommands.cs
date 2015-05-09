@@ -213,6 +213,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			bool isInstance = !(typeNode.TypeDefinition.IsAbstract && typeNode.TypeDefinition.IsSealed);
 			var sig = isInstance ? MethodSig.CreateInstance(module.CorLibTypes.Void) : MethodSig.CreateStatic(module.CorLibTypes.Void);
 			var options = MethodDefOptions.Create("MyMethod", sig);
+			if (typeNode.TypeDefinition.IsInterface)
+				options.Attributes |= MethodAttributes.Abstract | MethodAttributes.Virtual | MethodAttributes.NewSlot;
 
 			var data = new MethodOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, typeNode.TypeDefinition, null);
 			var win = new MethodOptionsDlg();
