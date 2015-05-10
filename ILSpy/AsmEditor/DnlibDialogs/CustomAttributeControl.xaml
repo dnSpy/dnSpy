@@ -61,6 +61,7 @@
 			<ListView Grid.Row="0"
 				  Margin="0 5 0 0"
 				  HorizontalContentAlignment="Stretch"
+				  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 				  SelectionMode="Single"
 				  IsEnabled="{Binding IsNotRawData}"
 				  ItemsSource="{Binding ConstructorArguments}"

@@ -49,6 +49,7 @@
 				  Name="listView"
 				  MouseDoubleClick="listView_MouseDoubleClick"
 				  SelectionMode="Single"
+				  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 				  ItemsSource="{Binding Collection}"
 				  HorizontalContentAlignment="Stretch"
 				  SelectedIndex="{Binding Collection.SelectedIndex}" />
