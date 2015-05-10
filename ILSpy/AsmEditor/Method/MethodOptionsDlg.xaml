@@ -23,7 +23,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
-             Height="450" Width="650"
+             Height="450" Width="550"
              ResizeMode="CanResizeWithGrip"
              Title="Method Settings"
              Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
@@ -134,15 +134,15 @@
 					</Grid>
 				</ScrollViewer>
 			</TabItem>
-			<TabItem Header="MethodSig">
+			<TabItem Header="Signature">
 				<ScrollViewer VerticalScrollBarVisibility="Auto">
 					<dnlibdlgs:MethodSigCreatorControl Grid.Row="0" Margin="0 5 0 0" DataContext="{Binding MethodSigCreator}" />
 				</ScrollViewer>
 			</TabItem>
-			<TabItem Header="Parameters">
+			<TabItem Header="Params">
 				<dnlibdlgs:ParamDefsControl Margin="0 5 0 0" DataContext="{Binding ParamDefsVM}" />
 			</TabItem>
-			<TabItem Header="Generic Parameters">
+			<TabItem Header="Generic Params">
 				<dnlibdlgs:GenericParamsControl Margin="0 5 0 0" DataContext="{Binding GenericParamsVM}" />
 			</TabItem>
 			<TabItem Header="ImplMap">
@@ -150,10 +150,10 @@
 					<dnlibdlgs:ImplMapControl Margin="0 5 0 0" DataContext="{Binding ImplMapVM}" />
 				</ScrollViewer>
 			</TabItem>
-			<TabItem Header="Custom Attributes">
+			<TabItem Header="Custom Attrs">
 				<dnlibdlgs:CustomAttributesControl Margin="0 5 0 0" DataContext="{Binding CustomAttributesVM}" />
 			</TabItem>
-			<TabItem Header="Security Declarations">
+			<TabItem Header="Sec Decls">
 				<dnlibdlgs:DeclSecuritiesControl Margin="0 5 0 0" DataContext="{Binding DeclSecuritiesVM}" />
 			</TabItem>
 		</TabControl>

@@ -271,7 +271,7 @@
 					</StackPanel>
 				</ScrollViewer>
 			</TabItem>
-			<TabItem Header="Custom Attributes">
+			<TabItem Header="Custom Attrs">
 				<dnlibdlgs:CustomAttributesControl Margin="0 5 0 0" DataContext="{Binding CustomAttributesVM}" />
 			</TabItem>
 		</TabControl>
