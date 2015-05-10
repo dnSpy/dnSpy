@@ -310,7 +310,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			ImplMap = options.ImplMap;
 			if (options.Constant != null) {
 				HasDefault = true;
-				ConstantVM.Value = options.Constant.Type == ElementType.Class ? null : options.Constant.Value;
+				ConstantVM.Value = options.Constant.Value;
 			}
 			else {
 				HasDefault = false;
