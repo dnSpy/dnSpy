@@ -22,7 +22,7 @@ using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
 
 namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 {
-	sealed class EditParamDef : IEditParamDef
+	sealed class EditParamDef : IEdit<ParamDefVM>
 	{
 		readonly Window ownerWindow;
 

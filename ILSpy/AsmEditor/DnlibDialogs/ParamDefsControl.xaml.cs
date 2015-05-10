@@ -19,7 +19,6 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
@@ -36,18 +35,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				var data = DataContext as ParamDefsVM;
 				if (data != null) {
 					var ownerWindow = Window.GetWindow(this);
-					data.EditParamDef = new EditParamDef(ownerWindow);
+					data.EditObject = new EditParamDef(ownerWindow);
 				}
 			};
-		}
-
-		private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-		{
-			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
-				return;
-			var data = DataContext as ParamDefsVM;
-			if (data != null)
-				data.EditCurrent();
 		}
 	}
 }

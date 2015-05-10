@@ -36,18 +36,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				var data = DataContext as GenericParamsVM;
 				if (data != null) {
 					var ownerWindow = Window.GetWindow(this);
-					data.EditGenericParam = new EditGenericParam(ownerWindow);
+					data.EditObject = new EditGenericParam(ownerWindow);
 				}
 			};
-		}
-
-		private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-		{
-			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
-				return;
-			var data = DataContext as GenericParamsVM;
-			if (data != null)
-				data.EditCurrent();
 		}
 	}
 }

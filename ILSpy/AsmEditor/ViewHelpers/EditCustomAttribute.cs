@@ -22,7 +22,7 @@ using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
 
 namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 {
-	sealed class EditCustomAttribute : IEditCustomAttribute
+	sealed class EditCustomAttribute : IEdit<CustomAttributeVM>
 	{
 		readonly Window ownerWindow;
 

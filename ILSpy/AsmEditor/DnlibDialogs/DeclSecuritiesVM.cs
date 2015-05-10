@@ -17,95 +17,30 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
-	sealed class DeclSecuritiesVM : ViewModelBase
+	sealed class DeclSecuritiesVM : ListVM<DeclSecurityVM, DeclSecurity>
 	{
-		public IEditDeclSecurity EditDeclSecurity {
-			set { editDeclSecurity = value; }
-		}
-		IEditDeclSecurity editDeclSecurity;
-
-		public ICommand EditCommand {
-			get { return new RelayCommand(a => EditCurrent(), a => EditCurrentCanExecute()); }
-		}
-
-		public ICommand AddCommand {
-			get { return new RelayCommand(a => AddCurrent(), a => AddCurrentCanExecute()); }
-		}
-
-		public MyObservableCollection<DeclSecurityVM> DeclSecurityCollection {
-			get { return declSecurityCollection; }
-		}
-		readonly MyObservableCollection<DeclSecurityVM> declSecurityCollection = new MyObservableCollection<DeclSecurityVM>();
-
-		readonly ModuleDef module;
-		readonly Language language;
-
-		public DeclSecuritiesVM(ModuleDef module, Language language)
+		public DeclSecuritiesVM(ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
+			: base("Edit Security Declaration", "Create Security Declaration", module, language, ownerType, ownerMethod)
 		{
-			this.module = module;
-			this.language = language;
 		}
 
-		public void InitializeFrom(IEnumerable<DeclSecurity> decls)
+		protected override DeclSecurityVM Create(DeclSecurity model)
 		{
-			DeclSecurityCollection.Clear();
-			DeclSecurityCollection.AddRange(decls.Select(a => new DeclSecurityVM(new DeclSecurityOptions(a), module, language)));
+			return new DeclSecurityVM(new DeclSecurityOptions(model), module, language, ownerType, ownerMethod);
 		}
 
-		public void EditCurrent()
+		protected override DeclSecurityVM Clone(DeclSecurityVM obj)
 		{
-			if (!EditCurrentCanExecute())
-				return;
-			if (editDeclSecurity == null)
-				throw new InvalidOperationException();
-			int index = DeclSecurityCollection.SelectedIndex;
-			var declVm = editDeclSecurity.Edit("Edit Security Declaration", new DeclSecurityVM(DeclSecurityCollection[index].CreateDeclSecurityOptions(), module, language));
-			if (declVm != null) {
-				DeclSecurityCollection[index] = declVm;
-				DeclSecurityCollection.SelectedIndex = index;
-			}
+			return new DeclSecurityVM(obj.CreateDeclSecurityOptions(), module, language, ownerType, ownerMethod);
 		}
 
-		bool EditCurrentCanExecute()
+		protected override DeclSecurityVM Create()
 		{
-			return DeclSecurityCollection.SelectedIndex >= 0 && DeclSecurityCollection.SelectedIndex < DeclSecurityCollection.Count;
-		}
-
-		void AddCurrent()
-		{
-			if (!AddCurrentCanExecute())
-				return;
-
-			if (editDeclSecurity == null)
-				throw new InvalidOperationException();
-			var declVm = editDeclSecurity.Edit("Create Security Declaration", new DeclSecurityVM(new DeclSecurityOptions(), module, language));
-			if (declVm != null) {
-				DeclSecurityCollection.Add(declVm);
-				DeclSecurityCollection.SelectedIndex = DeclSecurityCollection.Count - 1;
-			}
-		}
-
-		bool AddCurrentCanExecute()
-		{
-			return true;
-		}
-
-		protected override string Verify(string columnName)
-		{
-			return string.Empty;
-		}
-
-		public override bool HasError {
-			get { return false; }
+			return new DeclSecurityVM(new DeclSecurityOptions(), module, language, ownerType, ownerMethod);
 		}
 	}
 }

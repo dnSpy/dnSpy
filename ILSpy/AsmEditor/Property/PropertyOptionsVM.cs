@@ -191,7 +191,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			options.PropertySig = PropertySig;
 			options.Constant = HasDefault ? Constant : null;
 			options.CustomAttributes.Clear();
-			options.CustomAttributes.AddRange(CustomAttributesVM.CustomAttributeCollection.Select(a => a.CreateCustomAttributeOptions().Create()));
+			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			return options;
 		}
 

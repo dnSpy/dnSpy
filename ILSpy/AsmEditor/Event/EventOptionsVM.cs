@@ -151,7 +151,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			options.Name = Name;
 			options.EventType = EventTypeSig.ToTypeDefOrRef();
 			options.CustomAttributes.Clear();
-			options.CustomAttributes.AddRange(CustomAttributesVM.CustomAttributeCollection.Select(a => a.CreateCustomAttributeOptions().Create()));
+			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			return options;
 		}
 

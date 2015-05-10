@@ -55,21 +55,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 	sealed class DeclSecurityVM : ViewModelBase
 	{
-		public IEditSecurityAttribute EditSecurityAttribute {
-			set { editSecurityAttribute = value; }
-		}
-		IEditSecurityAttribute editSecurityAttribute;
-
 		public ICommand ReinitializeCommand {
 			get { return new RelayCommand(a => Reinitialize()); }
-		}
-
-		public ICommand EditCommand {
-			get { return new RelayCommand(a => EditCurrent(), a => EditCurrentCanExecute()); }
-		}
-
-		public ICommand AddCommand {
-			get { return new RelayCommand(a => AddCurrent(), a => AddCurrentCanExecute()); }
 		}
 
 		public string FullName {
@@ -112,29 +99,34 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		CustomAttributesVM customAttributesVM;
 
-		public MyObservableCollection<SecurityAttributeVM> SecurityAttributeCollection {
-			get { return securityAttributeCollection; }
+		public SecurityAttributesVM SecurityAttributesVM {
+			get { return securityAttributesVM; }
 		}
-		readonly MyObservableCollection<SecurityAttributeVM> securityAttributeCollection = new MyObservableCollection<SecurityAttributeVM>();
+		SecurityAttributesVM securityAttributesVM;
 
 		readonly DeclSecurityOptions origOptions;
 		readonly ModuleDef module;
 		readonly Language language;
+		readonly TypeDef ownerType;
+		readonly MethodDef ownerMethod;
 
-		public DeclSecurityVM(DeclSecurityOptions options, ModuleDef module, Language language)
+		public DeclSecurityVM(DeclSecurityOptions options, ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
 		{
 			this.module = module;
 			this.language = language;
+			this.ownerType = ownerType;
+			this.ownerMethod = ownerMethod;
 			this.origOptions = options;
 			this.customAttributesVM = new CustomAttributesVM(module, language);
 			CustomAttributesVM.PropertyChanged += CustomAttributesVM_PropertyChanged;
 			this.declSecVerEnumListVM = new EnumListVM(declSecVerList, (a, b) => OnDeclSecVerChanged());
 			this.securityActionEnumListVM = new EnumListVM(secActList, (a, b) => OnSecurityActionChanged());
-			this.SecurityAttributeCollection.CollectionChanged += SecurityAttributeCollection_CollectionChanged;
+			this.securityAttributesVM = new SecurityAttributesVM(module, language, ownerType, ownerMethod);
+			this.SecurityAttributesVM.Collection.CollectionChanged += SecurityAttributesVM_CollectionChanged;
 			Reinitialize();
 		}
 
-		void SecurityAttributeCollection_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+		void SecurityAttributesVM_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			HasErrorUpdated();
 		}
@@ -158,44 +150,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			HasErrorUpdated();
 		}
 
-		public void EditCurrent()
-		{
-			if (!EditCurrentCanExecute())
-				return;
-			if (editSecurityAttribute == null)
-				throw new InvalidOperationException();
-			int index = SecurityAttributeCollection.SelectedIndex;
-			var caVm = editSecurityAttribute.Edit("Edit Security Attribute", new SecurityAttributeVM(SecurityAttributeCollection[index].CreateSecurityAttribute(), new TypeSigCreatorOptions(module, language)));
-			if (caVm != null) {
-				SecurityAttributeCollection[index] = caVm;
-				SecurityAttributeCollection.SelectedIndex = index;
-			}
-		}
-
-		bool EditCurrentCanExecute()
-		{
-			return SecurityAttributeCollection.SelectedIndex >= 0 && SecurityAttributeCollection.SelectedIndex < SecurityAttributeCollection.Count;
-		}
-
-		void AddCurrent()
-		{
-			if (!AddCurrentCanExecute())
-				return;
-
-			if (editSecurityAttribute == null)
-				throw new InvalidOperationException();
-			var caVm = editSecurityAttribute.Edit("Create Security Attribute", new SecurityAttributeVM(new SecurityAttribute(), new TypeSigCreatorOptions(module, language)));
-			if (caVm != null) {
-				SecurityAttributeCollection.Add(caVm);
-				SecurityAttributeCollection.SelectedIndex = SecurityAttributeCollection.Count - 1;
-			}
-		}
-
-		bool AddCurrentCanExecute()
-		{
-			return true;
-		}
-
 		void Reinitialize()
 		{
 			InitializeFrom(origOptions);
@@ -210,8 +164,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		{
 			SecurityActionEnumList.SelectedItem = (SecAc)options.Action;
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
-			SecurityAttributeCollection.Clear();
-			SecurityAttributeCollection.AddRange(options.SecurityAttributes.Select(a => new SecurityAttributeVM(a, new TypeSigCreatorOptions(module, language))));
+			SecurityAttributesVM.Collection.Clear();
+			SecurityAttributesVM.Collection.AddRange(options.SecurityAttributes.Select(a => new SecurityAttributeVM(a, module, language, ownerType, ownerMethod)));
 			V1XMLString = options.V1XMLString;
 			DeclSecVerEnumList.SelectedItem = options.V1XMLString == null ? DeclSecVer.V2 : DeclSecVer.V1;
 		}
@@ -220,9 +174,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		{
 			options.Action = (SecurityAction)(SecAc)SecurityActionEnumList.SelectedItem;
 			options.CustomAttributes.Clear();
-			options.CustomAttributes.AddRange(CustomAttributesVM.CustomAttributeCollection.Select(a => a.CreateCustomAttributeOptions().Create()));
+			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			options.SecurityAttributes.Clear();
-			options.SecurityAttributes.AddRange(SecurityAttributeCollection.Select(a => a.CreateSecurityAttribute()));
+			options.SecurityAttributes.AddRange(SecurityAttributesVM.Collection.Select(a => a.CreateSecurityAttribute()));
 			options.V1XMLString = IsV1 ? V1XMLString : null;
 			return options;
 		}
@@ -235,7 +189,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		public override bool HasError {
 			get {
 				return CustomAttributesVM.HasError ||
-					SecurityAttributeCollection.Any(a => a.HasError);
+					SecurityAttributesVM.Collection.Any(a => a.HasError);
 			}
 		}
 	}

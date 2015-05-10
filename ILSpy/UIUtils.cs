@@ -21,6 +21,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 
 namespace ICSharpCode.ILSpy
 {
@@ -29,7 +30,7 @@ namespace ICSharpCode.ILSpy
 		static T GetItem<T>(DependencyObject view, object o) where T : class
 		{
 			var depo = o as DependencyObject;
-			while (depo != null && !(depo is T) && depo != view)
+			while ((depo is Visual || depo is Visual3D) && !(depo is T) && depo != view)
 				depo = VisualTreeHelper.GetParent(depo);
 			return depo as T;
 		}

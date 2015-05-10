@@ -17,109 +17,40 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
-	sealed class ParamDefsVM : ViewModelBase
+	sealed class ParamDefsVM : ListVM<ParamDefVM, ParamDef>
 	{
-		public IEditParamDef EditParamDef {
-			set { editParamDef = value; }
-		}
-		IEditParamDef editParamDef;
-
-		public ICommand EditCommand {
-			get { return new RelayCommand(a => EditCurrent(), a => EditCurrentCanExecute()); }
-		}
-
-		public ICommand AddCommand {
-			get { return new RelayCommand(a => AddCurrent(), a => AddCurrentCanExecute()); }
-		}
-
-		public MyObservableCollection<ParamDefVM> ParamDefCollection {
-			get { return paramDefCollection; }
-		}
-		readonly MyObservableCollection<ParamDefVM> paramDefCollection = new MyObservableCollection<ParamDefVM>();
-
-		readonly ModuleDef module;
-		readonly Language language;
-		readonly TypeDef ownerType;
-		readonly MethodDef ownerMethod;
-
 		public ParamDefsVM(ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
+			: base("Edit Parameter", "Create Parameter", module, language, ownerType, ownerMethod)
 		{
-			this.module = module;
-			this.language = language;
-			this.ownerType = ownerType;
-			this.ownerMethod = ownerMethod;
 		}
 
-		public void InitializeFrom(IEnumerable<ParamDef> pds)
+		protected override ParamDefVM Create(ParamDef model)
 		{
-			ParamDefCollection.Clear();
-			ParamDefCollection.AddRange(pds.Select(a => new ParamDefVM(new ParamDefOptions(a), module, language, ownerType, ownerMethod)));
+			return new ParamDefVM(new ParamDefOptions(model), module, language, ownerType, ownerMethod);
 		}
 
-		public void EditCurrent()
+		protected override ParamDefVM Clone(ParamDefVM obj)
 		{
-			if (!EditCurrentCanExecute())
-				return;
-			if (editParamDef == null)
-				throw new InvalidOperationException();
-			int index = ParamDefCollection.SelectedIndex;
-			var pdVm = editParamDef.Edit("Edit Parameter", new ParamDefVM(ParamDefCollection[index].CreateParamDefOptions(), module, language, ownerType, ownerMethod));
-			if (pdVm != null) {
-				ParamDefCollection[index] = pdVm;
-				ParamDefCollection.SelectedIndex = index;
-			}
+			return new ParamDefVM(obj.CreateParamDefOptions(), module, language, ownerType, ownerMethod);
 		}
 
-		bool EditCurrentCanExecute()
+		protected override ParamDefVM Create()
 		{
-			return ParamDefCollection.SelectedIndex >= 0 && ParamDefCollection.SelectedIndex < ParamDefCollection.Count;
+			return new ParamDefVM(new ParamDefOptions(), module, language, ownerType, ownerMethod);
 		}
 
-		void AddCurrent()
+		protected override int GetAddIndex(ParamDefVM obj)
 		{
-			if (!AddCurrentCanExecute())
-				return;
-
-			if (editParamDef == null)
-				throw new InvalidOperationException();
-			var pdVm = editParamDef.Edit("Create Parameter", new ParamDefVM(new ParamDefOptions(), module, language, ownerType, ownerMethod));
-			if (pdVm != null) {
-				int index = GetParamDefCollectionIndex(pdVm.Sequence.Value);
-				ParamDefCollection.Insert(index, pdVm);
-				ParamDefCollection.SelectedIndex = index;
-			}
-		}
-
-		int GetParamDefCollectionIndex(int sequence)
-		{
-			for (int i = 0; i < ParamDefCollection.Count; i++) {
-				if (sequence < ParamDefCollection[i].Sequence.Value)
+			ushort sequence = obj.Sequence.Value;
+			for (int i = 0; i < Collection.Count; i++) {
+				if (sequence < Collection[i].Sequence.Value)
 					return i;
 			}
-			return ParamDefCollection.Count;
-		}
-
-		bool AddCurrentCanExecute()
-		{
-			return true;
-		}
-
-		protected override string Verify(string columnName)
-		{
-			return string.Empty;
-		}
-
-		public override bool HasError {
-			get { return false; }
+			return Collection.Count;
 		}
 	}
 }

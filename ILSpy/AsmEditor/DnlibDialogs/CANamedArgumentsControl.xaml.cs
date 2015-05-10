@@ -17,18 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using System.Windows.Controls;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
+namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
-	interface IEditTypeDefOrRefAndCA
+	/// <summary>
+	/// Interaction logic for CANamedArgumentsControl.xaml
+	/// </summary>
+	public partial class CANamedArgumentsControl : UserControl
 	{
-		/// <summary>
-		/// Lets the user edit a type and custom attributes. Returns null if user canceled.
-		/// </summary>
-		/// <param name="title">Window UI title</param>
-		/// <param name="obj">Type and CAs</param>
-		/// <returns></returns>
-		TypeDefOrRefAndCAVM Edit(string title, TypeDefOrRefAndCAVM obj);
+		public CANamedArgumentsControl()
+		{
+			InitializeComponent();
+		}
 	}
 }

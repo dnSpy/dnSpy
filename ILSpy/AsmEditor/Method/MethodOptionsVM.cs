@@ -354,8 +354,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			this.methodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.ShowTypeFullName = true;
 			this.methodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
 
-			this.customAttributesVM = new CustomAttributesVM(module, language);
-			this.declSecuritiesVM = new DeclSecuritiesVM(module, language);
+			this.customAttributesVM = new CustomAttributesVM(module, language, ownerType, ownerMethod);
+			this.declSecuritiesVM = new DeclSecuritiesVM(module, language, ownerType, ownerMethod);
 			this.paramDefsVM = new ParamDefsVM(module, language, ownerType, ownerMethod);
 			this.genericParamsVM = new GenericParamsVM(module, language, ownerType, ownerMethod);
 
@@ -419,13 +419,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			options.MethodSig = MethodSig;
 			options.ImplMap = PinvokeImpl ? ImplMap : null;
 			options.CustomAttributes.Clear();
-			options.CustomAttributes.AddRange(CustomAttributesVM.CustomAttributeCollection.Select(a => a.CreateCustomAttributeOptions().Create()));
+			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			options.DeclSecurities.Clear();
-			options.DeclSecurities.AddRange(DeclSecuritiesVM.DeclSecurityCollection.Select(a => a.CreateDeclSecurityOptions().Create(module)));
+			options.DeclSecurities.AddRange(DeclSecuritiesVM.Collection.Select(a => a.CreateDeclSecurityOptions().Create(module)));
 			options.ParamDefs.Clear();
-			options.ParamDefs.AddRange(ParamDefsVM.ParamDefCollection.Select(a => a.CreateParamDefOptions().CreateParamDef(module)));
+			options.ParamDefs.AddRange(ParamDefsVM.Collection.Select(a => a.CreateParamDefOptions().CreateParamDef(module)));
 			options.GenericParameters.Clear();
-			options.GenericParameters.AddRange(GenericParamsVM.GenericParamCollection.Select(a => a.CreateGenericParamOptions().CreateGenericParam(module)));
+			options.GenericParameters.AddRange(GenericParamsVM.Collection.Select(a => a.CreateGenericParamOptions().CreateGenericParam(module)));
 			if (ModelUtils.GetHasSecurityBit(options.DeclSecurities, options.CustomAttributes))
 				options.Attributes |= MethodAttributes.HasSecurity;
 			else

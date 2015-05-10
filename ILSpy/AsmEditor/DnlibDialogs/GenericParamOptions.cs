@@ -49,7 +49,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		{
 			gp.Number = this.Number;
 			gp.Flags = this.Flags;
-			gp.Name = this.Name;
+			gp.Name = this.Name ?? UTF8String.Empty;
 			gp.Kind = this.Kind;
 			gp.GenericParamConstraints.Clear();
 			gp.GenericParamConstraints.AddRange(this.GenericParamConstraints);

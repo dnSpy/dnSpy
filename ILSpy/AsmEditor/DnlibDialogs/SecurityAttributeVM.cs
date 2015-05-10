@@ -44,17 +44,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			get { return new RelayCommand(a => PickAttributeType()); }
 		}
 
-		public ICommand AddNamedArgumentCommand {
-			get { return new RelayCommand(a => AddNamedArgument(), a => AddNamedArgumentCanExecute()); }
-		}
-
 		public string FullName {
 			get {
 				var sb = new StringBuilder();
 				sb.Append(AttributeType == null ? "<<<null>>>" : AttributeType.FullName);
 				sb.Append('(');
 				bool first = true;
-				foreach (var namedArg in NamedArguments) {
+				foreach (var namedArg in CANamedArgumentsVM.Collection) {
 					if (!first)
 						sb.Append(", ");
 					first = false;
@@ -78,21 +74,21 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		ITypeDefOrRef attributeType;
 
-		public MyObservableCollection<CANamedArgumentVM> NamedArguments {
-			get { return namedArguments; }
+		public CANamedArgumentsVM CANamedArgumentsVM {
+			get { return caNamedArgumentsVM; }
 		}
-		readonly MyObservableCollection<CANamedArgumentVM> namedArguments = new MyObservableCollection<CANamedArgumentVM>();
+		CANamedArgumentsVM caNamedArgumentsVM;
 
 		readonly SecurityAttribute origSa;
-		readonly TypeSigCreatorOptions typeSigOptions;
-		readonly ModuleDef module;
 
-		public SecurityAttributeVM(SecurityAttribute sa, TypeSigCreatorOptions typeSigOptions)
+		public SecurityAttributeVM(SecurityAttribute sa, ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
 		{
 			this.origSa = sa;
-			this.module = typeSigOptions.Module;
-			this.typeSigOptions = typeSigOptions;
-			NamedArguments.CollectionChanged += Args_CollectionChanged;
+			this.caNamedArgumentsVM = new CANamedArgumentsVM(module, language, ownerType, ownerMethod, a => {
+				// The named args blob length must also be at most 0x1FFFFFFF bytes but we can't verify it here
+				return a.Collection.Count < ModelUtils.COMPRESSED_UINT32_MAX;
+			});
+			CANamedArgumentsVM.Collection.CollectionChanged += Args_CollectionChanged;
 
 			Reinitialize();
 		}
@@ -131,19 +127,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				AttributeType = newAttrType;
 		}
 
-		void AddNamedArgument()
-		{
-			if (!AddNamedArgumentCanExecute())
-				return;
-			NamedArguments.Add(new CANamedArgumentVM(new CANamedArgument(false, module.CorLibTypes.Int32, "AttributeProperty", new CAArgument(module.CorLibTypes.Int32, 0)), typeSigOptions));
-		}
-
-		bool AddNamedArgumentCanExecute()
-		{
-			// The named args blob length must also be at most 0x1FFFFFFF bytes but we can't verify it here
-			return NamedArguments.Count < ModelUtils.COMPRESSED_UINT32_MAX;
-		}
-
 		void Reinitialize()
 		{
 			InitializeFrom(origSa);
@@ -152,14 +135,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		void InitializeFrom(SecurityAttribute sa)
 		{
 			AttributeType = sa.AttributeType;
-			NamedArguments.Clear();
-			NamedArguments.AddRange(sa.NamedArguments.Select(a => new CANamedArgumentVM(a, typeSigOptions)));
+			CANamedArgumentsVM.InitializeFrom(sa.NamedArguments);
 		}
 
 		public SecurityAttribute CreateSecurityAttribute()
 		{
 			var sa = new SecurityAttribute(AttributeType);
-			sa.NamedArguments.AddRange(NamedArguments.Select(a => a.CreateCANamedArgument()));
+			sa.NamedArguments.AddRange(CANamedArgumentsVM.Collection.Select(a => a.CreateCANamedArgument()));
 			return sa;
 		}
 
@@ -171,7 +153,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		public override bool HasError {
 			get {
 				return AttributeType == null ||
-						NamedArguments.Any(a => a.HasError);
+						CANamedArgumentsVM.Collection.Any(a => a.HasError);
 			}
 		}
 	}

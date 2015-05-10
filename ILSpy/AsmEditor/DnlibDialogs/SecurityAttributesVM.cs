@@ -21,26 +21,26 @@ using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
-	sealed class CustomAttributesVM : ListVM<CustomAttributeVM, CustomAttribute>
+	sealed class SecurityAttributesVM : ListVM<SecurityAttributeVM, SecurityAttribute>
 	{
-		public CustomAttributesVM(ModuleDef module, Language language, TypeDef ownerType = null, MethodDef ownerMethod = null)
-			: base("Edit Custom Attribute", "Create Custom Attribute", module, language, ownerType, ownerMethod)
+		public SecurityAttributesVM(ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
+			: base("Edit Security Attribute", "Create Security Attribute", module, language, ownerType, ownerMethod)
 		{
 		}
 
-		protected override CustomAttributeVM Create(CustomAttribute model)
+		protected override SecurityAttributeVM Create(SecurityAttribute model)
 		{
-			return new CustomAttributeVM(new CustomAttributeOptions(model), module, language, ownerType, ownerMethod);
+			return new SecurityAttributeVM(model, module, language, ownerType, ownerMethod);
 		}
 
-		protected override CustomAttributeVM Clone(CustomAttributeVM obj)
+		protected override SecurityAttributeVM Clone(SecurityAttributeVM obj)
 		{
-			return new CustomAttributeVM(obj.CreateCustomAttributeOptions(), module, language, ownerType, ownerMethod);
+			return new SecurityAttributeVM(obj.CreateSecurityAttribute(), module, language, ownerType, ownerMethod);
 		}
 
-		protected override CustomAttributeVM Create()
+		protected override SecurityAttributeVM Create()
 		{
-			return new CustomAttributeVM(new CustomAttributeOptions(), module, language, ownerType, ownerMethod);
+			return new SecurityAttributeVM(new SecurityAttribute(), module, language, ownerType, ownerMethod);
 		}
 	}
 }

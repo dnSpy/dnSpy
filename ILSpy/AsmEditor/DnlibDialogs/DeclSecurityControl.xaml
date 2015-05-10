@@ -59,37 +59,7 @@
 					<TextBox Grid.Row="1" Name="xmlTextBox" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" TextWrapping="Wrap" Text="{Binding V1XMLString, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 				</Grid>
 				<Grid Grid.Row="1" Visibility="{Binding IsV2, Converter={StaticResource BooleanToVisibilityConverter}}">
-					<Grid.RowDefinitions>
-						<RowDefinition Height="*" />
-						<RowDefinition Height="Auto" />
-					</Grid.RowDefinitions>
-
-					<ListView Grid.Row="0"
-							  Margin="0 5 0 0"
-							  Name="listView"
-							  MouseDoubleClick="listView_MouseDoubleClick"
-							  HorizontalContentAlignment="Stretch"
-							  SelectionMode="Single"
-							  ItemsSource="{Binding SecurityAttributeCollection}"
-							  DisplayMemberPath="FullName"
-							  SelectedIndex="{Binding SecurityAttributeCollection.SelectedIndex}" />
-
-					<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5 0 0">
-						<RepeatButton Margin="0 0 5 0" Command="{Binding SecurityAttributeCollection.MoveUpCommand}" ToolTip="Move Up">
-							<RepeatButton.Content>
-								<Image Width="16" Height="16" Source="../../Images/ArrowUp.png" Style="{StaticResource DisableImageStyle}" />
-							</RepeatButton.Content>
-						</RepeatButton>
-						<RepeatButton Margin="0 0 5 0" Command="{Binding SecurityAttributeCollection.MoveDownCommand}" ToolTip="Move Down">
-							<RepeatButton.Content>
-								<Image Width="16" Height="16" Source="../../Images/ArrowDown.png" Style="{StaticResource DisableImageStyle}" />
-							</RepeatButton.Content>
-						</RepeatButton>
-
-						<Button Content="_Edit..." Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding EditCommand}" />
-						<Button Content="_Add..." Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding AddCommand}" />
-						<Button Content="_Remove" Style="{StaticResource DialogButton}" Margin="0 0 0 0" Command="{Binding SecurityAttributeCollection.RemoveCommand}" />
-					</StackPanel>
+					<dnlibdlgs:SecurityAttributesControl DataContext="{Binding SecurityAttributesVM}" />
 				</Grid>
 			</Grid>
 		</TabItem>

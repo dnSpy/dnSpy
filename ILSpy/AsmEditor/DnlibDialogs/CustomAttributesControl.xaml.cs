@@ -36,18 +36,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				var data = DataContext as CustomAttributesVM;
 				if (data != null) {
 					var ownerWindow = Window.GetWindow(this);
-					data.EditCustomAttribute = new EditCustomAttribute(ownerWindow);
+					data.EditObject = new EditCustomAttribute(ownerWindow);
 				}
 			};
-		}
-
-		private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-		{
-			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
-				return;
-			var data = DataContext as CustomAttributesVM;
-			if (data != null)
-				data.EditCurrent();
 		}
 	}
 }

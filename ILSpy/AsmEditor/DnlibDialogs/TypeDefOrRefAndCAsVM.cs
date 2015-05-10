@@ -18,108 +18,39 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
-	sealed class TypeDefOrRefAndCAsVM : ViewModelBase
+	sealed class TypeDefOrRefAndCAsVM<TModel> : ListVM<TypeDefOrRefAndCAVM, TModel> where TModel : class
 	{
-		public IEditTypeDefOrRefAndCA EditTypeDefOrRefAndCA {
-			set { editTypeDefOrRefAndCA = value; }
-		}
-		IEditTypeDefOrRefAndCA editTypeDefOrRefAndCA;
-
-		public ICommand EditCommand {
-			get { return new RelayCommand(a => EditCurrent(), a => EditCurrentCanExecute()); }
-		}
-
-		public ICommand AddCommand {
-			get { return new RelayCommand(a => AddCurrent(), a => AddCurrentCanExecute()); }
-		}
-
-		public MyObservableCollection<TypeDefOrRefAndCAVM> TypeDefOrRefAndCACollection {
-			get { return typeDefOrRefAndCACollection; }
-		}
-		readonly MyObservableCollection<TypeDefOrRefAndCAVM> typeDefOrRefAndCACollection = new MyObservableCollection<TypeDefOrRefAndCAVM>();
-
-		readonly ModuleDef module;
-		readonly Language language;
-		readonly TypeDef ownerType;
-		readonly MethodDef ownerMethod;
-		readonly string editString;
-		readonly string createString;
-
-		public TypeDefOrRefAndCAsVM(ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod, string editString, string createString)
+		static TypeDefOrRefAndCAsVM()
 		{
-			this.module = module;
-			this.language = language;
-			this.ownerType = ownerType;
-			this.ownerMethod = ownerMethod;
-			this.editString = editString;
-			this.createString = createString;
+			if (typeof(TModel) != typeof(GenericParamConstraint) && typeof(TModel) != typeof(InterfaceImpl))
+				throw new InvalidOperationException("TModel is an invalid type");
 		}
 
-		public void InitializeFrom(IEnumerable<GenericParamConstraint> gpcs)
+		public TypeDefOrRefAndCAsVM(string editString, string createString, ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
+			: base(editString, createString, module, language, ownerType, ownerMethod)
 		{
-			TypeDefOrRefAndCACollection.Clear();
-			TypeDefOrRefAndCACollection.AddRange(gpcs.Select(a => new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(a), module, language, ownerType, ownerMethod)));
 		}
 
-		public void InitializeFrom(IEnumerable<InterfaceImpl> ifaces)
+		protected override TypeDefOrRefAndCAVM Create(TModel model)
 		{
-			TypeDefOrRefAndCACollection.Clear();
-			TypeDefOrRefAndCACollection.AddRange(ifaces.Select(a => new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(a), module, language, ownerType, ownerMethod)));
+			var gpc = model as GenericParamConstraint;
+			if (gpc != null)
+				return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(gpc), module, language, ownerType, ownerMethod);
+			return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions((InterfaceImpl)(object)model), module, language, ownerType, ownerMethod);
 		}
 
-		public void EditCurrent()
+		protected override TypeDefOrRefAndCAVM Clone(TypeDefOrRefAndCAVM obj)
 		{
-			if (!EditCurrentCanExecute())
-				return;
-			if (editTypeDefOrRefAndCA == null)
-				throw new InvalidOperationException();
-			int index = TypeDefOrRefAndCACollection.SelectedIndex;
-			var vm = editTypeDefOrRefAndCA.Edit(editString, new TypeDefOrRefAndCAVM(TypeDefOrRefAndCACollection[index].CreateTypeDefOrRefAndCAOptions(), module, language, ownerType, ownerMethod));
-			if (vm != null) {
-				TypeDefOrRefAndCACollection[index] = vm;
-				TypeDefOrRefAndCACollection.SelectedIndex = index;
-			}
+			return new TypeDefOrRefAndCAVM(obj.CreateTypeDefOrRefAndCAOptions(), module, language, ownerType, ownerMethod);
 		}
 
-		bool EditCurrentCanExecute()
+		protected override TypeDefOrRefAndCAVM Create()
 		{
-			return TypeDefOrRefAndCACollection.SelectedIndex >= 0 && TypeDefOrRefAndCACollection.SelectedIndex < TypeDefOrRefAndCACollection.Count;
-		}
-
-		void AddCurrent()
-		{
-			if (!AddCurrentCanExecute())
-				return;
-
-			if (editTypeDefOrRefAndCA == null)
-				throw new InvalidOperationException();
-			var vm = editTypeDefOrRefAndCA.Edit(createString, new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(), module, language, ownerType, ownerMethod));
-			if (vm != null) {
-				TypeDefOrRefAndCACollection.Add(vm);
-				TypeDefOrRefAndCACollection.SelectedIndex = TypeDefOrRefAndCACollection.Count - 1;
-			}
-		}
-
-		bool AddCurrentCanExecute()
-		{
-			return true;
-		}
-
-		protected override string Verify(string columnName)
-		{
-			return string.Empty;
-		}
-
-		public override bool HasError {
-			get { return false; }
+			return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(), module, language, ownerType, ownerMethod);
 		}
 	}
 }

@@ -47,7 +47,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		public ParamDef CopyTo(ParamDef pd)
 		{
-			pd.Name = this.Name;
+			pd.Name = this.Name ?? UTF8String.Empty;
 			pd.Sequence = this.Sequence;
 			pd.Attributes = this.Attributes;
 			pd.Constant = this.Constant;

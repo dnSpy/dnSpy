@@ -17,18 +17,30 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
+namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
-	interface IEditParamDef
+	/// <summary>
+	/// Interaction logic for ListVMControl.xaml
+	/// </summary>
+	public partial class ListVMControl : UserControl
 	{
-		/// <summary>
-		/// Lets the user edit a parameter. Returns null if user canceled.
-		/// </summary>
-		/// <param name="title">Window UI title</param>
-		/// <param name="pd">Parameter</param>
-		/// <returns></returns>
-		ParamDefVM Edit(string title, ParamDefVM pd);
+		public ListVMControl()
+		{
+			InitializeComponent();
+		}
+
+		private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
+				return;
+			var data = DataContext as ListVM;
+			if (data != null)
+				data.EditCurrent();
+		}
 	}
 }

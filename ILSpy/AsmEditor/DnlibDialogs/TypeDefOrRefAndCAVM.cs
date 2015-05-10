@@ -96,7 +96,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		{
 			options.TypeDefOrRef = TypeSigCreator.TypeSig.ToTypeDefOrRef();
 			options.CustomAttributes.Clear();
-			options.CustomAttributes.AddRange(CustomAttributesVM.CustomAttributeCollection.Select(a => a.CreateCustomAttributeOptions().Create()));
+			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			return options;
 		}
 

@@ -17,18 +17,27 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using System.Windows;
+using System.Windows.Controls;
+using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
+namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
-	interface IEditDeclSecurity
+	/// <summary>
+	/// Interaction logic for SecurityAttributesControl.xaml
+	/// </summary>
+	public partial class SecurityAttributesControl : UserControl
 	{
-		/// <summary>
-		/// Lets the user edit the security declaration. Returns null if user canceled.
-		/// </summary>
-		/// <param name="title">Window UI title</param>
-		/// <param name="ds">Security declaration</param>
-		/// <returns></returns>
-		DeclSecurityVM Edit(string title, DeclSecurityVM ds);
+		public SecurityAttributesControl()
+		{
+			InitializeComponent();
+			DataContextChanged += (s, e) => {
+				var data = DataContext as SecurityAttributesVM;
+				if (data != null) {
+					var ownerWindow = Window.GetWindow(this);
+					data.EditObject = new EditSecurityAttribute(ownerWindow);
+				}
+			};
+		}
 	}
 }

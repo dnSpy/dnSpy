@@ -124,6 +124,10 @@
     <Compile Include="AsmEditor\DnlibDialogs\CANamedArgumentControl.xaml.cs">
       <DependentUpon>CANamedArgumentControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\CANamedArgumentsControl.xaml.cs">
+      <DependentUpon>CANamedArgumentsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\CANamedArgumentsVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\CANamedArgumentVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\ConstantControl.xaml.cs">
       <DependentUpon>ConstantControl.xaml</DependentUpon>
@@ -185,6 +189,10 @@
       <DependentUpon>ImplMapControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\DnlibDialogs\ImplMapVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\ListVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\ListVMControl.xaml.cs">
+      <DependentUpon>ListVMControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AsmEditor\DnlibDialogs\MarshalTypeControl.xaml.cs">
       <DependentUpon>MarshalTypeControl.xaml</DependentUpon>
     </Compile>
@@ -222,6 +230,10 @@
     <Compile Include="AsmEditor\DnlibDialogs\SecurityAttributeDlg.xaml.cs">
       <DependentUpon>SecurityAttributeDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\SecurityAttributesControl.xaml.cs">
+      <DependentUpon>SecurityAttributesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\SecurityAttributesVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\SecurityAttributeVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\TypeDefOrRefAndCAControl.xaml.cs">
       <DependentUpon>TypeDefOrRefAndCAControl.xaml</DependentUpon>
@@ -332,12 +344,7 @@
     <Compile Include="AsmEditor\ViewHelpers\ICreateMethodPropertySig.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ICreateTypeSigArray.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IDnlibTypePicker.cs" />
-    <Compile Include="AsmEditor\ViewHelpers\IEditCustomAttribute.cs" />
-    <Compile Include="AsmEditor\ViewHelpers\IEditDeclSecurity.cs" />
-    <Compile Include="AsmEditor\ViewHelpers\IEditGenericParam.cs" />
-    <Compile Include="AsmEditor\ViewHelpers\IEditParamDef.cs" />
-    <Compile Include="AsmEditor\ViewHelpers\IEditSecurityAttribute.cs" />
-    <Compile Include="AsmEditor\ViewHelpers\IEditTypeDefOrRefAndCA.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\IEdit.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IMakeVisible.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IOpenAssembly.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IOpenPublicKeyFile.cs" />
@@ -638,6 +645,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="AsmEditor\DnlibDialogs\CANamedArgumentsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AsmEditor\DnlibDialogs\ConstantControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -698,6 +709,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="AsmEditor\DnlibDialogs\ListVMControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AsmEditor\DnlibDialogs\MarshalTypeControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -731,6 +746,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\DnlibDialogs\SecurityAttributeDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\SecurityAttributesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

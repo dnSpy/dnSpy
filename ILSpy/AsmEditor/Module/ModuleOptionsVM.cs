@@ -613,7 +613,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 				throw new InvalidOperationException();
 
 			options.CustomAttributes.Clear();
-			options.CustomAttributes.AddRange(CustomAttributesVM.CustomAttributeCollection.Select(a => a.CreateCustomAttributeOptions().Create()));
+			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));
 
 			return options;
 		}

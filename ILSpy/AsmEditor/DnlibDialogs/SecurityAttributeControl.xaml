@@ -47,41 +47,7 @@
 			<TextBox Grid.Column="1" Margin="5 0 0 0" IsReadOnly="True" Background="{x:Null}" Text="{Binding AttributeType.FullName, Mode=OneWay}" />
 		</Grid>
 		<GroupBox Grid.Row="1" Margin="0 5 0 0" Header="Named Arguments">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="*" />
-					<RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
-
-				<ListView Grid.Row="0"
-						  Margin="0 5 0 0"
-						  HorizontalContentAlignment="Stretch"
-						  SelectionMode="Single"
-						  ItemsSource="{Binding NamedArguments}"
-						  SelectedIndex="{Binding NamedArguments.SelectedIndex}">
-					<ListView.ItemTemplate>
-						<DataTemplate>
-							<dnlibdlgs:CANamedArgumentControl />
-						</DataTemplate>
-					</ListView.ItemTemplate>
-				</ListView>
-
-				<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5 0 0">
-					<RepeatButton Margin="0 0 5 0" Command="{Binding NamedArguments.MoveUpCommand}" ToolTip="Move Up">
-						<RepeatButton.Content>
-							<Image Width="16" Height="16" Source="../../Images/ArrowUp.png" Style="{StaticResource DisableImageStyle}" />
-						</RepeatButton.Content>
-					</RepeatButton>
-					<RepeatButton Margin="0 0 5 0" Command="{Binding NamedArguments.MoveDownCommand}" ToolTip="Move Down">
-						<RepeatButton.Content>
-							<Image Width="16" Height="16" Source="../../Images/ArrowDown.png" Style="{StaticResource DisableImageStyle}" />
-						</RepeatButton.Content>
-					</RepeatButton>
-
-					<Button Content="_Add" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding AddNamedArgumentCommand}" />
-					<Button Content="_Remove" Style="{StaticResource DialogButton}" Margin="0 0 0 0" Command="{Binding NamedArguments.RemoveCommand}" />
-				</StackPanel>
-			</Grid>
+			<dnlibdlgs:CANamedArgumentsControl DataContext="{Binding CANamedArgumentsVM}" />
 		</GroupBox>
 	</Grid>
 </UserControl>

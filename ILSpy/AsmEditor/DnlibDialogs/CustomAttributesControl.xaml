@@ -24,45 +24,5 @@
              xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="500">
-	<UserControl.Resources>
-		<Style x:Key="DisableImageStyle" TargetType="{x:Type Image}">
-			<Style.Triggers>
-				<DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Control}, AncestorLevel=1}, Path=IsEnabled}" Value="False">
-					<Setter Property="Opacity" Value="0.30" />
-				</DataTrigger>
-			</Style.Triggers>
-		</Style>
-	</UserControl.Resources>
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
-
-		<ListView Grid.Row="0"
-				  Margin="0 5 0 0"
-				  Name="listView"
-				  MouseDoubleClick="listView_MouseDoubleClick"
-				  SelectionMode="Single"
-				  ItemsSource="{Binding CustomAttributeCollection}"
-				  DisplayMemberPath="FullName"
-				  SelectedIndex="{Binding CustomAttributeCollection.SelectedIndex}" />
-
-		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5 0 0">
-			<RepeatButton Margin="0 0 5 0" Command="{Binding CustomAttributeCollection.MoveUpCommand}" ToolTip="Move Up">
-				<RepeatButton.Content>
-					<Image Width="16" Height="16" Source="../../Images/ArrowUp.png" Style="{StaticResource DisableImageStyle}" />
-				</RepeatButton.Content>
-			</RepeatButton>
-			<RepeatButton Margin="0 0 5 0" Command="{Binding CustomAttributeCollection.MoveDownCommand}" ToolTip="Move Down">
-				<RepeatButton.Content>
-					<Image Width="16" Height="16" Source="../../Images/ArrowDown.png" Style="{StaticResource DisableImageStyle}" />
-				</RepeatButton.Content>
-			</RepeatButton>
-
-			<Button Content="_Edit..." Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding EditCommand}" />
-			<Button Content="_Add..." Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding AddCommand}" />
-			<Button Content="_Remove" Style="{StaticResource DialogButton}" Margin="0 0 0 0" Command="{Binding CustomAttributeCollection.RemoveCommand}" />
-		</StackPanel>
-	</Grid>
+	<dnlibdlgs:ListVMControl DataContext="{Binding}" />
 </UserControl>

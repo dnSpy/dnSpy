@@ -17,18 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
-
 namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 {
-	interface IEditSecurityAttribute
+	interface IEdit<T>
 	{
 		/// <summary>
-		/// Lets the user edit the security attribute. Returns null if user canceled.
+		/// Lets the user edit the object. Returns null if user canceled.
 		/// </summary>
 		/// <param name="title">Window UI title</param>
-		/// <param name="ds">Security declaration</param>
+		/// <param name="obj">The object to edit</param>
 		/// <returns></returns>
-		SecurityAttributeVM Edit(string title, SecurityAttributeVM sa);
+		T Edit(string title, T obj);
 	}
 }

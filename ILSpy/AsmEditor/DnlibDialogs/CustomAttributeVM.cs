@@ -48,10 +48,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			get { return new RelayCommand(a => PickConstructor()); }
 		}
 
-		public ICommand AddNamedArgumentCommand {
-			get { return new RelayCommand(a => AddNamedArgument(), a => AddNamedArgumentCanExecute()); }
-		}
-
 		public string TypeFullName {
 			get {
 				var mrCtor = Constructor as MemberRef;
@@ -83,7 +79,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 					first = false;
 					sb.Append(arg.ToString());
 				}
-				foreach (var namedArg in NamedArguments) {
+				foreach (var namedArg in CANamedArgumentsVM.Collection) {
 					if (!first)
 						sb.Append(", ");
 					first = false;
@@ -100,7 +96,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				if (isRawData != value) {
 					isRawData = value;
 					ConstructorArguments.IsEnabled = !value;
-					NamedArguments.IsEnabled = !value;
+					CANamedArgumentsVM.Collection.IsEnabled = !value;
 					OnPropertyChanged("IsRawData");
 					OnPropertyChanged("IsNotRawData");
 					OnPropertyChanged("FullName");
@@ -141,23 +137,28 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		readonly MyObservableCollection<CAArgumentVM> constructorArguments = new MyObservableCollection<CAArgumentVM>();
 
-		public MyObservableCollection<CANamedArgumentVM> NamedArguments {
-			get { return namedArguments; }
+		public CANamedArgumentsVM CANamedArgumentsVM {
+			get { return caNamedArgumentsVM; }
 		}
-		readonly MyObservableCollection<CANamedArgumentVM> namedArguments = new MyObservableCollection<CANamedArgumentVM>();
+		CANamedArgumentsVM caNamedArgumentsVM;
 
-		readonly TypeSigCreatorOptions typeSigOptions;
 		readonly ModuleDef module;
+		readonly Language language;
+		readonly TypeDef ownerType;
+		readonly MethodDef ownerMethod;
 
-		public CustomAttributeVM(CustomAttributeOptions options, TypeSigCreatorOptions typeSigOptions)
+		public CustomAttributeVM(CustomAttributeOptions options, ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
 		{
-			this.module = typeSigOptions.Module;
 			this.origOptions = options;
-			this.typeSigOptions = typeSigOptions;
+			this.module = module;
+			this.language = language;
+			this.ownerType = ownerType;
+			this.ownerMethod = ownerMethod;
 
 			this.rawData = new HexStringVM(a => HasErrorUpdated());
+			this.caNamedArgumentsVM = new CANamedArgumentsVM(module, language, ownerType, ownerMethod, a => !IsRawData && a.Collection.Count < ushort.MaxValue);
 			ConstructorArguments.CollectionChanged += Args_CollectionChanged;
-			NamedArguments.CollectionChanged += Args_CollectionChanged;
+			CANamedArgumentsVM.Collection.CollectionChanged += Args_CollectionChanged;
 
 			Reinitialize();
 		}
@@ -194,7 +195,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				ConstructorArguments.RemoveAt(ConstructorArguments.Count - 1);
 			while (ConstructorArguments.Count < count) {
 				var type = Constructor.MethodSig.Params[ConstructorArguments.Count];
-				ConstructorArguments.Add(new CAArgumentVM(CreateCAArgument(type), typeSigOptions, type));
+				ConstructorArguments.Add(new CAArgumentVM(CreateCAArgument(type), new TypeSigCreatorOptions(module, language), type));
 			}
 		}
 
@@ -210,18 +211,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			var newCtor = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.Ctor), Constructor);
 			if (newCtor != null)
 				Constructor = newCtor;
-		}
-
-		void AddNamedArgument()
-		{
-			if (!AddNamedArgumentCanExecute())
-				return;
-			NamedArguments.Add(new CANamedArgumentVM(new CANamedArgument(false, module.CorLibTypes.Int32, "AttributeProperty", new CAArgument(module.CorLibTypes.Int32, 0)), typeSigOptions));
-		}
-
-		bool AddNamedArgumentCanExecute()
-		{
-			return !IsRawData && NamedArguments.Count < ushort.MaxValue;
 		}
 
 		void Reinitialize()
@@ -245,10 +234,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				TypeSig type = null;
 				if (sig != null && i < sig.Params.Count)
 					type = sig.Params[i];
-				ConstructorArguments.Add(new CAArgumentVM(options.ConstructorArguments[i], typeSigOptions, type));
+				ConstructorArguments.Add(new CAArgumentVM(options.ConstructorArguments[i], new TypeSigCreatorOptions(module, language), type));
 			}
-			NamedArguments.Clear();
-			NamedArguments.AddRange(options.NamedArguments.Select(a => new CANamedArgumentVM(a, typeSigOptions)));
+			CANamedArgumentsVM.InitializeFrom(options.NamedArguments);
 			CreateArguments();
 		}
 
@@ -264,7 +252,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				int count = Constructor == null ? 0 : Constructor.MethodSig.GetParamCount();
 				for (int i = 0; i < count; i++)
 					options.ConstructorArguments.Add(ConstructorArguments[i].CreateCAArgument(Constructor.MethodSig.Params[i]));
-				options.NamedArguments.AddRange(NamedArguments.Select(a => a.CreateCANamedArgument()));
+				options.NamedArguments.AddRange(CANamedArgumentsVM.Collection.Select(a => a.CreateCANamedArgument()));
 			}
 			return options;
 		}
@@ -280,7 +268,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 					(IsRawData && rawData.HasError) ||
 					(!IsRawData &&
 						(ConstructorArguments.Any(a => a.HasError) ||
-						NamedArguments.Any(a => a.HasError)));
+						CANamedArgumentsVM.Collection.Any(a => a.HasError)));
 			}
 		}
 	}

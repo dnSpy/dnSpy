@@ -121,10 +121,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		UInt16VM number;
 
-		public TypeDefOrRefAndCAsVM TypeDefOrRefAndCAsVM {
+		public TypeDefOrRefAndCAsVM<GenericParamConstraint> TypeDefOrRefAndCAsVM {
 			get { return typeDefOrRefAndCAsVM; }
 		}
-		TypeDefOrRefAndCAsVM typeDefOrRefAndCAsVM;
+		TypeDefOrRefAndCAsVM<GenericParamConstraint> typeDefOrRefAndCAsVM;
 
 		public CustomAttributesVM CustomAttributesVM {
 			get { return customAttributesVM; }
@@ -143,7 +143,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			this.module = module;
 			this.origOptions = options;
 			this.number = new UInt16VM(a => { OnPropertyChanged("FullName"); HasErrorUpdated(); });
-			this.typeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM(module, language, ownerType, ownerMethod, "Edit Generic Parameter Constraint", "Create Generic Parameter Constraint");
+			this.typeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM<GenericParamConstraint>("Edit Generic Parameter Constraint", "Create Generic Parameter Constraint", module, language, ownerType, ownerMethod);
 			this.customAttributesVM = new CustomAttributesVM(module, language);
 			this.gpVarianceVM = new EnumListVM(EnumVM.Create(typeof(GPVariance)));
 
@@ -191,9 +191,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			options.Name = Name;
 			options.Kind = TypeSigCreator.TypeSig.ToTypeDefOrRef();
 			options.GenericParamConstraints.Clear();
-			options.GenericParamConstraints.AddRange(TypeDefOrRefAndCAsVM.TypeDefOrRefAndCACollection.Select(a => a.CreateTypeDefOrRefAndCAOptions().CreateGenericParamConstraint(module)));
+			options.GenericParamConstraints.AddRange(TypeDefOrRefAndCAsVM.Collection.Select(a => a.CreateTypeDefOrRefAndCAOptions().CreateGenericParamConstraint(module)));
 			options.CustomAttributes.Clear();
-			options.CustomAttributes.AddRange(CustomAttributesVM.CustomAttributeCollection.Select(a => a.CreateCustomAttributeOptions().Create()));
+			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			return options;
 		}
 

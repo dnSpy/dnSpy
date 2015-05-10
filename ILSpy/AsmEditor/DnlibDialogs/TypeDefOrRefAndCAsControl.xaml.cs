@@ -19,8 +19,8 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
@@ -33,21 +33,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		{
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as TypeDefOrRefAndCAsVM;
-				if (data != null) {
-					var ownerWindow = Window.GetWindow(this);
-					data.EditTypeDefOrRefAndCA = new EditTypeDefOrRefAndCA(ownerWindow);
-				}
-			};
-		}
+				var ownerWindow = Window.GetWindow(this);
 
-		private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-		{
-			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
-				return;
-			var data = DataContext as TypeDefOrRefAndCAsVM;
-			if (data != null)
-				data.EditCurrent();
+				var data1 = DataContext as TypeDefOrRefAndCAsVM<GenericParamConstraint>;
+				if (data1 != null)
+					data1.EditObject = new EditTypeDefOrRefAndCA(ownerWindow);
+
+				var data2 = DataContext as TypeDefOrRefAndCAsVM<InterfaceImpl>;
+				if (data2 != null)
+					data2.EditObject = new EditTypeDefOrRefAndCA(ownerWindow);
+			};
 		}
 	}
 }

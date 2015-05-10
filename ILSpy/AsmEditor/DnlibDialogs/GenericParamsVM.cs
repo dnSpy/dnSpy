@@ -17,109 +17,40 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
-	sealed class GenericParamsVM : ViewModelBase
+	sealed class GenericParamsVM : ListVM<GenericParamVM, GenericParam>
 	{
-		public IEditGenericParam EditGenericParam {
-			set { editGenericParam = value; }
-		}
-		IEditGenericParam editGenericParam;
-
-		public ICommand EditCommand {
-			get { return new RelayCommand(a => EditCurrent(), a => EditCurrentCanExecute()); }
-		}
-
-		public ICommand AddCommand {
-			get { return new RelayCommand(a => AddCurrent(), a => AddCurrentCanExecute()); }
-		}
-
-		public MyObservableCollection<GenericParamVM> GenericParamCollection {
-			get { return genericParamCollection; }
-		}
-		readonly MyObservableCollection<GenericParamVM> genericParamCollection = new MyObservableCollection<GenericParamVM>();
-
-		readonly ModuleDef module;
-		readonly Language language;
-		readonly TypeDef ownerType;
-		readonly MethodDef ownerMethod;
-
 		public GenericParamsVM(ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
+			: base("Edit Generic Parameter", "Create Generic Parameter", module, language, ownerType, ownerMethod)
 		{
-			this.module = module;
-			this.language = language;
-			this.ownerType = ownerType;
-			this.ownerMethod = ownerMethod;
 		}
 
-		public void InitializeFrom(IEnumerable<GenericParam> gps)
+		protected override GenericParamVM Create(GenericParam model)
 		{
-			GenericParamCollection.Clear();
-			GenericParamCollection.AddRange(gps.Select(a => new GenericParamVM(new GenericParamOptions(a), module, language, ownerType, ownerMethod)));
+			return new GenericParamVM(new GenericParamOptions(model), module, language, ownerType, ownerMethod);
 		}
 
-		public void EditCurrent()
+		protected override GenericParamVM Clone(GenericParamVM obj)
 		{
-			if (!EditCurrentCanExecute())
-				return;
-			if (editGenericParam == null)
-				throw new InvalidOperationException();
-			int index = GenericParamCollection.SelectedIndex;
-			var gpVm = editGenericParam.Edit("Edit Generic Parameter", new GenericParamVM(GenericParamCollection[index].CreateGenericParamOptions(), module, language, ownerType, ownerMethod));
-			if (gpVm != null) {
-				GenericParamCollection[index] = gpVm;
-				GenericParamCollection.SelectedIndex = index;
-			}
+			return new GenericParamVM(obj.CreateGenericParamOptions(), module, language, ownerType, ownerMethod);
 		}
 
-		bool EditCurrentCanExecute()
+		protected override GenericParamVM Create()
 		{
-			return GenericParamCollection.SelectedIndex >= 0 && GenericParamCollection.SelectedIndex < GenericParamCollection.Count;
+			return new GenericParamVM(new GenericParamOptions(), module, language, ownerType, ownerMethod);
 		}
 
-		void AddCurrent()
+		protected override int GetAddIndex(GenericParamVM obj)
 		{
-			if (!AddCurrentCanExecute())
-				return;
-
-			if (editGenericParam == null)
-				throw new InvalidOperationException();
-			var gpVm = editGenericParam.Edit("Create Generic Parameter", new GenericParamVM(new GenericParamOptions(), module, language, ownerType, ownerMethod));
-			if (gpVm != null) {
-				int index = GetGenericParamCollectionIndex(gpVm.Number.Value);
-				GenericParamCollection.Insert(index, gpVm);
-				GenericParamCollection.SelectedIndex = index;
-			}
-		}
-
-		int GetGenericParamCollectionIndex(int number)
-		{
-			for (int i = 0; i < GenericParamCollection.Count; i++) {
-				if (number < GenericParamCollection[i].Number.Value)
+			ushort number = obj.Number.Value;
+			for (int i = 0; i < Collection.Count; i++) {
+				if (number < Collection[i].Number.Value)
 					return i;
 			}
-			return GenericParamCollection.Count;
-		}
-
-		bool AddCurrentCanExecute()
-		{
-			return true;
-		}
-
-		protected override string Verify(string columnName)
-		{
-			return string.Empty;
-		}
-
-		public override bool HasError {
-			get { return false; }
+			return Collection.Count;
 		}
 	}
 }
