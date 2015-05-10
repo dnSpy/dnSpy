@@ -52,6 +52,7 @@
 				  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 				  ItemsSource="{Binding Collection}"
 				  HorizontalContentAlignment="Stretch"
+				  IsEnabled="{Binding IsEnabled}"
 				  SelectedIndex="{Binding Collection.SelectedIndex}" />
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5 0 0">

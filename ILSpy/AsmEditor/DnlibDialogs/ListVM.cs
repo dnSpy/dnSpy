@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
@@ -38,6 +39,18 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			set { editObject = value; }
 		}
 		IEdit<TVM> editObject;
+
+		public bool IsEnabled {
+			get { return isEnabled; }
+			set {
+				if (isEnabled != value) {
+					isEnabled = value;
+					Collection.IsEnabled = value;
+					OnPropertyChanged("IsEnabled");
+				}
+			}
+		}
+		bool isEnabled = true;
 
 		public bool InlineEditing {
 			get { return inlineEditing; }
@@ -77,6 +90,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			this.ownerType = ownerType;
 			this.ownerMethod = ownerMethod;
 			this.inlineEditing = inlineEditing;
+			((INotifyPropertyChanged)Collection).PropertyChanged += ListVM_PropertyChanged;
+		}
+
+		void ListVM_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "IsEnabled")
+				IsEnabled = Collection.IsEnabled;
 		}
 
 		protected abstract TVM Create(TModel model);
