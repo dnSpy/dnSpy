@@ -65,9 +65,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			method.DeclSecurities.AddRange(DeclSecurities);
 			method.ParamDefs.Clear();
 			method.ParamDefs.AddRange(ParamDefs);
-			method.Parameters.UpdateParameterTypes();
 			method.GenericParameters.Clear();
 			method.GenericParameters.AddRange(GenericParameters);
+			method.Parameters.UpdateParameterTypes();
 			return method;
 		}
 
