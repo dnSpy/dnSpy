@@ -30,10 +30,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		public GenericParamControl()
 		{
 			InitializeComponent();
-			Loaded += ParamDefControl_Loaded;
+			Loaded += GenericParamControl_Loaded;
 		}
 
-		void ParamDefControl_Loaded(object sender, RoutedEventArgs e)
+		void GenericParamControl_Loaded(object sender, RoutedEventArgs e)
 		{
 			// I can't get it to work with XAML so do it with code
 			nameTextBox.Focus();
