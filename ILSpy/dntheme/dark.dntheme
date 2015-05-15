@@ -72,7 +72,7 @@
 		<color name="SystemColorsWindow" fg="#252525" />
 		<color name="SystemColorsHighlight" fg="#063F40" />
 		<color name="SystemColorsHighlightText" fg="#D0D0D0" />
-		<color name="systemcolorsinactiveselectionhighlight" fg="#1F5253" />
+		<color name="systemcolorsinactiveselectionhighlight" fg="#053233" />
 		<color name="systemcolorsinactiveselectionhighlighttext" fg="#7D7D7D" />
 		<color name="systemcolorsinactivecaption" fg="#606060" />
 		<color name="systemcolorsinactivecaptiontext" fg="#A0A0A0" />
