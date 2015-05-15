@@ -208,7 +208,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		{
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newCtor = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.Ctor), Constructor);
+			var newCtor = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.InstanceConstructor), Constructor);
 			if (newCtor != null)
 				Constructor = newCtor;
 		}
