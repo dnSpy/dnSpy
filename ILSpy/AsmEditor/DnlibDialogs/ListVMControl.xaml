@@ -27,7 +27,7 @@
              d:DesignHeight="200" d:DesignWidth="500">
 	<UserControl.Resources>
 		<DataTemplate DataType="{x:Type local:ViewModelBase}">
-			<TextBlock Text="{Binding FullName}" />
+			<TextBlock Text="{Binding FullName}" ToolTip="{Binding FullName}" />
 		</DataTemplate>
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 	</UserControl.Resources>
