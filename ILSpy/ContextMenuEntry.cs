@@ -346,7 +346,6 @@ namespace ICSharpCode.ILSpy
 					}
 				}
 			}
-			menu.Background = Brushes.White;
 			return menu.Items.Count > 0;
 		}
 	}

@@ -67,7 +67,7 @@
 			<StackPanel Grid.Row="2" Margin="0 5 0 0" Orientation="Horizontal">
 				<Button Grid.Column="0" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Content="Cl_ear" Command="{Binding ClearTypeSigCommand}" ToolTip="Clear type"/>
 				<Button Grid.Column="1" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Content="_Remove" Command="{Binding RemoveLastTypeSigCommand}" ToolTip="Remove last added type"/>
-				<ComboBox Grid.Column="2" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" Margin="0 0 0 0" DisplayMemberPath="Name" Width="100" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" Visibility="{Binding CanShowTypeFullName, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+				<ComboBox Grid.Column="2" Margin="0 0 0 0" DisplayMemberPath="Name" Width="100" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" Visibility="{Binding CanShowTypeFullName, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 			</StackPanel>
 
 			<Grid Grid.Row="3" Margin="0 5 0 0" Visibility="{Binding AddingLeafTypeSig, Converter={StaticResource BooleanToVisibilityConverter}}">

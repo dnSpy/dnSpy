@@ -17,40 +17,25 @@
 			<Path x:Name="upArrow"
 			      Visibility="{Binding Path=Column.SortDirection, ConverterParameter={x:Static controls:ColumnSortDirection.Ascending}, RelativeSource={RelativeSource AncestorType={x:Type GridViewColumnHeader}}, Converter={StaticResource ColumnSortDirectionToVisibilityConverter}}"
 			      StrokeThickness = "1"
-			      Fill            = "Gray"
+			      Fill            = "{DynamicResource SortableGridViewColumnArrowBackground}"
 			      Data            = "M 5,10 L 15,10 L 10,5 L 5,10"/>
 			<Path x:Name="downArrow"
 			      Visibility="{Binding Path=Column.SortDirection, ConverterParameter={x:Static controls:ColumnSortDirection.Descending}, RelativeSource={RelativeSource AncestorType={x:Type GridViewColumnHeader}}, Converter={StaticResource ColumnSortDirectionToVisibilityConverter}}"
 			      StrokeThickness = "1"
-			      Fill            = "Gray"
+			      Fill            = "{DynamicResource SortableGridViewColumnArrowBackground}"
 			      Data            = "M 5,5 L 10,10 L 15,5 L 5,5"/>
 		</StackPanel>
 	</DataTemplate>
-
-	<SolidColorBrush x:Key="paneBorder" Color="#828790" />
 
 	<!-- DockedPane -->
 	<Style TargetType="{x:Type controls:DockedPane}">
 		<Style.Resources>
 			<Style x:Key="CloseButtonStyle" TargetType="{x:Type Button}">
 				<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-				<Setter Property="Background">
-					<Setter.Value>
-						<LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
-							<GradientStop Color="{controls:ControlColor 243}" Offset="0"/>
-							<GradientStop Color="{controls:ControlColor 235}" Offset="0.5"/>
-							<GradientStop Color="{controls:ControlColor 221}" Offset="0.5"/>
-							<GradientStop Color="{controls:ControlColor 205}" Offset="1"/>
-						</LinearGradientBrush>
-					</Setter.Value>
-				</Setter>
-				<Setter Property="BorderBrush">
-					<Setter.Value>
-						<SolidColorBrush Color="{controls:ControlColor 150}"/>
-					</Setter.Value>
-				</Setter>
+				<Setter Property="Background" Value="{DynamicResource DockedPaneCloseButtonBackground}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource DockedPaneCloseButtonBorder}" />
 				<Setter Property="BorderThickness" Value="1"/>
-				<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+				<Setter Property="Foreground" Value="{DynamicResource SystemColorsControlText}"/>
 				<Setter Property="HorizontalContentAlignment" Value="Center"/>
 				<Setter Property="VerticalContentAlignment" Value="Center"/>
 				<Setter Property="Padding" Value="4"/>
@@ -63,24 +48,10 @@
 							</Grid>
 							<ControlTemplate.Triggers>
 								<Trigger Property="IsMouseOver" Value="True">
-									<Setter Property="Background" TargetName="buttonBorder">
-										<Setter.Value>
-											<LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
-												<GradientStop Color="{controls:ControlColor 250, Highlight=0.3}" Offset="0"/>
-												<GradientStop Color="{controls:ControlColor 224, Highlight=0.4}" Offset="1"/>
-											</LinearGradientBrush>
-										</Setter.Value>
-									</Setter>
+									<Setter Property="Background" TargetName="buttonBorder" Value="{DynamicResource DockedPaneCloseButtonMouseOverBackground}" />
 								</Trigger>
 								<Trigger Property="IsPressed" Value="True">
-									<Setter Property="Background" TargetName="buttonBorder">
-										<Setter.Value>
-											<LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
-												<GradientStop Color="{controls:ControlColor 224}" Offset="0"/>
-												<GradientStop Color="{controls:ControlColor 248}" Offset="1"/>
-											</LinearGradientBrush>
-										</Setter.Value>
-									</Setter>
+									<Setter Property="Background" TargetName="buttonBorder" Value="{DynamicResource DockedPaneCloseButtonPressedBackground}" />
 								</Trigger>
 							</ControlTemplate.Triggers>
 						</ControlTemplate>
@@ -91,19 +62,29 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type controls:DockedPane}">
-					<Border BorderThickness="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness}" BorderBrush="{StaticResource paneBorder}">
+					<Border
+						BorderThickness="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness}"
+						BorderBrush="{DynamicResource PaneBorder}">
 							<DockPanel>
-							<Border BorderThickness="0,0,0,0" BorderBrush="{StaticResource paneBorder}"
-									Background="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" DockPanel.Dock="Top">
+							<Border BorderThickness="0,0,0,0" BorderBrush="{DynamicResource PaneBorder}"
+									Background="{DynamicResource SystemColorsInactiveCaption}" DockPanel.Dock="Top">
 								<Grid>
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition Width="1*"/>
 										<ColumnDefinition Width="Auto" />
 									</Grid.ColumnDefinitions>
 									<TextBlock Text="{TemplateBinding Title}" Margin="3,0"
-											Foreground="{DynamicResource {x:Static SystemColors.InactiveCaptionTextBrushKey}}" VerticalAlignment="Center"/>
+											   Foreground="{DynamicResource SystemColorsInactiveCaptionText}"
+											   VerticalAlignment="Center"/>
 									<Button x:Name="PART_Close" Grid.Column="2" VerticalAlignment="Center" Width="16" Height="16" DockPanel.Dock="Right" Style="{DynamicResource CloseButtonStyle}" ToolTip="Close" Margin="1">
-										<Path x:Name="Path" Stretch="Fill" StrokeThickness="0.5" Stroke="#FF333333" Fill="#FF969696" Data="F1 M 0,1.3333L 1.33333,0L 4,2.6666L 6.6666,0 8,1.3333L 5.3333,4L 8,6.6666L 6.6666,8L 4,5.3333L 1.3333,8L 0,6.6666L 2.6666,4L 0,1.3333 Z " HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+										<Path x:Name="Path"
+											  Stretch="Fill"
+											  StrokeThickness="0.5"
+											  Stroke="{DynamicResource DockedPaneCloseButtonPathStroke}"
+											  Fill="{DynamicResource DockedPaneCloseButtonPathFill}"
+											  Data="F1 M 0,1.3333L 1.33333,0L 4,2.6666L 6.6666,0 8,1.3333L 5.3333,4L 8,6.6666L 6.6666,8L 4,5.3333L 1.3333,8L 0,6.6666L 2.6666,4L 0,1.3333 Z "
+											  HorizontalAlignment="Stretch"
+											  VerticalAlignment="Stretch"/>
 									</Button>
 								</Grid>
 							</Border>
@@ -113,6 +94,6 @@
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
-		<Setter Property="Control.BorderBrush" Value="{StaticResource paneBorder}" />
+		<Setter Property="Control.BorderBrush" Value="{DynamicResource PaneBorder}" />
 	</Style>
 </ResourceDictionary>

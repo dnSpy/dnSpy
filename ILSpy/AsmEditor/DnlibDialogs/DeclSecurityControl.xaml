@@ -25,13 +25,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500">
 	<UserControl.Resources>
-		<Style x:Key="DisableImageStyle" TargetType="{x:Type Image}">
-			<Style.Triggers>
-				<DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Control}, AncestorLevel=1}, Path=IsEnabled}" Value="False">
-					<Setter Property="Opacity" Value="0.30" />
-				</DataTrigger>
-			</Style.Triggers>
-		</Style>
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 	</UserControl.Resources>
 	<TabControl>
@@ -47,8 +40,8 @@
 						<ColumnDefinition Width="Auto" />
 						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
-					<ComboBox Grid.Column="0" Margin="0 0 0 0" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" DisplayMemberPath="Name" Width="120" ItemsSource="{Binding SecurityActionEnumList.Items}" SelectedIndex="{Binding SecurityActionEnumList.SelectedIndex}" VerticalContentAlignment="Center" />
-					<ComboBox Grid.Column="1" Margin="5 0 0 0" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" DisplayMemberPath="Name" Width="30" ItemsSource="{Binding DeclSecVerEnumList.Items}" SelectedIndex="{Binding DeclSecVerEnumList.SelectedIndex}" VerticalContentAlignment="Center" />
+					<ComboBox Grid.Column="0" Margin="0 0 0 0" DisplayMemberPath="Name" Width="120" ItemsSource="{Binding SecurityActionEnumList.Items}" SelectedIndex="{Binding SecurityActionEnumList.SelectedIndex}" VerticalContentAlignment="Center" />
+					<ComboBox Grid.Column="1" Margin="5 0 0 0" DisplayMemberPath="Name" Width="30" ItemsSource="{Binding DeclSecVerEnumList.Items}" SelectedIndex="{Binding DeclSecVerEnumList.SelectedIndex}" VerticalContentAlignment="Center" />
 				</Grid>
 				<Grid Grid.Row="1" Visibility="{Binding IsV1, Converter={StaticResource BooleanToVisibilityConverter}}">
 					<Grid.RowDefinitions>

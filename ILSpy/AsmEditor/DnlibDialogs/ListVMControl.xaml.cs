@@ -34,9 +34,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			InitializeComponent();
 		}
 
-		private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		private void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
+			if (!UIUtils.IsLeftDoubleClick<ListBoxItem>(listBox, e))
 				return;
 			var data = DataContext as ListVM;
 			if (data != null)

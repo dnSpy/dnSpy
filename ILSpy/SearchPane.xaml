@@ -11,7 +11,7 @@
 			<RowDefinition Height="Auto"  />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<Border BorderThickness="0,0,0,1" BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+		<Border BorderThickness="0,0,0,1" BorderBrush="{DynamicResource SystemColorsControlLight}" Background="{DynamicResource SystemColorsControl}">
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*" />
@@ -26,12 +26,11 @@
 				<controls:SearchBox x:Name="searchBox" DockPanel.Dock="Top" Grid.Column="0" Margin="1 1 0 1"
 						PreviewKeyDown="SearchBox_PreviewKeyDown"
 						Text="{Binding SearchTerm, ElementName=self}" ToolTip="Search" UpdateDelay="0:0:0.1"
-						WatermarkColor="Gray" WatermarkText="Enter search terms; use /reg(ular)?Ex(pressions)?/" />
+						WatermarkColor="{DynamicResource SystemColorsGrayText}" WatermarkText="Enter search terms; use /reg(ular)?Ex(pressions)?/" />
 				<Expander Grid.Column="1" Name="expander" IsExpanded="False" Header="Options" />
 				<Label Grid.Column="2" Margin="0,-1" VerticalContentAlignment="Center">Search For:</Label>
 				<ComboBox Grid.Column="3" Width="130" Name="searchModeComboBox" Margin="1"
-						  SelectionChanged="SearchModeComboBox_SelectionChanged"
-						  Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}">
+						  SelectionChanged="SearchModeComboBox_SelectionChanged">
 					<ComboBox.ItemTemplate>
 						<DataTemplate>
 							<StackPanel Orientation="Horizontal">

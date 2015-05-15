@@ -524,14 +524,17 @@ namespace ICSharpCode.TreeView
 			Before, Inside, After
 		}
 
+		public Func<Brush> GetPreviewInsideTextBackground = () => SystemColors.HighlightBrush;
+		public Func<Brush> GetPreviewInsideForeground = () => SystemColors.HighlightTextBrush;
+
 		void ShowPreview(SharpTreeViewItem item, DropPlace place)
 		{
 			previewNodeView = item.NodeView;
 			previewPlace = place;
 
 			if (place == DropPlace.Inside) {
-				previewNodeView.TextBackground = SystemColors.HighlightBrush;
-				previewNodeView.Foreground = SystemColors.HighlightTextBrush;
+				previewNodeView.TextBackground = GetPreviewInsideTextBackground();
+				previewNodeView.Foreground = GetPreviewInsideForeground();
 			}
 			else {
 				if (insertMarker == null) {

@@ -55,7 +55,7 @@ namespace ICSharpCode.ILSpy
 			this.TopPaneSettings.Height = FromString((string)doc.Element("TopPaneHeight"), 200);
 			this.BottomPaneSettings.Name = FromString((string)doc.Element("BottomPaneName"), string.Empty);
 			this.BottomPaneSettings.Height = FromString((string)doc.Element("BottomPaneHeight"), 200);
-			this.ThemeName = (string)doc.Element("ThemeName") ?? "light";
+			this.ThemeName = (string)doc.Element("ThemeName") ?? "dark";
 
 			var ignoreXml = doc.Element("IgnoredWarnings");
 			if (ignoreXml != null) {
@@ -91,7 +91,7 @@ namespace ICSharpCode.ILSpy
 		
 		public WindowState WindowState = WindowState.Normal;
 		public Rect WindowBounds;
-		internal static Rect DefaultWindowBounds =  new Rect(10, 10, 750, 550);
+		internal static Rect DefaultWindowBounds =  new Rect(10, 10, 1100, 750);
 		public double LeftColumnWidth;
 		public PaneSettings TopPaneSettings;
 		public PaneSettings BottomPaneSettings;

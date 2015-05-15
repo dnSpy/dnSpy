@@ -24,15 +24,6 @@
              xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="500">
-	<UserControl.Resources>
-		<Style x:Key="DisableImageStyle" TargetType="{x:Type Image}">
-			<Style.Triggers>
-				<DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Control}, AncestorLevel=1}, Path=IsEnabled}" Value="False">
-					<Setter Property="Opacity" Value="0.30" />
-				</DataTrigger>
-			</Style.Triggers>
-		</Style>
-	</UserControl.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition />
@@ -54,10 +45,9 @@
 				<RowDefinition Height="*" />
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
-			<ListView Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"
+			<ListBox Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"
 					  Margin="0 5 0 0"
 					  IsEnabled="{Binding IsEnabled}"
-					  Name="listView"
 					  ItemsSource="{Binding TypeSigCollection}"
 					  DisplayMemberPath="FullName"
 					  SelectedIndex="{Binding TypeSigCollection.SelectedIndex}" />
@@ -66,7 +56,11 @@
 					Command="{Binding TypeSigCollection.MoveUpCommand}"
 					ToolTip="Move Up">
 				<RepeatButton.Content>
-					<Image Width="16" Height="16" Source="../../Images/ArrowUp.png" Style="{StaticResource DisableImageStyle}" />
+					<Path Fill="{DynamicResource ListArrowBackground}" Width="16" Height="16" Data="{StaticResource ListUpArrow16x16}">
+						<Path.LayoutTransform>
+							<RotateTransform Angle="0" />
+						</Path.LayoutTransform>
+					</Path>
 				</RepeatButton.Content>
 			</RepeatButton>
 			<RepeatButton Grid.Row="2" Grid.Column="1"
@@ -74,7 +68,11 @@
 					Command="{Binding TypeSigCollection.MoveDownCommand}"
 					ToolTip="Move Down">
 				<RepeatButton.Content>
-					<Image Width="16" Height="16" Source="../../Images/ArrowDown.png" Style="{StaticResource DisableImageStyle}" />
+					<Path Fill="{DynamicResource ListArrowBackground}" Width="16" Height="16" Data="{StaticResource ListUpArrow16x16}">
+						<Path.LayoutTransform>
+							<RotateTransform Angle="180" />
+						</Path.LayoutTransform>
+					</Path>
 				</RepeatButton.Content>
 			</RepeatButton>
 		</Grid>

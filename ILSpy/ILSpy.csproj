@@ -70,6 +70,7 @@
     <Reference Include="PresentationFramework">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
@@ -413,7 +414,6 @@
     <Compile Include="TreeNodes\NodePathName.cs" />
     <Compile Include="TreeNodes\OpenInExplorerContextMenuEntry.cs" />
     <Compile Include="Commands\OpenListCommand.cs" />
-    <Compile Include="Controls\MarkupExtensions.cs" />
     <Compile Include="Controls\ResourceObjectTable.xaml.cs">
       <DependentUpon>ResourceObjectTable.xaml</DependentUpon>
     </Compile>
@@ -554,8 +554,6 @@
     <EmbeddedResource Include="..\COPYING">
       <Link>COPYING</Link>
     </EmbeddedResource>
-    <Resource Include="Images\ArrowUp.png" />
-    <Resource Include="Images\ArrowDown.png" />
     <Resource Include="Images\AssemblyList.png" />
     <Resource Include="Images\AssemblyListGAC.png" />
     <Resource Include="Images\AssemblyWarning.png" />
@@ -827,6 +825,10 @@
     <Page Include="DecompilerTabsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="dntheme\wpf.styles.templates.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="MainWindow.xaml" />
     <Page Include="MsgBox.xaml">

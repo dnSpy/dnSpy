@@ -78,7 +78,7 @@
 						</Grid.RowDefinitions>
 
 						<Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="_Variance" Target="{Binding ElementName=varianceComboBox}" />
-						<ComboBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="varianceComboBox" DisplayMemberPath="Name" ItemsSource="{Binding GPVarianceVM.Items}" SelectedIndex="{Binding GPVarianceVM.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
+						<ComboBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="varianceComboBox" DisplayMemberPath="Name" ItemsSource="{Binding GPVarianceVM.Items}" SelectedIndex="{Binding GPVarianceVM.SelectedIndex}" VerticalContentAlignment="Center" />
 					</Grid>
 				</Grid>
 			</ScrollViewer>

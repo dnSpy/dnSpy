@@ -68,7 +68,7 @@
 			<CheckBox Grid.Column="3" Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" IsChecked="{Binding ShowInternalApi}" ToolTip="Show Internal Types and Members">
 				<Image Source="../../Images/PrivateInternal.png" Width="16" Height="16"/>
 			</CheckBox>
-			<ComboBox Grid.Column="4" Margin="5 0 0 0" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" DisplayMemberPath="Name" Width="100" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" VerticalContentAlignment="Center" />
+			<ComboBox Grid.Column="4" Margin="5 0 0 0" DisplayMemberPath="Name" Width="100" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" VerticalContentAlignment="Center" />
 		</Grid>
 
 		<ListBox Grid.Row="1"

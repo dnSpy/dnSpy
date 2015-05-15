@@ -63,7 +63,7 @@
 							<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
 							<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 							<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="Accessibilit_y" Target="{Binding ElementName=visibilityComboBox}" />
-							<ComboBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" HorizontalAlignment="Stretch" Name="visibilityComboBox" DisplayMemberPath="Name" ItemsSource="{Binding FieldVisibility.Items}" SelectedIndex="{Binding FieldVisibility.SelectedIndex}" VerticalContentAlignment="Center" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}" />
+							<ComboBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" HorizontalAlignment="Stretch" Name="visibilityComboBox" DisplayMemberPath="Name" ItemsSource="{Binding FieldVisibility.Items}" SelectedIndex="{Binding FieldVisibility.SelectedIndex}" VerticalContentAlignment="Center" />
 						</Grid>
 
 						<GroupBox Grid.Row="1" Header="Flags">

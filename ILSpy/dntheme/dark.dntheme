@@ -59,5 +59,183 @@
 		<color name="currentline" fg="#3400FF6E" bg="#1614DCE0" />
 		<color name="selectedreturnstatement" fg="Black" bg="#68B4E4B4" />
 		<color name="returnstatement" bg="#62404040" />
+
+		<color name="systemcolorsmenutext" fg="#D0D0D0" />
+		<color name="systemcolorsgraytext" fg="#505050" />
+		<color name="systemcolorscontrol" fg="#303030" />
+		<color name="systemcolorscontroltext" fg="#D0D0D0" />
+		<color name="systemcolorscontrollight" fg="#404040" />
+		<color name="systemcolorscontrollightlight" fg="#303030" />
+		<color name="systemcolorscontroldark" fg="#606060" />
+		<color name="systemcolorscontroldarkdark" fg="#808080" />
+		<color name="SystemColorsWindowText" fg="#D0D0D0" />
+		<color name="SystemColorsWindow" fg="#252525" />
+		<color name="SystemColorsHighlight" fg="#063F40" />
+		<color name="SystemColorsHighlightText" fg="#D0D0D0" />
+		<color name="systemcolorsinactiveselectionhighlight" fg="#1F5253" />
+		<color name="systemcolorsinactiveselectionhighlighttext" fg="#7D7D7D" />
+		<color name="systemcolorsinactivecaption" fg="#606060" />
+		<color name="systemcolorsinactivecaptiontext" fg="#A0A0A0" />
+		<color name="controlshadow" bg="#71000000" />
+		<color name="gridsplitterpreviewfill" bg="#80000000" />
+		<color name="groupboxborderbrush" bg="#808080" />
+		<color name="groupboxborderbrushouter" bg="#404040" />
+		<color name="groupboxborderbrushinner" bg="#404040" />
+		<color name="listborder" bg="#505050" />
+		<color name="menuitemseparatorfilltop" bg="#505050" />
+		<color name="menuitemseparatorfillbottom" bg="#404040" />
+		<color name="menuitemselectionfill" fg="#340E9EA1" bg="#340D8E91" />
+		<color name="menuitemglyphpanelbackground" bg="#063F40" />
+		<color name="menuitemglyphpanelborderbrush" bg="#3EB1B4" />
+		<color name="menuitemglyphfill" bg="#D0D0D0" />
+		<color name="menuitemhighlightedstroke" bg="#803EB1B4" />
+		<color name="menuitemhighlightedinnerborder" bg="#40389FA2" />
+		<color name="menuitemdisabledforeground" fg="#505050" />
+		<color name="menuitemdisabledglyphpanelbackground" bg="#517979" />
+		<color name="menuitemdisabledglyphpanelborderbrush" bg="#65C1C3" />
+		<color name="menuitemdisabledglyphfill" bg="#C0C0C0" />
+		<color name="toolbardarkfill" bg="#063F40" />
+		<color name="toolbarbuttonpressed" bg="#063F40" />
+		<color name="toolbarseparatorfill" bg="#404040" />
+		<color name="toolbarbuttonhover" bg="#0A6F71" />
+		<color name="toolbarbuttonhoverborder" bg="#3EB1B4" />
+		<color name="toolbarbuttonpressedborder" bg="#3EB1B4" />
+		<color name="toolbarmenuborder" bg="#404040" />
+		<color name="toolbarsubmenubackground" bg="#252525" />
+		<color name="toolbarmenucheckfill" bg="#0B7E81" />
+		<color name="toolbarbuttonchecked" bg="#0B7E81" />
+		<color name="toolbaropenheaderbackground" fg="#202020" bg="#222222" color3="#252525" />
+		<color name="toolbarverticalbackground" fg="#303030" bg="#323232" color3="#353535" />
+		<color name="toolbarhorizontalbackground" fg="#303030" bg="#323232" color3="#353535" />
+		<color name="toolbardisabledfill" bg="#383838" />
+		<color name="toolbardisabledborder" bg="#484848" />
+		<color name="toolbarcomboboxtogglebuttonborder" bg="#252525" />
+		<color name="toolbarcomboboxtransparentbuttonfill" bg="#D0D0D0" />
+		<color name="checkboxfillnormal" bg="#404040" />
+		<color name="checkboxstroke" bg="#606060" />
+		<color name="buttonnormalbackground" fg="#606060" bg="#505050" color3="#404040" color4="#303030" />
+		<color name="buttonnormalborder" bg="#808080" />
+		<color name="buttonbasedisabledforeground" fg="#303030" />
+		<color name="buttonbasecommonpressedbackgroundoverlay" fg="#085F61" bg="#074F50" color3="#063F40" />
+		<color name="buttonbasecommonhoverbackgroundoverlay" fg="#0E9EA1" bg="#0D8E91" color3="#0B7E81" color4="#0A6F71" />
+		<color name="buttonbasecommoninnerborder" fg="#FA808080" bg="#85808080" />
+		<color name="buttonbaseborderoverlayborder" bg="#505050" />
+		<color name="buttonbasedisabledborderbrush" bg="#606060" />
+		<color name="buttonbasedisabledborderoverlaybackground" bg="#808080" />
+		<color name="buttonbasemouseoverborderbrush" bg="#3EB1B4" />
+		<color name="buttonbasepressedborderoverlaybrush" bg="#0A6F71" />
+		<color name="buttonbasedefaultedborderoverlaybrush" bg="#F90E9EA1" />
+		<color name="tabcontrolnormalborderbrush" bg="#353535" />
+		<color name="tabcontrolbackground" bg="#303030" />
+		<color name="tabitemforeground" bg="#D0D0D0" />
+		<color name="tabitemhotbackground" fg="#383838" bg="#3C3C3C" color3="#404040" color4="#444444" />
+		<color name="tabitemselectedbackground" bg="#303030" />
+		<color name="tabitemdisabledbackground" bg="#404040" />
+		<color name="tabitemhotborderbrush" bg="#404040" />
+		<color name="tabitemdisabledborderbrush" bg="#606060" />
+		<color name="contextmenubackground" bg="#252525" />
+		<color name="contextmenuborderbrush" bg="#404040" />
+		<color name="contextmenurectanglefill1" bg="#303030" />
+		<color name="contextmenurectanglefill2" bg="#404040" />
+		<color name="contextmenurectanglefill3" bg="Transparent" />
+		<color name="expanderstaticcirclestroke" bg="#808080" />
+		<color name="expanderstaticcirclefill" bg="Transparent" />
+		<color name="expanderstaticarrowstroke" bg="#D0D0D0" />
+		<color name="expandermouseovercirclestroke" bg="#0E9EA1" />
+		<color name="expandermouseovercirclefill" bg="Transparent" />
+		<color name="expandermouseoverarrowstroke" bg="#26A8AA" />
+		<color name="expanderpressedcirclestroke" bg="#085F61" />
+		<color name="expanderpressedcirclefill" bg="Transparent" />
+		<color name="expanderpressedarrowstroke" bg="#0A6F71" />
+		<color name="expanderdisabledcirclestroke" bg="#808080" />
+		<color name="expanderdisabledcirclefill" bg="Transparent" />
+		<color name="expanderdisabledarrowstroke" bg="#D0D0D0" />
+		<color name="progressbarborderbrush" fg="#707070" bg="#505050" />
+		<color name="progressbarforeground" fg="#006699" />
+		<color name="progressbarbackground" fg="#505050" bg="#606060" color3="#505050" />
+		<color name="progressbartophighlight" fg="#80FFFFFF" bg="#00FFFFFF" />
+		<color name="progressbarglassyhighlight" fg="#50FFFFFF" bg="#00FFFFFF" />
+		<color name="progressbarindicatorglassyhighlight" fg="#90FFFFFF" bg="#00FFFFFF" />
+		<color name="progressbarindicatorlightingeffectleft" fg="#60FFFFC4" bg="#00FFFFC4" />
+		<color name="progressbarindicatorlightingeffect" fg="#60FFFFC4" bg="#00FFFFC4" />
+		<color name="progressbarindicatorlightingeffectright" fg="#60FFFFC4" bg="#00FFFFC4" />
+		<color name="progressbarindicatordarkedgeleft" fg="#0C000000" bg="#20000000" color3="#00000000" />
+		<color name="progressbarindicatordarkedgeright" fg="#00000000" bg="#20000000" color3="#0C000000" />
+		<color name="progressbarindicatoranimatedfill" fg="#00FFFFFF" bg="#60FFFFFF" color3="#60FFFFFF" color4="#00FFFFFF" />
+		<color name="progressbarborderbrush2" bg="#80FFFFFF" />
+		<color name="progressbarindeterminatebackground" bg="#803385AD" />
+		<color name="resizegripperforeground" fg="#E0E0E0" bg="#D0D0D0" color3="#C0C0C0" />
+		<color name="scrollbardisabledbackground" bg="#606060" />
+		<color name="scrollbarbackground" bg="#404040" />
+		<color name="scrollbararrowbuttonforeground" bg="#D0D0D0" />
+		<color name="scrollbararrowbuttondisabled" fg="#606060" bg="#505050" />
+		<color name="scrollbararrowbuttonmouseoverbackground" bg="#0A6F71" />
+		<color name="scrollbararrowbuttonpressed" fg="#FFFFFF" bg="#063F40" />
+		<color name="scrollbarthumbbackground" bg="#606060" />
+		<color name="scrollbarthumbborder" bg="#808080" />
+		<color name="scrollbarthumbdisabledbackground" bg="#606060" />
+		<color name="scrollbarthumbdisabledborder" bg="#505050" />
+		<color name="scrollbarthumbmouseoverbackground" bg="#0A6F71" />
+		<color name="scrollbarthumbmouseoverborder" bg="#0D8E91" />
+		<color name="scrollbarthumbpressedbackground" bg="#063F40" />
+		<color name="scrollbarthumbpressedborder" bg="#085F61" />
+		<color name="statusbarbackground" bg="#303030" />
+		<color name="textboxborder" fg="#404040" bg="#505050" color3="#606060" />
+		<color name="tooltipbackground" fg="#454545" bg="#353535" />
+		<color name="tooltipborderbrush" bg="#505050" />
+		<color name="tooltipforeground" fg="#D0D0D0" />
+		<color name="tveditlistborder" bg="#FF7F9DB9" />
+		<color name="tvexpanderborderbrush" bg="#A0A0A0" />
+		<color name="tvexpanderborderbackground" fg="#606060" bg="#707070" />
+		<color name="tvexpanderpathfill" bg="#D0D0D0" />
+		<color name="tvexpandermouseoverborderbrush" bg="#0E9EA1" />
+		<color name="tvexpandermouseoverpathfill" bg="#0E9EA1" />
+		<color name="tvitemalternationbackground" bg="#0E9EA1" />
+		<color name="gridviewscrollviewerleftfill" bg="#303030" />
+		<color name="gridviewscrollviewertopfill" bg="#303030" />
+		<color name="gridviewcolumnheaderborderbackground" fg="#484848" bg="#505050" />
+		<color name="gridviewcolumnheaderbackground" fg="#303030" bg="#303030" color3="#383838" />
+		<color name="gridviewcolumnheaderhoverbackground" fg="#042F30" bg="#032020" />
+		<color name="gridviewcolumnheaderpressbackground" fg="#085F61" bg="#074F50" />
+		<color name="gridviewcolumnheaderupperhighlightfill" bg="#074F50" />
+		<color name="gridviewcolumnheadermouseoverheaderhoverborder" bg="#0B7E81" />
+		<color name="gridviewcolumnheaderpresshoverborder" bg="#0B7E81" />
+		<color name="gridviewcolumnheaderpressborder" bg="#0D8E91" />
+		<color name="gridviewcolumnheaderpressupperhighlightfill" bg="#074F50" />
+		<color name="gridviewcolumnheaderfloatingheadercanvasfill" bg="#FF000000" />
+		<color name="gridviewlistviewforeground" bg="#D0D0D0" />
+		<color name="gridviewlistviewitemfocusvisualstroke" bg="#8E383838" />
+		<color name="gridviewlistitemhoverfill" fg="#404040" bg="#484848" />
+		<color name="gridviewlistitemselectedfill" fg="#303030" bg="#383838" />
+		<color name="gridviewlistitemselectedhoverfill" fg="#383838" bg="#404040" />
+		<color name="gridviewlistitemselectedinactivefill" fg="#505050" bg="#505050" />
+		<color name="gridviewitemcontainerupperhighlightfill" bg="#75606060" />
+		<color name="gridviewitemcontainermouseoverhoverborder" bg="#FF808080" />
+		<color name="gridviewitemcontainerselectedborder" bg="#FF404040" />
+		<color name="gridviewitemcontainerselectedinnerborder" bg="#80808080" />
+		<color name="gridviewitemcontainerselectedupperhighlightfill" bg="#40808080" />
+		<color name="gridviewitemcontainerselectedinactiveborder" bg="#FF606060" />
+		<color name="gridviewitemcontainerselectedmouseoverborder" bg="#FF505050" />
+		<color name="sortablegridviewcolumnarrowbackground" bg="#D0D0D0" />
+		<color name="paneborder" bg="#505050" />
+		<color name="dockedpaneclosebuttonbackground" fg="#303030" bg="#383838" color3="#404040" color4="#484848" />
+		<color name="dockedpaneclosebuttonborder" bg="#505050" />
+		<color name="DockedPaneCloseButtonMouseOverBackground" fg="#404040" bg="#484848" />
+		<color name="dockedpaneclosebuttonpressedbackground" fg="#303030" bg="#383838" />
+		<color name="dockedpaneclosebuttonpathstroke" bg="#303030" />
+		<color name="dockedpaneclosebuttonpathfill" bg="#909090" />
+		<color name="decompilertextviewborder" bg="#606060" />
+		<color name="decompilertextviewwaitadornerbackground" bg="#A0404040" />
+		<color name="resourcetablealternationbackground1" bg="#252525" />
+		<color name="resourcetablealternationbackground2" bg="#454545" />
+		<color name="avaloneditsearchdropdownbuttonactiveborder" bg="#365959" />
+		<color name="avaloneditsearchdropdownbuttonactivebackground" bg="#042F30" />
+		<color name="textboxerrorborder" bg="#B20000" />
+		<color name="textboxerror" fg="#D0D0D0" bg="#660000" />
+		<color name="listarrowbackground" bg="#D0D0D0" />
+		<color name="treeviewlinebackground" bg="#606060" />
+		<color name="nodeautoloaded" fg="SteelBlue" />
+		<color name="nodepublic" fg="#D0D0D0" />
+		<color name="nodenotpublic" fg="#505050" />
 	</colors>
 </theme>

@@ -234,7 +234,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			switch (e.DebuggerEvent) {
 			case DebuggerEvent.Started:
 				MainWindow.Instance.SessionSettings.FilterSettings.ShowInternalApi = true;
-				MainWindow.Instance.SetStatus("Running...", Brushes.Black);
+				MainWindow.Instance.SetStatus("Running...");
 				break;
 
 			case DebuggerEvent.Stopped:
@@ -255,7 +255,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (debugger == null)
 				return;
 			if (debugger.IsProcessRunning) {
-				MainWindow.Instance.SetStatus("Running...", Brushes.Black);
+				MainWindow.Instance.SetStatus("Running...");
 				return;
 			}
 			
@@ -268,7 +268,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (DebugInformation.MustJumpToReference)
 				DebugUtils.JumpToCurrentStatement(MainWindow.Instance.SafeActiveTextView);
 			
-			inst.SetStatus("Debugging...", Brushes.Red);
+			inst.SetStatus("Debugging...");
 		}
 
 		void IPlugin.OnLoaded()
@@ -441,7 +441,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			var debugger = DebuggerService.CurrentDebugger;
 			if (debugger != null && debugger.IsDebugging && !debugger.IsProcessRunning) {
 				debugger.Continue();
-				MainWindow.Instance.SetStatus("Running...", Brushes.Black);
+				MainWindow.Instance.SetStatus("Running...");
 				return true;
 			}
 
@@ -453,7 +453,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			var debugger = DebuggerService.CurrentDebugger;
 			if (debugger != null && debugger.IsDebugging && debugger.IsProcessRunning) {
 				debugger.Break();
-				MainWindow.Instance.SetStatus("Debugging...", Brushes.Red);
+				MainWindow.Instance.SetStatus("Debugging...");
 				return true;
 			}
 

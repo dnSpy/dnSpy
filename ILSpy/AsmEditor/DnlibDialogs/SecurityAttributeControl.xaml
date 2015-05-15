@@ -24,15 +24,6 @@
              xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500">
-	<UserControl.Resources>
-		<Style x:Key="DisableImageStyle" TargetType="{x:Type Image}">
-			<Style.Triggers>
-				<DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Control}, AncestorLevel=1}, Path=IsEnabled}" Value="False">
-					<Setter Property="Opacity" Value="0.30" />
-				</DataTrigger>
-			</Style.Triggers>
-		</Style>
-	</UserControl.Resources>
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />

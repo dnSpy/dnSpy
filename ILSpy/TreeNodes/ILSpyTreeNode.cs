@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.dntheme;
 using ICSharpCode.TreeView;
 using dnlib.DotNet;
 
@@ -168,6 +169,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		protected virtual void OnFilterSettingsChanged()
 		{
 			RaisePropertyChanged("Text");
+			RaisePropertyChanged("Foreground");
 			if (IsVisible) {
 				foreach (ILSpyTreeNode node in this.Children.OfType<ILSpyTreeNode>())
 					ApplyFilterToChild(node);
@@ -206,14 +208,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get {
 				if (IsPublicAPI)
 					if (IsAutoLoaded) {
-						// HACK: should not be hard coded?
-						return System.Windows.Media.Brushes.SteelBlue;
+						return Themes.Theme.GetColor(dntheme.ColorType.NodeAutoLoaded).InheritedColor.Foreground.GetBrush(null);
 					}
 					else {
-						return base.Foreground;
+						return Themes.Theme.GetColor(dntheme.ColorType.NodePublic).InheritedColor.Foreground.GetBrush(null);
 					}
 				else
-					return System.Windows.SystemColors.GrayTextBrush;
+					return Themes.Theme.GetColor(dntheme.ColorType.NodeNotPublic).InheritedColor.Foreground.GetBrush(null);
 			}
 		}
 

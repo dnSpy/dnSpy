@@ -14,6 +14,7 @@ using ICSharpCode.AvalonEdit.Utils;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger;
+using ICSharpCode.ILSpy.dntheme;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.TextView;
@@ -85,9 +86,10 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		protected override void OnRender(DrawingContext drawingContext)
 		{
 			Size renderSize = this.RenderSize;
-			drawingContext.DrawRectangle(SystemColors.ControlBrush, null,
+			var theme = Themes.Theme;
+			drawingContext.DrawRectangle(theme.GetColor(ColorType.SystemColorsControl).InheritedColor.Foreground.GetBrush(null), null,
 			                             new Rect(0, 0, renderSize.Width, renderSize.Height));
-			drawingContext.DrawLine(new Pen(SystemColors.ControlDarkBrush, 1),
+			drawingContext.DrawLine(new Pen(theme.GetColor(ColorType.SystemColorsControlDark).InheritedColor.Foreground.GetBrush(null), 1),
 			                        new Point(renderSize.Width - 0.5, 0),
 			                        new Point(renderSize.Width - 0.5, renderSize.Height));
 			

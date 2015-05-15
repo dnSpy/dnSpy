@@ -10,15 +10,14 @@
 	<Grid Margin="5,0,0,0">
 		<Grid.Resources>
 			<AlternationConverter x:Key="BackgroundConverter">
-				<SolidColorBrush Color="White"></SolidColorBrush>
-				<SolidColorBrush Color="Beige"></SolidColorBrush>
+				<SolidColorBrush Color="{DynamicResource ResourceTableAlternationBackground1}"/>
+				<SolidColorBrush Color="{DynamicResource ResourceTableAlternationBackground2}"/>
 			</AlternationConverter>
-			<Style x:Key="alternatingWithBinding"
-				   TargetType="{x:Type ListBoxItem}">
+			<Style x:Key="ResourceAlternatingWithBinding"
+				   BasedOn="{StaticResource {x:Static GridView.GridViewItemContainerStyleKey}}"
+				   TargetType="{x:Type ListViewItem}">
 				<Setter Property="Background"
-						Value="{Binding RelativeSource={RelativeSource Self},
-					 Path=(ItemsControl.AlternationIndex),
-					 Converter={StaticResource BackgroundConverter}}" />
+						Value="{Binding RelativeSource={RelativeSource Self}, Path=(ItemsControl.AlternationIndex), Converter={StaticResource BackgroundConverter}}" />
 			</Style>
 		</Grid.Resources>
 		<Grid.RowDefinitions>
@@ -32,10 +31,10 @@
 		<ListView Name="resourceListView"
 				  FontFamily="Segoe UI"
 				  FontSize="9pt"
-				  Foreground="Black"
+				  Foreground="{DynamicResource SystemColorsControlText}"
 				  Grid.Row="1"
 				  AlternationCount="2"
-				  ItemContainerStyle="{StaticResource alternatingWithBinding}">
+				  ItemContainerStyle="{DynamicResource ResourceAlternatingWithBinding}">
 			<ListView.View>
 				<GridView AllowsColumnReorder="False">
 					<GridView.Columns>

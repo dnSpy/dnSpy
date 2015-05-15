@@ -12,7 +12,7 @@ using System.Windows;
 
 namespace ICSharpCode.TreeView
 {
-	class EditTextBox : TextBox
+	public class EditTextBox : TextBox
 	{
 		static EditTextBox()
 		{

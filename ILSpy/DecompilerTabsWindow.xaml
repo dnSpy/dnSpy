@@ -27,7 +27,7 @@
              ResizeMode="CanResizeWithGrip"
              Title="Windows"
              KeyDown="Window_KeyDown"
-             Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+             Background="{DynamicResource SystemColorsControl}"
              Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
              mc:Ignorable="d">
     <Grid Margin="13">

@@ -21,9 +21,7 @@
                         Header="Module">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock
-                                    Text="{Binding ModuleName}"
-                                    Foreground="{Binding FontColor}" />
+                                <TextBlock Text="{Binding ModuleName}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -31,9 +29,7 @@
                         Header="Name">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock
-                                    Text="{Binding Name}"
-                                    Foreground="{Binding FontColor}" />
+                                <TextBlock Text="{Binding Name}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -42,8 +38,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock
-                                    Text="{Binding Token, StringFormat={}0x{0:X8}}"
-                                    Foreground="{Binding FontColor}" />
+                                    Text="{Binding Token, StringFormat={}0x{0:X8}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -51,9 +46,7 @@
                         Header="IL Offset">
 						<GridViewColumn.CellTemplate>
 							<DataTemplate>
-								<TextBlock
-                                    Text="{Binding ILOffsetString}"
-                                    Foreground="{Binding FontColor}" />
+								<TextBlock Text="{Binding ILOffsetString}" />
 							</DataTemplate>
 						</GridViewColumn.CellTemplate>
 					</GridViewColumn>
@@ -61,9 +54,7 @@
                         Header="Assembly">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock
-                                    Text="{Binding AssemblyName}"
-                                    Foreground="{Binding FontColor}" />
+                                <TextBlock Text="{Binding AssemblyName}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

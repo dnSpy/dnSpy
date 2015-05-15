@@ -23,7 +23,7 @@
 					<RowDefinition Height="50" />
 				</Grid.RowDefinitions>
 				<Label Margin="3,0">Font:</Label>
-				<ComboBox x:Name="fontSelector" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" SelectedItem="{Binding SelectedFont}" Grid.Column="1" Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}">
+				<ComboBox x:Name="fontSelector" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" SelectedItem="{Binding SelectedFont}" Grid.Column="1">
 					<ComboBox.ItemTemplate>
 						<DataTemplate>
 							<TextBlock Text="{Binding Source}" />
@@ -52,7 +52,7 @@
 					<ComboBoxItem>23</ComboBoxItem>
 					<ComboBoxItem>24</ComboBoxItem>
 				</ComboBox>
-				<Border Grid.Row="1" Grid.ColumnSpan="4" BorderBrush="Black" BorderThickness="1" Background="White" Margin="3,5">
+				<Border Grid.Row="1" Grid.ColumnSpan="4" BorderBrush="{DynamicResource SystemColorsControlDarkDark}" BorderThickness="1" Background="{DynamicResource SystemColorsWindow}" Margin="3,5">
 					<TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="AaBbCcXxYyZz" FontFamily="{Binding SelectedFont}" FontSize="{Binding SelectedFontSize}" />
 				</Border>
 			</Grid>

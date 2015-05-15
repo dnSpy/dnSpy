@@ -59,5 +59,7 @@
 		<color name="currentline" fg="#EAEAF2" bg="#00000000" />
 		<color name="selectedreturnstatement" fg="Black" bg="#68B4E4B4" />
 		<color name="returnstatement" bg="#62EEEFE6" />
+
+		<color name="contextmenubackground" bg="White" />
 	</colors>
 </theme>

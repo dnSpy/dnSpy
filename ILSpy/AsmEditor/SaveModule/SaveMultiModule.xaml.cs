@@ -44,11 +44,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			ShowOptions((SaveModuleOptionsVM)e.Parameter);
 		}
 
-		private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		private void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
+			if (!UIUtils.IsLeftDoubleClick<ListBoxItem>(listBox, e))
 				return;
-			ShowOptions((SaveModuleOptionsVM)listView.SelectedItem);
+			ShowOptions((SaveModuleOptionsVM)listBox.SelectedItem);
 		}
 	}
 }

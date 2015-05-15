@@ -10,11 +10,16 @@ using System.Windows.Media;
 
 namespace ICSharpCode.TreeView
 {
-	class LinesRenderer : FrameworkElement
+	public class LinesRenderer : FrameworkElement
 	{
 		static LinesRenderer()
 		{
-			pen = new Pen(Brushes.LightGray, 1);
+			SetPen(Brushes.LightGray);
+		}
+
+		public static void SetPen(Brush brush)
+		{
+			pen = new Pen(brush, 1);
 			pen.Freeze();
 		}
 

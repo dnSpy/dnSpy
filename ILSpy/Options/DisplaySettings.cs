@@ -66,6 +66,12 @@ namespace ICSharpCode.ILSpy.Options
 			set {
 				if (selectedFontSize != value) {
 					selectedFontSize = value;
+					const int min = 1;
+					const int max = 200;
+					if (selectedFontSize > max)
+						selectedFontSize = max;
+					if (selectedFontSize < min)
+						selectedFontSize = min;
 					OnPropertyChanged("SelectedFontSize");
 				}
 			}

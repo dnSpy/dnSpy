@@ -329,6 +329,11 @@ namespace ICSharpCode.ILSpy
 			if (!canAdd)
 				return newAsm;
 
+			// Happens when we start dnSpy (try with many tabs) and try to exit while it's still
+			// decompiling and the decompiler resolves a reference.
+			if (App.Current == null && MainWindow.Instance != null)
+				return newAsm;
+
 			if (App.Current == null)
 				delay = false;
 			else if (!App.Current.CheckAccess())

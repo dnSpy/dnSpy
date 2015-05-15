@@ -37,6 +37,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 					data.MakeVisible = this;
 				}
 			};
+			MainWindow.InitializeTreeView(treeView);
 		}
 
 		void IMakeVisible.ScrollIntoView(object item)

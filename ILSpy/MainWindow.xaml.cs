@@ -155,7 +155,7 @@ namespace ICSharpCode.ILSpy
 		public MainWindow()
 		{
 			instance = this;
-			mainMenu = new Menu() { Background = Brushes.Transparent };
+			mainMenu = new Menu();
 			spySettings = ILSpySettings.Load();
 			this.sessionSettings = new SessionSettings(spySettings);
 			this.sessionSettings.PropertyChanged += sessionSettings_PropertyChanged;
@@ -184,11 +184,20 @@ namespace ICSharpCode.ILSpy
 			
 			tabGroupsManager = new TabGroupsManager<TabStateDecompile>(tabGroupsContentPresenter, tabManager_OnSelectionChanged, tabManager_OnAddRemoveTabState);
 			tabGroupsManager.OnTabGroupSelected += tabGroupsManager_OnTabGroupSelected;
+			Themes.Theme = Themes.GetThemeOrDefault(sessionSettings.ThemeName);
+			InitializeTreeView(treeView);
+
 			InitMainMenu();
 			InitToolbar();
 			
 			this.ContentRendered += MainWindow_ContentRendered;
 			this.IsEnabled = false;
+		}
+
+		internal static void InitializeTreeView(SharpTreeView treeView)
+		{
+			treeView.GetPreviewInsideTextBackground = () => Themes.Theme.GetColor(dntheme.ColorType.SystemColorsHighlight).InheritedColor.Foreground.GetBrush(null);
+			treeView.GetPreviewInsideForeground = () => Themes.Theme.GetColor(dntheme.ColorType.SystemColorsHighlightText).InheritedColor.Foreground.GetBrush(null);
 		}
 
 		internal bool IsDecompilerTabControl(TabControl tabControl)
@@ -587,8 +596,20 @@ namespace ICSharpCode.ILSpy
 
 		void Themes_ThemeChanged(object sender, EventArgs e)
 		{
+			UpdateControlColors();
 			foreach (var view in AllTextViews)
 				view.OnThemeUpdated();
+			LinesRenderer.SetPen(Themes.Theme.GetColor(ColorType.TreeViewLineBackground).InheritedColor.Background.GetBrush(null));
+			RefreshTreeViewFilter();
+		}
+
+		void UpdateControlColors()
+		{
+			var resources = App.Current.Resources;
+			foreach (var color in Themes.Theme.Colors) {
+				foreach (var kv in color.ColorInfo.GetResourceKeyValues(color.InheritedColor))
+					resources[kv.Item1] = kv.Item2;
+			}
 		}
 		
 		void SetWindowBounds(Rect bounds)
@@ -988,7 +1009,6 @@ namespace ICSharpCode.ILSpy
 
 			debug_CommandBindings_Count = this.CommandBindings.Count;
 			ContextMenuProvider.Add(treeView);
-			Themes.Theme = Themes.GetThemeOrDefault(sessionSettings.ThemeName);
 
 			ILSpySettings spySettings = this.spySettings;
 			this.spySettings = null;
@@ -2004,11 +2024,10 @@ namespace ICSharpCode.ILSpy
 			treeView.UnselectAll();
 		}
 		
-		public void SetStatus(string status, Brush foreground)
+		public void SetStatus(string status)
 		{
 			if (this.statusBar.Visibility == Visibility.Collapsed)
 				this.statusBar.Visibility = Visibility.Visible;
-			this.StatusLabel.Foreground = foreground;
 			this.StatusLabel.Text = status;
 		}
 

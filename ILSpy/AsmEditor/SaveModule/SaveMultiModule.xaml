@@ -55,7 +55,7 @@
 
 		<Label Content="Files that will be saved:" Margin="5 5 5 5" />
 
-		<ListView Grid.Row="1" Name="listView" IsEnabled="{Binding IsLoaded}" ItemsSource="{Binding Modules}" DisplayMemberPath="FileName" SelectedIndex="0" Margin="5 0 5 5" MouseDoubleClick="listView_MouseDoubleClick" />
+		<ListBox Grid.Row="1" Name="listBox" IsEnabled="{Binding IsLoaded}" ItemsSource="{Binding Modules}" DisplayMemberPath="FileName" SelectedIndex="0" Margin="5 0 5 5" MouseDoubleClick="listBox_MouseDoubleClick" />
 
 		<Grid Grid.Row="2" Margin="5 0 5 5"
 			  Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -70,7 +70,8 @@
 			<Label Grid.Row="0" Content="There are errors in the log:" />
 
 			<TextBox Grid.Row="1"
-				 Background="Pink"
+				 Background="{DynamicResource TextBoxErrorBackground}"
+				 Foreground="{DynamicResource TextBoxErrorForeground}"
 				 TextWrapping="Wrap"
 				 IsReadOnly="True"
 				 Text="{Binding LogMessage, Mode=OneWay}"
@@ -88,11 +89,11 @@
 		<StackPanel Grid.Row="4"
 					Margin="5 0 5 5"
 					Orientation="Horizontal"
-					Background="Pink"
+					Background="{DynamicResource TextBoxErrorBackground}"
 					Visibility="{Binding CanShowModuleErrors, Converter={StaticResource BooleanToVisibilityConverter}}"
 					>
-			<TextBlock Margin="0 0 5 0" Background="Pink" Text="{Binding CanExecuteSaveError}" />
-			<TextBlock Background="Pink">
+			<TextBlock Margin="0 0 5 0" Background="{DynamicResource TextBoxErrorBackground}" Foreground="{DynamicResource TextBoxErrorForeground}" Text="{Binding CanExecuteSaveError}" />
+			<TextBlock Background="{DynamicResource TextBoxErrorBackground}" Foreground="{DynamicResource TextBoxErrorForeground}">
 				-- Fix the errors by editing the options.
 			</TextBlock>
 		</StackPanel>
@@ -142,7 +143,7 @@
 					Content="_Options..."
 					Style="{StaticResource DialogButton}" Margin="0,0,5,0"
 					Command="{StaticResource OptionsCommand}"
-					CommandParameter="{Binding SelectedItem, ElementName=listView}"
+					CommandParameter="{Binding SelectedItem, ElementName=listBox}"
 					Visibility="{Binding CanSave, Converter={StaticResource BooleanToVisibilityConverter}}"
 					/>
 			<Button Grid.Column="2"

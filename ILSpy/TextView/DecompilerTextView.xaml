@@ -7,7 +7,7 @@
 		<BooleanToVisibilityConverter x:Key="boolToVisibility" />
 	</UserControl.Resources>
 	<Grid>
-		<Border BorderThickness="1,1,0,1" BorderBrush="#FF828790">
+		<Border BorderThickness="1,1,0,1" BorderBrush="{DynamicResource DecompilerTextViewBorder}">
 			<Grid>
 				<nt:NewTextEditor x:Name="textEditor" FontFamily="Consolas" FontSize="10pt" IsReadOnly="True"
 				               Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}"
@@ -17,7 +17,7 @@
 						<Style TargetType="{x:Type Button}" />
 					</ae:TextEditor.Resources>
 				</nt:NewTextEditor>
-				<Border Name="waitAdorner" Background="#C0FFFFFF" Visibility="Collapsed">
+				<Border Name="waitAdorner" Background="{DynamicResource DecompilerTextViewWaitAdornerBackground}" Visibility="Collapsed">
 					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 						<TextBlock FontSize="14pt">Decompiling...</TextBlock>
 						<ProgressBar IsIndeterminate="True" Height="16" Margin="0, 4" />

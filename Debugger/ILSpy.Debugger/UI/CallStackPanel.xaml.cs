@@ -338,10 +338,6 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		public int ILOffset { get; set; }
 		public string ILOffsetString { get; set; }
 		public MethodKey MethodKey { get; set; }
-		
-		public Brush FontColor {
-			get { return Brushes.Black; }
-		}
 	}
 
 	[ExportMainMenuCommand(Menu = "_Debug",
