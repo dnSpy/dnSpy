@@ -60,7 +60,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				throw new InvalidOperationException();
 			Debug.Assert(!restoreIndex || origIndex >= 0);
 
-			MainWindow.Instance.CurrentAssemblyList.ForceAddAssemblyToList(asmNode.LoadedAssembly, true, false, origIndex);
+			MainWindow.Instance.CurrentAssemblyList.ForceAddAssemblyToList(asmNode.LoadedAssembly, true, false, origIndex, false);
 
 			bool b = asmNode.LoadedAssembly.ModuleDefinition == null ||
 				(MainWindow.Instance.FindTreeNode(

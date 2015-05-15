@@ -305,26 +305,26 @@ namespace ICSharpCode.ILSpy
 
 				var newAsm = new LoadedAssembly(this, file);
 				newAsm.IsAutoLoaded = isAutoLoaded;
-				return ForceAddAssemblyToList(newAsm, canAdd, delay);
+				return ForceAddAssemblyToList(newAsm, canAdd, delay, -1, true);
 			}
 		}
 
-		internal LoadedAssembly AddAssembly(LoadedAssembly newAsm, bool canAdd, bool delay)
+		internal LoadedAssembly AddAssembly(LoadedAssembly newAsm, bool canAdd, bool delay, bool canDispose = true)
 		{
 			lock (assemblies) {
 				var asm = FindAssemblyByFileName_NoLock(newAsm.FileName);
 				if (asm != null) {
 					var mod = newAsm.ModuleDefinition;
-					if (mod != null)
+					if (canDispose && mod != null)
 						mod.Dispose();
 					return asm;
 				}
 
-				return ForceAddAssemblyToList(newAsm, canAdd, delay);
+				return ForceAddAssemblyToList(newAsm, canAdd, delay, -1, canDispose);
 			}
 		}
 
-		internal LoadedAssembly ForceAddAssemblyToList(LoadedAssembly newAsm, bool canAdd, bool delay, int index = -1)
+		internal LoadedAssembly ForceAddAssemblyToList(LoadedAssembly newAsm, bool canAdd, bool delay, int index, bool canDispose)
 		{
 			if (!canAdd)
 				return newAsm;
@@ -342,7 +342,7 @@ namespace ICSharpCode.ILSpy
 			// Sometimes the treeview will completely mess up if we immediately add the asm.
 			// Wait a little while for the treeview to finish its things before we add it.
 			if (delay)
-				return DelayLoadAssembly(newAsm, index);
+				return DelayLoadAssembly(newAsm, index, canDispose);
 			AddToList(newAsm, index);
 			return newAsm;
 		}
@@ -356,7 +356,7 @@ namespace ICSharpCode.ILSpy
 		}
 
 		Dictionary<string, Tuple<LoadedAssembly, int>> delayLoadedAsms = new Dictionary<string, Tuple<LoadedAssembly, int>>(StringComparer.OrdinalIgnoreCase);
-		LoadedAssembly DelayLoadAssembly(LoadedAssembly newAsm, int index)
+		LoadedAssembly DelayLoadAssembly(LoadedAssembly newAsm, int index, bool canDispose)
 		{
 			System.Diagnostics.Debug.Assert(!string.IsNullOrWhiteSpace(newAsm.FileName));
 			bool startThread;
@@ -364,7 +364,7 @@ namespace ICSharpCode.ILSpy
 				Tuple<LoadedAssembly, int> info;
 				if (delayLoadedAsms.TryGetValue(newAsm.FileName, out info)) {
 					var mod = newAsm.ModuleDefinition;
-					if (mod != null)
+					if (canDispose && mod != null)
 						mod.Dispose();
 					return info.Item1;
 				}
@@ -392,9 +392,8 @@ namespace ICSharpCode.ILSpy
 					if (asm == null)
 						AddToList(info.Item1, info.Item2);
 					else {
-						var mod = newAsm.ModuleDefinition;
-						if (mod != null)
-							mod.Dispose();
+						// We can't call newAsm.ModuleDefinition.Dispose() since it could still
+						// be in use by some decompiler thread.
 					}
 				}
 			}

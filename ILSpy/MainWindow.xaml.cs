@@ -1487,7 +1487,7 @@ namespace ICSharpCode.ILSpy
 				// The module has been removed. Add it again
 				var loadedAsm = new LoadedAssembly(assemblyList, mainModule);
 				loadedAsm.IsAutoLoaded = true;
-				assemblyList.AddAssembly(loadedAsm, true, false);
+				assemblyList.AddAssembly(loadedAsm, true, false, false);
 				return JumpToReferenceAsyncInternal(tabState, false, reference, onDecompileFinished);
 			}
 			else

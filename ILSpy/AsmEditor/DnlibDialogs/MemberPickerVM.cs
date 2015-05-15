@@ -236,7 +236,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 			assemblyList = new AssemblyList("Member Picker List", false);
 			foreach (var asm in assemblies)
-				assemblyList.ForceAddAssemblyToList(asm, true, false);
+				assemblyList.ForceAddAssemblyToList(asm, true, false, -1, false);
 
 			this.assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
 			this.assemblyListTreeNode.DisableDrop = true;
