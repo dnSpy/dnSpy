@@ -426,6 +426,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		ToolBarComboBoxTransparentButtonFill,
 		CheckBoxFillNormal,
 		CheckBoxStroke,
+		RadioButtonBackground,
 		ButtonNormalBackground,
 		ButtonNormalBorder,
 		ButtonBaseDisabledForeground,

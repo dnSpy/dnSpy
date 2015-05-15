@@ -431,6 +431,10 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#8E8F8F",
 				BackgroundResourceKey = "CheckBoxStroke",
 			},
+			new BrushColorInfo(ColorType.RadioButtonBackground, "RadioButton background") {
+				DefaultBackground = "#F4F4F4",
+				BackgroundResourceKey = "RadioButtonBackground",
+			},
 			new LinearGradientColorInfo(ColorType.ButtonNormalBackground, new Point(0, 1), "Button normal background", 0, 0.5, 0.5, 1) {
 				ResourceKey = "ButtonNormalBackground",
 				DefaultForeground = "#F3F3F3",

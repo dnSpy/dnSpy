@@ -2739,6 +2739,52 @@
         </Setter>
     </Style>
 
+	<Style x:Key="{x:Type RadioButton}"
+           TargetType="{x:Type RadioButton}">
+        <Setter Property="Foreground"
+                Value="{DynamicResource SystemColorsControlText}"/>
+        <Setter Property="Background"
+                Value="{DynamicResource RadioButtonBackground}"/>
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource CheckBoxStroke}"/>
+        <Setter Property="BorderThickness"
+                Value="1"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RadioButton}">
+                    <BulletDecorator Background="Transparent">
+                        <BulletDecorator.Bullet>
+                            <theme:BulletChrome Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                IsRound="true"
+                                                RenderMouseOver="{TemplateBinding IsMouseOver}"
+                                                RenderPressed="{TemplateBinding IsPressed}"
+                                                IsChecked="{TemplateBinding IsChecked}"/>
+                        </BulletDecorator.Bullet>
+                        <ContentPresenter Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          RecognizesAccessKey="True"/>
+                    </BulletDecorator>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HasContent"
+                                 Value="true">
+                            <Setter Property="FocusVisualStyle"
+                                    Value="{StaticResource CheckRadioFocusVisual}"/>
+                            <Setter Property="Padding"
+                                    Value="4,0,0,0"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled"
+                                 Value="false">
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource SystemColorsGrayText}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 
     <Style x:Key="ToolBarMainPanelBorderStyle" TargetType="{x:Type Border}">
         <Style.Triggers>

@@ -113,6 +113,7 @@
 		<color name="toolbarcomboboxtransparentbuttonfill" bg="#D0D0D0" />
 		<color name="checkboxfillnormal" bg="#404040" />
 		<color name="checkboxstroke" bg="#606060" />
+		<color name="radiobuttonbackground" bg="#404040" />
 		<color name="buttonnormalbackground" fg="#606060" bg="#505050" color3="#404040" color4="#303030" />
 		<color name="buttonnormalborder" bg="#808080" />
 		<color name="buttonbasedisabledforeground" fg="#303030" />
