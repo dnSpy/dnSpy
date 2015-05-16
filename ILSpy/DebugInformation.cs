@@ -96,7 +96,7 @@ namespace ICSharpCode.ILSpy.Debugger
 
 		public override int GetHashCode()
 		{
-			return token ^ (moduleFullPath == null ? 0 : moduleFullPath.GetHashCode());
+			return token ^ (moduleFullPath == null ? 0 : StringComparer.OrdinalIgnoreCase.GetHashCode(moduleFullPath));
 		}
 
 		public override string ToString()
