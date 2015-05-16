@@ -205,18 +205,18 @@
 		<color name="gridviewcolumnheaderpressupperhighlightfill" bg="#074F50" />
 		<color name="gridviewcolumnheaderfloatingheadercanvasfill" bg="#FF000000" />
 		<color name="gridviewlistviewforeground" bg="#D0D0D0" />
-		<color name="gridviewlistviewitemfocusvisualstroke" bg="#8E383838" />
-		<color name="gridviewlistitemhoverfill" fg="#404040" bg="#484848" />
-		<color name="gridviewlistitemselectedfill" fg="#303030" bg="#383838" />
-		<color name="gridviewlistitemselectedhoverfill" fg="#383838" bg="#404040" />
+		<color name="gridviewlistviewitemfocusvisualstroke" bg="#8E0E9EA1" />
+		<color name="gridviewlistitemhoverfill" fg="#042F30" bg="#074F50" />
+		<color name="gridviewlistitemselectedfill" fg="#032020" bg="#063F40" />
+		<color name="gridviewlistitemselectedhoverfill" fg="#011010" bg="#042F30" />
 		<color name="gridviewlistitemselectedinactivefill" fg="#505050" bg="#505050" />
-		<color name="gridviewitemcontainerupperhighlightfill" bg="#75606060" />
-		<color name="gridviewitemcontainermouseoverhoverborder" bg="#FF808080" />
-		<color name="gridviewitemcontainerselectedborder" bg="#FF404040" />
-		<color name="gridviewitemcontainerselectedinnerborder" bg="#80808080" />
-		<color name="gridviewitemcontainerselectedupperhighlightfill" bg="#40808080" />
+		<color name="gridviewitemcontainerupperhighlightfill" bg="#75085F61" />
+		<color name="gridviewitemcontainermouseoverhoverborder" bg="#FF063F40" />
+		<color name="gridviewitemcontainerselectedborder" bg="#FF0D8E91" />
+		<color name="gridviewitemcontainerselectedinnerborder" bg="#80063F40" />
+		<color name="gridviewitemcontainerselectedupperhighlightfill" bg="#40063F40" />
 		<color name="gridviewitemcontainerselectedinactiveborder" bg="#FF606060" />
-		<color name="gridviewitemcontainerselectedmouseoverborder" bg="#FF505050" />
+		<color name="gridviewitemcontainerselectedmouseoverborder" bg="#FF0A6F71" />
 		<color name="sortablegridviewcolumnarrowbackground" bg="#D0D0D0" />
 		<color name="paneborder" bg="#505050" />
 		<color name="dockedpaneclosebuttonbackground" fg="#303030" bg="#383838" color3="#404040" color4="#484848" />
