@@ -5016,7 +5016,7 @@
                     <Border Background="Transparent">
                         <Border Background="{TemplateBinding Background}">
                             <shtv:SharpTreeNodeView Name="nodeView"
-                                                       Foreground="{TemplateBinding Foreground}"
+                                                       Foreground="{Binding Foreground}"
                                                        HorizontalAlignment="Left" />
                         </Border>
                     </Border>
