@@ -448,8 +448,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			if (!AddNetModuleToAssemblyCommand.CanExecute(nodes))
 				return;
 
+			var asmNode = (AssemblyTreeNode)nodes[0];
+			if (asmNode.Parent is AssemblyTreeNode)
+				asmNode = (AssemblyTreeNode)asmNode.Parent;
+
 			var win = new NetModuleOptionsDlg();
-			var data = new NetModuleOptionsVM();
+			var data = new NetModuleOptionsVM(asmNode.LoadedAssembly.ModuleDefinition);
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
 			if (win.ShowDialog() != true)

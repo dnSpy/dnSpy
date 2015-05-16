@@ -19,6 +19,7 @@
 
 using System;
 using System.Windows.Input;
+using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Module
 {
@@ -56,11 +57,24 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			get { return new RelayCommand(a => Mvid.Value = Guid.NewGuid()); }
 		}
 
-		public NetModuleOptionsVM()
+		public NetModuleOptionsVM(ModuleDef module = null)
 		{
 			Name = "MyNetModule.netmodule";
 			mvid = new GuidVM(Guid.NewGuid(), a => HasErrorUpdated());
-			ClrVersion.SelectedItem = Module.ClrVersion.DefaultVersion;
+			ClrVersion.SelectedItem = GetClrVersion(module);
+		}
+
+		static Module.ClrVersion GetClrVersion(ModuleDef module)
+		{
+			if (module == null)
+				return Module.ClrVersion.DefaultVersion;
+
+			if (module.IsClr10) return Module.ClrVersion.CLR10;
+			if (module.IsClr11) return Module.ClrVersion.CLR11;
+			if (module.IsClr20) return Module.ClrVersion.CLR20;
+			if (module.IsClr40) return Module.ClrVersion.CLR40;
+
+			return Module.ClrVersion.DefaultVersion;
 		}
 
 		public NetModuleOptions CreateNetModuleOptions()
