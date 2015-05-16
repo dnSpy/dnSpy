@@ -293,7 +293,7 @@ namespace ICSharpCode.ILSpy.TextView
 		#region RunWithCancellation
 		void waitAdornerButton_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			if (waitAdornerButton.IsVisible && this == MainWindow.Instance.ActiveTextView)
+			if (waitAdornerButton.IsVisible && IsKeyboardFocused)
 				waitAdornerButton.Focus();
 		}
 
@@ -307,7 +307,7 @@ namespace ICSharpCode.ILSpy.TextView
 			if (waitAdorner.Visibility != Visibility.Visible) {
 				waitAdorner.Visibility = Visibility.Visible;
 				waitAdorner.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, new Duration(TimeSpan.FromSeconds(0.5)), FillBehavior.Stop));
-				if (this == MainWindow.Instance.ActiveTextView)
+				if (IsKeyboardFocused)
 					waitAdornerButton.Focus();
 				var taskBar = MainWindow.Instance.TaskbarItemInfo;
 				if (taskBar != null) {
