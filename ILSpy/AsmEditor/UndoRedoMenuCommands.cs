@@ -23,7 +23,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 {
 	[ExportMainMenuCommand(MenuHeader = "Undo",
 						   MenuInputGestureText = "Ctrl+Z",
-						   MenuIcon = "Images/Undo.png",
+						   MenuIcon = "Undo",
 						   Menu = "_Edit",
 						   MenuCategory = "UndoRedo",
 						   MenuOrder = 2000)]
@@ -37,7 +37,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 	[ExportMainMenuCommand(MenuHeader = "Redo",
 						   MenuInputGestureText = "Ctrl+Y",
-						   MenuIcon = "Images/Redo.png",
+						   MenuIcon = "Redo",
 						   Menu = "_Edit",
 						   MenuCategory = "UndoRedo",
 						   MenuOrder = 2010)]

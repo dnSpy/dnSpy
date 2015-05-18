@@ -32,12 +32,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 	{
 		const string CMD_NAME = "Delete Field";
 		[ExportContextMenuEntry(Header = CMD_NAME,
-								Icon = "Images/Delete.png",
+								Icon = "Delete",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
 							Menu = "_Edit",
-							MenuIcon = "Images/Delete.png",
+							MenuIcon = "Delete",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand
@@ -166,12 +166,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 	{
 		const string CMD_NAME = "Create Field";
 		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Images/Field.png",
+								Icon = "NewField",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
-							MenuIcon = "Images/Field.png",
+							MenuIcon = "NewField",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand
@@ -285,12 +285,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 	{
 		const string CMD_NAME = "Field Settings";
 		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Images/Settings.png",
+								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
-							MenuIcon = "Images/Settings.png",
+							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand

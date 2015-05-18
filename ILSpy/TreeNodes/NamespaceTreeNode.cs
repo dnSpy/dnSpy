@@ -52,7 +52,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Icon {
-			get { return Images.Namespace; }
+			get { return Images.Instance.GetImage("Namespace", BackgroundType.TreeNode); }
 		}
 		
 		public override FilterResult Filter(FilterSettings settings)

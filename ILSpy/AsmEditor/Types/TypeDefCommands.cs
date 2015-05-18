@@ -36,12 +36,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 	{
 		const string CMD_NAME = "Delete Type";
 		[ExportContextMenuEntry(Header = CMD_NAME,
-								Icon = "Images/Delete.png",
+								Icon = "Delete",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
 							Menu = "_Edit",
-							MenuIcon = "Images/Delete.png",
+							MenuIcon = "Delete",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand
@@ -177,12 +177,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 	{
 		const string CMD_NAME = "Create Type";
 		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Images/Class.png",
+								Icon = "NewClass",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
-							MenuIcon = "Images/Class.png",
+							MenuIcon = "NewClass",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand
@@ -283,12 +283,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 	{
 		const string CMD_NAME = "Create Nested Type";
 		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Images/Class.png",
+								Icon = "NewClass",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
-							MenuIcon = "Images/Class.png",
+							MenuIcon = "NewClass",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand
@@ -389,12 +389,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 	{
 		const string CMD_NAME = "Type Settings";
 		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Images/Settings.png",
+								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
-							MenuIcon = "Images/Settings.png",
+							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand

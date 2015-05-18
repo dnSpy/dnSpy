@@ -40,7 +40,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		public override object Icon
 		{
-			get { return PropertyTreeNode.GetIcon(analyzedProperty, isIndexer); }
+			get { return PropertyTreeNode.GetIcon(analyzedProperty, BackgroundType.TreeNode); }
 		}
 
 		public override object Text

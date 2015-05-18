@@ -322,9 +322,9 @@ namespace ICSharpCode.ILSpy
 				onMatch(new SearchResult {
 					Object = asmNode,
 					Name = asmNode.LoadedAssembly.AssemblyDefinition.FullName,
-					Image = GetAssemblyImage(asmNode.LoadedAssembly.ModuleDefinition),
+					TypeImageInfo = GetAssemblyImage(asmNode.LoadedAssembly.ModuleDefinition),
 					Location = string.Empty,
-					LocationImage = null,
+					LocationImageInfo = new ImageInfo(),
 					LoadedAssembly = asmNode.LoadedAssembly,
 				});
 			}
@@ -338,12 +338,17 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		static ImageSource GetAssemblyImage(ModuleDef module)
+		static ImageInfo GetAssemblyImage(ModuleDef module)
 		{
 			if (module == null)
-				return null;
+				return new ImageInfo();
 			return (module.Characteristics & dnlib.PE.Characteristics.Dll) == 0 ?
-				Images.AssemblyExe : Images.Assembly;
+				GetImage("AssemblyExe") : GetImage("Assembly");
+		}
+
+		static ImageInfo GetImage(string name)
+		{
+			return new ImageInfo(name, BackgroundType.Search);
 		}
 
 		void SearchModule(LoadedAssembly module)
@@ -364,9 +369,9 @@ namespace ICSharpCode.ILSpy
 				onMatch(new SearchResult {
 					Object = module,
 					Name = mod.FullName,
-					Image = Images.AssemblyModule,
+					TypeImageInfo = GetImage("AssemblyModule"),
 					Location = mod.Assembly != null ? mod.Assembly.FullName : string.Empty,
-					LocationImage = mod.Assembly != null ? GetAssemblyImage(mod.Assembly.ManifestModule) : null,
+					LocationImageInfo = mod.Assembly != null ? GetAssemblyImage(mod.Assembly.ManifestModule) : new ImageInfo(),
 					LoadedAssembly = module,
 				});
 			}
@@ -398,9 +403,9 @@ namespace ICSharpCode.ILSpy
 					onMatch(new SearchResult {
 						Object = asmRef,
 						Name = asmRef.FullName,
-						Image = Images.Assembly,
+						TypeImageInfo = GetImage("AssemblyReference"),
 						Location = module.ModuleDefinition.FullName,
-						LocationImage = Images.AssemblyModule,
+						LocationImageInfo = GetImage("AssemblyModule"),
 						LoadedAssembly = module,
 					});
 				}
@@ -415,9 +420,9 @@ namespace ICSharpCode.ILSpy
 					onMatch(new SearchResult {
 						Object = modRef,
 						Name = modRef.FullName,
-						Image = Images.Assembly,
+						TypeImageInfo = GetImage("ModuleReference"),
 						Location = module.ModuleDefinition.FullName,
-						LocationImage = Images.AssemblyModule,
+						LocationImageInfo = GetImage("AssemblyModule"),
 						LoadedAssembly = module,
 					});
 				}
@@ -450,9 +455,9 @@ namespace ICSharpCode.ILSpy
 				onMatch(new SearchResult {
 					Object = nonNetFile,
 					Name = nonNetFile.ShortName,
-					Image = Images.AssemblyWarning,
+					TypeImageInfo = GetImage("AssemblyWarning"),
 					Location = string.Empty,
-					LocationImage = null,
+					LocationImageInfo = new ImageInfo(),
 					LoadedAssembly = nonNetFile,
 				});
 			}
@@ -468,9 +473,9 @@ namespace ICSharpCode.ILSpy
 				onMatch(new SearchResult {
 					Object = ns,
 					Name = ns,
-					Image = Images.Namespace,
+					TypeImageInfo = GetImage("Namespace"),
 					Location = ownerModule.ModuleDefinition.FullName,
-					LocationImage = Images.AssemblyModule,
+					LocationImageInfo = GetImage("AssemblyModule"),
 					LoadedAssembly = ownerModule,
 				});
 			}
@@ -491,9 +496,9 @@ namespace ICSharpCode.ILSpy
 				onMatch(new SearchResult {
 					Object = type,
 					Name = language.TypeToString(type, false),
-					Image = TypeTreeNode.GetIcon(type),
+					TypeImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
 					Location = nsOwner,
-					LocationImage = Images.Namespace,
+					LocationImageInfo = GetImage("Namespace"),
 					LoadedAssembly = ownerModule,
 				});
 			}
@@ -516,9 +521,9 @@ namespace ICSharpCode.ILSpy
 				onMatch(new SearchResult {
 					Object = type,
 					Name = language.TypeToString(type, false),
-					Image = TypeTreeNode.GetIcon(type),
+					TypeImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
 					Location = language.TypeToString(type.DeclaringType, true),
-					LocationImage = TypeTreeNode.GetIcon(type.DeclaringType),
+					LocationImageInfo = TypeTreeNode.GetImageInfo(type.DeclaringType, BackgroundType.Search),
 					LoadedAssembly = ownerModule,
 				});
 			}
@@ -551,9 +556,9 @@ namespace ICSharpCode.ILSpy
 				onMatch(new SearchResult {
 					Object = method,
 					Name = method.Name,
-					Image = MethodTreeNode.GetIcon(method),
+					TypeImageInfo = MethodTreeNode.GetImageInfo(method, BackgroundType.Search),
 					Location = language.TypeToString(type, true),
-					LocationImage = TypeTreeNode.GetIcon(type),
+					LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
 					LoadedAssembly = ownerModule,
 				});
 				return;
@@ -569,9 +574,9 @@ namespace ICSharpCode.ILSpy
 						onMatch(new SearchResult {
 							Object = method,
 							Name = method.Name,
-							Image = MethodTreeNode.GetIcon(method),
+							TypeImageInfo = MethodTreeNode.GetImageInfo(method, BackgroundType.Search),
 							Location = language.TypeToString(type, true),
-							LocationImage = TypeTreeNode.GetIcon(type),
+							LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
 							LoadedAssembly = ownerModule,
 						});
 						return;
@@ -618,9 +623,9 @@ namespace ICSharpCode.ILSpy
 					onMatch(new SearchResult {
 						Object = method,
 						Name = method.Name,
-						Image = MethodTreeNode.GetIcon(method),
+						TypeImageInfo = MethodTreeNode.GetImageInfo(method, BackgroundType.Search),
 						Location = language.TypeToString(type, true),
-						LocationImage = TypeTreeNode.GetIcon(type),
+						LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
 						LoadedAssembly = ownerModule,
 					});
 					break;
@@ -639,9 +644,9 @@ namespace ICSharpCode.ILSpy
 				onMatch(new SearchResult {
 					Object = field,
 					Name = field.Name,
-					Image = FieldTreeNode.GetIcon(field),
+					TypeImageInfo = FieldTreeNode.GetImageInfo(field, BackgroundType.Search),
 					Location = language.TypeToString(type, true),
-					LocationImage = TypeTreeNode.GetIcon(type),
+					LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
 					LoadedAssembly = ownerModule,
 				});
 			}
@@ -657,9 +662,9 @@ namespace ICSharpCode.ILSpy
 				onMatch(new SearchResult {
 					Object = prop,
 					Name = prop.Name,
-					Image = PropertyTreeNode.GetIcon(prop),
+					TypeImageInfo = PropertyTreeNode.GetImageInfo(prop, BackgroundType.Search),
 					Location = language.TypeToString(type, true),
-					LocationImage = TypeTreeNode.GetIcon(type),
+					LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
 					LoadedAssembly = ownerModule,
 				});
 			}
@@ -675,9 +680,9 @@ namespace ICSharpCode.ILSpy
 				onMatch(new SearchResult {
 					Object = evt,
 					Name = evt.Name,
-					Image = EventTreeNode.GetIcon(evt),
+					TypeImageInfo = EventTreeNode.GetImageInfo(evt, BackgroundType.Search),
 					Location = language.TypeToString(type, true),
-					LocationImage = TypeTreeNode.GetIcon(type),
+					LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
 					LoadedAssembly = ownerModule,
 				});
 			}

@@ -31,12 +31,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 	{
 		const string CMD_NAME = "Delete Method";
 		[ExportContextMenuEntry(Header = CMD_NAME,
-								Icon = "Images/Delete.png",
+								Icon = "Delete",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
 							Menu = "_Edit",
-							MenuIcon = "Images/Delete.png",
+							MenuIcon = "Delete",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand
@@ -165,12 +165,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 	{
 		const string CMD_NAME = "Create Method";
 		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Images/Method.png",
+								Icon = "NewMethod",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
-							MenuIcon = "Images/Method.png",
+							MenuIcon = "NewMethod",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand
@@ -269,12 +269,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 	{
 		const string CMD_NAME = "Method Settings";
 		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Images/Settings.png",
+								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
-							MenuIcon = "Images/Settings.png",
+							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand

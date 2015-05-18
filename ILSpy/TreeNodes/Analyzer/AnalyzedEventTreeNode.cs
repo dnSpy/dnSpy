@@ -45,7 +45,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		public override object Icon
 		{
-			get { return EventTreeNode.GetIcon(analyzedEvent); }
+			get { return EventTreeNode.GetIcon(analyzedEvent, BackgroundType.TreeNode); }
 		}
 
 		public override object Text

@@ -49,7 +49,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Icon
 		{
-			get { return Images.SuperTypes; }
+			get { return Images.Instance.GetImage("SuperTypes", BackgroundType.TreeNode); }
 		}
 
 		public override FilterResult Filter(FilterSettings settings)

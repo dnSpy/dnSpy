@@ -32,10 +32,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 		const string CMD_NAME_SINGULAR = "Delete Namespace";
 		const string CMD_NAME_PLURAL_FORMAT = "Delete {0} Namespaces";
 		[ExportContextMenuEntry(Category = "AsmEd",
-								Icon = "Images/Delete.png",
+								Icon = "Delete",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(Menu = "_Edit",
-							MenuIcon = "Images/Delete.png",
+							MenuIcon = "Delete",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand
@@ -188,12 +188,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 	{
 		const string CMD_NAME = "Move Types to Empty Namespace";
 		[ExportContextMenuEntry(Header = CMD_NAME,
-								Icon = "Images/NameSpace.png",
+								Icon = "Namespace",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
 							   Menu = "_Edit",
-							   MenuIcon = "Images/NameSpace.png",
+							   MenuIcon = "Namespace",
 							   MenuCategory = "AsmEd",
 							   MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand

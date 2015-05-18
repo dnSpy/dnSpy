@@ -171,7 +171,7 @@ namespace ICSharpCode.ILSpy
 				Source = sessionSettings,
 			});
 			
-			this.Icon = new BitmapImage(new Uri("pack://application:,,,/dnSpy;component/images/ILSpy.ico"));
+			this.Icon = new BitmapImage(new Uri("pack://application:,,,/dnSpy;component/images/dnSpy.ico"));
 			
 			this.DataContext = sessionSettings;
 			
@@ -596,10 +596,13 @@ namespace ICSharpCode.ILSpy
 
 		void Themes_ThemeChanged(object sender, EventArgs e)
 		{
+			Images.Instance.OnThemeChanged();
 			UpdateControlColors();
 			foreach (var view in AllTextViews)
 				view.OnThemeUpdated();
 			LinesRenderer.SetPen(Themes.Theme.GetColor(ColorType.TreeViewLineBackground).InheritedColor.Background.GetBrush(null));
+			UpdateToolbar();
+			InvalidateMainMenu();
 			RefreshTreeViewFilter();
 		}
 
@@ -660,7 +663,7 @@ namespace ICSharpCode.ILSpy
 
 		class MainToolbarState
 		{
-			public IGrouping<string, Lazy<ICommand, IToolbarCommandMetadata>>[] Groupings;
+			public IGrouping<string, Lazy<ICommand, IToolbarCommandMetadata>>[] Groupings = new IGrouping<string, Lazy<ICommand, IToolbarCommandMetadata>>[0];
 		}
 		MainToolbarState mtbState = new MainToolbarState();
 		void InitToolbar()
@@ -677,7 +680,7 @@ namespace ICSharpCode.ILSpy
 				Content = new Image {
 					Width = 16,
 					Height = 16,
-					Source = Images.LoadImage(command.Value, command.Metadata.ToolbarIcon)
+					Source = Images.Instance.GetImage(command.Value, command.Metadata.ToolbarIcon, BackgroundType.Toolbar),
 				}
 			};
 			ToolTipService.SetShowOnDisabled(button, true);
@@ -726,6 +729,12 @@ namespace ICSharpCode.ILSpy
 				state.TopLevelMenuItem.Items.Clear();
 				state.TopLevelMenuItem.Items.Add(state.CachedMenuItems[0]);
 			}
+		}
+
+		void InvalidateMainMenu()
+		{
+			foreach (var state in subMenusDict.Values)
+				state.Recreate = true;
 		}
 
 		/// <summary>
@@ -803,13 +812,8 @@ namespace ICSharpCode.ILSpy
 						// need to do this when the menu wasn't in the toolbar.
 						menuItem.CommandTarget = MainWindow.Instance;
 						menuItem.Header = entry.Metadata.MenuHeader;
-						if (!string.IsNullOrEmpty(entry.Metadata.MenuIcon)) {
-							menuItem.Icon = new Image {
-								Width = 16,
-								Height = 16,
-								Source = Images.LoadImage(entry.Value, entry.Metadata.MenuIcon)
-							};
-						}
+						if (!string.IsNullOrEmpty(entry.Metadata.MenuIcon))
+							CreateMenuItemImage(menuItem, entry.Value, entry.Metadata.MenuIcon, BackgroundType.MainMenuMenuItem);
 
 						menuItem.InputGestureText = entry.Metadata.MenuInputGestureText;
 
@@ -842,6 +846,18 @@ namespace ICSharpCode.ILSpy
 					}
 				}
 			}
+		}
+
+		internal static void CreateMenuItemImage(MenuItem menuItem, object part, string icon, BackgroundType bgType, bool? enable = null)
+		{
+			var image = new Image {
+				Width = 16,
+				Height = 16,
+				Source = Images.Instance.GetImage(part, icon, bgType),
+			};
+			menuItem.Icon = image;
+			if (enable == false)
+				image.Opacity = 0.3;
 		}
 		#endregion
 		

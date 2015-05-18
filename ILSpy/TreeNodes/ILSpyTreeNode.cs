@@ -168,8 +168,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		protected virtual void OnFilterSettingsChanged()
 		{
-			RaisePropertyChanged("Text");
-			RaisePropertyChanged("Foreground");
+			RaiseUIPropsChanged();
 			if (IsVisible) {
 				foreach (ILSpyTreeNode node in this.Children.OfType<ILSpyTreeNode>())
 					ApplyFilterToChild(node);

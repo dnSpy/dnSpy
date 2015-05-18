@@ -235,18 +235,27 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			}
 		}
 
-		public override ImageSource Image {
-			get {
-				switch (type) {
-				case StackFrameStatementType.CurrentStatement:
-					return Images.CurrentLine;
-				case StackFrameStatementType.SelectedReturnStatement:
-					return Images.SelectedReturnLine;
-				case StackFrameStatementType.ReturnStatement:
-					return null;
-				default:
-					throw new InvalidOperationException();
-				}
+		public override bool HasImage {
+			get { return GetImageName() != null; }
+		}
+
+		public override ImageSource GetImage(Color bgColor) {
+			var name = GetImageName();
+			if (name != null)
+				return Images.Instance.GetImage(name, bgColor);
+			return null;
+		}
+
+		string GetImageName() {
+			switch (type) {
+			case StackFrameStatementType.CurrentStatement:
+				return "CurrentLine";
+			case StackFrameStatementType.SelectedReturnStatement:
+				return "SelectedReturnLine";
+			case StackFrameStatementType.ReturnStatement:
+				return null;
+			default:
+				throw new InvalidOperationException();
 			}
 		}
 

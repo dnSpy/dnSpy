@@ -26,7 +26,7 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 			DebugType baseType = (DebugType)shownType.BaseType;
 			if (baseType != null) {
 				yield return new TreeNode(
-					ImageService.GetImage("Icons.16x16.Class"),
+					Images.GetIcon(TypeIcon.Class, BackgroundType.DebuggerToolTip),
 					"BaseClass",
 					baseType.Name,
 					baseType.FullName,
@@ -84,10 +84,8 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 		{
 			List<TreeNode> nodes = new List<TreeNode>();
 			foreach(MemberInfo memberInfo in members) {
-				string imageName;
-				var image = ExpressionNode.GetImageForMember((IDebugMemberInfo)memberInfo, out imageName);
+				var image = ExpressionNode.GetImageForMember((IDebugMemberInfo)memberInfo);
 				var exp = new ExpressionNode(image, memberInfo.Name, expression.AppendMemberReference((IDebugMemberInfo)memberInfo));
-				exp.ImageName = imageName;
 				nodes.Add(exp);
 			}
 			
@@ -117,10 +115,8 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 				yield return new TreeNode(null, "(empty)", null, null, null);
 			} else {
 				for(int i = 0; i < count; i++) {
-					string imageName;
-					var image = ExpressionNode.GetImageForArrayIndexer(out imageName);
+					var image = ExpressionNode.GetImageForArrayIndexer();
 					var expression = new ExpressionNode(image, "[" + i + "]", targetObject.AppendIndexer(i));
-					expression.ImageName = imageName;
 					yield return expression;
 				}
 			}

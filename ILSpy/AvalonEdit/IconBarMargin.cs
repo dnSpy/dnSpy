@@ -87,6 +87,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		{
 			Size renderSize = this.RenderSize;
 			var theme = Themes.Theme;
+			var bgColor = theme.GetColor(ColorType.SystemColorsControl).InheritedColor.Foreground.GetColor(null).Value;
 			drawingContext.DrawRectangle(theme.GetColor(ColorType.SystemColorsControl).InheritedColor.Foreground.GetBrush(null), null,
 			                             new Rect(0, 0, renderSize.Width, renderSize.Height));
 			drawingContext.DrawLine(new Pen(theme.GetColor(ColorType.SystemColorsControlDark).InheritedColor.Foreground.GetBrush(null), 1),
@@ -128,7 +129,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 					list.Sort((a, b) => a.ZOrder.CompareTo(b.ZOrder));
 					foreach (var bm in list) {
 						Rect rect = new Rect(imagePadding, PixelSnapHelpers.Round(line.VisualTop - textView.VerticalOffset, pixelSize.Height), 16, 16);
-						drawingContext.DrawImage(bm.Image, rect);
+						drawingContext.DrawImage(bm.GetImage(bgColor), rect);
 					}
 				}
 			}

@@ -71,6 +71,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
         private CallStackPanel()
         {
             InitializeComponent();
+			dntheme.Themes.ThemeChanged += (s, e) => RefreshPad();
         }
   
 		public void Show()
@@ -209,9 +210,9 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 					MethodKey = frame.MethodInfo.ToMethodKey(),
 				};
 				if (frameNumber == 0)
-					item.Image = ImageService.CurrentLine;
+					item.Image = ImageService.GetImage("CurrentLine", BackgroundType.GridViewItem);
 				else if (frameNumber == StackFrameStatementManager.SelectedFrame)
-					item.Image = ImageService.SelectedReturnLine;
+					item.Image = ImageService.GetImage("SelectedReturnLine", BackgroundType.GridViewItem);
 				frameNumber++;
 				var module = frame.MethodInfo.DebugModule;
 				if (module.IsDynamic || module.IsInMemory) {
@@ -340,7 +341,8 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		public MethodKey MethodKey { get; set; }
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug",
+	[ExportMainMenuCommand(MenuIcon = "CallStackWindow",
+						   Menu = "_Debug",
 						   MenuHeader = "_Show Call Stack",
 						   MenuCategory = "View",
 						   MenuOrder = 5400)]

@@ -40,7 +40,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock
-                                    Text="{Binding MemberReference.DeclaringType.FullName}"
+                                    Text="{Binding DeclaringTypeFullName}"
                                     Margin="1,1,1,1" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
@@ -50,7 +50,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock
-                                    Text="{Binding MemberReference.Name}"
+                                    Text="{Binding Name}"
                                     Margin="1,1,1,1" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
@@ -71,7 +71,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock
-                                    Text="{Binding ILRange.From, StringFormat={}0x{0:X4}}"
+                                    Text="{Binding ILRangeFromString}"
                                     Margin="1,1,1,1" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
@@ -81,7 +81,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock
-                                    Text="{Binding MemberReference.MDToken.Raw, StringFormat={}0x{0:X8}}"
+                                    Text="{Binding MDTokenString}"
                                     Margin="1,1,1,1" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
@@ -91,7 +91,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock
-                                    Text="{Binding MemberReference.Module.Assembly.FullName}"
+                                    Text="{Binding AssemblyFullName}"
                                     Margin="1,1,1,1" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
@@ -101,7 +101,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock
-                                    Text="{Binding MemberReference.Module.FullName}"
+                                    Text="{Binding ModuleFullName}"
                                     Margin="1,1,1,1" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>

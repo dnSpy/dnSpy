@@ -17,317 +17,290 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.ComponentModel;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using System.Windows;
-using System.Collections.Generic;
 
 namespace ICSharpCode.ILSpy
 {
-	static class Images
+	// Fixes the VS2013 images to work with any theme. Same algo as VS2015 itself uses...
+	public static class ThemedImageCreator
 	{
-		static BitmapImage LoadBitmap(string name)
+		public struct HslColor
 		{
-			BitmapImage image = new BitmapImage(new Uri("pack://application:,,,/dnSpy;component/Images/" + name + ".png"));
-			image.Freeze();
-			return image;
+			public readonly double Hue;
+			public readonly double Saturation;
+			public readonly double Luminosity;
+			public readonly double Alpha;
+
+			public HslColor(double hue, double saturation, double luminosity, double alpha) {
+				Hue = hue < 0 ? 0 : hue > 360 ? 360 : hue;
+				Saturation = saturation < 0 ? 0 : saturation > 1 ? 1 : saturation;
+				Luminosity = luminosity < 0 ? 0 : luminosity > 1 ? 1 : luminosity;
+				Alpha = alpha < 0 ? 0 : alpha > 1 ? 1 : alpha;
+			}
+
+			public static HslColor FromColor(Color color)
+			{
+				unchecked {
+					byte n1 = Math.Max(color.R, Math.Max(color.G, color.B));
+					byte n2 = Math.Min(color.R, Math.Min(color.G, color.B));
+					double n3 = (double)(n1 - n2);
+					double n4 = (double)n1 / 255.0;
+					double n5 = (double)n2 / 255.0;
+					double hue;
+					if (n1 == n2)
+						hue = 0.0;
+					else if (n1 == color.R)
+						hue = (double)((int)(60.0 * (double)(color.G - color.B) / n3 + 360.0) % 360);
+					else if (n1 == color.G)
+						hue = 60.0 * (double)(color.B - color.R) / n3 + 120.0;
+					else
+						hue = 60.0 * (double)(color.R - color.G) / n3 + 240.0;
+					double alpha = (double)color.A / 255.0;
+					double luminosity = 0.5 * (n4 + n5);
+					double saturation;
+					if (n1 == n2)
+						saturation = 0.0;
+					else if (luminosity <= 0.5)
+						saturation = (n4 - n5) / (2.0 * luminosity);
+					else
+						saturation = (n4 - n5) / (2.0 - 2.0 * luminosity);
+					return new HslColor(hue, saturation, luminosity, alpha);
+				}
+			}
+
+			public Color ToColor()
+			{
+				unchecked {
+					double n1 = (Luminosity < 0.5) ? (Luminosity * (1.0 + Saturation)) : (Luminosity + Saturation - Luminosity * Saturation);
+					double p = 2.0 * Luminosity - n1;
+					double tC2 = Hue / 360.0;
+					double tC = HslColor.ModOne(tC2 + 1.0 / 3.0);
+					double tC3 = HslColor.ModOne(tC2 - 1.0 / 3.0);
+					byte r = (byte)(HslColor.ComputeRGBComponent(p, n1, tC) * 255.0);
+					byte g = (byte)(HslColor.ComputeRGBComponent(p, n1, tC2) * 255.0);
+					byte b = (byte)(HslColor.ComputeRGBComponent(p, n1, tC3) * 255.0);
+					return Color.FromArgb((byte)(Alpha * 255.0), r, g, b);
+				}
+			}
+
+			private static double ModOne(double value)
+			{
+				unchecked {
+					if (value < 0.0)
+						return value + 1.0;
+					if (value > 1.0)
+						return value - 1.0;
+					return value;
+				}
+			}
+
+			private static double ComputeRGBComponent(double p, double q, double tC)
+			{
+				unchecked {
+					if (tC < 1.0 / 6.0)
+						return p + (q - p) * 6.0 * tC;
+					if (tC < 0.5)
+						return q;
+					if (tC < 2.0 / 3.0)
+						return p + (q - p) * 6.0 * (2.0 / 3.0 - tC);
+					return p;
+				}
+			}
 		}
-		
-		public static readonly BitmapImage Breakpoint = LoadBitmap("Breakpoint");
-		public static readonly BitmapImage DisabledBreakpoint = LoadBitmap("DisabledBreakpoint");
-		public static readonly BitmapImage CurrentLine = LoadBitmap("CurrentLine");
-		public static readonly BitmapImage SelectedReturnLine = LoadBitmap("SelectedReturnLine");
 
-		public static readonly BitmapImage ViewCode = LoadBitmap("ViewCode");
-		public static readonly BitmapImage Save = LoadBitmap("SaveFile");
-		public static readonly BitmapImage OK = LoadBitmap("OK");
-
-		public static readonly BitmapImage Delete = LoadBitmap("Delete");
-		public static readonly BitmapImage Search = LoadBitmap("Search");
-
-		public static readonly BitmapImage Assembly = LoadBitmap("Assembly");
-		public static readonly BitmapImage AssemblyExe = LoadBitmap("AssemblyExe");
-		public static readonly BitmapImage AssemblyModule = LoadBitmap("AssemblyModule");
-		public static readonly BitmapImage AssemblyWarning = LoadBitmap("AssemblyWarning");
-		public static readonly BitmapImage AssemblyLoading = LoadBitmap("FindAssembly");
-
-		public static readonly BitmapImage Library = LoadBitmap("Library");
-		public static readonly BitmapImage Namespace = LoadBitmap("NameSpace");
-
-		public static readonly BitmapImage ReferenceFolderOpen = LoadBitmap("ReferenceFolder.Open");
-		public static readonly BitmapImage ReferenceFolderClosed = LoadBitmap("ReferenceFolder.Closed");
-
-		public static readonly BitmapImage SubTypes = LoadBitmap("SubTypes");
-		public static readonly BitmapImage SuperTypes = LoadBitmap("SuperTypes");
-
-		public static readonly BitmapImage FolderOpen = LoadBitmap("Folder.Open");
-		public static readonly BitmapImage FolderClosed = LoadBitmap("Folder.Closed");
-
-		public static readonly BitmapImage Resource = LoadBitmap("Resource");
-		public static readonly BitmapImage ResourceImage = LoadBitmap("ResourceImage");
-		public static readonly BitmapImage ResourceResourcesFile = LoadBitmap("ResourceResourcesFile");
-		public static readonly BitmapImage ResourceXml = LoadBitmap("ResourceXml");
-		public static readonly BitmapImage ResourceXsd = LoadBitmap("ResourceXsd");
-		public static readonly BitmapImage ResourceXslt = LoadBitmap("ResourceXslt");
-
-		public static readonly BitmapImage Class = LoadBitmap("Class");
-		public static readonly BitmapImage Struct = LoadBitmap("Struct");
-		public static readonly BitmapImage Interface = LoadBitmap("Interface");
-		public static readonly BitmapImage Delegate = LoadBitmap("Delegate");
-		public static readonly BitmapImage Enum = LoadBitmap("Enum");
-		public static readonly BitmapImage StaticClass = LoadBitmap("StaticClass");
-
-
-		public static readonly BitmapImage Field = LoadBitmap("Field");
-		public static readonly BitmapImage FieldReadOnly = LoadBitmap("FieldReadOnly");
-		public static readonly BitmapImage Literal = LoadBitmap("Literal");
-		public static readonly BitmapImage EnumValue = LoadBitmap("EnumValue");
-
-		public static readonly BitmapImage Method = LoadBitmap("Method");
-		public static readonly BitmapImage Constructor = LoadBitmap("Constructor");
-		public static readonly BitmapImage VirtualMethod = LoadBitmap("VirtualMethod");
-		public static readonly BitmapImage Operator = LoadBitmap("Operator");
-		public static readonly BitmapImage ExtensionMethod = LoadBitmap("ExtensionMethod");
-		public static readonly BitmapImage PInvokeMethod = LoadBitmap("PInvokeMethod");
-
-		public static readonly BitmapImage Property = LoadBitmap("Property");
-		public static readonly BitmapImage Indexer = LoadBitmap("Indexer");
-
-		public static readonly BitmapImage Event = LoadBitmap("Event");
-
-		private static readonly BitmapImage OverlayProtected = LoadBitmap("OverlayProtected");
-		private static readonly BitmapImage OverlayInternal = LoadBitmap("OverlayInternal");
-		private static readonly BitmapImage OverlayProtectedInternal = LoadBitmap("OverlayProtectedInternal");
-		private static readonly BitmapImage OverlayPrivate = LoadBitmap("OverlayPrivate");
-		private static readonly BitmapImage OverlayCompilerControlled = LoadBitmap("OverlayCompilerControlled");
-
-		private static readonly BitmapImage OverlayStatic = LoadBitmap("OverlayStatic");
-
-		public static readonly BitmapImage PrivateInternal = LoadBitmap("PrivateInternal");
-
-		public static BitmapImage LoadImage(object part, string icon)
+		public static BitmapSource CreateThemedBitmapSource(BitmapSource src, Color bgColor)
 		{
-			Uri uri;
+			unchecked {
+				if (src.Format != PixelFormats.Bgra32)
+					src = new FormatConvertedBitmap(src, PixelFormats.Bgra32, null, 0.0);
+				var pixels = new byte[src.PixelWidth * src.PixelHeight * 4];
+				src.CopyPixels(pixels, src.PixelWidth * 4, 0);
+
+				var bg = HslColor.FromColor(bgColor);
+				int offs = 0;
+				while (offs + 4 <= pixels.Length) {
+					var hslColor = HslColor.FromColor(Color.FromRgb(pixels[offs + 2], pixels[offs + 1], pixels[offs]));
+					double hue = hslColor.Hue;
+					double saturation = hslColor.Saturation;
+					double luminosity = hslColor.Luminosity;
+					double n1 = Math.Abs(0.96470588235294119 - luminosity);
+					double n2 = Math.Max(0.0, 1.0 - saturation * 4.0) * Math.Max(0.0, 1.0 - n1 * 4.0);
+					double n3 = Math.Max(0.0, 1.0 - saturation * 4.0);
+					luminosity = TransformLuminosity(hue, saturation, luminosity, bg.Luminosity);
+					hue = hue * (1.0 - n3) + bg.Hue * n3;
+					saturation = saturation * (1.0 - n2) + bg.Saturation * n2;
+					if (SystemParameters.HighContrast)
+						luminosity = ((luminosity <= 0.3) ? 0.0 : ((luminosity >= 0.7) ? 1.0 : ((luminosity - 0.3) / 0.4))) * (1.0 - saturation) + luminosity * saturation;
+					var color = new HslColor(hue, saturation, luminosity, 1.0).ToColor();
+					pixels[offs + 2] = color.R;
+					pixels[offs + 1] = color.G;
+					pixels[offs] = color.B;
+					offs += 4;
+				}
+
+				BitmapSource newImage = BitmapSource.Create(src.PixelWidth, src.PixelHeight, src.DpiX, src.DpiY, PixelFormats.Bgra32, src.Palette, pixels, src.PixelWidth * 4);
+				newImage.Freeze();
+				return newImage;
+			}
+		}
+
+		static double TransformLuminosity(double hue, double sat, double lum, double bgLum)
+		{
+			unchecked {
+				if (bgLum < 0.5) {
+					if (lum >= 0.96470588235294119)
+						return bgLum * (lum - 1.0) / -0.035294117647058809;
+					double val = sat < 0.2 ? 1.0 :
+								sat > 0.3 ? 0.0 :
+								1.0 - (sat - 0.2) / 0.099999999999999978;
+					double n1 = Math.Max(Math.Min(1.0, Math.Abs(hue - 37.0) / 20.0), val);
+					double n2 = ((bgLum - 1.0) * 0.66 / 0.96470588235294119 + 1.0) * n1 + 0.66 * (1.0 - n1);
+					return lum < 0.66 ?
+							(n2 - 1.0) / 0.66 * lum + 1.0 :
+							(n2 - bgLum) / -0.30470588235294116 * (lum - 0.96470588235294119) + bgLum;
+				}
+				else {
+					return lum < 0.96470588235294119 ?
+						lum * bgLum / 0.96470588235294119 :
+						(1.0 - bgLum) * (lum - 1.0) / 0.035294117647058809 + 1.0;
+				}
+			}
+		}
+	}
+
+	public enum BackgroundType
+	{
+		Button,
+		Window,
+		TreeNode,
+		Search,
+		ComboBox,
+		Toolbar,
+		MainMenuMenuItem,
+		ContextMenuItem,
+		GridViewItem,
+		DebuggerToolTip,
+	}
+
+	public struct ImageInfo
+	{
+		public readonly string Name;
+		public readonly BackgroundType BackgroundType;
+
+		public ImageInfo(string name, BackgroundType bgType)
+		{
+			this.Name = name;
+			this.BackgroundType = bgType;
+		}
+	}
+
+	public sealed class Images
+	{
+		public static readonly Images Instance = new Images();
+
+		readonly Dictionary<Tuple<string, Color>, BitmapSource> imageCache = new Dictionary<Tuple<string, Color>, BitmapSource>();
+
+		internal void OnThemeChanged()
+		{
+			imageCache.Clear();
+		}
+
+		public BitmapSource GetImage(ImageInfo info)
+		{
+			if (info.Name == null)
+				return null;
+			return GetImage(info.Name, info.BackgroundType);
+		}
+
+		public BitmapSource GetImage(string name, BackgroundType bgType)
+		{
+			return GetImage(name, GetColor(bgType));
+		}
+
+		public static Color GetColor(BackgroundType bgType)
+		{
+			switch (bgType) {
+			case BackgroundType.Button: return GetColorBackground(dntheme.ColorType.ButtonIconBackground);
+			case BackgroundType.Window: return GetColorForeground(dntheme.ColorType.SystemColorsWindow);
+			case BackgroundType.TreeNode: return GetColorForeground(dntheme.ColorType.SystemColorsWindow);
+			case BackgroundType.Search: return GetColorForeground(dntheme.ColorType.SystemColorsWindow);
+			case BackgroundType.ComboBox: return GetColorForeground(dntheme.ColorType.SystemColorsWindow);
+			case BackgroundType.Toolbar: return GetColorBackground(dntheme.ColorType.ToolBarIconBackground);
+			case BackgroundType.MainMenuMenuItem: return GetColorBackground(dntheme.ColorType.ToolBarIconVerticalBackground);
+			case BackgroundType.ContextMenuItem: return GetColorBackground(dntheme.ColorType.ContextMenuRectangleFill1);
+			case BackgroundType.GridViewItem: return GetColorForeground(dntheme.ColorType.SystemColorsWindow);
+			case BackgroundType.DebuggerToolTip: return Colors.White;//TODO: Update this when the debugger tooltips have been fixed
+			default:
+				Debug.Fail("Invalid bg type");
+				return GetColorForeground(dntheme.ColorType.SystemColorsWindow);
+			}
+		}
+
+		static Color GetColorForeground(dntheme.ColorType colorType)
+		{
+			return dntheme.Themes.Theme.GetColor(colorType).InheritedColor.Foreground.GetColor(null).Value;
+		}
+
+		static Color GetColorBackground(dntheme.ColorType colorType)
+		{
+			return dntheme.Themes.Theme.GetColor(colorType).InheritedColor.Background.GetColor(null).Value;
+		}
+
+		static string GetUri(object part, string icon)
+		{
 			var assembly = part.GetType().Assembly;
 			var name = assembly.GetName();
-			uri = new Uri("pack://application:,,,/" + name.Name + ";v" + name.Version + ";component/" + icon);
-			BitmapImage image = new BitmapImage(uri);
-			image.Freeze();
+			return "pack://application:,,,/" + name.Name + ";v" + name.Version + ";component/" + icon;
+		}
+
+		public BitmapSource GetImage(string name, Color bgColor)
+		{
+			return GetImage(this, name, bgColor);
+		}
+
+		public BitmapSource GetImage(object part, string icon, BackgroundType bgType)
+		{
+			return GetImage(part, icon, GetColor(bgType));
+		}
+
+		public BitmapSource GetImage(object part, string icon, Color bgColor)
+		{
+			var assembly = part.GetType().Assembly;
+			var name = assembly.GetName();
+			var uri = "pack://application:,,,/" + name.Name + ";v" + name.Version + ";component/Images/" + icon + ".png";
+			return GetImageUsingUri(uri, bgColor);
+		}
+
+		public BitmapSource GetImageUsingUri(string key, BackgroundType bgType)
+		{
+			return GetImageUsingUri(key, GetColor(bgType));
+		}
+
+		public BitmapSource GetImageUsingUri(string uri, Color bgColor)
+		{
+			var key = Tuple.Create(uri, bgColor);
+			BitmapSource image;
+			if (imageCache.TryGetValue(key, out image))
+				return image;
+
+			image = ThemedImageCreator.CreateThemedBitmapSource(new BitmapImage(new Uri(uri)), bgColor);
+			imageCache.Add(key, image);
 			return image;
 		}
 
-
-		private static readonly TypeIconCache typeIconCache = new TypeIconCache();
-		private static readonly MemberIconCache memberIconCache = new MemberIconCache();
-
-		public static ImageSource GetIcon(TypeIcon icon, AccessOverlayIcon overlay, bool isStatic = false)
+		public static ImageSource GetIcon(TypeIcon icon, BackgroundType bgType)
 		{
-			lock (typeIconCache)
-				return typeIconCache.GetIcon(icon, overlay, isStatic);
+			return TreeNodes.TypeTreeNode.GetIcon(icon, bgType);
 		}
 
-		public static ImageSource GetIcon(MemberIcon icon, AccessOverlayIcon overlay, bool isStatic)
+		public static ImageSource GetIcon(MemberIcon icon, BackgroundType bgType)
 		{
-			lock (memberIconCache)
-				return memberIconCache.GetIcon(icon, overlay, isStatic);
+			return TreeNodes.FieldTreeNode.GetIcon(icon, bgType);
 		}
-
-		#region icon caches & overlay management
-
-		private class TypeIconCache : IconCache<TypeIcon>
-		{
-			public TypeIconCache()
-			{
-				PreloadPublicIconToCache(TypeIcon.Class, Images.Class);
-				PreloadPublicIconToCache(TypeIcon.Enum, Images.Enum);
-				PreloadPublicIconToCache(TypeIcon.Struct, Images.Struct);
-				PreloadPublicIconToCache(TypeIcon.Interface, Images.Interface);
-				PreloadPublicIconToCache(TypeIcon.Delegate, Images.Delegate);
-				PreloadPublicIconToCache(TypeIcon.StaticClass, Images.StaticClass);
-			}
-
-			protected override ImageSource GetBaseImage(TypeIcon icon)
-			{
-				ImageSource baseImage;
-				switch (icon) {
-					case TypeIcon.Class:
-						baseImage = Images.Class;
-						break;
-					case TypeIcon.Enum:
-						baseImage = Images.Enum;
-						break;
-					case TypeIcon.Struct:
-						baseImage = Images.Struct;
-						break;
-					case TypeIcon.Interface:
-						baseImage = Images.Interface;
-						break;
-					case TypeIcon.Delegate:
-						baseImage = Images.Delegate;
-						break;
-					case TypeIcon.StaticClass:
-						baseImage = Images.StaticClass;
-						break;
-					default:
-						throw new NotSupportedException();
-				}
-
-				return baseImage;
-			}
-		}
-
-		private class MemberIconCache : IconCache<MemberIcon>
-		{
-			public MemberIconCache()
-			{
-				PreloadPublicIconToCache(MemberIcon.Field, Images.Field);
-				PreloadPublicIconToCache(MemberIcon.FieldReadOnly, Images.FieldReadOnly);
-				PreloadPublicIconToCache(MemberIcon.Literal, Images.Literal);
-				PreloadPublicIconToCache(MemberIcon.EnumValue, Images.EnumValue);
-				PreloadPublicIconToCache(MemberIcon.Property, Images.Property);
-				PreloadPublicIconToCache(MemberIcon.Indexer, Images.Indexer);
-				PreloadPublicIconToCache(MemberIcon.Method, Images.Method);
-				PreloadPublicIconToCache(MemberIcon.Constructor, Images.Constructor);
-				PreloadPublicIconToCache(MemberIcon.VirtualMethod, Images.VirtualMethod);
-				PreloadPublicIconToCache(MemberIcon.Operator, Images.Operator);
-				PreloadPublicIconToCache(MemberIcon.ExtensionMethod, Images.ExtensionMethod);
-				PreloadPublicIconToCache(MemberIcon.PInvokeMethod, Images.PInvokeMethod);
-				PreloadPublicIconToCache(MemberIcon.Event, Images.Event);
-			}
-
-			protected override ImageSource GetBaseImage(MemberIcon icon)
-			{
-				ImageSource baseImage;
-				switch (icon) {
-					case MemberIcon.Field:
-						baseImage = Images.Field;
-						break;
-					case MemberIcon.FieldReadOnly:
-						baseImage = Images.FieldReadOnly;
-						break;
-					case MemberIcon.Literal:
-						baseImage = Images.Literal;
-						break;
-					case MemberIcon.EnumValue:
-						baseImage = Images.Literal;
-						break;
-					case MemberIcon.Property:
-						baseImage = Images.Property;
-						break;
-					case MemberIcon.Indexer:
-						baseImage = Images.Indexer;
-						break;
-					case MemberIcon.Method:
-						baseImage = Images.Method;
-						break;
-					case MemberIcon.Constructor:
-						baseImage = Images.Constructor;
-						break;
-					case MemberIcon.VirtualMethod:
-						baseImage = Images.VirtualMethod;
-						break;
-					case MemberIcon.Operator:
-						baseImage = Images.Operator;
-						break;
-					case MemberIcon.ExtensionMethod:
-						baseImage = Images.ExtensionMethod;
-						break;
-					case MemberIcon.PInvokeMethod:
-						baseImage = Images.PInvokeMethod;
-						break;
-					case MemberIcon.Event:
-						baseImage = Images.Event;
-						break;
-					default:
-						throw new NotSupportedException();
-				}
-
-				return baseImage;
-			}
-		}
-
-		private abstract class IconCache<T>
-		{
-			private readonly Dictionary<Tuple<T, AccessOverlayIcon, bool>, ImageSource> cache = new Dictionary<Tuple<T, AccessOverlayIcon, bool>, ImageSource>();
-
-			protected void PreloadPublicIconToCache(T icon, ImageSource image)
-			{
-				var iconKey = new Tuple<T, AccessOverlayIcon, bool>(icon, AccessOverlayIcon.Public, false);
-				cache.Add(iconKey, image);
-			}
-
-			public ImageSource GetIcon(T icon, AccessOverlayIcon overlay, bool isStatic)
-			{
-				var iconKey = new Tuple<T, AccessOverlayIcon, bool>(icon, overlay, isStatic);
-				if (cache.ContainsKey(iconKey)) {
-					return cache[iconKey];
-				} else {
-					ImageSource result = BuildMemberIcon(icon, overlay, isStatic);
-					cache.Add(iconKey, result);
-					return result;
-				}
-			}
-
-			private ImageSource BuildMemberIcon(T icon, AccessOverlayIcon overlay, bool isStatic)
-			{
-				ImageSource baseImage = GetBaseImage(icon);
-				ImageSource overlayImage = GetOverlayImage(overlay);
-
-				return CreateOverlayImage(baseImage, overlayImage, isStatic);
-			}
-
-			protected abstract ImageSource GetBaseImage(T icon);
-
-			private static ImageSource GetOverlayImage(AccessOverlayIcon overlay)
-			{
-				ImageSource overlayImage;
-				switch (overlay) {
-					case AccessOverlayIcon.Public:
-						overlayImage = null;
-						break;
-					case AccessOverlayIcon.Protected:
-						overlayImage = Images.OverlayProtected;
-						break;
-					case AccessOverlayIcon.Internal:
-						overlayImage = Images.OverlayInternal;
-						break;
-					case AccessOverlayIcon.ProtectedInternal:
-						overlayImage = Images.OverlayProtectedInternal;
-						break;
-					case AccessOverlayIcon.Private:
-						overlayImage = Images.OverlayPrivate;
-						break;
-					case AccessOverlayIcon.CompilerControlled:
-						overlayImage = Images.OverlayCompilerControlled;
-						break;
-					default:
-						throw new NotSupportedException();
-				}
-				return overlayImage;
-			}
-
-			private static readonly Rect iconRect = new Rect(0, 0, 16, 16);
-
-			private static ImageSource CreateOverlayImage(ImageSource baseImage, ImageSource overlay, bool isStatic)
-			{
-				var group = new DrawingGroup();
-
-				group.Children.Add(new ImageDrawing(baseImage, iconRect));
-
-				if (overlay != null) {
-					group.Children.Add(new ImageDrawing(overlay, iconRect));
-				}
-
-				if (isStatic) {
-					group.Children.Add(new ImageDrawing(Images.OverlayStatic, iconRect));
-				}
-
-				var image = new DrawingImage(group);
-				image.Freeze();
-				return image;
-			}
-		}
-
-		#endregion
 	}
 }

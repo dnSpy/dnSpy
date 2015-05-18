@@ -3423,7 +3423,7 @@
         <Setter Property="Background"
                 Value="{DynamicResource StatusBarBackground}"/>
         <Setter Property="Foreground"
-                Value="{DynamicResource SystemColorsControlText}"/>
+                Value="{DynamicResource StatusBarForeground}"/>
         <Setter Property="FontFamily"
                 Value="{DynamicResource {x:Static SystemFonts.StatusFontFamilyKey}}"/>
         <Setter Property="FontSize"
@@ -4988,9 +4988,9 @@
                             </MultiTrigger.Conditions>
                             <Setter TargetName="Bd"
                                     Property="Background"
-                                    Value="{DynamicResource SystemColorsControl}" />
+                                    Value="{DynamicResource SystemColorsInactiveSelectionHighlight}" />
                             <Setter Property="Foreground"
-                                    Value="{DynamicResource SystemColorsControlText}" />
+                                    Value="{DynamicResource SystemColorsInactiveSelectionHighlightText}" />
                         </MultiTrigger>
                         <Trigger Property="IsEnabled"
                                  Value="false">
@@ -5177,7 +5177,7 @@
 		<Setter Property="ShowInTaskbar" Value="False"/>
 		<Setter Property="UseLayoutRounding" Value="True"/>
 		<Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
-		<Setter Property="Icon" Value="../Images/ILSpy.ico"/>
+		<Setter Property="Icon" Value="../Images/dnSpy.ico"/>
 		<Setter Property="mm:HideWindowsButtons.MaxMinButtons" Value="True"/>
 	</Style>
 	<Style x:Key="DialogBorderStyle" TargetType="{x:Type Border}">

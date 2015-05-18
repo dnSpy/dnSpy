@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using ICSharpCode.ILSpy.dntheme;
 using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
@@ -39,6 +40,32 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 						child.Language = value;
 				}
 			}
+		}
+
+		public override System.Windows.Media.Brush Foreground {
+			get { return Themes.Theme.GetColor(dntheme.ColorType.NodePublic).InheritedColor.Foreground.GetBrush(null); }
+		}
+
+		public IEnumerable<AnalyzerTreeNode> GetRecursiveChildrenAndSelf()
+		{
+			yield return this;
+
+			foreach (var child in Children) {
+				var at = child as AnalyzerTreeNode;
+				if (at == null)
+					continue;
+				foreach (var sc in at.GetRecursiveChildrenAndSelf())
+					yield return sc;
+			}
+		}
+
+		public void RaiseUIPropsChanged()
+		{
+			RaisePropertyChanged("Icon");
+			RaisePropertyChanged("ExpandedIcon");
+			RaisePropertyChanged("ToolTip");
+			RaisePropertyChanged("Text");
+			RaisePropertyChanged("Foreground");
 		}
 
 		public override bool CanDelete()

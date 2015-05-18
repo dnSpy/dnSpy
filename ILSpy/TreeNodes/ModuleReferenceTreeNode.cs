@@ -25,11 +25,15 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Module reference in ReferenceFolderTreeNode.
 	/// </summary>
-	sealed class ModuleReferenceTreeNode : ILSpyTreeNode
+	sealed class ModuleReferenceTreeNode : ILSpyTreeNode, ITokenTreeNode
 	{
 		readonly ModuleRef r;
 
 		public ModuleRef ModuleReference {
+			get { return r; }
+		}
+
+		public IMDTokenProvider MDTokenProvider {
 			get { return r; }
 		}
 		
@@ -50,7 +54,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Icon {
-			get { return Images.Library; }
+			get { return Images.Instance.GetImage("ModuleReference", BackgroundType.TreeNode); }
 		}
 
 		public override FilterResult Filter(FilterSettings settings)

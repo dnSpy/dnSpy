@@ -346,53 +346,63 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 			return false;
 		}
 		
-		public static ImageSource GetImageForThis(out string imageName)
+		public static ImageSource GetImageForThis()
 		{
-			imageName = "Icons.16x16.Parameter";
-			return ImageService.GetImage(imageName);
+			return ImageService.GetImage("Parameter", BackgroundType.DebuggerToolTip);
 		}
 		
-		public static ImageSource GetImageForParameter(out string imageName)
+		public static ImageSource GetImageForParameter()
 		{
-			imageName = "Icons.16x16.Parameter";
-			return ImageService.GetImage(imageName);
+			return ImageService.GetImage("Parameter", BackgroundType.DebuggerToolTip);
 		}
 		
-		public static ImageSource GetImageForLocalVariable(out string imageName)
+		public static ImageSource GetImageForLocalVariable()
 		{
-			imageName = "Icons.16x16.Local";
-			return ImageService.GetImage(imageName);
+			return ImageService.GetImage("Local", BackgroundType.DebuggerToolTip);
 		}
 		
-		public static ImageSource GetImageForArrayIndexer(out string imageName)
+		public static ImageSource GetImageForArrayIndexer()
 		{
-			imageName = "Icons.16x16.Field";
-			return ImageService.GetImage(imageName);
+			return Images.GetIcon(MemberIcon.Field, BackgroundType.DebuggerToolTip);
 		}
 		
-		public static ImageSource GetImageForMember(IDebugMemberInfo memberInfo, out string imageName)
+		public static ImageSource GetImageForMember(IDebugMemberInfo memberInfo)
 		{
-			string name = string.Empty;
-			if (memberInfo.IsPublic) {
-			} else if (memberInfo.IsAssembly) {
-				name += "Internal";
-			} else if (memberInfo.IsFamily) {
-				name += "Protected";
-			} else if (memberInfo.IsPrivate) {
-				name += "Private";
-			}
 			if (memberInfo is FieldInfo) {
-				name += "Field";
+				if (memberInfo.IsPublic)
+					return Images.GetIcon(MemberIcon.Field, BackgroundType.DebuggerToolTip);
+				else if (memberInfo.IsAssembly)
+					return Images.GetIcon(MemberIcon.FieldInternal, BackgroundType.DebuggerToolTip);
+				else if (memberInfo.IsFamily)
+					return Images.GetIcon(MemberIcon.FieldProtected, BackgroundType.DebuggerToolTip);
+				else if (memberInfo.IsPrivate)
+					return Images.GetIcon(MemberIcon.FieldPrivate, BackgroundType.DebuggerToolTip);
+				return Images.GetIcon(MemberIcon.Field, BackgroundType.DebuggerToolTip);
 			} else if (memberInfo is PropertyInfo) {
-				name += "Property";
-			} else if (memberInfo is MethodInfo) {
-				name += "Method";
-			} else {
+				if (memberInfo.IsPublic)
+					return Images.GetIcon(MemberIcon.Property, BackgroundType.DebuggerToolTip);
+				else if (memberInfo.IsAssembly)
+					return Images.GetIcon(MemberIcon.PropertyInternal, BackgroundType.DebuggerToolTip);
+				else if (memberInfo.IsFamily)
+					return Images.GetIcon(MemberIcon.PropertyProtected, BackgroundType.DebuggerToolTip);
+				else if (memberInfo.IsPrivate)
+					return Images.GetIcon(MemberIcon.PropertyPrivate, BackgroundType.DebuggerToolTip);
+				return Images.GetIcon(MemberIcon.Property, BackgroundType.DebuggerToolTip);
+			}
+			else if (memberInfo is MethodInfo) {
+				if (memberInfo.IsPublic)
+					return Images.GetIcon(MemberIcon.Method, BackgroundType.DebuggerToolTip);
+				else if (memberInfo.IsAssembly)
+					return Images.GetIcon(MemberIcon.MethodInternal, BackgroundType.DebuggerToolTip);
+				else if (memberInfo.IsFamily)
+					return Images.GetIcon(MemberIcon.MethodProtected, BackgroundType.DebuggerToolTip);
+				else if (memberInfo.IsPrivate)
+					return Images.GetIcon(MemberIcon.MethodPrivate, BackgroundType.DebuggerToolTip);
+				return Images.GetIcon(MemberIcon.Method, BackgroundType.DebuggerToolTip);
+			}
+			else {
 				throw new DebuggerException("Unknown member type " + memberInfo.GetType().FullName);
 			}
-			
-			imageName = "Icons.16x16." + name;
-			return ImageService.GetImage(imageName);
 		}
 		
 //		public ContextMenuStrip GetContextMenu()

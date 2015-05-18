@@ -61,11 +61,15 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			this.ILRange = range;
 			this.isEnabled = isEnabled;
 		}
+
+		public override bool HasImage {
+			get { return true; }
+		}
 		
-		public override ImageSource Image {
-			get {
-		    return IsEnabled ? Images.Breakpoint : Images.DisabledBreakpoint;
-			}
+		public override ImageSource GetImage(Color bgColor) {
+			return IsEnabled ?
+				Images.Instance.GetImage("Breakpoint", bgColor) :
+				Images.Instance.GetImage("DisabledBreakpoint", bgColor);
 		}
 		
 		public event EventHandler ImageChanged;

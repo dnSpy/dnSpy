@@ -31,12 +31,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 	{
 		const string CMD_NAME = "Delete Event";
 		[ExportContextMenuEntry(Header = CMD_NAME,
-								Icon = "Images/Delete.png",
+								Icon = "Delete",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
 							Menu = "_Edit",
-							MenuIcon = "Images/Delete.png",
+							MenuIcon = "Delete",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand
@@ -189,12 +189,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 	{
 		const string CMD_NAME = "Create Event";
 		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Images/Event.png",
+								Icon = "NewEvent",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
-							MenuIcon = "Images/Event.png",
+							MenuIcon = "NewEvent",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand
@@ -288,12 +288,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 	{
 		const string CMD_NAME = "Event Settings";
 		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Images/Settings.png",
+								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
-							MenuIcon = "Images/Settings.png",
+							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand

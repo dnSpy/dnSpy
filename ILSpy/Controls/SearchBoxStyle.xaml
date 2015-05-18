@@ -43,7 +43,7 @@
 								       HorizontalAlignment="Center"
 								       VerticalAlignment="Center"
 								       ToolTip="Search"
-								       Source="pack://application:,,,/dnSpy;component/images/search.png" />
+								       Source="{Binding SearchImage}" />
 							</Border>
 						</Grid>
 					</Border>
@@ -57,7 +57,7 @@
 							</MultiTrigger.Conditions>
 							<Setter Property="Source"
 							        TargetName="SearchIcon"
-							        Value="pack://application:,,,/dnSpy;component/images/clearsearch.png" />
+							        Value="{Binding ClearSearchImage}" />
 							<Setter Property="ToolTip" TargetName="SearchIcon" Value="Clear"/>
 						</MultiTrigger>
 					</ControlTemplate.Triggers>

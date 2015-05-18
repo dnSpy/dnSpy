@@ -22,7 +22,7 @@ using System.Windows.Input;
 
 namespace ICSharpCode.ILSpy.Commands
 {
-	[ExportMainMenuCommand(Menu = "_View", MenuCategory = "View1", MenuHeader = "Show _Internal Types and Members", MenuOrder = 3000, MenuIcon = "Images/PrivateInternal.png")]
+	[ExportMainMenuCommand(Menu = "_View", MenuCategory = "View1", MenuHeader = "Show _Internal Types and Members", MenuOrder = 3000, MenuIcon = "PrivateInternal")]
 	sealed class ShowInternalTypesAndMembersCommand : ICommand, IMainMenuCheckableCommand
 	{
 		public bool? IsChecked {
@@ -52,7 +52,7 @@ namespace ICSharpCode.ILSpy.Commands
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_View", MenuCategory = "View2", MenuHeader = "_Word Wrap", MenuOrder = 3100)]
+	[ExportMainMenuCommand(Menu = "_View", MenuCategory = "View2", MenuHeader = "_Word Wrap", MenuOrder = 3100, MenuIcon = "WordWrap")]
 	sealed class WordWrapCommand : ICommand, IMainMenuCheckableCommand
 	{
 		public bool? IsChecked {

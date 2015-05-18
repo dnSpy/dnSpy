@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Globalization;
 using System.Linq;
@@ -50,11 +51,13 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Search pane
 	/// </summary>
-	public partial class SearchPane : UserControl, IPane
+	public partial class SearchPane : UserControl, IPane, INotifyPropertyChanged
 	{
 		static SearchPane instance;
 		RunningSearch currentSearch;
-		
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
 		public static SearchPane Instance {
 			get {
 				if (instance == null) {
@@ -65,6 +68,14 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
+		public ImageSource SearchImage {
+			get { return Images.Instance.GetImage("Search", BackgroundType.Window); }
+		}
+
+		public ImageSource ClearSearchImage {
+			get { return Images.Instance.GetImage("ClearSearch", BackgroundType.Window); }
+		}
+
 		public string PaneName {
 			get { return "search window"; }
 		}
@@ -73,50 +84,71 @@ namespace ICSharpCode.ILSpy
 			get { return "Search"; }
 		}
 
-		sealed class SearchType
+		sealed class SearchType : INotifyPropertyChanged
 		{
 			public string Name { get; private set; }
-			public ImageSource Image { get; private set; }
+			public string ImageName { get; private set; }
 			public SearchMode SearchMode { get; private set; }
 			public VisibleMembersFlags Flags { get; private set; }
 
-			public SearchType(string name, ImageSource image, SearchMode searchMode, VisibleMembersFlags flags)
+			public ImageSource Image {
+				get { return Images.Instance.GetImage(ImageName, BackgroundType.ComboBox); }
+			}
+
+			public SearchType(string name, string imageName, SearchMode searchMode, VisibleMembersFlags flags)
 			{
 				this.Name = name;
-				this.Image = image;
+				this.ImageName = imageName;
 				this.SearchMode = searchMode;
 				this.Flags = flags;
 			}
+
+			internal void OnThemeChanged()
+			{
+				if (PropertyChanged != null)
+					PropertyChanged(this, new PropertyChangedEventArgs("Image"));
+			}
+
+			public event PropertyChangedEventHandler PropertyChanged;
 		}
 
 		static readonly SearchType[] searchTypes = new SearchType[] {
-			new SearchType("Assembly", Images.Assembly, SearchMode.AssemblyDef, VisibleMembersFlags.AssemblyDef),
-			new SearchType("Module", Images.AssemblyModule, SearchMode.ModuleDef, VisibleMembersFlags.ModuleDef),
-			new SearchType("Namespace", Images.Namespace, SearchMode.Namespace, VisibleMembersFlags.Namespace),
-			new SearchType("Type", Images.Class, SearchMode.TypeDef, VisibleMembersFlags.TypeDef),
-			new SearchType("Field", Images.Field, SearchMode.FieldDef, VisibleMembersFlags.FieldDef),
-			new SearchType("Method", Images.Method, SearchMode.MethodDef, VisibleMembersFlags.MethodDef),
-			new SearchType("Property", Images.Property, SearchMode.PropertyDef, VisibleMembersFlags.PropertyDef),
-			new SearchType("Event", Images.Event, SearchMode.EventDef, VisibleMembersFlags.EventDef),
-			new SearchType("Parameter", Images.Method, SearchMode.ParamDef, VisibleMembersFlags.ParamDef),
-			new SearchType("AssemblyRef", Images.Assembly, SearchMode.AssemblyRef, VisibleMembersFlags.AssemblyRef),
-			new SearchType("ModuleRef", Images.AssemblyModule, SearchMode.ModuleRef, VisibleMembersFlags.ModuleRef),
-			new SearchType("Generic Type", Images.Class, SearchMode.GenericTypeDef, VisibleMembersFlags.GenericTypeDef),
-			new SearchType("Non-Generic Type", Images.Class, SearchMode.NonGenericTypeDef, VisibleMembersFlags.NonGenericTypeDef),
-			new SearchType("Enum", Images.Enum, SearchMode.EnumTypeDef, VisibleMembersFlags.EnumTypeDef),
-			new SearchType("Interface", Images.Interface, SearchMode.InterfaceTypeDef, VisibleMembersFlags.InterfaceTypeDef),
-			new SearchType("Class", Images.Class, SearchMode.ClassTypeDef, VisibleMembersFlags.ClassTypeDef),
-			new SearchType("Struct", Images.Struct, SearchMode.ValueTypeDef, VisibleMembersFlags.ValueTypeDef),
-			new SearchType("Delegate", Images.Delegate, SearchMode.DelegateTypeDef, VisibleMembersFlags.DelegateTypeDef),
-			new SearchType("Member", Images.Property, SearchMode.Member, VisibleMembersFlags.MethodDef | VisibleMembersFlags.FieldDef | VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef),
-			new SearchType("All Above", Images.Class, SearchMode.Any, VisibleMembersFlags.TreeViewAll),
-			new SearchType("Number/String", Images.Literal, SearchMode.Literal, VisibleMembersFlags.MethodBody | VisibleMembersFlags.FieldDef | VisibleMembersFlags.ParamDef | VisibleMembersFlags.PropertyDef),
+			new SearchType("Assembly", "Assembly", SearchMode.AssemblyDef, VisibleMembersFlags.AssemblyDef),
+			new SearchType("Module", "AssemblyModule", SearchMode.ModuleDef, VisibleMembersFlags.ModuleDef),
+			new SearchType("Namespace", "Namespace", SearchMode.Namespace, VisibleMembersFlags.Namespace),
+			new SearchType("Type", "Class", SearchMode.TypeDef, VisibleMembersFlags.TypeDef),
+			new SearchType("Field", "Field", SearchMode.FieldDef, VisibleMembersFlags.FieldDef),
+			new SearchType("Method", "Method", SearchMode.MethodDef, VisibleMembersFlags.MethodDef),
+			new SearchType("Property", "Property", SearchMode.PropertyDef, VisibleMembersFlags.PropertyDef),
+			new SearchType("Event", "Event", SearchMode.EventDef, VisibleMembersFlags.EventDef),
+			new SearchType("Parameter", "Method", SearchMode.ParamDef, VisibleMembersFlags.ParamDef),
+			new SearchType("AssemblyRef", "AssemblyReference", SearchMode.AssemblyRef, VisibleMembersFlags.AssemblyRef),
+			new SearchType("ModuleRef", "ModuleReference", SearchMode.ModuleRef, VisibleMembersFlags.ModuleRef),
+			new SearchType("Generic Type", "Generic", SearchMode.GenericTypeDef, VisibleMembersFlags.GenericTypeDef),
+			new SearchType("Non-Generic Type", "Class", SearchMode.NonGenericTypeDef, VisibleMembersFlags.NonGenericTypeDef),
+			new SearchType("Enum", "Enum", SearchMode.EnumTypeDef, VisibleMembersFlags.EnumTypeDef),
+			new SearchType("Interface", "Interface", SearchMode.InterfaceTypeDef, VisibleMembersFlags.InterfaceTypeDef),
+			new SearchType("Class", "Class", SearchMode.ClassTypeDef, VisibleMembersFlags.ClassTypeDef),
+			new SearchType("Struct", "Struct", SearchMode.ValueTypeDef, VisibleMembersFlags.ValueTypeDef),
+			new SearchType("Delegate", "Delegate", SearchMode.DelegateTypeDef, VisibleMembersFlags.DelegateTypeDef),
+			new SearchType("Member", "Property", SearchMode.Member, VisibleMembersFlags.MethodDef | VisibleMembersFlags.FieldDef | VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef),
+			new SearchType("All Above", "Class", SearchMode.Any, VisibleMembersFlags.TreeViewAll),
+			new SearchType("Number/String", "Literal", SearchMode.Literal, VisibleMembersFlags.MethodBody | VisibleMembersFlags.FieldDef | VisibleMembersFlags.ParamDef | VisibleMembersFlags.PropertyDef),
 		};
 		Dictionary<SearchMode, int> searchModeToIndex = new Dictionary<SearchMode, int>();
+
+		static SearchPane()
+		{
+			dntheme.Themes.ThemeChanged += (s, e) => {
+				foreach (var searchType in searchTypes)
+					searchType.OnThemeChanged();
+			};
+		}
 		
 		private SearchPane()
 		{
 			InitializeComponent();
+			this.DataContext = this;
 			foreach (var type in searchTypes) {
 				searchModeComboBox.Items.Add(type);
 				searchModeToIndex[type.SearchMode] = searchModeComboBox.Items.Count - 1;
@@ -129,6 +161,18 @@ namespace ICSharpCode.ILSpy
 			foreach (var cb in checkBoxes) {
 				cb.Checked += (s, e) => RestartSearch();
 				cb.Unchecked += (s, e) => RestartSearch();
+			}
+
+			dntheme.Themes.ThemeChanged += Themes_ThemeChanged;
+		}
+
+		void Themes_ThemeChanged(object sender, EventArgs e)
+		{
+			if (currentSearch != null)
+				currentSearch.OnThemeChanged();
+			if (PropertyChanged != null) {
+				PropertyChanged(this, new PropertyChangedEventArgs("SearchImage"));
+				PropertyChanged(this, new PropertyChangedEventArgs("ClearSearchImage"));
 			}
 		}
 		
@@ -369,6 +413,12 @@ namespace ICSharpCode.ILSpy
 		public readonly ObservableCollection<SearchResult> Results = new ObservableCollection<SearchResult>();
 		int resultCount;
 
+		public void OnThemeChanged()
+		{
+			foreach (var result in Results)
+				result.OnThemeChanged();
+		}
+
 		public static Regex TryCreateRegEx(string s, bool caseSensitive)
 		{
 			s = s.Trim();
@@ -443,7 +493,7 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	sealed class SearchResult : IMemberTreeNode
+	sealed class SearchResult : IMemberTreeNode, INotifyPropertyChanged
 	{
 		public IMemberRef Member {
 			get { return MDTokenProvider as IMemberRef; }
@@ -471,8 +521,14 @@ namespace ICSharpCode.ILSpy
 		public object Object { get; set; }
 		public string Location { get; set; }
 		public string Name { get; set; }
-		public ImageSource Image { get; set; }
-		public ImageSource LocationImage { get; set; }
+		public ImageSource Image {
+			get { return Images.Instance.GetImage(TypeImageInfo); }
+		}
+		public ImageSource LocationImage {
+			get { return Images.Instance.GetImage(LocationImageInfo); }
+		}
+		public ImageInfo TypeImageInfo { get; set; }
+		public ImageInfo LocationImageInfo { get; set; }
 		public LoadedAssembly LoadedAssembly { get; set; }
 		public string ToolTip {
 			get {
@@ -491,15 +547,25 @@ namespace ICSharpCode.ILSpy
 				return null;
 			}
 		}
-			
+
 		public override string ToString()
 		{
 			return Name;
 		}
+
+		internal void OnThemeChanged()
+		{
+			if (PropertyChanged != null) {
+				PropertyChanged(this, new PropertyChangedEventArgs("Image"));
+				PropertyChanged(this, new PropertyChangedEventArgs("LocationImage"));
+			}
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
 	}
 
-	[ExportMainMenuCommand(Menu = "_View", MenuHeader = "_Search", MenuIcon = "Images/Find.png", MenuCategory = "ShowPane", MenuOrder = 3200)]
-	[ExportToolbarCommand(ToolTip = "Search (Ctrl+Shift+F or Ctrl+E)", ToolbarIcon = "Images/Find.png", ToolbarCategory = "View", ToolbarOrder = 9000)]
+	[ExportMainMenuCommand(Menu = "_View", MenuHeader = "_Search", MenuIcon = "Find", MenuCategory = "ShowPane", MenuOrder = 3200)]
+	[ExportToolbarCommand(ToolTip = "Search (Ctrl+Shift+F or Ctrl+E)", ToolbarIcon = "Find", ToolbarCategory = "View", ToolbarOrder = 9000)]
 	sealed class ShowSearchCommand : CommandWrapper
 	{
 		public ShowSearchCommand()

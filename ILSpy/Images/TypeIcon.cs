@@ -20,13 +20,43 @@ using System;
 
 namespace ICSharpCode.ILSpy
 {
-	internal enum TypeIcon
+	public enum TypeIcon
 	{
+		StaticClass,
 		Class,
+		ClassPrivate,
+		ClassProtected,
+		ClassInternal,
+		ClassProtectedInternal,
 		Enum,
+		EnumPrivate,
+		EnumProtected,
+		EnumInternal,
+		EnumProtectedInternal,
 		Struct,
+		StructPrivate,
+		StructProtected,
+		StructInternal,
+		StructProtectedInternal,
 		Interface,
+		InterfacePrivate,
+		InterfaceProtected,
+		InterfaceInternal,
+		InterfaceProtectedInternal,
 		Delegate,
-		StaticClass
+		DelegatePrivate,
+		DelegateProtected,
+		DelegateInternal,
+		DelegateProtectedInternal,
+		Exception,
+		ExceptionPrivate,
+		ExceptionProtected,
+		ExceptionInternal,
+		ExceptionProtectedInternal,
+		Generic,
+		GenericPrivate,
+		GenericProtected,
+		GenericInternal,
+		GenericProtectedInternal,
 	}
 }

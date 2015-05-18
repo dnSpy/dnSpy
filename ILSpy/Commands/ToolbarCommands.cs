@@ -53,24 +53,20 @@ namespace ICSharpCode.ILSpy.Commands
 	[ExportToolbarCommand(ToolbarCategory = "Options", ToolbarOrder = 3000)]
 	sealed class ShowInternalTypesAndMembersToolbarCommand : ToolbarCommand, IToolbarItemCreator
 	{
-		CheckBox checkBox;
-
 		public object CreateToolbarItem()
 		{
-			if (checkBox == null) {
-				checkBox = new CheckBox() {
-					Content = new Image {
-						Width = 16,
-						Height = 16,
-						Source = Images.PrivateInternal,
-					},
-					ToolTip = "Show Internal Types and Members",
-				};
-				var binding = new Binding("FilterSettings.ShowInternalApi") {
-					Source = MainWindow.Instance.SessionSettings,
-				};
-				checkBox.SetBinding(CheckBox.IsCheckedProperty, binding);
-			}
+			var checkBox = new CheckBox() {
+				Content = new Image {
+					Width = 16,
+					Height = 16,
+					Source = Images.Instance.GetImage("PrivateInternal", BackgroundType.Toolbar),
+				},
+				ToolTip = "Show Internal Types and Members",
+			};
+			var binding = new Binding("FilterSettings.ShowInternalApi") {
+				Source = MainWindow.Instance.SessionSettings,
+			};
+			checkBox.SetBinding(CheckBox.IsCheckedProperty, binding);
 			return checkBox;
 		}
 	}

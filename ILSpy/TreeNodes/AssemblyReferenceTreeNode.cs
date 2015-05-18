@@ -27,7 +27,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// <summary>
 	/// Node within assembly reference list.
 	/// </summary>
-	public sealed class AssemblyReferenceTreeNode : ILSpyTreeNode
+	public sealed class AssemblyReferenceTreeNode : ILSpyTreeNode, ITokenTreeNode
 	{
 		readonly AssemblyRef r;
 		readonly AssemblyListTreeNode assemblyListTreeNode;
@@ -51,6 +51,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			get { return r; }
 		}
+
+		public IMDTokenProvider MDTokenProvider {
+			get { return r; }
+		}
 		
 		public override object Text {
 			get { return ToString(Language); }
@@ -62,7 +66,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Icon {
-			get { return Images.Assembly; }
+			get { return Images.Instance.GetImage("AssemblyReference", BackgroundType.TreeNode); }
 		}
 		
 		public override bool ShowExpander {

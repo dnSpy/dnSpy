@@ -71,13 +71,13 @@ namespace ICSharpCode.ILSpy.Xaml
 			{
 				string text = (string)Text;
 				if (text.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
-					return Images.ResourceXml;
+					return Images.Instance.GetImage("ResourceXml", BackgroundType.TreeNode);
 				else if (text.EndsWith(".xsd", StringComparison.OrdinalIgnoreCase))
-					return Images.ResourceXsd;
+					return Images.Instance.GetImage("ResourceXsd", BackgroundType.TreeNode);
 				else if (text.EndsWith(".xslt", StringComparison.OrdinalIgnoreCase))
-					return Images.ResourceXslt;
+					return Images.Instance.GetImage("ResourceXslt", BackgroundType.TreeNode);
 				else
-					return Images.Resource;
+					return Images.Instance.GetImage("Resource", BackgroundType.TreeNode);
 			}
 		}
 

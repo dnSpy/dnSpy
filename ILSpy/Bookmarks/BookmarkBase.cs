@@ -111,9 +111,14 @@ namespace ICSharpCode.ILSpy.Bookmarks
 			this.Location = location;
 			this.EndLocation = endLocation;
 		}
+
+		public virtual bool HasImage {
+			get { return false; }
+		}
 		
-		public virtual ImageSource Image {
-			get { return null; }
+		public virtual ImageSource GetImage(Color bgColor)
+		{
+			return null;
 		}
 		
 		public virtual void MouseDown(MouseButtonEventArgs e)

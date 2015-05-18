@@ -55,7 +55,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Icon
 		{
-			get { return TypeTreeNode.GetIcon(type); }
+			get { return TypeTreeNode.GetIcon(type, BackgroundType.TreeNode); }
 		}
 
 		public override FilterResult Filter(FilterSettings settings)

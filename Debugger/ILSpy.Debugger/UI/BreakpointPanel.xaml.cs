@@ -60,7 +60,11 @@ namespace ICSharpCode.ILSpy.Debugger.UI
         
         private BreakpointPanel()
         {
-          InitializeComponent();
+			InitializeComponent();
+			dntheme.Themes.ThemeChanged += (s, e) => {
+				foreach (BreakpointBookmarkVM bmvm in view.Items)
+					bmvm.OnThemeChanged();
+			};
         }
         
 		public void Show()
@@ -111,11 +115,84 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		{
 			SetItemSource();
 		}
+
+		sealed class BreakpointBookmarkVM : INotifyPropertyChanged
+		{
+			readonly BreakpointBookmark bpm;
+
+			public BreakpointBookmark BreakpointBookmark {
+				get { return bpm; }
+			}
+
+			public event PropertyChangedEventHandler PropertyChanged;
+
+			internal void OnThemeChanged()
+			{
+				OnPropertyChanged("Image");
+			}
+
+			public ImageSource Image {
+				get { return bpm.GetImage(Images.GetColor(BackgroundType.GridViewItem)); }
+			}
+
+			public bool CanToggle {
+				get { return bpm.CanToggle; }
+			}
+
+			public bool IsEnabled {
+				get { return bpm.IsEnabled; }
+				set {
+					if (bpm.IsEnabled != value) {
+						bpm.IsEnabled = value;
+						OnPropertyChanged("IsEnabled");
+					}
+				}
+			}
+
+			public string DeclaringTypeFullName {
+				get { return bpm.MemberReference.DeclaringType.FullName; }
+			}
+
+			public string Name {
+				get { return bpm.MemberReference.Name; }
+			}
+
+			public int LineNumber {
+				get { return bpm.LineNumber; }
+			}
+
+			public string ILRangeFromString {
+				get { return string.Format("0x{0:X4}", bpm.ILRange.From); }
+			}
+
+			public string MDTokenString {
+				get { return string.Format("0x{0:X8}", bpm.MemberReference.MDToken.Raw); }
+			}
+
+			public string AssemblyFullName {
+				get { return bpm.MemberReference.Module.Assembly.FullName; }
+			}
+
+			public string ModuleFullName {
+				get { return bpm.MemberReference.Module.FullName; }
+			}
+
+			public BreakpointBookmarkVM(BreakpointBookmark bpm)
+			{
+				this.bpm = bpm;
+			}
+
+			void OnPropertyChanged(string propName)
+			{
+				if (PropertyChanged != null)
+					PropertyChanged(this, new PropertyChangedEventArgs(propName));
+			}
+		}
 		
 		private void SetItemSource()
 		{
           	view.ItemsSource = null;
-          	view.ItemsSource = BookmarkManager.Bookmarks.Where(b => b is BreakpointBookmark);
+			view.ItemsSource = BookmarkManager.Bookmarks.Where(b => b is BreakpointBookmark).Select(b => new BreakpointBookmarkVM((BreakpointBookmark)b));
 		}
         
         public void Closed()
@@ -135,7 +212,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(view, e))
 				return;
 			if (view.SelectedItems.Count > 0)
-				GoToBookmark(view.SelectedItems[0] as BookmarkBase);
+				GoToBookmark(((BreakpointBookmarkVM)view.SelectedItems[0]).BreakpointBookmark);
 			e.Handled = true;
 		}
 
@@ -151,29 +228,22 @@ namespace ICSharpCode.ILSpy.Debugger.UI
         void view_KeyDown(object sender, KeyEventArgs e)
         {
 			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Delete) {
-				foreach (BookmarkBase bm in Convert(view.SelectedItems))
-					BookmarkManager.RemoveMark(bm);
+				foreach (var bmvm in view.SelectedItems.OfType<BreakpointBookmarkVM>().ToArray())
+					BookmarkManager.RemoveMark(bmvm.BreakpointBookmark);
 				e.Handled = true;
 				return;
 			}
 			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Enter) {
 				if (view.SelectedItems.Count > 0)
-					GoToBookmark(view.SelectedItems[0] as BookmarkBase);
+					GoToBookmark(((BreakpointBookmarkVM)view.SelectedItems[0]).BreakpointBookmark);
 				e.Handled = true;
 				return;
 			}
 		}
-
-		static List<object> Convert(System.Collections.IList list)
-		{
-			var l = new List<object>(list.Count);
-			foreach (var i in list)
-				l.Add(i);
-			return l;
-		}
     }
 
-	[ExportMainMenuCommand(Menu = "_Debug",
+	[ExportMainMenuCommand(MenuIcon = "BreakpointsWindow",
+						   Menu = "_Debug",
 						   MenuHeader = "Show _Breakpoints",
 						   MenuCategory = "Breakpoints",
 						   MenuOrder = 5320)]

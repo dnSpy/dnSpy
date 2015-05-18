@@ -171,6 +171,7 @@ namespace ICSharpCode.ILSpy.TextView
 			var theme = Themes.Theme;
 			var marker = theme.GetColor(ColorType.SearchResultMarker).InheritedColor;
 			searchPanel.MarkerBrush = marker.Background == null ? Brushes.LightGreen : marker.Background.GetBrush(null);
+			iconMargin.InvalidateVisual();
 		}
 		
 		#region Line margin
@@ -728,7 +729,7 @@ namespace ICSharpCode.ILSpy.TextView
 			output.WriteLine();
 			if (wasNormalLimit) {
 				output.AddButton(
-					Images.ViewCode, "Display Code",
+					Images.Instance.GetImage("ViewCode", BackgroundType.Button), "Display Code",
 					delegate {
 						DoDecompile(context, ExtendedOutputLengthLimit).HandleExceptions();
 					});
@@ -736,7 +737,7 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 			
 			output.AddButton(
-				Images.Save, "Save Code",
+				Images.Instance.GetImage("Save", BackgroundType.Button), "Save Code",
 				delegate {
 					SaveToDisk(context.Language, context.TreeNodes, context.Options);
 				});

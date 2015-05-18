@@ -31,12 +31,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 	{
 		const string CMD_NAME = "Delete Property";
 		[ExportContextMenuEntry(Header = CMD_NAME,
-								Icon = "Images/Delete.png",
+								Icon = "Delete",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
 							Menu = "_Edit",
-							MenuIcon = "Images/Delete.png",
+							MenuIcon = "Delete",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand
@@ -188,12 +188,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 	{
 		const string CMD_NAME = "Create Property";
 		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Images/Property.png",
+								Icon = "NewProperty",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
-							MenuIcon = "Images/Property.png",
+							MenuIcon = "NewProperty",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand
@@ -289,12 +289,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 	{
 		const string CMD_NAME = "Property Settings";
 		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Images/Settings.png",
+								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
-							MenuIcon = "Images/Settings.png",
+							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand

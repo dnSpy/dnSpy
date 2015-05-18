@@ -61,5 +61,6 @@
 		<color name="returnstatement" bg="#62EEEFE6" />
 
 		<color name="contextmenubackground" bg="White" />
+		<color name="statusbar" fg="White" bg="#007ACC" />
 	</colors>
 </theme>

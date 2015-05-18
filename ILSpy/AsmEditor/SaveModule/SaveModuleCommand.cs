@@ -62,7 +62,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 	}
 
 	[ExportToolbarCommand(ToolTip = "Save All (Ctrl+Shift+S)",
-						  ToolbarIcon = "Images/SaveAll.png",
+						  ToolbarIcon = "SaveAll",
 						  ToolbarCategory = "Open",
 						  ToolbarOrder = 2010)]
 	sealed class SaveAllToolbarCommand : ICommand
@@ -107,7 +107,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "Save A_ll...", MenuInputGestureText = "Ctrl+Shift+S", MenuCategory = "Save", MenuOrder = 1020, MenuIcon = "Images/SaveAll.png")]
+	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "Save A_ll...", MenuInputGestureText = "Ctrl+Shift+S", MenuCategory = "Save", MenuOrder = 1020, MenuIcon = "SaveAll")]
 	sealed class SaveAllCommand : ICommand
 	{
 		public event EventHandler CanExecuteChanged {

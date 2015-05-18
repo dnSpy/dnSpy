@@ -170,15 +170,16 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			{
 				if (assembly.IsLoaded) {
 					if (assembly.HasLoadError)
-						return Images.AssemblyWarning;
+						return Images.Instance.GetImage("AssemblyWarning", BackgroundType.TreeNode);
 					if (Parent is AssemblyTreeNode || (assembly.ModuleDefinition != null && assembly.AssemblyDefinition == null))
-						return Images.AssemblyModule;
+						return Images.Instance.GetImage("AssemblyModule", BackgroundType.TreeNode);
 					return assembly.ModuleDefinition != null &&
 						assembly.ModuleDefinition.IsManifestModule &&
 						(assembly.ModuleDefinition.Characteristics & dnlib.PE.Characteristics.Dll) == 0 ?
-						Images.AssemblyExe : Images.Assembly;
+						Images.Instance.GetImage("AssemblyExe", BackgroundType.TreeNode) :
+						Images.Instance.GetImage("Assembly", BackgroundType.TreeNode);
 				} else {
-					return Images.AssemblyLoading;
+					return Images.Instance.GetImage("AssemblyLoading", BackgroundType.TreeNode);
 				}
 			}
 		}

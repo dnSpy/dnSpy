@@ -28,6 +28,16 @@ using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
+	enum MemberAccess
+	{
+		Public,
+		Private,
+		Protected,
+		Internal,
+		CompilerControlled,
+		ProtectedInternal,
+	}
+
 	public sealed class TypeTreeNode : ILSpyTreeNode, IMemberTreeNode
 	{
 		readonly TypeDef type;
@@ -168,66 +178,209 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		#region Icon
 		public override object Icon
 		{
-			get { return GetIcon(type); }
+			get { return GetIcon(type, BackgroundType.TreeNode); }
 		}
 
-		public static ImageSource GetIcon(TypeDef type)
+		public static ImageSource GetIcon(TypeDef type, BackgroundType bgType)
 		{
-			TypeIcon typeIcon = GetTypeIcon(type);
-			AccessOverlayIcon overlayIcon = GetOverlayIcon(type);
+			return GetIcon(GetTypeIcon(type), bgType);
+		}
 
-			return Images.GetIcon(typeIcon, overlayIcon);
+		internal static ImageSource GetIcon(TypeIcon typeIcon, BackgroundType bgType)
+		{
+			return Images.Instance.GetImage(GetImageInfo(typeIcon, bgType));
+		}
+
+		internal static ImageInfo GetImageInfo(TypeDef type, BackgroundType bgType)
+		{
+			return GetImageInfo(GetTypeIcon(type), bgType);
+		}
+
+		internal static ImageInfo GetImageInfo(TypeIcon typeIcon, BackgroundType bgType)
+		{
+			switch (typeIcon) {
+			case TypeIcon.StaticClass:				return new ImageInfo("StaticClass", bgType);
+			case TypeIcon.Class:					return new ImageInfo("Class", bgType);
+			case TypeIcon.ClassPrivate:				return new ImageInfo("ClassPrivate", bgType);
+			case TypeIcon.ClassProtected:			return new ImageInfo("ClassProtected", bgType);
+			case TypeIcon.ClassInternal:			return new ImageInfo("ClassInternal", bgType);
+			case TypeIcon.ClassProtectedInternal:	return new ImageInfo("ClassProtectedInternal", bgType);
+			case TypeIcon.Enum:						return new ImageInfo("Enum", bgType);
+			case TypeIcon.EnumPrivate:				return new ImageInfo("EnumPrivate", bgType);
+			case TypeIcon.EnumProtected:			return new ImageInfo("EnumProtected", bgType);
+			case TypeIcon.EnumInternal:				return new ImageInfo("EnumInternal", bgType);
+			case TypeIcon.EnumProtectedInternal:	return new ImageInfo("EnumProtectedInternal", bgType);
+			case TypeIcon.Struct:					return new ImageInfo("Struct", bgType);
+			case TypeIcon.StructPrivate:			return new ImageInfo("StructPrivate", bgType);
+			case TypeIcon.StructProtected:			return new ImageInfo("StructProtected", bgType);
+			case TypeIcon.StructInternal:			return new ImageInfo("StructInternal", bgType);
+			case TypeIcon.StructProtectedInternal:	return new ImageInfo("StructProtectedInternal", bgType);
+			case TypeIcon.Interface:				return new ImageInfo("Interface", bgType);
+			case TypeIcon.InterfacePrivate:			return new ImageInfo("InterfacePrivate", bgType);
+			case TypeIcon.InterfaceProtected:		return new ImageInfo("InterfaceProtected", bgType);
+			case TypeIcon.InterfaceInternal:		return new ImageInfo("InterfaceInternal", bgType);
+			case TypeIcon.InterfaceProtectedInternal:return new ImageInfo("InterfaceProtectedInternal", bgType);
+			case TypeIcon.Delegate:					return new ImageInfo("Delegate", bgType);
+			case TypeIcon.DelegatePrivate:			return new ImageInfo("DelegatePrivate", bgType);
+			case TypeIcon.DelegateProtected:		return new ImageInfo("DelegateProtected", bgType);
+			case TypeIcon.DelegateInternal:			return new ImageInfo("DelegateInternal", bgType);
+			case TypeIcon.DelegateProtectedInternal:return new ImageInfo("DelegateProtectedInternal", bgType);
+			case TypeIcon.Exception:				return new ImageInfo("Exception", bgType);
+			case TypeIcon.ExceptionPrivate:			return new ImageInfo("ExceptionPrivate", bgType);
+			case TypeIcon.ExceptionProtected:		return new ImageInfo("ExceptionProtected", bgType);
+			case TypeIcon.ExceptionInternal:		return new ImageInfo("ExceptionInternal", bgType);
+			case TypeIcon.ExceptionProtectedInternal:return new ImageInfo("ExceptionProtectedInternal", bgType);
+			case TypeIcon.Generic:					return new ImageInfo("Generic", bgType);
+			case TypeIcon.GenericPrivate:			return new ImageInfo("GenericPrivate", bgType);
+			case TypeIcon.GenericProtected:			return new ImageInfo("GenericProtected", bgType);
+			case TypeIcon.GenericInternal:			return new ImageInfo("GenericInternal", bgType);
+			case TypeIcon.GenericProtectedInternal:	return new ImageInfo("GenericProtectedInternal", bgType);
+			default:
+				Debug.Fail("Unknown type");
+				goto case TypeIcon.Class;
+			}
 		}
 
 		static TypeIcon GetTypeIcon(TypeDef type)
 		{
+			var memType = GetMemberAccess(type);
 			if (Decompiler.DnlibExtensions.IsValueType(type)) {
-				if (type.IsEnum)
-					return TypeIcon.Enum;
-				else
-					return TypeIcon.Struct;
-			} else {
-				if (type.IsInterface)
-					return TypeIcon.Interface;
-				else if (IsDelegate(type))
-					return TypeIcon.Delegate;
+				if (type.IsEnum) {
+					switch (memType) {
+					case MemberAccess.Public: return TypeIcon.Enum;
+					case MemberAccess.Private: return TypeIcon.EnumPrivate;
+					case MemberAccess.Protected: return TypeIcon.EnumProtected;
+					case MemberAccess.Internal: return TypeIcon.EnumInternal;
+					case MemberAccess.ProtectedInternal: return TypeIcon.EnumProtectedInternal;
+					default:
+						Debug.Fail("Invalid MemberAccess");
+						goto case MemberAccess.Public;
+					}
+				}
+				else {
+					switch (memType) {
+					case MemberAccess.Public: return TypeIcon.Struct;
+					case MemberAccess.Private: return TypeIcon.StructPrivate;
+					case MemberAccess.Protected: return TypeIcon.StructProtected;
+					case MemberAccess.Internal: return TypeIcon.StructInternal;
+					case MemberAccess.ProtectedInternal: return TypeIcon.StructProtectedInternal;
+					default:
+						Debug.Fail("Invalid MemberAccess");
+						goto case MemberAccess.Public;
+					}
+				}
+			}
+			else {
+				if (type.IsInterface) {
+					switch (memType) {
+					case MemberAccess.Public: return TypeIcon.Interface;
+					case MemberAccess.Private: return TypeIcon.InterfacePrivate;
+					case MemberAccess.Protected: return TypeIcon.InterfaceProtected;
+					case MemberAccess.Internal: return TypeIcon.InterfaceInternal;
+					case MemberAccess.ProtectedInternal: return TypeIcon.InterfaceProtectedInternal;
+					default:
+						Debug.Fail("Invalid MemberAccess");
+						goto case MemberAccess.Public;
+					}
+				}
+				else if (IsDelegate(type)) {
+					switch (memType) {
+					case MemberAccess.Public: return TypeIcon.Delegate;
+					case MemberAccess.Private: return TypeIcon.DelegatePrivate;
+					case MemberAccess.Protected: return TypeIcon.DelegateProtected;
+					case MemberAccess.Internal: return TypeIcon.DelegateInternal;
+					case MemberAccess.ProtectedInternal: return TypeIcon.DelegateProtectedInternal;
+					default:
+						Debug.Fail("Invalid MemberAccess");
+						goto case MemberAccess.Public;
+					}
+				}
+				else if (IsException(type)) {
+					switch (memType) {
+					case MemberAccess.Public: return TypeIcon.Exception;
+					case MemberAccess.Private: return TypeIcon.ExceptionPrivate;
+					case MemberAccess.Protected: return TypeIcon.ExceptionProtected;
+					case MemberAccess.Internal: return TypeIcon.ExceptionInternal;
+					case MemberAccess.ProtectedInternal: return TypeIcon.ExceptionProtectedInternal;
+					default:
+						Debug.Fail("Invalid MemberAccess");
+						goto case MemberAccess.Public;
+					}
+				}
+				else if (type.GenericParameters.Count > 0) {
+					switch (memType) {
+					case MemberAccess.Public: return TypeIcon.Generic;
+					case MemberAccess.Private: return TypeIcon.GenericPrivate;
+					case MemberAccess.Protected: return TypeIcon.GenericProtected;
+					case MemberAccess.Internal: return TypeIcon.GenericInternal;
+					case MemberAccess.ProtectedInternal: return TypeIcon.GenericProtectedInternal;
+					default:
+						Debug.Fail("Invalid MemberAccess");
+						goto case MemberAccess.Public;
+					}
+				}
 				else if (IsStaticClass(type))
 					return TypeIcon.StaticClass;
-				else
-					return TypeIcon.Class;
+				else {
+					switch (memType) {
+					case MemberAccess.Public: return TypeIcon.Class;
+					case MemberAccess.Private: return TypeIcon.ClassPrivate;
+					case MemberAccess.Protected: return TypeIcon.ClassProtected;
+					case MemberAccess.Internal: return TypeIcon.ClassInternal;
+					case MemberAccess.ProtectedInternal: return TypeIcon.ClassProtectedInternal;
+					default:
+						Debug.Fail("Invalid MemberAccess");
+						goto case MemberAccess.Public;
+					}
+				}
 			}
 		}
 
-		private static AccessOverlayIcon GetOverlayIcon(TypeDef type)
+		static MemberAccess GetMemberAccess(TypeDef type)
 		{
-			AccessOverlayIcon overlay;
-			switch (type.Attributes & TypeAttributes.VisibilityMask) {
-				case TypeAttributes.Public:
-				case TypeAttributes.NestedPublic:
-					overlay = AccessOverlayIcon.Public;
-					break;
-				case TypeAttributes.NotPublic:
-				case TypeAttributes.NestedAssembly:
-				case TypeAttributes.NestedFamANDAssem:
-					overlay = AccessOverlayIcon.Internal;
-					break;
-				case TypeAttributes.NestedFamily:
-				case TypeAttributes.NestedFamORAssem:
-					overlay = AccessOverlayIcon.Protected;
-					break;
-				case TypeAttributes.NestedPrivate:
-					overlay = AccessOverlayIcon.Private;
-					break;
-				default:
-					overlay = AccessOverlayIcon.Public;
-					break;
+			switch (type.Visibility) {
+			case TypeAttributes.Public:
+			case TypeAttributes.NestedPublic:
+				return MemberAccess.Public;
+			case TypeAttributes.NotPublic:
+			case TypeAttributes.NestedAssembly:
+			case TypeAttributes.NestedFamANDAssem:
+				return MemberAccess.Internal;
+			case TypeAttributes.NestedFamily:
+				return MemberAccess.Protected;
+			case TypeAttributes.NestedFamORAssem:
+				return MemberAccess.ProtectedInternal;
+			case TypeAttributes.NestedPrivate:
+				return MemberAccess.Private;
+			default:
+				return MemberAccess.Public;
 			}
-			return overlay;
 		}
 
 		internal static bool IsDelegate(TypeDef type)
 		{
 			return type.BaseType != null && type.BaseType.FullName == typeof(MulticastDelegate).FullName && type.BaseType.Module.Assembly.IsCorLib();
+		}
+
+		static bool IsException(TypeDef type)
+		{
+			if (IsSystemException(type))
+				return true;
+			while (type != null) {
+				if (IsSystemException(type.BaseType))
+					return true;
+				type = type.BaseType.Resolve();
+			}
+			return false;
+		}
+
+		static bool IsSystemException(ITypeDefOrRef type)
+		{
+			return type != null &&
+				type.DeclaringType == null &&
+				type.Namespace == "System" &&
+				type.Name == "Exception" &&
+				type.DefinitionAssembly.IsCorLib();
 		}
 
 		private static bool IsStaticClass(TypeDef type)

@@ -62,7 +62,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Icon
 		{
-			get { return Images.ResourceImage; }
+			get { return Images.Instance.GetImage("ResourceImage", BackgroundType.TreeNode); }
 		}
 
 		public override bool View(DecompilerTextView textView)
@@ -76,7 +76,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					AddIcon(output, frame);
 					output.WriteLine();
 				}
-				output.AddButton(Images.Save, "Save", delegate {
+				output.AddButton(Images.Instance.GetImage("Save", BackgroundType.Button), "Save", delegate {
 					Save(null);
 				});
 				textView.ShowNode(output, this);

@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Media;
 
@@ -78,57 +79,137 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Icon
 		{
-			get { return GetIcon(method); }
+			get { return GetIcon(method, BackgroundType.TreeNode); }
 		}
 
-		public static ImageSource GetIcon(MethodDef method)
+		public static ImageSource GetIcon(MethodDef method, BackgroundType bgType)
 		{
-			if (method.IsSpecialName && method.Name.StartsWith("op_", StringComparison.Ordinal)) {
-				return Images.GetIcon(MemberIcon.Operator, GetOverlayIcon(method.Attributes), false);
-			}
+			return FieldTreeNode.GetIcon(GetMemberIcon(method), bgType);
+		}
 
-			if (method.IsStatic && method.HasCustomAttributes) {
-				foreach (var ca in method.CustomAttributes) {
-					if (ca.TypeFullName == "System.Runtime.CompilerServices.ExtensionAttribute") {
-						return Images.GetIcon(MemberIcon.ExtensionMethod, GetOverlayIcon(method.Attributes), false);
-					}
+		internal static ImageInfo GetImageInfo(MethodDef method, BackgroundType bgType)
+		{
+			return FieldTreeNode.GetImageInfo(GetMemberIcon(method), bgType);
+		}
+
+		static MemberIcon GetMemberIcon(MethodDef method)
+		{
+			var access = GetMemberAccess(method);
+
+			if (method.IsSpecialName && method.Name.StartsWith("op_", StringComparison.Ordinal)) {
+				switch (access) {
+				case MemberAccess.Public: return MemberIcon.Operator;
+				case MemberAccess.Private: return MemberIcon.OperatorPrivate;
+				case MemberAccess.Protected: return MemberIcon.OperatorProtected;
+				case MemberAccess.Internal: return MemberIcon.OperatorInternal;
+				case MemberAccess.CompilerControlled: return MemberIcon.OperatorCompilerControlled;
+				case MemberAccess.ProtectedInternal: return MemberIcon.OperatorProtectedInternal;
+				default:
+					Debug.Fail("Invalid MemberAccess");
+					goto case MemberAccess.Public;
 				}
 			}
 
-			if (method.IsSpecialName &&
-				(method.Name == ".ctor" || method.Name == ".cctor")) {
-				return Images.GetIcon(MemberIcon.Constructor, GetOverlayIcon(method.Attributes), false);
+			if (method.IsStatic && method.CustomAttributes.IsDefined("System.Runtime.CompilerServices.ExtensionAttribute")) {
+				switch (access) {
+				case MemberAccess.Public: return MemberIcon.ExtensionMethod;
+				case MemberAccess.Private: return MemberIcon.ExtensionMethodPrivate;
+				case MemberAccess.Protected: return MemberIcon.ExtensionMethodProtected;
+				case MemberAccess.Internal: return MemberIcon.ExtensionMethodInternal;
+				case MemberAccess.CompilerControlled: return MemberIcon.ExtensionMethodCompilerControlled;
+				case MemberAccess.ProtectedInternal: return MemberIcon.ExtensionMethodProtectedInternal;
+				default:
+					Debug.Fail("Invalid MemberAccess");
+					goto case MemberAccess.Public;
+				}
 			}
 
-			if (method.HasImplMap)
-				return Images.GetIcon(MemberIcon.PInvokeMethod, GetOverlayIcon(method.Attributes), true);
+			if (method.IsConstructor) {
+				switch (access) {
+				case MemberAccess.Public: return MemberIcon.Constructor;
+				case MemberAccess.Private: return MemberIcon.ConstructorPrivate;
+				case MemberAccess.Protected: return MemberIcon.ConstructorProtected;
+				case MemberAccess.Internal: return MemberIcon.ConstructorInternal;
+				case MemberAccess.CompilerControlled: return MemberIcon.ConstructorCompilerControlled;
+				case MemberAccess.ProtectedInternal: return MemberIcon.ConstructorProtectedInternal;
+				default:
+					Debug.Fail("Invalid MemberAccess");
+					goto case MemberAccess.Public;
+				}
+			}
 
-			bool showAsVirtual = method.IsVirtual && !(method.IsNewSlot && method.IsFinal) && !method.DeclaringType.IsInterface;
+			if (method.HasImplMap) {
+				switch (access) {
+				case MemberAccess.Public: return MemberIcon.PInvokeMethod;
+				case MemberAccess.Private: return MemberIcon.PInvokeMethodPrivate;
+				case MemberAccess.Protected: return MemberIcon.PInvokeMethodProtected;
+				case MemberAccess.Internal: return MemberIcon.PInvokeMethodInternal;
+				case MemberAccess.CompilerControlled: return MemberIcon.PInvokeMethodCompilerControlled;
+				case MemberAccess.ProtectedInternal: return MemberIcon.PInvokeMethodProtectedInternal;
+				default:
+					Debug.Fail("Invalid MemberAccess");
+					goto case MemberAccess.Public;
+				}
+			}
 
-			return Images.GetIcon(
-				showAsVirtual ? MemberIcon.VirtualMethod : MemberIcon.Method,
-				GetOverlayIcon(method.Attributes),
-				method.IsStatic);
+			if (method.IsStatic) {
+				switch (access) {
+				case MemberAccess.Public: return MemberIcon.StaticMethod;
+				case MemberAccess.Private: return MemberIcon.StaticMethodPrivate;
+				case MemberAccess.Protected: return MemberIcon.StaticMethodProtected;
+				case MemberAccess.Internal: return MemberIcon.StaticMethodInternal;
+				case MemberAccess.CompilerControlled: return MemberIcon.StaticMethodCompilerControlled;
+				case MemberAccess.ProtectedInternal: return MemberIcon.StaticMethodProtectedInternal;
+				default:
+					Debug.Fail("Invalid MemberAccess");
+					goto case MemberAccess.Public;
+				}
+			}
+
+			if (method.IsVirtual) {
+				switch (access) {
+				case MemberAccess.Public: return MemberIcon.VirtualMethod;
+				case MemberAccess.Private: return MemberIcon.VirtualMethodPrivate;
+				case MemberAccess.Protected: return MemberIcon.VirtualMethodProtected;
+				case MemberAccess.Internal: return MemberIcon.VirtualMethodInternal;
+				case MemberAccess.CompilerControlled: return MemberIcon.VirtualMethodCompilerControlled;
+				case MemberAccess.ProtectedInternal: return MemberIcon.VirtualMethodProtectedInternal;
+				default:
+					Debug.Fail("Invalid MemberAccess");
+					goto case MemberAccess.Public;
+				}
+			}
+			switch (access) {
+			case MemberAccess.Public: return MemberIcon.Method;
+			case MemberAccess.Private: return MemberIcon.MethodPrivate;
+			case MemberAccess.Protected: return MemberIcon.MethodProtected;
+			case MemberAccess.Internal: return MemberIcon.MethodInternal;
+			case MemberAccess.CompilerControlled: return MemberIcon.MethodCompilerControlled;
+			case MemberAccess.ProtectedInternal: return MemberIcon.MethodProtectedInternal;
+			default:
+				Debug.Fail("Invalid MemberAccess");
+				goto case MemberAccess.Public;
+			}
 		}
 
-		private static AccessOverlayIcon GetOverlayIcon(MethodAttributes methodAttributes)
+		internal static MemberAccess GetMemberAccess(MethodDef method)
 		{
-			switch (methodAttributes & MethodAttributes.MemberAccessMask) {
-				case MethodAttributes.Public:
-					return AccessOverlayIcon.Public;
-				case MethodAttributes.Assembly:
-				case MethodAttributes.FamANDAssem:
-					return AccessOverlayIcon.Internal;
-				case MethodAttributes.Family:
-					return AccessOverlayIcon.Protected;
-				case MethodAttributes.FamORAssem:
-					return AccessOverlayIcon.ProtectedInternal;
-				case MethodAttributes.Private:
-					return AccessOverlayIcon.Private;
-				case MethodAttributes.CompilerControlled:
-					return AccessOverlayIcon.CompilerControlled;
-				default:
-					return AccessOverlayIcon.Public;
+			switch (method.Access) {
+			case MethodAttributes.Public:
+				return MemberAccess.Public;
+			case MethodAttributes.Assembly:
+			case MethodAttributes.FamANDAssem:
+				return MemberAccess.Internal;
+			case MethodAttributes.Family:
+				return MemberAccess.Protected;
+			case MethodAttributes.FamORAssem:
+				return MemberAccess.ProtectedInternal;
+			case MethodAttributes.Private:
+				return MemberAccess.Private;
+			case MethodAttributes.CompilerControlled:
+				return MemberAccess.CompilerControlled;
+			default:
+				return MemberAccess.Public;
 			}
 		}
 

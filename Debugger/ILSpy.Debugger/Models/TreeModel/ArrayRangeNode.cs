@@ -86,10 +86,8 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 			// The whole array is small - just add all elements as childs
 			if (bounds.TotalElementCount <= MaxElementCount) {
 				foreach(int[] indices in bounds.Indices) {
-					string imageName;
-					var image = ExpressionNode.GetImageForArrayIndexer(out imageName);
+					var image = ExpressionNode.GetImageForArrayIndexer();
 					var expression = new ExpressionNode(image, GetName(indices), arrayTarget.AppendIndexer(indices));
-					expression.ImageName = imageName;
 					yield return expression;
 				}
 				yield break;

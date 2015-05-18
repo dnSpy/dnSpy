@@ -72,6 +72,13 @@ namespace ICSharpCode.ILSpy
 			this.BorderThickness = new Thickness(0);
 			ContextMenuProvider.Add(this);
 			MainWindow.Instance.CurrentAssemblyListChanged += MainWindow_Instance_CurrentAssemblyListChanged;
+			dntheme.Themes.ThemeChanged += Themes_ThemeChanged;
+		}
+
+		void Themes_ThemeChanged(object sender, EventArgs e)
+		{
+			foreach (var c in ((AnalyzerRootNode)this.Root).GetRecursiveChildrenAndSelf())
+				c.RaiseUIPropsChanged();
 		}
 
 		void MainWindow_Instance_CurrentAssemblyListChanged(object sender, NotifyCollectionChangedEventArgs e)

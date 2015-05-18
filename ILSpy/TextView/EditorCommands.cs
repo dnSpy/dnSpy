@@ -23,7 +23,7 @@ using System.Text;
 
 namespace ICSharpCode.ILSpy.TextView
 {
-	[ExportContextMenuEntryAttribute(Header = "Cop_y", Category = "Editor", InputGestureText = "Ctrl+C", Order = 1000)]
+	[ExportContextMenuEntryAttribute(Header = "Cop_y", Icon = "Copy", Category = "Editor", InputGestureText = "Ctrl+C", Order = 1000)]
 	internal sealed class CopyContextMenuEntry : IContextMenuEntry
 	{
 		public bool IsVisible(TextViewContext context)

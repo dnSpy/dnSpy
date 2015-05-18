@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Diagnostics;
 using System.Windows.Media;
 using ICSharpCode.Decompiler;
 using dnlib.DotNet;
@@ -70,36 +71,64 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override object Icon
 		{
-			get { return GetIcon(ev); }
+			get { return GetIcon(ev, BackgroundType.TreeNode); }
 		}
 
-		public static ImageSource GetIcon(EventDef eventDef)
+		public static ImageSource GetIcon(EventDef eventDef, BackgroundType bgType)
 		{
-			MethodDef accessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
-			if (accessor != null)
-				return Images.GetIcon(MemberIcon.Event, GetOverlayIcon(accessor.Attributes), accessor.IsStatic);
-			else
-				return Images.GetIcon(MemberIcon.Event, AccessOverlayIcon.Public, false);
+			return FieldTreeNode.GetIcon(GetMemberIcon(eventDef), bgType);
 		}
 
-		private static AccessOverlayIcon GetOverlayIcon(MethodAttributes methodAttributes)
+		internal static ImageInfo GetImageInfo(EventDef eventDef, BackgroundType bgType)
 		{
-			switch (methodAttributes & MethodAttributes.MemberAccessMask) {
-				case MethodAttributes.Public:
-					return AccessOverlayIcon.Public;
-				case MethodAttributes.Assembly:
-				case MethodAttributes.FamANDAssem:
-					return AccessOverlayIcon.Internal;
-				case MethodAttributes.Family:
-					return AccessOverlayIcon.Protected;
-				case MethodAttributes.FamORAssem:
-					return AccessOverlayIcon.ProtectedInternal;
-				case MethodAttributes.Private:
-					return AccessOverlayIcon.Private;
-				case MethodAttributes.CompilerControlled:
-					return AccessOverlayIcon.CompilerControlled;
+			return FieldTreeNode.GetImageInfo(GetMemberIcon(eventDef), bgType);
+		}
+
+		static MemberIcon GetMemberIcon(EventDef eventDef)
+		{
+			MethodDef method = eventDef.AddMethod ?? eventDef.RemoveMethod;
+			if (method == null)
+				return MemberIcon.Event;
+
+			var access = MethodTreeNode.GetMemberAccess(method);
+			if (method.IsStatic) {
+				switch (access) {
+				case MemberAccess.Public: return MemberIcon.StaticEvent;
+				case MemberAccess.Private: return MemberIcon.StaticEventPrivate;
+				case MemberAccess.Protected: return MemberIcon.StaticEventProtected;
+				case MemberAccess.Internal: return MemberIcon.StaticEventInternal;
+				case MemberAccess.CompilerControlled: return MemberIcon.StaticEventCompilerControlled;
+				case MemberAccess.ProtectedInternal: return MemberIcon.StaticEventProtectedInternal;
 				default:
-					return AccessOverlayIcon.Public;
+					Debug.Fail("Invalid MemberAccess");
+					goto case MemberAccess.Public;
+				}
+			}
+
+			if (method.IsVirtual) {
+				switch (access) {
+				case MemberAccess.Public: return MemberIcon.VirtualEvent;
+				case MemberAccess.Private: return MemberIcon.VirtualEventPrivate;
+				case MemberAccess.Protected: return MemberIcon.VirtualEventProtected;
+				case MemberAccess.Internal: return MemberIcon.VirtualEventInternal;
+				case MemberAccess.CompilerControlled: return MemberIcon.VirtualEventCompilerControlled;
+				case MemberAccess.ProtectedInternal: return MemberIcon.VirtualEventProtectedInternal;
+				default:
+					Debug.Fail("Invalid MemberAccess");
+					goto case MemberAccess.Public;
+				}
+			}
+
+			switch (access) {
+			case MemberAccess.Public: return MemberIcon.Event;
+			case MemberAccess.Private: return MemberIcon.EventPrivate;
+			case MemberAccess.Protected: return MemberIcon.EventProtected;
+			case MemberAccess.Internal: return MemberIcon.EventInternal;
+			case MemberAccess.CompilerControlled: return MemberIcon.EventCompilerControlled;
+			case MemberAccess.ProtectedInternal: return MemberIcon.EventProtectedInternal;
+			default:
+				Debug.Fail("Invalid MemberAccess");
+				goto case MemberAccess.Public;
 			}
 		}
 

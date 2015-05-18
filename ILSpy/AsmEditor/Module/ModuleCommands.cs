@@ -31,12 +31,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 	{
 		const string CMD_NAME = "Create NetModule";
 		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Images/AssemblyModule.png",
+								Icon = "NewAssemblyModule",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
-							MenuIcon = "Images/AssemblyModule.png",
+							MenuIcon = "NewAssemblyModule",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand
@@ -422,12 +422,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 	{
 		const string CMD_NAME = "Add New NetModule to Assembly";
 		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Images/AssemblyModule.png",
+								Icon = "NewAssemblyModule",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
-							MenuIcon = "Images/AssemblyModule.png",
+							MenuIcon = "NewAssemblyModule",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand
@@ -476,12 +476,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 	{
 		const string CMD_NAME = "Add Existing NetModule to Assembly";
 		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Images/AssemblyModule.png",
+								Icon = "NewAssemblyModule",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
-							MenuIcon = "Images/AssemblyModule.png",
+							MenuIcon = "NewAssemblyModule",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand
@@ -536,12 +536,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 	{
 		const string CMD_NAME = "Remove NetModule from Assembly";
 		[ExportContextMenuEntry(Header = CMD_NAME,
-								Icon = "Images/Delete.png",
+								Icon = "Delete",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
 							Menu = "_Edit",
-							MenuIcon = "Images/Delete.png",
+							MenuIcon = "Delete",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand
@@ -648,12 +648,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 	{
 		const string CMD_NAME = "Module Settings";
 		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Images/Settings.png",
+								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
-							MenuIcon = "Images/Settings.png",
+							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand

@@ -44,7 +44,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Icon
 		{
-			get { return Images.Resource; }
+			get { return Images.Instance.GetImage("Resource", BackgroundType.TreeNode); }
 		}
 
 		protected Stream Data

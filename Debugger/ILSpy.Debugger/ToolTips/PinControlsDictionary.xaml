@@ -334,29 +334,4 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
-	
-	<ControlTemplate x:Key="RefreshButton" TargetType="Button">
-		<Border
-			Name="ImageBorder"
-			CornerRadius="7"
-			BorderBrush="Transparent"
-			BorderThickness="1"
-			Height="14"
-			Width="14">
-			<Image Width="9" Height="9" Margin="2 2"
-			       x:Name="RefreshContentImage"
-			       Tag="{Binding}"
-			       Source="pack://application:,,,/dnSpy;component/Images/Refresh.png"/>
-		</Border>
-		<ControlTemplate.Triggers>
-			<Trigger Property="UIElement.IsMouseOver" Value="true">
-				<Setter TargetName="ImageBorder" Property="Background" Value="{StaticResource SilverBrushKey}"/>
-				<Setter TargetName="ImageBorder" Property="BorderBrush" Value="Gray"/>
-			</Trigger>
-			<Trigger Property="ButtonBase.IsPressed" Value="True">
-				<Setter TargetName="ImageBorder" Property="Background" Value="{StaticResource SilverPressedBrushKey}"/>
-				<Setter TargetName="ImageBorder" Property="BorderBrush" Value="Gray"/>
-			</Trigger>
-		</ControlTemplate.Triggers>
-	</ControlTemplate>
 </ResourceDictionary>

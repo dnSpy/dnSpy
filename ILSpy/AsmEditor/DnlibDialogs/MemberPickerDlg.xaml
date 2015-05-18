@@ -63,10 +63,10 @@
 			<Label Grid.Column="0" Content="_Search" Target="{Binding ElementName=searchTextBox}"/>
 			<TextBox Grid.Column="1" Margin="5 0 0 0" Name="searchTextBox" Text="{Binding SearchText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 			<Button Grid.Column="2" Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding OpenCommand}" ToolTip="Open Assembly or NetModule" Visibility="{Binding CanOpenAssembly, Converter={StaticResource BooleanToVisibilityConverter}}">
-				<Image Source="../../Images/Open.png" Width="16" Height="16"/>
+				<Image Name="openImage" Width="16" Height="16"/>
 			</Button>
 			<CheckBox Grid.Column="3" Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" IsChecked="{Binding ShowInternalApi}" ToolTip="Show Internal Types and Members">
-				<Image Source="../../Images/PrivateInternal.png" Width="16" Height="16"/>
+				<Image Name="privateInternalImage" Width="16" Height="16"/>
 			</CheckBox>
 			<ComboBox Grid.Column="4" Margin="5 0 0 0" DisplayMemberPath="Name" Width="100" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" VerticalContentAlignment="Center" />
 		</Grid>

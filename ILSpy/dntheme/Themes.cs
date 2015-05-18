@@ -28,7 +28,7 @@ using System.Windows.Input;
 
 namespace ICSharpCode.ILSpy.dntheme
 {
-	static class Themes
+	public static class Themes
 	{
 		static Dictionary<string, Theme> themes = new Dictionary<string, Theme>();
 

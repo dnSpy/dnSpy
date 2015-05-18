@@ -27,19 +27,15 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 		IEnumerable<TreeNode> LazyGetChildNodes()
 		{
 			foreach(DebugParameterInfo par in stackFrame.MethodInfo.GetParameters()) {
-				string imageName;
-				var image = ExpressionNode.GetImageForParameter(out imageName);
+				var image = ExpressionNode.GetImageForParameter();
 				var expression = new ExpressionNode(image, par.Name, par.GetExpression());
-				expression.ImageName = imageName;
 				yield return expression;
 			}
 			var ip = this.StackFrame.IP;
 			if (ip.IsValid) {
 				foreach (DebugLocalVariableInfo locVar in stackFrame.MethodInfo.GetLocalVariables(ip.Offset)) {
-					string imageName;
-					var image = ExpressionNode.GetImageForLocalVariable(out imageName);
+					var image = ExpressionNode.GetImageForLocalVariable();
 					var expression = new ExpressionNode(image, locVar.Name, locVar.GetExpression());
-					expression.ImageName = imageName;
 					yield return expression;
 				}
 			}

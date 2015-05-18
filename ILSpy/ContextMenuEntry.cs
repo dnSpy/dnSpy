@@ -327,17 +327,16 @@ namespace ICSharpCode.ILSpy
 						}
 						MenuItem menuItem = new MenuItem();
 						menuItem.Header = entryPair.Metadata.Header;
-						if (!string.IsNullOrEmpty(entryPair.Metadata.Icon)) {
-							menuItem.Icon = new Image {
-								Width = 16,
-								Height = 16,
-								Source = Images.LoadImage(entry, entryPair.Metadata.Icon)
-							};
-						}
+						bool isEnabled;
 						if (entryPair.Value.IsEnabled(context)) {
 							menuItem.Click += delegate { entry.Execute(context); };
-						} else
+							isEnabled = true;
+						} else {
 							menuItem.IsEnabled = false;
+							isEnabled = false;
+						}
+						if (!string.IsNullOrEmpty(entryPair.Metadata.Icon))
+							MainWindow.CreateMenuItemImage(menuItem, entry, entryPair.Metadata.Icon, BackgroundType.ContextMenuItem, isEnabled);
 						menuItem.InputGestureText = entryPair.Metadata.InputGestureText ?? string.Empty;
 						var entry2 = entry as IContextMenuEntry2;
 						if (entry2 != null)

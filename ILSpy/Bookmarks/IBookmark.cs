@@ -35,11 +35,17 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		/// Gets the line number of the bookmark.
 		/// </summary>
 		int LineNumber { get; }
+
+		/// <summary>
+		/// true if <see cref="GetImage"/> doesn't return null
+		/// </summary>
+		bool HasImage { get; }
 		
 		/// <summary>
 		/// Gets the image.
 		/// </summary>
-		ImageSource Image { get; }
+		/// <param name="bgColor">Background color</param>
+		ImageSource GetImage(Color bgColor);
 		
 		/// <summary>
 		/// Gets the Z-Order of the bookmark icon.

@@ -16,8 +16,6 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 		
 		string FullName { get; }
 		
-		string ImageName { get; }
-		
 		string Text { get; }
 		
 		bool CanSetText { get; }

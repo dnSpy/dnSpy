@@ -17,7 +17,7 @@ using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.Debugger.Commands
 {
-	[ExportBookmarkActionEntry(Icon = "images/Breakpoint.png", Category="Debug")]
+	[ExportBookmarkActionEntry(Icon = "BreakpointMenu", Category = "Debug")]
 	public class BreakpointCommand : IBookmarkActionEntry
 	{
 		public bool IsEnabled(DecompilerTextView textView)
@@ -157,8 +157,9 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		}
 	}
 
-	[ExportBookmarkContextMenuEntry(InputGestureText = "Shift+F9",
-									Category = "Debug")]
+	[ExportBookmarkContextMenuEntry(InputGestureText = "Ctrl+F9",
+									Category = "Debug",
+									Order = 110)]
 	public class EnableAndDisableBreakpointCommand : IBookmarkContextMenuEntry2
 	{
 		public bool IsVisible(IBookmark bookmark)
@@ -182,20 +183,44 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		{
 			var bpm = bookmark as BreakpointBookmark;
 			if (bpm != null)
-				InitializeMenuItem(new[] { bpm }, menuItem);
+				InitializeMenuItem(new[] { bpm }, menuItem, BackgroundType.ContextMenuItem);
 		}
 
-		public static void InitializeMenuItem(IList<BreakpointBookmark> bpms, MenuItem menuItem)
+		public static void InitializeMenuItem(IList<BreakpointBookmark> bpms, MenuItem menuItem, BackgroundType bgType)
 		{
 			menuItem.IsEnabled = bpms.Count > 0;
 			if (bpms.IsEnabled()) {
-				menuItem.Header = bpms.Count <= 1 ? "Disable _Breakpoint" : "Disable _Breakpoints";
-				menuItem.Icon = ImageService.LoadImage(ImageService.DisabledBreakpoint, 16, 16);
+				menuItem.Header = bpms.Count <= 1 ? "_Disable Breakpoint" : "_Disable Breakpoints";
+				menuItem.Icon = ImageService.LoadImage(ImageService.GetImage("DisableEnableBreakpoint", bgType), 16, 16);
 			}
 			else {
-				menuItem.Header = bpms.Count <= 1 ? "Enable _Breakpoint" : "Enable _Breakpoints";
-				menuItem.Icon = ImageService.LoadImage(ImageService.Breakpoint, 16, 16);
+				menuItem.Header = bpms.Count <= 1 ? "Enab_le Breakpoint" : "Enab_le Breakpoints";
+				menuItem.Icon = ImageService.LoadImage(ImageService.GetImage("DisableEnableBreakpoint", bgType), 16, 16);
 			}
+		}
+	}
+
+	[ExportBookmarkContextMenuEntry(Header = "D_elete Breakpoint",
+									Icon = "BreakpointMenu",
+									Category = "Debug",
+									Order = 100)]
+	public class DeleteBreakpointCommand : IBookmarkContextMenuEntry
+	{
+		public bool IsVisible(IBookmark bookmark)
+		{
+			return bookmark is BreakpointBookmark;
+		}
+
+		public bool IsEnabled(IBookmark bookmark)
+		{
+			return IsVisible(bookmark);
+		}
+
+		public void Execute(IBookmark bookmark)
+		{
+			var bpm = bookmark as BreakpointBookmark;
+			if (bpm != null)
+				BookmarkManager.RemoveMark(bpm);
 		}
 	}
 }

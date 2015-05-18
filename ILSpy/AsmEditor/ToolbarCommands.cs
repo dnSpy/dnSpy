@@ -24,7 +24,7 @@ using ICSharpCode.ILSpy.TreeNodes;
 namespace ICSharpCode.ILSpy.AsmEditor
 {
 	[ExportToolbarCommand(ToolTip = "Undo (Ctrl+Z)",
-						  ToolbarIcon = "Images/Undo.png",
+						  ToolbarIcon = "Undo",
 						  ToolbarCategory = "AsmEdit",
 						  ToolbarOrder = 5000)]
 	sealed class UndoAsmEdCommand : CommandWrapper
@@ -36,7 +36,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 	}
 
 	[ExportToolbarCommand(ToolTip = "Redo (Ctrl+Y)",
-						  ToolbarIcon = "Images/Redo.png",
+						  ToolbarIcon = "Redo",
 						  ToolbarCategory = "AsmEdit",
 						  ToolbarOrder = 5010)]
 	sealed class RedoAsmEdCommand : CommandWrapper
@@ -48,7 +48,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 	}
 
 	[ExportToolbarCommand(ToolTip = "Clear Undo/Redo History",
-						  ToolbarIcon = "Images/DeleteHistory.png",
+						  ToolbarIcon = "DeleteHistory",
 						  ToolbarCategory = "AsmEdit",
 						  ToolbarOrder = 5020)]
 	sealed class DeleteHistoryAsmEdCommand : TreeNodeCommand

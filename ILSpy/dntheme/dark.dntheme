@@ -105,7 +105,9 @@
 		<color name="toolbarmenucheckfill" bg="#0B7E81" />
 		<color name="toolbarbuttonchecked" bg="#0B7E81" />
 		<color name="toolbaropenheaderbackground" fg="#202020" bg="#222222" color3="#252525" />
+		<color name="toolbariconverticalbackground" bg="#323232" />
 		<color name="toolbarverticalbackground" fg="#303030" bg="#323232" color3="#353535" />
+		<color name="toolbariconbackground" bg="#323232" />
 		<color name="toolbarhorizontalbackground" fg="#303030" bg="#323232" color3="#353535" />
 		<color name="toolbardisabledfill" bg="#383838" />
 		<color name="toolbardisabledborder" bg="#484848" />
@@ -114,6 +116,7 @@
 		<color name="checkboxfillnormal" bg="#404040" />
 		<color name="checkboxstroke" bg="#606060" />
 		<color name="radiobuttonbackground" bg="#404040" />
+		<color name="buttoniconbackground" bg="#404040" />
 		<color name="buttonnormalbackground" fg="#606060" bg="#505050" color3="#404040" color4="#303030" />
 		<color name="buttonnormalborder" bg="#808080" />
 		<color name="buttonbasedisabledforeground" fg="#303030" />
@@ -180,7 +183,7 @@
 		<color name="scrollbarthumbmouseoverborder" bg="#0D8E91" />
 		<color name="scrollbarthumbpressedbackground" bg="#063F40" />
 		<color name="scrollbarthumbpressedborder" bg="#085F61" />
-		<color name="statusbarbackground" bg="#303030" />
+		<color name="statusbar" fg="White" bg="#053233" />
 		<color name="textboxborder" fg="#404040" bg="#505050" color3="#606060" />
 		<color name="tooltipbackground" fg="#454545" bg="#353535" />
 		<color name="tooltipborderbrush" bg="#505050" />
@@ -237,6 +240,6 @@
 		<color name="treeviewlinebackground" bg="#606060" />
 		<color name="nodeautoloaded" fg="SteelBlue" />
 		<color name="nodepublic" fg="#D0D0D0" />
-		<color name="nodenotpublic" fg="#505050" />
+		<color name="nodenotpublic" fg="#909090" />
 	</colors>
 </theme>

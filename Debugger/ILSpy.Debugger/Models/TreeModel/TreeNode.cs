@@ -22,8 +22,6 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 		public ImageSource ImageSource { get; protected set; }
 		
 		public string Name { get; set; }
-
-		public string ImageName { get; set; }
 		
 		public virtual string FullName { 
 			get { return Name; }

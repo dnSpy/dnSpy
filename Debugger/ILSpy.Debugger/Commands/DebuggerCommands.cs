@@ -383,7 +383,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				e.Handled = true;
 				return;
 			}
-			if (Keyboard.Modifiers == ModifierKeys.Shift && e.Key == Key.F9) {
+			if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.F9) {
 				if (DebugEnableDisableBreakpointCanExecute())
 					DebugEnableDisableBreakpoint();
 				e.Handled = true;
@@ -425,6 +425,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			}
 			if (debugging && Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.Cancel) {
 				DebugBreak();
+				e.Handled = true;
+				return;
+			}
+			if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Alt) && e.Key == Key.P) {
+				DebuggerPlugin.Attach();
 				e.Handled = true;
 				return;
 			}
@@ -811,7 +816,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	}
 	
 	[ExportContextMenuEntryAttribute(Header = "_Debug Assembly",
-									Icon = "Images/application-x-executable.png",
+									Icon = "StartDebugging",
 									Order = 200,
 									Category = "Debug")]
 	internal sealed class DebugExecutableNodeCommand : DebuggerCommand, IContextMenuEntry2
@@ -856,11 +861,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	}
 	
 	[ExportToolbarCommand(ToolTip = "Debug an Executable",
-	                      ToolbarIcon = "Images/application-x-executable.png",
+						  ToolbarIcon = "StartDebugging",
 	                      ToolbarCategory = "Debug1",
 	                      ToolbarOrder = 6000)]
 	[ExportMainMenuCommand(Menu = "_Debug",
-	                       MenuIcon = "Images/application-x-executable.png",
+						   MenuIcon = "StartDebugging",
 	                       MenuCategory = "Start",
 	                       MenuHeader = "Debug an _Executable...",
 	                       MenuOrder = 5000)]
@@ -877,8 +882,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	}
 	
 	[ExportMainMenuCommand(Menu = "_Debug",
+						   MenuIcon = "Process",
 	                       MenuCategory = "Start",
 	                       MenuHeader = "Attach to _Process...",
+						   MenuInputGestureText = "Ctrl+Alt+P",
 	                       MenuOrder = 5010)]
 	internal sealed class AttachCommand : DebuggerCommand, IMainMenuCommand
 	{
@@ -893,11 +900,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	}
 	
 	[ExportToolbarCommand(ToolTip = "Continue (F5)",
-						  ToolbarIcon = "Images/ContinueDebugging.png",
+						  ToolbarIcon = "ContinueDebugging",
 	                      ToolbarCategory = "Debug2",
 	                      ToolbarOrder = 7000)]
 	[ExportMainMenuCommand(Menu = "_Debug",
-	                       MenuIcon = "Images/ContinueDebugging.png",
+	                       MenuIcon = "ContinueDebugging",
 	                       MenuCategory = "Debug1",
 	                       MenuHeader = "_Continue",
 	                       MenuInputGestureText = "F5",
@@ -915,11 +922,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	}
 
 	[ExportToolbarCommand(ToolTip = "Break (Ctrl+Break)",
-						  ToolbarIcon = "Images/Break.png",
+						  ToolbarIcon = "Break",
 						  ToolbarCategory = "Debug2",
 						  ToolbarOrder = 7100)]
 	[ExportMainMenuCommand(Menu = "_Debug",
-						   MenuIcon = "Images/Break.png",
+						   MenuIcon = "Break",
 						   MenuCategory = "Debug1",
 						   MenuHeader = "Brea_k",
 						   MenuInputGestureText = "Ctrl+Break",
@@ -937,11 +944,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	}
 
 	[ExportToolbarCommand(ToolTip = "Stop Debugging (Shift+F5)",
-						  ToolbarIcon = "Images/StopProcess.png",
+						  ToolbarIcon = "StopProcess",
 						  ToolbarCategory = "Debug2",
 						  ToolbarOrder = 7200)]
 	[ExportMainMenuCommand(Menu = "_Debug",
-						   MenuIcon = "Images/StopProcess.png",
+						   MenuIcon = "StopProcess",
 						   MenuCategory = "Debug1",
 						   MenuHeader = "Stop D_ebugging",
 						   MenuInputGestureText = "Shift+F5",
@@ -959,11 +966,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	}
 
 	[ExportToolbarCommand(ToolTip = "Restart (Ctrl+Shift+F5)",
-						  ToolbarIcon = "Images/RestartProcess.png",
+						  ToolbarIcon = "RestartProcess",
 						  ToolbarCategory = "Debug2",
 						  ToolbarOrder = 7300)]
 	[ExportMainMenuCommand(Menu = "_Debug",
-						   MenuIcon = "Images/RestartProcess.png",
+						   MenuIcon = "RestartProcess",
 						   MenuCategory = "Debug1",
 						   MenuHeader = "_Restart",
 						   MenuInputGestureText = "Ctrl+Shift+F5",
@@ -987,11 +994,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	}
 
 	[ExportToolbarCommand(ToolTip = "Step Into (F11)",
-						  ToolbarIcon = "Images/StepInto.png",
+						  ToolbarIcon = "StepInto",
 						  ToolbarCategory = "Debug3",
 						  ToolbarOrder = 8100)]
 	[ExportMainMenuCommand(Menu = "_Debug",
-	                       MenuIcon = "Images/StepInto.png",
+	                       MenuIcon = "StepInto",
 						   MenuCategory = "Debug2",
 	                       MenuHeader = "Step _Into",
 	                       MenuInputGestureText = "F11",
@@ -1009,11 +1016,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	}
 	
 	[ExportToolbarCommand(ToolTip = "Step Over (F10)",
-						  ToolbarIcon = "Images/StepOver.png",
+						  ToolbarIcon = "StepOver",
 						  ToolbarCategory = "Debug3",
 						  ToolbarOrder = 8200)]
 	[ExportMainMenuCommand(Menu = "_Debug",
-	                       MenuIcon = "Images/StepOver.png",
+	                       MenuIcon = "StepOver",
 						   MenuCategory = "Debug2",
 	                       MenuHeader = "Step _Over",
 	                       MenuInputGestureText = "F10",
@@ -1031,11 +1038,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	}
 	
 	[ExportToolbarCommand(ToolTip = "Step Out (Shift+F11)",
-						  ToolbarIcon = "Images/StepOut.png",
+						  ToolbarIcon = "StepOut",
 						  ToolbarCategory = "Debug3",
 						  ToolbarOrder = 8300)]
 	[ExportMainMenuCommand(Menu = "_Debug",
-	                       MenuIcon = "Images/StepOut.png",
+	                       MenuIcon = "StepOut",
 						   MenuCategory = "Debug2",
 	                       MenuHeader = "Step Ou_t",
 						   MenuInputGestureText = "Shift+F11",
@@ -1054,7 +1061,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	
 	[ExportMainMenuCommand(Menu = "_Debug",
 						   MenuCategory = "Debug1",
-	                       MenuHeader = "Det_ach",
+	                       MenuHeader = "_Detach",
 	                       MenuOrder = 5130)]
 	internal sealed class DetachCommand : DebuggerCommand, IMainMenuCommand
 	{
@@ -1069,9 +1076,9 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	}
 	
 	[ExportMainMenuCommand(Menu = "_Debug",
-	                       MenuIcon = "Images/DeleteAllBreakpoints.png",
+	                       MenuIcon = "DeleteAllBreakpoints",
 						   MenuCategory = "Breakpoints",
-						   MenuHeader = "_Delete All Breakpoints",
+						   MenuHeader = "Delete _All Breakpoints",
 						   MenuInputGestureText = "Ctrl+Shift+F9",
 	                       MenuOrder = 5310)]
 	internal sealed class RemoveBreakpointsCommand : DebuggerCommand, IMainMenuCommand
@@ -1117,7 +1124,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		}
 	}
 
-	[ExportContextMenuEntry(Icon = "images/Breakpoint.png",
+	[ExportContextMenuEntry(Icon = "BreakpointMenu",
 							InputGestureText = "F9",
 							Category = "Debug",
 							Order = 210)]
@@ -1150,7 +1157,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (bpms.Count == 0)
 				menuItem.Header = "_Add Breakpoint";
 			else
-				menuItem.Header = bpms.Count == 1 ? "C_lear Breakpoint" : "C_lear Breakpoints";
+				menuItem.Header = bpms.Count == 1 ? "_Delete Breakpoint" : "_Delete Breakpoints";
 		}
 
 		bool CanToggleBP()
@@ -1163,7 +1170,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		}
 	}
 
-	[ExportContextMenuEntry(InputGestureText = "Shift+F9",
+	[ExportContextMenuEntry(InputGestureText = "Ctrl+F9",
 							Category = "Debug",
 							Order = 220)]
 	internal sealed class DisableBreakpointContextMenuEntry : IContextMenuEntry2
@@ -1191,12 +1198,12 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				return;
 			var location = textView.TextEditor.TextArea.Caret.Location;
 			var bpms = BreakpointHelper.GetBreakpointBookmarks(textView, location.Line, location.Column);
-			EnableAndDisableBreakpointCommand.InitializeMenuItem(bpms, menuItem);
+			EnableAndDisableBreakpointCommand.InitializeMenuItem(bpms, menuItem, BackgroundType.ContextMenuItem);
 		}
 	}
 
 	[ExportToolbarCommand(ToolTip = "Show Next Statement (Alt+Num *)",
-						  ToolbarIcon = "Images/CurrentLineToolBar.png",
+						  ToolbarIcon = "CurrentLineToolBar",
 						  ToolbarCategory = "Debug3",
 						  ToolbarOrder = 8000)]
 	internal sealed class ShowNextStatementCommand : DebuggerCommand, IToolbarCommand
@@ -1211,7 +1218,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		}
 	}
 
-	[ExportContextMenuEntry(Icon = "images/CurrentLine.png",
+	[ExportContextMenuEntry(Icon = "CurrentLineToolBar",
 							Header = "S_how Next Statement",
 							InputGestureText = "Alt+Num *",
 							Category = "Debug",
@@ -1239,7 +1246,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Set Ne_xt Statement",
+	[ExportContextMenuEntry(Icon = "SetNextStatement",
+							Header = "Set Ne_xt Statement",
 							InputGestureText = "Ctrl+Shift+F10",
 							Category = "Debug",
 							Order = 240)]

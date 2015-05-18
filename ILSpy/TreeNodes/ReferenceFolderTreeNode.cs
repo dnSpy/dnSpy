@@ -51,11 +51,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Icon {
-			get { return Images.ReferenceFolderClosed; }
+			get { return Images.Instance.GetImage("ReferenceFolderClosed", BackgroundType.TreeNode); }
 		}
 		
 		public override object ExpandedIcon {
-			get { return Images.ReferenceFolderOpen; }
+			get { return Images.Instance.GetImage("ReferenceFolderOpen", BackgroundType.TreeNode); }
 		}
 
 		public override FilterResult Filter(FilterSettings settings)

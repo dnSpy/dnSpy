@@ -478,33 +478,10 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				var tooltipExpression = GetExpression(variableName);
 				if (tooltipExpression == null) return null;
 				
-				string imageName;
-				var image = ExpressionNode.GetImageForLocalVariable(out imageName);
+				var image = ExpressionNode.GetImageForLocalVariable();
 				ExpressionNode expressionNode = new ExpressionNode(image, variableName, tooltipExpression);
-				expressionNode.ImageName = imageName;
 				
 				return new DebuggerTooltipControl(logicalPosition, expressionNode);
-			} catch (GetValueException) {
-				return null;
-			}
-		}
-		
-		internal ITreeNode GetNode(string variable, string currentImageName = null)
-		{
-			try {
-				var expression = GetExpression(variable);
-				string imageName;
-				ImageSource image;
-				if (string.IsNullOrEmpty(currentImageName)) {
-					image = ExpressionNode.GetImageForLocalVariable(out imageName);
-				}
-				else {
-					image = ImageService.GetImage(currentImageName);
-					imageName = currentImageName;
-				}
-				ExpressionNode expressionNode = new ExpressionNode(image, variable, expression);
-				expressionNode.ImageName = imageName;
-				return expressionNode;
 			} catch (GetValueException) {
 				return null;
 			}

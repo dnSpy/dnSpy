@@ -28,7 +28,7 @@ using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.dntheme
 {
-	sealed class MyHighlightingColor : HighlightingColor
+	public sealed class MyHighlightingColor : HighlightingColor
 	{
 		HighlightingBrush color3;
 		HighlightingBrush color4;
@@ -64,7 +64,7 @@ namespace ICSharpCode.ILSpy.dntheme
 	}
 
 	[DebuggerDisplay("{ColorType}, Children={Children.Length}")]
-	abstract class ColorInfo
+	public abstract class ColorInfo
 	{
 		public readonly ColorType ColorType;
 		public readonly string Description;
@@ -93,7 +93,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		}
 	}
 
-	sealed class ColorColorInfo : ColorInfo
+	public sealed class ColorColorInfo : ColorInfo
 	{
 		public object BackgroundResourceKey;
 		public object ForegroundResourceKey;
@@ -116,7 +116,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		}
 	}
 
-	sealed class BrushColorInfo : ColorInfo
+	public sealed class BrushColorInfo : ColorInfo
 	{
 		public object BackgroundResourceKey;
 		public object ForegroundResourceKey;
@@ -147,7 +147,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		}
 	}
 
-	sealed class LinearGradientColorInfo : ColorInfo
+	public sealed class LinearGradientColorInfo : ColorInfo
 	{
 		public object ResourceKey;
 		public Point StartPoint;
@@ -183,7 +183,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		}
 	}
 
-	sealed class RadialGradientColorInfo : ColorInfo
+	public sealed class RadialGradientColorInfo : ColorInfo
 	{
 		public object ResourceKey;
 		public Transform RelativeTransform;
@@ -212,7 +212,7 @@ namespace ICSharpCode.ILSpy.dntheme
 	}
 
 	[DebuggerDisplay("{ColorInfo.ColorType}")]
-	sealed class Color
+	public sealed class Color
 	{
 		/// <summary>
 		/// Color info
@@ -243,7 +243,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		}
 	}
 
-	sealed class Theme
+	public sealed class Theme
 	{
 		static readonly Dictionary<string, ColorType> nameToColorType = new Dictionary<string, ColorType>(StringComparer.InvariantCultureIgnoreCase);
 
@@ -390,16 +390,22 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#E6F0FA",
 				BackgroundResourceKey = "ToolBarButtonChecked",
 			},
-			new LinearGradientColorInfo(ColorType.ToolBarOpenHeaderBackground, new Point(0, 1), "Toolbar open header. Color of top level menu item text when the sub menu is open. Color is a linear gradient brush from background to foreground color.", 0, 1) {
+			new LinearGradientColorInfo(ColorType.ToolBarOpenHeaderBackground, new Point(0, 1), "Toolbar open header. Color of top level menu item text when the sub menu is open.", 0, 1) {
 				ResourceKey = "ToolBarOpenHeaderBackground",
 				DefaultForeground = "#FFFFFF",
 				DefaultBackground = "#FFFBFF",
 			},
-			new LinearGradientColorInfo(ColorType.ToolBarVerticalBackground, new Point(1, 0), "Toolbar vertical header. Color of left vertical part of menu items. Color is a linear gradient brush from background to foreground color.", 0, 0.5, 1) {
+			new BrushColorInfo(ColorType.ToolBarIconVerticalBackground, "ToolBar icon vertical background. Makes sure icons look good with this background color.") {
+				DefaultBackground = "#FFFBFF",
+			},
+			new LinearGradientColorInfo(ColorType.ToolBarVerticalBackground, new Point(1, 0), "Toolbar vertical header. Color of left vertical part of menu items.", 0, 0.5, 1) {
 				ResourceKey = "ToolBarVerticalBackground",
 				DefaultForeground = "#FFFFFF",
 				DefaultBackground = "#FFFBFF",
 				DefaultColor3 = "#F7F7F7",
+			},
+			new BrushColorInfo(ColorType.ToolBarIconBackground, "ToolBar icon background. Makes sure icons look good with this background color.") {
+				DefaultBackground = "#FFFBFF",
 			},
 			new LinearGradientColorInfo(ColorType.ToolBarHorizontalBackground, new Point(0, 1), "Toolbar horizontal background", 0, 0.5, 1) {
 				ResourceKey = "ToolBarHorizontalBackground",
@@ -434,6 +440,9 @@ namespace ICSharpCode.ILSpy.dntheme
 			new BrushColorInfo(ColorType.RadioButtonBackground, "RadioButton background") {
 				DefaultBackground = "#F4F4F4",
 				BackgroundResourceKey = "RadioButtonBackground",
+			},
+			new BrushColorInfo(ColorType.ButtonIconBackground, "Button icon background. Makes sure icons look good with this background color.") {
+				DefaultBackground = "#EEEEEE",
 			},
 			new LinearGradientColorInfo(ColorType.ButtonNormalBackground, new Point(0, 1), "Button normal background", 0, 0.5, 0.5, 1) {
 				ResourceKey = "ButtonNormalBackground",
@@ -733,9 +742,11 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#787878",
 				BackgroundResourceKey = "ScrollBarThumbPressedBorder",
 			},
-			new BrushColorInfo(ColorType.StatusBarBackground, "StatusBar background") {
+			new BrushColorInfo(ColorType.StatusBar, "StatusBar") {
 				DefaultBackground = "#FFF1EDED",
 				BackgroundResourceKey = "StatusBarBackground",
+				DefaultForeground = "SystemColors.ControlText",
+				ForegroundResourceKey = "StatusBarForeground",
 			},
 			new LinearGradientColorInfo(ColorType.TextBoxBorder, new Point(0, 20), "TextBox border", 0.05, 0.07, 1) {
 				ResourceKey = "TextBoxBorder",

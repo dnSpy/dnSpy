@@ -138,7 +138,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			foreach (var b in bookmarks) {
 				if (BookmarkBase.GetLineNumber(b, textView) != line)
 					continue;
-				if (b.Image == null)
+				if (!b.HasImage)
 					continue;
 				list.Add(b);
 			}
@@ -185,29 +185,27 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				foreach (var bookmark in bms) {
 					ContextMenu menu = new ContextMenu();
 					foreach (var category in MefState.Instance.contextEntries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
-						bool needSeparatorForCategory = true;
+						bool hasAddedSep = menu.Items.Count == 0;
 						foreach (var entryPair in category) {
 							IBookmarkContextMenuEntry entry = entryPair.Value;
 							if (entry.IsVisible(bookmark)) {
-								if (needSeparatorForCategory && menu.Items.Count > 0) {
+								if (!hasAddedSep) {
 									menu.Items.Add(new Separator());
-									needSeparatorForCategory = false;
+									hasAddedSep = true;
 								}
 
 								MenuItem menuItem = new MenuItem();
 								menuItem.Header = entryPair.Metadata.Header;
-								if (!string.IsNullOrEmpty(entryPair.Metadata.Icon)) {
-									menuItem.Icon = new Image {
-										Width = 16,
-										Height = 16,
-										Source = Images.LoadImage(entry, entryPair.Metadata.Icon)
-									};
-								}
+								bool isEnabled;
 								if (entryPair.Value.IsEnabled(bookmark)) {
 									menuItem.Click += delegate { entry.Execute(bookmark); };
-								}
-								else
+									isEnabled = true;
+								} else {
 									menuItem.IsEnabled = false;
+									isEnabled = false;
+								}
+								if (!string.IsNullOrEmpty(entryPair.Metadata.Icon))
+									MainWindow.CreateMenuItemImage(menuItem, entry, entryPair.Metadata.Icon, BackgroundType.ContextMenuItem, isEnabled);
 								menuItem.InputGestureText = entryPair.Metadata.InputGestureText ?? string.Empty;
 								var entry2 = entry as IBookmarkContextMenuEntry2;
 								if (entry2 != null)

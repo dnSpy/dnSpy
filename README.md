@@ -52,7 +52,7 @@ F5			| (Debugger) Continue debugging
 Shift+F5	| (Debugger) Stop debugging
 Ctrl+Shift+F5 | (Debugger) Restart debugged program
 F9			| (Text view) Toggle breakpoint at caret
-Shift+F9	| (Text view) Toggle enable/disable breakpoint at caret
+Ctrl+F9		| (Text view) Toggle enable/disable breakpoint at caret
 Ctrl+Shift+F9 | Delete all breakpoints
 F10			| (Debugger) Step over
 Ctrl+Shift+F10 | (Debugger) Set next statement

@@ -39,7 +39,7 @@
     <StartupObject />
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>..\ILSpy\Images\ILSpy-Large.ico</ApplicationIcon>
+    <ApplicationIcon>..\ILSpy\Images\dnSpy.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>

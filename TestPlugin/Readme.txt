@@ -20,7 +20,7 @@ Adding another language:
 
 Adding an entry to the main menu:
 
-	[ExportMainMenuCommand(Menu = "_File", MenuIcon = "Clear.png", Header = "_Clear List", MenuCategory = "Open", MenuOrder = 1.5)]
+	[ExportMainMenuCommand(Menu = "_File", MenuIcon = "Clear", Header = "_Clear List", MenuCategory = "Open", MenuOrder = 1.5)]
 	public class UnloadAllAssembliesCommand : SimpleCommand
 	
 	Menu: menu into which the item is added
@@ -35,7 +35,7 @@ Adding an entry to the main menu:
 
 Adding an entry to the tool bar:
 
-	[ExportToolbarCommand(ToolTip = "Clears the current assembly list", ToolbarIcon = "Clear.png", ToolbarCategory = "Open", ToolbarOrder = 1.5)]
+	[ExportToolbarCommand(ToolTip = "Clears the current assembly list", ToolbarIcon = "Clear", ToolbarCategory = "Open", ToolbarOrder = 1.5)]
 	public class UnloadAllAssembliesCommand : SimpleCommand
 
 	ToolTip: the tool tip
