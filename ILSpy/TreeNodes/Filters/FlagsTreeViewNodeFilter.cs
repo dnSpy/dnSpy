@@ -215,7 +215,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 				return new TreeViewNodeFilterResult(FilterResult.Match, true);
 			else if ((flags & VisibleMembersFlags.ClassTypeDef) != 0 && !type.IsValueType && !type.IsInterface)
 				return new TreeViewNodeFilterResult(FilterResult.Match, true);
-			else if ((flags & VisibleMembersFlags.ValueTypeDef) != 0 && type.IsValueType)
+			else if ((flags & VisibleMembersFlags.StructTypeDef) != 0 && type.IsValueType && !type.IsEnum)
 				return new TreeViewNodeFilterResult(FilterResult.Match, true);
 			else if ((flags & VisibleMembersFlags.DelegateTypeDef) != 0 && TypeTreeNode.IsDelegate(type))
 				return new TreeViewNodeFilterResult(FilterResult.Match, true);

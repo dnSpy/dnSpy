@@ -44,13 +44,13 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 		EnumTypeDef		= 0x00010000,
 		InterfaceTypeDef= 0x00020000,
 		ClassTypeDef	= 0x00040000,
-		ValueTypeDef	= 0x00080000,
+		StructTypeDef	= 0x00080000,
 		DelegateTypeDef	= 0x00100000,
 		MethodBody		= 0x00200000,
 		ParamDefs		= 0x00400000,
 		ParamDef		= 0x00800000,
 		InstanceConstructor = 0x01000000,
-		TypeDefOther	= GenericTypeDef | NonGenericTypeDef | EnumTypeDef | InterfaceTypeDef | ClassTypeDef | ValueTypeDef | DelegateTypeDef,
+		TypeDefOther	= GenericTypeDef | NonGenericTypeDef | EnumTypeDef | InterfaceTypeDef | ClassTypeDef | StructTypeDef | DelegateTypeDef,
 		AnyTypeDef		= TypeDef | TypeDefOther,
 		// What's shown in the normal treeview
 		TreeViewAll		= AssemblyDef | ModuleDef | Namespace | TypeDef |
@@ -91,7 +91,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			if ((flags & VisibleMembersFlags.EnumTypeDef) != 0) AddString(sb, "Enum", ref count);
 			if ((flags & VisibleMembersFlags.InterfaceTypeDef) != 0) AddString(sb, "Interface", ref count);
 			if ((flags & VisibleMembersFlags.ClassTypeDef) != 0) AddString(sb, "Class", ref count);
-			if ((flags & VisibleMembersFlags.ValueTypeDef) != 0) AddString(sb, "Value Type", ref count);
+			if ((flags & VisibleMembersFlags.StructTypeDef) != 0) AddString(sb, "Struct", ref count);
 			if ((flags & VisibleMembersFlags.DelegateTypeDef) != 0) AddString(sb, "Delegate", ref count);
 			if ((flags & VisibleMembersFlags.MethodBody) != 0) AddString(sb, "Method Body", ref count);
 			if ((flags & VisibleMembersFlags.ParamDefs) != 0) AddString(sb, "ParamDefs", ref count);
