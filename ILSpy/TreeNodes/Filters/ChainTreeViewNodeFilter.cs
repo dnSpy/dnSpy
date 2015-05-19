@@ -18,6 +18,7 @@
 */
 
 using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 using ICSharpCode.ILSpy.Xaml;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Filters
@@ -123,6 +124,16 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 		public virtual TreeViewNodeFilterResult GetFilterResult(MethodDef method, ParamDef param)
 		{
 			return filter.GetFilterResult(method, param);
+		}
+
+		public virtual TreeViewNodeFilterResult GetFilterResultLocals(MethodDef method)
+		{
+			return filter.GetFilterResultLocals(method);
+		}
+
+		public virtual TreeViewNodeFilterResult GetFilterResult(MethodDef method, Local local)
+		{
+			return filter.GetFilterResult(method, local);
 		}
 
 		public virtual TreeViewNodeFilterResult GetFilterResult(CursorResourceEntryNode node)

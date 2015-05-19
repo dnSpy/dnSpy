@@ -47,9 +47,11 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 		StructTypeDef	= 0x00080000,
 		DelegateTypeDef	= 0x00100000,
 		MethodBody		= 0x00200000,
-		ParamDefs		= 0x00400000,
-		ParamDef		= 0x00800000,
-		InstanceConstructor = 0x01000000,
+		InstanceConstructor = 0x00400000,
+		ParamDefs		= 0x00800000,
+		ParamDef		= 0x01000000,
+		Locals			= 0x02000000,
+		Local			= 0x04000000,
 		TypeDefOther	= GenericTypeDef | NonGenericTypeDef | EnumTypeDef | InterfaceTypeDef | ClassTypeDef | StructTypeDef | DelegateTypeDef,
 		AnyTypeDef		= TypeDef | TypeDefOther,
 		// What's shown in the normal treeview
@@ -96,6 +98,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			if ((flags & VisibleMembersFlags.MethodBody) != 0) AddString(sb, "Method Body", ref count);
 			if ((flags & VisibleMembersFlags.ParamDefs) != 0) AddString(sb, "ParamDefs", ref count);
 			if ((flags & VisibleMembersFlags.ParamDef) != 0) AddString(sb, "ParamDef", ref count);
+			if ((flags & VisibleMembersFlags.Locals) != 0) AddString(sb, "Locals", ref count);
+			if ((flags & VisibleMembersFlags.Local) != 0) AddString(sb, "Local", ref count);
 			if ((flags & VisibleMembersFlags.InstanceConstructor) != 0) AddString(sb, "Constructor", ref count);
 
 			return sb.ToString();

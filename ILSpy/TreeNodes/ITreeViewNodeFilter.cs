@@ -18,6 +18,7 @@
 */
 
 using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 using ICSharpCode.ILSpy.Xaml;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -75,6 +76,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		TreeViewNodeFilterResult GetFilterResultBody(MethodDef method);
 		TreeViewNodeFilterResult GetFilterResultParamDefs(MethodDef method);
 		TreeViewNodeFilterResult GetFilterResult(MethodDef method, ParamDef param);
+		TreeViewNodeFilterResult GetFilterResultLocals(MethodDef method);
+		TreeViewNodeFilterResult GetFilterResult(MethodDef method, Local local);
 		TreeViewNodeFilterResult GetFilterResult(AssemblyRef asmRef);
 		TreeViewNodeFilterResult GetFilterResult(ModuleRef modRef);
 		TreeViewNodeFilterResult GetFilterResult(BaseTypesEntryNode node);

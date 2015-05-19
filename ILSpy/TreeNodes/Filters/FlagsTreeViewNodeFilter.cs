@@ -18,6 +18,7 @@
 */
 
 using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 using System.Linq;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Filters
@@ -57,7 +58,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 						VisibleMembersFlags.BaseTypes | VisibleMembersFlags.DerivedTypes |
 						VisibleMembersFlags.ModuleRef | VisibleMembersFlags.ResourceList |
 						VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
-						VisibleMembersFlags.ParamDef;
+						VisibleMembersFlags.ParamDef | VisibleMembersFlags.Locals |
+						VisibleMembersFlags.Local;
 				break;
 
 			case AssemblyFilterType.NetModule:
@@ -70,7 +72,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 						VisibleMembersFlags.BaseTypes | VisibleMembersFlags.DerivedTypes |
 						VisibleMembersFlags.ModuleRef | VisibleMembersFlags.ResourceList |
 						VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
-						VisibleMembersFlags.ParamDef;
+						VisibleMembersFlags.ParamDef | VisibleMembersFlags.Locals |
+						VisibleMembersFlags.Local;
 				break;
 
 			case AssemblyFilterType.NonNetFile:
@@ -109,7 +112,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 		{
 			var visibleFlags = VisibleMembersFlags.EventDef | VisibleMembersFlags.MethodDef |
 								VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
-								VisibleMembersFlags.ParamDef;
+								VisibleMembersFlags.ParamDef | VisibleMembersFlags.Locals |
+								VisibleMembersFlags.Local;
 			bool isMatch = (flags & VisibleMembersFlags.EventDef) != 0;
 			if ((flags & visibleFlags) == 0)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
@@ -127,7 +131,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 		public override TreeViewNodeFilterResult GetFilterResult(MethodDef method)
 		{
 			var childrenFlags = VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
-								VisibleMembersFlags.ParamDef;
+								VisibleMembersFlags.ParamDef | VisibleMembersFlags.Locals |
+								VisibleMembersFlags.Local;
 			var visibleFlags = childrenFlags | VisibleMembersFlags.MethodDef | VisibleMembersFlags.InstanceConstructor;
 			bool isMatch = (flags & VisibleMembersFlags.MethodDef) != 0 ||
 							(method.IsInstanceConstructor && (flags & VisibleMembersFlags.InstanceConstructor) != 0);
@@ -155,7 +160,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 					VisibleMembersFlags.InstanceConstructor | VisibleMembersFlags.PropertyDef |
 					VisibleMembersFlags.EventDef | VisibleMembersFlags.BaseTypes |
 					VisibleMembersFlags.DerivedTypes | VisibleMembersFlags.MethodBody |
-					VisibleMembersFlags.ParamDefs | VisibleMembersFlags.ParamDef;
+					VisibleMembersFlags.ParamDefs | VisibleMembersFlags.ParamDef |
+					VisibleMembersFlags.Locals | VisibleMembersFlags.Local;
 			bool isMatch = (flags & VisibleMembersFlags.Namespace) != 0;
 			if ((flags & visibleFlags) == 0)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
@@ -168,7 +174,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 		{
 			var visibleFlags = VisibleMembersFlags.PropertyDef | VisibleMembersFlags.MethodDef |
 								VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
-								VisibleMembersFlags.ParamDef;
+								VisibleMembersFlags.ParamDef | VisibleMembersFlags.Locals |
+								VisibleMembersFlags.Local;
 			bool isMatch = (flags & VisibleMembersFlags.PropertyDef) != 0;
 			if ((flags & visibleFlags) == 0)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
@@ -201,7 +208,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 					VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef |
 					VisibleMembersFlags.BaseTypes | VisibleMembersFlags.DerivedTypes |
 					VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
-					VisibleMembersFlags.ParamDef;
+					VisibleMembersFlags.ParamDef | VisibleMembersFlags.Locals |
+					VisibleMembersFlags.Local;
 			var visibleFlags = VisibleMembersFlags.AnyTypeDef | childrenFlags;
 			if ((flags & visibleFlags) == 0)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
@@ -241,9 +249,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 				return defaultValue;
 			if ((flags & VisibleMembersFlags.MethodBody) != 0 && HasMethodBodies(type))
 				return defaultValue;
-			if ((flags & VisibleMembersFlags.ParamDefs) != 0 && HasParamDefs(type))
+			if ((flags & (VisibleMembersFlags.ParamDefs | VisibleMembersFlags.ParamDef)) != 0 && HasParamDefs(type))
 				return defaultValue;
-			if ((flags & VisibleMembersFlags.ParamDef) != 0 && HasParamDef(type))
+			if ((flags & (VisibleMembersFlags.Locals | VisibleMembersFlags.Local)) != 0 && HasLocals(type))
 				return defaultValue;
 
 			return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
@@ -270,9 +278,15 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			return type.Methods.Any(m => m.HasParamDefs);
 		}
 
-		static bool HasParamDef(TypeDef type)
+		static bool HasLocals(TypeDef type)
 		{
-			return HasParamDefs(type);
+			foreach (var method in type.Methods) {
+				bool hasLocal = method.Body != null && method.Body.HasVariables;
+				ICSharpCode.ILSpy.TreeNodes.Analyzer.Helpers.FreeMethodBody(method);
+				if (hasLocal)
+					return true;
+			}
+			return false;
 		}
 
 		public override TreeViewNodeFilterResult GetFilterResultBody(MethodDef method)
@@ -295,6 +309,23 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 		public override TreeViewNodeFilterResult GetFilterResult(MethodDef method, ParamDef param)
 		{
 			bool isMatch = (flags & VisibleMembersFlags.ParamDef) != 0;
+			if (!isMatch)
+				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
+			return new TreeViewNodeFilterResult(null, isMatch);
+		}
+
+		public override TreeViewNodeFilterResult GetFilterResultLocals(MethodDef method)
+		{
+			var visibleFlags = VisibleMembersFlags.Locals | VisibleMembersFlags.Local;
+			bool isMatch = (flags & VisibleMembersFlags.Locals) != 0;
+			if ((flags & visibleFlags) == 0)
+				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
+			return new TreeViewNodeFilterResult(null, isMatch);
+		}
+
+		public override TreeViewNodeFilterResult GetFilterResult(MethodDef method, Local local)
+		{
+			bool isMatch = (flags & VisibleMembersFlags.Local) != 0;
 			if (!isMatch)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
 			return new TreeViewNodeFilterResult(null, isMatch);

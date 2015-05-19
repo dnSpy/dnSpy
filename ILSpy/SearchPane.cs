@@ -121,7 +121,9 @@ namespace ICSharpCode.ILSpy
 			new SearchType("Method", "Method", SearchMode.MethodDef, VisibleMembersFlags.MethodDef),
 			new SearchType("Property", "Property", SearchMode.PropertyDef, VisibleMembersFlags.PropertyDef),
 			new SearchType("Event", "Event", SearchMode.EventDef, VisibleMembersFlags.EventDef),
-			new SearchType("Parameter", "Method", SearchMode.ParamDef, VisibleMembersFlags.ParamDef),
+			new SearchType("Parameter", "Parameter", SearchMode.ParamDef, VisibleMembersFlags.ParamDef),
+			new SearchType("Local", "Local", SearchMode.Local, VisibleMembersFlags.Local),
+			new SearchType("Parameter/Local", "Parameter", SearchMode.ParamLocal, VisibleMembersFlags.ParamDef | VisibleMembersFlags.Local),
 			new SearchType("AssemblyRef", "AssemblyReference", SearchMode.AssemblyRef, VisibleMembersFlags.AssemblyRef),
 			new SearchType("ModuleRef", "ModuleReference", SearchMode.ModuleRef, VisibleMembersFlags.ModuleRef),
 			new SearchType("Generic Type", "Generic", SearchMode.GenericTypeDef, VisibleMembersFlags.GenericTypeDef),
@@ -132,7 +134,7 @@ namespace ICSharpCode.ILSpy
 			new SearchType("Struct", "Struct", SearchMode.StructTypeDef, VisibleMembersFlags.StructTypeDef),
 			new SearchType("Delegate", "Delegate", SearchMode.DelegateTypeDef, VisibleMembersFlags.DelegateTypeDef),
 			new SearchType("Member", "Property", SearchMode.Member, VisibleMembersFlags.MethodDef | VisibleMembersFlags.FieldDef | VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef),
-			new SearchType("All Above", "Class", SearchMode.Any, VisibleMembersFlags.TreeViewAll),
+			new SearchType("All Above", "Class", SearchMode.Any, VisibleMembersFlags.TreeViewAll | VisibleMembersFlags.ParamDef | VisibleMembersFlags.Local),
 			new SearchType("Number/String", "Literal", SearchMode.Literal, VisibleMembersFlags.MethodBody | VisibleMembersFlags.FieldDef | VisibleMembersFlags.ParamDef | VisibleMembersFlags.PropertyDef),
 		};
 		Dictionary<SearchMode, int> searchModeToIndex = new Dictionary<SearchMode, int>();
@@ -588,6 +590,8 @@ namespace ICSharpCode.ILSpy
 		PropertyDef,
 		EventDef,
 		ParamDef,
+		Local,
+		ParamLocal,
 		AssemblyRef,
 		BaseTypes,
 		DerivedTypes,

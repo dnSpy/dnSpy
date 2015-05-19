@@ -589,15 +589,52 @@ namespace ICSharpCode.ILSpy
 
 		void SearchBody(LoadedAssembly ownerModule, TypeDef type, MethodDef method)
 		{
-			var res = filter.GetFilterResultBody(method);
+			bool loadedBody;
+			SearchBody(ownerModule, type, method, out loadedBody);
+			if (loadedBody)
+				ICSharpCode.ILSpy.TreeNodes.Analyzer.Helpers.FreeMethodBody(method);
+		}
+
+		void SearchBody(LoadedAssembly ownerModule, TypeDef type, MethodDef method, out bool loadedBody)
+		{
+			loadedBody = false;
+			CilBody body;
+
+			var res = filter.GetFilterResultLocals(method);
+			if (res.FilterResult != FilterResult.Hidden) {
+				body = method.Body;
+				if (body == null)
+					return; // Return immediately. All code here depends on a non-null body
+				loadedBody = true;
+
+				foreach (var local in body.Variables) {
+					res = filter.GetFilterResult(method, local);
+					if (res.FilterResult == FilterResult.Hidden)
+						continue;
+					if (res.IsMatch && IsMatch(local.Name, local)) {
+						onMatch(new SearchResult {
+							Object = method,
+							Name = method.Name,
+							TypeImageInfo = MethodTreeNode.GetImageInfo(method, BackgroundType.Search),
+							Location = language.TypeToString(type, true),
+							LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
+							LoadedAssembly = ownerModule,
+						});
+						return;
+					}
+				}
+			}
+
+			res = filter.GetFilterResultBody(method);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
 			if (!res.IsMatch)
 				return;
 
-			var body = method.Body;
+			body = method.Body;
 			if (body == null)
-				return;
+				return; // Return immediately. All code here depends on a non-null body
+			loadedBody = true;
 			foreach (var instr in body.Instructions) {
 				object operand;
 				// Only check numbers and strings. Don't pass in any type of operand to IsMatch()
@@ -631,7 +668,6 @@ namespace ICSharpCode.ILSpy
 					break;
 				}
 			}
-			ICSharpCode.ILSpy.TreeNodes.Analyzer.Helpers.FreeMethodBody(method);
 		}
 
 		void Search(LoadedAssembly ownerModule, TypeDef type, FieldDef field)
