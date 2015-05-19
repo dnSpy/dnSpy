@@ -69,11 +69,11 @@ namespace ICSharpCode.ILSpy
 		}
 
 		public ImageSource SearchImage {
-			get { return Images.Instance.GetImage("Search", BackgroundType.Window); }
+			get { return ImageCache.Instance.GetImage("Search", BackgroundType.Window); }
 		}
 
 		public ImageSource ClearSearchImage {
-			get { return Images.Instance.GetImage("ClearSearch", BackgroundType.Window); }
+			get { return ImageCache.Instance.GetImage("ClearSearch", BackgroundType.Window); }
 		}
 
 		public string PaneName {
@@ -92,7 +92,7 @@ namespace ICSharpCode.ILSpy
 			public VisibleMembersFlags Flags { get; private set; }
 
 			public ImageSource Image {
-				get { return Images.Instance.GetImage(ImageName, BackgroundType.ComboBox); }
+				get { return ImageCache.Instance.GetImage(ImageName, BackgroundType.ComboBox); }
 			}
 
 			public SearchType(string name, string imageName, SearchMode searchMode, VisibleMembersFlags flags)
@@ -524,10 +524,10 @@ namespace ICSharpCode.ILSpy
 		public string Location { get; set; }
 		public string Name { get; set; }
 		public ImageSource Image {
-			get { return Images.Instance.GetImage(TypeImageInfo); }
+			get { return ImageCache.Instance.GetImage(TypeImageInfo); }
 		}
 		public ImageSource LocationImage {
-			get { return Images.Instance.GetImage(LocationImageInfo); }
+			get { return ImageCache.Instance.GetImage(LocationImageInfo); }
 		}
 		public ImageInfo TypeImageInfo { get; set; }
 		public ImageInfo LocationImageInfo { get; set; }
@@ -566,16 +566,15 @@ namespace ICSharpCode.ILSpy
 		public event PropertyChangedEventHandler PropertyChanged;
 	}
 
-	[ExportMainMenuCommand(Menu = "_View", MenuHeader = "_Search", MenuIcon = "Find", MenuCategory = "ShowPane", MenuOrder = 3200)]
-	[ExportToolbarCommand(ToolTip = "Search (Ctrl+Shift+F or Ctrl+E)", ToolbarIcon = "Find", ToolbarCategory = "View", ToolbarOrder = 9000)]
+	[ExportMainMenuCommand(Menu = "_Edit", MenuHeader = "_Search Assemblies", MenuIcon = "Find", MenuCategory = "Search", MenuOrder = 2091/*TODO: Fix MenuOrder*/)]
+	[ExportToolbarCommand(ToolTip = "Search Assemblies (Ctrl+K)", ToolbarIcon = "Find", ToolbarCategory = "View", ToolbarOrder = 9000)]
 	sealed class ShowSearchCommand : CommandWrapper
 	{
 		public ShowSearchCommand()
 			: base(NavigationCommands.Search)
 		{
 			NavigationCommands.Search.InputGestures.Clear();
-			NavigationCommands.Search.InputGestures.Add(new KeyGesture(Key.F, ModifierKeys.Control | ModifierKeys.Shift));
-			NavigationCommands.Search.InputGestures.Add(new KeyGesture(Key.E, ModifierKeys.Control));
+			NavigationCommands.Search.InputGestures.Add(new KeyGesture(Key.K, ModifierKeys.Control));
 		}
 	}
 

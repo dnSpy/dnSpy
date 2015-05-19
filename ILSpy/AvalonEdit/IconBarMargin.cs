@@ -87,10 +87,10 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 		{
 			Size renderSize = this.RenderSize;
 			var theme = Themes.Theme;
-			var bgColor = theme.GetColor(ColorType.SystemColorsControl).InheritedColor.Foreground.GetColor(null).Value;
-			drawingContext.DrawRectangle(theme.GetColor(ColorType.SystemColorsControl).InheritedColor.Foreground.GetBrush(null), null,
+			var bgColor = theme.GetColor(ColorType.IconBar).InheritedColor.Background.GetColor(null).Value;
+			drawingContext.DrawRectangle(theme.GetColor(ColorType.IconBar).InheritedColor.Background.GetBrush(null), null,
 			                             new Rect(0, 0, renderSize.Width, renderSize.Height));
-			drawingContext.DrawLine(new Pen(theme.GetColor(ColorType.SystemColorsControlDark).InheritedColor.Foreground.GetBrush(null), 1),
+			drawingContext.DrawLine(new Pen(theme.GetColor(ColorType.IconBarBorder).InheritedColor.Background.GetBrush(null), 1),
 			                        new Point(renderSize.Width - 0.5, 0),
 			                        new Point(renderSize.Width - 0.5, renderSize.Height));
 			

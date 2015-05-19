@@ -188,7 +188,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		internal static ImageSource GetIcon(TypeIcon typeIcon, BackgroundType bgType)
 		{
-			return Images.Instance.GetImage(GetImageInfo(typeIcon, bgType));
+			return ImageCache.Instance.GetImage(GetImageInfo(typeIcon, bgType));
 		}
 
 		internal static ImageInfo GetImageInfo(TypeDef type, BackgroundType bgType)

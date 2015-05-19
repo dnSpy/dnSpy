@@ -77,8 +77,14 @@ namespace ICSharpCode.ILSpy
 
 		void Themes_ThemeChanged(object sender, EventArgs e)
 		{
-			foreach (var c in ((AnalyzerRootNode)this.Root).GetRecursiveChildrenAndSelf())
-				c.RaiseUIPropsChanged();
+			foreach (var c in this.Root.DescendantsAndSelf()) {
+				var atv = c as AnalyzerTreeNode;
+				if (atv != null)
+					atv.RaiseUIPropsChanged();
+				var ilt = c as TreeNodes.ILSpyTreeNode;
+				if (ilt != null)
+					ilt.RaiseUIPropsChanged();
+			}
 		}
 
 		void MainWindow_Instance_CurrentAssemblyListChanged(object sender, NotifyCollectionChangedEventArgs e)

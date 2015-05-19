@@ -596,7 +596,7 @@ namespace ICSharpCode.ILSpy
 
 		void Themes_ThemeChanged(object sender, EventArgs e)
 		{
-			Images.Instance.OnThemeChanged();
+			ImageCache.Instance.OnThemeChanged();
 			UpdateControlColors();
 			foreach (var view in AllTextViews)
 				view.OnThemeUpdated();
@@ -680,7 +680,7 @@ namespace ICSharpCode.ILSpy
 				Content = new Image {
 					Width = 16,
 					Height = 16,
-					Source = Images.Instance.GetImage(command.Value, command.Metadata.ToolbarIcon, BackgroundType.Toolbar),
+					Source = ImageCache.Instance.GetImage(command.Value, command.Metadata.ToolbarIcon, BackgroundType.Toolbar),
 				}
 			};
 			ToolTipService.SetShowOnDisabled(button, true);
@@ -853,7 +853,7 @@ namespace ICSharpCode.ILSpy
 			var image = new Image {
 				Width = 16,
 				Height = 16,
-				Source = Images.Instance.GetImage(part, icon, bgType),
+				Source = ImageCache.Instance.GetImage(part, icon, bgType),
 			};
 			menuItem.Icon = image;
 			if (enable == false)
@@ -1262,6 +1262,15 @@ namespace ICSharpCode.ILSpy
 				var tabState = ActiveTabState;
 				if (tabState != null)
 					DecompileNodes(tabState, null, false, sessionSettings.FilterSettings.Language, tabState.DecompiledNodes);
+			}
+			else if (e.PropertyName == "ShowInternalApi") {
+				if (treeView.SelectedItem != null) {
+					this.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(delegate {
+						var item = treeView.SelectedItem;
+						if (item != null)
+							treeView.ScrollIntoView(item);
+					}));
+				}
 			}
 		}
 

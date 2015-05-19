@@ -1157,7 +1157,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (bpms.Count == 0)
 				menuItem.Header = "_Add Breakpoint";
 			else
-				menuItem.Header = bpms.Count == 1 ? "_Delete Breakpoint" : "_Delete Breakpoints";
+				menuItem.Header = bpms.Count == 1 ? "D_elete Breakpoint" : "D_elete Breakpoints";
 		}
 
 		bool CanToggleBP()

@@ -67,8 +67,7 @@ Ctrl+W		| Close current tab
 Ctrl+F4		| Close current tab
 Ctrl+Tab	| Go to next tab
 Ctrl+Shift+Tab | Go to previous tab
-Ctrl+E		| Open search pane
-Ctrl+Shift+F | Open search pane
+Ctrl+K		| Open search pane
 Ctrl+T		| (Search pane) Select Type
 Ctrl+M		| (Search pane) Select Member
 Ctrl+S		| (Search pane) Select Literal

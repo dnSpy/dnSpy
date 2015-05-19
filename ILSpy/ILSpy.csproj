@@ -382,6 +382,7 @@
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Commands\ExitCommand.cs" />
     <Compile Include="Commands\CommandWrapper.cs" />
+    <Compile Include="Commands\FindInCodeCommand.cs" />
     <Compile Include="Commands\ToolbarCommands.cs" />
     <Compile Include="Commands\ViewCommands.cs" />
     <Compile Include="DecompilerTabsWindow.xaml.cs">
@@ -389,6 +390,8 @@
     </Compile>
     <Compile Include="FilterSearcher.cs" />
     <Compile Include="HideWindowsButtons.cs" />
+    <Compile Include="Images\ImageCache.cs" />
+    <Compile Include="Images\ThemedImageCreator.cs" />
     <Compile Include="IPlugin.cs" />
     <Compile Include="MsgBox.xaml.cs">
       <DependentUpon>MsgBox.xaml</DependentUpon>
@@ -447,7 +450,6 @@
     <Compile Include="IPane.cs" />
     <Compile Include="ISmartTextOutput.cs" />
     <Compile Include="Languages\Language.cs" />
-    <Compile Include="Images\Images.cs" />
     <Compile Include="Languages\Languages.cs" />
     <Compile Include="LoadedAssembly.cs" />
     <Compile Include="Models\ToolTipRequestEventArgs.cs" />
@@ -831,6 +833,7 @@
     <Resource Include="Images\AssemblyLoading.png" />
     <Resource Include="Images\AssemblyModule.png" />
     <Resource Include="Images\AssemblyReference.png" />
+    <Resource Include="Images\AssemblyToModule.png" />
     <Resource Include="Images\AssemblyWarning.png" />
     <Resource Include="Images\Back.png" />
     <Resource Include="Images\Breakpoint.png" />
@@ -928,6 +931,7 @@
     <Resource Include="Images\MethodProtected.png" />
     <Resource Include="Images\MethodProtectedInternal.png" />
     <Resource Include="Images\ModuleReference.png" />
+    <Resource Include="Images\ModuleToAssembly.png" />
     <Resource Include="Images\NameSpace.png" />
     <Resource Include="Images\NewAssembly.png" />
     <Resource Include="Images\NewAssemblyModule.png" />

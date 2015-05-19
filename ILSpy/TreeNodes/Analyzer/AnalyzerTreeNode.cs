@@ -46,19 +46,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			get { return Themes.Theme.GetColor(dntheme.ColorType.NodePublic).InheritedColor.Foreground.GetBrush(null); }
 		}
 
-		public IEnumerable<AnalyzerTreeNode> GetRecursiveChildrenAndSelf()
-		{
-			yield return this;
-
-			foreach (var child in Children) {
-				var at = child as AnalyzerTreeNode;
-				if (at == null)
-					continue;
-				foreach (var sc in at.GetRecursiveChildrenAndSelf())
-					yield return sc;
-			}
-		}
-
 		public void RaiseUIPropsChanged()
 		{
 			RaisePropertyChanged("Icon");

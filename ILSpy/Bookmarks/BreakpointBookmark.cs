@@ -68,8 +68,8 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		
 		public override ImageSource GetImage(Color bgColor) {
 			return IsEnabled ?
-				Images.Instance.GetImage("Breakpoint", bgColor) :
-				Images.Instance.GetImage("DisabledBreakpoint", bgColor);
+				ImageCache.Instance.GetImage("Breakpoint", bgColor) :
+				ImageCache.Instance.GetImage("DisabledBreakpoint", bgColor);
 		}
 		
 		public event EventHandler ImageChanged;

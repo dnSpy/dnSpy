@@ -152,7 +152,7 @@ namespace ICSharpCode.ILSpy
 				stackPanel.Children.Add(
 					new Image {
 						Width = 16, Height = 16,
-						Source = Images.Instance.GetImage("OK", BackgroundType.Window),
+						Source = ImageCache.Instance.GetImage("OK", BackgroundType.Window),
 						Margin = new Thickness(4,0,4,0)
 					});
 				stackPanel.Children.Add(

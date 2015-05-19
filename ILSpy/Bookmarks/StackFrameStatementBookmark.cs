@@ -242,7 +242,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		public override ImageSource GetImage(Color bgColor) {
 			var name = GetImageName();
 			if (name != null)
-				return Images.Instance.GetImage(name, bgColor);
+				return ImageCache.Instance.GetImage(name, bgColor);
 			return null;
 		}
 

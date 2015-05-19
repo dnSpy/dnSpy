@@ -66,7 +66,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Icon {
-			get { return Images.Instance.GetImage("AssemblyReference", BackgroundType.TreeNode); }
+			get { return ImageCache.Instance.GetImage("AssemblyReference", BackgroundType.TreeNode); }
 		}
 		
 		public override bool ShowExpander {

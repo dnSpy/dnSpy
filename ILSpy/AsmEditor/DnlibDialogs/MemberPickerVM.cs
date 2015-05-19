@@ -222,6 +222,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 					showInternalApi = value;
 					OnPropertyChanged("ShowInternalApi");
 					CreateNewFilterSettings();
+					if (SelectedItem != null) {
+						if (makeVisible == null)
+							throw new InvalidOperationException();
+						makeVisible.ScrollIntoView(SelectedItem);
+					}
 				}
 			}
 		}

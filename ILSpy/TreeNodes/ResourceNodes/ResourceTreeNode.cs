@@ -58,7 +58,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Icon {
-			get { return Images.Instance.GetImage("Resource", BackgroundType.TreeNode); }
+			get { return ImageCache.Instance.GetImage("Resource", BackgroundType.TreeNode); }
 		}
 		
 		public override FilterResult Filter(FilterSettings settings)
@@ -87,7 +87,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			
 			ISmartTextOutput smartOutput = output as ISmartTextOutput;
 			if (smartOutput != null && r is EmbeddedResource) {
-				smartOutput.AddButton(Images.Instance.GetImage("Save", BackgroundType.Button), "Save", delegate { Save(null); });
+				smartOutput.AddButton(ImageCache.Instance.GetImage("Save", BackgroundType.Button), "Save", delegate { Save(null); });
 				output.WriteLine();
 			}
 		}

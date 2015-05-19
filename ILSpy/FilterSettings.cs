@@ -49,7 +49,7 @@ namespace ICSharpCode.ILSpy
 			this.filter = FilterNothingTreeViewNodeFilter.Instance;
 			this.origFilter = this.filter;
 			InitializeFilter();
-			this.ShowInternalApi = (bool?)element.Element("ShowInternalAPI") ?? true;
+			this.ShowInternalApi = (bool?)element.Element("ShowInternalApi") ?? true;
 			this.Language = Languages.GetLanguage("C#");
 		}
 		
@@ -57,7 +57,7 @@ namespace ICSharpCode.ILSpy
 		{
 			return new XElement(
 				"FilterSettings",
-				new XElement("ShowInternalAPI", this.ShowInternalApi)
+				new XElement("ShowInternalApi", this.ShowInternalApi)
 			);
 		}
 
@@ -104,7 +104,7 @@ namespace ICSharpCode.ILSpy
 				if (showInternalApi != value) {
 					showInternalApi = value;
 					InitializeFilter();
-					OnPropertyChanged("ShowInternalAPI");
+					OnPropertyChanged("ShowInternalApi");
 				}
 			}
 		}

@@ -26,7 +26,7 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 			DebugType baseType = (DebugType)shownType.BaseType;
 			if (baseType != null) {
 				yield return new TreeNode(
-					Images.GetIcon(TypeIcon.Class, BackgroundType.DebuggerToolTip),
+					ImageCache.GetIcon(TypeIcon.Class, BackgroundType.DebuggerToolTip),
 					"BaseClass",
 					baseType.Name,
 					baseType.FullName,

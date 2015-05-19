@@ -729,7 +729,7 @@ namespace ICSharpCode.ILSpy.TextView
 			output.WriteLine();
 			if (wasNormalLimit) {
 				output.AddButton(
-					Images.Instance.GetImage("ViewCode", BackgroundType.Button), "Display Code",
+					ImageCache.Instance.GetImage("ViewCode", BackgroundType.Button), "Display Code",
 					delegate {
 						DoDecompile(context, ExtendedOutputLengthLimit).HandleExceptions();
 					});
@@ -737,7 +737,7 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 			
 			output.AddButton(
-				Images.Instance.GetImage("Save", BackgroundType.Button), "Save Code",
+				ImageCache.Instance.GetImage("Save", BackgroundType.Button), "Save Code",
 				delegate {
 					SaveToDisk(context.Language, context.TreeNodes, context.Options);
 				});

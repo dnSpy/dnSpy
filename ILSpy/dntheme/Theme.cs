@@ -683,7 +683,7 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultColor3 = "#6D83A9",
 			},
 			new BrushColorInfo(ColorType.ScrollBarDisabledBackground, "ScrollBar disabled background") {
-				DefaultBackground = "#D1D1D1",
+				DefaultBackground = "#F5F5F5",
 				BackgroundResourceKey = "ScrollBarDisabledBackground",
 			},
 			new BrushColorInfo(ColorType.ScrollBarBackground, "ScrollBar background") {
@@ -695,9 +695,9 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "ScrollBarArrowButtonForeground",
 			},
 			new BrushColorInfo(ColorType.ScrollBarArrowButtonDisabled, "ScrollBar arrow button disabled") {
-				DefaultBackground = "#D1D1D1",
+				DefaultBackground = "#F5F5F5",
 				BackgroundResourceKey = "ScrollBarArrowButtonDisabledBackground",
-				DefaultForeground = "#A3A3A3",
+				DefaultForeground = "#D8D8D8",
 				ForegroundResourceKey = "ScrollBarArrowButtonDisabledForeground",
 			},
 			new BrushColorInfo(ColorType.ScrollBarArrowButtonMouseOverBackground, "ScrollBar arrow button mouse over background") {
@@ -943,6 +943,10 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#FF969696",
 				BackgroundResourceKey = "DockedPaneCloseButtonPathFill",
 			},
+			new BrushColorInfo(ColorType.DockedPaneTitleForeground, "DockedPane title foreground") {
+				DefaultForeground = "SystemColors.ControlText",
+				ForegroundResourceKey = "DockedPaneTitleForeground",
+			},
 			new BrushColorInfo(ColorType.DecompilerTextViewBorder, "DecompilerTextView border") {
 				DefaultBackground = "#FF828790",
 				BackgroundResourceKey = "DecompilerTextViewBorder",
@@ -984,6 +988,12 @@ namespace ICSharpCode.ILSpy.dntheme
 			new BrushColorInfo(ColorType.TreeViewLineBackground, "TreeView line background") {
 				DefaultBackground = "LightGray",
 				BackgroundResourceKey = "TreeViewLineBackground",
+			},
+			new BrushColorInfo(ColorType.IconBar, "IconBar") {
+				DefaultBackground = "#E6E7E8",
+			},
+			new BrushColorInfo(ColorType.IconBarBorder, "IconBar") {
+				DefaultBackground = "#CFD0D1",
 			},
 			new BrushColorInfo(ColorType.NodeAutoLoaded, "TreeView node auto loaded") {
 				DefaultForeground = "SteelBlue",

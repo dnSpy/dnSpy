@@ -169,10 +169,10 @@
 		<color name="progressbarborderbrush2" bg="#80FFFFFF" />
 		<color name="progressbarindeterminatebackground" bg="#803385AD" />
 		<color name="resizegripperforeground" fg="#E0E0E0" bg="#D0D0D0" color3="#C0C0C0" />
-		<color name="scrollbardisabledbackground" bg="#606060" />
+		<color name="scrollbardisabledbackground" bg="#3E3E3E" />
 		<color name="scrollbarbackground" bg="#404040" />
 		<color name="scrollbararrowbuttonforeground" bg="#D0D0D0" />
-		<color name="scrollbararrowbuttondisabled" fg="#606060" bg="#505050" />
+		<color name="scrollbararrowbuttondisabled" fg="#606060" bg="#3E3E3E" />
 		<color name="scrollbararrowbuttonmouseoverbackground" bg="#0A6F71" />
 		<color name="scrollbararrowbuttonpressed" fg="#FFFFFF" bg="#063F40" />
 		<color name="scrollbarthumbbackground" bg="#606060" />
@@ -183,7 +183,7 @@
 		<color name="scrollbarthumbmouseoverborder" bg="#0D8E91" />
 		<color name="scrollbarthumbpressedbackground" bg="#063F40" />
 		<color name="scrollbarthumbpressedborder" bg="#085F61" />
-		<color name="statusbar" fg="White" bg="#053233" />
+		<color name="statusbar" fg="White" bg="#007ACC" />
 		<color name="textboxborder" fg="#404040" bg="#505050" color3="#606060" />
 		<color name="tooltipbackground" fg="#454545" bg="#353535" />
 		<color name="tooltipborderbrush" bg="#505050" />
@@ -228,6 +228,7 @@
 		<color name="dockedpaneclosebuttonpressedbackground" fg="#303030" bg="#383838" />
 		<color name="dockedpaneclosebuttonpathstroke" bg="#303030" />
 		<color name="dockedpaneclosebuttonpathfill" bg="#909090" />
+		<color name="dockedpanetitleforeground" fg="#D0D0D0" />
 		<color name="decompilertextviewborder" bg="#606060" />
 		<color name="decompilertextviewwaitadornerbackground" bg="#A0404040" />
 		<color name="resourcetablealternationbackground1" bg="#252525" />
@@ -238,6 +239,8 @@
 		<color name="textboxerror" fg="#D0D0D0" bg="#660000" />
 		<color name="listarrowbackground" bg="#D0D0D0" />
 		<color name="treeviewlinebackground" bg="#606060" />
+		<color name="iconbar" bg="#333333" />
+		<color name="iconbarborder" bg="#555555" />
 		<color name="nodeautoloaded" fg="SteelBlue" />
 		<color name="nodepublic" fg="#D0D0D0" />
 		<color name="nodenotpublic" fg="#909090" />

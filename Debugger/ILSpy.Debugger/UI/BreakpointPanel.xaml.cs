@@ -132,7 +132,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 			}
 
 			public ImageSource Image {
-				get { return bpm.GetImage(Images.GetColor(BackgroundType.GridViewItem)); }
+				get { return bpm.GetImage(ImageCache.GetColor(BackgroundType.GridViewItem)); }
 			}
 
 			public bool CanToggle {

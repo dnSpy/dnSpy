@@ -117,10 +117,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 	{
 		const string CMD_NAME = "Convert NetModule to Assembly";
 		[ExportContextMenuEntry(Header = CMD_NAME,
+								Icon = "ModuleToAssembly",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
 							Menu = "_Edit",
+							MenuIcon = "ModuleToAssembly",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand
@@ -232,10 +234,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 	{
 		const string CMD_NAME = "Convert Assembly to NetModule";
 		[ExportContextMenuEntry(Header = CMD_NAME,
+								Icon = "AssemblyToModule",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
 							Menu = "_Edit",
+							MenuIcon = "AssemblyToModule",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand

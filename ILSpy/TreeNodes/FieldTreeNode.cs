@@ -130,7 +130,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		internal static ImageSource GetIcon(MemberIcon icon, BackgroundType bgType)
 		{
-			return Images.Instance.GetImage(GetImageInfo(icon, bgType));
+			return ImageCache.Instance.GetImage(GetImageInfo(icon, bgType));
 		}
 
 		internal static ImageInfo GetImageInfo(MemberIcon icon, BackgroundType bgType)

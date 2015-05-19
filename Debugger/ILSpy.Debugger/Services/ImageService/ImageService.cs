@@ -13,7 +13,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		public static ImageSource GetImage(string name, BackgroundType bgType)
 		{
 			try {
-				return Images.Instance.GetImageUsingUri("pack://application:,,,/ILSpy.Debugger.Plugin;component/Images/" + name + ".png", bgType);
+				return ImageCache.Instance.GetImageUsingUri("pack://application:,,,/ILSpy.Debugger.Plugin;component/Images/" + name + ".png", bgType);
 			}
 			catch {
 				// resource not found

@@ -74,7 +74,7 @@
 										<ColumnDefinition Width="Auto" />
 									</Grid.ColumnDefinitions>
 									<TextBlock Text="{TemplateBinding Title}" Margin="3,0"
-											   Foreground="{DynamicResource SystemColorsInactiveCaptionText}"
+											   Foreground="{DynamicResource DockedPaneTitleForeground}"
 											   VerticalAlignment="Center"/>
 									<Button x:Name="PART_Close" Grid.Column="2" VerticalAlignment="Center" Width="16" Height="16" DockPanel.Dock="Right" Style="{DynamicResource CloseButtonStyle}" ToolTip="Close" Margin="1">
 										<Path x:Name="Path"

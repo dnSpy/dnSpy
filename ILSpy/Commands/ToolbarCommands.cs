@@ -59,7 +59,7 @@ namespace ICSharpCode.ILSpy.Commands
 				Content = new Image {
 					Width = 16,
 					Height = 16,
-					Source = Images.Instance.GetImage("PrivateInternal", BackgroundType.Toolbar),
+					Source = ImageCache.Instance.GetImage("PrivateInternal", BackgroundType.Toolbar),
 				},
 				ToolTip = "Show Internal Types and Members",
 			};
