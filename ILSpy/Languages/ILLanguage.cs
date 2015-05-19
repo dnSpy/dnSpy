@@ -181,12 +181,10 @@ namespace ICSharpCode.ILSpy
 				}
 			}
 		}
-		
-		public override string TypeToString(ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null)
+
+		public override void TypeToString(ITextOutput output, ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null)
 		{
-			PlainTextOutput output = new PlainTextOutput();
 			t.WriteTo(output, includeNamespace ? ILNameSyntax.TypeName : ILNameSyntax.ShortTypeName);
-			return output.ToString();
 		}
 	}
 }

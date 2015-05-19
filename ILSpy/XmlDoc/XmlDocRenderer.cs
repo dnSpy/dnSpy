@@ -23,15 +23,38 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using System.Xml;
+using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.XmlDoc
 {
+	public interface IXmlDocOutput
+	{
+		void WriteNewLine();
+		void WriteSpace();
+		void Write(string s, TextTokenType tokenType);
+	}
+
 	/// <summary>
 	/// Renders XML documentation into a WPF <see cref="TextBlock"/>.
 	/// </summary>
-	public class XmlDocRenderer
+	public class XmlDocRenderer : IXmlDocOutput
 	{
 		readonly StringBuilder ret = new StringBuilder();
+
+		void IXmlDocOutput.WriteNewLine()
+		{
+			ret.AppendLine();
+		}
+
+		void IXmlDocOutput.WriteSpace()
+		{
+			ret.Append(' ');
+		}
+
+		void IXmlDocOutput.Write(string s, TextTokenType tokenType)
+		{
+			ret.Append(s);
+		}
 		
 		public void AppendText(string text)
 		{
@@ -40,93 +63,132 @@ namespace ICSharpCode.ILSpy.XmlDoc
 		
 		public void AddXmlDocumentation(string xmlDocumentation)
 		{
+			WriteXmlDoc(this, xmlDocumentation);
+		}
+
+		internal static void WriteXmlDoc(IXmlDocOutput output, string xmlDocumentation)
+		{
 			if (xmlDocumentation == null)
 				return;
 			Debug.WriteLine(xmlDocumentation);
 			try {
 				XmlTextReader r = new XmlTextReader(new StringReader("<docroot>" + xmlDocumentation + "</docroot>"));
 				r.XmlResolver = null;
-				AddXmlDocumentation(r);
+				AddXmlDocumentation(output, r);
 			} catch (XmlException) {
 			}
 		}
 		
 		static readonly Regex whitespace = new Regex(@"\s+");
-		
-		public void AddXmlDocumentation(XmlReader xml)
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="output"></param>
+		/// <param name="xml"></param>
+		static void AddXmlDocumentation(IXmlDocOutput output, XmlReader xml)
 		{
+			string lastElemName = string.Empty;
+			bool isNewLine = true;
 			while (xml.Read()) {
 				if (xml.NodeType == XmlNodeType.Element) {
 					string elname = xml.Name.ToLowerInvariant();
+					lastElemName = elname;
 					switch (elname) {
 						case "filterpriority":
 						case "remarks":
 							xml.Skip();
 							break;
 						case "example":
-							ret.Append(Environment.NewLine);
-							ret.Append("Example:");
-							ret.Append(Environment.NewLine);
+							output.WriteNewLine();
+							output.Write("Example", TextTokenType.XmlDocToolTipExample);
+							output.Write(":", TextTokenType.XmlDocToolTipColon);
+							output.WriteNewLine();
+							isNewLine = true;
 							break;
 						case "exception":
-							ret.Append(Environment.NewLine);
-							ret.Append(GetCref(xml["cref"]));
-							ret.Append(": ");
+							output.WriteNewLine();
+							output.Write(GetCref(xml["cref"]), TextTokenType.XmlDocToolTipExceptionCref);
+							output.Write(":", TextTokenType.XmlDocToolTipColon);
+							output.WriteSpace();
+							isNewLine = false;
 							break;
 						case "returns":
-							ret.Append(Environment.NewLine);
-							ret.Append("Returns: ");
+							output.WriteNewLine();
+							output.Write("Returns", TextTokenType.XmlDocToolTipReturns);
+							output.Write(":", TextTokenType.XmlDocToolTipColon);
+							output.WriteSpace();
+							isNewLine = false;
 							break;
 						case "see":
-							ret.Append(GetCref(xml["cref"]));
-							ret.Append(xml["langword"]);
+							output.Write(GetCref(xml["cref"]), TextTokenType.XmlDocToolTipSeeCref);
+							output.Write((xml["langword"] ?? string.Empty).Trim(), TextTokenType.XmlDocToolTipSeeLangword);
+							isNewLine = false;
 							break;
 						case "seealso":
-							ret.Append(Environment.NewLine);
-							ret.Append("See also: ");
-							ret.Append(GetCref(xml["cref"]));
+							output.WriteNewLine();
+							output.Write("See also", TextTokenType.XmlDocToolTipSeeAlso);
+							output.Write(":", TextTokenType.XmlDocToolTipColon);
+							output.WriteSpace();
+							output.Write(GetCref(xml["cref"]), TextTokenType.XmlDocToolTipSeeAlsoCref);
+							isNewLine = false;
 							break;
 						case "paramref":
-							ret.Append(xml["name"]);
+							output.Write((xml["name"] ?? string.Empty).Trim(), TextTokenType.XmlDocToolTipParamRefName);
+							isNewLine = false;
 							break;
 						case "param":
-							ret.Append(Environment.NewLine);
-							ret.Append(whitespace.Replace(xml["name"].Trim()," "));
-							ret.Append(": ");
+							output.WriteNewLine();
+							output.Write(whitespace.Replace((xml["name"] ?? string.Empty).Trim(), " "), TextTokenType.XmlDocToolTipParamName);
+							output.Write(":", TextTokenType.XmlDocToolTipColon);
+							output.WriteSpace();
+							isNewLine = false;
 							break;
 						case "typeparam":
-							ret.Append(Environment.NewLine);
-							ret.Append(whitespace.Replace(xml["name"].Trim()," "));
-							ret.Append(": ");
+							output.WriteNewLine();
+							output.Write(whitespace.Replace((xml["name"] ?? string.Empty).Trim(), " "), TextTokenType.XmlDocToolTipTypeParamName);
+							output.Write(":", TextTokenType.XmlDocToolTipColon);
+							output.WriteSpace();
+							isNewLine = false;
 							break;
 						case "value":
-							ret.Append(Environment.NewLine);
-							ret.Append("Value: ");
-							ret.Append(Environment.NewLine);
+							output.WriteNewLine();
+							output.Write("Value", TextTokenType.XmlDocToolTipValue);
+							output.Write(":", TextTokenType.XmlDocToolTipColon);
+							output.WriteNewLine();
+							isNewLine = true;
 							break;
 						case "br":
 						case "para":
-							ret.Append(Environment.NewLine);
+							output.WriteNewLine();
+							isNewLine = true;
 							break;
 					}
 				} else if (xml.NodeType == XmlNodeType.Text) {
-					ret.Append(whitespace.Replace(xml.Value, " "));
+					var s = whitespace.Replace(xml.Value, " ");
+					if (isNewLine)
+						s = s.TrimStart();
+					output.Write(s, lastElemName == "summary" ? TextTokenType.XmlDocSummary : TextTokenType.XmlDocToolTipText);
+					lastElemName = string.Empty;
+					isNewLine = false;
+				}
+				else {
+					lastElemName = string.Empty;
 				}
 			}
 		}
 		
 		static string GetCref(string cref)
 		{
-			if (cref == null || cref.Trim().Length==0) {
-				return "";
-			}
+			if (string.IsNullOrWhiteSpace(cref))
+				return string.Empty;
 			if (cref.Length < 2) {
-				return cref;
+				return cref.Trim();
 			}
 			if (cref.Substring(1, 1) == ":") {
-				return cref.Substring(2, cref.Length - 2);
+				return cref.Substring(2, cref.Length - 2).Trim();
 			}
-			return cref;
+			return cref.Trim();
 		}
 		
 		public TextBlock CreateTextBlock()

@@ -806,33 +806,36 @@ namespace ICSharpCode.ILSpy
 			};
 		}
 
-		public override string TypeToString(ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null)
+		public override void TypeToString(ITextOutput output, ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null)
 		{
 			ConvertTypeOptions options = ConvertTypeOptions.IncludeTypeParameterDefinitions;
 			if (includeNamespace)
 				options |= ConvertTypeOptions.IncludeNamespace;
 
-			return TypeToString(options, type, typeAttributes);
+			TypeToString(output, options, type, typeAttributes);
 		}
 
-		string TypeToString(ConvertTypeOptions options, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null)
+		void TypeToString(ITextOutput output, ConvertTypeOptions options, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null)
 		{
 			AstType astType = AstBuilder.ConvertType(type, typeAttributes, options);
 
-			StringWriter w = new StringWriter();
 			if (type.TryGetByRefSig() != null) {
 				ParamDef pd = typeAttributes as ParamDef;
-				if (pd != null && (!pd.IsIn && pd.IsOut))
-					w.Write("out ");
-				else
-					w.Write("ref ");
+				if (pd != null && (!pd.IsIn && pd.IsOut)) {
+					output.Write("out", TextTokenType.Keyword);
+					output.WriteSpace();
+				}
+				else {
+					output.Write("ref", TextTokenType.Keyword);
+					output.WriteSpace();
+				}
 
 				if (astType is ComposedType && ((ComposedType)astType).PointerRank > 0)
 					((ComposedType)astType).PointerRank--;
 			}
 
-			astType.AcceptVisitor(new CSharpOutputVisitor(w, FormattingOptionsFactory.CreateAllman()));
-			return w.ToString();
+			var ctx = new DecompilerContext(type.Module);
+			astType.AcceptVisitor(new CSharpOutputVisitor(new TextTokenWriter(output, ctx), FormattingOptionsFactory.CreateAllman()));
 		}
 
 		public override string FormatPropertyName(PropertyDef property, bool? isIndexer)
@@ -871,8 +874,11 @@ namespace ICSharpCode.ILSpy
 		{
 			if (type == null)
 				throw new ArgumentNullException("type");
-			
-			return TypeToString(ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions, type);
+
+			var writer = new StringWriter();
+			var output = new PlainTextOutput(writer);
+			TypeToString(output, ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions, type);
+			return writer.ToString();
 		}
 
 		public override bool ShowMember(IMemberRef member)
@@ -888,7 +894,7 @@ namespace ICSharpCode.ILSpy
 				return TreeNodes.Analyzer.Helpers.GetOriginalCodeLocation(member);
 		}
 
-		public override string GetTooltip(IMemberRef member)
+		public override void WriteTooltip(ITextOutput output, IMemberRef member)
 		{
 			MethodDef md = member as MethodDef;
 			PropertyDef pd = member as PropertyDef;
@@ -909,12 +915,11 @@ namespace ICSharpCode.ILSpy
 				foreach (var attribute in b.SyntaxTree.Descendants.OfType<AttributeSection>())
 					attribute.Remove();
 
-				StringWriter w = new StringWriter();
-				b.GenerateCode(new PlainTextOutput(w));
-				return Regex.Replace(w.ToString(), @"\s+", " ").TrimEnd();
+				b.GenerateCode(output);
+				return;
 			}
 
-			return base.GetTooltip(member);
+			base.WriteTooltip(output, member);
 		}
 	}
 }

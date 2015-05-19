@@ -26,6 +26,10 @@ namespace ICSharpCode.ILSpy.TextView
 {
 	sealed class LanguageTokens
 	{
+		public int Length {
+			get { return currentOffset; }
+		}
+
 		// current write offset
 		int currentOffset;
 		// current offset of this token. Only gets updated when a new token is saved

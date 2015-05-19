@@ -37,6 +37,8 @@
 		<color name="opcode" fg="#993366" />
 		<color name="ildirective" fg="#009900" />
 		<color name="ilmodule" fg="#660033" />
+		<color name="xmldoctooltipdescriptiontext" italics="true" bold="true" />
+		<color name="xmldoctooltiptext" italics="true" bold="false" />
 		<color name="linenumber" fg="#2B91AF" />
 		<color name="xmlcomment" fg="Green" italics="true" />
 		<color name="xmlcdata" fg="Blue" />

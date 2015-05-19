@@ -527,36 +527,38 @@ namespace ICSharpCode.ILSpy.VB
 		{
 			if (type == null)
 				throw new ArgumentNullException("type");
-			
-			return TypeToString(ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions, type);
+
+			var writer = new StringWriter();
+			var output = new PlainTextOutput(writer);
+			TypeToString(output, ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions, type);
+			return writer.ToString();
 		}
-		
-		public override string TypeToString(ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null)
+
+		public override void TypeToString(ITextOutput output, ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null)
 		{
 			ConvertTypeOptions options = ConvertTypeOptions.IncludeTypeParameterDefinitions;
 			if (includeNamespace)
 				options |= ConvertTypeOptions.IncludeNamespace;
 
-			return TypeToString(options, type, typeAttributes);
+			TypeToString(output, options, type, typeAttributes);
 		}
-		
-		string TypeToString(ConvertTypeOptions options, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null)
+
+		void TypeToString(ITextOutput output, ConvertTypeOptions options, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null)
 		{
 			var envProvider = new ILSpyEnvironmentProvider();
 			var converter = new CSharpToVBConverterVisitor(envProvider);
 			var astType = AstBuilder.ConvertType(type, typeAttributes, options);
-			StringWriter w = new StringWriter();
 
 			if (type.TryGetByRefSig() != null) {
-				w.Write("ByRef ");
+				output.Write("ByRef", TextTokenType.Keyword);
+				output.WriteSpace();
 				if (astType is NRefactory.CSharp.ComposedType && ((NRefactory.CSharp.ComposedType)astType).PointerRank > 0)
 					((NRefactory.CSharp.ComposedType)astType).PointerRank--;
 			}
 			
 			var vbAstType = astType.AcceptVisitor(converter, null);
 			
-			vbAstType.AcceptVisitor(new OutputVisitor(w, new VBFormattingOptions()), null);
-			return w.ToString();
+			vbAstType.AcceptVisitor(new OutputVisitor(new VBTextOutputFormatter(output), new VBFormattingOptions()), null);
 		}
 	}
 }

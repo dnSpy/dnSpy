@@ -27,6 +27,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -223,11 +224,18 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			if (segment.Reference is OpCode) {
 				OpCode code = (OpCode)segment.Reference;
+				var tooltip = new TextBlock();
 				var s = ILLanguage.GetOpCodeDocumentation(code);
-				string opCodeHex = code.Size > 1 ? string.Format("0x{0:x4}", code.Value) : string.Format("0x{0:x2}", code.Value);
-				if (s != null)
-					return new TextBlock { Text = string.Format("{0} ({1}) - {2}", code.Name, opCodeHex, s) };
-				return string.Format("{0} ({1})", code.Name, opCodeHex);
+				string opCodeHex = code.Size > 1 ? string.Format("0x{0:X4}", code.Value) : string.Format("0x{0:X2}", code.Value);
+				tooltip.Inlines.Add(new Run(code.Name) { FontWeight = FontWeights.Bold });
+				tooltip.Inlines.Add(" (");
+				tooltip.Inlines.Add(opCodeHex);
+				tooltip.Inlines.Add(")");
+				if (s != null) {
+					tooltip.Inlines.Add(" - ");
+					tooltip.Inlines.Add(new Run(s) { FontStyle = FontStyles.Italic });
+				}
+				return tooltip;
 			} else if (segment.Reference is IMemberRef) {
 				IMemberRef mr = (IMemberRef)segment.Reference;
 				// if possible, resolve the reference
@@ -238,21 +246,19 @@ namespace ICSharpCode.ILSpy.TextView
 				} else if (mr is IField && ((IField)mr).IsField) {
 					mr = ((IField)mr).ResolveFieldDef() ?? mr;
 				}
-				XmlDocRenderer renderer = new XmlDocRenderer();
-				renderer.AppendText(MainWindow.Instance.GetLanguage(this).GetTooltip(mr));
+				var toolTipGen = new ToolTipGenerator();
+				MainWindow.Instance.GetLanguage(this).WriteTooltip(toolTipGen.TextOutput, mr);
 				try {
 					XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(mr.Module);
 					if (docProvider != null) {
 						string documentation = GetDocumentation(docProvider, mr);
-						if (documentation != null) {
-							renderer.AppendText(Environment.NewLine);
-							renderer.AddXmlDocumentation(documentation);
-						}
+						if (documentation != null)
+							toolTipGen.WriteXmlDoc(documentation);
 					}
 				} catch (XmlException) {
 					// ignore
 				}
-				return renderer.CreateTextBlock();
+				return toolTipGen.Create();
 			}
 			return null;
 		}
@@ -412,7 +418,7 @@ namespace ICSharpCode.ILSpy.TextView
 
 			Debug.WriteLine("Showing {0} characters of output", textOutput.TextLength);
 			Stopwatch w = Stopwatch.StartNew();
-			textEditor.LanguageTokens = textOutput.tokens;
+			textEditor.LanguageTokens = textOutput.LanguageTokens;
 			textEditor.LanguageTokens.Finish();
 
 			ClearLocalReferenceMarks();

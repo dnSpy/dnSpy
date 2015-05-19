@@ -5,5 +5,7 @@
 		<color name="selectedreturnstatement" fg="Black" bg="#68B4E4B4" />
 		<color name="breakpointstatement" fg="White" bg="#963A46" />
 		<color name="disabledbreakpointstatement" bg="#30963A46" />
+		<color name="xmldoctooltipdescriptiontext" italics="true" bold="true" />
+		<color name="xmldoctooltiptext" italics="true" bold="false" />
 	</colors>
 </theme>

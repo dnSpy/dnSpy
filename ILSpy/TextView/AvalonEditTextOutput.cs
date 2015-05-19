@@ -69,7 +69,10 @@ namespace ICSharpCode.ILSpy.TextView
 	/// </summary>
 	public sealed class AvalonEditTextOutput : ISmartTextOutput
 	{
-		internal LanguageTokens tokens = new LanguageTokens();
+		internal LanguageTokens LanguageTokens {
+			get { return tokens; }
+		}
+		LanguageTokens tokens = new LanguageTokens();
 		int lastLineStart = 0;
 		int lineNumber = 1;
 		readonly StringBuilder b = new StringBuilder();
@@ -122,6 +125,10 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		public int TextLength {
 			get { return b.Length; }
+		}
+
+		internal string Text {
+			get { return b.ToString(); }
 		}
 		
 		public ICSharpCode.NRefactory.TextLocation Location {
@@ -267,18 +274,21 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			tokens.Append(tokenType, c);
 			b.Append(c);
+			Debug.Assert(b.Length == tokens.Length);
 		}
 
 		void Append(TextTokenType tokenType, string s)
 		{
 			tokens.Append(tokenType, s);
 			b.Append(s);
+			Debug.Assert(b.Length == tokens.Length);
 		}
 
 		void AppendLine()
 		{
 			tokens.AppendLine();
 			b.AppendLine();
+			Debug.Assert(b.Length == tokens.Length);
 		}
 	}
 }

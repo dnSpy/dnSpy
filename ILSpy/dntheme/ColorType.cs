@@ -209,6 +209,76 @@ namespace ICSharpCode.ILSpy.dntheme
 		ILModule,
 
 		/// <summary>
+		/// ":" string
+		/// </summary>
+		XmlDocToolTipColon,
+
+		/// <summary>
+		/// "Example" string
+		/// </summary>
+		XmlDocToolTipExample,
+
+		/// <summary>
+		/// cref attribute in an exception tag
+		/// </summary>
+		XmlDocToolTipExceptionCref,
+
+		/// <summary>
+		/// "Returns" string
+		/// </summary>
+		XmlDocToolTipReturns,
+
+		/// <summary>
+		/// cref attribute in a see tag
+		/// </summary>
+		XmlDocToolTipSeeCref,
+
+		/// <summary>
+		/// langword attribute in a see tag
+		/// </summary>
+		XmlDocToolTipSeeLangword,
+
+		/// <summary>
+		/// "See also" string
+		/// </summary>
+		XmlDocToolTipSeeAlso,
+
+		/// <summary>
+		/// cref attribute in a seealso tag
+		/// </summary>
+		XmlDocToolTipSeeAlsoCref,
+
+		/// <summary>
+		/// name attribute in a paramref tag
+		/// </summary>
+		XmlDocToolTipParamRefName,
+
+		/// <summary>
+		/// name attribute in a param tag
+		/// </summary>
+		XmlDocToolTipParamName,
+
+		/// <summary>
+		/// name attribute in a typeparam tag
+		/// </summary>
+		XmlDocToolTipTypeParamName,
+
+		/// <summary>
+		/// "Value" string
+		/// </summary>
+		XmlDocToolTipValue,
+
+		/// <summary>
+		/// Summary text
+		/// </summary>
+		XmlDocSummary,
+
+		/// <summary>
+		/// Any other XML doc text
+		/// </summary>
+		XmlDocToolTipText,
+
+		/// <summary>
 		/// Default text in all windows
 		/// </summary>
 		DefaultText,
@@ -557,6 +627,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		NodeAutoLoaded,
 		NodePublic,
 		NodeNotPublic,
+		XmlDocToolTipDescriptionText,
 
 		/// <summary>
 		/// Must be last

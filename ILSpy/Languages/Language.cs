@@ -177,26 +177,34 @@ namespace ICSharpCode.ILSpy
 		/// <summary>
 		/// Converts a type reference into a string. This method is used by the member tree node for parameter and return types.
 		/// </summary>
-		public virtual string TypeToString(ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null)
+		public string TypeToString(ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null)
+		{
+			var writer = new StringWriter();
+			var output = new PlainTextOutput(writer);
+			TypeToString(output, type, includeNamespace, typeAttributes);
+			return writer.ToString();
+		}
+
+		public virtual void TypeToString(ITextOutput output, ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null)
 		{
 			if (type == null)
-				return string.Empty;
+				return;
 			if (includeNamespace)
-				return type.FullName;
+				output.Write(type.FullName, TextTokenHelper.GetTextTokenType(type));
 			else
-				return type.Name;
+				output.Write(type.Name, TextTokenHelper.GetTextTokenType(type));
 		}
 
 		/// <summary>
 		/// Converts a member signature to a string.
 		/// This is used for displaying the tooltip on a member reference.
 		/// </summary>
-		public virtual string GetTooltip(IMemberRef member)
+		public virtual void WriteTooltip(ITextOutput output, IMemberRef member)
 		{
 			if (member is ITypeDefOrRef)
-				return TypeToString((ITypeDefOrRef)member, true);
+				TypeToString(output, (ITypeDefOrRef)member, true);
 			else
-				return member.ToString();
+				output.Write(member.ToString(), TextTokenHelper.GetTextTokenType(member));
 		}
 
 		public virtual string FormatPropertyName(PropertyDef property, bool? isIndexer = null)
