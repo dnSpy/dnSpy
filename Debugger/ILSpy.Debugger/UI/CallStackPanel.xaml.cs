@@ -304,6 +304,8 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 			IMemberRef mr = module.ResolveToken(item.Token) as IMemberRef;
 			if (mr == null)
 				return;
+			if (Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift)
+				MainWindow.Instance.OpenNewEmptyTab();
 			var textView = MainWindow.Instance.SafeActiveTextView;
 			if (DebugUtils.JumpTo(textView, mr, item.MethodKey, item.ILOffset))
 				MainWindow.Instance.SetTextEditorFocus(textView);
@@ -311,7 +313,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 
 		void view_KeyDown(object sender, KeyEventArgs e)
         {
-			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Enter) {
+			if ((Keyboard.Modifiers == ModifierKeys.None || Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift) && e.Key == Key.Enter) {
 				GoToStatement(view.SelectedItem as CallStackItem);
 				e.Handled = true;
 				return;

@@ -220,6 +220,8 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		{
             if (null == bm)
                 return;
+			if (Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift)
+				MainWindow.Instance.OpenNewEmptyTab();
 			var textView = MainWindow.Instance.SafeActiveTextView;
 			if (DebugUtils.JumpToReference(textView, bm.MemberReference, () => bm.GetLocation(textView)))
 				MainWindow.Instance.SetTextEditorFocus(textView);
@@ -233,7 +235,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 				e.Handled = true;
 				return;
 			}
-			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Enter) {
+			if ((Keyboard.Modifiers == ModifierKeys.None || Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift) && e.Key == Key.Enter) {
 				if (view.SelectedItems.Count > 0)
 					GoToBookmark(((BreakpointBookmarkVM)view.SelectedItems[0]).BreakpointBookmark);
 				e.Handled = true;

@@ -355,7 +355,7 @@ namespace ICSharpCode.ILSpy
 		
 		void ListBox_KeyDown(object sender, KeyEventArgs e)
 		{
-			if (e.Key == Key.Return) {
+			if ((Keyboard.Modifiers == ModifierKeys.None || Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift) && e.Key == Key.Return) {
 				e.Handled = true;
 				JumpToSelectedItem();
 			}
@@ -365,6 +365,8 @@ namespace ICSharpCode.ILSpy
 		{
 			SearchResult result = listBox.SelectedItem as SearchResult;
 			if (result != null) {
+				if (Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift)
+					MainWindow.Instance.OpenNewEmptyTab();
 				var obj = result.Object;
 				if (obj is AssemblyTreeNode)
 					obj = ((AssemblyTreeNode)obj).LoadedAssembly.AssemblyDefinition;

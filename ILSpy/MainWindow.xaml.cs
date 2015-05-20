@@ -2303,6 +2303,11 @@ namespace ICSharpCode.ILSpy
 			tabGroupsManager.ActiveTabGroup.SetSelectedTab(tabState);
 		}
 
+		public void OpenNewEmptyTab()
+		{
+			tabGroupsManager.ActiveTabGroup.SetSelectedTab(CreateEmptyTabState());
+		}
+
 		internal void OpenReferenceInNewTab(DecompilerTextView textView, ReferenceSegment reference)
 		{
 			if (textView == null || reference == null)

@@ -76,6 +76,7 @@ Enter		| (Text view) Follow reference at caret
 Ctrl+F12	| (Text view) Follow reference at caret in a new tab
 Ctrl+Enter	| (Text view) Follow reference at caret in a new tab
 Ctrl+Click	| (Text view) Follow the clicked reference in a new tab
+Shift+Dbl Click| (BP/Call stack/Search/etc windows) Open BP/method/etc in a new tab
 Ctrl+C		| (Text view) Copy selected text
 Ctrl+S		| Save code
 Ctrl+Shift+S| Save all modified assemblies and netmodules

@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Windows.Input;
 using ICSharpCode.TreeView;
 using dnlib.DotNet;
 
@@ -34,6 +35,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		public override void ActivateItem(System.Windows.RoutedEventArgs e)
 		{
 			e.Handled = true;
+			if (Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift)
+				MainWindow.Instance.OpenNewEmptyTab();
 			MainWindow.Instance.JumpToReference(this.Member);
 		}
 		
