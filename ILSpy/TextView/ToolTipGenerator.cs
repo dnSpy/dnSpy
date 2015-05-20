@@ -72,25 +72,34 @@ namespace ICSharpCode.ILSpy.TextView
 		public void WriteXmlDocParameter(string xmlDoc, string paramName)
 		{
 			needsNewLine = !output.Text.EndsWith(Environment.NewLine);
-			WriteXmlDocParameter(this, xmlDoc, paramName);
+			WriteXmlDoc(this, xmlDoc, paramName, "param");
 			needsNewLine = false;
 		}
 
-		static void WriteXmlDocParameter(IXmlDocOutput output, string xmlDoc, string paramName)
+		public bool WriteXmlDocGeneric(string xmlDoc, string gpName)
 		{
-			if (xmlDoc == null)
-				return;
+			needsNewLine = !output.Text.EndsWith(Environment.NewLine);
+			bool res = WriteXmlDoc(this, xmlDoc, gpName, "typeparam");
+			needsNewLine = false;
+			return res;
+		}
+
+		static bool WriteXmlDoc(IXmlDocOutput output, string xmlDoc, string name, string xmlElemName)
+		{
+			if (xmlDoc == null || name == null)
+				return false;
 			try {
 				var xml = XDocument.Load(new StringReader("<docroot>" + xmlDoc + "</docroot>"), LoadOptions.None);
-				foreach (var pxml in xml.Root.Elements("param")) {
-					if ((string)pxml.Attribute("name") == paramName) {
+				foreach (var pxml in xml.Root.Elements(xmlElemName)) {
+					if ((string)pxml.Attribute("name") == name) {
 						WriteXmlDocParameter(output, pxml);
-						break;
+						return true;
 					}
 				}
 			}
 			catch {
 			}
+			return false;
 		}
 
 		static void WriteXmlDocParameter(IXmlDocOutput output, XElement xml)

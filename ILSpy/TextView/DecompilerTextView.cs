@@ -237,6 +237,8 @@ namespace ICSharpCode.ILSpy.TextView
 					tooltip.Inlines.Add(new Run(s) { FontStyle = FontStyles.Italic });
 				}
 				return tooltip;
+			} else if (segment.Reference is GenericParam) {
+				return GenerateTooltip((GenericParam)segment.Reference);
 			} else if (segment.Reference is IMemberRef) {
 				IMemberRef mr = (IMemberRef)segment.Reference;
 				// if possible, resolve the reference
@@ -266,6 +268,7 @@ namespace ICSharpCode.ILSpy.TextView
 				var ilVar = (ILVariable)segment.Reference;
 				return GenerateTooltip(ilVar.OriginalVariable, ilVar.Name);
 			}
+
 			return null;
 		}
 
@@ -273,6 +276,7 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			if (variable == null)
 				return name == null ? null : string.Format("(local variable) {0}", name);
+
 			var toolTipGen = new ToolTipGenerator();
 			var isLocal = variable is Local;
 			toolTipGen.TextOutput.Write(isLocal ? "(local variable)" : "(parameter)", TextTokenType.Text);
@@ -291,6 +295,41 @@ namespace ICSharpCode.ILSpy.TextView
 				}
 				catch (XmlException) {
 				}
+			}
+
+			return toolTipGen.Create();
+		}
+
+		object GenerateTooltip(GenericParam gp)
+		{
+			if (gp == null)
+				return null;
+
+			var toolTipGen = new ToolTipGenerator();
+			toolTipGen.TextOutput.Write(gp.Name, TextTokenHelper.GetTextTokenType(gp));
+			toolTipGen.TextOutput.WriteSpace();
+			toolTipGen.TextOutput.Write("in", TextTokenType.Text);
+			toolTipGen.TextOutput.WriteSpace();
+			MainWindow.Instance.GetLanguage(this).WriteTooltip(toolTipGen.TextOutput, gp.Owner);
+
+			try {
+				XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(gp.Module);
+				if (docProvider != null) {
+					string documentation = GetDocumentation(docProvider, gp.Owner);
+					if ((documentation == null || !toolTipGen.WriteXmlDocGeneric(documentation, gp.Name)) && gp.Owner is TypeDef) {
+						// If there's no doc available, use the parent class' documentation if this
+						// is a generic type parameter (and not a generic method parameter).
+						TypeDef owner = ((TypeDef)gp.Owner).DeclaringType;
+						while (owner != null) {
+							documentation = GetDocumentation(docProvider, owner);
+							if (documentation != null && toolTipGen.WriteXmlDocGeneric(documentation, gp.Name))
+								break;
+							owner = owner.DeclaringType;
+						}
+					}
+				}
+			}
+			catch (XmlException) {
 			}
 
 			return toolTipGen.Create();

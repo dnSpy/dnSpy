@@ -508,7 +508,10 @@ namespace ICSharpCode.Decompiler.Ast
 				ApplyTypeArgumentsTo(baseType, typeArguments);
 				return baseType;
 			} else if (type is GenericSig) {
-				return new SimpleType(((GenericSig)type).TypeName).WithAnnotation(type);
+				var sig = (GenericSig)type;
+				var simpleType = new SimpleType(sig.TypeName).WithAnnotation(sig.GenericParam).WithAnnotation(type);
+				simpleType.IdentifierToken.WithAnnotation(sig.GenericParam).WithAnnotation(type);
+				return simpleType;
 			} else if (type is TypeDefOrRefSig) {
 				return ConvertType(((TypeDefOrRefSig)type).TypeDefOrRef, typeAttributes, ref typeIndex, options, depth);
 			} else
@@ -865,6 +868,7 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			foreach (var gp in genericParameters) {
 				TypeParameterDeclaration tp = new TypeParameterDeclaration();
+				tp.AddAnnotation(gp);
 				tp.NameToken = Identifier.Create(CleanName(gp.Name)).WithAnnotation(TextTokenHelper.GetTextTokenType(gp));
 				if (gp.IsContravariant)
 					tp.Variance = VarianceModifier.Contravariant;
@@ -880,6 +884,7 @@ namespace ICSharpCode.Decompiler.Ast
 			foreach (var gp in genericParameters) {
 				Constraint c = new Constraint();
 				c.TypeParameter = new SimpleType(CleanName(gp.Name)).WithAnnotation(gp);
+				c.TypeParameter.IdentifierToken.WithAnnotation(gp);
 				// class/struct must be first
 				if (gp.HasReferenceTypeConstraint)
 					c.BaseTypes.Add(new PrimitiveType("class"));

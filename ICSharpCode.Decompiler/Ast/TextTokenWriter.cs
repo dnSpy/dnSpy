@@ -393,7 +393,8 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			return node is EntityDeclaration
 				|| (node is VariableInitializer && node.Parent is FieldDeclaration)
-				|| node is FixedVariableInitializer;
+				|| node is FixedVariableInitializer
+				|| node is TypeParameterDeclaration;
 		}
 
 		class DebugState
