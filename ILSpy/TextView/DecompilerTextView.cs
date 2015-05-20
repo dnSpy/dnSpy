@@ -253,11 +253,8 @@ namespace ICSharpCode.ILSpy.TextView
 				MainWindow.Instance.GetLanguage(this).WriteTooltip(toolTipGen.TextOutput, mr);
 				try {
 					XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(mr.Module);
-					if (docProvider != null) {
-						string documentation = GetDocumentation(docProvider, mr);
-						if (documentation != null)
-							toolTipGen.WriteXmlDoc(documentation);
-					}
+					if (docProvider != null)
+						toolTipGen.WriteXmlDoc(GetDocumentation(docProvider, mr));
 				} catch (XmlException) {
 					// ignore
 				}
@@ -288,9 +285,14 @@ namespace ICSharpCode.ILSpy.TextView
 				try {
 					XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(method.Module);
 					if (docProvider != null) {
-						string documentation = GetDocumentation(docProvider, method);
-						if (documentation != null)
-							toolTipGen.WriteXmlDocParameter(documentation, variable.Name);
+						if (!toolTipGen.WriteXmlDocParameter(GetDocumentation(docProvider, method), variable.Name)) {
+							TypeDef owner = method.DeclaringType;
+							while (owner != null) {
+								if (toolTipGen.WriteXmlDocParameter(GetDocumentation(docProvider, owner), variable.Name))
+									break;
+								owner = owner.DeclaringType;
+							}
+						}
 					}
 				}
 				catch (XmlException) {
@@ -315,14 +317,12 @@ namespace ICSharpCode.ILSpy.TextView
 			try {
 				XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(gp.Module);
 				if (docProvider != null) {
-					string documentation = GetDocumentation(docProvider, gp.Owner);
-					if ((documentation == null || !toolTipGen.WriteXmlDocGeneric(documentation, gp.Name)) && gp.Owner is TypeDef) {
+					if (!toolTipGen.WriteXmlDocGeneric(GetDocumentation(docProvider, gp.Owner), gp.Name) && gp.Owner is TypeDef) {
 						// If there's no doc available, use the parent class' documentation if this
 						// is a generic type parameter (and not a generic method parameter).
 						TypeDef owner = ((TypeDef)gp.Owner).DeclaringType;
 						while (owner != null) {
-							documentation = GetDocumentation(docProvider, owner);
-							if (documentation != null && toolTipGen.WriteXmlDocGeneric(documentation, gp.Name))
+							if (toolTipGen.WriteXmlDocGeneric(GetDocumentation(docProvider, owner), gp.Name))
 								break;
 							owner = owner.DeclaringType;
 						}

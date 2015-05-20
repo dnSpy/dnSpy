@@ -69,11 +69,12 @@ namespace ICSharpCode.ILSpy.TextView
 			needsNewLine = false;
 		}
 
-		public void WriteXmlDocParameter(string xmlDoc, string paramName)
+		public bool WriteXmlDocParameter(string xmlDoc, string paramName)
 		{
 			needsNewLine = !output.Text.EndsWith(Environment.NewLine);
-			WriteXmlDoc(this, xmlDoc, paramName, "param");
+			bool res = WriteXmlDoc(this, xmlDoc, paramName, "param");
 			needsNewLine = false;
+			return res;
 		}
 
 		public bool WriteXmlDocGeneric(string xmlDoc, string gpName)
