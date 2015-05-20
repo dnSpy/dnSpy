@@ -25,6 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Resources;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Controls;
@@ -133,7 +134,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 						delegate {
 							var textView = options.DecompilerTextView;
 							if (textView != null)
-								return new ResourceStringTable(stringTableEntries, textView);
+								return new ResourceStringTable(stringTableEntries, textView) { Cursor = Cursors.Arrow };
 							return new TextBlock { Text = "no active tab!" };
 						}
 					);
@@ -148,7 +149,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 						delegate {
 							var textView = options.DecompilerTextView;
 							if (textView != null)
-								return new ResourceObjectTable(otherEntries, textView);
+								return new ResourceObjectTable(otherEntries, textView) { Cursor = Cursors.Arrow };
 							return new TextBlock { Text = "no active tab!" };
 						}
 					);
