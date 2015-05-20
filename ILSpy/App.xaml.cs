@@ -120,12 +120,33 @@ namespace ICSharpCode.ILSpy
 			EventManager.RegisterClassHandler(typeof(Window),
 			                                  Hyperlink.RequestNavigateEvent,
 			                                  new RequestNavigateEventHandler(Window_RequestNavigate));
+
+			FixEditorContextMenuStyle();
 			
 			try {
 				DebuggerService.SetDebugger(compositionContainer.GetExport<IDebugger>());
 			} catch {
 				// unable to find a IDebugger
 			}
+		}
+
+		// The text editor creates an EditorContextMenu which derives from ContextMenu. This
+		// class is private in the assembly and can't be referenced from XAML. In order to style
+		// this class we must get the type at runtime and add its style to the Resources.
+		void FixEditorContextMenuStyle()
+		{
+			var module = typeof(System.Windows.Controls.ContextMenu).Module;
+			var type = module.GetType("System.Windows.Documents.TextEditorContextMenu+EditorContextMenu", false, false);
+			Debug.Assert(type != null);
+			if (type == null)
+				return;
+			const string styleKey = "EditorContextMenuStyle";
+			var style = this.Resources[styleKey];
+			Debug.Assert(style != null);
+			if (style == null)
+				return;
+			this.Resources.Remove(styleKey);
+			this.Resources.Add(type, style);
 		}
 		
 		string FullyQualifyPath(string argument)

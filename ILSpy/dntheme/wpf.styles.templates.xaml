@@ -5173,6 +5173,12 @@
            TargetType="{x:Type ComboBox}">
 	</Style>
 
+	<!-- See FixEditorContextMenuStyle() in App.xaml.cs for more info -->
+	<Style x:Key="EditorContextMenuStyle"
+		   BasedOn="{StaticResource {x:Type ContextMenu}}"
+		   TargetType="{x:Type ContextMenu}">
+	</Style>
+
 	<Style x:Key="DialogWindow" TargetType="{x:Type Window}" BasedOn="{StaticResource {x:Type Window}}">
 		<Setter Property="ShowInTaskbar" Value="False"/>
 		<Setter Property="UseLayoutRounding" Value="True"/>
