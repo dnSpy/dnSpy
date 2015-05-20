@@ -70,7 +70,6 @@ namespace ICSharpCode.ILSpy.XmlDoc
 		{
 			if (xmlDocumentation == null)
 				return;
-			Debug.WriteLine(xmlDocumentation);
 			try {
 				XmlTextReader r = new XmlTextReader(new StringReader("<docroot>" + xmlDocumentation + "</docroot>"));
 				r.XmlResolver = null;
@@ -93,7 +92,8 @@ namespace ICSharpCode.ILSpy.XmlDoc
 			while (xml.Read()) {
 				if (xml.NodeType == XmlNodeType.Element) {
 					string elname = xml.Name.ToLowerInvariant();
-					lastElemName = elname;
+					if (!xml.IsEmptyElement)
+						lastElemName = elname;
 					switch (elname) {
 						case "filterpriority":
 						case "remarks":
@@ -163,22 +163,20 @@ namespace ICSharpCode.ILSpy.XmlDoc
 							output.WriteNewLine();
 							isNewLine = true;
 							break;
+						default:
+							break;
 					}
 				} else if (xml.NodeType == XmlNodeType.Text) {
 					var s = whitespace.Replace(xml.Value, " ");
 					if (isNewLine)
 						s = s.TrimStart();
 					output.Write(s, lastElemName == "summary" ? TextTokenType.XmlDocSummary : TextTokenType.XmlDocToolTipText);
-					lastElemName = string.Empty;
 					isNewLine = false;
-				}
-				else {
-					lastElemName = string.Empty;
 				}
 			}
 		}
 		
-		static string GetCref(string cref)
+		internal static string GetCref(string cref)
 		{
 			if (string.IsNullOrWhiteSpace(cref))
 				return string.Empty;

@@ -37,6 +37,7 @@ using CSharp = ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.VB;
 using ICSharpCode.NRefactory.VB.Visitors;
 using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 
 namespace ICSharpCode.ILSpy.VB
 {
@@ -559,6 +560,15 @@ namespace ICSharpCode.ILSpy.VB
 			var vbAstType = astType.AcceptVisitor(converter, null);
 			
 			vbAstType.AcceptVisitor(new OutputVisitor(new VBTextOutputFormatter(output), new VBFormattingOptions()), null);
+		}
+
+		public override void WriteTooltip(ITextOutput output, dnlib.DotNet.IVariable variable, string name)
+		{
+			output.Write(GetName(variable, name), variable is Local ? TextTokenType.Local : TextTokenType.Parameter);
+			output.WriteSpace();
+			output.Write("As", TextTokenType.Keyword);
+			output.WriteSpace();
+			WriteTooltip(output, variable.Type.ToTypeDefOrRef());
 		}
 	}
 }

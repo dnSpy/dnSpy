@@ -43,6 +43,7 @@ using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Search;
 using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger;
@@ -259,8 +260,40 @@ namespace ICSharpCode.ILSpy.TextView
 					// ignore
 				}
 				return toolTipGen.Create();
+			} else if (segment.Reference is Parameter) {
+				return GenerateTooltip((Parameter)segment.Reference, null);
+			} else if (segment.Reference is ILVariable) {
+				var ilVar = (ILVariable)segment.Reference;
+				return GenerateTooltip(ilVar.OriginalVariable, ilVar.Name);
 			}
 			return null;
+		}
+
+		object GenerateTooltip(IVariable variable, string name)
+		{
+			if (variable == null)
+				return name == null ? null : string.Format("(local variable) {0}", name);
+			var toolTipGen = new ToolTipGenerator();
+			var isLocal = variable is Local;
+			toolTipGen.TextOutput.Write(isLocal ? "(local variable)" : "(parameter)", TextTokenType.Text);
+			toolTipGen.TextOutput.WriteSpace();
+			MainWindow.Instance.GetLanguage(this).WriteTooltip(toolTipGen.TextOutput, variable, name);
+
+			if (!isLocal) {
+				var method = ((Parameter)variable).Method;
+				try {
+					XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(method.Module);
+					if (docProvider != null) {
+						string documentation = GetDocumentation(docProvider, method);
+						if (documentation != null)
+							toolTipGen.WriteXmlDocParameter(documentation, variable.Name);
+					}
+				}
+				catch (XmlException) {
+				}
+			}
+
+			return toolTipGen.Create();
 		}
 
 		string GetDocumentation(XmlDocumentationProvider docProvider, IMemberRef mr)

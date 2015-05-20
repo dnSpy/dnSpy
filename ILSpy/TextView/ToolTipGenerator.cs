@@ -20,9 +20,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Xml.Linq;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.dntheme;
@@ -65,6 +67,65 @@ namespace ICSharpCode.ILSpy.TextView
 			needsNewLine = !output.Text.EndsWith(Environment.NewLine);
 			XmlDocRenderer.WriteXmlDoc(this, xmlDoc);
 			needsNewLine = false;
+		}
+
+		public void WriteXmlDocParameter(string xmlDoc, string paramName)
+		{
+			needsNewLine = !output.Text.EndsWith(Environment.NewLine);
+			WriteXmlDocParameter(this, xmlDoc, paramName);
+			needsNewLine = false;
+		}
+
+		static void WriteXmlDocParameter(IXmlDocOutput output, string xmlDoc, string paramName)
+		{
+			if (xmlDoc == null)
+				return;
+			try {
+				var xml = XDocument.Load(new StringReader("<docroot>" + xmlDoc + "</docroot>"), LoadOptions.None);
+				foreach (var pxml in xml.Root.Elements("param")) {
+					if ((string)pxml.Attribute("name") == paramName) {
+						WriteXmlDocParameter(output, pxml);
+						break;
+					}
+				}
+			}
+			catch {
+			}
+		}
+
+		static void WriteXmlDocParameter(IXmlDocOutput output, XElement xml)
+		{
+			foreach (var elem in xml.DescendantNodes()) {
+				if (elem is XText)
+					output.Write(((XText)elem).Value, TextTokenType.XmlDocSummary);
+				else if (elem is XElement) {
+					var xelem = (XElement)elem;
+					switch (xelem.Name.ToString().ToUpperInvariant()) {
+					case "SEE":
+						var cref = xelem.Attribute("cref");
+						if (cref != null)
+							output.Write(XmlDocRenderer.GetCref((string)cref), TextTokenType.XmlDocToolTipSeeCref);
+						var langword = xelem.Attribute("langword");
+						if (langword != null)
+							output.Write(((string)langword).Trim(), TextTokenType.XmlDocToolTipSeeLangword);
+						break;
+					case "PARAMREF":
+						var nameAttr = xml.Attribute("name");
+						if (nameAttr != null)
+							output.Write(((string)nameAttr).Trim(), TextTokenType.XmlDocToolTipParamRefName);
+						break;
+					case "BR":
+					case "PARA":
+						output.WriteNewLine();
+						break;
+					default:
+						output.Write(elem.ToString(), TextTokenType.XmlDocSummary);
+						break;
+					}
+				}
+				else
+					output.Write(elem.ToString(), TextTokenType.XmlDocSummary);
+			}
 		}
 
 		IEnumerable<Tuple<string, int>> GetLines(string s)

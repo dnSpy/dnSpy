@@ -24,6 +24,7 @@ using System.Linq;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 
 namespace ICSharpCode.ILSpy
 {
@@ -205,6 +206,23 @@ namespace ICSharpCode.ILSpy
 				TypeToString(output, (ITypeDefOrRef)member, true);
 			else
 				output.Write(member.ToString(), TextTokenHelper.GetTextTokenType(member));
+		}
+
+		public virtual void WriteTooltip(ITextOutput output, IVariable variable, string name)
+		{
+			WriteTooltip(output, variable.Type.ToTypeDefOrRef());
+			output.WriteSpace();
+			output.Write(GetName(variable, name), variable is Local ? TextTokenType.Local : TextTokenType.Parameter);
+		}
+
+		protected static string GetName(IVariable variable, string name)
+		{
+			if (!string.IsNullOrWhiteSpace(name))
+				return name;
+			var n = variable.Name;
+			if (!string.IsNullOrWhiteSpace(n))
+				return n;
+			return string.Format("#{0}", variable.Index);
 		}
 
 		public virtual string FormatPropertyName(PropertyDef property, bool? isIndexer = null)
