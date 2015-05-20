@@ -206,7 +206,7 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			IMemberRef memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
-			if (memberRef != null && node is PrimitiveType)
+			if (memberRef != null && (node is PrimitiveType || node is ConstructorInitializer || node is BaseReferenceExpression))
 				output.WriteReference(keyword, memberRef, TextTokenType.Keyword);
 			else
 				output.Write(keyword, TextTokenType.Keyword);
@@ -217,7 +217,7 @@ namespace ICSharpCode.Decompiler.Ast
 			// Attach member reference to token only if there's no identifier in the current node.
 			IMemberRef memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
-			if (memberRef != null && node.GetChildByRole(Roles.Identifier).IsNull)
+			if (token != ":" && memberRef != null && node.GetChildByRole(Roles.Identifier).IsNull)
 				output.WriteReference(token, memberRef, tokenType);
 			else
 				output.Write(token, tokenType);

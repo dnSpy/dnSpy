@@ -999,6 +999,7 @@ namespace ICSharpCode.Decompiler.Ast
 				if (cecilMethod.DeclaringType != null && cecilMethod.DeclaringType.ScopeType.ResolveTypeDef() != this.methodDef.DeclaringType) {
 					// If we're not calling a method in the current class; we must be calling one in the base class.
 					target = new BaseReferenceExpression();
+					target.AddAnnotation(cecilMethod.DeclaringType);
 				}
 			}
 			
