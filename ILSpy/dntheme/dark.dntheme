@@ -187,7 +187,7 @@
 		<color name="scrollbarthumbpressedborder" bg="#085F61" />
 		<color name="statusbar" fg="White" bg="#007ACC" />
 		<color name="textboxborder" fg="#404040" bg="#505050" color3="#606060" />
-		<color name="tooltipbackground" fg="#252525" bg="#353535" />
+		<color name="tooltipbackground" fg="#252525" bg="#252525" />
 		<color name="tooltipborderbrush" bg="#505050" />
 		<color name="tooltipforeground" fg="#D0D0D0" />
 		<color name="tveditlistborder" bg="#FF7F9DB9" />
