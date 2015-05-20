@@ -834,6 +834,14 @@ namespace ICSharpCode.ILSpy
 					((ComposedType)astType).PointerRank--;
 			}
 
+			var module = type.Module;
+			if (module == null && type is TypeSpec && ((TypeSpec)type).TypeSig.RemovePinnedAndModifiers() is GenericSig) {
+				var sig = (GenericSig)((TypeSpec)type).TypeSig.RemovePinnedAndModifiers();
+				if (sig.OwnerType != null)
+					module = sig.OwnerType.Module;
+				if (module == null && sig.OwnerMethod != null && sig.OwnerMethod.DeclaringType != null)
+					module = sig.OwnerMethod.DeclaringType.Module;
+			}
 			var ctx = new DecompilerContext(type.Module);
 			astType.AcceptVisitor(new CSharpOutputVisitor(new TextTokenWriter(output, ctx), FormattingOptionsFactory.CreateAllman()));
 		}

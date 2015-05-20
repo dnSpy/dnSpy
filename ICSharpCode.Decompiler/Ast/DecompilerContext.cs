@@ -35,25 +35,9 @@ namespace ICSharpCode.Decompiler
 		public DecompilerSettings Settings = new DecompilerSettings();
 		public bool CurrentMethodIsAsync;
 		
-//		public ITypeResolveContext TypeResolveContext;
-//		public IProjectContent ProjectContent;
-		
 		public DecompilerContext(ModuleDef currentModule)
 		{
-			if (currentModule == null)
-				throw new ArgumentNullException("currentModule");
 			this.CurrentModule = currentModule;
-			
-//			this.ProjectContent = new CecilTypeResolveContext(currentModule);
-//			List<ITypeResolveContext> resolveContexts = new List<ITypeResolveContext>();
-//			resolveContexts.Add(this.ProjectContent);
-//			foreach (AssemblyNameReference r in currentModule.AssemblyReferences) {
-//				AssemblyDefinition d = currentModule.AssemblyResolver.Resolve(r);
-//				if (d != null) {
-//					resolveContexts.Add(new CecilTypeResolveContext(d.MainModule));
-//				}
-//			}
-//			this.TypeResolveContext = new CompositeTypeResolveContext(resolveContexts);
 		}
 		
 		/// <summary>
