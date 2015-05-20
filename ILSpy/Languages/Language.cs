@@ -200,17 +200,17 @@ namespace ICSharpCode.ILSpy
 		/// Converts a member signature to a string.
 		/// This is used for displaying the tooltip on a member reference.
 		/// </summary>
-		public virtual void WriteTooltip(ITextOutput output, IMemberRef member)
+		public virtual void WriteTooltip(ITextOutput output, IMemberRef member, IHasCustomAttribute typeAttributes)
 		{
 			if (member is ITypeDefOrRef)
-				TypeToString(output, (ITypeDefOrRef)member, true);
+				TypeToString(output, (ITypeDefOrRef)member, true, typeAttributes);
 			else
 				output.Write(member.ToString(), TextTokenHelper.GetTextTokenType(member));
 		}
 
 		public virtual void WriteTooltip(ITextOutput output, IVariable variable, string name)
 		{
-			WriteTooltip(output, variable.Type.ToTypeDefOrRef());
+			WriteTooltip(output, variable.Type.ToTypeDefOrRef(), variable is Parameter ? ((Parameter)variable).ParamDef : null);
 			output.WriteSpace();
 			output.Write(GetName(variable, name), variable is Local ? TextTokenType.Local : TextTokenType.Parameter);
 		}

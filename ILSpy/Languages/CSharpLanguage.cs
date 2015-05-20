@@ -902,7 +902,7 @@ namespace ICSharpCode.ILSpy
 				return TreeNodes.Analyzer.Helpers.GetOriginalCodeLocation(member);
 		}
 
-		public override void WriteTooltip(ITextOutput output, IMemberRef member)
+		public override void WriteTooltip(ITextOutput output, IMemberRef member, IHasCustomAttribute typeAttributes)
 		{
 			MethodDef md = member as MethodDef;
 			PropertyDef pd = member as PropertyDef;
@@ -927,7 +927,7 @@ namespace ICSharpCode.ILSpy
 				return;
 			}
 
-			base.WriteTooltip(output, member);
+			base.WriteTooltip(output, member, typeAttributes);
 		}
 	}
 }

@@ -568,7 +568,7 @@ namespace ICSharpCode.ILSpy.VB
 			output.WriteSpace();
 			output.Write("As", TextTokenType.Keyword);
 			output.WriteSpace();
-			WriteTooltip(output, variable.Type.ToTypeDefOrRef());
+			WriteTooltip(output, variable.Type.ToTypeDefOrRef(), variable is Parameter ? ((Parameter)variable).ParamDef : null);
 		}
 	}
 }

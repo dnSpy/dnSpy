@@ -250,7 +250,7 @@ namespace ICSharpCode.ILSpy.TextView
 					mr = ((IField)mr).ResolveFieldDef() ?? mr;
 				}
 				var toolTipGen = new ToolTipGenerator();
-				MainWindow.Instance.GetLanguage(this).WriteTooltip(toolTipGen.TextOutput, mr);
+				MainWindow.Instance.GetLanguage(this).WriteTooltip(toolTipGen.TextOutput, mr, null);
 				try {
 					XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(mr.Module);
 					if (docProvider != null)
@@ -312,7 +312,7 @@ namespace ICSharpCode.ILSpy.TextView
 			toolTipGen.TextOutput.WriteSpace();
 			toolTipGen.TextOutput.Write("in", TextTokenType.Text);
 			toolTipGen.TextOutput.WriteSpace();
-			MainWindow.Instance.GetLanguage(this).WriteTooltip(toolTipGen.TextOutput, gp.Owner);
+			MainWindow.Instance.GetLanguage(this).WriteTooltip(toolTipGen.TextOutput, gp.Owner, null);
 
 			try {
 				XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(gp.Module);
