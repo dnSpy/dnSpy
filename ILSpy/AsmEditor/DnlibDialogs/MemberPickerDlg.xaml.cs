@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Windows.Threading;
 using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 using ICSharpCode.TreeView;
 
@@ -45,8 +47,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		void IMakeVisible.ScrollIntoView(object item)
 		{
 			var node = item as SharpTreeNode;
-			if (node != null)
-				treeView.ScrollIntoView(node);
+			if (node != null) {
+				// Calling ScrollIntoView() immediately won't always work so delay a little bit.
+				this.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(delegate {
+					treeView.ScrollIntoView(node);
+				}));
+			}
 		}
 	}
 }
