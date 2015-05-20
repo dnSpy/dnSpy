@@ -688,7 +688,7 @@ namespace ICSharpCode.Decompiler.Ast
 							localVariablesToDefine.Add((ILVariable)operand);
 						Expression expr;
 						if (v.IsParameter && v.OriginalParameter.IsHiddenThisParameter)
-							expr = new ThisReferenceExpression();
+							expr = new ThisReferenceExpression().WithAnnotation(methodDef.DeclaringType);
 						else
 							expr = Ast.IdentifierExpression.Create(((ILVariable)operand).Name, ((ILVariable)operand).IsParameter ? TextTokenType.Parameter : TextTokenType.Local).WithAnnotation(operand);
 						return v.IsParameter && v.Type is ByRefSig ? MakeRef(expr) : expr;
@@ -696,7 +696,7 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Ldloca: {
 						ILVariable v = (ILVariable)operand;
 						if (v.IsParameter && v.OriginalParameter.IsHiddenThisParameter)
-							return MakeRef(new ThisReferenceExpression());
+							return MakeRef(new ThisReferenceExpression().WithAnnotation(methodDef.DeclaringType));
 						if (!v.IsParameter)
 							localVariablesToDefine.Add((ILVariable)operand);
 						return MakeRef(Ast.IdentifierExpression.Create(((ILVariable)operand).Name, ((ILVariable)operand).IsParameter ? TextTokenType.Parameter : TextTokenType.Local).WithAnnotation(operand));

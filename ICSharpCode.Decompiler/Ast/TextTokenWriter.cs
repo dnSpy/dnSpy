@@ -206,7 +206,7 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			IMemberRef memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
-			if (memberRef != null && (node is PrimitiveType || node is ConstructorInitializer || node is BaseReferenceExpression))
+			if (memberRef != null && (node is PrimitiveType || node is ConstructorInitializer || node is BaseReferenceExpression || node is ThisReferenceExpression))
 				output.WriteReference(keyword, memberRef, TextTokenType.Keyword);
 			else
 				output.Write(keyword, TextTokenType.Keyword);
