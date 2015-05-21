@@ -117,6 +117,41 @@
 		<color name="toolbarcomboboxtransparentbuttonfill" bg="#D0D0D0" />
 		<color name="checkboxfillnormal" bg="#404040" />
 		<color name="checkboxstroke" bg="#606060" />
+		<color name="commoncheckmarkstroke" bg="#A0A0A0" />
+		<color name="commoncheckmarkpressedstroke" bg="#A0A0A0" />
+		<color name="commonradiobuttondisabledglyphstroke" bg="#808080" />
+		<color name="commonradiobuttonglyphstroke" bg="#032020" />
+		<color name="commoncheckmarkdisabledfill" bg="#C0C0C0" />
+		<color name="commoncheckmarkfill" bg="#D0D0D0" />
+		<color name="commoncheckmarkpressedfill" bg="#A0A0A0" />
+		<color name="commonradiobuttonglyphdisabledfill" fg="#A0A0A0" bg="#0A6F71" color3="#032020" />
+		<color name="commonradiobuttonglyphfill" fg="#D0D0D0" bg="#A0A0A0" color3="#808080" />
+		<color name="commonradiobuttonglyphhoverfill" fg="#A0A0A0" bg="#808080" color3="#606060" />
+		<color name="commonradiobuttonglyphpressedfill" fg="#808080" bg="#606060" color3="#404040" />
+		<color name="commonhoverbackgroundoverlay" bg="#56BBBD" />
+		<color name="commonpressedbackgroundoverlay" bg="#0E9EA1" />
+		<color name="commondisabledbackgroundoverlay" bg="#606060" />
+		<color name="commonhoverborderoverlay" bg="#063F40" />
+		<color name="commonpressedborderoverlay" bg="#032020" />
+		<color name="commondisabledborderoverlay" bg="#A0A0A0" />
+		<color name="commoncheckboxdisabledinnerborderpen" fg="#606060" bg="#626262" color3="#646464" />
+		<color name="commoncheckboxinnerborderpen" fg="#606060" bg="#505050" color3="#404040" />
+		<color name="commoncheckboxhoverinnerborderpen" fg="#606060" bg="#686868" color3="#707070" />
+		<color name="commoncheckboxpressedinnerborderpen" fg="#505050" bg="#585858" color3="#606060" />
+		<color name="commonindeterminatedisabledinnerborderpen" fg="#808080" bg="#888888" color3="#909090" />
+		<color name="commonindeterminateinnerborderpen" fg="#56BBBD" bg="#3EB1B4" color3="#26A8AA" />
+		<color name="commonindeterminatehoverinnerborderpen" fg="#0B7E81" bg="#0A6F71" color3="#085F61" />
+		<color name="commonindeterminatepressedinnerborderpen" fg="#26A8AA" bg="#0E9EA1" color3="#0D8E91" />
+		<color name="commonradiobuttoninnerborderpen" fg="#606060" bg="#404040" />
+		<color name="commonradiobuttonhoverinnerborderpen" fg="#505050" bg="#606060" />
+		<color name="commonradiobuttonpressedinnerborderpen" fg="#303030" bg="#404040" />
+		<color name="commoncheckboxinnerfill" fg="#303030" bg="#383838" />
+		<color name="commoncheckboxhoverinnerfill" fg="#505050" bg="#606060" />
+		<color name="commoncheckboxpressedinnerfill" fg="#707070" bg="#808080" />
+		<color name="commonindeterminatedisabledfill" fg="#074F50" bg="#0D8E91" />
+		<color name="commonindeterminatefill" fg="#085F61" bg="#042F30" />
+		<color name="commonindeterminatehoverfill" fg="#074F50" bg="#063F40" />
+		<color name="commonindeterminatepressedfill" fg="#042F30" bg="#032020" />
 		<color name="radiobuttonbackground" bg="#404040" />
 		<color name="buttoniconbackground" bg="#404040" />
 		<color name="buttonnormalbackground" fg="#606060" bg="#505050" color3="#404040" color4="#303030" />
@@ -187,6 +222,10 @@
 		<color name="scrollbarthumbpressedborder" bg="#085F61" />
 		<color name="statusbar" fg="White" bg="#007ACC" />
 		<color name="textboxborder" fg="#404040" bg="#505050" color3="#606060" />
+		<color name="textboxhoverborder" fg="#0A6F71" bg="#085F61" color3="#074F50" />
+		<color name="textboxfocusedborder" fg="#074F50" bg="#063F40" color3="#042F30" />
+		<color name="textboxdisabledbackground" bg="#808080" />
+		<color name="textboxdisabledborder" bg="#606060" />
 		<color name="tooltipbackground" fg="#252525" bg="#252525" />
 		<color name="tooltipborderbrush" bg="#505050" />
 		<color name="tooltipforeground" fg="#D0D0D0" />

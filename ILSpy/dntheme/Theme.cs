@@ -120,6 +120,8 @@ namespace ICSharpCode.ILSpy.dntheme
 	{
 		public object BackgroundResourceKey;
 		public object ForegroundResourceKey;
+		public double? BackgroundOpacity;
+		public double? ForegroundOpacity;
 
 		public static BrushColorInfo CreateSystemColor(ColorType colorType, string name)
 		{
@@ -138,11 +140,23 @@ namespace ICSharpCode.ILSpy.dntheme
 		{
 			if (ForegroundResourceKey != null) {
 				Debug.Assert(hlColor.Foreground != null);
-				yield return new Tuple<object, object>(ForegroundResourceKey, hlColor.Foreground.GetBrush(null));
+				if (ForegroundOpacity == null)
+					yield return new Tuple<object, object>(ForegroundResourceKey, hlColor.Foreground.GetBrush(null));
+				else {
+					var color = hlColor.Foreground.GetColor(null).Value;
+					var brush = new SolidColorBrush(color) { Opacity = ForegroundOpacity.Value };
+					yield return new Tuple<object, object>(ForegroundResourceKey, brush);
+				}
 			}
 			if (BackgroundResourceKey != null) {
 				Debug.Assert(hlColor.Background != null);
-				yield return new Tuple<object, object>(BackgroundResourceKey, hlColor.Background.GetBrush(null));
+				if (BackgroundOpacity == null)
+					yield return new Tuple<object, object>(BackgroundResourceKey, hlColor.Background.GetBrush(null));
+				else {
+					var color = hlColor.Background.GetColor(null).Value;
+					var brush = new SolidColorBrush(color) { Opacity = BackgroundOpacity.Value };
+					yield return new Tuple<object, object>(BackgroundResourceKey, brush);
+				}
 			}
 		}
 	}
@@ -188,6 +202,16 @@ namespace ICSharpCode.ILSpy.dntheme
 		public object ResourceKey;
 		public Transform RelativeTransform;
 		public double[] GradientOffsets;
+		public Point? Center;
+		public Point? GradientOrigin;
+		public double? RadiusX, RadiusY;
+		public double? Opacity;
+
+		public RadialGradientColorInfo(ColorType colorType, string description, params double[] gradientOffsets)
+			: base(colorType, description)
+		{
+			this.GradientOffsets = gradientOffsets;
+		}
 
 		public RadialGradientColorInfo(ColorType colorType, string relativeTransformString, string description, params double[] gradientOffsets)
 			: base(colorType, description)
@@ -202,8 +226,19 @@ namespace ICSharpCode.ILSpy.dntheme
 			var br = new RadialGradientBrush() {
 				RadiusX = 1,
 				RadiusY = 1,
-				RelativeTransform = RelativeTransform,
 			};
+			if (RelativeTransform != null)
+				br.RelativeTransform = RelativeTransform;
+			if (Center != null)
+				br.Center = Center.Value;
+			if (GradientOrigin != null)
+				br.GradientOrigin = GradientOrigin.Value;
+			if (RadiusX != null)
+				br.RadiusX = RadiusX.Value;
+			if (RadiusY != null)
+				br.RadiusY = RadiusY.Value;
+			if (Opacity != null)
+				br.Opacity = Opacity.Value;
 			for (int i = 0; i < GradientOffsets.Length; i++)
 				br.GradientStops.Add(new GradientStop(((SolidColorBrush)hlColor.GetHighlightingBrush(i).GetBrush(null)).Color, GradientOffsets[i]));
 			br.Freeze();
@@ -436,6 +471,199 @@ namespace ICSharpCode.ILSpy.dntheme
 			new BrushColorInfo(ColorType.CheckBoxStroke, "Checkbox stroke") {
 				DefaultBackground = "#8E8F8F",
 				BackgroundResourceKey = "CheckBoxStroke",
+			},
+			new BrushColorInfo(ColorType.CommonCheckMarkStroke, "Common check mark stroke") {
+				DefaultBackground = "White",
+				BackgroundResourceKey = "CommonCheckMarkStroke",
+			},
+			new BrushColorInfo(ColorType.CommonCheckMarkPressedStroke, "Common check mark pressed stroke") {
+				DefaultBackground = "White",
+				BackgroundOpacity = 0.7,
+				BackgroundResourceKey = "CommonCheckMarkPressedStroke",
+			},
+			new BrushColorInfo(ColorType.CommonRadioButtonDisabledGlyphStroke, "Common radio button disabled glyph stroke") {
+				DefaultBackground = "#A2AEB9",
+				BackgroundResourceKey = "CommonRadioButtonDisabledGlyphStroke",
+			},
+			new BrushColorInfo(ColorType.CommonRadioButtonGlyphStroke, "Common radio button glyph stroke") {
+				DefaultBackground = "#193B55",
+				BackgroundResourceKey = "CommonRadioButtonGlyphStroke",
+			},
+			new BrushColorInfo(ColorType.CommonCheckMarkDisabledFill, "Common check mark disabled fill") {
+				DefaultBackground = "#AEB7CF",
+				BackgroundResourceKey = "CommonCheckMarkDisabledFill",
+			},
+			new BrushColorInfo(ColorType.CommonCheckMarkFill, "Common check mark fill") {
+				DefaultBackground = "#31347C",
+				BackgroundResourceKey = "CommonCheckMarkFill",
+			},
+			new BrushColorInfo(ColorType.CommonCheckMarkPressedFill, "Common check mark pressed fill") {
+				DefaultBackground = "#31347C",
+				BackgroundOpacity = 0.7,
+				BackgroundResourceKey = "CommonCheckMarkPressedFill",
+			},
+			new RadialGradientColorInfo(ColorType.CommonRadioButtonGlyphDisabledFill, "Common radio button glyph disabled fill", 0, 0.35, 1) {
+				ResourceKey = "CommonRadioButtonGlyphDisabledFill",
+				DefaultForeground = "#C9D5DE",
+				DefaultBackground = "#C0E3E8",
+				DefaultColor3 = "#B0D4E9",
+				Center = new Point(0.25, 0.25),
+				GradientOrigin = new Point(0.25, 0.25),
+				RadiusX = 0.75,
+				RadiusY = 0.75,
+				Opacity = 0.7,
+			},
+			new RadialGradientColorInfo(ColorType.CommonRadioButtonGlyphFill, "Common radio button glyph fill", 0.1, 0.35, 1) {
+				ResourceKey = "CommonRadioButtonGlyphFill",
+				DefaultForeground = "#E5E5E5",
+				DefaultBackground = "#5DCEDD",
+				DefaultColor3 = "#0B82C7",
+				Center = new Point(0.25, 0.25),
+				GradientOrigin = new Point(0.25, 0.25),
+				RadiusX = 0.75,
+				RadiusY = 0.75,
+			},
+			new RadialGradientColorInfo(ColorType.CommonRadioButtonGlyphHoverFill, "Common radio button glyph hover fill", 0.1, 0.35, 1) {
+				ResourceKey = "CommonRadioButtonGlyphHoverFill",
+				DefaultForeground = "#FFFFFF",
+				DefaultBackground = "#74FFFF",
+				DefaultColor3 = "#0DA0F3",
+				Center = new Point(0.25, 0.25),
+				GradientOrigin = new Point(0.25, 0.25),
+				RadiusX = 0.75,
+				RadiusY = 0.75,
+			},
+			new RadialGradientColorInfo(ColorType.CommonRadioButtonGlyphPressedFill, "Common radio button glyph pressed fill", 0, 0.35, 1) {
+				ResourceKey = "CommonRadioButtonGlyphPressedFill",
+				DefaultForeground = "#95D9FC",
+				DefaultBackground = "#3A84AA",
+				DefaultColor3 = "#075483",
+				Center = new Point(0.25, 0.25),
+				GradientOrigin = new Point(0.25, 0.25),
+				RadiusX = 0.75,
+				RadiusY = 0.75,
+			},
+			new BrushColorInfo(ColorType.CommonHoverBackgroundOverlay, "Common CheckBox/RadioButton hover background overlay") {
+				DefaultBackground = "#DEF9FA",
+				BackgroundResourceKey = "CommonHoverBackgroundOverlay",
+			},
+			new BrushColorInfo(ColorType.CommonPressedBackgroundOverlay, "Common CheckBox/RadioButton pressed background overlay") {
+				DefaultBackground = "#C2E4F6",
+				BackgroundResourceKey = "CommonPressedBackgroundOverlay",
+			},
+			new BrushColorInfo(ColorType.CommonDisabledBackgroundOverlay, "Common CheckBox/RadioButton disabled background overlay") {
+				DefaultBackground = "#F4F4F4",
+				BackgroundResourceKey = "CommonDisabledBackgroundOverlay",
+			},
+			new BrushColorInfo(ColorType.CommonHoverBorderOverlay, "Common CheckBox/RadioButton hover border overlay") {
+				DefaultBackground = "#3C7FB1",
+				BackgroundResourceKey = "CommonHoverBorderOverlay",
+			},
+			new BrushColorInfo(ColorType.CommonPressedBorderOverlay, "Common CheckBox/RadioButton pressed border overlay") {
+				DefaultBackground = "#2C628B",
+				BackgroundResourceKey = "CommonPressedBorderOverlay",
+			},
+			new BrushColorInfo(ColorType.CommonDisabledBorderOverlay, "Common CheckBox/RadioButton disabled border overlay") {
+				DefaultBackground = "#ADB2B5",
+				BackgroundResourceKey = "CommonDisabledBorderOverlay",
+			},
+			new LinearGradientColorInfo(ColorType.CommonCheckBoxDisabledInnerBorderPen, new Point(1, 1), "Common CheckBox disabled inner border", 0.25, 0.5, 1) {
+				ResourceKey = "CommonCheckBoxDisabledInnerBorderPen",
+				DefaultForeground = "#E1E3E5",
+				DefaultBackground = "#E8E9EA",
+				DefaultColor3 = "#F3F3F3",
+			},
+			new LinearGradientColorInfo(ColorType.CommonCheckBoxInnerBorderPen, new Point(1, 1), "Common CheckBox inner border", 0.25, 0.5, 1) {
+				ResourceKey = "CommonCheckBoxInnerBorderPen",
+				DefaultForeground = "#AEB3B9",
+				DefaultBackground = "#C2C4C6",
+				DefaultColor3 = "#EAEBEB",
+			},
+			new LinearGradientColorInfo(ColorType.CommonCheckBoxHoverInnerBorderPen, new Point(1, 1), "Common CheckBox hover inner border", 0.3, 0.5, 1) {
+				ResourceKey = "CommonCheckBoxHoverInnerBorderPen",
+				DefaultForeground = "#79C6F9",
+				DefaultBackground = "#79C6F9",
+				DefaultColor3 = "#D2EDFD",
+			},
+			new LinearGradientColorInfo(ColorType.CommonCheckBoxPressedInnerBorderPen, new Point(1, 1), "CommonCheckBoxPressedInnerBorderPen", 0.3, 0.5, 1) {
+				ResourceKey = "CommonCheckBoxPressedInnerBorderPen",
+				DefaultForeground = "#54A6D5",
+				DefaultBackground = "#5EB5E4",
+				DefaultColor3 = "#C4E5F6",
+			},
+			new LinearGradientColorInfo(ColorType.CommonIndeterminateDisabledInnerBorderPen, new Point(1, 1), "CommonIndeterminateDisabledInnerBorderPen", 0, 0.5, 1) {
+				ResourceKey = "CommonIndeterminateDisabledInnerBorderPen",
+				DefaultForeground = "#BFD0DD",
+				DefaultBackground = "#BDCBD7",
+				DefaultColor3 = "#BAC4CC",
+			},
+			new LinearGradientColorInfo(ColorType.CommonIndeterminateInnerBorderPen, new Point(1, 1), "Common CheckBox/RadioButton indeterminate inner border", 0, 0.5, 1) {
+				ResourceKey = "CommonIndeterminateInnerBorderPen",
+				DefaultForeground = "#2A628D",
+				DefaultBackground = "#245479",
+				DefaultColor3 = "#193B55",
+			},
+			new LinearGradientColorInfo(ColorType.CommonIndeterminateHoverInnerBorderPen, new Point(1, 1), "Common CheckBox/RadioButton indeterminate hover inner border", 0, 0.5, 1) {
+				ResourceKey = "CommonIndeterminateHoverInnerBorderPen",
+				DefaultForeground = "#29628D",
+				DefaultBackground = "#245479",
+				DefaultColor3 = "#193B55",
+			},
+			new LinearGradientColorInfo(ColorType.CommonIndeterminatePressedInnerBorderPen, new Point(1, 1), "Common CheckBox/RadioButton indeterminate pressed inner border", 0, 0.5, 1) {
+				ResourceKey = "CommonIndeterminatePressedInnerBorderPen",
+				DefaultForeground = "#193B55",
+				DefaultBackground = "#245479",
+				DefaultColor3 = "#29628D",
+			},
+			new LinearGradientColorInfo(ColorType.CommonRadioButtonInnerBorderPen, new Point(1, 1), "Common RadioButton inner border", 0, 1) {
+				ResourceKey = "CommonRadioButtonInnerBorderPen",
+				DefaultForeground = "#B3B8BD",
+				DefaultBackground = "#EBEBEB",
+			},
+			new LinearGradientColorInfo(ColorType.CommonRadioButtonHoverInnerBorderPen, new Point(1, 1), "Common RadioButton hover inner border", 0, 1) {
+				ResourceKey = "CommonRadioButtonHoverInnerBorderPen",
+				DefaultForeground = "#80CAF9",
+				DefaultBackground = "#D2EEFD",
+			},
+			new LinearGradientColorInfo(ColorType.CommonRadioButtonPressedInnerBorderPen, new Point(1, 1), "Common RadioButton pressed inner border", 0,  1) {
+				ResourceKey = "CommonRadioButtonPressedInnerBorderPen",
+				DefaultForeground = "#5CAAD7",
+				DefaultBackground = "#C3E4F6",
+			},
+			new LinearGradientColorInfo(ColorType.CommonCheckBoxInnerFill, new Point(1, 1), "Common CheckBox inner fill", 0.2, 0.8) {
+				ResourceKey = "CommonCheckBoxInnerFill",
+				DefaultForeground = "#CBCFD5",
+				DefaultBackground = "#F7F7F7",
+			},
+			new LinearGradientColorInfo(ColorType.CommonCheckBoxHoverInnerFill, new Point(1, 1), "Common CheckBox hover inner fill", 0.2, 0.8) {
+				ResourceKey = "CommonCheckBoxHoverInnerFill",
+				DefaultForeground = "#B1DFFD",
+				DefaultBackground = "#E9F7FE",
+			},
+			new LinearGradientColorInfo(ColorType.CommonCheckBoxPressedInnerFill, new Point(1, 1), "Common CheckBox pressed inner fill", 0.2, 0.8) {
+				ResourceKey = "CommonCheckBoxPressedInnerFill",
+				DefaultForeground = "#7FBADC",
+				DefaultBackground = "#D6EDF9",
+			},
+			new LinearGradientColorInfo(ColorType.CommonIndeterminateDisabledFill, new Point(1, 1), "Common CheckBox/RadioButton indeterminate disabled fill", 0.2, 0.8) {
+				ResourceKey = "CommonIndeterminateDisabledFill",
+				DefaultForeground = "#C0E5F3",
+				DefaultBackground = "#BDCDDC",
+			},
+			new LinearGradientColorInfo(ColorType.CommonIndeterminateFill, new Point(1, 1), "Common CheckBox/RadioButton indeterminate fill", 0.2, 0.8) {
+				ResourceKey = "CommonIndeterminateFill",
+				DefaultForeground = "#2FA8D5",
+				DefaultBackground = "#25598C",
+			},
+			new LinearGradientColorInfo(ColorType.CommonIndeterminateHoverFill, new Point(1, 1), "Common CheckBox/RadioButton indeterminate hover fill", 0.2, 0.8) {
+				ResourceKey = "CommonIndeterminateHoverFill",
+				DefaultForeground = "#33D7ED",
+				DefaultBackground = "#2094CE",
+			},
+			new LinearGradientColorInfo(ColorType.CommonIndeterminatePressedFill, new Point(1, 1), "Common CheckBox/RadioButton indeterminate pressed fill", 0.2, 0.8) {
+				ResourceKey = "CommonIndeterminatePressedFill",
+				DefaultForeground = "#17447A",
+				DefaultBackground = "#218BC3",
 			},
 			new BrushColorInfo(ColorType.RadioButtonBackground, "RadioButton background") {
 				DefaultBackground = "#F4F4F4",
@@ -754,6 +982,28 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#E2E3EA",
 				DefaultColor3 = "#E3E9EF",
 				MappingMode = BrushMappingMode.Absolute,
+			},
+			new LinearGradientColorInfo(ColorType.TextBoxHoverBorder, new Point(0, 20), "TextBox hover border", 0.05, 0.07, 1) {
+				ResourceKey = "TextBoxHoverBorder",
+				DefaultForeground = "#FF5794BF",
+				DefaultBackground = "#FFB7D5EA",
+				DefaultColor3 = "#FFC7E2F1",
+				MappingMode = BrushMappingMode.Absolute,
+			},
+			new LinearGradientColorInfo(ColorType.TextBoxFocusedBorder, new Point(0, 20), "TextBox focused border", 0.05, 0.07, 1) {
+				ResourceKey = "TextBoxFocusedBorder",
+				DefaultForeground = "#FF3D7BAD",
+				DefaultBackground = "#FFA4C9E3",
+				DefaultColor3 = "#FFB7D9ED",
+				MappingMode = BrushMappingMode.Absolute,
+			},
+			new BrushColorInfo(ColorType.TextBoxDisabledBackground, "TextBox disabled background") {
+				DefaultBackground = "#F4F4F4",
+				BackgroundResourceKey = "TextBoxDisabledBackground",
+			},
+			new BrushColorInfo(ColorType.TextBoxDisabledBorder, "TextBox disabled border") {
+				DefaultBackground = "#ADB2B5",
+				BackgroundResourceKey = "TextBoxDisabledBorder",
 			},
 			new LinearGradientColorInfo(ColorType.ToolTipBackground, new Point(0, 1), "ToolTip background", 0, 1) {
 				ResourceKey = "ToolTipBackground",

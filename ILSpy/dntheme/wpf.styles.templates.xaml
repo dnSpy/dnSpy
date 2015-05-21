@@ -5,6 +5,7 @@
                     xmlns:avalonsearch="clr-namespace:ICSharpCode.AvalonEdit.Search;assembly=ICSharpCode.AvalonEdit"
                     xmlns:avalonedit="clr-namespace:ICSharpCode.AvalonEdit;assembly=ICSharpCode.AvalonEdit"
                     xmlns:avalonediting="clr-namespace:ICSharpCode.AvalonEdit.Editing;assembly=ICSharpCode.AvalonEdit"
+                    xmlns:ctrls="clr-namespace:ICSharpCode.ILSpy.Controls"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 	<!--
@@ -43,6 +44,12 @@
 		* Add ColorInfo classes to Theme.cs if new colors are needed. Also update at least
 		  dark.dntheme. light.dntheme and none.dntheme don't need to be updated; they should
 		  use the default values you add to Theme.cs.
+
+		* If the template in the style uses a *Chrome class, remove the *Chrome class and replace
+		  it with XAML. The colors the *Chrome class uses can be found in the MS reference source
+		  code (or by decompiling it in dnSpy). The only exception is if SystemDropShadowChrome
+		  is used and Color=Transparent. Seems like it can be kept. If Color isn't Transparent, set
+		  it to "{DynamicResource ControlShadow}".
 	-->
 
     <MenuScrollingVisibilityConverter x:Key="MenuScrollingVisibilityConverter"/>
@@ -51,6 +58,7 @@
     <Geometry x:Key="RightArrow">M 0,0 L 4,3.5 L 0,7 Z</Geometry>
     <Geometry x:Key="ToolBarCheckmark"> M 0,2.5 L 2.5,5 L 7,0.5</Geometry>
 	<Geometry x:Key="ListUpArrow16x16">M4.999,8L4.999,15 10.999,15 10.999,8 14.999,8 7.999,1 1,8z</Geometry>
+	<Geometry x:Key="CheckMarkGeometry">M9,1.833L10.667,3.167L7,10.667L5.333,10.667L3.333,8.167L3.333,6.833L4.833,6.5L6,8z</Geometry>
 
     <Style x:Key="ButtonFocusVisual">
         <Setter Property="Control.Template">
@@ -622,27 +630,37 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TextBoxBase}">
-                    <theme:ListBoxChrome x:Name="Bd"
-                                         BorderThickness="{TemplateBinding BorderThickness}"
-                                         BorderBrush="{TemplateBinding BorderBrush}"
-                                         Background="{TemplateBinding Background}"
-                                         RenderMouseOver="{TemplateBinding IsMouseOver}"
-                                         RenderFocused="{TemplateBinding IsKeyboardFocusWithin}"
-                                         SnapsToDevicePixels="true">
+					<Border x:Name="Bd"
+							BorderThickness="{TemplateBinding BorderThickness}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							Background="{TemplateBinding Background}"
+							SnapsToDevicePixels="true">
                         <ScrollViewer x:Name="PART_ContentHost"
                                       SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                    </theme:ListBoxChrome>
+					</Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled"
                                  Value="false">
                             <Setter TargetName="Bd"
-                                    Property="Background"
-                                    Value="{DynamicResource SystemColorsControl}"/>
+                                    Property="BorderBrush"
+                                    Value="{DynamicResource TextBoxDisabledBorder}"/>
                             <Setter TargetName="PART_ContentHost"
                                     Property="Background"
-                                    Value="{DynamicResource SystemColorsControl}"/>
+                                    Value="{DynamicResource TextBoxDisabledBackground}"/>
                             <Setter Property="Foreground"
                                     Value="{DynamicResource SystemColorsGrayText}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver"
+                                 Value="true">
+                            <Setter TargetName="Bd"
+                                    Property="BorderBrush"
+                                    Value="{DynamicResource TextBoxHoverBorder}"/>
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocusWithin"
+                                 Value="true">
+                            <Setter TargetName="Bd"
+                                    Property="BorderBrush"
+                                    Value="{DynamicResource TextBoxFocusedBorder}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -713,27 +731,37 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type PasswordBox}">
-                    <theme:ListBoxChrome x:Name="Bd"
-                                         BorderThickness="{TemplateBinding BorderThickness}"
-                                         BorderBrush="{TemplateBinding BorderBrush}"
-                                         Background="{TemplateBinding Background}"
-                                         RenderMouseOver="{TemplateBinding IsMouseOver}"
-                                         RenderFocused="{TemplateBinding IsKeyboardFocusWithin}"
-                                         SnapsToDevicePixels="true">
+					<Border x:Name="Bd"
+							BorderThickness="{TemplateBinding BorderThickness}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							Background="{TemplateBinding Background}"
+							SnapsToDevicePixels="true">
                         <ScrollViewer x:Name="PART_ContentHost"
                                       SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                    </theme:ListBoxChrome>
+					</Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled"
                                  Value="false">
                             <Setter TargetName="Bd"
-                                    Property="Background"
-                                    Value="{DynamicResource SystemColorsControl}"/>
+                                    Property="BorderBrush"
+                                    Value="{DynamicResource TextBoxDisabledBorder}"/>
                             <Setter TargetName="PART_ContentHost"
                                     Property="Background"
-                                    Value="{DynamicResource SystemColorsControl}"/>
+                                    Value="{DynamicResource TextBoxDisabledBackground}"/>
                             <Setter Property="Foreground"
                                     Value="{DynamicResource SystemColorsGrayText}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver"
+                                 Value="true">
+                            <Setter TargetName="Bd"
+                                    Property="BorderBrush"
+                                    Value="{DynamicResource TextBoxHoverBorder}"/>
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocusWithin"
+                                 Value="true">
+                            <Setter TargetName="Bd"
+                                    Property="BorderBrush"
+                                    Value="{DynamicResource TextBoxFocusedBorder}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -879,11 +907,15 @@
                     <BulletDecorator Background="Transparent" 
                                      SnapsToDevicePixels="true">
                         <BulletDecorator.Bullet>
-                            <theme:BulletChrome Background="{TemplateBinding Background}"
-                                                BorderBrush="{TemplateBinding BorderBrush}"
-                                                RenderMouseOver="{TemplateBinding IsMouseOver}"
-                                                RenderPressed="{TemplateBinding IsPressed}"
-                                                IsChecked="{TemplateBinding IsChecked}"/>
+							<!-- The only difference compared to the original checkbox bullet is
+							that the original one has a left and top border when IsChecked == null. -->
+							<ctrls:CheckBoxBullet
+								Background="{TemplateBinding Background}"
+								BorderBrush="{TemplateBinding BorderBrush}"
+								RenderMouseOver="{TemplateBinding IsMouseOver}"
+								RenderPressed="{TemplateBinding IsPressed}"
+								IsChecked="{TemplateBinding IsChecked}"
+								/>
                         </BulletDecorator.Bullet>
                         <ContentPresenter Margin="{TemplateBinding Padding}"
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -2269,24 +2301,39 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListView}">
-                    <theme:ListBoxChrome Name="Bd"
-                                         BorderThickness="{TemplateBinding BorderThickness}"
-                                         BorderBrush="{TemplateBinding BorderBrush}"
-                                         Background="{TemplateBinding Background}"
-                                         RenderMouseOver="{TemplateBinding IsMouseOver}"
-                                         RenderFocused="{TemplateBinding IsKeyboardFocusWithin}"
-                                         SnapsToDevicePixels="true">
+					<Border x:Name="Bd"
+							BorderThickness="{TemplateBinding BorderThickness}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							Background="{TemplateBinding Background}"
+							SnapsToDevicePixels="true">
                         <ScrollViewer Style="{DynamicResource {x:Static GridView.GridViewScrollViewerStyleKey}}"
                                       Padding="{TemplateBinding Padding}">
                             <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </ScrollViewer>
-                    </theme:ListBoxChrome>
+					</Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled"
                                  Value="false">
                             <Setter TargetName="Bd"
+                                    Property="BorderBrush"
+                                    Value="{DynamicResource TextBoxDisabledBorder}"/>
+                            <Setter TargetName="Bd"
                                     Property="Background"
-                                    Value="{DynamicResource SystemColorsControl}"/>
+                                    Value="{DynamicResource TextBoxDisabledBackground}"/>
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource SystemColorsGrayText}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver"
+                                 Value="true">
+                            <Setter TargetName="Bd"
+                                    Property="BorderBrush"
+                                    Value="{DynamicResource TextBoxHoverBorder}"/>
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocusWithin"
+                                 Value="true">
+                            <Setter TargetName="Bd"
+                                    Property="BorderBrush"
+                                    Value="{DynamicResource TextBoxFocusedBorder}"/>
                         </Trigger>
 						<!-- TODO: Disable this since VirtualizingPanel.IsVirtualizingWhenGrouping is
 								available in 4.5+ only
@@ -2754,12 +2801,14 @@
                 <ControlTemplate TargetType="{x:Type RadioButton}">
                     <BulletDecorator Background="Transparent">
                         <BulletDecorator.Bullet>
-                            <theme:BulletChrome Background="{TemplateBinding Background}"
-                                                BorderBrush="{TemplateBinding BorderBrush}"
-                                                IsRound="true"
-                                                RenderMouseOver="{TemplateBinding IsMouseOver}"
-                                                RenderPressed="{TemplateBinding IsPressed}"
-                                                IsChecked="{TemplateBinding IsChecked}"/>
+							<ctrls:RadioButtonBullet
+								Background="Transparent"
+								DefaultBackground="{TemplateBinding Background}"
+								BorderBrush="{TemplateBinding BorderBrush}"
+								RenderMouseOver="{TemplateBinding IsMouseOver}"
+								RenderPressed="{TemplateBinding IsPressed}"
+								IsChecked="{TemplateBinding IsChecked}"
+								/>
                         </BulletDecorator.Bullet>
                         <ContentPresenter Margin="{TemplateBinding Padding}"
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
