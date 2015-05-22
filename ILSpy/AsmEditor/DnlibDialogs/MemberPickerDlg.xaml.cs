@@ -49,6 +49,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			var node = item as SharpTreeNode;
 			if (node != null) {
 				// Calling ScrollIntoView() immediately won't always work so delay a little bit.
+				// We must call ScrollIntoView() immediately or the selected item won't be
+				// highlighted for some reason.
+				treeView.ScrollIntoView(node);
 				this.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(delegate {
 					treeView.ScrollIntoView(node);
 				}));
