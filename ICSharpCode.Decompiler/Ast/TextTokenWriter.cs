@@ -94,6 +94,8 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			AstNode node = nodeStack.Peek();
 			IMemberRef memberRef = node.Annotation<IMemberRef>();
+			if (node is IndexerDeclaration)
+				memberRef = null;
 			if (node is SimpleType && node.Parent is ObjectCreateExpression)
 				memberRef = node.Parent.Annotation<IMemberRef>() ?? memberRef;
 			if (memberRef == null && node.Role == Roles.TargetExpression && (node.Parent is InvocationExpression || node.Parent is ObjectCreateExpression)) {
@@ -206,8 +208,12 @@ namespace ICSharpCode.Decompiler.Ast
 		{
 			IMemberRef memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
+			if (node is IndexerDeclaration)
+				memberRef = node.Annotation<PropertyDef>();
 			if (memberRef != null && (node is PrimitiveType || node is ConstructorInitializer || node is BaseReferenceExpression || node is ThisReferenceExpression))
 				output.WriteReference(keyword, memberRef, TextTokenType.Keyword);
+			else if (memberRef != null && node is IndexerDeclaration && keyword == "this")
+				output.WriteDefinition(keyword, memberRef, TextTokenType.Keyword, false);
 			else
 				output.Write(keyword, TextTokenType.Keyword);
 		}
