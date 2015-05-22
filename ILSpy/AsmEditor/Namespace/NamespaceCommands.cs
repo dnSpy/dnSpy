@@ -19,23 +19,46 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Input;
 using ICSharpCode.ILSpy.TreeNodes;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 {
+	[Export(typeof(IPlugin))]
+	sealed class AssemblyPlugin : IPlugin
+	{
+		public void OnLoaded()
+		{
+			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteExecuted, DeleteCanExecute));
+		}
+
+		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = DeleteNamespaceCommand.CanExecute(MainWindow.Instance.SelectedNodes);
+		}
+
+		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			DeleteNamespaceCommand.Execute(MainWindow.Instance.SelectedNodes);
+		}
+	}
+
 	sealed class DeleteNamespaceCommand : IUndoCommand
 	{
 		const string CMD_NAME_SINGULAR = "Delete Namespace";
 		const string CMD_NAME_PLURAL_FORMAT = "Delete {0} Namespaces";
 		[ExportContextMenuEntry(Category = "AsmEd",
 								Icon = "Delete",
+								InputGestureText = "Del",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(Menu = "_Edit",
 							MenuIcon = "Delete",
+							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand
@@ -63,13 +86,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 				string.Format(CMD_NAME_PLURAL_FORMAT, count);
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
+		internal static bool CanExecute(ILSpyTreeNode[] nodes)
 		{
 			return nodes != null &&
 				nodes.All(a => a is NamespaceTreeNode);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
+		internal static void Execute(ILSpyTreeNode[] nodes)
 		{
 			if (!CanExecute(nodes))
 				return;

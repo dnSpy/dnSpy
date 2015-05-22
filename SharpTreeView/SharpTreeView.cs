@@ -596,17 +596,18 @@ namespace ICSharpCode.TreeView
 
 		static void RegisterCommands()
 		{
-			CommandManager.RegisterClassCommandBinding(typeof(SharpTreeView),
-			                                           new CommandBinding(ApplicationCommands.Cut, HandleExecuted_Cut, HandleCanExecute_Cut));
-
-			CommandManager.RegisterClassCommandBinding(typeof(SharpTreeView),
-			                                           new CommandBinding(ApplicationCommands.Copy, HandleExecuted_Copy, HandleCanExecute_Copy));
-
-			CommandManager.RegisterClassCommandBinding(typeof(SharpTreeView),
-			                                           new CommandBinding(ApplicationCommands.Paste, HandleExecuted_Paste, HandleCanExecute_Paste));
-
-			CommandManager.RegisterClassCommandBinding(typeof(SharpTreeView),
-			                                           new CommandBinding(ApplicationCommands.Delete, HandleExecuted_Delete, HandleCanExecute_Delete));
+			// The asm editor should be the only one removing nodes
+// 			CommandManager.RegisterClassCommandBinding(typeof(SharpTreeView),
+// 			                                           new CommandBinding(ApplicationCommands.Cut, HandleExecuted_Cut, HandleCanExecute_Cut));
+// 
+// 			CommandManager.RegisterClassCommandBinding(typeof(SharpTreeView),
+// 			                                           new CommandBinding(ApplicationCommands.Copy, HandleExecuted_Copy, HandleCanExecute_Copy));
+// 
+// 			CommandManager.RegisterClassCommandBinding(typeof(SharpTreeView),
+// 			                                           new CommandBinding(ApplicationCommands.Paste, HandleExecuted_Paste, HandleCanExecute_Paste));
+// 
+// 			CommandManager.RegisterClassCommandBinding(typeof(SharpTreeView),
+// 			                                           new CommandBinding(ApplicationCommands.Delete, HandleExecuted_Delete, HandleCanExecute_Delete));
 		}
 
 		static void HandleExecuted_Cut(object sender, ExecutedRoutedEventArgs e)

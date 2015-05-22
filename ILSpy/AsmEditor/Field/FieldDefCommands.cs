@@ -19,25 +19,48 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Field
 {
+	[Export(typeof(IPlugin))]
+	sealed class AssemblyPlugin : IPlugin
+	{
+		public void OnLoaded()
+		{
+			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteExecuted, DeleteCanExecute));
+		}
+
+		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = DeleteFieldDefCommand.CanExecute(MainWindow.Instance.SelectedNodes);
+		}
+
+		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			DeleteFieldDefCommand.Execute(MainWindow.Instance.SelectedNodes);
+		}
+	}
+
 	sealed class DeleteFieldDefCommand : IUndoCommand
 	{
 		const string CMD_NAME = "Delete Field";
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Delete",
+								InputGestureText = "Del",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
 							Menu = "_Edit",
 							MenuIcon = "Delete",
+							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand
@@ -61,13 +84,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
+		internal static bool CanExecute(ILSpyTreeNode[] nodes)
 		{
 			return nodes.Length > 0 &&
 				nodes.All(n => n is FieldTreeNode);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
+		internal static void Execute(ILSpyTreeNode[] nodes)
 		{
 			if (!CanExecute(nodes))
 				return;

@@ -19,14 +19,35 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Input;
 using ICSharpCode.ILSpy.TreeNodes;
 using dnlib.DotNet;
 using dnlib.PE;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Module
 {
+	[Export(typeof(IPlugin))]
+	sealed class AssemblyPlugin : IPlugin
+	{
+		public void OnLoaded()
+		{
+			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteExecuted, DeleteCanExecute));
+		}
+
+		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = RemoveNetModuleFromAssemblyCommand.CanExecute(MainWindow.Instance.SelectedNodes);
+		}
+
+		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			RemoveNetModuleFromAssemblyCommand.Execute(MainWindow.Instance.SelectedNodes);
+		}
+	}
+
 	sealed class CreateNetModuleCommand : IUndoCommand
 	{
 		const string CMD_NAME = "Create NetModule";
@@ -541,11 +562,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		const string CMD_NAME = "Remove NetModule from Assembly";
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Delete",
+								InputGestureText = "Del",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
 							Menu = "_Edit",
 							MenuIcon = "Delete",
+							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]//TODO: Set menu order
 		sealed class TheEditCommand : EditCommand
@@ -574,7 +597,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 				((AssemblyTreeNode)nodes[0]).IsModuleInAssembly;
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
+		internal static bool CanExecute(ILSpyTreeNode[] nodes)
 		{
 			return nodes != null &&
 				nodes.Length == 1 &&
@@ -582,7 +605,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 				((AssemblyTreeNode)nodes[0]).IsNetModuleInAssembly;
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
+		internal static void Execute(ILSpyTreeNode[] nodes)
 		{
 			if (!CanExecute(nodes))
 				return;
