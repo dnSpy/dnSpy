@@ -11,20 +11,20 @@
 		<color name="keyword" fg="#0000FF" />
 		<color name="string" fg="#A31515" />
 		<color name="char" fg="#A31515" />
-		<color name="namespacepart" fg="#3366CC" />
+		<color name="namespacepart" fg="#216F85" />
 		<color name="type" fg="#2B91AF" />
 		<color name="statictype" fg="#1B5D70" />
 		<color name="delegate" fg="#2EB8E6" />
 		<color name="enum" fg="#336600" />
 		<color name="interface" fg="#1E667A" />
 		<color name="valuetype" fg="#009933" />
-		<color name="typegenericparameter" fg="#0000FF" />
-		<color name="methodgenericparameter" fg="#0000FF" />
+		<color name="typegenericparameter" fg="#2B91AF" />
+		<color name="methodgenericparameter" fg="#2B91AF" />
 		<color name="instancemethod" fg="#880000" />
 		<color name="staticmethod" fg="#880000" />
 		<color name="extensionmethod" fg="#91571D" italics="true" />
 		<color name="instancefield" fg="#CC3399" />
-		<color name="enumfield" fg="#A000A0" />
+		<color name="enumfield" fg="#6F008A" />
 		<color name="literalfield" fg="#9900FF" />
 		<color name="staticfield" fg="#990099" />
 		<color name="instanceevent" fg="#990033" />
@@ -32,7 +32,7 @@
 		<color name="instanceproperty" fg="#996633" />
 		<color name="staticproperty" fg="#7A5229" />
 		<color name="variable" fg="#000080" />
-		<color name="parameter" bold="true" />
+		<color name="parameter" fg="#000080" bold="true" />
 		<color name="label" fg="#663300" />
 		<color name="opcode" fg="#993366" />
 		<color name="ildirective" fg="#009900" />
@@ -51,20 +51,22 @@
 		<color name="xmlbrokenentity" fg="Olive" />
 		<color name="link" fg="Blue" />
 		<color name="selection" bg="#663399FF" />
-		<color name="localdefinition" bg="#68AFB3A3" />
-		<color name="localreference" bg="#68DBE0CC" />
-		<color name="currentstatement" fg="Black" bg="#FFF181" />
+		<color name="localdefinition" fg="#000000" bg="#DBE0CC" />
+		<color name="localreference" fg="#000000" bg="#DBE0CC" />
+		<color name="currentstatement" fg="Black" bg="#8FFFEE62" />
 		<color name="breakpointstatement" fg="White" bg="#963A46" />
 		<color name="disabledbreakpointstatement" bg="#30963A46" />
 		<color name="specialcharacterbox" bg="#C8808080" />
 		<color name="searchresultmarker" bg="#FFFFB7" />
 		<color name="currentline" fg="#EAEAF2" bg="#00000000" />
-		<color name="selectedreturnstatement" fg="Black" bg="#68B4E4B4" />
-		<color name="returnstatement" bg="#62EEEFE6" />
+		<color name="selectedreturnstatement" fg="Black" bg="#94B4E4B4" />
+		<color name="returnstatement" bg="#88C0C0C0" />
 
 		<color name="contextmenubackground" bg="White" />
 		<color name="statusbar" fg="White" bg="#007ACC" />
 		<color name="tooltipbackground" fg="White" bg="White" />
 		<color name="tooltipforeground" fg="Black" />
+		<color name="sharptreeviewbackground" bg="#F5F5F5" />
+		<color name="sharptreeviewborder" bg="#DCDCDC" />
 	</colors>
 </theme>

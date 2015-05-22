@@ -4976,6 +4976,10 @@
     
     <Style TargetType="{x:Type shtv:SharpTreeView}"
            BasedOn="{StaticResource {x:Type ListBox}}">
+        <Setter Property="Background"
+                Value="{DynamicResource SharpTreeViewBackground}"/>
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource SharpTreeViewBorder}"/>
         <Style.Triggers>
             <Trigger Property="ShowRoot"
                      Value="False">

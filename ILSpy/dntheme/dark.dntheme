@@ -1,38 +1,38 @@
 <theme name="dark" menu-name="_Dark" sort="100">
 	<colors>
-		<color name="defaulttext" fg="#D0D0D0" bg="#252525" />
+		<color name="defaulttext" fg="#DCDCDC" bg="#1E1E1E" />
 		<color name="brace" fg="#A6B8DB" />
-		<color name="operator" fg="#9B9B9B" />
+		<color name="operator" fg="#B4B4B4" />
 		<color name="number" fg="#B5CEA8" />
-		<color name="comment" fg="#668066" />
-		<color name="xmldoctag" fg="#808080" />
+		<color name="comment" fg="#57A64A" />
+		<color name="xmldoctag" fg="#C8C8C8" />
 		<color name="xmldocattribute" fg="#70704D" />
-		<color name="xmldoccomment" fg="#668066" italics="true" />
+		<color name="xmldoccomment" fg="#608B4E" italics="true" />
 		<color name="keyword" fg="#569CD6" />
-		<color name="string" fg="#9999FF" />
+		<color name="string" fg="#D69D85" />
 		<color name="char" fg="#9999FF" />
-		<color name="namespacepart" fg="#666699" />
-		<color name="type" fg="#2B91AF" />
-		<color name="statictype" fg="#6BB2C7" />
+		<color name="namespacepart" fg="#FFD700" />
+		<color name="type" fg="#4EC9B0" />
+		<color name="statictype" fg="#378D7B" />
 		<color name="delegate" fg="#33CCFF" />
-		<color name="enum" fg="#5C993D" />
+		<color name="enum" fg="#B8D7A3" />
 		<color name="interface" fg="#70704D" />
 		<color name="valuetype" fg="#009933" />
 		<color name="typegenericparameter" fg="#1E667A" />
 		<color name="methodgenericparameter" fg="#1E667A" />
-		<color name="instancemethod" fg="#336699" />
-		<color name="staticmethod" fg="#5C85AD" />
-		<color name="extensionmethod" fg="#8DAAC6" italics="true" />
+		<color name="instancemethod" fg="#FF8000" />
+		<color name="staticmethod" fg="#B25A00" />
+		<color name="extensionmethod" fg="#663300" italics="true" />
 		<color name="instancefield" fg="#AA70FF" />
-		<color name="enumfield" fg="#A883A8" />
+		<color name="enumfield" fg="#BD63C5" />
 		<color name="literalfield" fg="#C266FF" />
 		<color name="staticfield" fg="#5C5CAD" />
 		<color name="instanceevent" fg="#CC6699" />
 		<color name="staticevent" fg="#DB94B8" />
 		<color name="instanceproperty" fg="#248F8F" />
 		<color name="staticproperty" fg="#196464" />
-		<color name="variable" fg="#8080C0" />
-		<color name="parameter" bold="true" />
+		<color name="variable" fg="#BDB76B" />
+		<color name="parameter" fg="#BDB76B" bold="true" />
 		<color name="label" fg="#806F4D" />
 		<color name="opcode" fg="#993366" />
 		<color name="ildirective" fg="#9999FF" />
@@ -51,16 +51,16 @@
 		<color name="xmlbrokenentity" fg="#999966" />
 		<color name="link" fg="#CCFF33" />
 		<color name="selection" bg="#340E9EA1" />
-		<color name="localdefinition" bg="#FFCC99" />
-		<color name="localreference" bg="#FFFF99" />
-		<color name="currentstatement" fg="Black" bg="#FFF181" />
-		<color name="breakpointstatement" fg="White" bg="#963A46" />
-		<color name="disabledbreakpointstatement" bg="#30963A46" />
+		<color name="localdefinition" fg="#C0D3AD" bg="#48830E" />
+		<color name="localreference" fg="#ADC0D3" bg="#0E4583" />
+		<color name="currentstatement" fg="Black" bg="#7EFFEE62" />
+		<color name="breakpointstatement" fg="White" bg="#8C2F2F" />
+		<color name="disabledbreakpointstatement" bg="#308C2F2F" />
 		<color name="specialcharacterbox" bg="#666699" />
 		<color name="searchresultmarker" bg="#FFFFB7" />
-		<color name="currentline" fg="#3400FF6E" bg="#1614DCE0" />
-		<color name="selectedreturnstatement" fg="Black" bg="#68B4E4B4" />
-		<color name="returnstatement" bg="#62404040" />
+		<color name="currentline" fg="#282828" bg="#0F0F0F" />
+		<color name="selectedreturnstatement" fg="Black" bg="#6A7CA5A0" />
+		<color name="returnstatement" bg="#8E5A5A5A" />
 
 		<color name="systemcolorsmenutext" fg="#D0D0D0" />
 		<color name="systemcolorsgraytext" fg="#505050" />
@@ -220,7 +220,7 @@
 		<color name="scrollbarthumbmouseoverborder" bg="#0D8E91" />
 		<color name="scrollbarthumbpressedbackground" bg="#063F40" />
 		<color name="scrollbarthumbpressedborder" bg="#085F61" />
-		<color name="statusbar" fg="White" bg="#007ACC" />
+		<color name="statusbar" fg="White" bg="#CA5100" />
 		<color name="textboxborder" fg="#404040" bg="#505050" color3="#606060" />
 		<color name="textboxhoverborder" fg="#0A6F71" bg="#085F61" color3="#074F50" />
 		<color name="textboxfocusedborder" fg="#074F50" bg="#063F40" color3="#042F30" />
@@ -281,6 +281,8 @@
 		<color name="listarrowbackground" bg="#D0D0D0" />
 		<color name="treeviewlinebackground" bg="#606060" />
 		<color name="treeviewitemmouseover" fg="White" bg="#505050" />
+		<color name="sharptreeviewbackground" bg="#252525" />
+		<color name="sharptreeviewborder" bg="#505050" />
 		<color name="iconbar" bg="#333333" />
 		<color name="iconbarborder" bg="#555555" />
 		<color name="nodeautoloaded" fg="SteelBlue" />

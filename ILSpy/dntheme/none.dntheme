@@ -1,8 +1,8 @@
 <theme name="none" menu-name="_None" sort="999999">
 	<colors>
-		<color name="currentstatement" fg="Black" bg="#FFF181" />
-		<color name="returnstatement" bg="#62EEEFE6" />
-		<color name="selectedreturnstatement" fg="Black" bg="#68B4E4B4" />
+		<color name="currentstatement" fg="Black" bg="#8FFFEE62" />
+		<color name="returnstatement" bg="#88C0C0C0" />
+		<color name="selectedreturnstatement" fg="Black" bg="#94B4E4B4" />
 		<color name="breakpointstatement" fg="White" bg="#963A46" />
 		<color name="disabledbreakpointstatement" bg="#30963A46" />
 		<color name="xmldoctooltipdescriptiontext" italics="true" bold="true" />

@@ -79,7 +79,7 @@ namespace ICSharpCode.ILSpy
 			switch (bgType) {
 			case BackgroundType.Button: return GetColorBackground(dntheme.ColorType.ButtonIconBackground);
 			case BackgroundType.Window: return GetColorForeground(dntheme.ColorType.SystemColorsWindow);
-			case BackgroundType.TreeNode: return GetColorForeground(dntheme.ColorType.SystemColorsWindow);
+			case BackgroundType.TreeNode: return GetColorBackground(dntheme.ColorType.SharpTreeViewBackground);
 			case BackgroundType.Search: return GetColorForeground(dntheme.ColorType.SystemColorsWindow);
 			case BackgroundType.ComboBox: return GetColorForeground(dntheme.ColorType.SystemColorsWindow);
 			case BackgroundType.Toolbar: return GetColorBackground(dntheme.ColorType.ToolBarIconBackground);

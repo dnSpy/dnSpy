@@ -1265,6 +1265,14 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultForeground = "White",
 				ForegroundResourceKey = "TreeViewItemMouseOverForeground",
 			},
+			new BrushColorInfo(ColorType.SharpTreeViewBackground, "TreeView background") {
+				DefaultBackground = "SystemColors.Window",
+				BackgroundResourceKey = "SharpTreeViewBackground",
+			},
+			new BrushColorInfo(ColorType.SharpTreeViewBorder, "TreeView border") {
+				DefaultBackground = "#828790",
+				BackgroundResourceKey = "SharpTreeViewBorder",
+			},
 			new BrushColorInfo(ColorType.IconBar, "IconBar") {
 				DefaultBackground = "#E6E7E8",
 			},

@@ -882,7 +882,8 @@ namespace ICSharpCode.ILSpy.TextView
 			if (referenceSegment.IsLocal) {
 				ClearLocalReferenceMarks();
 				if (references != null && reference != null) {
-					foreach (var r in references) {
+					foreach (var tmp in references) {
+						var r = tmp;
 						if (RefSegEquals(referenceSegment, r)) {
 							var mark = textMarkerService.Create(r.StartOffset, r.Length);
 							mark.HighlightingColor = () => {
