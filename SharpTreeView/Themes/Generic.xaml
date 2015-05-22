@@ -196,6 +196,15 @@
                                     Property="Foreground"
                                     Value="{DynamicResource SystemColorsHighlightText}" />
                         </Trigger>
+                        <Trigger Property="IsMouseOver"
+                                 Value="True">
+                            <Setter TargetName="nodeView"
+                                    Property="TextBackground"
+                                    Value="{DynamicResource TreeViewItemMouseOverTextBackground}" />
+                            <Setter TargetName="nodeView"
+                                    Property="Foreground"
+                                    Value="{DynamicResource TreeViewItemMouseOverForeground}" />
+                        </Trigger>
                         <!--<MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected"

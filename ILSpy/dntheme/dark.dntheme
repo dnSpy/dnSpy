@@ -280,6 +280,7 @@
 		<color name="textboxerror" fg="#D0D0D0" bg="#660000" />
 		<color name="listarrowbackground" bg="#D0D0D0" />
 		<color name="treeviewlinebackground" bg="#606060" />
+		<color name="treeviewitemmouseover" fg="White" bg="#505050" />
 		<color name="iconbar" bg="#333333" />
 		<color name="iconbarborder" bg="#555555" />
 		<color name="nodeautoloaded" fg="SteelBlue" />

@@ -661,6 +661,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		TextBoxError,
 		ListArrowBackground,
 		TreeViewLineBackground,
+		TreeViewItemMouseOver,
 		IconBar,
 		IconBarBorder,
 		NodeAutoLoaded,
