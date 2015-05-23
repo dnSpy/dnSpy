@@ -97,9 +97,13 @@ For license info, authors and other credits, see README.txt.
 Build instructions
 ==================
 
-You need [dnlib](https://github.com/0xd4d/dnlib) and you must define `THREAD_SAFE` when compiling it. dnSpy will immediately exit if it detects that dnlib isn't thread safe.
+Dependencies:
 
-My modified [NRefactory](https://github.com/0xd4d/NRefactory) is another dependency.
+* [dnlib](https://github.com/0xd4d/dnlib)
+* [NRefactory](https://github.com/0xd4d/NRefactory)
+* [AvalonEdit](https://github.com/0xd4d/AvalonEdit)
+
+Make sure you get the source code from the above links because eg. NRefactory and AvalonEdit have been slightly modified. You must define `THREAD_SAFE` when compiling dnlib. dnSpy will immediately exit if it detects that dnlib isn't thread safe.
 
 Use Visual Studio 2010 or later or run `debugbuild.bat` / `releasebuild.bat` to build it once you have all dependencies.
 
