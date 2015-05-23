@@ -89,13 +89,15 @@ namespace ICSharpCode.Decompiler
 	// able to handle eg. attributes spanning more than one line, but this rarely happens.
 	static class SimpleXmlParser
 	{
-		static readonly char[] specialChars = new char[] { '<', '>', '"' };
+		static readonly char[] specialChars = new char[] { '<' };
+		static readonly char[] specialCharsTag = new char[] { '<', '>', '"' };
 
 		public static IEnumerable<KeyValuePair<string, TextTokenType>> Parse(string text)
 		{
+			bool inTag = true;
 			int index = 0;
 			while (index < text.Length) {
-				int specialIndex = text.IndexOfAny(specialChars, index);
+				int specialIndex = text.IndexOfAny(inTag ? specialCharsTag : specialChars, index);
 				if (specialIndex < 0) {
 					yield return new KeyValuePair<string, TextTokenType>(text.Substring(index), TextTokenType.XmlDocComment);
 					break;
@@ -111,7 +113,7 @@ namespace ICSharpCode.Decompiler
 						if (c == '<')
 							yield return new KeyValuePair<string, TextTokenType>(text.Substring(index, specialIndex - index), TextTokenType.XmlDocComment);
 						else // c == '"'
-							yield return new KeyValuePair<string, TextTokenType>(text.Substring(index, specialIndex - index), TextTokenType.XmlDocTag);
+							yield return new KeyValuePair<string, TextTokenType>(text.Substring(index, specialIndex - index), inTag ? TextTokenType.XmlDocTag : TextTokenType.XmlDocComment);
 					}
 
 					index = specialIndex;
@@ -140,6 +142,7 @@ namespace ICSharpCode.Decompiler
 
 					index = endIndex;
 				}
+				inTag = false;
 			}
 		}
 	}
