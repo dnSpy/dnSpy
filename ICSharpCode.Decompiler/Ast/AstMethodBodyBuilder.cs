@@ -81,7 +81,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 		}
 		
-		public BlockStatement CreateMethodBody(IEnumerable<ParameterDeclaration> parameters, out MemberMapping mm)
+		BlockStatement CreateMethodBody(IEnumerable<ParameterDeclaration> parameters, out MemberMapping mm)
 		{
 			if (methodDef.Body == null) {
 				mm = null;
@@ -287,6 +287,54 @@ namespace ICSharpCode.Decompiler.Ast
 			return result;
 		}
 		
+		IMDTokenProvider Create_SystemArray_get_Length()
+		{
+			if (Create_SystemArray_get_Length_result_initd)
+				return Create_SystemArray_get_Length_result;
+			Create_SystemArray_get_Length_result_initd = true;
+
+			const string propName = "Length";
+			var type = corLib.GetTypeRef("System", "Array");
+			var retType = corLib.Int32;
+			var mr = new MemberRefUser(methodDef.Module, "get_" + propName, MethodSig.CreateInstance(retType), type);
+			Create_SystemArray_get_Length_result = mr;
+			var md = mr.ResolveMethod();
+			if (md == null || md.DeclaringType == null)
+				return mr;
+			var prop = md.DeclaringType.FindProperty(propName);
+			if (prop == null)
+				return mr;
+
+			Create_SystemArray_get_Length_result = mr;
+			return prop;
+		}
+		IMDTokenProvider Create_SystemArray_get_Length_result;
+		bool Create_SystemArray_get_Length_result_initd;
+
+		IMDTokenProvider Create_SystemType_get_TypeHandle()
+		{
+			if (Create_SystemType_get_TypeHandle_initd)
+				return Create_SystemType_get_TypeHandle_result;
+			Create_SystemType_get_TypeHandle_initd = true;
+
+			const string propName = "TypeHandle";
+			var type = corLib.GetTypeRef("System", "Type");
+			var retType = new ValueTypeSig(corLib.GetTypeRef("System", "RuntimeTypeHandle"));
+			var mr = new MemberRefUser(methodDef.Module, "get_" + propName, MethodSig.CreateInstance(retType), type);
+			Create_SystemType_get_TypeHandle_result = mr;
+			var md = mr.ResolveMethod();
+			if (md == null || md.DeclaringType == null)
+				return mr;
+			var prop = md.DeclaringType.FindProperty(propName);
+			if (prop == null)
+				return mr;
+
+			Create_SystemType_get_TypeHandle_result = mr;
+			return prop;
+		}
+		IMDTokenProvider Create_SystemType_get_TypeHandle_result;
+		bool Create_SystemType_get_TypeHandle_initd;
+
 		AstNode TransformByteCode(ILExpression byteCode)
 		{
 			object operand = byteCode.Operand;
@@ -416,7 +464,7 @@ namespace ICSharpCode.Decompiler.Ast
 						}
 						return ace;
 					}
-					case ILCode.Ldlen: return arg1.Member("Length", TextTokenType.InstanceProperty);
+					case ILCode.Ldlen: return arg1.Member("Length", TextTokenType.InstanceProperty).WithAnnotation(Create_SystemArray_get_Length());
 				case ILCode.Ldelem_I:
 				case ILCode.Ldelem_I1:
 				case ILCode.Ldelem_I2:
@@ -705,7 +753,8 @@ namespace ICSharpCode.Decompiler.Ast
 					case ILCode.Ldstr:  return new Ast.PrimitiveExpression(operand);
 				case ILCode.Ldtoken:
 					if (operand is ITypeDefOrRef) {
-						return AstBuilder.CreateTypeOfExpression((ITypeDefOrRef)operand).Member("TypeHandle", TextTokenType.InstanceProperty);
+						var th = Create_SystemType_get_TypeHandle();
+						return AstBuilder.CreateTypeOfExpression((ITypeDefOrRef)operand).Member("TypeHandle", TextTokenType.InstanceProperty).WithAnnotation(th);
 					} else {
 						Expression referencedEntity;
 						string loadName;
@@ -759,7 +808,7 @@ namespace ICSharpCode.Decompiler.Ast
 					return new UndocumentedExpression {
 						UndocumentedExpressionType = UndocumentedExpressionType.RefType,
 						Arguments = { arg1 }
-					}.Member("TypeHandle", TextTokenType.InstanceProperty);
+					}.Member("TypeHandle", TextTokenType.InstanceProperty).WithAnnotation(Create_SystemType_get_TypeHandle());
 				case ILCode.Refanyval:
 					return MakeRef(
 						new UndocumentedExpression {

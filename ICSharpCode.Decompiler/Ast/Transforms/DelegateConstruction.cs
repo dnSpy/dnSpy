@@ -79,7 +79,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						if (!annotation.IsVirtual && obj is ThisReferenceExpression) {
 							// maybe it's getting the pointer of a base method?
 							if (method.DeclaringType.ResolveTypeDef() != context.CurrentType) {
-								obj = new BaseReferenceExpression();
+								obj = new BaseReferenceExpression().WithAnnotation(method.DeclaringType);
 							}
 						}
 						if (!annotation.IsVirtual && obj is NullReferenceExpression && method.MethodSig != null && !method.MethodSig.HasThis) {

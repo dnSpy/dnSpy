@@ -828,10 +828,50 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			
 			Expression targetConverted = Convert(invocation.Arguments.Single());
 			if (targetConverted != null)
-				return targetConverted.Member("Length", TextTokenType.InstanceProperty);
+				return targetConverted.Member("Length", TextTokenType.InstanceProperty).WithAnnotation(Create_SystemArray_get_Length());
 			else
 				return null;
 		}
+
+		ModuleDef GetModule()
+		{
+			if (context.CurrentMethod != null && context.CurrentMethod.Module != null)
+				return context.CurrentMethod.Module;
+			if (context.CurrentType != null && context.CurrentType.Module != null)
+				return context.CurrentType.Module;
+			if (context.CurrentModule != null)
+				return context.CurrentModule;
+
+			return null;
+		}
+
+		IMDTokenProvider Create_SystemArray_get_Length()
+		{
+			if (Create_SystemArray_get_Length_result_initd)
+				return Create_SystemArray_get_Length_result;
+			Create_SystemArray_get_Length_result_initd = true;
+
+			var module = GetModule();
+			if (module == null)
+				return null;
+
+			const string propName = "Length";
+			var type = module.CorLibTypes.GetTypeRef("System", "Array");
+			var retType = module.CorLibTypes.Int32;
+			var mr = new MemberRefUser(module, "get_" + propName, MethodSig.CreateInstance(retType), type);
+			Create_SystemArray_get_Length_result = mr;
+			var md = mr.ResolveMethod();
+			if (md == null || md.DeclaringType == null)
+				return mr;
+			var prop = md.DeclaringType.FindProperty(propName);
+			if (prop == null)
+				return mr;
+
+			Create_SystemArray_get_Length_result = mr;
+			return prop;
+		}
+		IMDTokenProvider Create_SystemArray_get_Length_result;
+		bool Create_SystemArray_get_Length_result_initd;
 		
 		Expression ConvertNewArrayInit(InvocationExpression invocation)
 		{
