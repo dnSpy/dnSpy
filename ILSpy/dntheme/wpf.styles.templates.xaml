@@ -3220,13 +3220,13 @@
 							Value="{x:Static theme:ScrollGlyph.VerticalGripper}">
 							<Setter Property="Margin"
 								TargetName="Border"
-								Value="2 0 2 0"/>
+								Value="4 0 4 0"/>
 						</Trigger>
 						<Trigger Property="theme:ScrollChrome.ScrollGlyph"
 							Value="{x:Static theme:ScrollGlyph.HorizontalGripper}">
 							<Setter Property="Margin"
 								TargetName="Border"
-								Value="0 2 0 2"/>
+								Value="0 4 0 4"/>
 						</Trigger>
 					</ControlTemplate.Triggers>
                 </ControlTemplate>
