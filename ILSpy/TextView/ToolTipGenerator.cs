@@ -107,7 +107,7 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			foreach (var elem in xml.DescendantNodes()) {
 				if (elem is XText)
-					output.Write(((XText)elem).Value, TextTokenType.XmlDocSummary);
+					output.Write(XmlDocRenderer.whitespace.Replace(((XText)elem).Value, " "), TextTokenType.XmlDocSummary);
 				else if (elem is XElement) {
 					var xelem = (XElement)elem;
 					switch (xelem.Name.ToString().ToUpperInvariant()) {
@@ -129,7 +129,6 @@ namespace ICSharpCode.ILSpy.TextView
 						output.WriteNewLine();
 						break;
 					default:
-						output.Write(elem.ToString(), TextTokenType.XmlDocSummary);
 						break;
 					}
 				}

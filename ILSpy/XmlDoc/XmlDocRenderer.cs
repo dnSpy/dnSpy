@@ -78,7 +78,7 @@ namespace ICSharpCode.ILSpy.XmlDoc
 			}
 		}
 		
-		static readonly Regex whitespace = new Regex(@"\s+");
+		internal static readonly Regex whitespace = new Regex(@"\s+");
 
 		/// <summary>
 		/// 
