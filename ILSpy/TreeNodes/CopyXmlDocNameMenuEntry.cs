@@ -56,7 +56,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 					if (numAdded++ > 0)
 						sb.AppendLine();
 					var mrNode = node as IMemberTreeNode;
-					if (mrNode != null)
+					if (mrNode != null && mrNode.Member != null)
 						sb.Append(XmlDocKeyProvider.GetKey(mrNode.Member));
 					else {
 						var nsNode = (NamespaceTreeNode)node;

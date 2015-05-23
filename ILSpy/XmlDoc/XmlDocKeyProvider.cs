@@ -33,6 +33,8 @@ namespace ICSharpCode.ILSpy.XmlDoc
 		#region GetKey
 		public static string GetKey(IMemberRef member)
 		{
+			if (member == null)
+				return null;
 			StringBuilder b = new StringBuilder();
 			if (member is ITypeDefOrRef) {
 				b.Append("T:");
