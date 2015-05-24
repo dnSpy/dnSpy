@@ -108,6 +108,7 @@ namespace ICSharpCode.ILSpy.TextView
 			
 			this.referenceElementGenerator = new ReferenceElementGenerator(this.JumpToReference, this.IsLink);
 			textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
+			textEditor.TextArea.PreviewKeyDown += TextEditor_PreviewKeyDown;
 			textEditor.TextArea.KeyDown += TextEditor_KeyDown;
 			this.uiElementGenerator = new UIElementGenerator();
 			textEditor.TextArea.TextView.ElementGenerators.Add(uiElementGenerator);
@@ -1088,6 +1089,59 @@ namespace ICSharpCode.ILSpy.TextView
 			TextEditor.TextArea.Caret.DesiredXPos = desiredXPos;
 		}
 
+		static Point FilterCaretPos(ICSharpCode.AvalonEdit.Rendering.TextView textView, Point pt)
+		{
+			Point firstPos;
+			if (textView.VisualLines.Count == 0)
+				firstPos = new Point(0, 0);
+			else {
+				var line = textView.VisualLines[0];
+				if (line.VisualTop < textView.VerticalOffset && textView.VisualLines.Count > 1)
+					line = textView.VisualLines[1];
+				firstPos = line.GetVisualPosition(0, VisualYPosition.LineMiddle);
+			}
+
+			Point lastPos;
+			if (textView.VisualLines.Count == 0)
+				lastPos = new Point(0, 0);
+			else {
+				var line = textView.VisualLines[textView.VisualLines.Count - 1];
+				if (line.VisualTop - textView.VerticalOffset + line.Height > textView.ActualHeight && textView.VisualLines.Count > 1)
+					line = textView.VisualLines[textView.VisualLines.Count - 2];
+				lastPos = line.GetVisualPosition(0, VisualYPosition.LineMiddle);
+			}
+
+			if (pt.Y < firstPos.Y)
+				return new Point(pt.X, firstPos.Y);
+			else if (pt.Y > lastPos.Y)
+				return new Point(pt.X, lastPos.Y);
+			return pt;
+		}
+
+		void TextEditor_PreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			if (Keyboard.Modifiers == ModifierKeys.None && (e.Key == Key.PageDown || e.Key == Key.PageUp)) {
+				var textView = TextEditor.TextArea.TextView;
+				var si = (System.Windows.Controls.Primitives.IScrollInfo)textView;
+
+				// Re-use the existing code in AvalonEdit
+				var cmd = e.Key == Key.PageDown ? EditingCommands.MoveDownByPage : EditingCommands.MoveUpByPage;
+				var target = textView;
+				bool canExec = cmd.CanExecute(null, target);
+				Debug.Assert(canExec);
+				if (canExec) {
+					if (e.Key == Key.PageDown)
+						si.PageDown();
+					else
+						si.PageUp();
+
+					cmd.Execute(null, target);
+					e.Handled = true;
+				}
+				return;
+			}
+		}
+
 		void TextEditor_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.PageUp) {
@@ -1118,6 +1172,30 @@ namespace ICSharpCode.ILSpy.TextView
 					var caret = TextEditor.TextArea.Caret;
 					SetCaretPosition(docLine.LineNumber, caret.Location.Column);
 				}
+				e.Handled = true;
+				return;
+			}
+
+			if (Keyboard.Modifiers == ModifierKeys.Control && (e.Key == Key.Down || e.Key == Key.Up)) {
+				var textView = TextEditor.TextArea.TextView;
+				var scrollViewer = ((System.Windows.Controls.Primitives.IScrollInfo)textView).ScrollOwner;
+				textView.EnsureVisualLines();
+
+				var currPos = FilterCaretPos(textView, textView.GetVisualPosition(TextEditor.TextArea.Caret.Position, VisualYPosition.LineMiddle));
+
+				if (e.Key == Key.Down)
+					scrollViewer.LineDown();
+				else
+					scrollViewer.LineUp();
+				textView.UpdateLayout();
+				textView.EnsureVisualLines();
+
+				var newPos = FilterCaretPos(textView, currPos);
+				var newVisPos = textView.GetPosition(newPos);
+				Debug.Assert(newVisPos != null);
+				if (newVisPos != null)
+					TextEditor.TextArea.Caret.Position = newVisPos.Value;
+
 				e.Handled = true;
 				return;
 			}
