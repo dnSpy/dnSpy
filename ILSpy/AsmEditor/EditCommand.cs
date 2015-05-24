@@ -17,8 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Linq;
 using System.Windows.Controls;
 using ICSharpCode.ILSpy.TreeNodes;
+using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.AsmEditor
 {
@@ -57,30 +59,35 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			Initialize(GetSelectedNodes(), menuItem);
 		}
 
+		static ILSpyTreeNode[] GetILSpyTreeNodes(SharpTreeNode[] nodes)
+		{
+			return nodes.OfType<ILSpyTreeNode>().ToArray();
+		}
+
 		bool IContextMenuEntry<TextViewContext>.IsVisible(TextViewContext context)
 		{
 			return context.TreeView == MainWindow.Instance.treeView &&
 				context.SelectedTreeNodes != null &&
-				IsVisible(context.SelectedTreeNodes);
+				IsVisible(GetILSpyTreeNodes(context.SelectedTreeNodes));
 		}
 
 		bool IContextMenuEntry<TextViewContext>.IsEnabled(TextViewContext context)
 		{
 			return context.TreeView == MainWindow.Instance.treeView &&
 				context.SelectedTreeNodes != null &&
-				CanExecute(context.SelectedTreeNodes);
+				CanExecute(GetILSpyTreeNodes(context.SelectedTreeNodes));
 		}
 
 		void IContextMenuEntry<TextViewContext>.Execute(TextViewContext context)
 		{
 			if (context.TreeView == MainWindow.Instance.treeView && context.SelectedTreeNodes != null)
-				Execute(context.SelectedTreeNodes);
+				Execute(GetILSpyTreeNodes(context.SelectedTreeNodes));
 		}
 
 		void IContextMenuEntry2<TextViewContext>.Initialize(TextViewContext context, MenuItem menuItem)
 		{
 			if (context.TreeView == MainWindow.Instance.treeView && context.SelectedTreeNodes != null)
-				Initialize(context.SelectedTreeNodes, menuItem);
+				Initialize(GetILSpyTreeNodes(context.SelectedTreeNodes), menuItem);
 		}
 	}
 }

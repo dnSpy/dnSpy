@@ -77,7 +77,7 @@ namespace ICSharpCode.ILSpy
 		/// Returns the selected nodes in the tree view.
 		/// Returns null, if context menu does not belong to a tree view.
 		/// </summary>
-		public ILSpyTreeNode[] SelectedTreeNodes { get; private set; }
+		public SharpTreeNode[] SelectedTreeNodes { get; private set; }
 		
 		/// <summary>
 		/// Returns the tree view the context menu is assigned to.
@@ -133,7 +133,7 @@ namespace ICSharpCode.ILSpy
 				reference = new ReferenceSegment { Reference = ((SearchResult)listBox.SelectedItem).MDTokenProvider };
 			else
 				reference = null;
-			var selectedTreeNodes = treeView != null ? treeView.GetTopLevelSelection().OfType<ILSpyTreeNode>().ToArray() : null;
+			var selectedTreeNodes = treeView != null ? treeView.GetTopLevelSelection().ToArray() : null;
 			return new TextViewContext {
 				TreeView = treeView,
 				SelectedTreeNodes = selectedTreeNodes,
