@@ -223,7 +223,9 @@ namespace ICSharpCode.ILSpy
 			if (textView != null)
 				textView.ContextMenuOpening -= this.textView_ContextMenuOpening;
 			if (listBox != null)
-				listBox.ContextMenuOpening -= listBox_ContextMenuOpening;
+				listBox.ContextMenuOpening -= this.listBox_ContextMenuOpening;
+			if (tabControl != null)
+				tabControl.ContextMenuOpening -= this.tabControl_ContextMenuOpening;
 		}
 		
 		readonly SharpTreeView treeView;
