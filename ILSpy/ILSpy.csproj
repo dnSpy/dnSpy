@@ -424,7 +424,7 @@
     <Compile Include="TreeNodes\ITokenTreeNode.cs" />
     <Compile Include="TreeNodes\ITreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\NodePathName.cs" />
-    <Compile Include="TreeNodes\OpenInExplorerContextMenuEntry.cs" />
+    <Compile Include="TreeNodes\OpenContainingFolderContextMenuEntry.cs" />
     <Compile Include="Commands\OpenListCommand.cs" />
     <Compile Include="Controls\ResourceObjectTable.xaml.cs">
       <DependentUpon>ResourceObjectTable.xaml</DependentUpon>

@@ -27,7 +27,7 @@ using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
-	[ExportContextMenuEntryAttribute(Header = "G_o to MD Token…", Order = 300, Category = "Tokens", InputGestureText = "Ctrl+D")]
+	[ExportContextMenuEntryAttribute(Header = "Go to M_D Token…", Order = 300, Category = "Tokens", InputGestureText = "Ctrl+D")]
 	class GoToTokenContextMenuEntry : IContextMenuEntry
 	{
 		public bool IsVisible(TextViewContext context)

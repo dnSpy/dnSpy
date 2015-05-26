@@ -24,8 +24,8 @@ using ICSharpCode.ILSpy.TreeNodes;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
-	[ExportContextMenuEntryAttribute(Header = "_Show in Explorer", Order = 920, Category = "Other")]
-	class OpenInExplorerContextMenuEntry : IContextMenuEntry
+	[ExportContextMenuEntryAttribute(Header = "_Open Containing Folder", Order = 920, Category = "Other")]
+	class OpenContainingFolderContextMenuEntry : IContextMenuEntry
 	{
 		public bool IsVisible(TextViewContext context)
 		{
