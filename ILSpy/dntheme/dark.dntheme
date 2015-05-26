@@ -78,6 +78,7 @@
 		<color name="systemcolorsinactiveselectionhighlighttext" fg="#7D7D7D" />
 		<color name="systemcolorsinactivecaption" fg="#606060" />
 		<color name="systemcolorsinactivecaptiontext" fg="#A0A0A0" />
+		<color name="mainwindowbackground" bg="#252525" />
 		<color name="controlshadow" bg="#71000000" />
 		<color name="gridsplitterpreviewfill" bg="#80000000" />
 		<color name="groupboxborderbrush" bg="#808080" />
@@ -270,7 +271,6 @@
 		<color name="dockedpaneclosebuttonpathstroke" bg="#303030" />
 		<color name="dockedpaneclosebuttonpathfill" bg="#909090" />
 		<color name="dockedpanetitleforeground" fg="#D0D0D0" />
-		<color name="decompilertextviewborder" bg="#606060" />
 		<color name="decompilertextviewwaitadornerbackground" bg="#A0404040" />
 		<color name="resourcetablealternationbackground1" bg="#252525" />
 		<color name="resourcetablealternationbackground2" bg="#454545" />
@@ -285,6 +285,39 @@
 		<color name="sharptreeviewborder" bg="#505050" />
 		<color name="iconbar" bg="#333333" />
 		<color name="iconbarborder" bg="#555555" />
+		<color name="environmentfiletabbackground" bg="#FF2D2D30" />
+		<color name="environmentfiletabborder" bg="#FF2D2D30" />
+		<color name="environmentfiletabbuttondowninactiveborder" bg="#FF0E6198" />
+		<color name="environmentfiletabbuttondowninactive" bg="#FF0E6198" />
+		<color name="environmentfiletabbuttondowninactiveglyph" bg="#FFFFFFFF" />
+		<color name="environmentfiletabbuttondownselectedactiveborder" bg="#FF0E6198" />
+		<color name="environmentfiletabbuttondownselectedactive" bg="#FF0E6198" />
+		<color name="environmentfiletabbuttondownselectedactiveglyph" bg="#FFFFFFFF" />
+		<color name="environmentfiletabbuttondownselectedinactiveborder" bg="#FF1B1B1C" />
+		<color name="environmentfiletabbuttondownselectedinactive" bg="#FF1B1B1C" />
+		<color name="environmentfiletabbuttondownselectedinactiveglyph" bg="#FFF1F1F1" />
+		<color name="environmentfiletabbuttonhoverinactiveborder" bg="#FF52B0EF" />
+		<color name="environmentfiletabbuttonhoverinactive" bg="#FF52B0EF" />
+		<color name="environmentfiletabbuttonhoverinactiveglyph" bg="#FFFFFFFF" />
+		<color name="environmentfiletabbuttonhoverselectedactiveborder" bg="#FF1C97EA" />
+		<color name="environmentfiletabbuttonhoverselectedactive" bg="#FF1C97EA" />
+		<color name="environmentfiletabbuttonhoverselectedactiveglyph" bg="#FFFFFFFF" />
+		<color name="environmentfiletabbuttonhoverselectedinactiveborder" bg="#FF555555" />
+		<color name="environmentfiletabbuttonhoverselectedinactive" bg="#FF555555" />
+		<color name="environmentfiletabbuttonhoverselectedinactiveglyph" bg="#FFF1F1F1" />
+		<color name="environmentfiletabbuttonselectedactiveglyph" bg="#FFD0E6F5" />
+		<color name="environmentfiletabbuttonselectedinactiveglyph" bg="#FF6D6D70" />
+		<color name="environmentfiletabinactiveborder" bg="#FF3F3F46" />
+		<color name="environmentfiletabinactivegradient" fg="#FF3F3F46" bg="#FF3F3F46" />
+		<color name="environmentfiletabinactivetext" bg="#FFF1F1F1" />
+		<color name="environmentfiletabselectedborder" bg="#FF007ACC" />
+		<color name="environmentfiletabselectedgradient" fg="#FF007ACC" bg="#FF007ACC" color3="#FF007ACC" color4="#FF007ACC" />
+		<color name="environmentfiletabselectedtext" bg="#FFFFFFFF" />
+		<color name="environmentfiletabtext" bg="#FFF1F1F1" />
+		<color name="environmentfiletabhotgradient" fg="#FF1C97EA" bg="#FF1C97EA" />
+		<color name="environmentfiletabhotborder" bg="#FF1C97EA" />
+		<color name="environmentfiletabhottext" bg="#FFFFFFFF" />
+		<color name="environmentfiletabhotglyph" bg="#FFD0E6F5" />
 		<color name="nodeautoloaded" fg="SteelBlue" />
 		<color name="nodepublic" fg="#D0D0D0" />
 		<color name="nodenotpublic" fg="#909090" />

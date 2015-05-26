@@ -265,7 +265,7 @@ namespace ICSharpCode.ILSpy
 		{
 			var view = tabState.TextView;
 			if (addType == TabManagerAddType.Add) {
-				tabState.HeaderChanged += tabState_HeaderChanged;
+				tabState.PropertyChanged += tabState_PropertyChanged;
 				RemoveCommands(view);
 				view.TextEditor.TextArea.MouseRightButtonDown += delegate { view.GoToMousePosition(); };
 				view.TextEditor.WordWrap = sessionSettings.WordWrap;
@@ -275,7 +275,7 @@ namespace ICSharpCode.ILSpy
 					OnDecompilerTextViewAdded(this, new DecompilerTextViewEventArgs(view));
 			}
 			else if (addType == TabManagerAddType.Remove) {
-				tabState.HeaderChanged -= tabState_HeaderChanged;
+				tabState.PropertyChanged -= tabState_PropertyChanged;
 				if (OnDecompilerTextViewRemoved != null)
 					OnDecompilerTextViewRemoved(this, new DecompilerTextViewEventArgs(view));
 			}
@@ -291,10 +291,12 @@ namespace ICSharpCode.ILSpy
 				throw new InvalidOperationException();
 		}
 
-		void tabState_HeaderChanged(object sender, EventArgs e)
+		void tabState_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (OnTabHeaderChanged != null)
-				OnTabHeaderChanged(sender, e);
+			if (e.PropertyName == "Header") {
+				if (OnTabHeaderChanged != null)
+					OnTabHeaderChanged(sender, e);
+			}
 		}
 		public event EventHandler OnTabHeaderChanged;
 

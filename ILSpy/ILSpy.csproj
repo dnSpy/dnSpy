@@ -391,9 +391,11 @@
     <Compile Include="Controls\RadioButtonBullet.xaml.cs">
       <DependentUpon>RadioButtonBullet.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TabButton.cs" />
     <Compile Include="DecompilerTabsWindow.xaml.cs">
       <DependentUpon>DecompilerTabsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="dntheme\FileTabBackgroundConverter.cs" />
     <Compile Include="FilterSearcher.cs" />
     <Compile Include="HideWindowsButtons.cs" />
     <Compile Include="Images\ImageCache.cs" />

@@ -78,14 +78,18 @@ namespace ICSharpCode.ILSpy
 		readonly Action<TabManager<TState>, TState, TState> onSelectionChanged;
 		readonly Action<TabManager<TState>, TabManagerAddType, TState> onAddRemoveTabState;
 
-		int activeIndex;
-
 		public int ActiveIndex {
-			get { return activeIndex; }
+			get { return _activeIndex; }
+			private set {
+				_activeIndex = value;
+				for (int i = 0; i < tabManagers.Count; i++)
+					tabManagers[i].IsActive = _activeIndex == i;
+			}
 		}
+		int _activeIndex;
 
 		public TabManager<TState> ActiveTabGroup {
-			get { return tabManagers[activeIndex]; }
+			get { return tabManagers[ActiveIndex]; }
 		}
 
 		public IList<TabManager<TState>> AllTabGroups {
@@ -115,11 +119,18 @@ namespace ICSharpCode.ILSpy
 
 		public TabGroupsManager(ContentPresenter contentPresenter, Action<TabManager<TState>, TState, TState> onSelectionChanged, Action<TabManager<TState>, TabManagerAddType, TState> onAddRemoveTabState)
 		{
+			dntheme.Themes.ThemeChanged += Themes_ThemeChanged;
 			this.contentPresenter = contentPresenter;
 			this.onSelectionChanged = onSelectionChanged;
 			this.onAddRemoveTabState = onAddRemoveTabState;
-			CreateTabManager(0);
+			CreateTabManager(0).IsActive = true;
 			UpdateGrid();
+		}
+
+		void Themes_ThemeChanged(object sender, EventArgs e)
+		{
+			foreach (var tabManager in tabManagers)
+				tabManager.OnThemeChanged();
 		}
 
 		public event EventHandler<TabGroupEventArgs> OnTabGroupAdded;
@@ -148,7 +159,9 @@ namespace ICSharpCode.ILSpy
 
 		TabManager<TState> CreateTabManager(int insertIndex)
 		{
-			var tabManager = new TabManager<TState>(this, new TabControl(), onSelectionChanged, onAddRemoveTabState);
+			var tabControl = new TabControl();
+			tabControl.Style = App.Current.FindResource("TabStateDecompileTabControl") as Style;
+			var tabManager = new TabManager<TState>(this, tabControl, onSelectionChanged, onAddRemoveTabState);
 			tabManagers.Insert(insertIndex, tabManager);
 			ContextMenuProvider.Add(tabManager.TabControl);
 			if (OnTabGroupAdded != null)
@@ -174,13 +187,13 @@ namespace ICSharpCode.ILSpy
 
 		public void SetActive(TabManager<TState> tabManager)
 		{
-			if (tabManager == tabManagers[activeIndex])
+			if (tabManager == tabManagers[ActiveIndex])
 				return;
 			int newIndex = tabManagers.IndexOf(tabManager);
 			if (newIndex < 0)
 				throw new InvalidOperationException();
-			int oldIndex = activeIndex;
-			activeIndex = newIndex;
+			int oldIndex = ActiveIndex;
+			ActiveIndex = newIndex;
 			if (OnTabGroupSelected != null)
 				OnTabGroupSelected(this, new TabGroupSelectedEventArgs(oldIndex, newIndex));
 		}
@@ -193,15 +206,15 @@ namespace ICSharpCode.ILSpy
 				return;
 			if (tabManagers.Count <= 1)
 				return;
-			if (activeIndex == index) {
+			if (ActiveIndex == index) {
 				int newIndex = index == 0 ? index + 1 : index - 1;
 				SetActive(tabManagers[newIndex]);
-				activeIndex = newIndex;
+				ActiveIndex = newIndex;
 			}
-			var current = tabManagers[activeIndex];
+			var current = tabManagers[ActiveIndex];
 			tabManagers.Remove(tabManager);
-			activeIndex = tabManagers.IndexOf(current);
-			Debug.Assert(activeIndex >= 0);
+			ActiveIndex = tabManagers.IndexOf(current);
+			Debug.Assert(ActiveIndex >= 0);
 			if (OnTabGroupRemoved != null)
 				OnTabGroupRemoved(this, TabGroupEventArgs.Empty);
 			UpdateGrid();
@@ -210,7 +223,7 @@ namespace ICSharpCode.ILSpy
 		public bool NewHorizontalTabGroupCanExecute()
 		{
 			return (tabManagers.Count == 1 || isHorizontal) &&
-				tabManagers[activeIndex].Count > 1;
+				tabManagers[ActiveIndex].Count > 1;
 		}
 
 		public void NewHorizontalTabGroup()
@@ -223,7 +236,7 @@ namespace ICSharpCode.ILSpy
 		public bool NewVerticalTabGroupCanExecute()
 		{
 			return (tabManagers.Count == 1 || !isHorizontal) &&
-				tabManagers[activeIndex].Count > 1;
+				tabManagers[ActiveIndex].Count > 1;
 		}
 
 		public void NewVerticalTabGroup()
@@ -237,12 +250,12 @@ namespace ICSharpCode.ILSpy
 		{
 			Debug.Assert(tabManagers.Count == 1 || isHorizontal == horizontal);
 
-			var newTabManager = CreateTabManager(activeIndex + 1);
+			var newTabManager = CreateTabManager(ActiveIndex + 1);
 
 			UpdateGrid(horizontal);
 			UpdateOrientation(horizontal);
 
-			Move(newTabManager, tabManagers[activeIndex], tabManagers[activeIndex].ActiveTabState);
+			Move(newTabManager, tabManagers[ActiveIndex], tabManagers[ActiveIndex].ActiveTabState);
 			SetActive(newTabManager);
 		}
 
@@ -257,54 +270,54 @@ namespace ICSharpCode.ILSpy
 
 		internal bool MoveToNextTabGroupCanExecute()
 		{
-			return activeIndex + 1 < tabManagers.Count &&
-				tabManagers[activeIndex].ActiveTabState != null;
+			return ActiveIndex + 1 < tabManagers.Count &&
+				tabManagers[ActiveIndex].ActiveTabState != null;
 		}
 
 		internal void MoveToNextTabGroup()
 		{
 			if (!MoveToNextTabGroupCanExecute())
 				return;
-			Move(tabManagers[activeIndex + 1], tabManagers[activeIndex], tabManagers[activeIndex].ActiveTabState);
+			Move(tabManagers[ActiveIndex + 1], tabManagers[ActiveIndex], tabManagers[ActiveIndex].ActiveTabState);
 		}
 
 		internal bool MoveToPreviousTabGroupCanExecute()
 		{
-			return activeIndex != 0 &&
-				tabManagers[activeIndex].ActiveTabState != null;
+			return ActiveIndex != 0 &&
+				tabManagers[ActiveIndex].ActiveTabState != null;
 		}
 
 		internal void MoveToPreviousTabGroup()
 		{
 			if (!MoveToPreviousTabGroupCanExecute())
 				return;
-			Move(tabManagers[activeIndex - 1], tabManagers[activeIndex], tabManagers[activeIndex].ActiveTabState);
+			Move(tabManagers[ActiveIndex - 1], tabManagers[ActiveIndex], tabManagers[ActiveIndex].ActiveTabState);
 		}
 
 		internal bool MoveAllToNextTabGroupCanExecute()
 		{
-			return activeIndex + 1 < tabManagers.Count &&
-				tabManagers[activeIndex].Count > 1;
+			return ActiveIndex + 1 < tabManagers.Count &&
+				tabManagers[ActiveIndex].Count > 1;
 		}
 
 		internal void MoveAllToNextTabGroup()
 		{
 			if (!MoveAllToNextTabGroupCanExecute())
 				return;
-			MoveAllToOtherTabGroup(tabManagers[activeIndex + 1], tabManagers[activeIndex]);
+			MoveAllToOtherTabGroup(tabManagers[ActiveIndex + 1], tabManagers[ActiveIndex]);
 		}
 
 		internal bool MoveAllToPreviousTabGroupCanExecute()
 		{
-			return activeIndex != 0 &&
-				tabManagers[activeIndex].Count > 1;
+			return ActiveIndex != 0 &&
+				tabManagers[ActiveIndex].Count > 1;
 		}
 
 		internal void MoveAllToPreviousTabGroup()
 		{
 			if (!MoveToPreviousTabGroupCanExecute())
 				return;
-			MoveAllToOtherTabGroup(tabManagers[activeIndex - 1], tabManagers[activeIndex]);
+			MoveAllToOtherTabGroup(tabManagers[ActiveIndex - 1], tabManagers[ActiveIndex]);
 		}
 
 		void MoveAllToOtherTabGroup(TabManager<TState> dst, TabManager<TState> src)
@@ -351,7 +364,7 @@ namespace ICSharpCode.ILSpy
 		{
 			if (!MergeAllTabGroupsCanExecute())
 				return;
-			var dstTabManager = tabManagers[activeIndex];
+			var dstTabManager = tabManagers[ActiveIndex];
 			foreach (var tabManager in tabManagers.ToArray()) {
 				if (tabManager == dstTabManager)
 					continue;
@@ -392,7 +405,7 @@ namespace ICSharpCode.ILSpy
 		{
 			if (!CloseTabGroupCanExecute())
 				return;
-			tabManagers[activeIndex].CloseAllTabs();
+			tabManagers[ActiveIndex].CloseAllTabs();
 		}
 
 		internal bool CloseAllTabGroupsButThisCanExecute()
@@ -404,7 +417,7 @@ namespace ICSharpCode.ILSpy
 		{
 			if (!CloseAllTabGroupsButThisCanExecute())
 				return;
-			var activeTabManager = tabManagers[activeIndex];
+			var activeTabManager = tabManagers[ActiveIndex];
 			foreach (var tabManager in tabManagers.ToArray()) {
 				if (activeTabManager == tabManager)
 					continue;
@@ -414,26 +427,26 @@ namespace ICSharpCode.ILSpy
 
 		internal bool MoveTabGroupAfterNextTabGroupCanExecute()
 		{
-			return activeIndex + 1 < tabManagers.Count;
+			return ActiveIndex + 1 < tabManagers.Count;
 		}
 
 		internal void MoveTabGroupAfterNextTabGroup()
 		{
 			if (!MoveTabGroupAfterNextTabGroupCanExecute())
 				return;
-			SwapTabGroups(activeIndex, activeIndex + 1);
+			SwapTabGroups(ActiveIndex, ActiveIndex + 1);
 		}
 
 		internal bool MoveTabGroupBeforePreviousTabGroupCanExecute()
 		{
-			return activeIndex != 0;
+			return ActiveIndex != 0;
 		}
 
 		internal void MoveTabGroupBeforePreviousTabGroup()
 		{
 			if (!MoveTabGroupBeforePreviousTabGroupCanExecute())
 				return;
-			SwapTabGroups(activeIndex - 1, activeIndex);
+			SwapTabGroups(ActiveIndex - 1, ActiveIndex);
 		}
 
 		void SwapTabGroups(int index1, int index2)
@@ -442,10 +455,10 @@ namespace ICSharpCode.ILSpy
 			tabManagers[index1] = tabManagers[index2];
 			tabManagers[index2] = tmp1;
 
-			if (activeIndex == index1)
-				activeIndex = index2;
-			else if (activeIndex == index2)
-				activeIndex = index1;
+			if (ActiveIndex == index1)
+				ActiveIndex = index2;
+			else if (ActiveIndex == index2)
+				ActiveIndex = index1;
 
 			UpdateGrid();
 
@@ -461,13 +474,14 @@ namespace ICSharpCode.ILSpy
 		void UpdateGrid(bool horizontal)
 		{
 			var grid = new Grid();
+			grid.Style = App.Current.FindResource("TabGroupsGridStyle") as Style;
 			var oldGrid = contentPresenter.Content as Grid;
 			if (oldGrid != null)
 				oldGrid.Children.Clear();
 			contentPresenter.Content = null;
 
 			// Make sure the horizontal grid splitters can resize the content
-			double d = 0.01;
+			double d = 0.0001;
 			if (horizontal) {
 				grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
 				int rowCol = 0;

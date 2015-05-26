@@ -19,11 +19,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
 using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy
@@ -36,13 +40,52 @@ namespace ICSharpCode.ILSpy
 		Detach,
 	}
 
-	abstract class TabManagerBase
+	public enum TabManagerState
 	{
+		Empty,
+		Active,
+		Inactive,
 	}
 
-	sealed class TabManager<TState> : TabManagerBase where TState : TabState
+	abstract class TabManagerBase
+	{
+		internal abstract void Close(object tabState);
+		internal abstract void OnThemeChanged();
+	}
+
+	sealed class TabManager<TState> : TabManagerBase, INotifyPropertyChanged where TState : TabState
 	{
 		readonly TabControl tabControl;
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		void OnPropertyChanged(string propName)
+		{
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(propName));
+		}
+
+		public bool IsActive {
+			get { return isActive; }
+			internal set {
+				if (isActive != value) {
+					isActive = value;
+					foreach (var tabState in AllTabStates)
+						tabState.IsActive = IsActive;
+					OnPropertyChanged("IsActive");
+					OnPropertyChanged("TabManagerState");
+				}
+			}
+		}
+		bool isActive;
+
+		public TabManagerState TabManagerState {
+			get {
+				if (Count == 0)
+					return TabManagerState.Empty;
+				return IsActive ? TabManagerState.Active : TabManagerState.Inactive;
+			}
+		}
 
 		public TabControl TabControl {
 			get { return tabControl; }
@@ -62,7 +105,7 @@ namespace ICSharpCode.ILSpy
 				if (index >= tabControl.Items.Count)
 					return null;
 				var item = tabControl.Items[index] as TabItem;
-				return item == null ? null : (TState)item.Tag;
+				return item == null ? null : (TState)item.DataContext;
 			}
 		}
 
@@ -72,8 +115,8 @@ namespace ICSharpCode.ILSpy
 					var tabItem = item as TabItem;
 					if (tabItem == null)
 						continue;
-					Debug.Assert(tabItem.Tag is TState);
-					yield return (TState)tabItem.Tag;
+					Debug.Assert(tabItem.DataContext is TState);
+					yield return (TState)tabItem.DataContext;
 				}
 			}
 		}
@@ -86,10 +129,21 @@ namespace ICSharpCode.ILSpy
 		{
 			this.tabGroupsManager = tabGroupsManager;
 			this.tabControl = tabControl;
-			tabControl.Tag = this;
+			tabControl.DataContext = this;
 			this.tabControl.SelectionChanged += tabControl_SelectionChanged;
 			this.OnSelectionChanged = onSelectionChanged;
 			this.OnAddRemoveTabState = onAddRemoveTabState;
+		}
+
+		internal override void OnThemeChanged()
+		{
+			// A color is calculated from TabManagerState so make sure it's recalculated
+			OnPropertyChanged("TabManagerState");
+		}
+
+		internal override void Close(object ts)
+		{
+			CloseTab((TState)ts);
 		}
 
 		void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -99,8 +153,15 @@ namespace ICSharpCode.ILSpy
 			Debug.Assert(e.RemovedItems.Count <= 1);
 			Debug.Assert(e.AddedItems.Count <= 1);
 
-			var oldState = e.RemovedItems.Count >= 1 ? (TState)((TabItem)e.RemovedItems[0]).Tag : null;
-			var newState = e.AddedItems.Count >= 1 ? (TState)((TabItem)e.AddedItems[0]).Tag : null;
+			var oldState = e.RemovedItems.Count >= 1 ? (TState)((TabItem)e.RemovedItems[0]).DataContext : null;
+			var newState = e.AddedItems.Count >= 1 ? (TState)((TabItem)e.AddedItems[0]).DataContext : null;
+
+			foreach (var item in tabControl.Items) {
+				var tabItem = (TabItem)item;
+				Debug.Assert(tabItem != null && tabItem.DataContext is TState);
+				var tabState = (TState)tabItem.DataContext;
+				tabState.IsSelected = tabState == newState;
+			}
 
 			OnSelectionChanged(this, oldState, newState);
 		}
@@ -111,7 +172,10 @@ namespace ICSharpCode.ILSpy
 			tabState.TabItem.AllowDrop = true;
 			AddEvents(tabState);
 
+			UpdateState(tabState);
 			tabControl.Items.Add(tabState.TabItem);
+			if (tabControl.Items.Count == 1)
+				OnPropertyChanged("TabManagerState");
 			OnAddRemoveTabState(this, TabManagerAddType.Add, tabState);
 			return tabState;
 		}
@@ -144,7 +208,7 @@ namespace ICSharpCode.ILSpy
 			var tabItem = o as TabItem;
 			if (tabItem == null)
 				return null;
-			var tabState = tabItem.Tag as TState;
+			var tabState = tabItem.DataContext as TState;
 			if (tabState == null || tabControl.Items.IndexOf(tabState.TabItem) < 0)
 				return null;
 			return tabState;
@@ -165,6 +229,7 @@ namespace ICSharpCode.ILSpy
 				return;
 			var tabItem = tabState.TabItem;
 
+			// We get notified whenever the mouse is down in TabItem.Header and TabItem.Contents
 			var mousePos = e.GetPosition(tabItem);
 			if (mousePos.X >= tabItem.ActualWidth || mousePos.Y >= tabItem.ActualHeight)
 				return;
@@ -178,11 +243,23 @@ namespace ICSharpCode.ILSpy
 				tabControl.SelectedItem = tabItem;//TODO: Doesn't work immediately!
 			}
 
-			if (e.LeftButton == MouseButtonState.Pressed)
+			if (Keyboard.Modifiers == ModifierKeys.None && e.LeftButton == MouseButtonState.Pressed) {
+				// HACK: The Close button won't work if we start the drag and drop operation
+				if (IsTabButton(tabItem, e.OriginalSource))
+					return;
 				DragDrop.DoDragDrop(tabItem, tabItem, DragDropEffects.Move);
+			}
 		}
 
-		bool GetInfo(object sender, DragEventArgs e, out TabItem source, out TabItem target, out TabControl tabControlSource, out TabControl tabControlTarget, out TState tabStateSource, out TState tabStateTarget, out TabManager<TState> tabManagerSource, out TabManager<TState> tabManagerTarget)
+		static bool IsTabButton(TabItem tabItem, object o)
+		{
+			var depo = o as DependencyObject;
+			while ((depo is Visual || depo is Visual3D) && !(depo is ButtonBase) && depo != tabItem)
+				depo = VisualTreeHelper.GetParent(depo);
+			return depo is ButtonBase;
+		}
+
+		bool GetInfo(object sender, DragEventArgs e, out TabItem source, out TabItem target, out TabControl tabControlSource, out TabControl tabControlTarget, out TState tabStateSource, out TState tabStateTarget, out TabManager<TState> tabManagerSource, out TabManager<TState> tabManagerTarget, bool canBeSame)
 		{
 			source = target = null;
 			tabControlSource = tabControlTarget = null;
@@ -194,7 +271,7 @@ namespace ICSharpCode.ILSpy
 
 			target = sender as TabItem;
 			source = (TabItem)e.Data.GetData(typeof(TabItem));
-			if (target == null || source == null || target == source)
+			if (target == null || source == null || (!canBeSame && target == source))
 				return false;
 			tabControlTarget = target.Parent as TabControl;
 			if (tabControlTarget == null)
@@ -203,8 +280,8 @@ namespace ICSharpCode.ILSpy
 			if (tabControlSource == null)
 				return false;
 
-			tabManagerTarget = tabControlTarget.Tag as TabManager<TState>;
-			tabManagerSource = tabControlSource.Tag as TabManager<TState>;
+			tabManagerTarget = tabControlTarget.DataContext as TabManager<TState>;
+			tabManagerSource = tabControlSource.DataContext as TabManager<TState>;
 			if (tabManagerTarget == null || tabManagerSource == null)
 				return false;
 			if (tabManagerTarget.tabGroupsManager != tabManagerSource.tabGroupsManager)
@@ -212,8 +289,8 @@ namespace ICSharpCode.ILSpy
 			if (tabManagerTarget.tabGroupsManager != this.tabGroupsManager)
 				return false;
 
-			tabStateSource = source.Tag as TState;
-			tabStateTarget = target.Tag as TState;
+			tabStateSource = source.DataContext as TState;
+			tabStateTarget = target.DataContext as TState;
 			if (tabStateSource == null || tabStateTarget == null)
 				return false;
 
@@ -231,7 +308,7 @@ namespace ICSharpCode.ILSpy
 			TabControl tabControlSource, tabControlTarget;
 			TState tabStateSource, tabStateTarget;
 			TabManager<TState> tabManagerSource, tabManagerTarget;
-			if (GetInfo(sender, e, out source, out target, out tabControlSource, out tabControlTarget, out tabStateSource, out tabStateTarget, out tabManagerSource, out tabManagerTarget))
+			if (GetInfo(sender, e, out source, out target, out tabControlSource, out tabControlTarget, out tabStateSource, out tabStateTarget, out tabManagerSource, out tabManagerTarget, true))
 				canDrag = true;
 
 			e.Effects = canDrag ? DragDropEffects.Move : DragDropEffects.None;
@@ -244,7 +321,7 @@ namespace ICSharpCode.ILSpy
 			TabControl tabControlSource, tabControlTarget;
 			TState tabStateSource, tabStateTarget;
 			TabManager<TState> tabManagerSource, tabManagerTarget;
-			if (!GetInfo(sender, e, out source, out target, out tabControlSource, out tabControlTarget, out tabStateSource, out tabStateTarget, out tabManagerSource, out tabManagerTarget))
+			if (!GetInfo(sender, e, out source, out target, out tabControlSource, out tabControlTarget, out tabStateSource, out tabStateTarget, out tabManagerSource, out tabManagerTarget, false))
 				return;
 
 			if (tabManagerSource.MoveToAndSelect(tabManagerTarget, tabStateSource, tabStateTarget))
@@ -257,9 +334,19 @@ namespace ICSharpCode.ILSpy
 			AddEvents(tabState);
 			if (insertIndex < 0 || insertIndex > TabControl.Items.Count)
 				insertIndex = TabControl.Items.Count;
+			UpdateState(tabState);
 			tabControl.Items.Insert(insertIndex, tabState.TabItem);
+			if (tabControl.Items.Count == 1)
+				OnPropertyChanged("TabManagerState");
 			OnAddRemoveTabState(this, TabManagerAddType.Attach, tabState);
 			return tabState;
+		}
+
+		void UpdateState(TState tabState)
+		{
+			Debug.Assert(tabControl.Items.IndexOf(tabState) < 0);
+			tabState.IsSelected = false;	// It's not inserted so can't be selected
+			tabState.IsActive = IsActive;
 		}
 
 		public void SetSelectedIndex(int index)
@@ -406,8 +493,10 @@ namespace ICSharpCode.ILSpy
 
 		void NotifyIfEmtpy()
 		{
-			if (tabControl.Items.Count == 0)
+			if (tabControl.Items.Count == 0) {
+				OnPropertyChanged("TabManagerState");
 				tabGroupsManager.Remove(this);
+			}
 		}
 
 		public bool MoveToAndSelect(TabManager<TState> dstTabManager, TState srcTabState, TState insertBeforeThis)

@@ -12,6 +12,7 @@
 	TextOptions.TextFormattingMode="Display"
 	FocusManager.FocusedElement="{Binding ElementName=treeView}"
 	Style="{DynamicResource {x:Type Window}}"
+	Background="{DynamicResource MainWindowBackground}"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008" d:DesignHeight="500" d:DesignWidth="500"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
 >

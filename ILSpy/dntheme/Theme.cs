@@ -312,6 +312,10 @@ namespace ICSharpCode.ILSpy.dntheme
 			BrushColorInfo.CreateSystemColor(ColorType.SystemColorsInactiveSelectionHighlightText, "InactiveSelectionHighlightText"),
 			BrushColorInfo.CreateSystemColor(ColorType.SystemColorsInactiveCaption, "InactiveCaption"),
 			BrushColorInfo.CreateSystemColor(ColorType.SystemColorsInactiveCaptionText, "InactiveCaptionText"),
+			new BrushColorInfo(ColorType.MainWindowBackground, "MainWindow background") {
+				DefaultBackground = "#EEEEF2",
+				BackgroundResourceKey = "MainWindowBackground",
+			},
 			new ColorColorInfo(ColorType.ControlShadow, "Control shadow") {
 				DefaultBackground = "#71000000",
 				BackgroundResourceKey = "ControlShadow",
@@ -1217,10 +1221,6 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultForeground = "SystemColors.ControlText",
 				ForegroundResourceKey = "DockedPaneTitleForeground",
 			},
-			new BrushColorInfo(ColorType.DecompilerTextViewBorder, "DecompilerTextView border") {
-				DefaultBackground = "#FF828790",
-				BackgroundResourceKey = "DecompilerTextViewBorder",
-			},
 			new BrushColorInfo(ColorType.DecompilerTextViewWaitAdornerBackground, "DecompilerTextView wait adorner background") {
 				DefaultBackground = "#C0FFFFFF",
 				BackgroundResourceKey = "DecompilerTextViewWaitAdornerBackground",
@@ -1278,6 +1278,143 @@ namespace ICSharpCode.ILSpy.dntheme
 			},
 			new BrushColorInfo(ColorType.IconBarBorder, "IconBar") {
 				DefaultBackground = "#CFD0D1",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabBackground, "FileTab background") {
+				DefaultBackground = "#FFEEEEF2",
+				BackgroundResourceKey = "EnvironmentFileTabBackground",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabBorder, "FileTab border") {
+				DefaultBackground = "#FFEEEEF2",
+				BackgroundResourceKey = "EnvironmentFileTabBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabButtonDownInactiveBorder, "FileTab button down inactive border") {
+				DefaultBackground = "#FF0E6198",
+				BackgroundResourceKey = "EnvironmentFileTabButtonDownInactiveBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabButtonDownInactive, "FileTab button down inactive") {
+				DefaultBackground = "#FF0E6198",
+				BackgroundResourceKey = "EnvironmentFileTabButtonDownInactive",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabButtonDownInactiveGlyph, "FileTab button down inactive glyph") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "EnvironmentFileTabButtonDownInactiveGlyph",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabButtonDownSelectedActiveBorder, "FileTab button down selected active border") {
+				DefaultBackground = "#FF0E6198",
+				BackgroundResourceKey = "EnvironmentFileTabButtonDownSelectedActiveBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabButtonDownSelectedActive, "FileTab button down selected active") {
+				DefaultBackground = "#FF0E6198",
+				BackgroundResourceKey = "EnvironmentFileTabButtonDownSelectedActive",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabButtonDownSelectedActiveGlyph, "FileTab button down selected active glyph") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "EnvironmentFileTabButtonDownSelectedActiveGlyph",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabButtonDownSelectedInactiveBorder, "FileTab button down selected inactive border") {
+				DefaultBackground = "#FFB7B9C5",
+				BackgroundResourceKey = "EnvironmentFileTabButtonDownSelectedInactiveBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabButtonDownSelectedInactive, "FileTab button down selected inactive") {
+				DefaultBackground = "#FFB7B9C5",
+				BackgroundResourceKey = "EnvironmentFileTabButtonDownSelectedInactive",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabButtonDownSelectedInactiveGlyph, "FileTab button down selected inactive glyph") {
+				DefaultBackground = "#FF2D2D2D",
+				BackgroundResourceKey = "EnvironmentFileTabButtonDownSelectedInactiveGlyph",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabButtonHoverInactiveBorder, "FileTab button hover inactive border") {
+				DefaultBackground = "#FF52B0EF",
+				BackgroundResourceKey = "EnvironmentFileTabButtonHoverInactiveBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabButtonHoverInactive, "FileTab button hover inactive") {
+				DefaultBackground = "#FF52B0EF",
+				BackgroundResourceKey = "EnvironmentFileTabButtonHoverInactive",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabButtonHoverInactiveGlyph, "FileTab button hover inactive glyph") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "EnvironmentFileTabButtonHoverInactiveGlyph",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabButtonHoverSelectedActiveBorder, "FileTab button hover selected active border") {
+				DefaultBackground = "#FF1C97EA",
+				BackgroundResourceKey = "EnvironmentFileTabButtonHoverSelectedActiveBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabButtonHoverSelectedActive, "FileTab button hover selected active") {
+				DefaultBackground = "#FF1C97EA",
+				BackgroundResourceKey = "EnvironmentFileTabButtonHoverSelectedActive",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabButtonHoverSelectedActiveGlyph, "FileTab button hover selected active glyph") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "EnvironmentFileTabButtonHoverSelectedActiveGlyph",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabButtonHoverSelectedInactiveBorder, "FileTab button hover selected inactive border") {
+				DefaultBackground = "#FFE6E7ED",
+				BackgroundResourceKey = "EnvironmentFileTabButtonHoverSelectedInactiveBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabButtonHoverSelectedInactive, "FileTab button hover selected inactive") {
+				DefaultBackground = "#FFE6E7ED",
+				BackgroundResourceKey = "EnvironmentFileTabButtonHoverSelectedInactive",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabButtonHoverSelectedInactiveGlyph, "FileTab button hover selected inactive glyph") {
+				DefaultBackground = "#FF717171",
+				BackgroundResourceKey = "EnvironmentFileTabButtonHoverSelectedInactiveGlyph",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabButtonSelectedActiveGlyph, "FileTab button selected active glyph") {
+				DefaultBackground = "#FFD0E6F5",
+				BackgroundResourceKey = "EnvironmentFileTabButtonSelectedActiveGlyph",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabButtonSelectedInactiveGlyph, "FileTab button selected inactive glyph") {
+				DefaultBackground = "#FF6D6D70",
+				BackgroundResourceKey = "EnvironmentFileTabButtonSelectedInactiveGlyph",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabInactiveBorder, "FileTab inactive border") {
+				DefaultBackground = "#FFCCCEDB",
+				BackgroundResourceKey = "EnvironmentFileTabInactiveBorder",
+			},
+			new LinearGradientColorInfo(ColorType.EnvironmentFileTabInactiveGradient, new Point(0, 1), "FileTab inactive gradient", 0, 1) {
+				ResourceKey = "EnvironmentFileTabInactiveGradient",
+				DefaultForeground = "#FFCCCEDB",
+				DefaultBackground = "#FFCCCEDB",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabInactiveText, "FileTab inactive text") {
+				DefaultBackground = "#FF717171",
+				BackgroundResourceKey = "EnvironmentFileTabInactiveText",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabSelectedBorder, "FileTab selected border") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "EnvironmentFileTabSelectedBorder",
+			},
+			new LinearGradientColorInfo(ColorType.EnvironmentFileTabSelectedGradient, new Point(0, 1), "FileTab selected gradient", 0, 0.5, 0.5, 1) {
+				ResourceKey = "EnvironmentFileTabSelectedGradient",
+				DefaultForeground = "#FF007ACC",
+				DefaultBackground = "#FF007ACC",
+				DefaultColor3 = "#FF007ACC",
+				DefaultColor4 = "#FF007ACC",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabSelectedText, "FileTab selected text") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "EnvironmentFileTabSelectedText",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabText, "FileTab text") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "EnvironmentFileTabText",
+			},
+			new LinearGradientColorInfo(ColorType.EnvironmentFileTabHotGradient, new Point(0, 1), "FileTab hot gradient", 0, 1) {
+				ResourceKey = "EnvironmentFileTabHotGradient",
+				DefaultForeground = "#FF1C97EA",
+				DefaultBackground = "#FF1C97EA",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabHotBorder, "FileTab hot border") {
+				DefaultBackground = "#FF1C97EA",
+				BackgroundResourceKey = "EnvironmentFileTabHotBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabHotText, "FileTab hot text") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "EnvironmentFileTabHotText",
+			},
+			new BrushColorInfo(ColorType.EnvironmentFileTabHotGlyph, "FileTab hot glyph") {
+				DefaultBackground = "#FFD0E6F5",
+				BackgroundResourceKey = "EnvironmentFileTabHotGlyph",
 			},
 			new BrushColorInfo(ColorType.NodeAutoLoaded, "TreeView node auto loaded") {
 				DefaultForeground = "SteelBlue",

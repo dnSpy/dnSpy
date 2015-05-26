@@ -23,23 +23,53 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using ICSharpCode.ILSpy.AsmEditor;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy
 {
-	abstract class TabState : IDisposable
+	abstract class TabState : IDisposable, INotifyPropertyChanged
 	{
 		public abstract string Header { get; }
 		public TabItem TabItem;
 
+		public bool IsActive {
+			get { return isActive; }
+			set {
+				if (isActive != value) {
+					isActive = value;
+					OnPropertyChanged("IsActive");
+				}
+			}
+		}
+		bool isActive;
+
+		public bool IsSelected {
+			get { return isSelected; }
+			set {
+				if (isSelected != value) {
+					isSelected = value;
+					OnPropertyChanged("IsSelected");
+				}
+			}
+		}
+		bool isSelected;
+
+		public ICommand CloseCommand {
+			get { return new RelayCommand(a => Close()); }
+		}
+
 		internal TabManagerBase Owner;
 
-		/// <summary>
-		/// Called when <see cref="Header"/> or <see cref="ShortHeader"/> has changed
-		/// </summary>
-		public event EventHandler HeaderChanged;
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged(string propName)
+		{
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(propName));
+		}
 
 		const int MAX_HEADER_LENGTH = 40;
 		public string ShortHeader {
@@ -47,7 +77,15 @@ namespace ICSharpCode.ILSpy
 				var header = Header;
 				if (header.Length <= MAX_HEADER_LENGTH)
 					return header;
-				return header.Substring(0, MAX_HEADER_LENGTH) + "...";
+				return header.Substring(0, MAX_HEADER_LENGTH) + "…";
+			}
+		}
+
+		public string ToolTip {
+			get {
+				var shortHeader = ShortHeader;
+				var header = Header;
+				return shortHeader == header ? null : header;
 			}
 		}
 
@@ -55,26 +93,27 @@ namespace ICSharpCode.ILSpy
 		{
 			var tabItem = new TabItem();
 			TabItem = tabItem;
-			tabItem.Tag = this;
+			TabItem.Header = this;
+			tabItem.DataContext = this;
 		}
 
 		public static TabState GetTabState(FrameworkElement elem)
 		{
 			if (elem == null)
 				return null;
-			return elem.Tag as TabState;
+			return elem.DataContext as TabState;
 		}
 
 		protected void UpdateHeader()
 		{
-			var shortHeader = ShortHeader;
-			var header = Header;
-			TabItem.Header = new TextBlock {
-				Text = shortHeader,
-				ToolTip = shortHeader == header ? null : header,
-			};
-			if (HeaderChanged != null)
-				HeaderChanged(this, EventArgs.Empty);
+			OnPropertyChanged("Header");
+			OnPropertyChanged("ShortHeader");
+			OnPropertyChanged("ToolTip");
+		}
+
+		void Close()
+		{
+			Owner.Close(this);
 		}
 
 		public void Dispose()
@@ -166,14 +205,15 @@ namespace ICSharpCode.ILSpy
 		{
 			if (elem == null)
 				return null;
-			return elem.Tag as TabStateDecompile;
+			// The DataContext is inherited from the owner TabItem which is set to a TabStateDecompile
+			return elem.DataContext as TabStateDecompile;
 		}
 
 		public TabStateDecompile(Language language)
 		{
-			this.TextView.Tag = this;
 			var view = TextView;
 			TabItem.Content = view;
+			TabItem.Style = App.Current.FindResource("TabStateDecompileTabItemStyle") as Style;
 			this.language = language;
 			UpdateHeader();
 			ContextMenuProvider.Add(view);
