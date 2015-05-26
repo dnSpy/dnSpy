@@ -489,7 +489,7 @@ namespace ICSharpCode.ILSpy.TextView
 			if (evt != null)
 				evt(this, new ShowOutputEventArgs(nodes, highlighting, state));
 
-			Debug.WriteLine("Showing {0} characters of output", textOutput.TextLength);
+			//Debug.WriteLine("Showing {0} characters of output", textOutput.TextLength);
 			Stopwatch w = Stopwatch.StartNew();
 			textEditor.LanguageTokens = textOutput.LanguageTokens;
 			textEditor.LanguageTokens.Finish();
@@ -518,9 +518,9 @@ namespace ICSharpCode.ILSpy.TextView
 				activeCustomElementGenerators.Add(elementGenerator);
 			}
 			
-			Debug.WriteLine("  Set-up: {0}", w.Elapsed); w.Restart();
+			//Debug.WriteLine("  Set-up: {0}", w.Elapsed); w.Restart();
 			textEditor.Document = textOutput.GetDocument();
-			Debug.WriteLine("  Assigning document: {0}", w.Elapsed); w.Restart();
+			//Debug.WriteLine("  Assigning document: {0}", w.Elapsed); w.Restart();
 			if (textOutput.Foldings.Count > 0) {
 				if (state != null) {
 					state.RestoreFoldings(textOutput.Foldings);
@@ -733,7 +733,7 @@ namespace ICSharpCode.ILSpy.TextView
 		
 		Task<AvalonEditTextOutput> DecompileAsync(DecompilationContext context, int outputLengthLimit)
 		{
-			Debug.WriteLine("Start decompilation of {0} tree nodes", context.TreeNodes.Length);
+			//Debug.WriteLine("Start decompilation of {0} tree nodes", context.TreeNodes.Length);
 			
 			TaskCompletionSource<AvalonEditTextOutput> tcs = new TaskCompletionSource<AvalonEditTextOutput>();
 			if (context.TreeNodes.Length == 0) {
