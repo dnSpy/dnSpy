@@ -185,7 +185,10 @@ namespace ICSharpCode.ILSpy
 			if (MainWindow.Instance.CurrentAssemblyList.IsReArranging)
 				return;
 			if (IsVisible) {
-				RestartSearch();
+				bool canRestart = (e.OldItems != null && e.OldItems.Count > 0) ||
+								  (e.NewItems != null && e.NewItems.Cast<LoadedAssembly>().Any(a => !a.IsAutoLoaded));
+				if (canRestart)
+					RestartSearch();
 			} else {
 				StartSearch(null);
 				runSearchOnNextShow = true;
