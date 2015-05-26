@@ -18,9 +18,10 @@
 
 using System;
 using System.IO;
+using System.Windows.Media.Imaging;
+using Microsoft.Win32;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
-using Microsoft.Win32;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
@@ -44,7 +45,34 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Icon
 		{
-			get { return ImageCache.Instance.GetImage("Resource", BackgroundType.TreeNode); }
+			get { return GetIcon((string)Text, BackgroundType.TreeNode); }
+		}
+
+		internal static BitmapSource GetIcon(string name, BackgroundType bgType)
+		{
+			var rsrcName = "Resource";
+			// Don't use Path.GetExtension() since it can throw
+			int index = name.LastIndexOf('.');
+			if (index >= 0) {
+				var ext = name.Substring(index + 1).ToLowerInvariant();
+				if (ext == "cs")
+					rsrcName = "CSharpFile";
+				else if (ext == "vb")
+					rsrcName = "VisualBasicFile";
+				else if (ext == "txt")
+					rsrcName = "TextFile";
+				else if (ext == "xaml" || ext == "baml")
+					rsrcName = "XamlFile";
+				else if (ext == "xml")
+					rsrcName = "XmlFile";
+				else if (ext == "xsd")
+					rsrcName = "XsdFile";
+				else if (ext == "xslt")
+					rsrcName = "XsltFile";
+				else if (ext == "png" || ext == "gif" || ext == "bmp" || ext == "jpg" || ext == "ico" || ext == "cur")
+					rsrcName = "ImageFile";
+			}
+			return ImageCache.Instance.GetImage(rsrcName, bgType);
 		}
 
 		protected Stream Data

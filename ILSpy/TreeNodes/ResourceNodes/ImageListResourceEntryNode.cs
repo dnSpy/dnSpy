@@ -72,7 +72,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override object Icon
 		{
-			get { return ImageCache.Instance.GetImage("ResourceImage", BackgroundType.TreeNode); }
+			get { return ImageCache.Instance.GetImage("ImageFile", BackgroundType.TreeNode); }
 		}
 
 		protected override void LoadChildren()

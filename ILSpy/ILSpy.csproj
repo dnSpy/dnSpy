@@ -869,6 +869,7 @@
     <Resource Include="Images\ConstructorProtected.png" />
     <Resource Include="Images\ConstructorProtectedInternal.png" />
     <Resource Include="Images\Copy.png" />
+    <Resource Include="Images\CSharpFile.png" />
     <Resource Include="Images\CurrentLine.png" />
     <Resource Include="Images\Delegate.png" />
     <Resource Include="Images\DelegateInternal.png" />
@@ -929,6 +930,7 @@
     <Resource Include="Images\GenericProtected.png" />
     <Resource Include="Images\GenericProtectedInternal.png" />
     <Resource Include="Images\HorizontalTabGroup.png" />
+    <Resource Include="Images\ImageFile.png" />
     <Resource Include="Images\Interface.png" />
     <Resource Include="Images\InterfaceInternal.png" />
     <Resource Include="Images\InterfacePrivate.png" />
@@ -984,11 +986,7 @@
     <Resource Include="Images\ReferenceFolderClosed.png" />
     <Resource Include="Images\ReferenceFolderOpen.png" />
     <Resource Include="Images\Resource.png" />
-    <Resource Include="Images\ResourceImage.png" />
     <Resource Include="Images\ResourceResourcesFile.png" />
-    <Resource Include="Images\ResourceXml.png" />
-    <Resource Include="Images\ResourceXsd.png" />
-    <Resource Include="Images\ResourceXslt.png" />
     <Resource Include="Images\Save.png" />
     <Resource Include="Images\SaveAll.png" />
     <Resource Include="Images\Search.png" />
@@ -1020,6 +1018,7 @@
     <Resource Include="Images\StructProtectedInternal.png" />
     <Resource Include="Images\SubTypes.png" />
     <Resource Include="Images\SuperTypes.png" />
+    <Resource Include="Images\TextFile.png" />
     <Resource Include="Images\Undo.png" />
     <Resource Include="Images\VerticalTabGroup.png" />
     <Resource Include="Images\ViewCode.png" />
@@ -1041,7 +1040,12 @@
     <Resource Include="Images\VirtualPropertyPrivate.png" />
     <Resource Include="Images\VirtualPropertyProtected.png" />
     <Resource Include="Images\VirtualPropertyProtectedInternal.png" />
+    <Resource Include="Images\VisualBasicFile.png" />
     <Resource Include="Images\WordWrap.png" />
+    <Resource Include="Images\XamlFile.png" />
+    <Resource Include="Images\XmlFile.png" />
+    <Resource Include="Images\XsdFile.png" />
+    <Resource Include="Images\XsltFile.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">

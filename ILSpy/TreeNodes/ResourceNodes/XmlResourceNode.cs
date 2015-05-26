@@ -67,18 +67,7 @@ namespace ICSharpCode.ILSpy.Xaml
 		
 		public override object Icon
 		{
-			get
-			{
-				string text = (string)Text;
-				if (text.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
-					return ImageCache.Instance.GetImage("ResourceXml", BackgroundType.TreeNode);
-				else if (text.EndsWith(".xsd", StringComparison.OrdinalIgnoreCase))
-					return ImageCache.Instance.GetImage("ResourceXsd", BackgroundType.TreeNode);
-				else if (text.EndsWith(".xslt", StringComparison.OrdinalIgnoreCase))
-					return ImageCache.Instance.GetImage("ResourceXslt", BackgroundType.TreeNode);
-				else
-					return ImageCache.Instance.GetImage("Resource", BackgroundType.TreeNode);
-			}
+			get { return ResourceEntryNode.GetIcon((string)Text, BackgroundType.TreeNode); }
 		}
 
 		public override bool View(DecompilerTextView textView)

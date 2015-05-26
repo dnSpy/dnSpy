@@ -723,6 +723,12 @@ namespace ICSharpCode.ILSpy
 						try {
 							rs = new ResourceSet(s).Cast<DictionaryEntry>();
 						}
+						catch (NotSupportedException) {
+						}
+						catch (IOException) {
+						}
+						catch (BadImageFormatException) {
+						}
 						catch (ArgumentException) {
 						}
 						if (rs != null && rs.All(e => e.Value is Stream)) {

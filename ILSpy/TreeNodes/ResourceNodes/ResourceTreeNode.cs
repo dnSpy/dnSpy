@@ -58,7 +58,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 		
 		public override object Icon {
-			get { return ImageCache.Instance.GetImage("Resource", BackgroundType.TreeNode); }
+			get { return ResourceEntryNode.GetIcon(r.Name, BackgroundType.TreeNode); }
 		}
 		
 		public override FilterResult Filter(FilterSettings settings)
