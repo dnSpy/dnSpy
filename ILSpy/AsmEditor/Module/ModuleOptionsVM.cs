@@ -475,7 +475,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 				s = string.Empty;
 			}
 			if (s.Length > maxChars)
-				s = s.Substring(0, maxChars) + "...";
+				s = s.Substring(0, maxChars) + "…";
 			return s;
 		}
 

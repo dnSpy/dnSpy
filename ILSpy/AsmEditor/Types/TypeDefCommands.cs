@@ -199,11 +199,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 	sealed class CreateTypeDefCommand : IUndoCommand
 	{
 		const string CMD_NAME = "Create Type";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewClass",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "NewClass",
 							MenuCategory = "AsmEd",
@@ -305,11 +305,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 	sealed class CreateNestedTypeDefCommand : IUndoCommand
 	{
 		const string CMD_NAME = "Create Nested Type";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewClass",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "NewClass",
 							MenuCategory = "AsmEd",
@@ -411,11 +411,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 	sealed class TypeDefSettingsCommand : IUndoCommand
 	{
 		const string CMD_NAME = "Type Settings";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",

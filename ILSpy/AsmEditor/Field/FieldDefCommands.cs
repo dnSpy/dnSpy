@@ -188,11 +188,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 	sealed class CreateFieldDefCommand : IUndoCommand
 	{
 		const string CMD_NAME = "Create Field";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewField",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "NewField",
 							MenuCategory = "AsmEd",
@@ -307,11 +307,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 	sealed class FieldDefSettingsCommand : IUndoCommand
 	{
 		const string CMD_NAME = "Field Settings";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",

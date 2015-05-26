@@ -156,11 +156,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 	sealed class AssemblySettingsCommand : IUndoCommand
 	{
 		const string CMD_NAME = "Assembly Settings";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
@@ -247,11 +247,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 	sealed class CreateAssemblyCommand : IUndoCommand
 	{
 		const string CMD_NAME = "Create Assembly";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewAssembly",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "NewAssembly",
 							MenuCategory = "AsmEd",

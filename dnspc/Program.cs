@@ -78,7 +78,7 @@ namespace ilspc {
 
 		static void PrintHelp() {
 			var progName = GetProgramBaseName();
-			Console.WriteLine("{0} [--stdout] [--asm-path path] [--no-gac] [--no-stdlib] [--sln] [--sln-name name] [--proj-dir-suffix suffix] [--dont-mask-merr] [-r] [-o outdir] [-l lang] [fileOrDir1] [fileOrDir2] [...]", progName);
+			Console.WriteLine("{0} [--stdout] [--asm-path path] [--no-gac] [--no-stdlib] [--sln] [--sln-name name] [--proj-dir-suffix suffix] [--dont-mask-merr] [-r] [-o outdir] [-l lang] [fileOrDir1] [fileOrDir2] […]", progName);
 			Console.WriteLine("  --stdout     decompile to the screen");
 			Console.WriteLine("  --asm-path path    assembly search path. Paths can be separated with '{0}' or multiple --asm-path's can be used", PATHS_SEP);
 			Console.WriteLine("  --no-gac     don't use the GAC to look up assemblies. Useful with --no-stdlib");

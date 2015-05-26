@@ -234,7 +234,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			switch (e.DebuggerEvent) {
 			case DebuggerEvent.Started:
 				MainWindow.Instance.SessionSettings.FilterSettings.ShowInternalApi = true;
-				MainWindow.Instance.SetStatus("Running...");
+				MainWindow.Instance.SetStatus("Running…");
 				break;
 
 			case DebuggerEvent.Stopped:
@@ -255,7 +255,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (debugger == null)
 				return;
 			if (debugger.IsProcessRunning) {
-				MainWindow.Instance.SetStatus("Running...");
+				MainWindow.Instance.SetStatus("Running…");
 				return;
 			}
 			
@@ -267,8 +267,8 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			
 			if (DebugInformation.MustJumpToReference)
 				DebugUtils.JumpToCurrentStatement(MainWindow.Instance.SafeActiveTextView);
-			
-			inst.SetStatus("Debugging...");
+
+			inst.SetStatus("Debugging…");
 		}
 
 		void IPlugin.OnLoaded()
@@ -446,7 +446,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			var debugger = DebuggerService.CurrentDebugger;
 			if (debugger != null && debugger.IsDebugging && !debugger.IsProcessRunning) {
 				debugger.Continue();
-				MainWindow.Instance.SetStatus("Running...");
+				MainWindow.Instance.SetStatus("Running…");
 				return true;
 			}
 
@@ -458,7 +458,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			var debugger = DebuggerService.CurrentDebugger;
 			if (debugger != null && debugger.IsDebugging && debugger.IsProcessRunning) {
 				debugger.Break();
-				MainWindow.Instance.SetStatus("Debugging...");
+				MainWindow.Instance.SetStatus("Debugging…");
 				return true;
 			}
 
@@ -867,7 +867,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportMainMenuCommand(Menu = "_Debug",
 						   MenuIcon = "StartDebugging",
 	                       MenuCategory = "Start",
-	                       MenuHeader = "Debug an _Executable...",
+						   MenuHeader = "Debug an _Executable…",
 	                       MenuOrder = 5000)]
 	internal sealed class DebugExecutableCommand : DebuggerCommand, IToolbarCommand, IMainMenuCommand
 	{
@@ -884,7 +884,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 	[ExportMainMenuCommand(Menu = "_Debug",
 						   MenuIcon = "Process",
 	                       MenuCategory = "Start",
-	                       MenuHeader = "Attach to _Process...",
+						   MenuHeader = "Attach to _Process…",
 						   MenuInputGestureText = "Ctrl+Alt+P",
 	                       MenuOrder = 5010)]
 	internal sealed class AttachCommand : DebuggerCommand, IMainMenuCommand

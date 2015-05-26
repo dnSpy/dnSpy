@@ -42,7 +42,7 @@
 		</Grid.ColumnDefinitions>
 
 		<ComboBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" DisplayMemberPath="Name" Width="70" ItemsSource="{Binding ConstantTypeEnumList.Items}" SelectedIndex="{Binding ConstantTypeEnumList.SelectedIndex}" VerticalContentAlignment="Center" ToolTip="Property/Field type" IsEnabled="{Binding IsEnabled}" />
-		<Button Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Content="..." ToolTip="{Binding PickEnumToolTip}" Width="25" Command="{Binding PickEnumTypeCommand}" Visibility="{Binding EnumIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" />
+		<Button Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Content="…" ToolTip="{Binding PickEnumToolTip}" Width="25" Command="{Binding PickEnumTypeCommand}" Visibility="{Binding EnumIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
 		<ComboBox Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" DisplayMemberPath="Name" Width="70" ItemsSource="{Binding NamedArgTypeEnumList.Items}" SelectedIndex="{Binding NamedArgTypeEnumList.SelectedIndex}" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" />
 

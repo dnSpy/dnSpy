@@ -140,8 +140,8 @@ namespace ICSharpCode.ILSpy.Options
 		
 		public int Order { get; set; }
 	}
-	
-	[ExportMainMenuCommand(Menu = "_View", MenuHeader = "_Options...", MenuIcon = "Settings", MenuCategory = "Options", MenuOrder = 3999)]
+
+	[ExportMainMenuCommand(Menu = "_View", MenuHeader = "_Options…", MenuIcon = "Settings", MenuCategory = "Options", MenuOrder = 3999)]
 	sealed class ShowOptionsCommand : SimpleCommand
 	{
 		public override void Execute(object parameter)

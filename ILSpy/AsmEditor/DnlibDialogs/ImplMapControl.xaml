@@ -54,7 +54,7 @@
 			<Label Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Content="_BestFit" Target="{Binding ElementName=bestFitComboBox}" IsEnabled="{Binding IsEnabled}" />
 			<ComboBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Name="bestFitComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BestFit.Items}" SelectedIndex="{Binding BestFit.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" />
 
-			<Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Content="_ThrowOn..." Target="{Binding ElementName=throwOnComboBox}" IsEnabled="{Binding IsEnabled}" ToolTip="ThrowOnUnmappableChar" />
+			<Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Content="_ThrowOn…" Target="{Binding ElementName=throwOnComboBox}" IsEnabled="{Binding IsEnabled}" ToolTip="ThrowOnUnmappableChar" />
 			<ComboBox Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Name="throwOnComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ThrowOnUnmappableChar.Items}" SelectedIndex="{Binding ThrowOnUnmappableChar.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" ToolTip="ThrowOnUnmappableChar" IsEnabled="{Binding IsEnabled}" />
 			<Label Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Content="CallCon_v" Target="{Binding ElementName=callConvComboBox}" IsEnabled="{Binding IsEnabled}" />
 			<ComboBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Name="callConvComboBox" DisplayMemberPath="Name" ItemsSource="{Binding CallConv.Items}" SelectedIndex="{Binding CallConv.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" />

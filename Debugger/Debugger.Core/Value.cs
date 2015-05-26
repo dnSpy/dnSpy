@@ -158,12 +158,12 @@ namespace Debugger
 			if (this.Type.IsPrimitive || this.Type.FullName == typeof(string).FullName) {
 				string text = PrimitiveValue.ToString();
 				if (text != null && text.Length > maxLength)
-					text = text.Substring(0, Math.Max(0, maxLength - 3)) + "...";
+					text = text.Substring(0, Math.Max(0, maxLength - 3)) + "…";
 				return text;
 			} else {
 				string name = this.Type.FullName;
 				if (name != null && name.Length > maxLength)
-					return "{" + name.Substring(0, Math.Max(0, maxLength - 5)) + "...}";
+					return "{" + name.Substring(0, Math.Max(0, maxLength - 5)) + "…}";
 				else
 					return "{" + name + "}";
 			}

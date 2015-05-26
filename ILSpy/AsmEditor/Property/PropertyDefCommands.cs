@@ -210,11 +210,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 	sealed class CreatePropertyDefCommand : IUndoCommand
 	{
 		const string CMD_NAME = "Create Property";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewProperty",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "NewProperty",
 							MenuCategory = "AsmEd",
@@ -311,11 +311,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 	sealed class PropertyDefSettingsCommand : IUndoCommand
 	{
 		const string CMD_NAME = "Property Settings";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",

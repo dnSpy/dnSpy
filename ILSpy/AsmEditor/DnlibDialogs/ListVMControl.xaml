@@ -68,8 +68,8 @@
 				</RepeatButton.Content>
 			</RepeatButton>
 
-			<Button Content="_Edit..." Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding EditCommand}" Visibility="{Binding NotInlineEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
-			<Button Content="_Add..." Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding AddCommand}" Visibility="{Binding NotInlineEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+			<Button Content="_Edit…" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding EditCommand}" Visibility="{Binding NotInlineEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+			<Button Content="_Add…" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding AddCommand}" Visibility="{Binding NotInlineEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
 			<Button Content="_Add" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding AddCommand}" Visibility="{Binding InlineEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
 			<Button Content="_Remove" Style="{StaticResource DialogButton}" Margin="0 0 0 0" Command="{Binding Collection.RemoveCommand}" />
 		</StackPanel>

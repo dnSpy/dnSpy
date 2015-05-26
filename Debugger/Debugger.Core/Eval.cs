@@ -54,11 +54,11 @@ namespace Debugger
 			get { return (ICorDebugEval2)corEval; }
 		}
 
-	    /// <exception cref="GetValueException">Evaluating...</exception>
+		/// <exception cref="GetValueException">Evaluating…</exception>
 	    public Value Result {
 			get {
 				switch(this.State) {
-					case EvalState.Evaluating:            throw new GetValueException("Evaluating...");
+					case EvalState.Evaluating:            throw new GetValueException("Evaluating…");
 					case EvalState.EvaluatedSuccessfully: return result;
 					case EvalState.EvaluatedException:    return result;
 					case EvalState.EvaluatedNoResult:     return null;

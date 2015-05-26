@@ -706,7 +706,7 @@ namespace ICSharpCode.ILSpy
 			MainWindow.Instance.OnTabHeaderChanged += (s, e) => MainWindow.Instance.UpdateMainSubMenu("_Window");
 
 			cachedLastMenuItem = new MenuItem();
-			cachedLastMenuItem.Header = "_Windows...";
+			cachedLastMenuItem.Header = "_Windows…";
 			cachedLastMenuItem.Click += (s, e) => MainWindow.Instance.ShowDecompilerTabsWindow();
 
 			for (int i = 0; i < cachedMenuItems.Length; i++)

@@ -187,11 +187,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 	sealed class CreateMethodDefCommand : IUndoCommand
 	{
 		const string CMD_NAME = "Create Method";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewMethod",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "NewMethod",
 							MenuCategory = "AsmEd",
@@ -291,11 +291,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 	sealed class MethodDefSettingsCommand : IUndoCommand
 	{
 		const string CMD_NAME = "Method Settings";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",

@@ -241,8 +241,8 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 			} else {
 				fullText = val.AsString();
 			}
-			
-			this.Text = (fullText.Length > 256) ? fullText.Substring(0, 256) + "..." : fullText;
+
+			this.Text = (fullText.Length > 256) ? fullText.Substring(0, 256) + "…" : fullText;
 		}
 		
 		string Escape(string source)

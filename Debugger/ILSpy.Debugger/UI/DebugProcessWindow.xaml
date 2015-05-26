@@ -36,7 +36,7 @@
 				Margin="5 5 0 0" />
 			<Button
 				Grid.Row="0" Grid.Column="2"
-				Content="..."
+				Content="…"
 				MinWidth="25"
 				Name="pathButton"
 				Click="pathButton_Click"
@@ -61,7 +61,7 @@
 				Margin="5 5 0 0" />
 			<Button
 				Grid.Row="2" Grid.Column="2"
-				Content="..."
+				Content="…"
 				MinWidth="25"
 				Click="workingDirectoryButton_Click"
 				Name="workingDirectoryButton"

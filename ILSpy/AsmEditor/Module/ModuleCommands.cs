@@ -51,11 +51,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 	sealed class CreateNetModuleCommand : IUndoCommand
 	{
 		const string CMD_NAME = "Create NetModule";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewAssemblyModule",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "NewAssemblyModule",
 							MenuCategory = "AsmEd",
@@ -446,11 +446,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 	sealed class AddNewNetModuleToAssemblyCommand : AddNetModuleToAssemblyCommand
 	{
 		const string CMD_NAME = "Add New NetModule to Assembly";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewAssemblyModule",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "NewAssemblyModule",
 							MenuCategory = "AsmEd",
@@ -500,11 +500,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 	sealed class AddExistingNetModuleToAssemblyCommand : AddNetModuleToAssemblyCommand
 	{
 		const string CMD_NAME = "Add Existing NetModule to Assembly";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewAssemblyModule",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "NewAssemblyModule",
 							MenuCategory = "AsmEd",
@@ -674,11 +674,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 	sealed class ModuleSettingsCommand : IUndoCommand
 	{
 		const string CMD_NAME = "Module Settings";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",

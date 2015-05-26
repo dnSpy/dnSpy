@@ -461,7 +461,7 @@ namespace ICSharpCode.ILSpy
 			this.language = language;
 			this.filter = filter;
 
-			this.Results.Add(new SearchResult { Name = "Searching..." });
+			this.Results.Add(new SearchResult { Name = "Searching…" });
 		}
 
 		public void Cancel()
@@ -478,7 +478,7 @@ namespace ICSharpCode.ILSpy
 			catch (OperationCanceledException) {
 				// ignore cancellation
 			}
-			// remove the 'Searching...' entry
+			// remove the 'Searching…' entry
 			dispatcher.BeginInvoke(
 				DispatcherPriority.Normal,
 				new Action(delegate { this.Results.RemoveAt(this.Results.Count - 1); }));

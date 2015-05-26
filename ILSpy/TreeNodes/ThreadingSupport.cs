@@ -81,7 +81,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					App.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(
 						delegate {
 							if (loadChildrenTask == thisTask) {
-								node.Children.RemoveAt(node.Children.Count - 1); // remove 'Loading...'
+								node.Children.RemoveAt(node.Children.Count - 1); // remove 'Loading…'
 							}
 							if (continuation.Exception != null) { // observe exception even when task isn't current
 								if (loadChildrenTask == thisTask) {
@@ -92,8 +92,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 							}
 						}));
 				});
-			
-			// Give the task a bit time to complete before we return to WPF - this keeps "Loading..."
+
+			// Give the task a bit time to complete before we return to WPF - this keeps "Loading…"
 			// from showing up for very short waits.
 			thisTask.Wait(TimeSpan.FromMilliseconds(200));
 		}
@@ -120,7 +120,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 			public override string ToString(Language language)
 			{
-				return "Loading...";
+				return "Loading…";
 			}
 			
 			public override FilterResult Filter(FilterSettings settings)

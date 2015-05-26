@@ -137,7 +137,7 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 			}
 			if (corValue is ICorDebugArrayValue) {
 				InfoNode info = new InfoNode("ICorDebugArrayValue", "");
-				info.AddChild("...", "...");
+				info.AddChild("…", "…");
 				items.Add(info);
 			}
 			if (corValue is ICorDebugHandleValue) {

@@ -320,7 +320,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 				ExecInOldThread(() => {
 					CurrentFileName = e.File.FileName;
 				});
-				AsyncAddMessage(string.Format("Writing {0}...", e.File.FileName), false, false);
+				AsyncAddMessage(string.Format("Writing {0}…", e.File.FileName), false, false);
 			}
 			else {
 				shownMessages.Clear();

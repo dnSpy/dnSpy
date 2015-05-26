@@ -211,11 +211,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 	sealed class CreateEventDefCommand : IUndoCommand
 	{
 		const string CMD_NAME = "Create Event";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewEvent",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "NewEvent",
 							MenuCategory = "AsmEd",
@@ -310,11 +310,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 	sealed class EventDefSettingsCommand : IUndoCommand
 	{
 		const string CMD_NAME = "Event Settings";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 240)]//TODO: Update Order
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",

@@ -70,7 +70,7 @@
 							</Grid.ColumnDefinitions>
 							<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=filenameTextBox}" Content="_Filename" />
 							<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="filenameTextBox" Text="{Binding FileName, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-							<Button Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" MinWidth="25" Content="..." Command="{Binding PickNetExecutableFileNameCommand}" />
+							<Button Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" MinWidth="25" Content="…" Command="{Binding PickNetExecutableFileNameCommand}" />
 						</Grid>
 					</StackPanel>
 				</ScrollViewer>
