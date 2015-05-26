@@ -480,7 +480,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		static void FixNativeTypeEnum(EnumListVM e, bool canHaveNotInitialized)
 		{
-			e.Items.RemoveAt(e.GetIndex(dnlib.DotNet.NativeType.Max));
 			e.Items.RemoveAt(e.GetIndex(dnlib.DotNet.NativeType.NotInitialized));
 			if (canHaveNotInitialized)
 				e.Items.Insert(0, new EnumVM(dnlib.DotNet.NativeType.NotInitialized, NOT_INITIALIZED_ENUM_VALUE));
