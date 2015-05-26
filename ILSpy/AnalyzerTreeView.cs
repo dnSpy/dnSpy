@@ -22,6 +22,7 @@ using System.Collections.Specialized;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using ICSharpCode.TreeView;
 
@@ -73,6 +74,21 @@ namespace ICSharpCode.ILSpy
 			ContextMenuProvider.Add(this);
 			MainWindow.Instance.CurrentAssemblyListChanged += MainWindow_Instance_CurrentAssemblyListChanged;
 			dntheme.Themes.ThemeChanged += Themes_ThemeChanged;
+		}
+
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			if (e.Key == Key.Delete) {
+				var nodes = this.GetTopLevelSelection().ToArray();
+				if (nodes.Length > 0 && nodes.All(n => n.Parent.IsRoot)) {
+					foreach (var node in nodes)
+						node.Parent.Children.Remove(node);
+					e.Handled = true;
+					return;
+				}
+			}
+
+			base.OnKeyDown(e);
 		}
 
 		void Themes_ThemeChanged(object sender, EventArgs e)
