@@ -652,7 +652,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		DockedPaneCloseButtonPathStroke,
 		DockedPaneCloseButtonPathFill,
 		DockedPaneTitleForeground,
-		DecompilerTextViewWaitAdornerBackground,
+		DecompilerTextViewWaitAdorner,
 		ResourceTableAlternationBackground1,
 		ResourceTableAlternationBackground2,
 		AvalonEditSearchDropDownButtonActiveBorder,

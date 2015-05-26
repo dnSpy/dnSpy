@@ -19,7 +19,7 @@
 					<Style TargetType="{x:Type Button}" />
 				</ae:TextEditor.Resources>
 			</nt:NewTextEditor>
-			<Border Name="waitAdorner" Background="{DynamicResource DecompilerTextViewWaitAdornerBackground}" Visibility="Collapsed">
+			<Border Name="waitAdorner" Background="{DynamicResource DecompilerTextViewWaitAdornerBackground}" TextBlock.Foreground="{DynamicResource DecompilerTextViewWaitAdornerForeground}" Visibility="Collapsed">
 				<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 					<TextBlock FontSize="14pt">Decompiling…</TextBlock>
 					<ProgressBar IsIndeterminate="True" Height="16" Margin="0, 4" />

@@ -1221,7 +1221,9 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultForeground = "SystemColors.ControlText",
 				ForegroundResourceKey = "DockedPaneTitleForeground",
 			},
-			new BrushColorInfo(ColorType.DecompilerTextViewWaitAdornerBackground, "DecompilerTextView wait adorner background") {
+			new BrushColorInfo(ColorType.DecompilerTextViewWaitAdorner, "DecompilerTextView wait adorner") {
+				DefaultForeground = "Black",
+				ForegroundResourceKey = "DecompilerTextViewWaitAdornerForeground",
 				DefaultBackground = "#C0FFFFFF",
 				BackgroundResourceKey = "DecompilerTextViewWaitAdornerBackground",
 			},

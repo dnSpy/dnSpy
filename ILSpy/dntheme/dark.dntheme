@@ -271,7 +271,7 @@
 		<color name="dockedpaneclosebuttonpathstroke" bg="#303030" />
 		<color name="dockedpaneclosebuttonpathfill" bg="#909090" />
 		<color name="dockedpanetitleforeground" fg="#D0D0D0" />
-		<color name="decompilertextviewwaitadornerbackground" bg="#A0404040" />
+		<color name="decompilertextviewwaitadorner" fg="#D0D0D0" bg="#A0404040" />
 		<color name="resourcetablealternationbackground1" bg="#252525" />
 		<color name="resourcetablealternationbackground2" bg="#454545" />
 		<color name="avaloneditsearchdropdownbuttonactiveborder" bg="#365959" />
