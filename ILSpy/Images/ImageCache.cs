@@ -78,24 +78,19 @@ namespace ICSharpCode.ILSpy
 		{
 			switch (bgType) {
 			case BackgroundType.Button: return GetColorBackground(dntheme.ColorType.ButtonIconBackground);
-			case BackgroundType.Window: return GetColorForeground(dntheme.ColorType.SystemColorsWindow);
-			case BackgroundType.TreeNode: return GetColorBackground(dntheme.ColorType.SharpTreeViewBackground);
-			case BackgroundType.Search: return GetColorForeground(dntheme.ColorType.SystemColorsWindow);
-			case BackgroundType.ComboBox: return GetColorForeground(dntheme.ColorType.SystemColorsWindow);
+			case BackgroundType.Window: return GetColorBackground(dntheme.ColorType.SystemColorsWindow);
+			case BackgroundType.TreeNode: return GetColorBackground(dntheme.ColorType.TreeViewBackground);
+			case BackgroundType.Search: return GetColorBackground(dntheme.ColorType.SystemColorsWindow);
+			case BackgroundType.ComboBox: return GetColorBackground(dntheme.ColorType.SystemColorsWindow);
 			case BackgroundType.Toolbar: return GetColorBackground(dntheme.ColorType.ToolBarIconBackground);
 			case BackgroundType.MainMenuMenuItem: return GetColorBackground(dntheme.ColorType.ToolBarIconVerticalBackground);
 			case BackgroundType.ContextMenuItem: return GetColorBackground(dntheme.ColorType.ContextMenuRectangleFill1);
-			case BackgroundType.GridViewItem: return GetColorForeground(dntheme.ColorType.SystemColorsWindow);
+			case BackgroundType.GridViewItem: return GetColorBackground(dntheme.ColorType.SystemColorsWindow);
 			case BackgroundType.DebuggerToolTip: return Colors.White;//TODO: Update this when the debugger tooltips have been fixed
 			default:
 				Debug.Fail("Invalid bg type");
-				return GetColorForeground(dntheme.ColorType.SystemColorsWindow);
+				return GetColorBackground(dntheme.ColorType.SystemColorsWindow);
 			}
-		}
-
-		static Color GetColorForeground(dntheme.ColorType colorType)
-		{
-			return dntheme.Themes.Theme.GetColor(colorType).InheritedColor.Foreground.GetColor(null).Value;
 		}
 
 		static Color GetColorBackground(dntheme.ColorType colorType)

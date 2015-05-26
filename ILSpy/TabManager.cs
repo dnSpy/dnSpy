@@ -238,17 +238,16 @@ namespace ICSharpCode.ILSpy
 			if (tabControl == null)
 				return;
 
-			if (e.LeftButton == MouseButtonState.Pressed || e.RightButton == MouseButtonState.Pressed) {
+			// HACK: The Close button won't work if we start the drag and drop operation
+			bool isTabButtonPressed = IsTabButton(tabItem, e.OriginalSource);
+
+			if (!isTabButtonPressed && (e.LeftButton == MouseButtonState.Pressed || e.RightButton == MouseButtonState.Pressed)) {
 				tabGroupsManager.SetActive(this);
 				tabControl.SelectedItem = tabItem;//TODO: Doesn't work immediately!
 			}
 
-			if (Keyboard.Modifiers == ModifierKeys.None && e.LeftButton == MouseButtonState.Pressed) {
-				// HACK: The Close button won't work if we start the drag and drop operation
-				if (IsTabButton(tabItem, e.OriginalSource))
-					return;
+			if (!isTabButtonPressed && (Keyboard.Modifiers == ModifierKeys.None && e.LeftButton == MouseButtonState.Pressed))
 				DragDrop.DoDragDrop(tabItem, tabItem, DragDropEffects.Move);
-			}
 		}
 
 		static bool IsTabButton(TabItem tabItem, object o)

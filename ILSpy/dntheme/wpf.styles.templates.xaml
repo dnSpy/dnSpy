@@ -58,6 +58,7 @@
     <Geometry x:Key="DownArrow"> M 0,0 L 3.5,4 L 7,0 Z</Geometry>
     <Geometry x:Key="UpArrow">   M 0,4 L 3.5,0 L 7,4 Z</Geometry>
     <Geometry x:Key="RightArrow">M 0,0 L 4,3.5 L 0,7 Z</Geometry>
+	<Geometry x:Key="ScrollBarRightArrow">M0,0 0,9 1,9 1,8 2,8 2,7 3,7 3,6 4,6 4,5 5,5 5,4 4,4 4,3 3,3 3,2 2,2 2,1 1,1 1,0z</Geometry>
     <Geometry x:Key="ToolBarCheckmark"> M 0,2.5 L 2.5,5 L 7,0.5</Geometry>
 	<Geometry x:Key="ListUpArrow16x16">M4.999,8L4.999,15 10.999,15 10.999,8 14.999,8 7.999,1 1,8z</Geometry>
 	<Geometry x:Key="CheckMarkGeometry">M9,1.833L10.667,3.167L7,10.667L5.333,10.667L3.333,8.167L3.333,6.833L4.833,6.5L6,8z</Geometry>
@@ -1911,9 +1912,9 @@
     <Style x:Key="{x:Type ListBox}"
            TargetType="{x:Type ListBox}">
         <Setter Property="Background"
-                Value="{DynamicResource SystemColorsWindow}"/>
+                Value="{DynamicResource ListBoxBackground}"/>
         <Setter Property="BorderBrush"
-                Value="{DynamicResource ListBorder}"/>
+                Value="{DynamicResource ListBoxBorder}"/>
         <Setter Property="BorderThickness"
                 Value="1"/>
         <Setter Property="Foreground"
@@ -2281,9 +2282,9 @@
     <Style x:Key="{x:Static GridView.GridViewStyleKey}"
            TargetType="{x:Type ListView}">
         <Setter Property="Background"
-                Value="{DynamicResource SystemColorsWindow}"/>
+                Value="{DynamicResource GridViewBackground}"/>
         <Setter Property="BorderBrush"
-                Value="{DynamicResource ListBorder}"/>
+                Value="{DynamicResource GridViewBorder}"/>
         <Setter Property="BorderThickness"
                 Value="1"/>
         <Setter Property="Foreground"
@@ -2314,6 +2315,7 @@
                         </ScrollViewer>
 					</Border>
                     <ControlTemplate.Triggers>
+						<!--
                         <Trigger Property="IsEnabled"
                                  Value="false">
                             <Setter TargetName="Bd"
@@ -2337,6 +2339,7 @@
                                     Property="BorderBrush"
                                     Value="{DynamicResource TextBoxFocusedBorder}"/>
                         </Trigger>
+						-->
 						<!-- TODO: Disable this since VirtualizingPanel.IsVirtualizingWhenGrouping is
 								available in 4.5+ only
                         <MultiTrigger>
@@ -3094,7 +3097,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type RepeatButton}">
-					<Border x:Name="Border" Background="{DynamicResource ScrollBarBackground}" SnapsToDevicePixels="true">
+					<Border x:Name="Border" Background="{DynamicResource EnvironmentScrollBarArrowBackground}" SnapsToDevicePixels="true">
 						<Grid>
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="*" />
@@ -3106,7 +3109,12 @@
 								<RowDefinition Height="Auto" />
 								<RowDefinition Height="*" />
 							</Grid.RowDefinitions>
-							<Path Grid.Row="1" Grid.Column="1" x:Name="arrowPath" Fill="{DynamicResource ScrollBarArrowButtonForeground}" Data="{StaticResource RightArrow}" SnapsToDevicePixels="true" />
+							<Path Grid.Row="1"
+								  Grid.Column="1"
+								  x:Name="arrowPath"
+								  Fill="{DynamicResource EnvironmentScrollBarArrowGlyph}"
+								  Data="{StaticResource ScrollBarRightArrow}"
+								  SnapsToDevicePixels="true" />
 						</Grid>
 					</Border>
 					<ControlTemplate.Triggers>
@@ -3146,29 +3154,29 @@
 								</Setter.Value>
 							</Setter>
 						</Trigger>
-						<Trigger Property="IsEnabled"
-                                 Value="False">
-							<Setter Property="Fill"
-									TargetName="arrowPath"
-                                    Value="{DynamicResource ScrollBarArrowButtonDisabledForeground}"/>
-							<Setter Property="Background"
-									TargetName="Border"
-                                    Value="{DynamicResource ScrollBarArrowButtonDisabledBackground}"/>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter TargetName="Border"
+									Property="Background"
+									Value="{DynamicResource EnvironmentScrollBarArrowMouseOverBackground}" />
+							<Setter TargetName="arrowPath"
+									Property="Fill"
+									Value="{DynamicResource EnvironmentScrollBarArrowGlyphMouseOver}" />
 						</Trigger>
-                        <Trigger Property="IsMouseOver"
-                                 Value="true">
-                            <Setter Property="Background"
-									TargetName="Border"
-                                    Value="{DynamicResource ScrollBarArrowButtonMouseOverBackground}"/>
-                        </Trigger>
-						<Trigger Property="IsPressed"
-                                 Value="true">
-							<Setter Property="Fill"
-									TargetName="arrowPath"
-                                    Value="{DynamicResource ScrollBarArrowButtonPressedForeground}"/>
-                            <Setter Property="Background"
-									TargetName="Border"
-                                    Value="{DynamicResource ScrollBarArrowButtonPressedBackground}"/>
+						<Trigger Property="IsPressed" Value="True">
+							<Setter TargetName="Border"
+									Property="Background"
+									Value="{DynamicResource EnvironmentScrollBarArrowPressedBackground}" />
+							<Setter TargetName="arrowPath"
+									Property="Fill"
+									Value="{DynamicResource EnvironmentScrollBarArrowGlyphPressed}" />
+						</Trigger>
+						<Trigger Property="IsEnabled" Value="False">
+							<Setter TargetName="Border"
+									Property="Background"
+									Value="{DynamicResource EnvironmentScrollBarArrowDisabledBackground}" />
+							<Setter TargetName="arrowPath"
+									Property="Fill"
+									Value="{DynamicResource EnvironmentScrollBarArrowGlyphDisabled}" />
 						</Trigger>
 					</ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -3181,42 +3189,27 @@
                 Value="true"/>
         <Setter Property="IsTabStop"
                 Value="false"/>
+        <Setter Property="Focusable"
+                Value="false"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Thumb}">
-					<Border x:Name="OuterBorder" Background="{DynamicResource ScrollBarBackground}">
-						<Border x:Name="Border" Background="{DynamicResource ScrollBarThumbBackground}" BorderBrush="{DynamicResource ScrollBarThumbBorder}" BorderThickness="1" SnapsToDevicePixels="true"/>
-					</Border>
+					<Border x:Name="Border" Background="{DynamicResource EnvironmentScrollBarThumbBackground}" />
 					<ControlTemplate.Triggers>
-						<Trigger Property="IsEnabled"
-                                 Value="False">
-							<Setter Property="Background"
-									TargetName="OuterBorder"
-                                    Value="{DynamicResource ScrollBarDisabledBackground}"/>
-							<Setter Property="Background"
-									TargetName="Border"
-                                    Value="{DynamicResource ScrollBarThumbDisabledBackground}"/>
-							<Setter Property="BorderBrush"
-									TargetName="Border"
-                                    Value="{DynamicResource ScrollBarThumbDisabledBorder}"/>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter TargetName="Border"
+									Property="Background"
+									Value="{DynamicResource EnvironmentScrollBarThumbMouseOverBackground}" />
 						</Trigger>
-                        <Trigger Property="IsMouseOver"
-                                 Value="true">
-							<Setter Property="Background"
-									TargetName="Border"
-                                    Value="{DynamicResource ScrollBarThumbMouseOverBackground}"/>
-							<Setter Property="BorderBrush"
-									TargetName="Border"
-                                    Value="{DynamicResource ScrollBarThumbMouseOverBorder}"/>
-                        </Trigger>
-						<Trigger Property="IsDragging"
-                                 Value="true">
-							<Setter Property="Background"
-									TargetName="Border"
-                                    Value="{DynamicResource ScrollBarThumbPressedBackground}"/>
-							<Setter Property="BorderBrush"
-									TargetName="Border"
-                                    Value="{DynamicResource ScrollBarThumbPressedBorder}"/>
+						<Trigger Property="IsDragging" Value="True">
+							<Setter TargetName="Border"
+									Property="Background"
+									Value="{DynamicResource EnvironmentScrollBarThumbPressedBackground}" />
+						</Trigger>
+						<Trigger Property="IsEnabled" Value="False">
+							<Setter TargetName="Border"
+									Property="Border.Background"
+									Value="{DynamicResource EnvironmentScrollBarThumbDisabled}" />
 						</Trigger>
 						<Trigger Property="theme:ScrollChrome.ScrollGlyph"
 							Value="{x:Static theme:ScrollGlyph.VerticalGripper}">
@@ -3277,8 +3270,6 @@
     </Style>
     <Style x:Key="{x:Type ScrollBar}"
            TargetType="{x:Type ScrollBar}">
-        <Setter Property="Background"
-                Value="{DynamicResource ScrollBarBackground}"/>
         <Setter Property="Stylus.IsPressAndHoldEnabled"
                 Value="false"/>
         <Setter Property="Stylus.IsFlicksEnabled"
@@ -3292,46 +3283,40 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ScrollBar}">
-                    <Grid Name="Bg"
-                          Background="{TemplateBinding Background}"
-                          SnapsToDevicePixels="true">
-                        <Grid.RowDefinitions>
-                            <RowDefinition MaxHeight="{DynamicResource {x:Static SystemParameters.VerticalScrollBarButtonHeightKey}}"/>
-                            <RowDefinition Height="0.00001*"/>
-                            <RowDefinition MaxHeight="{DynamicResource {x:Static SystemParameters.VerticalScrollBarButtonHeightKey}}"/>
-                        </Grid.RowDefinitions>
-                        <RepeatButton Style="{StaticResource ScrollBarButton}"
-                                      Command="{x:Static ScrollBar.LineUpCommand}"
-                                      theme:ScrollChrome.ScrollGlyph="UpArrow"/>
-                        <Track Grid.Row="1"
-                               Name="PART_Track"
-                               IsDirectionReversed="true">
-                            <Track.DecreaseRepeatButton>
-                                <RepeatButton Style="{StaticResource VerticalScrollBarPageButton}"
-                                              Command="{x:Static ScrollBar.PageUpCommand}"/>
-                            </Track.DecreaseRepeatButton>
-                            <Track.IncreaseRepeatButton>
-                                <RepeatButton Style="{StaticResource VerticalScrollBarPageButton}"
-                                              Command="{x:Static ScrollBar.PageDownCommand}"/>
-                            </Track.IncreaseRepeatButton>
-                            <Track.Thumb>
-                                <Thumb Style="{StaticResource ScrollBarThumb}"
-                                       theme:ScrollChrome.ScrollGlyph="VerticalGripper"/>
-                            </Track.Thumb>
-                        </Track>
-                        <RepeatButton Style="{StaticResource ScrollBarButton}"
-                                      Grid.Row="2"
-                                      Command="{x:Static ScrollBar.LineDownCommand}"
-                                      theme:ScrollChrome.ScrollGlyph="DownArrow"/>
-                    </Grid>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsEnabled"
-                                 Value="false">
-                            <Setter TargetName="Bg"
-                                    Property="Background"
-                                    Value="{DynamicResource ScrollBarDisabledBackground}"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
+					<Border Name="Border"
+							Background="{DynamicResource EnvironmentScrollBarBackground}"
+							BorderBrush="{DynamicResource EnvironmentScrollBarBorder}">
+						<Grid SnapsToDevicePixels="true">
+							<Grid.RowDefinitions>
+								<RowDefinition MaxHeight="{DynamicResource {x:Static SystemParameters.VerticalScrollBarButtonHeightKey}}"/>
+								<RowDefinition Height="0.00001*"/>
+								<RowDefinition MaxHeight="{DynamicResource {x:Static SystemParameters.VerticalScrollBarButtonHeightKey}}"/>
+							</Grid.RowDefinitions>
+							<RepeatButton Style="{StaticResource ScrollBarButton}"
+										  Command="{x:Static ScrollBar.LineUpCommand}"
+										  theme:ScrollChrome.ScrollGlyph="UpArrow"/>
+							<Track Grid.Row="1"
+								   Name="PART_Track"
+								   IsDirectionReversed="true">
+								<Track.DecreaseRepeatButton>
+									<RepeatButton Style="{StaticResource VerticalScrollBarPageButton}"
+												  Command="{x:Static ScrollBar.PageUpCommand}"/>
+								</Track.DecreaseRepeatButton>
+								<Track.IncreaseRepeatButton>
+									<RepeatButton Style="{StaticResource VerticalScrollBarPageButton}"
+												  Command="{x:Static ScrollBar.PageDownCommand}"/>
+								</Track.IncreaseRepeatButton>
+								<Track.Thumb>
+									<Thumb Style="{StaticResource ScrollBarThumb}"
+										   theme:ScrollChrome.ScrollGlyph="VerticalGripper"/>
+								</Track.Thumb>
+							</Track>
+							<RepeatButton Style="{StaticResource ScrollBarButton}"
+										  Grid.Row="2"
+										  Command="{x:Static ScrollBar.LineDownCommand}"
+										  theme:ScrollChrome.ScrollGlyph="DownArrow"/>
+						</Grid>
+					</Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -3346,50 +3331,42 @@
                         Value="{DynamicResource {x:Static SystemParameters.HorizontalScrollBarHeightKey}}"/>
                 <Setter Property="MinHeight"
                         Value="{DynamicResource {x:Static SystemParameters.HorizontalScrollBarHeightKey}}"/>
-                <Setter Property="Background"
-                        Value="{DynamicResource ScrollBarBackground}"/>
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ScrollBar}">
-                            <Grid Name="Bg"
-                                  Background="{TemplateBinding Background}"
-                                  SnapsToDevicePixels="true">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition MaxWidth="{DynamicResource {x:Static SystemParameters.HorizontalScrollBarButtonWidthKey}}"/>
-                                    <ColumnDefinition Width="0.00001*"/>
-                                    <ColumnDefinition MaxWidth="{DynamicResource {x:Static SystemParameters.HorizontalScrollBarButtonWidthKey}}"/>
-                                </Grid.ColumnDefinitions>
-                                <RepeatButton Style="{StaticResource ScrollBarButton}"
-                                              Command="{x:Static ScrollBar.LineLeftCommand}"
-                                              theme:ScrollChrome.ScrollGlyph="LeftArrow"/>
-                                <Track Grid.Column="1"
-                                       Name="PART_Track">
-                                    <Track.DecreaseRepeatButton>
-                                        <RepeatButton Style="{StaticResource HorizontalScrollBarPageButton}"
-                                                      Command="{x:Static ScrollBar.PageLeftCommand}"/>
-                                    </Track.DecreaseRepeatButton>
-                                    <Track.IncreaseRepeatButton>
-                                        <RepeatButton Style="{StaticResource HorizontalScrollBarPageButton}"
-                                                      Command="{x:Static ScrollBar.PageRightCommand}"/>
-                                    </Track.IncreaseRepeatButton>
-                                    <Track.Thumb>
-                                        <Thumb Style="{StaticResource ScrollBarThumb}"
-                                               theme:ScrollChrome.ScrollGlyph="HorizontalGripper"/>
-                                    </Track.Thumb>
-                                </Track>
-                                <RepeatButton Style="{StaticResource ScrollBarButton}"
-                                              Grid.Column="2"
-                                              Command="{x:Static ScrollBar.LineRightCommand}"
-                                              theme:ScrollChrome.ScrollGlyph="RightArrow"/>
-                            </Grid>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsEnabled"
-                                         Value="false">
-                                    <Setter TargetName="Bg"
-                                            Property="Background"
-                                            Value="{DynamicResource ScrollBarDisabledBackground}"/>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
+							<Border Name="Border"
+									Background="{DynamicResource EnvironmentScrollBarBackground}"
+									BorderBrush="{DynamicResource EnvironmentScrollBarBorder}">
+								<Grid SnapsToDevicePixels="true">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition MaxWidth="{DynamicResource {x:Static SystemParameters.HorizontalScrollBarButtonWidthKey}}"/>
+										<ColumnDefinition Width="0.00001*"/>
+										<ColumnDefinition MaxWidth="{DynamicResource {x:Static SystemParameters.HorizontalScrollBarButtonWidthKey}}"/>
+									</Grid.ColumnDefinitions>
+									<RepeatButton Style="{StaticResource ScrollBarButton}"
+												  Command="{x:Static ScrollBar.LineLeftCommand}"
+												  theme:ScrollChrome.ScrollGlyph="LeftArrow"/>
+									<Track Grid.Column="1"
+										   Name="PART_Track">
+										<Track.DecreaseRepeatButton>
+											<RepeatButton Style="{StaticResource HorizontalScrollBarPageButton}"
+														  Command="{x:Static ScrollBar.PageLeftCommand}"/>
+										</Track.DecreaseRepeatButton>
+										<Track.IncreaseRepeatButton>
+											<RepeatButton Style="{StaticResource HorizontalScrollBarPageButton}"
+														  Command="{x:Static ScrollBar.PageRightCommand}"/>
+										</Track.IncreaseRepeatButton>
+										<Track.Thumb>
+											<Thumb Style="{StaticResource ScrollBarThumb}"
+												   theme:ScrollChrome.ScrollGlyph="HorizontalGripper"/>
+										</Track.Thumb>
+									</Track>
+									<RepeatButton Style="{StaticResource ScrollBarButton}"
+												  Grid.Column="2"
+												  Command="{x:Static ScrollBar.LineRightCommand}"
+												  theme:ScrollChrome.ScrollGlyph="RightArrow"/>
+								</Grid>
+							</Border>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -3472,9 +3449,9 @@
     <Style x:Key="{x:Type StatusBar}"
            TargetType="{x:Type StatusBar}">
         <Setter Property="Background"
-                Value="{DynamicResource StatusBarBackground}"/>
+                Value="{DynamicResource StatusBarDebuggingBackground}"/>
         <Setter Property="Foreground"
-                Value="{DynamicResource StatusBarForeground}"/>
+                Value="{DynamicResource StatusBarDebuggingForeground}"/>
         <Setter Property="FontFamily"
                 Value="{DynamicResource {x:Static SystemFonts.StatusFontFamilyKey}}"/>
         <Setter Property="FontSize"
@@ -4979,9 +4956,9 @@
     <Style TargetType="{x:Type shtv:SharpTreeView}"
            BasedOn="{StaticResource {x:Type ListBox}}">
         <Setter Property="Background"
-                Value="{DynamicResource SharpTreeViewBackground}"/>
+                Value="{DynamicResource TreeViewBackground}"/>
         <Setter Property="BorderBrush"
-                Value="{DynamicResource SharpTreeViewBorder}"/>
+                Value="{DynamicResource TreeViewBorder}"/>
         <Style.Triggers>
             <Trigger Property="ShowRoot"
                      Value="False">

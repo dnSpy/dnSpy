@@ -123,14 +123,6 @@ namespace ICSharpCode.ILSpy.dntheme
 		public double? BackgroundOpacity;
 		public double? ForegroundOpacity;
 
-		public static BrushColorInfo CreateSystemColor(ColorType colorType, string name)
-		{
-			return new BrushColorInfo(colorType, "SystemColors." + name + "Brush") {
-				DefaultForeground = "SystemColors." + name,
-				ForegroundResourceKey = "SystemColors" + name,
-			};
-		}
-
 		public BrushColorInfo(ColorType colorType, string description)
 			: base(colorType, description)
 		{
@@ -296,22 +288,70 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultForeground = "#EAEAF2",
 				DefaultBackground = "#00000000",
 			},
-			BrushColorInfo.CreateSystemColor(ColorType.SystemColorsMenuText, "MenuText"),
-			BrushColorInfo.CreateSystemColor(ColorType.SystemColorsGrayText, "GrayText"),
-			BrushColorInfo.CreateSystemColor(ColorType.SystemColorsControl, "Control"),
-			BrushColorInfo.CreateSystemColor(ColorType.SystemColorsControlText, "ControlText"),
-			BrushColorInfo.CreateSystemColor(ColorType.SystemColorsControlLight, "ControlLight"),
-			BrushColorInfo.CreateSystemColor(ColorType.SystemColorsControlLightLight, "ControlLightLight"),
-			BrushColorInfo.CreateSystemColor(ColorType.SystemColorsControlDark, "ControlDark"),
-			BrushColorInfo.CreateSystemColor(ColorType.SystemColorsControlDarkDark, "ControlDarkDark"),
-			BrushColorInfo.CreateSystemColor(ColorType.SystemColorsWindowText, "WindowText"),
-			BrushColorInfo.CreateSystemColor(ColorType.SystemColorsWindow, "Window"),
-			BrushColorInfo.CreateSystemColor(ColorType.SystemColorsHighlight, "Highlight"),
-			BrushColorInfo.CreateSystemColor(ColorType.SystemColorsHighlightText, "HighlightText"),
-			BrushColorInfo.CreateSystemColor(ColorType.SystemColorsInactiveSelectionHighlight, "InactiveSelectionHighlight"),
-			BrushColorInfo.CreateSystemColor(ColorType.SystemColorsInactiveSelectionHighlightText, "InactiveSelectionHighlightText"),
-			BrushColorInfo.CreateSystemColor(ColorType.SystemColorsInactiveCaption, "InactiveCaption"),
-			BrushColorInfo.CreateSystemColor(ColorType.SystemColorsInactiveCaptionText, "InactiveCaptionText"),
+			new BrushColorInfo(ColorType.SystemColorsControl, "SystemColors.Control") {
+				DefaultBackground = "#FFF0F0F0",
+				BackgroundResourceKey = "SystemColorsControl"
+			},
+			new BrushColorInfo(ColorType.SystemColorsControlDark, "SystemColors.ControlDark") {
+				DefaultBackground = "#FFA0A0A0",
+				BackgroundResourceKey = "SystemColorsControlDark"
+			},
+			new BrushColorInfo(ColorType.SystemColorsControlDarkDark, "SystemColors.ControlDarkDark") {
+				DefaultBackground = "#FF696969",
+				BackgroundResourceKey = "SystemColorsControlDarkDark"
+			},
+			new BrushColorInfo(ColorType.SystemColorsControlLight, "SystemColors.ControlLight") {
+				DefaultBackground = "#FFE3E3E3",
+				BackgroundResourceKey = "SystemColorsControlLight"
+			},
+			new BrushColorInfo(ColorType.SystemColorsControlLightLight, "SystemColors.ControlLightLight") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "SystemColorsControlLightLight"
+			},
+			new BrushColorInfo(ColorType.SystemColorsControlText, "SystemColors.ControlText") {
+				DefaultForeground = "#FF000000",
+				ForegroundResourceKey = "SystemColorsControlText"
+			},
+			new BrushColorInfo(ColorType.SystemColorsGrayText, "SystemColors.GrayText") {
+				DefaultForeground = "#FF6D6D6D",
+				ForegroundResourceKey = "SystemColorsGrayText"
+			},
+			new BrushColorInfo(ColorType.SystemColorsHighlight, "SystemColors.Highlight") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "SystemColorsHighlight"
+			},
+			new BrushColorInfo(ColorType.SystemColorsHighlightText, "SystemColors.HighlightText") {
+				DefaultForeground = "#FFFFFFFF",
+				ForegroundResourceKey = "SystemColorsHighlightText"
+			},
+			new BrushColorInfo(ColorType.SystemColorsInactiveCaption, "SystemColors.InactiveCaption") {
+				DefaultBackground = "#FFBFCDDB",
+				BackgroundResourceKey = "SystemColorsInactiveCaption"
+			},
+			new BrushColorInfo(ColorType.SystemColorsInactiveCaptionText, "SystemColors.InactiveCaptionText") {
+				DefaultForeground = "#FF434E54",
+				ForegroundResourceKey = "SystemColorsInactiveCaptionText"
+			},
+			new BrushColorInfo(ColorType.SystemColorsInactiveSelectionHighlight, "SystemColors.InactiveSelectionHighlight") {
+				DefaultBackground = "#FFF0F0F0",
+				BackgroundResourceKey = "SystemColorsInactiveSelectionHighlight"
+			},
+			new BrushColorInfo(ColorType.SystemColorsInactiveSelectionHighlightText, "SystemColors.InactiveSelectionHighlightText") {
+				DefaultForeground = "#FF000000",
+				ForegroundResourceKey = "SystemColorsInactiveSelectionHighlightText"
+			},
+			new BrushColorInfo(ColorType.SystemColorsMenuText, "SystemColors.MenuText") {
+				DefaultForeground = "#FF000000",
+				ForegroundResourceKey = "SystemColorsMenuText"
+			},
+			new BrushColorInfo(ColorType.SystemColorsWindow, "SystemColors.Window") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "SystemColorsWindow"
+			},
+			new BrushColorInfo(ColorType.SystemColorsWindowText, "SystemColors.WindowText") {
+				DefaultForeground = "#FF000000",
+				ForegroundResourceKey = "SystemColorsWindowText"
+			},
 			new BrushColorInfo(ColorType.MainWindowBackground, "MainWindow background") {
 				DefaultBackground = "#EEEEF2",
 				BackgroundResourceKey = "MainWindowBackground",
@@ -336,22 +376,18 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "White",
 				BackgroundResourceKey = "GroupBoxBorderBrushInner",
 			},
-			new BrushColorInfo(ColorType.ListBorder, "List border") {
-				DefaultBackground = "#828790",
-				BackgroundResourceKey = "ListBorder",
-			},
 			new BrushColorInfo(ColorType.MenuItemSeparatorFillTop, "MenuItem Separator fill (top)") {
-				DefaultBackground = "#E0E0E0",
+				DefaultBackground = "#E0E3E6",
 				BackgroundResourceKey = "MenuItemSeparatorFillTop",
 			},
 			new BrushColorInfo(ColorType.MenuItemSeparatorFillBottom, "MenuItem Separator fill (bottom)") {
-				DefaultBackground = "White",
+				DefaultBackground = "Transparent",
 				BackgroundResourceKey = "MenuItemSeparatorFillBottom",
 			},
 			new LinearGradientColorInfo(ColorType.MenuItemSelectionFill, new Point(0, 1), "MenuItem selection fill", 0, 1) {
 				ResourceKey = "MenuItemSelectionFill",
-				DefaultForeground = "#34C5EBFF",
-				DefaultBackground = "#3481D8FF",
+				DefaultForeground = "#C9DEF5",
+				DefaultBackground = "#C9DEF5",
 			},
 			new BrushColorInfo(ColorType.MenuItemGlyphPanelBackground, "MenuItem glyph panel background") {
 				DefaultBackground = "#E6EFF4",
@@ -362,15 +398,15 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "MenuItemGlyphPanelBorderBrush",
 			},
 			new BrushColorInfo(ColorType.MenuItemGlyphFill, "MenuItem glyph fill") {
-				DefaultBackground = "#0C12A1",
+				DefaultBackground = "#1E1E1E",
 				BackgroundResourceKey = "MenuItemGlyphFill",
 			},
 			new BrushColorInfo(ColorType.MenuItemHighlightedStroke, "MenuItem highlighted stroke") {
-				DefaultBackground = "#8071CBF1",
+				DefaultBackground = "#C9DEF5",
 				BackgroundResourceKey = "MenuItemHighlightedStroke",
 			},
 			new BrushColorInfo(ColorType.MenuItemHighlightedInnerBorder, "MenuItem highlighted inner border") {
-				DefaultBackground = "#40FFFFFF",
+				DefaultBackground = "#C9DEF5",
 				BackgroundResourceKey = "MenuItemHighlightedInnerBorder",
 			},
 			new BrushColorInfo(ColorType.MenuItemDisabledForeground, "MenuItem disabled foreground") {
@@ -390,7 +426,7 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "MenuItemDisabledGlyphFill",
 			},
 			new BrushColorInfo(ColorType.ToolBarDarkFill, "Selected color of menu item's checkbox") {
-				DefaultBackground = "#99CCFF",
+				DefaultBackground = "#C9DEF5",
 				BackgroundResourceKey = "ToolBarDarkFill",
 			},
 			new BrushColorInfo(ColorType.ToolBarButtonPressed, "Toolbar button pressed") {
@@ -398,31 +434,31 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "ToolBarButtonPressed",
 			},
 			new BrushColorInfo(ColorType.ToolBarSeparatorFill, "Toolbar separator fill color") {
-				DefaultBackground = "#C6C7C6",
+				DefaultBackground = "#E0E3E6",
 				BackgroundResourceKey = "ToolBarSeparatorFill",
 			},
 			new BrushColorInfo(ColorType.ToolBarButtonHover, "Toolbar button hover color") {
-				DefaultBackground = "#C2E0FF",
+				DefaultBackground = "#C9DEF5",
 				BackgroundResourceKey = "ToolBarButtonHover",
 			},
 			new BrushColorInfo(ColorType.ToolBarButtonHoverBorder, "Toolbar button hover border") {
-				DefaultBackground = "#3399FF",
+				DefaultBackground = "#CCCCCC",
 				BackgroundResourceKey = "ToolBarButtonHoverBorder",
 			},
 			new BrushColorInfo(ColorType.ToolBarButtonPressedBorder, "Toolbar button pressed border") {
-				DefaultBackground = "#3399FF",
+				DefaultBackground = "#888888",
 				BackgroundResourceKey = "ToolBarButtonPressedBorder",
 			},
 			new BrushColorInfo(ColorType.ToolBarMenuBorder, "Toolbar menu border") {
-				DefaultBackground = "#808080",
+				DefaultBackground = "#CCCEDB",
 				BackgroundResourceKey = "ToolBarMenuBorder",
 			},
 			new BrushColorInfo(ColorType.ToolBarSubMenuBackground, "Toolbar sub menu") {
-				DefaultBackground = "#FDFDFD",
+				DefaultBackground = "#F6F6F6",
 				BackgroundResourceKey = "ToolBarSubMenuBackground",
 			},
 			new BrushColorInfo(ColorType.ToolBarMenuCheckFill, "Toolbar menu check fill") {
-				DefaultBackground = "#E6F0FA",
+				DefaultBackground = "#EEEEF2",
 				BackgroundResourceKey = "ToolBarMenuCheckFill",
 			},
 			new BrushColorInfo(ColorType.ToolBarButtonChecked, "Toolbar button checked") {
@@ -431,26 +467,26 @@ namespace ICSharpCode.ILSpy.dntheme
 			},
 			new LinearGradientColorInfo(ColorType.ToolBarOpenHeaderBackground, new Point(0, 1), "Toolbar open header. Color of top level menu item text when the sub menu is open.", 0, 1) {
 				ResourceKey = "ToolBarOpenHeaderBackground",
-				DefaultForeground = "#FFFFFF",
-				DefaultBackground = "#FFFBFF",
+				DefaultForeground = "#F6F6F6",
+				DefaultBackground = "#F6F6F6",
 			},
 			new BrushColorInfo(ColorType.ToolBarIconVerticalBackground, "ToolBar icon vertical background. Makes sure icons look good with this background color.") {
-				DefaultBackground = "#FFFBFF",
+				DefaultBackground = "#F6F6F6",
 			},
 			new LinearGradientColorInfo(ColorType.ToolBarVerticalBackground, new Point(1, 0), "Toolbar vertical header. Color of left vertical part of menu items.", 0, 0.5, 1) {
 				ResourceKey = "ToolBarVerticalBackground",
-				DefaultForeground = "#FFFFFF",
-				DefaultBackground = "#FFFBFF",
-				DefaultColor3 = "#F7F7F7",
+				DefaultForeground = "#F6F6F6",
+				DefaultBackground = "#F6F6F6",
+				DefaultColor3 = "#F6F6F6",
 			},
 			new BrushColorInfo(ColorType.ToolBarIconBackground, "ToolBar icon background. Makes sure icons look good with this background color.") {
-				DefaultBackground = "#FFFBFF",
+				DefaultBackground = "#F6F6F6",
 			},
 			new LinearGradientColorInfo(ColorType.ToolBarHorizontalBackground, new Point(0, 1), "Toolbar horizontal background", 0, 0.5, 1) {
 				ResourceKey = "ToolBarHorizontalBackground",
-				DefaultForeground = "#FFFFFF",
-				DefaultBackground = "#FFFBFF",
-				DefaultColor3 = "#F7F7F7",
+				DefaultForeground = "#EEEEF2",
+				DefaultBackground = "#EEEEF2",
+				DefaultColor3 = "#EEEEF2",
 			},
 			new BrushColorInfo(ColorType.ToolBarDisabledFill, "Toolbar disabled fill (combobox & textbox)") {
 				DefaultBackground = "#F7F7F7",
@@ -710,7 +746,7 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#85FFFFFF",
 			},
 			new BrushColorInfo(ColorType.ButtonBaseBorderOverlayBorder, "Button border overlay border") {
-				DefaultBackground = "SystemColors.Control",
+				DefaultBackground = "#FFF0F0F0",
 				BackgroundResourceKey = "ButtonBaseBorderOverlayBorder",
 			},
 			new BrushColorInfo(ColorType.ButtonBaseDisabledBorderBrush, "Button disabled border brush") {
@@ -769,7 +805,7 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "TabItemDisabledBorderBrush",
 			},
 			new BrushColorInfo(ColorType.ContextMenuBackground, "Context menu background") {
-				DefaultBackground = "#F5F5F5",
+				DefaultBackground = "#F6F6F6",
 				BackgroundResourceKey = "ContextMenuBackground",
 			},
 			new BrushColorInfo(ColorType.ContextMenuBorderBrush, "Context menu border brush") {
@@ -777,15 +813,15 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "ContextMenuBorderBrush",
 			},
 			new BrushColorInfo(ColorType.ContextMenuRectangleFill1, "Context menu rectangle fill #1. It's the vertical rectangle on the left side.") {
-				DefaultBackground = "#F1F1F1",
+				DefaultBackground = "#F6F6F6",
 				BackgroundResourceKey = "ContextMenuRectangleFill1",
 			},
 			new BrushColorInfo(ColorType.ContextMenuRectangleFill2, "Context menu rectangle fill #2. It's the small vertical rectangle to the right of the left most vertical rectangle.") {
-				DefaultBackground = "#E2E3E3",
+				DefaultBackground = "#F6F6F6",
 				BackgroundResourceKey = "ContextMenuRectangleFill2",
 			},
 			new BrushColorInfo(ColorType.ContextMenuRectangleFill3, "Context menu rectangle fill #3") {
-				DefaultBackground = "White",
+				DefaultBackground = "#F6F6F6",
 				BackgroundResourceKey = "ContextMenuRectangleFill3",
 			},
 			new BrushColorInfo(ColorType.ExpanderStaticCircleStroke, "Expander Static Circle Stroke") {
@@ -914,71 +950,67 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#BBC5D7",
 				DefaultColor3 = "#6D83A9",
 			},
-			new BrushColorInfo(ColorType.ScrollBarDisabledBackground, "ScrollBar disabled background") {
-				DefaultBackground = "#F5F5F5",
-				BackgroundResourceKey = "ScrollBarDisabledBackground",
+			new BrushColorInfo(ColorType.EnvironmentScrollBarArrowBackground, "ScrollBar arrow background") {
+				DefaultBackground = "#FFF5F5F5",
+				BackgroundResourceKey = "EnvironmentScrollBarArrowBackground",
 			},
-			new BrushColorInfo(ColorType.ScrollBarBackground, "ScrollBar background") {
-				DefaultBackground = "#F1F1F1",
-				BackgroundResourceKey = "ScrollBarBackground",
+			new BrushColorInfo(ColorType.EnvironmentScrollBarArrowDisabledBackground, "ScrollBar arrow disabled background") {
+				DefaultBackground = "#FFF5F5F5",
+				BackgroundResourceKey = "EnvironmentScrollBarArrowDisabledBackground",
 			},
-			new BrushColorInfo(ColorType.ScrollBarArrowButtonForeground, "ScrollBar arrow button foreground") {
-				DefaultBackground = "#505050",
-				BackgroundResourceKey = "ScrollBarArrowButtonForeground",
+			new BrushColorInfo(ColorType.EnvironmentScrollBarArrowGlyph, "ScrollBar arrow glyph") {
+				DefaultBackground = "#FF868999",
+				BackgroundResourceKey = "EnvironmentScrollBarArrowGlyph",
 			},
-			new BrushColorInfo(ColorType.ScrollBarArrowButtonDisabled, "ScrollBar arrow button disabled") {
-				DefaultBackground = "#F5F5F5",
-				BackgroundResourceKey = "ScrollBarArrowButtonDisabledBackground",
-				DefaultForeground = "#D8D8D8",
-				ForegroundResourceKey = "ScrollBarArrowButtonDisabledForeground",
+			new BrushColorInfo(ColorType.EnvironmentScrollBarArrowGlyphDisabled, "ScrollBar arrow glyph disabled") {
+				DefaultBackground = "#FFF5F5F5",
+				BackgroundResourceKey = "EnvironmentScrollBarArrowGlyphDisabled",
 			},
-			new BrushColorInfo(ColorType.ScrollBarArrowButtonMouseOverBackground, "ScrollBar arrow button mouse over background") {
-				DefaultBackground = "#D2D2D2",
-				BackgroundResourceKey = "ScrollBarArrowButtonMouseOverBackground",
+			new BrushColorInfo(ColorType.EnvironmentScrollBarArrowGlyphMouseOver, "ScrollBar arrow glyph mouse over") {
+				DefaultBackground = "#FF1C97EA",
+				BackgroundResourceKey = "EnvironmentScrollBarArrowGlyphMouseOver",
 			},
-			new BrushColorInfo(ColorType.ScrollBarArrowButtonPressed, "ScrollBar arrow button pressed") {
-				DefaultBackground = "#787878",
-				BackgroundResourceKey = "ScrollBarArrowButtonPressedBackground",
-				DefaultForeground = "#FFFFFF",
-				ForegroundResourceKey = "ScrollBarArrowButtonPressedForeground",
+			new BrushColorInfo(ColorType.EnvironmentScrollBarArrowGlyphPressed, "ScrollBar arrow glyph pressed") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "EnvironmentScrollBarArrowGlyphPressed",
 			},
-			new BrushColorInfo(ColorType.ScrollBarThumbBackground, "ScrollBar thumb background") {
-				DefaultBackground = "#BCBCBC",
-				BackgroundResourceKey = "ScrollBarThumbBackground",
+			new BrushColorInfo(ColorType.EnvironmentScrollBarArrowMouseOverBackground, "ScrollBar arrow mouse over background") {
+				DefaultBackground = "#FFF5F5F5",
+				BackgroundResourceKey = "EnvironmentScrollBarArrowMouseOverBackground",
 			},
-			new BrushColorInfo(ColorType.ScrollBarThumbBorder, "ScrollBar thumb border") {
-				DefaultBackground = "#A8A8A8",
-				BackgroundResourceKey = "ScrollBarThumbBorder",
+			new BrushColorInfo(ColorType.EnvironmentScrollBarArrowPressedBackground, "ScrollBar arrow pressed background") {
+				DefaultBackground = "#FFF5F5F5",
+				BackgroundResourceKey = "EnvironmentScrollBarArrowPressedBackground",
 			},
-			new BrushColorInfo(ColorType.ScrollBarThumbDisabledBackground, "ScrollBar thumb disabled background") {
-				DefaultBackground = "#BCBCBC",
-				BackgroundResourceKey = "ScrollBarThumbDisabledBackground",
+			new BrushColorInfo(ColorType.EnvironmentScrollBarBackground, "ScrollBar background") {
+				DefaultBackground = "#FFF5F5F5",
+				BackgroundResourceKey = "EnvironmentScrollBarBackground",
 			},
-			new BrushColorInfo(ColorType.ScrollBarThumbDisabledBorder, "ScrollBar thumb disabled border") {
-				DefaultBackground = "#A8A8A8",
-				BackgroundResourceKey = "ScrollBarThumbDisabledBorder",
+			new BrushColorInfo(ColorType.EnvironmentScrollBarBorder, "ScrollBar border") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "EnvironmentScrollBarBorder",
 			},
-			new BrushColorInfo(ColorType.ScrollBarThumbMouseOverBackground, "ScrollBar thumb mouse over background") {
-				DefaultBackground = "#AAAAAB",
-				BackgroundResourceKey = "ScrollBarThumbMouseOverBackground",
+			new BrushColorInfo(ColorType.EnvironmentScrollBarThumbBackground, "ScrollBar thumb background") {
+				DefaultBackground = "#FFDEDFE7",
+				BackgroundResourceKey = "EnvironmentScrollBarThumbBackground",
 			},
-			new BrushColorInfo(ColorType.ScrollBarThumbMouseOverBorder, "ScrollBar thumb mouse over border") {
-				DefaultBackground = "#9A9A9A",
-				BackgroundResourceKey = "ScrollBarThumbMouseOverBorder",
+			new BrushColorInfo(ColorType.EnvironmentScrollBarThumbDisabled, "ScrollBar thumb disabled") {
+				DefaultBackground = "#FFF5F5F5",
+				BackgroundResourceKey = "EnvironmentScrollBarThumbDisabled",
 			},
-			new BrushColorInfo(ColorType.ScrollBarThumbPressedBackground, "ScrollBar thumb pressed background") {
-				DefaultBackground = "#8D8D8E",
-				BackgroundResourceKey = "ScrollBarThumbPressedBackground",
+			new BrushColorInfo(ColorType.EnvironmentScrollBarThumbMouseOverBackground, "ScrollBar thumb mouse over background") {
+				DefaultBackground = "#FF888888",
+				BackgroundResourceKey = "EnvironmentScrollBarThumbMouseOverBackground",
 			},
-			new BrushColorInfo(ColorType.ScrollBarThumbPressedBorder, "ScrollBar thumb pressed border") {
-				DefaultBackground = "#787878",
-				BackgroundResourceKey = "ScrollBarThumbPressedBorder",
+			new BrushColorInfo(ColorType.EnvironmentScrollBarThumbPressedBackground, "ScrollBar thumb pressed background") {
+				DefaultBackground = "#FF6A6A6A",
+				BackgroundResourceKey = "EnvironmentScrollBarThumbPressedBackground",
 			},
-			new BrushColorInfo(ColorType.StatusBar, "StatusBar") {
-				DefaultBackground = "#FFF1EDED",
-				BackgroundResourceKey = "StatusBarBackground",
-				DefaultForeground = "SystemColors.ControlText",
-				ForegroundResourceKey = "StatusBarForeground",
+			new BrushColorInfo(ColorType.StatusBarDebugging, "StatusBar debugging") {
+				DefaultBackground = "#CA5100",
+				BackgroundResourceKey = "StatusBarDebuggingBackground",
+				DefaultForeground = "White",
+				ForegroundResourceKey = "StatusBarDebuggingForeground",
 			},
 			new LinearGradientColorInfo(ColorType.TextBoxBorder, new Point(0, 20), "TextBox border", 0.05, 0.07, 1) {
 				ResourceKey = "TextBoxBorder",
@@ -1011,15 +1043,15 @@ namespace ICSharpCode.ILSpy.dntheme
 			},
 			new LinearGradientColorInfo(ColorType.ToolTipBackground, new Point(0, 1), "ToolTip background", 0, 1) {
 				ResourceKey = "ToolTipBackground",
-				DefaultForeground = "#FFFFFF",
-				DefaultBackground = "#E4E5F0",
+				DefaultForeground = "White",
+				DefaultBackground = "White",
 			},
 			new BrushColorInfo(ColorType.ToolTipBorderBrush, "ToolTip border brush") {
 				DefaultBackground = "#767676",
 				BackgroundResourceKey = "ToolTipBorderBrush",
 			},
 			new BrushColorInfo(ColorType.ToolTipForeground, "ToolTip foreground") {
-				DefaultForeground = "#575757",
+				DefaultForeground = "Black",
 				ForegroundResourceKey = "ToolTipForeground",
 				Children = new ColorInfo[] {
 					new BrushColorInfo(ColorType.XmlDocToolTipDescriptionText, "XML doc tooltip: base class of most XML doc tooltip classes") {
@@ -1071,6 +1103,14 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "WhiteSmoke",
 				BackgroundResourceKey = "TVItemAlternationBackground",
 			},
+			new BrushColorInfo(ColorType.GridViewBackground, "GridView background") {
+				DefaultBackground = "#F5F5F5",
+				BackgroundResourceKey = "GridViewBackground",
+			},
+			new BrushColorInfo(ColorType.GridViewBorder, "GridView border") {
+				DefaultBackground = "#CCCEDB",
+				BackgroundResourceKey = "GridViewBorder",
+			},
 			new BrushColorInfo(ColorType.GridViewScrollViewerLeftFill, "GridView ScrollViewer left fill") {
 				DefaultBackground = "White",
 				BackgroundResourceKey = "GridViewScrollViewerLeftFill",
@@ -1081,43 +1121,43 @@ namespace ICSharpCode.ILSpy.dntheme
 			},
 			new LinearGradientColorInfo(ColorType.GridViewColumnHeaderBorderBackground, new Point(0, 1), "GridViewColumnHeader border background", 0, 1) {
 				ResourceKey = "GridViewColumnHeaderBorderBackground",
-				DefaultForeground = "#FFF2F2F2",
-				DefaultBackground = "#FFD5D5D5",
+				DefaultForeground = "#E0E3E6",
+				DefaultBackground = "#E0E3E6",
 			},
 			new LinearGradientColorInfo(ColorType.GridViewColumnHeaderBackground, new Point(0, 1), "GridViewColumnHeader background", 0, 0.4091, 1) {
 				ResourceKey = "GridViewColumnHeaderBackground",
-				DefaultForeground = "#FFFFFFFF",
-				DefaultBackground = "#FFFFFFFF",
-				DefaultColor3 = "#FFF7F8F9",
+				DefaultForeground = "#F5F5F5",
+				DefaultBackground = "#F5F5F5",
+				DefaultColor3 = "#F5F5F5",
 			},
 			new LinearGradientColorInfo(ColorType.GridViewColumnHeaderHoverBackground, new Point(0, 1), "GridViewColumnHeader hover background", 0, 1) {
 				ResourceKey = "GridViewColumnHeaderHoverBackground",
-				DefaultForeground = "#FFBDEDFF",
-				DefaultBackground = "#FFB7E7FB",
+				DefaultForeground = "#1C97EA",
+				DefaultBackground = "#1C97EA",
 			},
 			new LinearGradientColorInfo(ColorType.GridViewColumnHeaderPressBackground, new Point(0, 1), "GridViewColumnHeader press background", 0, 1) {
 				ResourceKey = "GridViewColumnHeaderPressBackground",
-				DefaultForeground = "#FF8DD6F7",
-				DefaultBackground = "#FF8AD1F5",
+				DefaultForeground = "#007ACC",
+				DefaultBackground = "#007ACC",
 			},
 			new BrushColorInfo(ColorType.GridViewColumnHeaderUpperHighlightFill, "GridViewColumnHeader upper highlight fill") {
-				DefaultBackground = "#FFE3F7FF",
+				DefaultBackground = "Transparent",
 				BackgroundResourceKey = "GridViewColumnHeaderUpperHighlightFill",
 			},
 			new BrushColorInfo(ColorType.GridViewColumnHeaderMouseOverHeaderHoverBorder, "GridViewColumnHeader mouse over header hover border") {
-				DefaultBackground = "#FF88CBEB",
+				DefaultBackground = "#1C97EA",
 				BackgroundResourceKey = "GridViewColumnHeaderMouseOverHeaderHoverBorder",
 			},
 			new BrushColorInfo(ColorType.GridViewColumnHeaderPressHoverBorder, "GridViewColumnHeader press hover border") {
-				DefaultBackground = "#FF95DAF9",
+				DefaultBackground = "#007ACC",
 				BackgroundResourceKey = "GridViewColumnHeaderPressHoverBorder",
 			},
 			new BrushColorInfo(ColorType.GridViewColumnHeaderPressBorder, "GridViewColumnHeader press border") {
-				DefaultBackground = "#FF7A9EB1",
+				DefaultBackground = "#007ACC",
 				BackgroundResourceKey = "GridViewColumnHeaderPressBorder",
 			},
 			new BrushColorInfo(ColorType.GridViewColumnHeaderPressUpperHighlightFill, "GridViewColumnHeader press upper highlight fill") {
-				DefaultBackground = "#FFBCE4F9",
+				DefaultBackground = "Transparent",
 				BackgroundResourceKey = "GridViewColumnHeaderPressUpperHighlightFill",
 			},
 			new BrushColorInfo(ColorType.GridViewColumnHeaderFloatingHeaderCanvasFill, "GridViewColumnHeaderFloatingHeaderCanvasFill") {
@@ -1125,63 +1165,63 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "GridViewColumnHeaderFloatingHeaderCanvasFill",
 			},
 			new BrushColorInfo(ColorType.GridViewListViewForeground, "GridView ListView foreground") {
-				DefaultBackground = "#FF042271",
+				DefaultBackground = "#1E1E1E",
 				BackgroundResourceKey = "GridViewListViewForeground",
 			},
 			new BrushColorInfo(ColorType.GridViewListViewItemFocusVisualStroke, "GridView ListViewItem FocusVisual stroke") {
-				DefaultBackground = "#8E6EA6F5",
+				DefaultBackground = "#3399FF",
 				BackgroundResourceKey = "GridViewListViewItemFocusVisualStroke",
 			},
 			new LinearGradientColorInfo(ColorType.GridViewListItemHoverFill, new Point(0, 1), "GridView ListItem hover fill", 0, 1) {
 				ResourceKey = "ListItemHoverFill",
-				DefaultForeground = "#FFF1FBFF",
-				DefaultBackground = "#FFD5F1FE",
+				DefaultForeground = "#5CADFF",
+				DefaultBackground = "#5CADFF",
 			},
 			new LinearGradientColorInfo(ColorType.GridViewListItemSelectedFill, new Point(0, 1), "GridView ListItem selected fill", 0, 1) {
 				ResourceKey = "ListItemSelectedFill",
-				DefaultForeground = "#FFD9F4FF",
-				DefaultBackground = "#FF9BDDFB",
+				DefaultForeground = "#3399FF",
+				DefaultBackground = "#3399FF",
 			},
 			new LinearGradientColorInfo(ColorType.GridViewListItemSelectedHoverFill, new Point(0, 1), "GridView ListItem selected hover fill", 0, 1) {
 				ResourceKey = "ListItemSelectedHoverFill",
-				DefaultForeground = "#FFEAF9FF",
-				DefaultBackground = "#FFC9EDFD",
+				DefaultForeground = "#85C2FF",
+				DefaultBackground = "#85C2FF",
 			},
 			new LinearGradientColorInfo(ColorType.GridViewListItemSelectedInactiveFill, new Point(0, 1), "GridView ListItem selected inactive fill", 0, 1) {
 				ResourceKey = "ListItemSelectedInactiveFill",
-				DefaultForeground = "#FFEEEDED",
-				DefaultBackground = "#FFDDDDDD",
+				DefaultForeground = "#AAAAAA",
+				DefaultBackground = "#AAAAAA",
 			},
 			new BrushColorInfo(ColorType.GridViewItemContainerUpperHighlightFill, "GridView ItemContainer upper highlight fill") {
-				DefaultBackground = "#75FFFFFF",
+				DefaultBackground = "Transparent",
 				BackgroundResourceKey = "GridViewItemContainerUpperHighlightFill",
 			},
 			new BrushColorInfo(ColorType.GridViewItemContainerMouseOverHoverBorder, "GridView ItemContainer mouse over hover border") {
-				DefaultBackground = "#FFCCF0FF",
+				DefaultBackground = "#5CADFF",
 				BackgroundResourceKey = "GridViewItemContainerMouseOverHoverBorder",
 			},
 			new BrushColorInfo(ColorType.GridViewItemContainerSelectedBorder, "GridView ItemContainer selected border") {
-				DefaultBackground = "#FF98DDFB",
+				DefaultBackground = "#3399FF",
 				BackgroundResourceKey = "GridViewItemContainerSelectedBorder",
 			},
 			new BrushColorInfo(ColorType.GridViewItemContainerSelectedInnerBorder, "GridView ItemContainer selected inner border") {
-				DefaultBackground = "#80FFFFFF",
+				DefaultBackground = "Transparent",
 				BackgroundResourceKey = "GridViewItemContainerSelectedInnerBorder",
 			},
 			new BrushColorInfo(ColorType.GridViewItemContainerSelectedUpperHighlightFill, "GridView ItemContainer selected upper highlight fill") {
-				DefaultBackground = "#40FFFFFF",
+				DefaultBackground = "Transparent",
 				BackgroundResourceKey = "GridViewItemContainerSelectedUpperHighlightFill",
 			},
 			new BrushColorInfo(ColorType.GridViewItemContainerSelectedInactiveBorder, "GridView ItemContainer selected inactive border") {
-				DefaultBackground = "#FFCFCFCF",
+				DefaultBackground = "#AAAAAA",
 				BackgroundResourceKey = "GridViewItemContainerSelectedInactiveBorder",
 			},
 			new BrushColorInfo(ColorType.GridViewItemContainerSelectedMouseOverBorder, "GridView ItemContainer selected mouse over border brush") {
-				DefaultBackground = "#FF98DDFB",
+				DefaultBackground = "#85C2FF",
 				BackgroundResourceKey = "GridViewItemContainerSelectedMouseOverBorder",
 			},
 			new BrushColorInfo(ColorType.SortableGridViewColumnArrowBackground, "SortableGridViewColumn arrow background") {
-				DefaultBackground = "Gray",
+				DefaultBackground = "#1E1E1E",
 				BackgroundResourceKey = "SortableGridViewColumnArrowBackground",
 			},
 			new BrushColorInfo(ColorType.PaneBorder, "Pane border") {
@@ -1218,7 +1258,7 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "DockedPaneCloseButtonPathFill",
 			},
 			new BrushColorInfo(ColorType.DockedPaneTitleForeground, "DockedPane title foreground") {
-				DefaultForeground = "SystemColors.ControlText",
+				DefaultForeground = "#FF000000",
 				ForegroundResourceKey = "DockedPaneTitleForeground",
 			},
 			new BrushColorInfo(ColorType.DecompilerTextViewWaitAdorner, "DecompilerTextView wait adorner") {
@@ -1249,7 +1289,7 @@ namespace ICSharpCode.ILSpy.dntheme
 			},
 			new BrushColorInfo(ColorType.TextBoxError, "TextBox error") {
 				DefaultBackground = "Pink",
-				DefaultForeground = "SystemColors.WindowText",
+				DefaultForeground = "#FF000000",
 				BackgroundResourceKey = "TextBoxErrorBackground",
 				ForegroundResourceKey = "TextBoxErrorForeground",
 			},
@@ -1267,13 +1307,21 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultForeground = "White",
 				ForegroundResourceKey = "TreeViewItemMouseOverForeground",
 			},
-			new BrushColorInfo(ColorType.SharpTreeViewBackground, "TreeView background") {
-				DefaultBackground = "SystemColors.Window",
-				BackgroundResourceKey = "SharpTreeViewBackground",
+			new BrushColorInfo(ColorType.TreeViewBackground, "TreeView background") {
+				DefaultBackground = "#F5F5F5",
+				BackgroundResourceKey = "TreeViewBackground",
 			},
-			new BrushColorInfo(ColorType.SharpTreeViewBorder, "TreeView border") {
-				DefaultBackground = "#828790",
-				BackgroundResourceKey = "SharpTreeViewBorder",
+			new BrushColorInfo(ColorType.TreeViewBorder, "TreeView border") {
+				DefaultBackground = "#CCCEDB",
+				BackgroundResourceKey = "TreeViewBorder",
+			},
+			new BrushColorInfo(ColorType.ListBoxBackground, "ListBox background") {
+				DefaultBackground = "#F5F5F5",
+				BackgroundResourceKey = "ListBoxBackground",
+			},
+			new BrushColorInfo(ColorType.ListBoxBorder, "ListBox border") {
+				DefaultBackground = "#CCCEDB",
+				BackgroundResourceKey = "ListBoxBorder",
 			},
 			new BrushColorInfo(ColorType.IconBar, "IconBar") {
 				DefaultBackground = "#E6E7E8",
@@ -1422,10 +1470,10 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultForeground = "SteelBlue",
 			},
 			new BrushColorInfo(ColorType.NodePublic, "TreeView node public") {
-				DefaultForeground = "SystemColors.WindowText",
+				DefaultForeground = "#FF000000",
 			},
 			new BrushColorInfo(ColorType.NodeNotPublic, "TreeView node not public") {
-				DefaultForeground = "SystemColors.GrayText",
+				DefaultForeground = "#FF6D6D6D",
 			},
 			new BrushColorInfo(ColorType.DefaultText, "Default text") {
 				DefaultForeground = "Black",
@@ -1836,13 +1884,6 @@ namespace ICSharpCode.ILSpy.dntheme
 			if (color.StartsWith("SystemColors.")) {
 				string shortName = color.Substring(13);
 				var property = typeof(SystemColors).GetProperty(shortName + "Brush");
-				if (property == null) {
-					// HACK: these exist in .NET 4.5+ only but are used by the XAML file.
-					if (shortName == "InactiveSelectionHighlight")
-						return CreateColor("SystemColors.Highlight");
-					if (shortName == "InactiveSelectionHighlightText")
-						return CreateColor("SystemColors.HighlightText");
-				}
 				Debug.Assert(property != null);
 				if (property == null)
 					return null;

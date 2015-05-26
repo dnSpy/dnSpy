@@ -196,7 +196,7 @@ namespace ICSharpCode.ILSpy
 
 		internal static void InitializeTreeView(SharpTreeView treeView)
 		{
-			treeView.GetPreviewInsideTextBackground = () => Themes.Theme.GetColor(dntheme.ColorType.SystemColorsHighlight).InheritedColor.Foreground.GetBrush(null);
+			treeView.GetPreviewInsideTextBackground = () => Themes.Theme.GetColor(dntheme.ColorType.SystemColorsHighlight).InheritedColor.Background.GetBrush(null);
 			treeView.GetPreviewInsideForeground = () => Themes.Theme.GetColor(dntheme.ColorType.SystemColorsHighlightText).InheritedColor.Foreground.GetBrush(null);
 		}
 

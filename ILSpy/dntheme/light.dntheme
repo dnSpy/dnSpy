@@ -61,12 +61,5 @@
 		<color name="currentline" fg="#EEEEEE" bg="#00000000" />
 		<color name="selectedreturnstatement" fg="Black" bg="#94B4E4B4" />
 		<color name="returnstatement" bg="#88C0C0C0" />
-
-		<color name="contextmenubackground" bg="White" />
-		<color name="statusbar" fg="White" bg="#007ACC" />
-		<color name="tooltipbackground" fg="White" bg="White" />
-		<color name="tooltipforeground" fg="Black" />
-		<color name="sharptreeviewbackground" bg="#F5F5F5" />
-		<color name="sharptreeviewborder" bg="#DCDCDC" />
 	</colors>
 </theme>
