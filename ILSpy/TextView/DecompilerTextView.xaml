@@ -14,10 +14,6 @@
 							  IsReadOnly="True"
 							  Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}"
 							  Foreground="{DynamicResource {x:Static SystemColors.InfoTextBrushKey}}">
-				<ae:TextEditor.Resources>
-					<!-- prevent App-wide button style from applying to the buttons in the search box -->
-					<Style TargetType="{x:Type Button}" />
-				</ae:TextEditor.Resources>
 			</nt:NewTextEditor>
 			<Border Name="waitAdorner" Background="{DynamicResource DecompilerTextViewWaitAdornerBackground}" TextBlock.Foreground="{DynamicResource DecompilerTextViewWaitAdornerForeground}" Visibility="Collapsed">
 				<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">

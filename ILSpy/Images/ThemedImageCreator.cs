@@ -93,7 +93,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		public static BitmapSource CreateThemedBitmapSource(BitmapSource src, Color bgColor)
+		public static BitmapSource CreateThemedBitmapSource(BitmapSource src, Color bgColor, bool isHighContrast)
 		{
 			unchecked {
 				if (src.Format != PixelFormats.Bgra32)
@@ -114,7 +114,7 @@ namespace ICSharpCode.ILSpy
 					luminosity = TransformLuminosity(hue, saturation, luminosity, bg.Luminosity);
 					hue = hue * (1.0 - n3) + bg.Hue * n3;
 					saturation = saturation * (1.0 - n2) + bg.Saturation * n2;
-					if (SystemParameters.HighContrast)
+					if (isHighContrast)
 						luminosity = ((luminosity <= 0.3) ? 0.0 : ((luminosity >= 0.7) ? 1.0 : ((luminosity - 0.3) / 0.4))) * (1.0 - saturation) + luminosity * saturation;
 					var color = new HslColor(hue, saturation, luminosity, 1.0).ToColor();
 					pixels[offs + 2] = color.R;

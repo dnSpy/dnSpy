@@ -1642,6 +1642,7 @@ namespace ICSharpCode.ILSpy.dntheme
 
 		public string Name { get; private set; }
 		public string MenuName { get; private set; }
+		public bool IsHighContrast { get; private set; }
 		public int Sort { get; private set; }
 
 		public Theme(XElement root)
@@ -1655,6 +1656,12 @@ namespace ICSharpCode.ILSpy.dntheme
 			if (menuName == null || string.IsNullOrEmpty(menuName.Value))
 				throw new Exception("Missing or empty menu-name attribute");
 			this.MenuName = menuName.Value;
+
+			var hcName = root.Attribute("is-high-contrast");
+			if (hcName != null)
+				this.IsHighContrast = (bool)hcName;
+			else
+				this.IsHighContrast = false;
 
 			var sort = root.Attribute("sort");
 			this.Sort = sort == null ? 1 : (int)sort;
@@ -1897,8 +1904,14 @@ namespace ICSharpCode.ILSpy.dntheme
 				return new SystemColorHighlightingBrush(property);
 			}
 
-			var clr = (System.Windows.Media.Color?)colorConverter.ConvertFromInvariantString(color);
-			return clr == null ? null : new SimpleHighlightingBrush(clr.Value);
+			try {
+				var clr = (System.Windows.Media.Color?)colorConverter.ConvertFromInvariantString(color);
+				return clr == null ? null : new SimpleHighlightingBrush(clr.Value);
+			}
+			catch {
+				Debug.Fail(string.Format("Couldn't convert color '{0}'", color));
+				throw;
+			}
 		}
 
 		static ColorType ToColorType(string name)

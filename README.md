@@ -10,7 +10,7 @@ Extra features present in dnSpy
 * Debugger
 * Tabs
 * Horizontal/vertical tab groups
-* Themes (blue, dark and light)
+* Themes (blue, dark, light and high contrast)
 * Updated syntax highlighting code
 * Multifile assembly support
 * Command line decompiler (dnspc.exe)

@@ -20,14 +20,26 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Microsoft.Win32;
 
 namespace ICSharpCode.ILSpy.dntheme
 {
+	public sealed class HighContrastEventArgs : EventArgs
+	{
+		public bool IsHighContrast { get; private set; }
+
+		public HighContrastEventArgs(bool isHighContrast)
+		{
+			this.IsHighContrast = isHighContrast;
+		}
+	}
+
 	public static class Themes
 	{
 		static Dictionary<string, Theme> themes = new Dictionary<string, Theme>();
@@ -45,14 +57,37 @@ namespace ICSharpCode.ILSpy.dntheme
 		}
 
 		public static event EventHandler<EventArgs> ThemeChanged;
+		public static event EventHandler<HighContrastEventArgs> HighContrastChanged;
 
 		public static IEnumerable<Theme> AllThemesSorted {
 			get { return themes.Values.OrderBy(x => x.Sort); }
 		}
 
+		public static string DefaultThemeName {
+			get { return "dark"; }
+		}
+
+		public static string DefaultHighContrastThemeName {
+			get { return "hc"; }
+		}
+
+		static bool isHighContrast;
+
 		static Themes()
 		{
+			isHighContrast = SystemParameters.HighContrast;
 			Load();
+			SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;
+		}
+
+		static void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
+		{
+			var newValue = SystemParameters.HighContrast;
+			if (isHighContrast != newValue) {
+				isHighContrast = newValue;
+				if (HighContrastChanged != null)
+					HighContrastChanged(null, new HighContrastEventArgs(isHighContrast));
+			}
 		}
 
 		static void Load()
@@ -64,7 +99,7 @@ namespace ICSharpCode.ILSpy.dntheme
 
 		public static Theme GetThemeOrDefault(string name)
 		{
-			return themes[name] ?? AllThemesSorted.FirstOrDefault();
+			return themes[name] ?? themes[DefaultThemeName] ?? AllThemesSorted.FirstOrDefault();
 		}
 
 		static Theme Load(string filename)
@@ -82,6 +117,7 @@ namespace ICSharpCode.ILSpy.dntheme
 				return theme;
 			}
 			catch (Exception) {
+				Debug.Fail(string.Format("Failed to load file '{0}'", filename));
 			}
 			return null;
 		}

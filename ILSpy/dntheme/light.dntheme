@@ -1,4 +1,4 @@
-<theme name="light" menu-name="_Light" sort="300">
+<theme name="light" menu-name="_Light" sort="300" is-high-contrast="false">
 	<colors>
 		<color name="defaulttext" fg="Black" bg="White" />
 		<color name="brace" fg="#003399" />

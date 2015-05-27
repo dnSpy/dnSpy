@@ -51,6 +51,9 @@
 		  code (or by decompiling it in dnSpy). The only exception is if SystemDropShadowChrome
 		  is used and Color=Transparent. Seems like it can be kept. If Color isn't Transparent, set
 		  it to "{DynamicResource ControlShadow}".
+	
+		* If the new styles/templates use SystemParameters.HighContrast, then remove those parts
+		  since the high contrast theme(s) are used when SystemParameters.HighContrast is true.
 	-->
 
     <MenuScrollingVisibilityConverter x:Key="MenuScrollingVisibilityConverter"/>
@@ -2838,12 +2841,12 @@
 
 
     <Style x:Key="ToolBarMainPanelBorderStyle" TargetType="{x:Type Border}">
+		<!--
         <Style.Triggers>
             <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="true">
                 <Setter Property="CornerRadius" Value="0,0,0,0" />
             </DataTrigger>
         </Style.Triggers>
-		<!--
         <Setter Property="Margin" Value="0,0,11,0" />
         <Setter Property="CornerRadius" Value="3,3,3,3" />
 		-->
@@ -4479,12 +4482,14 @@
 		 side. Enabling it will require adding more colors and styles. -->
     <Style x:Key="{x:Type ToolBar}"
            TargetType="{x:Type ToolBar}">
+	<!--
     <Style.Triggers>
         <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="true">
             <Setter Property="Background"
                         Value="{DynamicResource SystemColorsControl}" />
         </DataTrigger>
     </Style.Triggers>
+	-->
     <Setter Property="Background" Value="{DynamicResource ToolBarHorizontalBackground}"/>
     <Setter Property="Template">
         <Setter.Value>
