@@ -55,6 +55,7 @@
 
     <MenuScrollingVisibilityConverter x:Key="MenuScrollingVisibilityConverter"/>
 	<dntheme:FileTabBackgroundConverter x:Key="FileTabBackgroundConverter"/>
+	<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <Geometry x:Key="DownArrow"> M 0,0 L 3.5,4 L 7,0 Z</Geometry>
     <Geometry x:Key="UpArrow">   M 0,4 L 3.5,0 L 7,4 Z</Geometry>
     <Geometry x:Key="RightArrow">M 0,0 L 4,3.5 L 0,7 Z</Geometry>
@@ -62,6 +63,7 @@
     <Geometry x:Key="ToolBarCheckmark"> M 0,2.5 L 2.5,5 L 7,0.5</Geometry>
 	<Geometry x:Key="ListUpArrow16x16">M4.999,8L4.999,15 10.999,15 10.999,8 14.999,8 7.999,1 1,8z</Geometry>
 	<Geometry x:Key="CheckMarkGeometry">M9,1.833L10.667,3.167L7,10.667L5.333,10.667L3.333,8.167L3.333,6.833L4.833,6.5L6,8z</Geometry>
+	<SolidColorBrush x:Key="TransparentBrush" Color="Transparent" />
 
     <Style x:Key="ButtonFocusVisual">
         <Setter Property="Control.Template">
@@ -1160,7 +1162,7 @@
         <Setter Property="BorderBrush"
                 Value="{DynamicResource ContextMenuBorderBrush}"/>
         <Setter Property="Padding"
-                Value="2"/>
+                Value="0"/>
         <Setter Property="Grid.IsSharedSizeScope"
                 Value="true"/>
         <Setter Property="HasDropShadow"
@@ -2498,13 +2500,9 @@
             <Rectangle Name="Bg"
                        Fill="{TemplateBinding MenuItem.Background}"
                        Stroke="{TemplateBinding MenuItem.BorderBrush}"
-                       StrokeThickness="1"
-                       RadiusX="2"
-                       RadiusY="2"/>
+                       StrokeThickness="1"/>
             <Rectangle x:Name="InnerBorder"
-                       Margin="1"
-                       RadiusX="2"
-                       RadiusY="2"/>
+                       Margin="1"/>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition MinWidth="24"
@@ -2526,7 +2524,6 @@
                         Background="{DynamicResource MenuItemGlyphPanelBackground}"
                         BorderBrush="{DynamicResource MenuItemGlyphPanelBorderBrush}"
                         BorderThickness="1"
-                        CornerRadius="3"
                         Margin="1"
                         Visibility="Hidden"
                         Width="22"
@@ -2848,8 +2845,8 @@
         </Style.Triggers>
 		<!--
         <Setter Property="Margin" Value="0,0,11,0" />
-		-->
         <Setter Property="CornerRadius" Value="3,3,3,3" />
+		-->
     </Style>
 
     <Style x:Key="{x:Static ToolBar.SeparatorStyleKey}"
@@ -3194,7 +3191,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Thumb}">
-					<Border x:Name="Border" Background="{DynamicResource EnvironmentScrollBarThumbBackground}" />
+					<Border x:Name="Border"
+							BorderBrush="Transparent"
+							Background="{DynamicResource EnvironmentScrollBarThumbBackground}" />
 					<ControlTemplate.Triggers>
 						<Trigger Property="IsMouseOver" Value="True">
 							<Setter TargetName="Border"
@@ -3213,13 +3212,13 @@
 						</Trigger>
 						<Trigger Property="theme:ScrollChrome.ScrollGlyph"
 							Value="{x:Static theme:ScrollGlyph.VerticalGripper}">
-							<Setter Property="Margin"
+							<Setter Property="BorderThickness"
 								TargetName="Border"
 								Value="4 0 4 0"/>
 						</Trigger>
 						<Trigger Property="theme:ScrollChrome.ScrollGlyph"
 							Value="{x:Static theme:ScrollGlyph.HorizontalGripper}">
-							<Setter Property="Margin"
+							<Setter Property="BorderThickness"
 								TargetName="Border"
 								Value="0 4 0 4"/>
 						</Trigger>
@@ -5216,7 +5215,6 @@
 
 	<Style x:Key="TabGroupsGridStyle"
            TargetType="{x:Type Grid}">
-		<Setter Property="Background" Value="{DynamicResource EnvironmentFileTabBackground}"/>
 	</Style>
 
 	<!-- See FixEditorContextMenuStyle() in App.xaml.cs for more info -->
@@ -5236,6 +5234,8 @@
                 Value="0 0 0 0"/>
         <Setter Property="Background"
                 Value="{Binding TabManagerState, Converter={StaticResource FileTabBackgroundConverter}}"/>
+        <Setter Property="Visibility"
+                Value="{Binding HasOpenedDoc, Converter={StaticResource BooleanToVisibilityConverter}}"/>
         <Setter Property="HorizontalContentAlignment"
                 Value="Center"/>
         <Setter Property="VerticalContentAlignment"

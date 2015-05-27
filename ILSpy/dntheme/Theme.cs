@@ -333,7 +333,7 @@ namespace ICSharpCode.ILSpy.dntheme
 				ForegroundResourceKey = "SystemColorsInactiveCaptionText"
 			},
 			new BrushColorInfo(ColorType.SystemColorsInactiveSelectionHighlight, "SystemColors.InactiveSelectionHighlight") {
-				DefaultBackground = "#FFF0F0F0",
+				DefaultBackground = "#CCCCCC",
 				BackgroundResourceKey = "SystemColorsInactiveSelectionHighlight"
 			},
 			new BrushColorInfo(ColorType.SystemColorsInactiveSelectionHighlightText, "SystemColors.InactiveSelectionHighlightText") {
@@ -352,9 +352,16 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultForeground = "#FF000000",
 				ForegroundResourceKey = "SystemColorsWindowText"
 			},
-			new BrushColorInfo(ColorType.MainWindowBackground, "MainWindow background") {
-				DefaultBackground = "#EEEEF2",
-				BackgroundResourceKey = "MainWindowBackground",
+			new LinearGradientColorInfo(ColorType.EnvironmentBackground, new Point(0, 1), "MainWindow background", 0, 0.4, 0.6, 1) {
+				ResourceKey = "EnvironmentBackground",
+				DefaultForeground = "#FFEEEEF2",// Environment.EnvironmentBackgroundGradientBegin
+				DefaultBackground = "#FFEEEEF2",// Environment.EnvironmentBackgroundGradientMiddle1
+				DefaultColor3 = "#FFEEEEF2",// Environment.EnvironmentBackgroundGradientMiddle2
+				DefaultColor4 = "#FFEEEEF2",// Environment.EnvironmentBackgroundGradientEnd
+			},
+			new BrushColorInfo(ColorType.EnvironmentForeground, "MainWindow foreground") {
+				DefaultForeground = "#FF000000",
+				ForegroundResourceKey = "EnvironmentForeground",
 			},
 			new ColorColorInfo(ColorType.ControlShadow, "Control shadow") {
 				DefaultBackground = "#71000000",
@@ -480,7 +487,7 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultColor3 = "#F6F6F6",
 			},
 			new BrushColorInfo(ColorType.ToolBarIconBackground, "ToolBar icon background. Makes sure icons look good with this background color.") {
-				DefaultBackground = "#F6F6F6",
+				DefaultBackground = "#EEEEF2",
 			},
 			new LinearGradientColorInfo(ColorType.ToolBarHorizontalBackground, new Point(0, 1), "Toolbar horizontal background", 0, 0.5, 1) {
 				ResourceKey = "ToolBarHorizontalBackground",
@@ -1423,8 +1430,8 @@ namespace ICSharpCode.ILSpy.dntheme
 			},
 			new LinearGradientColorInfo(ColorType.EnvironmentFileTabInactiveGradient, new Point(0, 1), "FileTab inactive gradient", 0, 1) {
 				ResourceKey = "EnvironmentFileTabInactiveGradient",
-				DefaultForeground = "#FFCCCEDB",
-				DefaultBackground = "#FFCCCEDB",
+				DefaultForeground = "#FFCCCEDB",// Environment.FileTabInactiveGradientTop
+				DefaultBackground = "#FFCCCEDB",// Environment.FileTabInactiveGradientBottom
 			},
 			new BrushColorInfo(ColorType.EnvironmentFileTabInactiveText, "FileTab inactive text") {
 				DefaultBackground = "#FF717171",
@@ -1436,10 +1443,10 @@ namespace ICSharpCode.ILSpy.dntheme
 			},
 			new LinearGradientColorInfo(ColorType.EnvironmentFileTabSelectedGradient, new Point(0, 1), "FileTab selected gradient", 0, 0.5, 0.5, 1) {
 				ResourceKey = "EnvironmentFileTabSelectedGradient",
-				DefaultForeground = "#FF007ACC",
-				DefaultBackground = "#FF007ACC",
-				DefaultColor3 = "#FF007ACC",
-				DefaultColor4 = "#FF007ACC",
+				DefaultForeground = "#FF007ACC",// Environment.FileTabSelectedGradientTop
+				DefaultBackground = "#FF007ACC",// Environment.FileTabSelectedGradientMiddle1
+				DefaultColor3 = "#FF007ACC",// Environment.FileTabSelectedGradientMiddle2
+				DefaultColor4 = "#FF007ACC",// Environment.FileTabSelectedGradientBottom
 			},
 			new BrushColorInfo(ColorType.EnvironmentFileTabSelectedText, "FileTab selected text") {
 				DefaultBackground = "#FFFFFFFF",
@@ -1451,8 +1458,8 @@ namespace ICSharpCode.ILSpy.dntheme
 			},
 			new LinearGradientColorInfo(ColorType.EnvironmentFileTabHotGradient, new Point(0, 1), "FileTab hot gradient", 0, 1) {
 				ResourceKey = "EnvironmentFileTabHotGradient",
-				DefaultForeground = "#FF1C97EA",
-				DefaultBackground = "#FF1C97EA",
+				DefaultForeground = "#FF1C97EA",// Environment.FileTabHotGradientTop
+				DefaultBackground = "#FF1C97EA",// Environment.FileTabHotGradientBottom
 			},
 			new BrushColorInfo(ColorType.EnvironmentFileTabHotBorder, "FileTab hot border") {
 				DefaultBackground = "#FF1C97EA",

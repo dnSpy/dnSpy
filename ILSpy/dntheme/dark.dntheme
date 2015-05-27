@@ -1,4 +1,4 @@
-<theme name="dark" menu-name="_Dark" sort="100">
+<theme name="dark" menu-name="_Dark" sort="200">
 	<colors>
 		<color name="defaulttext" fg="#DCDCDC" bg="#1E1E1E" />
 		<color name="brace" fg="#A6B8DB" />
@@ -69,16 +69,17 @@
 		<color name="systemcolorscontrollightlight" bg="#303030" />
 		<color name="systemcolorscontroltext" fg="#F1F1F1" />
 		<color name="systemcolorsgraytext" fg="#505050" />
-		<color name="SystemColorsHighlight" bg="#FF297ACC" />
-		<color name="SystemColorsHighlightText" fg="#FFFFFFFF" />
+		<color name="systemcolorshighlight" bg="#FF297ACC" />
+		<color name="systemcolorshighlighttext" fg="#FFFFFFFF" />
 		<color name="systemcolorsinactivecaption" bg="#606060" />
 		<color name="systemcolorsinactivecaptiontext" fg="#A0A0A0" />
 		<color name="systemcolorsinactiveselectionhighlight" bg="#666666" />
 		<color name="systemcolorsinactiveselectionhighlighttext" fg="#CCCCCC" />
 		<color name="systemcolorsmenutext" fg="#F1F1F1" />
-		<color name="SystemColorsWindow" bg="#252525" />
-		<color name="SystemColorsWindowText" fg="#F1F1F1" />
-		<color name="mainwindowbackground" bg="#2D2D30" />
+		<color name="systemcolorswindow" bg="#252525" />
+		<color name="systemcolorswindowtext" fg="#F1F1F1" />
+		<color name="environmentbackground" fg="#FF2D2D30" bg="#FF2D2D30" color3="#FF2D2D30" color4="#FF2D2D30" />
+		<color name="environmentforeground" fg="#F1F1F1" />
 		<color name="controlshadow" bg="#71000000" />
 		<color name="gridsplitterpreviewfill" bg="#80000000" />
 		<color name="groupboxborderbrush" bg="#808080" />
@@ -109,7 +110,7 @@
 		<color name="toolbaropenheaderbackground" fg="#1B1B1C" bg="#1B1B1C" color3="#1B1B1C" />
 		<color name="toolbariconverticalbackground" bg="#1B1B1C" />
 		<color name="toolbarverticalbackground" fg="#1B1B1C" bg="#1B1B1C" color3="#1B1B1C" />
-		<color name="toolbariconbackground" bg="#1B1B1C" />
+		<color name="toolbariconbackground" bg="#2D2D30" />
 		<color name="toolbarhorizontalbackground" fg="#2D2D30" bg="#2D2D30" color3="#2D2D30" />
 		<color name="toolbardisabledfill" bg="#383838" />
 		<color name="toolbardisabledborder" bg="#484848" />
@@ -169,7 +170,7 @@
 		<color name="tabcontrolnormalborderbrush" bg="#353535" />
 		<color name="tabcontrolbackground" bg="#303030" />
 		<color name="tabitemforeground" bg="#F1F1F1" />
-		<color name="tabitemhotbackground" fg="#383838" bg="#3C3C3C" color3="#404040" color4="#444444" />
+		<color name="tabitemhotbackground" fg="#444444" bg="#404040" color3="#3C3C3C" color4="#383838" />
 		<color name="tabitemselectedbackground" bg="#303030" />
 		<color name="tabitemdisabledbackground" bg="#404040" />
 		<color name="tabitemhotborderbrush" bg="#404040" />
@@ -233,8 +234,8 @@
 		<color name="tvexpanderborderbrush" bg="#A0A0A0" />
 		<color name="tvexpanderborderbackground" fg="#606060" bg="#707070" />
 		<color name="tvexpanderpathfill" bg="#F1F1F1" />
-		<color name="tvexpandermouseoverborderbrush" bg="#3E81AD" />
-		<color name="tvexpandermouseoverpathfill" bg="#3E81AD" />
+		<color name="tvexpandermouseoverborderbrush" bg="#00CCFF" />
+		<color name="tvexpandermouseoverpathfill" bg="#00CCFF" />
 		<color name="tvitemalternationbackground" bg="#3E81AD" />
 		<color name="gridviewbackground" bg="#252526" />
 		<color name="gridviewborder" bg="#3F3F46" />
@@ -267,7 +268,7 @@
 		<color name="paneborder" bg="#505050" />
 		<color name="dockedpaneclosebuttonbackground" fg="#303030" bg="#383838" color3="#404040" color4="#484848" />
 		<color name="dockedpaneclosebuttonborder" bg="#505050" />
-		<color name="DockedPaneCloseButtonMouseOverBackground" fg="#404040" bg="#484848" />
+		<color name="dockedpaneclosebuttonmouseoverbackground" fg="#404040" bg="#484848" />
 		<color name="dockedpaneclosebuttonpressedbackground" fg="#303030" bg="#383838" />
 		<color name="dockedpaneclosebuttonpathstroke" bg="#303030" />
 		<color name="dockedpaneclosebuttonpathfill" bg="#909090" />

@@ -30,7 +30,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		{
 			string rsrcName;
 			switch ((TabManagerState)value) {
-			case TabManagerState.Empty:		rsrcName = "MainWindowBackground"; break;
+			case TabManagerState.Empty:		rsrcName = "TransparentBrush"; break;
 			case TabManagerState.Active:	rsrcName = "EnvironmentFileTabSelectedGradient"; break;
 			case TabManagerState.Inactive:	rsrcName = "EnvironmentFileTabInactiveGradient"; break;
 			default: throw new InvalidOperationException();

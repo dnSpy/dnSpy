@@ -87,6 +87,10 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
+		public bool HasOpenedDoc {
+			get { return Count != 0; }
+		}
+
 		public TabControl TabControl {
 			get { return tabControl; }
 		}
@@ -137,8 +141,13 @@ namespace ICSharpCode.ILSpy
 
 		internal override void OnThemeChanged()
 		{
-			// A color is calculated from TabManagerState so make sure it's recalculated
+			OnStylePropChange();
+		}
+
+		void OnStylePropChange()
+		{
 			OnPropertyChanged("TabManagerState");
+			OnPropertyChanged("HasOpenedDoc");
 		}
 
 		internal override void Close(object ts)
@@ -175,7 +184,7 @@ namespace ICSharpCode.ILSpy
 			UpdateState(tabState);
 			tabControl.Items.Add(tabState.TabItem);
 			if (tabControl.Items.Count == 1)
-				OnPropertyChanged("TabManagerState");
+				OnStylePropChange();
 			OnAddRemoveTabState(this, TabManagerAddType.Add, tabState);
 			return tabState;
 		}
@@ -336,7 +345,7 @@ namespace ICSharpCode.ILSpy
 			UpdateState(tabState);
 			tabControl.Items.Insert(insertIndex, tabState.TabItem);
 			if (tabControl.Items.Count == 1)
-				OnPropertyChanged("TabManagerState");
+				OnStylePropChange();
 			OnAddRemoveTabState(this, TabManagerAddType.Attach, tabState);
 			return tabState;
 		}
@@ -493,7 +502,7 @@ namespace ICSharpCode.ILSpy
 		void NotifyIfEmtpy()
 		{
 			if (tabControl.Items.Count == 0) {
-				OnPropertyChanged("TabManagerState");
+				OnStylePropChange();
 				tabGroupsManager.Remove(this);
 			}
 		}

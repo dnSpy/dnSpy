@@ -12,7 +12,8 @@
 	TextOptions.TextFormattingMode="Display"
 	FocusManager.FocusedElement="{Binding ElementName=treeView}"
 	Style="{DynamicResource {x:Type Window}}"
-	Background="{DynamicResource MainWindowBackground}"
+	Background="{DynamicResource EnvironmentBackground}"
+	Foreground="{DynamicResource EnvironmentForeground}"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008" d:DesignHeight="500" d:DesignWidth="500"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
 >
@@ -180,7 +181,7 @@
 				ShowRoot="False"
 				AllowDropOrder="True"
 				AllowDrop="True"
-				BorderThickness="0,1,1,1" Visibility="Visible" />
+				BorderThickness="0" />
 			<GridSplitter
 				Grid.ZIndex="1"
 				Grid.Column="1"
