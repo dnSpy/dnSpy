@@ -28,6 +28,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using System.Windows.Threading;
 using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy
@@ -257,11 +258,20 @@ namespace ICSharpCode.ILSpy
 
 			if (!isTabButtonPressed && (e.LeftButton == MouseButtonState.Pressed || e.RightButton == MouseButtonState.Pressed)) {
 				tabGroupsManager.SetActive(this);
-				tabControl.SelectedItem = tabItem;//TODO: Doesn't work immediately!
+				tabControl.SelectedItem = tabItem;
 			}
 
-			if (!isTabButtonPressed && (Keyboard.Modifiers == ModifierKeys.None && e.LeftButton == MouseButtonState.Pressed))
-				DragDrop.DoDragDrop(tabItem, tabItem, DragDropEffects.Move);
+			if (!isTabButtonPressed && (Keyboard.Modifiers == ModifierKeys.None && e.LeftButton == MouseButtonState.Pressed)) {
+				// Don't call DoDragDrop() immediately because it takes ownership of the mouse and
+				// prevents the pressed TabItem from becoming selected. When we don't want to drag
+				// a tab, the TabItem gets selected first when we release the mouse pointer instead
+				// of instantly when we press it. It makes the program feel slow.
+				tabControl.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(delegate {
+					// Make sure it's still the active TabItem
+					if (tabControl.SelectedItem == tabItem)
+						DragDrop.DoDragDrop(tabItem, tabItem, DragDropEffects.Move);
+				}));
+			}
 		}
 
 		static bool IsTabButton(TabItem tabItem, object o)
