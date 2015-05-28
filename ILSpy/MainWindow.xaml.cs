@@ -161,7 +161,7 @@ namespace ICSharpCode.ILSpy
 			this.sessionSettings.PropertyChanged += sessionSettings_PropertyChanged;
 			this.assemblyListManager = new AssemblyListManager(spySettings);
 			Themes.ThemeChanged += Themes_ThemeChanged;
-			Themes.HighContrastChanged += Themes_HighContrastChanged;
+			Themes.IsHighContrastChanged += (s, e) => Themes.SwitchThemeIfNecessary();
 
 			languageComboBox = new ComboBox() {
 				DisplayMemberPath = "Name",
@@ -186,8 +186,8 @@ namespace ICSharpCode.ILSpy
 			tabGroupsManager = new TabGroupsManager<TabStateDecompile>(tabGroupsContentPresenter, tabManager_OnSelectionChanged, tabManager_OnAddRemoveTabState);
 			tabGroupsManager.OnTabGroupSelected += tabGroupsManager_OnTabGroupSelected;
 			var theme = Themes.GetThemeOrDefault(sessionSettings.ThemeName);
-			if (theme.IsHighContrast != SystemParameters.HighContrast)
-				theme = Themes.GetThemeOrDefault(SystemParameters.HighContrast ? Themes.DefaultHighContrastThemeName : Themes.DefaultThemeName) ?? theme;
+			if (theme.IsHighContrast != Themes.IsHighContrast)
+				theme = Themes.GetThemeOrDefault(Themes.CurrentDefaultThemeName) ?? theme;
 			Themes.Theme = theme;
 			InitializeTreeView(treeView);
 
@@ -598,12 +598,6 @@ namespace ICSharpCode.ILSpy
 				return;
 			foreach (var listener in textEditorListeners)
 				listener.ClosePopup();
-		}
-
-		void Themes_HighContrastChanged(object sender, HighContrastEventArgs e)
-		{
-			var name = e.IsHighContrast ? Themes.DefaultHighContrastThemeName : Themes.DefaultThemeName;
-			Themes.Theme = Themes.GetThemeOrDefault(name);
 		}
 
 		void Themes_ThemeChanged(object sender, EventArgs e)

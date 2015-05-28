@@ -57,7 +57,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		}
 
 		public static event EventHandler<EventArgs> ThemeChanged;
-		public static event EventHandler<HighContrastEventArgs> HighContrastChanged;
+		public static event EventHandler<HighContrastEventArgs> IsHighContrastChanged;
 
 		public static IEnumerable<Theme> AllThemesSorted {
 			get { return themes.Values.OrderBy(x => x.Sort); }
@@ -71,23 +71,27 @@ namespace ICSharpCode.ILSpy.dntheme
 			get { return "hc"; }
 		}
 
+		public static string CurrentDefaultThemeName {
+			get { return IsHighContrast ? DefaultHighContrastThemeName : DefaultThemeName; }
+		}
+
+		public static bool IsHighContrast {
+			get { return isHighContrast; }
+			private set {
+				if (isHighContrast != value) {
+					isHighContrast = value;
+					if (IsHighContrastChanged != null)
+						IsHighContrastChanged(null, new HighContrastEventArgs(IsHighContrast));
+				}
+			}
+		}
 		static bool isHighContrast;
 
 		static Themes()
 		{
-			isHighContrast = SystemParameters.HighContrast;
 			Load();
-			SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;
-		}
-
-		static void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
-		{
-			var newValue = SystemParameters.HighContrast;
-			if (isHighContrast != newValue) {
-				isHighContrast = newValue;
-				if (HighContrastChanged != null)
-					HighContrastChanged(null, new HighContrastEventArgs(isHighContrast));
-			}
+			SystemEvents.UserPreferenceChanged += (s, e) => IsHighContrast = SystemParameters.HighContrast;
+			IsHighContrast = SystemParameters.HighContrast;
 		}
 
 		static void Load()
@@ -95,11 +99,6 @@ namespace ICSharpCode.ILSpy.dntheme
 			var path = Path.Combine(Path.GetDirectoryName(typeof(Themes).Assembly.Location), "dntheme");
 			foreach (var filename in Directory.GetFiles(path, "*.dntheme", SearchOption.TopDirectoryOnly))
 				Load(filename);
-		}
-
-		public static Theme GetThemeOrDefault(string name)
-		{
-			return themes[name] ?? themes[DefaultThemeName] ?? AllThemesSorted.FirstOrDefault();
 		}
 
 		static Theme Load(string filename)
@@ -121,10 +120,23 @@ namespace ICSharpCode.ILSpy.dntheme
 			}
 			return null;
 		}
+
+		public static Theme GetThemeOrDefault(string name)
+		{
+			var theme = themes[name] ?? themes[DefaultThemeName] ?? AllThemesSorted.FirstOrDefault();
+			Debug.Assert(theme != null);
+			return theme;
+		}
+
+		public static void SwitchThemeIfNecessary()
+		{
+			if (Theme.IsHighContrast != IsHighContrast)
+				Theme = GetThemeOrDefault(CurrentDefaultThemeName);
+		}
 	}
 
 	[ExportMainMenuCommand(Menu = "_Themes", MenuCategory = "Themes", MenuOrder = 4000)]
-	class ThemesMenu : ICommand, IMenuItemProvider
+	sealed class ThemesMenu : ICommand, IMenuItemProvider
 	{
 		public ThemesMenu()
 		{
