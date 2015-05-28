@@ -116,6 +116,8 @@ namespace ICSharpCode.ILSpy
 			Owner.Close(this);
 		}
 
+		public abstract void FocusContent();
+
 		public void Dispose()
 		{
 			Dispose(true);
@@ -228,6 +230,11 @@ namespace ICSharpCode.ILSpy
 				e.Handled = true;
 				return;
 			}
+		}
+
+		public override void FocusContent()
+		{
+			this.TextView.TextEditor.TextArea.Focus();
 		}
 
 		protected override void Dispose(bool isDisposing)

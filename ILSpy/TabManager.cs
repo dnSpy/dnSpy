@@ -247,6 +247,11 @@ namespace ICSharpCode.ILSpy
 			if (tabControl == null)
 				return;
 
+			// Give focus to active tab's content. Calling Focus() on tabItem.Content won't work if
+			// it's the text editor so need to call a virtual FocusContent().
+			if (tabControl.SelectedItem == tabItem)
+				tabState.FocusContent();
+
 			// HACK: The Close button won't work if we start the drag and drop operation
 			bool isTabButtonPressed = IsTabButton(tabItem, e.OriginalSource);
 
