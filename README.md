@@ -88,6 +88,7 @@ Ctrl++		| (Text view) Zoom In
 Ctrl+-		| (Text view) Zoom Out
 Ctrl+0		| (Text view) Zoom Reset
 Ctrl+Scroll Wheel| (Text view) Zoom In/Out
+Alt+Click	| (Text view) Don't follow the clicked reference so it's possible to start selecting text without being taken to the definition. References are only followed if none of Ctrl, Alt and Shift are pressed or if Ctrl is pressed.
 
 Credits
 =======

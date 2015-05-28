@@ -101,6 +101,10 @@ namespace ICSharpCode.ILSpy.TextView
 		/// <inheritdoc/>
 		protected override void OnQueryCursor(QueryCursorEventArgs e)
 		{
+			// See comment in OnMouseDown()
+			if (!(Keyboard.Modifiers == ModifierKeys.None || Keyboard.Modifiers == ModifierKeys.Control))
+				return;
+
 			e.Handled = true;
 			e.Cursor = referenceSegment.IsLocal ? Cursors.Arrow : Cursors.Hand;
 		}
@@ -108,7 +112,11 @@ namespace ICSharpCode.ILSpy.TextView
 		/// <inheritdoc/>
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
-			if (e.ChangedButton == MouseButton.Left && !e.Handled) {
+			// Only allow left click or ctrl + left click, nothing else. That way the user can eg.
+			// hold down shift or alt or shift+ctrl etc and select text where a reference is located
+			// without being taken to the definition.
+			if (!e.Handled && e.ChangedButton == MouseButton.Left &&
+				(Keyboard.Modifiers == ModifierKeys.None || Keyboard.Modifiers == ModifierKeys.Control)) {
 				parent.JumpToReference(referenceSegment, e);
 			}
 		}

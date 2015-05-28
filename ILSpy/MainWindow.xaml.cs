@@ -274,6 +274,7 @@ namespace ICSharpCode.ILSpy
 				view.TextEditor.TextArea.MouseRightButtonDown += delegate { view.GoToMousePosition(); };
 				view.TextEditor.WordWrap = sessionSettings.WordWrap;
 				view.TextEditor.Options.HighlightCurrentLine = sessionSettings.HighlightCurrentLine;
+				view.TextEditor.Options.EnableRectangularSelection = false;
 
 				if (OnDecompilerTextViewAdded != null)
 					OnDecompilerTextViewAdded(this, new DecompilerTextViewEventArgs(view));
