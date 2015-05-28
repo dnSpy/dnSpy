@@ -1087,6 +1087,10 @@ namespace ICSharpCode.ILSpy
 				func();
 
 			debug_CommandBindings_Count += this.CommandBindings.Count - debug_CommandBindings_Count2;
+
+			// Make sure that when no tabs are created that we have focus. If we don't do this we
+			// can't press Ctrl+K and open the asm search.
+			this.Focus();
 		}
 
 		IPane GetPane(DockedPane dockedPane, string name)

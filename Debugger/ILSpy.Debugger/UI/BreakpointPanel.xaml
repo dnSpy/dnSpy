@@ -29,6 +29,7 @@
                                         Margin="3,3,3,1"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
+                                        Focusable="False"
                                         IsEnabled="{Binding CanToggle}"
                                         IsChecked="{Binding IsEnabled}" />
                                 </StackPanel>

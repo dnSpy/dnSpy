@@ -42,16 +42,15 @@
 		  those that are not in use. Eg. if you add a toolbar style, you'd normally add all its
 		  extra resources, and then delete those that weren't used.
 
-		* Add ColorInfo classes to Theme.cs if new colors are needed. Also update at least
-		  dark.dntheme. light.dntheme and none.dntheme don't need to be updated; they should
-		  use the default values you add to Theme.cs.
+		* Add ColorInfo classes to Theme.cs if new colors are needed. Also update all *.dntheme
+		  files.
 
 		* If the template in the style uses a *Chrome class, remove the *Chrome class and replace
 		  it with XAML. The colors the *Chrome class uses can be found in the MS reference source
 		  code (or by decompiling it in dnSpy). The only exception is if SystemDropShadowChrome
 		  is used and Color=Transparent. Seems like it can be kept. If Color isn't Transparent, set
 		  it to "{DynamicResource ControlShadow}".
-	
+
 		* If the new styles/templates use SystemParameters.HighContrast, then remove those parts
 		  since the high contrast theme(s) are used when SystemParameters.HighContrast is true.
 	-->
@@ -4056,7 +4055,7 @@
                                          Value="true">
                                     <Setter TargetName="Border"
                                             Property="BorderBrush"
-                                            Value="{DynamicResource ToolBarButtonHoverBorder}"/>
+                                            Value="{DynamicResource ToolBarButtonHover}"/>
                                     <Setter TargetName="Border"
                                             Property="Background"
                                             Value="{DynamicResource ToolBarButtonHover}"/>
