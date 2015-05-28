@@ -272,7 +272,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 		static bool CanExecute(ILSpyTreeNode[] nodes)
 		{
 			return nodes != null &&
-				nodes.Length == 0 || nodes[0] is AssemblyTreeNode;
+				(nodes.Length == 0 || nodes[0] is AssemblyTreeNode);
 		}
 
 		static void Execute(ILSpyTreeNode[] nodes)
