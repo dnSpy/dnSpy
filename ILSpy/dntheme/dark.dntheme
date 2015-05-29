@@ -39,7 +39,7 @@
 		<color name="ilmodule" fg="#666699" />
 		<color name="xmldoctooltipdescriptiontext" italics="true" bold="true" />
 		<color name="xmldoctooltiptext" italics="true" bold="false" />
-		<color name="linenumber" fg="#666699" />
+		<color name="linenumber" fg="#2B91AF" />
 		<color name="xmlcomment" fg="#668066" italics="true" />
 		<color name="xmlcdata" fg="#339966" />
 		<color name="xmldoctype" fg="#669999" />
