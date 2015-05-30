@@ -38,7 +38,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 			this.analyzedType = analyzedType;
 
-			this.isSystemObject = analyzedType.Module.Assembly.IsCorLib() && analyzedType.FullName == "System.Object";
+			this.isSystemObject = analyzedType.DefinitionAssembly.IsCorLib() && analyzedType.FullName == "System.Object";
 		}
 
 		public override object Text

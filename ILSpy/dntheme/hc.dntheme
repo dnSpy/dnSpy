@@ -183,6 +183,8 @@
 		<color name="tooltipbackground" fg="#FF000000" bg="#FF000000" />
 		<color name="tooltipborderbrush" bg="#FFFFFFFF" />
 		<color name="tooltipforeground" fg="#FFFFFFFF" />
+		<color name="codetooltip" fg="#FFFFFFFF" bg="#FF000000" />
+		<color name="codetooltipborder" bg="#FFFFFFFF" />
 		<color name="tveditlistborder" bg="#FFFFFFFF" />
 		<color name="tvexpanderborderbrush" bg="#FFFFFFFF" />
 		<color name="tvexpanderborderbackground" fg="#FF000000" bg="#FF000000" />

@@ -359,7 +359,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		internal static bool IsDelegate(TypeDef type)
 		{
-			return type.BaseType != null && type.BaseType.FullName == typeof(MulticastDelegate).FullName && type.BaseType.Module.Assembly.IsCorLib();
+			return type.BaseType != null && type.BaseType.FullName == typeof(MulticastDelegate).FullName && type.BaseType.DefinitionAssembly.IsCorLib();
 		}
 
 		static bool IsException(TypeDef type)

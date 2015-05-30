@@ -66,25 +66,21 @@ namespace ICSharpCode.ILSpy.XmlDoc
 			WriteXmlDoc(this, xmlDocumentation);
 		}
 
-		internal static void WriteXmlDoc(IXmlDocOutput output, string xmlDocumentation)
+		internal static bool WriteXmlDoc(IXmlDocOutput output, string xmlDocumentation)
 		{
 			if (xmlDocumentation == null)
-				return;
+				return false;
 			try {
 				XmlTextReader r = new XmlTextReader(new StringReader("<docroot>" + xmlDocumentation + "</docroot>"));
 				r.XmlResolver = null;
 				AddXmlDocumentation(output, r);
 			} catch (XmlException) {
 			}
+			return true;
 		}
 		
 		internal static readonly Regex whitespace = new Regex(@"\s+");
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="output"></param>
-		/// <param name="xml"></param>
 		static void AddXmlDocumentation(IXmlDocOutput output, XmlReader xml)
 		{
 			string lastElemName = string.Empty;

@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Xml.Linq;
@@ -39,6 +40,10 @@ namespace ICSharpCode.ILSpy.TextView
 			get { return output; }
 		}
 		readonly AvalonEditTextOutput output = new AvalonEditTextOutput();
+
+		public bool IsEmpty {
+			get { return output.TextLength == 0; }
+		}
 
 		bool needsNewLine = false;
 
@@ -62,16 +67,23 @@ namespace ICSharpCode.ILSpy.TextView
 			output.Write(s, tokenType);
 		}
 
-		public void WriteXmlDoc(string xmlDoc)
+		void InitializeNeedsNewLine()
 		{
-			needsNewLine = !output.Text.EndsWith(Environment.NewLine);
-			XmlDocRenderer.WriteXmlDoc(this, xmlDoc);
+			var text = output.Text;
+			needsNewLine = text.Length > 0 && !text.EndsWith(Environment.NewLine);
+		}
+
+		public bool WriteXmlDoc(string xmlDoc)
+		{
+			InitializeNeedsNewLine();
+			bool res = XmlDocRenderer.WriteXmlDoc(this, xmlDoc);
 			needsNewLine = false;
+			return res;
 		}
 
 		public bool WriteXmlDocParameter(string xmlDoc, string paramName)
 		{
-			needsNewLine = !output.Text.EndsWith(Environment.NewLine);
+			InitializeNeedsNewLine();
 			bool res = WriteXmlDoc(this, xmlDoc, paramName, "param");
 			needsNewLine = false;
 			return res;
@@ -79,7 +91,7 @@ namespace ICSharpCode.ILSpy.TextView
 
 		public bool WriteXmlDocGeneric(string xmlDoc, string gpName)
 		{
-			needsNewLine = !output.Text.EndsWith(Environment.NewLine);
+			InitializeNeedsNewLine();
 			bool res = WriteXmlDoc(this, xmlDoc, gpName, "typeparam");
 			needsNewLine = false;
 			return res;
@@ -158,7 +170,7 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 
-		public object Create()
+		public UIElement Create()
 		{
 			var toolTipText = output.Text;
 			var tokens = output.LanguageTokens;

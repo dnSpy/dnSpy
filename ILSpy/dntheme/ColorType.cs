@@ -611,6 +611,8 @@ namespace ICSharpCode.ILSpy.dntheme
 		ToolTipBackground,
 		ToolTipBorderBrush,
 		ToolTipForeground,
+		CodeToolTip,
+		CodeToolTipBorder,
 		TVEditListBorder,
 		TVExpanderBorderBrush,
 		TVExpanderBorderBackground,

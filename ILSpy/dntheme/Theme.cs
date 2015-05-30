@@ -1060,6 +1060,12 @@ namespace ICSharpCode.ILSpy.dntheme
 			new BrushColorInfo(ColorType.ToolTipForeground, "ToolTip foreground") {
 				DefaultForeground = "Black",
 				ForegroundResourceKey = "ToolTipForeground",
+			},
+			new BrushColorInfo(ColorType.CodeToolTip, "Code ToolTip") {
+				DefaultForeground = "#FF1E1E1E",// Environment.ToolTip (fg)
+				ForegroundResourceKey = "CodeToolTipForeground",
+				DefaultBackground = "#FFF6F6F6",// Environment.ToolTip (bg)
+				BackgroundResourceKey = "CodeToolTipBackground",
 				Children = new ColorInfo[] {
 					new BrushColorInfo(ColorType.XmlDocToolTipDescriptionText, "XML doc tooltip: base class of most XML doc tooltip classes") {
 						Children = new ColorInfo[] {
@@ -1080,6 +1086,10 @@ namespace ICSharpCode.ILSpy.dntheme
 					new BrushColorInfo(ColorType.XmlDocSummary, "XML doc tooltip: summary text"),
 					new BrushColorInfo(ColorType.XmlDocToolTipText, "XML doc tooltip: XML doc text"),
 				}
+			},
+			new BrushColorInfo(ColorType.CodeToolTipBorder, "Code ToolTip border") {
+				DefaultBackground = "#FFCCCEDB",// Environment.ToolTipBorder
+				BackgroundResourceKey = "CodeToolTipBorder",
 			},
 			new BrushColorInfo(ColorType.TVEditListBorder, "TreeView Edit list border") {
 				DefaultBackground = "#FF7F9DB9",

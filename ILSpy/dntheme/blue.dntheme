@@ -230,6 +230,8 @@
 		<color name="tooltipbackground" fg="White" bg="White" />
 		<color name="tooltipborderbrush" bg="#767676" />
 		<color name="tooltipforeground" fg="Black" />
+		<color name="codetooltip" fg="#FF1E1E1E" bg="#FFE7E8EC" />
+		<color name="codetooltipborder" bg="#FFCCCEDB" />
 		<color name="tveditlistborder" bg="#FF7F9DB9" />
 		<color name="tvexpanderborderbrush" bg="#FF7898B5" />
 		<color name="tvexpanderborderbackground" fg="White" bg="#FFC0B7A6" />

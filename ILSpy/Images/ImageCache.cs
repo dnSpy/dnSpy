@@ -37,6 +37,7 @@ namespace ICSharpCode.ILSpy
 		ContextMenuItem,
 		GridViewItem,
 		DebuggerToolTip,
+		CodeToolTip,
 	}
 
 	public struct ImageInfo
@@ -89,6 +90,7 @@ namespace ICSharpCode.ILSpy
 			case BackgroundType.ContextMenuItem: return GetColorBackground(dntheme.ColorType.ContextMenuRectangleFill1);
 			case BackgroundType.GridViewItem: return GetColorBackground(dntheme.ColorType.SystemColorsWindow);
 			case BackgroundType.DebuggerToolTip: return Colors.White;//TODO: Update this when the debugger tooltips have been fixed
+			case BackgroundType.CodeToolTip: return GetColorBackground(dntheme.ColorType.CodeToolTip);
 			default:
 				Debug.Fail("Invalid bg type");
 				return GetColorBackground(dntheme.ColorType.SystemColorsWindow);

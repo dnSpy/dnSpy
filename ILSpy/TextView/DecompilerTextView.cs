@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -45,10 +44,7 @@ using ICSharpCode.AvalonEdit.Search;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.ILSpy.AvalonEdit;
-using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger;
-using ICSharpCode.ILSpy.Debugger.Bookmarks;
-using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.dntheme;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TreeNodes;
@@ -215,14 +211,14 @@ namespace ICSharpCode.ILSpy.TextView
 			ReferenceSegment seg = GetReferenceSegmentAt(offset);
 			if (seg == null)
 				return;
-			object content = GenerateTooltip(seg);
+			object content = GenerateToolTip(seg);
 			if (tooltip != null)
 				tooltip.IsOpen = false;
 			if (content != null)
-				tooltip = new ToolTip() { Content = content, IsOpen = true };
+				tooltip = new ToolTip() { Content = content, IsOpen = true, Style = (Style)this.FindResource("CodeToolTip") };
 		}
 		
-		object GenerateTooltip(ReferenceSegment segment)
+		object GenerateToolTip(ReferenceSegment segment)
 		{
 			if (segment.Reference is OpCode) {
 				OpCode code = (OpCode)segment.Reference;
@@ -239,49 +235,122 @@ namespace ICSharpCode.ILSpy.TextView
 				}
 				return tooltip;
 			} else if (segment.Reference is GenericParam) {
-				return GenerateTooltip((GenericParam)segment.Reference);
+				return GenerateToolTip((GenericParam)segment.Reference);
 			} else if (segment.Reference is IMemberRef) {
 				IMemberRef mr = (IMemberRef)segment.Reference;
+				IMemberRef resolvedRef = mr;
 				// if possible, resolve the reference
 				if (mr is ITypeDefOrRef) {
-					mr = ((ITypeDefOrRef)mr).ResolveTypeDef() ?? mr;
+					resolvedRef = ((ITypeDefOrRef)mr).ResolveTypeDef() ?? mr;
 				} else if (mr is IMethod && ((IMethod)mr).IsMethod) {
-					mr = ((IMethod)mr).ResolveMethodDef() ?? mr;
+					resolvedRef = ((IMethod)mr).ResolveMethodDef() ?? mr;
 				} else if (mr is IField && ((IField)mr).IsField) {
-					mr = ((IField)mr).ResolveFieldDef() ?? mr;
+					resolvedRef = ((IField)mr).ResolveFieldDef() ?? mr;
+				} else {
+					Debug.Assert(mr is PropertyDef || mr is EventDef, "Unknown IMemberRef");
 				}
+
+				var genFirstLine = new ToolTipGenerator();
+				MainWindow.Instance.GetLanguage(this).WriteToolTip(genFirstLine.TextOutput, mr, null);
 				var toolTipGen = new ToolTipGenerator();
-				MainWindow.Instance.GetLanguage(this).WriteTooltip(toolTipGen.TextOutput, mr, null);
 				try {
-					XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(mr.Module);
-					if (docProvider != null)
-						toolTipGen.WriteXmlDoc(GetDocumentation(docProvider, mr));
+					if (resolvedRef is IMemberDef) {
+						XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(resolvedRef.Module);
+						if (docProvider != null)
+							toolTipGen.WriteXmlDoc(GetDocumentation(docProvider, resolvedRef));
+					}
 				} catch (XmlException) {
 					// ignore
 				}
-				return toolTipGen.Create();
+				return GenerateToolTip(resolvedRef, genFirstLine, toolTipGen);
 			} else if (segment.Reference is Parameter) {
-				return GenerateTooltip((Parameter)segment.Reference, null);
+				return GenerateToolTip((Parameter)segment.Reference, null);
 			} else if (segment.Reference is ILVariable) {
 				var ilVar = (ILVariable)segment.Reference;
-				return GenerateTooltip(ilVar.OriginalVariable, ilVar.Name);
+				return GenerateToolTip(ilVar.OriginalVariable, ilVar.Name);
 			}
 
 			return null;
 		}
 
-		object GenerateTooltip(IVariable variable, string name)
+		static UIElement GenerateToolTip(object iconType, ToolTipGenerator genFirstLine, ToolTipGenerator gen)
+		{
+			var res = new StackPanel {
+				Orientation = Orientation.Vertical,
+			};
+			var sp = new StackPanel {
+				Orientation = Orientation.Horizontal,
+			};
+			res.Children.Add(sp);
+			if (!gen.IsEmpty)
+				res.Children.Add(gen.Create());
+			var icon = GetImage(iconType, BackgroundType.CodeToolTip);
+			if (icon != null) {
+				sp.Children.Add(new Image {
+					Width = 16,
+					Height = 16,
+					Source = icon,
+					Margin = new Thickness(0, 0, 4, 0),
+					VerticalAlignment = VerticalAlignment.Top,
+					HorizontalAlignment = HorizontalAlignment.Left,
+				});
+			}
+			sp.Children.Add(genFirstLine.Create());
+			return res;
+		}
+
+		static ImageSource GetImage(object obj, BackgroundType bgType)
+		{
+			var td = obj as TypeDef;
+			if (td != null)
+				return TypeTreeNode.GetIcon(td, bgType);
+
+			var md = obj as MethodDef;
+			if (md != null)
+				return MethodTreeNode.GetIcon(md, bgType);
+
+			var pd = obj as PropertyDef;
+			if (pd != null)
+				return PropertyTreeNode.GetIcon(pd, bgType);
+
+			var ed = obj as EventDef;
+			if (ed != null)
+				return EventTreeNode.GetIcon(ed, bgType);
+
+			var fd = obj as FieldDef;
+			if (fd != null)
+				return FieldTreeNode.GetIcon(fd, bgType);
+
+			var gd = obj as GenericParam;
+			if (gd != null)
+				return ImageCache.Instance.GetImage("GenericParameter", bgType);
+
+			if (obj is Local)
+				return ImageCache.Instance.GetImage("Local", bgType);
+
+			if (obj is Parameter)
+				return ImageCache.Instance.GetImage("Parameter", bgType);
+
+			if (obj is IType)
+				return ImageCache.Instance.GetImage("Class", bgType);
+			if (obj is IMethod && ((IMethod)obj).IsMethod)
+				return ImageCache.Instance.GetImage("Method", bgType);
+			if (obj is IField && ((IField)obj).IsField)
+				return ImageCache.Instance.GetImage("Field", bgType);
+
+			return null;
+		}
+
+		object GenerateToolTip(IVariable variable, string name)
 		{
 			if (variable == null)
 				return name == null ? null : string.Format("(local variable) {0}", name);
 
-			var toolTipGen = new ToolTipGenerator();
-			var isLocal = variable is Local;
-			toolTipGen.TextOutput.Write(isLocal ? "(local variable)" : "(parameter)", TextTokenType.Text);
-			toolTipGen.TextOutput.WriteSpace();
-			MainWindow.Instance.GetLanguage(this).WriteTooltip(toolTipGen.TextOutput, variable, name);
+			var genFirstLine = new ToolTipGenerator();
+			MainWindow.Instance.GetLanguage(this).WriteToolTip(genFirstLine.TextOutput, variable, name);
 
-			if (!isLocal) {
+			var toolTipGen = new ToolTipGenerator();
+			if (variable is Parameter) {
 				var method = ((Parameter)variable).Method;
 				try {
 					XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(method.Module);
@@ -300,21 +369,18 @@ namespace ICSharpCode.ILSpy.TextView
 				}
 			}
 
-			return toolTipGen.Create();
+			return GenerateToolTip(variable, genFirstLine, toolTipGen);
 		}
 
-		object GenerateTooltip(GenericParam gp)
+		object GenerateToolTip(GenericParam gp)
 		{
 			if (gp == null)
 				return null;
 
-			var toolTipGen = new ToolTipGenerator();
-			toolTipGen.TextOutput.Write(gp.Name, TextTokenHelper.GetTextTokenType(gp));
-			toolTipGen.TextOutput.WriteSpace();
-			toolTipGen.TextOutput.Write("in", TextTokenType.Text);
-			toolTipGen.TextOutput.WriteSpace();
-			MainWindow.Instance.GetLanguage(this).WriteTooltip(toolTipGen.TextOutput, gp.Owner, null);
+			var genFirstLine = new ToolTipGenerator();
+			MainWindow.Instance.GetLanguage(this).WriteToolTip(genFirstLine.TextOutput, gp, null);
 
+			var toolTipGen = new ToolTipGenerator();
 			try {
 				XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(gp.Module);
 				if (docProvider != null) {
@@ -333,7 +399,7 @@ namespace ICSharpCode.ILSpy.TextView
 			catch (XmlException) {
 			}
 
-			return toolTipGen.Create();
+			return GenerateToolTip(gp, genFirstLine, toolTipGen);
 		}
 
 		string GetDocumentation(XmlDocumentationProvider docProvider, IMemberRef mr)

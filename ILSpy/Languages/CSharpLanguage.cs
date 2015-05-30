@@ -20,6 +20,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Resources;
@@ -30,11 +31,13 @@ using System.Xml;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
+using ICSharpCode.ILSpy.AsmEditor;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.XmlDoc;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using dnlib.DotNet;
+using dnlib.DotNet.Emit;
 
 namespace ICSharpCode.ILSpy
 {
@@ -821,12 +824,9 @@ namespace ICSharpCode.ILSpy
 			TypeToString(output, options, type, typeAttributes);
 		}
 
-		void TypeToString(ITextOutput output, ConvertTypeOptions options, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null)
+		bool WriteRefIfByRef(ITextOutput output, TypeSig typeSig, ParamDef pd)
 		{
-			AstType astType = AstBuilder.ConvertType(type, typeAttributes, options);
-
-			if (type.TryGetByRefSig() != null) {
-				ParamDef pd = typeAttributes as ParamDef;
+			if (typeSig.RemovePinnedAndModifiers() is ByRefSig) {
 				if (pd != null && (!pd.IsIn && pd.IsOut)) {
 					output.Write("out", TextTokenType.Keyword);
 					output.WriteSpace();
@@ -835,7 +835,16 @@ namespace ICSharpCode.ILSpy
 					output.Write("ref", TextTokenType.Keyword);
 					output.WriteSpace();
 				}
+				return true;
+			}
+			return false;
+		}
 
+		void TypeToString(ITextOutput output, ConvertTypeOptions options, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null)
+		{
+			AstType astType = AstBuilder.ConvertType(type, typeAttributes, options);
+
+			if (WriteRefIfByRef(output, type.TryGetByRefSig(), typeAttributes as ParamDef)) {
 				if (astType is ComposedType && ((ComposedType)astType).PointerRank > 0)
 					((ComposedType)astType).PointerRank--;
 			}
@@ -908,32 +917,554 @@ namespace ICSharpCode.ILSpy
 				return TreeNodes.Analyzer.Helpers.GetOriginalCodeLocation(member);
 		}
 
-		public override void WriteTooltip(ITextOutput output, IMemberRef member, IHasCustomAttribute typeAttributes)
+		void WriteToolTipType(ITextOutput output, ITypeDefOrRef type, bool useNamespaces, bool usePrimitiveTypeName = true, IHasCustomAttribute typeAttributes = null)
 		{
-			MethodDef md = member as MethodDef;
-			PropertyDef pd = member as PropertyDef;
-			EventDef ed = member as EventDef;
-			FieldDef fd = member as FieldDef;
-			if (md != null || pd != null || ed != null || fd != null) {
-				AstBuilder b = new AstBuilder(new DecompilerContext(member.Module) { Settings = new DecompilerSettings { UsingDeclarations = false, FullyQualifyAmbiguousTypeNames = false } });
-				b.DecompileMethodBodies = false;
-				if (md != null)
-					b.AddMethod(md);
-				else if (pd != null)
-					b.AddProperty(pd);
-				else if (ed != null)
-					b.AddEvent(ed);
-				else
-					b.AddField(fd);
-				b.RunTransformations();
-				foreach (var attribute in b.SyntaxTree.Descendants.OfType<AttributeSection>())
-					attribute.Remove();
-
-				b.GenerateCode(output);
+			var td = type as TypeDef;
+			if (td == null && type is TypeRef)
+				td = ((TypeRef)type).Resolve();
+			if (td == null ||
+				td.GenericParameters.Count == 0 ||
+				(td.DeclaringType != null && td.DeclaringType.GenericParameters.Count >= td.GenericParameters.Count)) {
+				var options = ConvertTypeOptions.IncludeTypeParameterDefinitions;
+				if (useNamespaces)
+					options |= ConvertTypeOptions.IncludeNamespace;
+				if (!usePrimitiveTypeName)
+					options |= ConvertTypeOptions.DoNotUsePrimitiveTypeNames;
+				TypeToString(output, options, type, typeAttributes);
 				return;
 			}
 
-			base.WriteTooltip(output, member, typeAttributes);
+			var typeSig = type.ToTypeSig();
+			WriteRefIfByRef(output, typeSig, typeAttributes as ParamDef);
+
+			int numGenParams = td.GenericParameters.Count;
+			if (type.DeclaringType != null) {
+				var options = ConvertTypeOptions.IncludeTypeParameterDefinitions;
+				if (useNamespaces)
+					options |= ConvertTypeOptions.IncludeNamespace;
+				TypeToString(output, options, type.DeclaringType, null);
+				output.Write('.', TextTokenType.Operator);
+				numGenParams = numGenParams - td.DeclaringType.GenericParameters.Count;
+				if (numGenParams < 0)
+					numGenParams = 0;
+			}
+			else if (useNamespaces && !UTF8String.IsNullOrEmpty(td.Namespace)) {
+				foreach (var ns in td.Namespace.String.Split('.')) {
+					output.Write(ns, TextTokenType.NamespacePart);
+					output.Write('.', TextTokenType.Operator);
+				}
+			}
+
+			output.Write(RemoveGenericTick(td.Name), TextTokenHelper.GetTextTokenType(td));
+			var genParams = td.GenericParameters.Skip(td.GenericParameters.Count - numGenParams).ToArray();
+			WriteToolTipGenerics(output, genParams, TextTokenType.TypeGenericParameter);
+		}
+
+		void WriteToolTip(ITextOutput output, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null)
+		{
+			if (type == null)
+				return;
+
+			WriteToolTipType(output, type, TOOLTIP_USE_NAMESPACES, true, typeAttributes);
+		}
+
+		static GenericParam GetGenericParam(GenericSig gsig, GenericParamContext gpContext)
+		{
+			if (gsig == null)
+				return null;
+			ITypeOrMethodDef owner = gsig.IsTypeVar ? (ITypeOrMethodDef)gpContext.Type : gpContext.Method;
+			if (owner == null)
+				return null;
+			foreach (var gp in owner.GenericParameters) {
+				if (gp.Number == gsig.Number)
+					return gp;
+			}
+			return null;
+		}
+
+		void WriteToolTip(ITextOutput output, TypeSig type, GenericParamContext gpContext, IHasCustomAttribute typeAttributes)
+		{
+			var gsig = type.RemovePinnedAndModifiers() as GenericSig;
+			var gp = GetGenericParam(gsig, gpContext);
+			if (gp != null) {
+				output.Write(gp.Name, gsig.IsMethodVar ? TextTokenType.MethodGenericParameter : TextTokenType.TypeGenericParameter);
+				return;
+			}
+
+			WriteToolTip(output, type.ToTypeDefOrRef(), typeAttributes);
+		}
+
+		void WriteToolTipGenerics(ITextOutput output, IList<GenericParam> gps, TextTokenType gpTokenType)
+		{
+			if (gps == null || gps.Count == 0)
+				return;
+			output.Write('<', TextTokenType.Operator);
+			for (int i = 0; i < gps.Count; i++) {
+				if (i > 0) {
+					output.Write(',', TextTokenType.Operator);
+					output.WriteSpace();
+				}
+				var gp = gps[i];
+				if (gp.IsCovariant) {
+					output.Write("out", TextTokenType.Keyword);
+					output.WriteSpace();
+				}
+				else if (gp.IsContravariant) {
+					output.Write("in", TextTokenType.Keyword);
+					output.WriteSpace();
+				}
+				output.Write(gp.Name, gpTokenType);
+			}
+			output.Write('>', TextTokenType.Operator);
+		}
+
+		void WriteToolTipGenerics(ITextOutput output, IList<TypeSig> gps, TextTokenType gpTokenType, GenericParamContext gpContext)
+		{
+			if (gps == null || gps.Count == 0)
+				return;
+			output.Write('<', TextTokenType.Operator);
+			for (int i = 0; i < gps.Count; i++) {
+				if (i > 0) {
+					output.Write(',', TextTokenType.Operator);
+					output.WriteSpace();
+				}
+				WriteToolTip(output, gps[i], gpContext, null);
+			}
+			output.Write('>', TextTokenType.Operator);
+		}
+
+		void WriteToolTip(ITextOutput output, IMethod method)
+		{
+			WriteToolTipMethod(output, method);
+
+			var td = method.DeclaringType.ResolveTypeDef();
+			if (td != null) {
+				int overloads = GetNumberOfOverloads(td, method.Name);
+				if (overloads == 1)
+					output.Write(string.Format(" (+ 1 overload)"), TextTokenType.Text);
+				else if (overloads > 1)
+					output.Write(string.Format(" (+ {0} overloads)", overloads), TextTokenType.Text);
+			}
+		}
+
+		void WriteToolTipMethod(ITextOutput output, IMethod method)
+		{
+			var writer = new MethodWriter(this, output, method);
+			writer.WriteReturnType();
+
+			WriteToolTip(output, method.DeclaringType);
+			output.Write('.', TextTokenType.Operator);
+			if (writer.md != null && writer.md.IsConstructor && method.DeclaringType != null)
+				output.Write(RemoveGenericTick(method.DeclaringType.Name), TextTokenHelper.GetTextTokenType(method));
+			else if (writer.md != null && writer.md.Overrides.Count > 0) {
+				var ovrMeth = (IMemberRef)writer.md.Overrides[0].MethodDeclaration;
+				WriteToolTipType(output, ovrMeth.DeclaringType, false);
+				output.Write('.', TextTokenType.Operator);
+				output.Write(ovrMeth.Name, TextTokenHelper.GetTextTokenType(method));
+			}
+			else
+				output.Write(method.Name, TextTokenHelper.GetTextTokenType(method));
+
+			writer.WriteGenericArguments();
+			writer.WriteMethodParameterList('(', ')');
+		}
+
+		static int GetNumberOfOverloads(TypeDef type, string name)
+		{
+			//TODO: It counts every method, including methods the original type doesn't have access to.
+			var hash = new HashSet<MethodDef>(MethodEqualityComparer.DontCompareDeclaringTypes);
+			while (type != null) {
+				foreach (var m in type.Methods) {
+					if (m.Name == name)
+						hash.Add(m);
+				}
+				type = type.BaseType.ResolveTypeDef();
+			}
+			return hash.Count - 1;
+		}
+
+		struct MethodWriter
+		{
+			readonly CSharpLanguage lang;
+			readonly ITextOutput output;
+			readonly IList<TypeSig> typeGenericParams;
+			readonly IList<TypeSig> methodGenericParams;
+			internal readonly MethodDef md;
+			readonly MethodSig methodSig;
+
+			public MethodWriter(CSharpLanguage lang, ITextOutput output, IMethod method)
+			{
+				this.lang = lang;
+				this.output = output;
+				this.typeGenericParams = null;
+				this.methodGenericParams = null;
+				this.methodSig = method.MethodSig;
+
+				this.md = method as MethodDef;
+				var ms = method as MethodSpec;
+				var mr = method as MemberRef;
+				if (ms != null) {
+					var ts = ms.Method == null ? null : ms.Method.DeclaringType as TypeSpec;
+					if (ts != null) {
+						var gp = ts.TypeSig.RemovePinnedAndModifiers() as GenericInstSig;
+						if (gp != null)
+							typeGenericParams = gp.GenericArguments;
+					}
+
+					var gsSig = ms.GenericInstMethodSig;
+					if (gsSig != null)
+						methodGenericParams = gsSig.GenericArguments;
+
+					this.md = ms.Method.ResolveMethodDef();
+				}
+				else if (mr != null) {
+					var ts = mr.DeclaringType as TypeSpec;
+					if (ts != null) {
+						var gp = ts.TypeSig.RemovePinnedAndModifiers() as GenericInstSig;
+						if (gp != null)
+							typeGenericParams = gp.GenericArguments;
+					}
+
+					this.md = mr.ResolveMethod();
+				}
+
+				if (typeGenericParams != null || methodGenericParams != null)
+					this.methodSig = GenericArgumentResolver.Resolve(methodSig, typeGenericParams, methodGenericParams);
+			}
+
+			public void WriteReturnType()
+			{
+				if (!(md != null && md.IsConstructor)) {
+					lang.WriteToolTip(output, methodSig.RetType, GenericParamContext.Create(md), md.Parameters.ReturnParameter.ParamDef);
+					output.WriteSpace();
+				}
+			}
+
+			public void WriteGenericArguments()
+			{
+				if (methodSig.GenParamCount > 0) {
+					if (methodGenericParams != null)
+						lang.WriteToolTipGenerics(output, methodGenericParams, TextTokenType.MethodGenericParameter, GenericParamContext.Create(md));
+					else if (md != null)
+						lang.WriteToolTipGenerics(output, md.GenericParameters, TextTokenType.MethodGenericParameter);
+				}
+			}
+
+			public void WriteMethodParameterList(char lparen, char rparen)
+			{
+				output.Write(lparen, TextTokenType.Operator);
+				int baseIndex = methodSig.HasThis ? 1 : 0;
+				for (int i = 0; i < methodSig.Params.Count; i++) {
+					if (i > 0) {
+						output.Write(',', TextTokenType.Operator);
+						output.WriteSpace();
+					}
+					ParamDef pd;
+					if (md != null && baseIndex + i < md.Parameters.Count)
+						pd = md.Parameters[baseIndex + i].ParamDef;
+					else
+						pd = null;
+					if (pd != null && pd.CustomAttributes.IsDefined("System.ParamArrayAttribute")) {
+						output.Write("params", TextTokenType.Keyword);
+						output.WriteSpace();
+					}
+					var paramType = methodSig.Params[i];
+					lang.WriteToolTip(output, paramType, GenericParamContext.Create(md), pd);
+					output.WriteSpace();
+					if (pd != null)
+						output.Write(pd.Name, TextTokenType.Parameter);
+				}
+				output.Write(rparen, TextTokenType.Operator);
+			}
+		}
+
+		static string RemoveGenericTick(string name)
+		{
+			int index = name.LastIndexOf('`');
+			if (index < 0)
+				return name;
+			if (genericTick.IsMatch(name))
+				return name.Substring(0, index);
+			return name;
+		}
+		static readonly Regex genericTick = new Regex(@"`\d+$", RegexOptions.Compiled)  ;
+
+		void WriteToolTip(ITextOutput output, IField field)
+		{
+			var sig = field.FieldSig;
+			var gpContext = GenericParamContext.Create(field.DeclaringType.ResolveTypeDef());
+			bool isEnumOwner = gpContext.Type != null && gpContext.Type.IsEnum;
+
+			var fd = field.ResolveFieldDef();
+			if (!isEnumOwner) {
+				if (fd != null && fd.IsLiteral)
+					output.Write("(constant)", TextTokenType.Text);
+				else
+					output.Write("(field)", TextTokenType.Text);
+				output.WriteSpace();
+				WriteToolTip(output, sig.Type, gpContext, null);
+				output.WriteSpace();
+			}
+			WriteToolTip(output, field.DeclaringType);
+			output.Write('.', TextTokenType.Operator);
+			output.Write(field.Name, TextTokenHelper.GetTextTokenType(field));
+			if (fd.IsLiteral && fd.Constant != null) {
+				output.WriteSpace();
+				output.Write('=', TextTokenType.Operator);
+				output.WriteSpace();
+				WriteToolTipConstant(output, fd.Constant.Value);
+			}
+		}
+
+		const bool USE_DECIMAL = false;
+		void WriteToolTipConstant(ITextOutput output, object obj)
+		{
+			if (obj == null) {
+				output.Write("null", TextTokenType.Keyword);
+				return;
+			}
+
+			switch (Type.GetTypeCode(obj.GetType())) {
+			case TypeCode.Boolean:
+				output.Write((bool)obj ? "true" : "false", TextTokenType.Keyword);
+				break;
+
+			case TypeCode.Char:
+				output.Write(NumberVMUtils.ToString((char)obj), TextTokenType.Char);
+				break;
+
+			case TypeCode.SByte:
+				output.Write(NumberVMUtils.ToString((sbyte)obj, sbyte.MinValue, sbyte.MaxValue, USE_DECIMAL), TextTokenType.Number);
+				break;
+
+			case TypeCode.Byte:
+				output.Write(NumberVMUtils.ToString((byte)obj, byte.MinValue, byte.MaxValue, USE_DECIMAL), TextTokenType.Number);
+				break;
+
+			case TypeCode.Int16:
+				output.Write(NumberVMUtils.ToString((short)obj, short.MinValue, short.MaxValue, USE_DECIMAL), TextTokenType.Number);
+				break;
+
+			case TypeCode.UInt16:
+				output.Write(NumberVMUtils.ToString((ushort)obj, ushort.MinValue, ushort.MaxValue, USE_DECIMAL), TextTokenType.Number);
+				break;
+
+			case TypeCode.Int32:
+				output.Write(NumberVMUtils.ToString((int)obj, int.MinValue, int.MaxValue, USE_DECIMAL), TextTokenType.Number);
+				break;
+
+			case TypeCode.UInt32:
+				output.Write(NumberVMUtils.ToString((uint)obj, uint.MinValue, uint.MaxValue, USE_DECIMAL), TextTokenType.Number);
+				break;
+
+			case TypeCode.Int64:
+				output.Write(NumberVMUtils.ToString((long)obj, long.MinValue, long.MaxValue, USE_DECIMAL), TextTokenType.Number);
+				break;
+
+			case TypeCode.UInt64:
+				output.Write(NumberVMUtils.ToString((ulong)obj, ulong.MinValue, ulong.MaxValue, USE_DECIMAL), TextTokenType.Number);
+				break;
+
+			case TypeCode.Single:
+				output.Write(NumberVMUtils.ToString((float)obj), TextTokenType.Number);
+				break;
+
+			case TypeCode.Double:
+				output.Write(NumberVMUtils.ToString((double)obj), TextTokenType.Number);
+				break;
+
+			case TypeCode.String:
+				output.Write(NumberVMUtils.ToString((string)obj, true), TextTokenType.String);
+				break;
+
+			default:
+				Debug.Fail(string.Format("Unknown constant: '{0}'", obj));
+				output.Write(obj.ToString(), TextTokenType.Text);
+				break;
+			}
+		}
+
+		void WriteToolTip(ITextOutput output, PropertyDef prop)
+		{
+			var sig = prop.PropertySig;
+			var md = prop.GetMethods.FirstOrDefault() ??
+					prop.SetMethods.FirstOrDefault() ??
+					prop.OtherMethods.FirstOrDefault();
+
+			var writer = new MethodWriter(this, output, md);
+			writer.WriteReturnType();
+			WriteToolTip(output, prop.DeclaringType);
+			output.Write('.', TextTokenType.Operator);
+			var ovrMeth = md == null || md.Overrides.Count == 0 ? null : md.Overrides[0].MethodDeclaration;
+			if (prop.IsIndexer()) {
+				if (ovrMeth != null) {
+					WriteToolTipType(output, ovrMeth.DeclaringType, false);
+					output.Write('.', TextTokenType.Operator);
+				}
+				output.Write("this", TextTokenType.Keyword);
+				writer.WriteGenericArguments();
+				writer.WriteMethodParameterList('[', ']');
+			}
+			else if (ovrMeth != null && GetPropName(ovrMeth) != null) {
+				WriteToolTipType(output, ovrMeth.DeclaringType, false);
+				output.Write('.', TextTokenType.Operator);
+				output.Write(GetPropName(ovrMeth), TextTokenHelper.GetTextTokenType(prop));
+			}
+			else
+				output.Write(prop.Name, TextTokenHelper.GetTextTokenType(prop));
+
+			output.WriteSpace();
+			output.WriteLeftBrace();
+			if (prop.GetMethods.Count > 0) {
+				output.WriteSpace();
+				output.Write("get", TextTokenType.Keyword);
+				output.Write(';', TextTokenType.Operator);
+			}
+			if (prop.SetMethods.Count > 0) {
+				output.WriteSpace();
+				output.Write("set", TextTokenType.Keyword);
+				output.Write(';', TextTokenType.Operator);
+			}
+			output.WriteSpace();
+			output.WriteRightBrace();
+		}
+
+		static string GetPropName(IMethod method)
+		{
+			if (method == null)
+				return null;
+			var name = method.Name;
+			if (name.StartsWith("get_", StringComparison.Ordinal) || name.StartsWith("set_", StringComparison.Ordinal))
+				return name.Substring(4);
+			return null;
+		}
+
+		void WriteToolTip(ITextOutput output, EventDef evt)
+		{
+			WriteToolTip(output, evt.EventType);
+			output.WriteSpace();
+			WriteToolTip(output, evt.DeclaringType);
+			output.Write('.', TextTokenType.Operator);
+			output.Write(evt.Name, TextTokenHelper.GetTextTokenType(evt));
+		}
+
+		void WriteToolTipWithClassInfo(ITextOutput output, ITypeDefOrRef type)
+		{
+			var td = type.ResolveTypeDef();
+
+			MethodDef invoke;
+			if (IsDelegate(td) && (invoke = td.FindMethod("Invoke")) != null && invoke.MethodSig != null) {
+				output.Write("delegate", TextTokenType.Keyword);
+				output.WriteSpace();
+
+				var writer = new MethodWriter(this, output, invoke);
+				writer.WriteReturnType();
+
+				// Always print the namespace here because that's what VS does. I.e., ignore
+				// TOOLTIP_USE_NAMESPACES.
+				WriteToolTipType(output, td, true);
+
+				writer.WriteGenericArguments();
+				writer.WriteMethodParameterList('(', ')');
+				return;
+			}
+
+			if (td == null) {
+				base.WriteToolTip(output, type, null);
+				return;
+			}
+
+			string keyword;
+			if (td.IsEnum)
+				keyword = "enum";
+			else if (td.IsValueType)
+				keyword = "struct";
+			else if (td.IsInterface)
+				keyword = "interface";
+			else
+				keyword = "class";
+			output.Write(keyword, TextTokenType.Keyword);
+			output.WriteSpace();
+
+			// Always print the namespace here because that's what VS does. I.e., ignore
+			// TOOLTIP_USE_NAMESPACES.
+			WriteToolTipType(output, type, true, false);
+		}
+
+		static bool IsDelegate(TypeDef td)
+		{
+			return td != null &&
+				new SigComparer().Equals(td.BaseType, td.Module.CorLibTypes.GetTypeRef("System", "MulticastDelegate")) &&
+				td.BaseType.DefinitionAssembly.IsCorLib();
+		}
+
+		void WriteToolTip(ITextOutput output, GenericParam gp)
+		{
+			output.Write(gp.Name, TextTokenHelper.GetTextTokenType(gp));
+			output.WriteSpace();
+			output.Write("in", TextTokenType.Text);
+			output.WriteSpace();
+
+			var td = gp.Owner as TypeDef;
+			if (td != null)
+				WriteToolTipType(output, td, TOOLTIP_USE_NAMESPACES);
+			else
+				WriteToolTipMethod(output, gp.Owner as MethodDef);
+		}
+
+		// Don't show namespaces. It makes it easer to read the tooltip. Very rarely do you
+		// really need the full name.
+		const bool TOOLTIP_USE_NAMESPACES = false;
+
+		public override void WriteToolTip(ITextOutput output, IMemberRef member, IHasCustomAttribute typeAttributes)
+		{
+			var method = member as IMethod;
+			if (method != null && method.MethodSig != null) {
+				WriteToolTip(output, method);
+				return;
+			}
+
+			var field = member as IField;
+			if (field != null && field.FieldSig != null) {
+				WriteToolTip(output, field);
+				return;
+			}
+
+			var prop = member as PropertyDef;
+			if (prop != null && prop.PropertySig != null) {
+				WriteToolTip(output, prop);
+				return;
+			}
+
+			var evt = member as EventDef;
+			if (evt != null && evt.EventType != null) {
+				WriteToolTip(output, evt);
+				return;
+			}
+
+			var tdr = member as ITypeDefOrRef;
+			if (tdr != null) {
+				WriteToolTipWithClassInfo(output, tdr);
+				return;
+			}
+
+			var gp = member as GenericParam;
+			if (gp != null) {
+				WriteToolTip(output, gp);
+				return;
+			}
+
+			base.WriteToolTip(output, member, typeAttributes);
+		}
+
+		public override void WriteToolTip(ITextOutput output, IVariable variable, string name)
+		{
+			var isLocal = variable is Local;
+			output.Write(isLocal ? "(local variable)" : "(parameter)", TextTokenType.Text);
+			output.WriteSpace();
+			WriteToolTip(output, variable.Type, new GenericParamContext(), !isLocal ? ((Parameter)variable).ParamDef : null);
+			output.WriteSpace();
+			output.Write(GetName(variable, name), isLocal ? TextTokenType.Local : TextTokenType.Parameter);
 		}
 	}
 }

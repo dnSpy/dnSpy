@@ -562,13 +562,15 @@ namespace ICSharpCode.ILSpy.VB
 			vbAstType.AcceptVisitor(new OutputVisitor(new VBTextOutputFormatter(output), new VBFormattingOptions()), null);
 		}
 
-		public override void WriteTooltip(ITextOutput output, dnlib.DotNet.IVariable variable, string name)
+		public override void WriteToolTip(ITextOutput output, dnlib.DotNet.IVariable variable, string name)
 		{
+			output.Write(variable is Local ? "(local variable)" : "(parameter)", TextTokenType.Text);
+			output.WriteSpace();
 			output.Write(GetName(variable, name), variable is Local ? TextTokenType.Local : TextTokenType.Parameter);
 			output.WriteSpace();
 			output.Write("As", TextTokenType.Keyword);
 			output.WriteSpace();
-			WriteTooltip(output, variable.Type.ToTypeDefOrRef(), variable is Parameter ? ((Parameter)variable).ParamDef : null);
+			WriteToolTip(output, variable.Type.ToTypeDefOrRef(), variable is Parameter ? ((Parameter)variable).ParamDef : null);
 		}
 	}
 }

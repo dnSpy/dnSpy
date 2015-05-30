@@ -932,6 +932,7 @@
     <Resource Include="Images\Forward.png" />
     <Resource Include="Images\Generic.png" />
     <Resource Include="Images\GenericInternal.png" />
+    <Resource Include="Images\GenericParameter.png" />
     <Resource Include="Images\GenericPrivate.png" />
     <Resource Include="Images\GenericProtected.png" />
     <Resource Include="Images\GenericProtectedInternal.png" />
