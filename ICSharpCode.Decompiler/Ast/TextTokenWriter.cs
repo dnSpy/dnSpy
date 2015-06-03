@@ -96,7 +96,7 @@ namespace ICSharpCode.Decompiler.Ast
 			IMemberRef memberRef = node.Annotation<IMemberRef>();
 			if (node is IndexerDeclaration)
 				memberRef = null;
-			if (node is SimpleType && node.Parent is ObjectCreateExpression)
+			if ((node is SimpleType || node is MemberType) && node.Parent is ObjectCreateExpression)
 				memberRef = node.Parent.Annotation<IMemberRef>() ?? memberRef;
 			if (memberRef == null && node.Role == Roles.TargetExpression && (node.Parent is InvocationExpression || node.Parent is ObjectCreateExpression)) {
 				memberRef = node.Parent.Annotation<IMemberRef>();
