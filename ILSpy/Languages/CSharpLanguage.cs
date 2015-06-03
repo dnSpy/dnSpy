@@ -1135,7 +1135,7 @@ namespace ICSharpCode.ILSpy
 			public void WriteReturnType()
 			{
 				if (!(md != null && md.IsConstructor)) {
-					lang.WriteToolTip(output, methodSig.RetType, GenericParamContext.Create(md), md.Parameters.ReturnParameter.ParamDef);
+					lang.WriteToolTip(output, methodSig.RetType, GenericParamContext.Create(md), md == null ? null : md.Parameters.ReturnParameter.ParamDef);
 					output.WriteSpace();
 				}
 			}
