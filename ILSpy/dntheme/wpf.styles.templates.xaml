@@ -716,7 +716,7 @@
 							Width="16"
 							Height="16"
 							HorizontalAlignment="Left"
-							VerticalAlignment="Top">
+							VerticalAlignment="Center">
 							<Border
 								x:Name="checkBoxBorder"
 								BorderThickness="1"
