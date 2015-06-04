@@ -81,7 +81,7 @@ namespace ICSharpCode.ILSpy.VB
 				output.WriteLine();
 				ModuleDefinition mainModule = assembly.ModuleDefinition;
 				if (mainModule.Types.Count > 0) {
-					output.Write("// Global type: ");
+					output.Write("' Global type: ");
 					output.WriteReference(mainModule.Types[0].FullName, mainModule.Types[0]);
 					output.WriteLine();
 				}
