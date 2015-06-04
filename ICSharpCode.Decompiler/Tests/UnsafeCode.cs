@@ -130,12 +130,37 @@ public class UnsafeCode
 
 	public unsafe byte* PointerArithmetic2(long* p, int y, int x)
 	{
-		return (byte*)p + (y * x);
+		return (byte*)((short*)p + (y * x));
 	}
 
 	public unsafe long* PointerArithmetic3(long* p)
 	{
 		return (long*)((byte*)p + 3);
+	}
+
+	public unsafe long* PointerArithmetic4(void* p)
+	{
+		return (long*)((byte*)p + 3);
+	}
+
+	public unsafe int PointerArithmetic5(void* p, byte* q, int i)
+	{
+		return (int)(q[i] + *(byte*)p);
+	}
+
+	public unsafe int PointerSubtraction(long* p, long* q)
+	{
+		return (int)((long)(p - q));
+	}
+
+	public unsafe int PointerSubtraction2(long* p, short* q)
+	{
+		return (int)((long)((byte*)p - (byte*)q));
+	}
+
+	public unsafe int PointerSubtraction3(void* p, void* q)
+	{
+		return (int)((long)((byte*)p - (byte*)q));
 	}
 
 	unsafe ~UnsafeCode()
