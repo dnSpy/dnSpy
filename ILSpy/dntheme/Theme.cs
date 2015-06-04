@@ -496,11 +496,11 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultColor3 = "#EEEEF2",
 			},
 			new BrushColorInfo(ColorType.ToolBarDisabledFill, "Toolbar disabled fill (combobox & textbox)") {
-				DefaultBackground = "#F7F7F7",
+				DefaultBackground = "#FFDADADA",
 				BackgroundResourceKey = "ToolBarDisabledFill",
 			},
 			new BrushColorInfo(ColorType.ToolBarDisabledBorder, "Toolbar disabled border (combobox & textbox)") {
-				DefaultBackground = "#B5B2B5",
+				DefaultBackground = "#FFDADADA",
 				BackgroundResourceKey = "ToolBarDisabledBorder",
 			},
 			new BrushColorInfo(ColorType.ToolBarComboBoxToggleButtonBorder, "Toolbar combobox toggle button border") {
@@ -511,305 +511,318 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "Black",
 				BackgroundResourceKey = "ToolBarComboBoxTransparentButtonFill",
 			},
-			new BrushColorInfo(ColorType.CheckBoxFillNormal, "Checkbox fill normal") {
-				DefaultBackground = "#F4F4F4",
-				BackgroundResourceKey = "CheckBoxFillNormal",
+			new BrushColorInfo(ColorType.CommonControlsButtonIconBackground, "Button icon background. Makes sure icons look good with this background color.") {
+				DefaultBackground = "#FFECECF0",
 			},
-			new BrushColorInfo(ColorType.CheckBoxStroke, "Checkbox stroke") {
-				DefaultBackground = "#8E8F8F",
-				BackgroundResourceKey = "CheckBoxStroke",
+			new BrushColorInfo(ColorType.CommonControlsButton, "CommonControls Button") {
+				DefaultForeground = "#FF1E1E1E",
+				ForegroundResourceKey = "CommonControlsButtonText",
+				DefaultBackground = "#FFECECF0",
+				BackgroundResourceKey = "CommonControlsButton",
 			},
-			new BrushColorInfo(ColorType.CommonCheckMarkStroke, "Common check mark stroke") {
-				DefaultBackground = "White",
-				BackgroundResourceKey = "CommonCheckMarkStroke",
+			new BrushColorInfo(ColorType.CommonControlsButtonBorder, "CommonControls Button Border") {
+				DefaultBackground = "#FFCCCEDB",
+				BackgroundResourceKey = "CommonControlsButtonBorder",
 			},
-			new BrushColorInfo(ColorType.CommonCheckMarkPressedStroke, "Common check mark pressed stroke") {
-				DefaultBackground = "White",
-				BackgroundOpacity = 0.7,
-				BackgroundResourceKey = "CommonCheckMarkPressedStroke",
+			new BrushColorInfo(ColorType.CommonControlsButtonBorderDisabled, "CommonControls Button Border Disabled") {
+				DefaultBackground = "#FFCCCEDB",
+				BackgroundResourceKey = "CommonControlsButtonBorderDisabled",
 			},
-			new BrushColorInfo(ColorType.CommonRadioButtonDisabledGlyphStroke, "Common radio button disabled glyph stroke") {
-				DefaultBackground = "#A2AEB9",
-				BackgroundResourceKey = "CommonRadioButtonDisabledGlyphStroke",
+			new BrushColorInfo(ColorType.CommonControlsButtonBorderFocused, "CommonControls Button Border Focused") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CommonControlsButtonBorderFocused",
 			},
-			new BrushColorInfo(ColorType.CommonRadioButtonGlyphStroke, "Common radio button glyph stroke") {
-				DefaultBackground = "#193B55",
-				BackgroundResourceKey = "CommonRadioButtonGlyphStroke",
+			new BrushColorInfo(ColorType.CommonControlsButtonBorderHover, "CommonControls Button Border Hover") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CommonControlsButtonBorderHover",
 			},
-			new BrushColorInfo(ColorType.CommonCheckMarkDisabledFill, "Common check mark disabled fill") {
-				DefaultBackground = "#AEB7CF",
-				BackgroundResourceKey = "CommonCheckMarkDisabledFill",
+			new BrushColorInfo(ColorType.CommonControlsButtonBorderPressed, "CommonControls Button Border Pressed") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CommonControlsButtonBorderPressed",
 			},
-			new BrushColorInfo(ColorType.CommonCheckMarkFill, "Common check mark fill") {
-				DefaultBackground = "#31347C",
-				BackgroundResourceKey = "CommonCheckMarkFill",
+			new BrushColorInfo(ColorType.CommonControlsButtonDisabled, "CommonControlsButtonDisabled") {
+				DefaultForeground = "#FFA2A4A5",
+				ForegroundResourceKey = "CommonControlsButtonDisabledText",
+				DefaultBackground = "#FFF5F5F5",
+				BackgroundResourceKey = "CommonControlsButtonDisabled",
 			},
-			new BrushColorInfo(ColorType.CommonCheckMarkPressedFill, "Common check mark pressed fill") {
-				DefaultBackground = "#31347C",
-				BackgroundOpacity = 0.7,
-				BackgroundResourceKey = "CommonCheckMarkPressedFill",
+			new BrushColorInfo(ColorType.CommonControlsButtonFocused, "CommonControls Button Focused") {
+				DefaultForeground = "#FF1E1E1E",
+				ForegroundResourceKey = "CommonControlsButtonFocusedText",
+				DefaultBackground = "#FFC9DEF5",
+				BackgroundResourceKey = "CommonControlsButtonFocused",
 			},
-			new RadialGradientColorInfo(ColorType.CommonRadioButtonGlyphDisabledFill, "Common radio button glyph disabled fill", 0, 0.35, 1) {
-				ResourceKey = "CommonRadioButtonGlyphDisabledFill",
-				DefaultForeground = "#C9D5DE",
-				DefaultBackground = "#C0E3E8",
-				DefaultColor3 = "#B0D4E9",
-				Center = new Point(0.25, 0.25),
-				GradientOrigin = new Point(0.25, 0.25),
-				RadiusX = 0.75,
-				RadiusY = 0.75,
-				Opacity = 0.7,
+			new BrushColorInfo(ColorType.CommonControlsButtonHover, "CommonControls Button Hover") {
+				DefaultForeground = "#FF1E1E1E",
+				ForegroundResourceKey = "CommonControlsButtonHoverText",
+				DefaultBackground = "#FFC9DEF5",
+				BackgroundResourceKey = "CommonControlsButtonHover",
 			},
-			new RadialGradientColorInfo(ColorType.CommonRadioButtonGlyphFill, "Common radio button glyph fill", 0.1, 0.35, 1) {
-				ResourceKey = "CommonRadioButtonGlyphFill",
-				DefaultForeground = "#E5E5E5",
-				DefaultBackground = "#5DCEDD",
-				DefaultColor3 = "#0B82C7",
-				Center = new Point(0.25, 0.25),
-				GradientOrigin = new Point(0.25, 0.25),
-				RadiusX = 0.75,
-				RadiusY = 0.75,
+			new BrushColorInfo(ColorType.CommonControlsButtonPressed, "CommonControls Button Pressed") {
+				DefaultForeground = "#FFFFFFFF",
+				ForegroundResourceKey = "CommonControlsButtonPressedText",
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CommonControlsButtonPressed",
 			},
-			new RadialGradientColorInfo(ColorType.CommonRadioButtonGlyphHoverFill, "Common radio button glyph hover fill", 0.1, 0.35, 1) {
-				ResourceKey = "CommonRadioButtonGlyphHoverFill",
-				DefaultForeground = "#FFFFFF",
-				DefaultBackground = "#74FFFF",
-				DefaultColor3 = "#0DA0F3",
-				Center = new Point(0.25, 0.25),
-				GradientOrigin = new Point(0.25, 0.25),
-				RadiusX = 0.75,
-				RadiusY = 0.75,
+			new BrushColorInfo(ColorType.CommonControlsCheckBoxBackground, "CommonControls CheckBox Background") {
+				DefaultBackground = "#FFFEFEFE",
+				BackgroundResourceKey = "CommonControlsCheckBoxBackground",
 			},
-			new RadialGradientColorInfo(ColorType.CommonRadioButtonGlyphPressedFill, "Common radio button glyph pressed fill", 0, 0.35, 1) {
-				ResourceKey = "CommonRadioButtonGlyphPressedFill",
-				DefaultForeground = "#95D9FC",
-				DefaultBackground = "#3A84AA",
-				DefaultColor3 = "#075483",
-				Center = new Point(0.25, 0.25),
-				GradientOrigin = new Point(0.25, 0.25),
-				RadiusX = 0.75,
-				RadiusY = 0.75,
+			new BrushColorInfo(ColorType.CommonControlsCheckBoxBackgroundDisabled, "CommonControls CheckBox Background Disabled") {
+				DefaultBackground = "#FFF6F6F6",
+				BackgroundResourceKey = "CommonControlsCheckBoxBackgroundDisabled",
 			},
-			new BrushColorInfo(ColorType.CommonHoverBackgroundOverlay, "Common CheckBox/RadioButton hover background overlay") {
-				DefaultBackground = "#DEF9FA",
-				BackgroundResourceKey = "CommonHoverBackgroundOverlay",
+			new BrushColorInfo(ColorType.CommonControlsCheckBoxBackgroundFocused, "CommonControls CheckBox Background Focused") {
+				DefaultBackground = "#FFF3F9FF",
+				BackgroundResourceKey = "CommonControlsCheckBoxBackgroundFocused",
 			},
-			new BrushColorInfo(ColorType.CommonPressedBackgroundOverlay, "Common CheckBox/RadioButton pressed background overlay") {
-				DefaultBackground = "#C2E4F6",
-				BackgroundResourceKey = "CommonPressedBackgroundOverlay",
+			new BrushColorInfo(ColorType.CommonControlsCheckBoxBackgroundHover, "CommonControls CheckBox Background Hover") {
+				DefaultBackground = "#FFF3F9FF",
+				BackgroundResourceKey = "CommonControlsCheckBoxBackgroundHover",
 			},
-			new BrushColorInfo(ColorType.CommonDisabledBackgroundOverlay, "Common CheckBox/RadioButton disabled background overlay") {
-				DefaultBackground = "#F4F4F4",
-				BackgroundResourceKey = "CommonDisabledBackgroundOverlay",
+			new BrushColorInfo(ColorType.CommonControlsCheckBoxBackgroundPressed, "CommonControls CheckBox Background Pressed") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CommonControlsCheckBoxBackgroundPressed",
 			},
-			new BrushColorInfo(ColorType.CommonHoverBorderOverlay, "Common CheckBox/RadioButton hover border overlay") {
-				DefaultBackground = "#3C7FB1",
-				BackgroundResourceKey = "CommonHoverBorderOverlay",
+			new BrushColorInfo(ColorType.CommonControlsCheckBoxBorder, "CommonControls CheckBox Border") {
+				DefaultBackground = "#FF717171",
+				BackgroundResourceKey = "CommonControlsCheckBoxBorder",
 			},
-			new BrushColorInfo(ColorType.CommonPressedBorderOverlay, "Common CheckBox/RadioButton pressed border overlay") {
-				DefaultBackground = "#2C628B",
-				BackgroundResourceKey = "CommonPressedBorderOverlay",
+			new BrushColorInfo(ColorType.CommonControlsCheckBoxBorderDisabled, "CommonControls CheckBox Border Disabled") {
+				DefaultBackground = "#FFC6C6C6",
+				BackgroundResourceKey = "CommonControlsCheckBoxBorderDisabled",
 			},
-			new BrushColorInfo(ColorType.CommonDisabledBorderOverlay, "Common CheckBox/RadioButton disabled border overlay") {
-				DefaultBackground = "#ADB2B5",
-				BackgroundResourceKey = "CommonDisabledBorderOverlay",
+			new BrushColorInfo(ColorType.CommonControlsCheckBoxBorderFocused, "CommonControls CheckBox Border Focused") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CommonControlsCheckBoxBorderFocused",
 			},
-			new LinearGradientColorInfo(ColorType.CommonCheckBoxDisabledInnerBorderPen, new Point(1, 1), "Common CheckBox disabled inner border", 0.25, 0.5, 1) {
-				ResourceKey = "CommonCheckBoxDisabledInnerBorderPen",
-				DefaultForeground = "#E1E3E5",
-				DefaultBackground = "#E8E9EA",
-				DefaultColor3 = "#F3F3F3",
+			new BrushColorInfo(ColorType.CommonControlsCheckBoxBorderHover, "CommonControls CheckBox Border Hover") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CommonControlsCheckBoxBorderHover",
 			},
-			new LinearGradientColorInfo(ColorType.CommonCheckBoxInnerBorderPen, new Point(1, 1), "Common CheckBox inner border", 0.25, 0.5, 1) {
-				ResourceKey = "CommonCheckBoxInnerBorderPen",
-				DefaultForeground = "#AEB3B9",
-				DefaultBackground = "#C2C4C6",
-				DefaultColor3 = "#EAEBEB",
+			new BrushColorInfo(ColorType.CommonControlsCheckBoxBorderPressed, "CommonControls CheckBox Border Pressed") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CommonControlsCheckBoxBorderPressed",
 			},
-			new LinearGradientColorInfo(ColorType.CommonCheckBoxHoverInnerBorderPen, new Point(1, 1), "Common CheckBox hover inner border", 0.3, 0.5, 1) {
-				ResourceKey = "CommonCheckBoxHoverInnerBorderPen",
-				DefaultForeground = "#79C6F9",
-				DefaultBackground = "#79C6F9",
-				DefaultColor3 = "#D2EDFD",
+			new BrushColorInfo(ColorType.CommonControlsCheckBoxGlyph, "CommonControls CheckBox Glyph") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "CommonControlsCheckBoxGlyph",
 			},
-			new LinearGradientColorInfo(ColorType.CommonCheckBoxPressedInnerBorderPen, new Point(1, 1), "CommonCheckBoxPressedInnerBorderPen", 0.3, 0.5, 1) {
-				ResourceKey = "CommonCheckBoxPressedInnerBorderPen",
-				DefaultForeground = "#54A6D5",
-				DefaultBackground = "#5EB5E4",
-				DefaultColor3 = "#C4E5F6",
+			new BrushColorInfo(ColorType.CommonControlsCheckBoxGlyphDisabled, "CommonControls CheckBox Glyph Disabled") {
+				DefaultBackground = "#FFA2A4A5",
+				BackgroundResourceKey = "CommonControlsCheckBoxGlyphDisabled",
 			},
-			new LinearGradientColorInfo(ColorType.CommonIndeterminateDisabledInnerBorderPen, new Point(1, 1), "CommonIndeterminateDisabledInnerBorderPen", 0, 0.5, 1) {
-				ResourceKey = "CommonIndeterminateDisabledInnerBorderPen",
-				DefaultForeground = "#BFD0DD",
-				DefaultBackground = "#BDCBD7",
-				DefaultColor3 = "#BAC4CC",
+			new BrushColorInfo(ColorType.CommonControlsCheckBoxGlyphFocused, "CommonControls CheckBox Glyph Focused") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "CommonControlsCheckBoxGlyphFocused",
 			},
-			new LinearGradientColorInfo(ColorType.CommonIndeterminateInnerBorderPen, new Point(1, 1), "Common CheckBox/RadioButton indeterminate inner border", 0, 0.5, 1) {
-				ResourceKey = "CommonIndeterminateInnerBorderPen",
-				DefaultForeground = "#2A628D",
-				DefaultBackground = "#245479",
-				DefaultColor3 = "#193B55",
+			new BrushColorInfo(ColorType.CommonControlsCheckBoxGlyphHover, "CommonControls CheckBox Glyph Hover") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "CommonControlsCheckBoxGlyphHover",
 			},
-			new LinearGradientColorInfo(ColorType.CommonIndeterminateHoverInnerBorderPen, new Point(1, 1), "Common CheckBox/RadioButton indeterminate hover inner border", 0, 0.5, 1) {
-				ResourceKey = "CommonIndeterminateHoverInnerBorderPen",
-				DefaultForeground = "#29628D",
-				DefaultBackground = "#245479",
-				DefaultColor3 = "#193B55",
+			new BrushColorInfo(ColorType.CommonControlsCheckBoxGlyphPressed, "CommonControls CheckBox Glyph Pressed") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "CommonControlsCheckBoxGlyphPressed",
 			},
-			new LinearGradientColorInfo(ColorType.CommonIndeterminatePressedInnerBorderPen, new Point(1, 1), "Common CheckBox/RadioButton indeterminate pressed inner border", 0, 0.5, 1) {
-				ResourceKey = "CommonIndeterminatePressedInnerBorderPen",
-				DefaultForeground = "#193B55",
-				DefaultBackground = "#245479",
-				DefaultColor3 = "#29628D",
+			new BrushColorInfo(ColorType.CommonControlsCheckBoxText, "CommonControls CheckBox Text") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "CommonControlsCheckBoxText",
 			},
-			new LinearGradientColorInfo(ColorType.CommonRadioButtonInnerBorderPen, new Point(1, 1), "Common RadioButton inner border", 0, 1) {
-				ResourceKey = "CommonRadioButtonInnerBorderPen",
-				DefaultForeground = "#B3B8BD",
-				DefaultBackground = "#EBEBEB",
+			new BrushColorInfo(ColorType.CommonControlsCheckBoxTextDisabled, "CommonControls CheckBox Text Disabled") {
+				DefaultBackground = "#FFA2A4A5",
+				BackgroundResourceKey = "CommonControlsCheckBoxTextDisabled",
 			},
-			new LinearGradientColorInfo(ColorType.CommonRadioButtonHoverInnerBorderPen, new Point(1, 1), "Common RadioButton hover inner border", 0, 1) {
-				ResourceKey = "CommonRadioButtonHoverInnerBorderPen",
-				DefaultForeground = "#80CAF9",
-				DefaultBackground = "#D2EEFD",
+			new BrushColorInfo(ColorType.CommonControlsCheckBoxTextFocused, "CommonControls CheckBox Text Focused") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CommonControlsCheckBoxTextFocused",
 			},
-			new LinearGradientColorInfo(ColorType.CommonRadioButtonPressedInnerBorderPen, new Point(1, 1), "Common RadioButton pressed inner border", 0,  1) {
-				ResourceKey = "CommonRadioButtonPressedInnerBorderPen",
-				DefaultForeground = "#5CAAD7",
-				DefaultBackground = "#C3E4F6",
+			new BrushColorInfo(ColorType.CommonControlsCheckBoxTextHover, "CommonControls CheckBox Text Hover") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CommonControlsCheckBoxTextHover",
 			},
-			new LinearGradientColorInfo(ColorType.CommonCheckBoxInnerFill, new Point(1, 1), "Common CheckBox inner fill", 0.2, 0.8) {
-				ResourceKey = "CommonCheckBoxInnerFill",
-				DefaultForeground = "#CBCFD5",
-				DefaultBackground = "#F7F7F7",
+			new BrushColorInfo(ColorType.CommonControlsCheckBoxTextPressed, "CommonControls CheckBox Text Pressed") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CommonControlsCheckBoxTextPressed",
 			},
-			new LinearGradientColorInfo(ColorType.CommonCheckBoxHoverInnerFill, new Point(1, 1), "Common CheckBox hover inner fill", 0.2, 0.8) {
-				ResourceKey = "CommonCheckBoxHoverInnerFill",
-				DefaultForeground = "#B1DFFD",
-				DefaultBackground = "#E9F7FE",
+			new BrushColorInfo(ColorType.CommonControlsComboBoxListItemBackgroundHover, "CommonControls ComboBox ListItem Background Hover") {
+				DefaultBackground = "#FFC9DEF5",
+				BackgroundResourceKey = "CommonControlsComboBoxListItemBackgroundHover",
 			},
-			new LinearGradientColorInfo(ColorType.CommonCheckBoxPressedInnerFill, new Point(1, 1), "Common CheckBox pressed inner fill", 0.2, 0.8) {
-				ResourceKey = "CommonCheckBoxPressedInnerFill",
-				DefaultForeground = "#7FBADC",
-				DefaultBackground = "#D6EDF9",
+			new BrushColorInfo(ColorType.CommonControlsComboBoxListItemBorderHover, "CommonControls ComboBox ListItem Border Hover") {
+				DefaultBackground = "#FFC9DEF5",
+				BackgroundResourceKey = "CommonControlsComboBoxListItemBorderHover",
 			},
-			new LinearGradientColorInfo(ColorType.CommonIndeterminateDisabledFill, new Point(1, 1), "Common CheckBox/RadioButton indeterminate disabled fill", 0.2, 0.8) {
-				ResourceKey = "CommonIndeterminateDisabledFill",
-				DefaultForeground = "#C0E5F3",
-				DefaultBackground = "#BDCDDC",
+			new BrushColorInfo(ColorType.CommonControlsComboBoxListItemText, "CommonControls ComboBox ListItem Text") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "CommonControlsComboBoxListItemText",
 			},
-			new LinearGradientColorInfo(ColorType.CommonIndeterminateFill, new Point(1, 1), "Common CheckBox/RadioButton indeterminate fill", 0.2, 0.8) {
-				ResourceKey = "CommonIndeterminateFill",
-				DefaultForeground = "#2FA8D5",
-				DefaultBackground = "#25598C",
+			new BrushColorInfo(ColorType.CommonControlsComboBoxListItemTextHover, "CommonControls ComboBox ListItem Text Hover") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "CommonControlsComboBoxListItemTextHover",
 			},
-			new LinearGradientColorInfo(ColorType.CommonIndeterminateHoverFill, new Point(1, 1), "Common CheckBox/RadioButton indeterminate hover fill", 0.2, 0.8) {
-				ResourceKey = "CommonIndeterminateHoverFill",
-				DefaultForeground = "#33D7ED",
-				DefaultBackground = "#2094CE",
+			new BrushColorInfo(ColorType.CommonControlsRadioButtonBackground, "CommonControls RadioButton Background") {
+				DefaultBackground = "#FFFEFEFE",
+				BackgroundResourceKey = "CommonControlsRadioButtonBackground",
 			},
-			new LinearGradientColorInfo(ColorType.CommonIndeterminatePressedFill, new Point(1, 1), "Common CheckBox/RadioButton indeterminate pressed fill", 0.2, 0.8) {
-				ResourceKey = "CommonIndeterminatePressedFill",
-				DefaultForeground = "#17447A",
-				DefaultBackground = "#218BC3",
+			new BrushColorInfo(ColorType.CommonControlsRadioButtonBackgroundDisabled, "CommonControls RadioButton Background Disabled") {
+				DefaultBackground = "#FFF6F6F6",
+				BackgroundResourceKey = "CommonControlsRadioButtonBackgroundDisabled",
 			},
-			new BrushColorInfo(ColorType.RadioButtonBackground, "RadioButton background") {
-				DefaultBackground = "#F4F4F4",
-				BackgroundResourceKey = "RadioButtonBackground",
+			new BrushColorInfo(ColorType.CommonControlsRadioButtonBackgroundFocused, "CommonControls RadioButton Background Focused") {
+				DefaultBackground = "#FFF3F9FF",
+				BackgroundResourceKey = "CommonControlsRadioButtonBackgroundFocused",
 			},
-			new BrushColorInfo(ColorType.ButtonIconBackground, "Button icon background. Makes sure icons look good with this background color.") {
-				DefaultBackground = "#EEEEEE",
+			new BrushColorInfo(ColorType.CommonControlsRadioButtonBackgroundHover, "CommonControls RadioButton Background Hover") {
+				DefaultBackground = "#FFF3F9FF",
+				BackgroundResourceKey = "CommonControlsRadioButtonBackgroundHover",
 			},
-			new LinearGradientColorInfo(ColorType.ButtonNormalBackground, new Point(0, 1), "Button normal background", 0, 0.5, 0.5, 1) {
-				ResourceKey = "ButtonNormalBackground",
-				DefaultForeground = "#F3F3F3",
-				DefaultBackground = "#EBEBEB",
-				DefaultColor3 = "#DDDDDD",
-				DefaultColor4 = "#CDCDCD",
+			new BrushColorInfo(ColorType.CommonControlsRadioButtonBackgroundPressed, "CommonControls RadioButton Background Pressed") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CommonControlsRadioButtonBackgroundPressed",
 			},
-			new BrushColorInfo(ColorType.ButtonNormalBorder, "Button normal border") {
-				DefaultBackground = "#FF707070",
-				BackgroundResourceKey = "ButtonNormalBorder",
+			new BrushColorInfo(ColorType.CommonControlsRadioButtonBorder, "CommonControls RadioButton Border") {
+				DefaultBackground = "#FF717171",
+				BackgroundResourceKey = "CommonControlsRadioButtonBorder",
 			},
-			new BrushColorInfo(ColorType.ButtonBaseDisabledForeground, "ButtonBase disabled foreground") {
-				DefaultForeground = "#ADADAD",
-				ForegroundResourceKey = "ButtonBaseDisabledForeground",
+			new BrushColorInfo(ColorType.CommonControlsRadioButtonBorderDisabled, "CommonControls RadioButton Border Disabled") {
+				DefaultBackground = "#FFC6C6C6",
+				BackgroundResourceKey = "CommonControlsRadioButtonBorderDisabled",
 			},
-			new LinearGradientColorInfo(ColorType.ButtonBaseCommonPressedBackgroundOverlay, new Point(0, 1), "Button common pressed background overlay", 0.5, 0.5, 1) {
-				ResourceKey = "ButtonBaseCommonPressedBackgroundOverlay",
-				DefaultForeground = "#FFC2E4F6",
-				DefaultBackground = "#FFABDAF3",
-				DefaultColor3 = "#FF90CBEB",
+			new BrushColorInfo(ColorType.CommonControlsRadioButtonBorderFocused, "CommonControls RadioButton Border Focused") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CommonControlsRadioButtonBorderFocused",
 			},
-			new LinearGradientColorInfo(ColorType.ButtonBaseCommonHoverBackgroundOverlay, new Point(0, 1), "Button common hover background overlay", 0, 0.5, 0.5, 1) {
-				ResourceKey = "ButtonBaseCommonHoverBackgroundOverlay",
-				DefaultForeground = "#FFEAF6FD",
-				DefaultBackground = "#FFD9F0FC",
-				DefaultColor3 = "#FFBEE6FD",
-				DefaultColor4 = "#FFA7D9F5",
+			new BrushColorInfo(ColorType.CommonControlsRadioButtonBorderHover, "CommonControls RadioButton Border Hover") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CommonControlsRadioButtonBorderHover",
 			},
-			new LinearGradientColorInfo(ColorType.ButtonBaseCommonInnerBorder, new Point(0, 1), "Button common inner border", 0, 1) {
-				ResourceKey = "ButtonBaseCommonInnerBorder",
-				DefaultForeground = "#FAFFFFFF",
-				DefaultBackground = "#85FFFFFF",
+			new BrushColorInfo(ColorType.CommonControlsRadioButtonBorderPressed, "CommonControls RadioButton Border Pressed") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CommonControlsRadioButtonBorderPressed",
 			},
-			new BrushColorInfo(ColorType.ButtonBaseBorderOverlayBorder, "Button border overlay border") {
-				DefaultBackground = "#FFF0F0F0",
-				BackgroundResourceKey = "ButtonBaseBorderOverlayBorder",
+			new BrushColorInfo(ColorType.CommonControlsRadioButtonGlyph, "CommonControls RadioButton Glyph") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "CommonControlsRadioButtonGlyph",
 			},
-			new BrushColorInfo(ColorType.ButtonBaseDisabledBorderBrush, "Button disabled border brush") {
-				DefaultBackground = "#ADB2B5",
-				BackgroundResourceKey = "ButtonBaseDisabledBorderBrush",
+			new BrushColorInfo(ColorType.CommonControlsRadioButtonGlyphDisabled, "CommonControls RadioButton Glyph Disabled") {
+				DefaultBackground = "#FFA2A4A5",
+				BackgroundResourceKey = "CommonControlsRadioButtonGlyphDisabled",
 			},
-			new BrushColorInfo(ColorType.ButtonBaseDisabledBorderOverlayBackground, "Button disabled border overlay background") {
-				DefaultBackground = "#F4F4F4",
-				BackgroundResourceKey = "ButtonBaseDisabledBorderOverlayBackground",
+			new BrushColorInfo(ColorType.CommonControlsRadioButtonGlyphFocused, "CommonControls RadioButton Glyph Focused") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "CommonControlsRadioButtonGlyphFocused",
 			},
-			new BrushColorInfo(ColorType.ButtonBaseMouseOverBorderBrush, "Button mouse over border brush") {
-				DefaultBackground = "#3C7FB1",
-				BackgroundResourceKey = "ButtonBaseMouseOverBorderBrush",
+			new BrushColorInfo(ColorType.CommonControlsRadioButtonGlyphHover, "CommonControls RadioButton Glyph Hover") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "CommonControlsRadioButtonGlyphHover",
 			},
-			new BrushColorInfo(ColorType.ButtonBasePressedBorderOverlayBrush, "Button pressed border overlay brush") {
-				DefaultBackground = "#2C628B",
-				BackgroundResourceKey = "ButtonBasePressedBorderOverlayBrush",
+			new BrushColorInfo(ColorType.CommonControlsRadioButtonGlyphPressed, "CommonControls RadioButton Glyph Pressed") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "CommonControlsRadioButtonGlyphPressed",
 			},
-			new BrushColorInfo(ColorType.ButtonBaseDefaultedBorderOverlayBrush, "Button defaulted border overlay brush") {
-				DefaultBackground = "#F900CCFF",
-				BackgroundResourceKey = "ButtonBaseDefaultedBorderOverlayBrush",
+			new BrushColorInfo(ColorType.CommonControlsRadioButtonText, "CommonControls RadioButton Text") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "CommonControlsRadioButtonText",
 			},
-			new BrushColorInfo(ColorType.TabControlNormalBorderBrush, "TabControl normal border brush") {
-				DefaultBackground = "#8C8E94",
-				BackgroundResourceKey = "TabControlNormalBorderBrush",
+			new BrushColorInfo(ColorType.CommonControlsRadioButtonTextDisabled, "CommonControls RadioButton Text Disabled") {
+				DefaultBackground = "#FFA2A4A5",
+				BackgroundResourceKey = "CommonControlsRadioButtonTextDisabled",
 			},
-			new BrushColorInfo(ColorType.TabControlBackground, "TabControl background") {
-				DefaultBackground = "#F9F9F9",
-				BackgroundResourceKey = "TabControlBackground",
+			new BrushColorInfo(ColorType.CommonControlsRadioButtonTextFocused, "CommonControls RadioButton Text Focused") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CommonControlsRadioButtonTextFocused",
 			},
-			new BrushColorInfo(ColorType.TabItemForeground, "TabItem foreground") {
-				DefaultBackground = "Black",
+			new BrushColorInfo(ColorType.CommonControlsRadioButtonTextHover, "CommonControls RadioButton Text Hover") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CommonControlsRadioButtonTextHover",
+			},
+			new BrushColorInfo(ColorType.CommonControlsRadioButtonTextPressed, "CommonControls RadioButton Text Pressed") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CommonControlsRadioButtonTextPressed",
+			},
+			new BrushColorInfo(ColorType.CommonControlsTextBox, "CommonControls TextBox") {
+				DefaultForeground = "#FF1E1E1E",
+				ForegroundResourceKey = "CommonControlsTextBoxForeground",
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "CommonControlsTextBoxBackground",
+			},
+			new BrushColorInfo(ColorType.CommonControlsTextBoxBorder, "CommonControls TextBox Border") {
+				DefaultBackground = "#FFDBDDE6",
+				BackgroundResourceKey = "CommonControlsTextBoxBorder",
+			},
+			new BrushColorInfo(ColorType.CommonControlsTextBoxDisabled, "CommonControls TextBox Disabled") {
+				DefaultForeground = "#FFA2A4A5",
+				ForegroundResourceKey = "CommonControlsTextBoxDisabledForeground",
+				DefaultBackground = "#FFEEEEF2",
+				BackgroundResourceKey = "CommonControlsTextBoxDisabledBackground",
+			},
+			new BrushColorInfo(ColorType.CommonControlsTextBoxDisabledBorder, "CommonControls TextBox Disabled Border") {
+				DefaultBackground = "#FFCCCEDB",
+				BackgroundResourceKey = "CommonControlsTextBoxDisabledBorder",
+			},
+			new BrushColorInfo(ColorType.CommonControlsTextBoxError, "CommonControls TextBox Error") {
+				DefaultForeground = "#FF000000",
+				ForegroundResourceKey = "CommonControlsTextBoxErrorForeground",
+				DefaultBackground = "Pink",
+				BackgroundResourceKey = "CommonControlsTextBoxErrorBackground",
+			},
+			new BrushColorInfo(ColorType.CommonControlsTextBoxErrorBorder, "CommonControls TextBox Error Border") {
+				DefaultBackground = "Red",
+				BackgroundResourceKey = "CommonControlsTextBoxErrorBorder",
+			},
+			new BrushColorInfo(ColorType.CommonControlsTextBoxFocusedBorder, "CommonControls TextBox Focused Border") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CommonControlsTextBoxFocusedBorder",
+			},
+			new BrushColorInfo(ColorType.CommonControlsTextBoxMouseOverBorder, "CommonControls TextBox Mouse Over Border") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CommonControlsTextBoxMouseOverBorder",
+			},
+			new BrushColorInfo(ColorType.CommonControlsTextBoxSelection, "CommonControls TextBox Selection") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CommonControlsTextBoxSelection",
+			},
+			new BrushColorInfo(ColorType.CommonControlsFocusVisual, "CommonControlsFocusVisual") {
+				DefaultForeground = "#FF1E1E1E",
+				ForegroundResourceKey = "CommonControlsFocusVisualText",
+				DefaultBackground = "#FFF5F5F5",
+				BackgroundResourceKey = "CommonControlsFocusVisual",
+			},
+			new BrushColorInfo(ColorType.TabItemForeground, "TabItem Foreground") {
+				DefaultBackground = "#FF000000",
 				BackgroundResourceKey = "TabItemForeground",
 			},
-			new LinearGradientColorInfo(ColorType.TabItemHotBackground, new Point(0, 1), "TabItem hot background", 0.15, 0.5, 0.5, 1) {
-				ResourceKey = "TabItemHotBackground",
-				DefaultForeground = "#EAF6FD",
-				DefaultBackground = "#D9F0FC",
-				DefaultColor3 = "#BEE6FD",
-				DefaultColor4 = "#A7D9F5",
+			new BrushColorInfo(ColorType.TabItemStaticBackground, "TabItem Static Background") {
+				DefaultBackground = "#FFF0F0F0",
+				BackgroundResourceKey = "TabItem.Static.Background",
 			},
-			new BrushColorInfo(ColorType.TabItemSelectedBackground, "TabItem selected background") {
-				DefaultBackground = "#F9F9F9",
-				BackgroundResourceKey = "TabItemSelectedBackground",
+			new BrushColorInfo(ColorType.TabItemStaticBorder, "TabItem Static Border") {
+				DefaultBackground = "#FFACACAC",
+				BackgroundResourceKey = "TabItem.Static.Border",
 			},
-			new BrushColorInfo(ColorType.TabItemDisabledBackground, "TabItem disabled background") {
-				DefaultBackground = "#F4F4F4",
-				BackgroundResourceKey = "TabItemDisabledBackground",
+			new BrushColorInfo(ColorType.TabItemMouseOverBackground, "TabItem MouseOver Background") {
+				DefaultBackground = "#FFC9DEF5",
+				BackgroundResourceKey = "TabItem.MouseOver.Background",
 			},
-			new BrushColorInfo(ColorType.TabItemHotBorderBrush, "TabItem hot border brush") {
-				DefaultBackground = "#3C7FB1",
-				BackgroundResourceKey = "TabItemHotBorderBrush",
+			new BrushColorInfo(ColorType.TabItemMouseOverBorder, "TabItem MouseOver Border") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "TabItem.MouseOver.Border",
 			},
-			new BrushColorInfo(ColorType.TabItemDisabledBorderBrush, "TabItem disabled border brush") {
-				DefaultBackground = "#FFC9C7BA",
-				BackgroundResourceKey = "TabItemDisabledBorderBrush",
+			new BrushColorInfo(ColorType.TabItemSelectedBackground, "TabItem Selected Background") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "TabItem.Selected.Background",
+			},
+			new BrushColorInfo(ColorType.TabItemSelectedBorder, "TabItem Selected Border") {
+				DefaultBackground = "#FFACACAC",
+				BackgroundResourceKey = "TabItem.Selected.Border",
+			},
+			new BrushColorInfo(ColorType.TabItemDisabledBackground, "TabItem Disabled Background") {
+				DefaultBackground = "#FFF0F0F0",
+				BackgroundResourceKey = "TabItem.Disabled.Background",
+			},
+			new BrushColorInfo(ColorType.TabItemDisabledBorder, "TabItem Disabled Border") {
+				DefaultBackground = "#FFD9D9D9",
+				BackgroundResourceKey = "TabItem.Disabled.Border",
 			},
 			new BrushColorInfo(ColorType.ContextMenuBackground, "Context menu background") {
 				DefaultBackground = "#F6F6F6",
@@ -832,124 +845,64 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "ContextMenuRectangleFill3",
 			},
 			new BrushColorInfo(ColorType.ExpanderStaticCircleStroke, "Expander Static Circle Stroke") {
-				DefaultBackground = "DarkGray",
+				DefaultBackground = "#FF333333",
 				BackgroundResourceKey = "Expander.Static.Circle.Stroke",
 			},
 			new BrushColorInfo(ColorType.ExpanderStaticCircleFill, "Expander Static Circle Fill") {
-				DefaultBackground = "Transparent",
+				DefaultBackground = "#FFFFFFFF",
 				BackgroundResourceKey = "Expander.Static.Circle.Fill",
 			},
 			new BrushColorInfo(ColorType.ExpanderStaticArrowStroke, "Expander Static Arrow Stroke") {
-				DefaultBackground = "#666666",
+				DefaultBackground = "#FF333333",
 				BackgroundResourceKey = "Expander.Static.Arrow.Stroke",
 			},
 			new BrushColorInfo(ColorType.ExpanderMouseOverCircleStroke, "Expander MouseOver Circle Stroke") {
-				DefaultBackground = "#FF3C7FB1",
+				DefaultBackground = "#FF5593FF",
 				BackgroundResourceKey = "Expander.MouseOver.Circle.Stroke",
 			},
 			new BrushColorInfo(ColorType.ExpanderMouseOverCircleFill, "Expander MouseOver Circle Fill") {
-				DefaultBackground = "Transparent",
+				DefaultBackground = "#FFF3F9FF",
 				BackgroundResourceKey = "Expander.MouseOver.Circle.Fill",
 			},
 			new BrushColorInfo(ColorType.ExpanderMouseOverArrowStroke, "Expander MouseOver Arrow Stroke") {
-				DefaultBackground = "#222222",
+				DefaultBackground = "#FF000000",
 				BackgroundResourceKey = "Expander.MouseOver.Arrow.Stroke",
 			},
 			new BrushColorInfo(ColorType.ExpanderPressedCircleStroke, "Expander Pressed Circle Stroke") {
-				DefaultBackground = "#FF526C7B",
+				DefaultBackground = "#FF3C77DD",
 				BackgroundResourceKey = "Expander.Pressed.Circle.Stroke",
 			},
 			new BrushColorInfo(ColorType.ExpanderPressedCircleFill, "Expander.Pressed.Circle.Fill") {
-				DefaultBackground = "Transparent",
+				DefaultBackground = "#FFD9ECFF",
 				BackgroundResourceKey = "Expander.Pressed.Circle.Fill",
 			},
 			new BrushColorInfo(ColorType.ExpanderPressedArrowStroke, "Expander Pressed Arrow Stroke") {
-				DefaultBackground = "#FF003366",
+				DefaultBackground = "#FF000000",
 				BackgroundResourceKey = "Expander.Pressed.Arrow.Stroke",
 			},
 			new BrushColorInfo(ColorType.ExpanderDisabledCircleStroke, "Expander Disabled Circle Stroke") {
-				DefaultBackground = "DarkGray",
+				DefaultBackground = "#FFBCBCBC",
 				BackgroundResourceKey = "Expander.Disabled.Circle.Stroke",
 			},
 			new BrushColorInfo(ColorType.ExpanderDisabledCircleFill, "Expander Disabled Circle Fill") {
-				DefaultBackground = "Transparent",
+				DefaultBackground = "#FFE6E6E6",
 				BackgroundResourceKey = "Expander.Disabled.Circle.Fill",
 			},
 			new BrushColorInfo(ColorType.ExpanderDisabledArrowStroke, "Expander Disabled Arrow Stroke") {
-				DefaultBackground = "#666666",
+				DefaultBackground = "#FF707070",
 				BackgroundResourceKey = "Expander.Disabled.Arrow.Stroke",
 			},
-			new LinearGradientColorInfo(ColorType.ProgressBarBorderBrush, new Point(0, 1), "ProgressBar border brush", 0, 1) {
-				ResourceKey = "ProgressBarBorderBrush",
-				DefaultForeground = "#B2B2B2",
-				DefaultBackground = "#8C8C8C",
+			new BrushColorInfo(ColorType.ProgressBarProgress, "ProgressBar Progress") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "ProgressBarProgress",
 			},
-			new BrushColorInfo(ColorType.ProgressBarForeground, "ProgressBar foreground") {
-				DefaultForeground = "#01D328",
-				ForegroundResourceKey = "ProgressBarForeground",
+			new BrushColorInfo(ColorType.ProgressBarBackground, "ProgressBar Background") {
+				DefaultBackground = "#FFFEFEFE",
+				BackgroundResourceKey = "ProgressBarBackground",
 			},
-			new LinearGradientColorInfo(ColorType.ProgressBarBackground, new Point(1, 0), "ProgressBar background", 0, 0.5, 1) {
-				ResourceKey = "ProgressBarBackground",
-				DefaultForeground = "#BABABA",
-				DefaultBackground = "#C7C7C7",
-				DefaultColor3 = "#BABABA",
-			},
-			new LinearGradientColorInfo(ColorType.ProgressBarTopHighlight, new Point(0, 1), "ProgressBar top highlight", 0.05, 0.25) {
-				ResourceKey = "ProgressBarTopHighlight",
-				DefaultForeground = "#80FFFFFF",
-				DefaultBackground = "#00FFFFFF",
-			},
-			new LinearGradientColorInfo(ColorType.ProgressBarGlassyHighlight, new Point(0, 1), "ProgressBar glassy highlight", 0.5385, 0.5385) {
-				ResourceKey = "ProgressBarGlassyHighlight",
-				DefaultForeground = "#50FFFFFF",
-				DefaultBackground = "#00FFFFFF",
-			},
-			new LinearGradientColorInfo(ColorType.ProgressBarIndicatorGlassyHighlight, new Point(0, 1), "ProgressBar indicator glassy highlight", 0.5385, 0.5385) {
-				ResourceKey = "ProgressBarIndicatorGlassyHighlight",
-				DefaultForeground = "#90FFFFFF",
-				DefaultBackground = "#00FFFFFF",
-			},
-			new RadialGradientColorInfo(ColorType.ProgressBarIndicatorLightingEffectLeft, "1,0,0,1,0.5,0.5", "ProgressBar indicator lighting effect left", 0, 1) {
-				ResourceKey = "ProgressBarIndicatorLightingEffectLeft",
-				DefaultForeground = "#60FFFFC4",
-				DefaultBackground = "#00FFFFC4",
-			},
-			new LinearGradientColorInfo(ColorType.ProgressBarIndicatorLightingEffect, new Point(0, 1), new Point(0, 0), "ProgressBar indicator lighting effect", 0, 1) {
-				ResourceKey = "ProgressBarIndicatorLightingEffect",
-				DefaultForeground = "#60FFFFC4",
-				DefaultBackground = "#00FFFFC4",
-			},
-			new RadialGradientColorInfo(ColorType.ProgressBarIndicatorLightingEffectRight, "1,0,0,1,-0.5,0.5", "ProgressBar indicator lighting effect right", 0, 1) {
-				ResourceKey = "ProgressBarIndicatorLightingEffectRight",
-				DefaultForeground = "#60FFFFC4",
-				DefaultBackground = "#00FFFFC4",
-			},
-			new LinearGradientColorInfo(ColorType.ProgressBarIndicatorDarkEdgeLeft, new Point(1, 0), "ProgressBar indicator dark edge left", 0, 0.3, 1) {
-				ResourceKey = "ProgressBarIndicatorDarkEdgeLeft",
-				DefaultForeground = "#0C000000",
-				DefaultBackground = "#20000000",
-				DefaultColor3 = "#00000000",
-			},
-			new LinearGradientColorInfo(ColorType.ProgressBarIndicatorDarkEdgeRight, new Point(1, 0), "ProgressBar indicator dark edge right", 0, 0.7, 1) {
-				ResourceKey = "ProgressBarIndicatorDarkEdgeRight",
-				DefaultForeground = "#00000000",
-				DefaultBackground = "#20000000",
-				DefaultColor3 = "#0C000000",
-			},
-			new LinearGradientColorInfo(ColorType.ProgressBarIndicatorAnimatedFill, new Point(1, 0), "ProgressBar indicator animated fill", 0, 0.4, 0.6, 1) {
-				ResourceKey = "ProgressBarIndicatorAnimatedFill",
-				DefaultForeground = "#00FFFFFF",
-				DefaultBackground = "#60FFFFFF",
-				DefaultColor3 = "#60FFFFFF",
-				DefaultColor4 = "#00FFFFFF",
-			},
-			new BrushColorInfo(ColorType.ProgressBarBorderBrush2, "ProgressBar border brush #2") {
-				DefaultBackground = "#80FFFFFF",
-				BackgroundResourceKey = "ProgressBarBorderBrush2",
-			},
-			new BrushColorInfo(ColorType.ProgressBarIndeterminateBackground, "ProgressBar indeterminate background") {
-				DefaultBackground = "#80B5FFA9",
-				BackgroundResourceKey = "ProgressBarIndeterminateBackground",
+			new BrushColorInfo(ColorType.ProgressBarBorder, "ProgressBar Border") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "ProgressBarBorder",
 			},
 			new LinearGradientColorInfo(ColorType.ResizeGripperForeground, new Point(0, 0.25), new Point(1, 0.75), "ResizeGripper foreground", 0.3, 0.75, 1) {
 				ResourceKey = "ResizeGripperForeground",
@@ -1019,35 +972,6 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultForeground = "White",
 				ForegroundResourceKey = "StatusBarDebuggingForeground",
 			},
-			new LinearGradientColorInfo(ColorType.TextBoxBorder, new Point(0, 20), "TextBox border", 0.05, 0.07, 1) {
-				ResourceKey = "TextBoxBorder",
-				DefaultForeground = "#ABADB3",
-				DefaultBackground = "#E2E3EA",
-				DefaultColor3 = "#E3E9EF",
-				MappingMode = BrushMappingMode.Absolute,
-			},
-			new LinearGradientColorInfo(ColorType.TextBoxHoverBorder, new Point(0, 20), "TextBox hover border", 0.05, 0.07, 1) {
-				ResourceKey = "TextBoxHoverBorder",
-				DefaultForeground = "#FF5794BF",
-				DefaultBackground = "#FFB7D5EA",
-				DefaultColor3 = "#FFC7E2F1",
-				MappingMode = BrushMappingMode.Absolute,
-			},
-			new LinearGradientColorInfo(ColorType.TextBoxFocusedBorder, new Point(0, 20), "TextBox focused border", 0.05, 0.07, 1) {
-				ResourceKey = "TextBoxFocusedBorder",
-				DefaultForeground = "#FF3D7BAD",
-				DefaultBackground = "#FFA4C9E3",
-				DefaultColor3 = "#FFB7D9ED",
-				MappingMode = BrushMappingMode.Absolute,
-			},
-			new BrushColorInfo(ColorType.TextBoxDisabledBackground, "TextBox disabled background") {
-				DefaultBackground = "#F4F4F4",
-				BackgroundResourceKey = "TextBoxDisabledBackground",
-			},
-			new BrushColorInfo(ColorType.TextBoxDisabledBorder, "TextBox disabled border") {
-				DefaultBackground = "#ADB2B5",
-				BackgroundResourceKey = "TextBoxDisabledBorder",
-			},
 			new LinearGradientColorInfo(ColorType.ToolTipBackground, new Point(0, 1), "ToolTip background", 0, 1) {
 				ResourceKey = "ToolTipBackground",
 				DefaultForeground = "White",
@@ -1101,8 +1025,8 @@ namespace ICSharpCode.ILSpy.dntheme
 			},
 			new LinearGradientColorInfo(ColorType.TVExpanderBorderBackground, new Point(1, 1), "TreeView expander border background", 0.2, 1) {
 				ResourceKey = "TVExpanderBorderBackground",
-				DefaultForeground = "White",
-				DefaultBackground = "#FFC0B7A6",
+				DefaultForeground = "#FFFFFFFF",
+				DefaultBackground = "#FFFFFFFF",
 			},
 			new BrushColorInfo(ColorType.TVExpanderPathFill, "TreeView expander path fill") {
 				DefaultBackground = "Black",
@@ -1299,16 +1223,6 @@ namespace ICSharpCode.ILSpy.dntheme
 			new BrushColorInfo(ColorType.AvalonEditSearchDropDownButtonActiveBackground, "AvalonEdit search drop down button active Background") {
 				DefaultBackground = "#FFB6BDD2",
 				BackgroundResourceKey = "AvalonEditSearchDropDownButtonActiveBackground",
-			},
-			new BrushColorInfo(ColorType.TextBoxErrorBorder, "TextBox error border") {
-				DefaultBackground = "Red",
-				BackgroundResourceKey = "TextBoxErrorBorder",
-			},
-			new BrushColorInfo(ColorType.TextBoxError, "TextBox error") {
-				DefaultBackground = "Pink",
-				DefaultForeground = "#FF000000",
-				BackgroundResourceKey = "TextBoxErrorBackground",
-				ForegroundResourceKey = "TextBoxErrorForeground",
 			},
 			new BrushColorInfo(ColorType.ListArrowBackground, "List arrow background") {
 				DefaultBackground = "Black",

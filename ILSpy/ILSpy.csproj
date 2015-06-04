@@ -385,12 +385,6 @@
     <Compile Include="Commands\FindInCodeCommand.cs" />
     <Compile Include="Commands\ToolbarCommands.cs" />
     <Compile Include="Commands\ViewCommands.cs" />
-    <Compile Include="Controls\CheckBoxBullet.xaml.cs">
-      <DependentUpon>CheckBoxBullet.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\RadioButtonBullet.xaml.cs">
-      <DependentUpon>RadioButtonBullet.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\TabButton.cs" />
     <Compile Include="DecompilerTabsWindow.xaml.cs">
       <DependentUpon>DecompilerTabsWindow.xaml</DependentUpon>
@@ -800,14 +794,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\Types\TypeOptionsDlg.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\CheckBoxBullet.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\RadioButtonBullet.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -70,8 +70,8 @@
 			<Label Grid.Row="0" Content="There are errors in the log:" />
 
 			<TextBox Grid.Row="1"
-				 Background="{DynamicResource TextBoxErrorBackground}"
-				 Foreground="{DynamicResource TextBoxErrorForeground}"
+				 Background="{DynamicResource CommonControlsTextBoxErrorBackground}"
+				 Foreground="{DynamicResource CommonControlsTextBoxErrorForeground}"
 				 TextWrapping="Wrap"
 				 IsReadOnly="True"
 				 Text="{Binding LogMessage, Mode=OneWay}"
@@ -89,11 +89,11 @@
 		<StackPanel Grid.Row="4"
 					Margin="5 0 5 5"
 					Orientation="Horizontal"
-					Background="{DynamicResource TextBoxErrorBackground}"
+					Background="{DynamicResource CommonControlsTextBoxErrorBackground}"
 					Visibility="{Binding CanShowModuleErrors, Converter={StaticResource BooleanToVisibilityConverter}}"
 					>
-			<TextBlock Margin="0 0 5 0" Background="{DynamicResource TextBoxErrorBackground}" Foreground="{DynamicResource TextBoxErrorForeground}" Text="{Binding CanExecuteSaveError}" />
-			<TextBlock Background="{DynamicResource TextBoxErrorBackground}" Foreground="{DynamicResource TextBoxErrorForeground}">
+			<TextBlock Margin="0 0 5 0" Background="{DynamicResource CommonControlsTextBoxErrorBackground}" Foreground="{DynamicResource CommonControlsTextBoxErrorForeground}" Text="{Binding CanExecuteSaveError}" />
+			<TextBlock Background="{DynamicResource CommonControlsTextBoxErrorBackground}" Foreground="{DynamicResource CommonControlsTextBoxErrorForeground}">
 				-- Fix the errors by editing the options.
 			</TextBlock>
 		</StackPanel>

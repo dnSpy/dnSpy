@@ -112,100 +112,104 @@
 		<color name="toolbarverticalbackground" fg="#F2F4FE" bg="#F2F4FE" color3="#F2F4FE" />
 		<color name="toolbariconbackground" bg="#D6DBE9" />
 		<color name="toolbarhorizontalbackground" fg="#D6DBE9" bg="#D6DBE9" color3="#D6DBE9" />
-		<color name="toolbardisabledfill" bg="#F7F7F7" />
-		<color name="toolbardisabledborder" bg="#B5B2B5" />
+		<color name="toolbardisabledfill" bg="#FFDADADA" />
+		<color name="toolbardisabledborder" bg="#FFDADADA" />
 		<color name="toolbarcomboboxtogglebuttonborder" bg="White" />
 		<color name="toolbarcomboboxtransparentbuttonfill" bg="Black" />
-		<color name="checkboxfillnormal" bg="#F4F4F4" />
-		<color name="checkboxstroke" bg="#8E8F8F" />
-		<color name="commoncheckmarkstroke" bg="White" />
-		<color name="commoncheckmarkpressedstroke" bg="White" />
-		<color name="commonradiobuttondisabledglyphstroke" bg="#A2AEB9" />
-		<color name="commonradiobuttonglyphstroke" bg="#193B55" />
-		<color name="commoncheckmarkdisabledfill" bg="#AEB7CF" />
-		<color name="commoncheckmarkfill" bg="#31347C" />
-		<color name="commoncheckmarkpressedfill" bg="#31347C" />
-		<color name="commonradiobuttonglyphdisabledfill" fg="#C9D5DE" bg="#C0E3E8" color3="#B0D4E9" />
-		<color name="commonradiobuttonglyphfill" fg="#E5E5E5" bg="#5DCEDD" color3="#0B82C7" />
-		<color name="commonradiobuttonglyphhoverfill" fg="#FFFFFF" bg="#74FFFF" color3="#0DA0F3" />
-		<color name="commonradiobuttonglyphpressedfill" fg="#95D9FC" bg="#3A84AA" color3="#075483" />
-		<color name="commonhoverbackgroundoverlay" bg="#DEF9FA" />
-		<color name="commonpressedbackgroundoverlay" bg="#C2E4F6" />
-		<color name="commondisabledbackgroundoverlay" bg="#F4F4F4" />
-		<color name="commonhoverborderoverlay" bg="#3C7FB1" />
-		<color name="commonpressedborderoverlay" bg="#2C628B" />
-		<color name="commondisabledborderoverlay" bg="#ADB2B5" />
-		<color name="commoncheckboxdisabledinnerborderpen" fg="#E1E3E5" bg="#E8E9EA" color3="#F3F3F3" />
-		<color name="commoncheckboxinnerborderpen" fg="#AEB3B9" bg="#C2C4C6" color3="#EAEBEB" />
-		<color name="commoncheckboxhoverinnerborderpen" fg="#79C6F9" bg="#79C6F9" color3="#D2EDFD" />
-		<color name="commoncheckboxpressedinnerborderpen" fg="#54A6D5" bg="#5EB5E4" color3="#C4E5F6" />
-		<color name="commonindeterminatedisabledinnerborderpen" fg="#BFD0DD" bg="#BDCBD7" color3="#BAC4CC" />
-		<color name="commonindeterminateinnerborderpen" fg="#2A628D" bg="#245479" color3="#193B55" />
-		<color name="commonindeterminatehoverinnerborderpen" fg="#29628D" bg="#245479" color3="#193B55" />
-		<color name="commonindeterminatepressedinnerborderpen" fg="#193B55" bg="#245479" color3="#29628D" />
-		<color name="commonradiobuttoninnerborderpen" fg="#B3B8BD" bg="#EBEBEB" />
-		<color name="commonradiobuttonhoverinnerborderpen" fg="#80CAF9" bg="#D2EEFD" />
-		<color name="commonradiobuttonpressedinnerborderpen" fg="#5CAAD7" bg="#C3E4F6" />
-		<color name="commoncheckboxinnerfill" fg="#CBCFD5" bg="#F7F7F7" />
-		<color name="commoncheckboxhoverinnerfill" fg="#B1DFFD" bg="#E9F7FE" />
-		<color name="commoncheckboxpressedinnerfill" fg="#7FBADC" bg="#D6EDF9" />
-		<color name="commonindeterminatedisabledfill" fg="#C0E5F3" bg="#BDCDDC" />
-		<color name="commonindeterminatefill" fg="#2FA8D5" bg="#25598C" />
-		<color name="commonindeterminatehoverfill" fg="#33D7ED" bg="#2094CE" />
-		<color name="commonindeterminatepressedfill" fg="#17447A" bg="#218BC3" />
-		<color name="radiobuttonbackground" bg="#F4F4F4" />
-		<color name="buttoniconbackground" bg="#EEEEEE" />
-		<color name="buttonnormalbackground" fg="#F3F3F3" bg="#EBEBEB" color3="#DDDDDD" color4="#CDCDCD" />
-		<color name="buttonnormalborder" bg="#FF707070" />
-		<color name="buttonbasedisabledforeground" fg="#ADADAD" />
-		<color name="buttonbasecommonpressedbackgroundoverlay" fg="#FFC2E4F6" bg="#FFABDAF3" color3="#FF90CBEB" />
-		<color name="buttonbasecommonhoverbackgroundoverlay" fg="#FFEAF6FD" bg="#FFD9F0FC" color3="#FFBEE6FD" color4="#FFA7D9F5" />
-		<color name="buttonbasecommoninnerborder" fg="#FAFFFFFF" bg="#85FFFFFF" />
-		<color name="buttonbaseborderoverlayborder" bg="#FFF0F0F0" />
-		<color name="buttonbasedisabledborderbrush" bg="#ADB2B5" />
-		<color name="buttonbasedisabledborderoverlaybackground" bg="#F4F4F4" />
-		<color name="buttonbasemouseoverborderbrush" bg="#3C7FB1" />
-		<color name="buttonbasepressedborderoverlaybrush" bg="#2C628B" />
-		<color name="buttonbasedefaultedborderoverlaybrush" bg="#F900CCFF" />
-		<color name="tabcontrolnormalborderbrush" bg="#8C8E94" />
-		<color name="tabcontrolbackground" bg="#F9F9F9" />
-		<color name="tabitemforeground" bg="Black" />
-		<color name="tabitemhotbackground" fg="#EAF6FD" bg="#D9F0FC" color3="#BEE6FD" color4="#A7D9F5" />
-		<color name="tabitemselectedbackground" bg="#F9F9F9" />
-		<color name="tabitemdisabledbackground" bg="#F4F4F4" />
-		<color name="tabitemhotborderbrush" bg="#3C7FB1" />
-		<color name="tabitemdisabledborderbrush" bg="#FFC9C7BA" />
+		<color name="commoncontrolsbuttoniconbackground" bg="#FFECECF0" />
+		<color name="commoncontrolsbutton" fg="#FF1E1E1E" bg="#FFECECF0" />
+		<color name="commoncontrolsbuttonborder" bg="#FFCCCEDB" />
+		<color name="commoncontrolsbuttonborderdisabled" bg="#FFCCCEDB" />
+		<color name="commoncontrolsbuttonborderfocused" bg="#FFE5C365" />
+		<color name="commoncontrolsbuttonborderhover" bg="#FFE5C365" />
+		<color name="commoncontrolsbuttonborderpressed" bg="#FFE5C365" />
+		<color name="commoncontrolsbuttondisabled" fg="#FFA2A4A5" bg="#FFF5F5F5" />
+		<color name="commoncontrolsbuttonfocused" fg="#FF1E1E1E" bg="#FFFDF4BF" />
+		<color name="commoncontrolsbuttonhover" fg="#FF1E1E1E" bg="#FFFDF4BF" />
+		<color name="commoncontrolsbuttonpressed" fg="#FFFFFFFF" bg="#FFE5C365" />
+		<color name="commoncontrolscheckboxbackground" bg="#FFFEFEFE" />
+		<color name="commoncontrolscheckboxbackgrounddisabled" bg="#FFF6F6F6" />
+		<color name="commoncontrolscheckboxbackgroundfocused" bg="#FFFDF4BF" />
+		<color name="commoncontrolscheckboxbackgroundhover" bg="#FFFDF4BF" />
+		<color name="commoncontrolscheckboxbackgroundpressed" bg="#FFE5C365" />
+		<color name="commoncontrolscheckboxborder" bg="#FF717171" />
+		<color name="commoncontrolscheckboxborderdisabled" bg="#FFC6C6C6" />
+		<color name="commoncontrolscheckboxborderfocused" bg="#FFE5C365" />
+		<color name="commoncontrolscheckboxborderhover" bg="#FFE5C365" />
+		<color name="commoncontrolscheckboxborderpressed" bg="#FFE5C365" />
+		<color name="commoncontrolscheckboxglyph" bg="#FF1E1E1E" />
+		<color name="commoncontrolscheckboxglyphdisabled" bg="#FFA2A4A5" />
+		<color name="commoncontrolscheckboxglyphfocused" bg="#FF424242" />
+		<color name="commoncontrolscheckboxglyphhover" bg="#FF424242" />
+		<color name="commoncontrolscheckboxglyphpressed" bg="#FF1E1E1E" />
+		<color name="commoncontrolscheckboxtext" bg="#FF1E1E1E" />
+		<color name="commoncontrolscheckboxtextdisabled" bg="#FFA2A4A5" />
+		<color name="commoncontrolscheckboxtextfocused" bg="#FF424242" />
+		<color name="commoncontrolscheckboxtexthover" bg="#FF424242" />
+		<color name="commoncontrolscheckboxtextpressed" bg="#FF1E1E1E" />
+		<color name="commoncontrolscomboboxlistitembackgroundhover" bg="#FFFDF4BF" />
+		<color name="commoncontrolscomboboxlistitemborderhover" bg="#FFFDF4BF" />
+		<color name="commoncontrolscomboboxlistitemtext" bg="#FF000000" />
+		<color name="commoncontrolscomboboxlistitemtexthover" bg="#FF000000" />
+		<color name="commoncontrolsradiobuttonbackground" bg="#FFFEFEFE" />
+		<color name="commoncontrolsradiobuttonbackgrounddisabled" bg="#FFF6F6F6" />
+		<color name="commoncontrolsradiobuttonbackgroundfocused" bg="#FFFDF4BF" />
+		<color name="commoncontrolsradiobuttonbackgroundhover" bg="#FFFDF4BF" />
+		<color name="commoncontrolsradiobuttonbackgroundpressed" bg="#FFE5C365" />
+		<color name="commoncontrolsradiobuttonborder" bg="#FF717171" />
+		<color name="commoncontrolsradiobuttonborderdisabled" bg="#FFC6C6C6" />
+		<color name="commoncontrolsradiobuttonborderfocused" bg="#FFE5C365" />
+		<color name="commoncontrolsradiobuttonborderhover" bg="#FFE5C365" />
+		<color name="commoncontrolsradiobuttonborderpressed" bg="#FFE5C365" />
+		<color name="commoncontrolsradiobuttonglyph" bg="#FF1E1E1E" />
+		<color name="commoncontrolsradiobuttonglyphdisabled" bg="#FFA2A4A5" />
+		<color name="commoncontrolsradiobuttonglyphfocused" bg="#FF424242" />
+		<color name="commoncontrolsradiobuttonglyphhover" bg="#FF424242" />
+		<color name="commoncontrolsradiobuttonglyphpressed" bg="#FF1E1E1E" />
+		<color name="commoncontrolsradiobuttontext" bg="#FF1E1E1E" />
+		<color name="commoncontrolsradiobuttontextdisabled" bg="#FFA2A4A5" />
+		<color name="commoncontrolsradiobuttontextfocused" bg="#FF424242" />
+		<color name="commoncontrolsradiobuttontexthover" bg="#FF424242" />
+		<color name="commoncontrolsradiobuttontextpressed" bg="#FF1E1E1E" />
+		<color name="commoncontrolstextbox" fg="#FF1E1E1E" bg="#FFFFFFFF" />
+		<color name="commoncontrolstextboxborder" bg="#FFDBDDE6" />
+		<color name="commoncontrolstextboxdisabled" fg="#FFA2A4A5" bg="#FFD5DCE8" />
+		<color name="commoncontrolstextboxdisabledborder" bg="#FFA4ADBA" />
+		<color name="commoncontrolstextboxerror" fg="#FF000000" bg="Pink" />
+		<color name="commoncontrolstextboxerrorborder" bg="Red" />
+		<color name="commoncontrolstextboxfocusedborder" bg="#FFE5C365" />
+		<color name="commoncontrolstextboxmouseoverborder" bg="#FFE5C365" />
+		<color name="commoncontrolstextboxselection" bg="#FF3399FF" />
+		<color name="commoncontrolsfocusvisual" fg="#FF000000" bg="#FFFFFFFF" />
+		<color name="tabitemforeground" bg="#FF000000" />
+		<color name="tabitemstaticbackground" bg="#FFF0F0F0" />
+		<color name="tabitemstaticborder" bg="#FFACACAC" />
+		<color name="tabitemmouseoverbackground" bg="#FFFDF4BF" />
+		<color name="tabitemmouseoverborder" bg="#FFE5C365" />
+		<color name="tabitemselectedbackground" bg="#FFFFFFFF" />
+		<color name="tabitemselectedborder" bg="#FFACACAC" />
+		<color name="tabitemdisabledbackground" bg="#FFF0F0F0" />
+		<color name="tabitemdisabledborder" bg="#FFD9D9D9" />
 		<color name="contextmenubackground" bg="#EAF0FF" />
 		<color name="contextmenuborderbrush" bg="#9BA7B7" />
 		<color name="contextmenurectanglefill1" bg="#F2F4FE" />
 		<color name="contextmenurectanglefill2" bg="#F2F4FE" />
 		<color name="contextmenurectanglefill3" bg="#F2F4FE" />
-		<color name="expanderstaticcirclestroke" bg="DarkGray" />
-		<color name="expanderstaticcirclefill" bg="Transparent" />
-		<color name="expanderstaticarrowstroke" bg="#666666" />
-		<color name="expandermouseovercirclestroke" bg="#FF3C7FB1" />
-		<color name="expandermouseovercirclefill" bg="Transparent" />
-		<color name="expandermouseoverarrowstroke" bg="#222222" />
-		<color name="expanderpressedcirclestroke" bg="#FF526C7B" />
-		<color name="expanderpressedcirclefill" bg="Transparent" />
-		<color name="expanderpressedarrowstroke" bg="#FF003366" />
-		<color name="expanderdisabledcirclestroke" bg="DarkGray" />
-		<color name="expanderdisabledcirclefill" bg="Transparent" />
-		<color name="expanderdisabledarrowstroke" bg="#666666" />
-		<color name="progressbarborderbrush" fg="#B2B2B2" bg="#8C8C8C" />
-		<color name="progressbarforeground" fg="#01D328" />
-		<color name="progressbarbackground" fg="#BABABA" bg="#C7C7C7" color3="#BABABA" />
-		<color name="progressbartophighlight" fg="#80FFFFFF" bg="#00FFFFFF" />
-		<color name="progressbarglassyhighlight" fg="#50FFFFFF" bg="#00FFFFFF" />
-		<color name="progressbarindicatorglassyhighlight" fg="#90FFFFFF" bg="#00FFFFFF" />
-		<color name="progressbarindicatorlightingeffectleft" fg="#60FFFFC4" bg="#00FFFFC4" />
-		<color name="progressbarindicatorlightingeffect" fg="#60FFFFC4" bg="#00FFFFC4" />
-		<color name="progressbarindicatorlightingeffectright" fg="#60FFFFC4" bg="#00FFFFC4" />
-		<color name="progressbarindicatordarkedgeleft" fg="#0C000000" bg="#20000000" color3="#00000000" />
-		<color name="progressbarindicatordarkedgeright" fg="#00000000" bg="#20000000" color3="#0C000000" />
-		<color name="progressbarindicatoranimatedfill" fg="#00FFFFFF" bg="#60FFFFFF" color3="#60FFFFFF" color4="#00FFFFFF" />
-		<color name="progressbarborderbrush2" bg="#80FFFFFF" />
-		<color name="progressbarindeterminatebackground" bg="#80B5FFA9" />
+		<color name="expanderstaticcirclestroke" bg="#FF333333" />
+		<color name="expanderstaticcirclefill" bg="#FFFFFFFF" />
+		<color name="expanderstaticarrowstroke" bg="#FF333333" />
+		<color name="expandermouseovercirclestroke" bg="#FF5593FF" />
+		<color name="expandermouseovercirclefill" bg="#FFF3F9FF" />
+		<color name="expandermouseoverarrowstroke" bg="#FF000000" />
+		<color name="expanderpressedcirclestroke" bg="#FF3C77DD" />
+		<color name="expanderpressedcirclefill" bg="#FFD9ECFF" />
+		<color name="expanderpressedarrowstroke" bg="#FF000000" />
+		<color name="expanderdisabledcirclestroke" bg="#FFBCBCBC" />
+		<color name="expanderdisabledcirclefill" bg="#FFE6E6E6" />
+		<color name="expanderdisabledarrowstroke" bg="#FF707070" />
+		<color name="progressbarprogress" bg="#FFE5C365" />
+		<color name="progressbarbackground" bg="#FFFEFEFE" />
+		<color name="progressbarborder" bg="#FFE5C365" />
 		<color name="resizegripperforeground" fg="#FFFFFF" bg="#BBC5D7" color3="#6D83A9" />
 		<color name="environmentscrollbararrowbackground" bg="#FFE8E8EC" />
 		<color name="environmentscrollbararrowdisabledbackground" bg="#FFE8E8EC" />
@@ -222,11 +226,6 @@
 		<color name="environmentscrollbarthumbmouseoverbackground" bg="#FF888888" />
 		<color name="environmentscrollbarthumbpressedbackground" bg="#FF6A6A6A" />
 		<color name="statusbardebugging" fg="White" bg="#CA5100" />
-		<color name="textboxborder" fg="#ABADB3" bg="#E2E3EA" color3="#E3E9EF" />
-		<color name="textboxhoverborder" fg="#FF5794BF" bg="#FFB7D5EA" color3="#FFC7E2F1" />
-		<color name="textboxfocusedborder" fg="#FF3D7BAD" bg="#FFA4C9E3" color3="#FFB7D9ED" />
-		<color name="textboxdisabledbackground" bg="#F4F4F4" />
-		<color name="textboxdisabledborder" bg="#ADB2B5" />
 		<color name="tooltipbackground" fg="White" bg="White" />
 		<color name="tooltipborderbrush" bg="#767676" />
 		<color name="tooltipforeground" fg="Black" />
@@ -234,7 +233,7 @@
 		<color name="codetooltipborder" bg="#FFCCCEDB" />
 		<color name="tveditlistborder" bg="#FF7F9DB9" />
 		<color name="tvexpanderborderbrush" bg="#FF7898B5" />
-		<color name="tvexpanderborderbackground" fg="White" bg="#FFC0B7A6" />
+		<color name="tvexpanderborderbackground" fg="#FFFFFFFF" bg="#FFFFFFFF" />
 		<color name="tvexpanderpathfill" bg="Black" />
 		<color name="tvexpandermouseoverborderbrush" bg="#37CAF7" />
 		<color name="tvexpandermouseoverpathfill" bg="#37CAF7" />
@@ -280,8 +279,6 @@
 		<color name="resourcetablealternationbackground2" bg="Beige" />
 		<color name="avaloneditsearchdropdownbuttonactiveborder" bg="#FF0A246A" />
 		<color name="avaloneditsearchdropdownbuttonactivebackground" bg="#FFB6BDD2" />
-		<color name="textboxerrorborder" bg="Red" />
-		<color name="textboxerror" fg="#FF000000" bg="Pink" />
 		<color name="listarrowbackground" bg="Black" />
 		<color name="treeviewlinebackground" bg="LightGray" />
 		<color name="treeviewitemmouseover" fg="White" bg="#006699" />

@@ -80,7 +80,7 @@ namespace ICSharpCode.ILSpy
 		public static Color GetColor(BackgroundType bgType)
 		{
 			switch (bgType) {
-			case BackgroundType.Button: return GetColorBackground(dntheme.ColorType.ButtonIconBackground);
+			case BackgroundType.Button: return GetColorBackground(dntheme.ColorType.CommonControlsButtonIconBackground);
 			case BackgroundType.Window: return GetColorBackground(dntheme.ColorType.SystemColorsWindow);
 			case BackgroundType.TreeNode: return GetColorBackground(dntheme.ColorType.TreeViewBackground);
 			case BackgroundType.Search: return GetColorBackground(dntheme.ColorType.SystemColorsWindow);

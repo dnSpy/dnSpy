@@ -2112,7 +2112,7 @@ namespace ICSharpCode.ILSpy
 			ask.Title = "Go to Line";
 			ask.label.Content = "_Line [, column]";
 			ask.textBox.Text = "";
-			ask.ToolTip = "Enter a line and/or column\n10 => line 10, column 1\n,5 => column 5\n10,5 => line 10, column 5";
+			ask.textBox.ToolTip = "Enter a line and/or column\n10 => line 10, column 1\n,5 => column 5\n10,5 => line 10, column 5";
 			ask.ShowDialog();
 			if (ask.DialogResult != true)
 				return;
