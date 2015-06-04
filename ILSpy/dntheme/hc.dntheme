@@ -143,6 +143,12 @@
 		<color name="tabitemselectedborder" bg="#FFFFFFFF" />
 		<color name="tabitemdisabledbackground" bg="#FF008000" />
 		<color name="tabitemdisabledborder" bg="#FFFFFFFF" />
+		<color name="listboxitemmouseoverbackground" bg="#FF800080" />
+		<color name="listboxitemmouseoverborder" bg="#FF800080" />
+		<color name="listboxitemselectedinactivebackground" bg="#FF800080" />
+		<color name="listboxitemselectedinactiveborder" bg="#FF800080" />
+		<color name="listboxitemselectedactivebackground" bg="#FF800080" />
+		<color name="listboxitemselectedactiveborder" bg="#FF800080" />
 		<color name="contextmenubackground" bg="#FF000000" />
 		<color name="contextmenuborderbrush" bg="#FFFFFFFF" />
 		<color name="contextmenurectanglefill1" bg="#FF000000" />

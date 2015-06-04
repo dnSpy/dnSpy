@@ -190,6 +190,12 @@
 		<color name="tabitemselectedborder" bg="#FFACACAC" />
 		<color name="tabitemdisabledbackground" bg="#FFF0F0F0" />
 		<color name="tabitemdisabledborder" bg="#FFD9D9D9" />
+		<color name="listboxitemmouseoverbackground" bg="#FFFDF4BF" />
+		<color name="listboxitemmouseoverborder" bg="#FFFDF4BF" />
+		<color name="listboxitemselectedinactivebackground" bg="#80FDF4BF" />
+		<color name="listboxitemselectedinactiveborder" bg="#FFFDF4BF" />
+		<color name="listboxitemselectedactivebackground" bg="#FFFDF4BF" />
+		<color name="listboxitemselectedactiveborder" bg="#FFE5C365" />
 		<color name="contextmenubackground" bg="#EAF0FF" />
 		<color name="contextmenuborderbrush" bg="#9BA7B7" />
 		<color name="contextmenurectanglefill1" bg="#F2F4FE" />

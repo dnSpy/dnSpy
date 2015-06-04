@@ -824,6 +824,30 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#FFD9D9D9",
 				BackgroundResourceKey = "TabItem.Disabled.Border",
 			},
+			new BrushColorInfo(ColorType.ListBoxItemMouseOverBackground, "ListBoxItem MouseOver Background") {
+				DefaultBackground = "#FFC9DEF5",
+				BackgroundResourceKey = "ListBoxItem.MouseOver.Background",
+			},
+			new BrushColorInfo(ColorType.ListBoxItemMouseOverBorder, "ListBoxItem MouseOver Border") {
+				DefaultBackground = "#FFC9DEF5",
+				BackgroundResourceKey = "ListBoxItem.MouseOver.Border",
+			},
+			new BrushColorInfo(ColorType.ListBoxItemSelectedInactiveBackground, "ListBoxItem SelectedInactive Background") {
+				DefaultBackground = "#80C9DEF5",
+				BackgroundResourceKey = "ListBoxItem.SelectedInactive.Background",
+			},
+			new BrushColorInfo(ColorType.ListBoxItemSelectedInactiveBorder, "ListBoxItem SelectedInactive Border") {
+				DefaultBackground = "#FFC9DEF5",
+				BackgroundResourceKey = "ListBoxItem.SelectedInactive.Border",
+			},
+			new BrushColorInfo(ColorType.ListBoxItemSelectedActiveBackground, "ListBoxItem SelectedActive Background") {
+				DefaultBackground = "#FFC9DEF5",
+				BackgroundResourceKey = "ListBoxItem.SelectedActive.Background",
+			},
+			new BrushColorInfo(ColorType.ListBoxItemSelectedActiveBorder, "ListBoxItem SelectedActive Border") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "ListBoxItem.SelectedActive.Border",
+			},
 			new BrushColorInfo(ColorType.ContextMenuBackground, "Context menu background") {
 				DefaultBackground = "#F6F6F6",
 				BackgroundResourceKey = "ContextMenuBackground",
