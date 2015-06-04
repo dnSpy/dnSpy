@@ -445,7 +445,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					var tryBody = tryCatchBlock.TryBlock.Body;
 					if (tryBody.Count == 0)
 						throw new SymbolicAnalysisFailedException();
-					StateRangeAnalysis rangeAnalysis = new StateRangeAnalysis(tryBody[0], StateRangeAnalysisMode.AsyncMoveNext, stateField);
+					StateRangeAnalysis rangeAnalysis = new StateRangeAnalysis(tryBody[0], StateRangeAnalysisMode.AsyncMoveNext, stateField, cachedStateVar);
 					int tryBodyLength = tryBody.Count;
 					int posInTryBody = rangeAnalysis.AssignStateRanges(tryBody, tryBodyLength);
 					rangeAnalysis.EnsureLabelAtPos(tryBody, ref posInTryBody, ref tryBodyLength);
