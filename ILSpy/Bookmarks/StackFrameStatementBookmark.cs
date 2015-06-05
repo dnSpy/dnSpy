@@ -159,8 +159,9 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 				DebuggerService.CurrentDebugger.IsDebugging &&
 				!DebuggerService.CurrentDebugger.IsProcessRunning;
 			if (updateReturnStatements) {
-				int frameNo = 0;
+				int frameNo = -1;
 				foreach (var frame in DebuggerService.CurrentDebugger.GetStackFrames(100)) {
+					frameNo++;
 					StackFrameStatementType type;
 					if (frameNo == 0)
 						type = StackFrameStatementType.CurrentStatement;
@@ -183,7 +184,6 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 							movedCaret = true;
 						}
 					}
-					frameNo++;
 				}
 			}
 			return movedCaret;
