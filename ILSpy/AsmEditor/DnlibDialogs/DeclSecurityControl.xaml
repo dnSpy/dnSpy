@@ -49,7 +49,7 @@
 						<RowDefinition Height="*" />
 					</Grid.RowDefinitions>
 					<Label Grid.Row="0" Target="{Binding ElementName=xmlTextBox}" Content="_XML" />
-					<TextBox Grid.Row="1" Name="xmlTextBox" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" TextWrapping="Wrap" Text="{Binding V1XMLString, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+					<TextBox Grid.Row="1" Name="xmlTextBox" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" TextWrapping="Wrap" Text="{Binding V1XMLString, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 				</Grid>
 				<Grid Grid.Row="1" Visibility="{Binding IsV2, Converter={StaticResource BooleanToVisibilityConverter}}">
 					<dnlibdlgs:SecurityAttributesControl DataContext="{Binding SecurityAttributesVM}" />
