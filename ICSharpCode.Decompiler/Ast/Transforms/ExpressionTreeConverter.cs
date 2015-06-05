@@ -867,7 +867,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			if (prop == null)
 				return mr;
 
-			Create_SystemArray_get_Length_result = mr;
+			Create_SystemArray_get_Length_result = prop;
 			return prop;
 		}
 		IMDTokenProvider Create_SystemArray_get_Length_result;

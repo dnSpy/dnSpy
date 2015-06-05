@@ -305,7 +305,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (prop == null)
 				return mr;
 
-			Create_SystemArray_get_Length_result = mr;
+			Create_SystemArray_get_Length_result = prop;
 			return prop;
 		}
 		IMDTokenProvider Create_SystemArray_get_Length_result;
@@ -329,7 +329,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (prop == null)
 				return mr;
 
-			Create_SystemType_get_TypeHandle_result = mr;
+			Create_SystemType_get_TypeHandle_result = prop;
 			return prop;
 		}
 		IMDTokenProvider Create_SystemType_get_TypeHandle_result;
