@@ -1544,6 +1544,10 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#FFD0E6F5",
 				BackgroundResourceKey = "EnvironmentFileTabHotGlyph",
 			},
+			new BrushColorInfo(ColorType.SearchBoxWatermark, "SearchBox Watermark") {
+				DefaultForeground = "#FF6D6D6D",
+				ForegroundResourceKey = "SearchBoxWatermarkForeground",
+			},
 			new BrushColorInfo(ColorType.NodeAutoLoaded, "TreeView node auto loaded") {
 				DefaultForeground = "SteelBlue",
 			},

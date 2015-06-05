@@ -310,6 +310,7 @@
 		<color name="environmentfiletabhotborder" bg="#FF800080" />
 		<color name="environmentfiletabhottext" bg="#FFFFFFFF" />
 		<color name="environmentfiletabhotglyph" bg="#FFFFFFFF" />
+		<color name="searchboxwatermark" fg="#FF00FF00" />
 		<color name="nodeautoloaded" fg="SteelBlue" />
 		<color name="nodepublic" fg="#FFFFFFFF" />
 		<color name="nodenotpublic" fg="#FF00FF00" />

@@ -741,6 +741,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		EnvironmentFileTabHotBorder,
 		EnvironmentFileTabHotText,
 		EnvironmentFileTabHotGlyph,
+		SearchBoxWatermark,
 		NodeAutoLoaded,
 		NodePublic,
 		NodeNotPublic,
