@@ -530,6 +530,10 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#FFCCCEDB",
 				BackgroundResourceKey = "CommonControlsButtonBorder",
 			},
+			new BrushColorInfo(ColorType.CommonControlsButtonBorderDefaulted, "CommonControls Button Border Defaulted") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CommonControlsButtonBorderDefaulted",
+			},
 			new BrushColorInfo(ColorType.CommonControlsButtonBorderDisabled, "CommonControls Button Border Disabled") {
 				DefaultBackground = "#FFCCCEDB",
 				BackgroundResourceKey = "CommonControlsButtonBorderDisabled",
@@ -545,6 +549,12 @@ namespace ICSharpCode.ILSpy.dntheme
 			new BrushColorInfo(ColorType.CommonControlsButtonBorderPressed, "CommonControls Button Border Pressed") {
 				DefaultBackground = "#FF007ACC",
 				BackgroundResourceKey = "CommonControlsButtonBorderPressed",
+			},
+			new BrushColorInfo(ColorType.CommonControlsButtonDefaulted, "CommonControls Button Defaulted") {
+				DefaultForeground = "#FF1E1E1E",
+				ForegroundResourceKey = "CommonControlsButtonDefaultedText",
+				DefaultBackground = "#FFECECF0",
+				BackgroundResourceKey = "CommonControlsButtonDefaulted",
 			},
 			new BrushColorInfo(ColorType.CommonControlsButtonDisabled, "CommonControlsButtonDisabled") {
 				DefaultForeground = "#FFA2A4A5",

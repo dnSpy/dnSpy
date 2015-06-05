@@ -120,10 +120,12 @@
 		<color name="commoncontrolsbuttoniconbackground" bg="#FF3F3F46" />
 		<color name="commoncontrolsbutton" fg="#FFF1F1F1" bg="#FF3F3F46" />
 		<color name="commoncontrolsbuttonborder" bg="#FF555555" />
+		<color name="commoncontrolsbuttonborderdefaulted" bg="#FF007ACC" />
 		<color name="commoncontrolsbuttonborderdisabled" bg="#FF3F3F46" />
 		<color name="commoncontrolsbuttonborderfocused" bg="#FF007ACC" />
 		<color name="commoncontrolsbuttonborderhover" bg="#FF007ACC" />
 		<color name="commoncontrolsbuttonborderpressed" bg="#FF007ACC" />
+		<color name="commoncontrolsbuttondefaulted" fg="#FFF1F1F1" bg="#FF3F3F46" />
 		<color name="commoncontrolsbuttondisabled" fg="#FF656565" bg="#FF2D2D30" />
 		<color name="commoncontrolsbuttonfocused" fg="#FFF1F1F1" bg="#FF3F3F46" />
 		<color name="commoncontrolsbuttonhover" fg="#FFF1F1F1" bg="#FF3F3F46" />

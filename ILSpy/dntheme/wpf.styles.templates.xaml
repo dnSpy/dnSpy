@@ -134,9 +134,9 @@
 				<Setter Property="BorderBrush" Value="{DynamicResource CommonControlsButtonBorderFocused}" />
 			</Trigger>
 			<Trigger Property="Button.IsDefaulted" Value="True">
-				<Setter Property="Background" Value="{DynamicResource CommonControlsButton}" />
-				<Setter Property="Foreground" Value="{DynamicResource CommonControlsButtonText}" />
-				<Setter Property="BorderBrush" Value="{DynamicResource CommonControlsButtonBorder}" />
+				<Setter Property="Background" Value="{DynamicResource CommonControlsButtonDefaulted}" />
+				<Setter Property="Foreground" Value="{DynamicResource CommonControlsButtonDefaultedText}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource CommonControlsButtonBorderDefaulted}" />
 			</Trigger>
 			<Trigger Property="IsMouseOver" Value="True">
 				<Setter Property="Background" Value="{DynamicResource CommonControlsButtonHover}" />
