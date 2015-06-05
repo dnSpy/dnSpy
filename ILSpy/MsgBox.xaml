@@ -36,7 +36,7 @@
 			<Button Content="_Cancel" Click="cancelButton_Click" IsCancel="True" Style="{StaticResource DialogButton}" Name="cancelButton" Margin="5,0,0,0" DockPanel.Dock="Right" />
 			<Button Content="_No" Click="noButton_Click" Style="{StaticResource DialogButton}" Name="noButton" Margin="5,0,0,0" DockPanel.Dock="Right" />
 			<Button Content="_OK" Click="okButton_Click" IsDefault="True" Style="{StaticResource DialogButton}" Name="okButton" Margin="5,0,0,0" DockPanel.Dock="Right" />
-			<CheckBox Name="dontShowCheckBox" Content="_Don't show again" DockPanel.Dock="Left" />
+			<CheckBox Name="dontShowCheckBox" Content="_Don't show again" DockPanel.Dock="Left" VerticalAlignment="Center" />
 		</DockPanel>
 	</StackPanel>
 </Window>
