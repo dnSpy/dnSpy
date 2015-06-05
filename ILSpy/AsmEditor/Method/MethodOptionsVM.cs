@@ -331,6 +331,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 		}
 		GenericParamsVM genericParamsVM;
 
+		public MethodOverridesVM MethodOverridesVM {
+			get { return methodOverridesVM; }
+		}
+		MethodOverridesVM methodOverridesVM;
+
 		readonly ModuleDef module;
 
 		public MethodOptionsVM(MethodDefOptions options, ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
@@ -358,6 +363,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			this.declSecuritiesVM = new DeclSecuritiesVM(module, language, ownerType, ownerMethod);
 			this.paramDefsVM = new ParamDefsVM(module, language, ownerType, ownerMethod);
 			this.genericParamsVM = new GenericParamsVM(module, language, ownerType, ownerMethod);
+			this.methodOverridesVM = new MethodOverridesVM(module, language, ownerType, ownerMethod);
 
 			this.origOptions = options;
 
@@ -409,6 +415,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			DeclSecuritiesVM.InitializeFrom(options.DeclSecurities);
 			ParamDefsVM.InitializeFrom(options.ParamDefs);
 			GenericParamsVM.InitializeFrom(options.GenericParameters);
+			MethodOverridesVM.InitializeFrom(options.Overrides);
 		}
 
 		MethodDefOptions CopyTo(MethodDefOptions options)
@@ -426,6 +433,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			options.ParamDefs.AddRange(ParamDefsVM.Collection.Select(a => a.CreateParamDefOptions().CreateParamDef(module)));
 			options.GenericParameters.Clear();
 			options.GenericParameters.AddRange(GenericParamsVM.Collection.Select(a => a.CreateGenericParamOptions().CreateGenericParam(module)));
+			options.Overrides.Clear();
+			options.Overrides.AddRange(MethodOverridesVM.Collection.Select(a => a.CreateMethodOverrideOptions().CreateMethodOverride()));
 			if (ModelUtils.GetHasSecurityBit(options.DeclSecurities, options.CustomAttributes))
 				options.Attributes |= MethodAttributes.HasSecurity;
 			else

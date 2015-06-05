@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using System.Linq;
 using dnlib.PE;
 using dnlib.DotNet;
 
@@ -34,6 +35,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 		public List<DeclSecurity> DeclSecurities = new List<DeclSecurity>();
 		public List<ParamDef> ParamDefs = new List<ParamDef>();
 		public List<GenericParam> GenericParameters = new List<GenericParam>();
+		public List<MethodOverride> Overrides = new List<MethodOverride>();
 
 		public MethodDefOptions()
 		{
@@ -50,6 +52,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			this.DeclSecurities.AddRange(method.DeclSecurities);
 			this.ParamDefs.AddRange(method.ParamDefs);
 			this.GenericParameters.AddRange(method.GenericParameters);
+			this.Overrides.AddRange(method.Overrides);
 		}
 
 		public MethodDef CopyTo(MethodDef method)
@@ -67,6 +70,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			method.ParamDefs.AddRange(ParamDefs);
 			method.GenericParameters.Clear();
 			method.GenericParameters.AddRange(GenericParameters);
+			method.Overrides.Clear();
+			method.Overrides.AddRange(Overrides.Select(e => e.MethodBody != null ? e : new MethodOverride(method, e.MethodDeclaration)));
 			method.Parameters.UpdateParameterTypes();
 			return method;
 		}

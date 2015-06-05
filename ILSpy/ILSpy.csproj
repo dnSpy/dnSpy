@@ -208,6 +208,12 @@
       <DependentUpon>MemberPickerDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\DnlibDialogs\MemberPickerVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\MethodOverrideOptions.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\MethodOverridesControl.xaml.cs">
+      <DependentUpon>MethodOverridesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\MethodOverridesVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\MethodOverrideVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\MethodSigCreatorControl.xaml.cs">
       <DependentUpon>MethodSigCreatorControl.xaml</DependentUpon>
     </Compile>
@@ -344,6 +350,7 @@
     <Compile Include="AsmEditor\ViewHelpers\EditCustomAttribute.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditDeclSecurity.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditGenericParam.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\EditMethodOverride.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditParamDef.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditSecurityAttribute.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditTypeDefOrRefAndCA.cs" />
@@ -708,6 +715,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\DnlibDialogs\MemberPickerDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\MethodOverridesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
