@@ -662,8 +662,6 @@ namespace ICSharpCode.ILSpy.dntheme
 		TVItemAlternationBackground,
 		GridViewBackground,
 		GridViewBorder,
-		GridViewScrollViewerLeftFill,
-		GridViewScrollViewerTopFill,
 		GridViewColumnHeaderBorderBackground,
 		GridViewColumnHeaderBackground,
 		GridViewColumnHeaderHoverBackground,

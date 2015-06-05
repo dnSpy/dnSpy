@@ -1207,14 +1207,6 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#CCCEDB",
 				BackgroundResourceKey = "GridViewBorder",
 			},
-			new BrushColorInfo(ColorType.GridViewScrollViewerLeftFill, "GridView ScrollViewer left fill") {
-				DefaultBackground = "White",
-				BackgroundResourceKey = "GridViewScrollViewerLeftFill",
-			},
-			new BrushColorInfo(ColorType.GridViewScrollViewerTopFill, "GridView ScrollViewer top fill") {
-				DefaultBackground = "White",
-				BackgroundResourceKey = "GridViewScrollViewerTopFill",
-			},
 			new LinearGradientColorInfo(ColorType.GridViewColumnHeaderBorderBackground, new Point(0, 1), "GridViewColumnHeader border background", 0, 1) {
 				ResourceKey = "GridViewColumnHeaderBorderBackground",
 				DefaultForeground = "#E0E3E6",

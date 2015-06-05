@@ -1924,19 +1924,11 @@
                                    Value="{Binding Path=VerticalOffset,RelativeSource={RelativeSource TemplatedParent},Mode=OneWay}"
                                    Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
                                    Cursor="Arrow"/>
-                        <DockPanel Grid.Column="1"
-                                   Grid.Row="1"
-                                   Background="{Binding Path=Background,ElementName=PART_VerticalScrollBar}"
-                                   LastChildFill="false">
-                            <Rectangle DockPanel.Dock="Left"
-                                       Width="1"
-                                       Fill="{DynamicResource GridViewScrollViewerLeftFill}"
-                                       Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
-                            <Rectangle DockPanel.Dock="Top"
-                                       Height="1"
-                                       Fill="{DynamicResource GridViewScrollViewerTopFill}"
-                                       Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"/>
-                        </DockPanel>
+						<Rectangle
+							Grid.Column="1"
+							Grid.Row="1"
+							Fill="{DynamicResource EnvironmentScrollBarBackground}"
+							/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -3183,7 +3175,7 @@
 							x:Name="Corner"
 							Grid.Column="1"
 							Grid.Row="1"
-							Fill="{DynamicResource SystemColorsControl}"
+							Fill="{DynamicResource EnvironmentScrollBarBackground}"
 							/>
 						<ScrollContentPresenter
 							x:Name="PART_ScrollContentPresenter"

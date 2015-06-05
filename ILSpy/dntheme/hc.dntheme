@@ -231,8 +231,6 @@
 		<color name="tvitemalternationbackground" bg="#FF808080" />
 		<color name="gridviewbackground" bg="#FF000000" />
 		<color name="gridviewborder" bg="#FFFFFFFF" />
-		<color name="gridviewscrollviewerleftfill" bg="#FF000000" />
-		<color name="gridviewscrollviewertopfill" bg="#FF000000" />
 		<color name="gridviewcolumnheaderborderbackground" fg="#FFFFFFFF" bg="#FFFFFFFF" />
 		<color name="gridviewcolumnheaderbackground" fg="#FF000000" bg="#FF000000" color3="#FF000000" />
 		<color name="gridviewcolumnheaderhoverbackground" fg="#FF800080" bg="#FF800080" />
