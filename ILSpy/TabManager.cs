@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -268,8 +269,13 @@ namespace ICSharpCode.ILSpy
 				// of instantly when we press it. It makes the program feel slow.
 				tabControl.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(delegate {
 					// Make sure it's still the active TabItem
-					if (tabControl.SelectedItem == tabItem)
-						DragDrop.DoDragDrop(tabItem, tabItem, DragDropEffects.Move);
+					if (tabControl.SelectedItem == tabItem) {
+						try {
+							DragDrop.DoDragDrop(tabItem, tabItem, DragDropEffects.Move);
+						}
+						catch (COMException) { // Rarely happens
+						}
+					}
 				}));
 			}
 		}
