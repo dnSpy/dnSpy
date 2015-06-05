@@ -28,6 +28,10 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		{
 			InitializeComponent();
 			Loaded += OnLoaded;
+			if (IntPtr.Size == 4)
+				this.Title += " (32-bit only)";
+			else
+				this.Title += " (64-bit only)";
 		}
 		
 		public Process SelectedProcess {
