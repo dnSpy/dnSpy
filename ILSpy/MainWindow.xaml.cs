@@ -2183,6 +2183,30 @@ namespace ICSharpCode.ILSpy
 			e.CanExecute = tabGroupsManager.ActiveTabGroup.SelectPreviousTabCanExecute();
 		}
 
+		private void FocusTreeViewExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			var node = treeView.SelectedItem as SharpTreeNode;
+			if (node != null)
+				treeView.FocusNode(node);
+		}
+
+		private void FocusTreeViewCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = treeView.SelectedItem is SharpTreeNode;
+		}
+
+		private void FocusCodeExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			var tabState = ActiveTabState;
+			if (tabState != null)
+				SetTextEditorFocus(tabState.TextView);
+		}
+
+		private void FocusCodeCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = ActiveTabState != null;
+		}
+
 		private void ZoomIncreaseExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			ZoomIncrease(ActiveTabState);

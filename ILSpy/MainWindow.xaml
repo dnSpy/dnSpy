@@ -28,6 +28,8 @@
 		<RoutedUICommand x:Key="ZoomIncrease" Text="Zoom In" />
 		<RoutedUICommand x:Key="ZoomDecrease" Text="Zoom Out" />
 		<RoutedUICommand x:Key="ZoomReset" Text="Zoom Reset" />
+		<RoutedUICommand x:Key="FocusCode" Text="Focus Code Window" />
+		<RoutedUICommand x:Key="FocusTreeView" Text="Focus TreeView" />
 	</Window.Resources>
 	<Window.InputBindings>
 		<KeyBinding Gesture="Ctrl+D" Command="{StaticResource GoToToken}" />
@@ -44,8 +46,20 @@
 		<KeyBinding Gesture="Ctrl+Subtract" Command="{StaticResource ZoomDecrease}" />
 		<KeyBinding Gesture="Ctrl+D0" Command="{StaticResource ZoomReset}" />
 		<KeyBinding Gesture="Ctrl+NumPad0" Command="{StaticResource ZoomReset}" />
+		<KeyBinding Gesture="F7" Command="{StaticResource FocusCode}" />
+		<KeyBinding Gesture="Ctrl+Alt+D0" Command="{StaticResource FocusCode}" />
+		<KeyBinding Gesture="Ctrl+Alt+NumPad0" Command="{StaticResource FocusCode}" />
+		<KeyBinding Gesture="Ctrl+Alt+L" Command="{StaticResource FocusTreeView}" />
 	</Window.InputBindings>
 	<Window.CommandBindings>
+		<CommandBinding
+			Command="{StaticResource FocusTreeView}"
+			CanExecute="FocusTreeViewCanExecute"
+			Executed="FocusTreeViewExecuted" />
+		<CommandBinding
+			Command="{StaticResource FocusCode}"
+			CanExecute="FocusCodeCanExecute"
+			Executed="FocusCodeExecuted" />
 		<CommandBinding
 			Command="{StaticResource ZoomIncrease}"
 			CanExecute="ZoomIncreaseCanExecute"
