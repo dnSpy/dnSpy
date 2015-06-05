@@ -86,6 +86,8 @@
 		<color name="groupboxborderbrush" bg="#D5DFE5" />
 		<color name="groupboxborderbrushouter" bg="White" />
 		<color name="groupboxborderbrushinner" bg="White" />
+		<color name="toplevelmenuheaderhoverborder" bg="#FFE5C365" />
+		<color name="toplevelmenuheaderhover" bg="#FFFDF4BF" />
 		<color name="menuitemseparatorfilltop" bg="#BEC3CB" />
 		<color name="menuitemseparatorfillbottom" bg="Transparent" />
 		<color name="menuitemselectionfill" fg="#FDF4BF" bg="#FDF4BF" />

@@ -467,6 +467,8 @@ namespace ICSharpCode.ILSpy.dntheme
 		GroupBoxBorderBrush,
 		GroupBoxBorderBrushOuter,
 		GroupBoxBorderBrushInner,
+		TopLevelMenuHeaderHoverBorder,
+		TopLevelMenuHeaderHover,
 		MenuItemSeparatorFillTop,
 		MenuItemSeparatorFillBottom,
 		MenuItemSelectionFill,

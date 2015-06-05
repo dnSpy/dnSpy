@@ -389,6 +389,14 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "White",
 				BackgroundResourceKey = "GroupBoxBorderBrushInner",
 			},
+			new BrushColorInfo(ColorType.TopLevelMenuHeaderHoverBorder, "Top Level Menu Header Hover Border") {
+				DefaultBackground = "Transparent",
+				BackgroundResourceKey = "TopLevelMenuHeaderHoverBorder",
+			},
+			new BrushColorInfo(ColorType.TopLevelMenuHeaderHover, "Top Level Menu Header Hover") {
+				DefaultBackground = "#FFC9DEF5",
+				BackgroundResourceKey = "TopLevelMenuHeaderHoverBackground",
+			},
 			new BrushColorInfo(ColorType.MenuItemSeparatorFillTop, "MenuItem Separator fill (top)") {
 				DefaultBackground = "#E0E3E6",
 				BackgroundResourceKey = "MenuItemSeparatorFillTop",

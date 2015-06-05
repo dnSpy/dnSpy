@@ -39,6 +39,8 @@
 		<color name="groupboxborderbrush" bg="#FFFFFFFF" />
 		<color name="groupboxborderbrushouter" bg="#FFFFFFFF" />
 		<color name="groupboxborderbrushinner" bg="#FFFFFFFF" />
+		<color name="toplevelmenuheaderhoverborder" bg="#FFFFFFFF" />
+		<color name="toplevelmenuheaderhover" bg="#FF800080" />
 		<color name="menuitemseparatorfilltop" bg="#FF808080" />
 		<color name="menuitemseparatorfillbottom" bg="Transparent" />
 		<color name="menuitemselectionfill" fg="#FF800080" bg="#FF800080" />

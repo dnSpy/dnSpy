@@ -3968,10 +3968,10 @@
                                                  Value="true">
                                             <Setter TargetName="Border"
                                                     Property="BorderBrush"
-                                                    Value="{DynamicResource ToolBarButtonHoverBorder}"/>
+                                                    Value="{DynamicResource TopLevelMenuHeaderHoverBorder}"/>
                                             <Setter TargetName="Border"
                                                     Property="Background"
-                                                    Value="{DynamicResource ToolBarButtonHover}"/>
+                                                    Value="{DynamicResource TopLevelMenuHeaderHoverBackground}"/>
                                         </Trigger>
                                         <Trigger Property="IsSubmenuOpen"
                                                  Value="true">
