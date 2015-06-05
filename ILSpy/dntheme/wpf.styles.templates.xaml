@@ -540,6 +540,8 @@
                 Value="VerticalFirst"/>
         <Setter Property="Stylus.IsFlicksEnabled"
                 Value="False"/>
+		<Setter Property="SelectionBrush"
+                Value="{DynamicResource CommonControlsComboBoxTextInputSelection}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TextBox}">
@@ -3335,50 +3337,39 @@
                                 Width="13"
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderThickness="1"
                                 SnapsToDevicePixels="true">
                             <Path x:Name="ArrowDownPath"
-                                  Data="M 2.5 0 L 8.5 0 L 5.5 3 Z"
-                                  Fill="{DynamicResource ToolBarComboBoxTransparentButtonFill}"
+                                  Data="M 0 0 L 3 3 L 6 0 Z"
+                                  Margin="0 1 0 0"
+                                  Fill="{TemplateBinding Foreground}"
+                                  HorizontalAlignment="Center"
                                   VerticalAlignment="Center"/>
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsEnabled"
-                                 Value="false">
-                            <Setter TargetName="Chrome"
-                                    Property="BorderBrush"
-                                    Value="{x:Null}"/>
-                        </Trigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsMouseOver"
-                                           Value="true"/>
-                                <Condition Property="IsChecked"
-                                           Value="false"/>
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="Chrome"
-                                    Property="Background"
-                                    Value="{DynamicResource ToolBarButtonHover}"/>
-                        </MultiTrigger>
-                        <Trigger Property="IsChecked"
-                                 Value="true">
-                            <Setter TargetName="Chrome"
-                                    Property="BorderBrush"
-                                    Value="{DynamicResource ToolBarButtonPressedBorder}"/>
-                        </Trigger>
-                        <Trigger Property="IsPressed"
-                                 Value="true">
-                            <Setter TargetName="Chrome"
-                                    Property="Background"
-                                    Value="{DynamicResource ToolBarButtonPressed}"/>
-                        </Trigger>
-                        <Trigger Property="IsEnabled"
-                                 Value="false">
-                            <Setter TargetName="ArrowDownPath"
-                                    Property="Fill"
-                                    Value="{DynamicResource ToolBarDisabledBorder}"/>
-                        </Trigger>
+						<Trigger Property="IsChecked" Value="True">
+							<Setter TargetName="Chrome"
+									Property="Background"
+									Value="{DynamicResource CommonControlsComboBoxGlyphBackgroundPressed}" />
+							<Setter TargetName="Chrome"
+									Property="BorderBrush"
+									Value="{DynamicResource CommonControlsComboBoxSeparatorPressed}" />
+							<Setter TargetName="ArrowDownPath"
+									Property="Fill"
+									Value="{DynamicResource CommonControlsComboBoxGlyphPressed}" />
+						</Trigger>
+						<Trigger Property="IsPressed" Value="True">
+							<Setter TargetName="Chrome"
+									Property="Background"
+									Value="{DynamicResource CommonControlsComboBoxGlyphBackgroundPressed}" />
+							<Setter TargetName="Chrome"
+									Property="BorderBrush"
+									Value="{DynamicResource CommonControlsComboBoxSeparatorPressed}" />
+							<Setter TargetName="ArrowDownPath"
+									Property="Fill"
+									Value="{DynamicResource CommonControlsComboBoxGlyphPressed}" />
+						</Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -3389,11 +3380,11 @@
         <Setter Property="FocusVisualStyle"
                 Value="{x:Null}"/>
         <Setter Property="Foreground"
-                Value="{DynamicResource SystemColorsWindowText}"/>
+                Value="{DynamicResource CommonControlsComboBoxText}"/>
         <Setter Property="Background"
-                Value="{DynamicResource SystemColorsWindow}"/>
+                Value="{DynamicResource CommonControlsComboBoxBackground}"/>
         <Setter Property="BorderBrush"
-                Value="{DynamicResource SystemColorsWindow}"/>
+                Value="{DynamicResource CommonControlsComboBoxBorder}"/>
         <Setter Property="BorderThickness"
                 Value="1"/>
         <Setter Property="Margin"
@@ -3442,7 +3433,9 @@
                                     Grid.ColumnSpan="2"
                                     BorderThickness="{TemplateBinding BorderThickness}"
                                     BorderBrush="{TemplateBinding BorderBrush}"/>
-                            <ToggleButton BorderBrush="{DynamicResource ToolBarComboBoxToggleButtonBorder}"
+							<ToggleButton BorderBrush="{DynamicResource CommonControlsComboBoxSeparator}"
+										  Background="{DynamicResource CommonControlsComboBoxGlyphBackground}"
+										  Foreground="{DynamicResource CommonControlsComboBoxGlyph}"
                                           BorderThickness="1"
                                           x:Name="DropDownButton"
                                           Grid.ColumnSpan="2"
@@ -3469,10 +3462,12 @@
                                                           MaxHeight="{TemplateBinding MaxDropDownHeight}">
                                 <Border x:Name="DropDownBorder"
                                         Background="{TemplateBinding Background}"
+                                        Margin="0 1 0 0"
                                         BorderThickness="1"
-                                        BorderBrush="{DynamicResource ToolBarMenuBorder}">
+                                        BorderBrush="{DynamicResource CommonControlsComboBoxListBorder}">
                                     <ScrollViewer Name="DropDownScrollViewer">
-                                      <Grid RenderOptions.ClearTypeHint="Enabled">
+                                      <Grid RenderOptions.ClearTypeHint="Enabled"
+											Background="{DynamicResource CommonControlsComboBoxListBackground}">
                                         <Canvas Height="0" Width="0" HorizontalAlignment="Left" VerticalAlignment="Top">
                                             <Rectangle
                                                 Name="OpaqueRect"
@@ -3490,19 +3485,36 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled"
                                  Value="false">
-                            <Setter Property="Foreground"
-                                    Value="{DynamicResource SystemColorsGrayText}"/>
-                            <Setter TargetName="Background"
-                                    Property="Background"
-                                    Value="{DynamicResource ToolBarDisabledFill}"/>
                             <Setter TargetName="Background"
                                     Property="Grid.ColumnSpan"
                                     Value="2"/>
-                            <Setter TargetName="Border"
-                                    Property="BorderBrush"
-                                    Value="{DynamicResource ToolBarDisabledBorder}"/>
-                        </Trigger>
-                        <MultiTrigger>
+							<Setter TargetName="DropDownButton"
+									Property="BorderBrush"
+									Value="Transparent" />
+							<Setter TargetName="DropDownButton"
+									Property="Background"
+									Value="{DynamicResource CommonControlsComboBoxGlyphBackgroundDisabled}" />
+							<Setter TargetName="DropDownButton"
+									Property="Foreground"
+									Value="{DynamicResource CommonControlsComboBoxGlyphDisabled}" />
+							<Setter TargetName="Border"
+									Property="BorderBrush"
+									Value="{DynamicResource CommonControlsComboBoxBorderDisabled}" />
+							<Setter Property="Background"
+									Value="{DynamicResource CommonControlsComboBoxBackgroundDisabled}" />
+							<Setter Property="Foreground"
+									Value="{DynamicResource CommonControlsComboBoxTextDisabled}" />
+						</Trigger>
+						<Trigger Property="ComboBox.IsDropDownOpen" Value="True">
+							<Setter Property="Background"
+									Value="{DynamicResource CommonControlsComboBoxBackgroundPressed}" />
+							<Setter TargetName="Border"
+									Property="BorderBrush"
+									Value="{DynamicResource CommonControlsComboBoxBorderPressed}" />
+							<Setter Property="Foreground"
+									Value="{DynamicResource CommonControlsComboBoxTextPressed}" />
+						</Trigger>
+						<MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsKeyboardFocusWithin"
                                            Value="true"/>
@@ -3529,28 +3541,42 @@
                         </Trigger>
                         <Trigger Property="IsMouseOver"
                                  Value="true">
-                            <Setter TargetName="DropDownButton"
-                                    Property="BorderBrush"
-                                    Value="{DynamicResource ToolBarButtonHoverBorder}"/>
-                            <Setter TargetName="DropDownButton"
-                                    Property="Background"
-                                    Value="{DynamicResource ToolBarButtonHover}"/>
-                            <Setter TargetName="Border"
-                                    Property="BorderBrush"
-                                    Value="{DynamicResource ToolBarButtonHoverBorder}"/>
-                        </Trigger>
+							<Setter TargetName="DropDownButton"
+									Property="BorderBrush"
+									Value="{DynamicResource CommonControlsComboBoxSeparatorHover}" />
+							<Setter TargetName="DropDownButton"
+									Property="Background"
+									Value="{DynamicResource CommonControlsComboBoxGlyphBackgroundHover}" />
+							<Setter TargetName="DropDownButton"
+									Property="Foreground"
+									Value="{DynamicResource CommonControlsComboBoxGlyphHover}" />
+							<Setter Property="Background"
+									Value="{DynamicResource CommonControlsComboBoxBackgroundHover}" />
+							<Setter TargetName="Border"
+									Property="BorderBrush"
+									Value="{DynamicResource CommonControlsComboBoxBorderHover}" />
+							<Setter Property="Foreground"
+									Value="{DynamicResource CommonControlsComboBoxTextHover}" />
+						</Trigger>
                         <Trigger Property="IsKeyboardFocusWithin"
                                  Value="true">
-                            <Setter TargetName="DropDownButton"
-                                    Property="BorderBrush"
-                                    Value="{DynamicResource ToolBarButtonHoverBorder}"/>
-                            <Setter TargetName="DropDownButton"
-                                    Property="Background"
-                                    Value="{DynamicResource ToolBarButtonHover}"/>
-                            <Setter TargetName="Border"
-                                    Property="BorderBrush"
-                                    Value="{DynamicResource ToolBarButtonHoverBorder}"/>
-                        </Trigger>
+							<Setter TargetName="DropDownButton"
+									Property="BorderBrush"
+									Value="{DynamicResource CommonControlsComboBoxSeparatorFocused}" />
+							<Setter TargetName="DropDownButton"
+									Property="Background"
+									Value="{DynamicResource CommonControlsComboBoxGlyphBackgroundFocused}" />
+							<Setter TargetName="DropDownButton"
+									Property="Foreground"
+									Value="{DynamicResource CommonControlsComboBoxGlyphFocused}" />
+							<Setter Property="Background"
+									Value="{DynamicResource CommonControlsComboBoxBackgroundFocused}" />
+							<Setter TargetName="Border"
+									Property="BorderBrush"
+									Value="{DynamicResource CommonControlsComboBoxBorderFocused}" />
+							<Setter Property="Foreground"
+									Value="{DynamicResource CommonControlsComboBoxTextFocused}" />
+						</Trigger>
                         <Trigger SourceName="PART_Popup"
                                  Property="Popup.HasDropShadow"
                                  Value="true">
@@ -3570,16 +3596,6 @@
                                     Property="MinHeight"
                                     Value="95"/>
                         </Trigger>
-						<!-- TODO: Disable this since VirtualizingPanel.IsVirtualizingWhenGrouping is
-								available in 4.5+ only
-                        <MultiTrigger>
-                        <MultiTrigger.Conditions>
-                            <Condition Property="IsGrouping" Value="true" />
-                            <Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="false" />
-                        </MultiTrigger.Conditions>
-                            <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
-                        </MultiTrigger>
-						-->
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsKeyboardFocusWithin"
@@ -3621,11 +3637,11 @@
         <Setter Property="FocusVisualStyle"
                 Value="{x:Null}"/>
         <Setter Property="Foreground"
-                Value="{DynamicResource SystemColorsWindowText}"/>
+                Value="{DynamicResource CommonControlsTextBoxForeground}"/>
         <Setter Property="Background"
-                Value="{DynamicResource SystemColorsWindow}"/>
+                Value="{DynamicResource CommonControlsTextBoxBackground}"/>
         <Setter Property="BorderBrush"
-                Value="{DynamicResource SystemColorsWindow}"/>
+                Value="{DynamicResource CommonControlsTextBoxBorder}"/>
         <Setter Property="BorderThickness"
                 Value="1"/>
         <Setter Property="Margin"
@@ -4709,7 +4725,7 @@
 
 	<Style TargetType="{x:Type shtv:EditTextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
         <Setter Property="Foreground"
-                Value="{DynamicResource SystemColorsControlText}" />
+                Value="{DynamicResource CommonControlsTextBoxForeground}" />
         <Setter Property="KeyboardNavigation.TabNavigation"
                 Value="None" />
         <Setter Property="HorizontalContentAlignment"
@@ -4721,9 +4737,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type shtv:EditTextBox}">
-                    <Border Background="{DynamicResource SystemColorsWindow}"
+					<Border Background="{DynamicResource CommonControlsTextBoxBackground}"
                             BorderThickness="1"
-                            BorderBrush="{DynamicResource TVEditListBorder}"
+                            BorderBrush="{DynamicResource CommonControlsTextBoxBorder}"
                             Padding="0 1 2 0">
                         <ScrollViewer Name="PART_ContentHost" />
                     </Border>
@@ -5240,6 +5256,8 @@
 		<Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
 		<Setter Property="Icon" Value="../Images/dnSpy.ico"/>
 		<Setter Property="mm:HideWindowsButtons.MaxMinButtons" Value="True"/>
+		<Setter Property="Foreground" Value="{DynamicResource DialogWindowForeground}"/>
+		<Setter Property="Background" Value="{DynamicResource DialogWindowBackground}"/>
 	</Style>
 	<Style x:Key="DialogBorderStyle" TargetType="{x:Type Border}">
 		<Setter Property="BorderBrush" Value="{DynamicResource TabItemSelectedBackground}"/>

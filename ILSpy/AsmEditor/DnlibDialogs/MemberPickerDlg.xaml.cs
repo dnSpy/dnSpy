@@ -40,8 +40,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				}
 			};
 			MainWindow.InitializeTreeView(treeView);
-			openImage.Source = ImageCache.Instance.GetImage("Open", BackgroundType.Window);
-			privateInternalImage.Source = ImageCache.Instance.GetImage("PrivateInternal", BackgroundType.Window);
+			openImage.Source = ImageCache.Instance.GetImage("Open", BackgroundType.DialogWindow);
+			privateInternalImage.Source = ImageCache.Instance.GetImage("PrivateInternal", BackgroundType.DialogWindow);
 		}
 
 		void IMakeVisible.ScrollIntoView(object item)

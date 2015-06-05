@@ -28,7 +28,9 @@ namespace ICSharpCode.ILSpy
 	public enum BackgroundType
 	{
 		Button,
-		Window,
+		TextEditor,
+		DialogWindow,
+		TextBox,
 		TreeNode,
 		Search,
 		ComboBox,
@@ -81,14 +83,16 @@ namespace ICSharpCode.ILSpy
 		{
 			switch (bgType) {
 			case BackgroundType.Button: return GetColorBackground(dntheme.ColorType.CommonControlsButtonIconBackground);
-			case BackgroundType.Window: return GetColorBackground(dntheme.ColorType.SystemColorsWindow);
+			case BackgroundType.TextEditor: return GetColorBackground(dntheme.ColorType.DefaultText);
+			case BackgroundType.DialogWindow: return GetColorBackground(dntheme.ColorType.DialogWindow);
+			case BackgroundType.TextBox: return GetColorBackground(dntheme.ColorType.CommonControlsTextBox);
 			case BackgroundType.TreeNode: return GetColorBackground(dntheme.ColorType.TreeViewBackground);
-			case BackgroundType.Search: return GetColorBackground(dntheme.ColorType.SystemColorsWindow);
-			case BackgroundType.ComboBox: return GetColorBackground(dntheme.ColorType.SystemColorsWindow);
+			case BackgroundType.Search: return GetColorBackground(dntheme.ColorType.ListBoxBackground);
+			case BackgroundType.ComboBox: return GetColorBackground(dntheme.ColorType.CommonControlsComboBoxBackground);
 			case BackgroundType.Toolbar: return GetColorBackground(dntheme.ColorType.ToolBarIconBackground);
 			case BackgroundType.MainMenuMenuItem: return GetColorBackground(dntheme.ColorType.ToolBarIconVerticalBackground);
 			case BackgroundType.ContextMenuItem: return GetColorBackground(dntheme.ColorType.ContextMenuRectangleFill1);
-			case BackgroundType.GridViewItem: return GetColorBackground(dntheme.ColorType.SystemColorsWindow);
+			case BackgroundType.GridViewItem: return GetColorBackground(dntheme.ColorType.GridViewBackground);
 			case BackgroundType.DebuggerToolTip: return Colors.White;//TODO: Update this when the debugger tooltips have been fixed
 			case BackgroundType.CodeToolTip: return GetColorBackground(dntheme.ColorType.CodeToolTip);
 			default:

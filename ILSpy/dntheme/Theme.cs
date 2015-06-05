@@ -352,6 +352,12 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultForeground = "#FF000000",
 				ForegroundResourceKey = "SystemColorsWindowText"
 			},
+			new BrushColorInfo(ColorType.DialogWindow, "Dialog Window") {
+				DefaultForeground = "#FF1E1E1E",
+				ForegroundResourceKey = "DialogWindowForeground",
+				DefaultBackground = "#FFF5F5F5",
+				BackgroundResourceKey = "DialogWindowBackground"
+			},
 			new LinearGradientColorInfo(ColorType.EnvironmentBackground, new Point(0, 1), "MainWindow background", 0, 0.4, 0.6, 1) {
 				ResourceKey = "EnvironmentBackground",
 				DefaultForeground = "#FFEEEEF2",// Environment.EnvironmentBackgroundGradientBegin
@@ -503,14 +509,6 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#FFDADADA",
 				BackgroundResourceKey = "ToolBarDisabledBorder",
 			},
-			new BrushColorInfo(ColorType.ToolBarComboBoxToggleButtonBorder, "Toolbar combobox toggle button border") {
-				DefaultBackground = "White",
-				BackgroundResourceKey = "ToolBarComboBoxToggleButtonBorder",
-			},
-			new BrushColorInfo(ColorType.ToolBarComboBoxTransparentButtonFill, "Toolbar Combobox transparent button fill") {
-				DefaultBackground = "Black",
-				BackgroundResourceKey = "ToolBarComboBoxTransparentButtonFill",
-			},
 			new BrushColorInfo(ColorType.CommonControlsButtonIconBackground, "Button icon background. Makes sure icons look good with this background color.") {
 				DefaultBackground = "#FFECECF0",
 			},
@@ -644,6 +642,94 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#FF007ACC",
 				BackgroundResourceKey = "CommonControlsCheckBoxTextPressed",
 			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxBackground, "CommonControls ComboBox Background") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "CommonControlsComboBoxBackground",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxBackgroundDisabled, "CommonControls ComboBox Background Disabled") {
+				DefaultBackground = "#FFEEEEF2",
+				BackgroundResourceKey = "CommonControlsComboBoxBackgroundDisabled",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxBackgroundFocused, "CommonControls ComboBox Background Focused") {
+				DefaultBackground = "#FFF6F6F6",
+				BackgroundResourceKey = "CommonControlsComboBoxBackgroundFocused",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxBackgroundHover, "CommonControls ComboBox Background Hover") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "CommonControlsComboBoxBackgroundHover",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxBackgroundPressed, "CommonControls ComboBox Background Pressed") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "CommonControlsComboBoxBackgroundPressed",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxBorder, "CommonControls ComboBox Border") {
+				DefaultBackground = "#FFCCCEDB",
+				BackgroundResourceKey = "CommonControlsComboBoxBorder",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxBorderDisabled, "CommonControls ComboBox Border Disabled") {
+				DefaultBackground = "#FFCCCEDB",
+				BackgroundResourceKey = "CommonControlsComboBoxBorderDisabled",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxBorderFocused, "CommonControls ComboBox Border Focused") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CommonControlsComboBoxBorderFocused",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxBorderHover, "CommonControls ComboBox Border Hover") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CommonControlsComboBoxBorderHover",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxBorderPressed, "CommonControls ComboBox Border Pressed") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CommonControlsComboBoxBorderPressed",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxGlyph, "CommonControls ComboBox Glyph") {
+				DefaultBackground = "#FF717171",
+				BackgroundResourceKey = "CommonControlsComboBoxGlyph",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxGlyphBackground, "CommonControls ComboBox Glyph Background") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "CommonControlsComboBoxGlyphBackground",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxGlyphBackgroundDisabled, "CommonControls ComboBox Glyph Background Disabled") {
+				DefaultBackground = "#FFEEEEF2",
+				BackgroundResourceKey = "CommonControlsComboBoxGlyphBackgroundDisabled",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxGlyphBackgroundFocused, "CommonControls ComboBox Glyph Background Focused") {
+				DefaultBackground = "#FFC9DEF5",
+				BackgroundResourceKey = "CommonControlsComboBoxGlyphBackgroundFocused",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxGlyphBackgroundHover, "CommonControls ComboBox Glyph Background Hover") {
+				DefaultBackground = "#FFC9DEF5",
+				BackgroundResourceKey = "CommonControlsComboBoxGlyphBackgroundHover",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxGlyphBackgroundPressed, "CommonControls ComboBox Glyph Background Pressed") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CommonControlsComboBoxGlyphBackgroundPressed",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxGlyphDisabled, "CommonControls ComboBox Glyph Disabled") {
+				DefaultBackground = "#FFCCCEDB",
+				BackgroundResourceKey = "CommonControlsComboBoxGlyphDisabled",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxGlyphFocused, "CommonControls ComboBox Glyph Focused") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "CommonControlsComboBoxGlyphFocused",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxGlyphHover, "CommonControls ComboBox Glyph Hover") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "CommonControlsComboBoxGlyphHover",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxGlyphPressed, "CommonControls ComboBox Glyph Pressed") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "CommonControlsComboBoxGlyphPressed",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxListBackground, "CommonControls ComboBox List Background") {
+				DefaultBackground = "#FFF6F6F6",
+				BackgroundResourceKey = "CommonControlsComboBoxListBackground",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxListBorder, "CommonControls ComboBox ListBorder") {
+				DefaultBackground = "#FFCCCEDB",
+				BackgroundResourceKey = "CommonControlsComboBoxListBorder",
+			},
 			new BrushColorInfo(ColorType.CommonControlsComboBoxListItemBackgroundHover, "CommonControls ComboBox ListItem Background Hover") {
 				DefaultBackground = "#FFC9DEF5",
 				BackgroundResourceKey = "CommonControlsComboBoxListItemBackgroundHover",
@@ -660,6 +746,47 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#FF1E1E1E",
 				BackgroundResourceKey = "CommonControlsComboBoxListItemTextHover",
 			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxSeparator, "CommonControls ComboBox Separator") {
+				DefaultBackground = "#FFCCCEDB",
+				BackgroundResourceKey = "CommonControlsComboBoxSeparator",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxSeparatorFocused, "CommonControls ComboBox Separator Focused") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CommonControlsComboBoxSeparatorFocused",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxSeparatorHover, "CommonControls ComboBox Separator Hover") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CommonControlsComboBoxSeparatorHover",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxSeparatorPressed, "CommonControls ComboBox Separator Pressed") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CommonControlsComboBoxSeparatorPressed",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxText, "CommonControls ComboBox Text") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "CommonControlsComboBoxText",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxTextDisabled, "CommonControls ComboBox Text Disabled") {
+				DefaultBackground = "#FFA2A4A5",
+				BackgroundResourceKey = "CommonControlsComboBoxTextDisabled",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxTextFocused, "CommonControls ComboBox Text Focused") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "CommonControlsComboBoxTextFocused",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxTextHover, "CommonControls ComboBox Text Hover") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "CommonControlsComboBoxTextHover",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxTextInputSelection, "CommonControls ComboBox Text Input Selection") {
+				DefaultBackground = "#66007ACC",
+				BackgroundResourceKey = "CommonControlsComboBoxTextInputSelection",
+			},
+			new BrushColorInfo(ColorType.CommonControlsComboBoxTextPressed, "CommonControls ComboBox Text Pressed") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "CommonControlsComboBoxTextPressed",
+			},
+
 			new BrushColorInfo(ColorType.CommonControlsRadioButtonBackground, "CommonControls RadioButton Background") {
 				DefaultBackground = "#FFFEFEFE",
 				BackgroundResourceKey = "CommonControlsRadioButtonBackground",
@@ -823,6 +950,14 @@ namespace ICSharpCode.ILSpy.dntheme
 			new BrushColorInfo(ColorType.TabItemDisabledBorder, "TabItem Disabled Border") {
 				DefaultBackground = "#FFD9D9D9",
 				BackgroundResourceKey = "TabItem.Disabled.Border",
+			},
+			new BrushColorInfo(ColorType.ListBoxBackground, "ListBox background") {
+				DefaultBackground = "#F5F5F5",
+				BackgroundResourceKey = "ListBoxBackground",
+			},
+			new BrushColorInfo(ColorType.ListBoxBorder, "ListBox border") {
+				DefaultBackground = "#CCCEDB",
+				BackgroundResourceKey = "ListBoxBorder",
 			},
 			new BrushColorInfo(ColorType.ListBoxItemMouseOverBackground, "ListBoxItem MouseOver Background") {
 				DefaultBackground = "#FFC9DEF5",
@@ -1038,10 +1173,6 @@ namespace ICSharpCode.ILSpy.dntheme
 			new BrushColorInfo(ColorType.CodeToolTipBorder, "Code ToolTip border") {
 				DefaultBackground = "#FFCCCEDB",// Environment.ToolTipBorder
 				BackgroundResourceKey = "CodeToolTipBorder",
-			},
-			new BrushColorInfo(ColorType.TVEditListBorder, "TreeView Edit list border") {
-				DefaultBackground = "#FF7F9DB9",
-				BackgroundResourceKey = "TVEditListBorder",
 			},
 			new BrushColorInfo(ColorType.TVExpanderBorderBrush, "TreeView expander border brush") {
 				DefaultBackground = "#FF7898B5",
@@ -1269,14 +1400,6 @@ namespace ICSharpCode.ILSpy.dntheme
 			new BrushColorInfo(ColorType.TreeViewBorder, "TreeView border") {
 				DefaultBackground = "#CCCEDB",
 				BackgroundResourceKey = "TreeViewBorder",
-			},
-			new BrushColorInfo(ColorType.ListBoxBackground, "ListBox background") {
-				DefaultBackground = "#F5F5F5",
-				BackgroundResourceKey = "ListBoxBackground",
-			},
-			new BrushColorInfo(ColorType.ListBoxBorder, "ListBox border") {
-				DefaultBackground = "#CCCEDB",
-				BackgroundResourceKey = "ListBoxBorder",
 			},
 			new BrushColorInfo(ColorType.IconBar, "IconBar") {
 				DefaultBackground = "#E6E7E8",

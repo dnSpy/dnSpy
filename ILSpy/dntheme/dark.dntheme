@@ -78,6 +78,7 @@
 		<color name="systemcolorsmenutext" fg="#F1F1F1" />
 		<color name="systemcolorswindow" bg="#252525" />
 		<color name="systemcolorswindowtext" fg="#F1F1F1" />
+		<color name="dialogwindow" fg="#F1F1F1" bg="#252526" />
 		<color name="environmentbackground" fg="#FF2D2D30" bg="#FF2D2D30" color3="#FF2D2D30" color4="#FF2D2D30" />
 		<color name="environmentforeground" fg="#F1F1F1" />
 		<color name="controlshadow" bg="#71000000" />
@@ -114,8 +115,6 @@
 		<color name="toolbarhorizontalbackground" fg="#2D2D30" bg="#2D2D30" color3="#2D2D30" />
 		<color name="toolbardisabledfill" bg="#383838" />
 		<color name="toolbardisabledborder" bg="#484848" />
-		<color name="toolbarcomboboxtogglebuttonborder" bg="#1B1B1C" />
-		<color name="toolbarcomboboxtransparentbuttonfill" bg="#F1F1F1" />
 		<color name="commoncontrolsbuttoniconbackground" bg="#FF3F3F46" />
 		<color name="commoncontrolsbutton" fg="#FFF1F1F1" bg="#FF3F3F46" />
 		<color name="commoncontrolsbuttonborder" bg="#FF555555" />
@@ -147,10 +146,42 @@
 		<color name="commoncontrolscheckboxtextfocused" bg="#FF007ACC" />
 		<color name="commoncontrolscheckboxtexthover" bg="#FF007ACC" />
 		<color name="commoncontrolscheckboxtextpressed" bg="#FF007ACC" />
+		<color name="commoncontrolscomboboxbackground" bg="#FF252526" />
+		<color name="commoncontrolscomboboxbackgrounddisabled" bg="#FF333337" />
+		<color name="commoncontrolscomboboxbackgroundfocused" bg="#FF252526" />
+		<color name="commoncontrolscomboboxbackgroundhover" bg="#FF3F3F46" />
+		<color name="commoncontrolscomboboxbackgroundpressed" bg="#FF3F3F46" />
+		<color name="commoncontrolscomboboxborder" bg="#FF434346" />
+		<color name="commoncontrolscomboboxborderdisabled" bg="#FF434346" />
+		<color name="commoncontrolscomboboxborderfocused" bg="#FF007ACC" />
+		<color name="commoncontrolscomboboxborderhover" bg="#FF007ACC" />
+		<color name="commoncontrolscomboboxborderpressed" bg="#FF007ACC" />
+		<color name="commoncontrolscomboboxglyph" bg="#FF999999" />
+		<color name="commoncontrolscomboboxglyphbackground" bg="#FF333337" />
+		<color name="commoncontrolscomboboxglyphbackgrounddisabled" bg="#FF2D2D30" />
+		<color name="commoncontrolscomboboxglyphbackgroundfocused" bg="#FF3F3F46" />
+		<color name="commoncontrolscomboboxglyphbackgroundhover" bg="#FF1F1F20" />
+		<color name="commoncontrolscomboboxglyphbackgroundpressed" bg="#FF007ACC" />
+		<color name="commoncontrolscomboboxglyphdisabled" bg="#FF656565" />
+		<color name="commoncontrolscomboboxglyphfocused" bg="#FF007ACC" />
+		<color name="commoncontrolscomboboxglyphhover" bg="#FF007ACC" />
+		<color name="commoncontrolscomboboxglyphpressed" bg="#FFFFFFFF" />
+		<color name="commoncontrolscomboboxlistbackground" bg="#FF1F1F1C" />
+		<color name="commoncontrolscomboboxlistborder" bg="#FF3F3F46" />
 		<color name="commoncontrolscomboboxlistitembackgroundhover" bg="#FF3F3F46" />
 		<color name="commoncontrolscomboboxlistitemborderhover" bg="#FF3F3F46" />
 		<color name="commoncontrolscomboboxlistitemtext" bg="#FFFFFFFF" />
 		<color name="commoncontrolscomboboxlistitemtexthover" bg="#FFFFFFFF" />
+		<color name="commoncontrolscomboboxseparator" bg="#FF434346" />
+		<color name="commoncontrolscomboboxseparatorfocused" bg="#FF007ACC" />
+		<color name="commoncontrolscomboboxseparatorhover" bg="#FF007ACC" />
+		<color name="commoncontrolscomboboxseparatorpressed" bg="#FF007ACC" />
+		<color name="commoncontrolscomboboxtext" bg="#FFF1F1F1" />
+		<color name="commoncontrolscomboboxtextdisabled" bg="#FF656565" />
+		<color name="commoncontrolscomboboxtextfocused" bg="#FFFFFFFF" />
+		<color name="commoncontrolscomboboxtexthover" bg="#FFFFFFFF" />
+		<color name="commoncontrolscomboboxtextinputselection" bg="#66007ACC" />
+		<color name="commoncontrolscomboboxtextpressed" bg="#FFFFFFFF" />
 		<color name="commoncontrolsradiobuttonbackground" bg="#FF252526" />
 		<color name="commoncontrolsradiobuttonbackgrounddisabled" bg="#FF2D2D30" />
 		<color name="commoncontrolsradiobuttonbackgroundfocused" bg="#FF1F1F20" />
@@ -190,6 +221,8 @@
 		<color name="tabitemselectedborder" bg="#FF424245" />
 		<color name="tabitemdisabledbackground" bg="#FF818183" />
 		<color name="tabitemdisabledborder" bg="#FF969698" />
+		<color name="listboxbackground" bg="#252526" />
+		<color name="listboxborder" bg="#3F3F46" />
 		<color name="listboxitemmouseoverbackground" bg="#FF575759" />
 		<color name="listboxitemmouseoverborder" bg="#FF575759" />
 		<color name="listboxitemselectedinactivebackground" bg="#80575759" />
@@ -238,7 +271,6 @@
 		<!-- Original fg=#FFF1F1F1, bg=#FF424245 but the bg was too light -->
 		<color name="codetooltip" fg="#FFDCDCDC" bg="#FF1E1E1E" />
 		<color name="codetooltipborder" bg="#FF4D4D50" />
-		<color name="tveditlistborder" bg="#FF7F9DB9" />
 		<color name="tvexpanderborderbrush" bg="#A0A0A0" />
 		<color name="tvexpanderborderbackground" fg="#606060" bg="#606060" />
 		<color name="tvexpanderpathfill" bg="#F1F1F1" />
@@ -291,8 +323,6 @@
 		<color name="treeviewitemmouseover" fg="White" bg="#505050" />
 		<color name="treeviewbackground" bg="#252526" />
 		<color name="treeviewborder" bg="#3F3F46" />
-		<color name="listboxbackground" bg="#252526" />
-		<color name="listboxborder" bg="#3F3F46" />
 		<color name="iconbar" bg="#333333" />
 		<color name="iconbarborder" bg="#555555" />
 		<color name="environmentfiletabbackground" bg="#FF2D2D30" />

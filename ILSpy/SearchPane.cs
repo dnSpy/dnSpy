@@ -69,11 +69,11 @@ namespace ICSharpCode.ILSpy
 		}
 
 		public ImageSource SearchImage {
-			get { return ImageCache.Instance.GetImage("Search", BackgroundType.Window); }
+			get { return ImageCache.Instance.GetImage("Search", BackgroundType.TextBox); }
 		}
 
 		public ImageSource ClearSearchImage {
-			get { return ImageCache.Instance.GetImage("ClearSearch", BackgroundType.Window); }
+			get { return ImageCache.Instance.GetImage("ClearSearch", BackgroundType.TextBox); }
 		}
 
 		public string PaneName {
