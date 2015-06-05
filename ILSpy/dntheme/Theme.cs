@@ -329,7 +329,7 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "SystemColorsInactiveCaption"
 			},
 			new BrushColorInfo(ColorType.SystemColorsInactiveCaptionText, "SystemColors.InactiveCaptionText") {
-				DefaultForeground = "#FF434E54",
+				DefaultForeground = "#FF000000",
 				ForegroundResourceKey = "SystemColorsInactiveCaptionText"
 			},
 			new BrushColorInfo(ColorType.SystemColorsInactiveSelectionHighlight, "SystemColors.InactiveSelectionHighlight") {
