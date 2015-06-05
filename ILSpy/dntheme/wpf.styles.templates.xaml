@@ -1659,7 +1659,7 @@
                         </Border>
                         
                         <Border x:Name="Header"
-                                Padding="3,1,3,0"
+                                Padding="3,1,3,1"
                                 Grid.Row="0"
                                 Grid.RowSpan="2"
                                 Grid.Column="1">
