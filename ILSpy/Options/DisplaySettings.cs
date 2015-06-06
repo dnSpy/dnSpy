@@ -180,6 +180,19 @@ namespace ICSharpCode.ILSpy.Options
 			}
 		}
 
+		bool autoHighlightRefs;
+
+		public bool AutoHighlightRefs
+		{
+			get { return autoHighlightRefs; }
+			set {
+				if (autoHighlightRefs != value) {
+					autoHighlightRefs = value;
+					OnPropertyChanged("AutoHighlightRefs");
+				}
+			}
+		}
+
 		public void CopyValues(DisplaySettings s)
 		{
 			this.SelectedFont = s.selectedFont;
@@ -192,6 +205,7 @@ namespace ICSharpCode.ILSpy.Options
 			this.DecompileFullType = s.decompileFullType;
 			this.NewEmptyTabs = s.newEmptyTabs;
 			this.RestoreTabsAtStartup = s.restoreTabsAtStartup;
+			this.AutoHighlightRefs = s.autoHighlightRefs;
 		}
 	}
 }

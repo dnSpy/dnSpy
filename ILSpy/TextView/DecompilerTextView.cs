@@ -76,7 +76,7 @@ namespace ICSharpCode.ILSpy.TextView
 		internal readonly IconBarManager manager;
 		readonly IconBarMargin iconMargin;
 		readonly TextMarkerService textMarkerService;
-		readonly List<ITextMarker> localReferenceMarks = new List<ITextMarker>();
+		readonly List<ITextMarker> markedReferences = new List<ITextMarker>();
 
 		readonly SearchPanel searchPanel;
 
@@ -111,7 +111,7 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.Options.RequireControlModifierForHyperlinkClick = false;
 			textEditor.TextArea.TextView.MouseHover += TextViewMouseHover;
 			textEditor.TextArea.TextView.MouseHoverStopped += TextViewMouseHoverStopped;
-			textEditor.TextArea.TextView.MouseDown += TextViewMouseDown;
+			textEditor.TextArea.TextView.MouseDown += (s, e) => MainWindow.Instance.ClosePopups();
 			textEditor.SetBinding(Control.FontFamilyProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = new PropertyPath("SelectedFont") });
 			textEditor.SetBinding(Control.FontSizeProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = new PropertyPath("SelectedFontSize") });
 			
@@ -140,6 +140,21 @@ namespace ICSharpCode.ILSpy.TextView
 			waitAdornerButton.IsVisibleChanged += waitAdornerButton_IsVisibleChanged;
 
 			textEditor.TextArea.MouseWheel += TextArea_MouseWheel;
+			TextEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
+		}
+
+		void Caret_PositionChanged(object sender, EventArgs e)
+		{
+			MainWindow.Instance.ClosePopups();
+
+			if (ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.AutoHighlightRefs) {
+				int offset = textEditor.TextArea.Caret.Offset;
+				var refSeg = GetReferenceSegmentAt(offset);
+				if (refSeg != null)
+					MarkReferences(refSeg);
+				else
+					ClearMarkedReferences();
+			}
 		}
 
 		void TextArea_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -560,7 +575,7 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.LanguageTokens = textOutput.LanguageTokens;
 			textEditor.LanguageTokens.Finish();
 
-			ClearLocalReferenceMarks();
+			ClearMarkedReferences();
 			textEditor.ScrollToHome();
 			if (foldingManager != null) {
 				FoldingManager.Uninstall(foldingManager);
@@ -919,7 +934,7 @@ namespace ICSharpCode.ILSpy.TextView
 				MainWindow.Instance.SetActiveView(this);
 				GoToMousePosition();
 				MainWindow.Instance.RecordHistory(this);
-				MarkLocals(referenceSegment);
+				MarkReferences(referenceSegment);
 				MainWindow.Instance.SetTextEditorFocus(this);
 				textEditor.Select(pos, 0);
 				textEditor.ScrollTo(textEditor.TextArea.Caret.Line, textEditor.TextArea.Caret.Column);
@@ -931,7 +946,7 @@ namespace ICSharpCode.ILSpy.TextView
 				return;
 			}
 
-			if (MarkLocals(referenceSegment)) {
+			if (MarkReferences(referenceSegment)) {
 				e.Handled = false;	// Allow another handler to set a new caret position
 				return;
 			}
@@ -943,42 +958,33 @@ namespace ICSharpCode.ILSpy.TextView
 			return;
 		}
 
-		bool MarkLocals(ReferenceSegment referenceSegment)
+		bool MarkReferences(ReferenceSegment referenceSegment)
 		{
 			object reference = referenceSegment.Reference;
-			if (referenceSegment.IsLocal) {
-				ClearLocalReferenceMarks();
-				if (references != null && reference != null) {
-					foreach (var tmp in references) {
-						var r = tmp;
-						if (RefSegEquals(referenceSegment, r)) {
-							var mark = textMarkerService.Create(r.StartOffset, r.Length);
-							mark.HighlightingColor = () => {
-								return (r.IsLocalTarget ?
-									Themes.Theme.GetColor(dntheme.ColorType.LocalDefinition) :
-									Themes.Theme.GetColor(dntheme.ColorType.LocalReference)).TextInheritedColor;
-							};
-							localReferenceMarks.Add(mark);
-						}
-					}
+			if (references == null || reference == null)
+				return false;
+			ClearMarkedReferences();
+			foreach (var tmp in references) {
+				var r = tmp;
+				if (RefSegEquals(referenceSegment, r)) {
+					var mark = textMarkerService.Create(r.StartOffset, r.Length);
+					mark.HighlightingColor = () => {
+						return (r.IsLocalTarget ?
+							Themes.Theme.GetColor(dntheme.ColorType.LocalDefinition) :
+							Themes.Theme.GetColor(dntheme.ColorType.LocalReference)).TextInheritedColor;
+					};
+					markedReferences.Add(mark);
 				}
-				return true;
 			}
-
-			return false;
+			return true;
 		}
 
-		void TextViewMouseDown(object sender, MouseButtonEventArgs e)
+		void ClearMarkedReferences()
 		{
-			MainWindow.Instance.ClosePopups();
-		}
-
-		void ClearLocalReferenceMarks()
-		{
-			foreach (var mark in localReferenceMarks) {
+			foreach (var mark in markedReferences) {
 				textMarkerService.Remove(mark);
 			}
-			localReferenceMarks.Clear();
+			markedReferences.Clear();
 		}
 		
 		/// <summary>
@@ -1105,6 +1111,8 @@ namespace ICSharpCode.ILSpy.TextView
 
 		ReferenceSegment GetReferenceSegmentAt(int offset)
 		{
+			if (referenceElementGenerator == null || referenceElementGenerator.References == null)
+				return null;
 			var segs = referenceElementGenerator.References.FindSegmentsContaining(offset).ToArray();
 			foreach (var seg in segs) {
 				if (seg.StartOffset <= offset && offset < seg.EndOffset)
@@ -1291,7 +1299,7 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 
 			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Escape) {
-				ClearLocalReferenceMarks();
+				ClearMarkedReferences();
 				MainWindow.Instance.ClosePopups();
 				e.Handled = true;
 				return;

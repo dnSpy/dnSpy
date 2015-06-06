@@ -115,6 +115,7 @@ namespace ICSharpCode.ILSpy.Options
 			s.DecompileFullType = (bool?)e.Attribute("DecompileFullType") ?? true;
 			s.NewEmptyTabs = (bool?)e.Attribute("NewEmptyTabs") ?? false;
 			s.RestoreTabsAtStartup = (bool?)e.Attribute("RestoreTabsAtStartup") ?? true;
+			s.AutoHighlightRefs = (bool?)e.Attribute("AutoHighlightRefs") ?? true;
 			
 			return s;
 		}
@@ -143,6 +144,7 @@ namespace ICSharpCode.ILSpy.Options
 			section.SetAttributeValue("DecompileFullType", s.DecompileFullType);
 			section.SetAttributeValue("NewEmptyTabs", s.NewEmptyTabs);
 			section.SetAttributeValue("RestoreTabsAtStartup", s.RestoreTabsAtStartup);
+			section.SetAttributeValue("AutoHighlightRefs", s.AutoHighlightRefs);
 			
 			XElement existingElement = root.Element("DisplaySettings");
 			if (existingElement != null)
