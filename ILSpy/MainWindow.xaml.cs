@@ -177,6 +177,7 @@ namespace ICSharpCode.ILSpy
 			this.DataContext = sessionSettings;
 			
 			InitializeComponent();
+			AddTitleInfo(IntPtr.Size == 4 ? "x86" : "x64");
 			App.CompositionContainer.ComposeParts(this);
 			
 			if (sessionSettings.LeftColumnWidth > 0)
@@ -1192,16 +1193,36 @@ namespace ICSharpCode.ILSpy
 			assemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
 			assemblyListTreeNode.Select = SelectNode;
 			treeView.Root = assemblyListTreeNode;
-			
-			if (assemblyList.ListName == AssemblyListManager.DefaultListName)
-				this.Title = string.Format("dnSpy ({0})", GetCpuType());
-			else
-				this.Title = string.Format("dnSpy ({0}) - {1}", GetCpuType(), assemblyList.ListName);
+
+			UpdateTitle();
 		}
 
-		static string GetCpuType()
+		void UpdateTitle()
 		{
-			return IntPtr.Size == 4 ? "x86" : "x64";
+			this.Title = GetDefaultTitle();
+		}
+
+		string GetDefaultTitle()
+		{
+			var t = string.Format("dnSpy ({0})", string.Join(", ", titleInfos.ToArray()));
+			if (assemblyList != null && assemblyList.ListName != AssemblyListManager.DefaultListName)
+				t = string.Format("{0} - {1}", t, assemblyList.ListName);
+			return t;
+		}
+		List<string> titleInfos = new List<string>();
+
+		public void AddTitleInfo(string info)
+		{
+			if (!titleInfos.Contains(info)) {
+				titleInfos.Add(info);
+				UpdateTitle();
+			}
+		}
+
+		public void RemoveTitleInfo(string info)
+		{
+			if (titleInfos.Remove(info))
+				UpdateTitle();
 		}
 		
 		void assemblyList_Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

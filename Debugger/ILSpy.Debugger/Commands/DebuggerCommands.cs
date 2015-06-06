@@ -229,16 +229,29 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			return false;
 		}
 
+		static void SetRunningStatusMessage()
+		{
+			MainWindow.Instance.SetStatus("Running…");
+		}
+
+		static void SetReadyStatusMessage()
+		{
+			MainWindow.Instance.SetStatus("Ready");
+		}
+
 		void DebuggerService_DebugEvent(object sender, DebuggerEventArgs e)
 		{
+			const string DebuggingTitleInfo = "Debugging";
 			switch (e.DebuggerEvent) {
 			case DebuggerEvent.Started:
 				MainWindow.Instance.SessionSettings.FilterSettings.ShowInternalApi = true;
-				MainWindow.Instance.SetStatus("Running…");
+				SetRunningStatusMessage();
+				MainWindow.Instance.AddTitleInfo(DebuggingTitleInfo);
 				break;
 
 			case DebuggerEvent.Stopped:
 				MainWindow.Instance.HideStatus();
+				MainWindow.Instance.RemoveTitleInfo(DebuggingTitleInfo);
 				break;
 
 			case DebuggerEvent.Paused:
@@ -255,7 +268,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (debugger == null)
 				return;
 			if (debugger.IsProcessRunning) {
-				MainWindow.Instance.SetStatus("Running…");
+				SetRunningStatusMessage();
 				return;
 			}
 			
@@ -268,7 +281,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (DebugInformation.MustJumpToReference)
 				DebugUtils.JumpToCurrentStatement(MainWindow.Instance.SafeActiveTextView);
 
-			inst.SetStatus("Debugging…");
+			SetReadyStatusMessage();
 		}
 
 		void IPlugin.OnLoaded()
@@ -446,7 +459,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			var debugger = DebuggerService.CurrentDebugger;
 			if (debugger != null && debugger.IsDebugging && !debugger.IsProcessRunning) {
 				debugger.Continue();
-				MainWindow.Instance.SetStatus("Running…");
+				SetRunningStatusMessage();
 				return true;
 			}
 
@@ -458,7 +471,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			var debugger = DebuggerService.CurrentDebugger;
 			if (debugger != null && debugger.IsDebugging && debugger.IsProcessRunning) {
 				debugger.Break();
-				MainWindow.Instance.SetStatus("Debugging…");
+				SetReadyStatusMessage();
 				return true;
 			}
 
