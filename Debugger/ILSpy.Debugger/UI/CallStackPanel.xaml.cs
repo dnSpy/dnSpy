@@ -29,8 +29,20 @@ using NR = ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.Debugger.UI
 {
+	[Export(typeof(IPlugin))]
+	class CallstackPanelPlugin : IPlugin
+	{
+		public void OnLoaded()
+		{
+			var cmd = new CallstackPanelcommand(true);
+			MainWindow.Instance.InputBindings.Add(new KeyBinding(cmd, Key.C, ModifierKeys.Control | ModifierKeys.Alt));
+			MainWindow.Instance.InputBindings.Add(new KeyBinding(cmd, Key.D7, ModifierKeys.Alt));
+			MainWindow.Instance.InputBindings.Add(new KeyBinding(cmd, Key.NumPad7, ModifierKeys.Alt));
+		}
+	}
+
 	[Export(typeof(IPaneCreator))]
-	public class CallStackPanelCreator : IPaneCreator
+	class CallStackPanelCreator : IPaneCreator
 	{
 		public IPane Create(string name)
 		{
@@ -78,6 +90,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		{
 			if (!IsVisible)
 				MainWindow.Instance.ShowInBottomPane(PaneTitle, this);
+			DebugUtils.FocusListView(view);
 		}
 
 		public void Opened()
@@ -329,7 +342,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
         }
     }
     
-	public class CallStackItem
+	class CallStackItem
 	{
 		public ImageSource Image { get; set; }
 		public int FrameNumber { get; set; }
@@ -345,11 +358,24 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 
 	[ExportMainMenuCommand(MenuIcon = "CallStackWindow",
 						   Menu = "_Debug",
+						   MenuInputGestureText = "Ctrl+Alt+C",
 						   MenuHeader = "_Show Call Stack",
 						   MenuCategory = "View",
 						   MenuOrder = 5400)]
-    public class CallstackPanelcommand : SimpleCommand
+    class CallstackPanelcommand : SimpleCommand
     {
+		readonly bool canAlwaysExecute;
+
+		public CallstackPanelcommand()
+			: this(false)
+		{
+		}
+
+		public CallstackPanelcommand(bool canAlwaysExecute)
+		{
+			this.canAlwaysExecute = canAlwaysExecute;
+		}
+
         public override void Execute(object parameter)
         {
             CallStackPanel.Instance.Show();
@@ -357,7 +383,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 
 		public override bool CanExecute(object parameter)
 		{
-			return MainWindow.Instance.BottomPaneContent != CallStackPanel.Instance;
+			return canAlwaysExecute || MainWindow.Instance.BottomPaneContent != CallStackPanel.Instance;
 		}
     }
 }

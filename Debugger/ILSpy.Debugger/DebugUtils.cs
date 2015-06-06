@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 using dnlib.DotNet;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
@@ -110,6 +111,33 @@ namespace ICSharpCode.ILSpy.Debugger
 				return false;
 
 			return true;
+		}
+
+		public static void FocusListView(ListView view)
+		{
+			if (!view.IsVisible)
+				view.IsVisibleChanged += view_IsVisibleChanged;
+			else
+				FocusListViewInternal(view);
+		}
+
+		static void view_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+		{
+			var view = (ListView)sender;
+			view.IsVisibleChanged -= view_IsVisibleChanged;
+			FocusListViewInternal(view);
+		}
+
+		static void FocusListViewInternal(ListView view)
+		{
+			bool focused = false;
+			var item = view.SelectedItem as UIElement;
+			if (item == null && view.SelectedItem != null)
+				item = view.ItemContainerGenerator.ContainerFromItem(view.SelectedItem) as UIElement;
+			if (item != null)
+				focused = item.Focus();
+			if (!focused)
+				view.Focus();
 		}
 	}
 }

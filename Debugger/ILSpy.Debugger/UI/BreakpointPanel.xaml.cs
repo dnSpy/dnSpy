@@ -20,8 +20,19 @@ using ICSharpCode.ILSpy.Options;
 
 namespace ICSharpCode.ILSpy.Debugger.UI
 {
+	[Export(typeof(IPlugin))]
+	class BreakpointsPanelPlugin : IPlugin
+	{
+		public void OnLoaded()
+		{
+			var cmd = new BreakpointsPanelCommand(true);
+			MainWindow.Instance.InputBindings.Add(new KeyBinding(cmd, Key.B, ModifierKeys.Control | ModifierKeys.Alt));
+			MainWindow.Instance.InputBindings.Add(new KeyBinding(cmd, Key.F9, ModifierKeys.Alt));
+		}
+	}
+
 	[Export(typeof(IPaneCreator))]
-	public class BreakpointPanelCreator : IPaneCreator
+	class BreakpointPanelCreator : IPaneCreator
 	{
 		public IPane Create(string name)
 		{
@@ -71,6 +82,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 		{
 			if (!IsVisible)
 				MainWindow.Instance.ShowInBottomPane(PaneTitle, this);
+			DebugUtils.FocusListView(view);
 		}
 
 		public void Opened()
@@ -246,11 +258,24 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 
 	[ExportMainMenuCommand(MenuIcon = "BreakpointsWindow",
 						   Menu = "_Debug",
+						   MenuInputGestureText = "Ctrl+Alt+B",
 						   MenuHeader = "Show _Breakpoints",
 						   MenuCategory = "Breakpoints",
 						   MenuOrder = 5320)]
-    public class BookmarkManagerPanelCommand : SimpleCommand
+    class BreakpointsPanelCommand : SimpleCommand
     {
+		readonly bool canAlwaysExecute;
+
+		public BreakpointsPanelCommand()
+			: this(false)
+		{
+		}
+
+		public BreakpointsPanelCommand(bool canAlwaysExecute)
+		{
+			this.canAlwaysExecute = canAlwaysExecute;
+		}
+
         public override void Execute(object parameter)
         {
             BreakpointPanel.Instance.Show();
@@ -258,7 +283,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 
 		public override bool CanExecute(object parameter)
 		{
-			return MainWindow.Instance.BottomPaneContent != BreakpointPanel.Instance;
+			return canAlwaysExecute || MainWindow.Instance.BottomPaneContent != BreakpointPanel.Instance;
 		}
     }
 }

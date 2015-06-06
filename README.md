@@ -92,6 +92,11 @@ Alt+Click	| (Text view) Don't follow the clicked reference so it's possible to s
 F7			| Give text editor keyboard focus
 Ctrl+Alt+0	| Give text editor keyboard focus
 Ctrl+Alt+L	| Give tree view keyboard focus
+Ctrl+Alt+B	| Show Breakpoints window
+Alt+F9		| Show Breakpoints window
+Ctrl+Alt+C	| Show Call Stack window
+Alt+7		| Show Call Stack window
+
 
 Credits
 =======

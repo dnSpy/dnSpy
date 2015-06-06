@@ -1091,6 +1091,21 @@ namespace ICSharpCode.ILSpy
 			// Make sure that when no tabs are created that we have focus. If we don't do this we
 			// can't press Ctrl+K and open the asm search.
 			this.Focus();
+
+			// Sometimes we get keyboard focus when it's better that the text editor gets the focus instead
+			this.GotKeyboardFocus += MainWindow_GotKeyboardFocus;
+		}
+
+		void MainWindow_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+		{
+			if (e.NewFocus == this) {
+				var tabState = ActiveTabState;
+				if (tabState != null) {
+					tabState.FocusContent();
+					e.Handled = true;
+					return;
+				}
+			}
 		}
 
 		IPane GetPane(DockedPane dockedPane, string name)
