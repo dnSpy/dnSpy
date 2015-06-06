@@ -4650,44 +4650,63 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ToggleButton}">
-					<Grid Width="16" Height="16" Background="Transparent">
-						<Grid.RowDefinitions>
-							<RowDefinition Height="*" />
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="*" />
-						</Grid.RowDefinitions>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-						</Grid.ColumnDefinitions>
-						<Border Grid.Row="1" Grid.Column="1"
-							Name="border"
-							Width="9"
-                            Height="9"
-                            BorderThickness="1"
-                            BorderBrush="{DynamicResource TVExpanderBorderBrush}"
-                            Background="{DynamicResource TVExpanderBorderBackground}"
-                            CornerRadius="1"
-                            SnapsToDevicePixels="True">
-							<Path Name="ExpandPath"
-                              Margin="1,1,1,1"
-                              Fill="{DynamicResource TVExpanderPathFill}"
-                              Data="M 0 2 L 0 3 L 2 3 L 2 5 L 3 5 L 3 3 L 5 3 L 5 2 L 3 2 L 3 0 L 2 0 L 2 2 Z" />
-						</Border>
-					</Grid>
-                    <ControlTemplate.Triggers>
+					<Border Width="16"
+							Height="16"
+							Background="Transparent">
+						<!-- TODO: This path is BLURRY -->
+						<Path Name="ExpandPath"
+							  Fill="Transparent"
+							  Stroke="{DynamicResource TreeViewGlyph}"
+							  Data="M0,0 L0,6 L6,0 z"
+							  VerticalAlignment="Center"
+							  HorizontalAlignment="Center"
+							  SnapsToDevicePixels="True">
+							<Path.RenderTransform>
+								<RotateTransform Angle="135"
+                                                 CenterX="3"
+                                                 CenterY="3"/>
+							</Path.RenderTransform>
+						</Path>
+					</Border>
+					<ControlTemplate.Triggers>
                         <Trigger Property="IsChecked"
                                  Value="True">
-                            <Setter Property="Data"
-                                    TargetName="ExpandPath"
-                                    Value="M 0 2 L 0 3 L 5 3 L 5 2 Z" />
+							<Setter TargetName="ExpandPath"
+                                    Property="RenderTransform">
+								<Setter.Value>
+									<RotateTransform Angle="180"
+                                                     CenterX="3"
+                                                     CenterY="3"/>
+								</Setter.Value>
+							</Setter>
+							<Setter TargetName="ExpandPath"
+									Property="Fill"
+									Value="{DynamicResource TreeViewGlyph}" />
+							<Setter TargetName="ExpandPath"
+									Property="Stroke"
+									Value="{DynamicResource TreeViewGlyph}" />
                         </Trigger>
 						<Trigger Property="IsMouseOver" Value="True">
-							<Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource TVExpanderMouseOverBorderBrush}"/>
-							<Setter Property="Fill" TargetName="ExpandPath" Value="{DynamicResource TVExpanderMouseOverPathFill}"/>
+							<Setter TargetName="ExpandPath"
+									Property="Stroke"
+									Value="{DynamicResource TreeViewGlyphMouseOver}" />
+							<Setter TargetName="ExpandPath"
+									Property="Fill"
+									Value="Transparent" />
 						</Trigger>
-                    </ControlTemplate.Triggers>
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="IsMouseOver" Value="True"/>
+								<Condition Property="IsChecked" Value="True"/>
+							</MultiTrigger.Conditions>
+							<Setter TargetName="ExpandPath"
+									Property="Stroke"
+									Value="{DynamicResource TreeViewGlyphMouseOver}" />
+							<Setter TargetName="ExpandPath"
+									Property="Fill"
+									Value="{DynamicResource TreeViewGlyphMouseOver}" />
+						</MultiTrigger>
+					</ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -4840,15 +4859,6 @@
                         </Border>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsSelected"
-                                 Value="True">
-                            <Setter TargetName="nodeView"
-                                    Property="TextBackground"
-                                    Value="{DynamicResource SystemColorsHighlight}" />
-                            <Setter TargetName="nodeView"
-                                    Property="Foreground"
-                                    Value="{DynamicResource SystemColorsHighlightText}" />
-                        </Trigger>
                         <Trigger Property="IsMouseOver"
                                  Value="True">
                             <Setter TargetName="nodeView"
@@ -4857,6 +4867,15 @@
                             <Setter TargetName="nodeView"
                                     Property="Foreground"
                                     Value="{DynamicResource TreeViewItemMouseOverForeground}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected"
+                                 Value="True">
+                            <Setter TargetName="nodeView"
+                                    Property="TextBackground"
+                                    Value="{DynamicResource SystemColorsHighlight}" />
+                            <Setter TargetName="nodeView"
+                                    Property="Foreground"
+                                    Value="{DynamicResource SystemColorsHighlightText}" />
                         </Trigger>
                         <!--<MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -4891,16 +4910,12 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type shtv:SharpTreeNodeView}">
                     <Grid>
-                        <shtv:LinesRenderer Name="linesRenderer"
-                                               ClipToBounds="True"
-                                               Visibility="{Binding ShowLines, RelativeSource={RelativeSource AncestorType={x:Type shtv:SharpTreeView}}, Converter={shtv:CollapsedWhenFalse}}" />
                         <StackPanel Orientation="Horizontal">
                             <FrameworkElement Name="spacer" />
                             <ToggleButton Name="expander"
                                           Style="{StaticResource ExpandCollapseToggleStyle}"
                                           IsChecked="{Binding IsExpanded}"
                                           Visibility="Hidden"
-                                          Margin="0 0 6 0"
                                           VerticalAlignment="Center" />
                             <Border Name="checkBoxContainer"
                                     Width="16"

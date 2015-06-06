@@ -275,12 +275,6 @@
 		<!-- Original fg=#FFF1F1F1, bg=#FF424245 but the bg was too light -->
 		<color name="codetooltip" fg="#FFDCDCDC" bg="#FF1E1E1E" />
 		<color name="codetooltipborder" bg="#FF4D4D50" />
-		<color name="tvexpanderborderbrush" bg="#A0A0A0" />
-		<color name="tvexpanderborderbackground" fg="#606060" bg="#606060" />
-		<color name="tvexpanderpathfill" bg="#F1F1F1" />
-		<color name="tvexpandermouseoverborderbrush" bg="#00CCFF" />
-		<color name="tvexpandermouseoverpathfill" bg="#00CCFF" />
-		<color name="tvitemalternationbackground" bg="#3E81AD" />
 		<color name="gridviewbackground" bg="#252526" />
 		<color name="gridviewborder" bg="#3F3F46" />
 		<color name="gridviewcolumnheaderborderbackground" fg="#333337" bg="#333337" />
@@ -321,10 +315,12 @@
 		<color name="avaloneditsearchdropdownbuttonactiveborder" bg="#3E81AD" />
 		<color name="avaloneditsearchdropdownbuttonactivebackground" bg="#06273D" />
 		<color name="listarrowbackground" bg="#F1F1F1" />
-		<color name="treeviewlinebackground" bg="#606060" />
 		<color name="treeviewitemmouseover" fg="White" bg="#505050" />
-		<color name="treeviewbackground" bg="#252526" />
+		<color name="treeview" fg="#FFF1F1F1" bg="#FF252526" />
 		<color name="treeviewborder" bg="#3F3F46" />
+		<color name="treeviewglyph" bg="#FFF1F1F1" />
+		<color name="treeviewglyphmouseover" bg="#FF007ACC" />
+		<color name="tvitemalternationbackground" bg="#3E81AD" />
 		<color name="iconbar" bg="#333333" />
 		<color name="iconbarborder" bg="#555555" />
 		<color name="environmentfiletabbackground" bg="#FF2D2D30" />

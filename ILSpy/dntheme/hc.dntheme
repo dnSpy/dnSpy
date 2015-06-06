@@ -227,12 +227,6 @@
 		<color name="tooltipforeground" fg="#FFFFFFFF" />
 		<color name="codetooltip" fg="#FFFFFFFF" bg="#FF000000" />
 		<color name="codetooltipborder" bg="#FFFFFFFF" />
-		<color name="tvexpanderborderbrush" bg="#FFFFFFFF" />
-		<color name="tvexpanderborderbackground" fg="#FF000000" bg="#FF000000" />
-		<color name="tvexpanderpathfill" bg="#FFFFFFFF" />
-		<color name="tvexpandermouseoverborderbrush" bg="#FF800080" />
-		<color name="tvexpandermouseoverpathfill" bg="#FF800080" />
-		<color name="tvitemalternationbackground" bg="#FF808080" />
 		<color name="gridviewbackground" bg="#FF000000" />
 		<color name="gridviewborder" bg="#FFFFFFFF" />
 		<color name="gridviewcolumnheaderborderbackground" fg="#FFFFFFFF" bg="#FFFFFFFF" />
@@ -273,10 +267,12 @@
 		<color name="avaloneditsearchdropdownbuttonactiveborder" bg="#FFFFFFFF" />
 		<color name="avaloneditsearchdropdownbuttonactivebackground" bg="#FF000000" />
 		<color name="listarrowbackground" bg="#FFFFFFFF" />
-		<color name="treeviewlinebackground" bg="#FFFFFFFF" />
 		<color name="treeviewitemmouseover" fg="#FFFFFFFF" bg="#FF800080" />
-		<color name="treeviewbackground" bg="#FF000000" />
+		<color name="treeview" fg="#FFFFFFFF" bg="#FF000000" />
 		<color name="treeviewborder" bg="#FFFFFFFF" />
+		<color name="treeviewglyph" bg="#FFFFFFFF" />
+		<color name="treeviewglyphmouseover" bg="#FF800080" />
+		<color name="tvitemalternationbackground" bg="#FF808080" />
 		<color name="iconbar" bg="#E6E7E8" />
 		<color name="iconbarborder" bg="#FFFFFFFF" />
 		<color name="environmentfiletabbackground" bg="#FF000000" />

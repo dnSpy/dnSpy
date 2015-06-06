@@ -1192,31 +1192,6 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#FFCCCEDB",// Environment.ToolTipBorder
 				BackgroundResourceKey = "CodeToolTipBorder",
 			},
-			new BrushColorInfo(ColorType.TVExpanderBorderBrush, "TreeView expander border brush") {
-				DefaultBackground = "#FF7898B5",
-				BackgroundResourceKey = "TVExpanderBorderBrush",
-			},
-			new LinearGradientColorInfo(ColorType.TVExpanderBorderBackground, new Point(1, 1), "TreeView expander border background", 0.2, 1) {
-				ResourceKey = "TVExpanderBorderBackground",
-				DefaultForeground = "#FFFFFFFF",
-				DefaultBackground = "#FFFFFFFF",
-			},
-			new BrushColorInfo(ColorType.TVExpanderPathFill, "TreeView expander path fill") {
-				DefaultBackground = "Black",
-				BackgroundResourceKey = "TVExpanderPathFill",
-			},
-			new BrushColorInfo(ColorType.TVExpanderMouseOverBorderBrush, "TreeView expander mouse over border brush") {
-				DefaultBackground = "#37CAF7",
-				BackgroundResourceKey = "TVExpanderMouseOverBorderBrush",
-			},
-			new BrushColorInfo(ColorType.TVExpanderMouseOverPathFill, "TreeView expander mouse over path fill") {
-				DefaultBackground = "#37CAF7",
-				BackgroundResourceKey = "TVExpanderMouseOverPathFill",
-			},
-			new BrushColorInfo(ColorType.TVItemAlternationBackground, "TreeViewItem alternation background") {
-				DefaultBackground = "WhiteSmoke",
-				BackgroundResourceKey = "TVItemAlternationBackground",
-			},
 			new BrushColorInfo(ColorType.GridViewBackground, "GridView background") {
 				DefaultBackground = "#F5F5F5",
 				BackgroundResourceKey = "GridViewBackground",
@@ -1393,23 +1368,33 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "Black",
 				BackgroundResourceKey = "ListArrowBackground",
 			},
-			new BrushColorInfo(ColorType.TreeViewLineBackground, "TreeView line background") {
-				DefaultBackground = "LightGray",
-				BackgroundResourceKey = "TreeViewLineBackground",
-			},
 			new BrushColorInfo(ColorType.TreeViewItemMouseOver, "TreeViewItem mouse over") {
 				DefaultBackground = "#006699",
 				BackgroundResourceKey = "TreeViewItemMouseOverTextBackground",
 				DefaultForeground = "White",
 				ForegroundResourceKey = "TreeViewItemMouseOverForeground",
 			},
-			new BrushColorInfo(ColorType.TreeViewBackground, "TreeView background") {
-				DefaultBackground = "#F5F5F5",
+			new BrushColorInfo(ColorType.TreeView, "TreeView") {
+				DefaultForeground = "#FF1E1E1E",
+				ForegroundResourceKey = "TreeViewBackground",
+				DefaultBackground = "#FFF5F5F5",
 				BackgroundResourceKey = "TreeViewBackground",
 			},
 			new BrushColorInfo(ColorType.TreeViewBorder, "TreeView border") {
 				DefaultBackground = "#CCCEDB",
 				BackgroundResourceKey = "TreeViewBorder",
+			},
+			new BrushColorInfo(ColorType.TreeViewGlyph, "TreeView Glyph") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "TreeViewGlyph",
+			},
+			new BrushColorInfo(ColorType.TreeViewGlyphMouseOver, "TreeView Glyph Mouse Over") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "TreeViewGlyphMouseOver",
+			},
+			new BrushColorInfo(ColorType.TVItemAlternationBackground, "TreeViewItem alternation background") {
+				DefaultBackground = "WhiteSmoke",
+				BackgroundResourceKey = "TVItemAlternationBackground",
 			},
 			new BrushColorInfo(ColorType.IconBar, "IconBar") {
 				DefaultBackground = "#E6E7E8",

@@ -10,16 +10,11 @@ using System.Windows.Media;
 
 namespace ICSharpCode.TreeView
 {
-	public class LinesRenderer : FrameworkElement
+	class LinesRenderer : FrameworkElement
 	{
 		static LinesRenderer()
 		{
-			SetPen(Brushes.LightGray);
-		}
-
-		public static void SetPen(Brush brush)
-		{
-			pen = new Pen(brush, 1);
+			pen = new Pen(Brushes.LightGray, 1);
 			pen.Freeze();
 		}
 
@@ -33,10 +28,10 @@ namespace ICSharpCode.TreeView
 		protected override void OnRender(DrawingContext dc)
 		{
 			var indent = NodeView.CalculateIndent();
-			var p = new Point(indent + 7.5, 0);
+			var p = new Point(indent + 4.5, 0);
 
 			if (!NodeView.Node.IsRoot || NodeView.ParentTreeView.ShowRootExpander) {
-				dc.DrawLine(pen, new Point(p.X, ActualHeight / 2), new Point(p.X + 13, ActualHeight / 2));
+				dc.DrawLine(pen, new Point(p.X, ActualHeight / 2), new Point(p.X + 10, ActualHeight / 2));
 			}
 
 			if (NodeView.Node.IsRoot) return;

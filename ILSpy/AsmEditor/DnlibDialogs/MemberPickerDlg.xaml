@@ -99,6 +99,8 @@
 		</ListBox>
 
 		<tv:SharpTreeView Grid.Row="2"
+						  Style="{StaticResource {x:Type tv:SharpTreeView}}"
+						  ShowLines="False"
 						  Margin="5 0 5 5"
 						  Name="treeView"
 						  Validation.ErrorTemplate="{StaticResource noRedBorderOnValidationError}"

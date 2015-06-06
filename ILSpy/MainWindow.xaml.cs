@@ -607,7 +607,6 @@ namespace ICSharpCode.ILSpy
 			UpdateControlColors();
 			foreach (var view in AllTextViews)
 				view.OnThemeUpdated();
-			LinesRenderer.SetPen(Themes.Theme.GetColor(ColorType.TreeViewLineBackground).InheritedColor.Background.GetBrush(null));
 			UpdateToolbar();
 			InvalidateMainMenu();
 			RefreshTreeViewFilter();

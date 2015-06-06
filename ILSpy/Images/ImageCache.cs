@@ -86,7 +86,7 @@ namespace ICSharpCode.ILSpy
 			case BackgroundType.TextEditor: return GetColorBackground(dntheme.ColorType.DefaultText);
 			case BackgroundType.DialogWindow: return GetColorBackground(dntheme.ColorType.DialogWindow);
 			case BackgroundType.TextBox: return GetColorBackground(dntheme.ColorType.CommonControlsTextBox);
-			case BackgroundType.TreeNode: return GetColorBackground(dntheme.ColorType.TreeViewBackground);
+			case BackgroundType.TreeNode: return GetColorBackground(dntheme.ColorType.TreeView);
 			case BackgroundType.Search: return GetColorBackground(dntheme.ColorType.ListBoxBackground);
 			case BackgroundType.ComboBox: return GetColorBackground(dntheme.ColorType.CommonControlsComboBoxBackground);
 			case BackgroundType.Toolbar: return GetColorBackground(dntheme.ColorType.ToolBarIconBackground);

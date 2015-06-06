@@ -187,15 +187,6 @@
                         </Border>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsSelected"
-                                 Value="True">
-                            <Setter TargetName="nodeView"
-                                    Property="TextBackground"
-                                    Value="{DynamicResource SystemColorsHighlight}" />
-                            <Setter TargetName="nodeView"
-                                    Property="Foreground"
-                                    Value="{DynamicResource SystemColorsHighlightText}" />
-                        </Trigger>
                         <Trigger Property="IsMouseOver"
                                  Value="True">
                             <Setter TargetName="nodeView"
@@ -204,6 +195,15 @@
                             <Setter TargetName="nodeView"
                                     Property="Foreground"
                                     Value="{DynamicResource TreeViewItemMouseOverForeground}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected"
+                                 Value="True">
+                            <Setter TargetName="nodeView"
+                                    Property="TextBackground"
+                                    Value="{DynamicResource SystemColorsHighlight}" />
+                            <Setter TargetName="nodeView"
+                                    Property="Foreground"
+                                    Value="{DynamicResource SystemColorsHighlightText}" />
                         </Trigger>
                         <!--<MultiTrigger>
                             <MultiTrigger.Conditions>

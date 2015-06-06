@@ -191,6 +191,8 @@
 			<!-- Left pane: Tree View of assemblies and classes -->
 			<tv:SharpTreeView
 				Name="treeView"
+				Style="{StaticResource {x:Type tv:SharpTreeView}}"
+				ShowLines="False"
 				SelectionChanged="TreeView_SelectionChanged"
 				ShowRoot="False"
 				AllowDropOrder="True"
