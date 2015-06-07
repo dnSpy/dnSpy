@@ -81,6 +81,16 @@
 		<color name="dialogwindow" fg="#FF1E1E1E" bg="#FFD6DBE9" />
 		<color name="environmentbackground" fg="#FF293955" bg="#FF35496A" color3="#FF35496A" color4="#FF293955" />
 		<color name="environmentforeground" fg="White" />
+		<color name="environmentmainwindowactivedefaultborder" bg="#FF0D202D" />
+		<color name="environmentmainwindowactivecaption" fg="#FF000000" bg="#FFD6DBE9" />
+		<color name="environmentmainwindowbuttonactiveborder" bg="#00000000" />
+		<color name="environmentmainwindowbuttonactiveglyph" bg="#FF000000" />
+		<color name="environmentmainwindowbuttondown" bg="#FFFFE8A6" />
+		<color name="environmentmainwindowbuttondownborder" bg="#FFE5C365" />
+		<color name="environmentmainwindowbuttondownglyph" bg="#FF000000" />
+		<color name="environmentmainwindowbuttonhoveractive" bg="#FFFFFCF4" />
+		<color name="environmentmainwindowbuttonhoveractiveborder" bg="#FFE5C365" />
+		<color name="environmentmainwindowbuttonhoveractiveglyph" bg="#FF000000" />
 		<color name="controlshadow" bg="#71000000" />
 		<color name="gridsplitterpreviewfill" bg="#80000000" />
 		<color name="groupboxborderbrush" bg="#D5DFE5" />

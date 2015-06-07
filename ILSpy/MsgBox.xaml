@@ -25,7 +25,7 @@
              SizeToContent="Height"
              ResizeMode="NoResize"
              Title="dnSpy"
-             Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
+             xmlns:mm="clr-namespace:ICSharpCode.ILSpy" mm:WindowChrome.WindowChromeType="Dialog"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="400">
 	<StackPanel FocusManager.FocusedElement="{Binding ElementName=okButton}">

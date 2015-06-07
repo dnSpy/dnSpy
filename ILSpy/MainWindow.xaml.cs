@@ -83,6 +83,15 @@ namespace ICSharpCode.ILSpy
 			get { return instance; }
 		}
 		
+		public static readonly DependencyProperty SystemMenuImageProperty =
+			DependencyProperty.Register("SystemMenuImage", typeof(ImageSource), typeof(MainWindow),
+			new FrameworkPropertyMetadata(null));
+
+		public ImageSource SystemMenuImage {
+			get { return (ImageSource)GetValue(SystemMenuImageProperty); }
+			set { SetValue(SystemMenuImageProperty, value); }
+		}
+
 		public SessionSettings SessionSettings {
 			get { return sessionSettings; }
 		}
@@ -171,10 +180,6 @@ namespace ICSharpCode.ILSpy
 			languageComboBox.SetBinding(ComboBox.SelectedItemProperty, new Binding("FilterSettings.Language") {
 				Source = sessionSettings,
 			});
-			
-			this.Icon = new BitmapImage(new Uri("pack://application:,,,/dnSpy;component/images/dnSpy.ico"));
-			
-			this.DataContext = sessionSettings;
 			
 			InitializeComponent();
 			AddTitleInfo(IntPtr.Size == 4 ? "x86" : "x64");
@@ -605,6 +610,7 @@ namespace ICSharpCode.ILSpy
 		void Themes_ThemeChanged(object sender, EventArgs e)
 		{
 			ImageCache.Instance.OnThemeChanged();
+			SystemMenuImage = ImageCache.Instance.GetImage("Assembly", BackgroundType.TitleArea);
 			UpdateControlColors();
 			foreach (var view in AllTextViews)
 				view.OnThemeUpdated();

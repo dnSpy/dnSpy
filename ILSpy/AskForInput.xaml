@@ -25,7 +25,7 @@
              ResizeMode="NoResize"
              SizeToContent="Height"
              Title="dnSpy"
-             Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
+             xmlns:mm="clr-namespace:ICSharpCode.ILSpy" mm:WindowChrome.WindowChromeType="Dialog"
              mc:Ignorable="d" >
 	<StackPanel FocusManager.FocusedElement="{Binding ElementName=textBox}" Margin="5">
 		<DockPanel LastChildFill="True" Margin="0,15,0,10">

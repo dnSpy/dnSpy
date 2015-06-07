@@ -25,9 +25,8 @@
              xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              Height="500" Width="600"
-             ResizeMode="CanResizeWithGrip"
              Title="{Binding Title}"
-             Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
+             xmlns:mm="clr-namespace:ICSharpCode.ILSpy" mm:WindowChrome.WindowChromeType="Dialog"
              MinHeight="200" MinWidth="400">
 	<winlocal:WindowBase.Resources>
 		<vc:BooleanToGridrowLengthConverter x:Key="BooleanToGridrowLengthConverter" />

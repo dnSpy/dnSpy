@@ -3863,7 +3863,7 @@
                     <Trigger Property="Role"
                              Value="TopLevelHeader">
                         <Setter Property="Padding"
-                                Value="6,2,7,2"/>
+                                Value="9,0,9,1"/>
                         <Setter Property="Grid.IsSharedSizeScope"
                                 Value="true"/>
                         <Setter Property="Template">
@@ -4339,7 +4339,7 @@
                                               SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                             <ToolBarPanel x:Name="PART_ToolBarPanel"
                                           IsItemsHost="true"
-                                          Margin="0,1,2,2"
+                                          Margin="0,0,0,2"
                                           SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </DockPanel>
                     </Border>
@@ -5159,6 +5159,104 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
+	<Style x:Key="{x:Type ctrls:WinSysButton}"
+		   TargetType="{x:Type ctrls:WinSysButton}"
+		   BasedOn="{StaticResource {x:Type ctrls:TabButton}}">
+		<Setter Property="Margin" Value="0" />
+		<Setter Property="Padding" Value="0,3,0,0" />
+		<Setter Property="Width" Value="34" />
+		<Setter Property="Height" Value="25" />
+		<Setter Property="VerticalAlignment" Value="Top" />
+		<Setter Property="HorizontalAlignment" Value="Center" />
+		<Setter Property="BorderThickness" Value="1,0,1,1" />
+		<Setter Property="HoverBorderThickness" Value="1,0,1,0" />
+		<Setter Property="PressedBorderThickness" Value="1,0,1,0" />
+		<Setter Property="BorderBrush" Value="{DynamicResource EnvironmentMainWindowButtonActiveBorder}" />
+		<Setter Property="GlyphForeground" Value="{DynamicResource EnvironmentMainWindowButtonActiveGlyph}" />
+		<Setter Property="HoverBackground" Value="{DynamicResource EnvironmentMainWindowButtonHoverActive}" />
+		<Setter Property="HoverBorderBrush" Value="{DynamicResource EnvironmentMainWindowButtonHoverActiveBorder}" />
+		<Setter Property="HoverForeground" Value="{DynamicResource EnvironmentMainWindowButtonHoverActiveGlyph}" />
+		<Setter Property="PressedBackground" Value="{DynamicResource EnvironmentMainWindowButtonDown}" />
+		<Setter Property="PressedBorderBrush" Value="{DynamicResource EnvironmentMainWindowButtonDownBorder}" />
+		<Setter Property="PressedForeground" Value="{DynamicResource EnvironmentMainWindowButtonDownGlyph}" />
+		<Setter Property="Control.Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type ctrls:WinSysButton}">
+					<Border x:Name="Border"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							Background="{TemplateBinding Background}"
+							BorderThickness="1"
+							SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+						<Path
+							x:Name="path"
+							Margin="{TemplateBinding Padding}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+							SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+							Fill="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource Self}}" />
+					</Border>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver"
+                                 Value="true">
+							<Setter Property="BorderBrush"
+									TargetName="Border"
+                                    Value="{Binding HoverBorderBrush, RelativeSource={RelativeSource TemplatedParent}}"/>
+							<Setter Property="Background"
+									TargetName="Border"
+                                    Value="{Binding HoverBackground, RelativeSource={RelativeSource TemplatedParent}}"/>
+							<Setter Property="BorderThickness"
+									TargetName="Border"
+                                    Value="{Binding HoverBorderThickness, RelativeSource={RelativeSource TemplatedParent}}"/>
+							<Setter Property="TextElement.Foreground"
+                                    Value="{Binding HoverForeground, RelativeSource={RelativeSource Self}}"/>
+						</Trigger>
+						<Trigger Property="IsPressed"
+                                 Value="true">
+							<Setter Property="BorderBrush"
+									TargetName="Border"
+                                    Value="{Binding PressedBorderBrush, RelativeSource={RelativeSource TemplatedParent}}"/>
+							<Setter Property="Background"
+									TargetName="Border"
+                                    Value="{Binding PressedBackground, RelativeSource={RelativeSource TemplatedParent}}"/>
+							<Setter Property="BorderThickness"
+									TargetName="Border"
+                                    Value="{Binding PressedBorderThickness, RelativeSource={RelativeSource TemplatedParent}}"/>
+							<Setter Property="TextElement.Foreground"
+                                    Value="{Binding PressedForeground, RelativeSource={RelativeSource Self}}"/>
+						</Trigger>
+						<Trigger Property="CurrentWinSysType" Value="Minimize">
+							<Setter Property="ToolTip" Value="Minimize" />
+							<Setter TargetName="path" Property="Width" Value="9" />
+							<Setter TargetName="path" Property="Height" Value="9" />
+							<Setter TargetName="path" Property="Stretch" Value="None" />
+							<Setter TargetName="path" Property="Data" Value="F1M0,6L0,9 9,9 9,6 0,6z" />
+						</Trigger>
+						<Trigger Property="CurrentWinSysType" Value="Maximize">
+							<Setter Property="ToolTip" Value="Maximize" />
+							<Setter TargetName="path" Property="Width" Value="9" />
+							<Setter TargetName="path" Property="Height" Value="9" />
+							<Setter TargetName="path" Property="Stretch" Value="Uniform" />
+							<Setter TargetName="path" Property="Data" Value="F1M0,0L0,9 9,9 9,0 0,0 0,3 8,3 8,8 1,8 1,3z" />
+						</Trigger>
+						<Trigger Property="CurrentWinSysType" Value="Restore">
+							<Setter Property="ToolTip" Value="Restore Down" />
+							<Setter TargetName="path" Property="Width" Value="10" />
+							<Setter TargetName="path" Property="Height" Value="10" />
+							<Setter TargetName="path" Property="Stretch" Value="Uniform" />
+							<Setter TargetName="path" Property="Data" Value="F1M0,10L0,3 3,3 3,0 10,0 10,2 4,2 4,3 7,3 7,6 6,6 6,5 1,5 1,10z M1,10L7,10 7,7 10,7 10,2 9,2 9,6 6,6 6,9 1,9z" />
+						</Trigger>
+						<Trigger Property="CurrentWinSysType" Value="Close">
+							<Setter Property="ToolTip" Value="Close" />
+							<Setter TargetName="path" Property="Width" Value="10" />
+							<Setter TargetName="path" Property="Height" Value="8" />
+							<Setter TargetName="path" Property="Stretch" Value="Uniform" />
+							<Setter TargetName="path" Property="Data" Value="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z" />
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
 
 	<Style x:Key="TabStateDecompileTabItemStyle"
            TargetType="{x:Type TabItem}">
@@ -5257,14 +5355,129 @@
 		</Setter>
 	</Style>
 
-	<Style x:Key="DialogWindow" TargetType="{x:Type Window}" BasedOn="{StaticResource {x:Type Window}}">
-		<Setter Property="ShowInTaskbar" Value="False"/>
+	<Style x:Key="{x:Type ctrls:SysMenuButton}" TargetType="{x:Type ctrls:SysMenuButton}">
+		<Setter Property="FocusVisualStyle" Value="{x:Null}" />
+		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="HorizontalContentAlignment" Value="Center" />
+		<Setter Property="VerticalContentAlignment" Value="Center" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type ctrls:SysMenuButton}">
+					<ContentPresenter
+						RecognizesAccessKey="True"
+						Margin="{TemplateBinding Padding}"
+						SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+						HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+						VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+						Focusable="False" />
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style x:Key="CommonWindowStyleBase" TargetType="{x:Type Window}">
 		<Setter Property="UseLayoutRounding" Value="True"/>
 		<Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
 		<Setter Property="Icon" Value="../Images/dnSpy.ico"/>
-		<Setter Property="mm:HideWindowsButtons.MaxMinButtons" Value="True"/>
+	</Style>
+	<Style x:Key="MainWindowStyleBase" TargetType="{x:Type Window}" BasedOn="{StaticResource CommonWindowStyleBase}">
+		<Setter Property="Background" Value="{DynamicResource EnvironmentBackground}" />
+		<Setter Property="Foreground" Value="{DynamicResource EnvironmentForeground}" />
+	</Style>
+	<Style x:Key="MainWindowStyle" TargetType="{x:Type Window}" BasedOn="{StaticResource MainWindowStyleBase}">
+	</Style>
+	<ControlTemplate x:Key="ChromeWindowTemplate" TargetType="{x:Type Window}">
+		<Border
+			BorderBrush="{DynamicResource EnvironmentMainWindowActiveDefaultBorder}"
+			BorderThickness="1"
+			Background="{TemplateBinding Background}"
+			TextElement.Foreground="{TemplateBinding Foreground}"
+			>
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="{x:Static mm:WindowChrome.GridCaptionHeight}" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+				<DockPanel
+					Grid.Row="0"
+					Background="{DynamicResource EnvironmentMainWindowActiveCaption}"
+					TextElement.Foreground="{DynamicResource EnvironmentMainWindowActiveCaptionText}"
+					>
+					<ctrls:SysMenuButton
+						DockPanel.Dock="Left"
+						mm:WindowChrome.IsHitTestVisibleInChrome="True"
+						Command="{x:Static mm:WindowChrome.ShowSystemMenuCommand}"
+						CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
+						Width="16"
+						Height="16"
+						Margin="4 7 4 7"
+						Padding="0 0 0 0"
+						Background="Transparent"
+						VerticalAlignment="Center"
+						Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(mm:WindowChrome.ShowMenuButton), Converter={StaticResource BooleanToVisibilityConverter}}" >
+						<Image Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SystemMenuImage}" />
+					</ctrls:SysMenuButton>
+					<StackPanel DockPanel.Dock="Right" Orientation="Horizontal" mm:WindowChrome.IsHitTestVisibleInChrome="True">
+						<ctrls:WinSysButton WinSysType="Minimize" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(mm:WindowChrome.ShowMinimizeButton), Converter={StaticResource BooleanToVisibilityConverter}}" />
+						<ctrls:WinSysButton WinSysType="Maximize" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(mm:WindowChrome.ShowMaximizeButton), Converter={StaticResource BooleanToVisibilityConverter}}" />
+						<ctrls:WinSysButton WinSysType="Close" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(mm:WindowChrome.ShowCloseButton), Converter={StaticResource BooleanToVisibilityConverter}}" />
+					</StackPanel>
+					<TextBlock
+						Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title}"
+						Margin="5 0 0 0"
+						HorizontalAlignment="Left"
+						VerticalAlignment="Center"
+						TextTrimming="CharacterEllipsis"
+						TextWrapping="NoWrap" />
+				</DockPanel>
+				<Grid Grid.Row="1">
+					<AdornerDecorator>
+						<ContentPresenter/>
+					</AdornerDecorator>
+
+					<ResizeGrip x:Name="WindowResizeGrip"
+								HorizontalAlignment="Right"
+								VerticalAlignment="Bottom"
+								Visibility="Collapsed"
+								IsTabStop="false"/>
+				</Grid>
+			</Grid>
+		</Border>
+		<ControlTemplate.Triggers>
+			<MultiTrigger>
+				<MultiTrigger.Conditions>
+					<Condition Property="ResizeMode"
+                               Value="CanResizeWithGrip"/>
+					<Condition Property="WindowState"
+                               Value="Normal"/>
+				</MultiTrigger.Conditions>
+				<Setter TargetName="WindowResizeGrip"
+                        Property="Visibility"
+                        Value="Visible"/>
+			</MultiTrigger>
+		</ControlTemplate.Triggers>
+	</ControlTemplate>
+	<Style x:Key="ChromeMainWindowStyle" TargetType="{x:Type Window}" BasedOn="{StaticResource MainWindowStyleBase}">
+		<Setter Property="mm:WindowChrome.ShowMenuButton" Value="True" />
+		<Setter Property="mm:WindowChrome.ShowMinimizeButton" Value="True" />
+		<Setter Property="mm:WindowChrome.ShowMaximizeButton" Value="True" />
+		<Setter Property="mm:WindowChrome.ShowCloseButton" Value="True" />
+		<Setter Property="Template" Value="{StaticResource ChromeWindowTemplate}" />
+	</Style>
+	<Style x:Key="DialogWindowStyleBase" TargetType="{x:Type Window}" BasedOn="{StaticResource CommonWindowStyleBase}">
 		<Setter Property="Foreground" Value="{DynamicResource DialogWindowForeground}"/>
 		<Setter Property="Background" Value="{DynamicResource DialogWindowBackground}"/>
+		<Setter Property="ShowInTaskbar" Value="False"/>
+		<Setter Property="mm:HideWindowsButtons.MaxMinButtons" Value="True"/>
+	</Style>
+	<Style x:Key="DialogWindowStyle" TargetType="{x:Type Window}" BasedOn="{StaticResource DialogWindowStyleBase}">
+	</Style>
+	<Style x:Key="ChromeDialogWindowStyle" TargetType="{x:Type Window}" BasedOn="{StaticResource DialogWindowStyleBase}">
+		<Setter Property="ResizeMode" Value="CanResizeWithGrip" />
+		<Setter Property="mm:WindowChrome.ShowMenuButton" Value="False" />
+		<Setter Property="mm:WindowChrome.ShowMinimizeButton" Value="False" />
+		<Setter Property="mm:WindowChrome.ShowMaximizeButton" Value="False" />
+		<Setter Property="mm:WindowChrome.ShowCloseButton" Value="True" />
+		<Setter Property="Template" Value="{StaticResource ChromeWindowTemplate}" />
 	</Style>
 	<Style x:Key="DialogBorderStyle" TargetType="{x:Type Border}">
 		<Setter Property="BorderBrush" Value="{DynamicResource TabItemSelectedBackground}"/>

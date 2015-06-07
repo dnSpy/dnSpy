@@ -23,9 +23,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              Height="410" Width="400"
-             ResizeMode="CanResizeWithGrip"
              Title="Save Module"
-             Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
+             xmlns:mm="clr-namespace:ICSharpCode.ILSpy" mm:WindowChrome.WindowChromeType="Dialog"
              MinHeight="410" MinWidth="400">
 	<Grid FocusManager.FocusedElement="{Binding ElementName=filenameTextBox}">
 		<Grid.ColumnDefinitions>

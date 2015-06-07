@@ -369,6 +369,48 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultForeground = "#FF000000",
 				ForegroundResourceKey = "EnvironmentForeground",
 			},
+			new BrushColorInfo(ColorType.EnvironmentMainWindowActiveDefaultBorder, "MainWindow Active Default Border") {
+				DefaultBackground = "#FF9B9FB9",
+				BackgroundResourceKey = "EnvironmentMainWindowActiveDefaultBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentMainWindowActiveCaption, "MainWindow Active Caption") {
+				DefaultForeground = "#FF525252",
+				ForegroundResourceKey = "EnvironmentMainWindowActiveCaptionText",
+				DefaultBackground = "#FFEEEEF2",
+				BackgroundResourceKey = "EnvironmentMainWindowActiveCaption",
+			},
+			new BrushColorInfo(ColorType.EnvironmentMainWindowButtonActiveBorder, "MainWindow Button Active Border") {
+				DefaultBackground = "#00000000",
+				BackgroundResourceKey = "EnvironmentMainWindowButtonActiveBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentMainWindowButtonActiveGlyph, "MainWindow Button Active Glyph") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "EnvironmentMainWindowButtonActiveGlyph",
+			},
+			new BrushColorInfo(ColorType.EnvironmentMainWindowButtonDown, "MainWindow Button Down") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "EnvironmentMainWindowButtonDown",
+			},
+			new BrushColorInfo(ColorType.EnvironmentMainWindowButtonDownBorder, "MainWindow Button Down Border") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "EnvironmentMainWindowButtonDownBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentMainWindowButtonDownGlyph, "MainWindow Button Down Glyph") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "EnvironmentMainWindowButtonDownGlyph",
+			},
+			new BrushColorInfo(ColorType.EnvironmentMainWindowButtonHoverActive, "MainWindow Button Hover Active") {
+				DefaultBackground = "#D8FFFFFF",
+				BackgroundResourceKey = "EnvironmentMainWindowButtonHoverActive",
+			},
+			new BrushColorInfo(ColorType.EnvironmentMainWindowButtonHoverActiveBorder, "MainWindow Button Hover Active Border") {
+				DefaultBackground = "#D8FFFFFF",
+				BackgroundResourceKey = "EnvironmentMainWindowButtonHoverActiveBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentMainWindowButtonHoverActiveGlyph, "MainWindow Button Hover Active Glyph") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "EnvironmentMainWindowButtonHoverActiveGlyph",
+			},
 			new ColorColorInfo(ColorType.ControlShadow, "Control shadow") {
 				DefaultBackground = "#71000000",
 				BackgroundResourceKey = "ControlShadow",

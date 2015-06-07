@@ -24,9 +24,8 @@
              xmlns:local="clr-namespace:ICSharpCode.ILSpy.AsmEditor.SaveModule"
              xmlns:vc="clr-namespace:ICSharpCode.ILSpy.AsmEditor.Converters"
              Height="200" Width="400"
-             ResizeMode="CanResizeWithGrip"
              Title="Save Module"
-             Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
+             xmlns:mm="clr-namespace:ICSharpCode.ILSpy" mm:WindowChrome.WindowChromeType="Dialog"
              MinHeight="200" MinWidth="400">
 	<local:SaveModuleWindow.Resources>
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />

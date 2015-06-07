@@ -24,11 +24,10 @@
              xmlns:controls="clr-namespace:ICSharpCode.ILSpy.Controls"
              Width="620" Height="390"
              MinWidth="500" MinHeight="300"
-             ResizeMode="CanResizeWithGrip"
              Title="Windows"
              KeyDown="Window_KeyDown"
              Background="{DynamicResource SystemColorsControl}"
-             Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
+             xmlns:mm="clr-namespace:ICSharpCode.ILSpy" mm:WindowChrome.WindowChromeType="Dialog"
              mc:Ignorable="d">
     <Grid Margin="13">
 		<Grid.ColumnDefinitions>

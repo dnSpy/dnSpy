@@ -2,7 +2,7 @@
 <Window
 	x:Class="ICSharpCode.ILSpy.Debugger.UI.DebugProcessWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	Title="Select Executable to Debug"
-	Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
+	xmlns:mm="clr-namespace:ICSharpCode.ILSpy;assembly=dnSpy" mm:WindowChrome.WindowChromeType="Dialog"
 	WindowState="Normal"
 	MinHeight="180"
 	MaxHeight="200"

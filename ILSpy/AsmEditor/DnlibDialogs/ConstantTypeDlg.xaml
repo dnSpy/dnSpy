@@ -24,9 +24,8 @@
              xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              Height="120" Width="500"
-             ResizeMode="CanResizeWithGrip"
              Title="Create a Constant"
-             Style="{DynamicResource DialogWindow}" WindowStartupLocation="CenterOwner"
+             xmlns:mm="clr-namespace:ICSharpCode.ILSpy" mm:WindowChrome.WindowChromeType="Dialog"
              MinHeight="120" MinWidth="400">
 	<Grid>
 		<Grid.ColumnDefinitions>
