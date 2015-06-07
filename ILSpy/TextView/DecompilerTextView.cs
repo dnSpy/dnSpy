@@ -947,7 +947,7 @@ namespace ICSharpCode.ILSpy.TextView
 				return;
 			}
 
-			if (MarkReferences(referenceSegment)) {
+			if (referenceSegment.IsLocal && MarkReferences(referenceSegment)) {
 				e.Handled = false;	// Allow another handler to set a new caret position
 				return;
 			}
@@ -961,10 +961,13 @@ namespace ICSharpCode.ILSpy.TextView
 
 		bool MarkReferences(ReferenceSegment referenceSegment)
 		{
+			if (previousReferenceSegment == referenceSegment)
+				return true;
 			object reference = referenceSegment.Reference;
 			if (references == null || reference == null)
 				return false;
 			ClearMarkedReferences();
+			previousReferenceSegment = referenceSegment;
 			foreach (var tmp in references) {
 				var r = tmp;
 				if (RefSegEquals(referenceSegment, r)) {
@@ -979,6 +982,7 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 			return true;
 		}
+		ReferenceSegment previousReferenceSegment = null;
 
 		void ClearMarkedReferences()
 		{
@@ -986,6 +990,7 @@ namespace ICSharpCode.ILSpy.TextView
 				textMarkerService.Remove(mark);
 			}
 			markedReferences.Clear();
+			previousReferenceSegment = null;
 		}
 		
 		/// <summary>
