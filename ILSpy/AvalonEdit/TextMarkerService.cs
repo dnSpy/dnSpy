@@ -273,7 +273,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 				if (marker.BackgroundColor != null) {
 					BackgroundGeometryBuilder geoBuilder = new BackgroundGeometryBuilder();
 					geoBuilder.AlignToWholePixels = true;
-					geoBuilder.CornerRadius = 3;
+					geoBuilder.CornerRadius = 0;
 					geoBuilder.AddSegment(textView, marker);
 					Geometry geometry = geoBuilder.CreateGeometry();
 					if (geometry != null) {

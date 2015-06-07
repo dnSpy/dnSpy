@@ -102,6 +102,7 @@ namespace ICSharpCode.ILSpy.TextView
 			this.Loaded+= new RoutedEventHandler(DecompilerTextView_Loaded);
 			InitializeComponent();
 			
+			textEditor.TextArea.SelectionCornerRadius = 0;
 			this.referenceElementGenerator = new ReferenceElementGenerator(this.JumpToReference, this.IsLink);
 			textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
 			textEditor.TextArea.PreviewKeyDown += TextEditor_PreviewKeyDown;
