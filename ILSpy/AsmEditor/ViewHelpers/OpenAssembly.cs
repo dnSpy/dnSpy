@@ -26,7 +26,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 		public LoadedAssembly Open()
 		{
 			var dialog = new OpenFileDialog() {
-				Filter = ".NET Executables (*.exe, *.dll, *.netmodule)|*.exe;*.dll;*.netmodule|All files (*.*)|*.*",
+				Filter = ".NET Executables (*.exe, *.dll, *.netmodule, *.winmd)|*.exe;*.dll;*.netmodule;*.winmd|All files (*.*)|*.*",
 				RestoreDirectory = true,
 			};
 			if (dialog.ShowDialog() != DialogResult.OK)

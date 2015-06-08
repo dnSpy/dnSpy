@@ -27,7 +27,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 		public string GetFileName(string currentFileName, string extension)
 		{
 			var dialog = new SaveFileDialog() {
-				Filter = ".NET Executables (*.exe, *.dll, *.netmodule)|*.exe;*.dll;*.netmodule|All files (*.*)|*.*",
+				Filter = ".NET Executables (*.exe, *.dll, *.netmodule, *.winmd)|*.exe;*.dll;*.netmodule;*.winmd|All files (*.*)|*.*",
 				RestoreDirectory = true,
 				DefaultExt = extension,
 				ValidateNames = true,
