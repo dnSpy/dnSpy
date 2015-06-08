@@ -57,7 +57,7 @@ namespace ICSharpCode.ILSpy.Options
 								fontSelector.ItemsSource = task.Result;
 								if (continuation.Exception != null) {
 									foreach (var ex in continuation.Exception.InnerExceptions) {
-										MessageBox.Show(ex.ToString());
+										MainWindow.Instance.ShowMessageBox(ex.ToString());
 									}
 								}
 							})

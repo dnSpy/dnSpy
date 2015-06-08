@@ -30,7 +30,6 @@ using System.Windows.Input;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 
-using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;

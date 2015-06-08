@@ -24,7 +24,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -33,17 +32,12 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using ICSharpCode.AvalonEdit;
-using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.AsmEditor;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Controls;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.dntheme;
-using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.XmlDoc;
@@ -1401,10 +1395,9 @@ namespace ICSharpCode.ILSpy
 					treeView.FocusNode(obj);
 					treeView.SelectedItem = obj;
 				} else {
-					MessageBox.Show("Navigation failed because the target is hidden or a compiler-generated class.\n" +
+					MainWindow.Instance.ShowMessageBox("Navigation failed because the target is hidden or a compiler-generated class.\n" +
 						"Please disable all filters that might hide the item (i.e. activate " +
-						"\"View > Show Internal Types and Members\") and try again.",
-						"dnSpy", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+						"\"View > Show Internal Types and Members\") and try again.");
 				}
 			}
 		}
@@ -2217,7 +2210,7 @@ namespace ICSharpCode.ILSpy
 				column = TryParse(match.Groups[1].Value);
 			}
 			if (line == null || column == null) {
-				MessageBox.Show(this, string.Format("Invalid line: {0}", lineText));
+				ShowMessageBox(string.Format("Invalid line: {0}", lineText));
 				return;
 			}
 			decompilerTextView.ScrollAndMoveCaretTo(line.Value, column.Value);
@@ -2758,7 +2751,7 @@ namespace ICSharpCode.ILSpy
 			return button;
 		}
 
-		public MsgBoxButton ShowMessageBox(string msg, MessageBoxButton buttons, Window ownerWindow = null)
+		public MsgBoxButton ShowMessageBox(string msg, MessageBoxButton buttons = MessageBoxButton.OK, Window ownerWindow = null)
 		{
 			bool? dontShowIsChecked;
 			return ShowMessageBoxInternal(ownerWindow, msg, buttons, false, out dontShowIsChecked);

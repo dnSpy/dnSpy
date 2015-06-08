@@ -13,12 +13,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
-using System.Xml.Linq;
-using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Bookmarks;
-using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.Debugger.UI;
@@ -421,7 +417,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 					SourceCodeMapping mapping;
 					string errMsg;
 					if (!DebugGetSourceCodeMappingForSetNextStatement(out errMsg, out mapping))
-						MessageBox.Show(MainWindow.Instance, errMsg);
+						MainWindow.Instance.ShowMessageBox(errMsg);
 				}
 				e.Handled = true;
 				return;
@@ -636,7 +632,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (!DebugSetNextStatement(out errMsg)) {
 				if (string.IsNullOrEmpty(errMsg))
 					errMsg = "Could not set next statement (unknown reason)";
-				MessageBox.Show(MainWindow.Instance, errMsg);
+				MainWindow.Instance.ShowMessageBox(errMsg);
 				return false;
 			}
 

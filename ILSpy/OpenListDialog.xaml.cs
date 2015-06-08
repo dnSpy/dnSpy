@@ -20,7 +20,6 @@ using System.Windows;
 using System.Windows.Controls;
 using dnlib.DotNet;
 using System.Windows.Input;
-using System.Windows.Media;
 
 namespace ICSharpCode.ILSpy
 {
@@ -165,7 +164,7 @@ namespace ICSharpCode.ILSpy
 					if (manager.AssemblyLists.Contains(dlg.NewListName))
 					{
 						args.Cancel = true;
-						MessageBox.Show("A list with the same name was found.", null, MessageBoxButton.OK);
+						MainWindow.Instance.ShowMessageBox("A list with the same name was found.");
 					}
 				}
 			};

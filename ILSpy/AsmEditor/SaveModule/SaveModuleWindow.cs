@@ -49,16 +49,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 
 			var data = (SaveMultiModuleVM)DataContext;
 			if (data.IsSaving) {
-				var res = MessageBox.Show("Are you sure you want to cancel the save?", "dnSpy", MessageBoxButton.YesNo);
-				if (res == MessageBoxResult.Yes)
+				var res = MainWindow.Instance.ShowMessageBox("Are you sure you want to cancel the save?", MessageBoxButton.YesNo);
+				if (res == MsgBoxButton.OK)
 					data.CancelSave();
 				e.Cancel = true;
 				return;
 			}
 
 			if (data.IsCanceling) {
-				var res = MessageBox.Show("The save is being canceled.\nAre you sure you want to close the window?", "dnSpy", MessageBoxButton.YesNo);
-				if (res == MessageBoxResult.No)
+				var res = MainWindow.Instance.ShowMessageBox("The save is being canceled.\nAre you sure you want to close the window?", MessageBoxButton.YesNo);
+				if (res != MsgBoxButton.OK)
 					e.Cancel = true;
 				return;
 			}

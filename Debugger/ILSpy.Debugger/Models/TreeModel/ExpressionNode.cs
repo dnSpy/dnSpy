@@ -12,8 +12,6 @@ using System.Windows.Media;
 using Debugger;
 using Debugger.MetaData;
 using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.Ast;
-using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.Debugger.Services.Debugger;
 using ICSharpCode.NRefactory.Ast;
@@ -337,11 +335,11 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 			} catch (NotSupportedException) {
 				string format = "Can not convert {0} to {1}";
 				string msg = string.Format(format, newText, val.Type.PrimitiveType);
-				System.Windows.MessageBox.Show(msg);
+				MainWindow.Instance.ShowMessageBox(msg);
 			} catch (COMException) {
 				// COMException (0x80131330): Cannot perfrom SetValue on non-leaf frames.
 				// Happens if trying to set value after exception is breaked
-				System.Windows.MessageBox.Show("UnknownError");
+				MainWindow.Instance.ShowMessageBox("UnknownError");
 			}
 			return false;
 		}

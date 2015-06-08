@@ -535,12 +535,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					options.SaveAsProjectDirectory = Path.GetDirectoryName(dlg.FileName);
 					foreach (string entry in Directory.GetFileSystemEntries(options.SaveAsProjectDirectory)) {
 						if (!string.Equals(entry, dlg.FileName, StringComparison.OrdinalIgnoreCase)) {
-							var result = MessageBox.Show(
+							var result = MainWindow.Instance.ShowMessageBox(
 								"The directory is not empty. File will be overwritten." + Environment.NewLine +
 								"Are you sure you want to continue?",
-								"Project Directory not empty",
-								MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
-							if (result == MessageBoxResult.No)
+								MessageBoxButton.YesNo);
+							if (result != MsgBoxButton.OK)
 								return true; // don't save, but mark the Save operation as handled
 							break;
 						}

@@ -84,7 +84,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			if (obj != null) {
 				var member = MainWindow.ResolveReference(obj);
 				if (member == null)
-					MessageBox.Show(MainWindow.Instance, "Could not resolve member definition");
+					MainWindow.Instance.ShowMessageBox("Could not resolve member definition");
 				else
 					Execute(member);
 			}

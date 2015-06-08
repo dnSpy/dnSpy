@@ -4,24 +4,18 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows;
-using System.Windows.Media;
 
 using Debugger;
-using Debugger.Interop.CorDebug;
 using Debugger.Interop.CorPublish;
 using Debugger.MetaData;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Models.TreeModel;
-using ICSharpCode.ILSpy.Debugger.Services.Debugger;
 using ICSharpCode.ILSpy.Debugger.Tooltips;
 using ICSharpCode.NRefactory;
-using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Visitors;
 using dnlib.DotNet;
 using CorDbg = Debugger;
@@ -111,7 +105,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		public void Start(ProcessStartInfo processStartInfo)
 		{
 			if (IsDebugging) {
-				MessageBox.Show(errorDebugging);
+				MainWindow.Instance.ShowMessageBox(errorDebugging);
 				return;
 			}
 			if (!ServiceInitialized) {
@@ -172,7 +166,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 
 		void StartError(string msg)
 		{
-			MessageBox.Show(msg);
+			MainWindow.Instance.ShowMessageBox(msg);
 
 			if (DebugEvent != null)
 				DebugEvent(this, new DebuggerEventArgs(DebuggerEvent.Stopped));
@@ -184,7 +178,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				return;
 			
 			if (IsDebugging) {
-				MessageBox.Show(errorDebugging);
+				MainWindow.Instance.ShowMessageBox(errorDebugging);
 				return;
 			}
 			if (!ServiceInitialized) {
@@ -233,7 +227,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		public void Stop()
 		{
 			if (!IsDebugging) {
-				MessageBox.Show(errorNotDebugging, "Stop");
+				MainWindow.Instance.ShowMessageBox(errorNotDebugging + " : Stop");
 				return;
 			}
 			if (WasAttached) {
@@ -248,11 +242,11 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		public void Break()
 		{
 			if (!IsDebugging) {
-				MessageBox.Show(errorNotDebugging, "Break");
+				MainWindow.Instance.ShowMessageBox(errorNotDebugging + " : Break");
 				return;
 			}
 			if (!IsProcessRunning) {
-				MessageBox.Show(errorProcessPaused, "Break");
+				MainWindow.Instance.ShowMessageBox(errorProcessPaused + " : Break");
 				return;
 			}
 			debuggedProcess.Break();
@@ -261,11 +255,11 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		public void Continue()
 		{
 			if (!IsDebugging) {
-				MessageBox.Show(errorNotDebugging, "Continue");
+				MainWindow.Instance.ShowMessageBox(errorNotDebugging + " : Continue");
 				return;
 			}
 			if (IsProcessRunning) {
-				MessageBox.Show(errorProcessRunning, "Continue");
+				MainWindow.Instance.ShowMessageBox(errorProcessRunning + " : Continue");
 				return;
 			}
 			debuggedProcess.AsyncContinue();
@@ -340,7 +334,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		public void StepInto()
 		{
 			if (!IsDebugging) {
-				MessageBox.Show(errorNotDebugging, "StepInto");
+				MainWindow.Instance.ShowMessageBox(errorNotDebugging + " : StepInto");
 				return;
 			}
 			
@@ -348,7 +342,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			if (debuggedProcess.SelectedThread == null ||
 			    debuggedProcess.SelectedThread.MostRecentStackFrame == null ||
 			    debuggedProcess.IsRunning) {
-				MessageBox.Show(errorCannotStepNoActiveFunction, "StepInto");
+					MainWindow.Instance.ShowMessageBox(errorCannotStepNoActiveFunction + " : StepInto");
 			} else {
 				var frame = GetStackFrame();
 				if (frame != null)
@@ -359,7 +353,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		public void StepOver()
 		{
 			if (!IsDebugging) {
-				MessageBox.Show(errorNotDebugging, "StepOver");
+				MainWindow.Instance.ShowMessageBox(errorNotDebugging + " : StepOver");
 				return;
 				
 			}
@@ -367,7 +361,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			if (debuggedProcess.SelectedThread == null ||
 			    debuggedProcess.SelectedThread.MostRecentStackFrame == null ||
 			    debuggedProcess.IsRunning) {
-				MessageBox.Show(errorCannotStepNoActiveFunction, "StepOver");
+					MainWindow.Instance.ShowMessageBox(errorCannotStepNoActiveFunction + " : StepOver");
 			} else {
 				var frame = GetStackFrame();
 				if (frame != null) {
@@ -380,7 +374,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		public void StepOut()
 		{
 			if (!IsDebugging) {
-				MessageBox.Show(errorNotDebugging, "StepOut");
+				MainWindow.Instance.ShowMessageBox(errorNotDebugging + " : StepOut");
 				return;
 			}
 			
@@ -388,7 +382,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			if (debuggedProcess.SelectedThread == null ||
 			    debuggedProcess.SelectedThread.MostRecentStackFrame == null ||
 			    debuggedProcess.IsRunning) {
-				MessageBox.Show(errorCannotStepNoActiveFunction, "StepOut");
+					MainWindow.Instance.ShowMessageBox(errorCannotStepNoActiveFunction + " : StepOut");
 			} else {
 				var frame = GetStackFrame();
 				if (frame != null)
@@ -682,9 +676,9 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			}
 			
 			string title = e.IsUnhandled ? "Unhandled" : "Handled";
-			string message = string.Format("Message {0} {1}", e.Exception.Type, e.Exception.Message);
-			
-			MessageBox.Show(message + stacktraceBuilder.ToString(), title);
+			string message = string.Format("{2}: Message {0} {1}", e.Exception.Type, e.Exception.Message, title);
+
+			MainWindow.Instance.ShowMessageBox(message + stacktraceBuilder.ToString());
 		}
 		
 		public void JumpToCurrentLine()

@@ -18,12 +18,8 @@
 */
 
 using System;
-using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
-using System.Windows;
 using dnlib.DotNet;
-using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
@@ -84,7 +80,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (tokenText.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
 				tokenText = tokenText.Substring(2);
 			if (!uint.TryParse(tokenText, NumberStyles.HexNumber, null, out token)) {
-				MessageBox.Show(MainWindow.Instance, string.Format("Invalid hex number: {0}", tokenText));
+				MainWindow.Instance.ShowMessageBox(string.Format("Invalid hex number: {0}", tokenText));
 				return;
 			}
 
@@ -92,9 +88,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			var member = MainWindow.ResolveReference(memberRef);
 			if (member == null) {
 				if (memberRef == null)
-					MessageBox.Show(MainWindow.Instance, string.Format("Invalid metadata token: 0x{0:X8}", token));
+					MainWindow.Instance.ShowMessageBox(string.Format("Invalid metadata token: 0x{0:X8}", token));
 				else
-					MessageBox.Show(MainWindow.Instance, string.Format("Could not resolve member reference token: 0x{0:X8}", token));
+					MainWindow.Instance.ShowMessageBox(string.Format("Could not resolve member reference token: 0x{0:X8}", token));
 				return;
 			}
 

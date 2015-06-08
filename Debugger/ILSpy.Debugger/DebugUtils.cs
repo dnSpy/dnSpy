@@ -83,7 +83,7 @@ namespace ICSharpCode.ILSpy.Debugger
 		{
 			bool retVal = MainWindow.Instance.JumpToReference(textView, mr, getLocation);
 			if (!retVal) {
-				MessageBox.Show(MainWindow.Instance,
+				MainWindow.Instance.ShowMessageBox(
 					string.Format("Could not find {0}\n" +
 					"Make sure that it's visible in the treeview and not a hidden method or part of a hidden class. You could also try to debug the method in IL mode.", mr));
 			}
