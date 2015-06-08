@@ -154,17 +154,19 @@
 				<RowDefinition Height="*" />
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
 				<RowDefinition Height="*" />
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition />
 			</Grid.ColumnDefinitions>
-			<TextBlock Grid.Row="1"
+			<Image Name="loadingImage" Grid.Row="1" Width="64" Height="64" />
+			<TextBlock Grid.Row="2"
 				FontSize="20"
 				HorizontalAlignment="Center"
 				VerticalAlignment="Center"
 				Text="Loading dnSpy. Please wait…" />
-			<ProgressBar Grid.Row="2" Height="20" Width="150" Margin="0 5 0 0"
+			<ProgressBar Grid.Row="3" Height="20" Width="150" Margin="0 5 0 0"
 				IsIndeterminate="True" />
 		</Grid>
 		<!-- Main grid separating left pane (treeView) from main pane (textEditor) -->

@@ -18,9 +18,11 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using ICSharpCode.ILSpy.AsmEditor;
@@ -105,6 +107,83 @@ namespace ICSharpCode.ILSpy
 		public static bool GetIsHitTestVisibleInChrome(UIElement element)
 		{
 			return (bool)element.GetValue(IsHitTestVisibleInChromeProperty);
+		}
+
+		public static readonly DependencyProperty MaximizedElementProperty = DependencyProperty.RegisterAttached(
+			"MaximizedElement", typeof(bool), typeof(WindowChrome), new UIPropertyMetadata(false, OnMaximizedElementChanged));
+
+		static void OnMaximizedElementChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var border = d as Border;
+			Debug.Assert(border != null);
+			if (border == null)
+				return;
+			var win = Window.GetWindow(border);
+			if (win == null)
+				return;
+
+			new MaximizedWindowFixer(win, border);
+		}
+
+		// When the window is maximized, the part of the window where the (in our case, hidden) resize
+		// border is located, is hidden. Add a padding to a border element whose value exactly equals
+		// the border width and reset it when it's not maximized.
+		sealed class MaximizedWindowFixer
+		{
+			readonly Border border;
+			readonly Thickness oldThickness;
+
+			public MaximizedWindowFixer(Window win, Border border)
+			{
+				this.border = border;
+				this.oldThickness = border.BorderThickness;
+				win.StateChanged += win_StateChanged;
+				border.Loaded += border_Loaded;
+			}
+
+			void border_Loaded(object sender, RoutedEventArgs e)
+			{
+				border.Loaded -= border_Loaded;
+				UpdatePadding(Window.GetWindow(border));
+			}
+
+			void win_StateChanged(object sender, EventArgs e)
+			{
+				UpdatePadding((Window)sender);
+			}
+
+			void UpdatePadding(Window window)
+			{
+				Debug.Assert(window != null);
+				switch (window.WindowState) {
+				default:
+				case WindowState.Normal:
+					border.ClearValue(Border.PaddingProperty);
+					border.BorderThickness = oldThickness;
+					break;
+
+				case WindowState.Minimized:
+				case WindowState.Maximized:
+					const int magic = 2;
+					border.Padding = new Thickness(
+						SystemParameters.BorderWidth + border.BorderThickness.Left + magic,
+						SystemParameters.BorderWidth + border.BorderThickness.Top + magic,
+						SystemParameters.BorderWidth + border.BorderThickness.Right + magic,
+						SystemParameters.BorderWidth + border.BorderThickness.Bottom + magic);
+					border.BorderThickness = new Thickness(0);
+					break;
+				}
+			}
+		}
+
+		public static void SetMaximizedElement(UIElement element, bool value)
+		{
+			element.SetValue(MaximizedElementProperty, value);
+		}
+
+		public static bool GetMaximizedElement(UIElement element)
+		{
+			return (bool)element.GetValue(MaximizedElementProperty);
 		}
 
 		public static readonly DependencyProperty ShowMenuButtonProperty = DependencyProperty.RegisterAttached(
@@ -192,7 +271,7 @@ namespace ICSharpCode.ILSpy
 			windowChromeType = asm.GetType(ns + "WindowChrome", false, false);
 			if (windowChromeType == null) {
 				try {
-					asm = Assembly.Load("Microsoft.Windows.Shell");
+					asm = Assembly.Load("Microsoft.Windows.Shell, Version=3.5.41019.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
 					ns = "Microsoft.Windows.Shell.";
 					windowChromeType = asm.GetType(ns + "WindowChrome", false, false);
 				}
@@ -219,6 +298,28 @@ namespace ICSharpCode.ILSpy
 
 			var obj = CreateWindowChromeObject();
 			window.SetValue(winChrome_WindowChromeProperty, obj);
+			window.StateChanged += window_StateChanged;
+		}
+
+		static void window_StateChanged(object sender, EventArgs e)
+		{
+			var window = (Window)sender;
+			var obj = (DependencyObject)window.GetValue(winChrome_WindowChromeProperty);
+			switch (window.WindowState) {
+			case WindowState.Normal:
+				obj.SetValue(winChrome_CaptionHeightProperty, CaptionHeight);
+				obj.SetValue(winChrome_ResizeBorderThicknessProperty, ResizeBorderThickness);
+				break;
+
+			case WindowState.Minimized:
+			case WindowState.Maximized:
+				obj.SetValue(winChrome_CaptionHeightProperty, CaptionHeight + ResizeBorderThickness.Top);
+				obj.SetValue(winChrome_ResizeBorderThicknessProperty, new Thickness(0));
+				break;
+
+			default:
+				break;
+			}
 		}
 
 		static DependencyObject CreateWindowChromeObject()

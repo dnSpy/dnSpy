@@ -92,6 +92,8 @@ namespace ICSharpCode.ILSpy
 			set { SetValue(SystemMenuImageProperty, value); }
 		}
 
+		public ImageSource BigLoadingImage { get; private set; }
+
 		public SessionSettings SessionSettings {
 			get { return sessionSettings; }
 		}
@@ -199,6 +201,7 @@ namespace ICSharpCode.ILSpy
 
 			InitMainMenu();
 			InitToolbar();
+			loadingImage.Source = ImageCache.Instance.GetImage("dnSpy-Big", theme.GetColor(ColorType.EnvironmentBackground).InheritedColor.Background.GetColor(null).Value);
 			
 			this.ContentRendered += MainWindow_ContentRendered;
 			this.IsEnabled = false;
@@ -518,7 +521,7 @@ namespace ICSharpCode.ILSpy
 				return;
 
 			if (textView.waitAdornerButton.IsVisible) {
-				textView.waitAdornerButton.Focus();
+				SetFocusIfNoMenuIsOpened(textView.waitAdornerButton);
 				return;
 			}
 
@@ -528,7 +531,7 @@ namespace ICSharpCode.ILSpy
 				new SetFocusWhenVisible(tabState);
 			}
 			else
-				textArea.Focus();
+				SetFocusIfNoMenuIsOpened(textArea);
 		}
 
 		class SetFocusWhenVisible
@@ -546,7 +549,7 @@ namespace ICSharpCode.ILSpy
 				var textArea = tabState.TextView.TextEditor.TextArea;
 				textArea.IsVisibleChanged -= textArea_IsVisibleChanged;
 				if (MainWindow.Instance.IsActiveTab(tabState))
-					textArea.Focus();
+					SetFocusIfNoMenuIsOpened(textArea);
 			}
 		}
 
@@ -742,6 +745,24 @@ namespace ICSharpCode.ILSpy
 				state.TopLevelMenuItem.Items.Clear();
 				state.TopLevelMenuItem.Items.Add(state.CachedMenuItems[0]);
 			}
+		}
+
+		bool IsAnyMenuOpened()
+		{
+			if (ContextMenuProvider.IsMenuOpened)
+				return true;
+			foreach (var item in mainMenu.Items) {
+				var mi = item as MenuItem;
+				if (mi != null && mi.IsSubmenuOpen)
+					return true;
+			}
+			return false;
+		}
+
+		public static void SetFocusIfNoMenuIsOpened(UIElement elem)
+		{
+			if (!Instance.IsAnyMenuOpened())
+				elem.Focus();
 		}
 
 		void InvalidateMainMenu()
@@ -1032,74 +1053,100 @@ namespace ICSharpCode.ILSpy
 		void MainWindow_ContentRendered(object sender, EventArgs e)
 		{
 			this.ContentRendered -= MainWindow_ContentRendered;
-			this.IsEnabled = true;
-			loadingControl.Visibility = Visibility.Collapsed;
-			mainGrid.Visibility = Visibility.Visible;
+			StartLoadingHandler(0);
+		}
 
-			debug_CommandBindings_Count = this.CommandBindings.Count;
-			ContextMenuProvider.Add(treeView);
+		void StartLoadingHandler(int i)
+		{
+			this.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(delegate {
+				LoadingHandler(i);
+			}));
+		}
 
-			ILSpySettings spySettings = this.spySettings;
-			this.spySettings = null;
-			
-			// Load AssemblyList only in Loaded event so that WPF is initialized before we start the CPU-heavy stuff.
-			// This makes the UI come up a bit faster.
-			this.assemblyList = assemblyListManager.LoadList(spySettings, sessionSettings.ActiveAssemblyList);
-			
-			HandleCommandLineArguments(App.CommandLineArguments);
-			
-			if (assemblyList.GetAssemblies().Length == 0
-				&& assemblyList.ListName == AssemblyListManager.DefaultListName)
-			{
-				LoadInitialAssemblies();
-			}
-			
-			ShowAssemblyList(this.assemblyList);
-			
-			HandleCommandLineArgumentsAfterShowList(App.CommandLineArguments);
-			if (App.CommandLineArguments.NavigateTo == null && App.CommandLineArguments.AssembliesToLoad.Count != 1) {
-				if (ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.RestoreTabsAtStartup) {
-					RestoreTabGroups(sessionSettings.SavedTabGroupsState);
-					if (!sessionSettings.TabsFound)
+		void LoadingHandler(int i)
+		{
+			switch (i) {
+			case 0:
+				debug_CommandBindings_Count = this.CommandBindings.Count;
+				ContextMenuProvider.Add(treeView);
+
+				ILSpySettings spySettings = this.spySettings;
+				this.spySettings = null;
+
+				this.assemblyList = assemblyListManager.LoadList(spySettings, sessionSettings.ActiveAssemblyList);
+				break;
+
+			case 1:
+				HandleCommandLineArguments(App.CommandLineArguments);
+
+				if (assemblyList.GetAssemblies().Length == 0
+					&& assemblyList.ListName == AssemblyListManager.DefaultListName) {
+					LoadInitialAssemblies();
+				}
+
+				ShowAssemblyList(this.assemblyList);
+				break;
+
+			case 2:
+				HandleCommandLineArgumentsAfterShowList(App.CommandLineArguments);
+				if (App.CommandLineArguments.NavigateTo == null && App.CommandLineArguments.AssembliesToLoad.Count != 1) {
+					if (ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.RestoreTabsAtStartup) {
+						RestoreTabGroups(sessionSettings.SavedTabGroupsState);
+						if (!sessionSettings.TabsFound)
+							AboutPage.Display(SafeActiveTextView);
+					}
+					else {
 						AboutPage.Display(SafeActiveTextView);
+					}
 				}
-				else {
-					AboutPage.Display(SafeActiveTextView);
+				break;
+
+			case 3:
+				AvalonEditTextOutput output = new AvalonEditTextOutput();
+				if (FormatExceptions(App.StartupExceptions.ToArray(), output))
+					SafeActiveTextView.ShowText(output);
+
+				if (topPane.Content == null) {
+					var pane = GetPane(topPane, sessionSettings.TopPaneSettings.Name);
+					if (pane != null)
+						ShowInTopPane(pane.PaneTitle, pane);
 				}
+				if (bottomPane.Content == null) {
+					var pane = GetPane(bottomPane, sessionSettings.BottomPaneSettings.Name);
+					if (pane != null)
+						ShowInBottomPane(pane.PaneTitle, pane);
+				}
+				break;
+
+			case 4:
+				var debug_CommandBindings_Count2 = this.CommandBindings.Count;
+				foreach (var plugin in plugins)
+					plugin.OnLoaded();
+
+				var list = callWhenLoaded;
+				callWhenLoaded = null;
+				foreach (var func in list)
+					func();
+
+				debug_CommandBindings_Count += this.CommandBindings.Count - debug_CommandBindings_Count2;
+				break;
+
+			case 5:
+				// Make sure that when no tabs are created that we have focus. If we don't do this we
+				// can't press Ctrl+K and open the asm search.
+				this.Focus();
+
+				// Sometimes we get keyboard focus when it's better that the text editor gets the focus instead
+				this.GotKeyboardFocus += MainWindow_GotKeyboardFocus;
+
+				this.IsEnabled = true;
+				loadingControl.Visibility = Visibility.Collapsed;
+				mainGrid.Visibility = Visibility.Visible;
+				return;
+			default:
+				return;
 			}
-			
-			AvalonEditTextOutput output = new AvalonEditTextOutput();
-			if (FormatExceptions(App.StartupExceptions.ToArray(), output))
-				SafeActiveTextView.ShowText(output);
-
-			if (topPane.Content == null) {
-				var pane = GetPane(topPane, sessionSettings.TopPaneSettings.Name);
-				if (pane != null)
-					ShowInTopPane(pane.PaneTitle, pane);
-			}
-			if (bottomPane.Content == null) {
-				var pane = GetPane(bottomPane, sessionSettings.BottomPaneSettings.Name);
-				if (pane != null)
-					ShowInBottomPane(pane.PaneTitle, pane);
-			}
-
-			var debug_CommandBindings_Count2 = this.CommandBindings.Count;
-			foreach (var plugin in plugins)
-				plugin.OnLoaded();
-
-			var list = callWhenLoaded;
-			callWhenLoaded = null;
-			foreach (var func in list)
-				func();
-
-			debug_CommandBindings_Count += this.CommandBindings.Count - debug_CommandBindings_Count2;
-
-			// Make sure that when no tabs are created that we have focus. If we don't do this we
-			// can't press Ctrl+K and open the asm search.
-			this.Focus();
-
-			// Sometimes we get keyboard focus when it's better that the text editor gets the focus instead
-			this.GotKeyboardFocus += MainWindow_GotKeyboardFocus;
+			StartLoadingHandler(i + 1);
 		}
 
 		void MainWindow_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)

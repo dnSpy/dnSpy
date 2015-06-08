@@ -35,15 +35,15 @@
 		<color name="environmentbackground" fg="#FF808080" bg="#FF808080" color3="#FF808080" color4="#FF808080" />
 		<color name="environmentforeground" fg="#FFFFFFFF" />
 		<color name="environmentmainwindowactivedefaultborder" bg="#FFFFFFFF" />
-		<color name="environmentmainwindowactivecaption" fg="#FFFFFFFF" bg="#FF000000" />
+		<color name="environmentmainwindowactivecaption" fg="#FFFFFFFF" bg="#FF800080" />
 		<color name="environmentmainwindowbuttonactiveborder" bg="#FFFFFFFF" />
 		<color name="environmentmainwindowbuttonactiveglyph" bg="#FFFFFFFF" />
-		<color name="environmentmainwindowbuttondown" bg="#FF800080" />
-		<color name="environmentmainwindowbuttondownborder" bg="#FF800080" />
-		<color name="environmentmainwindowbuttondownglyph" bg="#FFFFFFFF" />
-		<color name="environmentmainwindowbuttonhoveractive" bg="#FF800080" />
-		<color name="environmentmainwindowbuttonhoveractiveborder" bg="#FF800080" />
-		<color name="environmentmainwindowbuttonhoveractiveglyph" bg="#FFFFFFFF" />
+		<color name="environmentmainwindowbuttondown" bg="#FFFFFFFF" />
+		<color name="environmentmainwindowbuttondownborder" bg="#FFFFFFFF" />
+		<color name="environmentmainwindowbuttondownglyph" bg="#FF800080" />
+		<color name="environmentmainwindowbuttonhoveractive" bg="#FFFFFFFF" />
+		<color name="environmentmainwindowbuttonhoveractiveborder" bg="#FFFFFFFF" />
+		<color name="environmentmainwindowbuttonhoveractiveglyph" bg="#FF800080" />
 		<color name="controlshadow" bg="#71FFFFFF" />
 		<color name="gridsplitterpreviewfill" bg="#80000000" />
 		<color name="groupboxborderbrush" bg="#FFFFFFFF" />

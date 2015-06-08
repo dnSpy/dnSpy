@@ -105,7 +105,7 @@ namespace ICSharpCode.ILSpy.Options
 		{
 			XElement e = settings["DisplaySettings"];
 			DisplaySettings s = new DisplaySettings();
-			s.SelectedFont = new FontFamily((string)e.Attribute("Font") ?? "Consolas");
+			s.SelectedFont = new FontFamily((string)e.Attribute("Font") ?? GetDefaultFont());
 			s.SelectedFontSize = (double?)e.Attribute("FontSize") ?? 10.0 * 4 / 3;
 			s.ShowLineNumbers = (bool?)e.Attribute("ShowLineNumbers") ?? true;
 			s.ShowMetadataTokens = (bool?)e.Attribute("ShowMetadataTokens") ?? true;
@@ -118,6 +118,14 @@ namespace ICSharpCode.ILSpy.Options
 			s.AutoHighlightRefs = (bool?)e.Attribute("AutoHighlightRefs") ?? true;
 			
 			return s;
+		}
+
+		static string GetDefaultFont()
+		{
+			// Consolas first appeared in Windows Vista (v6.0)
+			if (Environment.OSVersion.Version >= new Version(6, 0, 0, 0))
+				return "Consolas";
+			return "Lucida Console";
 		}
 		
 		public RefreshFlags Save(XElement root)

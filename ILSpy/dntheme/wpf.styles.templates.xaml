@@ -711,6 +711,7 @@
 					<Grid x:Name="templateRoot">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
 						<Grid
@@ -742,10 +743,11 @@
 									Visibility="Hidden" />
 							</Grid>
 						</Grid>
+						<Border x:Name="paddingBorder" Grid.Column="1" Background="Transparent" Width="6" Visibility="Collapsed" />
 						<ContentPresenter
 							x:Name="contentPresenter"
 							RecognizesAccessKey="True"
-							Grid.Column="1"
+							Grid.Column="2"
 							Margin="{TemplateBinding Padding}"
 							SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
 							HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -754,7 +756,8 @@
 					</Grid>
 					<ControlTemplate.Triggers>
 						<Trigger Property="HasContent" Value="True">
-							<Setter Property="Padding" Value="6,1,0,0" />
+							<Setter Property="Padding" Value="0,1,0,0" />
+							<Setter TargetName="paddingBorder" Property="Visibility" Value="Visible" />
 						</Trigger>
 						<Trigger Property="IsChecked" Value="true">
 							<Setter TargetName="optionMark" Property="Visibility" Value="Visible" />
@@ -5169,8 +5172,8 @@
 		<Setter Property="VerticalAlignment" Value="Top" />
 		<Setter Property="HorizontalAlignment" Value="Center" />
 		<Setter Property="BorderThickness" Value="1,0,1,1" />
-		<Setter Property="HoverBorderThickness" Value="1,0,1,0" />
-		<Setter Property="PressedBorderThickness" Value="1,0,1,0" />
+		<Setter Property="HoverBorderThickness" Value="1,0,1,1" />
+		<Setter Property="PressedBorderThickness" Value="1,0,1,1" />
 		<Setter Property="BorderBrush" Value="{DynamicResource EnvironmentMainWindowButtonActiveBorder}" />
 		<Setter Property="GlyphForeground" Value="{DynamicResource EnvironmentMainWindowButtonActiveGlyph}" />
 		<Setter Property="HoverBackground" Value="{DynamicResource EnvironmentMainWindowButtonHoverActive}" />
@@ -5185,7 +5188,7 @@
 					<Border x:Name="Border"
 							BorderBrush="{TemplateBinding BorderBrush}"
 							Background="{TemplateBinding Background}"
-							BorderThickness="1"
+							BorderThickness="{TemplateBinding BorderThickness}"
 							SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
 						<Path
 							x:Name="path"
@@ -5387,6 +5390,7 @@
 	</Style>
 	<ControlTemplate x:Key="ChromeWindowTemplate" TargetType="{x:Type Window}">
 		<Border
+			mm:WindowChrome.MaximizedElement="True"
 			BorderBrush="{DynamicResource EnvironmentMainWindowActiveDefaultBorder}"
 			BorderThickness="1"
 			Background="{TemplateBinding Background}"

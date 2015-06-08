@@ -456,7 +456,7 @@ namespace ICSharpCode.ILSpy.TextView
 		void waitAdornerButton_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			if (waitAdornerButton.IsVisible && IsKeyboardFocused)
-				waitAdornerButton.Focus();
+				MainWindow.SetFocusIfNoMenuIsOpened(waitAdornerButton);
 		}
 
 		/// <summary>
@@ -470,7 +470,7 @@ namespace ICSharpCode.ILSpy.TextView
 				waitAdorner.Visibility = Visibility.Visible;
 				waitAdorner.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, new Duration(TimeSpan.FromSeconds(0.5)), FillBehavior.Stop));
 				if (IsKeyboardFocused)
-					waitAdornerButton.Focus();
+					MainWindow.SetFocusIfNoMenuIsOpened(waitAdornerButton);
 				var taskBar = MainWindow.Instance.TaskbarItemInfo;
 				if (taskBar != null) {
 					taskBar.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Indeterminate;
@@ -615,7 +615,7 @@ namespace ICSharpCode.ILSpy.TextView
 				EditorPositionState = state.EditorPositionState;
 			
 			if (MainWindow.Instance.ActiveTextView == this && IsVisible && DisplaySettingsPanel.CurrentDisplaySettings.AutoFocusTextView)
-				textEditor.Focus();
+				MainWindow.SetFocusIfNoMenuIsOpened(textEditor);
 
 			var cm = new Dictionary<MethodKey, MemberMapping>();
 			foreach (var m in textOutput.DebuggerMemberMappings) {

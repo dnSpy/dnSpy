@@ -19,6 +19,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -366,7 +367,14 @@ namespace ICSharpCode.ILSpy
 					}
 				}
 			}
+			menu.Opened += (s, e) => Interlocked.Increment(ref menuCount);
+			menu.Closed += (s, e) => Interlocked.Increment(ref menuCount);
 			return menu.Items.Count > 0;
 		}
+
+		public static bool IsMenuOpened {
+			get { return menuCount > 0; }
+		}
+		static int menuCount;
 	}
 }

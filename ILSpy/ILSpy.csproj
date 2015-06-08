@@ -892,6 +892,7 @@
     <Resource Include="Images\DeleteHistory.png" />
     <Resource Include="Images\DisabledBreakpoint.png" />
     <Resource Include="Images\dnSpy.ico" />
+    <Resource Include="Images\dnSpy-Big.png" />
     <Resource Include="Images\Enum.png" />
     <Resource Include="Images\EnumInternal.png" />
     <Resource Include="Images\EnumPrivate.png" />
@@ -1089,6 +1090,11 @@
       <Project>{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}</Project>
       <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Microsoft.Windows.Shell.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
