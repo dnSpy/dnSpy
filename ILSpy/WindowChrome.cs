@@ -186,6 +186,34 @@ namespace ICSharpCode.ILSpy
 			return (bool)element.GetValue(MaximizedElementProperty);
 		}
 
+		public static readonly DependencyProperty UseResizeBorderProperty = DependencyProperty.RegisterAttached(
+			"UseResizeBorder", typeof(bool), typeof(WindowChrome), new UIPropertyMetadata(true, OnUseResizeBorderChanged));
+
+		static void OnUseResizeBorderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			if (!HasWindowChrome)
+				return;
+
+			var win = d as Window;
+			if (win == null)
+				return;
+			var obj = (DependencyObject)win.GetValue(winChrome_WindowChromeProperty);
+			if (obj == null)
+				return;
+
+			InitializeWindowCaptionAndResizeBorder(win, obj);
+		}
+
+		public static void SetUseResizeBorder(UIElement element, bool value)
+		{
+			element.SetValue(UseResizeBorderProperty, value);
+		}
+
+		public static bool GetUseResizeBorder(UIElement element)
+		{
+			return (bool)element.GetValue(UseResizeBorderProperty);
+		}
+
 		public static readonly DependencyProperty ShowMenuButtonProperty = DependencyProperty.RegisterAttached(
 			"ShowMenuButton", typeof(bool), typeof(WindowChrome), new UIPropertyMetadata(true));
 		public static readonly DependencyProperty ShowMinimizeButtonProperty = DependencyProperty.RegisterAttached(
@@ -296,7 +324,7 @@ namespace ICSharpCode.ILSpy
 			if (!HasWindowChrome)
 				return;
 
-			var obj = CreateWindowChromeObject();
+			var obj = CreateWindowChromeObject(window);
 			window.SetValue(winChrome_WindowChromeProperty, obj);
 			window.StateChanged += window_StateChanged;
 		}
@@ -307,13 +335,12 @@ namespace ICSharpCode.ILSpy
 			var obj = (DependencyObject)window.GetValue(winChrome_WindowChromeProperty);
 			switch (window.WindowState) {
 			case WindowState.Normal:
-				obj.SetValue(winChrome_CaptionHeightProperty, CaptionHeight);
-				obj.SetValue(winChrome_ResizeBorderThicknessProperty, ResizeBorderThickness);
+				InitializeWindowCaptionAndResizeBorder(window, obj);
 				break;
 
 			case WindowState.Minimized:
 			case WindowState.Maximized:
-				obj.SetValue(winChrome_CaptionHeightProperty, CaptionHeight + ResizeBorderThickness.Top);
+				obj.SetValue(winChrome_CaptionHeightProperty, GridCaptionHeight.Value);
 				obj.SetValue(winChrome_ResizeBorderThicknessProperty, new Thickness(0));
 				break;
 
@@ -322,18 +349,29 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		static DependencyObject CreateWindowChromeObject()
+		static DependencyObject CreateWindowChromeObject(Window window)
 		{
 			var ctor = windowChromeType.GetConstructor(new Type[0]);
 			var obj = (DependencyObject)ctor.Invoke(new object[0]);
 
-			obj.SetValue(winChrome_CaptionHeightProperty, CaptionHeight);
 			obj.SetValue(winChrome_CornerRadiusProperty, CornerRadius);
 			obj.SetValue(winChrome_GlassFrameThicknessProperty, GlassFrameThickness);
 			obj.SetValue(winChrome_NonClientFrameEdgesProperty, Enum.ToObject(nonClientFrameEdgesType, NonClientFrameEdges));
-			obj.SetValue(winChrome_ResizeBorderThicknessProperty, ResizeBorderThickness);
+			InitializeWindowCaptionAndResizeBorder(window, obj);
 
 			return obj;
+		}
+
+		static void InitializeWindowCaptionAndResizeBorder(Window window, DependencyObject obj)
+		{
+			if ((bool)window.GetValue(UseResizeBorderProperty)) {
+				obj.SetValue(winChrome_CaptionHeightProperty, CaptionHeight);
+				obj.SetValue(winChrome_ResizeBorderThicknessProperty, ResizeBorderThickness);
+			}
+			else {
+				obj.SetValue(winChrome_CaptionHeightProperty, GridCaptionHeight.Value);
+				obj.SetValue(winChrome_ResizeBorderThicknessProperty, new Thickness(0));
+			}
 		}
 
 		[DllImport("user32")]

@@ -5447,6 +5447,9 @@
 			</Grid>
 		</Border>
 		<ControlTemplate.Triggers>
+			<Trigger Property="ResizeMode" Value="NoResize">
+				<Setter Property="mm:WindowChrome.UseResizeBorder" Value="False" />
+			</Trigger>
 			<MultiTrigger>
 				<MultiTrigger.Conditions>
 					<Condition Property="ResizeMode"
