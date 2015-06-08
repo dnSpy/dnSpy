@@ -68,14 +68,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override object Icon {
 			get { return ImageCache.Instance.GetImage("AssemblyReference", BackgroundType.TreeNode); }
 		}
-		
-		public override bool ShowExpander {
-			get {
-				if (r.IsCorLib())
-					EnsureChildrenFiltered(); // likely doesn't have any children
-				return base.ShowExpander;
-			}
-		}
 
 		public override FilterResult Filter(FilterSettings settings)
 		{
