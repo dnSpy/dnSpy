@@ -898,19 +898,25 @@ namespace ICSharpCode.ILSpy
 			if (hwndSource != null) {
 				hwndSource.AddHook(WndProc);
 			}
-			// Validate and Set Window Bounds
-			Rect bounds = Rect.Transform(sessionSettings.WindowBounds, source.CompositionTarget.TransformToDevice);
-			var boundsRect = new System.Drawing.Rectangle((int)bounds.Left, (int)bounds.Top, (int)bounds.Width, (int)bounds.Height);
-			bool boundsOK = false;
-			foreach (var screen in System.Windows.Forms.Screen.AllScreens) {
-				var intersection = System.Drawing.Rectangle.Intersect(boundsRect, screen.WorkingArea);
-				if (intersection.Width > 10 && intersection.Height > 10)
-					boundsOK = true;
+			if (sessionSettings.WindowBounds != null) {
+				// Validate and Set Window Bounds
+				bool boundsOK = false;
+				Rect bounds = Rect.Transform(sessionSettings.WindowBounds.Value, source.CompositionTarget.TransformToDevice);
+				var boundsRect = new System.Drawing.Rectangle((int)bounds.Left, (int)bounds.Top, (int)bounds.Width, (int)bounds.Height);
+				foreach (var screen in System.Windows.Forms.Screen.AllScreens) {
+					var intersection = System.Drawing.Rectangle.Intersect(boundsRect, screen.WorkingArea);
+					if (intersection.Width > 10 && intersection.Height > 10)
+						boundsOK = true;
+				}
+				if (boundsOK)
+					SetWindowBounds(sessionSettings.WindowBounds.Value);
+				else
+					SetWindowBounds(SessionSettings.DefaultWindowBounds);
 			}
-			if (boundsOK)
-				SetWindowBounds(sessionSettings.WindowBounds);
-			else
-				SetWindowBounds(SessionSettings.DefaultWindowBounds);
+			else {
+				this.Width = SessionSettings.DefaultWindowBounds.Width;
+				this.Height = SessionSettings.DefaultWindowBounds.Height;
+			}
 			
 			this.WindowState = sessionSettings.WindowState;
 		}

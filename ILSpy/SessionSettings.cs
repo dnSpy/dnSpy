@@ -47,7 +47,9 @@ namespace ICSharpCode.ILSpy
 			this.ActiveAssemblyList = (string)doc.Element("ActiveAssemblyList");
 			
 			this.WindowState = FromString((string)doc.Element("WindowState"), WindowState.Normal);
-			this.WindowBounds = FromString((string)doc.Element("WindowBounds"), DefaultWindowBounds);
+			var winBoundsString = (string)doc.Element("WindowBounds");
+			if (winBoundsString != null)
+				this.WindowBounds = FromString(winBoundsString, DefaultWindowBounds);
 			this.LeftColumnWidth = FromString((string)doc.Element("LeftColumnWidth"), 0.0);
 			this.WordWrap = FromString((string)doc.Element("WordWrap"), false);
 			this.HighlightCurrentLine = FromString((string)doc.Element("HighlightCurrentLine"), true);
@@ -90,7 +92,7 @@ namespace ICSharpCode.ILSpy
 		public string ActiveAssemblyList;
 		
 		public WindowState WindowState = WindowState.Normal;
-		public Rect WindowBounds;
+		public Rect? WindowBounds;
 		internal static Rect DefaultWindowBounds =  new Rect(10, 10, 1100, 750);
 		public double LeftColumnWidth;
 		public PaneSettings TopPaneSettings;
@@ -137,7 +139,8 @@ namespace ICSharpCode.ILSpy
 				doc.Add(new XElement("ActiveAssemblyList", this.ActiveAssemblyList));
 			}
 			doc.Add(new XElement("WindowState", ToString(this.WindowState)));
-			doc.Add(new XElement("WindowBounds", ToString(this.WindowBounds)));
+			if (this.WindowBounds != null)
+				doc.Add(new XElement("WindowBounds", ToString(this.WindowBounds)));
 			doc.Add(new XElement("WordWrap", ToString(this.WordWrap)));
 			doc.Add(new XElement("HighlightCurrentLine", ToString(this.HighlightCurrentLine)));
 			doc.Add(new XElement("LeftColumnWidth", ToString(this.LeftColumnWidth)));
