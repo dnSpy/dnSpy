@@ -365,13 +365,16 @@ namespace Debugger.Interop.MetaData
 		public uint FindTypeDefByName(string name, uint typeDef_typeRef_enclosingClass_nullable)
 		{
 			uint typeDef;
-			metaData.FindTypeDefByName(name, typeDef_typeRef_enclosingClass_nullable, out typeDef);
-			return typeDef;
+			int hr = metaData.FindTypeDefByName(name, typeDef_typeRef_enclosingClass_nullable, out typeDef);
+			return hr < 0 ? 0 : typeDef;
 		}
 		
 		public TypeDefProps FindTypeDefPropsByName(string name, uint typeDef_typeRef_enclosingClass_nullable)
 		{
-			return GetTypeDefProps(FindTypeDefByName(name, typeDef_typeRef_enclosingClass_nullable));
+			uint token = FindTypeDefByName(name, typeDef_typeRef_enclosingClass_nullable);
+			if (token == 0)
+				return null;
+			return GetTypeDefProps(token);
 		}
 		
 		public uint FindTypeRef(uint moduleRef_assemblyRef_typeRef_scope, string name)

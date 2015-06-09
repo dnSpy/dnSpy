@@ -942,13 +942,15 @@ namespace Debugger.MetaData
 			if (declaringType != null && declaringType.DebugModule != module)
 				throw new DebuggerException("Declaring type must be in the same module");
 			
-			uint token;
 			try {
-				token = module.MetaData.FindTypeDefPropsByName(name, declaringType == null ? 0 : (uint)declaringType.MetadataToken).Token;
-			} catch {
+				var props = module.MetaData.FindTypeDefPropsByName(name, declaringType == null ? 0 : (uint)declaringType.MetadataToken);
+				if (props == null)
+					return null;
+				return CreateFromTypeDefOrRef(module, null, props.Token, genericArguments);
+			}
+			catch {
 				return null;
 			}
-			return CreateFromTypeDefOrRef(module, null, token, genericArguments);
 		}
 		
 		public static DebugType CreateFromTypeSpec(Module module, uint token, DebugType declaringType)

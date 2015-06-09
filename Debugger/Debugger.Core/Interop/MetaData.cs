@@ -148,8 +148,9 @@ namespace Debugger.Interop.MetaData
         void EnumInterfaceImpls(ref IntPtr phEnum, uint td, [Out, MarshalAsAttribute(UnmanagedType.LPArray)] uint[] rImpls, uint cMax, out uint pcImpls);
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType=MethodCodeType.Runtime)]
         void EnumTypeRefs(ref IntPtr phEnum, [Out, MarshalAsAttribute(UnmanagedType.LPArray)] uint[] rTypeRefs, uint cMax, out uint pcTypeRefs);
+		[PreserveSig]
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType=MethodCodeType.Runtime)]
-        void FindTypeDefByName([In, MarshalAs(UnmanagedType.LPWStr)] string szTypeDef, uint tkEnclosingClass, out uint ptd);
+        int FindTypeDefByName([In, MarshalAs(UnmanagedType.LPWStr)] string szTypeDef, uint tkEnclosingClass, out uint ptd);
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType=MethodCodeType.Runtime)]
         void GetScopeProps(IntPtr szName, uint cchName, out uint pchName, out Guid pmvid);
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType=MethodCodeType.Runtime)]
