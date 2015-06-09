@@ -27,6 +27,12 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		/// Gets whether the debugger can evaluate the expression.
 		/// </summary>
 		bool CanEvaluate { get; }
+
+		bool EnableJustMyCode { get; set; }
+		bool StepOverDebuggerAttributes { get; set; }
+		bool StepOverAllProperties { get; set; }
+		bool StepOverSingleLineProperties { get; set; }
+		bool StepOverFieldAccessProperties { get; set; }
 		
 		/// <summary>
 		/// Returns true if debuger is attached to a process

@@ -6,6 +6,11 @@
 		<StackPanel Margin="10">
 			<CheckBox IsChecked="{Binding AskForArguments}">Ask for arguments and working directory before executing a process</CheckBox>
 			<CheckBox IsChecked="{Binding BreakAtBeginning}">Break debugged process at start or attach</CheckBox>
-    </StackPanel>
+			<CheckBox IsChecked="{Binding EnableJustMyCode}">Enable just my code</CheckBox>
+			<CheckBox IsChecked="{Binding StepOverDebuggerAttributes}">Step over debugger attributes</CheckBox>
+			<CheckBox IsChecked="{Binding StepOverAllProperties}">Step over all properties</CheckBox>
+			<CheckBox IsChecked="{Binding StepOverSingleLineProperties}">Step over single line properties</CheckBox>
+			<CheckBox IsChecked="{Binding StepOverFieldAccessProperties}">Step over field access properties</CheckBox>
+		</StackPanel>
 	</Grid>
 </UserControl>

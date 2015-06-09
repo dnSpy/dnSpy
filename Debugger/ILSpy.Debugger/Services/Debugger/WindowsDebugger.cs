@@ -36,6 +36,28 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		bool attached;
 		NDebugger debugger;
 		Process debuggedProcess;
+
+		CorDbg.Options options = new CorDbg.Options();
+		public bool EnableJustMyCode {
+			get { return options.EnableJustMyCode; }
+			set { options.EnableJustMyCode = value; }
+		}
+		public bool StepOverDebuggerAttributes {
+			get { return options.StepOverDebuggerAttributes; }
+			set { options.StepOverDebuggerAttributes = value; }
+		}
+		public bool StepOverAllProperties {
+			get { return options.StepOverAllProperties; }
+			set { options.StepOverAllProperties = value; }
+		}
+		public bool StepOverSingleLineProperties {
+			get { return options.StepOverSingleLineProperties; }
+			set { options.StepOverSingleLineProperties = value; }
+		}
+		public bool StepOverFieldAccessProperties {
+			get { return options.StepOverFieldAccessProperties; }
+			set { options.StepOverFieldAccessProperties = value; }
+		}
 		
 		public NDebugger DebuggerCore {
 			get {
@@ -508,6 +530,7 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		public void InitializeService()
 		{
 			debugger = new NDebugger();
+			debugger.Options = options;
 			
 			debugger.DebuggerTraceMessage    += debugger_TraceMessage;
 			debugger.Processes.Added         += debugger_ProcessStarted;

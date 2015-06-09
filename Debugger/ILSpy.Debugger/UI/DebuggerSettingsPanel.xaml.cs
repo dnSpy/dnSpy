@@ -11,7 +11,6 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Linq;
-
 using ICSharpCode.ILSpy.Debugger;
 
 namespace ICSharpCode.ILSpy.Options

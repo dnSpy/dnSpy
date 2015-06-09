@@ -4,27 +4,37 @@
 using System;
 using System.ComponentModel;
 using System.Xml.Linq;
+using ICSharpCode.ILSpy.Debugger.Services;
 
 namespace ICSharpCode.ILSpy.Debugger
 {
 	public class DebuggerSettings : INotifyPropertyChanged
 	{
 		#region members
-		private static readonly string DEBUGGER_SETTINGS = "DebuggerSettings";
-		private static readonly string ASK_ARGUMENTS = "askForArguments";
-		private static readonly string SHOW_MODULE = "showModuleName";
-		private static readonly string SHOW_ARGUMENTS = "showArguments";
-		private static readonly string SHOW_ARGUMENTVALUE = "showArgumentValues";
-		private static readonly string BREAK_AT_BEGINNING = "breakAtBeginning";
+		static readonly string DEBUGGER_SETTINGS = "DebuggerSettings";
+		static readonly string ASK_ARGUMENTS = "askForArguments";
+		static readonly string SHOW_MODULE = "showModuleName";
+		static readonly string SHOW_ARGUMENTS = "showArguments";
+		static readonly string SHOW_ARGUMENTVALUE = "showArgumentValues";
+		static readonly string BREAK_AT_BEGINNING = "breakAtBeginning";
+		static readonly string ENABLE_JUST_MY_CODE = "enableJustMyCode";
+		static readonly string STEP_OVER_DEBUGGER_ATTRIBUTES = "stepOverDebuggerAttributes";
+		static readonly string STEP_OVER_ALL_PROPERTIES = "stepOverAllProperties";
+		static readonly string STEP_OVER_SINGLE_LINE_PROPERTIES = "stepOverSingleLineProperties";
+		static readonly string STEP_OVER_FIELD_ACCESS_PROPERTIES = "stepOverFieldAccessProperties";
 	 	
-		private bool askArguments = true;
-		private bool debugWholeTypesOnly = false;
-		private bool showModuleName = true;
-		private bool showArguments = false;
-		private bool showArgumentValues = false;
-		private bool breakAtBeginning = true;
+		bool askArguments = true;
+		bool showModuleName = true;
+		bool showArguments = false;
+		bool showArgumentValues = false;
+		bool breakAtBeginning = true;
+		bool enableJustMyCode = false;
+		bool stepOverDebuggerAttributes = false;
+		bool stepOverAllProperties = false;
+		bool stepOverSingleLineProperties = false;
+		bool stepOverFieldAccessProperties = false;
 		
-		private static DebuggerSettings s_instance;
+		static DebuggerSettings s_instance;
 		#endregion
 		
 		public static DebuggerSettings Instance 
@@ -39,7 +49,7 @@ namespace ICSharpCode.ILSpy.Debugger
 			}
 		}
 		
-		private DebuggerSettings()
+		DebuggerSettings()
 		{			
 		}
 		
@@ -51,6 +61,13 @@ namespace ICSharpCode.ILSpy.Debugger
 			ShowArguments = (bool?)e.Attribute(SHOW_ARGUMENTS) ?? ShowArguments;
 			ShowArgumentValues = (bool?)e.Attribute(SHOW_ARGUMENTVALUE) ?? ShowArgumentValues;
 			BreakAtBeginning = (bool?)e.Attribute(BREAK_AT_BEGINNING) ?? BreakAtBeginning;
+			EnableJustMyCode = (bool?)e.Attribute(ENABLE_JUST_MY_CODE) ?? EnableJustMyCode;
+			StepOverDebuggerAttributes = (bool?)e.Attribute(STEP_OVER_DEBUGGER_ATTRIBUTES) ?? StepOverDebuggerAttributes;
+			StepOverAllProperties = (bool?)e.Attribute(STEP_OVER_ALL_PROPERTIES) ?? StepOverAllProperties;
+			StepOverSingleLineProperties = (bool?)e.Attribute(STEP_OVER_SINGLE_LINE_PROPERTIES) ?? StepOverSingleLineProperties;
+			StepOverFieldAccessProperties = (bool?)e.Attribute(STEP_OVER_FIELD_ACCESS_PROPERTIES) ?? StepOverFieldAccessProperties;
+
+			UpdateDebugger();
 		}
 		
 		public void Save(XElement root)
@@ -61,18 +78,34 @@ namespace ICSharpCode.ILSpy.Debugger
 			section.SetAttributeValue(SHOW_ARGUMENTS, ShowArguments);
 			section.SetAttributeValue(SHOW_ARGUMENTVALUE, ShowArgumentValues);
 			section.SetAttributeValue(BREAK_AT_BEGINNING, BreakAtBeginning);
+			section.SetAttributeValue(ENABLE_JUST_MY_CODE, EnableJustMyCode);
+			section.SetAttributeValue(STEP_OVER_DEBUGGER_ATTRIBUTES, StepOverDebuggerAttributes);
+			section.SetAttributeValue(STEP_OVER_ALL_PROPERTIES, StepOverAllProperties);
+			section.SetAttributeValue(STEP_OVER_SINGLE_LINE_PROPERTIES, StepOverSingleLineProperties);
+			section.SetAttributeValue(STEP_OVER_FIELD_ACCESS_PROPERTIES, StepOverFieldAccessProperties);
 	
 			XElement existingElement = root.Element(DEBUGGER_SETTINGS);
 			if (existingElement != null)
 				existingElement.ReplaceWith(section);
 			else
 				root.Add(section);
+
+			UpdateDebugger();
+		}
+
+		void UpdateDebugger()
+		{
+			var debugger = DebuggerService.CurrentDebugger;
+			debugger.EnableJustMyCode = EnableJustMyCode;
+			debugger.StepOverDebuggerAttributes = StepOverDebuggerAttributes;
+			debugger.StepOverAllProperties = StepOverAllProperties;
+			debugger.StepOverSingleLineProperties = StepOverSingleLineProperties;
+			debugger.StepOverFieldAccessProperties = StepOverFieldAccessProperties;
 		}
 		
 		/// <summary>
 		/// Ask for arguments and working directory before executing a process.
 		/// </summary>
-		[DefaultValue(true)]
 		public bool AskForArguments {
 			get { return askArguments; }
 			set {
@@ -84,24 +117,8 @@ namespace ICSharpCode.ILSpy.Debugger
 		}			
 		
 		/// <summary>
-		/// True, if debug only whole types; otherwise false (debug only methods and properties).
-		/// <remarks>Default value is false.</remarks>
-		/// </summary>
-		[DefaultValue(false)]
-		public bool DebugWholeTypesOnly {
-			get { return debugWholeTypesOnly; }
-			set {
-				if (debugWholeTypesOnly != value) {
-					debugWholeTypesOnly = value;
-					OnPropertyChanged("DebugWholeTypesOnly");
-				}
-			}
-		}
-		
-		/// <summary>
 		/// Show module name in callstack panel.
 		/// </summary>
-		[DefaultValue(true)]
 		public bool ShowModuleName {
 		    get { return showModuleName; }
 		    set {
@@ -115,7 +132,6 @@ namespace ICSharpCode.ILSpy.Debugger
 		/// <summary>
 		/// Show module name in callstack panel.
 		/// </summary>
-		[DefaultValue(false)]
 		public bool ShowArguments {
 		    get { return showArguments; }
 		    set {
@@ -128,7 +144,6 @@ namespace ICSharpCode.ILSpy.Debugger
 		/// <summary>
 		/// Show module name in callstack panel.
 		/// </summary>
-		[DefaultValue(false)]
 		public bool ShowArgumentValues {
 		    get { return showArgumentValues; }
 		    set {
@@ -142,7 +157,6 @@ namespace ICSharpCode.ILSpy.Debugger
 		/// <summary>
 		/// Break debugged process after attach or start.
 		/// </summary>
-		[DefaultValue(true)]
 		public bool BreakAtBeginning {
 		    get { return breakAtBeginning; }
 		    set {
@@ -151,6 +165,56 @@ namespace ICSharpCode.ILSpy.Debugger
 					OnPropertyChanged("BreakAtBeginning");
 		        }
 		    }
+		}
+
+		public bool EnableJustMyCode {
+			get { return enableJustMyCode; }
+			set {
+				if (enableJustMyCode != value) {
+					enableJustMyCode = value;
+					OnPropertyChanged("EnableJustMyCode");
+				}
+			}
+		}
+
+		public bool StepOverDebuggerAttributes {
+			get { return stepOverDebuggerAttributes; }
+			set {
+				if (stepOverDebuggerAttributes != value) {
+					stepOverDebuggerAttributes = value;
+					OnPropertyChanged("StepOverDebuggerAttributes");
+				}
+			}
+		}
+
+		public bool StepOverAllProperties {
+			get { return stepOverAllProperties; }
+			set {
+				if (stepOverAllProperties != value) {
+					stepOverAllProperties = value;
+					OnPropertyChanged("StepOverAllProperties");
+				}
+			}
+		}
+
+		public bool StepOverSingleLineProperties {
+			get { return stepOverSingleLineProperties; }
+			set {
+				if (stepOverSingleLineProperties != value) {
+					stepOverSingleLineProperties = value;
+					OnPropertyChanged("StepOverSingleLineProperties");
+				}
+			}
+		}
+
+		public bool StepOverFieldAccessProperties {
+			get { return stepOverFieldAccessProperties; }
+			set {
+				if (stepOverFieldAccessProperties != value) {
+					stepOverFieldAccessProperties = value;
+					OnPropertyChanged("StepOverFieldAccessProperties");
+				}
+			}
 		}
 		
 		public event PropertyChangedEventHandler PropertyChanged;
