@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:controls="clr-namespace:ICSharpCode.ILSpy.Controls"
+	xmlns:ctrls="clr-namespace:ICSharpCode.ILSpy.Controls"
 >
 	<ResourceDictionary.MergedDictionaries>
 		<ResourceDictionary Source="pack://application:,,,/dnSpy;component/Controls/SearchBoxStyle.xaml" />
@@ -9,18 +9,18 @@
 	<!-- SortableGridViewColumn.
 		Displays an up arrow or down arrow in the column header when the grid is sorted using that column.
 	-->
-	<controls:ColumnSortDirectionToVisibilityConverter x:Key="ColumnSortDirectionToVisibilityConverter"/>
+	<ctrls:ColumnSortDirectionToVisibilityConverter x:Key="ColumnSortDirectionToVisibilityConverter"/>
 	
-	<DataTemplate x:Key="{ComponentResourceKey {x:Type controls:SortableGridViewColumn}, ColumnHeaderTemplate}">
+	<DataTemplate x:Key="{ComponentResourceKey {x:Type ctrls:SortableGridViewColumn}, ColumnHeaderTemplate}">
 		<StackPanel Orientation="Horizontal">
 			<TextBlock HorizontalAlignment="Center" Text="{Binding}"/>
 			<Path x:Name="upArrow"
-			      Visibility="{Binding Path=Column.SortDirection, ConverterParameter={x:Static controls:ColumnSortDirection.Ascending}, RelativeSource={RelativeSource AncestorType={x:Type GridViewColumnHeader}}, Converter={StaticResource ColumnSortDirectionToVisibilityConverter}}"
+			      Visibility="{Binding Path=Column.SortDirection, ConverterParameter={x:Static ctrls:ColumnSortDirection.Ascending}, RelativeSource={RelativeSource AncestorType={x:Type GridViewColumnHeader}}, Converter={StaticResource ColumnSortDirectionToVisibilityConverter}}"
 			      StrokeThickness = "1"
 			      Fill            = "{DynamicResource SortableGridViewColumnArrowBackground}"
 			      Data            = "M 5,10 L 15,10 L 10,5 L 5,10"/>
 			<Path x:Name="downArrow"
-			      Visibility="{Binding Path=Column.SortDirection, ConverterParameter={x:Static controls:ColumnSortDirection.Descending}, RelativeSource={RelativeSource AncestorType={x:Type GridViewColumnHeader}}, Converter={StaticResource ColumnSortDirectionToVisibilityConverter}}"
+			      Visibility="{Binding Path=Column.SortDirection, ConverterParameter={x:Static ctrls:ColumnSortDirection.Descending}, RelativeSource={RelativeSource AncestorType={x:Type GridViewColumnHeader}}, Converter={StaticResource ColumnSortDirectionToVisibilityConverter}}"
 			      StrokeThickness = "1"
 			      Fill            = "{DynamicResource SortableGridViewColumnArrowBackground}"
 			      Data            = "M 5,5 L 10,10 L 15,5 L 5,5"/>
@@ -28,7 +28,7 @@
 	</DataTemplate>
 
 	<!-- DockedPane -->
-	<Style TargetType="{x:Type controls:DockedPane}">
+	<Style TargetType="{x:Type ctrls:DockedPane}">
 		<Style.Resources>
 			<Style x:Key="CloseButtonStyle" TargetType="{x:Type Button}">
 				<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -61,7 +61,7 @@
 		</Style.Resources>
 		<Setter Property="Template">
 			<Setter.Value>
-				<ControlTemplate TargetType="{x:Type controls:DockedPane}">
+				<ControlTemplate TargetType="{x:Type ctrls:DockedPane}">
 					<Border
 						BorderThickness="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness}"
 						BorderBrush="{DynamicResource PaneBorder}">

@@ -1,12 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Window
+<ctrls:MetroWindow
 	x:Class="ICSharpCode.ILSpy.MainWindow"
 	x:ClassModifier="public"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
 	xmlns:textView="clr-namespace:ICSharpCode.ILSpy.TextView"
-	xmlns:controls="clr-namespace:ICSharpCode.ILSpy.Controls"
-	xmlns:mm="clr-namespace:ICSharpCode.ILSpy"
-	mm:WindowChrome.WindowChromeType="MainWindow"
+	xmlns:ctrls="clr-namespace:ICSharpCode.ILSpy.Controls"
+	Style="{StaticResource MainWindowStyle}"
 	Title="dnSpy"
 	MinWidth="250"
 	MinHeight="200"
@@ -14,7 +13,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008" d:DesignHeight="500" d:DesignWidth="500"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
 >
-	<Window.Resources>
+	<ctrls:MetroWindow.Resources>
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 		<RoutedUICommand x:Key="GoToToken" Text="Go to MD Token" />
 		<RoutedUICommand x:Key="GoToLine" Text="Go to Line" />
@@ -27,8 +26,8 @@
 		<RoutedUICommand x:Key="ZoomReset" Text="Zoom Reset" />
 		<RoutedUICommand x:Key="FocusCode" Text="Focus Code Window" />
 		<RoutedUICommand x:Key="FocusTreeView" Text="Focus TreeView" />
-	</Window.Resources>
-	<Window.InputBindings>
+	</ctrls:MetroWindow.Resources>
+	<ctrls:MetroWindow.InputBindings>
 		<KeyBinding Gesture="Ctrl+D" Command="{StaticResource GoToToken}" />
 		<KeyBinding Gesture="Ctrl+G" Command="{StaticResource GoToLine}" />
 		<KeyBinding Gesture="Ctrl+T" Command="{StaticResource OpenNewTab}" />
@@ -47,8 +46,8 @@
 		<KeyBinding Gesture="Ctrl+Alt+D0" Command="{StaticResource FocusCode}" />
 		<KeyBinding Gesture="Ctrl+Alt+NumPad0" Command="{StaticResource FocusCode}" />
 		<KeyBinding Gesture="Ctrl+Alt+L" Command="{StaticResource FocusTreeView}" />
-	</Window.InputBindings>
-	<Window.CommandBindings>
+	</ctrls:MetroWindow.InputBindings>
+	<ctrls:MetroWindow.CommandBindings>
 		<CommandBinding
 			Command="{StaticResource FocusTreeView}"
 			CanExecute="FocusTreeViewCanExecute"
@@ -108,10 +107,10 @@
 		<CommandBinding
 			Command="Search"
 			Executed="SearchCommandExecuted" />
-	</Window.CommandBindings>
-	<Window.TaskbarItemInfo>
+	</ctrls:MetroWindow.CommandBindings>
+	<ctrls:MetroWindow.TaskbarItemInfo>
 		<TaskbarItemInfo />
-	</Window.TaskbarItemInfo>
+	</ctrls:MetroWindow.TaskbarItemInfo>
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition />
@@ -230,7 +229,7 @@
 					</DockPanel>
 				</Border>
 				
-				<controls:DockedPane x:Name="topPane" Grid.Row="1" Title="Top" Visibility="Collapsed"
+				<ctrls:DockedPane x:Name="topPane" Grid.Row="1" Title="Top" Visibility="Collapsed"
 					CloseButtonClicked="TopPane_CloseButtonClicked" Margin="0,0,0,3"
 					BorderThickness="1,1,0,1" />
 				
@@ -258,9 +257,9 @@
 					Focusable="False"
 					Visibility="{Binding Visibility, ElementName=bottomPane}" />
 				
-				<controls:DockedPane x:Name="bottomPane" Grid.Row="5" Title="Bottom" Visibility="Collapsed"
+				<ctrls:DockedPane x:Name="bottomPane" Grid.Row="5" Title="Bottom" Visibility="Collapsed"
 					CloseButtonClicked="BottomPane_CloseButtonClicked" Margin="0,3,0,0" BorderThickness="1,1,0,1"/>
 			</Grid>
 		</Grid>
 	</Grid>
-</Window>
+</ctrls:MetroWindow>

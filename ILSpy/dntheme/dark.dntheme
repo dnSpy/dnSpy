@@ -91,6 +91,13 @@
 		<color name="environmentmainwindowbuttonhoveractive" bg="#72555555" />
 		<color name="environmentmainwindowbuttonhoveractiveborder" bg="#72555555" />
 		<color name="environmentmainwindowbuttonhoveractiveglyph" bg="#FFFFFFFF" />
+		<color name="environmentmainwindowbuttonhoverinactive" bg="#72555555" />
+		<color name="environmentmainwindowbuttonhoverinactiveborder" bg="#72555555" />
+		<color name="environmentmainwindowbuttonhoverinactiveglyph" bg="#FFFFFFFF" />
+		<color name="environmentmainwindowbuttoninactiveborder" bg="#00000000" />
+		<color name="environmentmainwindowbuttoninactiveglyph" bg="#FFF1F1F1" />
+		<color name="environmentmainwindowinactiveborder" bg="#FF434346" />
+		<color name="environmentmainwindowinactivecaption" fg="#99999999" bg="#FF2D2D30" />
 		<color name="controlshadow" bg="#71000000" />
 		<color name="gridsplitterpreviewfill" bg="#80000000" />
 		<color name="groupboxborderbrush" bg="#808080" />

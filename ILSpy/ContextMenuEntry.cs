@@ -368,7 +368,7 @@ namespace ICSharpCode.ILSpy
 				}
 			}
 			menu.Opened += (s, e) => Interlocked.Increment(ref menuCount);
-			menu.Closed += (s, e) => Interlocked.Increment(ref menuCount);
+			menu.Closed += (s, e) => Interlocked.Decrement(ref menuCount);
 			return menu.Items.Count > 0;
 		}
 

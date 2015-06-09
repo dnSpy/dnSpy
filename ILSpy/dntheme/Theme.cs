@@ -411,6 +411,36 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#FF007ACC",
 				BackgroundResourceKey = "EnvironmentMainWindowButtonHoverActiveGlyph",
 			},
+			new BrushColorInfo(ColorType.EnvironmentMainWindowButtonHoverInactive, "MainWindow Button Hover Inactive") {
+				DefaultBackground = "#D8FFFFFF",
+				BackgroundResourceKey = "EnvironmentMainWindowButtonHoverInactive",
+			},
+			new BrushColorInfo(ColorType.EnvironmentMainWindowButtonHoverInactiveBorder, "MainWindow Button Hover Inactive Border") {
+				DefaultBackground = "#D8FFFFFF",
+				BackgroundResourceKey = "EnvironmentMainWindowButtonHoverInactiveBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentMainWindowButtonHoverInactiveGlyph, "MainWindow Button Hover Inactive Glyph") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "EnvironmentMainWindowButtonHoverInactiveGlyph",
+			},
+			new BrushColorInfo(ColorType.EnvironmentMainWindowButtonInactiveBorder, "MainWindow Button Inactive Border") {
+				DefaultBackground = "#00000000",
+				BackgroundResourceKey = "EnvironmentMainWindowButtonInactiveBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentMainWindowButtonInactiveGlyph, "MainWindow Button Inactive Glyph") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "EnvironmentMainWindowButtonInactiveGlyph",
+			},
+			new BrushColorInfo(ColorType.EnvironmentMainWindowInactiveBorder, "MainWindow Inactive Border") {
+				DefaultBackground = "#FFCCCEDB",
+				BackgroundResourceKey = "EnvironmentMainWindowInactiveBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentMainWindowInactiveCaption, "MainWindow Inactive Caption") {
+				DefaultForeground = "#99525252",
+				ForegroundResourceKey = "EnvironmentMainWindowInactiveCaptionText",
+				DefaultBackground = "#FFEEEEF2",
+				BackgroundResourceKey = "EnvironmentMainWindowInactiveCaption",
+			},
 			new ColorColorInfo(ColorType.ControlShadow, "Control shadow") {
 				DefaultBackground = "#71000000",
 				BackgroundResourceKey = "ControlShadow",

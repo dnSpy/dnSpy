@@ -5377,114 +5377,130 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
-	<Style x:Key="CommonWindowStyleBase" TargetType="{x:Type Window}">
+	<Style x:Key="{x:Type ctrls:MetroWindow}" TargetType="{x:Type ctrls:MetroWindow}">
 		<Setter Property="UseLayoutRounding" Value="True"/>
 		<Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
 		<Setter Property="Icon" Value="../Images/dnSpy.ico"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type ctrls:MetroWindow}">
+					<Border
+						x:Name="border"
+						ctrls:MetroWindow.MaximizedElement="True"
+						BorderBrush="{DynamicResource EnvironmentMainWindowActiveDefaultBorder}"
+						BorderThickness="1"
+						Background="{TemplateBinding Background}"
+						TextElement.Foreground="{TemplateBinding Foreground}"
+						>
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="{x:Static ctrls:MetroWindow.GridCaptionHeight}" />
+								<RowDefinition Height="*" />
+							</Grid.RowDefinitions>
+							<DockPanel
+								x:Name="titleBar"
+								Grid.Row="0"
+								Background="{DynamicResource EnvironmentMainWindowActiveCaption}"
+								TextElement.Foreground="{DynamicResource EnvironmentMainWindowActiveCaptionText}"
+								>
+								<ctrls:SysMenuButton
+									DockPanel.Dock="Left"
+									ctrls:MetroWindow.IsHitTestVisibleInChrome="True"
+									Command="{x:Static ctrls:MetroWindow.ShowSystemMenuCommand}"
+									CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
+									Width="16"
+									Height="16"
+									Margin="4 7 4 7"
+									Padding="0 0 0 0"
+									Background="Transparent"
+									VerticalAlignment="Center"
+									Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ShowMenuButton, Converter={StaticResource BooleanToVisibilityConverter}}" >
+									<Image Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SystemMenuImage}" />
+								</ctrls:SysMenuButton>
+								<StackPanel DockPanel.Dock="Right" Orientation="Horizontal" ctrls:MetroWindow.IsHitTestVisibleInChrome="True">
+									<ctrls:WinSysButton x:Name="minButton" WinSysType="Minimize" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ShowMinimizeButton, Converter={StaticResource BooleanToVisibilityConverter}}" />
+									<ctrls:WinSysButton x:Name="maxButton" WinSysType="Maximize" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ShowMaximizeButton, Converter={StaticResource BooleanToVisibilityConverter}}" />
+									<ctrls:WinSysButton x:Name="closeButton" WinSysType="Close" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ShowCloseButton, Converter={StaticResource BooleanToVisibilityConverter}}" />
+								</StackPanel>
+								<TextBlock
+									Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title}"
+									Margin="5 0 0 0"
+									HorizontalAlignment="Left"
+									VerticalAlignment="Center"
+									TextTrimming="CharacterEllipsis"
+									TextWrapping="NoWrap" />
+							</DockPanel>
+							<Grid Grid.Row="1">
+								<AdornerDecorator>
+									<ContentPresenter/>
+								</AdornerDecorator>
+			
+								<ResizeGrip x:Name="WindowResizeGrip"
+											HorizontalAlignment="Right"
+											VerticalAlignment="Bottom"
+											Visibility="Collapsed"
+											IsTabStop="false"/>
+							</Grid>
+						</Grid>
+					</Border>
+					<ControlTemplate.Triggers>
+						<Trigger Property="ResizeMode" Value="NoResize">
+							<Setter Property="UseResizeBorder" Value="False" />
+						</Trigger>
+						<Trigger Property="IsActive" Value="False">
+							<Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource EnvironmentMainWindowInactiveBorder}" />
+							<Setter TargetName="titleBar" Property="Background" Value="{DynamicResource EnvironmentMainWindowInactiveCaption}" />
+							<Setter TargetName="titleBar" Property="TextElement.Foreground" Value="{DynamicResource EnvironmentMainWindowInactiveCaptionText}" />
+							<Setter TargetName="minButton" Property="BorderBrush" Value="{DynamicResource EnvironmentMainWindowButtonInactiveBorder}" />
+							<Setter TargetName="minButton" Property="GlyphForeground" Value="{DynamicResource EnvironmentMainWindowButtonInactiveGlyph}" />
+							<Setter TargetName="minButton" Property="HoverBackground" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactive}" />
+							<Setter TargetName="minButton" Property="HoverBorderBrush" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactiveBorder}" />
+							<Setter TargetName="minButton" Property="HoverForeground" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactiveGlyph}" />
+							<Setter TargetName="maxButton" Property="BorderBrush" Value="{DynamicResource EnvironmentMainWindowButtonInactiveBorder}" />
+							<Setter TargetName="maxButton" Property="GlyphForeground" Value="{DynamicResource EnvironmentMainWindowButtonInactiveGlyph}" />
+							<Setter TargetName="maxButton" Property="HoverBackground" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactive}" />
+							<Setter TargetName="maxButton" Property="HoverBorderBrush" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactiveBorder}" />
+							<Setter TargetName="maxButton" Property="HoverForeground" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactiveGlyph}" />
+							<Setter TargetName="closeButton" Property="BorderBrush" Value="{DynamicResource EnvironmentMainWindowButtonInactiveBorder}" />
+							<Setter TargetName="closeButton" Property="GlyphForeground" Value="{DynamicResource EnvironmentMainWindowButtonInactiveGlyph}" />
+							<Setter TargetName="closeButton" Property="HoverBackground" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactive}" />
+							<Setter TargetName="closeButton" Property="HoverBorderBrush" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactiveBorder}" />
+							<Setter TargetName="closeButton" Property="HoverForeground" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactiveGlyph}" />
+						</Trigger>
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="ResizeMode"
+			                               Value="CanResizeWithGrip"/>
+								<Condition Property="WindowState"
+			                               Value="Normal"/>
+							</MultiTrigger.Conditions>
+							<Setter TargetName="WindowResizeGrip"
+			                        Property="Visibility"
+			                        Value="Visible"/>
+						</MultiTrigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
 	</Style>
-	<Style x:Key="MainWindowStyleBase" TargetType="{x:Type Window}" BasedOn="{StaticResource CommonWindowStyleBase}">
-		<Setter Property="Background" Value="{DynamicResource EnvironmentBackground}" />
+	<Style x:Key="MainWindowStyle" TargetType="{x:Type ctrls:MetroWindow}" BasedOn="{StaticResource {x:Type ctrls:MetroWindow}}">
 		<Setter Property="Foreground" Value="{DynamicResource EnvironmentForeground}" />
+		<Setter Property="Background" Value="{DynamicResource EnvironmentBackground}" />
+		<Setter Property="ShowMenuButton" Value="True" />
+		<Setter Property="ShowMinimizeButton" Value="True" />
+		<Setter Property="ShowMaximizeButton" Value="True" />
+		<Setter Property="ShowCloseButton" Value="True" />
 	</Style>
-	<Style x:Key="MainWindowStyle" TargetType="{x:Type Window}" BasedOn="{StaticResource MainWindowStyleBase}">
-	</Style>
-	<ControlTemplate x:Key="ChromeWindowTemplate" TargetType="{x:Type Window}">
-		<Border
-			mm:WindowChrome.MaximizedElement="True"
-			BorderBrush="{DynamicResource EnvironmentMainWindowActiveDefaultBorder}"
-			BorderThickness="1"
-			Background="{TemplateBinding Background}"
-			TextElement.Foreground="{TemplateBinding Foreground}"
-			>
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="{x:Static mm:WindowChrome.GridCaptionHeight}" />
-					<RowDefinition Height="*" />
-				</Grid.RowDefinitions>
-				<DockPanel
-					Grid.Row="0"
-					Background="{DynamicResource EnvironmentMainWindowActiveCaption}"
-					TextElement.Foreground="{DynamicResource EnvironmentMainWindowActiveCaptionText}"
-					>
-					<ctrls:SysMenuButton
-						DockPanel.Dock="Left"
-						mm:WindowChrome.IsHitTestVisibleInChrome="True"
-						Command="{x:Static mm:WindowChrome.ShowSystemMenuCommand}"
-						CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
-						Width="16"
-						Height="16"
-						Margin="4 7 4 7"
-						Padding="0 0 0 0"
-						Background="Transparent"
-						VerticalAlignment="Center"
-						Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(mm:WindowChrome.ShowMenuButton), Converter={StaticResource BooleanToVisibilityConverter}}" >
-						<Image Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SystemMenuImage}" />
-					</ctrls:SysMenuButton>
-					<StackPanel DockPanel.Dock="Right" Orientation="Horizontal" mm:WindowChrome.IsHitTestVisibleInChrome="True">
-						<ctrls:WinSysButton WinSysType="Minimize" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(mm:WindowChrome.ShowMinimizeButton), Converter={StaticResource BooleanToVisibilityConverter}}" />
-						<ctrls:WinSysButton WinSysType="Maximize" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(mm:WindowChrome.ShowMaximizeButton), Converter={StaticResource BooleanToVisibilityConverter}}" />
-						<ctrls:WinSysButton WinSysType="Close" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(mm:WindowChrome.ShowCloseButton), Converter={StaticResource BooleanToVisibilityConverter}}" />
-					</StackPanel>
-					<TextBlock
-						Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Title}"
-						Margin="5 0 0 0"
-						HorizontalAlignment="Left"
-						VerticalAlignment="Center"
-						TextTrimming="CharacterEllipsis"
-						TextWrapping="NoWrap" />
-				</DockPanel>
-				<Grid Grid.Row="1">
-					<AdornerDecorator>
-						<ContentPresenter/>
-					</AdornerDecorator>
-
-					<ResizeGrip x:Name="WindowResizeGrip"
-								HorizontalAlignment="Right"
-								VerticalAlignment="Bottom"
-								Visibility="Collapsed"
-								IsTabStop="false"/>
-				</Grid>
-			</Grid>
-		</Border>
-		<ControlTemplate.Triggers>
-			<Trigger Property="ResizeMode" Value="NoResize">
-				<Setter Property="mm:WindowChrome.UseResizeBorder" Value="False" />
-			</Trigger>
-			<MultiTrigger>
-				<MultiTrigger.Conditions>
-					<Condition Property="ResizeMode"
-                               Value="CanResizeWithGrip"/>
-					<Condition Property="WindowState"
-                               Value="Normal"/>
-				</MultiTrigger.Conditions>
-				<Setter TargetName="WindowResizeGrip"
-                        Property="Visibility"
-                        Value="Visible"/>
-			</MultiTrigger>
-		</ControlTemplate.Triggers>
-	</ControlTemplate>
-	<Style x:Key="ChromeMainWindowStyle" TargetType="{x:Type Window}" BasedOn="{StaticResource MainWindowStyleBase}">
-		<Setter Property="mm:WindowChrome.ShowMenuButton" Value="True" />
-		<Setter Property="mm:WindowChrome.ShowMinimizeButton" Value="True" />
-		<Setter Property="mm:WindowChrome.ShowMaximizeButton" Value="True" />
-		<Setter Property="mm:WindowChrome.ShowCloseButton" Value="True" />
-		<Setter Property="Template" Value="{StaticResource ChromeWindowTemplate}" />
-	</Style>
-	<Style x:Key="DialogWindowStyleBase" TargetType="{x:Type Window}" BasedOn="{StaticResource CommonWindowStyleBase}">
+	<Style x:Key="DialogWindowStyle" TargetType="{x:Type ctrls:MetroWindow}" BasedOn="{StaticResource {x:Type ctrls:MetroWindow}}">
 		<Setter Property="Foreground" Value="{DynamicResource DialogWindowForeground}"/>
 		<Setter Property="Background" Value="{DynamicResource DialogWindowBackground}"/>
+		<Setter Property="ShowMenuButton" Value="False" />
+		<Setter Property="ShowMinimizeButton" Value="False" />
+		<Setter Property="ShowMaximizeButton" Value="False" />
+		<Setter Property="ShowCloseButton" Value="True" />
 		<Setter Property="ShowInTaskbar" Value="False"/>
 		<Setter Property="mm:HideWindowsButtons.MaxMinButtons" Value="True"/>
-	</Style>
-	<Style x:Key="DialogWindowStyle" TargetType="{x:Type Window}" BasedOn="{StaticResource DialogWindowStyleBase}">
-	</Style>
-	<Style x:Key="ChromeDialogWindowStyle" TargetType="{x:Type Window}" BasedOn="{StaticResource DialogWindowStyleBase}">
 		<Setter Property="ResizeMode" Value="CanResizeWithGrip" />
-		<Setter Property="mm:WindowChrome.ShowMenuButton" Value="False" />
-		<Setter Property="mm:WindowChrome.ShowMinimizeButton" Value="False" />
-		<Setter Property="mm:WindowChrome.ShowMaximizeButton" Value="False" />
-		<Setter Property="mm:WindowChrome.ShowCloseButton" Value="True" />
-		<Setter Property="Template" Value="{StaticResource ChromeWindowTemplate}" />
 	</Style>
 	<Style x:Key="DialogBorderStyle" TargetType="{x:Type Border}">
 		<Setter Property="BorderBrush" Value="{DynamicResource TabItemSelectedBackground}"/>

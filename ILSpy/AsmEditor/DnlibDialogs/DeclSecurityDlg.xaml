@@ -25,7 +25,7 @@
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              Height="400" Width="500"
              Title="Security Declaration Settings"
-             xmlns:mm="clr-namespace:ICSharpCode.ILSpy" mm:WindowChrome.WindowChromeType="Dialog"
+             Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="300" MinWidth="400">
 	<Grid>
 		<Grid.ColumnDefinitions>

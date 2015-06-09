@@ -398,6 +398,7 @@
     <Compile Include="Commands\FindInCodeCommand.cs" />
     <Compile Include="Commands\ToolbarCommands.cs" />
     <Compile Include="Commands\ViewCommands.cs" />
+    <Compile Include="Controls\MetroWindow.cs" />
     <Compile Include="Controls\SysMenuButton.cs" />
     <Compile Include="Controls\TabButton.cs" />
     <Compile Include="Controls\WinSysButton.cs" />
@@ -556,7 +557,6 @@
     <Compile Include="VB\ILSpyEnvironmentProvider.cs" />
     <Compile Include="VB\VBLanguage.cs" />
     <Compile Include="VB\VBTextOutputFormatter.cs" />
-    <Compile Include="WindowChrome.cs" />
     <Compile Include="WindowExtensions.cs" />
     <Compile Include="XmlDoc\AddXmlDocTransform.cs" />
     <Compile Include="XmlDoc\XmlDocKeyProvider.cs" />

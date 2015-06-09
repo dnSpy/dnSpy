@@ -1,7 +1,8 @@
-﻿<Window
-	x:Class="ICSharpCode.ILSpy.CreateListDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:controls="clr-namespace:ICSharpCode.ILSpy.Controls"
+﻿<ctrls:MetroWindow
+	x:Class="ICSharpCode.ILSpy.CreateListDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	Title="New List"
-	xmlns:mm="clr-namespace:ICSharpCode.ILSpy" mm:WindowChrome.WindowChromeType="Dialog"
+	xmlns:ctrls="clr-namespace:ICSharpCode.ILSpy.Controls"
+	Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
 	ResizeMode="NoResize"
 	SizeToContent="Height"
 	Width="300"
@@ -20,4 +21,4 @@
 			<Button IsCancel="True" Style="{StaticResource DialogButton}">_Cancel</Button>
         </StackPanel>
     </Grid>
-</Window>
+</ctrls:MetroWindow>

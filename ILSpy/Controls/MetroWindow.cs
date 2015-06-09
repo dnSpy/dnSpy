@@ -25,75 +25,39 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media;
 using ICSharpCode.ILSpy.AsmEditor;
 
-namespace ICSharpCode.ILSpy
+namespace ICSharpCode.ILSpy.Controls
 {
-	public enum WindowChromeType
-	{
-		None,
-		MainWindow,
-		Dialog,
-	}
-
-	public sealed class WindowChrome : DependencyObject
+	public class MetroWindow : Window
 	{
 		public static ICommand ShowSystemMenuCommand {
 			get { return new RelayCommand(a => ShowSystemMenu(a), a => true); }
 		}
 
-		public static readonly DependencyProperty WindowChromeTypeProperty = DependencyProperty.RegisterAttached(
-			"WindowChromeType", typeof(WindowChromeType), typeof(WindowChrome), new UIPropertyMetadata(WindowChromeType.None, OnWindowChromeTypeChanged));
+		public static readonly DependencyProperty SystemMenuImageProperty =
+			DependencyProperty.Register("SystemMenuImage", typeof(ImageSource), typeof(MetroWindow),
+			new FrameworkPropertyMetadata(null));
 
-		static void OnWindowChromeTypeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
-			var win = d as Window;
-			if (win == null)
-				return;
-
-			string normalStyle, chromeStyle;
-			switch ((WindowChromeType)e.NewValue)
-			{
-			case WindowChromeType.None:
-				return;
-
-			case WindowChromeType.MainWindow:
-				normalStyle = "MainWindowStyle";
-				chromeStyle = "ChromeMainWindowStyle";
-				break;
-
-			case WindowChromeType.Dialog:
-				normalStyle = "DialogWindowStyle";
-				chromeStyle = "ChromeDialogWindowStyle";
-				// Can't be set in a style since it's not a dep prop, so set it here
-				win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-				break;
-
-			default: throw new ArgumentException("Invalid WindowChromeType value");
-			}
-
-			win.Style = (Style)win.FindResource(HasWindowChrome ? chromeStyle : normalStyle);
-			AddWindowChrome(win);
+		public ImageSource SystemMenuImage {
+			get { return (ImageSource)GetValue(SystemMenuImageProperty); }
+			set { SetValue(SystemMenuImageProperty, value); }
 		}
 
-		public static void SetWindowChromeType(UIElement element, WindowChromeType value)
+		protected override void OnStyleChanged(Style oldStyle, Style newStyle)
 		{
-			element.SetValue(WindowChromeTypeProperty, value);
-		}
-
-		public static WindowChromeType GetWindowChromeType(UIElement element)
-		{
-			return (WindowChromeType)element.GetValue(WindowChromeTypeProperty);
+			// We must add the WindowChrome prop after the style has been added. If we
+			// add it before the style has been set (eg. in our ctor), then dialog boxes'
+			// title bar gets messed up when we hover the mouse over the dlg box.
+			SetValue(winChrome_WindowChromeProperty, CreateWindowChromeObject());
 		}
 
 		public static readonly DependencyProperty IsHitTestVisibleInChromeProperty = DependencyProperty.RegisterAttached(
-			"IsHitTestVisibleInChrome", typeof(bool), typeof(WindowChrome), new UIPropertyMetadata(false, OnIsHitTestVisibleInChromeChanged));
+			"IsHitTestVisibleInChrome", typeof(bool), typeof(MetroWindow), new UIPropertyMetadata(false, OnIsHitTestVisibleInChromeChanged));
 
 		static void OnIsHitTestVisibleInChromeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			if (!HasWindowChrome)
-				return;
-
 			var elem = d as UIElement;
 			if (elem != null)
 				elem.SetValue(winChrome_IsHitTestVisibleInChromeProperty, e.NewValue);
@@ -110,7 +74,7 @@ namespace ICSharpCode.ILSpy
 		}
 
 		public static readonly DependencyProperty MaximizedElementProperty = DependencyProperty.RegisterAttached(
-			"MaximizedElement", typeof(bool), typeof(WindowChrome), new UIPropertyMetadata(false, OnMaximizedElementChanged));
+			"MaximizedElement", typeof(bool), typeof(MetroWindow), new UIPropertyMetadata(false, OnMaximizedElementChanged));
 
 		static void OnMaximizedElementChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
@@ -186,22 +150,18 @@ namespace ICSharpCode.ILSpy
 			return (bool)element.GetValue(MaximizedElementProperty);
 		}
 
-		public static readonly DependencyProperty UseResizeBorderProperty = DependencyProperty.RegisterAttached(
-			"UseResizeBorder", typeof(bool), typeof(WindowChrome), new UIPropertyMetadata(true, OnUseResizeBorderChanged));
+		public static readonly DependencyProperty UseResizeBorderProperty =
+			DependencyProperty.Register("UseResizeBorder", typeof(bool), typeof(MetroWindow),
+			new UIPropertyMetadata(true, OnUseResizeBorderChanged));
 
 		static void OnUseResizeBorderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			if (!HasWindowChrome)
-				return;
-
-			var win = d as Window;
-			if (win == null)
-				return;
+			var win = (MetroWindow)d;
 			var obj = (DependencyObject)win.GetValue(winChrome_WindowChromeProperty);
 			if (obj == null)
 				return;
 
-			InitializeWindowCaptionAndResizeBorder(win, obj);
+			win.InitializeWindowCaptionAndResizeBorder(obj);
 		}
 
 		public static void SetUseResizeBorder(UIElement element, bool value)
@@ -214,14 +174,18 @@ namespace ICSharpCode.ILSpy
 			return (bool)element.GetValue(UseResizeBorderProperty);
 		}
 
-		public static readonly DependencyProperty ShowMenuButtonProperty = DependencyProperty.RegisterAttached(
-			"ShowMenuButton", typeof(bool), typeof(WindowChrome), new UIPropertyMetadata(true));
-		public static readonly DependencyProperty ShowMinimizeButtonProperty = DependencyProperty.RegisterAttached(
-			"ShowMinimizeButton", typeof(bool), typeof(WindowChrome), new UIPropertyMetadata(true));
-		public static readonly DependencyProperty ShowMaximizeButtonProperty = DependencyProperty.RegisterAttached(
-			"ShowMaximizeButton", typeof(bool), typeof(WindowChrome), new UIPropertyMetadata(true));
-		public static readonly DependencyProperty ShowCloseButtonProperty = DependencyProperty.RegisterAttached(
-			"ShowCloseButton", typeof(bool), typeof(WindowChrome), new UIPropertyMetadata(true));
+		public static readonly DependencyProperty ShowMenuButtonProperty =
+			DependencyProperty.Register("ShowMenuButton", typeof(bool), typeof(MetroWindow),
+			new UIPropertyMetadata(true));
+		public static readonly DependencyProperty ShowMinimizeButtonProperty =
+			DependencyProperty.Register("ShowMinimizeButton", typeof(bool), typeof(MetroWindow),
+			new UIPropertyMetadata(true));
+		public static readonly DependencyProperty ShowMaximizeButtonProperty =
+			DependencyProperty.Register("ShowMaximizeButton", typeof(bool), typeof(MetroWindow),
+			new UIPropertyMetadata(true));
+		public static readonly DependencyProperty ShowCloseButtonProperty =
+			DependencyProperty.Register("ShowCloseButton", typeof(bool), typeof(MetroWindow),
+			new UIPropertyMetadata(true));
 
 		public static void SetShowMenuButton(UIElement element, bool value)
 		{
@@ -273,12 +237,9 @@ namespace ICSharpCode.ILSpy
 		static DependencyProperty winChrome_WindowChromeProperty;
 		static DependencyProperty winChrome_IsHitTestVisibleInChromeProperty;
 
-		public static bool HasWindowChrome {
-			get { return windowChromeType != null; }
-		}
-
-		static WindowChrome()
+		static MetroWindow()
 		{
+			DefaultStyleKeyProperty.OverrideMetadata(typeof(MetroWindow), new FrameworkPropertyMetadata(typeof(MetroWindow)));
 			Initialize();
 		}
 
@@ -298,16 +259,12 @@ namespace ICSharpCode.ILSpy
 			var ns = "System.Windows.Shell.";
 			windowChromeType = asm.GetType(ns + "WindowChrome", false, false);
 			if (windowChromeType == null) {
-				try {
-					asm = Assembly.Load("Microsoft.Windows.Shell, Version=3.5.41019.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
-					ns = "Microsoft.Windows.Shell.";
-					windowChromeType = asm.GetType(ns + "WindowChrome", false, false);
-				}
-				catch {
-				}
+				asm = Assembly.Load("Microsoft.Windows.Shell, Version=3.5.41019.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
+				ns = "Microsoft.Windows.Shell.";
+				windowChromeType = asm.GetType(ns + "WindowChrome", false, false);
 			}
 			if (windowChromeType == null)
-				return;
+				throw new ApplicationException("Could not find WindowChrome class");
 
 			nonClientFrameEdgesType = asm.GetType(ns + "NonClientFrameEdges", false, false);
 			winChrome_CaptionHeightProperty = (DependencyProperty)windowChromeType.GetField("CaptionHeightProperty").GetValue(null);
@@ -319,23 +276,14 @@ namespace ICSharpCode.ILSpy
 			winChrome_IsHitTestVisibleInChromeProperty = (DependencyProperty)windowChromeType.GetField("IsHitTestVisibleInChromeProperty").GetValue(null);
 		}
 
-		static void AddWindowChrome(Window window)
+		protected override void OnStateChanged(EventArgs e)
 		{
-			if (!HasWindowChrome)
-				return;
+			base.OnStateChanged(e);
 
-			var obj = CreateWindowChromeObject(window);
-			window.SetValue(winChrome_WindowChromeProperty, obj);
-			window.StateChanged += window_StateChanged;
-		}
-
-		static void window_StateChanged(object sender, EventArgs e)
-		{
-			var window = (Window)sender;
-			var obj = (DependencyObject)window.GetValue(winChrome_WindowChromeProperty);
-			switch (window.WindowState) {
+			var obj = (DependencyObject)GetValue(winChrome_WindowChromeProperty);
+			switch (WindowState) {
 			case WindowState.Normal:
-				InitializeWindowCaptionAndResizeBorder(window, obj);
+				InitializeWindowCaptionAndResizeBorder(obj);
 				break;
 
 			case WindowState.Minimized:
@@ -349,7 +297,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		static DependencyObject CreateWindowChromeObject(Window window)
+		DependencyObject CreateWindowChromeObject()
 		{
 			var ctor = windowChromeType.GetConstructor(new Type[0]);
 			var obj = (DependencyObject)ctor.Invoke(new object[0]);
@@ -357,14 +305,14 @@ namespace ICSharpCode.ILSpy
 			obj.SetValue(winChrome_CornerRadiusProperty, CornerRadius);
 			obj.SetValue(winChrome_GlassFrameThicknessProperty, GlassFrameThickness);
 			obj.SetValue(winChrome_NonClientFrameEdgesProperty, Enum.ToObject(nonClientFrameEdgesType, NonClientFrameEdges));
-			InitializeWindowCaptionAndResizeBorder(window, obj);
+			InitializeWindowCaptionAndResizeBorder(obj);
 
 			return obj;
 		}
 
-		static void InitializeWindowCaptionAndResizeBorder(Window window, DependencyObject obj)
+		void InitializeWindowCaptionAndResizeBorder(DependencyObject obj)
 		{
-			if ((bool)window.GetValue(UseResizeBorderProperty)) {
+			if ((bool)GetValue(UseResizeBorderProperty)) {
 				obj.SetValue(winChrome_CaptionHeightProperty, CaptionHeight);
 				obj.SetValue(winChrome_ResizeBorderThicknessProperty, ResizeBorderThickness);
 			}

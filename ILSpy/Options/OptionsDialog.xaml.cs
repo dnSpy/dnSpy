@@ -17,19 +17,19 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Linq;
+using ICSharpCode.ILSpy.Controls;
 
 namespace ICSharpCode.ILSpy.Options
 {
 	/// <summary>
 	/// Interaction logic for OptionsDialog.xaml
 	/// </summary>
-	public partial class OptionsDialog : Window
+	public partial class OptionsDialog : MetroWindow
 	{
 		class MefState
 		{

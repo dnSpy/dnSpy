@@ -24,7 +24,7 @@
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              Height="410" Width="400"
              Title="Save Module"
-             xmlns:mm="clr-namespace:ICSharpCode.ILSpy" mm:WindowChrome.WindowChromeType="Dialog"
+             Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="410" MinWidth="400">
 	<Grid FocusManager.FocusedElement="{Binding ElementName=filenameTextBox}">
 		<Grid.ColumnDefinitions>

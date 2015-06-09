@@ -40,7 +40,8 @@ namespace ICSharpCode.ILSpy
 		GridViewItem,
 		DebuggerToolTip,
 		CodeToolTip,
-		TitleArea,
+		TitleAreaActive,
+		TitleAreaInactive,
 	}
 
 	public struct ImageInfo
@@ -96,7 +97,8 @@ namespace ICSharpCode.ILSpy
 			case BackgroundType.GridViewItem: return GetColorBackground(dntheme.ColorType.GridViewBackground);
 			case BackgroundType.DebuggerToolTip: return Colors.White;//TODO: Update this when the debugger tooltips have been fixed
 			case BackgroundType.CodeToolTip: return GetColorBackground(dntheme.ColorType.CodeToolTip);
-			case BackgroundType.TitleArea: return GetColorBackground(dntheme.ColorType.EnvironmentMainWindowActiveCaption);
+			case BackgroundType.TitleAreaActive: return GetColorBackground(dntheme.ColorType.EnvironmentMainWindowActiveCaption);
+			case BackgroundType.TitleAreaInactive: return GetColorBackground(dntheme.ColorType.EnvironmentMainWindowInactiveCaption);
 			default:
 				Debug.Fail("Invalid bg type");
 				return GetColorBackground(dntheme.ColorType.SystemColorsWindow);

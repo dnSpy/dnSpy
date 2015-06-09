@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Window
+<ctrls:MetroWindow
 	x:Class="ICSharpCode.ILSpy.Debugger.UI.DebugProcessWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	Title="Select Executable to Debug"
-	xmlns:mm="clr-namespace:ICSharpCode.ILSpy;assembly=dnSpy" mm:WindowChrome.WindowChromeType="Dialog"
+	xmlns:ctrls="clr-namespace:ICSharpCode.ILSpy.Controls;assembly=dnSpy"
+	Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
 	WindowState="Normal"
 	MinHeight="180"
 	MaxHeight="200"
@@ -92,4 +93,4 @@
 				Click="CancelButton_Click" />
 		</Grid>
 	</Grid>
-</Window>
+</ctrls:MetroWindow>

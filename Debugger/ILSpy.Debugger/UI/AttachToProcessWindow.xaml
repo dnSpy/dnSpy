@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Window
+<ctrls:MetroWindow
 	x:Class="ICSharpCode.ILSpy.Debugger.UI.AttachToProcessWindow" 
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	Title="Attach to Process"
-	xmlns:mm="clr-namespace:ICSharpCode.ILSpy;assembly=dnSpy" mm:WindowChrome.WindowChromeType="Dialog"
+	xmlns:ctrls="clr-namespace:ICSharpCode.ILSpy.Controls;assembly=dnSpy"
+	Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
 	WindowState="Normal"
 	MinHeight="300"
 	MinWidth="400"
@@ -60,4 +61,4 @@
 				Height="23" Width="75"/>
 		</DockPanel>
 	</Grid>
-</Window>
+</ctrls:MetroWindow>

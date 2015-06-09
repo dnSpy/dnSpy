@@ -1,13 +1,13 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using ICSharpCode.ILSpy.Controls;
 
 namespace ICSharpCode.ILSpy
 {
 	/// <summary>
 	/// Interaction logic for Create.xaml
 	/// </summary>
-	public partial class CreateListDialog : Window
+	public partial class CreateListDialog : MetroWindow
 	{
 		public CreateListDialog()
 		{

@@ -18,10 +18,11 @@
 */
 
 using System.Windows;
+using ICSharpCode.ILSpy.Controls;
 
 namespace ICSharpCode.ILSpy.AsmEditor
 {
-	public abstract class WindowBase : Window
+	public abstract class WindowBase : MetroWindow
 	{
 		protected void okButton_Click(object sender, RoutedEventArgs e)
 		{

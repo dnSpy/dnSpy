@@ -51,7 +51,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// The main window of the application.
 	/// </summary>
-	partial class MainWindow : Window
+	partial class MainWindow : MetroWindow
 	{
 		ILSpySettings spySettings;
 		internal SessionSettings sessionSettings;
@@ -77,15 +77,6 @@ namespace ICSharpCode.ILSpy
 			get { return instance; }
 		}
 		
-		public static readonly DependencyProperty SystemMenuImageProperty =
-			DependencyProperty.Register("SystemMenuImage", typeof(ImageSource), typeof(MainWindow),
-			new FrameworkPropertyMetadata(null));
-
-		public ImageSource SystemMenuImage {
-			get { return (ImageSource)GetValue(SystemMenuImageProperty); }
-			set { SetValue(SystemMenuImageProperty, value); }
-		}
-
 		public ImageSource BigLoadingImage { get; private set; }
 
 		public SessionSettings SessionSettings {
@@ -196,7 +187,9 @@ namespace ICSharpCode.ILSpy
 			InitMainMenu();
 			InitToolbar();
 			loadingImage.Source = ImageCache.Instance.GetImage("dnSpy-Big", theme.GetColor(ColorType.EnvironmentBackground).InheritedColor.Background.GetColor(null).Value);
-			
+
+			this.Activated += (s, e) => UpdateSystemMenuImage();
+			this.Deactivated += (s, e) => UpdateSystemMenuImage();
 			this.ContentRendered += MainWindow_ContentRendered;
 			this.IsEnabled = false;
 		}
@@ -386,6 +379,15 @@ namespace ICSharpCode.ILSpy
 					if (treeView.SelectedItems.Count != 0)
 						treeView.SelectedItems.Clear();
 					treeView.SelectedItem = nodes[0];
+
+					// FocusNode() should already call ScrollIntoView() but for some reason,
+					// the ScrollIntoView() does nothing so add another call.
+					// Background priority won't work, we need ContextIdle prio
+					this.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(delegate {
+						var item = treeView.SelectedItem as SharpTreeNode;
+						if (item != null)
+							treeView.ScrollIntoView(item);
+					}));
 				}
 				foreach (var node in nodes)
 					treeView.SelectedItems.Add(node);
@@ -607,13 +609,21 @@ namespace ICSharpCode.ILSpy
 		void Themes_ThemeChanged(object sender, EventArgs e)
 		{
 			ImageCache.Instance.OnThemeChanged();
-			SystemMenuImage = ImageCache.Instance.GetImage("Assembly", BackgroundType.TitleArea);
+			UpdateSystemMenuImage();
 			UpdateControlColors();
 			foreach (var view in AllTextViews)
 				view.OnThemeUpdated();
 			UpdateToolbar();
 			InvalidateMainMenu();
 			RefreshTreeViewFilter();
+		}
+
+		void UpdateSystemMenuImage()
+		{
+			if (IsActive)
+				SystemMenuImage = ImageCache.Instance.GetImage("Assembly", BackgroundType.TitleAreaActive);
+			else
+				SystemMenuImage = ImageCache.Instance.GetImage("Assembly", BackgroundType.TitleAreaInactive);
 		}
 
 		void UpdateControlColors()

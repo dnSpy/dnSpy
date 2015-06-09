@@ -7,13 +7,14 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Forms;
+using ICSharpCode.ILSpy.Controls;
 
 namespace ICSharpCode.ILSpy.Debugger.UI
 {
 	/// <summary>
 	/// Interaction logic for DebugProcessWindow.xaml
 	/// </summary>
-	public partial class DebugProcessWindow : Window
+	public partial class DebugProcessWindow : MetroWindow
 	{
 		public DebugProcessWindow()
 		{

@@ -18,15 +18,16 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using dnlib.DotNet;
 using System.Windows.Input;
+using dnlib.DotNet;
+using ICSharpCode.ILSpy.Controls;
 
 namespace ICSharpCode.ILSpy
 {
 	/// <summary>
 	/// Interaction logic for OpenListDialog.xaml
 	/// </summary>
-	public partial class OpenListDialog : Window
+	public partial class OpenListDialog : MetroWindow
 	{
 
 		public const string DotNet4List = ".NET 4 (WPF)";

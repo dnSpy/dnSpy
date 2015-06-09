@@ -26,7 +26,7 @@
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              Height="500" Width="600"
              Title="{Binding Title}"
-             xmlns:mm="clr-namespace:ICSharpCode.ILSpy" mm:WindowChrome.WindowChromeType="Dialog"
+             Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="200" MinWidth="400">
 	<winlocal:WindowBase.Resources>
 		<vc:BooleanToGridrowLengthConverter x:Key="BooleanToGridrowLengthConverter" />

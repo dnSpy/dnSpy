@@ -27,7 +27,7 @@
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              Height="380" Width="400"
              Title="Module Settings"
-             xmlns:mm="clr-namespace:ICSharpCode.ILSpy" mm:WindowChrome.WindowChromeType="Dialog"
+             Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="380" MinWidth="400">
 	<winlocal:WindowBase.Resources>
 		<vc:RadioButtonConverter x:Key="RadioButtonConverter" />

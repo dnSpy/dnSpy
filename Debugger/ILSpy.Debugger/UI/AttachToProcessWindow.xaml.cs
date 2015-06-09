@@ -11,10 +11,9 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Threading;
 using Microsoft.Win32.SafeHandles;
-
+using ICSharpCode.ILSpy.Controls;
 using ICSharpCode.ILSpy.Debugger.Models;
 
 namespace ICSharpCode.ILSpy.Debugger.UI
@@ -22,7 +21,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
 	/// <summary>
 	/// Interaction logic for AttachToProcessWindow.xaml
 	/// </summary>
-	public partial class AttachToProcessWindow : Window
+	public partial class AttachToProcessWindow : MetroWindow
 	{
 		public AttachToProcessWindow()
 		{

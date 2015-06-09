@@ -26,9 +26,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Threading;
-
 using ICSharpCode.ILSpy.Controls;
 using dnlib.DotNet;
 
@@ -37,7 +35,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Interaction logic for OpenFromGacDialog.xaml
 	/// </summary>
-	public partial class OpenFromGacDialog : Window
+	public partial class OpenFromGacDialog : MetroWindow
 	{
 		ObservableCollection<GacEntry> gacEntries = new ObservableCollection<GacEntry>();
 		ObservableCollection<GacEntry> filteredEntries = new ObservableCollection<GacEntry>();
