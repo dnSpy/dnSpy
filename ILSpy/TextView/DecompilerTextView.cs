@@ -961,6 +961,8 @@ namespace ICSharpCode.ILSpy.TextView
 
 		bool MarkReferences(ReferenceSegment referenceSegment)
 		{
+			if (TextEditor.TextArea.TextView.Document == null)
+				return false;
 			if (previousReferenceSegment == referenceSegment)
 				return true;
 			object reference = referenceSegment.Reference;
