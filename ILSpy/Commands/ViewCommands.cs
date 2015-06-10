@@ -52,7 +52,7 @@ namespace ICSharpCode.ILSpy.Commands
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_View", MenuCategory = "View2", MenuHeader = "_Word Wrap", MenuOrder = 3100, MenuIcon = "WordWrap")]
+	[ExportMainMenuCommand(Menu = "_View", MenuCategory = "View2", MenuHeader = "_Word Wrap", MenuOrder = 3100, MenuIcon = "WordWrap", MenuInputGestureText = "Ctrl+Alt+W")]
 	sealed class WordWrapCommand : ICommand, IMainMenuCheckableCommand
 	{
 		public bool? IsChecked {

@@ -27,6 +27,7 @@
 		<RoutedUICommand x:Key="FocusCode" Text="Focus Code Window" />
 		<RoutedUICommand x:Key="FocusTreeView" Text="Focus TreeView" />
 		<RoutedUICommand x:Key="FullScreen" Text="Full Screen" />
+		<RoutedUICommand x:Key="WordWrap" Text="Word Wrap" />
 	</ctrls:MetroWindow.Resources>
 	<ctrls:MetroWindow.InputBindings>
 		<KeyBinding Gesture="Ctrl+D" Command="{StaticResource GoToToken}" />
@@ -48,8 +49,13 @@
 		<KeyBinding Gesture="Ctrl+Alt+NumPad0" Command="{StaticResource FocusCode}" />
 		<KeyBinding Gesture="Ctrl+Alt+L" Command="{StaticResource FocusTreeView}" />
 		<KeyBinding Gesture="Shift+Alt+Enter" Command="{StaticResource FullScreen}" />
+		<KeyBinding Gesture="Ctrl+Alt+W" Command="{StaticResource WordWrap}" />
 	</ctrls:MetroWindow.InputBindings>
 	<ctrls:MetroWindow.CommandBindings>
+		<CommandBinding
+			Command="{StaticResource WordWrap}"
+			CanExecute="WordWrapCanExecute"
+			Executed="WordWrapExecuted" />
 		<CommandBinding
 			Command="{StaticResource FullScreen}"
 			CanExecute="FullScreenCanExecute"

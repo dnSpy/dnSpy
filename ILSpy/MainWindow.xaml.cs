@@ -2297,6 +2297,16 @@ namespace ICSharpCode.ILSpy
 			e.CanExecute = tabGroupsManager.ActiveTabGroup.SelectPreviousTabCanExecute();
 		}
 
+		private void WordWrapExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			sessionSettings.WordWrap = !sessionSettings.WordWrap;
+		}
+
+		private void WordWrapCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = true;
+		}
+
 		private void FullScreenExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			IsFullScreen = !IsFullScreen;
