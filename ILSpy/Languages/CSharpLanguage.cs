@@ -51,6 +51,35 @@ namespace ICSharpCode.ILSpy
 		bool showAllMembers = false;
 		Predicate<IAstTransform> transformAbortCondition = null;
 
+		public static Dictionary<string, string[]> nameToOperatorName = new Dictionary<string, string[]> {
+			{ "op_Addition", "operator +".Split(' ') },
+			{ "op_BitwiseAnd", "operator &".Split(' ') },
+			{ "op_BitwiseOr", "operator |".Split(' ') },
+			{ "op_Decrement", "operator --".Split(' ') },
+			{ "op_Division", "operator /".Split(' ') },
+			{ "op_Equality", "operator ==".Split(' ') },
+			{ "op_ExclusiveOr", "operator ^".Split(' ') },
+			{ "op_Explicit", "explicit operator".Split(' ') },
+			{ "op_False", "operator false".Split(' ') },
+			{ "op_GreaterThan", "operator >".Split(' ') },
+			{ "op_GreaterThanOrEqual", "operator >=".Split(' ') },
+			{ "op_Implicit", "implicit operator".Split(' ') },
+			{ "op_Increment", "operator ++".Split(' ') },
+			{ "op_Inequality", "operator !=".Split(' ') },
+			{ "op_LeftShift", "operator <<".Split(' ') },
+			{ "op_LessThan", "operator <".Split(' ') },
+			{ "op_LessThanOrEqual", "operator <=".Split(' ') },
+			{ "op_LogicalNot", "operator !".Split(' ') },
+			{ "op_Modulus", "operator %".Split(' ') },
+			{ "op_Multiply", "operator *".Split(' ') },
+			{ "op_OnesComplement", "operator ~".Split(' ') },
+			{ "op_RightShift", "operator >>".Split(' ') },
+			{ "op_Subtraction", "operator -".Split(' ') },
+			{ "op_True", "operator true".Split(' ') },
+			{ "op_UnaryNegation", "operator -".Split(' ') },
+			{ "op_UnaryPlus", "operator +".Split(' ') },
+		};
+
 		public CSharpLanguage()
 		{
 		}
@@ -1060,13 +1089,28 @@ namespace ICSharpCode.ILSpy
 				var ovrMeth = (IMemberRef)writer.md.Overrides[0].MethodDeclaration;
 				WriteToolTipType(output, ovrMeth.DeclaringType, false);
 				output.Write('.', TextTokenType.Operator);
-				output.Write(ovrMeth.Name, TextTokenHelper.GetTextTokenType(method));
+				WriteMethodName(output, method, ovrMeth.Name);
 			}
 			else
-				output.Write(method.Name, TextTokenHelper.GetTextTokenType(method));
+				WriteMethodName(output, method, method.Name);
 
 			writer.WriteGenericArguments();
 			writer.WriteMethodParameterList('(', ')');
+		}
+
+		void WriteMethodName(ITextOutput output, IMethod method, string name)
+		{
+			string[] list;
+			if (nameToOperatorName.TryGetValue(name, out list)) {
+				for (int i = 0; i < list.Length; i++) {
+					if (i > 0)
+						output.WriteSpace();
+					var s = list[i];
+					output.Write(s, 'a' <= s[0] && s[0] <= 'z' ? TextTokenType.Keyword : TextTokenType.Operator);
+				}
+			}
+			else
+				output.Write(name, TextTokenHelper.GetTextTokenType(method));
 		}
 
 		static int GetNumberOfOverloads(TypeDef type, string name)
