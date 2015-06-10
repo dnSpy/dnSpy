@@ -2383,18 +2383,15 @@
                         Property="Visibility"
                         Value="Collapsed"/>
             </Trigger>
-			<MultiTrigger>
-				<MultiTrigger.Conditions>
-					<Condition Property="Icon" Value="{x:Null}"/>
-					<Condition Property="IsChecked" Value="true"/>
-				</MultiTrigger.Conditions>
+            <Trigger Property="IsChecked"
+                     Value="true">
                 <Setter TargetName="GlyphPanel"
                         Property="Visibility"
                         Value="Visible"/>
                 <Setter TargetName="Icon"
                         Property="Visibility"
                         Value="Collapsed"/>
-			</MultiTrigger>
+            </Trigger>
             <Trigger Property="IsHighlighted"
                      Value="true">
                 <Setter TargetName="Bg"
@@ -3834,18 +3831,15 @@
                                             Property="Visibility"
                                             Value="Collapsed"/>
                                 </Trigger>
-								<MultiTrigger>
-									<MultiTrigger.Conditions>
-										<Condition Property="Icon" Value="{x:Null}"/>
-										<Condition Property="IsChecked" Value="true"/>
-									</MultiTrigger.Conditions>
+                                <Trigger Property="IsChecked"
+                                         Value="true">
                                     <Setter TargetName="GlyphPanel"
                                             Property="Visibility"
                                             Value="Visible"/>
                                     <Setter TargetName="Icon"
                                             Property="Visibility"
                                             Value="Collapsed"/>
-								</MultiTrigger>
+                                </Trigger>
                                 <Trigger Property="IsHighlighted"
                                          Value="true">
                                     <Setter TargetName="Border"
@@ -3966,18 +3960,15 @@
                                                     Property="Visibility"
                                                     Value="Collapsed"/>
                                         </Trigger>
-										<MultiTrigger>
-											<MultiTrigger.Conditions>
-												<Condition Property="Icon" Value="{x:Null}"/>
-												<Condition Property="IsChecked" Value="true"/>
-											</MultiTrigger.Conditions>
+                                        <Trigger Property="IsChecked"
+                                                 Value="true">
                                             <Setter TargetName="GlyphPanel"
                                                     Property="Visibility"
                                                     Value="Visible"/>
                                             <Setter TargetName="Icon"
                                                     Property="Visibility"
                                                     Value="Collapsed"/>
-										</MultiTrigger>
+                                        </Trigger>
                                         <Trigger Property="IsHighlighted"
                                                  Value="true">
                                             <Setter TargetName="Border"
@@ -4070,18 +4061,15 @@
                                                     Property="Visibility"
                                                     Value="Collapsed"/>
                                         </Trigger>
-										<MultiTrigger>
-											<MultiTrigger.Conditions>
-												<Condition Property="Icon" Value="{x:Null}"/>
-												<Condition Property="IsChecked" Value="true"/>
-											</MultiTrigger.Conditions>
+                                        <Trigger Property="IsChecked"
+                                                 Value="true">
                                             <Setter TargetName="GlyphPanel"
                                                     Property="Visibility"
                                                     Value="Visible"/>
                                             <Setter TargetName="Icon"
                                                     Property="Visibility"
                                                     Value="Collapsed"/>
-										</MultiTrigger>
+                                        </Trigger>
                                         <Trigger Property="IsHighlighted"
                                                  Value="true">
                                             <Setter TargetName="Border"
@@ -4214,18 +4202,15 @@
                                                     Property="Visibility"
                                                     Value="Collapsed"/>
                                         </Trigger>
-										<MultiTrigger>
-											<MultiTrigger.Conditions>
-												<Condition Property="Icon" Value="{x:Null}"/>
-												<Condition Property="IsChecked" Value="true"/>
-											</MultiTrigger.Conditions>
+                                        <Trigger Property="IsChecked"
+                                                 Value="true">
                                             <Setter TargetName="GlyphPanel"
                                                     Property="Visibility"
                                                     Value="Visible"/>
                                             <Setter TargetName="Icon"
                                                     Property="Visibility"
                                                     Value="Collapsed"/>
-										</MultiTrigger>
+                                        </Trigger>
                                         <Trigger Property="IsHighlighted"
                                                  Value="true">
                                             <Setter TargetName="Border"
