@@ -220,10 +220,16 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public override void WriteToken(Role role, string token, TextTokenType tokenType)
 		{
-			// Attach member reference to token only if there's no identifier in the current node.
 			IMemberRef memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
-			if (token != ":" && memberRef != null && node.GetChildByRole(Roles.Identifier).IsNull)
+
+			bool addRef = memberRef != null &&
+					(node is BinaryOperatorExpression ||
+					node is UnaryOperatorExpression ||
+					node is AssignmentExpression ||
+					node is IndexerExpression);
+
+			if (addRef)
 				output.WriteReference(token, memberRef, tokenType);
 			else
 				output.Write(token, tokenType);
