@@ -40,20 +40,7 @@ namespace ICSharpCode.ILSpy.Controls
 		protected override void OnSourceInitialized(EventArgs e)
 		{
 			base.OnSourceInitialized(e);
-			HwndSource.FromHwnd(new WindowInteropHelper(this).Handle).AddHook(WndProc);
-		}
-
-		const int WM_NCUAHDRAWCAPTION = 0x00AE;
-		const int WM_NCUAHDRAWFRAME = 0x00AF;
-
-		IntPtr WndProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-		{
-			// Undocumented WM_NCUAHDRAWCAPTION message. This sometimes pops up and if we don't ignore
-			// it, Windows will mess up our title bar and draw over it.
-			if (msg == WM_NCUAHDRAWCAPTION || msg == WM_NCUAHDRAWFRAME)
-				handled = true;
-
-			return IntPtr.Zero;
+			WindowUtils.UpdateWin32Style(this);
 		}
 
 		public static ICommand ShowSystemMenuCommand {
@@ -398,6 +385,22 @@ namespace ICSharpCode.ILSpy.Controls
 		static extern uint TrackPopupMenuEx(IntPtr hmenu, uint fuFlags, int x, int y, IntPtr hwnd, IntPtr lptpm);
 		[DllImport("user32")]
 		static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+		[DllImport("user32")]
+		extern static int GetWindowLong(IntPtr hWnd, int nIndex);
+		[DllImport("user32")]
+		extern static int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+		public static void UpdateWin32Style(MetroWindow window)
+		{
+			const int GWL_STYLE			= -16;
+			const int WS_SYSMENU		= 0x00080000;
+
+			IntPtr hWnd = new WindowInteropHelper(window).Handle;
+
+			// The whole title bar is restyled. We must hide the system menu or Windows
+			// will sometimes paint the title bar for us.
+			SetWindowLong(hWnd, GWL_STYLE, GetWindowLong(hWnd, GWL_STYLE) & ~WS_SYSMENU);
+		}
 
 		public static void ShowSystemMenu(Window window, Point p)
 		{
