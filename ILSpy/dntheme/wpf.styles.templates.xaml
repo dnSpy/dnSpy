@@ -5383,6 +5383,7 @@
 		<Setter Property="UseLayoutRounding" Value="True"/>
 		<Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
 		<Setter Property="Icon" Value="../Images/dnSpy.ico"/>
+		<Setter Property="IsDebugging" Value="{DynamicResource IsDebuggingKey}" />
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ctrls:MetroWindow}">
@@ -5461,6 +5462,9 @@
 						<Trigger Property="WindowState" Value="Maximized">
 							<Setter Property="UseResizeBorder" Value="False" />
 						</Trigger>
+						<Trigger Property="IsDebugging" Value="True">
+							<Setter TargetName="border" Property="BorderBrush" Value="{Binding ActiveDebuggingBorder, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
+						</Trigger>
 						<Trigger Property="IsActive" Value="False">
 							<Setter TargetName="border" Property="BorderBrush" Value="{Binding InactiveBorder, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
 							<Setter TargetName="titleBar" Property="Background" Value="{Binding InactiveCaption, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
@@ -5500,9 +5504,10 @@
 	<Style x:Key="MainWindowStyle" TargetType="{x:Type ctrls:MetroWindow}" BasedOn="{StaticResource {x:Type ctrls:MetroWindow}}">
 		<Setter Property="Foreground" Value="{DynamicResource EnvironmentForeground}" />
 		<Setter Property="Background" Value="{DynamicResource EnvironmentBackground}" />
-		<Setter Property="ActiveDefaultBorder" Value="{DynamicResource EnvironmentMainWindowActiveDefaultBorder}" />
 		<Setter Property="ActiveCaption" Value="{DynamicResource EnvironmentMainWindowActiveCaption}" />
 		<Setter Property="ActiveCaptionText" Value="{DynamicResource EnvironmentMainWindowActiveCaptionText}" />
+		<Setter Property="ActiveDebuggingBorder" Value="{DynamicResource EnvironmentMainWindowActiveDebuggingBorder}" />
+		<Setter Property="ActiveDefaultBorder" Value="{DynamicResource EnvironmentMainWindowActiveDefaultBorder}" />
 		<Setter Property="InactiveBorder" Value="{DynamicResource EnvironmentMainWindowInactiveBorder}" />
 		<Setter Property="InactiveCaption" Value="{DynamicResource EnvironmentMainWindowInactiveCaption}" />
 		<Setter Property="InactiveCaptionText" Value="{DynamicResource EnvironmentMainWindowInactiveCaptionText}" />
@@ -5519,9 +5524,10 @@
 	<Style x:Key="DialogWindowStyle" TargetType="{x:Type ctrls:MetroWindow}" BasedOn="{StaticResource {x:Type ctrls:MetroWindow}}">
 		<Setter Property="Foreground" Value="{DynamicResource DialogWindowForeground}"/>
 		<Setter Property="Background" Value="{DynamicResource DialogWindowBackground}"/>
-		<Setter Property="ActiveDefaultBorder" Value="{DynamicResource DialogWindowActiveDefaultBorder}" />
 		<Setter Property="ActiveCaption" Value="{DynamicResource DialogWindowActiveCaption}" />
 		<Setter Property="ActiveCaptionText" Value="{DynamicResource DialogWindowActiveCaptionText}" />
+		<Setter Property="ActiveDebuggingBorder" Value="{DynamicResource DialogWindowActiveDebuggingBorder}" />
+		<Setter Property="ActiveDefaultBorder" Value="{DynamicResource DialogWindowActiveDefaultBorder}" />
 		<Setter Property="InactiveBorder" Value="{DynamicResource DialogWindowInactiveBorder}" />
 		<Setter Property="InactiveCaption" Value="{DynamicResource DialogWindowInactiveCaption}" />
 		<Setter Property="InactiveCaptionText" Value="{DynamicResource DialogWindowInactiveCaptionText}" />

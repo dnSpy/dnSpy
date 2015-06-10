@@ -364,6 +364,10 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#FFEEEEF2",
 				BackgroundResourceKey = "DialogWindowActiveCaption",
 			},
+			new BrushColorInfo(ColorType.DialogWindowActiveDebuggingBorder, "Dialog Window Active Debugging Border") {
+				DefaultBackground = "#FF9B9FB9",
+				BackgroundResourceKey = "DialogWindowActiveDebuggingBorder",
+			},
 			new BrushColorInfo(ColorType.DialogWindowActiveDefaultBorder, "Dialog Window Active Default Border") {
 				DefaultBackground = "#FF9B9FB9",
 				BackgroundResourceKey = "DialogWindowActiveDefaultBorder",
@@ -409,15 +413,19 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultForeground = "#FF000000",
 				ForegroundResourceKey = "EnvironmentForeground",
 			},
-			new BrushColorInfo(ColorType.EnvironmentMainWindowActiveDefaultBorder, "MainWindow Active Default Border") {
-				DefaultBackground = "#FF9B9FB9",
-				BackgroundResourceKey = "EnvironmentMainWindowActiveDefaultBorder",
-			},
 			new BrushColorInfo(ColorType.EnvironmentMainWindowActiveCaption, "MainWindow Active Caption") {
 				DefaultForeground = "#FF525252",
 				ForegroundResourceKey = "EnvironmentMainWindowActiveCaptionText",
 				DefaultBackground = "#FFEEEEF2",
 				BackgroundResourceKey = "EnvironmentMainWindowActiveCaption",
+			},
+			new BrushColorInfo(ColorType.EnvironmentMainWindowActiveDebuggingBorder, "MainWindow Active Debugging Border") {
+				DefaultBackground = "#FF9B9FB9",
+				BackgroundResourceKey = "EnvironmentMainWindowActiveDebuggingBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentMainWindowActiveDefaultBorder, "MainWindow Active Default Border") {
+				DefaultBackground = "#FF9B9FB9",
+				BackgroundResourceKey = "EnvironmentMainWindowActiveDefaultBorder",
 			},
 			new BrushColorInfo(ColorType.EnvironmentMainWindowButtonActiveBorder, "MainWindow Button Active Border") {
 				DefaultBackground = "#00000000",

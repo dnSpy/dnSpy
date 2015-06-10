@@ -237,17 +237,16 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		void DebuggerService_DebugEvent(object sender, DebuggerEventArgs e)
 		{
-			const string DebuggingTitleInfo = "Debugging";
 			switch (e.DebuggerEvent) {
 			case DebuggerEvent.Started:
 				MainWindow.Instance.SessionSettings.FilterSettings.ShowInternalApi = true;
 				SetRunningStatusMessage();
-				MainWindow.Instance.AddTitleInfo(DebuggingTitleInfo);
+				MainWindow.Instance.SetDebugging();
 				break;
 
 			case DebuggerEvent.Stopped:
 				MainWindow.Instance.HideStatus();
-				MainWindow.Instance.RemoveTitleInfo(DebuggingTitleInfo);
+				MainWindow.Instance.ClearDebugging();
 				break;
 
 			case DebuggerEvent.Paused:

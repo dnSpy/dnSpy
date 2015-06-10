@@ -208,14 +208,26 @@ namespace ICSharpCode.ILSpy.Controls
 			return (bool)element.GetValue(UseResizeBorderProperty);
 		}
 
-		public static readonly DependencyProperty ActiveDefaultBorderProperty =
-			DependencyProperty.Register("ActiveDefaultBorder", typeof(Brush), typeof(MetroWindow),
+		public static readonly DependencyProperty IsDebuggingProperty =
+			DependencyProperty.Register("IsDebugging", typeof(bool), typeof(MetroWindow),
 			new UIPropertyMetadata(null));
+
+		public bool IsDebugging {
+			get { return (bool)GetValue(IsDebuggingProperty); }
+			set { SetValue(IsDebuggingProperty, value); }
+		}
+
 		public static readonly DependencyProperty ActiveCaptionProperty =
 			DependencyProperty.Register("ActiveCaption", typeof(Brush), typeof(MetroWindow),
 			new UIPropertyMetadata(null));
 		public static readonly DependencyProperty ActiveCaptionTextProperty =
 			DependencyProperty.Register("ActiveCaptionText", typeof(Brush), typeof(MetroWindow),
+			new UIPropertyMetadata(null));
+		public static readonly DependencyProperty ActiveDebuggingBorderProperty =
+			DependencyProperty.Register("ActiveDebuggingBorder", typeof(Brush), typeof(MetroWindow),
+			new UIPropertyMetadata(null));
+		public static readonly DependencyProperty ActiveDefaultBorderProperty =
+			DependencyProperty.Register("ActiveDefaultBorder", typeof(Brush), typeof(MetroWindow),
 			new UIPropertyMetadata(null));
 		public static readonly DependencyProperty InactiveBorderProperty =
 			DependencyProperty.Register("InactiveBorder", typeof(Brush), typeof(MetroWindow),
@@ -242,10 +254,6 @@ namespace ICSharpCode.ILSpy.Controls
 			DependencyProperty.Register("ButtonHoverInactiveGlyph", typeof(Brush), typeof(MetroWindow),
 			new UIPropertyMetadata(null));
 
-		public Brush ActiveDefaultBorder {
-			get { return (Brush)GetValue(ActiveDefaultBorderProperty); }
-			set { SetValue(ActiveDefaultBorderProperty, value); }
-		}
 		public Brush ActiveCaption {
 			get { return (Brush)GetValue(ActiveCaptionProperty); }
 			set { SetValue(ActiveCaptionProperty, value); }
@@ -253,6 +261,14 @@ namespace ICSharpCode.ILSpy.Controls
 		public Brush ActiveCaptionText {
 			get { return (Brush)GetValue(ActiveCaptionTextProperty); }
 			set { SetValue(ActiveCaptionTextProperty, value); }
+		}
+		public Brush ActiveDebuggingBorder {
+			get { return (Brush)GetValue(ActiveDebuggingBorderProperty); }
+			set { SetValue(ActiveDebuggingBorderProperty, value); }
+		}
+		public Brush ActiveDefaultBorder {
+			get { return (Brush)GetValue(ActiveDefaultBorderProperty); }
+			set { SetValue(ActiveDefaultBorderProperty, value); }
 		}
 		public Brush InactiveBorder {
 			get { return (Brush)GetValue(InactiveBorderProperty); }

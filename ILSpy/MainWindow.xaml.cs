@@ -1304,6 +1304,19 @@ namespace ICSharpCode.ILSpy
 			if (titleInfos.Remove(info))
 				UpdateTitle();
 		}
+
+		const string DebuggingTitleInfo = "Debugging";
+		public void SetDebugging()
+		{
+			AddTitleInfo(DebuggingTitleInfo);
+			App.Current.Resources["IsDebuggingKey"] = true;
+		}
+
+		public void ClearDebugging()
+		{
+			RemoveTitleInfo(DebuggingTitleInfo);
+			App.Current.Resources["IsDebuggingKey"] = false;
+		}
 		
 		void assemblyList_Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{

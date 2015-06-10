@@ -80,6 +80,7 @@
 		<color name="systemcolorswindowtext" fg="#F1F1F1" />
 		<color name="dialogwindow" fg="#F1F1F1" bg="#252526" />
 		<color name="dialogwindowactivecaption" fg="#FF999999" bg="#FF2D2D30" />
+		<color name="dialogwindowactivedebuggingborder" bg="#FFCA5100" />
 		<color name="dialogwindowactivedefaultborder" bg="#FF007ACC" />
 		<color name="dialogwindowbuttonhoverinactive" bg="#72555555" />
 		<color name="dialogwindowbuttonhoverinactiveborder" bg="#72555555" />
@@ -90,8 +91,9 @@
 		<color name="dialogwindowinactivecaption" fg="#99999999" bg="#FF2D2D30" />
 		<color name="environmentbackground" fg="#FF2D2D30" bg="#FF2D2D30" color3="#FF2D2D30" color4="#FF2D2D30" />
 		<color name="environmentforeground" fg="#F1F1F1" />
-		<color name="environmentmainwindowactivedefaultborder" bg="#FF007ACC" />
 		<color name="environmentmainwindowactivecaption" fg="#FF999999" bg="#FF2D2D30" />
+		<color name="environmentmainwindowactivedebuggingborder" bg="#FFCA5100" />
+		<color name="environmentmainwindowactivedefaultborder" bg="#FF007ACC" />
 		<color name="environmentmainwindowbuttonactiveborder" bg="#00000000" />
 		<color name="environmentmainwindowbuttonactiveglyph" bg="#FFF1F1F1" />
 		<color name="environmentmainwindowbuttondown" bg="#FF007ACC" />
