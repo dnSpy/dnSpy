@@ -114,15 +114,15 @@ namespace ICSharpCode.ILSpy.Controls
 		{
 			switch (CurrentWinSysType) {
 			case Controls.CurrentWinSysType.Minimize:
-				window.WindowState = WindowState.Minimized;
+				ICSharpCode.ILSpy.Controls.WindowUtils.Minimize(window);
 				break;
 
 			case Controls.CurrentWinSysType.Maximize:
-				window.WindowState = WindowState.Maximized;
+				ICSharpCode.ILSpy.Controls.WindowUtils.Maximize(window);
 				break;
 
 			case Controls.CurrentWinSysType.Restore:
-				window.WindowState = WindowState.Normal;
+				ICSharpCode.ILSpy.Controls.WindowUtils.Restore(window);
 				break;
 
 			case Controls.CurrentWinSysType.Close:

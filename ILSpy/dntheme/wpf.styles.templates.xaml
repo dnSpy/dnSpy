@@ -2383,15 +2383,18 @@
                         Property="Visibility"
                         Value="Collapsed"/>
             </Trigger>
-            <Trigger Property="IsChecked"
-                     Value="true">
+			<MultiTrigger>
+				<MultiTrigger.Conditions>
+					<Condition Property="Icon" Value="{x:Null}"/>
+					<Condition Property="IsChecked" Value="true"/>
+				</MultiTrigger.Conditions>
                 <Setter TargetName="GlyphPanel"
                         Property="Visibility"
                         Value="Visible"/>
                 <Setter TargetName="Icon"
                         Property="Visibility"
                         Value="Collapsed"/>
-            </Trigger>
+			</MultiTrigger>
             <Trigger Property="IsHighlighted"
                      Value="true">
                 <Setter TargetName="Bg"
@@ -2755,6 +2758,8 @@
                                     Value="{DynamicResource ToolBarButtonHoverBorder}"/>
                             <Setter Property="Background"
                                     Value="{DynamicResource ToolBarButtonChecked}"/>
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource ToolBarButtonCheckedText}"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver"
                                  Value="true">
@@ -3829,15 +3834,18 @@
                                             Property="Visibility"
                                             Value="Collapsed"/>
                                 </Trigger>
-                                <Trigger Property="IsChecked"
-                                         Value="true">
+								<MultiTrigger>
+									<MultiTrigger.Conditions>
+										<Condition Property="Icon" Value="{x:Null}"/>
+										<Condition Property="IsChecked" Value="true"/>
+									</MultiTrigger.Conditions>
                                     <Setter TargetName="GlyphPanel"
                                             Property="Visibility"
                                             Value="Visible"/>
                                     <Setter TargetName="Icon"
                                             Property="Visibility"
                                             Value="Collapsed"/>
-                                </Trigger>
+								</MultiTrigger>
                                 <Trigger Property="IsHighlighted"
                                          Value="true">
                                     <Setter TargetName="Border"
@@ -3958,15 +3966,18 @@
                                                     Property="Visibility"
                                                     Value="Collapsed"/>
                                         </Trigger>
-                                        <Trigger Property="IsChecked"
-                                                 Value="true">
+										<MultiTrigger>
+											<MultiTrigger.Conditions>
+												<Condition Property="Icon" Value="{x:Null}"/>
+												<Condition Property="IsChecked" Value="true"/>
+											</MultiTrigger.Conditions>
                                             <Setter TargetName="GlyphPanel"
                                                     Property="Visibility"
                                                     Value="Visible"/>
                                             <Setter TargetName="Icon"
                                                     Property="Visibility"
                                                     Value="Collapsed"/>
-                                        </Trigger>
+										</MultiTrigger>
                                         <Trigger Property="IsHighlighted"
                                                  Value="true">
                                             <Setter TargetName="Border"
@@ -4059,15 +4070,18 @@
                                                     Property="Visibility"
                                                     Value="Collapsed"/>
                                         </Trigger>
-                                        <Trigger Property="IsChecked"
-                                                 Value="true">
+										<MultiTrigger>
+											<MultiTrigger.Conditions>
+												<Condition Property="Icon" Value="{x:Null}"/>
+												<Condition Property="IsChecked" Value="true"/>
+											</MultiTrigger.Conditions>
                                             <Setter TargetName="GlyphPanel"
                                                     Property="Visibility"
                                                     Value="Visible"/>
                                             <Setter TargetName="Icon"
                                                     Property="Visibility"
                                                     Value="Collapsed"/>
-                                        </Trigger>
+										</MultiTrigger>
                                         <Trigger Property="IsHighlighted"
                                                  Value="true">
                                             <Setter TargetName="Border"
@@ -4200,15 +4214,18 @@
                                                     Property="Visibility"
                                                     Value="Collapsed"/>
                                         </Trigger>
-                                        <Trigger Property="IsChecked"
-                                                 Value="true">
+										<MultiTrigger>
+											<MultiTrigger.Conditions>
+												<Condition Property="Icon" Value="{x:Null}"/>
+												<Condition Property="IsChecked" Value="true"/>
+											</MultiTrigger.Conditions>
                                             <Setter TargetName="GlyphPanel"
                                                     Property="Visibility"
                                                     Value="Visible"/>
                                             <Setter TargetName="Icon"
                                                     Property="Visibility"
                                                     Value="Collapsed"/>
-                                        </Trigger>
+										</MultiTrigger>
                                         <Trigger Property="IsHighlighted"
                                                  Value="true">
                                             <Setter TargetName="Border"
@@ -5394,7 +5411,7 @@
 						>
 						<Grid>
 							<Grid.RowDefinitions>
-								<RowDefinition Height="{x:Static ctrls:MetroWindow.GridCaptionHeight}" />
+								<RowDefinition x:Name="titleBarRowDef" Height="{x:Static ctrls:MetroWindow.GridCaptionHeight}" />
 								<RowDefinition Height="*" />
 							</Grid.RowDefinitions>
 							<DockPanel
@@ -5444,7 +5461,19 @@
 						</Grid>
 					</Border>
 					<ControlTemplate.Triggers>
+						<Trigger Property="IsFullScreen" Value="True">
+							<Setter Property="WindowState" Value="Maximized" />
+							<Setter TargetName="titleBar" Property="Visibility" Value="Collapsed" />
+							<Setter TargetName="titleBarRowDef" Property="Height" Value="0" />
+							<Setter TargetName="border" Property="BorderThickness" Value="0" />
+							<Setter Property="ResizeMode" Value="NoResize" />
+							<Setter Property="UseResizeBorder" Value="False" />
+							<Setter Property="WindowStyle" Value="None" />
+						</Trigger>
 						<Trigger Property="ResizeMode" Value="NoResize">
+							<Setter Property="UseResizeBorder" Value="False" />
+						</Trigger>
+						<Trigger Property="WindowState" Value="Maximized">
 							<Setter Property="UseResizeBorder" Value="False" />
 						</Trigger>
 						<Trigger Property="IsActive" Value="False">
@@ -5499,7 +5528,6 @@
 		<Setter Property="ShowMaximizeButton" Value="False" />
 		<Setter Property="ShowCloseButton" Value="True" />
 		<Setter Property="ShowInTaskbar" Value="False"/>
-		<Setter Property="mm:HideWindowsButtons.MaxMinButtons" Value="True"/>
 		<Setter Property="ResizeMode" Value="CanResizeWithGrip" />
 	</Style>
 	<Style x:Key="DialogBorderStyle" TargetType="{x:Type Border}">

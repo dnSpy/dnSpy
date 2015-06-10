@@ -32,8 +32,56 @@ namespace ICSharpCode.ILSpy.Controls
 {
 	public class MetroWindow : Window
 	{
+		public MetroWindow()
+		{
+			SetValue(winChrome_WindowChromeProperty, CreateWindowChromeObject());
+		}
+
+		protected override void OnSourceInitialized(EventArgs e)
+		{
+			base.OnSourceInitialized(e);
+			HwndSource.FromHwnd(new WindowInteropHelper(this).Handle).AddHook(WndProc);
+		}
+
+		const int WM_NCUAHDRAWCAPTION = 0x00AE;
+		const int WM_NCUAHDRAWFRAME = 0x00AF;
+
+		IntPtr WndProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+		{
+			// Undocumented WM_NCUAHDRAWCAPTION message. This sometimes pops up and if we don't ignore
+			// it, Windows will mess up our title bar and draw over it.
+			if (msg == WM_NCUAHDRAWCAPTION || msg == WM_NCUAHDRAWFRAME)
+				handled = true;
+
+			return IntPtr.Zero;
+		}
+
 		public static ICommand ShowSystemMenuCommand {
 			get { return new RelayCommand(a => ShowSystemMenu(a), a => true); }
+		}
+
+		public event EventHandler IsFullScreenChanged;
+
+		public static readonly DependencyProperty IsFullScreenProperty =
+			DependencyProperty.Register("IsFullScreen", typeof(bool), typeof(MetroWindow),
+			new FrameworkPropertyMetadata(false, OnIsFullScreenChanged));
+
+		public bool IsFullScreen {
+			get { return (bool)GetValue(IsFullScreenProperty); }
+			set { SetValue(IsFullScreenProperty, value); }
+		}
+
+		static void OnIsFullScreenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var window = (MetroWindow)d;
+			var obj = (DependencyObject)window.GetValue(winChrome_WindowChromeProperty);
+			if (window.IsFullScreen)
+				window.InitializeWindowCaptionAndResizeBorder(obj, false);
+			else
+				window.InitializeWindowCaptionAndResizeBorder(obj);
+
+			if (window.IsFullScreenChanged != null)
+				window.IsFullScreenChanged(window, EventArgs.Empty);
 		}
 
 		public static readonly DependencyProperty SystemMenuImageProperty =
@@ -43,14 +91,6 @@ namespace ICSharpCode.ILSpy.Controls
 		public ImageSource SystemMenuImage {
 			get { return (ImageSource)GetValue(SystemMenuImageProperty); }
 			set { SetValue(SystemMenuImageProperty, value); }
-		}
-
-		protected override void OnStyleChanged(Style oldStyle, Style newStyle)
-		{
-			// We must add the WindowChrome prop after the style has been added. If we
-			// add it before the style has been set (eg. in our ctor), then dialog boxes'
-			// title bar gets messed up when we hover the mouse over the dlg box.
-			SetValue(winChrome_WindowChromeProperty, CreateWindowChromeObject());
 		}
 
 		public static readonly DependencyProperty IsHitTestVisibleInChromeProperty = DependencyProperty.RegisterAttached(
@@ -108,18 +148,20 @@ namespace ICSharpCode.ILSpy.Controls
 			void border_Loaded(object sender, RoutedEventArgs e)
 			{
 				border.Loaded -= border_Loaded;
-				UpdatePadding(Window.GetWindow(border));
+				UpdatePadding((MetroWindow)Window.GetWindow(border));
 			}
 
 			void win_StateChanged(object sender, EventArgs e)
 			{
-				UpdatePadding((Window)sender);
+				UpdatePadding((MetroWindow)sender);
 			}
 
-			void UpdatePadding(Window window)
+			void UpdatePadding(MetroWindow window)
 			{
 				Debug.Assert(window != null);
-				switch (window.WindowState) {
+
+				var state = window.IsFullScreen ? WindowState.Maximized : window.WindowState;
+				switch (state) {
 				default:
 				case WindowState.Normal:
 					border.ClearValue(Border.PaddingProperty);
@@ -279,17 +321,19 @@ namespace ICSharpCode.ILSpy.Controls
 		protected override void OnStateChanged(EventArgs e)
 		{
 			base.OnStateChanged(e);
+			if (WindowState == WindowState.Normal)
+				ClearValue(Window.WindowStateProperty);
 
 			var obj = (DependencyObject)GetValue(winChrome_WindowChromeProperty);
 			switch (WindowState) {
 			case WindowState.Normal:
 				InitializeWindowCaptionAndResizeBorder(obj);
+				ClearValue(Window.WindowStateProperty);
 				break;
 
 			case WindowState.Minimized:
 			case WindowState.Maximized:
-				obj.SetValue(winChrome_CaptionHeightProperty, GridCaptionHeight.Value);
-				obj.SetValue(winChrome_ResizeBorderThicknessProperty, new Thickness(0));
+				InitializeWindowCaptionAndResizeBorder(obj, false);
 				break;
 
 			default:
@@ -312,24 +356,23 @@ namespace ICSharpCode.ILSpy.Controls
 
 		void InitializeWindowCaptionAndResizeBorder(DependencyObject obj)
 		{
-			if ((bool)GetValue(UseResizeBorderProperty)) {
+			InitializeWindowCaptionAndResizeBorder(obj, (bool)GetValue(UseResizeBorderProperty));
+		}
+
+		void InitializeWindowCaptionAndResizeBorder(DependencyObject obj, bool useResizeBorder)
+		{
+			if (useResizeBorder) {
 				obj.SetValue(winChrome_CaptionHeightProperty, CaptionHeight);
 				obj.SetValue(winChrome_ResizeBorderThicknessProperty, ResizeBorderThickness);
 			}
 			else {
-				obj.SetValue(winChrome_CaptionHeightProperty, GridCaptionHeight.Value);
+				if (IsFullScreen)
+					obj.SetValue(winChrome_CaptionHeightProperty, 0d);
+				else
+					obj.SetValue(winChrome_CaptionHeightProperty, GridCaptionHeight.Value);
 				obj.SetValue(winChrome_ResizeBorderThicknessProperty, new Thickness(0));
 			}
 		}
-
-		[DllImport("user32")]
-		static extern bool IsWindow(IntPtr hWnd);
-		[DllImport("user32")]
-		static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
-		[DllImport("user32")]
-		static extern uint TrackPopupMenuEx(IntPtr hmenu, uint fuFlags, int x, int y, IntPtr hwnd, IntPtr lptpm);
-		[DllImport("user32")]
-		static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
 		static void ShowSystemMenu(object o)
 		{
@@ -341,8 +384,24 @@ namespace ICSharpCode.ILSpy.Controls
 				return;
 
 			var p = win.PointToScreen(new Point(0, GridCaptionHeight.Value));
+			WindowUtils.ShowSystemMenu(win, p);
+		}
+	}
 
-			var hWnd = new WindowInteropHelper(win).Handle;
+	static class WindowUtils
+	{
+		[DllImport("user32")]
+		static extern bool IsWindow(IntPtr hWnd);
+		[DllImport("user32")]
+		static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
+		[DllImport("user32")]
+		static extern uint TrackPopupMenuEx(IntPtr hmenu, uint fuFlags, int x, int y, IntPtr hwnd, IntPtr lptpm);
+		[DllImport("user32")]
+		static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+		public static void ShowSystemMenu(Window window, Point p)
+		{
+			var hWnd = new WindowInteropHelper(window).Handle;
 			if (hWnd == IntPtr.Zero)
 				return;
 			if (!IsWindow(hWnd))
@@ -352,6 +411,38 @@ namespace ICSharpCode.ILSpy.Controls
 			uint res = TrackPopupMenuEx(hMenu, 0x100, (int)p.X, (int)p.Y, hWnd, IntPtr.Zero);
 			if (res != 0)
 				PostMessage(hWnd, 0x112, new IntPtr(res), IntPtr.Zero);
+		}
+
+		public static void SetState(Window window, WindowState state)
+		{
+			switch (state) {
+			case WindowState.Normal:
+				Restore(window);
+				break;
+
+			case WindowState.Minimized:
+				Minimize(window);
+				break;
+
+			case WindowState.Maximized:
+				Maximize(window);
+				break;
+			}
+		}
+
+		public static void Minimize(Window window)
+		{
+			window.WindowState = WindowState.Minimized;
+		}
+
+		public static void Maximize(Window window)
+		{
+			window.WindowState = WindowState.Maximized;
+		}
+
+		public static void Restore(Window window)
+		{
+			window.ClearValue(Window.WindowStateProperty);
 		}
 	}
 }

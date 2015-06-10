@@ -47,6 +47,7 @@ namespace ICSharpCode.ILSpy
 			this.ActiveAssemblyList = (string)doc.Element("ActiveAssemblyList");
 			
 			this.WindowState = FromString((string)doc.Element("WindowState"), WindowState.Normal);
+			this.IsFullScreen = FromString((string)doc.Element("IsFullScreen"), false);
 			var winBoundsString = (string)doc.Element("WindowBounds");
 			if (winBoundsString != null)
 				this.WindowBounds = FromString(winBoundsString, DefaultWindowBounds);
@@ -92,6 +93,7 @@ namespace ICSharpCode.ILSpy
 		public string ActiveAssemblyList;
 		
 		public WindowState WindowState = WindowState.Normal;
+		public bool IsFullScreen;
 		public Rect? WindowBounds;
 		internal static Rect DefaultWindowBounds =  new Rect(10, 10, 1100, 750);
 		public double LeftColumnWidth;
@@ -139,6 +141,7 @@ namespace ICSharpCode.ILSpy
 				doc.Add(new XElement("ActiveAssemblyList", this.ActiveAssemblyList));
 			}
 			doc.Add(new XElement("WindowState", ToString(this.WindowState)));
+			doc.Add(new XElement("IsFullScreen", ToString(this.IsFullScreen)));
 			if (this.WindowBounds != null)
 				doc.Add(new XElement("WindowBounds", ToString(this.WindowBounds)));
 			doc.Add(new XElement("WordWrap", ToString(this.WordWrap)));

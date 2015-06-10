@@ -79,7 +79,7 @@
 		<color name="toolbarmenuborder" bg="#FFFFFFFF" />
 		<color name="toolbarsubmenubackground" bg="#FF000000" />
 		<color name="toolbarmenucheckfill" bg="#FF000000" />
-		<color name="toolbarbuttonchecked" bg="#FF00FF00" />
+		<color name="toolbarbuttonchecked" fg="#FF000000" bg="#FF00FF00" />
 		<color name="toolbaropenheaderbackground" fg="#FF000000" bg="#FF000000" color3="#FF000000" />
 		<color name="toolbariconverticalbackground" bg="#FF000000" />
 		<color name="toolbarverticalbackground" fg="#FF000000" bg="#FF000000" color3="#FF000000" />

@@ -126,7 +126,7 @@
 		<color name="toolbarmenuborder" bg="#333337" />
 		<color name="toolbarsubmenubackground" bg="#1B1B1C" />
 		<color name="toolbarmenucheckfill" bg="#3E3E40" />
-		<color name="toolbarbuttonchecked" bg="#1E1E1E" />
+		<color name="toolbarbuttonchecked" fg="#FFF1F1F1" bg="#FF1E1E1E" />
 		<color name="toolbaropenheaderbackground" fg="#1B1B1C" bg="#1B1B1C" color3="#1B1B1C" />
 		<color name="toolbariconverticalbackground" bg="#1B1B1C" />
 		<color name="toolbarverticalbackground" fg="#1B1B1C" bg="#1B1B1C" color3="#1B1B1C" />

@@ -35,6 +35,7 @@ namespace ICSharpCode.ILSpy
 		Search,
 		ComboBox,
 		Toolbar,
+		ToolBarButtonChecked,
 		MainMenuMenuItem,
 		ContextMenuItem,
 		GridViewItem,
@@ -92,6 +93,7 @@ namespace ICSharpCode.ILSpy
 			case BackgroundType.Search: return GetColorBackground(dntheme.ColorType.ListBoxBackground);
 			case BackgroundType.ComboBox: return GetColorBackground(dntheme.ColorType.CommonControlsComboBoxBackground);
 			case BackgroundType.Toolbar: return GetColorBackground(dntheme.ColorType.ToolBarIconBackground);
+			case BackgroundType.ToolBarButtonChecked: return GetColorBackground(dntheme.ColorType.ToolBarButtonChecked);
 			case BackgroundType.MainMenuMenuItem: return GetColorBackground(dntheme.ColorType.ToolBarIconVerticalBackground);
 			case BackgroundType.ContextMenuItem: return GetColorBackground(dntheme.ColorType.ContextMenuRectangleFill1);
 			case BackgroundType.GridViewItem: return GetColorBackground(dntheme.ColorType.GridViewBackground);

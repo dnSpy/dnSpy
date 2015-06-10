@@ -96,6 +96,7 @@ Ctrl+Alt+B	| Show Breakpoints window
 Alt+F9		| Show Breakpoints window
 Ctrl+Alt+C	| Show Call Stack window
 Alt+7		| Show Call Stack window
+Shift+Alt+Enter | Toggle full screen mode
 
 
 Credits

@@ -407,7 +407,6 @@
     </Compile>
     <Compile Include="dntheme\FileTabBackgroundConverter.cs" />
     <Compile Include="FilterSearcher.cs" />
-    <Compile Include="HideWindowsButtons.cs" />
     <Compile Include="Images\ImageCache.cs" />
     <Compile Include="Images\ThemedImageCreator.cs" />
     <Compile Include="IPlugin.cs" />
@@ -557,7 +556,6 @@
     <Compile Include="VB\ILSpyEnvironmentProvider.cs" />
     <Compile Include="VB\VBLanguage.cs" />
     <Compile Include="VB\VBTextOutputFormatter.cs" />
-    <Compile Include="WindowExtensions.cs" />
     <Compile Include="XmlDoc\AddXmlDocTransform.cs" />
     <Compile Include="XmlDoc\XmlDocKeyProvider.cs" />
     <Compile Include="XmlDoc\XmlDocLoader.cs" />
@@ -1095,6 +1093,9 @@
     <None Include="Microsoft.Windows.Shell.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\FullScreen.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

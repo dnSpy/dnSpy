@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -77,6 +78,42 @@ namespace ICSharpCode.ILSpy.Commands
 		public object CreateToolbarItem()
 		{
 			return MainWindow.Instance.languageComboBox;
+		}
+	}
+
+	[ExportToolbarCommand(ToolbarCategory = "FullScreen", ToolbarOrder = 10000)]
+	sealed class FullScreenToolbarCommand : ToolbarCommand, IToolbarItemCreator, IToolbarCommand
+	{
+		public FullScreenToolbarCommand()
+		{
+			MainWindow.Instance.IsFullScreenChanged += (s, e) => MainWindow.Instance.UpdateToolbar();
+		}
+
+		public object CreateToolbarItem()
+		{
+			var sp = new StackPanel {
+				Orientation = Orientation.Horizontal,
+				ToolTip = "Full Screen",
+			};
+			sp.Children.Add(new Image {
+				Width = 16,
+				Height = 16,
+				Source = ImageCache.Instance.GetImage("FullScreen", BackgroundType.ToolBarButtonChecked),
+			});
+			sp.Children.Add(new TextBlock {
+				Text = "Full Screen",
+				Margin = new Thickness(5, 0, 0, 0),
+			});
+			var checkBox = new CheckBox { Content = sp };
+			var binding = new Binding("IsFullScreen") {
+				Source = MainWindow.Instance,
+			};
+			checkBox.SetBinding(CheckBox.IsCheckedProperty, binding);
+			return checkBox;
+		}
+
+		public bool IsVisible {
+			get { return MainWindow.Instance.IsFullScreen; }
 		}
 	}
 }

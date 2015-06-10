@@ -927,8 +927,6 @@ namespace ICSharpCode.ILSpy
 				this.Width = SessionSettings.DefaultWindowBounds.Width;
 				this.Height = SessionSettings.DefaultWindowBounds.Height;
 			}
-			
-			this.WindowState = sessionSettings.WindowState;
 		}
 		
 		unsafe IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -947,7 +945,7 @@ namespace ICSharpCode.ILSpy
 					var args = new CommandLineArguments(lines);
 					if (HandleCommandLineArguments(args)) {
 						if (!args.NoActivate && WindowState == WindowState.Minimized)
-							WindowState = WindowState.Normal;
+							WindowUtils.SetState(this, WindowState.Normal);
 						HandleCommandLineArgumentsAfterShowList(args);
 						handled = true;
 						return (IntPtr)1;
@@ -1063,6 +1061,9 @@ namespace ICSharpCode.ILSpy
 		void MainWindow_ContentRendered(object sender, EventArgs e)
 		{
 			this.ContentRendered -= MainWindow_ContentRendered;
+			if (!sessionSettings.IsFullScreen)
+				WindowUtils.SetState(this, sessionSettings.WindowState);
+			this.IsFullScreen = sessionSettings.IsFullScreen;
 			StartLoadingHandler(0);
 		}
 
@@ -1869,8 +1870,10 @@ namespace ICSharpCode.ILSpy
 		{
 			base.OnStateChanged(e);
 			// store window state in settings only if it's not minimized
-			if (this.WindowState != System.Windows.WindowState.Minimized)
+			if (this.WindowState != System.Windows.WindowState.Minimized) {
 				sessionSettings.WindowState = this.WindowState;
+				sessionSettings.IsFullScreen = this.IsFullScreen;
+			}
 		}
 		
 		protected override void OnClosing(CancelEventArgs e)
@@ -2278,6 +2281,16 @@ namespace ICSharpCode.ILSpy
 		private void SelectPrevTabCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.CanExecute = tabGroupsManager.ActiveTabGroup.SelectPreviousTabCanExecute();
+		}
+
+		private void FullScreenExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			IsFullScreen = !IsFullScreen;
+		}
+
+		private void FullScreenCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = true;
 		}
 
 		private void FocusTreeViewExecuted(object sender, ExecutedRoutedEventArgs e)

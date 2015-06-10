@@ -111,4 +111,34 @@ namespace ICSharpCode.ILSpy.Commands
 		{
 		}
 	}
+
+	[ExportMainMenuCommand(Menu = "_View", MenuCategory = "View2", MenuHeader = "F_ull Screen", MenuOrder = 3120, MenuInputGestureText = "Shift+Alt+Enter", MenuIcon = "FullScreen")]
+	sealed class FullScreenCommand : ICommand, IMainMenuCheckableCommand
+	{
+		public bool? IsChecked {
+			get { return MainWindow.Instance.IsFullScreen; }
+		}
+
+		public Binding Binding {
+			get {
+				return new Binding("IsFullScreen") {
+					Source = MainWindow.Instance,
+				};
+			}
+		}
+
+		public bool CanExecute(object parameter)
+		{
+			return true;
+		}
+
+		public event System.EventHandler CanExecuteChanged {
+			add { }
+			remove { }
+		}
+
+		public void Execute(object parameter)
+		{
+		}
+	}
 }

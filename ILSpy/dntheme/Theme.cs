@@ -555,7 +555,9 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "ToolBarMenuCheckFill",
 			},
 			new BrushColorInfo(ColorType.ToolBarButtonChecked, "Toolbar button checked") {
-				DefaultBackground = "#E6F0FA",
+				DefaultForeground = "#FF000000",
+				ForegroundResourceKey = "ToolBarButtonCheckedText",
+				DefaultBackground = "#FFE6F0FA",
 				BackgroundResourceKey = "ToolBarButtonChecked",
 			},
 			new LinearGradientColorInfo(ColorType.ToolBarOpenHeaderBackground, new Point(0, 1), "Toolbar open header. Color of top level menu item text when the sub menu is open.", 0, 1) {
