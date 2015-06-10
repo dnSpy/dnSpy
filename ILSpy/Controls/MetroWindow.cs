@@ -183,6 +183,11 @@ namespace ICSharpCode.ILSpy.Controls
 			DependencyProperty.Register("UseResizeBorder", typeof(bool), typeof(MetroWindow),
 			new UIPropertyMetadata(true, OnUseResizeBorderChanged));
 
+		public bool UseResizeBorder {
+			get { return (bool)GetValue(UseResizeBorderProperty); }
+			set { SetValue(UseResizeBorderProperty, value); }
+		}
+
 		static void OnUseResizeBorderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			var win = (MetroWindow)d;
@@ -203,6 +208,85 @@ namespace ICSharpCode.ILSpy.Controls
 			return (bool)element.GetValue(UseResizeBorderProperty);
 		}
 
+		public static readonly DependencyProperty ActiveDefaultBorderProperty =
+			DependencyProperty.Register("ActiveDefaultBorder", typeof(Brush), typeof(MetroWindow),
+			new UIPropertyMetadata(null));
+		public static readonly DependencyProperty ActiveCaptionProperty =
+			DependencyProperty.Register("ActiveCaption", typeof(Brush), typeof(MetroWindow),
+			new UIPropertyMetadata(null));
+		public static readonly DependencyProperty ActiveCaptionTextProperty =
+			DependencyProperty.Register("ActiveCaptionText", typeof(Brush), typeof(MetroWindow),
+			new UIPropertyMetadata(null));
+		public static readonly DependencyProperty InactiveBorderProperty =
+			DependencyProperty.Register("InactiveBorder", typeof(Brush), typeof(MetroWindow),
+			new UIPropertyMetadata(null));
+		public static readonly DependencyProperty InactiveCaptionProperty =
+			DependencyProperty.Register("InactiveCaption", typeof(Brush), typeof(MetroWindow),
+			new UIPropertyMetadata(null));
+		public static readonly DependencyProperty InactiveCaptionTextProperty =
+			DependencyProperty.Register("InactiveCaptionText", typeof(Brush), typeof(MetroWindow),
+			new UIPropertyMetadata(null));
+		public static readonly DependencyProperty ButtonInactiveBorderProperty =
+			DependencyProperty.Register("ButtonInactiveBorder", typeof(Brush), typeof(MetroWindow),
+			new UIPropertyMetadata(null));
+		public static readonly DependencyProperty ButtonInactiveGlyphProperty =
+			DependencyProperty.Register("ButtonInactiveGlyph", typeof(Brush), typeof(MetroWindow),
+			new UIPropertyMetadata(null));
+		public static readonly DependencyProperty ButtonHoverInactiveProperty =
+			DependencyProperty.Register("ButtonHoverInactive", typeof(Brush), typeof(MetroWindow),
+			new UIPropertyMetadata(null));
+		public static readonly DependencyProperty ButtonHoverInactiveBorderProperty =
+			DependencyProperty.Register("ButtonHoverInactiveBorder", typeof(Brush), typeof(MetroWindow),
+			new UIPropertyMetadata(null));
+		public static readonly DependencyProperty ButtonHoverInactiveGlyphProperty =
+			DependencyProperty.Register("ButtonHoverInactiveGlyph", typeof(Brush), typeof(MetroWindow),
+			new UIPropertyMetadata(null));
+
+		public Brush ActiveDefaultBorder {
+			get { return (Brush)GetValue(ActiveDefaultBorderProperty); }
+			set { SetValue(ActiveDefaultBorderProperty, value); }
+		}
+		public Brush ActiveCaption {
+			get { return (Brush)GetValue(ActiveCaptionProperty); }
+			set { SetValue(ActiveCaptionProperty, value); }
+		}
+		public Brush ActiveCaptionText {
+			get { return (Brush)GetValue(ActiveCaptionTextProperty); }
+			set { SetValue(ActiveCaptionTextProperty, value); }
+		}
+		public Brush InactiveBorder {
+			get { return (Brush)GetValue(InactiveBorderProperty); }
+			set { SetValue(InactiveBorderProperty, value); }
+		}
+		public Brush InactiveCaption {
+			get { return (Brush)GetValue(InactiveCaptionProperty); }
+			set { SetValue(InactiveCaptionProperty, value); }
+		}
+		public Brush InactiveCaptionText {
+			get { return (Brush)GetValue(InactiveCaptionTextProperty); }
+			set { SetValue(InactiveCaptionTextProperty, value); }
+		}
+		public Brush ButtonInactiveBorder {
+			get { return (Brush)GetValue(ButtonInactiveBorderProperty); }
+			set { SetValue(ButtonInactiveBorderProperty, value); }
+		}
+		public Brush ButtonInactiveGlyph {
+			get { return (Brush)GetValue(ButtonInactiveGlyphProperty); }
+			set { SetValue(ButtonInactiveGlyphProperty, value); }
+		}
+		public Brush ButtonHoverInactive {
+			get { return (Brush)GetValue(ButtonHoverInactiveProperty); }
+			set { SetValue(ButtonHoverInactiveProperty, value); }
+		}
+		public Brush ButtonHoverInactiveBorder {
+			get { return (Brush)GetValue(ButtonHoverInactiveBorderProperty); }
+			set { SetValue(ButtonHoverInactiveBorderProperty, value); }
+		}
+		public Brush ButtonHoverInactiveGlyph {
+			get { return (Brush)GetValue(ButtonHoverInactiveGlyphProperty); }
+			set { SetValue(ButtonHoverInactiveGlyphProperty, value); }
+		}
+
 		public static readonly DependencyProperty ShowMenuButtonProperty =
 			DependencyProperty.Register("ShowMenuButton", typeof(bool), typeof(MetroWindow),
 			new UIPropertyMetadata(true));
@@ -216,44 +300,24 @@ namespace ICSharpCode.ILSpy.Controls
 			DependencyProperty.Register("ShowCloseButton", typeof(bool), typeof(MetroWindow),
 			new UIPropertyMetadata(true));
 
-		public static void SetShowMenuButton(UIElement element, bool value)
-		{
-			element.SetValue(ShowMenuButtonProperty, value);
+		public bool ShowMenuButton {
+			get { return (bool)GetValue(ShowMenuButtonProperty); }
+			set { SetValue(ShowMenuButtonProperty, value); }
 		}
 
-		public static bool GetShowMenuButton(UIElement element)
-		{
-			return (bool)element.GetValue(ShowMenuButtonProperty);
+		public bool ShowMinimizeButton {
+			get { return (bool)GetValue(ShowMinimizeButtonProperty); }
+			set { SetValue(ShowMinimizeButtonProperty, value); }
 		}
 
-		public static void SetShowMinimizeButton(UIElement element, bool value)
-		{
-			element.SetValue(ShowMinimizeButtonProperty, value);
+		public bool ShowMaximizeButton {
+			get { return (bool)GetValue(ShowMaximizeButtonProperty); }
+			set { SetValue(ShowMaximizeButtonProperty, value); }
 		}
 
-		public static bool GetShowMinimizeButton(UIElement element)
-		{
-			return (bool)element.GetValue(ShowMinimizeButtonProperty);
-		}
-
-		public static void SetShowMaximizeButton(UIElement element, bool value)
-		{
-			element.SetValue(ShowMaximizeButtonProperty, value);
-		}
-
-		public static bool GetShowMaximizeButton(UIElement element)
-		{
-			return (bool)element.GetValue(ShowMaximizeButtonProperty);
-		}
-
-		public static void SetShowCloseButton(UIElement element, bool value)
-		{
-			element.SetValue(ShowCloseButtonProperty, value);
-		}
-
-		public static bool GetShowCloseButton(UIElement element)
-		{
-			return (bool)element.GetValue(ShowCloseButtonProperty);
+		public bool ShowCloseButton {
+			get { return (bool)GetValue(ShowCloseButtonProperty); }
+			set { SetValue(ShowCloseButtonProperty, value); }
 		}
 
 		static Type windowChromeType;
@@ -343,7 +407,7 @@ namespace ICSharpCode.ILSpy.Controls
 
 		void InitializeWindowCaptionAndResizeBorder(DependencyObject obj)
 		{
-			InitializeWindowCaptionAndResizeBorder(obj, (bool)GetValue(UseResizeBorderProperty));
+			InitializeWindowCaptionAndResizeBorder(obj, UseResizeBorder);
 		}
 
 		void InitializeWindowCaptionAndResizeBorder(DependencyObject obj, bool useResizeBorder)

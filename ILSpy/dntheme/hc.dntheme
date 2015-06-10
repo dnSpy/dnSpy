@@ -32,6 +32,15 @@
 		<color name="systemcolorswindow" bg="#FF000000" />
 		<color name="systemcolorswindowtext" fg="#FFFFFFFF" />
 		<color name="dialogwindow" fg="#FFFFFFFF" bg="#FF000000" />
+		<color name="dialogwindowactivecaption" fg="#FFFFFFFF" bg="#FF800080" />
+		<color name="dialogwindowactivedefaultborder" bg="#FFFFFFFF" />
+		<color name="dialogwindowbuttonhoverinactive" bg="#FFFFFFFF" />
+		<color name="dialogwindowbuttonhoverinactiveborder" bg="#FFFFFFFF" />
+		<color name="dialogwindowbuttonhoverinactiveglyph" bg="#FF008000" />
+		<color name="dialogwindowbuttoninactiveborder" bg="#FF008000" />
+		<color name="dialogwindowbuttoninactiveglyph" bg="#FFFFFFFF" />
+		<color name="dialogwindowinactiveborder" bg="#FFFFFFFF" />
+		<color name="dialogwindowinactivecaption" fg="#FFFFFFFF" bg="#FF008000" />
 		<color name="environmentbackground" fg="#FF808080" bg="#FF808080" color3="#FF808080" color4="#FF808080" />
 		<color name="environmentforeground" fg="#FFFFFFFF" />
 		<color name="environmentmainwindowactivedefaultborder" bg="#FFFFFFFF" />

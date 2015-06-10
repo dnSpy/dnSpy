@@ -358,6 +358,46 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#FFF5F5F5",
 				BackgroundResourceKey = "DialogWindowBackground"
 			},
+			new BrushColorInfo(ColorType.DialogWindowActiveCaption, "Dialog Window Active Caption") {
+				DefaultForeground = "#FF525252",
+				ForegroundResourceKey = "DialogWindowActiveCaptionText",
+				DefaultBackground = "#FFEEEEF2",
+				BackgroundResourceKey = "DialogWindowActiveCaption",
+			},
+			new BrushColorInfo(ColorType.DialogWindowActiveDefaultBorder, "Dialog Window Active Default Border") {
+				DefaultBackground = "#FF9B9FB9",
+				BackgroundResourceKey = "DialogWindowActiveDefaultBorder",
+			},
+			new BrushColorInfo(ColorType.DialogWindowButtonHoverInactive, "Dialog Window Button Hover Inactive") {
+				DefaultBackground = "#D8FFFFFF",
+				BackgroundResourceKey = "DialogWindowButtonHoverInactive",
+			},
+			new BrushColorInfo(ColorType.DialogWindowButtonHoverInactiveBorder, "Dialog Window Button Hover Inactive Border") {
+				DefaultBackground = "#D8FFFFFF",
+				BackgroundResourceKey = "DialogWindowButtonHoverInactiveBorder",
+			},
+			new BrushColorInfo(ColorType.DialogWindowButtonHoverInactiveGlyph, "Dialog Window Button Hover Inactive Glyph") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "DialogWindowButtonHoverInactiveGlyph",
+			},
+			new BrushColorInfo(ColorType.DialogWindowButtonInactiveBorder, "Dialog Window Button Inactive Border") {
+				DefaultBackground = "#00000000",
+				BackgroundResourceKey = "DialogWindowButtonInactiveBorder",
+			},
+			new BrushColorInfo(ColorType.DialogWindowButtonInactiveGlyph, "Dialog Window Button Inactive Glyph") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "DialogWindowButtonInactiveGlyph",
+			},
+			new BrushColorInfo(ColorType.DialogWindowInactiveBorder, "Dialog Window Inactive Border") {
+				DefaultBackground = "#FFCCCEDB",
+				BackgroundResourceKey = "DialogWindowInactiveBorder",
+			},
+			new BrushColorInfo(ColorType.DialogWindowInactiveCaption, "Dialog Window Inactive Caption") {
+				DefaultForeground = "#99525252",
+				ForegroundResourceKey = "DialogWindowInactiveCaptionText",
+				DefaultBackground = "#FFEEEEF2",
+				BackgroundResourceKey = "DialogWindowInactiveCaption",
+			},
 			new LinearGradientColorInfo(ColorType.EnvironmentBackground, new Point(0, 1), "MainWindow background", 0, 0.4, 0.6, 1) {
 				ResourceKey = "EnvironmentBackground",
 				DefaultForeground = "#FFEEEEF2",// Environment.EnvironmentBackgroundGradientBegin

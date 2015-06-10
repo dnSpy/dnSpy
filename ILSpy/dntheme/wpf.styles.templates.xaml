@@ -5389,7 +5389,7 @@
 					<Border
 						x:Name="border"
 						ctrls:MetroWindow.MaximizedElement="True"
-						BorderBrush="{DynamicResource EnvironmentMainWindowActiveDefaultBorder}"
+						BorderBrush="{TemplateBinding ActiveDefaultBorder}"
 						BorderThickness="1"
 						Background="{TemplateBinding Background}"
 						TextElement.Foreground="{TemplateBinding Foreground}"
@@ -5402,8 +5402,8 @@
 							<DockPanel
 								x:Name="titleBar"
 								Grid.Row="0"
-								Background="{DynamicResource EnvironmentMainWindowActiveCaption}"
-								TextElement.Foreground="{DynamicResource EnvironmentMainWindowActiveCaptionText}"
+								Background="{TemplateBinding ActiveCaption}"
+								TextElement.Foreground="{TemplateBinding ActiveCaptionText}"
 								>
 								<ctrls:SysMenuButton
 									DockPanel.Dock="Left"
@@ -5462,24 +5462,24 @@
 							<Setter Property="UseResizeBorder" Value="False" />
 						</Trigger>
 						<Trigger Property="IsActive" Value="False">
-							<Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource EnvironmentMainWindowInactiveBorder}" />
-							<Setter TargetName="titleBar" Property="Background" Value="{DynamicResource EnvironmentMainWindowInactiveCaption}" />
-							<Setter TargetName="titleBar" Property="TextElement.Foreground" Value="{DynamicResource EnvironmentMainWindowInactiveCaptionText}" />
-							<Setter TargetName="minButton" Property="BorderBrush" Value="{DynamicResource EnvironmentMainWindowButtonInactiveBorder}" />
-							<Setter TargetName="minButton" Property="GlyphForeground" Value="{DynamicResource EnvironmentMainWindowButtonInactiveGlyph}" />
-							<Setter TargetName="minButton" Property="HoverBackground" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactive}" />
-							<Setter TargetName="minButton" Property="HoverBorderBrush" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactiveBorder}" />
-							<Setter TargetName="minButton" Property="HoverForeground" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactiveGlyph}" />
-							<Setter TargetName="maxButton" Property="BorderBrush" Value="{DynamicResource EnvironmentMainWindowButtonInactiveBorder}" />
-							<Setter TargetName="maxButton" Property="GlyphForeground" Value="{DynamicResource EnvironmentMainWindowButtonInactiveGlyph}" />
-							<Setter TargetName="maxButton" Property="HoverBackground" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactive}" />
-							<Setter TargetName="maxButton" Property="HoverBorderBrush" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactiveBorder}" />
-							<Setter TargetName="maxButton" Property="HoverForeground" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactiveGlyph}" />
-							<Setter TargetName="closeButton" Property="BorderBrush" Value="{DynamicResource EnvironmentMainWindowButtonInactiveBorder}" />
-							<Setter TargetName="closeButton" Property="GlyphForeground" Value="{DynamicResource EnvironmentMainWindowButtonInactiveGlyph}" />
-							<Setter TargetName="closeButton" Property="HoverBackground" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactive}" />
-							<Setter TargetName="closeButton" Property="HoverBorderBrush" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactiveBorder}" />
-							<Setter TargetName="closeButton" Property="HoverForeground" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactiveGlyph}" />
+							<Setter TargetName="border" Property="BorderBrush" Value="{Binding InactiveBorder, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
+							<Setter TargetName="titleBar" Property="Background" Value="{Binding InactiveCaption, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
+							<Setter TargetName="titleBar" Property="TextElement.Foreground" Value="{Binding InactiveCaptionText, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
+							<Setter TargetName="minButton" Property="BorderBrush" Value="{Binding ButtonInactiveBorder, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
+							<Setter TargetName="minButton" Property="GlyphForeground" Value="{Binding ButtonInactiveGlyph, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
+							<Setter TargetName="minButton" Property="HoverBackground" Value="{Binding ButtonHoverInactive, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
+							<Setter TargetName="minButton" Property="HoverBorderBrush" Value="{Binding ButtonHoverInactiveBorder, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
+							<Setter TargetName="minButton" Property="HoverForeground" Value="{Binding ButtonHoverInactiveGlyph, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
+							<Setter TargetName="maxButton" Property="BorderBrush" Value="{Binding ButtonInactiveBorder, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
+							<Setter TargetName="maxButton" Property="GlyphForeground" Value="{Binding ButtonInactiveGlyph, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
+							<Setter TargetName="maxButton" Property="HoverBackground" Value="{Binding ButtonHoverInactive, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
+							<Setter TargetName="maxButton" Property="HoverBorderBrush" Value="{Binding ButtonHoverInactiveBorder, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
+							<Setter TargetName="maxButton" Property="HoverForeground" Value="{Binding ButtonHoverInactiveGlyph, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
+							<Setter TargetName="closeButton" Property="BorderBrush" Value="{Binding ButtonInactiveBorder, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
+							<Setter TargetName="closeButton" Property="GlyphForeground" Value="{Binding ButtonInactiveGlyph, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
+							<Setter TargetName="closeButton" Property="HoverBackground" Value="{Binding ButtonHoverInactive, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
+							<Setter TargetName="closeButton" Property="HoverBorderBrush" Value="{Binding ButtonHoverInactiveBorder, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
+							<Setter TargetName="closeButton" Property="HoverForeground" Value="{Binding ButtonHoverInactiveGlyph, RelativeSource={RelativeSource AncestorType={x:Type ctrls:MetroWindow}}}" />
 						</Trigger>
 						<MultiTrigger>
 							<MultiTrigger.Conditions>
@@ -5500,6 +5500,17 @@
 	<Style x:Key="MainWindowStyle" TargetType="{x:Type ctrls:MetroWindow}" BasedOn="{StaticResource {x:Type ctrls:MetroWindow}}">
 		<Setter Property="Foreground" Value="{DynamicResource EnvironmentForeground}" />
 		<Setter Property="Background" Value="{DynamicResource EnvironmentBackground}" />
+		<Setter Property="ActiveDefaultBorder" Value="{DynamicResource EnvironmentMainWindowActiveDefaultBorder}" />
+		<Setter Property="ActiveCaption" Value="{DynamicResource EnvironmentMainWindowActiveCaption}" />
+		<Setter Property="ActiveCaptionText" Value="{DynamicResource EnvironmentMainWindowActiveCaptionText}" />
+		<Setter Property="InactiveBorder" Value="{DynamicResource EnvironmentMainWindowInactiveBorder}" />
+		<Setter Property="InactiveCaption" Value="{DynamicResource EnvironmentMainWindowInactiveCaption}" />
+		<Setter Property="InactiveCaptionText" Value="{DynamicResource EnvironmentMainWindowInactiveCaptionText}" />
+		<Setter Property="ButtonInactiveBorder" Value="{DynamicResource EnvironmentMainWindowButtonInactiveBorder}" />
+		<Setter Property="ButtonInactiveGlyph" Value="{DynamicResource EnvironmentMainWindowButtonInactiveGlyph}" />
+		<Setter Property="ButtonHoverInactive" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactive}" />
+		<Setter Property="ButtonHoverInactiveBorder" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactiveBorder}" />
+		<Setter Property="ButtonHoverInactiveGlyph" Value="{DynamicResource EnvironmentMainWindowButtonHoverInactiveGlyph}" />
 		<Setter Property="ShowMenuButton" Value="True" />
 		<Setter Property="ShowMinimizeButton" Value="True" />
 		<Setter Property="ShowMaximizeButton" Value="True" />
@@ -5508,6 +5519,17 @@
 	<Style x:Key="DialogWindowStyle" TargetType="{x:Type ctrls:MetroWindow}" BasedOn="{StaticResource {x:Type ctrls:MetroWindow}}">
 		<Setter Property="Foreground" Value="{DynamicResource DialogWindowForeground}"/>
 		<Setter Property="Background" Value="{DynamicResource DialogWindowBackground}"/>
+		<Setter Property="ActiveDefaultBorder" Value="{DynamicResource DialogWindowActiveDefaultBorder}" />
+		<Setter Property="ActiveCaption" Value="{DynamicResource DialogWindowActiveCaption}" />
+		<Setter Property="ActiveCaptionText" Value="{DynamicResource DialogWindowActiveCaptionText}" />
+		<Setter Property="InactiveBorder" Value="{DynamicResource DialogWindowInactiveBorder}" />
+		<Setter Property="InactiveCaption" Value="{DynamicResource DialogWindowInactiveCaption}" />
+		<Setter Property="InactiveCaptionText" Value="{DynamicResource DialogWindowInactiveCaptionText}" />
+		<Setter Property="ButtonInactiveBorder" Value="{DynamicResource DialogWindowButtonInactiveBorder}" />
+		<Setter Property="ButtonInactiveGlyph" Value="{DynamicResource DialogWindowButtonInactiveGlyph}" />
+		<Setter Property="ButtonHoverInactive" Value="{DynamicResource DialogWindowButtonHoverInactive}" />
+		<Setter Property="ButtonHoverInactiveBorder" Value="{DynamicResource DialogWindowButtonHoverInactiveBorder}" />
+		<Setter Property="ButtonHoverInactiveGlyph" Value="{DynamicResource DialogWindowButtonHoverInactiveGlyph}" />
 		<Setter Property="ShowMenuButton" Value="False" />
 		<Setter Property="ShowMinimizeButton" Value="False" />
 		<Setter Property="ShowMaximizeButton" Value="False" />
