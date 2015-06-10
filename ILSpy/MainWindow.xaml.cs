@@ -482,7 +482,7 @@ namespace ICSharpCode.ILSpy
 			UninitializeActiveTab(oldState, false);
 			InitializeActiveTab(newState, false);
 
-			if (IsActiveTab(newState))
+			if (IsActiveTab(newState) && ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.AutoFocusTextView)
 				SetTextEditorFocus(newView);
 
 			if (OnDecompilerTextViewChanged != null)
@@ -2319,14 +2319,19 @@ namespace ICSharpCode.ILSpy
 
 		private void FocusTreeViewExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			var node = treeView.SelectedItem as SharpTreeNode;
+			var node = (SharpTreeNode)treeView.SelectedItem;
 			if (node != null)
 				treeView.FocusNode(node);
+			else if (treeView.Items.Count > 0) {
+				node = (SharpTreeNode)treeView.Items[0];
+				treeView.FocusNode(node);
+				treeView.SelectedItem = node;
+			}
 		}
 
 		private void FocusTreeViewCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = treeView.SelectedItem is SharpTreeNode;
+			e.CanExecute = treeView.HasItems;
 		}
 
 		private void FocusCodeExecuted(object sender, ExecutedRoutedEventArgs e)
