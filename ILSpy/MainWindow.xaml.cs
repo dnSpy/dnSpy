@@ -1143,6 +1143,8 @@ namespace ICSharpCode.ILSpy
 				break;
 
 			case 5:
+				this.IsEnabled = true;
+
 				// Make sure that when no tabs are created that we have focus. If we don't do this we
 				// can't press Ctrl+K and open the asm search.
 				this.Focus();
@@ -1150,7 +1152,6 @@ namespace ICSharpCode.ILSpy
 				// Sometimes we get keyboard focus when it's better that the text editor gets the focus instead
 				this.GotKeyboardFocus += MainWindow_GotKeyboardFocus;
 
-				this.IsEnabled = true;
 				loadingControl.Visibility = Visibility.Collapsed;
 				mainGrid.Visibility = Visibility.Visible;
 				return;
