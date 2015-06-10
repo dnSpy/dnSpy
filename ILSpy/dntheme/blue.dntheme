@@ -120,8 +120,8 @@
 		<color name="menuitemseparatorfillbottom" bg="Transparent" />
 		<color name="menuitemselectionfill" fg="#FDF4BF" bg="#FDF4BF" />
 		<color name="menuitemglyphpanelbackground" bg="#E9ECEE" />
-		<color name="menuitemglyphpanelborderbrush" bg="#E9ECEE" />
-		<color name="menuitemglyphfill" bg="#000000" />
+		<color name="menuitemglyphpanelborderbrush" bg="#E5C365" />
+		<color name="menuitemglyphfill" bg="#FF000000" />
 		<color name="menuitemhighlightedstroke" bg="#FDF4BF" />
 		<color name="menuitemhighlightedinnerborder" bg="#FDF4BF" />
 		<color name="menuitemdisabledforeground" fg="#808080" />

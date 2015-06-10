@@ -119,8 +119,8 @@
 		<color name="menuitemseparatorfilltop" bg="#333337" />
 		<color name="menuitemseparatorfillbottom" bg="Transparent" />
 		<color name="menuitemselectionfill" fg="#333334" bg="#333334" />
-		<color name="menuitemglyphpanelbackground" bg="#0E6198" />
-		<color name="menuitemglyphpanelborderbrush" bg="#86B0CC" />
+		<color name="menuitemglyphpanelbackground" bg="#3E3E40" />
+		<color name="menuitemglyphpanelborderbrush" bg="#3E3E40" />
 		<color name="menuitemglyphfill" bg="#F1F1F1" />
 		<color name="menuitemhighlightedstroke" bg="#333334" />
 		<color name="menuitemhighlightedinnerborder" bg="#333334" />

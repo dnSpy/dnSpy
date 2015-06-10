@@ -72,8 +72,8 @@
 		<color name="menuitemseparatorfilltop" bg="#FF808080" />
 		<color name="menuitemseparatorfillbottom" bg="Transparent" />
 		<color name="menuitemselectionfill" fg="#FF800080" bg="#FF800080" />
-		<color name="menuitemglyphpanelbackground" bg="#FF800080" />
-		<color name="menuitemglyphpanelborderbrush" bg="#FF800080" />
+		<color name="menuitemglyphpanelbackground" bg="#FF000000" />
+		<color name="menuitemglyphpanelborderbrush" bg="#FFFFFFFF" />
 		<color name="menuitemglyphfill" bg="#FFFFFFFF" />
 		<color name="menuitemhighlightedstroke" bg="#FF800080" />
 		<color name="menuitemhighlightedinnerborder" bg="#FF800080" />

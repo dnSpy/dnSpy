@@ -531,15 +531,15 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#C9DEF5",
 			},
 			new BrushColorInfo(ColorType.MenuItemGlyphPanelBackground, "MenuItem glyph panel background") {
-				DefaultBackground = "#E6EFF4",
+				DefaultBackground = "#EEEEF2",
 				BackgroundResourceKey = "MenuItemGlyphPanelBackground",
 			},
 			new BrushColorInfo(ColorType.MenuItemGlyphPanelBorderBrush, "MenuItem glyph panel border brush") {
-				DefaultBackground = "#CDD3E6",
+				DefaultBackground = "#CCCCCC",
 				BackgroundResourceKey = "MenuItemGlyphPanelBorderBrush",
 			},
 			new BrushColorInfo(ColorType.MenuItemGlyphFill, "MenuItem glyph fill") {
-				DefaultBackground = "#1E1E1E",
+				DefaultBackground = "#FF000000",
 				BackgroundResourceKey = "MenuItemGlyphFill",
 			},
 			new BrushColorInfo(ColorType.MenuItemHighlightedStroke, "MenuItem highlighted stroke") {
