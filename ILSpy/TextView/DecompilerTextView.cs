@@ -1155,12 +1155,14 @@ namespace ICSharpCode.ILSpy.TextView
 			DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged -= CurrentDisplaySettings_PropertyChanged;
 		}
 
-		public void ScrollAndMoveCaretTo(int line, int column)
+		public void ScrollAndMoveCaretTo(int line, int column, bool focus = true)
 		{
 			// Make sure the lines have been re-initialized or the ScrollTo() method could fail
 			TextEditor.TextArea.TextView.EnsureVisualLines();
 			TextEditor.ScrollTo(line, column);
 			SetCaretPosition(line, column);
+			if (focus)
+				MainWindow.Instance.SetTextEditorFocus(this);
 		}
 
 		void SetCaretPosition(int line, int column, double desiredXPos = double.NaN)
