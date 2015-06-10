@@ -79,8 +79,14 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			var bps = Find(textView, line, column);
 			var bpms = GetBreakpointBookmarks(textView, bps);
 			if (bpms.Count > 0) {
-				foreach (var bpm in bpms)
-					BookmarkManager.RemoveMark(bpm);
+				if (bpms.IsEnabled()) {
+					foreach (var bpm in bpms)
+						BookmarkManager.RemoveMark(bpm);
+				}
+				else {
+					foreach (var bpm in bpms)
+						bpm.IsEnabled = true;
+				}
 			}
 			else if (bps.Count > 0) {
 				foreach (var bp in bps)

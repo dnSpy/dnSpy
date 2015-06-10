@@ -1165,8 +1165,10 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			var bpms = BreakpointHelper.GetBreakpointBookmarks(textView, location.Line, location.Column);
 			if (bpms.Count == 0)
 				menuItem.Header = "_Add Breakpoint";
-			else
+			else if (bpms.IsEnabled())
 				menuItem.Header = bpms.Count == 1 ? "D_elete Breakpoint" : "D_elete Breakpoints";
+			else
+				menuItem.Header = bpms.Count == 1 ? "_Enable Breakpoint" : "_Enable Breakpoints";
 		}
 
 		bool CanToggleBP()
