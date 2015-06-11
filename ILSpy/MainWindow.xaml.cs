@@ -1095,7 +1095,7 @@ namespace ICSharpCode.ILSpy
 					LoadInitialAssemblies();
 				}
 
-				ShowAssemblyList(this.assemblyList);
+				ShowAssemblyListDontAskUser(this.assemblyList);
 				break;
 
 			case 2:
@@ -1247,11 +1247,23 @@ namespace ICSharpCode.ILSpy
 			//Only load a new list when it is a different one
 			if (list.ListName != CurrentAssemblyList.ListName)
 			{
-				ShowAssemblyList(list);
+				if (AskUserReloadAssemblyListIfModified("Are you sure you want to load new assemblies and lose all changes?"))
+					ShowAssemblyListDontAskUser(list);
 			}
 		}
-		
-		void ShowAssemblyList(AssemblyList assemblyList)
+
+		bool AskUserReloadAssemblyListIfModified(string question)
+		{
+			int count = AsmEditor.UndoCommandManager.Instance.GetModifiedAssemblyTreeNodes().Count();
+			if (count == 0)
+				return true;
+
+			var msg = count == 1 ? "There is an unsaved file." : string.Format("There are {0} unsaved files.", count);
+			var res = ShowMessageBox(string.Format("{0} {1}", msg, question), System.Windows.MessageBoxButton.YesNo);
+			return res == MsgBoxButton.OK;
+		}
+
+		void ShowAssemblyListDontAskUser(AssemblyList assemblyList)
 		{
 			// Clear the cache since the keys contain tree nodes which get recreated now. The keys
 			// will never match again so shouldn't be in the cache.
@@ -1697,11 +1709,13 @@ namespace ICSharpCode.ILSpy
 		{
 			if (!ReloadListCanExecute())
 				return;
+			if (!AskUserReloadAssemblyListIfModified("Are you sure you want to reload all assemblies and lose all changes?"))
+				return;
 			var savedState = CreateSavedTabGroupsState();
 
 			try {
 				TreeView_SelectionChanged_ignore = true;
-				ShowAssemblyList(assemblyListManager.LoadList(ILSpySettings.Load(), assemblyList.ListName));
+				ShowAssemblyListDontAskUser(assemblyListManager.LoadList(ILSpySettings.Load(), assemblyList.ListName));
 			}
 			finally {
 				TreeView_SelectionChanged_ignore = false;
