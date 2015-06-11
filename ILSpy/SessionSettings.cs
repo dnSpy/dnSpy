@@ -44,7 +44,7 @@ namespace ICSharpCode.ILSpy
 			
 			this.FilterSettings = new FilterSettings(filterSettings);
 			
-			this.ActiveAssemblyList = (string)doc.Element("ActiveAssemblyList");
+			this.ActiveAssemblyList = Unescape((string)doc.Element("ActiveAssemblyList"));
 			
 			this.WindowState = FromString((string)doc.Element("WindowState"), WindowState.Normal);
 			this.IsFullScreen = FromString((string)doc.Element("IsFullScreen"), false);
@@ -63,7 +63,7 @@ namespace ICSharpCode.ILSpy
 			var ignoreXml = doc.Element("IgnoredWarnings");
 			if (ignoreXml != null) {
 				foreach (var child in ignoreXml.Elements("Warning")) {
-					var id = FromString((string)child, (string)null);
+					var id = Unescape((string)child);
 					if (id != null)
 						IgnoredWarnings.Add(id);
 				}
@@ -138,7 +138,7 @@ namespace ICSharpCode.ILSpy
 			XElement doc = new XElement("SessionSettings");
 			doc.Add(this.FilterSettings.SaveAsXml());
 			if (this.ActiveAssemblyList != null) {
-				doc.Add(new XElement("ActiveAssemblyList", this.ActiveAssemblyList));
+				doc.Add(new XElement("ActiveAssemblyList", Escape(this.ActiveAssemblyList)));
 			}
 			doc.Add(new XElement("WindowState", ToString(this.WindowState)));
 			doc.Add(new XElement("IsFullScreen", ToString(this.IsFullScreen)));
@@ -152,12 +152,40 @@ namespace ICSharpCode.ILSpy
 			doc.Add(new XElement("BottomPaneHeight", ToString(this.BottomPaneSettings.Height)));
 			doc.Add(new XElement("BottomPaneName", ToString(this.BottomPaneSettings.Name)));
 			doc.Add(new XElement("ThemeName", ToString(this.ThemeName)));
-			doc.Add(new XElement("IgnoredWarnings", IgnoredWarnings.Select(id => new XElement("Warning", id))));
+			doc.Add(new XElement("IgnoredWarnings", IgnoredWarnings.Select(id => new XElement("Warning", Escape(id)))));
 
 			if (ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.RestoreTabsAtStartup)
 				doc.Add(SavedTabGroupsState.ToXml(new XElement("TabGroups")));
 			
 			ILSpySettings.SaveSettings(doc);
+		}
+
+		static bool IsValidChar(char c)
+		{
+			return c >= 0x20 && c != '©';
+		}
+
+		static Regex regex = new Regex("©(?<num>[0-9A-f]{4})");
+		
+		public static string Escape(string p)
+		{
+			if (p == null)
+				return p;
+			StringBuilder sb = new StringBuilder();
+			foreach (char ch in p) {
+				if (IsValidChar(ch))
+					sb.Append(ch);
+				else
+					sb.AppendFormat("©{0:X4}", (int)ch);
+			}
+			return sb.ToString();
+		}
+		
+		public static string Unescape(string p)
+		{
+			if (p == null)
+				return p;
+			return regex.Replace(p, m => ((char)int.Parse(m.Groups["num"].Value, NumberStyles.HexNumber)).ToString());
 		}
 		
 		internal static T FromString<T>(string s, T defaultValue)

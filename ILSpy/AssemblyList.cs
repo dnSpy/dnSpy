@@ -114,11 +114,11 @@ namespace ICSharpCode.ILSpy
 		/// Loads an assembly list from XML.
 		/// </summary>
 		public AssemblyList(XElement listElement)
-			: this((string)listElement.Attribute("name"))
+			: this(SessionSettings.Unescape((string)listElement.Attribute("name")))
 		{
 			foreach (var asm in listElement.Elements("Assembly")) {
 				try {
-					OpenAssembly((string)asm);
+					OpenAssembly(SessionSettings.Unescape((string)asm));
 				}
 				catch (ArgumentException) { // invalid filename
 				}
@@ -173,8 +173,8 @@ namespace ICSharpCode.ILSpy
 			lock (assemblies) {
 				return new XElement(
 					"List",
-					new XAttribute("name", this.ListName),
-					assemblies.Where(asm => !asm.IsAutoLoaded && !string.IsNullOrWhiteSpace(asm.FileName)).Select(asm => new XElement("Assembly", asm.FileName))
+					new XAttribute("name", SessionSettings.Escape(this.ListName)),
+					assemblies.Where(asm => !asm.IsAutoLoaded && !string.IsNullOrWhiteSpace(asm.FileName)).Select(asm => new XElement("Assembly", SessionSettings.Escape(asm.FileName)))
 				);
 			}
 		}

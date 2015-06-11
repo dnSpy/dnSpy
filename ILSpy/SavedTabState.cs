@@ -93,12 +93,12 @@ namespace ICSharpCode.ILSpy
 
 		public XElement ToXml(XElement xml)
 		{
-			xml.SetAttributeValue("language", Language);
+			xml.SetAttributeValue("language", SessionSettings.Escape(Language));
 
 			foreach (var path in Paths)
 				xml.Add(path.ToXml(new XElement("Path")));
 
-			var asms = new XElement("ActiveAutoLoadedAssemblies", ActiveAutoLoadedAssemblies.Select(p => new XElement("Node", p)));
+			var asms = new XElement("ActiveAutoLoadedAssemblies", ActiveAutoLoadedAssemblies.Select(p => new XElement("Node", SessionSettings.Escape(p))));
 			xml.Add(asms);
 
 			xml.Add(EditorPositionState.ToXml(new XElement("EditorPositionState")));
@@ -110,7 +110,7 @@ namespace ICSharpCode.ILSpy
 		{
 			var savedState = new SavedTabState();
 
-			savedState.Language = (string)child.Attribute("language") ?? "C#";
+			savedState.Language = SessionSettings.Unescape((string)child.Attribute("language")) ?? "C#";
 
 			foreach (var path in child.Elements("Path"))
 				savedState.Paths.Add(FullNodePathName.FromXml(path));
@@ -118,7 +118,7 @@ namespace ICSharpCode.ILSpy
 			savedState.ActiveAutoLoadedAssemblies = new List<string>();
 			var autoAsms = child.Element("ActiveAutoLoadedAssemblies");
 			if (autoAsms != null)
-				savedState.ActiveAutoLoadedAssemblies.AddRange(autoAsms.Elements().Select(e => (string)e));
+				savedState.ActiveAutoLoadedAssemblies.AddRange(autoAsms.Elements().Select(e => SessionSettings.Unescape((string)e)));
 
 			savedState.EditorPositionState = EditorPositionState.FromXml(child.Element("EditorPositionState"));
 

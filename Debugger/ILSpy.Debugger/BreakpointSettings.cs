@@ -86,8 +86,8 @@ namespace ICSharpCode.ILSpy.Debugger
 			BookmarkManager.RemoveMarks<BreakpointBookmark>();
 			foreach (var bpx in bpsx.Elements("Breakpoint")) {
 				int? token = (int?)bpx.Attribute("Token");
-				string moduleFullPath = (string)bpx.Attribute("ModuleFullPath");
-				string assemblyFullPath = (string)bpx.Attribute("AssemblyFullPath");
+				string moduleFullPath = SessionSettings.Unescape((string)bpx.Attribute("ModuleFullPath"));
+				string assemblyFullPath = SessionSettings.Unescape((string)bpx.Attribute("AssemblyFullPath"));
 				uint? from = (uint?)bpx.Attribute("From");
 				uint? to = (uint?)bpx.Attribute("To");
 				bool? isEnabled = (bool?)bpx.Attribute("IsEnabled");
@@ -95,7 +95,7 @@ namespace ICSharpCode.ILSpy.Debugger
 				int? locationColumn = (int?)bpx.Attribute("LocationColumn");
 				int? endLocationLine = (int?)bpx.Attribute("EndLocationLine");
 				int? endLocationColumn = (int?)bpx.Attribute("EndLocationColumn");
-				string methodFullName = (string)bpx.Attribute("MethodFullName");
+				string methodFullName = SessionSettings.Unescape((string)bpx.Attribute("MethodFullName"));
 
 				if (token == null) continue;
 				if (string.IsNullOrEmpty(moduleFullPath)) continue;
@@ -162,8 +162,8 @@ namespace ICSharpCode.ILSpy.Debugger
 
 				var bpx = new XElement("Breakpoint");
 				bpx.SetAttributeValue("Token", bp.MethodKey.Token);
-				bpx.SetAttributeValue("ModuleFullPath", bp.MethodKey.ModuleFullPath);
-				bpx.SetAttributeValue("AssemblyFullPath", mainModule == null ? bp.MethodKey.ModuleFullPath : mainModule.Location);
+				bpx.SetAttributeValue("ModuleFullPath", SessionSettings.Escape(bp.MethodKey.ModuleFullPath));
+				bpx.SetAttributeValue("AssemblyFullPath", SessionSettings.Escape(mainModule == null ? bp.MethodKey.ModuleFullPath : mainModule.Location));
 				bpx.SetAttributeValue("From", bp.ILRange.From);
 				bpx.SetAttributeValue("To", bp.ILRange.To);
 				bpx.SetAttributeValue("IsEnabled", bp.IsEnabled);
@@ -171,7 +171,7 @@ namespace ICSharpCode.ILSpy.Debugger
 				bpx.SetAttributeValue("LocationColumn", bp.Location.Column);
 				bpx.SetAttributeValue("EndLocationLine", bp.EndLocation.Line);
 				bpx.SetAttributeValue("EndLocationColumn", bp.EndLocation.Column);
-				bpx.SetAttributeValue("MethodFullName", method.FullName);
+				bpx.SetAttributeValue("MethodFullName", SessionSettings.Escape(method.FullName));
 				bps.Add(bpx);
 			}
 		}

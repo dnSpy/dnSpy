@@ -105,7 +105,7 @@ namespace ICSharpCode.ILSpy.Options
 		{
 			XElement e = settings["DisplaySettings"];
 			DisplaySettings s = new DisplaySettings();
-			s.SelectedFont = new FontFamily((string)e.Attribute("Font") ?? GetDefaultFont());
+			s.SelectedFont = new FontFamily(SessionSettings.Unescape((string)e.Attribute("Font")) ?? GetDefaultFont());
 			s.SelectedFontSize = (double?)e.Attribute("FontSize") ?? 10.0 * 4 / 3;
 			s.ShowLineNumbers = (bool?)e.Attribute("ShowLineNumbers") ?? true;
 			s.ShowMetadataTokens = (bool?)e.Attribute("ShowMetadataTokens") ?? true;
@@ -142,7 +142,7 @@ namespace ICSharpCode.ILSpy.Options
 			currentDisplaySettings.CopyValues(s);
 			
 			XElement section = new XElement("DisplaySettings");
-			section.SetAttributeValue("Font", s.SelectedFont.Source);
+			section.SetAttributeValue("Font", SessionSettings.Escape(s.SelectedFont.Source));
 			section.SetAttributeValue("FontSize", s.SelectedFontSize);
 			section.SetAttributeValue("ShowLineNumbers", s.ShowLineNumbers);
 			section.SetAttributeValue("ShowMetadataTokens", s.ShowMetadataTokens);

@@ -34,7 +34,7 @@ namespace ICSharpCode.ILSpy
 		{
 			XElement doc = spySettings["AssemblyLists"];
 			foreach (var list in doc.Elements("List")) {
-				AssemblyLists.Add((string)list.Attribute("name"));
+				AssemblyLists.Add(SessionSettings.Unescape((string)list.Attribute("name")));
 			}
 		}
 		
@@ -57,7 +57,7 @@ namespace ICSharpCode.ILSpy
 			XElement doc = spySettings["AssemblyLists"];
 			if (listName != null) {
 				foreach (var list in doc.Elements("List")) {
-					if ((string)list.Attribute("name") == listName) {
+					if (SessionSettings.Unescape((string)list.Attribute("name")) == listName) {
 						return new AssemblyList(list);
 					}
 				}
@@ -85,7 +85,7 @@ namespace ICSharpCode.ILSpy
 						doc = new XElement("AssemblyLists");
 						root.Add(doc);
 					}
-					XElement listElement = doc.Elements("List").FirstOrDefault(e => (string)e.Attribute("name") == list.ListName);
+					XElement listElement = doc.Elements("List").FirstOrDefault(e => SessionSettings.Unescape((string)e.Attribute("name")) == list.ListName);
 					if (listElement != null)
 						listElement.ReplaceWith(list.SaveAsXml());
 					else
@@ -118,7 +118,7 @@ namespace ICSharpCode.ILSpy
 						{
 							return;
 						}
-						XElement listElement = doc.Elements("List").FirstOrDefault(e => (string)e.Attribute("name") == Name);
+						XElement listElement = doc.Elements("List").FirstOrDefault(e => SessionSettings.Unescape((string)e.Attribute("name")) == Name);
 						if (listElement != null)
 							listElement.Remove();
 					});

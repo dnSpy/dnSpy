@@ -51,8 +51,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public XElement ToXml(XElement xml)
 		{
-			xml.SetAttributeValue("id", id);
-			xml.SetAttributeValue("name", name);
+			xml.SetAttributeValue("id", SessionSettings.Escape(id));
+			xml.SetAttributeValue("name", SessionSettings.Escape(name));
 			return xml;
 		}
 
@@ -60,8 +60,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			if (doc == null)
 				return new NodePathName();
-			var id = SessionSettings.FromString((string)doc.Attribute("id"), string.Empty);
-			var name = SessionSettings.FromString((string)doc.Attribute("name"), string.Empty);
+			var id = SessionSettings.FromString(SessionSettings.Unescape((string)doc.Attribute("id")), string.Empty);
+			var name = SessionSettings.FromString(SessionSettings.Unescape((string)doc.Attribute("name")), string.Empty);
 			return new NodePathName(id, name);
 		}
 
