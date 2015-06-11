@@ -279,6 +279,7 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#663399FF",
 			},
 			new BrushColorInfo(ColorType.SpecialCharacterBox, "Special character box") {
+				DefaultForeground = "#FFFFFFFF",
 				DefaultBackground = "#C8808080",
 			},
 			new BrushColorInfo(ColorType.SearchResultMarker, "Search result marker") {

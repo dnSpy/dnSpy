@@ -611,6 +611,7 @@ namespace ICSharpCode.ILSpy
 			ImageCache.Instance.OnThemeChanged();
 			UpdateSystemMenuImage();
 			UpdateControlColors();
+			NewTextEditor.OnThemeUpdatedStatic();
 			foreach (var view in AllTextViews)
 				view.OnThemeUpdated();
 			UpdateToolbar();

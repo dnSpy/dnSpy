@@ -42,13 +42,21 @@ namespace ICSharpCode.ILSpy.TextView
 
 		public NewTextEditor()
 		{
-			Initialized += NewTextEditor_Initialized;
 			Options.AllowToggleOverstrikeMode = true;
 		}
 
-		void NewTextEditor_Initialized(object sender, EventArgs e)
+		internal static void OnThemeUpdatedStatic()
 		{
-			OnThemeUpdated();
+			var theme = Themes.Theme;
+
+			ICSharpCode.ILSpy.Debugger.Bookmarks.BreakpointBookmark.HighlightingColor = theme.GetColor(dntheme.ColorType.BreakpointStatement).TextInheritedColor;
+			ICSharpCode.ILSpy.Debugger.Bookmarks.BreakpointBookmark.DisabledHighlightingColor = theme.GetColor(dntheme.ColorType.DisabledBreakpointStatement).TextInheritedColor;
+			ICSharpCode.ILSpy.Debugger.Bookmarks.StackFrameStatementBookmark.CurrentHighlightingColor = theme.GetColor(dntheme.ColorType.CurrentStatement).TextInheritedColor;
+			ICSharpCode.ILSpy.Debugger.Bookmarks.StackFrameStatementBookmark.ReturnHighlightingColor = theme.GetColor(dntheme.ColorType.ReturnStatement).TextInheritedColor;
+			ICSharpCode.ILSpy.Debugger.Bookmarks.StackFrameStatementBookmark.SelectedHighlightingColor = theme.GetColor(dntheme.ColorType.SelectedReturnStatement).TextInheritedColor;
+			var specialBox = theme.GetColor(dntheme.ColorType.SpecialCharacterBox).TextInheritedColor;
+			ICSharpCode.AvalonEdit.Rendering.SpecialCharacterTextRunOptions.BackgroundBrush = specialBox.Background == null ? null : specialBox.Background.GetBrush(null);
+			ICSharpCode.AvalonEdit.Rendering.SpecialCharacterTextRunOptions.ForegroundBrush = specialBox.Foreground == null ? null : specialBox.Foreground.GetBrush(null);
 		}
 
 		internal void OnThemeUpdated()
@@ -59,14 +67,6 @@ namespace ICSharpCode.ILSpy.TextView
 			Foreground = textColor.Foreground == null ? null : textColor.Foreground.GetBrush(null);
 			FontWeight = textColor.FontWeight ?? FontWeights.Regular;
 			FontStyle = textColor.FontStyle ?? FontStyles.Normal;
-
-			ICSharpCode.ILSpy.Debugger.Bookmarks.BreakpointBookmark.HighlightingColor = theme.GetColor(dntheme.ColorType.BreakpointStatement).TextInheritedColor;
-			ICSharpCode.ILSpy.Debugger.Bookmarks.BreakpointBookmark.DisabledHighlightingColor = theme.GetColor(dntheme.ColorType.DisabledBreakpointStatement).TextInheritedColor;
-			ICSharpCode.ILSpy.Debugger.Bookmarks.StackFrameStatementBookmark.CurrentHighlightingColor = theme.GetColor(dntheme.ColorType.CurrentStatement).TextInheritedColor;
-			ICSharpCode.ILSpy.Debugger.Bookmarks.StackFrameStatementBookmark.ReturnHighlightingColor = theme.GetColor(dntheme.ColorType.ReturnStatement).TextInheritedColor;
-			ICSharpCode.ILSpy.Debugger.Bookmarks.StackFrameStatementBookmark.SelectedHighlightingColor = theme.GetColor(dntheme.ColorType.SelectedReturnStatement).TextInheritedColor;
-			var specialBox = theme.GetColor(dntheme.ColorType.SpecialCharacterBox).TextInheritedColor;
-			ICSharpCode.AvalonEdit.Rendering.SpecialCharacterTextRunOptions.Brush = specialBox.Background == null ? null : specialBox.Background.GetBrush(null);
 
 			var ln = theme.GetColor(ColorType.LineNumber).InheritedColor;
 			LineNumbersForeground = ln.Foreground == null ? null : ln.Foreground.GetBrush(null);

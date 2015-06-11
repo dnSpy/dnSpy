@@ -14,6 +14,7 @@
 		<color name="localdefinition" fg="#FFFFFFFF" bg="#FF800080" />
 		<color name="localreference" fg="#FFFFFFFF" bg="#FF800080" />
 		<color name="searchresultmarker" bg="#FF800080" />
+		<color name="specialcharacterbox" fg="#FFFFFFFF" bg="#FF800080" />
 
 		<color name="systemcolorscontrol" bg="#FF000000" />
 		<color name="systemcolorscontroldark" bg="#FF808080" />

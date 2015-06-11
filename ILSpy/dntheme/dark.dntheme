@@ -56,7 +56,7 @@
 		<color name="currentstatement" fg="Black" bg="#7EFFEE62" />
 		<color name="breakpointstatement" fg="White" bg="#8C2F2F" />
 		<color name="disabledbreakpointstatement" bg="#308C2F2F" />
-		<color name="specialcharacterbox" bg="#666699" />
+		<color name="specialcharacterbox" fg="#FFF1F1F1" bg="#FF666699" />
 		<color name="searchresultmarker" bg="#FFFFB7" />
 		<color name="currentline" fg="#282828" bg="#0F0F0F" />
 		<color name="selectedreturnstatement" fg="Black" bg="#6A7CA5A0" />

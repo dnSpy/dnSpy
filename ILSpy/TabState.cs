@@ -220,6 +220,7 @@ namespace ICSharpCode.ILSpy
 			UpdateHeader();
 			ContextMenuProvider.Add(view);
 			view.DragOver += view_DragOver;
+			view.OnThemeUpdated();
 		}
 
 		void view_DragOver(object sender, DragEventArgs e)
