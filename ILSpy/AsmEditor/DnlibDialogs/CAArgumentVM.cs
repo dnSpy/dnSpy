@@ -95,11 +95,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		TypeSig storageType;
 
-		public CAArgumentVM(CAArgument arg, TypeSigCreatorOptions options, TypeSig storageType)
+		public CAArgumentVM(ModuleDef ownerModule, CAArgument arg, TypeSigCreatorOptions options, TypeSig storageType)
 		{
-			this.module = options.Module;
+			this.module = options.OwnerModule;
 			this.originalArg = arg.Clone();
-			this.constantTypeVM = new DnlibDialogs.ConstantTypeVM(null, ConstantTypes, true, true, options);
+			this.constantTypeVM = new DnlibDialogs.ConstantTypeVM(ownerModule, null, ConstantTypes, true, true, options);
 			ConstantTypeVM.PropertyChanged += ConstantTypeVM_PropertyChanged;
 			InitializeFrom(arg, storageType);
 			this.modified = false;

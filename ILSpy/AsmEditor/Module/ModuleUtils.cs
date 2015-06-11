@@ -30,9 +30,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			return CreateModule(name, mvid, clrVersion, ModuleKind.NetModule);
 		}
 
-		public static ModuleDef CreateModule(string name, Guid mvid, ClrVersion clrVersion, ModuleKind kind)
+		public static ModuleDef CreateModule(string name, Guid mvid, ClrVersion clrVersion, ModuleKind kind, ModuleDef existingModule = null)
 		{
-			var module = CreateModuleDef(name, mvid, clrVersion);
+			var module = CreateModuleDef(name, mvid, clrVersion, existingModule);
 			module.Kind = kind;
 			module.Characteristics = Characteristics._32BitMachine | Characteristics.ExecutableImage;
 			if (kind == ModuleKind.Dll || kind == ModuleKind.NetModule)
@@ -41,16 +41,34 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			return module;
 		}
 
-		public static ModuleDef CreateModuleDef(string name, Guid mvid, ClrVersion clrVersion)
+		static ModuleDef CreateModuleDef(string name, Guid mvid, ClrVersion clrVersion, ModuleDef existingModule)
 		{
 			var clrValues = ClrVersionValues.GetValues(clrVersion);
-			var module = new ModuleDefUser(name, mvid, clrValues.CorLibRef);
+			ModuleDef module;
+			if (existingModule == null)
+				module = new ModuleDefUser(name, mvid, clrValues.CorLibRef);
+			else {
+				module = existingModule;
+				module.Name = name;
+				module.Mvid = mvid;
+				OverwriteAssembly(module.CorLibTypes.AssemblyRef, clrValues.CorLibRef);
+			}
 			module.UpdateRowId(module);
 			module.RuntimeVersion = clrValues.RuntimeVersion;
 			module.Cor20HeaderRuntimeVersion = clrValues.Cor20HeaderRuntimeVersion;
 			module.TablesHeaderVersion = clrValues.TablesHeaderVersion;
 			module.Location = string.Empty;
 			return module;
+		}
+
+		static void OverwriteAssembly(AssemblyRef dst, AssemblyRef src)
+		{
+			dst.Name = src.Name;
+			dst.Version = src.Version;
+			dst.PublicKeyOrToken = src.PublicKeyOrToken;
+			dst.Culture = src.Culture;
+			dst.Attributes = src.Attributes;
+			dst.Hash = src.Hash;
 		}
 
 		public static AssemblyDef AddToNewAssemblyDef(ModuleDef module, ModuleKind moduleKind, out Characteristics characteristics)

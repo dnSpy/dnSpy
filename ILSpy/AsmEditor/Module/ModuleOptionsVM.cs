@@ -622,7 +622,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		{
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var ep = dnlibTypePicker.GetDnlibType(new EntryPointTreeViewNodeFilter(module), ManagedEntryPoint);
+			var ep = dnlibTypePicker.GetDnlibType(new EntryPointTreeViewNodeFilter(module), ManagedEntryPoint, module);
 			if (ep != null) {
 				ManagedEntryPoint = ep;
 				EntryPointEnum = EntryPointType.Managed;

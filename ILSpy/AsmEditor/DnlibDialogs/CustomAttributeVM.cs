@@ -142,21 +142,21 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		CANamedArgumentsVM caNamedArgumentsVM;
 
-		readonly ModuleDef module;
+		readonly ModuleDef ownerModule;
 		readonly Language language;
 		readonly TypeDef ownerType;
 		readonly MethodDef ownerMethod;
 
-		public CustomAttributeVM(CustomAttributeOptions options, ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
+		public CustomAttributeVM(CustomAttributeOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
 		{
 			this.origOptions = options;
-			this.module = module;
+			this.ownerModule = ownerModule;
 			this.language = language;
 			this.ownerType = ownerType;
 			this.ownerMethod = ownerMethod;
 
 			this.rawData = new HexStringVM(a => HasErrorUpdated());
-			this.caNamedArgumentsVM = new CANamedArgumentsVM(module, language, ownerType, ownerMethod, a => !IsRawData && a.Collection.Count < ushort.MaxValue);
+			this.caNamedArgumentsVM = new CANamedArgumentsVM(ownerModule, language, ownerType, ownerMethod, a => !IsRawData && a.Collection.Count < ushort.MaxValue);
 			ConstructorArguments.CollectionChanged += Args_CollectionChanged;
 			CANamedArgumentsVM.Collection.CollectionChanged += Args_CollectionChanged;
 
@@ -195,7 +195,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				ConstructorArguments.RemoveAt(ConstructorArguments.Count - 1);
 			while (ConstructorArguments.Count < count) {
 				var type = Constructor.MethodSig.Params[ConstructorArguments.Count];
-				ConstructorArguments.Add(new CAArgumentVM(CreateCAArgument(type), new TypeSigCreatorOptions(module, language), type));
+				ConstructorArguments.Add(new CAArgumentVM(ownerModule, CreateCAArgument(type), new TypeSigCreatorOptions(ownerModule, language), type));
 			}
 		}
 
@@ -208,7 +208,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		{
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newCtor = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.InstanceConstructor), Constructor);
+			var newCtor = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.InstanceConstructor), Constructor, ownerModule);
 			if (newCtor != null)
 				Constructor = newCtor;
 		}
@@ -234,7 +234,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				TypeSig type = null;
 				if (sig != null && i < sig.Params.Count)
 					type = sig.Params[i];
-				ConstructorArguments.Add(new CAArgumentVM(options.ConstructorArguments[i], new TypeSigCreatorOptions(module, language), type));
+				ConstructorArguments.Add(new CAArgumentVM(ownerModule, options.ConstructorArguments[i], new TypeSigCreatorOptions(ownerModule, language), type));
 			}
 			CANamedArgumentsVM.InitializeFrom(options.NamedArguments);
 			CreateArguments();

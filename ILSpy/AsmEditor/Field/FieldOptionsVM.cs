@@ -176,7 +176,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 		readonly TypeSigCreatorVM typeSigCreator;
 
 		public Constant Constant {
-			get { return HasDefault ? module.UpdateRowId(new ConstantUser(ConstantVM.Value)) : null; }
+			get { return HasDefault ? ownerModule.UpdateRowId(new ConstantUser(ConstantVM.Value)) : null; }
 		}
 
 		public ConstantVM ConstantVM {
@@ -223,12 +223,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 		}
 		CustomAttributesVM customAttributesVM;
 
-		readonly ModuleDef module;
+		readonly ModuleDef ownerModule;
 
-		public FieldOptionsVM(FieldDefOptions options, ModuleDef module, Language language, TypeDef ownerType)
+		public FieldOptionsVM(FieldDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType)
 		{
-			this.module = module;
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(module, language) {
+			this.ownerModule = ownerModule;
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, language) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = false,
@@ -239,17 +239,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			this.typeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			TypeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
-			this.customAttributesVM = new CustomAttributesVM(module, language);
+			this.customAttributesVM = new CustomAttributesVM(ownerModule, language);
 			this.origOptions = options;
 
-			this.constantVM = new ConstantVM(options.Constant == null ? null : options.Constant.Value, "Default value for this field");
+			this.constantVM = new ConstantVM(ownerModule, options.Constant == null ? null : options.Constant.Value, "Default value for this field");
 			ConstantVM.PropertyChanged += constantVM_PropertyChanged;
-			this.marshalTypeVM = new MarshalTypeVM(module, language, ownerType, null);
+			this.marshalTypeVM = new MarshalTypeVM(ownerModule, language, ownerType, null);
 			MarshalTypeVM.PropertyChanged += marshalTypeVM_PropertyChanged;
 			this.fieldOffset = new NullableUInt32VM(a => HasErrorUpdated());
 			this.initialValue = new HexStringVM(a => HasErrorUpdated());
 			this.rva = new UInt32VM(a => HasErrorUpdated());
-			this.implMapVM = new ImplMapVM(module);
+			this.implMapVM = new ImplMapVM(ownerModule);
 			ImplMapVM.PropertyChanged += implMapVM_PropertyChanged;
 
 			this.typeSigCreator.CanAddFnPtr = false;

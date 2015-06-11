@@ -103,7 +103,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 		readonly MethodSigCreatorVM methodSigCreator;
 
 		public Constant Constant {
-			get { return HasDefault ? module.UpdateRowId(new ConstantUser(constantVM.Value)) : null; }
+			get { return HasDefault ? ownerModule.UpdateRowId(new ConstantUser(constantVM.Value)) : null; }
 		}
 
 		public ConstantVM ConstantVM {
@@ -116,14 +116,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 		}
 		CustomAttributesVM customAttributesVM;
 
-		readonly ModuleDef module;
+		readonly ModuleDef ownerModule;
 
-		public PropertyOptionsVM(PropertyDefOptions options, ModuleDef module, Language language, TypeDef ownerType)
+		public PropertyOptionsVM(PropertyDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType)
 		{
-			this.module = module;
+			this.ownerModule = ownerModule;
 			this.origOptions = options;
 
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(module, language) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, language) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = true,
@@ -137,8 +137,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			this.methodSigCreator.PropertyChanged += methodSigCreator_PropertyChanged;
 			this.methodSigCreator.ParametersCreateTypeSigArray.PropertyChanged += methodSigCreator_PropertyChanged;
 			this.methodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
-			this.customAttributesVM = new CustomAttributesVM(module, language);
-			this.constantVM = new ConstantVM(options.Constant == null ? null : options.Constant.Value, "Default value for this property");
+			this.customAttributesVM = new CustomAttributesVM(ownerModule, language);
+			this.constantVM = new ConstantVM(ownerModule, options.Constant == null ? null : options.Constant.Value, "Default value for this property");
 			this.constantVM.PropertyChanged += constantVM_PropertyChanged;
 
 			ConstantVM.IsEnabled = HasDefault;

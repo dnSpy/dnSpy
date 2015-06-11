@@ -23,24 +23,24 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
 	sealed class CustomAttributesVM : ListVM<CustomAttributeVM, CustomAttribute>
 	{
-		public CustomAttributesVM(ModuleDef module, Language language, TypeDef ownerType = null, MethodDef ownerMethod = null)
-			: base("Edit Custom Attribute", "Create Custom Attribute", module, language, ownerType, ownerMethod)
+		public CustomAttributesVM(ModuleDef ownerModule, Language language, TypeDef ownerType = null, MethodDef ownerMethod = null)
+			: base("Edit Custom Attribute", "Create Custom Attribute", ownerModule, language, ownerType, ownerMethod)
 		{
 		}
 
 		protected override CustomAttributeVM Create(CustomAttribute model)
 		{
-			return new CustomAttributeVM(new CustomAttributeOptions(model), module, language, ownerType, ownerMethod);
+			return new CustomAttributeVM(new CustomAttributeOptions(model), ownerModule, language, ownerType, ownerMethod);
 		}
 
 		protected override CustomAttributeVM Clone(CustomAttributeVM obj)
 		{
-			return new CustomAttributeVM(obj.CreateCustomAttributeOptions(), module, language, ownerType, ownerMethod);
+			return new CustomAttributeVM(obj.CreateCustomAttributeOptions(), ownerModule, language, ownerType, ownerMethod);
 		}
 
 		protected override CustomAttributeVM Create()
 		{
-			return new CustomAttributeVM(new CustomAttributeOptions(), module, language, ownerType, ownerMethod);
+			return new CustomAttributeVM(new CustomAttributeOptions(), ownerModule, language, ownerType, ownerMethod);
 		}
 	}
 }

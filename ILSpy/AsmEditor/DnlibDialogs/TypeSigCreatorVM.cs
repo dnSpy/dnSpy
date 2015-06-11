@@ -261,11 +261,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 
-			var type = dnlibTypePicker.GetDnlibType<ITypeDefOrRef>(new FlagsTreeViewNodeFilter(flags), null);
+			var type = dnlibTypePicker.GetDnlibType<ITypeDefOrRef>(new FlagsTreeViewNodeFilter(flags), null, options.OwnerModule);
 			if (type == null)
 				return null;
 
-			var corLibSig = options.Module.CorLibTypes.GetCorLibTypeSig(type);
+			var corLibSig = options.OwnerModule.CorLibTypes.GetCorLibTypeSig(type);
 			if (corLibSig != null)
 				return corLibSig;
 			else {

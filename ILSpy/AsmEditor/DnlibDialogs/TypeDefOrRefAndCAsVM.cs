@@ -30,8 +30,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				throw new InvalidOperationException("TModel is an invalid type");
 		}
 
-		public TypeDefOrRefAndCAsVM(string editString, string createString, ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
-			: base(editString, createString, module, language, ownerType, ownerMethod)
+		public TypeDefOrRefAndCAsVM(string editString, string createString, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
+			: base(editString, createString, ownerModule, language, ownerType, ownerMethod)
 		{
 		}
 
@@ -39,18 +39,18 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		{
 			var gpc = model as GenericParamConstraint;
 			if (gpc != null)
-				return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(gpc), module, language, ownerType, ownerMethod);
-			return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions((InterfaceImpl)(object)model), module, language, ownerType, ownerMethod);
+				return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(gpc), ownerModule, language, ownerType, ownerMethod);
+			return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions((InterfaceImpl)(object)model), ownerModule, language, ownerType, ownerMethod);
 		}
 
 		protected override TypeDefOrRefAndCAVM Clone(TypeDefOrRefAndCAVM obj)
 		{
-			return new TypeDefOrRefAndCAVM(obj.CreateTypeDefOrRefAndCAOptions(), module, language, ownerType, ownerMethod);
+			return new TypeDefOrRefAndCAVM(obj.CreateTypeDefOrRefAndCAOptions(), ownerModule, language, ownerType, ownerMethod);
 		}
 
 		protected override TypeDefOrRefAndCAVM Create()
 		{
-			return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(), module, language, ownerType, ownerMethod);
+			return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(), ownerModule, language, ownerType, ownerMethod);
 		}
 	}
 }

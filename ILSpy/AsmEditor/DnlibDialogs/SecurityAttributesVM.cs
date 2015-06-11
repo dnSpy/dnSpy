@@ -23,24 +23,24 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
 	sealed class SecurityAttributesVM : ListVM<SecurityAttributeVM, SecurityAttribute>
 	{
-		public SecurityAttributesVM(ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
-			: base("Edit Security Attribute", "Create Security Attribute", module, language, ownerType, ownerMethod)
+		public SecurityAttributesVM(ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
+			: base("Edit Security Attribute", "Create Security Attribute", ownerModule, language, ownerType, ownerMethod)
 		{
 		}
 
 		protected override SecurityAttributeVM Create(SecurityAttribute model)
 		{
-			return new SecurityAttributeVM(model, module, language, ownerType, ownerMethod);
+			return new SecurityAttributeVM(model, ownerModule, language, ownerType, ownerMethod);
 		}
 
 		protected override SecurityAttributeVM Clone(SecurityAttributeVM obj)
 		{
-			return new SecurityAttributeVM(obj.CreateSecurityAttribute(), module, language, ownerType, ownerMethod);
+			return new SecurityAttributeVM(obj.CreateSecurityAttribute(), ownerModule, language, ownerType, ownerMethod);
 		}
 
 		protected override SecurityAttributeVM Create()
 		{
-			return new SecurityAttributeVM(new SecurityAttribute(), module, language, ownerType, ownerMethod);
+			return new SecurityAttributeVM(new SecurityAttribute(), ownerModule, language, ownerType, ownerMethod);
 		}
 	}
 }

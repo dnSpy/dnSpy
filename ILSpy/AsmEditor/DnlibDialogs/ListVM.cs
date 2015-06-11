@@ -75,17 +75,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		readonly string editString;
 		readonly string createString;
-		protected readonly ModuleDef module;
+		protected readonly ModuleDef ownerModule;
 		protected readonly Language language;
 		protected readonly TypeDef ownerType;
 		protected readonly MethodDef ownerMethod;
 		readonly bool inlineEditing;
 
-		protected ListVM(string editString, string createString, ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod, bool inlineEditing = false)
+		protected ListVM(string editString, string createString, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod, bool inlineEditing = false)
 		{
 			this.editString = editString;
 			this.createString = createString;
-			this.module = module;
+			this.ownerModule = ownerModule;
 			this.language = language;
 			this.ownerType = ownerType;
 			this.ownerMethod = ownerMethod;

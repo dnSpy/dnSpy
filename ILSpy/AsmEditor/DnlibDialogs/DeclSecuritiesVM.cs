@@ -23,24 +23,24 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
 	sealed class DeclSecuritiesVM : ListVM<DeclSecurityVM, DeclSecurity>
 	{
-		public DeclSecuritiesVM(ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
-			: base("Edit Security Declaration", "Create Security Declaration", module, language, ownerType, ownerMethod)
+		public DeclSecuritiesVM(ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
+			: base("Edit Security Declaration", "Create Security Declaration", ownerModule, language, ownerType, ownerMethod)
 		{
 		}
 
 		protected override DeclSecurityVM Create(DeclSecurity model)
 		{
-			return new DeclSecurityVM(new DeclSecurityOptions(model), module, language, ownerType, ownerMethod);
+			return new DeclSecurityVM(new DeclSecurityOptions(model), ownerModule, language, ownerType, ownerMethod);
 		}
 
 		protected override DeclSecurityVM Clone(DeclSecurityVM obj)
 		{
-			return new DeclSecurityVM(obj.CreateDeclSecurityOptions(), module, language, ownerType, ownerMethod);
+			return new DeclSecurityVM(obj.CreateDeclSecurityOptions(), ownerModule, language, ownerType, ownerMethod);
 		}
 
 		protected override DeclSecurityVM Create()
 		{
-			return new DeclSecurityVM(new DeclSecurityOptions(), module, language, ownerType, ownerMethod);
+			return new DeclSecurityVM(new DeclSecurityOptions(), ownerModule, language, ownerType, ownerMethod);
 		}
 	}
 }

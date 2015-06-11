@@ -23,24 +23,24 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
 	sealed class MethodOverridesVM : ListVM<MethodOverrideVM, MethodOverride>
 	{
-		public MethodOverridesVM(ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
-			: base("Edit Method Override", "Create Method Override", module, language, ownerType, ownerMethod)
+		public MethodOverridesVM(ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
+			: base("Edit Method Override", "Create Method Override", ownerModule, language, ownerType, ownerMethod)
 		{
 		}
 
 		protected override MethodOverrideVM Create(MethodOverride model)
 		{
-			return new MethodOverrideVM(new MethodOverrideOptions(model), module);
+			return new MethodOverrideVM(new MethodOverrideOptions(model), ownerModule);
 		}
 
 		protected override MethodOverrideVM Clone(MethodOverrideVM obj)
 		{
-			return new MethodOverrideVM(obj.CreateMethodOverrideOptions(), module);
+			return new MethodOverrideVM(obj.CreateMethodOverrideOptions(), ownerModule);
 		}
 
 		protected override MethodOverrideVM Create()
 		{
-			return new MethodOverrideVM(new MethodOverrideOptions(), module);
+			return new MethodOverrideVM(new MethodOverrideOptions(), ownerModule);
 		}
 	}
 }

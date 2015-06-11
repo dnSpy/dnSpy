@@ -80,11 +80,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		CANamedArgumentsVM caNamedArgumentsVM;
 
 		readonly SecurityAttribute origSa;
+		readonly ModuleDef ownerModule;
 
-		public SecurityAttributeVM(SecurityAttribute sa, ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
+		public SecurityAttributeVM(SecurityAttribute sa, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
 		{
 			this.origSa = sa;
-			this.caNamedArgumentsVM = new CANamedArgumentsVM(module, language, ownerType, ownerMethod, a => {
+			this.ownerModule = ownerModule;
+			this.caNamedArgumentsVM = new CANamedArgumentsVM(ownerModule, language, ownerType, ownerMethod, a => {
 				// The named args blob length must also be at most 0x1FFFFFFF bytes but we can't verify it here
 				return a.Collection.Count < ModelUtils.COMPRESSED_UINT32_MAX;
 			});
@@ -122,7 +124,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		{
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newAttrType = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.TypeDef), AttributeType);
+			var newAttrType = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.TypeDef), AttributeType, ownerModule);
 			if (newAttrType != null)
 				AttributeType = newAttrType;
 		}

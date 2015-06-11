@@ -232,11 +232,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 		}
 		DeclSecuritiesVM declSecuritiesVM;
 
-		readonly ModuleDef module;
+		readonly ModuleDef ownerModule;
 
-		public AssemblyOptionsVM(AssemblyOptions options, ModuleDef module, Language language)
+		public AssemblyOptionsVM(AssemblyOptions options, ModuleDef ownerModule, Language language)
 		{
-			this.module = module;
+			this.ownerModule = ownerModule;
 			this.origOptions = options;
 			this.hashAlgorithmVM = new EnumListVM(hashAlgorithmList, (a, b) => OnPropertyChanged("AssemblyFullName"));
 			this.contentTypeVM = new EnumListVM(contentTypeList, (a, b) => OnPropertyChanged("AssemblyFullName"));
@@ -245,8 +245,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			this.versionBuild = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }) { UseDecimal = true };
 			this.versionRevision = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }) { UseDecimal = true };
 			this.publicKey = new HexStringVM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); UpdatePublicKeyFlag(); }) { UpperCaseHex = false };
-			this.customAttributesVM = new CustomAttributesVM(module, language);
-			this.declSecuritiesVM = new DeclSecuritiesVM(module, language, null, null);
+			this.customAttributesVM = new CustomAttributesVM(ownerModule, language);
+			this.declSecuritiesVM = new DeclSecuritiesVM(ownerModule, language, null, null);
 			Reinitialize();
 		}
 
@@ -295,7 +295,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			options.CustomAttributes.Clear();
 			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			options.DeclSecurities.Clear();
-			options.DeclSecurities.AddRange(DeclSecuritiesVM.Collection.Select(a => a.CreateDeclSecurityOptions().Create(module)));
+			options.DeclSecurities.AddRange(DeclSecuritiesVM.Collection.Select(a => a.CreateDeclSecurityOptions().Create(ownerModule)));
 			return options;
 		}
 

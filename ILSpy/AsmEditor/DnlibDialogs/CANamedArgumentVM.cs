@@ -158,11 +158,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		bool modified;
 		readonly CANamedArgument originalNamedArg;
-		readonly ModuleDef module;
+		readonly ModuleDef ownerModule;
 
-		public CANamedArgumentVM(CANamedArgument namedArg, TypeSigCreatorOptions options)
+		public CANamedArgumentVM(ModuleDef ownerModule, CANamedArgument namedArg, TypeSigCreatorOptions options)
 		{
-			this.module = options.Module;
+			this.ownerModule = ownerModule;
 			this.originalNamedArg = namedArg.Clone();
 			this.constantTypeEnumListVM = new EnumListVM(ConstantTypeVM.CreateEnumArray(validTypes), (a, b) => OnConstantTypeChanged());
 			this.namedArgTypeEnumListVM = new EnumListVM(EnumVM.Create(typeof(NamedArgType)), (a, b) => OnNamedArgTypeChanged());
@@ -199,7 +199,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		{
 			if (CAArgumentVM != null)
 				CAArgumentVM.PropertyChanged -= caArgumentVM_PropertyChanged;
-			caArgumentVM = new CAArgumentVM(namedArg.Argument, options, null);
+			caArgumentVM = new CAArgumentVM(ownerModule, namedArg.Argument, options, null);
 			OnPropertyChanged("CAArgumentVM");
 			CAArgumentVM.PropertyChanged += caArgumentVM_PropertyChanged;
 
@@ -292,50 +292,50 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		TypeSig GetType(ConstantType ct)
 		{
 			switch (ct) {
-			case ConstantType.Object:	return module.CorLibTypes.Object;
-			case ConstantType.Boolean:	return module.CorLibTypes.Boolean;
-			case ConstantType.Char:		return module.CorLibTypes.Char;
-			case ConstantType.SByte:	return module.CorLibTypes.SByte;
-			case ConstantType.Byte:		return module.CorLibTypes.Byte;
-			case ConstantType.Int16:	return module.CorLibTypes.Int16;
-			case ConstantType.UInt16:	return module.CorLibTypes.UInt16;
-			case ConstantType.Int32:	return module.CorLibTypes.Int32;
-			case ConstantType.UInt32:	return module.CorLibTypes.UInt32;
-			case ConstantType.Int64:	return module.CorLibTypes.Int64;
-			case ConstantType.UInt64:	return module.CorLibTypes.UInt64;
-			case ConstantType.Single:	return module.CorLibTypes.Single;
-			case ConstantType.Double:	return module.CorLibTypes.Double;
-			case ConstantType.String:	return module.CorLibTypes.String;
+			case ConstantType.Object:	return ownerModule.CorLibTypes.Object;
+			case ConstantType.Boolean:	return ownerModule.CorLibTypes.Boolean;
+			case ConstantType.Char:		return ownerModule.CorLibTypes.Char;
+			case ConstantType.SByte:	return ownerModule.CorLibTypes.SByte;
+			case ConstantType.Byte:		return ownerModule.CorLibTypes.Byte;
+			case ConstantType.Int16:	return ownerModule.CorLibTypes.Int16;
+			case ConstantType.UInt16:	return ownerModule.CorLibTypes.UInt16;
+			case ConstantType.Int32:	return ownerModule.CorLibTypes.Int32;
+			case ConstantType.UInt32:	return ownerModule.CorLibTypes.UInt32;
+			case ConstantType.Int64:	return ownerModule.CorLibTypes.Int64;
+			case ConstantType.UInt64:	return ownerModule.CorLibTypes.UInt64;
+			case ConstantType.Single:	return ownerModule.CorLibTypes.Single;
+			case ConstantType.Double:	return ownerModule.CorLibTypes.Double;
+			case ConstantType.String:	return ownerModule.CorLibTypes.String;
 			case ConstantType.Enum:		return new ValueTypeSig(EnumType);
-			case ConstantType.Type:		return new ClassSig(module.CorLibTypes.GetTypeRef("System", "Type"));
+			case ConstantType.Type:		return new ClassSig(ownerModule.CorLibTypes.GetTypeRef("System", "Type"));
 
-			case ConstantType.ObjectArray:	return new SZArraySig(module.CorLibTypes.Object);
-			case ConstantType.BooleanArray:	return new SZArraySig(module.CorLibTypes.Boolean);
-			case ConstantType.CharArray:	return new SZArraySig(module.CorLibTypes.Char);
-			case ConstantType.SByteArray:	return new SZArraySig(module.CorLibTypes.SByte);
-			case ConstantType.ByteArray:	return new SZArraySig(module.CorLibTypes.Byte);
-			case ConstantType.Int16Array:	return new SZArraySig(module.CorLibTypes.Int16);
-			case ConstantType.UInt16Array:	return new SZArraySig(module.CorLibTypes.UInt16);
-			case ConstantType.Int32Array:	return new SZArraySig(module.CorLibTypes.Int32);
-			case ConstantType.UInt32Array:	return new SZArraySig(module.CorLibTypes.UInt32);
-			case ConstantType.Int64Array:	return new SZArraySig(module.CorLibTypes.Int64);
-			case ConstantType.UInt64Array:	return new SZArraySig(module.CorLibTypes.UInt64);
-			case ConstantType.SingleArray:	return new SZArraySig(module.CorLibTypes.Single);
-			case ConstantType.DoubleArray:	return new SZArraySig(module.CorLibTypes.Double);
-			case ConstantType.StringArray:	return new SZArraySig(module.CorLibTypes.String);
+			case ConstantType.ObjectArray:	return new SZArraySig(ownerModule.CorLibTypes.Object);
+			case ConstantType.BooleanArray:	return new SZArraySig(ownerModule.CorLibTypes.Boolean);
+			case ConstantType.CharArray:	return new SZArraySig(ownerModule.CorLibTypes.Char);
+			case ConstantType.SByteArray:	return new SZArraySig(ownerModule.CorLibTypes.SByte);
+			case ConstantType.ByteArray:	return new SZArraySig(ownerModule.CorLibTypes.Byte);
+			case ConstantType.Int16Array:	return new SZArraySig(ownerModule.CorLibTypes.Int16);
+			case ConstantType.UInt16Array:	return new SZArraySig(ownerModule.CorLibTypes.UInt16);
+			case ConstantType.Int32Array:	return new SZArraySig(ownerModule.CorLibTypes.Int32);
+			case ConstantType.UInt32Array:	return new SZArraySig(ownerModule.CorLibTypes.UInt32);
+			case ConstantType.Int64Array:	return new SZArraySig(ownerModule.CorLibTypes.Int64);
+			case ConstantType.UInt64Array:	return new SZArraySig(ownerModule.CorLibTypes.UInt64);
+			case ConstantType.SingleArray:	return new SZArraySig(ownerModule.CorLibTypes.Single);
+			case ConstantType.DoubleArray:	return new SZArraySig(ownerModule.CorLibTypes.Double);
+			case ConstantType.StringArray:	return new SZArraySig(ownerModule.CorLibTypes.String);
 			case ConstantType.EnumArray:	return new SZArraySig(new ValueTypeSig(EnumType));
-			case ConstantType.TypeArray:	return new SZArraySig(new ClassSig(module.CorLibTypes.GetTypeRef("System", "Type")));
+			case ConstantType.TypeArray:	return new SZArraySig(new ClassSig(ownerModule.CorLibTypes.GetTypeRef("System", "Type")));
 			}
 
 			Debug.Fail(string.Format("Unknown constant type: {0}", ct));
-			return module.CorLibTypes.Object;
+			return ownerModule.CorLibTypes.Object;
 		}
 
 		void PickEnumType()
 		{
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var type = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.EnumTypeDef), EnumType);
+			var type = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.EnumTypeDef), EnumType, ownerModule);
 			if (type != null)
 				EnumType = type;
 		}

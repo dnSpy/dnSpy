@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
+using dnlib.DotNet;
 using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
@@ -47,14 +48,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			get { return new RelayCommand(a => ClearObjects(), a => ClearObjectsCanExecute()); }
 		}
 
-		public ObjectListDataFieldVM(Action<DataFieldVM> onUpdated, TypeSigCreatorOptions options)
-			: this(new object[0], onUpdated, options)
+		readonly ModuleDef ownerModule;
+
+		public ObjectListDataFieldVM(ModuleDef ownerModule, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions options)
+			: this(ownerModule, new object[0], onUpdated, options)
 		{
 		}
 
-		public ObjectListDataFieldVM(IList<object> value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions options)
+		public ObjectListDataFieldVM(ModuleDef ownerModule, IList<object> value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions options)
 			: base(onUpdated)
 		{
+			this.ownerModule = ownerModule;
 			if (options != null) {
 				this.options = options.Clone("Create a Type");
 				this.options.NullTypeSigAllowed = true;
@@ -107,7 +111,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				throw new InvalidOperationException();
 			bool canceled;
 			object newObjectNoSpecialNull;
-			var newObject = createConstantType.Create(null, Constants, true, true, options, out newObjectNoSpecialNull, out canceled);
+			var newObject = createConstantType.Create(ownerModule, null, Constants, true, true, options, out newObjectNoSpecialNull, out canceled);
 			if (canceled)
 				return;
 

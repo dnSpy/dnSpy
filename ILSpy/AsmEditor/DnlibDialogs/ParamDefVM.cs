@@ -126,7 +126,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		UInt16VM sequence;
 
 		public Constant Constant {
-			get { return HasDefault ? module.UpdateRowId(new ConstantUser(ConstantVM.Value)) : null; }
+			get { return HasDefault ? ownerModule.UpdateRowId(new ConstantUser(ConstantVM.Value)) : null; }
 		}
 
 		public ConstantVM ConstantVM {
@@ -148,17 +148,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		CustomAttributesVM customAttributesVM;
 
-		readonly ModuleDef module;
+		readonly ModuleDef ownerModule;
 
-		public ParamDefVM(ParamDefOptions options, ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
+		public ParamDefVM(ParamDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
 		{
-			this.module = module;
+			this.ownerModule = ownerModule;
 			this.origOptions = options;
 			this.sequence = new UInt16VM(a => { OnPropertyChanged("FullName"); HasErrorUpdated(); });
-			this.customAttributesVM = new CustomAttributesVM(module, language);
-			this.constantVM = new ConstantVM(options.Constant == null ? null : options.Constant.Value, "Default value for this parameter");
+			this.customAttributesVM = new CustomAttributesVM(ownerModule, language);
+			this.constantVM = new ConstantVM(ownerModule, options.Constant == null ? null : options.Constant.Value, "Default value for this parameter");
 			ConstantVM.PropertyChanged += constantVM_PropertyChanged;
-			this.marshalTypeVM = new MarshalTypeVM(module, language, ownerType != null ? ownerType : ownerMethod == null ? null : ownerMethod.DeclaringType, ownerMethod);
+			this.marshalTypeVM = new MarshalTypeVM(ownerModule, language, ownerType != null ? ownerType : ownerMethod == null ? null : ownerMethod.DeclaringType, ownerMethod);
 			MarshalTypeVM.PropertyChanged += marshalTypeVM_PropertyChanged;
 
 			ConstantVM.IsEnabled = HasDefault;

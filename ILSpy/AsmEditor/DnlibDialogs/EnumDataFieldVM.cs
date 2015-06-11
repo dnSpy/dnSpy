@@ -114,9 +114,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			get { return EnumInfo.CreateNullArray(enumInfo.EnumType); }
 		}
 
-		protected EnumDataFieldVMBase(EnumInfo value, Action<DataFieldVM> onUpdated)
+		readonly ModuleDef ownerModule;
+
+		protected EnumDataFieldVMBase(ModuleDef ownerModule, EnumInfo value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated)
 		{
+			this.ownerModule = ownerModule;
 			SetValue(value);
 		}
 
@@ -166,7 +169,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		{
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var type = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.EnumTypeDef), EnumType);
+			var type = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.EnumTypeDef), EnumType, ownerModule);
 			if (type != null)
 				EnumType = type;
 		}
@@ -177,13 +180,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 	sealed class EnumDataFieldVM : EnumDataFieldVMBase
 	{
-		public EnumDataFieldVM(Action<DataFieldVM> onUpdated)
-			: this(new EnumInfo(), onUpdated)
+		public EnumDataFieldVM(ModuleDef ownerModule, Action<DataFieldVM> onUpdated)
+			: this(ownerModule, new EnumInfo(), onUpdated)
 		{
 		}
 
-		public EnumDataFieldVM(EnumInfo value, Action<DataFieldVM> onUpdated)
-			: base(value, onUpdated)
+		public EnumDataFieldVM(ModuleDef ownerModule, EnumInfo value, Action<DataFieldVM> onUpdated)
+			: base(ownerModule, value, onUpdated)
 		{
 		}
 
@@ -226,13 +229,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 	sealed class EnumListDataFieldVM : EnumDataFieldVMBase
 	{
-		public EnumListDataFieldVM(Action<DataFieldVM> onUpdated)
-			: this(EnumInfo.CreateNullArray(null), onUpdated)
+		public EnumListDataFieldVM(ModuleDef ownerModule, Action<DataFieldVM> onUpdated)
+			: this(ownerModule, EnumInfo.CreateNullArray(null), onUpdated)
 		{
 		}
 
-		public EnumListDataFieldVM(EnumInfo value, Action<DataFieldVM> onUpdated)
-			: base(value, onUpdated)
+		public EnumListDataFieldVM(ModuleDef ownerModule, EnumInfo value, Action<DataFieldVM> onUpdated)
+			: base(ownerModule, value, onUpdated)
 		{
 		}
 

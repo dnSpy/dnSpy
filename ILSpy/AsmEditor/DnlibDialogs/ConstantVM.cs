@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel;
+using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
@@ -75,9 +76,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			ConstantType.String,
 		};
 
-		public ConstantVM(object value, string constantCheckBoxToolTip)
+		public ConstantVM(ModuleDef ownerModule, object value, string constantCheckBoxToolTip)
 		{
-			this.constantTypeVM = new ConstantTypeVM(value, constantTypes, true, false);
+			this.constantTypeVM = new ConstantTypeVM(ownerModule, value, constantTypes, true, false);
 			this.ConstantCheckBoxToolTip = constantCheckBoxToolTip;
 			this.ConstantTypeVM.PropertyChanged += ConstantTypeVM_PropertyChanged;
 

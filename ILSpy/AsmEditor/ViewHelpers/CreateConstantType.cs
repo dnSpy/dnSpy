@@ -18,6 +18,7 @@
 */
 
 using System.Windows;
+using dnlib.DotNet;
 using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
 
 namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
@@ -70,9 +71,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 			ConstantType.TypeArray,
 		};
 
-		public object Create(object value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions options, out object resultNoSpecialNull, out bool canceled)
+		public object Create(ModuleDef ownerModule, object value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions options, out object resultNoSpecialNull, out bool canceled)
 		{
-			var data = new ConstantTypeVM(value, validConstants ?? DefaultConstants, true, true, options);
+			var data = new ConstantTypeVM(ownerModule, value, validConstants ?? DefaultConstants, true, true, options);
 			var win = new ConstantTypeDlg();
 			win.DataContext = data;
 			win.Owner = ownerWindow ?? MainWindow.Instance;

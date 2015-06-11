@@ -23,24 +23,24 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
 	sealed class ParamDefsVM : ListVM<ParamDefVM, ParamDef>
 	{
-		public ParamDefsVM(ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
-			: base("Edit Parameter", "Create Parameter", module, language, ownerType, ownerMethod)
+		public ParamDefsVM(ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
+			: base("Edit Parameter", "Create Parameter", ownerModule, language, ownerType, ownerMethod)
 		{
 		}
 
 		protected override ParamDefVM Create(ParamDef model)
 		{
-			return new ParamDefVM(new ParamDefOptions(model), module, language, ownerType, ownerMethod);
+			return new ParamDefVM(new ParamDefOptions(model), ownerModule, language, ownerType, ownerMethod);
 		}
 
 		protected override ParamDefVM Clone(ParamDefVM obj)
 		{
-			return new ParamDefVM(obj.CreateParamDefOptions(), module, language, ownerType, ownerMethod);
+			return new ParamDefVM(obj.CreateParamDefOptions(), ownerModule, language, ownerType, ownerMethod);
 		}
 
 		protected override ParamDefVM Create()
 		{
-			return new ParamDefVM(new ParamDefOptions(), module, language, ownerType, ownerMethod);
+			return new ParamDefVM(new ParamDefOptions(), ownerModule, language, ownerType, ownerMethod);
 		}
 
 		protected override int GetAddIndex(ParamDefVM obj)

@@ -38,9 +38,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		public MethodDef OwnerMethod { get; set; }
 
-		public ModuleDef Module {
+		public ModuleDef OwnerModule {
 			get { return module; }
-			set {
+			private set {
 				if (value == null)
 					throw new ArgumentNullException();
 				module = value;
@@ -58,9 +58,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		Language language;
 
-		public TypeSigCreatorOptions(ModuleDef module, Language language)
+		public TypeSigCreatorOptions(ModuleDef ownerModule, Language language)
 		{
-			this.Module = module;
+			this.OwnerModule = ownerModule;
 			this.Language = language;
 		}
 

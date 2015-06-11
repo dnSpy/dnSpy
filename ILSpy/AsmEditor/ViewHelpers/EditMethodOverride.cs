@@ -41,7 +41,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 		public MethodOverrideVM Edit(string title, MethodOverrideVM mo)
 		{
 			var dnlibPicker = new DnlibTypePicker(ownerWindow);
-			var method = dnlibPicker.GetDnlibType<IMethodDefOrRef>(new FlagsTreeViewNodeFilter(VisibleMembersFlags.MethodDef), mo.MethodDeclaration);
+			var method = dnlibPicker.GetDnlibType<IMethodDefOrRef>(new FlagsTreeViewNodeFilter(VisibleMembersFlags.MethodDef), mo.MethodDeclaration, mo.OwnerModule);
 			if (method == null)
 				return null;
 

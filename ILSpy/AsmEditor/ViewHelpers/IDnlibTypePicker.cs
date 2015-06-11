@@ -30,7 +30,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 		/// <typeparam name="T"></typeparam>
 		/// <param name="filter">Decides which nodes to show to the user</param>
 		/// <param name="selectedObject">null or the object that should be selected in the UI</param>
+		/// <param name="ownerModule">Module owning the returned reference</param>
 		/// <returns></returns>
-		T GetDnlibType<T>(ITreeViewNodeFilter filter, T selectedObject) where T : class;
+		T GetDnlibType<T>(ITreeViewNodeFilter filter, T selectedObject, ModuleDef ownerModule) where T : class;
 	}
 }

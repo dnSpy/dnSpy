@@ -192,11 +192,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 				return;
 
 			var asmNode = (AssemblyTreeNode)nodes[0];
-
-			var module = ILSpyTreeNode.GetModule(nodes[0]);
-			Debug.Assert(module != null);
-			if (module == null)
-				throw new InvalidOperationException();
+			var module = asmNode.LoadedAssembly.ModuleDefinition;
 
 			var data = new AssemblyOptionsVM(new AssemblyOptions(asmNode.LoadedAssembly.AssemblyDefinition), module, MainWindow.Instance.CurrentLanguage);
 			var win = new AssemblyOptionsDlg();
@@ -280,12 +276,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			if (!CanExecute(nodes))
 				return;
 
-			var module = ILSpyTreeNode.GetModule(nodes[0]);
-			Debug.Assert(module != null);
-			if (module == null)
-				throw new InvalidOperationException();
+			var newModule = new ModuleDefUser();
 
-			var data = new AssemblyOptionsVM(AssemblyOptions.Create("MyAssembly"), module, MainWindow.Instance.CurrentLanguage);
+			var data = new AssemblyOptionsVM(AssemblyOptions.Create("MyAssembly"), newModule, MainWindow.Instance.CurrentLanguage);
 			data.CanShowClrVersion = true;
 			var win = new AssemblyOptionsDlg();
 			win.Title = "Create Assembly";
@@ -294,14 +287,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreateAssemblyCommand(data.CreateAssemblyOptions()));
+			UndoCommandManager.Instance.Add(new CreateAssemblyCommand(newModule, data.CreateAssemblyOptions()));
 		}
 
 		AssemblyTreeNodeCreator asmNodeCreator;
 
-		CreateAssemblyCommand(AssemblyOptions options)
+		CreateAssemblyCommand(ModuleDef newModule, AssemblyOptions options)
 		{
-			var module = Module.ModuleUtils.CreateModule(options.Name, Guid.NewGuid(), options.ClrVersion, ModuleKind.Dll);
+			var module = Module.ModuleUtils.CreateModule(options.Name, Guid.NewGuid(), options.ClrVersion, ModuleKind.Dll, newModule);
 			options.CreateAssemblyDef(module).Modules.Add(module);
 			this.asmNodeCreator = new AssemblyTreeNodeCreator(new LoadedAssembly(MainWindow.Instance.CurrentAssemblyList, module));
 		}

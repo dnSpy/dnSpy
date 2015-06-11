@@ -316,12 +316,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		}
 		TypeDefOrRefAndCAsVM<InterfaceImpl> typeDefOrRefAndCAsVM;
 
-		readonly ModuleDef module;
+		readonly ModuleDef ownerModule;
 
-		public TypeOptionsVM(TypeDefOptions options, ModuleDef module, Language language, TypeDef ownerType)
+		public TypeOptionsVM(TypeDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType)
 		{
-			this.module = module;
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(module, language) {
+			this.ownerModule = ownerModule;
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, language) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = false,
@@ -332,10 +332,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			this.typeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			this.typeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
-			this.customAttributesVM = new CustomAttributesVM(module, language, ownerType, null);
-			this.declSecuritiesVM = new DeclSecuritiesVM(module, language, ownerType, null);
-			this.genericParamsVM = new GenericParamsVM(module, language, ownerType, null);
-			this.typeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM<InterfaceImpl>("Edit Interface Impl", "Create Interface Impl", module, language, ownerType, null);
+			this.customAttributesVM = new CustomAttributesVM(ownerModule, language, ownerType, null);
+			this.declSecuritiesVM = new DeclSecuritiesVM(ownerModule, language, ownerType, null);
+			this.genericParamsVM = new GenericParamsVM(ownerModule, language, ownerType, null);
+			this.typeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM<InterfaceImpl>("Edit Interface Impl", "Create Interface Impl", ownerModule, language, ownerType, null);
 
 			this.origOptions = options;
 			this.isNestedType = (options.Attributes & TypeAttributes.VisibilityMask) > TypeAttributes.Public;
@@ -374,13 +374,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 
 		bool IsSystemValueType(IType type)
 		{
-			return new SigComparer().Equals(type, module.CorLibTypes.GetTypeRef("System", "ValueType")) &&
+			return new SigComparer().Equals(type, ownerModule.CorLibTypes.GetTypeRef("System", "ValueType")) &&
 				type.DefinitionAssembly.IsCorLib();
 		}
 
 		bool IsSystemEnum(IType type)
 		{
-			return new SigComparer().Equals(type, module.CorLibTypes.GetTypeRef("System", "Enum")) &&
+			return new SigComparer().Equals(type, ownerModule.CorLibTypes.GetTypeRef("System", "Enum")) &&
 				type.DefinitionAssembly.IsCorLib();
 		}
 
@@ -412,7 +412,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 
 		bool IsStaticClass()
 		{
-			return new SigComparer().Equals(BaseTypeSig, module.CorLibTypes.Object.TypeDefOrRef) &&
+			return new SigComparer().Equals(BaseTypeSig, ownerModule.CorLibTypes.Object.TypeDefOrRef) &&
 				BaseTypeSig.DefinitionAssembly.IsCorLib() &&
 				(Types.TypeLayout)TypeLayout.SelectedItem == Types.TypeLayout.AutoLayout &&
 				(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class &&
@@ -448,7 +448,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 
 		bool IsDelegate()
 		{
-			return new SigComparer().Equals(BaseTypeSig, module.CorLibTypes.GetTypeRef("System", "MulticastDelegate")) &&
+			return new SigComparer().Equals(BaseTypeSig, ownerModule.CorLibTypes.GetTypeRef("System", "MulticastDelegate")) &&
 				BaseTypeSig.DefinitionAssembly.IsCorLib() &&
 				(Types.TypeLayout)TypeLayout.SelectedItem == Types.TypeLayout.AutoLayout &&
 				(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class &&
@@ -478,12 +478,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 
 			case Types.TypeKind.Class:
 				if (!IsClassBaseType(BaseTypeSig))
-					BaseTypeSig = module.CorLibTypes.Object;
+					BaseTypeSig = ownerModule.CorLibTypes.Object;
 				TypeSemantics.SelectedItem = Types.TypeSemantics.Class;
 				break;
 
 			case Types.TypeKind.StaticClass:
-				BaseTypeSig = module.CorLibTypes.Object;
+				BaseTypeSig = ownerModule.CorLibTypes.Object;
 				TypeLayout.SelectedItem = Types.TypeLayout.AutoLayout;
 				TypeSemantics.SelectedItem = Types.TypeSemantics.Class;
 				Abstract = true;
@@ -499,14 +499,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 				break;
 
 			case Types.TypeKind.Struct:
-				BaseTypeSig = new ClassSig(module.CorLibTypes.GetTypeRef("System", "ValueType"));
+				BaseTypeSig = new ClassSig(ownerModule.CorLibTypes.GetTypeRef("System", "ValueType"));
 				TypeSemantics.SelectedItem = Types.TypeSemantics.Class;
 				Abstract = false;
 				Sealed = true;
 				break;
 
 			case Types.TypeKind.Enum:
-				BaseTypeSig = new ClassSig(module.CorLibTypes.GetTypeRef("System", "Enum"));
+				BaseTypeSig = new ClassSig(ownerModule.CorLibTypes.GetTypeRef("System", "Enum"));
 				TypeLayout.SelectedItem = Types.TypeLayout.AutoLayout;
 				TypeSemantics.SelectedItem = Types.TypeSemantics.Class;
 				Abstract = false;
@@ -514,7 +514,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 				break;
 
 			case Types.TypeKind.Delegate:
-				BaseTypeSig = new ClassSig(module.CorLibTypes.GetTypeRef("System", "MulticastDelegate"));
+				BaseTypeSig = new ClassSig(ownerModule.CorLibTypes.GetTypeRef("System", "MulticastDelegate"));
 				TypeLayout.SelectedItem = Types.TypeLayout.AutoLayout;
 				TypeSemantics.SelectedItem = Types.TypeSemantics.Class;
 				Abstract = false;
@@ -573,11 +573,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			options.CustomAttributes.Clear();
 			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			options.DeclSecurities.Clear();
-			options.DeclSecurities.AddRange(DeclSecuritiesVM.Collection.Select(a => a.CreateDeclSecurityOptions().Create(module)));
+			options.DeclSecurities.AddRange(DeclSecuritiesVM.Collection.Select(a => a.CreateDeclSecurityOptions().Create(ownerModule)));
 			options.GenericParameters.Clear();
-			options.GenericParameters.AddRange(GenericParamsVM.Collection.Select(a => a.CreateGenericParamOptions().CreateGenericParam(module)));
+			options.GenericParameters.AddRange(GenericParamsVM.Collection.Select(a => a.CreateGenericParamOptions().CreateGenericParam(ownerModule)));
 			options.Interfaces.Clear();
-			options.Interfaces.AddRange(InterfaceImplsVM.Collection.Select(a => a.CreateTypeDefOrRefAndCAOptions().CreateInterfaceImpl(module)));
+			options.Interfaces.AddRange(InterfaceImplsVM.Collection.Select(a => a.CreateTypeDefOrRefAndCAOptions().CreateInterfaceImpl(ownerModule)));
 			if (ModelUtils.GetHasSecurityBit(options.DeclSecurities, options.CustomAttributes))
 				options.Attributes |= TypeAttributes.HasSecurity;
 			else

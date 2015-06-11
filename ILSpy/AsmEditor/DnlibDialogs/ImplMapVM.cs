@@ -161,8 +161,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			get {
 				if (!IsEnabled)
 					return null;
-				ModuleRef modRef = ModuleName == null ? null : module.UpdateRowId(new ModuleRefUser(module, ModuleName));
-				return module.UpdateRowId(new ImplMapUser(modRef, Name, Attributes));
+				ModuleRef modRef = ModuleName == null ? null : ownerModule.UpdateRowId(new ModuleRefUser(ownerModule, ModuleName));
+				return ownerModule.UpdateRowId(new ImplMapUser(modRef, Name, Attributes));
 			}
 			set {
 				IsEnabled = value != null;
@@ -179,11 +179,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		readonly ModuleDef module;
+		readonly ModuleDef ownerModule;
 
-		public ImplMapVM(ModuleDef module)
+		public ImplMapVM(ModuleDef ownerModule)
 		{
-			this.module = module;
+			this.ownerModule = ownerModule;
 		}
 
 		protected override string Verify(string columnName)

@@ -336,12 +336,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 		}
 		MethodOverridesVM methodOverridesVM;
 
-		readonly ModuleDef module;
+		readonly ModuleDef ownerModule;
 
-		public MethodOptionsVM(MethodDefOptions options, ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
+		public MethodOptionsVM(MethodDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
 		{
-			this.module = module;
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(module, language) {
+			this.ownerModule = ownerModule;
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, language) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = ownerMethod == null || ownerMethod.GenericParameters.Count > 0,
@@ -359,15 +359,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			this.methodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.ShowTypeFullName = true;
 			this.methodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
 
-			this.customAttributesVM = new CustomAttributesVM(module, language, ownerType, ownerMethod);
-			this.declSecuritiesVM = new DeclSecuritiesVM(module, language, ownerType, ownerMethod);
-			this.paramDefsVM = new ParamDefsVM(module, language, ownerType, ownerMethod);
-			this.genericParamsVM = new GenericParamsVM(module, language, ownerType, ownerMethod);
-			this.methodOverridesVM = new MethodOverridesVM(module, language, ownerType, ownerMethod);
+			this.customAttributesVM = new CustomAttributesVM(ownerModule, language, ownerType, ownerMethod);
+			this.declSecuritiesVM = new DeclSecuritiesVM(ownerModule, language, ownerType, ownerMethod);
+			this.paramDefsVM = new ParamDefsVM(ownerModule, language, ownerType, ownerMethod);
+			this.genericParamsVM = new GenericParamsVM(ownerModule, language, ownerType, ownerMethod);
+			this.methodOverridesVM = new MethodOverridesVM(ownerModule, language, ownerType, ownerMethod);
 
 			this.origOptions = options;
 
-			this.implMapVM = new ImplMapVM(module);
+			this.implMapVM = new ImplMapVM(ownerModule);
 			ImplMapVM.PropertyChanged += implMapVM_PropertyChanged;
 
 			ImplMapVM.IsEnabled = PinvokeImpl;
@@ -428,11 +428,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			options.CustomAttributes.Clear();
 			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			options.DeclSecurities.Clear();
-			options.DeclSecurities.AddRange(DeclSecuritiesVM.Collection.Select(a => a.CreateDeclSecurityOptions().Create(module)));
+			options.DeclSecurities.AddRange(DeclSecuritiesVM.Collection.Select(a => a.CreateDeclSecurityOptions().Create(ownerModule)));
 			options.ParamDefs.Clear();
-			options.ParamDefs.AddRange(ParamDefsVM.Collection.Select(a => a.CreateParamDefOptions().CreateParamDef(module)));
+			options.ParamDefs.AddRange(ParamDefsVM.Collection.Select(a => a.CreateParamDefOptions().CreateParamDef(ownerModule)));
 			options.GenericParameters.Clear();
-			options.GenericParameters.AddRange(GenericParamsVM.Collection.Select(a => a.CreateGenericParamOptions().CreateGenericParam(module)));
+			options.GenericParameters.AddRange(GenericParamsVM.Collection.Select(a => a.CreateGenericParamOptions().CreateGenericParam(ownerModule)));
 			options.Overrides.Clear();
 			options.Overrides.AddRange(MethodOverridesVM.Collection.Select(a => a.CreateMethodOverrideOptions().CreateMethodOverride()));
 			if (ModelUtils.GetHasSecurityBit(options.DeclSecurities, options.CustomAttributes))

@@ -46,11 +46,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		CustomAttributesVM customAttributesVM;
 
-		public TypeDefOrRefAndCAVM(TypeDefOrRefAndCAOptions options, ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
+		public TypeDefOrRefAndCAVM(TypeDefOrRefAndCAOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
 		{
 			this.origOptions = options;
 
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(module, language) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, language) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = false,
@@ -64,7 +64,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 			this.typeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			TypeSigCreator.PropertyChanged += TypeSigCreator_PropertyChanged;
-			this.customAttributesVM = new CustomAttributesVM(module, language);
+			this.customAttributesVM = new CustomAttributesVM(ownerModule, language);
 
 			Reinitialize();
 		}

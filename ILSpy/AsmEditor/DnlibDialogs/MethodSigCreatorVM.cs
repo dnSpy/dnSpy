@@ -208,7 +208,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				MethodCallingConv.SelectedItem = DnlibDialogs.MethodCallingConv.Default;
 			else
 				CallingConvention = (CallingConvention & ~dnlib.DotNet.CallingConvention.Mask) | dnlib.DotNet.CallingConvention.Property;
-			ReturnType = options.TypeSigCreatorOptions.Module.CorLibTypes.Void;
+			ReturnType = options.TypeSigCreatorOptions.OwnerModule.CorLibTypes.Void;
 		}
 
 		T CreateSig<T>(T sig) where T : MethodBaseSig

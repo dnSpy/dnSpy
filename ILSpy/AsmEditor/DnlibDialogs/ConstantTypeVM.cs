@@ -992,7 +992,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		readonly bool arraysCanBeNull;
 
-		public ConstantTypeVM(object value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions options = null)
+		public ConstantTypeVM(ModuleDef ownerModule, object value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions options = null)
 		{
 			if (options == null) {
 				IList<ConstantType> clist = validConstants;
@@ -1018,9 +1018,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			this.single = new SingleVM(a => FieldUpdated());
 			this.@double = new DoubleVM(a => FieldUpdated());
 			this.@string = new StringVM(a => FieldUpdated(), allowNullString);
-			this.@enum = new EnumDataFieldVM(a => FieldUpdated());
+			this.@enum = new EnumDataFieldVM(ownerModule, a => FieldUpdated());
 			this.type = new TypeSigVM(a => FieldUpdated(), options);
-			this.objectArray = new ObjectListDataFieldVM(a => FieldUpdated(), options);
+			this.objectArray = new ObjectListDataFieldVM(ownerModule, a => FieldUpdated(), options);
 			this.booleanArray = new BooleanListDataFieldVM(a => FieldUpdated());
 			this.charArray = new CharListDataFieldVM(a => FieldUpdated());
 			this.sbyteArray = new SByteListDataFieldVM(a => FieldUpdated());
@@ -1034,7 +1034,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			this.singleArray = new SingleListDataFieldVM(a => FieldUpdated());
 			this.doubleArray = new DoubleListDataFieldVM(a => FieldUpdated());
 			this.stringArray = new StringListDataFieldVM(a => FieldUpdated());
-			this.enumArray = new EnumListDataFieldVM(a => FieldUpdated());
+			this.enumArray = new EnumListDataFieldVM(ownerModule, a => FieldUpdated());
 			this.typeArray = new TypeSigListDataFieldVM(a => FieldUpdated(), options);
 			this.Value = value;
 		}

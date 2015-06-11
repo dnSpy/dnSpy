@@ -55,11 +55,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		readonly ModuleDef module;
+		readonly ModuleDef ownerModule;
 
-		public MethodOverrideVM(MethodOverrideOptions options, ModuleDef module)
+		internal ModuleDef OwnerModule {
+			get { return ownerModule; }
+		}
+
+		public MethodOverrideVM(MethodOverrideOptions options, ModuleDef ownerModule)
 		{
-			this.module = module;
+			this.ownerModule = ownerModule;
 			this.origOptions = options;
 
 			Reinitialize();

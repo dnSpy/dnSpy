@@ -99,9 +99,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 		}
 		CustomAttributesVM customAttributesVM;
 
-		public EventOptionsVM(EventDefOptions options, ModuleDef module, Language language, TypeDef ownerType)
+		public EventOptionsVM(EventDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType)
 		{
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(module, language) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, language) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = true,
@@ -112,7 +112,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			this.typeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			this.typeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
-			this.customAttributesVM = new CustomAttributesVM(module, language);
+			this.customAttributesVM = new CustomAttributesVM(ownerModule, language);
 
 			this.origOptions = options;
 

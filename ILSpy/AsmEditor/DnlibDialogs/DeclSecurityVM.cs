@@ -105,23 +105,23 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		SecurityAttributesVM securityAttributesVM;
 
 		readonly DeclSecurityOptions origOptions;
-		readonly ModuleDef module;
+		readonly ModuleDef ownerModule;
 		readonly Language language;
 		readonly TypeDef ownerType;
 		readonly MethodDef ownerMethod;
 
-		public DeclSecurityVM(DeclSecurityOptions options, ModuleDef module, Language language, TypeDef ownerType, MethodDef ownerMethod)
+		public DeclSecurityVM(DeclSecurityOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
 		{
-			this.module = module;
+			this.ownerModule = ownerModule;
 			this.language = language;
 			this.ownerType = ownerType;
 			this.ownerMethod = ownerMethod;
 			this.origOptions = options;
-			this.customAttributesVM = new CustomAttributesVM(module, language);
+			this.customAttributesVM = new CustomAttributesVM(ownerModule, language);
 			CustomAttributesVM.PropertyChanged += CustomAttributesVM_PropertyChanged;
 			this.declSecVerEnumListVM = new EnumListVM(declSecVerList, (a, b) => OnDeclSecVerChanged());
 			this.securityActionEnumListVM = new EnumListVM(secActList, (a, b) => OnSecurityActionChanged());
-			this.securityAttributesVM = new SecurityAttributesVM(module, language, ownerType, ownerMethod);
+			this.securityAttributesVM = new SecurityAttributesVM(ownerModule, language, ownerType, ownerMethod);
 			this.SecurityAttributesVM.Collection.CollectionChanged += SecurityAttributesVM_CollectionChanged;
 			Reinitialize();
 		}
@@ -165,7 +165,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			SecurityActionEnumList.SelectedItem = (SecAc)options.Action;
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 			SecurityAttributesVM.Collection.Clear();
-			SecurityAttributesVM.Collection.AddRange(options.SecurityAttributes.Select(a => new SecurityAttributeVM(a, module, language, ownerType, ownerMethod)));
+			SecurityAttributesVM.Collection.AddRange(options.SecurityAttributes.Select(a => new SecurityAttributeVM(a, ownerModule, language, ownerType, ownerMethod)));
 			V1XMLString = options.V1XMLString;
 			DeclSecVerEnumList.SelectedItem = options.V1XMLString == null ? DeclSecVer.V2 : DeclSecVer.V1;
 		}

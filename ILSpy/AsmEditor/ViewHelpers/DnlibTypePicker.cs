@@ -38,7 +38,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 			this.ownerWindow = ownerWindow;
 		}
 
-		public T GetDnlibType<T>(ITreeViewNodeFilter filter, T selectedObject) where T : class
+		public T GetDnlibType<T>(ITreeViewNodeFilter filter, T selectedObject, ModuleDef ownerModule) where T : class
 		{
 			var data = new MemberPickerVM(MainWindow.Instance.CurrentLanguage, filter, MainWindow.Instance.CurrentAssemblyList.GetAssemblies());
 			var win = new MemberPickerDlg();
@@ -48,7 +48,27 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 			if (win.ShowDialog() != true)
 				return null;
 
-			return data.SelectedDnlibObject as T;
+			return ImportObject(ownerModule, data.SelectedDnlibObject) as T;
+		}
+
+		static object ImportObject(ModuleDef ownerModule, object obj)
+		{
+			var importer = new Importer(ownerModule, ImporterOptions.TryToUseDefs);
+
+			var type = obj as IType;
+			if (type != null)
+				return importer.Import(type);
+
+			var field = obj as IField;
+			if (field != null && field.IsField)
+				return importer.Import(field);
+
+			var method = obj as IMethod;
+			if (method != null && method.IsMethod)
+				return importer.Import(method);
+
+			// LoadedAssembly, namespace, PropertyDef, EventDef, AssemblyRef, ModuleRef
+			return obj;
 		}
 	}
 }

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnlib.DotNet;
 using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
 
 namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
@@ -26,6 +27,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 		/// <summary>
 		/// Create a constant
 		/// </summary>
+		/// <param name="ownerModule">Owner module</param>
 		/// <param name="value">null or value to show user</param>
 		/// <param name="validConstants">Allowed constants or null if default custom attribute constants can be returned</param>
 		/// <param name="allowNullString">true if strings can be null</param>
@@ -37,6 +39,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 		/// special Null classes.</param>
 		/// <param name="canceled">true if user canceled</param>
 		/// <returns></returns>
-		object Create(object value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions options, out object resultNoSpecialNull, out bool canceled);
+		object Create(ModuleDef ownerModule, object value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions options, out object resultNoSpecialNull, out bool canceled);
 	}
 }
