@@ -129,6 +129,8 @@ namespace ICSharpCode.ILSpy.Debugger
 				// with the same tools and no methods were added or removed.
 				if (method.FullName != methodFullName) continue;
 
+				if (MethodKey.Create(method) == null)
+					continue;
 				var bpm = new BreakpointBookmark(method, location, endLocation, new ILRange(from.Value, to.Value), isEnabled.Value);
 				BookmarkManager.AddMark(bpm);
 			}
@@ -152,7 +154,7 @@ namespace ICSharpCode.ILSpy.Debugger
 				if (bp == null)
 					continue;
 				var method = bp.MemberReference as MethodDef;
-				if (method == null)
+				if (method == null || method.Module == null)
 					continue;
 
 				var asm = method.Module.Assembly;

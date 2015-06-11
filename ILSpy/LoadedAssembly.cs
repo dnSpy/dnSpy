@@ -270,6 +270,10 @@ namespace ICSharpCode.ILSpy
 		{
 			if (module == null || string.IsNullOrWhiteSpace(fileName))
 				return;
+			// Happens if a module has been removed but then the exact same instance
+			// was re-added.
+			if (module.PdbState != null)
+				return;
 
 			// search for pdb in same directory as dll
 			string pdbName = Path.Combine(Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName) + ".pdb");

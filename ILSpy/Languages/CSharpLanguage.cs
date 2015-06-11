@@ -871,6 +871,8 @@ namespace ICSharpCode.ILSpy
 
 		void TypeToString(ITextOutput output, ConvertTypeOptions options, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null)
 		{
+			if (type == null)
+				return;
 			AstType astType = AstBuilder.ConvertType(type, typeAttributes, options);
 
 			if (WriteRefIfByRef(output, type.TryGetByRefSig(), typeAttributes as ParamDef)) {

@@ -108,7 +108,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 							Debug.Assert(asmNode != null);
 							if (asmNode != null) {
 								asmNode.OnFileNameChanged();
-								Utils.InvalidateDecompilationCache(asm);
+								Utils.NotifyModifiedAssembly(asm);
 							}
 						}
 					}

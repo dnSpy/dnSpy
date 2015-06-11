@@ -23,17 +23,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 {
 	static class Utils
 	{
-		public static void InvalidateDecompilationCache(AssemblyTreeNode asmNode)
+		public static void NotifyModifiedAssembly(LoadedAssembly asm)
 		{
-			InvalidateDecompilationCache(asmNode.LoadedAssembly);
-		}
-
-		public static void InvalidateDecompilationCache(LoadedAssembly asm)
-		{
-			DecompileCache.Instance.Clear(asm);
-
-			//TODO: User should be able to disable this:
-			MainWindow.Instance.RefreshCode(asm);
+			MainWindow.Instance.ModuleModified(asm);
 		}
 	}
 }

@@ -282,8 +282,13 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 				}
 			};
 			marker.IsVisible = b => {
-				return cm != null && b is MarkerBookmark &&
-					cm.ContainsKey(new MethodKey(((MarkerBookmark)b).MemberReference));
+				if (cm == null)
+					return false;
+				var mbm = b as MarkerBookmark;
+				if (mbm == null)
+					return false;
+				var key = MethodKey.Create(mbm.MemberReference);
+				return key != null && cm.ContainsKey(key.Value);
 			};
 			marker.Bookmark = this;
 			return marker;

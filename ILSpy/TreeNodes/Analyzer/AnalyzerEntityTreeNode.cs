@@ -53,5 +53,20 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				});
 			return true;
 		}
+
+		public override bool HandleModelUpdated(LoadedAssembly asm)
+		{
+			if (this.Member.Module == null)
+				return false; // remove this node
+			if ((this.Member is IField || this.Member is IMethod || this.Member is PropertyDef || this.Member is EventDef) &&
+				this.Member.DeclaringType == null)
+				return false;
+			this.Children.RemoveAll(
+				delegate(SharpTreeNode n) {
+					AnalyzerTreeNode an = n as AnalyzerTreeNode;
+					return an == null || !an.HandleModelUpdated(asm);
+				});
+			return true;
+		}
 	}
 }

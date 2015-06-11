@@ -71,5 +71,13 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 			return true;
 		}
+
+		public override bool HandleModelUpdated(LoadedAssembly asm)
+		{
+			this.LazyLoading = true;
+			threading.Cancel();
+			this.Children.Clear();
+			return true;
+		}
 	}
 }

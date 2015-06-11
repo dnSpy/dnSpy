@@ -212,8 +212,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			var storage = decompilerTextView.CodeMappings;
 			if (storage == null || storage.Count == 0)
 				return;
-			var key = new MethodKey(breakpoint.MemberReference);
-			if (storage.ContainsKey(key))
+			var key = MethodKey.Create(breakpoint.MemberReference);
+			if (key != null && storage.ContainsKey(key.Value))
 			{
 				// register to show enabled/disabled state
 				breakpoint.ImageChanged += breakpoint_ImageChanged;
@@ -235,8 +235,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			var storage = decompilerTextView.CodeMappings;
 			if (storage == null || storage.Count == 0)
 				return;
-			var key = new MethodKey(breakpoint.MemberReference);
-			if (storage.ContainsKey(key))
+			var key = MethodKey.Create(breakpoint.MemberReference);
+			if (key != null && storage.ContainsKey(key.Value))
 				InvalidateVisual();
 		}
 		

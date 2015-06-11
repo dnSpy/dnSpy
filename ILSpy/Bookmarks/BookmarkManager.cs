@@ -3,17 +3,30 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel.Composition;
+using System.Linq;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.ILSpy.TreeNodes;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.Bookmarks
 {
+	[Export(typeof(IPlugin))]
+	class BookmarkManagerPlugin : IPlugin
+	{
+		public void OnLoaded()
+		{
+			BookmarkManager.Initialize();
+		}
+	}
+
 	/// <summary>
 	/// Static class that maintains the list of bookmarks and breakpoints.
 	/// </summary>
-	public static partial class BookmarkManager
+	public static class BookmarkManager
 	{
 		static List<BookmarkBase> bookmarks = new List<BookmarkBase>();
 		
@@ -21,6 +34,47 @@ namespace ICSharpCode.ILSpy.Bookmarks
 			get {
 				return bookmarks;
 			}
+		}
+
+		internal static void Initialize()
+		{
+			MainWindow.Instance.CurrentAssemblyListChanged += MainWindow_CurrentAssemblyListChanged;
+			MainWindow.Instance.OnModuleModified += MainWindow_OnModuleModified;
+		}
+
+		static void MainWindow_CurrentAssemblyListChanged(object sender, NotifyCollectionChangedEventArgs e)
+		{
+			if (e.OldItems != null) {
+				foreach (var bm in bookmarks.ToArray()) {
+					if (bm.MemberReference.Module == null || e.OldItems.Cast<LoadedAssembly>().Any(n => n.ModuleDefinition == bm.MemberReference.Module))
+						RemoveMark(bm);
+				}
+			}
+		}
+
+		static void MainWindow_OnModuleModified(object sender, MainWindow.ModuleModifiedEventArgs e)
+		{
+			foreach (var bm in bookmarks.ToArray()) {
+				if (MustDelete(bm.MemberReference))
+					RemoveMark(bm);
+			}
+		}
+
+		static bool MustDelete(IMemberRef mr)
+		{
+			if (mr == null || mr.Module == null)
+				return true;
+			if (!(mr is IType) && mr.DeclaringType == null)
+				return true;
+			var td = mr as TypeDef;
+			if (td != null) {
+				for (int i = 0; i < 100 && td.DeclaringType != null; i++)
+					td = td.DeclaringType;
+				if (td.DeclaringType == null && td.Module.Types.IndexOf(td) < 0)
+					return true;
+			}
+
+			return false;
 		}
 		
 		public static void AddMark(BookmarkBase bookmark)

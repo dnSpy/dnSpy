@@ -154,7 +154,8 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		{
 			var cm = textView == null ? null : textView.CodeMappings;
 			MemberMapping mapping;
-			if (cm == null || !cm.TryGetValue(new MethodKey(MemberReference), out mapping)) {
+			var key = MethodKey.Create(MemberReference);
+			if (cm == null || key == null || !cm.TryGetValue(key.Value, out mapping)) {
 				location = endLocation = new TextLocation();
 				return false;
 			}

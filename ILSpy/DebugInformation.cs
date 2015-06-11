@@ -48,17 +48,28 @@ namespace ICSharpCode.ILSpy.Debugger
 			this.moduleFullPath = moduleFullPath;
 		}
 
-		public MethodKey(IMemberRef member)
-			: this(member.MDToken.ToInt32(), member.Module)
+		public static MethodKey? Create(IMemberRef member)
 		{
+			if (member == null)
+				return null;
+			return Create(member.MDToken.ToInt32(), member.Module);
 		}
 
-		public MethodKey(int token, IOwnerModule ownerModule)
-			: this(token, ownerModule.Module)
+		public static MethodKey? Create(int token, IOwnerModule ownerModule)
 		{
+			if (ownerModule == null)
+				return null;
+			return Create(token, ownerModule.Module);
 		}
 
-		public MethodKey(int token, ModuleDef module)
+		public static MethodKey? Create(int token, ModuleDef module)
+		{
+			if (module == null || string.IsNullOrEmpty(module.Location))
+				return null;
+			return new MethodKey(token, module);
+		}
+
+		MethodKey(int token, ModuleDef module)
 		{
 			this.token = token;
 			if (string.IsNullOrEmpty(module.Location))

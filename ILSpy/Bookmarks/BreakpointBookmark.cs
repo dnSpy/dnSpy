@@ -2,6 +2,7 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
+using System.Diagnostics;
 using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.Decompiler;
@@ -57,7 +58,9 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		public BreakpointBookmark(IMemberRef member, TextLocation location, TextLocation endLocation, ILRange range, bool isEnabled = true)
 			: base(member, range.From, location, endLocation)
 		{
-			this.MethodKey = new MethodKey(member);
+			var key = MethodKey.Create(member);
+			Debug.Assert(key != null, "Caller must verify that MethodKey.Create() won't fail");
+			this.MethodKey = key.Value;
 			this.ILRange = range;
 			this.isEnabled = isEnabled;
 		}
@@ -66,7 +69,8 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			get { return true; }
 		}
 		
-		public override ImageSource GetImage(Color bgColor) {
+		public override ImageSource GetImage(Color bgColor)
+		{
 			return IsEnabled ?
 				ImageCache.Instance.GetImage("Breakpoint", bgColor) :
 				ImageCache.Instance.GetImage("DisabledBreakpoint", bgColor);
@@ -74,14 +78,15 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		
 		public event EventHandler ImageChanged;
 
-		public override bool IsVisible(DecompilerTextView textView) {
-			var key = new MethodKey(MemberReference);
+		public override bool IsVisible(DecompilerTextView textView)
+		{
+			var key = MethodKey.Create(MemberReference);
 			uint ilOffset = ILRange.From;
 			TextLocation location, endLocation;
 			var cm = textView == null ? null : textView.CodeMappings;
-			if (cm == null || !cm.ContainsKey(key))
+			if (cm == null || key == null || !cm.ContainsKey(key.Value))
 				return false;
-			if (!cm[key].GetInstructionByTokenAndOffset((uint)ilOffset, out location, out endLocation))
+			if (!cm[key.Value].GetInstructionByTokenAndOffset((uint)ilOffset, out location, out endLocation))
 				return false;
 
 			return true;

@@ -1345,7 +1345,6 @@ namespace ICSharpCode.ILSpy
 						}
 						else {
 							tabState.History.UpdateCurrent(null);
-							tabState.TextView.ClearState();
 							DecompileNodes(tabState, null, false, tabState.Language, newNodes.ToArray());
 						}
 					}
@@ -1605,6 +1604,8 @@ namespace ICSharpCode.ILSpy
 
 				var member = (IMemberDef)reference;
 				var module = member.Module;
+				if (module == null)	// Check if it has been deleted
+					return false;
 				var mainModule = module;
 				if (module.Assembly != null)
 					mainModule = module.Assembly.ManifestModule;
@@ -1744,9 +1745,17 @@ namespace ICSharpCode.ILSpy
 				}));
 			}
 		}
-		
+
+		static ILSpyTreeNode[] FilterOutDeletedNodes(IEnumerable<ILSpyTreeNode> nodes)
+		{
+			return nodes.Where(a => ILSpyTreeNode.GetNode<AssemblyListTreeNode>(a) != null).ToArray();
+		}
+
 		bool? DecompileNodes(TabStateDecompile tabState, DecompilerTextViewState state, bool recordHistory, Language language, ILSpyTreeNode[] nodes, bool forceDecompile = false)
 		{
+			// Ignore all nodes that have been deleted
+			nodes = FilterOutDeletedNodes(nodes);
+
 			if (tabState.ignoreDecompilationRequests)
 				return null;
 			if (tabState.HasDecompiled && !forceDecompile && tabState.Equals(nodes, language)) {
@@ -1754,11 +1763,12 @@ namespace ICSharpCode.ILSpy
 					tabState.TextView.EditorPositionState = state.EditorPositionState;
 				return false;
 			}
+
+			if (tabState.HasDecompiled && recordHistory)
+				RecordHistory(tabState);
+
 			tabState.HasDecompiled = true;
 			tabState.SetDecompileProps(language, nodes);
-			
-			if (recordHistory)
-				RecordHistory(tabState);
 
 			if (nodes.Length == 1 && nodes[0].View(tabState.TextView)) {
 				tabState.TextView.CancelDecompileAsync();
@@ -1777,7 +1787,7 @@ namespace ICSharpCode.ILSpy
 		{
 			if (tabState == null)
 				return;
-			var dtState = tabState.TextView.GetState();
+			var dtState = tabState.TextView.GetState(tabState.DecompiledNodes);
 			if (dtState != null)
 				tabState.History.UpdateCurrent(new NavigationState(dtState, tabState.Language));
 			tabState.History.Record(new NavigationState(tabState.DecompiledNodes, tabState.Language));
@@ -1868,7 +1878,7 @@ namespace ICSharpCode.ILSpy
 		
 		void NavigateHistory(TabStateDecompile tabState, bool forward)
 		{
-			var dtState = tabState.TextView.GetState();
+			var dtState = tabState.TextView.GetState(tabState.DecompiledNodes);
 			if(dtState != null)
 				tabState.History.UpdateCurrent(new NavigationState(dtState, tabState.Language));
 			var newState = forward ? tabState.History.GoForward() : tabState.History.GoBack();
@@ -2004,7 +2014,7 @@ namespace ICSharpCode.ILSpy
 				if (nodes != null) {
 					var tmpNodes = nodes.ToArray();
 					var helper = new OnShowOutputHelper(tabState.TextView, (success, hasMovedCaret) => decompilerTextView_OnShowOutput(success, hasMovedCaret, tabState.TextView, savedState), tmpNodes);
-					DecompileNodes(tabState, null, true, tabState.Language, tmpNodes);
+					DecompileNodes(tabState, null, false, tabState.Language, tmpNodes);
 				}
 				else
 					AboutPage.Display(tabState.TextView);
@@ -2532,11 +2542,27 @@ namespace ICSharpCode.ILSpy
 			return ActiveTabState != null;
 		}
 
-		internal void RefreshCode(LoadedAssembly asm)
+		internal void ModuleModified(LoadedAssembly asm)
 		{
+			DecompileCache.Instance.Clear(asm);
+
 			foreach (var tabState in AllTabStates) {
 				if (MustRefresh(tabState, asm))
 					ForceDecompile(tabState);
+			}
+
+			if (OnModuleModified != null)
+				OnModuleModified(null, new ModuleModifiedEventArgs(asm));
+		}
+
+		public event EventHandler<ModuleModifiedEventArgs> OnModuleModified;
+		public class ModuleModifiedEventArgs : EventArgs
+		{
+			public LoadedAssembly LoadedAssembly { get; private set; }
+
+			public ModuleModifiedEventArgs(LoadedAssembly asm)
+			{
+				this.LoadedAssembly = asm;
 			}
 		}
 

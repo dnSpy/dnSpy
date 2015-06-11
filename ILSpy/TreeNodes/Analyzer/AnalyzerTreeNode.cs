@@ -83,5 +83,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		/// Handles changes to the assembly list.
 		/// </summary>
 		public abstract bool HandleAssemblyListChanged(ICollection<LoadedAssembly> removedAssemblies, ICollection<LoadedAssembly> addedAssemblies);
+
+		public abstract bool HandleModelUpdated(LoadedAssembly asm);
 	}
 }

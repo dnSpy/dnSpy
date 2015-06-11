@@ -67,7 +67,6 @@ namespace ICSharpCode.ILSpy.TextView
 		readonly UIElementGenerator uiElementGenerator;
 		List<VisualLineElementGenerator> activeCustomElementGenerators = new List<VisualLineElementGenerator>();
 		FoldingManager foldingManager;
-		ILSpyTreeNode[] decompiledNodes;
 		
 		DefinitionLookup definitionLookup;
 		TextSegmentCollection<ReferenceSegment> references;
@@ -548,7 +547,6 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			CancelDecompilation();
 			ShowOutput(textOutput, highlighting);
-			decompiledNodes = nodes;
 		}
 
 		void CancelDecompilation()
@@ -619,14 +617,14 @@ namespace ICSharpCode.ILSpy.TextView
 
 			var cm = new Dictionary<MethodKey, MemberMapping>();
 			foreach (var m in textOutput.DebuggerMemberMappings) {
-				if (m.MethodDefinition.Module == null)
+				var key = MethodKey.Create(m.MethodDefinition);
+				if (key == null)
 					continue;
-				var key = new MethodKey(m.MethodDefinition);
 				MemberMapping oldMm;
-				if (cm.TryGetValue(key, out oldMm))
+				if (cm.TryGetValue(key.Value, out oldMm))
 					Debug.Assert(oldMm == m);
 				else
-					cm[key] = m;
+					cm[key.Value] = m;
 			}
 			CodeMappings = cm;
 
@@ -713,7 +711,6 @@ namespace ICSharpCode.ILSpy.TextView
 			if (textOutput != null) {
 				CancelDecompilation();
 				ShowOutput(textOutput, newContext.Language.SyntaxHighlighting, newContext.Options.TextViewState, newContext.TreeNodes);
-				decompiledNodes = newContext.TreeNodes;
 				return TaskHelper.CompletedTask;
 			}
 			
@@ -764,7 +761,6 @@ namespace ICSharpCode.ILSpy.TextView
 					DecompileCache.Instance.Cache(context.Language, context.TreeNodes, context.Options, textOutput);
 					if (id == decompilationId) {
 						ShowOutput(textOutput, context.Language.SyntaxHighlighting, context.Options.TextViewState, context.TreeNodes);
-						decompiledNodes = context.TreeNodes;
 					}
 				})
 			.Catch<Exception>(exception => {
@@ -779,7 +775,6 @@ namespace ICSharpCode.ILSpy.TextView
 							output.WriteLine(exception.ToString(), TextTokenType.Text);
 						}
 						ShowOutput(output);
-						decompiledNodes = context.TreeNodes;
 					}
 				});
 		}
@@ -1134,21 +1129,16 @@ namespace ICSharpCode.ILSpy.TextView
 			return textEditor.TextArea.TextView.GetPosition(Mouse.GetPosition(textEditor.TextArea.TextView) + textEditor.TextArea.TextView.ScrollOffset);
 		}
 
-		internal void ClearState()
+		public DecompilerTextViewState GetState(ILSpyTreeNode[] nodes)
 		{
-			decompiledNodes = null;
-		}
-		
-		public DecompilerTextViewState GetState()
-		{
-			if (decompiledNodes == null)
+			if (nodes == null || nodes.Length == 0)
 				return null;
 
 			var state = new DecompilerTextViewState();
 			if (foldingManager != null)
 				state.SaveFoldingsState(foldingManager.AllFoldings);
 			state.EditorPositionState = new EditorPositionState(textEditor);
-			state.DecompiledNodes = decompiledNodes;
+			state.DecompiledNodes = nodes;
 			return state;
 		}
 		

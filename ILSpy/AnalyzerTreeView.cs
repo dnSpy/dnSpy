@@ -72,8 +72,14 @@ namespace ICSharpCode.ILSpy
 			this.Root = new AnalyzerRootNode { Language = MainWindow.Instance.CurrentLanguage };
 			this.BorderThickness = new Thickness(0);
 			ContextMenuProvider.Add(this);
-			MainWindow.Instance.CurrentAssemblyListChanged += MainWindow_Instance_CurrentAssemblyListChanged;
+			MainWindow.Instance.CurrentAssemblyListChanged += MainWindow_CurrentAssemblyListChanged;
+			MainWindow.Instance.OnModuleModified += MainWindow_OnModuleModified;
 			dntheme.Themes.ThemeChanged += Themes_ThemeChanged;
+		}
+
+		void MainWindow_OnModuleModified(object sender, MainWindow.ModuleModifiedEventArgs e)
+		{
+			((AnalyzerRootNode)Root).HandleModelUpdated(e.LoadedAssembly);
 		}
 
 		protected override void OnKeyDown(KeyEventArgs e)
@@ -103,7 +109,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		void MainWindow_Instance_CurrentAssemblyListChanged(object sender, NotifyCollectionChangedEventArgs e)
+		void MainWindow_CurrentAssemblyListChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			if (MainWindow.Instance.CurrentAssemblyList.IsReArranging)
 				return;
@@ -170,6 +176,16 @@ namespace ICSharpCode.ILSpy
 					delegate(SharpTreeNode n) {
 						AnalyzerTreeNode an = n as AnalyzerTreeNode;
 						return an == null || !an.HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
+					});
+				return true;
+			}
+
+			public override bool HandleModelUpdated(LoadedAssembly asm)
+			{
+				this.Children.RemoveAll(
+					delegate(SharpTreeNode n) {
+						AnalyzerTreeNode an = n as AnalyzerTreeNode;
+						return an == null || !an.HandleModelUpdated(asm);
 					});
 				return true;
 			}

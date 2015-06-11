@@ -411,7 +411,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 					module.ResetTypeDefFindCache();
 				if (asm.SavedCommand == 0)
 					asm.SavedCommand = group.PrevCommandCounter;
-				Utils.InvalidateDecompilationCache(asm);
+				Utils.NotifyModifiedAssembly(asm);
 			}
 		}
 	}

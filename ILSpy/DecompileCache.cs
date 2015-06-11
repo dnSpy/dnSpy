@@ -183,7 +183,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		public void ClearOld()
+		void ClearOld()
 		{
 			lock (lockObj) {
 				foreach (var kv in new List<KeyValuePair<Key, Item>>(cachedItems)) {

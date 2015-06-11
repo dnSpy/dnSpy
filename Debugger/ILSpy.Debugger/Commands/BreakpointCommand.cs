@@ -89,8 +89,11 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				}
 			}
 			else if (bps.Count > 0) {
-				foreach (var bp in bps)
+				foreach (var bp in bps) {
+					if (MethodKey.Create(bp.MemberMapping.MethodDefinition) == null)
+						continue;
 					BookmarkManager.AddMark(new BreakpointBookmark(bp.MemberMapping.MethodDefinition, bp.StartLocation, bp.EndLocation, bp.ILInstructionOffset));
+				}
 				textView.ScrollAndMoveCaretTo(bps[0].StartLocation.Line, bps[0].StartLocation.Column);
 			}
 		}
