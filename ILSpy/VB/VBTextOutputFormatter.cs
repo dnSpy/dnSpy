@@ -111,29 +111,29 @@ namespace ICSharpCode.ILSpy.VB
 		{
 			var definition = GetCurrentDefinition();
 			if (definition != null) {
-				output.WriteDefinition(identifier, definition, tokenType);
+				output.WriteDefinition(IdentifierEscaper.Escape(identifier), definition, tokenType);
 				return;
 			}
 			
 			object memberRef = GetCurrentMemberReference();
 			if (memberRef != null) {
-				output.WriteReference(identifier, memberRef, tokenType);
+				output.WriteReference(IdentifierEscaper.Escape(identifier), memberRef, tokenType);
 				return;
 			}
 
 			definition = GetCurrentLocalDefinition();
 			if (definition != null) {
-				output.WriteDefinition(identifier, definition, tokenType);
+				output.WriteDefinition(IdentifierEscaper.Escape(identifier), definition, tokenType);
 				return;
 			}
 
 			memberRef = GetCurrentLocalReference();
 			if (memberRef != null) {
-				output.WriteReference(identifier, memberRef, tokenType, true);
+				output.WriteReference(IdentifierEscaper.Escape(identifier), memberRef, tokenType, true);
 				return;
 			}
 
-			output.Write(identifier, tokenType);
+			output.Write(IdentifierEscaper.Escape(identifier), tokenType);
 		}
 
 		IMemberRef GetCurrentMemberReference()

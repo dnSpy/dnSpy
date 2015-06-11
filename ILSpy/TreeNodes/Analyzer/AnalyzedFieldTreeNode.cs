@@ -43,7 +43,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			get
 			{
 				return ILSpyTreeNode.CleanUpName(Language.TypeToString(analyzedField.DeclaringType, true) +
-					"." + analyzedField.Name + " : " + this.Language.TypeToString(analyzedField.FieldType.ToTypeDefOrRef(), false, analyzedField));
+					"." + ILSpyTreeNode.CleanUpIdentifier(analyzedField.Name) + " : " + this.Language.TypeToString(analyzedField.FieldType.ToTypeDefOrRef(), false, analyzedField));
 			}
 		}
 

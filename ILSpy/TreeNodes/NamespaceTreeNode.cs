@@ -48,7 +48,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override string ToString(Language language)
 		{
-			return name.Length == 0 ? "-" : CleanUpName(name);
+			return name.Length == 0 ? "-" : CleanUpIdentifier(name);
 		}
 		
 		public override object Icon {

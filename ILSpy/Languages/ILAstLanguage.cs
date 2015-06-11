@@ -47,7 +47,7 @@ namespace ICSharpCode.ILSpy
 		public override void DecompileMethod(MethodDef method, ITextOutput output, DecompilationOptions options)
 		{
 			WriteComment(output, "Method: ");
-			output.WriteDefinition(method.FullName, method, TextTokenType.Comment, false);
+			output.WriteDefinition(IdentifierEscaper.Escape(method.FullName), method, TextTokenType.Comment, false);
 			output.WriteLine();
 
 			if (!method.HasBody) {
@@ -74,7 +74,7 @@ namespace ICSharpCode.ILSpy
 			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable)
 				.Where(v => v != null && !v.IsParameter).Distinct();
 			foreach (ILVariable v in allVariables) {
-				output.WriteDefinition(v.Name, v, v.IsParameter ? TextTokenType.Parameter : TextTokenType.Local);
+				output.WriteDefinition(IdentifierEscaper.Escape(v.Name), v, v.IsParameter ? TextTokenType.Parameter : TextTokenType.Local);
 				if (v.Type != null) {
 					output.WriteSpace();
 					output.Write(':', TextTokenType.Operator);
@@ -108,7 +108,7 @@ namespace ICSharpCode.ILSpy
 		{
 			output.Write(keyword, TextTokenType.Keyword);
 			output.WriteSpace();
-			output.WriteDefinition(member.Name, member, TextTokenHelper.GetTextTokenType(member), false);
+			output.WriteDefinition(IdentifierEscaper.Escape(member.Name), member, TextTokenHelper.GetTextTokenType(member), false);
 			output.WriteSpace();
 			output.WriteLeftBrace();
 			output.WriteLine();
@@ -146,9 +146,9 @@ namespace ICSharpCode.ILSpy
 
 		public override void DecompileField(FieldDef field, ITextOutput output, DecompilationOptions options)
 		{
-			output.WriteReference(field.FieldType.GetFullName(), field.FieldType.ToTypeDefOrRef(), TextTokenHelper.GetTextTokenType(field.FieldType));
+			output.WriteReference(IdentifierEscaper.Escape(field.FieldType.GetFullName()), field.FieldType.ToTypeDefOrRef(), TextTokenHelper.GetTextTokenType(field.FieldType));
 			output.WriteSpace();
-			output.WriteDefinition(field.Name, field, TextTokenHelper.GetTextTokenType(field), false);
+			output.WriteDefinition(IdentifierEscaper.Escape(field.Name), field, TextTokenHelper.GetTextTokenType(field), false);
 			var c = field.Constant;
 			if (c != null) {
 				output.WriteSpace();
@@ -223,7 +223,7 @@ namespace ICSharpCode.ILSpy
 			WriteCommentLine(output, string.Format("Type: {0}", type.FullName));
 			if (type.BaseType != null) {
 				WriteComment(output, string.Format("Base type: "));
-				output.WriteReference(type.BaseType.FullName, type.BaseType, TextTokenType.Comment);
+				output.WriteReference(IdentifierEscaper.Escape(type.BaseType.FullName), type.BaseType, TextTokenType.Comment);
 				output.WriteLine();
 			}
 			foreach (var nested in type.NestedTypes) {

@@ -74,7 +74,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			b.Append(") : ");
 			b.Append(language.TypeToString(method.ReturnType.ToTypeDefOrRef(), false, method.Parameters.ReturnParameter.ParamDef));
 			b.Append(method.MDToken.ToSuffixString());
-			return CleanUpName(method.Name) + CleanUpName(b.ToString());
+			return CleanUpIdentifier(method.Name) + CleanUpName(b.ToString());
 		}
 
 		public override object Icon

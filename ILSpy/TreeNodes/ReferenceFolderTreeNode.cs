@@ -81,7 +81,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			foreach (var r in module.GetAssemblyRefs())
 				new AssemblyReferenceTreeNode(r, parentAssembly, assemblyListTreeNode).Decompile(language, output, options);
 			foreach (var r in module.GetModuleRefs())
-				language.WriteCommentLine(output, r.Name);
+				language.WriteCommentLine(output, IdentifierEscaper.Escape(r.Name));
 		}
 
 		public override NodePathName NodePathName {

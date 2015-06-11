@@ -62,7 +62,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override string ToString(Language language)
 		{
-			return CleanUpName(r.Name) + r.MDToken.ToSuffixString();
+			return CleanUpIdentifier(r.Name) + r.MDToken.ToSuffixString();
 		}
 		
 		public override object Icon {

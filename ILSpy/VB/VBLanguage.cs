@@ -91,7 +91,7 @@ namespace ICSharpCode.ILSpy.VB
 				ModuleDef mainModule = assembly.ModuleDefinition;
 				if (decompileMod && mainModule.Types.Count > 0) {
 					output.Write("' Global type: ", TextTokenType.Comment);
-					output.WriteReference(mainModule.GlobalType.FullName, mainModule.GlobalType, TextTokenType.Comment);
+					output.WriteReference(IdentifierEscaper.Escape(mainModule.GlobalType.FullName), mainModule.GlobalType, TextTokenType.Comment);
 					output.WriteLine();
 				}
 				if (decompileMod || decompileAsm)
@@ -168,7 +168,7 @@ namespace ICSharpCode.ILSpy.VB
 				}
 
 				if (module.Assembly != null)
-					w.WriteElementString("AssemblyName", module.Assembly.Name);
+					w.WriteElementString("AssemblyName", IdentifierEscaper.Escape(module.Assembly.Name));
 				bool useTargetFrameworkAttribute = false;
 				var targetFrameworkAttribute = module.Assembly == null ? null : module.Assembly.CustomAttributes.FirstOrDefault(a => a.TypeFullName == "System.Runtime.Versioning.TargetFrameworkAttribute");
 				if (targetFrameworkAttribute != null && targetFrameworkAttribute.ConstructorArguments.Any()) {
@@ -238,7 +238,7 @@ namespace ICSharpCode.ILSpy.VB
 						if (asm != null && CSharpLanguage.ExistsInProject(options, asm.FileName))
 							continue;
 						w.WriteStartElement("Reference");
-						w.WriteAttributeString("Include", r.Name);
+						w.WriteAttributeString("Include", IdentifierEscaper.Escape(r.Name));
 						var hintPath = CSharpLanguage.GetHintPath(options, asm);
 						if (hintPath != null) {
 							w.WriteStartElement("HintPath");
@@ -274,7 +274,7 @@ namespace ICSharpCode.ILSpy.VB
 						w.WriteString(otherProj.ProjectGuid.ToString("B").ToUpperInvariant());
 						w.WriteEndElement();
 						w.WriteStartElement("Name");
-						w.WriteString(otherProj.AssemblySimpleName);
+						w.WriteString(IdentifierEscaper.Escape(otherProj.AssemblySimpleName));
 						w.WriteEndElement();
 						w.WriteEndElement();
 					}
@@ -566,7 +566,7 @@ namespace ICSharpCode.ILSpy.VB
 		{
 			output.Write(variable is Local ? "(local variable)" : "(parameter)", TextTokenType.Text);
 			output.WriteSpace();
-			output.Write(GetName(variable, name), variable is Local ? TextTokenType.Local : TextTokenType.Parameter);
+			output.Write(IdentifierEscaper.Escape(GetName(variable, name)), variable is Local ? TextTokenType.Local : TextTokenType.Parameter);
 			output.WriteSpace();
 			output.Write("As", TextTokenType.Keyword);
 			output.WriteSpace();

@@ -234,6 +234,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return sb.ToString();
 		}
 
+		internal static string CleanUpIdentifier(string id)
+		{
+			if (id == null)
+				return id;
+			id = IdentifierEscaper.Escape(id);
+			return CleanUpName(id);
+		}
+
 		public abstract NodePathName NodePathName { get; }
 
 		public abstract string ToString(Language language);

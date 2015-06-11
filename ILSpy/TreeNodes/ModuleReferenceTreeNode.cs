@@ -50,7 +50,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override string ToString(Language language)
 		{
-			return CleanUpName(r.Name) + r.MDToken.ToSuffixString();
+			return CleanUpIdentifier(r.Name) + r.MDToken.ToSuffixString();
 		}
 		
 		public override object Icon {
@@ -67,7 +67,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			language.WriteCommentLine(output, r.Name);
+			language.WriteCommentLine(output, IdentifierEscaper.Escape(r.Name));
 		}
 
 		public override NodePathName NodePathName {

@@ -50,7 +50,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override string ToString(Language language)
 		{
-			return CleanUpName(field.Name) +
+			return CleanUpIdentifier(field.Name) +
 					CleanUpName(" : " + language.TypeToString(field.FieldType.ToTypeDefOrRef(), false, field)) + field.MDToken.ToSuffixString();
 		}
 

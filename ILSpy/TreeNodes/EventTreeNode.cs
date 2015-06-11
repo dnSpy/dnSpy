@@ -66,7 +66,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public static object GetText(EventDef eventDef, Language language)
 		{
-			return CleanUpName(eventDef.Name) + CleanUpName(" : " + language.TypeToString(eventDef.EventType, false, eventDef));
+			return CleanUpIdentifier(eventDef.Name) + CleanUpName(" : " + language.TypeToString(eventDef.EventType, false, eventDef));
 		}
 		
 		public override object Icon

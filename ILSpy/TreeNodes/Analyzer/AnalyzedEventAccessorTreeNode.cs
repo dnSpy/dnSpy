@@ -33,7 +33,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		public override object Text
 		{
-			get { return ILSpyTreeNode.CleanUpName(name) ?? base.Text; }
+			get { return ILSpyTreeNode.CleanUpIdentifier(name) ?? base.Text; }
 		}
 	}
 }

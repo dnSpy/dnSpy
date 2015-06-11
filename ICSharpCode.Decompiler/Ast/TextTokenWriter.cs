@@ -59,26 +59,26 @@ namespace ICSharpCode.Decompiler.Ast
 
 			var definition = GetCurrentDefinition(identifier);
 			if (definition != null) {
-				output.WriteDefinition(identifier.Name, definition, tokenType, false);
+				output.WriteDefinition(IdentifierEscaper.Escape(identifier.Name), definition, tokenType, false);
 				return;
 			}
 			
 			object memberRef = GetCurrentMemberReference();
 
 			if (memberRef != null) {
-				output.WriteReference(identifier.Name, memberRef, tokenType);
+				output.WriteReference(IdentifierEscaper.Escape(identifier.Name), memberRef, tokenType);
 				return;
 			}
 
 			definition = GetCurrentLocalDefinition();
 			if (definition != null) {
-				output.WriteDefinition(identifier.Name, definition, tokenType);
+				output.WriteDefinition(IdentifierEscaper.Escape(identifier.Name), definition, tokenType);
 				return;
 			}
 
 			memberRef = GetCurrentLocalReference();
 			if (memberRef != null) {
-				output.WriteReference(identifier.Name, memberRef, tokenType, true);
+				output.WriteReference(IdentifierEscaper.Escape(identifier.Name), memberRef, tokenType, true);
 				return;
 			}
 
@@ -87,7 +87,7 @@ namespace ICSharpCode.Decompiler.Ast
 				firstUsingDeclaration = false;
 			}
 
-			output.Write(identifier.Name, tokenType);
+			output.Write(IdentifierEscaper.Escape(identifier.Name), tokenType);
 		}
 
 		IMemberRef GetCurrentMemberReference()

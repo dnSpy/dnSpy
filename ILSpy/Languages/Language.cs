@@ -94,7 +94,7 @@ namespace ICSharpCode.ILSpy
 
 		public virtual void DecompileNamespace(string nameSpace, IEnumerable<TypeDef> types, ITextOutput output, DecompilationOptions options)
 		{
-			WriteCommentLine(output, nameSpace);
+			WriteCommentLine(output, IdentifierEscaper.Escape(nameSpace));
 		}
 
 		public virtual void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule)
@@ -122,10 +122,10 @@ namespace ICSharpCode.ILSpy
 				var epMethod = (MethodDef)ep;
 				WriteComment(output, "Entry point: ");
 				if (epMethod.DeclaringType != null) {
-					output.WriteReference(epMethod.DeclaringType.FullName, epMethod.DeclaringType, TextTokenType.Comment);
+					output.WriteReference(IdentifierEscaper.Escape(epMethod.DeclaringType.FullName), epMethod.DeclaringType, TextTokenType.Comment);
 					output.Write('.', TextTokenType.Comment);
 				}
-				output.WriteReference(epMethod.Name, epMethod, TextTokenType.Comment);
+				output.WriteReference(IdentifierEscaper.Escape(epMethod.Name), epMethod, TextTokenType.Comment);
 				output.WriteLine();
 			}
 		}
@@ -161,7 +161,7 @@ namespace ICSharpCode.ILSpy
 		public void WriteCommentLineDeclaringType(ITextOutput output, IMemberDef member)
 		{
 			WriteComment(output, string.Empty);
-			output.WriteReference(TypeToString(member.DeclaringType, includeNamespace: true), member.DeclaringType, TextTokenType.Comment);
+			output.WriteReference(IdentifierEscaper.Escape(TypeToString(member.DeclaringType, includeNamespace: true)), member.DeclaringType, TextTokenType.Comment);
 			output.WriteLine();
 		}
 
@@ -191,9 +191,9 @@ namespace ICSharpCode.ILSpy
 			if (type == null)
 				return;
 			if (includeNamespace)
-				output.Write(type.FullName, TextTokenHelper.GetTextTokenType(type));
+				output.Write(IdentifierEscaper.Escape(type.FullName), TextTokenHelper.GetTextTokenType(type));
 			else
-				output.Write(type.Name, TextTokenHelper.GetTextTokenType(type));
+				output.Write(IdentifierEscaper.Escape(type.Name), TextTokenHelper.GetTextTokenType(type));
 		}
 
 		/// <summary>
@@ -206,14 +206,14 @@ namespace ICSharpCode.ILSpy
 				TypeToString(output, (ITypeDefOrRef)member, true, typeAttributes);
 			else if (member is GenericParam) {
 				var gp = (GenericParam)member;
-				output.Write(gp.Name, TextTokenHelper.GetTextTokenType(gp));
+				output.Write(IdentifierEscaper.Escape(gp.Name), TextTokenHelper.GetTextTokenType(gp));
 				output.WriteSpace();
 				output.Write("in", TextTokenType.Text);
 				output.WriteSpace();
 				WriteToolTip(output, gp.Owner, typeAttributes);
 			}
 			else
-				output.Write(member.ToString(), TextTokenHelper.GetTextTokenType(member));
+				output.Write(IdentifierEscaper.Escape(member.ToString()), TextTokenHelper.GetTextTokenType(member));
 		}
 
 		public virtual void WriteToolTip(ITextOutput output, IVariable variable, string name)
@@ -222,7 +222,7 @@ namespace ICSharpCode.ILSpy
 			output.WriteSpace();
 			WriteToolTip(output, variable.Type.ToTypeDefOrRef(), variable is Parameter ? ((Parameter)variable).ParamDef : null);
 			output.WriteSpace();
-			output.Write(GetName(variable, name), variable is Local ? TextTokenType.Local : TextTokenType.Parameter);
+			output.Write(IdentifierEscaper.Escape(GetName(variable, name)), variable is Local ? TextTokenType.Local : TextTokenType.Parameter);
 		}
 
 		protected static string GetName(IVariable variable, string name)
@@ -239,14 +239,14 @@ namespace ICSharpCode.ILSpy
 		{
 			if (property == null)
 				throw new ArgumentNullException("property");
-			return property.Name;
+			return IdentifierEscaper.Escape(property.Name);
 		}
 		
 		public virtual string FormatTypeName(TypeDef type)
 		{
 			if (type == null)
 				throw new ArgumentNullException("type");
-			return type.Name;
+			return IdentifierEscaper.Escape(type.Name);
 		}
 
 		/// <summary>
