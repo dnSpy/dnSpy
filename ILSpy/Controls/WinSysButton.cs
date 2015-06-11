@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.Windows;
 
 namespace ICSharpCode.ILSpy.Controls
@@ -72,7 +73,8 @@ namespace ICSharpCode.ILSpy.Controls
 		{
 			Loaded -= WinSysButton_Loaded;
 			window = Window.GetWindow(this);
-			window.StateChanged += window_StateChanged;
+			if (window != null) // null if in design mode
+				window.StateChanged += window_StateChanged;
 		}
 
 		void window_StateChanged(object sender, EventArgs e)
@@ -89,6 +91,9 @@ namespace ICSharpCode.ILSpy.Controls
 		{
 			if (window == null)
 				window = Window.GetWindow(this);
+			if (window == null && DesignerProperties.GetIsInDesignMode(this))
+				return;
+
 			switch (newValue) {
 			case Controls.WinSysType.Minimize:
 				CurrentWinSysType = Controls.CurrentWinSysType.Minimize;
