@@ -43,6 +43,7 @@ using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Search;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
+using ICSharpCode.ILSpy.AsmEditor;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.dntheme;
@@ -106,7 +107,6 @@ namespace ICSharpCode.ILSpy.TextView
 			// Add the ref elem generator first in case one of the refs looks like a http link etc
 			textEditor.TextArea.TextView.ElementGenerators.Insert(0, referenceElementGenerator);
 			textEditor.TextArea.PreviewKeyDown += TextEditor_PreviewKeyDown;
-			textEditor.TextArea.KeyDown += TextEditor_KeyDown;
 			this.uiElementGenerator = new UIElementGenerator();
 			textEditor.TextArea.TextView.ElementGenerators.Add(uiElementGenerator);
 			textEditor.Options.RequireControlModifierForHyperlinkClick = false;
@@ -143,8 +143,18 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.TextArea.MouseWheel += TextArea_MouseWheel;
 			TextEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
 
-			InputBindings.Add(new KeyBinding(new AsmEditor.RelayCommand(a => MoveReference(true)), Key.Tab, ModifierKeys.None));
-			InputBindings.Add(new KeyBinding(new AsmEditor.RelayCommand(a => MoveReference(false)), Key.Tab, ModifierKeys.Shift));
+			InputBindings.Add(new KeyBinding(new RelayCommand(a => MoveReference(true)), Key.Tab, ModifierKeys.None));
+			InputBindings.Add(new KeyBinding(new RelayCommand(a => MoveReference(false)), Key.Tab, ModifierKeys.Shift));
+			InputBindings.Add(new KeyBinding(new RelayCommand(a => PageUp()), Key.PageUp, ModifierKeys.Control));
+			InputBindings.Add(new KeyBinding(new RelayCommand(a => PageDown()), Key.PageDown, ModifierKeys.Control));
+			textEditor.TextArea.InputBindings.Add(new KeyBinding(new RelayCommand(a => UpDownLine(false)), Key.Down, ModifierKeys.Control));
+			textEditor.TextArea.InputBindings.Add(new KeyBinding(new RelayCommand(a => UpDownLine(true)), Key.Up, ModifierKeys.Control));
+			InputBindings.Add(new KeyBinding(new RelayCommand(a => MainWindow.Instance.BackCommand(this)), Key.Back, ModifierKeys.None));
+			InputBindings.Add(new KeyBinding(new RelayCommand(a => FollowReference()), Key.F12, ModifierKeys.None));
+			InputBindings.Add(new KeyBinding(new RelayCommand(a => FollowReference()), Key.Enter, ModifierKeys.None));
+			InputBindings.Add(new KeyBinding(new RelayCommand(a => FollowReferenceNewTab()), Key.F12, ModifierKeys.Control));
+			InputBindings.Add(new KeyBinding(new RelayCommand(a => FollowReferenceNewTab()), Key.Enter, ModifierKeys.Control));
+			InputBindings.Add(new KeyBinding(new RelayCommand(a => ClearMarkedReferencesAndPopups()), Key.Escape, ModifierKeys.None));
 		}
 
 		void Caret_PositionChanged(object sender, EventArgs e)
@@ -1220,94 +1230,76 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 
-		void TextEditor_KeyDown(object sender, KeyEventArgs e)
+		void PageUp()
 		{
-			if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.PageUp) {
-				var textView = TextEditor.TextArea.TextView;
-				textView.EnsureVisualLines();
-				if (textView.VisualLines.Count > 0) {
-					var line = textView.VisualLines[0];
-					// If the full height isn't visible, pick the next one
-					if (line.VisualTop < textView.VerticalOffset && textView.VisualLines.Count > 1)
-						line = textView.VisualLines[1];
-					var docLine = line.FirstDocumentLine;
-					var caret = TextEditor.TextArea.Caret;
-					SetCaretPosition(docLine.LineNumber, caret.Location.Column);
-				}
-				e.Handled = true;
-				return;
+			var textView = TextEditor.TextArea.TextView;
+			textView.EnsureVisualLines();
+			if (textView.VisualLines.Count > 0) {
+				var line = textView.VisualLines[0];
+				// If the full height isn't visible, pick the next one
+				if (line.VisualTop < textView.VerticalOffset && textView.VisualLines.Count > 1)
+					line = textView.VisualLines[1];
+				var docLine = line.FirstDocumentLine;
+				var caret = TextEditor.TextArea.Caret;
+				SetCaretPosition(docLine.LineNumber, caret.Location.Column);
 			}
+		}
 
-			if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.PageDown) {
-				var textView = TextEditor.TextArea.TextView;
-				textView.EnsureVisualLines();
-				if (textView.VisualLines.Count > 0) {
-					var line = textView.VisualLines[textView.VisualLines.Count - 1];
-					// If the full height isn't visible, pick the previous one
-					if (line.VisualTop - textView.VerticalOffset + line.Height > textView.ActualHeight && textView.VisualLines.Count > 1)
-						line = textView.VisualLines[textView.VisualLines.Count - 2];
-					var docLine = line.LastDocumentLine;
-					var caret = TextEditor.TextArea.Caret;
-					SetCaretPosition(docLine.LineNumber, caret.Location.Column);
-				}
-				e.Handled = true;
-				return;
+		void PageDown()
+		{
+			var textView = TextEditor.TextArea.TextView;
+			textView.EnsureVisualLines();
+			if (textView.VisualLines.Count > 0) {
+				var line = textView.VisualLines[textView.VisualLines.Count - 1];
+				// If the full height isn't visible, pick the previous one
+				if (line.VisualTop - textView.VerticalOffset + line.Height > textView.ActualHeight && textView.VisualLines.Count > 1)
+					line = textView.VisualLines[textView.VisualLines.Count - 2];
+				var docLine = line.LastDocumentLine;
+				var caret = TextEditor.TextArea.Caret;
+				SetCaretPosition(docLine.LineNumber, caret.Location.Column);
 			}
+		}
 
-			if (Keyboard.Modifiers == ModifierKeys.Control && (e.Key == Key.Down || e.Key == Key.Up)) {
-				var textView = TextEditor.TextArea.TextView;
-				var scrollViewer = ((System.Windows.Controls.Primitives.IScrollInfo)textView).ScrollOwner;
-				textView.EnsureVisualLines();
+		void UpDownLine(bool up)
+		{
+			var textView = TextEditor.TextArea.TextView;
+			var scrollViewer = ((System.Windows.Controls.Primitives.IScrollInfo)textView).ScrollOwner;
+			textView.EnsureVisualLines();
 
-				var currPos = FilterCaretPos(textView, textView.GetVisualPosition(TextEditor.TextArea.Caret.Position, VisualYPosition.LineMiddle));
+			var currPos = FilterCaretPos(textView, textView.GetVisualPosition(TextEditor.TextArea.Caret.Position, VisualYPosition.LineMiddle));
 
-				if (e.Key == Key.Down)
-					scrollViewer.LineDown();
-				else
-					scrollViewer.LineUp();
-				textView.UpdateLayout();
-				textView.EnsureVisualLines();
+			if (!up)
+				scrollViewer.LineDown();
+			else
+				scrollViewer.LineUp();
+			textView.UpdateLayout();
+			textView.EnsureVisualLines();
 
-				var newPos = FilterCaretPos(textView, currPos);
-				var newVisPos = textView.GetPosition(newPos);
-				Debug.Assert(newVisPos != null);
-				if (newVisPos != null)
-					TextEditor.TextArea.Caret.Position = newVisPos.Value;
+			var newPos = FilterCaretPos(textView, currPos);
+			var newVisPos = textView.GetPosition(newPos);
+			Debug.Assert(newVisPos != null);
+			if (newVisPos != null)
+				TextEditor.TextArea.Caret.Position = newVisPos.Value;
+		}
 
-				e.Handled = true;
-				return;
-			}
+		void FollowReference()
+		{
+			int offset = textEditor.TextArea.Caret.Offset;
+			var refSeg = GetReferenceSegmentAt(offset);
+			GoToTarget(refSeg, true, true);
+		}
 
-			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Back) {
-				MainWindow.Instance.BackCommand(this);
-				e.Handled = true;
-				return;
-			}
+		void FollowReferenceNewTab()
+		{
+			int offset = textEditor.TextArea.Caret.Offset;
+			var refSeg = GetReferenceSegmentAt(offset);
+			MainWindow.Instance.OpenReferenceInNewTab(this, refSeg);
+		}
 
-			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.F12 ||
-				Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Enter) {
-				int offset = textEditor.TextArea.Caret.Offset;
-				var refSeg = GetReferenceSegmentAt(offset);
-				GoToTarget(refSeg, true, true);
-				e.Handled = true;
-				return;
-			}
-
-			if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.F12 ||
-				Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.Enter) {
-				int offset = textEditor.TextArea.Caret.Offset;
-				var refSeg = GetReferenceSegmentAt(offset);
-				MainWindow.Instance.OpenReferenceInNewTab(this, refSeg);
-				e.Handled = true;
-				return;
-			}
-
-			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Escape) {
-				ClearMarkedReferences();
-				MainWindow.Instance.ClosePopups();
-				e.Handled = true;
-				return;
-			}
+		void ClearMarkedReferencesAndPopups()
+		{
+			ClearMarkedReferences();
+			MainWindow.Instance.ClosePopups();
 		}
 
 		void MoveReference(bool forward)
