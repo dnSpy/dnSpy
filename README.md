@@ -97,6 +97,8 @@ Alt+F9		| Show Breakpoints window
 Ctrl+Alt+C	| Show Call Stack window
 Alt+7		| Show Call Stack window
 Shift+Alt+Enter | Toggle full screen mode
+Tab			| (Text view) Move to the next reference. Does nothing if the caret is not on a reference.
+Shift+Tab	| (Text view) Move to the previous reference. Does nothing if the caret is not on a reference.
 
 
 Credits

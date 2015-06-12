@@ -142,6 +142,9 @@ namespace ICSharpCode.ILSpy.TextView
 
 			textEditor.TextArea.MouseWheel += TextArea_MouseWheel;
 			TextEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
+
+			InputBindings.Add(new KeyBinding(new AsmEditor.RelayCommand(a => MoveReference(true)), Key.Tab, ModifierKeys.None));
+			InputBindings.Add(new KeyBinding(new AsmEditor.RelayCommand(a => MoveReference(false)), Key.Tab, ModifierKeys.Shift));
 		}
 
 		void Caret_PositionChanged(object sender, EventArgs e)
@@ -1304,6 +1307,42 @@ namespace ICSharpCode.ILSpy.TextView
 				MainWindow.Instance.ClosePopups();
 				e.Handled = true;
 				return;
+			}
+		}
+
+		void MoveReference(bool forward)
+		{
+			if (references == null)
+				return;
+			int offset = textEditor.TextArea.Caret.Offset;
+			var refSeg = GetReferenceSegmentAt(offset);
+			if (refSeg == null)
+				return;
+
+			foreach (var newSeg in GetReferenceSegmentsFrom(refSeg, forward)) {
+				if (RefSegEquals(newSeg, refSeg)) {
+					var line = textEditor.Document.GetLineByOffset(newSeg.StartOffset);
+					int column = newSeg.StartOffset - line.Offset + 1;
+					ScrollAndMoveCaretTo(line.LineNumber, column);
+					break;
+				}
+			}
+		}
+
+		IEnumerable<ReferenceSegment> GetReferenceSegmentsFrom(ReferenceSegment refSeg, bool forward)
+		{
+			if (references == null || refSeg == null)
+				yield break;
+
+			var currSeg = refSeg;
+			while (true) {
+				currSeg = forward ? references.GetNextSegment(currSeg) : references.GetPreviousSegment(currSeg);
+				if (currSeg == null)
+					currSeg = forward ? references.FirstSegment : references.LastSegment;
+				if (currSeg == refSeg)
+					break;
+
+				yield return currSeg;
 			}
 		}
 

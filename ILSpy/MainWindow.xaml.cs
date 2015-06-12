@@ -234,6 +234,8 @@ namespace ICSharpCode.ILSpy
 					continue;
 				if ((kb.Modifiers == ModifierKeys.None && kb.Key == Key.Back) ||
 					(kb.Modifiers == ModifierKeys.None && kb.Key == Key.Enter) ||
+					(kb.Modifiers == ModifierKeys.None && kb.Key == Key.Tab) ||
+					(kb.Modifiers == ModifierKeys.Shift && kb.Key == Key.Tab) ||
 					(kb.Modifiers == ModifierKeys.Control && kb.Key == Key.Enter)) {
 					inputList.RemoveAt(i);
 					commands.Add(kb.Command);
