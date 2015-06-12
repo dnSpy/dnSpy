@@ -232,6 +232,13 @@ namespace ICSharpCode.Decompiler.Ast
 					node is AssignmentExpression ||
 					node is IndexerExpression);
 
+			// Add a ref to the method if it's a delegate call
+			if (!addRef && node is InvocationExpression && memberRef is IMethod) {
+				var md = (memberRef as IMethod).Resolve();
+				if (md != null && md.DeclaringType.IsDelegate())
+					addRef = true;
+			}
+
 			if (addRef)
 				output.WriteReference(token, memberRef, tokenType);
 			else
