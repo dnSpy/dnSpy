@@ -35,6 +35,9 @@ namespace ICSharpCode.ILSpy.Controls
 		public MetroWindow()
 		{
 			SetValue(winChrome_WindowChromeProperty, CreateWindowChromeObject());
+			// Since the system menu had to be disabled, we must add this command
+			var cmd = new RelayCommand(a => ShowSystemMenu(this), a => !IsFullScreen);
+			InputBindings.Add(new KeyBinding(cmd, Key.Space, ModifierKeys.Alt));
 		}
 
 		protected override void OnSourceInitialized(EventArgs e)
