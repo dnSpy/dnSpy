@@ -49,7 +49,6 @@ namespace ICSharpCode.Decompiler
 
 		static bool IsValidChar(char c)
 		{
-			// Allow '.': used in eg. .ctor
 			switch (c) {
 			case '.':	// .ctor
 			case '_':
@@ -57,6 +56,8 @@ namespace ICSharpCode.Decompiler
 			case '>':	// compiler generated name
 			case '$':	// compiler generated name
 			case '-':	// compiler generated name
+			case '{':	// compiler generated name
+			case '}':	// compiler generated name
 				return true;
 			}
 			if (c == '.' || c == '_')
