@@ -755,13 +755,9 @@ namespace ICSharpCode.ILSpy
 						try {
 							rs = new ResourceSet(s).Cast<DictionaryEntry>();
 						}
-						catch (NotSupportedException) {
-						}
-						catch (IOException) {
-						}
-						catch (BadImageFormatException) {
-						}
-						catch (ArgumentException) {
+						catch {
+							// NotSupportedException, IOException, BadImageFormatException, ArgumentException
+							// and any other possible exception
 						}
 						if (rs != null && rs.All(e => e.Value is Stream)) {
 							foreach (var pair in rs) {

@@ -77,20 +77,17 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				try {
 					reader = new ResourceReader(s);
 				}
-				catch (NotSupportedException) {
+				catch {
+					// NotSupportedException, IOException, BadImageFormatException, ArgumentException
+					// and any other possible exception
 					return;
 				}
-				catch (IOException) {
-					return;
+				try {
+					foreach (DictionaryEntry entry in reader.Cast<DictionaryEntry>().OrderBy(e => e.Key.ToString())) {
+						ProcessResourceEntry(entry);
+					}
 				}
-				catch (BadImageFormatException) {
-					return;
-				}
-				catch (ArgumentException) {
-					return;
-				}
-				foreach (DictionaryEntry entry in reader.Cast<DictionaryEntry>().OrderBy(e => e.Key.ToString())) {
-					ProcessResourceEntry(entry);
+				catch {
 				}
 			}
 		}
