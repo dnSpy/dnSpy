@@ -345,7 +345,7 @@ namespace ICSharpCode.Decompiler.Ast
 						astType.AddChild(enumMember, Roles.TypeMemberRole);
 					}
 				}
-			} else if (typeDef.BaseType != null && typeDef.BaseType.FullName == "System.MulticastDelegate") {
+			} else if (IsNormalDelegate(typeDef)) {
 				DelegateDeclaration dd = new DelegateDeclaration();
 				dd.Modifiers = astType.Modifiers & ~Modifiers.Sealed;
 				dd.NameToken = (Identifier)astType.NameToken.Clone();
@@ -388,6 +388,23 @@ namespace ICSharpCode.Decompiler.Ast
 
 			context.CurrentType = oldCurrentType;
 			return result;
+		}
+
+		static bool IsNormalDelegate(TypeDef td)
+		{
+			if (td.BaseType == null || td.BaseType.FullName != "System.MulticastDelegate")
+				return false;
+
+			if (td.HasFields)
+				return false;
+			if (td.HasProperties)
+				return false;
+			if (td.HasEvents)
+				return false;
+			if (td.Methods.Any(m => m.Body != null))
+				return false;
+
+			return true;
 		}
 
 		internal static string CleanName(string name)
