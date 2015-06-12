@@ -302,18 +302,16 @@
 
 							<Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
 								<Grid.ColumnDefinitions>
-									<ColumnDefinition />
-									<ColumnDefinition />
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
 								</Grid.ColumnDefinitions>
-								<StackPanel Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" Orientation="Horizontal">
-									<Label Margin="0 0 0 0" Content="_Machine" Target="{Binding ElementName=machineComboBox}" />
-									<ComboBox Margin="5 0 0 0" Name="machineComboBox" DisplayMemberPath="Name" ItemsSource="{Binding PEHeadersOptions.Machine.Items}" SelectedIndex="{Binding PEHeadersOptions.Machine.SelectedIndex}" Width="100" VerticalContentAlignment="Center" />
-								</StackPanel>
+								<Label Grid.Column="0" Margin="0 5 0 0" Content="_Machine" Target="{Binding ElementName=machineComboBox}" />
+								<ComboBox Grid.Column="1" Margin="5 5 0 0" Name="machineComboBox" DisplayMemberPath="Name" ItemsSource="{Binding PEHeadersOptions.Machine.Items}" SelectedIndex="{Binding PEHeadersOptions.Machine.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
 
-								<StackPanel Grid.Column="1" Grid.ColumnSpan="2" Margin="0 5 0 0" Orientation="Horizontal">
-									<Label Margin="0 0 0 0" Content="_Subsystem" Target="{Binding ElementName=subsystemComboBox}" />
-									<ComboBox Margin="5 0 0 0" Name="subsystemComboBox" DisplayMemberPath="Name" ItemsSource="{Binding PEHeadersOptions.Subsystem.Items}" SelectedIndex="{Binding PEHeadersOptions.Subsystem.SelectedIndex}" Width="100" VerticalContentAlignment="Center" />
-								</StackPanel>
+								<Label Grid.Column="2" Margin="0 5 0 0" Content="_Subsystem" Target="{Binding ElementName=subsystemComboBox}" />
+								<ComboBox Grid.Column="3" Margin="5 5 0 0" Name="subsystemComboBox" DisplayMemberPath="Name" ItemsSource="{Binding PEHeadersOptions.Subsystem.Items}" SelectedIndex="{Binding PEHeadersOptions.Subsystem.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
 							</Grid>
 
 							<GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Header="Characteristics" Margin="0 5 0 0">
