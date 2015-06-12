@@ -24,6 +24,8 @@ namespace ICSharpCode.Decompiler
 {
 	public static class IdentifierEscaper
 	{
+		const int MAX_IDENTIFIER_LENGTH = 512;
+
 		public static string Escape(string id)
 		{
 			var sb = new StringBuilder();
@@ -33,6 +35,13 @@ namespace ICSharpCode.Decompiler
 					sb.Append(string.Format(@"\u{0:X4}", (ushort)c));
 				else
 					sb.Append(c);
+				if (sb.Length >= MAX_IDENTIFIER_LENGTH)
+					break;
+			}
+
+			if (sb.Length > MAX_IDENTIFIER_LENGTH) {
+				sb.Length = MAX_IDENTIFIER_LENGTH;
+				sb.Append('…');
 			}
 
 			return sb.ToString();
@@ -41,6 +50,15 @@ namespace ICSharpCode.Decompiler
 		static bool IsValidChar(char c)
 		{
 			// Allow '.': used in eg. .ctor
+			switch (c) {
+			case '.':	// .ctor
+			case '_':
+			case '<':	// compiler generated name
+			case '>':	// compiler generated name
+			case '$':	// compiler generated name
+			case '-':	// compiler generated name
+				return true;
+			}
 			if (c == '.' || c == '_')
 				return true;
 			switch (char.GetUnicodeCategory(c)) {
