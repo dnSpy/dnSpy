@@ -1,7 +1,10 @@
 dnSpy
 =====
 
-dnSpy is a .NET assembly editor, decompiler, and debugger forked from [ILSpy](https://github.com/icsharpcode/ILSpy).
+dnSpy is a .NET assembly editor, decompiler, and debugger forked from
+[ILSpy](https://github.com/icsharpcode/ILSpy).
+
+License: GPLv3
 
 Extra features present in dnSpy
 ===============================
@@ -34,6 +37,13 @@ Known issues
 
 * Debugger + IL mode: BPs can be set on any IL offset but the BPs are only triggered if they're at the start of statements (eg. offsets where the IL stack is empty and offsets following method calls).
 * Debugger can't debug iterator methods (yield return).
+
+Themes
+======
+
+dnSpy looks for *.dntheme files in the `<dnSpy-bin-dir>\dntheme` directory
+and the user's `%APPDATA%\dnSpy\dntheme` directory. If you wish to override a
+standard theme, copy the file to `%APPDATA%\dnSpy\dntheme` and edit the file.
 
 Keyboard shortcuts
 ==================
@@ -115,8 +125,12 @@ Dependencies:
 * [NRefactory](https://github.com/0xd4d/NRefactory)
 * [AvalonEdit](https://github.com/0xd4d/AvalonEdit)
 
-Make sure you get the source code from the above links because eg. NRefactory and AvalonEdit have been slightly modified. You must define `THREAD_SAFE` when compiling dnlib. dnSpy will immediately exit if it detects that dnlib isn't thread safe.
+Make sure you get the source code from the above links because eg. NRefactory
+and AvalonEdit have been slightly modified. You must define `THREAD_SAFE`
+when compiling dnlib. dnSpy will immediately exit if it detects that dnlib
+isn't thread safe.
 
-Use Visual Studio 2010 or later or run `debugbuild.bat` / `releasebuild.bat` to build it once you have all dependencies.
+Use Visual Studio 2010 or later or run `debugbuild.bat` / `releasebuild.bat`
+to build it once you have all dependencies.
 
 You need the Visual Studio SDK to build ILSpy.AddIn.

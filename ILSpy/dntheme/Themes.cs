@@ -22,6 +22,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security;
 using System.Xml.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -96,9 +97,32 @@ namespace ICSharpCode.ILSpy.dntheme
 
 		static void Load()
 		{
-			var path = Path.Combine(Path.GetDirectoryName(typeof(Themes).Assembly.Location), "dntheme");
-			foreach (var filename in Directory.GetFiles(path, "*.dntheme", SearchOption.TopDirectoryOnly))
-				Load(filename);
+			foreach (var basePath in GetDnthemePaths()) {
+				string[] files;
+				try {
+					if (!Directory.Exists(basePath))
+						continue;
+					files = Directory.GetFiles(basePath, "*.dntheme", SearchOption.TopDirectoryOnly);
+				}
+				catch (IOException) {
+					continue;
+				}
+				catch (UnauthorizedAccessException) {
+					continue;
+				}
+				catch (SecurityException) {
+					continue;
+				}
+
+				foreach (var filename in files)
+					Load(filename);
+			}
+		}
+
+		static IEnumerable<string> GetDnthemePaths()
+		{
+			yield return Path.Combine(Path.GetDirectoryName(typeof(Themes).Assembly.Location), "dntheme");
+			yield return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "dnSpy", "dntheme");
 		}
 
 		static Theme Load(string filename)
