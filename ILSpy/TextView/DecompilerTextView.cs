@@ -103,7 +103,8 @@ namespace ICSharpCode.ILSpy.TextView
 			
 			textEditor.TextArea.SelectionCornerRadius = 0;
 			this.referenceElementGenerator = new ReferenceElementGenerator(this.JumpToReference, this.IsLink);
-			textEditor.TextArea.TextView.ElementGenerators.Add(referenceElementGenerator);
+			// Add the ref elem generator first in case one of the refs looks like a http link etc
+			textEditor.TextArea.TextView.ElementGenerators.Insert(0, referenceElementGenerator);
 			textEditor.TextArea.PreviewKeyDown += TextEditor_PreviewKeyDown;
 			textEditor.TextArea.KeyDown += TextEditor_KeyDown;
 			this.uiElementGenerator = new UIElementGenerator();
