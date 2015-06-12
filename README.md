@@ -32,7 +32,6 @@ Updates to the Debugger
 Known issues
 ============
 
-* Stepping over an `endfinally` instruction causes the current line to be hidden. The reason is that the IP is unknown. Press F10 a few times and the IP should be known again.
 * Debugger + IL mode: BPs can be set on any IL offset but the BPs are only triggered if they're at the start of statements (eg. offsets where the IL stack is empty and offsets following method calls).
 * Debugger can't debug iterator methods (yield return).
 
