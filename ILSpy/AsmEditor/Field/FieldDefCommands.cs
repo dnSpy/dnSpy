@@ -77,11 +77,39 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 
 			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
 			{
-				if (nodes.Length == 1)
-					menuItem.Header = string.Format("Delete {0}", nodes[0].Text);
-				else
-					menuItem.Header = string.Format("Delete {0} fields", nodes.Length);
+				DeleteFieldDefCommand.Initialize(nodes, menuItem);
 			}
+		}
+
+		[ExportContextMenuEntry(Header = CMD_NAME,
+								Icon = "Delete",
+								Category = "AsmEd",
+								Order = 240)]//TODO: Update Order
+		sealed class TheTextEditorCommand : TextEditorCommand
+		{
+			protected override bool CanExecute(Context ctx)
+			{
+				return ctx.ReferenceSegment.IsLocalTarget &&
+					DeleteFieldDefCommand.CanExecute(ctx.Nodes);
+			}
+
+			protected override void Execute(Context ctx)
+			{
+				DeleteFieldDefCommand.Execute(ctx.Nodes);
+			}
+
+			protected override void Initialize(Context ctx, MenuItem menuItem)
+			{
+				DeleteFieldDefCommand.Initialize(ctx.Nodes, menuItem);
+			}
+		}
+
+		static void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
+		{
+			if (nodes.Length == 1)
+				menuItem.Header = string.Format("Delete {0}", nodes[0].Text);
+			else
+				menuItem.Header = string.Format("Delete {0} fields", nodes.Length);
 		}
 
 		internal static bool CanExecute(ILSpyTreeNode[] nodes)
@@ -210,6 +238,25 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			}
 		}
 
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+								Icon = "NewField",
+								Category = "AsmEd",
+								Order = 240)]//TODO: Update Order
+		sealed class TheTextEditorCommand : TextEditorCommand
+		{
+			protected override bool CanExecute(Context ctx)
+			{
+				return ctx.ReferenceSegment.IsLocalTarget &&
+					ctx.Nodes.Length == 1 &&
+					ctx.Nodes[0] is TypeTreeNode;
+			}
+
+			protected override void Execute(Context ctx)
+			{
+				CreateFieldDefCommand.Execute(ctx.Nodes);
+			}
+		}
+
 		static bool CanExecute(ILSpyTreeNode[] nodes)
 		{
 			return nodes.Length == 1 &&
@@ -326,6 +373,23 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
 			{
 				FieldDefSettingsCommand.Execute(nodes);
+			}
+		}
+
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+								Icon = "Settings",
+								Category = "AsmEd",
+								Order = 240)]//TODO: Update Order
+		sealed class TheTextEditorCommand : TextEditorCommand
+		{
+			protected override bool CanExecute(Context ctx)
+			{
+				return FieldDefSettingsCommand.CanExecute(ctx.Nodes);
+			}
+
+			protected override void Execute(Context ctx)
+			{
+				FieldDefSettingsCommand.Execute(ctx.Nodes);
 			}
 		}
 

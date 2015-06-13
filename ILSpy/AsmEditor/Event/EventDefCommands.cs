@@ -76,11 +76,39 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 
 			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
 			{
-				if (nodes.Length == 1)
-					menuItem.Header = string.Format("Delete {0}", nodes[0].Text);
-				else
-					menuItem.Header = string.Format("Delete {0} events", nodes.Length);
+				DeleteEventDefCommand.Initialize(nodes, menuItem);
 			}
+		}
+
+		[ExportContextMenuEntry(Header = CMD_NAME,
+								Icon = "Delete",
+								Category = "AsmEd",
+								Order = 240)]//TODO: Update Order
+		sealed class TheTextEditorCommand : TextEditorCommand
+		{
+			protected override bool CanExecute(Context ctx)
+			{
+				return ctx.ReferenceSegment.IsLocalTarget &&
+					DeleteEventDefCommand.CanExecute(ctx.Nodes);
+			}
+
+			protected override void Execute(Context ctx)
+			{
+				DeleteEventDefCommand.Execute(ctx.Nodes);
+			}
+
+			protected override void Initialize(Context ctx, MenuItem menuItem)
+			{
+				DeleteEventDefCommand.Initialize(ctx.Nodes, menuItem);
+			}
+		}
+
+		static void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
+		{
+			if (nodes.Length == 1)
+				menuItem.Header = string.Format("Delete {0}", nodes[0].Text);
+			else
+				menuItem.Header = string.Format("Delete {0} events", nodes.Length);
 		}
 
 		internal static bool CanExecute(ILSpyTreeNode[] nodes)
@@ -233,6 +261,25 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			}
 		}
 
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+								Icon = "NewEvent",
+								Category = "AsmEd",
+								Order = 240)]//TODO: Update Order
+		sealed class TheTextEditorCommand : TextEditorCommand
+		{
+			protected override bool CanExecute(Context ctx)
+			{
+				return ctx.ReferenceSegment.IsLocalTarget &&
+					ctx.Nodes.Length == 1 &&
+					ctx.Nodes[0] is TypeTreeNode;
+			}
+
+			protected override void Execute(Context ctx)
+			{
+				CreateEventDefCommand.Execute(ctx.Nodes);
+			}
+		}
+
 		static bool CanExecute(ILSpyTreeNode[] nodes)
 		{
 			return nodes.Length == 1 &&
@@ -329,6 +376,23 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
 			{
 				EventDefSettingsCommand.Execute(nodes);
+			}
+		}
+
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+								Icon = "Settings",
+								Category = "AsmEd",
+								Order = 240)]//TODO: Update Order
+		sealed class TheTextEditorCommand : TextEditorCommand
+		{
+			protected override bool CanExecute(Context ctx)
+			{
+				return EventDefSettingsCommand.CanExecute(ctx.Nodes);
+			}
+
+			protected override void Execute(Context ctx)
+			{
+				EventDefSettingsCommand.Execute(ctx.Nodes);
 			}
 		}
 

@@ -130,7 +130,7 @@ namespace ICSharpCode.ILSpy
 			ReferenceSegment reference;
 			if (textView != null)
 				reference = textView.GetReferenceSegmentAt(position);
-			else if (listBox != null && listBox.SelectedItem != null)
+			else if (listBox != null && listBox.SelectedItem is SearchResult)
 				reference = new ReferenceSegment { Reference = ((SearchResult)listBox.SelectedItem).MDTokenProvider };
 			else
 				reference = null;

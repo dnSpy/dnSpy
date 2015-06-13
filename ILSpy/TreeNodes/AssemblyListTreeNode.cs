@@ -247,7 +247,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					}
 				}
 			}
-			Debug.Fail("Could not find module node");
 			return null;
 		}
 		
@@ -260,7 +259,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				if (node.LoadedAssembly.IsLoaded && node.LoadedAssembly.AssemblyDefinition == asm)
 					return node;
 			}
-			Debug.Fail("Could not find assembly node");
 			return null;
 		}
 
@@ -273,7 +271,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				if (node.LoadedAssembly == asm)
 					return node;
 			}
-			Debug.Fail("Could not find assembly node");
 			return null;
 		}
 
@@ -297,7 +294,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					return asm.FindTypeNode(def);
 				}
 			}
-			Debug.Fail("Could not find type node");
 			return null;
 		}
 
@@ -335,7 +331,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				}
 			}
 
-			Debug.Fail("Could not find method node");
 			return null;
 		}
 

@@ -332,6 +332,7 @@
     <Compile Include="AsmEditor\SaveModule\SaveSingleModule.xaml.cs">
       <DependentUpon>SaveSingleModule.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AsmEditor\TextEditorCommand.cs" />
     <Compile Include="AsmEditor\ToolbarCommands.cs" />
     <Compile Include="AsmEditor\TreeNodeCommand.cs" />
     <Compile Include="AsmEditor\Types\TypeDefCommands.cs" />

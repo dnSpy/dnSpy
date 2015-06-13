@@ -76,11 +76,39 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 
 			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
 			{
-				if (nodes.Length == 1)
-					menuItem.Header = string.Format("Delete {0}", nodes[0].Text);
-				else
-					menuItem.Header = string.Format("Delete {0} properties", nodes.Length);
+				DeletePropertyDefCommand.Initialize(nodes, menuItem);
 			}
+		}
+
+		[ExportContextMenuEntry(Header = CMD_NAME,
+								Icon = "Delete",
+								Category = "AsmEd",
+								Order = 240)]//TODO: Update Order
+		sealed class TheTextEditorCommand : TextEditorCommand
+		{
+			protected override bool CanExecute(Context ctx)
+			{
+				return ctx.ReferenceSegment.IsLocalTarget &&
+					DeletePropertyDefCommand.CanExecute(ctx.Nodes);
+			}
+
+			protected override void Execute(Context ctx)
+			{
+				DeletePropertyDefCommand.Execute(ctx.Nodes);
+			}
+
+			protected override void Initialize(Context ctx, MenuItem menuItem)
+			{
+				DeletePropertyDefCommand.Initialize(ctx.Nodes, menuItem);
+			}
+		}
+
+		static void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
+		{
+			if (nodes.Length == 1)
+				menuItem.Header = string.Format("Delete {0}", nodes[0].Text);
+			else
+				menuItem.Header = string.Format("Delete {0} properties", nodes.Length);
 		}
 
 		internal static bool CanExecute(ILSpyTreeNode[] nodes)
@@ -232,6 +260,25 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			}
 		}
 
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+								Icon = "NewProperty",
+								Category = "AsmEd",
+								Order = 240)]//TODO: Update Order
+		sealed class TheTextEditorCommand : TextEditorCommand
+		{
+			protected override bool CanExecute(Context ctx)
+			{
+				return ctx.ReferenceSegment.IsLocalTarget &&
+					ctx.Nodes.Length == 1 &&
+					ctx.Nodes[0] is TypeTreeNode;
+			}
+
+			protected override void Execute(Context ctx)
+			{
+				CreatePropertyDefCommand.Execute(ctx.Nodes);
+			}
+		}
+
 		static bool CanExecute(ILSpyTreeNode[] nodes)
 		{
 			return nodes.Length == 1 &&
@@ -330,6 +377,23 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
 			{
 				PropertyDefSettingsCommand.Execute(nodes);
+			}
+		}
+
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+								Icon = "Settings",
+								Category = "AsmEd",
+								Order = 240)]//TODO: Update Order
+		sealed class TheTextEditorCommand : TextEditorCommand
+		{
+			protected override bool CanExecute(Context ctx)
+			{
+				return PropertyDefSettingsCommand.CanExecute(ctx.Nodes);
+			}
+
+			protected override void Execute(Context ctx)
+			{
+				PropertyDefSettingsCommand.Execute(ctx.Nodes);
 			}
 		}
 
