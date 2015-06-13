@@ -99,7 +99,7 @@ namespace ICSharpCode.ILSpy.TextView
 		#region Constructor
 		public DecompilerTextView()
 		{
-			this.Loaded+= new RoutedEventHandler(DecompilerTextView_Loaded);
+			this.Loaded += DecompilerTextView_Loaded;
 			InitializeComponent();
 			
 			textEditor.TextArea.SelectionCornerRadius = 0;
@@ -182,6 +182,7 @@ namespace ICSharpCode.ILSpy.TextView
 
 		void DecompilerTextView_Loaded(object sender, RoutedEventArgs e)
 		{
+			Loaded -= DecompilerTextView_Loaded;
 			ShowLineMargin();
 			
 			textEditor.TextArea.TextView.VisualLinesChanged += (s, _) => iconMargin.InvalidateVisual();
