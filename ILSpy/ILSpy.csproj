@@ -421,7 +421,6 @@
     <Compile Include="TabState.cs" />
     <Compile Include="TextView\ToolTipGenerator.cs" />
     <Compile Include="TreeNodes\CopyTokenContextMenuEntry.cs" />
-    <Compile Include="TreeNodes\CopyXmlDocNameMenuEntry.cs" />
     <Compile Include="TreeNodes\Filters\ChainTreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\Filters\EntryPointTreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\Filters\FilterNothingTreeViewNodeFilter.cs" />
