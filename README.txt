@@ -25,6 +25,9 @@ ILSpy Contributors:
 	Eusebiu Marcu
 	Pent Ploompuu
 
-Microsoft.Windows.Shell.dll is from "Microsoft Ribbon for WPF October 2010" (https://www.microsoft.com/en-us/download/details.aspx?id=11877). It's only used if .NET 4.5 or later is not installed.
+Microsoft.Windows.Shell.dll is from "Microsoft Ribbon for WPF October 2010"
+(https://www.microsoft.com/en-us/download/details.aspx?id=11877). It's only
+used if .NET 4.5 or later is not installed.
 
-The icons are from "Visual Studio Image Library" https://www.microsoft.com/en-us/download/details.aspx?id=35825.
+The icons are from "Visual Studio Image Library"
+https://www.microsoft.com/en-us/download/details.aspx?id=35825.
