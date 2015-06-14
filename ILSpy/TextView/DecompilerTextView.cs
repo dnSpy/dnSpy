@@ -160,6 +160,7 @@ namespace ICSharpCode.ILSpy.TextView
 		void Caret_PositionChanged(object sender, EventArgs e)
 		{
 			MainWindow.Instance.ClosePopups();
+			CloseToolTip();
 
 			if (ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.AutoHighlightRefs) {
 				int offset = textEditor.TextArea.Caret.Offset;
@@ -227,6 +228,11 @@ namespace ICSharpCode.ILSpy.TextView
 		ToolTip tooltip;
 		
 		void TextViewMouseHoverStopped(object sender, MouseEventArgs e)
+		{
+			CloseToolTip();
+		}
+
+		void CloseToolTip()
 		{
 			if (tooltip != null)
 				tooltip.IsOpen = false;
