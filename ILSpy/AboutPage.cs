@@ -55,7 +55,7 @@ namespace ICSharpCode.ILSpy
 		public static void Display(DecompilerTextView textView)
 		{
 			AvalonEditTextOutput output = new AvalonEditTextOutput();
-			output.WriteLine("dnSpy version " + RevisionClass.FullVersion, TextTokenType.Text);
+			output.WriteLine("dnSpy version " + currentVersion.ToString(), TextTokenType.Text);
 			bool checkForUpdateCode = false;
 			if (checkForUpdateCode)
 			output.AddUIElement(
@@ -144,7 +144,7 @@ namespace ICSharpCode.ILSpy
 			};
 		}
 		
-		static readonly Version currentVersion = new Version(RevisionClass.Major + "." + RevisionClass.Minor + "." + RevisionClass.Build + "." + RevisionClass.Revision);
+		static readonly Version currentVersion = typeof(MainWindow).Assembly.GetName().Version;
 		
 		static void ShowAvailableVersion(AvailableVersionInfo availableVersion, StackPanel stackPanel)
 		{

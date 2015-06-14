@@ -19,6 +19,7 @@ namespace UpdateAssemblyInfo
 	// Updates the version numbers in the assembly information.
 	class MainClass
 	{
+		const string DNSPY_VERSION = "1.0.0.0";
 		const string BaseCommit = "d779383cb85003d6dabeb976f0845631e07bf463";
 		const int BaseCommitRev = 1;
 		
@@ -109,6 +110,7 @@ namespace UpdateAssemblyInfo
 				using (StreamReader r = new StreamReader(file.Input)) {
 					content = r.ReadToEnd();
 				}
+				content = content.Replace("$DNSPY_INSERTVERSION$", DNSPY_VERSION);
 				content = content.Replace("$INSERTVERSION$", fullVersionNumber);
 				content = content.Replace("$INSERTMAJORVERSION$", majorVersionNumber);
 				content = content.Replace("$INSERTREVISION$", revisionNumber);

@@ -107,7 +107,7 @@ namespace ICSharpCode.ILSpy
 				} catch (XmlException) {
 					doc = new XDocument(new XElement("dnSpy"));
 				}
-				doc.Root.SetAttributeValue("version", RevisionClass.Major + "." + RevisionClass.Minor + "." + RevisionClass.Build + "." + RevisionClass.Revision);
+				doc.Root.SetAttributeValue("version", typeof(MainWindow).Assembly.GetName().Version.ToString());
 				action(doc.Root);
 				doc.Save(config, SaveOptions.None);
 			}

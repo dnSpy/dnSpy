@@ -33,7 +33,7 @@
 			</dependentAssembly>
 			<dependentAssembly>
 				<assemblyIdentity name="dnSpy" publicKeyToken="d4bfe873e7598c49" culture="neutral"/>
-				<bindingRedirect oldVersion="1.0.0.0-99.9.9.9" newVersion="$INSERTVERSION$"/>
+				<bindingRedirect oldVersion="1.0.0.0-99.9.9.9" newVersion="$DNSPY_INSERTVERSION$"/>
 			</dependentAssembly>
 			<dependentAssembly>
 				<assemblyIdentity name="dnlib" publicKeyToken="50e96378b6e77999" culture="neutral"/>
