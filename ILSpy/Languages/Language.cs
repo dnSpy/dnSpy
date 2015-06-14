@@ -161,7 +161,7 @@ namespace ICSharpCode.ILSpy
 		public void WriteCommentLineDeclaringType(ITextOutput output, IMemberDef member)
 		{
 			WriteComment(output, string.Empty);
-			output.WriteReference(IdentifierEscaper.Escape(TypeToString(member.DeclaringType, includeNamespace: true)), member.DeclaringType, TextTokenType.Comment);
+			output.WriteReference(TypeToString(member.DeclaringType, includeNamespace: true), member.DeclaringType, TextTokenType.Comment);
 			output.WriteLine();
 		}
 
@@ -212,8 +212,11 @@ namespace ICSharpCode.ILSpy
 				output.WriteSpace();
 				WriteToolTip(output, gp.Owner, typeAttributes);
 			}
-			else
-				output.Write(IdentifierEscaper.Escape(member.ToString()), TextTokenHelper.GetTextTokenType(member));
+			else {
+				//TODO: This should be escaped but since it contains whitespace, parens, etc,
+				//		we can't pass it to IdentifierEscaper.Escape().
+				output.Write(member.ToString(), TextTokenHelper.GetTextTokenType(member));
+			}
 		}
 
 		public virtual void WriteToolTip(ITextOutput output, IVariable variable, string name)
