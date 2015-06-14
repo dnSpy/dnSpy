@@ -110,7 +110,21 @@ namespace ICSharpCode.ILSpy
 		}
 
 		IEnumerable<TabStateDecompile> AllTabStates {
-			get { return tabGroupsManager.AllTabStates; }
+			get {
+				// Return the visible tabs first
+				foreach (var tabManager in tabGroupsManager.AllTabGroups) {
+					var tabState = tabManager.ActiveTabState;
+					if (tabState != null)
+						yield return tabState;
+				}
+				foreach (var tabManager in tabGroupsManager.AllTabGroups) {
+					var active = tabManager.ActiveTabState;
+					foreach (var tabState in tabManager.AllTabStates) {
+						if (tabState != active)
+							yield return tabState;
+					}
+				}
+			}
 		}
 
 		IEnumerable<TabStateDecompile> AllVisibleTabStates {
