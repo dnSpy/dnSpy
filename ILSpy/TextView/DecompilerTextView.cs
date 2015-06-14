@@ -273,19 +273,8 @@ namespace ICSharpCode.ILSpy.TextView
 			} else if (segment.Reference is GenericParam) {
 				return GenerateToolTip((GenericParam)segment.Reference);
 			} else if (segment.Reference is IMemberRef) {
-				IMemberRef mr = (IMemberRef)segment.Reference;
-				IMemberRef resolvedRef = mr;
-				// if possible, resolve the reference
-				if (mr is ITypeDefOrRef) {
-					resolvedRef = ((ITypeDefOrRef)mr).ResolveTypeDef() ?? mr;
-				} else if (mr is IMethod && ((IMethod)mr).IsMethod) {
-					resolvedRef = ((IMethod)mr).ResolveMethodDef() ?? mr;
-				} else if (mr is IField && ((IField)mr).IsField) {
-					resolvedRef = ((IField)mr).ResolveFieldDef() ?? mr;
-				} else {
-					Debug.Assert(mr is PropertyDef || mr is EventDef, "Unknown IMemberRef");
-				}
-
+				var mr = (IMemberRef)segment.Reference;
+				var resolvedRef = Resolve(mr) ?? mr;
 				var genFirstLine = new ToolTipGenerator();
 				MainWindow.Instance.GetLanguage(this).WriteToolTip(genFirstLine.TextOutput, mr, null);
 				var toolTipGen = new ToolTipGenerator();
@@ -306,6 +295,18 @@ namespace ICSharpCode.ILSpy.TextView
 				return GenerateToolTip(ilVar.OriginalVariable, ilVar.Name);
 			}
 
+			return null;
+		}
+
+		static IMemberRef Resolve(IMemberRef mr)
+		{
+			if (mr is ITypeDefOrRef)
+				return ((ITypeDefOrRef)mr).ResolveTypeDef();
+			if (mr is IMethod && ((IMethod)mr).IsMethod)
+				return ((IMethod)mr).ResolveMethodDef();
+			if (mr is IField)
+				return ((IField)mr).ResolveFieldDef();
+			Debug.Assert(mr is PropertyDef || mr is EventDef || mr is GenericParam, "Unknown IMemberRef");
 			return null;
 		}
 
@@ -1398,8 +1399,11 @@ namespace ICSharpCode.ILSpy.TextView
 
 			var ma = a.Reference as IMemberRef;
 			var mb = b.Reference as IMemberRef;
-			if (ma != null && mb != null)
+			if (ma != null && mb != null) {
+				ma = Resolve(ma) ?? ma;
+				mb = Resolve(mb) ?? mb;
 				return new SigComparer(SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable).Equals(ma, mb);
+			}
 
 			// Labels are strings, but the strings might not be the same reference, so make sure
 			// to do the comparison as strings.
