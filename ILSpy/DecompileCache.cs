@@ -21,6 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using dnlib.DotNet;
+using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
@@ -210,16 +212,60 @@ namespace ICSharpCode.ILSpy
 		public void Clear(HashSet<LoadedAssembly> asms)
 		{
 			lock (lockObj) {
-				foreach (var key in cachedItems.Keys.ToArray()) {
-					foreach (var node in key.TreeNodes) {
-						var asmNode = MainWindow.GetAssemblyTreeNode(node);
-						if (asmNode == null || asms.Contains(asmNode.LoadedAssembly)) {
-							cachedItems.Remove(key);
-							break;
-						}
+				foreach (var kv in cachedItems.ToArray()) {
+					if (IsInModifiedAssembly(asms, kv.Key.TreeNodes) ||
+						IsInModifiedAssembly(asms, kv.Value)) {
+						cachedItems.Remove(kv.Key);
+						continue;
 					}
 				}
 			}
+		}
+
+		internal static bool IsInModifiedAssembly(HashSet<LoadedAssembly> asms, ILSpyTreeNode[] nodes)
+		{
+			foreach (var node in nodes) {
+				var asmNode = MainWindow.GetAssemblyTreeNode(node);
+				if (asmNode == null || asms.Contains(asmNode.LoadedAssembly))
+					return true;
+			}
+
+			return false;
+		}
+
+		static bool IsInModifiedAssembly(HashSet<LoadedAssembly> asms, Item item)
+		{
+			var textOutput = item.TextOutput;
+			if (textOutput == null && item.WeakTextOutput != null)
+				textOutput = (AvalonEditTextOutput)item.WeakTextOutput.Target;
+			if (textOutput == null)
+				return true;
+
+			return IsInModifiedAssembly(asms, textOutput.References);
+		}
+
+		internal static bool IsInModifiedAssembly(HashSet<LoadedAssembly> asms, TextSegmentCollection<ReferenceSegment> references)
+		{
+			var checkedAsmRefs = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
+			foreach (var refSeg in references) {
+				var r = refSeg.Reference;
+				IAssembly asmRef = null;
+				if (r is IType)
+					asmRef = (r as IType).DefinitionAssembly;
+				if (asmRef == null && r is IMemberRef) {
+					var type = ((IMemberRef)r).DeclaringType;
+					if (type != null)
+						asmRef = type.DefinitionAssembly;
+				}
+				if (asmRef != null && !checkedAsmRefs.Contains(asmRef)) {
+					checkedAsmRefs.Add(asmRef);
+					var asm = MainWindow.Instance.CurrentAssemblyList.FindAssemblyByAssemblyName(asmRef.FullName);
+					if (asm != null && asms.Contains(asm))
+						return true;
+				}
+			}
+
+			return false;
 		}
 	}
 }

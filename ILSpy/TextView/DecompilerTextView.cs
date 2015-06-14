@@ -84,6 +84,10 @@ namespace ICSharpCode.ILSpy.TextView
 			get { return textEditor; }
 		}
 
+		internal TextSegmentCollection<ReferenceSegment> References {
+			get { return references; }
+		}
+
 		static DecompilerTextView() {
 			HighlightingManager.Instance.RegisterHighlighting(
 				"ILAsm", new string[] { ".il" },

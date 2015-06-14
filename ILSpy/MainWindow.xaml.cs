@@ -2585,12 +2585,10 @@ namespace ICSharpCode.ILSpy
 
 		static bool MustRefresh(TabStateDecompile tabState, LoadedAssembly asm)
 		{
-			foreach (var node in tabState.DecompiledNodes) {
-				var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
-				if (asmNode == null || asmNode.LoadedAssembly == asm)
-					return true;
-			}
-			return false;
+			var asms = new HashSet<LoadedAssembly>();
+			asms.Add(asm);
+			return DecompileCache.IsInModifiedAssembly(asms, tabState.DecompiledNodes) ||
+				DecompileCache.IsInModifiedAssembly(asms, tabState.TextView.References);
 		}
 
 		internal void RefreshCodeCSharp(bool disassembleIL, bool decompileILAst, bool decompileCSharp, bool decompileVB)
