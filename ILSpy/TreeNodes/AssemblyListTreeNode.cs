@@ -286,7 +286,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				TypeTreeNode decl = FindTypeNode(def.DeclaringType);
 				if (decl != null) {
 					decl.EnsureChildrenFiltered();
-					return decl.Children.OfType<TypeTreeNode>().FirstOrDefault(t => t.TypeDefinition == def && !t.IsHidden);
+					return decl.Children.OfType<TypeTreeNode>().FirstOrDefault(t => t.TypeDefinition == def);
 				}
 			} else {
 				AssemblyTreeNode asm = FindModuleNode(def.Module);
@@ -309,29 +309,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (typeNode == null)
 				return null;
 			typeNode.EnsureChildrenFiltered();
-			MethodTreeNode methodNode = typeNode.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def && !m.IsHidden);
-			if (methodNode != null)
-				return methodNode;
-			foreach (var p in typeNode.Children.OfType<ILSpyTreeNode>()) {
-				if (p.IsHidden)
-					continue;
-
-				// method might be a child of a property or event
-				if (p is PropertyTreeNode || p is EventTreeNode) {
-					p.EnsureChildrenFiltered();
-					methodNode = p.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def);
-					if (methodNode != null) {
-						// If the requested method is a property or event accessor, and accessors are
-						// hidden in the UI, then return the owning property or event.
-						if (methodNode.IsHidden)
-							return p;
-						else
-							return methodNode;
-					}
-				}
-			}
-
-			return null;
+			return typeNode.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def);
 		}
 
 		/// <summary>
@@ -346,9 +324,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (typeNode == null)
 				return null;
 			typeNode.EnsureChildrenFiltered();
-			var node = typeNode.Children.OfType<FieldTreeNode>().FirstOrDefault(m => m.FieldDefinition == def && !m.IsHidden);
-			Debug.Assert(node != null, "Could not find field node");
-			return node;
+			return typeNode.Children.OfType<FieldTreeNode>().FirstOrDefault(m => m.FieldDefinition == def);
 		}
 
 		/// <summary>
@@ -363,9 +339,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (typeNode == null)
 				return null;
 			typeNode.EnsureChildrenFiltered();
-			var node = typeNode.Children.OfType<PropertyTreeNode>().FirstOrDefault(m => m.PropertyDefinition == def && !m.IsHidden);
-			Debug.Assert(node != null, "Could not find property node");
-			return node;
+			return typeNode.Children.OfType<PropertyTreeNode>().FirstOrDefault(m => m.PropertyDefinition == def);
 		}
 
 		/// <summary>
@@ -380,9 +354,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (typeNode == null)
 				return null;
 			typeNode.EnsureChildrenFiltered();
-			var node = typeNode.Children.OfType<EventTreeNode>().FirstOrDefault(m => m.EventDefinition == def && !m.IsHidden);
-			Debug.Assert(node != null, "Could not find event node");
-			return node;
+			return typeNode.Children.OfType<EventTreeNode>().FirstOrDefault(m => m.EventDefinition == def);
 		}
 		#endregion
 
