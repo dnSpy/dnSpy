@@ -1366,7 +1366,7 @@ namespace ICSharpCode.ILSpy
 						foreach (var node in tabState.DecompiledNodes) {
 							var asmNode = GetAssemblyTreeNode(node);
 							if (asmNode != null && !oldAssemblies.Contains(asmNode.LoadedAssembly))
-								newNodes.Add(asmNode);
+								newNodes.Add(node);
 						}
 						if (newNodes.Count == 0 && ActiveTabState != tabState) {
 							var tabManager = (TabManager<TabStateDecompile>)tabState.Owner;
@@ -1784,11 +1784,12 @@ namespace ICSharpCode.ILSpy
 
 		bool? DecompileNodes(TabStateDecompile tabState, DecompilerTextViewState state, bool recordHistory, Language language, ILSpyTreeNode[] nodes, bool forceDecompile = false)
 		{
+			if (tabState.ignoreDecompilationRequests)
+				return null;
+
 			// Ignore all nodes that have been deleted
 			nodes = FilterOutDeletedNodes(nodes);
 
-			if (tabState.ignoreDecompilationRequests)
-				return null;
 			if (tabState.HasDecompiled && !forceDecompile && tabState.Equals(nodes, language)) {
 				if (state != null)
 					tabState.TextView.EditorPositionState = state.EditorPositionState;
