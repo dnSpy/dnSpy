@@ -17,14 +17,24 @@
 			<Path x:Name="upArrow"
 			      Visibility="{Binding Path=Column.SortDirection, ConverterParameter={x:Static ctrls:ColumnSortDirection.Ascending}, RelativeSource={RelativeSource AncestorType={x:Type GridViewColumnHeader}}, Converter={StaticResource ColumnSortDirectionToVisibilityConverter}}"
 			      StrokeThickness = "1"
-			      Fill            = "{DynamicResource SortableGridViewColumnArrowBackground}"
+			      Fill            = "{DynamicResource HeaderGlyph}"
 			      Data            = "M 5,10 L 15,10 L 10,5 L 5,10"/>
 			<Path x:Name="downArrow"
 			      Visibility="{Binding Path=Column.SortDirection, ConverterParameter={x:Static ctrls:ColumnSortDirection.Descending}, RelativeSource={RelativeSource AncestorType={x:Type GridViewColumnHeader}}, Converter={StaticResource ColumnSortDirectionToVisibilityConverter}}"
 			      StrokeThickness = "1"
-			      Fill            = "{DynamicResource SortableGridViewColumnArrowBackground}"
+			      Fill            = "{DynamicResource HeaderGlyph}"
 			      Data            = "M 5,5 L 10,10 L 15,5 L 5,5"/>
 		</StackPanel>
+		<DataTemplate.Triggers>
+			<Trigger Property="IsMouseOver" Value="true">
+				<Setter TargetName="upArrow"
+						Property="Fill"
+						Value="{DynamicResource HeaderMouseOverGlyph}"/>
+				<Setter TargetName="downArrow"
+						Property="Fill"
+						Value="{DynamicResource HeaderMouseOverGlyph}"/>
+			</Trigger>
+		</DataTemplate.Triggers>
 	</DataTemplate>
 
 	<!-- DockedPane -->

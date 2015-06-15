@@ -1949,7 +1949,7 @@
         <Setter Property="Padding"
                 Value="0"/>
         <Setter Property="Background"
-                Value="{DynamicResource GridViewColumnHeaderBorderBackground}"/>
+                Value="{DynamicResource HeaderSeparatorLine}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Thumb}">
@@ -1971,15 +1971,15 @@
         <Setter Property="VerticalContentAlignment"
                 Value="Center"/>
         <Setter Property="Background"
-                Value="{DynamicResource GridViewColumnHeaderBackground}"/>
+                Value="{DynamicResource HeaderDefault}"/>
         <Setter Property="BorderBrush"
-                Value="{DynamicResource GridViewColumnHeaderBorderBackground}"/>
+                Value="{DynamicResource HeaderSeparatorLine}"/>
         <Setter Property="BorderThickness"
                 Value="0"/>
         <Setter Property="Padding"
                 Value="6,0,6,0"/>
         <Setter Property="Foreground"
-                Value="{DynamicResource SystemColorsControlText}"/>
+                Value="{DynamicResource HeaderDefaultText}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
@@ -1993,9 +1993,6 @@
                                     <RowDefinition MaxHeight="7"/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <Rectangle Name="UpperHighlight"
-                                           Visibility="Collapsed"
-                                           Fill="{DynamicResource GridViewColumnHeaderUpperHighlightFill}"/>
                                 <Border Grid.RowSpan="2"
                                         Padding="{TemplateBinding Padding}">
                                     <ContentPresenter Name="HeaderContent"
@@ -2007,12 +2004,6 @@
                                 </Border>
                             </Grid>
                         </Border>
-                        <Border Name="HeaderHoverBorder"
-                                BorderThickness="1,0,1,1"
-                                Margin="1,1,0,0"/>
-                        <Border Name="HeaderPressBorder"
-                                BorderThickness="1,1,1,0"
-                                Margin="1,0,0,1"/>
                         <Canvas>
                             <Thumb x:Name="PART_HeaderGripper"
                                    Style="{StaticResource GridViewColumnHeaderGripper}"/>
@@ -2023,40 +2014,17 @@
                                  Value="true">
                             <Setter TargetName="HeaderBorder"
                                     Property="Background"
-                                    Value="{DynamicResource GridViewColumnHeaderHoverBackground}"/>
-                            <Setter TargetName="HeaderHoverBorder"
-                                    Property="BorderBrush"
-                                    Value="{DynamicResource GridViewColumnHeaderMouseOverHeaderHoverBorder}"/>
-                            <Setter TargetName="UpperHighlight"
-                                    Property="Visibility"
-                                    Value="Visible"/>
-                            <Setter TargetName="PART_HeaderGripper"
-                                    Property="Background"
-                                    Value="Transparent"/>
+                                    Value="{DynamicResource HeaderMouseOver}"/>
+							<Setter Property="Foreground"
+									Value="{DynamicResource HeaderMouseOverText}"/>
                         </Trigger>
                         <Trigger Property="IsPressed"
                                  Value="true">
                             <Setter TargetName="HeaderBorder"
                                     Property="Background"
-                                    Value="{DynamicResource GridViewColumnHeaderPressBackground}"/>
-                            <Setter TargetName="HeaderHoverBorder"
-                                    Property="BorderBrush"
-                                    Value="{DynamicResource GridViewColumnHeaderPressHoverBorder}"/>
-                            <Setter TargetName="HeaderPressBorder"
-                                    Property="BorderBrush"
-                                    Value="{DynamicResource GridViewColumnHeaderPressBorder}"/>
-                            <Setter TargetName="UpperHighlight"
-                                    Property="Visibility"
-                                    Value="Visible"/>
-                            <Setter TargetName="UpperHighlight"
-                                    Property="Fill"
-                                    Value="{DynamicResource GridViewColumnHeaderPressUpperHighlightFill}"/>
-                            <Setter TargetName="PART_HeaderGripper"
-                                    Property="Visibility"
-                                    Value="Hidden"/>
-                            <Setter TargetName="HeaderContent"
-                                    Property="Margin"
-                                    Value="1,1,0,0"/>
+                                    Value="{DynamicResource HeaderMouseDown}"/>
+							<Setter Property="Foreground"
+									Value="{DynamicResource HeaderMouseDownText}"/>
                         </Trigger>
                         <Trigger Property="Height"
                                  Value="Auto">
@@ -2082,7 +2050,7 @@
                         <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
                             <Canvas Name="PART_FloatingHeaderCanvas">
                                 <Rectangle Opacity="0.4697"
-                                           Fill="{DynamicResource GridViewColumnHeaderFloatingHeaderCanvasFill}"
+                                           Fill="{DynamicResource HeaderMouseDown}"
                                            Width="{TemplateBinding ActualWidth}"
                                            Height="{TemplateBinding ActualHeight}"/>
                             </Canvas>
@@ -2235,9 +2203,6 @@
                                     <RowDefinition MaxHeight="11"/>
                                     <RowDefinition/>
                                 </Grid.RowDefinitions>
-                                <Rectangle Name="UpperHighlight"
-                                           Visibility="Collapsed"
-                                           Fill="{DynamicResource GridViewItemContainerUpperHighlightFill}"/>
                                 <GridViewRowPresenter Grid.RowSpan="2"
                                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                                       SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
@@ -2248,28 +2213,16 @@
                         <Trigger Property="IsMouseOver"
                                  Value="true">
                             <Setter Property="Background"
-                                    Value="{DynamicResource ListItemHoverFill}"/>
+                                    Value="{DynamicResource GridViewListItemHoverFill}"/>
                             <Setter Property="BorderBrush"
                                     Value="{DynamicResource GridViewItemContainerMouseOverHoverBorder}"/>
-                            <Setter TargetName="UpperHighlight"
-                                    Property="Visibility"
-                                    Value="Visible"/>
                         </Trigger>
                         <Trigger Property="IsSelected"
                                  Value="true">
                             <Setter Property="Background"
-                                    Value="{DynamicResource ListItemSelectedFill}"/>
+                                    Value="{DynamicResource GridViewListItemSelectedFill}"/>
                             <Setter Property="BorderBrush"
                                     Value="{DynamicResource GridViewItemContainerSelectedBorder}"/>
-                            <Setter TargetName="InnerBorder"
-                                    Property="BorderBrush"
-                                    Value="{DynamicResource GridViewItemContainerSelectedInnerBorder}"/>
-                            <Setter TargetName="UpperHighlight"
-                                    Property="Visibility"
-                                    Value="Visible"/>
-                            <Setter TargetName="UpperHighlight"
-                                    Property="Fill"
-                                    Value="{DynamicResource GridViewItemContainerSelectedUpperHighlightFill}"/>
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -2279,7 +2232,7 @@
                                            Value="false"/>
                             </MultiTrigger.Conditions>
                             <Setter Property="Background"
-                                    Value="{DynamicResource ListItemSelectedInactiveFill}"/>
+                                    Value="{DynamicResource GridViewListItemSelectedInactiveFill}"/>
                             <Setter Property="BorderBrush"
                                     Value="{DynamicResource GridViewItemContainerSelectedInactiveBorder}"/>
                         </MultiTrigger>
@@ -2291,7 +2244,7 @@
                                            Value="true"/>
                             </MultiTrigger.Conditions>
                             <Setter Property="Background"
-                                    Value="{DynamicResource ListItemSelectedHoverFill}"/>
+                                    Value="{DynamicResource GridViewListItemSelectedHoverFill}"/>
                             <Setter Property="BorderBrush"
                                     Value="{DynamicResource GridViewItemContainerSelectedMouseOverBorder}"/>
                         </MultiTrigger>

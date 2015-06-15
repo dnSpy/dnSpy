@@ -1323,50 +1323,35 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#CCCEDB",
 				BackgroundResourceKey = "GridViewBorder",
 			},
-			new LinearGradientColorInfo(ColorType.GridViewColumnHeaderBorderBackground, new Point(0, 1), "GridViewColumnHeader border background", 0, 1) {
-				ResourceKey = "GridViewColumnHeaderBorderBackground",
-				DefaultForeground = "#E0E3E6",
-				DefaultBackground = "#E0E3E6",
+			new BrushColorInfo(ColorType.HeaderDefault, "Grid Header Default") {
+				DefaultForeground = "#FF1E1E1E",
+				ForegroundResourceKey = "HeaderDefaultText",
+				DefaultBackground = "#FFF5F5F5",
+				BackgroundResourceKey = "HeaderDefault",
 			},
-			new LinearGradientColorInfo(ColorType.GridViewColumnHeaderBackground, new Point(0, 1), "GridViewColumnHeader background", 0, 0.4091, 1) {
-				ResourceKey = "GridViewColumnHeaderBackground",
-				DefaultForeground = "#F5F5F5",
-				DefaultBackground = "#F5F5F5",
-				DefaultColor3 = "#F5F5F5",
+			new BrushColorInfo(ColorType.HeaderGlyph, "Grid Header Glyph") {
+				DefaultBackground = "#FF717171",
+				BackgroundResourceKey = "HeaderGlyph",
 			},
-			new LinearGradientColorInfo(ColorType.GridViewColumnHeaderHoverBackground, new Point(0, 1), "GridViewColumnHeader hover background", 0, 1) {
-				ResourceKey = "GridViewColumnHeaderHoverBackground",
-				DefaultForeground = "#1C97EA",
-				DefaultBackground = "#1C97EA",
+			new BrushColorInfo(ColorType.HeaderMouseDown, "Grid Header Mouse Down") {
+				DefaultForeground = "#FFFFFFFF",
+				ForegroundResourceKey = "HeaderMouseDownText",
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "HeaderMouseDown",
 			},
-			new LinearGradientColorInfo(ColorType.GridViewColumnHeaderPressBackground, new Point(0, 1), "GridViewColumnHeader press background", 0, 1) {
-				ResourceKey = "GridViewColumnHeaderPressBackground",
-				DefaultForeground = "#007ACC",
-				DefaultBackground = "#007ACC",
+			new BrushColorInfo(ColorType.HeaderMouseOver, "Grid Header Mouse Over") {
+				DefaultForeground = "#FF1E1E1E",
+				ForegroundResourceKey = "HeaderMouseOverText",
+				DefaultBackground = "#FFC9DEF5",
+				BackgroundResourceKey = "HeaderMouseOver",
 			},
-			new BrushColorInfo(ColorType.GridViewColumnHeaderUpperHighlightFill, "GridViewColumnHeader upper highlight fill") {
-				DefaultBackground = "Transparent",
-				BackgroundResourceKey = "GridViewColumnHeaderUpperHighlightFill",
+			new BrushColorInfo(ColorType.HeaderMouseOverGlyph, "Grid Header Mouse Over Glyph") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "HeaderMouseOverGlyph",
 			},
-			new BrushColorInfo(ColorType.GridViewColumnHeaderMouseOverHeaderHoverBorder, "GridViewColumnHeader mouse over header hover border") {
-				DefaultBackground = "#1C97EA",
-				BackgroundResourceKey = "GridViewColumnHeaderMouseOverHeaderHoverBorder",
-			},
-			new BrushColorInfo(ColorType.GridViewColumnHeaderPressHoverBorder, "GridViewColumnHeader press hover border") {
-				DefaultBackground = "#007ACC",
-				BackgroundResourceKey = "GridViewColumnHeaderPressHoverBorder",
-			},
-			new BrushColorInfo(ColorType.GridViewColumnHeaderPressBorder, "GridViewColumnHeader press border") {
-				DefaultBackground = "#007ACC",
-				BackgroundResourceKey = "GridViewColumnHeaderPressBorder",
-			},
-			new BrushColorInfo(ColorType.GridViewColumnHeaderPressUpperHighlightFill, "GridViewColumnHeader press upper highlight fill") {
-				DefaultBackground = "Transparent",
-				BackgroundResourceKey = "GridViewColumnHeaderPressUpperHighlightFill",
-			},
-			new BrushColorInfo(ColorType.GridViewColumnHeaderFloatingHeaderCanvasFill, "GridViewColumnHeaderFloatingHeaderCanvasFill") {
-				DefaultBackground = "#FF000000",
-				BackgroundResourceKey = "GridViewColumnHeaderFloatingHeaderCanvasFill",
+			new BrushColorInfo(ColorType.HeaderSeparatorLine, "Grid Header Separator Line") {
+				DefaultBackground = "#FFCCCEDB",
+				BackgroundResourceKey = "HeaderSeparatorLine",
 			},
 			new BrushColorInfo(ColorType.GridViewListViewForeground, "GridView ListView foreground") {
 				DefaultBackground = "#1E1E1E",
@@ -1377,28 +1362,24 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "GridViewListViewItemFocusVisualStroke",
 			},
 			new LinearGradientColorInfo(ColorType.GridViewListItemHoverFill, new Point(0, 1), "GridView ListItem hover fill", 0, 1) {
-				ResourceKey = "ListItemHoverFill",
+				ResourceKey = "GridViewListItemHoverFill",
 				DefaultForeground = "#5CADFF",
 				DefaultBackground = "#5CADFF",
 			},
 			new LinearGradientColorInfo(ColorType.GridViewListItemSelectedFill, new Point(0, 1), "GridView ListItem selected fill", 0, 1) {
-				ResourceKey = "ListItemSelectedFill",
+				ResourceKey = "GridViewListItemSelectedFill",
 				DefaultForeground = "#3399FF",
 				DefaultBackground = "#3399FF",
 			},
 			new LinearGradientColorInfo(ColorType.GridViewListItemSelectedHoverFill, new Point(0, 1), "GridView ListItem selected hover fill", 0, 1) {
-				ResourceKey = "ListItemSelectedHoverFill",
+				ResourceKey = "GridViewListItemSelectedHoverFill",
 				DefaultForeground = "#85C2FF",
 				DefaultBackground = "#85C2FF",
 			},
 			new LinearGradientColorInfo(ColorType.GridViewListItemSelectedInactiveFill, new Point(0, 1), "GridView ListItem selected inactive fill", 0, 1) {
-				ResourceKey = "ListItemSelectedInactiveFill",
+				ResourceKey = "GridViewListItemSelectedInactiveFill",
 				DefaultForeground = "#AAAAAA",
 				DefaultBackground = "#AAAAAA",
-			},
-			new BrushColorInfo(ColorType.GridViewItemContainerUpperHighlightFill, "GridView ItemContainer upper highlight fill") {
-				DefaultBackground = "Transparent",
-				BackgroundResourceKey = "GridViewItemContainerUpperHighlightFill",
 			},
 			new BrushColorInfo(ColorType.GridViewItemContainerMouseOverHoverBorder, "GridView ItemContainer mouse over hover border") {
 				DefaultBackground = "#5CADFF",
@@ -1408,14 +1389,6 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#3399FF",
 				BackgroundResourceKey = "GridViewItemContainerSelectedBorder",
 			},
-			new BrushColorInfo(ColorType.GridViewItemContainerSelectedInnerBorder, "GridView ItemContainer selected inner border") {
-				DefaultBackground = "Transparent",
-				BackgroundResourceKey = "GridViewItemContainerSelectedInnerBorder",
-			},
-			new BrushColorInfo(ColorType.GridViewItemContainerSelectedUpperHighlightFill, "GridView ItemContainer selected upper highlight fill") {
-				DefaultBackground = "Transparent",
-				BackgroundResourceKey = "GridViewItemContainerSelectedUpperHighlightFill",
-			},
 			new BrushColorInfo(ColorType.GridViewItemContainerSelectedInactiveBorder, "GridView ItemContainer selected inactive border") {
 				DefaultBackground = "#AAAAAA",
 				BackgroundResourceKey = "GridViewItemContainerSelectedInactiveBorder",
@@ -1423,10 +1396,6 @@ namespace ICSharpCode.ILSpy.dntheme
 			new BrushColorInfo(ColorType.GridViewItemContainerSelectedMouseOverBorder, "GridView ItemContainer selected mouse over border brush") {
 				DefaultBackground = "#85C2FF",
 				BackgroundResourceKey = "GridViewItemContainerSelectedMouseOverBorder",
-			},
-			new BrushColorInfo(ColorType.SortableGridViewColumnArrowBackground, "SortableGridViewColumn arrow background") {
-				DefaultBackground = "#1E1E1E",
-				BackgroundResourceKey = "SortableGridViewColumnArrowBackground",
 			},
 			new BrushColorInfo(ColorType.PaneBorder, "Pane border") {
 				DefaultBackground = "#828790",

@@ -305,30 +305,23 @@
 		<color name="codetooltipborder" bg="#FF4D4D50" />
 		<color name="gridviewbackground" bg="#252526" />
 		<color name="gridviewborder" bg="#3F3F46" />
-		<color name="gridviewcolumnheaderborderbackground" fg="#333337" bg="#333337" />
-		<color name="gridviewcolumnheaderbackground" fg="#252526" bg="#252526" color3="#252526" />
-		<color name="gridviewcolumnheaderhoverbackground" fg="#1C97EA" bg="#1C97EA" />
-		<color name="gridviewcolumnheaderpressbackground" fg="#007ACC" bg="#007ACC" />
-		<color name="gridviewcolumnheaderupperhighlightfill" bg="Transparent" />
-		<color name="gridviewcolumnheadermouseoverheaderhoverborder" bg="#1C97EA" />
-		<color name="gridviewcolumnheaderpresshoverborder" bg="#007ACC" />
-		<color name="gridviewcolumnheaderpressborder" bg="#007ACC" />
-		<color name="gridviewcolumnheaderpressupperhighlightfill" bg="Transparent" />
-		<color name="gridviewcolumnheaderfloatingheadercanvasfill" bg="#FF000000" />
+		<color name="headerdefault" fg="#FFF1F1F1" bg="#FF252526" />
+		<color name="headerglyph" bg="#FFF1F1F1" />
+		<color name="headermousedown" fg="#FFFFFFFF" bg="#FF007ACC" />
+		<color name="headermousedownglyph" bg="#FFFFFFFF" />
+		<color name="headermouseover" fg="#FFF1F1F1" bg="#FF3E3E40" />
+		<color name="headermouseoverglyph" bg="#FFFFFFFF" />
+		<color name="headerseparatorline" bg="#FF3F3F46" />
 		<color name="gridviewlistviewforeground" bg="#F1F1F1" />
 		<color name="gridviewlistviewitemfocusvisualstroke" bg="#3399FF" />
 		<color name="gridviewlistitemhoverfill" fg="#1F5C99" bg="#1F5C99" />
 		<color name="gridviewlistitemselectedfill" fg="#3399FF" bg="#3399FF" />
 		<color name="gridviewlistitemselectedhoverfill" fg="#297ACC" bg="#297ACC" />
 		<color name="gridviewlistitemselectedinactivefill" fg="#666666" bg="#666666" />
-		<color name="gridviewitemcontainerupperhighlightfill" bg="Transparent" />
 		<color name="gridviewitemcontainermouseoverhoverborder" bg="#1F5C99" />
 		<color name="gridviewitemcontainerselectedborder" bg="#3399FF" />
-		<color name="gridviewitemcontainerselectedinnerborder" bg="Transparent" />
-		<color name="gridviewitemcontainerselectedupperhighlightfill" bg="Transparent" />
 		<color name="gridviewitemcontainerselectedinactiveborder" bg="#666666" />
 		<color name="gridviewitemcontainerselectedmouseoverborder" bg="#297ACC" />
-		<color name="sortablegridviewcolumnarrowbackground" bg="#F1F1F1" />
 		<color name="paneborder" bg="#505050" />
 		<color name="dockedpaneclosebuttonbackground" fg="#303030" bg="#383838" color3="#404040" color4="#484848" />
 		<color name="dockedpaneclosebuttonborder" bg="#505050" />
