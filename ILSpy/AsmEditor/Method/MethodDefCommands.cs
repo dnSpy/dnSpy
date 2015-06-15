@@ -138,12 +138,51 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			{
 				public readonly TypeDef OwnerType;
 				public readonly int MethodIndex;
+				public readonly List<PropEventInfo> PropEventInfos;
+
+				public enum PropEventType
+				{
+					PropertyGetter,
+					PropertySetter,
+					PropertyOther,
+					EventAdd,
+					EventInvoke,
+					EventRemove,
+					EventOther,
+				}
+
+				public struct PropEventInfo
+				{
+					public readonly ICodedToken PropOrEvent;
+					public readonly PropEventType PropEventType;
+					public readonly int Index;
+
+					public PropEventInfo(ICodedToken propOrEvt, PropEventType propEventType, int index)
+					{
+						this.PropOrEvent = propOrEvt;
+						this.PropEventType = propEventType;
+						this.Index = index;
+					}
+				}
 
 				public ModelInfo(MethodDef method)
 				{
 					this.OwnerType = method.DeclaringType;
 					this.MethodIndex = this.OwnerType.Methods.IndexOf(method);
 					Debug.Assert(this.MethodIndex >= 0);
+
+					this.PropEventInfos = new List<PropEventInfo>();
+				}
+
+				public void AddMethods(ICodedToken propOrEvent, PropEventType propEvtType, IList<MethodDef> propEvtMethods, MethodDef method)
+				{
+					while (true) {
+						int index = propEvtMethods.IndexOf(method);
+						if (index < 0)
+							break;
+						propEvtMethods.RemoveAt(index);
+						PropEventInfos.Add(new PropEventInfo(propOrEvent, propEvtType, index));
+					}
 				}
 			}
 
@@ -160,6 +199,29 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 
 					var info = new ModelInfo(node.MethodDefinition);
 					infos[i] = info;
+
+					foreach (var prop in info.OwnerType.Properties) {
+						info.AddMethods(prop, ModelInfo.PropEventType.PropertyGetter, prop.GetMethods, node.MethodDefinition);
+						info.AddMethods(prop, ModelInfo.PropEventType.PropertySetter, prop.SetMethods, node.MethodDefinition);
+						info.AddMethods(prop, ModelInfo.PropEventType.PropertyOther, prop.OtherMethods, node.MethodDefinition);
+					}
+
+					foreach (var evt in info.OwnerType.Events) {
+						if (evt.AddMethod == node.MethodDefinition) {
+							evt.AddMethod = null;
+							info.PropEventInfos.Add(new ModelInfo.PropEventInfo(evt, ModelInfo.PropEventType.EventAdd, -1));
+						}
+						if (evt.InvokeMethod == node.MethodDefinition) {
+							evt.InvokeMethod = null;
+							info.PropEventInfos.Add(new ModelInfo.PropEventInfo(evt, ModelInfo.PropEventType.EventInvoke, -1));
+						}
+						if (evt.RemoveMethod == node.MethodDefinition) {
+							evt.RemoveMethod = null;
+							info.PropEventInfos.Add(new ModelInfo.PropEventInfo(evt, ModelInfo.PropEventType.EventRemove, -1));
+						}
+						info.AddMethods(evt, ModelInfo.PropEventType.EventOther, evt.OtherMethods, node.MethodDefinition);
+					}
+
 					info.OwnerType.Methods.RemoveAt(info.MethodIndex);
 				}
 			}
@@ -176,7 +238,56 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 				for (int i = infos.Length - 1; i >= 0; i--) {
 					var node = nodes[i];
 					var info = infos[i];
+
 					info.OwnerType.Methods.Insert(info.MethodIndex, node.MethodDefinition);
+
+					for (int j = info.PropEventInfos.Count - 1; j >= 0; j--) {
+						var pinfo = info.PropEventInfos[i];
+						EventDef evt;
+						switch (pinfo.PropEventType) {
+						case ModelInfo.PropEventType.PropertyGetter:
+							((PropertyDef)pinfo.PropOrEvent).GetMethods.Insert(pinfo.Index, node.MethodDefinition);
+							break;
+
+						case ModelInfo.PropEventType.PropertySetter:
+							((PropertyDef)pinfo.PropOrEvent).SetMethods.Insert(pinfo.Index, node.MethodDefinition);
+							break;
+
+						case ModelInfo.PropEventType.PropertyOther:
+							((PropertyDef)pinfo.PropOrEvent).OtherMethods.Insert(pinfo.Index, node.MethodDefinition);
+							break;
+
+						case ModelInfo.PropEventType.EventAdd:
+							evt = (EventDef)pinfo.PropOrEvent;
+							Debug.Assert(evt.AddMethod == null);
+							if (evt.AddMethod != null)
+								throw new InvalidOperationException();
+							evt.AddMethod = node.MethodDefinition;
+							break;
+
+						case ModelInfo.PropEventType.EventInvoke:
+							evt = (EventDef)pinfo.PropOrEvent;
+							Debug.Assert(evt.InvokeMethod == null);
+							if (evt.InvokeMethod != null)
+								throw new InvalidOperationException();
+							evt.InvokeMethod = node.MethodDefinition;
+							break;
+
+						case ModelInfo.PropEventType.EventRemove:
+							evt = (EventDef)pinfo.PropOrEvent;
+							Debug.Assert(evt.RemoveMethod == null);
+							if (evt.RemoveMethod != null)
+								throw new InvalidOperationException();
+							evt.RemoveMethod = node.MethodDefinition;
+							break;
+
+						case ModelInfo.PropEventType.EventOther:
+							((EventDef)pinfo.PropOrEvent).OtherMethods.Insert(pinfo.Index, node.MethodDefinition);
+							break;
+
+						default: throw new InvalidOperationException();
+						}
+					}
 				}
 
 				infos = null;
