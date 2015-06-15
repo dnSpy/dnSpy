@@ -41,5 +41,10 @@ namespace ICSharpCode.ILSpy
 				return false;
 			return GetItem<T>(view, e.OriginalSource) != null;
 		}
+
+		public static string EscapeMenuItemHeader(string s)
+		{
+			return s.Replace("_", "__");
+		}
 	}
 }

@@ -77,7 +77,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
 			{
 				if (nodes.Length == 1)
-					menuItem.Header = string.Format("Remove {0}", nodes[0].Text);
+					menuItem.Header = string.Format("Remove {0}", UIUtils.EscapeMenuItemHeader(nodes[0].Text.ToString()));
 				else
 					menuItem.Header = string.Format("Remove {0} assemblies", nodes.Length);
 			}

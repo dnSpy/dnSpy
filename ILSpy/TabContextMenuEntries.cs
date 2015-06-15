@@ -735,7 +735,7 @@ namespace ICSharpCode.ILSpy
 			foreach (var tabState in MainWindow.Instance.GetTabStateInOrder()) {
 				menuItem = cachedMenuItems[index];
 				menuItem.IsChecked = index == 0;
-				menuItem.Header = string.Format("{0} {1}", index + 1 == 10 ? "1_0" : string.Format("_{0}", index + 1), tabState.ShortHeader);
+				menuItem.Header = string.Format("{0} {1}", index + 1 == 10 ? "1_0" : string.Format("_{0}", index + 1), UIUtils.EscapeMenuItemHeader(tabState.ShortHeader));
 
 				var tabStateTmp = tabState;
 				menuItem.Click += (s, e) => MainWindow.Instance.SetActiveTab(tabStateTmp);

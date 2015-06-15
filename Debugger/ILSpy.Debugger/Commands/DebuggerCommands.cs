@@ -835,7 +835,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public void Initialize(TextViewContext context, MenuItem menuItem)
 		{
-			menuItem.Header = string.Format("_Debug {0}", ((AssemblyTreeNode)context.SelectedTreeNodes[0]).LoadedAssembly.ShortName);
+			menuItem.Header = string.Format("_Debug {0}", UIUtils.EscapeMenuItemHeader(((AssemblyTreeNode)context.SelectedTreeNodes[0]).LoadedAssembly.ShortName));
 		}
 
 		public new bool IsVisible(TextViewContext context)
