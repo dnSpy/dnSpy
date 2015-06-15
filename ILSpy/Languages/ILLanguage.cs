@@ -186,5 +186,36 @@ namespace ICSharpCode.ILSpy
 		{
 			t.WriteTo(output, includeNamespace ? ILNameSyntax.TypeName : ILNameSyntax.ShortTypeName);
 		}
+
+		public override void WriteToolTip(ITextOutput output, IMemberRef member, IHasCustomAttribute typeAttributes)
+		{
+			var method = member as IMethod;
+			if (method != null && method.IsMethod) {
+				method.WriteMethodTo(output);
+				return;
+			}
+
+			var field = member as IField;
+			if (field != null && field.IsField) {
+				field.WriteFieldTo(output);
+				return;
+			}
+
+			var prop = member as PropertyDef;
+			if (prop != null) {
+				var dis = new ReflectionDisassembler(output, false, new DisassemblerOptions(new System.Threading.CancellationToken()));
+				dis.DisassembleProperty(prop, false);
+				return;
+			}
+
+			var evt = member as EventDef;
+			if (evt != null) {
+				var dis = new ReflectionDisassembler(output, false, new DisassemblerOptions(new System.Threading.CancellationToken()));
+				dis.DisassembleEvent(evt, false);
+				return;
+			}
+
+			base.WriteToolTip(output, member, typeAttributes);
+		}
 	}
 }

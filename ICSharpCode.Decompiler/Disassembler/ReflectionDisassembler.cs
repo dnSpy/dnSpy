@@ -1022,7 +1022,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			{ PropertyAttributes.HasDefault, "hasdefault" },
 		};
 		
-		public void DisassembleProperty(PropertyDef property)
+		public void DisassembleProperty(PropertyDef property, bool full = true)
 		{
 			// set current member
 			currentMember = property;
@@ -1048,16 +1048,37 @@ namespace ICSharpCode.Decompiler.Disassembler
 				output.Unindent();
 			}
 			output.Write(')', TextTokenType.Operator);
-			
-			OpenBlock(false);
-			WriteAttributes(property.CustomAttributes);
-			WriteNestedMethod(".get", property.GetMethod);
-			WriteNestedMethod(".set", property.SetMethod);
-			
-			foreach (var method in property.OtherMethods) {
-				WriteNestedMethod(".other", method);
+
+			if (full) {
+				OpenBlock(false);
+				WriteAttributes(property.CustomAttributes);
+				WriteNestedMethod(".get", property.GetMethod);
+				WriteNestedMethod(".set", property.SetMethod);
+
+				foreach (var method in property.OtherMethods) {
+					WriteNestedMethod(".other", method);
+				}
+				CloseBlock();
 			}
-			CloseBlock();
+			else {
+				output.WriteSpace();
+				output.WriteLeftBrace();
+
+				if (property.GetMethods.Count > 0) {
+					output.WriteSpace();
+					output.Write(".get", TextTokenType.Keyword);
+					output.Write(';', TextTokenType.Operator);
+				}
+
+				if (property.SetMethods.Count > 0) {
+					output.WriteSpace();
+					output.Write(".set", TextTokenType.Keyword);
+					output.Write(';', TextTokenType.Operator);
+				}
+
+				output.WriteSpace();
+				output.WriteRightBrace();
+			}
 		}
 		
 		void WriteNestedMethod(string keyword, MethodDef method)
@@ -1078,7 +1099,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			{ EventAttributes.RTSpecialName, "rtspecialname" },
 		};
 		
-		public void DisassembleEvent(EventDef ev)
+		public void DisassembleEvent(EventDef ev, bool full = true)
 		{
 			// set current member
 			currentMember = ev;
@@ -1090,15 +1111,43 @@ namespace ICSharpCode.Decompiler.Disassembler
 			ev.EventType.WriteTo(output, ILNameSyntax.TypeName);
 			output.WriteSpace();
 			output.Write(DisassemblerHelpers.Escape(ev.Name), TextTokenHelper.GetTextTokenType(ev));
-			OpenBlock(false);
-			WriteAttributes(ev.CustomAttributes);
-			WriteNestedMethod(".addon", ev.AddMethod);
-			WriteNestedMethod(".removeon", ev.RemoveMethod);
-			WriteNestedMethod(".fire", ev.InvokeMethod);
-			foreach (var method in ev.OtherMethods) {
-				WriteNestedMethod(".other", method);
+
+			if (full) {
+				OpenBlock(false);
+				WriteAttributes(ev.CustomAttributes);
+				WriteNestedMethod(".addon", ev.AddMethod);
+				WriteNestedMethod(".removeon", ev.RemoveMethod);
+				WriteNestedMethod(".fire", ev.InvokeMethod);
+				foreach (var method in ev.OtherMethods) {
+					WriteNestedMethod(".other", method);
+				}
+				CloseBlock();
 			}
-			CloseBlock();
+			else {
+				output.WriteSpace();
+				output.WriteLeftBrace();
+
+				if (ev.AddMethod != null) {
+					output.WriteSpace();
+					output.Write(".addon", TextTokenType.Keyword);
+					output.Write(';', TextTokenType.Operator);
+				}
+
+				if (ev.RemoveMethod != null) {
+					output.WriteSpace();
+					output.Write(".removeon", TextTokenType.Keyword);
+					output.Write(';', TextTokenType.Operator);
+				}
+
+				if (ev.InvokeMethod != null) {
+					output.WriteSpace();
+					output.Write(".fire", TextTokenType.Keyword);
+					output.Write(';', TextTokenType.Operator);
+				}
+
+				output.WriteSpace();
+				output.WriteRightBrace();
+			}
 		}
 		#endregion
 		

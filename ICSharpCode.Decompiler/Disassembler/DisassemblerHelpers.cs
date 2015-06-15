@@ -209,7 +209,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			writer.Write(")", TextTokenType.Operator);
 		}
 		
-		static void WriteFieldTo(this IField field, ITextOutput writer)
+		public static void WriteFieldTo(this IField field, ITextOutput writer)
 		{
 			if (field == null || field.FieldSig == null)
 				return;
@@ -412,7 +412,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				typeFullName = DnlibExtensions.GetFnPtrFullName(fnPtrSig);
 				typeName = DnlibExtensions.GetFnPtrName(fnPtrSig);
 			}
-			string name = PrimitiveTypeName(typeFullName);
+			string name = type.DefinitionAssembly.IsCorLib() ? PrimitiveTypeName(typeFullName) : null;
 			if (syntax == ILNameSyntax.ShortTypeName) {
 				if (name != null)
 					WriteKeyword(writer, name);
