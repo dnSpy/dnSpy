@@ -351,16 +351,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				return;
 			var type = origType as ClassOrValueTypeSig;
 			if (type == null) {
-				ShowWarning("typesig: invalid type", "The type must be a generic type");
+				ShowWarning(null, "The type must be a generic type");
 				return;
 			}
 			var genericType = type.TypeDefOrRef.ResolveTypeDef();
 			if (genericType == null) {
-				ShowWarning("typesig: couldn't resolve type", "Could not resolve the type. Make sure that its assembly has already been loaded.");
+				ShowWarning(null, "Could not resolve the type. Make sure that its assembly has already been loaded.");
 				return;
 			}
 			if (genericType.GenericParameters.Count == 0) {
-				ShowWarning("typesig: not a generic type", string.Format("{0} is not a generic type", genericType.FullName));
+				ShowWarning(null, string.Format("{0} is not a generic type", genericType.FullName));
 				return;
 			}
 
