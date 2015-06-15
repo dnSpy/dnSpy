@@ -489,5 +489,15 @@ namespace ICSharpCode.ILSpy
 			assemblyTask.Wait();
 		}
 
+		public override string ToString()
+		{
+			if (!string.IsNullOrEmpty(FileName))
+				return FileName;
+			if (!string.IsNullOrEmpty(ShortName))
+				return ShortName;
+			if (IsLoaded && ModuleDefinition != null)
+				return ModuleDefinition.ToString();
+			return null;
+		}
 	}
 }
