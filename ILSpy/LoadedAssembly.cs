@@ -340,6 +340,7 @@ namespace ICSharpCode.ILSpy
 		
 		public LoadedAssembly LookupReferencedAssembly(IAssembly name, ModuleDef sourceModule = null, bool delay = false)
 		{
+			FrameworkRedirect.ApplyFrameworkRedirect(ref name, sourceModule);
 			if (name == null)
 				throw new ArgumentNullException("name");
 			if (name.IsContentTypeWindowsRuntime) {
