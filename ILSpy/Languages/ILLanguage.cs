@@ -52,9 +52,14 @@ namespace ICSharpCode.ILSpy
 			get { return ".il"; }
 		}
 
-		ReflectionDisassembler CreateReflectionDisassembler(ITextOutput output, DecompilationOptions options)
+		ReflectionDisassembler CreateReflectionDisassembler(ITextOutput output, DecompilationOptions options, IMemberDef member)
 		{
-			var disOpts = new DisassemblerOptions(options.CancellationToken);
+			return CreateReflectionDisassembler(output, options, member.Module);
+		}
+
+		ReflectionDisassembler CreateReflectionDisassembler(ITextOutput output, DecompilationOptions options, ModuleDef ownerModule)
+		{
+			var disOpts = new DisassemblerOptions(options.CancellationToken, ownerModule);
 			if (options.DecompilerSettings.AddILComments)
 				disOpts.GetOpCodeDocumentation = GetOpCodeDocumentation;
 			if (options.DecompilerSettings.ShowXmlDocumentation)
@@ -105,19 +110,19 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileMethod(MethodDef method, ITextOutput output, DecompilationOptions options)
 		{
-			var dis = CreateReflectionDisassembler(output, options);
+			var dis = CreateReflectionDisassembler(output, options, method);
 			dis.DisassembleMethod(method);
 		}
 		
 		public override void DecompileField(FieldDef field, ITextOutput output, DecompilationOptions options)
 		{
-			var dis = CreateReflectionDisassembler(output, options);
+			var dis = CreateReflectionDisassembler(output, options, field);
 			dis.DisassembleField(field);
 		}
 		
 		public override void DecompileProperty(PropertyDef property, ITextOutput output, DecompilationOptions options)
 		{
-			ReflectionDisassembler rd = CreateReflectionDisassembler(output, options);
+			ReflectionDisassembler rd = CreateReflectionDisassembler(output, options, property);
 			rd.DisassembleProperty(property);
 			if (property.GetMethod != null) {
 				output.WriteLine();
@@ -135,7 +140,7 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileEvent(EventDef ev, ITextOutput output, DecompilationOptions options)
 		{
-			ReflectionDisassembler rd = CreateReflectionDisassembler(output, options);
+			ReflectionDisassembler rd = CreateReflectionDisassembler(output, options, ev);
 			rd.DisassembleEvent(ev);
 			if (ev.AddMethod != null) {
 				output.WriteLine();
@@ -153,7 +158,7 @@ namespace ICSharpCode.ILSpy
 		
 		public override void DecompileType(TypeDef type, ITextOutput output, DecompilationOptions options)
 		{
-			var dis = CreateReflectionDisassembler(output, options);
+			var dis = CreateReflectionDisassembler(output, options, type);
 			dis.DisassembleType(type);
 		}
 		
@@ -166,7 +171,7 @@ namespace ICSharpCode.ILSpy
 				PrintEntryPoint(assembly, output);
 			output.WriteLine();
 			
-			ReflectionDisassembler rd = CreateReflectionDisassembler(output, options);
+			ReflectionDisassembler rd = CreateReflectionDisassembler(output, options, assembly.ModuleDefinition);
 			if (decompileMod && options.FullDecompilation)
 				rd.WriteAssemblyReferences(assembly.ModuleDefinition as ModuleDefMD);
 			if (decompileAsm && assembly.AssemblyDefinition != null)
@@ -203,14 +208,14 @@ namespace ICSharpCode.ILSpy
 
 			var prop = member as PropertyDef;
 			if (prop != null) {
-				var dis = new ReflectionDisassembler(output, false, new DisassemblerOptions(new System.Threading.CancellationToken()));
+				var dis = new ReflectionDisassembler(output, false, new DisassemblerOptions(new System.Threading.CancellationToken(), null));
 				dis.DisassembleProperty(prop, false);
 				return;
 			}
 
 			var evt = member as EventDef;
 			if (evt != null) {
-				var dis = new ReflectionDisassembler(output, false, new DisassemblerOptions(new System.Threading.CancellationToken()));
+				var dis = new ReflectionDisassembler(output, false, new DisassemblerOptions(new System.Threading.CancellationToken(), null));
 				dis.DisassembleEvent(evt, false);
 				return;
 			}

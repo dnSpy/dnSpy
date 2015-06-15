@@ -30,10 +30,13 @@ namespace ICSharpCode.Decompiler.Disassembler
 {
 	public class DisassemblerOptions
 	{
-		public DisassemblerOptions(CancellationToken cancellationToken)
+		public DisassemblerOptions(CancellationToken cancellationToken, ModuleDef ownerModule)
 		{
 			this.CancellationToken = cancellationToken;
+			this.OwnerModule = ownerModule;
 		}
+
+		public readonly ModuleDef OwnerModule;
 
 		public readonly CancellationToken CancellationToken;
 
@@ -929,9 +932,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (constant == null) {
 				output.Write("nullref", TextTokenType.Keyword);
 			} else {
-				string typeName = DisassemblerHelpers.PrimitiveTypeName(constant.GetType().FullName);
+				TypeSig typeSig;
+				string typeName = DisassemblerHelpers.PrimitiveTypeName(constant.GetType().FullName, options.OwnerModule, out typeSig);
 				if (typeName != null && typeName != "string") {
-					DisassemblerHelpers.WriteKeyword(output, typeName);
+					DisassemblerHelpers.WriteKeyword(output, typeName, typeSig.ToTypeDefOrRef());
 					output.Write('(', TextTokenType.Operator);
 					float? cf = constant as float?;
 					double? cd = constant as double?;

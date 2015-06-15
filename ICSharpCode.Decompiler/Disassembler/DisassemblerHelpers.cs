@@ -412,14 +412,15 @@ namespace ICSharpCode.Decompiler.Disassembler
 				typeFullName = DnlibExtensions.GetFnPtrFullName(fnPtrSig);
 				typeName = DnlibExtensions.GetFnPtrName(fnPtrSig);
 			}
-			string name = type.DefinitionAssembly.IsCorLib() ? PrimitiveTypeName(typeFullName) : null;
+			TypeSig typeSig = null;
+			string name = type.DefinitionAssembly.IsCorLib() ? PrimitiveTypeName(typeFullName, type.Module, out typeSig) : null;
 			if (syntax == ILNameSyntax.ShortTypeName) {
 				if (name != null)
-					WriteKeyword(writer, name);
+					WriteKeyword(writer, name, typeSig.ToTypeDefOrRef());
 				else
 					writer.WriteReference(Escape(typeName), type, TextTokenHelper.GetTextTokenType(type));
 			} else if ((syntax == ILNameSyntax.Signature || syntax == ILNameSyntax.SignatureNoNamedTypeParameters) && name != null) {
-				WriteKeyword(writer, name);
+				WriteKeyword(writer, name, typeSig.ToTypeDefOrRef());
 			} else {
 				if (syntax == ILNameSyntax.Signature || syntax == ILNameSyntax.SignatureNoNamedTypeParameters) {
 					writer.Write(DnlibExtensions.IsValueType(type) ? "valuetype" : "class", TextTokenType.Keyword);
@@ -441,13 +442,16 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 		}
 
-		internal static void WriteKeyword(ITextOutput writer, string name)
+		internal static void WriteKeyword(ITextOutput writer, string name, ITypeDefOrRef tdr)
 		{
 			var parts = name.Split(' ');
 			for (int i = 0; i < parts.Length; i++) {
 				if (i > 0)
 					writer.WriteSpace();
-				writer.Write(parts[i], TextTokenType.Keyword);
+				if (tdr != null)
+					writer.WriteReference(parts[i], tdr, TextTokenType.Keyword);
+				else
+					writer.Write(parts[i], TextTokenType.Keyword);
 			}
 		}
 		
@@ -581,41 +585,83 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 		}
 		
-		public static string PrimitiveTypeName(string fullName)
+		public static string PrimitiveTypeName(string fullName, ModuleDef module, out TypeSig typeSig)
 		{
+			var corLibTypes = module == null ? null : module.CorLibTypes;
+			typeSig = null;
 			switch (fullName) {
 				case "System.SByte":
+					if (corLibTypes != null)
+						typeSig = corLibTypes.SByte;
 					return "int8";
 				case "System.Int16":
+					if (corLibTypes != null)
+						typeSig = corLibTypes.Int16;
 					return "int16";
 				case "System.Int32":
+					if (corLibTypes != null)
+						typeSig = corLibTypes.Int32;
 					return "int32";
 				case "System.Int64":
+					if (corLibTypes != null)
+						typeSig = corLibTypes.Int64;
 					return "int64";
 				case "System.Byte":
+					if (corLibTypes != null)
+						typeSig = corLibTypes.Byte;
 					return "uint8";
 				case "System.UInt16":
+					if (corLibTypes != null)
+						typeSig = corLibTypes.UInt16;
 					return "uint16";
 				case "System.UInt32":
+					if (corLibTypes != null)
+						typeSig = corLibTypes.UInt32;
 					return "uint32";
 				case "System.UInt64":
+					if (corLibTypes != null)
+						typeSig = corLibTypes.UInt64;
 					return "uint64";
 				case "System.Single":
+					if (corLibTypes != null)
+						typeSig = corLibTypes.Single;
 					return "float32";
 				case "System.Double":
+					if (corLibTypes != null)
+						typeSig = corLibTypes.Double;
 					return "float64";
 				case "System.Void":
+					if (corLibTypes != null)
+						typeSig = corLibTypes.Void;
 					return "void";
 				case "System.Boolean":
+					if (corLibTypes != null)
+						typeSig = corLibTypes.Boolean;
 					return "bool";
 				case "System.String":
+					if (corLibTypes != null)
+						typeSig = corLibTypes.String;
 					return "string";
 				case "System.Char":
+					if (corLibTypes != null)
+						typeSig = corLibTypes.Char;
 					return "char";
 				case "System.Object":
+					if (corLibTypes != null)
+						typeSig = corLibTypes.Object;
 					return "object";
 				case "System.IntPtr":
+					if (corLibTypes != null)
+						typeSig = corLibTypes.IntPtr;
 					return "native int";
+				case "System.UIntPtr":
+					if (corLibTypes != null)
+						typeSig = corLibTypes.UIntPtr;
+					return "native unsigned int";
+				case "System.TypedReference":
+					if (corLibTypes != null)
+						typeSig = corLibTypes.TypedReference;
+					return "typedref";
 				default:
 					return null;
 			}
