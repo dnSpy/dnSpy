@@ -309,7 +309,19 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (typeNode == null)
 				return null;
 			typeNode.EnsureChildrenFiltered();
-			return typeNode.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def);
+			MethodTreeNode methodNode = typeNode.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def);
+			if (methodNode != null)
+				return methodNode;
+			foreach (var p in typeNode.Children.OfType<ILSpyTreeNode>()) {
+				if (p is PropertyTreeNode || p is EventTreeNode) {
+					p.EnsureChildrenFiltered();
+					methodNode = p.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def);
+					if (methodNode != null)
+						return methodNode;
+				}
+			}
+
+			return null;
 		}
 
 		/// <summary>
