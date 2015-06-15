@@ -262,18 +262,22 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			if (segment.Reference is OpCode) {
 				OpCode code = (OpCode)segment.Reference;
-				var tooltip = new TextBlock();
+
+				var toolTipGen = new ToolTipGenerator();
+
 				var s = ILLanguage.GetOpCodeDocumentation(code);
 				string opCodeHex = code.Size > 1 ? string.Format("0x{0:X4}", code.Value) : string.Format("0x{0:X2}", code.Value);
-				tooltip.Inlines.Add(new Run(code.Name) { FontWeight = FontWeights.Bold });
-				tooltip.Inlines.Add(" (");
-				tooltip.Inlines.Add(opCodeHex);
-				tooltip.Inlines.Add(")");
+				toolTipGen.TextOutput.Write(code.Name, TextTokenType.OpCode);
+				toolTipGen.TextOutput.WriteSpace();
+				toolTipGen.TextOutput.Write('(', TextTokenType.Operator);
+				toolTipGen.TextOutput.Write(opCodeHex, TextTokenType.Number);
+				toolTipGen.TextOutput.Write(')', TextTokenType.Operator);
 				if (s != null) {
-					tooltip.Inlines.Add(" - ");
-					tooltip.Inlines.Add(new Run(s) { FontStyle = FontStyles.Italic });
+					toolTipGen.TextOutput.Write(" - ", TextTokenType.Text);
+					toolTipGen.TextOutput.Write(s, TextTokenType.Text);
 				}
-				return tooltip;
+
+				return toolTipGen.Create();
 			} else if (segment.Reference is GenericParam) {
 				return GenerateToolTip((GenericParam)segment.Reference);
 			} else if (segment.Reference is IMemberRef) {
