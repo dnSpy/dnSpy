@@ -1025,7 +1025,7 @@ namespace ICSharpCode.Decompiler.Ast
 			EntityDeclaration member = astProp;
 			if(propDef.IsIndexer())
 				member = ConvertPropertyToIndexer(astProp, propDef);
-			if(accessor != null && !accessor.HasOverrides && !accessor.DeclaringType.IsInterface)
+			if(accessor != null && !accessor.HasOverrides && accessor.DeclaringType != null && !accessor.DeclaringType.IsInterface)
 				if (accessor.IsVirtual == accessor.IsNewSlot)
 					SetNewModifier(member);
 			return member;
