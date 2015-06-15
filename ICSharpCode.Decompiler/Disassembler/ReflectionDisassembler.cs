@@ -1052,12 +1052,13 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (full) {
 				OpenBlock(false);
 				WriteAttributes(property.CustomAttributes);
-				WriteNestedMethod(".get", property.GetMethod);
-				WriteNestedMethod(".set", property.SetMethod);
 
-				foreach (var method in property.OtherMethods) {
+				foreach (var method in property.GetMethods)
+					WriteNestedMethod(".get", method);
+				foreach (var method in property.SetMethods)
+					WriteNestedMethod(".set", method);
+				foreach (var method in property.OtherMethods)
 					WriteNestedMethod(".other", method);
-				}
 				CloseBlock();
 			}
 			else {
