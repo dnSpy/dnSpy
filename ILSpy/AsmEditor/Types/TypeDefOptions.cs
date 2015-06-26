@@ -62,8 +62,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		public TypeDef CopyTo(TypeDef type, ModuleDef ownerModule)
 		{
 			type.Attributes = this.Attributes;
-			type.Namespace = this.Namespace;
-			type.Name = this.Name;
+			type.Namespace = this.Namespace ?? UTF8String.Empty;
+			type.Name = this.Name ?? UTF8String.Empty;
 			if (PackingSize != null || ClassSize != null)
 				type.ClassLayout = ownerModule.UpdateRowId(new ClassLayoutUser(PackingSize ?? 0, ClassSize ?? 0));
 			else

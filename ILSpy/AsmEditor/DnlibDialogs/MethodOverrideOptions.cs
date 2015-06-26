@@ -36,7 +36,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			this.MethodDeclaration = mo.MethodDeclaration;
 		}
 
-		public MethodOverride CreateMethodOverride()
+		public MethodOverride Create()
 		{
 			return new MethodOverride(MethodBody, MethodDeclaration);
 		}

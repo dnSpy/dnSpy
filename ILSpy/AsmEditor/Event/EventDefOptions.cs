@@ -44,7 +44,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 		public EventDef CopyTo(EventDef evt)
 		{
 			evt.Attributes = this.Attributes;
-			evt.Name = this.Name;
+			evt.Name = this.Name ?? UTF8String.Empty;
 			evt.EventType = this.EventType;
 			evt.CustomAttributes.Clear();
 			evt.CustomAttributes.AddRange(CustomAttributes);

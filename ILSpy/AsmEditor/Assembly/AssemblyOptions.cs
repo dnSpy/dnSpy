@@ -58,7 +58,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			asm.Version = this.Version;
 			asm.Attributes = this.Attributes;
 			asm.PublicKey = this.PublicKey;
-			asm.Name = this.Name;
+			asm.Name = this.Name ?? UTF8String.Empty;
 			asm.Culture = this.Culture;
 			asm.CustomAttributes.Clear();
 			asm.CustomAttributes.AddRange(CustomAttributes);

@@ -57,6 +57,34 @@ namespace ICSharpCode.ILSpy.TextView
 			var specialBox = theme.GetColor(dntheme.ColorType.SpecialCharacterBox).TextInheritedColor;
 			ICSharpCode.AvalonEdit.Rendering.SpecialCharacterTextRunOptions.BackgroundBrush = specialBox.Background == null ? null : specialBox.Background.GetBrush(null);
 			ICSharpCode.AvalonEdit.Rendering.SpecialCharacterTextRunOptions.ForegroundBrush = specialBox.Foreground == null ? null : specialBox.Foreground.GetBrush(null);
+
+			foreach (var f in typeof(TextTokenType).GetFields()) {
+				if (!f.IsLiteral)
+					continue;
+				UpdateTextEditorResource((TextTokenType)f.GetValue(null), f.Name);
+			}
+		}
+
+		static void UpdateTextEditorResource(TextTokenType colorType, string name)
+		{
+			var theme = Themes.Theme;
+
+			var color = theme.GetColor(colorType).TextInheritedColor;
+			App.Current.Resources[string.Format("TETextInherited{0}Foreground", name)] = GetBrush(color.Foreground);
+			App.Current.Resources[string.Format("TETextInherited{0}Background", name)] = GetBrush(color.Background);
+			App.Current.Resources[string.Format("TETextInherited{0}FontStyle", name)] = color.FontStyle ?? FontStyles.Normal;
+			App.Current.Resources[string.Format("TETextInherited{0}FontWeight", name)] = color.FontWeight ?? FontWeights.Normal;
+
+			color = theme.GetColor(colorType).InheritedColor;
+			App.Current.Resources[string.Format("TEInherited{0}Foreground", name)] = GetBrush(color.Foreground);
+			App.Current.Resources[string.Format("TEInherited{0}Background", name)] = GetBrush(color.Background);
+			App.Current.Resources[string.Format("TEInherited{0}FontStyle", name)] = color.FontStyle ?? FontStyles.Normal;
+			App.Current.Resources[string.Format("TEInherited{0}FontWeight", name)] = color.FontWeight ?? FontWeights.Normal;
+		}
+
+		static Brush GetBrush(HighlightingBrush b)
+		{
+			return b == null ? Brushes.Transparent : b.GetBrush(null);
 		}
 
 		internal void OnThemeUpdated()

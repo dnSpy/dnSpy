@@ -53,7 +53,7 @@
 					  SelectedIndex="{Binding TypeSigCollection.SelectedIndex}" />
 			<RepeatButton Grid.Row="0" Grid.Column="1"
 					Margin="5 5 0 0"
-					Command="{Binding TypeSigCollection.MoveUpCommand}"
+					Command="{Binding TypeSigCollection.MoveSelectedUpCommand}"
 					ToolTip="Move Up">
 				<RepeatButton.Content>
 					<Path Fill="{DynamicResource ListArrowBackground}" Width="16" Height="16" Data="{StaticResource ListUpArrow16x16}">
@@ -65,7 +65,7 @@
 			</RepeatButton>
 			<RepeatButton Grid.Row="2" Grid.Column="1"
 					Margin="5 5 0 0"
-					Command="{Binding TypeSigCollection.MoveDownCommand}"
+					Command="{Binding TypeSigCollection.MoveSelectedDownCommand}"
 					ToolTip="Move Down">
 				<RepeatButton.Content>
 					<Path Fill="{DynamicResource ListArrowBackground}" Width="16" Height="16" Data="{StaticResource ListUpArrow16x16}">

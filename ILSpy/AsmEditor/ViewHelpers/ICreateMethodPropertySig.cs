@@ -28,7 +28,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 		/// Creates a <see cref="MethodSig"/> or a <see cref="PropertySig"/>
 		/// </summary>
 		/// <param name="options">Create-options</param>
+		/// <param name="origSig">Signature to edit or null</param>
 		/// <returns></returns>
-		MethodBaseSig Create(MethodSigCreatorOptions options);
+		MethodBaseSig Create(MethodSigCreatorOptions options, MethodBaseSig origSig);
 	}
 }

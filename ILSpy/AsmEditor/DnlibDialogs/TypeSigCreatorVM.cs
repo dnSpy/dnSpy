@@ -321,7 +321,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			var createOptions = new MethodSigCreatorOptions(options.Clone("Create FnPtr Method Signature"));
 			createOptions.IsPropertySig = false;
 			createOptions.CanHaveSentinel = true;
-			var sig = createMethodPropertySig.Create(createOptions);
+
+			var fnPtrSig = TypeSig as FnPtrSig;
+			var msig = fnPtrSig == null ? null : fnPtrSig.MethodSig;
+			var sig = createMethodPropertySig.Create(createOptions, msig);
 			if (sig == null)
 				return;
 

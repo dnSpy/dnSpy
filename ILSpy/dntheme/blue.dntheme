@@ -302,6 +302,72 @@
 		<color name="tooltipforeground" fg="Black" />
 		<color name="codetooltip" fg="#FF1E1E1E" bg="#FFE7E8EC" />
 		<color name="codetooltipborder" bg="#FFCCCEDB" />
+		<color name="cilbutton" fg="#FF1E1E1E" bg="Transparent" />
+		<color name="cilbuttonborder" bg="Transparent" />
+		<color name="cilbuttonborderfocused" bg="#FFE5C365" />
+		<color name="cilbuttonborderhover" bg="#FFE5C365" />
+		<color name="cilbuttonborderpressed" bg="#FFE5C365" />
+		<color name="cilbuttonerror" bg="Pink" />
+		<color name="cilbuttonerrorborder" bg="Red" />
+		<color name="cilbuttonfocused" fg="#FF1E1E1E" bg="#FFE0E0E0" />
+		<color name="cilbuttonhover" fg="#FF1E1E1E" bg="#FFE0E0E0" />
+		<color name="cilbuttonpressed" fg="#FFFFFFFF" bg="#FFC0C0C0" />
+		<color name="cilcheckboxbackground" bg="#FFFEFEFE" />
+		<color name="cilcheckboxbackgrounddisabled" bg="#FFF6F6F6" />
+		<color name="cilcheckboxbackgroundfocused" bg="#FFFDF4BF" />
+		<color name="cilcheckboxbackgroundhover" bg="#FFFDF4BF" />
+		<color name="cilcheckboxbackgroundpressed" bg="#FFE5C365" />
+		<color name="cilcheckboxborder" bg="#FF717171" />
+		<color name="cilcheckboxborderdisabled" bg="#FFC6C6C6" />
+		<color name="cilcheckboxborderfocused" bg="#FFE5C365" />
+		<color name="cilcheckboxborderhover" bg="#FFE5C365" />
+		<color name="cilcheckboxborderpressed" bg="#FFE5C365" />
+		<color name="cilcheckboxglyph" bg="#FF1E1E1E" />
+		<color name="cilcheckboxglyphdisabled" bg="#FFA2A4A5" />
+		<color name="cilcheckboxglyphfocused" bg="#FF424242" />
+		<color name="cilcheckboxglyphhover" bg="#FF424242" />
+		<color name="cilcheckboxglyphpressed" bg="#FF1E1E1E" />
+		<color name="cilcheckboxtext" bg="#FF1E1E1E" />
+		<color name="cilcheckboxtextdisabled" bg="#FFA2A4A5" />
+		<color name="cilcheckboxtextfocused" bg="#FF424242" />
+		<color name="cilcheckboxtexthover" bg="#FF424242" />
+		<color name="cilcheckboxtextpressed" bg="#FF1E1E1E" />
+		<color name="cilcomboboxborderfocused" bg="#FFE5C365" />
+		<color name="cilcomboboxborderhover" bg="#FFE5C365" />
+		<color name="cilcomboboxborderpressed" bg="#FFE5C364" />
+		<color name="cilcomboboxerror" bg="Pink" />
+		<color name="cilcomboboxerrorborder" bg="Red" />
+		<color name="cilcomboboxlistbackground" bg="#FFFFFFFF" />
+		<color name="cilcomboboxlistborder" bg="#FF9BA7B7" />
+		<color name="cilcomboboxlistitembackgroundhover" bg="#FFF8F8F8" />
+		<color name="cilcomboboxlistitemborderhover" bg="#FFF0F0F0" />
+		<color name="cilcomboboxlistitemtexthover" bg="#FF000000" />
+		<color name="cilgridviewborder" bg="Black" />
+		<color name="cilgridviewitemcontainermouseoverhoverborder" bg="#FFF0F0F0" />
+		<color name="cilgridviewitemcontainerselectedborder" bg="#FFF0F0F0" />
+		<color name="cilgridviewitemcontainerselectedinactiveborder" bg="#FFF0F0F0" />
+		<color name="cilgridviewitemcontainerselectedmouseoverborder" bg="#FFF0F0F0" />
+		<color name="cilgridviewlistitemhoverfill" bg="#FFF8F8F8" />
+		<color name="cilgridviewlistitemselectedfill" bg="#FFF8F8F8" />
+		<color name="cilgridviewlistitemselectedhoverfill" bg="#FFF8F8F8" />
+		<color name="cilgridviewlistitemselectedinactivefill" bg="#FFF8F8F8" />
+		<color name="cilgridviewlistviewitemfocusvisualstroke" bg="#FFF0F0F0" />
+		<color name="cillistboxborder" bg="Black" />
+		<color name="cillistboxitemmouseoverbackground" bg="#FFF8F8F8" />
+		<color name="cillistboxitemmouseoverborder" bg="#FFF0F0F0" />
+		<color name="cillistboxitemselectedactivebackground" bg="#FFF8F8F8" />
+		<color name="cillistboxitemselectedactiveborder" bg="#FFF0F0F0" />
+		<color name="cillistboxitemselectedinactivebackground" bg="#FFF8F8F8" />
+		<color name="cillistboxitemselectedinactiveborder" bg="#FFF0F0F0" />
+		<color name="cillistviewitem0" bg="White" />
+		<color name="cillistviewitem1" bg="White" />
+		<color name="ciltextboxdisabled" fg="#FFA2A4A5" bg="#FFD5DCE8" />
+		<color name="ciltextboxdisabledborder" bg="#FFA4ADBA" />
+		<color name="ciltextboxerror" fg="#FF000000" bg="Pink" />
+		<color name="ciltextboxerrorborder" bg="Red" />
+		<color name="ciltextboxfocusedborder" bg="#FFE5C365" />
+		<color name="ciltextboxmouseoverborder" bg="#FFE5C365" />
+		<color name="ciltextboxselection" bg="#FF3399FF" />
 		<color name="gridviewbackground" bg="White" />
 		<color name="gridviewborder" bg="Black" />
 		<color name="headerdefault" fg="#FF1E1E1E" bg="#FFF6F6F6" />
@@ -312,15 +378,15 @@
 		<color name="headermouseoverglyph" bg="#FF1E1E1E" />
 		<color name="headerseparatorline" bg="#FFCCCEDB" />
 		<color name="gridviewlistviewforeground" bg="#1E1E1E" />
-		<color name="gridviewlistviewitemfocusvisualstroke" bg="#3399FF" />
-		<color name="gridviewlistitemhoverfill" fg="#5CADFF" bg="#5CADFF" />
-		<color name="gridviewlistitemselectedfill" fg="#3399FF" bg="#3399FF" />
-		<color name="gridviewlistitemselectedhoverfill" fg="#85C2FF" bg="#85C2FF" />
-		<color name="gridviewlistitemselectedinactivefill" fg="#AAAAAA" bg="#AAAAAA" />
 		<color name="gridviewitemcontainermouseoverhoverborder" bg="#5CADFF" />
 		<color name="gridviewitemcontainerselectedborder" bg="#3399FF" />
 		<color name="gridviewitemcontainerselectedinactiveborder" bg="#AAAAAA" />
 		<color name="gridviewitemcontainerselectedmouseoverborder" bg="#85C2FF" />
+		<color name="gridviewlistitemhoverfill" bg="#5CADFF" />
+		<color name="gridviewlistitemselectedfill" bg="#3399FF" />
+		<color name="gridviewlistitemselectedhoverfill" bg="#85C2FF" />
+		<color name="gridviewlistitemselectedinactivefill" bg="#AAAAAA" />
+		<color name="gridviewlistviewitemfocusvisualstroke" bg="#3399FF" />
 		<color name="paneborder" bg="#828790" />
 		<color name="dockedpaneclosebuttonbackground" fg="#F4F4F4" bg="#EBEBEB" color3="#DEDEDE" color4="#D0D0D0" />
 		<color name="dockedpaneclosebuttonborder" bg="#FF989898" />

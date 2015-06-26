@@ -64,7 +64,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			get { return new RelayCommand(a => Reinitialize()); }
 		}
 
-		static readonly EnumVM[] codeTypeList = EnumVM.Create(typeof(Method.CodeType));
+		internal static readonly EnumVM[] codeTypeList = EnumVM.Create(typeof(Method.CodeType));
 		public EnumListVM CodeType {
 			get { return codeTypeVM; }
 		}
@@ -430,11 +430,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			options.DeclSecurities.Clear();
 			options.DeclSecurities.AddRange(DeclSecuritiesVM.Collection.Select(a => a.CreateDeclSecurityOptions().Create(ownerModule)));
 			options.ParamDefs.Clear();
-			options.ParamDefs.AddRange(ParamDefsVM.Collection.Select(a => a.CreateParamDefOptions().CreateParamDef(ownerModule)));
+			options.ParamDefs.AddRange(ParamDefsVM.Collection.Select(a => a.CreateParamDefOptions().Create(ownerModule)));
 			options.GenericParameters.Clear();
-			options.GenericParameters.AddRange(GenericParamsVM.Collection.Select(a => a.CreateGenericParamOptions().CreateGenericParam(ownerModule)));
+			options.GenericParameters.AddRange(GenericParamsVM.Collection.Select(a => a.CreateGenericParamOptions().Create(ownerModule)));
 			options.Overrides.Clear();
-			options.Overrides.AddRange(MethodOverridesVM.Collection.Select(a => a.CreateMethodOverrideOptions().CreateMethodOverride()));
+			options.Overrides.AddRange(MethodOverridesVM.Collection.Select(a => a.CreateMethodOverrideOptions().Create()));
 			if (ModelUtils.GetHasSecurityBit(options.DeclSecurities, options.CustomAttributes))
 				options.Attributes |= MethodAttributes.HasSecurity;
 			else

@@ -35,7 +35,7 @@
 				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
 			<Button Grid.Column="0" Width="25" Content="…" Command="{Binding PickAttributeTypeCommand}" ToolTip="Pick a Type" />
-			<TextBox Grid.Column="1" Margin="5 0 0 0" IsReadOnly="True" Background="{x:Null}" Text="{Binding AttributeType.FullName, Mode=OneWay}" />
+			<TextBox Grid.Column="1" Margin="5 0 0 0" IsReadOnly="True" Background="Transparent" Text="{Binding AttributeType.FullName, Mode=OneWay}" />
 		</Grid>
 		<GroupBox Grid.Row="1" Margin="0 5 0 0" Header="Named Arguments">
 			<dnlibdlgs:CANamedArgumentsControl DataContext="{Binding CANamedArgumentsVM}" />

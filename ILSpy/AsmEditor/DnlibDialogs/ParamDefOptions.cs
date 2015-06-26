@@ -57,7 +57,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return pd;
 		}
 
-		public ParamDef CreateParamDef(ModuleDef ownerModule)
+		public ParamDef Create(ModuleDef ownerModule)
 		{
 			return ownerModule.UpdateRowId(CopyTo(new ParamDefUser()));
 		}

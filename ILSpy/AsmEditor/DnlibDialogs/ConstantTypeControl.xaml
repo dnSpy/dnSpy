@@ -80,7 +80,7 @@
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
-			<TextBox Grid.Column="0" Name="typeTextBox" Background="{x:Null}" IsReadOnly="True" ToolTip="{Binding Type.StringValue}" Text="{Binding Type.StringValue, Mode=OneWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding TypeIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<TextBox Grid.Column="0" Name="typeTextBox" Background="Transparent" IsReadOnly="True" ToolTip="{Binding Type.StringValue}" Text="{Binding Type.StringValue, Mode=OneWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding TypeIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
 			<Button Grid.Column="1" Margin="5 0 0 0" Content="…" ToolTip="Pick a Type" Width="25" Command="{Binding Type.PickTypeCommand}" Visibility="{Binding TypeIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" />
 		</Grid>
 
@@ -94,7 +94,7 @@
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 			<CheckBox Grid.Column="0" Margin="0 0 5 0" VerticalAlignment="Center" IsChecked="{Binding ObjectArrayIsNull}" Visibility="{Binding ArraysCanBeNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-			<TextBox Grid.Column="1" Name="objectArrayTextBox" Background="{x:Null}" IsReadOnly="True" ToolTip="{Binding ObjectArray.StringValue}" Text="{Binding ObjectArray.StringValue, Mode=OneWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding ObjectArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<TextBox Grid.Column="1" Name="objectArrayTextBox" Background="Transparent" IsReadOnly="True" ToolTip="{Binding ObjectArray.StringValue}" Text="{Binding ObjectArray.StringValue, Mode=OneWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding ObjectArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
 			<Label Grid.Column="1" Content="null" Visibility="{Binding ObjectArrayIsNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
 			<Button Grid.Column="2" Margin="5 0 0 0" Content="…" ToolTip="Append Object" Width="25" Command="{Binding ObjectArray.AddObjectCommand}" Visibility="{Binding ObjectArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" />
 			<Button Grid.Column="3" Margin="5 0 0 0" Content="R" ToolTip="Remove Last Object" Width="25" Command="{Binding ObjectArray.RemoveObjectCommand}" Visibility="{Binding ObjectArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" />
@@ -252,7 +252,7 @@
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 			<CheckBox Grid.Column="0" Margin="0 0 5 0" VerticalAlignment="Center" IsChecked="{Binding TypeArrayIsNull}" Visibility="{Binding ArraysCanBeNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
-			<TextBox Grid.Column="1" Name="typeArrayTextBox" Background="{x:Null}" IsReadOnly="True" ToolTip="{Binding TypeArray.StringValue}" Text="{Binding TypeArray.StringValue, Mode=OneWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding TypeArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<TextBox Grid.Column="1" Name="typeArrayTextBox" Background="Transparent" IsReadOnly="True" ToolTip="{Binding TypeArray.StringValue}" Text="{Binding TypeArray.StringValue, Mode=OneWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding TypeArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
 			<Label Grid.Column="1" Content="null" Visibility="{Binding TypeArrayIsNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
 			<Button Grid.Column="2" Margin="5 0 0 0" Content="…" ToolTip="Append Type" Width="25" Command="{Binding TypeArray.AddTypeCommand}" Visibility="{Binding TypeArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" />
 			<Button Grid.Column="3" Margin="5 0 0 0" Content="R" ToolTip="Remove Last Type" Width="25" Command="{Binding TypeArray.RemoveTypeCommand}" Visibility="{Binding TypeArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" />

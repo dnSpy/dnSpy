@@ -194,33 +194,47 @@ namespace ICSharpCode.ILSpy
 
 		public override void WriteToolTip(ITextOutput output, IMemberRef member, IHasCustomAttribute typeAttributes)
 		{
+			if (!(member is ITypeDefOrRef) && Write(output, member))
+				return;
+
+			base.WriteToolTip(output, member, typeAttributes);
+		}
+
+		public static bool Write(ITextOutput output, IMemberRef member)
+		{
 			var method = member as IMethod;
 			if (method != null && method.IsMethod) {
 				method.WriteMethodTo(output);
-				return;
+				return true;
 			}
 
 			var field = member as IField;
 			if (field != null && field.IsField) {
 				field.WriteFieldTo(output);
-				return;
+				return true;
 			}
 
 			var prop = member as PropertyDef;
 			if (prop != null) {
 				var dis = new ReflectionDisassembler(output, false, new DisassemblerOptions(new System.Threading.CancellationToken(), null));
 				dis.DisassembleProperty(prop, false);
-				return;
+				return true;
 			}
 
 			var evt = member as EventDef;
 			if (evt != null) {
 				var dis = new ReflectionDisassembler(output, false, new DisassemblerOptions(new System.Threading.CancellationToken(), null));
 				dis.DisassembleEvent(evt, false);
-				return;
+				return true;
 			}
 
-			base.WriteToolTip(output, member, typeAttributes);
+			var type = member as ITypeDefOrRef;
+			if (type != null) {
+				type.WriteTo(output, ILNameSyntax.TypeName);
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

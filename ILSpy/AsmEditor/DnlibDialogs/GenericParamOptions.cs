@@ -58,7 +58,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return gp;
 		}
 
-		public GenericParam CreateGenericParam(ModuleDef ownerModule)
+		public GenericParam Create(ModuleDef ownerModule)
 		{
 			return ownerModule.UpdateRowId(CopyTo(new GenericParamUser()));
 		}

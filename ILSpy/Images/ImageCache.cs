@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 
@@ -126,13 +127,22 @@ namespace ICSharpCode.ILSpy
 
 		public BitmapSource GetImage(object part, string icon, BackgroundType bgType)
 		{
-			return GetImage(part, icon, GetColor(bgType));
+			return GetImage(part.GetType().Assembly, icon, GetColor(bgType));
+		}
+
+		public BitmapSource GetImage(Assembly asm, string icon, BackgroundType bgType)
+		{
+			return GetImage(asm, icon, GetColor(bgType));
 		}
 
 		public BitmapSource GetImage(object part, string icon, Color bgColor)
 		{
-			var assembly = part.GetType().Assembly;
-			var name = assembly.GetName();
+			return GetImage(part.GetType().Assembly, icon, bgColor);
+		}
+
+		public BitmapSource GetImage(Assembly asm, string icon, Color bgColor)
+		{
+			var name = asm.GetName();
 			var uri = "pack://application:,,,/" + name.Name + ";v" + name.Version + ";component/Images/" + icon + ".png";
 			return GetImageUsingUri(uri, bgColor);
 		}

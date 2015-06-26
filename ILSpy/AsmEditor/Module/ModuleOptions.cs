@@ -30,7 +30,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		public Guid? Mvid;
 		public Guid? EncId;
 		public Guid? EncBaseId;
-		public string Name;
+		public UTF8String Name;
 		public ModuleKind Kind;
 		public Characteristics Characteristics;
 		public DllCharacteristics DllCharacteristics;
@@ -71,7 +71,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			module.Mvid = this.Mvid;
 			module.EncId = this.EncId;
 			module.EncBaseId = this.EncBaseId;
-			module.Name = this.Name;
+			module.Name = this.Name ?? UTF8String.Empty;
 			module.Kind = this.Kind;
 			module.Characteristics = this.Characteristics;
 			module.DllCharacteristics = this.DllCharacteristics;

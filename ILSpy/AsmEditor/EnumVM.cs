@@ -19,9 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 
 namespace ICSharpCode.ILSpy.AsmEditor
@@ -77,36 +74,13 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 	}
 
-	sealed class EnumListVM : INotifyPropertyChanged
+	sealed class EnumListVM : ListVM<EnumVM>
 	{
-		readonly ObservableCollection<EnumVM> list;
-		readonly Action<int, int> onChanged;
-		int index;
-
-		public IList<EnumVM> Items {
-			get { return list; }
-		}
-
-		public int SelectedIndex {
-			get { return index; }
-			set {
-				if (index != value) {
-					int oldIndex = index;
-					Debug.Assert(value >= 0 && value < list.Count);
-					index = value;
-					OnPropertyChanged("SelectedIndex");
-					OnPropertyChanged("SelectedItem");
-					if (onChanged != null)
-						onChanged(oldIndex, index);
-				}
-			}
-		}
-
-		public object SelectedItem {
+		public new object SelectedItem {
 			get {
-				if (index < 0 || index >= list.Count)
+				if (Index < 0 || Index >= list.Count)
 					return null;
-				return list[index].Value;
+				return list[Index].Value;
 			}
 			set {
 				if (SelectedItem != value)
@@ -120,10 +94,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 
 		public EnumListVM(IEnumerable<EnumVM> list, Action<int, int> onChanged)
+			: base(list, onChanged)
 		{
-			this.list = new ObservableCollection<EnumVM>(list);
-			this.index = 0;
-			this.onChanged = onChanged;
 		}
 
 		public bool Has(object value)
@@ -144,14 +116,6 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 			list.Add(new EnumVM(value, string.Format("0x{0:X}", value)));
 			return list.Count - 1;
-		}
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		void OnPropertyChanged(string propName)
-		{
-			if (PropertyChanged != null)
-				PropertyChanged(this, new PropertyChangedEventArgs(propName));
 		}
 	}
 }

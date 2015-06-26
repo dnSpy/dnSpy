@@ -24,6 +24,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -172,6 +173,8 @@ namespace ICSharpCode.ILSpy
 			this.assemblyListManager = new AssemblyListManager(spySettings);
 			Themes.ThemeChanged += Themes_ThemeChanged;
 			Themes.IsHighContrastChanged += (s, e) => Themes.SwitchThemeIfNecessary();
+			Options.DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
+			InitializeTextEditorFontResource();
 
 			languageComboBox = new ComboBox() {
 				DisplayMemberPath = "Name",
@@ -206,6 +209,17 @@ namespace ICSharpCode.ILSpy
 			this.Deactivated += (s, e) => UpdateSystemMenuImage();
 			this.ContentRendered += MainWindow_ContentRendered;
 			this.IsEnabled = false;
+		}
+
+		void CurrentDisplaySettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "SelectedFont")
+				InitializeTextEditorFontResource();
+		}
+
+		void InitializeTextEditorFontResource()
+		{
+			App.Current.Resources["TextEditorFontFamily"] = Options.DisplaySettingsPanel.CurrentDisplaySettings.SelectedFont;
 		}
 
 		internal static void InitializeTreeView(SharpTreeView treeView)
@@ -905,10 +919,15 @@ namespace ICSharpCode.ILSpy
 
 		internal static void CreateMenuItemImage(MenuItem menuItem, object part, string icon, BackgroundType bgType, bool? enable = null)
 		{
+			CreateMenuItemImage(menuItem, part.GetType().Assembly, icon, bgType, enable);
+		}
+
+		internal static void CreateMenuItemImage(MenuItem menuItem, Assembly asm, string icon, BackgroundType bgType, bool? enable = null)
+		{
 			var image = new Image {
 				Width = 16,
 				Height = 16,
-				Source = ImageCache.Instance.GetImage(part, icon, bgType),
+				Source = ImageCache.Instance.GetImage(asm, icon, bgType),
 			};
 			menuItem.Icon = image;
 			if (enable == false)

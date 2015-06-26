@@ -49,7 +49,7 @@
 				  SelectedIndex="{Binding Collection.SelectedIndex}" />
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5 0 0">
-			<RepeatButton Margin="0 0 5 0" Command="{Binding Collection.MoveUpCommand}" ToolTip="Move Up">
+			<RepeatButton Margin="0 0 5 0" Command="{Binding Collection.MoveSelectedUpCommand}" ToolTip="Move Up">
 				<RepeatButton.Content>
 					<Path Fill="{DynamicResource ListArrowBackground}" Width="16" Height="16" Data="{StaticResource ListUpArrow16x16}">
 						<Path.LayoutTransform>
@@ -58,7 +58,7 @@
 					</Path>
 				</RepeatButton.Content>
 			</RepeatButton>
-			<RepeatButton Margin="0 0 5 0" Command="{Binding Collection.MoveDownCommand}" ToolTip="Move Down">
+			<RepeatButton Margin="0 0 5 0" Command="{Binding Collection.MoveSelectedDownCommand}" ToolTip="Move Down">
 				<RepeatButton.Content>
 					<Path Fill="{DynamicResource ListArrowBackground}" Width="16" Height="16" Data="{StaticResource ListUpArrow16x16}">
 						<Path.LayoutTransform>
@@ -71,7 +71,7 @@
 			<Button Content="_Edit…" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding EditCommand}" Visibility="{Binding NotInlineEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
 			<Button Content="_Add…" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding AddCommand}" Visibility="{Binding NotInlineEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
 			<Button Content="_Add" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding AddCommand}" Visibility="{Binding InlineEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
-			<Button Content="_Remove" Style="{StaticResource DialogButton}" Margin="0 0 0 0" Command="{Binding Collection.RemoveCommand}" />
+			<Button Content="_Remove" Style="{StaticResource DialogButton}" Margin="0 0 0 0" Command="{Binding Collection.RemoveSelectedCommand}" />
 		</StackPanel>
 	</Grid>
 </UserControl>

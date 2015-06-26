@@ -14,46 +14,6 @@
 	use the styles from aero2.normalcolor.xaml, see eg.:
 		C:\Program Files (x86)\Microsoft Visual Studio 12.0\Blend\SystemThemes\Wpf
 		C:\Program Files (x86)\Microsoft Visual Studio 14.0\DesignTools\SystemThemes\Wpf
-	Unfortunately the styles and templates mostly use StaticResource instead of DynamicResource
-	so EVERYTHING must be copied and fixed.
-
-	I'll document what I've done should another style need to be fixed:
-
-		* Copy the style from the WPF .xaml file and any extra resources (eg. colors) to this file.
-		  Make sure VS doesn't reformat the XAML so it's possible to diff the style later.
-
-		* Replace all StaticResource with DynamicResource. Only do it if it references a color,
-		  not if it's referencing eg. a Geometry (eg. an arrow).
-
-		* Replace all SystemColors.XXXXBrushKey references with SystemColorsXXXX. Eg.
-			"{DynamicResource {x:Static SystemColors.MenuTextBrushKey}}"
-		  should be replaced so it uses the correct color:
-			"{DynamicResource SystemColorsMenuText}"
-		  If the color doesn't exist in Theme.cs, create it.
-
-		* Search for the following and verify that it doesn't use any hard coded colors:
-			ground (eg. background, foreground)
-			brush (eg. borderbrush)
-			color
-			fill
-			"# (hard coded colors in XML attributes)
-			"#71000000" => replace with "{DynamicResource ControlShadow}"
-
-		* If you had to add extra resources, eg. SolidColorBrush, Geometry, etc, remove all of
-		  those that are not in use. Eg. if you add a toolbar style, you'd normally add all its
-		  extra resources, and then delete those that weren't used.
-
-		* Add ColorInfo classes to Theme.cs if new colors are needed. Also update all *.dntheme
-		  files.
-
-		* If the template in the style uses a *Chrome class, remove the *Chrome class and replace
-		  it with XAML. The colors the *Chrome class uses can be found in the MS reference source
-		  code (or by decompiling it in dnSpy). The only exception is if SystemDropShadowChrome
-		  is used and Color=Transparent. Seems like it can be kept. If Color isn't Transparent, set
-		  it to "{DynamicResource ControlShadow}".
-
-		* If the new styles/templates use SystemParameters.HighContrast, then remove those parts
-		  since the high contrast theme(s) are used when SystemParameters.HighContrast is true.
 	-->
 
     <MenuScrollingVisibilityConverter x:Key="MenuScrollingVisibilityConverter"/>
@@ -324,7 +284,7 @@
 
 
 	<Style TargetType="{x:Type TabItem}">
-		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
 		<Setter Property="Foreground" Value="{DynamicResource TabItemForeground}"/>
 		<Setter Property="Background" Value="{DynamicResource TabItem.Static.Background}" />
 		<Setter Property="BorderBrush" Value="{DynamicResource TabItem.Static.Border}" />
@@ -704,7 +664,7 @@
 		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}" />
 		<Setter Property="Foreground" Value="{DynamicResource CommonControlsCheckBoxText}" />
 		<Setter Property="HorizontalContentAlignment" Value="Stretch" />
-		<Setter Property="VerticalContentAlignment" Value="Stretch" />
+		<Setter Property="VerticalContentAlignment" Value="Center" />
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type CheckBox}">
@@ -905,6 +865,8 @@
     <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type FrameworkElement}, ResourceId=MenuScrollViewer}"
            TargetType="{x:Type ScrollViewer}"
            BasedOn="{x:Null}">
+        <Setter Property="FocusVisualStyle"
+                Value="{x:Null}"/>
         <Setter Property="HorizontalScrollBarVisibility"
                 Value="Hidden"/>
         <Setter Property="VerticalScrollBarVisibility"
@@ -1020,6 +982,7 @@
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}">
                             <ScrollViewer Name="ContextMenuScrollViewer"
+                                          FocusVisualStyle="{x:Null}"
                                           Grid.ColumnSpan="2" Margin="1,0"
                                           Style="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type FrameworkElement}, ResourceId=MenuScrollViewer}}">
                               <Grid RenderOptions.ClearTypeHint="Enabled">
@@ -1034,8 +997,8 @@
                                            HorizontalAlignment="Left"
                                            Width="28"
                                            Margin="1,2"
-                                           RadiusX="2"
-                                           RadiusY="2"/>
+                                           RadiusX="0"
+                                           RadiusY="0"/>
                                 <Rectangle HorizontalAlignment="Left"
                                            Width="1"
                                            Margin="29,2,0,2"
@@ -1821,7 +1784,7 @@
 		<Setter Property="Background" Value="Transparent" />
 		<Setter Property="BorderBrush" Value="Transparent" />
 		<Setter Property="BorderThickness" Value="1" />
-		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}" />
+		<Setter Property="FocusVisualStyle" Value="{x:Null}" />
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ListBoxItem}">
@@ -1871,6 +1834,8 @@
 
     <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}"
            TargetType="{x:Type ScrollViewer}">
+        <Setter Property="FocusVisualStyle"
+                Value="{x:Null}"/>
         <Setter Property="Focusable"
                 Value="false"/>
         <Setter Property="Template">
@@ -2163,8 +2128,8 @@
             <Setter.Value>
                 <ControlTemplate>
                     <Rectangle StrokeThickness="1"
-                               RadiusX="2"
-                               RadiusY="2"
+                               RadiusX="0"
+                               RadiusY="0"
                                Stroke="{DynamicResource GridViewListViewItemFocusVisualStroke}"/>
                 </ControlTemplate>
             </Setter.Value>
@@ -2187,16 +2152,16 @@
                 Value="5,2,5,2"/>
         <Setter Property="VerticalContentAlignment"
                 Value="Center"/>
+		<Setter Property="HorizontalContentAlignment"
+                Value="Stretch"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListViewItem}">
                     <Border BorderThickness="{TemplateBinding BorderThickness}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             Background="{TemplateBinding Background}"
-                            CornerRadius="2"
                             SnapsToDevicePixels="true">
                         <Border Name="InnerBorder"
-                                CornerRadius="1"
                                 BorderThickness="1">
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -2321,10 +2286,12 @@
                 </Border>
                 <ContentPresenter Grid.Column="2"
                                   ContentSource="Header"
+                                  VerticalAlignment="Center"
                                   Margin="{TemplateBinding MenuItem.Padding}"
                                   RecognizesAccessKey="True"
                                   SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                 <TextBlock Grid.Column="4"
+                           VerticalAlignment="Center"
                            Text="{TemplateBinding MenuItem.InputGestureText}"
                            Margin="{TemplateBinding MenuItem.Padding}"/>
             </Grid>
@@ -2491,6 +2458,7 @@
 	<Style TargetType="{x:Type RadioButton}">
 		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}" />
 		<Setter Property="Foreground" Value="{DynamicResource CommonControlsRadioButtonText}" />
+		<Setter Property="VerticalContentAlignment" Value="Center" />
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type RadioButton}">
@@ -3117,6 +3085,8 @@
                         Value="{DynamicResource SystemColorsGrayText}"/>
             </Trigger>
         </Style.Triggers>
+		<Setter Property="FocusVisualStyle"
+				Value="{x:Null}"/>
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ScrollViewer}">
@@ -3769,10 +3739,12 @@
 
                                 <ContentPresenter Grid.Column="1"
                                                   ContentSource="Header"
+                                                  VerticalAlignment="Center"
                                                   Margin="{TemplateBinding Padding}"
                                                   RecognizesAccessKey="True"
                                                   SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                                 <TextBlock Grid.Column="2"
+                                           VerticalAlignment="Center"
                                            Text="{TemplateBinding InputGestureText}"
                                            Margin="4,3,2,3"
                                            HorizontalAlignment="Right"/>
@@ -3870,6 +3842,7 @@
                                                                        Height="1"
                                                                        Width="{Binding ElementName=Header, Path=ActualWidth}" />
                                                             <ScrollViewer Name="SubMenuScrollViewer"
+                                                                          FocusVisualStyle="{x:Null}"
                                                                           Style="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type FrameworkElement}, ResourceId=MenuScrollViewer}}">
                                                               <Grid RenderOptions.ClearTypeHint="Enabled" Grid.IsSharedSizeScope="true">
                                                                   <Grid.ColumnDefinitions>
@@ -4114,6 +4087,7 @@
                                                         BorderThickness="1"
                                                         Grid.IsSharedSizeScope="true">
                                                     <ScrollViewer Name="SubMenuScrollViewer"
+                                                                  FocusVisualStyle="{x:Null}"
                                                                   Style="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type FrameworkElement}, ResourceId=MenuScrollViewer}}">
                                                       <Grid RenderOptions.ClearTypeHint="Enabled">
                                                         <Grid.ColumnDefinitions>
@@ -5504,6 +5478,11 @@
 	<Style x:Key="DialogButton" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="Height" Value="23"/>
 		<Setter Property="Width" Value="75"/>
+		<Setter Property="Padding" Value="10,1,10,1" />
+		<Setter Property="MinWidth" Value="75" />
+		<Setter Property="MinHeight" Value="23" />
+	</Style>
+	<Style x:Key="DialogButton2" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="Padding" Value="10,1,10,1" />
 		<Setter Property="MinWidth" Value="75" />
 		<Setter Property="MinHeight" Value="23" />

@@ -28,7 +28,7 @@ namespace ICSharpCode.ILSpy.TextView
 	{
 		public bool IsVisible(TextViewContext context)
 		{
-			return context.TextView != null;
+			return IsEnabled(context);
 		}
 
 		public bool IsEnabled(TextViewContext context)

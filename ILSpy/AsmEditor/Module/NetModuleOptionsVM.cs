@@ -80,7 +80,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		public NetModuleOptions CreateNetModuleOptions()
 		{
 			var options = new NetModuleOptions();
-			options.Name = Name;
+			options.Name = Name ?? UTF8String.Empty;
 			options.ClrVersion = (ClrVersion)ClrVersion.SelectedItem;
 			options.Mvid = Mvid.Value;
 			return options;

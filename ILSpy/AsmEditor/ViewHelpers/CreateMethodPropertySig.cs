@@ -37,9 +37,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 			this.ownerWindow = ownerWindow;
 		}
 
-		public MethodBaseSig Create(MethodSigCreatorOptions options)
+		public MethodBaseSig Create(MethodSigCreatorOptions options, MethodBaseSig origSig)
 		{
 			var data = new MethodSigCreatorVM(options);
+			if (origSig is MethodSig)
+				data.MethodSig = (MethodSig)origSig;
+			else if (origSig is PropertySig)
+				data.PropertySig = (PropertySig)origSig;
 			var win = new MethodSigCreatorDlg();
 			win.DataContext = data;
 			win.Owner = ownerWindow ?? MainWindow.Instance;

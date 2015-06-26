@@ -81,7 +81,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		void InitializeFrom(MethodOverrideOptions options)
 		{
-			methodOverride = options.CreateMethodOverride();
+			methodOverride = options.Create();
 		}
 
 		MethodOverrideOptions CopyTo(MethodOverrideOptions options)

@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Xml.Linq;
@@ -34,7 +33,7 @@ using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.TextView
 {
-	sealed class ToolTipGenerator : IXmlDocOutput
+	sealed class SimpleHighlighter : IXmlDocOutput
 	{
 		public ITextOutput TextOutput {
 			get { return output; }
@@ -170,7 +169,7 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 
-		public UIElement Create()
+		public TextBlock Create()
 		{
 			var toolTipText = output.Text;
 			var tokens = output.LanguageTokens;

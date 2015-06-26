@@ -6,6 +6,7 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="dntheme/wpf.styles.templates.xaml" />
+				<ResourceDictionary Source="AsmEditor/wpf.styles.templates.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Application.Resources>

@@ -263,39 +263,39 @@ namespace ICSharpCode.ILSpy.TextView
 			if (segment.Reference is OpCode) {
 				OpCode code = (OpCode)segment.Reference;
 
-				var toolTipGen = new ToolTipGenerator();
+				var gen = new SimpleHighlighter();
 
 				var s = ILLanguage.GetOpCodeDocumentation(code);
 				string opCodeHex = code.Size > 1 ? string.Format("0x{0:X4}", code.Value) : string.Format("0x{0:X2}", code.Value);
-				toolTipGen.TextOutput.Write(code.Name, TextTokenType.OpCode);
-				toolTipGen.TextOutput.WriteSpace();
-				toolTipGen.TextOutput.Write('(', TextTokenType.Operator);
-				toolTipGen.TextOutput.Write(opCodeHex, TextTokenType.Number);
-				toolTipGen.TextOutput.Write(')', TextTokenType.Operator);
+				gen.TextOutput.Write(code.Name, TextTokenType.OpCode);
+				gen.TextOutput.WriteSpace();
+				gen.TextOutput.Write('(', TextTokenType.Operator);
+				gen.TextOutput.Write(opCodeHex, TextTokenType.Number);
+				gen.TextOutput.Write(')', TextTokenType.Operator);
 				if (s != null) {
-					toolTipGen.TextOutput.Write(" - ", TextTokenType.Text);
-					toolTipGen.TextOutput.Write(s, TextTokenType.Text);
+					gen.TextOutput.Write(" - ", TextTokenType.Text);
+					gen.TextOutput.Write(s, TextTokenType.Text);
 				}
 
-				return toolTipGen.Create();
+				return gen.Create();
 			} else if (segment.Reference is GenericParam) {
 				return GenerateToolTip((GenericParam)segment.Reference);
 			} else if (segment.Reference is IMemberRef) {
 				var mr = (IMemberRef)segment.Reference;
 				var resolvedRef = Resolve(mr) ?? mr;
-				var genFirstLine = new ToolTipGenerator();
+				var genFirstLine = new SimpleHighlighter();
 				MainWindow.Instance.GetLanguage(this).WriteToolTip(genFirstLine.TextOutput, mr, null);
-				var toolTipGen = new ToolTipGenerator();
+				var gen = new SimpleHighlighter();
 				try {
 					if (resolvedRef is IMemberDef) {
 						XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(resolvedRef.Module);
 						if (docProvider != null)
-							toolTipGen.WriteXmlDoc(GetDocumentation(docProvider, resolvedRef));
+							gen.WriteXmlDoc(GetDocumentation(docProvider, resolvedRef));
 					}
 				} catch (XmlException) {
 					// ignore
 				}
-				return GenerateToolTip(resolvedRef, genFirstLine, toolTipGen);
+				return GenerateToolTip(resolvedRef, genFirstLine, gen);
 			} else if (segment.Reference is Parameter) {
 				return GenerateToolTip((Parameter)segment.Reference, null);
 			} else if (segment.Reference is ILVariable) {
@@ -318,7 +318,7 @@ namespace ICSharpCode.ILSpy.TextView
 			return null;
 		}
 
-		static UIElement GenerateToolTip(object iconType, ToolTipGenerator genFirstLine, ToolTipGenerator gen)
+		static UIElement GenerateToolTip(object iconType, SimpleHighlighter genFirstLine, SimpleHighlighter gen)
 		{
 			var res = new StackPanel {
 				Orientation = Orientation.Vertical,
@@ -391,19 +391,19 @@ namespace ICSharpCode.ILSpy.TextView
 			if (variable == null)
 				return name == null ? null : string.Format("(local variable) {0}", name);
 
-			var genFirstLine = new ToolTipGenerator();
+			var genFirstLine = new SimpleHighlighter();
 			MainWindow.Instance.GetLanguage(this).WriteToolTip(genFirstLine.TextOutput, variable, name);
 
-			var toolTipGen = new ToolTipGenerator();
+			var gen = new SimpleHighlighter();
 			if (variable is Parameter) {
 				var method = ((Parameter)variable).Method;
 				try {
 					XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(method.Module);
 					if (docProvider != null) {
-						if (!toolTipGen.WriteXmlDocParameter(GetDocumentation(docProvider, method), variable.Name)) {
+						if (!gen.WriteXmlDocParameter(GetDocumentation(docProvider, method), variable.Name)) {
 							TypeDef owner = method.DeclaringType;
 							while (owner != null) {
-								if (toolTipGen.WriteXmlDocParameter(GetDocumentation(docProvider, owner), variable.Name))
+								if (gen.WriteXmlDocParameter(GetDocumentation(docProvider, owner), variable.Name))
 									break;
 								owner = owner.DeclaringType;
 							}
@@ -414,7 +414,7 @@ namespace ICSharpCode.ILSpy.TextView
 				}
 			}
 
-			return GenerateToolTip(variable, genFirstLine, toolTipGen);
+			return GenerateToolTip(variable, genFirstLine, gen);
 		}
 
 		object GenerateToolTip(GenericParam gp)
@@ -422,19 +422,19 @@ namespace ICSharpCode.ILSpy.TextView
 			if (gp == null)
 				return null;
 
-			var genFirstLine = new ToolTipGenerator();
+			var genFirstLine = new SimpleHighlighter();
 			MainWindow.Instance.GetLanguage(this).WriteToolTip(genFirstLine.TextOutput, gp, null);
 
-			var toolTipGen = new ToolTipGenerator();
+			var gen = new SimpleHighlighter();
 			try {
 				XmlDocumentationProvider docProvider = XmlDocLoader.LoadDocumentation(gp.Module);
 				if (docProvider != null) {
-					if (!toolTipGen.WriteXmlDocGeneric(GetDocumentation(docProvider, gp.Owner), gp.Name) && gp.Owner is TypeDef) {
+					if (!gen.WriteXmlDocGeneric(GetDocumentation(docProvider, gp.Owner), gp.Name) && gp.Owner is TypeDef) {
 						// If there's no doc available, use the parent class' documentation if this
 						// is a generic type parameter (and not a generic method parameter).
 						TypeDef owner = ((TypeDef)gp.Owner).DeclaringType;
 						while (owner != null) {
-							if (toolTipGen.WriteXmlDocGeneric(GetDocumentation(docProvider, owner), gp.Name))
+							if (gen.WriteXmlDocGeneric(GetDocumentation(docProvider, owner), gp.Name))
 								break;
 							owner = owner.DeclaringType;
 						}
@@ -444,7 +444,7 @@ namespace ICSharpCode.ILSpy.TextView
 			catch (XmlException) {
 			}
 
-			return GenerateToolTip(gp, genFirstLine, toolTipGen);
+			return GenerateToolTip(gp, genFirstLine, gen);
 		}
 
 		string GetDocumentation(XmlDocumentationProvider docProvider, IMemberRef mr)

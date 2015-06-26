@@ -575,7 +575,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			options.DeclSecurities.Clear();
 			options.DeclSecurities.AddRange(DeclSecuritiesVM.Collection.Select(a => a.CreateDeclSecurityOptions().Create(ownerModule)));
 			options.GenericParameters.Clear();
-			options.GenericParameters.AddRange(GenericParamsVM.Collection.Select(a => a.CreateGenericParamOptions().CreateGenericParam(ownerModule)));
+			options.GenericParameters.AddRange(GenericParamsVM.Collection.Select(a => a.CreateGenericParamOptions().Create(ownerModule)));
 			options.Interfaces.Clear();
 			options.Interfaces.AddRange(InterfaceImplsVM.Collection.Select(a => a.CreateTypeDefOrRefAndCAOptions().CreateInterfaceImpl(ownerModule)));
 			if (ModelUtils.GetHasSecurityBit(options.DeclSecurities, options.CustomAttributes))

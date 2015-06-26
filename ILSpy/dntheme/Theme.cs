@@ -1315,6 +1315,282 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#FFCCCEDB",// Environment.ToolTipBorder
 				BackgroundResourceKey = "CodeToolTipBorder",
 			},
+			new BrushColorInfo(ColorType.CilButton, "CIL Button") {
+				DefaultForeground = "#FF1E1E1E",
+				ForegroundResourceKey = "CilButtonText",
+				DefaultBackground = "Transparent",
+				BackgroundResourceKey = "CilButton",
+			},
+			new BrushColorInfo(ColorType.CilButtonBorder, "CIL Button Border") {
+				DefaultBackground = "Transparent",
+				BackgroundResourceKey = "CilButtonBorder",
+			},
+			new BrushColorInfo(ColorType.CilButtonBorderFocused, "CIL Button Border Focused") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CilButtonBorderFocused",
+			},
+			new BrushColorInfo(ColorType.CilButtonBorderHover, "CIL Button Border Hover") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CilButtonBorderHover",
+			},
+			new BrushColorInfo(ColorType.CilButtonBorderPressed, "CIL Button Border Pressed") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CilButtonBorderPressed",
+			},
+			new BrushColorInfo(ColorType.CilButtonError, "CIL Button Error") {
+				DefaultBackground = "Pink",
+				BackgroundResourceKey = "CilButtonErrorBackground",
+			},
+			new BrushColorInfo(ColorType.CilButtonErrorBorder, "CIL Button Error Border") {
+				DefaultBackground = "Red",
+				BackgroundResourceKey = "CilButtonErrorBorder",
+			},
+			new BrushColorInfo(ColorType.CilButtonFocused, "CIL Button Focused") {
+				DefaultForeground = "#FF1E1E1E",
+				ForegroundResourceKey = "CilButtonFocusedText",
+				DefaultBackground = "#FFE0E0E0",
+				BackgroundResourceKey = "CilButtonFocused",
+			},
+			new BrushColorInfo(ColorType.CilButtonHover, "CIL Button Hover") {
+				DefaultForeground = "#FF1E1E1E",
+				ForegroundResourceKey = "CilButtonHoverText",
+				DefaultBackground = "#FFE0E0E0",
+				BackgroundResourceKey = "CilButtonHover",
+			},
+			new BrushColorInfo(ColorType.CilButtonPressed, "CIL Button Pressed") {
+				DefaultForeground = "#FFFFFFFF",
+				ForegroundResourceKey = "CilButtonPressedText",
+				DefaultBackground = "#FFC0C0C0",
+				BackgroundResourceKey = "CilButtonPressed",
+			},
+			new BrushColorInfo(ColorType.CilCheckBoxBackground, "CIL CheckBox Background") {
+				DefaultBackground = "#FFFEFEFE",
+				BackgroundResourceKey = "CilCheckBoxBackground",
+			},
+			new BrushColorInfo(ColorType.CilCheckBoxBackgroundDisabled, "CIL CheckBox Background Disabled") {
+				DefaultBackground = "#FFF6F6F6",
+				BackgroundResourceKey = "CilCheckBoxBackgroundDisabled",
+			},
+			new BrushColorInfo(ColorType.CilCheckBoxBackgroundFocused, "CIL CheckBox Background Focused") {
+				DefaultBackground = "#FFF3F9FF",
+				BackgroundResourceKey = "CilCheckBoxBackgroundFocused",
+			},
+			new BrushColorInfo(ColorType.CilCheckBoxBackgroundHover, "CIL CheckBox Background Hover") {
+				DefaultBackground = "#FFF3F9FF",
+				BackgroundResourceKey = "CilCheckBoxBackgroundHover",
+			},
+			new BrushColorInfo(ColorType.CilCheckBoxBackgroundPressed, "CIL CheckBox Background Pressed") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CilCheckBoxBackgroundPressed",
+			},
+			new BrushColorInfo(ColorType.CilCheckBoxBorder, "CIL CheckBox Border") {
+				DefaultBackground = "#FF717171",
+				BackgroundResourceKey = "CilCheckBoxBorder",
+			},
+			new BrushColorInfo(ColorType.CilCheckBoxBorderDisabled, "CIL CheckBox Border Disabled") {
+				DefaultBackground = "#FFC6C6C6",
+				BackgroundResourceKey = "CilCheckBoxBorderDisabled",
+			},
+			new BrushColorInfo(ColorType.CilCheckBoxBorderFocused, "CIL CheckBox Border Focused") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CilCheckBoxBorderFocused",
+			},
+			new BrushColorInfo(ColorType.CilCheckBoxBorderHover, "CIL CheckBox Border Hover") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CilCheckBoxBorderHover",
+			},
+			new BrushColorInfo(ColorType.CilCheckBoxBorderPressed, "CIL CheckBox Border Pressed") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CilCheckBoxBorderPressed",
+			},
+			new BrushColorInfo(ColorType.CilCheckBoxGlyph, "CIL CheckBox Glyph") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "CilCheckBoxGlyph",
+			},
+			new BrushColorInfo(ColorType.CilCheckBoxGlyphDisabled, "CIL CheckBox Glyph Disabled") {
+				DefaultBackground = "#FFA2A4A5",
+				BackgroundResourceKey = "CilCheckBoxGlyphDisabled",
+			},
+			new BrushColorInfo(ColorType.CilCheckBoxGlyphFocused, "CIL CheckBox Glyph Focused") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "CilCheckBoxGlyphFocused",
+			},
+			new BrushColorInfo(ColorType.CilCheckBoxGlyphHover, "CIL CheckBox Glyph Hover") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "CilCheckBoxGlyphHover",
+			},
+			new BrushColorInfo(ColorType.CilCheckBoxGlyphPressed, "CIL CheckBox Glyph Pressed") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "CilCheckBoxGlyphPressed",
+			},
+			new BrushColorInfo(ColorType.CilCheckBoxText, "CIL CheckBox Text") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "CilCheckBoxText",
+			},
+			new BrushColorInfo(ColorType.CilCheckBoxTextDisabled, "CIL CheckBox Text Disabled") {
+				DefaultBackground = "#FFA2A4A5",
+				BackgroundResourceKey = "CilCheckBoxTextDisabled",
+			},
+			new BrushColorInfo(ColorType.CilCheckBoxTextFocused, "CIL CheckBox Text Focused") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CilCheckBoxTextFocused",
+			},
+			new BrushColorInfo(ColorType.CilCheckBoxTextHover, "CIL CheckBox Text Hover") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CilCheckBoxTextHover",
+			},
+			new BrushColorInfo(ColorType.CilCheckBoxTextPressed, "CIL CheckBox Text Pressed") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CilCheckBoxTextPressed",
+			},
+			new BrushColorInfo(ColorType.CilComboBoxBorderFocused, "CIL ComboBox Border Focused") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CilComboBoxBorderFocused",
+			},
+			new BrushColorInfo(ColorType.CilComboBoxBorderHover, "CIL ComboBox Border Hover") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CilComboBoxBorderHover",
+			},
+			new BrushColorInfo(ColorType.CilComboBoxBorderPressed, "CIL ComboBox Border Pressed") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CilComboBoxBorderPressed",
+			},
+			new BrushColorInfo(ColorType.CilComboBoxError, "CIL ComboBox Error") {
+				DefaultBackground = "Pink",
+				BackgroundResourceKey = "CilComboBoxErrorBackground",
+			},
+			new BrushColorInfo(ColorType.CilComboBoxErrorBorder, "CIL ComboBox Error Border") {
+				DefaultBackground = "Red",
+				BackgroundResourceKey = "CilComboBoxErrorBorder",
+			},
+			new BrushColorInfo(ColorType.CilComboBoxListBackground, "CIL ComboBox List Background") {
+				DefaultBackground = "White",
+				BackgroundResourceKey = "CilComboBoxListBackground",
+			},
+			new BrushColorInfo(ColorType.CilComboBoxListBorder, "CIL ComboBox ListBorder") {
+				DefaultBackground = "#FFCCCEDB",
+				BackgroundResourceKey = "CilComboBoxListBorder",
+			},
+			new BrushColorInfo(ColorType.CilComboBoxListItemBackgroundHover, "CIL ComboBox ListItem Background Hover") {
+				DefaultBackground = "#FFF8F8F8",
+				BackgroundResourceKey = "CilComboBoxListItemBackgroundHover",
+			},
+			new BrushColorInfo(ColorType.CilComboBoxListItemBorderHover, "CIL ComboBox ListItem Border Hover") {
+				DefaultBackground = "#FFF0F0F0",
+				BackgroundResourceKey = "CilComboBoxListItemBorderHover",
+			},
+			new BrushColorInfo(ColorType.CilComboBoxListItemTextHover, "CIL ComboBox ListItem Text Hover") {
+				DefaultBackground = "#FF000000",
+				BackgroundResourceKey = "CilComboBoxListItemTextHover",
+			},
+			new BrushColorInfo(ColorType.CilGridViewBorder, "CIL GridView border") {
+				DefaultBackground = "#CCCEDB",
+				BackgroundResourceKey = "CilGridViewBorder",
+			},
+			new BrushColorInfo(ColorType.CilGridViewItemContainerMouseOverHoverBorder, "CIL GridView ItemContainer mouse over hover border") {
+				DefaultBackground = "#FFF0F0F0",
+				BackgroundResourceKey = "CilGridViewItemContainerMouseOverHoverBorder",
+			},
+			new BrushColorInfo(ColorType.CilGridViewItemContainerSelectedBorder, "CIL GridView ItemContainer selected border") {
+				DefaultBackground = "#FFF0F0F0",
+				BackgroundResourceKey = "CilGridViewItemContainerSelectedBorder",
+			},
+			new BrushColorInfo(ColorType.CilGridViewItemContainerSelectedInactiveBorder, "CIL GridView ItemContainer selected inactive border") {
+				DefaultBackground = "#FFF0F0F0",
+				BackgroundResourceKey = "CilGridViewItemContainerSelectedInactiveBorder",
+			},
+			new BrushColorInfo(ColorType.CilGridViewItemContainerSelectedMouseOverBorder, "CIL GridView ItemContainer selected mouse over border brush") {
+				DefaultBackground = "#FFF0F0F0",
+				BackgroundResourceKey = "CilGridViewItemContainerSelectedMouseOverBorder",
+			},
+			new BrushColorInfo(ColorType.CilGridViewListItemHoverFill, "CIL GridView ListItem hover fill") {
+				DefaultBackground = "#FFF8F8F8",
+				BackgroundResourceKey = "CilGridViewListItemHoverFill",
+			},
+			new BrushColorInfo(ColorType.CilGridViewListItemSelectedFill, "CIL GridView ListItem selected fill") {
+				DefaultBackground = "#FFF8F8F8",
+				BackgroundResourceKey = "CilGridViewListItemSelectedFill",
+			},
+			new BrushColorInfo(ColorType.CilGridViewListItemSelectedHoverFill, "CIL GridView ListItem selected hover fill") {
+				DefaultBackground = "#FFF8F8F8",
+				BackgroundResourceKey = "CilGridViewListItemSelectedHoverFill",
+			},
+			new BrushColorInfo(ColorType.CilGridViewListItemSelectedInactiveFill, "CIL GridView ListItem selected inactive fill") {
+				DefaultBackground = "#FFF8F8F8",
+				BackgroundResourceKey = "CilGridViewListItemSelectedInactiveFill",
+			},
+			new BrushColorInfo(ColorType.CilGridViewListViewItemFocusVisualStroke, "CIL GridView ListViewItem FocusVisual stroke") {
+				DefaultBackground = "#FFF0F0F0",
+				BackgroundResourceKey = "CilGridViewListViewItemFocusVisualStroke",
+			},
+			new BrushColorInfo(ColorType.CilListBoxBorder, "CIL ListBox Border") {
+				DefaultBackground = "#CCCEDB",
+				BackgroundResourceKey = "CilListBoxBorder",
+			},
+			new BrushColorInfo(ColorType.CilListBoxItemMouseOverBackground, "CIL ListBoxItem MouseOver Background") {
+				DefaultBackground = "#FFF8F8F8",
+				BackgroundResourceKey = "CilListBoxItem.MouseOver.Background",
+			},
+			new BrushColorInfo(ColorType.CilListBoxItemMouseOverBorder, "CIL ListBoxItem MouseOver Border") {
+				DefaultBackground = "#FFF0F0F0",
+				BackgroundResourceKey = "CilListBoxItem.MouseOver.Border",
+			},
+			new BrushColorInfo(ColorType.CilListBoxItemSelectedActiveBackground, "CIL ListBoxItem SelectedActive Background") {
+				DefaultBackground = "#FFF8F8F8",
+				BackgroundResourceKey = "CilListBoxItem.SelectedActive.Background",
+			},
+			new BrushColorInfo(ColorType.CilListBoxItemSelectedActiveBorder, "CIL ListBoxItem SelectedActive Border") {
+				DefaultBackground = "#FFF0F0F0",
+				BackgroundResourceKey = "CilListBoxItem.SelectedActive.Border",
+			},
+			new BrushColorInfo(ColorType.CilListBoxItemSelectedInactiveBackground, "CIL ListBoxItem SelectedInactive Background") {
+				DefaultBackground = "#FFF8F8F8",
+				BackgroundResourceKey = "CilListBoxItem.SelectedInactive.Background",
+			},
+			new BrushColorInfo(ColorType.CilListBoxItemSelectedInactiveBorder, "CIL ListBoxItem SelectedInactive Border") {
+				DefaultBackground = "#FFF0F0F0",
+				BackgroundResourceKey = "CilListBoxItem.SelectedInactive.Border",
+			},
+			new BrushColorInfo(ColorType.CilListViewItem0, "CIL ListViewItem 0") {
+				DefaultBackground = "White",
+				BackgroundResourceKey = "CilListViewItem0",
+			},
+			new BrushColorInfo(ColorType.CilListViewItem1, "CIL ListViewItem 1") {
+				DefaultBackground = "White",
+				BackgroundResourceKey = "CilListViewItem1",
+			},
+			new BrushColorInfo(ColorType.CilTextBoxDisabled, "CIL TextBox Disabled") {
+				DefaultForeground = "#FFA2A4A5",
+				ForegroundResourceKey = "CilTextBoxDisabledForeground",
+				DefaultBackground = "#FFEEEEF2",
+				BackgroundResourceKey = "CilTextBoxDisabledBackground",
+			},
+			new BrushColorInfo(ColorType.CilTextBoxDisabledBorder, "CIL TextBox Disabled Border") {
+				DefaultBackground = "#FFCCCEDB",
+				BackgroundResourceKey = "CilTextBoxDisabledBorder",
+			},
+			new BrushColorInfo(ColorType.CilTextBoxError, "CIL TextBox Error") {
+				DefaultForeground = "#FF000000",
+				ForegroundResourceKey = "CilTextBoxErrorForeground",
+				DefaultBackground = "Pink",
+				BackgroundResourceKey = "CilTextBoxErrorBackground",
+			},
+			new BrushColorInfo(ColorType.CilTextBoxErrorBorder, "CIL TextBox Error Border") {
+				DefaultBackground = "Red",
+				BackgroundResourceKey = "CilTextBoxErrorBorder",
+			},
+			new BrushColorInfo(ColorType.CilTextBoxFocusedBorder, "CIL TextBox Focused Border") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CilTextBoxFocusedBorder",
+			},
+			new BrushColorInfo(ColorType.CilTextBoxMouseOverBorder, "CIL TextBox Mouse Over Border") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CilTextBoxMouseOverBorder",
+			},
+			new BrushColorInfo(ColorType.CilTextBoxSelection, "CIL TextBox Selection") {
+				DefaultBackground = "#FF3399FF",
+				BackgroundResourceKey = "CilTextBoxSelection",
+			},
 			new BrushColorInfo(ColorType.GridViewBackground, "GridView background") {
 				DefaultBackground = "#F5F5F5",
 				BackgroundResourceKey = "GridViewBackground",
@@ -1357,30 +1633,6 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#1E1E1E",
 				BackgroundResourceKey = "GridViewListViewForeground",
 			},
-			new BrushColorInfo(ColorType.GridViewListViewItemFocusVisualStroke, "GridView ListViewItem FocusVisual stroke") {
-				DefaultBackground = "#3399FF",
-				BackgroundResourceKey = "GridViewListViewItemFocusVisualStroke",
-			},
-			new LinearGradientColorInfo(ColorType.GridViewListItemHoverFill, new Point(0, 1), "GridView ListItem hover fill", 0, 1) {
-				ResourceKey = "GridViewListItemHoverFill",
-				DefaultForeground = "#5CADFF",
-				DefaultBackground = "#5CADFF",
-			},
-			new LinearGradientColorInfo(ColorType.GridViewListItemSelectedFill, new Point(0, 1), "GridView ListItem selected fill", 0, 1) {
-				ResourceKey = "GridViewListItemSelectedFill",
-				DefaultForeground = "#3399FF",
-				DefaultBackground = "#3399FF",
-			},
-			new LinearGradientColorInfo(ColorType.GridViewListItemSelectedHoverFill, new Point(0, 1), "GridView ListItem selected hover fill", 0, 1) {
-				ResourceKey = "GridViewListItemSelectedHoverFill",
-				DefaultForeground = "#85C2FF",
-				DefaultBackground = "#85C2FF",
-			},
-			new LinearGradientColorInfo(ColorType.GridViewListItemSelectedInactiveFill, new Point(0, 1), "GridView ListItem selected inactive fill", 0, 1) {
-				ResourceKey = "GridViewListItemSelectedInactiveFill",
-				DefaultForeground = "#AAAAAA",
-				DefaultBackground = "#AAAAAA",
-			},
 			new BrushColorInfo(ColorType.GridViewItemContainerMouseOverHoverBorder, "GridView ItemContainer mouse over hover border") {
 				DefaultBackground = "#5CADFF",
 				BackgroundResourceKey = "GridViewItemContainerMouseOverHoverBorder",
@@ -1396,6 +1648,26 @@ namespace ICSharpCode.ILSpy.dntheme
 			new BrushColorInfo(ColorType.GridViewItemContainerSelectedMouseOverBorder, "GridView ItemContainer selected mouse over border brush") {
 				DefaultBackground = "#85C2FF",
 				BackgroundResourceKey = "GridViewItemContainerSelectedMouseOverBorder",
+			},
+			new BrushColorInfo(ColorType.GridViewListItemHoverFill, "GridView ListItem hover fill") {
+				DefaultBackground = "#5CADFF",
+				BackgroundResourceKey = "GridViewListItemHoverFill",
+			},
+			new BrushColorInfo(ColorType.GridViewListItemSelectedFill, "GridView ListItem selected fill") {
+				DefaultBackground = "#3399FF",
+				BackgroundResourceKey = "GridViewListItemSelectedFill",
+			},
+			new BrushColorInfo(ColorType.GridViewListItemSelectedHoverFill, "GridView ListItem selected hover fill") {
+				DefaultBackground = "#85C2FF",
+				BackgroundResourceKey = "GridViewListItemSelectedHoverFill",
+			},
+			new BrushColorInfo(ColorType.GridViewListItemSelectedInactiveFill, "GridView ListItem selected inactive fill") {
+				DefaultBackground = "#AAAAAA",
+				BackgroundResourceKey = "GridViewListItemSelectedInactiveFill",
+			},
+			new BrushColorInfo(ColorType.GridViewListViewItemFocusVisualStroke, "GridView ListViewItem FocusVisual stroke") {
+				DefaultBackground = "#3399FF",
+				BackgroundResourceKey = "GridViewListViewItemFocusVisualStroke",
 			},
 			new BrushColorInfo(ColorType.PaneBorder, "Pane border") {
 				DefaultBackground = "#828790",

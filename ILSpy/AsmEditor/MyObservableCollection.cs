@@ -52,21 +52,21 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 		int selectedIndex;
 
-		public ICommand RemoveCommand {
-			get { return new RelayCommand(a => RemoveCurrent(), a => RemoveCurrentCanExecute()); }
+		public ICommand RemoveSelectedCommand {
+			get { return new RelayCommand(a => RemoveSelected(), a => RemoveSelectedCanExecute()); }
 		}
 
-		public ICommand MoveUpCommand {
-			get { return new RelayCommand(a => MoveCurrentUp(), a => MoveCurrentUpCanExecute()); }
+		public ICommand MoveSelectedUpCommand {
+			get { return new RelayCommand(a => MoveSelectedUp(), a => MoveSelectedUpCanExecute()); }
 		}
 
-		public ICommand MoveDownCommand {
-			get { return new RelayCommand(a => MoveCurrentDown(), a => MoveCurrentDownCanExecute()); }
+		public ICommand MoveSelectedDownCommand {
+			get { return new RelayCommand(a => MoveSelectedDown(), a => MoveSelectedDownCanExecute()); }
 		}
 
-		void RemoveCurrent()
+		void RemoveSelected()
 		{
-			if (!RemoveCurrentCanExecute())
+			if (!RemoveSelectedCanExecute())
 				return;
 			int index = SelectedIndex;
 			this.RemoveAt(index);
@@ -78,14 +78,14 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				SelectedIndex = -1;
 		}
 
-		bool RemoveCurrentCanExecute()
+		bool RemoveSelectedCanExecute()
 		{
 			return IsEnabled && SelectedIndex >= 0 && SelectedIndex < this.Count;
 		}
 
-		void MoveCurrentUp()
+		void MoveSelectedUp()
 		{
-			if (!MoveCurrentUpCanExecute())
+			if (!MoveSelectedUpCanExecute())
 				return;
 			int index = SelectedIndex;
 			var item = this[index];
@@ -94,14 +94,14 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			SelectedIndex = index - 1;
 		}
 
-		bool MoveCurrentUpCanExecute()
+		bool MoveSelectedUpCanExecute()
 		{
 			return IsEnabled && SelectedIndex > 0 && SelectedIndex < this.Count;
 		}
 
-		void MoveCurrentDown()
+		void MoveSelectedDown()
 		{
-			if (!MoveCurrentDownCanExecute())
+			if (!MoveSelectedDownCanExecute())
 				return;
 			int index = SelectedIndex;
 			var item = this[index];
@@ -110,7 +110,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			SelectedIndex = index + 1;
 		}
 
-		bool MoveCurrentDownCanExecute()
+		bool MoveSelectedDownCanExecute()
 		{
 			return IsEnabled && SelectedIndex >= 0 && SelectedIndex < this.Count - 1;
 		}

@@ -2,6 +2,9 @@ dnSpy is a fork of ILSpy. All changes de4dot@gmail.com have made
 are distributed under the GPLv3 license. See the file COPYING.
 Copyright (C) 2014-2015 de4dot@gmail.com
 
+dnSpy is open source software. You have the right to get all
+the source code that were used to compile this binary.
+
 ILSpy is the open-source .NET assembly browser and decompiler.
 Website: http://www.ilspy.net/
 

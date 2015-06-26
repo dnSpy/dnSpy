@@ -59,7 +59,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 		{
 			method.ImplAttributes = this.ImplAttributes;
 			method.Attributes = this.Attributes;
-			method.Name = this.Name;
+			method.Name = this.Name ?? UTF8String.Empty;
 			method.MethodSig = this.MethodSig;
 			method.ImplMap = this.ImplMap;
 			method.CustomAttributes.Clear();

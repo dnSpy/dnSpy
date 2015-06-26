@@ -109,7 +109,24 @@ Alt+7		| Show Call Stack window
 Shift+Alt+Enter | Toggle full screen mode
 Tab			| (Text view) Move to the next reference. Does nothing if the caret is not on a reference.
 Shift+Tab	| (Text view) Move to the previous reference. Does nothing if the caret is not on a reference.
-
+N			| (Method Editor) Nop instruction
+I			| (Method Editor) Invert branch
+B			| (Method Editor) Convert to unconditional branch
+P			| (Method Editor) Remove instruction and add an equal number of pops that the original instruction popped
+S			| (Method Editor) Simplify instructions, eg. convert ldc.i4.8 to ldc.i4 with 8 as operand
+O			| (Method Editor) Optimize instructions, eg. convert ldc.i4 with 8 as operand to ldc.i4.8
+F			| (Method Editor) Add a new instruction before selection
+C			| (Method Editor) Add a new instruction after selection
+A			| (Method Editor) Append a new instruction
+U			| (Method Editor) Move selection up
+D			| (Method Editor) Move selection down
+Del			| (Method Editor) Remove selected instructions
+Ctrl+Del	| (Method Editor) Remove all instructions
+Ctrl+T		| (Method Editor) Copy selection as text
+Ctrl+X		| (Method Editor) Cut selected instructions
+Ctrl+C		| (Method Editor) Copy selected instructions
+Ctrl+V		| (Method Editor) Paste instructions
+Ctrl+Alt+V	| (Method Editor) Paste instructions after selection
 
 Credits
 =======

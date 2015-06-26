@@ -46,7 +46,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 		public PropertyDef CopyTo(PropertyDef evt)
 		{
 			evt.Attributes = this.Attributes;
-			evt.Name = this.Name;
+			evt.Name = this.Name ?? UTF8String.Empty;
 			evt.PropertySig = this.PropertySig;
 			evt.Constant = this.Constant;
 			evt.CustomAttributes.Clear();

@@ -132,9 +132,13 @@ namespace ICSharpCode.Decompiler.Disassembler
 		
 		public static void WriteMethodTo(this IMethod method, ITextOutput writer)
 		{
-			if (method == null)
-				return;
-			MethodSig sig = method.MethodSig;
+			writer.Write(null, method);
+		}
+
+		public static void Write(this ITextOutput writer, MethodSig sig, IMethod method = null)
+		{
+			if (sig == null && method != null)
+				sig = method.MethodSig;
 			if (sig == null)
 				return;
 			if (sig.ExplicitThis) {
@@ -149,15 +153,18 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			sig.RetType.WriteTo(writer, ILNameSyntax.SignatureNoNamedTypeParameters);
 			writer.WriteSpace();
-			if (method.DeclaringType != null) {
-				method.DeclaringType.WriteTo(writer, ILNameSyntax.TypeName);
-				writer.Write("::", TextTokenType.Operator);
-			}
-			MethodDef md = method as MethodDef;
-			if (md != null && md.IsCompilerControlled) {
-				writer.WriteReference(Escape(method.Name + "$PST" + method.MDToken.ToInt32().ToString("X8")), method, TextTokenHelper.GetTextTokenType(method));
-			} else {
-				writer.WriteReference(Escape(method.Name), method, TextTokenHelper.GetTextTokenType(method));
+			if (method != null) {
+				if (method.DeclaringType != null) {
+					method.DeclaringType.WriteTo(writer, ILNameSyntax.TypeName);
+					writer.Write("::", TextTokenType.Operator);
+				}
+				MethodDef md = method as MethodDef;
+				if (md != null && md.IsCompilerControlled) {
+					writer.WriteReference(Escape(method.Name + "$PST" + method.MDToken.ToInt32().ToString("X8")), method, TextTokenHelper.GetTextTokenType(method));
+				}
+				else {
+					writer.WriteReference(Escape(method.Name), method, TextTokenHelper.GetTextTokenType(method));
+				}
 			}
 			MethodSpec gim = method as MethodSpec;
 			if (gim != null && gim.GenericInstMethodSig != null) {

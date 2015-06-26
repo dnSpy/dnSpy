@@ -57,7 +57,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 		public FieldDef CopyTo(FieldDef field)
 		{
 			field.Attributes = this.Attributes;
-			field.Name = this.Name;
+			field.Name = this.Name ?? UTF8String.Empty;
 			field.FieldSig = this.FieldSig;
 			field.FieldOffset = this.FieldOffset;
 			field.MarshalType = this.MarshalType;

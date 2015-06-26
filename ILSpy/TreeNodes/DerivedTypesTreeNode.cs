@@ -58,6 +58,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return ImageCache.Instance.GetImage("SubTypes", BackgroundType.TreeNode); }
 		}
 
+		public override object ExpandedIcon
+		{
+			get { return ImageCache.Instance.GetImage("SubTypesOpen", BackgroundType.TreeNode); }
+		}
+
 		public override FilterResult Filter(FilterSettings settings)
 		{
 			var res = settings.Filter.GetFilterResult(this);

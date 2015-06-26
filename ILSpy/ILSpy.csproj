@@ -123,7 +123,10 @@
       <DependentUpon>AssemblyOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Assembly\AssemblyOptionsVM.cs" />
+    <Compile Include="AsmEditor\ContextMenuHandler.cs" />
     <Compile Include="AsmEditor\Converters\BooleanToGridrowLengthConverter.cs" />
+    <Compile Include="AsmEditor\Converters\CilObjectConverter.cs" />
+    <Compile Include="AsmEditor\Converters\InstructionOperandTextBoxStyleConverter.cs" />
     <Compile Include="AsmEditor\Converters\RadioButtonConverter.cs" />
     <Compile Include="AsmEditor\DataFieldVM.cs" />
     <Compile Include="AsmEditor\DeletableNodes.cs" />
@@ -208,6 +211,14 @@
       <DependentUpon>MemberPickerDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\DnlibDialogs\MemberPickerVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\MemberRefControl.xaml.cs">
+      <DependentUpon>MemberRefControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\MemberRefDlg.xaml.cs">
+      <DependentUpon>MemberRefDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\MemberRefOptions.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\MemberRefVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\MethodOverrideOptions.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\MethodOverridesControl.xaml.cs">
       <DependentUpon>MethodOverridesControl.xaml</DependentUpon>
@@ -222,6 +233,14 @@
     </Compile>
     <Compile Include="AsmEditor\DnlibDialogs\MethodSigCreatorOptions.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\MethodSigCreatorVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\MethodSpecControl.xaml.cs">
+      <DependentUpon>MethodSpecControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\MethodSpecDlg.xaml.cs">
+      <DependentUpon>MethodSpecDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\MethodSpecOptions.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\MethodSpecVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\ModelUtils.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\Null.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\ObjectListDataFieldVM.cs" />
@@ -284,7 +303,49 @@
       <DependentUpon>FieldOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Field\FieldOptionsVM.cs" />
+    <Compile Include="AsmEditor\IIndexedItem.cs" />
+    <Compile Include="AsmEditor\IndexObservableCollection.cs" />
     <Compile Include="AsmEditor\IUndoCommand.cs" />
+    <Compile Include="AsmEditor\ListBoxHelperBase.cs" />
+    <Compile Include="AsmEditor\ListVM.cs" />
+    <Compile Include="AsmEditor\MethodBody\BodyUtils.cs" />
+    <Compile Include="AsmEditor\MethodBody\CilBodyOptions.cs" />
+    <Compile Include="AsmEditor\MethodBody\CilBodyVM.cs" />
+    <Compile Include="AsmEditor\MethodBody\ComboBoxAttachedProps.cs" />
+    <Compile Include="AsmEditor\MethodBody\ExceptionHandlerOptions.cs" />
+    <Compile Include="AsmEditor\MethodBody\ExceptionHandlersListHelper.cs" />
+    <Compile Include="AsmEditor\MethodBody\ExceptionHandlerVM.cs" />
+    <Compile Include="AsmEditor\MethodBody\FastClickButton.cs" />
+    <Compile Include="AsmEditor\MethodBody\IEditOperand.cs" />
+    <Compile Include="AsmEditor\MethodBody\InstructionOperandControl.cs" />
+    <Compile Include="AsmEditor\MethodBody\InstructionOperandVM.cs" />
+    <Compile Include="AsmEditor\MethodBody\InstructionOptions.cs" />
+    <Compile Include="AsmEditor\MethodBody\InstructionsListHelper.cs" />
+    <Compile Include="AsmEditor\MethodBody\InstructionVM.cs" />
+    <Compile Include="AsmEditor\MethodBody\LocalOptions.cs" />
+    <Compile Include="AsmEditor\MethodBody\LocalsListHelper.cs" />
+    <Compile Include="AsmEditor\MethodBody\LocalVM.cs" />
+    <Compile Include="AsmEditor\MethodBody\MethodBodyCommands.cs" />
+    <Compile Include="AsmEditor\MethodBody\MethodBodyControl.xaml.cs">
+      <DependentUpon>MethodBodyControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\MethodBody\MethodBodyDlg.xaml.cs">
+      <DependentUpon>MethodBodyDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\MethodBody\MethodBodyOptions.cs" />
+    <Compile Include="AsmEditor\MethodBody\MethodBodyType.cs" />
+    <Compile Include="AsmEditor\MethodBody\MethodBodyVM.cs" />
+    <Compile Include="AsmEditor\MethodBody\NativeMethodBodyOptions.cs" />
+    <Compile Include="AsmEditor\MethodBody\NativeMethodBodyVM.cs" />
+    <Compile Include="AsmEditor\MethodBody\SwitchInstructionVM.cs" />
+    <Compile Include="AsmEditor\MethodBody\SwitchOperandControl.xaml.cs">
+      <DependentUpon>SwitchOperandControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\MethodBody\SwitchOperandDlg.xaml.cs">
+      <DependentUpon>SwitchOperandDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\MethodBody\SwitchOperandsListHelper.cs" />
+    <Compile Include="AsmEditor\MethodBody\SwitchOperandVM.cs" />
     <Compile Include="AsmEditor\Method\MethodDefCommands.cs" />
     <Compile Include="AsmEditor\Method\MethodDefOptions.cs" />
     <Compile Include="AsmEditor\Method\MethodOptionsDlg.xaml.cs">
@@ -351,7 +412,9 @@
     <Compile Include="AsmEditor\ViewHelpers\EditCustomAttribute.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditDeclSecurity.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditGenericParam.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\EditMemberRef.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditMethodOverride.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\EditMethodSpec.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditParamDef.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditSecurityAttribute.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditTypeDefOrRefAndCA.cs" />
@@ -419,13 +482,14 @@
     <Compile Include="TabGroupsManager.cs" />
     <Compile Include="TabManager.cs" />
     <Compile Include="TabState.cs" />
-    <Compile Include="TextView\ToolTipGenerator.cs" />
+    <Compile Include="TextView\SimpleHighlighter.cs" />
     <Compile Include="TreeNodes\CopyTokenContextMenuEntry.cs" />
     <Compile Include="TreeNodes\Filters\ChainTreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\Filters\EntryPointTreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\Filters\FilterNothingTreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\Filters\FlagsTreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\Filters\PublicApiTreeViewNodeFilter.cs" />
+    <Compile Include="TreeNodes\Filters\SameAssemblyTreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\Filters\ShowNothingTreeViewNodeFilterBase.cs" />
     <Compile Include="TreeNodes\Filters\TreeViewNodeFilterBase.cs" />
     <Compile Include="TreeNodes\Filters\VisibleMembersFlags.cs" />
@@ -719,6 +783,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="AsmEditor\DnlibDialogs\MemberRefControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\MemberRefDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AsmEditor\DnlibDialogs\MethodOverridesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -728,6 +800,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\DnlibDialogs\MethodSigCreatorDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\MethodSpecControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\MethodSpecDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -783,6 +863,22 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="AsmEditor\MethodBody\MethodBodyControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\MethodBody\MethodBodyDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\MethodBody\SwitchOperandControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\MethodBody\SwitchOperandDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AsmEditor\Method\MethodOptionsDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -814,6 +910,10 @@
     <Page Include="AsmEditor\Types\TypeOptionsDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\wpf.styles.templates.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\ResourceObjectTable.xaml">
       <SubType>Designer</SubType>
@@ -853,6 +953,11 @@
     <Page Include="themes\generic.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\AddException.png" />
+    <Resource Include="Images\AddLocal.png" />
+    <Resource Include="Images\AddNewItem.png" />
+    <Resource Include="Images\ArrowDown.png" />
+    <Resource Include="Images\ArrowUp.png" />
     <Resource Include="Images\Assembly.png" />
     <Resource Include="Images\AssemblyExe.png" />
     <Resource Include="Images\AssemblyList.png" />
@@ -863,6 +968,7 @@
     <Resource Include="Images\AssemblyToModule.png" />
     <Resource Include="Images\AssemblyWarning.png" />
     <Resource Include="Images\Back.png" />
+    <Resource Include="Images\Branch.png" />
     <Resource Include="Images\Breakpoint.png" />
     <Resource Include="Images\Class.png" />
     <Resource Include="Images\ClassInternal.png" />
@@ -881,6 +987,7 @@
     <Resource Include="Images\Copy.png" />
     <Resource Include="Images\CSharpFile.png" />
     <Resource Include="Images\CurrentLine.png" />
+    <Resource Include="Images\Cut.png" />
     <Resource Include="Images\Delegate.png" />
     <Resource Include="Images\DelegateInternal.png" />
     <Resource Include="Images\DelegatePrivate.png" />
@@ -935,6 +1042,7 @@
     <Resource Include="Images\FolderClosed.png" />
     <Resource Include="Images\FolderOpen.png" />
     <Resource Include="Images\Forward.png" />
+    <Resource Include="Images\FullScreen.png" />
     <Resource Include="Images\Generic.png" />
     <Resource Include="Images\GenericInternal.png" />
     <Resource Include="Images\GenericParameter.png" />
@@ -942,6 +1050,7 @@
     <Resource Include="Images\GenericProtected.png" />
     <Resource Include="Images\GenericProtectedInternal.png" />
     <Resource Include="Images\HorizontalTabGroup.png" />
+    <Resource Include="Images\ILEditor.png" />
     <Resource Include="Images\ImageFile.png" />
     <Resource Include="Images\Interface.png" />
     <Resource Include="Images\InterfaceInternal.png" />
@@ -972,6 +1081,7 @@
     <Resource Include="Images\NewMethod.png" />
     <Resource Include="Images\NewProperty.png" />
     <Resource Include="Images\NewWindow.png" />
+    <Resource Include="Images\NOP.png" />
     <Resource Include="Images\OK.png" />
     <Resource Include="Images\Open.png" />
     <Resource Include="Images\Operator.png" />
@@ -981,6 +1091,7 @@
     <Resource Include="Images\OperatorProtected.png" />
     <Resource Include="Images\OperatorProtectedInternal.png" />
     <Resource Include="Images\Parameter.png" />
+    <Resource Include="Images\Paste.png" />
     <Resource Include="Images\PInvokeMethod.png" />
     <Resource Include="Images\PInvokeMethodCompilerControlled.png" />
     <Resource Include="Images\PInvokeMethodInternal.png" />
@@ -1029,8 +1140,11 @@
     <Resource Include="Images\StructProtected.png" />
     <Resource Include="Images\StructProtectedInternal.png" />
     <Resource Include="Images\SubTypes.png" />
+    <Resource Include="Images\SubTypesOpen.png" />
     <Resource Include="Images\SuperTypes.png" />
+    <Resource Include="Images\SuperTypesOpen.png" />
     <Resource Include="Images\TextFile.png" />
+    <Resource Include="Images\ToUncondBranch.png" />
     <Resource Include="Images\Undo.png" />
     <Resource Include="Images\VerticalTabGroup.png" />
     <Resource Include="Images\ViewCode.png" />
@@ -1093,9 +1207,6 @@
     <None Include="Microsoft.Windows.Shell.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\FullScreen.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
