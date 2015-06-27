@@ -83,10 +83,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					cancellationToken.ThrowIfCancellationRequested();
 					if (type.IsInterface && td.HasInterfaces) {
 						foreach (var typeRef in td.Interfaces) {
-							if (IsSameType(typeRef.Interface, type))
+							if (IsSameType(typeRef.Interface.ResolveTypeDef() ?? typeRef.Interface, type))
 								yield return new DerivedTypesEntryNode(td, modules);
 						}
-					} else if (!type.IsInterface && td.BaseType != null && IsSameType(td.BaseType, type)) {
+					} else if (!type.IsInterface && td.BaseType != null && IsSameType(td.BaseType.ResolveTypeDef() ?? td.BaseType, type)) {
 						yield return new DerivedTypesEntryNode(td, modules);
 					}
 				}
