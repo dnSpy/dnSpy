@@ -95,7 +95,7 @@ namespace ICSharpCode.ILSpy
 		public WindowState WindowState = WindowState.Normal;
 		public bool IsFullScreen;
 		public Rect? WindowBounds;
-		internal static Rect DefaultWindowBounds =  new Rect(10, 10, 1100, 750);
+		internal static Rect DefaultWindowBounds =  new Rect(10, 10, 1300, 750);
 		public double LeftColumnWidth;
 		public PaneSettings TopPaneSettings;
 		public PaneSettings BottomPaneSettings;

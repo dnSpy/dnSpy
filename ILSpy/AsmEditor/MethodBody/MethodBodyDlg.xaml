@@ -23,7 +23,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              xmlns:mbody="clr-namespace:ICSharpCode.ILSpy.AsmEditor.MethodBody"
-             Height="800" Width="1000"
+             Height="750" Width="1300"
              Title="Edit Method Body"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="300" MinWidth="500">

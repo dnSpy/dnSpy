@@ -141,7 +141,7 @@
 										</DataTemplate>
 									</GridViewColumn.CellTemplate>
 								</GridViewColumn>
-								<GridViewColumn Header="Operand" Width="770">
+								<GridViewColumn Header="Operand" Width="1070">
 									<GridViewColumn.CellTemplate>
 										<DataTemplate>
 											<mbody:InstructionOperandControl
@@ -211,7 +211,7 @@
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
-						<GridViewColumn Header="Type" Width="650">
+						<GridViewColumn Header="Type" Width="950">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<mbody:FastClickButton Style="{StaticResource CilButtonStyle}" Content="{Binding Type, Mode=OneWay, Converter={StaticResource CilObjectConverter}}" Command="{Binding EditTypeCommand}" />
@@ -321,7 +321,7 @@
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
-						<GridViewColumn Header="CatchType" Width="480">
+						<GridViewColumn Header="CatchType" Width="750">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<mbody:FastClickButton Style="{StaticResource CilButtonStyle}" Content="{Binding CatchType, Mode=OneWay, Converter={StaticResource CilObjectConverter}}" Command="{Binding EditCatchTypeCommand}" />
