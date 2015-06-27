@@ -107,7 +107,7 @@ namespace ICSharpCode.ILSpy
 
 		void CurrentDisplaySettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == "SyntaxHighlightAnalyzerTreeViewUI")
+			if (e.PropertyName == "SyntaxHighlightAnalyzerTreeViewUI" || e.PropertyName == "ShowMetadataTokens")
 				UpdateUIColors();
 		}
 
