@@ -430,11 +430,23 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 					break;
 
 				case MethodBody.InstructionOperandType.Field:
-					if (Other != null && !(Other is IField)) return "Operand must be a field";
+					if (Other != null) {
+						if (!(Other is IField))
+							return "Operand must be a field";
+						var method = Other as IMethod;
+						if (method != null && method.MethodSig != null)
+							return "Operand must be a field";
+					}
 					break;
 
 				case MethodBody.InstructionOperandType.Method:
-					if (Other != null && !(Other is IMethod)) return "Operand must be a method";
+					if (Other != null) {
+						if (!(Other is IMethod))
+							return "Operand must be a method";
+						var field = Other as IField;
+						if (field != null && field.FieldSig != null)
+							return "Operand must be a method";
+					}
 					break;
 
 				case MethodBody.InstructionOperandType.Token:
@@ -501,42 +513,18 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 					break;
 
 				case MethodBody.InstructionOperandType.Field:
-					// Don't check for null operands. If it's an encrypted method,
-					// some/all of the operands are invalid so they would be null
-					// when method reader tries to resolve them.
-					if (Other != null && !(Other is IField)) return true;
-					break;
-
 				case MethodBody.InstructionOperandType.Method:
-					if (Other != null && !(Other is IMethod)) return true;
-					break;
-
 				case MethodBody.InstructionOperandType.Token:
-					if (Other != null && !(Other is ITokenOperand)) return true;
-					break;
-
 				case MethodBody.InstructionOperandType.Type:
-					if (Other != null && !(Other is ITypeDefOrRef)) return true;
-					break;
-
 				case MethodBody.InstructionOperandType.MethodSig:
-					if (Other != null && !(Other is MethodSig)) return true;
+				case MethodBody.InstructionOperandType.SwitchTargets:
+					if (!string.IsNullOrEmpty(Verify("Other"))) return true;
 					break;
 
 				case MethodBody.InstructionOperandType.BranchTarget:
 				case MethodBody.InstructionOperandType.Local:
 				case MethodBody.InstructionOperandType.Parameter:
 					if (HasListError(OperandListVM)) return true;
-					break;
-
-				case MethodBody.InstructionOperandType.SwitchTargets:
-					var list = Other as IList<InstructionVM>;
-					if (list == null)
-						return true;
-					foreach (var instr in list) {
-						if (instr != null && instr.Index == -1)
-							return true;
-					}
 					break;
 
 				default:
