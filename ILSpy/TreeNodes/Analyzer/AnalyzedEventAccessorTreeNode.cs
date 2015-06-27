@@ -18,6 +18,8 @@
 
 using System;
 using dnlib.DotNet;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
@@ -31,9 +33,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.name = name;
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return ILSpyTreeNode.CleanUpIdentifier(name) ?? base.Text; }
+			if (name != null)
+				output.Write(name, TextTokenType.Keyword);
+			else
+				base.Write(output, language);
 		}
 	}
 }

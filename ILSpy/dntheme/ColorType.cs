@@ -279,6 +279,21 @@ namespace ICSharpCode.ILSpy.dntheme
 		XmlDocToolTipText,
 
 		/// <summary>
+		/// Assembly
+		/// </summary>
+		Assembly,
+
+		/// <summary>
+		/// Assembly (executable)
+		/// </summary>
+		AssemblyExe,
+
+		/// <summary>
+		/// Module
+		/// </summary>
+		Module,
+
+		/// <summary>
 		/// Default text in all windows
 		/// </summary>
 		DefaultText,
@@ -785,6 +800,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		AvalonEditSearchDropDownButtonActiveBackground,
 		ListArrowBackground,
 		TreeViewItemMouseOver,
+		TreeViewItemSelected,
 		TreeView,
 		TreeViewBorder,
 		TreeViewGlyph,

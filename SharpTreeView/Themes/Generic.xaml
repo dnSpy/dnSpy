@@ -200,10 +200,10 @@
                                  Value="True">
                             <Setter TargetName="nodeView"
                                     Property="TextBackground"
-                                    Value="{DynamicResource SystemColorsHighlight}" />
+                                    Value="{DynamicResource TreeViewItemSelectedBackground}" />
                             <Setter TargetName="nodeView"
                                     Property="Foreground"
-                                    Value="{DynamicResource SystemColorsHighlightText}" />
+                                    Value="{DynamicResource TreeViewItemSelectedForeground}" />
                         </Trigger>
                         <!--<MultiTrigger>
                             <MultiTrigger.Conditions>

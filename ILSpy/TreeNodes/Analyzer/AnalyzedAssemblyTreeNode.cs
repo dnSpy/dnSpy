@@ -17,6 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
@@ -38,12 +40,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			get { return ImageCache.Instance.GetImage("Assembly", BackgroundType.TreeNode); }
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get
-			{
-				return ILSpyTreeNode.CleanUpIdentifier(analyzedAssembly.Name);
-			}
+			var isExe = analyzedAssembly.Assembly != null &&
+				analyzedAssembly.IsManifestModule &&
+				(analyzedAssembly.Characteristics & dnlib.PE.Characteristics.Dll) == 0;
+			output.Write(ILSpyTreeNode.CleanUpIdentifier(analyzedAssembly.Name), isExe ? TextTokenType.AssemblyExe : TextTokenType.Assembly);
 		}
 
 		protected override void LoadChildren()

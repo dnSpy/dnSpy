@@ -45,14 +45,16 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return def != null && (def.BaseType != null || def.HasInterfaces); }
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return ToString(Language); }
+			Write(output, tr, language);
 		}
 
-		public override string ToString(Language language)
+		public static ITextOutput Write(ITextOutput output, ITypeDefOrRef tr, Language language)
 		{
-			return CleanUpName(language.TypeToString(tr, true)) + tr.MDToken.ToSuffixString();
+			language.TypeToString(output, tr, true);
+			tr.MDToken.WriteSuffixString(output);
+			return output;
 		}
 
 		public override object Icon

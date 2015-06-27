@@ -39,6 +39,9 @@
 		<color name="ilmodule" fg="#660033" />
 		<color name="xmldoctooltipdescriptiontext" italics="true" bold="true" />
 		<color name="xmldoctooltiptext" italics="true" bold="false" />
+		<color name="assembly" fg="#414141" />
+		<color name="assemblyexe" fg="#C17B19" />
+		<color name="module" fg="#642C8F" />
 		<color name="linenumber" fg="#2B91AF" />
 		<color name="xmlcomment" fg="#FF008000" italics="true" />
 		<color name="xmlcdata" fg="#FF808080" />

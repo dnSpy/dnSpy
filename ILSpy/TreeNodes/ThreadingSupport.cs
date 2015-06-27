@@ -23,6 +23,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -114,13 +115,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		sealed class LoadingTreeNode : ILSpyTreeNode
 		{
-			public override object Text {
-				get { return ToString(Language); }
-			}
-
-			public override string ToString(Language language)
+			protected override void Write(ITextOutput output, Language language)
 			{
-				return "Loading…";
+				output.Write("Loading…", TextTokenType.Text);
 			}
 			
 			public override FilterResult Filter(FilterSettings settings)
@@ -141,13 +138,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			readonly string text;
 			
-			public override object Text {
-				get { return ToString(Language); }
-			}
-
-			public override string ToString(Language language)
+			protected override void Write(ITextOutput output, Language language)
 			{
-				return text;
+				output.Write(text, TextTokenType.Text);
 			}
 			
 			public ErrorTreeNode(string text)

@@ -888,7 +888,7 @@ namespace ICSharpCode.ILSpy
 			astType.AcceptVisitor(new CSharpOutputVisitor(new TextTokenWriter(output, ctx), FormattingOptionsFactory.CreateAllman()));
 		}
 
-		public override string FormatPropertyName(PropertyDef property, bool? isIndexer)
+		public override void FormatPropertyName(ITextOutput output, PropertyDef property, bool? isIndexer)
 		{
 			if (property == null)
 				throw new ArgumentNullException("property");
@@ -897,38 +897,36 @@ namespace ICSharpCode.ILSpy
 				isIndexer = property.IsIndexer();
 			}
 			if (isIndexer.Value) {
-				var buffer = new System.Text.StringBuilder();
 				var accessor = property.GetMethod ?? property.SetMethod;
 				if (accessor != null && accessor.HasOverrides) {
 					var methDecl = accessor.Overrides.First().MethodDeclaration;
 					var declaringType = methDecl == null ? null : methDecl.DeclaringType;
-					buffer.Append(TypeToString(declaringType, includeNamespace: true));
-					buffer.Append(@".");
+					TypeToString(output, declaringType, includeNamespace: true);
+					output.Write('.', TextTokenType.Operator);
 				}
-				buffer.Append(@"this[");
+				output.Write("this", TextTokenType.Keyword);
+				output.Write('[', TextTokenType.Operator);
 				bool addSeparator = false;
 				foreach (var p in property.PropertySig.GetParameters()) {
-					if (addSeparator)
-						buffer.Append(@", ");
+					if (addSeparator) {
+						output.Write(',', TextTokenType.Operator);
+						output.WriteSpace();
+					}
 					else
 						addSeparator = true;
-					buffer.Append(TypeToString(p.ToTypeDefOrRef(), includeNamespace: true));
+					TypeToString(output, p.ToTypeDefOrRef(), includeNamespace: true);
 				}
-				buffer.Append(@"]");
-				return buffer.ToString();
+				output.Write(']', TextTokenType.Operator);
 			} else
-				return IdentifierEscaper.Escape(property.Name);
+				output.Write(IdentifierEscaper.Escape(property.Name), TextTokenHelper.GetTextTokenType(property));
 		}
 		
-		public override string FormatTypeName(TypeDef type)
+		public override void FormatTypeName(ITextOutput output, TypeDef type)
 		{
 			if (type == null)
 				throw new ArgumentNullException("type");
 
-			var writer = new StringWriter();
-			var output = new PlainTextOutput(writer);
 			TypeToString(output, ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions, type);
-			return writer.ToString();
 		}
 
 		public override bool ShowMember(IMemberRef member)

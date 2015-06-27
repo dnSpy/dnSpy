@@ -16,7 +16,6 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using ICSharpCode.Decompiler;
@@ -43,14 +42,16 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return !type.IsSealed && base.ShowExpander; }
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return ToString(Language); }
+			Write(output, type, language);
 		}
 
-		public override string ToString(Language language)
+		public static ITextOutput Write(ITextOutput output, TypeDef type, Language language)
 		{
-			return CleanUpName(language.TypeToString(type, true)) + type.MDToken.ToSuffixString();
+			language.TypeToString(output, type, true);
+			type.MDToken.WriteSuffixString(output);
+			return output;
 		}
 
 		public override object Icon

@@ -193,6 +193,42 @@ namespace ICSharpCode.ILSpy.Options
 			}
 		}
 
+		bool syntaxHighlightTreeViewUI;
+
+		public bool SyntaxHighlightTreeViewUI {
+			get { return syntaxHighlightTreeViewUI; }
+			set {
+				if (syntaxHighlightTreeViewUI != value) {
+					syntaxHighlightTreeViewUI = value;
+					OnPropertyChanged("SyntaxHighlightTreeViewUI");
+				}
+			}
+		}
+
+		bool syntaxHighlightAnalyzerTreeViewUI;
+
+		public bool SyntaxHighlightAnalyzerTreeViewUI {
+			get { return syntaxHighlightAnalyzerTreeViewUI; }
+			set {
+				if (syntaxHighlightAnalyzerTreeViewUI != value) {
+					syntaxHighlightAnalyzerTreeViewUI = value;
+					OnPropertyChanged("SyntaxHighlightAnalyzerTreeViewUI");
+				}
+			}
+		}
+
+		bool syntaxHighlightSearchListUI;
+
+		public bool SyntaxHighlightSearchListUI {
+			get { return syntaxHighlightSearchListUI; }
+			set {
+				if (syntaxHighlightSearchListUI != value) {
+					syntaxHighlightSearchListUI = value;
+					OnPropertyChanged("SyntaxHighlightSearchListUI");
+				}
+			}
+		}
+
 		public void CopyValues(DisplaySettings s)
 		{
 			this.SelectedFont = s.selectedFont;
@@ -206,6 +242,9 @@ namespace ICSharpCode.ILSpy.Options
 			this.NewEmptyTabs = s.newEmptyTabs;
 			this.RestoreTabsAtStartup = s.restoreTabsAtStartup;
 			this.AutoHighlightRefs = s.autoHighlightRefs;
+			this.SyntaxHighlightTreeViewUI = s.syntaxHighlightTreeViewUI;
+			this.SyntaxHighlightAnalyzerTreeViewUI = s.syntaxHighlightAnalyzerTreeViewUI;
+			this.SyntaxHighlightSearchListUI = s.syntaxHighlightSearchListUI;
 		}
 	}
 }

@@ -22,6 +22,8 @@ using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
@@ -40,9 +42,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.analyzedMethod = analyzedMethod;
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return "Uses"; }
+			output.Write("Uses", TextTokenType.Text);
 		}
 
 		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)

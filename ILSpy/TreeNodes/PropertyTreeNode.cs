@@ -20,6 +20,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Media;
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -56,19 +57,20 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return property; }
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return ToString(Language); }
+			Write(output, property, language);
 		}
 
-		public override string ToString(Language language)
+		public static ITextOutput Write(ITextOutput output, PropertyDef property, Language language, bool? isIndexer = null)
 		{
-			return GetText(property, language, isIndexer) + property.MDToken.ToSuffixString();
-		}
-
-		public static string GetText(PropertyDef property, Language language, bool? isIndexer = null)
-		{
-			return CleanUpName(language.FormatPropertyName(property, isIndexer)) + CleanUpName(" : " + language.TypeToString(property.PropertySig.GetRetType().ToTypeDefOrRef(), false, property));
+			language.FormatPropertyName(output, property, isIndexer);
+			output.WriteSpace();
+			output.Write(':', TextTokenType.Operator);
+			output.WriteSpace();
+			language.TypeToString(output, property.PropertySig.GetRetType().ToTypeDefOrRef(), false, property);
+			property.MDToken.WriteSuffixString(output);
+			return output;
 		}
 		
 		public override object Icon

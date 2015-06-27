@@ -215,6 +215,13 @@ namespace ICSharpCode.ILSpy
 		{
 			if (e.PropertyName == "SelectedFont")
 				InitializeTextEditorFontResource();
+			else if (e.PropertyName == "SyntaxHighlightTreeViewUI")
+				OnSyntaxHighlightTreeViewUIChanged();
+		}
+
+		void OnSyntaxHighlightTreeViewUIChanged()
+		{
+			RefreshTreeViewFilter();
 		}
 
 		void InitializeTextEditorFontResource()

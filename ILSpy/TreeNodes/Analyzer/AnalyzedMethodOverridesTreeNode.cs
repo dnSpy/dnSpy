@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using ICSharpCode.Decompiler.Ast;
 using dnlib.DotNet;
 
@@ -41,15 +42,15 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.analyzedMethod = analyzedMethod;
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return "Overridden By"; }
+			output.Write("Overridden By", TextTokenType.Text);
 		}
 
 		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
 		{
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedMethod, FindReferencesInType);
-			return analyzer.PerformAnalysis(ct).OrderBy(n => n.Text);
+			return analyzer.PerformAnalysis(ct).OrderBy(n => n.ToString(Language));
 		}
 
 		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type)
@@ -62,7 +63,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				foreach (MethodDef method in type.Methods) {
 					if (TypesHierarchyHelpers.IsBaseMethod(analyzedMethod, method)) {
 						bool hidesParent = !method.IsVirtual ^ method.IsNewSlot;
-						newNode = new AnalyzedMethodTreeNode(method, hidesParent ? "(hides) " : "");
+						newNode = new AnalyzedMethodTreeNode(method, hidesParent);
 					}
 				}
 			}

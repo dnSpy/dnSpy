@@ -16,14 +16,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
@@ -60,14 +57,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.data.ImageStream = data;
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return ToString(Language); }
-		}
-
-		public override string ToString(Language language)
-		{
-			return CleanUpName(key);
+			output.Write(CleanUpName(key), TextTokenType.Text);
 		}
 
 		public override object Icon

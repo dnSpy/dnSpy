@@ -23,6 +23,8 @@ using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
@@ -47,16 +49,16 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				this.eventFiringMethod = eventType.Methods.First(md => md.Name == "Invoke");
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return "Raised By"; }
+			output.Write("Raised By", TextTokenType.Text);
 		}
 
 		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
 		{
 			foundMethods = new ConcurrentDictionary<MethodDef, int>();
 
-			foreach (var child in FindReferencesInType(analyzedEvent.DeclaringType).OrderBy(n => n.Text)) {
+			foreach (var child in FindReferencesInType(analyzedEvent.DeclaringType).OrderBy(n => n.ToString(Language))) {
 				yield return child;
 			}
 

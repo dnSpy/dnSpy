@@ -26,7 +26,6 @@ using System.Windows.Input;
 using ICSharpCode.ILSpy.AsmEditor;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
-using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy
 {

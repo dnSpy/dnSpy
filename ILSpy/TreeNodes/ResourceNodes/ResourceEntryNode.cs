@@ -21,6 +21,7 @@ using System.IO;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -33,19 +34,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		private readonly string key;
 		private readonly Stream data;
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return ToString(Language); }
-		}
-
-		public override string ToString(Language language)
-		{
-			return CleanUpName(this.key);
+			output.Write(CleanUpName(this.key), TextTokenType.Text);
 		}
 
 		public override object Icon
 		{
-			get { return GetIcon((string)Text, BackgroundType.TreeNode); }
+			get { return GetIcon(ToString(Language), BackgroundType.TreeNode); }
 		}
 
 		internal static BitmapSource GetIcon(string name, BackgroundType bgType)

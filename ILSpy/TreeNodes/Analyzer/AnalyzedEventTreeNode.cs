@@ -18,20 +18,22 @@
 
 using System;
 using dnlib.DotNet;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
 	internal sealed class AnalyzedEventTreeNode : AnalyzerEntityTreeNode
 	{
 		private readonly EventDef analyzedEvent;
-		private readonly string prefix;
+		private readonly bool hidesParent;
 
-		public AnalyzedEventTreeNode(EventDef analyzedEvent, string prefix = "")
+		public AnalyzedEventTreeNode(EventDef analyzedEvent, bool hidesParent = false)
 		{
 			if (analyzedEvent == null)
 				throw new ArgumentNullException("analyzedEvent");
 			this.analyzedEvent = analyzedEvent;
-			this.prefix = prefix;
+			this.hidesParent = hidesParent;
 			this.LazyLoading = true;
 		}
 
@@ -48,13 +50,17 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			get { return EventTreeNode.GetIcon(analyzedEvent, BackgroundType.TreeNode); }
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get
-			{
-				// TODO: This way of formatting is not suitable for events which explicitly implement interfaces.
-				return ILSpyTreeNode.CleanUpName(prefix + Language.TypeToString(analyzedEvent.DeclaringType, true) + "." + EventTreeNode.GetText(analyzedEvent, Language));
+			if (hidesParent) {
+				output.Write('(', TextTokenType.Operator);
+				output.Write("hides", TextTokenType.Text);
+				output.Write(')', TextTokenType.Operator);
+				output.WriteSpace();
 			}
+			Language.TypeToString(output, analyzedEvent.DeclaringType, true);
+			output.Write('.', TextTokenType.Operator);
+			EventTreeNode.Write(output, analyzedEvent, Language);
 		}
 
 		protected override void LoadChildren()

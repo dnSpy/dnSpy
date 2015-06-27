@@ -39,6 +39,9 @@
 		<color name="ilmodule" fg="#666699" />
 		<color name="xmldoctooltipdescriptiontext" italics="true" bold="true" />
 		<color name="xmldoctooltiptext" italics="true" bold="false" />
+		<color name="assembly" fg="#C4C4C4" />
+		<color name="assemblyexe" fg="#F0CA93" />
+		<color name="module" fg="#B17FD7" />
 		<color name="linenumber" fg="#2B91AF" />
 		<color name="xmlcomment" fg="#FF57A64A" italics="true" />
 		<color name="xmlcdata" fg="#FFE9D585" />
@@ -255,12 +258,12 @@
 		<color name="tabitemdisabledborder" bg="#FF6C6C6E" />
 		<color name="listboxbackground" bg="#252526" />
 		<color name="listboxborder" bg="#3F3F46" />
-		<color name="listboxitemmouseoverbackground" bg="#FF575759" />
-		<color name="listboxitemmouseoverborder" bg="#FF575759" />
-		<color name="listboxitemselectedinactivebackground" bg="#80575759" />
-		<color name="listboxitemselectedinactiveborder" bg="#FF575759" />
-		<color name="listboxitemselectedactivebackground" bg="#FF6C6C6E" />
-		<color name="listboxitemselectedactiveborder" bg="#FF6C6C6E" />
+		<color name="listboxitemmouseoverbackground" bg="#FF3E3E42" />
+		<color name="listboxitemmouseoverborder" bg="#FF505050" />
+		<color name="listboxitemselectedinactivebackground" bg="#FF3E3E42" />
+		<color name="listboxitemselectedinactiveborder" bg="#FF505050" />
+		<color name="listboxitemselectedactivebackground" bg="#FF3E3E42" />
+		<color name="listboxitemselectedactiveborder" bg="#FF505050" />
 		<color name="contextmenubackground" bg="#1B1B1C" />
 		<color name="contextmenuborderbrush" bg="#333337" />
 		<color name="contextmenurectanglefill1" bg="#FF1B1B1C" />
@@ -378,15 +381,15 @@
 		<color name="headermouseoverglyph" bg="#FFFFFFFF" />
 		<color name="headerseparatorline" bg="#FF3F3F46" />
 		<color name="gridviewlistviewforeground" bg="#F1F1F1" />
-		<color name="gridviewitemcontainermouseoverhoverborder" bg="#1F5C99" />
-		<color name="gridviewitemcontainerselectedborder" bg="#3399FF" />
-		<color name="gridviewitemcontainerselectedinactiveborder" bg="#666666" />
-		<color name="gridviewitemcontainerselectedmouseoverborder" bg="#297ACC" />
-		<color name="gridviewlistitemhoverfill" bg="#1F5C99" />
-		<color name="gridviewlistitemselectedfill" bg="#3399FF" />
-		<color name="gridviewlistitemselectedhoverfill" bg="#297ACC" />
-		<color name="gridviewlistitemselectedinactivefill" bg="#666666" />
-		<color name="gridviewlistviewitemfocusvisualstroke" bg="#3399FF" />
+		<color name="gridviewitemcontainermouseoverhoverborder" bg="#FF505050" />
+		<color name="gridviewitemcontainerselectedborder" bg="#FF505050" />
+		<color name="gridviewitemcontainerselectedinactiveborder" bg="#FF505050" />
+		<color name="gridviewitemcontainerselectedmouseoverborder" bg="#FF505050" />
+		<color name="gridviewlistitemhoverfill" bg="#FF3E3E42" />
+		<color name="gridviewlistitemselectedfill" bg="#FF3E3E42" />
+		<color name="gridviewlistitemselectedhoverfill" bg="#FF3E3E42" />
+		<color name="gridviewlistitemselectedinactivefill" bg="#FF3E3E42" />
+		<color name="gridviewlistviewitemfocusvisualstroke" bg="#FF505050" />
 		<color name="paneborder" bg="#505050" />
 		<color name="dockedpaneclosebuttonbackground" fg="#303030" bg="#383838" color3="#404040" color4="#484848" />
 		<color name="dockedpaneclosebuttonborder" bg="#505050" />
@@ -401,7 +404,8 @@
 		<color name="avaloneditsearchdropdownbuttonactiveborder" bg="#3E81AD" />
 		<color name="avaloneditsearchdropdownbuttonactivebackground" bg="#06273D" />
 		<color name="listarrowbackground" bg="#F1F1F1" />
-		<color name="treeviewitemmouseover" fg="White" bg="#505050" />
+		<color name="treeviewitemmouseover" fg="#FFF1F1F1" bg="#505050" />
+		<color name="treeviewitemselected" fg="#FFF1F1F1" bg="#FF505050" />
 		<color name="treeview" fg="#FFF1F1F1" bg="#FF252526" />
 		<color name="treeviewborder" bg="#3F3F46" />
 		<color name="treeviewglyph" bg="#FFF1F1F1" />

@@ -20,6 +20,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Media;
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -43,15 +44,20 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.field = field;
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return ToString(Language); }
+			Write(output, field, language);
 		}
 
-		public override string ToString(Language language)
+		public static ITextOutput Write(ITextOutput output, FieldDef field, Language language)
 		{
-			return CleanUpIdentifier(field.Name) +
-					CleanUpName(" : " + language.TypeToString(field.FieldType.ToTypeDefOrRef(), false, field)) + field.MDToken.ToSuffixString();
+			output.Write(CleanUpIdentifier(field.Name), TextTokenHelper.GetTextTokenType(field));
+			output.WriteSpace();
+			output.Write(':', TextTokenType.Operator);
+			output.WriteSpace();
+			language.TypeToString(output, field.FieldType.ToTypeDefOrRef(), false, field);
+			field.MDToken.WriteSuffixString(output);
+			return output;
 		}
 
 		public override object Icon

@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -77,7 +76,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
 			{
 				if (nodes.Length == 1)
-					menuItem.Header = string.Format("Remove {0}", UIUtils.EscapeMenuItemHeader(nodes[0].Text.ToString()));
+					menuItem.Header = string.Format("Remove {0}", UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
 				else
 					menuItem.Header = string.Format("Remove {0} assemblies", nodes.Length);
 			}

@@ -16,11 +16,10 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.Utils;
 using dnlib.DotNet;
 
@@ -43,14 +42,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.threading = new ThreadingSupport();
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return ToString(Language); }
-		}
-
-		public override string ToString(Language language)
-		{
-			return "Derived Types";
+			output.Write("Derived Types", TextTokenType.Text);
 		}
 
 		public override object Icon

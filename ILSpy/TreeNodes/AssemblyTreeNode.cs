@@ -21,12 +21,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.TreeView;
@@ -107,9 +107,61 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return ToString(Language); }
+			if (!assembly.IsLoaded)
+				output.Write(CleanUpName(assembly.ShortName), TextTokenType.Assembly);
+			else if (assembly.ModuleDefinition == null)
+				output.Write(CleanUpName(assembly.ShortName), TextTokenType.Text);
+			else if (Parent is AssemblyTreeNode || assembly.AssemblyDefinition == null)
+				output.Write(CleanUpName(assembly.ModuleDefinition.Name), TextTokenType.Module);
+			else {
+				var asm = assembly.AssemblyDefinition;
+
+				bool isExe = (assembly.ModuleDefinition.Characteristics & dnlib.PE.Characteristics.Dll) == 0;
+				output.Write(asm.Name, isExe ? TextTokenType.AssemblyExe : TextTokenType.Assembly);
+
+				bool showAsmVer = DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyVersion;
+				bool showPublicKeyToken = DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyPublicKeyToken && !PublicKeyBase.IsNullOrEmpty2(asm.PublicKeyToken);
+
+				if (showAsmVer || showPublicKeyToken) {
+					output.WriteSpace();
+					output.Write('(', TextTokenType.Operator);
+
+					bool needComma = false;
+					if (showAsmVer) {
+						if (needComma) {
+							output.Write(',', TextTokenType.Operator);
+							output.WriteSpace();
+						}
+						needComma = true;
+
+						output.Write(asm.Version.Major.ToString(), TextTokenType.Number);
+						output.Write('.', TextTokenType.Operator);
+						output.Write(asm.Version.Minor.ToString(), TextTokenType.Number);
+						output.Write('.', TextTokenType.Operator);
+						output.Write(asm.Version.Build.ToString(), TextTokenType.Number);
+						output.Write('.', TextTokenType.Operator);
+						output.Write(asm.Version.Revision.ToString(), TextTokenType.Number);
+					}
+
+					if (showPublicKeyToken) {
+						if (needComma) {
+							output.Write(',', TextTokenType.Operator);
+							output.WriteSpace();
+						}
+						needComma = true;
+
+						var pkt = asm.PublicKeyToken;
+						if (PublicKeyBase.IsNullOrEmpty2(pkt))
+							output.Write("null", TextTokenType.Keyword);
+						else
+							output.Write(pkt.ToString(), TextTokenType.Number);
+					}
+
+					output.Write(')', TextTokenType.Operator);
+				}
+			}
 		}
 
 		internal void OnFileNameChanged()
@@ -123,45 +175,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			node.RaisePropertyChanged("Text");
 			node.RaisePropertyChanged("ToolTip");
-		}
-
-		public override string ToString(Language language)
-		{
-			if (!assembly.IsLoaded)
-				return assembly.ShortName;
-			if (assembly.ModuleDefinition == null)
-				return CleanUpName(assembly.ShortName);
-			if (Parent is AssemblyTreeNode || assembly.AssemblyDefinition == null)
-				return CleanUpName(assembly.ModuleDefinition.Name);
-			return CleanUpName(GetAssemblyName());
-		}
-
-		string GetAssemblyName()
-		{
-			var asm = assembly.AssemblyDefinition;
-			int numExtra = (DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyVersion ? 1 : 0) +
-				(DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyPublicKeyToken ? 1 : 0);
-			if (numExtra == 0)
-				return asm.Name;
-
-			var sb = new StringBuilder(asm.Name.Length + 3 /* " ()" */ + (numExtra - 1) * 2 /* ", " */ +
-					(DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyVersion ? 5 * 4 + 3 : 0) +
-					(DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyPublicKeyToken ? 8 * 2 : 0));
-			sb.Append(asm.Name);
-			sb.Append(" (");
-			int len = sb.Length;
-			if (DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyVersion) {
-				if (len != sb.Length)
-					sb.Append(", ");
-				sb.Append(asm.Version.ToString());
-			}
-			if (DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyPublicKeyToken && !PublicKeyBase.IsNullOrEmpty2(asm.PublicKeyToken)) {
-				if (len != sb.Length)
-					sb.Append(", ");
-				sb.Append(asm.PublicKeyToken.ToString());
-			}
-			sb.Append(')');
-			return sb.ToString();
 		}
 
 		public override object Icon

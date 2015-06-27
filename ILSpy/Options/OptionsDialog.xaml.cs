@@ -99,32 +99,32 @@ namespace ICSharpCode.ILSpy.Options
 		/// <summary>
 		/// Nothing needs to be refreshed
 		/// </summary>
-		None = 0,
+		None				= 0,
 
 		/// <summary>
 		/// Tree view node names need to be updated
 		/// </summary>
-		TreeViewNodeNames = 0x00000001,
+		TreeViewNodeNames	= 0x00000001,
 
 		/// <summary>
 		/// Text editor needs to re-disassemble IL
 		/// </summary>
-		IL = 0x00000002,
+		IL					= 0x00000002,
 
 		/// <summary>
 		/// Text editor needs to re-decompile ILAst, C# and VB code
 		/// </summary>
-		ILAst = 0x00000004,
+		ILAst				= 0x00000004,
 
 		/// <summary>
 		/// Text editor needs to re-decompile C# and VB code
 		/// </summary>
-		CSharp = 0x00000008,
+		CSharp				= 0x00000008,
 
 		/// <summary>
 		/// Text editor needs to re-decompile VB code
 		/// </summary>
-		VB = 0x00000010,
+		VB					= 0x00000010,
 
 		DecompileAll = IL | ILAst | CSharp | VB,
 	}

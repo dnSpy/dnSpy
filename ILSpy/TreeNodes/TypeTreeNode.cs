@@ -70,13 +70,16 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return type.Namespace; }
 		}
 		
-		public override object Text {
-			get { return ToString(Language); }
+		protected override void Write(ITextOutput output, Language language)
+		{
+			Write(output, type, language);
 		}
 
-		public override string ToString(Language language)
+		public static ITextOutput Write(ITextOutput output, TypeDef type, Language language)
 		{
-			return CleanUpName(language.FormatTypeName(type)) + type.MDToken.ToSuffixString();
+			language.FormatTypeName(output, type);
+			type.MDToken.WriteSuffixString(output);
+			return output;
 		}
 		
 		public override bool IsPublicAPI {

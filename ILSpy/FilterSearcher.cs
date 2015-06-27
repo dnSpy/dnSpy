@@ -320,10 +320,11 @@ namespace ICSharpCode.ILSpy
 
 			if (res.IsMatch && IsMatch(asmNode.LoadedAssembly.AssemblyDefinition.FullName, asmNode.LoadedAssembly)) {
 				onMatch(new SearchResult {
+					Language = language,
 					Object = asmNode,
-					Name = asmNode.LoadedAssembly.AssemblyDefinition.FullName,
+					NameObject = asmNode.LoadedAssembly.AssemblyDefinition,
 					TypeImageInfo = GetAssemblyImage(asmNode.LoadedAssembly.ModuleDefinition),
-					Location = string.Empty,
+					LocationObject = null,
 					LocationImageInfo = new ImageInfo(),
 					LoadedAssembly = asmNode.LoadedAssembly,
 				});
@@ -367,10 +368,11 @@ namespace ICSharpCode.ILSpy
 
 			if (res.IsMatch && IsMatch(mod.FullName, module)) {
 				onMatch(new SearchResult {
+					Language = language,
 					Object = module,
-					Name = mod.FullName,
+					NameObject = mod,
 					TypeImageInfo = GetImage("AssemblyModule"),
-					Location = mod.Assembly != null ? mod.Assembly.FullName : string.Empty,
+					LocationObject = mod.Assembly != null ? mod.Assembly : null,
 					LocationImageInfo = mod.Assembly != null ? GetAssemblyImage(mod.Assembly.ManifestModule) : new ImageInfo(),
 					LoadedAssembly = module,
 				});
@@ -401,10 +403,11 @@ namespace ICSharpCode.ILSpy
 
 				if (res.IsMatch && IsMatch(asmRef.FullName, asmRef)) {
 					onMatch(new SearchResult {
+						Language = language,
 						Object = asmRef,
-						Name = asmRef.FullName,
+						NameObject = asmRef,
 						TypeImageInfo = GetImage("AssemblyReference"),
-						Location = module.ModuleDefinition.FullName,
+						LocationObject = module.ModuleDefinition,
 						LocationImageInfo = GetImage("AssemblyModule"),
 						LoadedAssembly = module,
 					});
@@ -418,10 +421,11 @@ namespace ICSharpCode.ILSpy
 
 				if (res.IsMatch && IsMatch(modRef.FullName, modRef)) {
 					onMatch(new SearchResult {
+						Language = language,
 						Object = modRef,
-						Name = modRef.FullName,
+						NameObject = modRef,
 						TypeImageInfo = GetImage("ModuleReference"),
-						Location = module.ModuleDefinition.FullName,
+						LocationObject = module.ModuleDefinition,
 						LocationImageInfo = GetImage("AssemblyModule"),
 						LoadedAssembly = module,
 					});
@@ -453,10 +457,11 @@ namespace ICSharpCode.ILSpy
 
 			if (res.IsMatch && IsMatch(nonNetFile.ShortName, nonNetFile)) {
 				onMatch(new SearchResult {
+					Language = language,
 					Object = nonNetFile,
-					Name = nonNetFile.ShortName,
+					NameObject = nonNetFile,
 					TypeImageInfo = GetImage("AssemblyWarning"),
-					Location = string.Empty,
+					LocationObject = null,
 					LocationImageInfo = new ImageInfo(),
 					LoadedAssembly = nonNetFile,
 				});
@@ -471,10 +476,11 @@ namespace ICSharpCode.ILSpy
 
 			if (res.IsMatch && IsMatch(ns, ns)) {
 				onMatch(new SearchResult {
+					Language = language,
 					Object = ns,
-					Name = ns,
+					NameObject = new NamespaceSearchResult(ns),
 					TypeImageInfo = GetImage("Namespace"),
-					Location = ownerModule.ModuleDefinition.FullName,
+					LocationObject = ownerModule.ModuleDefinition,
 					LocationImageInfo = GetImage("AssemblyModule"),
 					LoadedAssembly = ownerModule,
 				});
@@ -494,10 +500,11 @@ namespace ICSharpCode.ILSpy
 
 			if (res.IsMatch && (IsMatch(type.FullName, type) || IsMatch(type.Name, type))) {
 				onMatch(new SearchResult {
+					Language = language,
 					Object = type,
-					Name = language.TypeToString(type, false),
+					NameObject = type,
 					TypeImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
-					Location = nsOwner,
+					LocationObject = new NamespaceSearchResult(nsOwner),
 					LocationImageInfo = GetImage("Namespace"),
 					LoadedAssembly = ownerModule,
 				});
@@ -519,10 +526,11 @@ namespace ICSharpCode.ILSpy
 
 			if (res.IsMatch && (IsMatch(type.FullName, type) || IsMatch(type.Name, type))) {
 				onMatch(new SearchResult {
+					Language = language,
 					Object = type,
-					Name = language.TypeToString(type, false),
+					NameObject = type,
 					TypeImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
-					Location = language.TypeToString(type.DeclaringType, true),
+					LocationObject = type.DeclaringType,
 					LocationImageInfo = TypeTreeNode.GetImageInfo(type.DeclaringType, BackgroundType.Search),
 					LoadedAssembly = ownerModule,
 				});
@@ -554,10 +562,11 @@ namespace ICSharpCode.ILSpy
 
 			if (res.IsMatch && IsMatch(method.Name, method)) {
 				onMatch(new SearchResult {
+					Language = language,
 					Object = method,
-					Name = method.Name,
+					NameObject = method,
 					TypeImageInfo = MethodTreeNode.GetImageInfo(method, BackgroundType.Search),
-					Location = language.TypeToString(type, true),
+					LocationObject = type,
 					LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
 					LoadedAssembly = ownerModule,
 				});
@@ -572,10 +581,11 @@ namespace ICSharpCode.ILSpy
 						continue;
 					if (res.IsMatch && IsMatch(pd.Name, pd)) {
 						onMatch(new SearchResult {
+							Language = language,
 							Object = method,
-							Name = method.Name,
+							NameObject = method,
 							TypeImageInfo = MethodTreeNode.GetImageInfo(method, BackgroundType.Search),
-							Location = language.TypeToString(type, true),
+							LocationObject = type,
 							LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
 							LoadedAssembly = ownerModule,
 						});
@@ -613,10 +623,11 @@ namespace ICSharpCode.ILSpy
 						continue;
 					if (res.IsMatch && IsMatch(local.Name, local)) {
 						onMatch(new SearchResult {
+							Language = language,
 							Object = method,
-							Name = method.Name,
+							NameObject = method,
 							TypeImageInfo = MethodTreeNode.GetImageInfo(method, BackgroundType.Search),
-							Location = language.TypeToString(type, true),
+							LocationObject = type,
 							LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
 							LoadedAssembly = ownerModule,
 						});
@@ -658,10 +669,11 @@ namespace ICSharpCode.ILSpy
 				}
 				if (operand != null && IsMatch(null, operand)) {
 					onMatch(new SearchResult {
+						Language = language,
 						Object = method,
-						Name = method.Name,
+						NameObject = method,
 						TypeImageInfo = MethodTreeNode.GetImageInfo(method, BackgroundType.Search),
-						Location = language.TypeToString(type, true),
+						LocationObject = type,
 						LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
 						LoadedAssembly = ownerModule,
 					});
@@ -678,10 +690,11 @@ namespace ICSharpCode.ILSpy
 
 			if (res.IsMatch && IsMatch(field.Name, field)) {
 				onMatch(new SearchResult {
+					Language = language,
 					Object = field,
-					Name = field.Name,
+					NameObject = field,
 					TypeImageInfo = FieldTreeNode.GetImageInfo(field, BackgroundType.Search),
-					Location = language.TypeToString(type, true),
+					LocationObject = type,
 					LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
 					LoadedAssembly = ownerModule,
 				});
@@ -696,10 +709,11 @@ namespace ICSharpCode.ILSpy
 
 			if (res.IsMatch && IsMatch(prop.Name, prop)) {
 				onMatch(new SearchResult {
+					Language = language,
 					Object = prop,
-					Name = prop.Name,
+					NameObject = prop,
 					TypeImageInfo = PropertyTreeNode.GetImageInfo(prop, BackgroundType.Search),
-					Location = language.TypeToString(type, true),
+					LocationObject = type,
 					LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
 					LoadedAssembly = ownerModule,
 				});
@@ -714,10 +728,11 @@ namespace ICSharpCode.ILSpy
 
 			if (res.IsMatch && IsMatch(evt.Name, evt)) {
 				onMatch(new SearchResult {
+					Language = language,
 					Object = evt,
-					Name = evt.Name,
+					NameObject = evt,
 					TypeImageInfo = EventTreeNode.GetImageInfo(evt, BackgroundType.Search),
-					Location = language.TypeToString(type, true),
+					LocationObject = type,
 					LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
 					LoadedAssembly = ownerModule,
 				});

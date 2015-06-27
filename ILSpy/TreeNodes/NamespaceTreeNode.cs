@@ -20,6 +20,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -42,13 +43,24 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.name = name;
 		}
 		
-		public override object Text {
-			get { return ToString(Language); }
+		protected override void Write(ITextOutput output, Language language)
+		{
+			Write(output, name);
 		}
 
-		public override string ToString(Language language)
+		public static ITextOutput Write(ITextOutput output, string name)
 		{
-			return name.Length == 0 ? "-" : CleanUpIdentifier(name);
+			if (name.Length == 0)
+				output.Write('-', TextTokenType.Operator);
+			else {
+				var parts = name.Split('.');
+				for (int i = 0; i < parts.Length; i++) {
+					if (i > 0)
+						output.Write('.', TextTokenType.Operator);
+					output.Write(IdentifierEscaper.Escape(parts[i]), TextTokenType.NamespacePart);
+				}
+			}
+			return output;
 		}
 		
 		public override object Icon {

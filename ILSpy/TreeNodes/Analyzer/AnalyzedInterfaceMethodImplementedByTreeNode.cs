@@ -20,6 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using ICSharpCode.Decompiler.Ast;
 using dnlib.DotNet;
 
@@ -37,15 +39,15 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.analyzedMethod = analyzedMethod;
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return "Implemented By"; }
+			output.Write("Implemented By", TextTokenType.Text);
 		}
 
 		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
 		{
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedMethod, FindReferencesInType);
-			return analyzer.PerformAnalysis(ct).OrderBy(n => n.Text);
+			return analyzer.PerformAnalysis(ct).OrderBy(n => n.ToString(Language));
 		}
 
 		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type)

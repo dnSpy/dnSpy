@@ -76,26 +76,7 @@
 				 SelectionMode="Single"
 				 Validation.ErrorTemplate="{StaticResource noRedBorderOnValidationError}"
 				 ItemsSource="{Binding SearchItemsSource}"
-				 SelectedItem="{Binding SearchResult, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}">
-			<ListBox.ItemTemplate>
-				<DataTemplate>
-					<!-- Use Transparent background so tooltip is shown when hovering anywhere in the ListBoxItem -->
-					<Grid ToolTip="{Binding ToolTip}" Background="Transparent">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="20" />
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="*" />
-						</Grid.ColumnDefinitions>
-						<Image Height="16" Width="16" HorizontalAlignment="Left" Source="{Binding Image}" />
-						<TextBlock Grid.Column="1" Text="{Binding Name}" />
-						<StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,0,2,0">
-							<Image Height="16" Margin="4,0,4,0" Width="16" Source="{Binding LocationImage}" />
-							<TextBlock Text="{Binding Location}" TextTrimming="CharacterEllipsis" />
-						</StackPanel>
-					</Grid>
-				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
+				 SelectedItem="{Binding SearchResult, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"/>
 
 		<tv:SharpTreeView Grid.Row="2"
 						  Style="{StaticResource {x:Type tv:SharpTreeView}}"

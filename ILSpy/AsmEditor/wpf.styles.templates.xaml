@@ -372,6 +372,8 @@
 	</Style>
     <Style x:Key="CilListBoxStyle"
            TargetType="{x:Type ListBox}">
+        <Setter Property="FocusVisualStyle"
+                Value="{x:Null}" />
         <Setter Property="Background"
                 Value="{DynamicResource TEInheritedTextBackground}"/>
         <Setter Property="BorderBrush"

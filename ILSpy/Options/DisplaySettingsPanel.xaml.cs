@@ -116,6 +116,9 @@ namespace ICSharpCode.ILSpy.Options
 			s.NewEmptyTabs = (bool?)e.Attribute("NewEmptyTabs") ?? false;
 			s.RestoreTabsAtStartup = (bool?)e.Attribute("RestoreTabsAtStartup") ?? true;
 			s.AutoHighlightRefs = (bool?)e.Attribute("AutoHighlightRefs") ?? true;
+			s.SyntaxHighlightTreeViewUI = (bool?)e.Attribute("SyntaxHighlightTreeViewUI") ?? true;
+			s.SyntaxHighlightAnalyzerTreeViewUI = (bool?)e.Attribute("SyntaxHighlightAnalyzerTreeViewUI") ?? true;
+			s.SyntaxHighlightSearchListUI = (bool?)e.Attribute("SyntaxHighlightSearchListUI") ?? true;
 			
 			return s;
 		}
@@ -153,6 +156,9 @@ namespace ICSharpCode.ILSpy.Options
 			section.SetAttributeValue("NewEmptyTabs", s.NewEmptyTabs);
 			section.SetAttributeValue("RestoreTabsAtStartup", s.RestoreTabsAtStartup);
 			section.SetAttributeValue("AutoHighlightRefs", s.AutoHighlightRefs);
+			section.SetAttributeValue("SyntaxHighlightTreeViewUI", s.SyntaxHighlightTreeViewUI);
+			section.SetAttributeValue("SyntaxHighlightAnalyzerTreeViewUI", s.SyntaxHighlightAnalyzerTreeViewUI);
+			section.SetAttributeValue("SyntaxHighlightSearchListUI", s.SyntaxHighlightSearchListUI);
 			
 			XElement existingElement = root.Element("DisplaySettings");
 			if (existingElement != null)

@@ -16,9 +16,10 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
+using ICSharpCode.NRefactory;
+using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Options;
 
 namespace ICSharpCode.ILSpy
@@ -47,12 +48,14 @@ namespace ICSharpCode.ILSpy
 			return false;
 		}
 		
-		public static string ToSuffixString(this MDToken token)
+		public static void WriteSuffixString(this MDToken token, ITextOutput output)
 		{
 			if (!DisplaySettingsPanel.CurrentDisplaySettings.ShowMetadataTokens)
-				return string.Empty;
-			
-			return " @" + token.ToInt32().ToString("X8");
+				return;
+
+			output.WriteSpace();
+			output.Write('@', TextTokenType.Operator);
+			output.Write(string.Format("{0:X8}", token.ToUInt32()), TextTokenType.Number);
 		}
 	}
 }

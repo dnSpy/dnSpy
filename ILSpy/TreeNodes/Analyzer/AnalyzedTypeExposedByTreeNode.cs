@@ -21,6 +21,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
@@ -36,15 +38,15 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.analyzedType = analyzedType;
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return "Exposed By"; }
+			output.Write("Exposed By", TextTokenType.Text);
 		}
 
 		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
 		{
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedType, FindReferencesInType);
-			return analyzer.PerformAnalysis(ct).OrderBy(n => n.Text);
+			return analyzer.PerformAnalysis(ct).OrderBy(n => n.ToString(Language));
 		}
 
 		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type)

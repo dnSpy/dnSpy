@@ -18,6 +18,7 @@
 
 using System;
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
@@ -26,15 +27,15 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	{
 		private readonly PropertyDef analyzedProperty;
 		private readonly bool isIndexer;
-		private readonly string prefix;
+		private readonly bool hidesParent;
 
-		public AnalyzedPropertyTreeNode(PropertyDef analyzedProperty, string prefix = "")
+		public AnalyzedPropertyTreeNode(PropertyDef analyzedProperty, bool hidesParent = false)
 		{
 			if (analyzedProperty == null)
 				throw new ArgumentNullException("analyzedProperty");
 			this.isIndexer = analyzedProperty.IsIndexer();
 			this.analyzedProperty = analyzedProperty;
-			this.prefix = prefix;
+			this.hidesParent = hidesParent;
 			this.LazyLoading = true;
 		}
 
@@ -43,13 +44,17 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			get { return PropertyTreeNode.GetIcon(analyzedProperty, BackgroundType.TreeNode); }
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get
-			{
-				// TODO: This way of formatting is not suitable for properties which explicitly implement interfaces.
-				return ILSpyTreeNode.CleanUpName(prefix + Language.TypeToString(analyzedProperty.DeclaringType, true) + "." + PropertyTreeNode.GetText(analyzedProperty, Language, isIndexer));
+			if (hidesParent) {
+				output.Write('(', TextTokenType.Operator);
+				output.Write("hides", TextTokenType.Text);
+				output.Write(')', TextTokenType.Operator);
+				output.WriteSpace();
 			}
+			Language.TypeToString(output, analyzedProperty.DeclaringType, true);
+			output.Write('.', TextTokenType.Operator);
+			PropertyTreeNode.Write(output, analyzedProperty, Language, isIndexer);
 		}
 
 		protected override void LoadChildren()

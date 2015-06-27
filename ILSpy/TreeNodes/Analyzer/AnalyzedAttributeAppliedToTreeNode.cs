@@ -23,6 +23,8 @@ using System.Threading;
 using ICSharpCode.Decompiler.Ast;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.Utils;
 using System.Collections.Concurrent;
 
@@ -85,9 +87,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return "Applied To"; }
+			output.Write("Applied To", TextTokenType.Text);
 		}
 
 		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
@@ -100,7 +102,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 			var results = assemblies.AsParallel().WithCancellation(ct).SelectMany(a => FindReferencesInAssembly(a.Item1.Modules, a.Item2, ct));
 
-			foreach (var result in results.OrderBy(n => n.Text)) {
+			foreach (var result in results.OrderBy(n => n.ToString(Language))) {
 				yield return result;
 			}
 

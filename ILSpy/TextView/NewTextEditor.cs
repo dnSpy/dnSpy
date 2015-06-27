@@ -70,16 +70,16 @@ namespace ICSharpCode.ILSpy.TextView
 			var theme = Themes.Theme;
 
 			var color = theme.GetColor(colorType).TextInheritedColor;
-			App.Current.Resources[string.Format("TETextInherited{0}Foreground", name)] = GetBrush(color.Foreground);
-			App.Current.Resources[string.Format("TETextInherited{0}Background", name)] = GetBrush(color.Background);
-			App.Current.Resources[string.Format("TETextInherited{0}FontStyle", name)] = color.FontStyle ?? FontStyles.Normal;
-			App.Current.Resources[string.Format("TETextInherited{0}FontWeight", name)] = color.FontWeight ?? FontWeights.Normal;
+			App.Current.Resources[Theme.GetTextInheritedForegroundResourceKey(name)] = GetBrush(color.Foreground);
+			App.Current.Resources[Theme.GetTextInheritedBackgroundResourceKey(name)] = GetBrush(color.Background);
+			App.Current.Resources[Theme.GetTextInheritedFontStyleResourceKey(name)] = color.FontStyle ?? FontStyles.Normal;
+			App.Current.Resources[Theme.GetTextInheritedFontWeightResourceKey(name)] = color.FontWeight ?? FontWeights.Normal;
 
 			color = theme.GetColor(colorType).InheritedColor;
-			App.Current.Resources[string.Format("TEInherited{0}Foreground", name)] = GetBrush(color.Foreground);
-			App.Current.Resources[string.Format("TEInherited{0}Background", name)] = GetBrush(color.Background);
-			App.Current.Resources[string.Format("TEInherited{0}FontStyle", name)] = color.FontStyle ?? FontStyles.Normal;
-			App.Current.Resources[string.Format("TEInherited{0}FontWeight", name)] = color.FontWeight ?? FontWeights.Normal;
+			App.Current.Resources[Theme.GetInheritedForegroundResourceKey(name)] = GetBrush(color.Foreground);
+			App.Current.Resources[Theme.GetInheritedBackgroundResourceKey(name)] = GetBrush(color.Background);
+			App.Current.Resources[Theme.GetInheritedFontStyleResourceKey(name)] = color.FontStyle ?? FontStyles.Normal;
+			App.Current.Resources[Theme.GetInheritedFontWeightResourceKey(name)] = color.FontWeight ?? FontWeights.Normal;
 		}
 
 		static Brush GetBrush(HighlightingBrush b)

@@ -23,10 +23,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using dnlib.DotNet;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.dntheme;
 using ICSharpCode.TreeView;
-using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
@@ -50,13 +50,39 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 
+		public sealed override object Text {
+			get {
+				var gen = UISyntaxHighlighter.CreateTreeView();
+				Write(gen.TextOutput, Language);
+				return gen.CreateObject();
+			}
+		}
+
+		protected abstract void Write(ITextOutput output, Language language);
+
 		public Language Language
 		{
 			get { return filterSettings != null ? filterSettings.Language : Languages.AllLanguages[0]; }
 		}
 
 		public override object ToolTip {
-			get { return CleanUpName(ToString()); }
+			get {
+				var gen = UISyntaxHighlighter.CreateTreeView();
+				Write(gen.TextOutput, Language);
+				return gen.CreateObject();
+			}
+		}
+
+		public override string ToString()
+		{
+			return ToString(Language);
+		}
+
+		public string ToString(Language language)
+		{
+			var output = new PlainTextOutput();
+			Write(output, language);
+			return output.ToString();
 		}
 
 		public virtual FilterResult Filter(FilterSettings settings)
@@ -243,8 +269,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 
 		public abstract NodePathName NodePathName { get; }
-
-		public abstract string ToString(Language language);
 
 		internal static ModuleDef GetModule(IList<SharpTreeNode> nodes)
 		{

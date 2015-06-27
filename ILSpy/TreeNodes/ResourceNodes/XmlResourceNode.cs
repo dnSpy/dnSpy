@@ -22,7 +22,6 @@ using System.IO;
 using System.Threading.Tasks;
 
 using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.NRefactory;
@@ -67,7 +66,7 @@ namespace ICSharpCode.ILSpy.Xaml
 		
 		public override object Icon
 		{
-			get { return ResourceEntryNode.GetIcon((string)Text, BackgroundType.TreeNode); }
+			get { return ResourceEntryNode.GetIcon(ToString(Language), BackgroundType.TreeNode); }
 		}
 
 		public override bool View(DecompilerTextView textView)

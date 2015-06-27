@@ -23,6 +23,8 @@ using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
@@ -42,9 +44,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.showWrites = showWrites;
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return showWrites ? "Assigned By" : "Read By"; }
+			output.Write(showWrites ? "Assigned By" : "Read By", TextTokenType.Text);
 		}
 
 		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
@@ -52,7 +54,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			foundMethods = new Lazy<Hashtable>(LazyThreadSafetyMode.ExecutionAndPublication);
 
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedField, FindReferencesInType);
-			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.Text)) {
+			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.ToString(Language))) {
 				yield return child;
 			}
 

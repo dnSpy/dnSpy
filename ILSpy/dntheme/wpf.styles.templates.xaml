@@ -1715,6 +1715,8 @@
 
     <Style x:Key="{x:Type ListBox}"
            TargetType="{x:Type ListBox}">
+        <Setter Property="FocusVisualStyle"
+                Value="{x:Null}" />
         <Setter Property="Background"
                 Value="{DynamicResource ListBoxBackground}"/>
         <Setter Property="BorderBrush"
@@ -2047,6 +2049,8 @@
     </Style>
     <Style x:Key="{x:Static GridView.GridViewStyleKey}"
            TargetType="{x:Type ListView}">
+        <Setter Property="FocusVisualStyle"
+                Value="{x:Null}" />
         <Setter Property="Background"
                 Value="{DynamicResource GridViewBackground}"/>
         <Setter Property="BorderBrush"
@@ -4804,10 +4808,10 @@
                                  Value="True">
                             <Setter TargetName="nodeView"
                                     Property="TextBackground"
-                                    Value="{DynamicResource SystemColorsHighlight}" />
+                                    Value="{DynamicResource TreeViewItemSelectedBackground}" />
                             <Setter TargetName="nodeView"
                                     Property="Foreground"
-                                    Value="{DynamicResource SystemColorsHighlightText}" />
+                                    Value="{DynamicResource TreeViewItemSelectedForeground}" />
                         </Trigger>
                         <!--<MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -5495,5 +5499,21 @@
 		   BasedOn="{StaticResource {x:Type shtv:SharpTreeView}}"
 		   TargetType="{x:Type mm:AnalyzerTreeView}">
 	</Style>
+	<DataTemplate DataType="{x:Type mm:SearchResult}">
+		<!-- Use Transparent background so tooltip is shown when hovering anywhere in the ListBoxItem -->
+		<Grid ToolTip="{Binding ToolTip}" Background="Transparent">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="20" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<Image Height="16" Width="16" HorizontalAlignment="Left" Source="{Binding Image}" />
+			<ContentPresenter Grid.Column="1" Content="{Binding NameUI}" />
+			<StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,0,2,0">
+				<Image Height="16" Margin="4,0,4,0" Width="16" Source="{Binding LocationImage}" />
+				<ContentPresenter Content="{Binding LocationUI}" />
+			</StackPanel>
+		</Grid>
+	</DataTemplate>
 
 </ResourceDictionary>

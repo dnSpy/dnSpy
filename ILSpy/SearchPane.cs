@@ -22,6 +22,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -31,8 +32,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.TreeNodes.Filters;
+using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy
@@ -166,6 +169,7 @@ namespace ICSharpCode.ILSpy
 			}
 
 			dntheme.Themes.ThemeChanged += Themes_ThemeChanged;
+			Options.DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
 		}
 
 		void Themes_ThemeChanged(object sender, EventArgs e)
@@ -175,6 +179,14 @@ namespace ICSharpCode.ILSpy
 			if (PropertyChanged != null) {
 				PropertyChanged(this, new PropertyChangedEventArgs("SearchImage"));
 				PropertyChanged(this, new PropertyChangedEventArgs("ClearSearchImage"));
+			}
+		}
+
+		void CurrentDisplaySettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "SyntaxHighlightSearchListUI") {
+				if (currentSearch != null)
+					currentSearch.OnThemeChanged();
 			}
 		}
 		
@@ -464,7 +476,7 @@ namespace ICSharpCode.ILSpy
 			this.language = language;
 			this.filter = filter;
 
-			this.Results.Add(new SearchResult { Name = "Searching…" });
+			this.Results.Add(new SearchResult { NameObject = "Searching…" });
 		}
 
 		public void Cancel()
@@ -490,13 +502,23 @@ namespace ICSharpCode.ILSpy
 		void AddResult(SearchResult result)
 		{
 			if (++resultCount > 1000) {
-				result = new SearchResult { Name = "Search aborted, more than 1000 results found." };
+				result = new SearchResult { NameObject = "Search aborted, more than 1000 results found." };
 				cts.Cancel();
 			}
 			dispatcher.BeginInvoke(
 				DispatcherPriority.Normal,
 				new Action(delegate { this.Results.Insert(this.Results.Count - 1, result); }));
 			cts.Token.ThrowIfCancellationRequested();
+		}
+	}
+
+	sealed class NamespaceSearchResult
+	{
+		public readonly string Namespace;
+
+		public NamespaceSearchResult(string ns)
+		{
+			this.Namespace = ns;
 		}
 	}
 
@@ -526,8 +548,8 @@ namespace ICSharpCode.ILSpy
 		/// namespace, it's a <see cref="string"/>.
 		/// </summary>
 		public object Object { get; set; }
-		public string Location { get; set; }
-		public string Name { get; set; }
+		public object LocationObject { get; set; }
+		public object NameObject { get; set; }
 		public ImageSource Image {
 			get { return ImageCache.Instance.GetImage(TypeImageInfo); }
 		}
@@ -537,6 +559,7 @@ namespace ICSharpCode.ILSpy
 		public ImageInfo TypeImageInfo { get; set; }
 		public ImageInfo LocationImageInfo { get; set; }
 		public LoadedAssembly LoadedAssembly { get; set; }
+		public Language Language { get; set; }
 		public string ToolTip {
 			get {
 				var loadedAsm = LoadedAssembly;
@@ -555,9 +578,154 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		public override string ToString()
+		public object NameUI {
+			get { return CreateUI(NameObject, false); }
+		}
+		public object LocationUI {
+			get { return CreateUI(LocationObject, true); }
+		}
+
+		object CreateUI(object o, bool includeNamespace)
 		{
-			return Name;
+			var gen = UISyntaxHighlighter.CreateSearchList();
+			var output = gen.TextOutput;
+			CreateUI(gen.TextOutput, o, includeNamespace);
+			return gen.CreateTextBlock();
+		}
+
+		void CreateUI(ITextOutput output, object o, bool includeNamespace)
+		{
+			var ns = o as NamespaceSearchResult;
+			if (ns != null) {
+				NamespaceTreeNode.Write(output, ns.Namespace);
+				return;
+			}
+
+			var td = o as TypeDef;
+			if (td != null) {
+				Debug.Assert(Language != null);
+				Language.TypeToString(output, td, includeNamespace);
+				return;
+			}
+
+			var md = o as MethodDef;
+			if (md != null) {
+				output.Write(IdentifierEscaper.Escape(md.Name), TextTokenHelper.GetTextTokenType(md));
+				return;
+			}
+
+			var fd = o as FieldDef;
+			if (fd != null) {
+				output.Write(IdentifierEscaper.Escape(fd.Name), TextTokenHelper.GetTextTokenType(fd));
+				return;
+			}
+
+			var pd = o as PropertyDef;
+			if (pd != null) {
+				output.Write(IdentifierEscaper.Escape(pd.Name), TextTokenHelper.GetTextTokenType(pd));
+				return;
+			}
+
+			var ed = o as EventDef;
+			if (ed != null) {
+				output.Write(IdentifierEscaper.Escape(ed.Name), TextTokenHelper.GetTextTokenType(ed));
+				return;
+			}
+
+			var asm = o as AssemblyDef;
+			if (asm != null) {
+				Write(output, asm);
+				return;
+			}
+
+			var mod = o as ModuleDef;
+			if (mod != null) {
+				output.Write(mod.FullName, TextTokenType.Module);
+				return;
+			}
+
+			var asmRef = o as AssemblyRef;
+			if (asmRef != null) {
+				Write(output, asmRef);
+				return;
+			}
+
+			var modRef = o as ModuleRef;
+			if (modRef != null) {
+				output.Write(modRef.FullName, TextTokenType.Module);
+				return;
+			}
+
+			// non-.NET file
+			var loadedAsm = o as LoadedAssembly;
+			if (loadedAsm != null) {
+				output.Write(loadedAsm.ShortName, TextTokenType.Text);
+				return;
+			}
+
+			var s = o as string;
+			if (s != null) {
+				output.Write(s, TextTokenType.Text);
+				return;
+			}
+
+			Debug.Assert(s == null);
+		}
+
+		static void Write(ITextOutput output, IAssembly asm)
+		{
+			var asmDef = asm as AssemblyDef;
+			bool isExe = asmDef != null &&
+				asmDef.ManifestModule != null &&
+				(asmDef.ManifestModule.Characteristics & dnlib.PE.Characteristics.Dll) == 0;
+			output.Write(asm.Name, isExe ? TextTokenType.AssemblyExe : TextTokenType.Assembly);
+
+			output.Write(',', TextTokenType.Operator);
+			output.WriteSpace();
+
+			output.Write("Version", TextTokenType.InstanceProperty);
+			output.Write('=', TextTokenType.Operator);
+			output.Write(asm.Version.Major.ToString(), TextTokenType.Number);
+			output.Write('.', TextTokenType.Operator);
+			output.Write(asm.Version.Minor.ToString(), TextTokenType.Number);
+			output.Write('.', TextTokenType.Operator);
+			output.Write(asm.Version.Build.ToString(), TextTokenType.Number);
+			output.Write('.', TextTokenType.Operator);
+			output.Write(asm.Version.Revision.ToString(), TextTokenType.Number);
+
+			output.Write(',', TextTokenType.Operator);
+			output.WriteSpace();
+
+			output.Write("Culture", TextTokenType.InstanceProperty);
+			output.Write('=', TextTokenType.Operator);
+			output.Write(UTF8String.IsNullOrEmpty(asm.Culture) ? "neutral" : asm.Culture.String, TextTokenType.EnumField);
+
+			output.Write(',', TextTokenType.Operator);
+			output.WriteSpace();
+
+			var publicKey = PublicKeyBase.ToPublicKeyToken(asm.PublicKeyOrToken);
+			output.Write(publicKey == null || publicKey is PublicKeyToken ? "PublicKeyToken" : "PublicKey", TextTokenType.InstanceProperty);
+			output.Write('=', TextTokenType.Operator);
+			if (PublicKeyBase.IsNullOrEmpty2(publicKey))
+				output.Write("null", TextTokenType.Keyword);
+			else
+				output.Write(publicKey.ToString(), TextTokenType.Number);
+
+			if ((asm.Attributes & AssemblyAttributes.Retargetable) != 0) {
+				output.Write(',', TextTokenType.Operator);
+				output.WriteSpace();
+				output.Write("Retargetable", TextTokenType.InstanceProperty);
+				output.Write('=', TextTokenType.Operator);
+				output.Write("Yes", TextTokenType.EnumField);
+			}
+
+			if ((asm.Attributes & AssemblyAttributes.ContentType_Mask) == AssemblyAttributes.ContentType_WindowsRuntime) {
+				output.Write(',', TextTokenType.Operator);
+				output.WriteSpace();
+				output.Write("ContentType", TextTokenType.InstanceProperty);
+				output.Write('=', TextTokenType.Operator);
+				output.Write("WindowsRuntime", TextTokenType.EnumField);
+			}
 		}
 
 		internal void OnThemeChanged()
@@ -565,6 +733,8 @@ namespace ICSharpCode.ILSpy
 			if (PropertyChanged != null) {
 				PropertyChanged(this, new PropertyChangedEventArgs("Image"));
 				PropertyChanged(this, new PropertyChangedEventArgs("LocationImage"));
+				PropertyChanged(this, new PropertyChangedEventArgs("NameUI"));
+				PropertyChanged(this, new PropertyChangedEventArgs("LocationUI"));
 			}
 		}
 

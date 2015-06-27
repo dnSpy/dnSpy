@@ -18,12 +18,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using ICSharpCode.TreeView;
 using dnlib.DotNet;
 
@@ -45,14 +45,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			BindToObservableCollection();
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return ToString(Language); }
-		}
-
-		public override string ToString(Language language)
-		{
-			return CleanUpName(assemblyList.ListName);
+			output.Write(CleanUpName(assemblyList.ListName), TextTokenType.Text);
 		}
 
 		void BindToObservableCollection()

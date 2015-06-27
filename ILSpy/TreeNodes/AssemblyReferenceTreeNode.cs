@@ -18,8 +18,8 @@
 
 using System;
 using System.Diagnostics;
-using System.Linq;
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -56,13 +56,16 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return r; }
 		}
 		
-		public override object Text {
-			get { return ToString(Language); }
+		protected override void Write(ITextOutput output, Language language)
+		{
+			Write(output, r, language);
 		}
 
-		public override string ToString(Language language)
+		public static ITextOutput Write(ITextOutput output, AssemblyRef r, Language language)
 		{
-			return CleanUpIdentifier(r.Name) + r.MDToken.ToSuffixString();
+			output.Write(CleanUpIdentifier(r.Name), TextTokenType.Text);
+			r.MDToken.WriteSuffixString(output);
+			return output;
 		}
 		
 		public override object Icon {

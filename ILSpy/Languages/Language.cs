@@ -238,18 +238,18 @@ namespace ICSharpCode.ILSpy
 			return string.Format("#{0}", variable.Index);
 		}
 
-		public virtual string FormatPropertyName(PropertyDef property, bool? isIndexer = null)
+		public virtual void FormatPropertyName(ITextOutput output, PropertyDef property, bool? isIndexer = null)
 		{
 			if (property == null)
 				throw new ArgumentNullException("property");
-			return IdentifierEscaper.Escape(property.Name);
+			output.Write(IdentifierEscaper.Escape(property.Name), TextTokenHelper.GetTextTokenType(property));
 		}
 		
-		public virtual string FormatTypeName(TypeDef type)
+		public virtual void FormatTypeName(ITextOutput output, TypeDef type)
 		{
 			if (type == null)
 				throw new ArgumentNullException("type");
-			return IdentifierEscaper.Escape(type.Name);
+			output.Write(IdentifierEscaper.Escape(type.Name), TextTokenHelper.GetTextTokenType(type));
 		}
 
 		/// <summary>

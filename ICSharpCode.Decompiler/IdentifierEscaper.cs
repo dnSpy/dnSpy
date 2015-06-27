@@ -58,6 +58,7 @@ namespace ICSharpCode.Decompiler
 			case '-':	// compiler generated name
 			case '{':	// compiler generated name
 			case '}':	// compiler generated name
+			case '=':	// compiler generated name
 			case '!':	// generic type/method variable
 				return true;
 			}

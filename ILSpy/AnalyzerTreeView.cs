@@ -19,11 +19,13 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
+using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy
@@ -75,6 +77,7 @@ namespace ICSharpCode.ILSpy
 			MainWindow.Instance.CurrentAssemblyListChanged += MainWindow_CurrentAssemblyListChanged;
 			MainWindow.Instance.OnModuleModified += MainWindow_OnModuleModified;
 			dntheme.Themes.ThemeChanged += Themes_ThemeChanged;
+			Options.DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
 		}
 
 		void MainWindow_OnModuleModified(object sender, MainWindow.ModuleModifiedEventArgs e)
@@ -98,6 +101,17 @@ namespace ICSharpCode.ILSpy
 		}
 
 		void Themes_ThemeChanged(object sender, EventArgs e)
+		{
+			UpdateUIColors();
+		}
+
+		void CurrentDisplaySettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "SyntaxHighlightAnalyzerTreeViewUI")
+				UpdateUIColors();
+		}
+
+		void UpdateUIColors()
 		{
 			foreach (var c in this.Root.DescendantsAndSelf()) {
 				var atv = c as AnalyzerTreeNode;
@@ -170,6 +184,10 @@ namespace ICSharpCode.ILSpy
 		
 		sealed class AnalyzerRootNode : AnalyzerTreeNode
 		{
+			protected override void Write(ITextOutput output, Language language)
+			{
+			}
+
 			public override bool HandleAssemblyListChanged(ICollection<LoadedAssembly> removedAssemblies, ICollection<LoadedAssembly> addedAssemblies)
 			{
 				this.Children.RemoveAll(

@@ -48,13 +48,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return r; }
 		}
 		
-		public override object Text {
-			get { return ToString(Language); }
-		}
-
-		public override string ToString(Language language)
+		protected override void Write(ITextOutput output, Language language)
 		{
-			return CleanUpName(r.Name);
+			output.Write(CleanUpName(r.Name), TextTokenType.Text);
 		}
 		
 		public override object Icon {

@@ -106,7 +106,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 		static void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
 		{
 			if (nodes.Length == 1)
-				menuItem.Header = string.Format("Delete {0}", UIUtils.EscapeMenuItemHeader(nodes[0].Text.ToString()));
+				menuItem.Header = string.Format("Delete {0}", UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
 			else
 				menuItem.Header = string.Format("Delete {0} methods", nodes.Length);
 		}

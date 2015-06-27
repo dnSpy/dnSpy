@@ -19,6 +19,7 @@
 using System;
 using System.Windows.Threading;
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using ICSharpCode.TreeView;
 using dnlib.DotNet;
 
@@ -37,14 +38,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.LazyLoading = true;
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return ToString(Language); }
-		}
-
-		public override string ToString(Language language)
-		{
-			return "Base Types";
+			output.Write("Base Types", TextTokenType.Text);
 		}
 
 		public override object Icon

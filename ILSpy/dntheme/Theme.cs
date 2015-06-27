@@ -1101,27 +1101,27 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "ListBoxBorder",
 			},
 			new BrushColorInfo(ColorType.ListBoxItemMouseOverBackground, "ListBoxItem MouseOver Background") {
-				DefaultBackground = "#FFC9DEF5",
+				DefaultBackground = "#FFE0E0E0",
 				BackgroundResourceKey = "ListBoxItem.MouseOver.Background",
 			},
 			new BrushColorInfo(ColorType.ListBoxItemMouseOverBorder, "ListBoxItem MouseOver Border") {
-				DefaultBackground = "#FFC9DEF5",
+				DefaultBackground = "#FFD8D8D8",
 				BackgroundResourceKey = "ListBoxItem.MouseOver.Border",
 			},
 			new BrushColorInfo(ColorType.ListBoxItemSelectedInactiveBackground, "ListBoxItem SelectedInactive Background") {
-				DefaultBackground = "#80C9DEF5",
+				DefaultBackground = "#FFE0E0E0",
 				BackgroundResourceKey = "ListBoxItem.SelectedInactive.Background",
 			},
 			new BrushColorInfo(ColorType.ListBoxItemSelectedInactiveBorder, "ListBoxItem SelectedInactive Border") {
-				DefaultBackground = "#FFC9DEF5",
+				DefaultBackground = "#FFD8D8D8",
 				BackgroundResourceKey = "ListBoxItem.SelectedInactive.Border",
 			},
 			new BrushColorInfo(ColorType.ListBoxItemSelectedActiveBackground, "ListBoxItem SelectedActive Background") {
-				DefaultBackground = "#FFC9DEF5",
+				DefaultBackground = "#FFE0E0E0",
 				BackgroundResourceKey = "ListBoxItem.SelectedActive.Background",
 			},
 			new BrushColorInfo(ColorType.ListBoxItemSelectedActiveBorder, "ListBoxItem SelectedActive Border") {
-				DefaultBackground = "#FF3399FF",
+				DefaultBackground = "#FFD8D8D8",
 				BackgroundResourceKey = "ListBoxItem.SelectedActive.Border",
 			},
 			new BrushColorInfo(ColorType.ContextMenuBackground, "Context menu background") {
@@ -1634,39 +1634,39 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "GridViewListViewForeground",
 			},
 			new BrushColorInfo(ColorType.GridViewItemContainerMouseOverHoverBorder, "GridView ItemContainer mouse over hover border") {
-				DefaultBackground = "#5CADFF",
+				DefaultBackground = "#FFD8D8D8",
 				BackgroundResourceKey = "GridViewItemContainerMouseOverHoverBorder",
 			},
 			new BrushColorInfo(ColorType.GridViewItemContainerSelectedBorder, "GridView ItemContainer selected border") {
-				DefaultBackground = "#3399FF",
+				DefaultBackground = "#FFD8D8D8",
 				BackgroundResourceKey = "GridViewItemContainerSelectedBorder",
 			},
 			new BrushColorInfo(ColorType.GridViewItemContainerSelectedInactiveBorder, "GridView ItemContainer selected inactive border") {
-				DefaultBackground = "#AAAAAA",
+				DefaultBackground = "#FFD8D8D8",
 				BackgroundResourceKey = "GridViewItemContainerSelectedInactiveBorder",
 			},
 			new BrushColorInfo(ColorType.GridViewItemContainerSelectedMouseOverBorder, "GridView ItemContainer selected mouse over border brush") {
-				DefaultBackground = "#85C2FF",
+				DefaultBackground = "#FFD8D8D8",
 				BackgroundResourceKey = "GridViewItemContainerSelectedMouseOverBorder",
 			},
 			new BrushColorInfo(ColorType.GridViewListItemHoverFill, "GridView ListItem hover fill") {
-				DefaultBackground = "#5CADFF",
+				DefaultBackground = "#FFE0E0E0",
 				BackgroundResourceKey = "GridViewListItemHoverFill",
 			},
 			new BrushColorInfo(ColorType.GridViewListItemSelectedFill, "GridView ListItem selected fill") {
-				DefaultBackground = "#3399FF",
+				DefaultBackground = "#FFE0E0E0",
 				BackgroundResourceKey = "GridViewListItemSelectedFill",
 			},
 			new BrushColorInfo(ColorType.GridViewListItemSelectedHoverFill, "GridView ListItem selected hover fill") {
-				DefaultBackground = "#85C2FF",
+				DefaultBackground = "#FFE0E0E0",
 				BackgroundResourceKey = "GridViewListItemSelectedHoverFill",
 			},
 			new BrushColorInfo(ColorType.GridViewListItemSelectedInactiveFill, "GridView ListItem selected inactive fill") {
-				DefaultBackground = "#AAAAAA",
+				DefaultBackground = "#FFE0E0E0",
 				BackgroundResourceKey = "GridViewListItemSelectedInactiveFill",
 			},
 			new BrushColorInfo(ColorType.GridViewListViewItemFocusVisualStroke, "GridView ListViewItem FocusVisual stroke") {
-				DefaultBackground = "#3399FF",
+				DefaultBackground = "#FFD8D8D8",
 				BackgroundResourceKey = "GridViewListViewItemFocusVisualStroke",
 			},
 			new BrushColorInfo(ColorType.PaneBorder, "Pane border") {
@@ -1733,10 +1733,16 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "ListArrowBackground",
 			},
 			new BrushColorInfo(ColorType.TreeViewItemMouseOver, "TreeViewItem mouse over") {
-				DefaultBackground = "#006699",
+				DefaultBackground = "#FFD8D8D8",
 				BackgroundResourceKey = "TreeViewItemMouseOverTextBackground",
-				DefaultForeground = "White",
+				DefaultForeground = "Black",
 				ForegroundResourceKey = "TreeViewItemMouseOverForeground",
+			},
+			new BrushColorInfo(ColorType.TreeViewItemSelected, "TreeViewItem Selected") {
+				DefaultBackground = "#FFD8D8D8",
+				BackgroundResourceKey = "TreeViewItemSelectedBackground",
+				DefaultForeground = "Black",
+				ForegroundResourceKey = "TreeViewItemSelectedForeground",
 			},
 			new BrushColorInfo(ColorType.TreeView, "TreeView") {
 				DefaultForeground = "#FF1E1E1E",
@@ -2019,6 +2025,9 @@ namespace ICSharpCode.ILSpy.dntheme
 							new BrushColorInfo(ColorType.SelectedReturnStatement, "Selected return statement"),
 							new BrushColorInfo(ColorType.BreakpointStatement, "Breakpoint statement"),
 							new BrushColorInfo(ColorType.DisabledBreakpointStatement, "Disabled breakpoint statement"),
+							new BrushColorInfo(ColorType.Assembly, "Assembly"),
+							new BrushColorInfo(ColorType.AssemblyExe, "Executable Assembly"),
+							new BrushColorInfo(ColorType.Module, "Module"),
 						},
 					},
 				},
@@ -2354,6 +2363,46 @@ namespace ICSharpCode.ILSpy.dntheme
 			if (nameToColorType.TryGetValue(name, out type))
 				return type;
 			return ColorType.Last;
+		}
+
+		public static string GetTextInheritedForegroundResourceKey(string name)
+		{
+			return string.Format("TETextInherited{0}Foreground", name);
+		}
+
+		public static string GetTextInheritedBackgroundResourceKey(string name)
+		{
+			return string.Format("TETextInherited{0}Background", name);
+		}
+
+		public static string GetTextInheritedFontStyleResourceKey(string name)
+		{
+			return string.Format("TETextInherited{0}FontStyle", name);
+		}
+
+		public static string GetTextInheritedFontWeightResourceKey(string name)
+		{
+			return string.Format("TETextInherited{0}FontWeight", name);
+		}
+
+		public static string GetInheritedForegroundResourceKey(string name)
+		{
+			return string.Format("TEInherited{0}Foreground", name);
+		}
+
+		public static string GetInheritedBackgroundResourceKey(string name)
+		{
+			return string.Format("TEInherited{0}Background", name);
+		}
+
+		public static string GetInheritedFontStyleResourceKey(string name)
+		{
+			return string.Format("TEInherited{0}FontStyle", name);
+		}
+
+		public static string GetInheritedFontWeightResourceKey(string name)
+		{
+			return string.Format("TEInherited{0}FontWeight", name);
 		}
 
 		public override string ToString()

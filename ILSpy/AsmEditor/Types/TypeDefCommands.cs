@@ -112,7 +112,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		{
 			nodes = DeleteTypeDefCommand.FilterOutGlobalTypes(nodes);
 			if (nodes.Length == 1)
-				menuItem.Header = string.Format("Delete {0}", UIUtils.EscapeMenuItemHeader(nodes[0].Text.ToString()));
+				menuItem.Header = string.Format("Delete {0}", UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
 			else
 				menuItem.Header = string.Format("Delete {0} types", nodes.Length);
 		}

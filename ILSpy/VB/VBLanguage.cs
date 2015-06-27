@@ -524,15 +524,12 @@ namespace ICSharpCode.ILSpy.VB
 			};
 		}
 		
-		public override string FormatTypeName(TypeDef type)
+		public override void FormatTypeName(ITextOutput output, TypeDef type)
 		{
 			if (type == null)
 				throw new ArgumentNullException("type");
 
-			var writer = new StringWriter();
-			var output = new PlainTextOutput(writer);
 			TypeToString(output, ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions, type);
-			return writer.ToString();
 		}
 
 		public override void TypeToString(ITextOutput output, ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null)

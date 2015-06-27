@@ -17,6 +17,8 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
@@ -24,14 +26,14 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	internal class AnalyzedMethodTreeNode : AnalyzerEntityTreeNode
 	{
 		private readonly MethodDef analyzedMethod;
-		private readonly string prefix;
+		private readonly bool hidesParent;
 
-		public AnalyzedMethodTreeNode(MethodDef analyzedMethod, string prefix = "")
+		public AnalyzedMethodTreeNode(MethodDef analyzedMethod, bool hidesParent = false)
 		{
 			if (analyzedMethod == null)
 				throw new ArgumentNullException("analyzedMethod");
 			this.analyzedMethod = analyzedMethod;
-			this.prefix = prefix;
+			this.hidesParent = hidesParent;
 			this.LazyLoading = true;
 		}
 
@@ -40,12 +42,17 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			get { return MethodTreeNode.GetIcon(analyzedMethod, BackgroundType.TreeNode); }
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get
-			{
-				return ILSpyTreeNode.CleanUpName(prefix + Language.TypeToString(analyzedMethod.DeclaringType, true) + "." + MethodTreeNode.GetText(analyzedMethod, Language));
+			if (hidesParent) {
+				output.Write('(', TextTokenType.Operator);
+				output.Write("hides", TextTokenType.Text);
+				output.Write(')', TextTokenType.Operator);
+				output.WriteSpace();
 			}
+			Language.TypeToString(output, analyzedMethod.DeclaringType, true);
+			output.Write('.', TextTokenType.Operator);
+			MethodTreeNode.Write(output, analyzedMethod, Language);
 		}
 
 		protected override void LoadChildren()

@@ -18,10 +18,10 @@
 
 using System;
 using System.Diagnostics;
-using System.Text;
 using System.Windows.Media;
 
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -45,36 +45,38 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.method = method;
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return ToString(Language); }
+			Write(output, method, language);
 		}
 
-		public override string ToString(Language language)
+		public static ITextOutput Write(ITextOutput output, MethodDef method, Language language)
 		{
-			return GetText(method, language);
-		}
-
-		public static string GetText(MethodDef method, Language language)
-		{
-			StringBuilder b = new StringBuilder();
-			b.Append('(');
+			output.Write(CleanUpIdentifier(method.Name), TextTokenHelper.GetTextTokenType(method));
+			output.Write('(', TextTokenType.Operator);
 			for (int i = 0; i < method.Parameters.Count; i++) {
 				if (method.Parameters[i].IsHiddenThisParameter)
 					continue;
-				if (method.Parameters[i].MethodSigIndex > 0)
-					b.Append(", ");
-				b.Append(language.TypeToString(method.Parameters[i].Type.ToTypeDefOrRef(), false, method.Parameters[i].ParamDef));
+				if (method.Parameters[i].MethodSigIndex > 0) {
+					output.Write(',', TextTokenType.Operator);
+					output.WriteSpace();
+				}
+				language.TypeToString(output, method.Parameters[i].Type.ToTypeDefOrRef(), false, method.Parameters[i].ParamDef);
 			}
 			if (method.CallingConvention == CallingConvention.VarArg || method.CallingConvention == CallingConvention.NativeVarArg) {
-				if (method.MethodSig.GetParamCount() > 0)
-					b.Append(", ");
-				b.Append("...");
+				if (method.MethodSig.GetParamCount() > 0) {
+					output.Write(',', TextTokenType.Operator);
+					output.WriteSpace();
+				}
+				output.Write("...", TextTokenType.Operator);
 			}
-			b.Append(") : ");
-			b.Append(language.TypeToString(method.ReturnType.ToTypeDefOrRef(), false, method.Parameters.ReturnParameter.ParamDef));
-			b.Append(method.MDToken.ToSuffixString());
-			return CleanUpIdentifier(method.Name) + CleanUpName(b.ToString());
+			output.Write(')', TextTokenType.Operator);
+			output.WriteSpace();
+			output.Write(':', TextTokenType.Operator);
+			output.WriteSpace();
+			language.TypeToString(output, method.ReturnType.ToTypeDefOrRef(), false, method.Parameters.ReturnParameter.ParamDef);
+			method.MDToken.WriteSuffixString(output);
+			return output;
 		}
 
 		public override object Icon

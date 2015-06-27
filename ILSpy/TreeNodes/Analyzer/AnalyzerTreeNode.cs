@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using ICSharpCode.ILSpy.dntheme;
+using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
@@ -41,6 +42,28 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				}
 			}
 		}
+
+		public sealed override object Text {
+			get {
+				var gen = UISyntaxHighlighter.CreateAnalyzerTreeView();
+				Write(gen.TextOutput, Language);
+				return gen.CreateObject();
+			}
+		}
+
+		public string ToString(Language language)
+		{
+			var output = new PlainTextOutput();
+			Write(output, language);
+			return output.ToString();
+		}
+
+		public override string ToString()
+		{
+			return ToString(Language);
+		}
+
+		protected abstract void Write(ITextOutput output, Language language);
 
 		public override System.Windows.Media.Brush Foreground {
 			get { return Themes.Theme.GetColor(dntheme.ColorType.NodePublic).InheritedColor.Foreground.GetBrush(null); }

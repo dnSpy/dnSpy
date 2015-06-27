@@ -20,6 +20,7 @@ using System;
 using System.Linq;
 using System.Windows.Threading;
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes
@@ -41,13 +42,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.LazyLoading = true;
 		}
 		
-		public override object Text {
-			get { return ToString(Language); }
-		}
-
-		public override string ToString(Language language)
+		protected override void Write(ITextOutput output, Language language)
 		{
-			return "References";
+			output.Write("References", TextTokenType.Text);
 		}
 		
 		public override object Icon {

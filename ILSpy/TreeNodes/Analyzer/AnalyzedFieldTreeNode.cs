@@ -18,6 +18,8 @@
 
 using System;
 using dnlib.DotNet;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
@@ -38,13 +40,11 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			get { return FieldTreeNode.GetIcon(analyzedField, BackgroundType.TreeNode); }
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get
-			{
-				return ILSpyTreeNode.CleanUpName(Language.TypeToString(analyzedField.DeclaringType, true) +
-					"." + ILSpyTreeNode.CleanUpIdentifier(analyzedField.Name) + " : " + this.Language.TypeToString(analyzedField.FieldType.ToTypeDefOrRef(), false, analyzedField));
-			}
+			Language.TypeToString(output, analyzedField.DeclaringType, true);
+			output.Write('.', TextTokenType.Operator);
+			FieldTreeNode.Write(output, analyzedField, Language);
 		}
 
 		protected override void LoadChildren()

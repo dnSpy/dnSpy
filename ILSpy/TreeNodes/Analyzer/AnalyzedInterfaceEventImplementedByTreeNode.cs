@@ -20,6 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using ICSharpCode.Decompiler.Ast;
 using dnlib.DotNet;
 
@@ -39,9 +41,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.analyzedMethod = this.analyzedEvent.AddMethod ?? this.analyzedEvent.RemoveMethod;
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return "Implemented By"; }
+			output.Write("Implemented By", TextTokenType.Text);
 		}
 
 		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
@@ -49,7 +51,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			if (analyzedMethod == null)
 				yield break;
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedMethod, FindReferencesInType);
-			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.Text)) {
+			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.ToString(Language))) {
 				yield return child;
 			}
 		}

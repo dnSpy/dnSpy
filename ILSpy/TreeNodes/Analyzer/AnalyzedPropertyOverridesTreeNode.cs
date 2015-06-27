@@ -20,6 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 using ICSharpCode.Decompiler.Ast;
 using dnlib.DotNet;
 
@@ -37,15 +39,15 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.analyzedProperty = analyzedProperty;
 		}
 
-		public override object Text
+		protected override void Write(ITextOutput output, Language language)
 		{
-			get { return "Overridden By"; }
+			output.Write("Overridden By", TextTokenType.Text);
 		}
 
 		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
 		{
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedProperty, FindReferencesInType);
-			return analyzer.PerformAnalysis(ct).OrderBy(n => n.Text);
+			return analyzer.PerformAnalysis(ct).OrderBy(n => n.ToString(Language));
 		}
 
 		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type)
@@ -60,7 +62,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					if (anyAccessor == null)
 						continue;
 					bool hidesParent = !anyAccessor.IsVirtual ^ anyAccessor.IsNewSlot;
-					var node = new AnalyzedPropertyTreeNode(property, hidesParent ? "(hides) " : "");
+					var node = new AnalyzedPropertyTreeNode(property, hidesParent);
 					node.Language = this.Language;
 					yield return node;
 				}
