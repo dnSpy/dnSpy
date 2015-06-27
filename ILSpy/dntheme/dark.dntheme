@@ -34,7 +34,7 @@
 		<color name="variable" fg="#BDB76B" />
 		<color name="parameter" fg="#BDB76B" bold="true" />
 		<color name="label" fg="#806F4D" />
-		<color name="opcode" fg="#993366" />
+		<color name="opcode" fg="#AD5C85" />
 		<color name="ildirective" fg="#9999FF" />
 		<color name="ilmodule" fg="#666699" />
 		<color name="xmldoctooltipdescriptiontext" italics="true" bold="true" />
