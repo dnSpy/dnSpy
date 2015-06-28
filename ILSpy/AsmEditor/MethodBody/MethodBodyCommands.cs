@@ -89,6 +89,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			var win = new MethodBodyDlg();
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
+			win.Title = string.Format("{0} - {1}", win.Title, methodNode.ToString());
 			if (win.ShowDialog() != true)
 				return;
 
