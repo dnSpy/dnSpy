@@ -999,7 +999,10 @@ namespace ICSharpCode.Decompiler.ILAst
 			TypeSig leftPreferred = DoInferTypeForExpression(left, expectedType);
 			if (leftPreferred is PtrSig) {
 				left.InferredType = left.ExpectedType = leftPreferred;
-				InferTypeForExpression(right, null);
+				TypeSig rightPreferred = InferTypeForExpression(right, null);
+				// subtracting two pointers is not a pointer
+				if (rightPreferred is PtrSig)
+					return typeSystem.IntPtr;
 				return leftPreferred;
 			}
 			if (IsEnum(leftPreferred)) {

@@ -235,7 +235,8 @@ namespace UpdateAssemblyInfo
 				string line;
 				int revNum = BaseCommitRev;
 				while ((line = p.StandardOutput.ReadLine()) != null) {
-					if (gitCommitHash == null) {
+					//keep only line that contains git hash
+					if (gitCommitHash == null && line != null && line.Length == BaseCommit.Length) {
 						// first entry is HEAD
 						gitCommitHash = line;
 					}

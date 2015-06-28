@@ -452,9 +452,9 @@ namespace ICSharpCode.Decompiler.ILAst
 				// Might be 'newobj(SomeDelegate, target, ldvirtftn(F, target))'.
 				ILVariable target;
 				if (expr.Arguments[0].Match(ILCode.Ldloc, out target)
-				    && expr.Arguments[1].Code == ILCode.Ldvirtftn
-				    && expr.Arguments[1].Arguments.Count == 1
-				    && expr.Arguments[1].Arguments[0].MatchLdloc(target))
+					&& expr.Arguments[1].Code == ILCode.Ldvirtftn
+					&& expr.Arguments[1].Arguments.Count == 1
+					&& expr.Arguments[1].Arguments[0].MatchLdloc(target))
 				{
 					// Remove the 'target' argument from the ldvirtftn instruction.
 					// It's not needed in the translation to C#, and needs to be eliminated so that the target expression
@@ -490,9 +490,9 @@ namespace ICSharpCode.Decompiler.ILAst
 					
 					// Start a new basic block if necessary
 					if (currNode is ILLabel ||
-					    currNode is ILTryCatchBlock || // Counts as label
-					    lastNode.IsConditionalControlFlow() ||
-					    lastNode.IsUnconditionalControlFlow())
+						currNode is ILTryCatchBlock || // Counts as label
+						lastNode.IsConditionalControlFlow() ||
+						lastNode.IsUnconditionalControlFlow())
 					{
 						// Try to reuse the label
 						ILLabel label = currNode as ILLabel ?? new ILLabel() { Name = "Block_" + (nextLabelIndex++).ToString() };
@@ -699,33 +699,86 @@ namespace ICSharpCode.Decompiler.ILAst
 				});
 		}
 
-		static void HandlePointerArithmetic(ILNode method)
+		void HandlePointerArithmetic(ILNode method)
 		{
 			foreach (ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
 				List<ILExpression> args = expr.Arguments;
 				switch (expr.Code) {
 					case ILCode.Localloc:
-						if (expr.InferredType is PtrSig)
-							args[0] = DivideBySize(args[0], ((PtrSig)expr.InferredType).Next);
+					{
+						PtrSig type = expr.InferredType as PtrSig;
+						if (type != null) {
+							ILExpression arg0 = args[0];
+							ILExpression expr2 = expr;
+							DivideOrMultiplyBySize(ref expr2, ref arg0, type.Next, true);
+							// expr shouldn't change
+							if (expr2 != expr)
+								throw new InvalidOperationException();
+							args[0] = arg0;
+						}
 						break;
+					}
 					case ILCode.Add:
 					case ILCode.Add_Ovf:
 					case ILCode.Add_Ovf_Un:
+					{
+						ILExpression arg0 = args[0];
+						ILExpression arg1 = args[1];
 						if (expr.InferredType is PtrSig) {
-							if (args[0].ExpectedType is PtrSig)
-								args[1] = DivideBySize(args[1], ((PtrSig)expr.InferredType).Next);
-							else if (args[1].ExpectedType is PtrSig)
-								args[0] = DivideBySize(args[0], ((PtrSig)expr.InferredType).Next);
+							if (arg0.ExpectedType is PtrSig) {
+								DivideOrMultiplyBySize(ref arg0, ref arg1, ((PtrSig)expr.InferredType).Next, true);
+							} else if (arg1.ExpectedType is PtrSig)
+								DivideOrMultiplyBySize(ref arg1, ref arg0, ((PtrSig)expr.InferredType).Next, true);
 						}
+						args[0] = arg0;
+						args[1] = arg1;
 						break;
+					}
 					case ILCode.Sub:
 					case ILCode.Sub_Ovf:
 					case ILCode.Sub_Ovf_Un:
+					{
+						ILExpression arg0 = args[0];
+						ILExpression arg1 = args[1];
 						if (expr.InferredType is PtrSig) {
-							if (args[0].ExpectedType is PtrSig)
-								args[1] = DivideBySize(args[1], ((PtrSig)expr.InferredType).Next);
+							if (arg0.ExpectedType is PtrSig && !(arg1.InferredType is PtrSig))
+								DivideOrMultiplyBySize(ref arg0, ref arg1, ((PtrSig)expr.InferredType).Next, true);
 						}
+						args[0] = arg0;
+						args[1] = arg1;
 						break;
+					}
+					case ILCode.Conv_I8:
+					{
+						ILExpression arg0 = args[0];
+						// conv.i8(div:intptr(p0 - p1))
+						if (arg0.Code == ILCode.Div && arg0.InferredType.RemovePinnedAndModifiers().GetElementType() == ElementType.I)
+						{
+							ILExpression dividend = arg0.Arguments[0];
+							if (dividend.InferredType.RemovePinnedAndModifiers().GetElementType() == ElementType.I &&
+								(dividend.Code == ILCode.Sub || dividend.Code == ILCode.Sub_Ovf || dividend.Code == ILCode.Sub_Ovf_Un))
+							{
+								PtrSig pointerType0 = dividend.Arguments[0].InferredType as PtrSig;
+								PtrSig pointerType1 = dividend.Arguments[1].InferredType as PtrSig;
+
+								if (pointerType0 != null && pointerType1 != null) {
+									if (pointerType0.Next.RemovePinnedAndModifiers().GetElementType() == ElementType.Void ||
+										!new SigComparer().Equals(pointerType0.Next, pointerType1.Next)) {
+										pointerType0 = pointerType1 = new PtrSig(corLib.Byte);
+										dividend.Arguments[0] = Cast(dividend.Arguments[0], pointerType0);
+										dividend.Arguments[1] = Cast(dividend.Arguments[1], pointerType1);
+									}
+
+									DivideOrMultiplyBySize(ref dividend, ref arg0, pointerType0.Next, false);
+									// dividend shouldn't change
+									if (args[0].Arguments[0] != dividend)
+										throw new InvalidOperationException();
+								}
+							}
+						}
+						args[0] = arg0;
+						break;
+					}
 				}
 			}
 		}
@@ -752,12 +805,24 @@ namespace ICSharpCode.Decompiler.ILAst
 			return expr;
 		}
 
-		static ILExpression DivideBySize(ILExpression expr, TypeSig type)
+		static ILExpression Cast(ILExpression expr, TypeSig type)
 		{
-			expr = UnwrapIntPtrCast(expr);
+			return new ILExpression(ILCode.Castclass, type.ToTypeDefOrRef(), expr)
+			{
+				InferredType = type,
+				ExpectedType = type
+			};
+		}
+
+		void DivideOrMultiplyBySize(ref ILExpression pointerExpr, ref ILExpression adjustmentExpr, TypeSig elementType, bool divide)
+		{
+			adjustmentExpr = UnwrapIntPtrCast(adjustmentExpr);
 
 			ILExpression sizeOfExpression;
-			switch (TypeAnalysis.GetInformationAmount(type)) {
+			switch (TypeAnalysis.GetInformationAmount(elementType)) {
+				case 0: // System.Void
+					pointerExpr = Cast(pointerExpr, new PtrSig(corLib.Byte));
+					goto case 1;
 				case 1:
 				case 8:
 					sizeOfExpression = new ILExpression(ILCode.Ldc_I4, 1);
@@ -772,38 +837,44 @@ namespace ICSharpCode.Decompiler.ILAst
 					sizeOfExpression = new ILExpression(ILCode.Ldc_I4, 8);
 					break;
 				default:
-					sizeOfExpression = new ILExpression(ILCode.Sizeof, type.ToTypeDefOrRef());
+					sizeOfExpression = new ILExpression(ILCode.Sizeof, elementType.ToTypeDefOrRef());
 					break;
 			}
 
-			if (expr.Code == ILCode.Mul || expr.Code == ILCode.Mul_Ovf || expr.Code == ILCode.Mul_Ovf_Un) {
-				ILExpression mulArg = expr.Arguments[1];
+			if (divide && (adjustmentExpr.Code == ILCode.Mul || adjustmentExpr.Code == ILCode.Mul_Ovf || adjustmentExpr.Code == ILCode.Mul_Ovf_Un) ||
+				!divide && (adjustmentExpr.Code == ILCode.Div || adjustmentExpr.Code == ILCode.Div_Un)) {
+				ILExpression mulArg = adjustmentExpr.Arguments[1];
 				if (mulArg.Code == sizeOfExpression.Code && sizeOfExpression.Operand.Equals(mulArg.Operand)) {
-					var arg = expr.Arguments[0];
-					arg.ILRanges.AddRange(expr.ILRanges);
+					var arg = adjustmentExpr.Arguments[0];
+					arg.ILRanges.AddRange(adjustmentExpr.ILRanges);
 					arg.ILRanges.AddRange(mulArg.GetSelfAndChildrenRecursiveILRanges());
-					return UnwrapIntPtrCast(arg);
+					adjustmentExpr = UnwrapIntPtrCast(arg);
+					return;
 				}
 			}
 
-			if (expr.Code == sizeOfExpression.Code) {
-				if (sizeOfExpression.Operand.Equals(expr.Operand))
-					return new ILExpression(ILCode.Ldc_I4, 1).WithILRanges(expr.GetSelfAndChildrenRecursiveILRanges());
+			if (adjustmentExpr.Code == sizeOfExpression.Code) {
+				if (sizeOfExpression.Operand.Equals(adjustmentExpr.Operand)) {
+					adjustmentExpr = new ILExpression(ILCode.Ldc_I4, 1).WithILRanges(adjustmentExpr.GetSelfAndChildrenRecursiveILRanges());
+					return;
+				}
 
-				if (expr.Code == ILCode.Ldc_I4) {
-					int offsetInBytes = (int)expr.Operand;
+				if (adjustmentExpr.Code == ILCode.Ldc_I4) {
+					int offsetInBytes = (int)adjustmentExpr.Operand;
 					int elementSize = (int)sizeOfExpression.Operand;
-					int offsetInElements = offsetInBytes / elementSize;
 
-					// ensure integer division
-					if ((long)offsetInElements * elementSize == offsetInBytes) {
-						expr.Operand = offsetInElements;
-						return expr;
+					if (offsetInBytes % elementSize != 0) {
+						pointerExpr = Cast(pointerExpr, new PtrSig(corLib.Byte));
+						return;
 					}
+
+					adjustmentExpr.Operand = offsetInBytes / elementSize;
+					return;
 				}
 			}
 
-			return new ILExpression(ILCode.Div_Un, null, expr, sizeOfExpression);
+			if (!(sizeOfExpression.Code == ILCode.Ldc_I4 && (int)sizeOfExpression.Operand == 1))
+				adjustmentExpr = new ILExpression(divide ? ILCode.Div_Un : ILCode.Mul, null, adjustmentExpr, sizeOfExpression);
 		}
 		
 		public static void ReplaceVariables(ILNode node, Func<ILVariable, ILVariable> variableMapping)

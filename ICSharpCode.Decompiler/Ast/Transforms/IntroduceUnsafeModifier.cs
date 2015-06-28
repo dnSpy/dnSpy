@@ -35,7 +35,11 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		protected override bool VisitChildren(AstNode node, object data)
 		{
 			bool result = false;
-			for (AstNode child = node.FirstChild; child != null; child = child.NextSibling) {
+			AstNode next;
+			for (AstNode child = node.FirstChild; child != null; child = next) {
+				// Store next to allow the loop to continue
+				// if the visitor removes/replaces child.
+				next = child.NextSibling;
 				result |= child.AcceptVisitor(this, data);
 			}
 			if (result && node is EntityDeclaration && !(node is Accessor)) {
