@@ -84,7 +84,7 @@
 									<ColumnDefinition Width="Auto" />
 								</Grid.ColumnDefinitions>
 								<TextBox Grid.Column="0" Margin="5 5 0 0" Name="publicKeyTextBox" Text="{Binding PublicKey.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-								<Button Grid.Column="1" Margin="5 5 0 0" MinWidth="25" Content="…" Command="{Binding OpenPublicKeyFileCommand}"  />
+								<Button Grid.Column="1" Margin="5 5 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding OpenPublicKeyFileCommand}"  />
 							</Grid>
 						</Grid>
 

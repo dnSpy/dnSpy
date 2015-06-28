@@ -5487,6 +5487,10 @@
 		<Setter Property="Height" Value="23"/>
 		<Setter Property="MinHeight" Value="23" />
 	</Style>
+	<Style x:Key="EllipsisButton" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+		<Setter Property="Padding" Value="7 0 7 0" />
+		<Setter Property="Content" Value="&#8230;" />
+	</Style>
 	<Style x:Key="{x:Type mm:AnalyzerTreeView}"
 		   BasedOn="{StaticResource {x:Type shtv:SharpTreeView}}"
 		   TargetType="{x:Type mm:AnalyzerTreeView}">

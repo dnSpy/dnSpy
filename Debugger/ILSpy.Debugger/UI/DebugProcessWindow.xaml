@@ -37,8 +37,7 @@
 				Margin="5 5 0 0" />
 			<Button
 				Grid.Row="0" Grid.Column="2"
-				Content="…"
-				MinWidth="25"
+				Style="{StaticResource EllipsisButton}"
 				Name="pathButton"
 				Click="pathButton_Click"
 				Margin="5 5 5 0" />
@@ -62,8 +61,7 @@
 				Margin="5 5 0 0" />
 			<Button
 				Grid.Row="2" Grid.Column="2"
-				Content="…"
-				MinWidth="25"
+				Style="{StaticResource EllipsisButton}"
 				Click="workingDirectoryButton_Click"
 				Name="workingDirectoryButton"
 				Margin="5 5 5 0" />
