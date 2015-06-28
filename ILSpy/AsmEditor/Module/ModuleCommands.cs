@@ -54,12 +54,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewAssemblyModule",
 								Category = "AsmEd",
-								Order = 240)]//TODO: Update Order
+								Order = 530)]
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "NewAssemblyModule",
 							MenuCategory = "AsmEd",
-							MenuOrder = 2100)]//TODO: Set menu order
+							MenuOrder = 2330)]
 		sealed class TheEditCommand : EditCommand
 		{
 			public TheEditCommand()
@@ -140,12 +140,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "ModuleToAssembly",
 								Category = "AsmEd",
-								Order = 240)]//TODO: Update Order
+								Order = 410)]
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
 							Menu = "_Edit",
 							MenuIcon = "ModuleToAssembly",
 							MenuCategory = "AsmEd",
-							MenuOrder = 2100)]//TODO: Set menu order
+							MenuOrder = 2210)]
 		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
@@ -257,12 +257,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "AssemblyToModule",
 								Category = "AsmEd",
-								Order = 240)]//TODO: Update Order
+								Order = 420)]
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
 							Menu = "_Edit",
 							MenuIcon = "AssemblyToModule",
 							MenuCategory = "AsmEd",
-							MenuOrder = 2100)]//TODO: Set menu order
+							MenuOrder = 2220)]
 		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool IsVisible(ILSpyTreeNode[] nodes)
@@ -449,12 +449,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewAssemblyModule",
 								Category = "AsmEd",
-								Order = 240)]//TODO: Update Order
+								Order = 510)]
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "NewAssemblyModule",
 							MenuCategory = "AsmEd",
-							MenuOrder = 2100)]//TODO: Set menu order
+							MenuOrder = 2310)]
 		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
@@ -503,12 +503,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewAssemblyModule",
 								Category = "AsmEd",
-								Order = 240)]//TODO: Update Order
+								Order = 520)]
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "NewAssemblyModule",
 							MenuCategory = "AsmEd",
-							MenuOrder = 2100)]//TODO: Set menu order
+							MenuOrder = 2320)]
 		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
@@ -564,13 +564,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 								Icon = "Delete",
 								InputGestureText = "Del",
 								Category = "AsmEd",
-								Order = 240)]//TODO: Update Order
+								Order = 310)]
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
 							Menu = "_Edit",
 							MenuIcon = "Delete",
 							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
-							MenuOrder = 2100)]//TODO: Set menu order
+							MenuOrder = 2110)]
 		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool IsVisible(ILSpyTreeNode[] nodes)
@@ -677,12 +677,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
 								Category = "AsmEd",
-								Order = 240)]//TODO: Update Order
+								Order = 610)]
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
-							MenuOrder = 2100)]//TODO: Set menu order
+							MenuOrder = 2410)]
 		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)

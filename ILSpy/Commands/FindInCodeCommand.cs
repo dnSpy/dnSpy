@@ -20,7 +20,7 @@
 using System.Windows.Input;
 
 namespace ICSharpCode.ILSpy.Commands {
-	[ExportMainMenuCommand(Menu = "_Edit", MenuHeader = "_Find", MenuIcon = "Find", MenuCategory = "Search", MenuInputGestureText = "Ctrl+F", MenuOrder = 2090/*TODO: Fix MenuOrder*/)]
+	[ExportMainMenuCommand(Menu = "_Edit", MenuHeader = "_Find", MenuIcon = "Find", MenuCategory = "Search", MenuInputGestureText = "Ctrl+F", MenuOrder = 2090)]
 	sealed class FindInCodeCommand : CommandWrapper
 	{
 		public FindInCodeCommand()

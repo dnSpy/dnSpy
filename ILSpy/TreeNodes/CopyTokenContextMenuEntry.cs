@@ -53,7 +53,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 	}
 
-	[ExportContextMenuEntryAttribute(Header = "_Copy MD Token", Order = 310, Category = "Tokens")]
+	[ExportContextMenuEntryAttribute(Header = "_Copy MD Token", Order = 410, Category = "Tokens")]
 	class CopyTokenContextMenuEntry : CopyTokenContextMenuEntryBase
 	{
 		public override bool IsVisible(TextViewContext context)
@@ -69,7 +69,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 	}
 
-	[ExportContextMenuEntryAttribute(Header = "Copy De_finition MD Token", Order = 320, Category = "Tokens")]
+	[ExportContextMenuEntryAttribute(Header = "Copy De_finition MD Token", Order = 420, Category = "Tokens")]
 	class CopyDefinitionTokenContextMenuEntry : CopyTokenContextMenuEntryBase
 	{
 		public override bool IsVisible(TextViewContext context)

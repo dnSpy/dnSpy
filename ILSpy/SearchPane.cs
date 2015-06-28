@@ -741,7 +741,7 @@ namespace ICSharpCode.ILSpy
 		public event PropertyChangedEventHandler PropertyChanged;
 	}
 
-	[ExportMainMenuCommand(Menu = "_Edit", MenuHeader = "_Search Assemblies", MenuIcon = "Find", MenuCategory = "Search", MenuOrder = 2091/*TODO: Fix MenuOrder*/)]
+	[ExportMainMenuCommand(Menu = "_Edit", MenuHeader = "_Search Assemblies", MenuIcon = "Find", MenuCategory = "Search", MenuOrder = 2091)]
 	[ExportToolbarCommand(ToolTip = "Search Assemblies (Ctrl+K)", ToolbarIcon = "Find", ToolbarCategory = "View", ToolbarOrder = 9000)]
 	sealed class ShowSearchCommand : CommandWrapper
 	{

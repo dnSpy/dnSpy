@@ -55,12 +55,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 		[ExportContextMenuEntry(Category = "AsmEd",
 								Icon = "Delete",
 								InputGestureText = "Del",
-								Order = 240)]//TODO: Update Order
+								Order = 370)]
 		[ExportMainMenuCommand(Menu = "_Edit",
 							MenuIcon = "Delete",
 							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
-							MenuOrder = 2100)]//TODO: Set menu order
+							MenuOrder = 2170)]
 		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
@@ -213,12 +213,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Namespace",
 								Category = "AsmEd",
-								Order = 240)]//TODO: Update Order
+								Order = 400)]
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
 							   Menu = "_Edit",
 							   MenuIcon = "Namespace",
 							   MenuCategory = "AsmEd",
-							   MenuOrder = 2100)]//TODO: Set menu order
+							   MenuOrder = 2200)]
 		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
