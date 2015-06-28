@@ -145,6 +145,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
+		public ICommand ReinitializeCommand {
+			get { return new RelayCommand(a => Reinitialize()); }
+		}
+
 		public ICommand ClearTypeSigCommand {
 			get { return new RelayCommand(a => TypeSig = null, a => IsEnabled && TypeSig != null); }
 		}
@@ -222,10 +226,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		readonly UInt32VM genericVariableNumber;
 
 		readonly TypeSigCreatorOptions options;
+		readonly TypeSig defaultTypeSig;
 
-		public TypeSigCreatorVM(TypeSigCreatorOptions options)
+		public TypeSigCreatorVM(TypeSigCreatorOptions options, TypeSig defaultTypeSig = null)
 		{
 			this.options = options.Clone();
+			this.defaultTypeSig = defaultTypeSig;
 			this.arrayRank = new UInt32VM(2, a => { });
 			this.arraySizes = new UInt32ListDataFieldVM(a => { }) {
 				Min = ModelUtils.COMPRESSED_UINT32_MIN,
@@ -236,6 +242,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				Max = ModelUtils.COMPRESSED_INT32_MAX,
 			};
 			this.genericVariableNumber = new UInt32VM(0, a => { });
+
+			Reinitialize();
+		}
+
+		void Reinitialize()
+		{
+			this.TypeSig = defaultTypeSig;
 		}
 
 		void ShowWarning(string key, string msg)

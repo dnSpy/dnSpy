@@ -39,7 +39,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 
 		public TypeSig Create(TypeSigCreatorOptions options, TypeSig typeSig, out bool canceled)
 		{
-			var data = new TypeSigCreatorVM(options);
+			var data = new TypeSigCreatorVM(options, typeSig);
 			data.TypeSig = typeSig;
 			var win = new TypeSigCreatorDlg();
 			win.DataContext = data;
