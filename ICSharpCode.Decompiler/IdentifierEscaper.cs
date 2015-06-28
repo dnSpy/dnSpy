@@ -52,6 +52,7 @@ namespace ICSharpCode.Decompiler
 			switch (c) {
 			case '.':	// .ctor
 			case '_':
+			case '`':
 			case '<':	// compiler generated name
 			case '>':	// compiler generated name
 			case '$':	// compiler generated name
@@ -62,8 +63,6 @@ namespace ICSharpCode.Decompiler
 			case '!':	// generic type/method variable
 				return true;
 			}
-			if (c == '.' || c == '_')
-				return true;
 			switch (char.GetUnicodeCategory(c)) {
 			case UnicodeCategory.UppercaseLetter:
 			case UnicodeCategory.LowercaseLetter:
