@@ -37,7 +37,7 @@ namespace ICSharpCode.ILSpy.Controls
 			InitializeComponent();
 			// set size to fit decompiler window
 			contentPresenter.SizeChanged += OnParentSizeChanged;
-			Width = contentPresenter.ActualWidth - MAGIC;
+			Width = Math.Max(0, contentPresenter.ActualWidth - MAGIC);
 			MaxHeight = contentPresenter.ActualHeight;
 			resourceListView.ItemsSource = strings;
 		}
