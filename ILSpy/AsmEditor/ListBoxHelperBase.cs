@@ -258,7 +258,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		void listView_KeyDown(object sender, KeyEventArgs e)
 		{
-			if (e.OriginalSource is TextBox || e.OriginalSource is ComboBox)
+			if (e.OriginalSource is TextBox || e.OriginalSource is ComboBox || e.OriginalSource is ComboBoxItem)
 				return;
 
 			if (Keyboard.Modifiers != ModifierKeys.None)
