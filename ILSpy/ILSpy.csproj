@@ -454,6 +454,7 @@
     <Compile Include="Bookmarks\IBookmark.cs" />
     <Compile Include="Bookmarks\MarkerBookmark.cs" />
     <Compile Include="Bookmarks\StackFrameStatementBookmark.cs" />
+    <Compile Include="Bookmarks\TextMarkerZOrder.cs" />
     <Compile Include="Commands\AboutCommands.cs" />
     <Compile Include="Commands\BrowseBackCommand.cs" />
     <Compile Include="Commands\BrowseForwardCommand.cs" />

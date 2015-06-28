@@ -17,7 +17,7 @@ namespace ICSharpCode.ILSpy.Bookmarks
 	/// <summary>
 	/// A bookmark that can be attached to an AvalonEdit TextDocument.
 	/// </summary>
-	public class BookmarkBase : IBookmark
+	public abstract class BookmarkBase : IBookmark
 	{
 		TextLocation location;
 		TextLocation endLocation;
@@ -78,10 +78,8 @@ namespace ICSharpCode.ILSpy.Bookmarks
 		public int LineNumber {
 			get { return location.Line; }
 		}
-		
-		public virtual int ZOrder {
-			get { return 0; }
-		}
+
+		public abstract int ZOrder { get; }
 
 		/// <summary>
 		/// true if the bookmark is visible in the displayed document

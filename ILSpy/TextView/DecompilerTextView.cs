@@ -191,10 +191,6 @@ namespace ICSharpCode.ILSpy.TextView
 			ShowLineMargin();
 			
 			textEditor.TextArea.TextView.VisualLinesChanged += (s, _) => iconMargin.InvalidateVisual();
-			
-			// add marker service & margin
-			textEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
-			textEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
 		}
 		
 		#endregion
@@ -999,6 +995,7 @@ namespace ICSharpCode.ILSpy.TextView
 				var r = tmp;
 				if (RefSegEquals(referenceSegment, r)) {
 					var mark = textMarkerService.Create(r.StartOffset, r.Length);
+					mark.ZOrder = (int)Bookmarks.TextMarkerZOrder.SearchResult;
 					mark.HighlightingColor = () => {
 						return (r.IsLocalTarget ?
 							Themes.Theme.GetColor(dntheme.ColorType.LocalDefinition) :

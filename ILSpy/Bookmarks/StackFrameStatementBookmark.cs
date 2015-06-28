@@ -224,11 +224,11 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			get {
 				switch (type) {
 				case StackFrameStatementType.CurrentStatement:
-					return 100;
+					return (int)TextMarkerZOrder.CurrentStatement;
 				case StackFrameStatementType.SelectedReturnStatement:
-					return 90;
+					return (int)TextMarkerZOrder.SelectedReturnStatement;
 				case StackFrameStatementType.ReturnStatement:
-					return 80;
+					return (int)TextMarkerZOrder.ReturnStatement;
 				default:
 					throw new InvalidOperationException();
 				}

@@ -65,6 +65,10 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			this.isEnabled = isEnabled;
 		}
 
+		public override int ZOrder {
+			get { return (int)TextMarkerZOrder.Breakpoint; }
+		}
+
 		public override bool HasImage {
 			get { return true; }
 		}
