@@ -289,10 +289,15 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			return s;
 		}
+
+		internal static bool MustEscape(string identifier) 
+		{
+			return !IsValidIdentifier(identifier) || ilKeywords.Contains(identifier);
+		}
 		
 		public static string Escape(string identifier)
 		{
-			if (IsValidIdentifier(identifier) && !ilKeywords.Contains(identifier)) {
+			if (!MustEscape(identifier)) {
 				return identifier;
 			} else {
 				// The ECMA specification says that ' inside SQString should be ecaped using an octal escape sequence,
@@ -444,8 +449,25 @@ namespace ICSharpCode.Decompiler.Disassembler
 						writer.Write(Escape(type.Scope.GetScopeName()), TextTokenType.ILModule);
 						writer.Write(']', TextTokenType.Operator);
 					}
-					writer.WriteReference(Escape(typeFullName), type, TextTokenHelper.GetTextTokenType(type));
+					if (ts != null || MustEscape(typeFullName))
+						writer.WriteReference(Escape(typeFullName), type, TextTokenHelper.GetTextTokenType(type));
+					else {
+						WriteNamespace(writer, type.Namespace);
+						if (!string.IsNullOrEmpty(type.Namespace))
+							writer.Write('.', TextTokenType.Operator);
+						writer.WriteReference(IdentifierEscaper.Escape(type.Name), type, TextTokenHelper.GetTextTokenType(type));
+					}
 				}
+			}
+		}
+
+		internal static void WriteNamespace(ITextOutput writer, string ns)
+		{
+			var parts = ns.Split('.');
+			for (int i = 0; i < parts.Length; i++) {
+				if (i > 0)
+					writer.Write('.', TextTokenType.Operator);
+				writer.Write(IdentifierEscaper.Escape(parts[i]), TextTokenType.NamespacePart);
 			}
 		}
 

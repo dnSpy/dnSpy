@@ -1467,7 +1467,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (!string.IsNullOrEmpty(nameSpace)) {
 				output.Write(".namespace", TextTokenType.ILDirective);
 				output.WriteSpace();
-				output.Write(DisassemblerHelpers.Escape(nameSpace), TextTokenType.NamespacePart);
+				if (DisassemblerHelpers.MustEscape(nameSpace))
+					output.Write(DisassemblerHelpers.Escape(nameSpace), TextTokenType.NamespacePart);
+				else
+					DisassemblerHelpers.WriteNamespace(output, nameSpace);
 				OpenBlock(false);
 			}
 			bool oldIsInType = isInType;
