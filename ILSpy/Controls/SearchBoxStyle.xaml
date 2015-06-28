@@ -12,7 +12,7 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type local:SearchBox}">
-					<Border x:Name="Border"
+					<Border x:Name="border"
 					        Cursor="IBeam"
 					        Background="{TemplateBinding Background}"
 					        BorderBrush="{TemplateBinding BorderBrush}"
@@ -60,6 +60,12 @@
 							        Value="{Binding ClearSearchImage}" />
 							<Setter Property="ToolTip" TargetName="SearchIcon" Value="Clear"/>
 						</MultiTrigger>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter TargetName="border" Value="{DynamicResource CommonControlsTextBoxMouseOverBorder}" Property="BorderBrush" />
+						</Trigger>
+						<Trigger Property="IsKeyboardFocused" Value="True">
+							<Setter TargetName="border" Value="{DynamicResource CommonControlsTextBoxFocusedBorder}" Property="BorderBrush" />
+						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>
 			</Setter.Value>
