@@ -41,6 +41,7 @@ namespace ICSharpCode.ILSpy
 	[ExportMainMenuCommand(Menu = "_Help", MenuHeader = "_About", MenuOrder = 99999)]
 	sealed class AboutPage : SimpleCommand
 	{
+		static readonly bool checkForUpdateCode = false;
 		public override void Execute(object parameter)
 		{
 			MainWindow.Instance.UnselectAll();
@@ -56,7 +57,6 @@ namespace ICSharpCode.ILSpy
 		{
 			AvalonEditTextOutput output = new AvalonEditTextOutput();
 			output.WriteLine("dnSpy version " + currentVersion.ToString(), TextTokenType.Text);
-			bool checkForUpdateCode = false;
 			if (checkForUpdateCode)
 			output.AddUIElement(
 				delegate {
@@ -287,7 +287,7 @@ namespace ICSharpCode.ILSpy
 		{
 			var tcs = new TaskCompletionSource<string>();
 			UpdateSettings s = new UpdateSettings(spySettings);
-			if (s.AutomaticUpdateCheckEnabled) {
+			if (checkForUpdateCode && s.AutomaticUpdateCheckEnabled) {
 				// perform update check if we never did one before;
 				// or if the last check wasn't in the past 7 days
 				if (s.LastSuccessfulUpdateCheck == null
