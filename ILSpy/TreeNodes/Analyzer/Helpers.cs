@@ -151,9 +151,10 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		//TODO: Move this method
 		public static void FreeMethodBody(MethodDef method)
 		{
-			//TODO: Don't free the body if it's been modified by the asm editor
-			if (method != null)
-				method.FreeMethodBody();
+			if (method != null) {
+				if (!MethodAnnotations.Instance.IsBodyModified(method))
+					method.FreeMethodBody();
+			}
 		}
 	}
 }

@@ -99,6 +99,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		readonly MethodTreeNode methodNode;
 		readonly MethodBodyOptions newOptions;
 		readonly MethodBodyOptions origOptions;
+		bool isBodyModified;
 
 		MethodBodySettingsCommand(MethodTreeNode methodNode, MethodBodyOptions options)
 		{
@@ -113,12 +114,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 
 		public void Execute()
 		{
+			isBodyModified = MethodAnnotations.Instance.IsBodyModified(methodNode.MethodDefinition);
+			MethodAnnotations.Instance.SetBodyModified(methodNode.MethodDefinition, true);
 			newOptions.CopyTo(methodNode.MethodDefinition);
 		}
 
 		public void Undo()
 		{
 			origOptions.CopyTo(methodNode.MethodDefinition);
+			MethodAnnotations.Instance.SetBodyModified(methodNode.MethodDefinition, isBodyModified);
 		}
 
 		public IEnumerable<ILSpyTreeNode> TreeNodes {

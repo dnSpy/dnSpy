@@ -474,6 +474,7 @@
     <Compile Include="Images\ImageCache.cs" />
     <Compile Include="Images\ThemedImageCreator.cs" />
     <Compile Include="IPlugin.cs" />
+    <Compile Include="MethodAnnotations.cs" />
     <Compile Include="MsgBox.xaml.cs">
       <DependentUpon>MsgBox.xaml</DependentUpon>
     </Compile>
