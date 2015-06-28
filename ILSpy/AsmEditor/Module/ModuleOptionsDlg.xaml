@@ -26,7 +26,7 @@
              xmlns:local="clr-namespace:ICSharpCode.ILSpy.AsmEditor.Module"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              Height="380" Width="400"
-             Title="Module Settings"
+             Title="Edit Module"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="380" MinWidth="400">
 	<winlocal:WindowBase.Resources>

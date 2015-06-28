@@ -24,7 +24,7 @@
              xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              Height="450" Width="550"
-             Title="Method Settings"
+             Title="Edit Method"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="400" MinWidth="550">
 	<Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">

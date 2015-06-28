@@ -673,7 +673,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 
 	sealed class ModuleSettingsCommand : IUndoCommand
 	{
-		const string CMD_NAME = "Module Settings";
+		const string CMD_NAME = "Edit Module";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
 								Category = "AsmEd",

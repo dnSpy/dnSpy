@@ -452,7 +452,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 
 	sealed class MethodDefSettingsCommand : IUndoCommand
 	{
-		const string CMD_NAME = "Method Settings";
+		const string CMD_NAME = "Edit Method";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
 								Category = "AsmEd",

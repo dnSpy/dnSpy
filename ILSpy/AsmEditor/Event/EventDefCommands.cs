@@ -356,7 +356,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 
 	sealed class EventDefSettingsCommand : IUndoCommand
 	{
-		const string CMD_NAME = "Event Settings";
+		const string CMD_NAME = "Edit Event";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
 								Category = "AsmEd",

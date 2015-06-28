@@ -357,7 +357,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 
 	sealed class FieldDefSettingsCommand : IUndoCommand
 	{
-		const string CMD_NAME = "Field Settings";
+		const string CMD_NAME = "Edit Field";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
 								Category = "AsmEd",

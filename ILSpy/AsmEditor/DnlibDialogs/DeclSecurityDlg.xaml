@@ -24,7 +24,7 @@
              xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              Height="400" Width="500"
-             Title="Security Declaration Settings"
+             Title="Edit Security Declaration"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="300" MinWidth="400">
 	<Grid>

@@ -461,7 +461,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 
 	sealed class TypeDefSettingsCommand : IUndoCommand
 	{
-		const string CMD_NAME = "Type Settings";
+		const string CMD_NAME = "Edit Type";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
 								Category = "AsmEd",

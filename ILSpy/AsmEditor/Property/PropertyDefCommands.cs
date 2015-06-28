@@ -357,7 +357,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 
 	sealed class PropertyDefSettingsCommand : IUndoCommand
 	{
-		const string CMD_NAME = "Property Settings";
+		const string CMD_NAME = "Edit Property";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
 								Category = "AsmEd",

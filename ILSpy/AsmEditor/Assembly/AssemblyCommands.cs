@@ -154,7 +154,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 
 	sealed class AssemblySettingsCommand : IUndoCommand
 	{
-		const string CMD_NAME = "Assembly Settings";
+		const string CMD_NAME = "Edit Assembly";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
 								Category = "AsmEd",

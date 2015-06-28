@@ -24,7 +24,7 @@
              xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              Height="400" Width="500"
-             Title="Event Settings"
+             Title="Edit Event"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="400" MinWidth="500">
 	<Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
