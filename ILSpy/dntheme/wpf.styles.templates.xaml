@@ -5226,7 +5226,7 @@
 													  ContentSource="Header">
 										<ContentPresenter.ContentTemplate>
 											<DataTemplate>
-												<TextBlock Text="{Binding ShortHeader}" ToolTip="{Binding ToolTip}" />
+												<TextBlock Text="{Binding Header}" MaxWidth="230" TextTrimming="CharacterEllipsis" ToolTip="{Binding ToolTip}" />
 											</DataTemplate>
 										</ContentPresenter.ContentTemplate>
 									</ContentPresenter>
