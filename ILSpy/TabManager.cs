@@ -282,10 +282,7 @@ namespace ICSharpCode.ILSpy
 
 		static bool IsTabButton(TabItem tabItem, object o)
 		{
-			var depo = o as DependencyObject;
-			while ((depo is Visual || depo is Visual3D) && !(depo is ButtonBase) && depo != tabItem)
-				depo = VisualTreeHelper.GetParent(depo);
-			return depo is ButtonBase;
+			return UIUtils.GetItem<ButtonBase>(tabItem, o) != null;
 		}
 
 		bool GetInfo(object sender, DragEventArgs e, out TabItem source, out TabItem target, out TabControl tabControlSource, out TabControl tabControlTarget, out TState tabStateSource, out TState tabStateTarget, out TabManager<TState> tabManagerSource, out TabManager<TState> tabManagerTarget, bool canBeSame)

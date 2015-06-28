@@ -26,11 +26,20 @@ namespace ICSharpCode.ILSpy
 {
 	public static class UIUtils
 	{
-		static T GetItem<T>(DependencyObject view, object o) where T : class
+		public static DependencyObject GetParent(DependencyObject depo)
+		{
+			if (depo is Visual || depo is Visual3D)
+				return VisualTreeHelper.GetParent(depo);
+			else if (depo is FrameworkContentElement)
+				return ((FrameworkContentElement)depo).Parent;
+			return null;
+		}
+
+		public static T GetItem<T>(DependencyObject view, object o) where T : class
 		{
 			var depo = o as DependencyObject;
-			while ((depo is Visual || depo is Visual3D) && !(depo is T) && depo != view)
-				depo = VisualTreeHelper.GetParent(depo);
+			while (depo != null && !(depo is T) && depo != view)
+				depo = GetParent(depo);
 			return depo as T;
 		}
 
