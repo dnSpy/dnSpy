@@ -652,9 +652,6 @@
     <None Include="dntheme\light.dntheme">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="dntheme\none.dntheme">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Properties\app.config.template" />
     <None Include="Properties\AssemblyInfo.template.cs" />
     <Compile Include="Properties\WPFAssemblyInfo.cs" />
