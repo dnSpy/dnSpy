@@ -692,6 +692,8 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				debuggedProcess.SelectedThread != null &&
 				debuggedProcess.SelectedThread.MostRecentStackFrame != null &&
 				debuggedProcess.SelectedThread.MostRecentStackFrame.IP.IsInvalid;
+			if (IntPtr.Size == 8)
+				isInvalid = false;
 
 			if (isInvalid) {
 				switch (lastStepType) {
