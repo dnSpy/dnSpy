@@ -217,9 +217,7 @@
 		<color name="listboxitemselectedactiveborder" bg="#FF800080" />
 		<color name="contextmenubackground" bg="#FF000000" />
 		<color name="contextmenuborderbrush" bg="#FFFFFFFF" />
-		<color name="contextmenurectanglefill1" bg="#FF000000" />
-		<color name="contextmenurectanglefill2" bg="#FF000000" />
-		<color name="contextmenurectanglefill3" bg="#FF000000" />
+		<color name="contextmenurectanglefill" bg="#FF000000" />
 		<color name="expanderstaticcirclestroke" bg="#FFFFFFFF" />
 		<color name="expanderstaticcirclefill" bg="Transparent" />
 		<color name="expanderstaticarrowstroke" bg="#FFFFFFFF" />

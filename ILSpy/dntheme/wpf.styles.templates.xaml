@@ -983,7 +983,7 @@
                                 BorderThickness="{TemplateBinding BorderThickness}">
                             <ScrollViewer Name="ContextMenuScrollViewer"
                                           FocusVisualStyle="{x:Null}"
-                                          Grid.ColumnSpan="2" Margin="1,0"
+                                          Grid.ColumnSpan="2" Margin="0"
                                           Style="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type FrameworkElement}, ResourceId=MenuScrollViewer}}">
                               <Grid RenderOptions.ClearTypeHint="Enabled">
                                 <Canvas Height="0" Width="0" HorizontalAlignment="Left" VerticalAlignment="Top">
@@ -993,20 +993,12 @@
                                         Width="{Binding ElementName=ContextMenuBorder,Path=ActualWidth}"
                                         Fill="{Binding ElementName=ContextMenuBorder,Path=Background}" />
                                 </Canvas>
-                                <Rectangle Fill="{DynamicResource ContextMenuRectangleFill1}"
+                                <Rectangle Fill="{DynamicResource ContextMenuRectangleFill}"
                                            HorizontalAlignment="Left"
-                                           Width="28"
-                                           Margin="1,2"
+                                           Width="27"
+                                           Margin="0"
                                            RadiusX="0"
                                            RadiusY="0"/>
-                                <Rectangle HorizontalAlignment="Left"
-                                           Width="1"
-                                           Margin="29,2,0,2"
-                                           Fill="{DynamicResource ContextMenuRectangleFill2}"/>
-                                <Rectangle HorizontalAlignment="Left"
-                                           Width="1"
-                                           Margin="30,2,0,2"
-                                           Fill="{DynamicResource ContextMenuRectangleFill3}"/>
                                 <ItemsPresenter Name="ItemsPresenter" Margin="{TemplateBinding Padding}"
                                                 KeyboardNavigation.DirectionalNavigation="Cycle"
                                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
@@ -2235,10 +2227,10 @@
                 <ControlTemplate TargetType="{x:Type Separator}">
                     <Grid SnapsToDevicePixels="true" UseLayoutRounding="False" Margin="0,6,0,4">
                         <Rectangle Height="1"
-                                   Margin="30,0,1,1"
+                                   Margin="32,0,1,1"
                                    Fill="{DynamicResource MenuItemSeparatorFillTop}"/>
                         <Rectangle Height="1"
-                                   Margin="30,1,1,0"
+                                   Margin="32,1,1,0"
                                    Fill="{DynamicResource MenuItemSeparatorFillBottom}"/>
                     </Grid>
                 </ControlTemplate>
@@ -2258,10 +2250,10 @@
                        Margin="1"/>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition MinWidth="24"
+                    <ColumnDefinition MinWidth="27"
                                       Width="Auto"
                                       SharedSizeGroup="MenuItemIconColumnGroup"/>
-                    <ColumnDefinition Width="4"/>
+                    <ColumnDefinition Width="7"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="37"/>
                     <ColumnDefinition Width="Auto"
@@ -2269,7 +2261,7 @@
                     <ColumnDefinition Width="17"/>
                 </Grid.ColumnDefinitions>
                 <ContentPresenter x:Name="Icon"
-                                  Margin="1"
+                                  Margin="4 1 1 1"
                                   VerticalAlignment="Center"
                                   ContentSource="Icon"
                                   SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>

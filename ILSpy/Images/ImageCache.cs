@@ -96,7 +96,7 @@ namespace ICSharpCode.ILSpy
 			case BackgroundType.Toolbar: return GetColorBackground(dntheme.ColorType.ToolBarIconBackground);
 			case BackgroundType.ToolBarButtonChecked: return GetColorBackground(dntheme.ColorType.ToolBarButtonChecked);
 			case BackgroundType.MainMenuMenuItem: return GetColorBackground(dntheme.ColorType.ToolBarIconVerticalBackground);
-			case BackgroundType.ContextMenuItem: return GetColorBackground(dntheme.ColorType.ContextMenuRectangleFill1);
+			case BackgroundType.ContextMenuItem: return GetColorBackground(dntheme.ColorType.ContextMenuRectangleFill);
 			case BackgroundType.GridViewItem: return GetColorBackground(dntheme.ColorType.GridViewBackground);
 			case BackgroundType.DebuggerToolTip: return Colors.White;//TODO: Update this when the debugger tooltips have been fixed
 			case BackgroundType.CodeToolTip: return GetColorBackground(dntheme.ColorType.CodeToolTip);

@@ -1132,17 +1132,9 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#FF959595",
 				BackgroundResourceKey = "ContextMenuBorderBrush",
 			},
-			new BrushColorInfo(ColorType.ContextMenuRectangleFill1, "Context menu rectangle fill #1. It's the vertical rectangle on the left side.") {
+			new BrushColorInfo(ColorType.ContextMenuRectangleFill, "Context menu rectangle fill. It's the vertical rectangle on the left side.") {
 				DefaultBackground = "#F6F6F6",
-				BackgroundResourceKey = "ContextMenuRectangleFill1",
-			},
-			new BrushColorInfo(ColorType.ContextMenuRectangleFill2, "Context menu rectangle fill #2. It's the small vertical rectangle to the right of the left most vertical rectangle.") {
-				DefaultBackground = "#F6F6F6",
-				BackgroundResourceKey = "ContextMenuRectangleFill2",
-			},
-			new BrushColorInfo(ColorType.ContextMenuRectangleFill3, "Context menu rectangle fill #3") {
-				DefaultBackground = "#F6F6F6",
-				BackgroundResourceKey = "ContextMenuRectangleFill3",
+				BackgroundResourceKey = "ContextMenuRectangleFill",
 			},
 			new BrushColorInfo(ColorType.ExpanderStaticCircleStroke, "Expander Static Circle Stroke") {
 				DefaultBackground = "#FF333333",
