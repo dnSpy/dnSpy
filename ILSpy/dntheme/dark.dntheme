@@ -16,7 +16,7 @@
 		<color name="statictype" fg="#378D7B" />
 		<color name="delegate" fg="#33CCFF" />
 		<color name="enum" fg="#B8D7A3" />
-		<color name="interface" fg="#70704D" />
+		<color name="interface" fg="#9B9B82" />
 		<color name="valuetype" fg="#009933" />
 		<color name="typegenericparameter" fg="#1E667A" />
 		<color name="methodgenericparameter" fg="#1E667A" />
@@ -26,7 +26,7 @@
 		<color name="instancefield" fg="#AA70FF" />
 		<color name="enumfield" fg="#BD63C5" />
 		<color name="literalfield" fg="#C266FF" />
-		<color name="staticfield" fg="#5C5CAD" />
+		<color name="staticfield" fg="#8D8DC6" />
 		<color name="instanceevent" fg="#CC6699" />
 		<color name="staticevent" fg="#DB94B8" />
 		<color name="instanceproperty" fg="#248F8F" />
