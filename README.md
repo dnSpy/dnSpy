@@ -23,6 +23,8 @@ Extra features present in dnSpy
 Debugger
 ========
 
+It's still a primitive debugger so don't expect miracles.
+
 Updates to the Debugger
 =======================
 
@@ -31,12 +33,6 @@ Updates to the Debugger
 * Breakpoints are automatically saved
 * Current statement is highlighted instead of the whole line
 * Many other minor updates / fixes
-
-Known issues
-============
-
-* Debugger + IL mode: BPs can be set on any IL offset but the BPs are only triggered if they're at the start of statements (eg. offsets where the IL stack is empty and offsets following method calls).
-* Debugger can't debug iterator methods (yield return).
 
 Themes
 ======
