@@ -22,6 +22,7 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Property
 {
@@ -111,6 +112,21 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 		}
 		readonly ConstantVM constantVM;
 
+		public MethodDefsVM GetMethodsVM {
+			get { return getMethodsVM; }
+		}
+		MethodDefsVM getMethodsVM;
+
+		public MethodDefsVM SetMethodsVM {
+			get { return setMethodsVM; }
+		}
+		MethodDefsVM setMethodsVM;
+
+		public MethodDefsVM OtherMethodsVM {
+			get { return otherMethodsVM; }
+		}
+		MethodDefsVM otherMethodsVM;
+
 		public CustomAttributesVM CustomAttributesVM {
 			get { return customAttributesVM; }
 		}
@@ -137,6 +153,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			this.methodSigCreator.PropertyChanged += methodSigCreator_PropertyChanged;
 			this.methodSigCreator.ParametersCreateTypeSigArray.PropertyChanged += methodSigCreator_PropertyChanged;
 			this.methodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
+			this.getMethodsVM = new MethodDefsVM(ownerModule, language);
+			this.setMethodsVM = new MethodDefsVM(ownerModule, language);
+			this.otherMethodsVM = new MethodDefsVM(ownerModule, language);
 			this.customAttributesVM = new CustomAttributesVM(ownerModule, language);
 			this.constantVM = new ConstantVM(ownerModule, options.Constant == null ? null : options.Constant.Value, "Default value for this property");
 			this.constantVM.PropertyChanged += constantVM_PropertyChanged;
@@ -181,6 +200,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 				HasDefault = false;
 				ConstantVM.Value = null;
 			}
+			GetMethodsVM.InitializeFrom(options.GetMethods);
+			SetMethodsVM.InitializeFrom(options.SetMethods);
+			OtherMethodsVM.InitializeFrom(options.OtherMethods);
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 
@@ -190,6 +212,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			options.Name = Name;
 			options.PropertySig = PropertySig;
 			options.Constant = HasDefault ? Constant : null;
+			options.GetMethods.Clear();
+			options.GetMethods.AddRange(GetMethodsVM.Collection.Select(a => a.Method));
+			options.SetMethods.Clear();
+			options.SetMethods.AddRange(SetMethodsVM.Collection.Select(a => a.Method));
+			options.OtherMethods.Clear();
+			options.OtherMethods.AddRange(OtherMethodsVM.Collection.Select(a => a.Method));
 			options.CustomAttributes.Clear();
 			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			return options;

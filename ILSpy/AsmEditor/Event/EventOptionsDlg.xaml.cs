@@ -17,6 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Windows;
+using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+
 namespace ICSharpCode.ILSpy.AsmEditor.Event
 {
 	/// <summary>
@@ -27,6 +30,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 		public EventOptionsDlg()
 		{
 			InitializeComponent();
+			DataContextChanged += (s, e) => {
+				var data = DataContext as EventOptionsVM;
+				if (data != null) {
+					var ownerWindow = Window.GetWindow(this);
+					data.DnlibTypePicker = new DnlibTypePicker(ownerWindow);
+				}
+			};
 		}
 	}
 }

@@ -47,7 +47,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return new CANamedArgumentVM(ownerModule, new CANamedArgument(false, ownerModule.CorLibTypes.Int32, "AttributeProperty", new CAArgument(ownerModule.CorLibTypes.Int32, 0)), new TypeSigCreatorOptions(ownerModule, language));
 		}
 
-		protected override bool AddCurrentCanExecute()
+		protected override bool AddItemCanExecute()
 		{
 			return canAdd == null || canAdd(this);
 		}

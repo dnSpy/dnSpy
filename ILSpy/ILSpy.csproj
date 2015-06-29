@@ -219,6 +219,11 @@
     </Compile>
     <Compile Include="AsmEditor\DnlibDialogs\MemberRefOptions.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\MemberRefVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\MethodDefsControl.xaml.cs">
+      <DependentUpon>MethodDefsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\DnlibDialogs\MethodDefsVM.cs" />
+    <Compile Include="AsmEditor\DnlibDialogs\MethodDefVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\MethodOverrideOptions.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\MethodOverridesControl.xaml.cs">
       <DependentUpon>MethodOverridesControl.xaml</DependentUpon>
@@ -413,6 +418,7 @@
     <Compile Include="AsmEditor\ViewHelpers\EditDeclSecurity.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditGenericParam.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditMemberRef.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\EditMethodDef.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditMethodOverride.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditMethodSpec.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditParamDef.cs" />
@@ -493,6 +499,7 @@
     <Compile Include="TreeNodes\Filters\FlagsTreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\Filters\PublicApiTreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\Filters\SameAssemblyTreeViewNodeFilter.cs" />
+    <Compile Include="TreeNodes\Filters\SameModuleTreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\Filters\ShowNothingTreeViewNodeFilterBase.cs" />
     <Compile Include="TreeNodes\Filters\TreeViewNodeFilterBase.cs" />
     <Compile Include="TreeNodes\Filters\VisibleMembersFlags.cs" />
@@ -789,6 +796,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\DnlibDialogs\MemberRefDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\DnlibDialogs\MethodDefsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

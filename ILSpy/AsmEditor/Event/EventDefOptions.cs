@@ -27,6 +27,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 		public EventAttributes Attributes;
 		public UTF8String Name;
 		public ITypeDefOrRef EventType;
+		public MethodDef AddMethod;
+		public MethodDef InvokeMethod;
+		public MethodDef RemoveMethod;
+		public List<MethodDef> OtherMethods = new List<MethodDef>();
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
 		public EventDefOptions()
@@ -38,6 +42,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			this.Attributes = evt.Attributes;
 			this.Name = evt.Name;
 			this.EventType = evt.EventType;
+			this.AddMethod = evt.AddMethod;
+			this.InvokeMethod = evt.InvokeMethod;
+			this.RemoveMethod = evt.RemoveMethod;
+			this.OtherMethods.AddRange(evt.OtherMethods);
 			this.CustomAttributes.AddRange(evt.CustomAttributes);
 		}
 
@@ -46,6 +54,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			evt.Attributes = this.Attributes;
 			evt.Name = this.Name ?? UTF8String.Empty;
 			evt.EventType = this.EventType;
+			evt.AddMethod = this.AddMethod;
+			evt.InvokeMethod = this.InvokeMethod;
+			evt.RemoveMethod = this.RemoveMethod;
+			evt.OtherMethods.Clear();
+			evt.OtherMethods.AddRange(this.OtherMethods);
 			evt.CustomAttributes.Clear();
 			evt.CustomAttributes.AddRange(CustomAttributes);
 			return evt;

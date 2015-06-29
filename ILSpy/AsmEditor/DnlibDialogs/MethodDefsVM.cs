@@ -17,30 +17,30 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
-	/// <summary>
-	/// Interaction logic for ListVMControl.xaml
-	/// </summary>
-	public partial class ListVMControl : UserControl
+	sealed class MethodDefsVM : ListVM<MethodDefVM, MethodDef>
 	{
-		public ListVMControl()
+		public MethodDefsVM(ModuleDef ownerModule, Language language, TypeDef ownerType = null, MethodDef ownerMethod = null)
+			: base(null, null, ownerModule, language, ownerType, ownerMethod)
 		{
-			InitializeComponent();
 		}
 
-		private void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		protected override MethodDefVM Create(MethodDef model)
 		{
-			if (!UIUtils.IsLeftDoubleClick<ListBoxItem>(listBox, e))
-				return;
-			var data = DataContext as ListVM;
-			if (data != null)
-				data.EditItem();
+			return new MethodDefVM(model);
+		}
+
+		protected override MethodDefVM Clone(MethodDefVM obj)
+		{
+			return new MethodDefVM(obj.Method);
+		}
+
+		protected override MethodDefVM Create()
+		{
+			return new MethodDefVM(null);
 		}
 	}
 }

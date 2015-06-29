@@ -25,22 +25,20 @@ using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 {
 	/// <summary>
-	/// Interaction logic for ListVMControl.xaml
+	/// Interaction logic for MethodDefsControl.xaml
 	/// </summary>
-	public partial class ListVMControl : UserControl
+	public partial class MethodDefsControl : UserControl
 	{
-		public ListVMControl()
+		public MethodDefsControl()
 		{
 			InitializeComponent();
-		}
-
-		private void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-		{
-			if (!UIUtils.IsLeftDoubleClick<ListBoxItem>(listBox, e))
-				return;
-			var data = DataContext as ListVM;
-			if (data != null)
-				data.EditItem();
+			DataContextChanged += (s, e) => {
+				var data = DataContext as MethodDefsVM;
+				if (data != null) {
+					var ownerWindow = Window.GetWindow(this);
+					data.EditObject = new EditMethodDef(data.OwnerModule, ownerWindow);
+				}
+			};
 		}
 	}
 }

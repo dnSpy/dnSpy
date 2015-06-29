@@ -17,30 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using System;
+using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
+namespace ICSharpCode.ILSpy.TreeNodes.Filters
 {
-	/// <summary>
-	/// Interaction logic for ListVMControl.xaml
-	/// </summary>
-	public partial class ListVMControl : UserControl
+	sealed class SameModuleTreeViewNodeFilter : ChainTreeViewNodeFilter
 	{
-		public ListVMControl()
+		readonly ModuleDef allowedModule;
+
+		public SameModuleTreeViewNodeFilter(ModuleDef allowedModule, ITreeViewNodeFilter filter)
+			: base(filter)
 		{
-			InitializeComponent();
+			this.allowedModule = allowedModule;
 		}
 
-		private void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		public override TreeViewNodeFilterResult GetFilterResult(LoadedAssembly asm, AssemblyFilterType type)
 		{
-			if (!UIUtils.IsLeftDoubleClick<ListBoxItem>(listBox, e))
-				return;
-			var data = DataContext as ListVM;
-			if (data != null)
-				data.EditItem();
+			if (asm.ModuleDefinition != allowedModule)
+				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
+			return base.GetFilterResult(asm, type);
 		}
 	}
 }

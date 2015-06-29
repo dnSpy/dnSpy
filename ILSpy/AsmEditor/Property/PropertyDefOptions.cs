@@ -28,30 +28,42 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 		public UTF8String Name;
 		public PropertySig PropertySig;
 		public Constant Constant;
+		public List<MethodDef> GetMethods = new List<MethodDef>();
+		public List<MethodDef> SetMethods = new List<MethodDef>();
+		public List<MethodDef> OtherMethods = new List<MethodDef>();
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
 		public PropertyDefOptions()
 		{
 		}
 
-		public PropertyDefOptions(PropertyDef evt)
+		public PropertyDefOptions(PropertyDef prop)
 		{
-			this.Attributes = evt.Attributes;
-			this.Name = evt.Name;
-			this.PropertySig = evt.PropertySig;
-			this.Constant = evt.Constant;
-			this.CustomAttributes.AddRange(evt.CustomAttributes);
+			this.Attributes = prop.Attributes;
+			this.Name = prop.Name;
+			this.PropertySig = prop.PropertySig;
+			this.Constant = prop.Constant;
+			this.GetMethods.AddRange(prop.GetMethods);
+			this.SetMethods.AddRange(prop.SetMethods);
+			this.OtherMethods.AddRange(prop.OtherMethods);
+			this.CustomAttributes.AddRange(prop.CustomAttributes);
 		}
 
-		public PropertyDef CopyTo(PropertyDef evt)
+		public PropertyDef CopyTo(PropertyDef prop)
 		{
-			evt.Attributes = this.Attributes;
-			evt.Name = this.Name ?? UTF8String.Empty;
-			evt.PropertySig = this.PropertySig;
-			evt.Constant = this.Constant;
-			evt.CustomAttributes.Clear();
-			evt.CustomAttributes.AddRange(CustomAttributes);
-			return evt;
+			prop.Attributes = this.Attributes;
+			prop.Name = this.Name ?? UTF8String.Empty;
+			prop.PropertySig = this.PropertySig;
+			prop.Constant = this.Constant;
+			prop.GetMethods.Clear();
+			prop.GetMethods.AddRange(this.GetMethods);
+			prop.SetMethods.Clear();
+			prop.SetMethods.AddRange(this.SetMethods);
+			prop.OtherMethods.Clear();
+			prop.OtherMethods.AddRange(this.OtherMethods);
+			prop.CustomAttributes.Clear();
+			prop.CustomAttributes.AddRange(CustomAttributes);
+			return prop;
 		}
 
 		public PropertyDef CreatePropertyDef(ModuleDef ownerModule)

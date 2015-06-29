@@ -17,11 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using ICSharpCode.ILSpy.TreeNodes.Filters;
+using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Event
 {
@@ -29,8 +32,37 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 	{
 		readonly EventDefOptions origOptions;
 
+		public IDnlibTypePicker DnlibTypePicker {
+			set { dnlibTypePicker = value; }
+		}
+		IDnlibTypePicker dnlibTypePicker;
+
 		public ICommand ReinitializeCommand {
 			get { return new RelayCommand(a => Reinitialize()); }
+		}
+
+		public ICommand PickAddMethodCommand {
+			get { return new RelayCommand(a => PickAddMethod()); }
+		}
+
+		public ICommand PickInvokeMethodCommand {
+			get { return new RelayCommand(a => PickInvokeMethod()); }
+		}
+
+		public ICommand PickRemoveMethodCommand {
+			get { return new RelayCommand(a => PickRemoveMethod()); }
+		}
+
+		public ICommand ClearAddMethodCommand {
+			get { return new RelayCommand(a => AddMethod = null, a => AddMethod != null); }
+		}
+
+		public ICommand ClearInvokeMethodCommand {
+			get { return new RelayCommand(a => InvokeMethod = null, a => InvokeMethod != null); }
+		}
+
+		public ICommand ClearRemoveMethodCommand {
+			get { return new RelayCommand(a => RemoveMethod = null, a => RemoveMethod != null); }
 		}
 
 		public EventAttributes Attributes {
@@ -94,13 +126,74 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 		}
 		readonly TypeSigCreatorVM typeSigCreator;
 
+		public string AddMethodFullName {
+			get { return GetFullName(AddMethod); }
+		}
+
+		public string InvokeMethodFullName {
+			get { return GetFullName(InvokeMethod); }
+		}
+
+		public string RemoveMethodFullName {
+			get { return GetFullName(RemoveMethod); }
+		}
+
+		static string GetFullName(MethodDef md)
+		{
+			return md == null ? "null" : md.FullName;
+		}
+
+		public MethodDef AddMethod {
+			get { return addMethod; }
+			set {
+				if (addMethod != value) {
+					addMethod = value;
+					OnPropertyChanged("AddMethod");
+					OnPropertyChanged("AddMethodFullName");
+				}
+			}
+		}
+		MethodDef addMethod;
+
+		public MethodDef InvokeMethod {
+			get { return invokeMethod; }
+			set {
+				if (invokeMethod != value) {
+					invokeMethod = value;
+					OnPropertyChanged("InvokeMethod");
+					OnPropertyChanged("InvokeMethodFullName");
+				}
+			}
+		}
+		MethodDef invokeMethod;
+
+		public MethodDef RemoveMethod {
+			get { return removeMethod; }
+			set {
+				if (removeMethod != value) {
+					removeMethod = value;
+					OnPropertyChanged("RemoveMethod");
+					OnPropertyChanged("RemoveMethodFullName");
+				}
+			}
+		}
+		MethodDef removeMethod;
+
+		public MethodDefsVM OtherMethodsVM {
+			get { return otherMethodsVM; }
+		}
+		MethodDefsVM otherMethodsVM;
+
 		public CustomAttributesVM CustomAttributesVM {
 			get { return customAttributesVM; }
 		}
 		CustomAttributesVM customAttributesVM;
 
+		readonly ModuleDef ownerModule;
+
 		public EventOptionsVM(EventDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType)
 		{
+			this.ownerModule = ownerModule;
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, language) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
@@ -113,6 +206,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			this.typeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
 			this.customAttributesVM = new CustomAttributesVM(ownerModule, language);
+			this.otherMethodsVM = new MethodDefsVM(ownerModule, language);
 
 			this.origOptions = options;
 
@@ -132,6 +226,34 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			InitializeFrom(origOptions);
 		}
 
+		MethodDef PickMethod(MethodDef origMethod)
+		{
+			if (dnlibTypePicker == null)
+				throw new InvalidOperationException();
+			return dnlibTypePicker.GetDnlibType(new SameModuleTreeViewNodeFilter(ownerModule, new FlagsTreeViewNodeFilter(VisibleMembersFlags.MethodDef)), origMethod, ownerModule);
+		}
+
+		void PickAddMethod()
+		{
+			var method = PickMethod(AddMethod);
+			if (method != null)
+				AddMethod = method;
+		}
+
+		void PickInvokeMethod()
+		{
+			var method = PickMethod(InvokeMethod);
+			if (method != null)
+				InvokeMethod = method;
+		}
+
+		void PickRemoveMethod()
+		{
+			var method = PickMethod(RemoveMethod);
+			if (method != null)
+				RemoveMethod = method;
+		}
+
 		public EventDefOptions CreateEventDefOptions()
 		{
 			return CopyTo(new EventDefOptions());
@@ -142,6 +264,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			Attributes = options.Attributes;
 			Name = options.Name;
 			EventTypeSig = options.EventType.ToTypeSig();
+			AddMethod = options.AddMethod;
+			InvokeMethod = options.InvokeMethod;
+			RemoveMethod = options.RemoveMethod;
+			OtherMethodsVM.InitializeFrom(options.OtherMethods);
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 
@@ -150,6 +276,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			options.Attributes = Attributes;
 			options.Name = Name;
 			options.EventType = EventTypeSig.ToTypeDefOrRef();
+			options.AddMethod = AddMethod;
+			options.InvokeMethod = InvokeMethod;
+			options.RemoveMethod = RemoveMethod;
+			options.OtherMethods.Clear();
+			options.OtherMethods.AddRange(OtherMethodsVM.Collection.Select(a => a.Method));
 			options.CustomAttributes.Clear();
 			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));
 			return options;

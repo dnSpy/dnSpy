@@ -30,7 +30,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 	// Needed by ListVMControl
 	abstract class ListVM : ViewModelBase
 	{
-		public abstract void EditCurrent();
+		public abstract void EditItem();
 	}
 
 	abstract class ListVM<TVM, TModel> : ListVM
@@ -61,17 +61,21 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 
 		public ICommand EditCommand {
-			get { return new RelayCommand(a => EditCurrent(), a => EditCurrentCanExecute()); }
+			get { return new RelayCommand(a => EditItem(), a => EditItemCanExecute()); }
 		}
 
 		public ICommand AddCommand {
-			get { return new RelayCommand(a => AddCurrent(), a => AddCurrentCanExecute()); }
+			get { return new RelayCommand(a => AddItem(), a => AddItemCanExecute()); }
 		}
 
 		public MyObservableCollection<TVM> Collection {
 			get { return collection; }
 		}
 		readonly MyObservableCollection<TVM> collection = new MyObservableCollection<TVM>();
+
+		public ModuleDef OwnerModule {
+			get { return ownerModule; }
+		}
 
 		readonly string editString;
 		readonly string createString;
@@ -127,9 +131,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return editObject.Edit(createString, obj);
 		}
 
-		public override void EditCurrent()
+		public override void EditItem()
 		{
-			if (!EditCurrentCanExecute())
+			if (!EditItemCanExecute())
 				return;
 			int index = Collection.SelectedIndex;
 			var vm = EditClone(Clone(Collection[index]));
@@ -139,14 +143,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		bool EditCurrentCanExecute()
+		bool EditItemCanExecute()
 		{
 			return NotInlineEditing && Collection.SelectedIndex >= 0 && Collection.SelectedIndex < Collection.Count;
 		}
 
-		protected virtual void AddCurrent()
+		protected virtual void AddItem()
 		{
-			if (!AddCurrentCanExecute())
+			if (!AddItemCanExecute())
 				return;
 
 			var vm = AddNew(Create());
@@ -162,7 +166,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return Collection.Count;
 		}
 
-		protected virtual bool AddCurrentCanExecute()
+		protected virtual bool AddItemCanExecute()
 		{
 			return true;
 		}

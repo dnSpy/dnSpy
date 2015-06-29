@@ -83,6 +83,15 @@
 					<dnlibdlgs:MethodSigCreatorControl Margin="5" DataContext="{Binding MethodSigCreator}" />
 				</ScrollViewer>
 			</TabItem>
+			<TabItem Header="Getters">
+				<dnlibdlgs:MethodDefsControl Margin="0 5 0 0" DataContext="{Binding GetMethodsVM}" />
+			</TabItem>
+			<TabItem Header="Setters">
+				<dnlibdlgs:MethodDefsControl Margin="0 5 0 0" DataContext="{Binding SetMethodsVM}" />
+			</TabItem>
+			<TabItem Header="Other Methods">
+				<dnlibdlgs:MethodDefsControl Margin="0 5 0 0" DataContext="{Binding OtherMethodsVM}" />
+			</TabItem>
 			<TabItem Header="Custom Attrs">
 				<dnlibdlgs:CustomAttributesControl Margin="0 5 0 0" DataContext="{Binding CustomAttributesVM}" />
 			</TabItem>

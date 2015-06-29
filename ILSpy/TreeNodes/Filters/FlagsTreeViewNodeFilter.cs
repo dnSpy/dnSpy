@@ -41,7 +41,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			bool isMatch = (flags & VisibleMembersFlags.AssemblyRef) != 0;
 			if (!isMatch)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
-			return new TreeViewNodeFilterResult(null, isMatch);
+			return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);
 		}
 
 		public override TreeViewNodeFilterResult GetFilterResult(LoadedAssembly asm, AssemblyFilterType type)
@@ -97,7 +97,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			bool isMatch = (flags & VisibleMembersFlags.BaseTypes) != 0;
 			if (!isMatch)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
-			return new TreeViewNodeFilterResult(null, isMatch);
+			return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);
 		}
 
 		public override TreeViewNodeFilterResult GetFilterResult(DerivedTypesTreeNode node)
@@ -105,7 +105,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			bool isMatch = (flags & VisibleMembersFlags.DerivedTypes) != 0;
 			if (!isMatch)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
-			return new TreeViewNodeFilterResult(null, isMatch);
+			return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);
 		}
 
 		public override TreeViewNodeFilterResult GetFilterResult(EventDef evt)
@@ -117,6 +117,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			bool isMatch = (flags & VisibleMembersFlags.EventDef) != 0;
 			if ((flags & visibleFlags) == 0)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
+			if (isMatch)
+				return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);	// Make sure it's not hidden
 			return new TreeViewNodeFilterResult(null, isMatch);
 		}
 
@@ -125,7 +127,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			bool isMatch = (flags & VisibleMembersFlags.FieldDef) != 0;
 			if (!isMatch)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
-			return new TreeViewNodeFilterResult(null, isMatch);
+			return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);
 		}
 
 		public override TreeViewNodeFilterResult GetFilterResult(MethodDef method)
@@ -150,7 +152,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			bool isMatch = (flags & VisibleMembersFlags.ModuleRef) != 0;
 			if (!isMatch)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
-			return new TreeViewNodeFilterResult(null, isMatch);
+			return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);
 		}
 
 		public override TreeViewNodeFilterResult GetFilterResult(string ns, LoadedAssembly owner)
@@ -179,13 +181,15 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			bool isMatch = (flags & VisibleMembersFlags.PropertyDef) != 0;
 			if ((flags & visibleFlags) == 0)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
+			if (isMatch)
+				return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);	// Make sure it's not hidden
 			return new TreeViewNodeFilterResult(null, isMatch);
 		}
 
 		public override TreeViewNodeFilterResult GetFilterResult(ReferenceFolderTreeNode node)
 		{
 			var visibleFlags = VisibleMembersFlags.AssemblyRef | VisibleMembersFlags.ModuleRef;
-			bool isMatch = false;
+			const bool isMatch = false;
 			if ((flags & visibleFlags) == 0)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
 			return new TreeViewNodeFilterResult(null, isMatch);
@@ -196,9 +200,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			bool isMatch = (flags & VisibleMembersFlags.ResourceList) != 0;
 			if (!isMatch)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
-			if (isMatch)
-				return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);	// Make sure it's not hidden
-			return new TreeViewNodeFilterResult(null, isMatch);
+			return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);
 		}
 
 		public override TreeViewNodeFilterResult GetFilterResult(TypeDef type)
@@ -294,7 +296,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			bool isMatch = (flags & VisibleMembersFlags.MethodBody) != 0;
 			if (!isMatch)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
-			return new TreeViewNodeFilterResult(null, isMatch);
+			return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);
 		}
 
 		public override TreeViewNodeFilterResult GetFilterResultParamDefs(MethodDef method)
@@ -303,6 +305,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			bool isMatch = (flags & VisibleMembersFlags.ParamDefs) != 0;
 			if ((flags & visibleFlags) == 0)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
+			if (isMatch)
+				return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);	// Make sure it's not hidden
 			return new TreeViewNodeFilterResult(null, isMatch);
 		}
 
@@ -311,7 +315,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			bool isMatch = (flags & VisibleMembersFlags.ParamDef) != 0;
 			if (!isMatch)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
-			return new TreeViewNodeFilterResult(null, isMatch);
+			return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);
 		}
 
 		public override TreeViewNodeFilterResult GetFilterResultLocals(MethodDef method)
@@ -320,6 +324,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			bool isMatch = (flags & VisibleMembersFlags.Locals) != 0;
 			if ((flags & visibleFlags) == 0)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
+			if (isMatch)
+				return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);	// Make sure it's not hidden
 			return new TreeViewNodeFilterResult(null, isMatch);
 		}
 
@@ -328,7 +334,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			bool isMatch = (flags & VisibleMembersFlags.Local) != 0;
 			if (!isMatch)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
-			return new TreeViewNodeFilterResult(null, isMatch);
+			return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);
 		}
 	}
 }
