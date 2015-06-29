@@ -421,6 +421,8 @@ namespace ICSharpCode.ILSpy
 		{
 			if (!IsActiveTab(tabState))
 				return;
+
+			bool hasKeyboardFocus = Keyboard.FocusedElement == tabState.TextView.TextEditor.TextArea;
 			var old = tabState.ignoreDecompilationRequests;
 			try {
 				tabState.ignoreDecompilationRequests = true;
@@ -447,6 +449,9 @@ namespace ICSharpCode.ILSpy
 			finally {
 				tabState.ignoreDecompilationRequests = old;
 			}
+			// The treeview stole the focus; get it back
+			if (hasKeyboardFocus)
+				DelaySetFocus(tabState);
 		}
 
 		//TODO: HACK alert
@@ -2340,12 +2345,16 @@ namespace ICSharpCode.ILSpy
 
 		void TreeNodeActivatedExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (ActiveTabState != null) {
+			DelaySetFocus(ActiveTabState);
+		}
+
+		void DelaySetFocus(TabStateDecompile tabState)
+		{
+			if (tabState != null) {
 				// The TreeView steals the focus so we can't just set the focus to the text view
 				// right here, we have to wait a little bit.
 				this.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(delegate {
-					var tabState = ActiveTabState;
-					if (tabState != null)
+					if (ActiveTabState == tabState)
 						SetTextEditorFocus(tabState.TextView);
 				}));
 			}
