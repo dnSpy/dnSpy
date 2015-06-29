@@ -88,8 +88,10 @@ namespace ICSharpCode.TreeView
 			Debug.Assert(index >= 0);
 			Debug.Assert(index < root.totalListLength);
 			SharpTreeNode node = root;
+			Debug.Assert(node != null);
 			while (true) {
 				if (node.left != null && index < node.left.totalListLength) {
+					Debug.Assert(node.left != null);
 					node = node.left;
 				} else {
 					if (node.left != null) {
@@ -100,6 +102,7 @@ namespace ICSharpCode.TreeView
 							return node;
 						index--;
 					}
+					Debug.Assert(node.right != null);
 					node = node.right;
 				}
 			}
