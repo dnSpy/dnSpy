@@ -134,8 +134,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			if (!CanExecute(nodes))
 				return;
 
-			var res = MainWindow.Instance.ShowIgnorableMessageBox("delete def", "There could be code in this assembly or in another assembly that references this type. Are you sure you want to delete the type?", System.Windows.MessageBoxButton.YesNo);
-			if (res != null && res != MsgBoxButton.OK)
+			if (!Method.DeleteMethodDefCommand.AskDeleteDef("type"))
 				return;
 
 			var typeNodes = FilterOutGlobalTypes(nodes).Select(a => (TypeTreeNode)a).ToArray();

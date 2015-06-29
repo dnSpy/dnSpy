@@ -123,8 +123,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			if (!CanExecute(nodes))
 				return;
 
-			var res = MainWindow.Instance.ShowIgnorableMessageBox("delete def", "There could be code in this assembly or in another assembly that references this field. Are you sure you want to delete the field?", System.Windows.MessageBoxButton.YesNo);
-			if (res != null && res != MsgBoxButton.OK)
+			if (!Method.DeleteMethodDefCommand.AskDeleteDef("field"))
 				return;
 
 			var fieldNodes = nodes.Select(a => (FieldTreeNode)a).ToArray();

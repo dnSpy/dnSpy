@@ -122,12 +122,18 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			if (!CanExecute(nodes))
 				return;
 
-			var res = MainWindow.Instance.ShowIgnorableMessageBox("delete def", "There could be code in this assembly or in another assembly that references this method. Are you sure you want to delete the method?", System.Windows.MessageBoxButton.YesNo);
-			if (res != null && res != MsgBoxButton.OK)
+			if (!AskDeleteDef("method"))
 				return;
 
 			var methodNodes = nodes.Select(a => (MethodTreeNode)a).ToArray();
 			UndoCommandManager.Instance.Add(new DeleteMethodDefCommand(methodNodes));
+		}
+
+		internal static bool AskDeleteDef(string defName)
+		{
+			var msg = string.Format("There could be code in some assembly that references this {0}. Are you sure you want to delete the {0}?", defName);
+			var res = MainWindow.Instance.ShowIgnorableMessageBox("delete def", msg, System.Windows.MessageBoxButton.YesNo);
+			return res == null || res == MsgBoxButton.OK;
 		}
 
 		public struct DeleteModelNodes
