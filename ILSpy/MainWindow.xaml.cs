@@ -422,7 +422,11 @@ namespace ICSharpCode.ILSpy
 			if (!IsActiveTab(tabState))
 				return;
 
-			bool hasKeyboardFocus = Keyboard.FocusedElement == tabState.TextView.TextEditor.TextArea;
+			// This isn't perfect, but let's assume the TE has focus if the treeview doesn't.
+			// We should normally check for:
+			//	Keyboard.FocusedElement == tabState.TextView.TextEditor.TextArea
+			// but a menu could be open in the text editor, and then the above expression fails.
+			bool hasKeyboardFocus = !(Keyboard.FocusedElement is SharpTreeViewItem);
 			var old = tabState.ignoreDecompilationRequests;
 			try {
 				tabState.ignoreDecompilationRequests = true;
@@ -2353,6 +2357,14 @@ namespace ICSharpCode.ILSpy
 			if (tabState != null) {
 				// The TreeView steals the focus so we can't just set the focus to the text view
 				// right here, we have to wait a little bit.
+				// This is ugly, but we must use Normal prio to get rid of flickering (tab getting
+				// inactive followed by getting active). However, this doesn't work all the time
+				// (test: right-click tab, open new tab), so we must start another one at a lower
+				// priority in case the treeview steals the focus.......
+				this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(delegate {
+					if (ActiveTabState == tabState)
+						SetTextEditorFocus(tabState.TextView);
+				}));
 				this.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(delegate {
 					if (ActiveTabState == tabState)
 						SetTextEditorFocus(tabState.TextView);
