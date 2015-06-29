@@ -172,8 +172,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type Default:SharpTreeViewItem}"
-		   BasedOn="{StaticResource {x:Type ListBoxItem}}">
+    <Style TargetType="{x:Type Default:SharpTreeViewItem}">
         <Setter Property="FocusVisualStyle"
                 Value="{x:Null}" />
         <Setter Property="Template">
@@ -187,23 +186,14 @@
                         </Border>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver"
-                                 Value="True">
-                            <Setter TargetName="nodeView"
-                                    Property="TextBackground"
-                                    Value="{DynamicResource TreeViewItemMouseOverTextBackground}" />
-                            <Setter TargetName="nodeView"
-                                    Property="Foreground"
-                                    Value="{DynamicResource TreeViewItemMouseOverForeground}" />
-                        </Trigger>
                         <Trigger Property="IsSelected"
                                  Value="True">
                             <Setter TargetName="nodeView"
                                     Property="TextBackground"
-                                    Value="{DynamicResource TreeViewItemSelectedBackground}" />
+                                    Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
                             <Setter TargetName="nodeView"
                                     Property="Foreground"
-                                    Value="{DynamicResource TreeViewItemSelectedForeground}" />
+                                    Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
                         </Trigger>
                         <!--<MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -214,16 +204,16 @@
                             </MultiTrigger.Conditions>
                             <Setter TargetName="nodeView"
                                     Property="TextBackground"
-                                    Value="{DynamicResource SystemColorsControl}" />
+                                    Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
                             <Setter TargetName="nodeView"
                                     Property="Foreground"
-                                    Value="{DynamicResource SystemColorsControlText}" />
+                                    Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
                         </MultiTrigger>-->
                         <Trigger Property="IsEnabled"
                                  Value="False">
                             <Setter TargetName="nodeView"
                                     Property="Foreground"
-                                    Value="{DynamicResource SystemColorsGrayText}" />
+                                    Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

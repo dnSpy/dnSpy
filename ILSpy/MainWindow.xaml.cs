@@ -231,6 +231,9 @@ namespace ICSharpCode.ILSpy
 
 		internal static void InitializeTreeView(SharpTreeView treeView)
 		{
+			// Clear the value set by the constructor. This is required or our style won't be used.
+			treeView.ClearValue(ItemsControl.ItemContainerStyleProperty);
+
 			treeView.GetPreviewInsideTextBackground = () => Themes.Theme.GetColor(dntheme.ColorType.SystemColorsHighlight).InheritedColor.Background.GetBrush(null);
 			treeView.GetPreviewInsideForeground = () => Themes.Theme.GetColor(dntheme.ColorType.SystemColorsHighlightText).InheritedColor.Foreground.GetBrush(null);
 		}

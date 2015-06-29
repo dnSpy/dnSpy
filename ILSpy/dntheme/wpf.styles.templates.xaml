@@ -4769,9 +4769,6 @@
         </Setter>
     </Style>
 
-	<!-- TODO: This can't be defined here. It must be defined in the original SharpTreeView asm.
-		 Any changes made aren't used at all.
-	-->
     <Style TargetType="{x:Type shtv:SharpTreeViewItem}"
 		   BasedOn="{StaticResource {x:Type ListBoxItem}}">
         <Setter Property="FocusVisualStyle"
