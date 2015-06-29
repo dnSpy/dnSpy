@@ -28,6 +28,8 @@ namespace ICSharpCode.ILSpy.Commands
 {
 	static class AboutHelpers
 	{
+		public const string BASE_URL = @"https://github.com/0xd4d/dnSpy/";
+
 		public static void OpenWebPage(string url)
 		{
 			try {
@@ -39,39 +41,39 @@ namespace ICSharpCode.ILSpy.Commands
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Help", MenuHeader = "_Latest Release", MenuOrder = 99900)]
+	[ExportMainMenuCommand(Menu = "_Help", MenuCategory = "Links", MenuHeader = "_Latest Release", MenuOrder = 99900)]
 	sealed class OpenReleasesUrlCommand : SimpleCommand
 	{
 		public override void Execute(object parameter)
 		{
-			AboutHelpers.OpenWebPage(@"https://github.com/0xd4d/dnSpy/releases");
+			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL + @"releases");
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Help", MenuHeader = "_Source Code", MenuOrder = 99910)]
-	sealed class OpenSourceCodeUrlCommand : SimpleCommand
-	{
-		public override void Execute(object parameter)
-		{
-			AboutHelpers.OpenWebPage(@"https://github.com/0xd4d/dnSpy");
-		}
-	}
-
-	[ExportMainMenuCommand(Menu = "_Help", MenuHeader = "_Wiki", MenuOrder = 99920)]
-	sealed class OpenWikiUrlCommand : SimpleCommand
-	{
-		public override void Execute(object parameter)
-		{
-			AboutHelpers.OpenWebPage(@"https://github.com/0xd4d/dnSpy/wiki");
-		}
-	}
-
-	[ExportMainMenuCommand(Menu = "_Help", MenuHeader = "_Issues", MenuOrder = 99930)]
+	[ExportMainMenuCommand(Menu = "_Help", MenuCategory = "Links", MenuHeader = "_Issues", MenuOrder = 99910)]
 	sealed class OpenIssuesUrlCommand : SimpleCommand
 	{
 		public override void Execute(object parameter)
 		{
-			AboutHelpers.OpenWebPage(@"https://github.com/0xd4d/dnSpy/issues");
+			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL + @"issues");
+		}
+	}
+
+	[ExportMainMenuCommand(Menu = "_Help", MenuCategory = "Links", MenuHeader = "_Wiki", MenuOrder = 99920)]
+	sealed class OpenWikiUrlCommand : SimpleCommand
+	{
+		public override void Execute(object parameter)
+		{
+			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL + @"wiki");
+		}
+	}
+
+	[ExportMainMenuCommand(Menu = "_Help", MenuCategory = "Links", MenuHeader = "_Source Code", MenuOrder = 99930)]
+	sealed class OpenSourceCodeUrlCommand : SimpleCommand
+	{
+		public override void Execute(object parameter)
+		{
+			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL);
 		}
 	}
 }
