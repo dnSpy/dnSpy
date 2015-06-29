@@ -80,11 +80,7 @@ namespace ICSharpCode.ILSpy
 
 		public int ActiveIndex {
 			get { return _activeIndex; }
-			private set {
-				_activeIndex = value;
-				for (int i = 0; i < tabManagers.Count; i++)
-					tabManagers[i].IsActive = _activeIndex == i;
-			}
+			private set { _activeIndex = value; }
 		}
 		int _activeIndex;
 
@@ -123,7 +119,7 @@ namespace ICSharpCode.ILSpy
 			this.contentPresenter = contentPresenter;
 			this.onSelectionChanged = onSelectionChanged;
 			this.onAddRemoveTabState = onAddRemoveTabState;
-			CreateTabManager(0).IsActive = true;
+			CreateTabManager(0);
 			UpdateGrid();
 		}
 

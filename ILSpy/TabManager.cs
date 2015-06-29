@@ -198,11 +198,18 @@ namespace ICSharpCode.ILSpy
 			tabState.TabItem.DragOver += tabItem_DragOver;
 			tabState.TabItem.Drop += tabItem_Drop;
 			tabState.TabItem.AddHandler(UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(tabItem_GotKeyboardFocus), true);
+			tabState.TabItem.AddHandler(UIElement.LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(tabItem_LostKeyboardFocus), true);
 		}
 
 		void tabItem_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
 		{
 			tabGroupsManager.SetActive(this);
+			IsActive = true;
+		}
+
+		void tabItem_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+		{
+			IsActive = false;
 		}
 
 		void RemoveEvents(TState tabState)
