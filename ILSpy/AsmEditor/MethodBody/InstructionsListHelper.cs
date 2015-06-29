@@ -99,7 +99,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 				Key = Key.S,
 			});
 			Add(new ContextMenuHandler {
-				Header = "_Optimize All Instructions",
+				Header = "Optimi_ze All Instructions",
 				Command = cilBodyVM.OptimizeAllInstructionsCommand,
 				InputGestureText = "O",
 				Modifiers = ModifierKeys.None,
@@ -115,6 +115,58 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 				Modifiers = ModifierKeys.Control,
 				Key = Key.M,
 			});
+			Add(new ContextMenuHandler {
+				Header = "C_opy RVA",
+				Command = new RelayCommand(a => CopyInstructionRVA((InstructionVM[])a), a => CopyInstructionRVACanExecute((InstructionVM[])a)),
+				InputGestureText = "Ctrl+R",
+				Modifiers = ModifierKeys.Control,
+				Key = Key.R,
+			});
+			Add(new ContextMenuHandler {
+				Header = "Copy File Offset",
+				Command = new RelayCommand(a => CopyInstructionFileOffset((InstructionVM[])a), a => CopyInstructionFileOffsetCanExecute((InstructionVM[])a)),
+				InputGestureText = "Ctrl+F",
+				Modifiers = ModifierKeys.Control,
+				Key = Key.F,
+			});
+		}
+
+		void CopyOffsets(uint baseOffset, InstructionVM[] instrs)
+		{
+			var sb = new StringBuilder();
+
+			int lines = 0;
+			for (int i = 0; i < instrs.Length; i++) {
+				if (lines++ > 0)
+					sb.AppendLine();
+				sb.Append(string.Format("0x{0:X8}", baseOffset + instrs[i].Offset));
+			}
+			if (lines > 1)
+				sb.AppendLine();
+
+			var text = sb.ToString();
+			if (text.Length > 0)
+				Clipboard.SetText(text);
+		}
+
+		void CopyInstructionRVA(InstructionVM[] instrs)
+		{
+			CopyOffsets(cilBodyVM.RVA.Value, instrs);
+		}
+
+		bool CopyInstructionRVACanExecute(InstructionVM[] instrs)
+		{
+			return !cilBodyVM.RVA.HasError;
+		}
+
+		void CopyInstructionFileOffset(InstructionVM[] instrs)
+		{
+			CopyOffsets(cilBodyVM.FileOffset.Value, instrs);
+		}
+
+		bool CopyInstructionFileOffsetCanExecute(InstructionVM[] instrs)
+		{
+			return !cilBodyVM.FileOffset.HasError;
 		}
 
 		void CopyOperandMDTokens(InstructionVM[] instrs)

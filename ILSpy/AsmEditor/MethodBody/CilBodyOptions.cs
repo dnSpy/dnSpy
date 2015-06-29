@@ -20,6 +20,8 @@
 using System.Collections.Generic;
 using dnlib.DotNet.Emit;
 using dnlib.DotNet.Pdb;
+using dnlib.PE;
+using dnlib.IO;
 
 namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 {
@@ -29,6 +31,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		public bool InitLocals;
 		public ushort MaxStack;
 		public uint LocalVarSigTok;
+		public RVA RVA;
+		public FileOffset FileOffset;
 		public List<Instruction> Instructions = new List<Instruction>();
 		public List<ExceptionHandler> ExceptionHandlers = new List<ExceptionHandler>();
 		public List<Local> Locals = new List<Local>();
@@ -38,12 +42,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		{
 		}
 
-		public CilBodyOptions(CilBody body)
+		public CilBodyOptions(CilBody body, RVA rva, FileOffset fileOffset)
 		{
 			this.KeepOldMaxStack = body.KeepOldMaxStack;
 			this.InitLocals = body.InitLocals;
 			this.MaxStack = body.MaxStack;
 			this.LocalVarSigTok = body.LocalVarSigTok;
+			this.RVA = rva;
+			this.FileOffset = fileOffset;
 			this.Instructions.AddRange(body.Instructions);
 			this.ExceptionHandlers.AddRange(body.ExceptionHandlers);
 			this.Locals.AddRange(body.Variables);

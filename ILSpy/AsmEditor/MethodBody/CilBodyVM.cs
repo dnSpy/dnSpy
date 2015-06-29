@@ -93,6 +93,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		}
 		readonly UInt32VM localVarSigTok;
 
+		public UInt32VM RVA {
+			get { return rva; }
+		}
+		readonly UInt32VM rva;
+
+		public UInt32VM FileOffset {
+			get { return fileOffset; }
+		}
+		readonly UInt32VM fileOffset;
+
 		public IndexObservableCollection<LocalVM> LocalsListVM {
 			get { return localsListVM; }
 		}
@@ -144,6 +154,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			this.ExceptionHandlersListVM.CollectionChanged += ExceptionHandlersListVM_CollectionChanged;
 			this.maxStack = new UInt16VM(a => CallHasErrorUpdated());
 			this.localVarSigTok = new UInt32VM(a => CallHasErrorUpdated());
+			this.rva = new UInt32VM(a => CallHasErrorUpdated());
+			this.fileOffset = new UInt32VM(a => CallHasErrorUpdated());
 
 			Reinitialize();
 		}
@@ -723,6 +735,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 				InitLocals = options.InitLocals;
 				MaxStack.Value = options.MaxStack;
 				LocalVarSigTok.Value = options.LocalVarSigTok;
+				RVA.Value = (uint)options.RVA;
+				FileOffset.Value = (uint)options.FileOffset;
 				LocalsListVM.Clear();
 				LocalsListVM.AddRange(options.Locals.Select(a => (LocalVM)ops[a]));
 				InstructionsListVM.Clear();

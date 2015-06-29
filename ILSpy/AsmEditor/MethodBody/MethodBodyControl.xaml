@@ -86,13 +86,21 @@
 							<ColumnDefinition Width="*" />
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
 						<CheckBox Grid.Column="0" Margin="5 0 0 0" IsChecked="{Binding CilBodyVM.KeepOldMaxStack}" Content="_Keep Old MaxStack" ToolTip="Don't recalculate the MaxStack value when saving the file" />
 						<CheckBox Grid.Column="1" Margin="5 0 0 0" IsChecked="{Binding CilBodyVM.InitLocals}" Content="_Init Locals" />
-						<Label Grid.Column="2" Margin="5 0 0 0" Target="{Binding ElementName=maxStackTextBox}" Content="_MaxStack" />
-						<TextBox Grid.Column="3" Margin="5 0 0 0" Name="maxStackTextBox" Text="{Binding CilBodyVM.MaxStack.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-						<Label Grid.Column="4" Margin="5 0 0 0" Target="{Binding ElementName=localVarSigTokTextBox}" Content="_LocalVarSigTok" />
-						<TextBox Grid.Column="5" Margin="5 0 0 0" Name="localVarSigTokTextBox" Text="{Binding CilBodyVM.LocalVarSigTok.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+						<Label Grid.Column="2" Margin="5 0 0 0" Target="{Binding ElementName=rva2TextBox}" Content="_RVA" />
+						<TextBox Grid.Column="3" Margin="5 0 0 0" Name="rva2TextBox" IsReadOnly="True" Background="Transparent" Text="{Binding CilBodyVM.RVA.StringValue, Mode=OneWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+						<Label Grid.Column="4" Margin="5 0 0 0" Target="{Binding ElementName=fileOffsetTextBox}" Content="O_ffset" />
+						<TextBox Grid.Column="5" Margin="5 0 0 0" Name="fileOffsetTextBox" IsReadOnly="True" Background="Transparent" Text="{Binding CilBodyVM.FileOffset.StringValue, Mode=OneWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+						<Label Grid.Column="6" Margin="5 0 0 0" Target="{Binding ElementName=maxStackTextBox}" Content="_MaxStack" />
+						<TextBox Grid.Column="7" Margin="5 0 0 0" Name="maxStackTextBox" Text="{Binding CilBodyVM.MaxStack.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+						<Label Grid.Column="8" Margin="5 0 0 0" Target="{Binding ElementName=localVarSigTokTextBox}" Content="_LocalVarSigTok" />
+						<TextBox Grid.Column="9" Margin="5 0 0 0" Name="localVarSigTokTextBox" Text="{Binding CilBodyVM.LocalVarSigTok.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 					</Grid>
 					<!-- Use recycling mode or the virtualizer will free the ListViewItems only a
 					few seconds after letting go of the scroll bar. That will result in a few secs

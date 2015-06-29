@@ -21,6 +21,7 @@ using System;
 using System.Diagnostics;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnlib.IO;
 
 namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 {
@@ -39,7 +40,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		{
 			this.CodeType = method.CodeType;
 			if (method.MethodBody is CilBody) {
-				this.CilBodyOptions = new CilBodyOptions((CilBody)method.MethodBody);
+				FileOffset fileOffset = 0;
+				var mod = method.Module as ModuleDefMD;
+				if (mod != null)
+					fileOffset = mod.MetaData.PEImage.ToFileOffset(method.RVA);
+				this.CilBodyOptions = new CilBodyOptions((CilBody)method.MethodBody, method.RVA, fileOffset);
 				this.BodyType = MethodBodyType.Cil;
 			}
 			else if (method.MethodBody is NativeMethodBody) {
