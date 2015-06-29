@@ -127,6 +127,7 @@ Ctrl+X		| (Method Editor) Cut selected instructions
 Ctrl+C		| (Method Editor) Copy selected instructions
 Ctrl+V		| (Method Editor) Paste instructions
 Ctrl+Alt+V	| (Method Editor) Paste instructions after selection
+Ctrl+M		| (Method Editor) Copy operand's MD token
 
 Credits
 =======

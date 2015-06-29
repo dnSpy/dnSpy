@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -106,6 +107,74 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			});
 			AddSeparator();
 			AddStandardMenuHandlers();
+			Add(new ContextMenuHandler {
+				Header = "Copy _MD Token",
+				HeaderPlural = "Copy _MD Tokens",
+				Command = new RelayCommand(a => CopyOperandMDTokens((InstructionVM[])a), a => CopyOperandMDTokensCanExecute((InstructionVM[])a)),
+				InputGestureText = "Ctrl+M",
+				Modifiers = ModifierKeys.Control,
+				Key = Key.M,
+			});
+		}
+
+		void CopyOperandMDTokens(InstructionVM[] instrs)
+		{
+			var sb = new StringBuilder();
+
+			int lines = 0;
+			for (int i = 0; i < instrs.Length; i++) {
+				uint? token = GetOperandMDToken(instrs[i].InstructionOperandVM);
+				if (token == null)
+					continue;
+
+				if (lines++ > 0)
+					sb.AppendLine();
+				sb.Append(string.Format("0x{0:X8}", token.Value));
+			}
+			if (lines > 1)
+				sb.AppendLine();
+
+			var text = sb.ToString();
+			if (text.Length > 0)
+				Clipboard.SetText(text);
+		}
+
+		bool CopyOperandMDTokensCanExecute(InstructionVM[] instrs)
+		{
+			return instrs.Any(a => GetOperandMDToken(a.InstructionOperandVM) != null);
+		}
+
+		static uint? GetOperandMDToken(InstructionOperandVM op)
+		{
+			switch (op.InstructionOperandType) {
+			case InstructionOperandType.None:
+			case InstructionOperandType.SByte:
+			case InstructionOperandType.Byte:
+			case InstructionOperandType.Int32:
+			case InstructionOperandType.Int64:
+			case InstructionOperandType.Single:
+			case InstructionOperandType.Double:
+			case InstructionOperandType.String:
+			case InstructionOperandType.BranchTarget:
+			case InstructionOperandType.SwitchTargets:
+			case InstructionOperandType.Local:
+			case InstructionOperandType.Parameter:
+				return null;
+
+			case InstructionOperandType.Field:
+			case InstructionOperandType.Method:
+			case InstructionOperandType.Token:
+			case InstructionOperandType.Type:
+				var token = op.Other as IMDTokenProvider;
+				return token == null ? (uint?)null : token.MDToken.ToUInt32();
+
+			case InstructionOperandType.MethodSig:
+				var msig = op.Other as MethodSig;
+				return msig == null ? (uint?)null : msig.OriginalToken;
+
+			default:
+				throw new InvalidOperationException();
+			}
 		}
 
 		void coll_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
