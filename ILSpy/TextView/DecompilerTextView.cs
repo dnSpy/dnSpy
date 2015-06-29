@@ -124,7 +124,6 @@ namespace ICSharpCode.ILSpy.TextView
 			iconMargin = new IconBarMargin(manager = new IconBarManager(), this);
 			textMarkerService = new TextMarkerService(this);
 			textEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
-			textEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
 			textEditor.ShowLineNumbers = true;
 			DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
 
@@ -191,6 +190,11 @@ namespace ICSharpCode.ILSpy.TextView
 			ShowLineMargin();
 			
 			textEditor.TextArea.TextView.VisualLinesChanged += (s, _) => iconMargin.InvalidateVisual();
+
+			// We need to add this here in Loaded and not in the ctor. Adding it in the ctor causes
+			// the highlighted line not to be shown when opening a new tab. It's shown again when
+			// the caret is moved to another line.
+			textEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
 		}
 		
 		#endregion
