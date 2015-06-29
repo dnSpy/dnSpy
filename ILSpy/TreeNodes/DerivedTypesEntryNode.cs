@@ -98,9 +98,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return DerivedTypesTreeNode.FindDerivedTypes(type, modules, ct);
 		}
 
-		public override void ActivateItem(System.Windows.RoutedEventArgs e)
+		protected override void ActivateItemInternal(System.Windows.RoutedEventArgs e)
 		{
-			e.Handled = BaseTypesEntryNode.ActivateItem(this, type);
+			if (BaseTypesEntryNode.ActivateItem(this, type))
+				e.Handled = true;
 		}
 
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)

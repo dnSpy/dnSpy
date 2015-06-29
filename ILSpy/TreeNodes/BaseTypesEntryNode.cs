@@ -84,7 +84,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				BaseTypesTreeNode.AddBaseTypes(this.Children, def);
 		}
 
-		public override void ActivateItem(System.Windows.RoutedEventArgs e)
+		protected override void ActivateItemInternal(System.Windows.RoutedEventArgs e)
 		{
 			// on item activation, try to resolve once again (maybe the user loaded the assembly in the meantime)
 			if (def == null) {
@@ -93,7 +93,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					this.LazyLoading = true;
 				// re-load children
 			}
-			e.Handled = ActivateItem(this, def);
+			if (ActivateItem(this, def))
+				e.Handled = true;
 		}
 
 		internal static bool ActivateItem(SharpTreeNode node, TypeDef def)

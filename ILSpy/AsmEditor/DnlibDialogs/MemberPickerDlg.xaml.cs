@@ -37,6 +37,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				if (data != null) {
 					data.OpenAssembly = new OpenAssembly();
 					data.MakeVisible = this;
+					data.AssemblyListTreeNode.OwnerTreeView = treeView;
 				}
 			};
 			MainWindow.InitializeTreeView(treeView);

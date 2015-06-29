@@ -638,9 +638,6 @@ namespace ICSharpCode.ILSpy.TextView
 			if (state != null)
 				EditorPositionState = state.EditorPositionState;
 			
-			if (MainWindow.Instance.ActiveTextView == this && IsVisible && DisplaySettingsPanel.CurrentDisplaySettings.AutoFocusTextView)
-				MainWindow.SetFocusIfNoMenuIsOpened(textEditor);
-
 			var cm = new Dictionary<MethodKey, MemberMapping>();
 			foreach (var m in textOutput.DebuggerMemberMappings) {
 				var key = MethodKey.Create(m.MethodDefinition);

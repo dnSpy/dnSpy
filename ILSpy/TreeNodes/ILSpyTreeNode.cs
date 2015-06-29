@@ -23,6 +23,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Windows;
+using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.dntheme;
@@ -35,8 +37,26 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// </summary>
 	public abstract class ILSpyTreeNode : SharpTreeNode
 	{
+		public static readonly RoutedUICommand TreeNodeActivatedEvent = new RoutedUICommand("TreeNodeActivated", "TreeNodeActivated", typeof(ILSpyTreeNode));
 		FilterSettings filterSettings;
 		bool childrenNeedFiltering;
+
+		public sealed override void ActivateItem(RoutedEventArgs e)
+		{
+			ActivateItemInternal(e);
+			if (!e.Handled) {
+				var asmList = GetNode<AssemblyListTreeNode>(this);
+				var inputElem = asmList == null ? null : asmList.OwnerTreeView as IInputElement;
+				if (inputElem != null) {
+					if (TreeNodeActivatedEvent.CanExecute(this, inputElem))
+						TreeNodeActivatedEvent.Execute(this, inputElem);
+				}
+			}
+		}
+
+		protected virtual void ActivateItemInternal(RoutedEventArgs e)
+		{
+		}
 
 		public FilterSettings FilterSettings
 		{

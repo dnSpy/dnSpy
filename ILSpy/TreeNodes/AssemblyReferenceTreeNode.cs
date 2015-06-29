@@ -80,7 +80,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return base.Filter(settings);
 		}
 		
-		public override void ActivateItem(System.Windows.RoutedEventArgs e)
+		protected override void ActivateItemInternal(System.Windows.RoutedEventArgs e)
 		{
 			var assemblyListNode = assemblyListTreeNode;
 			Debug.Assert(assemblyListNode != null);

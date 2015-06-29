@@ -111,7 +111,6 @@ namespace ICSharpCode.ILSpy.Options
 			s.ShowMetadataTokens = (bool?)e.Attribute("ShowMetadataTokens") ?? true;
 			s.ShowAssemblyVersion = (bool?)e.Attribute("ShowAssemblyVersion") ?? true;
 			s.ShowAssemblyPublicKeyToken = (bool?)e.Attribute("ShowAssemblyPublicKeyToken") ?? false;
-			s.AutoFocusTextView = (bool?)e.Attribute("AutoFocusTextView") ?? true;
 			s.DecompileFullType = (bool?)e.Attribute("DecompileFullType") ?? true;
 			s.NewEmptyTabs = (bool?)e.Attribute("NewEmptyTabs") ?? false;
 			s.RestoreTabsAtStartup = (bool?)e.Attribute("RestoreTabsAtStartup") ?? true;
@@ -151,7 +150,6 @@ namespace ICSharpCode.ILSpy.Options
 			section.SetAttributeValue("ShowMetadataTokens", s.ShowMetadataTokens);
 			section.SetAttributeValue("ShowAssemblyVersion", s.ShowAssemblyVersion);
 			section.SetAttributeValue("ShowAssemblyPublicKeyToken", s.ShowAssemblyPublicKeyToken);
-			section.SetAttributeValue("AutoFocusTextView", s.AutoFocusTextView);
 			section.SetAttributeValue("DecompileFullType", s.DecompileFullType);
 			section.SetAttributeValue("NewEmptyTabs", s.NewEmptyTabs);
 			section.SetAttributeValue("RestoreTabsAtStartup", s.RestoreTabsAtStartup);

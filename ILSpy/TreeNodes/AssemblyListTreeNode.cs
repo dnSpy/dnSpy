@@ -37,6 +37,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	{
 		readonly AssemblyList assemblyList;
 
+		public object OwnerTreeView { get; set; }
+
 		public AssemblyListTreeNode(AssemblyList assemblyList)
 		{
 			if (assemblyList == null)

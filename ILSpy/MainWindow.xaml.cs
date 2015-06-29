@@ -519,7 +519,7 @@ namespace ICSharpCode.ILSpy
 			UninitializeActiveTab(oldState, false);
 			InitializeActiveTab(newState, false);
 
-			if (IsActiveTab(newState) && ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.AutoFocusTextView)
+			if (IsActiveTab(newState))
 				SetTextEditorFocus(newView);
 
 			if (OnDecompilerTextViewChanged != null)
@@ -1121,6 +1121,8 @@ namespace ICSharpCode.ILSpy
 		{
 			switch (i) {
 			case 0:
+				this.CommandBindings.Add(new CommandBinding(ILSpyTreeNode.TreeNodeActivatedEvent, TreeNodeActivatedExecuted));
+
 				debug_CommandBindings_Count = this.CommandBindings.Count;
 				ContextMenuProvider.Add(treeView);
 
@@ -1327,6 +1329,7 @@ namespace ICSharpCode.ILSpy
 			assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
 			assemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
 			assemblyListTreeNode.Select = SelectNode;
+			assemblyListTreeNode.OwnerTreeView = treeView;
 			treeView.Root = assemblyListTreeNode;
 
 			UpdateTitle();
@@ -1791,16 +1794,6 @@ namespace ICSharpCode.ILSpy
 
 			if (SelectionChanged != null)
 				SelectionChanged(sender, e);
-
-			if (ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.AutoFocusTextView) {
-				// The TreeView steals the focus so we can't just set the focus to the text view
-				// right here, we have to wait a little bit.
-				this.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(delegate {
-					var tabState2 = ActiveTabState;
-					if (tabState2 != null)
-						SetTextEditorFocus(tabState2.TextView);
-				}));
-			}
 		}
 
 		static ILSpyTreeNode[] FilterOutDeletedNodes(IEnumerable<ILSpyTreeNode> nodes)
@@ -2328,6 +2321,19 @@ namespace ICSharpCode.ILSpy
 		internal Language GetLanguage(DecompilerTextView textView)
 		{
 			return TabStateDecompile.GetTabStateDecompile(textView).Language;
+		}
+
+		void TreeNodeActivatedExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (ActiveTabState != null) {
+				// The TreeView steals the focus so we can't just set the focus to the text view
+				// right here, we have to wait a little bit.
+				this.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(delegate {
+					var tabState = ActiveTabState;
+					if (tabState != null)
+						SetTextEditorFocus(tabState.TextView);
+				}));
+			}
 		}
 
 		private void OpenNewTabExecuted(object sender, ExecutedRoutedEventArgs e)
