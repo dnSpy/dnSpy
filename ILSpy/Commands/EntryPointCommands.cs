@@ -35,7 +35,6 @@ namespace ICSharpCode.ILSpy.Commands
 		{
 			ModuleDef module;
 			return context.TreeView == MainWindow.Instance.treeView &&
-				context.SelectedTreeNodes.Length == 1 &&
 				((module = ILSpyTreeNode.GetModule(context.SelectedTreeNodes)) != null) &&
 				module.EntryPoint is MethodDef;
 		}
@@ -83,7 +82,6 @@ namespace ICSharpCode.ILSpy.Commands
 		{
 			ModuleDef module;
 			return context.TreeView == MainWindow.Instance.treeView &&
-				context.SelectedTreeNodes.Length == 1 &&
 				((module = ILSpyTreeNode.GetModule(context.SelectedTreeNodes)) != null) &&
 				module.GlobalType != null &&
 				module.GlobalType.FindStaticConstructor() != null;
