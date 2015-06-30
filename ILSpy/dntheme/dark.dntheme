@@ -350,9 +350,9 @@
 		<color name="cilgridviewitemcontainerselectedmouseoverborder" bg="#FF3E3E42" />
 		<color name="cilgridviewlistitemhoverfill" bg="#FF2D2D30" />
 		<color name="cilgridviewlistitemselectedfill" bg="#FF2D2D30" />
-		<color name="cilgridviewlistitemselectedhoverfill" bg="#FF2D2D30" />
+		<color name="cilgridviewlistitemselectedhoverfill" bg="#FF353539" />
 		<color name="cilgridviewlistitemselectedinactivefill" bg="#FF2D2D30" />
-		<color name="cilgridviewlistviewitemfocusvisualstroke" bg="#FF3E3E42" />
+		<color name="cilgridviewlistviewitemfocusvisualstroke" bg="#FF3F3F46" />
 		<color name="cillistboxborder" bg="#3F3F46" />
 		<color name="cillistboxitemmouseoverbackground" bg="#FF2D2D30" />
 		<color name="cillistboxitemmouseoverborder" bg="#FF3E3E42" />

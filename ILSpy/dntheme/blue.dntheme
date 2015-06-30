@@ -347,12 +347,12 @@
 		<color name="cilgridviewitemcontainermouseoverhoverborder" bg="#FFF0F0F0" />
 		<color name="cilgridviewitemcontainerselectedborder" bg="#FFF0F0F0" />
 		<color name="cilgridviewitemcontainerselectedinactiveborder" bg="#FFF0F0F0" />
-		<color name="cilgridviewitemcontainerselectedmouseoverborder" bg="#FFF0F0F0" />
+		<color name="cilgridviewitemcontainerselectedmouseoverborder" bg="#FFE0E0E0" />
 		<color name="cilgridviewlistitemhoverfill" bg="#FFF8F8F8" />
 		<color name="cilgridviewlistitemselectedfill" bg="#FFF8F8F8" />
-		<color name="cilgridviewlistitemselectedhoverfill" bg="#FFF8F8F8" />
+		<color name="cilgridviewlistitemselectedhoverfill" bg="#FFE8E8E8" />
 		<color name="cilgridviewlistitemselectedinactivefill" bg="#FFF8F8F8" />
-		<color name="cilgridviewlistviewitemfocusvisualstroke" bg="#FFF0F0F0" />
+		<color name="cilgridviewlistviewitemfocusvisualstroke" bg="#FFD0D0D0" />
 		<color name="cillistboxborder" bg="Black" />
 		<color name="cillistboxitemmouseoverbackground" bg="#FFF8F8F8" />
 		<color name="cillistboxitemmouseoverborder" bg="#FFF0F0F0" />

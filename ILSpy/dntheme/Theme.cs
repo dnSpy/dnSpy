@@ -1492,7 +1492,7 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "CilGridViewItemContainerSelectedInactiveBorder",
 			},
 			new BrushColorInfo(ColorType.CilGridViewItemContainerSelectedMouseOverBorder, "CIL GridView ItemContainer selected mouse over border brush") {
-				DefaultBackground = "#FFF0F0F0",
+				DefaultBackground = "#FFE0E0E0",
 				BackgroundResourceKey = "CilGridViewItemContainerSelectedMouseOverBorder",
 			},
 			new BrushColorInfo(ColorType.CilGridViewListItemHoverFill, "CIL GridView ListItem hover fill") {
@@ -1504,7 +1504,7 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "CilGridViewListItemSelectedFill",
 			},
 			new BrushColorInfo(ColorType.CilGridViewListItemSelectedHoverFill, "CIL GridView ListItem selected hover fill") {
-				DefaultBackground = "#FFF8F8F8",
+				DefaultBackground = "#FFE8E8E8",
 				BackgroundResourceKey = "CilGridViewListItemSelectedHoverFill",
 			},
 			new BrushColorInfo(ColorType.CilGridViewListItemSelectedInactiveFill, "CIL GridView ListItem selected inactive fill") {
@@ -1512,7 +1512,7 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "CilGridViewListItemSelectedInactiveFill",
 			},
 			new BrushColorInfo(ColorType.CilGridViewListViewItemFocusVisualStroke, "CIL GridView ListViewItem FocusVisual stroke") {
-				DefaultBackground = "#FFF0F0F0",
+				DefaultBackground = "#FFD0D0D0",
 				BackgroundResourceKey = "CilGridViewListViewItemFocusVisualStroke",
 			},
 			new BrushColorInfo(ColorType.CilListBoxBorder, "CIL ListBox Border") {
