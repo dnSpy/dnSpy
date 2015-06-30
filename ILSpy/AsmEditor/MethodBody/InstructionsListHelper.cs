@@ -160,7 +160,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 
 		bool CopyInstructionRVACanExecute(InstructionVM[] instrs)
 		{
-			return !cilBodyVM.RVA.HasError;
+			return !cilBodyVM.RVA.HasError && instrs.Length > 0;
 		}
 
 		void CopyInstructionFileOffset(InstructionVM[] instrs)
@@ -170,7 +170,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 
 		bool CopyInstructionFileOffsetCanExecute(InstructionVM[] instrs)
 		{
-			return !cilBodyVM.FileOffset.HasError;
+			return !cilBodyVM.FileOffset.HasError && instrs.Length > 0;
 		}
 
 		void CopyOperandMDTokens(InstructionVM[] instrs)
