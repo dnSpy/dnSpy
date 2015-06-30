@@ -132,6 +132,16 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return string.Format("0x{0:X}", value);
 		}
 
+		public static string ToString(long value)
+		{
+			return ToString(value, long.MinValue, long.MaxValue, false);
+		}
+
+		public static string ToString(ulong value)
+		{
+			return ToString(value, ulong.MinValue, ulong.MaxValue, false);
+		}
+
 		public static string ToString(float value)
 		{
 			return value.ToString();
