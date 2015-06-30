@@ -1366,6 +1366,7 @@ namespace ICSharpCode.ILSpy
 
 		string GetDefaultTitle()
 		{
+			// If this string gets updated, App.xaml.cs (SendToPreviousInstance()) needs to be updated too
 			var t = string.Format("dnSpy ({0})", string.Join(", ", titleInfos.ToArray()));
 			if (assemblyList != null && assemblyList.ListName != AssemblyListManager.DefaultListName)
 				t = string.Format("{0} - {1}", t, assemblyList.ListName);

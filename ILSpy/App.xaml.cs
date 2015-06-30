@@ -192,7 +192,7 @@ namespace ICSharpCode.ILSpy
 			NativeMethods.EnumWindows(
 				(hWnd, lParam) => {
 					string windowTitle = NativeMethods.GetWindowText(hWnd, 100);
-					if (windowTitle.StartsWith("dnSpy", StringComparison.Ordinal)) {
+					if (windowTitle.StartsWith("dnSpy (", StringComparison.Ordinal)) {
 						Debug.WriteLine("Found {0:x4}: {1}", hWnd, windowTitle);
 						IntPtr result = Send(hWnd, message);
 						Debug.WriteLine("WM_COPYDATA result: {0:x8}", result);
