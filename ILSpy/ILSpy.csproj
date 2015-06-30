@@ -433,6 +433,7 @@
     <Compile Include="AsmEditor\ViewHelpers\IOpenAssembly.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IOpenPublicKeyFile.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IPickNetExecutableFileName.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\ISelectItems.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IShowWarningMessage.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ITypeSigCreator.cs" />
     <Compile Include="AsmEditor\ViewHelpers\OpenAssembly.cs" />
@@ -488,6 +489,7 @@
       <DependentUpon>MsgBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="SavedTabState.cs" />
+    <Compile Include="SourceCodeMappingUtils.cs" />
     <Compile Include="TabContextMenuEntries.cs" />
     <Compile Include="TabGroupsManager.cs" />
     <Compile Include="TabManager.cs" />

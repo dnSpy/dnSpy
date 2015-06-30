@@ -87,12 +87,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return items.Length > 0;
 		}
 
-		protected ListBoxHelperBase(ListBox listView, string menuTypeName)
+		protected ListBoxHelperBase(ListBox listBox, string menuTypeName)
 		{
 			this.menuTypeName = menuTypeName;
-			this.listBox = listView;
+			this.listBox = listBox;
 			this.listBox.ContextMenu = new ContextMenu();
-			this.listBox.ContextMenuOpening += (s, e) => ShowContextMenu(e, listView, contextMenuHandlers, GetSelectedItems());
+			this.listBox.ContextMenuOpening += (s, e) => ShowContextMenu(e, listBox, contextMenuHandlers, GetSelectedItems());
 			this.copiedDataId = Interlocked.Increment(ref classCopiedDataId);
 		}
 
@@ -241,7 +241,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				throw new InvalidOperationException("DataContext changed more than once");
 
 			// Can't add M, N etc as shortcuts so must use a key down handler
-			listBox.KeyDown += listView_KeyDown;
+			listBox.KeyDown += listBox_KeyDown;
 
 			OnDataContextChangedInternal(dataContext);
 
@@ -256,7 +256,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			}
 		}
 
-		void listView_KeyDown(object sender, KeyEventArgs e)
+		void listBox_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.OriginalSource is TextBox || e.OriginalSource is ComboBox || e.OriginalSource is ComboBoxItem)
 				return;

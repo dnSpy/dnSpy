@@ -49,7 +49,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public static List<BreakpointBookmark> GetBreakpointBookmarks(DecompilerTextView textView, int line, int column)
 		{
-			return GetBreakpointBookmarks(textView, Find(textView, line, column));
+			return GetBreakpointBookmarks(textView, SourceCodeMappingUtils.Find(textView, line, column));
 		}
 
 		static List<BreakpointBookmark> GetBreakpointBookmarks(DecompilerTextView textView, IList<SourceCodeMapping> mappings)
@@ -76,7 +76,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public static void Toggle(DecompilerTextView textView, int line, int column)
 		{
-			var bps = Find(textView, line, column);
+			var bps = SourceCodeMappingUtils.Find(textView, line, column);
 			var bpms = GetBreakpointBookmarks(textView, bps);
 			if (bpms.Count > 0) {
 				if (bpms.IsEnabled()) {
@@ -96,73 +96,6 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 				}
 				textView.ScrollAndMoveCaretTo(bps[0].StartLocation.Line, bps[0].StartLocation.Column);
 			}
-		}
-
-		public static IList<SourceCodeMapping> Find(DecompilerTextView textView, int line, int column)
-		{
-			if (textView == null)
-				return null;
-			return Find(textView.CodeMappings, line, column);
-		}
-
-		public static IList<SourceCodeMapping> Find(Dictionary<MethodKey, MemberMapping> cm, int line, int column)
-		{
-			if (line <= 0)
-				return new SourceCodeMapping[0];
-			if (cm == null || cm.Count == 0)
-				return new SourceCodeMapping[0];
-
-			var bp = FindByLineColumn(cm, line, column);
-			if (bp == null && column != 0)
-				bp = FindByLineColumn(cm, line, 0);
-			if (bp == null)
-				bp = GetClosest(cm, line);
-
-			if (bp != null)
-				return bp;
-			return new SourceCodeMapping[0];
-		}
-
-		static List<SourceCodeMapping> FindByLineColumn(Dictionary<MethodKey, MemberMapping> cm, int line, int column)
-		{
-			List<SourceCodeMapping> list = null;
-			foreach (var storageEntry in cm.Values) {
-				var bp = storageEntry.GetInstructionByLineNumber(line, column);
-				if (bp != null) {
-					if (list == null)
-						list = new List<SourceCodeMapping>();
-					list.Add(bp);
-				}
-			}
-			return list;
-		}
-
-		static List<SourceCodeMapping> GetClosest(Dictionary<MethodKey, MemberMapping> cm, int line)
-		{
-			List<SourceCodeMapping> list = new List<SourceCodeMapping>();
-			foreach (var entry in cm.Values) {
-				SourceCodeMapping map = null;
-				foreach (var m in entry.MemberCodeMappings) {
-					if (line > m.EndLocation.Line)
-						continue;
-					if (map == null || m.StartLocation < map.StartLocation)
-						map = m;
-				}
-				if (map != null) {
-					if (list.Count == 0)
-						list.Add(map);
-					else if (map.StartLocation == list[0].StartLocation)
-						list.Add(map);
-					else if (map.StartLocation < list[0].StartLocation) {
-						list.Clear();
-						list.Add(map);
-					}
-				}
-			}
-
-			if (list.Count == 0)
-				return null;
-			return list;
 		}
 	}
 

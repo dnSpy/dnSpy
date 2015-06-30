@@ -20,6 +20,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using dnlib.DotNet;
+using dnlib.DotNet.Emit;
+using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
@@ -73,7 +78,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 				nodes[0] is MethodTreeNode;
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
+		internal static void Execute(ILSpyTreeNode[] nodes, uint[] offsets = null)
 		{
 			if (!CanExecute(nodes))
 				return;
@@ -90,6 +95,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
 			win.Title = string.Format("{0} - {1}", win.Title, methodNode.ToString());
+
+			if (data.IsCilBody && offsets != null)
+				data.CilBodyVM.Select(offsets);
+
 			if (win.ShowDialog() != true)
 				return;
 
@@ -131,6 +140,79 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 
 		public void Dispose()
 		{
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Edit IL Instruction_s…",
+							Icon = "ILEditor",
+							Category = "AsmEd",
+							Order = 639.99)]
+	sealed class EditILInstructionsCommand : IContextMenuEntry
+	{
+		public bool IsVisible(TextViewContext context)
+		{
+			var list = GetMappings(context);
+			return list != null &&
+				list.Count != 0 &&
+				list[0].MemberMapping.MethodDefinition != null &&
+				list[0].MemberMapping.MethodDefinition.Body != null &&
+				list[0].MemberMapping.MethodDefinition.Body.Instructions.Count > 0;
+		}
+
+		static IList<SourceCodeMapping> GetMappings(TextViewContext context)
+		{
+			if (context.TextView == null || context.Position == null)
+				return null;
+			var list = SourceCodeMappingUtils.Find(context.TextView, context.Position.Value.Line, context.Position.Value.Column);
+			return list.Count == 0 ? null : list;
+		}
+
+		public bool IsEnabled(TextViewContext context)
+		{
+			return true;
+		}
+
+		public void Execute(TextViewContext context)
+		{
+			var list = GetMappings(context);
+			if (list == null)
+				return;
+
+			var method = list[0].MemberMapping.MethodDefinition;
+			var methodNode = MainWindow.Instance.AssemblyListTreeNode.FindMethodNode(method);
+			if (methodNode == null) {
+				MainWindow.Instance.ShowMessageBox(string.Format("Could not find method: {0}", method));
+				return;
+			}
+
+			MethodBodySettingsCommand.Execute(new ILSpyTreeNode[] { methodNode }, GetInstructionOffsets(method, list));
+		}
+
+		static uint[] GetInstructionOffsets(MethodDef method, IList<SourceCodeMapping> list)
+		{
+			if (method == null)
+				return null;
+			var body = method.Body;
+			if (body == null)
+				return null;
+
+			var foundInstrs = new HashSet<uint>();
+			// The instructions' offset field is assumed to be valid
+			var instrs = body.Instructions.Select(a => a.Offset).ToArray();
+			foreach (var range in list.Select(a => a.ILInstructionOffset)) {
+				int index = Array.BinarySearch(instrs, range.From);
+				if (index < 0)
+					continue;
+				for (int i = index; i < instrs.Length; i++) {
+					uint instrOffset = instrs[i];
+					if (instrOffset >= range.To)
+						break;
+
+					foundInstrs.Add(instrOffset);
+				}
+			}
+
+			return foundInstrs.ToArray();
 		}
 	}
 }

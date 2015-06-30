@@ -26,12 +26,18 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
 namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 {
 	sealed class CilBodyVM : ViewModelBase
 	{
 		readonly CilBodyOptions origOptions;
+
+		public ISelectItems<InstructionVM> SelectItems {
+			set { selectItems = value; }
+		}
+		ISelectItems<InstructionVM> selectItems;
 
 		public ICommand ReinitializeCommand {
 			get { return new RelayCommand(a => Reinitialize()); }
@@ -158,6 +164,25 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			this.fileOffset = new UInt32VM(a => CallHasErrorUpdated());
 
 			Reinitialize();
+		}
+
+		public void Select(uint[] offsets)
+		{
+			if (selectItems == null)
+				throw new InvalidOperationException();
+			if (offsets == null || offsets.Length == 0)
+				return;
+
+			var dict = InstructionsListVM.ToDictionary(a => a.Offset);
+			var instrs = offsets.Select(a => {
+				InstructionVM instr;
+				dict.TryGetValue(a, out instr);
+				return instr;
+			}).Where(a => a != null).Distinct().ToArray();
+			if (instrs.Length == 0)
+				return;
+
+			selectItems.Select(instrs);
 		}
 
 		void LocalsUpdateIndexes(int i)

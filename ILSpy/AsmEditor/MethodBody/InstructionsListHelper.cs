@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
@@ -35,7 +36,7 @@ using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 {
-	sealed class InstructionsListHelper : ListBoxHelperBase<InstructionVM>, IEditOperand
+	sealed class InstructionsListHelper : ListBoxHelperBase<InstructionVM>, IEditOperand, ISelectItems<InstructionVM>
 	{
 		CilBodyVM cilBodyVM;
 
@@ -52,6 +53,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		protected override void OnDataContextChangedInternal(object dataContext)
 		{
 			this.cilBodyVM = ((MethodBodyVM)dataContext).CilBodyVM;
+			this.cilBodyVM.SelectItems = this;
 			this.coll = cilBodyVM.InstructionsListVM;
 			this.coll.CollectionChanged += coll_CollectionChanged;
 			InitializeInstructions(this.coll);
@@ -541,6 +543,19 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			default:
 				throw new InvalidOperationException();
 			}
+		}
+
+		public void Select(IEnumerable<InstructionVM> items)
+		{
+			var instrs = items.ToArray();
+			if (instrs.Length == 0)
+				return;
+			listBox.SelectedItems.Clear();
+			foreach (var instr in instrs)
+				listBox.SelectedItems.Add(instr);
+
+			// Select the last one because the selected item is usually the last visible item in the view.
+			listBox.ScrollIntoView(instrs[instrs.Length - 1]);
 		}
 	}
 }

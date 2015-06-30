@@ -686,7 +686,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			}
 
 			var location = textView.TextEditor.TextArea.Caret.Location;
-			var bps = BreakpointHelper.Find(cm, location.Line, location.Column);
+			var bps = SourceCodeMappingUtils.Find(cm, location.Line, location.Column);
 			if (bps.Count == 0) {
 				errMsg = "It's not possible to set the next statement here";
 				return false;
@@ -1176,7 +1176,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 			if (textView == null)
 				return false;
 			var location = textView.TextEditor.TextArea.Caret.Location;
-			return BreakpointHelper.Find(textView, location.Line, location.Column).Count != 0;
+			return SourceCodeMappingUtils.Find(textView, location.Line, location.Column).Count != 0;
 		}
 	}
 
