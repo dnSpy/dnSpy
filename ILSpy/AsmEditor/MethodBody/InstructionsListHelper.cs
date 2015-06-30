@@ -119,6 +119,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			});
 			Add(new ContextMenuHandler {
 				Header = "C_opy RVA",
+				HeaderPlural = "C_opy RVAs",
 				Command = new RelayCommand(a => CopyInstructionRVA((InstructionVM[])a), a => CopyInstructionRVACanExecute((InstructionVM[])a)),
 				InputGestureText = "Ctrl+R",
 				Modifiers = ModifierKeys.Control,
@@ -126,6 +127,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			});
 			Add(new ContextMenuHandler {
 				Header = "Copy File Offset",
+				HeaderPlural = "Copy File Offsets",
 				Command = new RelayCommand(a => CopyInstructionFileOffset((InstructionVM[])a), a => CopyInstructionFileOffsetCanExecute((InstructionVM[])a)),
 				InputGestureText = "Ctrl+F",
 				Modifiers = ModifierKeys.Control,
