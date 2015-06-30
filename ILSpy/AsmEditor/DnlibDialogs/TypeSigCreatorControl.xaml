@@ -47,14 +47,6 @@
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
-			<TextBox Grid.Row="0"
-					 Visibility="{Binding CanShowTypeFullName, Converter={StaticResource BooleanToVisibilityConverter}}"
-					 Margin="0 0 0 0"
-					 Background="Transparent"
-					 IsEnabled="{Binding IsEnabled}"
-					 IsReadOnly="True"
-					 TextWrapping="Wrap"
-					 Text="{Binding TypeSigDnlibFullName, Mode=OneWay}"/>
 			<TextBox Grid.Row="1"
 					 Visibility="{Binding CanShowTypeFullName, Converter={StaticResource BooleanToVisibilityConverter}}"
 					 Margin="0 5 0 0"

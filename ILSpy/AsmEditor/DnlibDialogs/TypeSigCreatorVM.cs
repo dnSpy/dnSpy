@@ -140,7 +140,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		public string TypeSigLanguageFullName {
 			get {
 				if (TypeSig == null)
-					return string.Empty;
+					return "null";
 				return Language.TypeToString(TypeSig.ToTypeDefOrRef(), true);
 			}
 		}
