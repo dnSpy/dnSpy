@@ -6,33 +6,19 @@ dnSpy is a .NET assembly editor, decompiler, and debugger forked from
 
 License: GPLv3
 
-Extra features present in dnSpy
-===============================
+Binaries
+========
+Latest release: https://github.com/0xd4d/dnSpy/releases
+Latest build: https://ci.appveyor.com/project/0xd4d/dnspy/build/artifacts
 
-* Assembly editor
-* Debugger
-* Tabs
-* Horizontal/vertical tab groups
-* Themes (blue, dark, light and high contrast)
-* Updated syntax highlighting code
-* Multifile assembly support
-* Command line decompiler (dnspc.exe)
-* More stable, can handle bad input that will crash ILSpy
-* Other minor updates / fixes
-
-Debugger
+Features
 ========
 
-It's still a primitive debugger so don't expect miracles.
-
-Updates to the Debugger
-=======================
-
-* Improved stepping
-* C#, VB, IL code can be debugged
-* Breakpoints are automatically saved
-* Current statement is highlighted instead of the whole line
-* Many other minor updates / fixes
+* Assembly editor
+* Decompiler
+* Debugger
+* Tabs and tab groups
+* Themes (blue, dark, light and high contrast)
 
 Themes
 ======
@@ -135,18 +121,28 @@ For license info, authors and other credits, see README.txt.
 Build instructions
 ==================
 
-Dependencies:
+First grab the code using `git`:
+
+```sh
+git clone https://github.com/0xd4d/dnSpy.git
+cd dnSpy
+git submodule update --init --recursive
+```
+
+Use Visual Studio 2010 or later or run `debugbuild.bat` / `releasebuild.bat`
+to build it once you have all dependencies. You don't need Visual Studio
+installed to run the `*.bat` files. The C# compiler is installed if you have
+the .NET Framework installed.
+
+You need the Visual Studio SDK to build ILSpy.AddIn.
+
+Dependencies
+============
+
+The `git` command above should've downloaded the correct versions. If you
+can't use `git`, grab the code from these links. dnlib must have `THREAD_SAFE`
+defined when you compile it.
 
 * [dnlib](https://github.com/0xd4d/dnlib)
 * [NRefactory](https://github.com/0xd4d/NRefactory)
 * [AvalonEdit](https://github.com/0xd4d/AvalonEdit)
-
-Make sure you get the source code from the above links because eg. NRefactory
-and AvalonEdit have been slightly modified. You must define `THREAD_SAFE`
-when compiling dnlib. dnSpy will immediately exit if it detects that dnlib
-isn't thread safe.
-
-Use Visual Studio 2010 or later or run `debugbuild.bat` / `releasebuild.bat`
-to build it once you have all dependencies.
-
-You need the Visual Studio SDK to build ILSpy.AddIn.

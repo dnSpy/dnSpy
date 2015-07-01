@@ -1,4 +1,3 @@
-%windir%\microsoft.net\framework\v4.0.30319\msbuild /m dnlib\src\dnlib.csproj /p:Configuration=Debug /p:DefineConstants="TRACE;DEBUG;THREAD_SAFE"
 %windir%\microsoft.net\framework\v4.0.30319\msbuild /m ILSpy.sln /p:Configuration=Debug "/p:Platform=Any CPU"
 @IF %ERRORLEVEL% NEQ 0 GOTO err
 @exit /B 0
