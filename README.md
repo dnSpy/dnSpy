@@ -9,6 +9,7 @@ License: GPLv3
 Binaries
 ========
 Latest release: https://github.com/0xd4d/dnSpy/releases
+
 Latest build: https://ci.appveyor.com/project/0xd4d/dnspy/build/artifacts
 
 Features
@@ -134,7 +135,9 @@ to build it once you have all dependencies. You don't need Visual Studio
 installed to run the `*.bat` files. The C# compiler is installed if you have
 the .NET Framework installed.
 
-You need the Visual Studio SDK to build ILSpy.AddIn.
+You need the Visual Studio SDK to build ILSpy.AddIn. [NOTE: ILSpy.AddIn is
+currently disabled in **Release** mode because the build server fails to build it
+due to a missing dependency. You must enable it in VS: Build|Configuration Manager]
 
 Dependencies
 ============
