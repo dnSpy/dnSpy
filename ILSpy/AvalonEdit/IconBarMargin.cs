@@ -257,6 +257,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 
 					bool isMatch;
 					SourceCodeMapping map = storage[key].GetInstructionByOffset(breakpoint.ILRange.From, out isMatch);
+					if (map == null)
+						continue;
 
 					breakpoint.UpdateLocation(map.StartLocation, map.EndLocation);
 				}

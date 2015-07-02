@@ -160,6 +160,10 @@ namespace ICSharpCode.ILSpy.Bookmarks
 
 			bool isMatch;
 			SourceCodeMapping map = mapping.GetInstructionByOffset(ilOffset, out isMatch);
+			if (map == null) {
+				location = endLocation = new TextLocation();
+				return false;
+			}
 
 			location = map.StartLocation;
 			endLocation = map.EndLocation;
