@@ -219,6 +219,7 @@ namespace ICSharpCode.ILSpy
 			tabState.TabItem.DragOver -= tabItem_DragOver;
 			tabState.TabItem.Drop -= tabItem_Drop;
 			tabState.TabItem.RemoveHandler(UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(tabItem_GotKeyboardFocus));
+			tabState.TabItem.RemoveHandler(UIElement.LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(tabItem_LostKeyboardFocus));
 		}
 
 		TState GetTabState(object o)
