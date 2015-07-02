@@ -23,8 +23,9 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
-using ICSharpCode.ILSpy.TreeNodes;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy.TreeNodes;
+using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 {
@@ -47,7 +48,49 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 		}
 	}
 
-	sealed class RemoveAssemblyCommand : IUndoCommand
+	[ExportContextMenuEntryAttribute(Header = "Disable Memory Mapped I/O", Order = 960, Category = "Other")]
+	sealed class DisableMemoryMappedIOCommand : IContextMenuEntry
+	{
+		public bool IsVisible(TextViewContext context)
+		{
+			return context.TreeView == MainWindow.Instance.treeView &&
+				context.SelectedTreeNodes.Any(a => GetLoadedAssembly(a) != null);
+		}
+
+		static LoadedAssembly GetLoadedAssembly(SharpTreeNode node)
+		{
+			var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
+			if (asmNode == null)
+				return null;
+
+			var module = asmNode.LoadedAssembly.ModuleDefinition as ModuleDefMD;
+			if (module == null)
+				return null;
+
+			return asmNode.LoadedAssembly;
+		}
+
+		public bool IsEnabled(TextViewContext context)
+		{
+			return true;
+		}
+
+		public void Execute(TextViewContext context)
+		{
+			if (context.TreeView != MainWindow.Instance.treeView)
+				return;
+			var asms = new List<LoadedAssembly>();
+			foreach (var node in context.SelectedTreeNodes) {
+				var loadedAsm = GetLoadedAssembly(node);
+				if (loadedAsm != null)
+					asms.Add(loadedAsm);
+			}
+			if (asms.Count > 0)
+				MainWindow.Instance.DisableMemoryMappedIO(asms);
+		}
+	}
+
+	sealed class RemoveAssemblyCommand : IUndoCommand2
 	{
 		const string CMD_NAME = "Remove Assembly";
 		[ExportContextMenuEntry(Header = CMD_NAME,
@@ -99,7 +142,34 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			if (!SaveModule.Saver.AskUserToSaveIfModified(modNodes))
 				return;
 
-			UndoCommandManager.Instance.Add(new RemoveAssemblyCommand(asmNodes));
+			var keepNodes = new List<AssemblyTreeNode>();
+			var freeNodes = new List<AssemblyTreeNode>();
+			var onlyInRedoHistory = new List<AssemblyTreeNode>();
+			foreach (var info in UndoCommandManager.Instance.GetUndoRedoInfo(asmNodes)) {
+				if (!info.IsInUndo && !info.IsInRedo) {
+					// This asm is safe to remove
+					freeNodes.Add(info.Node);
+				}
+				else if (!info.IsInUndo && info.IsInRedo) {
+					// If we add a RemoveAssemblyCommand, the redo history will be cleared, so this
+					// assembly will be cleared from the history and don't need to be kept.
+					onlyInRedoHistory.Add(info.Node);
+				}
+				else {
+					// The asm is in the undo history, and maybe in the redo history. We must keep it.
+					keepNodes.Add(info.Node);
+				}
+			}
+
+			if (keepNodes.Count > 0 || onlyInRedoHistory.Count > 0) {
+				// We can't free the asm since older commands might reference it so we must record
+				// it in the history. The user can click Clear History to free everything.
+				UndoCommandManager.Instance.Add(new RemoveAssemblyCommand(keepNodes.ToArray()));
+				// Redo history was cleared
+				FreeAssemblies(onlyInRedoHistory);
+			}
+
+			FreeAssemblies(freeNodes);
 		}
 
 		AssemblyTreeNodeCreator[] savedStates;
@@ -140,8 +210,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			}
 		}
 
+		public bool CallGarbageCollectorAfterDispose {
+			get { return true; }
+		}
+
 		public void Dispose()
 		{
+			// We don't need to call Dispose() on any deleted ModuleDefs since the
+			// UndoCommandManager calls the GC
 			if (savedStates != null) {
 				foreach (var savedState in savedStates) {
 					if (savedState != null)
@@ -149,6 +225,28 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 				}
 			}
 			savedStates = null;
+		}
+
+		static void FreeAssemblies(IList<AssemblyTreeNode> nodes)
+		{
+			foreach (var node in nodes)
+				node.Delete();
+
+			foreach (var node in nodes.SelectMany(a => GetAssemblyNodes(a))) {
+				var module = node.LoadedAssembly.ModuleDefinition;
+				if (module != null)
+					module.Dispose();
+			}
+		}
+
+		static IEnumerable<AssemblyTreeNode> GetAssemblyNodes(AssemblyTreeNode node)
+		{
+			if (!node.IsAssembly || node.Children.Count == 0)
+				yield return node;
+			else {
+				foreach (AssemblyTreeNode child in node.Children)
+					yield return child;
+			}
 		}
 	}
 

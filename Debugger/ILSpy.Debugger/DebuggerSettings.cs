@@ -3,6 +3,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Xml.Linq;
 using ICSharpCode.ILSpy.Debugger.Services;
 
@@ -41,9 +42,10 @@ namespace ICSharpCode.ILSpy.Debugger
 		{
 			get {
 				if (null == s_instance) {
-					s_instance = new DebuggerSettings();
+					var newInstance = new DebuggerSettings();
 					ILSpySettings settings = ILSpySettings.Load();
-					s_instance.Load(settings);
+					newInstance.Load(settings);
+					Interlocked.CompareExchange(ref s_instance, newInstance, null);
 				}
 				return s_instance;
 			}

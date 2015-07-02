@@ -217,6 +217,19 @@ namespace ICSharpCode.ILSpy
 			return provider;
 		}
 
+		// Make sure there are no more refs to modules so the GC can collect removed modules
+		void ClearReferences()
+		{
+			if (treeView != null)
+				treeView.ContextMenu = new ContextMenu();
+			if (textView != null)
+				textView.ContextMenu = new ContextMenu();
+			if (listBox != null)
+				listBox.ContextMenu = new ContextMenu();
+			if (tabControl != null)
+				tabControl.ContextMenu = new ContextMenu();
+		}
+
 		public void Dispose()
 		{
 			if (treeView != null)
@@ -368,7 +381,7 @@ namespace ICSharpCode.ILSpy
 				}
 			}
 			menu.Opened += (s, e) => Interlocked.Increment(ref menuCount);
-			menu.Closed += (s, e) => Interlocked.Decrement(ref menuCount);
+			menu.Closed += (s, e) => { Interlocked.Decrement(ref menuCount); ClearReferences(); };
 			return menu.Items.Count > 0;
 		}
 

@@ -488,6 +488,10 @@
     <Compile Include="MsgBox.xaml.cs">
       <DependentUpon>MsgBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Options\OtherSettings.cs" />
+    <Compile Include="Options\OtherSettingsControl.xaml.cs">
+      <DependentUpon>OtherSettingsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SavedTabState.cs" />
     <Compile Include="SourceCodeMappingUtils.cs" />
     <Compile Include="TabContextMenuEntries.cs" />
@@ -959,6 +963,10 @@
     <Page Include="Options\DecompilerSettingsPanel.xaml" />
     <Page Include="Options\DisplaySettingsPanel.xaml" />
     <Page Include="Options\OptionsDialog.xaml" />
+    <Page Include="Options\OtherSettingsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SearchPane.xaml">
       <DependentUpon>SearchPane.cs</DependentUpon>
     </Page>

@@ -18,7 +18,7 @@ using ICSharpCode.ILSpy.Options;
 namespace TestPlugin
 {
 	[ExportOptionPage(Title = "TestPlugin", Order = 0)]
-	class CustomOptionPageCreator : IOptionPageCreator
+	sealed class CustomOptionPageCreator : IOptionPageCreator
 	{
 		public IOptionPage Create()
 		{

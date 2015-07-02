@@ -188,7 +188,7 @@ namespace ICSharpCode.ILSpy
 		
 		void Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			ClearCache();
+			bool callGc = ClearCache();
 			// Whenever the assembly list is modified, mark it as dirty
 			// and enqueue a task that saves it once the UI has finished modifying the assembly list.
 			if (!dirty) {
@@ -196,7 +196,9 @@ namespace ICSharpCode.ILSpy
 				if (App.Current == null) {
 					dirty = false;
 					AssemblyListManager.SaveList(this);
-					ClearCache();
+					callGc |= ClearCache();
+					if (callGc)
+						CallGc();
 				}
 				else {
 					App.Current.Dispatcher.BeginInvoke(
@@ -206,10 +208,21 @@ namespace ICSharpCode.ILSpy
 							dirty = false;
 							AssemblyListManager.SaveList(this);
 							ClearCache();
+							callGc |= ClearCache();
+							if (callGc)
+								CallGc();
 						})
 					);
 				}
 			}
+			else if (callGc)
+				CallGc();
+		}
+
+		void CallGc()
+		{
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
 		}
 
 		internal void RefreshSave()
@@ -227,10 +240,12 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		internal void ClearCache()
+		internal bool ClearCache()
 		{
+			bool callGc = assemblyLookupCache.Count > 0 || winRTMetadataLookupCache.Count > 0;
 			assemblyLookupCache.Clear();
 			winRTMetadataLookupCache.Clear();
+			return callGc;
 		}
 
 		internal LoadedAssembly FindAssemblyByAssemblyName(string asmName)
@@ -418,12 +433,14 @@ namespace ICSharpCode.ILSpy
 			if (App.Current == null) {
 				gcRequested = false;
 				GC.Collect();
+				GC.WaitForPendingFinalizers();
 			}
 			else {
 				App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(
 				delegate {
 					gcRequested = false;
 					GC.Collect();
+					GC.WaitForPendingFinalizers();
 				}));
 			}
 		}

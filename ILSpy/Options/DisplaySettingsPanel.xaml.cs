@@ -18,6 +18,7 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,11 +29,8 @@ using System.Xml.Linq;
 
 namespace ICSharpCode.ILSpy.Options
 {
-	/// <summary>
-	/// Interaction logic for DisplaySettingsPanel.xaml
-	/// </summary>
 	[ExportOptionPage(Title = "Display", Order = 1)]
-	class DisplaySettingsPanelCreator : IOptionPageCreator
+	sealed class DisplaySettingsPanelCreator : IOptionPageCreator
 	{
 		public IOptionPage Create()
 		{
@@ -40,6 +38,9 @@ namespace ICSharpCode.ILSpy.Options
 		}
 	}
 
+	/// <summary>
+	/// Interaction logic for DisplaySettingsPanel.xaml
+	/// </summary>
 	public partial class DisplaySettingsPanel : UserControl, IOptionPage
 	{
 		public DisplaySettingsPanel()
@@ -75,7 +76,10 @@ namespace ICSharpCode.ILSpy.Options
 		
 		public static DisplaySettings CurrentDisplaySettings {
 			get {
-				return currentDisplaySettings ?? (currentDisplaySettings = LoadDisplaySettings(ILSpySettings.Load()));
+				if (currentDisplaySettings != null)
+					return currentDisplaySettings;
+				Interlocked.CompareExchange(ref currentDisplaySettings, LoadDisplaySettings(ILSpySettings.Load()), null);
+				return currentDisplaySettings;
 			}
 		}
 		

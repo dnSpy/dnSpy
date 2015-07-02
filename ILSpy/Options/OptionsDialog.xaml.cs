@@ -126,6 +126,11 @@ namespace ICSharpCode.ILSpy.Options
 		/// </summary>
 		VB					= 0x00000010,
 
+		/// <summary>
+		/// Disable memory mapped I/O
+		/// </summary>
+		DisableMmap			= 0x00000020,
+
 		DecompileAll = IL | ILAst | CSharp | VB,
 	}
 	
@@ -154,6 +159,15 @@ namespace ICSharpCode.ILSpy.Options
 				bool decompileILAst = (dlg.RefreshFlags & RefreshFlags.ILAst) != 0;
 				bool decompileCSharp = (dlg.RefreshFlags & RefreshFlags.CSharp) != 0;
 				bool decompileVB = (dlg.RefreshFlags & RefreshFlags.VB) != 0;
+				bool disableMmap = (dlg.RefreshFlags & RefreshFlags.DisableMmap) != 0;
+				if (disableMmap) {
+					disassembleIL = true;
+					decompileILAst = true;
+					decompileCSharp = true;
+					decompileVB = true;
+				}
+				if (disableMmap)
+					inst.DisableMemoryMappedIO();
 				inst.RefreshCodeCSharp(disassembleIL, decompileILAst, decompileCSharp, decompileVB);
 				if ((dlg.RefreshFlags & RefreshFlags.TreeViewNodeNames) != 0)
 					inst.RefreshTreeViewNodeNames();

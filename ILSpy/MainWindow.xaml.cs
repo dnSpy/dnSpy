@@ -2675,6 +2675,37 @@ namespace ICSharpCode.ILSpy
 				DecompileCache.IsInModifiedAssembly(asms, tabState.TextView.References);
 		}
 
+		internal void DisableMemoryMappedIO()
+		{
+			DisableMemoryMappedIO(GetAllModuleDefs());
+		}
+
+		internal void DisableMemoryMappedIO(IEnumerable<LoadedAssembly> asms)
+		{
+			foreach (var tabState in AllTabStates) {
+				// Make sure that the code doesn't try to reference memory that will be moved.
+				tabState.TextView.CancelDecompilation();
+			}
+
+			foreach (var asm in asms) {
+				var mod = asm.ModuleDefinition as ModuleDefMD;
+				if (mod != null)
+					mod.MetaData.PEImage.UnsafeDisableMemoryMappedIO();
+			}
+		}
+
+		IEnumerable<LoadedAssembly> GetAllModuleDefs()
+		{
+			foreach (AssemblyTreeNode asmNode in assemblyListTreeNode.Children) {
+				if (asmNode.Children.Count == 0 || !(asmNode.Children[0] is AssemblyTreeNode))
+					yield return asmNode.LoadedAssembly;
+				else {
+					foreach (AssemblyTreeNode child in asmNode.Children)
+						yield return child.LoadedAssembly;
+				}
+			}
+		}
+
 		internal void RefreshCodeCSharp(bool disassembleIL, bool decompileILAst, bool decompileCSharp, bool decompileVB)
 		{
 			if (decompileILAst)

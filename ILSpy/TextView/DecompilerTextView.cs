@@ -594,7 +594,7 @@ namespace ICSharpCode.ILSpy.TextView
 			ShowOutput(textOutput, highlighting);
 		}
 
-		void CancelDecompilation()
+		internal void CancelDecompilation()
 		{
 			// Cancel the decompilation task:
 			if (currentCancellationTokenSource != null) {

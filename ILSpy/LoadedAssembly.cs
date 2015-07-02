@@ -124,7 +124,7 @@ namespace ICSharpCode.ILSpy
 			if (ModuleDefinition != null) { }
 		}
 		
-		public LoadedAssembly(AssemblyList assemblyList, string fileName, Stream stream = null)
+		public LoadedAssembly(AssemblyList assemblyList, string fileName)
 		{
 			if (assemblyList == null)
 				throw new ArgumentNullException("assemblyList");
@@ -133,7 +133,7 @@ namespace ICSharpCode.ILSpy
 			this.assemblyList = assemblyList;
 			this.fileName = fileName;
 			
-			this.assemblyTask = Task.Factory.StartNew<ModuleDef>(LoadAssembly, stream); // requires that this.fileName is set
+			this.assemblyTask = Task.Factory.StartNew<ModuleDef>(LoadAssembly, null); // requires that this.fileName is set
 			this.shortName = GetShortName(fileName);
 		}
 
@@ -224,22 +224,11 @@ namespace ICSharpCode.ILSpy
 
 		ModuleDef LoadAssembly(object state)
 		{
-			var stream = state as Stream;
 			ModuleDef module;
-
-			// runs on background thread
-
-			if (stream != null)
-			{
-				// Read the module from a precrafted stream
-				module = ModuleDefMD.Load(stream, CreateModuleContext());
-			}
-			else
-			{
-				// Read the module from disk (by default)
+			if (Options.OtherSettings.Instance.UseMemoryMappedIO)
 				module = ModuleDefMD.Load(fileName, CreateModuleContext());
-			}
-
+			else
+				module = ModuleDefMD.Load(File.ReadAllBytes(fileName), CreateModuleContext());
 			return InitializeModule(module);
 		}
 

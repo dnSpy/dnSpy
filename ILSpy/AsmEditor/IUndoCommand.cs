@@ -49,4 +49,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		/// </summary>
 		IEnumerable<ILSpyTreeNode> TreeNodes { get; }
 	}
+
+	public interface IUndoCommand2 : IUndoCommand
+	{
+		/// <summary>
+		/// 
+		/// </summary>
+		bool CallGarbageCollectorAfterDispose { get; }
+	}
 }

@@ -163,7 +163,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 					Add(command);
 			}
 			else {
-				currentCommands.ModifiedAssemblies.AddRange(GetAssemblyTreeNodes(command));
+				currentCommands.ModifiedAssemblies.AddRange(GetLoadedAssemblies(command));
 				command.Execute();
 				OnExecutedOneCommand(currentCommands);
 				currentCommands.Commands.Add(command);
@@ -202,9 +202,26 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 			currentCommands.Commands.TrimExcess();
 			undoCommands.Add(currentCommands);
+
+			bool callGc = NeedsToCallGc(redoCommands);
 			Clear(redoCommands);
+			if (callGc)
+				CallGc();
+
 			UpdateAssemblySavedStateRedo(currentCommands);
 			currentCommands = null;
+		}
+
+		static bool NeedsToCallGc(List<UndoState> list)
+		{
+			foreach (var state in list) {
+				foreach (var c in state.Commands) {
+					var c2 = c as IUndoCommand2;
+					if (c2 != null && c2.CallGarbageCollectorAfterDispose)
+						return true;
+				}
+			}
+			return false;
 		}
 
 		/// <summary>
@@ -212,27 +229,45 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		/// </summary>
 		public void Clear()
 		{
+			Clear(true, true);
+		}
+
+		void Clear(bool clearUndo, bool clearRedo)
+		{
 			Debug.Assert(currentCommands == null);
 			if (currentCommands != null)
 				throw new InvalidOperationException();
 
-			bool callGc = undoCommands.Count != 0 || redoCommands.Count != 0;
-			Clear(undoCommands);
-			Clear(redoCommands);
-
-			if (callGc && !callingGc) {
-				callingGc = true;
-				// Some removed assemblies need to be GC'd. The AssemblyList already does this but
-				// we might cache them so we need to call the GC again.
-				App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(delegate {
-					GC.Collect();
-					callingGc = false;
-				}));
+			bool callGc = false;
+			if (clearUndo) {
+				callGc |= NeedsToCallGc(undoCommands);
+				Clear(undoCommands);
 			}
+			if (clearRedo) {
+				callGc |= NeedsToCallGc(redoCommands);
+				Clear(redoCommands);
+			}
+
+			if (callGc)
+				CallGc();
 
 			foreach (var asm in GetAliveModules()) {
 				if (!IsModified(asm))
 					asm.SavedCommand = 0;
+			}
+		}
+
+		void CallGc()
+		{
+			if (!callingGc) {
+				callingGc = true;
+				// Some removed assemblies need to be GC'd. The AssemblyList already does this but
+				// we might cache them so we need to call the GC again.
+				App.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(delegate {
+					callingGc = false;
+					GC.Collect();
+					GC.WaitForPendingFinalizers();
+				}));
 			}
 		}
 		bool callingGc = false;
@@ -393,7 +428,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			}
 		}
 
-		static IEnumerable<LoadedAssembly> GetAssemblyTreeNodes(IUndoCommand command)
+		static IEnumerable<LoadedAssembly> GetLoadedAssemblies(IUndoCommand command)
 		{
 			foreach (var node in command.TreeNodes) {
 				var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
@@ -412,6 +447,31 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				if (asm.SavedCommand == 0)
 					asm.SavedCommand = group.PrevCommandCounter;
 				Utils.NotifyModifiedAssembly(asm);
+			}
+		}
+
+		public struct UndoRedoInfo
+		{
+			public bool IsInUndo;
+			public bool IsInRedo;
+			public AssemblyTreeNode Node;
+
+			public UndoRedoInfo(AssemblyTreeNode node, bool isInUndo, bool isInRedo)
+			{
+				this.IsInUndo = isInUndo;
+				this.IsInRedo = isInRedo;
+				this.Node = node;
+			}
+		}
+
+		public IEnumerable<UndoRedoInfo> GetUndoRedoInfo(IEnumerable<AssemblyTreeNode> nodes)
+		{
+			var modifiedUndoAsms = new HashSet<LoadedAssembly>(undoCommands.SelectMany(a => a.ModifiedAssemblies));
+			var modifiedRedoAsms = new HashSet<LoadedAssembly>(redoCommands.SelectMany(a => a.ModifiedAssemblies));
+			foreach (var node in nodes) {
+				bool isInUndo = modifiedUndoAsms.Contains(node.LoadedAssembly);
+				bool isInRedo = modifiedRedoAsms.Contains(node.LoadedAssembly);
+				yield return new UndoRedoInfo(node, isInUndo, isInRedo);
 			}
 		}
 	}

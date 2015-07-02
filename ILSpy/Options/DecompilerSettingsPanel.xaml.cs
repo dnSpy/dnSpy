@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Threading;
 using System.Windows.Controls;
 using System.Xml.Linq;
 using ICSharpCode.Decompiler;
@@ -27,7 +28,7 @@ namespace ICSharpCode.ILSpy.Options
 	/// Interaction logic for DecompilerSettingsPanel.xaml
 	/// </summary>
 	[ExportOptionPage(Title = "Decompiler", Order = 0)]
-	class DecompilerSettingsPanelCreator : IOptionPageCreator
+	sealed class DecompilerSettingsPanelCreator : IOptionPageCreator
 	{
 		public IOptionPage Create()
 		{
@@ -51,7 +52,10 @@ namespace ICSharpCode.ILSpy.Options
 		
 		public static DecompilerSettings CurrentDecompilerSettings {
 			get {
-				return currentDecompilerSettings ?? (currentDecompilerSettings = LoadDecompilerSettings(ILSpySettings.Load()));
+				if (currentDecompilerSettings != null)
+					return currentDecompilerSettings;
+				Interlocked.CompareExchange(ref currentDecompilerSettings, LoadDecompilerSettings(ILSpySettings.Load()), null);
+				return currentDecompilerSettings;
 			}
 		}
 		
