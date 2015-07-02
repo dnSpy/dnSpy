@@ -552,6 +552,8 @@ namespace ICSharpCode.NRefactory.Visitors
 				target = null;
 				try {
 					targetType = memberReferenceExpression.Target.ResolveType(context.AppDomain);
+				} catch (NullReferenceException) {
+					throw e;
 				} catch (GetValueException) {
 					throw e;  // Use the other, nicer message
 				}
