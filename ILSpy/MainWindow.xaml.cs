@@ -260,7 +260,8 @@ namespace ICSharpCode.ILSpy
 			if (e.PropertyName == "WordWrap" || e.PropertyName == "HighlightCurrentLine") {
 				foreach (var textView in AllTextViews) {
 					textView.TextEditor.WordWrap = sessionSettings.WordWrap;
-					textView.TextEditor.Options.HighlightCurrentLine = sessionSettings.HighlightCurrentLine;
+					if ((bool)textView.GetValue(UIElement.IsKeyboardFocusWithinProperty))
+						textView.TextEditor.Options.HighlightCurrentLine = sessionSettings.HighlightCurrentLine;
 				}
 			}
 		}
@@ -321,7 +322,6 @@ namespace ICSharpCode.ILSpy
 				RemoveCommands(view);
 				view.TextEditor.TextArea.MouseRightButtonDown += delegate { view.GoToMousePosition(); };
 				view.TextEditor.WordWrap = sessionSettings.WordWrap;
-				view.TextEditor.Options.HighlightCurrentLine = sessionSettings.HighlightCurrentLine;
 				view.TextEditor.Options.EnableRectangularSelection = false;
 
 				if (OnDecompilerTextViewAdded != null)

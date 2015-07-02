@@ -158,6 +158,21 @@ namespace ICSharpCode.ILSpy.TextView
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => FollowReferenceNewTab()), Key.F12, ModifierKeys.Control));
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => FollowReferenceNewTab()), Key.Enter, ModifierKeys.Control));
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => ClearMarkedReferencesAndPopups()), Key.Escape, ModifierKeys.None));
+
+			this.AddHandler(UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnGotKeyboardFocus), true);
+			this.AddHandler(UIElement.LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnLostKeyboardFocus), true);
+		}
+
+		void OnGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+		{
+			TextEditor.Options.HighlightCurrentLine = MainWindow.Instance.SessionSettings.HighlightCurrentLine;
+			TextEditor.TextArea.Caret.Show();
+		}
+
+		void OnLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+		{
+			TextEditor.Options.HighlightCurrentLine = false;
+			TextEditor.TextArea.Caret.Hide();
 		}
 
 		void Caret_PositionChanged(object sender, EventArgs e)
