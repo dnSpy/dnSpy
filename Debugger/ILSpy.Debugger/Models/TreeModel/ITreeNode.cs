@@ -19,6 +19,8 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 		string Text { get; }
 		
 		bool CanSetText { get; }
+
+		bool IsReadOnly { get; }
 		
 		string Type { get; }
 		

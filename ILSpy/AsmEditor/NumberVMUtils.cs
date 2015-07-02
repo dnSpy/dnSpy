@@ -25,7 +25,7 @@ using System.Text;
 
 namespace ICSharpCode.ILSpy.AsmEditor
 {
-	static class NumberVMUtils
+	public static class NumberVMUtils
 	{
 		public static byte[] ParseByteArray(string s, out string error)
 		{

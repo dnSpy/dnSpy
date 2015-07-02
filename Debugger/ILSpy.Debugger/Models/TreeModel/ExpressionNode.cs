@@ -183,7 +183,7 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 				return;
 			}
 			
-			this.canSetText = val.Type.IsPrimitive;
+			this.canSetText = val.Type.IsPrimitive || val.Type.FullName == typeof(string).FullName;
 			
 			this.expressionType = val.Type;
 			this.Type = val.Type.Name;
@@ -327,6 +327,14 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 					} catch (OverflowException) {
 						throw new NotSupportedException();
 					}
+				} else if (val.Type.FullName == typeof(string).FullName) {
+					string error;
+					newText = ILSpy.AsmEditor.NumberVMUtils.ParseString(newText, false, out error);
+					if (!string.IsNullOrEmpty(error)) {
+						MainWindow.Instance.ShowMessageBox(string.Format("The string is not a valid C# string. Error: {0}", error));
+						return false;
+					}
+					val.PrimitiveValue = newText;
 				} else {
 					val.PrimitiveValue = newText;
 				}

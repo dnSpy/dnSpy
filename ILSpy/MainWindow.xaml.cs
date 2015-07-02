@@ -2921,6 +2921,12 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
+		protected override void OnDeactivated(EventArgs e)
+		{
+			ClosePopups();
+			base.OnDeactivated(e);
+		}
+
 		public MsgBoxButton? ShowIgnorableMessageBox(string id, string msg, MessageBoxButton buttons, Window ownerWindow = null)
 		{
 			if (sessionSettings.IgnoredWarnings.Contains(id))

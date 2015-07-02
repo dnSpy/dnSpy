@@ -52,6 +52,10 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 		public virtual bool CanSetText { 
 			get { return false; }
 		}
+
+		public virtual bool IsReadOnly {
+			get { return !CanSetText; }
+		}
 		
 		public virtual IEnumerable<IVisualizerCommand> VisualizerCommands {
 			get {

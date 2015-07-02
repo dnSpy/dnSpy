@@ -4,9 +4,7 @@
 	x:ClassModifier="internal"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:aero="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
 	xmlns:debugging="clr-namespace:ICSharpCode.ILSpy.Debugger.Tooltips"
-	xmlns:localControls="clr-namespace:ICSharpCode.ILSpy.Debugger.Tooltips"
 	Background="Transparent">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -34,7 +32,6 @@
 			MaxHeight="202"
 			SelectionMode="Single"
 			SelectionUnit="FullRow"
-			ItemsSource="{Binding}"
 			Name="dataGrid"
 			AutoGenerateColumns="False"
 			CanUserAddRows="False"
@@ -187,7 +184,7 @@
 						<DataTemplate>
 							<TextBox
 								Style="{StaticResource TextStyle}"
-								IsEnabled="{Binding CanSetText}"
+								IsReadOnly="{Binding IsReadOnly}"
 								KeyUp="TextBox_KeyUp"
 								Text="{Binding Path=Text}" />
 						</DataTemplate>

@@ -246,10 +246,10 @@ namespace Debugger
 		{
 			ICorDebugValue newCorValue = newValue.CorValue;
 			
-			if (this.CorValue is ICorDebugReferenceValue) {
+			if (this.corValue is ICorDebugReferenceValue) {
 				if (!(newCorValue is ICorDebugReferenceValue))
 					newCorValue = newValue.Box().CorValue;
-				((ICorDebugReferenceValue)this.CorValue).SetValue(((ICorDebugReferenceValue)newCorValue).GetValue());
+				((ICorDebugReferenceValue)this.corValue).SetValue(((ICorDebugReferenceValue)newCorValue).GetValue());
 			} else {
 				this.CorGenericValue.SetRawValue(newValue.CorGenericValue.GetRawValue());
 			}
