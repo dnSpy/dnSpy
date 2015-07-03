@@ -26,6 +26,7 @@
 	<Grid>
 		<StackPanel>
 			<CheckBox IsChecked="{Binding UseMemoryMappedIO}" Content="Use memory mapped I/O" ToolTip="Memory mapped I/O uses less memory and loads assemblies faster.&#x0A;Can be disabled per file if you right-click the module." />
+			<CheckBox IsChecked="{Binding WindowsExplorerIntegration}" Content="Windows Explorer Integration" ToolTip="Add a context menu entry to Windows Explorer to open assemblies in dnSpy" />
 		</StackPanel>
 	</Grid>
 </UserControl>
