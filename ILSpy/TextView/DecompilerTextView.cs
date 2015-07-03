@@ -876,6 +876,8 @@ namespace ICSharpCode.ILSpy.TextView
 							tcs.SetException(ex);
 						} catch (AggregateException ex) {
 							tcs.SetException(ex.InnerExceptions);
+						} catch (InvalidOperationException ex) {
+							tcs.SetException(ex);
 						} catch (OperationCanceledException) {
 							tcs.SetCanceled();
 						}
@@ -1188,6 +1190,7 @@ namespace ICSharpCode.ILSpy.TextView
 		public void Dispose()
 		{
 			DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged -= CurrentDisplaySettings_PropertyChanged;
+			CancelDecompilation();
 		}
 
 		public void ScrollAndMoveCaretTo(int line, int column, bool focus = true)

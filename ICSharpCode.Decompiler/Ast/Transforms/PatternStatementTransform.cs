@@ -269,7 +269,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			BlockStatement block = (BlockStatement)varDecl.Parent;
 			DefiniteAssignmentAnalysis daa = new DefiniteAssignmentAnalysis(block, context.CancellationToken);
 			daa.SetAnalyzedRange(targetStatement, block, startInclusive: false);
-			daa.Analyze(varDecl.Variables.Single().Name);
+			daa.Analyze(varDecl.Variables.Single().Name, context.CancellationToken);
 			return daa.UnassignedVariableUses.Count == 0;
 		}
 		
@@ -292,7 +292,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			DefiniteAssignmentAnalysis daa = new DefiniteAssignmentAnalysis(blocks[0], context.CancellationToken);
 			declarationPoint = null;
 			foreach (BlockStatement block in blocks) {
-				if (!DeclareVariables.FindDeclarationPoint(daa, varDecl, block, out declarationPoint)) {
+				if (!DeclareVariables.FindDeclarationPoint(daa, varDecl, block, out declarationPoint, context.CancellationToken)) {
 					return false;
 				}
 			}

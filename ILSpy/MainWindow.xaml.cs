@@ -1987,6 +1987,9 @@ namespace ICSharpCode.ILSpy
 			sessionSettings.BottomPaneSettings = GetPaneSettings(bottomPane, bottomPaneRow);
 			sessionSettings.SavedTabGroupsState = CreateSavedTabGroupsState();
 			sessionSettings.Save();
+
+			foreach (var tabState in AllTabStates)
+				tabState.Dispose();
 		}
 
 		void RestoreTabGroups(SavedTabGroupsState savedGroups)

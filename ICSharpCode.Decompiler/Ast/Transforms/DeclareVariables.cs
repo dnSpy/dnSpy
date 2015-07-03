@@ -127,7 +127,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			// declarationPoint: The point where the variable would be declared, if we decide to declare it in this block
 			Statement declarationPoint = null;
 			// Check whether we can move down the variable into the sub-blocks
-			bool canMoveVariableIntoSubBlocks = FindDeclarationPoint(daa, variableName, allowPassIntoLoops, block, out declarationPoint);
+			bool canMoveVariableIntoSubBlocks = FindDeclarationPoint(daa, variableName, allowPassIntoLoops, block, out declarationPoint, cancellationToken);
 			if (declarationPoint == null) {
 				// The variable isn't used at all
 				return;
@@ -213,14 +213,14 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		/// <returns>
 		/// Returns whether it is possible to move the variable declaration into sub-blocks.
 		/// </returns>
-		public static bool FindDeclarationPoint(DefiniteAssignmentAnalysis daa, VariableDeclarationStatement varDecl, BlockStatement block, out Statement declarationPoint)
+		public static bool FindDeclarationPoint(DefiniteAssignmentAnalysis daa, VariableDeclarationStatement varDecl, BlockStatement block, out Statement declarationPoint, CancellationToken cancellationToken)
 		{
 			string variableName = varDecl.Variables.Single().Name;
 			bool allowPassIntoLoops = varDecl.Variables.Single().Annotation<DelegateConstruction.CapturedVariableAnnotation>() == null;
-			return FindDeclarationPoint(daa, variableName, allowPassIntoLoops, block, out declarationPoint);
+			return FindDeclarationPoint(daa, variableName, allowPassIntoLoops, block, out declarationPoint, cancellationToken);
 		}
 		
-		static bool FindDeclarationPoint(DefiniteAssignmentAnalysis daa, string variableName, bool allowPassIntoLoops, BlockStatement block, out Statement declarationPoint)
+		static bool FindDeclarationPoint(DefiniteAssignmentAnalysis daa, string variableName, bool allowPassIntoLoops, BlockStatement block, out Statement declarationPoint, CancellationToken cancellationToken)
 		{
 			// declarationPoint: The point where the variable would be declared, if we decide to declare it in this block
 			declarationPoint = null;
@@ -239,7 +239,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					if (nextStatement != null) {
 						// Analyze the range from the next statement to the end of the block
 						daa.SetAnalyzedRange(nextStatement, block);
-						daa.Analyze(variableName);
+						daa.Analyze(variableName, cancellationToken);
 						if (daa.UnassignedVariableUses.Count > 0) {
 							return false;
 						}
