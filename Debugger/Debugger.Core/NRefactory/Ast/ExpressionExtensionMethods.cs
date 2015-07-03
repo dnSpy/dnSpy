@@ -157,7 +157,7 @@ namespace ICSharpCode.NRefactory.Ast
 		{
 			if (code == null) return string.Empty;
 
-			return code.GetText(FormattingOptionsFactory.CreateSharpDevelop());
+			return code.ToString(FormattingOptionsFactory.CreateSharpDevelop());
 		}
 		
 		public static AstType GetTypeReference(this Type type)
