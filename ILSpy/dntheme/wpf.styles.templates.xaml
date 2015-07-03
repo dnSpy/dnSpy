@@ -2344,6 +2344,8 @@
                 Value="{Binding Path=VerticalContentAlignment,RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
         <Setter Property="Background"
                 Value="Transparent"/>
+        <Setter Property="Foreground"
+                Value="{DynamicResource SystemColorsMenuText}"/>
         <Setter Property="ScrollViewer.PanningMode"
                 Value="Both"/>
         <Setter Property="Stylus.IsFlicksEnabled"
