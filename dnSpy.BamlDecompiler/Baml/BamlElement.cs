@@ -32,7 +32,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 		public IList<BamlElement> Children { get; private set; }
 		public BamlRecord Footer { get; private set; }
 
-		static bool IsHeader(BamlRecord rec) {
+		public static bool IsHeader(BamlRecord rec) {
 			switch (rec.Type) {
 				case BamlRecordType.ConstructorParametersStart:
 				case BamlRecordType.DocumentStart:
@@ -49,7 +49,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 			return false;
 		}
 
-		static bool IsFooter(BamlRecord rec) {
+		public static bool IsFooter(BamlRecord rec) {
 			switch (rec.Type) {
 				case BamlRecordType.ConstructorParametersEnd:
 				case BamlRecordType.DocumentEnd:
@@ -65,7 +65,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 			return false;
 		}
 
-		static bool IsMatch(BamlRecord header, BamlRecord footer) {
+		public static bool IsMatch(BamlRecord header, BamlRecord footer) {
 			switch (header.Type) {
 				case BamlRecordType.ConstructorParametersStart:
 					return footer.Type == BamlRecordType.ConstructorParametersEnd;

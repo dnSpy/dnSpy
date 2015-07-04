@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 namespace dnSpy.BamlDecompiler.Baml {
 	internal class BamlBinaryReader : BinaryReader {
@@ -37,7 +38,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class BamlReader {
-		public static BamlDocument ReadDocument(Stream str) {
+		public static BamlDocument ReadDocument(Stream str, CancellationToken token) {
 			var ret = new BamlDocument();
 			var reader = new BamlBinaryReader(str);
 			{
@@ -57,6 +58,8 @@ namespace dnSpy.BamlDecompiler.Baml {
 
 			var recs = new Dictionary<long, BamlRecord>();
 			while (str.Position < str.Length) {
+				token.ThrowIfCancellationRequested();
+
 				long pos = str.Position;
 				var type = (BamlRecordType)reader.ReadByte();
 				BamlRecord rec = null;

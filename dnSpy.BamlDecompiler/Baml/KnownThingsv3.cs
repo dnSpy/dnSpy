@@ -27,43 +27,48 @@ using dnlib.DotNet;
 namespace dnSpy.BamlDecompiler.Baml {
 	internal class KnownThingsv3 : IKnownThings {
 		readonly Dictionary<int, AssemblyDef> assemblies;
-		readonly AssemblyResolver resolver;
-		readonly Dictionary<KnownProperties, Tuple<KnownTypes, PropertyDef, TypeDef>> properties;
+		readonly IAssemblyResolver resolver;
+		readonly Dictionary<KnownProperties, KnownProperty> properties;
 		readonly Dictionary<KnownTypes, TypeDef> types;
+		readonly Dictionary<int, string> strings;
 
-		public KnownThingsv3(AssemblyResolver resolver, ModuleDefMD module) {
-			this.resolver = resolver;
+		public KnownThingsv3(ModuleDef module) {
+			resolver = module.Context.AssemblyResolver;
 
 			assemblies = new Dictionary<int, AssemblyDef>();
 			types = new Dictionary<KnownTypes, TypeDef>();
-			properties = new Dictionary<KnownProperties, Tuple<KnownTypes, PropertyDef, TypeDef>>();
+			properties = new Dictionary<KnownProperties, KnownProperty>();
+			strings = new Dictionary<int, string>();
 
 			InitAssemblies(module);
 			InitTypes();
 			InitProperties();
+			InitStrings();
 		}
 
 		public Func<KnownTypes, TypeDef> Types {
 			get { return type => types[type]; }
 		}
 
-		public Func<KnownProperties, Tuple<KnownTypes, PropertyDef, TypeDef>> Properties {
+		public Func<KnownProperties, KnownProperty> Properties {
 			get { return property => properties[property]; }
+		}
+
+		public Func<int, String> Strings {
+			get { return str => strings[str]; }
 		}
 
 		public AssemblyDef FrameworkAssembly {
 			get { return assemblies[0]; }
 		}
 
-		Tuple<KnownTypes, PropertyDef, TypeDef> InitProperty(KnownTypes parent, string propertyName, TypeDef propertyType) {
-			if (propertyName != null)
-				return Tuple.Create(parent, types[parent].FindProperty(propertyName), propertyType);
-			return Tuple.Create(parent, (PropertyDef)null, propertyType);
+		KnownProperty InitProperty(KnownTypes parent, string propertyName, TypeDef propertyType) {
+			return new KnownProperty(types[parent], propertyName, propertyType);
 		}
 
 		// Following codes are auto-generated, do not modify.
 
-		void InitAssemblies(ModuleDefMD module) {
+		void InitAssemblies(ModuleDef module) {
 			assemblies[0] =
 				resolver.ResolveThrow(
 					"PresentationFramework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35", module);
@@ -1058,17 +1063,17 @@ namespace dnSpy.BamlDecompiler.Baml {
 				assemblies[1].Find("System.Windows.Media.Brush", true));
 			properties[KnownProperties.Control_HorizontalContentAlignment] = InitProperty(KnownTypes.Control,
 				"HorizontalContentAlignment", assemblies[0].Find("System.Windows.HorizontalAlignment", true));
-			properties[KnownProperties.Control_IsTabStop] = InitProperty(KnownTypes.Control, null,
+			properties[KnownProperties.Control_IsTabStop] = InitProperty(KnownTypes.Control, "IsTabStop",
 				assemblies[2].Find("System.Boolean", true));
 			properties[KnownProperties.Control_Padding] = InitProperty(KnownTypes.Control, "Padding",
 				assemblies[0].Find("System.Windows.Thickness", true));
-			properties[KnownProperties.Control_TabIndex] = InitProperty(KnownTypes.Control, null,
+			properties[KnownProperties.Control_TabIndex] = InitProperty(KnownTypes.Control, "TabIndex",
 				assemblies[2].Find("System.Int32", true));
 			properties[KnownProperties.Control_Template] = InitProperty(KnownTypes.Control, "Template",
 				assemblies[0].Find("System.Windows.Controls.ControlTemplate", true));
 			properties[KnownProperties.Control_VerticalContentAlignment] = InitProperty(KnownTypes.Control,
 				"VerticalContentAlignment", assemblies[0].Find("System.Windows.VerticalAlignment", true));
-			properties[KnownProperties.DockPanel_Dock] = InitProperty(KnownTypes.DockPanel, null,
+			properties[KnownProperties.DockPanel_Dock] = InitProperty(KnownTypes.DockPanel, "Dock",
 				assemblies[0].Find("System.Windows.Controls.Dock", true));
 			properties[KnownProperties.DockPanel_LastChildFill] = InitProperty(KnownTypes.DockPanel, "LastChildFill",
 				assemblies[2].Find("System.Boolean", true));
@@ -1112,12 +1117,12 @@ namespace dnSpy.BamlDecompiler.Baml {
 				assemblies[1].Find("System.Windows.Media.Geometry", true));
 			properties[KnownProperties.GradientBrush_GradientStops] = InitProperty(KnownTypes.GradientBrush, "GradientStops",
 				assemblies[1].Find("System.Windows.Media.GradientStop", true));
-			properties[KnownProperties.Grid_Column] = InitProperty(KnownTypes.Grid, null,
+			properties[KnownProperties.Grid_Column] = InitProperty(KnownTypes.Grid, "Column",
 				assemblies[2].Find("System.Int32", true));
-			properties[KnownProperties.Grid_ColumnSpan] = InitProperty(KnownTypes.Grid, null,
+			properties[KnownProperties.Grid_ColumnSpan] = InitProperty(KnownTypes.Grid, "ColumnSpan",
 				assemblies[2].Find("System.Int32", true));
-			properties[KnownProperties.Grid_Row] = InitProperty(KnownTypes.Grid, null, assemblies[2].Find("System.Int32", true));
-			properties[KnownProperties.Grid_RowSpan] = InitProperty(KnownTypes.Grid, null,
+			properties[KnownProperties.Grid_Row] = InitProperty(KnownTypes.Grid, "Row", assemblies[2].Find("System.Int32", true));
+			properties[KnownProperties.Grid_RowSpan] = InitProperty(KnownTypes.Grid, "Grid_RowSpan",
 				assemblies[2].Find("System.Int32", true));
 			properties[KnownProperties.GridViewColumn_Header] = InitProperty(KnownTypes.GridViewColumn, "Header",
 				assemblies[2].Find("System.Object", true));
@@ -1548,6 +1553,12 @@ namespace dnSpy.BamlDecompiler.Baml {
 				assemblies[1].Find("System.Windows.UIElement", true));
 			properties[KnownProperties.XmlDataProvider_XmlSerializer] = InitProperty(KnownTypes.XmlDataProvider, "XmlSerializer",
 				assemblies[5].Find("System.Xml.Serialization.IXmlSerializable", true));
+		}
+
+		void InitStrings() {
+			strings[0] = null;
+			strings[1] = "Name";
+			strings[2] = "Uid";
 		}
 	}
 }

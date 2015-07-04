@@ -22,12 +22,16 @@
 
 using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
+using dnlib.DotNet;
+using dnSpy.BamlDecompiler.Baml;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.NRefactory;
+using ICSharpCode.TreeView;
 
 namespace dnSpy.BamlDecompiler {
 	internal class BamlResourceNode : ResourceEntryNode {
@@ -40,17 +44,28 @@ namespace dnSpy.BamlDecompiler {
 			this.bamlData = bamlData;
 		}
 
+		ModuleDef FindModule() {
+			SharpTreeNode node = this;
+			while (node != null && !(node is AssemblyTreeNode))
+				node = node.Parent;
+			if (node == null)
+				return null;
+			return ((AssemblyTreeNode)node).LoadedAssembly.ModuleDefinition;
+		}
+
 		public override bool View(DecompilerTextView textView) {
 			AvalonEditTextOutput output = new AvalonEditTextOutput();
 			IHighlightingDefinition highlighting = null;
+			var lang = MainWindow.Instance.CurrentLanguage;
+			var module = FindModule();
 
 			textView.RunWithCancellation(
 				token => Task.Factory.StartNew(
 					() => {
 						try {
 							bamlData.Position = 0;
-
-							highlighting = HighlightingManager.Instance.GetDefinitionByExtension(".xml");
+							var document = BamlReader.ReadDocument(bamlData, token);
+							Disassemble(module, document, lang, output, out highlighting, token);
 						}
 						catch (Exception ex) {
 							output.Write(ex.ToString(), TextTokenType.Text);
@@ -59,6 +74,13 @@ namespace dnSpy.BamlDecompiler {
 					}, token)
 				).Then(t => textView.ShowNode(t, this, highlighting)).HandleExceptions();
 			return true;
+		}
+
+		void Disassemble(ModuleDef module, BamlDocument document, Language lang,
+			AvalonEditTextOutput output, out IHighlightingDefinition highlight, CancellationToken token) {
+			var disassembler = new BamlDisassembler(lang, output, token);
+			disassembler.Disassemble(module, document);
+			highlight = HighlightingManager.Instance.GetDefinitionByExtension(".cs");
 		}
 	}
 }

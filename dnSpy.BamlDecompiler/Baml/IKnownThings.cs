@@ -1061,7 +1061,22 @@ namespace dnSpy.BamlDecompiler.Baml {
 
 	internal interface IKnownThings {
 		Func<KnownTypes, TypeDef> Types { get; }
-		Func<KnownProperties, Tuple<KnownTypes, PropertyDef, TypeDef>> Properties { get; }
+		Func<KnownProperties, KnownProperty> Properties { get; }
+		Func<int, string> Strings { get; }
 		AssemblyDef FrameworkAssembly { get; }
+	}
+
+	internal class KnownProperty {
+		public KnownProperty(TypeDef declType, string name, TypeDef propertyType) {
+			Property = declType.FindProperty(name);
+			DeclaringType = declType;
+			Name = name;
+			PropertyType = propertyType;
+		}
+
+		public TypeDef DeclaringType { get; private set; }
+		public PropertyDef Property { get; private set; }
+		public string Name { get; private set; }
+		public TypeDef PropertyType { get; private set; }
 	}
 }

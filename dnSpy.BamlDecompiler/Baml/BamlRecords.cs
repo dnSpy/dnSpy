@@ -1053,6 +1053,14 @@ namespace dnSpy.BamlDecompiler.Baml {
 		public byte Flags { get; set; }
 		public ushort ValueId { get; set; }
 
+		public bool IsType {
+			get { return (Flags & 1) != 0; }
+		}
+
+		public bool IsStatic {
+			get { return (Flags & 2) != 0; }
+		}
+
 		public override void Read(BamlBinaryReader reader) {
 			Flags = reader.ReadByte();
 			ValueId = reader.ReadUInt16();
