@@ -216,8 +216,10 @@ namespace ICSharpCode.ILSpy
 		{
 			if (!IsVisible)
 				MainWindow.Instance.ShowInTopPane(PaneTitle, this);
-			else
+			else {
 				searchBox.Focus();
+				searchBox.SelectAll();
+			}
 		}
 
 		public void Opened()
