@@ -303,7 +303,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return asmNode == null ? null : asmNode.LoadedAssembly.ModuleDefinition;
 		}
 
-		internal static T GetNode<T>(SharpTreeNode node) where T : SharpTreeNode
+		public static T GetNode<T>(SharpTreeNode node) where T : SharpTreeNode
 		{
 			while (node != null) {
 				var foundNode = node as T;

@@ -106,7 +106,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		internal TabStateDecompile ActiveTabState {
+		public TabStateDecompile ActiveTabState {
 			get { return tabGroupsManager.ActiveTabGroup.ActiveTabState; }
 		}
 

@@ -29,7 +29,7 @@ using ICSharpCode.ILSpy.TreeNodes;
 
 namespace ICSharpCode.ILSpy
 {
-	abstract class TabState : IDisposable, INotifyPropertyChanged
+	public abstract class TabState : IDisposable, INotifyPropertyChanged
 	{
 		public abstract string Header { get; }
 		public TabItem TabItem;
@@ -127,12 +127,12 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	sealed class TabStateDecompile : TabState
+	public sealed class TabStateDecompile : TabState
 	{
 		public readonly DecompilerTextView TextView = new DecompilerTextView();
-		public readonly NavigationHistory<NavigationState> History = new NavigationHistory<NavigationState>();
-		public bool ignoreDecompilationRequests;
-		public bool HasDecompiled;
+		internal readonly NavigationHistory<NavigationState> History = new NavigationHistory<NavigationState>();
+		internal bool ignoreDecompilationRequests;
+		internal bool HasDecompiled;
 
 		public ILSpyTreeNode[] DecompiledNodes {
 			get { return decompiledNodes; }

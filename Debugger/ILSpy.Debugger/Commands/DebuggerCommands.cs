@@ -835,36 +835,63 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 		public void Initialize(TextViewContext context, MenuItem menuItem)
 		{
-			menuItem.Header = string.Format("_Debug {0}", UIUtils.EscapeMenuItemHeader(((AssemblyTreeNode)context.SelectedTreeNodes[0]).LoadedAssembly.ShortName));
+			var loadedAsm = GetAssembly(context);
+			menuItem.Header = string.Format("_Debug {0}", UIUtils.EscapeMenuItemHeader(loadedAsm.ShortName));
 		}
 
 		public new bool IsVisible(TextViewContext context)
 		{
-			return DebuggerService.CurrentDebugger != null && !DebuggerService.CurrentDebugger.IsDebugging &&
-				context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length > 0 &&
-				context.SelectedTreeNodes.All(
-				delegate (SharpTreeNode n) {
-					AssemblyTreeNode a = n as AssemblyTreeNode;
-					if (a == null)
-						return false;
-					AssemblyDef asm = a.LoadedAssembly.AssemblyDefinition;
-					return asm != null && asm.ManifestModule != null && (asm.ManifestModule.ManagedEntryPoint != null || asm.ManifestModule.NativeEntryPoint != 0);
-				});
+			return IsEnabled(context);
 		}
-		
+
 		public bool IsEnabled(TextViewContext context)
 		{
-			return DebuggerService.CurrentDebugger != null && !DebuggerService.CurrentDebugger.IsDebugging &&
-				context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length == 1 &&
-				context.SelectedTreeNodes[0] is AssemblyTreeNode;
+			return GetAssembly(context) != null;
 		}
-		
+
+		LoadedAssembly GetAssembly(TextViewContext context)
+		{
+			if (DebuggerService.CurrentDebugger == null || DebuggerService.CurrentDebugger.IsDebugging)
+				return null;
+
+			SharpTreeNode node;
+			if (context.TextView != null) {
+				var tabState = MainWindow.Instance.ActiveTabState;
+				if (tabState == null)
+					return null;
+				if (tabState.DecompiledNodes.Length == 0)
+					return null;
+				node = tabState.DecompiledNodes[0];
+			}
+			else if (context.SelectedTreeNodes != null) {
+				if (context.SelectedTreeNodes.Length == 0)
+					return null;
+				node = context.SelectedTreeNodes[0];
+			}
+			else
+				return null;
+
+			var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
+			if (asmNode == null)
+				return null;
+
+			var loadedAsm = asmNode.LoadedAssembly;
+			var mod = loadedAsm.ModuleDefinition;
+			if (mod == null)
+				return null;
+			if (mod.Assembly == null || mod.Assembly.ManifestModule != mod)
+				return null;
+			if (mod.ManagedEntryPoint == null && mod.NativeEntryPoint == 0)
+				return null;
+
+			return loadedAsm;
+		}
+
 		public void Execute(TextViewContext context)
 		{
-			if (context.SelectedTreeNodes == null)
-				return;
-			AssemblyTreeNode n = context.SelectedTreeNodes[0] as AssemblyTreeNode;
-			DebuggerPlugin.Start(n.LoadedAssembly.FileName);
+			var loadedAsm = GetAssembly(context);
+			if (loadedAsm != null)
+				DebuggerPlugin.Start(loadedAsm.FileName);
 		}
 	}
 	
