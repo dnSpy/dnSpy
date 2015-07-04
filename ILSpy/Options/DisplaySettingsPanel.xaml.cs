@@ -121,6 +121,7 @@ namespace ICSharpCode.ILSpy.Options
 			s.SyntaxHighlightTreeViewUI = (bool?)e.Attribute("SyntaxHighlightTreeViewUI") ?? true;
 			s.SyntaxHighlightAnalyzerTreeViewUI = (bool?)e.Attribute("SyntaxHighlightAnalyzerTreeViewUI") ?? true;
 			s.SyntaxHighlightSearchListUI = (bool?)e.Attribute("SyntaxHighlightSearchListUI") ?? true;
+			s.SingleClickExpandsChildren = (bool?)e.Attribute("SingleClickExpandsChildren") ?? true;
 			
 			return s;
 		}
@@ -160,6 +161,7 @@ namespace ICSharpCode.ILSpy.Options
 			section.SetAttributeValue("SyntaxHighlightTreeViewUI", s.SyntaxHighlightTreeViewUI);
 			section.SetAttributeValue("SyntaxHighlightAnalyzerTreeViewUI", s.SyntaxHighlightAnalyzerTreeViewUI);
 			section.SetAttributeValue("SyntaxHighlightSearchListUI", s.SyntaxHighlightSearchListUI);
+			section.SetAttributeValue("SingleClickExpandsChildren", s.SingleClickExpandsChildren);
 			
 			XElement existingElement = root.Element("DisplaySettings");
 			if (existingElement != null)

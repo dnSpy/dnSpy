@@ -216,6 +216,18 @@ namespace ICSharpCode.ILSpy.Options
 			}
 		}
 
+		bool singleClickExpandsChildren;
+
+		public bool SingleClickExpandsChildren {
+			get { return singleClickExpandsChildren; }
+			set {
+				if (singleClickExpandsChildren != value) {
+					singleClickExpandsChildren = value;
+					OnPropertyChanged("SingleClickExpandsChildren");
+				}
+			}
+		}
+
 		public void CopyValues(DisplaySettings s)
 		{
 			this.SelectedFont = s.selectedFont;
@@ -231,6 +243,7 @@ namespace ICSharpCode.ILSpy.Options
 			this.SyntaxHighlightTreeViewUI = s.syntaxHighlightTreeViewUI;
 			this.SyntaxHighlightAnalyzerTreeViewUI = s.syntaxHighlightAnalyzerTreeViewUI;
 			this.SyntaxHighlightSearchListUI = s.syntaxHighlightSearchListUI;
+			this.SingleClickExpandsChildren = s.singleClickExpandsChildren;
 		}
 	}
 }

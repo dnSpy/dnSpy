@@ -125,6 +125,10 @@ namespace ICSharpCode.TreeView
 		{
 			get { return Parent == null; }
 		}
+
+		public virtual bool SingleClickExpandsChildren {
+			get { return false; }
+		}
 		
 		bool isHidden;
 		

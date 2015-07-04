@@ -43,6 +43,10 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
+		public override bool SingleClickExpandsChildren {
+			get { return Options.DisplaySettingsPanel.CurrentDisplaySettings.SingleClickExpandsChildren; }
+		}
+
 		public sealed override object Text {
 			get {
 				var gen = UISyntaxHighlighter.CreateAnalyzerTreeView();

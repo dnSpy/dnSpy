@@ -67,6 +67,7 @@
 				<CheckBox IsChecked="{Binding NewEmptyTabs}">New tabs are empty</CheckBox>
 				<CheckBox IsChecked="{Binding RestoreTabsAtStartup}">Restore tabs at startup</CheckBox>
 				<CheckBox IsChecked="{Binding AutoHighlightRefs}">Highlight references</CheckBox>
+				<CheckBox IsChecked="{Binding SingleClickExpandsChildren}">Single click expands TreeView nodes</CheckBox>
 				<Grid>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto" />

@@ -58,6 +58,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 		}
 
+		public override bool SingleClickExpandsChildren {
+			get { return Options.DisplaySettingsPanel.CurrentDisplaySettings.SingleClickExpandsChildren; }
+		}
+
 		public FilterSettings FilterSettings
 		{
 			get { return filterSettings; }

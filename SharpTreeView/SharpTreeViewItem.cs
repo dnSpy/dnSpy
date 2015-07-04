@@ -93,6 +93,11 @@ namespace ICSharpCode.TreeView
 					}
 				}
 			}
+			else if (!Node.IsExpanded && Node.SingleClickExpandsChildren) {
+				if (!Node.IsRoot || ParentTreeView.ShowRootExpander) {
+					Node.IsExpanded = !Node.IsExpanded;
+				}
+			}
 			
 			ReleaseMouseCapture();
 			if (wasSelected) {
