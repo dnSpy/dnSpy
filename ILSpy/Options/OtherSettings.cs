@@ -22,12 +22,18 @@ using System.IO;
 using System.Security;
 using System.Threading;
 using System.Xml.Linq;
+using System.Windows.Input;
 using Microsoft.Win32;
+using ICSharpCode.ILSpy.AsmEditor;
 
 namespace ICSharpCode.ILSpy.Options
 {
-	sealed class OtherSettings : AsmEditor.ViewModelBase
+	sealed class OtherSettings : ViewModelBase
 	{
+		public ICommand EnableAllWarningsCommand {
+			get { return new RelayCommand(a => EnableAllWarnings(), a => EnableAllWarningsCanExecute()); }
+		}
+
 		public static OtherSettings Instance {
 			get {
 				if (settings != null)
@@ -155,6 +161,16 @@ namespace ICSharpCode.ILSpy.Options
 			catch (Exception ex) {
 				MainWindow.Instance.ShowMessageBox("Cannot add context menu item!" + Environment.NewLine + ex.ToString());
 			}
+		}
+
+		void EnableAllWarnings()
+		{
+			MainWindow.Instance.SessionSettings.IgnoredWarnings.Clear();
+		}
+
+		bool EnableAllWarningsCanExecute()
+		{
+			return MainWindow.Instance.SessionSettings.IgnoredWarnings.Count > 0;
 		}
 	}
 }

@@ -79,7 +79,6 @@
 					<CheckBox Grid.Column="2" Margin="5 0 0 0" IsChecked="{Binding SyntaxHighlightAnalyzerTreeViewUI}">Analyzer</CheckBox>
 					<CheckBox Grid.Column="3" Margin="5 0 0 0" IsChecked="{Binding SyntaxHighlightSearchListUI}">Search</CheckBox>
 				</Grid>
-				<Button Content="Enable all warning messages" Click="enableAllWarnings_Click" />
 			</StackPanel>
 		</GroupBox>
 	</Grid>

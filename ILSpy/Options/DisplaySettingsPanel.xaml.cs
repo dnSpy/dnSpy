@@ -20,7 +20,6 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -169,11 +168,6 @@ namespace ICSharpCode.ILSpy.Options
 				root.Add(section);
 
 			return flags;
-		}
-
-		void enableAllWarnings_Click(object sender, RoutedEventArgs e)
-		{
-			MainWindow.Instance.SessionSettings.IgnoredWarnings.Clear();
 		}
 	}
 	
