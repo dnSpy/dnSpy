@@ -44,6 +44,14 @@
   <ItemGroup>
     <Compile Include="BamlResourceNode.cs" />
     <Compile Include="BamlResourceNodeFactory.cs" />
+    <Compile Include="Baml\BamlDocument.cs" />
+    <Compile Include="Baml\BamlElement.cs" />
+    <Compile Include="Baml\BamlRecords.cs" />
+    <Compile Include="Baml\BamlReader.cs" />
+    <Compile Include="Baml\BamlWriter.cs" />
+    <Compile Include="Baml\IKnownThings.cs" />
+    <Compile Include="Baml\KnownThingsv3.cs" />
+    <Compile Include="Baml\KnownThingsv4.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
