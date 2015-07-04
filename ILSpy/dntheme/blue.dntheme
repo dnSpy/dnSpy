@@ -14,7 +14,7 @@
 		<color name="namespacepart" fg="#216F85" />
 		<color name="type" fg="#2B91AF" />
 		<color name="statictype" fg="#1B5D70" />
-		<color name="delegate" fg="#2EB8E6" />
+		<color name="delegate" fg="#6666FF" />
 		<color name="enum" fg="#336600" />
 		<color name="interface" fg="#1E667A" />
 		<color name="valuetype" fg="#009933" />
