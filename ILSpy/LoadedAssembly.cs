@@ -49,6 +49,7 @@ namespace ICSharpCode.ILSpy
 		}
 
 		static readonly List<string> otherGacPaths = new List<string>();
+		static readonly List<string> winmdPaths = new List<string>();
 
 		static LoadedAssembly() {
 			var windir = Environment.GetEnvironmentVariable("WINDIR");
@@ -56,6 +57,23 @@ namespace ICSharpCode.ILSpy
 				AddIfExists(otherGacPaths, windir, @"Microsoft.NET\Framework\v1.1.4322");
 				AddIfExists(otherGacPaths, windir, @"Microsoft.NET\Framework\v1.0.3705");
 			}
+
+			var dirPF = Environment.GetEnvironmentVariable("ProgramFiles");
+			AddWinMDPaths(winmdPaths, dirPF);
+			var dirPFx86 = Environment.GetEnvironmentVariable("ProgramFiles(x86)");
+			if (!StringComparer.OrdinalIgnoreCase.Equals(dirPF, dirPFx86))
+				AddWinMDPaths(winmdPaths, dirPFx86);
+			AddIfExists(winmdPaths, Environment.SystemDirectory, "WinMetadata");
+		}
+
+		static void AddWinMDPaths(IList<string> paths, string path) {
+			if (string.IsNullOrEmpty(path))
+				return;
+
+			// Add latest versions first since all the Windows.winmd files have the same assembly name
+			AddIfExists(paths, path, @"Windows Kits\10\UnionMetadata");
+			AddIfExists(paths, path, @"Windows Kits\8.1\References\CommonConfiguration\Neutral");
+			AddIfExists(paths, path, @"Windows Kits\8.0\References\CommonConfiguration\Neutral");
 		}
 
 		static void AddIfExists(IList<string> paths, string basePath, string extraPath) {
@@ -236,7 +254,11 @@ namespace ICSharpCode.ILSpy
 		{
 			ModuleContext moduleCtx = new ModuleContext();
 			moduleCtx.AssemblyResolver = new MyAssemblyResolver(this);
-			moduleCtx.Resolver = new Resolver(moduleCtx.AssemblyResolver);
+			// Disable WinMD projection since the user probably expects that clicking on a type
+			// will take you to that type, and not to the projected CLR type.
+			// The decompiler shouldn't have a problem with this since it uses SigComparer() which
+			// defaults to projecting WinMD types.
+			moduleCtx.Resolver = new Resolver(moduleCtx.AssemblyResolver) { ProjectWinMDRefs = false };
 			return moduleCtx;
 		}
 
@@ -451,18 +473,19 @@ namespace ICSharpCode.ILSpy
 			var asm = assemblyList.FindAssemblyByAssemblySimplName(name);
 			if (asm != null)
 				return asm;
-			
-			string file;
-			try {
-				file = Path.Combine(Environment.SystemDirectory, "WinMetadata", name + ".winmd");
-			} catch (ArgumentException) {
-				return null;
+
+			foreach (var winmdPath in winmdPaths) {
+				string file;
+				try {
+					file = Path.Combine(winmdPath, name + ".winmd");
+				}
+				catch (ArgumentException) {
+					continue;
+				}
+				if (File.Exists(file))
+					return assemblyList.OpenAssemblyInternal(file, assemblyLoadDisableCount == 0, true, delay);
 			}
-			if (File.Exists(file)) {
-				return assemblyList.OpenAssemblyInternal(file, assemblyLoadDisableCount == 0, true, delay);
-			} else {
-				return null;
-			}
+			return null;
 		}
 		
 		public Task ContinueWhenLoaded(Action<Task<ModuleDef>> onAssemblyLoaded, TaskScheduler taskScheduler)
