@@ -12,5 +12,7 @@
 		<CheckBox IsChecked="{Binding ShowXmlDocumentation}">Show XML documentation in decompiled code</CheckBox>
 		<CheckBox IsChecked="{Binding AddILComments}">Add IL opcode comments</CheckBox>
 		<CheckBox IsChecked="{Binding RemoveEmptyDefaultConstructors}">Remove empty default constructors</CheckBox>
+		<CheckBox IsChecked="{Binding ShowTokenAndRvaComments}">Show tokens, RVAs and file offsets</CheckBox>
+		<CheckBox IsChecked="{Binding ShowILBytes}">Show IL instruction bytes</CheckBox>
 	</StackPanel>
 </UserControl>

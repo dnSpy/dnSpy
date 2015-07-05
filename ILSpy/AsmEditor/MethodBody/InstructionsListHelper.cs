@@ -135,7 +135,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			});
 		}
 
-		void CopyOffsets(uint baseOffset, InstructionVM[] instrs)
+		void CopyOffsets(ulong baseOffset, InstructionVM[] instrs)
 		{
 			var sb = new StringBuilder();
 

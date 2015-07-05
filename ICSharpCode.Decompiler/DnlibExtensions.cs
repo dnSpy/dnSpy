@@ -22,6 +22,8 @@ using System.Linq;
 using System.Text;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnlib.PE;
+using dnlib.IO;
 
 namespace ICSharpCode.Decompiler
 {
@@ -30,6 +32,39 @@ namespace ICSharpCode.Decompiler
 	/// </summary>
 	public static class DnlibExtensions
 	{
+		public static bool GetRVA(this IMemberDef member, out uint rva, out long fileOffset)
+		{
+			rva = 0;
+			fileOffset = 0;
+
+			if (member is MethodDef)
+				rva = (uint)(member as MethodDef).RVA;
+			else if (member is FieldDef)
+				rva = (uint)(member as FieldDef).RVA;
+			if (rva == 0)
+				return false;
+
+			fileOffset = member.Module.ToFileOffset(rva);
+			return true;
+		}
+
+		public static IImageStream GetImageStream(this ModuleDef module, uint rva)
+		{
+			var m = module as ModuleDefMD;
+			if (m == null)
+				return null;
+
+			return m.MetaData.PEImage.CreateStream((RVA)rva);
+		}
+
+		public static long ToFileOffset(this ModuleDef module, uint rva)
+		{
+			var m = module as ModuleDefMD;
+			if (m == null)
+				return (uint)rva;
+			return (long)m.MetaData.PEImage.ToFileOffset((RVA)rva);
+		}
+
 		#region GetPushDelta / GetPopDelta
 		public static int GetPushDelta(this Instruction instruction, MethodDef methodDef)
 		{
@@ -97,7 +132,7 @@ namespace ICSharpCode.Decompiler
 		
 		public static string OffsetToString(uint offset)
 		{
-			return string.Format("IL_{0:x4}", offset);
+			return string.Format("IL_{0:X4}", offset);
 		}
 		
 		public static HashSet<MethodDef> GetAccessorMethods(this TypeDef type)

@@ -22,6 +22,8 @@ using System.Diagnostics;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnlib.IO;
+using dnlib.PE;
+using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 {
@@ -40,11 +42,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		{
 			this.CodeType = method.CodeType;
 			if (method.MethodBody is CilBody) {
-				FileOffset fileOffset = 0;
-				var mod = method.Module as ModuleDefMD;
-				if (mod != null)
-					fileOffset = mod.MetaData.PEImage.ToFileOffset(method.RVA);
-				this.CilBodyOptions = new CilBodyOptions((CilBody)method.MethodBody, method.RVA, fileOffset);
+				var headerRva = method.RVA;
+				var headerFileOffset = (FileOffset)method.Module.ToFileOffset((uint)headerRva);
+				var rva = (RVA)((uint)headerRva + method.Body.HeaderSize);
+				var fileOffset = (FileOffset)((long)headerFileOffset + method.Body.HeaderSize);
+				this.CilBodyOptions = new CilBodyOptions((CilBody)method.MethodBody, headerRva, headerFileOffset, rva, fileOffset);
 				this.BodyType = MethodBodyType.Cil;
 			}
 			else if (method.MethodBody is NativeMethodBody) {

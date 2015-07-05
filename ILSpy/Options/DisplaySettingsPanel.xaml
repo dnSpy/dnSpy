@@ -63,7 +63,7 @@
 				<CheckBox IsChecked="{Binding ShowMetadataTokens}">Show metadata tokens</CheckBox>
 				<CheckBox IsChecked="{Binding ShowAssemblyVersion}">Show assembly version</CheckBox>
 				<CheckBox IsChecked="{Binding ShowAssemblyPublicKeyToken}">Show assembly public key token</CheckBox>
-				<CheckBox IsChecked="{Binding DecompileFullType}">Automatically decompile a member's type instead of the member</CheckBox>
+				<CheckBox IsChecked="{Binding DecompileFullType}">Decompile the full type instead of a single field / method / etc</CheckBox>
 				<CheckBox IsChecked="{Binding NewEmptyTabs}">New tabs are empty</CheckBox>
 				<CheckBox IsChecked="{Binding RestoreTabsAtStartup}">Restore tabs at startup</CheckBox>
 				<CheckBox IsChecked="{Binding AutoHighlightRefs}">Highlight references</CheckBox>

@@ -17,24 +17,19 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Threading;
 
-using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Utils;
 using dnlib.DotNet;
-using dnlib.DotNet.Emit;
+using dnlib.PE;
 
 namespace ICSharpCode.Decompiler.Ast
 {
@@ -250,6 +245,18 @@ namespace ICSharpCode.Decompiler.Ast
 				return astNamespace;
 			}
 		}
+
+		void AddComment(AstNode node, IMemberDef member)
+		{
+			if (!this.context.Settings.ShowTokenAndRvaComments)
+				return;
+			uint rva;
+			long fileOffset;
+			member.GetRVA(out rva, out fileOffset);
+			if (rva != 0)
+				node.InsertChildAfter(null, new Comment(string.Format(" RVA: 0x{0:X8} File Offset: 0x{1:X8}", rva, fileOffset)), Roles.Comment);
+			node.InsertChildAfter(null, new Comment(string.Format(" Token: 0x{0:X8} RID: {1}", member.MDToken.Raw, member.MDToken.Rid)), Roles.Comment);
+		}
 		
 		public void AddType(TypeDef typeDef)
 		{
@@ -343,6 +350,7 @@ namespace ICSharpCode.Decompiler.Ast
 						}
 						expectedEnumMemberValue = memberValue + 1;
 						astType.AddChild(enumMember, Roles.TypeMemberRole);
+						AddComment(enumMember, field);
 					}
 				}
 			} else if (IsNormalDelegate(typeDef)) {
@@ -358,8 +366,10 @@ namespace ICSharpCode.Decompiler.Ast
 						dd.ReturnType = ConvertType(m.ReturnType, m.Parameters.ReturnParameter.ParamDef);
 						dd.Parameters.AddRange(MakeParameters(m));
 						ConvertAttributes(dd, m.Parameters.ReturnParameter, m.Module);
+						AddComment(dd, m);
 					}
 				}
+				AddComment(dd, typeDef);
 				result = dd;
 			} else {
 				// Base type
@@ -386,6 +396,7 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 			}
 
+			AddComment(astType, typeDef);
 			context.CurrentType = oldCurrentType;
 			return result;
 		}
@@ -870,9 +881,11 @@ namespace ICSharpCode.Decompiler.Ast
 					astMethod.Parameters.MoveTo(op.Parameters);
 					astMethod.Attributes.MoveTo(op.Attributes);
 					op.Body = astMethod.Body.Detach();
+					AddComment(op, methodDef);
 					return op;
 				}
 			}
+			AddComment(astMethod, methodDef);
 			return astMethod;
 		}
 		
@@ -941,6 +954,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (methodDef.IsStatic && methodDef.DeclaringType.IsBeforeFieldInit && !astMethod.Body.IsNull) {
 				astMethod.Body.InsertChildAfter(null, new Comment(" Note: this type is marked as 'beforefieldinit'."), Roles.Comment);
 			}
+			AddComment(astMethod, methodDef);
 			return astMethod;
 		}
 
@@ -1002,6 +1016,7 @@ namespace ICSharpCode.Decompiler.Ast
 				
 				if ((getterModifiers & Modifiers.VisibilityMask) != (astProp.Modifiers & Modifiers.VisibilityMask))
 					astProp.Getter.Modifiers = getterModifiers & Modifiers.VisibilityMask;
+				AddComment(astProp.Getter, propDef.GetMethod);
 			}
 			if (propDef.SetMethod != null) {
 				astProp.Setter = new Accessor();
@@ -1019,6 +1034,7 @@ namespace ICSharpCode.Decompiler.Ast
 				
 				if ((setterModifiers & Modifiers.VisibilityMask) != (astProp.Modifiers & Modifiers.VisibilityMask))
 					astProp.Setter.Modifiers = setterModifiers & Modifiers.VisibilityMask;
+				AddComment(astProp.Setter, propDef.SetMethod);
 			}
 			ConvertCustomAttributes(astProp, propDef);
 
@@ -1028,6 +1044,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if(accessor != null && !accessor.HasOverrides && accessor.DeclaringType != null && !accessor.DeclaringType.IsInterface)
 				if (accessor.IsVirtual == accessor.IsNewSlot)
 					SetNewModifier(member);
+			AddComment(member, propDef);
 			return member;
 		}
 
@@ -1056,6 +1073,7 @@ namespace ICSharpCode.Decompiler.Ast
 				astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
 				if (!eventDef.DeclaringType.IsInterface)
 					astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
+				AddComment(astEvent, eventDef);
 				return astEvent;
 			} else {
 				CustomEventDeclaration astEvent = new CustomEventDeclaration();
@@ -1077,6 +1095,7 @@ namespace ICSharpCode.Decompiler.Ast
 					}.WithAnnotation(eventDef.AddMethod);
 					astEvent.AddAccessor.AddAnnotation(mm);
 					ConvertAttributes(astEvent.AddAccessor, eventDef.AddMethod);
+					AddComment(astEvent.AddAccessor, eventDef.AddMethod);
 				}
 				if (eventDef.RemoveMethod != null) {
 					astEvent.RemoveAccessor = new Accessor {
@@ -1084,11 +1103,13 @@ namespace ICSharpCode.Decompiler.Ast
 					}.WithAnnotation(eventDef.RemoveMethod);
 					astEvent.RemoveAccessor.AddAnnotation(mm);
 					ConvertAttributes(astEvent.RemoveAccessor, eventDef.RemoveMethod);
+					AddComment(astEvent.RemoveAccessor, eventDef.RemoveMethod);
 				}
 				MethodDef accessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
 				if (accessor != null && accessor.IsVirtual == accessor.IsNewSlot) {
 					SetNewModifier(astEvent);
 				}
+				AddComment(astEvent, eventDef);
 				return astEvent;
 			}
 		}
@@ -1140,6 +1161,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			ConvertAttributes(astField, fieldDef);
 			SetNewModifier(astField);
+			AddComment(astField, fieldDef);
 			return astField;
 		}
 

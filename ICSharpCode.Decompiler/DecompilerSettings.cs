@@ -325,7 +325,37 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 		#endregion
-		
+
+		bool showTokenAndRvaComments = true;
+
+		/// <summary>
+		/// Gets/sets whether to show tokens of types/methods/etc and the RVA / file offset in comments
+		/// </summary>
+		public bool ShowTokenAndRvaComments {
+			get { return showTokenAndRvaComments; }
+			set {
+				if (showTokenAndRvaComments != value) {
+					showTokenAndRvaComments = value;
+					OnPropertyChanged("ShowTokenAndRvaComments");
+				}
+			}
+		}
+
+		bool showILBytes;
+
+		/// <summary>
+		/// Gets/sets whether to show IL instruction bytes
+		/// </summary>
+		public bool ShowILBytes {
+			get { return showILBytes; }
+			set {
+				if (showILBytes != value) {
+					showILBytes = value;
+					OnPropertyChanged("ShowILBytes");
+				}
+			}
+		}
+
 		CSharpFormattingOptions csharpFormattingOptions;
 		
 		public CSharpFormattingOptions CSharpFormattingOptions {
@@ -391,6 +421,8 @@ namespace ICSharpCode.Decompiler
 			if (IntroduceIncrementAndDecrement != other.IntroduceIncrementAndDecrement) return false;
 			if (MakeAssignmentExpressions != other.MakeAssignmentExpressions) return false;
 			if (AlwaysGenerateExceptionVariableForCatchBlocks != other.AlwaysGenerateExceptionVariableForCatchBlocks) return false;
+			if (ShowTokenAndRvaComments != other.ShowTokenAndRvaComments) return false;
+			if (ShowILBytes != other.ShowILBytes) return false;
 
 			//TODO: CSharpFormattingOptions. This isn't currently used but it has a ton of properties
 
@@ -428,6 +460,8 @@ namespace ICSharpCode.Decompiler
 				h ^= MakeAssignmentExpressions		? 0 : 0x00002000U;
 				h ^= AlwaysGenerateExceptionVariableForCatchBlocks ? 0 : 0x00001000U;
 				h ^= RemoveEmptyDefaultConstructors	? 0 : 0x00000800U;
+				h ^= ShowTokenAndRvaComments ? 0 : 0x00000400U;
+				h ^= ShowILBytes ? 0 : 0x00000200U;
 
 				//TODO: CSharpFormattingOptions. This isn't currently used but it has a ton of properties
 

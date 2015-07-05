@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnlib.IO;
 
 namespace ICSharpCode.Decompiler.Disassembler
 {
@@ -77,8 +78,38 @@ namespace ICSharpCode.Decompiler.Disassembler
 			WriteOffsetReference(writer, exceptionHandler.HandlerEnd);
 		}
 		
-		public static void WriteTo(this Instruction instruction, ITextOutput writer, Func<OpCode, string> getOpCodeDocumentation)
+		public static void WriteTo(this Instruction instruction, ITextOutput writer, DisassemblerOptions options, uint baseRva, long baseOffs, IImageStream bodyStream)
 		{
+			if (options != null && (options.ShowTokenAndRvaComments || options.ShowILBytes)) {
+				writer.Write("/* ", TextTokenType.Comment);
+
+				bool needSpace = false;
+
+				if (options.ShowTokenAndRvaComments) {
+					writer.Write(string.Format("0x{0:X8}", baseOffs + instruction.Offset), TextTokenType.Comment);
+					needSpace = true;
+				}
+
+				if (options.ShowILBytes) {
+					if (needSpace)
+						writer.Write(' ', TextTokenType.Comment);
+					if (bodyStream == null)
+						writer.Write("??", TextTokenType.Comment);
+					else {
+						int size = instruction.GetSize();
+						for (int i = 0; i < size; i++)
+							writer.Write(string.Format("{0:X2}", bodyStream.ReadByte()), TextTokenType.Comment);
+						// Most instructions should be at most 5 bytes in length. The longest
+						// instructions are those with 8 byte operands, ldc.i8 and ldc.r8: 9 bytes.
+						const int MIN_BYTES = 5;
+						for (int i = size; i < MIN_BYTES; i++)
+							writer.Write("  ", TextTokenType.Comment);
+					}
+				}
+
+				writer.Write(" */", TextTokenType.Comment);
+				writer.WriteSpace();
+			}
 			writer.WriteDefinition(DnlibExtensions.OffsetToString(instruction.GetOffset()), instruction, TextTokenType.Label, false);
 			writer.Write(':', TextTokenType.Operator);
 			writer.WriteSpace();
@@ -98,8 +129,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 				}
 				WriteOperand(writer, instruction.Operand);
 			}
-			if (getOpCodeDocumentation != null) {
-				var doc = getOpCodeDocumentation(instruction.OpCode);
+			if (options != null && options.GetOpCodeDocumentation != null) {
+				var doc = options.GetOpCodeDocumentation(instruction.OpCode);
 				if (doc != null) {
 					writer.Write("\t", TextTokenType.Text);
 					writer.Write("// " + doc, TextTokenType.Comment);

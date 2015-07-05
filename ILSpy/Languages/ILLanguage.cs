@@ -64,7 +64,15 @@ namespace ICSharpCode.ILSpy
 				disOpts.GetOpCodeDocumentation = GetOpCodeDocumentation;
 			if (options.DecompilerSettings.ShowXmlDocumentation)
 				disOpts.GetXmlDocComments = GetXmlDocComments;
+			disOpts.IsBodyModified = IsBodyModified;
+			disOpts.ShowTokenAndRvaComments = options.DecompilerSettings.ShowTokenAndRvaComments;
+			disOpts.ShowILBytes = options.DecompilerSettings.ShowILBytes;
 			return new ReflectionDisassembler(output, detectControlStructure, disOpts);
+		}
+
+		static bool IsBodyModified(MethodDef method)
+		{
+			return MethodAnnotations.Instance.IsBodyModified(method);
 		}
 
 		static readonly string[] cachedOpCodeDocs = new string[0x200];

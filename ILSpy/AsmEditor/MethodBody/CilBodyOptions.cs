@@ -29,8 +29,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 	{
 		public bool KeepOldMaxStack;
 		public bool InitLocals;
+		public byte HeaderSize;
 		public ushort MaxStack;
 		public uint LocalVarSigTok;
+		public RVA HeaderRVA;
+		public FileOffset HeaderFileOffset;
 		public RVA RVA;
 		public FileOffset FileOffset;
 		public List<Instruction> Instructions = new List<Instruction>();
@@ -42,12 +45,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		{
 		}
 
-		public CilBodyOptions(CilBody body, RVA rva, FileOffset fileOffset)
+		public CilBodyOptions(CilBody body, RVA headerRva, FileOffset headerFileOffset, RVA rva, FileOffset fileOffset)
 		{
 			this.KeepOldMaxStack = body.KeepOldMaxStack;
 			this.InitLocals = body.InitLocals;
+			this.HeaderSize = body.HeaderSize;
 			this.MaxStack = body.MaxStack;
 			this.LocalVarSigTok = body.LocalVarSigTok;
+			this.HeaderRVA = headerRva;
+			this.HeaderFileOffset = headerFileOffset;
 			this.RVA = rva;
 			this.FileOffset = fileOffset;
 			this.Instructions.AddRange(body.Instructions);
@@ -60,6 +66,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		{
 			body.KeepOldMaxStack = KeepOldMaxStack;
 			body.InitLocals = InitLocals;
+			body.HeaderSize = HeaderSize;
 			body.MaxStack = MaxStack;
 			body.LocalVarSigTok = LocalVarSigTok;
 			body.Instructions.Clear();

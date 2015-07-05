@@ -72,6 +72,8 @@ namespace ICSharpCode.ILSpy.Options
 			s.ShowXmlDocumentation = (bool?)e.Attribute("xmlDoc") ?? s.ShowXmlDocumentation;
 			s.AddILComments = (bool?)e.Attribute("addILComments") ?? s.AddILComments;
 			s.RemoveEmptyDefaultConstructors = (bool?)e.Attribute("removeEmptyDefaultConstructors") ?? s.RemoveEmptyDefaultConstructors;
+			s.ShowTokenAndRvaComments = (bool?)e.Attribute("showTokenAndRvaComments") ?? s.ShowTokenAndRvaComments;
+			s.ShowILBytes = (bool?)e.Attribute("showILBytes") ?? s.ShowILBytes;
 			return s;
 		}
 		
@@ -101,6 +103,8 @@ namespace ICSharpCode.ILSpy.Options
 			if (CurrentDecompilerSettings.IntroduceIncrementAndDecrement != s.IntroduceIncrementAndDecrement) flags |= RefreshFlags.ILAst;
 			if (CurrentDecompilerSettings.MakeAssignmentExpressions != s.MakeAssignmentExpressions) flags |= RefreshFlags.ILAst;
 			if (CurrentDecompilerSettings.AlwaysGenerateExceptionVariableForCatchBlocks != s.AlwaysGenerateExceptionVariableForCatchBlocks) flags |= RefreshFlags.ILAst;
+			if (CurrentDecompilerSettings.ShowTokenAndRvaComments != s.ShowTokenAndRvaComments) flags |= RefreshFlags.CSharp | RefreshFlags.IL;
+			if (CurrentDecompilerSettings.ShowILBytes != s.ShowILBytes) flags |= RefreshFlags.IL;
 
 			XElement section = new XElement("DecompilerSettings");
 			section.SetAttributeValue("anonymousMethods", s.AnonymousMethods);
@@ -112,6 +116,8 @@ namespace ICSharpCode.ILSpy.Options
 			section.SetAttributeValue("xmlDoc", s.ShowXmlDocumentation);
 			section.SetAttributeValue("addILComments", s.AddILComments);
 			section.SetAttributeValue("removeEmptyDefaultConstructors", s.RemoveEmptyDefaultConstructors);
+			section.SetAttributeValue("showTokenAndRvaComments", s.ShowTokenAndRvaComments);
+			section.SetAttributeValue("showILBytes", s.ShowILBytes);
 			
 			XElement existingElement = root.Element("DecompilerSettings");
 			if (existingElement != null)

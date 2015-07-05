@@ -107,14 +107,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 
 		readonly MethodTreeNode methodNode;
 		readonly MethodBodyOptions newOptions;
-		readonly MethodBodyOptions origOptions;
+		readonly dnlib.DotNet.Emit.MethodBody origMethodBody;
 		bool isBodyModified;
 
 		MethodBodySettingsCommand(MethodTreeNode methodNode, MethodBodyOptions options)
 		{
 			this.methodNode = methodNode;
 			this.newOptions = options;
-			this.origOptions = new MethodBodyOptions(methodNode.MethodDefinition);
+			this.origMethodBody = methodNode.MethodDefinition.MethodBody;
 		}
 
 		public string Description {
@@ -130,7 +130,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 
 		public void Undo()
 		{
-			origOptions.CopyTo(methodNode.MethodDefinition);
+			methodNode.MethodDefinition.MethodBody = origMethodBody;
 			MethodAnnotations.Instance.SetBodyModified(methodNode.MethodDefinition, isBodyModified);
 		}
 

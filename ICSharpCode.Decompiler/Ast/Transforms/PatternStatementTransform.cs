@@ -1126,6 +1126,13 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				dd.Body.HiddenEnd = NRefactoryExtensions.CreateHidden(dd.Body.HiddenEnd, methodDef.Body.HiddenEnd, tc.FinallyBlock);
 				dd.NameToken = Identifier.Create(AstBuilder.CleanName(context.CurrentType.Name)).WithAnnotation(context.CurrentType);
 				methodDef.ReplaceWith(dd);
+				foreach (var child in methodDef.Children.Reverse().ToArray()) {
+					var cmt = child as Comment;
+					if (cmt != null) {
+						cmt.Detach();
+						dd.InsertChildAfter(null, cmt, Roles.Comment);
+					}
+				}
 				return dd;
 			}
 			return null;
