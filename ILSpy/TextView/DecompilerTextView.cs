@@ -663,10 +663,12 @@ namespace ICSharpCode.ILSpy.TextView
 				if (key == null)
 					continue;
 				MemberMapping oldMm;
-				if (cm.TryGetValue(key.Value, out oldMm))
-					Debug.Assert(oldMm == m);
-				else
-					cm[key.Value] = m;
+				// If a dupe is found, use the one with the most member mappings
+				if (cm.TryGetValue(key.Value, out oldMm)) {
+					if (m.MemberCodeMappings.Count < oldMm.MemberCodeMappings.Count)
+						continue;
+				}
+				cm[key.Value] = m;
 			}
 			CodeMappings = cm;
 
