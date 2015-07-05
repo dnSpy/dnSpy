@@ -109,9 +109,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 						int size = instruction.GetSize();
 						for (int i = 0; i < size; i++)
 							writer.Write(string.Format("{0:X2}", bodyStream.ReadByte()), TextTokenType.Comment);
-						// Most instructions should be at most 5 bytes in length. The longest
-						// instructions are those with 8 byte operands, ldc.i8 and ldc.r8: 9 bytes.
-						const int MIN_BYTES = 5;
+						// Most instructions should be at most 5 bytes in length, but use 6 since
+						// ldftn/ldvirtftn are 6 bytes long. The longest instructions are those with
+						// 8 byte operands, ldc.i8 and ldc.r8: 9 bytes.
+						const int MIN_BYTES = 6;
 						for (int i = size; i < MIN_BYTES; i++)
 							writer.Write("  ", TextTokenType.Comment);
 					}
