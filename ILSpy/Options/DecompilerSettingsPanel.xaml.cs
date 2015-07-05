@@ -70,7 +70,7 @@ namespace ICSharpCode.ILSpy.Options
 			s.ExpressionTrees = (bool?)e.Attribute("expressionTrees") ?? s.ExpressionTrees;
 			s.UseDebugSymbols = (bool?)e.Attribute("useDebugSymbols") ?? s.UseDebugSymbols;
 			s.ShowXmlDocumentation = (bool?)e.Attribute("xmlDoc") ?? s.ShowXmlDocumentation;
-			s.AddILComments = (bool?)e.Attribute("addILComments") ?? s.AddILComments;
+			s.ShowILComments = (bool?)e.Attribute("showILComments") ?? s.ShowILComments;
 			s.RemoveEmptyDefaultConstructors = (bool?)e.Attribute("removeEmptyDefaultConstructors") ?? s.RemoveEmptyDefaultConstructors;
 			s.ShowTokenAndRvaComments = (bool?)e.Attribute("showTokenAndRvaComments") ?? s.ShowTokenAndRvaComments;
 			s.ShowILBytes = (bool?)e.Attribute("showILBytes") ?? s.ShowILBytes;
@@ -98,7 +98,7 @@ namespace ICSharpCode.ILSpy.Options
 			if (CurrentDecompilerSettings.UseDebugSymbols != s.UseDebugSymbols) flags |= RefreshFlags.DecompileAll;
 			if (CurrentDecompilerSettings.ObjectOrCollectionInitializers != s.ObjectOrCollectionInitializers) flags |= RefreshFlags.ILAst;
 			if (CurrentDecompilerSettings.ShowXmlDocumentation != s.ShowXmlDocumentation) flags |= RefreshFlags.DecompileAll;
-			if (CurrentDecompilerSettings.AddILComments != s.AddILComments) flags |= RefreshFlags.IL;
+			if (CurrentDecompilerSettings.ShowILComments != s.ShowILComments) flags |= RefreshFlags.IL;
 			if (CurrentDecompilerSettings.RemoveEmptyDefaultConstructors != s.RemoveEmptyDefaultConstructors) flags |= RefreshFlags.CSharp;
 			if (CurrentDecompilerSettings.IntroduceIncrementAndDecrement != s.IntroduceIncrementAndDecrement) flags |= RefreshFlags.ILAst;
 			if (CurrentDecompilerSettings.MakeAssignmentExpressions != s.MakeAssignmentExpressions) flags |= RefreshFlags.ILAst;
@@ -114,7 +114,7 @@ namespace ICSharpCode.ILSpy.Options
 			section.SetAttributeValue("expressionTrees", s.ExpressionTrees);
 			section.SetAttributeValue("useDebugSymbols", s.UseDebugSymbols);
 			section.SetAttributeValue("xmlDoc", s.ShowXmlDocumentation);
-			section.SetAttributeValue("addILComments", s.AddILComments);
+			section.SetAttributeValue("showILComments", s.ShowILComments);
 			section.SetAttributeValue("removeEmptyDefaultConstructors", s.RemoveEmptyDefaultConstructors);
 			section.SetAttributeValue("showTokenAndRvaComments", s.ShowTokenAndRvaComments);
 			section.SetAttributeValue("showILBytes", s.ShowILBytes);

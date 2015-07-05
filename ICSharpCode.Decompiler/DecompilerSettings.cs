@@ -255,14 +255,14 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 
-		bool addILComments = false;
+		bool showILComments = false;
 
-		public bool AddILComments {
-			get { return addILComments; }
+		public bool ShowILComments {
+			get { return showILComments; }
 			set {
-				if (addILComments != value) {
-					addILComments = value;
-					OnPropertyChanged("AddILComments");
+				if (showILComments != value) {
+					showILComments = value;
+					OnPropertyChanged("ShowILComments");
 				}
 			}
 		}
@@ -416,7 +416,7 @@ namespace ICSharpCode.Decompiler
 			if (UseDebugSymbols != other.UseDebugSymbols) return false;
 			if (ObjectOrCollectionInitializers != other.ObjectOrCollectionInitializers) return false;
 			if (ShowXmlDocumentation != other.ShowXmlDocumentation) return false;
-			if (AddILComments != other.AddILComments) return false;
+			if (ShowILComments != other.ShowILComments) return false;
 			if (RemoveEmptyDefaultConstructors != other.RemoveEmptyDefaultConstructors) return false;
 			if (IntroduceIncrementAndDecrement != other.IntroduceIncrementAndDecrement) return false;
 			if (MakeAssignmentExpressions != other.MakeAssignmentExpressions) return false;
@@ -455,7 +455,7 @@ namespace ICSharpCode.Decompiler
 				h ^= UseDebugSymbols				? 0 : 0x00040000U;
 				h ^= ObjectOrCollectionInitializers	? 0 : 0x00020000U;
 				h ^= ShowXmlDocumentation			? 0 : 0x00010000U;
-				h ^= AddILComments					? 0 : 0x00008000U;
+				h ^= ShowILComments					? 0 : 0x00008000U;
 				h ^= IntroduceIncrementAndDecrement	? 0 : 0x00004000U;
 				h ^= MakeAssignmentExpressions		? 0 : 0x00002000U;
 				h ^= AlwaysGenerateExceptionVariableForCatchBlocks ? 0 : 0x00001000U;

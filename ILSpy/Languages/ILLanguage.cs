@@ -60,7 +60,7 @@ namespace ICSharpCode.ILSpy
 		ReflectionDisassembler CreateReflectionDisassembler(ITextOutput output, DecompilationOptions options, ModuleDef ownerModule)
 		{
 			var disOpts = new DisassemblerOptions(options.CancellationToken, ownerModule);
-			if (options.DecompilerSettings.AddILComments)
+			if (options.DecompilerSettings.ShowILComments)
 				disOpts.GetOpCodeDocumentation = GetOpCodeDocumentation;
 			if (options.DecompilerSettings.ShowXmlDocumentation)
 				disOpts.GetXmlDocComments = GetXmlDocComments;

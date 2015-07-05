@@ -107,8 +107,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			output.WriteLine();
 
-			uint baseRva = (uint)method.RVA + method.Body.HeaderSize;
-			long baseOffs = method.Module.ToFileOffset(baseRva);
+			uint baseRva = rva == 0 ? 0 : rva + method.Body.HeaderSize;
+			long baseOffs = baseRva == 0 ? 0 : method.Module.ToFileOffset(baseRva);
 			bool showILBytes = options.ShowILBytes && !isModified;
 			if (isModified && options.ShowILBytes)
 				output.WriteLine("// Method has been modified. Can't show original IL bytes.", TextTokenType.Comment);
