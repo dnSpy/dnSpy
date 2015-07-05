@@ -706,6 +706,9 @@ namespace ICSharpCode.Decompiler.ILAst
 				switch (expr.Code) {
 					case ILCode.Localloc:
 					{
+						// Disable unstable code. Will throw when type is void* because it gets
+						// changed to a byte*.
+#if false
 						PtrSig type = expr.InferredType as PtrSig;
 						if (type != null) {
 							ILExpression arg0 = args[0];
@@ -716,6 +719,7 @@ namespace ICSharpCode.Decompiler.ILAst
 								throw new InvalidOperationException();
 							args[0] = arg0;
 						}
+#endif
 						break;
 					}
 					case ILCode.Add:
