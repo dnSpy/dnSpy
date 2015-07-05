@@ -47,6 +47,16 @@ namespace ICSharpCode.Decompiler.Disassembler
 	
 	public static class DisassemblerHelpers
 	{
+		const int OPERAND_ALIGNMENT = 10;
+
+		static DisassemblerHelpers()
+		{
+			spaces = new string[OPERAND_ALIGNMENT];
+			for (int i = 0; i < spaces.Length; i++)
+				spaces[i] = new string(' ', i);
+		}
+		static readonly string[] spaces;
+
 		public static void WriteOffsetReference(ITextOutput writer, Instruction instruction, TextTokenType tokenType = TextTokenType.Label)
 		{
 			writer.WriteReference(DnlibExtensions.OffsetToString(instruction.GetOffset()), instruction, tokenType);
@@ -115,7 +125,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 			writer.WriteSpace();
 			writer.WriteReference(instruction.OpCode.Name, instruction.OpCode, TextTokenType.OpCode);
 			if (instruction.Operand != null) {
-				writer.WriteSpace();
+				int count = OPERAND_ALIGNMENT - instruction.OpCode.Name.Length;
+				if (count <= 0)
+					count = 1;
+				writer.Write(spaces[count], TextTokenType.Text);
 				if (instruction.OpCode == OpCodes.Ldtoken) {
 					var member = instruction.Operand as IMemberRef;
 					if (member != null && member.IsMethod) {
