@@ -341,7 +341,7 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 
-		bool showILBytes;
+		bool showILBytes = true;
 
 		/// <summary>
 		/// Gets/sets whether to show IL instruction bytes
