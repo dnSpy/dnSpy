@@ -349,56 +349,56 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		public LoadedAssembly LookupReferencedAssembly(IAssembly name, ModuleDef sourceModule = null, bool delay = false)
+		public LoadedAssembly LookupReferencedAssembly(IAssembly asmRef, ModuleDef sourceModule = null, bool delay = false)
 		{
-			FrameworkRedirect.ApplyFrameworkRedirect(ref name, sourceModule);
-			if (name == null)
+			FrameworkRedirect.ApplyFrameworkRedirect(ref asmRef, sourceModule);
+			if (asmRef == null)
 				throw new ArgumentNullException("name");
-			if (name.IsContentTypeWindowsRuntime) {
-				return assemblyList.winRTMetadataLookupCache.GetOrAdd(name.Name, n => LookupWinRTMetadata(n, delay));
+			if (asmRef.IsContentTypeWindowsRuntime) {
+				return assemblyList.winRTMetadataLookupCache.GetOrAdd(asmRef.Name, n => LookupWinRTMetadata(n, delay));
 			} else {
 				// WinMD files have a reference to mscorlib but its version is always 255.255.255.255
 				// since mscorlib isn't really loaded. The resolver only loads exact versions, so
 				// we must change the version or the resolve will fail.
-				if (name.Name == "mscorlib" && name.Version == invalidMscorlibVersion)
-					name = new AssemblyNameInfo(name) { Version = newMscorlibVersion };
-				return LookupReferencedAssembly(name.FullName, sourceModule, delay);
+				if (asmRef.Name == "mscorlib" && asmRef.Version == invalidMscorlibVersion)
+					asmRef = new AssemblyNameInfo(asmRef) { Version = newMscorlibVersion };
+				return LookupReferencedAssembly2(asmRef, sourceModule, delay);
 			}
 		}
 		static readonly Version invalidMscorlibVersion = new Version(255, 255, 255, 255);
 		static readonly Version newMscorlibVersion = new Version(4, 0, 0, 0);
 		
-		LoadedAssembly LookupReferencedAssembly(string fullName, ModuleDef sourceModule, bool delay)
+		LoadedAssembly LookupReferencedAssembly2(IAssembly asmRef, ModuleDef sourceModule, bool delay)
 		{
-			var asm = assemblyList.assemblyLookupCache.GetOrAdd(fullName, n => LookupReferencedAssemblyInternal(n, sourceModule, delay));
+			var fullName = asmRef.FullName;
+			var asm = assemblyList.assemblyLookupCache.GetOrAdd(fullName, n => LookupReferencedAssemblyInternal(asmRef, sourceModule, delay));
 			if (asm != null && asm.AssemblyDefinition != null && !asm.AssemblyDefinition.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase))
 				assemblyList.assemblyLookupCache.TryAdd(asm.AssemblyDefinition.FullName, asm);
 			return asm;
 		}
 		
-		LoadedAssembly LookupReferencedAssemblyInternal(string fullName, ModuleDef sourceModule, bool delay)
+		LoadedAssembly LookupReferencedAssemblyInternal(IAssembly asmRef, ModuleDef sourceModule, bool delay)
 		{
-			var asm = assemblyList.FindAssemblyByAssemblyName(fullName);
+			var asm = assemblyList.FindAssemblyByAssemblyName(asmRef.FullName);
 			if (asm != null)
 				return asm;
 			
-			var name = new AssemblyNameInfo(fullName);
-			var loadedAsm = LookupFromSearchPaths(name, sourceModule, true);
+			var loadedAsm = LookupFromSearchPaths(asmRef, sourceModule, true);
 			if (loadedAsm != null)
 				return assemblyList.AddAssembly(loadedAsm, assemblyLoadDisableCount == 0, delay);
 
 			if (assemblyList.UseGAC) {
-				var file = GacInterop.FindAssemblyInNetGac(name);
+				var file = GacInterop.FindAssemblyInNetGac(asmRef);
 				if (file != null)
 					return assemblyList.OpenAssemblyInternal(file, assemblyLoadDisableCount == 0, true, delay);
 				foreach (var path in otherGacPaths) {
-					loadedAsm = TryLoadFromDir(name, true, path);
+					loadedAsm = TryLoadFromDir(asmRef, true, path);
 					if (loadedAsm != null)
 						return assemblyList.AddAssembly(loadedAsm, assemblyLoadDisableCount == 0, delay);
 				}
 			}
 
-			loadedAsm = LookupFromSearchPaths(name, sourceModule, false);
+			loadedAsm = LookupFromSearchPaths(asmRef, sourceModule, false);
 			if (loadedAsm != null)
 				return assemblyList.AddAssembly(loadedAsm, assemblyLoadDisableCount == 0, delay);
 

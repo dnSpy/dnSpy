@@ -88,7 +88,7 @@ namespace ICSharpCode.ILSpy
 		/// <summary>
 		/// Gets the file name for an assembly stored in the GAC.
 		/// </summary>
-		public static string FindAssemblyInNetGac (AssemblyNameInfo reference)
+		public static string FindAssemblyInNetGac (IAssembly reference)
 		{
 			// without public key, it can't be in the GAC
 			if (PublicKeyBase.IsNullOrEmpty2(reference.PublicKeyOrToken))
@@ -108,7 +108,7 @@ namespace ICSharpCode.ILSpy
 			return null;
 		}
 		
-		static string GetAssemblyFile (AssemblyNameInfo reference, string prefix, string gac)
+		static string GetAssemblyFile (IAssembly reference, string prefix, string gac)
 		{
 			var gac_folder = new StringBuilder ()
 				.Append (prefix)
