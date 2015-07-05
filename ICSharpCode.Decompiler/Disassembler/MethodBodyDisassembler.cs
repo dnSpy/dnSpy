@@ -69,7 +69,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 
 			if (!isModified && options.ShowTokenAndRvaComments) {
 				output.WriteLine(string.Format("// Header Size: {0} {1}", method.Body.HeaderSize, method.Body.HeaderSize == 1 ? "byte" : "bytes"), TextTokenType.Comment);
-				output.WriteLine(string.Format("// Size: {0} (0x{0:X}) {1}", codeSize, codeSize == 1 ? "byte" : "bytes"), TextTokenType.Comment);
+				output.WriteLine(string.Format("// Code Size: {0} (0x{0:X}) {1}", codeSize, codeSize == 1 ? "byte" : "bytes"), TextTokenType.Comment);
 				if (body.LocalVarSigTok != 0)
 					output.WriteLine(string.Format("// LocalVarSig Token: 0x{0:X8} RID: {1}", body.LocalVarSigTok, body.LocalVarSigTok & 0xFFFFFF), TextTokenType.Comment);
 			}
