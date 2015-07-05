@@ -357,9 +357,16 @@ namespace ICSharpCode.ILSpy
 			if (name.IsContentTypeWindowsRuntime) {
 				return assemblyList.winRTMetadataLookupCache.GetOrAdd(name.Name, n => LookupWinRTMetadata(n, delay));
 			} else {
+				// WinMD files have a reference to mscorlib but its version is always 255.255.255.255
+				// since mscorlib isn't really loaded. The resolver only loads exact versions, so
+				// we must change the version or the resolve will fail.
+				if (name.Name == "mscorlib" && name.Version == invalidMscorlibVersion)
+					name = new AssemblyNameInfo(name) { Version = newMscorlibVersion };
 				return LookupReferencedAssembly(name.FullName, sourceModule, delay);
 			}
 		}
+		static readonly Version invalidMscorlibVersion = new Version(255, 255, 255, 255);
+		static readonly Version newMscorlibVersion = new Version(4, 0, 0, 0);
 		
 		LoadedAssembly LookupReferencedAssembly(string fullName, ModuleDef sourceModule, bool delay)
 		{
