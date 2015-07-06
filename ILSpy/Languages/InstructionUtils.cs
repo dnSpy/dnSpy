@@ -31,8 +31,8 @@ namespace ICSharpCode.ILSpy
 			if ((uint)code <= 0xFF)
 				instrs.Add((byte)code);
 			else if (((uint)code >> 8) == 0xFE) {
-				instrs.Add(unchecked((byte)code));
 				instrs.Add((byte)((uint)code >> 8));
+				instrs.Add(unchecked((byte)code));
 			}
 			else if (code == Code.UNKNOWN1)
 				instrs.AddUnknownByte();
