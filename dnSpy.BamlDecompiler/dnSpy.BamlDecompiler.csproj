@@ -42,12 +42,16 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ToggleDisassemblyContextMenuEntry.cs" />
+    <Compile Include="XamlContext.cs" />
+    <Compile Include="XamlDecompiler.cs" />
     <Compile Include="BamlDisassembler.cs" />
+    <Compile Include="BamlElement.cs" />
     <Compile Include="BamlResourceNode.cs" />
     <Compile Include="BamlResourceNodeFactory.cs" />
     <Compile Include="Baml\BamlContext.cs" />
     <Compile Include="Baml\BamlDocument.cs" />
-    <Compile Include="Baml\BamlElement.cs" />
+    <Compile Include="Baml\BamlNode.cs" />
     <Compile Include="Baml\BamlRecords.cs" />
     <Compile Include="Baml\BamlReader.cs" />
     <Compile Include="Baml\BamlWriter.cs" />

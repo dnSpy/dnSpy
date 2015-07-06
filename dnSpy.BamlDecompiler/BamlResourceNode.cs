@@ -38,6 +38,8 @@ namespace dnSpy.BamlDecompiler {
 		string bamlName;
 		Stream bamlData;
 
+		bool isDisassembly = false;
+
 		public BamlResourceNode(string bamlName, Stream bamlData)
 			: base(bamlName, bamlData) {
 			this.bamlName = bamlName;
@@ -53,6 +55,12 @@ namespace dnSpy.BamlDecompiler {
 			return ((AssemblyTreeNode)node).LoadedAssembly.ModuleDefinition;
 		}
 
+		// TODO: Save state in history?
+		public void ToggleDisassembly() {
+			isDisassembly = !isDisassembly;
+			View(MainWindow.Instance.SafeActiveTextView);
+		}
+
 		public override bool View(DecompilerTextView textView) {
 			AvalonEditTextOutput output = new AvalonEditTextOutput();
 			IHighlightingDefinition highlighting = null;
@@ -65,7 +73,10 @@ namespace dnSpy.BamlDecompiler {
 						try {
 							bamlData.Position = 0;
 							var document = BamlReader.ReadDocument(bamlData, token);
-							Disassemble(module, document, lang, output, out highlighting, token);
+							if (isDisassembly)
+								Disassemble(module, document, lang, output, out highlighting, token);
+							else
+								Decompile(module, document, lang, output, out highlighting, token);
 						}
 						catch (Exception ex) {
 							output.Write(ex.ToString(), TextTokenType.Text);
@@ -81,6 +92,15 @@ namespace dnSpy.BamlDecompiler {
 			var disassembler = new BamlDisassembler(lang, output, token);
 			disassembler.Disassemble(module, document);
 			highlight = HighlightingManager.Instance.GetDefinitionByExtension(".cs");
+		}
+
+		void Decompile(ModuleDef module, BamlDocument document, Language lang,
+			AvalonEditTextOutput output, out IHighlightingDefinition highlight, CancellationToken token) {
+			var decompiler = new XamlDecompiler();
+			var xaml = decompiler.Decompile(module, document, token);
+
+			output.Write(xaml.ToString(), TextTokenType.Text);
+			highlight = HighlightingManager.Instance.GetDefinitionByExtension(".xml");
 		}
 	}
 }

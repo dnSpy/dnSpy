@@ -250,8 +250,8 @@ namespace dnSpy.BamlDecompiler {
 		Stack<BamlRecord> scopeStack = new Stack<BamlRecord>();
 
 		void DisassembleRecord(BamlContext ctx, BamlRecord record) {
-			if (BamlElement.IsFooter(record)) {
-				while (scopeStack.Count > 0 && !BamlElement.IsMatch(scopeStack.Peek(), record)) {
+			if (BamlNode.IsFooter(record)) {
+				while (scopeStack.Count > 0 && !BamlNode.IsMatch(scopeStack.Peek(), record)) {
 					scopeStack.Pop();
 					output.Unindent();
 				}
@@ -272,7 +272,7 @@ namespace dnSpy.BamlDecompiler {
 
 			output.WriteLine();
 
-			if (BamlElement.IsHeader(record)) {
+			if (BamlNode.IsHeader(record)) {
 				scopeStack.Push(record);
 				output.Indent();
 			}

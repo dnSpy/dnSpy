@@ -23,14 +23,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 
 namespace dnSpy.BamlDecompiler.Baml {
-	internal class BamlElement {
-		public BamlElement Parent { get; private set; }
-		public BamlRecord Header { get; private set; }
-		public IList<BamlRecord> Body { get; private set; }
-		public IList<BamlElement> Children { get; private set; }
-		public BamlRecord Footer { get; private set; }
+	internal class BamlNode {
+		public BamlNode Parent { get; set; }
 
 		public static bool IsHeader(BamlRecord rec) {
 			switch (rec.Type) {
@@ -98,20 +95,21 @@ namespace dnSpy.BamlDecompiler.Baml {
 			return false;
 		}
 
-		public static BamlElement Read(BamlDocument document) {
+		public static BamlNode Parse(BamlDocument document, CancellationToken token) {
 			Debug.Assert(document.Count > 0 && document[0].Type == BamlRecordType.DocumentStart);
 
-			BamlElement current = null;
-			var stack = new Stack<BamlElement>();
+			BamlBlockNode current = null;
+			var stack = new Stack<BamlBlockNode>();
 
 			for (int i = 0; i < document.Count; i++) {
-				if (IsHeader(document[i])) {
-					BamlElement prev = current;
+				token.ThrowIfCancellationRequested();
 
-					current = new BamlElement();
-					current.Header = document[i];
-					current.Body = new List<BamlRecord>();
-					current.Children = new List<BamlElement>();
+				if (IsHeader(document[i])) {
+					var prev = current;
+
+					current = new BamlBlockNode {
+						Header = document[i]
+					};
 
 					if (prev != null) {
 						prev.Children.Add(current);
@@ -133,10 +131,28 @@ namespace dnSpy.BamlDecompiler.Baml {
 						current = stack.Pop();
 				}
 				else
-					current.Body.Add(document[i]);
+					current.Children.Add(new BamlRecordNode(document[i]));
 			}
 			Debug.Assert(stack.Count == 0);
 			return current;
+		}
+	}
+
+	internal class BamlRecordNode : BamlNode {
+		public BamlRecord Record { get; set; }
+
+		public BamlRecordNode(BamlRecord record) {
+			Record = record;
+		}
+	}
+
+	internal class BamlBlockNode : BamlNode {
+		public BamlRecord Header { get; set; }
+		public IList<BamlNode> Children { get; private set; }
+		public BamlRecord Footer { get; set; }
+
+		public BamlBlockNode() {
+			Children = new List<BamlNode>();
 		}
 	}
 }
