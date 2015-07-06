@@ -59,6 +59,10 @@
     <Compile Include="Baml\KnownThingsv3.cs" />
     <Compile Include="Baml\KnownThingsv4.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Xaml\XamlProperty.cs" />
+    <Compile Include="Xaml\NamespaceMap.cs" />
+    <Compile Include="Xaml\XamlType.cs" />
+    <Compile Include="XmlnsDictionary.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">

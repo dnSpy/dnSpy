@@ -20,20 +20,29 @@
 	THE SOFTWARE.
 */
 
+using System.Collections.Generic;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Baml;
+using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler {
 	internal class XamlContext {
 		XamlContext(ModuleDef module) {
 			Module = module;
+			NodeMap = new Dictionary<BamlRecord, BamlBlockNode>();
 		}
+
+		Dictionary<ushort, XamlType> typeMap = new Dictionary<ushort, XamlType>();
+		Dictionary<ushort, XamlProperty> propertyMap = new Dictionary<ushort, XamlProperty>();
 
 		public ModuleDef Module { get; private set; }
 
 		public BamlContext Baml { get; private set; }
 		public BamlNode RootNode { get; private set; }
+		public IDictionary<BamlRecord, BamlBlockNode> NodeMap { get; private set; }
+
+		public XmlnsDictionary XmlNs { get; private set; }
 
 		public static XamlContext Construct(ModuleDef module, BamlDocument document, CancellationToken token) {
 			var ctx = new XamlContext(module);
@@ -41,7 +50,34 @@ namespace dnSpy.BamlDecompiler {
 			ctx.Baml = BamlContext.ConstructContext(module, document, token);
 			ctx.RootNode = BamlNode.Parse(document, token);
 
+			ctx.BuildNodeMap(ctx.RootNode as BamlBlockNode, new RecursionCounter());
+
 			return ctx;
+		}
+
+		void BuildNodeMap(BamlBlockNode node, RecursionCounter counter) {
+			if (node == null || !counter.Increment())
+				return;
+
+			NodeMap[node.Header] = node;
+
+			foreach (var child in node.Children) {
+				var childBlock = child as BamlBlockNode;
+				if (childBlock != null)
+					BuildNodeMap(childBlock, counter);
+			}
+
+			counter.Decrement();
+		}
+
+		void BuildPIMappings(BamlDocument document) {
+			foreach (var record in document) {
+				var piMap = record as PIMappingRecord;
+				if (piMap == null)
+					continue;
+
+				XmlNs.SetPIMapping(piMap.XmlNamespace, piMap.ClrNamespace, null);
+			}
 		}
 	}
 }

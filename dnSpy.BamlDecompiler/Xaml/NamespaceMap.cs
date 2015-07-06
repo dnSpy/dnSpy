@@ -20,43 +20,28 @@
 	THE SOFTWARE.
 */
 
-using System.Xml.Linq;
-using dnSpy.BamlDecompiler.Baml;
+using dnlib.DotNet;
 
-namespace dnSpy.BamlDecompiler {
-	internal struct XamlNode {
-		XamlNode(XElement value) {
-			Element = value;
-			String = null;
+namespace dnSpy.BamlDecompiler.Xaml {
+	internal struct NamespaceMap {
+		public readonly string XmlnsPrefix;
+		public readonly AssemblyDef Assembly;
+		public readonly string XMLNamespace;
+		public readonly string CLRNamespace;
+
+		public NamespaceMap(string prefix, AssemblyDef asm, string xmlNs)
+			: this(prefix, asm, xmlNs, null) {
 		}
 
-		XamlNode(string value) {
-			Element = null;
-			String = value;
+		public NamespaceMap(string prefix, AssemblyDef asm, string xmlNs, string clrNs) {
+			XmlnsPrefix = prefix;
+			Assembly = asm;
+			XMLNamespace = xmlNs;
+			CLRNamespace = clrNs;
 		}
 
-		public readonly XElement Element;
-		public readonly string String;
-
-		public static implicit operator XamlNode(XElement value) {
-			return new XamlNode(value);
+		public override string ToString() {
+			return string.Format("{0}:[{1}|{2}]", XmlnsPrefix, Assembly.Name, CLRNamespace ?? XMLNamespace);
 		}
-
-		public static implicit operator XamlNode(string value) {
-			return new XamlNode(value);
-		}
-
-		public static implicit operator XElement(XamlNode node) {
-			return node.Element;
-		}
-
-		public static implicit operator string(XamlNode node) {
-			return node.String;
-		}
-	}
-
-	internal class BamlElement {
-		public BamlNode Node { get; set; }
-		public XamlNode Xaml { get; set; }
 	}
 }

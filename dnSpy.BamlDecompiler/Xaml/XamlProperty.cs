@@ -20,43 +20,14 @@
 	THE SOFTWARE.
 */
 
-using System.Xml.Linq;
-using dnSpy.BamlDecompiler.Baml;
+namespace dnSpy.BamlDecompiler.Xaml {
+	internal class XamlProperty {
+		public XamlType DeclaringType { get; private set; }
+		public string PropertyName { get; private set; }
 
-namespace dnSpy.BamlDecompiler {
-	internal struct XamlNode {
-		XamlNode(XElement value) {
-			Element = value;
-			String = null;
+		public XamlProperty(XamlType type, string name) {
+			DeclaringType = type;
+			PropertyName = name;
 		}
-
-		XamlNode(string value) {
-			Element = null;
-			String = value;
-		}
-
-		public readonly XElement Element;
-		public readonly string String;
-
-		public static implicit operator XamlNode(XElement value) {
-			return new XamlNode(value);
-		}
-
-		public static implicit operator XamlNode(string value) {
-			return new XamlNode(value);
-		}
-
-		public static implicit operator XElement(XamlNode node) {
-			return node.Element;
-		}
-
-		public static implicit operator string(XamlNode node) {
-			return node.String;
-		}
-	}
-
-	internal class BamlElement {
-		public BamlNode Node { get; set; }
-		public XamlNode Xaml { get; set; }
 	}
 }
