@@ -25,15 +25,15 @@ using dnlib.DotNet;
 namespace dnSpy.BamlDecompiler.Xaml {
 	internal class NamespaceMap {
 		public string XmlnsPrefix { get; set; }
-		public AssemblyDef Assembly { get; set; }
+		public IAssembly Assembly { get; set; }
 		public string XMLNamespace { get; set; }
 		public string CLRNamespace { get; set; }
 
-		public NamespaceMap(string prefix, AssemblyDef asm, string xmlNs)
+		public NamespaceMap(string prefix, IAssembly asm, string xmlNs)
 			: this(prefix, asm, xmlNs, null) {
 		}
 
-		public NamespaceMap(string prefix, AssemblyDef asm, string xmlNs, string clrNs) {
+		public NamespaceMap(string prefix, IAssembly asm, string xmlNs, string clrNs) {
 			XmlnsPrefix = prefix;
 			Assembly = asm;
 			XMLNamespace = xmlNs;

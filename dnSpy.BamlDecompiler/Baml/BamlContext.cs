@@ -29,7 +29,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 		public ModuleDef Module { get; private set; }
 		public IKnownThings KnownThings { get; private set; }
 
-		Dictionary<ushort, AssemblyDef> assemblyMap = new Dictionary<ushort, AssemblyDef>();
+		Dictionary<ushort, IAssembly> assemblyMap = new Dictionary<ushort, IAssembly>();
 
 		public Dictionary<ushort, AssemblyInfoRecord> AssemblyIdMap { get; private set; }
 		public Dictionary<ushort, AttributeInfoRecord> AttributeIdMap { get; private set; }
@@ -77,21 +77,25 @@ namespace dnSpy.BamlDecompiler.Baml {
 			return ctx;
 		}
 
-		public AssemblyDef ResolveAssembly(ushort id) {
-			AssemblyDef assembly;
+		public IAssembly ResolveAssembly(ushort id) {
+			id &= 0xfff;
+			IAssembly assembly;
 			if (!assemblyMap.TryGetValue(id, out assembly)) {
 				AssemblyInfoRecord assemblyRec;
-				if (id == 0xffff)
-					assembly = KnownThings.FrameworkAssembly;
-				else if (AssemblyIdMap.TryGetValue(id, out assemblyRec)) {
+				if (AssemblyIdMap.TryGetValue(id, out assemblyRec)) {
 					var assemblyName = new AssemblyNameInfo(assemblyRec.AssemblyFullName);
+
 					if (assemblyName.Name == Module.Assembly.Name)
 						assembly = Module.Assembly;
 					else
 						assembly = Module.Context.AssemblyResolver.Resolve(assemblyName, Module);
+
+					if (assembly == null)
+						assembly = assemblyName;
 				}
 				else
 					assembly = null;
+
 				assemblyMap[id] = assembly;
 			}
 			return assembly;

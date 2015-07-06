@@ -20,22 +20,62 @@
 	THE SOFTWARE.
 */
 
+using System.Diagnostics;
 using System.Xml;
 using System.Xml.Linq;
 using dnlib.DotNet;
 
 namespace dnSpy.BamlDecompiler.Xaml {
 	internal class XamlType {
-		public XNamespace Namespace { get; private set; }
+		public IAssembly Assembly { get; private set; }
+		public string TypeNamespace { get; private set; }
 		public string TypeName { get; private set; }
+
+		public XNamespace Namespace { get; private set; }
 		public ITypeDefOrRef ResolvedType { get; set; }
 
-		public XamlType(XNamespace ns, string name) {
-			Namespace = ns;
+		public XamlType(IAssembly assembly, string ns, string name)
+			: this(assembly, ns, name, null) {
+		}
+
+		public XamlType(IAssembly assembly, string ns, string name, XNamespace xmlns) {
+			Assembly = assembly;
+			TypeNamespace = ns;
 			TypeName = name;
+			Namespace = xmlns;
+		}
+
+		public void ResolveNamespace(XamlContext ctx) {
+			if (Namespace != null)
+				return;
+
+			// Since XmlnsProperty records are inside the element,
+			// the namespace is resolved after processing the element body.
+
+			string xmlNs = ctx.XmlNs.LookupXmlns(Assembly, TypeNamespace, true);
+			if (xmlNs == null) {
+				var element = ctx.XmlNs.GetCurrentElement(true);
+				Debug.Assert(element != null);
+
+				var nsSeg = TypeNamespace.Split('.');
+				var nsName = nsSeg[nsSeg.Length - 1].ToLowerInvariant();
+				var prefix = nsName;
+				int count = 0;
+				while (element.Xaml.Element.GetNamespaceOfPrefix(prefix) != null) {
+					count++;
+					prefix = nsName + count;
+				}
+
+				xmlNs = string.Format("clr-namespace:{0};assembly={1}", TypeNamespace, Assembly);
+				element.Xaml.Element.Add(new XAttribute(XNamespace.Xmlns + XmlConvert.EncodeLocalName(prefix),
+					ctx.GetXmlNamespace(xmlNs)));
+			}
+			Namespace = xmlNs;
 		}
 
 		public XName ToXName(XamlContext ctx) {
+			if (Namespace == null)
+				return XmlConvert.EncodeLocalName(TypeName);
 			return Namespace + XmlConvert.EncodeLocalName(TypeName);
 		}
 

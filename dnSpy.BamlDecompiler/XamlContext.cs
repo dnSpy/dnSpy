@@ -20,7 +20,6 @@
 	THE SOFTWARE.
 */
 
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Xml.Linq;
@@ -86,9 +85,9 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		class DummyAssemblyRefFinder : IAssemblyRefFinder {
-			readonly AssemblyDef assemblyDef;
+			readonly IAssembly assemblyDef;
 
-			public DummyAssemblyRefFinder(AssemblyDef assemblyDef) {
+			public DummyAssemblyRefFinder(IAssembly assemblyDef) {
 				this.assemblyDef = assemblyDef;
 			}
 
@@ -103,11 +102,11 @@ namespace dnSpy.BamlDecompiler {
 				return xamlType;
 
 			ITypeDefOrRef type;
-			AssemblyDef assembly;
+			IAssembly assembly;
 
 			if (id > 0x7fff) {
 				type = Baml.KnownThings.Types((KnownTypes)(-id));
-				assembly = (AssemblyDef)type.DefinitionAssembly;
+				assembly = type.DefinitionAssembly;
 			}
 			else {
 				var typeRec = Baml.TypeIdMap[id];
@@ -117,10 +116,8 @@ namespace dnSpy.BamlDecompiler {
 
 			var clrNs = type.ReflectionNamespace;
 			var xmlNs = XmlNs.LookupXmlns(assembly, clrNs);
-			if (xmlNs == null)
-				throw new NotSupportedException(); // TODO: create a new xmlns?
 
-			typeMap[id] = xamlType = new XamlType(GetXmlNamespace(xmlNs), type.ReflectionName) {
+			typeMap[id] = xamlType = new XamlType(assembly, clrNs, type.ReflectionName, GetXmlNamespace(xmlNs)) {
 				ResolvedType = type
 			};
 
@@ -159,6 +156,9 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		public XNamespace GetXmlNamespace(string xmlns) {
+			if (xmlns == null)
+				return null;
+
 			XNamespace ns;
 			if (!xmlnsMap.TryGetValue(xmlns, out ns))
 				ns = XNamespace.Get(xmlns);

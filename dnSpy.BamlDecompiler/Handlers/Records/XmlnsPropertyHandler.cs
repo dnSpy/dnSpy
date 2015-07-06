@@ -22,6 +22,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Xml;
 using System.Xml.Linq;
 using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Baml;
@@ -51,8 +52,10 @@ namespace dnSpy.BamlDecompiler.Handlers {
 			foreach (var asmId in record.AssemblyIds) {
 				var assembly = ctx.Baml.ResolveAssembly(asmId);
 				ctx.XmlNs.Add(new NamespaceMap(record.Prefix, assembly, record.XmlNamespace));
-				foreach (var clrNs in ResolveCLRNamespaces(assembly, record.XmlNamespace)) {
-					ctx.XmlNs.Add(new NamespaceMap(record.Prefix, assembly, record.XmlNamespace, clrNs));
+
+				if (assembly is AssemblyDef) {
+					foreach (var clrNs in ResolveCLRNamespaces((AssemblyDef)assembly, record.XmlNamespace))
+						ctx.XmlNs.Add(new NamespaceMap(record.Prefix, assembly, record.XmlNamespace, clrNs));
 				}
 			}
 
@@ -60,7 +63,7 @@ namespace dnSpy.BamlDecompiler.Handlers {
 			if (string.IsNullOrEmpty(record.Prefix))
 				xmlnsDef = "xmlns";
 			else
-				xmlnsDef = XNamespace.Xmlns + record.Prefix;
+				xmlnsDef = XNamespace.Xmlns + XmlConvert.EncodeLocalName(record.Prefix);
 			parent.Xaml.Element.Add(new XAttribute(xmlnsDef, ctx.GetXmlNamespace(record.XmlNamespace)));
 
 			return null;

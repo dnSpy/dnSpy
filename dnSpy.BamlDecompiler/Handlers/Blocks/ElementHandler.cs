@@ -36,13 +36,13 @@ namespace dnSpy.BamlDecompiler.Handlers {
 			var elemType = ctx.ResolveType(record.TypeId);
 			doc.Xaml = new XElement(elemType.ToXName(ctx));
 
-			if (elemType.ResolvedType != null)
-				doc.Xaml.Element.AddAnnotation(elemType.ResolvedType);
+			doc.Xaml.Element.AddAnnotation(elemType);
 			parent.Xaml.Element.Add(doc.Xaml.Element);
 
-			ctx.XmlNs.PushScope();
 			HandlerMap.ProcessChildren(ctx, (BamlBlockNode)node, doc);
-			ctx.XmlNs.PopScope();
+			elemType.ResolveNamespace(ctx);
+			doc.Xaml.Element.Name = elemType.ToXName(ctx);
+
 			return doc;
 		}
 	}
