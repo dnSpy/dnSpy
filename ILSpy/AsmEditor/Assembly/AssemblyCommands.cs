@@ -66,6 +66,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			var module = asmNode.LoadedAssembly.ModuleDefinition as ModuleDefMD;
 			if (module == null)
 				return null;
+			if (!module.MetaData.PEImage.IsMemoryMappedIO)
+				return null;
 
 			return asmNode.LoadedAssembly;
 		}

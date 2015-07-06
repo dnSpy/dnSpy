@@ -310,6 +310,7 @@
     <Compile Include="AsmEditor\Field\FieldOptionsVM.cs" />
     <Compile Include="AsmEditor\IIndexedItem.cs" />
     <Compile Include="AsmEditor\IndexObservableCollection.cs" />
+    <Compile Include="AsmEditor\InstructionCommands.cs" />
     <Compile Include="AsmEditor\IUndoCommand.cs" />
     <Compile Include="AsmEditor\ListBoxHelperBase.cs" />
     <Compile Include="AsmEditor\ListVM.cs" />
@@ -484,6 +485,10 @@
     <Compile Include="Images\ImageCache.cs" />
     <Compile Include="Images\ThemedImageCreator.cs" />
     <Compile Include="IPlugin.cs" />
+    <Compile Include="Languages\InstructionBytesReader.cs" />
+    <Compile Include="Languages\InstructionUtils.cs" />
+    <Compile Include="Languages\ModifiedInstructionBytesReader.cs" />
+    <Compile Include="Languages\OriginalInstructionBytesReader.cs" />
     <Compile Include="MethodAnnotations.cs" />
     <Compile Include="MsgBox.xaml.cs">
       <DependentUpon>MsgBox.xaml</DependentUpon>

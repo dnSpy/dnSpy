@@ -1418,10 +1418,10 @@ namespace ICSharpCode.ILSpy.TextView
 				return true;
 			if (a == null || b == null)
 				return false;
-			if (a.Reference == b.Reference)
-				return true;
 			if (a.Reference == null || b.Reference == null)
 				return false;
+			if (a.Reference.Equals(b.Reference))
+				return true;
 
 			var ma = a.Reference as IMemberRef;
 			var mb = b.Reference as IMemberRef;
@@ -1430,13 +1430,6 @@ namespace ICSharpCode.ILSpy.TextView
 				mb = Resolve(mb) ?? mb;
 				return new SigComparer(SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable).Equals(ma, mb);
 			}
-
-			// Labels are strings, but the strings might not be the same reference, so make sure
-			// to do the comparison as strings.
-			var sa = a.Reference as string;
-			var sb = b.Reference as string;
-			if (sa != null && sb != null)
-				return sa == sb;
 
 			return false;
 		}

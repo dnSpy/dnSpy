@@ -51,9 +51,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 		public Func<IMemberRef, IEnumerable<string>> GetXmlDocComments;
 
 		/// <summary>
-		/// Returns true if method has been modified
+		/// Creates a <see cref="IInstructionBytesReader"/> instance
 		/// </summary>
-		public Func<MethodDef, bool> IsBodyModified;
+		public Func<MethodDef, IInstructionBytesReader> CreateInstructionBytesReader;
 
 		/// <summary>
 		/// Show tokens, RVAs, file offsets

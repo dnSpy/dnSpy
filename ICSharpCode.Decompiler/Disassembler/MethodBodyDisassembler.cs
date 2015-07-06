@@ -18,17 +18,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 
-using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.FlowAnalysis;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using dnlib.PE;
-using dnlib.IO;
 
 namespace ICSharpCode.Decompiler.Disassembler
 {
@@ -55,19 +49,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 			// start writing IL code
 			CilBody body = method.Body;
 			uint codeSize = (uint)body.GetCodeSize();
-			bool isModified = options.IsBodyModified != null && options.IsBodyModified(method);
-
 			uint rva = (uint)method.RVA;
-			long offset;
-			if (isModified) {
-				rva = 0;
-				offset = 0;
-			}
-			else {
-				offset = method.Module.ToFileOffset(rva);
-			}
+			long offset = method.Module.ToFileOffset(rva);
 
-			if (!isModified && options.ShowTokenAndRvaComments) {
+			if (options.ShowTokenAndRvaComments) {
 				output.WriteLine(string.Format("// Header Size: {0} {1}", method.Body.HeaderSize, method.Body.HeaderSize == 1 ? "byte" : "bytes"), TextTokenType.Comment);
 				output.WriteLine(string.Format("// Code Size: {0} (0x{0:X}) {1}", codeSize, codeSize == 1 ? "byte" : "bytes"), TextTokenType.Comment);
 				if (body.LocalVarSigTok != 0)
@@ -109,21 +94,18 @@ namespace ICSharpCode.Decompiler.Disassembler
 
 			uint baseRva = rva == 0 ? 0 : rva + method.Body.HeaderSize;
 			long baseOffs = baseRva == 0 ? 0 : method.Module.ToFileOffset(baseRva);
-			bool showILBytes = options.ShowILBytes && !isModified;
-			if (isModified && options.ShowILBytes)
-				output.WriteLine("// Method has been modified. Can't show original IL bytes.", TextTokenType.Comment);
-			using (var bodyStream = !showILBytes ? null : method.Module.GetImageStream(baseRva)) {
+			using (var byteReader = !options.ShowILBytes || options.CreateInstructionBytesReader == null ? null : options.CreateInstructionBytesReader(method)) {
 				if (detectControlStructure && body.Instructions.Count > 0) {
 					int index = 0;
 					HashSet<uint> branchTargets = GetBranchTargets(body.Instructions);
-					WriteStructureBody(body, new ILStructure(body), branchTargets, ref index, debugSymbols, method.Body.GetCodeSize(), baseRva, baseOffs, bodyStream);
+					WriteStructureBody(body, new ILStructure(body), branchTargets, ref index, debugSymbols, method.Body.GetCodeSize(), baseRva, baseOffs, byteReader, method);
 				}
 				else {
 					var instructions = method.Body.Instructions;
 					for (int i = 0; i < instructions.Count; i++) {
 						var inst = instructions[i];
 						var startLocation = output.Location;
-						inst.WriteTo(output, options, baseRva, baseOffs, bodyStream);
+						inst.WriteTo(output, options, baseRva, baseOffs, byteReader, method);
 
 						if (debugSymbols != null) {
 							// add IL code mappings - used in debugger
@@ -142,7 +124,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 					if (method.Body.HasExceptionHandlers) {
 						output.WriteLine();
 						foreach (var eh in method.Body.ExceptionHandlers) {
-							eh.WriteTo(output);
+							eh.WriteTo(output, method);
 							output.WriteLine();
 						}
 					}
@@ -173,7 +155,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 					output.Write("// loop start", TextTokenType.Comment);
 					if (s.LoopEntryPoint != null) {
 						output.Write(" (head: ", TextTokenType.Comment);
-						DisassemblerHelpers.WriteOffsetReference(output, s.LoopEntryPoint, TextTokenType.Comment);
+						DisassemblerHelpers.WriteOffsetReference(output, s.LoopEntryPoint, null, TextTokenType.Comment);
 						output.Write(')', TextTokenType.Comment);
 					}
 					output.WriteLine();
@@ -215,7 +197,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Indent();
 		}
 		
-		void WriteStructureBody(CilBody body, ILStructure s, HashSet<uint> branchTargets, ref int index, MemberMapping debugSymbols, int codeSize, uint baseRva, long baseOffs, IImageStream bodyStream)
+		void WriteStructureBody(CilBody body, ILStructure s, HashSet<uint> branchTargets, ref int index, MemberMapping debugSymbols, int codeSize, uint baseRva, long baseOffs, IInstructionBytesReader byteReader, MethodDef method)
 		{
 			bool isFirstInstructionInStructure = true;
 			bool prevInstructionWasBranch = false;
@@ -229,14 +211,14 @@ namespace ICSharpCode.Decompiler.Disassembler
 				if (childIndex < s.Children.Count && s.Children[childIndex].StartOffset <= offset && offset < s.Children[childIndex].EndOffset) {
 					ILStructure child = s.Children[childIndex++];
 					WriteStructureHeader(child);
-					WriteStructureBody(body, child, branchTargets, ref index, debugSymbols, codeSize, baseRva, baseOffs, bodyStream);
+					WriteStructureBody(body, child, branchTargets, ref index, debugSymbols, codeSize, baseRva, baseOffs, byteReader, method);
 					WriteStructureFooter(child);
 				} else {
 					if (!isFirstInstructionInStructure && (prevInstructionWasBranch || branchTargets.Contains(offset))) {
 						output.WriteLine(); // put an empty line after branches, and in front of branch targets
 					}
 					var startLocation = output.Location;
-					inst.WriteTo(output, options, baseRva, baseOffs, bodyStream);
+					inst.WriteTo(output, options, baseRva, baseOffs, byteReader, method);
 					
 					// add IL code mappings - used in debugger
 					if (debugSymbols != null) {

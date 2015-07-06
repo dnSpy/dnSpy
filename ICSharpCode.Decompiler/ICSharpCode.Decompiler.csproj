@@ -82,6 +82,8 @@
     <Compile Include="Ast\Transforms\TransformationPipeline.cs" />
     <Compile Include="Ast\Transforms\PatternStatementTransform.cs" />
     <Compile Include="Ast\TypesHierarchyHelpers.cs" />
+    <Compile Include="Disassembler\IInstructionBytesReader.cs" />
+    <Compile Include="Disassembler\InstructionReference.cs" />
     <Compile Include="DnlibExtensions.cs" />
     <Compile Include="CodeMappings.cs" />
     <Compile Include="DecompilerException.cs" />

@@ -57,23 +57,24 @@ namespace ICSharpCode.Decompiler.Disassembler
 		}
 		static readonly string[] spaces;
 
-		public static void WriteOffsetReference(ITextOutput writer, Instruction instruction, TextTokenType tokenType = TextTokenType.Label)
+		public static void WriteOffsetReference(ITextOutput writer, Instruction instruction, MethodDef method, TextTokenType tokenType = TextTokenType.Label)
 		{
-			writer.WriteReference(DnlibExtensions.OffsetToString(instruction.GetOffset()), instruction, tokenType);
+			var r = instruction == null ? null : method == null ? (object)instruction : new InstructionReference(method, instruction);
+			writer.WriteReference(DnlibExtensions.OffsetToString(instruction.GetOffset()), r, tokenType);
 		}
 		
-		public static void WriteTo(this ExceptionHandler exceptionHandler, ITextOutput writer)
+		public static void WriteTo(this ExceptionHandler exceptionHandler, ITextOutput writer, MethodDef method)
 		{
 			writer.Write("Try", TextTokenType.Keyword);
 			writer.WriteSpace();
-			WriteOffsetReference(writer, exceptionHandler.TryStart);
+			WriteOffsetReference(writer, exceptionHandler.TryStart, method);
 			writer.Write('-', TextTokenType.Operator);
-			WriteOffsetReference(writer, exceptionHandler.TryEnd);
+			WriteOffsetReference(writer, exceptionHandler.TryEnd, method);
 			writer.WriteSpace();
 			writer.Write(exceptionHandler.HandlerType.ToString(), TextTokenType.Keyword);
 			if (exceptionHandler.FilterStart != null) {
 				writer.WriteSpace();
-				WriteOffsetReference(writer, exceptionHandler.FilterStart);
+				WriteOffsetReference(writer, exceptionHandler.FilterStart, method);
 				writer.WriteSpace();
 				writer.Write("handler", TextTokenType.Keyword);
 				writer.WriteSpace();
@@ -83,12 +84,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 				exceptionHandler.CatchType.WriteTo(writer);
 			}
 			writer.WriteSpace();
-			WriteOffsetReference(writer, exceptionHandler.HandlerStart);
+			WriteOffsetReference(writer, exceptionHandler.HandlerStart, method);
 			writer.Write('-', TextTokenType.Operator);
-			WriteOffsetReference(writer, exceptionHandler.HandlerEnd);
+			WriteOffsetReference(writer, exceptionHandler.HandlerEnd, method);
 		}
 		
-		public static void WriteTo(this Instruction instruction, ITextOutput writer, DisassemblerOptions options, uint baseRva, long baseOffs, IImageStream bodyStream)
+		public static void WriteTo(this Instruction instruction, ITextOutput writer, DisassemblerOptions options, uint baseRva, long baseOffs, IInstructionBytesReader byteReader, MethodDef method)
 		{
 			if (options != null && (options.ShowTokenAndRvaComments || options.ShowILBytes)) {
 				writer.Write("/* ", TextTokenType.Comment);
@@ -103,12 +104,17 @@ namespace ICSharpCode.Decompiler.Disassembler
 				if (options.ShowILBytes) {
 					if (needSpace)
 						writer.Write(' ', TextTokenType.Comment);
-					if (bodyStream == null)
+					if (byteReader == null)
 						writer.Write("??", TextTokenType.Comment);
 					else {
 						int size = instruction.GetSize();
-						for (int i = 0; i < size; i++)
-							writer.Write(string.Format("{0:X2}", bodyStream.ReadByte()), TextTokenType.Comment);
+						for (int i = 0; i < size; i++) {
+							var b = byteReader.ReadByte();
+							if (b < 0)
+								writer.Write("??", TextTokenType.Comment);
+							else
+								writer.Write(string.Format("{0:X2}", b), TextTokenType.Comment);
+						}
 						// Most instructions should be at most 5 bytes in length, but use 6 since
 						// ldftn/ldvirtftn are 6 bytes long. The longest instructions are those with
 						// 8 byte operands, ldc.i8 and ldc.r8: 9 bytes.
@@ -121,7 +127,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				writer.Write(" */", TextTokenType.Comment);
 				writer.WriteSpace();
 			}
-			writer.WriteDefinition(DnlibExtensions.OffsetToString(instruction.GetOffset()), instruction, TextTokenType.Label, false);
+			writer.WriteDefinition(DnlibExtensions.OffsetToString(instruction.GetOffset()), new InstructionReference(method, instruction), TextTokenType.Label, false);
 			writer.Write(':', TextTokenType.Operator);
 			writer.WriteSpace();
 			writer.WriteReference(instruction.OpCode.Name, instruction.OpCode, TextTokenType.OpCode);
@@ -141,7 +147,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 						writer.WriteSpace();
 					}
 				}
-				WriteOperand(writer, instruction.Operand);
+				WriteOperand(writer, instruction.Operand, method);
 			}
 			if (options != null && options.GetOpCodeDocumentation != null) {
 				var doc = options.GetOpCodeDocumentation(instruction.OpCode);
@@ -152,7 +158,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 		}
 		
-		static void WriteLabelList(ITextOutput writer, IList<Instruction> instructions)
+		static void WriteLabelList(ITextOutput writer, IList<Instruction> instructions, MethodDef method)
 		{
 			writer.Write("(", TextTokenType.Operator);
 			for(int i = 0; i < instructions.Count; i++) {
@@ -160,7 +166,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 					writer.Write(',', TextTokenType.Operator);
 					writer.WriteSpace();
 				}
-				WriteOffsetReference(writer, instructions[i]);
+				WriteOffsetReference(writer, instructions[i], method);
 			}
 			writer.Write(")", TextTokenType.Operator);
 		}
@@ -529,17 +535,17 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 		}
 		
-		public static void WriteOperand(ITextOutput writer, object operand)
+		public static void WriteOperand(ITextOutput writer, object operand, MethodDef method = null)
 		{
 			Instruction targetInstruction = operand as Instruction;
 			if (targetInstruction != null) {
-				WriteOffsetReference(writer, targetInstruction);
+				WriteOffsetReference(writer, targetInstruction, method);
 				return;
 			}
 			
 			IList<Instruction> targetInstructions = operand as IList<Instruction>;
 			if (targetInstructions != null) {
-				WriteLabelList(writer, targetInstructions);
+				WriteLabelList(writer, targetInstructions, method);
 				return;
 			}
 			
@@ -592,9 +598,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 				return;
 			}
 			
-			IMethod method = operand as IMethod;
-			if (method != null) {
-				method.WriteMethodTo(writer);
+			IMethod m = operand as IMethod;
+			if (m != null) {
+				m.WriteMethodTo(writer);
 				return;
 			}
 
