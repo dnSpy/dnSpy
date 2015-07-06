@@ -20,6 +20,7 @@
 	THE SOFTWARE.
 */
 
+using System.Collections.Generic;
 using System.Xml.Linq;
 using dnSpy.BamlDecompiler.Baml;
 
@@ -56,7 +57,15 @@ namespace dnSpy.BamlDecompiler {
 	}
 
 	internal class BamlElement {
-		public BamlNode Node { get; set; }
+		public BamlNode Node { get; private set; }
 		public XamlNode Xaml { get; set; }
+
+		public BamlElement Parent { get; set; }
+		public IList<BamlElement> Children { get; private set; }
+
+		public BamlElement(BamlNode node) {
+			Node = node;
+			Children = new List<BamlElement>();
+		}
 	}
 }

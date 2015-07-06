@@ -31,6 +31,7 @@ namespace dnSpy.BamlDecompiler {
 		XamlContext(ModuleDef module) {
 			Module = module;
 			NodeMap = new Dictionary<BamlRecord, BamlBlockNode>();
+			XmlNs = new XmlnsDictionary();
 		}
 
 		Dictionary<ushort, XamlType> typeMap = new Dictionary<ushort, XamlType>();

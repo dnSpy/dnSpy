@@ -26,8 +26,9 @@ using System.Diagnostics;
 using System.Threading;
 
 namespace dnSpy.BamlDecompiler.Baml {
-	internal class BamlNode {
+	internal abstract class BamlNode {
 		public BamlNode Parent { get; set; }
+		public abstract BamlRecordType Type { get; }
 
 		public static bool IsHeader(BamlRecord rec) {
 			switch (rec.Type) {
@@ -141,6 +142,10 @@ namespace dnSpy.BamlDecompiler.Baml {
 	internal class BamlRecordNode : BamlNode {
 		public BamlRecord Record { get; set; }
 
+		public override BamlRecordType Type {
+			get { return Record.Type; }
+		}
+
 		public BamlRecordNode(BamlRecord record) {
 			Record = record;
 		}
@@ -150,6 +155,10 @@ namespace dnSpy.BamlDecompiler.Baml {
 		public BamlRecord Header { get; set; }
 		public IList<BamlNode> Children { get; private set; }
 		public BamlRecord Footer { get; set; }
+
+		public override BamlRecordType Type {
+			get { return Header.Type; }
+		}
 
 		public BamlBlockNode() {
 			Children = new List<BamlNode>();

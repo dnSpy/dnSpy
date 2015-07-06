@@ -20,23 +20,16 @@
 	THE SOFTWARE.
 */
 
-using System.Threading;
-using System.Xml.Linq;
-using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Baml;
 
-namespace dnSpy.BamlDecompiler {
-	internal class XamlDecompiler {
-		public XDocument Decompile(ModuleDef module, BamlDocument document, CancellationToken token) {
-			var ctx = XamlContext.Construct(module, document, token);
+namespace dnSpy.BamlDecompiler.Handlers {
+	internal class TypeInfoHandler : IHandler {
+		public BamlRecordType Type {
+			get { return BamlRecordType.TypeInfo; }
+		}
 
-			var handler = HandlerMap.LookupHandler(ctx.RootNode.Type);
-			var elem = handler.Translate(ctx, ctx.RootNode, null);
-
-			var xaml = new XDocument();
-			xaml.Add(elem.Xaml.Element);
-
-			return xaml;
+		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
+			return null;
 		}
 	}
 }

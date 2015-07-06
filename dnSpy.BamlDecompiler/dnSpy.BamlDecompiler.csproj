@@ -42,6 +42,13 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Handlers\Records\AttributeInfoHandler.cs" />
+    <Compile Include="Handlers\Blocks\DocumentHandler.cs" />
+    <Compile Include="Handlers\Records\AssemblyInfoHandler.cs" />
+    <Compile Include="Handlers\Records\DeferableContentStartHandler.cs" />
+    <Compile Include="Handlers\Records\XmlnsPropertyHandler.cs" />
+    <Compile Include="Handlers\Records\TypeInfoHandler.cs" />
+    <Compile Include="IHandlers.cs" />
     <Compile Include="ToggleDisassemblyContextMenuEntry.cs" />
     <Compile Include="XamlContext.cs" />
     <Compile Include="XamlDecompiler.cs" />
@@ -94,6 +101,7 @@
       <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

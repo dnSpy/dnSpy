@@ -77,7 +77,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 			return ctx;
 		}
 
-		public AssemblyDef LookupAssembly(ushort id) {
+		public AssemblyDef ResolveAssembly(ushort id) {
 			AssemblyDef assembly;
 			if (!assemblyMap.TryGetValue(id, out assembly)) {
 				AssemblyInfoRecord assemblyRec;
