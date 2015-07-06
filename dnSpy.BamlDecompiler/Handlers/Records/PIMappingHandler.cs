@@ -20,28 +20,16 @@
 	THE SOFTWARE.
 */
 
-using dnlib.DotNet;
+using dnSpy.BamlDecompiler.Baml;
 
-namespace dnSpy.BamlDecompiler.Xaml {
-	internal class NamespaceMap {
-		public string XmlnsPrefix { get; set; }
-		public AssemblyDef Assembly { get; set; }
-		public string XMLNamespace { get; set; }
-		public string CLRNamespace { get; set; }
-
-		public NamespaceMap(string prefix, AssemblyDef asm, string xmlNs)
-			: this(prefix, asm, xmlNs, null) {
+namespace dnSpy.BamlDecompiler.Handlers {
+	internal class PIMappingHandler : IHandler {
+		public BamlRecordType Type {
+			get { return BamlRecordType.PIMapping; }
 		}
 
-		public NamespaceMap(string prefix, AssemblyDef asm, string xmlNs, string clrNs) {
-			XmlnsPrefix = prefix;
-			Assembly = asm;
-			XMLNamespace = xmlNs;
-			CLRNamespace = clrNs;
-		}
-
-		public override string ToString() {
-			return string.Format("{0}:[{1}|{2}]", XmlnsPrefix, Assembly.Name, CLRNamespace ?? XMLNamespace);
+		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
+			return null;
 		}
 	}
 }

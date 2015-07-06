@@ -83,8 +83,13 @@ namespace dnSpy.BamlDecompiler.Baml {
 				AssemblyInfoRecord assemblyRec;
 				if (id == 0xffff)
 					assembly = KnownThings.FrameworkAssembly;
-				else if (AssemblyIdMap.TryGetValue(id, out assemblyRec))
-					assembly = Module.Context.AssemblyResolver.Resolve(assemblyRec.AssemblyFullName, Module);
+				else if (AssemblyIdMap.TryGetValue(id, out assemblyRec)) {
+					var assemblyName = new AssemblyNameInfo(assemblyRec.AssemblyFullName);
+					if (assemblyName.Name == Module.Assembly.Name)
+						assembly = Module.Assembly;
+					else
+						assembly = Module.Context.AssemblyResolver.Resolve(assemblyName, Module);
+				}
 				else
 					assembly = null;
 				assemblyMap[id] = assembly;

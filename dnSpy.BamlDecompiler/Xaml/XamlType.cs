@@ -20,14 +20,27 @@
 	THE SOFTWARE.
 */
 
+using System.Xml;
+using System.Xml.Linq;
+using dnlib.DotNet;
+
 namespace dnSpy.BamlDecompiler.Xaml {
 	internal class XamlType {
-		public NamespaceMap Namespace { get; private set; }
+		public XNamespace Namespace { get; private set; }
 		public string TypeName { get; private set; }
+		public ITypeDefOrRef ResolvedType { get; set; }
 
-		public XamlType(NamespaceMap ns, string name) {
+		public XamlType(XNamespace ns, string name) {
 			Namespace = ns;
 			TypeName = name;
+		}
+
+		public XName ToXName(XamlContext ctx) {
+			return Namespace + XmlConvert.EncodeLocalName(TypeName);
+		}
+
+		public override string ToString() {
+			return TypeName;
 		}
 	}
 }

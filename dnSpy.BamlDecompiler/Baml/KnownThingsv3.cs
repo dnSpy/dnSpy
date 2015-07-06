@@ -63,7 +63,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 		}
 
 		KnownProperty InitProperty(KnownTypes parent, string propertyName, TypeDef propertyType) {
-			return new KnownProperty(types[parent], propertyName, propertyType);
+			return new KnownProperty(parent, types[parent], propertyName, propertyType);
 		}
 
 		// Following codes are auto-generated, do not modify.

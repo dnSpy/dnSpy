@@ -22,6 +22,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Xml.Linq;
 using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Baml;
 using dnSpy.BamlDecompiler.Xaml;
@@ -40,7 +41,7 @@ namespace dnSpy.BamlDecompiler.Handlers {
 				var clrNs = attr.ConstructorArguments[1].Value;
 				Debug.Assert(xmlNs is UTF8String && clrNs is UTF8String);
 
-				if (xmlNs == ns)
+				if ((UTF8String)xmlNs == ns)
 					yield return (UTF8String)clrNs;
 			}
 		}
@@ -49,10 +50,18 @@ namespace dnSpy.BamlDecompiler.Handlers {
 			var record = (XmlnsPropertyRecord)((BamlRecordNode)node).Record;
 			foreach (var asmId in record.AssemblyIds) {
 				var assembly = ctx.Baml.ResolveAssembly(asmId);
+				ctx.XmlNs.Add(new NamespaceMap(record.Prefix, assembly, record.XmlNamespace));
 				foreach (var clrNs in ResolveCLRNamespaces(assembly, record.XmlNamespace)) {
 					ctx.XmlNs.Add(new NamespaceMap(record.Prefix, assembly, record.XmlNamespace, clrNs));
 				}
 			}
+
+			XName xmlnsDef;
+			if (string.IsNullOrEmpty(record.Prefix))
+				xmlnsDef = "xmlns";
+			else
+				xmlnsDef = XNamespace.Xmlns + record.Prefix;
+			parent.Xaml.Element.Add(new XAttribute(xmlnsDef, ctx.GetXmlNamespace(record.XmlNamespace)));
 
 			return null;
 		}

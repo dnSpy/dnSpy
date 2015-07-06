@@ -20,14 +20,41 @@
 	THE SOFTWARE.
 */
 
+using dnlib.DotNet;
+
 namespace dnSpy.BamlDecompiler.Xaml {
 	internal class XamlProperty {
 		public XamlType DeclaringType { get; private set; }
 		public string PropertyName { get; private set; }
 
+		public IMemberDef ResolvedMember { get; set; }
+
 		public XamlProperty(XamlType type, string name) {
 			DeclaringType = type;
 			PropertyName = name;
+		}
+
+		public void TryResolve() {
+			if (ResolvedMember != null)
+				return;
+
+			var typeDef = DeclaringType.ResolvedType.ResolveTypeDef();
+			if (typeDef == null)
+				return;
+
+			ResolvedMember = typeDef.FindProperty(PropertyName);
+			if (ResolvedMember == null)
+				return;
+
+			ResolvedMember = typeDef.FindField(PropertyName + "Property");
+			if (ResolvedMember == null)
+				return;
+
+			ResolvedMember = typeDef.FindEvent(PropertyName);
+			if (ResolvedMember == null)
+				return;
+
+			ResolvedMember = typeDef.FindField(PropertyName + "Event");
 		}
 	}
 }

@@ -319,7 +319,7 @@ namespace dnSpy.BamlDecompiler {
 			WriteText("AssemblyId=");
 			WriteHexNumber(record.AssemblyId);
 
-			WriteText(", ClrNamespace=");
+			WriteText(", AssemblyFullName=");
 			WriteDefinition(record.AssemblyFullName);
 		}
 

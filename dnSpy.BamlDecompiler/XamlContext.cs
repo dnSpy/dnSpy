@@ -20,8 +20,10 @@
 	THE SOFTWARE.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Xml.Linq;
 using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Baml;
 using dnSpy.BamlDecompiler.Xaml;
@@ -36,6 +38,7 @@ namespace dnSpy.BamlDecompiler {
 
 		Dictionary<ushort, XamlType> typeMap = new Dictionary<ushort, XamlType>();
 		Dictionary<ushort, XamlProperty> propertyMap = new Dictionary<ushort, XamlProperty>();
+		Dictionary<string, XNamespace> xmlnsMap = new Dictionary<string, XNamespace>();
 
 		public ModuleDef Module { get; private set; }
 
@@ -51,6 +54,7 @@ namespace dnSpy.BamlDecompiler {
 			ctx.Baml = BamlContext.ConstructContext(module, document, token);
 			ctx.RootNode = BamlNode.Parse(document, token);
 
+			ctx.BuildPIMappings(document);
 			ctx.BuildNodeMap(ctx.RootNode as BamlBlockNode, new RecursionCounter());
 
 			return ctx;
@@ -77,8 +81,88 @@ namespace dnSpy.BamlDecompiler {
 				if (piMap == null)
 					continue;
 
-				XmlNs.SetPIMapping(piMap.XmlNamespace, piMap.ClrNamespace, null);
+				XmlNs.SetPIMapping(piMap.XmlNamespace, piMap.ClrNamespace, Baml.ResolveAssembly(piMap.AssemblyId));
 			}
+		}
+
+		class DummyAssemblyRefFinder : IAssemblyRefFinder {
+			readonly AssemblyDef assemblyDef;
+
+			public DummyAssemblyRefFinder(AssemblyDef assemblyDef) {
+				this.assemblyDef = assemblyDef;
+			}
+
+			public AssemblyRef FindAssemblyRef(TypeRef nonNestedTypeRef) {
+				return assemblyDef.ToAssemblyRef();
+			}
+		}
+
+		public XamlType ResolveType(ushort id) {
+			XamlType xamlType;
+			if (typeMap.TryGetValue(id, out xamlType))
+				return xamlType;
+
+			ITypeDefOrRef type;
+			AssemblyDef assembly;
+
+			if (id > 0x7fff) {
+				type = Baml.KnownThings.Types((KnownTypes)(-id));
+				assembly = (AssemblyDef)type.DefinitionAssembly;
+			}
+			else {
+				var typeRec = Baml.TypeIdMap[id];
+				assembly = Baml.ResolveAssembly(typeRec.AssemblyId);
+				type = TypeNameParser.ParseReflectionThrow(Module, typeRec.TypeFullName, new DummyAssemblyRefFinder(assembly));
+			}
+
+			var clrNs = type.ReflectionNamespace;
+			var xmlNs = XmlNs.LookupXmlns(assembly, clrNs);
+			if (xmlNs == null)
+				throw new NotSupportedException(); // TODO: create a new xmlns?
+
+			typeMap[id] = xamlType = new XamlType(GetXmlNamespace(xmlNs), type.ReflectionName) {
+				ResolvedType = type
+			};
+
+			return xamlType;
+		}
+
+		public XamlProperty ResolveProperty(ushort id) {
+			XamlProperty xamlProp;
+			if (propertyMap.TryGetValue(id, out xamlProp))
+				return xamlProp;
+
+			XamlType type;
+			string name;
+			IMemberDef member;
+
+			if (id > 0x7fff) {
+				var knownProp = Baml.KnownThings.Properties((KnownProperties)(-id));
+				type = ResolveType((ushort)-(short)knownProp.KnownParent);
+				name = knownProp.Name;
+				member = knownProp.Property;
+			}
+			else {
+				var attrRec = Baml.AttributeIdMap[id];
+				type = ResolveType(attrRec.OwnerTypeId);
+				name = attrRec.Name;
+
+				member = null;
+			}
+
+			propertyMap[id] = xamlProp = new XamlProperty(type, name) {
+				ResolvedMember = member
+			};
+			xamlProp.TryResolve();
+
+			return xamlProp;
+		}
+
+		public XNamespace GetXmlNamespace(string xmlns) {
+			XNamespace ns;
+			if (!xmlnsMap.TryGetValue(xmlns, out ns))
+				ns = XNamespace.Get(xmlns);
+			return ns;
 		}
 	}
 }

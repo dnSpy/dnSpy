@@ -50,12 +50,14 @@ namespace dnSpy.BamlDecompiler {
 
 		NamespaceMap PIFixup(NamespaceMap map) {
 			NamespaceMap piMap;
-			if (piMappings.TryGetValue(map.XMLNamespace, out piMap))
-				return new NamespaceMap(map.XmlnsPrefix, piMap.Assembly, piMap.XmlnsPrefix, piMap.CLRNamespace);
+			if (piMappings.TryGetValue(map.XMLNamespace, out piMap)) {
+				map.Assembly = piMap.Assembly;
+				map.CLRNamespace = piMap.CLRNamespace;
+			}
 			return map;
 		}
 
-		public NamespaceMap? LookupNamespace(string prefix) {
+		public NamespaceMap LookupNamespaceFromPrefix(string prefix) {
 			for (int i = xmlnsScopes.Count - 1; i >= 0; i--) {
 				foreach (var ns in xmlnsScopes[i]) {
 					if (ns.XmlnsPrefix == prefix)
@@ -65,11 +67,11 @@ namespace dnSpy.BamlDecompiler {
 			return null;
 		}
 
-		public string LookupPrefix(string xmlNs) {
+		public NamespaceMap LookupNamespaceFromXmlns(string xmlNs) {
 			for (int i = xmlnsScopes.Count - 1; i >= 0; i--) {
 				foreach (var ns in xmlnsScopes[i]) {
 					if (ns.XMLNamespace == xmlNs)
-						return ns.XmlnsPrefix;
+						return ns;
 				}
 			}
 			return null;
@@ -80,7 +82,13 @@ namespace dnSpy.BamlDecompiler {
 				if (map.Value.Assembly == asm && map.Value.CLRNamespace == clrNs)
 					return map.Key;
 			}
-			return null;
+			for (int i = xmlnsScopes.Count - 1; i >= 0; i--) {
+				foreach (var ns in xmlnsScopes[i]) {
+					if (ns.Assembly == asm && ns.CLRNamespace == clrNs)
+						return ns.XMLNamespace;
+				}
+			}
+			return string.Format("clr-namespace:{0};assembly={1}", clrNs, asm.FullName);
 		}
 	}
 }

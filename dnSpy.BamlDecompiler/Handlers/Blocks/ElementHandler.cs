@@ -20,28 +20,30 @@
 	THE SOFTWARE.
 */
 
-using dnlib.DotNet;
+using System.Xml.Linq;
+using dnSpy.BamlDecompiler.Baml;
 
-namespace dnSpy.BamlDecompiler.Xaml {
-	internal class NamespaceMap {
-		public string XmlnsPrefix { get; set; }
-		public AssemblyDef Assembly { get; set; }
-		public string XMLNamespace { get; set; }
-		public string CLRNamespace { get; set; }
-
-		public NamespaceMap(string prefix, AssemblyDef asm, string xmlNs)
-			: this(prefix, asm, xmlNs, null) {
+namespace dnSpy.BamlDecompiler.Handlers {
+	internal class ElementHandler : IHandler {
+		public BamlRecordType Type {
+			get { return BamlRecordType.ElementStart; }
 		}
 
-		public NamespaceMap(string prefix, AssemblyDef asm, string xmlNs, string clrNs) {
-			XmlnsPrefix = prefix;
-			Assembly = asm;
-			XMLNamespace = xmlNs;
-			CLRNamespace = clrNs;
-		}
+		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
+			var record = (ElementStartRecord)((BamlBlockNode)node).Header;
+			var doc = new BamlElement(node);
 
-		public override string ToString() {
-			return string.Format("{0}:[{1}|{2}]", XmlnsPrefix, Assembly.Name, CLRNamespace ?? XMLNamespace);
+			var elemType = ctx.ResolveType(record.TypeId);
+			doc.Xaml = new XElement(elemType.ToXName(ctx));
+
+			if (elemType.ResolvedType != null)
+				doc.Xaml.Element.AddAnnotation(elemType.ResolvedType);
+			parent.Xaml.Element.Add(doc.Xaml.Element);
+
+			ctx.XmlNs.PushScope();
+			HandlerMap.ProcessChildren(ctx, (BamlBlockNode)node, doc);
+			ctx.XmlNs.PopScope();
+			return doc;
 		}
 	}
 }

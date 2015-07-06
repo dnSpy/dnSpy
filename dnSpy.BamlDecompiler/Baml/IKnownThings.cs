@@ -1067,13 +1067,15 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal class KnownProperty {
-		public KnownProperty(TypeDef declType, string name, TypeDef propertyType) {
+		public KnownProperty(KnownTypes parent, TypeDef declType, string name, TypeDef propertyType) {
+			KnownParent = parent;
 			Property = declType.FindProperty(name);
 			DeclaringType = declType;
 			Name = name;
 			PropertyType = propertyType;
 		}
 
+		public KnownTypes KnownParent { get; private set; }
 		public TypeDef DeclaringType { get; private set; }
 		public PropertyDef Property { get; private set; }
 		public string Name { get; private set; }
