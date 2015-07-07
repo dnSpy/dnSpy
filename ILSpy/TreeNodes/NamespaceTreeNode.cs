@@ -116,7 +116,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		protected override int GetNewChildIndex(SharpTreeNode node)
 		{
 			if (node is TypeTreeNode)
-				return GetNewChildIndex(node, AssemblyTreeNode.TypeStringComparer, n => ((TypeTreeNode)n).TypeDefinition.FullName);
+				return GetNewChildIndex(node, (a, b) => AssemblyTreeNode.TypeStringComparer.Compare(((TypeTreeNode)a).TypeDefinition.FullName, ((TypeTreeNode)b).TypeDefinition.FullName));
 			return base.GetNewChildIndex(node);
 		}
 

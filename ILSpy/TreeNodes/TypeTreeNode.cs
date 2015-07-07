@@ -118,58 +118,75 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return typeOrder; }
 		}
 
-		static readonly Type[] typeOrder = new Type[] {
-			typeof(BaseTypesTreeNode),	// InvalidateInterfacesNode() assumes this is first
-			typeof(DerivedTypesTreeNode),
-			typeof(TypeTreeNode),
-			typeof(FieldTreeNode),
-			typeof(PropertyTreeNode),
-			typeof(EventTreeNode),
-			typeof(MethodTreeNode),
-		};
+		static TypeTreeNode()
+		{
+			var list = new List<Type>(7);
+
+			list.Add(typeof(BaseTypesTreeNode));	// InvalidateInterfacesNode() assumes this is first
+			list.Add(typeof(DerivedTypesTreeNode));
+
+			// The typeOrder array can't be changed at runtime because there are asm editor commands
+			// that keep indexes of removed nodes.
+			foreach (var d in Options.DecompilerSettingsPanel.CurrentDecompilerSettings.DecompilationObjects) {
+				switch (d) {
+				case DecompilationObject.NestedType:	list.Add(typeof(TypeTreeNode)); break;
+				case DecompilationObject.Field:			list.Add(typeof(FieldTreeNode)); break;
+				case DecompilationObject.Event:			list.Add(typeof(PropertyTreeNode)); break;
+				case DecompilationObject.Property:		list.Add(typeof(EventTreeNode)); break;
+				case DecompilationObject.Method:		list.Add(typeof(MethodTreeNode)); break;
+				default: throw new InvalidOperationException();
+				}
+			}
+
+			typeOrder = list.ToArray();
+		}
+		static readonly Type[] typeOrder;
+
 		protected override void LoadChildren()
 		{
-			// Make sure the order below matches typeOrder above
-			this.Children.Add(new BaseTypesTreeNode(type));
-			this.Children.Add(new DerivedTypesTreeNode(parentAssemblyNode.AssemblyList, type));
-			foreach (TypeDef nestedType in type.NestedTypes.OrderBy(m => m.Name.String, NestedTypeStringComparer)) {
-				this.Children.Add(new TypeTreeNode(nestedType, parentAssemblyNode));
-			}
-			foreach (FieldDef field in type.Fields.OrderBy(m => m.Name.String, FieldStringComparer)) {
-				this.Children.Add(new FieldTreeNode(field));
-			}
-			
-			foreach (PropertyDef property in type.Properties.OrderBy(m => m.Name.String, PropertyStringComparer)) {
-				this.Children.Add(new PropertyTreeNode(property));
-			}
-			foreach (EventDef ev in type.Events.OrderBy(m => m.Name.String, EventStringComparer)) {
-				this.Children.Add(new EventTreeNode(ev));
-			}
-			HashSet<MethodDef> accessorMethods = type.GetAccessorMethods();
-			foreach (MethodDef method in type.Methods.OrderBy(m => m.Name.String, MethodStringComparer)) {
-				if (!accessorMethods.Contains(method)) {
-					this.Children.Add(new MethodTreeNode(method));
+			foreach (var t in typeOrder) {
+				if (t == typeof(BaseTypesTreeNode))
+					this.Children.Add(new BaseTypesTreeNode(type));
+				else if (t == typeof(DerivedTypesTreeNode))
+					this.Children.Add(new DerivedTypesTreeNode(parentAssemblyNode.AssemblyList, type));
+				else if (t == typeof(TypeTreeNode)) {
+					foreach (TypeDef nestedType in type.GetNestedTypes(true))
+						this.Children.Add(new TypeTreeNode(nestedType, parentAssemblyNode));
+				}
+				else if (t == typeof(FieldTreeNode)) {
+					foreach (FieldDef field in type.GetFields(true))
+						this.Children.Add(new FieldTreeNode(field));
+				}
+				else if (t == typeof(PropertyTreeNode)) {
+					foreach (PropertyDef property in type.GetProperties(true))
+						this.Children.Add(new PropertyTreeNode(property));
+				}
+				else if (t == typeof(EventTreeNode)) {
+					foreach (EventDef ev in type.GetEvents(true))
+						this.Children.Add(new EventTreeNode(ev));
+				}
+				else if (t == typeof(MethodTreeNode)) {
+					HashSet<MethodDef> accessorMethods = type.GetAccessorMethods();
+					foreach (MethodDef method in type.GetMethods(true)) {
+						if (!accessorMethods.Contains(method))
+							this.Children.Add(new MethodTreeNode(method));
+					}
 				}
 			}
 		}
-		static readonly StringComparer NestedTypeStringComparer = StringComparer.OrdinalIgnoreCase;
-		static readonly StringComparer FieldStringComparer = StringComparer.OrdinalIgnoreCase;
-		static readonly StringComparer PropertyStringComparer = StringComparer.OrdinalIgnoreCase;
-		static readonly StringComparer EventStringComparer = StringComparer.OrdinalIgnoreCase;
-		static readonly StringComparer MethodStringComparer = StringComparer.OrdinalIgnoreCase;
 
 		protected override int GetNewChildIndex(SharpTreeNode node)
 		{
 			if (node is TypeTreeNode)
-				return GetNewChildIndex(node, NestedTypeStringComparer, n => ((TypeTreeNode)n).TypeDefinition.Name);
+				return GetNewChildIndex(node, (a, b) => TypeDefComparer.Instance.Compare(((TypeTreeNode)a).TypeDefinition, ((TypeTreeNode)b).TypeDefinition));
 			if (node is FieldTreeNode)
-				return GetNewChildIndex(node, FieldStringComparer, n => ((FieldTreeNode)n).FieldDefinition.Name);
+				return GetNewChildIndex(node, (a, b) => FieldDefComparer.Instance.Compare(((FieldTreeNode)a).FieldDefinition, ((FieldTreeNode)b).FieldDefinition));
 			if (node is PropertyTreeNode)
-				return GetNewChildIndex(node, PropertyStringComparer, n => ((PropertyTreeNode)n).PropertyDefinition.Name);
+				return GetNewChildIndex(node, (a, b) => PropertyDefComparer.Instance.Compare(((PropertyTreeNode)a).PropertyDefinition, ((PropertyTreeNode)b).PropertyDefinition));
 			if (node is EventTreeNode)
-				return GetNewChildIndex(node, EventStringComparer, n => ((EventTreeNode)n).EventDefinition.Name);
+				return GetNewChildIndex(node, (a, b) => EventDefComparer.Instance.Compare(((EventTreeNode)a).EventDefinition, ((EventTreeNode)b).EventDefinition));
 			if (node is MethodTreeNode)
-				return GetNewChildIndex(node, MethodStringComparer, n => ((MethodTreeNode)n).MethodDefinition.Name);
+				return GetNewChildIndex(node, (a, b) => MethodDefComparer.Instance.Compare(((MethodTreeNode)a).MethodDefinition, ((MethodTreeNode)b).MethodDefinition));
 			return base.GetNewChildIndex(node);
 		}
 		

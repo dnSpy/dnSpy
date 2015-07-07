@@ -361,17 +361,17 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return null; }
 		}
 
-		protected int GetNewChildIndex(SharpTreeNode node, StringComparer stringComparer, Func<SharpTreeNode, string> getCompareString)
+		protected int GetNewChildIndex(SharpTreeNode node, Func<SharpTreeNode, SharpTreeNode, int> comparer)
 		{
 			int start, end;
 			GetStartIndex(node, out start, out end);
-			return GetNewChildIndex(start, end, node, stringComparer, getCompareString);
+			return GetNewChildIndex(start, end, node, comparer);
 		}
 
-		protected int GetNewChildIndex(int start, int end, SharpTreeNode node, StringComparer stringComparer, Func<SharpTreeNode, string> getCompareString)
+		protected int GetNewChildIndex(int start, int end, SharpTreeNode node, Func<SharpTreeNode, SharpTreeNode, int> comparer)
 		{
 			for (int i = start; i < end; i++) {
-				if (stringComparer.Compare(getCompareString(node), getCompareString(Children[i])) < 0)
+				if (comparer(node, Children[i]) < 0)
 					return i;
 			}
 			return end;

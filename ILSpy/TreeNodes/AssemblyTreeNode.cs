@@ -305,7 +305,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		protected override int GetNewChildIndex(SharpTreeNode node)
 		{
 			if (node is NamespaceTreeNode)
-				return GetNewChildIndex(node, NamespaceStringComparer, n => ((NamespaceTreeNode)n).Name);
+				return GetNewChildIndex(node, (a, b) => NamespaceStringComparer.Compare(((NamespaceTreeNode)a).Name, ((NamespaceTreeNode)b).Name));
 			return base.GetNewChildIndex(node);
 		}
 

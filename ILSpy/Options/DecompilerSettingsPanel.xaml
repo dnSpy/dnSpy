@@ -15,7 +15,7 @@
 		<CheckBox IsChecked="{Binding ShowILBytes}">Show IL instruction bytes</CheckBox>
 		<CheckBox IsChecked="{Binding ShowILComments}">Show IL opcode comments</CheckBox>
 		<CheckBox IsChecked="{Binding SortMembers}">Sort methods, fields, properties, events and types</CheckBox>
-		<GroupBox Header="Decompilation order">
+		<GroupBox Header="Decompilation order" ToolTip="The TreeView uses these settings once you restart dnSpy">
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*"/>
