@@ -30,6 +30,8 @@ namespace dnSpy.BamlDecompiler {
 
 		public static void ProcessChildren(XamlContext ctx, BamlBlockNode node, BamlElement nodeElem) {
 			ctx.XmlNs.PushScope(nodeElem);
+			if (nodeElem.Xaml.Element != null)
+				nodeElem.Xaml.Element.AddAnnotation(ctx.XmlNs.CurrentScope);
 			foreach (var child in node.Children) {
 				var handler = LookupHandler(child.Type);
 				if (handler == null) {

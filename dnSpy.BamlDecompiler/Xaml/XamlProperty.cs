@@ -44,19 +44,19 @@ namespace dnSpy.BamlDecompiler.Xaml {
 			if (typeDef == null)
 				return;
 
-			ResolvedMember = typeDef.FindProperty(PropertyName);
+			ResolvedMember = typeDef.FindPropertyCheckBaseType(PropertyName);
 			if (ResolvedMember != null)
 				return;
 
-			ResolvedMember = typeDef.FindField(PropertyName + "Property");
+			ResolvedMember = typeDef.FindFieldCheckBaseType(PropertyName + "Property");
 			if (ResolvedMember != null)
 				return;
 
-			ResolvedMember = typeDef.FindEvent(PropertyName);
+			ResolvedMember = typeDef.FindEventCheckBaseType(PropertyName);
 			if (ResolvedMember != null)
 				return;
 
-			ResolvedMember = typeDef.FindField(PropertyName + "Event");
+			ResolvedMember = typeDef.FindFieldCheckBaseType(PropertyName + "Event");
 		}
 
 		public bool IsAttachedTo(XamlType type) {
@@ -82,7 +82,8 @@ namespace dnSpy.BamlDecompiler.Xaml {
 			else
 				name = typeName.LocalName + "." + XmlConvert.EncodeLocalName(PropertyName);
 
-			if (parent == null || parent.GetDefaultNamespace() != typeName.Namespace)
+			if (parent == null || (parent.GetDefaultNamespace() != typeName.Namespace &&
+			                       parent.Name.Namespace != typeName.Namespace))
 				name = typeName.Namespace + name.LocalName;
 
 			return name;

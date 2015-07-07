@@ -21,29 +21,9 @@
 */
 
 using System.Xml.Linq;
-using dnSpy.BamlDecompiler.Baml;
 
-namespace dnSpy.BamlDecompiler.Handlers {
-	internal class PropertyListHandler : IHandler {
-		public BamlRecordType Type {
-			get { return BamlRecordType.PropertyListStart; }
-		}
-
-		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
-			var record = (PropertyListStartRecord)((BamlBlockNode)node).Header;
-			var doc = new BamlElement(node);
-
-			var elemAttr = ctx.ResolveProperty(record.AttributeId);
-			doc.Xaml = new XElement(elemAttr.ToXName(ctx, null));
-
-			doc.Xaml.Element.AddAnnotation(elemAttr);
-			parent.Xaml.Element.Add(doc.Xaml.Element);
-
-			HandlerMap.ProcessChildren(ctx, (BamlBlockNode)node, doc);
-			elemAttr.DeclaringType.ResolveNamespace(doc.Xaml, ctx);
-			doc.Xaml.Element.Name = elemAttr.ToXName(ctx, null);
-
-			return doc;
-		}
+namespace dnSpy.BamlDecompiler {
+	internal interface IRewritePass {
+		void Run(XamlContext ctx, XDocument document);
 	}
 }

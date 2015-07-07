@@ -20,7 +20,6 @@
 	THE SOFTWARE.
 */
 
-using System.Diagnostics;
 using System.Xml;
 using System.Xml.Linq;
 using dnlib.DotNet;
@@ -45,29 +44,31 @@ namespace dnSpy.BamlDecompiler.Xaml {
 			Namespace = xmlns;
 		}
 
-		public void ResolveNamespace(XamlContext ctx) {
+		public void ResolveNamespace(XElement elem, XamlContext ctx) {
 			if (Namespace != null)
 				return;
 
 			// Since XmlnsProperty records are inside the element,
 			// the namespace is resolved after processing the element body.
 
-			string xmlNs = ctx.XmlNs.LookupXmlns(Assembly, TypeNamespace, true);
-			if (xmlNs == null) {
-				var element = ctx.XmlNs.GetCurrentElement(true);
-				Debug.Assert(element != null);
+			string xmlNs = null;
+			if (elem.Annotation<XmlnsScope>() != null)
+				xmlNs = elem.Annotation<XmlnsScope>().LookupXmlns(Assembly, TypeNamespace);
+			if (xmlNs == null)
+				xmlNs = ctx.XmlNs.LookupXmlns(Assembly, TypeNamespace);
 
+			if (xmlNs == null) {
 				var nsSeg = TypeNamespace.Split('.');
 				var nsName = nsSeg[nsSeg.Length - 1].ToLowerInvariant();
 				var prefix = nsName;
 				int count = 0;
-				while (element.Xaml.Element.GetNamespaceOfPrefix(prefix) != null) {
+				while (elem.GetNamespaceOfPrefix(prefix) != null) {
 					count++;
 					prefix = nsName + count;
 				}
 
 				xmlNs = string.Format("clr-namespace:{0};assembly={1}", TypeNamespace, Assembly);
-				element.Xaml.Element.Add(new XAttribute(XNamespace.Xmlns + XmlConvert.EncodeLocalName(prefix),
+				elem.Add(new XAttribute(XNamespace.Xmlns + XmlConvert.EncodeLocalName(prefix),
 					ctx.GetXmlNamespace(xmlNs)));
 			}
 			Namespace = xmlNs;

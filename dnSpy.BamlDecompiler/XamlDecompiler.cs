@@ -24,9 +24,15 @@ using System.Threading;
 using System.Xml.Linq;
 using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Baml;
+using dnSpy.BamlDecompiler.Rewrite;
 
 namespace dnSpy.BamlDecompiler {
 	internal class XamlDecompiler {
+		static readonly IRewritePass[] rewritePasses = new IRewritePass[] {
+			new XClassRewritePass(),
+			new DocumentRewritePass()
+		};
+
 		public XDocument Decompile(ModuleDef module, BamlDocument document, CancellationToken token) {
 			var ctx = XamlContext.Construct(module, document, token);
 
@@ -35,6 +41,9 @@ namespace dnSpy.BamlDecompiler {
 
 			var xaml = new XDocument();
 			xaml.Add(elem.Xaml.Element);
+
+			foreach (var pass in rewritePasses)
+				pass.Run(ctx, xaml);
 
 			return xaml;
 		}

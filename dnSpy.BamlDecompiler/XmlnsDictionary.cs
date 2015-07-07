@@ -20,36 +20,51 @@
 	THE SOFTWARE.
 */
 
-using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler {
+	internal class XmlnsScope : List<NamespaceMap> {
+		public BamlElement Element { get; private set; }
+		public XmlnsScope PreviousScope { get; private set; }
+
+		public XmlnsScope(XmlnsScope prev, BamlElement elem) {
+			PreviousScope = prev;
+			Element = elem;
+		}
+
+
+		public string LookupXmlns(IAssembly asm, string clrNs) {
+			var comparer = new AssemblyNameComparer(AssemblyNameComparerFlags.All);
+			foreach (var ns in this) {
+				if (comparer.Equals(ns.Assembly, asm) && ns.CLRNamespace == clrNs)
+					return ns.XMLNamespace;
+			}
+
+			return null;
+		}
+	}
+
 	internal class XmlnsDictionary {
 		Dictionary<string, NamespaceMap> piMappings = new Dictionary<string, NamespaceMap>();
-		List<Tuple<BamlElement, List<NamespaceMap>>> xmlnsScopes = new List<Tuple<BamlElement, List<NamespaceMap>>>();
-		List<NamespaceMap> lastScope;
+
+		public XmlnsDictionary() {
+			CurrentScope = null;
+		}
+
+		public XmlnsScope CurrentScope { get; set; }
 
 		public void PushScope(BamlElement element) {
-			xmlnsScopes.Add(Tuple.Create(element, new List<NamespaceMap>()));
+			CurrentScope = new XmlnsScope(CurrentScope, element);
 		}
 
 		public void PopScope() {
-			lastScope = xmlnsScopes[xmlnsScopes.Count - 1].Item2;
-			xmlnsScopes.RemoveAt(xmlnsScopes.Count - 1);
-		}
-
-		public BamlElement GetCurrentElement(bool xamlElement = false) {
-			for (int i = xmlnsScopes.Count - 1; i >= 0; i--) {
-				if (xmlnsScopes[i].Item1 != null && (!xamlElement || xmlnsScopes[i].Item1.Xaml.Element != null))
-					return xmlnsScopes[i].Item1;
-			}
-			return null;
+			CurrentScope = CurrentScope.PreviousScope;
 		}
 
 		public void Add(NamespaceMap map) {
-			xmlnsScopes[xmlnsScopes.Count - 1].Item2.Add(map);
+			CurrentScope.Add(map);
 		}
 
 		public void SetPIMapping(string xmlNs, string clrNs, IAssembly assembly) {
@@ -69,42 +84,50 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		public NamespaceMap LookupNamespaceFromPrefix(string prefix) {
-			for (int i = xmlnsScopes.Count - 1; i >= 0; i--) {
-				foreach (var ns in xmlnsScopes[i].Item2) {
+			var scope = CurrentScope;
+			while (scope != null) {
+				foreach (var ns in scope) {
 					if (ns.XmlnsPrefix == prefix)
 						return PIFixup(ns);
 				}
+
+				scope = scope.PreviousScope;
 			}
+
 			return null;
 		}
 
 		public NamespaceMap LookupNamespaceFromXmlns(string xmlNs) {
-			for (int i = xmlnsScopes.Count - 1; i >= 0; i--) {
-				foreach (var ns in xmlnsScopes[i].Item2) {
+			var scope = CurrentScope;
+			while (scope != null) {
+				foreach (var ns in scope) {
 					if (ns.XMLNamespace == xmlNs)
 						return ns;
 				}
+
+				scope = scope.PreviousScope;
 			}
+
 			return null;
 		}
 
-		public string LookupXmlns(IAssembly asm, string clrNs, bool doLastScope = false) {
+		public string LookupXmlns(IAssembly asm, string clrNs) {
 			foreach (var map in piMappings) {
 				if (map.Value.Assembly == asm && map.Value.CLRNamespace == clrNs)
 					return map.Key;
 			}
-			if (doLastScope) {
-				foreach (var ns in lastScope) {
-					if (ns.Assembly == asm && ns.CLRNamespace == clrNs)
+
+			var scope = CurrentScope;
+			var comparer = new AssemblyNameComparer(AssemblyNameComparerFlags.All);
+			while (scope != null) {
+				foreach (var ns in scope) {
+					if (comparer.Equals(ns.Assembly, asm) && ns.CLRNamespace == clrNs)
 						return ns.XMLNamespace;
 				}
+
+				scope = scope.PreviousScope;
 			}
-			for (int i = xmlnsScopes.Count - 1; i >= 0; i--) {
-				foreach (var ns in xmlnsScopes[i].Item2) {
-					if (ns.Assembly == asm && ns.CLRNamespace == clrNs)
-						return ns.XMLNamespace;
-				}
-			}
+
 			return null;
 		}
 	}

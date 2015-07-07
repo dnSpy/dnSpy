@@ -20,30 +20,25 @@
 	THE SOFTWARE.
 */
 
+using System.Diagnostics;
+using System.Linq;
 using System.Xml.Linq;
-using dnSpy.BamlDecompiler.Baml;
 
-namespace dnSpy.BamlDecompiler.Handlers {
-	internal class PropertyListHandler : IHandler {
-		public BamlRecordType Type {
-			get { return BamlRecordType.PropertyListStart; }
-		}
+namespace dnSpy.BamlDecompiler.Rewrite {
+	internal class DocumentRewritePass : IRewritePass {
+		public void Run(XamlContext ctx, XDocument document) {
+			foreach (var elem in document.Elements("Document").ToList()) {
+				if (elem.Elements().Count() != 1)
+					continue;
 
-		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
-			var record = (PropertyListStartRecord)((BamlBlockNode)node).Header;
-			var doc = new BamlElement(node);
-
-			var elemAttr = ctx.ResolveProperty(record.AttributeId);
-			doc.Xaml = new XElement(elemAttr.ToXName(ctx, null));
-
-			doc.Xaml.Element.AddAnnotation(elemAttr);
-			parent.Xaml.Element.Add(doc.Xaml.Element);
-
-			HandlerMap.ProcessChildren(ctx, (BamlBlockNode)node, doc);
-			elemAttr.DeclaringType.ResolveNamespace(doc.Xaml, ctx);
-			doc.Xaml.Element.Name = elemAttr.ToXName(ctx, null);
-
-			return doc;
+				var docElem = elem.Elements().Single();
+				foreach (var attr in elem.Attributes()) {
+					Debug.Assert(attr.IsNamespaceDeclaration);
+					attr.Remove();
+					docElem.Add(attr);
+				}
+				elem.ReplaceWith(docElem);
+			}
 		}
 	}
 }

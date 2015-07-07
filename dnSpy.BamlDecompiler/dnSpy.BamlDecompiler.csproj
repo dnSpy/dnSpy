@@ -53,7 +53,10 @@
     <Compile Include="Handlers\Records\DeferableContentStartHandler.cs" />
     <Compile Include="Handlers\Records\XmlnsPropertyHandler.cs" />
     <Compile Include="Handlers\Records\TypeInfoHandler.cs" />
+    <Compile Include="IRewritePass.cs" />
     <Compile Include="IHandlers.cs" />
+    <Compile Include="Rewrite\DocumentRewritePass.cs" />
+    <Compile Include="Rewrite\XClassRewritePass.cs" />
     <Compile Include="ToggleDisassemblyContextMenuEntry.cs" />
     <Compile Include="XamlContext.cs" />
     <Compile Include="XamlDecompiler.cs" />

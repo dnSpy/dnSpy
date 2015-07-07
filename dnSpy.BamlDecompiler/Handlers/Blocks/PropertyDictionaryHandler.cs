@@ -40,7 +40,7 @@ namespace dnSpy.BamlDecompiler.Handlers {
 			parent.Xaml.Element.Add(doc.Xaml.Element);
 
 			HandlerMap.ProcessChildren(ctx, (BamlBlockNode)node, doc);
-			elemAttr.DeclaringType.ResolveNamespace(ctx);
+			elemAttr.DeclaringType.ResolveNamespace(doc.Xaml, ctx);
 			doc.Xaml.Element.Name = elemAttr.ToXName(ctx, null);
 
 			return doc;
