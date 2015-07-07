@@ -68,19 +68,19 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			ask.Title = "Go to MD Token";
 			ask.label.Content = "_Metadata token";
 			ask.textBox.Text = "";
-			ask.textBox.ToolTip = "Enter a hexadecimal MD token: 0x06001234 or 0200ABCD";
+			ask.textBox.ToolTip = "Enter a hexadecimal MD token: 0x06001234 or 0x0200ABCD";
 			ask.ShowDialog();
 			if (ask.DialogResult != true)
 				return;
-			uint token;
 			string tokenText = ask.textBox.Text;
 			tokenText = tokenText.Trim();
 			if (string.IsNullOrEmpty(tokenText))
 				return;
-			if (tokenText.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
-				tokenText = tokenText.Substring(2);
-			if (!uint.TryParse(tokenText, NumberStyles.HexNumber, null, out token)) {
-				MainWindow.Instance.ShowMessageBox(string.Format("Invalid hex number: {0}", tokenText));
+
+			string error;
+			uint token = AsmEditor.NumberVMUtils.ParseUInt32(tokenText, uint.MinValue, uint.MaxValue, out error);
+			if (!string.IsNullOrEmpty(error)) {
+				MainWindow.Instance.ShowMessageBox(error);
 				return;
 			}
 
