@@ -796,7 +796,7 @@ namespace ICSharpCode.Decompiler.Ast
 			foreach (var d in this.context.Settings.DecompilationObjects) {
 				switch (d) {
 				case DecompilationObject.NestedType:
-					foreach (TypeDef nestedTypeDef in typeDef.NestedTypes) {
+					foreach (TypeDef nestedTypeDef in typeDef.GetNestedTypes(context.Settings.SortMembers)) {
 						if (MemberIsHidden(nestedTypeDef, context.Settings))
 							continue;
 						var nestedType = CreateType(nestedTypeDef);
@@ -806,14 +806,14 @@ namespace ICSharpCode.Decompiler.Ast
 					break;
 
 				case DecompilationObject.Field:
-					foreach (FieldDef fieldDef in typeDef.Fields) {
+					foreach (FieldDef fieldDef in typeDef.GetFields(context.Settings.SortMembers)) {
 						if (MemberIsHidden(fieldDef, context.Settings)) continue;
 						astType.AddChild(CreateField(fieldDef), Roles.TypeMemberRole);
 					}
 					break;
 
 				case DecompilationObject.Event:
-					foreach (EventDef eventDef in typeDef.Events) {
+					foreach (EventDef eventDef in typeDef.GetEvents(context.Settings.SortMembers)) {
 						if (eventDef.AddMethod == null && eventDef.RemoveMethod == null)
 							continue;
 						astType.AddChild(CreateEvent(eventDef), Roles.TypeMemberRole);
@@ -821,7 +821,7 @@ namespace ICSharpCode.Decompiler.Ast
 					break;
 
 				case DecompilationObject.Property:
-					foreach (PropertyDef propDef in typeDef.Properties) {
+					foreach (PropertyDef propDef in typeDef.GetProperties(context.Settings.SortMembers)) {
 						if (propDef.GetMethod == null && propDef.SetMethod == null)
 							continue;
 						astType.Members.Add(CreateProperty(propDef));
@@ -829,7 +829,7 @@ namespace ICSharpCode.Decompiler.Ast
 					break;
 
 				case DecompilationObject.Method:
-					foreach (MethodDef methodDef in typeDef.Methods) {
+					foreach (MethodDef methodDef in typeDef.GetMethods(context.Settings.SortMembers)) {
 						if (MemberIsHidden(methodDef, context.Settings)) continue;
 
 						if (methodDef.IsConstructor)

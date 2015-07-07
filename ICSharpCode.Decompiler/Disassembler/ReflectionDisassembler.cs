@@ -64,6 +64,11 @@ namespace ICSharpCode.Decompiler.Disassembler
 		/// Show IL instruction bytes
 		/// </summary>
 		public bool ShowILBytes;
+
+		/// <summary>
+		/// Sort members if true
+		/// </summary>
+		public bool SortMembers;
 	}
 
 	/// <summary>
@@ -1297,7 +1302,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			if (type.HasNestedTypes) {
 				output.WriteLine("// Nested Types", TextTokenType.Comment);
-				foreach (var nestedType in type.NestedTypes) {
+				foreach (var nestedType in type.GetNestedTypes(options.SortMembers)) {
 					options.CancellationToken.ThrowIfCancellationRequested();
 					DisassembleType(nestedType);
 					output.WriteLine();
@@ -1306,7 +1311,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			if (type.HasFields) {
 				output.WriteLine("// Fields", TextTokenType.Comment);
-				foreach (var field in type.Fields) {
+				foreach (var field in type.GetFields(options.SortMembers)) {
 					options.CancellationToken.ThrowIfCancellationRequested();
 					DisassembleField(field);
 				}
@@ -1314,7 +1319,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			if (type.HasMethods) {
 				output.WriteLine("// Methods", TextTokenType.Comment);
-				foreach (var m in type.Methods) {
+				foreach (var m in type.GetMethods(options.SortMembers)) {
 					options.CancellationToken.ThrowIfCancellationRequested();
 					DisassembleMethod(m);
 					output.WriteLine();
@@ -1322,7 +1327,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			if (type.HasEvents) {
 				output.WriteLine("// Events", TextTokenType.Comment);
-				foreach (var ev in type.Events) {
+				foreach (var ev in type.GetEvents(options.SortMembers)) {
 					options.CancellationToken.ThrowIfCancellationRequested();
 					DisassembleEvent(ev);
 					output.WriteLine();
@@ -1331,7 +1336,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			if (type.HasProperties) {
 				output.WriteLine("// Properties", TextTokenType.Comment);
-				foreach (var prop in type.Properties) {
+				foreach (var prop in type.GetProperties(options.SortMembers)) {
 					options.CancellationToken.ThrowIfCancellationRequested();
 					DisassembleProperty(prop);
 				}

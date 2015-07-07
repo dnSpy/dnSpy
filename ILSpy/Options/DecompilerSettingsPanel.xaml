@@ -14,6 +14,7 @@
 		<CheckBox IsChecked="{Binding ShowTokenAndRvaComments}">Show tokens, RVAs and file offsets</CheckBox>
 		<CheckBox IsChecked="{Binding ShowILBytes}">Show IL instruction bytes</CheckBox>
 		<CheckBox IsChecked="{Binding ShowILComments}">Show IL opcode comments</CheckBox>
+		<CheckBox IsChecked="{Binding SortMembers}">Sort methods, fields, properties, events and types</CheckBox>
 		<GroupBox Header="Decompilation order">
 			<Grid>
 				<Grid.ColumnDefinitions>

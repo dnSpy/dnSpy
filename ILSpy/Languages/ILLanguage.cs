@@ -67,6 +67,7 @@ namespace ICSharpCode.ILSpy
 			disOpts.CreateInstructionBytesReader = InstructionBytesReader.Create;
 			disOpts.ShowTokenAndRvaComments = options.DecompilerSettings.ShowTokenAndRvaComments;
 			disOpts.ShowILBytes = options.DecompilerSettings.ShowILBytes;
+			disOpts.SortMembers = options.DecompilerSettings.SortMembers;
 			return new ReflectionDisassembler(output, detectControlStructure, disOpts);
 		}
 

@@ -425,6 +425,21 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 
+		bool sortMembers = true;
+
+		/// <summary>
+		/// Gets/sets whether to sort members
+		/// </summary>
+		public bool SortMembers {
+			get { return sortMembers; }
+			set {
+				if (sortMembers != value) {
+					sortMembers = value;
+					OnPropertyChanged("SortMembers");
+				}
+			}
+		}
+
 		CSharpFormattingOptions csharpFormattingOptions;
 		
 		public CSharpFormattingOptions CSharpFormattingOptions {
@@ -498,6 +513,7 @@ namespace ICSharpCode.Decompiler
 			if (DecompilationObject2 != other.DecompilationObject2) return false;
 			if (DecompilationObject3 != other.DecompilationObject3) return false;
 			if (DecompilationObject4 != other.DecompilationObject4) return false;
+			if (SortMembers != other.SortMembers) return false;
 
 			//TODO: CSharpFormattingOptions. This isn't currently used but it has a ton of properties
 
@@ -537,6 +553,7 @@ namespace ICSharpCode.Decompiler
 				h ^= RemoveEmptyDefaultConstructors	? 0 : 0x00000800U;
 				h ^= ShowTokenAndRvaComments		? 0 : 0x00000400U;
 				h ^= ShowILBytes					? 0 : 0x00000200U;
+				h ^= SortMembers					? 0 : 0x00000100U;
 
 				for (int i = 0; i < decompilationObjects.Length; i++)
 					h ^= (uint)decompilationObjects[i] << (i * 8);

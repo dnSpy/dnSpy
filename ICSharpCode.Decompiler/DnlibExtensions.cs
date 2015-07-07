@@ -32,6 +32,51 @@ namespace ICSharpCode.Decompiler
 	/// </summary>
 	public static class DnlibExtensions
 	{
+		public static IEnumerable<TypeDef> GetNestedTypes(this TypeDef type, bool sortMembers)
+		{
+			if (!sortMembers)
+				return type.NestedTypes;
+			var ary = type.NestedTypes.ToArray();
+			Array.Sort(ary, TypeDefComparer.Instance);
+			return ary;
+		}
+
+		public static IEnumerable<FieldDef> GetFields(this TypeDef type, bool sortMembers)
+		{
+			if (!sortMembers)
+				return type.Fields;
+			var ary = type.Fields.ToArray();
+			Array.Sort(ary, FieldDefComparer.Instance);
+			return ary;
+		}
+
+		public static IEnumerable<EventDef> GetEvents(this TypeDef type, bool sortMembers)
+		{
+			if (!sortMembers)
+				return type.Events;
+			var ary = type.Events.ToArray();
+			Array.Sort(ary, EventDefComparer.Instance);
+			return ary;
+		}
+
+		public static IEnumerable<PropertyDef> GetProperties(this TypeDef type, bool sortMembers)
+		{
+			if (!sortMembers)
+				return type.Properties;
+			var ary = type.Properties.ToArray();
+			Array.Sort(ary, PropertyDefComparer.Instance);
+			return ary;
+		}
+
+		public static IEnumerable<MethodDef> GetMethods(this TypeDef type, bool sortMembers)
+		{
+			if (!sortMembers)
+				return type.Methods;
+			var ary = type.Methods.ToArray();
+			Array.Sort(ary, MethodDefComparer.Instance);
+			return ary;
+		}
+
 		public static bool GetRVA(this IMemberDef member, out uint rva, out long fileOffset)
 		{
 			rva = 0;
