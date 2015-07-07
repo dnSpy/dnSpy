@@ -108,23 +108,40 @@ namespace ICSharpCode.ILSpy.Options
 		}
 
 		const string EXPLORER_MENU_TEXT = "Open with dnSpy";
+		static readonly string[] openExtensions = new string[] {
+			"exe", "dll", "netmodule", "winmd",
+		};
 
-		bool HasExplorerIntegration() {
-			bool hasIntegration = false;
+		bool HasExplorerIntegration()
+		{
+			bool hasIntegration = true;
 			try {
-				using (var key = Registry.ClassesRoot.CreateSubKey("exefile\\shell"))
-				using (var ctxMenu = key.OpenSubKey(EXPLORER_MENU_TEXT)) {
-					if (ctxMenu != null)
-						hasIntegration = true;
+				foreach (var ext in openExtensions) {
+					string name;
+					using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Classes\." + ext))
+						name = key == null ? null : key.GetValue(string.Empty) as string;
+					if (string.IsNullOrEmpty(name)) {
+						hasIntegration = false;
+						break;
+					}
+
+					using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Classes\" + name + @"\shell\" + EXPLORER_MENU_TEXT)) {
+						if (key == null) {
+							hasIntegration = false;
+							break;
+						}
+					}
 				}
 			}
 			catch {
+				hasIntegration = false;
 			}
 			return hasIntegration;
 		}
 
-		void SetExplorerIntegration(bool enabled) {
-			var path = typeof(MainWindow).Assembly.Location;
+		void SetExplorerIntegration(bool enabled)
+		{
+			var path = System.Reflection.Assembly.GetEntryAssembly().Location;
 			if (!File.Exists(path)) {
 				MainWindow.Instance.ShowMessageBox("Cannot locate dnSpy!");
 				return;
@@ -132,24 +149,27 @@ namespace ICSharpCode.ILSpy.Options
 			path = string.Format("\"{0}\" \"%1\"", path);
 
 			try {
-				using (var key = Registry.ClassesRoot.CreateSubKey("exefile\\shell")) {
-					if (enabled) {
-						using (var ctxMenu = key.CreateSubKey(EXPLORER_MENU_TEXT))
-						using (var cmdKey = ctxMenu.CreateSubKey("command"))
-							cmdKey.SetValue("", path);
-					}
-					else
-						key.DeleteSubKey(EXPLORER_MENU_TEXT, false);
-				}
+				foreach (var ext in openExtensions) {
+					string name;
+					using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Classes\." + ext))
+						name = key == null ? null : key.GetValue(string.Empty) as string;
 
-				using (var key = Registry.ClassesRoot.CreateSubKey("dllfile\\shell")) {
-					if (enabled) {
-						using (var ctxMenu = key.CreateSubKey(EXPLORER_MENU_TEXT))
-						using (var cmdKey = ctxMenu.CreateSubKey("command"))
-							cmdKey.SetValue("", path);
+					if (string.IsNullOrEmpty(name)) {
+						if (!enabled)
+							continue;
+
+						using (var key = Registry.CurrentUser.CreateSubKey(@"Software\Classes\." + ext))
+							key.SetValue(string.Empty, name = string.Format(ext + "file"));
 					}
-					else
-						key.DeleteSubKey(EXPLORER_MENU_TEXT, false);
+
+					using (var key = Registry.CurrentUser.CreateSubKey(@"Software\Classes\" + name + @"\shell")) {
+						if (enabled) {
+							using (var cmdKey = key.CreateSubKey(EXPLORER_MENU_TEXT + @"\command"))
+								cmdKey.SetValue("", path);
+						}
+						else
+							key.DeleteSubKeyTree(EXPLORER_MENU_TEXT, false);
+					}
 				}
 			}
 			catch (UnauthorizedAccessException) {
