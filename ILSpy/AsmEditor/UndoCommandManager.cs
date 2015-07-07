@@ -257,7 +257,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			}
 		}
 
-		void CallGc()
+		internal void CallGc()
 		{
 			if (!callingGc) {
 				callingGc = true;

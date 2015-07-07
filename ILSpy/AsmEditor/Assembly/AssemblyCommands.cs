@@ -172,6 +172,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			}
 
 			FreeAssemblies(freeNodes);
+			if (freeNodes.Count > 0 || onlyInRedoHistory.Count > 0)
+				UndoCommandManager.Instance.CallGc();
 		}
 
 		AssemblyTreeNodeCreator[] savedStates;
@@ -233,12 +235,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 		{
 			foreach (var node in nodes)
 				node.Delete();
-
-			foreach (var node in nodes.SelectMany(a => GetAssemblyNodes(a))) {
-				var module = node.LoadedAssembly.ModuleDefinition;
-				if (module != null)
-					module.Dispose();
-			}
 		}
 
 		static IEnumerable<AssemblyTreeNode> GetAssemblyNodes(AssemblyTreeNode node)
