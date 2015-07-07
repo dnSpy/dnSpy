@@ -773,7 +773,9 @@ namespace ICSharpCode.Decompiler.Ast
 						} else {
 							loadName = "ldtoken";
 							handleName = "Handle";
-							referencedEntity = IdentifierExpression.Create(FormatByteCodeOperand(byteCode.Operand), byteCode.Operand);
+							var ie = IdentifierExpression.Create(FormatByteCodeOperand(byteCode.Operand), byteCode.Operand);
+							ie.IdentifierToken.AddAnnotation(IdentifierEscaper.IdentifierFormatted);
+							referencedEntity = ie;
 						}
 						return IdentifierExpression.Create(loadName, TextTokenType.Keyword).Invoke(referencedEntity).WithAnnotation(new LdTokenAnnotation()).Member(handleName, TextTokenType.InstanceProperty);
 					}
@@ -1197,7 +1199,9 @@ namespace ICSharpCode.Decompiler.Ast
 			#endif
 			// Output the operand of the unknown IL code as well
 			if (byteCode.Operand != null) {
-				args.Insert(0, IdentifierExpression.Create(FormatByteCodeOperand(byteCode.Operand), byteCode.Operand));
+				var ie = IdentifierExpression.Create(FormatByteCodeOperand(byteCode.Operand), byteCode.Operand);
+				ie.IdentifierToken.AddAnnotation(IdentifierEscaper.IdentifierFormatted);
+				args.Insert(0, ie);
 			}
 			return IdentifierExpression.Create(byteCode.Code.GetName(), TextTokenType.OpCode).Invoke(args);
 		}
@@ -1209,25 +1213,32 @@ namespace ICSharpCode.Decompiler.Ast
 				//} else if (operand is ILExpression) {
 				//	return string.Format("IL_{0:X2}", ((ILExpression)operand).Offset);
 			} else if (operand is IMethod && ((IMethod)operand).MethodSig != null) {
-				return ((IMethod)operand).Name + "()";
+				return IdentifierEscaper.Escape(((IMethod)operand).Name) + "()";
 			} else if (operand is ITypeDefOrRef) {
-				return ((ITypeDefOrRef)operand).FullName;
+				return IdentifierEscaper.Escape(((ITypeDefOrRef)operand).FullName);
 			} else if (operand is Local) {
-				return ((Local)operand).Name;
+				return IdentifierEscaper.Escape(((Local)operand).Name);
 			} else if (operand is Parameter) {
-				return ((Parameter)operand).Name;
+				return IdentifierEscaper.Escape(((Parameter)operand).Name);
 			} else if (operand is IField) {
-				return ((IField)operand).Name;
+				return IdentifierEscaper.Escape(((IField)operand).Name);
 			} else if (operand is string) {
-				return "\"" + operand + "\"";
+				return "\"" + Escape((string)operand) + "\"";
 			} else if (operand is int) {
 				return operand.ToString();
 			} else if (operand is MethodSig) {
 				var msig = (MethodSig)operand;
-				return DnlibExtensions.GetMethodSigFullName(msig);
+				return Escape(DnlibExtensions.GetMethodSigFullName(msig));
 			} else {
-				return operand.ToString();
+				return Escape(operand.ToString());
 			}
+		}
+
+		static string Escape(string s)
+		{
+			s = s.Replace("\n", @"\u000A");
+			s = s.Replace("\r", @"\u000D");
+			return s;
 		}
 		
 		IEnumerable<AstType> ConvertTypeArguments(IMethod cecilMethod)

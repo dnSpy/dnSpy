@@ -22,8 +22,14 @@ using System.Globalization;
 
 namespace ICSharpCode.Decompiler
 {
+	public sealed class IdentifierFormatted
+	{
+	}
+
 	public static class IdentifierEscaper
 	{
+		public static readonly IdentifierFormatted IdentifierFormatted = new IdentifierFormatted();
+
 		const int MAX_IDENTIFIER_LENGTH = 512;
 
 		public static string Escape(string id)
@@ -49,20 +55,11 @@ namespace ICSharpCode.Decompiler
 
 		static bool IsValidChar(char c)
 		{
-			switch (c) {
-			case '.':	// .ctor
-			case '_':
-			case '`':
-			case '<':	// compiler generated name
-			case '>':	// compiler generated name
-			case '$':	// compiler generated name
-			case '-':	// compiler generated name
-			case '{':	// compiler generated name
-			case '}':	// compiler generated name
-			case '=':	// compiler generated name
-			case '!':	// generic type/method variable
+			if (0x21 <= c && c <= 0x7E)
 				return true;
-			}
+			if (c <= 0x20)
+				return false;
+
 			switch (char.GetUnicodeCategory(c)) {
 			case UnicodeCategory.UppercaseLetter:
 			case UnicodeCategory.LowercaseLetter:

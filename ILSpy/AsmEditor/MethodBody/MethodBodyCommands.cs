@@ -164,7 +164,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			if (context.TextView == null || context.Position == null)
 				return null;
 			var list = SourceCodeMappingUtils.Find(context.TextView, context.Position.Value.Line, context.Position.Value.Column);
-			return list.Count == 0 ? null : list;
+			if (list.Count == 0)
+				return null;
+			if (!(list[0].StartLocation.Line <= context.Position.Value.Line && context.Position.Value.Line <= list[0].EndLocation.Line))
+				return null;
+			return list;
 		}
 
 		public bool IsEnabled(TextViewContext context)

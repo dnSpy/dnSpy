@@ -87,7 +87,10 @@ namespace ICSharpCode.Decompiler.Ast
 				firstUsingDeclaration = false;
 			}
 
-			output.Write(IdentifierEscaper.Escape(identifier.Name), tokenType);
+			var s = identifier.Name;
+			if (identifier.Annotation<IdentifierFormatted>() == null)
+				s = IdentifierEscaper.Escape(s);
+			output.Write(s, tokenType);
 		}
 
 		IMemberRef GetCurrentMemberReference()
