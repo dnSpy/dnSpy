@@ -90,9 +90,9 @@ namespace ICSharpCode.ILSpy
 		{
 			if (e.Key == Key.Delete) {
 				var nodes = this.GetTopLevelSelection().ToArray();
-				if (nodes.Length > 0 && nodes.All(n => n.Parent.IsRoot)) {
+				if (nodes.Length > 0 && nodes.All(n => n.CanDelete())) {
 					foreach (var node in nodes)
-						node.Parent.Children.Remove(node);
+						node.Delete();
 					e.Handled = true;
 					return;
 				}
@@ -180,6 +180,7 @@ namespace ICSharpCode.ILSpy
 
 		void IPane.Closed()
 		{
+			((AnalyzerRootNode)this.Root).DisposeSelfAndChildren();
 			this.Root.Children.Clear();
 		}
 		

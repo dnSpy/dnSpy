@@ -79,5 +79,10 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			this.Children.Clear();
 			return true;
 		}
+
+		protected override void Dispose(bool disposing)
+		{
+			threading.Cancel();
+		}
 	}
 }

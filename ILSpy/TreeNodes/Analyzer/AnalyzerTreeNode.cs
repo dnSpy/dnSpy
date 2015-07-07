@@ -26,7 +26,7 @@ using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	public abstract class AnalyzerTreeNode : SharpTreeNode
+	public abstract class AnalyzerTreeNode : SharpTreeNode, IDisposable
 	{
 		private Language language;
 
@@ -89,6 +89,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		public override void DeleteCore()
 		{
+			DisposeSelfAndChildren();
 			Parent.Children.Remove(this);
 		}
 
@@ -112,5 +113,23 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		public abstract bool HandleAssemblyListChanged(ICollection<LoadedAssembly> removedAssemblies, ICollection<LoadedAssembly> addedAssemblies);
 
 		public abstract bool HandleModelUpdated(LoadedAssembly asm);
+
+		public void Dispose()
+		{
+			Dispose(true);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+		}
+
+		public void DisposeSelfAndChildren()
+		{
+			foreach (var c in this.DescendantsAndSelf()) {
+				var id = c as IDisposable;
+				if (id != null)
+					id.Dispose();
+			}
+		}
 	}
 }
