@@ -42,10 +42,13 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Handlers\Blocks\PropertyListHandler.cs" />
+    <Compile Include="Handlers\Blocks\PropertyDictionaryHandler.cs" />
     <Compile Include="Handlers\Blocks\ElementHandler.cs" />
     <Compile Include="Handlers\Records\AttributeInfoHandler.cs" />
     <Compile Include="Handlers\Blocks\DocumentHandler.cs" />
     <Compile Include="Handlers\Records\AssemblyInfoHandler.cs" />
+    <Compile Include="Handlers\Records\PropertyWithConverterHandler.cs" />
     <Compile Include="Handlers\Records\PIMappingHandler.cs" />
     <Compile Include="Handlers\Records\DeferableContentStartHandler.cs" />
     <Compile Include="Handlers\Records\XmlnsPropertyHandler.cs" />

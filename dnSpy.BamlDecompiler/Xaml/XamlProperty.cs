@@ -20,6 +20,8 @@
 	THE SOFTWARE.
 */
 
+using System.Xml;
+using System.Xml.Linq;
 using dnlib.DotNet;
 
 namespace dnSpy.BamlDecompiler.Xaml {
@@ -43,18 +45,51 @@ namespace dnSpy.BamlDecompiler.Xaml {
 				return;
 
 			ResolvedMember = typeDef.FindProperty(PropertyName);
-			if (ResolvedMember == null)
+			if (ResolvedMember != null)
 				return;
 
 			ResolvedMember = typeDef.FindField(PropertyName + "Property");
-			if (ResolvedMember == null)
+			if (ResolvedMember != null)
 				return;
 
 			ResolvedMember = typeDef.FindEvent(PropertyName);
-			if (ResolvedMember == null)
+			if (ResolvedMember != null)
 				return;
 
 			ResolvedMember = typeDef.FindField(PropertyName + "Event");
+		}
+
+		public bool IsAttachedTo(XamlType type) {
+			if (ResolvedMember == null || type.ResolvedType == null)
+				return true;
+
+			var declType = ResolvedMember.DeclaringType;
+			var t = type.ResolvedType;
+			var comparer = new SigComparer();
+			do {
+				if (comparer.Equals(t, declType))
+					return false;
+				t = t.GetBaseType();
+			} while (t != null);
+			return true;
+		}
+
+		public XName ToXName(XamlContext ctx, XElement parent, bool isFullName = true) {
+			var typeName = DeclaringType.ToXName(ctx);
+			XName name;
+			if (!isFullName)
+				name = XmlConvert.EncodeLocalName(PropertyName);
+			else
+				name = typeName.LocalName + "." + XmlConvert.EncodeLocalName(PropertyName);
+
+			if (parent == null || parent.GetDefaultNamespace() != typeName.Namespace)
+				name = typeName.Namespace + name.LocalName;
+
+			return name;
+		}
+
+		public override string ToString() {
+			return PropertyName;
 		}
 	}
 }

@@ -1122,7 +1122,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 			properties[KnownProperties.Grid_ColumnSpan] = InitProperty(KnownTypes.Grid, "ColumnSpan",
 				assemblies[2].Find("System.Int32", true));
 			properties[KnownProperties.Grid_Row] = InitProperty(KnownTypes.Grid, "Row", assemblies[2].Find("System.Int32", true));
-			properties[KnownProperties.Grid_RowSpan] = InitProperty(KnownTypes.Grid, "Grid_RowSpan",
+			properties[KnownProperties.Grid_RowSpan] = InitProperty(KnownTypes.Grid, "RowSpan",
 				assemblies[2].Find("System.Int32", true));
 			properties[KnownProperties.GridViewColumn_Header] = InitProperty(KnownTypes.GridViewColumn, "Header",
 				assemblies[2].Find("System.Object", true));
