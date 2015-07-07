@@ -20,8 +20,11 @@
 using System;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using dnlib.DotNet;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 using ICSharpCode.NRefactory;
@@ -50,6 +53,46 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			InitializeExceptionHandlers(this.coll);
 
 			AddStandardMenuHandlers("AddException");
+			Add(new ContextMenuHandler {
+				Header = "Copy _MD Token",
+				HeaderPlural = "Copy _MD Tokens",
+				Command = new RelayCommand(a => CopyCatchTypeMDTokens((ExceptionHandlerVM[])a), a => CopyCatchTypeMDTokensCanExecute((ExceptionHandlerVM[])a)),
+				InputGestureText = "Ctrl+M",
+				Modifiers = ModifierKeys.Control,
+				Key = Key.M,
+			});
+		}
+
+		void CopyCatchTypeMDTokens(ExceptionHandlerVM[] ehs)
+		{
+			var sb = new StringBuilder();
+
+			int lines = 0;
+			for (int i = 0; i < ehs.Length; i++) {
+				uint? token = GetCatchTypeToken(ehs[i].CatchType);
+				if (token == null)
+					continue;
+
+				if (lines++ > 0)
+					sb.AppendLine();
+				sb.Append(string.Format("0x{0:X8}", token.Value));
+			}
+			if (lines > 1)
+				sb.AppendLine();
+
+			var text = sb.ToString();
+			if (text.Length > 0)
+				Clipboard.SetText(text);
+		}
+
+		bool CopyCatchTypeMDTokensCanExecute(ExceptionHandlerVM[] ehs)
+		{
+			return ehs.Any(a => GetCatchTypeToken(a.CatchType) != null);
+		}
+
+		static uint? GetCatchTypeToken(ITypeDefOrRef type)
+		{
+			return type == null ? (uint?)null : type.MDToken.Raw;
 		}
 
 		void coll_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
