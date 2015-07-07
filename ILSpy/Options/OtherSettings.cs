@@ -55,10 +55,10 @@ namespace ICSharpCode.ILSpy.Options
 		}
 		bool useMemoryMappedIO;
 
-		public bool WindowsExplorerIntegration {
+		public bool? WindowsExplorerIntegration {
 			get { return HasExplorerIntegration(); }
 			set {
-				SetExplorerIntegration(value);
+				SetExplorerIntegration(value ?? false);
 				OnPropertyChanged("WindowsExplorerIntegration");
 			}
 		}
@@ -112,31 +112,28 @@ namespace ICSharpCode.ILSpy.Options
 			"exe", "dll", "netmodule", "winmd",
 		};
 
-		bool HasExplorerIntegration()
+		bool? HasExplorerIntegration()
 		{
-			bool hasIntegration = true;
+			int count = 0;
 			try {
 				foreach (var ext in openExtensions) {
 					string name;
 					using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Classes\." + ext))
 						name = key == null ? null : key.GetValue(string.Empty) as string;
-					if (string.IsNullOrEmpty(name)) {
-						hasIntegration = false;
-						break;
-					}
+					if (string.IsNullOrEmpty(name))
+						continue;
 
 					using (var key = Registry.CurrentUser.OpenSubKey(@"Software\Classes\" + name + @"\shell\" + EXPLORER_MENU_TEXT)) {
-						if (key == null) {
-							hasIntegration = false;
-							break;
-						}
+						if (key != null)
+							count++;
 					}
 				}
 			}
 			catch {
-				hasIntegration = false;
 			}
-			return hasIntegration;
+			return count == openExtensions.Length ? true :
+				count == 0 ? (bool?)false :
+				null;
 		}
 
 		void SetExplorerIntegration(bool enabled)
