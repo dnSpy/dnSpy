@@ -16,40 +16,63 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
+using System.ComponentModel.Composition;
 using System.Linq;
-using System.Windows;
-using ICSharpCode.TreeView;
+using System.Windows.Input;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
-	[ExportContextMenuEntryAttribute(Header = "Analy_ze", Icon = "Search", Order = 900, Category = "Other")]
+	[Export(typeof(IPlugin))]
+	sealed class InstructionCommandsLoader : IPlugin
+	{
+		void IPlugin.OnLoaded()
+		{
+			var cmd = new RoutedCommand();
+			cmd.InputGestures.Add(new KeyGesture(Key.R, ModifierKeys.Control));
+			MainWindow.Instance.CommandBindings.Add(new CommandBinding(cmd, AnalyzeExecuted, AnalyzeCanExecute));
+		}
+
+		void AnalyzeCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = AnalyzeContextMenuEntry.CanAnalyze(GetMemberRef(MainWindow.Instance.ActiveTextView));
+		}
+
+		void AnalyzeExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			AnalyzeContextMenuEntry.Analyze(GetMemberRef(MainWindow.Instance.ActiveTextView));
+		}
+
+		static IMemberRef GetMemberRef(DecompilerTextView textView)
+		{
+			if (textView == null)
+				return null;
+
+			var refSeg = textView.GetCurrentReferenceSegment();
+			return refSeg == null ? null : refSeg.Reference as IMemberRef;
+		}
+	}
+
+	[ExportContextMenuEntryAttribute(Header = "Analy_ze", Icon = "Search", Order = 900, Category = "Other", InputGestureText = "Ctrl+R")]
 	internal sealed class AnalyzeContextMenuEntry : IContextMenuEntry
 	{
 		public bool IsVisible(TextViewContext context)
 		{
-			if (context.TreeView is AnalyzerTreeView && context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n.Parent.IsRoot))
-				return false;
-			if (context.SelectedTreeNodes == null)
-				return context.Reference != null && context.Reference.Reference is IMemberRef;
-			return context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n is IMemberTreeNode);
+			return IsEnabled(context);
 		}
 
 		public bool IsEnabled(TextViewContext context)
 		{
+			if (context.TreeView is AnalyzerTreeView && context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n.Parent.IsRoot))
+				return false;
 			if (context.SelectedTreeNodes == null)
-				return context.Reference != null && context.Reference.Reference is IMemberRef;
+				return context.Reference != null && MainWindow.ResolveReference(context.Reference.Reference) != null;
 			foreach (IMemberTreeNode node in context.SelectedTreeNodes) {
-				if (!(node.Member is TypeDef
-				      || node.Member is FieldDef
-				      || node.Member is MethodDef
-				      || AnalyzedPropertyTreeNode.CanShow(node.Member)
-				      || AnalyzedEventTreeNode.CanShow(node.Member)))
-					return false;
+				if (CanAnalyze(node.Member))
+					return true;
 			}
-
-			return true;
+			return false;
 		}
 
 		public void Execute(TextViewContext context)
@@ -61,30 +84,39 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			} else if (context.Reference != null && context.Reference.Reference is IMemberRef) {
 				if (context.Reference.Reference is IMemberRef)
 					Analyze((IMemberRef)context.Reference.Reference);
-				// TODO: implement support for other references: ParameterReference, etc.
 			}
+		}
+
+		public static bool CanAnalyze(IMemberRef member)
+		{
+			member = MainWindow.ResolveReference(member);
+			return member is TypeDef ||
+					member is FieldDef ||
+					member is MethodDef ||
+					AnalyzedPropertyTreeNode.CanShow(member) ||
+					AnalyzedEventTreeNode.CanShow(member);
 		}
 
 		public static void Analyze(IMemberRef member)
 		{
-			TypeDef type = null;
-			if (member is ITypeDefOrRef)
-				type = ((ITypeDefOrRef)member).ResolveTypeDef();
+			var memberDef = MainWindow.ResolveReference(member) as IMemberDef;
+
+			var type = memberDef as TypeDef;
 			if (type != null)
 				AnalyzerTreeView.Instance.ShowOrFocus(new AnalyzedTypeTreeNode(type));
-			FieldDef field = member as FieldDef;
-			if (field == null && member is IField && ((IField)member).IsField)
-				field = ((IField)member).ResolveFieldDef();
+
+			var field = memberDef as FieldDef;
 			if (field != null)
 				AnalyzerTreeView.Instance.ShowOrFocus(new AnalyzedFieldTreeNode(field));
-			MethodDef method = member as MethodDef;
-			if (method == null && member is IMethod && ((IMethod)member).IsMethod)
-				method = ((IMethod)member).ResolveMethodDef();
+
+			var method = memberDef as MethodDef;
 			if (method != null)
 				AnalyzerTreeView.Instance.ShowOrFocus(new AnalyzedMethodTreeNode(method));
+
 			var propertyAnalyzer = AnalyzedPropertyTreeNode.TryCreateAnalyzer(member);
 			if (propertyAnalyzer != null)
 				AnalyzerTreeView.Instance.ShowOrFocus(propertyAnalyzer);
+
 			var eventAnalyzer = AnalyzedEventTreeNode.TryCreateAnalyzer(member);
 			if (eventAnalyzer != null)
 				AnalyzerTreeView.Instance.ShowOrFocus(eventAnalyzer);

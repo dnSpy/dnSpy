@@ -1525,7 +1525,8 @@ namespace ICSharpCode.ILSpy
 			return assemblyListTreeNode.FindTreeNode(reference);
 		}
 
-		internal static IMemberDef ResolveReference(object reference) {
+		internal static IMemberDef ResolveReference(object reference)
+		{
 			if (reference is ITypeDefOrRef)
 				return ((ITypeDefOrRef)reference).ResolveTypeDef();
 			else if (reference is IMethod && ((IMethod)reference).MethodSig != null)

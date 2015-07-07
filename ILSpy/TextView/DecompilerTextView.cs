@@ -1159,6 +1159,11 @@ namespace ICSharpCode.ILSpy.TextView
 			return GetReferenceSegmentAt(offset);
 		}
 
+		internal ReferenceSegment GetCurrentReferenceSegment()
+		{
+			return GetReferenceSegmentAt(textEditor.TextArea.Caret.Offset);
+		}
+
 		ReferenceSegment GetReferenceSegmentAt(int offset)
 		{
 			if (referenceElementGenerator == null || referenceElementGenerator.References == null)
@@ -1318,16 +1323,12 @@ namespace ICSharpCode.ILSpy.TextView
 
 		void FollowReference()
 		{
-			int offset = textEditor.TextArea.Caret.Offset;
-			var refSeg = GetReferenceSegmentAt(offset);
-			GoToTarget(refSeg, true, true);
+			GoToTarget(GetCurrentReferenceSegment(), true, true);
 		}
 
 		void FollowReferenceNewTab()
 		{
-			int offset = textEditor.TextArea.Caret.Offset;
-			var refSeg = GetReferenceSegmentAt(offset);
-			MainWindow.Instance.OpenReferenceInNewTab(this, refSeg);
+			MainWindow.Instance.OpenReferenceInNewTab(this, GetCurrentReferenceSegment());
 		}
 
 		void ClearMarkedReferencesAndPopups()
@@ -1340,8 +1341,7 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			if (references == null)
 				return;
-			int offset = textEditor.TextArea.Caret.Offset;
-			var refSeg = GetReferenceSegmentAt(offset);
+			var refSeg = GetCurrentReferenceSegment();
 			if (refSeg == null)
 				return;
 

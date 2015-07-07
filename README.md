@@ -114,6 +114,7 @@ Ctrl+Alt+V	| (Method Editor) Paste instructions after selection
 Ctrl+M		| (Method Editor) Copy operand's MD token
 Ctrl+R		| (Method Editor) Copy RVA of instruction
 Ctrl+F		| (Method Editor) Copy file offset of instruction
+Ctrl+R		| (Text view) Analyze reference at caret
 
 Credits
 =======
