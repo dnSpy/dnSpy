@@ -55,6 +55,7 @@ namespace ICSharpCode.ILSpy
 				if (instance == null) {
 					App.Current.VerifyAccess();
 					instance = new AnalyzerTreeView();
+					MainWindow.InitializeTreeView(instance);
 				}
 				return instance;
 			}

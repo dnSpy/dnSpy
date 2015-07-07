@@ -88,7 +88,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				Clipboard.SetText(text);
 				if (copier.FoundUnknownBytes) {
 					MainWindow.Instance.ShowIgnorableMessageBox("instr: unknown bytes",
-						"The method has been edited. It's not possible to know the new tokens and string offsets until the method has been saved.",
+						"Some of the copied bytes are unknown because the method has been edited. New tokens and string offsets are only known once the file has been saved to disk.",
 						MessageBoxButton.OK);
 				}
 			}

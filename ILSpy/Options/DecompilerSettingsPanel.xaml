@@ -14,5 +14,21 @@
 		<CheckBox IsChecked="{Binding ShowTokenAndRvaComments}">Show tokens, RVAs and file offsets</CheckBox>
 		<CheckBox IsChecked="{Binding ShowILBytes}">Show IL instruction bytes</CheckBox>
 		<CheckBox IsChecked="{Binding ShowILComments}">Show IL opcode comments</CheckBox>
+		<GroupBox Header="Decompilation order">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<ComboBox Grid.Column="0" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject0}" />
+				<ComboBox Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject1}" />
+				<ComboBox Grid.Column="2" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject2}" />
+				<ComboBox Grid.Column="3" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject3}" />
+				<ComboBox Grid.Column="4" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject4}" />
+			</Grid>
+		</GroupBox>
 	</StackPanel>
 </UserControl>

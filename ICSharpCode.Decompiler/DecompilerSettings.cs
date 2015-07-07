@@ -18,15 +18,84 @@
 
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using ICSharpCode.NRefactory.CSharp;
 
 namespace ICSharpCode.Decompiler
 {
+	public enum DecompilationObject
+	{
+		NestedType,
+		Field,
+		Event,
+		Property,
+		Method,
+	}
+
 	/// <summary>
 	/// Settings for the decompiler.
 	/// </summary>
 	public class DecompilerSettings : INotifyPropertyChanged, IEquatable<DecompilerSettings>
 	{
+		DecompilationObject[] decompilationObjects = new DecompilationObject[5] {
+			DecompilationObject.NestedType,
+			DecompilationObject.Field,
+			DecompilationObject.Event,
+			DecompilationObject.Property,
+			DecompilationObject.Method,
+		};
+
+		public IEnumerable<DecompilationObject> DecompilationObjects {
+			get { return decompilationObjects.AsEnumerable(); }
+		}
+
+		public DecompilationObject[] DecompilationObjectsArray {
+			get { return typeof(DecompilationObject).GetEnumValues().Cast<DecompilationObject>().ToArray(); }
+		}
+
+		public DecompilationObject DecompilationObject0 {
+			get { return decompilationObjects[0]; }
+			set { SetDecompilationObject(0, value); }
+		}
+
+		public DecompilationObject DecompilationObject1 {
+			get { return decompilationObjects[1]; }
+			set { SetDecompilationObject(1, value); }
+		}
+
+		public DecompilationObject DecompilationObject2 {
+			get { return decompilationObjects[2]; }
+			set { SetDecompilationObject(2, value); }
+		}
+
+		public DecompilationObject DecompilationObject3 {
+			get { return decompilationObjects[3]; }
+			set { SetDecompilationObject(3, value); }
+		}
+
+		public DecompilationObject DecompilationObject4 {
+			get { return decompilationObjects[4]; }
+			set { SetDecompilationObject(4, value); }
+		}
+
+		void SetDecompilationObject(int index, DecompilationObject newValue)
+		{
+			if (decompilationObjects[index] == newValue)
+				return;
+
+			int otherIndex = Array.IndexOf(decompilationObjects, newValue);
+			Debug.Assert(otherIndex >= 0);
+			if (otherIndex >= 0) {
+				decompilationObjects[otherIndex] = decompilationObjects[index];
+				decompilationObjects[index] = newValue;
+
+				OnPropertyChanged(string.Format("DecompilationObject{0}", otherIndex));
+			}
+			OnPropertyChanged(string.Format("DecompilationObject{0}", index));
+		}
+
 		bool anonymousMethods = true;
 		
 		/// <summary>
@@ -391,6 +460,7 @@ namespace ICSharpCode.Decompiler
 			DecompilerSettings settings = (DecompilerSettings)MemberwiseClone();
 			if (csharpFormattingOptions != null)
 				settings.csharpFormattingOptions = csharpFormattingOptions.Clone();
+			settings.decompilationObjects = (DecompilationObject[])decompilationObjects.Clone();
 			settings.PropertyChanged = null;
 			return settings;
 		}
@@ -423,6 +493,11 @@ namespace ICSharpCode.Decompiler
 			if (AlwaysGenerateExceptionVariableForCatchBlocks != other.AlwaysGenerateExceptionVariableForCatchBlocks) return false;
 			if (ShowTokenAndRvaComments != other.ShowTokenAndRvaComments) return false;
 			if (ShowILBytes != other.ShowILBytes) return false;
+			if (DecompilationObject0 != other.DecompilationObject0) return false;
+			if (DecompilationObject1 != other.DecompilationObject1) return false;
+			if (DecompilationObject2 != other.DecompilationObject2) return false;
+			if (DecompilationObject3 != other.DecompilationObject3) return false;
+			if (DecompilationObject4 != other.DecompilationObject4) return false;
 
 			//TODO: CSharpFormattingOptions. This isn't currently used but it has a ton of properties
 
@@ -460,8 +535,11 @@ namespace ICSharpCode.Decompiler
 				h ^= MakeAssignmentExpressions		? 0 : 0x00002000U;
 				h ^= AlwaysGenerateExceptionVariableForCatchBlocks ? 0 : 0x00001000U;
 				h ^= RemoveEmptyDefaultConstructors	? 0 : 0x00000800U;
-				h ^= ShowTokenAndRvaComments ? 0 : 0x00000400U;
-				h ^= ShowILBytes ? 0 : 0x00000200U;
+				h ^= ShowTokenAndRvaComments		? 0 : 0x00000400U;
+				h ^= ShowILBytes					? 0 : 0x00000200U;
+
+				for (int i = 0; i < decompilationObjects.Length; i++)
+					h ^= (uint)decompilationObjects[i] << (i * 8);
 
 				//TODO: CSharpFormattingOptions. This isn't currently used but it has a ton of properties
 

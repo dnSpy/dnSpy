@@ -74,6 +74,11 @@ namespace ICSharpCode.ILSpy.Options
 			s.RemoveEmptyDefaultConstructors = (bool?)e.Attribute("removeEmptyDefaultConstructors") ?? s.RemoveEmptyDefaultConstructors;
 			s.ShowTokenAndRvaComments = (bool?)e.Attribute("showTokenAndRvaComments") ?? s.ShowTokenAndRvaComments;
 			s.ShowILBytes = (bool?)e.Attribute("showILBytes") ?? s.ShowILBytes;
+			s.DecompilationObject0 = (DecompilationObject)((int?)e.Attribute("decompilationObject0") ?? (int)s.DecompilationObject0);
+			s.DecompilationObject1 = (DecompilationObject)((int?)e.Attribute("decompilationObject1") ?? (int)s.DecompilationObject1);
+			s.DecompilationObject2 = (DecompilationObject)((int?)e.Attribute("decompilationObject2") ?? (int)s.DecompilationObject2);
+			s.DecompilationObject3 = (DecompilationObject)((int?)e.Attribute("decompilationObject3") ?? (int)s.DecompilationObject3);
+			s.DecompilationObject4 = (DecompilationObject)((int?)e.Attribute("decompilationObject4") ?? (int)s.DecompilationObject4);
 			return s;
 		}
 		
@@ -105,6 +110,11 @@ namespace ICSharpCode.ILSpy.Options
 			if (CurrentDecompilerSettings.AlwaysGenerateExceptionVariableForCatchBlocks != s.AlwaysGenerateExceptionVariableForCatchBlocks) flags |= RefreshFlags.ILAst;
 			if (CurrentDecompilerSettings.ShowTokenAndRvaComments != s.ShowTokenAndRvaComments) flags |= RefreshFlags.CSharp | RefreshFlags.IL;
 			if (CurrentDecompilerSettings.ShowILBytes != s.ShowILBytes) flags |= RefreshFlags.IL;
+			if (CurrentDecompilerSettings.DecompilationObject0 != s.DecompilationObject0) flags |= RefreshFlags.CSharp;
+			if (CurrentDecompilerSettings.DecompilationObject1 != s.DecompilationObject1) flags |= RefreshFlags.CSharp;
+			if (CurrentDecompilerSettings.DecompilationObject2 != s.DecompilationObject2) flags |= RefreshFlags.CSharp;
+			if (CurrentDecompilerSettings.DecompilationObject3 != s.DecompilationObject3) flags |= RefreshFlags.CSharp;
+			if (CurrentDecompilerSettings.DecompilationObject4 != s.DecompilationObject4) flags |= RefreshFlags.CSharp;
 
 			XElement section = new XElement("DecompilerSettings");
 			section.SetAttributeValue("anonymousMethods", s.AnonymousMethods);
@@ -118,6 +128,11 @@ namespace ICSharpCode.ILSpy.Options
 			section.SetAttributeValue("removeEmptyDefaultConstructors", s.RemoveEmptyDefaultConstructors);
 			section.SetAttributeValue("showTokenAndRvaComments", s.ShowTokenAndRvaComments);
 			section.SetAttributeValue("showILBytes", s.ShowILBytes);
+			section.SetAttributeValue("decompilationObject0", (int)s.DecompilationObject0);
+			section.SetAttributeValue("decompilationObject1", (int)s.DecompilationObject1);
+			section.SetAttributeValue("decompilationObject2", (int)s.DecompilationObject2);
+			section.SetAttributeValue("decompilationObject3", (int)s.DecompilationObject3);
+			section.SetAttributeValue("decompilationObject4", (int)s.DecompilationObject4);
 			
 			XElement existingElement = root.Element("DecompilerSettings");
 			if (existingElement != null)

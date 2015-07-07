@@ -793,43 +793,54 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		void AddTypeMembers(TypeDeclaration astType, TypeDef typeDef)
 		{
-			// Nested types
-			foreach (TypeDef nestedTypeDef in typeDef.NestedTypes) {
-				if (MemberIsHidden(nestedTypeDef, context.Settings))
-					continue;
-				var nestedType = CreateType(nestedTypeDef);
-				SetNewModifier(nestedType);
-				astType.AddChild(nestedType, Roles.TypeMemberRole);
-			}
-			
-			// Add fields
-			foreach(FieldDef fieldDef in typeDef.Fields) {
-				if (MemberIsHidden(fieldDef, context.Settings)) continue;
-				astType.AddChild(CreateField(fieldDef), Roles.TypeMemberRole);
-			}
-			
-			// Add events
-			foreach(EventDef eventDef in typeDef.Events) {
-				if (eventDef.AddMethod == null && eventDef.RemoveMethod == null)
-					continue;
-				astType.AddChild(CreateEvent(eventDef), Roles.TypeMemberRole);
-			}
+			foreach (var d in this.context.Settings.DecompilationObjects) {
+				switch (d) {
+				case DecompilationObject.NestedType:
+					foreach (TypeDef nestedTypeDef in typeDef.NestedTypes) {
+						if (MemberIsHidden(nestedTypeDef, context.Settings))
+							continue;
+						var nestedType = CreateType(nestedTypeDef);
+						SetNewModifier(nestedType);
+						astType.AddChild(nestedType, Roles.TypeMemberRole);
+					}
+					break;
 
-			// Add properties
-			foreach(PropertyDef propDef in typeDef.Properties) {
-				if (propDef.GetMethod == null && propDef.SetMethod == null)
-					continue;
-				astType.Members.Add(CreateProperty(propDef));
-			}
-			
-			// Add methods
-			foreach(MethodDef methodDef in typeDef.Methods) {
-				if (MemberIsHidden(methodDef, context.Settings)) continue;
-				
-				if (methodDef.IsConstructor)
-					astType.Members.Add(CreateConstructor(methodDef));
-				else
-					astType.Members.Add(CreateMethod(methodDef));
+				case DecompilationObject.Field:
+					foreach (FieldDef fieldDef in typeDef.Fields) {
+						if (MemberIsHidden(fieldDef, context.Settings)) continue;
+						astType.AddChild(CreateField(fieldDef), Roles.TypeMemberRole);
+					}
+					break;
+
+				case DecompilationObject.Event:
+					foreach (EventDef eventDef in typeDef.Events) {
+						if (eventDef.AddMethod == null && eventDef.RemoveMethod == null)
+							continue;
+						astType.AddChild(CreateEvent(eventDef), Roles.TypeMemberRole);
+					}
+					break;
+
+				case DecompilationObject.Property:
+					foreach (PropertyDef propDef in typeDef.Properties) {
+						if (propDef.GetMethod == null && propDef.SetMethod == null)
+							continue;
+						astType.Members.Add(CreateProperty(propDef));
+					}
+					break;
+
+				case DecompilationObject.Method:
+					foreach (MethodDef methodDef in typeDef.Methods) {
+						if (MemberIsHidden(methodDef, context.Settings)) continue;
+
+						if (methodDef.IsConstructor)
+							astType.Members.Add(CreateConstructor(methodDef));
+						else
+							astType.Members.Add(CreateMethod(methodDef));
+					}
+					break;
+
+				default: throw new InvalidOperationException();
+				}
 			}
 		}
 

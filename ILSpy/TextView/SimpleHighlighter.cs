@@ -171,18 +171,18 @@ namespace ICSharpCode.ILSpy.TextView
 
 		public TextBlock Create()
 		{
-			var toolTipText = output.Text;
+			var textBlockText = output.Text;
 			var tokens = output.LanguageTokens;
 			tokens.Finish();
 
-			var tooltip = new TextBlock();
+			var textBlock = new TextBlock();
 
 			int offs = 0;
-			foreach (var line in GetLines(toolTipText)) {
+			foreach (var line in GetLines(textBlockText)) {
 				if (offs != 0)
-					tooltip.Inlines.Add(new LineBreak());
+					textBlock.Inlines.Add(new LineBreak());
 				int endOffs = offs + line.Item1.Length;
-				Debug.Assert(offs <= toolTipText.Length);
+				Debug.Assert(offs <= textBlockText.Length);
 
 				while (offs < endOffs) {
 					int defaultTextLength, tokenLength;
@@ -193,14 +193,14 @@ namespace ICSharpCode.ILSpy.TextView
 					}
 
 					if (defaultTextLength != 0) {
-						var text = toolTipText.Substring(offs, defaultTextLength);
-						tooltip.Inlines.Add(text);
+						var text = textBlockText.Substring(offs, defaultTextLength);
+						textBlock.Inlines.Add(text);
 					}
 					offs += defaultTextLength;
 
 					if (tokenLength != 0) {
 						var hlColor = GetColor(tokenType);
-						var text = toolTipText.Substring(offs, tokenLength);
+						var text = textBlockText.Substring(offs, tokenLength);
 						var elem = new Run(text);
 						if (hlColor.FontStyle != null)
 							elem.FontStyle = hlColor.FontStyle.Value;
@@ -210,16 +210,16 @@ namespace ICSharpCode.ILSpy.TextView
 							elem.Foreground = hlColor.Foreground.GetBrush(null);
 						if (hlColor.Background != null)
 							elem.Background = hlColor.Background.GetBrush(null);
-						tooltip.Inlines.Add(elem);
+						textBlock.Inlines.Add(elem);
 					}
 					offs += tokenLength;
 				}
 				Debug.Assert(offs == endOffs);
 				offs += line.Item2;
-				Debug.Assert(offs <= toolTipText.Length);
+				Debug.Assert(offs <= textBlockText.Length);
 			}
 
-			return tooltip;
+			return textBlock;
 		}
 
 		HighlightingColor GetColor(TextTokenType tokenType)

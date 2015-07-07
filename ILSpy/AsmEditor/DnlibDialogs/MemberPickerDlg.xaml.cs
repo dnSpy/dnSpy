@@ -40,7 +40,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 					data.AssemblyListTreeNode.OwnerTreeView = treeView;
 				}
 			};
-			MainWindow.InitializeTreeView(treeView);
+			MainWindow.InitializeAssemblyTreeView(treeView);
 			openImage.Source = ImageCache.Instance.GetImage("Open", BackgroundType.DialogWindow);
 			privateInternalImage.Source = ImageCache.Instance.GetImage("PrivateInternal", BackgroundType.DialogWindow);
 		}

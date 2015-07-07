@@ -199,7 +199,7 @@ namespace ICSharpCode.ILSpy
 			if (theme.IsHighContrast != Themes.IsHighContrast)
 				theme = Themes.GetThemeOrDefault(Themes.CurrentDefaultThemeName) ?? theme;
 			Themes.Theme = theme;
-			InitializeTreeView(treeView);
+			InitializeAssemblyTreeView(treeView);
 
 			InitMainMenu();
 			InitToolbar();
@@ -236,6 +236,11 @@ namespace ICSharpCode.ILSpy
 
 			treeView.GetPreviewInsideTextBackground = () => Themes.Theme.GetColor(dntheme.ColorType.SystemColorsHighlight).InheritedColor.Background.GetBrush(null);
 			treeView.GetPreviewInsideForeground = () => Themes.Theme.GetColor(dntheme.ColorType.SystemColorsHighlightText).InheritedColor.Foreground.GetBrush(null);
+		}
+
+		internal static void InitializeAssemblyTreeView(SharpTreeView treeView)
+		{
+			InitializeTreeView(treeView);
 
 			VirtualizingStackPanel.SetIsVirtualizing(treeView, true);
 			// VirtualizationMode.Recycling results in slower scrolling but less memory usage.
