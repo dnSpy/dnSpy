@@ -59,7 +59,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 
 		static LoadedAssembly GetLoadedAssembly(SharpTreeNode node)
 		{
-			var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
+			var asmNode = node as AssemblyTreeNode;
 			if (asmNode == null)
 				return null;
 
