@@ -83,8 +83,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				return false;
 			if (context.SelectedTreeNodes == null)
 				return context.Reference != null && MainWindow.ResolveReference(context.Reference.Reference) != null;
-			foreach (IMemberTreeNode node in context.SelectedTreeNodes) {
-				if (CanAnalyze(node.Member))
+			foreach (var node in context.SelectedTreeNodes) {
+				var mr = node as IMemberTreeNode;
+				if (mr != null && CanAnalyze(mr.Member))
 					return true;
 			}
 			return false;
@@ -93,8 +94,10 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		public void Execute(TextViewContext context)
 		{
 			if (context.SelectedTreeNodes != null) {
-				foreach (IMemberTreeNode node in context.SelectedTreeNodes) {
-					Analyze(node.Member);
+				foreach (var node in context.SelectedTreeNodes) {
+					var mr = node as IMemberTreeNode;
+					if (mr != null)
+						Analyze(mr.Member);
 				}
 			} else if (context.Reference != null && context.Reference.Reference is IMemberRef) {
 				if (context.Reference.Reference is IMemberRef)
