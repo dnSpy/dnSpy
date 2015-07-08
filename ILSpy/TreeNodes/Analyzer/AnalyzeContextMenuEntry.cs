@@ -18,6 +18,7 @@
 
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.TextView;
@@ -36,21 +37,35 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		void AnalyzeCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = AnalyzeContextMenuEntry.CanAnalyze(GetMemberRef(MainWindow.Instance.ActiveTextView));
+			e.CanExecute = AnalyzeContextMenuEntry.CanAnalyze(GetMemberRef());
 		}
 
 		void AnalyzeExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			AnalyzeContextMenuEntry.Analyze(GetMemberRef(MainWindow.Instance.ActiveTextView));
+			AnalyzeContextMenuEntry.Analyze(GetMemberRef());
 		}
 
-		static IMemberRef GetMemberRef(DecompilerTextView textView)
+		static IMemberRef GetMemberRef()
 		{
-			if (textView == null)
-				return null;
+			var textView = MainWindow.Instance.ActiveTextView;
+			if (textView != null && (bool)textView.GetValue(UIElement.IsKeyboardFocusWithinProperty)) {
+				var refSeg = textView.GetCurrentReferenceSegment();
+				return refSeg == null ? null : refSeg.Reference as IMemberRef;
+			}
 
-			var refSeg = textView.GetCurrentReferenceSegment();
-			return refSeg == null ? null : refSeg.Reference as IMemberRef;
+			var treeView = MainWindow.Instance.treeView;
+			if ((bool)treeView.GetValue(UIElement.IsKeyboardFocusWithinProperty)) {
+				var node = treeView.SelectedItem as IMemberTreeNode;
+				return node == null ? null : node.Member;
+			}
+
+			treeView = AnalyzerTreeView.Instance;
+			if ((bool)treeView.GetValue(UIElement.IsKeyboardFocusWithinProperty)) {
+				var node = treeView.SelectedItem as IMemberTreeNode;
+				return node == null ? null : node.Member;
+			}
+
+			return null;
 		}
 	}
 
