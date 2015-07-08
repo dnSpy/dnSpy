@@ -20,25 +20,17 @@
 	THE SOFTWARE.
 */
 
-using System.Xml.Linq;
 using dnSpy.BamlDecompiler.Baml;
-using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
-	internal class PropertyWithConverterHandler : IHandler {
+	internal class ContentPropertyHandler : IHandler {
 		public BamlRecordType Type {
-			get { return BamlRecordType.PropertyWithConverter; }
+			get { return BamlRecordType.ContentProperty; }
 		}
 
 		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
-			var record = (PropertyWithConverterRecord)((BamlRecordNode)node).Record;
-
-			var elemType = parent.Xaml.Element.Annotation<XamlType>();
-			var xamlProp = ctx.ResolveProperty(record.AttributeId);
-			var value = XamlUtils.Escape(record.Value);
-
-			var attr = new XAttribute(xamlProp.ToXName(ctx, parent.Xaml, xamlProp.IsAttachedTo(elemType)), value);
-			parent.Xaml.Element.Add(attr);
+			var record = (ContentPropertyRecord)((BamlRecordNode)node).Record;
+			// TODO: What to do here?
 
 			return null;
 		}

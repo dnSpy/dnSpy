@@ -25,19 +25,42 @@ using dnSpy.BamlDecompiler.Baml;
 using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
-	internal class PropertyWithConverterHandler : IHandler {
+	internal class PropertyWithExtensionHandler : IHandler {
 		public BamlRecordType Type {
-			get { return BamlRecordType.PropertyWithConverter; }
+			get { return BamlRecordType.PropertyWithExtension; }
 		}
 
 		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
-			var record = (PropertyWithConverterRecord)((BamlRecordNode)node).Record;
+			var record = (PropertyWithExtensionRecord)((BamlRecordNode)node).Record;
+			var extTypeId = ((short)record.Flags & 0xfff);
+			bool valTypeExt = ((short)record.Flags & 0x4000) == 0x4000;
+			bool valStaticExt = ((short)record.Flags & 0x2000) == 0x2000;
 
 			var elemType = parent.Xaml.Element.Annotation<XamlType>();
 			var xamlProp = ctx.ResolveProperty(record.AttributeId);
-			var value = XamlUtils.Escape(record.Value);
+			var extType = ctx.ResolveType((ushort)-extTypeId);
+			extType.ResolveNamespace(parent.Xaml, ctx);
 
-			var attr = new XAttribute(xamlProp.ToXName(ctx, parent.Xaml, xamlProp.IsAttachedTo(elemType)), value);
+			var ext = new XamlExtension(extType);
+			if (valTypeExt || extTypeId == (short)KnownTypes.TypeExtension) {
+				var value = ctx.ResolveType(record.ValueId);
+				ext.Initializer = ctx.ToString(parent.Xaml, value);
+			}
+			else if (valStaticExt || extTypeId == (short)KnownTypes.TemplateBindingExtension ||
+			         extTypeId == (short)KnownTypes.StaticExtension) {
+				var value = ctx.ResolveProperty(record.ValueId);
+
+				value.DeclaringType.ResolveNamespace(parent.Xaml, ctx);
+				var xName = value.ToXName(ctx, parent.Xaml, extTypeId != (short)KnownTypes.TemplateBindingExtension);
+
+				ext.Initializer = ctx.ToString(parent.Xaml, xName);
+			}
+			else {
+				ext.Initializer = XamlUtils.Escape(ctx.Baml.StringIdMap[record.ValueId].Value);
+			}
+
+			var extValue = ext.ToString(ctx, parent.Xaml);
+			var attr = new XAttribute(xamlProp.ToXName(ctx, parent.Xaml, xamlProp.IsAttachedTo(elemType)), extValue);
 			parent.Xaml.Element.Add(attr);
 
 			return null;

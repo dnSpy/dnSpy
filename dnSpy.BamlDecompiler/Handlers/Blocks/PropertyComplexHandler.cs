@@ -22,25 +22,28 @@
 
 using System.Xml.Linq;
 using dnSpy.BamlDecompiler.Baml;
-using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
-	internal class PropertyWithConverterHandler : IHandler {
+	internal class PropertyComplexHandler : IHandler {
 		public BamlRecordType Type {
-			get { return BamlRecordType.PropertyWithConverter; }
+			get { return BamlRecordType.PropertyComplexStart; }
 		}
 
 		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
-			var record = (PropertyWithConverterRecord)((BamlRecordNode)node).Record;
+			var record = (PropertyComplexStartRecord)((BamlBlockNode)node).Header;
+			var doc = new BamlElement(node);
 
-			var elemType = parent.Xaml.Element.Annotation<XamlType>();
-			var xamlProp = ctx.ResolveProperty(record.AttributeId);
-			var value = XamlUtils.Escape(record.Value);
+			var elemAttr = ctx.ResolveProperty(record.AttributeId);
+			doc.Xaml = new XElement(elemAttr.ToXName(ctx, null));
 
-			var attr = new XAttribute(xamlProp.ToXName(ctx, parent.Xaml, xamlProp.IsAttachedTo(elemType)), value);
-			parent.Xaml.Element.Add(attr);
+			doc.Xaml.Element.AddAnnotation(elemAttr);
+			parent.Xaml.Element.Add(doc.Xaml.Element);
 
-			return null;
+			HandlerMap.ProcessChildren(ctx, (BamlBlockNode)node, doc);
+			elemAttr.DeclaringType.ResolveNamespace(doc.Xaml, ctx);
+			doc.Xaml.Element.Name = elemAttr.ToXName(ctx, null);
+
+			return doc;
 		}
 	}
 }

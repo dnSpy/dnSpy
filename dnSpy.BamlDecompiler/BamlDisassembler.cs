@@ -487,7 +487,7 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		void DisassembleRecord(BamlContext ctx, PropertyWithExtensionRecord record) {
-			WriteText("Value=");
+			WriteText("AttributeId=");
 			WriteAttributeId(ctx, record.AttributeId);
 
 			WriteText(", Flags=");
