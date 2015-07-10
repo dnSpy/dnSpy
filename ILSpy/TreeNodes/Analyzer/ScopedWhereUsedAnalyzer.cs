@@ -22,6 +22,7 @@ using System.Linq;
 using System.Threading;
 using ICSharpCode.NRefactory.Utils;
 using dnlib.DotNet;
+using dnlib.Threading;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {
@@ -30,7 +31,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	/// </summary>
 	internal class ScopedWhereUsedAnalyzer<T>
 	{
-		private readonly AssemblyDef assemblyScope;
+		private readonly ModuleDef moduleScope;
 		private TypeDef typeScope;
 
 		private readonly Accessibility memberAccessibility = Accessibility.Public;
@@ -40,7 +41,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		public ScopedWhereUsedAnalyzer(TypeDef type, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
 		{
 			this.typeScope = type;
-			this.assemblyScope = type.Module.Assembly;
+			this.moduleScope = type.Module;
 			this.typeAnalysisFunction = typeAnalysisFunction;
 		}
 
@@ -203,23 +204,19 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private IEnumerable<T> FindReferencesInAssemblyAndFriends(CancellationToken ct)
 		{
-			var assemblies = GetAssemblyAndAnyFriends(assemblyScope, ct);
-
-			// use parallelism only on the assembly level (avoid locks within Cecil)
-			return assemblies.AsParallel().WithCancellation(ct).SelectMany(a => FindReferencesInAssembly(a, ct));
+			var modules = GetModuleAndAnyFriends(moduleScope, ct);
+			return modules.AsParallel().WithCancellation(ct).SelectMany(a => FindReferencesInModule(a, ct));
 		}
 
 		private IEnumerable<T> FindReferencesGlobal(CancellationToken ct)
 		{
-			var assemblies = GetReferencingAssemblies(assemblyScope, ct);
-
-			// use parallelism only on the assembly level (avoid locks within Cecil)
-			return assemblies.AsParallel().WithCancellation(ct).SelectMany(asm => FindReferencesInAssembly(asm, ct));
+			var modules = GetReferencingModules(moduleScope, ct);
+			return modules.AsParallel().WithCancellation(ct).SelectMany(a => FindReferencesInModule(a, ct));
 		}
 
-		private IEnumerable<T> FindReferencesInAssembly(AssemblyDef asm, CancellationToken ct)
+		private IEnumerable<T> FindReferencesInModule(ModuleDef mod, CancellationToken ct)
 		{
-			foreach (TypeDef type in TreeTraversal.PreOrder(asm.Modules.SelectMany(m => m.Types), t => t.NestedTypes)) {
+			foreach (TypeDef type in TreeTraversal.PreOrder(mod.Types, t => t.NestedTypes)) {
 				ct.ThrowIfCancellationRequested();
 				foreach (var result in typeAnalysisFunction(type)) {
 					ct.ThrowIfCancellationRequested();
@@ -250,33 +247,43 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		private IEnumerable<AssemblyDef> GetReferencingAssemblies(AssemblyDef asm, CancellationToken ct)
+		private IEnumerable<ModuleDef> GetReferencingModules(ModuleDef mod, CancellationToken ct)
 		{
-			if (asm == null)
+			var asm = mod.Assembly;
+			if (asm == null) {
+				yield return mod;
 				yield break;
-			yield return asm;
+			}
+			foreach (var m in mod.Assembly.Modules.GetSafeEnumerable())
+				yield return m;
 
 			IEnumerable<LoadedAssembly> assemblies = MainWindow.Instance.CurrentAssemblyList.GetAssemblies().Where(assy => assy.AssemblyDefinition != null);
 
 			foreach (var assembly in assemblies) {
 				ct.ThrowIfCancellationRequested();
 				bool found = false;
-				foreach (var reference in assembly.AssemblyDefinition.Modules.OfType<ModuleDefMD>().SelectMany(module => module.GetAssemblyRefs())) {
+				foreach (var reference in assembly.AssemblyDefinition.Modules.GetSafeEnumerable().OfType<ModuleDefMD>().SelectMany(module => module.GetAssemblyRefs())) {
 					if (AssemblyNameComparer.CompareAll.CompareTo(asm, reference) == 0) {
 						found = true;
 						break;
 					}
 				}
-				if (found && AssemblyReferencesScopeType(assembly.AssemblyDefinition))
-					yield return assembly.AssemblyDefinition;
+				if (found && AssemblyReferencesScopeType(assembly.AssemblyDefinition)) {
+					foreach (var m in assembly.AssemblyDefinition.Modules.GetSafeEnumerable())
+						yield return m;
+				}
 			}
 		}
 
-		private IEnumerable<AssemblyDef> GetAssemblyAndAnyFriends(AssemblyDef asm, CancellationToken ct)
+		private IEnumerable<ModuleDef> GetModuleAndAnyFriends(ModuleDef mod, CancellationToken ct)
 		{
-			if (asm == null)
+			var asm = mod.Assembly;
+			if (asm == null) {
+				yield return mod;
 				yield break;
-			yield return asm;
+			}
+			foreach (var m in mod.Assembly.Modules.GetSafeEnumerable())
+				yield return m;
 
 			if (asm.HasCustomAttributes) {
 				var attributes = asm.CustomAttributes
@@ -298,7 +305,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 					foreach (var assembly in assemblies) {
 						ct.ThrowIfCancellationRequested();
 						if (friendAssemblies.Contains(assembly.AssemblyDefinition.Name) && AssemblyReferencesScopeType(assembly.AssemblyDefinition)) {
-							yield return assembly.AssemblyDefinition;
+							foreach (var m in assembly.AssemblyDefinition.Modules.GetSafeEnumerable())
+								yield return m;
 						}
 					}
 				}
@@ -307,7 +315,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private bool AssemblyReferencesScopeType(AssemblyDef asm)
 		{
-			foreach (var tmp in asm.Modules) {
+			foreach (var tmp in asm.Modules.GetSafeEnumerable()) {
 				var mod = tmp as ModuleDefMD;
 				if (mod == null)
 					continue;
