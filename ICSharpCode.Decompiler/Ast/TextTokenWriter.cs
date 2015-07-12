@@ -53,6 +53,10 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public override void WriteIdentifier(Identifier identifier)
 		{
+			if (identifier.IsVerbatim || CSharpOutputVisitor.IsKeyword(identifier.Name, identifier)) {
+				output.Write('@');
+			}
+			
 			var definition = GetCurrentDefinition();
 			if (definition != null) {
 				output.WriteDefinition(identifier.Name, definition, false);
