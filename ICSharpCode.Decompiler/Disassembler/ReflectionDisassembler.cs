@@ -33,7 +33,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 	/// </summary>
 	public sealed class ReflectionDisassembler
 	{
-		ITextOutput output;
+		readonly ITextOutput output;
 		CancellationToken cancellationToken;
 		bool isInType; // whether we are currently disassembling a whole type (-> defaultCollapsed for foldings)
 		MethodBodyDisassembler methodBodyDisassembler;
@@ -213,8 +213,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 					output.WriteLine();
 				}
 			}
+			WriteParameterAttributes(0, method.MethodReturnType, method.MethodReturnType);
 			foreach (var p in method.Parameters) {
-				WriteParameterAttributes(p);
+				WriteParameterAttributes(p.Index + 1, p, p);
 			}
 			WriteSecurityDeclarations(method);
 			
@@ -613,22 +614,17 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 		}
 		
-		bool HasParameterAttributes(ParameterDefinition p)
+		void WriteParameterAttributes(int index, IConstantProvider cp, ICustomAttributeProvider cap)
 		{
-			return p.HasConstant || p.HasCustomAttributes;
-		}
-		
-		void WriteParameterAttributes(ParameterDefinition p)
-		{
-			if (!HasParameterAttributes(p))
+			if (!cp.HasConstant && !cap.HasCustomAttributes)
 				return;
-			output.Write(".param [{0}]", p.Index + 1);
-			if (p.HasConstant) {
+			output.Write(".param [{0}]", index);
+			if (cp.HasConstant) {
 				output.Write(" = ");
-				WriteConstant(p.Constant);
+				WriteConstant(cp.Constant);
 			}
 			output.WriteLine();
-			WriteAttributes(p.CustomAttributes);
+			WriteAttributes(cap.CustomAttributes);
 		}
 		
 		void WriteConstant(object constant)
