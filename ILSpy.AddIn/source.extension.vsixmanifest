@@ -3,7 +3,7 @@
   <Identifier Id="a9120dbe-164a-4891-842f-fb7829273838">
     <Name>ILSpy</Name>
     <Author>IC#Code</Author>
-    <Version>1.2</Version>
+    <Version>1.3</Version>
     <Description xml:space="preserve">Integrates the ILSpy decompiler into Visual Studio.</Description>
     <Icon>ILSpy-Large.ico</Icon>
     <License>license.txt</License>
