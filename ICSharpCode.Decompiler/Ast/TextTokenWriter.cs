@@ -58,7 +58,7 @@ namespace ICSharpCode.Decompiler.Ast
 				tokenType = TextTokenHelper.GetTextTokenType(identifier.AnnotationVT<TextTokenType>() ?? identifier.Annotation<object>());
 
 			if (identifier.IsVerbatim || CSharpOutputVisitor.IsKeyword(identifier.Name, identifier)) {
-				output.Write('@');
+				output.Write('@', TextTokenType.Operator);
 			}
 			
 			var definition = GetCurrentDefinition(identifier);
