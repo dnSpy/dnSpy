@@ -3,7 +3,7 @@
   <Identifier Id="E423C8E4-E730-47FE-B943-5D0E0E5C7CEB">
     <Name>dnSpy</Name>
     <Author>IC#Code</Author>
-    <Version>1.2</Version>
+    <Version>1.3</Version>
     <Description xml:space="preserve">Integrates the dnSpy decompiler into Visual Studio.</Description>
     <Icon>ILSpy-Large.ico</Icon>
     <License>license.txt</License>

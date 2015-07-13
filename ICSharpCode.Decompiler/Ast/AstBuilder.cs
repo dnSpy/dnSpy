@@ -339,6 +339,7 @@ namespace ICSharpCode.Decompiler.Ast
 						}
 					} else {
 						EnumMemberDeclaration enumMember = new EnumMemberDeclaration();
+						ConvertCustomAttributes(enumMember, field);
 						enumMember.AddAnnotation(field);
 						enumMember.NameToken = Identifier.Create(CleanName(field.Name)).WithAnnotation(field);
 						var constant = field.Constant == null ? null : field.Constant.Value;

@@ -76,7 +76,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 	/// </summary>
 	public sealed class ReflectionDisassembler
 	{
-		ITextOutput output;
+		readonly ITextOutput output;
 		readonly DisassemblerOptions options;
 		bool isInType; // whether we are currently disassembling a whole type (-> defaultCollapsed for foldings)
 		MethodBodyDisassembler methodBodyDisassembler;
@@ -306,10 +306,11 @@ namespace ICSharpCode.Decompiler.Disassembler
 					output.WriteLine();
 				}
 			}
+			WriteParameterAttributes(0, method.Parameters.ReturnParameter);
 			foreach (var p in method.Parameters) {
 				if (p.IsHiddenThisParameter)
 					continue;
-				WriteParameterAttributes(p);
+				WriteParameterAttributes(p.MethodSigIndex + 1, p);
 			}
 			WriteSecurityDeclarations(method);
 			
@@ -928,14 +929,14 @@ namespace ICSharpCode.Decompiler.Disassembler
 			return p.ParamDef != null && (p.ParamDef.HasConstant || p.ParamDef.HasCustomAttributes);
 		}
 		
-		void WriteParameterAttributes(Parameter p)
+		void WriteParameterAttributes(int index, Parameter p)
 		{
 			if (!HasParameterAttributes(p))
 				return;
 			output.Write(".param", TextTokenType.ILDirective);
 			output.WriteSpace();
 			output.Write('[', TextTokenType.Operator);
-			output.Write(string.Format("{0}", p.MethodSigIndex + 1), TextTokenType.Number);
+			output.Write(string.Format("{0}", index), TextTokenType.Number);
 			output.Write(']', TextTokenType.Operator);
 			if (p.HasParamDef && p.ParamDef.HasConstant) {
 				output.WriteSpace();
