@@ -1,6 +1,5 @@
-dnSpy is a fork of ILSpy. All changes de4dot@gmail.com have made
-are distributed under the GPLv3 license. See the file COPYING.
-Copyright (C) 2014-2015 de4dot@gmail.com
+dnSpy is a fork of ILSpy and is licensed under the GPLv3 license.
+See the file COPYING. Copyright (C) 2014-2015 de4dot@gmail.com
 Website: https://github.com/0xd4d/dnSpy
 
 dnSpy is open source software. You have the right to get all
