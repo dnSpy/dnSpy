@@ -294,6 +294,21 @@ namespace ICSharpCode.ILSpy.dntheme
 		Module,
 
 		/// <summary>
+		/// Part of a directory
+		/// </summary>
+		DirectoryPart,
+
+		/// <summary>
+		/// Filename without extension
+		/// </summary>
+		FileNameNoExtension,
+
+		/// <summary>
+		/// File extension
+		/// </summary>
+		FileExtension,
+
+		/// <summary>
 		/// Default text in all windows
 		/// </summary>
 		DefaultText,
@@ -792,8 +807,6 @@ namespace ICSharpCode.ILSpy.dntheme
 		DockedPaneCloseButtonPathFill,
 		DockedPaneTitleForeground,
 		DecompilerTextViewWaitAdorner,
-		ResourceTableAlternationBackground1,
-		ResourceTableAlternationBackground2,
 		AvalonEditSearchDropDownButtonActiveBorder,
 		AvalonEditSearchDropDownButtonActiveBackground,
 		ListArrowBackground,

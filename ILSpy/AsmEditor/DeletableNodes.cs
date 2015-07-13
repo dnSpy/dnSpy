@@ -39,6 +39,10 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			get { return nodes; }
 		}
 
+		public ILSpyTreeNode[] Parents {
+			get { return parents; }
+		}
+
 		public DeletableNodes(T node)
 			: this(new[] { node })
 		{

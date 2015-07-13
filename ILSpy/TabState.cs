@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -96,13 +97,6 @@ namespace ICSharpCode.ILSpy
 			tabItem.DataContext = this;
 		}
 
-		public static TabState GetTabState(FrameworkElement elem)
-		{
-			if (elem == null)
-				return null;
-			return elem.DataContext as TabState;
-		}
-
 		protected void UpdateHeader()
 		{
 			OnPropertyChanged("Header");
@@ -115,7 +109,12 @@ namespace ICSharpCode.ILSpy
 			Owner.Close(this);
 		}
 
-		public abstract void FocusContent();
+		public virtual void FocusContent()
+		{
+			var uiel = TabItem.Content as UIElement;
+			if (uiel != null)
+				uiel.Focus();
+		}
 
 		public void Dispose()
 		{
@@ -138,6 +137,10 @@ namespace ICSharpCode.ILSpy
 			get { return decompiledNodes; }
 		}
 		ILSpyTreeNode[] decompiledNodes = new ILSpyTreeNode[0];
+
+		public bool IsTextViewInVisualTree {
+			get { return TabItem.Content == TextView; }
+		}
 
 		public string Title {
 			get { return title; }
@@ -202,18 +205,18 @@ namespace ICSharpCode.ILSpy
 				UpdateHeader();
 		}
 
-		public static TabStateDecompile GetTabStateDecompile(FrameworkElement elem)
+		public static TabStateDecompile GetTabStateDecompile(DecompilerTextView elem)
 		{
 			if (elem == null)
 				return null;
-			// The DataContext is inherited from the owner TabItem which is set to a TabStateDecompile
-			return elem.DataContext as TabStateDecompile;
+			return (TabStateDecompile)elem.Tag;
 		}
 
 		public TabStateDecompile(Language language)
 		{
 			var view = TextView;
 			TabItem.Content = view;
+			view.Tag = this;
 			TabItem.Style = App.Current.FindResource("TabStateDecompileTabItemStyle") as Style;
 			this.language = language;
 			UpdateHeader();
@@ -234,7 +237,10 @@ namespace ICSharpCode.ILSpy
 
 		public override void FocusContent()
 		{
-			this.TextView.TextEditor.TextArea.Focus();
+			if (this.TextView == TabItem.Content)
+				this.TextView.TextEditor.TextArea.Focus();
+			else
+				base.FocusContent();
 		}
 
 		protected override void Dispose(bool isDisposing)

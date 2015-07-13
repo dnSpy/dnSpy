@@ -29,7 +29,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 		public AssemblyOptionsDlg()
 		{
 			InitializeComponent();
-			Loaded += (s, e) => ((AssemblyOptionsVM)DataContext).OpenPublicKeyFile = new OpenPublicKeyFile(this);
+			DataContextChanged += (s, e) => {
+				var data = DataContext as AssemblyOptionsVM;
+				if (data != null)
+					data.OpenPublicKeyFile = new OpenPublicKeyFile(this);
+			};
 		}
 	}
 }

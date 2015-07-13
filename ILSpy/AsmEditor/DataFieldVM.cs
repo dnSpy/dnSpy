@@ -766,6 +766,84 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 	}
 
+	sealed class DecimalVM : DataFieldVM<decimal>
+	{
+		public DecimalVM(Action<DataFieldVM> onUpdated)
+			: this(0, onUpdated)
+		{
+		}
+
+		public DecimalVM(decimal value, Action<DataFieldVM> onUpdated)
+			: base(onUpdated)
+		{
+			SetValue(value);
+		}
+
+		protected override void SetValue(decimal value)
+		{
+			this.StringValue = NumberVMUtils.ToString(value);
+		}
+
+		protected override string ConvertToValue(out decimal value)
+		{
+			string error;
+			value = NumberVMUtils.ParseDecimal(StringValue, out error);
+			return error;
+		}
+	}
+
+	sealed class DateTimeVM : DataFieldVM<DateTime>
+	{
+		public DateTimeVM(Action<DataFieldVM> onUpdated)
+			: this(DateTime.MinValue, onUpdated)
+		{
+		}
+
+		public DateTimeVM(DateTime value, Action<DataFieldVM> onUpdated)
+			: base(onUpdated)
+		{
+			SetValue(value);
+		}
+
+		protected override void SetValue(DateTime value)
+		{
+			this.StringValue = NumberVMUtils.ToString(value);
+		}
+
+		protected override string ConvertToValue(out DateTime value)
+		{
+			string error;
+			value = NumberVMUtils.ParseDateTime(StringValue, out error);
+			return error;
+		}
+	}
+
+	sealed class TimeSpanVM : DataFieldVM<TimeSpan>
+	{
+		public TimeSpanVM(Action<DataFieldVM> onUpdated)
+			: this(TimeSpan.Zero, onUpdated)
+		{
+		}
+
+		public TimeSpanVM(TimeSpan value, Action<DataFieldVM> onUpdated)
+			: base(onUpdated)
+		{
+			SetValue(value);
+		}
+
+		protected override void SetValue(TimeSpan value)
+		{
+			this.StringValue = NumberVMUtils.ToString(value);
+		}
+
+		protected override string ConvertToValue(out TimeSpan value)
+		{
+			string error;
+			value = NumberVMUtils.ParseTimeSpan(StringValue, out error);
+			return error;
+		}
+	}
+
 	sealed class GuidVM : DataFieldVM<Guid>
 	{
 		public GuidVM(Action<DataFieldVM> onUpdated)

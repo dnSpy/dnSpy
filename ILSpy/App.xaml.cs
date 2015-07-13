@@ -72,8 +72,6 @@ namespace ICSharpCode.ILSpy
 		
 		public App()
 		{
-			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
-
 			// Add Ctrl+Shift+Z as a redo command. Don't know why it isn't enabled by default.
 			ApplicationCommands.Redo.InputGestures.Add(new KeyGesture(Key.Z, ModifierKeys.Control | ModifierKeys.Shift));
 
@@ -249,35 +247,6 @@ namespace ICSharpCode.ILSpy
 				ILSpy.MainWindow.Instance.SetTitle(textView, e.Uri.AbsolutePath);
 				e.Handled = true;
 			}
-		}
-
-		Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-		{
-			var name = new AssemblyName(args.Name).Name;
-			Assembly asm;
-			if (name == "ILSpy")
-				asm = typeof(App).Assembly;
-			else if (name == "ICSharpCode.TreeView")
-				asm = typeof(ICSharpCode.TreeView.SharpTreeView).Assembly;
-			else if (name == "ICSharpCode.AvalonEdit")
-				asm = typeof(ICSharpCode.AvalonEdit.TextEditor).Assembly;
-			else if (name == "ICSharpCode.NRefactory")
-				asm = typeof(ICSharpCode.NRefactory.IAnnotatable).Assembly;
-			else if (name == "ICSharpCode.NRefactory.CSharp")
-				asm = typeof(ICSharpCode.NRefactory.CSharp.AstNode).Assembly;
-			else if (name == "ICSharpCode.NRefactory.VB")
-				asm = typeof(ICSharpCode.NRefactory.VB.AstNode).Assembly;
-			else if (name == "ICSharpCode.Decompiler")
-				asm = typeof(ICSharpCode.Decompiler.DecompilerContext).Assembly;
-			else if (name == "ILSpy.SharpDevelop.LGPL")
-				asm = typeof(ICSharpCode.ILSpy.Debugger.DebugInformation).Assembly;
-			else if (name == "dnlib")
-				asm = typeof(dnlib.DotNet.ModuleDef).Assembly;
-			else
-				return null;
-
-			Debug.Fail(string.Format("Unresolved assembly reference to {0}", name));
-			return asm;
 		}
 	}
 }

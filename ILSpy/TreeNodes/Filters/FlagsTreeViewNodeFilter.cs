@@ -59,7 +59,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 						VisibleMembersFlags.ModuleRef | VisibleMembersFlags.ResourceList |
 						VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
 						VisibleMembersFlags.ParamDef | VisibleMembersFlags.Locals |
-						VisibleMembersFlags.Local;
+						VisibleMembersFlags.Local | VisibleMembersFlags.Resource |
+						VisibleMembersFlags.ResourceElement;
 				break;
 
 			case AssemblyFilterType.NetModule:
@@ -73,7 +74,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 						VisibleMembersFlags.ModuleRef | VisibleMembersFlags.ResourceList |
 						VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
 						VisibleMembersFlags.ParamDef | VisibleMembersFlags.Locals |
-						VisibleMembersFlags.Local;
+						VisibleMembersFlags.Local | VisibleMembersFlags.Resource |
+						VisibleMembersFlags.ResourceElement;
 				break;
 
 			case AssemblyFilterType.NonNetFile:
@@ -197,7 +199,29 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 
 		public override TreeViewNodeFilterResult GetFilterResult(ResourceListTreeNode node)
 		{
+			var visibleFlags = VisibleMembersFlags.Resource | VisibleMembersFlags.ResourceElement;
 			bool isMatch = (flags & VisibleMembersFlags.ResourceList) != 0;
+			if ((flags & visibleFlags) == 0)
+				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
+			if (isMatch)
+				return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);
+			return new TreeViewNodeFilterResult(FilterResult.Recurse, isMatch);
+		}
+
+		public override TreeViewNodeFilterResult GetFilterResult(ResourceTreeNode node)
+		{
+			var visibleFlags = VisibleMembersFlags.ResourceElement;
+			bool isMatch = (flags & VisibleMembersFlags.Resource) != 0;
+			if ((flags & visibleFlags) == 0)
+				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
+			if (isMatch)
+				return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);
+			return new TreeViewNodeFilterResult(FilterResult.Recurse, isMatch);
+		}
+
+		public override TreeViewNodeFilterResult GetFilterResult(ResourceElementTreeNode node)
+		{
+			bool isMatch = (flags & VisibleMembersFlags.ResourceElement) != 0;
 			if (!isMatch)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
 			return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);

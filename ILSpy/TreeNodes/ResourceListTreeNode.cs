@@ -19,9 +19,10 @@
 using System;
 using System.Linq;
 using System.Windows.Threading;
+using dnlib.DotNet;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
-using dnlib.DotNet;
+using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
@@ -53,10 +54,23 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		
 		protected override void LoadChildren()
 		{
-			foreach (Resource r in module.Resources.OrderBy(m => m.Name))
-				this.Children.Add(ResourceTreeNode.Create(r));
+			var ary = module.Resources.ToArray();
+			Array.Sort(ary, ResourceComparer.Instance);
+			foreach (var r in ary)
+				this.Children.Add(ResourceFactory.Create(module, r));
 		}
-		
+
+		protected override int GetNewChildIndex(SharpTreeNode node)
+		{
+			if (node is ResourceTreeNode)
+				return GetNewChildIndex(node, (a, b) => ResourceComparer.Instance.Compare(((ResourceTreeNode)a).Resource, ((ResourceTreeNode)b).Resource));
+			return base.GetNewChildIndex(node);
+		}
+
+		protected override bool SortOnNodeType {
+			get { return false; }
+		}
+
 		public override FilterResult Filter(FilterSettings settings)
 		{
 			var res = settings.Filter.GetFilterResult(this);
@@ -71,8 +85,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
 			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(EnsureChildrenFiltered));
-			foreach (ILSpyTreeNode child in this.Children) {
-				child.Decompile(language, output, options);
+			foreach (ResourceTreeNode child in this.Children) {
+				child.Decompile(language, output);
 				output.WriteLine();
 			}
 		}

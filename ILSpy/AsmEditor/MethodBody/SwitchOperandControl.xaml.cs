@@ -32,10 +32,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		public SwitchOperandControl()
 		{
 			InitializeComponent();
-			DataContextChanged += MethodBodyControl_DataContextChanged;
+			DataContextChanged += SwitchOperandControl_DataContextChanged;
 		}
 
-		void MethodBodyControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+		void SwitchOperandControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
 			var data = DataContext as SwitchOperandVM;
 			if (data == null)

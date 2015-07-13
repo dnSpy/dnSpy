@@ -24,16 +24,20 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 	sealed class SameAssemblyTreeViewNodeFilter : ChainTreeViewNodeFilter
 	{
 		readonly AssemblyDef allowedAsm;
+		readonly ModuleDef allowedMod;
 
-		public SameAssemblyTreeViewNodeFilter(AssemblyDef allowedAsm, ITreeViewNodeFilter filter)
+		public SameAssemblyTreeViewNodeFilter(ModuleDef allowedMod, ITreeViewNodeFilter filter)
 			: base(filter)
 		{
-			this.allowedAsm = allowedAsm;
+			this.allowedAsm = allowedMod.Assembly;
+			this.allowedMod = allowedMod;
 		}
 
 		public override TreeViewNodeFilterResult GetFilterResult(LoadedAssembly asm, AssemblyFilterType type)
 		{
 			if (asm.AssemblyDefinition != allowedAsm)
+				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
+			if (allowedAsm == null && asm.ModuleDefinition != allowedMod)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 			return base.GetFilterResult(asm, type);
 		}

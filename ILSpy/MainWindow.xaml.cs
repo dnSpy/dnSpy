@@ -174,6 +174,7 @@ namespace ICSharpCode.ILSpy
 			Themes.ThemeChanged += Themes_ThemeChanged;
 			Themes.IsHighContrastChanged += (s, e) => Themes.SwitchThemeIfNecessary();
 			Options.DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
+			Options.OtherSettings.Instance.PropertyChanged += OtherSettings_PropertyChanged;
 			InitializeTextEditorFontResource();
 
 			languageComboBox = new ComboBox() {
@@ -209,6 +210,50 @@ namespace ICSharpCode.ILSpy
 			this.Deactivated += (s, e) => UpdateSystemMenuImage();
 			this.ContentRendered += MainWindow_ContentRendered;
 			this.IsEnabled = false;
+		}
+
+		void OtherSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "DeserializeResources") {
+				if (Options.OtherSettings.Instance.DeserializeResources)
+					OnDeserializeResources();
+			}
+		}
+
+		void OnDeserializeResources()
+		{
+			var modifiedResourceNodes = new HashSet<ILSpyTreeNode>();
+			foreach (var node in this.assemblyListTreeNode.Descendants().OfType<SerializedResourceElementTreeNode>()) {
+				if (node.DeserializeCanExecute()) {
+					node.Deserialize();
+					modifiedResourceNodes.Add(node);
+				}
+			}
+
+			RefreshResources(modifiedResourceNodes);
+		}
+
+		void RefreshResources(HashSet<ILSpyTreeNode> modifiedResourceNodes)
+		{
+			if (modifiedResourceNodes.Count == 0)
+				return;
+
+			var ownerNodes = new HashSet<ResourceListTreeNode>();
+			foreach (var node in modifiedResourceNodes) {
+				var owner = ILSpyTreeNode.GetNode<ResourceListTreeNode>(node);
+				if (owner != null)
+					ownerNodes.Add(owner);
+			}
+			if (ownerNodes.Count == 0)
+				return;
+
+			DecompileCache.Instance.Clear(new HashSet<LoadedAssembly>(ownerNodes.Select(a => ILSpyTreeNode.GetNode<AssemblyTreeNode>(a).LoadedAssembly)));
+
+			foreach (var tabState in AllTabStates) {
+				bool refresh = tabState.DecompiledNodes.Any(a => ownerNodes.Contains(ILSpyTreeNode.GetNode<ResourceListTreeNode>(a)));
+				if (refresh)
+					ForceDecompile(tabState);
+			}
 		}
 
 		void CurrentDisplaySettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -549,7 +594,7 @@ namespace ICSharpCode.ILSpy
 			InitializeActiveTab(newState, false);
 
 			if (IsActiveTab(newState))
-				SetTextEditorFocus(newView);
+				SetTabFocus(newState);
 
 			if (OnDecompilerTextViewChanged != null)
 				OnDecompilerTextViewChanged(this, new DecompilerTextViewChangedEventArgs(oldView, newView));
@@ -565,7 +610,7 @@ namespace ICSharpCode.ILSpy
 
 			var activeTabState = newTabManager.ActiveTabState;
 			if (activeTabState != null)
-				SetTextEditorFocus(activeTabState.TextView);
+				SetTabFocus(activeTabState);
 
 			if (OnActiveDecompilerTextViewChanged != null) {
 				var oldView = oldTabManager.ActiveTabState == null ? null : oldTabManager.ActiveTabState.TextView;
@@ -576,42 +621,57 @@ namespace ICSharpCode.ILSpy
 
 		public void SetTextEditorFocus(DecompilerTextView textView)
 		{
-			var tabState = TabStateDecompile.GetTabStateDecompile(textView);
+			SetTabFocus(TabStateDecompile.GetTabStateDecompile(textView));
+		}
+
+		void SetTabFocus(TabStateDecompile tabState)
+		{
 			if (tabState == null)
 				return;
 			if (!IsActiveTab(tabState))
 				return;
-
-			if (textView.waitAdornerButton.IsVisible) {
-				SetFocusIfNoMenuIsOpened(textView.waitAdornerButton);
+			if (tabState.TabItem.Content == null)
 				return;
-			}
 
-			// Set focus to the text area whenever the view is selected
-			var textArea = textView.TextEditor.TextArea;
-			if (!textArea.IsVisible) {
-				new SetFocusWhenVisible(tabState);
+			UIElement uiElem;
+			if (tabState.IsTextViewInVisualTree) {
+				var textView = tabState.TextView;
+				if (textView.waitAdornerButton.IsVisible) {
+					SetFocusIfNoMenuIsOpened(textView.waitAdornerButton);
+					return;
+				}
+
+				uiElem = textView.TextEditor.TextArea;
 			}
 			else
-				SetFocusIfNoMenuIsOpened(textArea);
+				uiElem = tabState.TabItem.Content as UIElement;
+			Debug.Assert(uiElem != null);
+			if (uiElem == null)
+				return;
+
+			if (!uiElem.IsVisible)
+				new SetFocusWhenVisible(tabState, uiElem);
+			else
+				SetFocusIfNoMenuIsOpened(uiElem);
 		}
 
 		class SetFocusWhenVisible
 		{
 			readonly TabStateDecompile tabState;
+			readonly UIElement uiElem;
 
-			public SetFocusWhenVisible(TabStateDecompile tabState)
+			public SetFocusWhenVisible(TabStateDecompile tabState, UIElement uiElem)
 			{
 				this.tabState = tabState;
-				tabState.TextView.TextEditor.TextArea.IsVisibleChanged += textArea_IsVisibleChanged;
+				this.uiElem = uiElem;
+				uiElem.IsVisibleChanged += uiElem_IsVisibleChanged;
 			}
 
-			void textArea_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+			void uiElem_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
 			{
-				var textArea = tabState.TextView.TextEditor.TextArea;
-				textArea.IsVisibleChanged -= textArea_IsVisibleChanged;
+				uiElem.IsVisibleChanged -= uiElem_IsVisibleChanged;
 				if (MainWindow.Instance.IsActiveTab(tabState))
-					SetFocusIfNoMenuIsOpened(textArea);
+					SetFocusIfNoMenuIsOpened(uiElem);
 			}
 		}
 
@@ -1852,10 +1912,15 @@ namespace ICSharpCode.ILSpy
 			tabState.HasDecompiled = true;
 			tabState.SetDecompileProps(language, nodes);
 
-			if (nodes.Length == 1 && nodes[0].View(tabState.TextView)) {
-				tabState.TextView.CancelDecompileAsync();
-				return true;
+			if (nodes.Length == 1) {
+				var node = nodes[0];
+
+				if (node.View(tabState.TextView)) {
+					tabState.TextView.CancelDecompileAsync();
+					return true;
+				}
 			}
+
 			tabState.TextView.DecompileAsync(language, nodes, new DecompilationOptions() { TextViewState = state, DecompilerTextView = tabState.TextView });
 			return true;
 		}
@@ -2373,11 +2438,11 @@ namespace ICSharpCode.ILSpy
 				// priority in case the treeview steals the focus.......
 				this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(delegate {
 					if (ActiveTabState == tabState)
-						SetTextEditorFocus(tabState.TextView);
+						SetTabFocus(tabState);
 				}));
 				this.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(delegate {
 					if (ActiveTabState == tabState)
-						SetTextEditorFocus(tabState.TextView);
+						SetTabFocus(tabState);
 				}));
 			}
 		}
@@ -2458,7 +2523,7 @@ namespace ICSharpCode.ILSpy
 		{
 			var tabState = ActiveTabState;
 			if (tabState != null)
-				SetTextEditorFocus(tabState.TextView);
+				SetTabFocus(tabState);
 		}
 
 		private void FocusCodeCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -2607,9 +2672,16 @@ namespace ICSharpCode.ILSpy
 			if (textView == null || reference == null)
 				return;
 			var tabState = TabStateDecompile.GetTabStateDecompile(textView);
-			var clonedTabState = CloneTabMakeActive(tabState, true);
+			var clonedTabState = CloneTabMakeActive(tabState, false);
 			clonedTabState.History.Clear();
-			clonedTabState.TextView.GoToTarget(reference, true, false);
+
+			var nodes = tabState.DecompiledNodes;
+			var helper = new OnShowOutputHelper(clonedTabState.TextView, (a, b) => clonedTabState.TextView.GoToTarget(reference, true, false), nodes);
+			bool? decompiled = DecompileNodes(clonedTabState, null, false, clonedTabState.Language, nodes);
+			if (decompiled == false) {
+				helper.Abort();
+				clonedTabState.TextView.GoToTarget(reference, true, false);
+			}
 		}
 
 		internal void CloseActiveTab()
@@ -2932,7 +3004,7 @@ namespace ICSharpCode.ILSpy
 		internal bool SetActiveTab(TabStateDecompile tabState)
 		{
 			if (tabGroupsManager.SetActiveTab(tabState)) {
-				SetTextEditorFocus(tabState.TextView);
+				SetTabFocus(tabState);
 				return true;
 			}
 			return false;
@@ -2956,7 +3028,7 @@ namespace ICSharpCode.ILSpy
 			if (win.LastActivatedTabState != null) {
 				if (!SetActiveTab(win.LastActivatedTabState)) {
 					// Last activated window was deleted
-					SetTextEditorFocus(ActiveTextView);
+					SetTabFocus(ActiveTabState);
 				}
 			}
 		}

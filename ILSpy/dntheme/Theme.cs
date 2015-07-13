@@ -1704,14 +1704,6 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#C0FFFFFF",
 				BackgroundResourceKey = "DecompilerTextViewWaitAdornerBackground",
 			},
-			new ColorColorInfo(ColorType.ResourceTableAlternationBackground1, "Resource table alternation background #1") {
-				DefaultBackground = "White",
-				BackgroundResourceKey = "ResourceTableAlternationBackground1",
-			},
-			new ColorColorInfo(ColorType.ResourceTableAlternationBackground2, "Resource table alternation background #2") {
-				DefaultBackground = "Beige",
-				BackgroundResourceKey = "ResourceTableAlternationBackground2",
-			},
 			new BrushColorInfo(ColorType.AvalonEditSearchDropDownButtonActiveBorder, "AvalonEdit search drop down button active border") {
 				DefaultBackground = "#FF0A246A",
 				BackgroundResourceKey = "AvalonEditSearchDropDownButtonActiveBorder",
@@ -2020,6 +2012,9 @@ namespace ICSharpCode.ILSpy.dntheme
 							new BrushColorInfo(ColorType.Assembly, "Assembly"),
 							new BrushColorInfo(ColorType.AssemblyExe, "Executable Assembly"),
 							new BrushColorInfo(ColorType.Module, "Module"),
+							new BrushColorInfo(ColorType.DirectoryPart, "Directory part"),
+							new BrushColorInfo(ColorType.FileNameNoExtension, "Filename without extension"),
+							new BrushColorInfo(ColorType.FileExtension, "File extension"),
 						},
 					},
 				},

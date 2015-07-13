@@ -19,7 +19,6 @@
 
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using ICSharpCode.ILSpy.Xaml;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Filters
 {
@@ -106,6 +105,16 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			return filter.GetFilterResult(node);
 		}
 
+		public virtual TreeViewNodeFilterResult GetFilterResult(ResourceTreeNode node)
+		{
+			return filter.GetFilterResult(node);
+		}
+
+		public virtual TreeViewNodeFilterResult GetFilterResult(ResourceElementTreeNode node)
+		{
+			return filter.GetFilterResult(node);
+		}
+
 		public virtual TreeViewNodeFilterResult GetFilterResult(TypeDef type)
 		{
 			return filter.GetFilterResult(type);
@@ -134,51 +143,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 		public virtual TreeViewNodeFilterResult GetFilterResult(MethodDef method, Local local)
 		{
 			return filter.GetFilterResult(method, local);
-		}
-
-		public virtual TreeViewNodeFilterResult GetFilterResult(CursorResourceEntryNode node)
-		{
-			return filter.GetFilterResult(node);
-		}
-
-		public virtual TreeViewNodeFilterResult GetFilterResult(IconResourceEntryNode node)
-		{
-			return filter.GetFilterResult(node);
-		}
-
-		public virtual TreeViewNodeFilterResult GetFilterResult(ImageListResourceEntryNode node)
-		{
-			return filter.GetFilterResult(node);
-		}
-
-		public virtual TreeViewNodeFilterResult GetFilterResult(ImageResourceEntryNode node)
-		{
-			return filter.GetFilterResult(node);
-		}
-
-		public virtual TreeViewNodeFilterResult GetFilterResult(ResourceEntryNode node)
-		{
-			return filter.GetFilterResult(node);
-		}
-
-		public virtual TreeViewNodeFilterResult GetFilterResult(ResourcesFileTreeNode node)
-		{
-			return filter.GetFilterResult(node);
-		}
-
-		public virtual TreeViewNodeFilterResult GetFilterResult(ResourceTreeNode node)
-		{
-			return filter.GetFilterResult(node);
-		}
-
-		public virtual TreeViewNodeFilterResult GetFilterResult(XamlResourceEntryNode node)
-		{
-			return filter.GetFilterResult(node);
-		}
-
-		public virtual TreeViewNodeFilterResult GetFilterResult(XmlResourceEntryNode node)
-		{
-			return filter.GetFilterResult(node);
 		}
 	}
 }

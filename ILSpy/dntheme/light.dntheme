@@ -42,6 +42,9 @@
 		<color name="assembly" fg="#414141" />
 		<color name="assemblyexe" fg="#C17B19" />
 		<color name="module" fg="#642C8F" />
+		<color name="directorypart" fg="#216F85" />
+		<color name="filenamenoextension" fg="#990000" />
+		<color name="fileextension" fg="#3366CC" />
 		<color name="linenumber" fg="#2B91AF" />
 		<color name="xmlcomment" fg="#FF008000" italics="true" />
 		<color name="xmlcdata" fg="#FF808080" />

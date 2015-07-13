@@ -253,9 +253,10 @@ namespace ICSharpCode.Decompiler.Ast
 			uint rva;
 			long fileOffset;
 			member.GetRVA(out rva, out fileOffset);
+			string extra = string.Empty;
 			if (rva != 0)
-				node.InsertChildAfter(null, new Comment(string.Format(" RVA: 0x{0:X8} File Offset: 0x{1:X8}", rva, fileOffset)), Roles.Comment);
-			node.InsertChildAfter(null, new Comment(string.Format(" Token: 0x{0:X8} RID: {1}", member.MDToken.Raw, member.MDToken.Rid)), Roles.Comment);
+				extra = string.Format(" RVA: 0x{0:X8} File Offset: 0x{1:X8}", rva, fileOffset);
+			node.InsertChildAfter(null, new Comment(string.Format(" Token: 0x{0:X8} RID: {1}{2}", member.MDToken.Raw, member.MDToken.Rid, extra)), Roles.Comment);
 		}
 		
 		public void AddType(TypeDef typeDef)

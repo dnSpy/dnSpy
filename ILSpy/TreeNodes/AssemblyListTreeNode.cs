@@ -224,31 +224,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
         #region Find*Node
 
-        public ILSpyTreeNode FindResourceNode(Resource resource)
-        {
-            if (resource == null)
-                return null;
-            foreach (AssemblyTreeNode node in this.Children)
-            {
-                if (node.LoadedAssembly.IsLoaded)
-                {
-                    node.EnsureLazyChildren();
-                    foreach (var item in node.Children.OfType<ResourceListTreeNode>())
-                    {
-                        var founded = item.Children.OfType<ResourceTreeNode>().Where(x => x.Resource == resource).FirstOrDefault();
-                        if (founded != null)
-                            return founded;
-
-                        var foundedResEntry = item.Children.OfType<ResourceEntryNode>().Where(x => resource.Name.Equals(x.ToString())).FirstOrDefault();
-                        if (foundedResEntry != null)
-                            return foundedResEntry;
-                    }
-                }
-            }
-            return null;
-        }
-
-
         public AssemblyTreeNode FindModuleNode(ModuleDef module)
 		{
 			if (module == null)
@@ -444,8 +419,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return FindAssemblyNode((AssemblyDef)reference);
 			else if (reference is ModuleDef)
 				return FindModuleNode((ModuleDef)reference);
-			else if (reference is Resource)
-				return FindResourceNode((Resource)reference);
+			else if (reference is ILSpyTreeNode)
+				return (ILSpyTreeNode)reference;
 			else
 				return null;
 		}

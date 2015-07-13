@@ -62,13 +62,16 @@ namespace ICSharpCode.ILSpy
 	{
 		public static readonly ImageCache Instance = new ImageCache();
 
+		readonly object lockObj = new object();
 		readonly Dictionary<Tuple<string, Color>, BitmapSource> imageCache = new Dictionary<Tuple<string, Color>, BitmapSource>();
 		bool isHighContrast;
 
 		internal void OnThemeChanged()
 		{
-			imageCache.Clear();
-			isHighContrast = dntheme.Themes.Theme.IsHighContrast;
+			lock (lockObj) {
+				imageCache.Clear();
+				isHighContrast = dntheme.Themes.Theme.IsHighContrast;
+			}
 		}
 
 		public BitmapSource GetImage(ImageInfo info)
@@ -156,11 +159,13 @@ namespace ICSharpCode.ILSpy
 		{
 			var key = Tuple.Create(uri, bgColor);
 			BitmapSource image;
-			if (imageCache.TryGetValue(key, out image))
-				return image;
+			lock (lockObj) {
+				if (imageCache.TryGetValue(key, out image))
+					return image;
 
-			image = ThemedImageCreator.CreateThemedBitmapSource(new BitmapImage(new Uri(uri)), bgColor, isHighContrast);
-			imageCache.Add(key, image);
+				image = ThemedImageCreator.CreateThemedBitmapSource(new BitmapImage(new Uri(uri)), bgColor, isHighContrast);
+				imageCache.Add(key, image);
+			}
 			return image;
 		}
 

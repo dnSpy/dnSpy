@@ -381,6 +381,33 @@
       <DependentUpon>PropertyOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Property\PropertyOptionsVM.cs" />
+    <Compile Include="AsmEditor\Resources\ImageResourceElementControl.xaml.cs">
+      <DependentUpon>ImageResourceElementControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Resources\ImageResourceElementDlg.xaml.cs">
+      <DependentUpon>ImageResourceElementDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Resources\ImageResourceElementVM.cs" />
+    <Compile Include="AsmEditor\Resources\ResourceCommands.cs" />
+    <Compile Include="AsmEditor\Resources\ResourceControl.xaml.cs">
+      <DependentUpon>ResourceControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Resources\ResourceDlg.xaml.cs">
+      <DependentUpon>ResourceDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Resources\ResourceElementControl.xaml.cs">
+      <DependentUpon>ResourceElementControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Resources\ResourceElementDlg.xaml.cs">
+      <DependentUpon>ResourceElementDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Resources\ResourceElementOptions.cs" />
+    <Compile Include="AsmEditor\Resources\ResourceElementVM.cs" />
+    <Compile Include="AsmEditor\Resources\ResourceOptions.cs" />
+    <Compile Include="AsmEditor\Resources\ResourceVM.cs" />
+    <Compile Include="AsmEditor\Resources\SaveResources.cs" />
+    <Compile Include="AsmEditor\Resources\SerializationUtils.cs" />
+    <Compile Include="AsmEditor\Resources\UserTypeVM.cs" />
     <Compile Include="AsmEditor\SaveModule\CharacteristicsHelper.cs" />
     <Compile Include="AsmEditor\SaveModule\ModuleSaver.cs" />
     <Compile Include="AsmEditor\Namespace\NamespaceCommands.cs" />
@@ -432,12 +459,14 @@
     <Compile Include="AsmEditor\ViewHelpers\IEdit.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IMakeVisible.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IOpenAssembly.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\IOpenFile.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IOpenPublicKeyFile.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IPickNetExecutableFileName.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ISelectItems.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IShowWarningMessage.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ITypeSigCreator.cs" />
     <Compile Include="AsmEditor\ViewHelpers\OpenAssembly.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\OpenFile.cs" />
     <Compile Include="AsmEditor\ViewHelpers\OpenPublicKeyFile.cs" />
     <Compile Include="AsmEditor\ViewHelpers\PickNetExecutableFileName.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ShowWarningMessage.cs" />
@@ -521,9 +550,6 @@
     <Compile Include="TreeNodes\NodePathName.cs" />
     <Compile Include="TreeNodes\OpenContainingFolderContextMenuEntry.cs" />
     <Compile Include="Commands\OpenListCommand.cs" />
-    <Compile Include="Controls\ResourceObjectTable.xaml.cs">
-      <DependentUpon>ResourceObjectTable.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\DockedPane.cs" />
     <Compile Include="Commands\ExportCommandAttribute.cs" />
     <Compile Include="Controls\ExtensionMethods.cs" />
@@ -564,10 +590,6 @@
     <Compile Include="Commands\OpenFromGacCommand.cs" />
     <Compile Include="OpenFromGacDialog.xaml.cs">
       <DependentUpon>OpenFromGacDialog.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\ResourceStringTable.xaml.cs">
-      <DependentUpon>ResourceStringTable.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="OpenListDialog.xaml.cs">
@@ -627,16 +649,22 @@
     <Compile Include="TreeNodes\DerivedTypesEntryNode.cs" />
     <Compile Include="TreeNodes\FilterResult.cs" />
     <Compile Include="TreeNodes\IMemberTreeNode.cs" />
-    <Compile Include="TreeNodes\ResourceNodes\CursorResourceEntryNode.cs" />
-    <Compile Include="TreeNodes\ResourceNodes\IconResourceEntryNode.cs" />
-    <Compile Include="TreeNodes\ResourceNodes\ImageListResourceEntryNode.cs" />
-    <Compile Include="TreeNodes\ResourceNodes\ImageResourceEntryNode.cs" />
-    <Compile Include="TreeNodes\ResourceNodes\XmlResourceNode.cs" />
-    <Compile Include="TreeNodes\ResourceNodes\IResourceNodeFactory.cs" />
-    <Compile Include="TreeNodes\ResourceNodes\ResourcesFileTreeNode.cs" />
-    <Compile Include="TreeNodes\ResourceNodes\XamlResourceNode.cs" />
+    <Compile Include="TreeNodes\ResourceComparer.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\BuiltInResourceElementTreeNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\Deserializer.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\ImageResourceElementTreeNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\IResourceFactory.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\IResourceNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\ResourceData.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\ResourceElementTreeNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\ResourceUtils.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\ResourceElementSetTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyOverridesTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyTreeNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\SerializedImageResourceElementTreeNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\SerializedResourceElementTreeNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\UnknownResourceTreeNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\UnknownSerializedResourceElementTreeNode.cs" />
     <Compile Include="TreeNodes\SearchMsdnContextMenuEntry.cs" />
     <Compile Include="TreeNodes\UISyntaxHighlighter.cs" />
     <Compile Include="UIUtils.cs" />
@@ -707,7 +735,6 @@
     <Compile Include="TreeNodes\NamespaceTreeNode.cs" />
     <Compile Include="TreeNodes\PropertyTreeNode.cs" />
     <Compile Include="TreeNodes\ReferenceFolderTreeNode.cs" />
-    <Compile Include="TreeNodes\ResourceNodes\ResourceEntryNode.cs" />
     <Compile Include="TreeNodes\ResourceListTreeNode.cs" />
     <Compile Include="TreeNodes\ResourceNodes\ResourceTreeNode.cs" />
     <Compile Include="TreeNodes\ThreadingSupport.cs" />
@@ -919,6 +946,30 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="AsmEditor\Resources\ImageResourceElementControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\Resources\ImageResourceElementDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\Resources\ResourceControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\Resources\ResourceDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\Resources\ResourceElementControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\Resources\ResourceElementDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AsmEditor\SaveModule\SaveModuleOptions.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -939,10 +990,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\ResourceObjectTable.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\ResourceStringTable.xaml" />
     <Page Include="Controls\SearchBoxStyle.xaml">
       <DependentUpon>SearchBox.cs</DependentUpon>
     </Page>
@@ -996,6 +1043,7 @@
     <Resource Include="Images\AssemblyToModule.png" />
     <Resource Include="Images\AssemblyWarning.png" />
     <Resource Include="Images\Back.png" />
+    <Resource Include="Images\Binary.png" />
     <Resource Include="Images\Branch.png" />
     <Resource Include="Images\Breakpoint.png" />
     <Resource Include="Images\Class.png" />
@@ -1103,11 +1151,15 @@
     <Resource Include="Images\NameSpace.png" />
     <Resource Include="Images\NewAssembly.png" />
     <Resource Include="Images\NewAssemblyModule.png" />
+    <Resource Include="Images\NewBinary.png" />
     <Resource Include="Images\NewClass.png" />
     <Resource Include="Images\NewEvent.png" />
     <Resource Include="Images\NewField.png" />
+    <Resource Include="Images\NewImage.png" />
     <Resource Include="Images\NewMethod.png" />
     <Resource Include="Images\NewProperty.png" />
+    <Resource Include="Images\NewResource.png" />
+    <Resource Include="Images\NewResourcesFile.png" />
     <Resource Include="Images\NewWindow.png" />
     <Resource Include="Images\NOP.png" />
     <Resource Include="Images\OK.png" />
@@ -1137,7 +1189,7 @@
     <Resource Include="Images\ReferenceFolderClosed.png" />
     <Resource Include="Images\ReferenceFolderOpen.png" />
     <Resource Include="Images\Resource.png" />
-    <Resource Include="Images\ResourceResourcesFile.png" />
+    <Resource Include="Images\ResourcesFile.png" />
     <Resource Include="Images\Save.png" />
     <Resource Include="Images\SaveAll.png" />
     <Resource Include="Images\Search.png" />
@@ -1162,6 +1214,7 @@
     <Resource Include="Images\StaticPropertyPrivate.png" />
     <Resource Include="Images\StaticPropertyProtected.png" />
     <Resource Include="Images\StaticPropertyProtectedInternal.png" />
+    <Resource Include="Images\Strings.png" />
     <Resource Include="Images\Struct.png" />
     <Resource Include="Images\StructInternal.png" />
     <Resource Include="Images\StructPrivate.png" />
@@ -1174,6 +1227,7 @@
     <Resource Include="Images\TextFile.png" />
     <Resource Include="Images\ToUncondBranch.png" />
     <Resource Include="Images\Undo.png" />
+    <Resource Include="Images\UserDefinedDataType.png" />
     <Resource Include="Images\VerticalTabGroup.png" />
     <Resource Include="Images\ViewCode.png" />
     <Resource Include="Images\VirtualEvent.png" />

@@ -136,6 +136,7 @@
 		<ToolBar
 			Grid.Row="0"
 			Name="toolBar"
+			FocusVisualStyle="{x:Null}"
 			ToolBarTray.IsLocked="True">
 			<ToolBar.Resources>
 				<!-- Make images transparent if menu command is disabled -->

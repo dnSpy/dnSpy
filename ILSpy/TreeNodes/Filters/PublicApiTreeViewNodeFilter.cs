@@ -69,18 +69,18 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			return base.GetFilterResult(prop);
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(ResourceTreeNode node)
-		{
-			if (showPublicApi() && !ResourceTreeNode.IsPublicAPIInternal(node.Resource))
-				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
-			return base.GetFilterResult(node);
-		}
-
 		public override TreeViewNodeFilterResult GetFilterResult(TypeDef type)
 		{
 			if (showPublicApi() && !TypeTreeNode.IsPublicAPIInternal(type))
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 			return base.GetFilterResult(type);
+		}
+
+		public override TreeViewNodeFilterResult GetFilterResult(ResourceTreeNode node)
+		{
+			if (showPublicApi() && !ResourceTreeNode.IsPublicAPIInternal(node.Resource))
+				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
+			return base.GetFilterResult(node);
 		}
 	}
 }

@@ -19,7 +19,6 @@
 
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using ICSharpCode.ILSpy.Xaml;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Filters
 {
@@ -99,6 +98,16 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 		}
 
+		public virtual TreeViewNodeFilterResult GetFilterResult(ResourceTreeNode node)
+		{
+			return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
+		}
+
+		public virtual TreeViewNodeFilterResult GetFilterResult(ResourceElementTreeNode node)
+		{
+			return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
+		}
+
 		public virtual TreeViewNodeFilterResult GetFilterResult(TypeDef type)
 		{
 			return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
@@ -125,51 +134,6 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 		}
 
 		public virtual TreeViewNodeFilterResult GetFilterResult(MethodDef method, Local local)
-		{
-			return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
-		}
-
-		public virtual TreeViewNodeFilterResult GetFilterResult(CursorResourceEntryNode node)
-		{
-			return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
-		}
-
-		public virtual TreeViewNodeFilterResult GetFilterResult(IconResourceEntryNode node)
-		{
-			return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
-		}
-
-		public virtual TreeViewNodeFilterResult GetFilterResult(ImageListResourceEntryNode node)
-		{
-			return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
-		}
-
-		public virtual TreeViewNodeFilterResult GetFilterResult(ImageResourceEntryNode node)
-		{
-			return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
-		}
-
-		public virtual TreeViewNodeFilterResult GetFilterResult(ResourceEntryNode node)
-		{
-			return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
-		}
-
-		public virtual TreeViewNodeFilterResult GetFilterResult(ResourcesFileTreeNode node)
-		{
-			return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
-		}
-
-		public virtual TreeViewNodeFilterResult GetFilterResult(ResourceTreeNode node)
-		{
-			return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
-		}
-
-		public virtual TreeViewNodeFilterResult GetFilterResult(XamlResourceEntryNode node)
-		{
-			return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
-		}
-
-		public virtual TreeViewNodeFilterResult GetFilterResult(XmlResourceEntryNode node)
 		{
 			return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 		}

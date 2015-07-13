@@ -194,7 +194,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		{
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newMethod = dnlibTypePicker.GetDnlibType(new SameAssemblyTreeViewNodeFilter(typeSigCreatorOptions.OwnerModule.Assembly, new FlagsTreeViewNodeFilter(VisibleMembersFlags.MethodDef)), Class as IMethod, typeSigCreatorOptions.OwnerModule);
+			var newMethod = dnlibTypePicker.GetDnlibType(new SameAssemblyTreeViewNodeFilter(typeSigCreatorOptions.OwnerModule, new FlagsTreeViewNodeFilter(VisibleMembersFlags.MethodDef)), Class as IMethod, typeSigCreatorOptions.OwnerModule);
 			if (newMethod != null) {
 				var md = newMethod as MethodDef;
 				Debug.Assert(md != null);
@@ -207,7 +207,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		{
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var loadedAsm = dnlibTypePicker.GetDnlibType<LoadedAssembly>(new SameAssemblyTreeViewNodeFilter(typeSigCreatorOptions.OwnerModule.Assembly, new FlagsTreeViewNodeFilter(VisibleMembersFlags.ModuleDef)), null, typeSigCreatorOptions.OwnerModule);
+			var loadedAsm = dnlibTypePicker.GetDnlibType<LoadedAssembly>(new SameAssemblyTreeViewNodeFilter(typeSigCreatorOptions.OwnerModule, new FlagsTreeViewNodeFilter(VisibleMembersFlags.ModuleDef)), null, typeSigCreatorOptions.OwnerModule);
 			if (loadedAsm != null) {
 				var module = loadedAsm.ModuleDefinition;
 				if (module != null) {

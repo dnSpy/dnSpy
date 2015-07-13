@@ -321,6 +321,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		protected void GetStartIndex(SharpTreeNode node, out int start, out int end)
 		{
 			EnsureChildrenFiltered();
+
+			if (!SortOnNodeType) {
+				start = 0;
+				end = Children.Count;
+				return;
+			}
+
 			for (int i = 0; i < Children.Count; i++) {
 				if (node.GetType() == Children[i].GetType()) {
 					start = i;
@@ -355,6 +362,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 
 			start = end = Children.Count;
+		}
+
+		protected virtual bool SortOnNodeType {
+			get { return true; }
 		}
 
 		protected virtual Type[] ChildTypeOrder {

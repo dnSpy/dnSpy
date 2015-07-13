@@ -42,6 +42,9 @@
 		<color name="assembly" fg="#C4C4C4" />
 		<color name="assemblyexe" fg="#F0CA93" />
 		<color name="module" fg="#B17FD7" />
+		<color name="directorypart" fg="#FFD700" />
+		<color name="filenamenoextension" fg="#569CD6" />
+		<color name="fileextension" fg="#9B9B82" />
 		<color name="linenumber" fg="#2B91AF" />
 		<color name="xmlcomment" fg="#FF57A64A" italics="true" />
 		<color name="xmlcdata" fg="#FFE9D585" />
@@ -397,8 +400,6 @@
 		<color name="dockedpaneclosebuttonpathfill" bg="#909090" />
 		<color name="dockedpanetitleforeground" fg="#F1F1F1" />
 		<color name="decompilertextviewwaitadorner" fg="#F1F1F1" bg="#A0404040" />
-		<color name="resourcetablealternationbackground1" bg="#252525" />
-		<color name="resourcetablealternationbackground2" bg="#454545" />
 		<color name="avaloneditsearchdropdownbuttonactiveborder" bg="#3E81AD" />
 		<color name="avaloneditsearchdropdownbuttonactivebackground" bg="#06273D" />
 		<color name="listarrowbackground" bg="#F1F1F1" />

@@ -52,13 +52,15 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 		ParamDef		= 0x01000000,
 		Locals			= 0x02000000,
 		Local			= 0x04000000,
+		Resource		= 0x08000000,
+		ResourceElement	= 0x10000000,
 		TypeDefOther	= GenericTypeDef | NonGenericTypeDef | EnumTypeDef | InterfaceTypeDef | ClassTypeDef | StructTypeDef | DelegateTypeDef,
 		AnyTypeDef		= TypeDef | TypeDefOther,
 		// What's shown in the normal treeview
 		TreeViewAll		= AssemblyDef | ModuleDef | Namespace | TypeDef |
 						  FieldDef | MethodDef | PropertyDef | EventDef |
 						  AssemblyRef | BaseTypes | DerivedTypes | ModuleRef |
-						  ResourceList | NonNetFile,
+						  ResourceList | NonNetFile | Resource | ResourceElement,
 	}
 
 	static class VisibleMembersFlagsExtensions
@@ -101,6 +103,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			if ((flags & VisibleMembersFlags.Locals) != 0) AddString(sb, "Locals", ref count);
 			if ((flags & VisibleMembersFlags.Local) != 0) AddString(sb, "Local", ref count);
 			if ((flags & VisibleMembersFlags.InstanceConstructor) != 0) AddString(sb, "Constructor", ref count);
+			if ((flags & VisibleMembersFlags.Resource) != 0) AddString(sb, "Resource", ref count);
+			if ((flags & VisibleMembersFlags.ResourceElement) != 0) AddString(sb, "ResourceElement", ref count);
 
 			return sb.ToString();
 		}

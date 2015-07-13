@@ -19,7 +19,6 @@
 
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using ICSharpCode.ILSpy.Xaml;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
@@ -86,14 +85,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		TreeViewNodeFilterResult GetFilterResult(DerivedTypesTreeNode node);
 		TreeViewNodeFilterResult GetFilterResult(ReferenceFolderTreeNode node);
 		TreeViewNodeFilterResult GetFilterResult(ResourceListTreeNode node);
-		TreeViewNodeFilterResult GetFilterResult(CursorResourceEntryNode node);
-		TreeViewNodeFilterResult GetFilterResult(IconResourceEntryNode node);
-		TreeViewNodeFilterResult GetFilterResult(ImageListResourceEntryNode node);
-		TreeViewNodeFilterResult GetFilterResult(ImageResourceEntryNode node);
-		TreeViewNodeFilterResult GetFilterResult(ResourceEntryNode node);
-		TreeViewNodeFilterResult GetFilterResult(ResourcesFileTreeNode node);
 		TreeViewNodeFilterResult GetFilterResult(ResourceTreeNode node);
-		TreeViewNodeFilterResult GetFilterResult(XamlResourceEntryNode node);
-		TreeViewNodeFilterResult GetFilterResult(XmlResourceEntryNode node);
+		TreeViewNodeFilterResult GetFilterResult(ResourceElementTreeNode node);
 	}
 }

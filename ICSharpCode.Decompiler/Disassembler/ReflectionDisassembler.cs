@@ -1216,12 +1216,12 @@ namespace ICSharpCode.Decompiler.Disassembler
 			{ TypeAttributes.HasSecurity, null },
 		};
 
-		void AddTokenComment(IMDTokenProvider member)
+		void AddTokenComment(IMDTokenProvider member, string extra = null)
 		{
 			if (!options.ShowTokenAndRvaComments)
 				return;
 
-			output.WriteLine(string.Format("// Token: 0x{0:X8} RID: {1}", member.MDToken.Raw, member.MDToken.Rid), TextTokenType.Comment);
+			output.WriteLine(string.Format("// Token: 0x{0:X8} RID: {1}{2}", member.MDToken.Raw, member.MDToken.Rid, extra ?? string.Empty), TextTokenType.Comment);
 		}
 
 		void AddComment(IMemberDef member)
@@ -1229,12 +1229,14 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (!options.ShowTokenAndRvaComments)
 				return;
 
-			AddTokenComment(member);
 			uint rva;
 			long fileOffset;
 			member.GetRVA(out rva, out fileOffset);
+			string extra = string.Empty;
 			if (rva != 0)
-				output.WriteLine(string.Format("// RVA: 0x{0:X8} File Offset: 0x{1:X8}", rva, fileOffset), TextTokenType.Comment);
+				extra = string.Format(" RVA: 0x{0:X8} File Offset: 0x{1:X8}", rva, fileOffset);
+
+			AddTokenComment(member, extra);
 		}
 		
 		public void DisassembleType(TypeDef type)

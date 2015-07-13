@@ -63,12 +63,24 @@ namespace ICSharpCode.ILSpy.Options
 			}
 		}
 
+		public bool DeserializeResources {
+			get { return deserializeResources; }
+			set {
+				if (deserializeResources != value) {
+					deserializeResources = value;
+					OnPropertyChanged("DeserializeResources");
+				}
+			}
+		}
+		bool deserializeResources;
+
 		const string SETTINGS_SECTION_NAME = "OtherSettings";
 		internal static OtherSettings Load(ILSpySettings settings)
 		{
 			var xelem = settings[SETTINGS_SECTION_NAME];
 			var s = new OtherSettings();
 			s.UseMemoryMappedIO = (bool?)xelem.Attribute("UseMemoryMappedIO") ?? true;
+			s.DeserializeResources = (bool?)xelem.Attribute("DeserializeResources") ?? true;
 			return s;
 		}
 
@@ -81,6 +93,7 @@ namespace ICSharpCode.ILSpy.Options
 
 			var xelem = new XElement(SETTINGS_SECTION_NAME);
 			xelem.SetAttributeValue("UseMemoryMappedIO", this.UseMemoryMappedIO);
+			xelem.SetAttributeValue("DeserializeResources", this.DeserializeResources);
 
 
 			var currElem = root.Element(SETTINGS_SECTION_NAME);
@@ -97,6 +110,7 @@ namespace ICSharpCode.ILSpy.Options
 		void WriteTo(OtherSettings other)
 		{
 			other.UseMemoryMappedIO = this.UseMemoryMappedIO;
+			other.DeserializeResources = this.DeserializeResources;
 		}
 
 		protected override string Verify(string columnName) {

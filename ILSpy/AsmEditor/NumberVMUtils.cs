@@ -152,6 +152,21 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return value.ToString();
 		}
 
+		public static string ToString(decimal value)
+		{
+			return value.ToString();
+		}
+
+		public static string ToString(DateTime value)
+		{
+			return value.ToString();
+		}
+
+		public static string ToString(TimeSpan value)
+		{
+			return value.ToString();
+		}
+
 		public static string ToString(bool value)
 		{
 			return value.ToString();
@@ -268,6 +283,39 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			}
 			error = "Value must be a 64-bit floating point number";
 			return 0;
+		}
+
+		public static decimal ParseDecimal(string s, out string error)
+		{
+			decimal value;
+			if (decimal.TryParse(s, out value)) {
+				error = null;
+				return value;
+			}
+			error = "Value must be a Decimal";
+			return 0;
+		}
+
+		public static DateTime ParseDateTime(string s, out string error)
+		{
+			DateTime value;
+			if (DateTime.TryParse(s, out value)) {
+				error = null;
+				return value;
+			}
+			error = "Value must be a DateTime";
+			return DateTime.MinValue;
+		}
+
+		public static TimeSpan ParseTimeSpan(string s, out string error)
+		{
+			TimeSpan value;
+			if (TimeSpan.TryParse(s, out value)) {
+				error = null;
+				return value;
+			}
+			error = "Value must be a TimeSpan";
+			return TimeSpan.Zero;
 		}
 
 		public static bool ParseBoolean(string s, out string error)

@@ -129,6 +129,7 @@ namespace ICSharpCode.ILSpy
 			new SearchType("Parameter/Local", "Parameter", SearchMode.ParamLocal, VisibleMembersFlags.ParamDef | VisibleMembersFlags.Local),
 			new SearchType("AssemblyRef", "AssemblyReference", SearchMode.AssemblyRef, VisibleMembersFlags.AssemblyRef),
 			new SearchType("ModuleRef", "ModuleReference", SearchMode.ModuleRef, VisibleMembersFlags.ModuleRef),
+			new SearchType("Resource", "Resource", SearchMode.Resource, VisibleMembersFlags.Resource | VisibleMembersFlags.ResourceElement),
 			new SearchType("Generic Type", "Generic", SearchMode.GenericTypeDef, VisibleMembersFlags.GenericTypeDef),
 			new SearchType("Non-Generic Type", "Class", SearchMode.NonGenericTypeDef, VisibleMembersFlags.NonGenericTypeDef),
 			new SearchType("Enum", "Enum", SearchMode.EnumTypeDef, VisibleMembersFlags.EnumTypeDef),
@@ -138,7 +139,7 @@ namespace ICSharpCode.ILSpy
 			new SearchType("Delegate", "Delegate", SearchMode.DelegateTypeDef, VisibleMembersFlags.DelegateTypeDef),
 			new SearchType("Member", "Property", SearchMode.Member, VisibleMembersFlags.MethodDef | VisibleMembersFlags.FieldDef | VisibleMembersFlags.PropertyDef | VisibleMembersFlags.EventDef),
 			new SearchType("All Above", "Class", SearchMode.Any, VisibleMembersFlags.TreeViewAll | VisibleMembersFlags.ParamDef | VisibleMembersFlags.Local),
-			new SearchType("Number/String", "Literal", SearchMode.Literal, VisibleMembersFlags.MethodBody | VisibleMembersFlags.FieldDef | VisibleMembersFlags.ParamDef | VisibleMembersFlags.PropertyDef),
+			new SearchType("Number/String", "Literal", SearchMode.Literal, VisibleMembersFlags.MethodBody | VisibleMembersFlags.FieldDef | VisibleMembersFlags.ParamDef | VisibleMembersFlags.PropertyDef | VisibleMembersFlags.Resource | VisibleMembersFlags.ResourceElement),
 		};
 		Dictionary<SearchMode, int> searchModeToIndex = new Dictionary<SearchMode, int>();
 
@@ -665,6 +666,18 @@ namespace ICSharpCode.ILSpy
 				return;
 			}
 
+			var resNode = o as ResourceTreeNode;
+			if (resNode != null) {
+				ResourceTreeNode.WriteFileName(output, resNode.Name);
+				return;
+			}
+
+			var resElNode = o as ResourceElementTreeNode;
+			if (resElNode != null) {
+				ResourceTreeNode.WriteFileName(output, resElNode.Name);
+				return;
+			}
+
 			var s = o as string;
 			if (s != null) {
 				output.Write(s, TextTokenType.Text);
@@ -772,6 +785,7 @@ namespace ICSharpCode.ILSpy
 		BaseTypes,
 		DerivedTypes,
 		ModuleRef,
+		Resource,
 		ResourceList,
 		NonNetFile,
 		GenericTypeDef,

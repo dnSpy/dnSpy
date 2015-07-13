@@ -24,9 +24,11 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Media;
-using ICSharpCode.ILSpy.TreeNodes;
+using System.Windows.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnlib.DotNet.Resources;
+using ICSharpCode.ILSpy.TreeNodes;
 
 namespace ICSharpCode.ILSpy
 {
@@ -111,6 +113,7 @@ namespace ICSharpCode.ILSpy
 				return false;
 
 			switch (Type.GetTypeCode(obj.GetType())) {
+			case TypeCode.Char:		return searchValue == (char)obj;
 			case TypeCode.SByte:	return searchValue == (sbyte)obj;
 			case TypeCode.Byte:		return searchValue == (byte)obj;
 			case TypeCode.Int16:	return searchValue == (short)obj;
@@ -121,6 +124,8 @@ namespace ICSharpCode.ILSpy
 			case TypeCode.UInt64:	return searchValue == unchecked((long)(ulong)obj);
 			case TypeCode.Single:	return searchValue == (float)obj;
 			case TypeCode.Double:	return searchValue == (double)obj;
+			case TypeCode.Decimal:	return searchValue == (decimal)obj;
+			case TypeCode.DateTime: return new DateTime(searchValue) == (DateTime)obj;
 			}
 
 			return false;
@@ -145,6 +150,7 @@ namespace ICSharpCode.ILSpy
 				return false;
 
 			switch (Type.GetTypeCode(obj.GetType())) {
+			case TypeCode.Char:		return searchValue == (char)obj;
 			case TypeCode.SByte:	return searchValue == (sbyte)obj;
 			case TypeCode.Byte:		return searchValue == (byte)obj;
 			case TypeCode.Int16:	return searchValue == (short)obj;
@@ -379,6 +385,7 @@ namespace ICSharpCode.ILSpy
 			}
 
 			SearchModAsmReferences(module);
+			SearchResources(module);
 
 			foreach (var kv in GetNamespaces(mod)) {
 				cancellationToken.ThrowIfCancellationRequested();
@@ -427,6 +434,98 @@ namespace ICSharpCode.ILSpy
 						TypeImageInfo = GetImage("ModuleReference"),
 						LocationObject = module.ModuleDefinition,
 						LocationImageInfo = GetImage("AssemblyModule"),
+						LoadedAssembly = module,
+					});
+				}
+			}
+		}
+
+		void SearchResources(LoadedAssembly module)
+		{
+			var res = filter.GetFilterResult((ResourceListTreeNode)null);
+			if (res.FilterResult == FilterResult.Hidden)
+				return;
+
+			res = filter.GetFilterResult((ResourceTreeNode)null);
+			if (res.FilterResult == FilterResult.Hidden)
+				return;
+
+			var resNodes = new List<ResourceTreeNode>();
+			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => {
+				var modNode = MainWindow.Instance.AssemblyListTreeNode.FindModuleNode(module.ModuleDefinition);
+				if (modNode == null)
+					return;
+				modNode.EnsureChildrenFiltered();
+				var resListTreeNode = (ResourceListTreeNode)modNode.Children.FirstOrDefault(a => a is ResourceListTreeNode);
+				if (resListTreeNode != null) {
+					resListTreeNode.EnsureChildrenFiltered();
+					resNodes.AddRange(resListTreeNode.Children.Cast<ResourceTreeNode>());
+				}
+			}));
+
+			foreach (var node in resNodes)
+				SearchSearchResourceTreeNodes(module, node);
+		}
+
+		void SearchSearchResourceTreeNodes(LoadedAssembly module, ResourceTreeNode resTreeNode)
+		{
+			var res = filter.GetFilterResult(resTreeNode);
+			if (res.FilterResult == FilterResult.Hidden)
+				return;
+
+			if (res.IsMatch && (IsMatch(resTreeNode.Name, resTreeNode) || IsMatch(resTreeNode.GetStringContents(), null))) {
+				onMatch(new SearchResult {
+					Language = language,
+					Object = resTreeNode,
+					NameObject = resTreeNode,
+					TypeImageInfo = GetImage(resTreeNode.IconName),
+					LocationObject = module.ModuleDefinition,
+					LocationImageInfo = GetImage("AssemblyModule"),
+					LoadedAssembly = module,
+				});
+			}
+
+			res = filter.GetFilterResult((ResourceElementTreeNode)null);
+			if (res.FilterResult == FilterResult.Hidden)
+				return;
+
+			var resNodes = new List<ResourceElementTreeNode>();
+			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => {
+				resTreeNode.EnsureChildrenFiltered();
+				resNodes.AddRange(resTreeNode.Children.Cast<ResourceElementTreeNode>());
+			}));
+
+			foreach (var resElNode in resNodes)
+				SearchResourceElementTreeNode(module, resTreeNode, resElNode);
+		}
+
+		void SearchResourceElementTreeNode(LoadedAssembly module, ResourceTreeNode resTreeNode, ResourceElementTreeNode resElNode)
+		{
+			var res = filter.GetFilterResult(resElNode);
+			if (res.FilterResult == FilterResult.Hidden)
+				return;
+
+			if (res.IsMatch) {
+				bool m = IsMatch(resElNode.Name, resElNode);
+				if (!m) {
+					var builtin = resElNode.ResourceElement.ResourceData as BuiltInResourceData;
+					if (builtin != null) {
+						var val = builtin.Data;
+						if (builtin.Code == ResourceTypeCode.TimeSpan)
+							val = ((TimeSpan)val).Ticks;
+						m = IsMatch(val as string, val);
+					}
+				}
+				if (!m)
+					m = IsMatch(resElNode.GetStringContents(), null);
+				if (m) {
+					onMatch(new SearchResult {
+						Language = language,
+						Object = resElNode,
+						NameObject = resElNode,
+						TypeImageInfo = GetImage(resElNode.IconName),
+						LocationObject = resTreeNode,
+						LocationImageInfo = GetImage(resTreeNode.IconName),
 						LoadedAssembly = module,
 					});
 				}

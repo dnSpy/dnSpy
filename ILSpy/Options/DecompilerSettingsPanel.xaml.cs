@@ -109,7 +109,7 @@ namespace ICSharpCode.ILSpy.Options
 			if (CurrentDecompilerSettings.IntroduceIncrementAndDecrement != s.IntroduceIncrementAndDecrement) flags |= RefreshFlags.ILAst;
 			if (CurrentDecompilerSettings.MakeAssignmentExpressions != s.MakeAssignmentExpressions) flags |= RefreshFlags.ILAst;
 			if (CurrentDecompilerSettings.AlwaysGenerateExceptionVariableForCatchBlocks != s.AlwaysGenerateExceptionVariableForCatchBlocks) flags |= RefreshFlags.ILAst;
-			if (CurrentDecompilerSettings.ShowTokenAndRvaComments != s.ShowTokenAndRvaComments) flags |= RefreshFlags.CSharp | RefreshFlags.IL;
+			if (CurrentDecompilerSettings.ShowTokenAndRvaComments != s.ShowTokenAndRvaComments) flags |= RefreshFlags.DecompileAll;
 			if (CurrentDecompilerSettings.ShowILBytes != s.ShowILBytes) flags |= RefreshFlags.IL;
 			if (CurrentDecompilerSettings.DecompilationObject0 != s.DecompilationObject0) flags |= RefreshFlags.CSharp;
 			if (CurrentDecompilerSettings.DecompilationObject1 != s.DecompilationObject1) flags |= RefreshFlags.CSharp;
