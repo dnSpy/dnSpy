@@ -176,7 +176,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (Options.DecompilerSettingsPanel.CurrentDecompilerSettings.ShowTokenAndRvaComments) {
 				long fo = FileOffset;
 				if (fo != 0)
-					output.Write(string.Format("{0:X8}: ", fo), TextTokenType.Comment);
+					output.Write(string.Format("0x{0:X8}: ", fo), TextTokenType.Comment);
 			}
 			output.WriteDefinition(Name, this, TextTokenType.Comment);
 			output.Write(string.Format(" = {0}", ValueString), TextTokenType.Comment);

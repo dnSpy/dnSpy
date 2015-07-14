@@ -37,7 +37,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		static ResourceElement CreateSerializedImage(Stream stream, string filename)
 		{
 			object obj;
-			if (filename.EndsWith(".ico"))
+			if (filename.EndsWith(".ico", StringComparison.OrdinalIgnoreCase))
 				obj = new System.Drawing.Icon(stream);
 			else
 				obj = new System.Drawing.Bitmap(stream);

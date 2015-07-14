@@ -1376,6 +1376,14 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			if (refSeg == null)
 				return false;
+			if (!IsOurReferenceSegment(refSeg)) {
+				if (canJumpToReference) {
+					MainWindow.Instance.JumpToReference(this, refSeg.Reference, canRecordHistory);
+					return true;
+				}
+				return false;
+			}
+
 			var localTarget = FindLocalTarget(refSeg);
 			if (localTarget != null)
 				refSeg = localTarget;
@@ -1396,6 +1404,17 @@ namespace ICSharpCode.ILSpy.TextView
 				return true;
 			}
 
+			return false;
+		}
+
+		bool IsOurReferenceSegment(ReferenceSegment refSeg)
+		{
+			if (references == null)
+				return false;
+			foreach (var r in references) {
+				if (r == refSeg)
+					return true;
+			}
 			return false;
 		}
 

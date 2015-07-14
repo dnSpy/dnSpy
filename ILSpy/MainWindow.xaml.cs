@@ -2675,6 +2675,12 @@ namespace ICSharpCode.ILSpy
 			var clonedTabState = CloneTabMakeActive(tabState, false);
 			clonedTabState.History.Clear();
 
+			// Always open resources in their own window
+			if (reference.Reference is IResourceNode) {
+				JumpToReference(clonedTabState.TextView, reference.Reference, false);
+				return;
+			}
+
 			var nodes = tabState.DecompiledNodes;
 			var helper = new OnShowOutputHelper(clonedTabState.TextView, (a, b) => clonedTabState.TextView.GoToTarget(reference, true, false), nodes);
 			bool? decompiled = DecompileNodes(clonedTabState, null, false, clonedTabState.Language, nodes);

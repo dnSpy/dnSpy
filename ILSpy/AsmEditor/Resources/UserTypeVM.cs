@@ -49,7 +49,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				}
 			}
 		}
-		string typeFullName;
+		string typeFullName = string.Empty;
 
 		public string StringValue {
 			get { return stringValue; }
@@ -60,7 +60,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				}
 			}
 		}
-		string stringValue;
+		string stringValue = string.Empty;
 
 		readonly ModuleDef ownerModule;
 

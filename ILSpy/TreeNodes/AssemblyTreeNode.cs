@@ -281,8 +281,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			Debug.Assert(asmListTreeNode != null);
 			if (moduleDefinition is ModuleDefMD)
 				this.Children.Add(new ReferenceFolderTreeNode((ModuleDefMD)moduleDefinition, this, asmListTreeNode));
-			if (moduleDefinition.HasResources)
-				this.Children.Add(new ResourceListTreeNode(moduleDefinition));
+			this.Children.Add(new ResourceListTreeNode(moduleDefinition));
 			foreach (NamespaceTreeNode ns in namespaces.Values) {
 				ns.Children.Clear();
 			}

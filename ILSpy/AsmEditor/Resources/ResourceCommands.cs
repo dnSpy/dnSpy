@@ -539,6 +539,38 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 	}
 
+	static class Utils
+	{
+		public static bool CanExecuteResourceListCommand(ILSpyTreeNode[] nodes)
+		{
+			return GetResourceListTreeNode(nodes) != null;
+		}
+
+		public static ResourceListTreeNode GetResourceListTreeNode(ILSpyTreeNode[] nodes)
+		{
+			if (nodes.Length != 1)
+				return null;
+			var rsrcListNode = nodes[0] as ResourceListTreeNode;
+			if (rsrcListNode != null)
+				return rsrcListNode;
+			rsrcListNode = nodes[0].Parent as ResourceListTreeNode;
+			if (rsrcListNode != null)
+				return rsrcListNode;
+
+			var asmNode = nodes[0] as AssemblyTreeNode;
+			if (asmNode == null)
+				return null;
+			asmNode.EnsureChildrenFiltered();
+			rsrcListNode = (ResourceListTreeNode)asmNode.Children.FirstOrDefault(a => a is ResourceListTreeNode);
+			if (rsrcListNode == null)	// If not a module node
+				return null;
+			rsrcListNode.EnsureChildrenFiltered();
+			if (rsrcListNode.Children.Count == 0)
+				return rsrcListNode;
+			return null;
+		}
+	}
+
 	sealed class CreateFileResourceCommand : IUndoCommand
 	{
 		const string CMD_NAME = "Create File Resource";
@@ -584,8 +616,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 
 		static bool CanExecute(ILSpyTreeNode[] nodes)
 		{
-			return nodes.Length == 1 &&
-				(nodes[0] is ResourceListTreeNode || nodes[0].Parent is ResourceListTreeNode);
+			return Utils.CanExecuteResourceListCommand(nodes);
 		}
 
 		static void Execute(ILSpyTreeNode[] nodes)
@@ -593,10 +624,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			if (!CanExecute(nodes))
 				return;
 
-			var rsrcListNode = nodes[0] as ResourceListTreeNode;
-			if (rsrcListNode == null)
-				rsrcListNode = nodes[0].Parent as ResourceListTreeNode;
-			Debug.Assert(rsrcListNode != null);
+			var rsrcListNode = Utils.GetResourceListTreeNode(nodes);
 
 			var module = ILSpyTreeNode.GetModule(nodes[0]);
 			Debug.Assert(module != null);
@@ -765,8 +793,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 
 		static bool CanExecute(ILSpyTreeNode[] nodes)
 		{
-			return nodes.Length == 1 &&
-				(nodes[0] is ResourceListTreeNode || nodes[0].Parent is ResourceListTreeNode);
+			return Utils.CanExecuteResourceListCommand(nodes);
 		}
 
 		static void Execute(ILSpyTreeNode[] nodes)
@@ -774,10 +801,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			if (!CanExecute(nodes))
 				return;
 
-			var rsrcListNode = nodes[0] as ResourceListTreeNode;
-			if (rsrcListNode == null)
-				rsrcListNode = nodes[0].Parent as ResourceListTreeNode;
-			Debug.Assert(rsrcListNode != null);
+			var rsrcListNode = Utils.GetResourceListTreeNode(nodes);
 
 			var module = ILSpyTreeNode.GetModule(nodes[0]);
 			Debug.Assert(module != null);
@@ -856,8 +880,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 
 		static bool CanExecute(ILSpyTreeNode[] nodes)
 		{
-			return nodes.Length == 1 &&
-				(nodes[0] is ResourceListTreeNode || nodes[0].Parent is ResourceListTreeNode);
+			return Utils.CanExecuteResourceListCommand(nodes);
 		}
 
 		static void Execute(ILSpyTreeNode[] nodes)
@@ -865,10 +888,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			if (!CanExecute(nodes))
 				return;
 
-			var rsrcListNode = nodes[0] as ResourceListTreeNode;
-			if (rsrcListNode == null)
-				rsrcListNode = nodes[0].Parent as ResourceListTreeNode;
-			Debug.Assert(rsrcListNode != null);
+			var rsrcListNode = Utils.GetResourceListTreeNode(nodes);
 
 			var module = ILSpyTreeNode.GetModule(nodes[0]);
 			Debug.Assert(module != null);
@@ -948,8 +968,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 
 		static bool CanExecute(ILSpyTreeNode[] nodes)
 		{
-			return nodes.Length == 1 &&
-				(nodes[0] is ResourceListTreeNode || nodes[0].Parent is ResourceListTreeNode);
+			return Utils.CanExecuteResourceListCommand(nodes);
 		}
 
 		static void Execute(ILSpyTreeNode[] nodes)
@@ -957,10 +976,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			if (!CanExecute(nodes))
 				return;
 
-			var rsrcListNode = nodes[0] as ResourceListTreeNode;
-			if (rsrcListNode == null)
-				rsrcListNode = nodes[0].Parent as ResourceListTreeNode;
-			Debug.Assert(rsrcListNode != null);
+			var rsrcListNode = Utils.GetResourceListTreeNode(nodes);
 
 			var module = ILSpyTreeNode.GetModule(nodes[0]);
 			Debug.Assert(module != null);
@@ -1197,7 +1213,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 
 	sealed class CreateImageResourceElementCommand : CreateResourceElementCommandBase
 	{
-		const string CMD_NAME = "Create System.Data.Bitmap/Icon";
+		const string CMD_NAME = "Create System.Data.Bitmap/Icon Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewImage",
 								Category = "AsmEd",
@@ -1302,7 +1318,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 
 	sealed class CreateByteArrayResourceElementCommand : CreateResourceElementCommandBase
 	{
-		const string CMD_NAME = "Create Byte Array";
+		const string CMD_NAME = "Create Byte Array Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewBinary",
 								Category = "AsmEd",
@@ -1410,7 +1426,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 
 	sealed class CreateStreamResourceElementCommand : CreateResourceElementCommandBase
 	{
-		const string CMD_NAME = "Create System.IO.Stream";
+		const string CMD_NAME = "Create System.IO.Stream Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewBinary",
 								Category = "AsmEd",
@@ -1824,7 +1840,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				error = imgRsrcElNode.CheckCanUpdateData(opts.Create());
 			}
 			catch (Exception ex) {
-				error = string.Format("Can't use this data: {0}", ex.Message);
+				error = string.Format("New data must be an image. Error: {0}", ex.Message);
 			}
 			if (!string.IsNullOrEmpty(error)) {
 				MainWindow.Instance.ShowMessageBox(error);
@@ -1914,7 +1930,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				error = imgRsrcElNode.CheckCanUpdateData(opts.Create());
 			}
 			catch (Exception ex) {
-				error = string.Format("Can't use this data: {0}", ex.Message);
+				error = string.Format("New data must be an image. Error: {0}", ex.Message);
 			}
 			if (!string.IsNullOrEmpty(error)) {
 				MainWindow.Instance.ShowMessageBox(error);
