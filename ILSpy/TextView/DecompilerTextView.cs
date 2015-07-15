@@ -1474,6 +1474,85 @@ namespace ICSharpCode.ILSpy.TextView
 				textArea.Caret.DesiredXPos = double.NaN;
 			}
 		}
+
+		internal class RefPos
+		{
+			public IList<SourceCodeMapping> SourceCodeMappings;
+			public ReferenceSegment ReferenceSegment;
+
+			public RefPos(IList<SourceCodeMapping> sourceCodeMappings)
+			{
+				this.SourceCodeMappings = sourceCodeMappings;
+			}
+
+			public RefPos(ReferenceSegment refSeg)
+			{
+				this.ReferenceSegment = refSeg;
+			}
+		}
+
+		internal RefPos GetRefPos()
+		{
+			if (references == null)
+				return null;
+
+			var mappings = SourceCodeMappingUtils.Find(this, textEditor.TextArea.Caret.Line, textEditor.TextArea.Caret.Column).ToList();
+			mappings.Sort(Sort);
+			var mapping = mappings.Count == 0 ? null : mappings[0];
+
+			var doc = textEditor.TextArea.Document;
+			int offset = doc == null ? 0 : doc.GetOffset(textEditor.TextArea.Caret.Line, 0);
+			var refSeg = references.FindFirstSegmentWithStartAfter(offset);
+			while (refSeg != null) {
+				if (refSeg.IsLocalTarget)
+					break;
+				refSeg = references.GetNextSegment(refSeg);
+			}
+			if (mapping == null) {
+				if (refSeg != null)
+					return new RefPos(refSeg);
+			}
+			else if (refSeg == null)
+				return new RefPos(mappings);
+			else {
+				offset = doc == null ? 0 : doc.GetOffset(mapping.StartLocation.Line, mapping.StartLocation.Column);
+				if (offset < refSeg.StartOffset)
+					return new RefPos(mappings);
+				return new RefPos(refSeg);
+			}
+
+			return null;
+		}
+
+		static int Sort(SourceCodeMapping a, SourceCodeMapping b)
+		{
+			return a.StartLocation.CompareTo(b.StartLocation);
+		}
+
+		internal bool GoTo(RefPos pos)
+		{
+			if (pos == null)
+				return false;
+
+			if (CodeMappings != null && pos.SourceCodeMappings != null && pos.SourceCodeMappings.Count > 0) {
+				var mapping = pos.SourceCodeMappings[0];
+				MemberMapping mm;
+				var key = MethodKey.Create(mapping.MemberMapping.MethodDefinition);
+				if (key != null && CodeMappings.TryGetValue(key.Value, out mm)) {
+					bool isMatch;
+					var scm = mm.GetInstructionByOffset(mapping.ILInstructionOffset.From, out isMatch);
+					if (scm != null) {
+						ScrollAndMoveCaretTo(scm.StartLocation.Line, scm.StartLocation.Column);
+						return true;
+					}
+				}
+			}
+
+			if (references != null && pos.ReferenceSegment != null)
+				return GoToTarget(pos.ReferenceSegment, true, false);
+
+			return false;
+		}
 	}
 
 	public class DecompilerTextViewState : IEquatable<DecompilerTextViewState>
