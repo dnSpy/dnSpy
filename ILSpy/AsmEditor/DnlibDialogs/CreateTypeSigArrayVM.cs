@@ -154,11 +154,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				TypeSigCreator.TypeSig != null;
 		}
 
-		protected override string Verify(string columnName)
-		{
-			return string.Empty;
-		}
-
 		public override bool HasError {
 			get { return !IsUnlimitedCount && NumberOfTypesLeft > 0; }
 		}

@@ -47,13 +47,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				this.options = options.Clone("Create a Type");
 				this.options.NullTypeSigAllowed = true;
 			}
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(T value)
+		protected override string OnNewValue(T value)
 		{
 			this.type = value;
-			this.StringValue = ToString(this.type);
+			return ToString(this.type);
 		}
 
 		protected override string ConvertToValue(out T value)
@@ -156,20 +156,25 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				this.options = options.Clone("Create a Type");
 				this.options.NullTypeSigAllowed = true;
 			}
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(IList<T> value)
+		protected override string OnNewValue(IList<T> value)
 		{
 			types.Clear();
 			if (value != null)
 				types.AddRange(value);
-			InitializeStringValue();
+			return CalculateStringValue();
+		}
+
+		string CalculateStringValue()
+		{
+			return string.Join(", ", types.Select(a => TypeSigVM.ToString(a)));
 		}
 
 		void InitializeStringValue()
 		{
-			this.StringValue = string.Join(", ", types.Select(a => TypeSigVM.ToString(a)));
+			this.StringValue = CalculateStringValue();
 		}
 
 		protected override string ConvertToValue(out IList<T> value)

@@ -34,12 +34,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		}
 		UInt32VM rva;
 
-		public NativeMethodBodyVM(NativeMethodBodyOptions options)
+		public NativeMethodBodyVM(NativeMethodBodyOptions options, bool initialize)
 		{
 			this.origOptions = options;
 			this.rva = new UInt32VM(a => HasErrorUpdated());
 
-			Reinitialize();
+			if (initialize)
+				Reinitialize();
 		}
 
 		void Reinitialize()
@@ -61,11 +62,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		{
 			options.RVA = (dnlib.PE.RVA)(uint)this.RVA.Value;
 			return options;
-		}
-
-		protected override string Verify(string columnName)
-		{
-			return string.Empty;
 		}
 
 		public override bool HasError {

@@ -394,11 +394,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			}
 		}
 
-		protected override string Verify(string columnName)
-		{
-			return string.Empty;
-		}
-
 		public override bool HasError {
 			get {
 				switch ((ResourceElementType)this.ResourceElementTypeVM.SelectedItem) {

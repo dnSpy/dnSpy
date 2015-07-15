@@ -37,24 +37,21 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 
 		public string this[string columnName] {
-			get {
-				HasErrorUpdated();
-				return Verify(columnName);
-			}
+			get { return Verify(columnName); }
 		}
 
-		protected abstract string Verify(string columnName);
+		public virtual bool HasError {
+			get { return false; }
+		}
 
-		protected virtual void HasErrorUpdated()
+		protected virtual string Verify(string columnName)
+		{
+			return string.Empty;
+		}
+
+		protected void HasErrorUpdated()
 		{
 			OnPropertyChanged("HasError");
-			OnPropertyChanged("HasNoError");
 		}
-
-		public bool HasNoError {
-			get { return !HasError; }
-		}
-
-		public abstract bool HasError { get; }
 	}
 }

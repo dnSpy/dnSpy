@@ -337,11 +337,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			return options;
 		}
 
-		protected override string Verify(string columnName)
-		{
-			return string.Empty;
-		}
-
 		public override bool HasError {
 			get {
 				return (HasDefault && ConstantVM.HasError) ||

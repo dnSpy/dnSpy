@@ -127,6 +127,7 @@
     <Compile Include="AsmEditor\Converters\BooleanToGridrowLengthConverter.cs" />
     <Compile Include="AsmEditor\Converters\CilObjectConverter.cs" />
     <Compile Include="AsmEditor\Converters\InstructionOperandTextBoxStyleConverter.cs" />
+    <Compile Include="AsmEditor\Converters\NegateBooleanConverter.cs" />
     <Compile Include="AsmEditor\Converters\RadioButtonConverter.cs" />
     <Compile Include="AsmEditor\DataFieldVM.cs" />
     <Compile Include="AsmEditor\DeletableNodes.cs" />

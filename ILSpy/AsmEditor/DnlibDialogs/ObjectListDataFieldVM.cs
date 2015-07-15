@@ -63,20 +63,25 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				this.options = options.Clone("Create a Type");
 				this.options.NullTypeSigAllowed = true;
 			}
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(IList<object> value)
+		protected override string OnNewValue(IList<object> value)
 		{
 			this.objects.Clear();
 			if (value != null)
 				this.objects.AddRange(value);
-			InitializeStringValue();
+			return CalculateStringValue();
+		}
+
+		string CalculateStringValue()
+		{
+			return string.Join(", ", objects.Select(a => DlgUtils.ValueToString(a, true)));
 		}
 
 		void InitializeStringValue()
 		{
-			this.StringValue = string.Join(", ", objects.Select(a => DlgUtils.ValueToString(a, true)));
+			this.StringValue = CalculateStringValue();
 		}
 
 		protected override string ConvertToValue(out IList<object> value)

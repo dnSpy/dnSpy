@@ -343,6 +343,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 				options.RuntimeVersion = value;
 				OnPropertyChanged("RuntimeVersion");
 				UpdateClrVersion();
+				HasErrorUpdated();
 			}
 		}
 

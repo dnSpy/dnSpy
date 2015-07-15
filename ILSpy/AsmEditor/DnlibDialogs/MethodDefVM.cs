@@ -31,6 +31,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				if (method != value) {
 					method = value;
 					OnPropertyChanged("Method");
+					HasErrorUpdated();
 				}
 			}
 		}

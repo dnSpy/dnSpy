@@ -106,14 +106,5 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		{
 			return InstructionsListVM.Select(a => a.InstructionVM).ToArray();
 		}
-
-		protected override string Verify(string columnName)
-		{
-			return string.Empty;
-		}
-
-		public override bool HasError {
-			get { return false; }
-		}
 	}
 }

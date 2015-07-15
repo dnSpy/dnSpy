@@ -68,9 +68,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		{
 			this.origOptions = options;
 
-			this.nativeMethodBodyVM = new MethodBody.NativeMethodBodyVM(options.NativeMethodBodyOptions);
+			this.nativeMethodBodyVM = new MethodBody.NativeMethodBodyVM(options.NativeMethodBodyOptions, false);
 			NativeMethodBodyVM.PropertyChanged += (s, e) => HasErrorUpdated();
-			this.cilBodyVM = new MethodBody.CilBodyVM(options.CilBodyOptions, ownerModule, language, ownerType, ownerMethod);
+			this.cilBodyVM = new MethodBody.CilBodyVM(options.CilBodyOptions, ownerModule, language, ownerType, ownerMethod, false);
 			CilBodyVM.PropertyChanged += (s, e) => HasErrorUpdated();
 			this.methodBodyTypeVM = new EnumListVM(methodBodyTypeList, (a, b) => OnMethodBodyTypeChanged());
 
@@ -128,11 +128,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			options.BodyType = (MethodBodyType)MethodBodyTypeVM.SelectedItem;
 			options.CodeType = (MethodImplAttributes)(Method.CodeType)CodeTypeVM.SelectedItem;
 			return options;
-		}
-
-		protected override string Verify(string columnName)
-		{
-			return string.Empty;
 		}
 
 		public override bool HasError {

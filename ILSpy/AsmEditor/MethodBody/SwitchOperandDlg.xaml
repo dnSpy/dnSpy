@@ -23,10 +23,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
              xmlns:mbody="clr-namespace:ICSharpCode.ILSpy.AsmEditor.MethodBody"
+             xmlns:vc="clr-namespace:ICSharpCode.ILSpy.AsmEditor.Converters"
              Height="500" Width="800"
              Title="Edit Switch Operand"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="300" MinWidth="500">
+	<winlocal:WindowBase.Resources>
+		<vc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
+	</winlocal:WindowBase.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition />
@@ -39,7 +43,7 @@
 		<mbody:SwitchOperandControl Margin="5" />
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">
-			<Button Content="_OK" IsEnabled="{Binding HasNoError}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
+			<Button Content="_OK" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
 			<Button Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" />
 			<Button Content="Restore" Style="{StaticResource DialogButton}" Command="{Binding ReinitializeCommand}" ToolTip="Restore all options" />
 		</StackPanel>

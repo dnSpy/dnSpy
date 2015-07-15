@@ -484,11 +484,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return options.IsLocal && CanAddNonLeafTypeSig;
 		}
 
-		protected override string Verify(string columnName)
-		{
-			return string.Empty;
-		}
-
 		public override bool HasError {
 			get { return !IsValidTypeSig; }
 		}

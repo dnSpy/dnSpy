@@ -124,10 +124,39 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		}
 		readonly UInt64VM fileOffset;
 
+		sealed class LocalsIndexObservableCollection : IndexObservableCollection<LocalVM>
+		{
+			readonly CilBodyVM owner;
+
+			public LocalsIndexObservableCollection(CilBodyVM owner, Func<LocalVM> createNewItem)
+				: base(createNewItem)
+			{
+				this.owner = owner;
+			}
+
+			protected override void ClearItems()
+			{
+				var old_disable_UpdateLocalOperands = owner.disable_UpdateLocalOperands;
+				var old_disable_UpdateBranchOperands = owner.disable_UpdateBranchOperands;
+				try {
+					owner.disable_UpdateLocalOperands = true;
+					owner.disable_UpdateBranchOperands = true;
+
+					base.ClearItems();
+				}
+				finally {
+					owner.disable_UpdateLocalOperands = old_disable_UpdateLocalOperands;
+					owner.disable_UpdateBranchOperands = old_disable_UpdateBranchOperands;
+				}
+				owner.UpdateLocalOperands();
+				owner.UpdateBranchOperands();
+			}
+		}
+
 		public IndexObservableCollection<LocalVM> LocalsListVM {
 			get { return localsListVM; }
 		}
-		readonly IndexObservableCollection<LocalVM> localsListVM;
+		readonly LocalsIndexObservableCollection localsListVM;
 
 		public IndexObservableCollection<InstructionVM> InstructionsListVM {
 			get { return instructionsListVM; }
@@ -151,7 +180,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		readonly MethodDef ownerMethod;
 		readonly TypeSigCreatorOptions typeSigCreatorOptions;
 
-		public CilBodyVM(CilBodyOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
+		public CilBodyVM(CilBodyOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod, bool initialize)
 		{
 			this.ownerModule = ownerModule;
 			this.ownerMethod = ownerMethod;
@@ -164,7 +193,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 				OwnerMethod = ownerMethod,
 			};
 
-			this.localsListVM = new IndexObservableCollection<LocalVM>(() => new LocalVM(typeSigCreatorOptions, new LocalOptions(new Local(ownerModule.CorLibTypes.Int32))));
+			this.localsListVM = new LocalsIndexObservableCollection(this, () => new LocalVM(typeSigCreatorOptions, new LocalOptions(new Local(ownerModule.CorLibTypes.Int32))));
 			this.instructionsListVM = new IndexObservableCollection<InstructionVM>(() => CreateInstructionVM());
 			this.exceptionHandlersListVM = new IndexObservableCollection<ExceptionHandlerVM>(() => new ExceptionHandlerVM(typeSigCreatorOptions, new ExceptionHandlerOptions()));
 			this.LocalsListVM.UpdateIndexesDelegate = LocalsUpdateIndexes;
@@ -181,7 +210,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			this.rva = new UInt32VM(a => CallHasErrorUpdated());
 			this.fileOffset = new UInt64VM(a => CallHasErrorUpdated());
 
-			Reinitialize();
+			if (initialize)
+				Reinitialize();
 		}
 
 		public void Select(uint[] offsets)
@@ -205,29 +235,46 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 
 		void LocalsUpdateIndexes(int i)
 		{
+			var old_disable_UpdateLocalOperands = disable_UpdateLocalOperands;
+			var old_disable_UpdateBranchOperands = disable_UpdateBranchOperands;
 			var old = DisableHasError();
 			try {
+				disable_UpdateLocalOperands = true;
+				disable_UpdateBranchOperands = true;
 				LocalsListVM.DefaultUpdateIndexes(i);
+				disable_UpdateLocalOperands = old_disable_UpdateLocalOperands;
+				disable_UpdateBranchOperands = old_disable_UpdateBranchOperands;
+
 				UpdateLocalOperands();
 				UpdateBranchOperands();
 			}
 			finally {
+				disable_UpdateLocalOperands = old_disable_UpdateLocalOperands;
+				disable_UpdateBranchOperands = old_disable_UpdateBranchOperands;
 				RestoreHasError(old);
 			}
 		}
 
 		void InstructionsUpdateIndexes(int i)
 		{
+			var old_disable_UpdateLocalOperands = disable_UpdateLocalOperands;
+			var old_disable_UpdateBranchOperands = disable_UpdateBranchOperands;
 			var old = DisableHasError();
 			try {
+				disable_UpdateLocalOperands = true;
+				disable_UpdateBranchOperands = true;
 				InstructionsListVM.UpdateIndexesOffsets(i);
+				disable_UpdateLocalOperands = old_disable_UpdateLocalOperands;
+				disable_UpdateBranchOperands = old_disable_UpdateBranchOperands;
 
-				UpdateBranchOperands();
 				UpdateLocalOperands();
+				UpdateBranchOperands();
 				UpdateParameterOperands();
 				UpdateExceptionHandlerInstructionReferences();
 			}
 			finally {
+				disable_UpdateLocalOperands = old_disable_UpdateLocalOperands;
+				disable_UpdateBranchOperands = old_disable_UpdateBranchOperands;
 				RestoreHasError(old);
 			}
 		}
@@ -256,6 +303,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 
 		void UpdateBranchOperands()
 		{
+			if (disable_UpdateBranchOperands)
+				return;
 			foreach (var instr in instructionsListVM) {
 				if (instr.InstructionOperandVM.InstructionOperandType == InstructionOperandType.BranchTarget)
 					instr.InstructionOperandVM.BranchOperandChanged(InstructionsListVM);
@@ -263,14 +312,18 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 					instr.InstructionOperandVM.SwitchOperandChanged();
 			}
 		}
+		bool disable_UpdateBranchOperands = false;
 
 		void UpdateLocalOperands()
 		{
+			if (disable_UpdateLocalOperands)
+				return;
 			foreach (var instr in instructionsListVM) {
 				if (instr.InstructionOperandVM.InstructionOperandType == InstructionOperandType.Local)
 					instr.InstructionOperandVM.LocalOperandChanged(LocalsListVM);
 			}
 		}
+		bool disable_UpdateLocalOperands = false;
 
 		void UpdateParameterOperands()
 		{
@@ -287,9 +340,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			try {
 				InstructionsListVM.DisableAutoUpdateProps = true;
 
+				// Absolutely required for speed. The UI list is virtualized so most of the
+				// instructions won't have a handler to notify, only the visible ones and a few
+				// nearby instructions will.
+				UninstallInstructionHandlers(InstructionsListVM);
+
 				InstructionsListVM.SimplifyMacros(LocalsListVM, ownerMethod.Parameters);
 			}
 			finally {
+				InstallInstructionHandlers(InstructionsListVM);
 				RestoreHasError(old2);
 				InstructionsListVM.DisableAutoUpdateProps = old1;
 			}
@@ -308,9 +367,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			try {
 				InstructionsListVM.DisableAutoUpdateProps = true;
 
+				// Speed optimization, see comment in SimplifyAllInstructions()
+				UninstallInstructionHandlers(InstructionsListVM);
+
 				InstructionsListVM.OptimizeMacros();
 			}
 			finally {
+				InstallInstructionHandlers(InstructionsListVM);
 				RestoreHasError(old2);
 				InstructionsListVM.DisableAutoUpdateProps = old1;
 			}
@@ -329,10 +392,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			try {
 				InstructionsListVM.DisableAutoUpdateProps = true;
 
+				// Speed optimization, see comment in SimplifyAllInstructions()
+				UninstallInstructionHandlers(instrs);
+
 				foreach (var instr in instrs)
 					instr.Code = Code.Nop;
 			}
 			finally {
+				InstallInstructionHandlers(instrs);
 				RestoreHasError(old2);
 				InstructionsListVM.DisableAutoUpdateProps = old1;
 			}
@@ -662,17 +729,29 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 
 		void InstructionsListVM_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (e.NewItems != null) {
-				foreach (InstructionVM instr in e.NewItems) {
-					instr.PropertyChanged -= instr_PropertyChanged;
-					instr.PropertyChanged += instr_PropertyChanged;
-					instr.InstructionOperandVM.PropertyChanged -= InstructionOperandVM_PropertyChanged;
-					instr.InstructionOperandVM.PropertyChanged += InstructionOperandVM_PropertyChanged;
-				}
-			}
+			if (e.NewItems != null)
+				InstallInstructionHandlers(e.NewItems);
 
 			if (!InstructionsListVM.DisableAutoUpdateProps)
 				CallHasErrorUpdated();
+		}
+
+		void InstallInstructionHandlers(System.Collections.IList list)
+		{
+			foreach (InstructionVM instr in list) {
+				instr.PropertyChanged -= instr_PropertyChanged;
+				instr.PropertyChanged += instr_PropertyChanged;
+				instr.InstructionOperandVM.PropertyChanged -= InstructionOperandVM_PropertyChanged;
+				instr.InstructionOperandVM.PropertyChanged += InstructionOperandVM_PropertyChanged;
+			}
+		}
+
+		void UninstallInstructionHandlers(IList<InstructionVM> list)
+		{
+			foreach (var instr in list) {
+				instr.PropertyChanged -= instr_PropertyChanged;
+				instr.InstructionOperandVM.PropertyChanged -= InstructionOperandVM_PropertyChanged;
+			}
 		}
 
 		void instr_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -799,6 +878,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			LocalsUpdateIndexes(0);
 			InstructionsUpdateIndexes(0);
 			ExceptionHandlersUpdateIndexes(0);
+			HasErrorUpdated();
 		}
 
 		public CilBodyOptions CopyTo(CilBodyOptions options)
@@ -821,11 +901,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			options.ExceptionHandlers.Clear();
 			options.ExceptionHandlers.AddRange(ExceptionHandlersListVM.Select(a => a.CreateExceptionHandlerOptions().Create(ops)));
 			return options;
-		}
-
-		protected override string Verify(string columnName)
-		{
-			return string.Empty;
 		}
 
 		public override bool HasError {

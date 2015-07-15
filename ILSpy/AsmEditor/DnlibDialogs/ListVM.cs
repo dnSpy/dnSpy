@@ -170,14 +170,5 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		{
 			return true;
 		}
-
-		protected override string Verify(string columnName)
-		{
-			return string.Empty;
-		}
-
-		public override bool HasError {
-			get { return false; }
-		}
 	}
 }

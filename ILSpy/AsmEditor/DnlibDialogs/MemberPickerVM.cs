@@ -66,6 +66,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 						searchResult = null;
 						OnPropertyChanged("SearchResult");
 					}
+					HasErrorUpdated();
 				}
 			}
 		}
@@ -165,6 +166,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 						selectedItem = null;
 						OnPropertyChanged("SelectedItem");
 					}
+					HasErrorUpdated();
 				}
 			}
 		}

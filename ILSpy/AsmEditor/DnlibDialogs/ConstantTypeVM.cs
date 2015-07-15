@@ -1099,11 +1099,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			HasErrorUpdated();
 		}
 
-		protected override string Verify(string columnName)
-		{
-			return string.Empty;
-		}
-
 		public override bool HasError {
 			get {
 				if (!IsEnabled)

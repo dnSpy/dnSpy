@@ -113,14 +113,6 @@ namespace ICSharpCode.ILSpy.Options
 			other.DeserializeResources = this.DeserializeResources;
 		}
 
-		protected override string Verify(string columnName) {
-			return string.Empty;
-		}
-
-		public override bool HasError {
-			get { return false; }
-		}
-
 		const string EXPLORER_MENU_TEXT = "Open with dnSpy";
 		static readonly string[] openExtensions = new string[] {
 			"exe", "dll", "netmodule", "winmd",

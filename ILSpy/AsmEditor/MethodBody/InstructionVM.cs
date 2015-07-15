@@ -244,11 +244,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			return options;
 		}
 
-		protected override string Verify(string columnName)
-		{
-			return string.Empty;
-		}
-
 		public override bool HasError {
 			get { return InstructionOperandVM.HasError; }
 		}

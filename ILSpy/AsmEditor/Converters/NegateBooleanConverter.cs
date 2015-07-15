@@ -17,34 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
+using System;
+using System.Globalization;
+using System.Windows.Data;
+
+namespace ICSharpCode.ILSpy.AsmEditor.Converters
 {
-	sealed class SwitchInstructionVM : ViewModelBase, IIndexedItem
+	sealed class NegateBooleanConverter : IValueConverter
 	{
-		public InstructionVM InstructionVM {
-			get { return instr; }
-		}
-		readonly InstructionVM instr;
-
-		public int Index {
-			get { return index; }
-			set {
-				if (index != value) {
-					index = value;
-					OnPropertyChanged("Index");
-				}
-			}
-		}
-		int index;
-
-		public SwitchInstructionVM(InstructionVM instr)
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			this.instr = instr;
+			return !(bool)value;
 		}
 
-		public object Clone()
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return new SwitchInstructionVM(instr);
+			return !(bool)value;
 		}
 	}
 }

@@ -57,6 +57,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				if (stringValue != value) {
 					stringValue = value;
 					OnPropertyChanged("StringValue");
+					HasErrorUpdated();
 				}
 			}
 		}

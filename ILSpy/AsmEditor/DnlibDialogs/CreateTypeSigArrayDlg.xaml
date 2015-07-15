@@ -23,12 +23,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
+             xmlns:vc="clr-namespace:ICSharpCode.ILSpy.AsmEditor.Converters"
              Height="400" Width="500"
              Title="{Binding Title}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="400" MinWidth="500">
 	<winlocal:WindowBase.Resources>
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+		<vc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
 	</winlocal:WindowBase.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -54,7 +56,7 @@
 			<Label Grid.Column="0" Content="{Binding NumberOfTypesLeftString}" Visibility="{Binding IsFiniteCount, Converter={StaticResource BooleanToVisibilityConverter}}" />
 			<Button Grid.Column="1" Content="_Add" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Command="{Binding AddCommand}" />
 			<Button Grid.Column="2" Content="_Delete" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Command="{Binding TypeSigCollection.RemoveSelectedCommand}" />
-			<Button Grid.Column="3" Content="_OK" IsEnabled="{Binding HasNoError}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
+			<Button Grid.Column="3" Content="_OK" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
 			<Button Grid.Column="4" Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" />
 		</Grid>
 	</Grid>

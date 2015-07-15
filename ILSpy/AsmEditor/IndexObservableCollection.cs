@@ -25,7 +25,7 @@ using System.Windows.Input;
 
 namespace ICSharpCode.ILSpy.AsmEditor
 {
-	sealed class IndexObservableCollection<T> : ObservableCollection<T> where T : class, IIndexedItem
+	class IndexObservableCollection<T> : ObservableCollection<T> where T : class, IIndexedItem
 	{
 		public ICommand AddItemBeforeCommand {
 			get { return new RelayCommand(a => AddItemBefore((T[])a), a => AddItemBeforeCanExecute((T[])a)); }

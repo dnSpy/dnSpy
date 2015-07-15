@@ -88,6 +88,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 		string stringValue = string.Empty;
 
+		protected void WriteStringValueFromConstructor(string value)
+		{
+			Debug.Assert(stringValue == string.Empty);
+			stringValue = value;
+		}
+
 		protected void ForceWriteStringValue(string value)
 		{
 			stringValue = value;
@@ -162,7 +168,17 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		{
 		}
 
-		protected abstract void SetValue(T value);
+		protected void SetValueFromConstructor(T value)
+		{
+			WriteStringValueFromConstructor(OnNewValue(value));
+		}
+
+		protected void SetValue(T value)
+		{
+			StringValue = OnNewValue(value);
+		}
+
+		protected abstract string OnNewValue(T value);
 		protected abstract string ConvertToValue(out T value);
 
 		internal override string ConvertToObjectValue(out object value)
@@ -216,8 +232,8 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		protected NumberDataFieldVM(Action<DataFieldVM> onUpdated, U min, U max)
 			: base(onUpdated)
 		{
-			this.Min = min;
-			this.Max = max;
+			this.min = min;
+			this.max = max;
 		}
 	}
 
@@ -231,12 +247,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public NullableGuidVM(Guid? value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(Guid? value)
+		protected override string OnNewValue(Guid? value)
 		{
-			this.StringValue = value == null ? string.Empty : value.Value.ToString();
+			return value == null ? string.Empty : value.Value.ToString();
 		}
 
 		protected override string ConvertToValue(out Guid? value)
@@ -278,12 +294,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public HexStringVM(IList<byte> value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(IList<byte> value)
+		protected override string OnNewValue(IList<byte> value)
 		{
-			this.StringValue = NumberVMUtils.ByteArrayToString(value, UpperCaseHex);
+			return NumberVMUtils.ByteArrayToString(value, UpperCaseHex);
 		}
 
 		protected override string ConvertToValue(out IList<byte> value)
@@ -304,12 +320,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public NullableByteVM(byte? value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated, byte.MinValue, byte.MaxValue)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(byte? value)
+		protected override string OnNewValue(byte? value)
 		{
-			this.StringValue = value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
+			return value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out byte? value)
@@ -333,12 +349,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public NullableUInt16VM(ushort? value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated, ushort.MinValue, ushort.MaxValue)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(ushort? value)
+		protected override string OnNewValue(ushort? value)
 		{
-			this.StringValue = value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
+			return value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out ushort? value)
@@ -362,12 +378,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public NullableUInt32VM(uint? value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated, uint.MinValue, uint.MaxValue)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(uint? value)
+		protected override string OnNewValue(uint? value)
 		{
-			this.StringValue = value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
+			return value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out uint? value)
@@ -391,12 +407,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public NullableUInt64VM(ulong? value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated, ulong.MinValue, ulong.MaxValue)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(ulong? value)
+		protected override string OnNewValue(ulong? value)
 		{
-			this.StringValue = value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
+			return value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out ulong? value)
@@ -435,12 +451,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public BooleanVM(bool value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(bool value)
+		protected override string OnNewValue(bool value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value);
+			return NumberVMUtils.ToString(value);
 		}
 
 		protected override string ConvertToValue(out bool value)
@@ -461,12 +477,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public CharVM(char value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(char value)
+		protected override string OnNewValue(char value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value);
+			return NumberVMUtils.ToString(value);
 		}
 
 		protected override string ConvertToValue(out char value)
@@ -487,12 +503,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public ByteVM(byte value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated, byte.MinValue, byte.MaxValue)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(byte value)
+		protected override string OnNewValue(byte value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out byte value)
@@ -513,12 +529,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public UInt16VM(ushort value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated, ushort.MinValue, ushort.MaxValue)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(ushort value)
+		protected override string OnNewValue(ushort value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out ushort value)
@@ -539,12 +555,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public UInt32VM(uint value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated, uint.MinValue, uint.MaxValue)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(uint value)
+		protected override string OnNewValue(uint value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out uint value)
@@ -565,12 +581,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public UInt64VM(ulong value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated, ulong.MinValue, ulong.MaxValue)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(ulong value)
+		protected override string OnNewValue(ulong value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out ulong value)
@@ -591,12 +607,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public SByteVM(sbyte value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated, sbyte.MinValue, sbyte.MaxValue)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(sbyte value)
+		protected override string OnNewValue(sbyte value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out sbyte value)
@@ -617,12 +633,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public Int16VM(short value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated, short.MinValue, short.MaxValue)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(short value)
+		protected override string OnNewValue(short value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out short value)
@@ -643,12 +659,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public Int32VM(int value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated, int.MinValue, int.MaxValue)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(int value)
+		protected override string OnNewValue(int value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out int value)
@@ -669,12 +685,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public Int64VM(long value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated, long.MinValue, long.MaxValue)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(long value)
+		protected override string OnNewValue(long value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out long value)
@@ -695,12 +711,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public SingleVM(float value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(float value)
+		protected override string OnNewValue(float value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value);
+			return NumberVMUtils.ToString(value);
 		}
 
 		protected override string ConvertToValue(out float value)
@@ -721,12 +737,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public DoubleVM(double value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(double value)
+		protected override string OnNewValue(double value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value);
+			return NumberVMUtils.ToString(value);
 		}
 
 		protected override string ConvertToValue(out double value)
@@ -750,12 +766,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			: base(onUpdated)
 		{
 			this.allowNullString = allowNullString;
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(string value)
+		protected override string OnNewValue(string value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value, allowNullString);
+			return NumberVMUtils.ToString(value, allowNullString);
 		}
 
 		protected override string ConvertToValue(out string value)
@@ -776,12 +792,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public DecimalVM(decimal value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(decimal value)
+		protected override string OnNewValue(decimal value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value);
+			return NumberVMUtils.ToString(value);
 		}
 
 		protected override string ConvertToValue(out decimal value)
@@ -795,19 +811,19 @@ namespace ICSharpCode.ILSpy.AsmEditor
 	sealed class DateTimeVM : DataFieldVM<DateTime>
 	{
 		public DateTimeVM(Action<DataFieldVM> onUpdated)
-			: this(DateTime.MinValue, onUpdated)
+			: this(DateTime.Now, onUpdated)
 		{
 		}
 
 		public DateTimeVM(DateTime value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(DateTime value)
+		protected override string OnNewValue(DateTime value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value);
+			return NumberVMUtils.ToString(value);
 		}
 
 		protected override string ConvertToValue(out DateTime value)
@@ -828,12 +844,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public TimeSpanVM(TimeSpan value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(TimeSpan value)
+		protected override string OnNewValue(TimeSpan value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value);
+			return NumberVMUtils.ToString(value);
 		}
 
 		protected override string ConvertToValue(out TimeSpan value)
@@ -854,12 +870,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public GuidVM(Guid value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(Guid value)
+		protected override string OnNewValue(Guid value)
 		{
-			this.StringValue = value.ToString();
+			return value.ToString();
 		}
 
 		protected override string ConvertToValue(out Guid value)
@@ -880,12 +896,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public BooleanListDataFieldVM(IList<bool> value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(IList<bool> value)
+		protected override string OnNewValue(IList<bool> value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value);
+			return NumberVMUtils.ToString(value);
 		}
 
 		protected override string ConvertToValue(out IList<bool> value)
@@ -906,12 +922,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public CharListDataFieldVM(IList<char> value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(IList<char> value)
+		protected override string OnNewValue(IList<char> value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value);
+			return NumberVMUtils.ToString(value);
 		}
 
 		protected override string ConvertToValue(out IList<char> value)
@@ -932,12 +948,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public ByteListDataFieldVM(IList<byte> value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated, byte.MinValue, byte.MaxValue)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(IList<byte> value)
+		protected override string OnNewValue(IList<byte> value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out IList<byte> value)
@@ -958,12 +974,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public UInt16ListDataFieldVM(IList<ushort> value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated, ushort.MinValue, ushort.MaxValue)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(IList<ushort> value)
+		protected override string OnNewValue(IList<ushort> value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out IList<ushort> value)
@@ -984,12 +1000,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public UInt32ListDataFieldVM(IList<uint> value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated, uint.MinValue, uint.MaxValue)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(IList<uint> value)
+		protected override string OnNewValue(IList<uint> value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out IList<uint> value)
@@ -1010,12 +1026,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public UInt64ListDataFieldVM(IList<ulong> value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated, ulong.MinValue, ulong.MaxValue)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(IList<ulong> value)
+		protected override string OnNewValue(IList<ulong> value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out IList<ulong> value)
@@ -1036,12 +1052,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public SByteListDataFieldVM(IList<sbyte> value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated, sbyte.MinValue, sbyte.MaxValue)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(IList<sbyte> value)
+		protected override string OnNewValue(IList<sbyte> value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out IList<sbyte> value)
@@ -1062,12 +1078,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public Int16ListDataFieldVM(IList<short> value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated, short.MinValue, short.MaxValue)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(IList<short> value)
+		protected override string OnNewValue(IList<short> value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out IList<short> value)
@@ -1088,12 +1104,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public Int32ListDataFieldVM(IList<int> value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated, int.MinValue, int.MaxValue)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(IList<int> value)
+		protected override string OnNewValue(IList<int> value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out IList<int> value)
@@ -1114,12 +1130,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public Int64ListDataFieldVM(IList<long> value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated, long.MinValue, long.MaxValue)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(IList<long> value)
+		protected override string OnNewValue(IList<long> value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value, Min, Max, UseDecimal);
+			return NumberVMUtils.ToString(value, Min, Max, UseDecimal);
 		}
 
 		protected override string ConvertToValue(out IList<long> value)
@@ -1140,12 +1156,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public SingleListDataFieldVM(IList<float> value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(IList<float> value)
+		protected override string OnNewValue(IList<float> value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value);
+			return NumberVMUtils.ToString(value);
 		}
 
 		protected override string ConvertToValue(out IList<float> value)
@@ -1166,12 +1182,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public DoubleListDataFieldVM(IList<double> value, Action<DataFieldVM> onUpdated)
 			: base(onUpdated)
 		{
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(IList<double> value)
+		protected override string OnNewValue(IList<double> value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value);
+			return NumberVMUtils.ToString(value);
 		}
 
 		protected override string ConvertToValue(out IList<double> value)
@@ -1195,12 +1211,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			: base(onUpdated)
 		{
 			this.allowNullString = allowNullString;
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
-		protected override void SetValue(IList<string> value)
+		protected override string OnNewValue(IList<string> value)
 		{
-			this.StringValue = NumberVMUtils.ToString(value, allowNullString);
+			return NumberVMUtils.ToString(value, allowNullString);
 		}
 
 		protected override string ConvertToValue(out IList<string> value)

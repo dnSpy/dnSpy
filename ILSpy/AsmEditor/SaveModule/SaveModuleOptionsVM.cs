@@ -76,6 +76,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 					throw new ArgumentNullException();
 				filename = value;
 				OnPropertyChanged("FileName");
+				HasErrorUpdated();
 			}
 		}
 		string filename = string.Empty;
@@ -190,9 +191,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		public SaveModuleOptionsVM(ModuleDef module)
 		{
 			this.module = module;
-			this.peHeadersOptions = new PEHeadersOptionsVM(module.Machine, GetSubsystem(module.Kind), () => HasErrorUpdated());
-			this.cor20HeaderOptions = new Cor20HeaderOptionsVM(() => HasErrorUpdated());
-			this.metaDataOptions = new MetaDataOptionsVM(() => HasErrorUpdated());
+			this.peHeadersOptions = new PEHeadersOptionsVM(module.Machine, GetSubsystem(module.Kind));
+			this.cor20HeaderOptions = new Cor20HeaderOptionsVM();
+			this.metaDataOptions = new MetaDataOptionsVM();
+
+			this.peHeadersOptions.PropertyChanged += (s, e) => HasErrorUpdated();
+			this.cor20HeaderOptions.PropertyChanged += (s, e) => HasErrorUpdated();
+			this.metaDataOptions.PropertyChanged += (s, e) => HasErrorUpdated();
 
 			moduleKindVM = new EnumListVM(moduleKindList, (a, b) => {
 				OnPropertyChanged("Extension");
@@ -346,13 +351,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 	{
 		readonly Machine defaultMachine;
 		readonly Subsystem defaultSubsystem;
-		readonly Action onUpdated;
 
-		public PEHeadersOptionsVM(Machine defaultMachine, Subsystem defaultSubsystem, Action onUpdated)
+		public PEHeadersOptionsVM(Machine defaultMachine, Subsystem defaultSubsystem)
 		{
 			this.defaultMachine = defaultMachine;
 			this.defaultSubsystem = defaultSubsystem;
-			this.onUpdated = onUpdated;
 			this.machineVM = new EnumListVM(machineList, (a, b) => {
 				Characteristics = CharacteristicsHelper.GetCharacteristics(Characteristics ?? 0, (dnlib.PE.Machine)Machine.SelectedItem);
 			});
@@ -782,17 +785,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			NumberOfRvaAndSizes.Value = options.NumberOfRvaAndSizes;
 		}
 
-		protected override string Verify(string columnName)
-		{
-			return string.Empty;
-		}
-
-		protected override void HasErrorUpdated()
-		{
-			base.HasErrorUpdated();
-			onUpdated();
-		}
-
 		public override bool HasError {
 			get {
 				return timeDateStamp.HasError ||
@@ -820,11 +812,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 
 	sealed class Cor20HeaderOptionsVM : ViewModelBase
 	{
-		readonly Action onUpdated;
-
-		public Cor20HeaderOptionsVM(Action onUpdated)
+		public Cor20HeaderOptionsVM()
 		{
-			this.onUpdated = onUpdated;
 			this.majorRuntimeVersion = new NullableUInt16VM(a => HasErrorUpdated());
 			this.minorRuntimeVersion = new NullableUInt16VM(a => HasErrorUpdated());
 			this.entryPoint = new NullableUInt32VM(a => HasErrorUpdated());
@@ -923,17 +912,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			EntryPoint.Value = options.EntryPoint;
 		}
 
-		protected override string Verify(string columnName)
-		{
-			return string.Empty;
-		}
-
-		protected override void HasErrorUpdated()
-		{
-			base.HasErrorUpdated();
-			onUpdated();
-		}
-
 		public override bool HasError {
 			get {
 				return majorRuntimeVersion.HasError ||
@@ -945,13 +923,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 
 	sealed class MetaDataOptionsVM : ViewModelBase
 	{
-		readonly Action onUpdated;
-
-		public MetaDataOptionsVM(Action onUpdated)
+		public MetaDataOptionsVM()
 		{
-			this.onUpdated = onUpdated;
-			this.metaDataHeaderOptions = new MetaDataHeaderOptionsVM(() => HasErrorUpdated());
-			this.tablesHeapOptions = new TablesHeapOptionsVM(() => HasErrorUpdated());
+			this.metaDataHeaderOptions = new MetaDataHeaderOptionsVM();
+			this.tablesHeapOptions = new TablesHeapOptionsVM();
+
+			this.metaDataHeaderOptions.PropertyChanged += (s, e) => HasErrorUpdated();
+			this.tablesHeapOptions.PropertyChanged += (s, e) => HasErrorUpdated();
 		}
 
 		public MetaDataHeaderOptionsVM MetaDataHeaderOptions {
@@ -1167,17 +1145,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			OnPropertyChanged("AlwaysCreateBlobHeap");
 		}
 
-		protected override string Verify(string columnName)
-		{
-			return string.Empty;
-		}
-
-		protected override void HasErrorUpdated()
-		{
-			base.HasErrorUpdated();
-			onUpdated();
-		}
-
 		public override bool HasError {
 			get {
 				return metaDataHeaderOptions.HasError ||
@@ -1188,11 +1155,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 
 	sealed class MetaDataHeaderOptionsVM : ViewModelBase
 	{
-		readonly Action onUpdated;
-
-		public MetaDataHeaderOptionsVM(Action onUpdated)
+		public MetaDataHeaderOptionsVM()
 		{
-			this.onUpdated = onUpdated;
 			this.signature = new NullableUInt32VM(a => HasErrorUpdated());
 			this.majorVersion = new NullableUInt16VM(a => HasErrorUpdated());
 			this.minorVersion = new NullableUInt16VM(a => HasErrorUpdated());
@@ -1226,6 +1190,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			set {
 				versionString = value;
 				OnPropertyChanged("VersionString");
+				HasErrorUpdated();
 			}
 		}
 		string versionString;
@@ -1270,12 +1235,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			return string.Empty;
 		}
 
-		protected override void HasErrorUpdated()
-		{
-			base.HasErrorUpdated();
-			onUpdated();
-		}
-
 		public override bool HasError {
 			get {
 				if (!string.IsNullOrEmpty(Verify("VersionString")))
@@ -1302,11 +1261,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 
 	sealed class TablesHeapOptionsVM : ViewModelBase
 	{
-		readonly Action onUpdated;
-
-		public TablesHeapOptionsVM(Action onUpdated)
+		public TablesHeapOptionsVM()
 		{
-			this.onUpdated = onUpdated;
 			this.reserved1 = new NullableUInt32VM(a => HasErrorUpdated());
 			this.majorVersion = new NullableByteVM(a => HasErrorUpdated());
 			this.minorVersion = new NullableByteVM(a => HasErrorUpdated());
@@ -1369,17 +1325,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			UseENC = options.UseENC;
 			ExtraData.Value = options.ExtraData;
 			HasDeletedRows = options.HasDeletedRows;
-		}
-
-		protected override string Verify(string columnName)
-		{
-			return string.Empty;
-		}
-
-		protected override void HasErrorUpdated()
-		{
-			base.HasErrorUpdated();
-			onUpdated();
 		}
 
 		public override bool HasError {

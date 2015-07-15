@@ -120,7 +120,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			: base(onUpdated)
 		{
 			this.ownerModule = ownerModule;
-			SetValue(value);
+			SetValueFromConstructor(value);
 		}
 
 		protected override void OnStringValueChanged()
@@ -129,15 +129,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				enumUnderlyingTypeField.StringValue = StringValue;
 		}
 
-		protected override void SetValue(EnumInfo value)
+		protected override string OnNewValue(EnumInfo value)
 		{
 			InitializeEnumUnderlyingTypeField(value);
 
 			if (enumUnderlyingTypeField == null)
-				this.StringValue = string.Empty;
+				return string.Empty;
 			else {
 				enumUnderlyingTypeField.ObjectValue = value.Value;
-				this.StringValue = enumUnderlyingTypeField.StringValue;
+				return enumUnderlyingTypeField.StringValue;
 			}
 		}
 

@@ -309,11 +309,6 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			publicKey.Value = newPublicKey.Data;
 		}
 
-		protected override string Verify(string columnName)
-		{
-			return string.Empty;
-		}
-
 		public override bool HasError {
 			get {
 				return versionMajor.HasError ||
