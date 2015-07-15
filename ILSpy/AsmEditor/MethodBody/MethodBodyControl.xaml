@@ -222,7 +222,7 @@
 						<GridViewColumn Header="Type" Width="950">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
-									<mbody:FastClickButton Style="{StaticResource CilButtonStyle}" Content="{Binding Type, Mode=OneWay, Converter={StaticResource CilObjectConverter}}" Command="{Binding EditTypeCommand}" />
+									<mbody:FastClickButton Style="{StaticResource CilButtonStyle}" Content="{Binding Type, Mode=OneWay, Converter={StaticResource CilObjectConverter}}" Command="{Binding EditTypeCommand}" ClickMode="Press" />
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
@@ -332,7 +332,7 @@
 						<GridViewColumn Header="CatchType" Width="750">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
-									<mbody:FastClickButton Style="{StaticResource CilButtonStyle}" Content="{Binding CatchType, Mode=OneWay, Converter={StaticResource CilObjectConverter}}" Command="{Binding EditCatchTypeCommand}" />
+									<mbody:FastClickButton Style="{StaticResource CilButtonStyle}" Content="{Binding CatchType, Mode=OneWay, Converter={StaticResource CilObjectConverter}}" Command="{Binding EditCatchTypeCommand}" ClickMode="Press" />
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
