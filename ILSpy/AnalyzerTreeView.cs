@@ -97,6 +97,13 @@ namespace ICSharpCode.ILSpy
 					return;
 				}
 			}
+			if (e.Key == Key.Enter && (Keyboard.Modifiers == ModifierKeys.None || Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift)) {
+				var elem = this.SelectedItem as AnalyzerEntityTreeNode;
+				if (elem != null) {
+					elem.ActivateItem(e);
+					return;
+				}
+			}
 
 			base.OnKeyDown(e);
 		}
