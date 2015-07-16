@@ -1504,7 +1504,7 @@ namespace ICSharpCode.ILSpy.TextView
 			int offset = doc == null ? 0 : doc.GetOffset(textEditor.TextArea.Caret.Line, 0);
 			var refSeg = references.FindFirstSegmentWithStartAfter(offset);
 			while (refSeg != null) {
-				if (refSeg.IsLocalTarget)
+				if (refSeg.Reference is IMemberDef && refSeg.IsLocalTarget)
 					break;
 				refSeg = references.GetNextSegment(refSeg);
 			}
