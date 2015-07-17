@@ -55,9 +55,9 @@ namespace ICSharpCode.ILSpy
 			this.WordWrap = FromString((string)doc.Element("WordWrap"), false);
 			this.HighlightCurrentLine = FromString((string)doc.Element("HighlightCurrentLine"), true);
 			this.TopPaneSettings.Name = FromString((string)doc.Element("TopPaneName"), string.Empty);
-			this.TopPaneSettings.Height = FromString((string)doc.Element("TopPaneHeight"), 200);
+			this.TopPaneSettings.Height = FromString((string)doc.Element("TopPaneHeight"), 200.0);
 			this.BottomPaneSettings.Name = FromString((string)doc.Element("BottomPaneName"), string.Empty);
-			this.BottomPaneSettings.Height = FromString((string)doc.Element("BottomPaneHeight"), 200);
+			this.BottomPaneSettings.Height = FromString((string)doc.Element("BottomPaneHeight"), 200.0);
 			this.ThemeName = (string)doc.Element("ThemeName") ?? dntheme.Themes.DefaultThemeName;
 
 			var ignoreXml = doc.Element("IgnoredWarnings");
