@@ -62,7 +62,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public static ITextOutput Write(ITextOutput output, EventDef ev, Language language)
 		{
-			output.Write(CleanUpIdentifier(ev.Name), TextTokenHelper.GetTextTokenType(ev));
+			output.Write(UIUtils.CleanUpIdentifier(ev.Name), TextTokenHelper.GetTextTokenType(ev));
 			output.WriteSpace();
 			output.Write(':', TextTokenType.Operator);
 			output.WriteSpace();

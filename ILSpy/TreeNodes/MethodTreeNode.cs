@@ -52,7 +52,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public static ITextOutput Write(ITextOutput output, MethodDef method, Language language)
 		{
-			output.Write(CleanUpIdentifier(method.Name), TextTokenHelper.GetTextTokenType(method));
+			output.Write(UIUtils.CleanUpIdentifier(method.Name), TextTokenHelper.GetTextTokenType(method));
 			output.Write('(', TextTokenType.Operator);
 			for (int i = 0; i < method.Parameters.Count; i++) {
 				if (method.Parameters[i].IsHiddenThisParameter)

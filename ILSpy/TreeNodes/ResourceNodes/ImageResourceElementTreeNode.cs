@@ -203,7 +203,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					};
 				});
 				output.Write(" = ", TextTokenType.Comment);
-				output.WriteDefinition(Name, this, TextTokenType.Comment);
+				output.WriteDefinition(UIUtils.CleanUpName(Name), this, TextTokenType.Comment);
 				output.WriteLine();
 				return;
 			}
@@ -239,7 +239,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 
 		public override NodePathName NodePathName {
-			get { return new NodePathName("imgresel", resElem.Name); }
+			get { return new NodePathName("imgresel", UIUtils.CleanUpName(resElem.Name)); }
 		}
 	}
 
@@ -288,7 +288,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 
 		public override NodePathName NodePathName {
-			get { return new NodePathName("imgres", r.Name); }
+			get { return new NodePathName("imgres", UIUtils.CleanUpName(r.Name)); }
 		}
 	}
 }

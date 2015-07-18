@@ -17,10 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy
 {
@@ -52,7 +54,32 @@ namespace ICSharpCode.ILSpy
 
 		public static string EscapeMenuItemHeader(string s)
 		{
-			return s.Replace("_", "__");
+			return CleanUpName(s).Replace("_", "__");
+		}
+
+		public static string CleanUpName(string n)
+		{
+			if (n == null)
+				return n;
+			const int MAX_LEN = 0x100;
+			if (n.Length > MAX_LEN)
+				n = n.Substring(0, MAX_LEN);
+			var sb = new StringBuilder(n.Length);
+			for (int i = 0; i < n.Length; i++) {
+				var c = n[i];
+				if ((ushort)c < 0x20)
+					c = '_';
+				sb.Append(c);
+			}
+			return sb.ToString();
+		}
+
+		public static string CleanUpIdentifier(string id)
+		{
+			if (id == null)
+				return id;
+			id = IdentifierEscaper.Escape(id);
+			return CleanUpName(id);
 		}
 	}
 }

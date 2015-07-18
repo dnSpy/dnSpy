@@ -48,7 +48,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 
 		public override NodePathName NodePathName {
-			get { return new NodePathName("unserresel", resElem.Name); }
+			get { return new NodePathName("unserresel", UIUtils.CleanUpName(resElem.Name)); }
 		}
 	}
 }

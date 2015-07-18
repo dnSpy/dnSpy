@@ -22,7 +22,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using dnlib.DotNet;
@@ -265,31 +264,6 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				else
 					return Themes.Theme.GetColor(dntheme.ColorType.NodeNotPublic).InheritedColor.Foreground.GetBrush(null);
 			}
-		}
-
-		internal static string CleanUpName(string n)
-		{
-			if (n == null)
-				return n;
-			const int MAX_LEN = 256;
-			if (n.Length > MAX_LEN)
-				n = n.Substring(0, MAX_LEN);
-			var sb = new StringBuilder(n.Length);
-			for (int i = 0; i < n.Length; i++) {
-				var c = n[i];
-				if ((ushort)c < 0x20)
-					c = '_';
-				sb.Append(c);
-			}
-			return sb.ToString();
-		}
-
-		internal static string CleanUpIdentifier(string id)
-		{
-			if (id == null)
-				return id;
-			id = IdentifierEscaper.Escape(id);
-			return CleanUpName(id);
 		}
 
 		public abstract NodePathName NodePathName { get; }

@@ -45,7 +45,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			var isExe = analyzedAssembly.Assembly != null &&
 				analyzedAssembly.IsManifestModule &&
 				(analyzedAssembly.Characteristics & dnlib.PE.Characteristics.Dll) == 0;
-			output.Write(ILSpyTreeNode.CleanUpIdentifier(analyzedAssembly.Name), isExe ? TextTokenType.AssemblyExe : TextTokenType.Assembly);
+			output.Write(UIUtils.CleanUpIdentifier(analyzedAssembly.Name), isExe ? TextTokenType.AssemblyExe : TextTokenType.Assembly);
 		}
 
 		protected override void LoadChildren()

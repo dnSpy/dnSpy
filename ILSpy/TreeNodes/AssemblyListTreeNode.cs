@@ -49,7 +49,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		protected override void Write(ITextOutput output, Language language)
 		{
-			output.Write(CleanUpName(assemblyList.ListName), TextTokenType.Text);
+			output.Write(UIUtils.CleanUpName(assemblyList.ListName), TextTokenType.Text);
 		}
 
 		void BindToObservableCollection()

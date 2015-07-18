@@ -51,7 +51,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public static ITextOutput Write(ITextOutput output, FieldDef field, Language language)
 		{
-			output.Write(CleanUpIdentifier(field.Name), TextTokenHelper.GetTextTokenType(field));
+			output.Write(UIUtils.CleanUpIdentifier(field.Name), TextTokenHelper.GetTextTokenType(field));
 			output.WriteSpace();
 			output.Write(':', TextTokenType.Operator);
 			output.WriteSpace();

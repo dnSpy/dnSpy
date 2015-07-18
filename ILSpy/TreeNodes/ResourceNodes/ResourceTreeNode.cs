@@ -51,11 +51,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public static void WriteFileName(ITextOutput output, string name)
 		{
+			name = UIUtils.CleanUpName(name);
 			var s = name.Replace('\\', '/');
 			var parts = s.Split('/');
 			int slashIndex = 0;
 			for (int i = 0; i < parts.Length - 1; i++) {
-				output.Write(CleanUpName(parts[i]), TextTokenType.DirectoryPart);
+				output.Write(parts[i], TextTokenType.DirectoryPart);
 				slashIndex += parts[i].Length;
 				output.Write(name[slashIndex], TextTokenType.Text);
 				slashIndex++;
@@ -155,7 +156,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				if (fo != 0)
 					output.Write(string.Format("0x{0:X8}: ", fo), TextTokenType.Comment);
 			}
-			output.WriteDefinition(Name, this, TextTokenType.Comment);
+			output.WriteDefinition(UIUtils.CleanUpName(Name), this, TextTokenType.Comment);
 			string extra = null;
 			if (r.ResourceType == ResourceType.AssemblyLinked)
 				extra = ((AssemblyLinkedResource)r).Assembly.FullName;
@@ -240,7 +241,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 
 		public override NodePathName NodePathName {
-			get { return new NodePathName("rst", r.Name + " - " + r.ResourceType.ToString()); }
+			get { return new NodePathName("rst", UIUtils.CleanUpName(r.Name) + " - " + r.ResourceType.ToString()); }
 		}
 	}
 }

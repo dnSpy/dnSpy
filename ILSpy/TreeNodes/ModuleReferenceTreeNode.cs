@@ -52,7 +52,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public static ITextOutput Write(ITextOutput output, ModuleRef r, Language language)
 		{
-			output.Write(CleanUpIdentifier(r.Name), TextTokenType.Text);
+			output.Write(UIUtils.CleanUpIdentifier(r.Name), TextTokenType.Text);
 			r.MDToken.WriteSuffixString(output);
 			return output;
 		}

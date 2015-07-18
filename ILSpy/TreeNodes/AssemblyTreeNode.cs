@@ -110,11 +110,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		protected override void Write(ITextOutput output, Language language)
 		{
 			if (!assembly.IsLoaded)
-				output.Write(CleanUpName(assembly.ShortName), TextTokenType.Assembly);
+				output.Write(UIUtils.CleanUpName(assembly.ShortName), TextTokenType.Assembly);
 			else if (assembly.ModuleDefinition == null)
-				output.Write(CleanUpName(assembly.ShortName), TextTokenType.Text);
+				output.Write(UIUtils.CleanUpName(assembly.ShortName), TextTokenType.Text);
 			else if (Parent is AssemblyTreeNode || assembly.AssemblyDefinition == null)
-				output.Write(CleanUpName(assembly.ModuleDefinition.Name), TextTokenType.Module);
+				output.Write(UIUtils.CleanUpName(assembly.ModuleDefinition.Name), TextTokenType.Module);
 			else {
 				var asm = assembly.AssemblyDefinition;
 

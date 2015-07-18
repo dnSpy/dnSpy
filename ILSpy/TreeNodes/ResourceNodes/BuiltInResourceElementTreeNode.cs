@@ -83,7 +83,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 
 		public override NodePathName NodePathName {
-			get { return new NodePathName("resbuiltin", resElem.Name); }
+			get { return new NodePathName("resbuiltin", UIUtils.CleanUpName(resElem.Name)); }
 		}
 	}
 }
