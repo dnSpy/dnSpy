@@ -31,9 +31,12 @@ namespace ICSharpCode.Decompiler
 		public static readonly IdentifierFormatted IdentifierFormatted = new IdentifierFormatted();
 
 		const int MAX_IDENTIFIER_LENGTH = 512;
+		const string EMPTY_NAME = "<<EMPTY_NAME>>";
 
 		public static string Escape(string id)
 		{
+			if (string.IsNullOrEmpty(id))
+				return EMPTY_NAME;
 			var sb = new StringBuilder();
 
 			foreach (var c in id) {
