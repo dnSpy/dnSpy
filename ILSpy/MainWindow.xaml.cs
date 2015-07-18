@@ -1414,8 +1414,9 @@ namespace ICSharpCode.ILSpy
 			GC.WaitForPendingFinalizers();
 			
 			assemblyList.CollectionChanged += assemblyList_Assemblies_CollectionChanged;
-			
 			assemblyListTreeNode = new AssemblyListTreeNode(assemblyList);
+			// Make sure CurrentAssemblyListChanged() is called after the treenodes have been created
+			assemblyList.CollectionChanged += assemblyList_Assemblies_CollectionChanged2;
 			assemblyListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
 			assemblyListTreeNode.Select = SelectNode;
 			assemblyListTreeNode.OwnerTreeView = treeView;
@@ -1499,6 +1500,10 @@ namespace ICSharpCode.ILSpy
 					DecompileCache.Instance.Clear(oldAssemblies);
 				}
 			}
+		}
+
+		void assemblyList_Assemblies_CollectionChanged2(object sender, NotifyCollectionChangedEventArgs e)
+		{
 			if (CurrentAssemblyListChanged != null)
 				CurrentAssemblyListChanged(this, e);
 		}
