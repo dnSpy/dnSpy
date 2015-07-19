@@ -23,9 +23,17 @@
 using dnSpy.BamlDecompiler.Baml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
-	internal class PropertyWithConverterHandler : PropertyHandler, IHandler {
-		BamlRecordType IHandler.Type {
-			get { return BamlRecordType.PropertyWithConverter; }
+	internal class ConnectionIdHandler : IHandler {
+		public BamlRecordType Type {
+			get { return BamlRecordType.ConnectionId; }
+		}
+
+		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
+			var record = (ConnectionIdRecord)((BamlRecordNode)node).Record;
+
+			parent.Xaml.Element.AddAnnotation(new BamlConnectionId(record.ConnectionId));
+
+			return null;
 		}
 	}
 }

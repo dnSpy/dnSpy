@@ -155,6 +155,15 @@ namespace dnSpy.BamlDecompiler {
 			return xamlProp;
 		}
 
+		public string ResolveString(ushort id) {
+			if (id > 0x7fff)
+				return Baml.KnownThings.Strings(-(short)id);
+			else if (Baml.StringIdMap.ContainsKey(id))
+				return Baml.StringIdMap[id].Value;
+
+			return null;
+		}
+
 		public XNamespace GetXmlNamespace(string xmlns) {
 			if (xmlns == null)
 				return null;
@@ -163,6 +172,16 @@ namespace dnSpy.BamlDecompiler {
 			if (!xmlnsMap.TryGetValue(xmlns, out ns))
 				xmlnsMap[xmlns] = ns = XNamespace.Get(xmlns);
 			return ns;
+		}
+
+		public XName GetXamlNsName(string name, XElement elem = null) {
+			var xNs = GetXmlNamespace("http://schemas.microsoft.com/winfx/2006/xaml");
+			XName xName;
+			if (elem != null && xNs == elem.GetDefaultNamespace())
+				xName = name;
+			else
+				xName = xNs + name;
+			return xName;
 		}
 	}
 }

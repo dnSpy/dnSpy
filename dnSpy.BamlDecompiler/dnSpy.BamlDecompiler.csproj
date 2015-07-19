@@ -42,6 +42,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Annotations.cs" />
     <Compile Include="Handlers\Blocks\PropertyComplexHandler.cs" />
     <Compile Include="Handlers\Blocks\PropertyListHandler.cs" />
     <Compile Include="Handlers\Blocks\PropertyDictionaryHandler.cs" />
@@ -52,6 +53,12 @@
     <Compile Include="Handlers\Records\ContentPropertyHandler.cs" />
     <Compile Include="Handlers\Records\LineNumberAndPositionHandler.cs" />
     <Compile Include="Handlers\Records\LinePositionHandler.cs" />
+    <Compile Include="Handlers\Records\ConnectionIdHandler.cs" />
+    <Compile Include="Handlers\Records\LiteralContentHandler.cs" />
+    <Compile Include="Handlers\Records\TextWithConverterHandler.cs" />
+    <Compile Include="Handlers\Records\TextHandler.cs" />
+    <Compile Include="Handlers\Records\PropertyHandler.cs" />
+    <Compile Include="Handlers\Records\PresentationOptionsAttributeHandler.cs" />
     <Compile Include="Handlers\Records\PropertyCustomHandler.cs" />
     <Compile Include="Handlers\Records\PropertyWithExtensionHandler.cs" />
     <Compile Include="Handlers\Records\PropertyWithConverterHandler.cs" />

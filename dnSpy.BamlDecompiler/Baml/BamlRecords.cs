@@ -516,7 +516,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 		}
 	}
 
-	internal class TextWithIdRecord : TextRecord {
+	internal class TextWithIdRecord : SizedBamlRecord {
 		public override BamlRecordType Type {
 			get { return BamlRecordType.TextWithId; }
 		}

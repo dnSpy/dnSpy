@@ -23,9 +23,17 @@
 using dnSpy.BamlDecompiler.Baml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
-	internal class PropertyWithConverterHandler : PropertyHandler, IHandler {
-		BamlRecordType IHandler.Type {
-			get { return BamlRecordType.PropertyWithConverter; }
+	internal class TextHandler : IHandler {
+		public BamlRecordType Type {
+			get { return BamlRecordType.Text; }
+		}
+
+		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
+			var record = (TextRecord)((BamlRecordNode)node).Record;
+
+			parent.Xaml.Element.Add(record.Value);
+
+			return null;
 		}
 	}
 }

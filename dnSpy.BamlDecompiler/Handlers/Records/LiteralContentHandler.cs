@@ -20,12 +20,25 @@
 	THE SOFTWARE.
 */
 
+using System.Xml.Linq;
 using dnSpy.BamlDecompiler.Baml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
-	internal class PropertyWithConverterHandler : PropertyHandler, IHandler {
-		BamlRecordType IHandler.Type {
-			get { return BamlRecordType.PropertyWithConverter; }
+	internal class LiteralContentHandler : IHandler {
+		public BamlRecordType Type {
+			get { return BamlRecordType.LiteralContent; }
+		}
+
+		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
+			var record = (LiteralContentRecord)((BamlRecordNode)node).Record;
+
+			var elem = new XElement(ctx.GetXamlNsName("XData", parent.Xaml));
+			var content = XElement.Parse(record.Value);
+			elem.Add(content);
+
+			parent.Xaml.Element.Add(elem);
+
+			return null;
 		}
 	}
 }

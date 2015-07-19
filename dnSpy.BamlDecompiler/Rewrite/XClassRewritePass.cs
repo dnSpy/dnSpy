@@ -48,12 +48,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 
 			elem.Name = xamlType.ToXName(ctx);
 
-			var attrNs = ctx.GetXmlNamespace("http://schemas.microsoft.com/winfx/2006/xaml");
-			XName attrName;
-			if (attrNs == elem.GetDefaultNamespace())
-				attrName = "Class";
-			else
-				attrName = attrNs + "Class";
+			var attrName = ctx.GetXamlNsName("Class", elem);
 
 			var attrs = elem.Attributes().ToList();
 			attrs.Insert(0, new XAttribute(attrName, type.ResolvedType.ReflectionFullName));
