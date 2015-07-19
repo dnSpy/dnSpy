@@ -30,10 +30,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// </summary>
 	public sealed class NamespaceTreeNode : ILSpyTreeNode
 	{
-		readonly string name;
-		
+		string name;
+
 		public string Name {
 			get { return name; }
+			set { name = value; }
 		}
 		
 		public NamespaceTreeNode(string name)

@@ -536,6 +536,21 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		readonly ILSpyTreeNode origParentNode;
 		readonly int origParentChildIndex;
 		readonly bool nameChanged;
+		readonly TypeRefInfo[] typeRefInfos;
+
+		struct TypeRefInfo
+		{
+			public readonly TypeRef TypeRef;
+			public readonly UTF8String OrigNamespace;
+			public readonly UTF8String OrigName;
+
+			public TypeRefInfo(TypeRef tr)
+			{
+				this.TypeRef = tr;
+				this.OrigNamespace = tr.Namespace;
+				this.OrigName = tr.Name;
+			}
+		}
 
 		TypeDefSettingsCommand(ModuleDef module, TypeTreeNode typeNode, TypeDefOptions options)
 		{
@@ -556,6 +571,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 				if (AssemblyTreeNode.NamespaceStringComparer.Compare(newOptions.Namespace, origOptions.Namespace) != 0)
 					this.nsNodeCreator = new NamespaceTreeNodeCreator(newOptions.Namespace, asmNode);
 			}
+
+			if (this.nameChanged || origOptions.Namespace != newOptions.Namespace)
+				this.typeRefInfos = RefFinder.FindTypeRefsToThisModule(module).Where(a => RefFinder.TypeEqualityComparerInstance.Equals(a, typeNode.TypeDefinition)).Select(a => new TypeRefInfo(a)).ToArray();
 		}
 
 		public string Description {
@@ -591,6 +609,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			}
 			else
 				newOptions.CopyTo(typeNode.TypeDefinition, module);
+			if (typeRefInfos != null) {
+				foreach (var info in typeRefInfos) {
+					info.TypeRef.Namespace = typeNode.TypeDefinition.Namespace;
+					info.TypeRef.Name = typeNode.TypeDefinition.Name;
+				}
+			}
 			typeNode.RaiseUIPropsChanged();
 			typeNode.InvalidateInterfacesNode();
 		}
@@ -622,6 +646,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			}
 			else
 				origOptions.CopyTo(typeNode.TypeDefinition, module);
+			if (typeRefInfos != null) {
+				foreach (var info in typeRefInfos) {
+					info.TypeRef.Namespace = info.OrigNamespace;
+					info.TypeRef.Name = info.OrigName;
+				}
+			}
 			typeNode.RaiseUIPropsChanged();
 			typeNode.InvalidateInterfacesNode();
 		}

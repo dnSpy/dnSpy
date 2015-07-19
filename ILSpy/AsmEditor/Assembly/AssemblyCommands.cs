@@ -302,12 +302,30 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 		readonly AssemblyTreeNode asmNode;
 		readonly AssemblyOptions newOptions;
 		readonly AssemblyOptions origOptions;
+		readonly AssemblyRefInfo[] assemblyRefInfos;
+
+		struct AssemblyRefInfo
+		{
+			public readonly AssemblyRef AssemblyRef;
+			public readonly UTF8String OrigName;
+			public readonly PublicKeyBase OrigPublicKeyOrToken;
+
+			public AssemblyRefInfo(AssemblyRef asmRef)
+			{
+				this.AssemblyRef = asmRef;
+				this.OrigName = asmRef.Name;
+				this.OrigPublicKeyOrToken = asmRef.PublicKeyOrToken;
+			}
+		}
 
 		AssemblySettingsCommand(AssemblyTreeNode asmNode, AssemblyOptions newOptions)
 		{
 			this.asmNode = asmNode;
 			this.newOptions = newOptions;
 			this.origOptions = new AssemblyOptions(asmNode.LoadedAssembly.AssemblyDefinition);
+
+			if (newOptions.Name != origOptions.Name)
+				this.assemblyRefInfos = RefFinder.FindAssemblyRefsToThisModule(asmNode.LoadedAssembly.ModuleDefinition).Where(a => AssemblyNameComparer.NameAndPublicKeyTokenOnly.Equals(a, asmNode.LoadedAssembly.AssemblyDefinition)).Select(a => new AssemblyRefInfo(a)).ToArray();
 		}
 
 		public string Description {
@@ -317,12 +335,28 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 		public void Execute()
 		{
 			newOptions.CopyTo(asmNode.LoadedAssembly.AssemblyDefinition);
+			if (assemblyRefInfos != null) {
+				var pkt = newOptions.PublicKey.Token;
+				foreach (var info in assemblyRefInfos) {
+					info.AssemblyRef.Name = newOptions.Name;
+					if (info.AssemblyRef.PublicKeyOrToken is PublicKeyToken)
+						info.AssemblyRef.PublicKeyOrToken = pkt;
+					else
+						info.AssemblyRef.PublicKeyOrToken = newOptions.PublicKey;
+				}
+			}
 			asmNode.RaiseUIPropsChanged();
 		}
 
 		public void Undo()
 		{
 			origOptions.CopyTo(asmNode.LoadedAssembly.AssemblyDefinition);
+			if (assemblyRefInfos != null) {
+				foreach (var info in assemblyRefInfos) {
+					info.AssemblyRef.Name = info.OrigName;
+					info.AssemblyRef.PublicKeyOrToken = info.OrigPublicKeyOrToken;
+				}
+			}
 			asmNode.RaiseUIPropsChanged();
 		}
 

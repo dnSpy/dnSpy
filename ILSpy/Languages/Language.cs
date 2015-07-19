@@ -94,7 +94,7 @@ namespace ICSharpCode.ILSpy
 
 		public virtual void DecompileNamespace(string nameSpace, IEnumerable<TypeDef> types, ITextOutput output, DecompilationOptions options)
 		{
-			WriteCommentLine(output, IdentifierEscaper.Escape(nameSpace));
+			WriteCommentLine(output, string.IsNullOrEmpty(nameSpace) ? string.Empty : IdentifierEscaper.Escape(nameSpace));
 		}
 
 		public virtual void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule)

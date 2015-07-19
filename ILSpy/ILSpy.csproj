@@ -375,6 +375,10 @@
     <Compile Include="AsmEditor\Module\NetModuleOptionsVM.cs" />
     <Compile Include="AsmEditor\MyObservableCollection.cs" />
     <Compile Include="AsmEditor\NamespaceTreeNodeCreator.cs" />
+    <Compile Include="AsmEditor\Namespace\NamespaceDlg.xaml.cs">
+      <DependentUpon>NamespaceDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Namespace\NamespaceVM.cs" />
     <Compile Include="AsmEditor\NumberVMUtils.cs" />
     <Compile Include="AsmEditor\Property\PropertyDefCommands.cs" />
     <Compile Include="AsmEditor\Property\PropertyDefOptions.cs" />
@@ -382,6 +386,7 @@
       <DependentUpon>PropertyOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Property\PropertyOptionsVM.cs" />
+    <Compile Include="AsmEditor\RefFinder.cs" />
     <Compile Include="AsmEditor\Resources\ImageResourceElementControl.xaml.cs">
       <DependentUpon>ImageResourceElementControl.xaml</DependentUpon>
     </Compile>
@@ -940,6 +945,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\Module\NetModuleOptionsDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\Namespace\NamespaceDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -354,6 +354,18 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 		}
 	}
 
+	struct MemberRefInfo
+	{
+		public readonly MemberRef MemberRef;
+		public readonly UTF8String OrigName;
+
+		public MemberRefInfo(MemberRef mr)
+		{
+			this.MemberRef = mr;
+			this.OrigName = mr.Name;
+		}
+	}
+
 	sealed class FieldDefSettingsCommand : IUndoCommand
 	{
 		const string CMD_NAME = "Edit Field";
@@ -430,6 +442,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 		readonly ILSpyTreeNode origParentNode;
 		readonly int origParentChildIndex;
 		readonly bool nameChanged;
+		readonly MemberRefInfo[] memberRefInfos;
 
 		FieldDefSettingsCommand(FieldTreeNode fieldNode, FieldDefOptions options)
 		{
@@ -444,6 +457,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 				throw new InvalidOperationException();
 
 			this.nameChanged = origOptions.Name != newOptions.Name;
+			if (this.nameChanged)
+				this.memberRefInfos = RefFinder.FindMemberRefsToThisModule(ILSpyTreeNode.GetModule(fieldNode)).Where(a => RefFinder.FieldEqualityComparerInstance.Equals(a, fieldNode.FieldDefinition)).Select(a => new MemberRefInfo(a)).ToArray();
 		}
 
 		public string Description {
@@ -464,6 +479,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			}
 			else
 				newOptions.CopyTo(fieldNode.FieldDefinition);
+			if (memberRefInfos != null) {
+				foreach (var info in memberRefInfos)
+					info.MemberRef.Name = fieldNode.FieldDefinition.Name;
+			}
 			fieldNode.RaiseUIPropsChanged();
 		}
 
@@ -480,6 +499,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			}
 			else
 				origOptions.CopyTo(fieldNode.FieldDefinition);
+			if (memberRefInfos != null) {
+				foreach (var info in memberRefInfos)
+					info.MemberRef.Name = info.OrigName;
+			}
 			fieldNode.RaiseUIPropsChanged();
 		}
 

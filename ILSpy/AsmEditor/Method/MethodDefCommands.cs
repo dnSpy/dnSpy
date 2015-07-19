@@ -532,6 +532,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 		readonly ILSpyTreeNode origParentNode;
 		readonly int origParentChildIndex;
 		readonly bool nameChanged;
+		readonly Field.MemberRefInfo[] memberRefInfos;
 
 		MethodDefSettingsCommand(MethodTreeNode methodNode, MethodDefOptions options)
 		{
@@ -546,6 +547,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 				throw new InvalidOperationException();
 
 			this.nameChanged = origOptions.Name != newOptions.Name;
+			if (this.nameChanged)
+				this.memberRefInfos = RefFinder.FindMemberRefsToThisModule(ILSpyTreeNode.GetModule(methodNode)).Where(a => RefFinder.MethodEqualityComparerInstance.Equals(a, methodNode.MethodDefinition)).Select(a => new Field.MemberRefInfo(a)).ToArray();
 		}
 
 		public string Description {
@@ -566,6 +569,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			}
 			else
 				newOptions.CopyTo(methodNode.MethodDefinition);
+			if (memberRefInfos != null) {
+				foreach (var info in memberRefInfos)
+					info.MemberRef.Name = methodNode.MethodDefinition.Name;
+			}
 			methodNode.RaiseUIPropsChanged();
 		}
 
@@ -582,6 +589,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			}
 			else
 				origOptions.CopyTo(methodNode.MethodDefinition);
+			if (memberRefInfos != null) {
+				foreach (var info in memberRefInfos)
+					info.MemberRef.Name = info.OrigName;
+			}
 			methodNode.RaiseUIPropsChanged();
 		}
 

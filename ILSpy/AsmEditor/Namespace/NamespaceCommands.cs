@@ -207,6 +207,18 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 		}
 	}
 
+	struct TypeRefInfo
+	{
+		public readonly TypeRef TypeRef;
+		public readonly UTF8String OrigNamespace;
+
+		public TypeRefInfo(TypeRef tr)
+		{
+			this.TypeRef = tr;
+			this.OrigNamespace = tr.Namespace;
+		}
+	}
+
 	sealed class MoveNamespaceTypesToEmptypNamespaceCommand : IUndoCommand
 	{
 		const string CMD_NAME = "Move Types to Empty Namespace";
@@ -235,6 +247,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 		static bool CanExecute(ILSpyTreeNode[] nodes)
 		{
 			return nodes != null &&
+				nodes.Length > 0 &&
 				nodes.All(a => a is NamespaceTreeNode) &&
 				nodes.Any(a => ((NamespaceTreeNode)a).Name != string.Empty) &&
 				nodes.IsInSameModule() &&
@@ -255,6 +268,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 			Debug.Assert(nsNodes.Length > 0);
 			this.nodes = new DeletableNodes<NamespaceTreeNode>(nsNodes);
 			this.nsTarget = GetTarget();
+			this.typeRefInfos = RenameNamespaceCommand.GetTypeRefInfos(ILSpyTreeNode.GetModule(nodes[0]), nsNodes);
 		}
 
 		public string Description {
@@ -264,6 +278,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 		readonly NamespaceTreeNode nsTarget;
 		DeletableNodes<NamespaceTreeNode> nodes;
 		ModelInfo[] infos;
+		readonly TypeRefInfo[] typeRefInfos;
 
 		class ModelInfo
 		{
@@ -301,6 +316,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 					nsTarget.Append(typeNode);
 				}
 			}
+
+			foreach (var info in typeRefInfos)
+				info.TypeRef.Namespace = UTF8String.Empty;
 		}
 
 		public void Undo()
@@ -326,6 +344,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 
 			nodes.Restore();
 
+			foreach (var info in typeRefInfos)
+				info.TypeRef.Namespace = info.OrigNamespace;
+
 			infos = null;
 		}
 
@@ -335,6 +356,193 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 				foreach (var n in nodes.Nodes)
 					yield return n;
 			}
+		}
+
+		public void Dispose()
+		{
+		}
+	}
+
+	sealed class RenameNamespaceCommand : IUndoCommand
+	{
+		const string CMD_NAME = "Rename Namespace";
+		[ExportContextMenuEntry(Header = CMD_NAME,
+								Icon = "Namespace",
+								Category = "AsmEd",
+								Order = 401)]
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
+							   Menu = "_Edit",
+							   MenuIcon = "Namespace",
+							   MenuCategory = "AsmEd",
+							   MenuOrder = 2201)]
+		sealed class TheEditCommand : EditCommand
+		{
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				return RenameNamespaceCommand.CanExecute(nodes);
+			}
+
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				RenameNamespaceCommand.Execute(nodes);
+			}
+		}
+
+		static bool CanExecute(ILSpyTreeNode[] nodes)
+		{
+			return nodes != null &&
+				nodes.Length == 1 &&
+				nodes[0] is NamespaceTreeNode;
+		}
+
+		static void Execute(ILSpyTreeNode[] nodes)
+		{
+			if (!CanExecute(nodes))
+				return;
+
+			var nsNode = (NamespaceTreeNode)nodes[0];
+
+			var data = new NamespaceVM(nsNode.Name);
+			var win = new NamespaceDlg();
+			win.DataContext = data;
+			win.Owner = MainWindow.Instance;
+			if (win.ShowDialog() != true)
+				return;
+
+			if (AssemblyTreeNode.NamespaceStringComparer.Equals(nsNode.Name, data.Name))
+				return;
+
+			UndoCommandManager.Instance.Add(new RenameNamespaceCommand(data.Name, nsNode));
+		}
+
+		readonly string newName;
+		readonly string origName;
+		readonly NamespaceTreeNode nsNode;
+		readonly NamespaceTreeNode existingNsNode;
+		readonly ILSpyTreeNode origParentNode;
+		readonly int origParentChildIndex;
+		readonly UTF8String[] typeNamespaces;
+		readonly TypeTreeNode[] origChildren;
+		readonly TypeRefInfo[] typeRefInfos;
+
+		internal static TypeRefInfo[] GetTypeRefInfos(ModuleDef module, IEnumerable<NamespaceTreeNode> nsNodes)
+		{
+			var types = new HashSet<ITypeDefOrRef>(RefFinder.TypeEqualityComparerInstance);
+			foreach (var nsNode in nsNodes) {
+				foreach (TypeTreeNode typeNode in nsNode.Children)
+					types.Add(typeNode.TypeDefinition);
+			}
+			var typeRefs = RefFinder.FindTypeRefsToThisModule(module);
+			return typeRefs.Where(a => types.Contains(a)).Select(a => new TypeRefInfo(a)).ToArray();
+		}
+
+		RenameNamespaceCommand(string newName, NamespaceTreeNode nsNode)
+		{
+			this.newName = newName;
+			this.origName = nsNode.Name;
+			this.nsNode = nsNode;
+			this.existingNsNode = (NamespaceTreeNode)nsNode.Parent.Children.FirstOrDefault(a => a is NamespaceTreeNode && AssemblyTreeNode.NamespaceStringComparer.Equals(newName, ((NamespaceTreeNode)a).Name));
+
+			var module = ILSpyTreeNode.GetModule(nsNode);
+			Debug.Assert(module != null);
+			if (module == null)
+				throw new InvalidOperationException();
+
+			this.origParentNode = (ILSpyTreeNode)nsNode.Parent;
+			this.origParentChildIndex = this.origParentNode.Children.IndexOf(nsNode);
+			Debug.Assert(this.origParentChildIndex >= 0);
+			if (this.origParentChildIndex < 0)
+				throw new InvalidOperationException();
+
+			// Make sure the exact same namespace names are restored if we undo. The names are UTF8
+			// strings, but not necessarily canonicalized if it's an obfuscated assembly.
+			nsNode.EnsureChildrenFiltered();
+			this.origChildren = nsNode.Children.Cast<TypeTreeNode>().ToArray();
+			this.typeNamespaces = new UTF8String[nsNode.Children.Count];
+			for (int i = 0; i < this.typeNamespaces.Length; i++)
+				this.typeNamespaces[i] = origChildren[i].TypeDefinition.Namespace;
+
+			this.typeRefInfos = GetTypeRefInfos(module, new[] { nsNode });
+		}
+
+		public string Description {
+			get { return CMD_NAME; }
+		}
+
+		public void Execute()
+		{
+			UTF8String newNamespace = newName;
+			if (existingNsNode != null) {
+				Debug.Assert(origChildren.Length == nsNode.Children.Count);
+				foreach (var typeNode in origChildren)
+					typeNode.OnBeforeRemoved();
+				nsNode.Children.Clear();
+				foreach (var typeNode in origChildren) {
+					typeNode.TypeDefinition.Namespace = newNamespace;
+					existingNsNode.AddToChildren(typeNode);
+					typeNode.OnReadded();
+				}
+			}
+			else {
+				nsNode.OnBeforeRemoved();
+				bool b = origParentChildIndex < origParentNode.Children.Count && origParentNode.Children[origParentChildIndex] == nsNode;
+				Debug.Assert(b);
+				if (!b)
+					throw new InvalidOperationException();
+				origParentNode.Children.RemoveAt(origParentChildIndex);
+				nsNode.Name = newName;
+
+				foreach (var typeNode in origChildren)
+					typeNode.TypeDefinition.Namespace = newNamespace;
+
+				origParentNode.AddToChildren(nsNode);
+				nsNode.OnReadded();
+			}
+
+			foreach (var info in typeRefInfos)
+				info.TypeRef.Namespace = newNamespace;
+		}
+
+		public void Undo()
+		{
+			if (existingNsNode != null) {
+				Debug.Assert(nsNode.Children.Count == 0);
+				foreach (var typeNode in origChildren) {
+					typeNode.OnBeforeRemoved();
+					bool b = existingNsNode.Children.Remove(typeNode);
+					Debug.Assert(b);
+					if (!b)
+						throw new InvalidOperationException();
+				}
+				for (int i = 0; i < origChildren.Length; i++) {
+					var typeNode = origChildren[i];
+					typeNode.TypeDefinition.Namespace = typeNamespaces[i];
+					nsNode.Children.Add(typeNode);
+					typeNode.OnReadded();
+				}
+			}
+			else {
+				nsNode.OnBeforeRemoved();
+				bool b = origParentNode.Children.Remove(nsNode);
+				Debug.Assert(b);
+				if (!b)
+					throw new InvalidOperationException();
+
+				for (int i = 0; i < origChildren.Length; i++)
+					origChildren[i].TypeDefinition.Namespace = typeNamespaces[i];
+
+				nsNode.Name = origName;
+				origParentNode.Children.Insert(origParentChildIndex, nsNode);
+
+				nsNode.OnReadded();
+			}
+
+			foreach (var info in typeRefInfos)
+				info.TypeRef.Namespace = info.OrigNamespace;
+		}
+
+		public IEnumerable<ILSpyTreeNode> TreeNodes {
+			get { yield return nsNode; }
 		}
 
 		public void Dispose()
