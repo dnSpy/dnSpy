@@ -42,9 +42,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	public sealed class AssemblyTreeNode : ILSpyTreeNode
 	{
 		readonly LoadedAssembly assembly;
-		internal static readonly StringComparer NamespaceStringComparer = StringComparer.Ordinal;
+		internal static readonly StringComparer NamespaceStringEqualsComparer = StringComparer.Ordinal;
+		internal static readonly StringComparer NamespaceStringSortComparer = StringComparer.OrdinalIgnoreCase;
 		internal static readonly StringComparer TypeStringComparer = StringComparer.OrdinalIgnoreCase;
-		readonly Dictionary<string, NamespaceTreeNode> namespaces = new Dictionary<string, NamespaceTreeNode>(NamespaceStringComparer);
+		readonly Dictionary<string, NamespaceTreeNode> namespaces = new Dictionary<string, NamespaceTreeNode>(NamespaceStringEqualsComparer);
 
 		public AssemblyTreeNode(LoadedAssembly assembly)
 		{
@@ -304,7 +305,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		protected override int GetNewChildIndex(SharpTreeNode node)
 		{
 			if (node is NamespaceTreeNode)
-				return GetNewChildIndex(node, (a, b) => NamespaceStringComparer.Compare(((NamespaceTreeNode)a).Name, ((NamespaceTreeNode)b).Name));
+				return GetNewChildIndex(node, (a, b) => NamespaceStringSortComparer.Compare(((NamespaceTreeNode)a).Name, ((NamespaceTreeNode)b).Name));
 			return base.GetNewChildIndex(node);
 		}
 

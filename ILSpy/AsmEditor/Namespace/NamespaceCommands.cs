@@ -409,7 +409,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 			if (win.ShowDialog() != true)
 				return;
 
-			if (AssemblyTreeNode.NamespaceStringComparer.Equals(nsNode.Name, data.Name))
+			if (AssemblyTreeNode.NamespaceStringEqualsComparer.Equals(nsNode.Name, data.Name))
 				return;
 
 			UndoCommandManager.Instance.Add(new RenameNamespaceCommand(data.Name, nsNode));
@@ -441,7 +441,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 			this.newName = newName;
 			this.origName = nsNode.Name;
 			this.nsNode = nsNode;
-			this.existingNsNode = (NamespaceTreeNode)nsNode.Parent.Children.FirstOrDefault(a => a is NamespaceTreeNode && AssemblyTreeNode.NamespaceStringComparer.Equals(newName, ((NamespaceTreeNode)a).Name));
+			this.existingNsNode = (NamespaceTreeNode)nsNode.Parent.Children.FirstOrDefault(a => a is NamespaceTreeNode && AssemblyTreeNode.NamespaceStringEqualsComparer.Equals(newName, ((NamespaceTreeNode)a).Name));
 
 			var module = ILSpyTreeNode.GetModule(nsNode);
 			Debug.Assert(module != null);

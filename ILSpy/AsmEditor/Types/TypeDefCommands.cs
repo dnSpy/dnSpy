@@ -568,7 +568,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			this.nameChanged = origOptions.Name != newOptions.Name;
 			if (this.origParentNode is NamespaceTreeNode) {
 				var asmNode = (AssemblyTreeNode)this.origParentNode.Parent;
-				if (AssemblyTreeNode.NamespaceStringComparer.Compare(newOptions.Namespace, origOptions.Namespace) != 0)
+				if (!AssemblyTreeNode.NamespaceStringEqualsComparer.Equals(newOptions.Namespace, origOptions.Namespace))
 					this.nsNodeCreator = new NamespaceTreeNodeCreator(newOptions.Namespace, asmNode);
 			}
 
