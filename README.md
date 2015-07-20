@@ -133,9 +133,9 @@ git submodule update --init --recursive
 ```
 
 Use Visual Studio 2010 or later or run `debugbuild.bat` / `releasebuild.bat`
-to build it once you have all dependencies. You don't need Visual Studio
-installed to run the `*.bat` files. The C# compiler is installed if you have
-the .NET Framework installed.
+to build it once you have all dependencies. You probably don't need Visual Studio
+installed to run the `*.bat` files. The C# compiler is usually installed if you
+have the .NET Framework installed. Otherwise, download and install `Microsoft Build Tools`.
 
 You need the Visual Studio SDK to build ILSpy.AddIn. [NOTE: ILSpy.AddIn is
 currently disabled in **Release** mode because the build server fails to build it
