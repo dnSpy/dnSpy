@@ -604,6 +604,14 @@ namespace ICSharpCode.ILSpy.TextView
 			CancelDecompileAsync();
 			waitAdorner.Visibility = Visibility.Collapsed;
 		}
+
+		void ClearCustomElementGenerators()
+		{
+			foreach (var elementGenerator in activeCustomElementGenerators) {
+				textEditor.TextArea.TextView.ElementGenerators.Remove(elementGenerator);
+			}
+			activeCustomElementGenerators.Clear();
+		}
 		
 		/// <summary>
 		/// Shows the given output in the text view.
@@ -633,11 +641,7 @@ namespace ICSharpCode.ILSpy.TextView
 			textEditor.SyntaxHighlighting = highlighting;
 			
 			// Change the set of active element generators:
-			foreach (var elementGenerator in activeCustomElementGenerators) {
-				textEditor.TextArea.TextView.ElementGenerators.Remove(elementGenerator);
-			}
-			activeCustomElementGenerators.Clear();
-			
+			ClearCustomElementGenerators();
 			foreach (var elementGenerator in textOutput.elementGenerators) {
 				textEditor.TextArea.TextView.ElementGenerators.Add(elementGenerator);
 				activeCustomElementGenerators.Add(elementGenerator);
@@ -1198,6 +1202,19 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged -= CurrentDisplaySettings_PropertyChanged;
 			CancelDecompilation();
+		}
+
+		internal void CleanUpBeforeReDecompile()
+		{
+			CancelDecompilation();
+			ClearMarkedReferences();
+			ClearCustomElementGenerators();
+			textEditor.Document = new TextDocument();
+			definitionLookup = null;
+			uiElementGenerator.UIElements = null;
+			referenceElementGenerator.References = null;
+			references = new TextSegmentCollection<ReferenceSegment>();
+			CodeMappings = new Dictionary<MethodKey, MemberMapping>();
 		}
 
 		public void ScrollAndMoveCaretTo(int line, int column, bool focus = true)

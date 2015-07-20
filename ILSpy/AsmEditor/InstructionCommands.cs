@@ -101,14 +101,17 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			int start = textView.textEditor.SelectionStart;
 			int end = start + textView.textEditor.SelectionLength;
 
-			var r = textView.References.FindFirstSegmentWithStartAfter(start);
+			var refs = textView.References;
+			if (refs == null)
+				yield break;
+			var r = refs.FindFirstSegmentWithStartAfter(start);
 			while (r != null) {
 				if (r.StartOffset >= end)
 					break;
 				if (r.IsLocalTarget && r.Reference is InstructionReference)
 					yield return r;
 
-				r = textView.References.GetNextSegment(r);
+				r = refs.GetNextSegment(r);
 			}
 		}
 	}

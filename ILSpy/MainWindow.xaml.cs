@@ -1494,6 +1494,7 @@ namespace ICSharpCode.ILSpy
 						}
 						else {
 							tabState.History.UpdateCurrent(null);
+							tabState.TextView.CleanUpBeforeReDecompile();
 							DecompileRestoreLocation(tabState, newNodes.ToArray());
 						}
 					}
@@ -1895,7 +1896,7 @@ namespace ICSharpCode.ILSpy
 		void DecompileRestoreLocation(TabStateDecompile tabState, ILSpyTreeNode[] nodes, Language language = null, bool forceDecompile = false)
 		{
 			var pos = tabState.TextView.GetRefPos();
-			DecompileNodes(tabState, tabState.DecompiledNodes, false, language ?? tabState.Language, (a, b) => tabState.TextView.GoTo(pos), forceDecompile);
+			DecompileNodes(tabState, nodes, false, language ?? tabState.Language, (a, b) => tabState.TextView.GoTo(pos), forceDecompile);
 		}
 
 		void DecompileNodes(TabStateDecompile tabState, ILSpyTreeNode[] nodes, bool recordHistory, Language language, Func<bool, bool, bool> onDecompileFinished, bool forceDecompile = false)

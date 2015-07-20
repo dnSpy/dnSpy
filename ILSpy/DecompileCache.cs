@@ -246,6 +246,8 @@ namespace ICSharpCode.ILSpy
 
 		internal static bool IsInModifiedAssembly(HashSet<LoadedAssembly> asms, TextSegmentCollection<ReferenceSegment> references)
 		{
+			if (references == null)
+				return false;
 			var checkedAsmRefs = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
 			foreach (var refSeg in references) {
 				var r = refSeg.Reference;
