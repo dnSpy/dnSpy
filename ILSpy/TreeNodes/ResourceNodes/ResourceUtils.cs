@@ -36,7 +36,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public static string GetIconName(string name)
 		{
-			var rsrcName = "Resource";
+			return GetIconName(name, "Resource");
+		}
+
+		public static string GetIconName(string name, string rsrcName)
+		{
 			// Don't use Path.GetExtension() since it can throw
 			int index = name.LastIndexOf('.');
 			if (index >= 0) {

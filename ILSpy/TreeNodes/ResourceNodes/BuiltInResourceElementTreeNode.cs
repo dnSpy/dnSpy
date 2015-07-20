@@ -39,7 +39,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					return "Strings";
 				else if (resElem.ResourceData.Code >= ResourceTypeCode.UserTypes)
 					return "UserDefinedDataType";
-				return "Binary";
+				return ResourceUtils.GetIconName(Name, "Binary");
 			}
 		}
 
