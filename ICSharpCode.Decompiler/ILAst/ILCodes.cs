@@ -394,6 +394,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				case ILCode.LoopContinue:
 				case ILCode.LoopOrSwitchBreak:
 				case ILCode.YieldBreak:
+				case ILCode.Jmp:
 					return true;
 				default:
 					return false;
