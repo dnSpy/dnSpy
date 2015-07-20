@@ -129,11 +129,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			// that keep indexes of removed nodes.
 			foreach (var d in Options.DecompilerSettingsPanel.CurrentDecompilerSettings.DecompilationObjects) {
 				switch (d) {
-				case DecompilationObject.NestedType:	list.Add(typeof(TypeTreeNode)); break;
-				case DecompilationObject.Field:			list.Add(typeof(FieldTreeNode)); break;
-				case DecompilationObject.Event:			list.Add(typeof(PropertyTreeNode)); break;
-				case DecompilationObject.Property:		list.Add(typeof(EventTreeNode)); break;
-				case DecompilationObject.Method:		list.Add(typeof(MethodTreeNode)); break;
+				case DecompilationObject.NestedTypes:	list.Add(typeof(TypeTreeNode)); break;
+				case DecompilationObject.Fields:		list.Add(typeof(FieldTreeNode)); break;
+				case DecompilationObject.Events:		list.Add(typeof(PropertyTreeNode)); break;
+				case DecompilationObject.Properties:	list.Add(typeof(EventTreeNode)); break;
+				case DecompilationObject.Methods:		list.Add(typeof(MethodTreeNode)); break;
 				default: throw new InvalidOperationException();
 				}
 			}

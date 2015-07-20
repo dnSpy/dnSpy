@@ -27,11 +27,11 @@ namespace ICSharpCode.Decompiler
 {
 	public enum DecompilationObject
 	{
-		NestedType,
-		Field,
-		Event,
-		Property,
-		Method,
+		NestedTypes,
+		Fields,
+		Events,
+		Properties,
+		Methods,
 	}
 
 	/// <summary>
@@ -40,11 +40,11 @@ namespace ICSharpCode.Decompiler
 	public class DecompilerSettings : INotifyPropertyChanged, IEquatable<DecompilerSettings>
 	{
 		DecompilationObject[] decompilationObjects = new DecompilationObject[5] {
-			DecompilationObject.NestedType,
-			DecompilationObject.Field,
-			DecompilationObject.Event,
-			DecompilationObject.Property,
-			DecompilationObject.Method,
+			DecompilationObject.NestedTypes,
+			DecompilationObject.Fields,
+			DecompilationObject.Events,
+			DecompilationObject.Properties,
+			DecompilationObject.Methods,
 		};
 
 		public IEnumerable<DecompilationObject> DecompilationObjects {
