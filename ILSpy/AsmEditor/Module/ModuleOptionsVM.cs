@@ -454,7 +454,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		}
 
 		public string EntryPointNameToolTip {
-			get { return GetEntryPointString(500); }
+			get { return ManagedEntryPoint == null ? null : GetEntryPointString(500); }
 		}
 
 		string GetEntryPointString(int maxChars)
