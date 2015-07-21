@@ -153,13 +153,13 @@
 		<color name="toolbardisabledborder" bg="#FFDADADA" />
 		<color name="commoncontrolsbuttoniconbackground" bg="#FFECECF0" />
 		<color name="commoncontrolsbutton" fg="#FF1E1E1E" bg="#FFECECF0" />
-		<color name="commoncontrolsbuttonborder" bg="#FFCCCEDB" />
-		<color name="commoncontrolsbuttonborderdefaulted" bg="#FFE5C365" />
+		<color name="commoncontrolsbuttonborder" bg="#FFACACAC" />
+		<color name="commoncontrolsbuttonborderdefault" bg="#FFE5C365" />
 		<color name="commoncontrolsbuttonborderdisabled" bg="#FFCCCEDB" />
 		<color name="commoncontrolsbuttonborderfocused" bg="#FFE5C365" />
 		<color name="commoncontrolsbuttonborderhover" bg="#FFE5C365" />
 		<color name="commoncontrolsbuttonborderpressed" bg="#FFE5C365" />
-		<color name="commoncontrolsbuttondefaulted" fg="#FF1E1E1E" bg="#FFECECF0" />
+		<color name="commoncontrolsbuttondefault" fg="#FF1E1E1E" bg="#FFECECF0" />
 		<color name="commoncontrolsbuttondisabled" fg="#FFA2A4A5" bg="#FFF5F5F5" />
 		<color name="commoncontrolsbuttonfocused" fg="#FF1E1E1E" bg="#FFFDF4BF" />
 		<color name="commoncontrolsbuttonhover" fg="#FF1E1E1E" bg="#FFFDF4BF" />
@@ -181,8 +181,8 @@
 		<color name="commoncontrolscheckboxglyphpressed" bg="#FF1E1E1E" />
 		<color name="commoncontrolscheckboxtext" bg="#FF1E1E1E" />
 		<color name="commoncontrolscheckboxtextdisabled" bg="#FFA2A4A5" />
-		<color name="commoncontrolscheckboxtextfocused" bg="#FF424242" />
-		<color name="commoncontrolscheckboxtexthover" bg="#FF424242" />
+		<color name="commoncontrolscheckboxtextfocused" bg="#FF1E1E1E" />
+		<color name="commoncontrolscheckboxtexthover" bg="#FF1E1E1E" />
 		<color name="commoncontrolscheckboxtextpressed" bg="#FF1E1E1E" />
 		<color name="commoncontrolscomboboxbackground" bg="#FFEFEFEF" />
 		<color name="commoncontrolscomboboxbackgrounddisabled" bg="#FFDFE7F3" />
@@ -237,16 +237,17 @@
 		<color name="commoncontrolsradiobuttonglyphpressed" bg="#FF1E1E1E" />
 		<color name="commoncontrolsradiobuttontext" bg="#FF1E1E1E" />
 		<color name="commoncontrolsradiobuttontextdisabled" bg="#FFA2A4A5" />
-		<color name="commoncontrolsradiobuttontextfocused" bg="#FF424242" />
-		<color name="commoncontrolsradiobuttontexthover" bg="#FF424242" />
+		<color name="commoncontrolsradiobuttontextfocused" bg="#FF1E1E1E" />
+		<color name="commoncontrolsradiobuttontexthover" bg="#FF1E1E1E" />
 		<color name="commoncontrolsradiobuttontextpressed" bg="#FF1E1E1E" />
-		<color name="commoncontrolstextbox" fg="#FF1E1E1E" bg="#FFFFFFFF" />
-		<color name="commoncontrolstextboxborder" bg="#FFDBDDE6" />
-		<color name="commoncontrolstextboxdisabled" fg="#FFA2A4A5" bg="#FFD5DCE8" />
-		<color name="commoncontrolstextboxdisabledborder" bg="#FFA4ADBA" />
+		<color name="commoncontrolstextbox" fg="#FF000000" bg="#FFFCFCFC" />
+		<color name="commoncontrolstextboxborder" bg="#FF8591A2" />
+		<color name="commoncontrolstextboxborderdisabled" bg="#FFA4ADBA" />
+		<color name="commoncontrolstextboxbordererror" bg="Red" />
+		<color name="commoncontrolstextboxborderfocused" bg="#FFE5C365" />
+		<color name="commoncontrolstextboxdisabled" fg="#FFA2A4A5" bg="#FFDFE7F3" />
 		<color name="commoncontrolstextboxerror" fg="#FF000000" bg="Pink" />
-		<color name="commoncontrolstextboxerrorborder" bg="Red" />
-		<color name="commoncontrolstextboxfocusedborder" bg="#FFE5C365" />
+		<color name="commoncontrolstextboxfocused" fg="#FF000000" bg="#FFFCFCFC" />
 		<color name="commoncontrolstextboxmouseoverborder" bg="#FFE5C365" />
 		<color name="commoncontrolstextboxselection" bg="#FF3399FF" />
 		<color name="commoncontrolsfocusvisual" fg="#FF000000" bg="#FFFFFFFF" />
@@ -377,7 +378,6 @@
 		<color name="headerdefault" fg="#FF1E1E1E" bg="#FFF6F6F6" />
 		<color name="headerglyph" bg="#FF717171" />
 		<color name="headermousedown" fg="#FFFFFFFF" bg="#FF007ACC" />
-		<color name="headermousedownglyph" bg="#FFFFFFFF" />
 		<color name="headermouseover" fg="#FF1E1E1E" bg="#FFFEFEFE" />
 		<color name="headermouseoverglyph" bg="#FF1E1E1E" />
 		<color name="headerseparatorline" bg="#FFCCCEDB" />

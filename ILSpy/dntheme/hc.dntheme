@@ -102,12 +102,12 @@
 		<color name="commoncontrolsbuttoniconbackground" bg="#FF000000" />
 		<color name="commoncontrolsbutton" fg="#FFFFFFFF" bg="#FF000000" />
 		<color name="commoncontrolsbuttonborder" bg="#FFFFFFFF" />
-		<color name="commoncontrolsbuttonborderdefaulted" bg="#FF800080" />
+		<color name="commoncontrolsbuttonborderdefault" bg="#FF800080" />
 		<color name="commoncontrolsbuttonborderdisabled" bg="#FFFFFFFF" />
 		<color name="commoncontrolsbuttonborderfocused" bg="#FF800080" />
 		<color name="commoncontrolsbuttonborderhover" bg="#FF800080" />
 		<color name="commoncontrolsbuttonborderpressed" bg="#FF800080" />
-		<color name="commoncontrolsbuttondefaulted" fg="#FFFFFFFF" bg="#FF800080" />
+		<color name="commoncontrolsbuttondefault" fg="#FFFFFFFF" bg="#FF800080" />
 		<color name="commoncontrolsbuttondisabled" fg="#FFCCCCCC" bg="#FF008000" />
 		<color name="commoncontrolsbuttonfocused" fg="#FFFFFFFF" bg="#FF800080" />
 		<color name="commoncontrolsbuttonhover" fg="#FFFFFFFF" bg="#FF800080" />
@@ -190,11 +190,12 @@
 		<color name="commoncontrolsradiobuttontextpressed" bg="#FFFFFFFF" />
 		<color name="commoncontrolstextbox" fg="#FFFFFFFF" bg="#FF000000" />
 		<color name="commoncontrolstextboxborder" bg="#FFFFFFFF" />
+		<color name="commoncontrolstextboxborderdisabled" bg="#FFFFFFFF" />
+		<color name="commoncontrolstextboxbordererror" bg="#FFFFFFFF" />
+		<color name="commoncontrolstextboxborderfocused" bg="#FF800080" />
 		<color name="commoncontrolstextboxdisabled" fg="#FFFFFFFF" bg="#FF008000" />
-		<color name="commoncontrolstextboxdisabledborder" bg="#FFFFFFFF" />
 		<color name="commoncontrolstextboxerror" fg="#FFFFFFFF" bg="#FFFF0000" />
-		<color name="commoncontrolstextboxerrorborder" bg="#FFFFFFFF" />
-		<color name="commoncontrolstextboxfocusedborder" bg="#FF800080" />
+		<color name="commoncontrolstextboxfocused" fg="#FFFFFFFF" bg="#FF000000" />
 		<color name="commoncontrolstextboxmouseoverborder" bg="#FF800080" />
 		<color name="commoncontrolstextboxselection" bg="#FF800080" />
 		<color name="commoncontrolsfocusvisual" fg="#FFFFFFFF" bg="#FFFFFFFF" />
@@ -325,7 +326,6 @@
 		<color name="headerdefault" fg="#FFFFFFFF" bg="#FF000000" />
 		<color name="headerglyph" bg="#FFFFFFFF" />
 		<color name="headermousedown" fg="#FFFFFFFF" bg="#FF800080" />
-		<color name="headermousedownglyph" bg="#FFFFFFFF" />
 		<color name="headermouseover" fg="#FFFFFFFF" bg="#FF800080" />
 		<color name="headermouseoverglyph" bg="#FFFFFFFF" />
 		<color name="headerseparatorline" bg="#FFFFFFFF" />

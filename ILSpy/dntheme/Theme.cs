@@ -650,12 +650,12 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "CommonControlsButton",
 			},
 			new BrushColorInfo(ColorType.CommonControlsButtonBorder, "CommonControls Button Border") {
-				DefaultBackground = "#FFCCCEDB",
+				DefaultBackground = "#FFACACAC",
 				BackgroundResourceKey = "CommonControlsButtonBorder",
 			},
-			new BrushColorInfo(ColorType.CommonControlsButtonBorderDefaulted, "CommonControls Button Border Defaulted") {
+			new BrushColorInfo(ColorType.CommonControlsButtonBorderDefault, "CommonControls Button Border Default") {
 				DefaultBackground = "#FF3399FF",
-				BackgroundResourceKey = "CommonControlsButtonBorderDefaulted",
+				BackgroundResourceKey = "CommonControlsButtonBorderDefault",
 			},
 			new BrushColorInfo(ColorType.CommonControlsButtonBorderDisabled, "CommonControls Button Border Disabled") {
 				DefaultBackground = "#FFCCCEDB",
@@ -673,11 +673,11 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "#FF007ACC",
 				BackgroundResourceKey = "CommonControlsButtonBorderPressed",
 			},
-			new BrushColorInfo(ColorType.CommonControlsButtonDefaulted, "CommonControls Button Defaulted") {
+			new BrushColorInfo(ColorType.CommonControlsButtonDefault, "CommonControls Button Default") {
 				DefaultForeground = "#FF1E1E1E",
-				ForegroundResourceKey = "CommonControlsButtonDefaultedText",
+				ForegroundResourceKey = "CommonControlsButtonDefaultText",
 				DefaultBackground = "#FFECECF0",
-				BackgroundResourceKey = "CommonControlsButtonDefaulted",
+				BackgroundResourceKey = "CommonControlsButtonDefault",
 			},
 			new BrushColorInfo(ColorType.CommonControlsButtonDisabled, "CommonControlsButtonDisabled") {
 				DefaultForeground = "#FFA2A4A5",
@@ -772,15 +772,15 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "CommonControlsCheckBoxTextDisabled",
 			},
 			new BrushColorInfo(ColorType.CommonControlsCheckBoxTextFocused, "CommonControls CheckBox Text Focused") {
-				DefaultBackground = "#FF3399FF",
+				DefaultBackground = "#FF1E1E1E",
 				BackgroundResourceKey = "CommonControlsCheckBoxTextFocused",
 			},
 			new BrushColorInfo(ColorType.CommonControlsCheckBoxTextHover, "CommonControls CheckBox Text Hover") {
-				DefaultBackground = "#FF3399FF",
+				DefaultBackground = "#FF1E1E1E",
 				BackgroundResourceKey = "CommonControlsCheckBoxTextHover",
 			},
 			new BrushColorInfo(ColorType.CommonControlsCheckBoxTextPressed, "CommonControls CheckBox Text Pressed") {
-				DefaultBackground = "#FF007ACC",
+				DefaultBackground = "#FF1E1E1E",
 				BackgroundResourceKey = "CommonControlsCheckBoxTextPressed",
 			},
 			new BrushColorInfo(ColorType.CommonControlsComboBoxBackground, "CommonControls ComboBox Background") {
@@ -997,36 +997,44 @@ namespace ICSharpCode.ILSpy.dntheme
 				BackgroundResourceKey = "CommonControlsRadioButtonTextDisabled",
 			},
 			new BrushColorInfo(ColorType.CommonControlsRadioButtonTextFocused, "CommonControls RadioButton Text Focused") {
-				DefaultBackground = "#FF3399FF",
+				DefaultBackground = "#FF1E1E1E",
 				BackgroundResourceKey = "CommonControlsRadioButtonTextFocused",
 			},
 			new BrushColorInfo(ColorType.CommonControlsRadioButtonTextHover, "CommonControls RadioButton Text Hover") {
-				DefaultBackground = "#FF3399FF",
+				DefaultBackground = "#FF1E1E1E",
 				BackgroundResourceKey = "CommonControlsRadioButtonTextHover",
 			},
 			new BrushColorInfo(ColorType.CommonControlsRadioButtonTextPressed, "CommonControls RadioButton Text Pressed") {
-				DefaultBackground = "#FF007ACC",
+				DefaultBackground = "#FF1E1E1E",
 				BackgroundResourceKey = "CommonControlsRadioButtonTextPressed",
 			},
 			new BrushColorInfo(ColorType.CommonControlsTextBox, "CommonControls TextBox") {
 				DefaultForeground = "#FF1E1E1E",
-				ForegroundResourceKey = "CommonControlsTextBoxForeground",
+				ForegroundResourceKey = "CommonControlsTextBoxText",
 				DefaultBackground = "#FFFFFFFF",
 				BackgroundResourceKey = "CommonControlsTextBoxBackground",
 			},
 			new BrushColorInfo(ColorType.CommonControlsTextBoxBorder, "CommonControls TextBox Border") {
-				DefaultBackground = "#FFDBDDE6",
+				DefaultBackground = "#FFCCCEDB",
 				BackgroundResourceKey = "CommonControlsTextBoxBorder",
+			},
+			new BrushColorInfo(ColorType.CommonControlsTextBoxBorderDisabled, "CommonControls TextBox Disabled Border") {
+				DefaultBackground = "#FFCCCEDB",
+				BackgroundResourceKey = "CommonControlsTextBoxBorderDisabled",
+			},
+			new BrushColorInfo(ColorType.CommonControlsTextBoxBorderError, "CommonControls TextBox Error Border") {
+				DefaultBackground = "Red",
+				BackgroundResourceKey = "CommonControlsTextBoxBorderError",
+			},
+			new BrushColorInfo(ColorType.CommonControlsTextBoxBorderFocused, "CommonControls TextBox Focused Border") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "CommonControlsTextBoxBorderFocused",
 			},
 			new BrushColorInfo(ColorType.CommonControlsTextBoxDisabled, "CommonControls TextBox Disabled") {
 				DefaultForeground = "#FFA2A4A5",
-				ForegroundResourceKey = "CommonControlsTextBoxDisabledForeground",
+				ForegroundResourceKey = "CommonControlsTextBoxTextDisabled",
 				DefaultBackground = "#FFEEEEF2",
-				BackgroundResourceKey = "CommonControlsTextBoxDisabledBackground",
-			},
-			new BrushColorInfo(ColorType.CommonControlsTextBoxDisabledBorder, "CommonControls TextBox Disabled Border") {
-				DefaultBackground = "#FFCCCEDB",
-				BackgroundResourceKey = "CommonControlsTextBoxDisabledBorder",
+				BackgroundResourceKey = "CommonControlsTextBoxBackgroundDisabled",
 			},
 			new BrushColorInfo(ColorType.CommonControlsTextBoxError, "CommonControls TextBox Error") {
 				DefaultForeground = "#FF000000",
@@ -1034,13 +1042,11 @@ namespace ICSharpCode.ILSpy.dntheme
 				DefaultBackground = "Pink",
 				BackgroundResourceKey = "CommonControlsTextBoxErrorBackground",
 			},
-			new BrushColorInfo(ColorType.CommonControlsTextBoxErrorBorder, "CommonControls TextBox Error Border") {
-				DefaultBackground = "Red",
-				BackgroundResourceKey = "CommonControlsTextBoxErrorBorder",
-			},
-			new BrushColorInfo(ColorType.CommonControlsTextBoxFocusedBorder, "CommonControls TextBox Focused Border") {
-				DefaultBackground = "#FF3399FF",
-				BackgroundResourceKey = "CommonControlsTextBoxFocusedBorder",
+			new BrushColorInfo(ColorType.CommonControlsTextBoxFocused, "CommonControls TextBox Focused") {
+				DefaultForeground = "#FF1E1E1E",
+				ForegroundResourceKey = "CommonControlsTextBoxTextFocused",
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "CommonControlsTextBoxBackgroundFocused",
 			},
 			new BrushColorInfo(ColorType.CommonControlsTextBoxMouseOverBorder, "CommonControls TextBox Mouse Over Border") {
 				DefaultBackground = "#FF3399FF",
@@ -2349,6 +2355,7 @@ namespace ICSharpCode.ILSpy.dntheme
 			ColorType type;
 			if (nameToColorType.TryGetValue(name, out type))
 				return type;
+			Debug.Fail(string.Format("Invalid color found: {0}", name));
 			return ColorType.Last;
 		}
 

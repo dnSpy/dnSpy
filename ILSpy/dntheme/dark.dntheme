@@ -154,12 +154,12 @@
 		<color name="commoncontrolsbuttoniconbackground" bg="#FF3F3F46" />
 		<color name="commoncontrolsbutton" fg="#FFF1F1F1" bg="#FF3F3F46" />
 		<color name="commoncontrolsbuttonborder" bg="#FF555555" />
-		<color name="commoncontrolsbuttonborderdefaulted" bg="#FF007ACC" />
+		<color name="commoncontrolsbuttonborderdefault" bg="#FF007ACC" />
 		<color name="commoncontrolsbuttonborderdisabled" bg="#FF3F3F46" />
-		<color name="commoncontrolsbuttonborderfocused" bg="#FF007ACC" />
-		<color name="commoncontrolsbuttonborderhover" bg="#FF007ACC" />
+		<color name="commoncontrolsbuttonborderfocused" bg="#FF0097FB" />
+		<color name="commoncontrolsbuttonborderhover" bg="#FF0097FB" />
 		<color name="commoncontrolsbuttonborderpressed" bg="#FF007ACC" />
-		<color name="commoncontrolsbuttondefaulted" fg="#FFF1F1F1" bg="#FF3F3F46" />
+		<color name="commoncontrolsbuttondefault" fg="#FFF1F1F1" bg="#FF3F3F46" />
 		<color name="commoncontrolsbuttondisabled" fg="#FF656565" bg="#FF2D2D30" />
 		<color name="commoncontrolsbuttonfocused" fg="#FFF1F1F1" bg="#FF3F3F46" />
 		<color name="commoncontrolsbuttonhover" fg="#FFF1F1F1" bg="#FF3F3F46" />
@@ -181,9 +181,9 @@
 		<color name="commoncontrolscheckboxglyphpressed" bg="#FFF1F1F1" />
 		<color name="commoncontrolscheckboxtext" bg="#FFF1F1F1" />
 		<color name="commoncontrolscheckboxtextdisabled" bg="#FF656565" />
-		<color name="commoncontrolscheckboxtextfocused" bg="#FF007ACC" />
-		<color name="commoncontrolscheckboxtexthover" bg="#FF007ACC" />
-		<color name="commoncontrolscheckboxtextpressed" bg="#FF007ACC" />
+		<color name="commoncontrolscheckboxtextfocused" bg="#FFF1F1F1" />
+		<color name="commoncontrolscheckboxtexthover" bg="#FFF1F1F1" />
+		<color name="commoncontrolscheckboxtextpressed" bg="#FFF1F1F1" />
 		<color name="commoncontrolscomboboxbackground" bg="#FF252526" />
 		<color name="commoncontrolscomboboxbackgrounddisabled" bg="#FF333337" />
 		<color name="commoncontrolscomboboxbackgroundfocused" bg="#FF252526" />
@@ -237,16 +237,17 @@
 		<color name="commoncontrolsradiobuttonglyphpressed" bg="#FFF1F1F1" />
 		<color name="commoncontrolsradiobuttontext" bg="#FFF1F1F1" />
 		<color name="commoncontrolsradiobuttontextdisabled" bg="#FF656565" />
-		<color name="commoncontrolsradiobuttontextfocused" bg="#FF007ACC" />
-		<color name="commoncontrolsradiobuttontexthover" bg="#FF007ACC" />
-		<color name="commoncontrolsradiobuttontextpressed" bg="#FF007ACC" />
-		<color name="commoncontrolstextbox" fg="#FFF1F1F1" bg="#FF3F3F46" />
-		<color name="commoncontrolstextboxborder" bg="#FF3F3F46" />
+		<color name="commoncontrolsradiobuttontextfocused" bg="#FFF1F1F1" />
+		<color name="commoncontrolsradiobuttontexthover" bg="#FFF1F1F1" />
+		<color name="commoncontrolsradiobuttontextpressed" bg="#FFF1F1F1" />
+		<color name="commoncontrolstextbox" fg="#FFF1F1F1" bg="#FF333337" />
+		<color name="commoncontrolstextboxborder" bg="#FF434346" />
+		<color name="commoncontrolstextboxborderdisabled" bg="#FF434346" />
+		<color name="commoncontrolstextboxbordererror" bg="#FFB20000" />
+		<color name="commoncontrolstextboxborderfocused" bg="#FF007ACC" />
 		<color name="commoncontrolstextboxdisabled" fg="#FF656565" bg="#FF2D2D30" />
-		<color name="commoncontrolstextboxdisabledborder" bg="#FF434346" />
 		<color name="commoncontrolstextboxerror" fg="#FFF1F1F1" bg="#FF660000" />
-		<color name="commoncontrolstextboxerrorborder" bg="#FFB20000" />
-		<color name="commoncontrolstextboxfocusedborder" bg="#FF3399FF" />
+		<color name="commoncontrolstextboxfocused" fg="#FFFFFFFF" bg="#FF3F3F46" />
 		<color name="commoncontrolstextboxmouseoverborder" bg="#FF3399FF" />
 		<color name="commoncontrolstextboxselection" bg="#FF3399FF" />
 		<color name="commoncontrolsfocusvisual" fg="#FFF1F1F1" bg="#FF252526" />
@@ -377,7 +378,6 @@
 		<color name="headerdefault" fg="#FFF1F1F1" bg="#FF252526" />
 		<color name="headerglyph" bg="#FFF1F1F1" />
 		<color name="headermousedown" fg="#FFFFFFFF" bg="#FF007ACC" />
-		<color name="headermousedownglyph" bg="#FFFFFFFF" />
 		<color name="headermouseover" fg="#FFF1F1F1" bg="#FF3E3E40" />
 		<color name="headermouseoverglyph" bg="#FFFFFFFF" />
 		<color name="headerseparatorline" bg="#FF3F3F46" />

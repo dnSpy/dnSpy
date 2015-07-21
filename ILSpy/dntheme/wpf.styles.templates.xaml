@@ -88,15 +88,15 @@
 			</Setter.Value>
 		</Setter>
 		<Style.Triggers>
+			<Trigger Property="Button.IsDefaulted" Value="True">
+				<Setter Property="Background" Value="{DynamicResource CommonControlsButtonDefault}" />
+				<Setter Property="Foreground" Value="{DynamicResource CommonControlsButtonDefaultText}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource CommonControlsButtonBorderDefault}" />
+			</Trigger>
 			<Trigger Property="IsKeyboardFocused" Value="True">
 				<Setter Property="Background" Value="{DynamicResource CommonControlsButtonFocused}" />
 				<Setter Property="Foreground" Value="{DynamicResource CommonControlsButtonFocusedText}" />
 				<Setter Property="BorderBrush" Value="{DynamicResource CommonControlsButtonBorderFocused}" />
-			</Trigger>
-			<Trigger Property="Button.IsDefaulted" Value="True">
-				<Setter Property="Background" Value="{DynamicResource CommonControlsButtonDefaulted}" />
-				<Setter Property="Foreground" Value="{DynamicResource CommonControlsButtonDefaultedText}" />
-				<Setter Property="BorderBrush" Value="{DynamicResource CommonControlsButtonBorderDefaulted}" />
 			</Trigger>
 			<Trigger Property="IsMouseOver" Value="True">
 				<Setter Property="Background" Value="{DynamicResource CommonControlsButtonHover}" />
@@ -521,7 +521,7 @@
 		   BasedOn="{x:Null}">
 		<Setter Property="Background" Value="{DynamicResource CommonControlsTextBoxBackground}" />
 		<Setter Property="BorderBrush" Value="{DynamicResource CommonControlsTextBoxBorder}" />
-		<Setter Property="Foreground" Value="{DynamicResource CommonControlsTextBoxForeground}" />
+		<Setter Property="Foreground" Value="{DynamicResource CommonControlsTextBoxText}" />
 		<Setter Property="BorderThickness" Value="1" />
 		<Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
 		<Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -539,7 +539,7 @@
 		<Setter Property="Validation.ErrorTemplate">
 			<Setter.Value>
 				<ControlTemplate>
-					<Border BorderBrush="{DynamicResource CommonControlsTextBoxErrorBorder}" BorderThickness="1">
+					<Border BorderBrush="{DynamicResource CommonControlsTextBoxBorderError}" BorderThickness="1">
 						<AdornedElementPlaceholder x:Name="Placeholder" />
 					</Border>
 				</ControlTemplate>
@@ -562,15 +562,17 @@
 					</Border>
 					<ControlTemplate.Triggers>
 						<Trigger Property="IsEnabled" Value="False">
-							<Setter Property="Background" Value="{DynamicResource CommonControlsTextBoxDisabledBackground}" />
-							<Setter Property="Foreground" Value="{DynamicResource CommonControlsTextBoxDisabledForeground}" />
-							<Setter Property="BorderBrush" Value="{DynamicResource CommonControlsTextBoxDisabledBorder}" />
+							<Setter Property="Background" Value="{DynamicResource CommonControlsTextBoxBackgroundDisabled}" />
+							<Setter Property="Foreground" Value="{DynamicResource CommonControlsTextBoxTextDisabled}" />
+							<Setter Property="BorderBrush" Value="{DynamicResource CommonControlsTextBoxBorderDisabled}" />
 						</Trigger>
 						<Trigger Property="IsMouseOver" Value="True">
 							<Setter TargetName="border" Value="{DynamicResource CommonControlsTextBoxMouseOverBorder}" Property="BorderBrush" />
 						</Trigger>
 						<Trigger Property="IsKeyboardFocused" Value="True">
-							<Setter TargetName="border" Value="{DynamicResource CommonControlsTextBoxFocusedBorder}" Property="BorderBrush" />
+							<Setter Property="Background" Value="{DynamicResource CommonControlsTextBoxBackgroundFocused}" />
+							<Setter Property="Foreground" Value="{DynamicResource CommonControlsTextBoxTextFocused}" />
+							<Setter Property="BorderBrush" Value="{DynamicResource CommonControlsTextBoxBorderFocused}" />
 						</Trigger>
 						<Trigger Property="Validation.HasError" Value="true">
 							<Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
@@ -3555,7 +3557,7 @@
         <Setter Property="FocusVisualStyle"
                 Value="{x:Null}"/>
         <Setter Property="Foreground"
-                Value="{DynamicResource CommonControlsTextBoxForeground}"/>
+                Value="{DynamicResource CommonControlsTextBoxText}"/>
         <Setter Property="Background"
                 Value="{DynamicResource CommonControlsTextBoxBackground}"/>
         <Setter Property="BorderBrush"
@@ -4665,7 +4667,7 @@
 
 	<Style TargetType="{x:Type shtv:EditTextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
         <Setter Property="Foreground"
-                Value="{DynamicResource CommonControlsTextBoxForeground}" />
+                Value="{DynamicResource CommonControlsTextBoxText}" />
         <Setter Property="KeyboardNavigation.TabNavigation"
                 Value="None" />
         <Setter Property="HorizontalContentAlignment"

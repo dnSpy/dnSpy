@@ -5,7 +5,7 @@
 	<Style x:Key="{x:Type local:SearchBox}" TargetType="{x:Type local:SearchBox}">
 		<Setter Property="Background" Value="{DynamicResource CommonControlsTextBoxBackground}" />
 		<Setter Property="BorderBrush" Value="{DynamicResource CommonControlsTextBoxBorder}" />
-		<Setter Property="Foreground" Value="{DynamicResource CommonControlsTextBoxForeground}" />
+		<Setter Property="Foreground" Value="{DynamicResource CommonControlsTextBoxText}" />
 		<Setter Property="BorderThickness" Value="1" />
 		<Setter Property="SnapsToDevicePixels" Value="True" />
 		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
@@ -64,7 +64,7 @@
 							<Setter TargetName="border" Value="{DynamicResource CommonControlsTextBoxMouseOverBorder}" Property="BorderBrush" />
 						</Trigger>
 						<Trigger Property="IsKeyboardFocused" Value="True">
-							<Setter TargetName="border" Value="{DynamicResource CommonControlsTextBoxFocusedBorder}" Property="BorderBrush" />
+							<Setter TargetName="border" Value="{DynamicResource CommonControlsTextBoxBorderFocused}" Property="BorderBrush" />
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>
