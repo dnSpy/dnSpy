@@ -248,7 +248,7 @@
 		<color name="commoncontrolstextboxdisabled" fg="#FFA2A4A5" bg="#FFDFE7F3" />
 		<color name="commoncontrolstextboxerror" fg="#FF000000" bg="Pink" />
 		<color name="commoncontrolstextboxfocused" fg="#FF000000" bg="#FFFCFCFC" />
-		<color name="commoncontrolstextboxmouseoverborder" bg="#FFE5C365" />
+		<color name="commoncontrolstextboxmouseoverborder" bg="#FFB79C51" />
 		<color name="commoncontrolstextboxselection" bg="#FF3399FF" />
 		<color name="commoncontrolsfocusvisual" fg="#FF000000" bg="#FFFFFFFF" />
 		<color name="tabitemforeground" bg="#FF000000" />
