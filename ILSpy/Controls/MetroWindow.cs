@@ -160,12 +160,23 @@ namespace ICSharpCode.ILSpy.Controls
 
 				case WindowState.Minimized:
 				case WindowState.Maximized:
-					const int magic = 2;
+					double magicx, magicy;
+
+					magicx = magicy = 10;//TODO: Figure out how this value is calculated (it's not ResizeBorderThickness.Left/Top)
+
+					double deltax = magicx - SystemParameters.ResizeFrameVerticalBorderWidth;
+					double deltay = magicy - SystemParameters.ResizeFrameHorizontalBorderHeight;
+					Debug.Assert(deltax >= 0 && deltay >= 0);
+					if (deltax < 0)
+						deltax = 0;
+					if (deltay < 0)
+						deltay = 0;
+
 					border.Padding = new Thickness(
-						SystemParameters.BorderWidth + border.BorderThickness.Left + magic,
-						SystemParameters.BorderWidth + border.BorderThickness.Top + magic,
-						SystemParameters.BorderWidth + border.BorderThickness.Right + magic,
-						SystemParameters.BorderWidth + border.BorderThickness.Bottom + magic);
+						SystemParameters.BorderWidth + border.BorderThickness.Left + deltax,
+						SystemParameters.BorderWidth + border.BorderThickness.Top + deltay,
+						SystemParameters.BorderWidth + border.BorderThickness.Right + deltax,
+						SystemParameters.BorderWidth + border.BorderThickness.Bottom + deltay);
 					border.BorderThickness = new Thickness(0);
 					break;
 				}
