@@ -45,7 +45,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			if (type == AssemblyFilterType.Assembly) {
 				if (assembly == null || asm.AssemblyDefinition != assembly)
 					return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
-				return new TreeViewNodeFilterResult(null, false);
+				return new TreeViewNodeFilterResult(FilterResult.Match, false);
 			}
 
 			if (type == AssemblyFilterType.NetModule) {
@@ -54,10 +54,10 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 				if (assembly == null || assembly.ManifestModule != module) {
 					if (asm.ModuleDefinition != module)
 						return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
-					return new TreeViewNodeFilterResult(null, false);
+					return new TreeViewNodeFilterResult(FilterResult.Match, false);
 				}
 				else
-					return new TreeViewNodeFilterResult(null, asm.ModuleDefinition != assembly.ManifestModule);
+					return new TreeViewNodeFilterResult(FilterResult.Match, asm.ModuleDefinition != assembly.ManifestModule);
 			}
 
 			Debug.Fail("Invalid AssemblyFilterType value");
@@ -68,27 +68,27 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 		{
 			if (owner.ModuleDefinition != module)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
-			return new TreeViewNodeFilterResult();
+			return new TreeViewNodeFilterResult(FilterResult.Match, false);
 		}
 
 		public override TreeViewNodeFilterResult GetFilterResult(EventDef evt)
 		{
-			return new TreeViewNodeFilterResult();
+			return new TreeViewNodeFilterResult(FilterResult.Match, false);
 		}
 
 		public override TreeViewNodeFilterResult GetFilterResult(MethodDef method)
 		{
-			return new TreeViewNodeFilterResult(null, true);
+			return new TreeViewNodeFilterResult(FilterResult.Match, true);
 		}
 
 		public override TreeViewNodeFilterResult GetFilterResult(PropertyDef prop)
 		{
-			return new TreeViewNodeFilterResult();
+			return new TreeViewNodeFilterResult(FilterResult.Match, false);
 		}
 
 		public override TreeViewNodeFilterResult GetFilterResult(TypeDef type)
 		{
-			return new TreeViewNodeFilterResult();
+			return new TreeViewNodeFilterResult(FilterResult.Match, false);
 		}
 	}
 }
