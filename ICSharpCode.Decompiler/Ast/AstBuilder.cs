@@ -22,14 +22,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-
+using dnlib.DotNet;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Utils;
-using dnlib.DotNet;
-using dnlib.PE;
 
 namespace ICSharpCode.Decompiler.Ast
 {
@@ -452,7 +450,7 @@ namespace ICSharpCode.Decompiler.Ast
 			MemberType mType = type as MemberType;
 			if (sType != null) {
 				while (typeDef.GenericParameters.Count > sType.TypeArguments.Count) {
-					sType.TypeArguments.Add(new SimpleType("").WithAnnotation(TextTokenType.TypeGenericParameter));
+					sType.TypeArguments.Add(new SimpleType("").WithAnnotation(TextTokenType.TypeGenericParameter).WithAnnotation(SimpleType.DummyTypeGenericParam));
 				}
 			}
 			
@@ -462,7 +460,7 @@ namespace ICSharpCode.Decompiler.Ast
 				int outerTypeParamCount = typeDef.DeclaringType == null ? 0 : typeDef.DeclaringType.GenericParameters.Count;
 				
 				while (typeDef.GenericParameters.Count - outerTypeParamCount > mType.TypeArguments.Count) {
-					mType.TypeArguments.Add(new SimpleType("").WithAnnotation(TextTokenType.TypeGenericParameter));
+					mType.TypeArguments.Add(new SimpleType("").WithAnnotation(TextTokenType.TypeGenericParameter).WithAnnotation(SimpleType.DummyTypeGenericParam));
 				}
 			}
 			

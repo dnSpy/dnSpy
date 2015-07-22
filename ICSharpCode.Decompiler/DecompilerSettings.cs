@@ -39,6 +39,16 @@ namespace ICSharpCode.Decompiler
 	/// </summary>
 	public class DecompilerSettings : INotifyPropertyChanged, IEquatable<DecompilerSettings>
 	{
+		public DecompilerSettings InitializeForTest()
+		{
+			ShowILComments = false;
+			RemoveEmptyDefaultConstructors = true;
+			ShowTokenAndRvaComments = false;
+			ShowILBytes = false;
+			SortMembers = false;
+			return this;
+		}
+
 		DecompilationObject[] decompilationObjects = new DecompilationObject[5] {
 			DecompilationObject.NestedTypes,
 			DecompilationObject.Fields,

@@ -50,6 +50,10 @@ public class PInvoke
 		[FieldOffset(12)]
 		public int bottom;
 	}
+
+	private class MyMarshaler
+	{
+	}
 	
 	public static decimal MarshalAttributesOnPropertyAccessors
 	{
@@ -77,11 +81,11 @@ public class PInvoke
 	[DllImport("xyz.dll")]
 	private static extern void New3([MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Bool, SizeConst = 64, SizeParamIndex = 1)] int[] ar);
 	
-	public void CustomMarshal1([MarshalAs(UnmanagedType.CustomMarshaler, MarshalType = "MyCompany.MyMarshaler")] object o)
+	public void CustomMarshal1([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(PInvoke.MyMarshaler))] object o)
 	{
 	}
 	
-	public void CustomMarshal2([MarshalAs(UnmanagedType.CustomMarshaler, MarshalType = "MyCompany.MyMarshaler", MarshalCookie = "Cookie")] object o)
+	public void CustomMarshal2([MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(PInvoke.MyMarshaler), MarshalCookie = "Cookie")] object o)
 	{
 	}
 	

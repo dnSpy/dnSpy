@@ -352,7 +352,6 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression shortCircuitExpr = MakeLeftAssociativeShortCircuit(op, opFalseArg, rightExpression);
 			shortCircuitExpr.Operand = opBitwise;
 			
-			Debug.Fail("Preserve ILRanges");//TODO: Could never trigger this code path. Tested many asms.
 			var tail = head.Body.RemoveTail(ILCode.Stloc, ILCode.Brtrue, ILCode.Br);
 			//TODO: Keep tail's ILRanges
 			//TODO: Keep ILRanges of other things that are removed by this method

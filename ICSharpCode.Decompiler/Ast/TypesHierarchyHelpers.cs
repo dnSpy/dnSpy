@@ -155,6 +155,21 @@ namespace ICSharpCode.Decompiler.Ast
 			if (mMethod.MethodSig == null || mCandidateSig.Params.Count != mMethod.MethodSig.Params.Count)
 				return false;
 
+			if (mCandidate.Parameters.Count != mMethod.Parameters.Count)
+				return false;
+			for (int i = 0; i < mCandidate.Parameters.Count; i++) {
+				var p1 = mCandidate.Parameters[i];
+				var p2 = mMethod.Parameters[i];
+				if (p1.IsHiddenThisParameter != p2.IsHiddenThisParameter)
+					return false;
+				if (p1.IsHiddenThisParameter)
+					continue;
+				var pd1 = p1.ParamDef ?? new ParamDefUser();
+				var pd2 = p2.ParamDef ?? new ParamDefUser();
+				if (pd1.IsIn != pd2.IsIn || pd1.IsOut != pd2.IsOut)
+					return false;
+			}
+
 			return new SigComparer().Equals(mCandidateSig.Params, mMethod.MethodSig.Params);
 		}
 
