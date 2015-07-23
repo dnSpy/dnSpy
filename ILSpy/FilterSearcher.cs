@@ -23,7 +23,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Windows.Media;
 using System.Windows.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
@@ -659,7 +658,8 @@ namespace ICSharpCode.ILSpy
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
 
-			if (res.IsMatch && IsMatch(method.Name, method)) {
+			ImplMap im;
+			if (res.IsMatch && (IsMatch(method.Name, method) || ((im = method.ImplMap) != null && (IsMatch(im.Name, im) || IsMatch(im.Module == null ? null : im.Module.Name, null))))) {
 				onMatch(new SearchResult {
 					Language = language,
 					Object = method,
@@ -787,7 +787,8 @@ namespace ICSharpCode.ILSpy
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
 
-			if (res.IsMatch && IsMatch(field.Name, field)) {
+			ImplMap im;
+			if (res.IsMatch && (IsMatch(field.Name, field) || ((im = field.ImplMap) != null && (IsMatch(im.Name, im) || IsMatch(im.Module == null ? null : im.Module.Name, null))))) {
 				onMatch(new SearchResult {
 					Language = language,
 					Object = field,
