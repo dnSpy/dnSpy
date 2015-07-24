@@ -171,7 +171,6 @@ namespace ICSharpCode.ILSpy.TextView
 
 		void OnLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
 		{
-			TextEditor.Options.HighlightCurrentLine = false;
 			TextEditor.TextArea.Caret.Hide();
 		}
 
