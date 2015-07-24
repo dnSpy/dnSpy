@@ -23,7 +23,6 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 
@@ -89,7 +88,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return CheckType(module, name, SystemDrawingIcon);
 		}
 
-		static bool CheckType(ModuleDef module, string name, TypeRef expectedType)
+		internal static bool CheckType(ModuleDef module, string name, TypeRef expectedType)
 		{
 			if (module == null)
 				module = new ModuleDefUser();

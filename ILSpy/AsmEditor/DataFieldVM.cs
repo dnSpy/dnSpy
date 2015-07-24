@@ -19,7 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace ICSharpCode.ILSpy.AsmEditor
 {
@@ -1223,6 +1225,49 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		{
 			string error;
 			value = NumberVMUtils.ParseStringList(StringValue, allowNullString, out error);
+			return error;
+		}
+	}
+
+	sealed class DefaultConverterVM<T> : DataFieldVM<T>
+	{
+		static readonly TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
+
+		static DefaultConverterVM()
+		{
+			if (!converter.CanConvertTo(null, typeof(string)))
+				throw new InvalidOperationException(string.Format("Converter can't convert a {0} to a string", typeof(T)));
+			if (!converter.CanConvertFrom(null, typeof(string)))
+				throw new InvalidOperationException(string.Format("Converter can't convert a string to a {0}", typeof(T)));
+		}
+
+		public DefaultConverterVM(Action<DataFieldVM> onUpdated)
+			: this(default(T), onUpdated)
+		{
+		}
+
+		public DefaultConverterVM(T value, Action<DataFieldVM> onUpdated)
+			: base(onUpdated)
+		{
+			SetValueFromConstructor(value);
+		}
+
+		protected override string OnNewValue(T value)
+		{
+			return (string)converter.ConvertTo(null, CultureInfo.InvariantCulture, value, typeof(string));
+		}
+
+		protected override string ConvertToValue(out T value)
+		{
+			string error;
+			try {
+				value = (T)converter.ConvertFrom(null, CultureInfo.InvariantCulture, StringValue);
+				error = string.Empty;
+			}
+			catch (Exception ex) {
+				value = default(T);
+				error = string.Format("Value must be a {0}.\nError: {1}", typeof(T).FullName, ex.Message);
+			}
 			return error;
 		}
 	}

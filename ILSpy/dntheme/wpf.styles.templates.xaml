@@ -590,10 +590,14 @@
            BasedOn="{StaticResource {x:Type TextBoxBase}}"
            TargetType="{x:Type TextBox}">
     </Style>
+	<!--
+	Disable it, we don't use it: Prevent buggy Live Visual Tree from crashing:
+		"Can only base on a Style with target type that is base type 'PasswordBox'."
     <Style x:Key="{x:Type PasswordBox}"
 		   BasedOn="{StaticResource {x:Type TextBoxBase}}"
 		   TargetType="{x:Type PasswordBox}">
 	</Style>
+	-->
 
     <Style x:Key="{x:Type ToolTip}"
            TargetType="{x:Type ToolTip}">

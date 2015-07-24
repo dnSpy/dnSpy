@@ -387,6 +387,15 @@
     </Compile>
     <Compile Include="AsmEditor\Property\PropertyOptionsVM.cs" />
     <Compile Include="AsmEditor\RefFinder.cs" />
+    <Compile Include="AsmEditor\Resources\ImageListOptions.cs" />
+    <Compile Include="AsmEditor\Resources\ImageListStreamerControl.xaml.cs">
+      <DependentUpon>ImageListStreamerControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Resources\ImageListDlg.xaml.cs">
+      <DependentUpon>ImageListDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Resources\ImageListStreamerVM.cs" />
+    <Compile Include="AsmEditor\Resources\ImageListVM.cs" />
     <Compile Include="AsmEditor\Resources\ImageResourceElementControl.xaml.cs">
       <DependentUpon>ImageResourceElementControl.xaml</DependentUpon>
     </Compile>
@@ -394,6 +403,7 @@
       <DependentUpon>ImageResourceElementDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Resources\ImageResourceElementVM.cs" />
+    <Compile Include="AsmEditor\Resources\ImageVM.cs" />
     <Compile Include="AsmEditor\Resources\ResourceCommands.cs" />
     <Compile Include="AsmEditor\Resources\ResourceControl.xaml.cs">
       <DependentUpon>ResourceControl.xaml</DependentUpon>
@@ -451,6 +461,7 @@
     <Compile Include="AsmEditor\ViewHelpers\EditCustomAttribute.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditDeclSecurity.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditGenericParam.cs" />
+    <Compile Include="AsmEditor\ViewHelpers\EditImage.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditMemberRef.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditMethodDef.cs" />
     <Compile Include="AsmEditor\ViewHelpers\EditMethodOverride.cs" />
@@ -667,6 +678,7 @@
     <Compile Include="TreeNodes\ResourceNodes\ResourceElementSetTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyOverridesTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedPropertyTreeNode.cs" />
+    <Compile Include="TreeNodes\ResourceNodes\SerializedImageListStreamerResourceElementTreeNode.cs" />
     <Compile Include="TreeNodes\ResourceNodes\SerializedImageResourceElementTreeNode.cs" />
     <Compile Include="TreeNodes\ResourceNodes\SerializedResourceElementTreeNode.cs" />
     <Compile Include="TreeNodes\ResourceNodes\UnknownResourceTreeNode.cs" />
@@ -953,6 +965,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\Property\PropertyOptionsDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\Resources\ImageListStreamerControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\Resources\ImageListDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

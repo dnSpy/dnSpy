@@ -1023,7 +1023,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
-							MenuOrder = 2480)]
+							MenuOrder = 2490)]
 		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
@@ -1040,7 +1040,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
 								Category = "AsmEd",
-								Order = 680)]
+								Order = 690)]
 		sealed class TheTextEditorCommand : TextEditorCommand
 		{
 			protected override bool CanExecute(Context ctx)
@@ -1316,6 +1316,112 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 	}
 
+	sealed class CreateImageListResourceElementCommand : CreateResourceElementCommandBase
+	{
+		const string CMD_NAME = "Create System.Windows.Forms.ImageListStreamer Resource";
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+								Icon = "NewImage",
+								Category = "AsmEd",
+								Order = 650)]
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+							Menu = "_Edit",
+							MenuIcon = "NewImage",
+							MenuCategory = "AsmEd",
+							MenuOrder = 2450)]
+		sealed class TheEditCommand : EditCommand
+		{
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				return CreateImageListResourceElementCommand.CanExecute(nodes);
+			}
+
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				CreateImageListResourceElementCommand.Execute(nodes);
+			}
+		}
+
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+								Icon = "NewImage",
+								Category = "AsmEd",
+								Order = 650)]
+		sealed class TheTextEditorCommand : TextEditorCommand
+		{
+			protected override bool CanExecute(Context ctx)
+			{
+				return ctx.ReferenceSegment.IsLocalTarget &&
+					CreateImageListResourceElementCommand.CanExecute(ctx.Nodes);
+			}
+
+			protected override void Execute(Context ctx)
+			{
+				CreateImageListResourceElementCommand.Execute(ctx.Nodes);
+			}
+		}
+
+		static bool CanExecute(ILSpyTreeNode[] nodes)
+		{
+			return nodes.Length == 1 &&
+				(nodes[0] is ResourceElementSetTreeNode || nodes[0].Parent is ResourceElementSetTreeNode);
+		}
+
+		static void Execute(ILSpyTreeNode[] nodes)
+		{
+			if (!CanExecute(nodes))
+				return;
+
+			var rsrcSetNode = nodes[0] as ResourceElementSetTreeNode;
+			if (rsrcSetNode == null)
+				rsrcSetNode = nodes[0].Parent as ResourceElementSetTreeNode;
+			Debug.Assert(rsrcSetNode != null);
+
+			var module = ILSpyTreeNode.GetModule(nodes[0]);
+			Debug.Assert(module != null);
+			if (module == null)
+				throw new InvalidOperationException();
+
+			var data = new ImageListVM(new ImageListOptions() { Name = "my.ImageStream" });
+			var win = new ImageListDlg();
+			win.Title = CMD_NAME;
+			win.DataContext = data;
+			win.Owner = MainWindow.Instance;
+			if (win.ShowDialog() != true)
+				return;
+
+			if (data.ImageListStreamerVM.Collection.Count == 0) {
+				MainWindow.Instance.ShowMessageBox("It's not possible to create an empty image list");
+				return;
+			}
+
+			var listOpts = data.CreateImageListOptions();
+			ResourceElementOptions opts = null;
+			string error;
+			try {
+				opts = new ResourceElementOptions(SerializedImageListStreamerResourceElementTreeNode.Serialize(listOpts));
+				error = SerializedImageListStreamerResourceElementTreeNode.CheckCanUpdateData(module, opts.Create());
+			}
+			catch (Exception ex) {
+				error = string.Format("Couldn't serialize the images. Error: {0}", ex.Message);
+			}
+			if (!string.IsNullOrEmpty(error)) {
+				MainWindow.Instance.ShowMessageBox(error);
+				return;
+			}
+
+			var newNode = (SerializedImageListStreamerResourceElementTreeNode)ResourceFactory.Create(module, opts.Create());
+			UndoCommandManager.Instance.Add(new CreateImageListResourceElementCommand(rsrcSetNode, newNode));
+		}
+
+		CreateImageListResourceElementCommand(ResourceElementSetTreeNode rsrcSetNode, SerializedImageListStreamerResourceElementTreeNode node)
+			: base(rsrcSetNode, new ResourceElementTreeNode[] { node })
+		{
+		}
+
+		public override string Description {
+			get { return CMD_NAME; }
+		}
+	}
+
 	sealed class CreateByteArrayResourceElementCommand : CreateResourceElementCommandBase
 	{
 		const string CMD_NAME = "Create Byte Array Resource";
@@ -1327,7 +1433,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							Menu = "_Edit",
 							MenuIcon = "NewBinary",
 							MenuCategory = "AsmEd",
-							MenuOrder = 2460)]
+							MenuOrder = 2470)]
 		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
@@ -1344,7 +1450,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewBinary",
 								Category = "AsmEd",
-								Order = 660)]
+								Order = 670)]
 		sealed class TheTextEditorCommand : TextEditorCommand
 		{
 			protected override bool CanExecute(Context ctx)
@@ -1435,7 +1541,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							Menu = "_Edit",
 							MenuIcon = "NewBinary",
 							MenuCategory = "AsmEd",
-							MenuOrder = 2470)]
+							MenuOrder = 2480)]
 		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
@@ -1452,7 +1558,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewBinary",
 								Category = "AsmEd",
-								Order = 670)]
+								Order = 680)]
 		sealed class TheTextEditorCommand : TextEditorCommand
 		{
 			protected override bool CanExecute(Context ctx)
@@ -1501,7 +1607,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							Menu = "_Edit",
 							MenuIcon = "NewResource",
 							MenuCategory = "AsmEd",
-							MenuOrder = 2450)]
+							MenuOrder = 2460)]
 		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
@@ -1518,7 +1624,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewResource",
 								Category = "AsmEd",
-								Order = 650)]
+								Order = 660)]
 		sealed class TheTextEditorCommand : TextEditorCommand
 		{
 			protected override bool CanExecute(Context ctx)
@@ -1685,7 +1791,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
-							MenuOrder = 2490)]
+							MenuOrder = 2500)]
 		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
@@ -1702,7 +1808,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
 								Category = "AsmEd",
-								Order = 690)]
+								Order = 700)]
 		sealed class TheTextEditorCommand : TextEditorCommand
 		{
 			protected override bool CanExecute(Context ctx)
@@ -1781,7 +1887,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
-							MenuOrder = 2500)]
+							MenuOrder = 2510)]
 		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
@@ -1798,7 +1904,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
 								Category = "AsmEd",
-								Order = 700)]
+								Order = 710)]
 		sealed class TheTextEditorCommand : TextEditorCommand
 		{
 			protected override bool CanExecute(Context ctx)
@@ -1871,7 +1977,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
-							MenuOrder = 2510)]
+							MenuOrder = 2520)]
 		sealed class TheEditCommand : EditCommand
 		{
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
@@ -1888,7 +1994,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
 								Category = "AsmEd",
-								Order = 710)]
+								Order = 720)]
 		sealed class TheTextEditorCommand : TextEditorCommand
 		{
 			protected override bool CanExecute(Context ctx)
@@ -1941,6 +2047,103 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 
 		SerializedImageResourceElementSettingsCommand(ResourceElementTreeNode rsrcElNode, ResourceElementOptions options)
+			: base(rsrcElNode, options)
+		{
+		}
+
+		public override string Description {
+			get { return CMD_NAME; }
+		}
+	}
+
+	sealed class SerializedImageListStreamerResourceElementSettingsCommand : ResourceElementSettingsBaseCommand
+	{
+		const string CMD_NAME = "Edit Resource";
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+								Icon = "Settings",
+								Category = "AsmEd",
+								Order = 720)]
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+							Menu = "_Edit",
+							MenuIcon = "Settings",
+							MenuCategory = "AsmEd",
+							MenuOrder = 2530)]
+		sealed class TheEditCommand : EditCommand
+		{
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				return SerializedImageListStreamerResourceElementSettingsCommand.CanExecute(nodes);
+			}
+
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
+			{
+				SerializedImageListStreamerResourceElementSettingsCommand.Execute(nodes);
+			}
+		}
+
+		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+								Icon = "Settings",
+								Category = "AsmEd",
+								Order = 730)]
+		sealed class TheTextEditorCommand : TextEditorCommand
+		{
+			protected override bool CanExecute(Context ctx)
+			{
+				return SerializedImageListStreamerResourceElementSettingsCommand.CanExecute(ctx.Nodes);
+			}
+
+			protected override void Execute(Context ctx)
+			{
+				SerializedImageListStreamerResourceElementSettingsCommand.Execute(ctx.Nodes);
+			}
+		}
+
+		static bool CanExecute(ILSpyTreeNode[] nodes)
+		{
+			return nodes.Length == 1 &&
+				nodes[0] is SerializedImageListStreamerResourceElementTreeNode;
+		}
+
+		static void Execute(ILSpyTreeNode[] nodes)
+		{
+			if (!CanExecute(nodes))
+				return;
+
+			var imgNode = (SerializedImageListStreamerResourceElementTreeNode)nodes[0];
+			var options = new ImageListOptions(imgNode.ImageListOptions);
+			var data = new ImageListVM(options);
+			var win = new ImageListDlg();
+			win.Title = CMD_NAME;
+			win.DataContext = data;
+			win.Owner = MainWindow.Instance;
+			if (win.ShowDialog() != true)
+				return;
+
+			var listOpts = data.CreateImageListOptions();
+
+			if (listOpts.ImageSources.Count == 0) {
+				MainWindow.Instance.ShowMessageBox("It's not possible to create an empty image list");
+				return;
+			}
+
+			ResourceElementOptions opts = null;
+			string error;
+			try {
+				opts = new ResourceElementOptions(SerializedImageListStreamerResourceElementTreeNode.Serialize(listOpts));
+				error = imgNode.CheckCanUpdateData(opts.Create());
+			}
+			catch (Exception ex) {
+				error = string.Format("Couldn't serialize the images. Error: {0}", ex.Message);
+			}
+			if (!string.IsNullOrEmpty(error)) {
+				MainWindow.Instance.ShowMessageBox(error);
+				return;
+			}
+
+			UndoCommandManager.Instance.Add(new SerializedImageListStreamerResourceElementSettingsCommand(imgNode, opts));
+		}
+
+		SerializedImageListStreamerResourceElementSettingsCommand(ResourceElementTreeNode rsrcElNode, ResourceElementOptions options)
 			: base(rsrcElNode, options)
 		{
 		}
