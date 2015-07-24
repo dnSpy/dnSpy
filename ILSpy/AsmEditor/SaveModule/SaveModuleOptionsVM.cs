@@ -25,12 +25,10 @@ using dnlib.DotNet.MD;
 using dnlib.DotNet.Writer;
 using dnlib.PE;
 using dnlib.W32Resources;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
-{
-	sealed class SaveModuleOptionsVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.SaveModule {
+	sealed class SaveModuleOptionsVM : ViewModelBase {
 		public ModuleDef Module {
 			get { return module; }
 		}
@@ -188,8 +186,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 		readonly MetaDataOptionsVM metaDataOptions;
 
-		public SaveModuleOptionsVM(ModuleDef module)
-		{
+		public SaveModuleOptionsVM(ModuleDef module) {
 			this.module = module;
 			this.peHeadersOptions = new PEHeadersOptionsVM(module.Machine, GetSubsystem(module.Kind));
 			this.cor20HeaderOptions = new Cor20HeaderOptionsVM();
@@ -208,15 +205,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			Reinitialize();
 		}
 
-		static Subsystem GetSubsystem(ModuleKind moduleKind)
-		{
+		static Subsystem GetSubsystem(ModuleKind moduleKind) {
 			if (moduleKind == dnlib.DotNet.ModuleKind.Windows)
 				return Subsystem.WindowsGui;
 			return Subsystem.WindowsCui;
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			FileName = module.Location;
 			if (UseMixedMode == IsMixedModeModule)
 				ReinitializeModuleWriterOptions();
@@ -224,8 +219,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 				UseMixedMode = IsMixedModeModule;
 		}
 
-		void ReinitializeModuleWriterOptions()
-		{
+		void ReinitializeModuleWriterOptions() {
 			if (UseMixedMode)
 				InitializeFrom(new NativeModuleWriterOptions((ModuleDefMD)module));
 			else
@@ -233,8 +227,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			WritePdb = CanWritePdb;
 		}
 
-		public ModuleWriterOptionsBase CreateWriterOptions()
-		{
+		public ModuleWriterOptionsBase CreateWriterOptions() {
 			if (UseMixedMode) {
 				var options = new NativeModuleWriterOptions((ModuleDefMD)module);
 				CopyTo(options);
@@ -251,8 +244,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			}
 		}
 
-		void CopyTo(ModuleWriterOptionsBase options)
-		{
+		void CopyTo(ModuleWriterOptionsBase options) {
 			peHeadersOptions.CopyTo(options.PEHeadersOptions);
 			cor20HeaderOptions.CopyTo(options.Cor20HeaderOptions);
 			metaDataOptions.CopyTo(options.MetaDataOptions);
@@ -264,43 +256,37 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			options.ModuleKind = (dnlib.DotNet.ModuleKind)moduleKindVM.SelectedItem;
 		}
 
-		public SaveModuleOptionsVM Clone()
-		{
+		public SaveModuleOptionsVM Clone() {
 			return CopyTo(new SaveModuleOptionsVM(module));
 		}
 
-		public SaveModuleOptionsVM CopyTo(SaveModuleOptionsVM other)
-		{
+		public SaveModuleOptionsVM CopyTo(SaveModuleOptionsVM other) {
 			other.FileName = FileName;
 			other.UseMixedMode = UseMixedMode;
 			other.InitializeFrom(CreateWriterOptions());
 			return other;
 		}
 
-		public void InitializeFrom(ModuleWriterOptionsBase options)
-		{
+		public void InitializeFrom(ModuleWriterOptionsBase options) {
 			if (options is ModuleWriterOptions)
 				InitializeFrom((ModuleWriterOptions)options);
 			else
 				InitializeFrom((NativeModuleWriterOptions)options);
 		}
 
-		public void InitializeFrom(ModuleWriterOptions options)
-		{
+		public void InitializeFrom(ModuleWriterOptions options) {
 			InitializeFromInternal((ModuleWriterOptionsBase)options);
 			KeepExtraPEData = false;
 			KeepWin32Resources = false;
 		}
 
-		public void InitializeFrom(NativeModuleWriterOptions options)
-		{
+		public void InitializeFrom(NativeModuleWriterOptions options) {
 			InitializeFromInternal((ModuleWriterOptionsBase)options);
 			KeepExtraPEData = options.KeepExtraPEData;
 			KeepWin32Resources = options.KeepWin32Resources;
 		}
 
-		void InitializeFromInternal(ModuleWriterOptionsBase options)
-		{
+		void InitializeFromInternal(ModuleWriterOptionsBase options) {
 			// Writing to it triggers a write to Subsystem so write it first
 			moduleKindVM.SelectedItem = options.ModuleKind;
 
@@ -317,8 +303,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			peHeadersOptions.Characteristics = options.PEHeadersOptions.Characteristics;
 		}
 
-		void OnPickNetExecutableFileName()
-		{
+		void OnPickNetExecutableFileName() {
 			if (pickNetExecutableFileName == null)
 				throw new InvalidOperationException();
 			var newFileName = pickNetExecutableFileName.GetFileName(FileName, Extension);
@@ -327,8 +312,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			FileName = newFileName;
 		}
 
-		protected override string Verify(string columnName)
-		{
+		protected override string Verify(string columnName) {
 			if (columnName == "FileName")
 				return filename.ValidateFileName() ?? string.Empty;
 
@@ -347,13 +331,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 	}
 
-	sealed class PEHeadersOptionsVM : ViewModelBase
-	{
+	sealed class PEHeadersOptionsVM : ViewModelBase {
 		readonly Machine defaultMachine;
 		readonly Subsystem defaultSubsystem;
 
-		public PEHeadersOptionsVM(Machine defaultMachine, Subsystem defaultSubsystem)
-		{
+		public PEHeadersOptionsVM(Machine defaultMachine, Subsystem defaultSubsystem) {
 			this.defaultMachine = defaultMachine;
 			this.defaultSubsystem = defaultSubsystem;
 			this.machineVM = new EnumListVM(machineList, (a, b) => {
@@ -498,13 +480,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			set { SetFlagValue(dnlib.PE.Characteristics.BytesReversedHi, value); }
 		}
 
-		bool? GetFlagValue(Characteristics flag)
-		{
+		bool? GetFlagValue(Characteristics flag) {
 			return Characteristics == null ? (bool?)null : (Characteristics.Value & flag) != 0;
 		}
 
-		void SetFlagValue(Characteristics flag, bool? value)
-		{
+		void SetFlagValue(Characteristics flag, bool? value) {
 			if (Characteristics == null)
 				Characteristics = 0;
 			if (value ?? false)
@@ -686,13 +666,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			set { SetFlagValue(dnlib.PE.DllCharacteristics.TerminalServerAware, value); }
 		}
 
-		bool? GetFlagValue(DllCharacteristics flag)
-		{
+		bool? GetFlagValue(DllCharacteristics flag) {
 			return DllCharacteristics == null ? (bool?)null : (DllCharacteristics.Value & flag) != 0;
 		}
 
-		void SetFlagValue(DllCharacteristics flag, bool? value)
-		{
+		void SetFlagValue(DllCharacteristics flag, bool? value) {
 			if (DllCharacteristics == null)
 				DllCharacteristics = 0;
 			if (value ?? false)
@@ -731,8 +709,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 		NullableUInt32VM numberOfRvaAndSizes;
 
-		public void CopyTo(PEHeadersOptions options)
-		{
+		public void CopyTo(PEHeadersOptions options) {
 			options.Machine = (dnlib.PE.Machine)machineVM.SelectedItem;
 			options.TimeDateStamp = TimeDateStamp.Value;
 			options.Characteristics = Characteristics;
@@ -758,8 +735,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			options.NumberOfRvaAndSizes = NumberOfRvaAndSizes.Value;
 		}
 
-		public void InitializeFrom(PEHeadersOptions options)
-		{
+		public void InitializeFrom(PEHeadersOptions options) {
 			machineVM.SelectedItem = options.Machine ?? defaultMachine;
 			TimeDateStamp.Value = options.TimeDateStamp;
 			Characteristics = options.Characteristics;
@@ -810,10 +786,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 	}
 
-	sealed class Cor20HeaderOptionsVM : ViewModelBase
-	{
-		public Cor20HeaderOptionsVM()
-		{
+	sealed class Cor20HeaderOptionsVM : ViewModelBase {
+		public Cor20HeaderOptionsVM() {
 			this.majorRuntimeVersion = new NullableUInt16VM(a => HasErrorUpdated());
 			this.minorRuntimeVersion = new NullableUInt16VM(a => HasErrorUpdated());
 			this.entryPoint = new NullableUInt32VM(a => HasErrorUpdated());
@@ -876,13 +850,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			set { SetFlagValue(ComImageFlags._32BitPreferred, value); }
 		}
 
-		bool? GetFlagValue(ComImageFlags flag)
-		{
+		bool? GetFlagValue(ComImageFlags flag) {
 			return Flags == null ? (bool?)null : (Flags.Value & flag) != 0;
 		}
 
-		void SetFlagValue(ComImageFlags flag, bool? value)
-		{
+		void SetFlagValue(ComImageFlags flag, bool? value) {
 			if (Flags == null)
 				Flags = 0;
 			if (value ?? false)
@@ -896,16 +868,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 		NullableUInt32VM entryPoint;
 
-		public void CopyTo(Cor20HeaderOptions options)
-		{
+		public void CopyTo(Cor20HeaderOptions options) {
 			options.MajorRuntimeVersion = MajorRuntimeVersion.Value;
 			options.MinorRuntimeVersion = MinorRuntimeVersion.Value;
 			options.Flags = Flags;
 			options.EntryPoint = EntryPoint.Value;
 		}
 
-		public void InitializeFrom(Cor20HeaderOptions options)
-		{
+		public void InitializeFrom(Cor20HeaderOptions options) {
 			MajorRuntimeVersion.Value = options.MajorRuntimeVersion;
 			MinorRuntimeVersion.Value = options.MinorRuntimeVersion;
 			Flags = options.Flags;
@@ -921,10 +891,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 	}
 
-	sealed class MetaDataOptionsVM : ViewModelBase
-	{
-		public MetaDataOptionsVM()
-		{
+	sealed class MetaDataOptionsVM : ViewModelBase {
+		public MetaDataOptionsVM() {
 			this.metaDataHeaderOptions = new MetaDataHeaderOptionsVM();
 			this.tablesHeapOptions = new TablesHeapOptionsVM();
 
@@ -1084,13 +1052,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			set { SetFlagValue(MetaDataFlags.AlwaysCreateBlobHeap, value, "AlwaysCreateBlobHeap"); }
 		}
 
-		bool GetFlagValue(MetaDataFlags flag)
-		{
+		bool GetFlagValue(MetaDataFlags flag) {
 			return (Flags & flag) != 0;
 		}
 
-		void SetFlagValue(MetaDataFlags flag, bool value, string prop1, string prop2 = null)
-		{
+		void SetFlagValue(MetaDataFlags flag, bool value, string prop1, string prop2 = null) {
 			bool origValue = (Flags & flag) != 0;
 			if (origValue == value)
 				return;
@@ -1105,23 +1071,20 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 				OnPropertyChanged(prop2);
 		}
 
-		public void CopyTo(MetaDataOptions options)
-		{
+		public void CopyTo(MetaDataOptions options) {
 			MetaDataHeaderOptions.CopyTo(options.MetaDataHeaderOptions);
 			TablesHeapOptions.CopyTo(options.TablesHeapOptions);
 			options.Flags = Flags;
 		}
 
-		public void InitializeFrom(MetaDataOptions options)
-		{
+		public void InitializeFrom(MetaDataOptions options) {
 			MetaDataHeaderOptions.InitializeFrom(options.MetaDataHeaderOptions);
 			TablesHeapOptions.InitializeFrom(options.TablesHeapOptions);
 			Flags = options.Flags;
 			OnFlagsChanged();
 		}
 
-		void OnFlagsChanged()
-		{
+		void OnFlagsChanged() {
 			OnPropertyChanged("PreserveTypeRefRids");
 			OnPropertyChanged("PreserveTypeDefRids");
 			OnPropertyChanged("PreserveFieldRids");
@@ -1153,10 +1116,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 	}
 
-	sealed class MetaDataHeaderOptionsVM : ViewModelBase
-	{
-		public MetaDataHeaderOptionsVM()
-		{
+	sealed class MetaDataHeaderOptionsVM : ViewModelBase {
+		public MetaDataHeaderOptionsVM() {
 			this.signature = new NullableUInt32VM(a => HasErrorUpdated());
 			this.majorVersion = new NullableUInt16VM(a => HasErrorUpdated());
 			this.minorVersion = new NullableUInt16VM(a => HasErrorUpdated());
@@ -1205,8 +1166,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 		NullableByteVM reserved2;
 
-		public void CopyTo(MetaDataHeaderOptions options)
-		{
+		public void CopyTo(MetaDataHeaderOptions options) {
 			options.Signature = Signature.Value;
 			options.MajorVersion = MajorVersion.Value;
 			options.MinorVersion = MinorVersion.Value;
@@ -1216,8 +1176,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			options.Reserved2 = Reserved2.Value;
 		}
 
-		public void InitializeFrom(MetaDataHeaderOptions options)
-		{
+		public void InitializeFrom(MetaDataHeaderOptions options) {
 			Signature.Value = options.Signature;
 			MajorVersion.Value = options.MajorVersion;
 			MinorVersion.Value = options.MinorVersion;
@@ -1227,8 +1186,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			Reserved2.Value = options.Reserved2;
 		}
 
-		protected override string Verify(string columnName)
-		{
+		protected override string Verify(string columnName) {
 			if (columnName == "VersionString")
 				return ValidateVersionString(versionString);
 
@@ -1249,8 +1207,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			}
 		}
 
-		internal static string ValidateVersionString(string versionString)
-		{
+		internal static string ValidateVersionString(string versionString) {
 			var bytes = Encoding.UTF8.GetBytes(versionString + "\0");
 			if (bytes.Length > 256)
 				return "Version string is too long";
@@ -1259,10 +1216,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 	}
 
-	sealed class TablesHeapOptionsVM : ViewModelBase
-	{
-		public TablesHeapOptionsVM()
-		{
+	sealed class TablesHeapOptionsVM : ViewModelBase {
+		public TablesHeapOptionsVM() {
 			this.reserved1 = new NullableUInt32VM(a => HasErrorUpdated());
 			this.majorVersion = new NullableByteVM(a => HasErrorUpdated());
 			this.minorVersion = new NullableByteVM(a => HasErrorUpdated());
@@ -1307,8 +1262,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 		bool? hasDeletedRows;
 
-		public void CopyTo(TablesHeapOptions options)
-		{
+		public void CopyTo(TablesHeapOptions options) {
 			options.Reserved1 = Reserved1.Value;
 			options.MajorVersion = MajorVersion.Value;
 			options.MinorVersion = MinorVersion.Value;
@@ -1317,8 +1271,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			options.HasDeletedRows = HasDeletedRows;
 		}
 
-		public void InitializeFrom(TablesHeapOptions options)
-		{
+		public void InitializeFrom(TablesHeapOptions options) {
 			Reserved1.Value = options.Reserved1;
 			MajorVersion.Value = options.MajorVersion;
 			MinorVersion.Value = options.MinorVersion;

@@ -22,11 +22,10 @@ using System.Collections.Generic;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnlib.PE;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Module
-{
-	sealed class ModuleOptions
-	{
+namespace dnSpy.AsmEditor.Module {
+	sealed class ModuleOptions {
 		public Guid? Mvid;
 		public Guid? EncId;
 		public Guid? EncBaseId;
@@ -43,12 +42,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		public RVA NativeEntryPoint;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
-		public ModuleOptions()
-		{
+		public ModuleOptions() {
 		}
 
-		public ModuleOptions(ModuleDef module)
-		{
+		public ModuleOptions(ModuleDef module) {
 			this.Mvid = module.Mvid;
 			this.EncId = module.EncId;
 			this.EncBaseId = module.EncBaseId;
@@ -66,8 +63,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			this.CustomAttributes.AddRange(module.CustomAttributes);
 		}
 
-		public ModuleDef CopyTo(ModuleDef module)
-		{
+		public ModuleDef CopyTo(ModuleDef module) {
 			module.Mvid = this.Mvid;
 			module.EncId = this.EncId;
 			module.EncBaseId = this.EncBaseId;
@@ -89,8 +85,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			return module;
 		}
 
-		public ModuleDef CreateModuleDef()
-		{
+		public ModuleDef CreateModuleDef() {
 			var module = CopyTo(new ModuleDefUser());
 			return module.UpdateRowId(module);
 		}

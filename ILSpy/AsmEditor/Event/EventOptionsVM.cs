@@ -22,14 +22,13 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes.Filters;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Event
-{
-	sealed class EventOptionsVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.Event {
+	sealed class EventOptionsVM : ViewModelBase {
 		readonly EventDefOptions origOptions;
 
 		public IDnlibTypePicker DnlibTypePicker {
@@ -88,13 +87,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			set { SetFlagValue(EventAttributes.RTSpecialName, value); }
 		}
 
-		bool GetFlagValue(EventAttributes flag)
-		{
+		bool GetFlagValue(EventAttributes flag) {
 			return (Attributes & flag) != 0;
 		}
 
-		void SetFlagValue(EventAttributes flag, bool value)
-		{
+		void SetFlagValue(EventAttributes flag, bool value) {
 			if (value)
 				Attributes |= flag;
 			else
@@ -138,8 +135,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			get { return GetFullName(RemoveMethod); }
 		}
 
-		static string GetFullName(MethodDef md)
-		{
+		static string GetFullName(MethodDef md) {
 			return md == null ? "null" : md.FullName;
 		}
 
@@ -191,8 +187,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 
 		readonly ModuleDef ownerModule;
 
-		public EventOptionsVM(EventDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType)
-		{
+		public EventOptionsVM(EventDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType) {
 			this.ownerModule = ownerModule;
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, language) {
 				IsLocal = false,
@@ -214,53 +209,45 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			Reinitialize();
 		}
 
-		void typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "TypeSigDnlibFullName")
 				OnPropertyChanged("EventTypeHeader");
 			HasErrorUpdated();
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		MethodDef PickMethod(MethodDef origMethod)
-		{
+		MethodDef PickMethod(MethodDef origMethod) {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 			return dnlibTypePicker.GetDnlibType(new SameModuleTreeViewNodeFilter(ownerModule, new FlagsTreeViewNodeFilter(VisibleMembersFlags.MethodDef)), origMethod, ownerModule);
 		}
 
-		void PickAddMethod()
-		{
+		void PickAddMethod() {
 			var method = PickMethod(AddMethod);
 			if (method != null)
 				AddMethod = method;
 		}
 
-		void PickInvokeMethod()
-		{
+		void PickInvokeMethod() {
 			var method = PickMethod(InvokeMethod);
 			if (method != null)
 				InvokeMethod = method;
 		}
 
-		void PickRemoveMethod()
-		{
+		void PickRemoveMethod() {
 			var method = PickMethod(RemoveMethod);
 			if (method != null)
 				RemoveMethod = method;
 		}
 
-		public EventDefOptions CreateEventDefOptions()
-		{
+		public EventDefOptions CreateEventDefOptions() {
 			return CopyTo(new EventDefOptions());
 		}
 
-		void InitializeFrom(EventDefOptions options)
-		{
+		void InitializeFrom(EventDefOptions options) {
 			Attributes = options.Attributes;
 			Name = options.Name;
 			EventTypeSig = options.EventType.ToTypeSig();
@@ -271,8 +258,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 
-		EventDefOptions CopyTo(EventDefOptions options)
-		{
+		EventDefOptions CopyTo(EventDefOptions options) {
 			options.Attributes = Attributes;
 			options.Name = Name;
 			options.EventType = EventTypeSig.ToTypeDefOrRef();

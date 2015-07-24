@@ -16,15 +16,15 @@
     You should have received a copy of the GNU General Public License
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<winlocal:WindowBase x:Class="ICSharpCode.ILSpy.AsmEditor.Module.ModuleOptionsDlg"
+<winlocal:WindowBase x:Class="dnSpy.AsmEditor.Module.ModuleOptionsDlg"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:vc="clr-namespace:ICSharpCode.ILSpy.AsmEditor.Converters"
-             xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
-             xmlns:local="clr-namespace:ICSharpCode.ILSpy.AsmEditor.Module"
-             xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
+             xmlns:vc="clr-namespace:dnSpy.AsmEditor.Converters"
+             xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
+             xmlns:local="clr-namespace:dnSpy.AsmEditor.Module"
+             xmlns:winlocal="clr-namespace:dnSpy.AsmEditor"
              Height="380" Width="400"
              Title="Edit Module"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"

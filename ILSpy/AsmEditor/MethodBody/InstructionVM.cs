@@ -25,17 +25,14 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnlib.DotNet.Pdb;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	sealed class InstructionVM : ViewModelBase, IIndexedItem
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	sealed class InstructionVM : ViewModelBase, IIndexedItem {
 		public static readonly InstructionVM Null = new InstructionVM();
 		InstructionOptions origOptions;
 
 		static readonly Code[] codeList;
 
-		static InstructionVM()
-		{
+		static InstructionVM() {
 			var hash = new HashSet<OpCode>();
 			foreach (var c in typeof(Code).GetFields()) {
 				if (!c.IsLiteral)
@@ -105,28 +102,24 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 
 		readonly ModuleDef ownerModule;
 
-		InstructionVM()
-		{
+		InstructionVM() {
 		}
 
-		public InstructionVM(ModuleDef ownerModule)
-		{
+		public InstructionVM(ModuleDef ownerModule) {
 			this.ownerModule = ownerModule;
 			this.instructionOperandVM = new InstructionOperandVM();
 			this.InstructionOperandVM.PropertyChanged += (a, b) => HasErrorUpdated();
 			this.codeVM = new ListVM<Code>(codeList, (a, b) => OnCodeUpdated());
 		}
 
-		void OnCodeUpdated()
-		{
+		void OnCodeUpdated() {
 			InstructionOperandVM.UpdateOperandType(Code);
 			OnPropertyChanged("Code");
 			HasErrorUpdated();
 		}
 
 		// Create an Instruction that we can use to call useful Instruction methods
-		Instruction GetTempInstruction()
-		{
+		Instruction GetTempInstruction() {
 			var opCode = Code.ToOpCode();
 			switch (InstructionOperandVM.InstructionOperandType) {
 			case InstructionOperandType.None:
@@ -170,13 +163,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			}
 		}
 
-		public void CalculateStackUsage(out int pushes, out int pops)
-		{
+		public void CalculateStackUsage(out int pushes, out int pops) {
 			GetTempInstruction().CalculateStackUsage(out pushes, out pops);
 		}
 
-		public int GetSize()
-		{
+		public int GetSize() {
 			var opCode = Code.ToOpCode();
 			switch (opCode.OperandType) {
 			case OperandType.InlineBrTarget:
@@ -213,31 +204,26 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			}
 		}
 
-		public void Initialize(InstructionOptions options)
-		{
+		public void Initialize(InstructionOptions options) {
 			this.origOptions = options;
 			Reinitialize();
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public InstructionOptions CreateInstructionOptions()
-		{
+		public InstructionOptions CreateInstructionOptions() {
 			return CopyTo(new InstructionOptions());
 		}
 
-		public void InitializeFrom(InstructionOptions options)
-		{
+		public void InitializeFrom(InstructionOptions options) {
 			this.Code = options.Code;
 			this.InstructionOperandVM.WriteValue(Code, options.Operand);
 			this.SequencePoint = options.SequencePoint;
 		}
 
-		public InstructionOptions CopyTo(InstructionOptions options)
-		{
+		public InstructionOptions CopyTo(InstructionOptions options) {
 			options.Code = this.Code;
 			options.Operand = this.InstructionOperandVM.Value;
 			options.SequencePoint = this.SequencePoint;
@@ -248,8 +234,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			get { return InstructionOperandVM.HasError; }
 		}
 
-		public object Clone()
-		{
+		public object Clone() {
 			var inst = new InstructionVM(ownerModule);
 
 			inst.Code = this.Code;

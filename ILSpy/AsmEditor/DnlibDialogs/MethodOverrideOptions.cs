@@ -19,25 +19,20 @@
 
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class MethodOverrideOptions
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class MethodOverrideOptions {
 		public IMethodDefOrRef MethodBody;
 		public IMethodDefOrRef MethodDeclaration;
 
-		public MethodOverrideOptions()
-		{
+		public MethodOverrideOptions() {
 		}
 
-		public MethodOverrideOptions(MethodOverride mo)
-		{
+		public MethodOverrideOptions(MethodOverride mo) {
 			this.MethodBody = mo.MethodBody;
 			this.MethodDeclaration = mo.MethodDeclaration;
 		}
 
-		public MethodOverride Create()
-		{
+		public MethodOverride Create() {
 			return new MethodOverride(MethodBody, MethodDeclaration);
 		}
 	}

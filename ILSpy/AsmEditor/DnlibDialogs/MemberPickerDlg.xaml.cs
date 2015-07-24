@@ -19,18 +19,16 @@
 
 using System;
 using System.Windows.Threading;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.ILSpy;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
 	/// Interaction logic for MemberPickerDlg.xaml
 	/// </summary>
-	public partial class MemberPickerDlg : WindowBase, IMakeVisible
-	{
-		public MemberPickerDlg()
-		{
+	public partial class MemberPickerDlg : WindowBase, IMakeVisible {
+		public MemberPickerDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as MemberPickerVM;
@@ -45,8 +43,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			privateInternalImage.Source = ImageCache.Instance.GetImage("PrivateInternal", BackgroundType.DialogWindow);
 		}
 
-		void IMakeVisible.ScrollIntoView(object item)
-		{
+		void IMakeVisible.ScrollIntoView(object item) {
 			var node = item as SharpTreeNode;
 			if (node != null) {
 				// Calling ScrollIntoView() immediately won't always work so delay a little bit.

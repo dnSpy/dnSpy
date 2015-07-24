@@ -21,10 +21,8 @@ using System;
 using System.ComponentModel;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class ConstantVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class ConstantVM : ViewModelBase {
 		public ConstantTypeVM ConstantTypeVM {
 			get { return constantTypeVM; }
 		}
@@ -76,8 +74,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			ConstantType.String,
 		};
 
-		public ConstantVM(ModuleDef ownerModule, object value, string constantCheckBoxToolTip)
-		{
+		public ConstantVM(ModuleDef ownerModule, object value, string constantCheckBoxToolTip) {
 			this.constantTypeVM = new ConstantTypeVM(ownerModule, value, constantTypes, true, false);
 			this.ConstantCheckBoxToolTip = constantCheckBoxToolTip;
 			this.ConstantTypeVM.PropertyChanged += ConstantTypeVM_PropertyChanged;
@@ -85,8 +82,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			IsEnabled = ConstantTypeVM.IsEnabled;
 		}
 
-		void ConstantTypeVM_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void ConstantTypeVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "Value")
 				OnPropertyChanged("Value");
 			else if (e.PropertyName == "IsEnabled")

@@ -17,25 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
 	/// Interaction logic for ListVMControl.xaml
 	/// </summary>
-	public partial class ListVMControl : UserControl
-	{
-		public ListVMControl()
-		{
+	public partial class ListVMControl : UserControl {
+		public ListVMControl() {
 			InitializeComponent();
 		}
 
-		private void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-		{
+		private void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtils.IsLeftDoubleClick<ListBoxItem>(listBox, e))
 				return;
 			var data = DataContext as ListVM;

@@ -16,16 +16,16 @@
     You should have received a copy of the GNU General Public License
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<winlocal:WindowBase x:Class="ICSharpCode.ILSpy.AsmEditor.Resources.ImageListDlg"
+<winlocal:WindowBase x:Class="dnSpy.AsmEditor.Resources.ImageListDlg"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ICSharpCode.ILSpy.AsmEditor.Resources"
-             xmlns:vc="clr-namespace:ICSharpCode.ILSpy.AsmEditor.Converters"
+             xmlns:local="clr-namespace:dnSpy.AsmEditor.Resources"
+             xmlns:vc="clr-namespace:dnSpy.AsmEditor.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
-             xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
+             xmlns:winlocal="clr-namespace:dnSpy.AsmEditor"
              Title="Edit Resource"
              Height="400" Width="350"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"

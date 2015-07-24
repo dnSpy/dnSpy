@@ -21,18 +21,16 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	enum GPVariance
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	enum GPVariance {
 		NonVariant		= (int)GenericParamAttributes.NonVariant >> 0,
 		Covariant		= (int)GenericParamAttributes.Covariant >> 0,
 		Contravariant	= (int)GenericParamAttributes.Contravariant >> 0,
 	}
 
-	sealed class GenericParamVM : ViewModelBase
-	{
+	sealed class GenericParamVM : ViewModelBase {
 		readonly GenericParamOptions origOptions;
 
 		public ICommand ReinitializeCommand {
@@ -138,8 +136,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		readonly ModuleDef ownerModule;
 
-		public GenericParamVM(GenericParamOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
-		{
+		public GenericParamVM(GenericParamOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod) {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
 			this.number = new UInt16VM(a => { OnPropertyChanged("FullName"); HasErrorUpdated(); });
@@ -163,18 +160,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			Reinitialize();
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public GenericParamOptions CreateGenericParamOptions()
-		{
+		public GenericParamOptions CreateGenericParamOptions() {
 			return CopyTo(new GenericParamOptions());
 		}
 
-		void InitializeFrom(GenericParamOptions options)
-		{
+		void InitializeFrom(GenericParamOptions options) {
 			Number.Value = options.Number;
 			Attributes = options.Flags;
 			Name = options.Name;
@@ -184,8 +178,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 
-		GenericParamOptions CopyTo(GenericParamOptions options)
-		{
+		GenericParamOptions CopyTo(GenericParamOptions options) {
 			options.Number = Number.Value;
 			options.Flags = Attributes;
 			options.Name = Name;

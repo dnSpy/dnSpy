@@ -20,11 +20,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	sealed class SwitchOperandVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	sealed class SwitchOperandVM : ViewModelBase {
 		readonly IList<InstructionVM> origInstructions;
 
 		public ICommand ReinitializeCommand {
@@ -60,8 +59,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		}
 		readonly ListVM<InstructionVM> allInstructionsVM;
 
-		public SwitchOperandVM(IList<InstructionVM> allInstrs, IList<InstructionVM> instrs)
-		{
+		public SwitchOperandVM(IList<InstructionVM> allInstrs, IList<InstructionVM> instrs) {
 			this.allInstructionsVM = new ListVM<InstructionVM>(allInstrs);
 			this.origInstructions = instrs;
 			this.instructionsListVM = new IndexObservableCollection<SwitchInstructionVM>();
@@ -69,41 +67,34 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			Reinitialize();
 		}
 
-		void AddInstruction()
-		{
+		void AddInstruction() {
 			InstructionsListVM.Insert(SelectedIndex + 1, new SwitchInstructionVM(AllInstructionsVM.SelectedItem));
 		}
 
-		bool AddInstructionCanExecute()
-		{
+		bool AddInstructionCanExecute() {
 			return SelectedIndex >= 0;
 		}
 
-		void AppendInstruction()
-		{
+		void AppendInstruction() {
 			InstructionsListVM.Insert(InstructionsListVM.Count, new SwitchInstructionVM(AllInstructionsVM.SelectedItem));
 		}
 
-		bool AppendInstructionCanExecute()
-		{
+		bool AppendInstructionCanExecute() {
 			return true;
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origInstructions);
 		}
 
-		public void InitializeFrom(IList<InstructionVM> instrs)
-		{
+		public void InitializeFrom(IList<InstructionVM> instrs) {
 			InstructionsListVM.Clear();
 			if (instrs != null)
 				InstructionsListVM.AddRange(instrs.Select(a => new SwitchInstructionVM(a)));
 			SelectedIndex = InstructionsListVM.Count == 0 ? -1 : 0;
 		}
 
-		public InstructionVM[] GetSwitchList()
-		{
+		public InstructionVM[] GetSwitchList() {
 			return InstructionsListVM.Select(a => a.InstructionVM).ToArray();
 		}
 	}

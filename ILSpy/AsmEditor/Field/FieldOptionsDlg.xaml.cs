@@ -17,15 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.Field
-{
+namespace dnSpy.AsmEditor.Field {
 	/// <summary>
 	/// Interaction logic for FieldOptionsDlg.xaml
 	/// </summary>
-	public partial class FieldOptionsDlg : WindowBase
-	{
-		public FieldOptionsDlg()
-		{
+	public partial class FieldOptionsDlg : WindowBase {
+		public FieldOptionsDlg() {
 			InitializeComponent();
 		}
 	}

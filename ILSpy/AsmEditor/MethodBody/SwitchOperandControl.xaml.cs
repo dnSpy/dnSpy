@@ -20,23 +20,19 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
+namespace dnSpy.AsmEditor.MethodBody {
 	/// <summary>
 	/// Interaction logic for SwitchOperandControl.xaml
 	/// </summary>
-	public partial class SwitchOperandControl : UserControl
-	{
+	public partial class SwitchOperandControl : UserControl {
 		SwitchOperandsListHelper switchOperandsListHelper;
 
-		public SwitchOperandControl()
-		{
+		public SwitchOperandControl() {
 			InitializeComponent();
 			DataContextChanged += SwitchOperandControl_DataContextChanged;
 		}
 
-		void SwitchOperandControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
+		void SwitchOperandControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e) {
 			var data = DataContext as SwitchOperandVM;
 			if (data == null)
 				return;

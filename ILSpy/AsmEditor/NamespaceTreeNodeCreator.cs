@@ -22,14 +22,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
+namespace dnSpy.AsmEditor {
 	/// <summary>
 	/// Creates a <see cref="NamespaceTreeNode"/> if it doesn't exist. Caches the node to make sure
 	/// the same <see cref="NamespaceTreeNode"/> is used all the time.
 	/// </summary>
-	sealed class NamespaceTreeNodeCreator
-	{
+	sealed class NamespaceTreeNodeCreator {
 		readonly AssemblyTreeNode asmNode;
 		readonly NamespaceTreeNode nsNode;
 		readonly bool nsNodeCreated;
@@ -46,8 +44,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			}
 		}
 
-		public NamespaceTreeNodeCreator(string ns, AssemblyTreeNode asmNode)
-		{
+		public NamespaceTreeNodeCreator(string ns, AssemblyTreeNode asmNode) {
 			Debug.Assert(asmNode.IsModule);
 			if (!asmNode.IsModule)
 				throw new InvalidOperationException();
@@ -63,8 +60,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		/// <summary>
 		/// Add the <see cref="NamespaceTreeNode"/> if it doesn't exist
 		/// </summary>
-		public void Add()
-		{
+		public void Add() {
 			if (nsNodeCreated) {
 				asmNode.AddToChildren(nsNode);
 				nsNode.OnReadded();
@@ -74,8 +70,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		/// <summary>
 		/// Undo what <see cref="Add()"/> did
 		/// </summary>
-		public void Remove()
-		{
+		public void Remove() {
 			if (nsNodeCreated) {
 				nsNode.OnBeforeRemoved();
 				asmNode.Children.Remove(nsNode);

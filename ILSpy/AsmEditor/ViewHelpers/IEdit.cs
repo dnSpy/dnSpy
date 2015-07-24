@@ -17,10 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	interface IEdit<T>
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	interface IEdit<T> {
 		/// <summary>
 		/// Lets the user edit the object. Returns null if user canceled.
 		/// </summary>

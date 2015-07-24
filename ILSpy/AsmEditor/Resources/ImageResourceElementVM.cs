@@ -21,12 +21,10 @@ using System;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Resources
-{
-	sealed class ImageResourceElementVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.Resources {
+	sealed class ImageResourceElementVM : ViewModelBase {
 		readonly ResourceElementOptions origOptions;
 
 		public IOpenFile OpenFile {
@@ -71,15 +69,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			get { return string.Format("{0} bytes", Data == null ? 0 : Data.Length); }
 		}
 
-		public ImageResourceElementVM(ResourceElementOptions options)
-		{
+		public ImageResourceElementVM(ResourceElementOptions options) {
 			this.origOptions = options;
 
 			Reinitialize();
 		}
 
-		void FillData()
-		{
+		void FillData() {
 			if (openFile == null)
 				throw new InvalidOperationException();
 			var newBytes = openFile.Open("Images|*.png;*.gif;*.bmp;*.dib;*.jpg;*.jpeg;*.jpe;*.jif;*.jfif;*.jfi;*.ico;*.cur|All files (*.*)|*.*");
@@ -87,18 +83,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				Data = newBytes;
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public ResourceElementOptions CreateResourceElementOptions()
-		{
+		public ResourceElementOptions CreateResourceElementOptions() {
 			return CopyTo(new ResourceElementOptions());
 		}
 
-		void InitializeFrom(ResourceElementOptions options)
-		{
+		void InitializeFrom(ResourceElementOptions options) {
 			if (options.ResourceData.Code != ResourceTypeCode.ByteArray && options.ResourceData.Code != ResourceTypeCode.Stream)
 				throw new InvalidOperationException();
 			var builtin = (BuiltInResourceData)options.ResourceData;
@@ -108,8 +101,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			this.Data = (byte[])builtin.Data;
 		}
 
-		ResourceElementOptions CopyTo(ResourceElementOptions options)
-		{
+		ResourceElementOptions CopyTo(ResourceElementOptions options) {
 			options.Name = this.Name;
 			options.ResourceData = new BuiltInResourceData(resourceTypeCode, Data);
 			return options;

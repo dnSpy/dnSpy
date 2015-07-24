@@ -19,17 +19,14 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Resources
-{
+namespace dnSpy.AsmEditor.Resources {
 	/// <summary>
 	/// Interaction logic for ImageListStreamerControl.xaml
 	/// </summary>
-	public partial class ImageListStreamerControl : UserControl
-	{
-		public ImageListStreamerControl()
-		{
+	public partial class ImageListStreamerControl : UserControl {
+		public ImageListStreamerControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as ImageListStreamerVM;

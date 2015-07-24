@@ -19,10 +19,8 @@
 
 using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
-	sealed class ContextMenuHandler
-	{
+namespace dnSpy.AsmEditor {
+	sealed class ContextMenuHandler {
 		public string Header;
 		public string HeaderPlural;
 		public string Icon;

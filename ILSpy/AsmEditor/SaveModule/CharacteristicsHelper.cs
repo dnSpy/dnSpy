@@ -20,12 +20,9 @@
 using dnlib.DotNet;
 using dnlib.PE;
 
-namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
-{
-	static class CharacteristicsHelper
-	{
-		public static Characteristics GetCharacteristics(Characteristics characteristics, ModuleKind moduleKind)
-		{
+namespace dnSpy.AsmEditor.SaveModule {
+	static class CharacteristicsHelper {
+		public static Characteristics GetCharacteristics(Characteristics characteristics, ModuleKind moduleKind) {
 			if (moduleKind == ModuleKind.Dll || moduleKind == ModuleKind.NetModule)
 				characteristics |= Characteristics.Dll;
 			else
@@ -33,8 +30,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			return characteristics;
 		}
 
-		public static Characteristics GetCharacteristics(Characteristics characteristics, Machine machine)
-		{
+		public static Characteristics GetCharacteristics(Characteristics characteristics, Machine machine) {
 			if (machine == Machine.IA64 || machine == Machine.AMD64 || machine == Machine.ARM64) {
 				characteristics &= ~Characteristics._32BitMachine;
 				characteristics |= Characteristics.LargeAddressAware;

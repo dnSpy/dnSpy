@@ -19,36 +19,30 @@
 
 using System;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class CANamedArgumentsVM : ListVM<CANamedArgumentVM, CANamedArgument>
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class CANamedArgumentsVM : ListVM<CANamedArgumentVM, CANamedArgument> {
 		readonly Predicate<CANamedArgumentsVM> canAdd;
 
 		public CANamedArgumentsVM(ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod, Predicate<CANamedArgumentsVM> canAdd)
-			: base(null, null, ownerModule, language, ownerType, ownerMethod, true)
-		{
+			: base(null, null, ownerModule, language, ownerType, ownerMethod, true) {
 			this.canAdd = canAdd;
 		}
 
-		protected override CANamedArgumentVM Create(CANamedArgument model)
-		{
+		protected override CANamedArgumentVM Create(CANamedArgument model) {
 			return new CANamedArgumentVM(ownerModule, model, new TypeSigCreatorOptions(ownerModule, language));
 		}
 
-		protected override CANamedArgumentVM Clone(CANamedArgumentVM obj)
-		{
+		protected override CANamedArgumentVM Clone(CANamedArgumentVM obj) {
 			return new CANamedArgumentVM(ownerModule, obj.CreateCANamedArgument(), new TypeSigCreatorOptions(ownerModule, language));
 		}
 
-		protected override CANamedArgumentVM Create()
-		{
+		protected override CANamedArgumentVM Create() {
 			return new CANamedArgumentVM(ownerModule, new CANamedArgument(false, ownerModule.CorLibTypes.Int32, "AttributeProperty", new CAArgument(ownerModule.CorLibTypes.Int32, 0)), new TypeSigCreatorOptions(ownerModule, language));
 		}
 
-		protected override bool AddItemCanExecute()
-		{
+		protected override bool AddItemCanExecute() {
 			return canAdd == null || canAdd(this);
 		}
 	}

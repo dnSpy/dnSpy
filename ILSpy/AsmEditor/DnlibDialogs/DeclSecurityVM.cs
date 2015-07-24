@@ -17,16 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	enum SecAc
 	{
 		ActionNil			= SecurityAction.ActionNil,
@@ -53,8 +51,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		V2,
 	}
 
-	sealed class DeclSecurityVM : ViewModelBase
-	{
+	sealed class DeclSecurityVM : ViewModelBase {
 		public ICommand ReinitializeCommand {
 			get { return new RelayCommand(a => Reinitialize()); }
 		}
@@ -110,8 +107,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		readonly TypeDef ownerType;
 		readonly MethodDef ownerMethod;
 
-		public DeclSecurityVM(DeclSecurityOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
-		{
+		public DeclSecurityVM(DeclSecurityOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod) {
 			this.ownerModule = ownerModule;
 			this.language = language;
 			this.ownerType = ownerType;
@@ -126,42 +122,35 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			Reinitialize();
 		}
 
-		void SecurityAttributesVM_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
+		void SecurityAttributesVM_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			HasErrorUpdated();
 		}
 
-		void CustomAttributesVM_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void CustomAttributesVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			HasErrorUpdated();
 		}
 
-		void OnDeclSecVerChanged()
-		{
+		void OnDeclSecVerChanged() {
 			OnPropertyChanged("IsV1");
 			OnPropertyChanged("IsV2");
 			OnPropertyChanged("FullName");
 			HasErrorUpdated();
 		}
 
-		void OnSecurityActionChanged()
-		{
+		void OnSecurityActionChanged() {
 			OnPropertyChanged("FullName");
 			HasErrorUpdated();
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public DeclSecurityOptions CreateDeclSecurityOptions()
-		{
+		public DeclSecurityOptions CreateDeclSecurityOptions() {
 			return CopyTo(new DeclSecurityOptions());
 		}
 
-		void InitializeFrom(DeclSecurityOptions options)
-		{
+		void InitializeFrom(DeclSecurityOptions options) {
 			SecurityActionEnumList.SelectedItem = (SecAc)options.Action;
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 			SecurityAttributesVM.Collection.Clear();
@@ -170,8 +159,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			DeclSecVerEnumList.SelectedItem = options.V1XMLString == null ? DeclSecVer.V2 : DeclSecVer.V1;
 		}
 
-		DeclSecurityOptions CopyTo(DeclSecurityOptions options)
-		{
+		DeclSecurityOptions CopyTo(DeclSecurityOptions options) {
 			options.Action = (SecurityAction)(SecAc)SecurityActionEnumList.SelectedItem;
 			options.CustomAttributes.Clear();
 			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));

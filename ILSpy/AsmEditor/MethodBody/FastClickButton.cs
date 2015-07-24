@@ -19,15 +19,12 @@
 
 using System.Windows.Controls;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
+namespace dnSpy.AsmEditor.MethodBody {
 	// There's a long delay before the Click event is triggered if the button contains a
 	// TextBlock with many Inlines. The solution is to create a new button sub class and override
 	// the OnClick() method.
-	sealed class FastClickButton : Button
-	{
-		protected override void OnClick()
-		{
+	sealed class FastClickButton : Button {
+		protected override void OnClick() {
 			var cmd = Command;
 			if (cmd != null) {
 				if (cmd.CanExecute(CommandParameter))

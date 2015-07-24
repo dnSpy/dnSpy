@@ -21,29 +21,24 @@ using System.Collections.Generic;
 using System.Linq;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class CustomAttributeOptions
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class CustomAttributeOptions {
 		public byte[] RawData;
 		public ICustomAttributeType Constructor;
 		public List<CAArgument> ConstructorArguments = new List<CAArgument>();
 		public List<CANamedArgument> NamedArguments = new List<CANamedArgument>();
 
-		public CustomAttributeOptions()
-		{
+		public CustomAttributeOptions() {
 		}
 
-		public CustomAttributeOptions(CustomAttribute ca)
-		{
+		public CustomAttributeOptions(CustomAttribute ca) {
 			this.RawData = ca.RawData;
 			this.Constructor = ca.Constructor;
 			this.ConstructorArguments.AddRange(ca.ConstructorArguments.Select(a => a.Clone()));
 			this.NamedArguments.AddRange(ca.NamedArguments.Select(a => a.Clone()));
 		}
 
-		public CustomAttribute Create()
-		{
+		public CustomAttribute Create() {
 			if (RawData != null)
 				return new CustomAttribute(Constructor, RawData);
 			return new CustomAttribute(Constructor, ConstructorArguments, NamedArguments);

@@ -21,12 +21,11 @@ using System;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.Threading;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	enum MethodCallingConv
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	enum MethodCallingConv {
 		Default			= CallingConvention.Default,
 		C				= CallingConvention.C,
 		StdCall			= CallingConvention.StdCall,
@@ -36,8 +35,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		NativeVarArg	= CallingConvention.NativeVarArg,
 	}
 
-	sealed class MethodSigCreatorVM : ViewModelBase
-	{
+	sealed class MethodSigCreatorVM : ViewModelBase {
 		public ITypeSigCreator TypeSigCreator {
 			set { typeSigCreator = value; }
 		}
@@ -117,13 +115,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			set { SetFlags(dnlib.DotNet.CallingConvention.ExplicitThis, value); }
 		}
 
-		bool GetFlags(dnlib.DotNet.CallingConvention flag)
-		{
+		bool GetFlags(dnlib.DotNet.CallingConvention flag) {
 			return (CallingConvention & flag) != 0;
 		}
 
-		void SetFlags(dnlib.DotNet.CallingConvention flag, bool value)
-		{
+		void SetFlags(dnlib.DotNet.CallingConvention flag, bool value) {
 			if (value)
 				CallingConvention |= flag;
 			else
@@ -176,8 +172,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		readonly MethodSigCreatorOptions options;
 
-		public MethodSigCreatorVM(MethodSigCreatorOptions options)
-		{
+		public MethodSigCreatorVM(MethodSigCreatorOptions options) {
 			this.options = options.Clone();
 			this.title = options.TypeSigCreatorOptions.Title;
 			this.parametersCreateTypeSigArray = new CreateTypeSigArrayVM(options.TypeSigCreatorOptions.Clone(null), null);
@@ -211,8 +206,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			ReturnType = options.TypeSigCreatorOptions.OwnerModule.CorLibTypes.Void;
 		}
 
-		T CreateSig<T>(T sig) where T : MethodBaseSig
-		{
+		T CreateSig<T>(T sig) where T : MethodBaseSig {
 			sig.CallingConvention = CallingConvention;
 			sig.RetType = ReturnType;
 			sig.Params.AddRange(ParametersCreateTypeSigArray.TypeSigArray);
@@ -222,8 +216,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return sig;
 		}
 
-		void WriteSignature(MethodBaseSig sig)
-		{
+		void WriteSignature(MethodBaseSig sig) {
 			if (sig == null) {
 				CallingConvention = 0;
 				ReturnType = null;
@@ -243,8 +236,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		void AddReturnType()
-		{
+		void AddReturnType() {
 			if (typeSigCreator == null)
 				throw new InvalidOperationException();
 
@@ -254,8 +246,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				ReturnType = newTypeSig;
 		}
 
-		protected override string Verify(string columnName)
-		{
+		protected override string Verify(string columnName) {
 			if (columnName == "ReturnType")
 				return ReturnType != null ? string.Empty : "A return type is required";
 			return string.Empty;

@@ -18,26 +18,22 @@
 */
 
 using System.Windows;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.DnlibDialogs;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	sealed class EditGenericParam : IEdit<GenericParamVM>
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	sealed class EditGenericParam : IEdit<GenericParamVM> {
 		readonly Window ownerWindow;
 
 		public EditGenericParam()
-			: this(null)
-		{
+			: this(null) {
 		}
 
-		public EditGenericParam(Window ownerWindow)
-		{
+		public EditGenericParam(Window ownerWindow) {
 			this.ownerWindow = ownerWindow;
 		}
 
-		public GenericParamVM Edit(string title, GenericParamVM pd)
-		{
+		public GenericParamVM Edit(string title, GenericParamVM pd) {
 			var win = new GenericParamDlg();
 			if (title != null)
 				win.Title = title;

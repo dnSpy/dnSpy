@@ -21,10 +21,8 @@ using System;
 using System.Windows.Input;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Module
-{
-	sealed class NetModuleOptionsVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.Module {
+	sealed class NetModuleOptionsVM : ViewModelBase {
 		public string Name {
 			get { return name; }
 			set {
@@ -57,15 +55,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			get { return new RelayCommand(a => Mvid.Value = Guid.NewGuid()); }
 		}
 
-		public NetModuleOptionsVM(ModuleDef module = null)
-		{
+		public NetModuleOptionsVM(ModuleDef module = null) {
 			Name = "MyNetModule.netmodule";
 			mvid = new GuidVM(Guid.NewGuid(), a => HasErrorUpdated());
 			ClrVersion.SelectedItem = GetClrVersion(module);
 		}
 
-		static Module.ClrVersion GetClrVersion(ModuleDef module)
-		{
+		static Module.ClrVersion GetClrVersion(ModuleDef module) {
 			if (module == null)
 				return Module.ClrVersion.DefaultVersion;
 
@@ -77,8 +73,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			return Module.ClrVersion.DefaultVersion;
 		}
 
-		public NetModuleOptions CreateNetModuleOptions()
-		{
+		public NetModuleOptions CreateNetModuleOptions() {
 			var options = new NetModuleOptions();
 			options.Name = Name ?? UTF8String.Empty;
 			options.ClrVersion = (ClrVersion)ClrVersion.SelectedItem;

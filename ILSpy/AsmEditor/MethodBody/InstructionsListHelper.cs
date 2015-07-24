@@ -28,30 +28,26 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.ViewHelpers;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes.Filters;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	sealed class InstructionsListHelper : ListBoxHelperBase<InstructionVM>, IEditOperand, ISelectItems<InstructionVM>
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	sealed class InstructionsListHelper : ListBoxHelperBase<InstructionVM>, IEditOperand, ISelectItems<InstructionVM> {
 		CilBodyVM cilBodyVM;
 
 		public InstructionsListHelper(ListView listView, Window ownerWindow)
-			: base(listView, "Instruction")
-		{
+			: base(listView, "Instruction") {
 		}
 
-		protected override InstructionVM[] GetSelectedItems()
-		{
+		protected override InstructionVM[] GetSelectedItems() {
 			return listBox.SelectedItems.Cast<InstructionVM>().ToArray();
 		}
 
-		protected override void OnDataContextChangedInternal(object dataContext)
-		{
+		protected override void OnDataContextChangedInternal(object dataContext) {
 			this.cilBodyVM = ((MethodBodyVM)dataContext).CilBodyVM;
 			this.cilBodyVM.SelectItems = this;
 			this.coll = cilBodyVM.InstructionsListVM;
@@ -135,8 +131,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			});
 		}
 
-		void CopyOffsets(ulong baseOffset, InstructionVM[] instrs)
-		{
+		void CopyOffsets(ulong baseOffset, InstructionVM[] instrs) {
 			var sb = new StringBuilder();
 
 			int lines = 0;
@@ -153,28 +148,23 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 				Clipboard.SetText(text);
 		}
 
-		void CopyInstructionRVA(InstructionVM[] instrs)
-		{
+		void CopyInstructionRVA(InstructionVM[] instrs) {
 			CopyOffsets(cilBodyVM.RVA.Value, instrs);
 		}
 
-		bool CopyInstructionRVACanExecute(InstructionVM[] instrs)
-		{
+		bool CopyInstructionRVACanExecute(InstructionVM[] instrs) {
 			return !cilBodyVM.RVA.HasError && instrs.Length > 0;
 		}
 
-		void CopyInstructionFileOffset(InstructionVM[] instrs)
-		{
+		void CopyInstructionFileOffset(InstructionVM[] instrs) {
 			CopyOffsets(cilBodyVM.FileOffset.Value, instrs);
 		}
 
-		bool CopyInstructionFileOffsetCanExecute(InstructionVM[] instrs)
-		{
+		bool CopyInstructionFileOffsetCanExecute(InstructionVM[] instrs) {
 			return !cilBodyVM.FileOffset.HasError && instrs.Length > 0;
 		}
 
-		void CopyOperandMDTokens(InstructionVM[] instrs)
-		{
+		void CopyOperandMDTokens(InstructionVM[] instrs) {
 			var sb = new StringBuilder();
 
 			int lines = 0;
@@ -195,13 +185,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 				Clipboard.SetText(text);
 		}
 
-		bool CopyOperandMDTokensCanExecute(InstructionVM[] instrs)
-		{
+		bool CopyOperandMDTokensCanExecute(InstructionVM[] instrs) {
 			return instrs.Any(a => GetOperandMDToken(a.InstructionOperandVM) != null);
 		}
 
-		static uint? GetOperandMDToken(InstructionOperandVM op)
-		{
+		static uint? GetOperandMDToken(InstructionOperandVM op) {
 			switch (op.InstructionOperandType) {
 			case InstructionOperandType.None:
 			case InstructionOperandType.SByte:
@@ -233,26 +221,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			}
 		}
 
-		void coll_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
+		void coll_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			if (e.NewItems != null)
 				InitializeInstructions(e.NewItems);
 		}
 
-		void InitializeInstructions(System.Collections.IList list)
-		{
+		void InitializeInstructions(System.Collections.IList list) {
 			foreach (InstructionVM instr in list)
 				instr.InstructionOperandVM.EditOperand = this;
 		}
 
-		protected override void CopyItemsAsText(InstructionVM[] instrs)
-		{
+		protected override void CopyItemsAsText(InstructionVM[] instrs) {
 			Array.Sort(instrs, (a, b) => a.Index.CompareTo(b.Index));
 			CopyItemsAsTextToClipboard(instrs);
 		}
 
-		public static void CopyItemsAsTextToClipboard(InstructionVM[] instrs)
-		{
+		public static void CopyItemsAsTextToClipboard(InstructionVM[] instrs) {
 			var output = new PlainTextOutput();
 
 			for (int i = 0; i < instrs.Length; i++) {
@@ -318,7 +302,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 					BodyUtils.WriteObject(output, instr.InstructionOperandVM.Value);
 					break;
 
-				default: throw new InvalidOperationException();
+				default:
+					throw new InvalidOperationException();
 				}
 			}
 			if (instrs.Length > 1)
@@ -328,8 +313,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		}
 
 		[Flags]
-		enum MenuCommandFlags
-		{
+		enum MenuCommandFlags {
 			FieldDef		= 0x00000001,
 			FieldMemberRef	= 0x00000002,
 			MethodDef		= 0x00000004,
@@ -340,8 +324,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			TypeSpec		= 0x00000080,
 		}
 
-		void ShowMenu(object parameter, InstructionOperandVM opvm, MenuCommandFlags flags)
-		{
+		void ShowMenu(object parameter, InstructionOperandVM opvm, MenuCommandFlags flags) {
 			var ctxMenu = new ContextMenu();
 
 			MenuItem menuItem;
@@ -397,16 +380,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			ctxMenu.IsOpen = true;
 		}
 
-		void AddFieldDef(InstructionOperandVM opvm)
-		{
+		void AddFieldDef(InstructionOperandVM opvm) {
 			var picker = new DnlibTypePicker(Window.GetWindow(listBox));
 			var field = picker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.FieldDef), opvm.Other as IField, cilBodyVM.OwnerModule);
 			if (field != null)
 				opvm.Other = field;
 		}
 
-		void AddFieldMemberRef(InstructionOperandVM opvm)
-		{
+		void AddFieldMemberRef(InstructionOperandVM opvm) {
 			MemberRef mr = opvm.Other as MemberRef;
 			var fd = opvm.Other as FieldDef;
 			if (fd != null)
@@ -416,16 +397,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			AddMemberRef(opvm, mr, true);
 		}
 
-		void AddMethodDef(InstructionOperandVM opvm)
-		{
+		void AddMethodDef(InstructionOperandVM opvm) {
 			var picker = new DnlibTypePicker(Window.GetWindow(listBox));
 			var method = picker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.MethodDef), opvm.Other as IMethod, cilBodyVM.OwnerModule);
 			if (method != null)
 				opvm.Other = method;
 		}
 
-		void AddMethodMemberRef(InstructionOperandVM opvm)
-		{
+		void AddMethodMemberRef(InstructionOperandVM opvm) {
 			MemberRef mr = opvm.Other as MemberRef;
 			var md = opvm.Other as MethodDef;
 			var ms = opvm.Other as MethodSpec;
@@ -440,8 +419,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			AddMemberRef(opvm, mr, false);
 		}
 
-		void AddMemberRef(InstructionOperandVM opvm, MemberRef mr, bool isField)
-		{
+		void AddMemberRef(InstructionOperandVM opvm, MemberRef mr, bool isField) {
 			var opts = mr == null ? new MemberRefOptions() : new MemberRefOptions(mr);
 			var vm = new MemberRefVM(opts, cilBodyVM.TypeSigCreatorOptions, isField);
 			var creator = new EditMemberRef(Window.GetWindow(listBox));
@@ -453,8 +431,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			opvm.Other = vm.CreateMemberRefOptions().Create(cilBodyVM.OwnerModule);
 		}
 
-		void AddMethodSpec(InstructionOperandVM opvm)
-		{
+		void AddMethodSpec(InstructionOperandVM opvm) {
 			var ms = opvm.Other as MethodSpec;
 			var opts = ms == null ? new MethodSpecOptions() : new MethodSpecOptions(ms);
 			var vm = new MethodSpecVM(opts, cilBodyVM.TypeSigCreatorOptions);
@@ -466,16 +443,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			opvm.Other = vm.CreateMethodSpecOptions().Create(cilBodyVM.OwnerModule);
 		}
 
-		void AddType(InstructionOperandVM opvm)
-		{
+		void AddType(InstructionOperandVM opvm) {
 			var picker = new DnlibTypePicker(Window.GetWindow(listBox));
 			var type = picker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.TypeDef), opvm.Other as ITypeDefOrRef, cilBodyVM.OwnerModule);
 			if (type != null)
 				opvm.Other = type;
 		}
 
-		void AddTypeSpec(InstructionOperandVM opvm)
-		{
+		void AddTypeSpec(InstructionOperandVM opvm) {
 			var creator = new TypeSigCreator(Window.GetWindow(listBox));
 			var opts = cilBodyVM.TypeSigCreatorOptions.Clone("Create a TypeSpec");
 			bool canceled;
@@ -486,8 +461,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			opvm.Other = newSig.ToTypeDefOrRef();
 		}
 
-		void EditMethodSig(InstructionOperandVM opvm)
-		{
+		void EditMethodSig(InstructionOperandVM opvm) {
 			var creator = new CreateMethodPropertySig(Window.GetWindow(listBox));
 			var opts = new MethodSigCreatorOptions(cilBodyVM.TypeSigCreatorOptions.Clone("Create MethodSig"));
 			opts.CanHaveSentinel = true;
@@ -496,8 +470,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 				opvm.Other = sig;
 		}
 
-		void EditSwitchOperand(InstructionOperandVM opvm)
-		{
+		void EditSwitchOperand(InstructionOperandVM opvm) {
 			var data = new SwitchOperandVM(cilBodyVM.InstructionsListVM, opvm.Other as InstructionVM[]);
 			var win = new SwitchOperandDlg();
 			win.DataContext = data;
@@ -508,8 +481,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			opvm.Other = data.GetSwitchList();
 		}
 
-		void IEditOperand.Edit(object parameter, InstructionOperandVM opvm)
-		{
+		void IEditOperand.Edit(object parameter, InstructionOperandVM opvm) {
 			MenuCommandFlags flags;
 			switch (opvm.InstructionOperandType) {
 			case InstructionOperandType.Field:
@@ -547,8 +519,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			}
 		}
 
-		public void Select(IEnumerable<InstructionVM> items)
-		{
+		public void Select(IEnumerable<InstructionVM> items) {
 			var instrs = items.ToArray();
 			if (instrs.Length == 0)
 				return;

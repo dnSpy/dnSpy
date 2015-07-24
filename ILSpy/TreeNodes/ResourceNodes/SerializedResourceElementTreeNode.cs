@@ -17,19 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Input;
 using dnlib.DotNet.Resources;
-using ICSharpCode.ILSpy.AsmEditor;
+using dnSpy.AsmEditor;
+using dnSpy.AsmEditor.Resources;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Base class of serialized resources
 	/// </summary>
@@ -125,7 +122,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			if (!Options.OtherSettings.Instance.DeserializeResources)
 				return obj.ToString();
 
-			return AsmEditor.Resources.SerializationUtils.ConvertObjectToString(obj);
+			return SerializationUtils.ConvertObjectToString(obj);
 		}
 
 		public override void UpdateData(ResourceElement newResElem)

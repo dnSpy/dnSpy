@@ -19,27 +19,22 @@
 
 using System.Windows;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.DnlibDialogs;
 using ICSharpCode.ILSpy.TreeNodes.Filters;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	sealed class EditMethodOverride : IEdit<MethodOverrideVM>
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	sealed class EditMethodOverride : IEdit<MethodOverrideVM> {
 		readonly Window ownerWindow;
 
 		public EditMethodOverride()
-			: this(null)
-		{
+			: this(null) {
 		}
 
-		public EditMethodOverride(Window ownerWindow)
-		{
+		public EditMethodOverride(Window ownerWindow) {
 			this.ownerWindow = ownerWindow;
 		}
 
-		public MethodOverrideVM Edit(string title, MethodOverrideVM mo)
-		{
+		public MethodOverrideVM Edit(string title, MethodOverrideVM mo) {
 			var dnlibPicker = new DnlibTypePicker(ownerWindow);
 			var method = dnlibPicker.GetDnlibType<IMethodDefOrRef>(new FlagsTreeViewNodeFilter(VisibleMembersFlags.MethodDef), mo.MethodDeclaration, mo.OwnerModule);
 			if (method == null)

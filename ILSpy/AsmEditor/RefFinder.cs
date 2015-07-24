@@ -20,10 +20,8 @@
 using System.Collections.Generic;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
-	static class RefFinder
-	{
+namespace dnSpy.AsmEditor {
+	static class RefFinder {
 		const SigComparerOptions SigComparerOptionsFlags =
 			SigComparerOptions.CompareDeclaringTypes |
 			SigComparerOptions.CompareAssemblyPublicKeyToken |
@@ -34,8 +32,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		public static readonly FieldEqualityComparer FieldEqualityComparerInstance = new FieldEqualityComparer(SigComparerOptionsFlags);
 		public static readonly MethodEqualityComparer MethodEqualityComparerInstance = new MethodEqualityComparer(SigComparerOptionsFlags);
 
-		public static IEnumerable<AssemblyRef> FindAssemblyRefsToThisModule(ModuleDef module)
-		{
+		public static IEnumerable<AssemblyRef> FindAssemblyRefsToThisModule(ModuleDef module) {
 			if (!module.IsManifestModule)
 				yield break;
 			var asm = module.Assembly;
@@ -51,16 +48,14 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		// Returns type refs that reference this module. Can return type refs that reference some
 		// other assembly too.
-		public static IEnumerable<TypeRef> FindTypeRefsToThisModule(ModuleDef module)
-		{
+		public static IEnumerable<TypeRef> FindTypeRefsToThisModule(ModuleDef module) {
 			var finder = new MemberFinder().FindAll(module);
 			return finder.TypeRefs.Keys;
 		}
 
 		// Returns member refs that reference this module. Can return member refs that reference some
 		// other assembly too.
-		public static IEnumerable<MemberRef> FindMemberRefsToThisModule(ModuleDef module)
-		{
+		public static IEnumerable<MemberRef> FindMemberRefsToThisModule(ModuleDef module) {
 			var finder = new MemberFinder().FindAll(module);
 			return finder.MemberRefs.Keys;
 		}

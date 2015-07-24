@@ -21,12 +21,9 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
-	sealed class MyObservableCollection<T> : ObservableCollection<T>
-	{
-		void OnPropertyChanged(string propName)
-		{
+namespace dnSpy.AsmEditor {
+	sealed class MyObservableCollection<T> : ObservableCollection<T> {
+		void OnPropertyChanged(string propName) {
 			OnPropertyChanged(new PropertyChangedEventArgs(propName));
 		}
 
@@ -64,8 +61,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			get { return new RelayCommand(a => MoveSelectedDown(), a => MoveSelectedDownCanExecute()); }
 		}
 
-		void RemoveSelected()
-		{
+		void RemoveSelected() {
 			if (!RemoveSelectedCanExecute())
 				return;
 			int index = SelectedIndex;
@@ -78,13 +74,11 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				SelectedIndex = -1;
 		}
 
-		bool RemoveSelectedCanExecute()
-		{
+		bool RemoveSelectedCanExecute() {
 			return IsEnabled && SelectedIndex >= 0 && SelectedIndex < this.Count;
 		}
 
-		void MoveSelectedUp()
-		{
+		void MoveSelectedUp() {
 			if (!MoveSelectedUpCanExecute())
 				return;
 			int index = SelectedIndex;
@@ -94,13 +88,11 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			SelectedIndex = index - 1;
 		}
 
-		bool MoveSelectedUpCanExecute()
-		{
+		bool MoveSelectedUpCanExecute() {
 			return IsEnabled && SelectedIndex > 0 && SelectedIndex < this.Count;
 		}
 
-		void MoveSelectedDown()
-		{
+		void MoveSelectedDown() {
 			if (!MoveSelectedDownCanExecute())
 				return;
 			int index = SelectedIndex;
@@ -110,8 +102,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			SelectedIndex = index + 1;
 		}
 
-		bool MoveSelectedDownCanExecute()
-		{
+		bool MoveSelectedDownCanExecute() {
 			return IsEnabled && SelectedIndex >= 0 && SelectedIndex < this.Count - 1;
 		}
 	}

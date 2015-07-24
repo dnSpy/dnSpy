@@ -20,25 +20,21 @@
 using System.Windows;
 using System.Windows.Forms;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	sealed class OpenPublicKeyFile : IOpenPublicKeyFile
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	sealed class OpenPublicKeyFile : IOpenPublicKeyFile {
 		readonly Window ownerWindow;
 
 		public OpenPublicKeyFile()
-			: this(null)
-		{
+			: this(null) {
 		}
 
-		public OpenPublicKeyFile(Window ownerWindow)
-		{
+		public OpenPublicKeyFile(Window ownerWindow) {
 			this.ownerWindow = ownerWindow;
 		}
 
-		public PublicKey Open()
-		{
+		public PublicKey Open() {
 			var dialog = new OpenFileDialog() {
 				Filter = "Strong Name Key Files (*.snk)|*.snk|All files (*.*)|*.*",
 				RestoreDirectory = true,

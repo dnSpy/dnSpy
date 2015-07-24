@@ -17,15 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.Method
-{
+namespace dnSpy.AsmEditor.Method {
 	/// <summary>
 	/// Interaction logic for MethodOptionsDlg.xaml
 	/// </summary>
-	public partial class MethodOptionsDlg : WindowBase
-	{
-		public MethodOptionsDlg()
-		{
+	public partial class MethodOptionsDlg : WindowBase {
+		public MethodOptionsDlg() {
 			InitializeComponent();
 		}
 	}

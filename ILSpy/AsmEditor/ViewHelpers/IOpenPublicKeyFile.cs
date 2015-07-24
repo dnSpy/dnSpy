@@ -19,10 +19,8 @@
 
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	interface IOpenPublicKeyFile
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	interface IOpenPublicKeyFile {
 		/// <summary>
 		/// Lets the user pick a public key file to open and returns it to the caller. Returns null
 		/// if the user didn't open a public key file.

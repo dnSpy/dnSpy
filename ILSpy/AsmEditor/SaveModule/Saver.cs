@@ -20,24 +20,20 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
-{
-	static class Saver
-	{
-		public static bool AskUserToSaveIfModified(AssemblyTreeNode asmNode)
-		{
+namespace dnSpy.AsmEditor.SaveModule {
+	static class Saver {
+		public static bool AskUserToSaveIfModified(AssemblyTreeNode asmNode) {
 			return AskUserToSaveIfModified(new[] { asmNode.LoadedAssembly });
 		}
 
-		public static bool AskUserToSaveIfModified(IEnumerable<AssemblyTreeNode> asmNodes)
-		{
+		public static bool AskUserToSaveIfModified(IEnumerable<AssemblyTreeNode> asmNodes) {
 			return AskUserToSaveIfModified(asmNodes.Select(n => n.LoadedAssembly));
 		}
 
-		public static bool AskUserToSaveIfModified(IEnumerable<LoadedAssembly> asmNodes)
-		{
+		public static bool AskUserToSaveIfModified(IEnumerable<LoadedAssembly> asmNodes) {
 			var modifiedAsms = asmNodes.Where(n => UndoCommandManager.Instance.IsModified(n)).Distinct().ToArray();
 			if (modifiedAsms.Length == 0)
 				return true;
@@ -56,8 +52,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		/// </summary>
 		/// <param name="asms">All assemblies to save</param>
 		/// <returns></returns>
-		public static bool SaveAssemblies(IEnumerable<LoadedAssembly> asms)
-		{
+		public static bool SaveAssemblies(IEnumerable<LoadedAssembly> asms) {
 			var asmsAry = asms.ToArray();
 			if (asmsAry.Length == 0)
 				return true;
@@ -89,8 +84,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			}
 		}
 
-		static bool MarkAsSaved(SaveMultiModuleVM vm, LoadedAssembly[] asms)
-		{
+		static bool MarkAsSaved(SaveMultiModuleVM vm, LoadedAssembly[] asms) {
 			bool setNewFileName = false;
 			bool allSaved = true;
 			foreach (var asm in asms) {

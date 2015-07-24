@@ -19,17 +19,14 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
 	/// Interaction logic for CANamedArgumentControl.xaml
 	/// </summary>
-	public partial class CANamedArgumentControl : UserControl
-	{
-		public CANamedArgumentControl()
-		{
+	public partial class CANamedArgumentControl : UserControl {
+		public CANamedArgumentControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as CANamedArgumentVM;

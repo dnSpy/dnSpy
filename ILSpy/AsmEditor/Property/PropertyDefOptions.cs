@@ -19,11 +19,10 @@
 
 using System.Collections.Generic;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Property
-{
-	sealed class PropertyDefOptions
-	{
+namespace dnSpy.AsmEditor.Property {
+	sealed class PropertyDefOptions {
 		public PropertyAttributes Attributes;
 		public UTF8String Name;
 		public PropertySig PropertySig;
@@ -33,12 +32,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 		public List<MethodDef> OtherMethods = new List<MethodDef>();
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
-		public PropertyDefOptions()
-		{
+		public PropertyDefOptions() {
 		}
 
-		public PropertyDefOptions(PropertyDef prop)
-		{
+		public PropertyDefOptions(PropertyDef prop) {
 			this.Attributes = prop.Attributes;
 			this.Name = prop.Name;
 			this.PropertySig = prop.PropertySig;
@@ -49,8 +46,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			this.CustomAttributes.AddRange(prop.CustomAttributes);
 		}
 
-		public PropertyDef CopyTo(PropertyDef prop)
-		{
+		public PropertyDef CopyTo(PropertyDef prop) {
 			prop.Attributes = this.Attributes;
 			prop.Name = this.Name ?? UTF8String.Empty;
 			prop.PropertySig = this.PropertySig;
@@ -66,13 +62,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			return prop;
 		}
 
-		public PropertyDef CreatePropertyDef(ModuleDef ownerModule)
-		{
+		public PropertyDef CreatePropertyDef(ModuleDef ownerModule) {
 			return ownerModule.UpdateRowId(CopyTo(new PropertyDefUser()));
 		}
 
-		public static PropertyDefOptions Create(ModuleDef module, UTF8String name, bool isInstance)
-		{
+		public static PropertyDefOptions Create(ModuleDef module, UTF8String name, bool isInstance) {
 			return new PropertyDefOptions {
 				Attributes = 0,
 				Name = name,

@@ -22,11 +22,10 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class ParamDefVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class ParamDefVM : ViewModelBase {
 		readonly ParamDefOptions origOptions;
 
 		public ICommand ReinitializeCommand {
@@ -95,13 +94,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			set { SetFlagValue(ParamAttributes.HasFieldMarshal, value); }
 		}
 
-		bool GetFlagValue(ParamAttributes flag)
-		{
+		bool GetFlagValue(ParamAttributes flag) {
 			return (Attributes & flag) != 0;
 		}
 
-		void SetFlagValue(ParamAttributes flag, bool value)
-		{
+		void SetFlagValue(ParamAttributes flag, bool value) {
 			if (value)
 				Attributes |= flag;
 			else
@@ -150,8 +147,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		readonly ModuleDef ownerModule;
 
-		public ParamDefVM(ParamDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
-		{
+		public ParamDefVM(ParamDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod) {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
 			this.sequence = new UInt16VM(a => { OnPropertyChanged("FullName"); HasErrorUpdated(); });
@@ -166,15 +162,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			Reinitialize();
 		}
 
-		void constantVM_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void constantVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "IsEnabled")
 				HasDefault = ConstantVM.IsEnabled;
 			HasErrorUpdated();
 		}
 
-		void marshalTypeVM_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void marshalTypeVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "IsEnabled")
 				HasFieldMarshal = MarshalTypeVM.IsEnabled;
 			else if (e.PropertyName == "TypeString")
@@ -182,18 +176,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			HasErrorUpdated();
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public ParamDefOptions CreateParamDefOptions()
-		{
+		public ParamDefOptions CreateParamDefOptions() {
 			return CopyTo(new ParamDefOptions());
 		}
 
-		void InitializeFrom(ParamDefOptions options)
-		{
+		void InitializeFrom(ParamDefOptions options) {
 			Name = options.Name;
 			Sequence.Value = options.Sequence;
 			Attributes = options.Attributes;
@@ -209,8 +200,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 
-		ParamDefOptions CopyTo(ParamDefOptions options)
-		{
+		ParamDefOptions CopyTo(ParamDefOptions options) {
 			options.Name = Name;
 			options.Sequence = Sequence.Value;
 			options.Attributes = Attributes;

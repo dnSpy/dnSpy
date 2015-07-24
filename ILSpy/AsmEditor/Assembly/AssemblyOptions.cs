@@ -20,11 +20,10 @@
 using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Assembly
-{
-	sealed class AssemblyOptions
-	{
+namespace dnSpy.AsmEditor.Assembly {
+	sealed class AssemblyOptions {
 		public AssemblyHashAlgorithm HashAlgorithm;
 		public Version Version;
 		public AssemblyAttributes Attributes;
@@ -35,12 +34,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 		public List<DeclSecurity> DeclSecurities = new List<DeclSecurity>();
 
-		public AssemblyOptions()
-		{
+		public AssemblyOptions() {
 		}
 
-		public AssemblyOptions(AssemblyDef asm)
-		{
+		public AssemblyOptions(AssemblyDef asm) {
 			this.HashAlgorithm = asm.HashAlgorithm;
 			this.Version = asm.Version;
 			this.Attributes = asm.Attributes;
@@ -52,8 +49,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			this.DeclSecurities.AddRange(asm.DeclSecurities);
 		}
 
-		public AssemblyDef CopyTo(AssemblyDef asm)
-		{
+		public AssemblyDef CopyTo(AssemblyDef asm) {
 			asm.HashAlgorithm = this.HashAlgorithm;
 			asm.Version = this.Version;
 			asm.Attributes = this.Attributes;
@@ -67,13 +63,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			return asm;
 		}
 
-		public AssemblyDef CreateAssemblyDef(ModuleDef ownerModule)
-		{
+		public AssemblyDef CreateAssemblyDef(ModuleDef ownerModule) {
 			return ownerModule.UpdateRowId(CopyTo(new AssemblyDefUser()));
 		}
 
-		public static AssemblyOptions Create(string name)
-		{
+		public static AssemblyOptions Create(string name) {
 			return new AssemblyOptions {
 				HashAlgorithm = AssemblyHashAlgorithm.SHA1,
 				Version = new Version(0, 0, 0, 0),

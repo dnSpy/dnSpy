@@ -18,12 +18,10 @@
 */
 
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.DnlibDialogs;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	interface ITypeSigCreator
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	interface ITypeSigCreator {
 		/// <summary>
 		/// Creates a TypeSig
 		/// </summary>

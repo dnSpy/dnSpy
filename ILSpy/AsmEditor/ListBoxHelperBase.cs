@@ -25,11 +25,10 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
-	abstract class ListBoxHelperBase<T> where T : class, IIndexedItem
-	{
+namespace dnSpy.AsmEditor {
+	abstract class ListBoxHelperBase<T> where T : class, IIndexedItem {
 		readonly string menuTypeName;
 		protected readonly ListBox listBox;
 		protected IndexObservableCollection<T> coll;
@@ -38,32 +37,27 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		// Data on the clipboard must be serializable but our data isn't and would require too
 		// much work to fix so store the copied data here and serializable data in the clipboard.
 		T[] copiedData;
-		readonly int copiedDataId;	// unique id per instance
+		readonly int copiedDataId;  // unique id per instance
 		static int classCopiedDataId;
 		static readonly string DataFormat = typeof(ListBoxHelperBase<T>).ToString();
 		[Serializable]
-		sealed class ClipboardData
-		{
+		sealed class ClipboardData {
 			public readonly int Id;
-			public ClipboardData(int id)
-			{
+			public ClipboardData(int id) {
 				this.Id = id;
 			}
 		}
 
-		sealed class MyCommand : ICommand
-		{
+		sealed class MyCommand : ICommand {
 			readonly ListBoxHelperBase<T> owner;
 			readonly ICommand cmd;
 
-			public MyCommand(ListBoxHelperBase<T> owner, ICommand cmd)
-			{
+			public MyCommand(ListBoxHelperBase<T> owner, ICommand cmd) {
 				this.owner = owner;
 				this.cmd = cmd;
 			}
 
-			public bool CanExecute(object parameter)
-			{
+			public bool CanExecute(object parameter) {
 				return cmd.CanExecute(owner.GetSelectedItems());
 			}
 
@@ -72,8 +66,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				remove { CommandManager.RequerySuggested -= value; }
 			}
 
-			public void Execute(object parameter)
-			{
+			public void Execute(object parameter) {
 				cmd.Execute(owner.GetSelectedItems());
 			}
 		}
@@ -82,13 +75,11 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		protected abstract void CopyItemsAsText(T[] items);
 		protected abstract void OnDataContextChangedInternal(object dataContext);
 
-		protected virtual bool CopyItemsAsTextCanExecute(T[] items)
-		{
+		protected virtual bool CopyItemsAsTextCanExecute(T[] items) {
 			return items.Length > 0;
 		}
 
-		protected ListBoxHelperBase(ListBox listBox, string menuTypeName)
-		{
+		protected ListBoxHelperBase(ListBox listBox, string menuTypeName) {
 			this.menuTypeName = menuTypeName;
 			this.listBox = listBox;
 			this.listBox.ContextMenu = new ContextMenu();
@@ -96,18 +87,15 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			this.copiedDataId = Interlocked.Increment(ref classCopiedDataId);
 		}
 
-		protected void AddSeparator()
-		{
+		protected void AddSeparator() {
 			contextMenuHandlers.Add(null);
 		}
 
-		protected void Add(ContextMenuHandler handler)
-		{
+		protected void Add(ContextMenuHandler handler) {
 			contextMenuHandlers.Add(handler);
 		}
 
-		protected void AddStandardMenuHandlers(string addNewItemIcon = null)
-		{
+		protected void AddStandardMenuHandlers(string addNewItemIcon = null) {
 			AddAddNewItemHandlers(addNewItemIcon);
 			AddSeparator();
 			AddMoveItemHandlers();
@@ -117,8 +105,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			AddCopyHandlers();
 		}
 
-		protected void AddAddNewItemHandlers(string addNewItemIcon = null)
-		{
+		protected void AddAddNewItemHandlers(string addNewItemIcon = null) {
 			if (!coll.CanCreateNewItems)
 				return;
 			Add(new ContextMenuHandler {
@@ -146,8 +133,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			});
 		}
 
-		protected void AddMoveItemHandlers()
-		{
+		protected void AddMoveItemHandlers() {
 			if (!coll.CanMoveItems)
 				return;
 			Add(new ContextMenuHandler {
@@ -168,8 +154,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			});
 		}
 
-		protected void AddRemoveItemHandlers()
-		{
+		protected void AddRemoveItemHandlers() {
 			if (!coll.CanRemoveItems)
 				return;
 			Add(new ContextMenuHandler {
@@ -191,8 +176,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			});
 		}
 
-		protected void AddCopyHandlers()
-		{
+		protected void AddCopyHandlers() {
 			Add(new ContextMenuHandler {
 				Header = "Copy as Te_xt",
 				Command = new RelayCommand(a => CopyItemsAsText((T[])a), a => CopyItemsAsTextCanExecute((T[])a)),
@@ -235,8 +219,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			});
 		}
 
-		public void OnDataContextChanged(object dataContext)
-		{
+		public void OnDataContextChanged(object dataContext) {
 			if (coll != null)
 				throw new InvalidOperationException("DataContext changed more than once");
 
@@ -256,8 +239,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			}
 		}
 
-		void listBox_KeyDown(object sender, KeyEventArgs e)
-		{
+		void listBox_KeyDown(object sender, KeyEventArgs e) {
 			if (e.OriginalSource is TextBox || e.OriginalSource is ComboBox || e.OriginalSource is ComboBoxItem)
 				return;
 
@@ -284,8 +266,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			}
 		}
 
-		static void ShowContextMenu(ContextMenuEventArgs e, ListBox listBox, IList<ContextMenuHandler> handlers, object parameter)
-		{
+		static void ShowContextMenu(ContextMenuEventArgs e, ListBox listBox, IList<ContextMenuHandler> handlers, object parameter) {
 			var ctxMenu = new ContextMenu();
 
 			bool addSep = false;
@@ -319,22 +300,19 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				e.Handled = true;
 		}
 
-		void AddToClipboard(T[] items)
-		{
+		void AddToClipboard(T[] items) {
 			copiedData = items;
 			Clipboard.SetDataObject(new DataObject(DataFormat, new ClipboardData(copiedDataId)), false);
 		}
 
-		static T[] SortClipboardItems(T[] items)
-		{
+		static T[] SortClipboardItems(T[] items) {
 			// We must sort the items since they're not sorted when you'd think they're
 			// sorted, eg. when pressing Ctrl+A to select everything.
 			Array.Sort(items, (a, b) => a.Index.CompareTo(b.Index));
 			return items;
 		}
 
-		void CutItems(T[] items)
-		{
+		void CutItems(T[] items) {
 			var list = SortClipboardItems(items).ToList();
 			for (int i = list.Count - 1; i >= 0; i--) {
 				var item = list[i];
@@ -344,28 +322,23 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			AddToClipboard(items);
 		}
 
-		bool CutItemsCanExecute(T[] items)
-		{
+		bool CutItemsCanExecute(T[] items) {
 			return items.Length > 0;
 		}
 
-		static T[] CloneData(T[] items)
-		{
+		static T[] CloneData(T[] items) {
 			return items.Select(a => (T)a.Clone()).ToArray();
 		}
 
-		void CopyItems(T[] items)
-		{
+		void CopyItems(T[] items) {
 			AddToClipboard(CloneData(SortClipboardItems(items)));
 		}
 
-		bool CopyItemsCanExecute(T[] items)
-		{
+		bool CopyItemsCanExecute(T[] items) {
 			return items.Length > 0;
 		}
 
-		int GetPasteIndex(int relIndex)
-		{
+		int GetPasteIndex(int relIndex) {
 			int index = listBox.SelectedIndex;
 			if (index < 0 || index > coll.Count)
 				index = coll.Count;
@@ -375,8 +348,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return index;
 		}
 
-		ClipboardData GetClipboardData()
-		{
+		ClipboardData GetClipboardData() {
 			if (copiedData == null)
 				return null;
 			if (!Clipboard.ContainsData(DataFormat))
@@ -390,8 +362,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return data;
 		}
 
-		void PasteItems(int relIndex)
-		{
+		void PasteItems(int relIndex) {
 			var data = GetClipboardData();
 			if (data == null)
 				return;
@@ -403,23 +374,19 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			copiedData = CloneData(copiedData);
 		}
 
-		void PasteItems()
-		{
+		void PasteItems() {
 			PasteItems(0);
 		}
 
-		bool PasteItemsCanExecute()
-		{
+		bool PasteItemsCanExecute() {
 			return GetClipboardData() != null;
 		}
 
-		void PasteAfterItems()
-		{
+		void PasteAfterItems() {
 			PasteItems(1);
 		}
 
-		bool PasteAfterItemsCanExecute()
-		{
+		bool PasteAfterItemsCanExecute() {
 			return listBox.SelectedIndex >= 0 &&
 				GetClipboardData() != null;
 		}

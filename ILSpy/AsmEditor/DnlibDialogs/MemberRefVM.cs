@@ -22,13 +22,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes.Filters;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class MemberRefVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class MemberRefVM : ViewModelBase {
 		readonly MemberRefOptions origOptions;
 
 		public IDnlibTypePicker DnlibTypePicker {
@@ -127,8 +126,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		readonly TypeSigCreatorOptions typeSigCreatorOptions;
 
-		public MemberRefVM(MemberRefOptions options, TypeSigCreatorOptions typeSigCreatorOptions, bool isField)
-		{
+		public MemberRefVM(MemberRefOptions options, TypeSigCreatorOptions typeSigCreatorOptions, bool isField) {
 			this.isField = isField;
 			this.typeSigCreatorOptions = typeSigCreatorOptions.Clone();
 			this.origOptions = options;
@@ -150,8 +148,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			Reinitialize();
 		}
 
-		void InitializeFromField()
-		{
+		void InitializeFromField() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 			var newField = dnlibTypePicker.GetDnlibType<IField>(new FlagsTreeViewNodeFilter(VisibleMembersFlags.FieldDef), null, typeSigCreatorOptions.OwnerModule);
@@ -159,8 +156,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				InitializeFrom(new MemberRefOptions(typeSigCreatorOptions.OwnerModule.Import(newField)));
 		}
 
-		void InitializeFromMethod()
-		{
+		void InitializeFromMethod() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 			var newMethod = dnlibTypePicker.GetDnlibType<IMethod>(new FlagsTreeViewNodeFilter(VisibleMembersFlags.MethodDef), null, typeSigCreatorOptions.OwnerModule);
@@ -171,8 +167,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		void PickType()
-		{
+		void PickType() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 			var newType = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.TypeDef), Class as ITypeDefOrRef, typeSigCreatorOptions.OwnerModule);
@@ -180,8 +175,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				Class = newType;
 		}
 
-		void PickTypeSpec()
-		{
+		void PickTypeSpec() {
 			if (typeSigCreator == null)
 				throw new InvalidOperationException();
 			bool canceled;
@@ -190,8 +184,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				Class = newType.ToTypeDefOrRef();
 		}
 
-		void PickMethodDef()
-		{
+		void PickMethodDef() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 			var newMethod = dnlibTypePicker.GetDnlibType(new SameAssemblyTreeViewNodeFilter(typeSigCreatorOptions.OwnerModule, new FlagsTreeViewNodeFilter(VisibleMembersFlags.MethodDef)), Class as IMethod, typeSigCreatorOptions.OwnerModule);
@@ -203,8 +196,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		void PickModuleRef()
-		{
+		void PickModuleRef() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 			var loadedAsm = dnlibTypePicker.GetDnlibType<LoadedAssembly>(new SameAssemblyTreeViewNodeFilter(typeSigCreatorOptions.OwnerModule, new FlagsTreeViewNodeFilter(VisibleMembersFlags.ModuleDef)), null, typeSigCreatorOptions.OwnerModule);
@@ -217,18 +209,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public MemberRefOptions CreateMemberRefOptions()
-		{
+		public MemberRefOptions CreateMemberRefOptions() {
 			return CopyTo(new MemberRefOptions());
 		}
 
-		void InitializeFrom(MemberRefOptions options)
-		{
+		void InitializeFrom(MemberRefOptions options) {
 			this.Class = options.Class;
 			this.Name = options.Name;
 			if (IsField) {
@@ -240,8 +229,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 
-		MemberRefOptions CopyTo(MemberRefOptions options)
-		{
+		MemberRefOptions CopyTo(MemberRefOptions options) {
 			options.Class = this.Class;
 			options.Name = this.Name;
 			if (IsField)

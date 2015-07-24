@@ -23,10 +23,8 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	enum InstructionOperandType
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	enum InstructionOperandType {
 		None,
 		SByte,
 		Byte,
@@ -46,8 +44,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		Parameter,
 	}
 
-	sealed class InstructionOperandVM : ViewModelBase
-	{
+	sealed class InstructionOperandVM : ViewModelBase {
 		public IEditOperand EditOperand {
 			set { editOperand = value; }
 		}
@@ -104,13 +101,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			}
 		}
 
-		public void SwitchOperandChanged()
-		{
+		public void SwitchOperandChanged() {
 			OnPropertyChanged("Other");
 		}
 
-		public void BranchOperandChanged(IEnumerable<InstructionVM> instrs)
-		{
+		public void BranchOperandChanged(IEnumerable<InstructionVM> instrs) {
 			if (OperandListVM.Items.Count > 0 && !(OperandListVM.SelectedItem is InstructionVM))
 				OperandListVM.SelectedItem = InstructionVM.Null;
 			OperandListVM.InvalidateSelected(instrs, false, InstructionVM.Null);
@@ -118,8 +113,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 				OperandListVM.SelectedIndex = 0;
 		}
 
-		public void LocalOperandChanged(IEnumerable<LocalVM> locals)
-		{
+		public void LocalOperandChanged(IEnumerable<LocalVM> locals) {
 			if (OperandListVM.Items.Count > 0 && !(OperandListVM.SelectedItem is LocalVM))
 				OperandListVM.SelectedItem = LocalVM.Null;
 			OperandListVM.InvalidateSelected(locals, false, LocalVM.Null);
@@ -127,8 +121,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 				OperandListVM.SelectedIndex = 0;
 		}
 
-		public void ParameterOperandChanged(IEnumerable<Parameter> parameters)
-		{
+		public void ParameterOperandChanged(IEnumerable<Parameter> parameters) {
 			if (OperandListVM.Items.Count > 0 && !(OperandListVM.SelectedItem is Parameter))
 				OperandListVM.SelectedItem = BodyUtils.NullParameter;
 			OperandListVM.InvalidateSelected(parameters, false, BodyUtils.NullParameter);
@@ -136,13 +129,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 				OperandListVM.SelectedIndex = 0;
 		}
 
-		public void UpdateOperandType(Code code)
-		{
+		public void UpdateOperandType(Code code) {
 			InstructionOperandType = GetOperandType(code);
 		}
 
-		public void WriteValue(Code code, object value)
-		{
+		public void WriteValue(Code code, object value) {
 			UpdateOperandType(code);
 			switch (InstructionOperandType) {
 			case MethodBody.InstructionOperandType.None:	break;
@@ -166,8 +157,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			}
 		}
 
-		static MethodBody.InstructionOperandType GetOperandType(Code code)
-		{
+		static MethodBody.InstructionOperandType GetOperandType(Code code) {
 			switch (code.ToOpCode().OperandType) {
 			case OperandType.InlineBrTarget:		return MethodBody.InstructionOperandType.BranchTarget;
 			case OperandType.InlineField:			return MethodBody.InstructionOperandType.Field;
@@ -305,8 +295,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		}
 		readonly ListVM<object> operandListVM;
 
-		public InstructionOperandVM()
-		{
+		public InstructionOperandVM() {
 			this.@sbyte = new SByteVM(a => FieldUpdated());
 			this.@byte = new ByteVM(a => FieldUpdated());
 			this.int32 = new Int32VM(a => FieldUpdated());
@@ -318,8 +307,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			this.OperandListVM.DataErrorInfoDelegate = VerifyOperand;
 		}
 
-		void EditOther(object parameter)
-		{
+		void EditOther(object parameter) {
 			switch (InstructionOperandType) {
 			case InstructionOperandType.Field:
 			case InstructionOperandType.Method:
@@ -337,8 +325,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			}
 		}
 
-		bool EditOtherCanExecute(object parameter)
-		{
+		bool EditOtherCanExecute(object parameter) {
 			switch (InstructionOperandType) {
 			case InstructionOperandType.Field:
 			case InstructionOperandType.Method:
@@ -353,8 +340,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			}
 		}
 
-		string VerifyOperand(ListVM<object> list)
-		{
+		string VerifyOperand(ListVM<object> list) {
 			var item = list.SelectedItem;
 
 			switch (InstructionOperandType) {
@@ -387,19 +373,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			return string.Empty;
 		}
 
-		bool HasListError(ListVM<object> list)
-		{
+		bool HasListError(ListVM<object> list) {
 			return !string.IsNullOrEmpty(VerifyOperand(list));
 		}
 
-		void FieldUpdated()
-		{
+		void FieldUpdated() {
 			OnPropertyChanged("Modified");
 			HasErrorUpdated();
 		}
 
-		public void InitializeFrom(InstructionOperandVM other)
-		{
+		public void InitializeFrom(InstructionOperandVM other) {
 			this.InstructionOperandType = other.InstructionOperandType;
 			this.SByte.StringValue = other.SByte.StringValue;
 			this.Byte.StringValue = other.Byte.StringValue;
@@ -412,8 +395,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			this.OperandListItem = other.OperandListItem;
 		}
 
-		protected override string Verify(string columnName)
-		{
+		protected override string Verify(string columnName) {
 			if (columnName == "Other") {
 				switch (InstructionOperandType) {
 				case MethodBody.InstructionOperandType.None:

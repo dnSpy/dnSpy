@@ -17,10 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	interface IShowWarningMessage
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	interface IShowWarningMessage {
 		/// <summary>
 		/// Shows a warning message
 		/// </summary>

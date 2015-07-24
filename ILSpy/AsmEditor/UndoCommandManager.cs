@@ -25,18 +25,16 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using System.Windows.Threading;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
+namespace dnSpy.AsmEditor {
 	[Export(typeof(IPlugin))]
-	sealed class UndoCommandManagerLoader : IPlugin
-	{
+	sealed class UndoCommandManagerLoader : IPlugin {
 		public static readonly RoutedUICommand Undo;
 		public static readonly RoutedUICommand Redo;
 
-		static UndoCommandManagerLoader()
-		{
+		static UndoCommandManagerLoader() {
 			// Create our own Undo/Redo commands because if a text box has the focus (eg. search
 			// pane), it will send undo/redo events and the undo/redo toolbar buttons will be
 			// enabled/disabled based on the text box's undo/redo state, not the asm editor's
@@ -46,15 +44,13 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			Redo = new RoutedUICommand("Redo", "Redo", typeof(UndoCommandManagerLoader), new InputGestureCollection(ApplicationCommands.Redo.InputGestures));
 		}
 
-		void IPlugin.OnLoaded()
-		{
+		void IPlugin.OnLoaded() {
 			MainWindow.Instance.CommandBindings.Add(new CommandBinding(Undo, UndoExecuted, UndoCanExecute));
 			MainWindow.Instance.CommandBindings.Add(new CommandBinding(Redo, RedoExecuted, RedoCanExecute));
 			MainWindow.Instance.Closing += MainWindow_Closing;
 		}
 
-		void MainWindow_Closing(object sender, CancelEventArgs e)
-		{
+		void MainWindow_Closing(object sender, CancelEventArgs e) {
 			var nodes = UndoCommandManager.Instance.GetModifiedAssemblyTreeNodes().ToArray();
 			if (nodes.Length != 0) {
 				var msg = nodes.Length == 1 ? "There is an unsaved file." : string.Format("There are {0} unsaved files.", nodes.Length);
@@ -64,29 +60,24 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			}
 		}
 
-		void UndoCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		void UndoCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = UndoCommandManager.Instance.CanUndo;
 		}
 
-		void UndoExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		void UndoExecuted(object sender, ExecutedRoutedEventArgs e) {
 			UndoCommandManager.Instance.Undo();
 		}
 
-		void RedoCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		void RedoCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = UndoCommandManager.Instance.CanRedo;
 		}
 
-		void RedoExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		void RedoExecuted(object sender, ExecutedRoutedEventArgs e) {
 			UndoCommandManager.Instance.Redo();
 		}
 	}
 
-	public sealed class UndoCommandManager
-	{
+	public sealed class UndoCommandManager {
 		public static readonly UndoCommandManager Instance = new UndoCommandManager();
 
 		List<UndoState> undoCommands = new List<UndoState>();
@@ -95,37 +86,31 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		int commandCounter;
 		int currentCommandCounter;
 
-		UndoCommandManager()
-		{
+		UndoCommandManager() {
 			commandCounter = currentCommandCounter = 1;
 		}
 
-		sealed class UndoState
-		{
+		sealed class UndoState {
 			public readonly HashSet<LoadedAssembly> ModifiedAssemblies = new HashSet<LoadedAssembly>();
 			public readonly List<IUndoCommand> Commands = new List<IUndoCommand>();
 			public readonly int CommandCounter;
 			public readonly int PrevCommandCounter;
 
-			public UndoState(int prevCommandCounter, int commandCounter)
-			{
+			public UndoState(int prevCommandCounter, int commandCounter) {
 				this.PrevCommandCounter = prevCommandCounter;
 				this.CommandCounter = commandCounter;
 			}
 		}
 
-		public struct BeginEndAdder : IDisposable
-		{
+		public struct BeginEndAdder : IDisposable {
 			readonly UndoCommandManager mgr;
 
-			public BeginEndAdder(UndoCommandManager mgr)
-			{
+			public BeginEndAdder(UndoCommandManager mgr) {
 				this.mgr = mgr;
 				mgr.BeginAddInternal();
 			}
 
-			public void Dispose()
-			{
+			public void Dispose() {
 				mgr.EndAddInternal();
 			}
 		}
@@ -156,8 +141,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		/// Adds a command and executes it
 		/// </summary>
 		/// <param name="command"></param>
-		public void Add(IUndoCommand command)
-		{
+		public void Add(IUndoCommand command) {
 			if (currentCommands == null) {
 				using (BeginAdd())
 					Add(command);
@@ -174,8 +158,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		/// Call this to add a group of commands that belong in the same group. Call the Dispose()
 		/// method to stop adding more commands to the same group.
 		/// </summary>
-		public BeginEndAdder BeginAdd()
-		{
+		public BeginEndAdder BeginAdd() {
 			Debug.Assert(currentCommands == null);
 			if (currentCommands != null)
 				throw new InvalidOperationException();
@@ -183,8 +166,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return new BeginEndAdder(this);
 		}
 
-		void BeginAddInternal()
-		{
+		void BeginAddInternal() {
 			Debug.Assert(currentCommands == null);
 			if (currentCommands != null)
 				throw new InvalidOperationException();
@@ -194,8 +176,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			currentCommands = new UndoState(prev, commandCounter);
 		}
 
-		void EndAddInternal()
-		{
+		void EndAddInternal() {
 			Debug.Assert(currentCommands != null);
 			if (currentCommands == null)
 				throw new InvalidOperationException();
@@ -212,8 +193,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			currentCommands = null;
 		}
 
-		static bool NeedsToCallGc(List<UndoState> list)
-		{
+		static bool NeedsToCallGc(List<UndoState> list) {
 			foreach (var state in list) {
 				foreach (var c in state.Commands) {
 					var c2 = c as IUndoCommand2;
@@ -227,13 +207,11 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		/// <summary>
 		/// Clears undo and redo history
 		/// </summary>
-		public void Clear()
-		{
+		public void Clear() {
 			Clear(true, true);
 		}
 
-		void Clear(bool clearUndo, bool clearRedo)
-		{
+		void Clear(bool clearUndo, bool clearRedo) {
 			Debug.Assert(currentCommands == null);
 			if (currentCommands != null)
 				throw new InvalidOperationException();
@@ -257,8 +235,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			}
 		}
 
-		internal void CallGc()
-		{
+		internal void CallGc() {
 			if (!callingGc) {
 				callingGc = true;
 				// Some removed assemblies need to be GC'd. The AssemblyList already does this but
@@ -272,8 +249,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 		bool callingGc = false;
 
-		IEnumerable<LoadedAssembly> GetAliveModules()
-		{
+		IEnumerable<LoadedAssembly> GetAliveModules() {
 			if (MainWindow.Instance.AssemblyListTreeNode == null)
 				yield break;
 			foreach (AssemblyTreeNode asmNode in MainWindow.Instance.AssemblyListTreeNode.Children) {
@@ -293,8 +269,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			}
 		}
 
-		static void Clear(List<UndoState> list)
-		{
+		static void Clear(List<UndoState> list) {
 			foreach (var group in list) {
 				foreach (var cmd in group.Commands)
 					cmd.Dispose();
@@ -306,8 +281,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		/// <summary>
 		/// Undoes the previous command group and places it in the redo list
 		/// </summary>
-		public void Undo()
-		{
+		public void Undo() {
 			Debug.Assert(currentCommands == null);
 			if (currentCommands != null)
 				throw new InvalidOperationException();
@@ -327,8 +301,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		/// <summary>
 		/// Undoes the previous undo command group and places it in the undo list
 		/// </summary>
-		public void Redo()
-		{
+		public void Redo() {
 			Debug.Assert(currentCommands == null);
 			if (currentCommands != null)
 				throw new InvalidOperationException();
@@ -349,8 +322,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		/// Gets all modified <see cref="AssemblyTreeNode"/>s
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerable<AssemblyTreeNode> GetModifiedAssemblyTreeNodes()
-		{
+		public IEnumerable<AssemblyTreeNode> GetModifiedAssemblyTreeNodes() {
 			if (MainWindow.Instance.AssemblyListTreeNode == null)
 				yield break;
 			foreach (AssemblyTreeNode asmNode in MainWindow.Instance.AssemblyListTreeNode.Children) {
@@ -369,36 +341,30 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			}
 		}
 
-		public bool IsModified(AssemblyTreeNode asmNode)
-		{
+		public bool IsModified(AssemblyTreeNode asmNode) {
 			return IsModified(asmNode.LoadedAssembly);
 		}
 
-		public bool IsModified(LoadedAssembly asm)
-		{
+		public bool IsModified(LoadedAssembly asm) {
 			return asm.IsDirty && IsModifiedCounter(asm, currentCommandCounter);
 		}
 
-		bool IsModifiedCounter(LoadedAssembly asm, int counter)
-		{
+		bool IsModifiedCounter(LoadedAssembly asm, int counter) {
 			return asm.SavedCommand != 0 && asm.SavedCommand != counter;
 		}
 
-		internal void MarkAsModified(LoadedAssembly asm)
-		{
+		internal void MarkAsModified(LoadedAssembly asm) {
 			asm.IsDirty = true;
 			if (asm.SavedCommand == 0)
 				asm.SavedCommand = currentCommandCounter;
 		}
 
-		public void MarkAsSaved(LoadedAssembly asm)
-		{
+		public void MarkAsSaved(LoadedAssembly asm) {
 			asm.IsDirty = false;
 			asm.SavedCommand = GetNewSavedCommand(asm);
 		}
 
-		int GetNewSavedCommand(LoadedAssembly asm)
-		{
+		int GetNewSavedCommand(LoadedAssembly asm) {
 			for (int i = undoCommands.Count - 1; i >= 0; i--) {
 				var group = undoCommands[i];
 				if (group.ModifiedAssemblies.Contains(asm))
@@ -409,18 +375,15 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return currentCommandCounter;
 		}
 
-		void UpdateAssemblySavedStateRedo(UndoState executedGroup)
-		{
+		void UpdateAssemblySavedStateRedo(UndoState executedGroup) {
 			UpdateAssemblySavedState(executedGroup.CommandCounter, executedGroup);
 		}
 
-		void UpdateAssemblySavedStateUndo(UndoState executedGroup)
-		{
+		void UpdateAssemblySavedStateUndo(UndoState executedGroup) {
 			UpdateAssemblySavedState(executedGroup.PrevCommandCounter, executedGroup);
 		}
 
-		void UpdateAssemblySavedState(int newCurrentCommandCounter, UndoState executedGroup)
-		{
+		void UpdateAssemblySavedState(int newCurrentCommandCounter, UndoState executedGroup) {
 			currentCommandCounter = newCurrentCommandCounter;
 			foreach (var asm in executedGroup.ModifiedAssemblies) {
 				Debug.Assert(asm.SavedCommand != 0);
@@ -428,8 +391,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			}
 		}
 
-		static IEnumerable<LoadedAssembly> GetLoadedAssemblies(IUndoCommand command)
-		{
+		static IEnumerable<LoadedAssembly> GetLoadedAssemblies(IUndoCommand command) {
 			foreach (var node in command.TreeNodes) {
 				var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
 				Debug.Assert(asmNode != null);
@@ -438,8 +400,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			}
 		}
 
-		void OnExecutedOneCommand(UndoState group)
-		{
+		void OnExecutedOneCommand(UndoState group) {
 			foreach (var asm in group.ModifiedAssemblies) {
 				var module = asm.ModuleDefinition;
 				if (module != null)
@@ -450,22 +411,19 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			}
 		}
 
-		public struct UndoRedoInfo
-		{
+		public struct UndoRedoInfo {
 			public bool IsInUndo;
 			public bool IsInRedo;
 			public AssemblyTreeNode Node;
 
-			public UndoRedoInfo(AssemblyTreeNode node, bool isInUndo, bool isInRedo)
-			{
+			public UndoRedoInfo(AssemblyTreeNode node, bool isInUndo, bool isInRedo) {
 				this.IsInUndo = isInUndo;
 				this.IsInRedo = isInRedo;
 				this.Node = node;
 			}
 		}
 
-		public IEnumerable<UndoRedoInfo> GetUndoRedoInfo(IEnumerable<AssemblyTreeNode> nodes)
-		{
+		public IEnumerable<UndoRedoInfo> GetUndoRedoInfo(IEnumerable<AssemblyTreeNode> nodes) {
 			var modifiedUndoAsms = new HashSet<LoadedAssembly>(undoCommands.SelectMany(a => a.ModifiedAssemblies));
 			var modifiedRedoAsms = new HashSet<LoadedAssembly>(redoCommands.SelectMany(a => a.ModifiedAssemblies));
 			foreach (var node in nodes) {

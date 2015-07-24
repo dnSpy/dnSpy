@@ -19,17 +19,14 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Resources
-{
+namespace dnSpy.AsmEditor.Resources {
 	/// <summary>
 	/// Interaction logic for ResourceElementControl.xaml
 	/// </summary>
-	public partial class ResourceElementControl : UserControl
-	{
-		public ResourceElementControl()
-		{
+	public partial class ResourceElementControl : UserControl {
+		public ResourceElementControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as ResourceElementVM;
@@ -42,8 +39,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			Loaded += ResourceElementControl_Loaded;
 		}
 
-		void ResourceElementControl_Loaded(object sender, RoutedEventArgs e)
-		{
+		void ResourceElementControl_Loaded(object sender, RoutedEventArgs e) {
 			// I can't get it to work with XAML so do it with code
 			nameTextBox.Focus();
 		}

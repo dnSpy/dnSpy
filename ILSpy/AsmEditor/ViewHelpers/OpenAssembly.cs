@@ -18,13 +18,11 @@
 */
 
 using System.Windows.Forms;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	sealed class OpenAssembly : IOpenAssembly
-	{
-		public LoadedAssembly Open()
-		{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	sealed class OpenAssembly : IOpenAssembly {
+		public LoadedAssembly Open() {
 			var dialog = new OpenFileDialog() {
 				Filter = ".NET Executables (*.exe, *.dll, *.netmodule, *.winmd)|*.exe;*.dll;*.netmodule;*.winmd|All files (*.*)|*.*",
 				RestoreDirectory = true,

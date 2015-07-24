@@ -23,13 +23,11 @@ using System.Diagnostics;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	sealed class ExceptionHandlerVM : ViewModelBase, IIndexedItem
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	sealed class ExceptionHandlerVM : ViewModelBase, IIndexedItem {
 		readonly ExceptionHandlerOptions origOptions;
 
 		public ITypeSigCreator TypeSigCreator {
@@ -105,8 +103,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 
 		readonly TypeSigCreatorOptions typeSigCreatorOptions;
 
-		public ExceptionHandlerVM(TypeSigCreatorOptions typeSigCreatorOptions, ExceptionHandlerOptions options)
-		{
+		public ExceptionHandlerVM(TypeSigCreatorOptions typeSigCreatorOptions, ExceptionHandlerOptions options) {
 			this.typeSigCreatorOptions = typeSigCreatorOptions.Clone("Create an Exception Catch Type");
 			this.typeSigCreatorOptions.IsLocal = false;
 			this.typeSigCreatorOptions.NullTypeSigAllowed = true;
@@ -121,13 +118,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			Reinitialize();
 		}
 
-		void OnSelectionChanged()
-		{
+		void OnSelectionChanged() {
 			HasErrorUpdated();
 		}
 
-		string VerifyInstruction(ListVM<InstructionVM> list)
-		{
+		string VerifyInstruction(ListVM<InstructionVM> list) {
 			var item = list.SelectedItem;
 			var instr = item as InstructionVM;
 			if (item != null && instr == null)
@@ -139,13 +134,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			return string.Empty;
 		}
 
-		bool HasListError(ListVM<InstructionVM> list)
-		{
-			return !string.IsNullOrEmpty(VerifyInstruction(list))  ;
+		bool HasListError(ListVM<InstructionVM> list) {
+			return !string.IsNullOrEmpty(VerifyInstruction(list));
 		}
 
-		public void InstructionChanged(IEnumerable<InstructionVM> instrs)
-		{
+		public void InstructionChanged(IEnumerable<InstructionVM> instrs) {
 			TryStartVM.InvalidateSelected(instrs, true, InstructionVM.Null);
 			TryEndVM.InvalidateSelected(instrs, true, InstructionVM.Null);
 			FilterStartVM.InvalidateSelected(instrs, true, InstructionVM.Null);
@@ -153,8 +146,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			HandlerEndVM.InvalidateSelected(instrs, true, InstructionVM.Null);
 		}
 
-		void EditCatchType()
-		{
+		void EditCatchType() {
 			if (typeSigCreator == null)
 				throw new InvalidOperationException();
 
@@ -166,18 +158,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			CatchType = newType.ToTypeDefOrRef();
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public ExceptionHandlerOptions CreateExceptionHandlerOptions()
-		{
+		public ExceptionHandlerOptions CreateExceptionHandlerOptions() {
 			return CopyTo(new ExceptionHandlerOptions());
 		}
 
-		public void InitializeFrom(ExceptionHandlerOptions options)
-		{
+		public void InitializeFrom(ExceptionHandlerOptions options) {
 			this.TryStartVM.SelectedItem = options.TryStart ?? InstructionVM.Null;
 			this.TryEndVM.SelectedItem = options.TryEnd ?? InstructionVM.Null;
 			this.FilterStartVM.SelectedItem = options.FilterStart ?? InstructionVM.Null;
@@ -187,16 +176,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			this.HandlerTypeVM.SelectedItem = options.HandlerType;
 		}
 
-		static InstructionVM RemoveNullInstance(InstructionVM vm)
-		{
+		static InstructionVM RemoveNullInstance(InstructionVM vm) {
 			Debug.Assert(vm != null);
 			if (vm == null || vm == InstructionVM.Null)
 				return null;
 			return vm;
 		}
 
-		public ExceptionHandlerOptions CopyTo(ExceptionHandlerOptions options)
-		{
+		public ExceptionHandlerOptions CopyTo(ExceptionHandlerOptions options) {
 			options.TryStart = RemoveNullInstance(this.TryStartVM.SelectedItem);
 			options.TryEnd = RemoveNullInstance(this.TryEndVM.SelectedItem);
 			options.FilterStart = RemoveNullInstance(this.FilterStartVM.SelectedItem);
@@ -217,8 +204,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			}
 		}
 
-		public object Clone()
-		{
+		public object Clone() {
 			return new ExceptionHandlerVM(typeSigCreatorOptions, CreateExceptionHandlerOptions());
 		}
 	}

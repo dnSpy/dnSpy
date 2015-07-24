@@ -17,10 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.Module
-{
-	enum ClrVersion
-	{
+namespace dnSpy.AsmEditor.Module {
+	enum ClrVersion {
 		/// <summary>
 		/// Unknown version
 		/// </summary>

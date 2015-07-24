@@ -17,10 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	interface IMakeVisible
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	interface IMakeVisible {
 		/// <summary>
 		/// Scroll (or similar) the item into view so the user can see it.
 		/// </summary>

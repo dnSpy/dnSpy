@@ -19,10 +19,8 @@
 
 using System.Collections.Generic;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	interface ISelectItems<T>
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	interface ISelectItems<T> {
 		/// <summary>
 		/// Select the items
 		/// </summary>

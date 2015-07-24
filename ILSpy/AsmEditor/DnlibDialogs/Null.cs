@@ -17,22 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	abstract class Null
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	abstract class Null {
 	}
 
-	sealed class Null<T> : Null
-	{
+	sealed class Null<T> : Null {
 		public static readonly Null<T> Instance = new Null<T>();
 
-		Null()
-		{
+		Null() {
 		}
 
-		public override string ToString()
-		{
+		public override string ToString() {
 			return string.Format("({0})null", typeof(T));
 		}
 	}

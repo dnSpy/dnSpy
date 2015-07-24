@@ -21,19 +21,16 @@ using System;
 using System.Diagnostics;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 using ICSharpCode.ILSpy.TreeNodes.Filters;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	enum NamedArgType
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	enum NamedArgType {
 		Property,
 		Field,
 	}
 
-	sealed class CANamedArgumentVM : ViewModelBase
-	{
+	sealed class CANamedArgumentVM : ViewModelBase {
 		public IDnlibTypePicker DnlibTypePicker {
 			set { dnlibTypePicker = value; }
 		}
@@ -160,8 +157,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		readonly CANamedArgument originalNamedArg;
 		readonly ModuleDef ownerModule;
 
-		public CANamedArgumentVM(ModuleDef ownerModule, CANamedArgument namedArg, TypeSigCreatorOptions options)
-		{
+		public CANamedArgumentVM(ModuleDef ownerModule, CANamedArgument namedArg, TypeSigCreatorOptions options) {
 			this.ownerModule = ownerModule;
 			this.originalNamedArg = namedArg.Clone();
 			this.constantTypeEnumListVM = new EnumListVM(ConstantTypeVM.CreateEnumArray(validTypes), (a, b) => OnConstantTypeChanged());
@@ -170,16 +166,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			this.modified = false;
 		}
 
-		void OnConstantTypeChanged()
-		{
+		void OnConstantTypeChanged() {
 			modified = true;
 			OnPropertyChanged("EnumIsSelected");
 			UpdateArgumentType();
 			HasErrorUpdated();
 		}
 
-		void UpdateArgumentType()
-		{
+		void UpdateArgumentType() {
 			if (CAArgumentVM != null) {
 				var ct = (ConstantType)ConstantTypeEnumList.SelectedItem;
 				if (ct != ConstantType.Object && ct != ConstantType.ObjectArray)
@@ -188,15 +182,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		void OnNamedArgTypeChanged()
-		{
+		void OnNamedArgTypeChanged() {
 			modified = true;
 			OnPropertyChanged("IsField");
 			HasErrorUpdated();
 		}
 
-		void InitializeFrom(CANamedArgument namedArg, TypeSigCreatorOptions options)
-		{
+		void InitializeFrom(CANamedArgument namedArg, TypeSigCreatorOptions options) {
 			if (CAArgumentVM != null)
 				CAArgumentVM.PropertyChanged -= caArgumentVM_PropertyChanged;
 			caArgumentVM = new CAArgumentVM(ownerModule, namedArg.Argument, options, null);
@@ -211,8 +203,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			CAArgumentVM.StorageType = GetType((ConstantType)ConstantTypeEnumList.SelectedItem);
 		}
 
-		void caArgumentVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
+		void caArgumentVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
 			if (e.PropertyName == "Modified")
 				modified = true;
 			if (e.PropertyName == "IsEnabled")
@@ -220,8 +211,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			HasErrorUpdated();
 		}
 
-		static ConstantType GetConstantType(TypeSig type, out ITypeDefOrRef enumType)
-		{
+		static ConstantType GetConstantType(TypeSig type, out ITypeDefOrRef enumType) {
 			enumType = null;
 			var t = type.RemovePinnedAndModifiers();
 			switch (t.GetElementType())
@@ -281,16 +271,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return ConstantType.Object;
 		}
 
-		public CANamedArgument CreateCANamedArgument()
-		{
+		public CANamedArgument CreateCANamedArgument() {
 			if (!modified)
 				return originalNamedArg.Clone();
 			var type = GetType((ConstantType)ConstantTypeEnumList.SelectedItem);
 			return new CANamedArgument(IsField, type, Name, CAArgumentVM.CreateCAArgument(type));
 		}
 
-		TypeSig GetType(ConstantType ct)
-		{
+		TypeSig GetType(ConstantType ct) {
 			switch (ct) {
 			case ConstantType.Object:	return ownerModule.CorLibTypes.Object;
 			case ConstantType.Boolean:	return ownerModule.CorLibTypes.Boolean;
@@ -331,8 +319,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return ownerModule.CorLibTypes.Object;
 		}
 
-		void PickEnumType()
-		{
+		void PickEnumType() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 			var type = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.EnumTypeDef), EnumType, ownerModule);
@@ -340,8 +327,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				EnumType = type;
 		}
 
-		bool PickEnumTypeCanExecute()
-		{
+		bool PickEnumTypeCanExecute() {
 			return IsEnabled;
 		}
 
@@ -349,8 +335,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			get { return IsEnabled && CAArgumentVM.HasError; }
 		}
 
-		public override string ToString()
-		{
+		public override string ToString() {
 			return string.Format("{0} = {1}", Name, CAArgumentVM.ToString());
 		}
 	}

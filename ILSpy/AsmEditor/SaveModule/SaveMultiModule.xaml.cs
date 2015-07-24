@@ -17,35 +17,28 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
-{
+namespace dnSpy.AsmEditor.SaveModule {
 	/// <summary>
 	/// Interaction logic for SaveMultiModule.xaml
 	/// </summary>
-	public partial class SaveMultiModule : SaveModuleWindow
-	{
-		public SaveMultiModule()
-		{
+	public partial class SaveMultiModule : SaveModuleWindow {
+		public SaveMultiModule() {
 			InitializeComponent();
 		}
 
-		private void Options_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		private void Options_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = e.Parameter is SaveModuleOptionsVM;
 		}
 
-		private void Options_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void Options_Executed(object sender, ExecutedRoutedEventArgs e) {
 			ShowOptions((SaveModuleOptionsVM)e.Parameter);
 		}
 
-		private void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-		{
+		private void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtils.IsLeftDoubleClick<ListBoxItem>(listBox, e))
 				return;
 			ShowOptions((SaveModuleOptionsVM)listBox.SelectedItem);

@@ -17,10 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	interface IOpenFile
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	interface IOpenFile {
 		/// <summary>
 		/// Opens a file and returns its contents or null if user cancelled
 		/// </summary>

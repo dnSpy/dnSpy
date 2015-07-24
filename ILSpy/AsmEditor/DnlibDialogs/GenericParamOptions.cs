@@ -19,11 +19,10 @@
 
 using System.Collections.Generic;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class GenericParamOptions
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class GenericParamOptions {
 		public ushort Number;
 		public GenericParamAttributes Flags;
 		public UTF8String Name;
@@ -31,12 +30,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		public List<GenericParamConstraint> GenericParamConstraints = new List<GenericParamConstraint>();
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
-		public GenericParamOptions()
-		{
+		public GenericParamOptions() {
 		}
 
-		public GenericParamOptions(GenericParam gp)
-		{
+		public GenericParamOptions(GenericParam gp) {
 			this.Number = gp.Number;
 			this.Flags = gp.Flags;
 			this.Name = gp.Name;
@@ -45,8 +42,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			this.CustomAttributes.AddRange(gp.CustomAttributes);
 		}
 
-		public GenericParam CopyTo(GenericParam gp)
-		{
+		public GenericParam CopyTo(GenericParam gp) {
 			gp.Number = this.Number;
 			gp.Flags = this.Flags;
 			gp.Name = this.Name ?? UTF8String.Empty;
@@ -58,8 +54,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return gp;
 		}
 
-		public GenericParam Create(ModuleDef ownerModule)
-		{
+		public GenericParam Create(ModuleDef ownerModule) {
 			return ownerModule.UpdateRowId(CopyTo(new GenericParamUser()));
 		}
 	}

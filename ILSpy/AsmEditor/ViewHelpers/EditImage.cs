@@ -21,28 +21,23 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using ICSharpCode.ILSpy.AsmEditor.Resources;
-
+using dnSpy.AsmEditor.Resources;
+using ICSharpCode.ILSpy;
 using WF = System.Windows.Forms;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	sealed class EditImage : IEdit<ImageVM>
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	sealed class EditImage : IEdit<ImageVM> {
 		readonly Window ownerWindow;
 
 		public EditImage()
-			: this(null)
-		{
+			: this(null) {
 		}
 
-		public EditImage(Window ownerWindow)
-		{
+		public EditImage(Window ownerWindow) {
 			this.ownerWindow = ownerWindow;
 		}
 
-		public ImageVM Edit(string title, ImageVM mo)
-		{
+		public ImageVM Edit(string title, ImageVM mo) {
 			var dlg = new WF.OpenFileDialog {
 				RestoreDirectory = true,
 				Multiselect = false,

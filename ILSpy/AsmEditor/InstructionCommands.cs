@@ -19,66 +19,54 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using dnlib.DotNet;
-using dnlib.DotNet.Emit;
 using ICSharpCode.Decompiler.Disassembler;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
+namespace dnSpy.AsmEditor {
 	[Export(typeof(IPlugin))]
-	sealed class InstructionCommandsLoader : IPlugin
-	{
-		void IPlugin.OnLoaded()
-		{
+	sealed class InstructionCommandsLoader : IPlugin {
+		void IPlugin.OnLoaded() {
 			var cmd = new RoutedCommand();
 			cmd.InputGestures.Add(new KeyGesture(Key.B, ModifierKeys.Control));
 			MainWindow.Instance.CommandBindings.Add(new CommandBinding(cmd, CopyILBytesExecuted, CopyILBytesCanExecute));
 		}
 
-		void CopyILBytesCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		void CopyILBytesCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = CopyILBytesCommand.CanExecute(MainWindow.Instance.ActiveTextView);
 		}
 
-		void CopyILBytesExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		void CopyILBytesExecuted(object sender, ExecutedRoutedEventArgs e) {
 			CopyILBytesCommand.Execute(MainWindow.Instance.ActiveTextView);
 		}
 	}
 
 	[ExportContextMenuEntry(Header = "Copy IL Bytes", Icon = "Copy", Category = "Editor", InputGestureText = "Ctrl+B", Order = 1010)]
-	sealed class CopyILBytesCommand : IContextMenuEntry
-	{
-		public bool IsVisible(TextViewContext context)
-		{
+	sealed class CopyILBytesCommand : IContextMenuEntry {
+		public bool IsVisible(TextViewContext context) {
 			return CanExecute(context.TextView);
 		}
 
-		public bool IsEnabled(TextViewContext context)
-		{
+		public bool IsEnabled(TextViewContext context) {
 			return true;
 		}
 
-		public void Execute(TextViewContext context)
-		{
+		public void Execute(TextViewContext context) {
 			Execute(context.TextView);
 		}
 
-		public static bool CanExecute(DecompilerTextView textView)
-		{
+		public static bool CanExecute(DecompilerTextView textView) {
 			return textView != null &&
 				FindInstructions(textView).Any();
 		}
 
-		public static void Execute(DecompilerTextView textView)
-		{
+		public static void Execute(DecompilerTextView textView) {
 			if (!CanExecute(textView))
 				return;
 
@@ -94,8 +82,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			}
 		}
 
-		static IEnumerable<ReferenceSegment> FindInstructions(DecompilerTextView textView)
-		{
+		static IEnumerable<ReferenceSegment> FindInstructions(DecompilerTextView textView) {
 			if (textView.textEditor.SelectionLength <= 0)
 				yield break;
 			int start = textView.textEditor.SelectionStart;
@@ -116,12 +103,10 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 	}
 
-	struct InstructionILBytesCopier
-	{
+	struct InstructionILBytesCopier {
 		public bool FoundUnknownBytes { get; private set; }
 
-		public string Copy(IEnumerable<ReferenceSegment> refs)
-		{
+		public string Copy(IEnumerable<ReferenceSegment> refs) {
 			var sb = new StringBuilder();
 
 			IInstructionBytesReader reader = null;

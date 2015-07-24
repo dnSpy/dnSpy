@@ -19,17 +19,14 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
 	/// Interaction logic for CustomAttributeControl.xaml
 	/// </summary>
-	public partial class CustomAttributeControl : UserControl
-	{
-		public CustomAttributeControl()
-		{
+	public partial class CustomAttributeControl : UserControl {
+		public CustomAttributeControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as CustomAttributeVM;

@@ -19,26 +19,22 @@
 
 using System.Windows;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.DnlibDialogs;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	sealed class CreateTypeSigArray : ICreateTypeSigArray
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	sealed class CreateTypeSigArray : ICreateTypeSigArray {
 		readonly Window ownerWindow;
 
 		public CreateTypeSigArray()
-			: this(null)
-		{
+			: this(null) {
 		}
 
-		public CreateTypeSigArray(Window ownerWindow)
-		{
+		public CreateTypeSigArray(Window ownerWindow) {
 			this.ownerWindow = ownerWindow;
 		}
 
-		public TypeSig[] Create(TypeSigCreatorOptions options, int? count, TypeSig[] typeSigs)
-		{
+		public TypeSig[] Create(TypeSigCreatorOptions options, int? count, TypeSig[] typeSigs) {
 			var data = new CreateTypeSigArrayVM(options, count);
 			if (typeSigs != null)
 				data.TypeSigCollection.AddRange(typeSigs);

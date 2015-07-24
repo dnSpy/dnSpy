@@ -23,14 +23,12 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
-using ICSharpCode.ILSpy.TreeNodes.Filters;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class MemberPickerVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class MemberPickerVM : ViewModelBase {
 		public IOpenAssembly OpenAssembly {
 			set { openAssembly = value; }
 		}
@@ -209,8 +207,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		static bool StartsWithVowel(string text)
-		{
+		static bool StartsWithVowel(string text) {
 			if (string.IsNullOrEmpty(text))
 				return false;
 			var c = char.ToUpperInvariant(text[0]);
@@ -234,8 +231,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		bool showInternalApi;
 
-		public MemberPickerVM(Language language, ITreeViewNodeFilter filter, IEnumerable<LoadedAssembly> assemblies)
-		{
+		public MemberPickerVM(Language language, ITreeViewNodeFilter filter, IEnumerable<LoadedAssembly> assemblies) {
 			this.Language = language;
 			this.ShowInternalApi = true;
 			this.filter = filter;
@@ -257,8 +253,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			CreateNewFilterSettings();
 		}
 
-		public bool SelectItem(object item)
-		{
+		public bool SelectItem(object item) {
 			if (makeVisible == null)
 				throw new InvalidOperationException("Call SelectItem(item) after DataContext has been initialized!");
 
@@ -271,8 +266,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return true;
 		}
 
-		void CreateNewFilterSettings()
-		{
+		void CreateNewFilterSettings() {
 			if (assemblyListTreeNode != null) {
 				assemblyListTreeNode.FilterSettings = new FilterSettings(origFilter, Language, ShowInternalApi);
 				filter = assemblyListTreeNode.FilterSettings.Filter;
@@ -280,8 +274,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		void OpenNewAssembly()
-		{
+		void OpenNewAssembly() {
 			if (openAssembly == null)
 				throw new InvalidOperationException();
 
@@ -293,8 +286,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 
 		RunningSearch currentSearch;
-		void StartSearch(string searchTerm)
-		{
+		void StartSearch(string searchTerm) {
 			if (currentSearch != null)
 				currentSearch.Cancel();
 			if (string.IsNullOrEmpty(searchTerm)) {
@@ -308,13 +300,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		void RestartSearch()
-		{
+		void RestartSearch() {
 			StartSearch(SearchText);
 		}
 
-		protected override string Verify(string columnName)
-		{
+		protected override string Verify(string columnName) {
 			if (columnName == "SelectedItem" || columnName == "SearchResult") {
 				if (SelectedItem == null && SearchResult == null)
 					return "A type must be selected.";
@@ -325,8 +315,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return string.Empty;
 		}
 
-		string GetErrorMessage()
-		{
+		string GetErrorMessage() {
 			string s = filter.Text;
 			return string.IsNullOrEmpty(s) ?
 				"You must select a correct node" :

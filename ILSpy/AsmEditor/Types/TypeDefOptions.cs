@@ -19,11 +19,10 @@
 
 using System.Collections.Generic;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Types
-{
-	sealed class TypeDefOptions
-	{
+namespace dnSpy.AsmEditor.Types {
+	sealed class TypeDefOptions {
 		public TypeAttributes Attributes;
 		public UTF8String Namespace;
 		public UTF8String Name;
@@ -35,12 +34,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		public List<GenericParam> GenericParameters = new List<GenericParam>();
 		public List<InterfaceImpl> Interfaces = new List<InterfaceImpl>();
 
-		public TypeDefOptions()
-		{
+		public TypeDefOptions() {
 		}
 
-		public TypeDefOptions(TypeDef type)
-		{
+		public TypeDefOptions(TypeDef type) {
 			this.Attributes = type.Attributes;
 			this.Namespace = type.Namespace;
 			this.Name = type.Name;
@@ -59,8 +56,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			this.Interfaces.AddRange(type.Interfaces);
 		}
 
-		public TypeDef CopyTo(TypeDef type, ModuleDef ownerModule)
-		{
+		public TypeDef CopyTo(TypeDef type, ModuleDef ownerModule) {
 			type.Attributes = this.Attributes;
 			type.Namespace = this.Namespace ?? UTF8String.Empty;
 			type.Name = this.Name ?? UTF8String.Empty;
@@ -80,13 +76,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			return type;
 		}
 
-		public TypeDef CreateTypeDef(ModuleDef ownerModule)
-		{
+		public TypeDef CreateTypeDef(ModuleDef ownerModule) {
 			return ownerModule.UpdateRowId(CopyTo(new TypeDefUser(UTF8String.Empty), ownerModule));
 		}
 
-		public static TypeDefOptions Create(UTF8String ns, UTF8String name, ITypeDefOrRef baseType, bool isNestedType)
-		{
+		public static TypeDefOptions Create(UTF8String ns, UTF8String name, ITypeDefOrRef baseType, bool isNestedType) {
 			return new TypeDefOptions {
 				Attributes = (isNestedType ? TypeAttributes.NestedPublic : TypeAttributes.Public) | TypeAttributes.AutoLayout | TypeAttributes.Class | TypeAttributes.AnsiClass,
 				Namespace = ns ?? UTF8String.Empty,

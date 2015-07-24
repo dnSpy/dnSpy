@@ -23,21 +23,19 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnlib.PE;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes.Filters;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Module
-{
-	enum EntryPointType
-	{
+namespace dnSpy.AsmEditor.Module {
+	enum EntryPointType {
 		None,
 		Managed,
 		Native,
 	}
 
-	sealed class ModuleOptionsVM : ViewModelBase
-	{
+	sealed class ModuleOptionsVM : ViewModelBase {
 		readonly ModuleOptions options;
 		readonly ModuleOptions origOptions;
 
@@ -205,13 +203,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			set { SetFlagValue(dnlib.PE.Characteristics.BytesReversedHi, value); }
 		}
 
-		bool GetFlagValue(Characteristics flag)
-		{
+		bool GetFlagValue(Characteristics flag) {
 			return (Characteristics & flag) != 0;
 		}
 
-		void SetFlagValue(Characteristics flag, bool value)
-		{
+		void SetFlagValue(Characteristics flag, bool value) {
 			if (value)
 				Characteristics |= flag;
 			else
@@ -324,13 +320,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			set { SetFlagValue(dnlib.PE.DllCharacteristics.TerminalServerAware, value); }
 		}
 
-		bool GetFlagValue(DllCharacteristics flag)
-		{
+		bool GetFlagValue(DllCharacteristics flag) {
 			return (DllCharacteristics & flag) != 0;
 		}
 
-		void SetFlagValue(DllCharacteristics flag, bool value)
-		{
+		void SetFlagValue(DllCharacteristics flag, bool value) {
 			if (value)
 				DllCharacteristics |= flag;
 			else
@@ -398,13 +392,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			set { SetFlagValue(ComImageFlags._32BitPreferred, value); }
 		}
 
-		bool GetFlagValue(ComImageFlags flag)
-		{
+		bool GetFlagValue(ComImageFlags flag) {
 			return (Cor20HeaderFlags & flag) != 0;
 		}
 
-		void SetFlagValue(ComImageFlags flag, bool value)
-		{
+		void SetFlagValue(ComImageFlags flag, bool value) {
 			if (value)
 				Cor20HeaderFlags |= flag;
 			else
@@ -457,8 +449,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			get { return ManagedEntryPoint == null ? null : GetEntryPointString(500); }
 		}
 
-		string GetEntryPointString(int maxChars)
-		{
+		string GetEntryPointString(int maxChars) {
 			var ep = ManagedEntryPoint;
 			if (ep == null)
 				return string.Empty;
@@ -492,8 +483,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		}
 		CustomAttributesVM customAttributesVM;
 
-		public ModuleOptionsVM(ModuleDef module, ModuleOptions options, Language language)
-		{
+		public ModuleOptionsVM(ModuleDef module, ModuleOptions options, Language language) {
 			this.module = module;
 			this.options = new ModuleOptions();
 			this.origOptions = options;
@@ -516,8 +506,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			Reinitialize();
 		}
 
-		void OnClrVersionChanged()
-		{
+		void OnClrVersionChanged() {
 			var clrVersion = (Module.ClrVersion)clrVersionVM.SelectedItem;
 			var clrValues = ClrVersionValues.GetValues(clrVersion);
 			if (clrValues == null)
@@ -530,8 +519,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			RuntimeVersion = clrValues.RuntimeVersion;
 		}
 
-		void UpdateClrVersion()
-		{
+		void UpdateClrVersion() {
 			ClrVersion clrVersion = Module.ClrVersion.Unknown;
 			if (cor20HeaderRuntimeVersion != null && !cor20HeaderRuntimeVersion.HasError && cor20HeaderRuntimeVersion.Value != null &&
 				tablesHeaderVersion != null && !tablesHeaderVersion.HasError && tablesHeaderVersion.Value != null) {
@@ -543,18 +531,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 				clrVersionVM.SelectedItem = clrVersion;
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public ModuleOptions CreateModuleOptions()
-		{
+		public ModuleOptions CreateModuleOptions() {
 			return CopyTo(new ModuleOptions());
 		}
 
-		void InitializeFrom(ModuleOptions options)
-		{
+		void InitializeFrom(ModuleOptions options) {
 			Mvid.Value = options.Mvid;
 			EncId.Value = options.EncId;
 			EncBaseId.Value = options.EncBaseId;
@@ -583,8 +568,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 
-		ModuleOptions CopyTo(ModuleOptions options)
-		{
+		ModuleOptions CopyTo(ModuleOptions options) {
 			options.Mvid = Mvid.Value;
 			options.EncId = EncId.Value;
 			options.EncBaseId = EncBaseId.Value;
@@ -619,8 +603,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			return options;
 		}
 
-		void PickManagedEntryPoint()
-		{
+		void PickManagedEntryPoint() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 			var ep = dnlibTypePicker.GetDnlibType(new EntryPointTreeViewNodeFilter(module), ManagedEntryPoint, module);
@@ -630,8 +613,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			}
 		}
 
-		protected override string Verify(string columnName)
-		{
+		protected override string Verify(string columnName) {
 			if (columnName == "RuntimeVersion")
 				return SaveModule.MetaDataHeaderOptionsVM.ValidateVersionString(options.RuntimeVersion);
 

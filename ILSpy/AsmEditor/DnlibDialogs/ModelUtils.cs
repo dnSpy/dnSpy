@@ -21,17 +21,14 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	static class ModelUtils
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	static class ModelUtils {
 		public const uint COMPRESSED_UINT32_MIN	= 0;
 		public const uint COMPRESSED_UINT32_MAX	= 0x1FFFFFFF;
 		public const int COMPRESSED_INT32_MIN	=-0x10000000;
 		public const int COMPRESSED_INT32_MAX	= 0x0FFFFFFF;
 
-		public static bool IsSystemType(this ITypeDefOrRef tdr)
-		{
+		public static bool IsSystemType(this ITypeDefOrRef tdr) {
 			return tdr != null &&
 				tdr.DeclaringType == null &&
 				tdr.Namespace == "System" &&
@@ -39,8 +36,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				tdr.DefinitionAssembly.IsCorLib();
 		}
 
-		public static ElementType GetElementType(Type type)
-		{
+		public static ElementType GetElementType(Type type) {
 			var tc = type == null ? TypeCode.Empty : System.Type.GetTypeCode(type);
 			switch (tc) {
 			case TypeCode.Boolean:	return ElementType.Boolean;
@@ -60,8 +56,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		public static string GetEnumFieldName(TypeDef td, object value)
-		{
+		public static string GetEnumFieldName(TypeDef td, object value) {
 			if (td == null || value == null)
 				return null;
 			foreach (var fd in td.Fields) {
@@ -71,8 +66,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return null;
 		}
 
-		public static object GetDefaultValue(TypeSig type, bool classValueTypeIsEnum = false)
-		{
+		public static object GetDefaultValue(TypeSig type, bool classValueTypeIsEnum = false) {
 			var t = type.RemovePinnedAndModifiers();
 			switch (t.GetElementType()) {
 			case ElementType.Boolean:return false;
@@ -126,8 +120,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		/// <param name="declSecs">The <see cref="DeclSecurity"/> list</param>
 		/// <param name="cas">The <see cref="CustomAttribute"/> list</param>
 		/// <returns></returns>
-		public static bool GetHasSecurityBit(IList<DeclSecurity> declSecs, IList<CustomAttribute> cas)
-		{
+		public static bool GetHasSecurityBit(IList<DeclSecurity> declSecs, IList<CustomAttribute> cas) {
 			if (declSecs.Count > 0)
 				return true;
 

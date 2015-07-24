@@ -18,28 +18,23 @@
 */
 
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class MethodOverridesVM : ListVM<MethodOverrideVM, MethodOverride>
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class MethodOverridesVM : ListVM<MethodOverrideVM, MethodOverride> {
 		public MethodOverridesVM(ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
-			: base("Edit Method Override", "Create Method Override", ownerModule, language, ownerType, ownerMethod)
-		{
+			: base("Edit Method Override", "Create Method Override", ownerModule, language, ownerType, ownerMethod) {
 		}
 
-		protected override MethodOverrideVM Create(MethodOverride model)
-		{
+		protected override MethodOverrideVM Create(MethodOverride model) {
 			return new MethodOverrideVM(new MethodOverrideOptions(model), ownerModule);
 		}
 
-		protected override MethodOverrideVM Clone(MethodOverrideVM obj)
-		{
+		protected override MethodOverrideVM Clone(MethodOverrideVM obj) {
 			return new MethodOverrideVM(obj.CreateMethodOverrideOptions(), ownerModule);
 		}
 
-		protected override MethodOverrideVM Create()
-		{
+		protected override MethodOverrideVM Create() {
 			return new MethodOverrideVM(new MethodOverrideOptions(), ownerModule);
 		}
 	}

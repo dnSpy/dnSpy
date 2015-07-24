@@ -26,28 +26,23 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	sealed class ExceptionHandlersListHelper : ListBoxHelperBase<ExceptionHandlerVM>
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	sealed class ExceptionHandlersListHelper : ListBoxHelperBase<ExceptionHandlerVM> {
 		readonly TypeSigCreator typeSigCreator;
 
 		public ExceptionHandlersListHelper(ListView listView, Window ownerWindow)
-			: base(listView, "Exception Handler")
-		{
+			: base(listView, "Exception Handler") {
 			this.typeSigCreator = new TypeSigCreator(ownerWindow);
 		}
 
-		protected override ExceptionHandlerVM[] GetSelectedItems()
-		{
+		protected override ExceptionHandlerVM[] GetSelectedItems() {
 			return listBox.SelectedItems.Cast<ExceptionHandlerVM>().ToArray();
 		}
 
-		protected override void OnDataContextChangedInternal(object dataContext)
-		{
+		protected override void OnDataContextChangedInternal(object dataContext) {
 			this.coll = ((MethodBodyVM)dataContext).CilBodyVM.ExceptionHandlersListVM;
 			this.coll.CollectionChanged += coll_CollectionChanged;
 			InitializeExceptionHandlers(this.coll);
@@ -63,8 +58,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			});
 		}
 
-		void CopyCatchTypeMDTokens(ExceptionHandlerVM[] ehs)
-		{
+		void CopyCatchTypeMDTokens(ExceptionHandlerVM[] ehs) {
 			var sb = new StringBuilder();
 
 			int lines = 0;
@@ -85,30 +79,25 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 				Clipboard.SetText(text);
 		}
 
-		bool CopyCatchTypeMDTokensCanExecute(ExceptionHandlerVM[] ehs)
-		{
+		bool CopyCatchTypeMDTokensCanExecute(ExceptionHandlerVM[] ehs) {
 			return ehs.Any(a => GetCatchTypeToken(a.CatchType) != null);
 		}
 
-		static uint? GetCatchTypeToken(ITypeDefOrRef type)
-		{
+		static uint? GetCatchTypeToken(ITypeDefOrRef type) {
 			return type == null ? (uint?)null : type.MDToken.Raw;
 		}
 
-		void coll_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
+		void coll_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			if (e.NewItems != null)
 				InitializeExceptionHandlers(e.NewItems);
 		}
 
-		void InitializeExceptionHandlers(System.Collections.IList list)
-		{
+		void InitializeExceptionHandlers(System.Collections.IList list) {
 			foreach (ExceptionHandlerVM eh in list)
 				eh.TypeSigCreator = typeSigCreator;
 		}
 
-		protected override void CopyItemsAsText(ExceptionHandlerVM[] ehs)
-		{
+		protected override void CopyItemsAsText(ExceptionHandlerVM[] ehs) {
 			Array.Sort(ehs, (a, b) => a.Index.CompareTo(b.Index));
 
 			var output = new PlainTextOutput();

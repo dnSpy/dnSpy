@@ -17,15 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
+namespace dnSpy.AsmEditor.MethodBody {
 	/// <summary>
 	/// Interaction logic for MethodBodyDlg.xaml
 	/// </summary>
-	public partial class MethodBodyDlg : WindowBase
-	{
-		public MethodBodyDlg()
-		{
+	public partial class MethodBodyDlg : WindowBase {
+		public MethodBodyDlg() {
 			InitializeComponent();
 		}
 	}

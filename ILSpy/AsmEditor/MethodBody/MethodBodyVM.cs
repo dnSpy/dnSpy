@@ -20,11 +20,10 @@
 using System;
 using System.Windows.Input;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	sealed class MethodBodyVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	sealed class MethodBodyVM : ViewModelBase {
 		readonly MethodBodyOptions origOptions;
 
 		public ICommand ReinitializeCommand {
@@ -64,8 +63,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		}
 		readonly CilBodyVM cilBodyVM;
 
-		public MethodBodyVM(MethodBodyOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
-		{
+		public MethodBodyVM(MethodBodyOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod) {
 			this.origOptions = options;
 
 			this.nativeMethodBodyVM = new MethodBody.NativeMethodBodyVM(options.NativeMethodBodyOptions, false);
@@ -77,8 +75,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			Reinitialize();
 		}
 
-		void OnMethodBodyTypeChanged()
-		{
+		void OnMethodBodyTypeChanged() {
 			switch ((MethodBodyType)MethodBodyTypeVM.SelectedItem) {
 			case MethodBodyType.None:
 				CodeTypeVM.SelectedItem = Method.CodeType.IL;
@@ -101,18 +98,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			HasErrorUpdated();
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public MethodBodyOptions CreateMethodBodyOptions()
-		{
+		public MethodBodyOptions CreateMethodBodyOptions() {
 			return CopyTo(new MethodBodyOptions());
 		}
 
-		void InitializeFrom(MethodBodyOptions options)
-		{
+		void InitializeFrom(MethodBodyOptions options) {
 			NativeMethodBodyVM.InitializeFrom(options.NativeMethodBodyOptions);
 			CilBodyVM.InitializeFrom(options.CilBodyOptions);
 			MethodBodyTypeVM.SelectedItem = options.BodyType;
@@ -121,8 +115,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			CodeTypeVM.SelectedItem = (Method.CodeType)options.CodeType;
 		}
 
-		MethodBodyOptions CopyTo(MethodBodyOptions options)
-		{
+		MethodBodyOptions CopyTo(MethodBodyOptions options) {
 			NativeMethodBodyVM.CopyTo(options.NativeMethodBodyOptions);
 			CilBodyVM.CopyTo(options.CilBodyOptions);
 			options.BodyType = (MethodBodyType)MethodBodyTypeVM.SelectedItem;

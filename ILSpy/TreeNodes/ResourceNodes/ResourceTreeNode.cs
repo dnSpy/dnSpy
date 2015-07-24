@@ -22,6 +22,8 @@ using System.IO;
 using System.Text;
 using dnlib.DotNet;
 using dnlib.IO;
+using dnSpy.AsmEditor;
+using dnSpy.AsmEditor.Resources;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Utils;
 using ICSharpCode.Decompiler;
@@ -140,7 +142,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		protected void Save()
 		{
-			AsmEditor.Resources.SaveResources.Save(new IResourceNode[] { this }, false, ResourceDataType.Deserialized);
+			SaveResources.Save(new IResourceNode[] { this }, false, ResourceDataType.Deserialized);
 		}
 		
 		public sealed override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
@@ -162,7 +164,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				extra = ((AssemblyLinkedResource)r).Assembly.FullName;
 			else if (r.ResourceType == ResourceType.Linked) {
 				var file = ((LinkedResource)r).File;
-				extra = string.Format("{0}, {1}, {2}", file.Name, file.ContainsNoMetaData ? "ContainsNoMetaData" : "ContainsMetaData", AsmEditor.NumberVMUtils.ByteArrayToString(file.HashValue));
+				extra = string.Format("{0}, {1}, {2}", file.Name, file.ContainsNoMetaData ? "ContainsNoMetaData" : "ContainsMetaData", NumberVMUtils.ByteArrayToString(file.HashValue));
 			}
 			output.Write(string.Format(" ({0}{1}, {2})", extra == null ? string.Empty : string.Format("{0}, ", extra), r.ResourceType, r.Attributes), TextTokenType.Comment);
 			output.WriteLine();

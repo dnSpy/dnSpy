@@ -24,32 +24,27 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
-using ICSharpCode.ILSpy.TreeNodes;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Namespace
-{
+namespace dnSpy.AsmEditor.Namespace {
 	[Export(typeof(IPlugin))]
-	sealed class AssemblyPlugin : IPlugin
-	{
-		public void OnLoaded()
-		{
+	sealed class AssemblyPlugin : IPlugin {
+		public void OnLoaded() {
 			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteExecuted, DeleteCanExecute));
 		}
 
-		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = DeleteNamespaceCommand.CanExecute(MainWindow.Instance.SelectedNodes);
 		}
 
-		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e) {
 			DeleteNamespaceCommand.Execute(MainWindow.Instance.SelectedNodes);
 		}
 	}
 
-	sealed class DeleteNamespaceCommand : IUndoCommand
-	{
+	sealed class DeleteNamespaceCommand : IUndoCommand {
 		const string CMD_NAME_SINGULAR = "Delete Namespace";
 		const string CMD_NAME_PLURAL_FORMAT = "Delete {0} Namespaces";
 		[ExportContextMenuEntry(Category = "AsmEd",
@@ -61,39 +56,32 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2170)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return DeleteNamespaceCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				DeleteNamespaceCommand.Execute(nodes);
 			}
 
-			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
-			{
+			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
 				menuItem.Header = GetCommandName(nodes.Length);
 			}
 		}
 
-		static string GetCommandName(int count)
-		{
+		static string GetCommandName(int count) {
 			return count == 1 ?
 				CMD_NAME_SINGULAR :
 				string.Format(CMD_NAME_PLURAL_FORMAT, count);
 		}
 
-		internal static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		internal static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes != null &&
 				nodes.All(a => a is NamespaceTreeNode);
 		}
 
-		internal static void Execute(ILSpyTreeNode[] nodes)
-		{
+		internal static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -101,26 +89,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 			UndoCommandManager.Instance.Add(new DeleteNamespaceCommand(nsNodes));
 		}
 
-		public struct DeleteModelNodes
-		{
+		public struct DeleteModelNodes {
 			ModuleInfo[] infos;
 
-			class ModuleInfo
-			{
+			class ModuleInfo {
 				public readonly ModuleDef Module;
 				public readonly TypeDef[] Types;
 				public readonly int[] Indexes;
 
-				public ModuleInfo(ModuleDef module, int count)
-				{
+				public ModuleInfo(ModuleDef module, int count) {
 					this.Module = module;
 					this.Types = new TypeDef[count];
 					this.Indexes = new int[count];
 				}
 			}
 
-			public void Delete(NamespaceTreeNode[] nodes, ILSpyTreeNode[] parents)
-			{
+			public void Delete(NamespaceTreeNode[] nodes, ILSpyTreeNode[] parents) {
 				Debug.Assert(parents != null && nodes.Length == parents.Length);
 				Debug.Assert(infos == null);
 				if (infos != null)
@@ -151,8 +135,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 				}
 			}
 
-			public void Restore(NamespaceTreeNode[] nodes, ILSpyTreeNode[] parents)
-			{
+			public void Restore(NamespaceTreeNode[] nodes, ILSpyTreeNode[] parents) {
 				Debug.Assert(infos != null);
 				if (infos == null)
 					throw new InvalidOperationException();
@@ -175,8 +158,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 		DeletableNodes<NamespaceTreeNode> nodes;
 		DeleteModelNodes modelNodes;
 
-		DeleteNamespaceCommand(NamespaceTreeNode[] nodes)
-		{
+		DeleteNamespaceCommand(NamespaceTreeNode[] nodes) {
 			this.parents = nodes.Select(a => (ILSpyTreeNode)a.Parent).ToArray();
 			this.nodes = new DeletableNodes<NamespaceTreeNode>(nodes);
 			this.modelNodes = new DeleteModelNodes();
@@ -186,14 +168,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 			get { return GetCommandName(nodes.Count); }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			nodes.Delete();
 			modelNodes.Delete(nodes.Nodes, parents);
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			modelNodes.Restore(nodes.Nodes, parents);
 			nodes.Restore();
 		}
@@ -202,25 +182,21 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 			get { return nodes.Nodes; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	struct TypeRefInfo
-	{
+	struct TypeRefInfo {
 		public readonly TypeRef TypeRef;
 		public readonly UTF8String OrigNamespace;
 
-		public TypeRefInfo(TypeRef tr)
-		{
+		public TypeRefInfo(TypeRef tr) {
 			this.TypeRef = tr;
 			this.OrigNamespace = tr.Namespace;
 		}
 	}
 
-	sealed class MoveNamespaceTypesToEmptypNamespaceCommand : IUndoCommand
-	{
+	sealed class MoveNamespaceTypesToEmptypNamespaceCommand : IUndoCommand {
 		const string CMD_NAME = "Move Types to Empty Namespace";
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Namespace",
@@ -231,21 +207,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 							   MenuIcon = "Namespace",
 							   MenuCategory = "AsmEd",
 							   MenuOrder = 2200)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return MoveNamespaceTypesToEmptypNamespaceCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				MoveNamespaceTypesToEmptypNamespaceCommand.Execute(nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes != null &&
 				nodes.Length > 0 &&
 				nodes.All(a => a is NamespaceTreeNode) &&
@@ -254,16 +226,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 				nodes[0].Parent.Children.Any(a => a is NamespaceTreeNode && ((NamespaceTreeNode)a).Name == string.Empty);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
 			UndoCommandManager.Instance.Add(new MoveNamespaceTypesToEmptypNamespaceCommand(nodes));
 		}
 
-		MoveNamespaceTypesToEmptypNamespaceCommand(ILSpyTreeNode[] nodes)
-		{
+		MoveNamespaceTypesToEmptypNamespaceCommand(ILSpyTreeNode[] nodes) {
 			var nsNodes = nodes.Where(a => ((NamespaceTreeNode)a).Name != string.Empty).Select(a => (NamespaceTreeNode)a).ToArray();
 			Debug.Assert(nsNodes.Length > 0);
 			this.nodes = new DeletableNodes<NamespaceTreeNode>(nsNodes);
@@ -280,19 +250,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 		ModelInfo[] infos;
 		readonly TypeRefInfo[] typeRefInfos;
 
-		class ModelInfo
-		{
+		class ModelInfo {
 			public UTF8String[] Namespaces;
 			public DeletableNodes<TypeTreeNode> TypeNodes;
 		}
 
-		NamespaceTreeNode GetTarget()
-		{
+		NamespaceTreeNode GetTarget() {
 			return nodes.Nodes.Length == 0 ? null : (NamespaceTreeNode)nodes.Nodes[0].Parent.Children.First(a => a is NamespaceTreeNode && ((NamespaceTreeNode)a).Name == string.Empty);
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			Debug.Assert(infos == null);
 			if (infos != null)
 				throw new InvalidOperationException();
@@ -321,8 +288,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 				info.TypeRef.Namespace = UTF8String.Empty;
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			Debug.Assert(infos != null);
 			if (infos == null)
 				throw new InvalidOperationException();
@@ -358,13 +324,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 			}
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	sealed class RenameNamespaceCommand : IUndoCommand
-	{
+	sealed class RenameNamespaceCommand : IUndoCommand {
 		const string CMD_NAME = "Rename Namespace";
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Namespace",
@@ -375,28 +339,23 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 							   MenuIcon = "Namespace",
 							   MenuCategory = "AsmEd",
 							   MenuOrder = 2201)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return RenameNamespaceCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				RenameNamespaceCommand.Execute(nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes != null &&
 				nodes.Length == 1 &&
 				nodes[0] is NamespaceTreeNode;
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -425,8 +384,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 		readonly TypeTreeNode[] origChildren;
 		readonly TypeRefInfo[] typeRefInfos;
 
-		internal static TypeRefInfo[] GetTypeRefInfos(ModuleDef module, IEnumerable<NamespaceTreeNode> nsNodes)
-		{
+		internal static TypeRefInfo[] GetTypeRefInfos(ModuleDef module, IEnumerable<NamespaceTreeNode> nsNodes) {
 			var types = new HashSet<ITypeDefOrRef>(RefFinder.TypeEqualityComparerInstance);
 			foreach (var nsNode in nsNodes) {
 				foreach (TypeTreeNode typeNode in nsNode.Children)
@@ -436,8 +394,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 			return typeRefs.Where(a => types.Contains(a)).Select(a => new TypeRefInfo(a)).ToArray();
 		}
 
-		RenameNamespaceCommand(string newName, NamespaceTreeNode nsNode)
-		{
+		RenameNamespaceCommand(string newName, NamespaceTreeNode nsNode) {
 			this.newName = newName;
 			this.origName = nsNode.Name;
 			this.nsNode = nsNode;
@@ -469,8 +426,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			UTF8String newNamespace = newName;
 			if (existingNsNode != null) {
 				Debug.Assert(origChildren.Length == nsNode.Children.Count);
@@ -503,8 +459,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 				info.TypeRef.Namespace = newNamespace;
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			if (existingNsNode != null) {
 				Debug.Assert(nsNode.Children.Count == 0);
 				foreach (var typeNode in origChildren) {
@@ -545,8 +500,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 			get { yield return nsNode; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 }

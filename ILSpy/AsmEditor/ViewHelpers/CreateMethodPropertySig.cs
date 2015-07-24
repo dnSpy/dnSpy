@@ -19,26 +19,22 @@
 
 using System.Windows;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.DnlibDialogs;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	sealed class CreateMethodPropertySig : ICreateMethodPropertySig
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	sealed class CreateMethodPropertySig : ICreateMethodPropertySig {
 		readonly Window ownerWindow;
 
 		public CreateMethodPropertySig()
-			: this(null)
-		{
+			: this(null) {
 		}
 
-		public CreateMethodPropertySig(Window ownerWindow)
-		{
+		public CreateMethodPropertySig(Window ownerWindow) {
 			this.ownerWindow = ownerWindow;
 		}
 
-		public MethodBaseSig Create(MethodSigCreatorOptions options, MethodBaseSig origSig)
-		{
+		public MethodBaseSig Create(MethodSigCreatorOptions options, MethodBaseSig origSig) {
 			var data = new MethodSigCreatorVM(options);
 			if (origSig is MethodSig)
 				data.MethodSig = (MethodSig)origSig;

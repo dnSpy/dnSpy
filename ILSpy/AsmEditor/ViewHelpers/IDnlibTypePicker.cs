@@ -20,10 +20,8 @@
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	interface IDnlibTypePicker
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	interface IDnlibTypePicker {
 		/// <summary>
 		/// Asks user to pick a type, method etc in an assembly
 		/// </summary>

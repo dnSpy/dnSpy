@@ -19,15 +19,12 @@
 
 using System.Windows.Controls;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
 	/// Interaction logic for ImplMapControl.xaml
 	/// </summary>
-	public partial class ImplMapControl : UserControl
-	{
-		public ImplMapControl()
-		{
+	public partial class ImplMapControl : UserControl {
+		public ImplMapControl() {
 			InitializeComponent();
 		}
 	}

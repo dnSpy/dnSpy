@@ -18,26 +18,22 @@
 */
 
 using System.Windows;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.DnlibDialogs;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	sealed class EditTypeDefOrRefAndCA : IEdit<TypeDefOrRefAndCAVM>
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	sealed class EditTypeDefOrRefAndCA : IEdit<TypeDefOrRefAndCAVM> {
 		readonly Window ownerWindow;
 
 		public EditTypeDefOrRefAndCA()
-			: this(null)
-		{
+			: this(null) {
 		}
 
-		public EditTypeDefOrRefAndCA(Window ownerWindow)
-		{
+		public EditTypeDefOrRefAndCA(Window ownerWindow) {
 			this.ownerWindow = ownerWindow;
 		}
 
-		public TypeDefOrRefAndCAVM Edit(string title, TypeDefOrRefAndCAVM obj)
-		{
+		public TypeDefOrRefAndCAVM Edit(string title, TypeDefOrRefAndCAVM obj) {
 			var win = new TypeDefOrRefAndCADlg();
 			if (title != null)
 				win.Title = title;

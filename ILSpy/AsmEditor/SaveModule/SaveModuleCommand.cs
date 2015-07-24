@@ -21,20 +21,17 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Input;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
-{
+namespace dnSpy.AsmEditor.SaveModule {
 	[ExportMainMenuCommand(Menu = "_File", MenuCategory = "Save", MenuOrder = 1010)]
-	sealed class SaveModuleCommand : TreeNodeCommand, IMainMenuCommandInitialize
-	{
-		public SaveModuleCommand()
-		{
+	sealed class SaveModuleCommand : TreeNodeCommand, IMainMenuCommandInitialize {
+		public SaveModuleCommand() {
 			MainWindow.Instance.SetMenuAlwaysRegenerate("_File");
 		}
 
-		HashSet<LoadedAssembly> GetAssemblyNodes(ILSpyTreeNode[] nodes)
-		{
+		HashSet<LoadedAssembly> GetAssemblyNodes(ILSpyTreeNode[] nodes) {
 			var hash = new HashSet<LoadedAssembly>();
 			foreach (var node in nodes) {
 				var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
@@ -44,19 +41,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			return hash;
 		}
 
-		protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-		{
+		protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 			return GetAssemblyNodes(nodes).Count > 0;
 		}
 
-		protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-		{
+		protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 			var asmNodes = GetAssemblyNodes(nodes);
 			Saver.SaveAssemblies(asmNodes);
 		}
 
-		public void Initialize(MenuItem menuItem)
-		{
+		public void Initialize(MenuItem menuItem) {
 			menuItem.Header = GetAssemblyNodes(GetSelectedNodes()).Count <= 1 ? "Save _Module…" : "Save _Modules…";
 		}
 	}
@@ -65,16 +59,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 						  ToolbarIcon = "SaveAll",
 						  ToolbarCategory = "Open",
 						  ToolbarOrder = 2010)]
-	sealed class SaveAllToolbarCommand : ICommand
-	{
-		public SaveAllToolbarCommand()
-		{
+	sealed class SaveAllToolbarCommand : ICommand {
+		public SaveAllToolbarCommand() {
 			MainWindow.Instance.SetMenuAlwaysRegenerate("_File");
 			MainWindow.Instance.InputBindings.Add(new KeyBinding(this, Key.S, ModifierKeys.Control | ModifierKeys.Shift));
 		}
 
-		static LoadedAssembly[] GetDirtyAssemblies()
-		{
+		static LoadedAssembly[] GetDirtyAssemblies() {
 			var list = new List<LoadedAssembly>();
 			foreach (var asmNode in UndoCommandManager.Instance.GetModifiedAssemblyTreeNodes())
 				list.Add(asmNode.LoadedAssembly);
@@ -86,42 +77,35 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			remove { CommandManager.RequerySuggested -= value; }
 		}
 
-		public bool CanExecute(object parameter)
-		{
+		public bool CanExecute(object parameter) {
 			return CanExecute();
 		}
 
-		public void Execute(object parameter)
-		{
+		public void Execute(object parameter) {
 			Execute();
 		}
 
-		public static bool CanExecute()
-		{
+		public static bool CanExecute() {
 			return GetDirtyAssemblies().Length > 0;
 		}
 
-		public static void Execute()
-		{
+		public static void Execute() {
 			Saver.SaveAssemblies(GetDirtyAssemblies());
 		}
 	}
 
 	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "Save A_ll…", MenuInputGestureText = "Ctrl+Shift+S", MenuCategory = "Save", MenuOrder = 1020, MenuIcon = "SaveAll")]
-	sealed class SaveAllCommand : ICommand
-	{
+	sealed class SaveAllCommand : ICommand {
 		public event EventHandler CanExecuteChanged {
 			add { CommandManager.RequerySuggested += value; }
 			remove { CommandManager.RequerySuggested -= value; }
 		}
 
-		public bool CanExecute(object parameter)
-		{
+		public bool CanExecute(object parameter) {
 			return SaveAllToolbarCommand.CanExecute();
 		}
 
-		public void Execute(object parameter)
-		{
+		public void Execute(object parameter) {
 			SaveAllToolbarCommand.Execute();
 		}
 	}

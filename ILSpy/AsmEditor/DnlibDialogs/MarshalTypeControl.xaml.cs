@@ -19,15 +19,12 @@
 
 using System.Windows.Controls;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
 	/// Interaction logic for MarshalTypeControl.xaml
 	/// </summary>
-	public partial class MarshalTypeControl : UserControl
-	{
-		public MarshalTypeControl()
-		{
+	public partial class MarshalTypeControl : UserControl {
+		public MarshalTypeControl() {
 			InitializeComponent();
 		}
 	}

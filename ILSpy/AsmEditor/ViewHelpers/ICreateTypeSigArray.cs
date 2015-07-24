@@ -18,12 +18,10 @@
 */
 
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.DnlibDialogs;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	interface ICreateTypeSigArray
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	interface ICreateTypeSigArray {
 		/// <summary>
 		/// Returns a created TypeSig array or null if user canceled.
 		/// </summary>

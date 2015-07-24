@@ -17,15 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
-{
+namespace dnSpy.AsmEditor.SaveModule {
 	/// <summary>
 	/// Interaction logic for SaveSingleModule.xaml
 	/// </summary>
-	public partial class SaveSingleModule : SaveModuleWindow
-	{
-		public SaveSingleModule()
-		{
+	public partial class SaveSingleModule : SaveModuleWindow {
+		public SaveSingleModule() {
 			InitializeComponent();
 		}
 	}

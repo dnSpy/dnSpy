@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Windows.Controls;
@@ -31,11 +30,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
+using dnSpy.AsmEditor.Resources;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.AsmEditor.Resources;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	[Export(typeof(IResourceFactory<ResourceElement, ResourceElementTreeNode>))]
 	sealed class SerializedImageListStreamerResourceElementTreeNodeFactory : IResourceFactory<ResourceElement, ResourceElementTreeNode>
 	{
@@ -182,7 +180,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			var obj = imgList.ImageStream;
 			return new ResourceElement {
 				Name = opts.Name,
-				ResourceData = new BinaryResourceData(new UserResourceType(obj.GetType().AssemblyQualifiedName, ResourceTypeCode.UserTypes), AsmEditor.Resources.SerializationUtils.Serialize(obj)),
+				ResourceData = new BinaryResourceData(new UserResourceType(obj.GetType().AssemblyQualifiedName, ResourceTypeCode.UserTypes), SerializationUtils.Serialize(obj)),
 			};
 		}
 

@@ -22,27 +22,23 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 using ICSharpCode.ILSpy.TreeNodes.Filters;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	struct EnumInfo
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	struct EnumInfo {
 		public ITypeDefOrRef EnumType;
 		public object Value;
 		public bool IsArray;
 
-		public static EnumInfo CreateNullArray(ITypeDefOrRef type)
-		{
+		public static EnumInfo CreateNullArray(ITypeDefOrRef type) {
 			return new EnumInfo() {
 				EnumType = type,
 				IsArray = true,
 			};
 		}
 
-		public override string ToString()
-		{
+		public override string ToString() {
 			var td = EnumType.ResolveTypeDef();
 			if (td != null) {
 				var s = ModelUtils.GetEnumFieldName(td, Value);
@@ -70,8 +66,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 	}
 
-	abstract class EnumDataFieldVMBase : DataFieldVM<EnumInfo>
-	{
+	abstract class EnumDataFieldVMBase : DataFieldVM<EnumInfo> {
 		EnumInfo enumInfo;
 		DataFieldVM enumUnderlyingTypeField;
 
@@ -117,20 +112,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		readonly ModuleDef ownerModule;
 
 		protected EnumDataFieldVMBase(ModuleDef ownerModule, EnumInfo value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated)
-		{
+			: base(onUpdated) {
 			this.ownerModule = ownerModule;
 			SetValueFromConstructor(value);
 		}
 
-		protected override void OnStringValueChanged()
-		{
+		protected override void OnStringValueChanged() {
 			if (enumUnderlyingTypeField != null)
 				enumUnderlyingTypeField.StringValue = StringValue;
 		}
 
-		protected override string OnNewValue(EnumInfo value)
-		{
+		protected override string OnNewValue(EnumInfo value) {
 			InitializeEnumUnderlyingTypeField(value);
 
 			if (enumUnderlyingTypeField == null)
@@ -141,8 +133,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		protected override string ConvertToValue(out EnumInfo value)
-		{
+		protected override string ConvertToValue(out EnumInfo value) {
 			string error = null;
 			value = enumInfo;
 			if (enumUnderlyingTypeField != null)
@@ -151,8 +142,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return error;
 		}
 
-		void InitializeEnumUnderlyingTypeField(EnumInfo enumInfo)
-		{
+		void InitializeEnumUnderlyingTypeField(EnumInfo enumInfo) {
 			this.enumInfo = enumInfo;
 			this.enumUnderlyingTypeField = null;
 
@@ -165,8 +155,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		void PickEnumType()
-		{
+		void PickEnumType() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 			var type = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.EnumTypeDef), EnumType, ownerModule);
@@ -178,20 +167,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		protected abstract DataFieldVM CreateEnumUnderlyingTypeField(ElementType elementType);
 	}
 
-	sealed class EnumDataFieldVM : EnumDataFieldVMBase
-	{
+	sealed class EnumDataFieldVM : EnumDataFieldVMBase {
 		public EnumDataFieldVM(ModuleDef ownerModule, Action<DataFieldVM> onUpdated)
-			: this(ownerModule, new EnumInfo(), onUpdated)
-		{
+			: this(ownerModule, new EnumInfo(), onUpdated) {
 		}
 
 		public EnumDataFieldVM(ModuleDef ownerModule, EnumInfo value, Action<DataFieldVM> onUpdated)
-			: base(ownerModule, value, onUpdated)
-		{
+			: base(ownerModule, value, onUpdated) {
 		}
 
-		protected override DataFieldVM CreateEnumUnderlyingTypeFieldFromValue(object value)
-		{
+		protected override DataFieldVM CreateEnumUnderlyingTypeFieldFromValue(object value) {
 			if (value is bool)		return new BooleanVM((bool)value, a => { });
 			if (value is char)		return new CharVM((char)value, a => { });
 			if (value is sbyte)		return new SByteVM((sbyte)value, a => { });
@@ -207,8 +192,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return null;
 		}
 
-		protected override DataFieldVM CreateEnumUnderlyingTypeField(ElementType elementType)
-		{
+		protected override DataFieldVM CreateEnumUnderlyingTypeField(ElementType elementType) {
 			switch (elementType) {
 			case ElementType.Boolean:	return new BooleanVM(a => { });
 			case ElementType.Char:		return new CharVM(a => { });
@@ -227,11 +211,9 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 	}
 
-	sealed class EnumListDataFieldVM : EnumDataFieldVMBase
-	{
+	sealed class EnumListDataFieldVM : EnumDataFieldVMBase {
 		public EnumListDataFieldVM(ModuleDef ownerModule, Action<DataFieldVM> onUpdated)
-			: this(ownerModule, EnumInfo.CreateNullArray(null), onUpdated)
-		{
+			: this(ownerModule, EnumInfo.CreateNullArray(null), onUpdated) {
 		}
 
 		public EnumListDataFieldVM(ModuleDef ownerModule, EnumInfo value, Action<DataFieldVM> onUpdated)
@@ -239,8 +221,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		{
 		}
 
-		protected override DataFieldVM CreateEnumUnderlyingTypeFieldFromValue(object value)
-		{
+		protected override DataFieldVM CreateEnumUnderlyingTypeFieldFromValue(object value) {
 			if (value is IList<bool>)	return new BooleanListDataFieldVM((IList<bool>)value, a => { });
 			if (value is IList<char>)	return new CharListDataFieldVM((IList<char>)value, a => { });
 			if (value is IList<sbyte>)	return new SByteListDataFieldVM((IList<sbyte>)value, a => { });
@@ -256,8 +237,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return null;
 		}
 
-		protected override DataFieldVM CreateEnumUnderlyingTypeField(ElementType elementType)
-		{
+		protected override DataFieldVM CreateEnumUnderlyingTypeField(ElementType elementType) {
 			switch (elementType) {
 			case ElementType.Boolean:	return new BooleanListDataFieldVM(a => { });
 			case ElementType.Char:		return new CharListDataFieldVM(a => { });

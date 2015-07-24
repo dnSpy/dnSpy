@@ -19,15 +19,14 @@
 
 using System;
 using System.Diagnostics;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
+namespace dnSpy.AsmEditor {
 	/// <summary>
 	/// Creates and caches an <see cref="AssemblyTreeNode"/> so the same one is always used.
 	/// </summary>
-	sealed class AssemblyTreeNodeCreator : IDisposable
-	{
+	sealed class AssemblyTreeNodeCreator : IDisposable {
 		AssemblyTreeNode asmNode;
 		bool restoreIndex;
 		int origIndex = -1;
@@ -37,24 +36,20 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 
 		public AssemblyTreeNodeCreator(LoadedAssembly asm)
-			: this(asm, null, false)
-		{
+			: this(asm, null, false) {
 		}
 
 		public AssemblyTreeNodeCreator(AssemblyTreeNode asmNode)
-			: this(asmNode.LoadedAssembly, asmNode, true)
-		{
+			: this(asmNode.LoadedAssembly, asmNode, true) {
 		}
 
-		AssemblyTreeNodeCreator(LoadedAssembly asm, AssemblyTreeNode asmNode, bool restoreIndex)
-		{
+		AssemblyTreeNodeCreator(LoadedAssembly asm, AssemblyTreeNode asmNode, bool restoreIndex) {
 			this.asmNode = asmNode ?? new AssemblyTreeNode(asm);
 			this.restoreIndex = restoreIndex;
 			MainWindow.Instance.AssemblyListTreeNode.RegisterCached(asm, this.asmNode);
 		}
 
-		public void Add()
-		{
+		public void Add() {
 			Debug.Assert(asmNode.Parent == null);
 			if (asmNode.Parent != null)
 				throw new InvalidOperationException();
@@ -72,8 +67,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 				throw new InvalidOperationException();
 		}
 
-		public void Remove()
-		{
+		public void Remove() {
 			Debug.Assert(asmNode.Parent != null);
 			if (asmNode.Parent == null)
 				throw new InvalidOperationException();
@@ -88,8 +82,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			asmNode.Delete();
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 			if (asmNode != null)
 				MainWindow.Instance.AssemblyListTreeNode.UnregisterCached(asmNode.LoadedAssembly);
 			asmNode = null;

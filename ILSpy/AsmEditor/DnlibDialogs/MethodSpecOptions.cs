@@ -19,28 +19,24 @@
 
 using System.Collections.Generic;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class MethodSpecOptions
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class MethodSpecOptions {
 		public IMethodDefOrRef Method;
 		public CallingConventionSig Instantiation;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
-		public MethodSpecOptions()
-		{
+		public MethodSpecOptions() {
 		}
 
-		public MethodSpecOptions(MethodSpec ms)
-		{
+		public MethodSpecOptions(MethodSpec ms) {
 			this.Method = ms.Method;
 			this.Instantiation = ms.Instantiation;
 			this.CustomAttributes.AddRange(ms.CustomAttributes);
 		}
 
-		public MethodSpec CopyTo(MethodSpec ms)
-		{
+		public MethodSpec CopyTo(MethodSpec ms) {
 			ms.Method = this.Method;
 			ms.Instantiation = this.Instantiation;
 			ms.CustomAttributes.Clear();
@@ -48,8 +44,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return ms;
 		}
 
-		public MethodSpec Create(ModuleDef ownerModule)
-		{
+		public MethodSpec Create(ModuleDef ownerModule) {
 			return ownerModule.UpdateRowId(CopyTo(new MethodSpecUser()));
 		}
 	}

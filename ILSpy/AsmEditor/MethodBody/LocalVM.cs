@@ -20,13 +20,11 @@
 using System;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	sealed class LocalVM : ViewModelBase, IIndexedItem
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	sealed class LocalVM : ViewModelBase, IIndexedItem {
 		public static readonly LocalVM Null = new LocalVM();
 
 		LocalOptions origOptions;
@@ -114,12 +112,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 
 		readonly TypeSigCreatorOptions typeSigCreatorOptions;
 
-		LocalVM()
-		{
+		LocalVM() {
 		}
 
-		public LocalVM(TypeSigCreatorOptions typeSigCreatorOptions, LocalOptions options)
-		{
+		public LocalVM(TypeSigCreatorOptions typeSigCreatorOptions, LocalOptions options) {
 			this.typeSigCreatorOptions = typeSigCreatorOptions.Clone("Create a Local Type");
 			this.typeSigCreatorOptions.IsLocal = true;
 			this.typeSigCreatorOptions.NullTypeSigAllowed = false;
@@ -128,8 +124,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			Reinitialize();
 		}
 
-		void EditType()
-		{
+		void EditType() {
 			if (typeSigCreator == null)
 				throw new InvalidOperationException();
 
@@ -141,33 +136,28 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			Type = newType;
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public LocalOptions CreateLocalOptions()
-		{
+		public LocalOptions CreateLocalOptions() {
 			return CopyTo(new LocalOptions());
 		}
 
-		public void InitializeFrom(LocalOptions options)
-		{
+		public void InitializeFrom(LocalOptions options) {
 			this.Type = options.Type;
 			this.Name = options.Name;
 			this.PdbAttributes = options.PdbAttributes;
 		}
 
-		public LocalOptions CopyTo(LocalOptions options)
-		{
+		public LocalOptions CopyTo(LocalOptions options) {
 			options.Type = this.Type;
 			options.Name = this.Name;
 			options.PdbAttributes = this.PdbAttributes;
 			return options;
 		}
 
-		public object Clone()
-		{
+		public object Clone() {
 			return new LocalVM(typeSigCreatorOptions, CreateLocalOptions());
 		}
 	}

@@ -18,13 +18,12 @@
 */
 
 using System.Collections.Generic;
-using dnlib.PE;
 using dnlib.DotNet;
+using dnlib.PE;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Field
-{
-	sealed class FieldDefOptions
-	{
+namespace dnSpy.AsmEditor.Field {
+	sealed class FieldDefOptions {
 		public FieldAttributes Attributes;
 		public UTF8String Name;
 		public FieldSig FieldSig;
@@ -36,12 +35,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 		public Constant Constant;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
-		public FieldDefOptions()
-		{
+		public FieldDefOptions() {
 		}
 
-		public FieldDefOptions(FieldDef field)
-		{
+		public FieldDefOptions(FieldDef field) {
 			this.Attributes = field.Attributes;
 			this.Name = field.Name;
 			this.FieldSig = field.FieldSig;
@@ -54,8 +51,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			this.CustomAttributes.AddRange(field.CustomAttributes);
 		}
 
-		public FieldDef CopyTo(FieldDef field)
-		{
+		public FieldDef CopyTo(FieldDef field) {
 			field.Attributes = this.Attributes;
 			field.Name = this.Name ?? UTF8String.Empty;
 			field.FieldSig = this.FieldSig;
@@ -70,13 +66,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			return field;
 		}
 
-		public FieldDef CreateFieldDef(ModuleDef ownerModule)
-		{
+		public FieldDef CreateFieldDef(ModuleDef ownerModule) {
 			return ownerModule.UpdateRowId(CopyTo(new FieldDefUser()));
 		}
 
-		public static FieldDefOptions Create(UTF8String name, FieldSig fieldSig)
-		{
+		public static FieldDefOptions Create(UTF8String name, FieldSig fieldSig) {
 			return new FieldDefOptions {
 				Attributes = FieldAttributes.Public,
 				Name = name,

@@ -17,15 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
 	/// Interaction logic for MemberRefDlg.xaml
 	/// </summary>
-	public partial class MemberRefDlg : WindowBase
-	{
-		public MemberRefDlg()
-		{
+	public partial class MemberRefDlg : WindowBase {
+		public MemberRefDlg() {
 			InitializeComponent();
 		}
 	}

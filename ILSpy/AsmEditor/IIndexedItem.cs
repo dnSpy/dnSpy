@@ -19,10 +19,8 @@
 
 using System;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
-	interface IIndexedItem : ICloneable
-	{
+namespace dnSpy.AsmEditor {
+	interface IIndexedItem : ICloneable {
 		int Index { get; set; }
 	}
 }

@@ -19,15 +19,12 @@
 
 using System.Windows.Controls;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
 	/// Interaction logic for DeclSecurityControl.xaml
 	/// </summary>
-	public partial class DeclSecurityControl : UserControl
-	{
-		public DeclSecurityControl()
-		{
+	public partial class DeclSecurityControl : UserControl {
+		public DeclSecurityControl() {
 			InitializeComponent();
 		}
 	}

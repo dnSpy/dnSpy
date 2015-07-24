@@ -17,12 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Globalization;
 using dnlib.DotNet;
+using dnSpy.AsmEditor;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	[ExportContextMenuEntryAttribute(Header = "Go to M_D Token…", Order = 400, Category = "Tokens", InputGestureText = "Ctrl+D")]
 	class GoToTokenContextMenuEntry : IContextMenuEntry
 	{
@@ -78,7 +76,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				return;
 
 			string error;
-			uint token = AsmEditor.NumberVMUtils.ParseUInt32(tokenText, uint.MinValue, uint.MaxValue, out error);
+			uint token = NumberVMUtils.ParseUInt32(tokenText, uint.MinValue, uint.MaxValue, out error);
 			if (!string.IsNullOrEmpty(error)) {
 				MainWindow.Instance.ShowMessageBox(error);
 				return;

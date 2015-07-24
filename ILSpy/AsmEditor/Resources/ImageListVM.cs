@@ -23,10 +23,8 @@ using System.Drawing;
 using System.Windows.Input;
 using System.Windows.Forms;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Resources
-{
-	sealed class ImageListVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.Resources {
+	sealed class ImageListVM : ViewModelBase {
 		readonly ImageListOptions origOptions;
 
 		public ICommand ReinitializeCommand {
@@ -76,8 +74,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 		readonly ImageListStreamerVM imageListStreamerVM;
 
-		public ImageListVM(ImageListOptions options)
-		{
+		public ImageListVM(ImageListOptions options) {
 			this.origOptions = options;
 
 			this.imageListStreamerVM = new ImageListStreamerVM();
@@ -97,18 +94,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			Reinitialize();
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public ImageListOptions CreateImageListOptions()
-		{
+		public ImageListOptions CreateImageListOptions() {
 			return CopyTo(new ImageListOptions());
 		}
 
-		void InitializeFrom(ImageListOptions options)
-		{
+		void InitializeFrom(ImageListOptions options) {
 			Name = options.Name;
 			HeightVM.Value = options.ImageSize.Height;
 			WidthVM.Value = options.ImageSize.Width;
@@ -117,8 +111,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			ImageListStreamerVM.InitializeFrom(options.ImageSources);
 		}
 
-		ImageListOptions CopyTo(ImageListOptions options)
-		{
+		ImageListOptions CopyTo(ImageListOptions options) {
 			options.Name = Name;
 			options.ImageSize.Height = HeightVM.Value;
 			options.ImageSize.Width = WidthVM.Value;

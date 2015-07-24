@@ -18,20 +18,17 @@
 */
 
 using System.Windows;
-using System.Windows.Input;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
+namespace dnSpy.AsmEditor {
 	[ExportToolbarCommand(ToolTip = "Undo (Ctrl+Z)",
 						  ToolbarIcon = "Undo",
 						  ToolbarCategory = "AsmEdit",
 						  ToolbarOrder = 5000)]
-	sealed class UndoAsmEdCommand : CommandWrapper
-	{
+	sealed class UndoAsmEdCommand : CommandWrapper {
 		public UndoAsmEdCommand()
-			: base(UndoCommandManagerLoader.Undo)
-		{
+			: base(UndoCommandManagerLoader.Undo) {
 		}
 	}
 
@@ -39,11 +36,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 						  ToolbarIcon = "Redo",
 						  ToolbarCategory = "AsmEdit",
 						  ToolbarOrder = 5010)]
-	sealed class RedoAsmEdCommand : CommandWrapper
-	{
+	sealed class RedoAsmEdCommand : CommandWrapper {
 		public RedoAsmEdCommand()
-			: base(UndoCommandManagerLoader.Redo)
-		{
+			: base(UndoCommandManagerLoader.Redo) {
 		}
 	}
 
@@ -51,21 +46,17 @@ namespace ICSharpCode.ILSpy.AsmEditor
 						  ToolbarIcon = "DeleteHistory",
 						  ToolbarCategory = "AsmEdit",
 						  ToolbarOrder = 5020)]
-	sealed class DeleteHistoryAsmEdCommand : TreeNodeCommand
-	{
+	sealed class DeleteHistoryAsmEdCommand : TreeNodeCommand {
 		public DeleteHistoryAsmEdCommand()
-			: base(true)
-		{
+			: base(true) {
 		}
 
-		protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-		{
+		protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 			return UndoCommandManager.Instance.CanUndo ||
 				UndoCommandManager.Instance.CanRedo;
 		}
 
-		protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-		{
+		protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 			var res = MainWindow.Instance.ShowIgnorableMessageBox("undo: clear history", "Do you want to clear the undo/redo history?", MessageBoxButton.YesNo);
 			if (res == null || res == MsgBoxButton.OK)
 				UndoCommandManager.Instance.Clear();

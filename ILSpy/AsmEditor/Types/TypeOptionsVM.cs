@@ -22,12 +22,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.DnlibDialogs;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Types
-{
-	enum TypeKind
-	{
+namespace dnSpy.AsmEditor.Types {
+	enum TypeKind {
 		Unknown,
 		Class,
 		StaticClass,
@@ -37,8 +36,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		Delegate,
 	}
 
-	enum TypeVisibility
-	{
+	enum TypeVisibility {
 		NotPublic			= (int)TypeAttributes.NotPublic >> 0,
 		Public				= (int)TypeAttributes.Public >> 0,
 		NestedPublic		= (int)TypeAttributes.NestedPublic >> 0,
@@ -49,37 +47,32 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		NestedFamORAssem	= (int)TypeAttributes.NestedFamORAssem >> 0,
 	}
 
-	enum TypeLayout
-	{
+	enum TypeLayout {
 		AutoLayout			= (int)TypeAttributes.AutoLayout >> 3,
 		SequentialLayout	= (int)TypeAttributes.SequentialLayout >> 3,
 		ExplicitLayout		= (int)TypeAttributes.ExplicitLayout >> 3,
 	}
 
-	enum TypeSemantics
-	{
+	enum TypeSemantics {
 		Class				= (int)TypeAttributes.Class >> 5,
 		Interface			= (int)TypeAttributes.Interface >> 5,
 	}
 
-	enum TypeStringFormat
-	{
+	enum TypeStringFormat {
 		AnsiClass			= (int)TypeAttributes.AnsiClass >> 16,
 		UnicodeClass		= (int)TypeAttributes.UnicodeClass >> 16,
 		AutoClass			= (int)TypeAttributes.AutoClass >> 16,
 		CustomFormatClass	= (int)TypeAttributes.CustomFormatClass >> 16,
 	}
 
-	enum TypeCustomFormat
-	{
+	enum TypeCustomFormat {
 		Value0,
 		Value1,
 		Value2,
 		Value3,
 	}
 
-	sealed class TypeOptionsVM : ViewModelBase
-	{
+	sealed class TypeOptionsVM : ViewModelBase {
 		readonly TypeDefOptions origOptions;
 
 		public ICommand ReinitializeCommand {
@@ -237,13 +230,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			set { SetFlagValue(TypeAttributes.HasSecurity, value); }
 		}
 
-		bool GetFlagValue(TypeAttributes flag)
-		{
+		bool GetFlagValue(TypeAttributes flag) {
 			return (Attributes & flag) != 0;
 		}
 
-		void SetFlagValue(TypeAttributes flag, bool value)
-		{
+		void SetFlagValue(TypeAttributes flag, bool value) {
 			if (value)
 				Attributes |= flag;
 			else
@@ -318,8 +309,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 
 		readonly ModuleDef ownerModule;
 
-		public TypeOptionsVM(TypeDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType)
-		{
+		public TypeOptionsVM(TypeDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType) {
 			this.ownerModule = ownerModule;
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, language) {
 				IsLocal = false,
@@ -364,28 +354,24 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			Reinitialize();
 		}
 
-		void typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			InitializeTypeKind();
 			if (e.PropertyName == "TypeSigDnlibFullName")
 				OnPropertyChanged("BaseTypeHeader");
 			HasErrorUpdated();
 		}
 
-		bool IsSystemValueType(IType type)
-		{
+		bool IsSystemValueType(IType type) {
 			return new SigComparer().Equals(type, ownerModule.CorLibTypes.GetTypeRef("System", "ValueType")) &&
 				type.DefinitionAssembly.IsCorLib();
 		}
 
-		bool IsSystemEnum(IType type)
-		{
+		bool IsSystemEnum(IType type) {
 			return new SigComparer().Equals(type, ownerModule.CorLibTypes.GetTypeRef("System", "Enum")) &&
 				type.DefinitionAssembly.IsCorLib();
 		}
 
-		void InitializeTypeKind()
-		{
+		void InitializeTypeKind() {
 			if (OnTypeKindChanged_called)
 				return;
 			if (IsStaticClass())
@@ -404,14 +390,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 				TypeKind.SelectedItem = Types.TypeKind.Unknown;
 		}
 
-		bool IsClass()
-		{
+		bool IsClass() {
 			return IsClassBaseType(BaseTypeSig) &&
 				(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class;
 		}
 
-		bool IsStaticClass()
-		{
+		bool IsStaticClass() {
 			return new SigComparer().Equals(BaseTypeSig, ownerModule.CorLibTypes.Object.TypeDefOrRef) &&
 				BaseTypeSig.DefinitionAssembly.IsCorLib() &&
 				(Types.TypeLayout)TypeLayout.SelectedItem == Types.TypeLayout.AutoLayout &&
@@ -420,8 +404,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 				Sealed;
 		}
 
-		bool IsInterface()
-		{
+		bool IsInterface() {
 			return BaseTypeSig == null &&
 				(Types.TypeLayout)TypeLayout.SelectedItem == Types.TypeLayout.AutoLayout &&
 				(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Interface &&
@@ -429,16 +412,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 				!Sealed;
 		}
 
-		bool IsStruct()
-		{
+		bool IsStruct() {
 			return IsSystemValueType(BaseTypeSig) &&
 				(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class &&
 				!Abstract &&
 				Sealed;
 		}
 
-		bool IsEnum()
-		{
+		bool IsEnum() {
 			return IsSystemEnum(BaseTypeSig) &&
 				(Types.TypeLayout)TypeLayout.SelectedItem == Types.TypeLayout.AutoLayout &&
 				(Types.TypeSemantics)TypeSemantics.SelectedItem == Types.TypeSemantics.Class &&
@@ -446,8 +427,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 				Sealed;
 		}
 
-		bool IsDelegate()
-		{
+		bool IsDelegate() {
 			return new SigComparer().Equals(BaseTypeSig, ownerModule.CorLibTypes.GetTypeRef("System", "MulticastDelegate")) &&
 				BaseTypeSig.DefinitionAssembly.IsCorLib() &&
 				(Types.TypeLayout)TypeLayout.SelectedItem == Types.TypeLayout.AutoLayout &&
@@ -457,8 +437,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		}
 
 		bool OnTypeKindChanged_called;
-		void OnTypeKindChanged()
-		{
+		void OnTypeKindChanged() {
 			if (OnTypeKindChanged_called)
 				return;
 			OnTypeKindChanged_called = true;
@@ -470,8 +449,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			}
 		}
 
-		void OnTypeKindChanged2()
-		{
+		void OnTypeKindChanged2() {
 			switch ((Types.TypeKind)TypeKind.SelectedItem) {
 			case Types.TypeKind.Unknown:
 				break;
@@ -526,25 +504,21 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			}
 		}
 
-		bool IsClassBaseType(IType type)
-		{
+		bool IsClassBaseType(IType type) {
 			return type != null &&
 				!IsSystemEnum(type) &&
 				!IsSystemValueType(type);
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public TypeDefOptions CreateTypeDefOptions()
-		{
+		public TypeDefOptions CreateTypeDefOptions() {
 			return CopyTo(new TypeDefOptions());
 		}
 
-		void InitializeFrom(TypeDefOptions options)
-		{
+		void InitializeFrom(TypeDefOptions options) {
 			Attributes = options.Attributes;
 			Namespace = options.Namespace;
 			Name = options.Name;
@@ -562,8 +536,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			InterfaceImplsVM.InitializeFrom(options.Interfaces);
 		}
 
-		TypeDefOptions CopyTo(TypeDefOptions options)
-		{
+		TypeDefOptions CopyTo(TypeDefOptions options) {
 			options.Attributes = Attributes;
 			options.Namespace = Namespace;
 			options.Name = Name;

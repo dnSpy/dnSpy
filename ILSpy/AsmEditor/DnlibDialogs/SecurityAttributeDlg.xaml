@@ -16,14 +16,14 @@
     You should have received a copy of the GNU General Public License
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<winlocal:WindowBase x:Class="ICSharpCode.ILSpy.AsmEditor.DnlibDialogs.SecurityAttributeDlg"
+<winlocal:WindowBase x:Class="dnSpy.AsmEditor.DnlibDialogs.SecurityAttributeDlg"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:dnlibdlgs="clr-namespace:ICSharpCode.ILSpy.AsmEditor.DnlibDialogs"
-             xmlns:winlocal="clr-namespace:ICSharpCode.ILSpy.AsmEditor"
-             xmlns:vc="clr-namespace:ICSharpCode.ILSpy.AsmEditor.Converters"
+             xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
+             xmlns:winlocal="clr-namespace:dnSpy.AsmEditor"
+             xmlns:vc="clr-namespace:dnSpy.AsmEditor.Converters"
              Height="400" Width="500"
              Title="Edit Security Attribute"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"

@@ -19,32 +19,26 @@
 
 using dnlib.DotNet.Resources;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Resources
-{
-	sealed class ResourceElementOptions
-	{
+namespace dnSpy.AsmEditor.Resources {
+	sealed class ResourceElementOptions {
 		public string Name;
 		public IResourceData ResourceData;
 
-		public ResourceElementOptions()
-		{
+		public ResourceElementOptions() {
 		}
 
-		public ResourceElementOptions(ResourceElement resEl)
-		{
+		public ResourceElementOptions(ResourceElement resEl) {
 			this.Name = resEl.Name;
 			this.ResourceData = resEl.ResourceData;
 		}
 
-		public ResourceElement CopyTo(ResourceElement other)
-		{
+		public ResourceElement CopyTo(ResourceElement other) {
 			other.Name = this.Name;
 			other.ResourceData = this.ResourceData;
 			return other;
 		}
 
-		public ResourceElement Create()
-		{
+		public ResourceElement Create() {
 			return CopyTo(new ResourceElement());
 		}
 	}

@@ -21,17 +21,13 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Converters
-{
-	sealed class RadioButtonConverter : IValueConverter
-	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
+namespace dnSpy.AsmEditor.Converters {
+	sealed class RadioButtonConverter : IValueConverter {
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			return value.Equals(parameter);
 		}
 
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
 			return value.Equals(true) ? parameter : Binding.DoNothing;
 		}
 	}

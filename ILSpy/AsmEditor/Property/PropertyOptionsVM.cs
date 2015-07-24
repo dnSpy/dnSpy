@@ -21,13 +21,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.DnlibDialogs;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Property
-{
-	sealed class PropertyOptionsVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.Property {
+	sealed class PropertyOptionsVM : ViewModelBase {
 		readonly PropertyDefOptions origOptions;
 
 		public ICommand ReinitializeCommand {
@@ -65,13 +63,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			set { SetFlagValue(PropertyAttributes.HasDefault, value); }
 		}
 
-		bool GetFlagValue(PropertyAttributes flag)
-		{
+		bool GetFlagValue(PropertyAttributes flag) {
 			return (Attributes & flag) != 0;
 		}
 
-		void SetFlagValue(PropertyAttributes flag, bool value)
-		{
+		void SetFlagValue(PropertyAttributes flag, bool value) {
 			if (value)
 				Attributes |= flag;
 			else
@@ -134,8 +130,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 
 		readonly ModuleDef ownerModule;
 
-		public PropertyOptionsVM(PropertyDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType)
-		{
+		public PropertyOptionsVM(PropertyDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType) {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
 
@@ -164,31 +159,26 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			Reinitialize();
 		}
 
-		void constantVM_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void constantVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "IsEnabled")
 				HasDefault = ConstantVM.IsEnabled;
 			HasErrorUpdated();
 		}
 
-		void methodSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void methodSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			HasErrorUpdated();
 			OnPropertyChanged("PropertySigHeader");
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public PropertyDefOptions CreatePropertyDefOptions()
-		{
+		public PropertyDefOptions CreatePropertyDefOptions() {
 			return CopyTo(new PropertyDefOptions());
 		}
 
-		void InitializeFrom(PropertyDefOptions options)
-		{
+		void InitializeFrom(PropertyDefOptions options) {
 			Attributes = options.Attributes;
 			Name = options.Name;
 			PropertySig = options.PropertySig;
@@ -206,8 +196,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 
-		PropertyDefOptions CopyTo(PropertyDefOptions options)
-		{
+		PropertyDefOptions CopyTo(PropertyDefOptions options) {
 			options.Attributes = Attributes;
 			options.Name = Name;
 			options.PropertySig = PropertySig;

@@ -18,12 +18,10 @@
 */
 
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.DnlibDialogs;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	interface ICreateConstantType
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	interface ICreateConstantType {
 		/// <summary>
 		/// Create a constant
 		/// </summary>

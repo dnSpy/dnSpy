@@ -21,13 +21,12 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes.Filters;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class TypeSigCreatorVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class TypeSigCreatorVM : ViewModelBase {
 		public IDnlibTypePicker DnlibTypePicker {
 			set { dnlibTypePicker = value; }
 		}
@@ -228,8 +227,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		readonly TypeSigCreatorOptions options;
 		readonly TypeSig defaultTypeSig;
 
-		public TypeSigCreatorVM(TypeSigCreatorOptions options, TypeSig defaultTypeSig = null)
-		{
+		public TypeSigCreatorVM(TypeSigCreatorOptions options, TypeSig defaultTypeSig = null) {
 			this.options = options.Clone();
 			this.defaultTypeSig = defaultTypeSig;
 			this.arrayRank = new UInt32VM(2, a => { });
@@ -246,31 +244,26 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			Reinitialize();
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			this.TypeSig = defaultTypeSig;
 		}
 
-		void ShowWarning(string key, string msg)
-		{
+		void ShowWarning(string key, string msg) {
 			if (showWarningMessage == null)
 				throw new InvalidOperationException();
 			showWarningMessage.Show(key, msg);
 		}
 
-		void RemoveLastTypeSig()
-		{
+		void RemoveLastTypeSig() {
 			if (TypeSig != null)
 				TypeSig = TypeSig.Next;
 		}
 
-		TypeDefOrRefSig GetTypeSig()
-		{
+		TypeDefOrRefSig GetTypeSig() {
 			return GetTypeSig(VisibleMembersFlags.TypeDef);
 		}
 
-		TypeDefOrRefSig GetTypeSig(VisibleMembersFlags flags)
-		{
+		TypeDefOrRefSig GetTypeSig(VisibleMembersFlags flags) {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 
@@ -285,7 +278,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				var td = type.ResolveTypeDef();
 				bool isValueType;
 				if (td == null)
-					isValueType = false;	// Most types aren't value types
+					isValueType = false;    // Most types aren't value types
 				else
 					isValueType = td.IsValueType;
 
@@ -296,38 +289,31 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		void AddTypeDefOrRef()
-		{
+		void AddTypeDefOrRef() {
 			TypeSig = GetTypeSig();
 		}
 
-		bool AddTypeDefOrRefCanExecute()
-		{
+		bool AddTypeDefOrRefCanExecute() {
 			return CanAddLeafTypeSig;
 		}
 
-		void AddGenericVar()
-		{
+		void AddGenericVar() {
 			TypeSig = new GenericVar(genericVariableNumber.Value, options.OwnerType);
 		}
 
-		bool AddGenericVarCanExecute()
-		{
+		bool AddGenericVarCanExecute() {
 			return !genericVariableNumber.HasError && options.CanAddGenericTypeVar && CanAddLeafTypeSig;
 		}
 
-		void AddGenericMVar()
-		{
+		void AddGenericMVar() {
 			TypeSig = new GenericMVar(genericVariableNumber.Value, options.OwnerMethod);
 		}
 
-		bool AddGenericMVarCanExecute()
-		{
+		bool AddGenericMVarCanExecute() {
 			return !genericVariableNumber.HasError && options.CanAddGenericMethodVar && CanAddLeafTypeSig;
 		}
 
-		void AddFnPtrSig()
-		{
+		void AddFnPtrSig() {
 			if (createMethodPropertySig == null)
 				throw new InvalidOperationException();
 
@@ -344,8 +330,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			TypeSig = new FnPtrSig(sig);
 		}
 
-		bool AddFnPtrSigCanExecute()
-		{
+		bool AddFnPtrSigCanExecute() {
 			return CanAddFnPtr && CanAddLeafTypeSig;
 		}
 
@@ -360,8 +345,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		bool canAddFnPtr = true;
 
-		void AddGenericInstSig()
-		{
+		void AddGenericInstSig() {
 			var origType = GetTypeSig(VisibleMembersFlags.GenericTypeDef);
 			if (origType == null)
 				return;
@@ -387,38 +371,31 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			TypeSig = new GenericInstSig(type, genArgs);
 		}
 
-		bool AddGenericInstSigCanExecute()
-		{
+		bool AddGenericInstSigCanExecute() {
 			return CanAddLeafTypeSig;
 		}
 
-		void AddPtrSig()
-		{
+		void AddPtrSig() {
 			TypeSig = new PtrSig(TypeSig);
 		}
 
-		bool AddPtrSigCanExecute()
-		{
+		bool AddPtrSigCanExecute() {
 			return CanAddNonLeafTypeSig;
 		}
 
-		void AddByRefSig()
-		{
+		void AddByRefSig() {
 			TypeSig = new ByRefSig(TypeSig);
 		}
 
-		bool AddByRefSigCanExecute()
-		{
+		bool AddByRefSigCanExecute() {
 			return CanAddNonLeafTypeSig;
 		}
 
-		void AddSZArraySig()
-		{
+		void AddSZArraySig() {
 			TypeSig = new SZArraySig(TypeSig);
 		}
 
-		bool AddSZArraySigCanExecute()
-		{
+		bool AddSZArraySigCanExecute() {
 			return CanAddNonLeafTypeSig;
 		}
 
@@ -437,50 +414,42 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		Int32ListDataFieldVM arrayLowerBounds;
 
-		void AddArraySig()
-		{
+		void AddArraySig() {
 			TypeSig = new ArraySig(TypeSig, arrayRank.Value, arraySizes.Value, arrayLowerBounds.Value);
 		}
 
-		bool AddArraySigCanExecute()
-		{
+		bool AddArraySigCanExecute() {
 			return CanAddNonLeafTypeSig &&
 				!arrayRank.HasError &&
 				!arraySizes.HasError &&
 				!arrayLowerBounds.HasError;
 		}
 
-		void AddCModReqdSig()
-		{
+		void AddCModReqdSig() {
 			var type = GetTypeSig();
 			if (type != null)
 				TypeSig = new CModReqdSig(type.ToTypeDefOrRef(), TypeSig);
 		}
 
-		bool AddCModReqdSigCanExecute()
-		{
+		bool AddCModReqdSigCanExecute() {
 			return CanAddNonLeafTypeSig;
 		}
 
-		void AddCModOptSig()
-		{
+		void AddCModOptSig() {
 			var type = GetTypeSig();
 			if (type != null)
 				TypeSig = new CModOptSig(type.ToTypeDefOrRef(), TypeSig);
 		}
 
-		bool AddCModOptSigCanExecute()
-		{
+		bool AddCModOptSigCanExecute() {
 			return CanAddNonLeafTypeSig;
 		}
 
-		void AddPinnedSig()
-		{
+		void AddPinnedSig() {
 			TypeSig = new PinnedSig(TypeSig);
 		}
 
-		bool AddPinnedSigCanExecute()
-		{
+		bool AddPinnedSigCanExecute() {
 			return options.IsLocal && CanAddNonLeafTypeSig;
 		}
 

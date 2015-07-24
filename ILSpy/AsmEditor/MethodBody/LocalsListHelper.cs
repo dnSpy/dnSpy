@@ -23,28 +23,23 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	sealed class LocalsListHelper : ListBoxHelperBase<LocalVM>
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	sealed class LocalsListHelper : ListBoxHelperBase<LocalVM> {
 		readonly TypeSigCreator typeSigCreator;
 
 		public LocalsListHelper(ListView listView, Window ownerWindow)
-			: base(listView, "Local")
-		{
+			: base(listView, "Local") {
 			this.typeSigCreator = new TypeSigCreator(ownerWindow);
 		}
 
-		protected override LocalVM[] GetSelectedItems()
-		{
+		protected override LocalVM[] GetSelectedItems() {
 			return listBox.SelectedItems.Cast<LocalVM>().ToArray();
 		}
 
-		protected override void OnDataContextChangedInternal(object dataContext)
-		{
+		protected override void OnDataContextChangedInternal(object dataContext) {
 			this.coll = ((MethodBodyVM)dataContext).CilBodyVM.LocalsListVM;
 			this.coll.CollectionChanged += coll_CollectionChanged;
 			InitializeLocals(this.coll);
@@ -52,20 +47,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			AddStandardMenuHandlers("AddLocal");
 		}
 
-		void coll_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
+		void coll_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			if (e.NewItems != null)
 				InitializeLocals(e.NewItems);
 		}
 
-		void InitializeLocals(System.Collections.IList list)
-		{
+		void InitializeLocals(System.Collections.IList list) {
 			foreach (LocalVM local in list)
 				local.TypeSigCreator = typeSigCreator;
 		}
 
-		protected override void CopyItemsAsText(LocalVM[] locals)
-		{
+		protected override void CopyItemsAsText(LocalVM[] locals) {
 			Array.Sort(locals, (a, b) => a.Index.CompareTo(b.Index));
 
 			var output = new PlainTextOutput();

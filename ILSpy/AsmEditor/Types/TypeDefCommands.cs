@@ -24,37 +24,31 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
-using ICSharpCode.ILSpy.TreeNodes;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Types
-{
-	static class TypeConstants
-	{
+namespace dnSpy.AsmEditor.Types {
+	static class TypeConstants {
 		public const string DEFAULT_TYPE_NAME = "MyType";
 	}
 
 	[Export(typeof(IPlugin))]
-	sealed class AssemblyPlugin : IPlugin
-	{
-		public void OnLoaded()
-		{
+	sealed class AssemblyPlugin : IPlugin {
+		public void OnLoaded() {
 			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteExecuted, DeleteCanExecute));
 		}
 
-		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = DeleteTypeDefCommand.CanExecute(MainWindow.Instance.SelectedNodes);
 		}
 
-		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e) {
 			DeleteTypeDefCommand.Execute(MainWindow.Instance.SelectedNodes);
 		}
 	}
 
-	sealed class DeleteTypeDefCommand : IUndoCommand
-	{
+	sealed class DeleteTypeDefCommand : IUndoCommand {
 		const string CMD_NAME = "Delete Type";
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Delete",
@@ -67,20 +61,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2120)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return DeleteTypeDefCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				DeleteTypeDefCommand.Execute(nodes);
 			}
 
-			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
-			{
+			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
 				DeleteTypeDefCommand.Initialize(nodes, menuItem);
 			}
 		}
@@ -89,27 +79,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 								Icon = "Delete",
 								Category = "AsmEd",
 								Order = 320)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					DeleteTypeDefCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				DeleteTypeDefCommand.Execute(ctx.Nodes);
 			}
 
-			protected override void Initialize(Context ctx, MenuItem menuItem)
-			{
+			protected override void Initialize(Context ctx, MenuItem menuItem) {
 				DeleteTypeDefCommand.Initialize(ctx.Nodes, menuItem);
 			}
 		}
 
-		static void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
-		{
+		static void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
 			nodes = DeleteTypeDefCommand.FilterOutGlobalTypes(nodes);
 			if (nodes.Length == 1)
 				menuItem.Header = string.Format("Delete {0}", UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
@@ -117,20 +102,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 				menuItem.Header = string.Format("Delete {0} types", nodes.Length);
 		}
 
-		internal static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		internal static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length > 0 &&
 				nodes.All(n => n is TypeTreeNode) &&
 				FilterOutGlobalTypes(nodes).Length > 0;
 		}
 
-		static ILSpyTreeNode[] FilterOutGlobalTypes(ILSpyTreeNode[] nodes)
-		{
+		static ILSpyTreeNode[] FilterOutGlobalTypes(ILSpyTreeNode[] nodes) {
 			return nodes.Where(a => a is TypeTreeNode && !((TypeTreeNode)a).TypeDefinition.IsGlobalModuleType).ToArray();
 		}
 
-		internal static void Execute(ILSpyTreeNode[] nodes)
-		{
+		internal static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -141,25 +123,21 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			UndoCommandManager.Instance.Add(new DeleteTypeDefCommand(typeNodes));
 		}
 
-		public struct DeleteModelNodes
-		{
+		public struct DeleteModelNodes {
 			ModelInfo[] infos;
 
-			struct ModelInfo
-			{
+			struct ModelInfo {
 				public readonly IList<TypeDef> OwnerList;
 				public readonly int Index;
 
-				public ModelInfo(TypeDef type)
-				{
+				public ModelInfo(TypeDef type) {
 					this.OwnerList = type.DeclaringType == null ? type.Module.Types : type.DeclaringType.NestedTypes;
 					this.Index = this.OwnerList.IndexOf(type);
 					Debug.Assert(this.Index >= 0);
 				}
 			}
 
-			public void Delete(TypeTreeNode[] nodes)
-			{
+			public void Delete(TypeTreeNode[] nodes) {
 				Debug.Assert(infos == null);
 				if (infos != null)
 					throw new InvalidOperationException();
@@ -175,8 +153,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 				}
 			}
 
-			public void Restore(TypeTreeNode[] nodes)
-			{
+			public void Restore(TypeTreeNode[] nodes) {
 				Debug.Assert(infos != null);
 				if (infos == null)
 					throw new InvalidOperationException();
@@ -197,8 +174,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		DeletableNodes<TypeTreeNode> nodes;
 		DeleteModelNodes modelNodes;
 
-		DeleteTypeDefCommand(TypeTreeNode[] asmNodes)
-		{
+		DeleteTypeDefCommand(TypeTreeNode[] asmNodes) {
 			nodes = new DeletableNodes<TypeTreeNode>(asmNodes);
 		}
 
@@ -206,14 +182,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			nodes.Delete();
 			modelNodes.Delete(nodes.Nodes);
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			modelNodes.Restore(nodes.Nodes);
 			nodes.Restore();
 		}
@@ -222,13 +196,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			get { return nodes.Nodes; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	sealed class CreateTypeDefCommand : IUndoCommand
-	{
+	sealed class CreateTypeDefCommand : IUndoCommand {
 		const string CMD_NAME = "Create Type";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewClass",
@@ -239,29 +211,24 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 							MenuIcon = "NewClass",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2340)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return CreateTypeDefCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				CreateTypeDefCommand.Execute(nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length == 1 &&
 				(nodes[0] is TypeTreeNode ||
 				nodes[0] is NamespaceTreeNode ||
 				(nodes[0] is AssemblyTreeNode && ((AssemblyTreeNode)nodes[0]).IsModule));
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -289,8 +256,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		readonly NamespaceTreeNodeCreator nsNodeCreator;
 		readonly TypeTreeNode typeNode;
 
-		CreateTypeDefCommand(IList<TypeDef> ownerList, ILSpyTreeNode ownerNode, TypeDefOptions options)
-		{
+		CreateTypeDefCommand(IList<TypeDef> ownerList, ILSpyTreeNode ownerNode, TypeDefOptions options) {
 			this.ownerList = ownerList;
 			var modNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(ownerNode);
 			Debug.Assert(modNode != null);
@@ -304,8 +270,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			nsNodeCreator.Add();
 			nsNodeCreator.NamespaceTreeNode.EnsureChildrenFiltered();
 			ownerList.Add(typeNode.TypeDefinition);
@@ -313,8 +278,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			typeNode.OnReadded();
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			typeNode.OnBeforeRemoved();
 			bool b = nsNodeCreator.NamespaceTreeNode.Children.Remove(typeNode) &&
 					ownerList.Remove(typeNode.TypeDefinition);
@@ -328,13 +292,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			get { return nsNodeCreator.OriginalNodes; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	sealed class CreateNestedTypeDefCommand : IUndoCommand
-	{
+	sealed class CreateNestedTypeDefCommand : IUndoCommand {
 		const string CMD_NAME = "Create Nested Type";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewClass",
@@ -345,15 +307,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 							MenuIcon = "NewClass",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2350)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return CreateNestedTypeDefCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				CreateNestedTypeDefCommand.Execute(nodes);
 			}
 		}
@@ -362,29 +321,24 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 								Icon = "NewClass",
 								Category = "AsmEd",
 								Order = 550)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					ctx.Nodes.Length == 1 &&
 					ctx.Nodes[0] is TypeTreeNode;
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				CreateNestedTypeDefCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length == 1 &&
 				(nodes[0] is TypeTreeNode || nodes[0].Parent is TypeTreeNode);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -416,8 +370,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		readonly TypeTreeNode ownerType;
 		readonly TypeTreeNode nestedType;
 
-		CreateNestedTypeDefCommand(TypeTreeNode ownerType, TypeDefOptions options)
-		{
+		CreateNestedTypeDefCommand(TypeTreeNode ownerType, TypeDefOptions options) {
 			this.ownerType = ownerType;
 
 			var modNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(ownerType);
@@ -431,16 +384,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			ownerType.EnsureChildrenFiltered();
 			ownerType.TypeDefinition.NestedTypes.Add(nestedType.TypeDefinition);
 			ownerType.AddToChildren(nestedType);
 			nestedType.OnReadded();
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			nestedType.OnBeforeRemoved();
 			bool b = ownerType.Children.Remove(nestedType) &&
 					ownerType.TypeDefinition.NestedTypes.Remove(nestedType.TypeDefinition);
@@ -453,13 +404,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			get { yield return ownerType; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	sealed class TypeDefSettingsCommand : IUndoCommand
-	{
+	sealed class TypeDefSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Type";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
@@ -470,15 +419,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2420)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return TypeDefSettingsCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				TypeDefSettingsCommand.Execute(nodes);
 			}
 		}
@@ -487,27 +433,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 620)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return TypeDefSettingsCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				TypeDefSettingsCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length == 1 &&
 				nodes[0] is TypeTreeNode;
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -538,22 +479,19 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 		readonly bool nameChanged;
 		readonly TypeRefInfo[] typeRefInfos;
 
-		struct TypeRefInfo
-		{
+		struct TypeRefInfo {
 			public readonly TypeRef TypeRef;
 			public readonly UTF8String OrigNamespace;
 			public readonly UTF8String OrigName;
 
-			public TypeRefInfo(TypeRef tr)
-			{
+			public TypeRefInfo(TypeRef tr) {
 				this.TypeRef = tr;
 				this.OrigNamespace = tr.Namespace;
 				this.OrigName = tr.Name;
 			}
 		}
 
-		TypeDefSettingsCommand(ModuleDef module, TypeTreeNode typeNode, TypeDefOptions options)
-		{
+		TypeDefSettingsCommand(ModuleDef module, TypeTreeNode typeNode, TypeDefOptions options) {
 			this.module = module;
 			this.typeNode = typeNode;
 			this.newOptions = options;
@@ -580,8 +518,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			if (nsNodeCreator != null) {
 				typeNode.OnBeforeRemoved();
 				bool b = origParentChildIndex < origParentNode.Children.Count && origParentNode.Children[origParentChildIndex] == typeNode;
@@ -619,8 +556,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			typeNode.InvalidateInterfacesNode();
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			if (nsNodeCreator != null) {
 				typeNode.OnBeforeRemoved();
 				bool b = nsNodeCreator.NamespaceTreeNode.Children.Remove(typeNode);
@@ -660,8 +596,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Types
 			get { yield return typeNode; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 }

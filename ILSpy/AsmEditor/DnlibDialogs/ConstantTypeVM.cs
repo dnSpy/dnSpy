@@ -22,12 +22,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	enum ConstantType
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	enum ConstantType {
 		Null,
 
 		Object,	// Can only be used by CANamedArgumentVM
@@ -65,8 +63,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		TypeArray,
 	}
 
-	sealed class ConstantTypeVM : ViewModelBase
-	{
+	sealed class ConstantTypeVM : ViewModelBase {
 		public IDnlibTypePicker DnlibTypePicker {
 			set {
 				@enum.DnlibTypePicker = value;
@@ -126,8 +123,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			{ ConstantType.TypeArray,	new EnumVM(ConstantType.TypeArray,		"Type[]") },
 		};
 
-		public static EnumVM[] CreateEnumArray(IEnumerable<ConstantType> constants)
-		{
+		public static EnumVM[] CreateEnumArray(IEnumerable<ConstantType> constants) {
 			return constants.Select(a => typeToEnumVM[a]).ToArray();
 		}
 
@@ -153,8 +149,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			get { return ConvertValueNoSpecialNull(Value); }
 		}
 
-		public static object ConvertValueNoSpecialNull(object value)
-		{
+		public static object ConvertValueNoSpecialNull(object value) {
 			if (value == null)
 				return value;
 			if (value is Null)
@@ -424,8 +419,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		void SetSelectedItem(ConstantType ct)
-		{
+		void SetSelectedItem(ConstantType ct) {
 			if (ConstantTypeEnumList.Has(ct))
 				ConstantTypeEnumList.SelectedItem = ct;
 			else
@@ -992,8 +986,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		readonly bool arraysCanBeNull;
 
-		public ConstantTypeVM(ModuleDef ownerModule, object value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions options = null)
-		{
+		public ConstantTypeVM(ModuleDef ownerModule, object value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions options = null) {
 			if (options == null) {
 				IList<ConstantType> clist = validConstants;
 				if (clist.IndexOf(ConstantType.Type) >= 0 ||
@@ -1039,14 +1032,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			this.Value = value;
 		}
 
-		void FieldUpdated()
-		{
+		void FieldUpdated() {
 			OnPropertyChanged("Modified");
 			HasErrorUpdated();
 		}
 
-		void OnConstantChanged()
-		{
+		void OnConstantChanged() {
 			OnPropertyChanged("Modified");
 			OnPropertyChanged("NullIsSelected");
 			OnPropertyChanged("BooleanIsSelected");

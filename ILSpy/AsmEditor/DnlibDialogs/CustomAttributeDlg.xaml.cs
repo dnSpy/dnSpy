@@ -17,15 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
 	/// Interaction logic for CustomAttributeDlg.xaml
 	/// </summary>
-	public partial class CustomAttributeDlg : WindowBase
-	{
-		public CustomAttributeDlg()
-		{
+	public partial class CustomAttributeDlg : WindowBase {
+		public CustomAttributeDlg() {
 			InitializeComponent();
 		}
 	}

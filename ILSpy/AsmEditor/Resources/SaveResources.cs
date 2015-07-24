@@ -19,21 +19,18 @@
 
 using System.IO;
 using System.Linq;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
 using WF = System.Windows.Forms;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Resources
-{
-	static class SaveResources
-	{
-		public static ResourceData[] GetResourceData(IResourceNode[] nodes, ResourceDataType resourceDataType)
-		{
+namespace dnSpy.AsmEditor.Resources {
+	static class SaveResources {
+		public static ResourceData[] GetResourceData(IResourceNode[] nodes, ResourceDataType resourceDataType) {
 			return nodes.SelectMany(a => a.GetResourceData(resourceDataType)).ToArray();
 		}
 
-		public static void Save(IResourceNode[] nodes, bool useSubDirs, ResourceDataType resourceDataType)
-		{
+		public static void Save(IResourceNode[] nodes, bool useSubDirs, ResourceDataType resourceDataType) {
 			if (nodes == null)
 				return;
 

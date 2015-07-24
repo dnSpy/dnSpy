@@ -22,12 +22,9 @@ using System.Collections.Generic;
 using System.Text;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	static class DlgUtils
-	{
-		public static string ValueToString(object value, TypeSig storageType)
-		{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	static class DlgUtils {
+		public static string ValueToString(object value, TypeSig storageType) {
 			var t = storageType.RemovePinnedAndModifiers();
 			bool addCast = t.GetElementType() == ElementType.Object;
 			if (t is SZArraySig)
@@ -35,13 +32,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return ValueToString(value, addCast);
 		}
 
-		static string AddCast(string s, bool addCast, string cast)
-		{
+		static string AddCast(string s, bool addCast, string cast) {
 			return addCast ? string.Format("({0}){1}", cast, s) : s;
 		}
 
-		public static string ValueToString(object value, bool addCast)
-		{
+		public static string ValueToString(object value, bool addCast) {
 			if (value == null)
 				return "null";
 
@@ -98,8 +93,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return value.ToString();
 		}
 
-		static string ArrayToString(object value, Type type)
-		{
+		static string ArrayToString(object value, Type type) {
 			var list = value as System.Collections.IList;
 			if (list == null)
 				return string.Format("({0}[])null", type.FullName);

@@ -8,9 +8,9 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Media;
-
 using Debugger;
 using Debugger.MetaData;
+using dnSpy.AsmEditor;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.Debugger.Services.Debugger;
@@ -329,7 +329,7 @@ namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
 					}
 				} else if (val.Type.FullName == typeof(string).FullName) {
 					string error;
-					newText = ILSpy.AsmEditor.NumberVMUtils.ParseString(newText, false, out error);
+					newText = NumberVMUtils.ParseString(newText, false, out error);
 					if (!string.IsNullOrEmpty(error)) {
 						MainWindow.Instance.ShowMessageBox(string.Format("The string is not a valid C# string. Error: {0}", error));
 						return false;

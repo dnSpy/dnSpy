@@ -19,18 +19,15 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
 	/// Interaction logic for TypeDefOrRefAndCAsControl.xaml
 	/// </summary>
-	public partial class TypeDefOrRefAndCAsControl : UserControl
-	{
-		public TypeDefOrRefAndCAsControl()
-		{
+	public partial class TypeDefOrRefAndCAsControl : UserControl {
+		public TypeDefOrRefAndCAsControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var ownerWindow = Window.GetWindow(this);

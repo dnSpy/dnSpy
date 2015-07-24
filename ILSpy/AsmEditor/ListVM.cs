@@ -22,11 +22,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
-	class ListVM<T> : INotifyPropertyChanged, IDataErrorInfo
-	{
+namespace dnSpy.AsmEditor {
+	class ListVM<T> : INotifyPropertyChanged, IDataErrorInfo {
 		protected ObservableCollection<T> list;
 		readonly Action<int, int> onChanged;
 		int index;
@@ -39,8 +38,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			get { return list; }
 		}
 
-		public void InvalidateSelected(IEnumerable<T> newValues, bool addDefault, T defaultValue)
-		{
+		public void InvalidateSelected(IEnumerable<T> newValues, bool addDefault, T defaultValue) {
 			//TODO: Optimize callers. This method is slow.
 			var newList = new ObservableCollection<T>();
 			if (addDefault)
@@ -98,31 +96,26 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 
 		public ListVM()
-			: this((Action<int, int>)null)
-		{
+			: this((Action<int, int>)null) {
 		}
 
-		public ListVM(Action<int, int> onChanged)
-		{
+		public ListVM(Action<int, int> onChanged) {
 			this.list = new ObservableCollection<T>();
 			this.index = -1;
 			this.onChanged = onChanged;
 		}
 
 		public ListVM(IList<T> list)
-			: this(list, null)
-		{
+			: this(list, null) {
 		}
 
-		public ListVM(IEnumerable<T> list, Action<int, int> onChanged)
-		{
+		public ListVM(IEnumerable<T> list, Action<int, int> onChanged) {
 			this.list = new ObservableCollection<T>(list);
 			this.index = this.list.Count == 0 ? -1 : 0;
 			this.onChanged = onChanged;
 		}
 
-		int GetIndex(T value)
-		{
+		int GetIndex(T value) {
 			int index = list.IndexOf(value);
 			if (index >= 0)
 				return index;
@@ -133,8 +126,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		void OnPropertyChanged(string propName)
-		{
+		void OnPropertyChanged(string propName) {
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propName));
 		}

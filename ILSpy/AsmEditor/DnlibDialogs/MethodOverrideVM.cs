@@ -20,10 +20,8 @@
 using System.Windows.Input;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class MethodOverrideVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class MethodOverrideVM : ViewModelBase {
 		readonly MethodOverrideOptions origOptions;
 		MethodOverride methodOverride;
 
@@ -61,31 +59,26 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			get { return ownerModule; }
 		}
 
-		public MethodOverrideVM(MethodOverrideOptions options, ModuleDef ownerModule)
-		{
+		public MethodOverrideVM(MethodOverrideOptions options, ModuleDef ownerModule) {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
 
 			Reinitialize();
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public MethodOverrideOptions CreateMethodOverrideOptions()
-		{
+		public MethodOverrideOptions CreateMethodOverrideOptions() {
 			return CopyTo(new MethodOverrideOptions());
 		}
 
-		void InitializeFrom(MethodOverrideOptions options)
-		{
+		void InitializeFrom(MethodOverrideOptions options) {
 			methodOverride = options.Create();
 		}
 
-		MethodOverrideOptions CopyTo(MethodOverrideOptions options)
-		{
+		MethodOverrideOptions CopyTo(MethodOverrideOptions options) {
 			options.MethodBody = methodOverride.MethodBody;
 			options.MethodDeclaration = methodOverride.MethodDeclaration;
 			return options;

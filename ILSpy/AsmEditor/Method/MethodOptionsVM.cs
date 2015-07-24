@@ -21,27 +21,24 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.DnlibDialogs;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Method
-{
-	enum CodeType
-	{
+namespace dnSpy.AsmEditor.Method {
+	enum CodeType {
 		IL			= (int)MethodImplAttributes.IL >> 0,
 		Native		= (int)MethodImplAttributes.Native >> 0,
 		OPTIL		= (int)MethodImplAttributes.OPTIL >> 0,
 		Runtime		= (int)MethodImplAttributes.Runtime >> 0,
 	}
 
-	enum ManagedType
-	{
+	enum ManagedType {
 		Unmanaged	= (int)MethodImplAttributes.Unmanaged >> 2,
 		Managed		= (int)MethodImplAttributes.Managed >> 2,
 	}
 
-	enum MethodVisibility
-	{
-		PrivateScope= (int)MethodAttributes.PrivateScope >> 0,
+	enum MethodVisibility {
+		PrivateScope = (int)MethodAttributes.PrivateScope >> 0,
 		Private		= (int)MethodAttributes.Private >> 0,
 		FamANDAssem	= (int)MethodAttributes.FamANDAssem >> 0,
 		Assembly	= (int)MethodAttributes.Assembly >> 0,
@@ -50,14 +47,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 		Public		= (int)MethodAttributes.Public >> 0,
 	}
 
-	enum VtableLayout
-	{
+	enum VtableLayout {
 		ReuseSlot	= (int)MethodAttributes.ReuseSlot >> 8,
 		NewSlot		= (int)MethodAttributes.NewSlot >> 8,
 	}
 
-	sealed class MethodOptionsVM : ViewModelBase
-	{
+	sealed class MethodOptionsVM : ViewModelBase {
 		readonly MethodDefOptions origOptions;
 
 		public ICommand ReinitializeCommand {
@@ -156,13 +151,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			set { SetFlagValue(MethodImplAttributes.NoOptimization, value); }
 		}
 
-		bool GetFlagValue(MethodImplAttributes flag)
-		{
+		bool GetFlagValue(MethodImplAttributes flag) {
 			return (ImplAttributes & flag) != 0;
 		}
 
-		void SetFlagValue(MethodImplAttributes flag, bool value)
-		{
+		void SetFlagValue(MethodImplAttributes flag, bool value) {
 			if (value)
 				ImplAttributes |= flag;
 			else
@@ -263,13 +256,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			set { SetFlagValue(MethodAttributes.RequireSecObject, value); }
 		}
 
-		bool GetFlagValue(MethodAttributes flag)
-		{
+		bool GetFlagValue(MethodAttributes flag) {
 			return (Attributes & flag) != 0;
 		}
 
-		void SetFlagValue(MethodAttributes flag, bool value)
-		{
+		void SetFlagValue(MethodAttributes flag, bool value) {
 			if (value)
 				Attributes |= flag;
 			else
@@ -338,8 +329,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 
 		readonly ModuleDef ownerModule;
 
-		public MethodOptionsVM(MethodDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
-		{
+		public MethodOptionsVM(MethodDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod) {
 			this.ownerModule = ownerModule;
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, language) {
 				IsLocal = false,
@@ -374,8 +364,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			Reinitialize();
 		}
 
-		void methodSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void methodSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "HasThis") {
 				if (Static != !MethodSigCreator.HasThis)
 					Static = !MethodSigCreator.HasThis;
@@ -390,18 +379,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			HasErrorUpdated();
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public MethodDefOptions CreateMethodDefOptions()
-		{
+		public MethodDefOptions CreateMethodDefOptions() {
 			return CopyTo(new MethodDefOptions());
 		}
 
-		void InitializeFrom(MethodDefOptions options)
-		{
+		void InitializeFrom(MethodDefOptions options) {
 			ImplAttributes = options.ImplAttributes;
 			Attributes = options.Attributes;
 			Name = options.Name;
@@ -418,8 +404,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Method
 			MethodOverridesVM.InitializeFrom(options.Overrides);
 		}
 
-		MethodDefOptions CopyTo(MethodDefOptions options)
-		{
+		MethodDefOptions CopyTo(MethodDefOptions options) {
 			options.ImplAttributes = ImplAttributes;
 			options.Attributes = Attributes;
 			options.Name = Name;

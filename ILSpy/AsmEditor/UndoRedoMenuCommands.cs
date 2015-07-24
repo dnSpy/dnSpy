@@ -17,21 +17,18 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows.Input;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
+namespace dnSpy.AsmEditor {
 	[ExportMainMenuCommand(MenuHeader = "Undo",
 						   MenuInputGestureText = "Ctrl+Z",
 						   MenuIcon = "Undo",
 						   Menu = "_Edit",
 						   MenuCategory = "UndoRedo",
 						   MenuOrder = 2000)]
-	sealed class UndoMainMenuEntryCommand : CommandWrapper
-	{
+	sealed class UndoMainMenuEntryCommand : CommandWrapper {
 		public UndoMainMenuEntryCommand()
-			: base(UndoCommandManagerLoader.Undo)
-		{
+			: base(UndoCommandManagerLoader.Undo) {
 		}
 	}
 
@@ -41,11 +38,9 @@ namespace ICSharpCode.ILSpy.AsmEditor
 						   Menu = "_Edit",
 						   MenuCategory = "UndoRedo",
 						   MenuOrder = 2010)]
-	sealed class RedoMainMenuEntryCommand : CommandWrapper
-	{
+	sealed class RedoMainMenuEntryCommand : CommandWrapper {
 		public RedoMainMenuEntryCommand()
-			: base(UndoCommandManagerLoader.Redo)
-		{
+			: base(UndoCommandManagerLoader.Redo) {
 		}
 	}
 }

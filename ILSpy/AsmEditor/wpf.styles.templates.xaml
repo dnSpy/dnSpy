@@ -19,7 +19,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:mbody="clr-namespace:ICSharpCode.ILSpy.AsmEditor.MethodBody">
+                    xmlns:mbody="clr-namespace:dnSpy.AsmEditor.MethodBody">
 
 	<Style x:Key="CilListBoxScrollViewerStyle"
 		   TargetType="{x:Type ScrollViewer}"

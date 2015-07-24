@@ -20,35 +20,29 @@
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	sealed class LocalOptions
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	sealed class LocalOptions {
 		public TypeSig Type;
 		public string Name;
 		public int PdbAttributes;
 
-		public LocalOptions()
-		{
+		public LocalOptions() {
 		}
 
-		public LocalOptions(Local local)
-		{
+		public LocalOptions(Local local) {
 			this.Type = local.Type;
 			this.Name = local.Name;
 			this.PdbAttributes = local.PdbAttributes;
 		}
 
-		public Local CopyTo(Local local)
-		{
+		public Local CopyTo(Local local) {
 			local.Type = this.Type;
 			local.Name = this.Name;
 			local.PdbAttributes = this.PdbAttributes;
 			return local;
 		}
 
-		public Local Create()
-		{
+		public Local Create() {
 			return CopyTo(new Local(null));
 		}
 	}

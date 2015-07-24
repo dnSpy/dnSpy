@@ -19,15 +19,12 @@
 
 using System.Windows.Controls;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
 	/// Interaction logic for TypeDefOrRefAndCAControl.xaml
 	/// </summary>
-	public partial class TypeDefOrRefAndCAControl : UserControl
-	{
-		public TypeDefOrRefAndCAControl()
-		{
+	public partial class TypeDefOrRefAndCAControl : UserControl {
+		public TypeDefOrRefAndCAControl() {
 			InitializeComponent();
 		}
 	}

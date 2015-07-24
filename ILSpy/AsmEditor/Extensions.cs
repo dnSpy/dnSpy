@@ -21,12 +21,9 @@ using System;
 using System.IO;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
-	static class Extensions
-	{
-		public static bool IsInSameModule(this ILSpyTreeNode[] nodes)
-		{
+namespace dnSpy.AsmEditor {
+	static class Extensions {
+		public static bool IsInSameModule(this ILSpyTreeNode[] nodes) {
 			if (nodes == null || nodes.Length == 0)
 				return false;
 			var module = ILSpyTreeNode.GetModule(nodes[0]);
@@ -46,8 +43,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		/// </summary>
 		/// <param name="filename">Filename</param>
 		/// <returns></returns>
-		public static string ValidateFileName(this string filename)
-		{
+		public static string ValidateFileName(this string filename) {
 			if (string.IsNullOrEmpty(filename))
 				return "Filename can't be empty.";
 			if (string.IsNullOrWhiteSpace(filename))

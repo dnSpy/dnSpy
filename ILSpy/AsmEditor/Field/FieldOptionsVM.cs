@@ -21,12 +21,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.DnlibDialogs;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Field
-{
-	enum FieldVisibility
-	{
+namespace dnSpy.AsmEditor.Field {
+	enum FieldVisibility {
 		PrivateScope	= (int)FieldAttributes.PrivateScope >> 0,
 		Private			= (int)FieldAttributes.Private >> 0,
 		FamANDAssem		= (int)FieldAttributes.FamANDAssem >> 0,
@@ -36,8 +35,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 		Public			= (int)FieldAttributes.Public >> 0,
 	}
 
-	sealed class FieldOptionsVM : ViewModelBase
-	{
+	sealed class FieldOptionsVM : ViewModelBase {
 		readonly FieldDefOptions origOptions;
 
 		public ICommand ReinitializeCommand {
@@ -137,13 +135,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			set { SetFlagValue(FieldAttributes.HasFieldRVA, value); }
 		}
 
-		bool GetFlagValue(FieldAttributes flag)
-		{
+		bool GetFlagValue(FieldAttributes flag) {
 			return (Attributes & flag) != 0;
 		}
 
-		void SetFlagValue(FieldAttributes flag, bool value)
-		{
+		void SetFlagValue(FieldAttributes flag, bool value) {
 			if (value)
 				Attributes |= flag;
 			else
@@ -225,8 +221,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 
 		readonly ModuleDef ownerModule;
 
-		public FieldOptionsVM(FieldDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType)
-		{
+		public FieldOptionsVM(FieldDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType) {
 			this.ownerModule = ownerModule;
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, language) {
 				IsLocal = false,
@@ -259,15 +254,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			Reinitialize();
 		}
 
-		void constantVM_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void constantVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "IsEnabled")
 				HasDefault = ConstantVM.IsEnabled;
 			HasErrorUpdated();
 		}
 
-		void marshalTypeVM_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void marshalTypeVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "IsEnabled")
 				HasFieldMarshal = MarshalTypeVM.IsEnabled;
 			else if (e.PropertyName == "TypeString")
@@ -281,25 +274,21 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			HasErrorUpdated();
 		}
 
-		void typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "TypeSigDnlibFullName")
 				OnPropertyChanged("FieldTypeHeader");
 			HasErrorUpdated();
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public FieldDefOptions CreateFieldDefOptions()
-		{
+		public FieldDefOptions CreateFieldDefOptions() {
 			return CopyTo(new FieldDefOptions());
 		}
 
-		void InitializeFrom(FieldDefOptions options)
-		{
+		void InitializeFrom(FieldDefOptions options) {
 			Attributes = options.Attributes;
 			Name = options.Name;
 			FieldTypeSig = options.FieldSig == null ? null : options.FieldSig.Type;
@@ -320,8 +309,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 
-		FieldDefOptions CopyTo(FieldDefOptions options)
-		{
+		FieldDefOptions CopyTo(FieldDefOptions options) {
 			options.Attributes = Attributes;
 			options.Name = Name;
 			var typeSig = FieldTypeSig;

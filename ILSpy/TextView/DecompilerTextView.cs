@@ -26,13 +26,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using System.Xml;
+using dnlib.DotNet;
+using dnlib.DotNet.Emit;
+using dnSpy.AsmEditor;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
@@ -43,7 +46,6 @@ using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Search;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
-using ICSharpCode.ILSpy.AsmEditor;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.dntheme;
@@ -53,8 +55,6 @@ using ICSharpCode.ILSpy.XmlDoc;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.Documentation;
 using Microsoft.Win32;
-using dnlib.DotNet;
-using dnlib.DotNet.Emit;
 
 namespace ICSharpCode.ILSpy.TextView
 {

@@ -19,17 +19,14 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
 	/// Interaction logic for MemberRefControl.xaml
 	/// </summary>
-	public partial class MemberRefControl : UserControl
-	{
-		public MemberRefControl()
-		{
+	public partial class MemberRefControl : UserControl {
+		public MemberRefControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as MemberRefVM;
@@ -42,8 +39,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			Loaded += MemberRefControl_Loaded;
 		}
 
-		void MemberRefControl_Loaded(object sender, RoutedEventArgs e)
-		{
+		void MemberRefControl_Loaded(object sender, RoutedEventArgs e) {
 			// I can't get it to work with XAML so do it with code
 			nameTextBox.Focus();
 		}

@@ -24,32 +24,27 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
-using ICSharpCode.ILSpy.TreeNodes;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Property
-{
+namespace dnSpy.AsmEditor.Property {
 	[Export(typeof(IPlugin))]
-	sealed class AssemblyPlugin : IPlugin
-	{
-		public void OnLoaded()
-		{
+	sealed class AssemblyPlugin : IPlugin {
+		public void OnLoaded() {
 			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteExecuted, DeleteCanExecute));
 		}
 
-		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = DeletePropertyDefCommand.CanExecute(MainWindow.Instance.SelectedNodes);
 		}
 
-		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e) {
 			DeletePropertyDefCommand.Execute(MainWindow.Instance.SelectedNodes);
 		}
 	}
 
-	sealed class DeletePropertyDefCommand : IUndoCommand
-	{
+	sealed class DeletePropertyDefCommand : IUndoCommand {
 		const string CMD_NAME = "Delete Property";
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Delete",
@@ -62,20 +57,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2150)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return DeletePropertyDefCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				DeletePropertyDefCommand.Execute(nodes);
 			}
 
-			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
-			{
+			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
 				DeletePropertyDefCommand.Initialize(nodes, menuItem);
 			}
 		}
@@ -84,41 +75,34 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 								Icon = "Delete",
 								Category = "AsmEd",
 								Order = 350)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					DeletePropertyDefCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				DeletePropertyDefCommand.Execute(ctx.Nodes);
 			}
 
-			protected override void Initialize(Context ctx, MenuItem menuItem)
-			{
+			protected override void Initialize(Context ctx, MenuItem menuItem) {
 				DeletePropertyDefCommand.Initialize(ctx.Nodes, menuItem);
 			}
 		}
 
-		static void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
-		{
+		static void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
 			if (nodes.Length == 1)
 				menuItem.Header = string.Format("Delete {0}", UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
 			else
 				menuItem.Header = string.Format("Delete {0} properties", nodes.Length);
 		}
 
-		internal static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		internal static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length > 0 &&
 				nodes.All(n => n is PropertyTreeNode);
 		}
 
-		internal static void Execute(ILSpyTreeNode[] nodes)
-		{
+		internal static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -126,19 +110,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			UndoCommandManager.Instance.Add(new DeletePropertyDefCommand(propNodes));
 		}
 
-		public struct DeleteModelNodes
-		{
+		public struct DeleteModelNodes {
 			ModelInfo[] infos;
 
-			struct ModelInfo
-			{
+			struct ModelInfo {
 				public readonly TypeDef OwnerType;
 				public readonly int PropertyIndex;
 				public readonly int[] MethodIndexes;
 				public readonly MethodDef[] Methods;
 
-				public ModelInfo(PropertyDef evt)
-				{
+				public ModelInfo(PropertyDef evt) {
 					this.OwnerType = evt.DeclaringType;
 					this.PropertyIndex = this.OwnerType.Properties.IndexOf(evt);
 					Debug.Assert(this.PropertyIndex >= 0);
@@ -146,16 +127,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 					this.MethodIndexes = new int[this.Methods.Length];
 				}
 
-				static IEnumerable<MethodDef> GetMethods(PropertyDef evt)
-				{
-					foreach (var m in evt.GetMethods) yield return m;
-					foreach (var m in evt.SetMethods) yield return m;
-					foreach (var m in evt.OtherMethods) yield return m;
+				static IEnumerable<MethodDef> GetMethods(PropertyDef evt) {
+					foreach (var m in evt.GetMethods)
+						yield return m;
+					foreach (var m in evt.SetMethods)
+						yield return m;
+					foreach (var m in evt.OtherMethods)
+						yield return m;
 				}
 			}
 
-			public void Delete(PropertyTreeNode[] nodes)
-			{
+			public void Delete(PropertyTreeNode[] nodes) {
 				Debug.Assert(infos == null);
 				if (infos != null)
 					throw new InvalidOperationException();
@@ -180,8 +162,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 				}
 			}
 
-			public void Restore(PropertyTreeNode[] nodes)
-			{
+			public void Restore(PropertyTreeNode[] nodes) {
 				Debug.Assert(infos != null);
 				if (infos == null)
 					throw new InvalidOperationException();
@@ -205,8 +186,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 		DeletableNodes<PropertyTreeNode> nodes;
 		DeleteModelNodes modelNodes;
 
-		DeletePropertyDefCommand(PropertyTreeNode[] propNodes)
-		{
+		DeletePropertyDefCommand(PropertyTreeNode[] propNodes) {
 			this.nodes = new DeletableNodes<PropertyTreeNode>(propNodes);
 		}
 
@@ -214,14 +194,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			nodes.Delete();
 			modelNodes.Delete(nodes.Nodes);
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			modelNodes.Restore(nodes.Nodes);
 			nodes.Restore();
 		}
@@ -230,13 +208,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			get { return nodes.Nodes; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	sealed class CreatePropertyDefCommand : IUndoCommand
-	{
+	sealed class CreatePropertyDefCommand : IUndoCommand {
 		const string CMD_NAME = "Create Property";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewProperty",
@@ -247,15 +223,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 							MenuIcon = "NewProperty",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2380)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return CreatePropertyDefCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				CreatePropertyDefCommand.Execute(nodes);
 			}
 		}
@@ -264,29 +237,24 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 								Icon = "NewProperty",
 								Category = "AsmEd",
 								Order = 580)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					ctx.Nodes.Length == 1 &&
 					ctx.Nodes[0] is TypeTreeNode;
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				CreatePropertyDefCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length == 1 &&
 				(nodes[0] is TypeTreeNode || nodes[0].Parent is TypeTreeNode);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -320,8 +288,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 		readonly TypeTreeNode ownerNode;
 		readonly PropertyTreeNode propNode;
 
-		CreatePropertyDefCommand(TypeTreeNode ownerNode, PropertyDefOptions options)
-		{
+		CreatePropertyDefCommand(TypeTreeNode ownerNode, PropertyDefOptions options) {
 			this.ownerNode = ownerNode;
 			this.propNode = new PropertyTreeNode(options.CreatePropertyDef(ownerNode.TypeDefinition.Module));
 		}
@@ -330,15 +297,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			ownerNode.EnsureChildrenFiltered();
 			ownerNode.TypeDefinition.Properties.Add(propNode.PropertyDefinition);
 			ownerNode.AddToChildren(propNode);
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			bool b = ownerNode.Children.Remove(propNode) &&
 					ownerNode.TypeDefinition.Properties.Remove(propNode.PropertyDefinition);
 			Debug.Assert(b);
@@ -350,13 +315,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			get { yield return ownerNode; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	sealed class PropertyDefSettingsCommand : IUndoCommand
-	{
+	sealed class PropertyDefSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Property";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
@@ -367,15 +330,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2460)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return PropertyDefSettingsCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				PropertyDefSettingsCommand.Execute(nodes);
 			}
 		}
@@ -384,27 +344,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 660)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return PropertyDefSettingsCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				PropertyDefSettingsCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length == 1 &&
 				nodes[0] is PropertyTreeNode;
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -432,8 +387,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 		readonly int origParentChildIndex;
 		readonly bool nameChanged;
 
-		PropertyDefSettingsCommand(PropertyTreeNode propNode, PropertyDefOptions options)
-		{
+		PropertyDefSettingsCommand(PropertyTreeNode propNode, PropertyDefOptions options) {
 			this.propNode = propNode;
 			this.newOptions = options;
 			this.origOptions = new PropertyDefOptions(propNode.PropertyDefinition);
@@ -451,8 +405,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			if (nameChanged) {
 				bool b = origParentChildIndex < origParentNode.Children.Count && origParentNode.Children[origParentChildIndex] == propNode;
 				Debug.Assert(b);
@@ -468,8 +421,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			propNode.RaiseUIPropsChanged();
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			if (nameChanged) {
 				bool b = origParentNode.Children.Remove(propNode);
 				Debug.Assert(b);
@@ -488,8 +440,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Property
 			get { yield return propNode; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 }

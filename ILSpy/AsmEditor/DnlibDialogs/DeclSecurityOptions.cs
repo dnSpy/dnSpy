@@ -18,24 +18,20 @@
 */
 
 using System.Collections.Generic;
-using System.Linq;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class DeclSecurityOptions
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class DeclSecurityOptions {
 		public SecurityAction Action;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 		public List<SecurityAttribute> SecurityAttributes = new List<SecurityAttribute>();
 		public string V1XMLString;
 
-		public DeclSecurityOptions()
-		{
+		public DeclSecurityOptions() {
 		}
 
-		public DeclSecurityOptions(DeclSecurity ds)
-		{
+		public DeclSecurityOptions(DeclSecurity ds) {
 			this.Action = ds.Action;
 			this.CustomAttributes.AddRange(ds.CustomAttributes);
 			this.V1XMLString = ds.GetNet1xXmlString();
@@ -43,8 +39,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				this.SecurityAttributes.AddRange(ds.SecurityAttributes);
 		}
 
-		public DeclSecurity CopyTo(ModuleDef module, DeclSecurity ds)
-		{
+		public DeclSecurity CopyTo(ModuleDef module, DeclSecurity ds) {
 			ds.Action = this.Action;
 			ds.CustomAttributes.Clear();
 			ds.CustomAttributes.AddRange(CustomAttributes);
@@ -56,8 +51,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return ds;
 		}
 
-		public DeclSecurity Create(ModuleDef module)
-		{
+		public DeclSecurity Create(ModuleDef module) {
 			return module.UpdateRowId(CopyTo(module, new DeclSecurityUser()));
 		}
 	}

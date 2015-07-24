@@ -17,14 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using ICSharpCode.ILSpy.TreeNodes;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
-	static class Utils
-	{
-		public static void NotifyModifiedAssembly(LoadedAssembly asm)
-		{
+namespace dnSpy.AsmEditor {
+	static class Utils {
+		public static void NotifyModifiedAssembly(LoadedAssembly asm) {
 			MainWindow.Instance.ModuleModified(asm);
 		}
 	}

@@ -19,10 +19,8 @@
 
 using System;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	public sealed class MethodSigCreatorOptions : ICloneable
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	public sealed class MethodSigCreatorOptions : ICloneable {
 		/// <summary>
 		/// True if it's a property signature, false if it's a method signature
 		/// </summary>
@@ -48,20 +46,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		TypeSigCreatorOptions typeSigCreatorOptions;
 
-		public MethodSigCreatorOptions(TypeSigCreatorOptions typeSigCreatorOptions)
-		{
+		public MethodSigCreatorOptions(TypeSigCreatorOptions typeSigCreatorOptions) {
 			this.TypeSigCreatorOptions = typeSigCreatorOptions;
 		}
 
-		public MethodSigCreatorOptions Clone()
-		{
+		public MethodSigCreatorOptions Clone() {
 			var clone = (MethodSigCreatorOptions)MemberwiseClone();
 			clone.TypeSigCreatorOptions = TypeSigCreatorOptions.Clone();
 			return clone;
 		}
 
-		object ICloneable.Clone()
-		{
+		object ICloneable.Clone() {
 			return Clone();
 		}
 	}

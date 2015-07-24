@@ -19,15 +19,12 @@
 
 using System.Windows.Controls;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
 	/// Interaction logic for ConstantControl.xaml
 	/// </summary>
-	public partial class ConstantControl : UserControl
-	{
-		public ConstantControl()
-		{
+	public partial class ConstantControl : UserControl {
+		public ConstantControl() {
 			InitializeComponent();
 		}
 	}

@@ -20,13 +20,12 @@
 using System.Collections.Generic;
 using dnlib.DotNet.Emit;
 using dnlib.DotNet.Pdb;
-using dnlib.PE;
 using dnlib.IO;
+using dnlib.PE;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	sealed class CilBodyOptions
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	sealed class CilBodyOptions {
 		public bool KeepOldMaxStack;
 		public bool InitLocals;
 		public byte HeaderSize;
@@ -41,12 +40,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		public List<Local> Locals = new List<Local>();
 		public PdbScope Scope;//TODO: Use this
 
-		public CilBodyOptions()
-		{
+		public CilBodyOptions() {
 		}
 
-		public CilBodyOptions(CilBody body, RVA headerRva, FileOffset headerFileOffset, RVA rva, FileOffset fileOffset)
-		{
+		public CilBodyOptions(CilBody body, RVA headerRva, FileOffset headerFileOffset, RVA rva, FileOffset fileOffset) {
 			this.KeepOldMaxStack = body.KeepOldMaxStack;
 			this.InitLocals = body.InitLocals;
 			this.HeaderSize = body.HeaderSize;
@@ -62,8 +59,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			this.Scope = body.Scope;
 		}
 
-		public CilBody CopyTo(CilBody body)
-		{
+		public CilBody CopyTo(CilBody body) {
 			body.KeepOldMaxStack = KeepOldMaxStack;
 			body.InitLocals = InitLocals;
 			body.HeaderSize = HeaderSize;
@@ -80,8 +76,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			return body;
 		}
 
-		public CilBody Create()
-		{
+		public CilBody Create() {
 			return CopyTo(new CilBody());
 		}
 	}

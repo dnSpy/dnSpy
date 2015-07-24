@@ -27,17 +27,16 @@ using System.Resources;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
-
+using dnlib.DotNet;
+using dnlib.DotNet.Emit;
+using dnSpy.AsmEditor;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
-using ICSharpCode.ILSpy.AsmEditor;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.XmlDoc;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
-using dnlib.DotNet;
-using dnlib.DotNet.Emit;
 
 namespace ICSharpCode.ILSpy
 {

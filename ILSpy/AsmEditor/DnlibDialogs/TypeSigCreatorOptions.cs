@@ -19,11 +19,10 @@
 
 using System;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	public sealed class TypeSigCreatorOptions : ICloneable
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	public sealed class TypeSigCreatorOptions : ICloneable {
 		public string Title { get; set; }
 		public bool IsLocal { get; set; }
 		public bool CanAddGenericTypeVar { get; set; }
@@ -58,26 +57,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		Language language;
 
-		public TypeSigCreatorOptions(ModuleDef ownerModule, Language language)
-		{
+		public TypeSigCreatorOptions(ModuleDef ownerModule, Language language) {
 			this.OwnerModule = ownerModule;
 			this.Language = language;
 		}
 
-		public TypeSigCreatorOptions Clone()
-		{
+		public TypeSigCreatorOptions Clone() {
 			return (TypeSigCreatorOptions)MemberwiseClone();
 		}
 
-		public TypeSigCreatorOptions Clone(string title)
-		{
+		public TypeSigCreatorOptions Clone(string title) {
 			var clone = Clone();
 			clone.Title = title;
 			return clone;
 		}
 
-		object ICloneable.Clone()
-		{
+		object ICloneable.Clone() {
 			return Clone();
 		}
 	}

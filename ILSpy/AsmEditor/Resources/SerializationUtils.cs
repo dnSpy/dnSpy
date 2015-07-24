@@ -24,18 +24,14 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using dnlib.DotNet.Resources;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Resources
-{
-	static class SerializationUtils
-	{
-		public static ResourceElement CreateSerializedImage(string filename)
-		{
+namespace dnSpy.AsmEditor.Resources {
+	static class SerializationUtils {
+		public static ResourceElement CreateSerializedImage(string filename) {
 			using (var stream = File.OpenRead(filename))
 				return CreateSerializedImage(stream, filename);
 		}
 
-		static ResourceElement CreateSerializedImage(Stream stream, string filename)
-		{
+		static ResourceElement CreateSerializedImage(Stream stream, string filename) {
 			object obj;
 			if (filename.EndsWith(".ico", StringComparison.OrdinalIgnoreCase))
 				obj = new System.Drawing.Icon(stream);
@@ -52,8 +48,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			return rsrcElem;
 		}
 
-		public static byte[] Serialize(object obj)
-		{
+		public static byte[] Serialize(object obj) {
 			//TODO: The asm names of the saved types are saved in the serialized data. If the current
 			//		module is eg. a .NET 2.0 asm, you should replace the versions from 4.0.0.0 to 2.0.0.0.
 			var formatter = new BinaryFormatter();
@@ -62,8 +57,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			return outStream.ToArray();
 		}
 
-		public static string Deserialize(byte[] data, out object obj)
-		{
+		public static string Deserialize(byte[] data, out object obj) {
 			try {
 				obj = new BinaryFormatter().Deserialize(new MemoryStream(data));
 				return string.Empty;
@@ -74,8 +68,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			}
 		}
 
-		public static string CreateObjectFromString(Type targetType, string typeAsString, out object obj)
-		{
+		public static string CreateObjectFromString(Type targetType, string typeAsString, out object obj) {
 			obj = null;
 			try {
 				var typeConverter = TypeDescriptor.GetConverter(targetType);
@@ -91,8 +84,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			return string.Format("{0} does not have a TypeConverter and can't be converted from a string.", targetType);
 		}
 
-		public static string ConvertObjectToString(object obj)
-		{
+		public static string ConvertObjectToString(object obj) {
 			var objType = obj.GetType();
 
 			try {

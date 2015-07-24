@@ -19,10 +19,8 @@
 
 using System.Windows.Media;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Resources
-{
-	sealed class ImageVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.Resources {
+	sealed class ImageVM : ViewModelBase {
 		public ImageSource ImageSource {
 			get { return imageSource; }
 			set {
@@ -34,8 +32,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 		ImageSource imageSource;
 
-		public ImageVM(ImageSource imageSource)
-		{
+		public ImageVM(ImageSource imageSource) {
 			this.imageSource = imageSource;
 		}
 	}

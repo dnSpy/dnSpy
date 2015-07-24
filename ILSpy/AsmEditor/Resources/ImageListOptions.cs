@@ -22,26 +22,22 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Media;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Resources
-{
-	sealed class ImageListOptions
-	{
+namespace dnSpy.AsmEditor.Resources {
+	sealed class ImageListOptions {
 		public string Name;
 		public ColorDepth ColorDepth;
 		public Size ImageSize;
 		public System.Drawing.Color TransparentColor;
 		public List<ImageSource> ImageSources = new List<ImageSource>();
 
-		public ImageListOptions()
-		{
+		public ImageListOptions() {
 			this.Name = string.Empty;
 			this.ColorDepth = ColorDepth.Depth32Bit;
 			this.ImageSize = new Size(16, 16);
 			this.TransparentColor = System.Drawing.Color.Transparent;
 		}
 
-		public ImageListOptions(ImageListOptions other)
-		{
+		public ImageListOptions(ImageListOptions other) {
 			this.Name = other.Name ?? string.Empty;
 			this.ColorDepth = other.ColorDepth;
 			this.ImageSize = other.ImageSize;

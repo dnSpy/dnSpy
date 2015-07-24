@@ -21,28 +21,22 @@ using System;
 using System.Linq;
 using System.Windows.Controls;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	sealed class SwitchOperandsListHelper : ListBoxHelperBase<SwitchInstructionVM>
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	sealed class SwitchOperandsListHelper : ListBoxHelperBase<SwitchInstructionVM> {
 		public SwitchOperandsListHelper(ListBox listBox)
-			: base(listBox, "Instruction")
-		{
+			: base(listBox, "Instruction") {
 		}
 
-		protected override SwitchInstructionVM[] GetSelectedItems()
-		{
+		protected override SwitchInstructionVM[] GetSelectedItems() {
 			return listBox.SelectedItems.Cast<SwitchInstructionVM>().ToArray();
 		}
 
-		protected override void CopyItemsAsText(SwitchInstructionVM[] instrs)
-		{
+		protected override void CopyItemsAsText(SwitchInstructionVM[] instrs) {
 			Array.Sort(instrs, (a, b) => a.Index.CompareTo(b.Index));
 			InstructionsListHelper.CopyItemsAsTextToClipboard(instrs.Select(a => a.InstructionVM).ToArray());
 		}
 
-		protected override void OnDataContextChangedInternal(object dataContext)
-		{
+		protected override void OnDataContextChangedInternal(object dataContext) {
 			this.coll = ((SwitchOperandVM)dataContext).InstructionsListVM;
 			AddStandardMenuHandlers();
 		}

@@ -19,10 +19,8 @@
 
 using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	sealed class NativeMethodBodyVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	sealed class NativeMethodBodyVM : ViewModelBase {
 		readonly NativeMethodBodyOptions origOptions;
 
 		public ICommand ReinitializeCommand {
@@ -34,8 +32,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		}
 		UInt32VM rva;
 
-		public NativeMethodBodyVM(NativeMethodBodyOptions options, bool initialize)
-		{
+		public NativeMethodBodyVM(NativeMethodBodyOptions options, bool initialize) {
 			this.origOptions = options;
 			this.rva = new UInt32VM(a => HasErrorUpdated());
 
@@ -43,23 +40,19 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 				Reinitialize();
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public NativeMethodBodyOptions CreateNativeMethodBodyOptions()
-		{
+		public NativeMethodBodyOptions CreateNativeMethodBodyOptions() {
 			return CopyTo(new NativeMethodBodyOptions());
 		}
 
-		public void InitializeFrom(NativeMethodBodyOptions options)
-		{
+		public void InitializeFrom(NativeMethodBodyOptions options) {
 			this.RVA.Value = (uint)options.RVA;
 		}
 
-		public NativeMethodBodyOptions CopyTo(NativeMethodBodyOptions options)
-		{
+		public NativeMethodBodyOptions CopyTo(NativeMethodBodyOptions options) {
 			options.RVA = (dnlib.PE.RVA)(uint)this.RVA.Value;
 			return options;
 		}

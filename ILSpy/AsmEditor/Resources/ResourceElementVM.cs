@@ -18,16 +18,13 @@
 */
 
 using System;
-using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Resources
-{
-	enum ResourceElementType
-	{
+namespace dnSpy.AsmEditor.Resources {
+	enum ResourceElementType {
 		Null			= ResourceTypeCode.Null,
 		String			= ResourceTypeCode.String,
 		Boolean			= ResourceTypeCode.Boolean,
@@ -50,8 +47,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		SerializedType	= ResourceTypeCode.UserTypes,
 	}
 
-	sealed class ResourceElementVM : ViewModelBase
-	{
+	sealed class ResourceElementVM : ViewModelBase {
 		readonly ResourceElementOptions origOptions;
 
 		public IOpenFile OpenFile {
@@ -255,8 +251,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 
 		readonly bool canDeserialize;
 
-		public ResourceElementVM(ResourceElementOptions options, ModuleDef ownerModule, bool canDeserialize)
-		{
+		public ResourceElementVM(ResourceElementOptions options, ModuleDef ownerModule, bool canDeserialize) {
 			this.origOptions = options;
 			this.canDeserialize = canDeserialize;
 
@@ -286,8 +281,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			Reinitialize();
 		}
 
-		void PickRawBytes()
-		{
+		void PickRawBytes() {
 			if (openFile == null)
 				throw new InvalidOperationException();
 			var newBytes = openFile.Open();
@@ -295,8 +289,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				Data = newBytes;
 		}
 
-		void OnResourceElementTypeChanged()
-		{
+		void OnResourceElementTypeChanged() {
 			OnPropertyChanged("ValueVM");
 			OnPropertyChanged("IsSerializedType");
 			OnPropertyChanged("IsSingleLineValue");
@@ -305,18 +298,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			HasErrorUpdated();
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public ResourceElementOptions CreateResourceElementOptions()
-		{
+		public ResourceElementOptions CreateResourceElementOptions() {
 			return CopyTo(new ResourceElementOptions());
 		}
 
-		void InitializeFrom(ResourceElementOptions options)
-		{
+		void InitializeFrom(ResourceElementOptions options) {
 			this.Name = options.Name;
 			var code = Convert(options.ResourceData.Code);
 			var builtin = options.ResourceData as BuiltInResourceData;
@@ -352,22 +342,19 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			}
 		}
 
-		static ResourceElementType Convert(ResourceTypeCode code)
-		{
+		static ResourceElementType Convert(ResourceTypeCode code) {
 			if (code >= ResourceTypeCode.UserTypes)
 				return ResourceElementType.SerializedType;
 			return (ResourceElementType)code;
 		}
 
-		ResourceElementOptions CopyTo(ResourceElementOptions options)
-		{
+		ResourceElementOptions CopyTo(ResourceElementOptions options) {
 			options.Name = this.Name;
 			options.ResourceData = CreateResourceData();
 			return options;
 		}
 
-		IResourceData CreateResourceData()
-		{
+		IResourceData CreateResourceData() {
 			var code = (ResourceElementType)this.ResourceElementTypeVM.SelectedItem;
 			switch (code) {
 			case ResourceElementType.Null:		return new BuiltInResourceData((ResourceTypeCode)code, null);

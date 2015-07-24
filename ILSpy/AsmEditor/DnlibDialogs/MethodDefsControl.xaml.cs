@@ -19,18 +19,14 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
 	/// Interaction logic for MethodDefsControl.xaml
 	/// </summary>
-	public partial class MethodDefsControl : UserControl
-	{
-		public MethodDefsControl()
-		{
+	public partial class MethodDefsControl : UserControl {
+		public MethodDefsControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as MethodDefsVM;

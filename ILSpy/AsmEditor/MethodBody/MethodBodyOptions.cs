@@ -25,21 +25,17 @@ using dnlib.IO;
 using dnlib.PE;
 using ICSharpCode.Decompiler;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	sealed class MethodBodyOptions
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	sealed class MethodBodyOptions {
 		public MethodBodyType BodyType;
 		public MethodImplAttributes CodeType;
 		public NativeMethodBodyOptions NativeMethodBodyOptions = new NativeMethodBodyOptions();
 		public CilBodyOptions CilBodyOptions = new CilBodyOptions();
 
-		public MethodBodyOptions()
-		{
+		public MethodBodyOptions() {
 		}
 
-		public MethodBodyOptions(MethodDef method)
-		{
+		public MethodBodyOptions(MethodDef method) {
 			this.CodeType = method.CodeType;
 			if (method.MethodBody is CilBody) {
 				var headerRva = method.RVA;
@@ -57,8 +53,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 				this.BodyType = MethodBodyType.None;
 		}
 
-		public MethodDef CopyTo(MethodDef method)
-		{
+		public MethodDef CopyTo(MethodDef method) {
 			method.CodeType = this.CodeType;
 			if (this.BodyType == MethodBodyType.Cil)
 				method.MethodBody = CilBodyOptions.Create();

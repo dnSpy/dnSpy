@@ -19,17 +19,14 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
 	/// Interaction logic for MethodOverridesControl.xaml
 	/// </summary>
-	public partial class MethodOverridesControl : UserControl
-	{
-		public MethodOverridesControl()
-		{
+	public partial class MethodOverridesControl : UserControl {
+		public MethodOverridesControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as MethodOverridesVM;

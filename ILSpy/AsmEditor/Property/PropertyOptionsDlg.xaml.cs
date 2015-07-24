@@ -17,15 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.Property
-{
+namespace dnSpy.AsmEditor.Property {
 	/// <summary>
 	/// Interaction logic for PropertyOptionsDlg.xaml
 	/// </summary>
-	public partial class PropertyOptionsDlg : WindowBase
-	{
-		public PropertyOptionsDlg()
-		{
+	public partial class PropertyOptionsDlg : WindowBase {
+		public PropertyOptionsDlg() {
 			InitializeComponent();
 		}
 	}

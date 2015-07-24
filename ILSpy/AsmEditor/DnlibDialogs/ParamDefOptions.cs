@@ -19,11 +19,10 @@
 
 using System.Collections.Generic;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class ParamDefOptions
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class ParamDefOptions {
 		public UTF8String Name;
 		public ushort Sequence;
 		public ParamAttributes Attributes;
@@ -31,12 +30,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		public MarshalType MarshalType;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
-		public ParamDefOptions()
-		{
+		public ParamDefOptions() {
 		}
 
-		public ParamDefOptions(ParamDef pd)
-		{
+		public ParamDefOptions(ParamDef pd) {
 			this.Name = pd.Name;
 			this.Sequence = pd.Sequence;
 			this.Attributes = pd.Attributes;
@@ -45,8 +42,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			this.CustomAttributes.AddRange(pd.CustomAttributes);
 		}
 
-		public ParamDef CopyTo(ParamDef pd)
-		{
+		public ParamDef CopyTo(ParamDef pd) {
 			pd.Name = this.Name ?? UTF8String.Empty;
 			pd.Sequence = this.Sequence;
 			pd.Attributes = this.Attributes;
@@ -57,8 +53,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return pd;
 		}
 
-		public ParamDef Create(ModuleDef ownerModule)
-		{
+		public ParamDef Create(ModuleDef ownerModule) {
 			return ownerModule.UpdateRowId(CopyTo(new ParamDefUser()));
 		}
 	}

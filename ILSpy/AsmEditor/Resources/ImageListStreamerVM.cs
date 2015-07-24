@@ -18,29 +18,23 @@
 */
 
 using System.Windows.Media;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.DnlibDialogs;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Resources
-{
-	sealed class ImageListStreamerVM : ListVM<ImageVM, ImageSource>
-	{
+namespace dnSpy.AsmEditor.Resources {
+	sealed class ImageListStreamerVM : ListVM<ImageVM, ImageSource> {
 		public ImageListStreamerVM()
-			: base(null, null, null, null, null, null)
-		{
+			: base(null, null, null, null, null, null) {
 		}
 
-		protected override ImageVM Clone(ImageVM obj)
-		{
+		protected override ImageVM Clone(ImageVM obj) {
 			return new ImageVM(obj.ImageSource);
 		}
 
-		protected override ImageVM Create()
-		{
+		protected override ImageVM Create() {
 			return new ImageVM(null);
 		}
 
-		protected override ImageVM Create(ImageSource model)
-		{
+		protected override ImageVM Create(ImageSource model) {
 			return new ImageVM(model);
 		}
 	}

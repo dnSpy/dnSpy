@@ -23,21 +23,19 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
-{
-	sealed class SaveMultiModuleVM : INotifyPropertyChanged
-	{
+namespace dnSpy.AsmEditor.SaveModule {
+	sealed class SaveMultiModuleVM : INotifyPropertyChanged {
 		ObservableCollection<SaveModuleOptionsVM> modules = new ObservableCollection<SaveModuleOptionsVM>();
 
-		enum SaveState
-		{
+		enum SaveState {
 			/// <summary>
 			/// We haven't started saving yet
 			/// </summary>
@@ -146,8 +144,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			}
 		}
 
-		public void OnModuleSettingsSaved()
-		{
+		public void OnModuleSettingsSaved() {
 			OnPropertyChanged("CanExecuteSaveError");
 			OnPropertyChanged("CanExecuteSave");
 			OnPropertyChanged("CanShowModuleErrors");
@@ -231,23 +228,19 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			get { return modules; }
 		}
 
-		public SaveMultiModuleVM(SaveModuleOptionsVM options)
-		{
+		public SaveMultiModuleVM(SaveModuleOptionsVM options) {
 			this.modules.Add(options);
 		}
 
-		public SaveMultiModuleVM(IEnumerable<ModuleDef> modules)
-		{
+		public SaveMultiModuleVM(IEnumerable<ModuleDef> modules) {
 			this.modules.AddRange(modules.Select(m => new SaveModuleOptionsVM(m)));
 		}
 
-		SaveModuleOptionsVM GetSaveModuleOptionsVM(ModuleDef module)
-		{
+		SaveModuleOptionsVM GetSaveModuleOptionsVM(ModuleDef module) {
 			return modules.FirstOrDefault(a => a.Module == module);
 		}
 
-		public bool WasSaved(ModuleDef module)
-		{
+		public bool WasSaved(ModuleDef module) {
 			var data = GetSaveModuleOptionsVM(module);
 			if (data == null)
 				return false;
@@ -256,14 +249,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			return saved;
 		}
 
-		public string GetSavedFileName(ModuleDef module)
-		{
+		public string GetSavedFileName(ModuleDef module) {
 			var data = GetSaveModuleOptionsVM(module);
 			return data == null ? null : data.FileName;
 		}
 
-		public void Save()
-		{
+		public void Save() {
 			if (!CanExecuteSave)
 				return;
 			State = SaveState.Saving;
@@ -276,16 +267,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			new Thread(() => SaveAsync(mods)).Start();
 		}
 
-		void ExecInOldThread(Action action)
-		{
+		void ExecInOldThread(Action action) {
 			var disp = App.Current.Dispatcher;
 			if (disp != null)
 				disp.BeginInvoke(DispatcherPriority.Background, action);
 		}
 
 		ModuleSaver moduleSaver;
-		void SaveAsync(SaveModuleOptionsVM[] mods)
-		{
+		void SaveAsync(SaveModuleOptionsVM[] mods) {
 			try {
 				moduleSaver = new ModuleSaver(mods);
 				moduleSaver.OnProgressUpdated += moduleSaver_OnProgressUpdated;
@@ -314,8 +303,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			});
 		}
 
-		void moduleSaver_OnWritingFile(object sender, ModuleSaverWriteEventArgs e)
-		{
+		void moduleSaver_OnWritingFile(object sender, ModuleSaverWriteEventArgs e) {
 			if (e.Starting) {
 				ExecInOldThread(() => {
 					CurrentFileName = e.File.FileName;
@@ -329,8 +317,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		}
 		Dictionary<SaveModuleOptionsVM, bool> savedFile = new Dictionary<SaveModuleOptionsVM, bool>();
 
-		void moduleSaver_OnProgressUpdated(object sender, EventArgs e)
-		{
+		void moduleSaver_OnProgressUpdated(object sender, EventArgs e) {
 			var moduleSaver = (ModuleSaver)sender;
 			double totalProgress = 100 * moduleSaver.TotalProgress;
 			double currentFileProgress = 100 * moduleSaver.CurrentFileProgress;
@@ -340,13 +327,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			});
 		}
 
-		void moduleSaver_OnLogMessage(object sender, ModuleSaverLogEventArgs e)
-		{
+		void moduleSaver_OnLogMessage(object sender, ModuleSaverLogEventArgs e) {
 			AsyncAddMessage(e.Message, e.Event == ModuleSaverLogEvent.Error || e.Event == ModuleSaverLogEvent.Warning, true);
 		}
 
-		void AsyncAddMessage(string msg, bool isError, bool canIgnore)
-		{
+		void AsyncAddMessage(string msg, bool isError, bool canIgnore) {
 			// If there are a lot of errors, we don't want to add a ton of extra delegates to be
 			// called in the old thread. Just use one so we don't slow down everything to a crawl.
 			lock (addMessageStringBuilder) {
@@ -383,8 +368,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		int errors;
 		bool hasAddedMessage;
 
-		public void CancelSave()
-		{
+		public void CancelSave() {
 			if (!IsSaving)
 				return;
 			var ms = moduleSaver;
@@ -397,8 +381,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		void OnPropertyChanged(string propName)
-		{
+		void OnPropertyChanged(string propName) {
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propName));
 		}

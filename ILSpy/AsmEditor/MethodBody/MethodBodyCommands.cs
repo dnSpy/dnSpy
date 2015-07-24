@@ -22,15 +22,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
-using dnlib.DotNet.Emit;
 using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.ILAst;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	sealed class MethodBodySettingsCommand : IUndoCommand
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	sealed class MethodBodySettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Method Body";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "ILEditor",
@@ -41,15 +38,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 							MenuIcon = "ILEditor",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2440)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return MethodBodySettingsCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				MethodBodySettingsCommand.Execute(nodes);
 			}
 		}
@@ -58,28 +52,23 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 								Icon = "ILEditor",
 								Category = "AsmEd",
 								Order = 640)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					MethodBodySettingsCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				MethodBodySettingsCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length == 1 &&
 				nodes[0] is MethodTreeNode;
 		}
 
-		internal static void Execute(ILSpyTreeNode[] nodes, uint[] offsets = null)
-		{
+		internal static void Execute(ILSpyTreeNode[] nodes, uint[] offsets = null) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -110,8 +99,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		readonly dnlib.DotNet.Emit.MethodBody origMethodBody;
 		bool isBodyModified;
 
-		MethodBodySettingsCommand(MethodTreeNode methodNode, MethodBodyOptions options)
-		{
+		MethodBodySettingsCommand(MethodTreeNode methodNode, MethodBodyOptions options) {
 			this.methodNode = methodNode;
 			this.newOptions = options;
 			this.origMethodBody = methodNode.MethodDefinition.MethodBody;
@@ -121,15 +109,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			isBodyModified = MethodAnnotations.Instance.IsBodyModified(methodNode.MethodDefinition);
 			MethodAnnotations.Instance.SetBodyModified(methodNode.MethodDefinition, true);
 			newOptions.CopyTo(methodNode.MethodDefinition);
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			methodNode.MethodDefinition.MethodBody = origMethodBody;
 			MethodAnnotations.Instance.SetBodyModified(methodNode.MethodDefinition, isBodyModified);
 		}
@@ -138,8 +124,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			get { yield return methodNode; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
@@ -147,10 +132,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 							Icon = "ILEditor",
 							Category = "AsmEd",
 							Order = 639.99)]
-	sealed class EditILInstructionsCommand : IContextMenuEntry
-	{
-		public bool IsVisible(TextViewContext context)
-		{
+	sealed class EditILInstructionsCommand : IContextMenuEntry {
+		public bool IsVisible(TextViewContext context) {
 			var list = GetMappings(context);
 			return list != null &&
 				list.Count != 0 &&
@@ -159,8 +142,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 				list[0].MemberMapping.MethodDefinition.Body.Instructions.Count > 0;
 		}
 
-		static IList<SourceCodeMapping> GetMappings(TextViewContext context)
-		{
+		static IList<SourceCodeMapping> GetMappings(TextViewContext context) {
 			if (context.TextView == null || context.Position == null)
 				return null;
 			var list = SourceCodeMappingUtils.Find(context.TextView, context.Position.Value.Line, context.Position.Value.Column);
@@ -171,13 +153,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			return list;
 		}
 
-		public bool IsEnabled(TextViewContext context)
-		{
+		public bool IsEnabled(TextViewContext context) {
 			return true;
 		}
 
-		public void Execute(TextViewContext context)
-		{
+		public void Execute(TextViewContext context) {
 			var list = GetMappings(context);
 			if (list == null)
 				return;
@@ -192,8 +172,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			MethodBodySettingsCommand.Execute(new ILSpyTreeNode[] { methodNode }, GetInstructionOffsets(method, list));
 		}
 
-		static uint[] GetInstructionOffsets(MethodDef method, IList<SourceCodeMapping> list)
-		{
+		static uint[] GetInstructionOffsets(MethodDef method, IList<SourceCodeMapping> list) {
 			if (method == null)
 				return null;
 			var body = method.Body;

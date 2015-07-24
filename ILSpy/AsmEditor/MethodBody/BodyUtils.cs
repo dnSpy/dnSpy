@@ -24,31 +24,27 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
+using ICSharpCode.ILSpy;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
+namespace dnSpy.AsmEditor.MethodBody {
 	[Flags]
-	enum WriteObjectFlags : uint
-	{
+	enum WriteObjectFlags : uint {
 		None						= 0,
 		ShortInstruction			= 0x00000001,
 	}
 
-	static class BodyUtils
-	{
+	static class BodyUtils {
 		public static readonly Parameter NullParameter = new Parameter(int.MinValue);
 
-		public static bool IsNull(object op)
-		{
+		public static bool IsNull(object op) {
 			return op == null ||
 				op == NullParameter ||
 				op == InstructionVM.Null ||
 				op == LocalVM.Null;
 		}
 
-		public static object TryGetVM(Dictionary<object, object> ops, object objModel)
-		{
+		public static object TryGetVM(Dictionary<object, object> ops, object objModel) {
 			if (objModel == null)
 				return null;
 			object objVm;
@@ -57,8 +53,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			return objVm;
 		}
 
-		public static object TryGetModel(Dictionary<object, object> ops, object objVm)
-		{
+		public static object TryGetModel(Dictionary<object, object> ops, object objVm) {
 			if (IsNull(objVm))
 				return null;
 			object objModel;
@@ -67,8 +62,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			return objModel;
 		}
 
-		public static object ToOperandVM(Dictionary<object, object> ops, object operand)
-		{
+		public static object ToOperandVM(Dictionary<object, object> ops, object operand) {
 			var targets = operand as IList<Instruction>;
 			if (targets != null) {
 				var newTargets = new InstructionVM[targets.Count];
@@ -80,8 +74,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			return TryGetVM(ops, operand);
 		}
 
-		public static object ToOperandModel(Dictionary<object, object> ops, object operand)
-		{
+		public static object ToOperandModel(Dictionary<object, object> ops, object operand) {
 			var targets = operand as IList<InstructionVM>;
 			if (targets != null) {
 				var newTargets = new Instruction[targets.Count];
@@ -93,8 +86,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			return TryGetModel(ops, operand);
 		}
 
-		public static void UpdateIndexesOffsets(this IList<InstructionVM> instrs, int index)
-		{
+		public static void UpdateIndexesOffsets(this IList<InstructionVM> instrs, int index) {
 			uint offset = index > 0 ? instrs[index - 1].Offset + (uint)instrs[index - 1].GetSize() : 0;
 			for (; index < instrs.Count; index++) {
 				var instr = instrs[index];
@@ -104,8 +96,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			}
 		}
 
-		public static uint UpdateInstructionOffsets(this IList<InstructionVM> instrs, int index = 0)
-		{
+		public static uint UpdateInstructionOffsets(this IList<InstructionVM> instrs, int index = 0) {
 			uint offset = index > 0 ? instrs[index - 1].Offset + (uint)instrs[index - 1].GetSize() : 0;
 			for (; index < instrs.Count; index++) {
 				var instr = instrs[index];
@@ -115,8 +106,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			return offset;
 		}
 
-		public static void SimplifyMacros(this IList<InstructionVM> instrs, IList<LocalVM> locals, IList<Parameter> parameters)
-		{
+		public static void SimplifyMacros(this IList<InstructionVM> instrs, IList<LocalVM> locals, IList<Parameter> parameters) {
 			foreach (var instr in instrs) {
 				switch (instr.Code) {
 				case Code.Beq_S:
@@ -319,15 +309,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			}
 		}
 
-		static T ReadList<T>(IList<T> list, int index)
-		{
+		static T ReadList<T>(IList<T> list, int index) {
 			if (list == null || index < 0 || index >= list.Count)
 				return default(T);
 			return list[index];
 		}
 
-		public static void OptimizeMacros(this IList<InstructionVM> instrs)
-		{
+		public static void OptimizeMacros(this IList<InstructionVM> instrs) {
 			foreach (var instr in instrs) {
 				Parameter arg;
 				LocalVM local;
@@ -446,8 +434,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			instrs.OptimizeBranches();
 		}
 
-		public static void SimplifyBranches(this IList<InstructionVM> instrs)
-		{
+		public static void SimplifyBranches(this IList<InstructionVM> instrs) {
 			foreach (var instr in instrs) {
 				switch (instr.Code) {
 				case Code.Beq_S:	instr.Code = Code.Beq; break;
@@ -468,8 +455,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			}
 		}
 
-		public static void OptimizeBranches(this IList<InstructionVM> instrs)
-		{
+		public static void OptimizeBranches(this IList<InstructionVM> instrs) {
 			while (true) {
 				instrs.UpdateInstructionOffsets();
 
@@ -521,8 +507,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			}
 		}
 
-		public static void WriteObject(ITextOutput output, object obj, WriteObjectFlags flags = WriteObjectFlags.None)
-		{
+		public static void WriteObject(ITextOutput output, object obj, WriteObjectFlags flags = WriteObjectFlags.None) {
 			if (IsNull(obj)) {
 				output.Write("null", TextTokenType.Keyword);
 				return;
@@ -591,29 +576,25 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			output.Write(obj.ToString(), TextTokenType.Text);
 		}
 
-		static string GetLocalName(string name, int index)
-		{
+		static string GetLocalName(string name, int index) {
 			if (!string.IsNullOrEmpty(name))
 				return name;
 			return string.Format("V_{0}", index);
 		}
 
-		static string GetParameterName(string name, int index)
-		{
+		static string GetParameterName(string name, int index) {
 			if (!string.IsNullOrEmpty(name))
 				return name;
 			return string.Format("A_{0}", index);
 		}
 
-		static void WriteLocalParameterIndex(this ITextOutput output, int index)
-		{
+		static void WriteLocalParameterIndex(this ITextOutput output, int index) {
 			output.Write('(', TextTokenType.Operator);
 			output.Write(index.ToString(), TextTokenType.Number);
 			output.Write(')', TextTokenType.Operator);
 		}
 
-		static void WriteLong(this ITextOutput output, InstructionVM instr)
-		{
+		static void WriteLong(this ITextOutput output, InstructionVM instr) {
 			output.WriteShort(instr);
 			output.WriteSpace();
 			output.Write(instr.Code.ToOpCode().Name, TextTokenType.OpCode);
@@ -621,8 +602,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			Write(output, instr.InstructionOperandVM);
 		}
 
-		static void Write(this ITextOutput output, InstructionOperandVM opvm)
-		{
+		static void Write(this ITextOutput output, InstructionOperandVM opvm) {
 			switch (opvm.InstructionOperandType) {
 			case MethodBody.InstructionOperandType.None:
 				break;
@@ -651,8 +631,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			}
 		}
 
-		static void WriteShort(this ITextOutput output, InstructionVM instr)
-		{
+		static void WriteShort(this ITextOutput output, InstructionVM instr) {
 			output.Write(instr.Index.ToString(), TextTokenType.Number);
 			output.WriteSpace();
 			output.Write('(', TextTokenType.Operator);
@@ -660,8 +639,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			output.Write(')', TextTokenType.Operator);
 		}
 
-		static void Write(this ITextOutput output, IList<InstructionVM> instrs)
-		{
+		static void Write(this ITextOutput output, IList<InstructionVM> instrs) {
 			output.Write('[', TextTokenType.Operator);
 			for (int i = 0; i < instrs.Count; i++) {
 				if (i > 0) {

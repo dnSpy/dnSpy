@@ -19,21 +19,18 @@
 
 using System.Windows;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.DnlibDialogs;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	sealed class CreateConstantType : ICreateConstantType
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	sealed class CreateConstantType : ICreateConstantType {
 		readonly Window ownerWindow;
 
 		public CreateConstantType()
-			: this(null)
-		{
+			: this(null) {
 		}
 
-		public CreateConstantType(Window ownerWindow)
-		{
+		public CreateConstantType(Window ownerWindow) {
 			this.ownerWindow = ownerWindow;
 		}
 
@@ -71,8 +68,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 			ConstantType.TypeArray,
 		};
 
-		public object Create(ModuleDef ownerModule, object value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions options, out object resultNoSpecialNull, out bool canceled)
-		{
+		public object Create(ModuleDef ownerModule, object value, ConstantType[] validConstants, bool allowNullString, bool arraysCanBeNull, TypeSigCreatorOptions options, out object resultNoSpecialNull, out bool canceled) {
 			var data = new ConstantTypeVM(ownerModule, value, validConstants ?? DefaultConstants, true, true, options);
 			var win = new ConstantTypeDlg();
 			win.DataContext = data;

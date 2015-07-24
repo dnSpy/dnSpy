@@ -18,17 +18,14 @@
 */
 
 using System.Windows;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Module
-{
+namespace dnSpy.AsmEditor.Module {
 	/// <summary>
 	/// Interaction logic for ModuleOptionsDlg.xaml
 	/// </summary>
-	public partial class ModuleOptionsDlg : WindowBase
-	{
-		public ModuleOptionsDlg()
-		{
+	public partial class ModuleOptionsDlg : WindowBase {
+		public ModuleOptionsDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as ModuleOptionsVM;

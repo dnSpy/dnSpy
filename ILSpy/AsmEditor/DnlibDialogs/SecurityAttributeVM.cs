@@ -24,13 +24,12 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes.Filters;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class SecurityAttributeVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class SecurityAttributeVM : ViewModelBase {
 		public IDnlibTypePicker DnlibTypePicker {
 			set { dnlibTypePicker = value; }
 		}
@@ -82,8 +81,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		readonly SecurityAttribute origSa;
 		readonly ModuleDef ownerModule;
 
-		public SecurityAttributeVM(SecurityAttribute sa, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
-		{
+		public SecurityAttributeVM(SecurityAttribute sa, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod) {
 			this.origSa = sa;
 			this.ownerModule = ownerModule;
 			this.caNamedArgumentsVM = new CANamedArgumentsVM(ownerModule, language, ownerType, ownerMethod, a => {
@@ -95,15 +93,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			Reinitialize();
 		}
 
-		void Args_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
+		void Args_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			Hook(e);
 			OnPropertyChanged("FullName");
 			HasErrorUpdated();
 		}
 
-		void Hook(NotifyCollectionChangedEventArgs e)
-		{
+		void Hook(NotifyCollectionChangedEventArgs e) {
 			if (e.OldItems != null) {
 				foreach (INotifyPropertyChanged i in e.OldItems)
 					i.PropertyChanged -= arg_PropertyChanged;
@@ -114,14 +110,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		void arg_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void arg_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			OnPropertyChanged("FullName");
 			HasErrorUpdated();
 		}
 
-		void PickAttributeType()
-		{
+		void PickAttributeType() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 			var newAttrType = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.TypeDef), AttributeType, ownerModule);
@@ -129,19 +123,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				AttributeType = newAttrType;
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origSa);
 		}
 
-		void InitializeFrom(SecurityAttribute sa)
-		{
+		void InitializeFrom(SecurityAttribute sa) {
 			AttributeType = sa.AttributeType;
 			CANamedArgumentsVM.InitializeFrom(sa.NamedArguments);
 		}
 
-		public SecurityAttribute CreateSecurityAttribute()
-		{
+		public SecurityAttribute CreateSecurityAttribute() {
 			var sa = new SecurityAttribute(AttributeType);
 			sa.NamedArguments.AddRange(CANamedArgumentsVM.Collection.Select(a => a.CreateCANamedArgument()));
 			return sa;

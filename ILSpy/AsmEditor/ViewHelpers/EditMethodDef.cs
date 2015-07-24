@@ -19,29 +19,24 @@
 
 using System.Windows;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.DnlibDialogs;
 using ICSharpCode.ILSpy.TreeNodes.Filters;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	sealed class EditMethodDef : IEdit<MethodDefVM>
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	sealed class EditMethodDef : IEdit<MethodDefVM> {
 		readonly ModuleDef ownerModule;
 		readonly DnlibTypePicker dnlibTypePicker;
 
 		public EditMethodDef(ModuleDef ownerModule)
-			: this(ownerModule, null)
-		{
+			: this(ownerModule, null) {
 		}
 
-		public EditMethodDef(ModuleDef ownerModule, Window ownerWindow)
-		{
+		public EditMethodDef(ModuleDef ownerModule, Window ownerWindow) {
 			this.ownerModule = ownerModule;
 			this.dnlibTypePicker = new DnlibTypePicker(ownerWindow);
 		}
 
-		public MethodDefVM Edit(string title, MethodDefVM vm)
-		{
+		public MethodDefVM Edit(string title, MethodDefVM vm) {
 			var method = dnlibTypePicker.GetDnlibType(new SameModuleTreeViewNodeFilter(ownerModule, new FlagsTreeViewNodeFilter(VisibleMembersFlags.MethodDef)), vm.Method, ownerModule);
 			if (method == null)
 				return null;

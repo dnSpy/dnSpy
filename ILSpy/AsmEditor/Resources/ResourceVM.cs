@@ -21,19 +21,17 @@ using System;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes.Filters;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Resources
-{
-	enum ResourceVisibility
-	{
+namespace dnSpy.AsmEditor.Resources {
+	enum ResourceVisibility {
 		Public	= (int)ManifestResourceAttributes.Public >> 0,
 		Private	= (int)ManifestResourceAttributes.Private >> 0,
 	}
 
-	sealed class ResourceVM : ViewModelBase
-	{
+	sealed class ResourceVM : ViewModelBase {
 		readonly ResourceOptions origOptions;
 
 		public IDnlibTypePicker DnlibTypePicker {
@@ -153,8 +151,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 
 		readonly ModuleDef ownerModule;
 
-		public ResourceVM(ResourceOptions options, ModuleDef ownerModule)
-		{
+		public ResourceVM(ResourceOptions options, ModuleDef ownerModule) {
 			this.origOptions = options;
 			this.ownerModule = ownerModule;
 
@@ -163,8 +160,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			Reinitialize();
 		}
 
-		void PickAssembly()
-		{
+		void PickAssembly() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 			var newAsm = dnlibTypePicker.GetDnlibType<LoadedAssembly>(new FlagsTreeViewNodeFilter(VisibleMembersFlags.AssemblyDef), null, ownerModule);
@@ -172,18 +168,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				Assembly = newAsm.AssemblyDefinition.ToAssemblyRef();
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public ResourceOptions CreateResourceOptions()
-		{
+		public ResourceOptions CreateResourceOptions() {
 			return CopyTo(new ResourceOptions());
 		}
 
-		void InitializeFrom(ResourceOptions options)
-		{
+		void InitializeFrom(ResourceOptions options) {
 			this.Type = options.ResourceType;
 			this.ResourceVisibilityVM.SelectedItem = (ResourceVisibility)((int)(options.Attributes & ManifestResourceAttributes.VisibilityMask) >> 0);
 			this.Attributes = options.Attributes;
@@ -201,8 +194,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			}
 		}
 
-		ResourceOptions CopyTo(ResourceOptions options)
-		{
+		ResourceOptions CopyTo(ResourceOptions options) {
 			options.ResourceType = this.Type;
 			options.Attributes = this.Attributes;
 			options.Name = this.Name;
@@ -213,8 +205,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			return options;
 		}
 
-		protected override string Verify(string columnName)
-		{
+		protected override string Verify(string columnName) {
 			if (columnName == "AssemblyFullName") {
 				if (Assembly == null)
 					return "Assembly must not be empty.";

@@ -18,25 +18,21 @@
 */
 
 using System.Windows;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	sealed class ShowWarningMessage : IShowWarningMessage
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	sealed class ShowWarningMessage : IShowWarningMessage {
 		readonly Window ownerWindow;
 
 		public ShowWarningMessage()
-			: this(null)
-		{
+			: this(null) {
 		}
 
-		public ShowWarningMessage(Window ownerWindow)
-		{
+		public ShowWarningMessage(Window ownerWindow) {
 			this.ownerWindow = ownerWindow;
 		}
 
-		public void Show(string key, string msg)
-		{
+		public void Show(string key, string msg) {
 			if (key == null)
 				MainWindow.Instance.ShowMessageBox(msg, MessageBoxButton.OK, ownerWindow);
 			else

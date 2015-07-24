@@ -20,13 +20,11 @@
 using System;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 using ICSharpCode.ILSpy.TreeNodes.Filters;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Resources
-{
-	sealed class UserTypeVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.Resources {
+	sealed class UserTypeVM : ViewModelBase {
 		readonly bool canDeserialize;
 
 		public IDnlibTypePicker DnlibTypePicker {
@@ -65,14 +63,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 
 		readonly ModuleDef ownerModule;
 
-		public UserTypeVM(ModuleDef ownerModule, bool canDeserialize)
-		{
+		public UserTypeVM(ModuleDef ownerModule, bool canDeserialize) {
 			this.ownerModule = ownerModule;
 			this.canDeserialize = canDeserialize;
 		}
 
-		void PickType()
-		{
+		void PickType() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 			var newType = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.TypeDef), GetTypeRef(), ownerModule);
@@ -80,21 +76,18 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				TypeFullName = newType.AssemblyQualifiedName;
 		}
 
-		public void SetData(byte[] data)
-		{
+		public void SetData(byte[] data) {
 			StringValue = GetString(data);
 		}
 
-		public byte[] GetSerializedData()
-		{
+		public byte[] GetSerializedData() {
 			object obj;
 			if (!string.IsNullOrEmpty(GetSerializedData(out obj)))
 				return null;
 			return SerializationUtils.Serialize(obj);
 		}
 
-		string GetString(byte[] data)
-		{
+		string GetString(byte[] data) {
 			if (!canDeserialize)
 				return string.Empty;
 
@@ -108,8 +101,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			return SerializationUtils.ConvertObjectToString(obj);
 		}
 
-		string GetSerializedData(out object obj)
-		{
+		string GetSerializedData(out object obj) {
 			obj = null;
 			Type type;
 			var error = LoadType(out type);
@@ -120,8 +112,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 
 		const string SERIALIZATION_DISABLED_ERROR = "(De)serialization is disabled in the settings.";
-		string LoadType(out Type type)
-		{
+		string LoadType(out Type type) {
 			if (!canDeserialize) {
 				type = null;
 				return SERIALIZATION_DISABLED_ERROR;
@@ -139,13 +130,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			}
 		}
 
-		ITypeDefOrRef GetTypeRef()
-		{
+		ITypeDefOrRef GetTypeRef() {
 			return TypeNameParser.ParseReflection(ownerModule, typeFullName, null);
 		}
 
-		protected override string Verify(string columnName)
-		{
+		protected override string Verify(string columnName) {
 			if (columnName == "TypeFullName") {
 				Type type;
 				var error = LoadType(out type);

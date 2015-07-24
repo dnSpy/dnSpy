@@ -18,33 +18,27 @@
 */
 
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class GenericParamsVM : ListVM<GenericParamVM, GenericParam>
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class GenericParamsVM : ListVM<GenericParamVM, GenericParam> {
 		public GenericParamsVM(ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
-			: base("Edit Generic Parameter", "Create Generic Parameter", ownerModule, language, ownerType, ownerMethod)
-		{
+			: base("Edit Generic Parameter", "Create Generic Parameter", ownerModule, language, ownerType, ownerMethod) {
 		}
 
-		protected override GenericParamVM Create(GenericParam model)
-		{
+		protected override GenericParamVM Create(GenericParam model) {
 			return new GenericParamVM(new GenericParamOptions(model), ownerModule, language, ownerType, ownerMethod);
 		}
 
-		protected override GenericParamVM Clone(GenericParamVM obj)
-		{
+		protected override GenericParamVM Clone(GenericParamVM obj) {
 			return new GenericParamVM(obj.CreateGenericParamOptions(), ownerModule, language, ownerType, ownerMethod);
 		}
 
-		protected override GenericParamVM Create()
-		{
+		protected override GenericParamVM Create() {
 			return new GenericParamVM(new GenericParamOptions(), ownerModule, language, ownerType, ownerMethod);
 		}
 
-		protected override int GetAddIndex(GenericParamVM obj)
-		{
+		protected override int GetAddIndex(GenericParamVM obj) {
 			ushort number = obj.Number.Value;
 			for (int i = 0; i < Collection.Count; i++) {
 				if (number < Collection[i].Number.Value)

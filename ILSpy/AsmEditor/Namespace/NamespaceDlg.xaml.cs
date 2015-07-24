@@ -17,15 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.Namespace
-{
+namespace dnSpy.AsmEditor.Namespace {
 	/// <summary>
 	/// Interaction logic for NamespaceDlg.xaml
 	/// </summary>
-	public partial class NamespaceDlg : WindowBase
-	{
-		public NamespaceDlg()
-		{
+	public partial class NamespaceDlg : WindowBase {
+		public NamespaceDlg() {
 			InitializeComponent();
 		}
 	}

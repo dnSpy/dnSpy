@@ -24,10 +24,8 @@ using System.Diagnostics;
 using dnlib.DotNet;
 using dnlib.Threading;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class CAArgumentVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class CAArgumentVM : ViewModelBase {
 		public ConstantTypeVM ConstantTypeVM {
 			get { return constantTypeVM; }
 		}
@@ -95,8 +93,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		TypeSig storageType;
 
-		public CAArgumentVM(ModuleDef ownerModule, CAArgument arg, TypeSigCreatorOptions options, TypeSig storageType)
-		{
+		public CAArgumentVM(ModuleDef ownerModule, CAArgument arg, TypeSigCreatorOptions options, TypeSig storageType) {
 			this.module = options.OwnerModule;
 			this.originalArg = arg.Clone();
 			this.constantTypeVM = new DnlibDialogs.ConstantTypeVM(ownerModule, null, ConstantTypes, true, true, options);
@@ -105,8 +102,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			this.modified = false;
 		}
 
-		void ConstantTypeVM_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void ConstantTypeVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "Modified") {
 				OnPropertyChanged("Modified");
 				modified = true;
@@ -114,14 +110,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			HasErrorUpdated();
 		}
 
-		void InitializeFrom(CAArgument arg, TypeSig storageType)
-		{
+		void InitializeFrom(CAArgument arg, TypeSig storageType) {
 			StorageType = storageType;
 			ConstantTypeVM.Value = ConvertFromModel(arg.Type, arg.Value);
 		}
 
-		object ConvertFromModel(TypeSig valueType, object value)
-		{
+		object ConvertFromModel(TypeSig valueType, object value) {
 			var type = valueType.RemovePinnedAndModifiers();
 			var et = type.GetElementType();
 			ITypeDefOrRef tdr;
@@ -236,8 +230,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return value;
 		}
 
-		object ConvertEnum(TypeSig elemType, IList<CAArgument> oldList)
-		{
+		object ConvertEnum(TypeSig elemType, IList<CAArgument> oldList) {
 			var td = elemType.ScopeType.ResolveTypeDef();
 			ElementType underlyingElemType = ElementType.End;
 			if (td != null && td.IsEnum)
@@ -264,8 +257,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return new int[0];
 		}
 
-		object ConvertEnum<T>(TypeSig elemType, IList<CAArgument> oldList)
-		{
+		object ConvertEnum<T>(TypeSig elemType, IList<CAArgument> oldList) {
 			var ary = ConvertArray<EnumInfo>(elemType, oldList);
 			var list = new T[ary.Length];
 
@@ -282,8 +274,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			};
 		}
 
-		T[] ConvertArray<T>(TypeSig elemType, IList<CAArgument> oldList)
-		{
+		T[] ConvertArray<T>(TypeSig elemType, IList<CAArgument> oldList) {
 			var list = new T[oldList.Count];
 
 			bool tIsValueType = typeof(T).IsValueType;
@@ -308,15 +299,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return list;
 		}
 
-		public CAArgument CreateCAArgument(TypeSig ownerType)
-		{
+		public CAArgument CreateCAArgument(TypeSig ownerType) {
 			if (!modified)
 				return originalArg.Clone();
 			return CreateCAArgument(ownerType, ConstantTypeVM.Value);
 		}
 
-		CAArgument CreateCAArgument(TypeSig ownerType, object value)
-		{
+		CAArgument CreateCAArgument(TypeSig ownerType, object value) {
 			if (value == null || value is Null) {
 				var t = ownerType.RemovePinnedAndModifiers();
 				t = t is SZArraySig ? t.Next : t;
@@ -393,8 +382,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return new CAArgument();
 		}
 
-		CAArgument CreateArray(TypeSig elemType, object value)
-		{
+		CAArgument CreateArray(TypeSig elemType, object value) {
 			var aryType = new SZArraySig(elemType);
 			var list = value as System.Collections.IList;
 			Debug.Assert(list != null || value == null);
@@ -408,8 +396,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return new CAArgument(aryType, ary);
 		}
 
-		public override string ToString()
-		{
+		public override string ToString() {
 			if (ConstantTypeVM.HasError)
 				return "<error>";
 			return DlgUtils.ValueToString(ConstantTypeVM.Value, StorageType);

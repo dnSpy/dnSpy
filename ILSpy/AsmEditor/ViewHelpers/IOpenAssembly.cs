@@ -17,10 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	interface IOpenAssembly
-	{
+using ICSharpCode.ILSpy;
+
+namespace dnSpy.AsmEditor.ViewHelpers {
+	interface IOpenAssembly {
 		/// <summary>
 		/// Asks user to pick a file and returns it or null if user canceled.
 		/// </summary>

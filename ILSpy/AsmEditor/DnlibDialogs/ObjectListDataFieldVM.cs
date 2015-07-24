@@ -22,12 +22,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class ObjectListDataFieldVM : DataFieldVM<IList<object>>
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class ObjectListDataFieldVM : DataFieldVM<IList<object>> {
 		readonly TypeSigCreatorOptions options;
 		List<object> objects = new List<object>();
 
@@ -51,13 +49,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		readonly ModuleDef ownerModule;
 
 		public ObjectListDataFieldVM(ModuleDef ownerModule, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions options)
-			: this(ownerModule, new object[0], onUpdated, options)
-		{
+			: this(ownerModule, new object[0], onUpdated, options) {
 		}
 
 		public ObjectListDataFieldVM(ModuleDef ownerModule, IList<object> value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions options)
-			: base(onUpdated)
-		{
+			: base(onUpdated) {
 			this.ownerModule = ownerModule;
 			if (options != null) {
 				this.options = options.Clone("Create a Type");
@@ -66,26 +62,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			SetValueFromConstructor(value);
 		}
 
-		protected override string OnNewValue(IList<object> value)
-		{
+		protected override string OnNewValue(IList<object> value) {
 			this.objects.Clear();
 			if (value != null)
 				this.objects.AddRange(value);
 			return CalculateStringValue();
 		}
 
-		string CalculateStringValue()
-		{
+		string CalculateStringValue() {
 			return string.Join(", ", objects.Select(a => DlgUtils.ValueToString(a, true)));
 		}
 
-		void InitializeStringValue()
-		{
+		void InitializeStringValue() {
 			this.StringValue = CalculateStringValue();
 		}
 
-		protected override string ConvertToValue(out IList<object> value)
-		{
+		protected override string ConvertToValue(out IList<object> value) {
 			value = objects.ToArray();
 			return null;
 		}
@@ -110,8 +102,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			ConstantType.ObjectArray,
 		};
 
-		void AddObject()
-		{
+		void AddObject() {
 			if (createConstantType == null)
 				throw new InvalidOperationException();
 			bool canceled;
@@ -124,8 +115,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			InitializeStringValue();
 		}
 
-		void RemoveObject()
-		{
+		void RemoveObject() {
 			if (!RemoveObjectCanExecute())
 				return;
 
@@ -133,13 +123,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			InitializeStringValue();
 		}
 
-		bool RemoveObjectCanExecute()
-		{
+		bool RemoveObjectCanExecute() {
 			return objects.Count > 0;
 		}
 
-		void ClearObjects()
-		{
+		void ClearObjects() {
 			if (!ClearObjectsCanExecute())
 				return;
 
@@ -147,8 +135,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			InitializeStringValue();
 		}
 
-		bool ClearObjectsCanExecute()
-		{
+		bool ClearObjectsCanExecute() {
 			return objects.Count > 0;
 		}
 	}

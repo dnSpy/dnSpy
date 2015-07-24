@@ -19,17 +19,14 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
 	/// Interaction logic for TypeSigCreatorControl.xaml
 	/// </summary>
-	public partial class TypeSigCreatorControl : UserControl
-	{
-		public TypeSigCreatorControl()
-		{
+	public partial class TypeSigCreatorControl : UserControl {
+		public TypeSigCreatorControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as TypeSigCreatorVM;

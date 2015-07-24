@@ -17,15 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
+namespace dnSpy.AsmEditor.MethodBody {
 	/// <summary>
 	/// Interaction logic for SwitchOperandDlg.xaml
 	/// </summary>
-	public partial class SwitchOperandDlg : WindowBase
-	{
-		public SwitchOperandDlg()
-		{
+	public partial class SwitchOperandDlg : WindowBase {
+		public SwitchOperandDlg() {
 			InitializeComponent();
 		}
 	}

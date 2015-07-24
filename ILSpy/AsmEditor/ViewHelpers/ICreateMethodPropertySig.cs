@@ -18,12 +18,10 @@
 */
 
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.DnlibDialogs;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	interface ICreateMethodPropertySig
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	interface ICreateMethodPropertySig {
 		/// <summary>
 		/// Creates a <see cref="MethodSig"/> or a <see cref="PropertySig"/>
 		/// </summary>

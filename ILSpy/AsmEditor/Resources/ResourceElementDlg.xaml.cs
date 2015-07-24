@@ -17,15 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.Resources
-{
+namespace dnSpy.AsmEditor.Resources {
 	/// <summary>
 	/// Interaction logic for ResourceElementDlg.xaml
 	/// </summary>
-	public partial class ResourceElementDlg : WindowBase
-	{
-		public ResourceElementDlg()
-		{
+	public partial class ResourceElementDlg : WindowBase {
+		public ResourceElementDlg() {
 			InitializeComponent();
 		}
 	}

@@ -21,11 +21,10 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class MarshalTypeVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class MarshalTypeVM : ViewModelBase {
 		const string NOT_INITIALIZED_ENUM_VALUE = "<Not Initialized>";
 
 		static readonly EnumVM[] nativeTypeList = EnumVM.Create(typeof(dnlib.DotNet.NativeType));
@@ -226,13 +225,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			set { SetFlagValue(VariantType.Reserved, value); }
 		}
 
-		bool GetFlagValue(VariantType flag)
-		{
+		bool GetFlagValue(VariantType flag) {
 			return (SafeArrayMarshalType_VT & flag) != 0;
 		}
 
-		void SetFlagValue(VariantType flag, bool value)
-		{
+		void SetFlagValue(VariantType flag, bool value) {
 			if (value)
 				SafeArrayMarshalType_VT |= flag;
 			else
@@ -375,13 +372,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			get { return NativeType.SelectedItem.ToString(); }
 		}
 
-		void TypeStringUpdated()
-		{
+		void TypeStringUpdated() {
 			OnPropertyChanged("TypeString");
 		}
 
-		public MarshalTypeVM(ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
-		{
+		public MarshalTypeVM(ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod) {
 			this.nativeTypeVM = new EnumListVM(nativeTypeList, (a, b) => { OnNativeTypeChanged(); TypeStringUpdated(); });
 			FixNativeTypeEnum(this.NativeType, false);
 			this.rawMarshalType_data = new HexStringVM(a => { HasErrorUpdated(); TypeStringUpdated(); });
@@ -400,8 +395,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			this.interfaceMarshalType_iidParamIndex = new NullableCompressedUInt32(a => { HasErrorUpdated(); TypeStringUpdated(); });
 		}
 
-		void OnSafeArrayMarshalTypeIsEnabledChanged()
-		{
+		void OnSafeArrayMarshalTypeIsEnabledChanged() {
 			OnPropertyChanged("SafeArrayMarshalType_VT_IsEnabled");
 			OnPropertyChanged("SafeArrayMarshalType_VT_Flags_IsEnabled");
 			OnPropertyChanged("SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator_IsEnabled");
@@ -410,8 +404,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator.TypeSig = null;
 		}
 
-		void OnFixedArrayMarshalTypeIsEnabledChanged()
-		{
+		void OnFixedArrayMarshalTypeIsEnabledChanged() {
 			OnPropertyChanged("FixedArrayMarshalType_Size_IsEnabled");
 			OnPropertyChanged("FixedArrayMarshalType_NativeType_IsEnabled");
 			HasErrorUpdated();
@@ -419,8 +412,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				FixedArrayMarshalType_NativeType.SelectedItem = dnlib.DotNet.NativeType.NotInitialized;
 		}
 
-		void OnArrayMarshalTypeIsEnabledChanged()
-		{
+		void OnArrayMarshalTypeIsEnabledChanged() {
 			OnPropertyChanged("ArrayMarshalType_NativeType_IsEnabled");
 			OnPropertyChanged("ArrayMarshalType_ParamNum_IsEnabled");
 			OnPropertyChanged("ArrayMarshalType_NumElems_IsEnabled");
@@ -442,8 +434,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			get { return string.Format("Type: {0}", customMarshalType_custMarshaler_typeSigCreator.TypeSigDnlibFullName); }
 		}
 
-		void safeArrayMarshalType_userDefinedSubType_typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void safeArrayMarshalType_userDefinedSubType_typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "TypeSigDnlibFullName")
 				OnPropertyChanged("SafeArrayMarshalType_UserDefinedSubType_TypeHeader");
 			OnSafeArrayMarshalTypeIsEnabledChanged();
@@ -451,16 +442,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			HasErrorUpdated();
 		}
 
-		void customMarshalType_custMarshaler_typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void customMarshalType_custMarshaler_typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "TypeSigDnlibFullName")
 				OnPropertyChanged("CustomMarshalType_CustMarshaler_TypeHeader");
 			TypeStringUpdated();
 			HasErrorUpdated();
 		}
 
-		static TypeSigCreatorVM CreateTypeSigCreatorVM(ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod, bool allowNullTypeSig, PropertyChangedEventHandler handler)
-		{
+		static TypeSigCreatorVM CreateTypeSigCreatorVM(ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod, bool allowNullTypeSig, PropertyChangedEventHandler handler) {
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, language) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
@@ -478,15 +467,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return typeSigCreator;
 		}
 
-		static void FixNativeTypeEnum(EnumListVM e, bool canHaveNotInitialized)
-		{
+		static void FixNativeTypeEnum(EnumListVM e, bool canHaveNotInitialized) {
 			e.Items.RemoveAt(e.GetIndex(dnlib.DotNet.NativeType.NotInitialized));
 			if (canHaveNotInitialized)
 				e.Items.Insert(0, new EnumVM(dnlib.DotNet.NativeType.NotInitialized, NOT_INITIALIZED_ENUM_VALUE));
 		}
 
-		void OnNativeTypeChanged()
-		{
+		void OnNativeTypeChanged() {
 			OnPropertyChanged("IsMarshalType");
 			OnPropertyChanged("IsRawMarshalType");
 			OnPropertyChanged("IsFixedSysStringMarshalType");

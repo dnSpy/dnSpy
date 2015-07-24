@@ -21,10 +21,10 @@ using System;
 using System.IO;
 using System.Security;
 using System.Threading;
-using System.Xml.Linq;
 using System.Windows.Input;
+using System.Xml.Linq;
+using dnSpy.AsmEditor;
 using Microsoft.Win32;
-using ICSharpCode.ILSpy.AsmEditor;
 
 namespace ICSharpCode.ILSpy.Options
 {

@@ -21,13 +21,12 @@ using System;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.ILSpy;
+using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Assembly
-{
-	enum AsmProcArch
-	{
+namespace dnSpy.AsmEditor.Assembly {
+	enum AsmProcArch {
 		None = (int)((uint)AssemblyAttributes.PA_None >> (int)AssemblyAttributes.PA_Shift),
 		MSIL = (int)((uint)AssemblyAttributes.PA_MSIL >> (int)AssemblyAttributes.PA_Shift),
 		x86 = (int)((uint)AssemblyAttributes.PA_x86 >> (int)AssemblyAttributes.PA_Shift),
@@ -38,14 +37,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 		NoPlatform = (int)((uint)AssemblyAttributes.PA_NoPlatform >> (int)AssemblyAttributes.PA_Shift),
 	}
 
-	enum AsmContType
-	{
+	enum AsmContType {
 		Default = (int)((uint)AssemblyAttributes.ContentType_Default >> 9),
 		WindowsRuntime = (int)((uint)AssemblyAttributes.ContentType_WindowsRuntime >> 9),
 	}
 
-	sealed class AssemblyOptionsVM : ViewModelBase
-	{
+	sealed class AssemblyOptionsVM : ViewModelBase {
 		readonly AssemblyOptions origOptions;
 
 		public IOpenPublicKeyFile OpenPublicKeyFile {
@@ -151,13 +148,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			set { SetFlagValue(AssemblyAttributes.DisableJITcompileOptimizer, value); }
 		}
 
-		bool GetFlagValue(AssemblyAttributes flag)
-		{
+		bool GetFlagValue(AssemblyAttributes flag) {
 			return (Flags & flag) != 0;
 		}
 
-		void SetFlagValue(AssemblyAttributes flag, bool value)
-		{
+		void SetFlagValue(AssemblyAttributes flag, bool value) {
 			if (value)
 				Flags |= flag;
 			else
@@ -234,8 +229,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 
 		readonly ModuleDef ownerModule;
 
-		public AssemblyOptionsVM(AssemblyOptions options, ModuleDef ownerModule, Language language)
-		{
+		public AssemblyOptionsVM(AssemblyOptions options, ModuleDef ownerModule, Language language) {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
 			this.hashAlgorithmVM = new EnumListVM(hashAlgorithmList, (a, b) => OnPropertyChanged("AssemblyFullName"));
@@ -250,23 +244,19 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			Reinitialize();
 		}
 
-		void UpdatePublicKeyFlag()
-		{
+		void UpdatePublicKeyFlag() {
 			FlagsPublicKey = !publicKey.IsNull;
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public AssemblyOptions CreateAssemblyOptions()
-		{
+		public AssemblyOptions CreateAssemblyOptions() {
 			return CopyTo(new AssemblyOptions());
 		}
 
-		void InitializeFrom(AssemblyOptions options)
-		{
+		void InitializeFrom(AssemblyOptions options) {
 			PublicKey.Value = options.PublicKey.Data;
 			HashAlgorithm.SelectedItem = options.HashAlgorithm;
 			VersionMajor.Value = checked((ushort)options.Version.Major);
@@ -283,8 +273,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			DeclSecuritiesVM.InitializeFrom(options.DeclSecurities);
 		}
 
-		AssemblyOptions CopyTo(AssemblyOptions options)
-		{
+		AssemblyOptions CopyTo(AssemblyOptions options) {
 			options.HashAlgorithm = (AssemblyHashAlgorithm)HashAlgorithm.SelectedItem;
 			options.Version = new Version(VersionMajor.Value, VersionMinor.Value, VersionBuild.Value, VersionRevision.Value);
 			options.Attributes = Flags;
@@ -299,8 +288,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Assembly
 			return options;
 		}
 
-		void OnOpenPublicKeyFile()
-		{
+		void OnOpenPublicKeyFile() {
 			if (openPublicKeyFile == null)
 				throw new InvalidOperationException();
 			var newPublicKey = openPublicKeyFile.Open();

@@ -27,44 +27,37 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TreeNodes;
-
 using WF = System.Windows.Forms;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Resources
-{
+namespace dnSpy.AsmEditor.Resources {
 	[Export(typeof(IPlugin))]
-	sealed class AssemblyPlugin : IPlugin
-	{
-		public void OnLoaded()
-		{
+	sealed class AssemblyPlugin : IPlugin {
+		public void OnLoaded() {
 			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteResourceExecuted, DeleteResourceCanExecute));
 			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteResourceElementExecuted, DeleteResourceElementCanExecute));
 		}
 
-		void DeleteResourceCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		void DeleteResourceCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = DeleteResourceCommand.CanExecute(MainWindow.Instance.SelectedNodes);
 		}
 
-		void DeleteResourceExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		void DeleteResourceExecuted(object sender, ExecutedRoutedEventArgs e) {
 			DeleteResourceCommand.Execute(MainWindow.Instance.SelectedNodes);
 		}
 
-		void DeleteResourceElementCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		void DeleteResourceElementCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = DeleteResourceElementCommand.CanExecute(MainWindow.Instance.SelectedNodes);
 		}
 
-		void DeleteResourceElementExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		void DeleteResourceElementExecuted(object sender, ExecutedRoutedEventArgs e) {
 			DeleteResourceElementCommand.Execute(MainWindow.Instance.SelectedNodes);
 		}
 	}
 
-	sealed class DeleteResourceCommand : IUndoCommand
-	{
+	sealed class DeleteResourceCommand : IUndoCommand {
 		const string CMD_NAME = "Delete Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Delete",
@@ -77,20 +70,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2180)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return DeleteResourceCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				DeleteResourceCommand.Execute(nodes);
 			}
 
-			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
-			{
+			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
 				DeleteResourceCommand.Initialize(nodes, menuItem);
 			}
 		}
@@ -99,41 +88,34 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 								Icon = "Delete",
 								Category = "AsmEd",
 								Order = 380)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					DeleteResourceCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				DeleteResourceCommand.Execute(ctx.Nodes);
 			}
 
-			protected override void Initialize(Context ctx, MenuItem menuItem)
-			{
+			protected override void Initialize(Context ctx, MenuItem menuItem) {
 				DeleteResourceCommand.Initialize(ctx.Nodes, menuItem);
 			}
 		}
 
-		static void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
-		{
+		static void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
 			if (nodes.Length == 1)
 				menuItem.Header = string.Format("Delete {0}", UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
 			else
 				menuItem.Header = string.Format("Delete {0} resources", nodes.Length);
 		}
 
-		internal static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		internal static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length > 0 &&
 				nodes.All(n => n is ResourceTreeNode);
 		}
 
-		internal static void Execute(ILSpyTreeNode[] nodes)
-		{
+		internal static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -141,17 +123,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			UndoCommandManager.Instance.Add(new DeleteResourceCommand(rsrcNodes));
 		}
 
-		public struct DeleteModelNodes
-		{
+		public struct DeleteModelNodes {
 			ModelInfo[] infos;
 
-			struct ModelInfo
-			{
+			struct ModelInfo {
 				public readonly ModuleDef OwnerModule;
 				public readonly int Index;
 
-				public ModelInfo(ModuleDef module, Resource rsrc)
-				{
+				public ModelInfo(ModuleDef module, Resource rsrc) {
 					this.OwnerModule = module;
 					this.Index = module.Resources.IndexOf(rsrc);
 					Debug.Assert(this.Index >= 0);
@@ -160,8 +139,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				}
 			}
 
-			public void Delete(ResourceTreeNode[] nodes, ILSpyTreeNode[] parents)
-			{
+			public void Delete(ResourceTreeNode[] nodes, ILSpyTreeNode[] parents) {
 				Debug.Assert(infos == null);
 				if (infos != null)
 					throw new InvalidOperationException();
@@ -181,8 +159,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				}
 			}
 
-			public void Restore(ResourceTreeNode[] nodes)
-			{
+			public void Restore(ResourceTreeNode[] nodes) {
 				Debug.Assert(infos != null);
 				if (infos == null)
 					throw new InvalidOperationException();
@@ -203,8 +180,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		DeletableNodes<ResourceTreeNode> nodes;
 		DeleteModelNodes modelNodes;
 
-		DeleteResourceCommand(ResourceTreeNode[] rsrcNodes)
-		{
+		DeleteResourceCommand(ResourceTreeNode[] rsrcNodes) {
 			this.nodes = new DeletableNodes<ResourceTreeNode>(rsrcNodes);
 		}
 
@@ -212,14 +188,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			nodes.Delete();
 			modelNodes.Delete(nodes.Nodes, nodes.Parents);
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			modelNodes.Restore(nodes.Nodes);
 			nodes.Restore();
 		}
@@ -228,13 +202,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			get { return nodes.Nodes; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	sealed class DeleteResourceElementCommand : IUndoCommand
-	{
+	sealed class DeleteResourceElementCommand : IUndoCommand {
 		const string CMD_NAME = "Delete Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Delete",
@@ -247,20 +219,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2190)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return DeleteResourceElementCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				DeleteResourceElementCommand.Execute(nodes);
 			}
 
-			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
-			{
+			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
 				DeleteResourceElementCommand.Initialize(nodes, menuItem);
 			}
 		}
@@ -269,41 +237,34 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 								Icon = "Delete",
 								Category = "AsmEd",
 								Order = 390)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					DeleteResourceElementCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				DeleteResourceElementCommand.Execute(ctx.Nodes);
 			}
 
-			protected override void Initialize(Context ctx, MenuItem menuItem)
-			{
+			protected override void Initialize(Context ctx, MenuItem menuItem) {
 				DeleteResourceElementCommand.Initialize(ctx.Nodes, menuItem);
 			}
 		}
 
-		static void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
-		{
+		static void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
 			if (nodes.Length == 1)
 				menuItem.Header = string.Format("Delete {0}", UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
 			else
 				menuItem.Header = string.Format("Delete {0} resources", nodes.Length);
 		}
 
-		internal static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		internal static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length > 0 &&
 				nodes.All(n => n is ResourceElementTreeNode);
 		}
 
-		internal static void Execute(ILSpyTreeNode[] nodes)
-		{
+		internal static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -311,16 +272,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			UndoCommandManager.Instance.Add(new DeleteResourceElementCommand(rsrcNodes));
 		}
 
-		sealed class ModuleInfo
-		{
+		sealed class ModuleInfo {
 			public readonly ResourceTreeNode Node;
 			readonly ModuleDef Module;
 			readonly int Index;
 			readonly Resource Resource;
 			Resource NewResource;
 
-			public ModuleInfo(ResourceTreeNode node)
-			{
+			public ModuleInfo(ResourceTreeNode node) {
 				if (node == null)
 					throw new InvalidOperationException();
 				this.Node = node;
@@ -336,8 +295,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				this.Resource = node.Resource;
 			}
 
-			public void Replace()
-			{
+			public void Replace() {
 				Debug.Assert(this.Index < this.Module.Resources.Count && this.Module.Resources[this.Index] == this.Node.Resource);
 				if (NewResource == null) {
 					this.Node.RegenerateEmbeddedResource();
@@ -348,8 +306,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				this.Module.Resources[this.Index] = this.NewResource;
 			}
 
-			public void Restore()
-			{
+			public void Restore() {
 				Debug.Assert(this.Index < this.Module.Resources.Count && this.Module.Resources[this.Index] == this.Node.Resource);
 				this.Node.Resource = this.Resource;
 				this.Module.Resources[this.Index] = this.Resource;
@@ -359,8 +316,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		DeletableNodes<ResourceElementTreeNode> nodes;
 		readonly List<ModuleInfo> savedResources = new List<ModuleInfo>();
 
-		DeleteResourceElementCommand(ResourceElementTreeNode[] rsrcNodes)
-		{
+		DeleteResourceElementCommand(ResourceElementTreeNode[] rsrcNodes) {
 			this.nodes = new DeletableNodes<ResourceElementTreeNode>(rsrcNodes);
 		}
 
@@ -368,8 +324,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			Debug.Assert(savedResources.Count == 0);
 			savedResources.AddRange(nodes.Nodes.Select(a => ILSpyTreeNode.GetNode<ResourceTreeNode>(a)).Distinct().Select(a => new ModuleInfo(a)));
 
@@ -379,8 +334,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				savedResources[i].Replace();
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			Debug.Assert(savedResources.Count > 0);
 			for (int i = savedResources.Count - 1; i >= 0; i--)
 				savedResources[i].Restore();
@@ -393,41 +347,34 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			get { return nodes.Nodes; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	abstract class SaveResourcesContextMenuEntryBase : IContextMenuEntry2
-	{
+	abstract class SaveResourcesContextMenuEntryBase : IContextMenuEntry2 {
 		readonly bool useSubDirs;
 		readonly ResourceDataType resourceDataType;
 
-		protected SaveResourcesContextMenuEntryBase(bool useSubDirs, ResourceDataType resourceDataType)
-		{
+		protected SaveResourcesContextMenuEntryBase(bool useSubDirs, ResourceDataType resourceDataType) {
 			this.useSubDirs = useSubDirs;
 			this.resourceDataType = resourceDataType;
 		}
 
-		public virtual bool IsVisible(TextViewContext context)
-		{
+		public virtual bool IsVisible(TextViewContext context) {
 			return GetResourceNodes(context) != null;
 		}
 
-		public bool IsEnabled(TextViewContext context)
-		{
+		public bool IsEnabled(TextViewContext context) {
 			return true;
 		}
 
-		public void Execute(TextViewContext context)
-		{
+		public void Execute(TextViewContext context) {
 			SaveResources.Save(GetResourceNodes(context), useSubDirs, resourceDataType);
 		}
 
 		public abstract void Initialize(TextViewContext context, MenuItem menuItem);
 
-		protected IResourceNode[] GetResourceNodes(TextViewContext context)
-		{
+		protected IResourceNode[] GetResourceNodes(TextViewContext context) {
 			IResourceNode[] nodes;
 			if (context.SelectedTreeNodes != null) {
 				var inputNodes = context.SelectedTreeNodes;
@@ -447,22 +394,18 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			return nodes.Length == 0 ? null : nodes;
 		}
 
-		protected ResourceData[] GetResourceData(IResourceNode[] nodes)
-		{
+		protected ResourceData[] GetResourceData(IResourceNode[] nodes) {
 			return SaveResources.GetResourceData(nodes, resourceDataType);
 		}
 	}
 
 	[ExportContextMenuEntryAttribute(Order = 300, Category = "AsmEd")]
-	sealed class SaveResourcesContextMenuEntry : SaveResourcesContextMenuEntryBase
-	{
+	sealed class SaveResourcesContextMenuEntry : SaveResourcesContextMenuEntryBase {
 		public SaveResourcesContextMenuEntry()
-			: base(false, ResourceDataType.Deserialized)
-		{
+			: base(false, ResourceDataType.Deserialized) {
 		}
 
-		public override void Initialize(TextViewContext context, MenuItem menuItem)
-		{
+		public override void Initialize(TextViewContext context, MenuItem menuItem) {
 			var infos = GetResourceData(GetResourceNodes(context));
 			if (infos.Length == 1)
 				menuItem.Header = string.Format("Save {0}", UIUtils.EscapeMenuItemHeader(infos[0].Name));
@@ -472,15 +415,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 	}
 
 	[ExportContextMenuEntryAttribute(Order = 310, Category = "AsmEd")]
-	sealed class SaveWithPathResourcesContextMenuEntry : SaveResourcesContextMenuEntryBase
-	{
+	sealed class SaveWithPathResourcesContextMenuEntry : SaveResourcesContextMenuEntryBase {
 		public SaveWithPathResourcesContextMenuEntry()
-			: base(true, ResourceDataType.Deserialized)
-		{
+			: base(true, ResourceDataType.Deserialized) {
 		}
 
-		public override bool IsVisible(TextViewContext context)
-		{
+		public override bool IsVisible(TextViewContext context) {
 			var nodes = GetResourceNodes(context);
 			if (nodes == null)
 				return false;
@@ -489,23 +429,19 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				infos.Any(a => a.Name.Contains('/') || a.Name.Contains('\\'));
 		}
 
-		public override void Initialize(TextViewContext context, MenuItem menuItem)
-		{
+		public override void Initialize(TextViewContext context, MenuItem menuItem) {
 			var infos = GetResourceData(GetResourceNodes(context));
 			menuItem.Header = string.Format("Save {0} resources, use sub dirs", infos.Length);
 		}
 	}
 
 	[ExportContextMenuEntryAttribute(Order = 320, Category = "AsmEd")]
-	sealed class SaveRawResourcesContextMenuEntry : SaveResourcesContextMenuEntryBase
-	{
+	sealed class SaveRawResourcesContextMenuEntry : SaveResourcesContextMenuEntryBase {
 		public SaveRawResourcesContextMenuEntry()
-			: base(false, ResourceDataType.Serialized)
-		{
+			: base(false, ResourceDataType.Serialized) {
 		}
 
-		public override void Initialize(TextViewContext context, MenuItem menuItem)
-		{
+		public override void Initialize(TextViewContext context, MenuItem menuItem) {
 			var infos = GetResourceData(GetResourceNodes(context));
 			if (infos.Length == 1)
 				menuItem.Header = string.Format("Raw Save {0}", UIUtils.EscapeMenuItemHeader(infos[0].Name));
@@ -515,15 +451,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 	}
 
 	[ExportContextMenuEntryAttribute(Order = 330, Category = "AsmEd")]
-	sealed class SaveRawWithPathResourcesContextMenuEntry : SaveResourcesContextMenuEntryBase
-	{
+	sealed class SaveRawWithPathResourcesContextMenuEntry : SaveResourcesContextMenuEntryBase {
 		public SaveRawWithPathResourcesContextMenuEntry()
-			: base(true, ResourceDataType.Serialized)
-		{
+			: base(true, ResourceDataType.Serialized) {
 		}
 
-		public override bool IsVisible(TextViewContext context)
-		{
+		public override bool IsVisible(TextViewContext context) {
 			var nodes = GetResourceNodes(context);
 			if (nodes == null)
 				return false;
@@ -532,22 +465,18 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				infos.Any(a => a.Name.Contains('/') || a.Name.Contains('\\'));
 		}
 
-		public override void Initialize(TextViewContext context, MenuItem menuItem)
-		{
+		public override void Initialize(TextViewContext context, MenuItem menuItem) {
 			var infos = GetResourceData(GetResourceNodes(context));
 			menuItem.Header = string.Format("Raw Save {0} resources, use sub dirs", infos.Length);
 		}
 	}
 
-	static class Utils
-	{
-		public static bool CanExecuteResourceListCommand(ILSpyTreeNode[] nodes)
-		{
+	static class Utils {
+		public static bool CanExecuteResourceListCommand(ILSpyTreeNode[] nodes) {
 			return GetResourceListTreeNode(nodes) != null;
 		}
 
-		public static ResourceListTreeNode GetResourceListTreeNode(ILSpyTreeNode[] nodes)
-		{
+		public static ResourceListTreeNode GetResourceListTreeNode(ILSpyTreeNode[] nodes) {
 			if (nodes.Length != 1)
 				return null;
 			var rsrcListNode = nodes[0] as ResourceListTreeNode;
@@ -562,7 +491,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				return null;
 			asmNode.EnsureChildrenFiltered();
 			rsrcListNode = (ResourceListTreeNode)asmNode.Children.FirstOrDefault(a => a is ResourceListTreeNode);
-			if (rsrcListNode == null)	// If not a module node
+			if (rsrcListNode == null)   // If not a module node
 				return null;
 			rsrcListNode.EnsureChildrenFiltered();
 			if (rsrcListNode.Children.Count == 0)
@@ -571,8 +500,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 	}
 
-	sealed class CreateFileResourceCommand : IUndoCommand
-	{
+	sealed class CreateFileResourceCommand : IUndoCommand {
 		const string CMD_NAME = "Create File Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewResource",
@@ -583,15 +511,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							MenuIcon = "NewResource",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2400)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return CreateFileResourceCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				CreateFileResourceCommand.Execute(nodes);
 			}
 		}
@@ -600,27 +525,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 								Icon = "NewResource",
 								Category = "AsmEd",
 								Order = 600)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					CreateFileResourceCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				CreateFileResourceCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return Utils.CanExecuteResourceListCommand(nodes);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -661,8 +581,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		readonly ResourceListTreeNode rsrcListNode;
 		readonly ResourceTreeNode[] nodes;
 
-		CreateFileResourceCommand(ResourceListTreeNode rsrcListNode, ResourceTreeNode[] nodes)
-		{
+		CreateFileResourceCommand(ResourceListTreeNode rsrcListNode, ResourceTreeNode[] nodes) {
 			this.module = ILSpyTreeNode.GetModule(rsrcListNode);
 			Debug.Assert(this.module != null);
 			this.rsrcListNode = rsrcListNode;
@@ -673,16 +592,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			foreach (var node in nodes) {
 				module.Resources.Add(node.Resource);
 				rsrcListNode.AddToChildren(node);
 			}
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			for (int i = nodes.Length - 1; i >= 0; i--) {
 				var node = nodes[i];
 				bool b = rsrcListNode.Children.Remove(node);
@@ -700,19 +617,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			get { yield return rsrcListNode; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	abstract class CreateResourceTreeNodeCommand : IUndoCommand
-	{
+	abstract class CreateResourceTreeNodeCommand : IUndoCommand {
 		readonly ModuleDef module;
 		readonly ResourceListTreeNode rsrcListNode;
 		readonly ResourceTreeNode resTreeNode;
 
-		protected CreateResourceTreeNodeCommand(ResourceListTreeNode rsrcListNode, ResourceTreeNode resTreeNode)
-		{
+		protected CreateResourceTreeNodeCommand(ResourceListTreeNode rsrcListNode, ResourceTreeNode resTreeNode) {
 			this.module = ILSpyTreeNode.GetModule(rsrcListNode);
 			Debug.Assert(this.module != null);
 			this.rsrcListNode = rsrcListNode;
@@ -721,14 +635,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 
 		public abstract string Description { get; }
 
-		public void Execute()
-		{
+		public void Execute() {
 			module.Resources.Add(resTreeNode.Resource);
 			rsrcListNode.AddToChildren(resTreeNode);
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			bool b = rsrcListNode.Children.Remove(resTreeNode);
 			Debug.Assert(b);
 			if (!b)
@@ -743,13 +655,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			get { yield return rsrcListNode; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	sealed class CreateMultiFileResourceCommand : CreateResourceTreeNodeCommand
-	{
+	sealed class CreateMultiFileResourceCommand : CreateResourceTreeNodeCommand {
 		const string CMD_NAME = "Create Multi File Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewResourcesFile",
@@ -760,15 +670,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							MenuIcon = "NewResourcesFile",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2410)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return CreateMultiFileResourceCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				CreateMultiFileResourceCommand.Execute(nodes);
 			}
 		}
@@ -777,27 +684,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 								Icon = "NewResourcesFile",
 								Category = "AsmEd",
 								Order = 610)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					CreateMultiFileResourceCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				CreateMultiFileResourceCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return Utils.CanExecuteResourceListCommand(nodes);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -826,8 +728,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 
 		CreateMultiFileResourceCommand(ResourceListTreeNode rsrcListNode, ResourceTreeNode resTreeNode)
-			: base(rsrcListNode, resTreeNode)
-		{
+			: base(rsrcListNode, resTreeNode) {
 		}
 
 		public override string Description {
@@ -835,8 +736,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 	}
 
-	sealed class CreateAssemblyLinkedResourceCommand : CreateResourceTreeNodeCommand
-	{
+	sealed class CreateAssemblyLinkedResourceCommand : CreateResourceTreeNodeCommand {
 		const string CMD_NAME = "Create Assembly Linked Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewAssembly",
@@ -847,15 +747,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							MenuIcon = "NewAssembly",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2420)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return CreateAssemblyLinkedResourceCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				CreateAssemblyLinkedResourceCommand.Execute(nodes);
 			}
 		}
@@ -864,27 +761,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 								Icon = "NewAssembly",
 								Category = "AsmEd",
 								Order = 620)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					CreateAssemblyLinkedResourceCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				CreateAssemblyLinkedResourceCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return Utils.CanExecuteResourceListCommand(nodes);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -914,8 +806,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 
 		CreateAssemblyLinkedResourceCommand(ResourceListTreeNode rsrcListNode, ResourceTreeNode resTreeNode)
-			: base(rsrcListNode, resTreeNode)
-		{
+			: base(rsrcListNode, resTreeNode) {
 		}
 
 		public override string Description {
@@ -923,8 +814,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 	}
 
-	sealed class CreateFileLinkedResourceCommand : CreateResourceTreeNodeCommand
-	{
+	sealed class CreateFileLinkedResourceCommand : CreateResourceTreeNodeCommand {
 		const string CMD_NAME = "Create File Linked Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewAssemblyModule",
@@ -935,15 +825,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							MenuIcon = "NewAssemblyModule",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2430)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return CreateFileLinkedResourceCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				CreateFileLinkedResourceCommand.Execute(nodes);
 			}
 		}
@@ -952,27 +839,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 								Icon = "NewAssemblyModule",
 								Category = "AsmEd",
 								Order = 630)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					CreateFileLinkedResourceCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				CreateFileLinkedResourceCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return Utils.CanExecuteResourceListCommand(nodes);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -1003,8 +885,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 
 		CreateFileLinkedResourceCommand(ResourceListTreeNode rsrcListNode, ResourceTreeNode resTreeNode)
-			: base(rsrcListNode, resTreeNode)
-		{
+			: base(rsrcListNode, resTreeNode) {
 		}
 
 		public override string Description {
@@ -1012,8 +893,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 	}
 
-	sealed class ResourceSettingsCommand : IUndoCommand
-	{
+	sealed class ResourceSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
@@ -1024,15 +904,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2490)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return ResourceSettingsCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				ResourceSettingsCommand.Execute(nodes);
 			}
 		}
@@ -1041,27 +918,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 690)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ResourceSettingsCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				ResourceSettingsCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length == 1 &&
 				nodes[0] is ResourceTreeNode;
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -1089,8 +961,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		readonly int origParentChildIndex;
 		readonly bool nameChanged;
 
-		ResourceSettingsCommand(ResourceTreeNode rsrcNode, ResourceOptions options)
-		{
+		ResourceSettingsCommand(ResourceTreeNode rsrcNode, ResourceOptions options) {
 			this.rsrcNode = rsrcNode;
 			this.newOptions = options;
 			this.origOptions = new ResourceOptions(rsrcNode.Resource);
@@ -1108,8 +979,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			if (nameChanged) {
 				bool b = origParentChildIndex < origParentNode.Children.Count && origParentNode.Children[origParentChildIndex] == rsrcNode;
 				Debug.Assert(b);
@@ -1125,8 +995,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			rsrcNode.RaiseUIPropsChanged();
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			if (nameChanged) {
 				bool b = origParentNode.Children.Remove(rsrcNode);
 				Debug.Assert(b);
@@ -1145,13 +1014,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			get { yield return rsrcNode; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	abstract class CreateResourceElementCommandBase : IUndoCommand
-	{
+	abstract class CreateResourceElementCommandBase : IUndoCommand {
 		readonly ModuleDef module;
 		readonly ResourceElementSetTreeNode rsrcSetNode;
 		readonly ResourceElementTreeNode[] nodes;
@@ -1159,8 +1026,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		readonly int resourceIndex;
 		Resource newResource;
 
-		protected CreateResourceElementCommandBase(ResourceElementSetTreeNode rsrcSetNode, ResourceElementTreeNode[] nodes)
-		{
+		protected CreateResourceElementCommandBase(ResourceElementSetTreeNode rsrcSetNode, ResourceElementTreeNode[] nodes) {
 			this.module = ILSpyTreeNode.GetModule(rsrcSetNode);
 			Debug.Assert(this.module != null);
 			this.rsrcSetNode = rsrcSetNode;
@@ -1174,8 +1040,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 
 		public abstract string Description { get; }
 
-		public void Execute()
-		{
+		public void Execute() {
 			Debug.Assert(resource == rsrcSetNode.Resource);
 			Debug.Assert(module.Resources[resourceIndex] == resource);
 			foreach (var node in nodes)
@@ -1189,8 +1054,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			module.Resources[resourceIndex] = newResource;
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			for (int i = nodes.Length - 1; i >= 0; i--) {
 				var node = nodes[i];
 				bool b = rsrcSetNode.Children.Remove(node);
@@ -1206,13 +1070,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			get { yield return rsrcSetNode; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	sealed class CreateImageResourceElementCommand : CreateResourceElementCommandBase
-	{
+	sealed class CreateImageResourceElementCommand : CreateResourceElementCommandBase {
 		const string CMD_NAME = "Create System.Data.Bitmap/Icon Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewImage",
@@ -1223,15 +1085,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							MenuIcon = "NewImage",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2440)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return CreateImageResourceElementCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				CreateImageResourceElementCommand.Execute(nodes);
 			}
 		}
@@ -1240,28 +1099,23 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 								Icon = "NewImage",
 								Category = "AsmEd",
 								Order = 640)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					CreateImageResourceElementCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				CreateImageResourceElementCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length == 1 &&
 				(nodes[0] is ResourceElementSetTreeNode || nodes[0].Parent is ResourceElementSetTreeNode);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -1307,8 +1161,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 
 		CreateImageResourceElementCommand(ResourceElementSetTreeNode rsrcSetNode, ResourceElementTreeNode[] nodes)
-			: base(rsrcSetNode, nodes)
-		{
+			: base(rsrcSetNode, nodes) {
 		}
 
 		public override string Description {
@@ -1316,8 +1169,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 	}
 
-	sealed class CreateImageListResourceElementCommand : CreateResourceElementCommandBase
-	{
+	sealed class CreateImageListResourceElementCommand : CreateResourceElementCommandBase {
 		const string CMD_NAME = "Create System.Windows.Forms.ImageListStreamer Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewImage",
@@ -1328,15 +1180,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							MenuIcon = "NewImage",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2450)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return CreateImageListResourceElementCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				CreateImageListResourceElementCommand.Execute(nodes);
 			}
 		}
@@ -1345,28 +1194,23 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 								Icon = "NewImage",
 								Category = "AsmEd",
 								Order = 650)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					CreateImageListResourceElementCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				CreateImageListResourceElementCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length == 1 &&
 				(nodes[0] is ResourceElementSetTreeNode || nodes[0].Parent is ResourceElementSetTreeNode);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -1413,8 +1257,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 
 		CreateImageListResourceElementCommand(ResourceElementSetTreeNode rsrcSetNode, SerializedImageListStreamerResourceElementTreeNode node)
-			: base(rsrcSetNode, new ResourceElementTreeNode[] { node })
-		{
+			: base(rsrcSetNode, new ResourceElementTreeNode[] { node }) {
 		}
 
 		public override string Description {
@@ -1422,8 +1265,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 	}
 
-	sealed class CreateByteArrayResourceElementCommand : CreateResourceElementCommandBase
-	{
+	sealed class CreateByteArrayResourceElementCommand : CreateResourceElementCommandBase {
 		const string CMD_NAME = "Create Byte Array Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewBinary",
@@ -1434,15 +1276,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							MenuIcon = "NewBinary",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2470)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return CreateByteArrayResourceElementCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				CreateByteArrayResourceElementCommand.Execute(nodes);
 			}
 		}
@@ -1451,35 +1290,29 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 								Icon = "NewBinary",
 								Category = "AsmEd",
 								Order = 670)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					CreateByteArrayResourceElementCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				CreateByteArrayResourceElementCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length == 1 &&
 				(nodes[0] is ResourceElementSetTreeNode || nodes[0].Parent is ResourceElementSetTreeNode);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 			Execute(nodes, ResourceTypeCode.ByteArray, (a, b) => new CreateByteArrayResourceElementCommand(a, b));
 		}
 
-		internal static void Execute(ILSpyTreeNode[] nodes, ResourceTypeCode typeCode, Func<ResourceElementSetTreeNode, ResourceElementTreeNode[], IUndoCommand> createCommand)
-		{
+		internal static void Execute(ILSpyTreeNode[] nodes, ResourceTypeCode typeCode, Func<ResourceElementSetTreeNode, ResourceElementTreeNode[], IUndoCommand> createCommand) {
 			var rsrcSetNode = nodes[0] as ResourceElementSetTreeNode;
 			if (rsrcSetNode == null)
 				rsrcSetNode = nodes[0].Parent as ResourceElementSetTreeNode;
@@ -1521,8 +1354,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 
 		CreateByteArrayResourceElementCommand(ResourceElementSetTreeNode rsrcSetNode, ResourceElementTreeNode[] nodes)
-			: base(rsrcSetNode, nodes)
-		{
+			: base(rsrcSetNode, nodes) {
 		}
 
 		public override string Description {
@@ -1530,8 +1362,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 	}
 
-	sealed class CreateStreamResourceElementCommand : CreateResourceElementCommandBase
-	{
+	sealed class CreateStreamResourceElementCommand : CreateResourceElementCommandBase {
 		const string CMD_NAME = "Create System.IO.Stream Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewBinary",
@@ -1542,15 +1373,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							MenuIcon = "NewBinary",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2480)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return CreateStreamResourceElementCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				CreateStreamResourceElementCommand.Execute(nodes);
 			}
 		}
@@ -1559,36 +1387,30 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 								Icon = "NewBinary",
 								Category = "AsmEd",
 								Order = 680)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					CreateStreamResourceElementCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				CreateStreamResourceElementCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length == 1 &&
 				(nodes[0] is ResourceElementSetTreeNode || nodes[0].Parent is ResourceElementSetTreeNode);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 			CreateByteArrayResourceElementCommand.Execute(nodes, ResourceTypeCode.Stream, (a, b) => new CreateStreamResourceElementCommand(a, b));
 		}
 
 		CreateStreamResourceElementCommand(ResourceElementSetTreeNode rsrcSetNode, ResourceElementTreeNode[] nodes)
-			: base(rsrcSetNode, nodes)
-		{
+			: base(rsrcSetNode, nodes) {
 		}
 
 		public override string Description {
@@ -1596,8 +1418,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 	}
 
-	sealed class CreateResourceElementCommand : CreateResourceElementCommandBase
-	{
+	sealed class CreateResourceElementCommand : CreateResourceElementCommandBase {
 		const string CMD_NAME = "Create Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewResource",
@@ -1608,15 +1429,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							MenuIcon = "NewResource",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2460)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return CreateResourceElementCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				CreateResourceElementCommand.Execute(nodes);
 			}
 		}
@@ -1625,28 +1443,23 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 								Icon = "NewResource",
 								Category = "AsmEd",
 								Order = 660)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					CreateResourceElementCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				CreateResourceElementCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length == 1 &&
 				(nodes[0] is ResourceElementSetTreeNode || nodes[0].Parent is ResourceElementSetTreeNode);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -1664,7 +1477,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				Name = string.Empty,
 				ResourceData = new BuiltInResourceData(ResourceTypeCode.String, string.Empty),
 			});
-			var data = new ResourceElementVM(options, module, Options.OtherSettings.Instance.DeserializeResources);
+			var data = new ResourceElementVM(options, module, OtherSettings.Instance.DeserializeResources);
 			var win = new ResourceElementDlg();
 			win.Title = CMD_NAME;
 			win.DataContext = data;
@@ -1678,8 +1491,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 
 		CreateResourceElementCommand(ResourceElementSetTreeNode rsrcSetNode, ResourceElementTreeNode node)
-			: base(rsrcSetNode, new[] { node })
-		{
+			: base(rsrcSetNode, new[] { node }) {
 		}
 
 		public override string Description {
@@ -1687,8 +1499,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 	}
 
-	abstract class ResourceElementSettingsBaseCommand : IUndoCommand
-	{
+	abstract class ResourceElementSettingsBaseCommand : IUndoCommand {
 		readonly ModuleDef module;
 		readonly Resource resource;
 		readonly int resourceIndex;
@@ -1700,8 +1511,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		readonly int origParentChildIndex;
 		readonly bool nameChanged;
 
-		protected ResourceElementSettingsBaseCommand(ResourceElementTreeNode rsrcElNode, ResourceElementOptions options)
-		{
+		protected ResourceElementSettingsBaseCommand(ResourceElementTreeNode rsrcElNode, ResourceElementOptions options) {
 			this.rsrcSetNode = (ResourceElementSetTreeNode)rsrcElNode.Parent;
 			this.rsrcElNode = rsrcElNode;
 			this.newOptions = options.Create();
@@ -1725,8 +1535,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 
 		public abstract string Description { get; }
 
-		public void Execute()
-		{
+		public void Execute() {
 			Debug.Assert(resource == rsrcSetNode.Resource);
 			Debug.Assert(module.Resources[resourceIndex] == resource);
 			if (nameChanged) {
@@ -1752,8 +1561,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			rsrcElNode.RaiseUIPropsChanged();
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			if (nameChanged) {
 				bool b = rsrcSetNode.Children.Remove(rsrcElNode);
 				Debug.Assert(b);
@@ -1775,13 +1583,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 			get { yield return rsrcElNode; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	sealed class ResourceElementSettingsCommand : ResourceElementSettingsBaseCommand
-	{
+	sealed class ResourceElementSettingsCommand : ResourceElementSettingsBaseCommand {
 		const string CMD_NAME = "Edit Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
@@ -1792,15 +1598,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2500)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return ResourceElementSettingsCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				ResourceElementSettingsCommand.Execute(nodes);
 			}
 		}
@@ -1809,28 +1612,23 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 700)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ResourceElementSettingsCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				ResourceElementSettingsCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length == 1 &&
 				(nodes[0] is BuiltInResourceElementTreeNode ||
 				nodes[0] is UnknownSerializedResourceElementTreeNode);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -1841,7 +1639,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				throw new InvalidOperationException();
 
 			var options = new ResourceElementOptions(rsrcElNode.ResourceElement);
-			var data = new ResourceElementVM(options, module, Options.OtherSettings.Instance.DeserializeResources);
+			var data = new ResourceElementVM(options, module, OtherSettings.Instance.DeserializeResources);
 			data.CanChangeType = false;
 			var win = new ResourceElementDlg();
 			win.Title = CMD_NAME;
@@ -1867,8 +1665,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 
 		ResourceElementSettingsCommand(ResourceElementTreeNode rsrcElNode, ResourceElementOptions options)
-			: base(rsrcElNode, options)
-		{
+			: base(rsrcElNode, options) {
 		}
 
 		public override string Description {
@@ -1876,8 +1673,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 	}
 
-	sealed class ImageResourceElementSettingsCommand : ResourceElementSettingsBaseCommand
-	{
+	sealed class ImageResourceElementSettingsCommand : ResourceElementSettingsBaseCommand {
 		const string CMD_NAME = "Edit Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
@@ -1888,15 +1684,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2510)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return ImageResourceElementSettingsCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				ImageResourceElementSettingsCommand.Execute(nodes);
 			}
 		}
@@ -1905,27 +1698,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 710)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ImageResourceElementSettingsCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				ImageResourceElementSettingsCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length == 1 &&
 				nodes[0] is ImageResourceElementTreeNode;
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -1957,8 +1745,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 
 		ImageResourceElementSettingsCommand(ResourceElementTreeNode rsrcElNode, ResourceElementOptions options)
-			: base(rsrcElNode, options)
-		{
+			: base(rsrcElNode, options) {
 		}
 
 		public override string Description {
@@ -1966,8 +1753,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 	}
 
-	sealed class SerializedImageResourceElementSettingsCommand : ResourceElementSettingsBaseCommand
-	{
+	sealed class SerializedImageResourceElementSettingsCommand : ResourceElementSettingsBaseCommand {
 		const string CMD_NAME = "Edit Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
@@ -1978,15 +1764,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2520)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return SerializedImageResourceElementSettingsCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				SerializedImageResourceElementSettingsCommand.Execute(nodes);
 			}
 		}
@@ -1995,27 +1778,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 720)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return SerializedImageResourceElementSettingsCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				SerializedImageResourceElementSettingsCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length == 1 &&
 				nodes[0] is SerializedImageResourceElementTreeNode;
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -2047,8 +1825,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 
 		SerializedImageResourceElementSettingsCommand(ResourceElementTreeNode rsrcElNode, ResourceElementOptions options)
-			: base(rsrcElNode, options)
-		{
+			: base(rsrcElNode, options) {
 		}
 
 		public override string Description {
@@ -2056,8 +1833,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 	}
 
-	sealed class SerializedImageListStreamerResourceElementSettingsCommand : ResourceElementSettingsBaseCommand
-	{
+	sealed class SerializedImageListStreamerResourceElementSettingsCommand : ResourceElementSettingsBaseCommand {
 		const string CMD_NAME = "Edit Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
@@ -2068,15 +1844,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2530)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return SerializedImageListStreamerResourceElementSettingsCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				SerializedImageListStreamerResourceElementSettingsCommand.Execute(nodes);
 			}
 		}
@@ -2085,27 +1858,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 730)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return SerializedImageListStreamerResourceElementSettingsCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				SerializedImageListStreamerResourceElementSettingsCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length == 1 &&
 				nodes[0] is SerializedImageListStreamerResourceElementTreeNode;
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -2144,8 +1912,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 		}
 
 		SerializedImageListStreamerResourceElementSettingsCommand(ResourceElementTreeNode rsrcElNode, ResourceElementOptions options)
-			: base(rsrcElNode, options)
-		{
+			: base(rsrcElNode, options) {
 		}
 
 		public override string Description {

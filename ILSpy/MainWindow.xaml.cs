@@ -34,6 +34,8 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
+using dnlib.DotNet;
+using dnSpy.AsmEditor;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Controls;
@@ -45,7 +47,6 @@ using ICSharpCode.ILSpy.XmlDoc;
 using ICSharpCode.NRefactory;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
-using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy
 {
@@ -1388,7 +1389,7 @@ namespace ICSharpCode.ILSpy
 
 		bool AskUserReloadAssemblyListIfModified(string question)
 		{
-			int count = AsmEditor.UndoCommandManager.Instance.GetModifiedAssemblyTreeNodes().Count();
+			int count = UndoCommandManager.Instance.GetModifiedAssemblyTreeNodes().Count();
 			if (count == 0)
 				return true;
 
@@ -1402,7 +1403,7 @@ namespace ICSharpCode.ILSpy
 			// Clear the cache since the keys contain tree nodes which get recreated now. The keys
 			// will never match again so shouldn't be in the cache.
 			DecompileCache.Instance.ClearAll();
-			ICSharpCode.ILSpy.AsmEditor.UndoCommandManager.Instance.Clear();
+			UndoCommandManager.Instance.Clear();
 
 			foreach (var tabManager in tabGroupsManager.AllTabGroups.ToArray())
 				tabManager.RemoveAllTabStates();

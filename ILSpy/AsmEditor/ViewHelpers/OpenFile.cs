@@ -21,25 +21,21 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Forms;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	sealed class OpenFile : IOpenFile
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	sealed class OpenFile : IOpenFile {
 		readonly Window ownerWindow;
 
 		public OpenFile()
-			: this(null)
-		{
+			: this(null) {
 		}
 
-		public OpenFile(Window ownerWindow)
-		{
+		public OpenFile(Window ownerWindow) {
 			this.ownerWindow = ownerWindow;
 		}
 
-		public byte[] Open(string filter)
-		{
+		public byte[] Open(string filter) {
 			var dialog = new OpenFileDialog() {
 				Filter = filter ?? "All files (*.*)|*.*",
 				RestoreDirectory = true,

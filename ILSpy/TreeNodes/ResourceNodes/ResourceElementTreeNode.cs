@@ -23,11 +23,11 @@ using System.IO;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnlib.IO;
+using dnSpy.AsmEditor;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	public abstract class ResourceElementTreeNode : ILSpyTreeNode, IResourceNode
 	{
 		protected ResourceElement resElem;
@@ -55,43 +55,43 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					return "null";
 
 				case ResourceTypeCode.String:
-					return AsmEditor.NumberVMUtils.ToString((string)((BuiltInResourceData)resElem.ResourceData).Data, false);
+					return NumberVMUtils.ToString((string)((BuiltInResourceData)resElem.ResourceData).Data, false);
 
 				case ResourceTypeCode.Boolean:
-					return AsmEditor.NumberVMUtils.ToString((bool)((BuiltInResourceData)resElem.ResourceData).Data);
+					return NumberVMUtils.ToString((bool)((BuiltInResourceData)resElem.ResourceData).Data);
 
 				case ResourceTypeCode.Char:
-					return AsmEditor.NumberVMUtils.ToString((char)((BuiltInResourceData)resElem.ResourceData).Data);
+					return NumberVMUtils.ToString((char)((BuiltInResourceData)resElem.ResourceData).Data);
 
 				case ResourceTypeCode.Byte:
-					return AsmEditor.NumberVMUtils.ToString((byte)((BuiltInResourceData)resElem.ResourceData).Data);
+					return NumberVMUtils.ToString((byte)((BuiltInResourceData)resElem.ResourceData).Data);
 
 				case ResourceTypeCode.SByte:
-					return AsmEditor.NumberVMUtils.ToString((sbyte)((BuiltInResourceData)resElem.ResourceData).Data);
+					return NumberVMUtils.ToString((sbyte)((BuiltInResourceData)resElem.ResourceData).Data);
 
 				case ResourceTypeCode.Int16:
-					return AsmEditor.NumberVMUtils.ToString((short)((BuiltInResourceData)resElem.ResourceData).Data);
+					return NumberVMUtils.ToString((short)((BuiltInResourceData)resElem.ResourceData).Data);
 
 				case ResourceTypeCode.UInt16:
-					return AsmEditor.NumberVMUtils.ToString((ushort)((BuiltInResourceData)resElem.ResourceData).Data);
+					return NumberVMUtils.ToString((ushort)((BuiltInResourceData)resElem.ResourceData).Data);
 
 				case ResourceTypeCode.Int32:
-					return AsmEditor.NumberVMUtils.ToString((int)((BuiltInResourceData)resElem.ResourceData).Data);
+					return NumberVMUtils.ToString((int)((BuiltInResourceData)resElem.ResourceData).Data);
 
 				case ResourceTypeCode.UInt32:
-					return AsmEditor.NumberVMUtils.ToString((uint)((BuiltInResourceData)resElem.ResourceData).Data);
+					return NumberVMUtils.ToString((uint)((BuiltInResourceData)resElem.ResourceData).Data);
 
 				case ResourceTypeCode.Int64:
-					return AsmEditor.NumberVMUtils.ToString((long)((BuiltInResourceData)resElem.ResourceData).Data);
+					return NumberVMUtils.ToString((long)((BuiltInResourceData)resElem.ResourceData).Data);
 
 				case ResourceTypeCode.UInt64:
-					return AsmEditor.NumberVMUtils.ToString((ulong)((BuiltInResourceData)resElem.ResourceData).Data);
+					return NumberVMUtils.ToString((ulong)((BuiltInResourceData)resElem.ResourceData).Data);
 
 				case ResourceTypeCode.Single:
-					return AsmEditor.NumberVMUtils.ToString((float)((BuiltInResourceData)resElem.ResourceData).Data);
+					return NumberVMUtils.ToString((float)((BuiltInResourceData)resElem.ResourceData).Data);
 
 				case ResourceTypeCode.Double:
-					return AsmEditor.NumberVMUtils.ToString((double)((BuiltInResourceData)resElem.ResourceData).Data);
+					return NumberVMUtils.ToString((double)((BuiltInResourceData)resElem.ResourceData).Data);
 
 				case ResourceTypeCode.Decimal:
 					return ((decimal)((BuiltInResourceData)resElem.ResourceData).Data).ToString();

@@ -18,26 +18,22 @@
 */
 
 using System.Windows;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.DnlibDialogs;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	sealed class EditDeclSecurity : IEdit<DeclSecurityVM>
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	sealed class EditDeclSecurity : IEdit<DeclSecurityVM> {
 		readonly Window ownerWindow;
 
 		public EditDeclSecurity()
-			: this(null)
-		{
+			: this(null) {
 		}
 
-		public EditDeclSecurity(Window ownerWindow)
-		{
+		public EditDeclSecurity(Window ownerWindow) {
 			this.ownerWindow = ownerWindow;
 		}
 
-		public DeclSecurityVM Edit(string title, DeclSecurityVM ds)
-		{
+		public DeclSecurityVM Edit(string title, DeclSecurityVM ds) {
 			var win = new DeclSecurityDlg();
 			if (title != null)
 				win.Title = title;

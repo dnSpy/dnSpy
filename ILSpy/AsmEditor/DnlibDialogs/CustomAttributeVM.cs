@@ -18,21 +18,18 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes.Filters;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class CustomAttributeVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class CustomAttributeVM : ViewModelBase {
 		readonly CustomAttributeOptions origOptions;
 
 		public IDnlibTypePicker DnlibTypePicker {
@@ -147,8 +144,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		readonly TypeDef ownerType;
 		readonly MethodDef ownerMethod;
 
-		public CustomAttributeVM(CustomAttributeOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
-		{
+		public CustomAttributeVM(CustomAttributeOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod) {
 			this.origOptions = options;
 			this.ownerModule = ownerModule;
 			this.language = language;
@@ -163,15 +159,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			Reinitialize();
 		}
 
-		void Args_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
+		void Args_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			Hook(e);
 			OnPropertyChanged("FullName");
 			HasErrorUpdated();
 		}
 
-		void Hook(NotifyCollectionChangedEventArgs e)
-		{
+		void Hook(NotifyCollectionChangedEventArgs e) {
 			if (e.OldItems != null) {
 				foreach (INotifyPropertyChanged i in e.OldItems)
 					i.PropertyChanged -= arg_PropertyChanged;
@@ -182,14 +176,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		void arg_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void arg_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			OnPropertyChanged("FullName");
 			HasErrorUpdated();
 		}
 
-		void CreateArguments()
-		{
+		void CreateArguments() {
 			int count = Constructor == null ? 0 : Constructor.MethodSig.GetParamCount();
 			while (ConstructorArguments.Count > count)
 				ConstructorArguments.RemoveAt(ConstructorArguments.Count - 1);
@@ -199,13 +191,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		static CAArgument CreateCAArgument(TypeSig type)
-		{
+		static CAArgument CreateCAArgument(TypeSig type) {
 			return new CAArgument(type, ModelUtils.GetDefaultValue(type, true));
 		}
 
-		void PickConstructor()
-		{
+		void PickConstructor() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 			var newCtor = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.InstanceConstructor), Constructor, ownerModule);
@@ -213,18 +203,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				Constructor = newCtor;
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public CustomAttributeOptions CreateCustomAttributeOptions()
-		{
+		public CustomAttributeOptions CreateCustomAttributeOptions() {
 			return CopyTo(new CustomAttributeOptions());
 		}
 
-		void InitializeFrom(CustomAttributeOptions options)
-		{
+		void InitializeFrom(CustomAttributeOptions options) {
 			IsRawData = options.RawData != null;
 			RawData.Value = options.RawData;
 			Constructor = options.Constructor;
@@ -240,8 +227,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			CreateArguments();
 		}
 
-		CustomAttributeOptions CopyTo(CustomAttributeOptions options)
-		{
+		CustomAttributeOptions CopyTo(CustomAttributeOptions options) {
 			options.Constructor = Constructor;
 			options.ConstructorArguments.Clear();
 			options.NamedArguments.Clear();

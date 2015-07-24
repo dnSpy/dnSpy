@@ -20,14 +20,11 @@
 using System;
 using System.ComponentModel;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
-	abstract class ViewModelBase : INotifyPropertyChanged, IDataErrorInfo
-	{
+namespace dnSpy.AsmEditor {
+	abstract class ViewModelBase : INotifyPropertyChanged, IDataErrorInfo {
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		protected void OnPropertyChanged(string propName)
-		{
+		protected void OnPropertyChanged(string propName) {
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propName));
 		}
@@ -44,13 +41,11 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			get { return false; }
 		}
 
-		protected virtual string Verify(string columnName)
-		{
+		protected virtual string Verify(string columnName) {
 			return string.Empty;
 		}
 
-		protected void HasErrorUpdated()
-		{
+		protected void HasErrorUpdated() {
 			OnPropertyChanged("HasError");
 		}
 	}

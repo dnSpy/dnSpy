@@ -23,10 +23,8 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
-	class IndexObservableCollection<T> : ObservableCollection<T> where T : class, IIndexedItem
-	{
+namespace dnSpy.AsmEditor {
+	class IndexObservableCollection<T> : ObservableCollection<T> where T : class, IIndexedItem {
 		public ICommand AddItemBeforeCommand {
 			get { return new RelayCommand(a => AddItemBefore((T[])a), a => AddItemBeforeCanExecute((T[])a)); }
 		}
@@ -73,17 +71,14 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 
 		public IndexObservableCollection()
-			: this(null)
-		{
+			: this(null) {
 		}
 
-		public IndexObservableCollection(Func<T> createNewItem)
-		{
+		public IndexObservableCollection(Func<T> createNewItem) {
 			this.createNewItem = createNewItem;
 		}
 
-		protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-		{
+		protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e) {
 			if (!DisableAutoUpdateProps) {
 				switch (e.Action) {
 				case NotifyCollectionChangedAction.Add:
@@ -103,15 +98,15 @@ namespace ICSharpCode.ILSpy.AsmEditor
 					UpdateIndexes(0);
 					break;
 
-				default: throw new InvalidOperationException();
+				default:
+					throw new InvalidOperationException();
 				}
 			}
 
 			base.OnCollectionChanged(e);
 		}
 
-		protected override void ClearItems()
-		{
+		protected override void ClearItems() {
 			// Must do this before calling base method since some listeners
 			// validate that they don't reference removed items.
 			foreach (var item in Items)
@@ -119,30 +114,26 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			base.ClearItems();
 		}
 
-		protected override void RemoveItem(int index)
-		{
+		protected override void RemoveItem(int index) {
 			// Must do this before calling base method since some listeners
 			// validate that they don't reference removed items.
 			Items[index].Index = -1;
 			base.RemoveItem(index);
 		}
 
-		public void UpdateIndexes(int index)
-		{
+		public void UpdateIndexes(int index) {
 			if (UpdateIndexesDelegate != null)
 				UpdateIndexesDelegate(index);
 			else
 				DefaultUpdateIndexes(index);
 		}
 
-		public void DefaultUpdateIndexes(int index)
-		{
+		public void DefaultUpdateIndexes(int index) {
 			for (; index < Count; index++)
 				this[index].Index = index;
 		}
 
-		void AddNewItem(T[] items, int indexDisp)
-		{
+		void AddNewItem(T[] items, int indexDisp) {
 			if (items.Length == 0)
 				return;
 			int index = IndexOf(items[0]);
@@ -152,43 +143,35 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			AddNewItem(index + indexDisp);
 		}
 
-		void AddNewItem(int index)
-		{
+		void AddNewItem(int index) {
 			Insert(index, createNewItem());
 		}
 
-		void AddItemBefore(T[] items)
-		{
+		void AddItemBefore(T[] items) {
 			AddNewItem(items, 0);
 		}
 
-		bool AddItemBeforeCanExecute(T[] items)
-		{
+		bool AddItemBeforeCanExecute(T[] items) {
 			return CanCreateNewItems && items.Length == 1;
 		}
 
-		void AddItemAfter(T[] items)
-		{
+		void AddItemAfter(T[] items) {
 			AddNewItem(items, 1);
 		}
 
-		bool AddItemAfterCanExecute(T[] items)
-		{
+		bool AddItemAfterCanExecute(T[] items) {
 			return CanCreateNewItems && items.Length == 1;
 		}
 
-		void AppendItem(T[] items)
-		{
+		void AppendItem(T[] items) {
 			AddNewItem(Count);
 		}
 
-		bool AppendItemCanExecute(T[] items)
-		{
+		bool AppendItemCanExecute(T[] items) {
 			return CanCreateNewItems;
 		}
 
-		void ItemMoveUp(T[] items)
-		{
+		void ItemMoveUp(T[] items) {
 			if (items.Length == 0)
 				return;
 
@@ -214,13 +197,11 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			UpdateIndexes(0);
 		}
 
-		bool ItemMoveUpCanExecute(T[] items)
-		{
+		bool ItemMoveUpCanExecute(T[] items) {
 			return CanMoveItems && items.Length > 0;
 		}
 
-		void ItemMoveDown(T[] items)
-		{
+		void ItemMoveDown(T[] items) {
 			if (items.Length == 0)
 				return;
 
@@ -248,13 +229,11 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			UpdateIndexes(0);
 		}
 
-		bool ItemMoveDownCanExecute(T[] items)
-		{
+		bool ItemMoveDownCanExecute(T[] items) {
 			return CanMoveItems && items.Length > 0;
 		}
 
-		void RemoveItem(T[] items)
-		{
+		void RemoveItem(T[] items) {
 			Array.Sort(items, (a, b) => b.Index.CompareTo(a.Index));
 
 			var old = DisableAutoUpdateProps;
@@ -275,18 +254,15 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			UpdateIndexes(0);
 		}
 
-		bool RemoveItemCanExecute(T[] items)
-		{
+		bool RemoveItemCanExecute(T[] items) {
 			return CanRemoveItems && items.Length > 0;
 		}
 
-		void RemoveAllItems(T[] items)
-		{
+		void RemoveAllItems(T[] items) {
 			Clear();
 		}
 
-		bool RemoveAllItemsCanExecute(T[] items)
-		{
+		bool RemoveAllItemsCanExecute(T[] items) {
 			return CanRemoveItems && Count > 0;
 		}
 	}

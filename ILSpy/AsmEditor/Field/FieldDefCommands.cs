@@ -25,32 +25,27 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.DnlibDialogs;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Field
-{
+namespace dnSpy.AsmEditor.Field {
 	[Export(typeof(IPlugin))]
-	sealed class AssemblyPlugin : IPlugin
-	{
-		public void OnLoaded()
-		{
+	sealed class AssemblyPlugin : IPlugin {
+		public void OnLoaded() {
 			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteExecuted, DeleteCanExecute));
 		}
 
-		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = DeleteFieldDefCommand.CanExecute(MainWindow.Instance.SelectedNodes);
 		}
 
-		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e) {
 			DeleteFieldDefCommand.Execute(MainWindow.Instance.SelectedNodes);
 		}
 	}
 
-	sealed class DeleteFieldDefCommand : IUndoCommand
-	{
+	sealed class DeleteFieldDefCommand : IUndoCommand {
 		const string CMD_NAME = "Delete Field";
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Delete",
@@ -63,20 +58,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2140)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return DeleteFieldDefCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				DeleteFieldDefCommand.Execute(nodes);
 			}
 
-			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
-			{
+			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
 				DeleteFieldDefCommand.Initialize(nodes, menuItem);
 			}
 		}
@@ -85,41 +76,34 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 								Icon = "Delete",
 								Category = "AsmEd",
 								Order = 340)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					DeleteFieldDefCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				DeleteFieldDefCommand.Execute(ctx.Nodes);
 			}
 
-			protected override void Initialize(Context ctx, MenuItem menuItem)
-			{
+			protected override void Initialize(Context ctx, MenuItem menuItem) {
 				DeleteFieldDefCommand.Initialize(ctx.Nodes, menuItem);
 			}
 		}
 
-		static void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
-		{
+		static void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
 			if (nodes.Length == 1)
 				menuItem.Header = string.Format("Delete {0}", UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
 			else
 				menuItem.Header = string.Format("Delete {0} fields", nodes.Length);
 		}
 
-		internal static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		internal static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length > 0 &&
 				nodes.All(n => n is FieldTreeNode);
 		}
 
-		internal static void Execute(ILSpyTreeNode[] nodes)
-		{
+		internal static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -130,25 +114,21 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			UndoCommandManager.Instance.Add(new DeleteFieldDefCommand(fieldNodes));
 		}
 
-		public struct DeleteModelNodes
-		{
+		public struct DeleteModelNodes {
 			ModelInfo[] infos;
 
-			struct ModelInfo
-			{
+			struct ModelInfo {
 				public readonly TypeDef OwnerType;
 				public readonly int FieldIndex;
 
-				public ModelInfo(FieldDef field)
-				{
+				public ModelInfo(FieldDef field) {
 					this.OwnerType = field.DeclaringType;
 					this.FieldIndex = this.OwnerType.Fields.IndexOf(field);
 					Debug.Assert(this.FieldIndex >= 0);
 				}
 			}
 
-			public void Delete(FieldTreeNode[] nodes)
-			{
+			public void Delete(FieldTreeNode[] nodes) {
 				Debug.Assert(infos == null);
 				if (infos != null)
 					throw new InvalidOperationException();
@@ -164,8 +144,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 				}
 			}
 
-			public void Restore(FieldTreeNode[] nodes)
-			{
+			public void Restore(FieldTreeNode[] nodes) {
 				Debug.Assert(infos != null);
 				if (infos == null)
 					throw new InvalidOperationException();
@@ -186,8 +165,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 		DeletableNodes<FieldTreeNode> nodes;
 		DeleteModelNodes modelNodes;
 
-		DeleteFieldDefCommand(FieldTreeNode[] fieldNodes)
-		{
+		DeleteFieldDefCommand(FieldTreeNode[] fieldNodes) {
 			this.nodes = new DeletableNodes<FieldTreeNode>(fieldNodes);
 		}
 
@@ -195,14 +173,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			nodes.Delete();
 			modelNodes.Delete(nodes.Nodes);
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			modelNodes.Restore(nodes.Nodes);
 			nodes.Restore();
 		}
@@ -211,13 +187,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			get { return nodes.Nodes; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	sealed class CreateFieldDefCommand : IUndoCommand
-	{
+	sealed class CreateFieldDefCommand : IUndoCommand {
 		const string CMD_NAME = "Create Field";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewField",
@@ -228,15 +202,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 							MenuIcon = "NewField",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2370)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return CreateFieldDefCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				CreateFieldDefCommand.Execute(nodes);
 			}
 		}
@@ -245,29 +216,24 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 								Icon = "NewField",
 								Category = "AsmEd",
 								Order = 570)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					ctx.Nodes.Length == 1 &&
 					ctx.Nodes[0] is TypeTreeNode;
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				CreateFieldDefCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length == 1 &&
 				(nodes[0] is TypeTreeNode || nodes[0].Parent is TypeTreeNode);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -319,8 +285,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 		readonly TypeTreeNode ownerNode;
 		readonly FieldTreeNode fieldNode;
 
-		CreateFieldDefCommand(TypeTreeNode ownerNode, FieldDefOptions options)
-		{
+		CreateFieldDefCommand(TypeTreeNode ownerNode, FieldDefOptions options) {
 			this.ownerNode = ownerNode;
 			this.fieldNode = new FieldTreeNode(options.CreateFieldDef(ownerNode.TypeDefinition.Module));
 		}
@@ -329,15 +294,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			ownerNode.EnsureChildrenFiltered();
 			ownerNode.TypeDefinition.Fields.Add(fieldNode.FieldDefinition);
 			ownerNode.AddToChildren(fieldNode);
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			bool b = ownerNode.Children.Remove(fieldNode) &&
 					ownerNode.TypeDefinition.Fields.Remove(fieldNode.FieldDefinition);
 			Debug.Assert(b);
@@ -349,25 +312,21 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			get { yield return ownerNode; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	struct MemberRefInfo
-	{
+	struct MemberRefInfo {
 		public readonly MemberRef MemberRef;
 		public readonly UTF8String OrigName;
 
-		public MemberRefInfo(MemberRef mr)
-		{
+		public MemberRefInfo(MemberRef mr) {
 			this.MemberRef = mr;
 			this.OrigName = mr.Name;
 		}
 	}
 
-	sealed class FieldDefSettingsCommand : IUndoCommand
-	{
+	sealed class FieldDefSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Field";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
@@ -378,15 +337,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2450)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return FieldDefSettingsCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				FieldDefSettingsCommand.Execute(nodes);
 			}
 		}
@@ -395,27 +351,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 650)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return FieldDefSettingsCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				FieldDefSettingsCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length == 1 &&
 				nodes[0] is FieldTreeNode;
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -444,8 +395,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 		readonly bool nameChanged;
 		readonly MemberRefInfo[] memberRefInfos;
 
-		FieldDefSettingsCommand(FieldTreeNode fieldNode, FieldDefOptions options)
-		{
+		FieldDefSettingsCommand(FieldTreeNode fieldNode, FieldDefOptions options) {
 			this.fieldNode = fieldNode;
 			this.newOptions = options;
 			this.origOptions = new FieldDefOptions(fieldNode.FieldDefinition);
@@ -465,8 +415,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			if (nameChanged) {
 				bool b = origParentChildIndex < origParentNode.Children.Count && origParentNode.Children[origParentChildIndex] == fieldNode;
 				Debug.Assert(b);
@@ -486,8 +435,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			fieldNode.RaiseUIPropsChanged();
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			if (nameChanged) {
 				bool b = origParentNode.Children.Remove(fieldNode);
 				Debug.Assert(b);
@@ -510,8 +458,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Field
 			get { yield return fieldNode; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 }

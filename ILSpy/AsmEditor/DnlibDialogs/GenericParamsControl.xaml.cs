@@ -19,18 +19,14 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
 	/// Interaction logic for GenericParamsControl.xaml
 	/// </summary>
-	public partial class GenericParamsControl : UserControl
-	{
-		public GenericParamsControl()
-		{
+	public partial class GenericParamsControl : UserControl {
+		public GenericParamsControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as GenericParamsVM;

@@ -17,10 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	sealed class SwitchInstructionVM : ViewModelBase, IIndexedItem
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	sealed class SwitchInstructionVM : ViewModelBase, IIndexedItem {
 		public InstructionVM InstructionVM {
 			get { return instr; }
 		}
@@ -37,13 +35,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		}
 		int index;
 
-		public SwitchInstructionVM(InstructionVM instr)
-		{
+		public SwitchInstructionVM(InstructionVM instr) {
 			this.instr = instr;
 		}
 
-		public object Clone()
-		{
+		public object Clone() {
 			return new SwitchInstructionVM(instr);
 		}
 	}

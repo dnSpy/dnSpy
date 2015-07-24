@@ -21,11 +21,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class TypeDefOrRefAndCAVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class TypeDefOrRefAndCAVM : ViewModelBase {
 		readonly TypeDefOrRefAndCAOptions origOptions;
 
 		public ICommand ReinitializeCommand {
@@ -46,8 +45,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		}
 		CustomAttributesVM customAttributesVM;
 
-		public TypeDefOrRefAndCAVM(TypeDefOrRefAndCAOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
-		{
+		public TypeDefOrRefAndCAVM(TypeDefOrRefAndCAOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod) {
 			this.origOptions = options;
 
 			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, language) {
@@ -69,31 +67,26 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			Reinitialize();
 		}
 
-		void TypeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void TypeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "TypeSigDnlibFullName")
 				OnPropertyChanged("FullName");
 			HasErrorUpdated();
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public TypeDefOrRefAndCAOptions CreateTypeDefOrRefAndCAOptions()
-		{
+		public TypeDefOrRefAndCAOptions CreateTypeDefOrRefAndCAOptions() {
 			return CopyTo(new TypeDefOrRefAndCAOptions());
 		}
 
-		void InitializeFrom(TypeDefOrRefAndCAOptions options)
-		{
+		void InitializeFrom(TypeDefOrRefAndCAOptions options) {
 			TypeSigCreator.TypeSig = options.TypeDefOrRef.ToTypeSig();
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 
-		TypeDefOrRefAndCAOptions CopyTo(TypeDefOrRefAndCAOptions options)
-		{
+		TypeDefOrRefAndCAOptions CopyTo(TypeDefOrRefAndCAOptions options) {
 			options.TypeDefOrRef = TypeSigCreator.TypeSig.ToTypeDefOrRef();
 			options.CustomAttributes.Clear();
 			options.CustomAttributes.AddRange(CustomAttributesVM.Collection.Select(a => a.CreateCustomAttributeOptions().Create()));

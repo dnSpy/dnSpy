@@ -17,15 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.Module
-{
+namespace dnSpy.AsmEditor.Module {
 	/// <summary>
 	/// Interaction logic for NetModuleOptionsDlg.xaml
 	/// </summary>
-	public partial class NetModuleOptionsDlg : WindowBase
-	{
-		public NetModuleOptionsDlg()
-		{
+	public partial class NetModuleOptionsDlg : WindowBase {
+		public NetModuleOptionsDlg() {
 			InitializeComponent();
 		}
 	}

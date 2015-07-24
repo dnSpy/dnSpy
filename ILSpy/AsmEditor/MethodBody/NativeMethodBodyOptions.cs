@@ -20,29 +20,23 @@
 using dnlib.DotNet.Emit;
 using dnlib.PE;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	sealed class NativeMethodBodyOptions
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	sealed class NativeMethodBodyOptions {
 		public RVA RVA;
 
-		public NativeMethodBodyOptions()
-		{
+		public NativeMethodBodyOptions() {
 		}
 
-		public NativeMethodBodyOptions(NativeMethodBody body)
-		{
+		public NativeMethodBodyOptions(NativeMethodBody body) {
 			this.RVA = body.RVA;
 		}
 
-		public NativeMethodBody CopyTo(NativeMethodBody body)
-		{
+		public NativeMethodBody CopyTo(NativeMethodBody body) {
 			body.RVA = RVA;
 			return body;
 		}
 
-		public NativeMethodBody Create()
-		{
+		public NativeMethodBody Create() {
 			return CopyTo(new NativeMethodBody());
 		}
 	}

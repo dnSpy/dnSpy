@@ -19,30 +19,26 @@
 
 using System.Collections.Generic;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class MemberRefOptions
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class MemberRefOptions {
 		public IMemberRefParent Class;
 		public UTF8String Name;
 		public CallingConventionSig Signature;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
-		public MemberRefOptions()
-		{
+		public MemberRefOptions() {
 		}
 
-		public MemberRefOptions(MemberRef mr)
-		{
+		public MemberRefOptions(MemberRef mr) {
 			this.Class = mr.Class;
 			this.Name = mr.Name;
 			this.Signature = mr.Signature;
 			this.CustomAttributes.AddRange(mr.CustomAttributes);
 		}
 
-		public MemberRef CopyTo(MemberRef mr)
-		{
+		public MemberRef CopyTo(MemberRef mr) {
 			mr.Class = this.Class;
 			mr.Name = this.Name ?? UTF8String.Empty;
 			mr.Signature = this.Signature;
@@ -51,8 +47,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return mr;
 		}
 
-		public MemberRef Create(ModuleDef ownerModule)
-		{
+		public MemberRef Create(ModuleDef ownerModule) {
 			return ownerModule.UpdateRowId(CopyTo(new MemberRefUser(ownerModule)));
 		}
 	}

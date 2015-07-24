@@ -21,35 +21,29 @@ using System.Collections.Generic;
 using dnlib.DotNet.Emit;
 using dnlib.DotNet.Pdb;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	sealed class InstructionOptions
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	sealed class InstructionOptions {
 		public Code Code;
 		public object Operand;
 		public SequencePoint SequencePoint;//TODO: Use this
 
-		public InstructionOptions()
-		{
+		public InstructionOptions() {
 		}
 
-		public InstructionOptions(Dictionary<object, object> ops, Instruction instr)
-		{
+		public InstructionOptions(Dictionary<object, object> ops, Instruction instr) {
 			this.Code = instr.OpCode.Code;
 			this.Operand = BodyUtils.ToOperandVM(ops, instr.Operand);
 			this.SequencePoint = instr.SequencePoint;
 		}
 
-		public Instruction CopyTo(Dictionary<object, object> ops, Instruction instr)
-		{
+		public Instruction CopyTo(Dictionary<object, object> ops, Instruction instr) {
 			instr.OpCode = this.Code.ToOpCode();
 			instr.Operand = BodyUtils.ToOperandModel(ops, this.Operand);
 			instr.SequencePoint = this.SequencePoint;
 			return instr;
 		}
 
-		public Instruction Create(Dictionary<object, object> ops)
-		{
+		public Instruction Create(Dictionary<object, object> ops) {
 			return CopyTo(ops, new Instruction());
 		}
 	}

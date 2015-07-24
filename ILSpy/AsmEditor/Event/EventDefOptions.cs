@@ -19,11 +19,10 @@
 
 using System.Collections.Generic;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Event
-{
-	sealed class EventDefOptions
-	{
+namespace dnSpy.AsmEditor.Event {
+	sealed class EventDefOptions {
 		public EventAttributes Attributes;
 		public UTF8String Name;
 		public ITypeDefOrRef EventType;
@@ -33,12 +32,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 		public List<MethodDef> OtherMethods = new List<MethodDef>();
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
-		public EventDefOptions()
-		{
+		public EventDefOptions() {
 		}
 
-		public EventDefOptions(EventDef evt)
-		{
+		public EventDefOptions(EventDef evt) {
 			this.Attributes = evt.Attributes;
 			this.Name = evt.Name;
 			this.EventType = evt.EventType;
@@ -49,8 +46,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			this.CustomAttributes.AddRange(evt.CustomAttributes);
 		}
 
-		public EventDef CopyTo(EventDef evt)
-		{
+		public EventDef CopyTo(EventDef evt) {
 			evt.Attributes = this.Attributes;
 			evt.Name = this.Name ?? UTF8String.Empty;
 			evt.EventType = this.EventType;
@@ -64,13 +60,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			return evt;
 		}
 
-		public EventDef CreateEventDef(ModuleDef ownerModule)
-		{
+		public EventDef CreateEventDef(ModuleDef ownerModule) {
 			return ownerModule.UpdateRowId(CopyTo(new EventDefUser()));
 		}
 
-		public static EventDefOptions Create(UTF8String name, ITypeDefOrRef eventType)
-		{
+		public static EventDefOptions Create(UTF8String name, ITypeDefOrRef eventType) {
 			return new EventDefOptions {
 				Attributes = 0,
 				Name = name,

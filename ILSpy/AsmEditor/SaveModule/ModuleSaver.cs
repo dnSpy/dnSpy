@@ -25,51 +25,42 @@ using System.Threading.Tasks;
 using dnlib.DotNet;
 using dnlib.DotNet.Writer;
 
-namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
-{
-	enum ModuleSaverLogEvent
-	{
+namespace dnSpy.AsmEditor.SaveModule {
+	enum ModuleSaverLogEvent {
 		Error,
 		Warning,
 		Other,
 	}
 
-	sealed class ModuleSaverLogEventArgs : EventArgs
-	{
+	sealed class ModuleSaverLogEventArgs : EventArgs {
 		public string Message { get; private set; }
 		public ModuleSaverLogEvent Event { get; private set; }
 
-		public ModuleSaverLogEventArgs(string msg, ModuleSaverLogEvent evType)
-		{
+		public ModuleSaverLogEventArgs(string msg, ModuleSaverLogEvent evType) {
 			this.Message = msg;
 			this.Event = evType;
 		}
 	}
 
-	sealed class ModuleSaverWriteEventArgs : EventArgs
-	{
+	sealed class ModuleSaverWriteEventArgs : EventArgs {
 		public SaveModuleOptionsVM File { get; private set; }
 		public bool Starting { get; private set; }
 
-		public ModuleSaverWriteEventArgs(SaveModuleOptionsVM vm, bool starting)
-		{
+		public ModuleSaverWriteEventArgs(SaveModuleOptionsVM vm, bool starting) {
 			this.File = vm;
 			this.Starting = starting;
 		}
 	}
 
-	sealed class ModuleSaver : IModuleWriterListener, ILogger
-	{
+	sealed class ModuleSaver : IModuleWriterListener, ILogger {
 		SaveState[] filesToSave;
 		long totalSize;
 
-		class SaveState
-		{
+		class SaveState {
 			public readonly SaveModuleOptionsVM File;
 			public double SizeRatio;
 
-			public SaveState(SaveModuleOptionsVM vm)
-			{
+			public SaveState(SaveModuleOptionsVM vm) {
 				this.File = vm;
 			}
 		}
@@ -159,16 +150,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 		public event EventHandler<ModuleSaverWriteEventArgs> OnWritingFile;
 		public event EventHandler<ModuleSaverLogEventArgs> OnLogMessage;
 
-		public ModuleSaver(IEnumerable<SaveModuleOptionsVM> moduleVms)
-		{
+		public ModuleSaver(IEnumerable<SaveModuleOptionsVM> moduleVms) {
 			this.filesToSave = moduleVms.Select(a => new SaveState(a)).ToArray();
 			totalSize = filesToSave.Sum(a => a.File.Module.Types.Count);
 			foreach (var state in filesToSave)
 				state.SizeRatio = (double)state.File.Module.Types.Count / totalSize;
 		}
 
-		public void SaveAll()
-		{
+		public void SaveAll() {
 			mustCancel = false;
 			for (int i = 0; i < filesToSave.Length; i++) {
 				fileIndex = i;
@@ -201,8 +190,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 				OnProgressUpdated(this, EventArgs.Empty);
 		}
 
-		void IModuleWriterListener.OnWriterEvent(ModuleWriterBase writer, ModuleWriterEvent evt)
-		{
+		void IModuleWriterListener.OnWriterEvent(ModuleWriterBase writer, ModuleWriterEvent evt) {
 			ThrowIfCanceled();
 			currentEventIndex = evt - ModuleWriterEvent.Begin;
 			Debug.Assert(currentEventIndex >= 0);
@@ -210,8 +198,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 				OnProgressUpdated(this, EventArgs.Empty);
 		}
 
-		void ILogger.Log(object sender, LoggerEvent loggerEvent, string format, params object[] args)
-		{
+		void ILogger.Log(object sender, LoggerEvent loggerEvent, string format, params object[] args) {
 			ThrowIfCanceled();
 			if (OnLogMessage != null) {
 				var evtType =
@@ -222,20 +209,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.SaveModule
 			}
 		}
 
-		bool ILogger.IgnoresEvent(LoggerEvent loggerEvent)
-		{
+		bool ILogger.IgnoresEvent(LoggerEvent loggerEvent) {
 			ThrowIfCanceled();
 			return false;
 		}
 
-		public void CancelAsync()
-		{
+		public void CancelAsync() {
 			mustCancel = true;
 		}
 		volatile bool mustCancel;
 
-		void ThrowIfCanceled()
-		{
+		void ThrowIfCanceled() {
 			if (mustCancel)
 				throw new TaskCanceledException();
 		}

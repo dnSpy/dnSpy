@@ -21,22 +21,18 @@ using System;
 using System.Diagnostics;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Resources
-{
-	sealed class ResourceOptions
-	{
+namespace dnSpy.AsmEditor.Resources {
+	sealed class ResourceOptions {
 		public ResourceType ResourceType;
 		public UTF8String Name;
 		public ManifestResourceAttributes Attributes;
 		public AssemblyRef Assembly;
 		public FileDef File;
 
-		public ResourceOptions()
-		{
+		public ResourceOptions() {
 		}
 
-		public ResourceOptions(Resource resource)
-		{
+		public ResourceOptions(Resource resource) {
 			this.ResourceType = resource.ResourceType;
 			this.Name = resource.Name ?? UTF8String.Empty;
 			this.Attributes = resource.Attributes;
@@ -52,12 +48,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				this.File = ((LinkedResource)resource).File;
 				break;
 
-			default: throw new InvalidOperationException();
+			default:
+				throw new InvalidOperationException();
 			}
 		}
 
-		public void CopyTo(Resource resource)
-		{
+		public void CopyTo(Resource resource) {
 			switch (ResourceType) {
 			case dnlib.DotNet.ResourceType.Embedded:
 				// Always cast it to catch errors
@@ -76,7 +72,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.Resources
 				lr.File = this.File;
 				break;
 
-			default: throw new InvalidOperationException();
+			default:
+				throw new InvalidOperationException();
 			}
 
 			resource.Name = this.Name;

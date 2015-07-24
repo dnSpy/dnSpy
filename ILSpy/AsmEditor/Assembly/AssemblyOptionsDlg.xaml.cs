@@ -17,17 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Assembly
-{
+namespace dnSpy.AsmEditor.Assembly {
 	/// <summary>
 	/// Interaction logic for AssemblyOptionsDlg.xaml
 	/// </summary>
-	public partial class AssemblyOptionsDlg : WindowBase
-	{
-		public AssemblyOptionsDlg()
-		{
+	public partial class AssemblyOptionsDlg : WindowBase {
+		public AssemblyOptionsDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as AssemblyOptionsVM;

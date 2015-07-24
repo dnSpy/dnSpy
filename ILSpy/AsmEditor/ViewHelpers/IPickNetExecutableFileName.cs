@@ -17,10 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	interface IPickNetExecutableFileName
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	interface IPickNetExecutableFileName {
 		/// <summary>
 		/// Lets the user pick a new filename. Returns null if the user didn't pick a new filename.
 		/// </summary>

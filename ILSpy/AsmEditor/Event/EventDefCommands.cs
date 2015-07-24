@@ -24,32 +24,27 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
-using ICSharpCode.ILSpy.TreeNodes;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Event
-{
+namespace dnSpy.AsmEditor.Event {
 	[Export(typeof(IPlugin))]
-	sealed class AssemblyPlugin : IPlugin
-	{
-		public void OnLoaded()
-		{
+	sealed class AssemblyPlugin : IPlugin {
+		public void OnLoaded() {
 			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteExecuted, DeleteCanExecute));
 		}
 
-		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = DeleteEventDefCommand.CanExecute(MainWindow.Instance.SelectedNodes);
 		}
 
-		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e) {
 			DeleteEventDefCommand.Execute(MainWindow.Instance.SelectedNodes);
 		}
 	}
 
-	sealed class DeleteEventDefCommand : IUndoCommand
-	{
+	sealed class DeleteEventDefCommand : IUndoCommand {
 		const string CMD_NAME = "Delete Event";
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Delete",
@@ -62,20 +57,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2160)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return DeleteEventDefCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				DeleteEventDefCommand.Execute(nodes);
 			}
 
-			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
-			{
+			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
 				DeleteEventDefCommand.Initialize(nodes, menuItem);
 			}
 		}
@@ -84,41 +75,34 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 								Icon = "Delete",
 								Category = "AsmEd",
 								Order = 360)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					DeleteEventDefCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				DeleteEventDefCommand.Execute(ctx.Nodes);
 			}
 
-			protected override void Initialize(Context ctx, MenuItem menuItem)
-			{
+			protected override void Initialize(Context ctx, MenuItem menuItem) {
 				DeleteEventDefCommand.Initialize(ctx.Nodes, menuItem);
 			}
 		}
 
-		static void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
-		{
+		static void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
 			if (nodes.Length == 1)
 				menuItem.Header = string.Format("Delete {0}", UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
 			else
 				menuItem.Header = string.Format("Delete {0} events", nodes.Length);
 		}
 
-		internal static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		internal static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length > 0 &&
 				nodes.All(n => n is EventTreeNode);
 		}
 
-		internal static void Execute(ILSpyTreeNode[] nodes)
-		{
+		internal static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -126,19 +110,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			UndoCommandManager.Instance.Add(new DeleteEventDefCommand(eventNodes));
 		}
 
-		public struct DeleteModelNodes
-		{
+		public struct DeleteModelNodes {
 			ModelInfo[] infos;
 
-			struct ModelInfo
-			{
+			struct ModelInfo {
 				public readonly TypeDef OwnerType;
 				public readonly int EventIndex;
 				public readonly int[] MethodIndexes;
 				public readonly MethodDef[] Methods;
 
-				public ModelInfo(EventDef evt)
-				{
+				public ModelInfo(EventDef evt) {
 					this.OwnerType = evt.DeclaringType;
 					this.EventIndex = this.OwnerType.Events.IndexOf(evt);
 					Debug.Assert(this.EventIndex >= 0);
@@ -146,17 +127,19 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 					this.MethodIndexes = new int[this.Methods.Length];
 				}
 
-				static IEnumerable<MethodDef> GetMethods(EventDef evt)
-				{
-					if (evt.AddMethod != null) yield return evt.AddMethod;
-					if (evt.InvokeMethod != null) yield return evt.InvokeMethod;
-					if (evt.RemoveMethod != null) yield return evt.RemoveMethod;
-					foreach (var m in evt.OtherMethods) yield return m;
+				static IEnumerable<MethodDef> GetMethods(EventDef evt) {
+					if (evt.AddMethod != null)
+						yield return evt.AddMethod;
+					if (evt.InvokeMethod != null)
+						yield return evt.InvokeMethod;
+					if (evt.RemoveMethod != null)
+						yield return evt.RemoveMethod;
+					foreach (var m in evt.OtherMethods)
+						yield return m;
 				}
 			}
 
-			public void Delete(EventTreeNode[] nodes)
-			{
+			public void Delete(EventTreeNode[] nodes) {
 				Debug.Assert(infos == null);
 				if (infos != null)
 					throw new InvalidOperationException();
@@ -181,8 +164,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 				}
 			}
 
-			public void Restore(EventTreeNode[] nodes)
-			{
+			public void Restore(EventTreeNode[] nodes) {
 				Debug.Assert(infos != null);
 				if (infos == null)
 					throw new InvalidOperationException();
@@ -206,8 +188,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 		DeletableNodes<EventTreeNode> nodes;
 		DeleteModelNodes modelNodes;
 
-		DeleteEventDefCommand(EventTreeNode[] eventNodes)
-		{
+		DeleteEventDefCommand(EventTreeNode[] eventNodes) {
 			this.nodes = new DeletableNodes<EventTreeNode>(eventNodes);
 		}
 
@@ -215,14 +196,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			nodes.Delete();
 			modelNodes.Delete(nodes.Nodes);
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			modelNodes.Restore(nodes.Nodes);
 			nodes.Restore();
 		}
@@ -231,13 +210,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			get { return nodes.Nodes; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	sealed class CreateEventDefCommand : IUndoCommand
-	{
+	sealed class CreateEventDefCommand : IUndoCommand {
 		const string CMD_NAME = "Create Event";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewEvent",
@@ -248,15 +225,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 							MenuIcon = "NewEvent",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2390)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return CreateEventDefCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				CreateEventDefCommand.Execute(nodes);
 			}
 		}
@@ -265,29 +239,24 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 								Icon = "NewEvent",
 								Category = "AsmEd",
 								Order = 590)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					ctx.Nodes.Length == 1 &&
 					ctx.Nodes[0] is TypeTreeNode;
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				CreateEventDefCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length == 1 &&
 				(nodes[0] is TypeTreeNode || nodes[0].Parent is TypeTreeNode);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -319,8 +288,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 		readonly TypeTreeNode ownerNode;
 		readonly EventTreeNode eventNode;
 
-		CreateEventDefCommand(TypeTreeNode ownerNode, EventDefOptions options)
-		{
+		CreateEventDefCommand(TypeTreeNode ownerNode, EventDefOptions options) {
 			this.ownerNode = ownerNode;
 			this.eventNode = new EventTreeNode(options.CreateEventDef(ownerNode.TypeDefinition.Module));
 		}
@@ -329,15 +297,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			ownerNode.EnsureChildrenFiltered();
 			ownerNode.TypeDefinition.Events.Add(eventNode.EventDefinition);
 			ownerNode.AddToChildren(eventNode);
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			bool b = ownerNode.Children.Remove(eventNode) &&
 					ownerNode.TypeDefinition.Events.Remove(eventNode.EventDefinition);
 			Debug.Assert(b);
@@ -349,13 +315,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			get { yield return ownerNode; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	sealed class EventDefSettingsCommand : IUndoCommand
-	{
+	sealed class EventDefSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Event";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
@@ -366,15 +330,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2470)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return EventDefSettingsCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				EventDefSettingsCommand.Execute(nodes);
 			}
 		}
@@ -383,27 +344,22 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 								Icon = "Settings",
 								Category = "AsmEd",
 								Order = 670)]
-		sealed class TheTextEditorCommand : TextEditorCommand
-		{
-			protected override bool CanExecute(Context ctx)
-			{
+		sealed class TheTextEditorCommand : TextEditorCommand {
+			protected override bool CanExecute(Context ctx) {
 				return EventDefSettingsCommand.CanExecute(ctx.Nodes);
 			}
 
-			protected override void Execute(Context ctx)
-			{
+			protected override void Execute(Context ctx) {
 				EventDefSettingsCommand.Execute(ctx.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length == 1 &&
 				nodes[0] is EventTreeNode;
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -431,8 +387,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 		readonly int origParentChildIndex;
 		readonly bool nameChanged;
 
-		EventDefSettingsCommand(EventTreeNode eventNode, EventDefOptions options)
-		{
+		EventDefSettingsCommand(EventTreeNode eventNode, EventDefOptions options) {
 			this.eventNode = eventNode;
 			this.newOptions = options;
 			this.origOptions = new EventDefOptions(eventNode.EventDefinition);
@@ -450,8 +405,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			if (nameChanged) {
 				bool b = origParentChildIndex < origParentNode.Children.Count && origParentNode.Children[origParentChildIndex] == eventNode;
 				Debug.Assert(b);
@@ -467,8 +421,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			eventNode.RaiseUIPropsChanged();
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			if (nameChanged) {
 				bool b = origParentNode.Children.Remove(eventNode);
 				Debug.Assert(b);
@@ -487,8 +440,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Event
 			get { yield return eventNode; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 }

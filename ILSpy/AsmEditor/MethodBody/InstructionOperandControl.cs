@@ -23,12 +23,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using ICSharpCode.ILSpy.AsmEditor.Converters;
+using dnSpy.AsmEditor.Converters;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	sealed class InstructionOperandControl : ContentControl
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	sealed class InstructionOperandControl : ContentControl {
 		public static readonly DependencyProperty InstructionOperandVMProperty =
 			DependencyProperty.Register("InstructionOperandVM", typeof(InstructionOperandVM), typeof(InstructionOperandControl),
 			new FrameworkPropertyMetadata(null, OnInstructionOperandVMChanged));
@@ -86,14 +84,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			set { SetValue(ButtonCommandProperty, value); }
 		}
 
-		static void OnInstructionOperandVMChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
+		static void OnInstructionOperandVMChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			var self = (InstructionOperandControl)d;
 			self.OnInstructionOperandVMChanged((InstructionOperandVM)e.OldValue, (InstructionOperandVM)e.NewValue);
 		}
 
-		void OnInstructionOperandVMChanged(InstructionOperandVM oldValue, InstructionOperandVM newValue)
-		{
+		void OnInstructionOperandVMChanged(InstructionOperandVM oldValue, InstructionOperandVM newValue) {
 			if (oldValue != null)
 				oldValue.PropertyChanged -= instructionOperandVM_PropertyChanged;
 			if (newValue != null) {
@@ -102,14 +98,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			}
 		}
 
-		void instructionOperandVM_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void instructionOperandVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "InstructionOperandType")
 				InitializeOperandType((InstructionOperandVM)sender);
 		}
 
-		void InitializeOperandType(InstructionOperandVM instructionOperandVM)
-		{
+		void InitializeOperandType(InstructionOperandVM instructionOperandVM) {
 			switch (instructionOperandVM.InstructionOperandType) {
 			case InstructionOperandType.None:
 				Content = null;
@@ -209,7 +203,8 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 				}
 				break;
 
-			default: throw new InvalidOperationException();
+			default:
+				throw new InvalidOperationException();
 			}
 		}
 	}

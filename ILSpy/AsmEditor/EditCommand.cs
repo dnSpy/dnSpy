@@ -19,73 +19,61 @@
 
 using System.Linq;
 using System.Windows.Controls;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
-	public abstract class EditCommand : TreeNodeCommand, IMainMenuCommand, IMainMenuCommandInitialize, IContextMenuEntry2
-	{
-		static EditCommand()
-		{
+namespace dnSpy.AsmEditor {
+	public abstract class EditCommand : TreeNodeCommand, IMainMenuCommand, IMainMenuCommandInitialize, IContextMenuEntry2 {
+		static EditCommand() {
 			MainWindow.Instance.SetMenuAlwaysRegenerate("_Edit");
 		}
 
 		protected EditCommand()
-			: this(false)
-		{
+			: this(false) {
 		}
 
 		protected EditCommand(bool canAcceptEmptySelectedNodes)
-			: base(canAcceptEmptySelectedNodes)
-		{
+			: base(canAcceptEmptySelectedNodes) {
 		}
 
-		protected virtual bool IsVisible(ILSpyTreeNode[] nodes)
-		{
+		protected virtual bool IsVisible(ILSpyTreeNode[] nodes) {
 			return CanExecute(nodes);
 		}
 
-		protected virtual void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem)
-		{
+		protected virtual void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
 		}
 
 		bool IMainMenuCommand.IsVisible {
 			get { return IsVisible(GetSelectedNodes()); }
 		}
 
-		void IMainMenuCommandInitialize.Initialize(MenuItem menuItem)
-		{
+		void IMainMenuCommandInitialize.Initialize(MenuItem menuItem) {
 			Initialize(GetSelectedNodes(), menuItem);
 		}
 
-		static ILSpyTreeNode[] GetILSpyTreeNodes(SharpTreeNode[] nodes)
-		{
+		static ILSpyTreeNode[] GetILSpyTreeNodes(SharpTreeNode[] nodes) {
 			return nodes.OfType<ILSpyTreeNode>().ToArray();
 		}
 
-		bool IContextMenuEntry<TextViewContext>.IsVisible(TextViewContext context)
-		{
+		bool IContextMenuEntry<TextViewContext>.IsVisible(TextViewContext context) {
 			return context.TreeView == MainWindow.Instance.treeView &&
 				context.SelectedTreeNodes != null &&
 				IsVisible(GetILSpyTreeNodes(context.SelectedTreeNodes));
 		}
 
-		bool IContextMenuEntry<TextViewContext>.IsEnabled(TextViewContext context)
-		{
+		bool IContextMenuEntry<TextViewContext>.IsEnabled(TextViewContext context) {
 			return context.TreeView == MainWindow.Instance.treeView &&
 				context.SelectedTreeNodes != null &&
 				CanExecute(GetILSpyTreeNodes(context.SelectedTreeNodes));
 		}
 
-		void IContextMenuEntry<TextViewContext>.Execute(TextViewContext context)
-		{
+		void IContextMenuEntry<TextViewContext>.Execute(TextViewContext context) {
 			if (context.TreeView == MainWindow.Instance.treeView && context.SelectedTreeNodes != null)
 				Execute(GetILSpyTreeNodes(context.SelectedTreeNodes));
 		}
 
-		void IContextMenuEntry2<TextViewContext>.Initialize(TextViewContext context, MenuItem menuItem)
-		{
+		void IContextMenuEntry2<TextViewContext>.Initialize(TextViewContext context, MenuItem menuItem) {
 			if (context.TreeView == MainWindow.Instance.treeView && context.SelectedTreeNodes != null)
 				Initialize(GetILSpyTreeNodes(context.SelectedTreeNodes), menuItem);
 		}

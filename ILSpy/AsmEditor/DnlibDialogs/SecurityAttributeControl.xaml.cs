@@ -19,17 +19,14 @@
 
 using System.Windows;
 using System.Windows.Controls;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
 	/// Interaction logic for SecurityAttributeControl.xaml
 	/// </summary>
-	public partial class SecurityAttributeControl : UserControl
-	{
-		public SecurityAttributeControl()
-		{
+	public partial class SecurityAttributeControl : UserControl {
+		public SecurityAttributeControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as SecurityAttributeVM;

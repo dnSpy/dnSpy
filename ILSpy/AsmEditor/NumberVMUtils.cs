@@ -23,12 +23,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
-	public static class NumberVMUtils
-	{
-		public static byte[] ParseByteArray(string s, out string error)
-		{
+namespace dnSpy.AsmEditor {
+	public static class NumberVMUtils {
+		public static byte[] ParseByteArray(string s, out string error) {
 			s = s.Replace(" ", string.Empty);
 			s = s.Replace("\t", string.Empty);
 			s = s.Replace("\r", string.Empty);
@@ -51,8 +48,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return bytes;
 		}
 
-		static int TryParseHexChar(char c)
-		{
+		static int TryParseHexChar(char c) {
 			if ('0' <= c && c <= '9')
 				return c - '0';
 			if ('a' <= c && c <= 'f')
@@ -62,8 +58,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return -1;
 		}
 
-		public static string ByteArrayToString(IList<byte> value, bool upper = true)
-		{
+		public static string ByteArrayToString(IList<byte> value, bool upper = true) {
 			if (value == null)
 				return string.Empty;
 			var chars = new char[value.Count * 2];
@@ -75,8 +70,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return new string(chars);
 		}
 
-		static NumberVMUtils()
-		{
+		static NumberVMUtils() {
 			for (ulong i = 0; i <= 20; i++)
 				AddNumber(i);
 			ulong n = 10;
@@ -92,8 +86,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			}
 		}
 
-		static void AddNumber(ulong n)
-		{
+		static void AddNumber(ulong n) {
 			decimalUInt64.Add(n);
 			if (n <= long.MaxValue)
 				decimalInt64.Add((long)n);
@@ -104,16 +97,14 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		static readonly HashSet<long> decimalInt64 = new HashSet<long>();
 		static readonly HashSet<ulong> decimalUInt64 = new HashSet<ulong>();
 
-		static char ToHexChar(int val, bool upper)
-		{
+		static char ToHexChar(int val, bool upper) {
 			if (0 <= val && val <= 9)
 				return (char)(val + (int)'0');
 			return (char)(val - 10 + (upper ? (int)'A' : (int)'a'));
 		}
 
 		const string INVALID_TOSTRING_VALUE = "<invalid value>";
-		public static string ToString(ulong value, ulong min, ulong max, bool useDecimal)
-		{
+		public static string ToString(ulong value, ulong min, ulong max, bool useDecimal) {
 			if (value < min || value > max)
 				return INVALID_TOSTRING_VALUE;
 			if (useDecimal || decimalUInt64.Contains(value))
@@ -121,8 +112,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return string.Format("0x{0:X}", value);
 		}
 
-		public static string ToString(long value, long min, long max, bool useDecimal)
-		{
+		public static string ToString(long value, long min, long max, bool useDecimal) {
 			if (value < min || value > max)
 				return INVALID_TOSTRING_VALUE;
 			if (useDecimal || decimalInt64.Contains(value))
@@ -132,48 +122,39 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return string.Format("0x{0:X}", value);
 		}
 
-		public static string ToString(long value)
-		{
+		public static string ToString(long value) {
 			return ToString(value, long.MinValue, long.MaxValue, false);
 		}
 
-		public static string ToString(ulong value)
-		{
+		public static string ToString(ulong value) {
 			return ToString(value, ulong.MinValue, ulong.MaxValue, false);
 		}
 
-		public static string ToString(float value)
-		{
+		public static string ToString(float value) {
 			return value.ToString();
 		}
 
-		public static string ToString(double value)
-		{
+		public static string ToString(double value) {
 			return value.ToString();
 		}
 
-		public static string ToString(decimal value)
-		{
+		public static string ToString(decimal value) {
 			return value.ToString();
 		}
 
-		public static string ToString(DateTime value)
-		{
+		public static string ToString(DateTime value) {
 			return value.ToString();
 		}
 
-		public static string ToString(TimeSpan value)
-		{
+		public static string ToString(TimeSpan value) {
 			return value.ToString();
 		}
 
-		public static string ToString(bool value)
-		{
+		public static string ToString(bool value) {
 			return value.ToString();
 		}
 
-		public static string ToString(char value)
-		{
+		public static string ToString(char value) {
 			var sb = new StringBuilder(8);
 			sb.Append('\'');
 			switch (value) {
@@ -198,8 +179,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return sb.ToString();
 		}
 
-		public static string ToString(string s, bool canHaveNull)
-		{
+		public static string ToString(string s, bool canHaveNull) {
 			if (s == null)
 				return canHaveNull ? "null" : string.Empty;
 			var sb = new StringBuilder(s.Length + 10);
@@ -228,8 +208,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return sb.ToString();
 		}
 
-		static string TryParseUnsigned(string s, ulong min, ulong max, out ulong value)
-		{
+		static string TryParseUnsigned(string s, ulong min, ulong max, out ulong value) {
 			value = 0;
 			bool isValid;
 			s = s.Trim();
@@ -254,8 +233,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return null;
 		}
 
-		static ulong ParseUnsigned(string s, ulong min, ulong max, out string error)
-		{
+		static ulong ParseUnsigned(string s, ulong min, ulong max, out string error) {
 			ulong value;
 			error = TryParseUnsigned(s, min, max, out value);
 			if (error != null)
@@ -263,8 +241,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return value;
 		}
 
-		public static float ParseSingle(string s, out string error)
-		{
+		public static float ParseSingle(string s, out string error) {
 			float value;
 			if (float.TryParse(s, out value)) {
 				error = null;
@@ -274,8 +251,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return 0;
 		}
 
-		public static double ParseDouble(string s, out string error)
-		{
+		public static double ParseDouble(string s, out string error) {
 			double value;
 			if (double.TryParse(s, out value)) {
 				error = null;
@@ -285,8 +261,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return 0;
 		}
 
-		public static decimal ParseDecimal(string s, out string error)
-		{
+		public static decimal ParseDecimal(string s, out string error) {
 			decimal value;
 			if (decimal.TryParse(s, out value)) {
 				error = null;
@@ -296,8 +271,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return 0;
 		}
 
-		public static DateTime ParseDateTime(string s, out string error)
-		{
+		public static DateTime ParseDateTime(string s, out string error) {
 			DateTime value;
 			if (DateTime.TryParse(s, out value)) {
 				error = null;
@@ -307,8 +281,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return DateTime.MinValue;
 		}
 
-		public static TimeSpan ParseTimeSpan(string s, out string error)
-		{
+		public static TimeSpan ParseTimeSpan(string s, out string error) {
 			TimeSpan value;
 			if (TimeSpan.TryParse(s, out value)) {
 				error = null;
@@ -318,8 +291,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return TimeSpan.Zero;
 		}
 
-		public static bool ParseBoolean(string s, out string error)
-		{
+		public static bool ParseBoolean(string s, out string error) {
 			bool value;
 			if (bool.TryParse(s, out value)) {
 				error = null;
@@ -329,8 +301,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return false;
 		}
 
-		public static char ParseChar(string s, out string error)
-		{
+		public static char ParseChar(string s, out string error) {
 			int index = 0;
 			char c = ParseChar(s, ref index, out error);
 			if (error != null)
@@ -341,14 +312,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return c;
 		}
 
-		static char SetParseCharError(out string error)
-		{
+		static char SetParseCharError(out string error) {
 			error = "A character must be enclosed in single quotes (')";
 			return (char)0;
 		}
 
-		static char ParseChar(string s, ref int index, out string error)
-		{
+		static char ParseChar(string s, ref int index, out string error) {
 			SkipSpaces(s, ref index);
 			if (index >= s.Length || s[index] != '\'')
 				return SetParseCharError(out error);
@@ -399,8 +368,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return c;
 		}
 
-		public static string ParseString(string s, bool canHaveNull, out string error)
-		{
+		public static string ParseString(string s, bool canHaveNull, out string error) {
 			int index = 0;
 			var res = ParseString(s, canHaveNull, ref index, out error);
 			if (error != null)
@@ -411,16 +379,14 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return res;
 		}
 
-		static string SetParseStringError(bool canHaveNull, out string error)
-		{
+		static string SetParseStringError(bool canHaveNull, out string error) {
 			error = canHaveNull ?
 				"A string must contain the value 'null' or must be enclosed in double quotes (\")" :
 				"A string must be enclosed in double quotes (\")";
 			return null;
 		}
 
-		static string ParseString(string s, bool canHaveNull, ref int index, out string error)
-		{
+		static string ParseString(string s, bool canHaveNull, ref int index, out string error) {
 			SkipSpaces(s, ref index);
 			if (canHaveNull && s.Substring(index).StartsWith("null")) {
 				index += 4;
@@ -485,14 +451,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return sb.ToString();
 		}
 
-		static void SkipSpaces(string s, ref int index)
-		{
+		static void SkipSpaces(string s, ref int index) {
 			while (index < s.Length && char.IsWhiteSpace(s[index]))
 				index++;
 		}
 
-		static int ParseHex(string s, ref int index, int hexChars, out char surrogate)
-		{
+		static int ParseHex(string s, ref int index, int hexChars, out char surrogate) {
 			surrogate = (char)0;
 			if (index >= s.Length)
 				return -1;
@@ -523,28 +487,23 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return val;
 		}
 
-		public static byte ParseByte(string s, byte min, byte max, out string error)
-		{
+		public static byte ParseByte(string s, byte min, byte max, out string error) {
 			return (byte)ParseUnsigned(s, min, max, out error);
 		}
 
-		public static ushort ParseUInt16(string s, ushort min, ushort max, out string error)
-		{
+		public static ushort ParseUInt16(string s, ushort min, ushort max, out string error) {
 			return (ushort)ParseUnsigned(s, min, max, out error);
 		}
 
-		public static uint ParseUInt32(string s, uint min, uint max, out string error)
-		{
+		public static uint ParseUInt32(string s, uint min, uint max, out string error) {
 			return (uint)ParseUnsigned(s, min, max, out error);
 		}
 
-		public static ulong ParseUInt64(string s, ulong min, ulong max, out string error)
-		{
+		public static ulong ParseUInt64(string s, ulong min, ulong max, out string error) {
 			return ParseUnsigned(s, min, max, out error);
 		}
 
-		static string TryParseSigned(string s, long min, long max, object minObject, out long value)
-		{
+		static string TryParseSigned(string s, long min, long max, object minObject, out long value) {
 			value = 0;
 			bool isValid;
 			s = s.Trim();
@@ -582,8 +541,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return null;
 		}
 
-		static long ParseSigned(string s, long min, long max, object minObject, out string error)
-		{
+		static long ParseSigned(string s, long min, long max, object minObject, out string error) {
 			long value;
 			error = TryParseSigned(s, min, max, minObject, out value);
 			if (error != null)
@@ -591,28 +549,23 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return value;
 		}
 
-		public static sbyte ParseSByte(string s, sbyte min, sbyte max, out string error)
-		{
+		public static sbyte ParseSByte(string s, sbyte min, sbyte max, out string error) {
 			return (sbyte)ParseSigned(s, min, max, min, out error);
 		}
 
-		public static short ParseInt16(string s, short min, short max, out string error)
-		{
+		public static short ParseInt16(string s, short min, short max, out string error) {
 			return (short)ParseSigned(s, min, max, min, out error);
 		}
 
-		public static int ParseInt32(string s, int min, int max, out string error)
-		{
+		public static int ParseInt32(string s, int min, int max, out string error) {
 			return (int)ParseSigned(s, min, max, min, out error);
 		}
 
-		public static long ParseInt64(string s, long min, long max, out string error)
-		{
+		public static long ParseInt64(string s, long min, long max, out string error) {
 			return (long)ParseSigned(s, min, max, min, out error);
 		}
 
-		static string ToString<T>(IList<T> list, Func<T,string> toString)
-		{
+		static string ToString<T>(IList<T> list, Func<T, string> toString) {
 			if (list == null)
 				return string.Empty;
 			var sb = new StringBuilder();
@@ -624,73 +577,59 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return sb.ToString();
 		}
 
-		public static string ToString(IList<bool> values)
-		{
+		public static string ToString(IList<bool> values) {
 			return ToString(values, v => ToString(v));
 		}
 
-		public static string ToString(IList<char> values)
-		{
+		public static string ToString(IList<char> values) {
 			return ToString(values, v => ToString(v));
 		}
 
-		public static string ToString(IList<byte> values, byte min, byte max, bool useDecimal)
-		{
+		public static string ToString(IList<byte> values, byte min, byte max, bool useDecimal) {
 			return ToString(values, v => ToString(v, min, max, useDecimal));
 		}
 
-		public static string ToString(IList<ushort> values, ushort min, ushort max, bool useDecimal)
-		{
+		public static string ToString(IList<ushort> values, ushort min, ushort max, bool useDecimal) {
 			return ToString(values, v => ToString(v, min, max, useDecimal));
 		}
 
-		public static string ToString(IList<uint> values, uint min, uint max, bool useDecimal)
-		{
+		public static string ToString(IList<uint> values, uint min, uint max, bool useDecimal) {
 			return ToString(values, v => ToString(v, min, max, useDecimal));
 		}
 
-		public static string ToString(IList<ulong> values, ulong min, ulong max, bool useDecimal)
-		{
+		public static string ToString(IList<ulong> values, ulong min, ulong max, bool useDecimal) {
 			return ToString(values, v => ToString(v, min, max, useDecimal));
 		}
 
-		public static string ToString(IList<sbyte> values, sbyte min, sbyte max, bool useDecimal)
-		{
+		public static string ToString(IList<sbyte> values, sbyte min, sbyte max, bool useDecimal) {
 			return ToString(values, v => ToString(v, min, max, useDecimal));
 		}
 
-		public static string ToString(IList<short> values, short min, short max, bool useDecimal)
-		{
+		public static string ToString(IList<short> values, short min, short max, bool useDecimal) {
 			return ToString(values, v => ToString(v, min, max, useDecimal));
 		}
 
-		public static string ToString(IList<int> values, int min, int max, bool useDecimal)
-		{
+		public static string ToString(IList<int> values, int min, int max, bool useDecimal) {
 			return ToString(values, v => ToString(v, min, max, useDecimal));
 		}
 
-		public static string ToString(IList<long> values, long min, long max, bool useDecimal)
-		{
+		public static string ToString(IList<long> values, long min, long max, bool useDecimal) {
 			return ToString(values, v => ToString(v, min, max, useDecimal));
 		}
 
-		public static string ToString(IList<float> values)
-		{
+		public static string ToString(IList<float> values) {
 			return ToString(values, v => ToString(v));
 		}
 
-		public static string ToString(IList<double> values)
-		{
+		public static string ToString(IList<double> values) {
 			return ToString(values, v => ToString(v));
 		}
 
-		public static string ToString(IList<string> values, bool canHaveNull)
-		{
+		public static string ToString(IList<string> values, bool canHaveNull) {
 			return ToString(values, v => ToString(v, canHaveNull));
 		}
 
-		static T[] ParseList<T>(string s, out string error, Func<string, Tuple<T, string>> parseValue)
-		{
+		static T[] ParseList<T>(string s, out string error, Func<string, Tuple<T, string>> parseValue) {
 			var list = new List<T>();
 
 			s = s.Trim();
@@ -719,8 +658,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 
 		delegate T ParseListCallBack<T, U>(U data, string s, ref int index, out string error);
 
-		static T[] ParseList<T, U>(string s, out string error, ParseListCallBack<T, U> parseValue, U data)
-		{
+		static T[] ParseList<T, U>(string s, out string error, ParseListCallBack<T, U> parseValue, U data) {
 			var list = new List<T>();
 
 			if (s.Trim() == string.Empty) {
@@ -750,78 +688,63 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return list.ToArray();
 		}
 
-		public static bool[] ParseBooleanList(string s, out string error)
-		{
+		public static bool[] ParseBooleanList(string s, out string error) {
 			return ParseList(s, out error, v => { string err; var res = ParseBoolean(v, out err); return Tuple.Create(res, err); });
 		}
 
-		public static char[] ParseCharList(string s, out string error)
-		{
+		public static char[] ParseCharList(string s, out string error) {
 			return ParseList(s, out error, ParseCharPart, 0);
 		}
 
-		static char ParseCharPart(int data, string s, ref int index, out string error)
-		{
+		static char ParseCharPart(int data, string s, ref int index, out string error) {
 			return ParseChar(s, ref index, out error);
 		}
 
-		public static byte[] ParseByteList(string s, byte min, byte max, out string error)
-		{
+		public static byte[] ParseByteList(string s, byte min, byte max, out string error) {
 			return ParseList(s, out error, v => { string err; var res = ParseByte(v, min, max, out err); return Tuple.Create(res, err); });
 		}
 
-		public static ushort[] ParseUInt16List(string s, ushort min, ushort max, out string error)
-		{
+		public static ushort[] ParseUInt16List(string s, ushort min, ushort max, out string error) {
 			return ParseList(s, out error, v => { string err; var res = ParseUInt16(v, min, max, out err); return Tuple.Create(res, err); });
 		}
 
-		public static uint[] ParseUInt32List(string s, uint min, uint max, out string error)
-		{
+		public static uint[] ParseUInt32List(string s, uint min, uint max, out string error) {
 			return ParseList(s, out error, v => { string err; var res = ParseUInt32(v, min, max, out err); return Tuple.Create(res, err); });
 		}
 
-		public static ulong[] ParseUInt64List(string s, ulong min, ulong max, out string error)
-		{
+		public static ulong[] ParseUInt64List(string s, ulong min, ulong max, out string error) {
 			return ParseList(s, out error, v => { string err; var res = ParseUInt64(v, min, max, out err); return Tuple.Create(res, err); });
 		}
 
-		public static sbyte[] ParseSByteList(string s, sbyte min, sbyte max, out string error)
-		{
+		public static sbyte[] ParseSByteList(string s, sbyte min, sbyte max, out string error) {
 			return ParseList(s, out error, v => { string err; var res = ParseSByte(v, min, max, out err); return Tuple.Create(res, err); });
 		}
 
-		public static short[] ParseInt16List(string s, short min, short max, out string error)
-		{
+		public static short[] ParseInt16List(string s, short min, short max, out string error) {
 			return ParseList(s, out error, v => { string err; var res = ParseInt16(v, min, max, out err); return Tuple.Create(res, err); });
 		}
 
-		public static int[] ParseInt32List(string s, int min, int max, out string error)
-		{
+		public static int[] ParseInt32List(string s, int min, int max, out string error) {
 			return ParseList(s, out error, v => { string err; var res = ParseInt32(v, min, max, out err); return Tuple.Create(res, err); });
 		}
 
-		public static long[] ParseInt64List(string s, long min, long max, out string error)
-		{
+		public static long[] ParseInt64List(string s, long min, long max, out string error) {
 			return ParseList(s, out error, v => { string err; var res = ParseInt64(v, min, max, out err); return Tuple.Create(res, err); });
 		}
 
-		public static float[] ParseSingleList(string s, out string error)
-		{
+		public static float[] ParseSingleList(string s, out string error) {
 			return ParseList(s, out error, v => { string err; var res = ParseSingle(v, out err); return Tuple.Create(res, err); });
 		}
 
-		public static double[] ParseDoubleList(string s, out string error)
-		{
+		public static double[] ParseDoubleList(string s, out string error) {
 			return ParseList(s, out error, v => { string err; var res = ParseDouble(v, out err); return Tuple.Create(res, err); });
 		}
 
-		public static string[] ParseStringList(string s, bool canHaveNull, out string error)
-		{
+		public static string[] ParseStringList(string s, bool canHaveNull, out string error) {
 			return ParseList(s, out error, ParseStringPart, canHaveNull);
 		}
 
-		static string ParseStringPart(bool canHaveNull, string s, ref int index, out string error)
-		{
+		static string ParseStringPart(bool canHaveNull, string s, ref int index, out string error) {
 			return ParseString(s, (bool)canHaveNull, ref index, out error);
 		}
 	}

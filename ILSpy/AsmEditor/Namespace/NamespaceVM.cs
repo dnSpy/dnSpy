@@ -19,10 +19,8 @@
 
 using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Namespace
-{
-	sealed class NamespaceVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.Namespace {
+	sealed class NamespaceVM : ViewModelBase {
 		readonly string origName;
 
 		public ICommand ReinitializeCommand {
@@ -40,15 +38,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Namespace
 		}
 		string name;
 
-		public NamespaceVM(string name)
-		{
+		public NamespaceVM(string name) {
 			this.origName = name;
 
 			Reinitialize();
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			this.Name = origName;
 		}
 	}

@@ -22,17 +22,14 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using ICSharpCode.ILSpy.AsmEditor.MethodBody;
+using dnSpy.AsmEditor.MethodBody;
 using ICSharpCode.ILSpy.TextView;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Converters
-{
-	sealed class CilObjectConverter : IValueConverter
-	{
+namespace dnSpy.AsmEditor.Converters {
+	sealed class CilObjectConverter : IValueConverter {
 		public static readonly CilObjectConverter Instance = new CilObjectConverter();
 
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			try {
 				var flags = WriteObjectFlags.None;
 				if (parameter != null) {
@@ -57,8 +54,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Converters
 			return value.ToString();
 		}
 
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
 			throw new NotImplementedException();
 		}
 	}

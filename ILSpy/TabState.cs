@@ -24,7 +24,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using ICSharpCode.ILSpy.AsmEditor;
+using dnSpy.AsmEditor;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 

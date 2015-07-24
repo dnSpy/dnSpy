@@ -20,10 +20,8 @@
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Module
-{
-	sealed class ClrVersionValues
-	{
+namespace dnSpy.AsmEditor.Module {
+	sealed class ClrVersionValues {
 		public static readonly ClrVersionValues CLR10 = new ClrVersionValues(ClrVersion.CLR10, 0x00020000, 0x0100, MDHeaderRuntimeVersion.MS_CLR_10, AssemblyRefUser.CreateMscorlibReferenceCLR10());
 		public static readonly ClrVersionValues CLR11 = new ClrVersionValues(ClrVersion.CLR11, 0x00020000, 0x0100, MDHeaderRuntimeVersion.MS_CLR_11, AssemblyRefUser.CreateMscorlibReferenceCLR11());
 		public static readonly ClrVersionValues CLR20 = new ClrVersionValues(ClrVersion.CLR20, 0x00020005, 0x0200, MDHeaderRuntimeVersion.MS_CLR_20, AssemblyRefUser.CreateMscorlibReferenceCLR20());
@@ -33,8 +31,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			CLR10, CLR11, CLR20, CLR40,
 		};
 
-		public static ClrVersionValues GetValues(ClrVersion clrVersion)
-		{
+		public static ClrVersionValues GetValues(ClrVersion clrVersion) {
 			switch (clrVersion) {
 			case ClrVersion.CLR10: return CLR10;
 			case ClrVersion.CLR11: return CLR11;
@@ -44,8 +41,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			}
 		}
 
-		public static ClrVersionValues Find(uint cor20HeaderRuntimeVersion, ushort tablesHeaderVersion, string runtimeVersion)
-		{
+		public static ClrVersionValues Find(uint cor20HeaderRuntimeVersion, ushort tablesHeaderVersion, string runtimeVersion) {
 			foreach (var clrValues in AllVersions) {
 				if (clrValues.Cor20HeaderRuntimeVersion == cor20HeaderRuntimeVersion &&
 					clrValues.TablesHeaderVersion == tablesHeaderVersion &&
@@ -61,8 +57,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		public readonly string RuntimeVersion;
 		public readonly AssemblyRef CorLibRef;
 
-		public ClrVersionValues(ClrVersion clrVersion, uint cor20HeaderRuntimeVersion, ushort tablesHeaderVersion, string runtimeVersion, AssemblyRef corLibRef)
-		{
+		public ClrVersionValues(ClrVersion clrVersion, uint cor20HeaderRuntimeVersion, ushort tablesHeaderVersion, string runtimeVersion, AssemblyRef corLibRef) {
 			this.ClrVersion = clrVersion;
 			this.Cor20HeaderRuntimeVersion = cor20HeaderRuntimeVersion;
 			this.TablesHeaderVersion = tablesHeaderVersion;

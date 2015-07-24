@@ -21,10 +21,8 @@ using System.Collections.Generic;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	sealed class ExceptionHandlerOptions
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	sealed class ExceptionHandlerOptions {
 		public InstructionVM TryStart;
 		public InstructionVM TryEnd;
 		public InstructionVM FilterStart;
@@ -33,12 +31,10 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 		public ITypeDefOrRef CatchType;
 		public ExceptionHandlerType HandlerType;
 
-		public ExceptionHandlerOptions()
-		{
+		public ExceptionHandlerOptions() {
 		}
 
-		public ExceptionHandlerOptions(Dictionary<object, object> ops, ExceptionHandler eh)
-		{
+		public ExceptionHandlerOptions(Dictionary<object, object> ops, ExceptionHandler eh) {
 			this.TryStart = (InstructionVM)BodyUtils.TryGetVM(ops, eh.TryStart);
 			this.TryEnd = (InstructionVM)BodyUtils.TryGetVM(ops, eh.TryEnd);
 			this.FilterStart = (InstructionVM)BodyUtils.TryGetVM(ops, eh.FilterStart);
@@ -48,8 +44,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			this.HandlerType = eh.HandlerType;
 		}
 
-		public ExceptionHandler CopyTo(Dictionary<object, object> ops, ExceptionHandler eh)
-		{
+		public ExceptionHandler CopyTo(Dictionary<object, object> ops, ExceptionHandler eh) {
 			eh.TryStart = BodyUtils.TryGetModel(ops, this.TryStart) as Instruction;
 			eh.TryEnd = BodyUtils.TryGetModel(ops, this.TryEnd) as Instruction;
 			eh.FilterStart = BodyUtils.TryGetModel(ops, this.FilterStart) as Instruction;
@@ -60,8 +55,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 			return eh;
 		}
 
-		public ExceptionHandler Create(Dictionary<object, object> ops)
-		{
+		public ExceptionHandler Create(Dictionary<object, object> ops) {
 			return CopyTo(ops, new ExceptionHandler());
 		}
 	}

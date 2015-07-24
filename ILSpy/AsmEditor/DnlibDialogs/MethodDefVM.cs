@@ -19,10 +19,8 @@
 
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class MethodDefVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class MethodDefVM : ViewModelBase {
 		readonly MethodDef origMethod;
 
 		public MethodDef Method {
@@ -44,20 +42,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		public MethodDefVM(MethodDef method)
-		{
+		public MethodDefVM(MethodDef method) {
 			this.origMethod = method;
 
 			Reinitialize();
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			Method = origMethod;
 		}
 
-		protected override string Verify(string columnName)
-		{
+		protected override string Verify(string columnName) {
 			if (columnName == "Method") {
 				if (Method == null)
 					return "Method can't be null";

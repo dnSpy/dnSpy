@@ -19,7 +19,7 @@
 
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
+namespace dnSpy.AsmEditor.DnlibDialogs
 {
 	enum CharSet
 	{
@@ -52,8 +52,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		Fastcall	= (int)PInvokeAttributes.CallConvFastcall >> 8,
 	}
 
-	sealed class ImplMapVM : ViewModelBase
-	{
+	sealed class ImplMapVM : ViewModelBase {
 		static readonly EnumVM[] charSetList = EnumVM.Create(typeof(DnlibDialogs.CharSet));
 		public EnumListVM CharSet {
 			get { return charSetVM; }
@@ -144,13 +143,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			set { SetFlagValue(PInvokeAttributes.SupportsLastError, value); }
 		}
 
-		bool GetFlagValue(PInvokeAttributes flag)
-		{
+		bool GetFlagValue(PInvokeAttributes flag) {
 			return (Attributes & flag) != 0;
 		}
 
-		void SetFlagValue(PInvokeAttributes flag, bool value)
-		{
+		void SetFlagValue(PInvokeAttributes flag, bool value) {
 			if (value)
 				Attributes |= flag;
 			else
@@ -181,8 +178,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		readonly ModuleDef ownerModule;
 
-		public ImplMapVM(ModuleDef ownerModule)
-		{
+		public ImplMapVM(ModuleDef ownerModule) {
 			this.ownerModule = ownerModule;
 		}
 	}

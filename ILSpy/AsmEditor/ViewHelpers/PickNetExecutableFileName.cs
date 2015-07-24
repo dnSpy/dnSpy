@@ -20,12 +20,9 @@
 using System.IO;
 using System.Windows.Forms;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	sealed class PickNetExecutableFileName : IPickNetExecutableFileName
-	{
-		public string GetFileName(string currentFileName, string extension)
-		{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	sealed class PickNetExecutableFileName : IPickNetExecutableFileName {
+		public string GetFileName(string currentFileName, string extension) {
 			var dialog = new SaveFileDialog() {
 				Filter = ".NET Executables (*.exe, *.dll, *.netmodule, *.winmd)|*.exe;*.dll;*.netmodule;*.winmd|All files (*.*)|*.*",
 				RestoreDirectory = true,

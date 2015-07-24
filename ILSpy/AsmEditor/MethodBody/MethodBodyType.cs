@@ -17,10 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	enum MethodBodyType
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	enum MethodBodyType {
 		None,
 		Cil,
 		Native,

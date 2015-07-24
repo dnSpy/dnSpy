@@ -19,53 +19,45 @@
 
 using System.Collections.Generic;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class TypeDefOrRefAndCAOptions
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class TypeDefOrRefAndCAOptions {
 		public ITypeDefOrRef TypeDefOrRef;
 		public List<CustomAttribute> CustomAttributes = new List<CustomAttribute>();
 
-		public TypeDefOrRefAndCAOptions()
-		{
+		public TypeDefOrRefAndCAOptions() {
 		}
 
-		public TypeDefOrRefAndCAOptions(GenericParamConstraint gpc)
-		{
+		public TypeDefOrRefAndCAOptions(GenericParamConstraint gpc) {
 			this.TypeDefOrRef = gpc.Constraint;
 			this.CustomAttributes.AddRange(gpc.CustomAttributes);
 		}
 
-		public TypeDefOrRefAndCAOptions(InterfaceImpl iface)
-		{
+		public TypeDefOrRefAndCAOptions(InterfaceImpl iface) {
 			this.TypeDefOrRef = iface.Interface;
 			this.CustomAttributes.AddRange(iface.CustomAttributes);
 		}
 
-		public GenericParamConstraint CopyTo(GenericParamConstraint gpc)
-		{
+		public GenericParamConstraint CopyTo(GenericParamConstraint gpc) {
 			gpc.Constraint = this.TypeDefOrRef;
 			gpc.CustomAttributes.Clear();
 			gpc.CustomAttributes.AddRange(CustomAttributes);
 			return gpc;
 		}
 
-		public InterfaceImpl CopyTo(InterfaceImpl iface)
-		{
+		public InterfaceImpl CopyTo(InterfaceImpl iface) {
 			iface.Interface = this.TypeDefOrRef;
 			iface.CustomAttributes.Clear();
 			iface.CustomAttributes.AddRange(CustomAttributes);
 			return iface;
 		}
 
-		public GenericParamConstraint CreateGenericParamConstraint(ModuleDef ownerModule)
-		{
+		public GenericParamConstraint CreateGenericParamConstraint(ModuleDef ownerModule) {
 			return ownerModule.UpdateRowId(CopyTo(new GenericParamConstraintUser()));
 		}
 
-		public InterfaceImpl CreateInterfaceImpl(ModuleDef ownerModule)
-		{
+		public InterfaceImpl CreateInterfaceImpl(ModuleDef ownerModule) {
 			return ownerModule.UpdateRowId(CopyTo(new InterfaceImplUser()));
 		}
 	}

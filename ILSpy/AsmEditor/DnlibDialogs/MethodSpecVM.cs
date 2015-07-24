@@ -21,13 +21,12 @@ using System;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes.Filters;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class MethodSpecVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class MethodSpecVM : ViewModelBase {
 		readonly MethodSpecOptions origOptions;
 
 		public IDnlibTypePicker DnlibTypePicker {
@@ -76,8 +75,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 
 		readonly TypeSigCreatorOptions typeSigCreatorOptions;
 
-		public MethodSpecVM(MethodSpecOptions options, TypeSigCreatorOptions typeSigCreatorOptions)
-		{
+		public MethodSpecVM(MethodSpecOptions options, TypeSigCreatorOptions typeSigCreatorOptions) {
 			this.origOptions = options;
 			this.typeSigCreatorOptions = typeSigCreatorOptions;
 			this.customAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.OwnerModule, typeSigCreatorOptions.Language);
@@ -92,8 +90,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			Reinitialize();
 		}
 
-		void PickMethod()
-		{
+		void PickMethod() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 			var newMethod = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.MethodDef), Method, typeSigCreatorOptions.OwnerModule);
@@ -101,18 +98,15 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 				Method = newMethod;
 		}
 
-		void Reinitialize()
-		{
+		void Reinitialize() {
 			InitializeFrom(origOptions);
 		}
 
-		public MethodSpecOptions CreateMethodSpecOptions()
-		{
+		public MethodSpecOptions CreateMethodSpecOptions() {
 			return CopyTo(new MethodSpecOptions());
 		}
 
-		void InitializeFrom(MethodSpecOptions options)
-		{
+		void InitializeFrom(MethodSpecOptions options) {
 			this.Method = options.Method;
 			var gim = options.Instantiation as GenericInstMethodSig;
 			CreateTypeSigArrayVM.TypeSigCollection.Clear();
@@ -121,8 +115,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			this.CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 
-		MethodSpecOptions CopyTo(MethodSpecOptions options)
-		{
+		MethodSpecOptions CopyTo(MethodSpecOptions options) {
 			options.Method = this.Method;
 			options.Instantiation = new GenericInstMethodSig(CreateTypeSigArrayVM.TypeSigCollection);
 			options.CustomAttributes.Clear();

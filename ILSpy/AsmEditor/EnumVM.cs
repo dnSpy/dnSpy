@@ -21,10 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
-	sealed class EnumVM
-	{
+namespace dnSpy.AsmEditor {
+	sealed class EnumVM {
 		readonly object value;
 		readonly string name;
 
@@ -36,25 +34,21 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			get { return name; }
 		}
 
-		public EnumVM(object value)
-		{
+		public EnumVM(object value) {
 			this.value = value;
 			this.name = Enum.GetName(value.GetType(), value);
 		}
 
-		public EnumVM(object value, string name)
-		{
+		public EnumVM(object value, string name) {
 			this.value = value;
 			this.name = name;
 		}
 
-		public static EnumVM[] Create(Type enumType, params object[] values)
-		{
+		public static EnumVM[] Create(Type enumType, params object[] values) {
 			return Create(true, enumType, values);
 		}
 
-		public static EnumVM[] Create(bool sort, Type enumType, params object[] values)
-		{
+		public static EnumVM[] Create(bool sort, Type enumType, params object[] values) {
 			var list = new List<EnumVM>();
 			foreach (var value in enumType.GetEnumValues()) {
 				if (values.Any(a => a.Equals(value)))
@@ -68,14 +62,12 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return list.ToArray();
 		}
 
-		public override string ToString()
-		{
+		public override string ToString() {
 			return name;
 		}
 	}
 
-	sealed class EnumListVM : ListVM<EnumVM>
-	{
+	sealed class EnumListVM : ListVM<EnumVM> {
 		public new object SelectedItem {
 			get {
 				if (Index < 0 || Index >= list.Count)
@@ -89,17 +81,14 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 
 		public EnumListVM(IList<EnumVM> list)
-			: this(list, null)
-		{
+			: this(list, null) {
 		}
 
 		public EnumListVM(IEnumerable<EnumVM> list, Action<int, int> onChanged)
-			: base(list, onChanged)
-		{
+			: base(list, onChanged) {
 		}
 
-		public bool Has(object value)
-		{
+		public bool Has(object value) {
 			for (int i = 0; i < list.Count; i++) {
 				if (list[i].Value.Equals(value))
 					return true;
@@ -107,8 +96,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 			return false;
 		}
 
-		public int GetIndex(object value)
-		{
+		public int GetIndex(object value) {
 			for (int i = 0; i < list.Count; i++) {
 				if (list[i].Value.Equals(value))
 					return i;

@@ -19,27 +19,23 @@
 
 using System.Windows;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.DnlibDialogs;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
-{
-	sealed class DnlibTypePicker : IDnlibTypePicker
-	{
+namespace dnSpy.AsmEditor.ViewHelpers {
+	sealed class DnlibTypePicker : IDnlibTypePicker {
 		readonly Window ownerWindow;
 
 		public DnlibTypePicker()
-			: this(null)
-		{
+			: this(null) {
 		}
 
-		public DnlibTypePicker(Window ownerWindow)
-		{
+		public DnlibTypePicker(Window ownerWindow) {
 			this.ownerWindow = ownerWindow;
 		}
 
-		public T GetDnlibType<T>(ITreeViewNodeFilter filter, T selectedObject, ModuleDef ownerModule) where T : class
-		{
+		public T GetDnlibType<T>(ITreeViewNodeFilter filter, T selectedObject, ModuleDef ownerModule) where T : class {
 			var data = new MemberPickerVM(MainWindow.Instance.CurrentLanguage, filter, MainWindow.Instance.CurrentAssemblyList.GetAssemblies());
 			var win = new MemberPickerDlg();
 			win.DataContext = data;
@@ -51,8 +47,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.ViewHelpers
 			return ImportObject(ownerModule, data.SelectedDnlibObject) as T;
 		}
 
-		static object ImportObject(ModuleDef ownerModule, object obj)
-		{
+		static object ImportObject(ModuleDef ownerModule, object obj) {
 			var importer = new Importer(ownerModule, ImporterOptions.TryToUseDefs);
 
 			var type = obj as IType;

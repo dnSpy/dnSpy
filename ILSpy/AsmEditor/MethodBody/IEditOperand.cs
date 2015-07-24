@@ -17,10 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
-	interface IEditOperand
-	{
+namespace dnSpy.AsmEditor.MethodBody {
+	interface IEditOperand {
 		/// <summary>
 		/// Edit the operand
 		/// </summary>

@@ -18,28 +18,23 @@
 */
 
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class DeclSecuritiesVM : ListVM<DeclSecurityVM, DeclSecurity>
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class DeclSecuritiesVM : ListVM<DeclSecurityVM, DeclSecurity> {
 		public DeclSecuritiesVM(ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
-			: base("Edit Security Declaration", "Create Security Declaration", ownerModule, language, ownerType, ownerMethod)
-		{
+			: base("Edit Security Declaration", "Create Security Declaration", ownerModule, language, ownerType, ownerMethod) {
 		}
 
-		protected override DeclSecurityVM Create(DeclSecurity model)
-		{
+		protected override DeclSecurityVM Create(DeclSecurity model) {
 			return new DeclSecurityVM(new DeclSecurityOptions(model), ownerModule, language, ownerType, ownerMethod);
 		}
 
-		protected override DeclSecurityVM Clone(DeclSecurityVM obj)
-		{
+		protected override DeclSecurityVM Clone(DeclSecurityVM obj) {
 			return new DeclSecurityVM(obj.CreateDeclSecurityOptions(), ownerModule, language, ownerType, ownerMethod);
 		}
 
-		protected override DeclSecurityVM Create()
-		{
+		protected override DeclSecurityVM Create() {
 			return new DeclSecurityVM(new DeclSecurityOptions(), ownerModule, language, ownerType, ownerMethod);
 		}
 	}

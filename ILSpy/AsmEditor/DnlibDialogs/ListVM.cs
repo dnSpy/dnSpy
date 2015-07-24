@@ -23,18 +23,16 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	// Needed by ListVMControl
-	abstract class ListVM : ViewModelBase
-	{
+	abstract class ListVM : ViewModelBase {
 		public abstract void EditItem();
 	}
 
-	abstract class ListVM<TVM, TModel> : ListVM
-	{
+	abstract class ListVM<TVM, TModel> : ListVM {
 		public IEdit<TVM> EditObject {
 			set { editObject = value; }
 		}
@@ -85,8 +83,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		protected readonly MethodDef ownerMethod;
 		readonly bool inlineEditing;
 
-		protected ListVM(string editString, string createString, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod, bool inlineEditing = false)
-		{
+		protected ListVM(string editString, string createString, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod, bool inlineEditing = false) {
 			this.editString = editString;
 			this.createString = createString;
 			this.ownerModule = ownerModule;
@@ -97,8 +94,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			((INotifyPropertyChanged)Collection).PropertyChanged += ListVM_PropertyChanged;
 		}
 
-		void ListVM_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void ListVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "IsEnabled")
 				IsEnabled = Collection.IsEnabled;
 		}
@@ -107,14 +103,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 		protected abstract TVM Clone(TVM obj);
 		protected abstract TVM Create();
 
-		public void InitializeFrom(IEnumerable<TModel> modelObjs)
-		{
+		public void InitializeFrom(IEnumerable<TModel> modelObjs) {
 			Collection.Clear();
 			Collection.AddRange(modelObjs.Select(a => Create(a)));
 		}
 
-		TVM EditClone(TVM obj)
-		{
+		TVM EditClone(TVM obj) {
 			if (InlineEditing)
 				return obj;
 			if (editObject == null)
@@ -122,8 +116,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return editObject.Edit(editString, obj);
 		}
 
-		TVM AddNew(TVM obj)
-		{
+		TVM AddNew(TVM obj) {
 			if (InlineEditing)
 				return obj;
 			if (editObject == null)
@@ -131,8 +124,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			return editObject.Edit(createString, obj);
 		}
 
-		public override void EditItem()
-		{
+		public override void EditItem() {
 			if (!EditItemCanExecute())
 				return;
 			int index = Collection.SelectedIndex;
@@ -143,13 +135,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		bool EditItemCanExecute()
-		{
+		bool EditItemCanExecute() {
 			return NotInlineEditing && Collection.SelectedIndex >= 0 && Collection.SelectedIndex < Collection.Count;
 		}
 
-		protected virtual void AddItem()
-		{
+		protected virtual void AddItem() {
 			if (!AddItemCanExecute())
 				return;
 
@@ -161,13 +151,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		protected virtual int GetAddIndex(TVM obj)
-		{
+		protected virtual int GetAddIndex(TVM obj) {
 			return Collection.Count;
 		}
 
-		protected virtual bool AddItemCanExecute()
-		{
+		protected virtual bool AddItemCanExecute() {
 			return true;
 		}
 	}

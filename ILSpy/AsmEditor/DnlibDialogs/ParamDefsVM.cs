@@ -18,33 +18,27 @@
 */
 
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class ParamDefsVM : ListVM<ParamDefVM, ParamDef>
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class ParamDefsVM : ListVM<ParamDefVM, ParamDef> {
 		public ParamDefsVM(ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
-			: base("Edit Parameter", "Create Parameter", ownerModule, language, ownerType, ownerMethod)
-		{
+			: base("Edit Parameter", "Create Parameter", ownerModule, language, ownerType, ownerMethod) {
 		}
 
-		protected override ParamDefVM Create(ParamDef model)
-		{
+		protected override ParamDefVM Create(ParamDef model) {
 			return new ParamDefVM(new ParamDefOptions(model), ownerModule, language, ownerType, ownerMethod);
 		}
 
-		protected override ParamDefVM Clone(ParamDefVM obj)
-		{
+		protected override ParamDefVM Clone(ParamDefVM obj) {
 			return new ParamDefVM(obj.CreateParamDefOptions(), ownerModule, language, ownerType, ownerMethod);
 		}
 
-		protected override ParamDefVM Create()
-		{
+		protected override ParamDefVM Create() {
 			return new ParamDefVM(new ParamDefOptions(), ownerModule, language, ownerType, ownerMethod);
 		}
 
-		protected override int GetAddIndex(ParamDefVM obj)
-		{
+		protected override int GetAddIndex(ParamDefVM obj) {
 			ushort sequence = obj.Sequence.Value;
 			for (int i = 0; i < Collection.Count; i++) {
 				if (sequence < Collection[i].Sequence.Value)

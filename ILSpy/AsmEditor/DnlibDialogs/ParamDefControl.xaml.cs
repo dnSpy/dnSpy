@@ -20,21 +20,17 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
 	/// Interaction logic for ParamDefControl.xaml
 	/// </summary>
-	public partial class ParamDefControl : UserControl
-	{
-		public ParamDefControl()
-		{
+	public partial class ParamDefControl : UserControl {
+		public ParamDefControl() {
 			InitializeComponent();
 			Loaded += ParamDefControl_Loaded;
 		}
 
-		void ParamDefControl_Loaded(object sender, RoutedEventArgs e)
-		{
+		void ParamDefControl_Loaded(object sender, RoutedEventArgs e) {
 			// I can't get it to work with XAML so do it with code
 			nameTextBox.Focus();
 		}

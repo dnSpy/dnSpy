@@ -20,32 +20,27 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
-{
+namespace dnSpy.AsmEditor.MethodBody {
 	/// <summary>
 	/// Interaction logic for MethodBodyControl.xaml
 	/// </summary>
-	public partial class MethodBodyControl : UserControl
-	{
+	public partial class MethodBodyControl : UserControl {
 		LocalsListHelper localsListHelper;
 		InstructionsListHelper instructionsListHelper;
 		ExceptionHandlersListHelper exceptionHandlersListHelper;
 
-		public MethodBodyControl()
-		{
+		public MethodBodyControl() {
 			InitializeComponent();
 			DataContextChanged += MethodBodyControl_DataContextChanged;
 			Loaded += MethodBodyControl_Loaded;
 		}
 
-		void MethodBodyControl_Loaded(object sender, RoutedEventArgs e)
-		{
+		void MethodBodyControl_Loaded(object sender, RoutedEventArgs e) {
 			Loaded -= MethodBodyControl_Loaded;
 			SetFocusToControl();
 		}
 
-		void SetFocusToControl()
-		{
+		void SetFocusToControl() {
 			var data = DataContext as MethodBodyVM;
 			if (data == null)
 				return;
@@ -56,8 +51,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.MethodBody
 				rvaTextBox.Focus();
 		}
 
-		void MethodBodyControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
+		void MethodBodyControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e) {
 			var data = DataContext as MethodBodyVM;
 			if (data == null)
 				return;

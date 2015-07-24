@@ -18,17 +18,14 @@
 */
 
 using System.Windows;
-using ICSharpCode.ILSpy.AsmEditor.ViewHelpers;
+using dnSpy.AsmEditor.ViewHelpers;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Event
-{
+namespace dnSpy.AsmEditor.Event {
 	/// <summary>
 	/// Interaction logic for EventOptionsDlg.xaml
 	/// </summary>
-	public partial class EventOptionsDlg : WindowBase
-	{
-		public EventOptionsDlg()
-		{
+	public partial class EventOptionsDlg : WindowBase {
+		public EventOptionsDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as EventOptionsVM;

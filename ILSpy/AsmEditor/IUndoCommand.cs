@@ -21,13 +21,11 @@ using System;
 using System.Collections.Generic;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
+namespace dnSpy.AsmEditor {
 	/// <summary>
 	/// An assembly editor command that can be undone. Dispose() is called when the history is cleared.
 	/// </summary>
-	public interface IUndoCommand : IDisposable
-	{
+	public interface IUndoCommand : IDisposable {
 		/// <summary>
 		/// Gets a description of the command
 		/// </summary>
@@ -50,8 +48,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		IEnumerable<ILSpyTreeNode> TreeNodes { get; }
 	}
 
-	public interface IUndoCommand2 : IUndoCommand
-	{
+	public interface IUndoCommand2 : IUndoCommand {
 		/// <summary>
 		/// 
 		/// </summary>

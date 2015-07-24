@@ -17,15 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
+namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
 	/// Interaction logic for ConstantTypeDlg.xaml
 	/// </summary>
-	public partial class ConstantTypeDlg : WindowBase
-	{
-		public ConstantTypeDlg()
-		{
+	public partial class ConstantTypeDlg : WindowBase {
+		public ConstantTypeDlg() {
 			InitializeComponent();
 		}
 	}

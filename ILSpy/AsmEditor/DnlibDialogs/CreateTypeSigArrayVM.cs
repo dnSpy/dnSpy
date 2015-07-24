@@ -22,10 +22,8 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
-{
-	sealed class CreateTypeSigArrayVM : ViewModelBase
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class CreateTypeSigArrayVM : ViewModelBase {
 		public ICommand AddCommand {
 			get { return new RelayCommand(a => AddCurrent(), a => AddCurrentCanExecute()); }
 		}
@@ -119,16 +117,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			}
 		}
 
-		public CreateTypeSigArrayVM(TypeSigCreatorOptions options, int? requiredCount)
-		{
+		public CreateTypeSigArrayVM(TypeSigCreatorOptions options, int? requiredCount) {
 			this.title = options.Title;
 			this.typeSigCreator = new TypeSigCreatorVM(options);
 			this.RequiredCount = requiredCount;
 			this.TypeSigCollection.CollectionChanged += (s, e) => UpdateNumberLeftProperties();
 		}
 
-		void UpdateNumberLeftProperties()
-		{
+		void UpdateNumberLeftProperties() {
 			OnPropertyChanged("NumberOfTypesLeft");
 			OnPropertyChanged("NumberOfTypesLeftString");
 			OnPropertyChanged("CanAddMore");
@@ -137,8 +133,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			TypeSigCreator.IsEnabled = CanAddMore;
 		}
 
-		void AddCurrent()
-		{
+		void AddCurrent() {
 			if (!AddCurrentCanExecute())
 				return;
 			var typeSig = TypeSigCreator.TypeSig;
@@ -147,8 +142,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.DnlibDialogs
 			TypeSigCreator.TypeSig = null;
 		}
 
-		bool AddCurrentCanExecute()
-		{
+		bool AddCurrentCanExecute() {
 			return IsEnabled &&
 				(IsUnlimitedCount || NumberOfTypesLeft > 0) &&
 				TypeSigCreator.TypeSig != null;

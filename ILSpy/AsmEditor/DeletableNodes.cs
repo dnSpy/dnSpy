@@ -23,10 +23,8 @@ using System.Diagnostics;
 using System.Linq;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.AsmEditor
-{
-	public struct DeletableNodes<T> where T : ILSpyTreeNode
-	{
+namespace dnSpy.AsmEditor {
+	public struct DeletableNodes<T> where T : ILSpyTreeNode {
 		readonly T[] nodes;
 		ILSpyTreeNode[] parents;
 		int[] indexes;
@@ -44,12 +42,10 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		}
 
 		public DeletableNodes(T node)
-			: this(new[] { node })
-		{
+			: this(new[] { node }) {
 		}
 
-		public DeletableNodes(IEnumerable<T> nodes)
-		{
+		public DeletableNodes(IEnumerable<T> nodes) {
 			this.nodes = nodes.ToArray();
 			this.parents = null;
 			this.indexes = null;
@@ -59,8 +55,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		/// Deletes the nodes. An exception is thrown if they've already been deleted but not restored.
 		/// The model (dnlib) elements must be deleted after this method is called, not before.
 		/// </summary>
-		public void Delete()
-		{
+		public void Delete() {
 			Debug.Assert(indexes == null && parents == null);
 			if (indexes != null || parents != null)
 				throw new ArgumentException("Nodes have already been deleted");
@@ -88,8 +83,7 @@ namespace ICSharpCode.ILSpy.AsmEditor
 		/// Restores the deleted nodes. An exception is thrown if the nodes haven't been deleted.
 		/// The model (dnlib) elements must be restored before this method is called, not after.
 		/// </summary>
-		public void Restore()
-		{
+		public void Restore() {
 			Debug.Assert(indexes != null && parents != null);
 			if (indexes == null || parents == null)
 				throw new ArgumentException("Nodes have already been restored");

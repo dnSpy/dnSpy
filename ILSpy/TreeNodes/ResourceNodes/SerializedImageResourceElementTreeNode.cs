@@ -25,6 +25,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
+using dnSpy.AsmEditor.Resources;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
@@ -174,7 +175,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 			return new ResourceElement {
 				Name = resElem.Name,
-				ResourceData = new BinaryResourceData(new UserResourceType(obj.GetType().AssemblyQualifiedName, ResourceTypeCode.UserTypes), AsmEditor.Resources.SerializationUtils.Serialize(obj)),
+				ResourceData = new BinaryResourceData(new UserResourceType(obj.GetType().AssemblyQualifiedName, ResourceTypeCode.UserTypes), SerializationUtils.Serialize(obj)),
 			};
 		}
 

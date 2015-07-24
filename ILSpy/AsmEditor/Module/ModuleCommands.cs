@@ -23,33 +23,28 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
-using ICSharpCode.ILSpy.TreeNodes;
 using dnlib.DotNet;
 using dnlib.PE;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.AsmEditor.Module
-{
+namespace dnSpy.AsmEditor.Module {
 	[Export(typeof(IPlugin))]
-	sealed class AssemblyPlugin : IPlugin
-	{
-		public void OnLoaded()
-		{
+	sealed class AssemblyPlugin : IPlugin {
+		public void OnLoaded() {
 			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteExecuted, DeleteCanExecute));
 		}
 
-		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = RemoveNetModuleFromAssemblyCommand.CanExecute(MainWindow.Instance.SelectedNodes);
 		}
 
-		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e) {
 			RemoveNetModuleFromAssemblyCommand.Execute(MainWindow.Instance.SelectedNodes);
 		}
 	}
 
-	sealed class CreateNetModuleCommand : IUndoCommand
-	{
+	sealed class CreateNetModuleCommand : IUndoCommand {
 		const string CMD_NAME = "Create NetModule";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewAssemblyModule",
@@ -60,32 +55,26 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 							MenuIcon = "NewAssemblyModule",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2330)]
-		sealed class TheEditCommand : EditCommand
-		{
+		sealed class TheEditCommand : EditCommand {
 			public TheEditCommand()
-				: base(true)
-			{
+				: base(true) {
 			}
 
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return CreateNetModuleCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				CreateNetModuleCommand.Execute(nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes != null &&
 				(nodes.Length == 0 || nodes.Any(a => a is AssemblyTreeNode));
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -101,8 +90,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 
 		AssemblyTreeNodeCreator asmNodeCreator;
 
-		CreateNetModuleCommand(NetModuleOptions options)
-		{
+		CreateNetModuleCommand(NetModuleOptions options) {
 			var module = ModuleUtils.CreateNetModule(options.Name, options.Mvid, options.ClrVersion);
 			this.asmNodeCreator = new AssemblyTreeNodeCreator(new LoadedAssembly(MainWindow.Instance.CurrentAssemblyList, module));
 		}
@@ -111,14 +99,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			asmNodeCreator.Add();
 			UndoCommandManager.Instance.MarkAsModified(asmNodeCreator.AssemblyTreeNode.LoadedAssembly);
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			asmNodeCreator.Remove();
 		}
 
@@ -126,16 +112,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			get { return new ILSpyTreeNode[0]; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 			if (asmNodeCreator != null)
 				asmNodeCreator.Dispose();
 			asmNodeCreator = null;
 		}
 	}
 
-	sealed class ConvertNetModuleToAssemblyCommand : IUndoCommand
-	{
+	sealed class ConvertNetModuleToAssemblyCommand : IUndoCommand {
 		const string CMD_NAME = "Convert NetModule to Assembly";
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "ModuleToAssembly",
@@ -146,28 +130,23 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 							MenuIcon = "ModuleToAssembly",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2210)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return ConvertNetModuleToAssemblyCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				ConvertNetModuleToAssemblyCommand.Execute(nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes != null &&
 				nodes.Length > 0 &&
 				nodes.All(n => n is AssemblyTreeNode && ((AssemblyTreeNode)n).IsNetModule);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -177,15 +156,13 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		readonly AssemblyTreeNode[] nodes;
 		SavedState[] savedStates;
 		bool hasExecuted;
-		sealed class SavedState
-		{
+		sealed class SavedState {
 			public ModuleKind ModuleKind;
 			public Characteristics Characteristics;
 			public AssemblyTreeNode AssemblyTreeNode;
 		}
 
-		ConvertNetModuleToAssemblyCommand(ILSpyTreeNode[] nodes)
-		{
+		ConvertNetModuleToAssemblyCommand(ILSpyTreeNode[] nodes) {
 			this.nodes = nodes.Select(n => (AssemblyTreeNode)n).ToArray();
 			this.savedStates = new SavedState[this.nodes.Length];
 			for (int i = 0; i < this.savedStates.Length; i++)
@@ -196,8 +173,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			Debug.Assert(!hasExecuted);
 			if (hasExecuted)
 				throw new InvalidOperationException();
@@ -218,8 +194,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			hasExecuted = true;
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			Debug.Assert(hasExecuted);
 			if (!hasExecuted)
 				throw new InvalidOperationException();
@@ -246,13 +221,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			get { return nodes; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	sealed class ConvertAssemblyToNetModuleCommand : IUndoCommand
-	{
+	sealed class ConvertAssemblyToNetModuleCommand : IUndoCommand {
 		const string CMD_NAME = "Convert Assembly to NetModule";
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "AssemblyToModule",
@@ -263,41 +236,34 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 							MenuIcon = "AssemblyToModule",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2220)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool IsVisible(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool IsVisible(ILSpyTreeNode[] nodes) {
 				return ConvertAssemblyToNetModuleCommand.IsVisible(nodes);
 			}
 
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return ConvertAssemblyToNetModuleCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				ConvertAssemblyToNetModuleCommand.Execute(nodes);
 			}
 		}
 
-		static bool IsVisible(ILSpyTreeNode[] nodes)
-		{
+		static bool IsVisible(ILSpyTreeNode[] nodes) {
 			return nodes != null &&
 				nodes.Length > 0 &&
 				nodes.All(n => n is AssemblyTreeNode && ((AssemblyTreeNode)n).IsAssembly);
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes != null &&
 				nodes.Length > 0 &&
 				nodes.All(n => n is AssemblyTreeNode && ((AssemblyTreeNode)n).IsAssembly &&
 					((AssemblyTreeNode)n).LoadedAssembly.AssemblyDefinition.Modules.Count == 1);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -306,16 +272,14 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 
 		readonly AssemblyTreeNode[] nodes;
 		SavedState[] savedStates;
-		sealed class SavedState
-		{
+		sealed class SavedState {
 			public AssemblyDef AssemblyDef;
 			public ModuleKind ModuleKind;
 			public Characteristics Characteristics;
 			public AssemblyTreeNode ModuleNode;
 		}
 
-		ConvertAssemblyToNetModuleCommand(ILSpyTreeNode[] nodes)
-		{
+		ConvertAssemblyToNetModuleCommand(ILSpyTreeNode[] nodes) {
 			this.nodes = nodes.Select(n => (AssemblyTreeNode)n).ToArray();
 		}
 
@@ -323,8 +287,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			Debug.Assert(savedStates == null);
 			if (savedStates != null)
 				throw new InvalidOperationException();
@@ -349,8 +312,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			}
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			Debug.Assert(savedStates != null);
 			if (savedStates == null)
 				throw new InvalidOperationException();
@@ -377,15 +339,12 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			get { return nodes; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	abstract class AddNetModuleToAssemblyCommand : IUndoCommand
-	{
-		internal static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+	abstract class AddNetModuleToAssemblyCommand : IUndoCommand {
+		internal static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes != null &&
 				nodes.Length == 1 &&
 				nodes[0] is AssemblyTreeNode &&
@@ -396,8 +355,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		readonly AssemblyTreeNode modNode;
 		readonly bool modNodeWasCreated;
 
-		protected AddNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, AssemblyTreeNode modNode, bool modNodeWasCreated)
-		{
+		protected AddNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, AssemblyTreeNode modNode, bool modNodeWasCreated) {
 			if (asmNode.Parent is AssemblyTreeNode)
 				asmNode = (AssemblyTreeNode)asmNode.Parent;
 			Debug.Assert(!(asmNode.Parent is AssemblyTreeNode));
@@ -409,8 +367,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 
 		public abstract string Description { get; }
 
-		public void Execute()
-		{
+		public void Execute() {
 			Debug.Assert(modNode.Parent == null);
 			if (modNode.Parent != null)
 				throw new InvalidOperationException();
@@ -421,8 +378,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 				UndoCommandManager.Instance.MarkAsModified(modNode.LoadedAssembly);
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			Debug.Assert(modNode.Parent != null);
 			if (modNode.Parent == null)
 				throw new InvalidOperationException();
@@ -438,13 +394,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			get { yield return asmNode; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	sealed class AddNewNetModuleToAssemblyCommand : AddNetModuleToAssemblyCommand
-	{
+	sealed class AddNewNetModuleToAssemblyCommand : AddNetModuleToAssemblyCommand {
 		const string CMD_NAME = "Add New NetModule to Assembly";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewAssemblyModule",
@@ -455,21 +409,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 							MenuIcon = "NewAssemblyModule",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2310)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return AddNetModuleToAssemblyCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				AddNewNetModuleToAssemblyCommand.Execute(nodes);
 			}
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!AddNetModuleToAssemblyCommand.CanExecute(nodes))
 				return;
 
@@ -488,8 +438,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		}
 
 		AddNewNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, NetModuleOptions options)
-			: base(asmNode, new AssemblyTreeNode(new LoadedAssembly(MainWindow.Instance.CurrentAssemblyList, ModuleUtils.CreateNetModule(options.Name, options.Mvid, options.ClrVersion))), true)
-		{
+			: base(asmNode, new AssemblyTreeNode(new LoadedAssembly(MainWindow.Instance.CurrentAssemblyList, ModuleUtils.CreateNetModule(options.Name, options.Mvid, options.ClrVersion))), true) {
 		}
 
 		public override string Description {
@@ -497,8 +446,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		}
 	}
 
-	sealed class AddExistingNetModuleToAssemblyCommand : AddNetModuleToAssemblyCommand
-	{
+	sealed class AddExistingNetModuleToAssemblyCommand : AddNetModuleToAssemblyCommand {
 		const string CMD_NAME = "Add Existing NetModule to Assembly";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "NewAssemblyModule",
@@ -509,21 +457,17 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 							MenuIcon = "NewAssemblyModule",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2320)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return AddNetModuleToAssemblyCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				AddExistingNetModuleToAssemblyCommand.Execute(nodes);
 			}
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!AddNetModuleToAssemblyCommand.CanExecute(nodes))
 				return;
 
@@ -548,8 +492,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		}
 
 		AddExistingNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, LoadedAssembly asm)
-			: base(asmNode, new AssemblyTreeNode(asm), false)
-		{
+			: base(asmNode, new AssemblyTreeNode(asm), false) {
 		}
 
 		public override string Description {
@@ -557,8 +500,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		}
 	}
 
-	sealed class RemoveNetModuleFromAssemblyCommand : IUndoCommand
-	{
+	sealed class RemoveNetModuleFromAssemblyCommand : IUndoCommand {
 		const string CMD_NAME = "Remove NetModule from Assembly";
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Delete",
@@ -571,42 +513,35 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2110)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool IsVisible(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool IsVisible(ILSpyTreeNode[] nodes) {
 				return RemoveNetModuleFromAssemblyCommand.IsVisible(nodes);
 			}
 
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return RemoveNetModuleFromAssemblyCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				RemoveNetModuleFromAssemblyCommand.Execute(nodes);
 			}
 		}
 
-		static bool IsVisible(ILSpyTreeNode[] nodes)
-		{
+		static bool IsVisible(ILSpyTreeNode[] nodes) {
 			return nodes != null &&
 				nodes.Length == 1 &&
 				nodes[0] is AssemblyTreeNode &&
 				((AssemblyTreeNode)nodes[0]).IsModuleInAssembly;
 		}
 
-		internal static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		internal static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes != null &&
 				nodes.Length == 1 &&
 				nodes[0] is AssemblyTreeNode &&
 				((AssemblyTreeNode)nodes[0]).IsNetModuleInAssembly;
 		}
 
-		internal static void Execute(ILSpyTreeNode[] nodes)
-		{
+		internal static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -621,8 +556,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		readonly AssemblyTreeNode modNode;
 		readonly int removeIndex;
 
-		RemoveNetModuleFromAssemblyCommand(AssemblyTreeNode modNode)
-		{
+		RemoveNetModuleFromAssemblyCommand(AssemblyTreeNode modNode) {
 			this.asmNode = (AssemblyTreeNode)modNode.Parent;
 			Debug.Assert(this.asmNode != null);
 			this.modNode = modNode;
@@ -636,8 +570,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			get { return CMD_NAME; }
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			Debug.Assert(modNode.Parent != null);
 			if (modNode.Parent == null)
 				throw new InvalidOperationException();
@@ -652,8 +585,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			UndoCommandManager.Instance.MarkAsModified(asmNode.LoadedAssembly);
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			Debug.Assert(modNode.Parent == null);
 			if (modNode.Parent != null)
 				throw new InvalidOperationException();
@@ -666,13 +598,11 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			get { yield return asmNode; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 
-	sealed class ModuleSettingsCommand : IUndoCommand
-	{
+	sealed class ModuleSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Module";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
@@ -683,29 +613,24 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 							MenuIcon = "Settings",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2410)]
-		sealed class TheEditCommand : EditCommand
-		{
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+		sealed class TheEditCommand : EditCommand {
+			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return ModuleSettingsCommand.CanExecute(nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes)
-			{
+			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
 				ModuleSettingsCommand.Execute(nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes)
-		{
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes != null &&
 				nodes.Length == 1 &&
 				nodes[0] is AssemblyTreeNode &&
 				((AssemblyTreeNode)nodes[0]).IsModule;
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes)
-		{
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -726,8 +651,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 		readonly ModuleOptions newOptions;
 		readonly ModuleOptions origOptions;
 
-		ModuleSettingsCommand(AssemblyTreeNode modNode, ModuleOptions newOptions)
-		{
+		ModuleSettingsCommand(AssemblyTreeNode modNode, ModuleOptions newOptions) {
 			this.modNode = modNode;
 			this.newOptions = newOptions;
 			this.origOptions = new ModuleOptions(modNode.LoadedAssembly.ModuleDefinition);
@@ -737,19 +661,16 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			get { return CMD_NAME; }
 		}
 
-		void WriteModuleOptions(ModuleOptions theOptions)
-		{
+		void WriteModuleOptions(ModuleOptions theOptions) {
 			theOptions.CopyTo(modNode.LoadedAssembly.ModuleDefinition);
 			modNode.RaiseUIPropsChanged();
 		}
 
-		public void Execute()
-		{
+		public void Execute() {
 			WriteModuleOptions(newOptions);
 		}
 
-		public void Undo()
-		{
+		public void Undo() {
 			WriteModuleOptions(origOptions);
 		}
 
@@ -757,8 +678,7 @@ namespace ICSharpCode.ILSpy.AsmEditor.Module
 			get { yield return modNode; }
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 }
