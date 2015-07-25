@@ -128,12 +128,9 @@ namespace dnSpy.AsmEditor.Property {
 				}
 
 				static IEnumerable<MethodDef> GetMethods(PropertyDef evt) {
-					foreach (var m in evt.GetMethods)
-						yield return m;
-					foreach (var m in evt.SetMethods)
-						yield return m;
-					foreach (var m in evt.OtherMethods)
-						yield return m;
+					foreach (var m in evt.GetMethods) yield return m;
+					foreach (var m in evt.SetMethods) yield return m;
+					foreach (var m in evt.OtherMethods) yield return m;
 				}
 			}
 

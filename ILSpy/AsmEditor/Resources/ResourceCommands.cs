@@ -491,7 +491,7 @@ namespace dnSpy.AsmEditor.Resources {
 				return null;
 			asmNode.EnsureChildrenFiltered();
 			rsrcListNode = (ResourceListTreeNode)asmNode.Children.FirstOrDefault(a => a is ResourceListTreeNode);
-			if (rsrcListNode == null)   // If not a module node
+			if (rsrcListNode == null)	// If not a module node
 				return null;
 			rsrcListNode.EnsureChildrenFiltered();
 			if (rsrcListNode.Children.Count == 0)
