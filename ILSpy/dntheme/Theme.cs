@@ -2023,6 +2023,15 @@ namespace ICSharpCode.ILSpy.dntheme
 							new BrushColorInfo(ColorType.FileExtension, "File extension"),
 						},
 					},
+					new BrushColorInfo(ColorType.HexText, "Default text color in hex view") {
+						Children = new ColorInfo[] {
+							new BrushColorInfo(ColorType.HexOffset, "Hex Offset"),
+							new BrushColorInfo(ColorType.HexByte1, "Hex Byte Color #1"),
+							new BrushColorInfo(ColorType.HexByte2, "Hex Byte Color #2"),
+							new BrushColorInfo(ColorType.HexByteError, "Hex Byte Color Error"),
+							new BrushColorInfo(ColorType.HexAscii, "Hex ASCII"),
+						},
+					},
 				},
 			},
 		};

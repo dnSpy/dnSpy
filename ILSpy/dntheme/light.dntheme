@@ -67,5 +67,11 @@
 		<color name="currentline" fg="#EEEEEE" bg="#00000000" />
 		<color name="selectedreturnstatement" fg="Black" bg="#94B4E4B4" />
 		<color name="returnstatement" bg="#88C0C0C0" />
+		<color name="hextext" fg="Black" bg="White" />
+		<color name="hexoffset" bg="Black" />
+		<color name="hexbyte1" bg="#FF3333CC" />
+		<color name="hexbyte2" bg="#FF993366" />
+		<color name="hexbyteerror" bg="#FFFF0000" />
+		<color name="hexascii" bg="Black" />
 	</colors>
 </theme>

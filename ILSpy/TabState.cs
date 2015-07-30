@@ -112,6 +112,9 @@ namespace ICSharpCode.ILSpy
 		public virtual void FocusContent()
 		{
 			var uiel = TabItem.Content as UIElement;
+			var sv = uiel as ScrollViewer;
+			if (sv != null)
+				uiel = sv.Content as UIElement ?? uiel;
 			if (uiel != null)
 				uiel.Focus();
 		}

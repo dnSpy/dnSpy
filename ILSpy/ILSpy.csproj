@@ -526,6 +526,24 @@
     </Compile>
     <Compile Include="dntheme\FileTabBackgroundConverter.cs" />
     <Compile Include="FilterSearcher.cs" />
+    <Compile Include="HexEditor\ByteArrayHexStream.cs" />
+    <Compile Include="HexEditor\HexBox.cs" />
+    <Compile Include="HexEditor\HexBoxPosition.cs" />
+    <Compile Include="HexEditor\HexBoxPositionKind.cs" />
+    <Compile Include="HexEditor\HexBoxState.cs" />
+    <Compile Include="HexEditor\HexCaret.cs" />
+    <Compile Include="HexEditor\HexDocument.cs" />
+    <Compile Include="HexEditor\HexLine.cs" />
+    <Compile Include="HexEditor\HexLineLayer.cs" />
+    <Compile Include="HexEditor\HexLinePart.cs" />
+    <Compile Include="HexEditor\HexLineTextSource.cs" />
+    <Compile Include="HexEditor\HexSelection.cs" />
+    <Compile Include="HexEditor\HexTextParagraphProperties.cs" />
+    <Compile Include="HexEditor\HexTextRunProperties.cs" />
+    <Compile Include="HexEditor\IHexLayer.cs" />
+    <Compile Include="HexEditor\IHexStream.cs" />
+    <Compile Include="HexEditor\NumberUtils.cs" />
+    <Compile Include="HexEditor\SelectionLayer.cs" />
     <Compile Include="Images\ImageCache.cs" />
     <Compile Include="Images\ThemedImageCreator.cs" />
     <Compile Include="IPlugin.cs" />

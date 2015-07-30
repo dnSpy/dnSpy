@@ -473,6 +473,13 @@ namespace ICSharpCode.ILSpy.dntheme
 		/// </summary>
 		CurrentLine,
 
+		HexText,
+		HexOffset,
+		HexByte1,
+		HexByte2,
+		HexByteError,
+		HexAscii,
+
 		SystemColorsControl,
 		SystemColorsControlDark,
 		SystemColorsControlDarkDark,

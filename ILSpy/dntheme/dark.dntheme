@@ -67,6 +67,12 @@
 		<color name="currentline" fg="#282828" bg="#0F0F0F" />
 		<color name="selectedreturnstatement" fg="Black" bg="#6A7CA5A0" />
 		<color name="returnstatement" bg="#8E5A5A5A" />
+		<color name="hextext" fg="#DCDCDC" bg="#1E1E1E" />
+		<color name="hexoffset" bg="#FFB5CEA8" />
+		<color name="hexbyte1" bg="#FFCC9900" />
+		<color name="hexbyte2" bg="#FF996600" />
+		<color name="hexbyteerror" bg="#FFFF0066" />
+		<color name="hexascii" bg="#DCDCDC" />
 
 		<color name="systemcolorscontrol" bg="#303030" />
 		<color name="systemcolorscontroldark" bg="#606060" />
