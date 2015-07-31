@@ -278,7 +278,10 @@ namespace ICSharpCode.ILSpy.dntheme
 			new BrushColorInfo(ColorType.Selection, "Selected text") {
 				DefaultBackground = "#663399FF",
 			},
-			new BrushColorInfo(ColorType.SpecialCharacterBox, "Special character box") {
+			new BrushColorInfo(ColorType.HexSelection, "Selected text in hex editor") {
+				DefaultBackground = "#663399FF",
+			},
+            new BrushColorInfo(ColorType.SpecialCharacterBox, "Special character box") {
 				DefaultForeground = "#FFFFFFFF",
 				DefaultBackground = "#C8808080",
 			},
@@ -2026,10 +2029,12 @@ namespace ICSharpCode.ILSpy.dntheme
 					new BrushColorInfo(ColorType.HexText, "Default text color in hex view") {
 						Children = new ColorInfo[] {
 							new BrushColorInfo(ColorType.HexOffset, "Hex Offset"),
+							new BrushColorInfo(ColorType.HexByte0, "Hex Byte Color #0"),
 							new BrushColorInfo(ColorType.HexByte1, "Hex Byte Color #1"),
-							new BrushColorInfo(ColorType.HexByte2, "Hex Byte Color #2"),
 							new BrushColorInfo(ColorType.HexByteError, "Hex Byte Color Error"),
 							new BrushColorInfo(ColorType.HexAscii, "Hex ASCII"),
+							new BrushColorInfo(ColorType.HexCaret, "Hex Caret"),
+							new BrushColorInfo(ColorType.HexInactiveCaret, "Hex Inactive Caret"),
 						},
 					},
 				},

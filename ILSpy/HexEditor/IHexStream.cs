@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections;
+
 namespace dnSpy.HexEditor {
 	public interface IHexStream {
 		/// <summary>
@@ -31,5 +33,14 @@ namespace dnSpy.HexEditor {
 		/// <param name="offset">Offset of byte</param>
 		/// <returns></returns>
 		int ReadByte(ulong offset);
+
+		/// <summary>
+		/// Reads bytes
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <param name="array">Array</param>
+		/// <param name="index">Index in <paramref name="array"/></param>
+		/// <param name="count">Size of data to read</param>
+		void Read(ulong offset, byte[] array, int index, int count);
 	}
 }

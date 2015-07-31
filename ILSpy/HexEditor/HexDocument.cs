@@ -21,7 +21,7 @@ using System;
 using System.IO;
 
 namespace dnSpy.HexEditor {
-	public sealed class HexDocument : IDisposable {
+	public sealed class HexDocument : IDisposable, IHexStream {
 		readonly IHexStream stream;
 
 		public ulong Size {
@@ -44,6 +44,10 @@ namespace dnSpy.HexEditor {
 
 		public int ReadByte(ulong offs) {
 			return stream.ReadByte(offs);
+		}
+
+		public void Read(ulong offset, byte[] array, int index, int count) {
+			stream.Read(offset, array, index, count);
 		}
 
 		public void Dispose() {

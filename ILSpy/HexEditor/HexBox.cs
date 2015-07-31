@@ -83,6 +83,9 @@ namespace dnSpy.HexEditor {
 		public static readonly DependencyProperty CaretForegroundProperty =
 			DependencyProperty.Register("CaretForeground", typeof(Brush), typeof(HexBox),
 			new FrameworkPropertyMetadata(Brushes.Black));
+		public static readonly DependencyProperty InactiveCaretForegroundProperty =
+			DependencyProperty.Register("InactiveCaretForeground", typeof(Brush), typeof(HexBox),
+			new FrameworkPropertyMetadata(Brushes.Black));
 		public static readonly DependencyProperty SelectionBackgroundProperty =
 			DependencyProperty.Register("SelectionBackground", typeof(Brush), typeof(HexBox),
 			new FrameworkPropertyMetadata(Brushes.Blue));
@@ -142,6 +145,11 @@ namespace dnSpy.HexEditor {
 			set { SetValue(CaretForegroundProperty, value); }
 		}
 
+		public Brush InactiveCaretForeground {
+			get { return (Brush)GetValue(InactiveCaretForegroundProperty); }
+			set { SetValue(InactiveCaretForegroundProperty, value); }
+		}
+
 		public Brush SelectionBackground {
 			get { return (Brush)GetValue(SelectionBackgroundProperty); }
 			set { SetValue(SelectionBackgroundProperty, value); }
@@ -149,8 +157,26 @@ namespace dnSpy.HexEditor {
 
 		static void OnDocumentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			var self = (HexBox)d;
+			self.RemoveHooks((HexDocument)e.OldValue);
+			self.AddHooks((HexDocument)e.NewValue);
+		}
+
+		void AddHooks(HexDocument doc) {
+			if (doc == null)
+				return;
+			if (!IsLoaded)
+				return;
+
 			//TODO: hook events, unhook events from old doc, invalidate layers, etc
-			self.InvalidateCachedLinesAndRefresh();
+			InvalidateCachedLinesAndRefresh();
+		}
+
+		void RemoveHooks(HexDocument doc) {
+			if (doc == null)
+				return;
+
+			//TODO: Undo what AddHooks() did
+			InvalidateCachedLinesAndRefresh();
 		}
 
 		static void OnStartOffsetChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
@@ -222,6 +248,7 @@ namespace dnSpy.HexEditor {
 
 			this.selectionLayer.SetBinding(BackgroundProperty, new Binding("SelectionBackground") { Source = this });
 			this.hexCaret.SetBinding(ForegroundProperty, new Binding("CaretForeground") { Source = this });
+			this.hexCaret.SetBinding(HexCaret.InactiveCaretForegroundProperty, new Binding("InactiveCaretForeground") { Source = this });
 
 			// Since we don't use a ControlTemplate, the Background property isn't used by WPF. Use
 			// a Canvas to show the background color.
@@ -230,6 +257,7 @@ namespace dnSpy.HexEditor {
 
 			InitializeHexOffsetSizeData();
 			this.Loaded += HexBox_Loaded;
+			this.Unloaded += HexBox_Unloaded;
 
 			Add(EditingCommands.MoveDownByLine, ModifierKeys.None, Key.Down, (s, e) => UnselectText(() => MoveCaretDown()));
 			Add(EditingCommands.MoveUpByLine, ModifierKeys.None, Key.Up, (s, e) => UnselectText(() => MoveCaretUp()));
@@ -267,6 +295,19 @@ namespace dnSpy.HexEditor {
 			Add(SelectCaretToBottomCommand, ModifierKeys.Control | ModifierKeys.Shift, Key.PageDown, (s, e) => SelectText(() => MoveCaretToBottom()));
 			Add(SelectScrollMoveCaretUpCommand, ModifierKeys.Control | ModifierKeys.Shift, Key.Up, (s, e) => SelectText(() => ScrollMoveCaretUp()));
 			Add(SelectScrollMoveCaretDownCommand, ModifierKeys.Control | ModifierKeys.Shift, Key.Down, (s, e) => SelectText(() => ScrollMoveCaretDown()));
+
+			this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (s, e) => Copy(), (s, e) => e.CanExecute = CanCopyToClipboard()));
+			this.CommandBindings.Add(new CommandBinding(ApplicationCommands.SelectAll, (s, e) => SelectAll()));
+			this.CommandBindings.Add(new CommandBinding(CopyHexStringCommand, (s, e) => CopyHexString(), (s, e) => e.CanExecute = CanCopyToClipboard()));
+			this.CommandBindings.Add(new CommandBinding(CopyUTF8StringCommand, (s, e) => CopyUTF8String(), (s, e) => e.CanExecute = CanCopyToClipboard()));
+			this.CommandBindings.Add(new CommandBinding(CopyUnicodeStringCommand, (s, e) => CopyUnicodeString(), (s, e) => e.CanExecute = CanCopyToClipboard()));
+			this.CommandBindings.Add(new CommandBinding(CopyCSharpArrayCommand, (s, e) => CopyCSharpArray(), (s, e) => e.CanExecute = CanCopyToClipboard()));
+			this.CommandBindings.Add(new CommandBinding(CopyVBArrayCommand, (s, e) => CopyVBArray(), (s, e) => e.CanExecute = CanCopyToClipboard()));
+			this.CommandBindings.Add(new CommandBinding(CopyUILayoutCommand, (s, e) => CopyUILayout(), (s, e) => e.CanExecute = CanCopyToClipboard()));
+		}
+
+		bool CanCopyToClipboard() {
+			return Selection != null && Document != null;
 		}
 
 		public static readonly RoutedUICommand MoveCaretToTopCommand = new RoutedUICommand("Move Caret To Top", "Move Caret To Top", typeof(HexBox));
@@ -280,9 +321,15 @@ namespace dnSpy.HexEditor {
 		public static readonly RoutedUICommand SwitchCaretColumnCommand = new RoutedUICommand("Switch Caret Column", "Switch Caret Column", typeof(HexBox));
 		public static readonly RoutedUICommand SwitchCaretToHexColumnCommand = new RoutedUICommand("Switch Caret To Hex Column", "Switch Caret To Hex Column", typeof(HexBox));
 		public static readonly RoutedUICommand SwitchCaretToAsciiColumnCommand = new RoutedUICommand("Switch Caret To Ascii Column", "Switch Caret To Ascii Column", typeof(HexBox));
+		public static readonly RoutedUICommand CopyHexStringCommand = new RoutedUICommand("Copy Hex String", "Copy Hex String", typeof(HexBox));
+		public static readonly RoutedUICommand CopyUTF8StringCommand = new RoutedUICommand("Copy UTF8 String", "Copy UTF8 String", typeof(HexBox));
+		public static readonly RoutedUICommand CopyUnicodeStringCommand = new RoutedUICommand("Copy Unicode String", "Copy Unicode String", typeof(HexBox));
+		public static readonly RoutedUICommand CopyCSharpArrayCommand = new RoutedUICommand("Copy C# Array", "Copy C# Array", typeof(HexBox));
+		public static readonly RoutedUICommand CopyVBArrayCommand = new RoutedUICommand("Copy VB Array", "Copy VB Array", typeof(HexBox));
+		public static readonly RoutedUICommand CopyUILayoutCommand = new RoutedUICommand("Copy UI Layout", "Copy UI Layout", typeof(HexBox));
 
-		void Add(ICommand command, ModifierKeys modifiers, Key key, ExecutedRoutedEventHandler del) {
-			this.CommandBindings.Add(new CommandBinding(command, del));
+		void Add(ICommand command, ModifierKeys modifiers, Key key, ExecutedRoutedEventHandler exec) {
+			this.CommandBindings.Add(new CommandBinding(command, exec));
 			this.InputBindings.Add(new KeyBinding(command, key, modifiers));
 		}
 
@@ -326,9 +373,14 @@ namespace dnSpy.HexEditor {
 		}
 
 		void HexBox_Loaded(object sender, RoutedEventArgs e) {
-			Loaded -= HexBox_Loaded;
+			AddHooks(Document);
+
 			if (textFormatter == null)
 				InitializeAll();
+		}
+
+		void HexBox_Unloaded(object sender, RoutedEventArgs e) {
+			RemoveHooks(Document);
 		}
 
 		void InitializeAll() {
@@ -424,15 +476,23 @@ namespace dnSpy.HexEditor {
 				hexByteCharIndex = (diff % 3) <= 1 ? 0 : 1;
 				return diff / 3;
 			}
+			if (col < start) {
+				hexByteCharIndex = 0;
+				return 0;
+			}
 			hexByteCharIndex = 0;
 			return null;
 		}
 
 		ulong? TryGetAsciiLineIndex(ulong col) {
+			if (!PrintAscii)
+				return null;
 			ulong start = GetAsciiColumnIndex();
 			ulong end = NumberUtils.AddUInt64(start, (ulong)(visibleBytesPerLine - 1));
 			if (start <= col && col <= end)
 				return col - start;
+			if (col >= end)
+				return end - start;
 			// Check if the user clicked the space character before the ASCII text
 			return start != 0 && start - 1 == col ? 0 : (ulong?)null;
 		}
@@ -508,7 +568,7 @@ namespace dnSpy.HexEditor {
 			else
 				hexLines.Clear();
 			hexLineLayer.Initialize(hexLines);
-			InitializeCaret(hexCaret.Position);
+			InitializeCaret(CaretPosition);
 
 			for (int i = 0; i < VisualChildrenCount; i++)
 				((UIElement)this.GetVisualChild(i)).Measure(constraint);
@@ -530,7 +590,7 @@ namespace dnSpy.HexEditor {
 
 		void InitializeCaret(HexBoxPosition position) {
 			double horizPos = horizCol * characterWidth;
-			if (!IsCaretVisible(position)) {
+			if (!IsCaretVisible(position) || visibleBytesPerLine == 0) {
 				hexCaret.SetCaret(position, horizPos, null, null);
 				return;
 			}
@@ -561,22 +621,75 @@ namespace dnSpy.HexEditor {
 			return hexLines[0].Offset <= position.Offset && position.Offset <= NumberUtils.AddUInt64(hexLines[hexLines.Count - 1].Offset, (ulong)(visibleBytesPerLine - 1));
 		}
 
-		HexBoxPosition? GetPositionFrom(Point pos) {
-			if (pos.X < 0 || pos.Y < 0 || pos.X >= ActualWidth || pos.Y >= ActualHeight)
-				return null;
+		HexPositionUI GetDocumentPosition(Point pos) {
 			if (characterHeight == 0 || characterWidth == 0)
-				return null;
+				return new HexPositionUI(0, 0);
 
-			ulong index = (ulong)(pos.Y / characterHeight);
-			ulong col = NumberUtils.AddUInt64((ulong)(pos.X / characterWidth), (ulong)horizCol);
-			ulong lineOffset = NumberUtils.AddUInt64(topOffset, NumberUtils.MulUInt64(index, (ulong)visibleBytesPerLine));
+			ulong bpl = (ulong)(visibleBytesPerLine == 0 ? 1 : visibleBytesPerLine);
+			ulong topLine = (topOffset - StartOffset) / bpl;
+
+			long relRow = (long)(pos.Y / characterHeight);
+			long relCol = (long)(pos.X / characterWidth + horizCol);
+
+			ulong row;
+			if (relRow < 0)
+				row = NumberUtils.SubUInt64(topLine, (ulong)-relRow);
+			else
+				row = NumberUtils.AddUInt64(topLine, (ulong)relRow);
+
+			ulong col = (ulong)Math.Max(0, relCol);
+
+			return new HexPositionUI(col, row);
+		}
+
+		HexPositionUI GetTopDocumentPos() {
+			return GetDocumentPosition(new Point(0, 0));
+		}
+
+		HexPositionUI GetBottomDocumentPos() {
+			return GetDocumentPosition(new Point(Math.Max(0, (int)Math.Ceiling(ViewportWidth) - 1) * CharacterWidth, Math.Max(0, VisibleLinesPerPage - 1) * CharacterHeight));
+		}
+
+		HexPositionUI GetDocumentPositionFromMousePosition(Point pos) {
+			if (characterHeight == 0 || characterWidth == 0)
+				return new HexPositionUI(0, 0);
+
+			var docPos = GetDocumentPosition(pos);
+			var top = GetTopDocumentPos();
+			var bottom = GetBottomDocumentPos();
+
+			ulong x = docPos.X;
+			ulong y = docPos.Y;
+			if (x > bottom.X)
+				x = NumberUtils.AddUInt64(bottom.X, 1);
+			if (y > bottom.Y)
+				y = NumberUtils.AddUInt64(bottom.Y, 1);
+			if (x < top.X)
+				x = NumberUtils.SubUInt64(top.X, 1);
+			if (y < top.Y)
+				y = NumberUtils.SubUInt64(top.Y, 1);
+
+			return new HexPositionUI(x, y);
+		}
+
+		HexBoxPosition? GetPositionFrom(Point pos) {
+			return GetPositionFrom(GetDocumentPositionFromMousePosition(pos));
+		}
+
+		ulong GetLineOffset(HexPositionUI docPos) {
+			ulong bpl = (ulong)(visibleBytesPerLine == 0 ? 1 : visibleBytesPerLine);
+			return NumberUtils.AddUInt64(StartOffset, NumberUtils.MulUInt64(docPos.Y, bpl));
+		}
+
+		HexBoxPosition? GetPositionFrom(HexPositionUI docPos) {
+			ulong lineOffset = GetLineOffset(docPos);
 
 			int hexByteCharIndex;
-			ulong? hexByteIndex = TryGetHexByteLineIndex(col, out hexByteCharIndex);
+			ulong? hexByteIndex = TryGetHexByteLineIndex(docPos.X, out hexByteCharIndex);
 			if (hexByteIndex != null)
 				return HexBoxPosition.CreateByte(NumberUtils.AddUInt64(lineOffset, hexByteIndex.Value), hexByteCharIndex);
 
-			ulong? asciiIndex = TryGetAsciiLineIndex(col);
+			ulong? asciiIndex = TryGetAsciiLineIndex(docPos.X);
 			if (asciiIndex != null)
 				return HexBoxPosition.CreateAscii(NumberUtils.AddUInt64(lineOffset, asciiIndex.Value));
 
@@ -615,20 +728,47 @@ namespace dnSpy.HexEditor {
 				offsetToLine.Add(line.Offset, line);
 		}
 
-		HexLine GetHexLine(ulong offset, List<HexLinePart> parts, TextRunProperties textRunProps, TextParagraphProperties paraProps, StringBuilder sb, StringBuilder sb2, double width, short[] bytesAry) {
-			HexLine hexLine;
-			if (offsetToLine.TryGetValue(offset, out hexLine))
-				return hexLine;
+		internal List<HexLine> CreateHexLines(ulong start, ulong end) {
+			var lines = new List<HexLine>();
 
+			var textRunProps = CreateHexTextRunProperties();
+
+			ulong offs = start;
+			var parts = new List<HexLinePart>();
+			var sb = new StringBuilder(2/*0x*/ + 16/*offset: up to 16 hex chars*/ + visibleBytesPerLine * 3/*space + 2 hex chars*/ + 1/*space*/ + visibleBytesPerLine/*ASCII chars*/);
+			var sb2 = new StringBuilder(visibleBytesPerLine);
+			var bytesAry = new short[visibleBytesPerLine];
+			while (offs <= end) {
+				var hexLine = CreateHexLine(offs, end, parts, textRunProps, sb, sb2, bytesAry);
+
+				lines.Add(hexLine);
+				sb.Clear();
+
+				offs = offs - GetLineByteIndex(offs);
+				var nextOffs = offs + (ulong)visibleBytesPerLine;
+				if (nextOffs < offs)
+					break;
+				offs = nextOffs;
+			}
+
+			return lines;
+		}
+
+		HexLine CreateHexLine(ulong offset, ulong end, List<HexLinePart> parts, TextRunProperties textRunProps, StringBuilder sb, StringBuilder sb2, short[] bytesAry) {
 			parts.Clear();
-			int bytes = (int)Math.Min(EndOffset - offset + 1, (ulong)visibleBytesPerLine);
+			int skipBytes = (int)GetLineByteIndex(offset);
+			int bytes = (int)Math.Min(end - offset + 1, (ulong)(visibleBytesPerLine - skipBytes));
 			if (bytes == 0)
-				bytes = visibleBytesPerLine;
+				bytes = visibleBytesPerLine - skipBytes;
 
-			ulong visibleOffs = PhysicalToVisibleOffset(offset);
+			ulong visibleOffs = PhysicalToVisibleOffset(offset - (ulong)skipBytes);
 			Add(parts, sb, string.Format(offsetFormatString, UseHexPrefix ? "0x" : string.Empty, visibleOffs & offsetMask), textRunProps, ColorType.HexOffset);
+
+			if (skipBytes > 0)
+				Add(parts, sb, new string(' ', skipBytes * 3), textRunProps, ColorType.HexText);
+
 			var doc = Document;
-			for (int i = 0; i < bytes; i++, visibleOffs++) {
+			for (int i = 0; i < bytes; i++) {
 				int b = doc.ReadByte(offset + (ulong)i);
 				bytesAry[i] = (short)b;
 
@@ -636,12 +776,14 @@ namespace dnSpy.HexEditor {
 				if (b < 0)
 					Add(parts, sb, " ??", textRunProps, ColorType.HexByteError);
 				else
-					Add(parts, sb, string.Format(" {0:X2}", b), textRunProps, BytesGroupCount <= 0 || ((i / BytesGroupCount) & 1) == 0 ? ColorType.HexByte1 : ColorType.HexByte2);
+					Add(parts, sb, string.Format(" {0:X2}", b), textRunProps, BytesGroupCount <= 0 || ((i / BytesGroupCount) & 1) == 0 ? ColorType.HexByte0 : ColorType.HexByte1);
 			}
 
-			if (visibleBytesPerLine != bytes)
-				Add(parts, sb, new string(' ', (visibleBytesPerLine - bytes) * 3), textRunProps, ColorType.HexText);
+			if (visibleBytesPerLine - skipBytes != bytes)
+				Add(parts, sb, new string(' ', (visibleBytesPerLine - skipBytes - bytes) * 3), textRunProps, ColorType.HexText);
 			if (PrintAscii) {
+				if (skipBytes > 0)
+					Add(parts, sb, new string(' ', skipBytes), textRunProps, ColorType.HexAscii);
 				Add(parts, sb, " ", textRunProps, ColorType.HexAscii);
 				for (int i = 0; i < bytes; i++) {
 					int b = bytesAry[i];
@@ -654,7 +796,15 @@ namespace dnSpy.HexEditor {
 				sb2.Clear();
 			}
 
-			hexLine = new HexLine(offset, sb.ToString(), parts.ToArray());
+			return new HexLine(offset, sb.ToString(), parts.ToArray());
+		}
+
+		HexLine GetHexLine(ulong offset, List<HexLinePart> parts, TextRunProperties textRunProps, TextParagraphProperties paraProps, StringBuilder sb, StringBuilder sb2, double width, short[] bytesAry) {
+			HexLine hexLine;
+			if (offsetToLine.TryGetValue(offset, out hexLine))
+				return hexLine;
+
+			hexLine = CreateHexLine(offset, EndOffset , parts, textRunProps, sb, sb2, bytesAry);
 			offsetToLine.Add(offset, hexLine);
 			var hexLineTextSource = new HexLineTextSource(hexLine);
 			var textLines = new List<TextLine>();
@@ -688,11 +838,6 @@ namespace dnSpy.HexEditor {
 			var bg = c.Background == null ? null : c.Background.GetBrush(null);
 			if (bg != null)
 				trp._ForegroundBrush = bg;
-
-			var fs = c.FontStyle;
-			var fw = c.FontWeight;
-			if (fs != null || fw != null)
-				trp._Typeface = new Typeface(trp.Typeface.FontFamily, fs ?? FontStyles.Normal, fw ?? FontWeights.Normal, trp.Typeface.Stretch);
 
 			// Merge if possible
 			bool merged = false;
@@ -829,7 +974,7 @@ namespace dnSpy.HexEditor {
 			return c == 0 ? 1 : c;
 		}
 
-		int VisibleCharactersPerLine() {
+		int WholeCharactersPerLine() {
 			return (int)ViewportWidth;
 		}
 
@@ -858,11 +1003,11 @@ namespace dnSpy.HexEditor {
 		}
 
 		public void PageLeft() {
-			AddHorizontal(-VisibleCharactersPerLine());
+			AddHorizontal(-WholeCharactersPerLine());
 		}
 
 		public void PageRight() {
-			AddHorizontal(VisibleCharactersPerLine());
+			AddHorizontal(WholeCharactersPerLine());
 		}
 
 		int GetScrollWheelLines() {
@@ -986,7 +1131,7 @@ namespace dnSpy.HexEditor {
 		}
 
 		void SetHorizontalEndColumn(long newHorizCol) {
-			int cols = VisibleCharactersPerLine();
+			int cols = WholeCharactersPerLine();
 			newHorizCol = Math.Max(0, newHorizCol - (cols - 1));
 			SetHorizontalStartColumn(newHorizCol);
 		}
@@ -994,7 +1139,7 @@ namespace dnSpy.HexEditor {
 		bool SetHorizontalColumnInternal(long newHorizCol) {
 			if (newHorizCol < 0)
 				newHorizCol = 0;
-			long max = Math.Max(0, (long)CalculateCharactersPerLine() - VisibleCharactersPerLine());
+			long max = Math.Max(0, (long)CalculateCharactersPerLine() - WholeCharactersPerLine());
 			if (max > int.MaxValue)
 				max = int.MaxValue;
 			if (newHorizCol >= max)
@@ -1006,106 +1151,106 @@ namespace dnSpy.HexEditor {
 
 			horizCol = (int)newHorizCol;
 			hexLineLayer.LineStart = new Vector(-horizCol * characterWidth, 0);
-			InitializeCaret(hexCaret.Position);
+			InitializeCaret(CaretPosition);
 			return true;
 		}
 		int horizCol;
 
 		void UpdateCaretOffset() {
-			SetCaretPosition(hexCaret.Position, false);
+			SetCaretPosition(CaretPosition, false);
 		}
 
 		void UpdateCaretPosition() {
-			InitializeCaret(hexCaret.Position);
+			InitializeCaret(CaretPosition);
 		}
 
 		public void MoveCaretLeft() {
-			SetCaretPosition(MoveLeft(hexCaret.Position));
+			SetCaretPosition(MoveLeft(CaretPosition));
 		}
 
 		public void MoveCaretRight() {
-			SetCaretPosition(MoveRight(hexCaret.Position));
+			SetCaretPosition(MoveRight(CaretPosition));
 		}
 
 		public void MoveCaretUp() {
-			SetCaretPosition(MoveUp(hexCaret.Position));
+			SetCaretPosition(MoveUp(CaretPosition));
 		}
 
 		public void MoveCaretDown() {
-			SetCaretPosition(MoveDown(hexCaret.Position));
+			SetCaretPosition(MoveDown(CaretPosition));
 		}
 
 		public void MoveCaretPageUp() {
 			PageUp();
-			SetCaretPosition(MovePageUp(hexCaret.Position));
+			SetCaretPosition(MovePageUp(CaretPosition));
 		}
 
 		public void MoveCaretPageDown() {
 			PageDown();
-			SetCaretPosition(MovePageDown(hexCaret.Position));
+			SetCaretPosition(MovePageDown(CaretPosition));
 		}
 
 		public void MoveCaretToStart() {
-			SetCaretPosition(MoveStart(hexCaret.Position));
+			SetCaretPosition(MoveStart(CaretPosition));
 		}
 
 		public void MoveCaretToEnd() {
-			SetCaretPosition(MoveEnd(hexCaret.Position));
+			SetCaretPosition(MoveEnd(CaretPosition));
 		}
 
 		public void MoveCaretToTop() {
-			SetCaretPosition(MoveToTop(hexCaret.Position));
+			SetCaretPosition(MoveToTop(CaretPosition));
 		}
 
 		public void MoveCaretToBottom() {
-			SetCaretPosition(MoveToBottom(hexCaret.Position));
+			SetCaretPosition(MoveToBottom(CaretPosition));
 		}
 
 		public void MoveCaretLeftWord() {
-			SetCaretPosition(MoveLeftWord(hexCaret.Position));
+			SetCaretPosition(MoveLeftWord(CaretPosition));
 		}
 
 		public void MoveCaretRightWord() {
-			SetCaretPosition(MoveRightWord(hexCaret.Position));
+			SetCaretPosition(MoveRightWord(CaretPosition));
 		}
 
 		public void MoveCaretToLineStart() {
-			SetCaretPosition(MoveLineStart(hexCaret.Position));
+			SetCaretPosition(MoveLineStart(CaretPosition));
 		}
 
 		public void MoveCaretToLineEnd() {
-			SetCaretPosition(MoveLineEnd(hexCaret.Position));
+			SetCaretPosition(MoveLineEnd(CaretPosition));
 		}
 
 		public void SwitchCaretColumn() {
-			if (hexCaret.Position.Kind == HexBoxPositionKind.HexByte)
+			if (CaretPosition.Kind == HexBoxPositionKind.HexByte)
 				SwitchCaretToAsciiColumn();
 			else
 				SwitchCaretToHexColumn();
 		}
 
 		public void SwitchCaretToHexColumn() {
-			if (hexCaret.Position.Kind == HexBoxPositionKind.HexByte)
+			if (CaretPosition.Kind == HexBoxPositionKind.HexByte)
 				return;
-			SetCaretPosition(new HexBoxPosition(hexCaret.Position.Offset, HexBoxPositionKind.HexByte, 0));
+			SetCaretPosition(new HexBoxPosition(CaretPosition.Offset, HexBoxPositionKind.HexByte, 0));
 		}
 
 		public void SwitchCaretToAsciiColumn() {
 			if (!PrintAscii)
 				return;
-			if (hexCaret.Position.Kind == HexBoxPositionKind.Ascii)
+			if (CaretPosition.Kind == HexBoxPositionKind.Ascii)
 				return;
-			SetCaretPosition(new HexBoxPosition(hexCaret.Position.Offset, HexBoxPositionKind.Ascii, 0));
+			SetCaretPosition(new HexBoxPosition(CaretPosition.Offset, HexBoxPositionKind.Ascii, 0));
 		}
 
 		public void ScrollMoveCaretUp() {
 			LineUp();
-			SetCaretPosition(EnsureInCurrentView(hexCaret.Position));
+			SetCaretPosition(EnsureInCurrentView(CaretPosition));
 		}
 
 		public void ScrollMoveCaretDown() {
 			LineDown();
-			SetCaretPosition(EnsureInCurrentView(hexCaret.Position));
+			SetCaretPosition(EnsureInCurrentView(CaretPosition));
 		}
 
 		void SetCaretPosition(HexBoxPosition position, bool bringCaretIntoView = true) {
@@ -1316,11 +1461,42 @@ namespace dnSpy.HexEditor {
 			}
 		}
 
+		HexBoxPosition MoveToEndOfSelection(HexBoxPosition position) {
+			var sel = Selection;
+			if (sel == null)
+				return position;
+
+			switch (position.Kind) {
+			case HexBoxPositionKind.Ascii:
+				return HexBoxPosition.CreateAscii(sel.Value.To);
+
+			case HexBoxPositionKind.HexByte:
+				if (sel.Value.From <= sel.Value.To)
+					return HexBoxPosition.CreateByte(sel.Value.To, HexBoxPosition.INDEX_HEXBYTE_LAST);
+				return HexBoxPosition.CreateByte(sel.Value.To, HexBoxPosition.INDEX_HEXBYTE_FIRST);
+
+			default:
+				throw new InvalidOperationException();
+			}
+		}
+
 		void BringCaretIntoView() {
-			BringIntoView(hexCaret.Position);
+			BringIntoView(CaretPosition);
 		}
 
 		void BringIntoView(HexBoxPosition position) {
+			if (position.Kind == HexBoxPositionKind.HexByte && position.KindPosition == HexBoxPosition.INDEX_HEXBYTE_FIRST) {
+				// To make sure left scrolling with the mouse works, make sure that the space
+				// character is visible. First make it visible, and then bring the new position into
+				// view, just in case the size of the control is so small that two chars won't fit.
+				ScrollHorizontallyToCaret(ToColumn(position) - 1);
+				BringIntoView2(position);
+			}
+			else
+				BringIntoView2(position);
+		}
+
+		void BringIntoView2(HexBoxPosition position) {
 			if (position.Offset < topOffset)
 				SetTopOffset(position.Offset);
 			else {
@@ -1335,11 +1511,14 @@ namespace dnSpy.HexEditor {
 		}
 
 		void ScrollHorizontallyToCaret(HexBoxPosition position) {
-			int caretCol = ToColumn(position);
+			ScrollHorizontallyToCaret(ToColumn(position));
+		}
+
+		void ScrollHorizontallyToCaret(int caretCol) {
 			if (caretCol < horizCol)
 				SetHorizontalStartColumn(caretCol);
 			else {
-				int cols = VisibleCharactersPerLine();
+				int cols = WholeCharactersPerLine();
 				int end = horizCol + cols - 1;
 				if (caretCol > end)
 					SetHorizontalEndColumn(caretCol);
@@ -1373,20 +1552,20 @@ namespace dnSpy.HexEditor {
 		}
 
 		bool mouseCaptureActive;
-		HexBoxPosition? mouseCaptureStartPos;
+		ulong? mouseCaptureStartPos;
+		HexPositionUI mouseCaptureStartPosUI;
 
 		protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e) {
 			var pos = GetPositionFrom(e);
 			if (pos != null) {
 				if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0)
 					SelectText(() => SetCaretPosition(pos.Value));
-				else {
+				else
 					UnselectText(() => SetCaretPosition(pos.Value));
-
-					if (CaptureMouse()) {
-						mouseCaptureActive = true;
-						mouseCaptureStartPos = pos;
-					}
+				if (CaptureMouse()) {
+					mouseCaptureActive = true;
+					mouseCaptureStartPos = Selection == null ? pos.Value.Offset : Selection.Value.From;
+					mouseCaptureStartPosUI = GetDocumentPositionFromMousePosition(e.GetPosition(this));
 				}
 
 				Focus();
@@ -1400,7 +1579,7 @@ namespace dnSpy.HexEditor {
 		protected override void OnMouseMove(MouseEventArgs e) {
 			HexBoxPosition? pos;
 			if (mouseCaptureActive && (pos = GetPositionFrom(e)) != null) {
-				UpdateCaptureMouseSelection(mouseCaptureStartPos, pos.Value);
+				UpdateCaptureMouseSelection(mouseCaptureStartPos, pos.Value, GetDocumentPositionFromMousePosition(e.GetPosition(this)));
 				e.Handled = true;
 				return;
 			}
@@ -1418,7 +1597,7 @@ namespace dnSpy.HexEditor {
 				ReleaseMouseCapture();
 			HexBoxPosition? pos;
 			if (mouseCaptured && (pos = GetPositionFrom(e)) != null) {
-				UpdateCaptureMouseSelection(origSel, pos.Value);
+				UpdateCaptureMouseSelection(origSel, pos.Value, GetDocumentPositionFromMousePosition(e.GetPosition(this)));
 				e.Handled = true;
 				return;
 			}
@@ -1426,11 +1605,12 @@ namespace dnSpy.HexEditor {
 			base.OnMouseLeftButtonUp(e);
 		}
 
-		void UpdateCaptureMouseSelection(HexBoxPosition? origSel, HexBoxPosition position) {
-			if (origSel == null)
+		void UpdateCaptureMouseSelection(ulong? startOffset, HexBoxPosition position, HexPositionUI uiPos) {
+			SetCaretPosition(position);
+			if (startOffset == null)
 				return;
-			if (Selection != null || origSel.Value.Offset != position.Offset)
-				Selection = new HexSelection(origSel.Value.Offset, position.Offset);
+			if (Selection != null || uiPos != mouseCaptureStartPosUI)
+				Selection = new HexSelection(startOffset.Value, position.Offset);
 		}
 
 		HexBoxPosition? GetPositionFrom(MouseEventArgs e) {
@@ -1444,7 +1624,7 @@ namespace dnSpy.HexEditor {
 				state.Column = horizCol;
 				state.StartOffset = StartOffset;
 				state.EndOffset = EndOffset;
-				state.CaretPosition = hexCaret.Position;
+				state.CaretPosition = CaretPosition;
 				state.Selection = Selection;
 				return state;
 			}
@@ -1453,7 +1633,7 @@ namespace dnSpy.HexEditor {
 				EndOffset = value.EndOffset;
 				SetTopOffset(value.TopOffset);
 				SetHorizontalStartColumn(value.Column);
-				SetCaretPosition(value.CaretPosition);
+				CaretPosition = value.CaretPosition;
 				Selection = value.Selection;
 			}
 		}
@@ -1535,6 +1715,73 @@ namespace dnSpy.HexEditor {
 				Selection = new HexSelection(pos.Offset, CaretPosition.Offset);
 			else
 				Selection = new HexSelection(Selection.Value.From, CaretPosition.Offset);
+		}
+
+		public void Copy() {
+			CopyHexString();
+		}
+
+		public void CopyHexString() {
+			if (CanCopyToClipboard())
+				CopyHexString(Selection.Value.StartOffset, Selection.Value.EndOffset);
+		}
+
+		public void CopyUTF8String() {
+			if (CanCopyToClipboard())
+				CopyUTF8String(Selection.Value.StartOffset, Selection.Value.EndOffset);
+		}
+
+		public void CopyUnicodeString() {
+			if (CanCopyToClipboard())
+				CopyUnicodeString(Selection.Value.StartOffset, Selection.Value.EndOffset);
+		}
+
+		public void CopyCSharpArray() {
+			if (CanCopyToClipboard())
+				CopyCSharpArray(Selection.Value.StartOffset, Selection.Value.EndOffset);
+		}
+
+		public void CopyVBArray() {
+			if (CanCopyToClipboard())
+				CopyVBArray(Selection.Value.StartOffset, Selection.Value.EndOffset);
+		}
+
+		public void CopyUILayout() {
+			if (CanCopyToClipboard())
+				CopyUILayout(Selection.Value.StartOffset, Selection.Value.EndOffset);
+		}
+
+		void CopyHexString(ulong start, ulong end) {
+			new HexStringFormatter(this, start, end).CopyToClipboard();
+		}
+
+		void CopyUTF8String(ulong start, ulong end) {
+			new UTF8StringFormatter(this, start, end).CopyToClipboard();
+		}
+
+		void CopyUnicodeString(ulong start, ulong end) {
+			new UnicodeStringFormatter(this, start, end).CopyToClipboard();
+		}
+
+		void CopyCSharpArray(ulong start, ulong end) {
+			new CSharpArrayFormatter(this, start, end).CopyToClipboard();
+		}
+
+		void CopyVBArray(ulong start, ulong end) {
+			new VBArrayFormatter(this, start, end).CopyToClipboard();
+		}
+
+		void CopyUILayout(ulong start, ulong end) {
+			new UILayoutFormatter(this, start, end).CopyToClipboard();
+		}
+
+		public void SelectAll() {
+			Selection = new HexSelection(StartOffset, EndOffset);
+			SetCaretPosition(MoveToEndOfSelection(CaretPosition));
+		}
+
+		public void MoveTo(ulong offset, bool bringCaretIntoView = true) {
+			SetCaretPosition(new HexBoxPosition(offset, CaretPosition.Kind, CaretPosition.KindPosition), bringCaretIntoView);
 		}
 	}
 }

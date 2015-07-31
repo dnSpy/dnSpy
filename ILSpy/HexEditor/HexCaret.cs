@@ -29,6 +29,15 @@ namespace dnSpy.HexEditor {
 	sealed class HexCaret : Control, IHexLayer {
 		public static readonly double DEFAULT_ORDER = 3000;
 
+		public static readonly DependencyProperty InactiveCaretForegroundProperty =
+			DependencyProperty.Register("InactiveCaretForeground", typeof(Brush), typeof(HexCaret),
+			new FrameworkPropertyMetadata(Brushes.Black));
+
+		public Brush InactiveCaretForeground {
+			get { return (Brush)GetValue(InactiveCaretForegroundProperty); }
+			set { SetValue(InactiveCaretForegroundProperty, value); }
+		}
+
 		[DllImport("user32")]
 		static extern int GetCaretBlinkTime();
 
@@ -59,12 +68,11 @@ namespace dnSpy.HexEditor {
 			IsVisibleChanged += HexCaret_IsVisibleChanged;
 			Loaded += (s, e) => UpdateInstallTimer();
 			Unloaded += (s, e) => StopTimer();
-			this.Opacity = 0.5;
 		}
 
 		protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e) {
 			base.OnPropertyChanged(e);
-			if (e.Property == ForegroundProperty)
+			if (e.Property == ForegroundProperty || e.Property == InactiveCaretForegroundProperty)
 				Redraw();
 		}
 
@@ -122,7 +130,7 @@ namespace dnSpy.HexEditor {
 			foreach (var info in caretInfos) {
 				var geo = visible ? info.Geometry : info.BlinkHiddenGeometry;
 				if (geo != null)
-					drawingContext.DrawGeometry(Foreground, null, geo);
+					drawingContext.DrawGeometry(info.IsActive ? Foreground : InactiveCaretForeground, null, geo);
 			}
 		}
 
@@ -130,6 +138,12 @@ namespace dnSpy.HexEditor {
 			public Geometry Geometry;
 			public Geometry BlinkHiddenGeometry;
 			public Rect? Rect;
+			public bool IsActive;
+
+			public void Initialize(Rect? rect, bool isActive) {
+				this.Rect = rect;
+				this.IsActive = isActive;
+			}
 		}
         readonly CaretInfo[] caretInfos = new CaretInfo[] {
 			new CaretInfo(),
@@ -170,8 +184,8 @@ namespace dnSpy.HexEditor {
 				return;
 			this.position = position;
 			this.horizOffset = horizOffset;
-			hexByteInfo.Rect = hexByteCaret;
-			asciiInfo.Rect = asciiCaret;
+			hexByteInfo.Initialize(hexByteCaret, position.Kind == HexBoxPositionKind.HexByte);
+			asciiInfo.Initialize(asciiCaret, position.Kind == HexBoxPositionKind.Ascii);
 			geometriesCreated = false;
 			Redraw();
 		}

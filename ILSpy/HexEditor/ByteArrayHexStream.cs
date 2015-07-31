@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.HexEditor {
 	public class ByteArrayHexStream : IHexStream {
 		readonly byte[] data;
@@ -33,6 +35,20 @@ namespace dnSpy.HexEditor {
 			if (offset >= (ulong)data.LongLength)
 				return -1;
 			return data[offset];
+		}
+
+		public void Read(ulong offset, byte[] array, int index, int count) {
+			if (offset >= (ulong)data.LongLength) {
+				Array.Clear(array, index, count);
+				return;
+			}
+
+			long bytesLeft = data.LongLength - (long)offset;
+			long validBytes = count <= bytesLeft ? count : bytesLeft;
+			Array.Copy(data, (long)offset, array, index, validBytes);
+			count -= (int)validBytes;
+			if (count > 0)
+				Array.Clear(array, index + (int)validBytes, count);
 		}
 	}
 }
