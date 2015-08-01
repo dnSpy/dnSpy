@@ -343,7 +343,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (name.Length == 0)
 				return "obj";
 			else
-				return char.ToLower(name[0]) + name.Substring(1);
+				return char.ToLowerInvariant(name[0]) + name.Substring(1);
 		}
 	}
 }
