@@ -18,22 +18,38 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
+using dnlib.DotNet;
 using dnSpy.AsmEditor;
+using dnSpy.HexEditor;
+using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.ILSpy.dntheme;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy
-{
-	public abstract class TabState : IDisposable, INotifyPropertyChanged
-	{
-		public abstract string Header { get; }
+namespace ICSharpCode.ILSpy {
+	public enum TabStateType {
+		DecompiledCode,
+		HexEditor,
+	}
+
+	public abstract class TabState : IDisposable, INotifyPropertyChanged {
 		public TabItem TabItem;
+
+		public abstract string Header { get; }
+		public abstract TabStateType Type { get; }
+		public abstract FrameworkElement ScaleElement { get; }
+		public abstract string FileName { get; }
+		public abstract string Name { get; }
+		public abstract UIElement FocusedElement { get; }
 
 		public bool IsActive {
 			get { return isActive; }
@@ -65,8 +81,7 @@ namespace ICSharpCode.ILSpy
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		protected void OnPropertyChanged(string propName)
-		{
+		protected void OnPropertyChanged(string propName) {
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propName));
 		}
@@ -81,7 +96,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		public string ToolTip {
+		public virtual string ToolTip {
 			get {
 				var shortHeader = ShortHeader;
 				var header = Header;
@@ -89,28 +104,43 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		protected TabState()
-		{
+		protected TabState() {
 			var tabItem = new TabItem();
 			TabItem = tabItem;
 			TabItem.Header = this;
 			tabItem.DataContext = this;
+			TabItem.Style = (Style)App.Current.FindResource("TabStateTabItemStyle");
 		}
 
-		protected void UpdateHeader()
-		{
+		protected void InstallMouseWheelZoomHandler() {
+			ScaleElement.MouseWheel += OnMouseWheel;
+		}
+
+		void OnMouseWheel(object sender, MouseWheelEventArgs e) {
+			if (Keyboard.Modifiers != ModifierKeys.Control)
+				return;
+
+			MainWindow.Instance.ZoomMouseWheel(this, e.Delta);
+			e.Handled = true;
+		}
+
+		public static TabState GetTabState(FrameworkElement elem) {
+			if (elem == null)
+				return null;
+			return (TabState)elem.Tag;
+		}
+
+		protected void UpdateHeader() {
 			OnPropertyChanged("Header");
 			OnPropertyChanged("ShortHeader");
 			OnPropertyChanged("ToolTip");
 		}
 
-		void Close()
-		{
+		void Close() {
 			Owner.Close(this);
 		}
 
-		public virtual void FocusContent()
-		{
+		public virtual void FocusContent() {
 			var uiel = TabItem.Content as UIElement;
 			var sv = uiel as ScrollViewer;
 			if (sv != null)
@@ -119,22 +149,55 @@ namespace ICSharpCode.ILSpy
 				uiel.Focus();
 		}
 
-		public void Dispose()
-		{
+		public abstract SavedTabState CreateSavedTabState();
+
+		public void Dispose() {
 			Dispose(true);
 		}
 
-		protected virtual void Dispose(bool isDisposing)
-		{
+		protected virtual void Dispose(bool isDisposing) {
 		}
 	}
 
-	public sealed class TabStateDecompile : TabState
-	{
+	public sealed class DecompileTabState : TabState {
 		public readonly DecompilerTextView TextView = new DecompilerTextView();
 		internal readonly NavigationHistory<NavigationState> History = new NavigationHistory<NavigationState>();
 		internal bool ignoreDecompilationRequests;
 		internal bool HasDecompiled;
+
+		public override string FileName {
+			get {
+				var mod = ILSpyTreeNode.GetModule(DecompiledNodes);
+				return mod == null ? null : mod.Location;
+			}
+		}
+
+		public override string Name {
+			get {
+				var mod = ILSpyTreeNode.GetModule(DecompiledNodes);
+				return mod == null ? null : mod.Name;
+			}
+		}
+
+		public override UIElement FocusedElement {
+			get {
+				if (TabItem.Content == TextView) {
+					if (TextView.waitAdornerButton.IsVisible)
+						return TextView.waitAdornerButton;
+					return TextView.TextEditor.TextArea;
+				}
+
+				return TabItem.Content as UIElement;
+			}
+		}
+
+		public override FrameworkElement ScaleElement {
+			get { return TextView.TextEditor.TextArea; }
+		}
+
+		public override TabStateType Type {
+			get { return TabStateType.DecompiledCode; }
+		}
 
 		public ILSpyTreeNode[] DecompiledNodes {
 			get { return decompiledNodes; }
@@ -180,8 +243,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		internal void SetDecompileProps(Language language, ILSpyTreeNode[] nodes)
-		{
+		internal void SetDecompileProps(Language language, ILSpyTreeNode[] nodes) {
 			this.language = language;
 			UnhookEvents();
 			this.decompiledNodes = nodes ?? new ILSpyTreeNode[0];
@@ -190,46 +252,37 @@ namespace ICSharpCode.ILSpy
 			UpdateHeader();
 		}
 
-		void HookEvents()
-		{
+		void HookEvents() {
 			foreach (var node in decompiledNodes)
 				node.PropertyChanged += node_PropertyChanged;
 		}
 
-		void UnhookEvents()
-		{
+		void UnhookEvents() {
 			foreach (var node in decompiledNodes)
 				node.PropertyChanged -= node_PropertyChanged;
 		}
 
-		void node_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void node_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "Text")
 				UpdateHeader();
 		}
 
-		public static TabStateDecompile GetTabStateDecompile(DecompilerTextView elem)
-		{
-			if (elem == null)
-				return null;
-			return (TabStateDecompile)elem.Tag;
+		public static DecompileTabState GetDecompileTabState(DecompilerTextView elem) {
+			return (DecompileTabState)GetTabState(elem);
 		}
 
-		public TabStateDecompile(Language language)
-		{
+		public DecompileTabState(Language language) {
 			var view = TextView;
 			TabItem.Content = view;
 			view.Tag = this;
-			TabItem.Style = App.Current.FindResource("TabStateDecompileTabItemStyle") as Style;
 			this.language = language;
-			UpdateHeader();
 			ContextMenuProvider.Add(view);
 			view.DragOver += view_DragOver;
 			view.OnThemeUpdated();
+			InstallMouseWheelZoomHandler();
 		}
 
-		void view_DragOver(object sender, DragEventArgs e)
-		{
+		void view_DragOver(object sender, DragEventArgs e) {
 			// The text editor seems to allow anything
 			if (e.Data.GetDataPresent(typeof(TabItem))) {
 				e.Effects = DragDropEffects.None;
@@ -238,24 +291,21 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		public override void FocusContent()
-		{
+		public override void FocusContent() {
 			if (this.TextView == TabItem.Content)
 				this.TextView.TextEditor.TextArea.Focus();
 			else
 				base.FocusContent();
 		}
 
-		protected override void Dispose(bool isDisposing)
-		{
+		protected override void Dispose(bool isDisposing) {
 			if (isDisposing)
 				TextView.Dispose();
 			UnhookEvents();
 			decompiledNodes = new ILSpyTreeNode[0];
 		}
 
-		public bool Equals(ILSpyTreeNode[] nodes, Language language)
-		{
+		public bool Equals(ILSpyTreeNode[] nodes, Language language) {
 			if (Language != language)
 				return false;
 			if (DecompiledNodes.Length != nodes.Length)
@@ -265,6 +315,220 @@ namespace ICSharpCode.ILSpy
 					return false;
 			}
 			return true;
+		}
+
+		public override SavedTabState CreateSavedTabState() {
+			var savedState = new SavedDecompileTabState();
+			savedState.Language = Language.Name;
+			savedState.Paths = new List<FullNodePathName>();
+			savedState.ActiveAutoLoadedAssemblies = new List<string>();
+			foreach (var node in DecompiledNodes) {
+				savedState.Paths.Add(node.CreateFullNodePathName());
+				var autoAsm = GetAutoLoadedAssemblyNode(node);
+				if (!string.IsNullOrEmpty(autoAsm))
+					savedState.ActiveAutoLoadedAssemblies.Add(autoAsm);
+			}
+			savedState.EditorPositionState = TextView.EditorPositionState;
+			return savedState;
+		}
+
+		static string GetAutoLoadedAssemblyNode(ILSpyTreeNode node) {
+			var assyNode = MainWindow.GetAssemblyTreeNode(node);
+			if (assyNode == null)
+				return null;
+			var loadedAssy = assyNode.LoadedAssembly;
+			if (!(loadedAssy.IsLoaded && loadedAssy.IsAutoLoaded))
+				return null;
+
+			return loadedAssy.FileName;
+		}
+	}
+
+	public sealed class HexTabState : TabState {
+		readonly HexBox HexBox;
+
+		public override UIElement FocusedElement {
+			get { return HexBox; }
+		}
+
+		public override string Header {
+			get {
+				var doc = HexBox.Document;
+				if (doc == null)
+					return "<NO DOC>";
+				var filename = HexBox.Document.Name;
+				try {
+					return Path.GetFileName(filename);
+				}
+				catch {
+				}
+				return filename;
+            }
+		}
+
+		public override string ToolTip {
+			get {
+				var doc = HexBox.Document;
+				if (doc == null)
+					return null;
+				return doc.Name;
+			}
+		}
+
+		public override FrameworkElement ScaleElement {
+			get { return HexBox; }
+		}
+
+		public override TabStateType Type {
+			get { return TabStateType.HexEditor; }
+		}
+
+		public override string FileName {
+			get { return HexBox.Document == null ? null : HexBox.Document.Name; }
+		}
+
+		public override string Name {
+			get { return HexBox.Document == null ? null : Path.GetFileName(HexBox.Document.Name); }
+		}
+
+		public HexTabState() {
+			this.HexBox = new HexBox();
+			this.HexBox.Tag = this;
+			var scroller = new ScrollViewer();
+			scroller.Content = HexBox;
+			scroller.CanContentScroll = true;
+			scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+			scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+			this.TabItem.Content = scroller;
+
+			this.HexBox.SetBinding(Control.FontFamilyProperty, new Binding("SelectedFont") { Source = Options.DisplaySettingsPanel.CurrentDisplaySettings });
+			this.HexBox.SetBinding(Control.FontSizeProperty, new Binding("SelectedFontSize") { Source = Options.DisplaySettingsPanel.CurrentDisplaySettings });
+			this.HexBox.SetResourceReference(Control.BackgroundProperty, GetBackgroundResourceKey(ColorType.HexText));
+			this.HexBox.SetResourceReference(Control.ForegroundProperty, GetForegroundResourceKey(ColorType.HexText));
+			this.HexBox.SetResourceReference(HexBox.OffsetForegroundProperty, GetForegroundResourceKey(ColorType.HexOffset));
+			this.HexBox.SetResourceReference(HexBox.Byte0ForegroundProperty, GetForegroundResourceKey(ColorType.HexByte0));
+			this.HexBox.SetResourceReference(HexBox.Byte1ForegroundProperty, GetForegroundResourceKey(ColorType.HexByte1));
+			this.HexBox.SetResourceReference(HexBox.ByteErrorForegroundProperty, GetForegroundResourceKey(ColorType.HexByteError));
+			this.HexBox.SetResourceReference(HexBox.AsciiForegroundProperty, GetForegroundResourceKey(ColorType.HexAscii));
+			this.HexBox.SetResourceReference(HexBox.CaretForegroundProperty, GetBackgroundResourceKey(ColorType.HexCaret));
+			this.HexBox.SetResourceReference(HexBox.InactiveCaretForegroundProperty, GetBackgroundResourceKey(ColorType.HexInactiveCaret));
+			this.HexBox.SetResourceReference(HexBox.SelectionBackgroundProperty, GetBackgroundResourceKey(ColorType.HexSelection));
+			this.HexBox.SetResourceReference(Control.FontStyleProperty, GetFontStyleResourceKey(ColorType.HexText));
+			this.HexBox.SetResourceReference(Control.FontWeightProperty, GetFontWeightResourceKey(ColorType.HexText));
+
+			ContextMenuProvider.Add(this.HexBox);
+
+			InstallMouseWheelZoomHandler();
+		}
+
+		internal static void OnThemeUpdatedStatic() {
+			var theme = Themes.Theme;
+
+			var color = theme.GetColor(ColorType.HexText).InheritedColor;
+			App.Current.Resources[GetBackgroundResourceKey(ColorType.HexText)] = GetBrush(color.Background);
+			App.Current.Resources[GetForegroundResourceKey(ColorType.HexText)] = GetBrush(color.Foreground);
+			App.Current.Resources[GetFontStyleResourceKey(ColorType.HexText)] = color.FontStyle ?? FontStyles.Normal;
+			App.Current.Resources[GetFontWeightResourceKey(ColorType.HexText)] = color.FontWeight ?? FontWeights.Normal;
+
+			UpdateForeground(theme, ColorType.HexOffset);
+			UpdateForeground(theme, ColorType.HexByte0);
+			UpdateForeground(theme, ColorType.HexByte1);
+			UpdateForeground(theme, ColorType.HexByteError);
+			UpdateForeground(theme, ColorType.HexAscii);
+			UpdateBackground(theme, ColorType.HexCaret);
+			UpdateBackground(theme, ColorType.HexInactiveCaret);
+			UpdateBackground(theme, ColorType.HexSelection);
+		}
+
+		static void UpdateForeground(Theme theme, ColorType colorType) {
+			var color = theme.GetColor(colorType).TextInheritedColor;
+			App.Current.Resources[GetForegroundResourceKey(colorType)] = GetBrush(color.Foreground);
+		}
+
+		static void UpdateBackground(Theme theme, ColorType colorType) {
+			var color = theme.GetColor(colorType).TextInheritedColor;
+			App.Current.Resources[GetBackgroundResourceKey(colorType)] = GetBrush(color.Background);
+		}
+
+		static Brush GetBrush(HighlightingBrush b) {
+			return b == null ? Brushes.Transparent : b.GetBrush(null);
+		}
+
+		static string GetBackgroundResourceKey(ColorType colorType) {
+			return string.Format("HB_{0}_Background", Enum.GetName(typeof(ColorType), colorType));
+		}
+
+		static string GetForegroundResourceKey(ColorType colorType) {
+			return string.Format("HB_{0}_Foreground", Enum.GetName(typeof(ColorType), colorType));
+		}
+
+		static string GetFontStyleResourceKey(ColorType colorType) {
+			return string.Format("HB_{0}_FontStyle", Enum.GetName(typeof(ColorType), colorType));
+		}
+
+		static string GetFontWeightResourceKey(ColorType colorType) {
+			return string.Format("HB_{0}_FontWeight", Enum.GetName(typeof(ColorType), colorType));
+		}
+
+		public void Restore(SavedHexTabState state) {
+			HexBox.BytesGroupCount = state.BytesGroupCount;
+			HexBox.BytesPerLine = state.BytesPerLine;
+			HexBox.HexOffsetSize = state.HexOffsetSize;
+			HexBox.UseRelativeOffsets = state.UseRelativeOffsets;
+			HexBox.UseHexPrefix = state.UseHexPrefix;
+			HexBox.PrintAscii = state.PrintAscii;
+			HexBox.LowerCaseHex = state.LowerCaseHex;
+			HexBox.BaseOffset = state.BaseOffset;
+			if (HexBox.IsLoaded)
+				HexBox.State = state.HexBoxState;
+			else
+				new StateRestorer(HexBox, state.HexBoxState);
+		}
+
+		sealed class StateRestorer {
+			readonly HexBox hexBox;
+			readonly HexBoxState state;
+
+			public StateRestorer(HexBox hexBox, HexBoxState state) {
+				this.hexBox = hexBox;
+				this.state = state;
+				this.hexBox.Loaded += HexBox_Loaded;
+			}
+
+			private void HexBox_Loaded(object sender, RoutedEventArgs e) {
+				this.hexBox.Loaded -= HexBox_Loaded;
+				hexBox.UpdateLayout();
+				hexBox.State = state;
+			}
+		}
+
+		public override SavedTabState CreateSavedTabState() {
+			var state = new SavedHexTabState();
+			state.BytesGroupCount = HexBox.BytesGroupCount;
+			state.BytesPerLine = HexBox.BytesPerLine;
+			state.HexOffsetSize = HexBox.HexOffsetSize;
+			state.UseRelativeOffsets = HexBox.UseRelativeOffsets;
+			state.UseHexPrefix = HexBox.UseHexPrefix;
+			state.PrintAscii = HexBox.PrintAscii;
+			state.LowerCaseHex = HexBox.LowerCaseHex;
+			state.BaseOffset = HexBox.BaseOffset;
+			state.HexBoxState = HexBox.State;
+			state.FileName = HexBox.Document == null ? string.Empty : HexBox.Document.Name;
+			return state;
+		}
+
+		public void SetDocument(HexDocument doc) {
+			this.HexBox.Document = doc;
+			UpdateHeader();
+		}
+
+		public void InitializeDefaultOptions() {
+			var doc = HexBox.Document;
+			if (doc == null)
+				return;
+
+			HexBox.StartOffset = 0;
+			HexBox.EndOffset = doc.Size == 0 ? 0 : doc.Size - 1;
 		}
 	}
 }

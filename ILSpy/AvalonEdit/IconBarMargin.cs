@@ -38,7 +38,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			BookmarkManager.Removed += OnBookmarkRemoved;
 			decompilerTextView.OnShowOutput += decompilerTextView_OnShowOutput;
 			MainWindow.Instance.ExecuteWhenLoaded(() => {
-				MainWindow.Instance.OnDecompilerTextViewRemoved += OnDecompilerTextViewRemoved;
+				MainWindow.Instance.OnTabStateRemoved += OnTabStateRemoved;
 			});
 			
 			this.manager = manager;
@@ -50,15 +50,16 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			SyncBookmarks();
 		}
 
-		void OnDecompilerTextViewRemoved(object sender, MainWindow.DecompilerTextViewEventArgs e)
+		void OnTabStateRemoved(object sender, MainWindow.TabStateEventArgs e)
 		{
-			if (e.DecompilerTextView != decompilerTextView)
+			var tsd = e.TabState as DecompileTabState;
+			if (tsd == null || tsd.TextView != decompilerTextView)
 				return;
 
 			BookmarkManager.Added -= OnBookmarkAdded;
 			BookmarkManager.Removed -= OnBookmarkRemoved;
 			decompilerTextView.OnShowOutput -= decompilerTextView_OnShowOutput;
-			MainWindow.Instance.OnDecompilerTextViewRemoved -= OnDecompilerTextViewRemoved;
+			MainWindow.Instance.OnTabStateRemoved -= OnTabStateRemoved;
 		}
 		
 		public IconBarManager Manager {

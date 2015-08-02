@@ -18,28 +18,33 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace dnSpy.HexEditor {
+	[DebuggerDisplay("{Size} {Name}")]
 	public sealed class HexDocument : IDisposable, IHexStream {
 		readonly IHexStream stream;
+
+		public string Name { get; set; }
 
 		public ulong Size {
 			get { return stream.Size; }
 		}
 
 		public HexDocument(string filename)
-			: this(new ByteArrayHexStream(File.ReadAllBytes(filename))) {
+			: this(new ByteArrayHexStream(File.ReadAllBytes(filename)), filename) {
 		}
 
-		public HexDocument(byte[] data)
-			: this(new ByteArrayHexStream(data)) {
+		public HexDocument(byte[] data, string name)
+			: this(new ByteArrayHexStream(data), name) {
 		}
 
-		public HexDocument(IHexStream stream) {
+		public HexDocument(IHexStream stream, string name) {
 			if (stream == null)
 				throw new ArgumentNullException("stream");
 			this.stream = stream;
+			this.Name = name;
 		}
 
 		public int ReadByte(ulong offs) {

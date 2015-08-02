@@ -28,15 +28,33 @@ namespace dnSpy.HexEditor {
 		public HexBoxPosition CaretPosition;
 		public HexSelection? Selection;
 
+		public HexBoxState() {
+		}
+
+		public HexBoxState(HexBoxState other) {
+			this.TopOffset = other.TopOffset;
+			this.Column = other.Column;
+			this.StartOffset = other.StartOffset;
+			this.EndOffset = other.EndOffset;
+			this.CaretPosition = other.CaretPosition;
+			this.Selection = other.Selection;
+		}
+
 		public static bool operator ==(HexBoxState a, HexBoxState b) {
+			if ((object)a == b)
+				return true;
+			if ((object)a == null || (object)b == null)
+				return false;
 			return a.Equals(b);
 		}
 
 		public static bool operator !=(HexBoxState a, HexBoxState b) {
-			return !a.Equals(b);
+			return !(a == b);
 		}
 
 		public bool Equals(HexBoxState other) {
+			if ((object)other == null)
+				return false;
 			return TopOffset == other.TopOffset &&
 				Column == other.Column &&
 				StartOffset == other.StartOffset &&
@@ -46,7 +64,7 @@ namespace dnSpy.HexEditor {
 		}
 
 		public override bool Equals(object obj) {
-			return obj is HexBoxState && Equals((HexBoxState)obj);
+			return Equals(obj as HexBoxState);
 		}
 
 		public override int GetHashCode() {

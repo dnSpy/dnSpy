@@ -143,7 +143,6 @@ namespace ICSharpCode.ILSpy.TextView
 			waitAdorner.MouseUp += (s, e) => e.Handled = true;
 			waitAdornerButton.IsVisibleChanged += waitAdornerButton_IsVisibleChanged;
 
-			textEditor.TextArea.MouseWheel += TextArea_MouseWheel;
 			TextEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
 
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => MoveReference(true)), Key.Tab, ModifierKeys.None));
@@ -187,15 +186,6 @@ namespace ICSharpCode.ILSpy.TextView
 				else
 					ClearMarkedReferences();
 			}
-		}
-
-		void TextArea_MouseWheel(object sender, MouseWheelEventArgs e)
-		{
-			if (Keyboard.Modifiers != ModifierKeys.Control)
-				return;
-
-			MainWindow.Instance.ZoomMouseWheel(this, e.Delta);
-			e.Handled = true;
 		}
 
 		void DecompilerTextView_Loaded(object sender, RoutedEventArgs e)

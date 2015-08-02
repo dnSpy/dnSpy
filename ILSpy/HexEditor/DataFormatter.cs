@@ -52,7 +52,7 @@ namespace dnSpy.HexEditor {
 
 			try {
 				var dataObj = new DataObject();
-				CopyToClipboard(dataObj);
+				InitializeDataObject(dataObj);
 				Clipboard.SetDataObject(dataObj, true);
 			}
 			catch (OutOfMemoryException) {
@@ -67,29 +67,36 @@ namespace dnSpy.HexEditor {
 			}
 		}
 
-		protected abstract void CopyToClipboard(DataObject dataObj);
+		protected abstract void InitializeDataObject(DataObject dataObj);
 
 		protected byte[] ReadByteArray() {
 			var data = new byte[end - start + 1];
 			hexBox.Document.Read(start, data, 0, data.Length);
 			return data;
 		}
+
+		protected int ReadByte(ulong offset) {
+			return hexBox.Document.ReadByte(offset);
+		}
 	}
 
 	sealed class HexStringFormatter : DataFormatter {
-		public HexStringFormatter(HexBox hexBox, ulong start, ulong end) : base(hexBox, start, end) {
+		readonly string hexByteFormatString;
+
+		public HexStringFormatter(HexBox hexBox, ulong start, ulong end, bool lowerHex) : base(hexBox, start, end) {
+			this.hexByteFormatString = lowerHex ? "{0:x2}" : "{0:X2}";
 		}
 
-		protected override void CopyToClipboard(DataObject dataObj) {
+		protected override void InitializeDataObject(DataObject dataObj) {
 			var sb = new StringBuilder();
 
 			ulong offs = start;
 			for (;;) {
-				int b = hexBox.Document.ReadByte(offs);
+				int b = ReadByte(offs);
 				if (b < 0)
 					sb.Append("??");
 				else
-					sb.Append(string.Format("{0:X2}", (byte)b));
+					sb.Append(string.Format(hexByteFormatString, (byte)b));
 
 				if (offs++ >= end)
 					break;
@@ -103,7 +110,7 @@ namespace dnSpy.HexEditor {
 		public UTF8StringFormatter(HexBox hexBox, ulong start, ulong end) : base(hexBox, start, end) {
 		}
 
-		protected override void CopyToClipboard(DataObject dataObj) {
+		protected override void InitializeDataObject(DataObject dataObj) {
 			var s = Encoding.UTF8.GetString(ReadByteArray());
 			dataObj.SetData(DataFormats.Text, s);
 		}
@@ -113,7 +120,7 @@ namespace dnSpy.HexEditor {
 		public UnicodeStringFormatter(HexBox hexBox, ulong start, ulong end) : base(hexBox, start, end) {
 		}
 
-		protected override void CopyToClipboard(DataObject dataObj) {
+		protected override void InitializeDataObject(DataObject dataObj) {
 			var s = Encoding.Unicode.GetString(ReadByteArray());
 			dataObj.SetData(DataFormats.Text, s);
 		}
@@ -131,7 +138,7 @@ namespace dnSpy.HexEditor {
 		protected LanguageArrayFormatter(HexBox hexBox, ulong start, ulong end) : base(hexBox, start, end) {
 		}
 
-		protected override void CopyToClipboard(DataObject dataObj) {
+		protected override void InitializeDataObject(DataObject dataObj) {
 			var sb = new StringBuilder();
 
 			sb.Append(allocStringStart);
@@ -147,7 +154,7 @@ namespace dnSpy.HexEditor {
 				else
 					sb.Append(' ');
 
-				int b = hexBox.Document.ReadByte(offs);
+				int b = ReadByte(offs);
 				if (b < 0)
 					sb.Append(unknownHex);
 				else
@@ -166,20 +173,20 @@ namespace dnSpy.HexEditor {
 	}
 
 	sealed class CSharpArrayFormatter : LanguageArrayFormatter {
-		public CSharpArrayFormatter(HexBox hexBox, ulong start, ulong end) : base(hexBox, start, end) {
+		public CSharpArrayFormatter(HexBox hexBox, ulong start, ulong end, bool lowerHex) : base(hexBox, start, end) {
 			allocStringStart = "new byte[] {";
 			allocStringEnd = "};";
 			unknownHex = "0x??";
-			hexFormat = "0x{0:X2}";
+			hexFormat = lowerHex ? "0x{0:x2}" : "0x{0:X2}";
 		}
 	}
 
 	sealed class VBArrayFormatter : LanguageArrayFormatter {
-		public VBArrayFormatter(HexBox hexBox, ulong start, ulong end) : base(hexBox, start, end) {
+		public VBArrayFormatter(HexBox hexBox, ulong start, ulong end, bool lowerHex) : base(hexBox, start, end) {
 			allocStringStart = "New Byte() {";
 			allocStringEnd = "}";
 			unknownHex = "&H??";
-			hexFormat = "&H{0:X2}";
+			hexFormat = lowerHex ? "&H{0:x2}" : "&H{0:X2}";
 			eol = " _" + Environment.NewLine;
 		}
 	}
@@ -188,7 +195,7 @@ namespace dnSpy.HexEditor {
 		public UILayoutFormatter(HexBox hexBox, ulong start, ulong end) : base(hexBox, start, end) {
 		}
 
-		protected override void CopyToClipboard(DataObject dataObj) {
+		protected override void InitializeDataObject(DataObject dataObj) {
 			var hexLines = hexBox.CreateHexLines(start, end);
 			CopyText(dataObj, hexLines);
 			CopyHtml(dataObj, hexLines);

@@ -27,10 +27,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Media3D;
 using System.Windows.Threading;
-using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy
 {
@@ -510,7 +507,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		public void DetachTabState(TState tabState)
+		void DetachTabState(TState tabState)
 		{
 			DetachNoEvents(tabState);
 			RemoveEvents(tabState);
@@ -567,6 +564,13 @@ namespace ICSharpCode.ILSpy
 
 			DetachTabState(srcTabState);
 			dstTabManager.AttachTabState(srcTabState, insertIndex);
+
+			if ((bool)srcTabState.TabItem.GetValue(UIElement.IsKeyboardFocusWithinProperty)) {
+				tabGroupsManager.SetActiveTab(srcTabState);
+				this.IsActive = false;
+				dstTabManager.IsActive = true;
+			}
+
 			return true;
 		}
 

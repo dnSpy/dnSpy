@@ -856,7 +856,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 			SharpTreeNode node;
 			if (context.TextView != null) {
-				var tabState = MainWindow.Instance.ActiveTabState;
+				var tabState = MainWindow.Instance.GetActiveDecompileTabState();
 				if (tabState == null)
 					return null;
 				if (tabState.DecompiledNodes.Length == 0)

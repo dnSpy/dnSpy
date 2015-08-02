@@ -4973,7 +4973,7 @@
                 Value="False"/>
     </Style>
 
-	<Style x:Key="TabStateDecompileTabControl"
+	<Style x:Key="TabStateTabControl"
 		   BasedOn="{StaticResource {x:Type TabControl}}"
            TargetType="{x:Type TabControl}">
         <Setter Property="Foreground"
@@ -5190,7 +5190,7 @@
 		</Setter>
 	</Style>
 
-	<Style x:Key="TabStateDecompileTabItemStyle"
+    <Style x:Key="TabStateTabItemStyle"
            TargetType="{x:Type TabItem}">
 		<Setter Property="Control.Template">
 			<Setter.Value>

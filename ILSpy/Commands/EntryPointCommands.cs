@@ -49,7 +49,7 @@ namespace ICSharpCode.ILSpy.Commands
 
 		internal static ModuleDef GetModule()
 		{
-			var tabState = MainWindow.Instance.ActiveTabState;
+			var tabState = MainWindow.Instance.GetActiveDecompileTabState();
 			if (tabState == null)
 				return null;
 			return ILSpyTreeNode.GetModule(tabState.DecompiledNodes) as ModuleDef;

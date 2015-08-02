@@ -378,12 +378,12 @@ namespace ICSharpCode.ILSpy
 
 		static TabGroupCommand()
 		{
-			MainWindow.Instance.OnActiveDecompilerTextViewChanged += (s, e) => UpdateState();
-			MainWindow.Instance.OnDecompilerTextViewChanged += (s, e) => UpdateState();
-			MainWindow.Instance.OnDecompilerTextViewAdded += (s, e) => UpdateState();
-			MainWindow.Instance.OnDecompilerTextViewRemoved += (s, e) => UpdateState();
-			MainWindow.Instance.OnDecompilerTextViewAttached += (s, e) => UpdateState();
-			MainWindow.Instance.OnDecompilerTextViewDetached += (s, e) => UpdateState();
+			MainWindow.Instance.OnActiveTabStateChanged += (s, e) => UpdateState();
+			MainWindow.Instance.OnTabStateChanged += (s, e) => UpdateState();
+			MainWindow.Instance.OnTabStateAdded += (s, e) => UpdateState();
+			MainWindow.Instance.OnTabStateRemoved += (s, e) => UpdateState();
+			MainWindow.Instance.OnTabStateAttached += (s, e) => UpdateState();
+			MainWindow.Instance.OnTabStateDetached += (s, e) => UpdateState();
 			MainWindow.Instance.OnTabGroupAdded += (s, e) => UpdateState();
 			MainWindow.Instance.OnTabGroupRemoved += (s, e) => UpdateState();
 			MainWindow.Instance.OnTabGroupSelected += (s, e) => UpdateState();

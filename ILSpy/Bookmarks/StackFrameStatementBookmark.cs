@@ -68,9 +68,9 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		{
 			DebuggerService.DebugEvent += OnDebugEvent;
 			MainWindow.Instance.ExecuteWhenLoaded(() => {
-				MainWindow.Instance.OnDecompilerTextViewChanged += (sender, e) => OnDecompilerTextViewChanged(e.OldView, e.NewView);
-				foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
-					OnDecompilerTextViewChanged(null, textView);
+				MainWindow.Instance.OnTabStateChanged += (sender, e) => OnTabStateChanged(e.OldTabState, e.NewTabState);
+				foreach (var tabState in MainWindow.Instance.AllVisibleDecompileTabStates)
+					OnTabStateChanged(null, tabState);
 			});
 		}
 
@@ -92,19 +92,23 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			}
 		}
 
-		static void OnDecompilerTextViewChanged(DecompilerTextView oldView, DecompilerTextView newView)
+		static void OnTabStateChanged(TabState oldTabState, TabState newTabState)
 		{
-			if (oldView != null) {
-				oldView.OnBeforeShowOutput -= DecompilerTextView_OnBeforeShowOutput;
-				oldView.OnShowOutput -= DecompilerTextView_OnShowOutput;
+			var oldTsd = oldTabState as DecompileTabState;
+			if (oldTsd != null) {
+				oldTsd.TextView.OnBeforeShowOutput -= DecompilerTextView_OnBeforeShowOutput;
+				oldTsd.TextView.OnShowOutput -= DecompilerTextView_OnShowOutput;
 			}
-			if (newView != null) {
-				newView.OnBeforeShowOutput += DecompilerTextView_OnBeforeShowOutput;
-				newView.OnShowOutput += DecompilerTextView_OnShowOutput;
+			var newTsd = newTabState as DecompileTabState;
+			if (newTsd != null) {
+				newTsd.TextView.OnBeforeShowOutput += DecompilerTextView_OnBeforeShowOutput;
+				newTsd.TextView.OnShowOutput += DecompilerTextView_OnShowOutput;
 			}
 
-			Remove(oldView);
-			UpdateReturnStatementBookmarks(newView);
+			if (oldTsd != null)
+				Remove(oldTsd.TextView);
+			if (newTsd != null)
+				UpdateReturnStatementBookmarks(newTsd.TextView);
 		}
 
 		static void DecompilerTextView_OnBeforeShowOutput(object sender, TextView.DecompilerTextView.ShowOutputEventArgs e)

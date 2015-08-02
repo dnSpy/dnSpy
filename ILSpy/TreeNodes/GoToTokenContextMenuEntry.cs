@@ -40,9 +40,9 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			Execute();
 		}
 
-		static ModuleDefMD GetModule(out TabStateDecompile tabState)
+		static ModuleDefMD GetModule(out DecompileTabState tabState)
 		{
-			tabState = MainWindow.Instance.ActiveTabState;
+			tabState = MainWindow.Instance.GetActiveDecompileTabState();
 			if (tabState == null)
 				return null;
 			return ILSpyTreeNode.GetModule(tabState.DecompiledNodes) as ModuleDefMD;
@@ -50,13 +50,13 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		internal static bool CanExecute()
 		{
-			TabStateDecompile tabState;
+			DecompileTabState tabState;
 			return GetModule(out tabState) != null;
 		}
 
 		internal static void Execute()
 		{
-			TabStateDecompile tabState;
+			DecompileTabState tabState;
 			var module = GetModule(out tabState);
 			if (module == null)
 				return;

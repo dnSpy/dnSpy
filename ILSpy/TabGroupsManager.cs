@@ -156,7 +156,7 @@ namespace ICSharpCode.ILSpy
 		TabManager<TState> CreateTabManager(int insertIndex)
 		{
 			var tabControl = new TabControl();
-			tabControl.Style = App.Current.FindResource("TabStateDecompileTabControl") as Style;
+			tabControl.Style = App.Current.FindResource("TabStateTabControl") as Style;
 			var tabManager = new TabManager<TState>(this, tabControl, onSelectionChanged, onAddRemoveTabState);
 			tabManagers.Insert(insertIndex, tabManager);
 			ContextMenuProvider.Add(tabManager.TabControl);

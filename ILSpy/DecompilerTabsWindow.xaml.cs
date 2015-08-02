@@ -26,7 +26,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using ICSharpCode.ILSpy.Controls;
-using ICSharpCode.ILSpy.TreeNodes;
 
 namespace ICSharpCode.ILSpy
 {
@@ -36,11 +35,11 @@ namespace ICSharpCode.ILSpy
 	public partial class DecompilerTabsWindow : MetroWindow
 	{
 		readonly ObservableCollection<TabInfo> allTabs;
-		internal TabStateDecompile LastActivatedTabState;
+		internal TabState LastActivatedTabState;
 
 		class TabInfo
 		{
-			public TabStateDecompile TabState { get; set; }
+			public TabState TabState { get; set; }
 			public string FirstModuleName { get; set; }
 			public string FirstModuleFullName { get; set; }
 		}
@@ -75,15 +74,8 @@ namespace ICSharpCode.ILSpy
 			foreach (var tabState in MainWindow.Instance.GetTabStateInOrder()) {
 				var info = new TabInfo();
 				info.TabState = tabState;
-				var module = ILSpyTreeNode.GetModule(tabState.DecompiledNodes);
-				if (module != null) {
-					info.FirstModuleName = module.Name;
-					info.FirstModuleFullName = module.Location;
-				}
-				else {
-					info.FirstModuleName = string.Empty;
-					info.FirstModuleFullName = string.Empty;
-				}
+				info.FirstModuleName = tabState.Name ?? string.Empty;
+				info.FirstModuleFullName = tabState.FileName ?? string.Empty;
 				list.Add(info);
 			}
 			list.Sort((a, b) => StringComparer.InvariantCultureIgnoreCase.Compare(a.TabState.ShortHeader, b.TabState.ShortHeader));
@@ -160,7 +152,7 @@ namespace ICSharpCode.ILSpy
 			activateButton.IsEnabled = listView.SelectedItems.Count == 1;
 			closeWindowsButton.IsEnabled = listView.SelectedItems.Count != 0;
 			var tabs = GetSelectedItems();
-			saveCodeButton.IsEnabled = tabs.Length == 1 && tabs[0].TabState.DecompiledNodes.Length > 0;
+			saveCodeButton.IsEnabled = tabs.Length == 1 && tabs[0].TabState is DecompileTabState && ((DecompileTabState)tabs[0].TabState).DecompiledNodes.Length > 0;
 		}
 
 		private void activateButton_Click(object sender, RoutedEventArgs e)
@@ -174,7 +166,7 @@ namespace ICSharpCode.ILSpy
 		{
 			var tabs = GetSelectedItems();
 			if (tabs.Length > 0)
-				MainWindow.Instance.Save(tabs[0].TabState);
+				MainWindow.Instance.Save(tabs[0].TabState as DecompileTabState);
 		}
 
 		private void closeWindowsButton_Click(object sender, RoutedEventArgs e)

@@ -307,6 +307,8 @@
       <DependentUpon>FieldOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Field\FieldOptionsVM.cs" />
+    <Compile Include="AsmEditor\HexDocumentManager.cs" />
+    <Compile Include="AsmEditor\Hex\ContextMenuCommands.cs" />
     <Compile Include="AsmEditor\IIndexedItem.cs" />
     <Compile Include="AsmEditor\IndexObservableCollection.cs" />
     <Compile Include="AsmEditor\InstructionCommands.cs" />
