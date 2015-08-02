@@ -420,6 +420,7 @@ namespace ICSharpCode.ILSpy
 				App.Current.Dispatcher.VerifyAccess();
 			lock (assemblies) {
 				assemblies.Remove(assembly);
+				assembly.Dispose();
 			}
 			RequestGC();
 		}
