@@ -17,16 +17,51 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Input;
+using ICSharpCode.ILSpy.TreeNodes;
+using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy
 {
 	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "_Save Code…", MenuIcon = "Save", MenuCategory = "Save", MenuOrder = 1000)]
-	sealed class SaveCommand : CommandWrapper
+	[ExportContextMenuEntry(Header = "Save Code…", Icon = "Save", Category = "Save", InputGestureText = "Ctrl+S", Order = 250)]
+	sealed class SaveCommand : CommandWrapper, IContextMenuEntry2
 	{
 		public SaveCommand()
 			: base(ApplicationCommands.Save)
 		{
+		}
+
+		/// <remarks>Copied from SaveModuleCommand.cs, move to helper/util class?</remarks>
+		HashSet<LoadedAssembly> GetAssemblyNodes(SharpTreeNode[] nodes)
+		{
+			var hash = new HashSet<LoadedAssembly>();
+			foreach (var node in nodes) {
+				var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
+				if (asmNode != null && asmNode.LoadedAssembly.ModuleDefinition != null)
+					hash.Add(asmNode.LoadedAssembly);
+			}
+			return hash;
+		}
+
+		public void Initialize(TextViewContext context, System.Windows.Controls.MenuItem menuItem)
+		{
+		}
+
+		public void Execute(TextViewContext context)
+		{
+			base.Execute(null);
+		}
+
+		public bool IsEnabled(TextViewContext context)
+		{
+			return base.CanExecute(null);
+		}
+
+		public bool IsVisible(TextViewContext context)
+		{
+			return context.TreeView != null;
 		}
 	}
 }
