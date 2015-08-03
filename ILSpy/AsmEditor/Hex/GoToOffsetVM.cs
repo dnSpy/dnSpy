@@ -17,38 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows.Controls;
-using System.Xml.Linq;
+namespace dnSpy.AsmEditor.Hex {
+	sealed class GoToOffsetVM : ViewModelBase {
 
-namespace ICSharpCode.ILSpy.Options
-{
-	[ExportOptionPage(Title = "Other", Order = 2)]
-	sealed class OtherSettingsCreator : IOptionPageCreator
-	{
-		public IOptionPage Create()
-		{
-			return new OtherSettingsControl();
+		public UInt64VM OffsetVM {
+			get { return offsetVM; }
 		}
-	}
+		UInt64VM offsetVM;
 
-	/// <summary>
-	/// Interaction logic for OtherSettingsControl.xaml
-	/// </summary>
-	public partial class OtherSettingsControl : UserControl, IOptionPage
-	{
-		public OtherSettingsControl()
-		{
-			InitializeComponent();
+		public GoToOffsetVM(ulong offset, ulong min, ulong max) {
+			this.offsetVM = new UInt64VM(offset, a => HasErrorUpdated()) {
+				Min = min,
+				Max = max,
+			};
 		}
 
-		public void Load(ILSpySettings settings)
-		{
-			this.DataContext = OtherSettings.Load(settings);
-		}
-
-		public RefreshFlags Save(XElement root)
-		{
-			return ((OtherSettings)this.DataContext).Save(root);
+		public override bool HasError {
+			get { return OffsetVM.HasError; }
 		}
 	}
 }

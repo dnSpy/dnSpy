@@ -80,7 +80,7 @@ namespace dnSpy.HexEditor {
 				rectGeo.Freeze();
 				path.AddGeometry(rectGeo);
 
-				if (hexBox.PrintAscii) {
+				if (hexBox.ShowAscii) {
 					rectGeo = new RectangleGeometry(new Rect(x + dx + asciiX, y, count * hexBox.CharacterWidth, hexBox.CharacterHeight));
 					rectGeo.Freeze();
 					path.AddGeometry(rectGeo);

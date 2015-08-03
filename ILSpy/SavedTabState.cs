@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -153,13 +152,14 @@ namespace ICSharpCode.ILSpy {
 		public static readonly string TYPE = "hex";
 
 		public HexBoxState HexBoxState = new HexBoxState();
-		public int BytesGroupCount;
-		public int BytesPerLine;
+		public int? BytesGroupCount;
+		public int? BytesPerLine;
+		public bool? UseHexPrefix;
+		public bool? ShowAscii;
+		public bool? LowerCaseHex;
+
 		public int HexOffsetSize;
 		public bool UseRelativeOffsets;
-		public bool UseHexPrefix;
-		public bool PrintAscii;
-		public bool LowerCaseHex;
 		public ulong BaseOffset;
 		public string FileName;
 
@@ -167,21 +167,15 @@ namespace ICSharpCode.ILSpy {
 			get { return TYPE; }
 		}
 
-		public SavedHexTabState() {
-		}
-
-		public SavedHexTabState(string filename) {
-			this.FileName = filename;
-		}
-
 		protected override void ToXmlOverride(XElement xml) {
 			xml.SetAttributeValue("BytesGroupCount", BytesGroupCount);
 			xml.SetAttributeValue("BytesPerLine", BytesPerLine);
+			xml.SetAttributeValue("UseHexPrefix", UseHexPrefix);
+			xml.SetAttributeValue("ShowAscii", ShowAscii);
+			xml.SetAttributeValue("LowerCaseHex", LowerCaseHex);
+
 			xml.SetAttributeValue("HexOffsetSize", HexOffsetSize);
 			xml.SetAttributeValue("UseRelativeOffsets", UseRelativeOffsets);
-			xml.SetAttributeValue("UseHexPrefix", UseHexPrefix);
-			xml.SetAttributeValue("PrintAscii", PrintAscii);
-			xml.SetAttributeValue("LowerCaseHex", LowerCaseHex);
 			xml.SetAttributeValue("BaseOffset", BaseOffset);
 			xml.SetAttributeValue("FileName", SessionSettings.Escape(FileName));
 
@@ -201,13 +195,14 @@ namespace ICSharpCode.ILSpy {
 		internal static SavedHexTabState FromXmlInternal(XElement child) {
 			var savedState = new SavedHexTabState();
 
-			savedState.BytesGroupCount = (int)child.Attribute("BytesGroupCount");
-			savedState.BytesPerLine = (int)child.Attribute("BytesPerLine");
+			savedState.BytesGroupCount = (int?)child.Attribute("BytesGroupCount");
+			savedState.BytesPerLine = (int?)child.Attribute("BytesPerLine");
+			savedState.UseHexPrefix = (bool?)child.Attribute("UseHexPrefix");
+			savedState.ShowAscii = (bool?)child.Attribute("ShowAscii");
+			savedState.LowerCaseHex = (bool?)child.Attribute("LowerCaseHex");
+
 			savedState.HexOffsetSize = (int)child.Attribute("HexOffsetSize");
 			savedState.UseRelativeOffsets = (bool)child.Attribute("UseRelativeOffsets");
-			savedState.UseHexPrefix = (bool)child.Attribute("UseHexPrefix");
-			savedState.PrintAscii = (bool)child.Attribute("PrintAscii");
-			savedState.LowerCaseHex = (bool)child.Attribute("LowerCaseHex");
 			savedState.BaseOffset = (ulong)child.Attribute("BaseOffset");
 			savedState.FileName = SessionSettings.Unescape((string)child.Attribute("FileName"));
 

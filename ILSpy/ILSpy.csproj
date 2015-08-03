@@ -309,6 +309,11 @@
     <Compile Include="AsmEditor\Field\FieldOptionsVM.cs" />
     <Compile Include="AsmEditor\HexDocumentManager.cs" />
     <Compile Include="AsmEditor\Hex\ContextMenuCommands.cs" />
+    <Compile Include="AsmEditor\Hex\GoToOffsetDlg.xaml.cs">
+      <DependentUpon>GoToOffsetDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Hex\GoToOffsetVM.cs" />
+    <Compile Include="AsmEditor\Hex\HexSettings.cs" />
     <Compile Include="AsmEditor\IIndexedItem.cs" />
     <Compile Include="AsmEditor\IndexObservableCollection.cs" />
     <Compile Include="AsmEditor\InstructionCommands.cs" />
@@ -560,10 +565,9 @@
     <Compile Include="MsgBox.xaml.cs">
       <DependentUpon>MsgBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Options\DecompilerSettingsPanel.cs" />
+    <Compile Include="Options\DisplaySettingsPanel.cs" />
     <Compile Include="Options\OtherSettings.cs" />
-    <Compile Include="Options\OtherSettingsControl.xaml.cs">
-      <DependentUpon>OtherSettingsControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="SavedTabState.cs" />
     <Compile Include="SourceCodeMappingUtils.cs" />
     <Compile Include="TabContextMenuEntries.cs" />
@@ -633,15 +637,7 @@
     <Compile Include="OpenListDialog.xaml.cs">
       <DependentUpon>OpenListDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Options\DecompilerSettingsPanel.xaml.cs">
-      <DependentUpon>DecompilerSettingsPanel.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Options\DisplaySettings.cs" />
-    <Compile Include="Options\DisplaySettingsPanel.xaml.cs">
-      <DependentUpon>DisplaySettingsPanel.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Options\OptionsDialog.xaml.cs">
       <DependentUpon>OptionsDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -953,6 +949,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="AsmEditor\Hex\GoToOffsetDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AsmEditor\MethodBody\MethodBodyControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1063,13 +1063,7 @@
     </Page>
     <Page Include="OpenFromGacDialog.xaml" />
     <Page Include="OpenListDialog.xaml" />
-    <Page Include="Options\DecompilerSettingsPanel.xaml" />
-    <Page Include="Options\DisplaySettingsPanel.xaml" />
     <Page Include="Options\OptionsDialog.xaml" />
-    <Page Include="Options\OtherSettingsControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="SearchPane.xaml">
       <DependentUpon>SearchPane.cs</DependentUpon>
     </Page>

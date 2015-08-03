@@ -20,41 +20,47 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
 using System.Xml.Linq;
+using dnSpy.AsmEditor;
 
-namespace ICSharpCode.ILSpy.Options
-{
+namespace ICSharpCode.ILSpy.Options {
 	[ExportOptionPage(Title = "Display", Order = 1)]
-	sealed class DisplaySettingsPanelCreator : IOptionPageCreator
-	{
-		public IOptionPage Create()
-		{
+	sealed class DisplaySettingsPanelCreator : IOptionPageCreator {
+		public OptionPage Create() {
 			return new DisplaySettingsPanel();
 		}
 	}
 
-	/// <summary>
-	/// Interaction logic for DisplaySettingsPanel.xaml
-	/// </summary>
-	public partial class DisplaySettingsPanel : UserControl, IOptionPage
-	{
-		public DisplaySettingsPanel()
-		{
-			InitializeComponent();
-			
+	public class DisplaySettingsPanel : OptionPage {
+		public DisplaySettings Settings {
+			get { return settings; }
+		}
+		DisplaySettings settings;
+
+		public FontFamily[] Fonts {
+			get { return fonts; }
+			set {
+				if (fonts != value) {
+					fonts = value;
+					OnPropertyChanged("Fonts");
+				}
+			}
+		}
+		FontFamily[] fonts;
+
+		public DisplaySettingsPanel() {
 			Task<FontFamily[]> task = new Task<FontFamily[]>(FontLoader);
 			task.Start();
 			task.ContinueWith(
-				delegate(Task continuation) {
+				delegate (Task continuation) {
 					App.Current.Dispatcher.Invoke(
 						DispatcherPriority.Normal,
 						(Action)(
 							() => {
-								fontSelector.ItemsSource = task.Result;
+								this.Fonts = task.Result;
 								if (continuation.Exception != null) {
 									foreach (var ex in continuation.Exception.InnerExceptions) {
 										MainWindow.Instance.ShowMessageBox(ex.ToString());
@@ -65,14 +71,13 @@ namespace ICSharpCode.ILSpy.Options
 				}
 			);
 		}
-		
-		public void Load(ILSpySettings settings)
-		{
-			this.DataContext = LoadDisplaySettings(settings);
+
+		public override void Load(ILSpySettings settings) {
+			this.settings = LoadDisplaySettings(settings);
 		}
-		
+
 		static DisplaySettings currentDisplaySettings;
-		
+
 		public static DisplaySettings CurrentDisplaySettings {
 			get {
 				if (currentDisplaySettings != null)
@@ -81,31 +86,29 @@ namespace ICSharpCode.ILSpy.Options
 				return currentDisplaySettings;
 			}
 		}
-		
-		static bool IsSymbolFont(FontFamily fontFamily)
-		{
+
+		static bool IsSymbolFont(FontFamily fontFamily) {
 			foreach (var tf in fontFamily.GetTypefaces()) {
 				GlyphTypeface glyph;
 				try {
 					if (tf.TryGetGlyphTypeface(out glyph))
 						return glyph.Symbol;
-				} catch (Exception) {
+				}
+				catch (Exception) {
 					return true;
 				}
 			}
 			return false;
 		}
-		
-		static FontFamily[] FontLoader()
-		{
-			return Fonts.SystemFontFamilies
+
+		static FontFamily[] FontLoader() {
+			return System.Windows.Media.Fonts.SystemFontFamilies
 				.Where(ff => !IsSymbolFont(ff))
 				.OrderBy(ff => ff.Source)
 				.ToArray();
 		}
-		
-		public static DisplaySettings LoadDisplaySettings(ILSpySettings settings)
-		{
+
+		public static DisplaySettings LoadDisplaySettings(ILSpySettings settings) {
 			XElement e = settings["DisplaySettings"];
 			DisplaySettings s = new DisplaySettings();
 			s.SelectedFont = new FontFamily(SessionSettings.Unescape((string)e.Attribute("Font")) ?? GetDefaultFont());
@@ -122,21 +125,19 @@ namespace ICSharpCode.ILSpy.Options
 			s.SyntaxHighlightAnalyzerTreeViewUI = (bool?)e.Attribute("SyntaxHighlightAnalyzerTreeViewUI") ?? true;
 			s.SyntaxHighlightSearchListUI = (bool?)e.Attribute("SyntaxHighlightSearchListUI") ?? true;
 			s.SingleClickExpandsChildren = (bool?)e.Attribute("SingleClickExpandsChildren") ?? true;
-			
+
 			return s;
 		}
 
-		static string GetDefaultFont()
-		{
+		static string GetDefaultFont() {
 			// Consolas first appeared in Windows Vista (v6.0)
 			if (Environment.OSVersion.Version >= new Version(6, 0, 0, 0))
 				return "Consolas";
 			return "Lucida Console";
 		}
-		
-		public RefreshFlags Save(XElement root)
-		{
-			DisplaySettings s = (DisplaySettings)this.DataContext;
+
+		public override RefreshFlags Save(XElement root) {
+			DisplaySettings s = this.settings;
 
 			var flags = RefreshFlags.None;
 			if (currentDisplaySettings.ShowMetadataTokens != s.ShowMetadataTokens ||
@@ -144,9 +145,9 @@ namespace ICSharpCode.ILSpy.Options
 				currentDisplaySettings.ShowAssemblyPublicKeyToken != s.ShowAssemblyPublicKeyToken) {
 				flags |= RefreshFlags.TreeViewNodeNames;
 			}
-			
+
 			currentDisplaySettings.CopyValues(s);
-			
+
 			XElement section = new XElement("DisplaySettings");
 			section.SetAttributeValue("Font", SessionSettings.Escape(s.SelectedFont.Source));
 			section.SetAttributeValue("FontSize", s.SelectedFontSize);
@@ -162,7 +163,7 @@ namespace ICSharpCode.ILSpy.Options
 			section.SetAttributeValue("SyntaxHighlightAnalyzerTreeViewUI", s.SyntaxHighlightAnalyzerTreeViewUI);
 			section.SetAttributeValue("SyntaxHighlightSearchListUI", s.SyntaxHighlightSearchListUI);
 			section.SetAttributeValue("SingleClickExpandsChildren", s.SingleClickExpandsChildren);
-			
+
 			XElement existingElement = root.Element("DisplaySettings");
 			if (existingElement != null)
 				existingElement.ReplaceWith(section);
@@ -172,27 +173,24 @@ namespace ICSharpCode.ILSpy.Options
 			return flags;
 		}
 	}
-	
-	public class FontSizeConverter : IValueConverter
-	{
-		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
+
+	public class FontSizeConverter : IValueConverter {
+		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) {
 			if (value is double) {
 				return Math.Round((double)value / 4 * 3);
 			}
-			
+
 			throw new NotImplementedException();
 		}
-		
-		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
+
+		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) {
 			if (value is string) {
 				double d;
 				if (double.TryParse((string)value, out d))
 					return d * 4 / 3;
 				return 11 * 4 / 3;
 			}
-			
+
 			throw new NotImplementedException();
 		}
 	}

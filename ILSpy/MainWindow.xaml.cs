@@ -36,6 +36,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using dnlib.DotNet;
 using dnSpy.AsmEditor;
+using dnSpy.Options;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Controls;
@@ -199,7 +200,7 @@ namespace ICSharpCode.ILSpy
 			Themes.ThemeChanged += Themes_ThemeChanged;
 			Themes.IsHighContrastChanged += (s, e) => Themes.SwitchThemeIfNecessary();
 			Options.DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
-			Options.OtherSettings.Instance.PropertyChanged += OtherSettings_PropertyChanged;
+			OtherSettings.Instance.PropertyChanged += OtherSettings_PropertyChanged;
 			InitializeTextEditorFontResource();
 
 			languageComboBox = new ComboBox() {
@@ -218,7 +219,9 @@ namespace ICSharpCode.ILSpy
 			if (sessionSettings.LeftColumnWidth > 0)
 				leftColumn.Width = new GridLength(sessionSettings.LeftColumnWidth, GridUnitType.Pixel);
 			sessionSettings.FilterSettings.PropertyChanged += filterSettings_PropertyChanged;
-			
+
+			InstallCommands();
+
 			tabGroupsManager = new TabGroupsManager<TabState>(tabGroupsContentPresenter, tabManager_OnSelectionChanged, tabManager_OnAddRemoveTabState);
 			tabGroupsManager.OnTabGroupSelected += tabGroupsManager_OnTabGroupSelected;
 			var theme = Themes.GetThemeOrDefault(sessionSettings.ThemeName);
@@ -240,7 +243,7 @@ namespace ICSharpCode.ILSpy
 		void OtherSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == "DeserializeResources") {
-				if (Options.OtherSettings.Instance.DeserializeResources)
+				if (OtherSettings.Instance.DeserializeResources)
 					OnDeserializeResources();
 			}
 		}
@@ -535,7 +538,6 @@ namespace ICSharpCode.ILSpy
 				tabManager_dontSelectHack[tabManager] = oldValue;
 		}
 
-		int debug_CommandBindings_Count;
 		void InitializeActiveTab(TabState tabState, bool forceIsInActiveTabGroup)
 		{
 			var tabManager = tabState == null ? null : tabState.Owner as TabManager<TabState>;
@@ -544,12 +546,10 @@ namespace ICSharpCode.ILSpy
 			var dts = tabState as DecompileTabState;
 			var newView = dts == null ? null : dts.TextView;
 
-			if (newView != null) {
-				if (isInActiveTabGroup) {
-					Debug.Assert(debug_CommandBindings_Count == this.CommandBindings.Count);
-					this.CommandBindings.AddRange(newView.CommandBindings);
+			if (isInActiveTabGroup) {
+				InstallTabCommandBindings(tabState);
+				if (dts != null)
 					SetLanguage(dts.Language);
-				}
 			}
 
 			bool dontSelect;
@@ -583,16 +583,111 @@ namespace ICSharpCode.ILSpy
 			var tabManager = tabState == null ? null : tabState.Owner as TabManager<TabState>;
 			bool isInActiveTabGroup = tabGroupsManager.ActiveTabGroup == tabManager || forceIsInActiveTabGroup;
 
-			var dts = tabState as DecompileTabState;
-			var oldView = dts == null ? null : dts.TextView;
-
-			if (oldView != null && isInActiveTabGroup) {
-				Debug.Assert(debug_CommandBindings_Count + oldView.CommandBindings.Count == this.CommandBindings.Count);
-				foreach (CommandBinding binding in oldView.CommandBindings)
-					this.CommandBindings.Remove(binding);
-				Debug.Assert(debug_CommandBindings_Count == this.CommandBindings.Count);
-				UninstallTextEditorListeners(oldView);
+			if (isInActiveTabGroup) {
+				UninstallTabCommandBindings(tabState);
+				var dts = tabState as DecompileTabState;
+				if (dts != null)
+					UninstallTextEditorListeners(dts.TextView);
 			}
+		}
+
+		void InstallTabCommandBindings(TabState tabState) {
+			switch (tabState.Type) {
+			case TabStateType.DecompiledCode:
+				AddCommandBindings(CodeBindings, ((DecompileTabState)tabState).TextView);
+				break;
+
+			case TabStateType.HexEditor:
+				AddCommandBindings(HexBindings, ((HexTabState)tabState).HexBox);
+				break;
+
+			default:
+				throw new InvalidOperationException();
+			}
+		}
+
+		void UninstallTabCommandBindings(TabState tabState) {
+			if (tabState == null)
+				return;
+
+			switch (tabState.Type) {
+			case TabStateType.DecompiledCode:
+				RemoveCommandBindings(CodeBindings, ((DecompileTabState)tabState).TextView);
+				break;
+
+			case TabStateType.HexEditor:
+				RemoveCommandBindings(HexBindings, ((HexTabState)tabState).HexBox);
+				break;
+
+			default:
+				throw new InvalidOperationException();
+			}
+		}
+
+		// These command and input bindings are added whenever a new tab gets active
+		public readonly TabBindings CodeBindings = new TabBindings();
+		public readonly TabBindings HexBindings = new TabBindings();
+		public class TabBindings {
+			public readonly List<CommandBinding> CommandBindings = new List<CommandBinding>();
+			public readonly List<InputBinding> InputBindings = new List<InputBinding>();
+
+			public void Install(UIElement target) {
+				target.CommandBindings.AddRange(CommandBindings);
+				target.InputBindings.AddRange(InputBindings);
+			}
+
+			public void Uninstall(UIElement target) {
+				foreach (var binding in CommandBindings)
+					target.CommandBindings.Remove(binding);
+				foreach (var binding in InputBindings)
+					target.InputBindings.Remove(binding);
+			}
+
+			public void Add(ICommand command, ExecutedRoutedEventHandler exec, CanExecuteRoutedEventHandler canExec, ModifierKeys modifiers1, Key key1, ModifierKeys modifiers2 = ModifierKeys.None, Key key2 = Key.None, ModifierKeys modifiers3 = ModifierKeys.None, Key key3 = Key.None) {
+				this.CommandBindings.Add(new CommandBinding(command, exec, canExec));
+				this.InputBindings.Add(new KeyBinding(command, key1, modifiers1));
+				if (key2 != Key.None)
+					this.InputBindings.Add(new KeyBinding(command, key2, modifiers2));
+				if (key3 != Key.None)
+					this.InputBindings.Add(new KeyBinding(command, key3, modifiers3));
+			}
+		}
+
+		void InstallCommands()
+		{
+			CodeBindings.Add(new RoutedCommand("GoToLine", typeof(MainWindow)), GoToLineExecuted, null, ModifierKeys.Control, Key.G);
+
+			var bindings = new TabBindings();
+			bindings.Add(new RoutedCommand("OpenNewTab", typeof(MainWindow)), OpenNewTabExecuted, null, ModifierKeys.Control, Key.T);
+			bindings.Add(new RoutedCommand("CloseActiveTab", typeof(MainWindow)), CloseActiveTabExecuted, CloseActiveTabCanExecute, ModifierKeys.Control, Key.W, ModifierKeys.Control, Key.F4);
+			bindings.Add(new RoutedCommand("SelectNextTab", typeof(MainWindow)), SelectNextTabExecuted, SelectNextTabCanExecute, ModifierKeys.Control, Key.Tab);
+			bindings.Add(new RoutedCommand("SelectPrevTab", typeof(MainWindow)), SelectPrevTabExecuted, SelectPrevTabCanExecute, ModifierKeys.Control | ModifierKeys.Shift, Key.Tab);
+			bindings.Add(new RoutedCommand("ZoomIncrease", typeof(MainWindow)), ZoomIncreaseExecuted, ZoomIncreaseCanExecute, ModifierKeys.Control, Key.OemPlus, ModifierKeys.Control, Key.Add);
+			bindings.Add(new RoutedCommand("ZoomDecrease", typeof(MainWindow)), ZoomDecreaseExecuted, ZoomDecreaseCanExecute, ModifierKeys.Control, Key.OemMinus, ModifierKeys.Control, Key.Subtract);
+			bindings.Add(new RoutedCommand("ZoomReset", typeof(MainWindow)), ZoomResetExecuted, ZoomResetCanExecute, ModifierKeys.Control, Key.D0, ModifierKeys.Control, Key.NumPad0);
+			bindings.Add(new RoutedCommand("FocusCode", typeof(MainWindow)), FocusCodeExecuted, FocusCodeCanExecute, ModifierKeys.None, Key.F7, ModifierKeys.Control | ModifierKeys.Alt, Key.D0, ModifierKeys.Control | ModifierKeys.Alt, Key.NumPad0);
+			bindings.Add(new RoutedCommand("FocusTreeView", typeof(MainWindow)), FocusTreeViewExecuted, FocusTreeViewCanExecute, ModifierKeys.Control | ModifierKeys.Alt, Key.L);
+			bindings.Add(NavigationCommands.BrowseBack, BackCommandExecuted, BackCommandCanExecute, ModifierKeys.None, Key.Back);
+			bindings.CommandBindings.Add(new CommandBinding(NavigationCommands.BrowseForward, ForwardCommandExecuted, ForwardCommandCanExecute));
+			bindings.Add(new RoutedCommand("FullScreen", typeof(MainWindow)), FullScreenExecuted, FullScreenCanExecute, ModifierKeys.Shift | ModifierKeys.Alt, Key.Enter);
+			bindings.CommandBindings.Add(new CommandBinding(ApplicationCommands.Open, OpenCommandExecuted));
+			bindings.CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, SaveCommandExecuted));
+			bindings.CommandBindings.Add(new CommandBinding(NavigationCommands.Search, SearchCommandExecuted));
+			bindings.Add(new RoutedCommand("WordWrap", typeof(MainWindow)), WordWrapExecuted, WordWrapCanExecute, ModifierKeys.Control | ModifierKeys.Alt, Key.W);
+			bindings.Install(this);
+		}
+
+		void AddCommandBindings(TabBindings bindings, UIElement elem)
+		{
+			bindings.Install(this);
+			this.CommandBindings.AddRange(elem.CommandBindings);
+		}
+
+		void RemoveCommandBindings(TabBindings bindings, UIElement elem)
+		{
+			bindings.Uninstall(this);
+			foreach (CommandBinding binding in elem.CommandBindings)
+				this.CommandBindings.Remove(binding);
 		}
 
 		internal void tabManager_OnSelectionChanged(TabManager<TabState> tabManager, TabState oldState, TabState newState)
@@ -1206,7 +1301,6 @@ namespace ICSharpCode.ILSpy
 			case 0:
 				this.CommandBindings.Add(new CommandBinding(ILSpyTreeNode.TreeNodeActivatedEvent, TreeNodeActivatedExecuted));
 
-				debug_CommandBindings_Count = this.CommandBindings.Count;
 				ContextMenuProvider.Add(treeView);
 
 				ILSpySettings spySettings = this.spySettings;
@@ -1258,7 +1352,6 @@ namespace ICSharpCode.ILSpy
 				break;
 
 			case 4:
-				var debug_CommandBindings_Count2 = this.CommandBindings.Count;
 				foreach (var plugin in plugins)
 					plugin.OnLoaded();
 
@@ -1267,7 +1360,6 @@ namespace ICSharpCode.ILSpy
 				foreach (var func in list)
 					func();
 
-				debug_CommandBindings_Count += this.CommandBindings.Count - debug_CommandBindings_Count2;
 				break;
 
 			case 5:
@@ -1282,6 +1374,10 @@ namespace ICSharpCode.ILSpy
 
 				loadingControl.Visibility = Visibility.Collapsed;
 				mainGrid.Visibility = Visibility.Visible;
+
+				// In case a plugin has added their own bindings
+				UninstallTabCommandBindings(ActiveTabState);
+				InstallTabCommandBindings(ActiveTabState);
 				return;
 			default:
 				return;
@@ -2402,16 +2498,6 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		private void GoToTokenExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
-			GoToTokenContextMenuEntry.Execute();
-		}
-
-		private void GoToTokenCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.CanExecute = GoToTokenContextMenuEntry.CanExecute();
-		}
-
 		private void GoToLineExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			var decompilerTextView = ActiveTextView;
@@ -3160,7 +3246,7 @@ namespace ICSharpCode.ILSpy
 
 			var tabState = CreateNewHexTabState(tabGroupsManager.ActiveTabGroup);
 			InitializeHexDocument(tabState, node.LoadedAssembly.FileName);
-			tabState.InitializeDefaultOptions();
+			tabState.InitializeStartEndOffset();
 			SetActiveTab(tabState);
 		}
 

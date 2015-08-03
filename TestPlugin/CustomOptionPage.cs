@@ -1,16 +1,7 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Xml.Linq;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Options;
@@ -20,22 +11,22 @@ namespace TestPlugin
 	[ExportOptionPage(Title = "TestPlugin", Order = 0)]
 	sealed class CustomOptionPageCreator : IOptionPageCreator
 	{
-		public IOptionPage Create()
+		public OptionPage Create()
 		{
 			return new CustomOptionPage();
 		}
 	}
 
-	partial class CustomOptionPage : UserControl, IOptionPage
+	class CustomOptionPage : OptionPage
 	{
+		public Options Options {
+			get { return options; }
+		}
+		Options options;
+
 		static readonly XNamespace ns = "http://www.ilspy.net/testplugin";
 		
-		public CustomOptionPage()
-		{
-			InitializeComponent();
-		}
-		
-		public void Load(ILSpySettings settings)
+		public override void Load(ILSpySettings settings)
 		{
 			// For loading options, use ILSpySetting's indexer.
 			// If the specified section does exist, the indexer will return a new empty element.
@@ -44,12 +35,12 @@ namespace TestPlugin
 			Options s = new Options();
 			s.UselessOption1 = (bool?)e.Attribute("useless1") ?? s.UselessOption1;
 			s.UselessOption2 = (double?)e.Attribute("useless2") ?? s.UselessOption2;
-			this.DataContext = s;
+			this.options = s;
 		}
 		
-		public RefreshFlags Save(XElement root)
+		public override RefreshFlags Save(XElement root)
 		{
-			Options s = (Options)this.DataContext;
+			Options s = this.options;
 			// Save the options back into XML:
 			XElement section = new XElement(ns + "CustomOptions");
 			section.SetAttributeValue("useless1", s.UselessOption1);
@@ -67,7 +58,7 @@ namespace TestPlugin
 		}
 	}
 	
-	class Options : INotifyPropertyChanged
+	public class Options : INotifyPropertyChanged
 	{
 		bool uselessOption1;
 		

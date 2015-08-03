@@ -27,8 +27,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
+using dnSpy.Options;
 using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TreeNodes;
 using WF = System.Windows.Forms;
 

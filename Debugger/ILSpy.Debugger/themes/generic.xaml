@@ -1,0 +1,20 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:options="clr-namespace:ICSharpCode.ILSpy.Options"
+>
+
+    <DataTemplate DataType="{x:Type options:DebuggerSettingsPanel}">
+        <Grid>
+            <StackPanel Margin="10">
+                <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.AskForArguments}">Ask for arguments and working directory before executing a process</CheckBox>
+                <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.BreakAtBeginning}">Break debugged process at start or attach</CheckBox>
+                <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.EnableJustMyCode}">Enable just my code</CheckBox>
+                <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.StepOverDebuggerAttributes}">Step over debugger attributes</CheckBox>
+                <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.StepOverAllProperties}">Step over all properties</CheckBox>
+                <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.StepOverSingleLineProperties}">Step over single line properties</CheckBox>
+                <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.StepOverFieldAccessProperties}">Step over field access properties</CheckBox>
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
+</ResourceDictionary>

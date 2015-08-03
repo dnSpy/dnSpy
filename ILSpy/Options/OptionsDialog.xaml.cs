@@ -18,11 +18,13 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Linq;
 using ICSharpCode.ILSpy.Controls;
+using dnSpy.AsmEditor;
 
 namespace ICSharpCode.ILSpy.Options
 {
@@ -44,9 +46,18 @@ namespace ICSharpCode.ILSpy.Options
 			public Lazy<IOptionPageCreator, IOptionPageCreatorMetadata>[] optionPages = null;
 		}
 
-		readonly IOptionPage[] optionPages;
+		readonly OptionPage[] optionPages;
 		public RefreshFlags RefreshFlags { get; private set; }
-		
+
+		bool HasError {
+			get { return optionPages.Any(a => a.HasError); }
+		}
+
+		void HasErrorUpdated()
+		{
+			this.okButton.IsEnabled = !HasError;
+		}
+
 		public OptionsDialog()
 		{
 			InitializeComponent();
@@ -56,11 +67,19 @@ namespace ICSharpCode.ILSpy.Options
 			for (int i = 0; i < creators.Length; i++) {
 				TabItem tabItem = new TabItem();
 				tabItem.Header = creators[i].Metadata.Title;
-				tabItem.Content = optionPages[i];
+				tabItem.Content = new ScrollViewer {
+					HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+					VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+					Content = optionPages[i],
+				};
 				tabControl.Items.Add(tabItem);
 				
 				optionPages[i].Load(settings);
 			}
+
+			foreach (var page in optionPages)
+				page.PropertyChanged += (s, e) => HasErrorUpdated();
+			HasErrorUpdated();
 		}
 		
 		void OKButton_Click(object sender, RoutedEventArgs e)
@@ -78,7 +97,7 @@ namespace ICSharpCode.ILSpy.Options
 
 	public interface IOptionPageCreator
 	{
-		IOptionPage Create();
+		OptionPage Create();
 	}
 	
 	public interface IOptionPageCreatorMetadata
@@ -87,10 +106,10 @@ namespace ICSharpCode.ILSpy.Options
 		int Order { get; }
 	}
 	
-	public interface IOptionPage
+	public abstract class OptionPage : ViewModelBase
 	{
-		void Load(ILSpySettings settings);
-		RefreshFlags Save(XElement root);
+		public abstract void Load(ILSpySettings settings);
+		public abstract RefreshFlags Save(XElement root);
 	}
 
 	[Flags]

@@ -375,7 +375,7 @@ namespace ICSharpCode.ILSpy
 			TextViewContext context = TextViewContext.Create(hexBox: hexBox);
 			ContextMenu menu;
 			if (ShowContextMenu(context, out menu))
-				tabControl.ContextMenu = menu;
+				hexBox.ContextMenu = menu;
 			else
 				// hide the context menu.
 				e.Handled = true;

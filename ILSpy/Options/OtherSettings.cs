@@ -24,12 +24,19 @@ using System.Threading;
 using System.Windows.Input;
 using System.Xml.Linq;
 using dnSpy.AsmEditor;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.Options;
 using Microsoft.Win32;
 
-namespace ICSharpCode.ILSpy.Options
-{
-	sealed class OtherSettings : ViewModelBase
-	{
+namespace dnSpy.Options {
+	[ExportOptionPage(Title = "Other", Order = 3)]
+	sealed class OtherSettingsCreator : IOptionPageCreator {
+		public OptionPage Create() {
+			return new OtherSettings();
+		}
+	}
+
+	sealed class OtherSettings : OptionPage {
 		public ICommand EnableAllWarningsCommand {
 			get { return new RelayCommand(a => EnableAllWarnings(), a => EnableAllWarningsCanExecute()); }
 		}
@@ -38,7 +45,9 @@ namespace ICSharpCode.ILSpy.Options
 			get {
 				if (settings != null)
 					return settings;
-				Interlocked.CompareExchange(ref settings, Load(ILSpySettings.Load()), null);
+				var s = new OtherSettings();
+				s.Load(ILSpySettings.Load());
+				Interlocked.CompareExchange(ref settings, s, null);
 				return settings;
 			}
 		}
@@ -75,17 +84,13 @@ namespace ICSharpCode.ILSpy.Options
 		bool deserializeResources;
 
 		const string SETTINGS_SECTION_NAME = "OtherSettings";
-		internal static OtherSettings Load(ILSpySettings settings)
-		{
+		public override void Load(ILSpySettings settings) {
 			var xelem = settings[SETTINGS_SECTION_NAME];
-			var s = new OtherSettings();
-			s.UseMemoryMappedIO = (bool?)xelem.Attribute("UseMemoryMappedIO") ?? true;
-			s.DeserializeResources = (bool?)xelem.Attribute("DeserializeResources") ?? true;
-			return s;
+			this.UseMemoryMappedIO = (bool?)xelem.Attribute("UseMemoryMappedIO") ?? true;
+			this.DeserializeResources = (bool?)xelem.Attribute("DeserializeResources") ?? true;
 		}
 
-		internal RefreshFlags Save(XElement root)
-		{
+		public override RefreshFlags Save(XElement root) {
 			var flags = RefreshFlags.None;
 
 			if (!this.UseMemoryMappedIO && Instance.UseMemoryMappedIO)
@@ -107,8 +112,7 @@ namespace ICSharpCode.ILSpy.Options
 			return flags;
 		}
 
-		void WriteTo(OtherSettings other)
-		{
+		void WriteTo(OtherSettings other) {
 			other.UseMemoryMappedIO = this.UseMemoryMappedIO;
 			other.DeserializeResources = this.DeserializeResources;
 		}
@@ -118,8 +122,7 @@ namespace ICSharpCode.ILSpy.Options
 			"exe", "dll", "netmodule", "winmd",
 		};
 
-		bool? HasExplorerIntegration()
-		{
+		bool? HasExplorerIntegration() {
 			int count = 0;
 			try {
 				foreach (var ext in openExtensions) {
@@ -142,8 +145,7 @@ namespace ICSharpCode.ILSpy.Options
 				null;
 		}
 
-		void SetExplorerIntegration(bool enabled)
-		{
+		void SetExplorerIntegration(bool enabled) {
 			var path = System.Reflection.Assembly.GetEntryAssembly().Location;
 			if (!File.Exists(path)) {
 				MainWindow.Instance.ShowMessageBox("Cannot locate dnSpy!");
@@ -186,13 +188,11 @@ namespace ICSharpCode.ILSpy.Options
 			}
 		}
 
-		void EnableAllWarnings()
-		{
+		void EnableAllWarnings() {
 			MainWindow.Instance.SessionSettings.IgnoredWarnings.Clear();
 		}
 
-		bool EnableAllWarningsCanExecute()
-		{
+		bool EnableAllWarningsCanExecute() {
 			return MainWindow.Instance.SessionSettings.IgnoredWarnings.Count > 0;
 		}
 	}

@@ -73,9 +73,9 @@ namespace dnSpy.HexEditor {
 		public static readonly DependencyProperty UseHexPrefixProperty =
 			DependencyProperty.Register("UseHexPrefix", typeof(bool), typeof(HexBox),
 			new FrameworkPropertyMetadata(false, OnUseHexPrefixChanged));
-		public static readonly DependencyProperty PrintAsciiProperty =
-			DependencyProperty.Register("PrintAscii", typeof(bool), typeof(HexBox),
-			new FrameworkPropertyMetadata(true, OnPrintAsciiChanged));
+		public static readonly DependencyProperty ShowAsciiProperty =
+			DependencyProperty.Register("ShowAscii", typeof(bool), typeof(HexBox),
+			new FrameworkPropertyMetadata(true, OnShowAsciiChanged));
 		public static readonly DependencyProperty LowerCaseHexProperty =
 			DependencyProperty.Register("LowerCaseHex", typeof(bool), typeof(HexBox),
 			new FrameworkPropertyMetadata(false, OnLowerCaseHexChanged));
@@ -147,9 +147,9 @@ namespace dnSpy.HexEditor {
 			set { SetValue(UseHexPrefixProperty, value); }
 		}
 
-		public bool PrintAscii {
-			get { return (bool)GetValue(PrintAsciiProperty); }
-			set { SetValue(PrintAsciiProperty, value); }
+		public bool ShowAscii {
+			get { return (bool)GetValue(ShowAsciiProperty); }
+			set { SetValue(ShowAsciiProperty, value); }
 		}
 
 		public bool LowerCaseHex {
@@ -272,9 +272,9 @@ namespace dnSpy.HexEditor {
 			self.InvalidateCachedLinesAndRefresh();
 		}
 
-		static void OnPrintAsciiChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+		static void OnShowAsciiChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			var self = (HexBox)d;
-			if (!self.PrintAscii)
+			if (!self.ShowAscii)
 				self.SwitchCaretToHexColumn();
 			self.RepaintLayers();
 			self.InvalidateCachedLinesAndRefresh();
@@ -508,10 +508,10 @@ namespace dnSpy.HexEditor {
 			int numCharsPerLine = (int)(width / characterWidth);
 
 			int num = (UseHexPrefix ? 2/*0x*/ : 0) + numOffsetNibbles/*offset*/;
-			if (PrintAscii)
+			if (ShowAscii)
 				num++;	// space between hex + ASCII
 			int charsLeft = numCharsPerLine - num;
-			int bytes = charsLeft / (1/*space*/ + 2/*hex*/ + (PrintAscii ? 1/*ASCII char*/ : 0));
+			int bytes = charsLeft / (1/*space*/ + 2/*hex*/ + (ShowAscii ? 1/*ASCII char*/ : 0));
 			return Math.Max(1, bytes);
 		}
 
@@ -519,8 +519,8 @@ namespace dnSpy.HexEditor {
 			return (ulong)(UseHexPrefix ? 2/*0x*/ : 0) +
 				(ulong)numOffsetNibbles/*offset*/ +
 				(ulong)visibleBytesPerLine * 3/*space + hex*/ +
-				(ulong)(PrintAscii ? 1/*space between hex + ASCII*/ : 0) +
-				(ulong)(PrintAscii ? visibleBytesPerLine/*ASCII*/ : 0);
+				(ulong)(ShowAscii ? 1/*space between hex + ASCII*/ : 0) +
+				(ulong)(ShowAscii ? visibleBytesPerLine/*ASCII*/ : 0);
 		}
 
 		internal ulong GetHexByteColumnIndex() {
@@ -532,7 +532,7 @@ namespace dnSpy.HexEditor {
 			return (ulong)(UseHexPrefix ? 2/*0x*/ : 0) +
 				(ulong)numOffsetNibbles/*offset*/ +
 				(ulong)visibleBytesPerLine * 3/*space + hex*/ +
-				(ulong)(PrintAscii ? 1/*space between hex + ASCII*/ : 0);
+				(ulong)(ShowAscii ? 1/*space between hex + ASCII*/ : 0);
 		}
 
 		ulong? TryGetHexByteLineIndex(ulong col, double xpos, out int hexByteCharIndex) {
@@ -553,7 +553,7 @@ namespace dnSpy.HexEditor {
 				hexByteCharIndex = 0;
 				return 0;
 			}
-			if (xpos < 0.5 && PrintAscii && GetAsciiColumnIndex() == col + 1) {
+			if (xpos < 0.5 && ShowAscii && GetAsciiColumnIndex() == col + 1) {
 				hexByteCharIndex = 1;
 				return (ulong)visibleBytesPerLine - 1;
 			}
@@ -562,7 +562,7 @@ namespace dnSpy.HexEditor {
 		}
 
 		ulong? TryGetAsciiLineIndex(ulong col) {
-			if (!PrintAscii)
+			if (!ShowAscii)
 				return null;
 			ulong start = GetAsciiColumnIndex();
 			ulong end = NumberUtils.AddUInt64(start, (ulong)(visibleBytesPerLine - 1));
@@ -597,8 +597,12 @@ namespace dnSpy.HexEditor {
 			AddVisualChild((Visual)layer);
 		}
 
-		ulong PhysicalToVisibleOffset(ulong offset) {
-			return BaseOffset + (UseRelativeOffsets ? offset - StartOffset : offset);
+		public ulong PhysicalToVisibleOffset(ulong offset) {
+			return offset - (UseRelativeOffsets ? StartOffset : 0) + BaseOffset;
+		}
+
+		public ulong VisibleToPhysicalOffset(ulong offset) {
+			return offset - BaseOffset + (UseRelativeOffsets ? StartOffset : 0);
 		}
 
 		HexTextRunProperties CreateHexTextRunProperties() {
@@ -681,7 +685,7 @@ namespace dnSpy.HexEditor {
 			ulong byteIndex = position.Offset - hexLine.Offset;
 			Rect? rectHex = GetCharacterRect(hexLine, y, (int)(GetHexByteColumnIndex() + byteIndex * 3 + 1 + position.KindPosition));
 			Rect? rectAsc = GetCharacterRect(hexLine, y, (int)(GetAsciiColumnIndex() + byteIndex));
-			if (!PrintAscii)
+			if (!ShowAscii)
 				rectAsc = null;
 			if (rectHex != null && position.Kind != HexBoxPositionKind.HexByte)
 				rectHex = new Rect(rectHex.Value.X, rectHex.Value.Y, rectHex.Value.Width * 2, rectHex.Value.Height);
@@ -858,7 +862,7 @@ namespace dnSpy.HexEditor {
 
 			if (visibleBytesPerLine - skipBytes != bytes)
 				Add(parts, sb, new string(' ', (visibleBytesPerLine - skipBytes - bytes) * 3), textRunProps, Foreground);
-			if (PrintAscii) {
+			if (ShowAscii) {
 				if (skipBytes > 0)
 					Add(parts, sb, new string(' ', skipBytes), textRunProps, AsciiForeground);
 				Add(parts, sb, " ", textRunProps, AsciiForeground);
@@ -1304,7 +1308,7 @@ namespace dnSpy.HexEditor {
 		}
 
 		public void SwitchCaretToAsciiColumn() {
-			if (!PrintAscii)
+			if (!ShowAscii)
 				return;
 			if (CaretPosition.Kind == HexBoxPositionKind.Ascii)
 				return;
@@ -1326,7 +1330,7 @@ namespace dnSpy.HexEditor {
 				position = MoveStart(position);
 			else if (position.Offset > EndOffset)
 				position = MoveEnd(position);
-			if (!PrintAscii && position.Kind == HexBoxPositionKind.Ascii)
+			if (!ShowAscii && position.Kind == HexBoxPositionKind.Ascii)
 				position = new HexBoxPosition(position.Offset, HexBoxPositionKind.HexByte, 0);
 			InitializeCaret(position);
 			if (bringCaretIntoView)

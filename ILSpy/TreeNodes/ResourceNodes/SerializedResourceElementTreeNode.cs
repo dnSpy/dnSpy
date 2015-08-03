@@ -25,6 +25,7 @@ using System.Windows.Input;
 using dnlib.DotNet.Resources;
 using dnSpy.AsmEditor;
 using dnSpy.AsmEditor.Resources;
+using dnSpy.Options;
 
 namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
@@ -70,7 +71,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		void DeserializeIfPossible()
 		{
-			if (Options.OtherSettings.Instance.DeserializeResources)
+			if (OtherSettings.Instance.DeserializeResources)
 				Deserialize();
 		}
 
@@ -119,7 +120,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		{
 			if (obj == null)
 				return null;
-			if (!Options.OtherSettings.Instance.DeserializeResources)
+			if (!OtherSettings.Instance.DeserializeResources)
 				return obj.ToString();
 
 			return SerializationUtils.ConvertObjectToString(obj);

@@ -19,6 +19,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:hex="clr-namespace:dnSpy.AsmEditor.Hex"
                     xmlns:mbody="clr-namespace:dnSpy.AsmEditor.MethodBody">
 
 	<Style x:Key="CilListBoxScrollViewerStyle"
@@ -775,5 +776,28 @@
            BasedOn="{StaticResource CilComboBoxVirtualizationStyle}"
            TargetType="{x:Type ComboBox}">
     </Style>
+
+    <DataTemplate DataType="{x:Type hex:HexSettings}">
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=bytesPerLineTextBox}" Content="Bytes per line" />
+            <TextBox Grid.Row="0" Grid.Column="1" Margin="0 5 0 0" Name="bytesPerLineTextBox" Text="{Binding BytesPerLineVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=bytesGroupCountTextBox}" Content="Byte group size" />
+            <TextBox Grid.Row="1" Grid.Column="1" Margin="0 5 0 0" Name="bytesGroupCountTextBox" Text="{Binding BytesGroupCountVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding UseHexPrefix}" Content="Use hex prefix (offset)" />
+            <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding ShowAscii}" Content="Show ASCII" />
+            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding LowerCaseHex}" Content="Lower case hex" />
+        </Grid>
+    </DataTemplate>
 
 </ResourceDictionary>

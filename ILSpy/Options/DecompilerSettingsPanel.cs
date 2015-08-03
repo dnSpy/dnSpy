@@ -16,40 +16,27 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Threading;
-using System.Windows.Controls;
 using System.Xml.Linq;
+using dnSpy.AsmEditor;
 using ICSharpCode.Decompiler;
 
-namespace ICSharpCode.ILSpy.Options
-{
-	/// <summary>
-	/// Interaction logic for DecompilerSettingsPanel.xaml
-	/// </summary>
+namespace ICSharpCode.ILSpy.Options {
 	[ExportOptionPage(Title = "Decompiler", Order = 0)]
-	sealed class DecompilerSettingsPanelCreator : IOptionPageCreator
-	{
-		public IOptionPage Create()
-		{
+	sealed class DecompilerSettingsPanelCreator : IOptionPageCreator {
+		public OptionPage Create() {
 			return new DecompilerSettingsPanel();
 		}
 	}
 
-	partial class DecompilerSettingsPanel : UserControl, IOptionPage
-	{
-		public DecompilerSettingsPanel()
-		{
-			InitializeComponent();
-		}
-		
-		public void Load(ILSpySettings settings)
-		{
-			this.DataContext = LoadDecompilerSettings(settings);
-		}
-		
+	class DecompilerSettingsPanel : OptionPage {
 		static DecompilerSettings currentDecompilerSettings;
-		
+
+		public DecompilerSettings Settings {
+			get { return settings; }
+		}
+		DecompilerSettings settings;
+
 		public static DecompilerSettings CurrentDecompilerSettings {
 			get {
 				if (currentDecompilerSettings != null)
@@ -58,9 +45,12 @@ namespace ICSharpCode.ILSpy.Options
 				return currentDecompilerSettings;
 			}
 		}
-		
-		public static DecompilerSettings LoadDecompilerSettings(ILSpySettings settings)
-		{
+
+		public override void Load(ILSpySettings settings) {
+			this.settings = LoadDecompilerSettings(settings);
+		}
+
+		public static DecompilerSettings LoadDecompilerSettings(ILSpySettings settings) {
 			XElement e = settings["DecompilerSettings"];
 			DecompilerSettings s = new DecompilerSettings();
 			s.AnonymousMethods = (bool?)e.Attribute("anonymousMethods") ?? s.AnonymousMethods;
@@ -82,10 +72,9 @@ namespace ICSharpCode.ILSpy.Options
 			s.SortMembers = (bool?)e.Attribute("sortMembers") ?? s.SortMembers;
 			return s;
 		}
-		
-		public RefreshFlags Save(XElement root)
-		{
-			DecompilerSettings s = (DecompilerSettings)this.DataContext;
+
+		public override RefreshFlags Save(XElement root) {
+			DecompilerSettings s = this.settings;
 			var flags = RefreshFlags.None;
 
 			if (CurrentDecompilerSettings.AnonymousMethods != s.AnonymousMethods) flags |= RefreshFlags.ILAst;
@@ -136,13 +125,13 @@ namespace ICSharpCode.ILSpy.Options
 			section.SetAttributeValue("decompilationObject3", (int)s.DecompilationObject3);
 			section.SetAttributeValue("decompilationObject4", (int)s.DecompilationObject4);
 			section.SetAttributeValue("sortMembers", s.SortMembers);
-			
+
 			XElement existingElement = root.Element("DecompilerSettings");
 			if (existingElement != null)
 				existingElement.ReplaceWith(section);
 			else
 				root.Add(section);
-			
+
 			currentDecompilerSettings = null; // invalidate cached settings
 			return flags;
 		}

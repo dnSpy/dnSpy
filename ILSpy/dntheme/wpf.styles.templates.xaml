@@ -7,6 +7,9 @@
                     xmlns:avalonedit="clr-namespace:ICSharpCode.AvalonEdit;assembly=ICSharpCode.AvalonEdit"
                     xmlns:avalonediting="clr-namespace:ICSharpCode.AvalonEdit.Editing;assembly=ICSharpCode.AvalonEdit"
                     xmlns:ctrls="clr-namespace:ICSharpCode.ILSpy.Controls"
+                    xmlns:hex="clr-namespace:dnSpy.AsmEditor.Hex"
+                    xmlns:options="clr-namespace:dnSpy.Options"
+                    xmlns:options2="clr-namespace:ICSharpCode.ILSpy.Options"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 	<!--
@@ -5515,5 +5518,133 @@
 			</StackPanel>
 		</Grid>
 	</DataTemplate>
+
+    <DataTemplate DataType="{x:Type options:OtherSettings}">
+        <Grid Margin="10">
+            <StackPanel>
+                <CheckBox Margin="0 5 0 0" IsChecked="{Binding UseMemoryMappedIO}" Content="Use memory mapped I/O" ToolTip="Memory mapped I/O uses less memory and loads assemblies faster.&#x0A;Can be disabled per file if you right-click the module." />
+                <CheckBox Margin="0 5 0 0" IsChecked="{Binding WindowsExplorerIntegration}" Content="Windows Explorer Integration" ToolTip="Add a context menu entry to Windows Explorer to open assemblies in dnSpy" />
+                <CheckBox Margin="0 5 0 0" IsChecked="{Binding DeserializeResources}" Content="Deserialize types in resources (unsafe)" ToolTip="Any assembly could get loaded and executed with data from the resources." />
+                <Button Margin="0 5 0 0" Content="Enable all warning messages" Command="{Binding EnableAllWarningsCommand}" />
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type options2:DecompilerSettingsPanel}">
+        <StackPanel Margin="10">
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.AnonymousMethods}">Decompile anonymous methods/lambdas</CheckBox>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.YieldReturn}">Decompile enumerators (yield return)</CheckBox>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.AsyncAwait}">Decompile async methods (async/await)</CheckBox>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.QueryExpressions}" IsEnabled="{Binding Settings.AnonymousMethods}">Decompile query expressions</CheckBox>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ExpressionTrees}">Decompile expression trees</CheckBox>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.UseDebugSymbols}">Use variable names from debug symbols, if available</CheckBox>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowXmlDocumentation}">Show XML documentation in decompiled code</CheckBox>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.RemoveEmptyDefaultConstructors}">Remove empty default constructors</CheckBox>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowTokenAndRvaComments}">Show tokens, RVAs and file offsets</CheckBox>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowILBytes}">Show IL instruction bytes</CheckBox>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowILComments}">Show IL opcode comments</CheckBox>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.SortMembers}">Sort methods, fields, properties, events and types</CheckBox>
+            <GroupBox Margin="0 5 0 0" Header="Decompilation order" ToolTip="The TreeView uses these settings once you restart dnSpy">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" ItemsSource="{Binding Settings.DecompilationObjectsArray}" SelectedItem="{Binding Settings.DecompilationObject0}" />
+                    <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding Settings.DecompilationObjectsArray}" SelectedItem="{Binding Settings.DecompilationObject1}" />
+                    <ComboBox Grid.Column="2" HorizontalAlignment="Stretch" ItemsSource="{Binding Settings.DecompilationObjectsArray}" SelectedItem="{Binding Settings.DecompilationObject2}" />
+                    <ComboBox Grid.Column="3" HorizontalAlignment="Stretch" ItemsSource="{Binding Settings.DecompilationObjectsArray}" SelectedItem="{Binding Settings.DecompilationObject3}" />
+                    <ComboBox Grid.Column="4" HorizontalAlignment="Stretch" ItemsSource="{Binding Settings.DecompilationObjectsArray}" SelectedItem="{Binding Settings.DecompilationObject4}" />
+                </Grid>
+            </GroupBox>
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type options2:DisplaySettingsPanel}">
+        <Grid>
+            <Grid.Resources>
+                <options2:FontSizeConverter x:Key="fontSizeConv" />
+            </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <GroupBox Header="Font">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+                    <Label Margin="3,0">Font:</Label>
+                    <ComboBox x:Name="fontSelector" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" SelectedItem="{Binding Settings.SelectedFont}" ItemsSource="{Binding Fonts}" Grid.Column="1">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Source}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Label Grid.Column="2" Margin="3,0">Size:</Label>
+                    <ComboBox Grid.Column="3" Text="{Binding Settings.SelectedFontSize, Converter={StaticResource fontSizeConv}}" IsEditable="True" Margin="3,0">
+                        <ComboBoxItem>6</ComboBoxItem>
+                        <ComboBoxItem>7</ComboBoxItem>
+                        <ComboBoxItem>8</ComboBoxItem>
+                        <ComboBoxItem>9</ComboBoxItem>
+                        <ComboBoxItem>10</ComboBoxItem>
+                        <ComboBoxItem>11</ComboBoxItem>
+                        <ComboBoxItem>12</ComboBoxItem>
+                        <ComboBoxItem>13</ComboBoxItem>
+                        <ComboBoxItem>14</ComboBoxItem>
+                        <ComboBoxItem>15</ComboBoxItem>
+                        <ComboBoxItem>16</ComboBoxItem>
+                        <ComboBoxItem>17</ComboBoxItem>
+                        <ComboBoxItem>18</ComboBoxItem>
+                        <ComboBoxItem>19</ComboBoxItem>
+                        <ComboBoxItem>20</ComboBoxItem>
+                        <ComboBoxItem>21</ComboBoxItem>
+                        <ComboBoxItem>22</ComboBoxItem>
+                        <ComboBoxItem>23</ComboBoxItem>
+                        <ComboBoxItem>24</ComboBoxItem>
+                    </ComboBox>
+                    <Border Grid.Row="1" Grid.ColumnSpan="4" BorderBrush="{DynamicResource SystemColorsControlDarkDark}" BorderThickness="1" Background="{DynamicResource SystemColorsWindow}" Margin="3,5">
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="AaBbCcXxYyZz" FontFamily="{Binding Settings.SelectedFont}" FontSize="{Binding Settings.SelectedFontSize}" />
+                    </Border>
+                </Grid>
+            </GroupBox>
+            <GroupBox Header="Other options" Grid.Row="1">
+                <StackPanel Margin="3">
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowLineNumbers}">Show line numbers</CheckBox>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowMetadataTokens}">Show metadata tokens</CheckBox>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowAssemblyVersion}">Show assembly version</CheckBox>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowAssemblyPublicKeyToken}">Show assembly public key token</CheckBox>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.DecompileFullType}">Decompile the full type instead of a single field / method / etc</CheckBox>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.NewEmptyTabs}">New tabs are empty</CheckBox>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.RestoreTabsAtStartup}">Restore tabs at startup</CheckBox>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.AutoHighlightRefs}">Highlight references</CheckBox>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.SingleClickExpandsChildren}">Single click expands TreeView nodes</CheckBox>
+                    <Grid Margin="0 5 0 0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Content="Syntax highlight:" />
+                        <CheckBox Grid.Column="1" Margin="0 0 0 0" IsChecked="{Binding Settings.SyntaxHighlightTreeViewUI}">TreeView</CheckBox>
+                        <CheckBox Grid.Column="2" Margin="5 0 0 0" IsChecked="{Binding Settings.SyntaxHighlightAnalyzerTreeViewUI}">Analyzer</CheckBox>
+                        <CheckBox Grid.Column="3" Margin="5 0 0 0" IsChecked="{Binding Settings.SyntaxHighlightSearchListUI}">Search</CheckBox>
+                    </Grid>
+                </StackPanel>
+            </GroupBox>
+        </Grid>
+    </DataTemplate>
 
 </ResourceDictionary>

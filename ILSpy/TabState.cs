@@ -27,8 +27,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using dnlib.DotNet;
 using dnSpy.AsmEditor;
+using dnSpy.AsmEditor.Hex;
 using dnSpy.HexEditor;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.ILSpy.dntheme;
@@ -345,7 +345,7 @@ namespace ICSharpCode.ILSpy {
 	}
 
 	public sealed class HexTabState : TabState {
-		readonly HexBox HexBox;
+		internal readonly HexBox HexBox;
 
 		public override UIElement FocusedElement {
 			get { return HexBox; }
@@ -419,6 +419,12 @@ namespace ICSharpCode.ILSpy {
 			ContextMenuProvider.Add(this.HexBox);
 
 			InstallMouseWheelZoomHandler();
+
+			BytesGroupCount = null;
+			BytesPerLine = null;
+			UseHexPrefix = null;
+			ShowAscii = null;
+			LowerCaseHex = null;
 		}
 
 		internal static void OnThemeUpdatedStatic() {
@@ -471,14 +477,16 @@ namespace ICSharpCode.ILSpy {
 		}
 
 		public void Restore(SavedHexTabState state) {
-			HexBox.BytesGroupCount = state.BytesGroupCount;
-			HexBox.BytesPerLine = state.BytesPerLine;
+			BytesGroupCount = state.BytesGroupCount;
+			BytesPerLine = state.BytesPerLine;
+			UseHexPrefix = state.UseHexPrefix;
+			ShowAscii = state.ShowAscii;
+			LowerCaseHex = state.LowerCaseHex;
+
 			HexBox.HexOffsetSize = state.HexOffsetSize;
 			HexBox.UseRelativeOffsets = state.UseRelativeOffsets;
-			HexBox.UseHexPrefix = state.UseHexPrefix;
-			HexBox.PrintAscii = state.PrintAscii;
-			HexBox.LowerCaseHex = state.LowerCaseHex;
 			HexBox.BaseOffset = state.BaseOffset;
+
 			if (HexBox.IsLoaded)
 				HexBox.State = state.HexBoxState;
 			else
@@ -504,13 +512,14 @@ namespace ICSharpCode.ILSpy {
 
 		public override SavedTabState CreateSavedTabState() {
 			var state = new SavedHexTabState();
-			state.BytesGroupCount = HexBox.BytesGroupCount;
-			state.BytesPerLine = HexBox.BytesPerLine;
+			state.BytesGroupCount = BytesGroupCount;
+			state.BytesPerLine = BytesPerLine;
+			state.UseHexPrefix = UseHexPrefix;
+			state.ShowAscii = ShowAscii;
+			state.LowerCaseHex = LowerCaseHex;
+
 			state.HexOffsetSize = HexBox.HexOffsetSize;
 			state.UseRelativeOffsets = HexBox.UseRelativeOffsets;
-			state.UseHexPrefix = HexBox.UseHexPrefix;
-			state.PrintAscii = HexBox.PrintAscii;
-			state.LowerCaseHex = HexBox.LowerCaseHex;
 			state.BaseOffset = HexBox.BaseOffset;
 			state.HexBoxState = HexBox.State;
 			state.FileName = HexBox.Document == null ? string.Empty : HexBox.Document.Name;
@@ -522,7 +531,7 @@ namespace ICSharpCode.ILSpy {
 			UpdateHeader();
 		}
 
-		public void InitializeDefaultOptions() {
+		public void InitializeStartEndOffset() {
 			var doc = HexBox.Document;
 			if (doc == null)
 				return;
@@ -530,5 +539,85 @@ namespace ICSharpCode.ILSpy {
 			HexBox.StartOffset = 0;
 			HexBox.EndOffset = doc.Size == 0 ? 0 : doc.Size - 1;
 		}
+
+		public int? BytesGroupCount {
+			get { return useDefault_BytesGroupCount ? (int?)null : HexBox.BytesGroupCount; }
+			set {
+				if (value == null) {
+					useDefault_BytesGroupCount = true;
+					HexBox.ClearValue(HexBox.BytesGroupCountProperty);
+					HexBox.SetBinding(HexBox.BytesGroupCountProperty, new Binding("BytesGroupCount") { Source = HexSettings.Instance });
+				}
+				else {
+					useDefault_BytesGroupCount = false;
+					HexBox.BytesGroupCount = value.Value;
+				}
+			}
+		}
+		bool useDefault_BytesGroupCount;
+
+		public int? BytesPerLine {
+			get { return useDefault_BytesPerLine ? (int?)null : HexBox.BytesPerLine; }
+			set {
+				if (value == null) {
+					useDefault_BytesPerLine = true;
+					HexBox.ClearValue(HexBox.BytesPerLineProperty);
+					HexBox.SetBinding(HexBox.BytesPerLineProperty, new Binding("BytesPerLine") { Source = HexSettings.Instance });
+				}
+				else {
+					useDefault_BytesPerLine = false;
+					HexBox.BytesPerLine = Math.Min(HexSettings.MAX_BYTES_PER_LINE, value.Value);
+				}
+			}
+		}
+		bool useDefault_BytesPerLine;
+
+		public bool? UseHexPrefix {
+			get { return useDefault_UseHexPrefix ? (bool?)null : HexBox.UseHexPrefix; }
+			set {
+				if (value == null) {
+					useDefault_UseHexPrefix = true;
+					HexBox.ClearValue(HexBox.UseHexPrefixProperty);
+					HexBox.SetBinding(HexBox.UseHexPrefixProperty, new Binding("UseHexPrefix") { Source = HexSettings.Instance });
+				}
+				else {
+					useDefault_UseHexPrefix = false;
+					HexBox.UseHexPrefix = value.Value;
+				}
+			}
+		}
+		bool useDefault_UseHexPrefix;
+
+		public bool? ShowAscii {
+			get { return useDefault_ShowAscii ? (bool?)null : HexBox.ShowAscii; }
+			set {
+				if (value == null) {
+					useDefault_ShowAscii = true;
+					HexBox.ClearValue(HexBox.ShowAsciiProperty);
+					HexBox.SetBinding(HexBox.ShowAsciiProperty, new Binding("ShowAscii") { Source = HexSettings.Instance });
+				}
+				else {
+					useDefault_ShowAscii = false;
+					HexBox.ShowAscii = value.Value;
+				}
+			}
+		}
+		bool useDefault_ShowAscii;
+
+		public bool? LowerCaseHex {
+			get { return useDefault_LowerCaseHex ? (bool?)null : HexBox.LowerCaseHex; }
+			set {
+				if (value == null) {
+					useDefault_LowerCaseHex = true;
+					HexBox.ClearValue(HexBox.LowerCaseHexProperty);
+					HexBox.SetBinding(HexBox.LowerCaseHexProperty, new Binding("LowerCaseHex") { Source = HexSettings.Instance });
+				}
+				else {
+					useDefault_LowerCaseHex = false;
+					HexBox.LowerCaseHex = value.Value;
+				}
+			}
+		}
+		bool useDefault_LowerCaseHex;
 	}
 }

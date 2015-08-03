@@ -22,9 +22,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Threading;
-using ICSharpCode.ILSpy.Options;
 using dnlib.DotNet;
+using dnSpy.Options;
+using ICSharpCode.ILSpy.Options;
 
 namespace ICSharpCode.ILSpy
 {
@@ -243,7 +243,7 @@ namespace ICSharpCode.ILSpy
 		ModuleDef LoadAssembly(object state)
 		{
 			ModuleDef module;
-			if (Options.OtherSettings.Instance.UseMemoryMappedIO)
+			if (OtherSettings.Instance.UseMemoryMappedIO)
 				module = ModuleDefMD.Load(fileName, CreateModuleContext());
 			else
 				module = ModuleDefMD.Load(File.ReadAllBytes(fileName), CreateModuleContext());
