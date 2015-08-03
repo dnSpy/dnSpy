@@ -23,15 +23,17 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
+using ICSharpCode.TreeView;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	[ExportMainMenuCommand(Menu = "_File", MenuCategory = "Save", MenuOrder = 1010)]
-	sealed class SaveModuleCommand : TreeNodeCommand, IMainMenuCommandInitialize {
+	[ExportContextMenuEntry(Header = "Save", Category = "Save", Order = 260)]
+	sealed class SaveModuleCommand : TreeNodeCommand, IMainMenuCommandInitialize, IContextMenuEntry2 {
 		public SaveModuleCommand() {
 			MainWindow.Instance.SetMenuAlwaysRegenerate("_File");
 		}
 
-		HashSet<LoadedAssembly> GetAssemblyNodes(ILSpyTreeNode[] nodes) {
+		HashSet<LoadedAssembly> GetAssemblyNodes(SharpTreeNode[] nodes) {
 			var hash = new HashSet<LoadedAssembly>();
 			foreach (var node in nodes) {
 				var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
@@ -41,17 +43,41 @@ namespace dnSpy.AsmEditor.SaveModule {
 			return hash;
 		}
 
-		protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
+		private bool CanExecuteInternal(SharpTreeNode[] nodes) {
 			return GetAssemblyNodes(nodes).Count > 0;
 		}
 
-		protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
+		protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
+			return CanExecuteInternal((SharpTreeNode[])nodes);
+		}
+
+		public void Execute(TextViewContext context) {
+			ExecuteInternal(context.SelectedTreeNodes);
+		}
+
+		private void ExecuteInternal(SharpTreeNode[] nodes) {
 			var asmNodes = GetAssemblyNodes(nodes);
 			Saver.SaveAssemblies(asmNodes);
 		}
 
+		protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
+			ExecuteInternal((SharpTreeNode[])nodes);
+		}
+
 		public void Initialize(MenuItem menuItem) {
 			menuItem.Header = GetAssemblyNodes(GetSelectedNodes()).Count <= 1 ? "Save _Module…" : "Save _Modules…";
+		}
+
+		public void Initialize(TextViewContext context, MenuItem menuItem) {
+			this.Initialize(menuItem);
+		}
+
+		public bool IsEnabled(TextViewContext context) {
+			return CanExecuteInternal(context.SelectedTreeNodes);
+		}
+
+		public bool IsVisible(TextViewContext context) {
+			return context.TreeView != null;
 		}
 	}
 
