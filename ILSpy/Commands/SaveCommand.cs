@@ -56,7 +56,7 @@ namespace ICSharpCode.ILSpy
 
 		public bool IsEnabled(TextViewContext context)
 		{
-			return GetAssemblyNodes(context.SelectedTreeNodes).Count == 1;
+			return base.CanExecute(null);
 		}
 
 		public bool IsVisible(TextViewContext context)
