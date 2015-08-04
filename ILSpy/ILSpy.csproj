@@ -314,6 +314,15 @@
     </Compile>
     <Compile Include="AsmEditor\Hex\GoToOffsetVM.cs" />
     <Compile Include="AsmEditor\Hex\HexSettings.cs" />
+    <Compile Include="AsmEditor\Hex\LocalHexSettings.cs" />
+    <Compile Include="AsmEditor\Hex\LocalSettingsDlg.xaml.cs">
+      <DependentUpon>LocalSettingsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Hex\LocalSettingsVM.cs" />
+    <Compile Include="AsmEditor\Hex\SelectDlg.xaml.cs">
+      <DependentUpon>SelectDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Hex\SelectVM.cs" />
     <Compile Include="AsmEditor\IIndexedItem.cs" />
     <Compile Include="AsmEditor\IndexObservableCollection.cs" />
     <Compile Include="AsmEditor\InstructionCommands.cs" />
@@ -950,6 +959,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\Hex\GoToOffsetDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\Hex\LocalSettingsDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\Hex\SelectDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

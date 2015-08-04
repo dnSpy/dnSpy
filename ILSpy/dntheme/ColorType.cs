@@ -17,12 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using ICSharpCode.NRefactory;
-
-namespace ICSharpCode.ILSpy.dntheme
-{
-	public enum ColorType
-	{
+namespace ICSharpCode.ILSpy.dntheme {
+	public enum ColorType {
 		/// <summary>
 		/// default text (in text editor)
 		/// </summary>
@@ -566,6 +562,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		ToolBarHorizontalBackground,
 		ToolBarDisabledFill,
 		ToolBarDisabledBorder,
+		EnvironmentCommandBarMenuMouseOverSubmenuGlyph,
 		CommonControlsButtonIconBackground,
 		CommonControlsButton,
 		CommonControlsButtonBorder,

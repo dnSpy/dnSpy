@@ -619,5 +619,14 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 		bool useDefault_LowerCaseHex;
+
+		public void SelectAndMoveCaret(ulong fileOffset, ulong length) {
+			ulong end = length == 0 ? fileOffset : fileOffset + length - 1 < fileOffset ? ulong.MaxValue : fileOffset + length - 1;
+			if (length == 0)
+				HexBox.Selection = null;
+			else
+				HexBox.Selection = new HexSelection(fileOffset, end);
+			HexBox.CaretPosition = new HexBoxPosition(fileOffset, HexBox.CaretPosition.Kind, 0);
+		}
 	}
 }

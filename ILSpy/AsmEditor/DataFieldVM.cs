@@ -281,6 +281,54 @@ namespace dnSpy.AsmEditor {
 		}
 	}
 
+	sealed class NullableBooleanVM : DataFieldVM<bool?> {
+		public NullableBooleanVM(Action<DataFieldVM> onUpdated)
+			: this(false, onUpdated) {
+		}
+
+		public NullableBooleanVM(bool? value, Action<DataFieldVM> onUpdated)
+			: base(onUpdated) {
+			SetValueFromConstructor(value);
+		}
+
+		protected override string OnNewValue(bool? value) {
+			return value == null ? string.Empty : NumberVMUtils.ToString(value.Value);
+		}
+
+		protected override string ConvertToValue(out bool? value) {
+			string error = null;
+			if (IsNull)
+				value = null;
+			else
+				value = NumberVMUtils.ParseBoolean(StringValue, out error);
+			return error;
+		}
+	}
+
+	sealed class NullableSByteVM : NumberDataFieldVM<sbyte?, sbyte> {
+		public NullableSByteVM(Action<DataFieldVM> onUpdated)
+			: this(null, onUpdated) {
+		}
+
+		public NullableSByteVM(sbyte? value, Action<DataFieldVM> onUpdated)
+			: base(onUpdated, sbyte.MinValue, sbyte.MaxValue) {
+			SetValueFromConstructor(value);
+		}
+
+		protected override string OnNewValue(sbyte? value) {
+			return value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
+		}
+
+		protected override string ConvertToValue(out sbyte? value) {
+			string error = null;
+			if (IsNull)
+				value = null;
+			else
+				value = NumberVMUtils.ParseSByte(StringValue, Min, Max, out error);
+			return error;
+		}
+	}
+
 	sealed class NullableByteVM : NumberDataFieldVM<byte?, byte> {
 		public NullableByteVM(Action<DataFieldVM> onUpdated)
 			: this(null, onUpdated) {
@@ -301,6 +349,30 @@ namespace dnSpy.AsmEditor {
 				value = null;
 			else
 				value = NumberVMUtils.ParseByte(StringValue, Min, Max, out error);
+			return error;
+		}
+	}
+
+	sealed class NullableInt16VM : NumberDataFieldVM<short?, short> {
+		public NullableInt16VM(Action<DataFieldVM> onUpdated)
+			: this(null, onUpdated) {
+		}
+
+		public NullableInt16VM(short? value, Action<DataFieldVM> onUpdated)
+			: base(onUpdated, short.MinValue, short.MaxValue) {
+			SetValueFromConstructor(value);
+		}
+
+		protected override string OnNewValue(short? value) {
+			return value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
+		}
+
+		protected override string ConvertToValue(out short? value) {
+			string error = null;
+			if (IsNull)
+				value = null;
+			else
+				value = NumberVMUtils.ParseInt16(StringValue, Min, Max, out error);
 			return error;
 		}
 	}
@@ -329,6 +401,30 @@ namespace dnSpy.AsmEditor {
 		}
 	}
 
+	class NullableInt32VM : NumberDataFieldVM<int?, int> {
+		public NullableInt32VM(Action<DataFieldVM> onUpdated)
+			: this(null, onUpdated) {
+		}
+
+		public NullableInt32VM(int? value, Action<DataFieldVM> onUpdated)
+			: base(onUpdated, int.MinValue, int.MaxValue) {
+			SetValueFromConstructor(value);
+		}
+
+		protected override string OnNewValue(int? value) {
+			return value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
+		}
+
+		protected override string ConvertToValue(out int? value) {
+			string error = null;
+			if (IsNull)
+				value = null;
+			else
+				value = NumberVMUtils.ParseInt32(StringValue, Min, Max, out error);
+			return error;
+		}
+	}
+
 	class NullableUInt32VM : NumberDataFieldVM<uint?, uint> {
 		public NullableUInt32VM(Action<DataFieldVM> onUpdated)
 			: this(null, onUpdated) {
@@ -349,6 +445,30 @@ namespace dnSpy.AsmEditor {
 				value = null;
 			else
 				value = NumberVMUtils.ParseUInt32(StringValue, Min, Max, out error);
+			return error;
+		}
+	}
+
+	sealed class NullableInt64VM : NumberDataFieldVM<long?, long> {
+		public NullableInt64VM(Action<DataFieldVM> onUpdated)
+			: this(null, onUpdated) {
+		}
+
+		public NullableInt64VM(long? value, Action<DataFieldVM> onUpdated)
+			: base(onUpdated, long.MinValue, long.MaxValue) {
+			SetValueFromConstructor(value);
+		}
+
+		protected override string OnNewValue(long? value) {
+			return value == null ? string.Empty : NumberVMUtils.ToString(value.Value, Min, Max, UseDecimal);
+		}
+
+		protected override string ConvertToValue(out long? value) {
+			string error = null;
+			if (IsNull)
+				value = null;
+			else
+				value = NumberVMUtils.ParseInt64(StringValue, Min, Max, out error);
 			return error;
 		}
 	}

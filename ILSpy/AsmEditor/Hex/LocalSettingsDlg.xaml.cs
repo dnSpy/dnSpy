@@ -17,21 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-
 namespace dnSpy.AsmEditor.Hex {
 	/// <summary>
-	/// Interaction logic for GoToOffsetDlg.xaml
+	/// Interaction logic for LocalSettingsDlg.xaml
 	/// </summary>
-	public partial class GoToOffsetDlg : WindowBase {
-		public GoToOffsetDlg() {
+	public partial class LocalSettingsDlg : WindowBase {
+		public LocalSettingsDlg() {
 			InitializeComponent();
-			Loaded += OnLoaded;
-		}
-
-		void OnLoaded(object sender, RoutedEventArgs e) {
-			Loaded -= OnLoaded;
-			this.offsetTextBox.SelectAll();
 		}
 	}
 }

@@ -35,6 +35,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 using dnlib.DotNet;
+using dnlib.PE;
 using dnSpy.AsmEditor;
 using dnSpy.Options;
 using ICSharpCode.Decompiler;
@@ -2811,8 +2812,15 @@ namespace ICSharpCode.ILSpy
 
 		internal void OpenReferenceInNewTab(DecompilerTextView textView, ReferenceSegment reference)
 		{
-			if (textView == null || reference == null)
+			if (reference == null)
 				return;
+			if (reference.Reference is AddressReference) {
+				GoToAddress((AddressReference)reference.Reference);
+				return;
+			}
+			if (textView == null)
+				return;
+
 			var tabState = DecompileTabState.GetDecompileTabState(textView);
 			var clonedTabState = (DecompileTabState)CloneTabMakeActive(tabState, false);
 			Debug.Assert(clonedTabState != null);
@@ -3240,14 +3248,30 @@ namespace ICSharpCode.ILSpy
 			return msgBox.ButtonClicked;
 		}
 
-		internal void OpenHexBox(AssemblyTreeNode node) {
-			if (node == null || string.IsNullOrEmpty(node.LoadedAssembly.FileName))
-				return;
+		internal void OpenOrShowHexBox(AssemblyTreeNode node) {
+			var tabState = GetHexTabState(node);
+			if (tabState != null)
+				ShowHexBox(node);
+			else
+				OpenHexBox(node);
+		}
 
-			var tabState = CreateNewHexTabState(tabGroupsManager.ActiveTabGroup);
-			InitializeHexDocument(tabState, node.LoadedAssembly.FileName);
-			tabState.InitializeStartEndOffset();
+		internal void OpenHexBox(AssemblyTreeNode node) {
+			if (node == null)
+				return;
+			var tabState = OpenHexBox(node.LoadedAssembly.FileName);
+			if (tabState == null)
+				return;
 			SetActiveTab(tabState);
+		}
+
+		HexTabState OpenHexBox(string filename) {
+			if (string.IsNullOrEmpty(filename))
+				return null;
+			var tabState = CreateNewHexTabState(tabGroupsManager.ActiveTabGroup);
+			InitializeHexDocument(tabState, filename);
+			tabState.InitializeStartEndOffset();
+			return tabState;
 		}
 
 		internal void ShowHexBox(AssemblyTreeNode node) {
@@ -3261,14 +3285,66 @@ namespace ICSharpCode.ILSpy
 		internal HexTabState GetHexTabState(AssemblyTreeNode node) {
 			if (node == null)
 				return null;
+			return GetHexTabStates(node.LoadedAssembly.FileName).FirstOrDefault();
+		}
 
+		IEnumerable<HexTabState> GetHexTabStates(string filename) {
+			if (filename == null)
+				yield break;
 			foreach (var tabState in AllTabStates) {
 				var hex = tabState as HexTabState;
-				if (hex != null && node.LoadedAssembly.FileName.Equals(hex.FileName, StringComparison.OrdinalIgnoreCase))
-					return hex;
+				if (hex != null && filename.Equals(hex.FileName, StringComparison.OrdinalIgnoreCase))
+					yield return hex;
+			}
+		}
+
+		IEnumerable<HexTabState> GetHexTabStates(string filename, ulong offset, ulong? length) {
+			ulong? end;
+			if (length == null)
+				end = null;
+			else if (length.Value == 0)
+				end = offset;
+			else if (offset + length.Value - 1 < offset)
+				end = ulong.MaxValue;
+			else
+				end = offset + length.Value - 1;
+			foreach (var tabState in GetHexTabStates(filename)) {
+				var hb = tabState.HexBox;
+				if (offset < hb.StartOffset || offset > hb.EndOffset)
+					continue;
+				if (end != null && (end.Value < hb.StartOffset || end.Value > hb.EndOffset))
+					continue;
+				yield return tabState;
+			}
+		}
+
+		internal void GoToAddress(AddressReference @ref) {
+			HexTabState tabState;
+			ulong fileOffset;
+			if (@ref.IsRVA) {
+				var asm = assemblyList.FindAssemblyByFileName(@ref.Filename);
+				//TODO: Should check whether it's a PE file, not whether it's a .NET file
+				if (asm == null || asm.ModuleDefinition == null)
+					return;
+				var mod = asm.ModuleDefinition as ModuleDefMD;
+				if (mod == null)
+					return;
+				var pe = mod.MetaData.PEImage;
+				fileOffset = (ulong)pe.ToFileOffset((RVA)@ref.Address);
+				tabState = GetHexTabStates(@ref.Filename, fileOffset, @ref.Length).FirstOrDefault();
+			}
+			else {
+				fileOffset = (ulong)@ref.Address;
+				tabState = GetHexTabStates(@ref.Filename, fileOffset, @ref.Length).FirstOrDefault();
 			}
 
-			return null;
+			if (tabState == null)
+				tabState = OpenHexBox(@ref.Filename);
+			if (tabState == null)
+				return;
+
+			SetActiveTab(tabState);
+			tabState.SelectAndMoveCaret(fileOffset, @ref.Length);
 		}
 	}
 }

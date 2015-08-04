@@ -362,7 +362,7 @@ namespace dnSpy.HexEditor {
 			Add(CopyUnicodeStringCommand, ModifierKeys.Control | ModifierKeys.Shift, Key.U, (s, e) => CopyUnicodeString(), (s, e) => e.CanExecute = CanCopyToClipboard());
 			Add(CopyCSharpArrayCommand, ModifierKeys.Control | ModifierKeys.Shift, Key.P, (s, e) => CopyCSharpArray(), (s, e) => e.CanExecute = CanCopyToClipboard());
 			Add(CopyVBArrayCommand, ModifierKeys.Control | ModifierKeys.Shift, Key.B, (s, e) => CopyVBArray(), (s, e) => e.CanExecute = CanCopyToClipboard());
-			Add(CopyUILayoutCommand, ModifierKeys.Control | ModifierKeys.Shift, Key.C, (s, e) => CopyUILayout(), (s, e) => e.CanExecute = CanCopyToClipboard());
+			Add(CopyUIContentsCommand, ModifierKeys.Control | ModifierKeys.Shift, Key.C, (s, e) => CopyUIContents(), (s, e) => e.CanExecute = CanCopyToClipboard());
 			Add(CopyAddressCommand, ModifierKeys.Control | ModifierKeys.Alt, Key.A, (s, e) => CopyAddress());
 			this.CommandBindings.Add(new CommandBinding(ToggleLowerCaseHexCommand, (s, e) => LowerCaseHex = !LowerCaseHex));
 			this.CommandBindings.Add(new CommandBinding(LowerCaseHexCommand, (s, e) => LowerCaseHex = true));
@@ -389,7 +389,7 @@ namespace dnSpy.HexEditor {
 		public static readonly RoutedUICommand CopyUnicodeStringCommand = new RoutedUICommand("Copy Unicode String", "Copy Unicode String", typeof(HexBox));
 		public static readonly RoutedUICommand CopyCSharpArrayCommand = new RoutedUICommand("Copy C# Array", "Copy C# Array", typeof(HexBox));
 		public static readonly RoutedUICommand CopyVBArrayCommand = new RoutedUICommand("Copy VB Array", "Copy VB Array", typeof(HexBox));
-		public static readonly RoutedUICommand CopyUILayoutCommand = new RoutedUICommand("Copy UI Layout", "Copy UI Layout", typeof(HexBox));
+		public static readonly RoutedUICommand CopyUIContentsCommand = new RoutedUICommand("Copy UI Contents", "Copy UI Contents", typeof(HexBox));
 		public static readonly RoutedUICommand CopyAddressCommand = new RoutedUICommand("Copy Address", "Copy Address", typeof(HexBox));
 		public static readonly RoutedUICommand ToggleLowerCaseHexCommand = new RoutedUICommand("Toggle Lower Case Hex", "Toggle Lower Case Hex", typeof(HexBox));
 		public static readonly RoutedUICommand LowerCaseHexCommand = new RoutedUICommand("Lower Case Hex", "Lower Case Hex", typeof(HexBox));
@@ -1742,7 +1742,11 @@ namespace dnSpy.HexEditor {
 					ulong end = newSel.Value.EndOffset;
 					if (start < StartOffset)
 						start = StartOffset;
-					if (end > EndOffset)
+					else if (start > EndOffset)
+						start = EndOffset;
+					if (end < StartOffset)
+						end = StartOffset;
+					else if (end > EndOffset)
 						end = EndOffset;
 					if (newSel.Value.From < newSel.Value.To)
 						newSel = new HexSelection(start, end);
@@ -1820,9 +1824,9 @@ namespace dnSpy.HexEditor {
 				CopyVBArray(Selection.Value.StartOffset, Selection.Value.EndOffset);
 		}
 
-		public void CopyUILayout() {
+		public void CopyUIContents() {
 			if (CanCopyToClipboard())
-				CopyUILayout(Selection.Value.StartOffset, Selection.Value.EndOffset);
+				CopyUIContents(Selection.Value.StartOffset, Selection.Value.EndOffset);
 		}
 
 		public void CopyAddress() {
@@ -1855,7 +1859,7 @@ namespace dnSpy.HexEditor {
 			new VBArrayFormatter(this, start, end, LowerCaseHex).CopyToClipboard();
 		}
 
-		void CopyUILayout(ulong start, ulong end) {
+		void CopyUIContents(ulong start, ulong end) {
 			new UILayoutFormatter(this, start, end).CopyToClipboard();
 		}
 

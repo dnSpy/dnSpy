@@ -21,17 +21,18 @@ using System.Windows;
 
 namespace dnSpy.AsmEditor.Hex {
 	/// <summary>
-	/// Interaction logic for GoToOffsetDlg.xaml
+	/// Interaction logic for SelectDlg.xaml
 	/// </summary>
-	public partial class GoToOffsetDlg : WindowBase {
-		public GoToOffsetDlg() {
+	public partial class SelectDlg : WindowBase {
+		public SelectDlg() {
 			InitializeComponent();
 			Loaded += OnLoaded;
 		}
 
 		void OnLoaded(object sender, RoutedEventArgs e) {
 			Loaded -= OnLoaded;
-			this.offsetTextBox.SelectAll();
+			this.startTextBox.SelectAll();
+			this.endTextBox.SelectAll();
 		}
 	}
 }

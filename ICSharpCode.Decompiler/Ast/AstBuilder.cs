@@ -251,10 +251,23 @@ namespace ICSharpCode.Decompiler.Ast
 			uint rva;
 			long fileOffset;
 			member.GetRVA(out rva, out fileOffset);
-			string extra = string.Empty;
-			if (rva != 0)
-				extra = string.Format(" RVA: 0x{0:X8} File Offset: 0x{1:X8}", rva, fileOffset);
-			node.InsertChildAfter(null, new Comment(string.Format(" Token: 0x{0:X8} RID: {1}{2}", member.MDToken.Raw, member.MDToken.Rid, extra)), Roles.Comment);
+
+			var creator = new CommentReferencesCreator();
+			creator.AddText(" Token: ");
+			creator.AddText(string.Format("0x{0:X8}", member.MDToken.Raw));//TODO: Add ref to MD table
+			creator.AddText(string.Format(" RID: {0}", member.MDToken.Rid));
+			if (rva != 0) {
+				var mod = member.Module;
+				var filename = mod == null ? null : mod.Location;
+				creator.AddText(" RVA: ");
+				creator.AddReference(string.Format("0x{0:X8}", rva), new AddressReference(filename, true, rva, 0));
+				creator.AddText(" File Offset: ");
+				creator.AddReference(string.Format("0x{0:X8}", fileOffset), new AddressReference(filename, false, (uint)fileOffset, 0));
+			}
+
+			var cmt = new Comment(creator.Text);
+			cmt.References = creator.CommentReferences;
+			node.InsertChildAfter(null, cmt, Roles.Comment);
 		}
 		
 		public void AddType(TypeDef typeDef)

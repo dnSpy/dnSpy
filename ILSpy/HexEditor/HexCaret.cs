@@ -187,6 +187,10 @@ namespace dnSpy.HexEditor {
 			hexByteInfo.Initialize(hexByteCaret, position.Kind == HexBoxPositionKind.HexByte);
 			asciiInfo.Initialize(asciiCaret, position.Kind == HexBoxPositionKind.Ascii);
 			geometriesCreated = false;
+
+			// Make sure caret doesn't blink when it's moving. It looks weird when quickly moving up/down
+			blinkIsVisible = true;
+
 			Redraw();
 		}
 	}

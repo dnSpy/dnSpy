@@ -946,6 +946,11 @@ namespace ICSharpCode.ILSpy.TextView
 		/// </summary>
 		internal void JumpToReference(ReferenceSegment referenceSegment, MouseEventArgs e)
 		{
+			if (referenceSegment.Reference is AddressReference) {
+				MainWindow.Instance.GoToAddress((AddressReference)referenceSegment.Reference);
+				e.Handled = true;
+				return;
+			}
 			if (Keyboard.Modifiers == ModifierKeys.Control) {
 				MainWindow.Instance.SetActiveView(this);
 				GoToMousePosition();
@@ -1382,6 +1387,10 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			if (refSeg == null)
 				return false;
+			if (refSeg.Reference is AddressReference) {
+				MainWindow.Instance.GoToAddress((AddressReference)refSeg.Reference);
+				return true;
+			}
 			if (!IsOurReferenceSegment(refSeg)) {
 				if (canJumpToReference) {
 					MainWindow.Instance.JumpToReference(this, refSeg.Reference, canRecordHistory);

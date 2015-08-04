@@ -29,20 +29,16 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.Win32;
 
-namespace ICSharpCode.ILSpy.dntheme
-{
-	public sealed class HighContrastEventArgs : EventArgs
-	{
+namespace ICSharpCode.ILSpy.dntheme {
+	public sealed class HighContrastEventArgs : EventArgs {
 		public bool IsHighContrast { get; private set; }
 
-		public HighContrastEventArgs(bool isHighContrast)
-		{
+		public HighContrastEventArgs(bool isHighContrast) {
 			this.IsHighContrast = isHighContrast;
 		}
 	}
 
-	public static class Themes
-	{
+	public static class Themes {
 		static Dictionary<string, Theme> themes = new Dictionary<string, Theme>();
 
 		static Theme theme;
@@ -88,15 +84,13 @@ namespace ICSharpCode.ILSpy.dntheme
 		}
 		static bool isHighContrast;
 
-		static Themes()
-		{
+		static Themes() {
 			Load();
 			SystemEvents.UserPreferenceChanged += (s, e) => IsHighContrast = SystemParameters.HighContrast;
 			IsHighContrast = SystemParameters.HighContrast;
 		}
 
-		static void Load()
-		{
+		static void Load() {
 			foreach (var basePath in GetDnthemePaths()) {
 				string[] files;
 				try {
@@ -119,14 +113,12 @@ namespace ICSharpCode.ILSpy.dntheme
 			}
 		}
 
-		static IEnumerable<string> GetDnthemePaths()
-		{
+		static IEnumerable<string> GetDnthemePaths() {
 			yield return Path.Combine(Path.GetDirectoryName(typeof(Themes).Assembly.Location), "dntheme");
 			yield return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "dnSpy", "dntheme");
 		}
 
-		static Theme Load(string filename)
-		{
+		static Theme Load(string filename) {
 			try {
 				var root = XDocument.Load(filename).Root;
 				if (root.Name != "theme")
@@ -145,35 +137,29 @@ namespace ICSharpCode.ILSpy.dntheme
 			return null;
 		}
 
-		public static Theme GetThemeOrDefault(string name)
-		{
+		public static Theme GetThemeOrDefault(string name) {
 			var theme = themes[name] ?? themes[DefaultThemeName] ?? AllThemesSorted.FirstOrDefault();
 			Debug.Assert(theme != null);
 			return theme;
 		}
 
-		public static void SwitchThemeIfNecessary()
-		{
+		public static void SwitchThemeIfNecessary() {
 			if (Theme.IsHighContrast != IsHighContrast)
 				Theme = GetThemeOrDefault(CurrentDefaultThemeName);
 		}
 	}
 
 	[ExportMainMenuCommand(Menu = "_Themes", MenuCategory = "Themes", MenuOrder = 4000)]
-	sealed class ThemesMenu : ICommand, IMenuItemProvider
-	{
-		public ThemesMenu()
-		{
+	sealed class ThemesMenu : ICommand, IMenuItemProvider {
+		public ThemesMenu() {
 			Themes.ThemeChanged += (s, e) => UpdateThemesMenu();
 		}
 
-		void UpdateThemesMenu()
-		{
+		void UpdateThemesMenu() {
 			MainWindow.Instance.UpdateMainSubMenu("_Themes");
 		}
 
-		public bool CanExecute(object parameter)
-		{
+		public bool CanExecute(object parameter) {
 			return false;
 		}
 
@@ -182,12 +168,10 @@ namespace ICSharpCode.ILSpy.dntheme
 			remove { }
 		}
 
-		public void Execute(object parameter)
-		{
+		public void Execute(object parameter) {
 		}
 
-		public IEnumerable<MenuItem> CreateMenuItems(MenuItem cachedMenuItem)
-		{
+		public IEnumerable<MenuItem> CreateMenuItems(MenuItem cachedMenuItem) {
 			int index = 0;
 			foreach (var theme in Themes.AllThemesSorted) {
 				var item = index++ == 0 ? cachedMenuItem : new MenuItem();
@@ -198,17 +182,14 @@ namespace ICSharpCode.ILSpy.dntheme
 			}
 		}
 
-		sealed class SetThemeCommand : ICommand
-		{
+		sealed class SetThemeCommand : ICommand {
 			readonly Theme theme;
 
-			public SetThemeCommand(Theme theme)
-			{
+			public SetThemeCommand(Theme theme) {
 				this.theme = theme;
 			}
 
-			public bool CanExecute(object parameter)
-			{
+			public bool CanExecute(object parameter) {
 				return true;
 			}
 
@@ -217,8 +198,7 @@ namespace ICSharpCode.ILSpy.dntheme
 				remove { }
 			}
 
-			public void Execute(object parameter)
-			{
+			public void Execute(object parameter) {
 				Themes.Theme = theme;
 			}
 		}

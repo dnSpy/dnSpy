@@ -26,10 +26,8 @@ using System.Xml.Linq;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.dntheme
-{
-	public sealed class MyHighlightingColor : HighlightingColor
-	{
+namespace ICSharpCode.ILSpy.dntheme {
+	public sealed class MyHighlightingColor : HighlightingColor {
 		HighlightingBrush color3;
 		HighlightingBrush color4;
 
@@ -51,8 +49,7 @@ namespace ICSharpCode.ILSpy.dntheme
 			}
 		}
 
-		public HighlightingBrush GetHighlightingBrush(int index)
-		{
+		public HighlightingBrush GetHighlightingBrush(int index) {
 			switch (index) {
 			case 0: return Foreground;
 			case 1: return Background;
@@ -64,8 +61,7 @@ namespace ICSharpCode.ILSpy.dntheme
 	}
 
 	[DebuggerDisplay("{ColorType}, Children={Children.Length}")]
-	public abstract class ColorInfo
-	{
+	public abstract class ColorInfo {
 		public readonly ColorType ColorType;
 		public readonly string Description;
 		public string DefaultForeground;
@@ -86,25 +82,21 @@ namespace ICSharpCode.ILSpy.dntheme
 
 		public abstract IEnumerable<Tuple<object, object>> GetResourceKeyValues(MyHighlightingColor hlColor);
 
-		protected ColorInfo(ColorType colorType, string description)
-		{
+		protected ColorInfo(ColorType colorType, string description) {
 			this.ColorType = colorType;
 			this.Description = description;
 		}
 	}
 
-	public sealed class ColorColorInfo : ColorInfo
-	{
+	public sealed class ColorColorInfo : ColorInfo {
 		public object BackgroundResourceKey;
 		public object ForegroundResourceKey;
 
 		public ColorColorInfo(ColorType colorType, string description)
-			: base(colorType, description)
-		{
+			: base(colorType, description) {
 		}
 
-		public override IEnumerable<Tuple<object, object>> GetResourceKeyValues(MyHighlightingColor hlColor)
-		{
+		public override IEnumerable<Tuple<object, object>> GetResourceKeyValues(MyHighlightingColor hlColor) {
 			if (ForegroundResourceKey != null) {
 				Debug.Assert(hlColor.Foreground != null);
 				yield return new Tuple<object, object>(ForegroundResourceKey, ((SolidColorBrush)hlColor.Foreground.GetBrush(null)).Color);
@@ -116,20 +108,17 @@ namespace ICSharpCode.ILSpy.dntheme
 		}
 	}
 
-	public sealed class BrushColorInfo : ColorInfo
-	{
+	public sealed class BrushColorInfo : ColorInfo {
 		public object BackgroundResourceKey;
 		public object ForegroundResourceKey;
 		public double? BackgroundOpacity;
 		public double? ForegroundOpacity;
 
 		public BrushColorInfo(ColorType colorType, string description)
-			: base(colorType, description)
-		{
+			: base(colorType, description) {
 		}
 
-		public override IEnumerable<Tuple<object, object>> GetResourceKeyValues(MyHighlightingColor hlColor)
-		{
+		public override IEnumerable<Tuple<object, object>> GetResourceKeyValues(MyHighlightingColor hlColor) {
 			if (ForegroundResourceKey != null) {
 				Debug.Assert(hlColor.Foreground != null);
 				if (ForegroundOpacity == null)
@@ -153,8 +142,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		}
 	}
 
-	public sealed class LinearGradientColorInfo : ColorInfo
-	{
+	public sealed class LinearGradientColorInfo : ColorInfo {
 		public object ResourceKey;
 		public Point StartPoint;
 		public Point EndPoint;
@@ -162,20 +150,17 @@ namespace ICSharpCode.ILSpy.dntheme
 		public BrushMappingMode? MappingMode;
 
 		public LinearGradientColorInfo(ColorType colorType, Point endPoint, string description, params double[] gradientOffsets)
-			: this(colorType, new Point(0, 0), endPoint, description, gradientOffsets)
-		{
+			: this(colorType, new Point(0, 0), endPoint, description, gradientOffsets) {
 		}
 
 		public LinearGradientColorInfo(ColorType colorType, Point startPoint, Point endPoint, string description, params double[] gradientOffsets)
-			: base(colorType, description)
-		{
+			: base(colorType, description) {
 			this.StartPoint = startPoint;
 			this.EndPoint = endPoint;
 			this.GradientOffsets = gradientOffsets;
 		}
 
-		public override IEnumerable<Tuple<object, object>> GetResourceKeyValues(MyHighlightingColor hlColor)
-		{
+		public override IEnumerable<Tuple<object, object>> GetResourceKeyValues(MyHighlightingColor hlColor) {
 			var br = new LinearGradientBrush() {
 				StartPoint = StartPoint,
 				EndPoint = EndPoint,
@@ -189,8 +174,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		}
 	}
 
-	public sealed class RadialGradientColorInfo : ColorInfo
-	{
+	public sealed class RadialGradientColorInfo : ColorInfo {
 		public object ResourceKey;
 		public Transform RelativeTransform;
 		public double[] GradientOffsets;
@@ -200,21 +184,18 @@ namespace ICSharpCode.ILSpy.dntheme
 		public double? Opacity;
 
 		public RadialGradientColorInfo(ColorType colorType, string description, params double[] gradientOffsets)
-			: base(colorType, description)
-		{
+			: base(colorType, description) {
 			this.GradientOffsets = gradientOffsets;
 		}
 
 		public RadialGradientColorInfo(ColorType colorType, string relativeTransformString, string description, params double[] gradientOffsets)
-			: base(colorType, description)
-		{
+			: base(colorType, description) {
 			this.GradientOffsets = gradientOffsets;
 			this.RelativeTransform = (Transform)transformConverter.ConvertFromInvariantString(relativeTransformString);
 		}
 		static readonly TransformConverter transformConverter = new TransformConverter();
 
-		public override IEnumerable<Tuple<object, object>> GetResourceKeyValues(MyHighlightingColor hlColor)
-		{
+		public override IEnumerable<Tuple<object, object>> GetResourceKeyValues(MyHighlightingColor hlColor) {
 			var br = new RadialGradientBrush() {
 				RadiusX = 1,
 				RadiusY = 1,
@@ -239,8 +220,7 @@ namespace ICSharpCode.ILSpy.dntheme
 	}
 
 	[DebuggerDisplay("{ColorInfo.ColorType}")]
-	public sealed class Color
-	{
+	public sealed class Color {
 		/// <summary>
 		/// Color info
 		/// </summary>
@@ -264,14 +244,12 @@ namespace ICSharpCode.ILSpy.dntheme
 		/// </summary>
 		public MyHighlightingColor InheritedColor;
 
-		public Color(ColorInfo colorInfo)
-		{
+		public Color(ColorInfo colorInfo) {
 			this.ColorInfo = colorInfo;
 		}
 	}
 
-	public sealed class Theme
-	{
+	public sealed class Theme {
 		static readonly Dictionary<string, ColorType> nameToColorType = new Dictionary<string, ColorType>(StringComparer.InvariantCultureIgnoreCase);
 
 		static readonly ColorInfo[] rootColorInfos = new ColorInfo[] {
@@ -281,7 +259,7 @@ namespace ICSharpCode.ILSpy.dntheme
 			new BrushColorInfo(ColorType.HexSelection, "Selected text in hex editor") {
 				DefaultBackground = "#663399FF",
 			},
-            new BrushColorInfo(ColorType.SpecialCharacterBox, "Special character box") {
+			new BrushColorInfo(ColorType.SpecialCharacterBox, "Special character box") {
 				DefaultForeground = "#FFFFFFFF",
 				DefaultBackground = "#C8808080",
 			},
@@ -642,6 +620,10 @@ namespace ICSharpCode.ILSpy.dntheme
 			new BrushColorInfo(ColorType.ToolBarDisabledBorder, "Toolbar disabled border (combobox & textbox)") {
 				DefaultBackground = "#FFDADADA",
 				BackgroundResourceKey = "ToolBarDisabledBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentCommandBarMenuMouseOverSubmenuGlyph, "Submenu opened glyph color") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "EnvironmentCommandBarMenuMouseOverSubmenuGlyph",
 			},
 			new BrushColorInfo(ColorType.CommonControlsButtonIconBackground, "Button icon background. Makes sure icons look good with this background color.") {
 				DefaultBackground = "#FFECECF0",
@@ -2042,8 +2024,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		};
 		static readonly ColorInfo[] colorInfos = new ColorInfo[(int)ColorType.Last];
 
-		static Theme()
-		{
+		static Theme() {
 			for (int i = 0; i < (int)TextTokenType.Last; i++) {
 				var tt = ((TextTokenType)i).ToString();
 				var ct = ((ColorType)i).ToString();
@@ -2072,8 +2053,7 @@ namespace ICSharpCode.ILSpy.dntheme
 			}
 		}
 
-		static void InitColorInfos(ColorInfo[] infos)
-		{
+		static void InitColorInfos(ColorInfo[] infos) {
 			foreach (var info in infos) {
 				int i = (int)info.ColorType;
 				if (colorInfos[i] != null) {
@@ -2095,8 +2075,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		public bool IsHighContrast { get; private set; }
 		public int Sort { get; private set; }
 
-		public Theme(XElement root)
-		{
+		public Theme(XElement root) {
 			var name = root.Attribute("name");
 			if (name == null || string.IsNullOrEmpty(name.Value))
 				throw new Exception("Missing or empty name attribute");
@@ -2143,8 +2122,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		/// Recalculates the inherited color properties and should be called whenever any of the
 		/// color properties have been modified.
 		/// </summary>
-		public void RecalculateInheritedColorProperties()
-		{
+		public void RecalculateInheritedColorProperties() {
 			for (int i = 0; i < hlColors.Length; i++) {
 				var info = colorInfos[i];
 				var textColor = hlColors[i].TextInheritedColor;
@@ -2175,8 +2153,7 @@ namespace ICSharpCode.ILSpy.dntheme
 			}
 		}
 
-		HighlightingBrush GetForeground(ColorInfo info, bool canIncludeDefault)
-		{
+		HighlightingBrush GetForeground(ColorInfo info, bool canIncludeDefault) {
 			while (info != null) {
 				if (!canIncludeDefault && info.ColorType == ColorType.DefaultText)
 					break;
@@ -2189,8 +2166,7 @@ namespace ICSharpCode.ILSpy.dntheme
 			return null;
 		}
 
-		HighlightingBrush GetBackground(ColorInfo info, bool canIncludeDefault)
-		{
+		HighlightingBrush GetBackground(ColorInfo info, bool canIncludeDefault) {
 			while (info != null) {
 				if (!canIncludeDefault && info.ColorType == ColorType.DefaultText)
 					break;
@@ -2203,8 +2179,7 @@ namespace ICSharpCode.ILSpy.dntheme
 			return null;
 		}
 
-		HighlightingBrush GetColor3(ColorInfo info, bool canIncludeDefault)
-		{
+		HighlightingBrush GetColor3(ColorInfo info, bool canIncludeDefault) {
 			while (info != null) {
 				if (!canIncludeDefault && info.ColorType == ColorType.DefaultText)
 					break;
@@ -2217,8 +2192,7 @@ namespace ICSharpCode.ILSpy.dntheme
 			return null;
 		}
 
-		HighlightingBrush GetColor4(ColorInfo info, bool canIncludeDefault)
-		{
+		HighlightingBrush GetColor4(ColorInfo info, bool canIncludeDefault) {
 			while (info != null) {
 				if (!canIncludeDefault && info.ColorType == ColorType.DefaultText)
 					break;
@@ -2231,8 +2205,7 @@ namespace ICSharpCode.ILSpy.dntheme
 			return null;
 		}
 
-		FontStyle? GetFontStyle(ColorInfo info, bool canIncludeDefault)
-		{
+		FontStyle? GetFontStyle(ColorInfo info, bool canIncludeDefault) {
 			while (info != null) {
 				if (!canIncludeDefault && info.ColorType == ColorType.DefaultText)
 					break;
@@ -2245,8 +2218,7 @@ namespace ICSharpCode.ILSpy.dntheme
 			return null;
 		}
 
-		FontWeight? GetFontWeight(ColorInfo info, bool canIncludeDefault)
-		{
+		FontWeight? GetFontWeight(ColorInfo info, bool canIncludeDefault) {
 			while (info != null) {
 				if (!canIncludeDefault && info.ColorType == ColorType.DefaultText)
 					break;
@@ -2259,21 +2231,18 @@ namespace ICSharpCode.ILSpy.dntheme
 			return null;
 		}
 
-		public Color GetColor(TextTokenType tokenType)
-		{
+		public Color GetColor(TextTokenType tokenType) {
 			return GetColor((ColorType)tokenType);
 		}
 
-		public Color GetColor(ColorType colorType)
-		{
+		public Color GetColor(ColorType colorType) {
 			uint i = (uint)colorType;
 			if (i >= (uint)hlColors.Length)
 				return hlColors[(int)ColorType.DefaultText];
 			return hlColors[i];
 		}
 
-		MyHighlightingColor ReadColor(XElement color, ref ColorType colorType)
-		{
+		MyHighlightingColor ReadColor(XElement color, ref ColorType colorType) {
 			var name = color.Attribute("name");
 			if (name == null)
 				return null;
@@ -2313,8 +2282,7 @@ namespace ICSharpCode.ILSpy.dntheme
 			return hl;
 		}
 
-		MyHighlightingColor CreateHighlightingColor(ColorType colorType)
-		{
+		MyHighlightingColor CreateHighlightingColor(ColorType colorType) {
 			var hl = new MyHighlightingColor { Name = colorType.ToString() };
 
 			var colorInfo = colorInfos[(int)colorType];
@@ -2334,8 +2302,7 @@ namespace ICSharpCode.ILSpy.dntheme
 			return hl;
 		}
 
-		static string GetAttribute(XElement xml, string attr, string defVal)
-		{
+		static string GetAttribute(XElement xml, string attr, string defVal) {
 			var a = xml.Attribute(attr);
 			if (a != null)
 				return a.Value;
@@ -2343,8 +2310,7 @@ namespace ICSharpCode.ILSpy.dntheme
 		}
 
 		static readonly ColorConverter colorConverter = new ColorConverter();
-		static HighlightingBrush CreateColor(string color)
-		{
+		static HighlightingBrush CreateColor(string color) {
 			if (color.StartsWith("SystemColors.")) {
 				string shortName = color.Substring(13);
 				var property = typeof(SystemColors).GetProperty(shortName + "Brush");
@@ -2364,8 +2330,7 @@ namespace ICSharpCode.ILSpy.dntheme
 			}
 		}
 
-		static ColorType ToColorType(string name)
-		{
+		static ColorType ToColorType(string name) {
 			ColorType type;
 			if (nameToColorType.TryGetValue(name, out type))
 				return type;
@@ -2373,48 +2338,39 @@ namespace ICSharpCode.ILSpy.dntheme
 			return ColorType.Last;
 		}
 
-		public static string GetTextInheritedForegroundResourceKey(string name)
-		{
+		public static string GetTextInheritedForegroundResourceKey(string name) {
 			return string.Format("TETextInherited{0}Foreground", name);
 		}
 
-		public static string GetTextInheritedBackgroundResourceKey(string name)
-		{
+		public static string GetTextInheritedBackgroundResourceKey(string name) {
 			return string.Format("TETextInherited{0}Background", name);
 		}
 
-		public static string GetTextInheritedFontStyleResourceKey(string name)
-		{
+		public static string GetTextInheritedFontStyleResourceKey(string name) {
 			return string.Format("TETextInherited{0}FontStyle", name);
 		}
 
-		public static string GetTextInheritedFontWeightResourceKey(string name)
-		{
+		public static string GetTextInheritedFontWeightResourceKey(string name) {
 			return string.Format("TETextInherited{0}FontWeight", name);
 		}
 
-		public static string GetInheritedForegroundResourceKey(string name)
-		{
+		public static string GetInheritedForegroundResourceKey(string name) {
 			return string.Format("TEInherited{0}Foreground", name);
 		}
 
-		public static string GetInheritedBackgroundResourceKey(string name)
-		{
+		public static string GetInheritedBackgroundResourceKey(string name) {
 			return string.Format("TEInherited{0}Background", name);
 		}
 
-		public static string GetInheritedFontStyleResourceKey(string name)
-		{
+		public static string GetInheritedFontStyleResourceKey(string name) {
 			return string.Format("TEInherited{0}FontStyle", name);
 		}
 
-		public static string GetInheritedFontWeightResourceKey(string name)
-		{
+		public static string GetInheritedFontWeightResourceKey(string name) {
 			return string.Format("TEInherited{0}FontWeight", name);
 		}
 
-		public override string ToString()
-		{
+		public override string ToString() {
 			return string.Format("Theme: {0}", Name);
 		}
 	}

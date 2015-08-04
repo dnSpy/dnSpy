@@ -160,6 +160,7 @@
 		<color name="toolbarhorizontalbackground" fg="#D6DBE9" bg="#D6DBE9" color3="#D6DBE9" />
 		<color name="toolbardisabledfill" bg="#FFDADADA" />
 		<color name="toolbardisabledborder" bg="#FFDADADA" />
+		<color name="environmentcommandbarmenumouseoversubmenuglyph" bg="#FF000000" />
 		<color name="commoncontrolsbuttoniconbackground" bg="#FFECECF0" />
 		<color name="commoncontrolsbutton" fg="#FF1E1E1E" bg="#FFECECF0" />
 		<color name="commoncontrolsbuttonborder" bg="#FFACACAC" />

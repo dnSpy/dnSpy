@@ -17,7 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.HexEditor;
 using ICSharpCode.ILSpy;
@@ -27,16 +30,16 @@ namespace dnSpy.AsmEditor.Hex {
 	[Export(typeof(IPlugin))]
 	sealed class HexContextMenuPlugin : IPlugin {
 		public void OnLoaded() {
-			GoToOffsetContextMenuEntry.OnLoaded();
+			GoToOffsetHexBoxContextMenuEntry.OnLoaded();
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Open Hex Editor", Order = 500, Category = "Hex")]
-	sealed class OpenHexEditorContextMenuEntry : IContextMenuEntry {
+	[ExportContextMenuEntry(Header = "Open Hex Editor", Order = 500, Category = "Hex", Icon = "Binary")]
+	sealed class OpenHexEditorContextMenuEntry : IContextMenuEntry2 {
 		public void Execute(TextViewContext context) {
 			var node = GetNode(context);
 			if (node != null)
-				MainWindow.Instance.OpenHexBox(node);
+				MainWindow.Instance.OpenOrShowHexBox(node);
 		}
 
 		public bool IsEnabled(TextViewContext context) {
@@ -69,37 +72,56 @@ namespace dnSpy.AsmEditor.Hex {
 		static AssemblyTreeNode GetNode(TextViewContext context) {
 			return GetAssemblyTreeNode(context);
 		}
+
+		public void Initialize(TextViewContext context, MenuItem menuItem) {
+			menuItem.Header = MainWindow.Instance.GetHexTabState(GetAssemblyTreeNode(context)) == null ? "Open Hex Editor" : "Show Hex Editor";
+		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show Hex Editor", Order = 510, Category = "Hex")]
-	sealed class ShowHexEditorContextMenuEntry : IContextMenuEntry {
+	abstract class HexBoxContextMenuEntry : IContextMenuEntry2 {
 		public void Execute(TextViewContext context) {
-			var node = GetNode(context);
-			if (node != null)
-				MainWindow.Instance.ShowHexBox(node);
+			var tabState = GetHexTabState(context.HexBox);
+			if (tabState != null)
+				Execute(tabState);
+		}
+
+		public void Initialize(TextViewContext context, MenuItem menuItem) {
+			var tabState = GetHexTabState(context.HexBox);
+			if (tabState != null)
+				Initialize(tabState, menuItem);
 		}
 
 		public bool IsEnabled(TextViewContext context) {
-			return true;
+			var tabState = GetHexTabState(context.HexBox);
+			if (tabState != null)
+				return IsEnabled(tabState);
+			return false;
 		}
 
 		public bool IsVisible(TextViewContext context) {
-			var node = GetNode(context);
-			return node != null && !string.IsNullOrEmpty(node.LoadedAssembly.FileName);
+			var tabState = GetHexTabState(context.HexBox);
+			if (tabState != null)
+				return IsVisible(tabState);
+			return false;
 		}
 
-		static AssemblyTreeNode GetNode(TextViewContext context) {
-			var node = OpenHexEditorContextMenuEntry.GetAssemblyTreeNode(context);
-			if (node == null)
-				return null;
-			return MainWindow.Instance.GetHexTabState(node) == null ? null : node;
+		static HexTabState GetHexTabState(HexBox hexBox) {
+			return (HexTabState)TabState.GetTabState(hexBox);
 		}
+
+		protected abstract void Execute(HexTabState tabState);
+		protected virtual void Initialize(HexTabState tabState, MenuItem menuItem) {
+		}
+		protected virtual bool IsEnabled(HexTabState tabState) {
+			return IsVisible(tabState);
+		}
+		protected abstract bool IsVisible(HexTabState tabState);
 	}
 
-	[ExportContextMenuEntry(Header = "Go to Offset", Order = 520, Category = "Hex", InputGestureText = "Ctrl+G")]
-	sealed class GoToOffsetContextMenuEntry : IContextMenuEntry {
+	[ExportContextMenuEntry(Header = "Go to Offset…", Order = 100, Category = "Misc", InputGestureText = "Ctrl+G")]
+	sealed class GoToOffsetHexBoxContextMenuEntry : HexBoxContextMenuEntry {
 		internal static void OnLoaded() {
-			MainWindow.Instance.HexBindings.Add(new RoutedCommand("GoToOffset", typeof(HexContextMenuPlugin)),
+			MainWindow.Instance.HexBindings.Add(new RoutedCommand("GoToOffset", typeof(GoToOffsetHexBoxContextMenuEntry)),
 				(s, e) => Execute(),
 				(s, e) => e.CanExecute = CanExecute(),
 				ModifierKeys.Control, Key.G);
@@ -110,30 +132,26 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static void Execute() {
-			Execute(MainWindow.Instance.ActiveTabState as HexTabState);
+			Execute2(MainWindow.Instance.ActiveTabState as HexTabState);
 		}
 
 		static bool CanExecute() {
 			return CanExecute(MainWindow.Instance.ActiveTabState as HexTabState);
 		}
 
-		public void Execute(TextViewContext context) {
-			Execute(GetHexTabState(context));
+		protected override void Execute(HexTabState tabState) {
+			Execute2(tabState);
 		}
 
-		public bool IsEnabled(TextViewContext context) {
-			return true;
-		}
-
-		public bool IsVisible(TextViewContext context) {
-			return CanExecute(GetHexTabState(context));
+		protected override bool IsVisible(HexTabState tabState) {
+			return CanExecute(tabState);
 		}
 
 		static bool CanExecute(HexTabState tabState) {
 			return tabState != null;
 		}
 
-		static void Execute(HexTabState tabState) {
+		static void Execute2(HexTabState tabState) {
 			if (!CanExecute(tabState))
 				return;
 
@@ -146,6 +164,190 @@ namespace dnSpy.AsmEditor.Hex {
 				return;
 
 			hb.CaretPosition = new HexBoxPosition(hb.VisibleToPhysicalOffset(data.OffsetVM.Value), hb.CaretPosition.Kind, 0);
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Select…", Order = 110, Category = "Misc")]
+	sealed class SelectRangeHexBoxContextMenuEntry : HexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+			var hb = tabState.HexBox;
+			ulong start = hb.CaretPosition.Offset;
+			ulong end = start;
+			if (hb.Selection != null) {
+				start = hb.Selection.Value.StartOffset;
+				end = hb.Selection.Value.EndOffset;
+			}
+			var data = new SelectVM(hb.PhysicalToVisibleOffset(start), hb.PhysicalToVisibleOffset(end), hb.PhysicalToVisibleOffset(hb.StartOffset), hb.PhysicalToVisibleOffset(hb.EndOffset));
+			var win = new SelectDlg();
+			win.DataContext = data;
+			win.Owner = MainWindow.Instance;
+			if (win.ShowDialog() != true)
+				return;
+
+			hb.Selection = new HexSelection(hb.VisibleToPhysicalOffset(data.StartVM.Value), hb.VisibleToPhysicalOffset(data.EndVM.Value));
+			hb.CaretPosition = new HexBoxPosition(hb.VisibleToPhysicalOffset(data.StartVM.Value), hb.CaretPosition.Kind, 0);
+		}
+
+		protected override bool IsVisible(HexTabState tabState) {
+			return true;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Use 0x Prefix (offset)", Order = 500, Category = "Options")]
+	sealed class UseHexPrefixHexBoxContextMenuEntry : HexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+			tabState.UseHexPrefix = !(tabState.UseHexPrefix ?? HexSettings.Instance.UseHexPrefix);
+		}
+
+		protected override bool IsVisible(HexTabState tabState) {
+			return true;
+		}
+
+		protected override void Initialize(HexTabState tabState, MenuItem menuItem) {
+			menuItem.IsChecked = tabState.UseHexPrefix ?? HexSettings.Instance.UseHexPrefix;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show ASCII", Order = 510, Category = "Options")]
+	sealed class ShowAsciiHexBoxContextMenuEntry : HexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+			tabState.ShowAscii = !(tabState.ShowAscii ?? HexSettings.Instance.ShowAscii);
+		}
+
+		protected override bool IsVisible(HexTabState tabState) {
+			return true;
+		}
+
+		protected override void Initialize(HexTabState tabState, MenuItem menuItem) {
+			menuItem.IsChecked = tabState.ShowAscii ?? HexSettings.Instance.ShowAscii;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Lower Case Hex", Order = 520, Category = "Options")]
+	sealed class LowerCaseHexHexBoxContextMenuEntry : HexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+			tabState.LowerCaseHex = !(tabState.LowerCaseHex ?? HexSettings.Instance.LowerCaseHex);
+		}
+
+		protected override bool IsVisible(HexTabState tabState) {
+			return true;
+		}
+
+		protected override void Initialize(HexTabState tabState, MenuItem menuItem) {
+			menuItem.IsChecked = tabState.LowerCaseHex ?? HexSettings.Instance.LowerCaseHex;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Bytes per Line", Order = 530, Category = "Options")]
+	sealed class BytesPerLineHexBoxContextMenuEntry : HexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+		}
+
+		protected override bool IsVisible(HexTabState tabState) {
+			return true;
+		}
+
+		static readonly Tuple<int?, string>[] subMenus = new Tuple<int?, string>[] {
+			Tuple.Create((int?)0, "_Fit to Width"),
+			Tuple.Create((int?)8, "_8 Bytes"),
+			Tuple.Create((int?)16, "_16 Bytes"),
+			Tuple.Create((int?)32, "_32 Bytes"),
+			Tuple.Create((int?)48, "_48 Bytes"),
+			Tuple.Create((int?)64, "_64 Bytes"),
+			Tuple.Create((int?)null, "_Default"),
+		};
+
+		protected override void Initialize(HexTabState tabState, MenuItem menuItem) {
+			foreach (var info in subMenus) {
+				var mi = new MenuItem {
+					Header = info.Item2,
+					IsChecked = info.Item1 == tabState.BytesPerLine,
+				};
+				var tmpInfo = info;
+				mi.Click += (s, e) => tabState.BytesPerLine = tmpInfo.Item1;
+				menuItem.Items.Add(mi);
+			}
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Settings…", Order = 599, Category = "Options")]
+	sealed class LocalSettingsHexBoxContextMenuEntry : HexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+			var data = new LocalSettingsVM(new LocalHexSettings(tabState));
+			var win = new LocalSettingsDlg();
+			win.DataContext = data;
+			win.Owner = MainWindow.Instance;
+			if (win.ShowDialog() != true)
+				return;
+
+			data.CreateLocalHexSettings().CopyTo(tabState);
+		}
+
+		protected override bool IsVisible(HexTabState tabState) {
+			return true;
+		}
+	}
+
+	abstract class CopyBaseHexBoxContextMenuEntry : HexBoxContextMenuEntry {
+		protected override bool IsVisible(HexTabState tabState) {
+			return true;
+		}
+
+		protected override bool IsEnabled(HexTabState tabState) {
+			return tabState.HexBox.Selection != null;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Cop_y", Order = 600, Category = "Copy", Icon = "Copy", InputGestureText = "Ctrl+C")]
+	sealed class CopyHexBoxContextMenuEntry : CopyBaseHexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+			tabState.HexBox.Copy();
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Copy UTF-8 String", Order = 610, Category = "Copy", InputGestureText = "Ctrl+Shift+8")]
+	sealed class CopyUtf8StringHexBoxContextMenuEntry : CopyBaseHexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+			tabState.HexBox.CopyUTF8String();
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Copy Unicode String", Order = 620, Category = "Copy", InputGestureText = "Ctrl+Shift+U")]
+	sealed class CopyUnicodeStringHexBoxContextMenuEntry : CopyBaseHexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+			tabState.HexBox.CopyUnicodeString();
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Copy C# Array", Order = 630, Category = "Copy", InputGestureText = "Ctrl+Shift+P")]
+	sealed class CopyCSharpArrayHexBoxContextMenuEntry : CopyBaseHexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+			tabState.HexBox.CopyCSharpArray();
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Copy VB Array", Order = 640, Category = "Copy", InputGestureText = "Ctrl+Shift+B")]
+	sealed class CopyVBArrayHexBoxContextMenuEntry : CopyBaseHexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+			tabState.HexBox.CopyVBArray();
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Copy UI Contents", Order = 650, Category = "Copy", InputGestureText = "Ctrl+Shift+C")]
+	sealed class CopyUIContentsHexBoxContextMenuEntry : CopyBaseHexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+			tabState.HexBox.CopyUIContents();
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Copy Offset", Order = 660, Category = "Copy", InputGestureText = "Ctrl+Alt+A")]
+	sealed class CopyOffsetHexBoxContextMenuEntry : HexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+			tabState.HexBox.CopyAddress();
+		}
+
+		protected override bool IsVisible(HexTabState tabState) {
+			return true;
 		}
 	}
 }
