@@ -22,11 +22,28 @@ using System.Windows.Input;
 namespace ICSharpCode.ILSpy
 {
 	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "_Save Code…", MenuIcon = "Save", MenuCategory = "Save", MenuOrder = 1000)]
-	sealed class SaveCommand : CommandWrapper
+	[ExportContextMenuEntry(Header = "_Save Code…", Order = 90, InputGestureText = "Ctrl+S", Category = "Tabs", Icon = "Save")]
+	sealed class SaveCommand : CommandWrapper, IContextMenuEntry
 	{
 		public SaveCommand()
 			: base(ApplicationCommands.Save)
 		{
+		}
+
+		public bool IsVisible(TextViewContext context)
+		{
+			// Only show if tab context menu
+			return context.TabControl != null;
+		}
+
+		public bool IsEnabled(TextViewContext context)
+		{
+			return base.CanExecute(null);
+		}
+
+		public void Execute(TextViewContext context)
+		{
+			base.Execute(null);
 		}
 	}
 }
