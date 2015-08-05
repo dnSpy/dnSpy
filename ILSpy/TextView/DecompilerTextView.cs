@@ -947,6 +947,8 @@ namespace ICSharpCode.ILSpy.TextView
 		internal void JumpToReference(ReferenceSegment referenceSegment, MouseEventArgs e)
 		{
 			if (referenceSegment.Reference is AddressReference) {
+				MainWindow.Instance.SetActiveView(this);
+				GoToMousePosition();
 				MainWindow.Instance.GoToAddress((AddressReference)referenceSegment.Reference);
 				e.Handled = true;
 				return;

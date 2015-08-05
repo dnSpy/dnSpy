@@ -532,12 +532,15 @@ namespace ICSharpCode.ILSpy {
 		}
 
 		public void InitializeStartEndOffset() {
-			var doc = HexBox.Document;
-			if (doc == null)
-				return;
-
 			HexBox.StartOffset = 0;
-			HexBox.EndOffset = doc.Size == 0 ? 0 : doc.Size - 1;
+			HexBox.EndOffset = DocumentEndOffset;
+		}
+
+		public ulong DocumentEndOffset {
+			get {
+				var doc = HexBox.Document;
+				return doc == null ? 0 : doc.EndOffset;
+			}
 		}
 
 		public int? BytesGroupCount {
@@ -625,8 +628,21 @@ namespace ICSharpCode.ILSpy {
 			if (length == 0)
 				HexBox.Selection = null;
 			else
-				HexBox.Selection = new HexSelection(fileOffset, end);
-			HexBox.CaretPosition = new HexBoxPosition(fileOffset, HexBox.CaretPosition.Kind, 0);
+				HexBox.Selection = new HexSelection(end, fileOffset);
+			SetCaretPositionAndMakeVisible(fileOffset, end, true);
+		}
+
+		public void SetCaretPositionAndMakeVisible(ulong start, ulong end, bool resetKindPos = false) {
+			// Make sure end address is also visible
+			var kindPos = HexBox.CaretPosition.KindPosition;
+			if (resetKindPos) {
+				if (HexBox.CaretPosition.Kind != HexBoxPositionKind.HexByte)
+					kindPos = 0;
+				else
+					kindPos = start <= end ? HexBoxPosition.INDEX_HEXBYTE_FIRST : HexBoxPosition.INDEX_HEXBYTE_LAST;
+			}
+			HexBox.CaretPosition = new HexBoxPosition(end, HexBox.CaretPosition.Kind, kindPos);
+			HexBox.CaretPosition = new HexBoxPosition(start, HexBox.CaretPosition.Kind, kindPos);
 		}
 	}
 }

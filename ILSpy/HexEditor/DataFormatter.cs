@@ -35,8 +35,14 @@ namespace dnSpy.HexEditor {
 		protected DataFormatter(HexBox hexBox, ulong start, ulong end) {
 			if (start < hexBox.StartOffset)
 				start = hexBox.StartOffset;
-			if (end > hexBox.EndOffset)
+			else if (start > hexBox.EndOffset)
+				start = hexBox.EndOffset;
+			if (end < hexBox.StartOffset)
+				end = hexBox.StartOffset;
+			else if (end > hexBox.EndOffset)
 				end = hexBox.EndOffset;
+			if (end < start)
+				end = start;
 
 			if (end - start >= MAX_BYTES - 1)
 				end = start + MAX_BYTES - 1;

@@ -22,9 +22,15 @@ using System.Collections;
 namespace dnSpy.HexEditor {
 	public interface IHexStream {
 		/// <summary>
-		/// Size of stream
+		/// Size of stream. This could be <see cref="ulong.MaxValue"/>, one byte too small, if the
+		/// whole 64-bit address space is used. See also <see cref="EndOffset"/>.
 		/// </summary>
 		ulong Size { get; }
+
+		/// <summary>
+		/// Last valid offset. See also <see cref="Size"/>
+		/// </summary>
+		ulong EndOffset { get; }
 
 		/// <summary>
 		/// Reads a byte. Returns -1 if <paramref name="offset"/> is invalid or if the memory isn't

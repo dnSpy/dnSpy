@@ -18,25 +18,68 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
+using System.IO;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
+using dnlib.DotNet;
 using dnSpy.HexEditor;
+using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
+using WF = System.Windows.Forms;
 
 namespace dnSpy.AsmEditor.Hex {
 	[Export(typeof(IPlugin))]
 	sealed class HexContextMenuPlugin : IPlugin {
 		public void OnLoaded() {
 			GoToOffsetHexBoxContextMenuEntry.OnLoaded();
+			OpenHexEditorContextMenuEntry.OnLoaded();
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Open Hex Editor", Order = 500, Category = "Hex", Icon = "Binary")]
+	[ExportContextMenuEntry(Header = "Open He_x Editor", Order = 500, Category = "Hex", Icon = "Binary", InputGestureText = "Ctrl+X")]
 	sealed class OpenHexEditorContextMenuEntry : IContextMenuEntry2 {
+		internal static void OnLoaded() {
+			MainWindow.Instance.CodeBindings.Add(ApplicationCommands.Cut,
+				(s, e) => ExecuteCommand(),
+				(s, e) => e.CanExecute = CanExecuteCommand(),
+				ModifierKeys.Control, Key.X);
+		}
+
+		static TextViewContext CreateTextViewContext() {
+			var textView = MainWindow.Instance.ActiveTextView;
+			return textView == null ? null : TextViewContext.Create(textView: textView, openedFromKeyboard: true);
+		}
+
+		static void ExecuteCommand() {
+			var context = CreateTextViewContext();
+			if (context == null)
+				return;
+			if (ShowAddressReferenceInHexEditorContextMenuEntry.IsVisibleInternal(context))
+				ShowAddressReferenceInHexEditorContextMenuEntry.ExecuteInternal(context);
+			else if (ShowILRangeInHexEditorContextMenuEntry.IsVisibleInternal(context))
+				ShowILRangeInHexEditorContextMenuEntry.ExecuteInternal(context);
+			else if (IsVisibleInternal(context))
+				ExecuteInternal(context);
+		}
+
+		static bool CanExecuteCommand() {
+			var context = CreateTextViewContext();
+			if (context == null)
+				return false;
+			return ShowAddressReferenceInHexEditorContextMenuEntry.IsVisibleInternal(context) ||
+				ShowILRangeInHexEditorContextMenuEntry.IsVisibleInternal(context) ||
+				IsVisibleInternal(context);
+		}
+
 		public void Execute(TextViewContext context) {
+			ExecuteInternal(context);
+		}
+
+		internal static void ExecuteInternal(TextViewContext context) {
 			var node = GetNode(context);
 			if (node != null)
 				MainWindow.Instance.OpenOrShowHexBox(node);
@@ -47,11 +90,19 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		public bool IsVisible(TextViewContext context) {
+			return IsVisibleInternal(context);
+		}
+
+		static bool IsVisibleInternal(TextViewContext context) {
 			var node = GetNode(context);
 			return node != null && !string.IsNullOrEmpty(node.LoadedAssembly.FileName);
 		}
 
-		internal static AssemblyTreeNode GetAssemblyTreeNode(TextViewContext context) {
+		static AssemblyTreeNode GetAssemblyTreeNode(TextViewContext context) {
+			if (ShowAddressReferenceInHexEditorContextMenuEntry.IsVisibleInternal(context))
+				return null;
+			if (ShowILRangeInHexEditorContextMenuEntry.IsVisibleInternal(context))
+				return null;
 			if (context.TextView != null)
 				return GetActiveAssemblyTreeNode();
 			if (context.TreeView == MainWindow.Instance.treeView) {
@@ -75,6 +126,239 @@ namespace dnSpy.AsmEditor.Hex {
 
 		public void Initialize(TextViewContext context, MenuItem menuItem) {
 			menuItem.Header = MainWindow.Instance.GetHexTabState(GetAssemblyTreeNode(context)) == null ? "Open Hex Editor" : "Show Hex Editor";
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show in He_x Editor", Order = 500.1, Category = "Hex", Icon = "Binary", InputGestureText = "Ctrl+X")]
+	sealed class ShowAddressReferenceInHexEditorContextMenuEntry : IContextMenuEntry {
+		public void Execute(TextViewContext context) {
+			ExecuteInternal(context);
+		}
+
+		internal static void ExecuteInternal(TextViewContext context) {
+			var @ref = GetAddressReference(context);
+			if (@ref != null)
+				MainWindow.Instance.GoToAddress(@ref);
+		}
+
+		public bool IsEnabled(TextViewContext context) {
+			return true;
+		}
+
+		public bool IsVisible(TextViewContext context) {
+			return IsVisibleInternal(context);
+		}
+
+		internal static bool IsVisibleInternal(TextViewContext context) {
+			return GetAddressReference(context) != null;
+		}
+
+		static AddressReference GetAddressReference(TextViewContext context) {
+			if (context.Reference == null)
+				return null;
+
+			var addr = context.Reference.Reference as AddressReference;
+			if (addr != null)
+				return addr;
+
+			var rsrc = context.Reference.Reference as IResourceNode;
+			if (rsrc != null && rsrc.FileOffset != 0) {
+				var mod = ILSpyTreeNode.GetModule((ILSpyTreeNode)rsrc);
+				if (mod != null && !string.IsNullOrEmpty(mod.Location))
+					return new AddressReference(mod.Location, false, rsrc.FileOffset, rsrc.Length);
+			}
+
+			return null;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show Instructions in He_x Editor", Order = 500.2, Category = "Hex", Icon = "Binary", InputGestureText = "Ctrl+X")]
+	sealed class ShowILRangeInHexEditorContextMenuEntry : IContextMenuEntry {
+		public void Execute(TextViewContext context) {
+			ExecuteInternal(context);
+		}
+
+		internal static void ExecuteInternal(TextViewContext context) {
+			var @ref = GetAddressReference(context);
+			if (@ref != null)
+				MainWindow.Instance.GoToAddress(@ref);
+		}
+
+		public bool IsEnabled(TextViewContext context) {
+			return true;
+		}
+
+		public bool IsVisible(TextViewContext context) {
+			return IsVisibleInternal(context);
+		}
+
+		internal static bool IsVisibleInternal(TextViewContext context) {
+			return GetAddressReference(context) != null;
+		}
+
+		static AddressReference GetAddressReference(TextViewContext context) {
+			if (ShowAddressReferenceInHexEditorContextMenuEntry.IsVisibleInternal(context))
+				return null;
+
+			var mappings = GetMappings(context);
+			if (mappings == null || mappings.Count == 0)
+				return null;
+
+			var method = mappings[0].MemberMapping.MethodDefinition;
+			var mod = mappings[0].MemberMapping.MethodDefinition.Module as ModuleDefMD;
+			if (mod == null || string.IsNullOrEmpty(mod.Location))
+				return null;
+
+			ulong addr = (ulong)method.RVA;
+			ulong len;
+			if (MethodAnnotations.Instance.IsBodyModified(method))
+				len = 0;
+			else if (mappings.Count == 1) {
+				addr += (ulong)method.Body.HeaderSize + mappings[0].ILInstructionOffset.From;
+				len = mappings[0].ILInstructionOffset.To - mappings[0].ILInstructionOffset.From;
+			}
+			else {
+				addr += (ulong)method.Body.HeaderSize + mappings[0].ILInstructionOffset.From;
+				len = 0;
+			}
+
+			return new AddressReference(mod.Location, true, addr, len);
+		}
+
+		static IList<SourceCodeMapping> GetMappings(TextViewContext context) {
+			return MethodBody.EditILInstructionsCommand.GetMappings(context);
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show Instructions in He_x Editor", Order = 500.3, Category = "Hex", Icon = "Binary")]
+	sealed class TVShowMethodInstructionsInHexEditorContextMenuEntry : IContextMenuEntry {
+		public void Execute(TextViewContext context) {
+			var @ref = GetAddressReference(context);
+			if (@ref != null)
+				MainWindow.Instance.GoToAddress(@ref);
+		}
+
+		public bool IsEnabled(TextViewContext context) {
+			return true;
+		}
+
+		public bool IsVisible(TextViewContext context) {
+			return GetAddressReference(context) != null;
+		}
+
+		internal static IMemberDef GetMemberDef(TextViewContext context) {
+			if (context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length == 1 && context.SelectedTreeNodes[0] is IMemberTreeNode)
+				return MainWindow.ResolveReference(((IMemberTreeNode)context.SelectedTreeNodes[0]).Member);
+
+			if (context.Reference != null && context.Reference.Reference is IMemberRef) {
+				// Don't resolve it. It's confusing if we show the method body of a called method
+				// instead of the current method.
+				return context.Reference.Reference as IMemberDef;
+			}
+
+			return null;
+		}
+
+		static AddressReference GetAddressReference(TextViewContext context) {
+			var md = GetMemberDef(context) as MethodDef;
+			if (md == null)
+				return null;
+			var body = md.Body;
+			if (body == null)
+				return null;
+
+			var mod = md.Module;
+			bool modified = MethodAnnotations.Instance.IsBodyModified(md);
+			return new AddressReference(mod == null ? null : mod.Location, true, (ulong)md.RVA + body.HeaderSize, modified ? 0 : (ulong)body.GetCodeSize());
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show Header in Hex Editor", Order = 500.4, Category = "Hex", Icon = "Binary")]
+	sealed class TVShowMethodHeaderInHexEditorContextMenuEntry : IContextMenuEntry {
+		public void Execute(TextViewContext context) {
+			var @ref = GetAddressReference(context);
+			if (@ref != null)
+				MainWindow.Instance.GoToAddress(@ref);
+		}
+
+		public bool IsEnabled(TextViewContext context) {
+			return true;
+		}
+
+		public bool IsVisible(TextViewContext context) {
+			return GetAddressReference(context) != null;
+		}
+
+		static AddressReference GetAddressReference(TextViewContext context) {
+			var md = TVShowMethodInstructionsInHexEditorContextMenuEntry.GetMemberDef(context) as MethodDef;
+			if (md == null)
+				return null;
+			var body = md.Body;
+			if (body == null)
+				return null;
+
+			var mod = md.Module;
+			return new AddressReference(mod == null ? null : mod.Location, true, (ulong)md.RVA, body.HeaderSize);
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show Initial Value in Hex Editor", Order = 500.5, Category = "Hex", Icon = "Binary")]
+	sealed class TVShowFieldInitialValueInHexEditorContextMenuEntry : IContextMenuEntry {
+		public void Execute(TextViewContext context) {
+			var @ref = GetAddressReference(context);
+			if (@ref != null)
+				MainWindow.Instance.GoToAddress(@ref);
+		}
+
+		public bool IsEnabled(TextViewContext context) {
+			return true;
+		}
+
+		public bool IsVisible(TextViewContext context) {
+			return GetAddressReference(context) != null;
+		}
+
+		static AddressReference GetAddressReference(TextViewContext context) {
+			var fd = TVShowMethodInstructionsInHexEditorContextMenuEntry.GetMemberDef(context) as FieldDef;
+			if (fd == null || fd.RVA == 0)
+				return null;
+			var iv = fd.InitialValue;
+			if (iv == null)
+				return null;
+
+			var mod = fd.Module;
+			return new AddressReference(mod == null ? null : mod.Location, true, (ulong)fd.RVA, (ulong)iv.Length);
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show in Hex Editor", Order = 500.6, Category = "Hex", Icon = "Binary")]
+	sealed class TVShowResourceInHexEditorContextMenuEntry : IContextMenuEntry {
+		public void Execute(TextViewContext context) {
+			var @ref = GetAddressReference(context);
+			if (@ref != null)
+				MainWindow.Instance.GoToAddress(@ref);
+		}
+
+		public bool IsEnabled(TextViewContext context) {
+			return true;
+		}
+
+		public bool IsVisible(TextViewContext context) {
+			return GetAddressReference(context) != null;
+		}
+
+		static AddressReference GetAddressReference(TextViewContext context) {
+			if (context.SelectedTreeNodes == null || context.SelectedTreeNodes.Length != 1)
+				return null;
+
+			var rsrc = context.SelectedTreeNodes[0] as IResourceNode;
+			if (rsrc != null && rsrc.FileOffset != 0) {
+				var mod = ILSpyTreeNode.GetModule((ILSpyTreeNode)rsrc);
+				if (mod != null && !string.IsNullOrEmpty(mod.Location))
+					return new AddressReference(mod.Location, false, rsrc.FileOffset, rsrc.Length);
+			}
+
+			return null;
 		}
 	}
 
@@ -190,6 +474,95 @@ namespace dnSpy.AsmEditor.Hex {
 
 		protected override bool IsVisible(HexTabState tabState) {
 			return true;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Save Se_lection…", Order = 120, Category = "Misc")]
+	sealed class SaveSelectionHexBoxContextMenuEntry : HexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+			var doc = tabState.HexBox.Document;
+			if (doc == null)
+				return;
+			var sel = tabState.HexBox.Selection;
+			if (sel == null)
+				return;
+
+			var dialog = new WF.SaveFileDialog() {
+				Filter = "All files (*.*)|*.*",
+				RestoreDirectory = true,
+				ValidateNames = true,
+			};
+
+			if (dialog.ShowDialog() != WF.DialogResult.OK)
+				return;
+
+			var filename = dialog.FileName;
+			try {
+				using (var file = File.Create(filename))
+					Write(doc, file, sel.Value.StartOffset, sel.Value.EndOffset);
+			}
+			catch (Exception ex) {
+				MainWindow.Instance.ShowMessageBox(string.Format("Could not save '{0}'\nERROR: {1}", filename, ex.Message));
+			}
+		}
+
+		protected override bool IsVisible(HexTabState tabState) {
+			return tabState.HexBox.Document != null && tabState.HexBox.Selection != null;
+		}
+
+		static void Write(HexDocument doc, Stream target, ulong start, ulong end) {
+			const int MAX_BUFFER_LENGTH = 1024 * 64;
+			byte[] buffer = new byte[end - start >= MAX_BUFFER_LENGTH ? MAX_BUFFER_LENGTH : (int)(end - start + 1)];
+			ulong offs = start;
+			while (offs <= end) {
+				ulong bytesLeft = offs == 0 && end == ulong.MaxValue ? ulong.MaxValue : end - offs + 1;
+				int bytesToRead = bytesLeft >= (ulong)buffer.Length ? buffer.Length : (int)bytesLeft;
+
+				doc.Read(offs, buffer, 0, bytesToRead);
+				target.Write(buffer, 0, bytesToRead);
+
+				ulong nextOffs = offs + (ulong)bytesToRead;
+				if (nextOffs < offs)
+					break;
+				offs = nextOffs;
+			}
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show Only Selected Bytes", Order = 130, Category = "Misc")]
+	sealed class ShowSelectionHexBoxContextMenuEntry : HexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+			var sel = tabState.HexBox.Selection;
+			if (sel == null)
+				return;
+
+			tabState.HexBox.StartOffset = sel.Value.StartOffset;
+			tabState.HexBox.EndOffset = sel.Value.EndOffset;
+		}
+
+		protected override bool IsVisible(HexTabState tabState) {
+			return tabState.HexBox.Selection != null &&
+				(tabState.HexBox.StartOffset != tabState.HexBox.Selection.Value.StartOffset ||
+				tabState.HexBox.EndOffset != tabState.HexBox.Selection.Value.EndOffset);
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show All Bytes", Order = 140, Category = "Misc")]
+	sealed class ShowHoleDocumentHexBoxContextMenuEntry : HexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+			tabState.HexBox.StartOffset = 0;
+			tabState.HexBox.EndOffset = tabState.DocumentEndOffset;
+			var sel = tabState.HexBox.Selection;
+			tabState.HexBox.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(delegate {
+				if (sel != null && sel == tabState.HexBox.Selection)
+					tabState.SetCaretPositionAndMakeVisible(sel.Value.StartOffset, sel.Value.EndOffset);
+				else
+					tabState.HexBox.BringCaretIntoView();
+			}));
+		}
+
+		protected override bool IsVisible(HexTabState tabState) {
+			return tabState.HexBox.StartOffset != 0 || tabState.HexBox.EndOffset != tabState.DocumentEndOffset;
 		}
 	}
 

@@ -22,6 +22,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Media.Imaging;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
+using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {
@@ -133,6 +136,21 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 
 			return null;
+		}
+
+		public static void WriteOffsetComment(this ITextOutput output, IResourceNode node)
+		{
+			if (!Options.DecompilerSettingsPanel.CurrentDecompilerSettings.ShowTokenAndRvaComments)
+				return;
+
+			ulong fo = node.FileOffset;
+			if (fo == 0)
+				return;
+
+			var mod = ILSpyTreeNode.GetModule((SharpTreeNode)node);
+			var filename = mod == null ? null : mod.Location;
+			output.WriteReference(string.Format("0x{0:X8}", fo), new AddressReference(filename, false, fo, node.Length), TextTokenType.Comment);
+			output.Write(": ", TextTokenType.Comment);
 		}
 	}
 }

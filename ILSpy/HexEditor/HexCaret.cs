@@ -134,6 +134,14 @@ namespace dnSpy.HexEditor {
 			}
 		}
 
+		public Rect? HexRect {
+			get { return hexByteInfo.Rect; }
+		}
+
+		public Rect? AsciiRect {
+			get { return asciiInfo.Rect; }
+		}
+
 		sealed class CaretInfo {
 			public Geometry Geometry;
 			public Geometry BlinkHiddenGeometry;

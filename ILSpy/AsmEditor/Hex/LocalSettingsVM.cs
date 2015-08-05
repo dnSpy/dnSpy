@@ -110,7 +110,7 @@ namespace dnSpy.AsmEditor.Hex {
 			this.bytesGroupCountVM = new NullableInt32VM(a => HasErrorUpdated());
 			this.bytesPerLineVM = new NullableInt32VM(a => HasErrorUpdated()) {
 				Min = 0,
-				Max = dnSpy.AsmEditor.Hex.HexSettings.MAX_BYTES_PER_LINE,
+				Max = HexSettings.MAX_BYTES_PER_LINE,
 				UseDecimal = true,
 			};
 			this.hexOffsetSizeVM = new Int32VM(a => HasErrorUpdated()) {

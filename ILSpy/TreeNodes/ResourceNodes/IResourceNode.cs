@@ -39,7 +39,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		/// <summary>
 		/// File offset of resource or 0
 		/// </summary>
-		long FileOffset { get; }
+		ulong FileOffset { get; }
+
+		/// <summary>
+		/// Length of the resource
+		/// </summary>
+		ulong Length { get; }
 
 		/// <summary>
 		/// Gets the resource data

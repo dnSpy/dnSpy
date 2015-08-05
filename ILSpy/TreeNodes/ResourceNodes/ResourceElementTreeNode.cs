@@ -127,12 +127,16 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		public long FileOffset {
+		public ulong FileOffset {
 			get {
 				FileOffset fo;
 				GetModuleOffset(out fo);
-				return (long)fo;
+				return (ulong)fo;
 			}
+		}
+
+		public ulong Length {
+			get { return (ulong)(resElem.ResourceData.EndOffset - resElem.ResourceData.StartOffset); }
 		}
 
 		ModuleDefMD GetModuleOffset(out FileOffset fileOffset)
@@ -173,11 +177,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		public virtual void Decompile(Language language, ITextOutput output)
 		{
 			language.WriteComment(output, string.Empty);
-			if (Options.DecompilerSettingsPanel.CurrentDecompilerSettings.ShowTokenAndRvaComments) {
-				long fo = FileOffset;
-				if (fo != 0)
-					output.Write(string.Format("0x{0:X8}: ", fo), TextTokenType.Comment);
-			}
+			output.WriteOffsetComment(this);
 			output.WriteDefinition(UIUtils.CleanUpName(Name), this, TextTokenType.Comment);
 			output.Write(string.Format(" = {0}", ValueString), TextTokenType.Comment);
 			output.WriteLine();

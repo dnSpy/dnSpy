@@ -108,11 +108,18 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 
-		public long FileOffset {
+		public ulong FileOffset {
 			get {
 				FileOffset fo;
 				GetModuleOffset(out fo);
-				return (long)fo;
+				return (ulong)fo;
+			}
+		}
+
+		public ulong Length {
+			get {
+				var er = r as EmbeddedResource;
+				return er == null ? 0 : (ulong)er.Data.Length;
 			}
 		}
 
@@ -153,11 +160,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public virtual void Decompile(Language language, ITextOutput output)
 		{
 			language.WriteComment(output, string.Empty);
-			if (Options.DecompilerSettingsPanel.CurrentDecompilerSettings.ShowTokenAndRvaComments) {
-				long fo = FileOffset;
-				if (fo != 0)
-					output.Write(string.Format("0x{0:X8}: ", fo), TextTokenType.Comment);
-			}
+			output.WriteOffsetComment(this);
 			output.WriteDefinition(UIUtils.CleanUpName(Name), this, TextTokenType.Comment);
 			string extra = null;
 			if (r.ResourceType == ResourceType.AssemblyLinked)
@@ -166,6 +169,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				var file = ((LinkedResource)r).File;
 				extra = string.Format("{0}, {1}, {2}", file.Name, file.ContainsNoMetaData ? "ContainsNoMetaData" : "ContainsMetaData", NumberVMUtils.ByteArrayToString(file.HashValue));
 			}
+			else if (r.ResourceType == ResourceType.Embedded)
+				extra = string.Format("{0} bytes", ((EmbeddedResource)r).Data.Length);
 			output.Write(string.Format(" ({0}{1}, {2})", extra == null ? string.Empty : string.Format("{0}, ", extra), r.ResourceType, r.Attributes), TextTokenType.Comment);
 			output.WriteLine();
 		}

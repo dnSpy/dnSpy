@@ -54,6 +54,7 @@ Ctrl+Pause	| (Debugger) Break
 Alt+*		| (Debugger) Show next statement
 Ctrl+D		| (Text view) Go to token
 Ctrl+G		| (Text view) Go to line
+Ctrl+X		| (Text view) Show current instruction in hex editor or open hex editor
 Ctrl+T		| Open a new tab
 Ctrl+W		| Close current tab
 Ctrl+F4		| Close current tab
@@ -122,7 +123,8 @@ Ctrl+Shift+U| (Hex editor) Copy data as a Unicode string
 Ctrl+Shift+P| (Hex editor) Copy data as a C# array
 Ctrl+Shift+B| (Hex editor) Copy data as a VB array
 Ctrl+Shift+C| (Hex editor) Copy hex editor screen contents
-Ctrl+Alt+A	| (Hex editor) Copy address
+Ctrl+Alt+A	| (Hex editor) Copy offset
+Ctrl+G		| (Hex editor) Go to offset
 
 Credits
 =======

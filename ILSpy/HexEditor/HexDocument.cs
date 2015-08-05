@@ -28,6 +28,10 @@ namespace dnSpy.HexEditor {
 
 		public string Name { get; set; }
 
+		public ulong EndOffset {
+			get { return stream.EndOffset; }
+		}
+
 		public ulong Size {
 			get { return stream.Size; }
 		}

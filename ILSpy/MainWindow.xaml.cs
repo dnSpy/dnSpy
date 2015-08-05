@@ -96,9 +96,26 @@ namespace ICSharpCode.ILSpy
 		}
 
 		DecompileTabState GetOrCreateActiveDecompileTabState() {
+			bool wasMadeActive;
+			return GetOrCreateActiveDecompileTabState(out wasMadeActive);
+		}
+
+		DecompileTabState GetOrCreateActiveDecompileTabState(out bool wasMadeActive) {
+			wasMadeActive = false;
 			var tabState = GetActiveDecompileTabState();
 			if (tabState != null)
 				return tabState;
+
+			// If another tab group has an active DecompileTabState, use it instead of
+			// creating a new one
+			foreach (var ts in AllVisibleTabStates) {
+				var dts = ts as DecompileTabState;
+				if (dts != null) {
+					wasMadeActive = true;
+					SetActiveTab(dts);
+					return dts;
+				}
+			}
 
 			tabState = CreateEmptyDecompileTabState();
 
@@ -387,7 +404,8 @@ namespace ICSharpCode.ILSpy
 				// Ctrl+D: GoToToken
 				if (binding.Command == ICSharpCode.AvalonEdit.AvalonEditCommands.DeleteLine ||
 					binding.Command == ApplicationCommands.Undo ||
-					binding.Command == ApplicationCommands.Redo)
+					binding.Command == ApplicationCommands.Redo ||
+					binding.Command == ApplicationCommands.Cut)
 					bindingList.RemoveAt(i);
 			}
 		}
@@ -726,6 +744,8 @@ namespace ICSharpCode.ILSpy
 
 		void SetTabFocus(TabState tabState)
 		{
+			if (disable_SetTabFocus)
+				return;
 			if (tabState == null)
 				return;
 			if (!IsActiveTab(tabState))
@@ -743,6 +763,7 @@ namespace ICSharpCode.ILSpy
 			else
 				SetFocusIfNoMenuIsOpened(uiElem);
 		}
+		bool disable_SetTabFocus = false;
 
 		class SetFocusWhenVisible
 		{
@@ -1977,8 +1998,25 @@ namespace ICSharpCode.ILSpy
 		{
 			if (TreeView_SelectionChanged_ignore)
 				return;
-			var tabState = GetOrCreateActiveDecompileTabState();
-			DecompileNodes(tabState, null, true, tabState.Language, this.SelectedNodes);
+			// New nodes could be selected so grab the current selected nodes now
+			var nodes = this.SelectedNodes;
+
+			DecompileTabState tabState;
+			bool old = TreeView_SelectionChanged_ignore, old2 = disable_SetTabFocus;
+			try {
+				TreeView_SelectionChanged_ignore = true;
+				disable_SetTabFocus = true;
+				bool wasMadeActive;
+				tabState = GetOrCreateActiveDecompileTabState(out wasMadeActive);
+				if (wasMadeActive)
+					SelectTreeViewNodes(tabState, nodes);
+			}
+			finally {
+				TreeView_SelectionChanged_ignore = old;
+				disable_SetTabFocus = old2;
+			}
+
+			DecompileNodes(tabState, null, true, tabState.Language, nodes);
 
 			if (SelectionChanged != null)
 				SelectionChanged(sender, e);
@@ -3334,7 +3372,7 @@ namespace ICSharpCode.ILSpy
 				tabState = GetHexTabStates(@ref.Filename, fileOffset, @ref.Length).FirstOrDefault();
 			}
 			else {
-				fileOffset = (ulong)@ref.Address;
+				fileOffset = @ref.Address;
 				tabState = GetHexTabStates(@ref.Filename, fileOffset, @ref.Length).FirstOrDefault();
 			}
 

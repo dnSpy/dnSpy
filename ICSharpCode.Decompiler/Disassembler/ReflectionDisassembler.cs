@@ -1254,7 +1254,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			output.Write(" RVA: ", TextTokenType.Comment);
 			output.WriteReference(string.Format("0x{0:X8}", rva), new AddressReference(filename, true, rva, 0), TextTokenType.Comment, false);
 			output.Write(" File Offset: ", TextTokenType.Comment);
-			output.WriteReference(string.Format("0x{0:X8}", fileOffset), new AddressReference(filename, false, (uint)fileOffset, 0), TextTokenType.Comment, false);
+			output.WriteReference(string.Format("0x{0:X8}", fileOffset), new AddressReference(filename, false, (ulong)fileOffset, 0), TextTokenType.Comment, false);
 		}
 
 		void AddComment(IMemberDef member)

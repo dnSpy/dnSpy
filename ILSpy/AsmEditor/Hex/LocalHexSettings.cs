@@ -37,11 +37,6 @@ namespace dnSpy.AsmEditor.Hex {
 		public LocalHexSettings() {
 		}
 
-		static ulong GetDocEndOffset(HexTabState tabState) {
-			var doc = tabState.HexBox.Document;
-			return doc == null ? ulong.MaxValue : doc.Size == 0 ? 0 : doc.Size - 1;
-		}
-
 		public LocalHexSettings(HexTabState tabState) {
 			this.BytesGroupCount = tabState.BytesGroupCount;
 			this.BytesPerLine = tabState.BytesPerLine;
@@ -52,8 +47,7 @@ namespace dnSpy.AsmEditor.Hex {
 			this.UseRelativeOffsets = tabState.HexBox.UseRelativeOffsets;
 			this.BaseOffset = tabState.HexBox.BaseOffset;
 			this.StartOffset = tabState.HexBox.StartOffset == 0 ? (ulong?)null : tabState.HexBox.StartOffset;
-			var endOffset = GetDocEndOffset(tabState);
-			this.EndOffset = tabState.HexBox.EndOffset == endOffset ? (ulong?)null : tabState.HexBox.EndOffset;
+			this.EndOffset = tabState.HexBox.EndOffset == tabState.DocumentEndOffset ? (ulong?)null : tabState.HexBox.EndOffset;
 		}
 
 		public void CopyTo(HexTabState tabState) {
@@ -66,7 +60,7 @@ namespace dnSpy.AsmEditor.Hex {
 			tabState.HexBox.UseRelativeOffsets = this.UseRelativeOffsets;
 			tabState.HexBox.BaseOffset = this.BaseOffset;
 			tabState.HexBox.StartOffset = this.StartOffset ?? 0;
-			tabState.HexBox.EndOffset = this.EndOffset ?? GetDocEndOffset(tabState);
+			tabState.HexBox.EndOffset = this.EndOffset ?? tabState.DocumentEndOffset;
 		}
 	}
 }

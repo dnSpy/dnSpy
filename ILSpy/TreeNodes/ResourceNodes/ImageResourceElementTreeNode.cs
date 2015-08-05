@@ -192,11 +192,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			var smartOutput = output as ISmartTextOutput;
 			if (smartOutput != null) {
 				language.WriteComment(output, string.Empty);
-				if (Options.DecompilerSettingsPanel.CurrentDecompilerSettings.ShowTokenAndRvaComments) {
-					long fo = FileOffset;
-					if (fo != 0)
-						output.Write(string.Format("0x{0:X8}: ", fo), TextTokenType.Comment);
-				}
+				output.WriteOffsetComment(this);
 				smartOutput.AddUIElement(() => {
 					return new Image {
 						Source = ImageSource,

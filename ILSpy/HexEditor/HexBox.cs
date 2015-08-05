@@ -1003,7 +1003,7 @@ namespace dnSpy.HexEditor {
 		}
 
 		public double ExtentHeight {
-			get { return Math.Ceiling(((double)EndOffset - (double)StartOffset + 1 + visibleBytesPerLine - 1) / (double)visibleBytesPerLine); }
+			get { return EndOffset < StartOffset ? 0 : Math.Ceiling(((double)EndOffset - (double)StartOffset + 1 + visibleBytesPerLine - 1) / (double)visibleBytesPerLine); }
 		}
 
 		public double ViewportWidth {
@@ -1157,7 +1157,7 @@ namespace dnSpy.HexEditor {
 			ulong bpl = (ulong)(visibleBytesPerLine == 0 ? 1 : visibleBytesPerLine);
 
 			bool ovfl = false;
-			ulong a = (EndOffset - StartOffset) / bpl * bpl;
+			ulong a = (EndOffset < StartOffset ? 0 : EndOffset - StartOffset) / bpl * bpl;
 			ovfl |= a + bpl - 1 < a;
 			a = NumberUtils.AddUInt64(a, bpl - 1);
 			ovfl |= StartOffset + a < a;
@@ -1392,7 +1392,7 @@ namespace dnSpy.HexEditor {
 			if (visibleBytesPerLine == 0)
 				return position;
 			ulong pageSize = (ulong)visibleBytesPerLine;
-			ulong pageNo = position.Offset / pageSize;
+			ulong pageNo = (position.Offset < StartOffset ? 0 : position.Offset - StartOffset) / pageSize;
 			if (pageNo == 0)
 				return position;
 			if (pages > pageNo)
@@ -1414,8 +1414,8 @@ namespace dnSpy.HexEditor {
 			if (visibleBytesPerLine == 0)
 				return position;
 			ulong pageSize = (ulong)visibleBytesPerLine;
-			ulong pageNo = position.Offset / pageSize;
-			ulong lastPage = EndOffset / pageSize;
+			ulong pageNo = (position.Offset < StartOffset ? 0 : position.Offset - StartOffset) / pageSize;
+			ulong lastPage = (EndOffset < StartOffset ? 0 : EndOffset - StartOffset) / pageSize;
 			ulong pagesLeftUntilLast = NumberUtils.SubUInt64(lastPage, pageNo);
 			if (pagesLeftUntilLast == 0)
 				return position;
@@ -1552,7 +1552,20 @@ namespace dnSpy.HexEditor {
 			}
 		}
 
-		void BringCaretIntoView() {
+		public Rect? GetCaretWindowRect() {
+			switch (CaretPosition.Kind) {
+			case HexBoxPositionKind.Ascii:
+				return hexCaret.AsciiRect;
+
+			case HexBoxPositionKind.HexByte:
+				return hexCaret.HexRect;
+
+			default:
+				throw new InvalidOperationException();
+			}
+		}
+
+		public void BringCaretIntoView() {
 			BringIntoView(CaretPosition);
 		}
 

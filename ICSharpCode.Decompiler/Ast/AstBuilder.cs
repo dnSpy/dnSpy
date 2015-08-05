@@ -262,7 +262,7 @@ namespace ICSharpCode.Decompiler.Ast
 				creator.AddText(" RVA: ");
 				creator.AddReference(string.Format("0x{0:X8}", rva), new AddressReference(filename, true, rva, 0));
 				creator.AddText(" File Offset: ");
-				creator.AddReference(string.Format("0x{0:X8}", fileOffset), new AddressReference(filename, false, (uint)fileOffset, 0));
+				creator.AddReference(string.Format("0x{0:X8}", fileOffset), new AddressReference(filename, false, (ulong)fileOffset, 0));
 			}
 
 			var cmt = new Comment(creator.Text);

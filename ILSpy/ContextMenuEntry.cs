@@ -21,6 +21,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using dnSpy.HexEditor;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.ILSpy.TextView;
@@ -324,13 +325,13 @@ namespace ICSharpCode.ILSpy
 			ContextMenu menu;
 			if (ShowContextMenu(context, out menu)) {
 				if (openedFromKeyboard) {
-					var scrollInfo = (System.Windows.Controls.Primitives.IScrollInfo)textView.TextEditor.TextArea.TextView;
+					var scrollInfo = (IScrollInfo)textView.TextEditor.TextArea.TextView;
 					var pos = textView.TextEditor.TextArea.TextView.GetVisualPosition(textView.TextEditor.TextArea.Caret.Position, ICSharpCode.AvalonEdit.Rendering.VisualYPosition.TextBottom);
 					pos = new Point(pos.X - scrollInfo.HorizontalOffset, pos.Y - scrollInfo.VerticalOffset);
 
 					menu.HorizontalOffset = pos.X;
 					menu.VerticalOffset = pos.Y;
-					ContextMenuService.SetPlacement(textView, System.Windows.Controls.Primitives.PlacementMode.Relative);
+					ContextMenuService.SetPlacement(textView, PlacementMode.Relative);
 					ContextMenuService.SetPlacementTarget(textView, textView.TextEditor.TextArea.TextView);
 					menu.Closed += (s, e2) => {
 						textView.ClearValue(ContextMenuService.PlacementProperty);
@@ -372,10 +373,28 @@ namespace ICSharpCode.ILSpy
 
 		void hexBox_ContextMenuOpening(object sender, ContextMenuEventArgs e)
 		{
-			TextViewContext context = TextViewContext.Create(hexBox: hexBox);
+			bool openedFromKeyboard = e.CursorLeft == -1 && e.CursorTop == -1;
+			TextViewContext context = TextViewContext.Create(hexBox: hexBox, openedFromKeyboard: openedFromKeyboard);
 			ContextMenu menu;
-			if (ShowContextMenu(context, out menu))
+			if (ShowContextMenu(context, out menu)) {
+				var rect = hexBox.GetCaretWindowRect();
+				if (rect != null && openedFromKeyboard) {
+					var pos = rect.Value.BottomLeft;
+					menu.HorizontalOffset = pos.X;
+					menu.VerticalOffset = pos.Y;
+					ContextMenuService.SetPlacement(hexBox, PlacementMode.Relative);
+					ContextMenuService.SetPlacementTarget(hexBox, hexBox);
+					menu.Closed += (s, e2) => {
+						hexBox.ClearValue(ContextMenuService.PlacementProperty);
+						hexBox.ClearValue(ContextMenuService.PlacementTargetProperty);
+					};
+				}
+				else {
+					hexBox.ClearValue(ContextMenuService.PlacementProperty);
+					hexBox.ClearValue(ContextMenuService.PlacementTargetProperty);
+				}
 				hexBox.ContextMenu = menu;
+			}
 			else
 				// hide the context menu.
 				e.Handled = true;

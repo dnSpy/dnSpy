@@ -27,6 +27,10 @@ namespace dnSpy.HexEditor {
 			get { return (ulong)data.LongLength; }
 		}
 
+		public ulong EndOffset {
+			get { return data.LongLength == 0 ? 0 : (ulong)data.LongLength - 1; }
+		}
+
 		public ByteArrayHexStream(byte[] data) {
 			this.data = data;
 		}

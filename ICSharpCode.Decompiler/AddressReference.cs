@@ -23,10 +23,10 @@ namespace ICSharpCode.Decompiler {
 	public sealed class AddressReference : IEquatable<AddressReference> {
 		public readonly string Filename;
 		public readonly bool IsRVA;
-		public readonly uint Address;
-		public readonly uint Length;
+		public readonly ulong Address;
+		public readonly ulong Length;
 
-		public AddressReference(string filename, bool isRva, uint addr, uint len) {
+		public AddressReference(string filename, bool isRva, ulong addr, ulong len) {
 			this.Filename = filename;
 			this.IsRVA = isRva;
 			this.Address = addr;
@@ -46,7 +46,10 @@ namespace ICSharpCode.Decompiler {
 		}
 
 		public override int GetHashCode() {
-			return (Filename ?? string.Empty).GetHashCode() ^ (IsRVA ? 0 : int.MinValue) ^ (int)Address ^ (int)Length;
+			return (Filename ?? string.Empty).GetHashCode() ^
+				(IsRVA ? 0 : int.MinValue) ^
+				(int)Address ^ (int)(Address >> 32) ^
+				(int)Length ^ (int)(Length >> 32);
 		}
 	}
 }
