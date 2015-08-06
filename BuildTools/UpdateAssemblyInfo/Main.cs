@@ -19,7 +19,7 @@ namespace UpdateAssemblyInfo
 	// Updates the version numbers in the assembly information.
 	class MainClass
 	{
-		const string DNSPY_VERSION = "1.1.1.1";
+		const string DNSPY_VERSION = "1.1.2.1";
 		const string BaseCommit = "d779383cb85003d6dabeb976f0845631e07bf463";
 		const int BaseCommitRev = 1;
 		

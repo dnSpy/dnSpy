@@ -31,9 +31,9 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Represents an assembly loaded into ILSpy.
 	/// </summary>
-	public sealed class LoadedAssembly
+	public sealed class LoadedAssembly : IDisposable
 	{
-		readonly Task<ModuleDef> assemblyTask;
+		Task<ModuleDef> assemblyTask;
 		readonly AssemblyList assemblyList;
 		string fileName;
 		string shortName;
@@ -518,6 +518,18 @@ namespace ICSharpCode.ILSpy
 			if (IsLoaded && ModuleDefinition != null)
 				return ModuleDefinition.ToString();
 			return null;
+		}
+
+		public void Dispose()
+		{
+			// Prevent a ref to the module def. Needed if the OS is XP (.NET 4.0), not if Win10 (.NET 4.6).
+			// Make sure that the task has finished so the GC can collect the memory.
+			Load(ModuleDefinition);
+			assemblyTask = new Task<ModuleDef>(() => null);
+		}
+
+		static void Load(object obj)
+		{
 		}
 	}
 }
