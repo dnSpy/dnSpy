@@ -30,9 +30,10 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Images;
+using dnSpy.Search;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TreeNodes.Filters;
 using ICSharpCode.NRefactory;
 
 namespace dnSpy.AsmEditor.MethodBody {

@@ -20,48 +20,40 @@
 using dnlib.DotNet;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.Commands
-{
+namespace ICSharpCode.ILSpy.Commands {
 	[ExportContextMenuEntryAttribute(Header = "Go to _Entry Point", Order = 450, Category = "EP")]
-	sealed class GoToEntryPointCommand : IContextMenuEntry
-	{
-		public bool IsVisible(TextViewContext context)
-		{
+	sealed class GoToEntryPointCommand : IContextMenuEntry {
+		public bool IsVisible(TextViewContext context) {
 			return TreeView_IsVisible(context) ||
 				TextEditor_IsVisible(context);
 		}
 
-		static bool TreeView_IsVisible(TextViewContext context)
-		{
+		static bool TreeView_IsVisible(TextViewContext context) {
 			ModuleDef module;
 			return context.TreeView == MainWindow.Instance.treeView &&
 				((module = ILSpyTreeNode.GetModule(context.SelectedTreeNodes)) != null) &&
 				module.EntryPoint is MethodDef;
 		}
 
-		static bool TextEditor_IsVisible(TextViewContext context)
-		{
+		static bool TextEditor_IsVisible(TextViewContext context) {
 			ModuleDef module;
 			return context.TextView != null &&
 				(module = GetModule()) != null &&
 				module.EntryPoint is MethodDef;
 		}
 
-		internal static ModuleDef GetModule()
-		{
+		internal static ModuleDef GetModule() {
 			var tabState = MainWindow.Instance.GetActiveDecompileTabState();
 			if (tabState == null)
 				return null;
 			return ILSpyTreeNode.GetModule(tabState.DecompiledNodes) as ModuleDef;
 		}
 
-		public bool IsEnabled(TextViewContext context)
-		{
+		public bool IsEnabled(TextViewContext context) {
 			return true;
 		}
 
-		public void Execute(TextViewContext context)
-		{
+		public void Execute(TextViewContext context) {
 			if (TreeView_IsVisible(context))
 				MainWindow.Instance.JumpToReference(ILSpyTreeNode.GetModule(context.SelectedTreeNodes).EntryPoint);
 			else if (TextEditor_IsVisible(context))
@@ -70,16 +62,13 @@ namespace ICSharpCode.ILSpy.Commands
 	}
 
 	[ExportContextMenuEntryAttribute(Header = "Go to <Module> .ccto_r", Order = 460, Category = "EP")]
-	sealed class GoToGlobalTypeCctorCommand : IContextMenuEntry
-	{
-		public bool IsVisible(TextViewContext context)
-		{
+	sealed class GoToGlobalTypeCctorCommand : IContextMenuEntry {
+		public bool IsVisible(TextViewContext context) {
 			return TreeView_IsVisible(context) ||
 				TextEditor_IsVisible(context);
 		}
 
-		static bool TreeView_IsVisible(TextViewContext context)
-		{
+		static bool TreeView_IsVisible(TextViewContext context) {
 			ModuleDef module;
 			return context.TreeView == MainWindow.Instance.treeView &&
 				((module = ILSpyTreeNode.GetModule(context.SelectedTreeNodes)) != null) &&
@@ -87,8 +76,7 @@ namespace ICSharpCode.ILSpy.Commands
 				module.GlobalType.FindStaticConstructor() != null;
 		}
 
-		static bool TextEditor_IsVisible(TextViewContext context)
-		{
+		static bool TextEditor_IsVisible(TextViewContext context) {
 			ModuleDef module;
 			return context.TextView != null &&
 				(module = GoToEntryPointCommand.GetModule()) != null &&
@@ -96,13 +84,11 @@ namespace ICSharpCode.ILSpy.Commands
 				module.GlobalType.FindStaticConstructor() != null;
 		}
 
-		public bool IsEnabled(TextViewContext context)
-		{
+		public bool IsEnabled(TextViewContext context) {
 			return true;
 		}
 
-		public void Execute(TextViewContext context)
-		{
+		public void Execute(TextViewContext context) {
 			if (TreeView_IsVisible(context))
 				MainWindow.Instance.JumpToReference(ILSpyTreeNode.GetModule(context.SelectedTreeNodes).GlobalType.FindStaticConstructor());
 			else if (TextEditor_IsVisible(context))

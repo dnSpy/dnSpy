@@ -39,7 +39,7 @@ namespace ICSharpCode.Decompiler {
 				Address == other.Address &&
 				Length == other.Length &&
 				StringComparer.OrdinalIgnoreCase.Equals(Filename, other.Filename);
-        }
+		}
 
 		public override bool Equals(object obj) {
 			return Equals(obj as AddressReference);

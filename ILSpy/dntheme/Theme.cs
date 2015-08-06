@@ -26,7 +26,7 @@ using System.Xml.Linq;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.dntheme {
+namespace dnSpy.dntheme {
 	public sealed class MyHighlightingColor : HighlightingColor {
 		HighlightingBrush color3;
 		HighlightingBrush color4;

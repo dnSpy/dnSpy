@@ -17,10 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.Bookmarks
-{
-	enum TextMarkerZOrder
-	{
+namespace ICSharpCode.ILSpy.Bookmarks {
+	enum TextMarkerZOrder {
 		Breakpoint,
 		ReturnStatement,
 		SelectedReturnStatement,

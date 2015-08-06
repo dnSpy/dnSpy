@@ -18,18 +18,19 @@
 */
 
 using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Security;
-using System.Xml.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Xml.Linq;
+using ICSharpCode.ILSpy;
 using Microsoft.Win32;
 
-namespace ICSharpCode.ILSpy.dntheme {
+namespace dnSpy.dntheme {
 	public sealed class HighContrastEventArgs : EventArgs {
 		public bool IsHighContrast { get; private set; }
 

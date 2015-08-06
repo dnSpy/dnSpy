@@ -1,19 +1,16 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
 
+using System.Collections.Generic;
+using System.Windows.Controls;
+using dnSpy.Images;
 using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.TextView;
-using dnlib.DotNet;
+using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.Debugger.Commands
 {

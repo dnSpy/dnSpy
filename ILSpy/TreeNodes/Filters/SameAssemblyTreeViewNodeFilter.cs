@@ -18,23 +18,21 @@
 */
 
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Filters
-{
-	sealed class SameAssemblyTreeViewNodeFilter : ChainTreeViewNodeFilter
-	{
+namespace dnSpy.Search {
+	sealed class SameAssemblyTreeViewNodeFilter : ChainTreeViewNodeFilter {
 		readonly AssemblyDef allowedAsm;
 		readonly ModuleDef allowedMod;
 
 		public SameAssemblyTreeViewNodeFilter(ModuleDef allowedMod, ITreeViewNodeFilter filter)
-			: base(filter)
-		{
+			: base(filter) {
 			this.allowedAsm = allowedMod.Assembly;
 			this.allowedMod = allowedMod;
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(LoadedAssembly asm, AssemblyFilterType type)
-		{
+		public override TreeViewNodeFilterResult GetFilterResult(LoadedAssembly asm, AssemblyFilterType type) {
 			if (asm.AssemblyDefinition != allowedAsm)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 			if (allowedAsm == null && asm.ModuleDefinition != allowedMod)

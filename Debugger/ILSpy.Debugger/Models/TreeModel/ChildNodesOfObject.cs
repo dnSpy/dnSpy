@@ -1,19 +1,18 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-
 using Debugger;
 using Debugger.MetaData;
-using ICSharpCode.NRefactory.Ast;
-using ICSharpCode.NRefactory.CSharp;
+using dnSpy.Images;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.Debugger.Services.Debugger;
-using Module = Debugger.Module;
+using ICSharpCode.NRefactory.Ast;
+using ICSharpCode.NRefactory.CSharp;
 
-namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
-{
+namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel {
 	internal partial class Utils
 	{
 		public static IEnumerable<TreeNode> LazyGetChildNodesOfObject(Expression targetObject, DebugType shownType)

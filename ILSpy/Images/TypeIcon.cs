@@ -16,12 +16,8 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
-
-namespace ICSharpCode.ILSpy
-{
-	public enum TypeIcon
-	{
+namespace dnSpy.Images {
+	public enum TypeIcon {
 		StaticClass,
 		Class,
 		ClassPrivate,

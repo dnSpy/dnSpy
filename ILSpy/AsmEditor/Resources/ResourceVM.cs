@@ -22,8 +22,8 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Search;
 using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TreeNodes.Filters;
 
 namespace dnSpy.AsmEditor.Resources {
 	enum ResourceVisibility {

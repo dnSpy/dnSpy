@@ -24,7 +24,6 @@ using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
 using System.Xml.Linq;
-using dnSpy.AsmEditor;
 
 namespace ICSharpCode.ILSpy.Options {
 	[ExportOptionPage(Title = "Display", Order = 1)]

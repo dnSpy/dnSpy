@@ -22,7 +22,7 @@ using System.Diagnostics;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.ViewHelpers;
-using ICSharpCode.ILSpy.TreeNodes.Filters;
+using dnSpy.Search;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	enum NamedArgType {

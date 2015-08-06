@@ -18,11 +18,11 @@
 
 using System;
 using dnlib.DotNet;
+using dnSpy.Images;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
-{
+namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	internal class AnalyzedFieldTreeNode : AnalyzerEntityTreeNode
 	{
 		private readonly FieldDef analyzedField;

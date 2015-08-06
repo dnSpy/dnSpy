@@ -23,31 +23,26 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using ICSharpCode.Decompiler.Disassembler;
 
-namespace ICSharpCode.ILSpy
-{
-	sealed class ModifiedInstructionBytesReader : IInstructionBytesReader
-	{
+namespace dnSpy {
+	sealed class ModifiedInstructionBytesReader : IInstructionBytesReader {
 		readonly ModuleDefMD module;
 		readonly IList<Instruction> instrs;
 		int instrIndex;
 		readonly List<short> instrBytes = new List<short>(10);
 		int byteIndex;
 
-		public ModifiedInstructionBytesReader(MethodDef method)
-		{
+		public ModifiedInstructionBytesReader(MethodDef method) {
 			this.module = method.Module as ModuleDefMD;
 			this.instrs = method.Body.Instructions;
 		}
 
-		public int ReadByte()
-		{
+		public int ReadByte() {
 			if (byteIndex >= instrBytes.Count)
 				InitializeNextInstruction();
 			return instrBytes[byteIndex++];
 		}
 
-		void InitializeNextInstruction()
-		{
+		void InitializeNextInstruction() {
 			if (instrIndex >= instrs.Count)
 				throw new InvalidOperationException();
 			var instr = instrs[instrIndex++];
@@ -59,14 +54,12 @@ namespace ICSharpCode.ILSpy
 			InstructionUtils.AddOperand(instrBytes, module, instr.Offset + (uint)instr.OpCode.Size, instr.OpCode, instr.Operand);
 		}
 
-		public void SetInstruction(int index, uint offset)
-		{
+		public void SetInstruction(int index, uint offset) {
 			instrIndex = index;
 			InitializeNextInstruction();
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 		}
 	}
 }

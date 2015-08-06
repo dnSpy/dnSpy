@@ -32,11 +32,12 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using dnlib.DotNet;
+using dnSpy.Images;
+using dnSpy.Search;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TreeNodes;
-using ICSharpCode.ILSpy.TreeNodes.Filters;
 using ICSharpCode.NRefactory;
-using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy
 {
@@ -145,7 +146,7 @@ namespace ICSharpCode.ILSpy
 
 		static SearchPane()
 		{
-			dntheme.Themes.ThemeChanged += (s, e) => {
+			dnSpy.dntheme.Themes.ThemeChanged += (s, e) => {
 				foreach (var searchType in searchTypes)
 					searchType.OnThemeChanged();
 			};
@@ -169,7 +170,7 @@ namespace ICSharpCode.ILSpy
 				cb.Unchecked += (s, e) => RestartSearch();
 			}
 
-			dntheme.Themes.ThemeChanged += Themes_ThemeChanged;
+			dnSpy.dntheme.Themes.ThemeChanged += Themes_ThemeChanged;
 			Options.DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
 		}
 

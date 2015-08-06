@@ -23,12 +23,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using dnSpy.HexEditor;
+using dnSpy.Images;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	public interface IContextMenuEntry<TContext>
 	{
 		/// <summary>

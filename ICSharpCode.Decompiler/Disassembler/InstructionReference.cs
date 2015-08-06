@@ -21,33 +21,27 @@ using System;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
-namespace ICSharpCode.Decompiler.Disassembler
-{
-	public sealed class InstructionReference : IEquatable<InstructionReference>
-	{
+namespace ICSharpCode.Decompiler.Disassembler {
+	public sealed class InstructionReference : IEquatable<InstructionReference> {
 		public readonly MethodDef Method;
 		public readonly Instruction Instruction;
 
-		public InstructionReference(MethodDef method, Instruction instr)
-		{
+		public InstructionReference(MethodDef method, Instruction instr) {
 			this.Method = method;
 			this.Instruction = instr;
 		}
 
-		public bool Equals(InstructionReference other)
-		{
+		public bool Equals(InstructionReference other) {
 			return other != null &&
 				Method == other.Method &&
 				Instruction == other.Instruction;
 		}
 
-		public override bool Equals(object obj)
-		{
+		public override bool Equals(object obj) {
 			return Equals(obj as InstructionReference);
 		}
 
-		public override int GetHashCode()
-		{
+		public override int GetHashCode() {
 			return Method.GetHashCode() ^ Instruction.GetHashCode();
 		}
 	}

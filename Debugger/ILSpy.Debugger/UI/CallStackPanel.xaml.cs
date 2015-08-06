@@ -1,34 +1,23 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
-using System.Linq;
 using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Xml.Linq;
-
 using Debugger;
-using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.Debugger.Bookmarks;
-using ICSharpCode.ILSpy.Debugger.Commands;
-using ICSharpCode.ILSpy.Debugger.Models.TreeModel;
-using ICSharpCode.ILSpy.Debugger.Services;
-using ICSharpCode.ILSpy.XmlDoc;
 using dnlib.DotNet;
+using dnSpy;
+using dnSpy.Images;
+using ICSharpCode.ILSpy.Debugger.Bookmarks;
+using ICSharpCode.ILSpy.Debugger.Services;
 
-using NR = ICSharpCode.NRefactory;
-
-namespace ICSharpCode.ILSpy.Debugger.UI
-{
+namespace ICSharpCode.ILSpy.Debugger.UI {
 	[Export(typeof(IPlugin))]
 	class CallstackPanelPlugin : IPlugin
 	{
@@ -83,7 +72,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
         private CallStackPanel()
         {
             InitializeComponent();
-			dntheme.Themes.ThemeChanged += (s, e) => RefreshPad();
+			dnSpy.dntheme.Themes.ThemeChanged += (s, e) => RefreshPad();
         }
   
 		public void Show()

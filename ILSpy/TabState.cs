@@ -29,13 +29,15 @@ using System.Windows.Input;
 using System.Windows.Media;
 using dnSpy.AsmEditor;
 using dnSpy.AsmEditor.Hex;
+using dnSpy.dntheme;
 using dnSpy.HexEditor;
 using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.ILSpy.dntheme;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy {
+namespace dnSpy.Tabs {
 	public enum TabStateType {
 		DecompiledCode,
 		HexEditor,
@@ -363,7 +365,7 @@ namespace ICSharpCode.ILSpy {
 				catch {
 				}
 				return filename;
-            }
+			}
 		}
 
 		public override string ToolTip {
@@ -401,8 +403,8 @@ namespace ICSharpCode.ILSpy {
 			scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
 			this.TabItem.Content = scroller;
 
-			this.HexBox.SetBinding(Control.FontFamilyProperty, new Binding("SelectedFont") { Source = Options.DisplaySettingsPanel.CurrentDisplaySettings });
-			this.HexBox.SetBinding(Control.FontSizeProperty, new Binding("SelectedFontSize") { Source = Options.DisplaySettingsPanel.CurrentDisplaySettings });
+			this.HexBox.SetBinding(Control.FontFamilyProperty, new Binding("SelectedFont") { Source = DisplaySettingsPanel.CurrentDisplaySettings });
+			this.HexBox.SetBinding(Control.FontSizeProperty, new Binding("SelectedFontSize") { Source = DisplaySettingsPanel.CurrentDisplaySettings });
 			this.HexBox.SetResourceReference(Control.BackgroundProperty, GetBackgroundResourceKey(ColorType.HexText));
 			this.HexBox.SetResourceReference(Control.ForegroundProperty, GetForegroundResourceKey(ColorType.HexText));
 			this.HexBox.SetResourceReference(HexBox.OffsetForegroundProperty, GetForegroundResourceKey(ColorType.HexOffset));

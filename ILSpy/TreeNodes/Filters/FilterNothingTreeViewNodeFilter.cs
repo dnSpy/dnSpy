@@ -17,10 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.TreeNodes.Filters
-{
-	sealed class FilterNothingTreeViewNodeFilter : TreeViewNodeFilterBase
-	{
+namespace dnSpy.Search {
+	sealed class FilterNothingTreeViewNodeFilter : TreeViewNodeFilterBase {
 		public static readonly FilterNothingTreeViewNodeFilter Instance = new FilterNothingTreeViewNodeFilter();
 	}
 }

@@ -24,16 +24,15 @@ using System.Threading;
 using dnlib.DotNet;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy
-{
+namespace dnSpy {
 	/// <summary>
 	/// Caches decompiled output
 	/// </summary>
-	sealed class DecompileCache
-	{
+	sealed class DecompileCache {
 		public static readonly DecompileCache Instance = new DecompileCache();
 
 		// How often ClearOld() is called
@@ -45,8 +44,7 @@ namespace ICSharpCode.ILSpy
 		readonly object lockObj = new object();
 		readonly Dictionary<Key, Item> cachedItems = new Dictionary<Key, Item>();
 
-		sealed class Item
-		{
+		sealed class Item {
 			public AvalonEditTextOutput TextOutput;
 			public WeakReference WeakTextOutput;
 			DateTime LastHitUTC;
@@ -58,14 +56,12 @@ namespace ICSharpCode.ILSpy
 				get { return DateTime.UtcNow - LastHitUTC; }
 			}
 
-			public Item(AvalonEditTextOutput textOutput)
-			{
+			public Item(AvalonEditTextOutput textOutput) {
 				this.TextOutput = textOutput;
 				this.LastHitUTC = DateTime.UtcNow;
 			}
 
-			public void Hit()
-			{
+			public void Hit() {
 				LastHitUTC = DateTime.UtcNow;
 				if (WeakTextOutput != null) {
 					TextOutput = (AvalonEditTextOutput)WeakTextOutput.Target;
@@ -73,37 +69,32 @@ namespace ICSharpCode.ILSpy
 				}
 			}
 
-			public void MakeWeakReference()
-			{
+			public void MakeWeakReference() {
 				var textOutput = Interlocked.CompareExchange(ref this.TextOutput, null, this.TextOutput);
 				if (textOutput != null)
 					this.WeakTextOutput = new WeakReference(textOutput);
 			}
 		}
 
-		struct Key : IEquatable<Key>
-		{
+		struct Key : IEquatable<Key> {
 			public readonly Language Language;
 			public readonly ILSpyTreeNode[] TreeNodes;
 			public readonly DecompilationOptions Options;
 
-			public Key(Language language, ILSpyTreeNode[] treeNodes, DecompilationOptions options)
-			{
+			public Key(Language language, ILSpyTreeNode[] treeNodes, DecompilationOptions options) {
 				this.Language = language;
 				this.TreeNodes = new List<ILSpyTreeNode>(treeNodes).ToArray();
 				this.Options = Clone(options);
 			}
 
-			static DecompilationOptions Clone(DecompilationOptions options)
-			{
+			static DecompilationOptions Clone(DecompilationOptions options) {
 				var newOpts = options.SimpleClone();
 				newOpts.DecompilerSettings = (DecompilerSettings)options.DecompilerSettings.Clone();
-				newOpts.TextViewState = null;	// Ignore it; we don't use it
+				newOpts.TextViewState = null;   // Ignore it; we don't use it
 				return newOpts;
 			}
 
-			public bool Equals(Key other)
-			{
+			public bool Equals(Key other) {
 				if (Language != other.Language)
 					return false;
 
@@ -120,15 +111,13 @@ namespace ICSharpCode.ILSpy
 				return true;
 			}
 
-			public override bool Equals(object obj)
-			{
+			public override bool Equals(object obj) {
 				if (!(obj is Key))
 					return false;
 				return Equals((Key)obj);
 			}
 
-			public override int GetHashCode()
-			{
+			public override int GetHashCode() {
 				int h = 0;
 				h = Language.Name.GetHashCode();
 				foreach (var node in TreeNodes)
@@ -138,13 +127,11 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		public DecompileCache()
-		{
+		public DecompileCache() {
 			AddTimerWait(this);
 		}
 
-		static void AddTimerWait(DecompileCache dc)
-		{
+		static void AddTimerWait(DecompileCache dc) {
 			Timer timer = null;
 			WeakReference weakSelf = new WeakReference(dc);
 			timer = new Timer(a => {
@@ -157,8 +144,7 @@ namespace ICSharpCode.ILSpy
 			}, null, CLEAR_OLD_ITEMS_EVERY_MS, Timeout.Infinite);
 		}
 
-		public AvalonEditTextOutput Lookup(Language language, ILSpyTreeNode[] treeNodes, DecompilationOptions options)
-		{
+		public AvalonEditTextOutput Lookup(Language language, ILSpyTreeNode[] treeNodes, DecompilationOptions options) {
 			lock (lockObj) {
 				var key = new Key(language, treeNodes, options);
 
@@ -174,8 +160,7 @@ namespace ICSharpCode.ILSpy
 			return null;
 		}
 
-		public void Cache(Language language, ILSpyTreeNode[] treeNodes, DecompilationOptions options, AvalonEditTextOutput textOutput)
-		{
+		public void Cache(Language language, ILSpyTreeNode[] treeNodes, DecompilationOptions options, AvalonEditTextOutput textOutput) {
 			// Don't cache it if it has UI elements. ResourcesFileTreeNode depends on it.
 			if (textOutput.UIElements.Count > 0)
 				return;
@@ -185,8 +170,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		void ClearOld()
-		{
+		void ClearOld() {
 			lock (lockObj) {
 				foreach (var kv in new List<KeyValuePair<Key, Item>>(cachedItems)) {
 					if (kv.Value.Age.TotalMilliseconds > OLD_ITEM_MS) {
@@ -198,19 +182,16 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		public void ClearAll()
-		{
+		public void ClearAll() {
 			lock (lockObj)
 				cachedItems.Clear();
 		}
 
-		public void Clear(LoadedAssembly asm)
-		{
+		public void Clear(LoadedAssembly asm) {
 			Clear(new HashSet<LoadedAssembly>(new[] { asm }));
 		}
 
-		public void Clear(HashSet<LoadedAssembly> asms)
-		{
+		public void Clear(HashSet<LoadedAssembly> asms) {
 			lock (lockObj) {
 				foreach (var kv in cachedItems.ToArray()) {
 					if (IsInModifiedAssembly(asms, kv.Key.TreeNodes) ||
@@ -222,8 +203,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		internal static bool IsInModifiedAssembly(HashSet<LoadedAssembly> asms, ILSpyTreeNode[] nodes)
-		{
+		internal static bool IsInModifiedAssembly(HashSet<LoadedAssembly> asms, ILSpyTreeNode[] nodes) {
 			foreach (var node in nodes) {
 				var asmNode = MainWindow.GetAssemblyTreeNode(node);
 				if (asmNode == null || asms.Contains(asmNode.LoadedAssembly))
@@ -233,8 +213,7 @@ namespace ICSharpCode.ILSpy
 			return false;
 		}
 
-		static bool IsInModifiedAssembly(HashSet<LoadedAssembly> asms, Item item)
-		{
+		static bool IsInModifiedAssembly(HashSet<LoadedAssembly> asms, Item item) {
 			var textOutput = item.TextOutput;
 			if (textOutput == null && item.WeakTextOutput != null)
 				textOutput = (AvalonEditTextOutput)item.WeakTextOutput.Target;
@@ -244,8 +223,7 @@ namespace ICSharpCode.ILSpy
 			return IsInModifiedAssembly(asms, textOutput.References);
 		}
 
-		internal static bool IsInModifiedAssembly(HashSet<LoadedAssembly> asms, TextSegmentCollection<ReferenceSegment> references)
-		{
+		internal static bool IsInModifiedAssembly(HashSet<LoadedAssembly> asms, TextSegmentCollection<ReferenceSegment> references) {
 			if (references == null)
 				return false;
 			var checkedAsmRefs = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);

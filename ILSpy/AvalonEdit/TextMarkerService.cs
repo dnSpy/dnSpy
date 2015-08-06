@@ -18,22 +18,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
-
-using ICSharpCode.AvalonEdit;
+using dnSpy.Tabs;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.ILSpy.Bookmarks;
-using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.TextView;
 
-namespace ICSharpCode.ILSpy.AvalonEdit
-{
+namespace ICSharpCode.ILSpy.AvalonEdit {
 	using TextView = ICSharpCode.AvalonEdit.Rendering.TextView;
 	/// <summary>
 	/// Handles the text markers for a code editor.

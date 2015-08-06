@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy.dntheme {
+namespace dnSpy.dntheme {
 	public enum ColorType {
 		/// <summary>
 		/// default text (in text editor)

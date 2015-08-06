@@ -17,13 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace ICSharpCode.ILSpy
-{
+namespace dnSpy {
 	/// <summary>
 	/// A plugin can implement this interface to get notified at startup
 	/// </summary>
-	public interface IPlugin
-	{
+	public interface IPlugin {
 		/// <summary>
 		/// Called when MainWindow has been loaded
 		/// </summary>

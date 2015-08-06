@@ -1,25 +1,18 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-
-using ICSharpCode.ILSpy;
+using dnSpy;
+using dnSpy.Images;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
-using ICSharpCode.ILSpy.Options;
 
-namespace ICSharpCode.ILSpy.Debugger.UI
-{
+namespace ICSharpCode.ILSpy.Debugger.UI {
 	[Export(typeof(IPlugin))]
 	class BreakpointsPanelPlugin : IPlugin
 	{
@@ -72,7 +65,7 @@ namespace ICSharpCode.ILSpy.Debugger.UI
         private BreakpointPanel()
         {
 			InitializeComponent();
-			dntheme.Themes.ThemeChanged += (s, e) => {
+			dnSpy.dntheme.Themes.ThemeChanged += (s, e) => {
 				foreach (BreakpointBookmarkVM bmvm in view.Items)
 					bmvm.OnThemeChanged();
 			};

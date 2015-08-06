@@ -21,11 +21,9 @@ using System;
 using System.Windows;
 using ICSharpCode.ILSpy.Controls;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	[Flags]
-	public enum MsgBoxButton
-	{
+	public enum MsgBoxButton {
 		None = 0,
 		OK = 1,
 		No = 2,
@@ -35,31 +33,26 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Interaction logic for MsgBox.xaml
 	/// </summary>
-	public partial class MsgBox : MetroWindow
-	{
+	public partial class MsgBox : MetroWindow {
 		public MsgBoxButton ButtonClicked { get; private set; }
 
-		public MsgBox()
-		{
+		public MsgBox() {
 			InitializeComponent();
 		}
 
-		private void okButton_Click(object sender, RoutedEventArgs e)
-		{
+		private void okButton_Click(object sender, RoutedEventArgs e) {
 			this.DialogResult = true;
 			this.ButtonClicked = MsgBoxButton.OK;
 			Close();
 		}
 
-		private void noButton_Click(object sender, RoutedEventArgs e)
-		{
+		private void noButton_Click(object sender, RoutedEventArgs e) {
 			this.DialogResult = false;
 			this.ButtonClicked = MsgBoxButton.No;
 			Close();
 		}
 
-		private void cancelButton_Click(object sender, RoutedEventArgs e)
-		{
+		private void cancelButton_Click(object sender, RoutedEventArgs e) {
 			this.DialogResult = false;
 			this.ButtonClicked = MsgBoxButton.Cancel;
 			Close();

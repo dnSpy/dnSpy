@@ -20,23 +20,18 @@
 using System.Windows;
 using ICSharpCode.ILSpy.Controls;
 
-namespace ICSharpCode.ILSpy
-{
-	public partial class AskForInput : MetroWindow
-	{
-		public AskForInput()
-		{
+namespace ICSharpCode.ILSpy {
+	public partial class AskForInput : MetroWindow {
+		public AskForInput() {
 			InitializeComponent();
 		}
 
-		private void okButton_Click(object sender, RoutedEventArgs e)
-		{
+		private void okButton_Click(object sender, RoutedEventArgs e) {
 			this.DialogResult = true;
 			Close();
 		}
 
-		private void cancelButton_Click(object sender, RoutedEventArgs e)
-		{
+		private void cancelButton_Click(object sender, RoutedEventArgs e) {
 			this.DialogResult = false;
 			Close();
 		}

@@ -234,7 +234,7 @@ namespace ilspc {
 
 				var slnPathName = Path.Combine(outputDir, slnName ?? "solution.sln");
 				using (var writer = new StreamWriter(slnPathName, false, Encoding.UTF8)) {
-					const string crlf = "\r\n";	// Make sure it's always CRLF
+					const string crlf = "\r\n"; // Make sure it's always CRLF
 					writer.Write(crlf);
 					writer.Write("Microsoft Visual Studio Solution File, Format Version 11.00" + crlf);
 					writer.Write("# Visual Studio 2010" + crlf);

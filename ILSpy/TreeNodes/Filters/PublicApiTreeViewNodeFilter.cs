@@ -19,65 +19,56 @@
 
 using System;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Filters
-{
-	sealed class PublicApiTreeViewNodeFilter : ChainTreeViewNodeFilter
-	{
+namespace dnSpy.Search {
+	sealed class PublicApiTreeViewNodeFilter : ChainTreeViewNodeFilter {
 		readonly Func<bool> showPublicApi;
 
 		public PublicApiTreeViewNodeFilter(ITreeViewNodeFilter filter, Func<bool> showPublicApi)
-			: base(filter)
-		{
+			: base(filter) {
 			if (showPublicApi == null)
 				throw new ArgumentNullException();
 			this.showPublicApi = showPublicApi;
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(DerivedTypesEntryNode node)
-		{
+		public override TreeViewNodeFilterResult GetFilterResult(DerivedTypesEntryNode node) {
 			if (showPublicApi() && !node.IsPublicAPI)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 			return base.GetFilterResult(node);
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(EventDef evt)
-		{
+		public override TreeViewNodeFilterResult GetFilterResult(EventDef evt) {
 			if (showPublicApi() && !EventTreeNode.IsPublicAPIInternal(evt))
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 			return base.GetFilterResult(evt);
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(FieldDef field)
-		{
+		public override TreeViewNodeFilterResult GetFilterResult(FieldDef field) {
 			if (showPublicApi() && !FieldTreeNode.IsPublicAPIInternal(field))
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 			return base.GetFilterResult(field);
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(MethodDef method)
-		{
+		public override TreeViewNodeFilterResult GetFilterResult(MethodDef method) {
 			if (showPublicApi() && !MethodTreeNode.IsPublicAPIInternal(method))
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 			return base.GetFilterResult(method);
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(PropertyDef prop)
-		{
+		public override TreeViewNodeFilterResult GetFilterResult(PropertyDef prop) {
 			if (showPublicApi() && !PropertyTreeNode.IsPublicAPIInternal(prop))
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 			return base.GetFilterResult(prop);
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(TypeDef type)
-		{
+		public override TreeViewNodeFilterResult GetFilterResult(TypeDef type) {
 			if (showPublicApi() && !TypeTreeNode.IsPublicAPIInternal(type))
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 			return base.GetFilterResult(type);
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(ResourceTreeNode node)
-		{
+		public override TreeViewNodeFilterResult GetFilterResult(ResourceTreeNode node) {
 			if (showPublicApi() && !ResourceTreeNode.IsPublicAPIInternal(node.Resource))
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 			return base.GetFilterResult(node);

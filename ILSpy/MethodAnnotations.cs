@@ -22,29 +22,24 @@ using System.Collections.Generic;
 using System.Threading;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy
-{
-	sealed class MethodAnnotations
-	{
+namespace dnSpy {
+	sealed class MethodAnnotations {
 		public static readonly MethodAnnotations Instance = new MethodAnnotations();
 
 		const int DELETE_GCD_ITEMS_EVERY_MS = 5 * 60 * 1000;
 		readonly object lockObj = new object();
 		readonly Dictionary<Key, bool> infos = new Dictionary<Key, bool>();
 
-		struct Key : IEquatable<Key>
-		{
+		struct Key : IEquatable<Key> {
 			public readonly WeakReference method;
 			readonly int hc;
 
-			public Key(MethodDef method)
-			{
+			public Key(MethodDef method) {
 				this.method = new WeakReference(method);
 				this.hc = method.GetHashCode();
 			}
 
-			public bool Equals(Key other)
-			{
+			public bool Equals(Key other) {
 				var m = method.Target;
 				var om = other.method.Target;
 				if (m == null || om == null)
@@ -52,32 +47,27 @@ namespace ICSharpCode.ILSpy
 				return m == om;
 			}
 
-			public override bool Equals(object obj)
-			{
+			public override bool Equals(object obj) {
 				if (!(obj is Key))
 					return false;
 				return Equals((Key)obj);
 			}
 
-			public override int GetHashCode()
-			{
+			public override int GetHashCode() {
 				return hc;
 			}
 
-			public override string ToString()
-			{
+			public override string ToString() {
 				var m = method.Target;
 				return m == null ? null : m.ToString();
 			}
 		}
 
-		MethodAnnotations()
-		{
+		MethodAnnotations() {
 			AddTimerWait(this);
 		}
 
-		static void AddTimerWait(MethodAnnotations ma)
-		{
+		static void AddTimerWait(MethodAnnotations ma) {
 			Timer timer = null;
 			WeakReference weakSelf = new WeakReference(ma);
 			timer = new Timer(a => {
@@ -90,16 +80,14 @@ namespace ICSharpCode.ILSpy
 			}, null, DELETE_GCD_ITEMS_EVERY_MS, Timeout.Infinite);
 		}
 
-		public bool IsBodyModified(MethodDef method)
-		{
+		public bool IsBodyModified(MethodDef method) {
 			bool modified;
 			lock (lockObj)
 				infos.TryGetValue(new Key(method), out modified);
 			return modified;
 		}
 
-		public void SetBodyModified(MethodDef method, bool isModified)
-		{
+		public void SetBodyModified(MethodDef method, bool isModified) {
 			var key = new Key(method);
 			lock (lockObj) {
 				if (isModified)
@@ -109,8 +97,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		void ClearGarbageCollectedItems()
-		{
+		void ClearGarbageCollectedItems() {
 			lock (lockObj) {
 				foreach (var kv in new List<KeyValuePair<Key, bool>>(infos)) {
 					if (kv.Key.method.Target == null)

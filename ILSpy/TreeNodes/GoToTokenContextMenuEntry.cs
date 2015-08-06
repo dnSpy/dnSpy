@@ -20,7 +20,9 @@
 using System.ComponentModel.Composition;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy;
 using dnSpy.AsmEditor;
+using dnSpy.Tabs;
 
 namespace ICSharpCode.ILSpy.TreeNodes {
 	[Export(typeof(IPlugin))]

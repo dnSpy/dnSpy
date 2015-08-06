@@ -19,10 +19,8 @@
 
 using System;
 
-namespace ICSharpCode.Decompiler.Disassembler
-{
-	public interface IInstructionBytesReader : IDisposable
-	{
+namespace ICSharpCode.Decompiler.Disassembler {
+	public interface IInstructionBytesReader : IDisposable {
 		int ReadByte();
 		void SetInstruction(int index, uint offset);
 	}

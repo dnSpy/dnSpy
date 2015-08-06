@@ -20,21 +20,17 @@
 using System.Text;
 using System.Globalization;
 
-namespace ICSharpCode.Decompiler
-{
-	public sealed class IdentifierFormatted
-	{
+namespace ICSharpCode.Decompiler {
+	public sealed class IdentifierFormatted {
 	}
 
-	public static class IdentifierEscaper
-	{
+	public static class IdentifierEscaper {
 		public static readonly IdentifierFormatted IdentifierFormatted = new IdentifierFormatted();
 
 		const int MAX_IDENTIFIER_LENGTH = 512;
 		const string EMPTY_NAME = "<<EMPTY_NAME>>";
 
-		public static string Escape(string id)
-		{
+		public static string Escape(string id) {
 			if (string.IsNullOrEmpty(id))
 				return EMPTY_NAME;
 			var sb = new StringBuilder();
@@ -56,8 +52,7 @@ namespace ICSharpCode.Decompiler
 			return sb.ToString();
 		}
 
-		static bool IsValidChar(char c)
-		{
+		static bool IsValidChar(char c) {
 			if (0x21 <= c && c <= 0x7E)
 				return true;
 			if (c <= 0x20)

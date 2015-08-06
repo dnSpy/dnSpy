@@ -20,15 +20,12 @@
 using System;
 using System.IO;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
-	public sealed class ResourceData
-	{
+namespace ICSharpCode.ILSpy.TreeNodes {
+	public sealed class ResourceData {
 		public readonly string Name;
 		public readonly Func<Stream> GetStream;
 
-		public ResourceData(string name, Func<Stream> getStream)
-		{
+		public ResourceData(string name, Func<Stream> getStream) {
 			this.Name = name;
 			this.GetStream = getStream;
 		}

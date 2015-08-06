@@ -27,17 +27,14 @@ using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnSpy.AsmEditor.Resources;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	[Export(typeof(IResourceFactory<ResourceElement, ResourceElementTreeNode>))]
-	sealed class SerializedImageResourceElementTreeNodeFactory : IResourceFactory<ResourceElement, ResourceElementTreeNode>
-	{
+	sealed class SerializedImageResourceElementTreeNodeFactory : IResourceFactory<ResourceElement, ResourceElementTreeNode> {
 		public int Priority {
 			get { return 100; }
 		}
 
-		public ResourceElementTreeNode Create(ModuleDef module, ResourceElement resInput)
-		{
+		public ResourceElementTreeNode Create(ModuleDef module, ResourceElement resInput) {
 			var serializedData = resInput.ResourceData as BinaryResourceData;
 			if (serializedData == null)
 				return null;
@@ -49,8 +46,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return null;
 		}
 
-		internal static bool GetImageData(ModuleDef module, string typeName, byte[] serializedData, out byte[] imageData)
-		{
+		internal static bool GetImageData(ModuleDef module, string typeName, byte[] serializedData, out byte[] imageData) {
 			imageData = null;
 			if (CouldBeBitmap(module, typeName)) {
 				var dict = Deserializer.Deserialize(SystemDrawingBitmap.DefinitionAssembly.FullName, SystemDrawingBitmap.ReflectionFullName, serializedData);
@@ -79,18 +75,15 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return false;
 		}
 
-		static bool CouldBeBitmap(ModuleDef module, string name)
-		{
+		static bool CouldBeBitmap(ModuleDef module, string name) {
 			return CheckType(module, name, SystemDrawingBitmap);
 		}
 
-		static bool CouldBeIcon(ModuleDef module, string name)
-		{
+		static bool CouldBeIcon(ModuleDef module, string name) {
 			return CheckType(module, name, SystemDrawingIcon);
 		}
 
-		internal static bool CheckType(ModuleDef module, string name, TypeRef expectedType)
-		{
+		internal static bool CheckType(ModuleDef module, string name, TypeRef expectedType) {
 			if (module == null)
 				module = new ModuleDefUser();
 			var tr = TypeNameParser.ParseReflection(module, name, null);
@@ -111,8 +104,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		static readonly TypeRef SystemDrawingIcon = new TypeRefUser(null, "System.Drawing", "Icon", SystemDrawingAsm);
 	}
 
-	sealed class SerializedImageResourceElementTreeNode : ResourceElementTreeNode
-	{
+	sealed class SerializedImageResourceElementTreeNode : ResourceElementTreeNode {
 		public ImageSource ImageSource {
 			get { return imageSource; }
 		}
@@ -124,19 +116,16 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 
 		public SerializedImageResourceElementTreeNode(ResourceElement resElem, byte[] imageData)
-			: base(resElem)
-		{
+			: base(resElem) {
 			InitializeImageData(imageData);
 		}
 
-		void InitializeImageData(byte[] imageData)
-		{
+		void InitializeImageData(byte[] imageData) {
 			this.imageData = imageData;
 			this.imageSource = ImageResourceElementTreeNode.CreateImageSource(imageData);
 		}
 
-		public override void Decompile(Language language, Decompiler.ITextOutput output)
-		{
+		public override void Decompile(Language language, Decompiler.ITextOutput output) {
 			var smartOutput = output as ISmartTextOutput;
 			if (smartOutput != null) {
 				smartOutput.AddUIElement(() => {
@@ -149,21 +138,18 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			base.Decompile(language, output);
 		}
 
-		protected override IEnumerable<ResourceData> GetDeserialized()
-		{
+		protected override IEnumerable<ResourceData> GetDeserialized() {
 			yield return new ResourceData(resElem.Name, () => new MemoryStream(imageData));
 		}
 
-		internal ResourceElement GetAsRawImage()
-		{
+		internal ResourceElement GetAsRawImage() {
 			return new ResourceElement {
 				Name = resElem.Name,
 				ResourceData = new BuiltInResourceData(ResourceTypeCode.ByteArray, imageData),
 			};
 		}
 
-		internal ResourceElement Serialize(ResourceElement resElem)
-		{
+		internal ResourceElement Serialize(ResourceElement resElem) {
 			var data = (byte[])((BuiltInResourceData)resElem.ResourceData).Data;
 			bool isIcon = BitConverter.ToUInt32(data, 0) == 0x00010000;
 
@@ -179,8 +165,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			};
 		}
 
-		public override string CheckCanUpdateData(ResourceElement newResElem)
-		{
+		public override string CheckCanUpdateData(ResourceElement newResElem) {
 			var res = base.CheckCanUpdateData(newResElem);
 			if (!string.IsNullOrEmpty(res))
 				return res;
@@ -200,8 +185,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return string.Empty;
 		}
 
-		public override void UpdateData(ResourceElement newResElem)
-		{
+		public override void UpdateData(ResourceElement newResElem) {
 			base.UpdateData(newResElem);
 
 			var binData = (BinaryResourceData)newResElem.ResourceData;

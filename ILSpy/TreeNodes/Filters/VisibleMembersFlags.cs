@@ -20,11 +20,9 @@
 using System;
 using System.Text;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Filters
-{
+namespace dnSpy.Search {
 	[Flags]
-	enum VisibleMembersFlags
-	{
+	enum VisibleMembersFlags {
 		AssemblyDef		= 0x00000001,
 		ModuleDef		= 0x00000002,
 		Namespace		= 0x00000004,
@@ -63,16 +61,13 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 						  ResourceList | NonNetFile | Resource | ResourceElement,
 	}
 
-	static class VisibleMembersFlagsExtensions
-	{
-		public static string GetListString(this VisibleMembersFlags flags)
-		{
+	static class VisibleMembersFlagsExtensions {
+		public static string GetListString(this VisibleMembersFlags flags) {
 			int count;
 			return flags.GetListString(out count);
 		}
 
-		public static string GetListString(this VisibleMembersFlags flags, out int count)
-		{
+		public static string GetListString(this VisibleMembersFlags flags, out int count) {
 			var sb = new StringBuilder();
 			count = 0;
 
@@ -109,8 +104,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			return sb.ToString();
 		}
 
-		static void AddString(StringBuilder sb, string text, ref int count)
-		{
+		static void AddString(StringBuilder sb, string text, ref int count) {
 			if (count++ != 0)
 				sb.Append(", ");
 			sb.Append(text);

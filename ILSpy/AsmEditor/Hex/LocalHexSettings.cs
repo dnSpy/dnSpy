@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using ICSharpCode.ILSpy;
+using dnSpy.Tabs;
 
 namespace dnSpy.AsmEditor.Hex {
 	sealed class LocalHexSettings {

@@ -25,13 +25,14 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using dnlib.DotNet;
+using dnSpy.Images;
 using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TextView;
+using ICSharpCode.NRefactory;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
-using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {

@@ -25,27 +25,24 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using dnSpy.Tabs;
 using ICSharpCode.ILSpy.Controls;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// Interaction logic for DecompilerTabsWindow.xaml
 	/// </summary>
-	public partial class DecompilerTabsWindow : MetroWindow
-	{
+	public partial class DecompilerTabsWindow : MetroWindow {
 		readonly ObservableCollection<TabInfo> allTabs;
 		internal TabState LastActivatedTabState;
 
-		class TabInfo
-		{
+		class TabInfo {
 			public TabState TabState { get; set; }
 			public string FirstModuleName { get; set; }
 			public string FirstModuleFullName { get; set; }
 		}
 
-		public DecompilerTabsWindow()
-		{
+		public DecompilerTabsWindow() {
 			InitializeComponent();
 			UpdateButtonState();
 			allTabs = CreateCollection();
@@ -68,8 +65,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		ObservableCollection<TabInfo> CreateCollection()
-		{
+		ObservableCollection<TabInfo> CreateCollection() {
 			var list = new List<TabInfo>();
 			foreach (var tabState in MainWindow.Instance.GetTabStateInOrder()) {
 				var info = new TabInfo();
@@ -82,22 +78,19 @@ namespace ICSharpCode.ILSpy
 			return new ObservableCollection<TabInfo>(list);
 		}
 
-		TabInfo[] GetSelectedItems()
-		{
+		TabInfo[] GetSelectedItems() {
 			var list = new TabInfo[listView.SelectedItems.Count];
 			for (int i = 0; i < list.Length; i++)
 				list[i] = (TabInfo)listView.SelectedItems[i];
 			return list;
 		}
 
-		void ActivateWindow(TabInfo info)
-		{
+		void ActivateWindow(TabInfo info) {
 			LastActivatedTabState = info.TabState;
 			MainWindow.Instance.SetActiveTab(info.TabState);
 		}
 
-		void CloseWindows(IList<TabInfo> tabs)
-		{
+		void CloseWindows(IList<TabInfo> tabs) {
 			int newIndex = listView.SelectedIndex;
 			foreach (var info in tabs) {
 				MainWindow.Instance.CloseTab(info.TabState);
@@ -128,8 +121,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-		{
+		private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
 			var tabs = GetSelectedItems();
@@ -141,13 +133,11 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
+		private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
 			UpdateButtonState();
 		}
 
-		void UpdateButtonState()
-		{
+		void UpdateButtonState() {
 			closeWindowsButton.Content = listView.SelectedItems.Count <= 1 ? "_Close Window" : "_Close Windows";
 			activateButton.IsEnabled = listView.SelectedItems.Count == 1;
 			closeWindowsButton.IsEnabled = listView.SelectedItems.Count != 0;
@@ -155,27 +145,23 @@ namespace ICSharpCode.ILSpy
 			saveCodeButton.IsEnabled = tabs.Length == 1 && tabs[0].TabState is DecompileTabState && ((DecompileTabState)tabs[0].TabState).DecompiledNodes.Length > 0;
 		}
 
-		private void activateButton_Click(object sender, RoutedEventArgs e)
-		{
+		private void activateButton_Click(object sender, RoutedEventArgs e) {
 			var tabs = GetSelectedItems();
 			if (tabs.Length > 0)
 				ActivateWindow(tabs[0]);
 		}
 
-		private void saveCodeButton_Click(object sender, RoutedEventArgs e)
-		{
+		private void saveCodeButton_Click(object sender, RoutedEventArgs e) {
 			var tabs = GetSelectedItems();
 			if (tabs.Length > 0)
 				MainWindow.Instance.Save(tabs[0].TabState as DecompileTabState);
 		}
 
-		private void closeWindowsButton_Click(object sender, RoutedEventArgs e)
-		{
+		private void closeWindowsButton_Click(object sender, RoutedEventArgs e) {
 			CloseWindows(GetSelectedItems());
 		}
 
-		private void okButton_Click(object sender, RoutedEventArgs e)
-		{
+		private void okButton_Click(object sender, RoutedEventArgs e) {
 			var tabs = GetSelectedItems();
 			if (tabs.Length > 0)
 				ActivateWindow(tabs[tabs.Length - 1]);
@@ -183,8 +169,7 @@ namespace ICSharpCode.ILSpy
 			e.Handled = true;
 		}
 
-		private void Window_KeyDown(object sender, KeyEventArgs e)
-		{
+		private void Window_KeyDown(object sender, KeyEventArgs e) {
 			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Escape) {
 				this.DialogResult = false;
 				e.Handled = true;
@@ -192,8 +177,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		private void listView_KeyDown(object sender, KeyEventArgs e)
-		{
+		private void listView_KeyDown(object sender, KeyEventArgs e) {
 			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Return) {
 				okButton_Click(sender, e);
 				return;

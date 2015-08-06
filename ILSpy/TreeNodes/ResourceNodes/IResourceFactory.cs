@@ -17,20 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.IO;
 using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Creates resource nodes
 	/// </summary>
 	/// <typeparam name="TInput">Resource input data</typeparam>
 	/// <typeparam name="TOutput">Resource node</typeparam>
-	public interface IResourceFactory<TInput, TOutput>
-	{
+	public interface IResourceFactory<TInput, TOutput> {
 		/// <summary>
 		/// Higher priority factories get called before lower priority factories
 		/// </summary>
@@ -46,10 +43,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		TOutput Create(ModuleDef module, TInput resInput);
 	}
 
-	public static class ResourceFactory
-	{
-		static TOutput Create<TInput, TOutput>(ModuleDef module, TInput resInput) where TOutput : class
-		{
+	public static class ResourceFactory {
+		static TOutput Create<TInput, TOutput>(ModuleDef module, TInput resInput) where TOutput : class {
 			foreach (var creator in App.CompositionContainer.GetExportedValues<IResourceFactory<TInput, TOutput>>().OrderByDescending(a => a.Priority)) {
 				try {
 					var resNode = creator.Create(module, resInput);
@@ -63,23 +58,19 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return null;
 		}
 
-		public static ResourceTreeNode Create(ModuleDef module, Resource resource)
-		{
+		public static ResourceTreeNode Create(ModuleDef module, Resource resource) {
 			return Create<Resource, ResourceTreeNode>(module, resource) ?? CreateDefault(module, resource);
 		}
 
-		static ResourceTreeNode CreateDefault(ModuleDef module, Resource resource)
-		{
+		static ResourceTreeNode CreateDefault(ModuleDef module, Resource resource) {
 			return new UnknownResourceTreeNode(resource);
 		}
 
-		public static ResourceElementTreeNode Create(ModuleDef module, ResourceElement resElem)
-		{
+		public static ResourceElementTreeNode Create(ModuleDef module, ResourceElement resElem) {
 			return Create<ResourceElement, ResourceElementTreeNode>(module, resElem) ?? CreateDefault(module, resElem);
 		}
 
-		static ResourceElementTreeNode CreateDefault(ModuleDef module, ResourceElement resElem)
-		{
+		static ResourceElementTreeNode CreateDefault(ModuleDef module, ResourceElement resElem) {
 			return new BuiltInResourceElementTreeNode(resElem);
 		}
 	}

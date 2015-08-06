@@ -17,12 +17,12 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using dnlib.DotNet;
+using dnSpy.Images;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
-using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
-{
+namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	internal sealed class AnalyzedPropertyTreeNode : AnalyzerEntityTreeNode
 	{
 		private readonly PropertyDef analyzedProperty;

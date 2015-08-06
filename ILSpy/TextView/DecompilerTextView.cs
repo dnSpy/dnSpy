@@ -35,7 +35,10 @@ using System.Windows.Threading;
 using System.Xml;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy;
 using dnSpy.AsmEditor;
+using dnSpy.dntheme;
+using dnSpy.Images;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
@@ -48,7 +51,6 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Debugger;
-using ICSharpCode.ILSpy.dntheme;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.XmlDoc;
@@ -1018,8 +1020,8 @@ namespace ICSharpCode.ILSpy.TextView
 					mark.ZOrder = (int)Bookmarks.TextMarkerZOrder.SearchResult;
 					mark.HighlightingColor = () => {
 						return (r.IsLocalTarget ?
-							Themes.Theme.GetColor(dntheme.ColorType.LocalDefinition) :
-							Themes.Theme.GetColor(dntheme.ColorType.LocalReference)).TextInheritedColor;
+							Themes.Theme.GetColor(dnSpy.dntheme.ColorType.LocalDefinition) :
+							Themes.Theme.GetColor(dnSpy.dntheme.ColorType.LocalReference)).TextInheritedColor;
 					};
 					markedReferences.Add(mark);
 				}

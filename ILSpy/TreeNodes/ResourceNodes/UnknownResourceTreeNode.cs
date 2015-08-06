@@ -21,17 +21,13 @@ using System.IO;
 using dnlib.DotNet;
 using ICSharpCode.Decompiler;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
-	public sealed class UnknownResourceTreeNode : ResourceTreeNode
-	{
+namespace ICSharpCode.ILSpy.TreeNodes {
+	public sealed class UnknownResourceTreeNode : ResourceTreeNode {
 		public UnknownResourceTreeNode(Resource resource)
-			: base(resource)
-		{
+			: base(resource) {
 		}
 
-		public override void Decompile(Language language, ITextOutput output)
-		{
+		public override void Decompile(Language language, ITextOutput output) {
 			base.Decompile(language, output);
 			var so = output as ISmartTextOutput;
 			if (so != null) {
@@ -41,16 +37,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 
-		public override bool View(TextView.DecompilerTextView textView)
-		{
+		public override bool View(TextView.DecompilerTextView textView) {
 			EmbeddedResource er = r as EmbeddedResource;
 			if (er != null)
 				return View(this, textView, new MemoryStream(er.GetResourceData()), er.Name);
 			return false;
 		}
 
-		public override string GetStringContents()
-		{
+		public override string GetStringContents() {
 			EmbeddedResource er = r as EmbeddedResource;
 			if (er != null)
 				return GetStringContents(new MemoryStream(er.GetResourceData()));

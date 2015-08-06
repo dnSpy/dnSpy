@@ -22,14 +22,11 @@ using System.Collections.Generic;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
-	sealed class ResourceComparer : IComparer<Resource>
-	{
+namespace ICSharpCode.ILSpy.TreeNodes {
+	sealed class ResourceComparer : IComparer<Resource> {
 		public static readonly ResourceComparer Instance = new ResourceComparer();
 
-		public int Compare(Resource x, Resource y)
-		{
+		public int Compare(Resource x, Resource y) {
 			int c = StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name);
 			if (c != 0)
 				return c;
@@ -37,12 +34,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 	}
 
-	sealed class ResourceElementComparer : IComparer<ResourceElement>
-	{
+	sealed class ResourceElementComparer : IComparer<ResourceElement> {
 		public static readonly ResourceElementComparer Instance = new ResourceElementComparer();
 
-		public int Compare(ResourceElement x, ResourceElement y)
-		{
+		public int Compare(ResourceElement x, ResourceElement y) {
 			int c = StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name);
 			if (c != 0)
 				return c;
@@ -52,10 +47,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 	}
 
-	static class ResourceTypeCodeExtensions
-	{
-		public static ResourceTypeCode FixUserType(this ResourceTypeCode code)
-		{
+	static class ResourceTypeCodeExtensions {
+		public static ResourceTypeCode FixUserType(this ResourceTypeCode code) {
 			if (code < ResourceTypeCode.UserTypes)
 				return code;
 			return ResourceTypeCode.UserTypes;

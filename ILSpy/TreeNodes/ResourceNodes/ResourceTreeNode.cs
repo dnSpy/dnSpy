@@ -24,35 +24,31 @@ using dnlib.DotNet;
 using dnlib.IO;
 using dnSpy.AsmEditor;
 using dnSpy.AsmEditor.Resources;
+using dnSpy.Images;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Utils;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
-	public abstract class ResourceTreeNode : ILSpyTreeNode, IResourceNode
-	{
+namespace ICSharpCode.ILSpy.TreeNodes {
+	public abstract class ResourceTreeNode : ILSpyTreeNode, IResourceNode {
 		protected Resource r;
 
-		protected ResourceTreeNode(Resource r)
-		{
+		protected ResourceTreeNode(Resource r) {
 			this.r = r;
 		}
-		
+
 		public Resource Resource {
 			get { return r; }
 			internal set { r = value; }
 		}
-		
-		protected sealed override void Write(ITextOutput output, Language language)
-		{
+
+		protected sealed override void Write(ITextOutput output, Language language) {
 			WriteFileName(output, r.Name);
 		}
 
-		public static void WriteFileName(ITextOutput output, string name)
-		{
+		public static void WriteFileName(ITextOutput output, string name) {
 			name = UIUtils.CleanUpName(name);
 			var s = name.Replace('\\', '/');
 			var parts = s.Split('/');
@@ -75,7 +71,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				output.Write(ext, TextTokenType.FileExtension);
 			}
 		}
-		
+
 		public sealed override object Icon {
 			get { return ResourceUtils.GetIcon(IconName, BackgroundType.TreeNode); }
 		}
@@ -87,13 +83,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		public string Name {
 			get { return r.Name; }
 		}
-		
+
 		public override bool IsPublicAPI {
 			get { return IsPublicAPIInternal(r); }
 		}
 
-		internal static bool IsPublicAPIInternal(Resource r)
-		{
+		internal static bool IsPublicAPIInternal(Resource r) {
 			return (r.Attributes & ManifestResourceAttributes.VisibilityMask) != ManifestResourceAttributes.Private;
 		}
 
@@ -123,8 +118,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 
-		ModuleDefMD GetModuleOffset(out FileOffset fileOffset)
-		{
+		ModuleDefMD GetModuleOffset(out FileOffset fileOffset) {
 			fileOffset = 0;
 
 			var er = r as EmbeddedResource;
@@ -139,26 +133,22 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return module;
 		}
 
-		public override FilterResult Filter(FilterSettings settings)
-		{
+		public override FilterResult Filter(FilterSettings settings) {
 			var res = settings.Filter.GetFilterResult(this);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
 			return base.Filter(settings);
 		}
 
-		protected void Save()
-		{
+		protected void Save() {
 			SaveResources.Save(new IResourceNode[] { this }, false, ResourceDataType.Deserialized);
 		}
-		
-		public sealed override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
+
+		public sealed override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
 			Decompile(language, output);
 		}
 
-		public virtual void Decompile(Language language, ITextOutput output)
-		{
+		public virtual void Decompile(Language language, ITextOutput output) {
 			language.WriteComment(output, string.Empty);
 			output.WriteOffsetComment(this);
 			output.WriteDefinition(UIUtils.CleanUpName(Name), this, TextTokenType.Comment);
@@ -175,8 +165,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			output.WriteLine();
 		}
 
-		internal static bool View(ILSpyTreeNode node, DecompilerTextView textView, Stream stream, string name)
-		{
+		internal static bool View(ILSpyTreeNode node, DecompilerTextView textView, Stream stream, string name) {
 			if (stream == null || stream.Length >= DecompilerTextView.DefaultOutputLengthLimit)
 				return false;
 
@@ -203,8 +192,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return true;
 		}
 
-		internal static string GetStringContents(Stream stream)
-		{
+		internal static string GetStringContents(Stream stream) {
 			if (stream == null)
 				return null;
 
@@ -216,32 +204,30 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return FileReader.OpenStream(stream, Encoding.UTF8).ReadToEnd();
 		}
 
-		public virtual string GetStringContents()
-		{
+		public virtual string GetStringContents() {
 			return null;
 		}
 
-		public virtual void RegenerateEmbeddedResource()
-		{
+		public virtual void RegenerateEmbeddedResource() {
 			throw new NotSupportedException();
 		}
 
-		public IEnumerable<ResourceData> GetResourceData(ResourceDataType type)
-		{
+		public IEnumerable<ResourceData> GetResourceData(ResourceDataType type) {
 			switch (type) {
-			case ResourceDataType.Deserialized:	return GetDeserialized();
-			case ResourceDataType.Serialized:	return GetSerialized();
-			default: throw new InvalidOperationException();
+			case ResourceDataType.Deserialized:
+				return GetDeserialized();
+			case ResourceDataType.Serialized:
+				return GetSerialized();
+			default:
+				throw new InvalidOperationException();
 			}
 		}
 
-		protected virtual IEnumerable<ResourceData> GetDeserialized()
-		{
+		protected virtual IEnumerable<ResourceData> GetDeserialized() {
 			return GetSerialized();
 		}
 
-		protected virtual IEnumerable<ResourceData> GetSerialized()
-		{
+		protected virtual IEnumerable<ResourceData> GetSerialized() {
 			var er = r as EmbeddedResource;
 			if (er != null)
 				yield return new ResourceData(r.Name, () => new MemoryStream(er.GetResourceData()));

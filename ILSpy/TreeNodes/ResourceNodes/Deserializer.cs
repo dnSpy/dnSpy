@@ -25,16 +25,13 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
-	sealed class DeserializedDataInfo
-	{
+namespace ICSharpCode.ILSpy.TreeNodes {
+	sealed class DeserializedDataInfo {
 		public Type ObjectType { get; private set; }
 		public string Name { get; private set; }
 		public object Value { get; private set; }
 
-		public DeserializedDataInfo(Type objectType, string name, object value)
-		{
+		public DeserializedDataInfo(Type objectType, string name, object value) {
 			this.ObjectType = objectType;
 			this.Name = name;
 			this.Value = value;
@@ -45,21 +42,17 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	/// Deserializes data without loading the deserialized types. Only our types get "deserialized".
 	/// This is only useful if it's eg. an image and it's stored in a byte[].
 	/// </summary>
-	static class Deserializer
-	{
-		sealed class MyBinder : SerializationBinder
-		{
+	static class Deserializer {
+		sealed class MyBinder : SerializationBinder {
 			readonly ModuleDef module;
 			readonly ITypeDefOrRef type;
 
-			public MyBinder(string asmName, string typeName)
-			{
+			public MyBinder(string asmName, string typeName) {
 				this.module = new ModuleDefUser();
 				this.type = TypeNameParser.ParseReflection(module, string.Format("{0}, {1}", typeName, asmName), null);
 			}
 
-			public override Type BindToType(string assemblyName, string typeName)
-			{
+			public override Type BindToType(string assemblyName, string typeName) {
 				var otherType = TypeNameParser.ParseReflection(module, string.Format("{0}, {1}", typeName, assemblyName), null);
 				if (string.IsNullOrEmpty(type.TypeName) || string.IsNullOrEmpty(otherType.TypeName))
 					return typeof(DontDeserializeType);
@@ -74,37 +67,30 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 
 		[Serializable]
-		sealed class DeserializedType : ISerializable
-		{
+		sealed class DeserializedType : ISerializable {
 			public readonly Dictionary<string, DeserializedDataInfo> DeserializedDataInfos = new Dictionary<string, DeserializedDataInfo>(StringComparer.Ordinal);
 
-			public DeserializedType(SerializationInfo info, StreamingContext context)
-			{
+			public DeserializedType(SerializationInfo info, StreamingContext context) {
 				foreach (var c in info)
 					DeserializedDataInfos[c.Name] = new DeserializedDataInfo(c.ObjectType, c.Name, c.Value);
 			}
 
-			public void GetObjectData(SerializationInfo info, StreamingContext context)
-			{
+			public void GetObjectData(SerializationInfo info, StreamingContext context) {
 				throw new NotImplementedException();
 			}
 		}
 
 		[Serializable]
-		sealed class DontDeserializeType : ISerializable
-		{
-			public DontDeserializeType(SerializationInfo info, StreamingContext context)
-			{
+		sealed class DontDeserializeType : ISerializable {
+			public DontDeserializeType(SerializationInfo info, StreamingContext context) {
 			}
 
-			public void GetObjectData(SerializationInfo info, StreamingContext context)
-			{
+			public void GetObjectData(SerializationInfo info, StreamingContext context) {
 				throw new NotImplementedException();
 			}
 		}
 
-		public static Dictionary<string, DeserializedDataInfo> Deserialize(string asmName, string typeName, byte[] data)
-		{
+		public static Dictionary<string, DeserializedDataInfo> Deserialize(string asmName, string typeName, byte[] data) {
 			var fmt = new BinaryFormatter();
 			fmt.Binder = new MyBinder(asmName, typeName);
 			var obj = fmt.Deserialize(new MemoryStream(data)) as DeserializedType;

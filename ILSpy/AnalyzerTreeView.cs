@@ -24,8 +24,9 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using ICSharpCode.ILSpy.TreeNodes.Analyzer;
+using dnSpy.dntheme;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy
@@ -77,7 +78,7 @@ namespace ICSharpCode.ILSpy
 			ContextMenuProvider.Add(this);
 			MainWindow.Instance.CurrentAssemblyListChanged += MainWindow_CurrentAssemblyListChanged;
 			MainWindow.Instance.OnModuleModified += MainWindow_OnModuleModified;
-			dntheme.Themes.ThemeChanged += Themes_ThemeChanged;
+			Themes.ThemeChanged += Themes_ThemeChanged;
 			Options.DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
 		}
 

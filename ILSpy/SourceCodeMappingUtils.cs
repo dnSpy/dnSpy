@@ -22,19 +22,15 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.TextView;
 
-namespace ICSharpCode.ILSpy
-{
-	public static class SourceCodeMappingUtils
-	{
-		public static IList<SourceCodeMapping> Find(DecompilerTextView textView, int line, int column)
-		{
+namespace ICSharpCode.ILSpy {
+	public static class SourceCodeMappingUtils {
+		public static IList<SourceCodeMapping> Find(DecompilerTextView textView, int line, int column) {
 			if (textView == null)
 				return new SourceCodeMapping[0];
 			return Find(textView.CodeMappings, line, column);
 		}
 
-		public static IList<SourceCodeMapping> Find(Dictionary<MethodKey, MemberMapping> cm, int line, int column)
-		{
+		public static IList<SourceCodeMapping> Find(Dictionary<MethodKey, MemberMapping> cm, int line, int column) {
 			if (line <= 0)
 				return new SourceCodeMapping[0];
 			if (cm == null || cm.Count == 0)
@@ -51,8 +47,7 @@ namespace ICSharpCode.ILSpy
 			return new SourceCodeMapping[0];
 		}
 
-		static List<SourceCodeMapping> FindByLineColumn(Dictionary<MethodKey, MemberMapping> cm, int line, int column)
-		{
+		static List<SourceCodeMapping> FindByLineColumn(Dictionary<MethodKey, MemberMapping> cm, int line, int column) {
 			List<SourceCodeMapping> list = null;
 			foreach (var storageEntry in cm.Values) {
 				var bp = storageEntry.GetInstructionByLineNumber(line, column);
@@ -65,8 +60,7 @@ namespace ICSharpCode.ILSpy
 			return list;
 		}
 
-		static List<SourceCodeMapping> GetClosest(Dictionary<MethodKey, MemberMapping> cm, int line)
-		{
+		static List<SourceCodeMapping> GetClosest(Dictionary<MethodKey, MemberMapping> cm, int line) {
 			List<SourceCodeMapping> list = new List<SourceCodeMapping>();
 			foreach (var entry in cm.Values) {
 				SourceCodeMapping map = null;

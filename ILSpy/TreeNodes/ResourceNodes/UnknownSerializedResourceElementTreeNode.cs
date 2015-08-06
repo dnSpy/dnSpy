@@ -21,17 +21,14 @@ using System.ComponentModel.Composition;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	[Export(typeof(IResourceFactory<ResourceElement, ResourceElementTreeNode>))]
-	sealed class UnknownSerializedResourceElementTreeNodeFactory : IResourceFactory<ResourceElement, ResourceElementTreeNode>
-	{
+	sealed class UnknownSerializedResourceElementTreeNodeFactory : IResourceFactory<ResourceElement, ResourceElementTreeNode> {
 		public int Priority {
 			get { return -1; }
 		}
 
-		public ResourceElementTreeNode Create(ModuleDef module, ResourceElement resInput)
-		{
+		public ResourceElementTreeNode Create(ModuleDef module, ResourceElement resInput) {
 			var serializedData = resInput.ResourceData as BinaryResourceData;
 			if (serializedData == null)
 				return null;
@@ -40,11 +37,9 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 	}
 
-	sealed class UnknownSerializedResourceElementTreeNode : SerializedResourceElementTreeNode
-	{
+	sealed class UnknownSerializedResourceElementTreeNode : SerializedResourceElementTreeNode {
 		public UnknownSerializedResourceElementTreeNode(ResourceElement resElem)
-			: base(resElem)
-		{
+			: base(resElem) {
 		}
 
 		public override NodePathName NodePathName {

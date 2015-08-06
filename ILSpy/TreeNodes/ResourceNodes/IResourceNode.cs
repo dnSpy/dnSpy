@@ -18,19 +18,15 @@
 */
 
 using System.Collections.Generic;
-using System.IO;
 using ICSharpCode.Decompiler;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
-	public enum ResourceDataType
-	{
+namespace ICSharpCode.ILSpy.TreeNodes {
+	public enum ResourceDataType {
 		Deserialized,
 		Serialized,
 	}
 
-	interface IResourceNode
-	{
+	interface IResourceNode {
 		/// <summary>
 		/// RVA of resource or 0
 		/// </summary>

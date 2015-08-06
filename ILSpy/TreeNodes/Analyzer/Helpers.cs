@@ -16,14 +16,13 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Linq;
-using ICSharpCode.Decompiler;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy;
+using ICSharpCode.Decompiler;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
-{
+namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	internal static class Helpers
 	{
 		public static bool IsReferencedBy(TypeDef type, ITypeDefOrRef typeRef)

@@ -20,7 +20,7 @@
 using System.Windows;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
-using ICSharpCode.ILSpy.TreeNodes.Filters;
+using dnSpy.Search;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class EditMethodDef : IEdit<MethodDefVM> {

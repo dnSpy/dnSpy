@@ -19,13 +19,11 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using ICSharpCode.Decompiler;
+using dnlib.DotNet;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
-using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// Decompilation event arguments.
 	/// </summary>

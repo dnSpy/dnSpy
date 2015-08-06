@@ -4,6 +4,8 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Media;
+using dnlib.DotNet;
+using dnSpy.Images;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
@@ -11,11 +13,8 @@ using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
-using ICSharpCode.NRefactory.CSharp;
-using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.Debugger.Bookmarks
-{
+namespace ICSharpCode.ILSpy.Debugger.Bookmarks {
 	public class BreakpointBookmark : MarkerBookmark
 	{
 		public static HighlightingColor HighlightingColor = new HighlightingColor {

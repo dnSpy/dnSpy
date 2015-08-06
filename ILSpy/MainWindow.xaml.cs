@@ -36,13 +36,16 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using dnlib.DotNet;
 using dnlib.PE;
+using dnSpy;
 using dnSpy.AsmEditor;
+using dnSpy.dntheme;
+using dnSpy.Images;
 using dnSpy.Options;
+using dnSpy.Tabs;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Controls;
 using ICSharpCode.ILSpy.Debugger.Services;
-using ICSharpCode.ILSpy.dntheme;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.XmlDoc;
@@ -325,8 +328,8 @@ namespace ICSharpCode.ILSpy
 			// Clear the value set by the constructor. This is required or our style won't be used.
 			treeView.ClearValue(ItemsControl.ItemContainerStyleProperty);
 
-			treeView.GetPreviewInsideTextBackground = () => Themes.Theme.GetColor(dntheme.ColorType.SystemColorsHighlight).InheritedColor.Background.GetBrush(null);
-			treeView.GetPreviewInsideForeground = () => Themes.Theme.GetColor(dntheme.ColorType.SystemColorsHighlightText).InheritedColor.Foreground.GetBrush(null);
+			treeView.GetPreviewInsideTextBackground = () => Themes.Theme.GetColor(ColorType.SystemColorsHighlight).InheritedColor.Background.GetBrush(null);
+			treeView.GetPreviewInsideForeground = () => Themes.Theme.GetColor(ColorType.SystemColorsHighlightText).InheritedColor.Foreground.GetBrush(null);
 		}
 
 		internal static void InitializeAssemblyTreeView(SharpTreeView treeView)

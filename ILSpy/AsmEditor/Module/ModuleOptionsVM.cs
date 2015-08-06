@@ -25,8 +25,8 @@ using dnlib.DotNet.MD;
 using dnlib.PE;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Search;
 using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TreeNodes.Filters;
 
 namespace dnSpy.AsmEditor.Module {
 	enum EntryPointType {

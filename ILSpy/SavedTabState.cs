@@ -22,10 +22,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using dnSpy.HexEditor;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy {
+namespace dnSpy.Tabs {
 	public class SavedTabGroupsState {
 		public List<SavedTabGroupState> Groups = new List<SavedTabGroupState>();
 		public int Index;

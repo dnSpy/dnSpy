@@ -17,15 +17,11 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using ICSharpCode.Decompiler.Ast;
-using ICSharpCode.Decompiler.Disassembler;
+using dnlib.DotNet;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory;
-using ICSharpCode.NRefactory.CSharp;
-using dnlib.DotNet;
 
 namespace ICSharpCode.Decompiler
 {
