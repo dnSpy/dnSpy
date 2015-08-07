@@ -24,6 +24,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
 using System.Xml.Linq;
+using dnSpy.Options;
 
 namespace ICSharpCode.ILSpy.Options {
 	[ExportOptionPage(Title = "Display", Order = 1)]
@@ -110,8 +111,8 @@ namespace ICSharpCode.ILSpy.Options {
 		public static DisplaySettings LoadDisplaySettings(ILSpySettings settings) {
 			XElement e = settings["DisplaySettings"];
 			DisplaySettings s = new DisplaySettings();
-			s.SelectedFont = new FontFamily(SessionSettings.Unescape((string)e.Attribute("Font")) ?? GetDefaultFont());
-			s.SelectedFontSize = (double?)e.Attribute("FontSize") ?? 10.0 * 4 / 3;
+			s.SelectedFont = new FontFamily(SessionSettings.Unescape((string)e.Attribute("Font")) ?? FontUtils.GetDefaultFont());
+			s.SelectedFontSize = (double?)e.Attribute("FontSize") ?? FontUtils.DEFAULT_FONT_SIZE;
 			s.ShowLineNumbers = (bool?)e.Attribute("ShowLineNumbers") ?? true;
 			s.ShowMetadataTokens = (bool?)e.Attribute("ShowMetadataTokens") ?? true;
 			s.ShowAssemblyVersion = (bool?)e.Attribute("ShowAssemblyVersion") ?? true;
@@ -126,13 +127,6 @@ namespace ICSharpCode.ILSpy.Options {
 			s.SingleClickExpandsChildren = (bool?)e.Attribute("SingleClickExpandsChildren") ?? true;
 
 			return s;
-		}
-
-		static string GetDefaultFont() {
-			// Consolas first appeared in Windows Vista (v6.0)
-			if (Environment.OSVersion.Version >= new Version(6, 0, 0, 0))
-				return "Consolas";
-			return "Lucida Console";
 		}
 
 		public override RefreshFlags Save(XElement root) {

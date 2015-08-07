@@ -5737,7 +5737,7 @@
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowILBytes}">Show IL instruction bytes</CheckBox>
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowILComments}">Show IL opcode comments</CheckBox>
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.SortMembers}">Sort methods, fields, properties, events and types</CheckBox>
-            <GroupBox Margin="0 5 0 0" Header="Decompilation order" ToolTip="The TreeView uses these settings once you restart dnSpy">
+            <GroupBox Margin="0 5 0 0" Header="Decompilation order">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -5768,25 +5768,21 @@
             <GroupBox Header="Font">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="50" />
                     </Grid.RowDefinitions>
-                    <Label Margin="3,0">Font:</Label>
-                    <ComboBox x:Name="fontSelector" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" SelectedItem="{Binding Settings.SelectedFont}" ItemsSource="{Binding Fonts}" Grid.Column="1">
+                    <ComboBox Grid.Column="0" Margin="3,0" x:Name="fontSelector" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" SelectedItem="{Binding Settings.SelectedFont}" ItemsSource="{Binding Fonts}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Source}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-                    <Label Grid.Column="2" Margin="3,0">Size:</Label>
-                    <ComboBox Grid.Column="3" Text="{Binding Settings.SelectedFontSize, Converter={StaticResource fontSizeConv}}" IsEditable="True" Margin="3,0">
+                    <ComboBox Grid.Column="1" Text="{Binding Settings.SelectedFontSize, Converter={StaticResource fontSizeConv}}" IsEditable="True" Margin="3,0">
                         <ComboBoxItem>6</ComboBoxItem>
                         <ComboBoxItem>7</ComboBoxItem>
                         <ComboBoxItem>8</ComboBoxItem>
@@ -5808,11 +5804,11 @@
                         <ComboBoxItem>24</ComboBoxItem>
                     </ComboBox>
                     <Border Grid.Row="1" Grid.ColumnSpan="4" BorderBrush="{DynamicResource SystemColorsControlDarkDark}" BorderThickness="1" Background="{DynamicResource SystemColorsWindow}" Margin="3,5">
-                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="AaBbCcXxYyZz" FontFamily="{Binding Settings.SelectedFont}" FontSize="{Binding Settings.SelectedFontSize}" />
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="AaBbCcIiOoXxYyZz" FontFamily="{Binding Settings.SelectedFont}" FontSize="{Binding Settings.SelectedFontSize}" />
                     </Border>
                 </Grid>
             </GroupBox>
-            <GroupBox Header="Other options" Grid.Row="1">
+            <GroupBox Header="Other Options" Grid.Row="1">
                 <StackPanel Margin="3">
                     <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowLineNumbers}">Show line numbers</CheckBox>
                     <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowMetadataTokens}">Show metadata tokens</CheckBox>

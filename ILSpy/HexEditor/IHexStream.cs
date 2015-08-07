@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections;
-
 namespace dnSpy.HexEditor {
 	public interface IHexStream {
 		/// <summary>
@@ -26,6 +24,11 @@ namespace dnSpy.HexEditor {
 		/// whole 64-bit address space is used. See also <see cref="EndOffset"/>.
 		/// </summary>
 		ulong Size { get; }
+
+		/// <summary>
+		/// First valid offset
+		/// </summary>
+		ulong StartOffset { get; }
 
 		/// <summary>
 		/// Last valid offset. See also <see cref="Size"/>
@@ -47,6 +50,22 @@ namespace dnSpy.HexEditor {
 		/// <param name="array">Array</param>
 		/// <param name="index">Index in <paramref name="array"/></param>
 		/// <param name="count">Size of data to read</param>
-		void Read(ulong offset, byte[] array, int index, int count);
+		void Read(ulong offset, byte[] array, long index, int count);
+
+		/// <summary>
+		/// Writes a byte
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <param name="b">Value</param>
+		void Write(ulong offset, byte b);
+
+		/// <summary>
+		/// Writes bytes
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <param name="array">Data to write</param>
+		/// <param name="index">Index in <paramref name="array"/></param>
+		/// <param name="count">Number of bytes to write</param>
+		void Write(ulong offset, byte[] array, long index, int count);
 	}
 }

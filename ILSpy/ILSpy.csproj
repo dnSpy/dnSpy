@@ -314,6 +314,7 @@
     </Compile>
     <Compile Include="AsmEditor\Hex\GoToOffsetVM.cs" />
     <Compile Include="AsmEditor\Hex\HexSettings.cs" />
+    <Compile Include="AsmEditor\Hex\InstructionUtils.cs" />
     <Compile Include="AsmEditor\Hex\LocalHexSettings.cs" />
     <Compile Include="AsmEditor\Hex\LocalSettingsDlg.xaml.cs">
       <DependentUpon>LocalSettingsDlg.xaml</DependentUpon>
@@ -323,6 +324,7 @@
       <DependentUpon>SelectDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Hex\SelectVM.cs" />
+    <Compile Include="AsmEditor\Hex\WriteHexUndoCommand.cs" />
     <Compile Include="AsmEditor\IIndexedItem.cs" />
     <Compile Include="AsmEditor\IndexObservableCollection.cs" />
     <Compile Include="AsmEditor\InstructionCommands.cs" />
@@ -543,13 +545,16 @@
     <Compile Include="dntheme\FileTabBackgroundConverter.cs" />
     <Compile Include="FilterSearcher.cs" />
     <Compile Include="HexEditor\ByteArrayHexStream.cs" />
+    <Compile Include="HexEditor\ClipboardUtils.cs" />
     <Compile Include="HexEditor\DataFormatter.cs" />
     <Compile Include="HexEditor\HexBox.cs" />
     <Compile Include="HexEditor\HexBoxPosition.cs" />
     <Compile Include="HexEditor\HexBoxPositionKind.cs" />
     <Compile Include="HexEditor\HexBoxState.cs" />
+    <Compile Include="HexEditor\HexBoxWriteEventArgs.cs" />
     <Compile Include="HexEditor\HexCaret.cs" />
     <Compile Include="HexEditor\HexDocument.cs" />
+    <Compile Include="HexEditor\HexDocumentModifiedEventArgs.cs" />
     <Compile Include="HexEditor\HexLine.cs" />
     <Compile Include="HexEditor\HexLineLayer.cs" />
     <Compile Include="HexEditor\HexLinePart.cs" />
@@ -576,6 +581,7 @@
     </Compile>
     <Compile Include="Options\DecompilerSettingsPanel.cs" />
     <Compile Include="Options\DisplaySettingsPanel.cs" />
+    <Compile Include="Options\FontUtils.cs" />
     <Compile Include="Options\OtherSettings.cs" />
     <Compile Include="SavedTabState.cs" />
     <Compile Include="SourceCodeMappingUtils.cs" />

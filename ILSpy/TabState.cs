@@ -33,7 +33,6 @@ using dnSpy.dntheme;
 using dnSpy.HexEditor;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 
@@ -403,8 +402,8 @@ namespace dnSpy.Tabs {
 			scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
 			this.TabItem.Content = scroller;
 
-			this.HexBox.SetBinding(Control.FontFamilyProperty, new Binding("SelectedFont") { Source = DisplaySettingsPanel.CurrentDisplaySettings });
-			this.HexBox.SetBinding(Control.FontSizeProperty, new Binding("SelectedFontSize") { Source = DisplaySettingsPanel.CurrentDisplaySettings });
+			this.HexBox.SetBinding(Control.FontFamilyProperty, new Binding("FontFamily") { Source = HexSettings.Instance });
+			this.HexBox.SetBinding(Control.FontSizeProperty, new Binding("FontSize") { Source = HexSettings.Instance });
 			this.HexBox.SetResourceReference(Control.BackgroundProperty, GetBackgroundResourceKey(ColorType.HexText));
 			this.HexBox.SetResourceReference(Control.ForegroundProperty, GetForegroundResourceKey(ColorType.HexText));
 			this.HexBox.SetResourceReference(HexBox.OffsetForegroundProperty, GetForegroundResourceKey(ColorType.HexOffset));
@@ -534,8 +533,15 @@ namespace dnSpy.Tabs {
 		}
 
 		public void InitializeStartEndOffset() {
-			HexBox.StartOffset = 0;
+			HexBox.StartOffset = DocumentStartOffset;
 			HexBox.EndOffset = DocumentEndOffset;
+		}
+
+		public ulong DocumentStartOffset {
+			get {
+				var doc = HexBox.Document;
+				return doc == null ? 0 : doc.StartOffset;
+			}
 		}
 
 		public ulong DocumentEndOffset {

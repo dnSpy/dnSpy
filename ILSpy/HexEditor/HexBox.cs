@@ -46,8 +46,8 @@ namespace dnSpy.HexEditor {
 		List<IHexLayer> layers = new List<IHexLayer>();
 		readonly Canvas bgCanvas;
 
-		List<HexLine> hexLines = new List<HexLine>();
-		Dictionary<ulong, HexLine> offsetToLine = new Dictionary<ulong, HexLine>();
+		readonly List<HexLine> hexLines = new List<HexLine>();
+		readonly Dictionary<ulong, HexLine> offsetToLine = new Dictionary<ulong, HexLine>();
 
 		public static readonly DependencyProperty DocumentProperty =
 			DependencyProperty.Register("Document", typeof(HexDocument), typeof(HexBox),
@@ -214,7 +214,7 @@ namespace dnSpy.HexEditor {
 			if (!IsLoaded)
 				return;
 
-			//TODO: hook events, unhook events from old doc, invalidate layers, etc
+			doc.OnDocumentModified += OnDocumentModified;
 			InvalidateCachedLinesAndRefresh();
 		}
 
@@ -222,7 +222,7 @@ namespace dnSpy.HexEditor {
 			if (doc == null)
 				return;
 
-			//TODO: Undo what AddHooks() did
+			doc.OnDocumentModified -= OnDocumentModified;
 			InvalidateCachedLinesAndRefresh();
 		}
 
@@ -357,16 +357,20 @@ namespace dnSpy.HexEditor {
 
 			this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (s, e) => Copy(), (s, e) => e.CanExecute = CanCopyToClipboard()));
 			this.CommandBindings.Add(new CommandBinding(ApplicationCommands.SelectAll, (s, e) => SelectAll()));
+			this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Paste, (s, e) => Paste(), (s, e) => e.CanExecute = CanPaste()));
+			this.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, (s, e) => ClearBytes()));
 			this.CommandBindings.Add(new CommandBinding(CopyHexStringCommand, (s, e) => CopyHexString(), (s, e) => e.CanExecute = CanCopyToClipboard()));
 			Add(CopyUTF8StringCommand, ModifierKeys.Control | ModifierKeys.Shift, Key.D8, (s, e) => CopyUTF8String(), (s, e) => e.CanExecute = CanCopyToClipboard());
 			Add(CopyUnicodeStringCommand, ModifierKeys.Control | ModifierKeys.Shift, Key.U, (s, e) => CopyUnicodeString(), (s, e) => e.CanExecute = CanCopyToClipboard());
 			Add(CopyCSharpArrayCommand, ModifierKeys.Control | ModifierKeys.Shift, Key.P, (s, e) => CopyCSharpArray(), (s, e) => e.CanExecute = CanCopyToClipboard());
 			Add(CopyVBArrayCommand, ModifierKeys.Control | ModifierKeys.Shift, Key.B, (s, e) => CopyVBArray(), (s, e) => e.CanExecute = CanCopyToClipboard());
 			Add(CopyUIContentsCommand, ModifierKeys.Control | ModifierKeys.Shift, Key.C, (s, e) => CopyUIContents(), (s, e) => e.CanExecute = CanCopyToClipboard());
-			Add(CopyAddressCommand, ModifierKeys.Control | ModifierKeys.Alt, Key.A, (s, e) => CopyAddress());
+			Add(CopyOffsetCommand, ModifierKeys.Control | ModifierKeys.Alt, Key.O, (s, e) => CopyOffset());
 			this.CommandBindings.Add(new CommandBinding(ToggleLowerCaseHexCommand, (s, e) => LowerCaseHex = !LowerCaseHex));
 			this.CommandBindings.Add(new CommandBinding(LowerCaseHexCommand, (s, e) => LowerCaseHex = true));
 			this.CommandBindings.Add(new CommandBinding(UpperCaseHexCommand, (s, e) => LowerCaseHex = false));
+			Add(PasteUtf8Command, ModifierKeys.Control, Key.D8, (s, e) => PasteUtf8(), (s, e) => e.CanExecute = CanPasteUtf8());
+			Add(PasteUnicodeCommand, ModifierKeys.Control, Key.U, (s, e) => PasteUnicode(), (s, e) => e.CanExecute = CanPasteUnicode());
 		}
 
 		bool CanCopyToClipboard() {
@@ -390,10 +394,12 @@ namespace dnSpy.HexEditor {
 		public static readonly RoutedUICommand CopyCSharpArrayCommand = new RoutedUICommand("Copy C# Array", "Copy C# Array", typeof(HexBox));
 		public static readonly RoutedUICommand CopyVBArrayCommand = new RoutedUICommand("Copy VB Array", "Copy VB Array", typeof(HexBox));
 		public static readonly RoutedUICommand CopyUIContentsCommand = new RoutedUICommand("Copy UI Contents", "Copy UI Contents", typeof(HexBox));
-		public static readonly RoutedUICommand CopyAddressCommand = new RoutedUICommand("Copy Address", "Copy Address", typeof(HexBox));
+		public static readonly RoutedUICommand CopyOffsetCommand = new RoutedUICommand("Copy Offset", "Copy Offset", typeof(HexBox));
 		public static readonly RoutedUICommand ToggleLowerCaseHexCommand = new RoutedUICommand("Toggle Lower Case Hex", "Toggle Lower Case Hex", typeof(HexBox));
 		public static readonly RoutedUICommand LowerCaseHexCommand = new RoutedUICommand("Lower Case Hex", "Lower Case Hex", typeof(HexBox));
 		public static readonly RoutedUICommand UpperCaseHexCommand = new RoutedUICommand("Upper Case Hex", "Upper Case Hex", typeof(HexBox));
+		public static readonly RoutedUICommand PasteUtf8Command = new RoutedUICommand("Paste UTF-8", "Paste UTF-8", typeof(HexBox));
+		public static readonly RoutedUICommand PasteUnicodeCommand = new RoutedUICommand("Paste Unicode", "Paste Unicode", typeof(HexBox));
 
 		void Add(ICommand command, ModifierKeys modifiers, Key key, ExecutedRoutedEventHandler exec, CanExecuteRoutedEventHandler canExec = null) {
 			this.CommandBindings.Add(new CommandBinding(command, exec, canExec));
@@ -465,7 +471,7 @@ namespace dnSpy.HexEditor {
 		void InitializeFontProperties() {
 			var textRunProps = CreateHexTextRunProperties();
 			var paraProps = CreateHexTextParagraphProperties(textRunProps);
-			var hexLine = new HexLine(0, "O", new HexLinePart[1] { new HexLinePart(0, 1, textRunProps) });
+			var hexLine = new HexLine(0, 0, "O", new HexLinePart[1] { new HexLinePart(0, 1, textRunProps) });
 			var hexLineTextSource = new HexLineTextSource(hexLine);
 			using (var textLine = textFormatter.FormatLine(hexLineTextSource, 0, 10000, paraProps, null)) {
 				characterWidth = textLine.Width;
@@ -682,7 +688,7 @@ namespace dnSpy.HexEditor {
 			}
 			double y = index * characterHeight;
 			var hexLine = hexLines[index];
-			ulong byteIndex = position.Offset - hexLine.Offset;
+			ulong byteIndex = position.Offset - hexLine.StartOffset;
 			Rect? rectHex = GetCharacterRect(hexLine, y, (int)(GetHexByteColumnIndex() + byteIndex * 3 + 1 + position.KindPosition));
 			Rect? rectAsc = GetCharacterRect(hexLine, y, (int)(GetAsciiColumnIndex() + byteIndex));
 			if (!ShowAscii)
@@ -699,7 +705,7 @@ namespace dnSpy.HexEditor {
 		bool IsCaretVisible(HexBoxPosition position) {
 			if (hexLines.Count == 0)
 				return false;
-			return hexLines[0].Offset <= position.Offset && position.Offset <= NumberUtils.AddUInt64(hexLines[hexLines.Count - 1].Offset, (ulong)(visibleBytesPerLine - 1));
+			return hexLines[0].StartOffset <= position.Offset && position.Offset <= NumberUtils.AddUInt64(hexLines[hexLines.Count - 1].StartOffset, (ulong)(visibleBytesPerLine - 1));
 		}
 
 		HexPositionUI GetDocumentPosition(Point pos) {
@@ -801,12 +807,12 @@ namespace dnSpy.HexEditor {
 				y += hexLine.Height;
 			}
 			foreach (var line in hexLines)
-				offsetToLine.Remove(line.Offset);
+				offsetToLine.Remove(line.StartOffset);
 			foreach (var line in offsetToLine.Values)
 				line.Dispose();
 			offsetToLine.Clear();
 			foreach (var line in hexLines)
-				offsetToLine.Add(line.Offset, line);
+				offsetToLine.Add(line.StartOffset, line);
 		}
 
 		internal List<HexLine> CreateHexLines(ulong start, ulong end) {
@@ -877,7 +883,7 @@ namespace dnSpy.HexEditor {
 				sb2.Clear();
 			}
 
-			return new HexLine(offset, sb.ToString(), parts.ToArray());
+			return new HexLine(offset, offset + (ulong)(bytes == 0 ? 0 : bytes - 1), sb.ToString(), parts.ToArray());
 		}
 
 		HexLine GetHexLine(ulong offset, List<HexLinePart> parts, TextRunProperties textRunProps, TextParagraphProperties paraProps, StringBuilder sb, StringBuilder sb2, double width, short[] bytesAry) {
@@ -1842,11 +1848,11 @@ namespace dnSpy.HexEditor {
 				CopyUIContents(Selection.Value.StartOffset, Selection.Value.EndOffset);
 		}
 
-		public void CopyAddress() {
-			CopyAddress(CaretPosition.Offset);
+		public void CopyOffset() {
+			CopyOffset(CaretPosition.Offset);
 		}
 
-		void CopyAddress(ulong offset) {
+		void CopyOffset(ulong offset) {
 			ulong visibleOffs = PhysicalToVisibleOffset(offset);
 			var s = string.Format(offsetFormatString, UseHexPrefix ? "0x" : string.Empty, visibleOffs & offsetMask);
 			Clipboard.SetText(s);
@@ -1884,6 +1890,201 @@ namespace dnSpy.HexEditor {
 		public void MoveTo(ulong offset, bool bringCaretIntoView = true) {
 			SetCaretPosition(new HexBoxPosition(offset, CaretPosition.Kind, CaretPosition.KindPosition), bringCaretIntoView);
 		}
+
+		void OnDocumentModified(object sender, HexDocumentModifiedEventArgs e) {
+			if (InvalidateLines(e.StartOffset, e.EndOffset))
+				InvalidateMeasure();
+		}
+
+		bool InvalidateLines(ulong startOffset, ulong endOffset) {
+			int linesCount = offsetToLine.Count;
+			foreach (var kv in offsetToLine.ToArray()) {
+				var line = kv.Value;
+				if (startOffset <= line.EndOffset && endOffset >= line.StartOffset) {
+					bool b = offsetToLine.Remove(kv.Key);
+					Debug.Assert(b);
+				}
+			}
+			return linesCount != offsetToLine.Count;
+		}
+
+		public void PasteUtf8() {
+			PasteUtf8(Clipboard.GetText());
+		}
+
+		public void PasteUtf8(string s) {
+			if (!CanPasteUtf8(s))
+				return;
+			Paste(Encoding.UTF8.GetBytes(s));
+		}
+
+		public bool CanPasteUtf8() {
+			return CanPasteUtf8(Clipboard.GetText());
+		}
+
+		public bool CanPasteUtf8(string s) {
+			return Document != null && s != null && s.Length != 0;
+		}
+
+		public void PasteUnicode() {
+			PasteUnicode(Clipboard.GetText());
+		}
+
+		public void PasteUnicode(string s) {
+			if (!CanPasteUnicode(s))
+				return;
+			Paste(Encoding.Unicode.GetBytes(s));
+		}
+
+		public bool CanPasteUnicode() {
+			return CanPasteUnicode(Clipboard.GetText());
+		}
+
+		public bool CanPasteUnicode(string s) {
+			return Document != null && s != null && s.Length != 0;
+		}
+
+		public void Paste() {
+			Paste(ClipboardUtils.GetData());
+		}
+
+		public void Paste(byte[] data) {
+			if (!CanPaste(data))
+				return;
+
+			NotifyBeforeWrite(data.Length);
+			Document.Write(CaretPosition.Offset, data, 0, data.Length);
+			SetCaretPosition(new HexBoxPosition(NumberUtils.AddUInt64(CaretPosition.Offset, (ulong)data.Length), CaretPosition.Kind, 0));
+			Selection = null;
+			BringCaretIntoView();
+			NotifyAfterWrite(data.Length);
+		}
+
+		public bool CanPaste() {
+			return CanPaste(ClipboardUtils.GetData());
+		}
+
+		public bool CanPaste(byte[] data) {
+			return Document != null && data != null && data.Length != 0;
+		}
+
+		protected override void OnTextInput(TextCompositionEventArgs e) {
+			if (!e.Handled && HandleTextInput(e.Text)) {
+				e.Handled = true;
+				return;
+			}
+			base.OnTextInput(e);
+		}
+
+		public bool HandleTextInput(string text) {
+			if (Document == null)
+				return false;
+
+			bool unselect = false;
+			switch (CaretPosition.Kind) {
+			case HexBoxPositionKind.HexByte:
+				foreach (var c in text) {
+					if (HandleHexByteInput(c)) {
+						unselect = true;
+						MoveCaretRight();
+					}
+				}
+				break;
+
+			case HexBoxPositionKind.Ascii:
+				foreach (var c in text) {
+					if (HandleHexAsciiInput(c)) {
+						unselect = true;
+						MoveCaretRight();
+					}
+				}
+				break;
+
+			default:
+				throw new InvalidOperationException();
+			}
+
+			if (unselect)
+				Selection = null;
+			return true;
+		}
+
+		bool HandleHexByteInput(char c) {
+			int h = ClipboardUtils.TryParseHexChar(c);
+			if (h < 0)
+				return false;
+
+			int b = Document.ReadByte(CaretPosition.Offset);
+			if (b >= 0) {
+				NotifyBeforeWrite(1);
+				if (CaretPosition.KindPosition == HexBoxPosition.INDEX_HEXBYTE_HI)
+					b = (b & 0x0F) | (h << 4);
+				else
+					b = (b & 0xF0) | h;
+				Document.Write(CaretPosition.Offset, (byte)b);
+				NotifyAfterWrite(1);
+			}
+			return true;
+		}
+
+		bool HandleHexAsciiInput(char c) {
+			if (c > 0x7E)
+				return false;
+
+			NotifyBeforeWrite(1);
+			Document.Write(CaretPosition.Offset, (byte)c);
+			NotifyAfterWrite(1);
+			return true;
+		}
+
+		public void ClearBytes() {
+			FillBytes(0);
+		}
+
+		void FillBytes(byte b) {
+			if (Selection == null) {
+				FillBytes(CaretPosition.Offset, CaretPosition.Offset, b);
+				SetCaretPosition(new HexBoxPosition(NumberUtils.AddUInt64(CaretPosition.Offset, 1), CaretPosition.Kind, 0));
+			}
+			else
+				FillBytes(Selection.Value.StartOffset, Selection.Value.EndOffset, b);
+			Selection = null;
+		}
+
+		void FillBytes(ulong startOffset, ulong endOffset, byte b) {
+			if (Document == null)
+				return;
+			if (endOffset < startOffset)
+				return;
+			ulong count = startOffset == 0 && endOffset == ulong.MaxValue ? ulong.MaxValue : endOffset - startOffset + 1;
+			if (count > int.MaxValue)
+				count = int.MaxValue;
+
+			NotifyBeforeWrite((int)count);
+			ulong offs = startOffset;
+			ulong end = offs + count - 1;
+			while (offs <= end) {
+				Document.Write(offs, b);
+				if (offs++ == ulong.MaxValue)
+					break;
+			}
+			NotifyAfterWrite((int)count);
+		}
+
+		void NotifyBeforeWrite(int count) {
+			NotifyWrite(count, true);
+		}
+
+		void NotifyAfterWrite(int count) {
+			NotifyWrite(count, false);
+		}
+
+		void NotifyWrite(int count, bool isBeforeWrite) {
+			if (OnWrite != null)
+				OnWrite(this, new HexBoxWriteEventArgs(count, isBeforeWrite));
+		}
+
+		public event EventHandler<HexBoxWriteEventArgs> OnWrite;
 
 		public override string ToString() {
 			return string.Format("HexBox: {0}", Document == null ? null : Document.Name);

@@ -16,7 +16,6 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Windows.Input;
 
 namespace ICSharpCode.ILSpy
@@ -33,12 +32,12 @@ namespace ICSharpCode.ILSpy
 		public bool IsVisible(TextViewContext context)
 		{
 			// Only show if tab context menu
-			return context.TabControl != null;
+			return context.TabControl != null && CanExecute(null);
 		}
 
 		public bool IsEnabled(TextViewContext context)
 		{
-			return base.CanExecute(null);
+			return CanExecute(null);
 		}
 
 		public void Execute(TextViewContext context)

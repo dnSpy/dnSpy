@@ -27,6 +27,10 @@ namespace dnSpy.HexEditor {
 			get { return (ulong)data.LongLength; }
 		}
 
+		public ulong StartOffset {
+			get { return 0; }
+		}
+
 		public ulong EndOffset {
 			get { return data.LongLength == 0 ? 0 : (ulong)data.LongLength - 1; }
 		}
@@ -41,9 +45,9 @@ namespace dnSpy.HexEditor {
 			return data[offset];
 		}
 
-		public void Read(ulong offset, byte[] array, int index, int count) {
+		public void Read(ulong offset, byte[] array, long index, int count) {
 			if (offset >= (ulong)data.LongLength) {
-				Array.Clear(array, index, count);
+				Clear(array, index, count);
 				return;
 			}
 
@@ -52,7 +56,36 @@ namespace dnSpy.HexEditor {
 			Array.Copy(data, (long)offset, array, index, validBytes);
 			count -= (int)validBytes;
 			if (count > 0)
-				Array.Clear(array, index + (int)validBytes, count);
+				Clear(array, index + (int)validBytes, count);
+		}
+
+		public void Write(ulong offset, byte b) {
+			if (offset >= (ulong)data.LongLength)
+				return;
+
+			data[offset] = b;
+		}
+
+		public void Write(ulong offset, byte[] array, long index, int count) {
+			if (offset >= (ulong)data.LongLength)
+				return;
+
+			long bytesLeft = data.LongLength - (long)offset;
+			long validBytes = count <= bytesLeft ? count : bytesLeft;
+			Array.Copy(array, index, data, (long)offset, validBytes);
+		}
+
+		void Clear(byte[] array, long index, int count) {
+			if (count == 0)
+				return;
+			if (index <= int.MaxValue && index + count - 1 <= int.MaxValue) {
+				Array.Clear(array, (int)index, count);
+				return;
+			}
+
+			long i = index;
+			while (count-- > 0)
+				array[i++] = 0;
 		}
 	}
 }

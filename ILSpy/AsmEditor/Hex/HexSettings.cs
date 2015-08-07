@@ -17,8 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Media;
+using System.Windows.Threading;
 using System.Xml.Linq;
+using dnSpy.Options;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Options;
 
@@ -26,11 +31,11 @@ namespace dnSpy.AsmEditor.Hex {
 	[ExportOptionPage(Title = "Hex Editor", Order = 2)]
 	sealed class HexSettingsCreator : IOptionPageCreator {
 		public OptionPage Create() {
-			return new HexSettings();
+			return new HexSettingsVM();
 		}
 	}
 
-	sealed class HexSettings : OptionPage {
+	class HexSettings : OptionPage {
 		public static int MAX_BYTES_PER_LINE = 128;
 
 		public static HexSettings Instance {
@@ -51,9 +56,7 @@ namespace dnSpy.AsmEditor.Hex {
 				Min = 0,
 				Max = MAX_BYTES_PER_LINE,
 			};
-        }
-
-		//TODO: Also font and font size
+		}
 
 		public Int32VM BytesGroupCountVM {
 			get { return bytesGroupCountVM; }
@@ -108,6 +111,28 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 		bool lowerCaseHex;
 
+		public FontFamily FontFamily {
+			get { return fontFamily; }
+			set {
+				if (fontFamily != value) {
+					fontFamily = value;
+					OnPropertyChanged("FontFamily");
+				}
+			}
+		}
+		FontFamily fontFamily;
+
+		public double FontSize {
+			get { return fontSize; }
+			set {
+				if (fontSize != value) {
+					fontSize = FontUtils.FilterFontSize(value);
+					OnPropertyChanged("FontSize");
+				}
+			}
+		}
+		double fontSize;
+
 		const string SETTINGS_SECTION_NAME = "HexSettings";
 		public override void Load(ILSpySettings settings) {
 			var xelem = settings[SETTINGS_SECTION_NAME];
@@ -116,6 +141,8 @@ namespace dnSpy.AsmEditor.Hex {
 			this.UseHexPrefix = (bool?)xelem.Attribute("UseHexPrefix") ?? false;
 			this.ShowAscii = (bool?)xelem.Attribute("ShowAscii") ?? true;
 			this.LowerCaseHex = (bool?)xelem.Attribute("LowerCaseHex") ?? false;
+			this.FontFamily = new FontFamily(SessionSettings.Unescape((string)xelem.Attribute("FontFamily")) ?? FontUtils.GetDefaultFont());
+			this.FontSize = (double?)xelem.Attribute("FontSize") ?? FontUtils.DEFAULT_FONT_SIZE;
 		}
 
 		public override RefreshFlags Save(XElement root) {
@@ -126,6 +153,8 @@ namespace dnSpy.AsmEditor.Hex {
 			xelem.SetAttributeValue("UseHexPrefix", this.UseHexPrefix);
 			xelem.SetAttributeValue("ShowAscii", this.ShowAscii);
 			xelem.SetAttributeValue("LowerCaseHex", this.LowerCaseHex);
+			xelem.SetAttributeValue("FontFamily", SessionSettings.Escape(this.FontFamily.Source));
+			xelem.SetAttributeValue("FontSize", this.FontSize);
 
 			var currElem = root.Element(SETTINGS_SECTION_NAME);
 			if (currElem != null)
@@ -144,6 +173,8 @@ namespace dnSpy.AsmEditor.Hex {
 			other.UseHexPrefix = this.UseHexPrefix;
 			other.ShowAscii = this.ShowAscii;
 			other.LowerCaseHex = this.LowerCaseHex;
+			other.FontFamily = this.FontFamily;
+			other.FontSize = this.FontSize;
 		}
 
 		public override bool HasError {
@@ -151,6 +182,33 @@ namespace dnSpy.AsmEditor.Hex {
 				return BytesGroupCountVM.HasError ||
 					BytesPerLineVM.HasError;
 			}
+		}
+	}
+
+	sealed class HexSettingsVM : HexSettings {
+		public FontFamily[] Fonts {
+			get { return fonts; }
+			set {
+				if (fonts != value) {
+					fonts = value;
+					OnPropertyChanged("Fonts");
+				}
+			}
+		}
+		FontFamily[] fonts;
+
+		public HexSettingsVM() {
+			var task = new Task<FontFamily[]>(FontUtils.GetMonospacedFonts);
+			task.Start();
+			task.ContinueWith(continuation => {
+				App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, (Action)(() => {
+					this.Fonts = task.Result;
+					if (continuation.Exception != null) {
+						foreach (var ex in continuation.Exception.InnerExceptions)
+							MainWindow.Instance.ShowMessageBox(ex.ToString());
+					}
+				}));
+			});
 		}
 	}
 }

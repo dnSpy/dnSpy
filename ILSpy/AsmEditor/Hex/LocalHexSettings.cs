@@ -46,7 +46,7 @@ namespace dnSpy.AsmEditor.Hex {
 			this.HexOffsetSize = tabState.HexBox.HexOffsetSize;
 			this.UseRelativeOffsets = tabState.HexBox.UseRelativeOffsets;
 			this.BaseOffset = tabState.HexBox.BaseOffset;
-			this.StartOffset = tabState.HexBox.StartOffset == 0 ? (ulong?)null : tabState.HexBox.StartOffset;
+			this.StartOffset = tabState.HexBox.StartOffset == tabState.DocumentStartOffset ? (ulong?)null : tabState.HexBox.StartOffset;
 			this.EndOffset = tabState.HexBox.EndOffset == tabState.DocumentEndOffset ? (ulong?)null : tabState.HexBox.EndOffset;
 		}
 
@@ -59,7 +59,7 @@ namespace dnSpy.AsmEditor.Hex {
 			tabState.HexBox.HexOffsetSize = this.HexOffsetSize;
 			tabState.HexBox.UseRelativeOffsets = this.UseRelativeOffsets;
 			tabState.HexBox.BaseOffset = this.BaseOffset;
-			tabState.HexBox.StartOffset = this.StartOffset ?? 0;
+			tabState.HexBox.StartOffset = this.StartOffset ?? tabState.DocumentStartOffset;
 			tabState.HexBox.EndOffset = this.EndOffset ?? tabState.DocumentEndOffset;
 		}
 	}

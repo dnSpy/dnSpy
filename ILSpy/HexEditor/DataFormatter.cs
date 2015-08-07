@@ -108,7 +108,7 @@ namespace dnSpy.HexEditor {
 					break;
 			}
 
-			dataObj.SetData(DataFormats.Text, sb.ToString());
+			dataObj.SetText(sb.ToString());
 		}
 	}
 
@@ -118,7 +118,7 @@ namespace dnSpy.HexEditor {
 
 		protected override void InitializeDataObject(DataObject dataObj) {
 			var s = Encoding.UTF8.GetString(ReadByteArray());
-			dataObj.SetData(DataFormats.Text, s);
+			dataObj.SetText(s);
 		}
 	}
 
@@ -128,7 +128,7 @@ namespace dnSpy.HexEditor {
 
 		protected override void InitializeDataObject(DataObject dataObj) {
 			var s = Encoding.Unicode.GetString(ReadByteArray());
-			dataObj.SetData(DataFormats.Text, s);
+			dataObj.SetText(s);
 		}
 	}
 
@@ -174,7 +174,7 @@ namespace dnSpy.HexEditor {
 			sb.Append(allocStringEnd);
 			sb.AppendLine();
 
-			dataObj.SetData(DataFormats.Text, sb.ToString());
+			dataObj.SetText(sb.ToString());
 		}
 	}
 
@@ -215,7 +215,7 @@ namespace dnSpy.HexEditor {
 				sb.AppendLine();
 			}
 
-			dataObj.SetData(DataFormats.Text, sb.ToString());
+			dataObj.SetText(sb.ToString());
 		}
 
 		void CopyHtml(DataObject dataObj, List<HexLine> lines) {

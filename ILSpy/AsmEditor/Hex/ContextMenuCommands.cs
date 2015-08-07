@@ -83,7 +83,7 @@ namespace dnSpy.AsmEditor.Hex {
 		internal static void ExecuteInternal(TextViewContext context) {
 			var node = GetNode(context);
 			if (node != null)
-				MainWindow.Instance.OpenOrShowHexBox(node);
+				MainWindow.Instance.OpenOrShowHexBox(node.LoadedAssembly.FileName);
 		}
 
 		public bool IsEnabled(TextViewContext context) {
@@ -251,7 +251,9 @@ namespace dnSpy.AsmEditor.Hex {
 			if (context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length == 1 && context.SelectedTreeNodes[0] is IMemberTreeNode)
 				return MainWindow.ResolveReference(((IMemberTreeNode)context.SelectedTreeNodes[0]).Member);
 
-			if (context.Reference != null && context.Reference.Reference is IMemberRef) {
+			// Only allow declarations of the defs, i.e., right-clicking a method call with a method
+			// def as reference should return null, not the method def.
+			if (context.Reference != null && context.Reference.IsLocalTarget && context.Reference.Reference is IMemberRef) {
 				// Don't resolve it. It's confusing if we show the method body of a called method
 				// instead of the current method.
 				return context.Reference.Reference as IMemberDef;
@@ -274,7 +276,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show Header in Hex Editor", Order = 500.4, Category = "Hex", Icon = "Binary")]
+	[ExportContextMenuEntry(Header = "Show Method Body in Hex Editor", Order = 500.4, Category = "Hex", Icon = "Binary")]
 	sealed class TVShowMethodHeaderInHexEditorContextMenuEntry : IContextMenuEntry {
 		public void Execute(TextViewContext context) {
 			var @ref = GetAddressReference(context);
@@ -294,12 +296,12 @@ namespace dnSpy.AsmEditor.Hex {
 			var md = TVShowMethodInstructionsInHexEditorContextMenuEntry.GetMemberDef(context) as MethodDef;
 			if (md == null)
 				return null;
-			var body = md.Body;
-			if (body == null)
-				return null;
 
-			var mod = md.Module;
-			return new AddressReference(mod == null ? null : mod.Location, true, (ulong)md.RVA, body.HeaderSize);
+			var info = TVChangeBodyHexEditorContextMenuEntry.GetMethodLengthAndOffset(context);
+			if (info != null)
+				return new AddressReference(info.Value.Filename, false, info.Value.Offset, info.Value.Size);
+
+			return null;
 		}
 	}
 
@@ -360,6 +362,73 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 
 			return null;
+		}
+	}
+
+	struct LengthAndOffset {
+		public string Filename;
+		public ulong Offset;
+		public ulong Size;
+
+		public LengthAndOffset(string filename, ulong offs, ulong size) {
+			this.Filename = filename;
+			this.Offset = offs;
+			this.Size = size;
+		}
+	}
+
+	abstract class TVChangeBodyHexEditorContextMenuEntry : IContextMenuEntry {
+		readonly byte[] data;
+		readonly string descr;
+
+		protected TVChangeBodyHexEditorContextMenuEntry(byte[] data, string descr) {
+			this.data = data;
+			this.descr = descr;
+		}
+
+		public void Execute(TextViewContext context) {
+			var info = GetMethodLengthAndOffset(context);
+			if (info == null || info.Value.Size < (ulong)data.Length)
+				return;
+			WriteHexUndoCommand.AddAndExecute(info.Value.Filename, info.Value.Offset, data, descr);
+		}
+
+		public bool IsEnabled(TextViewContext context) {
+			return true;
+		}
+
+		public bool IsVisible(TextViewContext context) {
+			var info = GetMethodLengthAndOffset(context);
+			return info != null && info.Value.Size >= (ulong)data.Length;
+		}
+
+		internal static LengthAndOffset? GetMethodLengthAndOffset(TextViewContext context) {
+			var md = TVShowMethodInstructionsInHexEditorContextMenuEntry.GetMemberDef(context) as MethodDef;
+			if (md == null)
+				return null;
+			var mod = md.Module;
+			if (mod == null || string.IsNullOrEmpty(mod.Location))
+				return null;
+			uint rva;
+			long fileOffset;
+			if (!md.GetRVA(out rva, out fileOffset))
+				return null;
+
+			return new LengthAndOffset(mod.Location, (ulong)fileOffset, InstructionUtils.GetTotalMethodBodyLength(md));
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Hex Write Return True Body", Order = 500.7, Category = "Hex")]
+	sealed class TVChangeBodyToReturnTrueHexEditorContextMenuEntry : TVChangeBodyHexEditorContextMenuEntry {
+		public TVChangeBodyToReturnTrueHexEditorContextMenuEntry()
+			:base(new byte[] { 0x06, 0x17 }, "Hex Write Return True Body") {
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Hex Write Return False Body", Order = 500.8, Category = "Hex")]
+	sealed class TVChangeBodyToReturnFalseHexEditorContextMenuEntry : TVChangeBodyHexEditorContextMenuEntry {
+		public TVChangeBodyToReturnFalseHexEditorContextMenuEntry()
+			: base(new byte[] { 0x06, 0x16 }, "Hex Write Return False Body") {
 		}
 	}
 
@@ -469,7 +538,7 @@ namespace dnSpy.AsmEditor.Hex {
 			if (win.ShowDialog() != true)
 				return;
 
-			hb.Selection = new HexSelection(hb.VisibleToPhysicalOffset(data.StartVM.Value), hb.VisibleToPhysicalOffset(data.EndVM.Value));
+			hb.Selection = new HexSelection(hb.VisibleToPhysicalOffset(data.EndVM.Value), hb.VisibleToPhysicalOffset(data.StartVM.Value));
 			hb.CaretPosition = new HexBoxPosition(hb.VisibleToPhysicalOffset(data.StartVM.Value), hb.CaretPosition.Kind, 0);
 		}
 
@@ -551,7 +620,7 @@ namespace dnSpy.AsmEditor.Hex {
 	[ExportContextMenuEntry(Header = "Show All Bytes", Order = 140, Category = "Misc")]
 	sealed class ShowHoleDocumentHexBoxContextMenuEntry : HexBoxContextMenuEntry {
 		protected override void Execute(HexTabState tabState) {
-			tabState.HexBox.StartOffset = 0;
+			tabState.HexBox.StartOffset = tabState.DocumentStartOffset;
 			tabState.HexBox.EndOffset = tabState.DocumentEndOffset;
 			var sel = tabState.HexBox.Selection;
 			tabState.HexBox.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(delegate {
@@ -563,7 +632,38 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		protected override bool IsVisible(HexTabState tabState) {
-			return tabState.HexBox.StartOffset != 0 || tabState.HexBox.EndOffset != tabState.DocumentEndOffset;
+			return tabState.HexBox.StartOffset != tabState.DocumentStartOffset ||
+				tabState.HexBox.EndOffset != tabState.DocumentEndOffset;
+		}
+	}
+
+	[ExportContextMenuEntry(Order = 200, Category = "Edit", InputGestureText = "Del")]
+	sealed class ClearSelectionHexBoxContextMenuEntry : HexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+			tabState.HexBox.ClearBytes();
+		}
+
+		protected override bool IsVisible(HexTabState tabState) {
+			return true;
+		}
+
+		protected override void Initialize(HexTabState tabState, MenuItem menuItem) {
+			menuItem.Header = tabState.HexBox.Selection != null ? "Clear Selected Bytes" : "Clear Byte";
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Fill Selection with Byte...", Order = 210, Category = "Edit")]
+	sealed class WriteToSelectionSelectionHexBoxContextMenuEntry : HexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+			//TODO:
+		}
+
+		protected override bool IsEnabled(HexTabState tabState) {
+			return tabState.HexBox.Selection != null;
+		}
+
+		protected override bool IsVisible(HexTabState tabState) {
+			return true;
 		}
 	}
 
@@ -714,14 +814,59 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Copy Offset", Order = 660, Category = "Copy", InputGestureText = "Ctrl+Alt+A")]
+	[ExportContextMenuEntry(Header = "Copy Offset", Order = 660, Category = "Copy", InputGestureText = "Ctrl+Alt+O")]
 	sealed class CopyOffsetHexBoxContextMenuEntry : HexBoxContextMenuEntry {
 		protected override void Execute(HexTabState tabState) {
-			tabState.HexBox.CopyAddress();
+			tabState.HexBox.CopyOffset();
 		}
 
 		protected override bool IsVisible(HexTabState tabState) {
 			return true;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "_Paste", Order = 670, Category = "Copy", Icon = "Paste", InputGestureText = "Ctrl+V")]
+	sealed class PasteHexBoxContextMenuEntry : HexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+			tabState.HexBox.Paste();
+		}
+
+		protected override bool IsVisible(HexTabState tabState) {
+			return true;
+		}
+
+		protected override bool IsEnabled(HexTabState tabState) {
+			return tabState.HexBox.CanPaste();
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "_Paste (UTF-8)", Order = 680, Category = "Copy", InputGestureText = "Ctrl+8")]
+	sealed class PasteUtf8HexBoxContextMenuEntry : HexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+			tabState.HexBox.PasteUtf8();
+		}
+
+		protected override bool IsVisible(HexTabState tabState) {
+			return true;
+		}
+
+		protected override bool IsEnabled(HexTabState tabState) {
+			return tabState.HexBox.CanPasteUtf8();
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "_Paste (Unicode)", Order = 690, Category = "Copy", InputGestureText = "Ctrl+U")]
+	sealed class PasteUnicodeHexBoxContextMenuEntry : HexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+			tabState.HexBox.PasteUnicode();
+		}
+
+		protected override bool IsVisible(HexTabState tabState) {
+			return true;
+		}
+
+		protected override bool IsEnabled(HexTabState tabState) {
+			return tabState.HexBox.CanPasteUnicode();
 		}
 	}
 }

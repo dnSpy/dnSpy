@@ -123,8 +123,10 @@ Ctrl+Shift+U| (Hex editor) Copy data as a Unicode string
 Ctrl+Shift+P| (Hex editor) Copy data as a C# array
 Ctrl+Shift+B| (Hex editor) Copy data as a VB array
 Ctrl+Shift+C| (Hex editor) Copy hex editor screen contents
-Ctrl+Alt+A	| (Hex editor) Copy offset
+Ctrl+Alt+O	| (Hex editor) Copy offset
 Ctrl+G		| (Hex editor) Go to offset
+Ctrl+8		| (Hex editor) Paste (UTF-8)
+Ctrl+U		| (Hex editor) Paste (Unicode)
 
 Credits
 =======

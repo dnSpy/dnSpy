@@ -26,9 +26,10 @@ using System.Windows.Media.TextFormatting;
 namespace dnSpy.HexEditor {
 	[DebuggerDisplay("{Text}")]
 	sealed class HexLine : IDisposable {
-		public HexLinePart[] LineParts;
-		public string Text;
-		public ulong Offset;
+		public readonly HexLinePart[] LineParts;
+		public readonly string Text;
+		public readonly ulong StartOffset;
+		public readonly ulong EndOffset;
 		public double Height;
 		public double Width;
 
@@ -55,8 +56,9 @@ namespace dnSpy.HexEditor {
 			}
 		}
 
-		public HexLine(ulong offset, string text, HexLinePart[] parts) {
-			this.Offset = offset;
+		public HexLine(ulong offset, ulong end, string text, HexLinePart[] parts) {
+			this.StartOffset = offset;
+			this.EndOffset = end;
 			this.Text = text;
 			this.LineParts = parts;
 		}

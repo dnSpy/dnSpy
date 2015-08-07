@@ -578,7 +578,7 @@ namespace ICSharpCode.ILSpy
 			if (tabManager != null && tabManager_dontSelectHack.TryGetValue(tabManager, out dontSelect) && dontSelect) {
 			}
 			else if (tabState == null || dts == null) {
-				if (tabState != null || (tabGroupsManager.AllTabGroups.Count == 1 && tabGroupsManager.ActiveTabGroup.ActiveTabState == null)) {
+				if ((isInActiveTabGroup && tabState != null) || (tabGroupsManager.AllTabGroups.Count == 1 && tabGroupsManager.ActiveTabGroup.ActiveTabState == null)) {
 					var old = TreeView_SelectionChanged_ignore;
 					try {
 						TreeView_SelectionChanged_ignore = true;
@@ -693,7 +693,7 @@ namespace ICSharpCode.ILSpy
 			bindings.CommandBindings.Add(new CommandBinding(NavigationCommands.BrowseForward, ForwardCommandExecuted, ForwardCommandCanExecute));
 			bindings.Add(new RoutedCommand("FullScreen", typeof(MainWindow)), FullScreenExecuted, FullScreenCanExecute, ModifierKeys.Shift | ModifierKeys.Alt, Key.Enter);
 			bindings.CommandBindings.Add(new CommandBinding(ApplicationCommands.Open, OpenCommandExecuted));
-			bindings.CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, SaveCommandExecuted));
+			bindings.CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, SaveCommandExecuted, SaveCommandCanExecute));
 			bindings.CommandBindings.Add(new CommandBinding(NavigationCommands.Search, SearchCommandExecuted));
 			bindings.Add(new RoutedCommand("WordWrap", typeof(MainWindow)), WordWrapExecuted, WordWrapCanExecute, ModifierKeys.Control | ModifierKeys.Alt, Key.W);
 			bindings.Install(this);
@@ -2104,6 +2104,11 @@ namespace ICSharpCode.ILSpy
 			Save(GetActiveDecompileTabState());
 		}
 
+		void SaveCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = GetActiveDecompileTabState() != null;
+		}
+
 		internal void Save(DecompileTabState tabState)
 		{
 			if (tabState == null)
@@ -3289,44 +3294,46 @@ namespace ICSharpCode.ILSpy
 			return msgBox.ButtonClicked;
 		}
 
-		internal void OpenOrShowHexBox(AssemblyTreeNode node) {
-			var tabState = GetHexTabState(node);
+		internal void OpenOrShowHexBox(string filename) {
+			var tabState = GetHexTabState(filename);
 			if (tabState != null)
-				ShowHexBox(node);
+				ShowHexBox(filename);
 			else
-				OpenHexBox(node);
+				OpenHexBox(filename);
 		}
 
-		internal void OpenHexBox(AssemblyTreeNode node) {
-			if (node == null)
-				return;
-			var tabState = OpenHexBox(node.LoadedAssembly.FileName);
+		void ShowHexBox(string filename) {
+			var tabState = GetHexTabState(filename);
+			if (tabState != null)
+				SetActiveTab(tabState);
+		}
+
+		void OpenHexBox(string filename) {
+			var tabState = OpenHexBoxInternal(filename);
 			if (tabState == null)
 				return;
 			SetActiveTab(tabState);
 		}
 
-		HexTabState OpenHexBox(string filename) {
+		internal HexTabState GetHexTabState(AssemblyTreeNode node) {
+			if (node == null)
+				return null;
+			return GetHexTabState(node.LoadedAssembly.FileName);
+		}
+
+		HexTabState GetHexTabState(string filename) {
+			if (string.IsNullOrEmpty(filename))
+				return null;
+			return GetHexTabStates(filename).FirstOrDefault();
+		}
+
+		HexTabState OpenHexBoxInternal(string filename) {
 			if (string.IsNullOrEmpty(filename))
 				return null;
 			var tabState = CreateNewHexTabState(tabGroupsManager.ActiveTabGroup);
 			InitializeHexDocument(tabState, filename);
 			tabState.InitializeStartEndOffset();
 			return tabState;
-		}
-
-		internal void ShowHexBox(AssemblyTreeNode node) {
-			if (node == null || string.IsNullOrEmpty(node.LoadedAssembly.FileName))
-				return;
-			var tabState = GetHexTabState(node);
-			if (tabState != null)
-				SetActiveTab(tabState);
-		}
-
-		internal HexTabState GetHexTabState(AssemblyTreeNode node) {
-			if (node == null)
-				return null;
-			return GetHexTabStates(node.LoadedAssembly.FileName).FirstOrDefault();
 		}
 
 		IEnumerable<HexTabState> GetHexTabStates(string filename) {
@@ -3380,7 +3387,7 @@ namespace ICSharpCode.ILSpy
 			}
 
 			if (tabState == null)
-				tabState = OpenHexBox(@ref.Filename);
+				tabState = OpenHexBoxInternal(@ref.Filename);
 			if (tabState == null)
 				return;
 

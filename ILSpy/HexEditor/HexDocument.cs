@@ -26,7 +26,13 @@ namespace dnSpy.HexEditor {
 	public sealed class HexDocument : IDisposable, IHexStream {
 		readonly IHexStream stream;
 
+		public event EventHandler<HexDocumentModifiedEventArgs> OnDocumentModified;
+
 		public string Name { get; set; }
+
+		public ulong StartOffset {
+			get { return stream.StartOffset; }
+		}
 
 		public ulong EndOffset {
 			get { return stream.EndOffset; }
@@ -55,8 +61,26 @@ namespace dnSpy.HexEditor {
 			return stream.ReadByte(offs);
 		}
 
-		public void Read(ulong offset, byte[] array, int index, int count) {
+		public void Read(ulong offset, byte[] array, long index, int count) {
 			stream.Read(offset, array, index, count);
+		}
+
+		public void Write(ulong offset, byte b) {
+			stream.Write(offset, b);
+
+			var h = OnDocumentModified;
+			if (h != null)
+				h(this, new HexDocumentModifiedEventArgs(offset, offset));
+		}
+
+		public void Write(ulong offset, byte[] array, long index, int count) {
+			if (count <= 0)
+				return;
+			stream.Write(offset, array, index, count);
+
+			var h = OnDocumentModified;
+			if (h != null)
+				h(this, new HexDocumentModifiedEventArgs(offset, NumberUtils.AddUInt64(offset, (ulong)count - 1)));
 		}
 
 		public void Dispose() {
