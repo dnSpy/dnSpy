@@ -806,7 +806,7 @@ namespace ICSharpCode.Decompiler.Ast
 					break;
 
 				case DecompilationObject.Fields:
-					foreach (FieldDef fieldDef in typeDef.GetFields(context.Settings.SortMembers)) {
+					foreach (FieldDef fieldDef in typeDef.GetFields(typeDef.IsAutoLayout ? context.Settings.SortMembers : false)) {
 						if (MemberIsHidden(fieldDef, context.Settings)) continue;
 						astType.AddChild(CreateField(fieldDef), Roles.TypeMemberRole);
 					}

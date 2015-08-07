@@ -1314,7 +1314,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			if (type.HasFields) {
 				output.WriteLine("// Fields", TextTokenType.Comment);
-				foreach (var field in type.GetFields(options.SortMembers)) {
+				foreach (var field in type.GetFields(type.IsAutoLayout ? options.SortMembers : false)) {
 					options.CancellationToken.ThrowIfCancellationRequested();
 					DisassembleField(field);
 				}
