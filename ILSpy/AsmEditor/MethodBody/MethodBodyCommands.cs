@@ -120,7 +120,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			MethodAnnotations.Instance.SetBodyModified(methodNode.MethodDefinition, isBodyModified);
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { yield return methodNode; }
 		}
 

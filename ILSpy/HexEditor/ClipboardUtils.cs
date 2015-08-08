@@ -17,7 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Text;
 using System.Windows;
+using System.Runtime.InteropServices;
 
 namespace dnSpy.HexEditor {
 	static class ClipboardUtils {
@@ -61,6 +63,24 @@ namespace dnSpy.HexEditor {
 			if ('A' <= c && c <= 'F')
 				return c - 'A' + 10;
 			return -1;
+		}
+
+		public static string ToHexString(byte[] data) {
+			if (data == null || data.Length == 0)
+				return string.Empty;
+
+			var sb = new StringBuilder(data.Length * 2);
+			foreach (var b in data)
+				sb.Append(string.Format("{0:X2}", b));
+			return sb.ToString();
+		}
+
+		public static void SetText(string text) {
+			try {
+				Clipboard.SetText(text);
+			}
+			catch (ExternalException) {
+			}
 		}
 	}
 }

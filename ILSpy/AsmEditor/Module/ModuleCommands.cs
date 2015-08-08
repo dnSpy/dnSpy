@@ -108,7 +108,7 @@ namespace dnSpy.AsmEditor.Module {
 			asmNodeCreator.Remove();
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { return new ILSpyTreeNode[0]; }
 		}
 
@@ -217,7 +217,7 @@ namespace dnSpy.AsmEditor.Module {
 			hasExecuted = false;
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { return nodes; }
 		}
 
@@ -335,7 +335,7 @@ namespace dnSpy.AsmEditor.Module {
 			savedStates = null;
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { return nodes; }
 		}
 
@@ -343,7 +343,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 	}
 
-	abstract class AddNetModuleToAssemblyCommand : IUndoCommand {
+	abstract class AddNetModuleToAssemblyCommand : IUndoCommand2 {
 		internal static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes != null &&
 				nodes.Length == 1 &&
@@ -389,9 +389,15 @@ namespace dnSpy.AsmEditor.Module {
 				throw new InvalidOperationException();
 		}
 
-		//TODO: Should also return modNode but it should be marked as "not modified" if modNodeWasCreated is false
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { yield return asmNode; }
+		}
+
+		public IEnumerable<object> NonModifiedObjects {
+			get {
+				if (modNodeWasCreated)
+					yield return modNode;
+			}
 		}
 
 		public void Dispose() {
@@ -500,7 +506,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 	}
 
-	sealed class RemoveNetModuleFromAssemblyCommand : IUndoCommand {
+	sealed class RemoveNetModuleFromAssemblyCommand : IUndoCommand2 {
 		const string CMD_NAME = "Remove NetModule from Assembly";
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Delete",
@@ -593,9 +599,12 @@ namespace dnSpy.AsmEditor.Module {
 			asmNode.Children.Insert(removeIndex, modNode);
 		}
 
-		//TODO: Should also return modNode but it should be marked as "not modified"
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { yield return asmNode; }
+		}
+
+		public IEnumerable<object> NonModifiedObjects {
+			get { yield return modNode; }
 		}
 
 		public void Dispose() {
@@ -674,7 +683,7 @@ namespace dnSpy.AsmEditor.Module {
 			WriteModuleOptions(origOptions);
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { yield return modNode; }
 		}
 

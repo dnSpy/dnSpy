@@ -17,13 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.AsmEditor.SaveModule {
-	/// <summary>
-	/// Interaction logic for SaveSingleModule.xaml
-	/// </summary>
-	public partial class SaveSingleModule : SaveModuleWindow {
-		public SaveSingleModule() {
-			InitializeComponent();
-		}
+namespace dnSpy.HexEditor {
+	public enum HexWriteType {
+		Paste,
+		ByteInput,
+		AsciiInput,
+		Fill,
 	}
 }

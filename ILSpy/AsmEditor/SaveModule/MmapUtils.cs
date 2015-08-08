@@ -19,27 +19,24 @@
 
 using System;
 using System.Collections.Generic;
+using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace dnSpy.HexEditor {
-	public sealed class HexBoxWriteEventArgs : EventArgs {
-		public readonly HexWriteType Type;
-		public readonly ulong StartOffset;
-		public readonly ulong EndOffset;
-		public readonly int Size;
-		public readonly bool IsBeforeWrite;
-		public readonly Dictionary<object, object> Context;
+namespace dnSpy.AsmEditor.SaveModule {
+	static class MmapUtils {
+		public static void DisableMemoryMappedIO(IEnumerable<string> filenames) {
+			var hash = new HashSet<string>(filenames, StringComparer.OrdinalIgnoreCase);
 
-		public bool IsAfterWrite {
-			get { return !IsBeforeWrite; }
+			foreach (var mod in MainWindow.Instance.CurrentAssemblyList.GetAllModules())
+				DisableMemoryMappedIO(hash, mod as ModuleDefMD);
+
+			foreach (var asm in UndoCommandManager.Instance.GetAssemblies())
+				DisableMemoryMappedIO(hash, asm.ModuleDefinition as ModuleDefMD);
 		}
 
-		public HexBoxWriteEventArgs(HexWriteType type, ulong offs, int size, bool isBeforeWrite, Dictionary<object, object> context = null) {
-			this.Type = type;
-			this.StartOffset = offs;
-			this.EndOffset = size == 0 ? offs : NumberUtils.AddUInt64(offs, (ulong)(size - 1));
-			this.Size = size;
-			this.IsBeforeWrite = isBeforeWrite;
-			this.Context = context ?? new Dictionary<object, object>();
+		static void DisableMemoryMappedIO(HashSet<string> filenames, ModuleDefMD mod) {
+			if (mod != null && filenames.Contains(mod.Location))
+				mod.MetaData.PEImage.UnsafeDisableMemoryMappedIO();
 		}
 	}
 }

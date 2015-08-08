@@ -589,7 +589,8 @@ namespace dnSpy.HexEditor {
 			case HexBoxPositionKind.HexByte:
 				return (int)GetHexByteColumnIndex() + byteIndex * 3 + position.KindPosition + 1;
 
-			default: throw new InvalidOperationException();
+			default:
+				throw new InvalidOperationException();
 			}
 		}
 
@@ -781,7 +782,7 @@ namespace dnSpy.HexEditor {
 				return HexBoxPosition.CreateAscii(NumberUtils.AddUInt64(lineOffset, asciiIndex.Value));
 
 			return null;
-        }
+		}
 
 		void InitializeHexLines(double width, double height) {
 			var textRunProps = CreateHexTextRunProperties();
@@ -891,7 +892,7 @@ namespace dnSpy.HexEditor {
 			if (offsetToLine.TryGetValue(offset, out hexLine))
 				return hexLine;
 
-			hexLine = CreateHexLine(offset, EndOffset , parts, textRunProps, sb, sb2, bytesAry);
+			hexLine = CreateHexLine(offset, EndOffset, parts, textRunProps, sb, sb2, bytesAry);
 			offsetToLine.Add(offset, hexLine);
 			var hexLineTextSource = new HexLineTextSource(hexLine);
 			var textLines = new List<TextLine>();
@@ -1356,7 +1357,8 @@ namespace dnSpy.HexEditor {
 				}
 				return HexBoxPosition.CreateByte(position.Offset, position.KindPosition - 1);
 
-			default: throw new InvalidOperationException();
+			default:
+				throw new InvalidOperationException();
 			}
 		}
 
@@ -1952,12 +1954,13 @@ namespace dnSpy.HexEditor {
 			if (!CanPaste(data))
 				return;
 
-			NotifyBeforeWrite(data.Length);
-			Document.Write(CaretPosition.Offset, data, 0, data.Length);
-			SetCaretPosition(new HexBoxPosition(NumberUtils.AddUInt64(CaretPosition.Offset, (ulong)data.Length), CaretPosition.Kind, 0));
+			ulong offs = CaretPosition.Offset;
+			var ctx = NotifyBeforeWrite(HexWriteType.Paste, offs, data.Length);
+			Document.Write(offs, data, 0, data.Length);
+			SetCaretPosition(new HexBoxPosition(NumberUtils.AddUInt64(offs, (ulong)data.Length), CaretPosition.Kind, 0));
 			Selection = null;
 			BringCaretIntoView();
-			NotifyAfterWrite(data.Length);
+			NotifyAfterWrite(HexWriteType.Paste, offs, data.Length, ctx);
 		}
 
 		public bool CanPaste() {
@@ -2014,15 +2017,16 @@ namespace dnSpy.HexEditor {
 			if (h < 0)
 				return false;
 
-			int b = Document.ReadByte(CaretPosition.Offset);
+			ulong offs = CaretPosition.Offset;
+			int b = Document.ReadByte(offs);
 			if (b >= 0) {
-				NotifyBeforeWrite(1);
+				var ctx = NotifyBeforeWrite(HexWriteType.ByteInput, offs, 1);
 				if (CaretPosition.KindPosition == HexBoxPosition.INDEX_HEXBYTE_HI)
 					b = (b & 0x0F) | (h << 4);
 				else
 					b = (b & 0xF0) | h;
-				Document.Write(CaretPosition.Offset, (byte)b);
-				NotifyAfterWrite(1);
+				Document.Write(offs, (byte)b);
+				NotifyAfterWrite(HexWriteType.ByteInput, offs, 1, ctx);
 			}
 			return true;
 		}
@@ -2031,9 +2035,10 @@ namespace dnSpy.HexEditor {
 			if (c > 0x7E)
 				return false;
 
-			NotifyBeforeWrite(1);
-			Document.Write(CaretPosition.Offset, (byte)c);
-			NotifyAfterWrite(1);
+			ulong offs = CaretPosition.Offset;
+			var ctx = NotifyBeforeWrite(HexWriteType.AsciiInput, offs, 1);
+			Document.Write(offs, (byte)c);
+			NotifyAfterWrite(HexWriteType.AsciiInput, offs, 1, ctx);
 			return true;
 		}
 
@@ -2051,7 +2056,7 @@ namespace dnSpy.HexEditor {
 			Selection = null;
 		}
 
-		void FillBytes(ulong startOffset, ulong endOffset, byte b) {
+		public void FillBytes(ulong startOffset, ulong endOffset, byte b) {
 			if (Document == null)
 				return;
 			if (endOffset < startOffset)
@@ -2060,28 +2065,31 @@ namespace dnSpy.HexEditor {
 			if (count > int.MaxValue)
 				count = int.MaxValue;
 
-			NotifyBeforeWrite((int)count);
 			ulong offs = startOffset;
-			ulong end = offs + count - 1;
-			while (offs <= end) {
-				Document.Write(offs, b);
-				if (offs++ == ulong.MaxValue)
+			var ctx = NotifyBeforeWrite(HexWriteType.Fill, offs, (int)count);
+			ulong currOffs = startOffset;
+			ulong end = currOffs + count - 1;
+			while (currOffs <= end) {
+				Document.Write(currOffs, b);
+				if (currOffs++ == ulong.MaxValue)
 					break;
 			}
-			NotifyAfterWrite((int)count);
+			NotifyAfterWrite(HexWriteType.Fill, offs, (int)count, ctx);
 		}
 
-		void NotifyBeforeWrite(int count) {
-			NotifyWrite(count, true);
+		Dictionary<object, object> NotifyBeforeWrite(HexWriteType type, ulong offs, int count) {
+			return NotifyWrite(type, offs, count, true, null);
 		}
 
-		void NotifyAfterWrite(int count) {
-			NotifyWrite(count, false);
+		void NotifyAfterWrite(HexWriteType type, ulong offs, int count, Dictionary<object, object> context) {
+			NotifyWrite(type, offs, count, false, context);
 		}
 
-		void NotifyWrite(int count, bool isBeforeWrite) {
+		Dictionary<object, object> NotifyWrite(HexWriteType type, ulong offs, int count, bool isBeforeWrite, Dictionary<object, object> context) {
+			var ea = new HexBoxWriteEventArgs(type, offs, count, isBeforeWrite, context);
 			if (OnWrite != null)
-				OnWrite(this, new HexBoxWriteEventArgs(count, isBeforeWrite));
+				OnWrite(this, ea);
+			return ea.Context;
 		}
 
 		public event EventHandler<HexBoxWriteEventArgs> OnWrite;

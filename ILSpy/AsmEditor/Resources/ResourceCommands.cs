@@ -198,7 +198,7 @@ namespace dnSpy.AsmEditor.Resources {
 			nodes.Restore();
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { return nodes.Nodes; }
 		}
 
@@ -343,7 +343,7 @@ namespace dnSpy.AsmEditor.Resources {
 			nodes.Restore();
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { return nodes.Nodes; }
 		}
 
@@ -613,7 +613,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { yield return rsrcListNode; }
 		}
 
@@ -651,7 +651,7 @@ namespace dnSpy.AsmEditor.Resources {
 				throw new InvalidOperationException();
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { yield return rsrcListNode; }
 		}
 
@@ -1010,7 +1010,7 @@ namespace dnSpy.AsmEditor.Resources {
 			rsrcNode.RaiseUIPropsChanged();
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { yield return rsrcNode; }
 		}
 
@@ -1066,7 +1066,7 @@ namespace dnSpy.AsmEditor.Resources {
 			module.Resources[resourceIndex] = resource;
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { yield return rsrcSetNode; }
 		}
 
@@ -1579,7 +1579,7 @@ namespace dnSpy.AsmEditor.Resources {
 			rsrcElNode.RaiseUIPropsChanged();
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { yield return rsrcElNode; }
 		}
 

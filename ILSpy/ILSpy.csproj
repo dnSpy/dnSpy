@@ -114,6 +114,7 @@
     <Compile Include="AskForInput.xaml.cs">
       <DependentUpon>AskForInput.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AsmEditor\AsmEdHexDocument.cs" />
     <Compile Include="AsmEditor\AssemblyTreeNodeCreator.cs" />
     <Compile Include="AsmEditor\Assembly\AssemblyCommands.cs" />
     <Compile Include="AsmEditor\Assembly\AssemblyOptions.cs" />
@@ -313,6 +314,8 @@
       <DependentUpon>GoToOffsetDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Hex\GoToOffsetVM.cs" />
+    <Compile Include="AsmEditor\Hex\HexBoxUndo.cs" />
+    <Compile Include="AsmEditor\Hex\HexBoxUndoCommand.cs" />
     <Compile Include="AsmEditor\Hex\HexSettings.cs" />
     <Compile Include="AsmEditor\Hex\InstructionUtils.cs" />
     <Compile Include="AsmEditor\Hex\LocalHexSettings.cs" />
@@ -329,6 +332,7 @@
     <Compile Include="AsmEditor\IndexObservableCollection.cs" />
     <Compile Include="AsmEditor\InstructionCommands.cs" />
     <Compile Include="AsmEditor\IUndoCommand.cs" />
+    <Compile Include="AsmEditor\IUndoObject.cs" />
     <Compile Include="AsmEditor\ListBoxHelperBase.cs" />
     <Compile Include="AsmEditor\ListVM.cs" />
     <Compile Include="AsmEditor\MethodBody\BodyUtils.cs" />
@@ -441,22 +445,29 @@
     <Compile Include="AsmEditor\Resources\SerializationUtils.cs" />
     <Compile Include="AsmEditor\Resources\UserTypeVM.cs" />
     <Compile Include="AsmEditor\SaveModule\CharacteristicsHelper.cs" />
+    <Compile Include="AsmEditor\SaveModule\MmapUtils.cs" />
     <Compile Include="AsmEditor\SaveModule\ModuleSaver.cs" />
     <Compile Include="AsmEditor\Namespace\NamespaceCommands.cs" />
     <Compile Include="AsmEditor\RelayCommand.cs" />
+    <Compile Include="AsmEditor\SaveModule\SaveHexOptionsDlg.xaml.cs">
+      <DependentUpon>SaveHexOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\SaveModule\SaveHexOptionsVM.cs" />
     <Compile Include="AsmEditor\SaveModule\SaveModuleCommand.cs" />
-    <Compile Include="AsmEditor\SaveModule\SaveModuleOptions.xaml.cs">
-      <DependentUpon>SaveModuleOptions.xaml</DependentUpon>
+    <Compile Include="AsmEditor\SaveModule\SaveModuleOptionsDlg.xaml.cs">
+      <DependentUpon>SaveModuleOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\SaveModule\SaveModuleOptionsVM.cs" />
     <Compile Include="AsmEditor\SaveModule\SaveModuleWindow.cs" />
-    <Compile Include="AsmEditor\SaveModule\SaveMultiModule.xaml.cs">
-      <DependentUpon>SaveMultiModule.xaml</DependentUpon>
+    <Compile Include="AsmEditor\SaveModule\SaveMultiModuleDlg.xaml.cs">
+      <DependentUpon>SaveMultiModuleDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\SaveModule\SaveMultiModuleVM.cs" />
+    <Compile Include="AsmEditor\SaveModule\SaveOptionsType.cs" />
+    <Compile Include="AsmEditor\SaveModule\SaveOptionsVM.cs" />
     <Compile Include="AsmEditor\SaveModule\Saver.cs" />
-    <Compile Include="AsmEditor\SaveModule\SaveSingleModule.xaml.cs">
-      <DependentUpon>SaveSingleModule.xaml</DependentUpon>
+    <Compile Include="AsmEditor\SaveModule\SaveSingleModuleDlg.xaml.cs">
+      <DependentUpon>SaveSingleModuleDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\TextEditorCommand.cs" />
     <Compile Include="AsmEditor\ToolbarCommands.cs" />
@@ -563,6 +574,7 @@
     <Compile Include="HexEditor\HexSelection.cs" />
     <Compile Include="HexEditor\HexTextParagraphProperties.cs" />
     <Compile Include="HexEditor\HexTextRunProperties.cs" />
+    <Compile Include="HexEditor\HexWriteType.cs" />
     <Compile Include="HexEditor\HtmlClipboardFormatWriter.cs" />
     <Compile Include="HexEditor\IHexLayer.cs" />
     <Compile Include="HexEditor\IHexStream.cs" />
@@ -1044,15 +1056,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AsmEditor\SaveModule\SaveModuleOptions.xaml">
+    <Page Include="AsmEditor\SaveModule\SaveHexOptionsDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AsmEditor\SaveModule\SaveMultiModule.xaml">
+    <Page Include="AsmEditor\SaveModule\SaveModuleOptionsDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AsmEditor\SaveModule\SaveSingleModule.xaml">
+    <Page Include="AsmEditor\SaveModule\SaveMultiModuleDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\SaveModule\SaveSingleModuleDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

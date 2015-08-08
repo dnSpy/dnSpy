@@ -23,7 +23,7 @@ using System.IO;
 
 namespace dnSpy.HexEditor {
 	[DebuggerDisplay("{Size} {Name}")]
-	public sealed class HexDocument : IDisposable, IHexStream {
+	public class HexDocument : IDisposable, IHexStream {
 		readonly IHexStream stream;
 
 		public event EventHandler<HexDocumentModifiedEventArgs> OnDocumentModified;

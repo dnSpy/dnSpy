@@ -25,6 +25,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using System.Windows.Threading;
+using dnSpy.HexEditor;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
@@ -51,9 +52,9 @@ namespace dnSpy.AsmEditor {
 		}
 
 		void MainWindow_Closing(object sender, CancelEventArgs e) {
-			var nodes = UndoCommandManager.Instance.GetModifiedAssemblyTreeNodes().ToArray();
-			if (nodes.Length != 0) {
-				var msg = nodes.Length == 1 ? "There is an unsaved file." : string.Format("There are {0} unsaved files.", nodes.Length);
+			var count = UndoCommandManager.Instance.GetModifiedObjects().Count();
+			if (count != 0) {
+				var msg = count == 1 ? "There is an unsaved file." : string.Format("There are {0} unsaved files.", count);
 				var res = MainWindow.Instance.ShowMessageBox(string.Format("{0} Are you sure you want to exit?", msg), System.Windows.MessageBoxButton.YesNo);
 				if (res == MsgBoxButton.No)
 					e.Cancel = true;
@@ -91,7 +92,7 @@ namespace dnSpy.AsmEditor {
 		}
 
 		sealed class UndoState {
-			public readonly HashSet<LoadedAssembly> ModifiedAssemblies = new HashSet<LoadedAssembly>();
+			public readonly HashSet<IUndoObject> ModifiedObjects = new HashSet<IUndoObject>();
 			public readonly List<IUndoCommand> Commands = new List<IUndoCommand>();
 			public readonly int CommandCounter;
 			public readonly int PrevCommandCounter;
@@ -147,7 +148,7 @@ namespace dnSpy.AsmEditor {
 					Add(command);
 			}
 			else {
-				currentCommands.ModifiedAssemblies.AddRange(GetLoadedAssemblies(command));
+				currentCommands.ModifiedObjects.AddRange(GetModifiedObjects(command));
 				command.Execute();
 				OnExecutedOneCommand(currentCommands);
 				currentCommands.Commands.Add(command);
@@ -196,7 +197,7 @@ namespace dnSpy.AsmEditor {
 		static bool NeedsToCallGc(List<UndoState> list) {
 			foreach (var state in list) {
 				foreach (var c in state.Commands) {
-					var c2 = c as IUndoCommand2;
+					var c2 = c as IGCUndoCommand;
 					if (c2 != null && c2.CallGarbageCollectorAfterDispose)
 						return true;
 				}
@@ -318,26 +319,27 @@ namespace dnSpy.AsmEditor {
 			UpdateAssemblySavedStateRedo(group);
 		}
 
-		/// <summary>
-		/// Gets all modified <see cref="AssemblyTreeNode"/>s
-		/// </summary>
-		/// <returns></returns>
-		public IEnumerable<AssemblyTreeNode> GetModifiedAssemblyTreeNodes() {
-			if (MainWindow.Instance.AssemblyListTreeNode == null)
-				yield break;
-			foreach (AssemblyTreeNode asmNode in MainWindow.Instance.AssemblyListTreeNode.Children) {
-				// If it's a netmodule it has no asm children. If it's an asm and its children haven't
-				// been initialized yet, they can't be modified.
-				if (asmNode.Children.Count == 0 || !(asmNode.Children[0] is AssemblyTreeNode)) {
-					if (IsModified(asmNode))
-						yield return asmNode;
-				}
-				else {
-					foreach (AssemblyTreeNode childNode in asmNode.Children) {
-						if (IsModified(childNode))
-							yield return childNode;
+		public IEnumerable<IUndoObject> GetModifiedObjects() {
+			if (MainWindow.Instance.AssemblyListTreeNode != null) {
+				foreach (AssemblyTreeNode asmNode in MainWindow.Instance.AssemblyListTreeNode.Children) {
+					// If it's a netmodule it has no asm children. If it's an asm and its children haven't
+					// been initialized yet, they can't be modified.
+					if (asmNode.Children.Count == 0 || !(asmNode.Children[0] is AssemblyTreeNode)) {
+						if (IsModified(asmNode))
+							yield return asmNode.LoadedAssembly;
+					}
+					else {
+						foreach (AssemblyTreeNode childNode in asmNode.Children) {
+							if (IsModified(childNode))
+								yield return childNode.LoadedAssembly;
+						}
 					}
 				}
+			}
+
+			foreach (var doc in HexDocumentManager.Instance.GetDocuments()) {
+				if (IsModified(doc))
+					yield return doc;
 			}
 		}
 
@@ -345,29 +347,29 @@ namespace dnSpy.AsmEditor {
 			return IsModified(asmNode.LoadedAssembly);
 		}
 
-		public bool IsModified(LoadedAssembly asm) {
-			return asm.IsDirty && IsModifiedCounter(asm, currentCommandCounter);
+		public bool IsModified(IUndoObject obj) {
+			return obj.IsDirty && IsModifiedCounter(obj, currentCommandCounter);
 		}
 
-		bool IsModifiedCounter(LoadedAssembly asm, int counter) {
-			return asm.SavedCommand != 0 && asm.SavedCommand != counter;
+		bool IsModifiedCounter(IUndoObject obj, int counter) {
+			return obj.SavedCommand != 0 && obj.SavedCommand != counter;
 		}
 
-		internal void MarkAsModified(LoadedAssembly asm) {
-			asm.IsDirty = true;
-			if (asm.SavedCommand == 0)
-				asm.SavedCommand = currentCommandCounter;
+		internal void MarkAsModified(IUndoObject obj) {
+			obj.IsDirty = true;
+			if (obj.SavedCommand == 0)
+				obj.SavedCommand = currentCommandCounter;
 		}
 
-		public void MarkAsSaved(LoadedAssembly asm) {
-			asm.IsDirty = false;
-			asm.SavedCommand = GetNewSavedCommand(asm);
+		public void MarkAsSaved(IUndoObject obj) {
+			obj.IsDirty = false;
+			obj.SavedCommand = GetNewSavedCommand(obj);
 		}
 
-		int GetNewSavedCommand(LoadedAssembly asm) {
+		int GetNewSavedCommand(IUndoObject obj) {
 			for (int i = undoCommands.Count - 1; i >= 0; i--) {
 				var group = undoCommands[i];
-				if (group.ModifiedAssemblies.Contains(asm))
+				if (group.ModifiedObjects.Contains(obj))
 					return group.CommandCounter;
 			}
 			if (undoCommands.Count > 0)
@@ -385,29 +387,53 @@ namespace dnSpy.AsmEditor {
 
 		void UpdateAssemblySavedState(int newCurrentCommandCounter, UndoState executedGroup) {
 			currentCommandCounter = newCurrentCommandCounter;
-			foreach (var asm in executedGroup.ModifiedAssemblies) {
-				Debug.Assert(asm.SavedCommand != 0);
-				asm.IsDirty = IsModifiedCounter(asm, currentCommandCounter);
+			foreach (var obj in executedGroup.ModifiedObjects) {
+				Debug.Assert(obj.SavedCommand != 0);
+				obj.IsDirty = IsModifiedCounter(obj, currentCommandCounter);
 			}
 		}
 
-		static IEnumerable<LoadedAssembly> GetLoadedAssemblies(IUndoCommand command) {
-			foreach (var node in command.TreeNodes) {
+		static IEnumerable<IUndoObject> GetModifiedObjects(IUndoCommand command) {
+			foreach (var obj in command.ModifiedObjects) {
+				var uo = GetUndoObject(obj);
+				if (uo != null)
+					yield return uo;
+			}
+		}
+
+		static IUndoObject GetUndoObject(object obj) {
+			var node = obj as ILSpyTreeNode;
+			if (node != null) {
 				var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
 				Debug.Assert(asmNode != null);
 				if (asmNode != null)
-					yield return asmNode.LoadedAssembly;
+					return asmNode.LoadedAssembly;
+				return null;
 			}
+
+			var doc = obj as AsmEdHexDocument;
+			if (doc != null)
+				return doc;
+
+			Debug.Fail(string.Format("Unknown modified object: {0}: {1}", obj == null ? null : obj.GetType(), obj));
+			return null;
 		}
 
 		void OnExecutedOneCommand(UndoState group) {
-			foreach (var asm in group.ModifiedAssemblies) {
-				var module = asm.ModuleDefinition;
-				if (module != null)
-					module.ResetTypeDefFindCache();
-				if (asm.SavedCommand == 0)
-					asm.SavedCommand = group.PrevCommandCounter;
-				Utils.NotifyModifiedAssembly(asm);
+			foreach (var obj in group.ModifiedObjects) {
+				if (obj.SavedCommand == 0)
+					obj.SavedCommand = group.PrevCommandCounter;
+
+				var asm = obj as LoadedAssembly;
+				if (asm != null) {
+					var module = asm.ModuleDefinition;
+					if (module != null)
+						module.ResetTypeDefFindCache();
+					Utils.NotifyModifiedAssembly(asm);
+					continue;
+				}
+
+				Debug.Assert(obj is AsmEdHexDocument, string.Format("Unknown modified object: {0}: {1}", obj == null ? null : obj.GetType(), obj));
 			}
 		}
 
@@ -424,12 +450,34 @@ namespace dnSpy.AsmEditor {
 		}
 
 		public IEnumerable<UndoRedoInfo> GetUndoRedoInfo(IEnumerable<AssemblyTreeNode> nodes) {
-			var modifiedUndoAsms = new HashSet<LoadedAssembly>(undoCommands.SelectMany(a => a.ModifiedAssemblies));
-			var modifiedRedoAsms = new HashSet<LoadedAssembly>(redoCommands.SelectMany(a => a.ModifiedAssemblies));
+			var modifiedUndoAsms = new HashSet<LoadedAssembly>(undoCommands.SelectMany(a => a.ModifiedObjects.Where(b => b is LoadedAssembly).Cast<LoadedAssembly>()));
+			var modifiedRedoAsms = new HashSet<LoadedAssembly>(redoCommands.SelectMany(a => a.ModifiedObjects.Where(b => b is LoadedAssembly).Cast<LoadedAssembly>()));
 			foreach (var node in nodes) {
 				bool isInUndo = modifiedUndoAsms.Contains(node.LoadedAssembly);
 				bool isInRedo = modifiedRedoAsms.Contains(node.LoadedAssembly);
 				yield return new UndoRedoInfo(node, isInUndo, isInRedo);
+			}
+		}
+
+		public IEnumerable<LoadedAssembly> GetAssemblies() {
+			var list = new List<UndoState>(undoCommands);
+			list.AddRange(redoCommands);
+			foreach (var grp in list) {
+				foreach (var cmd in grp.Commands) {
+					var cmd2 = cmd as IUndoCommand2;
+					if (cmd2 == null)
+						continue;
+					foreach (var obj in cmd2.NonModifiedObjects) {
+						var asm = GetUndoObject(obj) as LoadedAssembly;
+						if (asm != null)
+							yield return asm;
+					}
+				}
+				foreach (var obj in grp.ModifiedObjects) {
+					var asm = obj as LoadedAssembly;
+					if (asm != null)
+						yield return asm;
+				}
 			}
 		}
 	}

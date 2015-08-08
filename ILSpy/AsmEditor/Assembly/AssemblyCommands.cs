@@ -83,7 +83,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 	}
 
-	sealed class RemoveAssemblyCommand : IUndoCommand2 {
+	sealed class RemoveAssemblyCommand : IGCUndoCommand {
 		const string CMD_NAME = "Remove Assembly";
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Delete",
@@ -188,7 +188,7 @@ namespace dnSpy.AsmEditor.Assembly {
 				savedStates[i].Add();
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get {
 				foreach (var savedState in savedStates)
 					yield return savedState.AssemblyTreeNode;
@@ -327,7 +327,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			asmNode.RaiseUIPropsChanged();
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { yield return asmNode; }
 		}
 
@@ -400,7 +400,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			asmNodeCreator.Remove();
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { return new ILSpyTreeNode[0]; }
 		}
 

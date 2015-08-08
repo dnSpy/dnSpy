@@ -17,31 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows.Controls;
-using System.Windows.Input;
-using ICSharpCode.ILSpy;
+using dnSpy.AsmEditor.ViewHelpers;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	/// <summary>
-	/// Interaction logic for SaveMultiModule.xaml
+	/// Interaction logic for SaveHexOptionsDlg.xaml
 	/// </summary>
-	public partial class SaveMultiModule : SaveModuleWindow {
-		public SaveMultiModule() {
+	public partial class SaveHexOptionsDlg : WindowBase {
+		public SaveHexOptionsDlg() {
 			InitializeComponent();
-		}
-
-		private void Options_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = e.Parameter is SaveModuleOptionsVM;
-		}
-
-		private void Options_Executed(object sender, ExecutedRoutedEventArgs e) {
-			ShowOptions((SaveModuleOptionsVM)e.Parameter);
-		}
-
-		private void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
-			if (!UIUtils.IsLeftDoubleClick<ListBoxItem>(listBox, e))
-				return;
-			ShowOptions((SaveModuleOptionsVM)listBox.SelectedItem);
+			DataContextChanged += (s, e) => {
+				var data = DataContext as SaveHexOptionsVM;
+				if (data != null)
+					data.PickNetExecutableFileName = new PickNetExecutableFileName();
+			};
 		}
 	}
 }

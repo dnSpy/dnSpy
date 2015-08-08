@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using dnlib.DotNet;
@@ -43,10 +44,10 @@ namespace dnSpy.AsmEditor.SaveModule {
 	}
 
 	sealed class ModuleSaverWriteEventArgs : EventArgs {
-		public SaveModuleOptionsVM File { get; private set; }
+		public SaveOptionsVM File { get; private set; }
 		public bool Starting { get; private set; }
 
-		public ModuleSaverWriteEventArgs(SaveModuleOptionsVM vm, bool starting) {
+		public ModuleSaverWriteEventArgs(SaveOptionsVM vm, bool starting) {
 			this.File = vm;
 			this.Starting = starting;
 		}
@@ -54,13 +55,12 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 	sealed class ModuleSaver : IModuleWriterListener, ILogger {
 		SaveState[] filesToSave;
-		long totalSize;
 
 		class SaveState {
-			public readonly SaveModuleOptionsVM File;
+			public readonly SaveOptionsVM File;
 			public double SizeRatio;
 
-			public SaveState(SaveModuleOptionsVM vm) {
+			public SaveState(SaveOptionsVM vm) {
 				this.File = vm;
 			}
 		}
@@ -74,7 +74,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				double d = 0;
 				for (int i = 0; i < index; i++)
 					d += filesToSave[i].SizeRatio;
-				d += filesToSave[index].SizeRatio * eventIndexToCompleted[currentEventIndex];
+				d += filesToSave[index].SizeRatio * GetFileProgress();
 				return d;
 			}
 		}
@@ -83,11 +83,40 @@ namespace dnSpy.AsmEditor.SaveModule {
 			get {
 				if (fileIndex >= filesToSave.Length)
 					return 1.0;
-				return eventIndexToCompleted[currentEventIndex];
+				return GetFileProgress();
 			}
 		}
 		int fileIndex;
-		int currentEventIndex;
+		FileProgress fileProgress;
+
+		double GetFileProgress() {
+			return fileProgress.Progress;
+		}
+
+		abstract class FileProgress {
+			public abstract double Progress { get; }
+		}
+
+		sealed class ModuleFileProgress : FileProgress {
+			public int CurrentEventIndex;
+
+			public override double Progress {
+				get { return eventIndexToCompleted[CurrentEventIndex]; }
+			}
+		}
+
+		sealed class HexFileProgress : FileProgress {
+			public ulong TotalSize;
+			public ulong BytesWritten;
+
+			public override double Progress {
+				get { return (double)BytesWritten / TotalSize; }
+			}
+
+			public HexFileProgress(ulong totalSize) {
+				this.TotalSize = totalSize;
+			}
+		}
 
 		static double[] eventIndexToCompleted = new double[ModuleWriterEvent.End - ModuleWriterEvent.Begin + 1] {
 			0.00054765546805657849,
@@ -150,39 +179,54 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public event EventHandler<ModuleSaverWriteEventArgs> OnWritingFile;
 		public event EventHandler<ModuleSaverLogEventArgs> OnLogMessage;
 
-		public ModuleSaver(IEnumerable<SaveModuleOptionsVM> moduleVms) {
+		public ModuleSaver(IEnumerable<SaveOptionsVM> moduleVms) {
 			this.filesToSave = moduleVms.Select(a => new SaveState(a)).ToArray();
-			totalSize = filesToSave.Sum(a => a.File.Module.Types.Count);
+			var totalSize = filesToSave.Sum(a => GetSize(a.File));
+			if (totalSize == 0)
+				totalSize = 1;
 			foreach (var state in filesToSave)
-				state.SizeRatio = (double)state.File.Module.Types.Count / totalSize;
+				state.SizeRatio = GetSize(state.File) / totalSize;
+		}
+
+		static ulong GetSize(ulong start, ulong end) {
+			return start == 0 && end == ulong.MaxValue ? ulong.MaxValue : end - start + 1;
+		}
+
+		static double GetSize(SaveOptionsVM vm) {
+			switch (vm.Type) {
+			case SaveOptionsType.Module:
+				return ((SaveModuleOptionsVM)vm).Module.Types.Count;
+
+			case SaveOptionsType.Hex:
+				var hex = (SaveHexOptionsVM)vm;
+				ulong size = GetSize(hex.Document.StartOffset, hex.Document.EndOffset);
+				const double m = 1.0;
+				const double sizediv = 10 * 1024 * 1024;
+				return m * (size / sizediv);
+
+			default: throw new InvalidOperationException();
+			}
 		}
 
 		public void SaveAll() {
 			mustCancel = false;
+			byte[] buffer = null;
 			for (int i = 0; i < filesToSave.Length; i++) {
 				fileIndex = i;
 				var state = filesToSave[fileIndex];
-				var vm = state.File;
-
-				// If the user tries to save to the same file as the module, disable mmap'd I/O so
-				// we can write to the file.
-				//TODO: Make sure that no other code tries to use this module, eg. background decompilation
-				var mod = vm.Module as ModuleDefMD;
-				if (mod != null && vm.FileName.Equals(mod.Location, StringComparison.OrdinalIgnoreCase))
-					mod.MetaData.PEImage.UnsafeDisableMemoryMappedIO();
-
-				var opts = vm.CreateWriterOptions();
-				opts.Listener = this;
-				opts.Logger = this;
-				var filename = vm.FileName;
 				if (OnWritingFile != null)
-					OnWritingFile(this, new ModuleSaverWriteEventArgs(vm, true));
-				if (opts is NativeModuleWriterOptions)
-					((ModuleDefMD)vm.Module).NativeWrite(filename, (NativeModuleWriterOptions)opts);
-				else
-					vm.Module.Write(filename, (ModuleWriterOptions)opts);
+					OnWritingFile(this, new ModuleSaverWriteEventArgs(state.File, true));
+
+				fileProgress = null;
+				switch (state.File.Type) {
+				case SaveOptionsType.Module:	Save((SaveModuleOptionsVM)state.File); break;
+				case SaveOptionsType.Hex:		Save((SaveHexOptionsVM)state.File, ref buffer); break;
+				default:						throw new InvalidOperationException();
+				}
+				fileProgress = null;
+
 				if (OnWritingFile != null)
-					OnWritingFile(this, new ModuleSaverWriteEventArgs(vm, false));
+					OnWritingFile(this, new ModuleSaverWriteEventArgs(state.File, false));
 			}
 
 			fileIndex = filesToSave.Length;
@@ -190,12 +234,73 @@ namespace dnSpy.AsmEditor.SaveModule {
 				OnProgressUpdated(this, EventArgs.Empty);
 		}
 
-		void IModuleWriterListener.OnWriterEvent(ModuleWriterBase writer, ModuleWriterEvent evt) {
-			ThrowIfCanceled();
-			currentEventIndex = evt - ModuleWriterEvent.Begin;
-			Debug.Assert(currentEventIndex >= 0);
+		void Save(SaveModuleOptionsVM vm) {
+			fileProgress = new ModuleFileProgress();
+			var opts = vm.CreateWriterOptions();
+			opts.Listener = this;
+			opts.Logger = this;
+			var filename = vm.FileName;
+			if (opts is NativeModuleWriterOptions)
+				((ModuleDefMD)vm.Module).NativeWrite(filename, (NativeModuleWriterOptions)opts);
+			else
+				vm.Module.Write(filename, (ModuleWriterOptions)opts);
+		}
+
+		void Save(SaveHexOptionsVM hex, ref byte[] buffer) {
+			var progress = new HexFileProgress(GetSize(hex.Document.StartOffset, hex.Document.EndOffset));
+			fileProgress = progress;
+			if (buffer == null)
+				buffer = new byte[64 * 1024];
+
+			try {
+				if (File.Exists(hex.FileName))
+					File.Delete(hex.FileName);
+				using (var stream = File.OpenWrite(hex.FileName)) {
+					ulong offs = hex.Document.StartOffset;
+					ulong end = hex.Document.EndOffset;
+					while (offs <= end) {
+						ThrowIfCanceled();
+
+						ulong bytesLeft = GetSize(offs, end);
+						int bytesToWrite = bytesLeft > (ulong)buffer.Length ? buffer.Length : (int)bytesLeft;
+						hex.Document.Read(offs, buffer, 0, bytesToWrite);
+						stream.Write(buffer, 0, bytesToWrite);
+						progress.BytesWritten += (ulong)bytesToWrite;
+						NotifyProgressUpdated();
+
+						ulong nextOffs = offs + (ulong)bytesToWrite;
+						if (nextOffs < offs)
+							break;
+						offs = nextOffs;
+					}
+				}
+			}
+			catch {
+				DeleteFile(hex.FileName);
+				throw;
+			}
+		}
+
+		static void DeleteFile(string filename) {
+			try {
+				if (!File.Exists(filename))
+					return;
+				File.Delete(filename);
+			}
+			catch {
+			}
+		}
+
+		void NotifyProgressUpdated() {
 			if (OnProgressUpdated != null)
 				OnProgressUpdated(this, EventArgs.Empty);
+		}
+
+		void IModuleWriterListener.OnWriterEvent(ModuleWriterBase writer, ModuleWriterEvent evt) {
+			ThrowIfCanceled();
+			((ModuleFileProgress)fileProgress).CurrentEventIndex = evt - ModuleWriterEvent.Begin;
+			Debug.Assert(((ModuleFileProgress)fileProgress).CurrentEventIndex >= 0);
+			NotifyProgressUpdated();
 		}
 
 		void ILogger.Log(object sender, LoggerEvent loggerEvent, string format, params object[] args) {

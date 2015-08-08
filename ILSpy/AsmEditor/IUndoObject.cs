@@ -17,20 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.AsmEditor.ViewHelpers;
-
-namespace dnSpy.AsmEditor.SaveModule {
-	/// <summary>
-	/// Interaction logic for SaveModuleOptions.xaml
-	/// </summary>
-	public partial class SaveModuleOptions : WindowBase {
-		public SaveModuleOptions() {
-			InitializeComponent();
-			DataContextChanged += (s, e) => {
-				var data = DataContext as SaveModuleOptionsVM;
-				if (data != null)
-					data.PickNetExecutableFileName = new PickNetExecutableFileName();
-			};
-		}
+namespace dnSpy.AsmEditor {
+	public interface IUndoObject {
+		bool IsDirty { get; set; }
+		int SavedCommand { get; set; }
 	}
 }

@@ -68,4 +68,19 @@ namespace dnSpy.HexEditor {
 		/// <param name="count">Number of bytes to write</param>
 		void Write(ulong offset, byte[] array, long index, int count);
 	}
+
+	public static class HexStreamExtensions {
+		/// <summary>
+		/// Reads bytes
+		/// </summary>
+		/// <param name="self">Stream</param>
+		/// <param name="offset">Offset</param>
+		/// <param name="size">Size of data to read</param>
+		/// <returns></returns>
+		public static byte[] Read(this IHexStream self, ulong offset, int size) {
+			var data = new byte[size];
+			self.Read(offset, data, 0, data.Length);
+			return data;
+		}
+	}
 }

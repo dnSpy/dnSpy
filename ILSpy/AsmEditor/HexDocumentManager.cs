@@ -20,34 +20,55 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using dnSpy.HexEditor;
+using System.Linq;
 
 namespace dnSpy.AsmEditor {
 	sealed class HexDocumentManager {
 		public static readonly HexDocumentManager Instance = new HexDocumentManager();
 
 		object lockObj = new object();
-		Dictionary<string, HexDocument> filenameToDoc = new Dictionary<string, HexDocument>(StringComparer.OrdinalIgnoreCase);
+		Dictionary<string, AsmEdHexDocument> filenameToDoc = new Dictionary<string, AsmEdHexDocument>(StringComparer.OrdinalIgnoreCase);
 
 		HexDocumentManager() {
 		}
 
-		public HexDocument GetOrCreate(string filename) {
+		public bool Exists(string filename) {
+			return TryGet(filename) != null;
+		}
+
+		public AsmEdHexDocument TryGet(string filename) {
 			filename = GetFullPath(filename);
 
 			lock (lockObj) {
-				HexDocument doc;
+				AsmEdHexDocument doc;
+				filenameToDoc.TryGetValue(filename, out doc);
+				return doc;
+			}
+		}
+
+		public AsmEdHexDocument GetOrCreate(string filename) {
+			filename = GetFullPath(filename);
+
+			lock (lockObj) {
+				AsmEdHexDocument doc;
 				if (filenameToDoc.TryGetValue(filename, out doc))
 					return doc;
 
 				//TODO: This reads the whole file into memory
-				doc = new HexDocument(filename);
+				doc = new AsmEdHexDocument(filename);
 				filenameToDoc.Add(filename, doc);
 				return doc;
 			}
-        }
+		}
+
+		public AsmEdHexDocument[] GetDocuments() {
+			lock (lockObj)
+				return filenameToDoc.Values.ToArray();
+		}
 
 		static string GetFullPath(string filename) {
+			if (filename == null)
+				return string.Empty;
 			try {
 				return Path.GetFullPath(filename);
 			}

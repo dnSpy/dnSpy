@@ -137,7 +137,7 @@ namespace ICSharpCode.ILSpy
 			get { return tabGroupsManager.ActiveTabGroup.ActiveTabState; }
 		}
 
-		IEnumerable<TabState> AllTabStates {
+		public IEnumerable<TabState> AllTabStates {
 			get {
 				// Return the visible tabs first
 				foreach (var tabManager in tabGroupsManager.AllTabGroups) {
@@ -357,10 +357,8 @@ namespace ICSharpCode.ILSpy
 		void sessionSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == "HighlightCurrentLine") {
-				foreach (var textView in AllTextViews) {
-					if ((bool)textView.GetValue(UIElement.IsKeyboardFocusWithinProperty))
-						textView.TextEditor.Options.HighlightCurrentLine = sessionSettings.HighlightCurrentLine;
-				}
+				foreach (var textView in AllTextViews)
+					textView.TextEditor.Options.HighlightCurrentLine = sessionSettings.HighlightCurrentLine;
 			}
 		}
 
@@ -1503,7 +1501,7 @@ namespace ICSharpCode.ILSpy
 
 		bool AskUserReloadAssemblyListIfModified(string question)
 		{
-			int count = UndoCommandManager.Instance.GetModifiedAssemblyTreeNodes().Count();
+			int count = UndoCommandManager.Instance.GetModifiedObjects().Count();
 			if (count == 0)
 				return true;
 

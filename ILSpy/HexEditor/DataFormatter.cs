@@ -76,9 +76,7 @@ namespace dnSpy.HexEditor {
 		protected abstract void InitializeDataObject(DataObject dataObj);
 
 		protected byte[] ReadByteArray() {
-			var data = new byte[end - start + 1];
-			hexBox.Document.Read(start, data, 0, data.Length);
-			return data;
+			return hexBox.Document.Read(start, (int)(end - start + 1));
 		}
 
 		protected int ReadByte(ulong offset) {

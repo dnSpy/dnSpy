@@ -110,7 +110,7 @@ namespace dnSpy.AsmEditor.Hex {
 				return context.SelectedTreeNodes != null &&
 					context.SelectedTreeNodes.Length == 1 ?
 					context.SelectedTreeNodes[0] as AssemblyTreeNode : null;
-            }
+			}
 			return null;
 		}
 
@@ -293,10 +293,6 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static AddressReference GetAddressReference(TextViewContext context) {
-			var md = TVShowMethodInstructionsInHexEditorContextMenuEntry.GetMemberDef(context) as MethodDef;
-			if (md == null)
-				return null;
-
 			var info = TVChangeBodyHexEditorContextMenuEntry.GetMethodLengthAndOffset(context);
 			if (info != null)
 				return new AddressReference(info.Value.Filename, false, info.Value.Offset, info.Value.Size);
@@ -378,19 +374,17 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	abstract class TVChangeBodyHexEditorContextMenuEntry : IContextMenuEntry {
-		readonly byte[] data;
-		readonly string descr;
-
-		protected TVChangeBodyHexEditorContextMenuEntry(byte[] data, string descr) {
-			this.data = data;
-			this.descr = descr;
-		}
+		protected abstract byte[] Data { get; }
+		protected abstract string GetDescription(byte[] data);
 
 		public void Execute(TextViewContext context) {
+			var data = Data;
+			if (data == null)
+				return;
 			var info = GetMethodLengthAndOffset(context);
 			if (info == null || info.Value.Size < (ulong)data.Length)
 				return;
-			WriteHexUndoCommand.AddAndExecute(info.Value.Filename, info.Value.Offset, data, descr);
+			WriteHexUndoCommand.AddAndExecute(info.Value.Filename, info.Value.Offset, data, GetDescription(data));
 		}
 
 		public bool IsEnabled(TextViewContext context) {
@@ -398,6 +392,9 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		public bool IsVisible(TextViewContext context) {
+			var data = Data;
+			if (data == null)
+				return false;
 			var info = GetMethodLengthAndOffset(context);
 			return info != null && info.Value.Size >= (ulong)data.Length;
 		}
@@ -418,17 +415,64 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Hex Write Return True Body", Order = 500.7, Category = "Hex")]
+	[ExportContextMenuEntry(Header = "Hex Write 'return true' Body", Order = 500.7, Category = "Hex")]
 	sealed class TVChangeBodyToReturnTrueHexEditorContextMenuEntry : TVChangeBodyHexEditorContextMenuEntry {
-		public TVChangeBodyToReturnTrueHexEditorContextMenuEntry()
-			:base(new byte[] { 0x06, 0x17 }, "Hex Write Return True Body") {
+		protected override string GetDescription(byte[] data) {
+			return "Hex Write 'return true' Body";
+		}
+
+		protected override byte[] Data {
+			get { return data; }
+		}
+		static readonly byte[] data = new byte[] { 0x0A, 0x17, 0x2A };
+	}
+
+	[ExportContextMenuEntry(Header = "Hex Write 'return false' Body", Order = 500.8, Category = "Hex")]
+	sealed class TVChangeBodyToReturnFalseHexEditorContextMenuEntry : TVChangeBodyHexEditorContextMenuEntry {
+		protected override string GetDescription(byte[] data) {
+			return "Hex Write 'return false' Body";
+		}
+
+		protected override byte[] Data {
+			get { return data; }
+		}
+		static readonly byte[] data = new byte[] { 0x0A, 0x16, 0x2A };
+	}
+
+	[ExportContextMenuEntry(Header = "Hex Copy Method Body", Order = 500.9, Category = "Hex")]
+	sealed class TVCopyMethodBodyHexEditorContextMenuEntry : IContextMenuEntry {
+		public void Execute(TextViewContext context) {
+			var data = GetMethodBodyBytes(context);
+			if (data == null)
+				return;
+			ClipboardUtils.SetText(ClipboardUtils.ToHexString(data));
+		}
+
+		public bool IsEnabled(TextViewContext context) {
+			return true;
+		}
+
+		public bool IsVisible(TextViewContext context) {
+			return TVChangeBodyHexEditorContextMenuEntry.GetMethodLengthAndOffset(context) != null;
+		}
+
+		static byte[] GetMethodBodyBytes(TextViewContext context) {
+			var info = TVChangeBodyHexEditorContextMenuEntry.GetMethodLengthAndOffset(context);
+			if (info == null || info.Value.Size > int.MaxValue)
+				return null;
+			var doc = HexDocumentManager.Instance.GetOrCreate(info.Value.Filename);
+			return doc.Read(info.Value.Offset, (int)info.Value.Size);
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Hex Write Return False Body", Order = 500.8, Category = "Hex")]
-	sealed class TVChangeBodyToReturnFalseHexEditorContextMenuEntry : TVChangeBodyHexEditorContextMenuEntry {
-		public TVChangeBodyToReturnFalseHexEditorContextMenuEntry()
-			: base(new byte[] { 0x06, 0x16 }, "Hex Write Return False Body") {
+	[ExportContextMenuEntry(Header = "Hex Paste Method Body", Order = 501.0, Category = "Hex")]
+	sealed class TVPasteMethodBodyHexEditorContextMenuEntry : TVChangeBodyHexEditorContextMenuEntry {
+		protected override string GetDescription(byte[] data) {
+			return "Hex Paste Method Body";
+		}
+
+		protected override byte[] Data {
+			get { return ClipboardUtils.GetData(); }
 		}
 	}
 
@@ -655,7 +699,28 @@ namespace dnSpy.AsmEditor.Hex {
 	[ExportContextMenuEntry(Header = "Fill Selection with Byte...", Order = 210, Category = "Edit")]
 	sealed class WriteToSelectionSelectionHexBoxContextMenuEntry : HexBoxContextMenuEntry {
 		protected override void Execute(HexTabState tabState) {
-			//TODO:
+			var sel = tabState.HexBox.Selection;
+			if (sel == null)
+				return;
+
+			var ask = new AskForInput();
+			ask.Owner = MainWindow.Instance;
+			ask.Title = "Enter Value";
+			ask.label.Content = "_Byte";
+			ask.textBox.Text = "0xFF";
+			ask.ShowDialog();
+			if (ask.DialogResult != true)
+				return;
+
+			string error;
+			byte b = NumberVMUtils.ParseByte(ask.textBox.Text, byte.MinValue, byte.MaxValue, out error);
+			if (!string.IsNullOrEmpty(error)) {
+				MainWindow.Instance.ShowMessageBox(error);
+				return;
+			}
+
+			tabState.HexBox.FillBytes(sel.Value.StartOffset, sel.Value.EndOffset, b);
+			tabState.HexBox.Selection = null;
 		}
 
 		protected override bool IsEnabled(HexTabState tabState) {

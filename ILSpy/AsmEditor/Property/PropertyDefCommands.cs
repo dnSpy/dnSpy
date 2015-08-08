@@ -201,7 +201,7 @@ namespace dnSpy.AsmEditor.Property {
 			nodes.Restore();
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { return nodes.Nodes; }
 		}
 
@@ -308,7 +308,7 @@ namespace dnSpy.AsmEditor.Property {
 				throw new InvalidOperationException();
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { yield return ownerNode; }
 		}
 
@@ -433,7 +433,7 @@ namespace dnSpy.AsmEditor.Property {
 			propNode.RaiseUIPropsChanged();
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { yield return propNode; }
 		}
 

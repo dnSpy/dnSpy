@@ -22,31 +22,35 @@ using System.Collections.Generic;
 using dnSpy.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex {
-	sealed class WriteHexUndoCommand : IUndoCommand {
+	/// <summary>
+	/// A command that gets added to <see cref="UndoCommandManager"/> after it's already been
+	/// executed once.
+	/// </summary>
+	sealed class HexBoxUndoCommand : IUndoCommand {
 		readonly HexDocument doc;
+		readonly WeakReference hexBoxWeakRef;
+		readonly HexBoxPosition origCaretPos;
+		readonly HexBoxPosition newCaretPos;
 		readonly ulong offset;
-		readonly byte[] newData;
 		readonly byte[] origData;
+		readonly byte[] newData;
 		readonly string descr;
+		bool canExecute;
 
-		public static void AddAndExecute(string filename, ulong offset, byte[] data, string descr = null) {
-			if (string.IsNullOrEmpty(filename))
-				throw new ArgumentException();
-			if (data == null || data.Length == 0)
-				return;
-			UndoCommandManager.Instance.Add(new WriteHexUndoCommand(filename, offset, data, descr));
-		}
-
-		WriteHexUndoCommand(string filename, ulong offset, byte[] data, string descr) {
-			this.doc = HexDocumentManager.Instance.GetOrCreate(filename);
+		public HexBoxUndoCommand(HexBox hexBox, HexBoxPosition origCaretPos, ulong offset, byte[] origData, string descr) {
+			this.doc = hexBox.Document;
+			this.hexBoxWeakRef = new WeakReference(hexBox);
+			this.origCaretPos = origCaretPos;
+			this.newCaretPos = hexBox.CaretPosition;
 			this.offset = offset;
-			this.newData = (byte[])data.Clone();
-			this.origData = this.doc.Read(offset, data.Length);
+			this.origData = origData;
+			this.newData = doc.Read(offset, origData.Length);
 			this.descr = descr;
+			this.canExecute = false;
 		}
 
 		public string Description {
-			get { return descr ?? string.Format("Write {0} bytes to offset {1:X8}", newData.Length, offset); }
+			get { return descr; }
 		}
 
 		public IEnumerable<object> ModifiedObjects {
@@ -57,15 +61,22 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		public void Execute() {
-			WriteData(newData);
+			if (canExecute)
+				WriteData(newData, newCaretPos);
+			canExecute = true;
 		}
 
 		public void Undo() {
-			WriteData(origData);
+			WriteData(origData, origCaretPos);
 		}
 
-		void WriteData(byte[] data) {
+		void WriteData(byte[] data, HexBoxPosition caretPos) {
 			doc.Write(offset, data, 0, data.Length);
+			var hexBox = (HexBox)hexBoxWeakRef.Target;
+			if (hexBox != null) {
+				hexBox.CaretPosition = caretPos;
+				hexBox.BringCaretIntoView();
+			}
 		}
 	}
 }

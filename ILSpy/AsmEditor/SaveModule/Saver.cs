@@ -33,67 +33,85 @@ namespace dnSpy.AsmEditor.SaveModule {
 			return AskUserToSaveIfModified(asmNodes.Select(n => n.LoadedAssembly));
 		}
 
-		public static bool AskUserToSaveIfModified(IEnumerable<LoadedAssembly> asmNodes) {
-			var modifiedAsms = asmNodes.Where(n => UndoCommandManager.Instance.IsModified(n)).Distinct().ToArray();
-			if (modifiedAsms.Length == 0)
+		public static bool AskUserToSaveIfModified(IEnumerable<IUndoObject> objs) {
+			var modifiedObjs = objs.Where(n => UndoCommandManager.Instance.IsModified(n)).Distinct().ToArray();
+			if (modifiedObjs.Length == 0)
 				return true;
 
-			var msg = modifiedAsms.Length == 1 ?
+			var msg = modifiedObjs.Length == 1 ?
 				"The file hasn't been saved yet. Do you want to save it before continuing?" :
 				"The files haven't been saved yet. Do you want to save them before continuing?";
 			var res = MainWindow.Instance.ShowMessageBox(msg, System.Windows.MessageBoxButton.YesNo);
 			if (res == MsgBoxButton.No)
 				return true;
-			return SaveAssemblies(modifiedAsms);
+			return SaveAssemblies(modifiedObjs);
 		}
 
 		/// <summary>
-		/// Saves all assemblies and returns true if all assemblies were saved to disk
+		/// Saves all asms/hex docs and returns true if all of them were saved to disk
 		/// </summary>
-		/// <param name="asms">All assemblies to save</param>
+		/// <param name="objs">All objects to save</param>
 		/// <returns></returns>
-		public static bool SaveAssemblies(IEnumerable<LoadedAssembly> asms) {
-			var asmsAry = asms.ToArray();
-			if (asmsAry.Length == 0)
+		public static bool SaveAssemblies(IEnumerable<IUndoObject> objs) {
+			var objsAry = objs.ToArray();
+			if (objsAry.Length == 0)
 				return true;
 
-			if (asmsAry.Length == 1) {
-				var optsData = new SaveModuleOptionsVM(asmsAry[0].ModuleDefinition);
-				var optsWin = new SaveModuleOptions();
-				optsWin.Owner = MainWindow.Instance;
-				optsWin.DataContext = optsData;
-				var res = optsWin.ShowDialog();
-				if (res != true)
-					return false;
+			if (objsAry.Length == 1) {
+				SaveOptionsVM options;
 
-				var data = new SaveMultiModuleVM(optsData);
-				var win = new SaveSingleModule();
+				var asm = objsAry[0] as LoadedAssembly;
+				if (asm != null) {
+					var optsData = new SaveModuleOptionsVM(asm);
+					var optsWin = new SaveModuleOptionsDlg();
+					optsWin.Owner = MainWindow.Instance;
+					optsWin.DataContext = optsData;
+					var res = optsWin.ShowDialog();
+					if (res != true)
+						return false;
+					options = optsData;
+				}
+				else {
+					var doc = (AsmEdHexDocument)objsAry[0];
+					var optsData = new SaveHexOptionsVM(doc);
+					var optsWin = new SaveHexOptionsDlg();
+					optsWin.Owner = MainWindow.Instance;
+					optsWin.DataContext = optsData;
+					var res = optsWin.ShowDialog();
+					if (res != true)
+						return false;
+					options = optsData;
+				}
+
+				var data = new SaveMultiModuleVM(options);
+				var win = new SaveSingleModuleDlg();
 				win.Owner = MainWindow.Instance;
 				win.DataContext = data;
 				data.Save();
 				win.ShowDialog();
-				return MarkAsSaved(data, asmsAry);
+				return MarkAsSaved(data, objsAry);
 			}
 			else {
-				var data = new SaveMultiModuleVM(asmsAry.Select(a => a.ModuleDefinition));
-				var win = new SaveMultiModule();
+				var data = new SaveMultiModuleVM(objsAry);
+				var win = new SaveMultiModuleDlg();
 				win.Owner = MainWindow.Instance;
 				win.DataContext = data;
 				win.ShowDialog();
-				return MarkAsSaved(data, asmsAry);
+				return MarkAsSaved(data, objsAry);
 			}
 		}
 
-		static bool MarkAsSaved(SaveMultiModuleVM vm, LoadedAssembly[] asms) {
+		static bool MarkAsSaved(SaveMultiModuleVM vm, IUndoObject[] objs) {
 			bool setNewFileName = false;
 			bool allSaved = true;
-			foreach (var asm in asms) {
-				if (!vm.WasSaved(asm.ModuleDefinition))
+			foreach (var obj in objs) {
+				if (!vm.WasSaved(obj))
 					allSaved = false;
 				else {
-					UndoCommandManager.Instance.MarkAsSaved(asm);
-					if (string.IsNullOrEmpty(asm.FileName)) {
-						var filename = vm.GetSavedFileName(asm.ModuleDefinition);
+					UndoCommandManager.Instance.MarkAsSaved(obj);
+					var asm = obj as LoadedAssembly;
+					if (asm != null && string.IsNullOrEmpty(asm.FileName)) {
+						var filename = vm.GetSavedFileName(asm);
 						if (!string.IsNullOrWhiteSpace(filename)) {
 							asm.ModuleDefinition.Location = filename;
 							asm.FileName = filename;
