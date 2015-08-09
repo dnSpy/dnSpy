@@ -4026,7 +4026,7 @@
                                                             BorderThickness="1">
                                                         <Grid>
                                                             <Rectangle Fill="{DynamicResource ToolBarSubMenuBackground}"
-                                                                       Margin="0"
+                                                                       Margin="0,-1,0,0"
                                                                        VerticalAlignment="Top"
                                                                        HorizontalAlignment="Left"
                                                                        Height="1"
