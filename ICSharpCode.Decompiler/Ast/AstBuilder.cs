@@ -156,7 +156,7 @@ namespace ICSharpCode.Decompiler.Ast
 			syntaxTree.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true });
 			var outputFormatter = new TextTokenWriter(output, context) { FoldBraces = false };
 			var formattingPolicy = context.Settings.CSharpFormattingOptions;
-			syntaxTree.AcceptVisitor(new CSharpOutputVisitor(outputFormatter, formattingPolicy));
+			syntaxTree.AcceptVisitor(new CSharpOutputVisitor(outputFormatter, formattingPolicy, context.CancellationToken));
 		}
 		
 		public void AddAssembly(AssemblyDef assemblyDefinition, bool onlyAssemblyLevel = false)
