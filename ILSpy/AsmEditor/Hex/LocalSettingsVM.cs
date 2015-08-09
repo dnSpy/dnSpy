@@ -18,6 +18,7 @@
 */
 
 using System.Windows.Input;
+using dnSpy.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex {
 	sealed class LocalSettingsVM : ViewModelBase {
@@ -105,6 +106,22 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 		readonly NullableUInt64VM endOffsetVM;
 
+		public EnumListVM AsciiEncodingVM {
+			get { return asciiEncodingVM; }
+		}
+		readonly EnumListVM asciiEncodingVM;
+		readonly EnumVM[] asciiEncodingList = new EnumVM[] {
+			new EnumVM(AsciiEncoding.ASCII, "ASCII"),
+			new EnumVM(AsciiEncoding.ANSI, "ANSI"),
+			new EnumVM(AsciiEncoding.UTF7, "UTF-7"),
+			new EnumVM(AsciiEncoding.UTF8, "UTF-8"),
+			new EnumVM(AsciiEncoding.UTF32, "UTF-32"),
+			new EnumVM(AsciiEncoding.Unicode, "Unicode"),
+			new EnumVM(AsciiEncoding.BigEndianUnicode, "BE Unicode"),
+			new EnumVM(AsciiEncoding_DEFAULT, "Default"),
+		};
+		const AsciiEncoding AsciiEncoding_DEFAULT = (AsciiEncoding)(-1);
+
 		public LocalSettingsVM(LocalHexSettings options) {
 			this.origOptions = options;
 			this.bytesGroupCountVM = new NullableInt32VM(a => HasErrorUpdated());
@@ -121,6 +138,7 @@ namespace dnSpy.AsmEditor.Hex {
 			this.baseOffsetVM = new UInt64VM(a => HasErrorUpdated());
 			this.startOffsetVM = new NullableUInt64VM(a => HasErrorUpdated());
 			this.endOffsetVM = new NullableUInt64VM(a => HasErrorUpdated());
+			this.asciiEncodingVM = new EnumListVM(asciiEncodingList);
 
 			Reinitialize();
 		}
@@ -132,6 +150,7 @@ namespace dnSpy.AsmEditor.Hex {
 				UseHexPrefix != null ||
 				ShowAscii != null ||
 				LowerCaseHex != null ||
+				(AsciiEncoding)AsciiEncodingVM.SelectedItem != AsciiEncoding_DEFAULT ||
 				(HexOffsetSizeVM.HasError || HexOffsetSizeVM.Value != 0) ||
 				UseRelativeOffsets ||
 				(BaseOffsetVM.HasError || BaseOffsetVM.Value != 0) ||
@@ -145,6 +164,7 @@ namespace dnSpy.AsmEditor.Hex {
 			UseHexPrefix = null;
 			ShowAscii = null;
 			LowerCaseHex = null;
+			AsciiEncodingVM.SelectedItem = AsciiEncoding_DEFAULT;
 			HexOffsetSizeVM.Value = 0;
 			UseRelativeOffsets = false;
 			BaseOffsetVM.Value = 0;
@@ -166,6 +186,7 @@ namespace dnSpy.AsmEditor.Hex {
 			UseHexPrefix = options.UseHexPrefix;
 			ShowAscii = options.ShowAscii;
 			LowerCaseHex = options.LowerCaseHex;
+			AsciiEncodingVM.SelectedItem = options.AsciiEncoding ?? AsciiEncoding_DEFAULT;
 			HexOffsetSizeVM.Value = options.HexOffsetSize;
 			UseRelativeOffsets = options.UseRelativeOffsets;
 			BaseOffsetVM.Value = options.BaseOffset;
@@ -179,6 +200,8 @@ namespace dnSpy.AsmEditor.Hex {
 			options.UseHexPrefix = UseHexPrefix;
 			options.ShowAscii = ShowAscii;
 			options.LowerCaseHex = LowerCaseHex;
+			var val = (AsciiEncoding)AsciiEncodingVM.SelectedItem;
+			options.AsciiEncoding = val == AsciiEncoding_DEFAULT ? (AsciiEncoding?)null : val;
 			options.HexOffsetSize = HexOffsetSizeVM.Value;
 			options.UseRelativeOffsets = UseRelativeOffsets;
 			options.BaseOffset = BaseOffsetVM.Value;

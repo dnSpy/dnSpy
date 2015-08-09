@@ -426,6 +426,7 @@ namespace dnSpy.Tabs {
 			UseHexPrefix = null;
 			ShowAscii = null;
 			LowerCaseHex = null;
+			AsciiEncoding = null;
 		}
 
 		internal static void OnThemeUpdatedStatic() {
@@ -483,6 +484,7 @@ namespace dnSpy.Tabs {
 			UseHexPrefix = state.UseHexPrefix;
 			ShowAscii = state.ShowAscii;
 			LowerCaseHex = state.LowerCaseHex;
+			AsciiEncoding = state.AsciiEncoding;
 
 			HexBox.HexOffsetSize = state.HexOffsetSize;
 			HexBox.UseRelativeOffsets = state.UseRelativeOffsets;
@@ -518,6 +520,7 @@ namespace dnSpy.Tabs {
 			state.UseHexPrefix = UseHexPrefix;
 			state.ShowAscii = ShowAscii;
 			state.LowerCaseHex = LowerCaseHex;
+			state.AsciiEncoding = AsciiEncoding;
 
 			state.HexOffsetSize = HexBox.HexOffsetSize;
 			state.UseRelativeOffsets = HexBox.UseRelativeOffsets;
@@ -630,6 +633,22 @@ namespace dnSpy.Tabs {
 			}
 		}
 		bool useDefault_LowerCaseHex;
+
+		public AsciiEncoding? AsciiEncoding {
+			get { return useDefault_AsciiEncoding ? (AsciiEncoding?)null : HexBox.AsciiEncoding; }
+			set {
+				if (value == null) {
+					useDefault_AsciiEncoding = true;
+					HexBox.ClearValue(HexBox.AsciiEncodingProperty);
+					HexBox.SetBinding(HexBox.AsciiEncodingProperty, new Binding("AsciiEncoding") { Source = HexSettings.Instance });
+				}
+				else {
+					useDefault_AsciiEncoding = false;
+					HexBox.AsciiEncoding = value.Value;
+				}
+			}
+		}
+		bool useDefault_AsciiEncoding;
 
 		public void SelectAndMoveCaret(ulong fileOffset, ulong length) {
 			ulong end = length == 0 ? fileOffset : fileOffset + length - 1 < fileOffset ? ulong.MaxValue : fileOffset + length - 1;

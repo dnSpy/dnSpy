@@ -106,6 +106,9 @@ namespace dnSpy.HexEditor {
 		public static readonly DependencyProperty SelectionBackgroundProperty =
 			DependencyProperty.Register("SelectionBackground", typeof(Brush), typeof(HexBox),
 			new FrameworkPropertyMetadata(Brushes.Blue));
+		public static readonly DependencyProperty AsciiEncodingProperty =
+			DependencyProperty.Register("AsciiEncoding", typeof(AsciiEncoding), typeof(HexBox),
+			new FrameworkPropertyMetadata(AsciiEncoding.UTF8));
 
 		public HexDocument Document {
 			get { return (HexDocument)GetValue(DocumentProperty); }
@@ -200,6 +203,11 @@ namespace dnSpy.HexEditor {
 		public Brush SelectionBackground {
 			get { return (Brush)GetValue(SelectionBackgroundProperty); }
 			set { SetValue(SelectionBackgroundProperty, value); }
+		}
+
+		public AsciiEncoding AsciiEncoding {
+			get { return (AsciiEncoding)GetValue(AsciiEncodingProperty); }
+			set { SetValue(AsciiEncodingProperty, value); }
 		}
 
 		static void OnDocumentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
@@ -1996,9 +2004,11 @@ namespace dnSpy.HexEditor {
 
 			case HexBoxPositionKind.Ascii:
 				foreach (var c in text) {
-					if (HandleHexAsciiInput(c)) {
+					int length;
+					if (HandleHexAsciiInput(c, out length)) {
 						unselect = true;
-						MoveCaretRight();
+						for (int i = 0; i < length; i++)
+							MoveCaretRight();
 					}
 				}
 				break;
@@ -2031,14 +2041,27 @@ namespace dnSpy.HexEditor {
 			return true;
 		}
 
-		bool HandleHexAsciiInput(char c) {
-			if (c > 0x7E)
-				return false;
+		bool HandleHexAsciiInput(char c, out int length) {
+			length = 0;
+			Encoding enc;
+			switch (AsciiEncoding) {
+			case AsciiEncoding.ASCII:	enc = Encoding.ASCII; break;
+			case AsciiEncoding.BigEndianUnicode: enc = Encoding.BigEndianUnicode; break;
+			case AsciiEncoding.ANSI:	enc = Encoding.Default; break;
+			case AsciiEncoding.Unicode:	enc = Encoding.Unicode; break;
+			case AsciiEncoding.UTF32:	enc = Encoding.UTF32; break;
+			case AsciiEncoding.UTF7:	enc = Encoding.UTF7; break;
+			default:
+			case AsciiEncoding.UTF8:	enc = Encoding.UTF8; break;
+			}
 
+			var bytes = enc.GetBytes(new char[] { c });
+
+			length = bytes.Length;
 			ulong offs = CaretPosition.Offset;
-			var ctx = NotifyBeforeWrite(HexWriteType.AsciiInput, offs, 1);
-			Document.Write(offs, (byte)c);
-			NotifyAfterWrite(HexWriteType.AsciiInput, offs, 1, ctx);
+			var ctx = NotifyBeforeWrite(HexWriteType.AsciiInput, offs, bytes.Length);
+			Document.Write(offs, bytes, 0, bytes.Length);
+			NotifyAfterWrite(HexWriteType.AsciiInput, offs, bytes.Length, ctx);
 			return true;
 		}
 

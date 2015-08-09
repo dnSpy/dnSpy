@@ -158,6 +158,7 @@ namespace dnSpy.Tabs {
 		public bool? UseHexPrefix;
 		public bool? ShowAscii;
 		public bool? LowerCaseHex;
+		public AsciiEncoding? AsciiEncoding;
 
 		public int HexOffsetSize;
 		public bool UseRelativeOffsets;
@@ -174,6 +175,7 @@ namespace dnSpy.Tabs {
 			xml.SetAttributeValue("UseHexPrefix", UseHexPrefix);
 			xml.SetAttributeValue("ShowAscii", ShowAscii);
 			xml.SetAttributeValue("LowerCaseHex", LowerCaseHex);
+			xml.SetAttributeValue("AsciiEncoding", (int?)AsciiEncoding);
 
 			xml.SetAttributeValue("HexOffsetSize", HexOffsetSize);
 			xml.SetAttributeValue("UseRelativeOffsets", UseRelativeOffsets);
@@ -201,6 +203,7 @@ namespace dnSpy.Tabs {
 			savedState.UseHexPrefix = (bool?)child.Attribute("UseHexPrefix");
 			savedState.ShowAscii = (bool?)child.Attribute("ShowAscii");
 			savedState.LowerCaseHex = (bool?)child.Attribute("LowerCaseHex");
+			savedState.AsciiEncoding = (AsciiEncoding?)(int?)child.Attribute("AsciiEncoding");
 
 			savedState.HexOffsetSize = (int)child.Attribute("HexOffsetSize");
 			savedState.UseRelativeOffsets = (bool)child.Attribute("UseRelativeOffsets");

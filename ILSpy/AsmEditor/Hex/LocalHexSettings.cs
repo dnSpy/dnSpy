@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.HexEditor;
 using dnSpy.Tabs;
 
 namespace dnSpy.AsmEditor.Hex {
@@ -26,6 +27,7 @@ namespace dnSpy.AsmEditor.Hex {
 		public bool? UseHexPrefix;
 		public bool? ShowAscii;
 		public bool? LowerCaseHex;
+		public AsciiEncoding? AsciiEncoding;
 
 		public int HexOffsetSize;
 		public bool UseRelativeOffsets;
@@ -43,6 +45,7 @@ namespace dnSpy.AsmEditor.Hex {
 			this.UseHexPrefix = tabState.UseHexPrefix;
 			this.ShowAscii = tabState.ShowAscii;
 			this.LowerCaseHex = tabState.LowerCaseHex;
+			this.AsciiEncoding = tabState.AsciiEncoding;
 			this.HexOffsetSize = tabState.HexBox.HexOffsetSize;
 			this.UseRelativeOffsets = tabState.HexBox.UseRelativeOffsets;
 			this.BaseOffset = tabState.HexBox.BaseOffset;
@@ -56,6 +59,7 @@ namespace dnSpy.AsmEditor.Hex {
 			tabState.UseHexPrefix = this.UseHexPrefix;
 			tabState.ShowAscii = this.ShowAscii;
 			tabState.LowerCaseHex = this.LowerCaseHex;
+			tabState.AsciiEncoding = this.AsciiEncoding;
 			tabState.HexBox.HexOffsetSize = this.HexOffsetSize;
 			tabState.HexBox.UseRelativeOffsets = this.UseRelativeOffsets;
 			tabState.HexBox.BaseOffset = this.BaseOffset;

@@ -45,6 +45,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -66,10 +67,13 @@
             <Label Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=bytesPerLineTextBox}" Content="B_ytes per Line" />
             <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Name="bytesPerLineTextBox" Text="{Binding BytesPerLineVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
-            <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding UseHexPrefix}" Content="_Use Hex Prefix (offset)" IsThreeState="True" />
-            <CheckBox Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding ShowAscii}" Content="Sho_w ASCII" IsThreeState="True" />
-            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding LowerCaseHex}" Content="_Lower Case Hex" IsThreeState="True" />
-            <CheckBox Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding UseRelativeOffsets}" Content="Use _Relative Offsets" ToolTip="All offsets are relative to start offset" />
+            <Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Content="E_ncoding" Target="{Binding ElementName=encodingComboBox}" />
+            <ComboBox Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="encodingComboBox" DisplayMemberPath="Name" ItemsSource="{Binding AsciiEncodingVM.Items}" SelectedIndex="{Binding AsciiEncodingVM.SelectedIndex}" VerticalContentAlignment="Center" />
+
+            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding UseHexPrefix}" Content="_Use Hex Prefix (offset)" IsThreeState="True" />
+            <CheckBox Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding ShowAscii}" Content="Sho_w ASCII" IsThreeState="True" />
+            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding LowerCaseHex}" Content="_Lower Case Hex" IsThreeState="True" />
+            <CheckBox Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding UseRelativeOffsets}" Content="Use _Relative Offsets" ToolTip="All offsets are relative to start offset" />
         </Grid>
 
         <Grid Grid.Row="1" Margin="5">

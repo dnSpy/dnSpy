@@ -809,6 +809,39 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
+	[ExportContextMenuEntry(Header = "Encoding", Order = 540, Category = "Options")]
+	sealed class EncodingHexBoxContextMenuEntry : HexBoxContextMenuEntry {
+		protected override void Execute(HexTabState tabState) {
+		}
+
+		protected override bool IsVisible(HexTabState tabState) {
+			return true;
+		}
+
+		static readonly Tuple<AsciiEncoding?, string>[] subMenus = new Tuple<AsciiEncoding?, string>[] {
+			Tuple.Create((AsciiEncoding?)AsciiEncoding.ASCII, "A_SCII"),
+			Tuple.Create((AsciiEncoding?)AsciiEncoding.ANSI, "_ANSI"),
+			Tuple.Create((AsciiEncoding?)AsciiEncoding.UTF7, "UTF_7"),
+			Tuple.Create((AsciiEncoding?)AsciiEncoding.UTF8, "UTF_8"),
+			Tuple.Create((AsciiEncoding?)AsciiEncoding.UTF32, "UTF_32"),
+			Tuple.Create((AsciiEncoding?)AsciiEncoding.Unicode, "_Unicode"),
+			Tuple.Create((AsciiEncoding?)AsciiEncoding.BigEndianUnicode, "_BE Unicode"),
+			Tuple.Create((AsciiEncoding?)null, "_Default"),
+		};
+
+		protected override void Initialize(HexTabState tabState, MenuItem menuItem) {
+			foreach (var info in subMenus) {
+				var mi = new MenuItem {
+					Header = info.Item2,
+					IsChecked = info.Item1 == tabState.AsciiEncoding,
+				};
+				var tmpInfo = info;
+				mi.Click += (s, e) => tabState.AsciiEncoding = tmpInfo.Item1;
+				menuItem.Items.Add(mi);
+			}
+		}
+	}
+
 	[ExportContextMenuEntry(Header = "Settings…", Order = 599, Category = "Options")]
 	sealed class LocalSettingsHexBoxContextMenuEntry : HexBoxContextMenuEntry {
 		protected override void Execute(HexTabState tabState) {

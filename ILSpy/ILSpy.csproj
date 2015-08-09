@@ -555,6 +555,7 @@
     </Compile>
     <Compile Include="dntheme\FileTabBackgroundConverter.cs" />
     <Compile Include="FilterSearcher.cs" />
+    <Compile Include="HexEditor\AsciiEncoding.cs" />
     <Compile Include="HexEditor\ByteArrayHexStream.cs" />
     <Compile Include="HexEditor\ClipboardUtils.cs" />
     <Compile Include="HexEditor\DataFormatter.cs" />

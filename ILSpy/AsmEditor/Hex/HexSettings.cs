@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Threading;
 using System.Xml.Linq;
+using dnSpy.HexEditor;
 using dnSpy.Options;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Options;
@@ -133,6 +134,17 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 		double fontSize;
 
+		public virtual AsciiEncoding AsciiEncoding {
+			get { return asciiEncoding; }
+			set {
+				if (asciiEncoding != value) {
+					asciiEncoding = value;
+					OnPropertyChanged("AsciiEncoding");
+				}
+			}
+		}
+		AsciiEncoding asciiEncoding;
+
 		const string SETTINGS_SECTION_NAME = "HexSettings";
 		public override void Load(ILSpySettings settings) {
 			var xelem = settings[SETTINGS_SECTION_NAME];
@@ -143,6 +155,7 @@ namespace dnSpy.AsmEditor.Hex {
 			this.LowerCaseHex = (bool?)xelem.Attribute("LowerCaseHex") ?? false;
 			this.FontFamily = new FontFamily(SessionSettings.Unescape((string)xelem.Attribute("FontFamily")) ?? FontUtils.GetDefaultFont());
 			this.FontSize = (double?)xelem.Attribute("FontSize") ?? FontUtils.DEFAULT_FONT_SIZE;
+			this.AsciiEncoding = (AsciiEncoding)((int?)xelem.Attribute("AsciiEncoding") ?? (int)AsciiEncoding.UTF8);
 		}
 
 		public override RefreshFlags Save(XElement root) {
@@ -155,6 +168,7 @@ namespace dnSpy.AsmEditor.Hex {
 			xelem.SetAttributeValue("LowerCaseHex", this.LowerCaseHex);
 			xelem.SetAttributeValue("FontFamily", SessionSettings.Escape(this.FontFamily.Source));
 			xelem.SetAttributeValue("FontSize", this.FontSize);
+			xelem.SetAttributeValue("AsciiEncoding", (int)this.AsciiEncoding);
 
 			var currElem = root.Element(SETTINGS_SECTION_NAME);
 			if (currElem != null)
@@ -175,6 +189,7 @@ namespace dnSpy.AsmEditor.Hex {
 			other.LowerCaseHex = this.LowerCaseHex;
 			other.FontFamily = this.FontFamily;
 			other.FontSize = this.FontSize;
+			other.AsciiEncoding = this.AsciiEncoding;
 		}
 
 		public override bool HasError {
@@ -197,6 +212,25 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 		FontFamily[] fonts;
 
+		public EnumListVM AsciiEncodingVM {
+			get { return asciiEncodingVM; }
+		}
+		readonly EnumListVM asciiEncodingVM;
+		readonly EnumVM[] asciiEncodingList = new EnumVM[] {
+			new EnumVM(AsciiEncoding.ASCII, "ASCII"),
+			new EnumVM(AsciiEncoding.ANSI, "ANSI"),
+			new EnumVM(AsciiEncoding.UTF7, "UTF-7"),
+			new EnumVM(AsciiEncoding.UTF8, "UTF-8"),
+			new EnumVM(AsciiEncoding.UTF32, "UTF-32"),
+			new EnumVM(AsciiEncoding.Unicode, "Unicode"),
+			new EnumVM(AsciiEncoding.BigEndianUnicode, "BE Unicode"),
+		};
+
+		public override AsciiEncoding AsciiEncoding {
+			get { return (AsciiEncoding)AsciiEncodingVM.SelectedItem; }
+			set { AsciiEncodingVM.SelectedItem = value; }
+		}
+
 		public HexSettingsVM() {
 			var task = new Task<FontFamily[]>(FontUtils.GetMonospacedFonts);
 			task.Start();
@@ -209,6 +243,7 @@ namespace dnSpy.AsmEditor.Hex {
 					}
 				}));
 			});
+			this.asciiEncodingVM = new EnumListVM(asciiEncodingList);
 		}
 	}
 }

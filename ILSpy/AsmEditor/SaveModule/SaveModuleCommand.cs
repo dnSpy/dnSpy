@@ -22,18 +22,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
+using dnSpy.Tabs;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	[ExportMainMenuCommand(Menu = "_File", MenuCategory = "Save", MenuOrder = 1010)]
 	sealed class SaveModuleCommand : TreeNodeCommand, IMainMenuCommandInitialize {
-		public SaveModuleCommand() {
+		public SaveModuleCommand()
+			: base(true) {
 			MainWindow.Instance.SetMenuAlwaysRegenerate("_File");
 		}
 
 		HashSet<IUndoObject> GetAssemblyNodes(ILSpyTreeNode[] nodes) {
 			var hash = new HashSet<IUndoObject>();
+
+			if (nodes.Length == 0) {
+				var hex = MainWindow.Instance.ActiveTabState as HexTabState;
+				if (hex != null) {
+					var doc = hex.HexBox.Document as AsmEdHexDocument;
+					if (doc != null)
+						hash.Add(doc);
+				}
+			}
+
 			foreach (var node in nodes) {
 				var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
 				if (asmNode == null)
