@@ -16,33 +16,37 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using System.Windows.Controls;
 using System.Windows.Input;
+using dnSpy.Tabs;
 
-namespace ICSharpCode.ILSpy
-{
-	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "_Save Code…", MenuIcon = "Save", MenuCategory = "Save", MenuOrder = 1000)]
-	[ExportContextMenuEntry(Header = "_Save Code…", Order = 90, InputGestureText = "Ctrl+S", Category = "Tabs", Icon = "Save")]
-	sealed class SaveCommand : CommandWrapper, IContextMenuEntry
-	{
+namespace ICSharpCode.ILSpy {
+	[ExportMainMenuCommand(Menu = "_File", MenuIcon = "Save", MenuCategory = "Save", MenuOrder = 1000)]
+	[ExportContextMenuEntry(Order = 100, InputGestureText = "Ctrl+S", Category = "Tabs", Icon = "Save")]
+	sealed class SaveCommand : CommandWrapper, IMainMenuCommandInitialize, IContextMenuEntry2 {
 		public SaveCommand()
-			: base(ApplicationCommands.Save)
-		{
+			: base(ApplicationCommands.Save) {
 		}
 
-		public bool IsVisible(TextViewContext context)
-		{
-			// Only show if tab context menu
-			return context.TabControl != null && CanExecute(null);
+		public bool IsVisible(TextViewContext context) {
+			return MainWindow.Instance.IsDecompilerTabControl(context.TabControl) &&
+				CanExecute(null);
 		}
 
-		public bool IsEnabled(TextViewContext context)
-		{
+		public bool IsEnabled(TextViewContext context) {
 			return CanExecute(null);
 		}
 
-		public void Execute(TextViewContext context)
-		{
+		public void Execute(TextViewContext context) {
 			base.Execute(null);
+		}
+
+		public void Initialize(MenuItem menuItem) {
+			menuItem.Header = MainWindow.Instance.ActiveTabState is DecompileTabState ? "_Save Code…" : "_Save…";
+		}
+
+		public void Initialize(TextViewContext context, MenuItem menuItem) {
+			Initialize(menuItem);
 		}
 	}
 }

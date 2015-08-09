@@ -2042,7 +2042,6 @@ namespace dnSpy.HexEditor {
 		}
 
 		bool HandleHexAsciiInput(char c, out int length) {
-			length = 0;
 			Encoding enc;
 			switch (AsciiEncoding) {
 			case AsciiEncoding.ASCII:	enc = Encoding.ASCII; break;

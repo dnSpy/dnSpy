@@ -50,7 +50,7 @@ namespace dnSpy.Tabs {
 		protected abstract void ExecuteInternal();
 	}
 
-	[ExportContextMenuEntry(Header = "_Close", Order = 100, InputGestureText = "Ctrl+W", Category = "Tabs")]
+	[ExportContextMenuEntry(Header = "_Close", Order = 101, InputGestureText = "Ctrl+W", Category = "Tabs")]
 	class CloseTabContextMenuEntry : IContextMenuEntry {
 		public bool IsVisible(TextViewContext context) {
 			return MainWindow.Instance.IsDecompilerTabControl(context.TabControl) &&

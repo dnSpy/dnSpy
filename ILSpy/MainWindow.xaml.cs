@@ -2099,15 +2099,30 @@ namespace ICSharpCode.ILSpy
 		
 		void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			Save(GetActiveDecompileTabState());
+			Save(ActiveTabState);
 		}
 
 		void SaveCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.CanExecute = GetActiveDecompileTabState() != null;
+			e.CanExecute = ActiveTabState != null;
 		}
 
-		internal void Save(DecompileTabState tabState)
+		internal void Save(TabState tabState)
+		{
+			var decompileTabState = tabState as DecompileTabState;
+			if (decompileTabState != null) {
+				SaveCode(decompileTabState);
+				return;
+			}
+
+			var hexTabState = tabState as HexTabState;
+			if (hexTabState != null && hexTabState.HexBox.Document is AsmEdHexDocument) {
+				dnSpy.AsmEditor.SaveModule.Saver.SaveAssemblies(new[] { (AsmEdHexDocument)hexTabState.HexBox.Document });
+				return;
+			}
+		}
+
+		void SaveCode(DecompileTabState tabState)
 		{
 			if (tabState == null)
 				return;

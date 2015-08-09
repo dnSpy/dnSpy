@@ -142,7 +142,23 @@ namespace ICSharpCode.ILSpy {
 			activateButton.IsEnabled = listView.SelectedItems.Count == 1;
 			closeWindowsButton.IsEnabled = listView.SelectedItems.Count != 0;
 			var tabs = GetSelectedItems();
-			saveCodeButton.IsEnabled = tabs.Length == 1 && tabs[0].TabState is DecompileTabState && ((DecompileTabState)tabs[0].TabState).DecompiledNodes.Length > 0;
+			saveCodeButton.IsEnabled = CanSave(tabs);
+			saveCodeButton.Content = GetSaveButtonText(tabs);
+		}
+
+		bool CanSave(TabInfo[] tabs) {
+			if (tabs.Length != 1)
+				return false;
+			var dec = tabs[0].TabState as DecompileTabState;
+			if (dec != null)
+				return dec.DecompiledNodes.Length > 0;
+			return true;
+		}
+
+		string GetSaveButtonText(TabInfo[] tabs) {
+			if (tabs.Length == 1 && !(tabs[0].TabState is DecompileTabState))
+				return "_Save…";
+			return "_Save Code…";
 		}
 
 		private void activateButton_Click(object sender, RoutedEventArgs e) {
@@ -154,7 +170,7 @@ namespace ICSharpCode.ILSpy {
 		private void saveCodeButton_Click(object sender, RoutedEventArgs e) {
 			var tabs = GetSelectedItems();
 			if (tabs.Length > 0)
-				MainWindow.Instance.Save(tabs[0].TabState as DecompileTabState);
+				MainWindow.Instance.Save(tabs[0].TabState);
 		}
 
 		private void closeWindowsButton_Click(object sender, RoutedEventArgs e) {
