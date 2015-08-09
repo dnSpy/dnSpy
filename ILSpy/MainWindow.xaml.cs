@@ -612,6 +612,8 @@ namespace ICSharpCode.ILSpy
 		}
 
 		void InstallTabCommandBindings(TabState tabState) {
+			if (tabState == null)
+				return;
 			switch (tabState.Type) {
 			case TabStateType.DecompiledCode:
 				AddCommandBindings(CodeBindings, ((DecompileTabState)tabState).TextView);
