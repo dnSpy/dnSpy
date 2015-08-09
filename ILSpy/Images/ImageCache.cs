@@ -21,13 +21,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
-using System.Windows.Media.Imaging;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy
-{
-	public enum BackgroundType
-	{
+namespace dnSpy.Images {
+	public enum BackgroundType {
 		Button,
 		TextEditor,
 		DialogWindow,
@@ -46,48 +46,41 @@ namespace ICSharpCode.ILSpy
 		TitleAreaInactive,
 	}
 
-	public struct ImageInfo
-	{
+	public struct ImageInfo {
 		public readonly string Name;
 		public readonly BackgroundType BackgroundType;
 
-		public ImageInfo(string name, BackgroundType bgType)
-		{
+		public ImageInfo(string name, BackgroundType bgType) {
 			this.Name = name;
 			this.BackgroundType = bgType;
 		}
 	}
 
-	public sealed class ImageCache
-	{
+	public sealed class ImageCache {
 		public static readonly ImageCache Instance = new ImageCache();
 
 		readonly object lockObj = new object();
 		readonly Dictionary<Tuple<string, Color>, BitmapSource> imageCache = new Dictionary<Tuple<string, Color>, BitmapSource>();
 		bool isHighContrast;
 
-		internal void OnThemeChanged()
-		{
+		internal void OnThemeChanged() {
 			lock (lockObj) {
 				imageCache.Clear();
 				isHighContrast = dntheme.Themes.Theme.IsHighContrast;
 			}
 		}
 
-		public BitmapSource GetImage(ImageInfo info)
-		{
+		public BitmapSource GetImage(ImageInfo info) {
 			if (info.Name == null)
 				return null;
 			return GetImage(info.Name, info.BackgroundType);
 		}
 
-		public BitmapSource GetImage(string name, BackgroundType bgType)
-		{
+		public BitmapSource GetImage(string name, BackgroundType bgType) {
 			return GetImage(name, GetColor(bgType));
 		}
 
-		public static Color GetColor(BackgroundType bgType)
-		{
+		public static Color GetColor(BackgroundType bgType) {
 			switch (bgType) {
 			case BackgroundType.Button: return GetColorBackground(dntheme.ColorType.CommonControlsButtonIconBackground);
 			case BackgroundType.TextEditor: return GetColorBackground(dntheme.ColorType.DefaultText);
@@ -111,52 +104,43 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		static Color GetColorBackground(dntheme.ColorType colorType)
-		{
+		static Color GetColorBackground(dntheme.ColorType colorType) {
 			return dntheme.Themes.Theme.GetColor(colorType).InheritedColor.Background.GetColor(null).Value;
 		}
 
-		static string GetUri(object part, string icon)
-		{
+		static string GetUri(object part, string icon) {
 			var assembly = part.GetType().Assembly;
 			var name = assembly.GetName();
 			return "pack://application:,,,/" + name.Name + ";v" + name.Version + ";component/" + icon;
 		}
 
-		public BitmapSource GetImage(string name, Color bgColor)
-		{
+		public BitmapSource GetImage(string name, Color bgColor) {
 			return GetImage(this, name, bgColor);
 		}
 
-		public BitmapSource GetImage(object part, string icon, BackgroundType bgType)
-		{
+		public BitmapSource GetImage(object part, string icon, BackgroundType bgType) {
 			return GetImage(part.GetType().Assembly, icon, GetColor(bgType));
 		}
 
-		public BitmapSource GetImage(Assembly asm, string icon, BackgroundType bgType)
-		{
+		public BitmapSource GetImage(Assembly asm, string icon, BackgroundType bgType) {
 			return GetImage(asm, icon, GetColor(bgType));
 		}
 
-		public BitmapSource GetImage(object part, string icon, Color bgColor)
-		{
+		public BitmapSource GetImage(object part, string icon, Color bgColor) {
 			return GetImage(part.GetType().Assembly, icon, bgColor);
 		}
 
-		public BitmapSource GetImage(Assembly asm, string icon, Color bgColor)
-		{
+		public BitmapSource GetImage(Assembly asm, string icon, Color bgColor) {
 			var name = asm.GetName();
 			var uri = "pack://application:,,,/" + name.Name + ";v" + name.Version + ";component/Images/" + icon + ".png";
 			return GetImageUsingUri(uri, bgColor);
 		}
 
-		public BitmapSource GetImageUsingUri(string key, BackgroundType bgType)
-		{
+		public BitmapSource GetImageUsingUri(string key, BackgroundType bgType) {
 			return GetImageUsingUri(key, GetColor(bgType));
 		}
 
-		public BitmapSource GetImageUsingUri(string uri, Color bgColor)
-		{
+		public BitmapSource GetImageUsingUri(string uri, Color bgColor) {
 			var key = Tuple.Create(uri, bgColor);
 			BitmapSource image;
 			lock (lockObj) {
@@ -169,14 +153,12 @@ namespace ICSharpCode.ILSpy
 			return image;
 		}
 
-		public static ImageSource GetIcon(TypeIcon icon, BackgroundType bgType)
-		{
-			return TreeNodes.TypeTreeNode.GetIcon(icon, bgType);
+		public static ImageSource GetIcon(TypeIcon icon, BackgroundType bgType) {
+			return TypeTreeNode.GetIcon(icon, bgType);
 		}
 
-		public static ImageSource GetIcon(MemberIcon icon, BackgroundType bgType)
-		{
-			return TreeNodes.FieldTreeNode.GetIcon(icon, bgType);
+		public static ImageSource GetIcon(MemberIcon icon, BackgroundType bgType) {
+			return FieldTreeNode.GetIcon(icon, bgType);
 		}
 	}
 }

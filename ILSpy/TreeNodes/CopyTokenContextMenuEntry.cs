@@ -21,12 +21,10 @@ using System.Windows;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes {
-	abstract class CopyTokenContextMenuEntryBase : IContextMenuEntry
-	{
+	abstract class CopyTokenContextMenuEntryBase : IContextMenuEntry {
 		public abstract bool IsVisible(TextViewContext context);
 
-		protected IMDTokenProvider GetReference(TextViewContext context)
-		{
+		protected IMDTokenProvider GetReference(TextViewContext context) {
 			if (context.Reference != null)
 				return context.Reference.Reference as IMDTokenProvider;
 			if (context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length != 0 &&
@@ -37,15 +35,13 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return null;
 		}
 
-		public bool IsEnabled(TextViewContext context)
-		{
+		public bool IsEnabled(TextViewContext context) {
 			return true;
 		}
 
 		public abstract void Execute(TextViewContext context);
 
-		protected void Execute(IMDTokenProvider member)
-		{
+		protected void Execute(IMDTokenProvider member) {
 			if (member == null)
 				return;
 
@@ -54,15 +50,12 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	}
 
 	[ExportContextMenuEntryAttribute(Header = "_Copy MD Token", Order = 410, Category = "Tokens")]
-	class CopyTokenContextMenuEntry : CopyTokenContextMenuEntryBase
-	{
-		public override bool IsVisible(TextViewContext context)
-		{
+	class CopyTokenContextMenuEntry : CopyTokenContextMenuEntryBase {
+		public override bool IsVisible(TextViewContext context) {
 			return GetReference(context) != null;
 		}
 
-		public override void Execute(TextViewContext context)
-		{
+		public override void Execute(TextViewContext context) {
 			var obj = GetReference(context);
 			if (obj != null)
 				Execute(obj);
@@ -70,16 +63,13 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	}
 
 	[ExportContextMenuEntryAttribute(Header = "Copy De_finition MD Token", Order = 420, Category = "Tokens")]
-	class CopyDefinitionTokenContextMenuEntry : CopyTokenContextMenuEntryBase
-	{
-		public override bool IsVisible(TextViewContext context)
-		{
+	class CopyDefinitionTokenContextMenuEntry : CopyTokenContextMenuEntryBase {
+		public override bool IsVisible(TextViewContext context) {
 			var obj = GetReference(context);
 			return obj is IMemberRef && !(obj is IMemberDef);
 		}
 
-		public override void Execute(TextViewContext context)
-		{
+		public override void Execute(TextViewContext context) {
 			var obj = GetReference(context);
 			if (obj != null) {
 				var member = MainWindow.ResolveReference(obj);

@@ -18,10 +18,11 @@
 
 using System.Collections.Generic;
 using System.Threading;
+using dnlib.DotNet;
+using dnSpy.Images;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.Utils;
-using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {

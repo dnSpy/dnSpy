@@ -21,25 +21,21 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 
-namespace ICSharpCode.ILSpy.Controls
-{
-	public enum WinSysType
-	{
+namespace ICSharpCode.ILSpy.Controls {
+	public enum WinSysType {
 		Minimize,
 		Maximize,
 		Close,
 	}
 
-	public enum CurrentWinSysType
-	{
+	public enum CurrentWinSysType {
 		Minimize,
 		Maximize,
 		Restore,
 		Close,
 	}
 
-	public class WinSysButton : TabButton
-	{
+	public class WinSysButton : TabButton {
 		public static readonly DependencyProperty WinSysTypeProperty =
 			DependencyProperty.Register("WinSysType", typeof(WinSysType), typeof(WinSysButton),
 			new FrameworkPropertyMetadata(WinSysType.Minimize, OnWinSysTypeChanged));
@@ -59,36 +55,30 @@ namespace ICSharpCode.ILSpy.Controls
 
 		Window window;
 
-		static WinSysButton()
-		{
+		static WinSysButton() {
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(WinSysButton), new FrameworkPropertyMetadata(typeof(WinSysButton)));
 		}
 
-		public WinSysButton()
-		{
+		public WinSysButton() {
 			Loaded += WinSysButton_Loaded;
 		}
 
-		void WinSysButton_Loaded(object sender, RoutedEventArgs e)
-		{
+		void WinSysButton_Loaded(object sender, RoutedEventArgs e) {
 			Loaded -= WinSysButton_Loaded;
 			window = Window.GetWindow(this);
 			if (window != null) // null if in design mode
 				window.StateChanged += window_StateChanged;
 		}
 
-		void window_StateChanged(object sender, EventArgs e)
-		{
+		void window_StateChanged(object sender, EventArgs e) {
 			OnWinSysTypeChanged(WinSysType);
 		}
 
-		static void OnWinSysTypeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
+		static void OnWinSysTypeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			((WinSysButton)d).OnWinSysTypeChanged((WinSysType)e.NewValue);
 		}
 
-		void OnWinSysTypeChanged(WinSysType newValue)
-		{
+		void OnWinSysTypeChanged(WinSysType newValue) {
 			if (window == null)
 				window = Window.GetWindow(this);
 			if (window == null && DesignerProperties.GetIsInDesignMode(this))
@@ -115,8 +105,7 @@ namespace ICSharpCode.ILSpy.Controls
 			}
 		}
 
-		protected override void OnClick()
-		{
+		protected override void OnClick() {
 			switch (CurrentWinSysType) {
 			case Controls.CurrentWinSysType.Minimize:
 				ICSharpCode.ILSpy.Controls.WindowUtils.Minimize(window);

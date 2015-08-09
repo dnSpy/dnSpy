@@ -25,13 +25,13 @@ using System.Windows.Input;
 using dnlib.DotNet.Resources;
 using dnSpy.AsmEditor;
 using dnSpy.AsmEditor.Resources;
+using dnSpy.Options;
 
 namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Base class of serialized resources
 	/// </summary>
-	public abstract class SerializedResourceElementTreeNode : ResourceElementTreeNode
-	{
+	public abstract class SerializedResourceElementTreeNode : ResourceElementTreeNode {
 		public ICommand DeserializeCommand {
 			get { return new RelayCommand(a => Deserialize(), a => DeserializeCanExecute()); }
 		}
@@ -62,32 +62,27 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		protected SerializedResourceElementTreeNode(ResourceElement resElem)
-			: base(resElem)
-		{
+			: base(resElem) {
 			Debug.Assert(resElem.ResourceData is BinaryResourceData);
 			DeserializeIfPossible();
 		}
 
-		void DeserializeIfPossible()
-		{
-			if (Options.OtherSettings.Instance.DeserializeResources)
+		void DeserializeIfPossible() {
+			if (OtherSettings.Instance.DeserializeResources)
 				Deserialize();
 		}
 
-		protected override IEnumerable<ResourceData> GetDeserialized()
-		{
+		protected override IEnumerable<ResourceData> GetDeserialized() {
 			if (deserializedData != null)
 				yield return new ResourceData(resElem.Name, () => ResourceUtils.StringToStream(ConvertObjectToString(deserializedData)));
 			else
 				yield return new ResourceData(resElem.Name, () => new MemoryStream(((BinaryResourceData)resElem.ResourceData).Data));
 		}
 
-		protected virtual void OnDeserialized()
-		{
+		protected virtual void OnDeserialized() {
 		}
 
-		public void Deserialize()
-		{
+		public void Deserialize() {
 			if (!DeserializeCanExecute())
 				return;
 
@@ -110,30 +105,26 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		public bool DeserializeCanExecute()
-		{
+		public bool DeserializeCanExecute() {
 			return IsSerialized;
 		}
 
-		static string ConvertObjectToString(object obj)
-		{
+		static string ConvertObjectToString(object obj) {
 			if (obj == null)
 				return null;
-			if (!Options.OtherSettings.Instance.DeserializeResources)
+			if (!OtherSettings.Instance.DeserializeResources)
 				return obj.ToString();
 
 			return SerializationUtils.ConvertObjectToString(obj);
 		}
 
-		public override void UpdateData(ResourceElement newResElem)
-		{
+		public override void UpdateData(ResourceElement newResElem) {
 			base.UpdateData(newResElem);
 			deserializedData = null;
 			DeserializeIfPossible();
 		}
 
-		public override string GetStringContents()
-		{
+		public override string GetStringContents() {
 			if (IsSerialized)
 				return null;
 			return DeserializedStringValue;

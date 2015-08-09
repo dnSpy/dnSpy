@@ -16,9 +16,9 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.ComponentModel;
 using System.Windows.Media;
+using dnSpy.Options;
 
 namespace ICSharpCode.ILSpy.Options
 {
@@ -65,13 +65,7 @@ namespace ICSharpCode.ILSpy.Options
 			get { return selectedFontSize; }
 			set {
 				if (selectedFontSize != value) {
-					selectedFontSize = value;
-					const int min = 1;
-					const int max = 200;
-					if (selectedFontSize > max)
-						selectedFontSize = max;
-					if (selectedFontSize < min)
-						selectedFontSize = min;
+					selectedFontSize = FontUtils.FilterFontSize(value);
 					OnPropertyChanged("SelectedFontSize");
 				}
 			}

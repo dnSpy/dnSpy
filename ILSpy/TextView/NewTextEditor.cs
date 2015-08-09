@@ -24,37 +24,31 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
+using dnSpy.dntheme;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
-using ICSharpCode.AvalonEdit.Utils;
 using ICSharpCode.NRefactory;
-using ICSharpCode.ILSpy.dntheme;
-
 using AR = ICSharpCode.AvalonEdit.Rendering;
 
-namespace ICSharpCode.ILSpy.TextView
-{
-	sealed class NewTextEditor : TextEditor
-	{
+namespace ICSharpCode.ILSpy.TextView {
+	sealed class NewTextEditor : TextEditor {
 		public LanguageTokens LanguageTokens { get; set; }
 
-		public NewTextEditor()
-		{
+		public NewTextEditor() {
 			Options.AllowToggleOverstrikeMode = true;
 		}
 
-		internal static void OnThemeUpdatedStatic()
-		{
+		internal static void OnThemeUpdatedStatic() {
 			var theme = Themes.Theme;
 
-			ICSharpCode.ILSpy.Debugger.Bookmarks.BreakpointBookmark.HighlightingColor = theme.GetColor(dntheme.ColorType.BreakpointStatement).TextInheritedColor;
-			ICSharpCode.ILSpy.Debugger.Bookmarks.BreakpointBookmark.DisabledHighlightingColor = theme.GetColor(dntheme.ColorType.DisabledBreakpointStatement).TextInheritedColor;
-			ICSharpCode.ILSpy.Debugger.Bookmarks.StackFrameStatementBookmark.CurrentHighlightingColor = theme.GetColor(dntheme.ColorType.CurrentStatement).TextInheritedColor;
-			ICSharpCode.ILSpy.Debugger.Bookmarks.StackFrameStatementBookmark.ReturnHighlightingColor = theme.GetColor(dntheme.ColorType.ReturnStatement).TextInheritedColor;
-			ICSharpCode.ILSpy.Debugger.Bookmarks.StackFrameStatementBookmark.SelectedHighlightingColor = theme.GetColor(dntheme.ColorType.SelectedReturnStatement).TextInheritedColor;
-			var specialBox = theme.GetColor(dntheme.ColorType.SpecialCharacterBox).TextInheritedColor;
+			ICSharpCode.ILSpy.Debugger.Bookmarks.BreakpointBookmark.HighlightingColor = theme.GetColor(ColorType.BreakpointStatement).TextInheritedColor;
+			ICSharpCode.ILSpy.Debugger.Bookmarks.BreakpointBookmark.DisabledHighlightingColor = theme.GetColor(ColorType.DisabledBreakpointStatement).TextInheritedColor;
+			ICSharpCode.ILSpy.Debugger.Bookmarks.StackFrameStatementBookmark.CurrentHighlightingColor = theme.GetColor(ColorType.CurrentStatement).TextInheritedColor;
+			ICSharpCode.ILSpy.Debugger.Bookmarks.StackFrameStatementBookmark.ReturnHighlightingColor = theme.GetColor(ColorType.ReturnStatement).TextInheritedColor;
+			ICSharpCode.ILSpy.Debugger.Bookmarks.StackFrameStatementBookmark.SelectedHighlightingColor = theme.GetColor(ColorType.SelectedReturnStatement).TextInheritedColor;
+			var specialBox = theme.GetColor(ColorType.SpecialCharacterBox).TextInheritedColor;
 			ICSharpCode.AvalonEdit.Rendering.SpecialCharacterTextRunOptions.BackgroundBrush = specialBox.Background == null ? null : specialBox.Background.GetBrush(null);
 			ICSharpCode.AvalonEdit.Rendering.SpecialCharacterTextRunOptions.ForegroundBrush = specialBox.Foreground == null ? null : specialBox.Foreground.GetBrush(null);
 
@@ -65,8 +59,7 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 
-		static void UpdateTextEditorResource(TextTokenType colorType, string name)
-		{
+		static void UpdateTextEditorResource(TextTokenType colorType, string name) {
 			var theme = Themes.Theme;
 
 			var color = theme.GetColor(colorType).TextInheritedColor;
@@ -82,13 +75,11 @@ namespace ICSharpCode.ILSpy.TextView
 			App.Current.Resources[Theme.GetInheritedFontWeightResourceKey(name)] = color.FontWeight ?? FontWeights.Normal;
 		}
 
-		static Brush GetBrush(HighlightingBrush b)
-		{
+		static Brush GetBrush(HighlightingBrush b) {
 			return b == null ? Brushes.Transparent : b.GetBrush(null);
 		}
 
-		internal void OnThemeUpdated()
-		{
+		internal void OnThemeUpdated() {
 			var theme = Themes.Theme;
 			var textColor = theme.GetColor(ColorType.Text).InheritedColor;
 			Background = textColor.Background == null ? null : textColor.Background.GetBrush(null);
@@ -131,14 +122,12 @@ namespace ICSharpCode.ILSpy.TextView
 				}
 			)
 		};
-		void UpdateDefaultHighlighter()
-		{
+		void UpdateDefaultHighlighter() {
 			foreach (var fix in langFixes)
 				UpdateLanguage(fix.Item1, fix.Item2);
 		}
 
-		void UpdateLanguage(string name, Dictionary<string, ColorType> colorNames)
-		{
+		void UpdateLanguage(string name, Dictionary<string, ColorType> colorNames) {
 			var lang = HighlightingManager.Instance.GetDefinition(name);
 			Debug.Assert(lang != null);
 			if (lang == null)
@@ -158,8 +147,7 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 
-		protected override IVisualLineTransformer CreateColorizer(IHighlightingDefinition highlightingDefinition)
-		{
+		protected override IVisualLineTransformer CreateColorizer(IHighlightingDefinition highlightingDefinition) {
 			Debug.Assert(LanguageTokens != null);
 			if (highlightingDefinition.Name == "C#" || highlightingDefinition.Name == "VB" ||
 				highlightingDefinition.Name == "ILAsm")
@@ -167,8 +155,7 @@ namespace ICSharpCode.ILSpy.TextView
 			return base.CreateColorizer(highlightingDefinition);
 		}
 
-		sealed class NewHighlightingColorizer : HighlightingColorizer
-		{
+		sealed class NewHighlightingColorizer : HighlightingColorizer {
 			readonly NewTextEditor textEditor;
 
 			public NewHighlightingColorizer(NewTextEditor textEditor) {
@@ -184,19 +171,16 @@ namespace ICSharpCode.ILSpy.TextView
 			readonly NewTextEditor textEditor;
 			readonly TextDocument document;
 
-			public NewHighlighter(NewTextEditor textEditor, TextDocument document)
-			{
+			public NewHighlighter(NewTextEditor textEditor, TextDocument document) {
 				this.textEditor = textEditor;
 				this.document = document;
 			}
 
-			public IDocument Document
-			{
+			public IDocument Document {
 				get { return document; }
 			}
 
-			public HighlightedLine HighlightLine(int lineNumber)
-			{
+			public HighlightedLine HighlightLine(int lineNumber) {
 				var line = document.GetLineByNumber(lineNumber);
 				int offs = line.Offset;
 				int endOffs = line.EndOffset;
@@ -225,25 +209,21 @@ namespace ICSharpCode.ILSpy.TextView
 				return hl;
 			}
 
-			bool CanAddColor(HighlightingColor color)
-			{
+			bool CanAddColor(HighlightingColor color) {
 				return color != null &&
 					(color.FontWeight != null || color.FontStyle != null ||
 					color.Foreground != null || color.Background != null);
 			}
 
-			HighlightingColor GetColor(TextTokenType tokenType)
-			{
+			HighlightingColor GetColor(TextTokenType tokenType) {
 				return Themes.Theme.GetColor(tokenType).TextInheritedColor;
 			}
 
-			public IEnumerable<HighlightingColor> GetColorStack(int lineNumber)
-			{
+			public IEnumerable<HighlightingColor> GetColorStack(int lineNumber) {
 				return new HighlightingColor[0];
 			}
 
-			public void UpdateHighlightingState(int lineNumber)
-			{
+			public void UpdateHighlightingState(int lineNumber) {
 			}
 
 			public event HighlightingStateChangedEventHandler HighlightingStateChanged {
@@ -251,26 +231,21 @@ namespace ICSharpCode.ILSpy.TextView
 				remove { }
 			}
 
-			public void BeginHighlighting()
-			{
+			public void BeginHighlighting() {
 			}
 
-			public void EndHighlighting()
-			{
+			public void EndHighlighting() {
 			}
 
-			public HighlightingColor GetNamedColor(string name)
-			{
+			public HighlightingColor GetNamedColor(string name) {
 				return null;
 			}
 
-			public HighlightingColor DefaultTextColor
-			{
+			public HighlightingColor DefaultTextColor {
 				get { return null; }
 			}
 
-			public void Dispose()
-			{
+			public void Dispose() {
 			}
 		}
 	}

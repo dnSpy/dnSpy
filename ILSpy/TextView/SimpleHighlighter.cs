@@ -25,16 +25,14 @@ using System.Text;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Xml.Linq;
+using dnSpy.dntheme;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.dntheme;
 using ICSharpCode.ILSpy.XmlDoc;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.TextView
-{
-	sealed class SimpleHighlighter : IXmlDocOutput
-	{
+namespace ICSharpCode.ILSpy.TextView {
+	sealed class SimpleHighlighter : IXmlDocOutput {
 		public ITextOutput TextOutput {
 			get { return output; }
 		}
@@ -46,58 +44,50 @@ namespace ICSharpCode.ILSpy.TextView
 
 		bool needsNewLine = false;
 
-		public void WriteNewLine()
-		{
+		public void WriteNewLine() {
 			output.WriteLine();
 			needsNewLine = false;
 		}
 
-		public void WriteSpace()
-		{
+		public void WriteSpace() {
 			if (needsNewLine)
 				WriteNewLine();
 			output.WriteSpace();
 		}
 
-		public void Write(string s, TextTokenType tokenType)
-		{
+		public void Write(string s, TextTokenType tokenType) {
 			if (needsNewLine)
 				WriteNewLine();
 			output.Write(s, tokenType);
 		}
 
-		void InitializeNeedsNewLine()
-		{
+		void InitializeNeedsNewLine() {
 			var text = output.Text;
 			needsNewLine = text.Length > 0 && !text.EndsWith(Environment.NewLine);
 		}
 
-		public bool WriteXmlDoc(string xmlDoc)
-		{
+		public bool WriteXmlDoc(string xmlDoc) {
 			InitializeNeedsNewLine();
 			bool res = XmlDocRenderer.WriteXmlDoc(this, xmlDoc);
 			needsNewLine = false;
 			return res;
 		}
 
-		public bool WriteXmlDocParameter(string xmlDoc, string paramName)
-		{
+		public bool WriteXmlDocParameter(string xmlDoc, string paramName) {
 			InitializeNeedsNewLine();
 			bool res = WriteXmlDoc(this, xmlDoc, paramName, "param");
 			needsNewLine = false;
 			return res;
 		}
 
-		public bool WriteXmlDocGeneric(string xmlDoc, string gpName)
-		{
+		public bool WriteXmlDocGeneric(string xmlDoc, string gpName) {
 			InitializeNeedsNewLine();
 			bool res = WriteXmlDoc(this, xmlDoc, gpName, "typeparam");
 			needsNewLine = false;
 			return res;
 		}
 
-		static bool WriteXmlDoc(IXmlDocOutput output, string xmlDoc, string name, string xmlElemName)
-		{
+		static bool WriteXmlDoc(IXmlDocOutput output, string xmlDoc, string name, string xmlElemName) {
 			if (xmlDoc == null || name == null)
 				return false;
 			try {
@@ -114,8 +104,7 @@ namespace ICSharpCode.ILSpy.TextView
 			return false;
 		}
 
-		static void WriteXmlDocParameter(IXmlDocOutput output, XElement xml)
-		{
+		static void WriteXmlDocParameter(IXmlDocOutput output, XElement xml) {
 			foreach (var elem in xml.DescendantNodes()) {
 				if (elem is XText)
 					output.Write(XmlDocRenderer.whitespace.Replace(((XText)elem).Value, " "), TextTokenType.XmlDocSummary);
@@ -148,10 +137,9 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 
-		IEnumerable<Tuple<string, int>> GetLines(string s)
-		{
+		IEnumerable<Tuple<string, int>> GetLines(string s) {
 			var sb = new StringBuilder();
-			for (int offs = 0; offs < s.Length; ) {
+			for (int offs = 0; offs < s.Length;) {
 				sb.Clear();
 				while (offs < s.Length && s[offs] != '\r' && s[offs] != '\n')
 					sb.Append(s[offs++]);
@@ -169,8 +157,7 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 		}
 
-		public TextBlock Create()
-		{
+		public TextBlock Create() {
 			var textBlockText = output.Text;
 			var tokens = output.LanguageTokens;
 			tokens.Finish();
@@ -222,8 +209,7 @@ namespace ICSharpCode.ILSpy.TextView
 			return textBlock;
 		}
 
-		HighlightingColor GetColor(TextTokenType tokenType)
-		{
+		HighlightingColor GetColor(TextTokenType tokenType) {
 			var color = Themes.Theme.GetColor(tokenType).TextInheritedColor;
 			Debug.Assert(color != null);
 			return color;

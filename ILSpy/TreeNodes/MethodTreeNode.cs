@@ -19,13 +19,12 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Media;
-
+using dnlib.DotNet;
+using dnSpy.Images;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
-using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Tree Node representing a field, method, property, or event.
 	/// </summary>

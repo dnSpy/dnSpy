@@ -28,12 +28,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
-using dnlib.DotNet;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	sealed class SaveMultiModuleVM : INotifyPropertyChanged {
-		ObservableCollection<SaveModuleOptionsVM> modules = new ObservableCollection<SaveModuleOptionsVM>();
+		ObservableCollection<SaveOptionsVM> modules = new ObservableCollection<SaveOptionsVM>();
 
 		enum SaveState {
 			/// <summary>
@@ -224,24 +223,36 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 		string currentFileName = string.Empty;
 
-		public ObservableCollection<SaveModuleOptionsVM> Modules {
+		public ObservableCollection<SaveOptionsVM> Modules {
 			get { return modules; }
 		}
 
-		public SaveMultiModuleVM(SaveModuleOptionsVM options) {
+		public SaveMultiModuleVM(SaveOptionsVM options) {
 			this.modules.Add(options);
 		}
 
-		public SaveMultiModuleVM(IEnumerable<ModuleDef> modules) {
-			this.modules.AddRange(modules.Select(m => new SaveModuleOptionsVM(m)));
+		public SaveMultiModuleVM(IEnumerable<IUndoObject> objs) {
+			this.modules.AddRange(objs.Select(m => Create(m)));
 		}
 
-		SaveModuleOptionsVM GetSaveModuleOptionsVM(ModuleDef module) {
-			return modules.FirstOrDefault(a => a.Module == module);
+		static SaveOptionsVM Create(IUndoObject obj) {
+			var asm = obj as LoadedAssembly;
+			if (asm != null)
+				return new SaveModuleOptionsVM(asm);
+
+			var doc = obj as AsmEdHexDocument;
+			if (doc != null)
+				return new SaveHexOptionsVM(doc);
+
+			throw new InvalidOperationException();
 		}
 
-		public bool WasSaved(ModuleDef module) {
-			var data = GetSaveModuleOptionsVM(module);
+		SaveOptionsVM GetSaveOptionsVM(IUndoObject obj) {
+			return modules.FirstOrDefault(a => a.UndoObject == obj);
+		}
+
+		public bool WasSaved(IUndoObject obj) {
+			var data = GetSaveOptionsVM(obj);
 			if (data == null)
 				return false;
 			bool saved;
@@ -249,8 +260,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 			return saved;
 		}
 
-		public string GetSavedFileName(ModuleDef module) {
-			var data = GetSaveModuleOptionsVM(module);
+		public string GetSavedFileName(IUndoObject obj) {
+			var data = GetSaveOptionsVM(obj);
 			return data == null ? null : data.FileName;
 		}
 
@@ -264,6 +275,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			savedFile.Clear();
 
 			var mods = modules.ToArray();
+			MmapUtils.DisableMemoryMappedIO(mods.Select(a => a.FileName));
 			new Thread(() => SaveAsync(mods)).Start();
 		}
 
@@ -274,7 +286,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		ModuleSaver moduleSaver;
-		void SaveAsync(SaveModuleOptionsVM[] mods) {
+		void SaveAsync(SaveOptionsVM[] mods) {
 			try {
 				moduleSaver = new ModuleSaver(mods);
 				moduleSaver.OnProgressUpdated += moduleSaver_OnProgressUpdated;
@@ -315,7 +327,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				savedFile.Add(e.File, true);
 			}
 		}
-		Dictionary<SaveModuleOptionsVM, bool> savedFile = new Dictionary<SaveModuleOptionsVM, bool>();
+		Dictionary<SaveOptionsVM, bool> savedFile = new Dictionary<SaveOptionsVM, bool>();
 
 		void moduleSaver_OnProgressUpdated(object sender, EventArgs e) {
 			var moduleSaver = (ModuleSaver)sender;

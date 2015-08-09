@@ -22,10 +22,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.TextView
-{
-	sealed class LanguageTokens
-	{
+namespace ICSharpCode.ILSpy.TextView {
+	sealed class LanguageTokens {
 		public int Length {
 			get { return currentOffset; }
 		}
@@ -66,14 +64,12 @@ namespace ICSharpCode.ILSpy.TextView
 		const int TEXT_TOKEN_LENGTH_BIT = 0;
 		const int TEXT_TOKEN_LENGTH_MAX = (1 << TEXT_TOKEN_LENGTH_BITS) - 1;
 
-		static LanguageTokens()
-		{
+		static LanguageTokens() {
 			if ((int)TextTokenType.Last > (1 << TOKEN_TYPE_BITS))
 				throw new InvalidProgramException("TOKEN_TYPE_BITS is too small");
 		}
 
-		public bool Find(int offset, out int defaultTextLength, out TextTokenType tokenType, out int tokenLength)
-		{
+		public bool Find(int offset, out int defaultTextLength, out TextTokenType tokenType, out int tokenLength) {
 			Debug.Assert(tokenInfos != null, "You must call Finish() before you call this method");
 			int index;
 			if (!offsetToTokenInfoIndex.TryGetValue(offset, out index)) {
@@ -90,8 +86,7 @@ namespace ICSharpCode.ILSpy.TextView
 			return true;
 		}
 
-		public void Finish()
-		{
+		public void Finish() {
 			if (tokenInfosList == null)
 				return;
 			EndCurrentToken(0);
@@ -99,13 +94,11 @@ namespace ICSharpCode.ILSpy.TextView
 			tokenInfosList = null;
 		}
 
-		public void Append(TextTokenType tokenType, char c)
-		{
+		public void Append(TextTokenType tokenType, char c) {
 			Append(tokenType, c.ToString());
 		}
 
-		public void Append(TextTokenType tokenType, string s)
-		{
+		public void Append(TextTokenType tokenType, string s) {
 			int oldCurrentOffset = currentOffset;
 
 			// Newlines could be part of the input string
@@ -129,15 +122,13 @@ namespace ICSharpCode.ILSpy.TextView
 			Debug.Assert(oldCurrentOffset + s.Length == currentOffset);
 		}
 
-		public void AppendLine()
-		{
+		public void AppendLine() {
 			// We must append the same type of new line string as StringBuilder
 			Append(TextTokenType.Text, Environment.NewLine);
 		}
 
 		// Gets called to add one token. No newlines are allowed
-		void AppendInternal(TextTokenType tokenType, int length)
-		{
+		void AppendInternal(TextTokenType tokenType, int length) {
 			Debug.Assert(length >= 0);
 			if (length == 0)
 				return;
@@ -180,8 +171,7 @@ redo:
 			}
 		}
 
-		void EndCurrentToken(int lengthTillNextToken)
-		{
+		void EndCurrentToken(int lengthTillNextToken) {
 			Debug.Assert(currentTokenLength == 0 || !isAppendingDefaultText);
 			int totalLength = currentDefaultTextLength + currentTokenLength;
 			if (totalLength != 0) {

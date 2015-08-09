@@ -45,13 +45,14 @@ namespace dnSpy.AsmEditor {
 		/// Gets all tree nodes it operates on. The implementer can decide to only return one node
 		/// if all the other nodes it operates on are (grand) children of that node.
 		/// </summary>
-		IEnumerable<ILSpyTreeNode> TreeNodes { get; }
+		IEnumerable<object> ModifiedObjects { get; }
 	}
 
 	public interface IUndoCommand2 : IUndoCommand {
-		/// <summary>
-		/// 
-		/// </summary>
+		IEnumerable<object> NonModifiedObjects { get; }
+	}
+
+	public interface IGCUndoCommand : IUndoCommand {
 		bool CallGarbageCollectorAfterDispose { get; }
 	}
 }

@@ -1,5 +1,6 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,14 +12,14 @@ using System.Windows.Media;
 using Debugger;
 using Debugger.MetaData;
 using dnSpy.AsmEditor;
+using dnSpy.Images;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.Debugger.Services.Debugger;
 using ICSharpCode.NRefactory.Ast;
 using ICSharpCode.NRefactory.CSharp;
 
-namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel
-{
+namespace ICSharpCode.ILSpy.Debugger.Models.TreeModel {
 	internal class ExpressionNode: TreeNode, ISetText, INotifyPropertyChanged
 	{
 		bool evaluated;

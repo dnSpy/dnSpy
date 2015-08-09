@@ -21,10 +21,8 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 
-namespace ICSharpCode.ILSpy.Controls
-{
-	public class TabButton : ButtonBase
-	{
+namespace ICSharpCode.ILSpy.Controls {
+	public class TabButton : ButtonBase {
 		public static readonly DependencyProperty GlyphForegroundProperty =
 			DependencyProperty.Register("GlyphForeground", typeof(Brush), typeof(TabButton),
 			new FrameworkPropertyMetadata(null));
@@ -98,13 +96,11 @@ namespace ICSharpCode.ILSpy.Controls
 			set { SetValue(PressedBorderThicknessProperty, value); }
 		}
 
-		static TabButton()
-		{
+		static TabButton() {
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(TabButton), new FrameworkPropertyMetadata(typeof(TabButton)));
 		}
 
-		public TabButton()
-		{
+		public TabButton() {
 		}
 	}
 }

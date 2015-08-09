@@ -13,6 +13,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using dnlib.DotNet;
+using dnSpy;
+using dnSpy.Images;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
@@ -22,12 +25,9 @@ using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
-using dnlib.DotNet;
-
 using NR = ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.Debugger.Commands
-{
+namespace ICSharpCode.ILSpy.Debugger.Commands {
 	[Export(typeof(IPlugin))]
 	public class DebuggerPlugin : IPlugin
 	{
@@ -856,7 +856,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 
 			SharpTreeNode node;
 			if (context.TextView != null) {
-				var tabState = MainWindow.Instance.ActiveTabState;
+				var tabState = MainWindow.Instance.GetActiveDecompileTabState();
 				if (tabState == null)
 					return null;
 				if (tabState.DecompiledNodes.Length == 0)

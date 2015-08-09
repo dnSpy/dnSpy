@@ -97,7 +97,8 @@ namespace ICSharpCode.Decompiler.Disassembler
 				bool needSpace = false;
 
 				if (options.ShowTokenAndRvaComments) {
-					writer.Write(string.Format("0x{0:X8}", baseOffs + instruction.Offset), TextTokenType.Comment);
+					ulong fileOffset = (ulong)baseOffs + instruction.Offset;
+					writer.WriteReference(string.Format("0x{0:X8}", fileOffset), new AddressReference(options.OwnerModule == null ? null : options.OwnerModule.Location, false, fileOffset, (ulong)instruction.GetSize()), TextTokenType.Comment, false);
 					needSpace = true;
 				}
 

@@ -25,12 +25,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.dntheme;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.dntheme;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Base class of all ILSpy tree nodes.
 	/// </summary>
@@ -256,13 +255,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get {
 				if (IsPublicAPI)
 					if (IsAutoLoaded) {
-						return Themes.Theme.GetColor(dntheme.ColorType.NodeAutoLoaded).InheritedColor.Foreground.GetBrush(null);
+						return Themes.Theme.GetColor(ColorType.NodeAutoLoaded).InheritedColor.Foreground.GetBrush(null);
 					}
 					else {
-						return Themes.Theme.GetColor(dntheme.ColorType.NodePublic).InheritedColor.Foreground.GetBrush(null);
+						return Themes.Theme.GetColor(ColorType.NodePublic).InheritedColor.Foreground.GetBrush(null);
 					}
 				else
-					return Themes.Theme.GetColor(dntheme.ColorType.NodeNotPublic).InheritedColor.Foreground.GetBrush(null);
+					return Themes.Theme.GetColor(ColorType.NodeNotPublic).InheritedColor.Foreground.GetBrush(null);
 			}
 		}
 

@@ -21,12 +21,9 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 
-namespace ICSharpCode.Decompiler
-{
-	public abstract class MemberRefComparer<T> : IComparer<T> where T : IMemberRef
-	{
-		public int Compare(T x, T y)
-		{
+namespace ICSharpCode.Decompiler {
+	public abstract class MemberRefComparer<T> : IComparer<T> where T : IMemberRef {
+		public int Compare(T x, T y) {
 			int c = StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name);
 			if (c != 0)
 				return c;
@@ -37,32 +34,26 @@ namespace ICSharpCode.Decompiler
 		}
 	}
 
-	public sealed class TypeDefComparer : MemberRefComparer<TypeDef>
-	{
+	public sealed class TypeDefComparer : MemberRefComparer<TypeDef> {
 		public static readonly TypeDefComparer Instance = new TypeDefComparer();
 	}
 
-	public sealed class FieldDefComparer : MemberRefComparer<FieldDef>
-	{
+	public sealed class FieldDefComparer : MemberRefComparer<FieldDef> {
 		public static readonly FieldDefComparer Instance = new FieldDefComparer();
 	}
 
-	public sealed class EventDefComparer : MemberRefComparer<EventDef>
-	{
+	public sealed class EventDefComparer : MemberRefComparer<EventDef> {
 		public static readonly EventDefComparer Instance = new EventDefComparer();
 	}
 
-	public sealed class PropertyDefComparer : MemberRefComparer<PropertyDef>
-	{
+	public sealed class PropertyDefComparer : MemberRefComparer<PropertyDef> {
 		public static readonly PropertyDefComparer Instance = new PropertyDefComparer();
 	}
 
-	public sealed class MethodDefComparer : IComparer<MethodDef>
-	{
+	public sealed class MethodDefComparer : IComparer<MethodDef> {
 		public static readonly MethodDefComparer Instance = new MethodDefComparer();
 
-		public int Compare(MethodDef x, MethodDef y)
-		{
+		public int Compare(MethodDef x, MethodDef y) {
 			int c = StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name);
 			if (c != 0)
 				return c;

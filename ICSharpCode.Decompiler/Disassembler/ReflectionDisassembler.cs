@@ -1222,7 +1222,39 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (!options.ShowTokenAndRvaComments)
 				return;
 
-			output.WriteLine(string.Format("// Token: 0x{0:X8} RID: {1}{2}", member.MDToken.Raw, member.MDToken.Rid, extra ?? string.Empty), TextTokenType.Comment);
+			StartComment();
+			WriteToken(member);
+			output.WriteLine();
+		}
+
+		void StartComment()
+		{
+			output.Write("//", TextTokenType.Comment);
+		}
+
+		void WriteToken(IMDTokenProvider member)
+		{
+			output.Write(" Token: ", TextTokenType.Comment);
+			output.Write(string.Format("0x{0:X8}", member.MDToken.Raw), TextTokenType.Comment);//TODO: Add ref to MD table
+			output.Write(" RID: ", TextTokenType.Comment);
+			output.Write(string.Format("{0}", member.MDToken.Rid), TextTokenType.Comment);
+		}
+
+		void WriteRVA(IMemberDef member)
+		{
+			uint rva;
+			long fileOffset;
+			member.GetRVA(out rva, out fileOffset);
+			string extra = string.Empty;
+			if (rva == 0)
+				return;
+
+			var mod = member.Module;
+			var filename = mod == null ? null : mod.Location;
+			output.Write(" RVA: ", TextTokenType.Comment);
+			output.WriteReference(string.Format("0x{0:X8}", rva), new AddressReference(filename, true, rva, 0), TextTokenType.Comment, false);
+			output.Write(" File Offset: ", TextTokenType.Comment);
+			output.WriteReference(string.Format("0x{0:X8}", fileOffset), new AddressReference(filename, false, (ulong)fileOffset, 0), TextTokenType.Comment, false);
 		}
 
 		void AddComment(IMemberDef member)
@@ -1230,14 +1262,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (!options.ShowTokenAndRvaComments)
 				return;
 
-			uint rva;
-			long fileOffset;
-			member.GetRVA(out rva, out fileOffset);
-			string extra = string.Empty;
-			if (rva != 0)
-				extra = string.Format(" RVA: 0x{0:X8} File Offset: 0x{1:X8}", rva, fileOffset);
-
-			AddTokenComment(member, extra);
+			StartComment();
+			WriteToken(member);
+			WriteRVA(member);
+			output.WriteLine();
 		}
 		
 		public void DisassembleType(TypeDef type)

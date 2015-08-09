@@ -18,19 +18,15 @@
 */
 
 using System.Collections.Generic;
-using System.IO;
 using ICSharpCode.Decompiler;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
-	public enum ResourceDataType
-	{
+namespace ICSharpCode.ILSpy.TreeNodes {
+	public enum ResourceDataType {
 		Deserialized,
 		Serialized,
 	}
 
-	interface IResourceNode
-	{
+	interface IResourceNode {
 		/// <summary>
 		/// RVA of resource or 0
 		/// </summary>
@@ -39,7 +35,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		/// <summary>
 		/// File offset of resource or 0
 		/// </summary>
-		long FileOffset { get; }
+		ulong FileOffset { get; }
+
+		/// <summary>
+		/// Length of the resource
+		/// </summary>
+		ulong Length { get; }
 
 		/// <summary>
 		/// Gets the resource data

@@ -21,7 +21,7 @@ using System;
 using System.ComponentModel;
 
 namespace dnSpy.AsmEditor {
-	abstract class ViewModelBase : INotifyPropertyChanged, IDataErrorInfo {
+	public abstract class ViewModelBase : INotifyPropertyChanged, IDataErrorInfo {
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		protected void OnPropertyChanged(string propName) {

@@ -70,15 +70,12 @@
   <ItemGroup>
     <Compile Include="ContextMenuCommand.cs" />
     <Compile Include="CustomLanguage.cs" />
-    <Compile Include="CustomOptionPage.xaml.cs">
-      <DependentUpon>CustomOptionPage.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="CustomOptionPage.cs" />
     <Compile Include="MainMenuCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Clear.png" />
+    <Resource Include="Images\Clear.png" />
     <None Include="Readme.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -108,7 +105,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="CustomOptionPage.xaml" />
+    <Page Include="themes\generic.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

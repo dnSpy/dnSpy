@@ -20,28 +20,22 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	[ExportContextMenuEntryAttribute(Header = "_Open Containing Folder", Order = 920, Category = "Other")]
-	class OpenContainingFolderContextMenuEntry : IContextMenuEntry
-	{
-		public bool IsVisible(TextViewContext context)
-		{
+	sealed class OpenContainingFolderContextMenuEntry : IContextMenuEntry {
+		public bool IsVisible(TextViewContext context) {
 			return context.SelectedTreeNodes != null &&
 				context.SelectedTreeNodes.Length == 1 &&
 				context.SelectedTreeNodes[0] is AssemblyTreeNode &&
 				!string.IsNullOrWhiteSpace(((AssemblyTreeNode)context.SelectedTreeNodes[0]).LoadedAssembly.FileName);
 		}
 
-		public bool IsEnabled(TextViewContext context)
-		{
+		public bool IsEnabled(TextViewContext context) {
 			return IsVisible(context);
 		}
 
-		public void Execute(TextViewContext context)
-		{
+		public void Execute(TextViewContext context) {
 			// Known problem: explorer can't show files in the .NET 2.0 GAC.
 			var asmNode = (AssemblyTreeNode)context.SelectedTreeNodes[0];
 			var filename = asmNode.LoadedAssembly.FileName;

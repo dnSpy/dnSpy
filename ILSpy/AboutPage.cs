@@ -18,7 +18,6 @@
 
 using System;
 using System.ComponentModel;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -30,7 +29,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Xml.Linq;
-
+using dnSpy.Images;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;

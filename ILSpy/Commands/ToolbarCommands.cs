@@ -22,13 +22,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using dnSpy.Images;
 
-namespace ICSharpCode.ILSpy.Commands
-{
-	abstract class ToolbarCommand : ICommand
-	{
-		public bool CanExecute(object parameter)
-		{
+namespace ICSharpCode.ILSpy.Commands {
+	abstract class ToolbarCommand : ICommand {
+		public bool CanExecute(object parameter) {
 			return true;
 		}
 
@@ -37,25 +35,20 @@ namespace ICSharpCode.ILSpy.Commands
 			remove { }
 		}
 
-		public void Execute(object parameter)
-		{
+		public void Execute(object parameter) {
 		}
 	}
 
 	[ExportToolbarCommand(ToolbarCategory = "MainMenu", ToolbarOrder = 0)]
-	sealed class MainMenuToolbarCommand : ToolbarCommand, IToolbarItemCreator
-	{
-		public object CreateToolbarItem()
-		{
+	sealed class MainMenuToolbarCommand : ToolbarCommand, IToolbarItemCreator {
+		public object CreateToolbarItem() {
 			return MainWindow.Instance.mainMenu;
 		}
 	}
 
 	[ExportToolbarCommand(ToolbarCategory = "Options", ToolbarOrder = 3000)]
-	sealed class ShowInternalTypesAndMembersToolbarCommand : ToolbarCommand, IToolbarItemCreator
-	{
-		public object CreateToolbarItem()
-		{
+	sealed class ShowInternalTypesAndMembersToolbarCommand : ToolbarCommand, IToolbarItemCreator {
+		public object CreateToolbarItem() {
 			var checkBox = new CheckBox() {
 				Content = new Image {
 					Width = 16,
@@ -73,24 +66,19 @@ namespace ICSharpCode.ILSpy.Commands
 	}
 
 	[ExportToolbarCommand(ToolbarCategory = "Language", ToolbarOrder = 4000)]
-	sealed class LanguageComboBoxToolbarCommand : ToolbarCommand, IToolbarItemCreator
-	{
-		public object CreateToolbarItem()
-		{
+	sealed class LanguageComboBoxToolbarCommand : ToolbarCommand, IToolbarItemCreator {
+		public object CreateToolbarItem() {
 			return MainWindow.Instance.languageComboBox;
 		}
 	}
 
 	[ExportToolbarCommand(ToolbarCategory = "FullScreen", ToolbarOrder = 10000)]
-	sealed class FullScreenToolbarCommand : ToolbarCommand, IToolbarItemCreator, IToolbarCommand
-	{
-		public FullScreenToolbarCommand()
-		{
+	sealed class FullScreenToolbarCommand : ToolbarCommand, IToolbarItemCreator, IToolbarCommand {
+		public FullScreenToolbarCommand() {
 			MainWindow.Instance.IsFullScreenChanged += (s, e) => MainWindow.Instance.UpdateToolbar();
 		}
 
-		public object CreateToolbarItem()
-		{
+		public object CreateToolbarItem() {
 			var sp = new StackPanel {
 				Orientation = Orientation.Horizontal,
 				ToolTip = "Full Screen",

@@ -16,12 +16,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using System.Threading;
+using dnSpy.Images;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
-{
+namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	/// <summary>
 	/// Base class for analyzer nodes that perform a search.
 	/// </summary>

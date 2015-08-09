@@ -1,16 +1,12 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel.Composition;
 using System.Linq;
-using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
-using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.ILSpy.TreeNodes;
 using dnlib.DotNet;
+using dnSpy;
 
 namespace ICSharpCode.ILSpy.Bookmarks
 {

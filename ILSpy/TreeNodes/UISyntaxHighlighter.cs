@@ -22,10 +22,8 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TextView;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
-	struct UISyntaxHighlighter
-	{
+namespace ICSharpCode.ILSpy.TreeNodes {
+	struct UISyntaxHighlighter {
 		SimpleHighlighter simpleHighlighter;
 		PlainTextOutput output;
 
@@ -37,23 +35,19 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return output ?? simpleHighlighter.TextOutput; }
 		}
 
-		public static UISyntaxHighlighter CreateTreeView()
-		{
+		public static UISyntaxHighlighter CreateTreeView() {
 			return new UISyntaxHighlighter(DisplaySettingsPanel.CurrentDisplaySettings.SyntaxHighlightTreeViewUI);
 		}
 
-		public static UISyntaxHighlighter CreateAnalyzerTreeView()
-		{
+		public static UISyntaxHighlighter CreateAnalyzerTreeView() {
 			return new UISyntaxHighlighter(DisplaySettingsPanel.CurrentDisplaySettings.SyntaxHighlightAnalyzerTreeViewUI);
 		}
 
-		public static UISyntaxHighlighter CreateSearchList()
-		{
+		public static UISyntaxHighlighter CreateSearchList() {
 			return new UISyntaxHighlighter(DisplaySettingsPanel.CurrentDisplaySettings.SyntaxHighlightSearchListUI);
 		}
 
-		UISyntaxHighlighter(bool highlight)
-		{
+		UISyntaxHighlighter(bool highlight) {
 			if (highlight) {
 				this.simpleHighlighter = new SimpleHighlighter();
 				this.output = null;
@@ -69,8 +63,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		/// it's just a <see cref="string"/>. See also <see cref="CreateTextBlock()"/>
 		/// </summary>
 		/// <returns></returns>
-		public object CreateObject()
-		{
+		public object CreateObject() {
 			if (simpleHighlighter != null)
 				return simpleHighlighter.Create();
 
@@ -81,8 +74,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		/// Creates a <see cref="TextBlock"/> containing the resulting text
 		/// </summary>
 		/// <returns></returns>
-		public TextBlock CreateTextBlock()
-		{
+		public TextBlock CreateTextBlock() {
 			if (simpleHighlighter != null)
 				return simpleHighlighter.Create();
 

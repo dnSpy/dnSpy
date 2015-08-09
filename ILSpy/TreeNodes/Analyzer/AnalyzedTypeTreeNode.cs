@@ -18,10 +18,10 @@
 
 using System;
 using dnlib.DotNet;
+using dnSpy.Images;
 using ICSharpCode.Decompiler;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
-{
+namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	internal class AnalyzedTypeTreeNode : AnalyzerEntityTreeNode
 	{
 		private readonly TypeDef analyzedType;

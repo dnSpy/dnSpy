@@ -17,46 +17,53 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel.Composition;
+using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy;
 using dnSpy.AsmEditor;
+using dnSpy.Tabs;
 
 namespace ICSharpCode.ILSpy.TreeNodes {
+	[Export(typeof(IPlugin))]
+	sealed class GoToTokenPlugin : IPlugin {
+		public void OnLoaded() {
+			MainWindow.Instance.CodeBindings.Add(new RoutedCommand("GoToToken", typeof(GoToTokenPlugin)),
+				(s, e) => GoToTokenContextMenuEntry.Execute(),
+				(s, e) => e.CanExecute = GoToTokenContextMenuEntry.CanExecute(),
+				ModifierKeys.Control, Key.D);
+		}
+	}
+
 	[ExportContextMenuEntryAttribute(Header = "Go to M_D Token…", Order = 400, Category = "Tokens", InputGestureText = "Ctrl+D")]
-	class GoToTokenContextMenuEntry : IContextMenuEntry
-	{
-		public bool IsVisible(TextViewContext context)
-		{
+	sealed class GoToTokenContextMenuEntry : IContextMenuEntry {
+		public bool IsVisible(TextViewContext context) {
 			return CanExecute() &&
 				(context.SelectedTreeNodes != null || context.TextView != null);
 		}
 
-		public bool IsEnabled(TextViewContext context)
-		{
+		public bool IsEnabled(TextViewContext context) {
 			return true;
 		}
 
-		public void Execute(TextViewContext context)
-		{
+		public void Execute(TextViewContext context) {
 			Execute();
 		}
 
-		static ModuleDefMD GetModule(out TabStateDecompile tabState)
-		{
-			tabState = MainWindow.Instance.ActiveTabState;
+		static ModuleDefMD GetModule(out DecompileTabState tabState) {
+			tabState = MainWindow.Instance.GetActiveDecompileTabState();
 			if (tabState == null)
 				return null;
 			return ILSpyTreeNode.GetModule(tabState.DecompiledNodes) as ModuleDefMD;
 		}
 
-		internal static bool CanExecute()
-		{
-			TabStateDecompile tabState;
+		internal static bool CanExecute() {
+			DecompileTabState tabState;
 			return GetModule(out tabState) != null;
 		}
 
-		internal static void Execute()
-		{
-			TabStateDecompile tabState;
+		internal static void Execute() {
+			DecompileTabState tabState;
 			var module = GetModule(out tabState);
 			if (module == null)
 				return;

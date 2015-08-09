@@ -20,10 +20,8 @@
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
-	enum AssemblyFilterType
-	{
+namespace ICSharpCode.ILSpy.TreeNodes {
+	enum AssemblyFilterType {
 		/// <summary>
 		/// non-.NET file node
 		/// </summary>
@@ -40,8 +38,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		Assembly,
 	}
 
-	struct TreeViewNodeFilterResult
-	{
+	struct TreeViewNodeFilterResult {
 		/// <summary>
 		/// null if the <see cref="ILSpyTreeNode"/> should decide what result to return in its
 		/// Filter() method. <see cref="FilterResult.Hidden"/> is returned if the node should be
@@ -54,15 +51,13 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		/// </summary>
 		public bool IsMatch;
 
-		public TreeViewNodeFilterResult(FilterResult? filterResult, bool isMatch)
-		{
+		public TreeViewNodeFilterResult(FilterResult? filterResult, bool isMatch) {
 			this.FilterResult = filterResult;
 			this.IsMatch = isMatch;
 		}
 	}
 
-	interface ITreeViewNodeFilter
-	{
+	interface ITreeViewNodeFilter {
 		string Text { get; }
 		// NOTE: Any node arguments (not dnlib types) can be null when called.
 		TreeViewNodeFilterResult GetFilterResult(LoadedAssembly asm, AssemblyFilterType type);

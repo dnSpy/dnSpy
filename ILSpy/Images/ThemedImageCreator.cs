@@ -1,30 +1,24 @@
 ﻿using System;
-using System.Windows.Media.Imaging;
 using System.Windows.Media;
-using System.Windows;
+using System.Windows.Media.Imaging;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	// Fixes the VS2013 images to work with any theme. Same algo as VS2015 itself uses...
-	public static class ThemedImageCreator
-	{
-		public struct HslColor
-		{
+	public static class ThemedImageCreator {
+		public struct HslColor {
 			public readonly double Hue;
 			public readonly double Saturation;
 			public readonly double Luminosity;
 			public readonly double Alpha;
 
-			public HslColor(double hue, double saturation, double luminosity, double alpha)
-			{
+			public HslColor(double hue, double saturation, double luminosity, double alpha) {
 				Hue = hue < 0 ? 0 : hue > 360 ? 360 : hue;
 				Saturation = saturation < 0 ? 0 : saturation > 1 ? 1 : saturation;
 				Luminosity = luminosity < 0 ? 0 : luminosity > 1 ? 1 : luminosity;
 				Alpha = alpha < 0 ? 0 : alpha > 1 ? 1 : alpha;
 			}
 
-			public static HslColor FromColor(Color color)
-			{
+			public static HslColor FromColor(Color color) {
 				unchecked {
 					byte n1 = Math.Max(color.R, Math.Max(color.G, color.B));
 					byte n2 = Math.Min(color.R, Math.Min(color.G, color.B));
@@ -53,8 +47,7 @@ namespace ICSharpCode.ILSpy
 				}
 			}
 
-			public Color ToColor()
-			{
+			public Color ToColor() {
 				unchecked {
 					double n1 = (Luminosity < 0.5) ? (Luminosity * (1.0 + Saturation)) : (Luminosity + Saturation - Luminosity * Saturation);
 					double p = 2.0 * Luminosity - n1;
@@ -68,8 +61,7 @@ namespace ICSharpCode.ILSpy
 				}
 			}
 
-			private static double ModOne(double value)
-			{
+			private static double ModOne(double value) {
 				unchecked {
 					if (value < 0.0)
 						return value + 1.0;
@@ -79,8 +71,7 @@ namespace ICSharpCode.ILSpy
 				}
 			}
 
-			private static double ComputeRGBComponent(double p, double q, double tC)
-			{
+			private static double ComputeRGBComponent(double p, double q, double tC) {
 				unchecked {
 					if (tC < 1.0 / 6.0)
 						return p + (q - p) * 6.0 * tC;
@@ -93,8 +84,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		public static BitmapSource CreateThemedBitmapSource(BitmapSource src, Color bgColor, bool isHighContrast)
-		{
+		public static BitmapSource CreateThemedBitmapSource(BitmapSource src, Color bgColor, bool isHighContrast) {
 			unchecked {
 				if (src.Format != PixelFormats.Bgra32)
 					src = new FormatConvertedBitmap(src, PixelFormats.Bgra32, null, 0.0);
@@ -129,8 +119,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		static double TransformLuminosity(double hue, double sat, double lum, double bgLum)
-		{
+		static double TransformLuminosity(double hue, double sat, double lum, double bgLum) {
 			unchecked {
 				if (bgLum < 0.5) {
 					if (lum >= 0.96470588235294119)

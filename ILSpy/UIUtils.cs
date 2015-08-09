@@ -24,12 +24,9 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using ICSharpCode.Decompiler;
 
-namespace ICSharpCode.ILSpy
-{
-	public static class UIUtils
-	{
-		public static DependencyObject GetParent(DependencyObject depo)
-		{
+namespace ICSharpCode.ILSpy {
+	public static class UIUtils {
+		public static DependencyObject GetParent(DependencyObject depo) {
 			if (depo is Visual || depo is Visual3D)
 				return VisualTreeHelper.GetParent(depo);
 			else if (depo is FrameworkContentElement)
@@ -37,28 +34,24 @@ namespace ICSharpCode.ILSpy
 			return null;
 		}
 
-		public static T GetItem<T>(DependencyObject view, object o) where T : class
-		{
+		public static T GetItem<T>(DependencyObject view, object o) where T : class {
 			var depo = o as DependencyObject;
 			while (depo != null && !(depo is T) && depo != view)
 				depo = GetParent(depo);
 			return depo as T;
 		}
 
-		public static bool IsLeftDoubleClick<T>(DependencyObject view, MouseButtonEventArgs e) where T : class
-		{
+		public static bool IsLeftDoubleClick<T>(DependencyObject view, MouseButtonEventArgs e) where T : class {
 			if (MouseButton.Left != e.ChangedButton)
 				return false;
 			return GetItem<T>(view, e.OriginalSource) != null;
 		}
 
-		public static string EscapeMenuItemHeader(string s)
-		{
+		public static string EscapeMenuItemHeader(string s) {
 			return CleanUpName(s).Replace("_", "__");
 		}
 
-		public static string CleanUpName(string n)
-		{
+		public static string CleanUpName(string n) {
 			if (n == null)
 				return n;
 			const int MAX_LEN = 0x100;
@@ -74,8 +67,7 @@ namespace ICSharpCode.ILSpy
 			return sb.ToString();
 		}
 
-		public static string CleanUpIdentifier(string id)
-		{
+		public static string CleanUpIdentifier(string id) {
 			if (id == null)
 				return id;
 			id = IdentifierEscaper.Escape(id);

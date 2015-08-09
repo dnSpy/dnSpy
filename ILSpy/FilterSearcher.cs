@@ -27,12 +27,12 @@ using System.Windows.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnlib.DotNet.Resources;
+using dnSpy.Images;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy
-{
-	interface ISearchComparer
-	{
+namespace dnSpy.Search {
+	interface ISearchComparer {
 		/// <summary>
 		/// Checks whether some value matches something
 		/// </summary>
@@ -42,19 +42,16 @@ namespace ICSharpCode.ILSpy
 		bool IsMatch(string text, object obj);
 	}
 
-	sealed class RegExStringLiteralSearchComparer : ISearchComparer
-	{
+	sealed class RegExStringLiteralSearchComparer : ISearchComparer {
 		readonly Regex regex;
 
-		public RegExStringLiteralSearchComparer(Regex regex)
-		{
+		public RegExStringLiteralSearchComparer(Regex regex) {
 			if (regex == null)
 				throw new ArgumentNullException();
 			this.regex = regex;
 		}
 
-		public bool IsMatch(string text, object obj)
-		{
+		public bool IsMatch(string text, object obj) {
 			var hc = obj as IHasConstant;
 			if (hc != null && hc.Constant != null)
 				obj = hc.Constant.Value;
@@ -64,14 +61,12 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	sealed class StringLiteralSearchComparer : ISearchComparer
-	{
+	sealed class StringLiteralSearchComparer : ISearchComparer {
 		readonly string str;
 		readonly StringComparison stringComparison;
 		readonly bool matchWholeString;
 
-		public StringLiteralSearchComparer(string s, bool caseSensitive = false, bool matchWholeString = false)
-		{
+		public StringLiteralSearchComparer(string s, bool caseSensitive = false, bool matchWholeString = false) {
 			if (s == null)
 				throw new ArgumentNullException();
 			this.str = s;
@@ -79,8 +74,7 @@ namespace ICSharpCode.ILSpy
 			this.matchWholeString = matchWholeString;
 		}
 
-		public bool IsMatch(string text, object obj)
-		{
+		public bool IsMatch(string text, object obj) {
 			var hc = obj as IHasConstant;
 			if (hc != null && hc.Constant != null)
 				obj = hc.Constant.Value;
@@ -94,17 +88,14 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	sealed class IntegerLiteralSearchComparer : ISearchComparer
-	{
+	sealed class IntegerLiteralSearchComparer : ISearchComparer {
 		readonly long searchValue;
 
-		public IntegerLiteralSearchComparer(long value)
-		{
+		public IntegerLiteralSearchComparer(long value) {
 			this.searchValue = value;
 		}
 
-		public bool IsMatch(string text, object obj)
-		{
+		public bool IsMatch(string text, object obj) {
 			var hc = obj as IHasConstant;
 			if (hc != null && hc.Constant != null)
 				obj = hc.Constant.Value;
@@ -131,17 +122,14 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	sealed class DoubleLiteralSearchComparer : ISearchComparer
-	{
+	sealed class DoubleLiteralSearchComparer : ISearchComparer {
 		readonly double searchValue;
 
-		public DoubleLiteralSearchComparer(double value)
-		{
+		public DoubleLiteralSearchComparer(double value) {
 			this.searchValue = value;
 		}
 
-		public bool IsMatch(string text, object obj)
-		{
+		public bool IsMatch(string text, object obj) {
 			var hc = obj as IHasConstant;
 			if (hc != null && hc.Constant != null)
 				obj = hc.Constant.Value;
@@ -166,45 +154,38 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	sealed class RegExSearchComparer : ISearchComparer
-	{
+	sealed class RegExSearchComparer : ISearchComparer {
 		readonly Regex regex;
 
-		public RegExSearchComparer(Regex regex)
-		{
+		public RegExSearchComparer(Regex regex) {
 			if (regex == null)
 				throw new ArgumentNullException();
 			this.regex = regex;
 		}
 
-		public bool IsMatch(string text, object obj)
-		{
+		public bool IsMatch(string text, object obj) {
 			if (text == null)
 				return false;
 			return regex.IsMatch(text);
 		}
 	}
 
-	sealed class AndSearchComparer : ISearchComparer
-	{
+	sealed class AndSearchComparer : ISearchComparer {
 		readonly string[] searchTerms;
 		readonly StringComparison stringComparison;
 		readonly bool matchWholeWords;
 
 		public AndSearchComparer(string[] searchTerms, bool caseSensitive = false, bool matchWholeWords = false)
-			: this(searchTerms, caseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase, matchWholeWords)
-		{
+			: this(searchTerms, caseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase, matchWholeWords) {
 		}
 
-		public AndSearchComparer(string[] searchTerms, StringComparison stringComparison, bool matchWholeWords = false)
-		{
+		public AndSearchComparer(string[] searchTerms, StringComparison stringComparison, bool matchWholeWords = false) {
 			this.searchTerms = searchTerms;
 			this.stringComparison = stringComparison;
 			this.matchWholeWords = matchWholeWords;
 		}
 
-		public bool IsMatch(string text, object obj)
-		{
+		public bool IsMatch(string text, object obj) {
 			if (text == null)
 				return false;
 			foreach (var searchTerm in searchTerms) {
@@ -222,26 +203,22 @@ namespace ICSharpCode.ILSpy
 		}
 	}
 
-	sealed class OrSearchComparer : ISearchComparer
-	{
+	sealed class OrSearchComparer : ISearchComparer {
 		readonly string[] searchTerms;
 		readonly StringComparison stringComparison;
 		readonly bool matchWholeWords;
 
 		public OrSearchComparer(string[] searchTerms, bool caseSensitive = false, bool matchWholeWords = false)
-			: this(searchTerms, caseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase, matchWholeWords)
-		{
+			: this(searchTerms, caseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase, matchWholeWords) {
 		}
 
-		public OrSearchComparer(string[] searchTerms, StringComparison stringComparison, bool matchWholeWords = false)
-		{
+		public OrSearchComparer(string[] searchTerms, StringComparison stringComparison, bool matchWholeWords = false) {
 			this.searchTerms = searchTerms;
 			this.stringComparison = stringComparison;
 			this.matchWholeWords = matchWholeWords;
 		}
 
-		public bool IsMatch(string text, object obj)
-		{
+		public bool IsMatch(string text, object obj) {
 			if (text == null)
 				return false;
 			foreach (var searchTerm in searchTerms) {
@@ -262,8 +239,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Searches types/members/etc for text. A filter decides which type/member/etc to check.
 	/// </summary>
-	sealed class FilterSearcher
-	{
+	sealed class FilterSearcher {
 		readonly ITreeViewNodeFilter filter;
 		readonly ISearchComparer searchComparer;
 		readonly Action<SearchResult> onMatch;
@@ -278,8 +254,7 @@ namespace ICSharpCode.ILSpy
 		/// <param name="onMatch">Called when there's a match</param>
 		/// <param name="language">Language</param>
 		/// <param name="cancellationToken">Cancellation token</param>
-		public FilterSearcher(ITreeViewNodeFilter filter, ISearchComparer searchComparer, Action<SearchResult> onMatch, Language language, CancellationToken cancellationToken)
-		{
+		public FilterSearcher(ITreeViewNodeFilter filter, ISearchComparer searchComparer, Action<SearchResult> onMatch, Language language, CancellationToken cancellationToken) {
 			if (filter == null)
 				throw new ArgumentNullException();
 			if (searchComparer == null)
@@ -295,8 +270,7 @@ namespace ICSharpCode.ILSpy
 			this.cancellationToken = cancellationToken;
 		}
 
-		bool IsMatch(string text, object obj)
-		{
+		bool IsMatch(string text, object obj) {
 			return searchComparer.IsMatch(text, obj);
 		}
 
@@ -304,8 +278,7 @@ namespace ICSharpCode.ILSpy
 		/// Search the assemblies and netmodules.
 		/// </summary>
 		/// <param name="asmNodes">Assembly and/or netmodule nodes</param>
-		public void SearchAssemblies(IEnumerable<AssemblyTreeNode> asmNodes)
-		{
+		public void SearchAssemblies(IEnumerable<AssemblyTreeNode> asmNodes) {
 			foreach (var asmNode in asmNodes) {
 				cancellationToken.ThrowIfCancellationRequested();
 				if (asmNode.LoadedAssembly.AssemblyDefinition != null)
@@ -315,8 +288,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		void SearchAssemblyInternal(AssemblyTreeNode asmNode)
-		{
+		void SearchAssemblyInternal(AssemblyTreeNode asmNode) {
 			if (asmNode == null)
 				return;
 			var res = filter.GetFilterResult(asmNode.LoadedAssembly, AssemblyFilterType.Assembly);
@@ -344,21 +316,18 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		static ImageInfo GetAssemblyImage(ModuleDef module)
-		{
+		static ImageInfo GetAssemblyImage(ModuleDef module) {
 			if (module == null)
 				return new ImageInfo();
 			return (module.Characteristics & dnlib.PE.Characteristics.Dll) == 0 ?
 				GetImage("AssemblyExe") : GetImage("Assembly");
 		}
 
-		static ImageInfo GetImage(string name)
-		{
+		static ImageInfo GetImage(string name) {
 			return new ImageInfo(name, BackgroundType.Search);
 		}
 
-		void SearchModule(LoadedAssembly module)
-		{
+		void SearchModule(LoadedAssembly module) {
 			if (module == null)
 				return;
 			var mod = module.ModuleDefinition;
@@ -392,8 +361,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		void SearchModAsmReferences(LoadedAssembly module)
-		{
+		void SearchModAsmReferences(LoadedAssembly module) {
 			var mod = module.ModuleDefinition as ModuleDefMD;
 			if (mod == null)
 				return;
@@ -439,8 +407,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		void SearchResources(LoadedAssembly module)
-		{
+		void SearchResources(LoadedAssembly module) {
 			var res = filter.GetFilterResult((ResourceListTreeNode)null);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -466,8 +433,7 @@ namespace ICSharpCode.ILSpy
 				SearchSearchResourceTreeNodes(module, node);
 		}
 
-		void SearchSearchResourceTreeNodes(LoadedAssembly module, ResourceTreeNode resTreeNode)
-		{
+		void SearchSearchResourceTreeNodes(LoadedAssembly module, ResourceTreeNode resTreeNode) {
 			var res = filter.GetFilterResult(resTreeNode);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -498,8 +464,7 @@ namespace ICSharpCode.ILSpy
 				SearchResourceElementTreeNode(module, resTreeNode, resElNode);
 		}
 
-		void SearchResourceElementTreeNode(LoadedAssembly module, ResourceTreeNode resTreeNode, ResourceElementTreeNode resElNode)
-		{
+		void SearchResourceElementTreeNode(LoadedAssembly module, ResourceTreeNode resTreeNode, ResourceElementTreeNode resElNode) {
 			var res = filter.GetFilterResult(resElNode);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -531,8 +496,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		Dictionary<string, List<TypeDef>> GetNamespaces(ModuleDef module)
-		{
+		Dictionary<string, List<TypeDef>> GetNamespaces(ModuleDef module) {
 			var ns = new Dictionary<string, List<TypeDef>>(StringComparer.Ordinal);
 
 			foreach (var type in module.Types) {
@@ -545,8 +509,7 @@ namespace ICSharpCode.ILSpy
 			return ns;
 		}
 
-		void SearchNonNetFile(LoadedAssembly nonNetFile)
-		{
+		void SearchNonNetFile(LoadedAssembly nonNetFile) {
 			if (nonNetFile == null)
 				return;
 			var res = filter.GetFilterResult(nonNetFile, AssemblyFilterType.NonNetFile);
@@ -566,8 +529,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		void Search(LoadedAssembly ownerModule, string ns, List<TypeDef> types)
-		{
+		void Search(LoadedAssembly ownerModule, string ns, List<TypeDef> types) {
 			var res = filter.GetFilterResult(ns, ownerModule);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -590,8 +552,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		void Search(LoadedAssembly ownerModule, string nsOwner, TypeDef type)
-		{
+		void Search(LoadedAssembly ownerModule, string nsOwner, TypeDef type) {
 			var res = filter.GetFilterResult(type);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -616,8 +577,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		void Search(LoadedAssembly ownerModule, TypeDef type)
-		{
+		void Search(LoadedAssembly ownerModule, TypeDef type) {
 			var res = filter.GetFilterResult(type);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -637,8 +597,7 @@ namespace ICSharpCode.ILSpy
 			SearchMembers(ownerModule, type);
 		}
 
-		void SearchMembers(LoadedAssembly ownerModule, TypeDef type)
-		{
+		void SearchMembers(LoadedAssembly ownerModule, TypeDef type) {
 			foreach (var method in type.Methods)
 				Search(ownerModule, type, method);
 			cancellationToken.ThrowIfCancellationRequested();
@@ -652,8 +611,7 @@ namespace ICSharpCode.ILSpy
 				Search(ownerModule, type, evt);
 		}
 
-		void Search(LoadedAssembly ownerModule, TypeDef type, MethodDef method)
-		{
+		void Search(LoadedAssembly ownerModule, TypeDef type, MethodDef method) {
 			var res = filter.GetFilterResult(method);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -696,16 +654,14 @@ namespace ICSharpCode.ILSpy
 			SearchBody(ownerModule, type, method);
 		}
 
-		void SearchBody(LoadedAssembly ownerModule, TypeDef type, MethodDef method)
-		{
+		void SearchBody(LoadedAssembly ownerModule, TypeDef type, MethodDef method) {
 			bool loadedBody;
 			SearchBody(ownerModule, type, method, out loadedBody);
 			if (loadedBody)
 				ICSharpCode.ILSpy.TreeNodes.Analyzer.Helpers.FreeMethodBody(method);
 		}
 
-		void SearchBody(LoadedAssembly ownerModule, TypeDef type, MethodDef method, out bool loadedBody)
-		{
+		void SearchBody(LoadedAssembly ownerModule, TypeDef type, MethodDef method, out bool loadedBody) {
 			loadedBody = false;
 			CilBody body;
 
@@ -781,8 +737,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		void Search(LoadedAssembly ownerModule, TypeDef type, FieldDef field)
-		{
+		void Search(LoadedAssembly ownerModule, TypeDef type, FieldDef field) {
 			var res = filter.GetFilterResult(field);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -801,8 +756,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		void Search(LoadedAssembly ownerModule, TypeDef type, PropertyDef prop)
-		{
+		void Search(LoadedAssembly ownerModule, TypeDef type, PropertyDef prop) {
 			var res = filter.GetFilterResult(prop);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -820,8 +774,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		void Search(LoadedAssembly ownerModule, TypeDef type, EventDef evt)
-		{
+		void Search(LoadedAssembly ownerModule, TypeDef type, EventDef evt) {
 			var res = filter.GetFilterResult(evt);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;

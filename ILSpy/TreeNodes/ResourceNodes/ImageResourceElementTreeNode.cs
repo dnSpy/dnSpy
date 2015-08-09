@@ -30,17 +30,14 @@ using dnlib.IO;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	[Export(typeof(IResourceFactory<Resource, ResourceTreeNode>))]
-	sealed class ImageResourceTreeNodeFactory : IResourceFactory<Resource, ResourceTreeNode>
-	{
+	sealed class ImageResourceTreeNodeFactory : IResourceFactory<Resource, ResourceTreeNode> {
 		public int Priority {
 			get { return 0; }
 		}
 
-		public ResourceTreeNode Create(ModuleDef module, Resource resInput)
-		{
+		public ResourceTreeNode Create(ModuleDef module, Resource resInput) {
 			var er = resInput as EmbeddedResource;
 			if (er == null)
 				return null;
@@ -54,14 +51,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 	}
 
 	[Export(typeof(IResourceFactory<ResourceElement, ResourceElementTreeNode>))]
-	sealed class ImageResourceElementTreeNodeFactory : IResourceFactory<ResourceElement, ResourceElementTreeNode>
-	{
+	sealed class ImageResourceElementTreeNodeFactory : IResourceFactory<ResourceElement, ResourceElementTreeNode> {
 		public int Priority {
 			get { return 0; }
 		}
 
-		public ResourceElementTreeNode Create(ModuleDef module, ResourceElement resInput)
-		{
+		public ResourceElementTreeNode Create(ModuleDef module, ResourceElement resInput) {
 			if (resInput.ResourceData.Code != ResourceTypeCode.ByteArray && resInput.ResourceData.Code != ResourceTypeCode.Stream)
 				return null;
 
@@ -73,8 +68,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return new ImageResourceElementTreeNode(resInput);
 		}
 
-		internal static bool CouldBeImage(string name, IBinaryReader reader)
-		{
+		internal static bool CouldBeImage(string name, IBinaryReader reader) {
 			return CouldBeImage(name) || CouldBeImage(reader);
 		}
 
@@ -85,8 +79,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			".jpg", ".jpeg", ".jpe", ".jif", ".jfif", ".jfi",
 			".ico", ".cur",
 		};
-		static bool CouldBeImage(string name)
-		{
+		static bool CouldBeImage(string name) {
 			foreach (var ext in fileExtensions) {
 				if (name.EndsWith(ext, StringComparison.OrdinalIgnoreCase))
 					return true;
@@ -94,8 +87,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return false;
 		}
 
-		static bool CouldBeImage(IBinaryReader reader)
-		{
+		static bool CouldBeImage(IBinaryReader reader) {
 			reader.Position = 0;
 			if (reader.Length < 0x16)
 				return false;
@@ -137,8 +129,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 	}
 
-	sealed class ImageResourceElementTreeNode : ResourceElementTreeNode
-	{
+	sealed class ImageResourceElementTreeNode : ResourceElementTreeNode {
 		ImageSource imageSource;
 		byte[] imageData;
 
@@ -151,19 +142,16 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 
 		public ImageResourceElementTreeNode(ResourceElement resElem)
-			: base(resElem)
-		{
+			: base(resElem) {
 			InitializeImageData();
 		}
 
-		void InitializeImageData()
-		{
+		void InitializeImageData() {
 			this.imageData = (byte[])((BuiltInResourceData)resElem.ResourceData).Data;
 			this.imageSource = CreateImageSource(this.imageData);
 		}
 
-		internal static ImageSource CreateImageSource(byte[] data)
-		{
+		internal static ImageSource CreateImageSource(byte[] data) {
 			// Check if CUR
 			if (data.Length >= 4 && BitConverter.ToUInt32(data, 0) == 0x00020000) {
 				try {
@@ -178,8 +166,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return CreateImageSource2(data);
 		}
 
-		static ImageSource CreateImageSource2(byte[] data)
-		{
+		static ImageSource CreateImageSource2(byte[] data) {
 			var bimg = new BitmapImage();
 			bimg.BeginInit();
 			bimg.StreamSource = new MemoryStream(data);
@@ -187,16 +174,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return bimg;
 		}
 
-		public override void Decompile(Language language, Decompiler.ITextOutput output)
-		{
+		public override void Decompile(Language language, Decompiler.ITextOutput output) {
 			var smartOutput = output as ISmartTextOutput;
 			if (smartOutput != null) {
 				language.WriteComment(output, string.Empty);
-				if (Options.DecompilerSettingsPanel.CurrentDecompilerSettings.ShowTokenAndRvaComments) {
-					long fo = FileOffset;
-					if (fo != 0)
-						output.Write(string.Format("0x{0:X8}: ", fo), TextTokenType.Comment);
-				}
+				output.WriteOffsetComment(this);
 				smartOutput.AddUIElement(() => {
 					return new Image {
 						Source = ImageSource,
@@ -211,13 +193,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			base.Decompile(language, output);
 		}
 
-		protected override IEnumerable<ResourceData> GetDeserialized()
-		{
+		protected override IEnumerable<ResourceData> GetDeserialized() {
 			yield return new ResourceData(resElem.Name, () => new MemoryStream(imageData));
 		}
 
-		public override string CheckCanUpdateData(ResourceElement newResElem)
-		{
+		public override string CheckCanUpdateData(ResourceElement newResElem) {
 			var res = base.CheckCanUpdateData(newResElem);
 			if (!string.IsNullOrEmpty(res))
 				return res;
@@ -232,8 +212,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return null;
 		}
 
-		public override void UpdateData(ResourceElement newResElem)
-		{
+		public override void UpdateData(ResourceElement newResElem) {
 			base.UpdateData(newResElem);
 			InitializeImageData();
 		}
@@ -243,8 +222,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 	}
 
-	sealed class ImageResourceTreeNode : ResourceTreeNode
-	{
+	sealed class ImageResourceTreeNode : ResourceTreeNode {
 		readonly ImageSource imageSource;
 		readonly byte[] imageData;
 
@@ -257,14 +235,12 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 
 		public ImageResourceTreeNode(EmbeddedResource er)
-			: base(er)
-		{
+			: base(er) {
 			this.imageData = er.GetResourceData();
 			this.imageSource = ImageResourceElementTreeNode.CreateImageSource(this.imageData);
 		}
 
-		public override void Decompile(Language language, ITextOutput output)
-		{
+		public override void Decompile(Language language, ITextOutput output) {
 			var so = output as ISmartTextOutput;
 			if (so != null) {
 				so.AddUIElement(() => {
@@ -282,8 +258,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 
-		protected override IEnumerable<ResourceData> GetDeserialized()
-		{
+		protected override IEnumerable<ResourceData> GetDeserialized() {
 			yield return new ResourceData(r.Name, () => new MemoryStream(imageData));
 		}
 

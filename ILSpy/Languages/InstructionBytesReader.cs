@@ -20,12 +20,9 @@
 using dnlib.DotNet;
 using ICSharpCode.Decompiler.Disassembler;
 
-namespace ICSharpCode.ILSpy
-{
-	static class InstructionBytesReader
-	{
-		public static IInstructionBytesReader Create(MethodDef method)
-		{
+namespace dnSpy {
+	static class InstructionBytesReader {
+		public static IInstructionBytesReader Create(MethodDef method) {
 			if (MethodAnnotations.Instance.IsBodyModified(method))
 				return new ModifiedInstructionBytesReader(method);
 			else

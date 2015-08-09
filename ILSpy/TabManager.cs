@@ -27,42 +27,34 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Media3D;
 using System.Windows.Threading;
-using ICSharpCode.ILSpy.TextView;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy
-{
-	public enum TabManagerAddType
-	{
+namespace dnSpy.Tabs {
+	public enum TabManagerAddType {
 		Add,
 		Remove,
 		Attach,
 		Detach,
 	}
 
-	public enum TabManagerState
-	{
+	public enum TabManagerState {
 		Empty,
 		Active,
 		Inactive,
 	}
 
-	abstract class TabManagerBase
-	{
+	abstract class TabManagerBase {
 		internal abstract void Close(object tabState);
 		internal abstract void OnThemeChanged();
 	}
 
-	sealed class TabManager<TState> : TabManagerBase, INotifyPropertyChanged where TState : TabState
-	{
+	sealed class TabManager<TState> : TabManagerBase, INotifyPropertyChanged where TState : TabState {
 		readonly TabControl tabControl;
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		void OnPropertyChanged(string propName)
-		{
+		void OnPropertyChanged(string propName) {
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propName));
 		}
@@ -131,8 +123,7 @@ namespace ICSharpCode.ILSpy
 		readonly Action<TabManager<TState>, TabManagerAddType, TState> OnAddRemoveTabState;
 		readonly TabGroupsManager<TState> tabGroupsManager;
 
-		public TabManager(TabGroupsManager<TState> tabGroupsManager, TabControl tabControl, Action<TabManager<TState>, TState, TState> onSelectionChanged, Action<TabManager<TState>, TabManagerAddType, TState> onAddRemoveTabState)
-		{
+		public TabManager(TabGroupsManager<TState> tabGroupsManager, TabControl tabControl, Action<TabManager<TState>, TState, TState> onSelectionChanged, Action<TabManager<TState>, TabManagerAddType, TState> onAddRemoveTabState) {
 			this.tabGroupsManager = tabGroupsManager;
 			this.tabControl = tabControl;
 			tabControl.DataContext = this;
@@ -141,24 +132,20 @@ namespace ICSharpCode.ILSpy
 			this.OnAddRemoveTabState = onAddRemoveTabState;
 		}
 
-		internal override void OnThemeChanged()
-		{
+		internal override void OnThemeChanged() {
 			OnStylePropChange();
 		}
 
-		void OnStylePropChange()
-		{
+		void OnStylePropChange() {
 			OnPropertyChanged("TabManagerState");
 			OnPropertyChanged("HasOpenedDoc");
 		}
 
-		internal override void Close(object ts)
-		{
+		internal override void Close(object ts) {
 			CloseTab((TState)ts);
 		}
 
-		void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
+		void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e) {
 			if (sender != tabControl || e.Source != tabControl)
 				return;
 			Debug.Assert(e.RemovedItems.Count <= 1);
@@ -177,8 +164,7 @@ namespace ICSharpCode.ILSpy
 			OnSelectionChanged(this, oldState, newState);
 		}
 
-		internal TState AddNewTabState(TState tabState)
-		{
+		internal TState AddNewTabState(TState tabState) {
 			tabState.Owner = this;
 			tabState.TabItem.AllowDrop = true;
 			AddEvents(tabState);
@@ -191,8 +177,7 @@ namespace ICSharpCode.ILSpy
 			return tabState;
 		}
 
-		void AddEvents(TState tabState)
-		{
+		void AddEvents(TState tabState) {
 			tabState.TabItem.MouseRightButtonDown += tabItem_MouseRightButtonDown;
 			tabState.TabItem.PreviewMouseDown += tabItem_PreviewMouseDown;
 			tabState.TabItem.DragOver += tabItem_DragOver;
@@ -201,19 +186,16 @@ namespace ICSharpCode.ILSpy
 			tabState.TabItem.AddHandler(UIElement.LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(tabItem_LostKeyboardFocus), true);
 		}
 
-		void tabItem_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
-		{
+		void tabItem_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			tabGroupsManager.SetActive(this);
 			IsActive = true;
 		}
 
-		void tabItem_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
-		{
+		void tabItem_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			IsActive = false;
 		}
 
-		void RemoveEvents(TState tabState)
-		{
+		void RemoveEvents(TState tabState) {
 			tabState.TabItem.MouseRightButtonDown -= tabItem_MouseRightButtonDown;
 			tabState.TabItem.PreviewMouseDown -= tabItem_PreviewMouseDown;
 			tabState.TabItem.DragOver -= tabItem_DragOver;
@@ -222,8 +204,7 @@ namespace ICSharpCode.ILSpy
 			tabState.TabItem.RemoveHandler(UIElement.LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(tabItem_LostKeyboardFocus));
 		}
 
-		TState GetTabState(object o)
-		{
+		TState GetTabState(object o) {
 			var tabItem = o as TabItem;
 			if (tabItem == null)
 				return null;
@@ -233,16 +214,14 @@ namespace ICSharpCode.ILSpy
 			return tabState;
 		}
 
-		void tabItem_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-		{
+		void tabItem_MouseRightButtonDown(object sender, MouseButtonEventArgs e) {
 			var tabState = GetTabState(sender);
 			if (tabState == null)
 				return;
 			tabControl.SelectedItem = tabState.TabItem;
 		}
 
-		void tabItem_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-		{
+		void tabItem_PreviewMouseDown(object sender, MouseButtonEventArgs e) {
 			var tabState = GetTabState(sender);
 			if (tabState == null)
 				return;
@@ -288,13 +267,11 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		static bool IsTabButton(TabItem tabItem, object o)
-		{
+		static bool IsTabButton(TabItem tabItem, object o) {
 			return UIUtils.GetItem<ButtonBase>(tabItem, o) != null;
 		}
 
-		bool GetInfo(object sender, DragEventArgs e, out TabItem source, out TabItem target, out TabControl tabControlSource, out TabControl tabControlTarget, out TState tabStateSource, out TState tabStateTarget, out TabManager<TState> tabManagerSource, out TabManager<TState> tabManagerTarget, bool canBeSame)
-		{
+		bool GetInfo(object sender, DragEventArgs e, out TabItem source, out TabItem target, out TabControl tabControlSource, out TabControl tabControlTarget, out TState tabStateSource, out TState tabStateTarget, out TabManager<TState> tabManagerSource, out TabManager<TState> tabManagerTarget, bool canBeSame) {
 			source = target = null;
 			tabControlSource = tabControlTarget = null;
 			tabStateSource = tabStateTarget = null;
@@ -331,8 +308,7 @@ namespace ICSharpCode.ILSpy
 			return true;
 		}
 
-		void tabItem_DragOver(object sender, DragEventArgs e)
-		{
+		void tabItem_DragOver(object sender, DragEventArgs e) {
 			var tabState = GetTabState(sender);
 			if (tabState == null)
 				return;
@@ -349,8 +325,7 @@ namespace ICSharpCode.ILSpy
 			e.Handled = true;
 		}
 
-		void tabItem_Drop(object sender, DragEventArgs e)
-		{
+		void tabItem_Drop(object sender, DragEventArgs e) {
 			TabItem source, target;
 			TabControl tabControlSource, tabControlTarget;
 			TState tabStateSource, tabStateTarget;
@@ -362,8 +337,7 @@ namespace ICSharpCode.ILSpy
 				tabManagerTarget.tabGroupsManager.SetActive(tabManagerTarget);
 		}
 
-		TState AttachTabState(TState tabState, int insertIndex)
-		{
+		TState AttachTabState(TState tabState, int insertIndex) {
 			tabState.Owner = this;
 			AddEvents(tabState);
 			if (insertIndex < 0 || insertIndex > TabControl.Items.Count)
@@ -376,28 +350,24 @@ namespace ICSharpCode.ILSpy
 			return tabState;
 		}
 
-		void UpdateState(TState tabState)
-		{
+		void UpdateState(TState tabState) {
 			Debug.Assert(tabControl.Items.IndexOf(tabState) < 0);
-			tabState.IsSelected = false;	// It's not inserted so can't be selected
+			tabState.IsSelected = false;    // It's not inserted so can't be selected
 			tabState.IsActive = IsActive;
 		}
 
-		public void SetSelectedIndex(int index)
-		{
+		public void SetSelectedIndex(int index) {
 			int selectedIndex = unchecked((uint)index) < (uint)tabControl.Items.Count ?
 						index : tabControl.Items.Count == 0 ? -1 : 0;
 			tabControl.SelectedIndex = selectedIndex;
 		}
 
-		public void SetSelectedTab(TabState tabState)
-		{
+		public void SetSelectedTab(TabState tabState) {
 			tabControl.SelectedItem = tabState.TabItem;
 		}
 
 		// This method is only executed when the text editor does NOT have keyboard focus
-		void SelectTab(int index)
-		{
+		void SelectTab(int index) {
 			if (tabControl.Items.Count == 0)
 				return;
 			if (index < 0)
@@ -406,43 +376,35 @@ namespace ICSharpCode.ILSpy
 			tabControl.SelectedIndex = index;
 		}
 
-		public void SelectNextTab()
-		{
+		public void SelectNextTab() {
 			SelectTab(tabControl.SelectedIndex + 1);
 		}
 
-		public bool SelectNextTabCanExecute()
-		{
+		public bool SelectNextTabCanExecute() {
 			return tabControl.Items.Count > 1;
 		}
 
-		public void SelectPreviousTab()
-		{
+		public void SelectPreviousTab() {
 			SelectTab(tabControl.SelectedIndex - 1);
 		}
 
-		public bool SelectPreviousTabCanExecute()
-		{
+		public bool SelectPreviousTabCanExecute() {
 			return tabControl.Items.Count > 1;
 		}
 
-		public void CloseActiveTab()
-		{
+		public void CloseActiveTab() {
 			RemoveTabState(ActiveTabState);
 		}
 
-		public bool CloseActiveTabCanExecute()
-		{
+		public bool CloseActiveTabCanExecute() {
 			return ActiveTabState != null;
 		}
 
-		public void CloseTab(TState tabState)
-		{
+		public void CloseTab(TState tabState) {
 			RemoveTabState(tabState);
 		}
 
-		public void CloseAllButActiveTab()
-		{
+		public void CloseAllButActiveTab() {
 			var activeTab = ActiveTabState;
 			if (activeTab == null)
 				return;
@@ -452,24 +414,20 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		public bool CloseAllButActiveTabCanExecute()
-		{
+		public bool CloseAllButActiveTabCanExecute() {
 			return tabControl.Items.Count > 1;
 		}
 
-		internal bool CloseAllTabsCanExecute()
-		{
+		internal bool CloseAllTabsCanExecute() {
 			return tabControl.Items.Count > 0;
 		}
 
-		internal void CloseAllTabs()
-		{
+		internal void CloseAllTabs() {
 			foreach (var tabState in AllTabStates.ToArray())
 				RemoveTabState(tabState);
 		}
 
-		public void RemoveAllTabStates()
-		{
+		public void RemoveAllTabStates() {
 			var allTabStates = AllTabStates.ToArray();
 			tabControl.Items.Clear();
 			foreach (var tabState in allTabStates)
@@ -477,8 +435,7 @@ namespace ICSharpCode.ILSpy
 			NotifyIfEmtpy();
 		}
 
-		public void RemoveTabState(TState tabState)
-		{
+		public void RemoveTabState(TState tabState) {
 			if (tabState == null)
 				return;
 			Debug.Assert(tabControl.Items.Contains(tabState.TabItem));
@@ -487,8 +444,7 @@ namespace ICSharpCode.ILSpy
 			NotifyIfEmtpy();
 		}
 
-		void DetachNoEvents(TState tabState)
-		{
+		void DetachNoEvents(TState tabState) {
 			if (tabState == null)
 				return;
 			int index = tabControl.Items.IndexOf(tabState.TabItem);
@@ -510,47 +466,41 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		public void DetachTabState(TState tabState)
-		{
+		void DetachTabState(TState tabState) {
 			DetachNoEvents(tabState);
 			RemoveEvents(tabState);
 			OnAddRemoveTabState(this, TabManagerAddType.Detach, tabState);
 			NotifyIfEmtpy();
 		}
 
-		void RemoveTabStateInternal(TState tabState)
-		{
+		void RemoveTabStateInternal(TState tabState) {
 			RemoveEvents(tabState);
 			OnAddRemoveTabState(this, TabManagerAddType.Remove, tabState);
 			tabState.Dispose();
 		}
 
-		void NotifyIfEmtpy()
-		{
+		void NotifyIfEmtpy() {
 			if (tabControl.Items.Count == 0) {
 				OnStylePropChange();
 				tabGroupsManager.Remove(this);
 			}
 		}
 
-		public bool MoveToAndSelect(TabManager<TState> dstTabManager, TState srcTabState, TState insertBeforeThis)
-		{
+		public bool MoveToAndSelect(TabManager<TState> dstTabManager, TState srcTabState, TState insertBeforeThis) {
 			bool res = MoveTo(dstTabManager, srcTabState, insertBeforeThis);
 			if (res)
 				dstTabManager.SetSelectedTab(srcTabState);
 			return res;
 		}
 
-		public bool MoveToAndSelect(TabManager<TState> dstTabManager, TState srcTabState, int insertIndex)
-		{
+		public bool MoveToAndSelect(TabManager<TState> dstTabManager, TState srcTabState, int insertIndex) {
 			bool res = MoveTo(dstTabManager, srcTabState, insertIndex);
 			if (res)
 				dstTabManager.SetSelectedTab(srcTabState);
 			return res;
 		}
 
-		public bool MoveTo(TabManager<TState> dstTabManager, TState srcTabState, TState insertBeforeThis)
-		{
+		public bool MoveTo(TabManager<TState> dstTabManager, TState srcTabState, TState insertBeforeThis) {
 			if (insertBeforeThis != null) {
 				Debug.Assert(dstTabManager.tabControl.Items.Contains(insertBeforeThis.TabItem));
 				return MoveTo(dstTabManager, srcTabState, dstTabManager.tabControl.Items.IndexOf(insertBeforeThis.TabItem));
@@ -559,19 +509,24 @@ namespace ICSharpCode.ILSpy
 				return MoveTo(dstTabManager, srcTabState, -1);
 		}
 
-		public bool MoveTo(TabManager<TState> dstTabManager, TState srcTabState, int insertIndex)
-		{
+		public bool MoveTo(TabManager<TState> dstTabManager, TState srcTabState, int insertIndex) {
 			Debug.Assert(this.TabControl.Items.Contains(srcTabState.TabItem));
 			if (srcTabState == null)
 				return false;
 
 			DetachTabState(srcTabState);
 			dstTabManager.AttachTabState(srcTabState, insertIndex);
+
+			if ((bool)srcTabState.TabItem.GetValue(UIElement.IsKeyboardFocusWithinProperty)) {
+				tabGroupsManager.SetActiveTab(srcTabState);
+				this.IsActive = false;
+				dstTabManager.IsActive = true;
+			}
+
 			return true;
 		}
 
-		public bool SetActiveTab(TState tabState)
-		{
+		public bool SetActiveTab(TState tabState) {
 			if (tabState == null || !this.TabControl.Items.Contains(tabState.TabItem))
 				return false;
 			this.TabControl.SelectedItem = tabState.TabItem;

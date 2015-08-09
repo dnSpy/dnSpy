@@ -17,34 +17,28 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.Disassembler;
 using dnlib.DotNet;
 using dnlib.IO;
+using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Disassembler;
 
-namespace ICSharpCode.ILSpy
-{
-	sealed class OriginalInstructionBytesReader : IInstructionBytesReader
-	{
+namespace dnSpy {
+	sealed class OriginalInstructionBytesReader : IInstructionBytesReader {
 		readonly IImageStream stream;
 
-		public OriginalInstructionBytesReader(MethodDef method)
-		{
+		public OriginalInstructionBytesReader(MethodDef method) {
 			this.stream = method.Module.GetImageStream((uint)method.RVA + method.Body.HeaderSize);
 		}
 
-		public int ReadByte()
-		{
+		public int ReadByte() {
 			return stream.ReadByte();
 		}
 
-		public void SetInstruction(int index, uint offset)
-		{
+		public void SetInstruction(int index, uint offset) {
 			stream.Position = offset;
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 			stream.Dispose();
 		}
 	}

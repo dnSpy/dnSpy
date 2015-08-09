@@ -53,6 +53,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddressReference.cs" />
     <Compile Include="Ast\Annotations.cs" />
     <Compile Include="Ast\AstBuilder.cs" />
     <Compile Include="Ast\AstMethodBodyBuilder.cs" />

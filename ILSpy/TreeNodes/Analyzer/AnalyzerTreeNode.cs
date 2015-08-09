@@ -20,12 +20,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using ICSharpCode.ILSpy.dntheme;
+using dnSpy.dntheme;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
-{
+namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	public abstract class AnalyzerTreeNode : SharpTreeNode, IDisposable
 	{
 		private Language language;
@@ -70,7 +69,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		protected abstract void Write(ITextOutput output, Language language);
 
 		public override System.Windows.Media.Brush Foreground {
-			get { return Themes.Theme.GetColor(dntheme.ColorType.NodePublic).InheritedColor.Foreground.GetBrush(null); }
+			get { return Themes.Theme.GetColor(ColorType.NodePublic).InheritedColor.Foreground.GetBrush(null); }
 		}
 
 		public void RaiseUIPropsChanged()

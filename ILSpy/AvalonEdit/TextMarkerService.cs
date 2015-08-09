@@ -18,22 +18,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
-
-using ICSharpCode.AvalonEdit;
+using dnSpy.Tabs;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.ILSpy.Bookmarks;
-using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.TextView;
 
-namespace ICSharpCode.ILSpy.AvalonEdit
-{
+namespace ICSharpCode.ILSpy.AvalonEdit {
 	using TextView = ICSharpCode.AvalonEdit.Rendering.TextView;
 	/// <summary>
 	/// Handles the text markers for a code editor.
@@ -56,7 +52,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			BookmarkManager.Added += BookmarkManager_Added;
 			BookmarkManager.Removed += BookmarkManager_Removed;
 			MainWindow.Instance.ExecuteWhenLoaded(() => {
-				MainWindow.Instance.OnDecompilerTextViewRemoved += OnDecompilerTextViewRemoved;
+				MainWindow.Instance.OnTabStateRemoved += OnTabStateRemoved;
 				this.textView.OnShowOutput += textView_OnShowOutput;
 				RecreateMarkers();
 			});
@@ -68,15 +64,16 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			RecreateMarkers();
 		}
 
-		void OnDecompilerTextViewRemoved(object sender, MainWindow.DecompilerTextViewEventArgs e)
+		void OnTabStateRemoved(object sender, MainWindow.TabStateEventArgs e)
 		{
-			if (e.DecompilerTextView != textView)
+			var tsd = e.TabState as DecompileTabState;
+			if (tsd == null || tsd.TextView != textView)
 				return;
 
 			TextView.DocumentChanged -= OnDocumentChanged;
 			BookmarkManager.Added -= BookmarkManager_Added;
 			BookmarkManager.Removed -= BookmarkManager_Removed;
-			MainWindow.Instance.OnDecompilerTextViewRemoved -= OnDecompilerTextViewRemoved;
+			MainWindow.Instance.OnTabStateRemoved -= OnTabStateRemoved;
 			textView.OnShowOutput -= textView_OnShowOutput;
 			foreach (var bm in BookmarkManager.Bookmarks) {
 				var mbm = bm as MarkerBookmark;

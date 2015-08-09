@@ -25,23 +25,23 @@ using dnlib.DotNet.MD;
 using dnlib.DotNet.Writer;
 using dnlib.PE;
 using dnlib.W32Resources;
-using dnSpy.AsmEditor.ViewHelpers;
+using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.SaveModule {
-	sealed class SaveModuleOptionsVM : ViewModelBase {
+	sealed class SaveModuleOptionsVM : SaveOptionsVM {
+		public override SaveOptionsType Type {
+			get { return SaveOptionsType.Module; }
+		}
+
 		public ModuleDef Module {
 			get { return module; }
 		}
 		readonly ModuleDef module;
 
-		public IPickNetExecutableFileName PickNetExecutableFileName {
-			set { pickNetExecutableFileName = value; }
+		public override IUndoObject UndoObject {
+			get { return loadedAssembly; }
 		}
-		IPickNetExecutableFileName pickNetExecutableFileName;
-
-		public ICommand PickNetExecutableFileNameCommand {
-			get { return new RelayCommand(a => OnPickNetExecutableFileName()); }
-		}
+		readonly LoadedAssembly loadedAssembly;
 
 		public ICommand ReinitializeCommand {
 			get { return new RelayCommand(a => Reinitialize()); }
@@ -66,18 +66,6 @@ namespace dnSpy.AsmEditor.SaveModule {
 			}
 		}
 		bool useMixedMode;
-
-		public string FileName {
-			get { return filename; }
-			set {
-				if (value == null)
-					throw new ArgumentNullException();
-				filename = value;
-				OnPropertyChanged("FileName");
-				HasErrorUpdated();
-			}
-		}
-		string filename = string.Empty;
 
 		public bool CanWritePdb {
 			get { return module.PdbState != null; }
@@ -186,8 +174,9 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 		readonly MetaDataOptionsVM metaDataOptions;
 
-		public SaveModuleOptionsVM(ModuleDef module) {
-			this.module = module;
+		public SaveModuleOptionsVM(LoadedAssembly asm) {
+			this.loadedAssembly = asm;
+			this.module = asm.ModuleDefinition;
 			this.peHeadersOptions = new PEHeadersOptionsVM(module.Machine, GetSubsystem(module.Kind));
 			this.cor20HeaderOptions = new Cor20HeaderOptionsVM();
 			this.metaDataOptions = new MetaDataOptionsVM();
@@ -257,7 +246,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		public SaveModuleOptionsVM Clone() {
-			return CopyTo(new SaveModuleOptionsVM(module));
+			return CopyTo(new SaveModuleOptionsVM(loadedAssembly));
 		}
 
 		public SaveModuleOptionsVM CopyTo(SaveModuleOptionsVM other) {
@@ -303,28 +292,14 @@ namespace dnSpy.AsmEditor.SaveModule {
 			peHeadersOptions.Characteristics = options.PEHeadersOptions.Characteristics;
 		}
 
-		void OnPickNetExecutableFileName() {
-			if (pickNetExecutableFileName == null)
-				throw new InvalidOperationException();
-			var newFileName = pickNetExecutableFileName.GetFileName(FileName, Extension);
-			if (newFileName == null)
-				return;
-			FileName = newFileName;
-		}
-
-		protected override string Verify(string columnName) {
-			if (columnName == "FileName")
-				return filename.ValidateFileName() ?? string.Empty;
-
-			return string.Empty;
+		protected override string GetExtension(string filename) {
+			return Extension;
 		}
 
 		public override bool HasError {
 			get {
-				if (!string.IsNullOrEmpty(Verify("FileName")))
-					return true;
-
-				return peHeadersOptions.HasError ||
+				return base.HasError ||
+						peHeadersOptions.HasError ||
 						cor20HeaderOptions.HasError ||
 						metaDataOptions.HasError;
 			}

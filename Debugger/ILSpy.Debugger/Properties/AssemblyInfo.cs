@@ -1,9 +1,9 @@
 ﻿#region Using directives
 
-using System;
-using System.Resources;
 using System.Reflection;
+using System.Resources;
 using System.Runtime.InteropServices;
+using System.Windows;
 
 #endregion
 
@@ -22,6 +22,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("0.1.0.208")]
 [assembly: AssemblyInformationalVersion("0.1.0.208-Debugger-alpha-5eadd1d9")]
 [assembly: NeutralResourcesLanguage("en-US")]
+
+[assembly: ThemeInfo(ResourceDictionaryLocation.SourceAssembly, ResourceDictionaryLocation.SourceAssembly)]
 
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2243:AttributeStringLiteralsShouldParseCorrectly",
     Justification = "AssemblyInformationalVersion does not need to be a parsable version")]

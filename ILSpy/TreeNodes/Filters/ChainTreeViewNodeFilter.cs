@@ -19,15 +19,14 @@
 
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Filters
-{
-	abstract class ChainTreeViewNodeFilter : ITreeViewNodeFilter
-	{
+namespace dnSpy.Search {
+	abstract class ChainTreeViewNodeFilter : ITreeViewNodeFilter {
 		readonly ITreeViewNodeFilter filter;
 
-		public ChainTreeViewNodeFilter(ITreeViewNodeFilter filter)
-		{
+		public ChainTreeViewNodeFilter(ITreeViewNodeFilter filter) {
 			this.filter = filter;
 		}
 
@@ -35,113 +34,91 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			get { return filter.Text; }
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(AssemblyRef asmRef)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResult(AssemblyRef asmRef) {
 			return filter.GetFilterResult(asmRef);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(LoadedAssembly asm, AssemblyFilterType type)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResult(LoadedAssembly asm, AssemblyFilterType type) {
 			return filter.GetFilterResult(asm, type);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(BaseTypesEntryNode node)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResult(BaseTypesEntryNode node) {
 			return filter.GetFilterResult(node);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(BaseTypesTreeNode node)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResult(BaseTypesTreeNode node) {
 			return filter.GetFilterResult(node);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(DerivedTypesEntryNode node)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResult(DerivedTypesEntryNode node) {
 			return filter.GetFilterResult(node);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(DerivedTypesTreeNode node)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResult(DerivedTypesTreeNode node) {
 			return filter.GetFilterResult(node);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(EventDef evt)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResult(EventDef evt) {
 			return filter.GetFilterResult(evt);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(FieldDef field)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResult(FieldDef field) {
 			return filter.GetFilterResult(field);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(MethodDef method)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResult(MethodDef method) {
 			return filter.GetFilterResult(method);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(ModuleRef modRef)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResult(ModuleRef modRef) {
 			return filter.GetFilterResult(modRef);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(string ns, LoadedAssembly owner)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResult(string ns, LoadedAssembly owner) {
 			return filter.GetFilterResult(ns, owner);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(PropertyDef prop)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResult(PropertyDef prop) {
 			return filter.GetFilterResult(prop);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(ReferenceFolderTreeNode node)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResult(ReferenceFolderTreeNode node) {
 			return filter.GetFilterResult(node);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(ResourceListTreeNode node)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResult(ResourceListTreeNode node) {
 			return filter.GetFilterResult(node);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(ResourceTreeNode node)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResult(ResourceTreeNode node) {
 			return filter.GetFilterResult(node);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(ResourceElementTreeNode node)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResult(ResourceElementTreeNode node) {
 			return filter.GetFilterResult(node);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(TypeDef type)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResult(TypeDef type) {
 			return filter.GetFilterResult(type);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResultBody(MethodDef method)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResultBody(MethodDef method) {
 			return filter.GetFilterResultBody(method);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResultParamDefs(MethodDef method)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResultParamDefs(MethodDef method) {
 			return filter.GetFilterResultParamDefs(method);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(MethodDef method, ParamDef param)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResult(MethodDef method, ParamDef param) {
 			return filter.GetFilterResult(method, param);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResultLocals(MethodDef method)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResultLocals(MethodDef method) {
 			return filter.GetFilterResultLocals(method);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(MethodDef method, Local local)
-		{
+		public virtual TreeViewNodeFilterResult GetFilterResult(MethodDef method, Local local) {
 			return filter.GetFilterResult(method, local);
 		}
 	}

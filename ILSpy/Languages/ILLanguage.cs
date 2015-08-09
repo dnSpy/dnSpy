@@ -16,18 +16,17 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using System.IO;
-using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.Disassembler;
-using ICSharpCode.NRefactory;
-using ICSharpCode.ILSpy.XmlDoc;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy;
+using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Disassembler;
+using ICSharpCode.ILSpy.XmlDoc;
+using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// IL language support.
 	/// </summary>

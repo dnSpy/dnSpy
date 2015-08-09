@@ -22,16 +22,17 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Threading;
-using ICSharpCode.ILSpy.Options;
 using dnlib.DotNet;
+using dnSpy.AsmEditor;
+using dnSpy.Options;
+using ICSharpCode.ILSpy.Options;
 
 namespace ICSharpCode.ILSpy
 {
 	/// <summary>
 	/// Represents an assembly loaded into ILSpy.
 	/// </summary>
-	public sealed class LoadedAssembly : IDisposable
+	public sealed class LoadedAssembly : IDisposable, IUndoObject
 	{
 		Task<ModuleDef> assemblyTask;
 		readonly AssemblyList assemblyList;
@@ -85,8 +86,8 @@ namespace ICSharpCode.ILSpy
 		/// <summary>
 		/// Don't read or write. Updated by UndoCommandManager.
 		/// </summary>
-		internal bool IsDirty;
-		internal int SavedCommand;
+		public bool IsDirty { get; set; }
+		public int SavedCommand { get; set; }
 
 		/// <summary>
 		/// true if this assembly is located in the GAC
@@ -243,7 +244,7 @@ namespace ICSharpCode.ILSpy
 		ModuleDef LoadAssembly(object state)
 		{
 			ModuleDef module;
-			if (Options.OtherSettings.Instance.UseMemoryMappedIO)
+			if (OtherSettings.Instance.UseMemoryMappedIO)
 				module = ModuleDefMD.Load(fileName, CreateModuleContext());
 			else
 				module = ModuleDefMD.Load(File.ReadAllBytes(fileName), CreateModuleContext());

@@ -28,20 +28,16 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using dnSpy.AsmEditor;
 
-namespace ICSharpCode.ILSpy.Controls
-{
-	public class MetroWindow : Window
-	{
-		public MetroWindow()
-		{
+namespace ICSharpCode.ILSpy.Controls {
+	public class MetroWindow : Window {
+		public MetroWindow() {
 			SetValue(winChrome_WindowChromeProperty, CreateWindowChromeObject());
 			// Since the system menu had to be disabled, we must add this command
 			var cmd = new RelayCommand(a => ShowSystemMenu(this), a => !IsFullScreen);
 			InputBindings.Add(new KeyBinding(cmd, Key.Space, ModifierKeys.Alt));
 		}
 
-		protected override void OnSourceInitialized(EventArgs e)
-		{
+		protected override void OnSourceInitialized(EventArgs e) {
 			base.OnSourceInitialized(e);
 			WindowUtils.UpdateWin32Style(this);
 		}
@@ -61,8 +57,7 @@ namespace ICSharpCode.ILSpy.Controls
 			set { SetValue(IsFullScreenProperty, value); }
 		}
 
-		static void OnIsFullScreenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
+		static void OnIsFullScreenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			var window = (MetroWindow)d;
 			var obj = (DependencyObject)window.GetValue(winChrome_WindowChromeProperty);
 			if (window.IsFullScreen)
@@ -86,28 +81,24 @@ namespace ICSharpCode.ILSpy.Controls
 		public static readonly DependencyProperty IsHitTestVisibleInChromeProperty = DependencyProperty.RegisterAttached(
 			"IsHitTestVisibleInChrome", typeof(bool), typeof(MetroWindow), new UIPropertyMetadata(false, OnIsHitTestVisibleInChromeChanged));
 
-		static void OnIsHitTestVisibleInChromeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
+		static void OnIsHitTestVisibleInChromeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			var elem = d as UIElement;
 			if (elem != null)
 				elem.SetValue(winChrome_IsHitTestVisibleInChromeProperty, e.NewValue);
 		}
 
-		public static void SetIsHitTestVisibleInChrome(UIElement element, bool value)
-		{
+		public static void SetIsHitTestVisibleInChrome(UIElement element, bool value) {
 			element.SetValue(IsHitTestVisibleInChromeProperty, value);
 		}
 
-		public static bool GetIsHitTestVisibleInChrome(UIElement element)
-		{
+		public static bool GetIsHitTestVisibleInChrome(UIElement element) {
 			return (bool)element.GetValue(IsHitTestVisibleInChromeProperty);
 		}
 
 		public static readonly DependencyProperty MaximizedElementProperty = DependencyProperty.RegisterAttached(
 			"MaximizedElement", typeof(bool), typeof(MetroWindow), new UIPropertyMetadata(false, OnMaximizedElementChanged));
 
-		static void OnMaximizedElementChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
+		static void OnMaximizedElementChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			var border = d as Border;
 			Debug.Assert(border != null);
 			if (border == null)
@@ -122,32 +113,27 @@ namespace ICSharpCode.ILSpy.Controls
 		// When the window is maximized, the part of the window where the (in our case, hidden) resize
 		// border is located, is hidden. Add a padding to a border element whose value exactly equals
 		// the border width and reset it when it's not maximized.
-		sealed class MaximizedWindowFixer
-		{
+		sealed class MaximizedWindowFixer {
 			readonly Border border;
 			readonly Thickness oldThickness;
 
-			public MaximizedWindowFixer(Window win, Border border)
-			{
+			public MaximizedWindowFixer(Window win, Border border) {
 				this.border = border;
 				this.oldThickness = border.BorderThickness;
 				win.StateChanged += win_StateChanged;
 				border.Loaded += border_Loaded;
 			}
 
-			void border_Loaded(object sender, RoutedEventArgs e)
-			{
+			void border_Loaded(object sender, RoutedEventArgs e) {
 				border.Loaded -= border_Loaded;
 				UpdatePadding((MetroWindow)Window.GetWindow(border));
 			}
 
-			void win_StateChanged(object sender, EventArgs e)
-			{
+			void win_StateChanged(object sender, EventArgs e) {
 				UpdatePadding((MetroWindow)sender);
 			}
 
-			void UpdatePadding(MetroWindow window)
-			{
+			void UpdatePadding(MetroWindow window) {
 				Debug.Assert(window != null);
 
 				var state = window.IsFullScreen ? WindowState.Maximized : window.WindowState;
@@ -183,13 +169,11 @@ namespace ICSharpCode.ILSpy.Controls
 			}
 		}
 
-		public static void SetMaximizedElement(UIElement element, bool value)
-		{
+		public static void SetMaximizedElement(UIElement element, bool value) {
 			element.SetValue(MaximizedElementProperty, value);
 		}
 
-		public static bool GetMaximizedElement(UIElement element)
-		{
+		public static bool GetMaximizedElement(UIElement element) {
 			return (bool)element.GetValue(MaximizedElementProperty);
 		}
 
@@ -202,8 +186,7 @@ namespace ICSharpCode.ILSpy.Controls
 			set { SetValue(UseResizeBorderProperty, value); }
 		}
 
-		static void OnUseResizeBorderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
+		static void OnUseResizeBorderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			var win = (MetroWindow)d;
 			var obj = (DependencyObject)win.GetValue(winChrome_WindowChromeProperty);
 			if (obj == null)
@@ -212,13 +195,11 @@ namespace ICSharpCode.ILSpy.Controls
 			win.InitializeWindowCaptionAndResizeBorder(obj);
 		}
 
-		public static void SetUseResizeBorder(UIElement element, bool value)
-		{
+		public static void SetUseResizeBorder(UIElement element, bool value) {
 			element.SetValue(UseResizeBorderProperty, value);
 		}
 
-		public static bool GetUseResizeBorder(UIElement element)
-		{
+		public static bool GetUseResizeBorder(UIElement element) {
 			return (bool)element.GetValue(UseResizeBorderProperty);
 		}
 
@@ -360,8 +341,7 @@ namespace ICSharpCode.ILSpy.Controls
 		static DependencyProperty winChrome_WindowChromeProperty;
 		static DependencyProperty winChrome_IsHitTestVisibleInChromeProperty;
 
-		static MetroWindow()
-		{
+		static MetroWindow() {
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(MetroWindow), new FrameworkPropertyMetadata(typeof(MetroWindow)));
 			Initialize();
 		}
@@ -370,13 +350,12 @@ namespace ICSharpCode.ILSpy.Controls
 		static readonly CornerRadius CornerRadius = new CornerRadius(0, 0, 0, 0);
 		static readonly Thickness GlassFrameThickness = new Thickness(0);
 		static readonly int NonClientFrameEdges = 0; // 0=None
-		// NOTE: Keep these in sync: CaptionHeight + ResizeBorderThickness.Top = GridCaptionHeight
+													 // NOTE: Keep these in sync: CaptionHeight + ResizeBorderThickness.Top = GridCaptionHeight
 		static readonly double CaptionHeight = 20;
 		static readonly Thickness ResizeBorderThickness = new Thickness(10, 10, 5, 5);
 		public static readonly GridLength GridCaptionHeight = new GridLength(CaptionHeight + ResizeBorderThickness.Top, GridUnitType.Pixel);
 
-		static void Initialize()
-		{
+		static void Initialize() {
 			// Available in .NET 4.5. Also available in Microsoft.Windows.Shell.dll (Microsoft Ribbon for WPF)
 			var asm = typeof(Window).Assembly;
 			var ns = "System.Windows.Shell.";
@@ -399,8 +378,7 @@ namespace ICSharpCode.ILSpy.Controls
 			winChrome_IsHitTestVisibleInChromeProperty = (DependencyProperty)windowChromeType.GetField("IsHitTestVisibleInChromeProperty").GetValue(null);
 		}
 
-		protected override void OnStateChanged(EventArgs e)
-		{
+		protected override void OnStateChanged(EventArgs e) {
 			base.OnStateChanged(e);
 			if (WindowState == WindowState.Normal)
 				ClearValue(Window.WindowStateProperty);
@@ -422,8 +400,7 @@ namespace ICSharpCode.ILSpy.Controls
 			}
 		}
 
-		DependencyObject CreateWindowChromeObject()
-		{
+		DependencyObject CreateWindowChromeObject() {
 			var ctor = windowChromeType.GetConstructor(new Type[0]);
 			var obj = (DependencyObject)ctor.Invoke(new object[0]);
 
@@ -435,13 +412,11 @@ namespace ICSharpCode.ILSpy.Controls
 			return obj;
 		}
 
-		void InitializeWindowCaptionAndResizeBorder(DependencyObject obj)
-		{
+		void InitializeWindowCaptionAndResizeBorder(DependencyObject obj) {
 			InitializeWindowCaptionAndResizeBorder(obj, UseResizeBorder);
 		}
 
-		void InitializeWindowCaptionAndResizeBorder(DependencyObject obj, bool useResizeBorder)
-		{
+		void InitializeWindowCaptionAndResizeBorder(DependencyObject obj, bool useResizeBorder) {
 			if (useResizeBorder) {
 				obj.SetValue(winChrome_CaptionHeightProperty, CaptionHeight);
 				obj.SetValue(winChrome_ResizeBorderThicknessProperty, ResizeBorderThickness);
@@ -455,8 +430,7 @@ namespace ICSharpCode.ILSpy.Controls
 			}
 		}
 
-		static void ShowSystemMenu(object o)
-		{
+		static void ShowSystemMenu(object o) {
 			var depo = o as DependencyObject;
 			if (depo == null)
 				return;
@@ -469,8 +443,7 @@ namespace ICSharpCode.ILSpy.Controls
 		}
 	}
 
-	static class WindowUtils
-	{
+	static class WindowUtils {
 		[DllImport("user32")]
 		static extern bool IsWindow(IntPtr hWnd);
 		[DllImport("user32")]
@@ -484,10 +457,9 @@ namespace ICSharpCode.ILSpy.Controls
 		[DllImport("user32")]
 		extern static int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
-		public static void UpdateWin32Style(MetroWindow window)
-		{
-			const int GWL_STYLE			= -16;
-			const int WS_SYSMENU		= 0x00080000;
+		public static void UpdateWin32Style(MetroWindow window) {
+			const int GWL_STYLE = -16;
+			const int WS_SYSMENU = 0x00080000;
 
 			IntPtr hWnd = new WindowInteropHelper(window).Handle;
 
@@ -496,8 +468,7 @@ namespace ICSharpCode.ILSpy.Controls
 			SetWindowLong(hWnd, GWL_STYLE, GetWindowLong(hWnd, GWL_STYLE) & ~WS_SYSMENU);
 		}
 
-		public static void ShowSystemMenu(Window window, Point p)
-		{
+		public static void ShowSystemMenu(Window window, Point p) {
 			var hWnd = new WindowInteropHelper(window).Handle;
 			if (hWnd == IntPtr.Zero)
 				return;
@@ -510,8 +481,7 @@ namespace ICSharpCode.ILSpy.Controls
 				PostMessage(hWnd, 0x112, new IntPtr(res), IntPtr.Zero);
 		}
 
-		public static void SetState(Window window, WindowState state)
-		{
+		public static void SetState(Window window, WindowState state) {
 			switch (state) {
 			case WindowState.Normal:
 				Restore(window);
@@ -527,18 +497,15 @@ namespace ICSharpCode.ILSpy.Controls
 			}
 		}
 
-		public static void Minimize(Window window)
-		{
+		public static void Minimize(Window window) {
 			window.WindowState = WindowState.Minimized;
 		}
 
-		public static void Maximize(Window window)
-		{
+		public static void Maximize(Window window) {
 			window.WindowState = WindowState.Maximized;
 		}
 
-		public static void Restore(Window window)
-		{
+		public static void Restore(Window window) {
 			window.ClearValue(Window.WindowStateProperty);
 		}
 	}

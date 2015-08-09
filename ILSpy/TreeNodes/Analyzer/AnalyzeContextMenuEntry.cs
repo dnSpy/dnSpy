@@ -21,7 +21,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.TextView;
+using dnSpy;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 {

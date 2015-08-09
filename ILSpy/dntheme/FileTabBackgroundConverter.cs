@@ -21,13 +21,12 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
+using dnSpy.Tabs;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.dntheme
-{
-	sealed class FileTabBackgroundConverter : IValueConverter
-	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
+namespace dnSpy.dntheme {
+	sealed class FileTabBackgroundConverter : IValueConverter {
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			string rsrcName;
 			switch ((TabManagerState)value) {
 			case TabManagerState.Empty:		rsrcName = "TransparentBrush"; break;
@@ -38,8 +37,7 @@ namespace ICSharpCode.ILSpy.dntheme
 			return (Brush)App.Current.FindResource(rsrcName);
 		}
 
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
 			throw new NotImplementedException();
 		}
 	}

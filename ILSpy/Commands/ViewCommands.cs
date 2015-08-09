@@ -20,11 +20,9 @@
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy.Commands
-{
+namespace ICSharpCode.ILSpy.Commands {
 	[ExportMainMenuCommand(Menu = "_View", MenuCategory = "View1", MenuHeader = "Show _Internal Types and Members", MenuOrder = 3000, MenuIcon = "PrivateInternal")]
-	sealed class ShowInternalTypesAndMembersCommand : ICommand, IMainMenuCheckableCommand
-	{
+	sealed class ShowInternalTypesAndMembersCommand : ICommand, IMainMenuCheckableCommand {
 		public bool? IsChecked {
 			get { return false; }
 		}
@@ -37,8 +35,7 @@ namespace ICSharpCode.ILSpy.Commands
 			}
 		}
 
-		public bool CanExecute(object parameter)
-		{
+		public bool CanExecute(object parameter) {
 			return true;
 		}
 
@@ -47,14 +44,12 @@ namespace ICSharpCode.ILSpy.Commands
 			remove { }
 		}
 
-		public void Execute(object parameter)
-		{
+		public void Execute(object parameter) {
 		}
 	}
 
 	[ExportMainMenuCommand(Menu = "_View", MenuCategory = "View2", MenuHeader = "_Word Wrap", MenuOrder = 3100, MenuIcon = "WordWrap", MenuInputGestureText = "Ctrl+Alt+W")]
-	sealed class WordWrapCommand : ICommand, IMainMenuCheckableCommand
-	{
+	sealed class WordWrapCommand : ICommand, IMainMenuCheckableCommand {
 		public bool? IsChecked {
 			get { return false; }
 		}
@@ -67,8 +62,7 @@ namespace ICSharpCode.ILSpy.Commands
 			}
 		}
 
-		public bool CanExecute(object parameter)
-		{
+		public bool CanExecute(object parameter) {
 			return true;
 		}
 
@@ -77,14 +71,12 @@ namespace ICSharpCode.ILSpy.Commands
 			remove { }
 		}
 
-		public void Execute(object parameter)
-		{
+		public void Execute(object parameter) {
 		}
 	}
 
 	[ExportMainMenuCommand(Menu = "_View", MenuCategory = "View2", MenuHeader = "_Highlight Current Line", MenuOrder = 3110)]
-	sealed class HighlightCurrentLineCommand : ICommand, IMainMenuCheckableCommand
-	{
+	sealed class HighlightCurrentLineCommand : ICommand, IMainMenuCheckableCommand {
 		public bool? IsChecked {
 			get { return false; }
 		}
@@ -97,8 +89,7 @@ namespace ICSharpCode.ILSpy.Commands
 			}
 		}
 
-		public bool CanExecute(object parameter)
-		{
+		public bool CanExecute(object parameter) {
 			return true;
 		}
 
@@ -107,14 +98,12 @@ namespace ICSharpCode.ILSpy.Commands
 			remove { }
 		}
 
-		public void Execute(object parameter)
-		{
+		public void Execute(object parameter) {
 		}
 	}
 
 	[ExportMainMenuCommand(Menu = "_View", MenuCategory = "View2", MenuHeader = "F_ull Screen", MenuOrder = 3120, MenuInputGestureText = "Shift+Alt+Enter", MenuIcon = "FullScreen")]
-	sealed class FullScreenCommand : ICommand, IMainMenuCheckableCommand
-	{
+	sealed class FullScreenCommand : ICommand, IMainMenuCheckableCommand {
 		public bool? IsChecked {
 			get { return MainWindow.Instance.IsFullScreen; }
 		}
@@ -127,8 +116,7 @@ namespace ICSharpCode.ILSpy.Commands
 			}
 		}
 
-		public bool CanExecute(object parameter)
-		{
+		public bool CanExecute(object parameter) {
 			return true;
 		}
 
@@ -137,8 +125,7 @@ namespace ICSharpCode.ILSpy.Commands
 			remove { }
 		}
 
-		public void Execute(object parameter)
-		{
+		public void Execute(object parameter) {
 		}
 	}
 }

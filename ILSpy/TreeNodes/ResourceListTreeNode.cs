@@ -20,6 +20,7 @@ using System;
 using System.Linq;
 using System.Windows.Threading;
 using dnlib.DotNet;
+using dnSpy.Images;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 using ICSharpCode.TreeView;

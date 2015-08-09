@@ -59,19 +59,39 @@ namespace dnSpy.AsmEditor.SaveModule {
 			}
 		}
 
-		internal void ShowOptions(SaveModuleOptionsVM data) {
+		internal void ShowOptions(SaveOptionsVM data) {
 			if (data == null)
 				return;
 
-			var win = new SaveModuleOptions();
-			win.Owner = this;
-			var clone = data.Clone();
-			win.DataContext = clone;
-			var res = win.ShowDialog();
-			if (res == true) {
-				clone.CopyTo(data);
-				((SaveMultiModuleVM)DataContext).OnModuleSettingsSaved();
+			var mvm = data as SaveModuleOptionsVM;
+			if (mvm != null) {
+				var win = new SaveModuleOptionsDlg();
+				win.Owner = this;
+				var clone = mvm.Clone();
+				win.DataContext = clone;
+				var res = win.ShowDialog();
+				if (res == true) {
+					clone.CopyTo(mvm);
+					((SaveMultiModuleVM)DataContext).OnModuleSettingsSaved();
+				}
+				return;
 			}
+
+			var hvm = data as SaveHexOptionsVM;
+			if (hvm != null) {
+				var win = new SaveHexOptionsDlg();
+				win.Owner = this;
+				var clone = hvm.Clone();
+				win.DataContext = clone;
+				var res = win.ShowDialog();
+				if (res == true) {
+					clone.CopyTo(hvm);
+					((SaveMultiModuleVM)DataContext).OnModuleSettingsSaved();
+				}
+				return;
+			}
+
+			throw new InvalidOperationException();
 		}
 	}
 }

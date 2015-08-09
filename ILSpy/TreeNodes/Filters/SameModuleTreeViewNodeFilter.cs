@@ -17,23 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Filters
-{
-	sealed class SameModuleTreeViewNodeFilter : ChainTreeViewNodeFilter
-	{
+namespace dnSpy.Search {
+	sealed class SameModuleTreeViewNodeFilter : ChainTreeViewNodeFilter {
 		readonly ModuleDef allowedModule;
 
 		public SameModuleTreeViewNodeFilter(ModuleDef allowedModule, ITreeViewNodeFilter filter)
-			: base(filter)
-		{
+			: base(filter) {
 			this.allowedModule = allowedModule;
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(LoadedAssembly asm, AssemblyFilterType type)
-		{
+		public override TreeViewNodeFilterResult GetFilterResult(LoadedAssembly asm, AssemblyFilterType type) {
 			if (asm.ModuleDefinition != allowedModule)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 			return base.GetFilterResult(asm, type);

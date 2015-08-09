@@ -19,18 +19,16 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-
+using System.Windows.Controls.Primitives;
+using dnSpy.HexEditor;
+using dnSpy.Images;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.TreeView;
-using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	public interface IContextMenuEntry<TContext>
 	{
 		/// <summary>
@@ -91,6 +89,12 @@ namespace ICSharpCode.ILSpy
 		/// Returns null, if context menu is not assigned to a text view.
 		/// </summary>
 		public DecompilerTextView TextView { get; private set; }
+
+		/// <summary>
+		/// Returns the HexBox context menu is assigned to.
+		/// Returns null, if context menu is not assigned to a HexBox.
+		/// </summary>
+		public HexBox HexBox { get; private set; }
 		
 		/// <summary>
 		/// Returns the list box the context menu is assigned to.
@@ -122,7 +126,7 @@ namespace ICSharpCode.ILSpy
 		/// </summary>
 		public bool OpenedFromKeyboard { get; private set; }
 		
-		public static TextViewContext Create(SharpTreeView treeView = null, DecompilerTextView textView = null, ListBox listBox = null, TabControl tabControl = null, bool openedFromKeyboard = false)
+		public static TextViewContext Create(SharpTreeView treeView = null, DecompilerTextView textView = null, ListBox listBox = null, TabControl tabControl = null, HexBox hexBox = null, bool openedFromKeyboard = false)
 		{
 			TextViewPosition? position = null;
 			if (textView != null)
@@ -140,6 +144,7 @@ namespace ICSharpCode.ILSpy
 				SelectedTreeNodes = selectedTreeNodes,
 				TextView = textView,
 				TabControl = tabControl,
+				HexBox = hexBox,
 				ListBox = listBox,
 				Reference = reference,
 				Position = position,
@@ -217,6 +222,14 @@ namespace ICSharpCode.ILSpy
 			return provider;
 		}
 
+		public static ContextMenuProvider Add(HexBox hexBox)
+		{
+			var provider = new ContextMenuProvider(hexBox);
+			hexBox.ContextMenuOpening += provider.hexBox_ContextMenuOpening;
+			hexBox.ContextMenu = new ContextMenu();
+			return provider;
+		}
+
 		// Make sure there are no more refs to modules so the GC can collect removed modules
 		void ClearReferences()
 		{
@@ -228,6 +241,8 @@ namespace ICSharpCode.ILSpy
 				listBox.ContextMenu = new ContextMenu();
 			if (tabControl != null)
 				tabControl.ContextMenu = new ContextMenu();
+			if (hexBox != null)
+				hexBox.ContextMenu = new ContextMenu();
 		}
 
 		public void Dispose()
@@ -240,12 +255,15 @@ namespace ICSharpCode.ILSpy
 				listBox.ContextMenuOpening -= this.listBox_ContextMenuOpening;
 			if (tabControl != null)
 				tabControl.ContextMenuOpening -= this.tabControl_ContextMenuOpening;
+			if (hexBox != null)
+				hexBox.ContextMenuOpening -= this.hexBox_ContextMenuOpening;
 		}
-		
+
 		readonly SharpTreeView treeView;
 		readonly DecompilerTextView textView;
 		readonly ListBox listBox;
 		readonly TabControl tabControl;
+		readonly HexBox hexBox;
 
 		// Prevent big memory leaks (text editor) because the data is put into some MEF data structure.
 		// All created instances in this class are shared so this one can be shared as well.
@@ -283,6 +301,11 @@ namespace ICSharpCode.ILSpy
 		{
 			this.tabControl = tabControl;
 		}
+
+		ContextMenuProvider(HexBox hexBox)
+		{
+			this.hexBox = hexBox;
+		}
 		
 		void treeView_ContextMenuOpening(object sender, ContextMenuEventArgs e)
 		{
@@ -302,13 +325,13 @@ namespace ICSharpCode.ILSpy
 			ContextMenu menu;
 			if (ShowContextMenu(context, out menu)) {
 				if (openedFromKeyboard) {
-					var scrollInfo = (System.Windows.Controls.Primitives.IScrollInfo)textView.TextEditor.TextArea.TextView;
+					var scrollInfo = (IScrollInfo)textView.TextEditor.TextArea.TextView;
 					var pos = textView.TextEditor.TextArea.TextView.GetVisualPosition(textView.TextEditor.TextArea.Caret.Position, ICSharpCode.AvalonEdit.Rendering.VisualYPosition.TextBottom);
 					pos = new Point(pos.X - scrollInfo.HorizontalOffset, pos.Y - scrollInfo.VerticalOffset);
 
 					menu.HorizontalOffset = pos.X;
 					menu.VerticalOffset = pos.Y;
-					ContextMenuService.SetPlacement(textView, System.Windows.Controls.Primitives.PlacementMode.Relative);
+					ContextMenuService.SetPlacement(textView, PlacementMode.Relative);
 					ContextMenuService.SetPlacementTarget(textView, textView.TextEditor.TextArea.TextView);
 					menu.Closed += (s, e2) => {
 						textView.ClearValue(ContextMenuService.PlacementProperty);
@@ -348,6 +371,35 @@ namespace ICSharpCode.ILSpy
 				e.Handled = true;
 		}
 
+		void hexBox_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+		{
+			bool openedFromKeyboard = e.CursorLeft == -1 && e.CursorTop == -1;
+			TextViewContext context = TextViewContext.Create(hexBox: hexBox, openedFromKeyboard: openedFromKeyboard);
+			ContextMenu menu;
+			if (ShowContextMenu(context, out menu)) {
+				var rect = hexBox.GetCaretWindowRect();
+				if (rect != null && openedFromKeyboard) {
+					var pos = rect.Value.BottomLeft;
+					menu.HorizontalOffset = pos.X;
+					menu.VerticalOffset = pos.Y;
+					ContextMenuService.SetPlacement(hexBox, PlacementMode.Relative);
+					ContextMenuService.SetPlacementTarget(hexBox, hexBox);
+					menu.Closed += (s, e2) => {
+						hexBox.ClearValue(ContextMenuService.PlacementProperty);
+						hexBox.ClearValue(ContextMenuService.PlacementTargetProperty);
+					};
+				}
+				else {
+					hexBox.ClearValue(ContextMenuService.PlacementProperty);
+					hexBox.ClearValue(ContextMenuService.PlacementTargetProperty);
+				}
+				hexBox.ContextMenu = menu;
+			}
+			else
+				// hide the context menu.
+				e.Handled = true;
+		}
+
 		bool ShowContextMenu(TextViewContext context, out ContextMenu menu)
 		{
 			menu = new ContextMenu();
@@ -364,7 +416,13 @@ namespace ICSharpCode.ILSpy
 						menuItem.Header = entryPair.Metadata.Header;
 						bool isEnabled;
 						if (entryPair.Value.IsEnabled(context)) {
-							menuItem.Click += delegate { entry.Execute(context); };
+							menuItem.Click += (s, e) => {
+								// Clear this before executing the command since MainWindow might
+								// fail to give focus to new elements if it still thinks the menu
+								// is opened.
+								isMenuOpened = false;
+								entry.Execute(context);
+							};
 							isEnabled = true;
 						} else {
 							menuItem.IsEnabled = false;
@@ -380,14 +438,14 @@ namespace ICSharpCode.ILSpy
 					}
 				}
 			}
-			menu.Opened += (s, e) => Interlocked.Increment(ref menuCount);
-			menu.Closed += (s, e) => { Interlocked.Decrement(ref menuCount); ClearReferences(); };
+			menu.Opened += (s, e) => isMenuOpened = true;
+			menu.Closed += (s, e) => { isMenuOpened = false; ClearReferences(); };
 			return menu.Items.Count > 0;
 		}
 
 		public static bool IsMenuOpened {
-			get { return menuCount > 0; }
+			get { return isMenuOpened; }
 		}
-		static int menuCount;
+		static bool isMenuOpened;
 	}
 }

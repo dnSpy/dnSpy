@@ -67,6 +67,15 @@
 		<color name="currentline" fg="#282828" bg="#0F0F0F" />
 		<color name="selectedreturnstatement" fg="Black" bg="#6A7CA5A0" />
 		<color name="returnstatement" bg="#8E5A5A5A" />
+		<color name="hextext" fg="#DCDCDC" bg="#1E1E1E" />
+		<color name="hexoffset" fg="#FF497F49" />
+		<color name="hexbyte0" fg="#FF396339" />
+		<color name="hexbyte1" fg="#FF497F49" />
+		<color name="hexbyteerror" fg="#FFFF0066" />
+		<color name="hexascii" fg="#FF87E587" />
+		<color name="hexcaret" bg="#6691F291" />
+		<color name="hexinactivecaret" bg="#FF007ACC" />
+		<color name="hexselection" bg="#66405935" />
 
 		<color name="systemcolorscontrol" bg="#303030" />
 		<color name="systemcolorscontroldark" bg="#606060" />
@@ -151,6 +160,7 @@
 		<color name="toolbarhorizontalbackground" fg="#2D2D30" bg="#2D2D30" color3="#2D2D30" />
 		<color name="toolbardisabledfill" bg="#383838" />
 		<color name="toolbardisabledborder" bg="#484848" />
+		<color name="environmentcommandbarmenumouseoversubmenuglyph" bg="#FF007ACC" />
 		<color name="commoncontrolsbuttoniconbackground" bg="#FF3F3F46" />
 		<color name="commoncontrolsbutton" fg="#FFF1F1F1" bg="#FF3F3F46" />
 		<color name="commoncontrolsbuttonborder" bg="#FF555555" />

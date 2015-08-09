@@ -35,7 +35,10 @@ using System.Windows.Threading;
 using System.Xml;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy;
 using dnSpy.AsmEditor;
+using dnSpy.dntheme;
+using dnSpy.Images;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
@@ -48,7 +51,6 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Debugger;
-using ICSharpCode.ILSpy.dntheme;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.XmlDoc;
@@ -143,7 +145,6 @@ namespace ICSharpCode.ILSpy.TextView
 			waitAdorner.MouseUp += (s, e) => e.Handled = true;
 			waitAdornerButton.IsVisibleChanged += waitAdornerButton_IsVisibleChanged;
 
-			textEditor.TextArea.MouseWheel += TextArea_MouseWheel;
 			TextEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
 
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => MoveReference(true)), Key.Tab, ModifierKeys.None));
@@ -187,15 +188,6 @@ namespace ICSharpCode.ILSpy.TextView
 				else
 					ClearMarkedReferences();
 			}
-		}
-
-		void TextArea_MouseWheel(object sender, MouseWheelEventArgs e)
-		{
-			if (Keyboard.Modifiers != ModifierKeys.Control)
-				return;
-
-			MainWindow.Instance.ZoomMouseWheel(this, e.Delta);
-			e.Handled = true;
 		}
 
 		void DecompilerTextView_Loaded(object sender, RoutedEventArgs e)
@@ -956,6 +948,13 @@ namespace ICSharpCode.ILSpy.TextView
 		/// </summary>
 		internal void JumpToReference(ReferenceSegment referenceSegment, MouseEventArgs e)
 		{
+			if (referenceSegment.Reference is AddressReference) {
+				MainWindow.Instance.SetActiveView(this);
+				GoToMousePosition();
+				MainWindow.Instance.GoToAddress((AddressReference)referenceSegment.Reference);
+				e.Handled = true;
+				return;
+			}
 			if (Keyboard.Modifiers == ModifierKeys.Control) {
 				MainWindow.Instance.SetActiveView(this);
 				GoToMousePosition();
@@ -1021,8 +1020,8 @@ namespace ICSharpCode.ILSpy.TextView
 					mark.ZOrder = (int)Bookmarks.TextMarkerZOrder.SearchResult;
 					mark.HighlightingColor = () => {
 						return (r.IsLocalTarget ?
-							Themes.Theme.GetColor(dntheme.ColorType.LocalDefinition) :
-							Themes.Theme.GetColor(dntheme.ColorType.LocalReference)).TextInheritedColor;
+							Themes.Theme.GetColor(dnSpy.dntheme.ColorType.LocalDefinition) :
+							Themes.Theme.GetColor(dnSpy.dntheme.ColorType.LocalReference)).TextInheritedColor;
 					};
 					markedReferences.Add(mark);
 				}
@@ -1392,6 +1391,10 @@ namespace ICSharpCode.ILSpy.TextView
 		{
 			if (refSeg == null)
 				return false;
+			if (refSeg.Reference is AddressReference) {
+				MainWindow.Instance.GoToAddress((AddressReference)refSeg.Reference);
+				return true;
+			}
 			if (!IsOurReferenceSegment(refSeg)) {
 				if (canJumpToReference) {
 					MainWindow.Instance.JumpToReference(this, refSeg.Reference, canRecordHistory);

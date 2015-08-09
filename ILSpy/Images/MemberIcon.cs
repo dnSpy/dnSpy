@@ -16,12 +16,8 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
-
-namespace ICSharpCode.ILSpy
-{
-	public enum MemberIcon
-	{
+namespace ICSharpCode.ILSpy {
+	public enum MemberIcon {
 		EnumValue,
 		EnumValuePrivate,
 		EnumValueProtected,

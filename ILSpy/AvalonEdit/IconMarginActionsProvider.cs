@@ -22,11 +22,11 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
+using dnSpy.Images;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.TextView;
 
-namespace ICSharpCode.ILSpy.AvalonEdit
-{
+namespace ICSharpCode.ILSpy.AvalonEdit {
 	#region Context menu extensibility
 	public interface IBookmarkContextMenuEntry : IContextMenuEntry<IBookmark>
 	{

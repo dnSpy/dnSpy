@@ -192,7 +192,7 @@ namespace dnSpy.AsmEditor.Types {
 			nodes.Restore();
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { return nodes.Nodes; }
 		}
 
@@ -288,7 +288,7 @@ namespace dnSpy.AsmEditor.Types {
 			nsNodeCreator.Remove();
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { return nsNodeCreator.OriginalNodes; }
 		}
 
@@ -400,7 +400,7 @@ namespace dnSpy.AsmEditor.Types {
 				throw new InvalidOperationException();
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { yield return ownerType; }
 		}
 
@@ -592,7 +592,7 @@ namespace dnSpy.AsmEditor.Types {
 			typeNode.InvalidateInterfacesNode();
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { yield return typeNode; }
 		}
 

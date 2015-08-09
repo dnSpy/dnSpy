@@ -19,11 +19,11 @@
 
 using System.Diagnostics;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Filters
-{
-	sealed class EntryPointTreeViewNodeFilter : ShowNothingTreeViewNodeFilterBase
-	{
+namespace dnSpy.Search {
+	sealed class EntryPointTreeViewNodeFilter : ShowNothingTreeViewNodeFilterBase {
 		readonly AssemblyDef assembly;
 		readonly ModuleDef module;
 
@@ -31,14 +31,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			get { return "Managed Entry Point"; }
 		}
 
-		public EntryPointTreeViewNodeFilter(ModuleDef module)
-		{
+		public EntryPointTreeViewNodeFilter(ModuleDef module) {
 			this.module = module;
 			this.assembly = module.Assembly;
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(LoadedAssembly asm, AssemblyFilterType type)
-		{
+		public override TreeViewNodeFilterResult GetFilterResult(LoadedAssembly asm, AssemblyFilterType type) {
 			if (type == AssemblyFilterType.NonNetFile)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 
@@ -64,30 +62,25 @@ namespace ICSharpCode.ILSpy.TreeNodes.Filters
 			return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(string ns, LoadedAssembly owner)
-		{
+		public override TreeViewNodeFilterResult GetFilterResult(string ns, LoadedAssembly owner) {
 			if (owner.ModuleDefinition != module)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 			return new TreeViewNodeFilterResult(FilterResult.Match, false);
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(EventDef evt)
-		{
+		public override TreeViewNodeFilterResult GetFilterResult(EventDef evt) {
 			return new TreeViewNodeFilterResult(FilterResult.Match, false);
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(MethodDef method)
-		{
+		public override TreeViewNodeFilterResult GetFilterResult(MethodDef method) {
 			return new TreeViewNodeFilterResult(FilterResult.Match, true);
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(PropertyDef prop)
-		{
+		public override TreeViewNodeFilterResult GetFilterResult(PropertyDef prop) {
 			return new TreeViewNodeFilterResult(FilterResult.Match, false);
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(TypeDef type)
-		{
+		public override TreeViewNodeFilterResult GetFilterResult(TypeDef type) {
 			return new TreeViewNodeFilterResult(FilterResult.Match, false);
 		}
 	}

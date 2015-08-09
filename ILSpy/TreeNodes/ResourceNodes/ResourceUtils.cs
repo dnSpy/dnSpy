@@ -22,25 +22,24 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Media.Imaging;
+using dnSpy.Images;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
+using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
-	static class ResourceUtils
-	{
+namespace ICSharpCode.ILSpy.TreeNodes {
+	static class ResourceUtils {
 		static readonly HashSet<char> invalidFileNameChar = new HashSet<char>();
-		static ResourceUtils()
-		{
+		static ResourceUtils() {
 			invalidFileNameChar.AddRange(Path.GetInvalidFileNameChars());
 			invalidFileNameChar.AddRange(Path.GetInvalidPathChars());
 		}
 
-		public static string GetIconName(string name)
-		{
+		public static string GetIconName(string name) {
 			return GetIconName(name, "Resource");
 		}
 
-		public static string GetIconName(string name, string rsrcName)
-		{
+		public static string GetIconName(string name, string rsrcName) {
 			// Don't use Path.GetExtension() since it can throw
 			int index = name.LastIndexOf('.');
 			if (index >= 0) {
@@ -63,13 +62,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return rsrcName;
 		}
 
-		public static BitmapSource GetIcon(string name, BackgroundType bgType)
-		{
+		public static BitmapSource GetIcon(string name, BackgroundType bgType) {
 			return ImageCache.Instance.GetImage(name, bgType);
 		}
 
-		public static MemoryStream StringToStream(string s)
-		{
+		public static MemoryStream StringToStream(string s) {
 			var outStream = new MemoryStream();
 			var writer = new StreamWriter(outStream, Encoding.UTF8);
 			writer.Write(s);
@@ -77,16 +74,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return new MemoryStream(outStream.ToArray());
 		}
 
-		public static string GetFileName(string s)
-		{
+		public static string GetFileName(string s) {
 			int index = Math.Max(s.LastIndexOf('/'), s.LastIndexOf('\\'));
 			if (index < 0)
 				return s;
 			return s.Substring(index + 1);
 		}
 
-		public static string FixFileNamePart(string s)
-		{
+		public static string FixFileNamePart(string s) {
 			var sb = new StringBuilder(s.Length);
 
 			foreach (var c in s) {
@@ -99,8 +94,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return sb.ToString();
 		}
 
-		public static string GetCleanedPath(string s, bool useSubDirs)
-		{
+		public static string GetCleanedPath(string s, bool useSubDirs) {
 			if (!useSubDirs)
 				return FixFileNamePart(GetFileName(s));
 
@@ -110,8 +104,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return res;
 		}
 
-		public static Exception SaveFile(string path, Stream data)
-		{
+		public static Exception SaveFile(string path, Stream data) {
 			bool deleteFile = false;
 			try {
 				using (data) {
@@ -133,6 +126,20 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 
 			return null;
+		}
+
+		public static void WriteOffsetComment(this ITextOutput output, IResourceNode node) {
+			if (!Options.DecompilerSettingsPanel.CurrentDecompilerSettings.ShowTokenAndRvaComments)
+				return;
+
+			ulong fo = node.FileOffset;
+			if (fo == 0)
+				return;
+
+			var mod = ILSpyTreeNode.GetModule((SharpTreeNode)node);
+			var filename = mod == null ? null : mod.Location;
+			output.WriteReference(string.Format("0x{0:X8}", fo), new AddressReference(filename, false, fo, node.Length), TextTokenType.Comment);
+			output.Write(": ", TextTokenType.Comment);
 		}
 	}
 }

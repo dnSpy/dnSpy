@@ -178,7 +178,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			nodes.Restore();
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { return nodes.Nodes; }
 		}
 
@@ -316,7 +316,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			infos = null;
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get {
 				yield return nsTarget;
 				foreach (var n in nodes.Nodes)
@@ -496,7 +496,7 @@ namespace dnSpy.AsmEditor.Namespace {
 				info.TypeRef.Namespace = info.OrigNamespace;
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { yield return nsNode; }
 		}
 

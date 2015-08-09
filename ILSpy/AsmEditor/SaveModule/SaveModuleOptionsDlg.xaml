@@ -1,0 +1,458 @@
+﻿<!--
+    Copyright (C) 2014-2015 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<winlocal:WindowBase x:Class="dnSpy.AsmEditor.SaveModule.SaveModuleOptionsDlg"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:winlocal="clr-namespace:dnSpy.AsmEditor"
+             xmlns:vc="clr-namespace:dnSpy.AsmEditor.Converters"
+             Height="400" Width="450"
+             Title="Save Module"
+             Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
+             MinHeight="410" MinWidth="400">
+	<winlocal:WindowBase.Resources>
+		<vc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
+	</winlocal:WindowBase.Resources>
+	<Grid FocusManager.FocusedElement="{Binding ElementName=filenameTextBox}">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<TabControl Margin="5">
+			<TabItem Header="Main">
+				<ScrollViewer VerticalScrollBarVisibility="Auto">
+					<StackPanel>
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition />
+								<RowDefinition />
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition />
+								<ColumnDefinition />
+							</Grid.ColumnDefinitions>
+							<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" IsEnabled="{Binding CanWritePdb}" IsChecked="{Binding WritePdb}" Content="Save _PDB File" />
+							<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" IsEnabled="{Binding CanSaveMixedModeModule}" IsChecked="{Binding UseMixedMode}" Content="_Mixed-Mode Module" ToolTip="Should be checked if it's a mixed-mode module (eg. C++/.NET).&#x0A;Most options will be re-initialized when this checkbox is clicked" />
+							<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding ShareMethodBodies}" Content="Shared Method _Bodies" ToolTip=".NET methods that have the exact same code will share method bodies.&#x0A;The output file will be a little bit smaller" />
+						</Grid>
+
+						<StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+							<Label Content="Module _Type" Margin="0 0 0 0" Target="{Binding ElementName=moduleKindComboBox}" />
+							<ComboBox Name="moduleKindComboBox" Margin="5 0 0 0" DisplayMemberPath="Name" ItemsSource="{Binding ModuleKind.Items}" SelectedIndex="{Binding ModuleKind.SelectedIndex}" Width="100" VerticalContentAlignment="Center" />
+						</StackPanel>
+
+						<Grid Margin="0 5 0 0">
+							<Grid.RowDefinitions>
+								<RowDefinition />
+								<RowDefinition />
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="Auto" />
+							</Grid.ColumnDefinitions>
+							<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=filenameTextBox}" Content="_Filename" />
+							<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="filenameTextBox" Text="{Binding FileName, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+							<Button Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickNetExecutableFileNameCommand}" />
+						</Grid>
+					</StackPanel>
+				</ScrollViewer>
+			</TabItem>
+			<TabItem Header="MD Writer Options">
+				<ScrollViewer VerticalScrollBarVisibility="Auto">
+					<StackPanel>
+						<GroupBox ToolTip="If the file is still obfuscated, RIDs might need to be preserved" IsEnabled="{Binding CanSaveMixedModeModule}">
+							<GroupBox.Header>
+								<CheckBox IsThreeState="False" IsChecked="{Binding MetaDataOptions.PreserveRids}" Content="P_reserve All MD Tokens" />
+							</GroupBox.Header>
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition />
+									<ColumnDefinition />
+								</Grid.ColumnDefinitions>
+								<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Content="_TypeRef" IsChecked="{Binding MetaDataOptions.PreserveTypeRefRids}" />
+								<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Content="T_ypeDef" IsChecked="{Binding MetaDataOptions.PreserveTypeDefRids}" />
+								<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="_Field" IsChecked="{Binding MetaDataOptions.PreserveFieldRids}" />
+								<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Content="Met_hod" IsChecked="{Binding MetaDataOptions.PreserveMethodRids}" />
+								<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Content="P_aram" IsChecked="{Binding MetaDataOptions.PreserveParamRids}" />
+								<CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Content="_MemberRef" IsChecked="{Binding MetaDataOptions.PreserveMemberRefRids}" />
+								<CheckBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Content="StandAloneS_ig" IsChecked="{Binding MetaDataOptions.PreserveStandAloneSigRids}" />
+								<CheckBox Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Content="E_vent" IsChecked="{Binding MetaDataOptions.PreserveEventRids}" />
+								<CheckBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Content="Prop_erty" IsChecked="{Binding MetaDataOptions.PreservePropertyRids}" />
+								<CheckBox Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Content="Ty_peSpec" IsChecked="{Binding MetaDataOptions.PreserveTypeSpecRids}" />
+								<CheckBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Content="Metho_dSpec" IsChecked="{Binding MetaDataOptions.PreserveMethodSpecRids}" />
+							</Grid>
+						</GroupBox>
+						<GroupBox Header="Preserve Heap Offsets" IsEnabled="{Binding CanSaveMixedModeModule}" Margin="0 5 0 0" >
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition />
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition />
+									<ColumnDefinition />
+									<ColumnDefinition />
+									<ColumnDefinition />
+								</Grid.ColumnDefinitions>
+								<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Content="#Stri_ngs" IsChecked="{Binding MetaDataOptions.PreserveStringsOffsets}" />
+								<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Content="#_US" IsChecked="{Binding MetaDataOptions.PreserveUSOffsets}" />
+								<CheckBox Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="#_Blob" IsChecked="{Binding MetaDataOptions.PreserveBlobOffsets}" />
+							</Grid>
+						</GroupBox>
+						<GroupBox Header="Create Heap Even If Empty" Margin="0 5 0 0" >
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition />
+									<RowDefinition />
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition />
+									<ColumnDefinition />
+									<ColumnDefinition />
+									<ColumnDefinition />
+								</Grid.ColumnDefinitions>
+								<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Content="#Strings" IsChecked="{Binding MetaDataOptions.AlwaysCreateStringsHeap}" />
+								<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Content="#U_S" IsChecked="{Binding MetaDataOptions.AlwaysCreateUSHeap}" />
+								<CheckBox Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="#B_lob" IsChecked="{Binding MetaDataOptions.AlwaysCreateBlobHeap}" />
+								<CheckBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Content="#_Guid" IsChecked="{Binding MetaDataOptions.AlwaysCreateGuidHeap}" />
+							</Grid>
+						</GroupBox>
+						<GroupBox Header="Misc Options" Margin="0 5 0 0">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition />
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition />
+									<ColumnDefinition />
+								</Grid.ColumnDefinitions>
+								<CheckBox Grid.Column="0" Margin="0 0 0 0" Content="Preserve E_xtra Signature Data" IsChecked="{Binding MetaDataOptions.PreserveExtraSignatureData}" ToolTip="Preserve any extra data after the signatures.&#x0A;Some obfuscators put data there" IsEnabled="{Binding CanSaveMixedModeModule}" />
+								<CheckBox Grid.Column="1" Margin="5 0 0 0" Content="_Keep Old MaxStack Value" IsChecked="{Binding MetaDataOptions.KeepOldMaxStack}" ToolTip="Use the MaxStack value from the method instead of calculating a new MaxStack value.&#x0A;Needed if the methods are still obfuscated" />
+							</Grid>
+						</GroupBox>
+					</StackPanel>
+				</ScrollViewer>
+			</TabItem>
+			<TabItem Header="Metadata">
+				<ScrollViewer VerticalScrollBarVisibility="Auto">
+					<StackPanel>
+						<GroupBox Header="Metadata Header Options">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
+								<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=signatureTextBox}" Content="_Signature" />
+								<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="signatureTextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.Signature.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+								<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Target="{Binding ElementName=versionStringTextBox}" Content="_VersionString" />
+								<TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="versionStringTextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.VersionString, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+								<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=majorVersionTextBox}" Content="_MajorVersion" />
+								<TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="majorVersionTextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.MajorVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+								<Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=minorVersionTextBox}" Content="MinorVe_rsion" />
+								<TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Name="minorVersionTextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.MinorVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+								<Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=reserved1TextBox}" Content="Reserved_1" />
+								<TextBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="reserved1TextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.Reserved1.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+								<Label Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=reserved2TextBox}" Content="Reserved_2" />
+								<TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Name="reserved2TextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.Reserved2.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+								<Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=storageFlagsTextBox}" Content="S_torageFlags" />
+								<TextBox Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Name="storageFlagsTextBox" Text="{Binding MetaDataOptions.MetaDataHeaderOptions.StorageFlags.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="Leave this blank or set it only to 0.&#x0A;Any other value will crash the assembly" />
+							</Grid>
+						</GroupBox>
+						<GroupBox Header="Tables Heap Options" Margin="0 5 0 0">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
+								<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=majorVersionTextBox2}" Content="M_ajorVersion" />
+								<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="majorVersionTextBox2" Text="{Binding MetaDataOptions.TablesHeapOptions.MajorVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+								<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Target="{Binding ElementName=minorVersionTextBox2}" Content="MinorVers_ion" />
+								<TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="minorVersionTextBox2" Text="{Binding MetaDataOptions.TablesHeapOptions.MinorVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+								<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=reserved1TextBox2}" Content="Reserv_ed1" />
+								<TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="reserved1TextBox2" Text="{Binding MetaDataOptions.TablesHeapOptions.Reserved1.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+								<Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=extraDataTextBox}" Content="Extra_Data" />
+								<TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Name="extraDataTextBox" Text="{Binding MetaDataOptions.TablesHeapOptions.ExtraData.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+								<CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsThreeState="True" Content="_HasDeletedRows" IsChecked="{Binding MetaDataOptions.TablesHeapOptions.HasDeletedRows}" />
+								<CheckBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Margin="5 5 0 0" IsThreeState="True" Content="_Use #- Table" IsChecked="{Binding MetaDataOptions.TablesHeapOptions.UseENC}" />
+							</Grid>
+						</GroupBox>
+					</StackPanel>
+				</ScrollViewer>
+			</TabItem>
+			<TabItem Header="Cor20">
+				<ScrollViewer VerticalScrollBarVisibility="Auto">
+					<StackPanel>
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition />
+								<RowDefinition />
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+							<Label Grid.Row="0" Grid.Column="0" Target="{Binding ElementName=majorRuntimeVersionTextBox}" Content="_Major RT Ver" />
+							<TextBox Grid.Row="0" Grid.Column="1" Name="majorRuntimeVersionTextBox" Text="{Binding Cor20HeaderOptions.MajorRuntimeVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+							<Label Grid.Row="0" Grid.Column="2" Target="{Binding ElementName=minorRuntimeVersionTextBox}" Content="Mino_r RT Ver" />
+							<TextBox Grid.Row="0" Grid.Column="3" Name="minorRuntimeVersionTextBox" Text="{Binding Cor20HeaderOptions.MinorRuntimeVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+							<Label Grid.Row="1" Grid.Column="0" Target="{Binding ElementName=entryPointTextBox}" Content="_Entry Point" />
+							<TextBox Grid.Row="1" Grid.Column="1" Name="entryPointTextBox" Text="{Binding Cor20HeaderOptions.EntryPoint.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+						</Grid>
+						<GroupBox Header="Flags" Margin="0 5 0 0">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+									<RowDefinition />
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition />
+									<ColumnDefinition />
+								</Grid.ColumnDefinitions>
+								<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.ILOnly}" Content="_IL Only" />
+								<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.ILLibrary}" Content="IL _Library" />
+								<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.Bit32Required}" Content="_32-Bit Required" />
+								<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.Bit32Preferred}" Content="32-Bit _Preferred" />
+								<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.TrackDebugData}" Content="_Track Debug Data" />
+								<CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding Cor20HeaderOptions.StrongNameSigned}" Content="_Strong Name Signed" />
+							</Grid>
+						</GroupBox>
+					</StackPanel>
+				</ScrollViewer>
+			</TabItem>
+			<TabItem Header="PE">
+				<ScrollViewer VerticalScrollBarVisibility="Auto">
+					<StackPanel>
+						<CheckBox Margin="5 5 0 0" IsChecked="{Binding AddCheckSum}" Content="_Add PE Checksum" />
+						<Grid Margin="0 5 0 0" >
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+
+							<Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
+								<Label Grid.Column="0" Margin="0 5 0 0" Content="_Machine" Target="{Binding ElementName=machineComboBox}" />
+								<ComboBox Grid.Column="1" Margin="5 5 0 0" Name="machineComboBox" DisplayMemberPath="Name" ItemsSource="{Binding PEHeadersOptions.Machine.Items}" SelectedIndex="{Binding PEHeadersOptions.Machine.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
+
+								<Label Grid.Column="2" Margin="0 5 0 0" Content="_Subsystem" Target="{Binding ElementName=subsystemComboBox}" />
+								<ComboBox Grid.Column="3" Margin="5 5 0 0" Name="subsystemComboBox" DisplayMemberPath="Name" ItemsSource="{Binding PEHeadersOptions.Subsystem.Items}" SelectedIndex="{Binding PEHeadersOptions.Subsystem.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
+							</Grid>
+
+							<GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Header="Characteristics" Margin="0 5 0 0">
+								<Grid>
+									<Grid.RowDefinitions>
+										<RowDefinition />
+										<RowDefinition />
+										<RowDefinition />
+										<RowDefinition />
+										<RowDefinition />
+										<RowDefinition />
+										<RowDefinition />
+										<RowDefinition />
+									</Grid.RowDefinitions>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition />
+										<ColumnDefinition />
+									</Grid.ColumnDefinitions>
+									<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.RelocsStripped}" Content="Relocs Stripped" />
+									<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.ExecutableImage}" Content="_Executable Image" />
+									<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.LineNumsStripped}" Content="Line Nums Stripped" />
+									<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.LocalSymsStripped}" Content="Local Syms Stripped" />
+									<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.AggressiveWsTrim}" Content="Aggressive WS Trim" />
+									<CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.LargeAddressAware}" Content="_Large Address Aware" />
+									<CheckBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.CharacteristicsReserved1}" Content="Reserved 0040h" />
+									<CheckBox Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.BytesReversedLo}" Content="Bytes Reversed Lo" />
+									<CheckBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.Bit32Machine}" Content="_32-Bit Machine" />
+									<CheckBox Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.DebugStripped}" Content="Debug Stripped" />
+									<CheckBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.RemovableRunFromSwap}" Content="Removable Run From Swap" />
+									<CheckBox Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.NetRunFromSwap}" Content="Net Run From Swap" />
+									<CheckBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.System}" Content="System" />
+									<CheckBox Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.Dll}" Content="_Dll" />
+									<CheckBox Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.UpSystemOnly}" Content="Up System Only" />
+									<CheckBox Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.BytesReversedHi}" Content="Bytes Reversed Hi" />
+								</Grid>
+							</GroupBox>
+
+							<GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Header="DllCharacteristics" Margin="0 5 0 0">
+								<Grid>
+									<Grid.RowDefinitions>
+										<RowDefinition />
+										<RowDefinition />
+										<RowDefinition />
+										<RowDefinition />
+										<RowDefinition />
+										<RowDefinition />
+										<RowDefinition />
+										<RowDefinition />
+									</Grid.RowDefinitions>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition />
+										<ColumnDefinition />
+									</Grid.ColumnDefinitions>
+									<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.DllCharacteristicsReserved1}" Content="Reserved1" />
+									<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.DllCharacteristicsReserved2}" Content="Reserved2" />
+									<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.DllCharacteristicsReserved3}" Content="Reserved3" />
+									<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.DllCharacteristicsReserved4}" Content="Reserved4" />
+									<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.DllCharacteristicsReserved5}" Content="Reserved5" />
+									<CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.HighEntropyVA}" Content="High Entropy VA" />
+									<CheckBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.DynamicBase}" Content="Dynamic Base" />
+									<CheckBox Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.ForceIntegrity}" Content="Force Integrity" />
+									<CheckBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.NxCompat}" Content="NX Compat" />
+									<CheckBox Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.NoIsolation}" Content="No Isolation" />
+									<CheckBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.NoSeh}" Content="No SEH" />
+									<CheckBox Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.NoBind}" Content="No Bind" />
+									<CheckBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.AppContainer}" Content="AppContainer" />
+									<CheckBox Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.WdmDriver}" Content="WDM Driver" />
+									<CheckBox Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.GuardCf}" Content="Guard CF" />
+									<CheckBox Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" IsThreeState="True" IsChecked="{Binding PEHeadersOptions.TerminalServerAware}" Content="Terminal Server Aware" />
+								</Grid>
+							</GroupBox>
+
+							<Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=timeDateStampTextBox}" Content="_TimeDateStamp" />
+							<TextBox Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Name="timeDateStampTextBox" Text="{Binding PEHeadersOptions.TimeDateStamp.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+							<Label Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Content="MajorLinkerVersion" />
+							<TextBox Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Text="{Binding PEHeadersOptions.MajorLinkerVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+							<Label Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Content="MinorLinkerVersion" />
+							<TextBox Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" Text="{Binding PEHeadersOptions.MinorLinkerVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+							<Label Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" Content="ImageBase" />
+							<TextBox Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" Text="{Binding PEHeadersOptions.ImageBase.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+							<Label Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" Content="SectionAlignment" />
+							<TextBox Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" Text="{Binding PEHeadersOptions.SectionAlignment.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+							<Label Grid.Row="8" Grid.Column="0" Margin="0 5 0 0" Content="FileAlignment" />
+							<TextBox Grid.Row="8" Grid.Column="1" Margin="5 5 0 0" Text="{Binding PEHeadersOptions.FileAlignment.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+							<Label Grid.Row="9" Grid.Column="0" Margin="0 5 0 0" Content="MajorOperatingSystemVersion" />
+							<TextBox Grid.Row="9" Grid.Column="1" Margin="5 5 0 0" Text="{Binding PEHeadersOptions.MajorOperatingSystemVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+							<Label Grid.Row="10" Grid.Column="0" Margin="0 5 0 0" Content="MinorOperatingSystemVersion" />
+							<TextBox Grid.Row="10" Grid.Column="1" Margin="5 5 0 0" Text="{Binding PEHeadersOptions.MinorOperatingSystemVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+							<Label Grid.Row="11" Grid.Column="0" Margin="0 5 0 0" Content="MajorImageVersion" />
+							<TextBox Grid.Row="11" Grid.Column="1" Margin="5 5 0 0" Text="{Binding PEHeadersOptions.MajorImageVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+							<Label Grid.Row="12" Grid.Column="0" Margin="0 5 0 0" Content="MinorImageVersion" />
+							<TextBox Grid.Row="12" Grid.Column="1" Margin="5 5 0 0" Text="{Binding PEHeadersOptions.MinorImageVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+							<Label Grid.Row="13" Grid.Column="0" Margin="0 5 0 0" Content="MajorSubsystemVersion" />
+							<TextBox Grid.Row="13" Grid.Column="1" Margin="5 5 0 0" Text="{Binding PEHeadersOptions.MajorSubsystemVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+							<Label Grid.Row="14" Grid.Column="0" Margin="0 5 0 0" Content="MinorSubsystemVersion" />
+							<TextBox Grid.Row="14" Grid.Column="1" Margin="5 5 0 0" Text="{Binding PEHeadersOptions.MinorSubsystemVersion.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+							<Label Grid.Row="15" Grid.Column="0" Margin="0 5 0 0" Content="Win32VersionValue" />
+							<TextBox Grid.Row="15" Grid.Column="1" Margin="5 5 0 0" Text="{Binding PEHeadersOptions.Win32VersionValue.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+							<Label Grid.Row="16" Grid.Column="0" Margin="0 5 0 0" Content="SizeOfStackReserve" />
+							<TextBox Grid.Row="16" Grid.Column="1" Margin="5 5 0 0" Text="{Binding PEHeadersOptions.SizeOfStackReserve.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+							<Label Grid.Row="17" Grid.Column="0" Margin="0 5 0 0" Content="SizeOfStackCommit" />
+							<TextBox Grid.Row="17" Grid.Column="1" Margin="5 5 0 0" Text="{Binding PEHeadersOptions.SizeOfStackCommit.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+							<Label Grid.Row="18" Grid.Column="0" Margin="0 5 0 0" Content="SizeOfHeapReserve" />
+							<TextBox Grid.Row="18" Grid.Column="1" Margin="5 5 0 0" Text="{Binding PEHeadersOptions.SizeOfHeapReserve.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+							<Label Grid.Row="19" Grid.Column="0" Margin="0 5 0 0" Content="SizeOfHeapCommit" />
+							<TextBox Grid.Row="19" Grid.Column="1" Margin="5 5 0 0" Text="{Binding PEHeadersOptions.SizeOfHeapCommit.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+							<Label Grid.Row="20" Grid.Column="0" Margin="0 5 0 0" Content="LoaderFlags" />
+							<TextBox Grid.Row="20" Grid.Column="1" Margin="5 5 0 0" Text="{Binding PEHeadersOptions.LoaderFlags.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+							<Label Grid.Row="21" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=numberOfRvaAndSizesTextBox}" Content="_NumberOfRvaAndSizes" />
+							<TextBox Grid.Row="21" Grid.Column="1" Margin="5 5 0 0" Name="numberOfRvaAndSizesTextBox" Text="{Binding PEHeadersOptions.NumberOfRvaAndSizes.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+						</Grid>
+					</StackPanel>
+				</ScrollViewer>
+			</TabItem>
+		</TabControl>
+		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">
+			<Button Content="_OK" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
+			<Button Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" />
+			<Button Content="Restore" Style="{StaticResource DialogButton}" Command="{Binding ReinitializeCommand}" ToolTip="Restore all options" />
+		</StackPanel>
+	</Grid>
+</winlocal:WindowBase>

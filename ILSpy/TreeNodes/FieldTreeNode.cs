@@ -19,9 +19,10 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Media;
+using dnlib.DotNet;
+using dnSpy.Images;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
-using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {

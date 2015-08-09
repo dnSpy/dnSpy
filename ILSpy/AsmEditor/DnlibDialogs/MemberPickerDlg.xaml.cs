@@ -20,6 +20,7 @@
 using System;
 using System.Windows.Threading;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Images;
 using ICSharpCode.ILSpy;
 using ICSharpCode.TreeView;
 

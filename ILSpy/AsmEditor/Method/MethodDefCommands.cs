@@ -296,7 +296,7 @@ namespace dnSpy.AsmEditor.Method {
 			nodes.Restore();
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { return nodes.Nodes; }
 		}
 
@@ -406,7 +406,7 @@ namespace dnSpy.AsmEditor.Method {
 				throw new InvalidOperationException();
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { yield return ownerNode; }
 		}
 
@@ -542,7 +542,7 @@ namespace dnSpy.AsmEditor.Method {
 			methodNode.RaiseUIPropsChanged();
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { yield return methodNode; }
 		}
 

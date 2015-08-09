@@ -20,22 +20,21 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
-using System.Linq;
 using System.Windows.Media;
+using dnlib.DotNet;
+using dnSpy;
+using dnSpy.Images;
+using dnSpy.Tabs;
 using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.TextView;
-using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
-using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.Debugger.Bookmarks
-{
-	public enum StackFrameStatementType
-	{
+namespace ICSharpCode.ILSpy.Debugger.Bookmarks {
+	public enum StackFrameStatementType {
 		/// <summary>
 		/// This is the statement that will be executed next
 		/// </summary>
@@ -53,29 +52,24 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 	}
 
 	[Export(typeof(IPlugin))]
-	public class StackFrameStatementManager : IPlugin
-	{
-		StackFrameStatementManager()
-		{
+	public class StackFrameStatementManager : IPlugin {
+		StackFrameStatementManager() {
 		}
 
-		public void OnLoaded()
-		{
+		public void OnLoaded() {
 			// Do nothing, we just want to load the cctor
 		}
 
-		static StackFrameStatementManager()
-		{
+		static StackFrameStatementManager() {
 			DebuggerService.DebugEvent += OnDebugEvent;
 			MainWindow.Instance.ExecuteWhenLoaded(() => {
-				MainWindow.Instance.OnDecompilerTextViewChanged += (sender, e) => OnDecompilerTextViewChanged(e.OldView, e.NewView);
-				foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
-					OnDecompilerTextViewChanged(null, textView);
+				MainWindow.Instance.OnTabStateChanged += (sender, e) => OnTabStateChanged(e.OldTabState, e.NewTabState);
+				foreach (var tabState in MainWindow.Instance.AllVisibleDecompileTabStates)
+					OnTabStateChanged(null, tabState);
 			});
 		}
 
-		static void OnDebugEvent(object sender, DebuggerEventArgs e)
-		{
+		static void OnDebugEvent(object sender, DebuggerEventArgs e) {
 			switch (e.DebuggerEvent) {
 			case DebuggerEvent.Resumed:
 				SelectedFrame = 0;
@@ -92,28 +86,29 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			}
 		}
 
-		static void OnDecompilerTextViewChanged(DecompilerTextView oldView, DecompilerTextView newView)
-		{
-			if (oldView != null) {
-				oldView.OnBeforeShowOutput -= DecompilerTextView_OnBeforeShowOutput;
-				oldView.OnShowOutput -= DecompilerTextView_OnShowOutput;
+		static void OnTabStateChanged(TabState oldTabState, TabState newTabState) {
+			var oldTsd = oldTabState as DecompileTabState;
+			if (oldTsd != null) {
+				oldTsd.TextView.OnBeforeShowOutput -= DecompilerTextView_OnBeforeShowOutput;
+				oldTsd.TextView.OnShowOutput -= DecompilerTextView_OnShowOutput;
 			}
-			if (newView != null) {
-				newView.OnBeforeShowOutput += DecompilerTextView_OnBeforeShowOutput;
-				newView.OnShowOutput += DecompilerTextView_OnShowOutput;
+			var newTsd = newTabState as DecompileTabState;
+			if (newTsd != null) {
+				newTsd.TextView.OnBeforeShowOutput += DecompilerTextView_OnBeforeShowOutput;
+				newTsd.TextView.OnShowOutput += DecompilerTextView_OnShowOutput;
 			}
 
-			Remove(oldView);
-			UpdateReturnStatementBookmarks(newView);
+			if (oldTsd != null)
+				Remove(oldTsd.TextView);
+			if (newTsd != null)
+				UpdateReturnStatementBookmarks(newTsd.TextView);
 		}
 
-		static void DecompilerTextView_OnBeforeShowOutput(object sender, TextView.DecompilerTextView.ShowOutputEventArgs e)
-		{
+		static void DecompilerTextView_OnBeforeShowOutput(object sender, TextView.DecompilerTextView.ShowOutputEventArgs e) {
 			Remove((DecompilerTextView)sender);
 		}
 
-		static void DecompilerTextView_OnShowOutput(object sender, TextView.DecompilerTextView.ShowOutputEventArgs e)
-		{
+		static void DecompilerTextView_OnShowOutput(object sender, TextView.DecompilerTextView.ShowOutputEventArgs e) {
 			e.HasMovedCaret |= UpdateReturnStatementBookmarks((DecompilerTextView)sender, !e.HasMovedCaret);
 		}
 
@@ -135,8 +130,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		public static event EventHandler SelectedFrameChanged;
 		static int selectedFrame = 0;
 
-		static void Remove(DecompilerTextView decompilerTextView)
-		{
+		static void Remove(DecompilerTextView decompilerTextView) {
 			for (int i = returnStatementBookmarks.Count - 1; i >= 0; i--) {
 				if (returnStatementBookmarks[i].decompilerTextView == decompilerTextView) {
 					BookmarkManager.RemoveMark(returnStatementBookmarks[i]);
@@ -148,8 +142,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		/// <summary>
 		/// Should be called each time the IL offset has been updated
 		/// </summary>
-		static bool UpdateReturnStatementBookmarks(DecompilerTextView decompilerTextView, bool moveCaret = false)
-		{
+		static bool UpdateReturnStatementBookmarks(DecompilerTextView decompilerTextView, bool moveCaret = false) {
 			Remove(decompilerTextView);
 			bool movedCaret = false;
 			var cm = decompilerTextView == null ? null : decompilerTextView.CodeMappings;
@@ -191,8 +184,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		static readonly List<StackFrameStatementBookmark> returnStatementBookmarks = new List<StackFrameStatementBookmark>();
 	}
 
-	public class StackFrameStatementBookmark : MarkerBookmark
-	{
+	public class StackFrameStatementBookmark : MarkerBookmark {
 		public static HighlightingColor ReturnHighlightingColor = new HighlightingColor {
 			Background = new SimpleHighlightingBrush(Color.FromArgb(0x62, 0xEE, 0xEF, 0xE6)),
 			Foreground = new SimpleHighlightingBrush(Colors.Transparent),
@@ -210,8 +202,7 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 		internal readonly DecompilerTextView decompilerTextView;
 
 		public StackFrameStatementBookmark(DecompilerTextView decompilerTextView, IMemberRef member, TextLocation location, TextLocation endLocation, StackFrameStatementType type, uint ilOffset)
-			: base(member, ilOffset, location, endLocation)
-		{
+			: base(member, ilOffset, location, endLocation) {
 			this.decompilerTextView = decompilerTextView;
 			this.type = type;
 		}
@@ -259,13 +250,11 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks
 			}
 		}
 
-		public override bool IsVisible(DecompilerTextView textView)
-		{
+		public override bool IsVisible(DecompilerTextView textView) {
 			return decompilerTextView == textView;
 		}
 
-		public override ITextMarker CreateMarker(ITextMarkerService markerService, DecompilerTextView textView)
-		{
+		public override ITextMarker CreateMarker(ITextMarkerService markerService, DecompilerTextView textView) {
 			ITextMarker marker = CreateMarkerInternal(markerService, textView);
 			var cm = textView == null ? null : textView.CodeMappings;
 			marker.ZOrder = ZOrder;

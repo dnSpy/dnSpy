@@ -304,16 +304,17 @@ namespace ICSharpCode.Decompiler.Ast
 			output.WriteLine();
 		}
 		
-		public override void WriteComment(CommentType commentType, string content)
+		public override void WriteComment(CommentType commentType, string content, CommentReference[] refs)
 		{
 			switch (commentType) {
 				case CommentType.SingleLine:
 					output.Write("//", TextTokenType.Comment);
-					output.WriteLine(content, TextTokenType.Comment);
+					Write(content, refs);
+					output.WriteLine();
 					break;
 				case CommentType.MultiLine:
 					output.Write("/*", TextTokenType.Comment);
-					output.Write(content, TextTokenType.Comment);
+					Write(content, refs);
 					output.Write("*/", TextTokenType.Comment);
 					break;
 				case CommentType.Documentation:
@@ -323,6 +324,7 @@ namespace ICSharpCode.Decompiler.Ast
 						output.MarkFoldStart("///" + content, true);
 					}
 					output.Write("///", TextTokenType.XmlDocTag);
+					Debug.Assert(refs == null);
 					output.WriteXmlDoc(content);
 					if (inDocumentationComment && isLastLine) {
 						inDocumentationComment = false;
@@ -331,9 +333,29 @@ namespace ICSharpCode.Decompiler.Ast
 					output.WriteLine();
 					break;
 				default:
-					output.Write(content, TextTokenType.Comment);
+					Write(content, refs);
 					break;
 			}
+		}
+
+		void Write(string content, CommentReference[] refs)
+		{
+			if (refs == null) {
+				output.Write(content, TextTokenType.Comment);
+				return;
+			}
+
+			int offs = 0;
+			for (int i = 0; i < refs.Length; i++) {
+				var @ref = refs[i];
+				var s = content.Substring(offs, @ref.Length);
+				offs += @ref.Length;
+				if (@ref.Reference == null)
+					output.Write(s, TextTokenType.Comment);
+				else
+					output.WriteReference(s, @ref.Reference, TextTokenType.Comment, @ref.IsLocal);
+			}
+			Debug.Assert(offs == content.Length);
 		}
 		
 		public override void WritePreProcessorDirective(PreProcessorDirectiveType type, string argument)

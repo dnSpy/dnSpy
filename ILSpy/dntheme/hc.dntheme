@@ -15,6 +15,10 @@
 		<color name="localreference" fg="#FFFFFFFF" bg="#FF800080" />
 		<color name="searchresultmarker" bg="#FF800080" />
 		<color name="specialcharacterbox" fg="#FFFFFFFF" bg="#FF800080" />
+		<color name="hextext" fg="#FFFFFFFF" bg="#FF000000" />
+		<color name="hexcaret" bg="#C0FFFFFF" />
+		<color name="hexinactivecaret" bg="#FFFFFFFF" />
+		<color name="hexselection" bg="#33FFFFFF" />
 
 		<color name="systemcolorscontrol" bg="#FF000000" />
 		<color name="systemcolorscontroldark" bg="#FF808080" />
@@ -99,6 +103,7 @@
 		<color name="toolbarhorizontalbackground" fg="#FF000000" bg="#FF000000" color3="#FF000000" />
 		<color name="toolbardisabledfill" bg="#FF008000" />
 		<color name="toolbardisabledborder" bg="#FFFFFFFF" />
+		<color name="environmentcommandbarmenumouseoversubmenuglyph" bg="#FFFFFFFF" />
 		<color name="commoncontrolsbuttoniconbackground" bg="#FF000000" />
 		<color name="commoncontrolsbutton" fg="#FFFFFFFF" bg="#FF000000" />
 		<color name="commoncontrolsbuttonborder" bg="#FFFFFFFF" />

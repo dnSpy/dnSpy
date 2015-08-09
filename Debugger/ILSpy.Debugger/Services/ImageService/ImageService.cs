@@ -1,13 +1,11 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
-using System;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
+using dnSpy.Images;
 
-namespace ICSharpCode.ILSpy.Debugger.Services
-{
+namespace ICSharpCode.ILSpy.Debugger.Services {
 	static class ImageService
 	{
 		public static ImageSource GetImage(string name, BackgroundType bgType)

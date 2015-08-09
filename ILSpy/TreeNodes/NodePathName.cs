@@ -22,11 +22,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml.Linq;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	[DebuggerDisplay("{Id} - {Name}")]
-	public struct NodePathName : IEquatable<NodePathName>
-	{
+	public struct NodePathName : IEquatable<NodePathName> {
 		readonly string id;
 		readonly string name;
 
@@ -39,25 +37,21 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 
 		public NodePathName(string id)
-			: this(id, string.Empty)
-		{
+			: this(id, string.Empty) {
 		}
 
-		public NodePathName(string id, string name)
-		{
+		public NodePathName(string id, string name) {
 			this.id = id;
 			this.name = name;
 		}
 
-		public XElement ToXml(XElement xml)
-		{
+		public XElement ToXml(XElement xml) {
 			xml.SetAttributeValue("id", SessionSettings.Escape(id));
 			xml.SetAttributeValue("name", SessionSettings.Escape(name));
 			return xml;
 		}
 
-		public static NodePathName FromXml(XElement doc)
-		{
+		public static NodePathName FromXml(XElement doc) {
 			if (doc == null)
 				return new NodePathName();
 			var id = SessionSettings.FromString(SessionSettings.Unescape((string)doc.Attribute("id")), string.Empty);
@@ -65,51 +59,43 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return new NodePathName(id, name);
 		}
 
-		public static bool operator ==(NodePathName a, NodePathName b)
-		{
+		public static bool operator ==(NodePathName a, NodePathName b) {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(NodePathName a, NodePathName b)
-		{
+		public static bool operator !=(NodePathName a, NodePathName b) {
 			return !a.Equals(b);
 		}
 
-		public bool Equals(NodePathName other)
-		{
+		public bool Equals(NodePathName other) {
 			return id == other.id && name == other.name;
 		}
 
-		public override bool Equals(object obj)
-		{
+		public override bool Equals(object obj) {
 			if (!(obj is NodePathName))
 				return false;
 			return Equals((NodePathName)obj);
 		}
 
-		public override int GetHashCode()
-		{
+		public override int GetHashCode() {
 			return id.GetHashCode() ^ name.GetHashCode();
 		}
 	}
 
-	public struct FullNodePathName
-	{
+	public struct FullNodePathName {
 		List<NodePathName> names;
 
 		public List<NodePathName> Names {
 			get { return names ?? (names = new List<NodePathName>()); }
 		}
 
-		public XElement ToXml(XElement xml)
-		{
+		public XElement ToXml(XElement xml) {
 			foreach (var name in names)
 				xml.Add(name.ToXml(new XElement("Name")));
 			return xml;
 		}
 
-		public static FullNodePathName FromXml(XElement doc)
-		{
+		public static FullNodePathName FromXml(XElement doc) {
 			var fullPath = new FullNodePathName();
 			if (doc != null) {
 				foreach (var xname in doc.Elements("Name"))

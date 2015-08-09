@@ -18,8 +18,9 @@
 
 using System.Collections.Generic;
 using System.Threading;
-using ICSharpCode.Decompiler;
 using dnlib.DotNet;
+using dnSpy.Images;
+using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {

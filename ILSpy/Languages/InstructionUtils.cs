@@ -22,12 +22,9 @@ using System.Collections.Generic;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
-namespace ICSharpCode.ILSpy
-{
-	static class InstructionUtils
-	{
-		public static void AddOpCode(IList<short> instrs, Code code)
-		{
+namespace dnSpy {
+	static class InstructionUtils {
+		public static void AddOpCode(IList<short> instrs, Code code) {
 			if ((uint)code <= 0xFF)
 				instrs.Add((byte)code);
 			else if (((uint)code >> 8) == 0xFE) {
@@ -42,47 +39,40 @@ namespace ICSharpCode.ILSpy
 				throw new InvalidOperationException();
 		}
 
-		static void AddUnknownByte(this IList<short> instrs)
-		{
+		static void AddUnknownByte(this IList<short> instrs) {
 			instrs.Add(-1);
 		}
 
-		static void AddUnknownInt16(this IList<short> instrs)
-		{
+		static void AddUnknownInt16(this IList<short> instrs) {
 			instrs.Add(-1);
 			instrs.Add(-1);
 		}
 
-		static void AddUnknownInt32(this IList<short> instrs)
-		{
+		static void AddUnknownInt32(this IList<short> instrs) {
 			instrs.Add(-1);
 			instrs.Add(-1);
 			instrs.Add(-1);
 			instrs.Add(-1);
 		}
 
-		static void AddUnknownInt64(this IList<short> instrs)
-		{
+		static void AddUnknownInt64(this IList<short> instrs) {
 			instrs.AddUnknownInt32();
 			instrs.AddUnknownInt32();
 		}
 
-		static void AddInt16(this IList<short> instrs, short val)
-		{
+		static void AddInt16(this IList<short> instrs, short val) {
 			instrs.Add(unchecked((byte)val));
 			instrs.Add(unchecked((byte)(val >> 8)));
 		}
 
-		static void AddInt32(this IList<short> instrs, int val)
-		{
+		static void AddInt32(this IList<short> instrs, int val) {
 			instrs.Add(unchecked((byte)val));
 			instrs.Add(unchecked((byte)(val >> 8)));
 			instrs.Add(unchecked((byte)(val >> 16)));
 			instrs.Add(unchecked((byte)(val >> 24)));
 		}
 
-		static void AddInt64(this IList<short> instrs, long val)
-		{
+		static void AddInt64(this IList<short> instrs, long val) {
 			instrs.Add(unchecked((byte)val));
 			instrs.Add(unchecked((byte)(val >> 8)));
 			instrs.Add(unchecked((byte)(val >> 16)));
@@ -93,28 +83,24 @@ namespace ICSharpCode.ILSpy
 			instrs.Add(unchecked((byte)(val >> 56)));
 		}
 
-		static void AddSingle(this IList<short> instrs, float val)
-		{
+		static void AddSingle(this IList<short> instrs, float val) {
 			foreach (var b in BitConverter.GetBytes(val))
 				instrs.Add(b);
 		}
 
-		static void AddDouble(this IList<short> instrs, double val)
-		{
+		static void AddDouble(this IList<short> instrs, double val) {
 			foreach (var b in BitConverter.GetBytes(val))
 				instrs.Add(b);
 		}
 
-		static void AddToken(this IList<short> instrs, ModuleDefMD module, uint token)
-		{
+		static void AddToken(this IList<short> instrs, ModuleDefMD module, uint token) {
 			if (module == null || module.ResolveToken(token) == null)
 				instrs.AddUnknownInt32();
 			else
 				instrs.AddInt32(unchecked((int)token));
 		}
 
-		public static void AddOperand(IList<short> instrs, ModuleDefMD module, uint offset, OpCode opCode, object operand)
-		{
+		public static void AddOperand(IList<short> instrs, ModuleDefMD module, uint offset, OpCode opCode, object operand) {
 			Instruction target;
 			IVariable variable;
 			switch (opCode.OperandType) {
@@ -233,7 +219,8 @@ namespace ICSharpCode.ILSpy
 			case OperandType.InlinePhi:
 				break;
 
-			default: throw new InvalidOperationException();
+			default:
+				throw new InvalidOperationException();
 			}
 		}
 	}

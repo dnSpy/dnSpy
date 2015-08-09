@@ -21,21 +21,16 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy.Controls
-{
-	public class SysMenuButton : ButtonBase
-	{
-		static SysMenuButton()
-		{
+namespace ICSharpCode.ILSpy.Controls {
+	public class SysMenuButton : ButtonBase {
+		static SysMenuButton() {
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(SysMenuButton), new FrameworkPropertyMetadata(typeof(SysMenuButton)));
 		}
 
-		public SysMenuButton()
-		{
+		public SysMenuButton() {
 		}
 
-		protected override void OnMouseDoubleClick(MouseButtonEventArgs e)
-		{
+		protected override void OnMouseDoubleClick(MouseButtonEventArgs e) {
 			var win = Window.GetWindow(this);
 			win.Close();
 			e.Handled = true;

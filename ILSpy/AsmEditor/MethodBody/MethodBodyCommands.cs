@@ -120,7 +120,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			MethodAnnotations.Instance.SetBodyModified(methodNode.MethodDefinition, isBodyModified);
 		}
 
-		public IEnumerable<ILSpyTreeNode> TreeNodes {
+		public IEnumerable<object> ModifiedObjects {
 			get { yield return methodNode; }
 		}
 
@@ -142,7 +142,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				list[0].MemberMapping.MethodDefinition.Body.Instructions.Count > 0;
 		}
 
-		static IList<SourceCodeMapping> GetMappings(TextViewContext context) {
+		internal static IList<SourceCodeMapping> GetMappings(TextViewContext context) {
 			if (context.TextView == null || context.Position == null)
 				return null;
 			var list = SourceCodeMappingUtils.Find(context.TextView, context.Position.Value.Line, context.Position.Value.Column);

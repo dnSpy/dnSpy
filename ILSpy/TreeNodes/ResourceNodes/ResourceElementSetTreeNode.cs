@@ -28,17 +28,14 @@ using dnlib.DotNet.Resources;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	[Export(typeof(IResourceFactory<Resource, ResourceTreeNode>))]
-	sealed class ResourceElementSetTreeNodeFactory : IResourceFactory<Resource, ResourceTreeNode>
-	{
+	sealed class ResourceElementSetTreeNodeFactory : IResourceFactory<Resource, ResourceTreeNode> {
 		public int Priority {
 			get { return 100; }
 		}
 
-		public ResourceTreeNode Create(ModuleDef module, Resource resInput)
-		{
+		public ResourceTreeNode Create(ModuleDef module, Resource resInput) {
 			var er = resInput as EmbeddedResource;
 			if (er == null)
 				return null;
@@ -51,22 +48,19 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		}
 	}
 
-	sealed class ResourceElementSetTreeNode : ResourceTreeNode
-	{
+	sealed class ResourceElementSetTreeNode : ResourceTreeNode {
 		readonly ResourceElementSet resourceElementSet;
 		readonly ModuleDef module;
 
 		public ResourceElementSetTreeNode(ModuleDef module, EmbeddedResource er)
-			: base(er)
-		{
+			: base(er) {
 			this.module = module;
 			this.resourceElementSet = dnlib.DotNet.Resources.ResourceReader.Read(module, er.Data);
 			this.LazyLoading = true;
 		}
 
 		internal ResourceElementSetTreeNode(ModuleDef module, string name, ManifestResourceAttributes flags)
-			: base(new EmbeddedResource(name, new byte[0], flags))
-		{
+			: base(new EmbeddedResource(name, new byte[0], flags)) {
 			this.module = module;
 			RegenerateEmbeddedResource(module);
 			this.resourceElementSet = dnlib.DotNet.Resources.ResourceReader.Read(module, ((EmbeddedResource)r).Data);
@@ -77,8 +71,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return "ResourcesFile"; }
 		}
 
-		protected override IEnumerable<ResourceData> GetDeserialized()
-		{
+		protected override IEnumerable<ResourceData> GetDeserialized() {
 			EnsureChildrenFiltered();
 			foreach (IResourceNode node in Children) {
 				foreach (var data in node.GetResourceData(ResourceDataType.Deserialized))
@@ -86,16 +79,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 
-		protected override void LoadChildren()
-		{
+		protected override void LoadChildren() {
 			var ary = resourceElementSet.ResourceElements.ToArray();
 			Array.Sort(ary, ResourceElementComparer.Instance);
 			foreach (var elem in ary)
 				Children.Add(ResourceFactory.Create(module, elem));
 		}
 
-		protected override int GetNewChildIndex(SharpTreeNode node)
-		{
+		protected override int GetNewChildIndex(SharpTreeNode node) {
 			if (node is ResourceElementTreeNode)
 				return GetNewChildIndex(node, (a, b) => ResourceElementComparer.Instance.Compare(((ResourceElementTreeNode)a).ResourceElement, ((ResourceElementTreeNode)b).ResourceElement));
 			return base.GetNewChildIndex(node);
@@ -105,8 +96,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return false; }
 		}
 
-		public override void Decompile(Language language, ITextOutput output)
-		{
+		public override void Decompile(Language language, ITextOutput output) {
 			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(EnsureChildrenFiltered));
 
 			base.Decompile(language, output);
@@ -121,8 +111,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				child.Decompile(language, output);
 		}
 
-		public override void RegenerateEmbeddedResource()
-		{
+		public override void RegenerateEmbeddedResource() {
 			var module = GetModule(this);
 			Debug.Assert(module != null);
 			if (module == null)
@@ -130,8 +119,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			RegenerateEmbeddedResource(module);
 		}
 
-		void RegenerateEmbeddedResource(ModuleDef module)
-		{
+		void RegenerateEmbeddedResource(ModuleDef module) {
 			EnsureChildrenFiltered();
 			var outStream = new MemoryStream();
 			var resources = new ResourceElementSet();
@@ -141,8 +129,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.r = new EmbeddedResource(r.Name, outStream.ToArray(), r.Attributes);
 		}
 
-		public override bool Save(TextView.DecompilerTextView textView)
-		{
+		public override bool Save(TextView.DecompilerTextView textView) {
 			Save();
 			return true;
 		}

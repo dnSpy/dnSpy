@@ -18,9 +18,10 @@
 
 using System;
 using System.Linq;
+using dnlib.DotNet;
+using dnSpy.Images;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
-using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {

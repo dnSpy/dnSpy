@@ -114,6 +114,7 @@
     <Compile Include="AskForInput.xaml.cs">
       <DependentUpon>AskForInput.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AsmEditor\AsmEdHexDocument.cs" />
     <Compile Include="AsmEditor\AssemblyTreeNodeCreator.cs" />
     <Compile Include="AsmEditor\Assembly\AssemblyCommands.cs" />
     <Compile Include="AsmEditor\Assembly\AssemblyOptions.cs" />
@@ -307,10 +308,31 @@
       <DependentUpon>FieldOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Field\FieldOptionsVM.cs" />
+    <Compile Include="AsmEditor\HexDocumentManager.cs" />
+    <Compile Include="AsmEditor\Hex\ContextMenuCommands.cs" />
+    <Compile Include="AsmEditor\Hex\GoToOffsetDlg.xaml.cs">
+      <DependentUpon>GoToOffsetDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Hex\GoToOffsetVM.cs" />
+    <Compile Include="AsmEditor\Hex\HexBoxUndo.cs" />
+    <Compile Include="AsmEditor\Hex\HexBoxUndoCommand.cs" />
+    <Compile Include="AsmEditor\Hex\HexSettings.cs" />
+    <Compile Include="AsmEditor\Hex\InstructionUtils.cs" />
+    <Compile Include="AsmEditor\Hex\LocalHexSettings.cs" />
+    <Compile Include="AsmEditor\Hex\LocalSettingsDlg.xaml.cs">
+      <DependentUpon>LocalSettingsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Hex\LocalSettingsVM.cs" />
+    <Compile Include="AsmEditor\Hex\SelectDlg.xaml.cs">
+      <DependentUpon>SelectDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\Hex\SelectVM.cs" />
+    <Compile Include="AsmEditor\Hex\WriteHexUndoCommand.cs" />
     <Compile Include="AsmEditor\IIndexedItem.cs" />
     <Compile Include="AsmEditor\IndexObservableCollection.cs" />
     <Compile Include="AsmEditor\InstructionCommands.cs" />
     <Compile Include="AsmEditor\IUndoCommand.cs" />
+    <Compile Include="AsmEditor\IUndoObject.cs" />
     <Compile Include="AsmEditor\ListBoxHelperBase.cs" />
     <Compile Include="AsmEditor\ListVM.cs" />
     <Compile Include="AsmEditor\MethodBody\BodyUtils.cs" />
@@ -423,22 +445,29 @@
     <Compile Include="AsmEditor\Resources\SerializationUtils.cs" />
     <Compile Include="AsmEditor\Resources\UserTypeVM.cs" />
     <Compile Include="AsmEditor\SaveModule\CharacteristicsHelper.cs" />
+    <Compile Include="AsmEditor\SaveModule\MmapUtils.cs" />
     <Compile Include="AsmEditor\SaveModule\ModuleSaver.cs" />
     <Compile Include="AsmEditor\Namespace\NamespaceCommands.cs" />
     <Compile Include="AsmEditor\RelayCommand.cs" />
+    <Compile Include="AsmEditor\SaveModule\SaveHexOptionsDlg.xaml.cs">
+      <DependentUpon>SaveHexOptionsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="AsmEditor\SaveModule\SaveHexOptionsVM.cs" />
     <Compile Include="AsmEditor\SaveModule\SaveModuleCommand.cs" />
-    <Compile Include="AsmEditor\SaveModule\SaveModuleOptions.xaml.cs">
-      <DependentUpon>SaveModuleOptions.xaml</DependentUpon>
+    <Compile Include="AsmEditor\SaveModule\SaveModuleOptionsDlg.xaml.cs">
+      <DependentUpon>SaveModuleOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\SaveModule\SaveModuleOptionsVM.cs" />
     <Compile Include="AsmEditor\SaveModule\SaveModuleWindow.cs" />
-    <Compile Include="AsmEditor\SaveModule\SaveMultiModule.xaml.cs">
-      <DependentUpon>SaveMultiModule.xaml</DependentUpon>
+    <Compile Include="AsmEditor\SaveModule\SaveMultiModuleDlg.xaml.cs">
+      <DependentUpon>SaveMultiModuleDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\SaveModule\SaveMultiModuleVM.cs" />
+    <Compile Include="AsmEditor\SaveModule\SaveOptionsType.cs" />
+    <Compile Include="AsmEditor\SaveModule\SaveOptionsVM.cs" />
     <Compile Include="AsmEditor\SaveModule\Saver.cs" />
-    <Compile Include="AsmEditor\SaveModule\SaveSingleModule.xaml.cs">
-      <DependentUpon>SaveSingleModule.xaml</DependentUpon>
+    <Compile Include="AsmEditor\SaveModule\SaveSingleModuleDlg.xaml.cs">
+      <DependentUpon>SaveSingleModuleDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\TextEditorCommand.cs" />
     <Compile Include="AsmEditor\ToolbarCommands.cs" />
@@ -526,6 +555,32 @@
     </Compile>
     <Compile Include="dntheme\FileTabBackgroundConverter.cs" />
     <Compile Include="FilterSearcher.cs" />
+    <Compile Include="HexEditor\AsciiEncoding.cs" />
+    <Compile Include="HexEditor\ByteArrayHexStream.cs" />
+    <Compile Include="HexEditor\ClipboardUtils.cs" />
+    <Compile Include="HexEditor\DataFormatter.cs" />
+    <Compile Include="HexEditor\HexBox.cs" />
+    <Compile Include="HexEditor\HexBoxPosition.cs" />
+    <Compile Include="HexEditor\HexBoxPositionKind.cs" />
+    <Compile Include="HexEditor\HexBoxState.cs" />
+    <Compile Include="HexEditor\HexBoxWriteEventArgs.cs" />
+    <Compile Include="HexEditor\HexCaret.cs" />
+    <Compile Include="HexEditor\HexDocument.cs" />
+    <Compile Include="HexEditor\HexDocumentModifiedEventArgs.cs" />
+    <Compile Include="HexEditor\HexLine.cs" />
+    <Compile Include="HexEditor\HexLineLayer.cs" />
+    <Compile Include="HexEditor\HexLinePart.cs" />
+    <Compile Include="HexEditor\HexLineTextSource.cs" />
+    <Compile Include="HexEditor\HexPositionUI.cs" />
+    <Compile Include="HexEditor\HexSelection.cs" />
+    <Compile Include="HexEditor\HexTextParagraphProperties.cs" />
+    <Compile Include="HexEditor\HexTextRunProperties.cs" />
+    <Compile Include="HexEditor\HexWriteType.cs" />
+    <Compile Include="HexEditor\HtmlClipboardFormatWriter.cs" />
+    <Compile Include="HexEditor\IHexLayer.cs" />
+    <Compile Include="HexEditor\IHexStream.cs" />
+    <Compile Include="HexEditor\NumberUtils.cs" />
+    <Compile Include="HexEditor\SelectionLayer.cs" />
     <Compile Include="Images\ImageCache.cs" />
     <Compile Include="Images\ThemedImageCreator.cs" />
     <Compile Include="IPlugin.cs" />
@@ -537,10 +592,10 @@
     <Compile Include="MsgBox.xaml.cs">
       <DependentUpon>MsgBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Options\DecompilerSettingsPanel.cs" />
+    <Compile Include="Options\DisplaySettingsPanel.cs" />
+    <Compile Include="Options\FontUtils.cs" />
     <Compile Include="Options\OtherSettings.cs" />
-    <Compile Include="Options\OtherSettingsControl.xaml.cs">
-      <DependentUpon>OtherSettingsControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="SavedTabState.cs" />
     <Compile Include="SourceCodeMappingUtils.cs" />
     <Compile Include="TabContextMenuEntries.cs" />
@@ -610,15 +665,7 @@
     <Compile Include="OpenListDialog.xaml.cs">
       <DependentUpon>OpenListDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Options\DecompilerSettingsPanel.xaml.cs">
-      <DependentUpon>DecompilerSettingsPanel.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Options\DisplaySettings.cs" />
-    <Compile Include="Options\DisplaySettingsPanel.xaml.cs">
-      <DependentUpon>DisplaySettingsPanel.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Options\OptionsDialog.xaml.cs">
       <DependentUpon>OptionsDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -930,6 +977,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="AsmEditor\Hex\GoToOffsetDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\Hex\LocalSettingsDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\Hex\SelectDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AsmEditor\MethodBody\MethodBodyControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -998,15 +1057,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AsmEditor\SaveModule\SaveModuleOptions.xaml">
+    <Page Include="AsmEditor\SaveModule\SaveHexOptionsDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AsmEditor\SaveModule\SaveMultiModule.xaml">
+    <Page Include="AsmEditor\SaveModule\SaveModuleOptionsDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AsmEditor\SaveModule\SaveSingleModule.xaml">
+    <Page Include="AsmEditor\SaveModule\SaveMultiModuleDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AsmEditor\SaveModule\SaveSingleModuleDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1040,13 +1103,7 @@
     </Page>
     <Page Include="OpenFromGacDialog.xaml" />
     <Page Include="OpenListDialog.xaml" />
-    <Page Include="Options\DecompilerSettingsPanel.xaml" />
-    <Page Include="Options\DisplaySettingsPanel.xaml" />
     <Page Include="Options\OptionsDialog.xaml" />
-    <Page Include="Options\OtherSettingsControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="SearchPane.xaml">
       <DependentUpon>SearchPane.cs</DependentUpon>
     </Page>

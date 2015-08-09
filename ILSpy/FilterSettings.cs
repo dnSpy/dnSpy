@@ -18,10 +18,9 @@
 
 using System;
 using System.ComponentModel;
-using System.Text;
 using System.Xml.Linq;
+using dnSpy.Search;
 using ICSharpCode.ILSpy.TreeNodes;
-using ICSharpCode.ILSpy.TreeNodes.Filters;
 
 namespace ICSharpCode.ILSpy
 {

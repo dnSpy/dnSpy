@@ -24,12 +24,12 @@ using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnlib.IO;
 using dnSpy.AsmEditor;
+using dnSpy.Images;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.TreeNodes {
-	public abstract class ResourceElementTreeNode : ILSpyTreeNode, IResourceNode
-	{
+	public abstract class ResourceElementTreeNode : ILSpyTreeNode, IResourceNode {
 		protected ResourceElement resElem;
 
 		public ResourceElement ResourceElement {
@@ -127,16 +127,19 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		public long FileOffset {
+		public ulong FileOffset {
 			get {
 				FileOffset fo;
 				GetModuleOffset(out fo);
-				return (long)fo;
+				return (ulong)fo;
 			}
 		}
 
-		ModuleDefMD GetModuleOffset(out FileOffset fileOffset)
-		{
+		public ulong Length {
+			get { return (ulong)(resElem.ResourceData.EndOffset - resElem.ResourceData.StartOffset); }
+		}
+
+		ModuleDefMD GetModuleOffset(out FileOffset fileOffset) {
 			fileOffset = 0;
 
 			var module = GetModule(this) as ModuleDefMD;
@@ -147,55 +150,47 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return module;
 		}
 
-		protected ResourceElementTreeNode(ResourceElement resElem)
-		{
+		protected ResourceElementTreeNode(ResourceElement resElem) {
 			this.resElem = resElem;
 		}
 
-		public override FilterResult Filter(FilterSettings settings)
-		{
+		public override FilterResult Filter(FilterSettings settings) {
 			var res = settings.Filter.GetFilterResult(this);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
 			return base.Filter(settings);
 		}
 
-		protected sealed override void Write(ITextOutput output, Language language)
-		{
+		protected sealed override void Write(ITextOutput output, Language language) {
 			ResourceTreeNode.WriteFileName(output, resElem.Name);
 		}
 
-		public sealed override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
+		public sealed override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
 			Decompile(language, output);
 		}
 
-		public virtual void Decompile(Language language, ITextOutput output)
-		{
+		public virtual void Decompile(Language language, ITextOutput output) {
 			language.WriteComment(output, string.Empty);
-			if (Options.DecompilerSettingsPanel.CurrentDecompilerSettings.ShowTokenAndRvaComments) {
-				long fo = FileOffset;
-				if (fo != 0)
-					output.Write(string.Format("0x{0:X8}: ", fo), TextTokenType.Comment);
-			}
+			output.WriteOffsetComment(this);
 			output.WriteDefinition(UIUtils.CleanUpName(Name), this, TextTokenType.Comment);
 			output.Write(string.Format(" = {0}", ValueString), TextTokenType.Comment);
 			output.WriteLine();
 		}
 
-		public IEnumerable<ResourceData> GetResourceData(ResourceDataType type)
-		{
+		public IEnumerable<ResourceData> GetResourceData(ResourceDataType type) {
 			switch (type) {
-			case ResourceDataType.Deserialized:	return GetDeserialized();
-			case ResourceDataType.Serialized:	return GetSerialized();
-			default: throw new InvalidOperationException();
+			case ResourceDataType.Deserialized:
+				return GetDeserialized();
+			case ResourceDataType.Serialized:
+				return GetSerialized();
+			default:
+				throw new InvalidOperationException();
 			}
 		}
 
 		protected abstract IEnumerable<ResourceData> GetDeserialized();
 
-		IEnumerable<ResourceData> GetSerialized()
-		{
+		IEnumerable<ResourceData> GetSerialized() {
 			var outStream = new MemoryStream();
 			var writer = new BinaryWriter(outStream);
 
@@ -284,23 +279,20 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			yield return new ResourceData(resElem.Name, () => outStream);
 		}
 
-		public virtual string CheckCanUpdateData(ResourceElement newResElem)
-		{
+		public virtual string CheckCanUpdateData(ResourceElement newResElem) {
 			if (resElem.ResourceData.Code.FixUserType() != newResElem.ResourceData.Code.FixUserType())
 				return "Resource type can't be changed";
 
 			return string.Empty;
 		}
 
-		public virtual void UpdateData(ResourceElement newResElem)
-		{
+		public virtual void UpdateData(ResourceElement newResElem) {
 			resElem = newResElem;
 		}
 
 		// Used by the searcher. Should only return a string if the data is text or compiled text.
 		// I.e., null should be returned if it's an Int32, but a string if it's eg. an XML doc.
-		public virtual string GetStringContents()
-		{
+		public virtual string GetStringContents() {
 			return null;
 		}
 	}

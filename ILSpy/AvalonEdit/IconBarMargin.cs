@@ -7,22 +7,18 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-
+using dnSpy.dntheme;
+using dnSpy.Tabs;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Utils;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger;
-using ICSharpCode.ILSpy.dntheme;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
-using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.TextView;
-using ICSharpCode.NRefactory;
-using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AvalonEdit
-{
+namespace ICSharpCode.ILSpy.AvalonEdit {
 	public class IconBarMargin : AbstractMargin, IDisposable
 	{
 		// 16px wide icon + 1px each side padding + 1px right-side border
@@ -38,7 +34,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			BookmarkManager.Removed += OnBookmarkRemoved;
 			decompilerTextView.OnShowOutput += decompilerTextView_OnShowOutput;
 			MainWindow.Instance.ExecuteWhenLoaded(() => {
-				MainWindow.Instance.OnDecompilerTextViewRemoved += OnDecompilerTextViewRemoved;
+				MainWindow.Instance.OnTabStateRemoved += OnTabStateRemoved;
 			});
 			
 			this.manager = manager;
@@ -50,15 +46,16 @@ namespace ICSharpCode.ILSpy.AvalonEdit
 			SyncBookmarks();
 		}
 
-		void OnDecompilerTextViewRemoved(object sender, MainWindow.DecompilerTextViewEventArgs e)
+		void OnTabStateRemoved(object sender, MainWindow.TabStateEventArgs e)
 		{
-			if (e.DecompilerTextView != decompilerTextView)
+			var tsd = e.TabState as DecompileTabState;
+			if (tsd == null || tsd.TextView != decompilerTextView)
 				return;
 
 			BookmarkManager.Added -= OnBookmarkAdded;
 			BookmarkManager.Removed -= OnBookmarkRemoved;
 			decompilerTextView.OnShowOutput -= decompilerTextView_OnShowOutput;
-			MainWindow.Instance.OnDecompilerTextViewRemoved -= OnDecompilerTextViewRemoved;
+			MainWindow.Instance.OnTabStateRemoved -= OnTabStateRemoved;
 		}
 		
 		public IconBarManager Manager {

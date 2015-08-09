@@ -35,14 +35,12 @@ using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TreeNodes {
 	[Export(typeof(IResourceFactory<ResourceElement, ResourceElementTreeNode>))]
-	sealed class SerializedImageListStreamerResourceElementTreeNodeFactory : IResourceFactory<ResourceElement, ResourceElementTreeNode>
-	{
+	sealed class SerializedImageListStreamerResourceElementTreeNodeFactory : IResourceFactory<ResourceElement, ResourceElementTreeNode> {
 		public int Priority {
 			get { return 100; }
 		}
 
-		public ResourceElementTreeNode Create(ModuleDef module, ResourceElement resInput)
-		{
+		public ResourceElementTreeNode Create(ModuleDef module, ResourceElement resInput) {
 			var serializedData = resInput.ResourceData as BinaryResourceData;
 			if (serializedData == null)
 				return null;
@@ -54,8 +52,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return null;
 		}
 
-		internal static bool GetImageData(ModuleDef module, string typeName, byte[] serializedData, out byte[] imageData)
-		{
+		internal static bool GetImageData(ModuleDef module, string typeName, byte[] serializedData, out byte[] imageData) {
 			imageData = null;
 			if (!SerializedImageResourceElementTreeNodeFactory.CheckType(module, typeName, SystemWindowsFormsImageListStreamer))
 				return false;
@@ -79,8 +76,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		static readonly TypeRef SystemWindowsFormsImageListStreamer = new TypeRefUser(null, "System.Windows.Forms", "ImageListStreamer", SystemWindowsForms);
 	}
 
-	sealed class SerializedImageListStreamerResourceElementTreeNode : ResourceElementTreeNode
-	{
+	sealed class SerializedImageListStreamerResourceElementTreeNode : ResourceElementTreeNode {
 		ImageListOptions imageListOptions;
 		byte[] imageData;
 
@@ -93,13 +89,11 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		public SerializedImageListStreamerResourceElementTreeNode(ResourceElement resElem, byte[] imageData)
-			: base(resElem)
-		{
+			: base(resElem) {
 			InitializeImageData(imageData);
 		}
 
-		static ImageListOptions ReadImageData(byte[] imageData)
-		{
+		static ImageListOptions ReadImageData(byte[] imageData) {
 			var imageList = new ImageList();
 			var info = new SerializationInfo(typeof(ImageListStreamer), new FormatterConverter());
 			info.AddValue("Data", imageData);
@@ -122,14 +116,12 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return opts;
 		}
 
-		void InitializeImageData(byte[] imageData)
-		{
+		void InitializeImageData(byte[] imageData) {
 			this.imageListOptions = ReadImageData(imageData);
 			this.imageData = imageData;
 		}
 
-		public override void Decompile(Language language, ITextOutput output)
-		{
+		public override void Decompile(Language language, ITextOutput output) {
 			var smartOutput = output as ISmartTextOutput;
 			if (smartOutput != null) {
 				for (int i = 0; i < imageListOptions.ImageSources.Count; i++) {
@@ -147,18 +139,15 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			base.Decompile(language, output);
 		}
 
-		protected override IEnumerable<ResourceData> GetDeserialized()
-		{
+		protected override IEnumerable<ResourceData> GetDeserialized() {
 			yield return new ResourceData(resElem.Name, () => new MemoryStream(imageData));
 		}
 
-		internal ResourceElement Serialize(IList<ImageSource> imageSources)
-		{
+		internal ResourceElement Serialize(IList<ImageSource> imageSources) {
 			return Serialize(ImageListOptions);
 		}
 
-		internal static ResourceElement Serialize(ImageListOptions opts)
-		{
+		internal static ResourceElement Serialize(ImageListOptions opts) {
 			var imgList = new ImageList();
 			imgList.ColorDepth = opts.ColorDepth;
 			imgList.ImageSize = opts.ImageSize;
@@ -184,16 +173,14 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			};
 		}
 
-		public override string CheckCanUpdateData(ResourceElement newResElem)
-		{
+		public override string CheckCanUpdateData(ResourceElement newResElem) {
 			var res = base.CheckCanUpdateData(newResElem);
 			if (!string.IsNullOrEmpty(res))
 				return res;
 			return CheckCanUpdateData(GetModule(this), newResElem);
 		}
 
-		internal static string CheckCanUpdateData(ModuleDef module, ResourceElement newResElem)
-		{
+		internal static string CheckCanUpdateData(ModuleDef module, ResourceElement newResElem) {
 			var binData = (BinaryResourceData)newResElem.ResourceData;
 			byte[] imageData;
 			if (!SerializedImageListStreamerResourceElementTreeNodeFactory.GetImageData(module, binData.TypeName, binData.Data, out imageData))
@@ -209,8 +196,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return string.Empty;
 		}
 
-		public override void UpdateData(ResourceElement newResElem)
-		{
+		public override void UpdateData(ResourceElement newResElem) {
 			base.UpdateData(newResElem);
 
 			var binData = (BinaryResourceData)newResElem.ResourceData;

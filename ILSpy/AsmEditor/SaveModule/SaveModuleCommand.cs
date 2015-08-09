@@ -19,23 +19,53 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
+using dnSpy.Tabs;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	[ExportMainMenuCommand(Menu = "_File", MenuCategory = "Save", MenuOrder = 1010)]
 	sealed class SaveModuleCommand : TreeNodeCommand, IMainMenuCommandInitialize {
-		public SaveModuleCommand() {
+		public SaveModuleCommand()
+			: base(true) {
 			MainWindow.Instance.SetMenuAlwaysRegenerate("_File");
 		}
 
-		HashSet<LoadedAssembly> GetAssemblyNodes(ILSpyTreeNode[] nodes) {
-			var hash = new HashSet<LoadedAssembly>();
+		HashSet<IUndoObject> GetAssemblyNodes(ILSpyTreeNode[] nodes) {
+			var hash = new HashSet<IUndoObject>();
+
+			if (nodes.Length == 0) {
+				var hex = MainWindow.Instance.ActiveTabState as HexTabState;
+				if (hex != null) {
+					var doc = hex.HexBox.Document as AsmEdHexDocument;
+					if (doc != null)
+						hash.Add(doc);
+				}
+			}
+
 			foreach (var node in nodes) {
 				var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
-				if (asmNode != null && asmNode.LoadedAssembly.ModuleDefinition != null)
+				if (asmNode == null)
+					continue;
+
+				bool added = false;
+
+				if (asmNode.LoadedAssembly.ModuleDefinition != null && UndoCommandManager.Instance.IsModified(asmNode.LoadedAssembly)) {
+					hash.Add(asmNode.LoadedAssembly);
+					added = true;
+				}
+
+				var doc = HexDocumentManager.Instance.TryGet(asmNode.LoadedAssembly.FileName);
+				if (doc != null && UndoCommandManager.Instance.IsModified(doc)) {
+					hash.Add(doc);
+					added = true;
+				}
+
+				// If nothing was modified, just include the selected module
+				if (!added && asmNode.LoadedAssembly.ModuleDefinition != null)
 					hash.Add(asmNode.LoadedAssembly);
 			}
 			return hash;
@@ -65,11 +95,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 			MainWindow.Instance.InputBindings.Add(new KeyBinding(this, Key.S, ModifierKeys.Control | ModifierKeys.Shift));
 		}
 
-		static LoadedAssembly[] GetDirtyAssemblies() {
-			var list = new List<LoadedAssembly>();
-			foreach (var asmNode in UndoCommandManager.Instance.GetModifiedAssemblyTreeNodes())
-				list.Add(asmNode.LoadedAssembly);
-			return list.ToArray();
+		static IUndoObject[] GetDirtyObjects() {
+			return UndoCommandManager.Instance.GetModifiedObjects().ToArray();
 		}
 
 		public event EventHandler CanExecuteChanged {
@@ -86,11 +113,11 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		public static bool CanExecute() {
-			return GetDirtyAssemblies().Length > 0;
+			return GetDirtyObjects().Length > 0;
 		}
 
 		public static void Execute() {
-			Saver.SaveAssemblies(GetDirtyAssemblies());
+			Saver.SaveAssemblies(GetDirtyObjects());
 		}
 	}
 
