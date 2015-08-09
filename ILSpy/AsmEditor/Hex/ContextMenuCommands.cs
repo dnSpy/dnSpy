@@ -374,11 +374,10 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	abstract class TVChangeBodyHexEditorContextMenuEntry : IContextMenuEntry {
-		protected abstract byte[] Data { get; }
 		protected abstract string GetDescription(byte[] data);
 
 		public void Execute(TextViewContext context) {
-			var data = Data;
+			var data = GetData(context);
 			if (data == null)
 				return;
 			var info = GetMethodLengthAndOffset(context);
@@ -392,12 +391,21 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		public bool IsVisible(TextViewContext context) {
-			var data = Data;
+			var data = GetData(context);
 			if (data == null)
 				return false;
 			var info = GetMethodLengthAndOffset(context);
 			return info != null && info.Value.Size >= (ulong)data.Length;
 		}
+
+		byte[] GetData(TextViewContext context) {
+			var md = TVShowMethodInstructionsInHexEditorContextMenuEntry.GetMemberDef(context) as MethodDef;
+			if (md == null)
+				return null;
+			return GetData(md);
+		}
+
+		protected abstract byte[] GetData(MethodDef method);
 
 		internal static LengthAndOffset? GetMethodLengthAndOffset(TextViewContext context) {
 			var md = TVShowMethodInstructionsInHexEditorContextMenuEntry.GetMemberDef(context) as MethodDef;
@@ -421,8 +429,10 @@ namespace dnSpy.AsmEditor.Hex {
 			return "Hex Write 'return true' Body";
 		}
 
-		protected override byte[] Data {
-			get { return data; }
+		protected override byte[] GetData(MethodDef method) {
+			if (method.MethodSig.GetRetType().RemovePinnedAndModifiers().GetElementType() != ElementType.Boolean)
+				return null;
+			return data;
 		}
 		static readonly byte[] data = new byte[] { 0x0A, 0x17, 0x2A };
 	}
@@ -433,13 +443,121 @@ namespace dnSpy.AsmEditor.Hex {
 			return "Hex Write 'return false' Body";
 		}
 
-		protected override byte[] Data {
-			get { return data; }
+		protected override byte[] GetData(MethodDef method) {
+			if (method.MethodSig.GetRetType().RemovePinnedAndModifiers().GetElementType() != ElementType.Boolean)
+				return null;
+			return data;
 		}
 		static readonly byte[] data = new byte[] { 0x0A, 0x16, 0x2A };
 	}
 
-	[ExportContextMenuEntry(Header = "Hex Copy Method Body", Order = 500.9, Category = "Hex")]
+	[ExportContextMenuEntry(Header = "Hex Write Empty Body", Order = 500.9, Category = "Hex")]
+	sealed class TVWriteEmptyBodyHexEditorContextMenuEntry : TVChangeBodyHexEditorContextMenuEntry {
+		protected override string GetDescription(byte[] data) {
+			return "Hex Write Empty Body";
+		}
+
+		protected override byte[] GetData(MethodDef method) {
+			var sig = method.MethodSig.GetRetType().RemovePinnedAndModifiers();
+
+			// This is taken care of by the write 'return true/false' commands
+			if (sig.GetElementType() == ElementType.Boolean)
+				return null;
+
+			return GetData(sig, 0);
+		}
+
+		byte[] GetData(TypeSig typeSig, int level) {
+			if (level >= 10)
+				return null;
+			var retType = typeSig.RemovePinnedAndModifiers();
+			if (retType == null)
+				return null;
+
+			switch (retType.ElementType) {
+			case ElementType.Void:
+				return dataVoidReturnType;
+
+			case ElementType.Boolean:
+			case ElementType.Char:
+			case ElementType.I1:
+			case ElementType.U1:
+			case ElementType.I2:
+			case ElementType.U2:
+			case ElementType.I4:
+			case ElementType.U4:
+				return dataInt32ReturnType;
+
+			case ElementType.I8:
+			case ElementType.U8:
+				return dataInt64ReturnType;
+
+			case ElementType.R4:
+				return dataSingleReturnType;
+
+			case ElementType.R8:
+				return dataDoubleReturnType;
+
+			case ElementType.I:
+				return dataIntPtrReturnType;
+
+			case ElementType.U:
+			case ElementType.Ptr:
+			case ElementType.FnPtr:
+				return dataUIntPtrReturnType;
+
+			case ElementType.ValueType:
+				var td = ((ValueTypeSig)retType).TypeDefOrRef.ResolveTypeDef();
+				if (td != null && td.IsEnum) {
+					var undType = td.GetEnumUnderlyingType().RemovePinnedAndModifiers();
+					var et = undType.GetElementType();
+					if ((ElementType.Boolean <= et && et <= ElementType.R8) || et == ElementType.I || et == ElementType.U)
+						return GetData(undType, level + 1);
+				}
+				goto case ElementType.TypedByRef;
+
+			case ElementType.TypedByRef:
+			case ElementType.Var:
+			case ElementType.MVar:
+				// Need ldloca, initobj, ldloc and a local variable
+				return null;
+
+			case ElementType.GenericInst:
+				if (((GenericInstSig)retType).GenericType is ValueTypeSig)
+					goto case ElementType.TypedByRef;
+				goto case ElementType.Class;
+
+			case ElementType.End:
+			case ElementType.String:
+			case ElementType.ByRef:
+			case ElementType.Class:
+			case ElementType.Array:
+			case ElementType.ValueArray:
+			case ElementType.R:
+			case ElementType.Object:
+			case ElementType.SZArray:
+			case ElementType.CModReqd:
+			case ElementType.CModOpt:
+			case ElementType.Internal:
+			case ElementType.Module:
+			case ElementType.Sentinel:
+			case ElementType.Pinned:
+			default:
+				return dataRefTypeReturnType;
+			}
+		}
+
+		static readonly byte[] dataVoidReturnType = new byte[] { 0x06, 0x2A };	// ret
+		static readonly byte[] dataInt32ReturnType = new byte[] { 0x0A, 0x16, 0x2A };	// ldc.i4.0, ret
+		static readonly byte[] dataInt64ReturnType = new byte[] { 0x0E, 0x16, 0x6A, 0x2A };	// ldc.i4.0, conv.i8, ret
+		static readonly byte[] dataSingleReturnType = new byte[] { 0x0E, 0x16, 0x6B, 0x2A };	// ldc.i4.0, conv.r4, ret
+		static readonly byte[] dataDoubleReturnType = new byte[] { 0x0E, 0x16, 0x6C, 0x2A };	// ldc.i4.0, conv.r8, ret
+		static readonly byte[] dataIntPtrReturnType = new byte[] { 0x0E, 0x16, 0xD3, 0x2A };    // ldc.i4.0, conv.i, ret
+		static readonly byte[] dataUIntPtrReturnType = new byte[] { 0x0E, 0x16, 0xE0, 0x2A };    // ldc.i4.0, conv.u, ret
+		static readonly byte[] dataRefTypeReturnType = new byte[] { 0x0A, 0x14, 0x2A };	// ldnull, ret
+	}
+
+	[ExportContextMenuEntry(Header = "Hex Copy Method Body", Order = 501.0, Category = "Hex")]
 	sealed class TVCopyMethodBodyHexEditorContextMenuEntry : IContextMenuEntry {
 		public void Execute(TextViewContext context) {
 			var data = GetMethodBodyBytes(context);
@@ -465,14 +583,14 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Hex Paste Method Body", Order = 501.0, Category = "Hex")]
+	[ExportContextMenuEntry(Header = "Hex Paste Method Body", Order = 501.1, Category = "Hex")]
 	sealed class TVPasteMethodBodyHexEditorContextMenuEntry : TVChangeBodyHexEditorContextMenuEntry {
 		protected override string GetDescription(byte[] data) {
 			return "Hex Paste Method Body";
 		}
 
-		protected override byte[] Data {
-			get { return ClipboardUtils.GetData(); }
+		protected override byte[] GetData(MethodDef method) {
+			return ClipboardUtils.GetData();
 		}
 	}
 
