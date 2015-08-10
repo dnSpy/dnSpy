@@ -25,7 +25,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using System.Windows.Threading;
-using dnSpy.HexEditor;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
@@ -56,7 +55,7 @@ namespace dnSpy.AsmEditor {
 			if (count != 0) {
 				var msg = count == 1 ? "There is an unsaved file." : string.Format("There are {0} unsaved files.", count);
 				var res = MainWindow.Instance.ShowMessageBox(string.Format("{0} Are you sure you want to exit?", msg), System.Windows.MessageBoxButton.YesNo);
-				if (res == MsgBoxButton.No)
+				if (res == MsgBoxButton.No || res == MsgBoxButton.None)
 					e.Cancel = true;
 			}
 		}
@@ -78,6 +77,22 @@ namespace dnSpy.AsmEditor {
 		}
 	}
 
+	public enum UndoCommandManagerEventType {
+		Add,
+		Undo,
+		Redo,
+		ClearUndo,
+		ClearRedo,
+	}
+
+	public class UndoCommandManagerEventArgs : EventArgs {
+		public readonly UndoCommandManagerEventType Type;
+
+		public UndoCommandManagerEventArgs(UndoCommandManagerEventType type) {
+			this.Type = type;
+		}
+	}
+
 	public sealed class UndoCommandManager {
 		public static readonly UndoCommandManager Instance = new UndoCommandManager();
 
@@ -86,6 +101,14 @@ namespace dnSpy.AsmEditor {
 		UndoState currentCommands;
 		int commandCounter;
 		int currentCommandCounter;
+
+		public event EventHandler<UndoCommandManagerEventArgs> OnEvent;
+
+		void NotifyEvent(UndoCommandManagerEventType type) {
+			var evt = OnEvent;
+			if (evt != null)
+				evt(this, new UndoCommandManagerEventArgs(type));
+		}
 
 		UndoCommandManager() {
 			commandCounter = currentCommandCounter = 1;
@@ -192,6 +215,7 @@ namespace dnSpy.AsmEditor {
 
 			UpdateAssemblySavedStateRedo(currentCommands);
 			currentCommands = null;
+			NotifyEvent(UndoCommandManagerEventType.Add);
 		}
 
 		static bool NeedsToCallGc(List<UndoState> list) {
@@ -221,10 +245,12 @@ namespace dnSpy.AsmEditor {
 			if (clearUndo) {
 				callGc |= NeedsToCallGc(undoCommands);
 				Clear(undoCommands);
+				NotifyEvent(UndoCommandManagerEventType.ClearUndo);
 			}
 			if (clearRedo) {
 				callGc |= NeedsToCallGc(redoCommands);
 				Clear(redoCommands);
+				NotifyEvent(UndoCommandManagerEventType.ClearRedo);
 			}
 
 			if (callGc)
@@ -297,6 +323,7 @@ namespace dnSpy.AsmEditor {
 			undoCommands.RemoveAt(undoCommands.Count - 1);
 			redoCommands.Add(group);
 			UpdateAssemblySavedStateUndo(group);
+			NotifyEvent(UndoCommandManagerEventType.Undo);
 		}
 
 		/// <summary>
@@ -317,6 +344,7 @@ namespace dnSpy.AsmEditor {
 			redoCommands.RemoveAt(redoCommands.Count - 1);
 			undoCommands.Add(group);
 			UpdateAssemblySavedStateRedo(group);
+			NotifyEvent(UndoCommandManagerEventType.Redo);
 		}
 
 		public IEnumerable<IUndoObject> GetModifiedObjects() {

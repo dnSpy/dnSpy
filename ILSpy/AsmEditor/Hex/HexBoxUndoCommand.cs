@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnSpy.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex {
@@ -30,10 +31,10 @@ namespace dnSpy.AsmEditor.Hex {
 		readonly HexDocument doc;
 		readonly WeakReference hexBoxWeakRef;
 		readonly HexBoxPosition origCaretPos;
-		readonly HexBoxPosition newCaretPos;
+		HexBoxPosition newCaretPos;
 		readonly ulong offset;
-		readonly byte[] origData;
-		readonly byte[] newData;
+		byte[] origData;
+		byte[] newData;
 		readonly string descr;
 		bool canExecute;
 
@@ -58,7 +59,9 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		public void Dispose() {
+			canNotAppend = true;
 		}
+		bool canNotAppend = false;
 
 		public void Execute() {
 			if (canExecute)
@@ -77,6 +80,49 @@ namespace dnSpy.AsmEditor.Hex {
 				hexBox.CaretPosition = caretPos;
 				hexBox.BringCaretIntoView();
 			}
+		}
+
+		public bool TryAppend(HexBox hexBox, HexBoxPosition posBeforeWrite, ulong startOffset, byte[] originalData) {
+			if (canNotAppend)
+				return false;
+			if (hexBoxWeakRef.Target != hexBox)
+				return false;
+			if (hexBox.Document == null)
+				return false;
+			if (originalData.Length == 0)
+				return false;
+			if (newCaretPos != posBeforeWrite)
+				return false;
+			if (newCaretPos.Offset > hexBox.CaretPosition.Offset)
+				return false;
+			if (newCaretPos.Kind != hexBox.CaretPosition.Kind)
+				return false;
+
+			if (newCaretPos.Offset == posBeforeWrite.Offset && newCaretPos.Kind == HexBoxPositionKind.HexByte && newCaretPos.KindPosition == HexBoxPosition.INDEX_HEXBYTE_LAST) {
+				if (posBeforeWrite.Kind != HexBoxPositionKind.HexByte || posBeforeWrite.KindPosition != HexBoxPosition.INDEX_HEXBYTE_LAST)
+					return false;
+				if (originalData.Length != 1)
+					return false;
+				newData[newData.Length - 1] = (byte)hexBox.Document.ReadByte(posBeforeWrite.Offset);
+			}
+			else {
+				if (newCaretPos.Offset != posBeforeWrite.Offset)
+					return false;
+				ulong c = hexBox.CaretPosition.Kind == HexBoxPositionKind.HexByte && hexBox.CaretPosition.KindPosition == HexBoxPosition.INDEX_HEXBYTE_LAST ? 1UL : 0;
+				if (hexBox.CaretPosition.Offset - newCaretPos.Offset + c != (ulong)originalData.Length)
+					return false;
+				int origLen = newData.Length;
+				Array.Resize(ref newData, origLen + originalData.Length);
+				Array.Resize(ref origData, origLen + originalData.Length);
+
+				for (int i = 0; i < originalData.Length; i++) {
+					newData[origLen + i] = (byte)hexBox.Document.ReadByte(posBeforeWrite.Offset + (ulong)i);
+					origData[origLen + i] = originalData[i];
+				}
+			}
+
+			newCaretPos = hexBox.CaretPosition;
+			return true;
 		}
 	}
 }

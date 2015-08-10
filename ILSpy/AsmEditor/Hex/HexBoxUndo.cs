@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using dnSpy.HexEditor;
 using dnSpy.Tabs;
@@ -26,6 +27,7 @@ namespace dnSpy.AsmEditor.Hex {
 	[Export(typeof(IPlugin))]
 	sealed class HexBoxUndo : IPlugin {
 		public void OnLoaded() {
+			UndoCommandManager.Instance.OnEvent += UndoCommandManager_OnEvent;
 			MainWindow.Instance.OnTabStateAdded += OnTabStateAdded;
 			MainWindow.Instance.OnTabStateRemoved += OnTabStateRemoved;
 			foreach (var tabState in MainWindow.Instance.AllTabStates)
@@ -75,8 +77,40 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 			else {
 				var info = (UndoInfo)e.Context[key];
-				UndoCommandManager.Instance.Add(new HexBoxUndoCommand(hts.HexBox, info.OriginalCaretPosition, e.StartOffset, info.OriginalData, GetDescription(e)));
+
+				bool updated = TryUpdateOldTextInputCommand(e.Type, hts.HexBox, info.OriginalCaretPosition, e.StartOffset, info.OriginalData);
+				if (!updated) {
+					ClearTextInputCommand();
+					var cmd = new HexBoxUndoCommand(hts.HexBox, info.OriginalCaretPosition, e.StartOffset, info.OriginalData, GetDescription(e));
+					UndoCommandManager.Instance.Add(cmd);
+					if (e.Type == HexWriteType.ByteInput || e.Type == HexWriteType.AsciiInput)
+						SetTextInputCommand(cmd);
+				}
 			}
+		}
+
+		bool TryUpdateOldTextInputCommand(HexWriteType type, HexBox hexBox, HexBoxPosition posBeforeWrite, ulong startOffset, byte[] originalData) {
+			if (type != HexWriteType.ByteInput && type != HexWriteType.AsciiInput)
+				return false;
+
+			var cmd = (HexBoxUndoCommand)prevTextInputCmd.Target;
+			if (cmd == null)
+				return false;
+
+			return cmd.TryAppend(hexBox, posBeforeWrite, startOffset, originalData);
+		}
+		readonly WeakReference prevTextInputCmd = new WeakReference(null);
+
+		void UndoCommandManager_OnEvent(object sender, UndoCommandManagerEventArgs e) {
+			ClearTextInputCommand();
+		}
+
+		void ClearTextInputCommand() {
+			prevTextInputCmd.Target = null;
+		}
+
+		void SetTextInputCommand(HexBoxUndoCommand cmd) {
+			prevTextInputCmd.Target = cmd;
 		}
 
 		static string GetDescription(HexBoxWriteEventArgs e) {

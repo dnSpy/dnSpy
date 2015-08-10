@@ -1995,21 +1995,17 @@ namespace dnSpy.HexEditor {
 			switch (CaretPosition.Kind) {
 			case HexBoxPositionKind.HexByte:
 				foreach (var c in text) {
-					if (HandleHexByteInput(c)) {
-						unselect = true;
+					if (c == ' ')
 						MoveCaretRight();
-					}
+					else if (HandleHexByteInput(c))
+						unselect = true;
 				}
 				break;
 
 			case HexBoxPositionKind.Ascii:
 				foreach (var c in text) {
-					int length;
-					if (HandleHexAsciiInput(c, out length)) {
+					if (HandleHexAsciiInput(c))
 						unselect = true;
-						for (int i = 0; i < length; i++)
-							MoveCaretRight();
-					}
 				}
 				break;
 
@@ -2036,12 +2032,15 @@ namespace dnSpy.HexEditor {
 				else
 					b = (b & 0xF0) | h;
 				Document.Write(offs, (byte)b);
+				MoveCaretRight();
 				NotifyAfterWrite(HexWriteType.ByteInput, offs, 1, ctx);
 			}
+			else
+				MoveCaretRight();
 			return true;
 		}
 
-		bool HandleHexAsciiInput(char c, out int length) {
+		bool HandleHexAsciiInput(char c) {
 			Encoding enc;
 			switch (AsciiEncoding) {
 			case AsciiEncoding.ASCII:	enc = Encoding.ASCII; break;
@@ -2056,10 +2055,11 @@ namespace dnSpy.HexEditor {
 
 			var bytes = enc.GetBytes(new char[] { c });
 
-			length = bytes.Length;
 			ulong offs = CaretPosition.Offset;
 			var ctx = NotifyBeforeWrite(HexWriteType.AsciiInput, offs, bytes.Length);
 			Document.Write(offs, bytes, 0, bytes.Length);
+			for (int i = 0; i < bytes.Length; i++)
+				MoveCaretRight();
 			NotifyAfterWrite(HexWriteType.AsciiInput, offs, bytes.Length, ctx);
 			return true;
 		}
