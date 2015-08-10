@@ -83,6 +83,7 @@ namespace dnSpy.AsmEditor {
 		Redo,
 		ClearUndo,
 		ClearRedo,
+		Saved,
 	}
 
 	public class UndoCommandManagerEventArgs : EventArgs {
@@ -392,6 +393,7 @@ namespace dnSpy.AsmEditor {
 		public void MarkAsSaved(IUndoObject obj) {
 			obj.IsDirty = false;
 			obj.SavedCommand = GetNewSavedCommand(obj);
+			NotifyEvent(UndoCommandManagerEventType.Saved);
 		}
 
 		int GetNewSavedCommand(IUndoObject obj) {
