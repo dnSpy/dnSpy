@@ -118,8 +118,8 @@ Ctrl+F		| (Method Editor) Copy file offset of instruction
 Ctrl+R		| (Text view) Analyze reference at caret
 Tab			| (Hex editor) Switch caret from hex bytes to ASCII or back
 Ctrl+C		| (Hex editor) Copy binary data
-Ctrl+Shift+8| (Hex editor) Copy data as a UTF8 string
-Ctrl+Shift+U| (Hex editor) Copy data as a Unicode string
+Ctrl+Shift+8| (Hex editor) Copy UTF-8 encoded data
+Ctrl+Shift+U| (Hex editor) Copy Unicode encoded data
 Ctrl+Shift+P| (Hex editor) Copy data as a C# array
 Ctrl+Shift+B| (Hex editor) Copy data as a VB array
 Ctrl+Shift+C| (Hex editor) Copy hex editor screen contents

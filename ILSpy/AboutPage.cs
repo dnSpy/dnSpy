@@ -43,8 +43,11 @@ namespace ICSharpCode.ILSpy
 		static readonly bool checkForUpdateCode = false;
 		public override void Execute(object parameter)
 		{
+			// Make sure to get the textview before unselecting anything in case we have two tab
+			// groups opened and the active tab is not a textview
+			var activeTextView = MainWindow.Instance.SafeActiveTextView;
 			MainWindow.Instance.UnselectAll();
-			Display(MainWindow.Instance.SafeActiveTextView);
+			Display(activeTextView);
 		}
 		
 		static readonly Uri UpdateUrl = new Uri("http://www.ilspy.net/updates.xml");

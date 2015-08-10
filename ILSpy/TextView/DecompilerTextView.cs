@@ -614,7 +614,7 @@ namespace ICSharpCode.ILSpy.TextView
 				evt(this, new ShowOutputEventArgs(nodes, highlighting, state));
 
 			//Debug.WriteLine("Showing {0} characters of output", textOutput.TextLength);
-			Stopwatch w = Stopwatch.StartNew();
+			//Stopwatch w = Stopwatch.StartNew();
 			textEditor.LanguageTokens = textOutput.LanguageTokens;
 			textEditor.LanguageTokens.Finish();
 
@@ -647,7 +647,7 @@ namespace ICSharpCode.ILSpy.TextView
 				}
 				foldingManager = FoldingManager.Install(textEditor.TextArea);
 				foldingManager.UpdateFoldings(textOutput.Foldings.OrderBy(f => f.StartOffset), -1);
-				Debug.WriteLine("  Updating folding: {0}", w.Elapsed); w.Restart();
+				//Debug.WriteLine("  Updating folding: {0}", w.Elapsed); w.Restart();
 			}
 			if (state != null)
 				EditorPositionState = state.EditorPositionState;
