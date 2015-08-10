@@ -29,12 +29,14 @@ namespace dnSpy.Options {
 		public const double MIN_FONT_SIZE = 1;
 		public const double MAX_FONT_SIZE = 200;
 
+		const string GLOBAL_MONOSPACE_FONT = "Global Monospace";
+
 		static readonly string[] monospaceFontsToCheck = new string[] {
 			"Consolas",
 			"Lucida Console",
 			"Courier New",
 			"Courier",
-			"Global Monospace",
+			GLOBAL_MONOSPACE_FONT,
 		};
 
 		public static string GetDefaultFont() {
@@ -65,12 +67,15 @@ namespace dnSpy.Options {
 		}
 
 		public static FontFamily[] GetMonospacedFonts() {
-			return Fonts.SystemFontFamilies.Where(a => IsMonospacedFont(a)).ToArray();
+			return Fonts.SystemFontFamilies.Where(a => IsMonospacedFont(a)).OrderBy(a => a.Source.ToUpperInvariant()).ToArray();
 		}
 
 		// Checks chars 0x20-0x7E (the only ones used by the hex editor) whether they have the same
 		// width and height. There's probably a better way of doing this...
 		static bool IsMonospacedFont(FontFamily ff) {
+			if (ff.Source.Equals(GLOBAL_MONOSPACE_FONT, StringComparison.OrdinalIgnoreCase))
+				return true;
+
 			foreach (var tf in ff.GetTypefaces()) {
 				if (tf.Weight != FontWeights.Normal)
 					continue;
