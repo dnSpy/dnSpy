@@ -24,7 +24,7 @@
              xmlns:winlocal="clr-namespace:dnSpy.AsmEditor"
              xmlns:mbody="clr-namespace:dnSpy.AsmEditor.MethodBody"
              xmlns:vc="clr-namespace:dnSpy.AsmEditor.Converters"
-             Height="750" Width="1300"
+             Height="730" Width="1300"
              Title="Edit Method Body"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="300" MinWidth="500">
