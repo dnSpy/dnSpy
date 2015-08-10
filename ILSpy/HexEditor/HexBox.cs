@@ -2091,10 +2091,24 @@ namespace dnSpy.HexEditor {
 			var ctx = NotifyBeforeWrite(HexWriteType.Fill, offs, (int)count);
 			ulong currOffs = startOffset;
 			ulong end = currOffs + count - 1;
+
+			ulong bytesLeft = currOffs == 0 && end == ulong.MaxValue ? ulong.MaxValue : end - currOffs + 1;
+			const int BUF_LEN = 64 * 1024;
+			var buf = new byte[bytesLeft >= BUF_LEN ? BUF_LEN : (int)bytesLeft];
+			if (b != 0) {
+				for (int i = 0; i < buf.Length; i++)
+					buf[i] = b;
+			}
+
 			while (currOffs <= end) {
-				Document.Write(currOffs, b);
-				if (currOffs++ == ulong.MaxValue)
+				bytesLeft = currOffs == 0 && end == ulong.MaxValue ? ulong.MaxValue : end - currOffs + 1;
+				int bytesToWrite = bytesLeft >= (ulong)buf.Length ? buf.Length : (int)bytesLeft;
+				Document.Write(currOffs, buf, 0, bytesToWrite);
+
+				ulong nextOffs = currOffs + (ulong)bytesToWrite;
+				if (nextOffs < currOffs)
 					break;
+				currOffs = nextOffs;
 			}
 			NotifyAfterWrite(HexWriteType.Fill, offs, (int)count, ctx);
 		}
