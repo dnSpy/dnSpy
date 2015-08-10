@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -28,11 +29,31 @@ namespace dnSpy.Options {
 		public const double MIN_FONT_SIZE = 1;
 		public const double MAX_FONT_SIZE = 200;
 
+		static readonly string[] monospaceFontsToCheck = new string[] {
+			"Consolas",
+			"Lucida Console",
+			"Courier New",
+			"Courier",
+			"Global Monospace",
+		};
+
 		public static string GetDefaultFont() {
-			// Consolas first appeared in Windows Vista (v6.0)
-			if (Environment.OSVersion.Version >= new Version(6, 0, 0, 0))
-				return "Consolas";
-			return "Lucida Console";
+			foreach (var name in monospaceFontsToCheck) {
+				if (Exists(name))
+					return name;
+			}
+
+			Debug.Fail("Couldn't find a default monospace font");
+
+			return "Courier New";
+		}
+
+		public static bool Exists(string name) {
+			foreach (var ff in Fonts.SystemFontFamilies) {
+				if (ff.Source.Equals(name, StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
+			return false;
 		}
 
 		public static double FilterFontSize(double size) {
