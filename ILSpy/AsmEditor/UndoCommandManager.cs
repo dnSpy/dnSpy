@@ -287,7 +287,7 @@ namespace dnSpy.AsmEditor {
 					// Don't force loading of the asms. If they haven't been loaded, we don't need
 					// to return them. We must always return the first one though because the asm
 					// could've been modified even if its children haven't been loaded yet.
-					if (asmNode.Children.Count == 0)
+					if (asmNode.Children.Count == 0 || !(asmNode.Children[0] is AssemblyTreeNode))
 						yield return asmNode.LoadedAssembly;
 					else {
 						foreach (AssemblyTreeNode modNode in asmNode.Children)

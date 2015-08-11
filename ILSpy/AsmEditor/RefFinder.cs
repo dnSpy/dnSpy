@@ -33,7 +33,7 @@ namespace dnSpy.AsmEditor {
 		public static readonly MethodEqualityComparer MethodEqualityComparerInstance = new MethodEqualityComparer(SigComparerOptionsFlags);
 
 		public static IEnumerable<AssemblyRef> FindAssemblyRefsToThisModule(ModuleDef module) {
-			if (!module.IsManifestModule)
+			if (module == null || !module.IsManifestModule)
 				yield break;
 			var asm = module.Assembly;
 			if (asm == null)

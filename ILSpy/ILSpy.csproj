@@ -596,12 +596,14 @@
     <Compile Include="Options\DisplaySettingsPanel.cs" />
     <Compile Include="Options\FontUtils.cs" />
     <Compile Include="Options\OtherSettings.cs" />
-    <Compile Include="SavedTabState.cs" />
+    <Compile Include="Tabs\DecompileTabState.cs" />
+    <Compile Include="Tabs\HexTabState.cs" />
+    <Compile Include="Tabs\SavedTabState.cs" />
     <Compile Include="SourceCodeMappingUtils.cs" />
-    <Compile Include="TabContextMenuEntries.cs" />
-    <Compile Include="TabGroupsManager.cs" />
-    <Compile Include="TabManager.cs" />
-    <Compile Include="TabState.cs" />
+    <Compile Include="Tabs\TabContextMenuEntries.cs" />
+    <Compile Include="Tabs\TabGroupsManager.cs" />
+    <Compile Include="Tabs\TabManager.cs" />
+    <Compile Include="Tabs\TabState.cs" />
     <Compile Include="TextView\SimpleHighlighter.cs" />
     <Compile Include="TreeNodes\CopyTokenContextMenuEntry.cs" />
     <Compile Include="TreeNodes\Filters\ChainTreeViewNodeFilter.cs" />
@@ -615,6 +617,22 @@
     <Compile Include="TreeNodes\Filters\TreeViewNodeFilterBase.cs" />
     <Compile Include="TreeNodes\Filters\VisibleMembersFlags.cs" />
     <Compile Include="TreeNodes\GoToTokenContextMenuEntry.cs" />
+    <Compile Include="TreeNodes\Hex\HexField.cs" />
+    <Compile Include="TreeNodes\Hex\HexTreeNode.cs" />
+    <Compile Include="TreeNodes\Hex\HexUtils.cs" />
+    <Compile Include="TreeNodes\Hex\HexVM.cs" />
+    <Compile Include="TreeNodes\Hex\ImageDosHeaderTreeNode.cs" />
+    <Compile Include="TreeNodes\Hex\ImageDosHeaderVM.cs" />
+    <Compile Include="TreeNodes\Hex\ImageFileHeaderTreeNode.cs" />
+    <Compile Include="TreeNodes\Hex\ImageFileHeaderVM.cs" />
+    <Compile Include="TreeNodes\Hex\ImageOptionalHeader32TreeNode.cs" />
+    <Compile Include="TreeNodes\Hex\ImageOptionalHeader32VM.cs" />
+    <Compile Include="TreeNodes\Hex\ImageOptionalHeader64TreeNode.cs" />
+    <Compile Include="TreeNodes\Hex\ImageOptionalHeader64VM.cs" />
+    <Compile Include="TreeNodes\Hex\ImageOptionalHeaderVM.cs" />
+    <Compile Include="TreeNodes\Hex\ImageSectionHeaderTreeNode.cs" />
+    <Compile Include="TreeNodes\Hex\ImageSectionHeaderVM.cs" />
+    <Compile Include="TreeNodes\Hex\PETreeNode.cs" />
     <Compile Include="TreeNodes\ITokenTreeNode.cs" />
     <Compile Include="TreeNodes\ITreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\NodePathName.cs" />
@@ -1111,6 +1129,10 @@
       <DependentUpon>DecompilerTextView.cs</DependentUpon>
     </Page>
     <Page Include="themes\generic.xaml" />
+    <Page Include="TreeNodes\Hex\wpf.styles.templates.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\AddException.png" />

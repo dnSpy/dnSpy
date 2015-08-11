@@ -329,9 +329,8 @@ namespace ICSharpCode.ILSpy
 			lock (assemblies) {
 				var asm = FindAssemblyByFileName_NoLock(newAsm.FileName);
 				if (asm != null) {
-					var mod = newAsm.ModuleDefinition;
-					if (canDispose && mod != null)
-						mod.Dispose();
+					if (canDispose)
+						newAsm.TheLoadedFile.Dispose();
 					return asm;
 				}
 
@@ -378,9 +377,8 @@ namespace ICSharpCode.ILSpy
 			lock (delayLoadedAsms) {
 				Tuple<LoadedAssembly, int> info;
 				if (delayLoadedAsms.TryGetValue(newAsm.FileName, out info)) {
-					var mod = newAsm.ModuleDefinition;
-					if (canDispose && mod != null)
-						mod.Dispose();
+					if (canDispose)
+						newAsm.TheLoadedFile.Dispose();
 					return info.Item1;
 				}
 				delayLoadedAsms.Add(newAsm.FileName, Tuple.Create(newAsm, index));

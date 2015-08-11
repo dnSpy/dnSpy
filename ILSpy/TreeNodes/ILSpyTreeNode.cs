@@ -117,6 +117,11 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		public abstract void Decompile(Language language, ITextOutput output, DecompilationOptions options);
 
+		public virtual object GetViewObject(TextView.DecompilerTextView textView)
+		{
+			return null;
+		}
+
 		/// <summary>
 		/// Used to implement special view logic for some items.
 		/// This method is called on the main thread when only a single item is selected.

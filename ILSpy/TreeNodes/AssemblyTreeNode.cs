@@ -26,7 +26,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using dnlib.DotNet;
+using dnlib.PE;
 using dnSpy.Images;
+using dnSpy.TreeNodes.Hex;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TextView;
@@ -78,8 +80,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return assembly.ModuleDefinition != null && assembly.AssemblyDefinition == null; }
 		}
 
-		public bool IsAssembly
-		{
+		public bool IsAssembly {
 			get { return assembly.AssemblyDefinition != null && !(Parent is AssemblyTreeNode); }
 		}
 
@@ -87,19 +88,21 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return IsModuleInAssembly || IsNetModule; }
 		}
 
-		public bool IsModuleInAssembly
-		{
+		public bool IsModuleInAssembly {
 			get { return assembly.ModuleDefinition != null && Parent is AssemblyTreeNode; }
 		}
 
-		public bool IsNetModuleInAssembly
-		{
+		public bool IsNetModuleInAssembly {
 			get {
 				var asmNode = Parent as AssemblyTreeNode;
 				return assembly.ModuleDefinition != null &&
 					asmNode != null &&
 					asmNode.Children.IndexOf(this) > 0;
 			}
+		}
+
+		public bool IsDotNetFile {
+			get { return assembly.ModuleDefinition != null; }
 		}
 
 		public override bool IsAutoLoaded
@@ -188,9 +191,14 @@ namespace ICSharpCode.ILSpy.TreeNodes
 						return ImageCache.Instance.GetImage("AssemblyWarning", BackgroundType.TreeNode);
 					if (Parent is AssemblyTreeNode || (assembly.ModuleDefinition != null && assembly.AssemblyDefinition == null))
 						return ImageCache.Instance.GetImage("AssemblyModule", BackgroundType.TreeNode);
+					if (assembly.ModuleDefinition == null && assembly.PEImage != null) {
+						return (assembly.PEImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0 ?
+							ImageCache.Instance.GetImage("AssemblyExe", BackgroundType.TreeNode) :
+							ImageCache.Instance.GetImage("Assembly", BackgroundType.TreeNode);
+					}
 					return assembly.ModuleDefinition != null &&
 						assembly.ModuleDefinition.IsManifestModule &&
-						(assembly.ModuleDefinition.Characteristics & dnlib.PE.Characteristics.Dll) == 0 ?
+						(assembly.ModuleDefinition.Characteristics & Characteristics.Dll) == 0 ?
 						ImageCache.Instance.GetImage("AssemblyExe", BackgroundType.TreeNode) :
 						ImageCache.Instance.GetImage("Assembly", BackgroundType.TreeNode);
 				} else {
@@ -209,21 +217,27 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 				var tooltip = new TextBlock();
 				tooltip.Inlines.Add(new Bold(new Run("Name: ")));
-				var name = Parent is AssemblyTreeNode || assembly.AssemblyDefinition == null ?
-							assembly.ModuleDefinition.Name.String :
-							assembly.AssemblyDefinition.FullName;
+				string name;
+				if (!(Parent is AssemblyTreeNode) && assembly.AssemblyDefinition != null)
+					name = assembly.AssemblyDefinition.FullName;
+				else if (assembly.ModuleDefinition != null)
+					name = assembly.ModuleDefinition.Name;
+				else
+					name = Path.GetFileName(assembly.FileName);
 				tooltip.Inlines.Add(new Run(name));
 				tooltip.Inlines.Add(new LineBreak());
 				tooltip.Inlines.Add(new Bold(new Run("Location: ")));
 				tooltip.Inlines.Add(new Run(assembly.FileName));
 				tooltip.Inlines.Add(new LineBreak());
-				tooltip.Inlines.Add(new Bold(new Run("Architecture: ")));
-				tooltip.Inlines.Add(new Run(CSharpLanguage.GetPlatformDisplayName(assembly.ModuleDefinition)));
-				string runtimeName = CSharpLanguage.GetRuntimeDisplayName(assembly.ModuleDefinition);
-				if (runtimeName != null) {
-					tooltip.Inlines.Add(new LineBreak());
-					tooltip.Inlines.Add(new Bold(new Run("Runtime: ")));
-					tooltip.Inlines.Add(new Run(runtimeName));
+				if (assembly.ModuleDefinition != null) {
+					tooltip.Inlines.Add(new Bold(new Run("Architecture: ")));
+					tooltip.Inlines.Add(new Run(CSharpLanguage.GetPlatformDisplayName(assembly.ModuleDefinition)));
+					string runtimeName = CSharpLanguage.GetRuntimeDisplayName(assembly.ModuleDefinition);
+					if (runtimeName != null) {
+						tooltip.Inlines.Add(new LineBreak());
+						tooltip.Inlines.Add(new Bold(new Run("Runtime: ")));
+						tooltip.Inlines.Add(new Run(runtimeName));
+					}
 				}
 
 				return tooltip;
@@ -235,7 +249,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			get { return !assembly.HasLoadError && base.ShowExpander; }
 		}
 
-		void OnAssemblyLoaded(Task<ModuleDef> moduleTask)
+		void OnAssemblyLoaded(Task<LoadedAssembly.LoadedFile> moduleTask)
 		{
 			// change from "Loading" icon to final icon
 			RaisePropertyChanged("Icon");
@@ -254,14 +268,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		protected override void LoadChildren()
 		{
-			ModuleDef moduleDefinition = assembly.ModuleDefinition;
-			if (moduleDefinition == null) {
-				// if we crashed on loading, then we don't have any children
-				return;
-			}
-
 			if (Parent is AssemblyTreeNode || assembly.AssemblyDefinition == null) {
-				LoadModuleChildren(moduleDefinition);
+				LoadModuleChildren(assembly.PEImage, assembly.ModuleDefinition);
 			}
 			else {
 				// Add all modules in this assembly
@@ -277,29 +285,33 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 
-		void LoadModuleChildren(ModuleDef moduleDefinition)
+		void LoadModuleChildren(IPEImage peImage, ModuleDef module)
 		{
 			var asmListTreeNode = this.Ancestors().OfType<AssemblyListTreeNode>().FirstOrDefault();
 			Debug.Assert(asmListTreeNode != null);
-			if (moduleDefinition is ModuleDefMD)
-				this.Children.Add(new ReferenceFolderTreeNode((ModuleDefMD)moduleDefinition, this, asmListTreeNode));
-			this.Children.Add(new ResourceListTreeNode(moduleDefinition));
-			foreach (NamespaceTreeNode ns in namespaces.Values) {
-				ns.Children.Clear();
-			}
-			foreach (TypeDef type in moduleDefinition.Types.OrderBy(t => t.FullName, TypeStringComparer)) {
-				NamespaceTreeNode ns;
-				if (!namespaces.TryGetValue(type.Namespace, out ns)) {
-					ns = new NamespaceTreeNode(type.Namespace);
-					namespaces[type.Namespace] = ns;
+			if (peImage != null)
+				this.Children.Add(new PETreeNode(peImage));
+			if (module != null) {
+				if (module is ModuleDefMD)
+					this.Children.Add(new ReferenceFolderTreeNode((ModuleDefMD)module, this, asmListTreeNode));
+				this.Children.Add(new ResourceListTreeNode(module));
+				foreach (NamespaceTreeNode ns in namespaces.Values) {
+					ns.Children.Clear();
 				}
-				TypeTreeNode node = new TypeTreeNode(type, this);
-				typeDict[type] = node;
-				ns.Children.Add(node);
-			}
-			foreach (NamespaceTreeNode ns in namespaces.Values.OrderBy(n => n.Name)) {
-				if (ns.Children.Count > 0)
-					this.Children.Add(ns);
+				foreach (TypeDef type in module.Types.OrderBy(t => t.FullName, TypeStringComparer)) {
+					NamespaceTreeNode ns;
+					if (!namespaces.TryGetValue(type.Namespace, out ns)) {
+						ns = new NamespaceTreeNode(type.Namespace);
+						namespaces[type.Namespace] = ns;
+					}
+					TypeTreeNode node = new TypeTreeNode(type, this);
+					typeDict[type] = node;
+					ns.Children.Add(node);
+				}
+				foreach (NamespaceTreeNode ns in namespaces.Values.OrderBy(n => n.Name)) {
+					if (ns.Children.Count > 0)
+						this.Children.Add(ns);
+				}
 			}
 		}
 
@@ -524,6 +536,10 @@ namespace ICSharpCode.ILSpy.TreeNodes
 					throw;
 				}
 			}
+			if (assembly.ModuleDefinition == null) {
+				language.WriteCommentLine(output, "This file does not contain a managed assembly.");
+				return;
+			}
 			var flags = Parent is AssemblyTreeNode ? DecompileAssemblyFlags.Module : DecompileAssemblyFlags.Assembly;
 			if (assembly.AssemblyDefinition == null)
 				flags = DecompileAssemblyFlags.Module;
@@ -534,6 +550,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 
 		public override bool Save(DecompilerTextView textView)
 		{
+			if (assembly.ModuleDefinition == null)
+				return false;
 			Language language = this.Language;
 			if (string.IsNullOrEmpty(language.ProjectFileExtension))
 				return false;
@@ -574,7 +592,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			if (context.SelectedTreeNodes == null)
 				return false;
-			return context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
+			return context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n is AssemblyTreeNode && ((AssemblyTreeNode)n).LoadedAssembly.ModuleDefinition != null);
 		}
 
 		public bool IsEnabled(TextViewContext context)

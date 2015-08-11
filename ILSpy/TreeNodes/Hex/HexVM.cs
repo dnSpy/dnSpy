@@ -17,19 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.HexEditor;
+using dnSpy.AsmEditor;
 
-namespace dnSpy.AsmEditor {
-	sealed class AsmEdHexDocument : HexDocument, IUndoObject {
-		public bool IsDirty { get; set; }
-		public int SavedCommand { get; set; }
-
-		public AsmEdHexDocument(string filename)
-			: base(filename) {
-		}
-
-		public AsmEdHexDocument(byte[] data, string filename)
-			: base(data, filename) {
-		}
+namespace dnSpy.TreeNodes.Hex {
+	abstract class HexVM : ViewModelBase {
+		public abstract string Name { get; }
+		public abstract void OnDocumentModifiedOverride(ulong modifiedStart, ulong modifiedEnd);
 	}
 }

@@ -124,7 +124,7 @@ namespace dnSpy.AsmEditor.Assembly {
 
 			var asmNodes = nodes.Select(a => (AssemblyTreeNode)a).ToArray();
 			var modNodes = new HashSet<AssemblyTreeNode>(asmNodes);
-			modNodes.AddRange(asmNodes.SelectMany(a => a.IsNetModule ? new AssemblyTreeNode[0] : a.Children.Cast<AssemblyTreeNode>()));
+			modNodes.AddRange(asmNodes.SelectMany(a => !a.IsAssembly ? new AssemblyTreeNode[0] : a.Children.Cast<AssemblyTreeNode>()));
 			if (!SaveModule.Saver.AskUserToSaveIfModified(modNodes))
 				return;
 

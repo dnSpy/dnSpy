@@ -44,7 +44,7 @@ namespace dnSpy.AsmEditor.Hex {
 			this.newCaretPos = hexBox.CaretPosition;
 			this.offset = offset;
 			this.origData = origData;
-			this.newData = doc.Read(offset, origData.Length);
+			this.newData = doc.ReadBytes(offset, origData.Length);
 			this.descr = descr;
 			this.canExecute = false;
 		}

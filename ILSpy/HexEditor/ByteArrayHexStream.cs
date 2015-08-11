@@ -45,6 +45,124 @@ namespace dnSpy.HexEditor {
 			return data[offset];
 		}
 
+		public short ReadInt16(ulong offset) {
+			if (offset + 1 < offset || offset + 1 >= (ulong)data.LongLength)
+				return offset < (ulong)data.LongLength ? data[offset] : (short)0;
+
+			return (short)(data[offset] | (data[offset + 1] << 8));
+		}
+
+		public ushort ReadUInt16(ulong offset) {
+			if (offset + 1 < offset || offset + 1 >= (ulong)data.LongLength)
+				return offset < (ulong)data.LongLength ? data[offset] : (ushort)0;
+
+			return (ushort)(data[offset] | (data[offset + 1] << 8));
+		}
+
+		public int ReadInt32(ulong offset) {
+			if (offset + 3 < offset)
+				return 0;
+			if (offset + 3 >= (ulong)data.LongLength) {
+				int res = 0;
+				if (offset < (ulong)data.LongLength)
+					res = data[offset];
+				if (offset + 1 < (ulong)data.LongLength)
+					res |= data[offset + 1] << 8;
+				if (offset + 2 < (ulong)data.LongLength)
+					res |= data[offset + 2] << 16;
+				return res;
+			}
+
+			return data[offset] |
+					(data[offset + 1] << 8) |
+					(data[offset + 2] << 16) |
+					(data[offset + 3] << 24);
+		}
+
+		public uint ReadUInt32(ulong offset) {
+			if (offset + 3 < offset)
+				return 0;
+			if (offset + 3 >= (ulong)data.LongLength) {
+				int res = 0;
+				if (offset < (ulong)data.LongLength)
+					res = data[offset];
+				if (offset + 1 < (ulong)data.LongLength)
+					res |= data[offset + 1] << 8;
+				if (offset + 2 < (ulong)data.LongLength)
+					res |= data[offset + 2] << 16;
+				return (uint)res;
+			}
+
+			return (uint)(data[offset] |
+					(data[offset + 1] << 8) |
+					(data[offset + 2] << 16) |
+					(data[offset + 3] << 24));
+		}
+
+		public long ReadInt64(ulong offset) {
+			if (offset + 7 < offset)
+				return 0;
+			if (offset + 7 >= (ulong)data.LongLength) {
+				long res = 0;
+				if (offset < (ulong)data.LongLength)
+					res = data[offset];
+				if (offset + 1 < (ulong)data.LongLength)
+					res |= (long)data[offset + 1] << 8;
+				if (offset + 2 < (ulong)data.LongLength)
+					res |= (long)data[offset + 2] << 16;
+				if (offset + 3 < (ulong)data.LongLength)
+					res |= (long)data[offset + 3] << 24;
+				if (offset + 4 < (ulong)data.LongLength)
+					res |= (long)data[offset + 4] << 32;
+				if (offset + 5 < (ulong)data.LongLength)
+					res |= (long)data[offset + 5] << 40;
+				if (offset + 6 < (ulong)data.LongLength)
+					res |= (long)data[offset + 6] << 48;
+				return res;
+			}
+
+			return data[offset] |
+					((long)data[offset + 1] << 8) |
+					((long)data[offset + 2] << 16) |
+					((long)data[offset + 3] << 24) |
+					((long)data[offset + 4] << 32) |
+					((long)data[offset + 5] << 40) |
+					((long)data[offset + 6] << 48) |
+					((long)data[offset + 7] << 56);
+		}
+
+		public ulong ReadUInt64(ulong offset) {
+			if (offset + 7 < offset)
+				return 0;
+			if (offset + 7 >= (ulong)data.LongLength) {
+				ulong res = 0;
+				if (offset < (ulong)data.LongLength)
+					res = data[offset];
+				if (offset + 1 < (ulong)data.LongLength)
+					res |= (ulong)data[offset + 1] << 8;
+				if (offset + 2 < (ulong)data.LongLength)
+					res |= (ulong)data[offset + 2] << 16;
+				if (offset + 3 < (ulong)data.LongLength)
+					res |= (ulong)data[offset + 3] << 24;
+				if (offset + 4 < (ulong)data.LongLength)
+					res |= (ulong)data[offset + 4] << 32;
+				if (offset + 5 < (ulong)data.LongLength)
+					res |= (ulong)data[offset + 5] << 40;
+				if (offset + 6 < (ulong)data.LongLength)
+					res |= (ulong)data[offset + 6] << 48;
+				return res;
+			}
+
+			return data[offset] |
+					((ulong)data[offset + 1] << 8) |
+					((ulong)data[offset + 2] << 16) |
+					((ulong)data[offset + 3] << 24) |
+					((ulong)data[offset + 4] << 32) |
+					((ulong)data[offset + 5] << 40) |
+					((ulong)data[offset + 6] << 48) |
+					((ulong)data[offset + 7] << 56);
+		}
+
 		public void Read(ulong offset, byte[] array, long index, int count) {
 			if (offset >= (ulong)data.LongLength) {
 				Clear(array, index, count);

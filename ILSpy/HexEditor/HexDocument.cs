@@ -61,6 +61,30 @@ namespace dnSpy.HexEditor {
 			return stream.ReadByte(offs);
 		}
 
+		public short ReadInt16(ulong offset) {
+			return stream.ReadInt16(offset);
+		}
+
+		public ushort ReadUInt16(ulong offset) {
+			return stream.ReadUInt16(offset);
+		}
+
+		public int ReadInt32(ulong offset) {
+			return stream.ReadInt32(offset);
+		}
+
+		public uint ReadUInt32(ulong offset) {
+			return stream.ReadUInt32(offset);
+		}
+
+		public long ReadInt64(ulong offset) {
+			return stream.ReadInt64(offset);
+		}
+
+		public ulong ReadUInt64(ulong offset) {
+			return stream.ReadUInt64(offset);
+		}
+
 		public void Read(ulong offset, byte[] array, long index, int count) {
 			stream.Read(offset, array, index, count);
 		}

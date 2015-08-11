@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
+
 namespace dnSpy.HexEditor {
 	public interface IHexStream {
 		/// <summary>
@@ -36,12 +38,54 @@ namespace dnSpy.HexEditor {
 		ulong EndOffset { get; }
 
 		/// <summary>
-		/// Reads a byte. Returns -1 if <paramref name="offset"/> is invalid or if the memory isn't
-		/// readable.
+		/// Reads a <see cref="byte"/>. Returns -1 if <paramref name="offset"/> is invalid or if the
+		/// memory isn't readable.
 		/// </summary>
 		/// <param name="offset">Offset of byte</param>
 		/// <returns></returns>
 		int ReadByte(ulong offset);
+
+		/// <summary>
+		/// Reads a <see cref="short"/>
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <returns></returns>
+		short ReadInt16(ulong offset);
+
+		/// <summary>
+		/// Reads a <see cref="ushort"/>
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <returns></returns>
+		ushort ReadUInt16(ulong offset);
+
+		/// <summary>
+		/// Reads a <see cref="int"/>
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <returns></returns>
+		int ReadInt32(ulong offset);
+
+		/// <summary>
+		/// Reads a <see cref="uint"/>
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <returns></returns>
+		uint ReadUInt32(ulong offset);
+
+		/// <summary>
+		/// Reads a <see cref="long"/>
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <returns></returns>
+		long ReadInt64(ulong offset);
+
+		/// <summary>
+		/// Reads a <see cref="ulong"/>
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <returns></returns>
+		ulong ReadUInt64(ulong offset);
 
 		/// <summary>
 		/// Reads bytes
@@ -77,10 +121,21 @@ namespace dnSpy.HexEditor {
 		/// <param name="offset">Offset</param>
 		/// <param name="size">Size of data to read</param>
 		/// <returns></returns>
-		public static byte[] Read(this IHexStream self, ulong offset, int size) {
+		public static byte[] ReadBytes(this IHexStream self, ulong offset, int size) {
 			var data = new byte[size];
 			self.Read(offset, data, 0, data.Length);
 			return data;
+		}
+
+		/// <summary>
+		/// Writes bytes
+		/// </summary>
+		/// <param name="self">Stream</param>
+		/// <param name="offset">Offset</param>
+		/// <param name="data">Data</param>
+		public static void Write(this IHexStream self, ulong offset, byte[] data) {
+			Debug.Assert(data.LongLength <= int.MaxValue);
+			self.Write(offset, data, 0, data.Length);
 		}
 	}
 }

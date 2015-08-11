@@ -232,6 +232,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			foreach (AssemblyTreeNode node in this.Children) {
 				if (!node.LoadedAssembly.IsLoaded)
 					continue;
+				if (!node.IsDotNetFile)
+					continue;
 				if (node.IsNetModule) {
 					if (node.LoadedAssembly.ModuleDefinition == module)
 						return node;
@@ -373,7 +375,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			foreach (AssemblyTreeNode node in this.Children) {
 				if (node.LoadedAssembly != asm)
 					continue;
-				if (node.IsNetModule)
+				if (!node.IsDotNetFile || node.IsNetModule)
 					continue;
 
 				node.EnsureChildrenFiltered();

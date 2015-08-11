@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnSpy.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex {
@@ -32,16 +33,25 @@ namespace dnSpy.AsmEditor.Hex {
 		public static void AddAndExecute(string filename, ulong offset, byte[] data, string descr = null) {
 			if (string.IsNullOrEmpty(filename))
 				throw new ArgumentException();
-			if (data == null || data.Length == 0)
+			var doc = HexDocumentManager.Instance.GetOrCreate(filename);
+			if (doc == null)
 				return;
-			UndoCommandManager.Instance.Add(new WriteHexUndoCommand(filename, offset, data, descr));
+			AddAndExecute(doc, offset, data, descr);
 		}
 
-		WriteHexUndoCommand(string filename, ulong offset, byte[] data, string descr) {
-			this.doc = HexDocumentManager.Instance.GetOrCreate(filename);
+		public static void AddAndExecute(HexDocument doc, ulong offset, byte[] data, string descr = null) {
+			if (doc == null)
+				throw new ArgumentNullException();
+			if (data == null || data.Length == 0)
+				return;
+			UndoCommandManager.Instance.Add(new WriteHexUndoCommand(doc, offset, data, descr));
+		}
+
+		WriteHexUndoCommand(HexDocument doc, ulong offset, byte[] data, string descr) {
+			this.doc = doc;
 			this.offset = offset;
 			this.newData = (byte[])data.Clone();
-			this.origData = this.doc.Read(offset, data.Length);
+			this.origData = this.doc.ReadBytes(offset, data.Length);
 			this.descr = descr;
 		}
 

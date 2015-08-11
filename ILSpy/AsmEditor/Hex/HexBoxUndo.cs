@@ -71,7 +71,7 @@ namespace dnSpy.AsmEditor.Hex {
 				return;
 			if (e.IsBeforeWrite) {
 				var info = new UndoInfo();
-				info.OriginalData = hts.HexBox.Document.Read(e.StartOffset, e.Size);
+				info.OriginalData = hts.HexBox.Document.ReadBytes(e.StartOffset, e.Size);
 				info.OriginalCaretPosition = hts.HexBox.CaretPosition;
 				e.Context[key] = info;
 			}

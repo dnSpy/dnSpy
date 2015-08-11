@@ -20,12 +20,19 @@
 using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
+using dnlib.PE;
 using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	static class MmapUtils {
 		public static void DisableMemoryMappedIO(IEnumerable<string> filenames) {
 			var hash = new HashSet<string>(filenames, StringComparer.OrdinalIgnoreCase);
+
+			foreach (var asm in GetAssemblyTreeNodes()) {
+				DisableMemoryMappedIO(hash, asm.LoadedAssembly.TheLoadedFile.ModuleDef as ModuleDefMD);
+				DisableMemoryMappedIO(hash, asm.LoadedAssembly.TheLoadedFile.PEImage);
+			}
 
 			foreach (var mod in MainWindow.Instance.CurrentAssemblyList.GetAllModules())
 				DisableMemoryMappedIO(hash, mod as ModuleDefMD);
@@ -34,9 +41,25 @@ namespace dnSpy.AsmEditor.SaveModule {
 				DisableMemoryMappedIO(hash, asm.ModuleDefinition as ModuleDefMD);
 		}
 
+		static IEnumerable<AssemblyTreeNode> GetAssemblyTreeNodes() {
+			foreach (AssemblyTreeNode asmNode in MainWindow.Instance.treeView.Root.Children) {
+				if (asmNode.Children.Count == 0 || !(asmNode.Children[0] is AssemblyTreeNode))
+					yield return asmNode;
+				else {
+					foreach (AssemblyTreeNode child in asmNode.Children)
+						yield return child;
+				}
+			}
+		}
+
 		static void DisableMemoryMappedIO(HashSet<string> filenames, ModuleDefMD mod) {
-			if (mod != null && filenames.Contains(mod.Location))
-				mod.MetaData.PEImage.UnsafeDisableMemoryMappedIO();
+			if (mod != null)
+				DisableMemoryMappedIO(filenames, mod.MetaData.PEImage);
+		}
+
+		static void DisableMemoryMappedIO(HashSet<string> filenames, IPEImage peImage) {
+			if (peImage != null && filenames.Contains(peImage.FileName))
+				peImage.UnsafeDisableMemoryMappedIO();
 		}
 	}
 }

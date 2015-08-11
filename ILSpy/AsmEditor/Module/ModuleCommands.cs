@@ -489,8 +489,7 @@ namespace dnSpy.AsmEditor.Module {
 			var asm = new LoadedAssembly(MainWindow.Instance.CurrentAssemblyList, dialog.FileName);
 			if (asm.ModuleDefinition == null || asm.AssemblyDefinition != null) {
 				MainWindow.Instance.ShowMessageBox(string.Format("{0} is not a NetModule", asm.FileName), System.Windows.MessageBoxButton.OK);
-				if (asm.ModuleDefinition != null)
-					asm.ModuleDefinition.Dispose();
+				asm.TheLoadedFile.Dispose();
 				return;
 			}
 

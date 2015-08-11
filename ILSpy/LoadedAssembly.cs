@@ -23,6 +23,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using dnlib.DotNet;
+using dnlib.PE;
 using dnSpy.AsmEditor;
 using dnSpy.Options;
 using ICSharpCode.ILSpy.Options;
@@ -34,7 +35,24 @@ namespace ICSharpCode.ILSpy
 	/// </summary>
 	public sealed class LoadedAssembly : IDisposable, IUndoObject
 	{
-		Task<ModuleDef> assemblyTask;
+		public struct LoadedFile : IDisposable {
+			public IPEImage PEImage;
+			public ModuleDef ModuleDef;
+
+			public LoadedFile(IPEImage peImage, ModuleDef module) {
+				this.PEImage = peImage;
+				this.ModuleDef = module;
+			}
+
+			public void Dispose() {
+				if (PEImage != null)
+					PEImage.Dispose();
+				if (ModuleDef != null)
+					ModuleDef.Dispose();
+			}
+		}
+
+		Task<LoadedFile> assemblyTask;
 		readonly AssemblyList assemblyList;
 		string fileName;
 		string shortName;
@@ -134,7 +152,7 @@ namespace ICSharpCode.ILSpy
 			this.assemblyList = assemblyList;
 			this.fileName = module.Location ?? string.Empty;
 
-			this.assemblyTask = Task.Factory.StartNew<ModuleDef>(() => LoadModule(module));
+			this.assemblyTask = Task.Factory.StartNew<LoadedFile>(() => LoadModule(module));
 			this.shortName = GetShortName(fileName);
 			if (string.IsNullOrEmpty(this.shortName))
 				this.shortName = module.Name;
@@ -152,7 +170,7 @@ namespace ICSharpCode.ILSpy
 			this.assemblyList = assemblyList;
 			this.fileName = fileName;
 			
-			this.assemblyTask = Task.Factory.StartNew<ModuleDef>(LoadAssembly, null); // requires that this.fileName is set
+			this.assemblyTask = Task.Factory.StartNew<LoadedFile>(LoadAssembly, null); // requires that this.fileName is set
 			this.shortName = GetShortName(fileName);
 		}
 
@@ -176,7 +194,7 @@ namespace ICSharpCode.ILSpy
 				if (wasException)
 					return null;
 				try {
-					return assemblyTask.Result;
+					return assemblyTask.Result.ModuleDef;
 				} catch (AggregateException) {
 					wasException = true;
 					return null;
@@ -184,7 +202,35 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		bool wasException;
-		
+
+		public IPEImage PEImage {
+			get {
+				if (wasException)
+					return null;
+				try {
+					return assemblyTask.Result.PEImage;
+				}
+				catch (AggregateException) {
+					wasException = true;
+					return null;
+				}
+			}
+		}
+
+		public LoadedFile TheLoadedFile {
+			get {
+				if (wasException)
+					return default(LoadedFile);
+				try {
+					return assemblyTask.Result;
+				}
+				catch (AggregateException) {
+					wasException = true;
+					return default(LoadedFile);
+				}
+			}
+		}
+
 		/// <summary>
 		/// Gets the Cecil AssemblyDefinition.
 		/// Is null when there was a load error; or when opening a netmodule.
@@ -232,7 +278,7 @@ namespace ICSharpCode.ILSpy
 			get { return assemblyTask.IsFaulted; }
 		}
 
-		ModuleDef LoadModule(ModuleDef module)
+		LoadedFile LoadModule(ModuleDef module)
 		{
 			// runs on background thread
 			module.Context = CreateModuleContext();
@@ -241,15 +287,34 @@ namespace ICSharpCode.ILSpy
 		
 		public bool IsAutoLoaded { get; set; }
 
-		ModuleDef LoadAssembly(object state)
+		LoadedFile LoadAssembly(object state)
 		{
-			ModuleDef module;
+			IPEImage peImage;
+
 			if (OtherSettings.Instance.UseMemoryMappedIO)
-				module = ModuleDefMD.Load(fileName, CreateModuleContext());
+				peImage = new PEImage(fileName);
 			else
-				module = ModuleDefMD.Load(File.ReadAllBytes(fileName), CreateModuleContext());
-			return InitializeModule(module);
-		}
+				peImage = new PEImage(File.ReadAllBytes(fileName));
+
+			var dotNetDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
+			bool isDotNet = dotNetDir.VirtualAddress != 0 && dotNetDir.Size >= 0x48;
+
+			if (isDotNet) {
+				try {
+					ModuleDef module;
+					var opts = new ModuleCreationOptions(CreateModuleContext());
+					if (OtherSettings.Instance.UseMemoryMappedIO)
+						module = ModuleDefMD.Load(peImage, opts);
+					else
+						module = ModuleDefMD.Load(peImage, opts);
+					return InitializeModule(module);
+				}
+				catch {
+				}
+			}
+
+			return new LoadedFile(peImage, null);
+        }
 
 		ModuleContext CreateModuleContext()
 		{
@@ -263,19 +328,21 @@ namespace ICSharpCode.ILSpy
 			return moduleCtx;
 		}
 
-		ModuleDef InitializeModule(ModuleDef module)
+		LoadedFile InitializeModule(ModuleDef module)
 		{
 			module.EnableTypeDefFindCache = true;
+			var md = module as ModuleDefMD;
 			if (DecompilerSettingsPanel.CurrentDecompilerSettings.UseDebugSymbols) {
 				try {
-					LoadSymbols(module as ModuleDefMD);
+					LoadSymbols(md);
 				} catch (IOException) {
 				} catch (UnauthorizedAccessException) {
 				} catch (InvalidOperationException) {
 					// ignore any errors during symbol loading
 				}
 			}
-			return module;
+
+			return new LoadedFile(md == null ? null : md.MetaData.PEImage, module);
 		}
 		
 		private void LoadSymbols(ModuleDefMD module)
@@ -496,7 +563,7 @@ namespace ICSharpCode.ILSpy
 			return null;
 		}
 		
-		public Task ContinueWhenLoaded(Action<Task<ModuleDef>> onAssemblyLoaded, TaskScheduler taskScheduler)
+		public Task ContinueWhenLoaded(Action<Task<LoadedFile>> onAssemblyLoaded, TaskScheduler taskScheduler)
 		{
 			return this.assemblyTask.ContinueWith(onAssemblyLoaded, taskScheduler);
 		}
@@ -526,7 +593,7 @@ namespace ICSharpCode.ILSpy
 			// Prevent a ref to the module def. Needed if the OS is XP (.NET 4.0), not if Win10 (.NET 4.6).
 			// Make sure that the task has finished so the GC can collect the memory.
 			Load(ModuleDefinition);
-			assemblyTask = new Task<ModuleDef>(() => null);
+			assemblyTask = new Task<LoadedFile>(() => default(LoadedFile));
 		}
 
 		static void Load(object obj)

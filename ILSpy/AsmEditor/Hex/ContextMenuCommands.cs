@@ -595,7 +595,9 @@ namespace dnSpy.AsmEditor.Hex {
 			if (info == null || info.Value.Size > int.MaxValue)
 				return null;
 			var doc = HexDocumentManager.Instance.GetOrCreate(info.Value.Filename);
-			return doc.Read(info.Value.Offset, (int)info.Value.Size);
+			if (doc == null)
+				return null;
+			return doc.ReadBytes(info.Value.Offset, (int)info.Value.Size);
 		}
 	}
 

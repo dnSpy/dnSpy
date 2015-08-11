@@ -1267,7 +1267,7 @@ namespace ICSharpCode.ILSpy
 			}
 			if (!string.IsNullOrEmpty(args.SaveDirectory)) {
 				foreach (var x in commandLineLoadedAssemblies) {
-					x.ContinueWhenLoaded( (Task<ModuleDef> moduleTask) => {
+					x.ContinueWhenLoaded( (Task<LoadedAssembly.LoadedFile> moduleTask) => {
 						OnExportAssembly(moduleTask, args.SaveDirectory);
 					}, TaskScheduler.FromCurrentSynchronizationContext());
 				}
@@ -1275,12 +1275,12 @@ namespace ICSharpCode.ILSpy
 			commandLineLoadedAssemblies.Clear(); // clear references once we don't need them anymore
 		}
 		
-		void OnExportAssembly(Task<ModuleDef> moduleTask, string path)
+		void OnExportAssembly(Task<LoadedAssembly.LoadedFile> moduleTask, string path)
 		{
 			var textView = ActiveTextView;
 			if (textView == null)
 				return;
-			AssemblyTreeNode asmNode = assemblyListTreeNode.FindModuleNode(moduleTask.Result);
+			AssemblyTreeNode asmNode = assemblyListTreeNode.FindModuleNode(moduleTask.Result.ModuleDef);
 			if (asmNode != null) {
 				string file = DecompilerTextView.CleanUpName(asmNode.LoadedAssembly.ShortName);
 				Language language = sessionSettings.FilterSettings.Language;
@@ -2074,12 +2074,21 @@ namespace ICSharpCode.ILSpy
 			if (nodes.Length == 1) {
 				var node = nodes[0];
 
+				var viewObject = node.GetViewObject(tabState.TextView);
+				if (viewObject != null) {
+					tabState.TextView.CancelDecompileAsync();
+					tabState.Content = viewObject;
+					return true;
+				}
+
 				if (node.View(tabState.TextView)) {
+					tabState.Content = tabState.TextView;
 					tabState.TextView.CancelDecompileAsync();
 					return true;
 				}
 			}
 
+			tabState.Content = tabState.TextView;
 			tabState.TextView.DecompileAsync(language, nodes, new DecompilationOptions() { TextViewState = state, DecompilerTextView = tabState.TextView });
 			return true;
 		}
@@ -2258,7 +2267,7 @@ namespace ICSharpCode.ILSpy
 					}
 
 					var savedHexTabState = savedTabState as SavedHexTabState;
-					if (savedHexTabState != null) {
+					if (savedHexTabState != null && File.Exists(savedHexTabState.FileName)) {
 						var tabState = CreateNewHexTabState(tabManager);
 						CreateHexTabState(tabState, savedHexTabState);
 						continue;
@@ -2369,6 +2378,8 @@ namespace ICSharpCode.ILSpy
 
 		HexTabState CreateHexTabState(SavedHexTabState savedState)
 		{
+			if (!File.Exists(savedState.FileName))
+				return null;
 			var tabState = CreateNewHexTabState(tabGroupsManager.ActiveTabGroup);
 			return CreateHexTabState(tabState, savedState);
 		}
@@ -2381,15 +2392,10 @@ namespace ICSharpCode.ILSpy
 
 		HexTabState InitializeHexDocument(HexTabState tabState, string filename)
 		{
-			Exception errEx = null;
-			try {
-				tabState.SetDocument(HexDocumentManager.Instance.GetOrCreate(filename));
-			}
-			catch (Exception ex) { // most likely: IOException, UnauthorizedAccessException, SecurityException
-				errEx = ex;
-			}
-			if (errEx != null)
-				ShowIgnorableMessageBox("hex: load doc ex", string.Format("Error loading {0}.\n\nError: {1}", filename, errEx.Message), MessageBoxButton.OK);
+			var doc = HexDocumentManager.Instance.GetOrCreate(filename);
+			tabState.SetDocument(doc);
+			if (doc == null)
+				ShowIgnorableMessageBox("hex: load doc err", string.Format("Error loading {0}", filename), MessageBoxButton.OK);
 			return tabState;
 		}
 
@@ -2862,6 +2868,8 @@ namespace ICSharpCode.ILSpy
 				else
 					tabState = CloneTab(currenTabState);
 			}
+			if (tabState == null)
+				return;
 
 			tabGroupsManager.ActiveTabGroup.SetSelectedTab(tabState);
 		}
@@ -2884,7 +2892,6 @@ namespace ICSharpCode.ILSpy
 
 			var tabState = DecompileTabState.GetDecompileTabState(textView);
 			var clonedTabState = (DecompileTabState)CloneTabMakeActive(tabState, false);
-			Debug.Assert(clonedTabState != null);
 			if (clonedTabState == null)
 				return;
 			clonedTabState.History.Clear();
@@ -3343,7 +3350,7 @@ namespace ICSharpCode.ILSpy
 		}
 
 		HexTabState OpenHexBoxInternal(string filename) {
-			if (string.IsNullOrEmpty(filename))
+			if (!File.Exists(filename))
 				return null;
 			var tabState = CreateNewHexTabState(tabGroupsManager.ActiveTabGroup);
 			InitializeHexDocument(tabState, filename);
@@ -3386,13 +3393,11 @@ namespace ICSharpCode.ILSpy
 			ulong fileOffset;
 			if (@ref.IsRVA) {
 				var asm = assemblyList.FindAssemblyByFileName(@ref.Filename);
-				//TODO: Should check whether it's a PE file, not whether it's a .NET file
-				if (asm == null || asm.ModuleDefinition == null)
+				if (asm == null)
 					return;
-				var mod = asm.ModuleDefinition as ModuleDefMD;
-				if (mod == null)
+				var pe = asm.PEImage;
+				if (pe == null)
 					return;
-				var pe = mod.MetaData.PEImage;
 				fileOffset = (ulong)pe.ToFileOffset((RVA)@ref.Address);
 				tabState = GetHexTabStates(@ref.Filename, fileOffset, @ref.Length).FirstOrDefault();
 			}

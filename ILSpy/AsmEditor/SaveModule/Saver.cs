@@ -112,7 +112,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 					var asm = obj as LoadedAssembly;
 					if (asm != null && string.IsNullOrEmpty(asm.FileName)) {
 						var filename = vm.GetSavedFileName(asm);
-						if (!string.IsNullOrWhiteSpace(filename)) {
+						if (!string.IsNullOrWhiteSpace(filename) && asm.ModuleDefinition != null) {
 							asm.ModuleDefinition.Location = filename;
 							asm.FileName = filename;
 							setNewFileName = true;

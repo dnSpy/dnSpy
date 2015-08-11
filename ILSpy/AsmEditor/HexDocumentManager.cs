@@ -21,6 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security;
+using dnlib.IO;
+using dnlib.PE;
 
 namespace dnSpy.AsmEditor {
 	sealed class HexDocumentManager {
@@ -47,6 +50,8 @@ namespace dnSpy.AsmEditor {
 		}
 
 		public AsmEdHexDocument GetOrCreate(string filename) {
+			if (!File.Exists(filename))
+				return null;
 			filename = GetFullPath(filename);
 
 			lock (lockObj) {
@@ -54,10 +59,34 @@ namespace dnSpy.AsmEditor {
 				if (filenameToDoc.TryGetValue(filename, out doc))
 					return doc;
 
-				//TODO: This reads the whole file into memory
-				doc = new AsmEdHexDocument(filename);
+				byte[] data;
+				try {
+					data = File.ReadAllBytes(filename);
+				}
+				catch {
+					return null;
+				}
+
+				doc = new AsmEdHexDocument(data, filename);
 				filenameToDoc.Add(filename, doc);
 				return doc;
+			}
+		}
+
+		public AsmEdHexDocument GetOrCreate(IPEImage peImage) {
+			var filename = GetFullPath(peImage.FileName);
+
+			lock (lockObj) {
+				AsmEdHexDocument doc;
+				if (filenameToDoc.TryGetValue(filename, out doc))
+					return doc;
+
+				using (var stream = peImage.CreateFullStream()) {
+					var data = stream.ReadAllBytes();
+					doc = new AsmEdHexDocument(data, filename);
+					filenameToDoc.Add(filename, doc);
+					return doc;
+				}
 			}
 		}
 
@@ -67,12 +96,18 @@ namespace dnSpy.AsmEditor {
 		}
 
 		static string GetFullPath(string filename) {
-			if (filename == null)
-				return string.Empty;
+			if (!File.Exists(filename))
+				return filename ?? string.Empty;
 			try {
 				return Path.GetFullPath(filename);
 			}
-			catch (PathTooLongException) {
+			catch (ArgumentException) {
+			}
+			catch (IOException) {
+			}
+			catch (SecurityException) {
+			}
+			catch (NotSupportedException) {
 			}
 			return filename;
 		}
