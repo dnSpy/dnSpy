@@ -25,6 +25,7 @@ using System.Linq;
 using System.Windows.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
+using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 

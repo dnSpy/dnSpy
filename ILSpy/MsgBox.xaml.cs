@@ -19,9 +19,9 @@
 
 using System;
 using System.Windows;
-using ICSharpCode.ILSpy.Controls;
+using dnSpy.Controls;
 
-namespace ICSharpCode.ILSpy {
+namespace dnSpy {
 	[Flags]
 	public enum MsgBoxButton {
 		None = 0,

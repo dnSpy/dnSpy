@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.TextView {
+namespace dnSpy.TextView {
 	sealed class LanguageTokens {
 		public int Length {
 			get { return currentOffset; }

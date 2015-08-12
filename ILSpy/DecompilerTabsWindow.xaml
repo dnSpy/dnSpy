@@ -16,12 +16,13 @@
     You should have received a copy of the GNU General Public License
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<ctrls:MetroWindow x:Class="ICSharpCode.ILSpy.DecompilerTabsWindow"
+<ctrls:MetroWindow x:Class="dnSpy.DecompilerTabsWindow"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:ctrls="clr-namespace:ICSharpCode.ILSpy.Controls"
+             xmlns:ilctrls="clr-namespace:ICSharpCode.ILSpy.Controls"
+             xmlns:ctrls="clr-namespace:dnSpy.Controls"
              Width="620" Height="390"
              MinWidth="500" MinHeight="300"
              Title="Windows"
@@ -41,16 +42,16 @@
 
 		<ListView Name="listView" Grid.Row="0" Grid.Column="0"
 				  Margin="0 0 13 13"
-				  ctrls:SortableGridViewColumn.SortMode="Automatic"
+				  ilctrls:SortableGridViewColumn.SortMode="Automatic"
 				  VirtualizingStackPanel.IsVirtualizing="False"
 				  KeyDown="listView_KeyDown"
 				  SelectionChanged="listView_SelectionChanged"
 				  MouseDoubleClick="listView_MouseDoubleClick">
 			<ListView.View>
 				<GridView>
-					<ctrls:SortableGridViewColumn Header="Name" DisplayMemberBinding="{Binding TabState.ShortHeader}" />
-					<ctrls:SortableGridViewColumn Header="Module" DisplayMemberBinding="{Binding FirstModuleName}" />
-					<ctrls:SortableGridViewColumn Header="Path" DisplayMemberBinding="{Binding FirstModuleFullName}" />
+					<ilctrls:SortableGridViewColumn Header="Name" DisplayMemberBinding="{Binding TabState.ShortHeader}" />
+					<ilctrls:SortableGridViewColumn Header="Module" DisplayMemberBinding="{Binding FirstModuleName}" />
+					<ilctrls:SortableGridViewColumn Header="Path" DisplayMemberBinding="{Binding FirstModuleFullName}" />
 				</GridView>
 			</ListView.View>
 		</ListView>

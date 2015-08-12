@@ -23,8 +23,9 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using dnSpy.Images;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.Commands {
+namespace dnSpy.Commands {
 	abstract class ToolbarCommand : ICommand {
 		public bool CanExecute(object parameter) {
 			return true;

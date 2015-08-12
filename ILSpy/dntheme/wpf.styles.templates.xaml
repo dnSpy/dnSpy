@@ -6,7 +6,7 @@
                     xmlns:avalonsearch="clr-namespace:ICSharpCode.AvalonEdit.Search;assembly=ICSharpCode.AvalonEdit"
                     xmlns:avalonedit="clr-namespace:ICSharpCode.AvalonEdit;assembly=ICSharpCode.AvalonEdit"
                     xmlns:avalonediting="clr-namespace:ICSharpCode.AvalonEdit.Editing;assembly=ICSharpCode.AvalonEdit"
-                    xmlns:ctrls="clr-namespace:ICSharpCode.ILSpy.Controls"
+                    xmlns:ctrls="clr-namespace:dnSpy.Controls"
                     xmlns:hex="clr-namespace:dnSpy.AsmEditor.Hex"
                     xmlns:options="clr-namespace:dnSpy.Options"
                     xmlns:options2="clr-namespace:ICSharpCode.ILSpy.Options"

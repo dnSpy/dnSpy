@@ -28,7 +28,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using dnSpy.AsmEditor;
 
-namespace ICSharpCode.ILSpy.Controls {
+namespace dnSpy.Controls {
 	public class MetroWindow : Window {
 		public MetroWindow() {
 			SetValue(winChrome_WindowChromeProperty, CreateWindowChromeObject());

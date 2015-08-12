@@ -20,7 +20,7 @@
 using System;
 using System.IO;
 
-namespace ICSharpCode.ILSpy.TreeNodes {
+namespace dnSpy.TreeNodes {
 	public sealed class ResourceData {
 		public readonly string Name;
 		public readonly Func<Stream> GetStream;

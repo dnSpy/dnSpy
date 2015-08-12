@@ -23,7 +23,6 @@ using System.Text;
 using dnSpy.AsmEditor;
 using dnSpy.AsmEditor.Hex;
 using dnSpy.HexEditor;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.TreeNodes.Hex {
 	[DebuggerDisplay("{StartOffset} {EndOffset} {Name} {DataFieldVM.StringValue}")]

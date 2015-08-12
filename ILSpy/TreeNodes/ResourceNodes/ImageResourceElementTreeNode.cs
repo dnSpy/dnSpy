@@ -28,9 +28,11 @@ using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnlib.IO;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.TreeNodes {
+namespace dnSpy.TreeNodes {
 	[Export(typeof(IResourceFactory<Resource, ResourceTreeNode>))]
 	sealed class ImageResourceTreeNodeFactory : IResourceFactory<Resource, ResourceTreeNode> {
 		public int Priority {
@@ -174,7 +176,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return bimg;
 		}
 
-		public override void Decompile(Language language, Decompiler.ITextOutput output) {
+		public override void Decompile(Language language, ITextOutput output) {
 			var smartOutput = output as ISmartTextOutput;
 			if (smartOutput != null) {
 				language.WriteComment(output, string.Empty);

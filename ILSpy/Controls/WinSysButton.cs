@@ -21,7 +21,7 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 
-namespace ICSharpCode.ILSpy.Controls {
+namespace dnSpy.Controls {
 	public enum WinSysType {
 		Minimize,
 		Maximize,
@@ -85,19 +85,19 @@ namespace ICSharpCode.ILSpy.Controls {
 				return;
 
 			switch (newValue) {
-			case Controls.WinSysType.Minimize:
-				CurrentWinSysType = Controls.CurrentWinSysType.Minimize;
+			case WinSysType.Minimize:
+				CurrentWinSysType = CurrentWinSysType.Minimize;
 				break;
 
-			case Controls.WinSysType.Maximize:
+			case WinSysType.Maximize:
 				CurrentWinSysType =
 					window.WindowState == WindowState.Maximized ?
-					Controls.CurrentWinSysType.Restore :
-					Controls.CurrentWinSysType.Maximize;
+					CurrentWinSysType.Restore :
+					CurrentWinSysType.Maximize;
 				break;
 
-			case Controls.WinSysType.Close:
-				CurrentWinSysType = Controls.CurrentWinSysType.Close;
+			case WinSysType.Close:
+				CurrentWinSysType = CurrentWinSysType.Close;
 				break;
 
 			default:
@@ -107,19 +107,19 @@ namespace ICSharpCode.ILSpy.Controls {
 
 		protected override void OnClick() {
 			switch (CurrentWinSysType) {
-			case Controls.CurrentWinSysType.Minimize:
-				ICSharpCode.ILSpy.Controls.WindowUtils.Minimize(window);
+			case CurrentWinSysType.Minimize:
+				WindowUtils.Minimize(window);
 				break;
 
-			case Controls.CurrentWinSysType.Maximize:
-				ICSharpCode.ILSpy.Controls.WindowUtils.Maximize(window);
+			case CurrentWinSysType.Maximize:
+				WindowUtils.Maximize(window);
 				break;
 
-			case Controls.CurrentWinSysType.Restore:
-				ICSharpCode.ILSpy.Controls.WindowUtils.Restore(window);
+			case CurrentWinSysType.Restore:
+				WindowUtils.Restore(window);
 				break;
 
-			case Controls.CurrentWinSysType.Close:
+			case CurrentWinSysType.Close:
 				window.Close();
 				break;
 

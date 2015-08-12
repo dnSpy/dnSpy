@@ -18,8 +18,9 @@
 */
 
 using System.Windows.Input;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.Commands {
+namespace dnSpy.Commands {
 	[ExportMainMenuCommand(Menu = "_Edit", MenuHeader = "_Find", MenuIcon = "Find", MenuCategory = "Search", MenuInputGestureText = "Ctrl+F", MenuOrder = 2090)]
 	sealed class FindInCodeCommand : CommandWrapper {
 		public FindInCodeCommand()

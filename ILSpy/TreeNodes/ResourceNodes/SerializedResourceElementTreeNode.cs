@@ -27,7 +27,7 @@ using dnSpy.AsmEditor;
 using dnSpy.AsmEditor.Resources;
 using dnSpy.Options;
 
-namespace ICSharpCode.ILSpy.TreeNodes {
+namespace dnSpy.TreeNodes {
 	/// <summary>
 	/// Base class of serialized resources
 	/// </summary>

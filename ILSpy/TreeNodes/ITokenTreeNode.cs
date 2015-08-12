@@ -19,7 +19,7 @@
 
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.TreeNodes {
+namespace dnSpy.TreeNodes {
 	public interface ITokenTreeNode {
 		IMDTokenProvider MDTokenProvider { get; }
 	}

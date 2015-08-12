@@ -1,13 +1,10 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Windows;
 using System.Windows.Forms;
-using ICSharpCode.ILSpy.Controls;
+using dnSpy.Controls;
 
 namespace ICSharpCode.ILSpy.Debugger.UI
 {

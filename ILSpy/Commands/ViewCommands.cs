@@ -19,8 +19,9 @@
 
 using System.Windows.Data;
 using System.Windows.Input;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.Commands {
+namespace dnSpy.Commands {
 	[ExportMainMenuCommand(Menu = "_View", MenuCategory = "View1", MenuHeader = "Show _Internal Types and Members", MenuOrder = 3000, MenuIcon = "PrivateInternal")]
 	sealed class ShowInternalTypesAndMembersCommand : ICommand, IMainMenuCheckableCommand {
 		public bool? IsChecked {

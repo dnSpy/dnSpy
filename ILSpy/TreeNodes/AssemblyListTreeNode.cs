@@ -26,6 +26,8 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 using ICSharpCode.TreeView;
 using dnlib.DotNet;
+using dnSpy;
+using dnSpy.TreeNodes;
 
 namespace ICSharpCode.ILSpy.TreeNodes
 {

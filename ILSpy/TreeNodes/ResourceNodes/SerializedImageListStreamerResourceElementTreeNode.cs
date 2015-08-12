@@ -32,8 +32,10 @@ using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnSpy.AsmEditor.Resources;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.TreeNodes {
+namespace dnSpy.TreeNodes {
 	[Export(typeof(IResourceFactory<ResourceElement, ResourceElementTreeNode>))]
 	sealed class SerializedImageListStreamerResourceElementTreeNodeFactory : IResourceFactory<ResourceElement, ResourceElementTreeNode> {
 		public int Priority {

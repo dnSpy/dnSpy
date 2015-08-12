@@ -22,18 +22,20 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows.Media;
 using dnlib.DotNet;
-using dnSpy;
+using dnSpy.Bookmarks;
 using dnSpy.Images;
 using dnSpy.Tabs;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Bookmarks;
+using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.Debugger.Bookmarks {
+namespace dnSpy.Debugger.Bookmarks {
 	public enum StackFrameStatementType {
 		/// <summary>
 		/// This is the statement that will be executed next
@@ -104,11 +106,11 @@ namespace ICSharpCode.ILSpy.Debugger.Bookmarks {
 				UpdateReturnStatementBookmarks(newTsd.TextView);
 		}
 
-		static void DecompilerTextView_OnBeforeShowOutput(object sender, TextView.DecompilerTextView.ShowOutputEventArgs e) {
+		static void DecompilerTextView_OnBeforeShowOutput(object sender, DecompilerTextView.ShowOutputEventArgs e) {
 			Remove((DecompilerTextView)sender);
 		}
 
-		static void DecompilerTextView_OnShowOutput(object sender, TextView.DecompilerTextView.ShowOutputEventArgs e) {
+		static void DecompilerTextView_OnShowOutput(object sender, DecompilerTextView.ShowOutputEventArgs e) {
 			e.HasMovedCaret |= UpdateReturnStatementBookmarks((DecompilerTextView)sender, !e.HasMovedCaret);
 		}
 

@@ -2,7 +2,8 @@
 <ctrls:MetroWindow
 	x:Class="ICSharpCode.ILSpy.OpenFromGacDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	Title="Open from GAC"
-	xmlns:ctrls="clr-namespace:ICSharpCode.ILSpy.Controls"
+	xmlns:ilctrls="clr-namespace:ICSharpCode.ILSpy.Controls"
+	xmlns:ctrls="clr-namespace:dnSpy.Controls"
 	Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
 	MinWidth="400"
 	MinHeight="300"
@@ -23,14 +24,14 @@
 			<Label DockPanel.Dock="Left" Target="{Binding ElementName=filterTextBox}">_Search:</Label>
 			<TextBox Name="filterTextBox" TextChanged="FilterTextBox_TextChanged" />
 		</DockPanel>
-		<ListView Name="listView" Grid.Row="1" Margin="0 0 0 5" ctrls:SortableGridViewColumn.SortMode="Automatic" SelectionChanged="ListView_SelectionChanged" MouseDoubleClick="listView_MouseDoubleClick">
+		<ListView Name="listView" Grid.Row="1" Margin="0 0 0 5" ilctrls:SortableGridViewColumn.SortMode="Automatic" SelectionChanged="ListView_SelectionChanged" MouseDoubleClick="listView_MouseDoubleClick">
 			<ListView.View>
 				<GridView>
-					<ctrls:SortableGridViewColumn x:Name="nameColumn" Width="300" Header="Reference Name" DisplayMemberBinding="{Binding ShortName}" />
-					<ctrls:SortableGridViewColumn Width="75" Header="Version" DisplayMemberBinding="{Binding Version}" />
-					<ctrls:SortableGridViewColumn Width="65" Header="Culture" DisplayMemberBinding="{Binding Culture}" />
-					<ctrls:SortableGridViewColumn Width="115" Header="Public Key Token" DisplayMemberBinding="{Binding PublicKeyToken}" />
-					<ctrls:SortableGridViewColumn Width="1000" Header="Location" DisplayMemberBinding="{Binding FileName}" />
+					<ilctrls:SortableGridViewColumn x:Name="nameColumn" Width="300" Header="Reference Name" DisplayMemberBinding="{Binding ShortName}" />
+					<ilctrls:SortableGridViewColumn Width="75" Header="Version" DisplayMemberBinding="{Binding Version}" />
+					<ilctrls:SortableGridViewColumn Width="65" Header="Culture" DisplayMemberBinding="{Binding Culture}" />
+					<ilctrls:SortableGridViewColumn Width="115" Header="Public Key Token" DisplayMemberBinding="{Binding PublicKeyToken}" />
+					<ilctrls:SortableGridViewColumn Width="1000" Header="Location" DisplayMemberBinding="{Binding FileName}" />
 				</GridView>
 			</ListView.View>
 		</ListView>

@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.Images;
+using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.Utils;

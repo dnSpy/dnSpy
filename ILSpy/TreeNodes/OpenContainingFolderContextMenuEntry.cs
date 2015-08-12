@@ -20,8 +20,10 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.TreeNodes {
+namespace dnSpy.TreeNodes {
 	[ExportContextMenuEntryAttribute(Header = "_Open Containing Folder", Order = 920, Category = "Other")]
 	sealed class OpenContainingFolderContextMenuEntry : IContextMenuEntry {
 		public bool IsVisible(TextViewContext context) {

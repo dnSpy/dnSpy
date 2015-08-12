@@ -33,6 +33,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using dnlib.DotNet;
+using dnSpy;
 using dnSpy.Images;
 using dnSpy.Search;
 using dnSpy.TreeNodes;

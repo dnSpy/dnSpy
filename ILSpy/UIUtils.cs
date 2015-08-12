@@ -24,7 +24,7 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using ICSharpCode.Decompiler;
 
-namespace ICSharpCode.ILSpy {
+namespace dnSpy {
 	public static class UIUtils {
 		public static DependencyObject GetParent(DependencyObject depo) {
 			if (depo is Visual || depo is Visual3D)

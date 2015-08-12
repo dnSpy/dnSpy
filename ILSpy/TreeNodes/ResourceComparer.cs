@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 
-namespace ICSharpCode.ILSpy.TreeNodes {
+namespace dnSpy.TreeNodes {
 	sealed class ResourceComparer : IComparer<Resource> {
 		public static readonly ResourceComparer Instance = new ResourceComparer();
 

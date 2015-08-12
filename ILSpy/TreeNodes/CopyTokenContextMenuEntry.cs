@@ -19,8 +19,9 @@
 
 using System.Windows;
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.TreeNodes {
+namespace dnSpy.TreeNodes {
 	abstract class CopyTokenContextMenuEntryBase : IContextMenuEntry {
 		public abstract bool IsVisible(TextViewContext context);
 

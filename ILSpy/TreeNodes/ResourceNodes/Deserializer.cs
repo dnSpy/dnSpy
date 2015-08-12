@@ -25,7 +25,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.TreeNodes {
+namespace dnSpy.TreeNodes {
 	sealed class DeserializedDataInfo {
 		public Type ObjectType { get; private set; }
 		public string Name { get; private set; }

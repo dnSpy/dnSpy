@@ -28,10 +28,11 @@ using System.Xml.Linq;
 using dnSpy.dntheme;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.XmlDoc;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.TextView {
+namespace dnSpy.TextView {
 	sealed class SimpleHighlighter : IXmlDocOutput {
 		public ITextOutput TextOutput {
 			get { return output; }

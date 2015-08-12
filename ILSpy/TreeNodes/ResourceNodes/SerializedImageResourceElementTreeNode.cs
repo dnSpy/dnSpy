@@ -26,8 +26,11 @@ using System.Windows.Media;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnSpy.AsmEditor.Resources;
+using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.TreeNodes {
+namespace dnSpy.TreeNodes {
 	[Export(typeof(IResourceFactory<ResourceElement, ResourceElementTreeNode>))]
 	sealed class SerializedImageResourceElementTreeNodeFactory : IResourceFactory<ResourceElement, ResourceElementTreeNode> {
 		public int Priority {
@@ -125,7 +128,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			this.imageSource = ImageResourceElementTreeNode.CreateImageSource(imageData);
 		}
 
-		public override void Decompile(Language language, Decompiler.ITextOutput output) {
+		public override void Decompile(Language language, ITextOutput output) {
 			var smartOutput = output as ISmartTextOutput;
 			if (smartOutput != null) {
 				smartOutput.AddUIElement(() => {

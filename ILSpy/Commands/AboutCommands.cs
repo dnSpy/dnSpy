@@ -17,14 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.Commands {
+namespace dnSpy.Commands {
 	static class AboutHelpers {
 		public const string BASE_URL = @"https://github.com/0xd4d/dnSpy/";
 

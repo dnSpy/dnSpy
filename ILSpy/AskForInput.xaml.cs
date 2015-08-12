@@ -18,9 +18,9 @@
 */
 
 using System.Windows;
-using ICSharpCode.ILSpy.Controls;
+using dnSpy.Controls;
 
-namespace ICSharpCode.ILSpy {
+namespace dnSpy {
 	public partial class AskForInput : MetroWindow {
 		public AskForInput() {
 			InitializeComponent();

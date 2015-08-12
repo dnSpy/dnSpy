@@ -21,7 +21,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy.Controls {
+namespace dnSpy.Controls {
 	public class SysMenuButton : ButtonBase {
 		static SysMenuButton() {
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(SysMenuButton), new FrameworkPropertyMetadata(typeof(SysMenuButton)));

@@ -27,6 +27,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using dnlib.DotNet;
 using dnlib.PE;
+using dnSpy;
 using dnSpy.Images;
 using dnSpy.TreeNodes;
 using dnSpy.TreeNodes.Hex;

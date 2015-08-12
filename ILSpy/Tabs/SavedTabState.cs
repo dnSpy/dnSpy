@@ -21,10 +21,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
+using dnSpy.AvalonEdit;
 using dnSpy.HexEditor;
+using dnSpy.TreeNodes;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.AvalonEdit;
-using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.Tabs {
 	public class SavedTabGroupsState {

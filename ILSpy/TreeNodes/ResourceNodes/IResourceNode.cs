@@ -19,8 +19,9 @@
 
 using System.Collections.Generic;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.TreeNodes {
+namespace dnSpy.TreeNodes {
 	public enum ResourceDataType {
 		Deserialized,
 		Serialized,

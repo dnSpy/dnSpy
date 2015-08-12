@@ -20,8 +20,11 @@
 using System.IO;
 using dnlib.DotNet;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TextView;
+using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.TreeNodes {
+namespace dnSpy.TreeNodes {
 	public sealed class UnknownResourceTreeNode : ResourceTreeNode {
 		public UnknownResourceTreeNode(Resource resource)
 			: base(resource) {
@@ -37,7 +40,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		public override bool View(TextView.DecompilerTextView textView) {
+		public override bool View(DecompilerTextView textView) {
 			EmbeddedResource er = r as EmbeddedResource;
 			if (er != null)
 				return View(this, textView, new MemoryStream(er.GetResourceData()), er.Name);

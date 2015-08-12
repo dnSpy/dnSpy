@@ -18,7 +18,7 @@
 */
 
 using System.Windows;
-using ICSharpCode.ILSpy.Controls;
+using dnSpy.Controls;
 
 namespace dnSpy.AsmEditor {
 	public abstract class WindowBase : MetroWindow {

@@ -20,7 +20,6 @@
 using System.Collections.Generic;
 using dnlib.DotNet.MD;
 using dnSpy.HexEditor;
-using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.TreeNodes.Hex {
 	sealed class StorageSignatureTreeNode : HexTreeNode {

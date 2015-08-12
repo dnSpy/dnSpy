@@ -21,9 +21,10 @@ using System.Collections.Generic;
 using System.IO;
 using dnlib.DotNet.Resources;
 using ICSharpCode.ILSpy.TextView;
+using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.TreeNodes {
+namespace dnSpy.TreeNodes {
 	public sealed class BuiltInResourceElementTreeNode : ResourceElementTreeNode {
 		public BuiltInResourceElementTreeNode(ResourceElement resElem)
 			: base(resElem) {

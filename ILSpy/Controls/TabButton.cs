@@ -21,7 +21,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 
-namespace ICSharpCode.ILSpy.Controls {
+namespace dnSpy.Controls {
 	public class TabButton : ButtonBase {
 		public static readonly DependencyProperty GlyphForegroundProperty =
 			DependencyProperty.Register("GlyphForeground", typeof(Brush), typeof(TabButton),

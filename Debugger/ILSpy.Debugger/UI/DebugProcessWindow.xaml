@@ -2,7 +2,7 @@
 <ctrls:MetroWindow
 	x:Class="ICSharpCode.ILSpy.Debugger.UI.DebugProcessWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	Title="Select Executable to Debug"
-	xmlns:ctrls="clr-namespace:ICSharpCode.ILSpy.Controls;assembly=dnSpy"
+	xmlns:ctrls="clr-namespace:dnSpy.Controls;assembly=dnSpy"
 	Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
 	WindowState="Normal"
 	MinHeight="180"

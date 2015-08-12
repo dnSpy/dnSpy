@@ -20,11 +20,12 @@
 using System.ComponentModel.Composition;
 using System.Windows.Input;
 using dnlib.DotNet;
-using dnSpy;
 using dnSpy.AsmEditor;
 using dnSpy.Tabs;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.TreeNodes {
+namespace dnSpy.TreeNodes {
 	[Export(typeof(IPlugin))]
 	sealed class GoToTokenPlugin : IPlugin {
 		public void OnLoaded() {

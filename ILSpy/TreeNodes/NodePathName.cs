@@ -21,8 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml.Linq;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.TreeNodes {
+namespace dnSpy.TreeNodes {
 	[DebuggerDisplay("{Id} - {Name}")]
 	public struct NodePathName : IEquatable<NodePathName> {
 		readonly string id;

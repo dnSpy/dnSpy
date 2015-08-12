@@ -22,7 +22,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows;
-
+using dnSpy.TextView;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Rendering;

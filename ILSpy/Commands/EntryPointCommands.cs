@@ -18,9 +18,10 @@
 */
 
 using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.Commands {
+namespace dnSpy.Commands {
 	[ExportContextMenuEntryAttribute(Header = "Go to _Entry Point", Order = 450, Category = "EP", Icon = "EntryPoint")]
 	sealed class GoToEntryPointCommand : IContextMenuEntry {
 		public bool IsVisible(TextViewContext context) {

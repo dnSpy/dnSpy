@@ -1,7 +1,8 @@
 ﻿<ctrls:MetroWindow
 	x:Class="ICSharpCode.ILSpy.OpenListDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	Title="Open List"
-	xmlns:ctrls="clr-namespace:ICSharpCode.ILSpy.Controls"
+	xmlns:ilctrls="clr-namespace:ICSharpCode.ILSpy.Controls"
+	xmlns:ctrls="clr-namespace:dnSpy.Controls"
 	Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
 	MinWidth="380"
 	MinHeight="250"
@@ -17,11 +18,11 @@
 		<StackPanel>
 			<Label>Select a List:</Label>
 		</StackPanel>
-		<ListView Name="listView" Grid.Row="1" Margin="0, 8" ctrls:SortableGridViewColumn.SortMode="Automatic" SelectionChanged="ListView_SelectionChanged" 
+		<ListView Name="listView" Grid.Row="1" Margin="0, 8" ilctrls:SortableGridViewColumn.SortMode="Automatic" SelectionChanged="ListView_SelectionChanged" 
 				  Loaded="listView_Loaded" SelectionMode="Single" MouseDoubleClick="listView_MouseDoubleClick">
 			<ListView.View>
 				<GridView>
-					<ctrls:SortableGridViewColumn x:Name="nameColumn" Header="Name" DisplayMemberBinding="{Binding .}" />
+					<ilctrls:SortableGridViewColumn x:Name="nameColumn" Header="Name" DisplayMemberBinding="{Binding .}" />
 				</GridView>
 			</ListView.View>
 		</ListView>

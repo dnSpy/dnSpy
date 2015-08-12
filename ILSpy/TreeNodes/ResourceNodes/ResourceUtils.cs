@@ -24,10 +24,13 @@ using System.Text;
 using System.Windows.Media.Imaging;
 using dnSpy.Images;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.Options;
+using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.NRefactory;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.TreeNodes {
+namespace dnSpy.TreeNodes {
 	static class ResourceUtils {
 		static readonly HashSet<char> invalidFileNameChar = new HashSet<char>();
 		static ResourceUtils() {
@@ -129,7 +132,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		public static void WriteOffsetComment(this ITextOutput output, IResourceNode node) {
-			if (!Options.DecompilerSettingsPanel.CurrentDecompilerSettings.ShowTokenAndRvaComments)
+			if (!DecompilerSettingsPanel.CurrentDecompilerSettings.ShowTokenAndRvaComments)
 				return;
 
 			ulong fo = node.FileOffset;

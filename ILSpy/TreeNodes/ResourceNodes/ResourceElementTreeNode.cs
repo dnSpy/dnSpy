@@ -26,9 +26,11 @@ using dnlib.IO;
 using dnSpy.AsmEditor;
 using dnSpy.Images;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.TreeNodes {
+namespace dnSpy.TreeNodes {
 	public abstract class ResourceElementTreeNode : ILSpyTreeNode, IResourceNode {
 		protected ResourceElement resElem;
 

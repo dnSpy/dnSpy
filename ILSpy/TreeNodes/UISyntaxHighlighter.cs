@@ -18,11 +18,11 @@
 */
 
 using System.Windows.Controls;
+using dnSpy.TextView;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Options;
-using ICSharpCode.ILSpy.TextView;
 
-namespace ICSharpCode.ILSpy.TreeNodes {
+namespace dnSpy.TreeNodes {
 	struct UISyntaxHighlighter {
 		SimpleHighlighter simpleHighlighter;
 		PlainTextOutput output;

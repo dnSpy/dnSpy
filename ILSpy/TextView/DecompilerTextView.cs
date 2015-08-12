@@ -37,8 +37,11 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy;
 using dnSpy.AsmEditor;
+using dnSpy.AvalonEdit;
+using dnSpy.Bookmarks;
 using dnSpy.dntheme;
 using dnSpy.Images;
+using dnSpy.TextView;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
@@ -1017,7 +1020,7 @@ namespace ICSharpCode.ILSpy.TextView
 				var r = tmp;
 				if (RefSegEquals(referenceSegment, r)) {
 					var mark = textMarkerService.Create(r.StartOffset, r.Length);
-					mark.ZOrder = (int)Bookmarks.TextMarkerZOrder.SearchResult;
+					mark.ZOrder = (int)TextMarkerZOrder.SearchResult;
 					mark.HighlightingColor = () => {
 						return (r.IsLocalTarget ?
 							Themes.Theme.GetColor(dnSpy.dntheme.ColorType.LocalDefinition) :

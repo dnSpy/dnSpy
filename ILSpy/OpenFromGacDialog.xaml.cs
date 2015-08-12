@@ -27,8 +27,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-using ICSharpCode.ILSpy.Controls;
 using dnlib.DotNet;
+using dnSpy;
+using dnSpy.Controls;
+using ICSharpCode.ILSpy.Controls;
 
 namespace ICSharpCode.ILSpy
 {

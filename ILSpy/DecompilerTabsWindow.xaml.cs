@@ -25,10 +25,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using dnSpy.Controls;
 using dnSpy.Tabs;
-using ICSharpCode.ILSpy.Controls;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy {
+namespace dnSpy {
 	/// <summary>
 	/// Interaction logic for DecompilerTabsWindow.xaml
 	/// </summary>

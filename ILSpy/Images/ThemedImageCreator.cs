@@ -2,7 +2,7 @@
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace ICSharpCode.ILSpy {
+namespace dnSpy {
 	// Fixes the VS2013 images to work with any theme. Same algo as VS2015 itself uses...
 	public static class ThemedImageCreator {
 		public struct HslColor {

@@ -20,7 +20,6 @@
 using System.Collections.Generic;
 using dnlib.PE;
 using dnSpy.HexEditor;
-using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.TreeNodes.Hex {
 	sealed class ImageCor20HeaderTreeNode : HexTreeNode {

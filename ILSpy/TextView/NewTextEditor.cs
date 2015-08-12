@@ -29,10 +29,11 @@ using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
+using ICSharpCode.ILSpy;
 using ICSharpCode.NRefactory;
 using AR = ICSharpCode.AvalonEdit.Rendering;
 
-namespace ICSharpCode.ILSpy.TextView {
+namespace dnSpy.TextView {
 	sealed class NewTextEditor : TextEditor {
 		public LanguageTokens LanguageTokens { get; set; }
 
@@ -45,9 +46,9 @@ namespace ICSharpCode.ILSpy.TextView {
 
 			ICSharpCode.ILSpy.Debugger.Bookmarks.BreakpointBookmark.HighlightingColor = theme.GetColor(ColorType.BreakpointStatement).TextInheritedColor;
 			ICSharpCode.ILSpy.Debugger.Bookmarks.BreakpointBookmark.DisabledHighlightingColor = theme.GetColor(ColorType.DisabledBreakpointStatement).TextInheritedColor;
-			ICSharpCode.ILSpy.Debugger.Bookmarks.StackFrameStatementBookmark.CurrentHighlightingColor = theme.GetColor(ColorType.CurrentStatement).TextInheritedColor;
-			ICSharpCode.ILSpy.Debugger.Bookmarks.StackFrameStatementBookmark.ReturnHighlightingColor = theme.GetColor(ColorType.ReturnStatement).TextInheritedColor;
-			ICSharpCode.ILSpy.Debugger.Bookmarks.StackFrameStatementBookmark.SelectedHighlightingColor = theme.GetColor(ColorType.SelectedReturnStatement).TextInheritedColor;
+			dnSpy.Debugger.Bookmarks.StackFrameStatementBookmark.CurrentHighlightingColor = theme.GetColor(ColorType.CurrentStatement).TextInheritedColor;
+			dnSpy.Debugger.Bookmarks.StackFrameStatementBookmark.ReturnHighlightingColor = theme.GetColor(ColorType.ReturnStatement).TextInheritedColor;
+			dnSpy.Debugger.Bookmarks.StackFrameStatementBookmark.SelectedHighlightingColor = theme.GetColor(ColorType.SelectedReturnStatement).TextInheritedColor;
 			var specialBox = theme.GetColor(ColorType.SpecialCharacterBox).TextInheritedColor;
 			ICSharpCode.AvalonEdit.Rendering.SpecialCharacterTextRunOptions.BackgroundBrush = specialBox.Background == null ? null : specialBox.Background.GetBrush(null);
 			ICSharpCode.AvalonEdit.Rendering.SpecialCharacterTextRunOptions.ForegroundBrush = specialBox.Foreground == null ? null : specialBox.Foreground.GetBrush(null);

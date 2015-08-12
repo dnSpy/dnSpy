@@ -19,8 +19,8 @@
 
 using System.IO;
 using System.Linq;
+using dnSpy.TreeNodes;
 using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TreeNodes;
 
 using WF = System.Windows.Forms;
 

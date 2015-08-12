@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using ICSharpCode.ILSpy.Controls;
+using dnSpy.Controls;
 
 namespace ICSharpCode.ILSpy
 {

@@ -12,9 +12,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Microsoft.Win32.SafeHandles;
-using ICSharpCode.ILSpy.Controls;
+using dnSpy;
+using dnSpy.Controls;
 using ICSharpCode.ILSpy.Debugger.Models;
+using Microsoft.Win32.SafeHandles;
 
 namespace ICSharpCode.ILSpy.Debugger.UI
 {

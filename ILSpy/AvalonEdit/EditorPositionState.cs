@@ -20,8 +20,9 @@
 using System;
 using System.Xml.Linq;
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.ILSpy;
 
-namespace ICSharpCode.ILSpy.AvalonEdit {
+namespace dnSpy.AvalonEdit {
 	public struct EditorPositionState : IEquatable<EditorPositionState> {
 		public double VerticalOffset, HorizontalOffset;
 		public TextViewPosition TextViewPosition;

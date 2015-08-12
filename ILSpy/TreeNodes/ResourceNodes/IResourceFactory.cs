@@ -20,8 +20,10 @@
 using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.TreeNodes {
+namespace dnSpy.TreeNodes {
 	/// <summary>
 	/// Creates resource nodes
 	/// </summary>
