@@ -257,7 +257,7 @@ namespace dnSpy.AsmEditor {
 			if (callGc)
 				CallGc();
 
-			foreach (var asm in GetAliveModules()) {
+			foreach (var asm in MainWindow.Instance.GetAllLoadedAssemblyInstances()) {
 				if (!IsModified(asm))
 					asm.SavedCommand = 0;
 			}
@@ -276,26 +276,6 @@ namespace dnSpy.AsmEditor {
 			}
 		}
 		bool callingGc = false;
-
-		IEnumerable<LoadedAssembly> GetAliveModules() {
-			if (MainWindow.Instance.AssemblyListTreeNode == null)
-				yield break;
-			foreach (AssemblyTreeNode asmNode in MainWindow.Instance.AssemblyListTreeNode.Children) {
-				if (asmNode.IsModule)
-					yield return asmNode.LoadedAssembly;
-				else {
-					// Don't force loading of the asms. If they haven't been loaded, we don't need
-					// to return them. We must always return the first one though because the asm
-					// could've been modified even if its children haven't been loaded yet.
-					if (asmNode.Children.Count == 0 || !(asmNode.Children[0] is AssemblyTreeNode))
-						yield return asmNode.LoadedAssembly;
-					else {
-						foreach (AssemblyTreeNode modNode in asmNode.Children)
-							yield return asmNode.LoadedAssembly;
-					}
-				}
-			}
-		}
 
 		static void Clear(List<UndoState> list) {
 			foreach (var group in list) {
@@ -349,31 +329,15 @@ namespace dnSpy.AsmEditor {
 		}
 
 		public IEnumerable<IUndoObject> GetModifiedObjects() {
-			if (MainWindow.Instance.AssemblyListTreeNode != null) {
-				foreach (AssemblyTreeNode asmNode in MainWindow.Instance.AssemblyListTreeNode.Children) {
-					// If it's a netmodule it has no asm children. If it's an asm and its children haven't
-					// been initialized yet, they can't be modified.
-					if (asmNode.Children.Count == 0 || !(asmNode.Children[0] is AssemblyTreeNode)) {
-						if (IsModified(asmNode))
-							yield return asmNode.LoadedAssembly;
-					}
-					else {
-						foreach (AssemblyTreeNode childNode in asmNode.Children) {
-							if (IsModified(childNode))
-								yield return childNode.LoadedAssembly;
-						}
-					}
-				}
+			foreach (var asm in MainWindow.Instance.GetAllLoadedAssemblyInstances()) {
+				if (IsModified(asm))
+					yield return asm;
 			}
 
 			foreach (var doc in HexDocumentManager.Instance.GetDocuments()) {
 				if (IsModified(doc))
 					yield return doc;
 			}
-		}
-
-		public bool IsModified(AssemblyTreeNode asmNode) {
-			return IsModified(asmNode.LoadedAssembly);
 		}
 
 		public bool IsModified(IUndoObject obj) {

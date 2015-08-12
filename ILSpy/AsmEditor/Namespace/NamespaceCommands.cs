@@ -44,6 +44,7 @@ namespace dnSpy.AsmEditor.Namespace {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class DeleteNamespaceCommand : IUndoCommand {
 		const string CMD_NAME_SINGULAR = "Delete Namespace";
 		const string CMD_NAME_PLURAL_FORMAT = "Delete {0} Namespaces";
@@ -196,6 +197,7 @@ namespace dnSpy.AsmEditor.Namespace {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class MoveNamespaceTypesToEmptypNamespaceCommand : IUndoCommand {
 		const string CMD_NAME = "Move Types to Empty Namespace";
 		[ExportContextMenuEntry(Header = CMD_NAME,
@@ -328,6 +330,7 @@ namespace dnSpy.AsmEditor.Namespace {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class RenameNamespaceCommand : IUndoCommand {
 		const string CMD_NAME = "Rename Namespace";
 		[ExportContextMenuEntry(Header = CMD_NAME,

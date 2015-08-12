@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnSpy.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex {
@@ -26,6 +27,7 @@ namespace dnSpy.AsmEditor.Hex {
 	/// A command that gets added to <see cref="UndoCommandManager"/> after it's already been
 	/// executed once.
 	/// </summary>
+	[DebuggerDisplay("{Description}")]
 	sealed class HexBoxUndoCommand : IUndoCommand {
 		readonly HexDocument doc;
 		readonly WeakReference hexBoxWeakRef;

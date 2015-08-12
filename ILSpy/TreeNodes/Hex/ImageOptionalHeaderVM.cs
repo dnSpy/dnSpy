@@ -224,6 +224,9 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 		readonly DataDirVM dataDir15VM;
 
+		public override IEnumerable<HexField> HexFields {
+			get { return hexFields; }
+		}
 		HexField[] hexFields;
 
 		protected ImageOptionalHeaderVM(HexDocument doc, ulong startOffset, ulong endOffset, ulong offs1, ulong offs2) {
@@ -304,11 +307,6 @@ namespace dnSpy.TreeNodes.Hex {
 			}
 
 			this.hexFields = fields.ToArray();
-		}
-
-		public override void OnDocumentModifiedOverride(ulong modifiedStart, ulong modifiedEnd) {
-			foreach (var field in hexFields)
-				field.OnDocumentModifiedOverride(modifiedStart, modifiedEnd);
 		}
 	}
 }

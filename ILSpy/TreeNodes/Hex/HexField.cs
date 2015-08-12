@@ -28,7 +28,7 @@ using ICSharpCode.ILSpy;
 namespace dnSpy.TreeNodes.Hex {
 	[DebuggerDisplay("{StartOffset} {EndOffset} {Name} {DataFieldVM.StringValue}")]
 	abstract class HexField {
-		readonly HexDocument doc;
+		protected readonly HexDocument doc;
 		readonly string parentName;
 
 		public string NameUI {
@@ -54,6 +54,8 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 		readonly ulong endOffset;
 
+		public abstract string FormattedValue { get; }
+
 		protected HexField(HexDocument doc, string parentName, string name, ulong start, int size) {
 			this.doc = doc;
 			this.parentName = parentName;
@@ -72,10 +74,19 @@ namespace dnSpy.TreeNodes.Hex {
 			if (!DataFieldVM.HasError && newValue.Equals(DataFieldVM.ObjectValue))
 				return;
 
-			DataFieldVM.ObjectValue = newValue;
-		}
+			var old = disable_UpdateValue;
+			try {
+				disable_UpdateValue = true;
+				DataFieldVM.ObjectValue = newValue;
+			}
+			finally {
+				disable_UpdateValue = old;
+			}
+        }
 
 		protected void UpdateValue() {
+			if (disable_UpdateValue)
+				return;
 			if (DataFieldVM.HasError)
 				return;
 			var newData = GetDataAsByteArray();
@@ -88,6 +99,7 @@ namespace dnSpy.TreeNodes.Hex {
 			WriteHexUndoCommand.AddAndExecute(doc, startOffset, newData, string.Format("Write {0}.{1}", parentName, Name));
 			doc.Write(startOffset, newData);
 		}
+		bool disable_UpdateValue = false;
 
 		static bool Equals(byte[] a, byte[] b) {
 			if (a == b)
@@ -113,6 +125,10 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 		readonly ByteVM data;
 
+		public override string FormattedValue {
+			get { return string.Format("{0:X2}", ReadDataFrom(doc)); }
+		}
+
 		public ByteHexField(HexDocument doc, string parentName, string name, ulong start)
 			: base(doc, parentName, name, start, 1) {
 			this.data = new ByteVM((byte)doc.ReadByte(start), a => UpdateValue());
@@ -132,6 +148,10 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return data; }
 		}
 		readonly UInt16VM data;
+
+		public override string FormattedValue {
+			get { return string.Format("{0:X4}", ReadDataFrom(doc)); }
+		}
 
 		public UInt16HexField(HexDocument doc, string parentName, string name, ulong start)
 			: base(doc, parentName, name, start, 2) {
@@ -153,6 +173,10 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 		readonly Int32VM data;
 
+		public override string FormattedValue {
+			get { return string.Format("{0:X8}", ReadDataFrom(doc)); }
+		}
+
 		public Int32HexField(HexDocument doc, string parentName, string name, ulong start)
 			: base(doc, parentName, name, start, 4) {
 			this.data = new Int32VM(doc.ReadInt32(start), a => UpdateValue());
@@ -172,6 +196,10 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return data; }
 		}
 		readonly UInt32VM data;
+
+		public override string FormattedValue {
+			get { return string.Format("{0:X8}", ReadDataFrom(doc)); }
+		}
 
 		public UInt32HexField(HexDocument doc, string parentName, string name, ulong start)
 			: base(doc, parentName, name, start, 4) {
@@ -193,6 +221,10 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 		readonly UInt64VM data;
 
+		public override string FormattedValue {
+			get { return string.Format("{0:X16}", ReadDataFrom(doc)); }
+		}
+
 		public UInt64HexField(HexDocument doc, string parentName, string name, ulong start)
 			: base(doc, parentName, name, start, 8) {
 			this.data = new UInt64VM(doc.ReadUInt64(start), a => UpdateValue());
@@ -212,6 +244,10 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return data; }
 		}
 		readonly StringVM data;
+
+		public override string FormattedValue {
+			get { return String; }
+		}
 
 		public string String {
 			get {

@@ -23,6 +23,7 @@ using System.Diagnostics;
 using dnSpy.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex {
+	[DebuggerDisplay("{Description}")]
 	sealed class WriteHexUndoCommand : IUndoCommand {
 		readonly HexDocument doc;
 		readonly ulong offset;

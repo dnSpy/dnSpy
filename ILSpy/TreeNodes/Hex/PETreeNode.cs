@@ -19,6 +19,8 @@
 
 using System;
 using System.Diagnostics;
+using System.Windows.Threading;
+using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.AsmEditor;
 using dnSpy.HexEditor;
@@ -31,17 +33,23 @@ using ICSharpCode.NRefactory;
 namespace dnSpy.TreeNodes.Hex {
 	sealed class PETreeNode : ILSpyTreeNode {
 		readonly IPEImage peImage;
+		readonly ModuleDefMD module;
 
-		public PETreeNode(IPEImage peImage) {
+		public PETreeNode(IPEImage peImage, ModuleDefMD module) {
 			this.peImage = peImage;
+			this.module = module;
 			LazyLoading = true;
 		}
 
 		public override object Icon {
-			get {
-				//TODO: Fix image
-				return ImageCache.Instance.GetImage("AssemblyWarning", BackgroundType.TreeNode);
-			}
+			get { return ImageCache.Instance.GetImage("ModuleFile", BackgroundType.TreeNode); }
+		}
+
+		public sealed override FilterResult Filter(FilterSettings settings) {
+			var res = settings.Filter.GetFilterResult(this);
+			if (res.FilterResult != null)
+				return res.FilterResult.Value;
+			return base.Filter(settings);
 		}
 
 		protected override void LoadChildren() {
@@ -63,6 +71,14 @@ namespace dnSpy.TreeNodes.Hex {
 				Children.Add(new ImageOptionalHeader64TreeNode(doc, (ImageOptionalHeader64)peImage.ImageNTHeaders.OptionalHeader));
 			for (int i = 0; i < peImage.ImageSectionHeaders.Count; i++)
 				Children.Add(new ImageSectionHeaderTreeNode(doc, peImage.ImageSectionHeaders[i], i));
+			var cor20Hdr = ImageCor20HeaderTreeNode.Create(doc, peImage);
+			if (cor20Hdr != null)
+				Children.Add(cor20Hdr);
+			if (module != null) {
+				var md = module.MetaData;
+				Children.Add(new StorageSignatureTreeNode(doc, md.MetaDataHeader));
+				Children.Add(new StorageHeaderTreeNode(doc, md.MetaDataHeader));
+			}
 		}
 		WeakDocumentListener weakDocListener;
 
@@ -91,8 +107,13 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
+			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(EnsureChildrenFiltered));
 			language.WriteCommentLine(output, "PE");
 			language.WriteCommentLine(output, "All tree nodes below use the hex editor to modify the PE file");
+			foreach (HexTreeNode node in Children) {
+				language.WriteCommentLine(output, string.Empty);
+				node.Decompile(language, output, options);
+			}
 		}
 
 		protected override void Write(ITextOutput output, Language language) {

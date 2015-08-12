@@ -22,16 +22,15 @@ using System.Collections.Generic;
 using dnlib.DotNet;
 using dnlib.PE;
 using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	static class MmapUtils {
 		public static void DisableMemoryMappedIO(IEnumerable<string> filenames) {
 			var hash = new HashSet<string>(filenames, StringComparer.OrdinalIgnoreCase);
 
-			foreach (var asm in GetAssemblyTreeNodes()) {
-				DisableMemoryMappedIO(hash, asm.LoadedAssembly.TheLoadedFile.ModuleDef as ModuleDefMD);
-				DisableMemoryMappedIO(hash, asm.LoadedAssembly.TheLoadedFile.PEImage);
+			foreach (var asm in MainWindow.Instance.GetAllLoadedAssemblyInstances()) {
+				DisableMemoryMappedIO(hash, asm.TheLoadedFile.ModuleDef as ModuleDefMD);
+				DisableMemoryMappedIO(hash, asm.TheLoadedFile.PEImage);
 			}
 
 			foreach (var mod in MainWindow.Instance.CurrentAssemblyList.GetAllModules())
@@ -39,17 +38,6 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 			foreach (var asm in UndoCommandManager.Instance.GetAssemblies())
 				DisableMemoryMappedIO(hash, asm.ModuleDefinition as ModuleDefMD);
-		}
-
-		static IEnumerable<AssemblyTreeNode> GetAssemblyTreeNodes() {
-			foreach (AssemblyTreeNode asmNode in MainWindow.Instance.treeView.Root.Children) {
-				if (asmNode.Children.Count == 0 || !(asmNode.Children[0] is AssemblyTreeNode))
-					yield return asmNode;
-				else {
-					foreach (AssemblyTreeNode child in asmNode.Children)
-						yield return child;
-				}
-			}
 		}
 
 		static void DisableMemoryMappedIO(HashSet<string> filenames, ModuleDefMD mod) {

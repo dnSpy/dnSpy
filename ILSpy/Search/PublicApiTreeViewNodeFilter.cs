@@ -19,6 +19,7 @@
 
 using System;
 using dnlib.DotNet;
+using dnSpy.TreeNodes;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.Search {

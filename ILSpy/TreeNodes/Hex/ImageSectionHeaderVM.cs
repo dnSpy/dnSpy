@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using System.Text;
 using dnSpy.HexEditor;
 
@@ -76,6 +77,9 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 		readonly UInt32HexField characteristicsVM;
 
+		public override IEnumerable<HexField> HexFields {
+			get { return hexFields; }
+		}
 		readonly HexField[] hexFields;
 
 		public ImageSectionHeaderVM(HexDocument doc, ulong startOffset) {
@@ -102,11 +106,6 @@ namespace dnSpy.TreeNodes.Hex {
 				this.numberOfLinenumbersVM,
 				this.characteristicsVM,
 			};
-		}
-
-		public override void OnDocumentModifiedOverride(ulong modifiedStart, ulong modifiedEnd) {
-			foreach (var field in hexFields)
-				field.OnDocumentModifiedOverride(modifiedStart, modifiedEnd);
 		}
 	}
 }

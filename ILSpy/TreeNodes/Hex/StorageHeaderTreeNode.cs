@@ -18,37 +18,37 @@
 */
 
 using System.Collections.Generic;
-using dnlib.PE;
+using dnlib.DotNet.MD;
 using dnSpy.HexEditor;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.TreeNodes.Hex {
-	sealed class ImageOptionalHeader64TreeNode : HexTreeNode {
+	sealed class StorageHeaderTreeNode : HexTreeNode {
 		public override NodePathName NodePathName {
-			get { return new NodePathName("opthdr64"); }
+			get { return new NodePathName("strghdr"); }
 		}
 
 		protected override string Name {
-			get { return "Optional Header (64-bit)"; }
+			get { return "Storage Header"; }
 		}
 
 		protected override object ViewObject {
-			get { return imageOptionalHeader64VM; }
+			get { return storageHeaderVM; }
 		}
 
 		protected override IEnumerable<HexVM> HexVMs {
-			get { yield return imageOptionalHeader64VM; }
+			get { yield return storageHeaderVM; }
 		}
 
 		protected override string IconName {
 			get { return "BinaryFile"; }
 		}
 
-		readonly ImageOptionalHeader64VM imageOptionalHeader64VM;
+		readonly StorageHeaderVM storageHeaderVM;
 
-		public ImageOptionalHeader64TreeNode(HexDocument doc, ImageOptionalHeader64 optHdr)
-			: base((ulong)optHdr.StartOffset, (ulong)optHdr.EndOffset - 1) {
-			this.imageOptionalHeader64VM = new ImageOptionalHeader64VM(doc, StartOffset, EndOffset);
+		public StorageHeaderTreeNode(HexDocument doc, MetaDataHeader mdHeader)
+			: base((ulong)mdHeader.StorageHeaderOffset, (ulong)mdHeader.StorageHeaderOffset + 4 - 1) {
+			this.storageHeaderVM = new StorageHeaderVM(doc, StartOffset);
 		}
 	}
 }

@@ -69,6 +69,11 @@ namespace ICSharpCode.ILSpy.TextView
 	/// </summary>
 	public sealed class AvalonEditTextOutput : ISmartTextOutput
 	{
+		public bool CanBeCached {
+			get { return canBeCached; }
+			private set { canBeCached = value; }
+		}
+		bool canBeCached = true;
 		internal LanguageTokens LanguageTokens {
 			get { return tokens; }
 		}
@@ -262,6 +267,7 @@ namespace ICSharpCode.ILSpy.TextView
 				if (this.UIElements.Count > 0 && this.UIElements.Last().Key == this.TextLength)
 					throw new InvalidOperationException("Only one UIElement is allowed for each position in the document");
 				this.UIElements.Add(new KeyValuePair<int, Lazy<UIElement>>(this.TextLength, new Lazy<UIElement>(element)));
+				MarkAsNonCached();
 			}
 		}
 		
@@ -289,6 +295,11 @@ namespace ICSharpCode.ILSpy.TextView
 			tokens.AppendLine();
 			b.AppendLine();
 			Debug.Assert(b.Length == tokens.Length);
+		}
+
+		public void MarkAsNonCached()
+		{
+			CanBeCached = false;
 		}
 	}
 }

@@ -44,6 +44,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class CreateNetModuleCommand : IUndoCommand {
 		const string CMD_NAME = "Create NetModule";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
@@ -119,6 +120,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class ConvertNetModuleToAssemblyCommand : IUndoCommand {
 		const string CMD_NAME = "Convert NetModule to Assembly";
 		[ExportContextMenuEntry(Header = CMD_NAME,
@@ -225,6 +227,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class ConvertAssemblyToNetModuleCommand : IUndoCommand {
 		const string CMD_NAME = "Convert Assembly to NetModule";
 		[ExportContextMenuEntry(Header = CMD_NAME,
@@ -610,6 +613,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class ModuleSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Module";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",

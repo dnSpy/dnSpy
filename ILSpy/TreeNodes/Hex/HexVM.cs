@@ -17,11 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using dnSpy.AsmEditor;
 
 namespace dnSpy.TreeNodes.Hex {
 	abstract class HexVM : ViewModelBase {
 		public abstract string Name { get; }
-		public abstract void OnDocumentModifiedOverride(ulong modifiedStart, ulong modifiedEnd);
+		public abstract IEnumerable<HexField> HexFields { get; }
+
+		public void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
+			foreach (var field in HexFields)
+				field.OnDocumentModifiedOverride(modifiedStart, modifiedEnd);
+		}
 	}
 }

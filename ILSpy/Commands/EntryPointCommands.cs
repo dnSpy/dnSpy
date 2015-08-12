@@ -21,7 +21,7 @@ using dnlib.DotNet;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace ICSharpCode.ILSpy.Commands {
-	[ExportContextMenuEntryAttribute(Header = "Go to _Entry Point", Order = 450, Category = "EP")]
+	[ExportContextMenuEntryAttribute(Header = "Go to _Entry Point", Order = 450, Category = "EP", Icon = "EntryPoint")]
 	sealed class GoToEntryPointCommand : IContextMenuEntry {
 		public bool IsVisible(TextViewContext context) {
 			return TreeView_IsVisible(context) ||

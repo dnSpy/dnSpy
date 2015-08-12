@@ -932,4 +932,179 @@
         </Border>
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type tnhex:ImageCor20HeaderVM}">
+        <Border TextBlock.Foreground="{DynamicResource SystemColorsControlText}" Background="{DynamicResource SystemColorsControl}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" MaxWidth="200" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="{Binding CbVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=CbVMTextBox}" Content="{Binding CbVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Name="CbVMTextBox" Text="{Binding CbVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+
+                <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{Binding MajorRuntimeVersionVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=MajorRuntimeVersionVMTextBox}" Content="{Binding MajorRuntimeVersionVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Name="MajorRuntimeVersionVMTextBox" Text="{Binding MajorRuntimeVersionVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+
+                <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Content="{Binding MinorRuntimeVersionVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=MinorRuntimeVersionVMTextBox}" Content="{Binding MinorRuntimeVersionVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Name="MinorRuntimeVersionVMTextBox" Text="{Binding MinorRuntimeVersionVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+
+                <Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Content="{Binding MetaDataVM.RVAVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=MetaDataVMRVAVMTextBox}" Content="{Binding MetaDataVM.RVAVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Name="MetaDataVMRVAVMTextBox" Text="{Binding MetaDataVM.RVAVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                <Label Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Content="{Binding MetaDataVM.SizeVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=MetaDataVMSizeVMTextBox}" Content="{Binding MetaDataVM.SizeVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Name="MetaDataVMSizeVMTextBox" Text="{Binding MetaDataVM.SizeVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+
+                <Label Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Content="{Binding FlagsVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=FlagsVMTextBox}" Content="{Binding FlagsVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="5" Grid.Column="2" Margin="5 5 0 0" Name="FlagsVMTextBox" Text="{Binding FlagsVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+
+                <Label Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" Content="{Binding EntryPointTokenRVAVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=EntryPointTokenRVAVMTextBox}" Content="{Binding EntryPointTokenRVAVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="6" Grid.Column="2" Margin="5 5 0 0" Name="EntryPointTokenRVAVMTextBox" Text="{Binding EntryPointTokenRVAVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+
+                <Label Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" Content="{Binding ResourcesVM.RVAVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=ResourcesVMRVAVMTextBox}" Content="{Binding ResourcesVM.RVAVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="7" Grid.Column="2" Margin="5 5 0 0" Name="ResourcesVMRVAVMTextBox" Text="{Binding ResourcesVM.RVAVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                <Label Grid.Row="8" Grid.Column="0" Margin="0 5 0 0" Content="{Binding ResourcesVM.SizeVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="8" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=ResourcesVMSizeVMTextBox}" Content="{Binding ResourcesVM.SizeVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="8" Grid.Column="2" Margin="5 5 0 0" Name="ResourcesVMSizeVMTextBox" Text="{Binding ResourcesVM.SizeVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+
+                <Label Grid.Row="9" Grid.Column="0" Margin="0 5 0 0" Content="{Binding StrongNameSignatureVM.RVAVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="9" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=StrongNameSignatureVMRVAVMTextBox}" Content="{Binding StrongNameSignatureVM.RVAVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="9" Grid.Column="2" Margin="5 5 0 0" Name="StrongNameSignatureVMRVAVMTextBox" Text="{Binding StrongNameSignatureVM.RVAVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                <Label Grid.Row="10" Grid.Column="0" Margin="0 5 0 0" Content="{Binding StrongNameSignatureVM.SizeVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="10" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=StrongNameSignatureVMSizeVMTextBox}" Content="{Binding StrongNameSignatureVM.SizeVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="10" Grid.Column="2" Margin="5 5 0 0" Name="StrongNameSignatureVMSizeVMTextBox" Text="{Binding StrongNameSignatureVM.SizeVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+
+                <Label Grid.Row="11" Grid.Column="0" Margin="0 5 0 0" Content="{Binding CodeManagerTableVM.RVAVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="11" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=CodeManagerTableVMRVAVMTextBox}" Content="{Binding CodeManagerTableVM.RVAVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="11" Grid.Column="2" Margin="5 5 0 0" Name="CodeManagerTableVMRVAVMTextBox" Text="{Binding CodeManagerTableVM.RVAVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                <Label Grid.Row="12" Grid.Column="0" Margin="0 5 0 0" Content="{Binding CodeManagerTableVM.SizeVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="12" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=CodeManagerTableVMSizeVMTextBox}" Content="{Binding CodeManagerTableVM.SizeVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="12" Grid.Column="2" Margin="5 5 0 0" Name="CodeManagerTableVMSizeVMTextBox" Text="{Binding CodeManagerTableVM.SizeVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+
+                <Label Grid.Row="13" Grid.Column="0" Margin="0 5 0 0" Content="{Binding VTableFixupsVM.RVAVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="13" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=VTableFixupsVMRVAVMTextBox}" Content="{Binding VTableFixupsVM.RVAVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="13" Grid.Column="2" Margin="5 5 0 0" Name="VTableFixupsVMRVAVMTextBox" Text="{Binding VTableFixupsVM.RVAVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                <Label Grid.Row="14" Grid.Column="0" Margin="0 5 0 0" Content="{Binding VTableFixupsVM.SizeVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="14" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=VTableFixupsVMSizeVMTextBox}" Content="{Binding VTableFixupsVM.SizeVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="14" Grid.Column="2" Margin="5 5 0 0" Name="VTableFixupsVMSizeVMTextBox" Text="{Binding VTableFixupsVM.SizeVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+
+                <Label Grid.Row="15" Grid.Column="0" Margin="0 5 0 0" Content="{Binding ExportAddressTableJumpsVM.RVAVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="15" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=ExportAddressTableJumpsVMRVAVMTextBox}" Content="{Binding ExportAddressTableJumpsVM.RVAVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="15" Grid.Column="2" Margin="5 5 0 0" Name="ExportAddressTableJumpsVMRVAVMTextBox" Text="{Binding ExportAddressTableJumpsVM.RVAVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                <Label Grid.Row="16" Grid.Column="0" Margin="0 5 0 0" Content="{Binding ExportAddressTableJumpsVM.SizeVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="16" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=ExportAddressTableJumpsVMSizeVMTextBox}" Content="{Binding ExportAddressTableJumpsVM.SizeVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="16" Grid.Column="2" Margin="5 5 0 0" Name="ExportAddressTableJumpsVMSizeVMTextBox" Text="{Binding ExportAddressTableJumpsVM.SizeVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+
+                <Label Grid.Row="17" Grid.Column="0" Margin="0 5 0 0" Content="{Binding ManagedNativeHeaderVM.RVAVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="17" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=ManagedNativeHeaderVMRVAVMTextBox}" Content="{Binding ManagedNativeHeaderVM.RVAVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="17" Grid.Column="2" Margin="5 5 0 0" Name="ManagedNativeHeaderVMRVAVMTextBox" Text="{Binding ManagedNativeHeaderVM.RVAVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                <Label Grid.Row="18" Grid.Column="0" Margin="0 5 0 0" Content="{Binding ManagedNativeHeaderVM.SizeVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="18" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=ManagedNativeHeaderVMSizeVMTextBox}" Content="{Binding ManagedNativeHeaderVM.SizeVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="18" Grid.Column="2" Margin="5 5 0 0" Name="ManagedNativeHeaderVMSizeVMTextBox" Text="{Binding ManagedNativeHeaderVM.SizeVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+            </Grid>
+        </Border>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type tnhex:StorageSignatureVM}">
+        <Border TextBlock.Foreground="{DynamicResource SystemColorsControlText}" Background="{DynamicResource SystemColorsControl}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" MaxWidth="200" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="{Binding LSignatureVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=LSignatureVMTextBox}" Content="{Binding LSignatureVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Name="LSignatureVMTextBox" Text="{Binding LSignatureVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+
+                <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{Binding IMajorVerVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=IMajorVerVMTextBox}" Content="{Binding IMajorVerVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Name="IMajorVerVMTextBox" Text="{Binding IMajorVerVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+
+                <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Content="{Binding IMinorVerVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=IMinorVerVMTextBox}" Content="{Binding IMinorVerVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Name="IMinorVerVMTextBox" Text="{Binding IMinorVerVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+
+                <Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Content="{Binding IExtraDataVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=IExtraDataVMTextBox}" Content="{Binding IExtraDataVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Name="IExtraDataVMTextBox" Text="{Binding IExtraDataVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+
+                <Label Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Content="{Binding IVersionStringVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=IVersionStringVMTextBox}" Content="{Binding IVersionStringVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Name="IVersionStringVMTextBox" Text="{Binding IVersionStringVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+
+                <Label Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Content="{Binding VersionStringVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=VersionStringVMTextBox}" Content="{Binding VersionStringVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="5" Grid.Column="2" Margin="5 5 0 0" Name="VersionStringVMTextBox" Text="{Binding VersionStringVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+            </Grid>
+        </Border>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type tnhex:StorageHeaderVM}">
+        <Border TextBlock.Foreground="{DynamicResource SystemColorsControlText}" Background="{DynamicResource SystemColorsControl}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" MaxWidth="200" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="{Binding FFlagsVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=FFlagsVMTextBox}" Content="{Binding FFlagsVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Name="FFlagsVMTextBox" Text="{Binding FFlagsVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+
+                <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{Binding PadVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=PadVMTextBox}" Content="{Binding PadVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Name="PadVMTextBox" Text="{Binding PadVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+
+                <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Content="{Binding IStreamsVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=IStreamsVMTextBox}" Content="{Binding IStreamsVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Name="IStreamsVMTextBox" Text="{Binding IStreamsVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+            </Grid>
+        </Border>
+    </DataTemplate>
+
 </ResourceDictionary>

@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.AsmEditor {
 	/// <summary>

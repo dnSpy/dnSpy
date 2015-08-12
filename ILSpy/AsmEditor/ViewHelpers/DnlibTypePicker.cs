@@ -20,8 +20,8 @@
 using System.Windows;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.TreeNodes;
 using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class DnlibTypePicker : IDnlibTypePicker {

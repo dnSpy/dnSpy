@@ -44,6 +44,7 @@ namespace dnSpy.AsmEditor.Event {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class DeleteEventDefCommand : IUndoCommand {
 		const string CMD_NAME = "Delete Event";
 		[ExportContextMenuEntry(Header = CMD_NAME,
@@ -214,6 +215,7 @@ namespace dnSpy.AsmEditor.Event {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class CreateEventDefCommand : IUndoCommand {
 		const string CMD_NAME = "Create Event";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
@@ -319,6 +321,7 @@ namespace dnSpy.AsmEditor.Event {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class EventDefSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Event";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",

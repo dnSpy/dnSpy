@@ -45,6 +45,7 @@ namespace dnSpy.AsmEditor.Field {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class DeleteFieldDefCommand : IUndoCommand {
 		const string CMD_NAME = "Delete Field";
 		[ExportContextMenuEntry(Header = CMD_NAME,
@@ -191,6 +192,7 @@ namespace dnSpy.AsmEditor.Field {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class CreateFieldDefCommand : IUndoCommand {
 		const string CMD_NAME = "Create Field";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
@@ -326,6 +328,7 @@ namespace dnSpy.AsmEditor.Field {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class FieldDefSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Field";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",

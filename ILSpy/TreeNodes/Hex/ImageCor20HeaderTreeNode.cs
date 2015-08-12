@@ -23,32 +23,39 @@ using dnSpy.HexEditor;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.TreeNodes.Hex {
-	sealed class ImageOptionalHeader64TreeNode : HexTreeNode {
+	sealed class ImageCor20HeaderTreeNode : HexTreeNode {
 		public override NodePathName NodePathName {
-			get { return new NodePathName("opthdr64"); }
+			get { return new NodePathName("cor20hdr"); }
 		}
 
 		protected override string Name {
-			get { return "Optional Header (64-bit)"; }
+			get { return "Cor20 Header"; }
 		}
 
 		protected override object ViewObject {
-			get { return imageOptionalHeader64VM; }
+			get { return imageCor20HeaderVM; }
 		}
 
 		protected override IEnumerable<HexVM> HexVMs {
-			get { yield return imageOptionalHeader64VM; }
+			get { yield return imageCor20HeaderVM; }
 		}
 
 		protected override string IconName {
 			get { return "BinaryFile"; }
 		}
 
-		readonly ImageOptionalHeader64VM imageOptionalHeader64VM;
+		readonly ImageCor20HeaderVM imageCor20HeaderVM;
 
-		public ImageOptionalHeader64TreeNode(HexDocument doc, ImageOptionalHeader64 optHdr)
-			: base((ulong)optHdr.StartOffset, (ulong)optHdr.EndOffset - 1) {
-			this.imageOptionalHeader64VM = new ImageOptionalHeader64VM(doc, StartOffset, EndOffset);
+		public static ImageCor20HeaderTreeNode Create(HexDocument doc, IPEImage peImage) {
+			var dnDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
+			if (dnDir.VirtualAddress != 0 && dnDir.Size >= 0x48)
+				return new ImageCor20HeaderTreeNode(doc, (ulong)peImage.ToFileOffset(dnDir.VirtualAddress));
+			return null;
+		}
+
+		public ImageCor20HeaderTreeNode(HexDocument doc, ulong startOffset)
+			: base(startOffset, startOffset + 0x48 - 1) {
+			this.imageCor20HeaderVM = new ImageCor20HeaderVM(doc, StartOffset);
 		}
 	}
 }

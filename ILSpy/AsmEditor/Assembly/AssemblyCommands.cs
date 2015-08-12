@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -83,6 +84,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class RemoveAssemblyCommand : IGCUndoCommand {
 		const string CMD_NAME = "Remove Assembly";
 		[ExportContextMenuEntry(Header = CMD_NAME,
@@ -226,6 +228,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class AssemblySettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Assembly";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
@@ -335,6 +338,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class CreateAssemblyCommand : IUndoCommand {
 		const string CMD_NAME = "Create Assembly";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",

@@ -44,6 +44,7 @@ namespace dnSpy.AsmEditor.Method {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class DeleteMethodDefCommand : IUndoCommand {
 		const string CMD_NAME = "Delete Method";
 		[ExportContextMenuEntry(Header = CMD_NAME,
@@ -304,6 +305,7 @@ namespace dnSpy.AsmEditor.Method {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class CreateMethodDefCommand : IUndoCommand {
 		const string CMD_NAME = "Create Method";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
@@ -414,6 +416,7 @@ namespace dnSpy.AsmEditor.Method {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class MethodDefSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Method";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",

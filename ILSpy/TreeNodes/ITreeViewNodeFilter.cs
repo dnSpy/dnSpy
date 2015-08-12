@@ -19,8 +19,11 @@
 
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.TreeNodes.Hex;
+using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.TreeNodes {
+namespace dnSpy.TreeNodes {
 	enum AssemblyFilterType {
 		/// <summary>
 		/// non-.NET file node
@@ -82,5 +85,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		TreeViewNodeFilterResult GetFilterResult(ResourceListTreeNode node);
 		TreeViewNodeFilterResult GetFilterResult(ResourceTreeNode node);
 		TreeViewNodeFilterResult GetFilterResult(ResourceElementTreeNode node);
+		TreeViewNodeFilterResult GetFilterResult(PETreeNode node);
+		TreeViewNodeFilterResult GetFilterResult(HexTreeNode node);
 	}
 }

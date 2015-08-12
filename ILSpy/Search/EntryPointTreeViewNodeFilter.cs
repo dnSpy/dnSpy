@@ -19,6 +19,7 @@
 
 using System.Diagnostics;
 using dnlib.DotNet;
+using dnSpy.TreeNodes;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 

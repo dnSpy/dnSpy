@@ -35,6 +35,8 @@ namespace ICSharpCode.ILSpy
 		/// Inserts an interactive UI element at the current position in the text output.
 		/// </summary>
 		void AddUIElement(Func<UIElement> element);
+
+		void MarkAsNonCached();
 	}
 	
 	public static class SmartTextOutputExtensions

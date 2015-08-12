@@ -28,6 +28,7 @@ using System.Windows.Documents;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Images;
+using dnSpy.TreeNodes;
 using dnSpy.TreeNodes.Hex;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Options;
@@ -228,8 +229,8 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				tooltip.Inlines.Add(new LineBreak());
 				tooltip.Inlines.Add(new Bold(new Run("Location: ")));
 				tooltip.Inlines.Add(new Run(assembly.FileName));
-				tooltip.Inlines.Add(new LineBreak());
 				if (assembly.ModuleDefinition != null) {
+					tooltip.Inlines.Add(new LineBreak());
 					tooltip.Inlines.Add(new Bold(new Run("Architecture: ")));
 					tooltip.Inlines.Add(new Run(CSharpLanguage.GetPlatformDisplayName(assembly.ModuleDefinition)));
 					string runtimeName = CSharpLanguage.GetRuntimeDisplayName(assembly.ModuleDefinition);
@@ -290,7 +291,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			var asmListTreeNode = this.Ancestors().OfType<AssemblyListTreeNode>().FirstOrDefault();
 			Debug.Assert(asmListTreeNode != null);
 			if (peImage != null)
-				this.Children.Add(new PETreeNode(peImage));
+				this.Children.Add(new PETreeNode(peImage, module as ModuleDefMD));
 			if (module != null) {
 				if (module is ModuleDefMD)
 					this.Children.Add(new ReferenceFolderTreeNode((ModuleDefMD)module, this, asmListTreeNode));

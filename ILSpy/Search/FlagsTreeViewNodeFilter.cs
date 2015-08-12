@@ -20,6 +20,8 @@
 using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.TreeNodes;
+using dnSpy.TreeNodes.Hex;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
@@ -57,7 +59,8 @@ namespace dnSpy.Search {
 						VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
 						VisibleMembersFlags.ParamDef | VisibleMembersFlags.Locals |
 						VisibleMembersFlags.Local | VisibleMembersFlags.Resource |
-						VisibleMembersFlags.ResourceElement;
+						VisibleMembersFlags.ResourceElement | VisibleMembersFlags.PE |
+						VisibleMembersFlags.Hex;
 				break;
 
 			case AssemblyFilterType.NetModule:
@@ -72,13 +75,14 @@ namespace dnSpy.Search {
 						VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
 						VisibleMembersFlags.ParamDef | VisibleMembersFlags.Locals |
 						VisibleMembersFlags.Local | VisibleMembersFlags.Resource |
-						VisibleMembersFlags.ResourceElement;
+						VisibleMembersFlags.ResourceElement | VisibleMembersFlags.PE |
+						VisibleMembersFlags.Hex;
 				break;
 
 			case AssemblyFilterType.NonNetFile:
 			default:
 				thisFlag = VisibleMembersFlags.NonNetFile;
-				visibleFlags = thisFlag;
+				visibleFlags = thisFlag | VisibleMembersFlags.PE | VisibleMembersFlags.Hex;
 				break;
 			}
 			bool isMatch = (flags & thisFlag) != 0;
@@ -186,7 +190,8 @@ namespace dnSpy.Search {
 		}
 
 		public override TreeViewNodeFilterResult GetFilterResult(ResourceListTreeNode node) {
-			var visibleFlags = VisibleMembersFlags.Resource | VisibleMembersFlags.ResourceElement;
+			var visibleFlags = VisibleMembersFlags.ResourceList | VisibleMembersFlags.Resource |
+								VisibleMembersFlags.ResourceElement;
 			bool isMatch = (flags & VisibleMembersFlags.ResourceList) != 0;
 			if ((flags & visibleFlags) == 0)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
@@ -196,7 +201,7 @@ namespace dnSpy.Search {
 		}
 
 		public override TreeViewNodeFilterResult GetFilterResult(ResourceTreeNode node) {
-			var visibleFlags = VisibleMembersFlags.ResourceElement;
+			var visibleFlags = VisibleMembersFlags.Resource | VisibleMembersFlags.ResourceElement;
 			bool isMatch = (flags & VisibleMembersFlags.Resource) != 0;
 			if ((flags & visibleFlags) == 0)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
@@ -207,6 +212,23 @@ namespace dnSpy.Search {
 
 		public override TreeViewNodeFilterResult GetFilterResult(ResourceElementTreeNode node) {
 			bool isMatch = (flags & VisibleMembersFlags.ResourceElement) != 0;
+			if (!isMatch)
+				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
+			return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);
+		}
+
+		public override TreeViewNodeFilterResult GetFilterResult(PETreeNode node) {
+			var visibleFlags = VisibleMembersFlags.PE | VisibleMembersFlags.Hex;
+			bool isMatch = (flags & VisibleMembersFlags.PE) != 0;
+			if ((flags & visibleFlags) == 0)
+				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
+			if (isMatch)
+				return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);
+			return new TreeViewNodeFilterResult(FilterResult.Recurse, isMatch);
+		}
+
+		public override TreeViewNodeFilterResult GetFilterResult(HexTreeNode node) {
+			bool isMatch = (flags & VisibleMembersFlags.Hex) != 0;
 			if (!isMatch)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, isMatch);
 			return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);

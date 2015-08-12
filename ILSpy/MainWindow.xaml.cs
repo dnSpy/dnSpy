@@ -2979,7 +2979,7 @@ namespace ICSharpCode.ILSpy
 
 		internal void DisableMemoryMappedIO()
 		{
-			DisableMemoryMappedIO(GetAllModuleDefs());
+			DisableMemoryMappedIO(GetAllLoadedAssemblyInstances());
 		}
 
 		internal void DisableMemoryMappedIO(IEnumerable<LoadedAssembly> asms)
@@ -2996,8 +2996,10 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		IEnumerable<LoadedAssembly> GetAllModuleDefs()
+		public IEnumerable<LoadedAssembly> GetAllLoadedAssemblyInstances()
 		{
+			if (assemblyListTreeNode == null)
+				yield break;
 			foreach (AssemblyTreeNode asmNode in assemblyListTreeNode.Children) {
 				if (asmNode.Children.Count == 0 || !(asmNode.Children[0] is AssemblyTreeNode))
 					yield return asmNode.LoadedAssembly;

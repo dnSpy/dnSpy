@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using dnlib.PE;
 using dnSpy.HexEditor;
 using ICSharpCode.ILSpy.TreeNodes;
@@ -35,6 +36,14 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return imageSectionHeaderVM; }
 		}
 
+		protected override IEnumerable<HexVM> HexVMs {
+			get { yield return imageSectionHeaderVM; }
+		}
+
+		protected override string IconName {
+			get { return "BinaryFile"; }
+		}
+
 		readonly int sectionNumber;
 		readonly ImageSectionHeaderVM imageSectionHeaderVM;
 
@@ -44,8 +53,8 @@ namespace dnSpy.TreeNodes.Hex {
 			this.imageSectionHeaderVM = new ImageSectionHeaderVM(doc, StartOffset);
 		}
 
-		protected override void OnDocumentModifiedOverride(ulong modifiedStart, ulong modifiedEnd) {
-			imageSectionHeaderVM.OnDocumentModifiedOverride(modifiedStart, modifiedEnd);
+		public override void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
+			base.OnDocumentModified(modifiedStart, modifiedEnd);
 			if (HexUtils.IsModified(imageSectionHeaderVM.NameVM.StartOffset, imageSectionHeaderVM.NameVM.EndOffset, modifiedStart, modifiedEnd))
 				RaisePropertyChanged("Text");
 		}

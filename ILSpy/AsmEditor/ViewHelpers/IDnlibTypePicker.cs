@@ -18,7 +18,7 @@
 */
 
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.TreeNodes;
+using dnSpy.TreeNodes;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	interface IDnlibTypePicker {

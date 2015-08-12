@@ -44,6 +44,7 @@ namespace dnSpy.AsmEditor.Property {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class DeletePropertyDefCommand : IUndoCommand {
 		const string CMD_NAME = "Delete Property";
 		[ExportContextMenuEntry(Header = CMD_NAME,
@@ -209,6 +210,7 @@ namespace dnSpy.AsmEditor.Property {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class CreatePropertyDefCommand : IUndoCommand {
 		const string CMD_NAME = "Create Property";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
@@ -316,6 +318,7 @@ namespace dnSpy.AsmEditor.Property {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class PropertyDefSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Property";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",

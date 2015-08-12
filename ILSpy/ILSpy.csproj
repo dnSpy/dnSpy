@@ -554,7 +554,7 @@
       <DependentUpon>DecompilerTabsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="dntheme\FileTabBackgroundConverter.cs" />
-    <Compile Include="FilterSearcher.cs" />
+    <Compile Include="Search\FilterSearcher.cs" />
     <Compile Include="HexEditor\AsciiEncoding.cs" />
     <Compile Include="HexEditor\ByteArrayHexStream.cs" />
     <Compile Include="HexEditor\ClipboardUtils.cs" />
@@ -606,21 +606,23 @@
     <Compile Include="Tabs\TabState.cs" />
     <Compile Include="TextView\SimpleHighlighter.cs" />
     <Compile Include="TreeNodes\CopyTokenContextMenuEntry.cs" />
-    <Compile Include="TreeNodes\Filters\ChainTreeViewNodeFilter.cs" />
-    <Compile Include="TreeNodes\Filters\EntryPointTreeViewNodeFilter.cs" />
-    <Compile Include="TreeNodes\Filters\FilterNothingTreeViewNodeFilter.cs" />
-    <Compile Include="TreeNodes\Filters\FlagsTreeViewNodeFilter.cs" />
-    <Compile Include="TreeNodes\Filters\PublicApiTreeViewNodeFilter.cs" />
-    <Compile Include="TreeNodes\Filters\SameAssemblyTreeViewNodeFilter.cs" />
-    <Compile Include="TreeNodes\Filters\SameModuleTreeViewNodeFilter.cs" />
-    <Compile Include="TreeNodes\Filters\ShowNothingTreeViewNodeFilterBase.cs" />
-    <Compile Include="TreeNodes\Filters\TreeViewNodeFilterBase.cs" />
-    <Compile Include="TreeNodes\Filters\VisibleMembersFlags.cs" />
+    <Compile Include="Search\ChainTreeViewNodeFilter.cs" />
+    <Compile Include="Search\EntryPointTreeViewNodeFilter.cs" />
+    <Compile Include="Search\FilterNothingTreeViewNodeFilter.cs" />
+    <Compile Include="Search\FlagsTreeViewNodeFilter.cs" />
+    <Compile Include="Search\PublicApiTreeViewNodeFilter.cs" />
+    <Compile Include="Search\SameAssemblyTreeViewNodeFilter.cs" />
+    <Compile Include="Search\SameModuleTreeViewNodeFilter.cs" />
+    <Compile Include="Search\ShowNothingTreeViewNodeFilterBase.cs" />
+    <Compile Include="Search\TreeViewNodeFilterBase.cs" />
+    <Compile Include="Search\VisibleMembersFlags.cs" />
     <Compile Include="TreeNodes\GoToTokenContextMenuEntry.cs" />
     <Compile Include="TreeNodes\Hex\HexField.cs" />
     <Compile Include="TreeNodes\Hex\HexTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\HexUtils.cs" />
     <Compile Include="TreeNodes\Hex\HexVM.cs" />
+    <Compile Include="TreeNodes\Hex\ImageCor20HeaderTreeNode.cs" />
+    <Compile Include="TreeNodes\Hex\ImageCor20HeaderVM.cs" />
     <Compile Include="TreeNodes\Hex\ImageDosHeaderTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\ImageDosHeaderVM.cs" />
     <Compile Include="TreeNodes\Hex\ImageFileHeaderTreeNode.cs" />
@@ -633,6 +635,10 @@
     <Compile Include="TreeNodes\Hex\ImageSectionHeaderTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\ImageSectionHeaderVM.cs" />
     <Compile Include="TreeNodes\Hex\PETreeNode.cs" />
+    <Compile Include="TreeNodes\Hex\StorageHeaderTreeNode.cs" />
+    <Compile Include="TreeNodes\Hex\StorageHeaderVM.cs" />
+    <Compile Include="TreeNodes\Hex\StorageSignatureTreeNode.cs" />
+    <Compile Include="TreeNodes\Hex\StorageSignatureVM.cs" />
     <Compile Include="TreeNodes\ITokenTreeNode.cs" />
     <Compile Include="TreeNodes\ITreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\NodePathName.cs" />
@@ -1151,6 +1157,7 @@
     <Resource Include="Images\AssemblyWarning.png" />
     <Resource Include="Images\Back.png" />
     <Resource Include="Images\Binary.png" />
+    <Resource Include="Images\BinaryFile.png" />
     <Resource Include="Images\Branch.png" />
     <Resource Include="Images\Breakpoint.png" />
     <Resource Include="Images\Class.png" />
@@ -1181,6 +1188,7 @@
     <Resource Include="Images\DisabledBreakpoint.png" />
     <Resource Include="Images\dnSpy.ico" />
     <Resource Include="Images\dnSpy-Big.png" />
+    <Resource Include="Images\EntryPoint.png" />
     <Resource Include="Images\Enum.png" />
     <Resource Include="Images\EnumInternal.png" />
     <Resource Include="Images\EnumPrivate.png" />
@@ -1221,6 +1229,7 @@
     <Resource Include="Images\FieldReadOnlyPrivate.png" />
     <Resource Include="Images\FieldReadOnlyProtected.png" />
     <Resource Include="Images\FieldReadOnlyProtectedInternal.png" />
+    <Resource Include="Images\Fill.png" />
     <Resource Include="Images\Find.png" />
     <Resource Include="Images\FolderClosed.png" />
     <Resource Include="Images\FolderOpen.png" />
@@ -1253,6 +1262,7 @@
     <Resource Include="Images\MethodPrivate.png" />
     <Resource Include="Images\MethodProtected.png" />
     <Resource Include="Images\MethodProtectedInternal.png" />
+    <Resource Include="Images\ModuleFile.png" />
     <Resource Include="Images\ModuleReference.png" />
     <Resource Include="Images\ModuleToAssembly.png" />
     <Resource Include="Images\NameSpace.png" />

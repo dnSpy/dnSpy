@@ -57,6 +57,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class DeleteResourceCommand : IUndoCommand {
 		const string CMD_NAME = "Delete Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME,
@@ -206,6 +207,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class DeleteResourceElementCommand : IUndoCommand {
 		const string CMD_NAME = "Delete Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME,
@@ -500,6 +502,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class CreateFileResourceCommand : IUndoCommand {
 		const string CMD_NAME = "Create File Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
@@ -621,6 +624,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	abstract class CreateResourceTreeNodeCommand : IUndoCommand {
 		readonly ModuleDef module;
 		readonly ResourceListTreeNode rsrcListNode;
@@ -893,6 +897,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class ResourceSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
@@ -1018,6 +1023,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	abstract class CreateResourceElementCommandBase : IUndoCommand {
 		readonly ModuleDef module;
 		readonly ResourceElementSetTreeNode rsrcSetNode;
@@ -1499,6 +1505,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	abstract class ResourceElementSettingsBaseCommand : IUndoCommand {
 		readonly ModuleDef module;
 		readonly Resource resource;

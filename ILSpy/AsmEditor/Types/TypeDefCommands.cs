@@ -48,6 +48,7 @@ namespace dnSpy.AsmEditor.Types {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class DeleteTypeDefCommand : IUndoCommand {
 		const string CMD_NAME = "Delete Type";
 		[ExportContextMenuEntry(Header = CMD_NAME,
@@ -200,6 +201,7 @@ namespace dnSpy.AsmEditor.Types {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class CreateTypeDefCommand : IUndoCommand {
 		const string CMD_NAME = "Create Type";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
@@ -296,6 +298,7 @@ namespace dnSpy.AsmEditor.Types {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class CreateNestedTypeDefCommand : IUndoCommand {
 		const string CMD_NAME = "Create Nested Type";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
@@ -408,6 +411,7 @@ namespace dnSpy.AsmEditor.Types {
 		}
 	}
 
+	[DebuggerDisplay("{Description}")]
 	sealed class TypeDefSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Type";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",

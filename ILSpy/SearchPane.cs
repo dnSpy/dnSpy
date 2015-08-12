@@ -35,6 +35,7 @@ using System.Windows.Threading;
 using dnlib.DotNet;
 using dnSpy.Images;
 using dnSpy.Search;
+using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.NRefactory;

@@ -20,7 +20,7 @@ using System;
 using System.ComponentModel;
 using System.Xml.Linq;
 using dnSpy.Search;
-using ICSharpCode.ILSpy.TreeNodes;
+using dnSpy.TreeNodes;
 
 namespace ICSharpCode.ILSpy
 {

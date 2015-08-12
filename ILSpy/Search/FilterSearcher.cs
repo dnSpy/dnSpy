@@ -28,6 +28,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnlib.DotNet.Resources;
 using dnSpy.Images;
+using dnSpy.TreeNodes;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
@@ -430,10 +431,10 @@ namespace dnSpy.Search {
 			}));
 
 			foreach (var node in resNodes)
-				SearchSearchResourceTreeNodes(module, node);
+				SearchResourceTreeNodes(module, node);
 		}
 
-		void SearchSearchResourceTreeNodes(LoadedAssembly module, ResourceTreeNode resTreeNode) {
+		void SearchResourceTreeNodes(LoadedAssembly module, ResourceTreeNode resTreeNode) {
 			var res = filter.GetFilterResult(resTreeNode);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;

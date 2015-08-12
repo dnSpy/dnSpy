@@ -27,6 +27,7 @@ using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.AsmEditor.MethodBody {
+	[DebuggerDisplay("{Description}")]
 	sealed class MethodBodySettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Method Body";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
