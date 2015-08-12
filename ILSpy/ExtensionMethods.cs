@@ -18,9 +18,9 @@
 
 using System.Collections.Generic;
 using dnlib.DotNet;
-using ICSharpCode.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Options;
+using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy
 {
