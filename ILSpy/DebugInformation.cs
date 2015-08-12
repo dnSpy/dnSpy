@@ -2,16 +2,10 @@
 // This code is distributed under the GNU LGPL (for details please see \doc\license.txt)
 
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
-
-using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.ILAst;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.Debugger
-{
+namespace ICSharpCode.ILSpy.Debugger {
 	/// <summary>
 	/// Contains the data important for debugger from the main application.
 	/// </summary>

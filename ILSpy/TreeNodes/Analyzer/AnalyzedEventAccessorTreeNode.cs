@@ -16,13 +16,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using dnlib.DotNet;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
-{
+namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	internal class AnalyzedEventAccessorTreeNode : AnalyzedMethodTreeNode
 	{
 		private readonly string name;

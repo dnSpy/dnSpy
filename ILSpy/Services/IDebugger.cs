@@ -4,12 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
-using ICSharpCode.NRefactory.CSharp;
 
-namespace ICSharpCode.ILSpy.Debugger.Services
-{
+namespace ICSharpCode.ILSpy.Debugger.Services {
 	public class DebugStackFrame
 	{
 		public MethodKey MethodKey;

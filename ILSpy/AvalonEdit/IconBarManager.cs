@@ -5,15 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
 
 using ICSharpCode.ILSpy.Bookmarks;
-using ICSharpCode.ILSpy.Debugger;
-using ICSharpCode.NRefactory.CSharp;
-using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.AvalonEdit
-{
+namespace ICSharpCode.ILSpy.AvalonEdit {
 	/// <summary>
 	/// Stores the entries in the icon bar margin. Multiple icon bar margins
 	/// can use the same manager if split view is used.

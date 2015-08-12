@@ -4,10 +4,8 @@
 using System;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.NRefactory;
-using ICSharpCode.NRefactory.CSharp;
 
-namespace ICSharpCode.ILSpy.Debugger.Tooltips
-{
+namespace ICSharpCode.ILSpy.Debugger.Tooltips {
 	public class ToolTipRequestEventArgs : EventArgs
 	{
 		/// <summary>

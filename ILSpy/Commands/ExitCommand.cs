@@ -16,10 +16,8 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "E_xit", MenuIcon = "Close", MenuOrder = 1999, MenuCategory = "Exit", MenuInputGestureText = "Alt+F4")]
 	sealed class ExitCommand : SimpleCommand
 	{

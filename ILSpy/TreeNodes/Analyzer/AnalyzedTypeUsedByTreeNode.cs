@@ -23,10 +23,8 @@ using System.Threading;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 using dnlib.DotNet;
-using dnlib.DotNet.Emit;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
-{
+namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	internal sealed class AnalyzedTypeUsedByTreeNode : AnalyzerSearchTreeNode
 	{
 		private readonly TypeDef analyzedType;

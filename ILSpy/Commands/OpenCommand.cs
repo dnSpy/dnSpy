@@ -16,11 +16,9 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	[ExportToolbarCommand(ToolTip = "Open (Ctrl+O)", ToolbarIcon = "Open", ToolbarCategory = "Open", ToolbarOrder = 2000)]
 	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "_Open…", MenuIcon = "Open", MenuCategory = "Open", MenuOrder = 1100)]
 	sealed class OpenCommand : CommandWrapper

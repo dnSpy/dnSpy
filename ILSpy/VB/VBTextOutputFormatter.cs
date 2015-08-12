@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory;
@@ -27,8 +26,7 @@ using ICSharpCode.NRefactory.VB;
 using ICSharpCode.NRefactory.VB.Ast;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.VB
-{
+namespace ICSharpCode.ILSpy.VB {
 	/// <summary>
 	/// Description of VBTextOutputFormatter.
 	/// </summary>

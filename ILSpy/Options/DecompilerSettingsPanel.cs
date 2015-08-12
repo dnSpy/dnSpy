@@ -18,7 +18,6 @@
 
 using System.Threading;
 using System.Xml.Linq;
-using dnSpy.AsmEditor;
 using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.Options {

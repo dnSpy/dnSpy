@@ -31,16 +31,13 @@ using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.ILSpy.XmlDoc;
 using ICSharpCode.NRefactory;
-using ICSharpCode.NRefactory.TypeSystem;
-using ICSharpCode.NRefactory.TypeSystem.Implementation;
 using CSharp = ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.VB;
 using ICSharpCode.NRefactory.VB.Visitors;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
-namespace ICSharpCode.ILSpy.VB
-{
+namespace ICSharpCode.ILSpy.VB {
 	/// <summary>
 	/// Decompiler logic for VB.
 	/// </summary>

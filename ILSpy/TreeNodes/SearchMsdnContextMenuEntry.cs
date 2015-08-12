@@ -16,16 +16,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Linq;
-using System.Windows;
 using System.Diagnostics;
 using dnlib.DotNet;
-using ICSharpCode.TreeView;
-using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	[ExportContextMenuEntryAttribute(Header = "Search _MSDN", Icon = "Search", Order = 910, Category = "Other")]
 	internal sealed class SearchMsdnContextMenuEntry : IContextMenuEntry
 	{

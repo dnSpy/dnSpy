@@ -9,11 +9,9 @@ using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
-using ICSharpCode.NRefactory.CSharp;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.Bookmarks
-{
+namespace ICSharpCode.ILSpy.Bookmarks {
 	/// <summary>
 	/// A bookmark that can be attached to an AvalonEdit TextDocument.
 	/// </summary>

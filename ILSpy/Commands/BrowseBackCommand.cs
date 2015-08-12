@@ -16,11 +16,9 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	[ExportToolbarCommand(ToolTip = "Back", ToolbarIcon = "Back", ToolbarCategory = "Navigation", ToolbarOrder = 1000)]
 	sealed class BrowseBackCommand : CommandWrapper
 	{

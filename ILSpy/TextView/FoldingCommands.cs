@@ -16,15 +16,9 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
-using ICSharpCode.AvalonEdit;
-using ICSharpCode.AvalonEdit.Folding;
 
-namespace ICSharpCode.ILSpy.TextView
-{
+namespace ICSharpCode.ILSpy.TextView {
 #if false
 	[ExportContextMenuEntryAttribute(Header = "Toggle All Folding", Category = "Folding")]
 	internal sealed class ToggleAllContextMenuEntry : IContextMenuEntry

@@ -33,7 +33,6 @@ using dnlib.DotNet.Resources;
 using dnSpy.AsmEditor.Resources;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.TreeNodes {
 	[Export(typeof(IResourceFactory<ResourceElement, ResourceElementTreeNode>))]

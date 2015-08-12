@@ -25,7 +25,6 @@ using dnSpy.AvalonEdit;
 using dnSpy.HexEditor;
 using dnSpy.TreeNodes;
 using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.AvalonEdit;
 
 namespace dnSpy.Tabs {
 	public class SavedTabGroupsState {

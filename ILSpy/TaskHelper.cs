@@ -19,12 +19,10 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	public static class TaskHelper
 	{
 		public static readonly Task CompletedTask = FromResult<object>(null);

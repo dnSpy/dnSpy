@@ -20,7 +20,6 @@
 using System.ComponentModel.Composition;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
-using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.TreeNodes {
 	[Export(typeof(IResourceFactory<ResourceElement, ResourceElementTreeNode>))]

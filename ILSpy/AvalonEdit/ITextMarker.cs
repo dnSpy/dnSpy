@@ -22,11 +22,9 @@ using System.Windows;
 using System.Windows.Media;
 
 using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.ILSpy.Bookmarks;
 
-namespace ICSharpCode.ILSpy.AvalonEdit
-{
+namespace ICSharpCode.ILSpy.AvalonEdit {
 	/// <summary>
 	/// Represents a text marker.
 	/// </summary>

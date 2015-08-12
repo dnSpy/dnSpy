@@ -18,15 +18,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using ICSharpCode.NRefactory.Documentation;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 
-namespace ICSharpCode.ILSpy.XmlDoc
-{
+namespace ICSharpCode.ILSpy.XmlDoc {
 	/// <summary>
 	/// Helps finding and loading .xml documentation.
 	/// </summary>

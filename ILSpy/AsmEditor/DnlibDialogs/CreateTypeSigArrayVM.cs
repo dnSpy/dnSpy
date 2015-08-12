@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;

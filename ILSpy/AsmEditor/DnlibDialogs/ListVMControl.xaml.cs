@@ -19,7 +19,6 @@
 
 using System.Windows.Controls;
 using System.Windows.Input;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	/// <summary>
