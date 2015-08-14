@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnlib.DotNet.MD;
 using dnSpy.HexEditor;
 using ICSharpCode.Decompiler;
@@ -26,7 +27,7 @@ using ICSharpCode.NRefactory;
 namespace dnSpy.TreeNodes.Hex {
 	sealed class MetaDataTableTreeNode : HexTreeNode {
 		public override NodePathName NodePathName {
-			get { return new NodePathName("tblstrm", ((byte)tablesStreamVM.Table).ToString()); }
+			get { return new NodePathName("mdtblstrm", ((byte)tablesStreamVM.Table).ToString()); }
 		}
 
 		protected override object ViewObject {
@@ -45,11 +46,25 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return true; }
 		}
 
+		public MetaDataTableVM MetaDataTableVM {
+			get { return tablesStreamVM; }
+		}
 		readonly MetaDataTableVM tablesStreamVM;
 
-		public MetaDataTableTreeNode(HexDocument doc, MDTable mdTable)
+		// It could have tens of thousands of children so prevent loading all of them when
+		// single-clicking the treenode
+		public override bool SingleClickExpandsChildren {
+			get { return false; }
+		}
+
+		readonly HexDocument doc;
+
+		public MetaDataTableTreeNode(HexDocument doc, MDTable mdTable, IMetaData md)
 			: base((ulong)mdTable.StartOffset, (ulong)mdTable.EndOffset - 1) {
+			LazyLoading = true;
+			this.doc = doc;
 			this.tablesStreamVM = MetaDataTableVM.Create(doc, StartOffset, mdTable);
+			this.tablesStreamVM.InitializeHeapOffsets((ulong)md.StringsStream.StartOffset, (ulong)md.StringsStream.EndOffset - 1);
 		}
 
 		protected override void Write(ITextOutput output) {
@@ -60,6 +75,17 @@ namespace dnSpy.TreeNodes.Hex {
 			output.Write('(', TextTokenType.Operator);
 			output.Write(string.Format("{0}", tablesStreamVM.Rows), TextTokenType.Number);
 			output.Write(')', TextTokenType.Operator);
+		}
+
+		protected override void LoadChildren() {
+			Debug.Assert(Children.Count == 0);
+
+			ulong offs = StartOffset;
+			ulong rowSize = (ulong)MetaDataTableVM.TableInfo.RowSize;
+			for (uint i = 0; i < MetaDataTableVM.Rows; i++) {
+				Children.Add(new MetaDataTableRecordTreeNode(doc, (int)i, offs, offs + rowSize - 1));
+				offs += rowSize;
+            }
 		}
 	}
 }

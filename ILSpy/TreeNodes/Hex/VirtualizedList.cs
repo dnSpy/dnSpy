@@ -44,7 +44,7 @@ namespace dnSpy.TreeNodes.Hex {
 			return weakRef == null ? null : (T)weakRef.Target;
 		}
 
-		object IList.this[int index] {
+		public T this[int index] {
 			get {
 				T obj;
 				var weakRef = list[index];
@@ -58,6 +58,10 @@ namespace dnSpy.TreeNodes.Hex {
 					weakRef.Target = obj = createItem(index);
 				return obj;
 			}
+		}
+
+		object IList.this[int index] {
+			get { return this[index]; }
 			set { throw new NotImplementedException(); }
 		}
 

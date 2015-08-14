@@ -27,7 +27,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		public virtual void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
 			foreach (var field in HexFields)
-				field.OnDocumentModifiedOverride(modifiedStart, modifiedEnd);
+				field.OnDocumentModified(modifiedStart, modifiedEnd);
 		}
 	}
 }

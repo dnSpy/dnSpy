@@ -634,6 +634,7 @@
     <Compile Include="TreeNodes\Hex\ImageOptionalHeaderVM.cs" />
     <Compile Include="TreeNodes\Hex\ImageSectionHeaderTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\ImageSectionHeaderVM.cs" />
+    <Compile Include="TreeNodes\Hex\MetaDataTableRecordTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\MetaDataTableRecordVM.cs" />
     <Compile Include="TreeNodes\Hex\MetaDataTableTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\MetaDataTableVM.cs" />

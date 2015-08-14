@@ -1530,6 +1530,13 @@
         <Setter Property="IsReadOnly" Value="True"/>
     </Style>
 
+    <Style x:Key="MDTableGridViewScrollViewerStyle"
+		   BasedOn="{StaticResource {x:Static GridView.GridViewScrollViewerStyleKey}}"
+		   TargetType="{x:Type ScrollViewer}">
+        <Setter Property="Focusable" Value="True"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+    </Style>
+
     <DataTemplate DataType="{x:Type tnhex:MetaDataTable1VM}">
         <Border TextBlock.Foreground="{DynamicResource SystemColorsControlText}" Background="{DynamicResource SystemColorsControl}">
             <ListView
@@ -1538,6 +1545,9 @@
                 SelectionMode="Single"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
+                <ListView.Resources>
+                    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource MDTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
+                </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
                         <GridViewColumn Header="RID    ">
@@ -1582,6 +1592,9 @@
                 SelectionMode="Single"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
+                <ListView.Resources>
+                    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource MDTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
+                </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
                         <GridViewColumn Header="RID    ">
@@ -1633,6 +1646,9 @@
                 SelectionMode="Single"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
+                <ListView.Resources>
+                    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource MDTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
+                </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
                         <GridViewColumn Header="RID    ">
@@ -1691,6 +1707,9 @@
                 SelectionMode="Single"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
+                <ListView.Resources>
+                    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource MDTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
+                </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
                         <GridViewColumn Header="RID    ">
@@ -1756,6 +1775,9 @@
                 SelectionMode="Single"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
+                <ListView.Resources>
+                    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource MDTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
+                </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
                         <GridViewColumn Header="RID    ">
@@ -1828,6 +1850,9 @@
                 SelectionMode="Single"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
+                <ListView.Resources>
+                    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource MDTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
+                </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
                         <GridViewColumn Header="RID    ">
@@ -1907,6 +1932,9 @@
                 SelectionMode="Single"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
+                <ListView.Resources>
+                    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource MDTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
+                </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
                         <GridViewColumn Header="RID    ">
@@ -1993,6 +2021,9 @@
                 SelectionMode="Single"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
+                <ListView.Resources>
+                    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource MDTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
+                </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
                         <GridViewColumn Header="RID    ">
@@ -2086,6 +2117,9 @@
                 SelectionMode="Single"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
+                <ListView.Resources>
+                    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource MDTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
+                </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
                         <GridViewColumn Header="RID    ">
@@ -2175,6 +2209,78 @@
                     </GridView>
                 </ListView.View>
             </ListView>
+        </Border>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type tnhex:MetaDataTableRecordVM}">
+        <Border TextBlock.Foreground="{DynamicResource SystemColorsControlText}" Background="{DynamicResource SystemColorsControl}">
+            <Grid>
+                <Grid.Resources>
+                    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" MaxWidth="200" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column0Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column0TextBox}" Content="{Binding Column0.NameUI, Mode=OneTime}" Visibility="{Binding Column0Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxStyle}" Name="Column0TextBox" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" Visibility="{Binding Column0Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column0Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <TextBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column1Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Label Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column1TextBox}" Content="{Binding Column1.NameUI, Mode=OneTime}" Visibility="{Binding Column1Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxStyle}" Name="Column1TextBox" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" Visibility="{Binding Column1Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column1Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <TextBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column2Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Label Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column2TextBox}" Content="{Binding Column2.NameUI, Mode=OneTime}" Visibility="{Binding Column2Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxStyle}" Name="Column2TextBox" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" Visibility="{Binding Column2Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column2Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column3Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Label Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column3TextBox}" Content="{Binding Column3.NameUI, Mode=OneTime}" Visibility="{Binding Column3Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxStyle}" Name="Column3TextBox" Text="{Binding Column3.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" Visibility="{Binding Column3Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column3Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column4.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column4Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Label Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column4TextBox}" Content="{Binding Column4.NameUI, Mode=OneTime}" Visibility="{Binding Column4Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxStyle}" Name="Column4TextBox" Text="{Binding Column4.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" Visibility="{Binding Column4Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column4Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column4Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <TextBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column5.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column5Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Label Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column5TextBox}" Content="{Binding Column5.NameUI, Mode=OneTime}" Visibility="{Binding Column5Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="5" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxStyle}" Name="Column5TextBox" Text="{Binding Column5.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" Visibility="{Binding Column5Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="5" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column5Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column5Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <TextBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column6.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column6Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Label Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column6TextBox}" Content="{Binding Column6.NameUI, Mode=OneTime}" Visibility="{Binding Column6Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="6" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxStyle}" Name="Column6TextBox" Text="{Binding Column6.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" Visibility="{Binding Column6Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="6" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column6Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column6Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <TextBox Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column7.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column7Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Label Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column7TextBox}" Content="{Binding Column7.NameUI, Mode=OneTime}" Visibility="{Binding Column7Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="7" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxStyle}" Name="Column7TextBox" Text="{Binding Column7.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" Visibility="{Binding Column7Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="7" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column7Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column7Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <TextBox Grid.Row="8" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column8.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column8Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Label Grid.Row="8" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column8TextBox}" Content="{Binding Column8.NameUI, Mode=OneTime}" Visibility="{Binding Column8Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="8" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxStyle}" Name="Column8TextBox" Text="{Binding Column8.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" Visibility="{Binding Column8Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="8" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column8Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column8Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </Grid>
         </Border>
     </DataTemplate>
 

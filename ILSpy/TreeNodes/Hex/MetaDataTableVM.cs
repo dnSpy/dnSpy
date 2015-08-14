@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnSpy.HexEditor;
@@ -116,6 +117,8 @@ namespace dnSpy.TreeNodes.Hex {
 		readonly HexDocument doc;
 		readonly ulong startOffset;
 		readonly ulong endOffset;
+		ulong stringsStartOffset;
+		ulong stringsEndOffset;
 
 		protected MetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable) {
 			this.doc = doc;
@@ -130,11 +133,11 @@ namespace dnSpy.TreeNodes.Hex {
 		MetaDataTableRecordVM CreateItem(int index) {
 			Debug.Assert(index >= 0 && (uint)index < numRows);
 			ulong recordOffset = startOffset + (ulong)index * (ulong)tableInfo.RowSize;
-			return new MetaDataTableRecordVM(doc, recordOffset, new MDToken(table, index + 1), tableInfo);
+			return new MetaDataTableRecordVM(this, doc, recordOffset, new MDToken(table, index + 1), tableInfo);
 		}
 
 		public static MetaDataTableVM Create(HexDocument doc, ulong startOffset, MDTable mdTable) {
-			switch (mdTable.Columns.Count) {
+			switch (CreateTableInfo(mdTable.TableInfo).Columns.Count) {
 			case 1:		return new MetaDataTable1VM(doc, startOffset, mdTable);
 			case 2:		return new MetaDataTable2VM(doc, startOffset, mdTable);
 			case 3:		return new MetaDataTable3VM(doc, startOffset, mdTable);
@@ -182,6 +185,34 @@ namespace dnSpy.TreeNodes.Hex {
 					obj.OnDocumentModified(modifiedStart, modifiedEnd);
 				i++;
 			}
+		}
+
+		public MetaDataTableRecordVM Get(int index) {
+			return virtList[index];
+		}
+
+		public MetaDataTableRecordVM TryGet(int index) {
+			return virtList.TryGet(index);
+		}
+
+		internal void InitializeHeapOffsets(ulong stringsStartOffset, ulong stringsEndOffset) {
+			this.stringsStartOffset = stringsStartOffset;
+			this.stringsEndOffset = stringsEndOffset;
+		}
+
+		public string ReadStringsHeap(uint offset) {
+			if (offset == 0)
+				return string.Empty;
+			ulong offs = stringsStartOffset + offset;
+			var bytes = new List<byte>();
+			while (offs <= stringsEndOffset) {
+				int b = doc.ReadByte(offs);
+				if (b <= 0)
+					break;
+				bytes.Add((byte)b);
+				offs++;
+			}
+			return Encoding.UTF8.GetString(bytes.ToArray());
 		}
 	}
 

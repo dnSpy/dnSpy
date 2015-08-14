@@ -30,6 +30,11 @@
 	<Geometry x:Key="ListUpArrow16x16">M4.999,8L4.999,15 10.999,15 10.999,8 14.999,8 7.999,1 1,8z</Geometry>
 	<SolidColorBrush x:Key="TransparentBrush" Color="Transparent" />
 
+	<Style x:Key="{x:Type ContentPresenter}"
+		   TargetType="{x:Type ContentPresenter}">
+		<Setter Property="FocusVisualStyle" Value="{x:Null}" />
+	</Style>
+
 	<Style x:Key="FocusVisual" TargetType="{x:Type Control}">
 		<Setter Property="Template">
 			<Setter.Value>

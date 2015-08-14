@@ -35,6 +35,10 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return false; }
 		}
 
+		protected virtual bool CanCacheUIObject {
+			get { return true; }
+		}
+
 		public ulong StartOffset {
 			get { return startOffset; }
 		}
@@ -64,22 +68,27 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		public sealed override object GetViewObject(DecompilerTextView textView) {
-			if (uiObj == null) {
-				object newObj;
-				if (IsVirtualizingCollectionVM)
-					newObj = new ContentPresenter() { Content = ViewObject, Focusable = true };
-				else {
-					newObj = new ScrollViewer {
-						CanContentScroll = true,
-						HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-						VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-						Content = ViewObject,
-						Focusable = true,
-					};
+			if (uiObj != null)
+				return uiObj;
+
+			object newObj;
+			if (IsVirtualizingCollectionVM)
+				newObj = new ContentPresenter() { Content = ViewObject, Focusable = true };
+			else {
+				newObj = new ScrollViewer {
+					CanContentScroll = true,
+					HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+					VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+					Content = ViewObject,
+					Focusable = true,
 				};
+			};
+
+			if (CanCacheUIObject) {
 				Interlocked.CompareExchange(ref uiObj, newObj, null);
+				return uiObj;
 			}
-			return uiObj;
+			return newObj;
 		}
 		object uiObj;
 

@@ -18,50 +18,55 @@
 */
 
 using System.Collections.Generic;
-using dnlib.DotNet.MD;
 using dnSpy.HexEditor;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 
 namespace dnSpy.TreeNodes.Hex {
-	sealed class TablesStreamTreeNode : HexTreeNode {
+	sealed class MetaDataTableRecordTreeNode : HexTreeNode {
 		public override NodePathName NodePathName {
-			get { return new NodePathName("tblstrm"); }
+			get { return new NodePathName("mdtblrec", index.ToString()); }
+		}
+
+		// Don't cache it since the VM object will never get freed (it's stored in a weak ref in
+		// the virtualized list)
+		protected override bool CanCacheUIObject {
+			get { return false; }
 		}
 
 		protected override object ViewObject {
-			get { return tablesStreamVM; }
+			get { return Record; }
 		}
 
 		protected override IEnumerable<HexVM> HexVMs {
-			get { yield return tablesStreamVM; }
+			get { yield return Record; }
 		}
 
 		protected override string IconName {
 			get { return "MetaData"; }
 		}
 
-		readonly TablesStreamVM tablesStreamVM;
-
-		public TablesStreamTreeNode(HexDocument doc, TablesStream tblStream, IMetaData md)
-			: base((ulong)tblStream.StartOffset, (ulong)tblStream.MDTables[0].StartOffset - 1) {
-			this.tablesStreamVM = new TablesStreamVM(doc, tblStream);
-
-			foreach (var mdTable in tblStream.MDTables) {
-				if (mdTable.Rows != 0)
-					this.Children.Add(new MetaDataTableTreeNode(doc, mdTable, md));
-			}
+		MetaDataTableTreeNode MDParent {
+			get { return (MetaDataTableTreeNode)Parent; }
 		}
 
-		public override void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
-			base.OnDocumentModified(modifiedStart, modifiedEnd);
+		MetaDataTableRecordVM Record {
+			get { return MDParent.MetaDataTableVM.Get(index); }
+		}
 
-			foreach (HexTreeNode node in Children)
-				node.OnDocumentModified(modifiedStart, modifiedEnd);
+		public override bool SingleClickExpandsChildren {
+			get { return false; }
+		}
+
+		readonly int index;
+
+		public MetaDataTableRecordTreeNode(HexDocument doc, int index, ulong startOffset, ulong endOffset)
+			: base(startOffset, endOffset) {
+			this.index = index;
 		}
 
 		protected override void Write(ITextOutput output) {
-			output.Write("Tables Stream", TextTokenType.InstanceField);
+			output.Write(string.Format("{0}", index + 1), TextTokenType.Number);
 		}
 	}
 }

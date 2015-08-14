@@ -59,6 +59,10 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 		bool isVisible = true;
 
+		public int Size {
+			get { return (int)(EndOffset - StartOffset + 1); }
+		}
+
 		public abstract string FormattedValue { get; }
 
 		protected HexField(HexDocument doc, string parentName, string name, ulong start, int size) {
@@ -71,7 +75,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		public abstract DataFieldVM DataFieldVM { get; }
 
-		public void OnDocumentModifiedOverride(ulong modifiedStart, ulong modifiedEnd) {
+		public void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
 			if (!HexUtils.IsModified(startOffset, endOffset, modifiedStart, modifiedEnd))
 				return;
 

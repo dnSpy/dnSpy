@@ -61,7 +61,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		readonly StorageStreamVM storageStreamVM;
 
-		public StorageStreamTreeNode(HexDocument doc, StreamHeader sh, int streamNumber, DotNetStream knownStream)
+		public StorageStreamTreeNode(HexDocument doc, StreamHeader sh, int streamNumber, DotNetStream knownStream, IMetaData md)
 			: base((ulong)sh.StartOffset, (ulong)sh.EndOffset - 1) {
 			this.streamNumber = streamNumber;
 			this.storageStreamType = GetStorageStreamType(knownStream);
@@ -69,7 +69,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 			var tblStream = knownStream as TablesStream;
 			if (tblStream != null)
-				this.Children.Add(new TablesStreamTreeNode(doc, tblStream));
+				this.Children.Add(new TablesStreamTreeNode(doc, tblStream, md));
 		}
 
 		static StorageStreamType GetStorageStreamType(DotNetStream stream) {

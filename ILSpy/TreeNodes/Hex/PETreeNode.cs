@@ -97,7 +97,7 @@ namespace dnSpy.TreeNodes.Hex {
 				for (int i = 0; i < md.MetaDataHeader.StreamHeaders.Count; i++) {
 					var sh = md.MetaDataHeader.StreamHeaders[i];
 					var knownStream = knownStreams.FirstOrDefault(a => a.StreamHeader == sh);
-					Children.Add(new StorageStreamTreeNode(doc, sh, i, knownStream));
+					Children.Add(new StorageStreamTreeNode(doc, sh, i, knownStream, md));
 				}
 			}
 		}
