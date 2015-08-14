@@ -20,15 +20,13 @@
 using System.Collections.Generic;
 using dnlib.PE;
 using dnSpy.HexEditor;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 
 namespace dnSpy.TreeNodes.Hex {
 	sealed class ImageSectionHeaderTreeNode : HexTreeNode {
 		public override NodePathName NodePathName {
 			get { return new NodePathName("secthdr", sectionNumber.ToString()); }
-		}
-
-		protected override string Name {
-			get { return string.Format("Section #{0}: {1}", sectionNumber, imageSectionHeaderVM.NameVM.String); }
 		}
 
 		protected override object ViewObject {
@@ -43,7 +41,11 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return "BinaryFile"; }
 		}
 
+		public int SectionNumber {
+			get { return sectionNumber; }
+		}
 		readonly int sectionNumber;
+
 		readonly ImageSectionHeaderVM imageSectionHeaderVM;
 
 		public ImageSectionHeaderTreeNode(HexDocument doc, ImageSectionHeader sectHdr, int sectionNumber)
@@ -56,6 +58,16 @@ namespace dnSpy.TreeNodes.Hex {
 			base.OnDocumentModified(modifiedStart, modifiedEnd);
 			if (HexUtils.IsModified(imageSectionHeaderVM.NameVM.StartOffset, imageSectionHeaderVM.NameVM.EndOffset, modifiedStart, modifiedEnd))
 				RaisePropertyChanged("Text");
+		}
+
+		protected override void Write(ITextOutput output) {
+			output.Write("Section", TextTokenType.Keyword);
+			output.WriteSpace();
+			output.Write('#', TextTokenType.Operator);
+			output.Write(sectionNumber.ToString(), TextTokenType.Number);
+			output.Write(':', TextTokenType.Operator);
+			output.WriteSpace();
+			output.Write(string.Format("{0}", imageSectionHeaderVM.NameVM.String), TextTokenType.Type);
 		}
 	}
 }

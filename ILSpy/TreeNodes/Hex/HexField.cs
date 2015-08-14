@@ -53,6 +53,12 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 		readonly ulong endOffset;
 
+		public bool IsVisible {
+			get { return isVisible; }
+			set { isVisible = value; }
+		}
+		bool isVisible = true;
+
 		public abstract string FormattedValue { get; }
 
 		protected HexField(HexDocument doc, string parentName, string name, ulong start, int size) {
@@ -139,6 +145,30 @@ namespace dnSpy.TreeNodes.Hex {
 
 		protected override object ReadDataFrom(IHexStream stream) {
 			return (byte)stream.ReadByte(StartOffset);
+		}
+	}
+
+	sealed class Int16HexField : HexField {
+		public override DataFieldVM DataFieldVM {
+			get { return data; }
+		}
+		readonly Int16VM data;
+
+		public override string FormattedValue {
+			get { return string.Format("{0:X4}", ReadDataFrom(doc)); }
+		}
+
+		public Int16HexField(HexDocument doc, string parentName, string name, ulong start)
+			: base(doc, parentName, name, start, 2) {
+			this.data = new Int16VM(doc.ReadInt16(start), a => UpdateValue());
+		}
+
+		protected override byte[] GetDataAsByteArray() {
+			return BitConverter.GetBytes(data.Value);
+		}
+
+		protected override object ReadDataFrom(IHexStream stream) {
+			return stream.ReadInt16(StartOffset);
 		}
 	}
 
@@ -257,6 +287,18 @@ namespace dnSpy.TreeNodes.Hex {
 						break;
 				}
 				return Filter(encoding.GetString(data, 0, count + 1));
+			}
+		}
+
+		public string StringZ {
+			get {
+				var data = GetDataAsByteArray();
+				int count;
+				for (count = 0; count < data.Length; count++) {
+					if (data[count] == 0)
+						break;
+				}
+				return Filter(encoding.GetString(data, 0, count));
 			}
 		}
 

@@ -2006,6 +2006,7 @@ namespace dnSpy.dntheme {
 							new BrushColorInfo(ColorType.DirectoryPart, "Directory part"),
 							new BrushColorInfo(ColorType.FileNameNoExtension, "Filename without extension"),
 							new BrushColorInfo(ColorType.FileExtension, "File extension"),
+							new BrushColorInfo(ColorType.Error, "Error"),
 						},
 					},
 					new BrushColorInfo(ColorType.HexText, "Default text color in hex view") {

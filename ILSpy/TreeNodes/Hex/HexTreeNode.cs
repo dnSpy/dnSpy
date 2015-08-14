@@ -18,18 +18,22 @@
 */
 
 using System.Collections.Generic;
+using System.Threading;
+using System.Windows.Controls;
 using dnSpy.Images;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
-using ICSharpCode.NRefactory;
 
 namespace dnSpy.TreeNodes.Hex {
 	abstract class HexTreeNode : ILSpyTreeNode {
-		protected abstract string Name { get; }
 		protected abstract IEnumerable<HexVM> HexVMs { get; }
 		protected abstract object ViewObject { get; }
+
+		protected virtual bool IsVirtualizingCollectionVM {
+			get { return false; }
+		}
 
 		public ulong StartOffset {
 			get { return startOffset; }
@@ -60,11 +64,27 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		public sealed override object GetViewObject(DecompilerTextView textView) {
-			return ViewObject;
+			if (uiObj == null) {
+				object newObj;
+				if (IsVirtualizingCollectionVM)
+					newObj = new ContentPresenter() { Content = ViewObject, Focusable = true };
+				else {
+					newObj = new ScrollViewer {
+						CanContentScroll = true,
+						HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+						VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+						Content = ViewObject,
+						Focusable = true,
+					};
+				};
+				Interlocked.CompareExchange(ref uiObj, newObj, null);
+			}
+			return uiObj;
 		}
+		object uiObj;
 
 		public sealed override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
-			language.WriteCommentLine(output, string.Format("{0:X8} - {1:X8} {2}", StartOffset, EndOffset, Name));
+			language.WriteCommentLine(output, string.Format("{0:X8} - {1:X8} {2}", StartOffset, EndOffset, this.ToString()));
 			foreach (var vm in HexVMs) {
 				language.WriteCommentLine(output, string.Empty);
 				language.WriteCommentLine(output, string.Format("{0}:", vm.Name));
@@ -77,8 +97,10 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		protected sealed override void Write(ITextOutput output, Language language) {
-			output.Write(Name, TextTokenType.Text);
+			Write(output);
 		}
+
+		protected abstract void Write(ITextOutput output);
 
 		public virtual void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
 			if (!HexUtils.IsModified(StartOffset, EndOffset, modifiedStart, modifiedEnd))

@@ -45,6 +45,7 @@
 		<color name="directorypart" fg="#FFD700" />
 		<color name="filenamenoextension" fg="#569CD6" />
 		<color name="fileextension" fg="#9B9B82" />
+		<color name="error" fg="Red" />
 		<color name="linenumber" fg="#2B91AF" />
 		<color name="xmlcomment" fg="#FF57A64A" italics="true" />
 		<color name="xmlcdata" fg="#FFE9D585" />

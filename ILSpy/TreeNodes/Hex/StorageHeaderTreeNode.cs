@@ -20,15 +20,13 @@
 using System.Collections.Generic;
 using dnlib.DotNet.MD;
 using dnSpy.HexEditor;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 
 namespace dnSpy.TreeNodes.Hex {
 	sealed class StorageHeaderTreeNode : HexTreeNode {
 		public override NodePathName NodePathName {
 			get { return new NodePathName("strghdr"); }
-		}
-
-		protected override string Name {
-			get { return "Storage Header"; }
 		}
 
 		protected override object ViewObject {
@@ -48,6 +46,10 @@ namespace dnSpy.TreeNodes.Hex {
 		public StorageHeaderTreeNode(HexDocument doc, MetaDataHeader mdHeader)
 			: base((ulong)mdHeader.StorageHeaderOffset, (ulong)mdHeader.StorageHeaderOffset + 4 - 1) {
 			this.storageHeaderVM = new StorageHeaderVM(doc, StartOffset);
+		}
+
+		protected override void Write(ITextOutput output) {
+			output.Write("Storage Header", TextTokenType.InstanceField);
 		}
 	}
 }

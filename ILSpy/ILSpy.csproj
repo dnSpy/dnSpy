@@ -634,11 +634,19 @@
     <Compile Include="TreeNodes\Hex\ImageOptionalHeaderVM.cs" />
     <Compile Include="TreeNodes\Hex\ImageSectionHeaderTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\ImageSectionHeaderVM.cs" />
+    <Compile Include="TreeNodes\Hex\MetaDataTableRecordVM.cs" />
+    <Compile Include="TreeNodes\Hex\MetaDataTableTreeNode.cs" />
+    <Compile Include="TreeNodes\Hex\MetaDataTableVM.cs" />
     <Compile Include="TreeNodes\Hex\PETreeNode.cs" />
     <Compile Include="TreeNodes\Hex\StorageHeaderTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\StorageHeaderVM.cs" />
     <Compile Include="TreeNodes\Hex\StorageSignatureTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\StorageSignatureVM.cs" />
+    <Compile Include="TreeNodes\Hex\StorageStreamTreeNode.cs" />
+    <Compile Include="TreeNodes\Hex\StorageStreamVM.cs" />
+    <Compile Include="TreeNodes\Hex\TablesStreamTreeNode.cs" />
+    <Compile Include="TreeNodes\Hex\TablesStreamVM.cs" />
+    <Compile Include="TreeNodes\Hex\VirtualizedList.cs" />
     <Compile Include="TreeNodes\ITokenTreeNode.cs" />
     <Compile Include="TreeNodes\ITreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\NodePathName.cs" />
@@ -1256,6 +1264,7 @@
     <Resource Include="Images\LiteralProtected.png" />
     <Resource Include="Images\LiteralProtectedInternal.png" />
     <Resource Include="Images\Local.png" />
+    <Resource Include="Images\MetaData.png" />
     <Resource Include="Images\Method.png" />
     <Resource Include="Images\MethodCompilerControlled.png" />
     <Resource Include="Images\MethodInternal.png" />

@@ -18,9 +18,12 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Threading;
 using dnlib.DotNet;
+using dnlib.DotNet.MD;
 using dnlib.PE;
 using dnSpy.AsmEditor;
 using dnSpy.HexEditor;
@@ -78,6 +81,24 @@ namespace dnSpy.TreeNodes.Hex {
 				var md = module.MetaData;
 				Children.Add(new StorageSignatureTreeNode(doc, md.MetaDataHeader));
 				Children.Add(new StorageHeaderTreeNode(doc, md.MetaDataHeader));
+				var knownStreams = new List<DotNetStream> {
+					md.StringsStream,
+					md.USStream,
+					md.BlobStream,
+					md.GuidStream,
+					md.TablesStream,
+				};
+				if (md.IsCompressed) {
+					foreach (var stream in md.AllStreams) {
+						if (stream.Name == "#!")
+							knownStreams.Add(stream);
+					}
+				}
+				for (int i = 0; i < md.MetaDataHeader.StreamHeaders.Count; i++) {
+					var sh = md.MetaDataHeader.StreamHeaders[i];
+					var knownStream = knownStreams.FirstOrDefault(a => a.StreamHeader == sh);
+					Children.Add(new StorageStreamTreeNode(doc, sh, i, knownStream));
+				}
 			}
 		}
 		WeakDocumentListener weakDocListener;
@@ -102,6 +123,9 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		void HexDocument_OnDocumentModified(object sender, HexDocumentModifiedEventArgs e) {
+			// Descendants() shouldn't be used since some of the nodes could have thousands of
+			// children and it's better if the parent can quickly check whether any of its children
+			// need to get notified.
 			foreach (HexTreeNode node in Children)
 				node.OnDocumentModified(e.StartOffset, e.EndOffset);
 		}

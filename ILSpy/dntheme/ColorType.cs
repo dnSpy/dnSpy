@@ -305,6 +305,11 @@ namespace dnSpy.dntheme {
 		FileExtension,
 
 		/// <summary>
+		/// Error text
+		/// </summary>
+		Error,
+
+		/// <summary>
 		/// Default text in all windows
 		/// </summary>
 		DefaultText,

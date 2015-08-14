@@ -18,45 +18,48 @@
 */
 
 using System.Collections.Generic;
-using dnlib.PE;
+using dnlib.DotNet.MD;
 using dnSpy.HexEditor;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 
 namespace dnSpy.TreeNodes.Hex {
-	sealed class ImageCor20HeaderTreeNode : HexTreeNode {
+	sealed class MetaDataTableTreeNode : HexTreeNode {
 		public override NodePathName NodePathName {
-			get { return new NodePathName("cor20hdr"); }
+			get { return new NodePathName("tblstrm", ((byte)tablesStreamVM.Table).ToString()); }
 		}
 
 		protected override object ViewObject {
-			get { return imageCor20HeaderVM; }
+			get { return tablesStreamVM; }
 		}
 
 		protected override IEnumerable<HexVM> HexVMs {
-			get { yield return imageCor20HeaderVM; }
+			get { yield return tablesStreamVM; }
 		}
 
 		protected override string IconName {
-			get { return "BinaryFile"; }
+			get { return "MetaData"; }
 		}
 
-		readonly ImageCor20HeaderVM imageCor20HeaderVM;
-
-		public static ImageCor20HeaderTreeNode Create(HexDocument doc, IPEImage peImage) {
-			var dnDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
-			if (dnDir.VirtualAddress != 0 && dnDir.Size >= 0x48)
-				return new ImageCor20HeaderTreeNode(doc, (ulong)peImage.ToFileOffset(dnDir.VirtualAddress));
-			return null;
+		protected override bool IsVirtualizingCollectionVM {
+			get { return true; }
 		}
 
-		public ImageCor20HeaderTreeNode(HexDocument doc, ulong startOffset)
-			: base(startOffset, startOffset + 0x48 - 1) {
-			this.imageCor20HeaderVM = new ImageCor20HeaderVM(doc, StartOffset);
+		readonly MetaDataTableVM tablesStreamVM;
+
+		public MetaDataTableTreeNode(HexDocument doc, MDTable mdTable)
+			: base((ulong)mdTable.StartOffset, (ulong)mdTable.EndOffset - 1) {
+			this.tablesStreamVM = MetaDataTableVM.Create(doc, StartOffset, mdTable);
 		}
 
 		protected override void Write(ITextOutput output) {
-			output.Write("Cor20 Header", TextTokenType.InstanceField);
+			output.Write(string.Format("{0:X2}", (byte)tablesStreamVM.Table), TextTokenType.Number);
+			output.WriteSpace();
+			output.Write(string.Format("{0}", tablesStreamVM.Table), TextTokenType.Type);
+			output.WriteSpace();
+			output.Write('(', TextTokenType.Operator);
+			output.Write(string.Format("{0}", tablesStreamVM.Rows), TextTokenType.Number);
+			output.Write(')', TextTokenType.Operator);
 		}
 	}
 }

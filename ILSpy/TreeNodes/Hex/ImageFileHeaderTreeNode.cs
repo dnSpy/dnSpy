@@ -20,15 +20,13 @@
 using System.Collections.Generic;
 using dnlib.PE;
 using dnSpy.HexEditor;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 
 namespace dnSpy.TreeNodes.Hex {
 	sealed class ImageFileHeaderTreeNode : HexTreeNode {
 		public override NodePathName NodePathName {
 			get { return new NodePathName("filehdr"); }
-		}
-
-		protected override string Name {
-			get { return "File Header"; }
 		}
 
 		protected override object ViewObject {
@@ -48,6 +46,10 @@ namespace dnSpy.TreeNodes.Hex {
 		public ImageFileHeaderTreeNode(HexDocument doc, ImageFileHeader fileHeader)
 			: base((ulong)fileHeader.StartOffset, (ulong)fileHeader.EndOffset - 1) {
 			this.imageFileHeaderVM = new ImageFileHeaderVM(doc, StartOffset);
+		}
+
+		protected override void Write(ITextOutput output) {
+			output.Write("File Header", TextTokenType.Keyword);
 		}
 	}
 }

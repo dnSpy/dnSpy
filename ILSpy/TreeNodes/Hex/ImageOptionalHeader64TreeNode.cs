@@ -20,15 +20,13 @@
 using System.Collections.Generic;
 using dnlib.PE;
 using dnSpy.HexEditor;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 
 namespace dnSpy.TreeNodes.Hex {
 	sealed class ImageOptionalHeader64TreeNode : HexTreeNode {
 		public override NodePathName NodePathName {
 			get { return new NodePathName("opthdr64"); }
-		}
-
-		protected override string Name {
-			get { return "Optional Header (64-bit)"; }
 		}
 
 		protected override object ViewObject {
@@ -48,6 +46,10 @@ namespace dnSpy.TreeNodes.Hex {
 		public ImageOptionalHeader64TreeNode(HexDocument doc, ImageOptionalHeader64 optHdr)
 			: base((ulong)optHdr.StartOffset, (ulong)optHdr.EndOffset - 1) {
 			this.imageOptionalHeader64VM = new ImageOptionalHeader64VM(doc, StartOffset, EndOffset);
+		}
+
+		protected override void Write(ITextOutput output) {
+			output.Write("Optional Header (64-bit)", TextTokenType.Keyword);
 		}
 	}
 }

@@ -143,6 +143,8 @@ namespace dnSpy.Tabs {
 			get { return TabItem.Content; }
 			set {
 				var elem = value;
+				// Add a scrollviewer if necessary, eg. it's just a data object. NOTE: Don't do this
+				// for any control though, because it could be a virtualized listview.
 				if (!(elem is UIElement)) {
 					elem = new ScrollViewer {
 						CanContentScroll = true,

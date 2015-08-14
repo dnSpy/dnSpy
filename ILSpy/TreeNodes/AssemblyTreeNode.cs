@@ -118,14 +118,21 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		{
 			if (!assembly.IsLoaded)
 				output.Write(UIUtils.CleanUpName(assembly.ShortName), TextTokenType.Assembly);
-			else if (assembly.ModuleDefinition == null)
-				output.Write(UIUtils.CleanUpName(assembly.ShortName), TextTokenType.Text);
+			else if (assembly.ModuleDefinition == null) {
+				var pe = assembly.PEImage;
+				if (pe != null) {
+					bool isExe = (pe.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
+					output.Write(UIUtils.CleanUpName(assembly.ShortName), isExe ? TextTokenType.AssemblyExe : TextTokenType.Assembly);
+				}
+				else
+					output.Write(UIUtils.CleanUpName(assembly.ShortName), TextTokenType.Text);
+			}
 			else if (Parent is AssemblyTreeNode || assembly.AssemblyDefinition == null)
 				output.Write(UIUtils.CleanUpName(assembly.ModuleDefinition.Name), TextTokenType.Module);
 			else {
 				var asm = assembly.AssemblyDefinition;
 
-				bool isExe = (assembly.ModuleDefinition.Characteristics & dnlib.PE.Characteristics.Dll) == 0;
+				bool isExe = (assembly.ModuleDefinition.Characteristics & Characteristics.Dll) == 0;
 				output.Write(asm.Name, isExe ? TextTokenType.AssemblyExe : TextTokenType.Assembly);
 
 				bool showAsmVer = DisplaySettingsPanel.CurrentDisplaySettings.ShowAssemblyVersion;

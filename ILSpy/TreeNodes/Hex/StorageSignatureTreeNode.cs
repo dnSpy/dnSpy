@@ -20,15 +20,13 @@
 using System.Collections.Generic;
 using dnlib.DotNet.MD;
 using dnSpy.HexEditor;
+using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 
 namespace dnSpy.TreeNodes.Hex {
 	sealed class StorageSignatureTreeNode : HexTreeNode {
 		public override NodePathName NodePathName {
 			get { return new NodePathName("strgsig"); }
-		}
-
-		protected override string Name {
-			get { return "Storage Signature"; }
 		}
 
 		protected override object ViewObject {
@@ -48,6 +46,10 @@ namespace dnSpy.TreeNodes.Hex {
 		public StorageSignatureTreeNode(HexDocument doc, MetaDataHeader mdHeader)
 			: base((ulong)mdHeader.StartOffset, (ulong)mdHeader.StorageHeaderOffset - 1) {
 			this.storageSignatureVM = new StorageSignatureVM(doc, StartOffset, (int)(EndOffset - StartOffset + 1 - 0x10));
+		}
+
+		protected override void Write(ITextOutput output) {
+			output.Write("Storage Signature", TextTokenType.InstanceField);
 		}
 	}
 }

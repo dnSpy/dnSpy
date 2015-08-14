@@ -18,45 +18,50 @@
 */
 
 using System.Collections.Generic;
-using dnlib.PE;
+using dnlib.DotNet.MD;
 using dnSpy.HexEditor;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 
 namespace dnSpy.TreeNodes.Hex {
-	sealed class ImageCor20HeaderTreeNode : HexTreeNode {
+	sealed class TablesStreamTreeNode : HexTreeNode {
 		public override NodePathName NodePathName {
-			get { return new NodePathName("cor20hdr"); }
+			get { return new NodePathName("tblstrm"); }
 		}
 
 		protected override object ViewObject {
-			get { return imageCor20HeaderVM; }
+			get { return tablesStreamVM; }
 		}
 
 		protected override IEnumerable<HexVM> HexVMs {
-			get { yield return imageCor20HeaderVM; }
+			get { yield return tablesStreamVM; }
 		}
 
 		protected override string IconName {
-			get { return "BinaryFile"; }
+			get { return "MetaData"; }
 		}
 
-		readonly ImageCor20HeaderVM imageCor20HeaderVM;
+		readonly TablesStreamVM tablesStreamVM;
 
-		public static ImageCor20HeaderTreeNode Create(HexDocument doc, IPEImage peImage) {
-			var dnDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
-			if (dnDir.VirtualAddress != 0 && dnDir.Size >= 0x48)
-				return new ImageCor20HeaderTreeNode(doc, (ulong)peImage.ToFileOffset(dnDir.VirtualAddress));
-			return null;
+		public TablesStreamTreeNode(HexDocument doc, TablesStream tblStream)
+			: base((ulong)tblStream.StartOffset, (ulong)tblStream.MDTables[0].StartOffset - 1) {
+			this.tablesStreamVM = new TablesStreamVM(doc, tblStream);
+
+			foreach (var mdTable in tblStream.MDTables) {
+				if (mdTable.Rows != 0)
+					this.Children.Add(new MetaDataTableTreeNode(doc, mdTable));
+			}
 		}
 
-		public ImageCor20HeaderTreeNode(HexDocument doc, ulong startOffset)
-			: base(startOffset, startOffset + 0x48 - 1) {
-			this.imageCor20HeaderVM = new ImageCor20HeaderVM(doc, StartOffset);
+		public override void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
+			base.OnDocumentModified(modifiedStart, modifiedEnd);
+
+			foreach (HexTreeNode node in Children)
+				node.OnDocumentModified(modifiedStart, modifiedEnd);
 		}
 
 		protected override void Write(ITextOutput output) {
-			output.Write("Cor20 Header", TextTokenType.InstanceField);
+			output.Write("Tables Stream", TextTokenType.InstanceField);
 		}
 	}
 }
