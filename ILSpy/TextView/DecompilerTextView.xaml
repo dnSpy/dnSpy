@@ -18,7 +18,7 @@
 			<Border Name="waitAdorner" Background="{DynamicResource DecompilerTextViewWaitAdornerBackground}" TextBlock.Foreground="{DynamicResource DecompilerTextViewWaitAdornerForeground}" Visibility="Collapsed">
 				<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 					<TextBlock FontSize="14pt">Decompiling…</TextBlock>
-					<ProgressBar IsIndeterminate="True" Height="16" Margin="0, 4" />
+					<ProgressBar Name="waitAdornerProgressBar" IsIndeterminate="True" Height="16" Margin="0, 4" />
 					<Button Name="waitAdornerButton" Style="{StaticResource DialogButton}" Click="cancelButton_Click" HorizontalAlignment="Center">Cancel</Button>
 				</StackPanel>
 			</Border>

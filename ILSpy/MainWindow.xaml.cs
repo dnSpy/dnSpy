@@ -1407,6 +1407,9 @@ namespace ICSharpCode.ILSpy
 				// In case a plugin has added their own bindings
 				UninstallTabCommandBindings(ActiveTabState);
 				InstallTabCommandBindings(ActiveTabState);
+
+				// Flickering workaround fix. Could reproduce it when using VMWare + WinXP
+				loadingProgressBar.IsIndeterminate = false;
 				return;
 			default:
 				return;

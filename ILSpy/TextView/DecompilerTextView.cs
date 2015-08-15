@@ -167,6 +167,22 @@ namespace ICSharpCode.ILSpy.TextView
 			this.AddHandler(UIElement.LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnLostKeyboardFocus), true);
 		}
 
+		bool IsWaitAdornerVisible() {
+			return waitAdorner.Visibility == Visibility.Visible;
+		}
+
+		void HideWaitAdorner() {
+			// Flickering workaround fix. Could reproduce it when using VMWare + WinXP
+			waitAdorner.Visibility = Visibility.Collapsed;
+			waitAdornerProgressBar.IsIndeterminate = false;
+		}
+
+		void ShowWaitAdorner() {
+			// Flickering workaround fix. Could reproduce it when using VMWare + WinXP
+			waitAdornerProgressBar.IsIndeterminate = true;
+			waitAdorner.Visibility = Visibility.Visible;
+		}
+
 		void OnGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
 		{
 			TextEditor.Options.HighlightCurrentLine = MainWindow.Instance.SessionSettings.HighlightCurrentLine;
@@ -504,8 +520,8 @@ namespace ICSharpCode.ILSpy.TextView
 		/// </summary>
 		public Task<T> RunWithCancellation<T>(Func<CancellationToken, Task<T>> taskCreation)
 		{
-			if (waitAdorner.Visibility != Visibility.Visible) {
-				waitAdorner.Visibility = Visibility.Visible;
+			if (!IsWaitAdornerVisible()) {
+				ShowWaitAdorner();
 				waitAdorner.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, new Duration(TimeSpan.FromSeconds(0.5)), FillBehavior.Stop));
 				if (IsKeyboardFocused)
 					MainWindow.SetFocusIfNoMenuIsOpened(waitAdornerButton);
@@ -534,7 +550,7 @@ namespace ICSharpCode.ILSpy.TextView
 				try {
 					if (currentCancellationTokenSource == myCancellationTokenSource) {
 						currentCancellationTokenSource = null;
-						waitAdorner.Visibility = Visibility.Collapsed;
+						HideWaitAdorner();
 						if (waitAdornerButton.IsKeyboardFocused)
 							MainWindow.Instance.SetTextEditorFocus(this);
 						var taskBar = MainWindow.Instance.TaskbarItemInfo;
@@ -596,7 +612,7 @@ namespace ICSharpCode.ILSpy.TextView
 				currentCancellationTokenSource = null; // prevent canceled task from producing output
 			}
 			CancelDecompileAsync();
-			waitAdorner.Visibility = Visibility.Collapsed;
+			HideWaitAdorner();
 		}
 
 		void ClearCustomElementGenerators()
