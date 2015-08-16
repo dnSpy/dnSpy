@@ -26,10 +26,10 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return "STORAGEHEADER"; }
 		}
 
-		public ByteHexField FFlagsVM {
+		public ByteFlagsHexField FFlagsVM {
 			get { return fFlagsVM; }
 		}
-		readonly ByteHexField fFlagsVM;
+		readonly ByteFlagsHexField fFlagsVM;
 
 		public ByteHexField PadVM {
 			get { return padVM; }
@@ -47,7 +47,8 @@ namespace dnSpy.TreeNodes.Hex {
 		readonly HexField[] hexFields;
 
 		public StorageHeaderVM(HexDocument doc, ulong startOffset) {
-			this.fFlagsVM = new ByteHexField(doc, Name, "fFlags", startOffset + 0);
+			this.fFlagsVM = new ByteFlagsHexField(doc, Name, "fFlags", startOffset + 0);
+			this.fFlagsVM.Add(new BooleanHexBitField("ExtraData", 0));
 			this.padVM = new ByteHexField(doc, Name, "pad", startOffset + 1);
 			this.iStreamsVM = new UInt16HexField(doc, Name, "iStreams", startOffset + 2);
 

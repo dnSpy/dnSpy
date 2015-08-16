@@ -43,25 +43,25 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 		readonly ByteHexField m_minorVM;
 
-		public ByteHexField M_heapsVM {
+		public ByteFlagsHexField M_heapsVM {
 			get { return m_heapsVM; }
 		}
-		readonly ByteHexField m_heapsVM;
+		readonly ByteFlagsHexField m_heapsVM;
 
 		public ByteHexField M_ridVM {
 			get { return m_ridVM; }
 		}
 		readonly ByteHexField m_ridVM;
 
-		public UInt64HexField M_maskvalidVM {
+		public UInt64FlagsHexField M_maskvalidVM {
 			get { return m_maskvalidVM; }
 		}
-		readonly UInt64HexField m_maskvalidVM;
+		readonly UInt64FlagsHexField m_maskvalidVM;
 
-		public UInt64HexField M_sortedVM {
+		public UInt64FlagsHexField M_sortedVM {
 			get { return m_sortedVM; }
 		}
-		readonly UInt64HexField m_sortedVM;
+		readonly UInt64FlagsHexField m_sortedVM;
 
 		public UInt32HexField Rows00VM {
 			get { return rowsVM[0x00]; }
@@ -336,10 +336,20 @@ namespace dnSpy.TreeNodes.Hex {
 			this.m_ulReservedVM = new UInt32HexField(doc, Name, "m_ulReserved", startOffset + 0);
 			this.m_majorVM = new ByteHexField(doc, Name, "m_major", startOffset + 4);
 			this.m_minorVM = new ByteHexField(doc, Name, "m_minor", startOffset + 5);
-			this.m_heapsVM = new ByteHexField(doc, Name, "m_heaps", startOffset + 6);
+			this.m_heapsVM = new ByteFlagsHexField(doc, Name, "m_heaps", startOffset + 6);
+			this.m_heapsVM.Add(new BooleanHexBitField("BigStrings", 0));
+			this.m_heapsVM.Add(new BooleanHexBitField("BigGUID", 1));
+			this.m_heapsVM.Add(new BooleanHexBitField("BigBlob", 2));
+			this.m_heapsVM.Add(new BooleanHexBitField("Padding", 3));
+			this.m_heapsVM.Add(new BooleanHexBitField("Reserved", 4));
+			this.m_heapsVM.Add(new BooleanHexBitField("DeltaOnly", 5));
+			this.m_heapsVM.Add(new BooleanHexBitField("ExtraData", 6));
+			this.m_heapsVM.Add(new BooleanHexBitField("HasDelete", 7));
 			this.m_ridVM = new ByteHexField(doc, Name, "m_rid", startOffset + 7);
-			this.m_maskvalidVM = new UInt64HexField(doc, Name, "m_maskvalid", startOffset + 8);
-			this.m_sortedVM = new UInt64HexField(doc, Name, "m_sorted", startOffset + 0x10);
+			this.m_maskvalidVM = new UInt64FlagsHexField(doc, Name, "m_maskvalid", startOffset + 8);
+			AddTableFlags(this.m_maskvalidVM);
+			this.m_sortedVM = new UInt64FlagsHexField(doc, Name, "m_sorted", startOffset + 0x10);
+			AddTableFlags(this.m_sortedVM);
 
 			var list = new List<HexField> {
 				m_ulReservedVM,
@@ -374,6 +384,73 @@ namespace dnSpy.TreeNodes.Hex {
 			Debug.Assert(offs == (ulong)tblStream.MDTables[0].StartOffset);
 
 			this.hexFields = list.ToArray();
+		}
+
+		static void AddTableFlags(UInt64FlagsHexField field) {
+			field.Add(new BooleanHexBitField("Module", 0));
+			field.Add(new BooleanHexBitField("TypeRef", 1));
+			field.Add(new BooleanHexBitField("TypeDef", 2));
+			field.Add(new BooleanHexBitField("FieldPtr", 3));
+			field.Add(new BooleanHexBitField("Field", 4));
+			field.Add(new BooleanHexBitField("MethodPtr", 5));
+			field.Add(new BooleanHexBitField("Method", 6));
+			field.Add(new BooleanHexBitField("ParamPtr", 7));
+			field.Add(new BooleanHexBitField("Param", 8));
+			field.Add(new BooleanHexBitField("InterfaceImpl", 9));
+			field.Add(new BooleanHexBitField("MemberRef", 10));
+			field.Add(new BooleanHexBitField("Constant", 11));
+			field.Add(new BooleanHexBitField("CustomAttribute", 12));
+			field.Add(new BooleanHexBitField("FieldMarshal", 13));
+			field.Add(new BooleanHexBitField("DeclSecurity", 14));
+			field.Add(new BooleanHexBitField("ClassLayout", 15));
+			field.Add(new BooleanHexBitField("FieldLayout", 16));
+			field.Add(new BooleanHexBitField("StandAloneSig", 17));
+			field.Add(new BooleanHexBitField("EventMap", 18));
+			field.Add(new BooleanHexBitField("EventPtr", 19));
+			field.Add(new BooleanHexBitField("Event", 20));
+			field.Add(new BooleanHexBitField("PropertyMap", 21));
+			field.Add(new BooleanHexBitField("PropertyPtr", 22));
+			field.Add(new BooleanHexBitField("Property", 23));
+			field.Add(new BooleanHexBitField("MethodSemantics", 24));
+			field.Add(new BooleanHexBitField("MethodImpl", 25));
+			field.Add(new BooleanHexBitField("ModuleRef", 26));
+			field.Add(new BooleanHexBitField("TypeSpec", 27));
+			field.Add(new BooleanHexBitField("ImplMap", 28));
+			field.Add(new BooleanHexBitField("FieldRVA", 29));
+			field.Add(new BooleanHexBitField("ENCLog", 30));
+			field.Add(new BooleanHexBitField("ENCMap", 31));
+			field.Add(new BooleanHexBitField("Assembly", 32));
+			field.Add(new BooleanHexBitField("AssemblyProcessor", 33));
+			field.Add(new BooleanHexBitField("AssemblyOS", 34));
+			field.Add(new BooleanHexBitField("AssemblyRef", 35));
+			field.Add(new BooleanHexBitField("AssemblyRefProcessor", 36));
+			field.Add(new BooleanHexBitField("AssemblyRefOS", 37));
+			field.Add(new BooleanHexBitField("File", 38));
+			field.Add(new BooleanHexBitField("ExportedType", 39));
+			field.Add(new BooleanHexBitField("ManifestResource", 40));
+			field.Add(new BooleanHexBitField("NestedClass", 41));
+			field.Add(new BooleanHexBitField("GenericParam", 42));
+			field.Add(new BooleanHexBitField("MethodSpec", 43));
+			field.Add(new BooleanHexBitField("GenericParamConstraint", 44));
+			field.Add(new BooleanHexBitField("Reserved 2D", 45));
+			field.Add(new BooleanHexBitField("Reserved 2E", 46));
+			field.Add(new BooleanHexBitField("Reserved 2F", 47));
+			field.Add(new BooleanHexBitField("Reserved 30", 48));
+			field.Add(new BooleanHexBitField("Reserved 31", 49));
+			field.Add(new BooleanHexBitField("Reserved 32", 50));
+			field.Add(new BooleanHexBitField("Reserved 33", 51));
+			field.Add(new BooleanHexBitField("Reserved 34", 52));
+			field.Add(new BooleanHexBitField("Reserved 35", 53));
+			field.Add(new BooleanHexBitField("Reserved 36", 54));
+			field.Add(new BooleanHexBitField("Reserved 37", 55));
+			field.Add(new BooleanHexBitField("Reserved 38", 56));
+			field.Add(new BooleanHexBitField("Reserved 39", 57));
+			field.Add(new BooleanHexBitField("Reserved 3A", 58));
+			field.Add(new BooleanHexBitField("Reserved 3B", 59));
+			field.Add(new BooleanHexBitField("Reserved 3C", 60));
+			field.Add(new BooleanHexBitField("Reserved 3D", 61));
+			field.Add(new BooleanHexBitField("Reserved 3E", 62));
+			field.Add(new BooleanHexBitField("Reserved 3F", 63));
 		}
 	}
 }

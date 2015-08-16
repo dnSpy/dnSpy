@@ -72,15 +72,34 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 		readonly UInt16HexField numberOfLinenumbersVM;
 
-		public UInt32HexField CharacteristicsVM {
+		public UInt32FlagsHexField CharacteristicsVM {
 			get { return characteristicsVM; }
 		}
-		readonly UInt32HexField characteristicsVM;
+		readonly UInt32FlagsHexField characteristicsVM;
 
 		public override IEnumerable<HexField> HexFields {
 			get { return hexFields; }
 		}
 		readonly HexField[] hexFields;
+
+		static readonly IntegerHexBitFieldEnumInfo[] AlignInfos = new IntegerHexBitFieldEnumInfo[] {
+			new IntegerHexBitFieldEnumInfo(0, "Default"),
+			new IntegerHexBitFieldEnumInfo(1, "1 Byte"),
+			new IntegerHexBitFieldEnumInfo(2, "2 Bytes"),
+			new IntegerHexBitFieldEnumInfo(3, "4 Bytes"),
+			new IntegerHexBitFieldEnumInfo(4, "8 Bytes"),
+			new IntegerHexBitFieldEnumInfo(5, "16 Bytes"),
+			new IntegerHexBitFieldEnumInfo(6, "32 Bytes"),
+			new IntegerHexBitFieldEnumInfo(7, "64 Bytes"),
+			new IntegerHexBitFieldEnumInfo(8, "128 Bytes"),
+			new IntegerHexBitFieldEnumInfo(9, "256 Bytes"),
+			new IntegerHexBitFieldEnumInfo(10, "512 Bytes"),
+			new IntegerHexBitFieldEnumInfo(11, "1024 Bytes"),
+			new IntegerHexBitFieldEnumInfo(12, "2048 Bytes"),
+			new IntegerHexBitFieldEnumInfo(13, "4096 Bytes"),
+			new IntegerHexBitFieldEnumInfo(14, "8192 Bytes"),
+			new IntegerHexBitFieldEnumInfo(15, "Reserved"),
+		};
 
 		public ImageSectionHeaderVM(HexDocument doc, ulong startOffset) {
 			this.nameVM = new StringHexField(doc, Name, "Name", startOffset + 0, Encoding.UTF8, 8);
@@ -92,7 +111,36 @@ namespace dnSpy.TreeNodes.Hex {
 			this.pointerToLinenumbersVM = new UInt32HexField(doc, Name, "PointerToLinenumbers", startOffset + 0x1C);
 			this.numberOfRelocationsVM = new UInt16HexField(doc, Name, "NumberOfRelocations", startOffset + 0x20);
 			this.numberOfLinenumbersVM = new UInt16HexField(doc, Name, "NumberOfLinenumbers", startOffset + 0x22);
-			this.characteristicsVM = new UInt32HexField(doc, Name, "Characteristics", startOffset + 0x24);
+			this.characteristicsVM = new UInt32FlagsHexField(doc, Name, "Characteristics", startOffset + 0x24);
+			this.characteristicsVM.Add(new BooleanHexBitField("TYPE_DSECT", 0));
+			this.characteristicsVM.Add(new BooleanHexBitField("TYPE_NOLOAD", 1));
+			this.characteristicsVM.Add(new BooleanHexBitField("TYPE_GROUP", 2));
+			this.characteristicsVM.Add(new BooleanHexBitField("TYPE_NO_PAD", 3));
+			this.characteristicsVM.Add(new BooleanHexBitField("TYPE_COPY", 4));
+			this.characteristicsVM.Add(new BooleanHexBitField("CNT_CODE", 5));
+			this.characteristicsVM.Add(new BooleanHexBitField("CNT_INITD_DATA", 6));
+			this.characteristicsVM.Add(new BooleanHexBitField("CNT_UNINITD_DATA", 7));
+			this.characteristicsVM.Add(new BooleanHexBitField("LNK_OTHER", 8));
+			this.characteristicsVM.Add(new BooleanHexBitField("LNK_INFO", 9));
+			this.characteristicsVM.Add(new BooleanHexBitField("TYPE_OVER", 10));
+			this.characteristicsVM.Add(new BooleanHexBitField("LNK_REMOVE", 11));
+			this.characteristicsVM.Add(new BooleanHexBitField("LNK_COMDAT", 12));
+			this.characteristicsVM.Add(new BooleanHexBitField("RESERVED", 13));
+			this.characteristicsVM.Add(new BooleanHexBitField("NO_DEFER_SPEC_EXC", 14));
+			this.characteristicsVM.Add(new BooleanHexBitField("GPREL", 15));
+			this.characteristicsVM.Add(new BooleanHexBitField("MEM_SYSHEAP", 16));
+			this.characteristicsVM.Add(new BooleanHexBitField("MEM_PURGEABLE", 17));
+			this.characteristicsVM.Add(new BooleanHexBitField("MEM_LOCKED", 18));
+			this.characteristicsVM.Add(new BooleanHexBitField("MEM_PRELOAD", 19));
+			this.characteristicsVM.Add(new IntegerHexBitField("ALIGN", 20, 4, AlignInfos));
+			this.characteristicsVM.Add(new BooleanHexBitField("LNK_NRELOC_OVFL", 24));
+			this.characteristicsVM.Add(new BooleanHexBitField("MEM_DISCARDABLE", 25));
+			this.characteristicsVM.Add(new BooleanHexBitField("MEM_NOT_CACHED", 26));
+			this.characteristicsVM.Add(new BooleanHexBitField("MEM_NOT_PAGED", 27));
+			this.characteristicsVM.Add(new BooleanHexBitField("MEM_SHARED", 28));
+			this.characteristicsVM.Add(new BooleanHexBitField("MEM_EXECUTE", 29));
+			this.characteristicsVM.Add(new BooleanHexBitField("MEM_READ", 30));
+			this.characteristicsVM.Add(new BooleanHexBitField("MEM_WRITE", 31));
 
 			this.hexFields = new HexField[] {
 				this.nameVM,

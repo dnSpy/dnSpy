@@ -75,7 +75,7 @@ namespace dnSpy.AsmEditor {
 				return list[Index].Value;
 			}
 			set {
-				if (SelectedItem != value)
+				if (!object.Equals(SelectedItem, value))
 					SelectedIndex = GetIndex(value);
 			}
 		}

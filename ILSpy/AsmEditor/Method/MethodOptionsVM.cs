@@ -37,7 +37,7 @@ namespace dnSpy.AsmEditor.Method {
 		Managed		= (int)MethodImplAttributes.Managed >> 2,
 	}
 
-	enum MethodVisibility {
+	enum MethodAccess {
 		PrivateScope = (int)MethodAttributes.PrivateScope >> 0,
 		Private		= (int)MethodAttributes.Private >> 0,
 		FamANDAssem	= (int)MethodAttributes.FamANDAssem >> 0,
@@ -71,19 +71,19 @@ namespace dnSpy.AsmEditor.Method {
 		}
 		readonly EnumListVM managedTypeVM = new EnumListVM(managedTypeList);
 
-		static readonly EnumVM[] methodVisibilityList = new EnumVM[] {
-			new EnumVM(Method.MethodVisibility.PrivateScope, "PrivateScope"),
-			new EnumVM(Method.MethodVisibility.Private, "Private"),
-			new EnumVM(Method.MethodVisibility.FamANDAssem, "Family and Assembly"),
-			new EnumVM(Method.MethodVisibility.Assembly, "Assembly"),
-			new EnumVM(Method.MethodVisibility.Family, "Family"),
-			new EnumVM(Method.MethodVisibility.FamORAssem, "Family or Assembly"),
-			new EnumVM(Method.MethodVisibility.Public, "Public"),
+		static readonly EnumVM[] methodAccessList = new EnumVM[] {
+			new EnumVM(Method.MethodAccess.PrivateScope, "PrivateScope"),
+			new EnumVM(Method.MethodAccess.Private, "Private"),
+			new EnumVM(Method.MethodAccess.FamANDAssem, "Family and Assembly"),
+			new EnumVM(Method.MethodAccess.Assembly, "Assembly"),
+			new EnumVM(Method.MethodAccess.Family, "Family"),
+			new EnumVM(Method.MethodAccess.FamORAssem, "Family or Assembly"),
+			new EnumVM(Method.MethodAccess.Public, "Public"),
 		};
-		public EnumListVM MethodVisibility {
-			get { return methodVisibilityVM; }
+		public EnumListVM MethodAccess {
+			get { return methodAccessVM; }
 		}
-		readonly EnumListVM methodVisibilityVM = new EnumListVM(methodVisibilityList);
+		readonly EnumListVM methodAccessVM = new EnumListVM(methodAccessList);
 
 		static readonly EnumVM[] vtableLayoutList = EnumVM.Create(typeof(Method.VtableLayout));
 		public EnumListVM VtableLayout {
@@ -167,7 +167,7 @@ namespace dnSpy.AsmEditor.Method {
 				var mask = MethodAttributes.MemberAccessMask |
 							MethodAttributes.VtableLayoutMask;
 				return (attributes & ~mask) |
-					(MethodAttributes)((int)(Method.MethodVisibility)MethodVisibility.SelectedItem << 0) |
+					(MethodAttributes)((int)(Method.MethodAccess)MethodAccess.SelectedItem << 0) |
 					(MethodAttributes)((int)(Method.VtableLayout)VtableLayout.SelectedItem << 8);
 			}
 			set {
@@ -395,7 +395,7 @@ namespace dnSpy.AsmEditor.Method {
 			ImplMap = options.ImplMap;
 			CodeType.SelectedItem = (Method.CodeType)((int)(options.ImplAttributes & MethodImplAttributes.CodeTypeMask) >> 0);
 			ManagedType.SelectedItem = (Method.ManagedType)((int)(options.ImplAttributes & MethodImplAttributes.ManagedMask) >> 2);
-			MethodVisibility.SelectedItem = (Method.MethodVisibility)((int)(options.Attributes & MethodAttributes.MemberAccessMask) >> 0);
+			MethodAccess.SelectedItem = (Method.MethodAccess)((int)(options.Attributes & MethodAttributes.MemberAccessMask) >> 0);
 			VtableLayout.SelectedItem = (Method.VtableLayout)((int)(options.Attributes & MethodAttributes.VtableLayoutMask) >> 8);
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 			DeclSecuritiesVM.InitializeFrom(options.DeclSecurities);

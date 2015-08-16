@@ -124,15 +124,15 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 		readonly UInt32HexField checkSumVM;
 
-		public UInt16HexField SubsystemVM {
+		public UInt16FlagsHexField SubsystemVM {
 			get { return subsystemVM; }
 		}
-		readonly UInt16HexField subsystemVM;
+		readonly UInt16FlagsHexField subsystemVM;
 
-		public UInt16HexField DllCharacteristicsVM {
+		public UInt16FlagsHexField DllCharacteristicsVM {
 			get { return dllCharacteristicsVM; }
 		}
-		readonly UInt16HexField dllCharacteristicsVM;
+		readonly UInt16FlagsHexField dllCharacteristicsVM;
 
 		public UInt32HexField LoaderFlagsVM {
 			get { return loaderFlagsVM; }
@@ -229,6 +229,23 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 		HexField[] hexFields;
 
+		static readonly IntegerHexBitFieldEnumInfo[] SubsystemInfos = new IntegerHexBitFieldEnumInfo[] {
+			new IntegerHexBitFieldEnumInfo(0, "Unknown"),
+			new IntegerHexBitFieldEnumInfo(1, "Native"),
+			new IntegerHexBitFieldEnumInfo(2, "WindowsGui"),
+			new IntegerHexBitFieldEnumInfo(3, "WindowsCui"),
+			new IntegerHexBitFieldEnumInfo(5, "Os2Cui"),
+			new IntegerHexBitFieldEnumInfo(7, "PosixCui"),
+			new IntegerHexBitFieldEnumInfo(8, "NativeWindows"),
+			new IntegerHexBitFieldEnumInfo(9, "WindowsCeGui"),
+			new IntegerHexBitFieldEnumInfo(10, "EfiApplication"),
+			new IntegerHexBitFieldEnumInfo(11, "EfiBootServiceDriver"),
+			new IntegerHexBitFieldEnumInfo(12, "EfiRuntimeDriver"),
+			new IntegerHexBitFieldEnumInfo(13, "EfiRom"),
+			new IntegerHexBitFieldEnumInfo(14, "Xbox"),
+			new IntegerHexBitFieldEnumInfo(16, "WindowsBootApplication"),
+		};
+
 		protected ImageOptionalHeaderVM(HexDocument doc, ulong startOffset, ulong endOffset, ulong offs1, ulong offs2) {
 			this.magicVM = new UInt16HexField(doc, Name, "Magic", startOffset + 0);
 			this.majorLinkerVersionVM = new ByteHexField(doc, Name, "MajorLinkerVersion", startOffset + 2);
@@ -251,9 +268,25 @@ namespace dnSpy.TreeNodes.Hex {
 			this.sizeOfImageVM = new UInt32HexField(doc, Name, "SizeOfImage", startOffset + offs1 + 0x18);
 			this.sizeOfHeadersVM = new UInt32HexField(doc, Name, "SizeOfHeaders", startOffset + offs1 + 0x1C);
 			this.checkSumVM = new UInt32HexField(doc, Name, "CheckSum", startOffset + offs1 + 0x20);
-			this.subsystemVM = new UInt16HexField(doc, Name, "Subsystem", startOffset + offs1 + 0x24);
-			this.dllCharacteristicsVM = new UInt16HexField(doc, Name, "DllCharacteristics", startOffset + offs1 + 0x26);
-
+			this.subsystemVM = new UInt16FlagsHexField(doc, Name, "Subsystem", startOffset + offs1 + 0x24);
+			this.subsystemVM.Add(new IntegerHexBitField("Subsystem", 0, 16, SubsystemInfos));
+			this.dllCharacteristicsVM = new UInt16FlagsHexField(doc, Name, "DllCharacteristics", startOffset + offs1 + 0x26);
+			this.dllCharacteristicsVM.Add(new BooleanHexBitField("Reserved1", 0));
+			this.dllCharacteristicsVM.Add(new BooleanHexBitField("Reserved2", 1));
+			this.dllCharacteristicsVM.Add(new BooleanHexBitField("Reserved3", 2));
+			this.dllCharacteristicsVM.Add(new BooleanHexBitField("Reserved4", 3));
+			this.dllCharacteristicsVM.Add(new BooleanHexBitField("Reserved5", 4));
+			this.dllCharacteristicsVM.Add(new BooleanHexBitField("High Entropy VA", 5));
+			this.dllCharacteristicsVM.Add(new BooleanHexBitField("Dynamic Base", 6));
+			this.dllCharacteristicsVM.Add(new BooleanHexBitField("Force Integrity", 7));
+			this.dllCharacteristicsVM.Add(new BooleanHexBitField("NX Compat", 8));
+			this.dllCharacteristicsVM.Add(new BooleanHexBitField("No Isolation", 9));
+			this.dllCharacteristicsVM.Add(new BooleanHexBitField("No SEH", 10));
+			this.dllCharacteristicsVM.Add(new BooleanHexBitField("No Bind", 11));
+			this.dllCharacteristicsVM.Add(new BooleanHexBitField("AppContainer", 12));
+			this.dllCharacteristicsVM.Add(new BooleanHexBitField("WDM Driver", 13));
+			this.dllCharacteristicsVM.Add(new BooleanHexBitField("Guard CF", 14));
+			this.dllCharacteristicsVM.Add(new BooleanHexBitField("Terminal Server Aware", 15));
 			this.loaderFlagsVM = new UInt32HexField(doc, Name, "LoaderFlags", startOffset + offs2 + 0);
 			this.numberOfRvaAndSizesVM = new UInt32HexField(doc, Name, "NumberOfRvaAndSizes", startOffset + offs2 + 4);
 

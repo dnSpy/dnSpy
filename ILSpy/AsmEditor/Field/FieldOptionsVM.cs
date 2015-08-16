@@ -25,7 +25,7 @@ using dnSpy.AsmEditor.DnlibDialogs;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.Field {
-	enum FieldVisibility {
+	enum FieldAccess {
 		PrivateScope	= (int)FieldAttributes.PrivateScope >> 0,
 		Private			= (int)FieldAttributes.Private >> 0,
 		FamANDAssem		= (int)FieldAttributes.FamANDAssem >> 0,
@@ -42,24 +42,24 @@ namespace dnSpy.AsmEditor.Field {
 			get { return new RelayCommand(a => Reinitialize()); }
 		}
 
-		static readonly EnumVM[] fieldVisibilityList = new EnumVM[] {
-			new EnumVM(Field.FieldVisibility.PrivateScope, "PrivateScope"),
-			new EnumVM(Field.FieldVisibility.Private, "Private"),
-			new EnumVM(Field.FieldVisibility.FamANDAssem, "Family and Assembly"),
-			new EnumVM(Field.FieldVisibility.Assembly, "Assembly"),
-			new EnumVM(Field.FieldVisibility.Family, "Family"),
-			new EnumVM(Field.FieldVisibility.FamORAssem, "Family or Assembly"),
-			new EnumVM(Field.FieldVisibility.Public, "Public"),
+		static readonly EnumVM[] fieldAccessList = new EnumVM[] {
+			new EnumVM(Field.FieldAccess.PrivateScope, "PrivateScope"),
+			new EnumVM(Field.FieldAccess.Private, "Private"),
+			new EnumVM(Field.FieldAccess.FamANDAssem, "Family and Assembly"),
+			new EnumVM(Field.FieldAccess.Assembly, "Assembly"),
+			new EnumVM(Field.FieldAccess.Family, "Family"),
+			new EnumVM(Field.FieldAccess.FamORAssem, "Family or Assembly"),
+			new EnumVM(Field.FieldAccess.Public, "Public"),
 		};
-		public EnumListVM FieldVisibility {
-			get { return fieldVisibilityVM; }
+		public EnumListVM FieldAccess {
+			get { return fieldAccessVM; }
 		}
-		readonly EnumListVM fieldVisibilityVM = new EnumListVM(fieldVisibilityList);
+		readonly EnumListVM fieldAccessVM = new EnumListVM(fieldAccessList);
 
 		public FieldAttributes Attributes {
 			get {
 				return (attributes & ~FieldAttributes.FieldAccessMask) |
-					(FieldAttributes)((int)(Field.FieldVisibility)FieldVisibility.SelectedItem << 0);
+					(FieldAttributes)((int)(Field.FieldAccess)FieldAccess.SelectedItem << 0);
 			}
 			set {
 				if (attributes != value) {
@@ -305,7 +305,7 @@ namespace dnSpy.AsmEditor.Field {
 				HasDefault = false;
 				ConstantVM.Value = null;
 			}
-			FieldVisibility.SelectedItem = (Field.FieldVisibility)((int)(options.Attributes & FieldAttributes.FieldAccessMask) >> 0);
+			FieldAccess.SelectedItem = (Field.FieldAccess)((int)(options.Attributes & FieldAttributes.FieldAccessMask) >> 0);
 			CustomAttributesVM.InitializeFrom(options.CustomAttributes);
 		}
 
