@@ -229,7 +229,7 @@ namespace dnSpy.TreeNodes.Hex {
 			case ColumnSize.UInt32: return "UInt32";
 
 			case ColumnSize.Strings: return GetStringsDescription(field);
-			case ColumnSize.GUID: return "#GUID Heap Offset";
+			case ColumnSize.GUID: return "#GUID Heap Index";
 			case ColumnSize.Blob: return "#Blob Heap Offset";
 
 			case ColumnSize.TypeDefOrRef: return GetCodedTokenDescription(CodedToken.TypeDefOrRef, "TypeDefOrRef", col, field);
@@ -857,6 +857,8 @@ namespace dnSpy.TreeNodes.Hex {
 				field.Add(new IntegerHexBitField("Hash Algorithm", 0, 32, HashAlgoInfos));
 				return field;
 			}
+			else if (1 <= colInfo.Index && colInfo.Index <= 4)
+				return new UInt16HexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset, true);
 			else if (colInfo.Index == 5)
 				return CreateAssemblyAttributesField(colInfo, doc, Name, startOffset);
 			return base.CreateField(colInfo);
@@ -866,7 +868,7 @@ namespace dnSpy.TreeNodes.Hex {
 			var field = new UInt32FlagsHexField(doc, name, colInfo.Name, startOffset + (uint)colInfo.Offset);
 			field.Add(new BooleanHexBitField("PublicKey", 0));
 			field.Add(new IntegerHexBitField("Processor Arch", 4, 3, PAInfos));
-			field.Add(new BooleanHexBitField("PA_Specified", 7));
+			field.Add(new BooleanHexBitField("Processor Arch Specified", 7));
 			field.Add(new BooleanHexBitField("Retargetable", 8));
 			field.Add(new IntegerHexBitField("ContentType", 9, 3, ContentTypeInfos));
 			field.Add(new BooleanHexBitField("DisableJITcompileOptimizer", 14));
@@ -885,6 +887,12 @@ namespace dnSpy.TreeNodes.Hex {
 		public AssemblyOSMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
 			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
 		}
+
+		protected override HexField CreateField(ColumnInfo colInfo) {
+			if (1 <= colInfo.Index && colInfo.Index <= 2)
+				return new UInt32HexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset, true);
+			return base.CreateField(colInfo);
+		}
 	}
 
 	sealed class AssemblyRefMetaDataTableRecordVM : MetaDataTableRecordVM {
@@ -893,7 +901,9 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
-			if (colInfo.Index == 4)
+			if (0 <= colInfo.Index && colInfo.Index <= 3)
+				return new UInt16HexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset, true);
+			else if (colInfo.Index == 4)
 				return AssemblyMetaDataTableRecordVM.CreateAssemblyAttributesField(colInfo, doc, Name, startOffset);
 			return base.CreateField(colInfo);
 		}
@@ -908,6 +918,12 @@ namespace dnSpy.TreeNodes.Hex {
 	sealed class AssemblyRefOSMetaDataTableRecordVM : MetaDataTableRecordVM {
 		public AssemblyRefOSMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
 			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		}
+
+		protected override HexField CreateField(ColumnInfo colInfo) {
+			if (1 <= colInfo.Index && colInfo.Index <= 2)
+				return new UInt32HexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset, true);
+			return base.CreateField(colInfo);
 		}
 	}
 

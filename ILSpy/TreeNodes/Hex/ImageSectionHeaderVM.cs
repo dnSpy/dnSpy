@@ -118,8 +118,8 @@ namespace dnSpy.TreeNodes.Hex {
 			this.characteristicsVM.Add(new BooleanHexBitField("TYPE_NO_PAD", 3));
 			this.characteristicsVM.Add(new BooleanHexBitField("TYPE_COPY", 4));
 			this.characteristicsVM.Add(new BooleanHexBitField("CNT_CODE", 5));
-			this.characteristicsVM.Add(new BooleanHexBitField("CNT_INITD_DATA", 6));
-			this.characteristicsVM.Add(new BooleanHexBitField("CNT_UNINITD_DATA", 7));
+			this.characteristicsVM.Add(new BooleanHexBitField("CNT_INITIALIZED_DATA", 6));
+			this.characteristicsVM.Add(new BooleanHexBitField("CNT_UNINITIALIZED_DATA", 7));
 			this.characteristicsVM.Add(new BooleanHexBitField("LNK_OTHER", 8));
 			this.characteristicsVM.Add(new BooleanHexBitField("LNK_INFO", 9));
 			this.characteristicsVM.Add(new BooleanHexBitField("TYPE_OVER", 10));
@@ -132,7 +132,7 @@ namespace dnSpy.TreeNodes.Hex {
 			this.characteristicsVM.Add(new BooleanHexBitField("MEM_PURGEABLE", 17));
 			this.characteristicsVM.Add(new BooleanHexBitField("MEM_LOCKED", 18));
 			this.characteristicsVM.Add(new BooleanHexBitField("MEM_PRELOAD", 19));
-			this.characteristicsVM.Add(new IntegerHexBitField("ALIGN", 20, 4, AlignInfos));
+			this.characteristicsVM.Add(new IntegerHexBitField("Alignment", 20, 4, AlignInfos));
 			this.characteristicsVM.Add(new BooleanHexBitField("LNK_NRELOC_OVFL", 24));
 			this.characteristicsVM.Add(new BooleanHexBitField("MEM_DISCARDABLE", 25));
 			this.characteristicsVM.Add(new BooleanHexBitField("MEM_NOT_CACHED", 26));
