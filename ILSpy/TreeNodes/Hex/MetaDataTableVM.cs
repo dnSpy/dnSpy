@@ -92,6 +92,10 @@ namespace dnSpy.TreeNodes.Hex {
 			return tableInfo.Columns[col].Name;
 		}
 
+		public string InfoName {
+			get { return "Info"; }
+		}
+
 		public override IEnumerable<HexField> HexFields {
 			get { return hexFields; }
 		}
@@ -345,19 +349,61 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 	}
 
-	sealed class ModuleMetaDataTableVM : MetaDataTable5VM {
+	abstract class MetaDataTable1InfoVM : MetaDataTable1VM {
+		public MetaDataTable1InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(doc, startOffset, mdTable) {
+		}
+	}
+
+	abstract class MetaDataTable2InfoVM : MetaDataTable2VM {
+		public MetaDataTable2InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(doc, startOffset, mdTable) {
+		}
+	}
+
+	abstract class MetaDataTable3InfoVM : MetaDataTable3VM {
+		public MetaDataTable3InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(doc, startOffset, mdTable) {
+		}
+	}
+
+	abstract class MetaDataTable4InfoVM : MetaDataTable4VM {
+		public MetaDataTable4InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(doc, startOffset, mdTable) {
+		}
+	}
+
+	abstract class MetaDataTable5InfoVM : MetaDataTable5VM {
+		public MetaDataTable5InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(doc, startOffset, mdTable) {
+		}
+	}
+
+	abstract class MetaDataTable6InfoVM : MetaDataTable6VM {
+		public MetaDataTable6InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(doc, startOffset, mdTable) {
+		}
+	}
+
+	abstract class MetaDataTable9InfoVM : MetaDataTable9VM {
+		public MetaDataTable9InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(doc, startOffset, mdTable) {
+		}
+	}
+
+	sealed class ModuleMetaDataTableVM : MetaDataTable5InfoVM {
 		public ModuleMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
 	}
 
-	sealed class TypeRefMetaDataTableVM : MetaDataTable3VM {
+	sealed class TypeRefMetaDataTableVM : MetaDataTable3InfoVM {
 		public TypeRefMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
 	}
 
-	sealed class TypeDefMetaDataTableVM : MetaDataTable6VM {
+	sealed class TypeDefMetaDataTableVM : MetaDataTable6InfoVM {
 		public TypeDefMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
@@ -369,7 +415,7 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 	}
 
-	sealed class FieldMetaDataTableVM : MetaDataTable3VM {
+	sealed class FieldMetaDataTableVM : MetaDataTable3InfoVM {
 		public FieldMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
@@ -381,7 +427,7 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 	}
 
-	sealed class MethodMetaDataTableVM : MetaDataTable6VM {
+	sealed class MethodMetaDataTableVM : MetaDataTable6InfoVM {
 		public MethodMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
@@ -393,7 +439,7 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 	}
 
-	sealed class ParamMetaDataTableVM : MetaDataTable3VM {
+	sealed class ParamMetaDataTableVM : MetaDataTable3InfoVM {
 		public ParamMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
@@ -405,7 +451,7 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 	}
 
-	sealed class MemberRefMetaDataTableVM : MetaDataTable3VM {
+	sealed class MemberRefMetaDataTableVM : MetaDataTable3InfoVM {
 		public MemberRefMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
@@ -465,7 +511,7 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 	}
 
-	sealed class EventMetaDataTableVM : MetaDataTable3VM {
+	sealed class EventMetaDataTableVM : MetaDataTable3InfoVM {
 		public EventMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
@@ -483,7 +529,7 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 	}
 
-	sealed class PropertyMetaDataTableVM : MetaDataTable3VM {
+	sealed class PropertyMetaDataTableVM : MetaDataTable3InfoVM {
 		public PropertyMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
@@ -501,7 +547,7 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 	}
 
-	sealed class ModuleRefMetaDataTableVM : MetaDataTable1VM {
+	sealed class ModuleRefMetaDataTableVM : MetaDataTable1InfoVM {
 		public ModuleRefMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
@@ -513,7 +559,7 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 	}
 
-	sealed class ImplMapMetaDataTableVM : MetaDataTable4VM {
+	sealed class ImplMapMetaDataTableVM : MetaDataTable4InfoVM {
 		public ImplMapMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
@@ -537,7 +583,7 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 	}
 
-	sealed class AssemblyMetaDataTableVM : MetaDataTable9VM {
+	sealed class AssemblyMetaDataTableVM : MetaDataTable9InfoVM {
 		public AssemblyMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
@@ -555,7 +601,7 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 	}
 
-	sealed class AssemblyRefMetaDataTableVM : MetaDataTable9VM {
+	sealed class AssemblyRefMetaDataTableVM : MetaDataTable9InfoVM {
 		public AssemblyRefMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
@@ -573,19 +619,19 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 	}
 
-	sealed class FileMetaDataTableVM : MetaDataTable3VM {
+	sealed class FileMetaDataTableVM : MetaDataTable3InfoVM {
 		public FileMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
 	}
 
-	sealed class ExportedTypeMetaDataTableVM : MetaDataTable5VM {
+	sealed class ExportedTypeMetaDataTableVM : MetaDataTable5InfoVM {
 		public ExportedTypeMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
 	}
 
-	sealed class ManifestResourceMetaDataTableVM : MetaDataTable4VM {
+	sealed class ManifestResourceMetaDataTableVM : MetaDataTable4InfoVM {
 		public ManifestResourceMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
@@ -597,13 +643,13 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 	}
 
-	sealed class GenericParamMetaDataTableV11VM : MetaDataTable5VM {
+	sealed class GenericParamMetaDataTableV11VM : MetaDataTable5InfoVM {
 		public GenericParamMetaDataTableV11VM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
 	}
 
-	sealed class GenericParamMetaDataTableVM : MetaDataTable4VM {
+	sealed class GenericParamMetaDataTableVM : MetaDataTable4InfoVM {
 		public GenericParamMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}

@@ -228,7 +228,7 @@ namespace dnSpy.TreeNodes.Hex {
 			case ColumnSize.Int32: return "Int32";
 			case ColumnSize.UInt32: return "UInt32";
 
-			case ColumnSize.Strings: return GetStringsDescription(field);
+			case ColumnSize.Strings: return ReadStringsHeap(field);
 			case ColumnSize.GUID: return "#GUID Heap Index";
 			case ColumnSize.Blob: return "#Blob Heap Offset";
 
@@ -251,7 +251,7 @@ namespace dnSpy.TreeNodes.Hex {
 			}
 		}
 
-		string GetStringsDescription(HexField field) {
+		protected string ReadStringsHeap(HexField field) {
 			var s = NumberVMUtils.ToString(mdVM.ReadStringsHeap(ReadFieldValue(field)), false);
 			Debug.Assert(s.Length >= 2);
 			if (s.Length < 2)
@@ -313,6 +313,14 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return string.Format("0x{0:X8}", mdToken.Raw); }
 		}
 
+		public virtual string Info {
+			get { return string.Empty; }
+		}
+
+		protected virtual int[] InfoColumnIndexes {
+			get { return null; }
+		}
+
 		readonly MetaDataTableVM mdVM;
 		readonly TableInfo tableInfo;
 
@@ -350,6 +358,16 @@ namespace dnSpy.TreeNodes.Hex {
 				if (IsDynamicDescription(i) && HexUtils.IsModified(field.StartOffset, field.EndOffset, modifiedStart, modifiedEnd))
 					InvalidateDescription(i);
 			}
+			var infoCols = InfoColumnIndexes;
+			if (infoCols != null) {
+				foreach (var index in infoCols) {
+					var field = hexFields[index];
+					if (HexUtils.IsModified(field.StartOffset, field.EndOffset, modifiedStart, modifiedEnd)) {
+						OnPropertyChanged("Info");
+						break;
+					}
+				}
+			}
 		}
 	}
 
@@ -357,11 +375,33 @@ namespace dnSpy.TreeNodes.Hex {
 		public ModuleMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
 			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
 		}
+
+		public override string Info {
+			get { return ReadStringsHeap(Column1); }
+		}
+
+		protected override int[] InfoColumnIndexes {
+			get { return infoColIndexes; }
+		}
+		static readonly int[] infoColIndexes = new int[] { 1 };
 	}
 
 	sealed class TypeRefMetaDataTableRecordVM : MetaDataTableRecordVM {
 		public TypeRefMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
 			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		}
+
+		public override string Info {
+			get { return CreateTypeString(ReadStringsHeap(Column2), ReadStringsHeap(Column1)); }
+		}
+
+		protected override int[] InfoColumnIndexes {
+			get { return infoColIndexes; }
+		}
+		static readonly int[] infoColIndexes = new int[] { 1, 2 };
+
+		public static string CreateTypeString(string ns, string name) {
+			return string.IsNullOrEmpty(ns) ? name : string.Format("{0}.{1}", ns, name);
 		}
 	}
 
@@ -431,6 +471,15 @@ namespace dnSpy.TreeNodes.Hex {
 			field.Add(new IntegerHexBitField("Custom", 22, 2, CustomFormatInfos));
 			return field;
 		}
+
+		public override string Info {
+			get { return TypeRefMetaDataTableRecordVM.CreateTypeString(ReadStringsHeap(Column2), ReadStringsHeap(Column1)); }
+		}
+
+		protected override int[] InfoColumnIndexes {
+			get { return infoColIndexes; }
+		}
+		static readonly int[] infoColIndexes = new int[] { 1, 2 };
 	}
 
 	sealed class FieldPtrMetaDataTableRecordVM : MetaDataTableRecordVM {
@@ -472,6 +521,15 @@ namespace dnSpy.TreeNodes.Hex {
 			}
 			return base.CreateField(colInfo);
 		}
+
+		public override string Info {
+			get { return ReadStringsHeap(Column1); }
+		}
+
+		protected override int[] InfoColumnIndexes {
+			get { return infoColIndexes; }
+		}
+		static readonly int[] infoColIndexes = new int[] { 1 };
 	}
 
 	sealed class MethodPtrMetaDataTableRecordVM : MetaDataTableRecordVM {
@@ -546,6 +604,15 @@ namespace dnSpy.TreeNodes.Hex {
 			}
 			return base.CreateField(colInfo);
 		}
+
+		public override string Info {
+			get { return ReadStringsHeap(Column3); }
+		}
+
+		protected override int[] InfoColumnIndexes {
+			get { return infoColIndexes; }
+		}
+		static readonly int[] infoColIndexes = new int[] { 3 };
 	}
 
 	sealed class ParamPtrMetaDataTableRecordVM : MetaDataTableRecordVM {
@@ -571,6 +638,15 @@ namespace dnSpy.TreeNodes.Hex {
 			}
 			return base.CreateField(colInfo);
 		}
+
+		public override string Info {
+			get { return ReadStringsHeap(Column2); }
+		}
+
+		protected override int[] InfoColumnIndexes {
+			get { return infoColIndexes; }
+		}
+		static readonly int[] infoColIndexes = new int[] { 2 };
 	}
 
 	sealed class InterfaceImplMetaDataTableRecordVM : MetaDataTableRecordVM {
@@ -583,6 +659,15 @@ namespace dnSpy.TreeNodes.Hex {
 		public MemberRefMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
 			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
 		}
+
+		public override string Info {
+			get { return ReadStringsHeap(Column1); }
+		}
+
+		protected override int[] InfoColumnIndexes {
+			get { return infoColIndexes; }
+		}
+		static readonly int[] infoColIndexes = new int[] { 1 };
 	}
 
 	sealed class ConstantMetaDataTableRecordVM : MetaDataTableRecordVM {
@@ -681,6 +766,15 @@ namespace dnSpy.TreeNodes.Hex {
 			}
 			return base.CreateField(colInfo);
 		}
+
+		public override string Info {
+			get { return ReadStringsHeap(Column1); }
+		}
+
+		protected override int[] InfoColumnIndexes {
+			get { return infoColIndexes; }
+		}
+		static readonly int[] infoColIndexes = new int[] { 1 };
 	}
 
 	sealed class PropertyMapMetaDataTableRecordVM : MetaDataTableRecordVM {
@@ -710,6 +804,15 @@ namespace dnSpy.TreeNodes.Hex {
 			}
 			return base.CreateField(colInfo);
 		}
+
+		public override string Info {
+			get { return ReadStringsHeap(Column1); }
+		}
+
+		protected override int[] InfoColumnIndexes {
+			get { return infoColIndexes; }
+		}
+		static readonly int[] infoColIndexes = new int[] { 1 };
 	}
 
 	sealed class MethodSemanticsMetaDataTableRecordVM : MetaDataTableRecordVM {
@@ -742,6 +845,15 @@ namespace dnSpy.TreeNodes.Hex {
 		public ModuleRefMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
 			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
 		}
+
+		public override string Info {
+			get { return ReadStringsHeap(Column0); }
+		}
+
+		protected override int[] InfoColumnIndexes {
+			get { return infoColIndexes; }
+		}
+		static readonly int[] infoColIndexes = new int[] { 0 };
 	}
 
 	sealed class TypeSpecMetaDataTableRecordVM : MetaDataTableRecordVM {
@@ -795,6 +907,15 @@ namespace dnSpy.TreeNodes.Hex {
 			}
 			return base.CreateField(colInfo);
 		}
+
+		public override string Info {
+			get { return ReadStringsHeap(Column2); }
+		}
+
+		protected override int[] InfoColumnIndexes {
+			get { return infoColIndexes; }
+		}
+		static readonly int[] infoColIndexes = new int[] { 2 };
 	}
 
 	sealed class FieldRVAMetaDataTableRecordVM : MetaDataTableRecordVM {
@@ -875,6 +996,15 @@ namespace dnSpy.TreeNodes.Hex {
 			field.Add(new BooleanHexBitField("EnableJITcompileTracking", 15));
 			return field;
 		}
+
+		public override string Info {
+			get { return ReadStringsHeap(Column7); }
+		}
+
+		protected override int[] InfoColumnIndexes {
+			get { return infoColIndexes; }
+		}
+		static readonly int[] infoColIndexes = new int[] { 7 };
 	}
 
 	sealed class AssemblyProcessorMetaDataTableRecordVM : MetaDataTableRecordVM {
@@ -907,6 +1037,15 @@ namespace dnSpy.TreeNodes.Hex {
 				return AssemblyMetaDataTableRecordVM.CreateAssemblyAttributesField(colInfo, doc, Name, startOffset);
 			return base.CreateField(colInfo);
 		}
+
+		public override string Info {
+			get { return ReadStringsHeap(Column6); }
+		}
+
+		protected override int[] InfoColumnIndexes {
+			get { return infoColIndexes; }
+		}
+		static readonly int[] infoColIndexes = new int[] { 6 };
 	}
 
 	sealed class AssemblyRefProcessorMetaDataTableRecordVM : MetaDataTableRecordVM {
@@ -940,6 +1079,15 @@ namespace dnSpy.TreeNodes.Hex {
 			}
 			return base.CreateField(colInfo);
 		}
+
+		public override string Info {
+			get { return ReadStringsHeap(Column1); }
+		}
+
+		protected override int[] InfoColumnIndexes {
+			get { return infoColIndexes; }
+		}
+		static readonly int[] infoColIndexes = new int[] { 1 };
 	}
 
 	sealed class ExportedTypeMetaDataTableRecordVM : MetaDataTableRecordVM {
@@ -952,6 +1100,15 @@ namespace dnSpy.TreeNodes.Hex {
 				return TypeDefMetaDataTableRecordVM.CreateTypeAttributesField(colInfo, doc, Name, startOffset);
 			return base.CreateField(colInfo);
 		}
+
+		public override string Info {
+			get { return TypeRefMetaDataTableRecordVM.CreateTypeString(ReadStringsHeap(Column3), ReadStringsHeap(Column2)); }
+		}
+
+		protected override int[] InfoColumnIndexes {
+			get { return infoColIndexes; }
+		}
+		static readonly int[] infoColIndexes = new int[] { 2, 3 };
 	}
 
 	sealed class ManifestResourceMetaDataTableRecordVM : MetaDataTableRecordVM {
@@ -972,6 +1129,15 @@ namespace dnSpy.TreeNodes.Hex {
 			}
 			return base.CreateField(colInfo);
 		}
+
+		public override string Info {
+			get { return ReadStringsHeap(Column2); }
+		}
+
+		protected override int[] InfoColumnIndexes {
+			get { return infoColIndexes; }
+		}
+		static readonly int[] infoColIndexes = new int[] { 2 };
 	}
 
 	sealed class NestedClassMetaDataTableRecordVM : MetaDataTableRecordVM {
@@ -990,6 +1156,15 @@ namespace dnSpy.TreeNodes.Hex {
 				return GenericParamMetaDataTableRecordVM.CreateGenericParamAttributesField(colInfo, doc, Name, startOffset);
 			return base.CreateField(colInfo);
 		}
+
+		public override string Info {
+			get { return ReadStringsHeap(Column3); }
+		}
+
+		protected override int[] InfoColumnIndexes {
+			get { return infoColIndexes; }
+		}
+		static readonly int[] infoColIndexes = new int[] { 3 };
 	}
 
 	sealed class GenericParamMetaDataTableRecordVM : MetaDataTableRecordVM {
@@ -1017,6 +1192,15 @@ namespace dnSpy.TreeNodes.Hex {
 			field.Add(new BooleanHexBitField("Default ctor", 4));
 			return field;
 		}
+
+		public override string Info {
+			get { return ReadStringsHeap(Column3); }
+		}
+
+		protected override int[] InfoColumnIndexes {
+			get { return infoColIndexes; }
+		}
+		static readonly int[] infoColIndexes = new int[] { 3 };
 	}
 
 	sealed class MethodSpecMetaDataTableRecordVM : MetaDataTableRecordVM {

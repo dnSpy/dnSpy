@@ -2639,6 +2639,545 @@
         </Border>
     </DataTemplate>
 
+    <DataTemplate DataType="{x:Type tnhex:MetaDataTable1InfoVM}">
+        <Border TextBlock.Foreground="{DynamicResource SystemColorsControlText}" Background="{DynamicResource SystemColorsControl}">
+            <ListView
+                VirtualizingStackPanel.IsVirtualizing="True"
+                VirtualizingStackPanel.VirtualizationMode="Recycling"
+                SelectionMode="Single"
+                ItemsSource="{Binding Collection}"
+                SelectedItem="{Binding SelectedItem}">
+                <ListView.Resources>
+                    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource MDTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
+                </ListView.Resources>
+                <ListView.View>
+                    <GridView AllowsColumnReorder="False">
+                        <GridViewColumn Header="RID    ">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Token">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                       </GridViewColumn>
+                        <GridViewColumn Header="Offset">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column0Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding InfoName, Mode=OneTime}">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Info, Mode=OneWay}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Border>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type tnhex:MetaDataTable2InfoVM}">
+        <Border TextBlock.Foreground="{DynamicResource SystemColorsControlText}" Background="{DynamicResource SystemColorsControl}">
+            <ListView
+                VirtualizingStackPanel.IsVirtualizing="True"
+                VirtualizingStackPanel.VirtualizationMode="Recycling"
+                SelectionMode="Single"
+                ItemsSource="{Binding Collection}"
+                SelectedItem="{Binding SelectedItem}">
+                <ListView.Resources>
+                    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource MDTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
+                </ListView.Resources>
+                <ListView.View>
+                    <GridView AllowsColumnReorder="False">
+                        <GridViewColumn Header="RID    ">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Token">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Offset">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column0Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column1Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding InfoName, Mode=OneTime}">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Info, Mode=OneWay}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Border>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type tnhex:MetaDataTable3InfoVM}">
+        <Border TextBlock.Foreground="{DynamicResource SystemColorsControlText}" Background="{DynamicResource SystemColorsControl}">
+            <ListView
+                VirtualizingStackPanel.IsVirtualizing="True"
+                VirtualizingStackPanel.VirtualizationMode="Recycling"
+                SelectionMode="Single"
+                ItemsSource="{Binding Collection}"
+                SelectedItem="{Binding SelectedItem}">
+                <ListView.Resources>
+                    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource MDTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
+                </ListView.Resources>
+                <ListView.View>
+                    <GridView AllowsColumnReorder="False">
+                        <GridViewColumn Header="RID    ">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Token">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Offset">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column0Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column1Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column2Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding InfoName, Mode=OneTime}">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Info, Mode=OneWay}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Border>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type tnhex:MetaDataTable4InfoVM}">
+        <Border TextBlock.Foreground="{DynamicResource SystemColorsControlText}" Background="{DynamicResource SystemColorsControl}">
+            <ListView
+                VirtualizingStackPanel.IsVirtualizing="True"
+                VirtualizingStackPanel.VirtualizationMode="Recycling"
+                SelectionMode="Single"
+                ItemsSource="{Binding Collection}"
+                SelectedItem="{Binding SelectedItem}">
+                <ListView.Resources>
+                    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource MDTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
+                </ListView.Resources>
+                <ListView.View>
+                    <GridView AllowsColumnReorder="False">
+                        <GridViewColumn Header="RID    ">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Token">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Offset">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column0Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column1Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column2Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column3Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column3.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding InfoName, Mode=OneTime}">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Info, Mode=OneWay}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Border>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type tnhex:MetaDataTable5InfoVM}">
+        <Border TextBlock.Foreground="{DynamicResource SystemColorsControlText}" Background="{DynamicResource SystemColorsControl}">
+            <ListView
+                VirtualizingStackPanel.IsVirtualizing="True"
+                VirtualizingStackPanel.VirtualizationMode="Recycling"
+                SelectionMode="Single"
+                ItemsSource="{Binding Collection}"
+                SelectedItem="{Binding SelectedItem}">
+                <ListView.Resources>
+                    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource MDTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
+                </ListView.Resources>
+                <ListView.View>
+                    <GridView AllowsColumnReorder="False">
+                        <GridViewColumn Header="RID    ">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Token">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Offset">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column0Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column1Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column2Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column3Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column3.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column4Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column4.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding InfoName, Mode=OneTime}">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Info, Mode=OneWay}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Border>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type tnhex:MetaDataTable6InfoVM}">
+        <Border TextBlock.Foreground="{DynamicResource SystemColorsControlText}" Background="{DynamicResource SystemColorsControl}">
+            <ListView
+                VirtualizingStackPanel.IsVirtualizing="True"
+                VirtualizingStackPanel.VirtualizationMode="Recycling"
+                SelectionMode="Single"
+                ItemsSource="{Binding Collection}"
+                SelectedItem="{Binding SelectedItem}">
+                <ListView.Resources>
+                    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource MDTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
+                </ListView.Resources>
+                <ListView.View>
+                    <GridView AllowsColumnReorder="False">
+                        <GridViewColumn Header="RID    ">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Token">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Offset">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column0Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column1Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column2Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column3Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column3.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column4Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column4.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column5Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column5.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding InfoName, Mode=OneTime}">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Info, Mode=OneWay}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Border>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type tnhex:MetaDataTable9InfoVM}">
+        <Border TextBlock.Foreground="{DynamicResource SystemColorsControlText}" Background="{DynamicResource SystemColorsControl}">
+            <ListView
+                VirtualizingStackPanel.IsVirtualizing="True"
+                VirtualizingStackPanel.VirtualizationMode="Recycling"
+                SelectionMode="Single"
+                ItemsSource="{Binding Collection}"
+                SelectedItem="{Binding SelectedItem}">
+                <ListView.Resources>
+                    <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource MDTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
+                </ListView.Resources>
+                <ListView.View>
+                    <GridView AllowsColumnReorder="False">
+                        <GridViewColumn Header="RID    ">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Token">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Offset">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column0Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column1Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column2Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column3Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column3.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column4Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column4.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column5Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column5.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column6Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column6.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column7Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column7.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding Column8Name, Mode=OneTime}" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxStyle}" Text="{Binding Column8.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="{Binding InfoName, Mode=OneTime}">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Info, Mode=OneWay}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Border>
+    </DataTemplate>
+
     <DataTemplate DataType="{x:Type tnhex:MetaDataTableRecordVM}">
         <Border TextBlock.Foreground="{DynamicResource SystemColorsControlText}" Background="{DynamicResource SystemColorsControl}">
             <Grid>

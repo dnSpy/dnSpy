@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet.MD;
@@ -57,12 +58,21 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return false; }
 		}
 
+		public TableInfo TableInfo {
+			get { return tableInfo; }
+		}
+		readonly TableInfo tableInfo;
+
+		internal HexDocument Document {
+			get { return doc; }
+		}
 		readonly HexDocument doc;
 
 		public MetaDataTableTreeNode(HexDocument doc, MDTable mdTable, IMetaData md)
 			: base((ulong)mdTable.StartOffset, (ulong)mdTable.EndOffset - 1) {
 			LazyLoading = true;
 			this.doc = doc;
+			this.tableInfo = mdTable.TableInfo;
 			this.tablesStreamVM = MetaDataTableVM.Create(doc, StartOffset, mdTable);
 			this.tablesStreamVM.InitializeHeapOffsets((ulong)md.StringsStream.StartOffset, (ulong)md.StringsStream.EndOffset - 1);
 		}
@@ -83,9 +93,30 @@ namespace dnSpy.TreeNodes.Hex {
 			ulong offs = StartOffset;
 			ulong rowSize = (ulong)MetaDataTableVM.TableInfo.RowSize;
 			for (uint i = 0; i < MetaDataTableVM.Rows; i++) {
-				Children.Add(new MetaDataTableRecordTreeNode(doc, (int)i, offs, offs + rowSize - 1));
+				Children.Add(new MetaDataTableRecordTreeNode(tableInfo, (int)i, offs, offs + rowSize - 1));
 				offs += rowSize;
             }
+		}
+
+		public override void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
+			base.OnDocumentModified(modifiedStart, modifiedEnd);
+
+			if (Children.Count == 0)
+				return;
+
+			if (!HexUtils.IsModified(StartOffset, EndOffset, modifiedStart, modifiedEnd))
+				return;
+
+			ulong start = Math.Max(StartOffset, modifiedStart);
+			ulong end = Math.Min(EndOffset, modifiedEnd);
+			int i = (int)((start - StartOffset) / (ulong)tableInfo.RowSize);
+			int endi = (int)((end - StartOffset) / (ulong)tableInfo.RowSize);
+			Debug.Assert(0 <= i && i <= endi && endi < Children.Count);
+			while (i <= endi) {
+				var obj = (MetaDataTableRecordTreeNode)Children[i];
+				obj.OnDocumentModified(modifiedStart, modifiedEnd);
+				i++;
+			}
 		}
 	}
 }
