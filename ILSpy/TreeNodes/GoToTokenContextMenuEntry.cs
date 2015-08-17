@@ -20,8 +20,10 @@
 using System.ComponentModel.Composition;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnlib.IO;
 using dnSpy.AsmEditor;
 using dnSpy.Tabs;
+using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
@@ -33,6 +35,10 @@ namespace dnSpy.TreeNodes {
 				(s, e) => GoToTokenContextMenuEntry.Execute(),
 				(s, e) => e.CanExecute = GoToTokenContextMenuEntry.CanExecute(),
 				ModifierKeys.Control, Key.D);
+            MainWindow.Instance.CodeBindings.Add(new RoutedCommand("GoToFileOffset", typeof(GoToTokenPlugin)),
+                (s, e) => GoToOffsetContextMenuEntry.Execute(),
+                (s, e) => e.CanExecute = GoToOffsetContextMenuEntry.CanExecute(),
+                ModifierKeys.Alt, Key.G);
 		}
 	}
 
@@ -103,4 +109,128 @@ namespace dnSpy.TreeNodes {
 			MainWindow.Instance.JumpToReference(tabState.TextView, member);
 		}
 	}
+
+    [ExportContextMenuEntryAttribute(Header = "Go to File(RVA) O_ffset", Order = 401, Category = "Offset", InputGestureText = "Alt+G")]
+    sealed class GoToOffsetContextMenuEntry : IContextMenuEntry
+    {
+        public bool IsVisible(TextViewContext context)
+        {
+            return CanExecute() &&
+                (context.SelectedTreeNodes != null || context.TextView != null);
+        }
+
+        public bool IsEnabled(TextViewContext context)
+        {
+            return true;
+        }
+
+        public void Execute(TextViewContext context)
+        {
+            Execute();
+        }
+
+        static ModuleDefMD GetModule(out DecompileTabState tabState)
+        {
+            tabState = MainWindow.Instance.GetActiveDecompileTabState();
+            if (tabState == null)
+                return null;
+            return ILSpyTreeNode.GetModule(tabState.DecompiledNodes) as ModuleDefMD;
+        }
+
+        internal static bool CanExecute()
+        {
+            DecompileTabState tabState;
+            return GetModule(out tabState) != null;
+        }
+
+        internal static void Execute()
+        {
+            DecompileTabState tabState;
+            var module = GetModule(out tabState);
+            if (module == null)
+                return;
+
+            var ask = new AskForInput();
+            ask.Owner = MainWindow.Instance;
+            ask.Title = "Go to File(RVA) Offset";
+            ask.label.Content = "_File(RVA) offset";
+            ask.textBox.Text = "";
+            ask.textBox.ToolTip = "Enter an File(RVA) offset: 0x1234(0x1234*) or 0x0ABCD(0x0ABCD*)";
+            ask.ShowDialog();
+            if (ask.DialogResult != true)
+                return;
+            string fileOffset = ask.textBox.Text;
+            fileOffset = fileOffset.Trim();
+            if (string.IsNullOrEmpty(fileOffset))
+                return;
+
+            bool isRVA = false;
+            if (fileOffset.EndsWith("*"))
+            {
+                fileOffset = fileOffset.Replace("*","");
+                isRVA = true;
+            }
+            string error;
+            ulong offset = NumberVMUtils.ParseUInt64(fileOffset, ulong.MinValue, ulong.MaxValue, out error);
+            if (!string.IsNullOrEmpty(error))
+            {
+                MainWindow.Instance.ShowMessageBox(error);
+                return;
+            }
+
+            IMemberDef memberRef = null;
+                foreach (var types in module.GetTypes())
+                {
+                    foreach (var md in types.Methods)
+                    {
+                        if (md == null)
+                            continue;
+                        var body = md.Body;
+                        if (body == null)
+                            continue;
+
+                        var len= AsmEditor.Hex.InstructionUtils.GetTotalMethodBodyLength(md);
+                        offset = isRVA ? offset : (ulong) module.MetaData.PEImage.ToRVA((FileOffset) offset);
+                        var add = (ulong) md.RVA; 
+                        if (offset >= add && offset <= add + len)
+                        {
+                            memberRef = md;
+                            goto br;
+                        }
+                    }
+                    foreach (var nestedType in types.GetNestedTypes(true))
+                    {
+                        foreach (var md in nestedType.GetMethods(true))
+                        {
+                            if (md == null)
+                                continue;
+                            var body = md.Body;
+                            if (body == null)
+                                continue;
+
+                            var len = AsmEditor.Hex.InstructionUtils.GetTotalMethodBodyLength(md);
+                            offset = isRVA ? offset : (ulong) module.MetaData.PEImage.ToRVA((FileOffset) offset);
+                            var add = (ulong)md.RVA;
+                            if (offset >= add && offset <= add + len)
+                            {
+                                memberRef = md;
+                                goto br;
+                            }
+                        }
+                    }
+                }
+            br:
+            var member = MainWindow.ResolveReference(memberRef);
+            if (member == null)
+            {
+                if (memberRef == null)
+                    MainWindow.Instance.ShowMessageBox(string.Format("Offset: 0x{0:X8} isn't in methods" , offset));
+                else
+                    MainWindow.Instance.ShowMessageBox(string.Format("Could not resolve member reference offset: 0x{0:X8}", offset));
+                return;
+            }
+
+            MainWindow.Instance.JumpToReference(tabState.TextView, member);
+        }
+    }
 }

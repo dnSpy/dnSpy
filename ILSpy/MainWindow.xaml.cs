@@ -1783,7 +1783,7 @@ namespace ICSharpCode.ILSpy
 			var tabState = GetOrCreateActiveDecompileTabState();
 			if (canRecordHistory)
 				RecordHistory(tabState);
-			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), (success, hasMovedCaret) => GoToLocation(tabState.TextView, success, hasMovedCaret, ResolveReference(reference)));
+			return JumpToReferenceAsyncInternal(tabState, true, reference, (success, hasMovedCaret) => GoToLocation(tabState.TextView, success, hasMovedCaret, ResolveReference(reference)));
 		}
 
 		public bool JumpToReference(DecompilerTextView textView, object reference, bool canRecordHistory = true)
@@ -1791,7 +1791,7 @@ namespace ICSharpCode.ILSpy
 			var tabState = DecompileTabState.GetDecompileTabState(textView);
 			if (canRecordHistory)
 				RecordHistory(tabState);
-			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), (success, hasMovedCaret) => GoToLocation(tabState.TextView, success, hasMovedCaret, ResolveReference(reference)));
+			return JumpToReferenceAsyncInternal(tabState, true, reference, (success, hasMovedCaret) => GoToLocation(tabState.TextView, success, hasMovedCaret, ResolveReference(reference)));
 		}
 
 		public bool JumpToReference(DecompilerTextView textView, object reference, Func<TextLocation> getLocation, bool canRecordHistory = true)
@@ -1799,7 +1799,7 @@ namespace ICSharpCode.ILSpy
 			var tabState = DecompileTabState.GetDecompileTabState(textView);
 			if (canRecordHistory)
 				RecordHistory(tabState);
-			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), (success, hasMovedCaret) => GoToLocation(tabState.TextView, success, hasMovedCaret, getLocation()));
+			return JumpToReferenceAsyncInternal(tabState, true, reference, (success, hasMovedCaret) => GoToLocation(tabState.TextView, success, hasMovedCaret, getLocation()));
 		}
 
 		public bool JumpToReference(DecompilerTextView textView, object reference, Func<bool, bool, bool> onDecompileFinished, bool canRecordHistory = true)
@@ -1807,7 +1807,7 @@ namespace ICSharpCode.ILSpy
 			var tabState = DecompileTabState.GetDecompileTabState(textView);
 			if (canRecordHistory)
 				RecordHistory(tabState);
-			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), onDecompileFinished);
+			return JumpToReferenceAsyncInternal(tabState, true, reference, onDecompileFinished);
 		}
 
 		bool GoToLocation(DecompilerTextView decompilerTextView, bool success, bool hasMovedCaret, object destLoc)
