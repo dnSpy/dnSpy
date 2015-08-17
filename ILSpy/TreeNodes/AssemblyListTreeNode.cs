@@ -22,15 +22,14 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
-using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
-using ICSharpCode.TreeView;
 using dnlib.DotNet;
 using dnSpy;
+using dnSpy.NRefactory;
 using dnSpy.TreeNodes;
+using ICSharpCode.Decompiler;
+using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Represents a list of assemblies.
 	/// This is used as (invisible) root node of the tree view.

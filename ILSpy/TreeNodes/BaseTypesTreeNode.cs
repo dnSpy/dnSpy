@@ -20,13 +20,12 @@ using System;
 using System.Windows.Threading;
 using dnlib.DotNet;
 using dnSpy.Images;
+using dnSpy.NRefactory;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Lists the base types of a class.
 	/// </summary>

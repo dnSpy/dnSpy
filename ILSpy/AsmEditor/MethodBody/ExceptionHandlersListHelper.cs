@@ -25,9 +25,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnlib.DotNet;
-using ICSharpCode.Decompiler;
 using dnSpy.AsmEditor.ViewHelpers;
-using ICSharpCode.NRefactory;
+using dnSpy.NRefactory;
+using ICSharpCode.Decompiler;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class ExceptionHandlersListHelper : ListBoxHelperBase<ExceptionHandlerVM> {

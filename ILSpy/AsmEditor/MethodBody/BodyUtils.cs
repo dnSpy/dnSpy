@@ -22,10 +22,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.ILSpy;
-using ICSharpCode.NRefactory;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	[Flags]

@@ -20,13 +20,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
-using ICSharpCode.Decompiler.Ast;
 using dnlib.DotNet;
+using dnSpy.NRefactory;
+using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Ast;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
-{
+namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	internal sealed class AnalyzedInterfacePropertyImplementedByTreeNode : AnalyzerSearchTreeNode
 	{
 		private readonly PropertyDef analyzedProperty;

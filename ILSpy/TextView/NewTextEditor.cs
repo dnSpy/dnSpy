@@ -25,12 +25,12 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using dnSpy.dntheme;
+using dnSpy.NRefactory;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.ILSpy;
-using ICSharpCode.NRefactory;
 using AR = ICSharpCode.AvalonEdit.Rendering;
 
 namespace dnSpy.TextView {

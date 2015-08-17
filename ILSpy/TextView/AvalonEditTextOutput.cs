@@ -22,15 +22,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using dnSpy.NRefactory;
 using dnSpy.TextView;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.TextView
-{
+namespace ICSharpCode.ILSpy.TextView {
 	/// <summary>
 	/// A text segment that references some object. Used for hyperlinks in the editor.
 	/// </summary>

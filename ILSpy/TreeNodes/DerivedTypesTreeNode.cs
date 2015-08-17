@@ -20,13 +20,12 @@ using System.Collections.Generic;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.Images;
+using dnSpy.NRefactory;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.Utils;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Lists the super types of a class.
 	/// </summary>

@@ -1,19 +1,16 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
-using System;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows.Controls;
+using dnlib.DotNet;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.ILSpy;
-using ICSharpCode.NRefactory;
-using ICSharpCode.NRefactory.CSharp;
-using dnlib.DotNet;
 
-namespace TestPlugin
-{
+namespace TestPlugin {
 	/// <summary>
 	/// Adds a new language to the decompiler.
 	/// </summary>

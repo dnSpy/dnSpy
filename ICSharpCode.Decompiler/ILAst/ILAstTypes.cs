@@ -21,16 +21,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.Disassembler;
-using ICSharpCode.NRefactory.Utils;
-using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.NRefactory;
+using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Disassembler;
+using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.Decompiler.ILAst
-{
+namespace ICSharpCode.Decompiler.ILAst {
 	public abstract class ILNode
 	{
 		public readonly List<ILRange> ILRanges = new List<ILRange>(1);

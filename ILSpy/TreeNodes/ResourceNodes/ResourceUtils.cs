@@ -23,11 +23,11 @@ using System.IO;
 using System.Text;
 using System.Windows.Media.Imaging;
 using dnSpy.Images;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TreeNodes;
-using ICSharpCode.NRefactory;
 using ICSharpCode.TreeView;
 
 namespace dnSpy.TreeNodes {

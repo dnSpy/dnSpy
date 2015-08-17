@@ -22,11 +22,10 @@ using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
-{
+namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	/// <summary>
 	/// Shows the methods that are used by this method.
 	/// </summary>

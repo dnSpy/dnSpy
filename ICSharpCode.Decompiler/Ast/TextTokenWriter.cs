@@ -20,14 +20,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using ICSharpCode.Decompiler;
+using dnlib.DotNet;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
-using dnlib.DotNet;
 
-namespace ICSharpCode.Decompiler.Ast
-{
+namespace ICSharpCode.Decompiler.Ast {
 	public class TextTokenWriter : TokenWriter
 	{
 		readonly ITextOutput output;

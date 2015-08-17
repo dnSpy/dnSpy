@@ -17,11 +17,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 using dnlib.DotNet;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
-{
+namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	internal class AnalyzedPropertyAccessorTreeNode : AnalyzedMethodTreeNode
 	{
 		private readonly string name;

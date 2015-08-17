@@ -41,6 +41,7 @@ using dnSpy.AvalonEdit;
 using dnSpy.Bookmarks;
 using dnSpy.dntheme;
 using dnSpy.Images;
+using dnSpy.NRefactory;
 using dnSpy.TextView;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
@@ -57,12 +58,10 @@ using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.XmlDoc;
-using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.Documentation;
 using Microsoft.Win32;
 
-namespace ICSharpCode.ILSpy.TextView
-{
+namespace ICSharpCode.ILSpy.TextView {
 	/// <summary>
 	/// Manages the TextEditor showing the decompiled code.
 	/// Contains all the threading logic that makes the decompiler work in the background.

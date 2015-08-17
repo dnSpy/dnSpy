@@ -30,13 +30,12 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Xml.Linq;
 using dnSpy.Images;
+using dnSpy.NRefactory;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
-using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	[ExportMainMenuCommand(Menu = "_Help", MenuHeader = "_About", MenuOrder = 99999)]
 	sealed class AboutPage : SimpleCommand
 	{

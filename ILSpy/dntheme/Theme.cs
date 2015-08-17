@@ -23,8 +23,8 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using System.Xml.Linq;
+using dnSpy.NRefactory;
 using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.NRefactory;
 
 namespace dnSpy.dntheme {
 	public sealed class MyHighlightingColor : HighlightingColor {

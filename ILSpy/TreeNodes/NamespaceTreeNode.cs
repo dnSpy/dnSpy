@@ -20,13 +20,12 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using dnSpy.Images;
+using dnSpy.NRefactory;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Namespace node. The loading of the type nodes is handled by the parent AssemblyTreeNode.
 	/// </summary>

@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using ICSharpCode.NRefactory;
+using dnSpy.NRefactory;
 
 namespace dnSpy.TextView {
 	sealed class LanguageTokens {

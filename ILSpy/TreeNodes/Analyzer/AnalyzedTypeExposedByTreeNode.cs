@@ -21,11 +21,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
-{
+namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	internal sealed class AnalyzedTypeExposedByTreeNode : AnalyzerSearchTreeNode
 	{
 		private readonly TypeDef analyzedType;

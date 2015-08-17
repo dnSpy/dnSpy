@@ -24,15 +24,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using dnSpy.NRefactory;
 
-using Ast = ICSharpCode.NRefactory.VB.Ast;
-
-namespace ICSharpCode.NRefactory.VB.Ast
-{
+namespace ICSharpCode.NRefactory.VB.Ast {
 	public class SimpleType : AstType
 	{
 		public SimpleType(Identifier identifier)

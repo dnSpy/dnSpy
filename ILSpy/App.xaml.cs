@@ -29,13 +29,11 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using System.Windows.Threading;
-
+using dnSpy.NRefactory;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.TextView;
-using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	public static class StartUpClass
 	{
 		[STAThread]

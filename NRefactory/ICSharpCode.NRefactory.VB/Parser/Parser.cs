@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
+﻿using System.Collections;
+using dnSpy.NRefactory;
 using ICSharpCode.NRefactory.VB.Ast;
-using ICSharpCode.NRefactory.VB.Parser;
-using ASTAttribute = ICSharpCode.NRefactory.VB.Ast.Attribute;
 using Roles = ICSharpCode.NRefactory.VB.AstNode.Roles;
 
 
@@ -15,11 +9,11 @@ using Roles = ICSharpCode.NRefactory.VB.AstNode.Roles;
 namespace ICSharpCode.NRefactory.VB.Parser {
 
 
-// ----------------------------------------------------------------------------
-// Parser
-// ----------------------------------------------------------------------------
-//! A Coco/R Parser
-partial class VBParser
+	// ----------------------------------------------------------------------------
+	// Parser
+	// ----------------------------------------------------------------------------
+	//! A Coco/R Parser
+	partial class VBParser
 {
 	public const int _EOF = 0;
 	public const int _EOL = 1;

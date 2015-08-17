@@ -26,12 +26,12 @@ using dnSpy;
 using dnSpy.AsmEditor;
 using dnSpy.AsmEditor.Resources;
 using dnSpy.Images;
+using dnSpy.NRefactory;
 using dnSpy.TreeNodes;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Utils;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
-using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.TreeNodes {
 	public abstract class ResourceTreeNode : ILSpyTreeNode, IResourceNode {

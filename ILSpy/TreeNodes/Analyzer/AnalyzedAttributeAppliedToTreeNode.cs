@@ -17,15 +17,15 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
 using dnlib.Threading;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.Utils;
-using System.Collections.Concurrent;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	internal sealed class AnalyzedAttributeAppliedToTreeNode : AnalyzerSearchTreeNode

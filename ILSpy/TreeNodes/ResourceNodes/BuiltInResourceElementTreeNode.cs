@@ -20,9 +20,9 @@
 using System.Collections.Generic;
 using System.IO;
 using dnlib.DotNet.Resources;
+using dnSpy.NRefactory;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
-using ICSharpCode.NRefactory;
 
 namespace dnSpy.TreeNodes {
 	public sealed class BuiltInResourceElementTreeNode : ResourceElementTreeNode {

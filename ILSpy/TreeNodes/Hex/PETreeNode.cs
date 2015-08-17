@@ -28,10 +28,10 @@ using dnlib.PE;
 using dnSpy.AsmEditor;
 using dnSpy.HexEditor;
 using dnSpy.Images;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
-using ICSharpCode.NRefactory;
 
 namespace dnSpy.TreeNodes.Hex {
 	sealed class PETreeNode : ILSpyTreeNode {

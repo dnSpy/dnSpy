@@ -19,16 +19,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using dnlib.DotNet;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.Decompiler.ILAst;
-using ICSharpCode.NRefactory;
-using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy
-{
-	#if DEBUG
+namespace ICSharpCode.ILSpy {
+#if DEBUG
 	/// <summary>
 	/// Represents the ILAst "language" used for debugging purposes.
 	/// </summary>

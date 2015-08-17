@@ -1,11 +1,9 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
-using System;
-using System.Collections.Generic;
+using dnSpy.NRefactory;
 
-namespace ICSharpCode.NRefactory.VB
-{
+namespace ICSharpCode.NRefactory.VB {
 	/// <summary>
 	/// Output formatter for the Output visitor.
 	/// </summary>

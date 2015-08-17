@@ -20,14 +20,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
-using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.NRefactory;
+using ICSharpCode.Decompiler;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	[Flags]
 	public enum DecompileAssemblyFlags
 	{

@@ -19,8 +19,8 @@
 using System;
 using dnlib.DotNet;
 using dnSpy.Images;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	internal sealed class AnalyzedPropertyTreeNode : AnalyzerEntityTreeNode

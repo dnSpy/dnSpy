@@ -30,16 +30,15 @@ using System.Xml;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.AsmEditor;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.XmlDoc;
-using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// Decompiler logic for C#.
 	/// </summary>

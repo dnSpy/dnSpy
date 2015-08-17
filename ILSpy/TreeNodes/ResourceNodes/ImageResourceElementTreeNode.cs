@@ -27,10 +27,10 @@ using System.Windows.Media.Imaging;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnlib.IO;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
-using ICSharpCode.NRefactory;
 
 namespace dnSpy.TreeNodes {
 	[Export(typeof(IResourceFactory<Resource, ResourceTreeNode>))]

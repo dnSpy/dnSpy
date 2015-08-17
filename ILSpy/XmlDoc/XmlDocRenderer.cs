@@ -21,7 +21,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using System.Xml;
-using ICSharpCode.NRefactory;
+using dnSpy.NRefactory;
 
 namespace ICSharpCode.ILSpy.XmlDoc {
 	public interface IXmlDocOutput

@@ -19,12 +19,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using dnlib.DotNet;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.VB;
 using ICSharpCode.NRefactory.VB.Ast;
-using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.VB {
 	/// <summary>

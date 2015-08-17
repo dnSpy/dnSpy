@@ -22,9 +22,9 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using ICSharpCode.Decompiler;
 using dnSpy.AsmEditor.ViewHelpers;
-using ICSharpCode.NRefactory;
+using dnSpy.NRefactory;
+using ICSharpCode.Decompiler;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class LocalsListHelper : ListBoxHelperBase<LocalVM> {

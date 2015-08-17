@@ -21,21 +21,17 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
-
-using ICSharpCode.Decompiler.Ast.Transforms;
-using ICSharpCode.Decompiler.ILAst;
-using ICSharpCode.NRefactory;
-using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.PatternMatching;
-using ICSharpCode.NRefactory.Utils;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.NRefactory;
+using ICSharpCode.Decompiler.Ast.Transforms;
+using ICSharpCode.Decompiler.ILAst;
+using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.PatternMatching;
 
-namespace ICSharpCode.Decompiler.Ast
-{
+namespace ICSharpCode.Decompiler.Ast {
 	using Ast = ICSharpCode.NRefactory.CSharp;
-	
+
 	public class AstMethodBodyBuilder
 	{
 		MethodDef methodDef;

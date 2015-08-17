@@ -20,13 +20,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
-using ICSharpCode.Decompiler.Ast;
 using dnlib.DotNet;
+using dnSpy.NRefactory;
+using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Ast;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
-{
+namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	/// <summary>
 	/// Searches for overrides of the analyzed method.
 	/// </summary>

@@ -19,10 +19,9 @@
 using System;
 using System.IO;
 using System.Text;
-using ICSharpCode.NRefactory;
+using dnSpy.NRefactory;
 
-namespace ICSharpCode.Decompiler
-{
+namespace ICSharpCode.Decompiler {
 	public class TextOutputWriter : TextWriter
 	{
 		readonly ITextOutput output;

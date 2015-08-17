@@ -19,8 +19,8 @@
 
 using System.Collections.Generic;
 using dnSpy.HexEditor;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
 
 namespace dnSpy.TreeNodes.Hex {
 	sealed class MetaDataTableRecordTreeNode : HexTreeNode {

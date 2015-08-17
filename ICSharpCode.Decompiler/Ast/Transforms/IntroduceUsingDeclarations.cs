@@ -20,12 +20,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using ICSharpCode.NRefactory;
-using ICSharpCode.NRefactory.CSharp;
 using dnlib.DotNet;
+using dnSpy.NRefactory;
+using ICSharpCode.NRefactory.CSharp;
 
-namespace ICSharpCode.Decompiler.Ast.Transforms
-{
+namespace ICSharpCode.Decompiler.Ast.Transforms {
 	/// <summary>
 	/// Introduces using declarations.
 	/// </summary>

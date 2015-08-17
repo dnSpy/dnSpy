@@ -18,16 +18,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.NRefactory;
 
-namespace ICSharpCode.Decompiler.Disassembler
-{
+namespace ICSharpCode.Decompiler.Disassembler {
 	public class DisassemblerOptions
 	{
 		public DisassemblerOptions(CancellationToken cancellationToken, ModuleDef ownerModule)

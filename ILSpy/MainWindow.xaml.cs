@@ -42,6 +42,7 @@ using dnSpy.AvalonEdit;
 using dnSpy.Controls;
 using dnSpy.dntheme;
 using dnSpy.Images;
+using dnSpy.NRefactory;
 using dnSpy.Options;
 using dnSpy.Tabs;
 using dnSpy.TextView;

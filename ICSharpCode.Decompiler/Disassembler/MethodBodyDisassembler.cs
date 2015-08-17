@@ -18,14 +18,12 @@
 
 using System;
 using System.Collections.Generic;
-
-using ICSharpCode.Decompiler.ILAst;
-using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.NRefactory;
+using ICSharpCode.Decompiler.ILAst;
 
-namespace ICSharpCode.Decompiler.Disassembler
-{
+namespace ICSharpCode.Decompiler.Disassembler {
 	/// <summary>
 	/// Disassembles a method body.
 	/// </summary>

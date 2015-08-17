@@ -21,12 +21,11 @@ using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy;
 using dnSpy.Images;
+using dnSpy.NRefactory;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Node within assembly reference list.
 	/// </summary>

@@ -2,11 +2,10 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System;
-using System.Collections.Generic;
 using System.IO;
+using dnSpy.NRefactory;
 
-namespace ICSharpCode.NRefactory.VB
-{
+namespace ICSharpCode.NRefactory.VB {
 	/// <summary>
 	/// Writes VB code into a TextWriter.
 	/// </summary>

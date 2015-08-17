@@ -23,17 +23,16 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using dnlib.DotNet;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.Decompiler.ILAst;
-using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Utils;
 
-namespace ICSharpCode.Decompiler.Ast
-{
+namespace ICSharpCode.Decompiler.Ast {
 	using Ast = ICSharpCode.NRefactory.CSharp;
 	using VarianceModifier = ICSharpCode.NRefactory.TypeSystem.VarianceModifier;
-	
+
 	[Flags]
 	public enum ConvertTypeOptions
 	{

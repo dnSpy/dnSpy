@@ -25,10 +25,10 @@ using dnlib.DotNet.Resources;
 using dnlib.IO;
 using dnSpy.AsmEditor;
 using dnSpy.Images;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
-using ICSharpCode.NRefactory;
 
 namespace dnSpy.TreeNodes {
 	public abstract class ResourceElementTreeNode : ILSpyTreeNode, IResourceNode {

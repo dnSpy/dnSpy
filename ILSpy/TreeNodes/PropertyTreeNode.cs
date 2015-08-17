@@ -21,12 +21,11 @@ using System.Diagnostics;
 using System.Windows.Media;
 using dnlib.DotNet;
 using dnSpy.Images;
+using dnSpy.NRefactory;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Represents a property in the TreeView.
 	/// </summary>

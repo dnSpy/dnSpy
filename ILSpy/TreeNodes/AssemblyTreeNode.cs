@@ -29,17 +29,16 @@ using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy;
 using dnSpy.Images;
+using dnSpy.NRefactory;
 using dnSpy.TreeNodes;
 using dnSpy.TreeNodes.Hex;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TextView;
-using ICSharpCode.NRefactory;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Tree node representing an assembly.
 	/// This class is responsible for loading both namespace and type nodes.

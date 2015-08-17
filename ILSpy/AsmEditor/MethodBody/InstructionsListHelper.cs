@@ -31,10 +31,10 @@ using dnlib.DotNet.Emit;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Images;
+using dnSpy.NRefactory;
 using dnSpy.Search;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
-using ICSharpCode.NRefactory;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class InstructionsListHelper : ListBoxHelperBase<InstructionVM>, IEditOperand, ISelectItems<InstructionVM> {

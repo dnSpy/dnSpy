@@ -19,16 +19,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using dnlib.DotNet;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
-using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.VB.Visitors;
-using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.VB
-{
+namespace ICSharpCode.ILSpy.VB {
 	public class ILSpyEnvironmentProvider : IEnvironmentProvider
 	{
 		public string RootNamespace {

@@ -25,17 +25,16 @@ using System.Linq;
 using System.Resources;
 using System.Threading.Tasks;
 using System.Xml;
-
+using dnlib.DotNet;
+using dnlib.DotNet.Emit;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.ILSpy.XmlDoc;
-using ICSharpCode.NRefactory;
-using CSharp = ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.VB;
 using ICSharpCode.NRefactory.VB.Visitors;
-using dnlib.DotNet;
-using dnlib.DotNet.Emit;
+using CSharp = ICSharpCode.NRefactory.CSharp;
 
 namespace ICSharpCode.ILSpy.VB {
 	/// <summary>

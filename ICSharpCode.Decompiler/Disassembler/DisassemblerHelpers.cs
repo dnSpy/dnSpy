@@ -18,13 +18,11 @@
 
 using System;
 using System.Collections.Generic;
-using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using dnlib.IO;
+using dnSpy.NRefactory;
 
-namespace ICSharpCode.Decompiler.Disassembler
-{
+namespace ICSharpCode.Decompiler.Disassembler {
 	public enum ILNameSyntax
 	{
 		/// <summary>

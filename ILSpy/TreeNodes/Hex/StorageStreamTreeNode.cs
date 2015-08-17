@@ -21,8 +21,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet.MD;
 using dnSpy.HexEditor;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
 
 namespace dnSpy.TreeNodes.Hex {
 	enum StorageStreamType {

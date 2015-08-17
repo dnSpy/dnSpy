@@ -21,16 +21,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using dnlib.DotNet;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler.ILAst;
-using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
-using dnlib.DotNet;
 
 //TODO: Verify that no ILRanges have been removed from this file
 
-namespace ICSharpCode.Decompiler.Ast.Transforms
-{
+namespace ICSharpCode.Decompiler.Ast.Transforms {
 	public class ExpressionTreeConverter
 	{
 		#region static TryConvert method

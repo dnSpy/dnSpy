@@ -16,13 +16,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
-using System.IO;
+using dnSpy.NRefactory;
 using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.Decompiler
-{
+namespace ICSharpCode.Decompiler {
 	public interface ITextOutput
 	{
 		TextLocation Location { get; }

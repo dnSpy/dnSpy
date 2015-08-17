@@ -21,10 +21,10 @@ using System.IO;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.ILSpy.XmlDoc;
-using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy {
 	/// <summary>

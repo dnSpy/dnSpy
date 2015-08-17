@@ -20,9 +20,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
 using dnlib.DotNet;
+using dnSpy.NRefactory;
+using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	internal sealed class AnalyzedTypeUsedByTreeNode : AnalyzerSearchTreeNode

@@ -18,12 +18,11 @@
 
 using System.Collections.Generic;
 using dnlib.DotNet;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Options;
-using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// ExtensionMethods used in ILSpy.
 	/// </summary>
