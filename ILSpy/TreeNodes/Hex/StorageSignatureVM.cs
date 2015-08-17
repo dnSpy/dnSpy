@@ -64,8 +64,8 @@ namespace dnSpy.TreeNodes.Hex {
 
 		public StorageSignatureVM(HexDocument doc, ulong startOffset, int stringLen) {
 			this.lSignatureVM = new UInt32HexField(doc, Name, "lSignature", startOffset + 0);
-			this.iMajorVerVM = new UInt16HexField(doc, Name, "iMajorVer", startOffset + 4);
-			this.iMinorVerVM = new UInt16HexField(doc, Name, "iMinorVer", startOffset + 6);
+			this.iMajorVerVM = new UInt16HexField(doc, Name, "iMajorVer", startOffset + 4, true);
+			this.iMinorVerVM = new UInt16HexField(doc, Name, "iMinorVer", startOffset + 6, true);
 			this.iExtraDataVM = new UInt32HexField(doc, Name, "iExtraData", startOffset + 8);
 			this.iVersionStringVM = new UInt32HexField(doc, Name, "iVersionString", startOffset + 0x0C);
 			this.versionStringVM = new StringHexField(doc, Name, "VersionString", startOffset + 0x10, Encoding.UTF8, stringLen);

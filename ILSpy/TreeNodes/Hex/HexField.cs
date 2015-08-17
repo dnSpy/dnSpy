@@ -147,9 +147,12 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return string.Format("{0:X2}", ReadData()); }
 		}
 
-		public ByteHexField(HexDocument doc, string parentName, string name, ulong start)
+		public ByteHexField(HexDocument doc, string parentName, string name, ulong start, bool useDecimal = false)
 			: base(doc, parentName, name, start, 1) {
-			this.data = new ByteVM((byte)doc.ReadByte(start), a => UpdateValue());
+			var val = (byte)doc.ReadByte(start);
+			this.data = new ByteVM(val, a => UpdateValue());
+			if (useDecimal)
+				this.data.Value = val;
 		}
 
 		protected override byte[] GetDataAsByteArray() {
@@ -634,6 +637,8 @@ namespace dnSpy.TreeNodes.Hex {
 				return (ushort)(short)o;
 			if (o is uint)
 				return (uint)o;
+			if (o is int)
+				return (uint)(int)o;
 			if (o is ulong)
 				return (ulong)o;
 			throw new InvalidOperationException();
@@ -687,7 +692,7 @@ namespace dnSpy.TreeNodes.Hex {
 		readonly ByteVM data;
 
 		public override string FormattedValue {
-			get { return string.Format("{0:X4}", ReadData()); }
+			get { return string.Format("{0:X2}", ReadData()); }
 		}
 
 		public ByteFlagsHexField(HexDocument doc, string parentName, string name, ulong start)
@@ -799,7 +804,7 @@ namespace dnSpy.TreeNodes.Hex {
 		readonly UInt64VM data;
 
 		public override string FormattedValue {
-			get { return string.Format("{0:X8}", ReadData()); }
+			get { return string.Format("{0:X16}", ReadData()); }
 		}
 
 		public UInt64FlagsHexField(HexDocument doc, string parentName, string name, ulong start)

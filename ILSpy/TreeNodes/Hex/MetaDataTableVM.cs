@@ -281,19 +281,25 @@ namespace dnSpy.TreeNodes.Hex {
 			this.stringsEndOffset = stringsEndOffset;
 		}
 
-		public string ReadStringsHeap(uint offset) {
+		public string ReadStringsHeap(uint offset, uint maxLen = 0x200) {
 			if (offset == 0)
 				return string.Empty;
 			ulong offs = stringsStartOffset + offset;
 			var bytes = new List<byte>();
+			bool tooLongString = false;
 			while (offs <= stringsEndOffset) {
 				int b = doc.ReadByte(offs);
 				if (b <= 0)
 					break;
+				if (bytes.Count >= maxLen) {
+					tooLongString = true;
+					break;
+				}
 				bytes.Add((byte)b);
 				offs++;
 			}
-			return Encoding.UTF8.GetString(bytes.ToArray());
+			var s = Encoding.UTF8.GetString(bytes.ToArray());
+			return tooLongString ? s + "…" : s;
 		}
 	}
 

@@ -248,8 +248,8 @@ namespace dnSpy.TreeNodes.Hex {
 
 		protected ImageOptionalHeaderVM(HexDocument doc, ulong startOffset, ulong endOffset, ulong offs1, ulong offs2) {
 			this.magicVM = new UInt16HexField(doc, Name, "Magic", startOffset + 0);
-			this.majorLinkerVersionVM = new ByteHexField(doc, Name, "MajorLinkerVersion", startOffset + 2);
-			this.minorLinkerVersionVM = new ByteHexField(doc, Name, "MinorLinkerVersion", startOffset + 3);
+			this.majorLinkerVersionVM = new ByteHexField(doc, Name, "MajorLinkerVersion", startOffset + 2, true);
+			this.minorLinkerVersionVM = new ByteHexField(doc, Name, "MinorLinkerVersion", startOffset + 3, true);
 			this.sizeOfCodeVM = new UInt32HexField(doc, Name, "SizeOfCode", startOffset + 4);
 			this.sizeOfInitializedDataVM = new UInt32HexField(doc, Name, "SizeOfInitializedData", startOffset + 8);
 			this.sizeOfUninitializedDataVM = new UInt32HexField(doc, Name, "SizeOfUninitializedData", startOffset + 0x0C);
@@ -258,13 +258,13 @@ namespace dnSpy.TreeNodes.Hex {
 
 			this.sectionAlignmentVM = new UInt32HexField(doc, Name, "SectionAlignment", startOffset + offs1 + 0);
 			this.fileAlignmentVM = new UInt32HexField(doc, Name, "FileAlignment", startOffset + offs1 + 4);
-			this.majorOperatingSystemVersionVM = new UInt16HexField(doc, Name, "MajorOperatingSystemVersion", startOffset + offs1 + 8);
-			this.minorOperatingSystemVersionVM = new UInt16HexField(doc, Name, "MinorOperatingSystemVersion", startOffset + offs1 + 0x0A);
-			this.majorImageVersionVM = new UInt16HexField(doc, Name, "MajorImageVersion", startOffset + offs1 + 0x0C);
-			this.minorImageVersionVM = new UInt16HexField(doc, Name, "MinorImageVersion", startOffset + offs1 + 0x0E);
-			this.majorSubsystemVersionVM = new UInt16HexField(doc, Name, "MajorSubsystemVersion", startOffset + offs1 + 0x10);
-			this.minorSubsystemVersionVM = new UInt16HexField(doc, Name, "MinorSubsystemVersion", startOffset + offs1 + 0x12);
-			this.win32VersionValueVM = new UInt32HexField(doc, Name, "Win32VersionValue", startOffset + offs1 + 0x14);
+			this.majorOperatingSystemVersionVM = new UInt16HexField(doc, Name, "MajorOperatingSystemVersion", startOffset + offs1 + 8, true);
+			this.minorOperatingSystemVersionVM = new UInt16HexField(doc, Name, "MinorOperatingSystemVersion", startOffset + offs1 + 0x0A, true);
+			this.majorImageVersionVM = new UInt16HexField(doc, Name, "MajorImageVersion", startOffset + offs1 + 0x0C, true);
+			this.minorImageVersionVM = new UInt16HexField(doc, Name, "MinorImageVersion", startOffset + offs1 + 0x0E, true);
+			this.majorSubsystemVersionVM = new UInt16HexField(doc, Name, "MajorSubsystemVersion", startOffset + offs1 + 0x10, true);
+			this.minorSubsystemVersionVM = new UInt16HexField(doc, Name, "MinorSubsystemVersion", startOffset + offs1 + 0x12, true);
+			this.win32VersionValueVM = new UInt32HexField(doc, Name, "Win32VersionValue", startOffset + offs1 + 0x14, true);
 			this.sizeOfImageVM = new UInt32HexField(doc, Name, "SizeOfImage", startOffset + offs1 + 0x18);
 			this.sizeOfHeadersVM = new UInt32HexField(doc, Name, "SizeOfHeaders", startOffset + offs1 + 0x1C);
 			this.checkSumVM = new UInt32HexField(doc, Name, "CheckSum", startOffset + offs1 + 0x20);

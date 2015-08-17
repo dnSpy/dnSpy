@@ -93,8 +93,8 @@ namespace dnSpy.TreeNodes.Hex {
 
 		public ImageCor20HeaderVM(HexDocument doc, ulong startOffset) {
 			this.cbVM = new UInt32HexField(doc, Name, "cb", startOffset + 0);
-			this.majorRuntimeVersionVM = new UInt16HexField(doc, Name, "MajorRuntimeVersion", startOffset + 4);
-			this.minorRuntimeVersionVM = new UInt16HexField(doc, Name, "MinorRuntimeVersion", startOffset + 6);
+			this.majorRuntimeVersionVM = new UInt16HexField(doc, Name, "MajorRuntimeVersion", startOffset + 4, true);
+			this.minorRuntimeVersionVM = new UInt16HexField(doc, Name, "MinorRuntimeVersion", startOffset + 6, true);
 			this.metaDataVM = new DataDirVM(doc, Name, "MetaData", startOffset + 8);
 			this.flagsVM = new UInt32FlagsHexField(doc, Name, "Flags", startOffset + 0x10);
 			this.flagsVM.Add(new BooleanHexBitField("IL Only", 0));

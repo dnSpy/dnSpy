@@ -334,8 +334,8 @@ namespace dnSpy.TreeNodes.Hex {
 		public TablesStreamVM(HexDocument doc, TablesStream tblStream) {
 			ulong startOffset = (ulong)tblStream.StartOffset;
 			this.m_ulReservedVM = new UInt32HexField(doc, Name, "m_ulReserved", startOffset + 0);
-			this.m_majorVM = new ByteHexField(doc, Name, "m_major", startOffset + 4);
-			this.m_minorVM = new ByteHexField(doc, Name, "m_minor", startOffset + 5);
+			this.m_majorVM = new ByteHexField(doc, Name, "m_major", startOffset + 4, true);
+			this.m_minorVM = new ByteHexField(doc, Name, "m_minor", startOffset + 5, true);
 			this.m_heapsVM = new ByteFlagsHexField(doc, Name, "m_heaps", startOffset + 6);
 			this.m_heapsVM.Add(new BooleanHexBitField("BigStrings", 0));
 			this.m_heapsVM.Add(new BooleanHexBitField("BigGUID", 1));
@@ -376,7 +376,7 @@ namespace dnSpy.TreeNodes.Hex {
 				valid >>= 1;
 			}
 
-			this.m_ulExtraVM = new UInt32HexField(doc, Name, "m_ulExtraVM", offs);
+			this.m_ulExtraVM = new UInt32HexField(doc, Name, "m_ulExtra", offs);
 			this.m_ulExtraVM.IsVisible = tblStream.HasExtraData;
 			if (tblStream.HasExtraData)
 				list.Add(this.m_ulExtraVM);
