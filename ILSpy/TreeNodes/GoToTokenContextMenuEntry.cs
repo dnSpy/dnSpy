@@ -183,39 +183,27 @@ namespace dnSpy.TreeNodes {
                 {
                     foreach (var md in types.Methods)
                     {
-                        if (md == null)
-                            continue;
-                        var body = md.Body;
-                        if (body == null)
-                            continue;
-
-                        var len= AsmEditor.Hex.InstructionUtils.GetTotalMethodBodyLength(md);
-                        offset = isRVA ? offset : (ulong) module.MetaData.PEImage.ToRVA((FileOffset) offset);
-                        var add = (ulong) md.RVA; 
-                        if (offset >= add && offset <= add + len)
-                        {
-                            memberRef = md;
-                            goto br;
-                        }
+                        if (GetMemberRef(md, isRVA, module, offset, ref memberRef)) goto br;
                     }
                     foreach (var nestedType in types.GetNestedTypes(true))
                     {
                         foreach (var md in nestedType.GetMethods(true))
                         {
-                            if (md == null)
-                                continue;
-                            var body = md.Body;
-                            if (body == null)
-                                continue;
-
-                            var len = AsmEditor.Hex.InstructionUtils.GetTotalMethodBodyLength(md);
-                            offset = isRVA ? offset : (ulong) module.MetaData.PEImage.ToRVA((FileOffset) offset);
-                            var add = (ulong)md.RVA;
-                            if (offset >= add && offset <= add + len)
-                            {
-                                memberRef = md;
-                                goto br;
-                            }
+                            if (GetMemberRef(md, isRVA, module, offset, ref memberRef)) goto br;
+                        }
+                    }
+                    foreach (var propertyDef in types.Properties)
+                    {
+                        foreach (var md in propertyDef.GetMethods)
+                        {
+                            if (GetMemberRef(md, isRVA, module, offset, ref memberRef)) goto br;
+                        }
+                    }
+                    foreach (var eventDef in types.Events)
+                    {
+                        foreach (var md in eventDef.OtherMethods)
+                        {
+                            if (GetMemberRef(md, isRVA, module, offset, ref memberRef)) goto br;
                         }
                     }
                 }
@@ -231,6 +219,26 @@ namespace dnSpy.TreeNodes {
             }
 
             MainWindow.Instance.JumpToReference(tabState.TextView, member);
+        }
+
+        private static bool GetMemberRef(MethodDef md, bool isRVA, ModuleDefMD module, ulong offset,
+            ref IMemberDef memberRef)
+        {
+            if (md == null)
+                return true;
+            var body = md.Body;
+            if (body == null)
+                return true;
+
+            var len = AsmEditor.Hex.InstructionUtils.GetTotalMethodBodyLength(md);
+            offset = isRVA ? offset : (ulong) module.MetaData.PEImage.ToRVA((FileOffset) offset);
+            var add = (ulong)md.RVA;
+            if (offset >= add && offset < add + len)
+            {
+                memberRef = md;
+                return true;
+            }
+            return false;
         }
     }
 }
