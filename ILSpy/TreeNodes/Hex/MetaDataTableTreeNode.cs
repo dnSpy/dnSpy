@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using dnlib.DotNet.MD;
 using dnSpy.HexEditor;
 using dnSpy.NRefactory;
@@ -99,7 +98,7 @@ namespace dnSpy.TreeNodes.Hex {
 			for (int i = 0; i < cols.Count; i++) {
 				output.Write('\t', TextTokenType.Comment);
 				output.Write(tablesStreamVM.GetColumnName(i), TextTokenType.Comment);
-            }
+			}
 			if (tablesStreamVM.HasInfo) {
 				output.Write('\t', TextTokenType.Comment);
 				output.Write(tablesStreamVM.InfoName, TextTokenType.Comment);
@@ -108,13 +107,13 @@ namespace dnSpy.TreeNodes.Hex {
 
 			for (int i = 0; i < (int)tablesStreamVM.Rows; i++) {
 				var obj = tablesStreamVM.Get(i);
-                language.WriteComment(output, string.Empty);
+				language.WriteComment(output, string.Empty);
 				output.Write(obj.RidString, TextTokenType.Comment);
 				output.Write('\t', TextTokenType.Comment);
 				output.Write(obj.TokenString, TextTokenType.Comment);
 				output.Write('\t', TextTokenType.Comment);
 				output.Write(obj.OffsetString, TextTokenType.Comment);
-                for (int j = 0; j < cols.Count; j++) {
+				for (int j = 0; j < cols.Count; j++) {
 					output.Write('\t', TextTokenType.Comment);
 					output.Write(obj.GetField(j).DataFieldVM.StringValue, TextTokenType.Comment);
 				}
@@ -134,7 +133,7 @@ namespace dnSpy.TreeNodes.Hex {
 			for (uint i = 0; i < MetaDataTableVM.Rows; i++) {
 				Children.Add(new MetaDataTableRecordTreeNode(tableInfo, (int)i, offs, offs + rowSize - 1));
 				offs += rowSize;
-            }
+			}
 		}
 
 		public override void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {

@@ -53,7 +53,7 @@ Shift+F11	| (Debugger) Step out of current method
 Ctrl+Pause	| (Debugger) Break
 Alt+*		| (Debugger) Show next statement
 Ctrl+D		| (Text view) Go to token
-Ctrl+Shift+D| (Text view) Go to MD table record
+Ctrl+Shift+D| (Text view) Go to MD table row
 Ctrl+G		| (Text view) Go to line
 Ctrl+X		| (Text view) Show current instruction in hex editor or open hex editor
 Ctrl+T		| Open a new tab

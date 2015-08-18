@@ -261,6 +261,8 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		MetaDataTableRecordVM GetMetaDataTableRecordVM(Table table, uint rid) {
+			if (rid == 0)
+				return null;
 			var tblVM = mdVM.FindMetaDataTable(table);
 			if (tblVM == null)
 				return null;
