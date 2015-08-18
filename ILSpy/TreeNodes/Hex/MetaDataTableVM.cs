@@ -27,6 +27,12 @@ using dnSpy.HexEditor;
 
 namespace dnSpy.TreeNodes.Hex {
 	abstract class MetaDataTableVM : HexVM {
+		public Func<Table, MetaDataTableVM> FindMetaDataTable {
+			get { return findMetaDataTable; }
+			set { findMetaDataTable = value; }
+		}
+		Func<Table, MetaDataTableVM> findMetaDataTable;
+
 		public Table Table {
 			get { return TableInfo.Table; }
 		}
@@ -85,7 +91,7 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return GetColumnName(9); }
 		}
 
-		string GetColumnName(int col) {
+		public string GetColumnName(int col) {
 			Debug.Assert(col < tableInfo.Columns.Count);
 			if (col >= tableInfo.Columns.Count)
 				return string.Empty;
@@ -94,6 +100,10 @@ namespace dnSpy.TreeNodes.Hex {
 
 		public string InfoName {
 			get { return "Info"; }
+		}
+
+		public virtual bool HasInfo {
+			get { return false; }
 		}
 
 		public override IEnumerable<HexField> HexFields {
@@ -350,42 +360,70 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	abstract class MetaDataTable1InfoVM : MetaDataTable1VM {
+		public override bool HasInfo {
+			get { return true; }
+		}
+
 		public MetaDataTable1InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
 	}
 
 	abstract class MetaDataTable2InfoVM : MetaDataTable2VM {
+		public override bool HasInfo {
+			get { return true; }
+		}
+
 		public MetaDataTable2InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
 	}
 
 	abstract class MetaDataTable3InfoVM : MetaDataTable3VM {
+		public override bool HasInfo {
+			get { return true; }
+		}
+
 		public MetaDataTable3InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
 	}
 
 	abstract class MetaDataTable4InfoVM : MetaDataTable4VM {
+		public override bool HasInfo {
+			get { return true; }
+		}
+
 		public MetaDataTable4InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
 	}
 
 	abstract class MetaDataTable5InfoVM : MetaDataTable5VM {
+		public override bool HasInfo {
+			get { return true; }
+		}
+
 		public MetaDataTable5InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
 	}
 
 	abstract class MetaDataTable6InfoVM : MetaDataTable6VM {
+		public override bool HasInfo {
+			get { return true; }
+		}
+
 		public MetaDataTable6InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}
 	}
 
 	abstract class MetaDataTable9InfoVM : MetaDataTable9VM {
+		public override bool HasInfo {
+			get { return true; }
+		}
+
 		public MetaDataTable9InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
 			: base(doc, startOffset, mdTable) {
 		}

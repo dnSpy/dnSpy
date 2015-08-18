@@ -94,6 +94,8 @@
 		<color name="systemcolorsmenutext" fg="#F1F1F1" />
 		<color name="systemcolorswindow" bg="#252525" />
 		<color name="systemcolorswindowtext" fg="#F1F1F1" />
+		<color name="pehex" fg="#F1F1F1" bg="#252526" />
+		<color name="pehexborder" bg="#3F3F46" />
 		<color name="dialogwindow" fg="#F1F1F1" bg="#252526" />
 		<color name="dialogwindowactivecaption" fg="#FF999999" bg="#FF2D2D30" />
 		<color name="dialogwindowactivedebuggingborder" bg="#FFCA5100" />

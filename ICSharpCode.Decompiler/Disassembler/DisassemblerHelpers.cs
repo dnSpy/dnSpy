@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Decompiler;
 using dnSpy.NRefactory;
 
 namespace ICSharpCode.Decompiler.Disassembler {

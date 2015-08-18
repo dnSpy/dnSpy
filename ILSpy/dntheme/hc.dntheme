@@ -36,6 +36,8 @@
 		<color name="systemcolorsmenutext" fg="#FFFFFFFF" />
 		<color name="systemcolorswindow" bg="#FF000000" />
 		<color name="systemcolorswindowtext" fg="#FFFFFFFF" />
+		<color name="pehex" fg="#FFFFFFFF" bg="#FF000000" />
+		<color name="pehexborder" bg="#FFFFFFFF" />
 		<color name="dialogwindow" fg="#FFFFFFFF" bg="#FF000000" />
 		<color name="dialogwindowactivecaption" fg="#FFFFFFFF" bg="#FF800080" />
 		<color name="dialogwindowactivedebuggingborder" bg="#FFFFFFFF" />

@@ -104,18 +104,30 @@ namespace dnSpy.AsmEditor {
 		}
 
 		const string INVALID_TOSTRING_VALUE = "<invalid value>";
-		public static string ToString(ulong value, ulong min, ulong max, bool useDecimal) {
+		public static string ToString(ulong value, ulong min, ulong max, bool? useDecimal) {
 			if (value < min || value > max)
 				return INVALID_TOSTRING_VALUE;
-			if (useDecimal || decimalUInt64.Contains(value))
+			if (useDecimal == null) {
+				if (decimalUInt64.Contains(value))
+					return value.ToString();
+			}
+			else if (useDecimal.Value)
+				return value.ToString();
+			else if (value <= 9)
 				return value.ToString();
 			return string.Format("0x{0:X}", value);
 		}
 
-		public static string ToString(long value, long min, long max, bool useDecimal) {
+		public static string ToString(long value, long min, long max, bool? useDecimal) {
 			if (value < min || value > max)
 				return INVALID_TOSTRING_VALUE;
-			if (useDecimal || decimalInt64.Contains(value))
+			if (useDecimal == null) {
+				if (decimalInt64.Contains(value))
+					return value.ToString();
+			}
+			else if (useDecimal.Value)
+				return value.ToString();
+			else if (-9 <= value && value <= 9)
 				return value.ToString();
 			if (value < 0)
 				return string.Format("-0x{0:X}", -value);
@@ -585,35 +597,35 @@ namespace dnSpy.AsmEditor {
 			return ToString(values, v => ToString(v));
 		}
 
-		public static string ToString(IList<byte> values, byte min, byte max, bool useDecimal) {
+		public static string ToString(IList<byte> values, byte min, byte max, bool? useDecimal) {
 			return ToString(values, v => ToString(v, min, max, useDecimal));
 		}
 
-		public static string ToString(IList<ushort> values, ushort min, ushort max, bool useDecimal) {
+		public static string ToString(IList<ushort> values, ushort min, ushort max, bool? useDecimal) {
 			return ToString(values, v => ToString(v, min, max, useDecimal));
 		}
 
-		public static string ToString(IList<uint> values, uint min, uint max, bool useDecimal) {
+		public static string ToString(IList<uint> values, uint min, uint max, bool? useDecimal) {
 			return ToString(values, v => ToString(v, min, max, useDecimal));
 		}
 
-		public static string ToString(IList<ulong> values, ulong min, ulong max, bool useDecimal) {
+		public static string ToString(IList<ulong> values, ulong min, ulong max, bool? useDecimal) {
 			return ToString(values, v => ToString(v, min, max, useDecimal));
 		}
 
-		public static string ToString(IList<sbyte> values, sbyte min, sbyte max, bool useDecimal) {
+		public static string ToString(IList<sbyte> values, sbyte min, sbyte max, bool? useDecimal) {
 			return ToString(values, v => ToString(v, min, max, useDecimal));
 		}
 
-		public static string ToString(IList<short> values, short min, short max, bool useDecimal) {
+		public static string ToString(IList<short> values, short min, short max, bool? useDecimal) {
 			return ToString(values, v => ToString(v, min, max, useDecimal));
 		}
 
-		public static string ToString(IList<int> values, int min, int max, bool useDecimal) {
+		public static string ToString(IList<int> values, int min, int max, bool? useDecimal) {
 			return ToString(values, v => ToString(v, min, max, useDecimal));
 		}
 
-		public static string ToString(IList<long> values, long min, long max, bool useDecimal) {
+		public static string ToString(IList<long> values, long min, long max, bool? useDecimal) {
 			return ToString(values, v => ToString(v, min, max, useDecimal));
 		}
 

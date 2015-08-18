@@ -32,12 +32,6 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return new NodePathName("mdtblrec", index.ToString()); }
 		}
 
-		// Don't cache it since the VM object will never get freed (it's stored in a weak ref in
-		// the virtualized list)
-		protected override bool CanCacheUIObject {
-			get { return false; }
-		}
-
 		protected override object ViewObject {
 			get { return Record; }
 		}
@@ -226,7 +220,7 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		void WriteImplMapInfo(ITextOutput output) {
-			output.Write(ReadStringsHeap(2), TextTokenType.Module);
+			output.Write(ReadStringsHeap(2), TextTokenType.InstanceMethod);
 		}
 
 		void WriteAssemblyInfo(ITextOutput output) {

@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Decompiler;
 using dnSpy.NRefactory;
 
 namespace ICSharpCode.Decompiler.Disassembler {
@@ -1231,7 +1232,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 		void WriteToken(IMDTokenProvider member)
 		{
 			output.Write(" Token: ", TextTokenType.Comment);
-			output.Write(string.Format("0x{0:X8}", member.MDToken.Raw), TextTokenType.Comment);//TODO: Add ref to MD table
+			output.WriteReference(string.Format("0x{0:X8}", member.MDToken.Raw), new TokenReference(options.OwnerModule == null ? null : options.OwnerModule.Location, member.MDToken.Raw), TextTokenType.Comment, false);
 			output.Write(" RID: ", TextTokenType.Comment);
 			output.Write(string.Format("{0}", member.MDToken.Rid), TextTokenType.Comment);
 		}

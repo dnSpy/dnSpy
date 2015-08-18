@@ -24,8 +24,10 @@ using System.Linq;
 using System.Windows;
 using dnlib.DotNet;
 using dnSpy;
+using dnSpy.Decompiler;
 using dnSpy.NRefactory;
 using dnSpy.TreeNodes;
+using dnSpy.TreeNodes.Hex;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 
@@ -249,7 +251,16 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 			return null;
 		}
-		
+
+		internal MetaDataTableRecordTreeNode FindTokenNode(TokenReference @ref)
+		{
+			var asm = assemblyList.FindAssemblyByFileName(@ref.Filename);
+			if (asm == null)
+				return null;
+			var modNode = FindModuleNode(asm.ModuleDefinition);
+			return modNode == null ? null : modNode.FindTokenNode(@ref.Token);
+		}
+
 		public AssemblyTreeNode FindAssemblyNode(AssemblyDef asm)
 		{
 			if (asm == null)
@@ -424,6 +435,8 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				return FindModuleNode((ModuleDef)reference);
 			else if (reference is ILSpyTreeNode)
 				return (ILSpyTreeNode)reference;
+			else if (reference is TokenReference)
+				return FindTokenNode((TokenReference)reference);
 			else
 				return null;
 		}

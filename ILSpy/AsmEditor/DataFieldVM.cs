@@ -190,9 +190,20 @@ namespace dnSpy.AsmEditor {
 
 	abstract class NumberDataFieldVM<T, U> : DataFieldVM<T> {
 		/// <summary>
-		/// Use decimal by default if it's a number
+		/// true to always use decimal, false to never use decimal (except if it's just one digit),
+		/// and null to use decimal or hex depending on what number it is.
 		/// </summary>
-		public bool UseDecimal { get; set; }
+		public bool? UseDecimal {
+			get { return useDecimal; }
+			set {
+				if (useDecimal != value) {
+					useDecimal = value;
+					if (!HasError)
+						ForceWriteStringValue(OnNewValue(Value));
+				}
+			}
+		}
+		bool? useDecimal;
 
 		public U Min {
 			get { return min; }
@@ -212,10 +223,11 @@ namespace dnSpy.AsmEditor {
 		}
 		U max;
 
-		protected NumberDataFieldVM(Action<DataFieldVM> onUpdated, U min, U max)
+		protected NumberDataFieldVM(Action<DataFieldVM> onUpdated, U min, U max, bool? useDecimal)
 			: base(onUpdated) {
 			this.min = min;
 			this.max = max;
+			this.useDecimal = useDecimal;
 		}
 	}
 
@@ -306,12 +318,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class NullableSByteVM : NumberDataFieldVM<sbyte?, sbyte> {
-		public NullableSByteVM(Action<DataFieldVM> onUpdated)
-			: this(null, onUpdated) {
+		public NullableSByteVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(null, onUpdated, useDecimal) {
 		}
 
-		public NullableSByteVM(sbyte? value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, sbyte.MinValue, sbyte.MaxValue) {
+		public NullableSByteVM(sbyte? value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, sbyte.MinValue, sbyte.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -330,12 +342,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class NullableByteVM : NumberDataFieldVM<byte?, byte> {
-		public NullableByteVM(Action<DataFieldVM> onUpdated)
-			: this(null, onUpdated) {
+		public NullableByteVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(null, onUpdated, useDecimal) {
 		}
 
-		public NullableByteVM(byte? value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, byte.MinValue, byte.MaxValue) {
+		public NullableByteVM(byte? value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, byte.MinValue, byte.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -354,12 +366,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class NullableInt16VM : NumberDataFieldVM<short?, short> {
-		public NullableInt16VM(Action<DataFieldVM> onUpdated)
-			: this(null, onUpdated) {
+		public NullableInt16VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(null, onUpdated, useDecimal) {
 		}
 
-		public NullableInt16VM(short? value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, short.MinValue, short.MaxValue) {
+		public NullableInt16VM(short? value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, short.MinValue, short.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -378,12 +390,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class NullableUInt16VM : NumberDataFieldVM<ushort?, ushort> {
-		public NullableUInt16VM(Action<DataFieldVM> onUpdated)
-			: this(null, onUpdated) {
+		public NullableUInt16VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(null, onUpdated, useDecimal) {
 		}
 
-		public NullableUInt16VM(ushort? value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, ushort.MinValue, ushort.MaxValue) {
+		public NullableUInt16VM(ushort? value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, ushort.MinValue, ushort.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -402,12 +414,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	class NullableInt32VM : NumberDataFieldVM<int?, int> {
-		public NullableInt32VM(Action<DataFieldVM> onUpdated)
-			: this(null, onUpdated) {
+		public NullableInt32VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(null, onUpdated, useDecimal) {
 		}
 
-		public NullableInt32VM(int? value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, int.MinValue, int.MaxValue) {
+		public NullableInt32VM(int? value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, int.MinValue, int.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -426,12 +438,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	class NullableUInt32VM : NumberDataFieldVM<uint?, uint> {
-		public NullableUInt32VM(Action<DataFieldVM> onUpdated)
-			: this(null, onUpdated) {
+		public NullableUInt32VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(null, onUpdated, useDecimal) {
 		}
 
-		public NullableUInt32VM(uint? value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, uint.MinValue, uint.MaxValue) {
+		public NullableUInt32VM(uint? value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, uint.MinValue, uint.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -450,12 +462,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class NullableInt64VM : NumberDataFieldVM<long?, long> {
-		public NullableInt64VM(Action<DataFieldVM> onUpdated)
-			: this(null, onUpdated) {
+		public NullableInt64VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(null, onUpdated, useDecimal) {
 		}
 
-		public NullableInt64VM(long? value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, long.MinValue, long.MaxValue) {
+		public NullableInt64VM(long? value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, long.MinValue, long.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -474,12 +486,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class NullableUInt64VM : NumberDataFieldVM<ulong?, ulong> {
-		public NullableUInt64VM(Action<DataFieldVM> onUpdated)
-			: this(null, onUpdated) {
+		public NullableUInt64VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(null, onUpdated, useDecimal) {
 		}
 
-		public NullableUInt64VM(ulong? value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, ulong.MinValue, ulong.MaxValue) {
+		public NullableUInt64VM(ulong? value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, ulong.MinValue, ulong.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -552,12 +564,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class ByteVM : NumberDataFieldVM<byte, byte> {
-		public ByteVM(Action<DataFieldVM> onUpdated)
-			: this(0, onUpdated) {
+		public ByteVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(0, onUpdated, useDecimal) {
 		}
 
-		public ByteVM(byte value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, byte.MinValue, byte.MaxValue) {
+		public ByteVM(byte value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, byte.MinValue, byte.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -573,12 +585,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class UInt16VM : NumberDataFieldVM<ushort, ushort> {
-		public UInt16VM(Action<DataFieldVM> onUpdated)
-			: this(0, onUpdated) {
+		public UInt16VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(0, onUpdated, useDecimal) {
 		}
 
-		public UInt16VM(ushort value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, ushort.MinValue, ushort.MaxValue) {
+		public UInt16VM(ushort value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, ushort.MinValue, ushort.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -594,12 +606,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class UInt32VM : NumberDataFieldVM<uint, uint> {
-		public UInt32VM(Action<DataFieldVM> onUpdated)
-			: this(0, onUpdated) {
+		public UInt32VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(0, onUpdated, useDecimal) {
 		}
 
-		public UInt32VM(uint value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, uint.MinValue, uint.MaxValue) {
+		public UInt32VM(uint value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, uint.MinValue, uint.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -615,12 +627,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class UInt64VM : NumberDataFieldVM<ulong, ulong> {
-		public UInt64VM(Action<DataFieldVM> onUpdated)
-			: this(0, onUpdated) {
+		public UInt64VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(0, onUpdated, useDecimal) {
 		}
 
-		public UInt64VM(ulong value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, ulong.MinValue, ulong.MaxValue) {
+		public UInt64VM(ulong value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, ulong.MinValue, ulong.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -636,12 +648,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class SByteVM : NumberDataFieldVM<sbyte, sbyte> {
-		public SByteVM(Action<DataFieldVM> onUpdated)
-			: this(0, onUpdated) {
+		public SByteVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(0, onUpdated, useDecimal) {
 		}
 
-		public SByteVM(sbyte value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, sbyte.MinValue, sbyte.MaxValue) {
+		public SByteVM(sbyte value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, sbyte.MinValue, sbyte.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -657,12 +669,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class Int16VM : NumberDataFieldVM<short, short> {
-		public Int16VM(Action<DataFieldVM> onUpdated)
-			: this(0, onUpdated) {
+		public Int16VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(0, onUpdated, useDecimal) {
 		}
 
-		public Int16VM(short value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, short.MinValue, short.MaxValue) {
+		public Int16VM(short value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, short.MinValue, short.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -678,12 +690,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class Int32VM : NumberDataFieldVM<int, int> {
-		public Int32VM(Action<DataFieldVM> onUpdated)
-			: this(0, onUpdated) {
+		public Int32VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(0, onUpdated, useDecimal) {
 		}
 
-		public Int32VM(int value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, int.MinValue, int.MaxValue) {
+		public Int32VM(int value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, int.MinValue, int.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -699,12 +711,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class Int64VM : NumberDataFieldVM<long, long> {
-		public Int64VM(Action<DataFieldVM> onUpdated)
-			: this(0, onUpdated) {
+		public Int64VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(0, onUpdated, useDecimal) {
 		}
 
-		public Int64VM(long value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, long.MinValue, long.MaxValue) {
+		public Int64VM(long value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, long.MinValue, long.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -912,12 +924,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class ByteListDataFieldVM : NumberDataFieldVM<IList<byte>, byte> {
-		public ByteListDataFieldVM(Action<DataFieldVM> onUpdated)
-			: this(new byte[0], onUpdated) {
+		public ByteListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(new byte[0], onUpdated, useDecimal) {
 		}
 
-		public ByteListDataFieldVM(IList<byte> value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, byte.MinValue, byte.MaxValue) {
+		public ByteListDataFieldVM(IList<byte> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, byte.MinValue, byte.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -933,12 +945,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class UInt16ListDataFieldVM : NumberDataFieldVM<IList<ushort>, ushort> {
-		public UInt16ListDataFieldVM(Action<DataFieldVM> onUpdated)
-			: this(new ushort[0], onUpdated) {
+		public UInt16ListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(new ushort[0], onUpdated, useDecimal) {
 		}
 
-		public UInt16ListDataFieldVM(IList<ushort> value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, ushort.MinValue, ushort.MaxValue) {
+		public UInt16ListDataFieldVM(IList<ushort> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, ushort.MinValue, ushort.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -954,12 +966,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class UInt32ListDataFieldVM : NumberDataFieldVM<IList<uint>, uint> {
-		public UInt32ListDataFieldVM(Action<DataFieldVM> onUpdated)
-			: this(new uint[0], onUpdated) {
+		public UInt32ListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(new uint[0], onUpdated, useDecimal) {
 		}
 
-		public UInt32ListDataFieldVM(IList<uint> value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, uint.MinValue, uint.MaxValue) {
+		public UInt32ListDataFieldVM(IList<uint> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, uint.MinValue, uint.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -975,12 +987,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class UInt64ListDataFieldVM : NumberDataFieldVM<IList<ulong>, ulong> {
-		public UInt64ListDataFieldVM(Action<DataFieldVM> onUpdated)
-			: this(new ulong[0], onUpdated) {
+		public UInt64ListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(new ulong[0], onUpdated, useDecimal) {
 		}
 
-		public UInt64ListDataFieldVM(IList<ulong> value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, ulong.MinValue, ulong.MaxValue) {
+		public UInt64ListDataFieldVM(IList<ulong> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, ulong.MinValue, ulong.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -996,12 +1008,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class SByteListDataFieldVM : NumberDataFieldVM<IList<sbyte>, sbyte> {
-		public SByteListDataFieldVM(Action<DataFieldVM> onUpdated)
-			: this(new sbyte[0], onUpdated) {
+		public SByteListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(new sbyte[0], onUpdated, useDecimal) {
 		}
 
-		public SByteListDataFieldVM(IList<sbyte> value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, sbyte.MinValue, sbyte.MaxValue) {
+		public SByteListDataFieldVM(IList<sbyte> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, sbyte.MinValue, sbyte.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -1017,12 +1029,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class Int16ListDataFieldVM : NumberDataFieldVM<IList<short>, short> {
-		public Int16ListDataFieldVM(Action<DataFieldVM> onUpdated)
-			: this(new short[0], onUpdated) {
+		public Int16ListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(new short[0], onUpdated, useDecimal) {
 		}
 
-		public Int16ListDataFieldVM(IList<short> value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, short.MinValue, short.MaxValue) {
+		public Int16ListDataFieldVM(IList<short> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, short.MinValue, short.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -1038,12 +1050,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class Int32ListDataFieldVM : NumberDataFieldVM<IList<int>, int> {
-		public Int32ListDataFieldVM(Action<DataFieldVM> onUpdated)
-			: this(new int[0], onUpdated) {
+		public Int32ListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(new int[0], onUpdated, useDecimal) {
 		}
 
-		public Int32ListDataFieldVM(IList<int> value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, int.MinValue, int.MaxValue) {
+		public Int32ListDataFieldVM(IList<int> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, int.MinValue, int.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 
@@ -1059,12 +1071,12 @@ namespace dnSpy.AsmEditor {
 	}
 
 	sealed class Int64ListDataFieldVM : NumberDataFieldVM<IList<long>, long> {
-		public Int64ListDataFieldVM(Action<DataFieldVM> onUpdated)
-			: this(new long[0], onUpdated) {
+		public Int64ListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: this(new long[0], onUpdated, useDecimal) {
 		}
 
-		public Int64ListDataFieldVM(IList<long> value, Action<DataFieldVM> onUpdated)
-			: base(onUpdated, long.MinValue, long.MaxValue) {
+		public Int64ListDataFieldVM(IList<long> value, Action<DataFieldVM> onUpdated, bool? useDecimal = null)
+			: base(onUpdated, long.MinValue, long.MaxValue, useDecimal) {
 			SetValueFromConstructor(value);
 		}
 

@@ -39,6 +39,7 @@ using dnSpy;
 using dnSpy.AsmEditor;
 using dnSpy.AvalonEdit;
 using dnSpy.Bookmarks;
+using dnSpy.Decompiler;
 using dnSpy.dntheme;
 using dnSpy.Images;
 using dnSpy.NRefactory;

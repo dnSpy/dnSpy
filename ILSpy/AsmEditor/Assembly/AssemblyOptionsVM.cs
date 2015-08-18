@@ -234,10 +234,10 @@ namespace dnSpy.AsmEditor.Assembly {
 			this.origOptions = options;
 			this.hashAlgorithmVM = new EnumListVM(hashAlgorithmList, (a, b) => OnPropertyChanged("AssemblyFullName"));
 			this.contentTypeVM = new EnumListVM(contentTypeList, (a, b) => OnPropertyChanged("AssemblyFullName"));
-			this.versionMajor = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }) { UseDecimal = true };
-			this.versionMinor = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }) { UseDecimal = true };
-			this.versionBuild = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }) { UseDecimal = true };
-			this.versionRevision = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }) { UseDecimal = true };
+			this.versionMajor = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }, true);
+			this.versionMinor = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }, true);
+			this.versionBuild = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }, true);
+			this.versionRevision = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }, true);
 			this.publicKey = new HexStringVM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); UpdatePublicKeyFlag(); }) { UpperCaseHex = false };
 			this.customAttributesVM = new CustomAttributesVM(ownerModule, language);
 			this.declSecuritiesVM = new DeclSecuritiesVM(ownerModule, language, null, null);

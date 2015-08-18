@@ -334,6 +334,16 @@ namespace dnSpy.dntheme {
 				DefaultForeground = "#FF000000",
 				ForegroundResourceKey = "SystemColorsWindowText"
 			},
+			new BrushColorInfo(ColorType.PEHex, "PE Hex") {
+				DefaultForeground = "#FF000000",
+				ForegroundResourceKey = "PEHexForeground",
+				DefaultBackground = "#FFF5F5F5",
+				BackgroundResourceKey = "PEHexBackground"
+			},
+			new BrushColorInfo(ColorType.PEHexBorder, "PE Hex Border") {
+				DefaultBackground = "#FFCCCEDB",
+				BackgroundResourceKey = "PEHexBorder",
+			},
 			new BrushColorInfo(ColorType.DialogWindow, "Dialog Window") {
 				DefaultForeground = "#FF1E1E1E",
 				ForegroundResourceKey = "DialogWindowForeground",

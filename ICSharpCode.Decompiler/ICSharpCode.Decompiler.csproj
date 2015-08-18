@@ -94,6 +94,7 @@
     <Compile Include="DnlibExtra\GenericArgumentResolver.cs" />
     <Compile Include="FlowAnalysis\ControlFlowEdge.cs" />
     <Compile Include="FlowAnalysis\ControlFlowGraph.cs" />
+    <Compile Include="TokenReference.cs" />
     <None Include="FlowAnalysis\ControlFlowGraphBuilder.cs" />
     <Compile Include="FlowAnalysis\ControlFlowNode.cs" />
     <Compile Include="FlowAnalysis\ControlStructureDetector.cs" />

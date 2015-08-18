@@ -20,10 +20,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using dnlib.DotNet.MD;
 using dnSpy.HexEditor;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy;
 
 namespace dnSpy.TreeNodes.Hex {
 	sealed class MetaDataTableTreeNode : HexTreeNode {
@@ -74,6 +76,7 @@ namespace dnSpy.TreeNodes.Hex {
 			this.doc = doc;
 			this.tableInfo = mdTable.TableInfo;
 			this.tablesStreamVM = MetaDataTableVM.Create(doc, StartOffset, mdTable);
+			this.tablesStreamVM.FindMetaDataTable = FindMetaDataTable;
 			this.tablesStreamVM.InitializeHeapOffsets((ulong)md.StringsStream.StartOffset, (ulong)md.StringsStream.EndOffset - 1);
 		}
 
@@ -85,6 +88,42 @@ namespace dnSpy.TreeNodes.Hex {
 			output.Write('(', TextTokenType.Operator);
 			output.Write(string.Format("{0}", tablesStreamVM.Rows), TextTokenType.Number);
 			output.Write(')', TextTokenType.Operator);
+		}
+
+		protected override void DecompileFields(Language language, ITextOutput output) {
+			var cols = tablesStreamVM.TableInfo.Columns;
+
+			language.WriteCommentLine(output, string.Empty);
+			language.WriteComment(output, string.Empty);
+			output.Write("RID\tToken\tOffset", TextTokenType.Comment);
+			for (int i = 0; i < cols.Count; i++) {
+				output.Write('\t', TextTokenType.Comment);
+				output.Write(tablesStreamVM.GetColumnName(i), TextTokenType.Comment);
+            }
+			if (tablesStreamVM.HasInfo) {
+				output.Write('\t', TextTokenType.Comment);
+				output.Write(tablesStreamVM.InfoName, TextTokenType.Comment);
+			}
+			output.WriteLine();
+
+			for (int i = 0; i < (int)tablesStreamVM.Rows; i++) {
+				var obj = tablesStreamVM.Get(i);
+                language.WriteComment(output, string.Empty);
+				output.Write(obj.RidString, TextTokenType.Comment);
+				output.Write('\t', TextTokenType.Comment);
+				output.Write(obj.TokenString, TextTokenType.Comment);
+				output.Write('\t', TextTokenType.Comment);
+				output.Write(obj.OffsetString, TextTokenType.Comment);
+                for (int j = 0; j < cols.Count; j++) {
+					output.Write('\t', TextTokenType.Comment);
+					output.Write(obj.GetField(j).DataFieldVM.StringValue, TextTokenType.Comment);
+				}
+				if (tablesStreamVM.HasInfo) {
+					output.Write('\t', TextTokenType.Comment);
+					output.Write(obj.Info, TextTokenType.Comment);
+				}
+				output.WriteLine();
+			}
 		}
 
 		protected override void LoadChildren() {
@@ -117,6 +156,18 @@ namespace dnSpy.TreeNodes.Hex {
 				obj.OnDocumentModified(modifiedStart, modifiedEnd);
 				i++;
 			}
+		}
+
+		public MetaDataTableRecordTreeNode FindTokenNode(uint token) {
+			uint rid = token & 0x00FFFFFF;
+			if (rid - 1 >= tablesStreamVM.Rows)
+				return null;
+			EnsureChildrenFiltered();
+			return (MetaDataTableRecordTreeNode)Children[(int)rid - 1];
+		}
+
+		MetaDataTableVM FindMetaDataTable(Table table) {
+			return ((TablesStreamTreeNode)Parent).FindMetaDataTable(table);
 		}
 	}
 }

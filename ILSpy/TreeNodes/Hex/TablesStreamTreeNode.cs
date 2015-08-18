@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using System.Linq;
 using dnlib.DotNet.MD;
 using dnSpy.HexEditor;
 using dnSpy.NRefactory;
@@ -62,6 +63,19 @@ namespace dnSpy.TreeNodes.Hex {
 
 		protected override void Write(ITextOutput output) {
 			output.Write("Tables Stream", TextTokenType.InstanceField);
+		}
+
+		public MetaDataTableRecordTreeNode FindTokenNode(uint token) {
+			var mdTblNode = (MetaDataTableTreeNode)Children.FirstOrDefault(a => ((MetaDataTableTreeNode)a).TableInfo.Table == (Table)(token >> 24));
+			return mdTblNode == null ? null : mdTblNode.FindTokenNode(token);
+		}
+
+		public MetaDataTableVM FindMetaDataTable(Table table) {
+			foreach (MetaDataTableTreeNode node in Children) {
+				if (node.TableInfo.Table == table)
+					return node.MetaDataTableVM;
+			}
+			return null;
 		}
 	}
 }

@@ -149,10 +149,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		public ByteHexField(HexDocument doc, string parentName, string name, ulong start, bool useDecimal = false)
 			: base(doc, parentName, name, start, 1) {
-			var val = (byte)doc.ReadByte(start);
-			this.data = new ByteVM(val, a => UpdateValue());
-			if (useDecimal)
-				this.data.Value = val;
+			this.data = new ByteVM((byte)doc.ReadByte(start), a => UpdateValue(), useDecimal);
 		}
 
 		protected override byte[] GetDataAsByteArray() {
@@ -174,9 +171,9 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return string.Format("{0:X4}", ReadData()); }
 		}
 
-		public Int16HexField(HexDocument doc, string parentName, string name, ulong start)
+		public Int16HexField(HexDocument doc, string parentName, string name, ulong start, bool useDecimal = false)
 			: base(doc, parentName, name, start, 2) {
-			this.data = new Int16VM(doc.ReadInt16(start), a => UpdateValue());
+			this.data = new Int16VM(doc.ReadInt16(start), a => UpdateValue(), useDecimal);
 		}
 
 		protected override byte[] GetDataAsByteArray() {
@@ -200,10 +197,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		public UInt16HexField(HexDocument doc, string parentName, string name, ulong start, bool useDecimal = false)
 			: base(doc, parentName, name, start, 2) {
-			var val = doc.ReadUInt16(start);
-			this.data = new UInt16VM(val, a => UpdateValue()) { UseDecimal = useDecimal };
-			if (useDecimal)
-				this.data.Value = val;
+			this.data = new UInt16VM(doc.ReadUInt16(start), a => UpdateValue(), useDecimal);
 		}
 
 		protected override byte[] GetDataAsByteArray() {
@@ -225,9 +219,9 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return string.Format("{0:X8}", ReadData()); }
 		}
 
-		public Int32HexField(HexDocument doc, string parentName, string name, ulong start)
+		public Int32HexField(HexDocument doc, string parentName, string name, ulong start, bool useDecimal = false)
 			: base(doc, parentName, name, start, 4) {
-			this.data = new Int32VM(doc.ReadInt32(start), a => UpdateValue());
+			this.data = new Int32VM(doc.ReadInt32(start), a => UpdateValue(), useDecimal);
 		}
 
 		protected override byte[] GetDataAsByteArray() {
@@ -251,10 +245,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		public UInt32HexField(HexDocument doc, string parentName, string name, ulong start, bool useDecimal = false)
 			: base(doc, parentName, name, start, 4) {
-			var val = doc.ReadUInt32(start);
-			this.data = new UInt32VM(val, a => UpdateValue()) { UseDecimal = useDecimal };
-			if (useDecimal)
-				this.data.Value = val;
+			this.data = new UInt32VM(doc.ReadUInt32(start), a => UpdateValue(), useDecimal);
 		}
 
 		protected override byte[] GetDataAsByteArray() {
@@ -276,9 +267,9 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return string.Format("{0:X16}", ReadData()); }
 		}
 
-		public UInt64HexField(HexDocument doc, string parentName, string name, ulong start)
+		public UInt64HexField(HexDocument doc, string parentName, string name, ulong start, bool useDecimal = false)
 			: base(doc, parentName, name, start, 8) {
-			this.data = new UInt64VM(doc.ReadUInt64(start), a => UpdateValue());
+			this.data = new UInt64VM(doc.ReadUInt64(start), a => UpdateValue(), useDecimal);
 		}
 
 		protected override byte[] GetDataAsByteArray() {
@@ -697,7 +688,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		public ByteFlagsHexField(HexDocument doc, string parentName, string name, ulong start)
 			: base(doc, parentName, name, start, 2) {
-			this.data = new ByteVM((byte)doc.ReadByte(start), a => UpdateValue());
+			this.data = new ByteVM((byte)doc.ReadByte(start), a => UpdateValue(), false);
 		}
 
 		protected override byte[] GetDataAsByteArray() {
@@ -725,7 +716,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		public Int16FlagsHexField(HexDocument doc, string parentName, string name, ulong start)
 			: base(doc, parentName, name, start, 2) {
-			this.data = new Int16VM(doc.ReadInt16(start), a => UpdateValue());
+			this.data = new Int16VM(doc.ReadInt16(start), a => UpdateValue(), false);
 		}
 
 		protected override byte[] GetDataAsByteArray() {
@@ -753,7 +744,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		public UInt16FlagsHexField(HexDocument doc, string parentName, string name, ulong start)
 			: base(doc, parentName, name, start, 2) {
-			this.data = new UInt16VM(doc.ReadUInt16(start), a => UpdateValue());
+			this.data = new UInt16VM(doc.ReadUInt16(start), a => UpdateValue(), false);
 		}
 
 		protected override byte[] GetDataAsByteArray() {
@@ -781,7 +772,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		public UInt32FlagsHexField(HexDocument doc, string parentName, string name, ulong start)
 			: base(doc, parentName, name, start, 4) {
-			this.data = new UInt32VM(doc.ReadUInt32(start), a => UpdateValue());
+			this.data = new UInt32VM(doc.ReadUInt32(start), a => UpdateValue(), false);
 		}
 
 		protected override byte[] GetDataAsByteArray() {
@@ -809,7 +800,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		public UInt64FlagsHexField(HexDocument doc, string parentName, string name, ulong start)
 			: base(doc, parentName, name, start, 8) {
-			this.data = new UInt64VM(doc.ReadUInt64(start), a => UpdateValue());
+			this.data = new UInt64VM(doc.ReadUInt64(start), a => UpdateValue(), false);
 		}
 
 		protected override byte[] GetDataAsByteArray() {

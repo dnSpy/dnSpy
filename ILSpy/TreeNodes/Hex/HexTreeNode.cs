@@ -17,8 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Windows.Controls;
 using dnSpy.Images;
 using ICSharpCode.Decompiler;
@@ -33,10 +33,6 @@ namespace dnSpy.TreeNodes.Hex {
 
 		protected virtual bool IsVirtualizingCollectionVM {
 			get { return false; }
-		}
-
-		protected virtual bool CanCacheUIObject {
-			get { return true; }
 		}
 
 		public ulong StartOffset {
@@ -68,8 +64,9 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		public sealed override object GetViewObject(DecompilerTextView textView) {
-			if (uiObj != null)
-				return uiObj;
+			var obj = uiObjRef == null ? null : uiObjRef.Target;
+			if (obj != null)
+				return obj;
 
 			object newObj;
 			if (IsVirtualizingCollectionVM)
@@ -84,25 +81,29 @@ namespace dnSpy.TreeNodes.Hex {
 				};
 			};
 
-			if (CanCacheUIObject) {
-				Interlocked.CompareExchange(ref uiObj, newObj, null);
-				return uiObj;
-			}
+			if (uiObjRef == null)
+				uiObjRef = new WeakReference(newObj);
+			else
+				uiObjRef.Target = newObj;
 			return newObj;
 		}
-		object uiObj;
+		WeakReference uiObjRef;
 
 		public sealed override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
 			language.WriteCommentLine(output, string.Format("{0:X8} - {1:X8} {2}", StartOffset, EndOffset, this.ToString()));
+			DecompileFields(language, output);
+			var smartOutput = output as ISmartTextOutput;
+			if (smartOutput != null)
+				smartOutput.MarkAsNonCached();
+		}
+
+		protected virtual void DecompileFields(Language language, ITextOutput output) {
 			foreach (var vm in HexVMs) {
 				language.WriteCommentLine(output, string.Empty);
 				language.WriteCommentLine(output, string.Format("{0}:", vm.Name));
 				foreach (var field in vm.HexFields)
 					language.WriteCommentLine(output, string.Format("{0:X8} - {1:X8} {2} = {3}", field.StartOffset, field.EndOffset, field.FormattedValue, field.Name));
 			}
-			var smartOutput = output as ISmartTextOutput;
-			if (smartOutput != null)
-				smartOutput.MarkAsNonCached();
 		}
 
 		protected sealed override void Write(ITextOutput output, Language language) {

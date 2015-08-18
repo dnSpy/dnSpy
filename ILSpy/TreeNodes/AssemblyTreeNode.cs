@@ -293,6 +293,12 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
+		internal MetaDataTableRecordTreeNode FindTokenNode(uint token) {
+			EnsureChildrenFiltered();
+			var peNode = (PETreeNode)Children.FirstOrDefault(a => a is PETreeNode);
+			return peNode == null ? null : peNode.FindTokenNode(token);
+		}
+
 		void LoadModuleChildren(IPEImage peImage, ModuleDef module)
 		{
 			var asmListTreeNode = this.Ancestors().OfType<AssemblyListTreeNode>().FirstOrDefault();

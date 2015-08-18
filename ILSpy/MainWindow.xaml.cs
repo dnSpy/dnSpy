@@ -40,6 +40,7 @@ using dnSpy;
 using dnSpy.AsmEditor;
 using dnSpy.AvalonEdit;
 using dnSpy.Controls;
+using dnSpy.Decompiler;
 using dnSpy.dntheme;
 using dnSpy.Images;
 using dnSpy.NRefactory;

@@ -36,6 +36,9 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class StorageStreamTreeNode : HexTreeNode {
+		public StorageStreamType StorageStreamType {
+			get { return storageStreamType; }
+		}
 		readonly StorageStreamType storageStreamType;
 
 		public override NodePathName NodePathName {
@@ -110,6 +113,12 @@ namespace dnSpy.TreeNodes.Hex {
 			output.Write(':', TextTokenType.Operator);
 			output.WriteSpace();
 			output.Write(string.Format("{0}", storageStreamVM.RCNameVM.StringZ), storageStreamType == StorageStreamType.None ? TextTokenType.Error : TextTokenType.Type);
+		}
+
+		public MetaDataTableRecordTreeNode FindTokenNode(uint token) {
+			if (StorageStreamType != StorageStreamType.Tables)
+				return null;
+			return ((TablesStreamTreeNode)Children[0]).FindTokenNode(token);
 		}
 	}
 }

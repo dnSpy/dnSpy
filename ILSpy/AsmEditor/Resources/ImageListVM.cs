@@ -78,15 +78,13 @@ namespace dnSpy.AsmEditor.Resources {
 
 			this.imageListStreamerVM = new ImageListStreamerVM();
 			ImageListStreamerVM.Collection.CollectionChanged += (s, e) => HasErrorUpdated();
-			this.widthVM = new Int32VM(a => HasErrorUpdated()) {
+			this.widthVM = new Int32VM(a => HasErrorUpdated(), true) {
 				Min = 1,
 				Max = 256,
-				UseDecimal = true,
 			};
-			this.heightVM = new Int32VM(a => HasErrorUpdated()) {
+			this.heightVM = new Int32VM(a => HasErrorUpdated(), true) {
 				Min = 1,
 				Max = 256,
-				UseDecimal = true,
 			};
 			this.transparentColorVM = new DefaultConverterVM<Color>(a => HasErrorUpdated());
 

@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Media.Imaging;
+using dnSpy.Decompiler;
 using dnSpy.Images;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;

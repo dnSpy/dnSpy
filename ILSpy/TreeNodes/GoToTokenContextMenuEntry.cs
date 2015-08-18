@@ -69,38 +69,46 @@ namespace dnSpy.TreeNodes {
 			if (module == null)
 				return;
 
+			uint? token = AskForToken("Go to MD Token");
+			if (token == null)
+				return;
+
+			var memberRef = module.ResolveToken(token.Value) as IMemberRef;
+			var member = MainWindow.ResolveReference(memberRef);
+			if (member == null) {
+				if (memberRef == null)
+					MainWindow.Instance.ShowMessageBox(string.Format("Invalid metadata token: 0x{0:X8}", token.Value));
+				else
+					MainWindow.Instance.ShowMessageBox(string.Format("Could not resolve member reference token: 0x{0:X8}", token.Value));
+				return;
+			}
+
+			MainWindow.Instance.JumpToReference(tabState.TextView, member);
+		}
+
+		internal static uint? AskForToken(string title) {
 			var ask = new AskForInput();
 			ask.Owner = MainWindow.Instance;
-			ask.Title = "Go to MD Token";
+			ask.Title = title;
 			ask.label.Content = "_Metadata token";
 			ask.textBox.Text = "";
 			ask.textBox.ToolTip = "Enter an MD token: 0x06001234 or 0x0200ABCD";
 			ask.ShowDialog();
 			if (ask.DialogResult != true)
-				return;
+				return null;
 			string tokenText = ask.textBox.Text;
 			tokenText = tokenText.Trim();
 			if (string.IsNullOrEmpty(tokenText))
-				return;
+				return null;
 
 			string error;
 			uint token = NumberVMUtils.ParseUInt32(tokenText, uint.MinValue, uint.MaxValue, out error);
 			if (!string.IsNullOrEmpty(error)) {
 				MainWindow.Instance.ShowMessageBox(error);
-				return;
+				return null;
 			}
 
-			var memberRef = module.ResolveToken(token) as IMemberRef;
-			var member = MainWindow.ResolveReference(memberRef);
-			if (member == null) {
-				if (memberRef == null)
-					MainWindow.Instance.ShowMessageBox(string.Format("Invalid metadata token: 0x{0:X8}", token));
-				else
-					MainWindow.Instance.ShowMessageBox(string.Format("Could not resolve member reference token: 0x{0:X8}", token));
-				return;
-			}
-
-			MainWindow.Instance.JumpToReference(tabState.TextView, member);
+			return token;
 		}
 	}
 }

@@ -23,6 +23,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using dnlib.DotNet;
+using dnSpy.Decompiler;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.Decompiler.ILAst;
@@ -253,7 +254,7 @@ namespace ICSharpCode.Decompiler.Ast {
 
 			var creator = new CommentReferencesCreator();
 			creator.AddText(" Token: ");
-			creator.AddText(string.Format("0x{0:X8}", member.MDToken.Raw));//TODO: Add ref to MD table
+			creator.AddReference(string.Format("0x{0:X8}", member.MDToken.Raw), new TokenReference(member));
 			creator.AddText(string.Format(" RID: {0}", member.MDToken.Rid));
 			if (rva != 0) {
 				var mod = member.Module;

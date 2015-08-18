@@ -86,7 +86,7 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return GetField(8); }
 		}
 
-		HexField GetField(int index) {
+		public HexField GetField(int index) {
 			if ((uint)index < (uint)hexFields.Length)
 				return hexFields[index];
 			return null;
@@ -128,7 +128,7 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return IsFieldPresent(8); }
 		}
 
-		bool IsFieldPresent(int index) {
+		public bool IsFieldPresent(int index) {
 			return (uint)index < (uint)hexFields.Length;
 		}
 
@@ -168,7 +168,7 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return GetFieldDescription(8); }
 		}
 
-		string GetFieldDescription(int index) {
+		public string GetFieldDescription(int index) {
 			if ((uint)index >= (uint)hexFields.Length)
 				return string.Empty;
 
@@ -176,51 +176,52 @@ namespace dnSpy.TreeNodes.Hex {
 			var field = hexFields[index];
 
 			switch (col.ColumnSize) {
-			case ColumnSize.Module: return "Module RID";
-			case ColumnSize.TypeRef: return "TypeRef RID";
-			case ColumnSize.TypeDef: return "TypeDef RID";
-			case ColumnSize.FieldPtr: return "FieldPtr RID";
-			case ColumnSize.Field: return "Field RID";
-			case ColumnSize.MethodPtr: return "MethodPtr RID";
-			case ColumnSize.Method: return "Method RID";
-			case ColumnSize.ParamPtr: return "ParamPtr RID";
-			case ColumnSize.Param: return "Param RID";
-			case ColumnSize.InterfaceImpl: return "InterfaceImpl RID";
-			case ColumnSize.MemberRef: return "MemberRef RID";
-			case ColumnSize.Constant: return "Constant RID";
-			case ColumnSize.CustomAttribute: return "CustomAttribute RID";
-			case ColumnSize.FieldMarshal: return "FieldMarshal RID";
-			case ColumnSize.DeclSecurity: return "DeclSecurity RID";
-			case ColumnSize.ClassLayout: return "ClassLayout RID";
-			case ColumnSize.FieldLayout: return "FieldLayout RID";
-			case ColumnSize.StandAloneSig: return "StandAloneSig RID";
-			case ColumnSize.EventMap: return "EventMap RID";
-			case ColumnSize.EventPtr: return "EventPtr RID";
-			case ColumnSize.Event: return "Event RID";
-			case ColumnSize.PropertyMap: return "PropertyMap RID";
-			case ColumnSize.PropertyPtr: return "PropertyPtr RID";
-			case ColumnSize.Property: return "Property RID";
-			case ColumnSize.MethodSemantics: return "MethodSemantics RID";
-			case ColumnSize.MethodImpl: return "MethodImpl RID";
-			case ColumnSize.ModuleRef: return "ModuleRef RID";
-			case ColumnSize.TypeSpec: return "TypeSpec RID";
-			case ColumnSize.ImplMap: return "ImplMap RID";
-			case ColumnSize.FieldRVA: return "FieldRVA RID";
-			case ColumnSize.ENCLog: return "ENCLog RID";
-			case ColumnSize.ENCMap: return "ENCMap RID";
-			case ColumnSize.Assembly: return "Assembly RID";
-			case ColumnSize.AssemblyProcessor: return "AssemblyProcessor RID";
-			case ColumnSize.AssemblyOS: return "AssemblyOS RID";
-			case ColumnSize.AssemblyRef: return "AssemblyRef RID";
-			case ColumnSize.AssemblyRefProcessor: return "AssemblyRefProcessor RID";
-			case ColumnSize.AssemblyRefOS: return "AssemblyRefOS RID";
-			case ColumnSize.File: return "File RID";
-			case ColumnSize.ExportedType: return "ExportedType RID";
-			case ColumnSize.ManifestResource: return "ManifestResource RID";
-			case ColumnSize.NestedClass: return "NestedClass RID";
-			case ColumnSize.GenericParam: return "GenericParam RID";
-			case ColumnSize.MethodSpec: return "MethodSpec RID";
-			case ColumnSize.GenericParamConstraint: return "GenericParamConstraint RID";
+			case ColumnSize.Module:
+			case ColumnSize.TypeRef:
+			case ColumnSize.TypeDef:
+			case ColumnSize.FieldPtr:
+			case ColumnSize.Field:
+			case ColumnSize.MethodPtr:
+			case ColumnSize.Method:
+			case ColumnSize.ParamPtr:
+			case ColumnSize.Param:
+			case ColumnSize.InterfaceImpl:
+			case ColumnSize.MemberRef:
+			case ColumnSize.Constant:
+			case ColumnSize.CustomAttribute:
+			case ColumnSize.FieldMarshal:
+			case ColumnSize.DeclSecurity:
+			case ColumnSize.ClassLayout:
+			case ColumnSize.FieldLayout:
+			case ColumnSize.StandAloneSig:
+			case ColumnSize.EventMap:
+			case ColumnSize.EventPtr:
+			case ColumnSize.Event:
+			case ColumnSize.PropertyMap:
+			case ColumnSize.PropertyPtr:
+			case ColumnSize.Property:
+			case ColumnSize.MethodSemantics:
+			case ColumnSize.MethodImpl:
+			case ColumnSize.ModuleRef:
+			case ColumnSize.TypeSpec:
+			case ColumnSize.ImplMap:
+			case ColumnSize.FieldRVA:
+			case ColumnSize.ENCLog:
+			case ColumnSize.ENCMap:
+			case ColumnSize.Assembly:
+			case ColumnSize.AssemblyProcessor:
+			case ColumnSize.AssemblyOS:
+			case ColumnSize.AssemblyRef:
+			case ColumnSize.AssemblyRefProcessor:
+			case ColumnSize.AssemblyRefOS:
+			case ColumnSize.File:
+			case ColumnSize.ExportedType:
+			case ColumnSize.ManifestResource:
+			case ColumnSize.NestedClass:
+			case ColumnSize.GenericParam:
+			case ColumnSize.MethodSpec:
+			case ColumnSize.GenericParamConstraint:
+				return GetDescription(Table.Module + (col.ColumnSize - ColumnSize.Module), field);
 
 			case ColumnSize.Byte: return "Byte";
 			case ColumnSize.Int16: return "Int16";
@@ -259,12 +260,32 @@ namespace dnSpy.TreeNodes.Hex {
 			return s.Substring(1, s.Length - 2);
 		}
 
+		MetaDataTableRecordVM GetMetaDataTableRecordVM(Table table, uint rid) {
+			var tblVM = mdVM.FindMetaDataTable(table);
+			if (tblVM == null)
+				return null;
+			if (rid - 1 >= (uint)tblVM.Collection.Count)
+				return null;
+			return tblVM.Get((int)(rid - 1));
+		}
+
+		string GetInfo(Table table, uint rid) {
+			var recVM = GetMetaDataTableRecordVM(table, rid);
+			return recVM == null ? string.Empty : recVM.Info;
+		}
+
+		string GetDescription(Table table, HexField field) {
+			var info = GetInfo(table, ReadFieldValue(field));
+			return string.Format("{0} RID{1}", table, string.IsNullOrEmpty(info) ? string.Empty : string.Format(": {0}", info));
+		}
+
 		string GetCodedTokenDescription(CodedToken codedToken, string codedTokenName, ColumnInfo col, HexField field) {
 			MDToken token;
 			if (!codedToken.Decode(ReadFieldValue(field), out token))
 				return string.Empty;
 
-			return string.Format("{0} Coded Token: {1}[{2}] (0x{3:X8})", codedTokenName, token.Table, token.Rid, token.Raw);
+			var info = GetInfo(token.Table, token.Rid);
+			return string.Format("{0}: {1}[{2}] (0x{3:X8}){4}", codedTokenName, token.Table, token.Rid, token.Raw, string.IsNullOrEmpty(info) ? string.Empty : string.Format(": {0}", info));
 		}
 
 		uint ReadFieldValue(HexField field) {
@@ -281,7 +302,54 @@ namespace dnSpy.TreeNodes.Hex {
 
 			var col = tableInfo.Columns[index];
 			switch (col.ColumnSize) {
+			case ColumnSize.Module:
+			case ColumnSize.TypeRef:
+			case ColumnSize.TypeDef:
+			case ColumnSize.FieldPtr:
+			case ColumnSize.Field:
+			case ColumnSize.MethodPtr:
+			case ColumnSize.Method:
+			case ColumnSize.ParamPtr:
+			case ColumnSize.Param:
+			case ColumnSize.InterfaceImpl:
+			case ColumnSize.MemberRef:
+			case ColumnSize.Constant:
+			case ColumnSize.CustomAttribute:
+			case ColumnSize.FieldMarshal:
+			case ColumnSize.DeclSecurity:
+			case ColumnSize.ClassLayout:
+			case ColumnSize.FieldLayout:
+			case ColumnSize.StandAloneSig:
+			case ColumnSize.EventMap:
+			case ColumnSize.EventPtr:
+			case ColumnSize.Event:
+			case ColumnSize.PropertyMap:
+			case ColumnSize.PropertyPtr:
+			case ColumnSize.Property:
+			case ColumnSize.MethodSemantics:
+			case ColumnSize.MethodImpl:
+			case ColumnSize.ModuleRef:
+			case ColumnSize.TypeSpec:
+			case ColumnSize.ImplMap:
+			case ColumnSize.FieldRVA:
+			case ColumnSize.ENCLog:
+			case ColumnSize.ENCMap:
+			case ColumnSize.Assembly:
+			case ColumnSize.AssemblyProcessor:
+			case ColumnSize.AssemblyOS:
+			case ColumnSize.AssemblyRef:
+			case ColumnSize.AssemblyRefProcessor:
+			case ColumnSize.AssemblyRefOS:
+			case ColumnSize.File:
+			case ColumnSize.ExportedType:
+			case ColumnSize.ManifestResource:
+			case ColumnSize.NestedClass:
+			case ColumnSize.GenericParam:
+			case ColumnSize.MethodSpec:
+			case ColumnSize.GenericParamConstraint:
+
 			case ColumnSize.Strings:
+
 			case ColumnSize.TypeDefOrRef:
 			case ColumnSize.HasConstant:
 			case ColumnSize.HasCustomAttribute:
@@ -296,6 +364,14 @@ namespace dnSpy.TreeNodes.Hex {
 			case ColumnSize.ResolutionScope:
 			case ColumnSize.TypeOrMethodDef:
 				return true;
+
+			case ColumnSize.Byte:
+			case ColumnSize.Int16:
+			case ColumnSize.UInt16:
+			case ColumnSize.Int32:
+			case ColumnSize.UInt32:
+			case ColumnSize.GUID:
+			case ColumnSize.Blob:
 			default:
 				return false;
 			}

@@ -500,6 +500,8 @@ namespace dnSpy.dntheme {
 		SystemColorsMenuText,
 		SystemColorsWindow,
 		SystemColorsWindowText,
+		PEHex,
+		PEHexBorder,
 		DialogWindow,
 		DialogWindowActiveCaption,
 		DialogWindowActiveDebuggingBorder,

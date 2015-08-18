@@ -125,15 +125,13 @@ namespace dnSpy.AsmEditor.Hex {
 		public LocalSettingsVM(LocalHexSettings options) {
 			this.origOptions = options;
 			this.bytesGroupCountVM = new NullableInt32VM(a => HasErrorUpdated());
-			this.bytesPerLineVM = new NullableInt32VM(a => HasErrorUpdated()) {
+			this.bytesPerLineVM = new NullableInt32VM(a => HasErrorUpdated(), true) {
 				Min = 0,
 				Max = HexSettings.MAX_BYTES_PER_LINE,
-				UseDecimal = true,
 			};
-			this.hexOffsetSizeVM = new Int32VM(a => HasErrorUpdated()) {
+			this.hexOffsetSizeVM = new Int32VM(a => HasErrorUpdated(), true) {
 				Min = 0,
 				Max = 64,
-				UseDecimal = true,
 			};
 			this.baseOffsetVM = new UInt64VM(a => HasErrorUpdated());
 			this.startOffsetVM = new NullableUInt64VM(a => HasErrorUpdated());

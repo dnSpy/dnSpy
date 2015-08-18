@@ -18,38 +18,34 @@
 */
 
 using System;
+using dnlib.DotNet;
 
 namespace dnSpy.Decompiler {
-	public sealed class AddressReference : IEquatable<AddressReference> {
+	public class TokenReference : IEquatable<TokenReference> {
 		public readonly string Filename;
-		public readonly bool IsRVA;
-		public readonly ulong Address;
-		public readonly ulong Length;
+		public readonly uint Token;
 
-		public AddressReference(string filename, bool isRva, ulong addr, ulong len) {
-			this.Filename = filename;
-			this.IsRVA = isRva;
-			this.Address = addr;
-			this.Length = len;
+		public TokenReference(IMemberRef mr)
+			: this(mr.Module == null ? null : mr.Module.Location, mr.MDToken.Raw) {
 		}
 
-		public bool Equals(AddressReference other) {
+		public TokenReference(string filename, uint token) {
+			this.Filename = filename;
+			this.Token = token;
+		}
+
+		public bool Equals(TokenReference other) {
 			return other != null &&
-				IsRVA == other.IsRVA &&
-				Address == other.Address &&
-				Length == other.Length &&
+				Token == other.Token &&
 				StringComparer.OrdinalIgnoreCase.Equals(Filename, other.Filename);
 		}
 
 		public override bool Equals(object obj) {
-			return Equals(obj as AddressReference);
+			return Equals(obj as TokenReference);
 		}
 
 		public override int GetHashCode() {
-			return (Filename ?? string.Empty).GetHashCode() ^
-				(IsRVA ? 0 : int.MinValue) ^
-				(int)Address ^ (int)(Address >> 32) ^
-				(int)Length ^ (int)(Length >> 32);
+			return (Filename ?? string.Empty).GetHashCode() ^ (int)Token;
 		}
 	}
 }

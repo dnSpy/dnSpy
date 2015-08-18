@@ -53,6 +53,7 @@ Shift+F11	| (Debugger) Step out of current method
 Ctrl+Pause	| (Debugger) Break
 Alt+*		| (Debugger) Show next statement
 Ctrl+D		| (Text view) Go to token
+Ctrl+Shift+D| (Text view) Go to MD table record
 Ctrl+G		| (Text view) Go to line
 Ctrl+X		| (Text view) Show current instruction in hex editor or open hex editor
 Ctrl+T		| Open a new tab
@@ -127,6 +128,7 @@ Ctrl+Alt+O	| (Hex editor) Copy offset
 Ctrl+G		| (Hex editor) Go to offset
 Ctrl+8		| (Hex editor) Paste (UTF-8)
 Ctrl+U		| (Hex editor) Paste (Unicode)
+Ctrl+B		| (Hex editor) Paste (#Blob data with compressed length)
 
 Credits
 =======

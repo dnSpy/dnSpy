@@ -323,6 +323,7 @@
       <DependentUpon>LocalSettingsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Hex\LocalSettingsVM.cs" />
+    <Compile Include="AsmEditor\Hex\MDUtils.cs" />
     <Compile Include="AsmEditor\Hex\SelectDlg.xaml.cs">
       <DependentUpon>SelectDlg.xaml</DependentUpon>
     </Compile>

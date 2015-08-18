@@ -25,6 +25,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dnlib.DotNet;
+using dnSpy.Decompiler;
 using dnSpy.HexEditor;
 using dnSpy.Tabs;
 using dnSpy.TreeNodes;
@@ -32,6 +33,7 @@ using dnSpy.TreeNodes.Hex;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
+using ICSharpCode.TreeView;
 using WF = System.Windows.Forms;
 
 namespace dnSpy.AsmEditor.Hex {
@@ -40,6 +42,8 @@ namespace dnSpy.AsmEditor.Hex {
 		public void OnLoaded() {
 			GoToOffsetHexBoxContextMenuEntry.OnLoaded();
 			OpenHexEditorCommand.OnLoaded();
+			PasteBlobDataHexBoxContextMenuEntry.OnLoaded();
+			GoToMDTableRowUIHexEditorCommand.OnLoaded();
 		}
 	}
 
@@ -87,7 +91,7 @@ namespace dnSpy.AsmEditor.Hex {
 	[ExportMainMenuCommand(MenuHeader = "Open He_x Editor", Menu = "_Edit", MenuOrder = 3500, MenuCategory = "Hex", MenuIcon = "Binary", MenuInputGestureText = "Ctrl+X")]
 	sealed class OpenHexEditorCommand : HexCommand {
 		internal static void OnLoaded() {
-			MainWindow.Instance.CodeBindings.Add(ApplicationCommands.Cut,
+			MainWindow.Instance.CodeBindings.Add(new RoutedCommand("OpenHexEditor", typeof(OpenHexEditorCommand)),
 				(s, e) => ExecuteCommand(),
 				(s, e) => e.CanExecute = CanExecuteCommand(),
 				ModifierKeys.Control, Key.X);
@@ -719,6 +723,159 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
+	[ExportContextMenuEntry(Order = 510.0, Category = "Hex")]
+	[ExportMainMenuCommand(Menu = "_Edit", MenuOrder = 3510.0, MenuCategory = "Hex")]
+	sealed class GoToMDTableRowHexEditorCommand : HexCommand {
+		public override void Execute(TextViewContext context) {
+			ExecuteInternal(context);
+		}
+
+		public override bool IsVisible(TextViewContext context) {
+			return IsVisibleInternal(context);
+		}
+
+		public override void Initialize(TextViewContext context, MenuItem menuItem) {
+			var tokRef = GetTokenReference(context);
+			menuItem.Header = string.Format("Go to MD Table Row ({0:X8})", tokRef.Token);
+		}
+
+		internal static void ExecuteInternal(TextViewContext context) {
+			var @ref = GetTokenReference(context);
+			if (@ref != null)
+				MainWindow.Instance.JumpToReference(@ref);
+		}
+
+		internal static bool IsVisibleInternal(TextViewContext context) {
+			return GetTokenReference(context) != null;
+		}
+
+		static TokenReference GetTokenReference(TextViewContext context) {
+			if (context.Reference != null) {
+				var tokRef = context.Reference.Reference as TokenReference;
+				if (tokRef != null)
+					return tokRef;
+
+				var mr = context.Reference.Reference as IMemberRef;
+				if (mr != null)
+					return CreateTokenReference(mr.Module, mr);
+
+				var p = context.Reference.Reference as Parameter;
+				if (p != null) {
+					var pd = p.ParamDef;
+					if (pd != null && pd.DeclaringMethod != null)
+						return CreateTokenReference(pd.DeclaringMethod.Module, pd);
+				}
+			}
+			if (context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length == 1) {
+				var node = context.SelectedTreeNodes[0] as ITokenTreeNode;
+				if (node != null && node.MDTokenProvider != null) {
+					var mod = ILSpyTreeNode.GetModule((SharpTreeNode)node);
+					if (mod != null)
+						return new TokenReference(mod.Location, node.MDTokenProvider.MDToken.Raw);
+				}
+			}
+
+			return null;
+		}
+
+		static TokenReference CreateTokenReference(ModuleDef module, IMDTokenProvider @ref) {
+			if (module == null || @ref == null)
+				return null;
+			var mod = module as ModuleDefMD;
+			if (mod == null)
+				return null;
+			// Make sure it's not a created method/field/etc
+			var res = mod.ResolveToken(@ref.MDToken.Raw);
+			if (res == null)
+				return null;
+			return new TokenReference(module.Location, @ref.MDToken.Raw);
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Go to MD Table Row…", Order = 510.1, Category = "Hex", InputGestureText = "Ctrl+Shift+D")]
+	[ExportMainMenuCommand(MenuHeader = "Go to MD Table Row…", Menu = "_Edit", MenuOrder = 3510.1, MenuCategory = "Hex", MenuInputGestureText = "Ctrl+Shift+D")]
+	sealed class GoToMDTableRowUIHexEditorCommand : HexCommand {
+		internal static void OnLoaded() {
+			MainWindow.Instance.CodeBindings.Add(new RoutedCommand("GoToMDTableRow", typeof(GoToMDTableRowUIHexEditorCommand)),
+				(s, e) => Execute(),
+				(s, e) => e.CanExecute = CanExecute(),
+				ModifierKeys.Control | ModifierKeys.Shift, Key.D);
+		}
+
+		static void Execute() {
+			Execute2(CreateContext());
+		}
+
+		static bool CanExecute() {
+			return CanExecute(CreateContext());
+		}
+
+		static TextViewContext CreateContext() {
+			var tabState = MainWindow.Instance.GetActiveDecompileTabState();
+			return tabState == null ? null : TextViewContext.Create(textView: tabState.TextView, openedFromKeyboard: true);
+		}
+
+		public override void Execute(TextViewContext context) {
+			Execute2(context);
+		}
+
+		public override bool IsEnabled(TextViewContext context) {
+			return CanExecute(context);
+		}
+
+		public override bool IsVisible(TextViewContext context) {
+			return true;
+		}
+
+		static bool CanExecute(TextViewContext context) {
+			DecompileTabState tabState;
+			return GetModule(context, out tabState) != null;
+		}
+
+		static ModuleDefMD GetModule(TextViewContext context, out DecompileTabState tabState) {
+			tabState = null;
+			if (context == null)
+				return null;
+
+			var textView = context.TextView;
+			if (textView != null) {
+				tabState = DecompileTabState.GetDecompileTabState(textView);
+				if (tabState != null)
+					return ILSpyTreeNode.GetModule(tabState.DecompiledNodes) as ModuleDefMD;
+			}
+
+			if (context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length == 1) {
+				var node = context.SelectedTreeNodes[0] as ITokenTreeNode;
+				if (node != null)
+					return ILSpyTreeNode.GetModule((SharpTreeNode)node) as ModuleDefMD;
+			}
+
+			return null;
+		}
+
+		static void Execute2(TextViewContext context) {
+			DecompileTabState tabState;
+			var module = GetModule(context, out tabState);
+			if (module == null)
+				return;
+
+			uint? token = GoToTokenContextMenuEntry.AskForToken("Go to MD Table Row");
+			if (token == null)
+				return;
+
+			var tokRef = new TokenReference(module.Location, token.Value);
+			if (MainWindow.Instance.AssemblyListTreeNode.FindTokenNode(tokRef) == null) {
+				MainWindow.Instance.ShowMessageBox(string.Format("Token {0:X8} doesn't exist in the metadata", token.Value));
+				return;
+			}
+
+			if (tabState != null)
+				MainWindow.Instance.JumpToReference(tabState.TextView, tokRef);
+			else
+				MainWindow.Instance.JumpToReference(tokRef);
+		}
+	}
+
 	abstract class HexBoxContextMenuEntry : IContextMenuEntry2 {
 		public void Execute(TextViewContext context) {
 			var tabState = GetHexTabState(context.HexBox);
@@ -1208,6 +1365,62 @@ namespace dnSpy.AsmEditor.Hex {
 
 		protected override bool IsEnabled(HexTabState tabState) {
 			return tabState.HexBox.CanPasteUnicode();
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "_Paste (#Blob Data)", Order = 7000, Category = "Copy", InputGestureText = "Ctrl+B")]
+	sealed class PasteBlobDataHexBoxContextMenuEntry : HexBoxContextMenuEntry {
+		internal static void OnLoaded() {
+			MainWindow.Instance.HexBindings.Add(new RoutedCommand("PasteBlobData", typeof(PasteBlobDataHexBoxContextMenuEntry)),
+				(s, e) => Execute(),
+				(s, e) => e.CanExecute = CanExecute(),
+				ModifierKeys.Control, Key.B);
+		}
+
+		static void Execute() {
+			Execute2(MainWindow.Instance.ActiveTabState as HexTabState);
+		}
+
+		static bool CanExecute() {
+			return CanExecute(MainWindow.Instance.ActiveTabState as HexTabState);
+		}
+
+		static bool CanExecute(HexTabState tabState) {
+			return tabState != null && GetBlobData(ClipboardUtils.GetData()) != null;
+		}
+
+		static void Execute2(HexTabState tabState) {
+			if (!CanExecute(tabState))
+				return;
+
+			var data = GetBlobData(ClipboardUtils.GetData());
+			if (data != null)
+				tabState.HexBox.Paste(data);
+		}
+
+		protected override void Execute(HexTabState tabState) {
+			Execute2(tabState);
+		}
+
+		static byte[] GetBlobData(byte[] data) {
+			if (data == null)
+				return null;
+			uint len = (uint)data.Length;
+			int extraLen = MDUtils.GetCompressedUInt32Length(len);
+			if (extraLen < 0)
+				return null;
+			var d = new byte[data.Length + extraLen];
+			MDUtils.WriteCompressedUInt32(d, 0, len);
+			Array.Copy(data, 0, d, extraLen, data.Length);
+			return d;
+		}
+
+		protected override bool IsVisible(HexTabState tabState) {
+			return true;
+		}
+
+		protected override bool IsEnabled(HexTabState tabState) {
+			return CanExecute(tabState);
 		}
 	}
 }

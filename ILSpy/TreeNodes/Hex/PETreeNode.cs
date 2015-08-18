@@ -140,6 +140,14 @@ namespace dnSpy.TreeNodes.Hex {
 			}
 		}
 
+		public MetaDataTableRecordTreeNode FindTokenNode(uint token) {
+			if ((token & 0x00FFFFFF) == 0)
+				return null;
+			EnsureChildrenFiltered();
+			var stgStreamNode = (StorageStreamTreeNode)Children.FirstOrDefault(a => a is StorageStreamTreeNode && ((StorageStreamTreeNode)a).StorageStreamType == StorageStreamType.Tables);
+			return stgStreamNode == null ? null : stgStreamNode.FindTokenNode(token);
+		}
+
 		protected override void Write(ITextOutput output, Language language) {
 			output.Write("PE", TextTokenType.Text);
 		}
