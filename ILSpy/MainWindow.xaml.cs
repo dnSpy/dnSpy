@@ -1630,10 +1630,10 @@ namespace ICSharpCode.ILSpy
 								var tabManager = (TabManager<TabState>)dts.Owner;
 								tabManager.RemoveTabState(dts);
 							}
-							else {
+							else if (!dts.Equals(newNodes.ToArray(), dts.Language)) {
 								dts.History.UpdateCurrent(null);
 								dts.TextView.CleanUpBeforeReDecompile();
-								DecompileRestoreLocation(dts, newNodes.ToArray());
+								DecompileRestoreLocation(dts, newNodes.ToArray(), null, true);
 							}
 							break;
 
