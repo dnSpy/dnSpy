@@ -118,13 +118,17 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			if (!assembly.IsLoaded)
 				output.Write(UIUtils.CleanUpName(assembly.ShortName), TextTokenType.Assembly);
 			else if (assembly.ModuleDefinition == null) {
+				var filename = Path.GetFileName(assembly.FileName);
+				if (string.IsNullOrEmpty(filename))
+					filename = assembly.ShortName;
+
 				var pe = assembly.PEImage;
 				if (pe != null) {
 					bool isExe = (pe.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
-					output.Write(UIUtils.CleanUpName(assembly.ShortName), isExe ? TextTokenType.AssemblyExe : TextTokenType.Assembly);
+					output.Write(UIUtils.CleanUpName(filename), isExe ? TextTokenType.AssemblyExe : TextTokenType.Assembly);
 				}
 				else
-					output.Write(UIUtils.CleanUpName(assembly.ShortName), TextTokenType.Text);
+					output.Write(UIUtils.CleanUpName(filename), TextTokenType.Text);
 			}
 			else if (Parent is AssemblyTreeNode || assembly.AssemblyDefinition == null)
 				output.Write(UIUtils.CleanUpName(assembly.ModuleDefinition.Name), TextTokenType.Module);
