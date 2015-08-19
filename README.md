@@ -54,6 +54,7 @@ Ctrl+Pause	| (Debugger) Break
 Alt+*		| (Debugger) Show next statement
 Ctrl+D		| (Text view) Go to token
 Ctrl+Shift+D| (Text view) Go to MD table row
+Shift+Alt+R	| (Text view) Go to highlighted reference's MD table row
 Ctrl+G		| (Text view) Go to line
 Ctrl+X		| (Text view) Show current instruction in hex editor or open hex editor
 Ctrl+T		| Open a new tab
@@ -129,6 +130,7 @@ Ctrl+G		| (Hex editor) Go to offset
 Ctrl+8		| (Hex editor) Paste (UTF-8)
 Ctrl+U		| (Hex editor) Paste (Unicode)
 Ctrl+B		| (Hex editor) Paste (#Blob data with compressed length)
+Ctrl+L		| (Hex editor) Show 'Select' dialog box
 
 Credits
 =======
