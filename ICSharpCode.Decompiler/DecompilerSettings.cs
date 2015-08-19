@@ -46,15 +46,20 @@ namespace ICSharpCode.Decompiler
 			ShowTokenAndRvaComments = false;
 			ShowILBytes = false;
 			SortMembers = false;
+			DecompilationObject0 = DecompilationObject.NestedTypes;
+			DecompilationObject1 = DecompilationObject.Fields;
+			DecompilationObject2 = DecompilationObject.Events;
+			DecompilationObject3 = DecompilationObject.Properties;
+			DecompilationObject4 = DecompilationObject.Methods;
 			return this;
 		}
 
 		DecompilationObject[] decompilationObjects = new DecompilationObject[5] {
-			DecompilationObject.NestedTypes,
-			DecompilationObject.Fields,
-			DecompilationObject.Events,
-			DecompilationObject.Properties,
 			DecompilationObject.Methods,
+			DecompilationObject.Properties,
+			DecompilationObject.Events,
+			DecompilationObject.Fields,
+			DecompilationObject.NestedTypes,
 		};
 
 		public IEnumerable<DecompilationObject> DecompilationObjects {
