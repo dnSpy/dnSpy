@@ -62,7 +62,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		object IList.this[int index] {
 			get { return this[index]; }
-			set { throw new NotImplementedException(); }
+			set { Debug.Fail("Method shouldn't be called"); }
 		}
 
 		public int Count {
@@ -86,19 +86,21 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		int IList.Add(object value) {
-			throw new NotImplementedException();
+			Debug.Fail("Method shouldn't be called");
+			return -1;
 		}
 
 		void IList.Clear() {
-			throw new NotImplementedException();
+			Debug.Fail("Method shouldn't be called");
 		}
 
 		bool IList.Contains(object value) {
-			throw new NotImplementedException();
+			return value is IVirtualizedListItem;
 		}
 
 		void ICollection.CopyTo(Array array, int index) {
-			throw new NotImplementedException();
+			Debug.Fail("Method shouldn't be called");
+			throw new NotImplementedException("ICollection.CopyTo shouldn't be called");
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() {
@@ -111,15 +113,15 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		void IList.Insert(int index, object value) {
-			throw new NotImplementedException();
+			Debug.Fail("Method shouldn't be called");
 		}
 
 		void IList.Remove(object value) {
-			throw new NotImplementedException();
+			Debug.Fail("Method shouldn't be called");
 		}
 
 		void IList.RemoveAt(int index) {
-			throw new NotImplementedException();
+			Debug.Fail("Method shouldn't be called");
 		}
 	}
 }
