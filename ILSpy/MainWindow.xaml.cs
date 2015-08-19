@@ -267,6 +267,17 @@ namespace ICSharpCode.ILSpy
 			this.IsEnabled = false;
 		}
 
+		protected override void OnKeyDown(KeyEventArgs e) {
+			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Escape) {
+				var tabState = ActiveTabState;
+				tabState.FocusContent();
+				e.Handled = true;
+				return;
+			}
+
+			base.OnKeyDown(e);
+		}
+
 		void OtherSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == "DeserializeResources") {
