@@ -270,7 +270,8 @@ namespace ICSharpCode.ILSpy
 		protected override void OnKeyDown(KeyEventArgs e) {
 			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Escape) {
 				var tabState = ActiveTabState;
-				tabState.FocusContent();
+				if (tabState != null)
+					tabState.FocusContent();
 				e.Handled = true;
 				return;
 			}
