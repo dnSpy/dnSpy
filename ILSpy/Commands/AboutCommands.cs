@@ -41,6 +41,15 @@ namespace dnSpy.Commands {
 		}
 	}
 
+    [ExportMainMenuCommand(Menu = "_Help", MenuCategory = "Links", MenuHeader = "Latest _Build", MenuOrder = 99901)]
+    sealed class OpenBuildUrlCommand : SimpleCommand
+    {
+        public override void Execute(object parameter)
+        {
+            AboutHelpers.OpenWebPage("https://ci.appveyor.com/project/0xd4d/dnspy/build/artifacts");
+        }
+    }
+
 	[ExportMainMenuCommand(Menu = "_Help", MenuCategory = "Links", MenuHeader = "_Issues", MenuOrder = 99910)]
 	sealed class OpenIssuesUrlCommand : SimpleCommand {
 		public override void Execute(object parameter) {
