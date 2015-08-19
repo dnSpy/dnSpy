@@ -1077,6 +1077,25 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 			ed.Modifiers = ev.Modifiers;
 			ed.Variables.Add(new VariableInitializer(TextTokenHelper.GetTextTokenType(ev.Annotation<EventDef>()), ev.Name));
 			ed.CopyAnnotationsFrom(ev);
+
+			// Keep the token comments
+			foreach (var child in ev.Children.Reverse().ToArray()) {
+				var cmt = child as Comment;
+				if (cmt != null) {
+					ed.InsertChildAfter(null, cmt.Detach(), Roles.Comment);
+					continue;
+				}
+
+				var acc = child as Accessor;
+				if (acc != null) {
+					foreach (var accChild in acc.Children.Reverse().ToArray()) {
+						var accCmt = accChild as Comment;
+						if (accCmt != null)
+							ed.InsertChildAfter(null, accCmt.Detach(), Roles.Comment);
+					}
+					continue;
+				}
+			}
 			
 			EventDef eventDef = ev.Annotation<EventDef>();
 			if (eventDef != null) {
