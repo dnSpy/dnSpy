@@ -245,9 +245,10 @@ namespace ICSharpCode.ILSpy.TextView {
 		void ShowLineMargin()
 		{
 			foreach (var margin in this.textEditor.TextArea.LeftMargins) {
-				if (margin is LineNumberMargin || margin is System.Windows.Shapes.Line) {
+				if (margin is LineNumberMargin)
 					margin.Visibility = DisplaySettingsPanel.CurrentDisplaySettings.ShowLineNumbers ? Visibility.Visible : Visibility.Collapsed;
-				}
+				else if (margin is System.Windows.Shapes.Line)
+					margin.Visibility = Visibility.Collapsed;
 			}
 		}
 		
