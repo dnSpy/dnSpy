@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Input;
+using dnSpy.TreeNodes;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Tabs {
@@ -149,6 +150,66 @@ namespace dnSpy.Tabs {
 
 		public void Initialize(TextViewContext context, MenuItem menuItem) {
 			menuItem.InputGestureText = context.OpenedFromKeyboard ? "Ctrl+F12" : "Ctrl+Click";
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Go to Reference", Order = 151, InputGestureText = "Dbl Click", Category = "Tabs")]
+	class OpenReferenceContextMenuEntry : IContextMenuEntry {
+		public bool IsVisible(TextViewContext context) {
+			return GetReference(context) != null;
+		}
+
+		internal static object GetReference(TextViewContext context) {
+			if (context.TextView != null)
+				return null;
+			if (context.TabControl != null)
+				return null;
+			if (context.TreeView == MainWindow.Instance.treeView)
+				return null;
+
+			if (context.Reference != null)
+				return context.Reference.Reference;
+			if (context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length == 1) {
+				var tokenNode = context.SelectedTreeNodes[0] as ITokenTreeNode;
+				if (tokenNode != null && tokenNode.MDTokenProvider != null)
+					return tokenNode.MDTokenProvider;
+			}
+
+			return null;
+		}
+
+		public bool IsEnabled(TextViewContext context) {
+			return true;
+		}
+
+		public void Execute(TextViewContext context) {
+			var @ref = GetReference(context);
+			if (@ref != null) {
+				var textView = MainWindow.Instance.SafeActiveTextView;
+				MainWindow.Instance.JumpToReference(textView, @ref);
+				MainWindow.Instance.SetTextEditorFocus(textView);
+			}
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Open in New _Tab", Order = 152, InputGestureText = "Shift+Dbl Click", Category = "Tabs")]
+	class OpenReferenceInNewTab2ContextMenuEntry : IContextMenuEntry {
+		public bool IsVisible(TextViewContext context) {
+			return OpenReferenceContextMenuEntry.GetReference(context) != null;
+		}
+
+		public bool IsEnabled(TextViewContext context) {
+			return true;
+		}
+
+		public void Execute(TextViewContext context) {
+			var @ref = OpenReferenceContextMenuEntry.GetReference(context);
+			if (@ref != null) {
+				MainWindow.Instance.OpenNewEmptyTab();
+				var textView = MainWindow.Instance.SafeActiveTextView;
+				MainWindow.Instance.JumpToReference(textView, @ref);
+				MainWindow.Instance.SetTextEditorFocus(textView);
+			}
 		}
 	}
 
