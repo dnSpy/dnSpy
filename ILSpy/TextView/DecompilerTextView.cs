@@ -1457,6 +1457,16 @@ namespace ICSharpCode.ILSpy.TextView {
 			return false;
 		}
 
+		ReferenceSegment FindReferenceSegment(ReferenceSegment refSeg) {
+			if (references == null || refSeg == null)
+				return null;
+			foreach (var r in references) {
+				if (r.IsLocal == refSeg.IsLocal && r.IsLocalTarget == refSeg.IsLocalTarget && RefSegEquals(r, refSeg))
+					return r;
+			}
+			return null;
+		}
+
 		ReferenceSegment FindLocalTarget(ReferenceSegment refSeg)
 		{
 			if (references == null)
@@ -1587,8 +1597,11 @@ namespace ICSharpCode.ILSpy.TextView {
 				}
 			}
 
-			if (references != null && pos.ReferenceSegment != null)
-				return GoToTarget(pos.ReferenceSegment, true, false);
+			if (references != null && pos.ReferenceSegment != null) {
+				var refSeg = FindReferenceSegment(pos.ReferenceSegment);
+				if (refSeg != null)
+					return GoToTarget(refSeg, false, false);
+			}
 
 			return false;
 		}
