@@ -842,7 +842,7 @@ namespace ICSharpCode.Decompiler.Ast {
 					break;
 
 				case DecompilationObject.Methods:
-					foreach (MethodDef methodDef in typeDef.GetMethods(context.Settings.SortMembers)) {
+					foreach (MethodDef methodDef in typeDef.GetMethods(typeDef.IsInterface ? false : context.Settings.SortMembers)) {
 						if (MemberIsHidden(methodDef, context.Settings)) continue;
 
 						if (methodDef.IsConstructor)

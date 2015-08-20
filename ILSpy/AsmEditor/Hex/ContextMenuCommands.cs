@@ -858,11 +858,8 @@ namespace dnSpy.AsmEditor.Hex {
 					return ILSpyTreeNode.GetModule(tabState.DecompiledNodes) as ModuleDefMD;
 			}
 
-			if (context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length == 1) {
-				var node = context.SelectedTreeNodes[0] as ITokenTreeNode;
-				if (node != null)
-					return ILSpyTreeNode.GetModule((SharpTreeNode)node) as ModuleDefMD;
-			}
+			if (context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length == 1)
+				return ILSpyTreeNode.GetModule(context.SelectedTreeNodes[0]) as ModuleDefMD;
 
 			return null;
 		}
