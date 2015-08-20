@@ -652,7 +652,7 @@ namespace dnSpy.TreeNodes.Hex {
 			UpdateFields(DataFieldVM.ObjectValue);
 		}
 
-		void UpdateFields(Object newValue) {
+		void UpdateFields(object newValue) {
 			ulong val = ToUInt64(newValue);
 
 			foreach (var bitField in bitFields.Values)
