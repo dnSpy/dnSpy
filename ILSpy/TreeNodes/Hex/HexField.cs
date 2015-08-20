@@ -687,12 +687,12 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		public ByteFlagsHexField(HexDocument doc, string parentName, string name, ulong start)
-			: base(doc, parentName, name, start, 2) {
+			: base(doc, parentName, name, start, 1) {
 			this.data = new ByteVM((byte)doc.ReadByte(start), a => UpdateValue(), false);
 		}
 
 		protected override byte[] GetDataAsByteArray() {
-			return BitConverter.GetBytes(data.Value);
+			return new byte[1] { data.Value };
 		}
 
 		protected override object ReadData() {
