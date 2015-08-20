@@ -229,7 +229,7 @@ namespace dnSpy.TreeNodes.Hex {
 			case ColumnSize.Int32: return "Int32";
 			case ColumnSize.UInt32: return "UInt32";
 
-			case ColumnSize.Strings: return ReadStringsHeap(field);
+			case ColumnSize.Strings: return GetStringsDescription(field);
 			case ColumnSize.GUID: return "#GUID Heap Index";
 			case ColumnSize.Blob: return "#Blob Heap Offset";
 
@@ -271,6 +271,13 @@ namespace dnSpy.TreeNodes.Hex {
 			return tblVM.Get((int)(rid - 1));
 		}
 
+		string GetStringsDescription(HexField field) {
+			var s = ReadStringsHeap(field);
+			if (!string.IsNullOrEmpty(s))
+				return string.Format("{0} (#Strings Heap Offset)", s);
+			return "#Strings Heap Offset";
+		}
+
 		string GetInfo(Table table, uint rid) {
 			var recVM = GetMetaDataTableRecordVM(table, rid);
 			return recVM == null ? string.Empty : recVM.Info;
@@ -278,16 +285,20 @@ namespace dnSpy.TreeNodes.Hex {
 
 		string GetDescription(Table table, HexField field) {
 			var info = GetInfo(table, ReadFieldValue(field));
-			return string.Format("{0} RID{1}", table, string.IsNullOrEmpty(info) ? string.Empty : string.Format(": {0}", info));
+			if (string.IsNullOrEmpty(info))
+				return string.Format("{0} RID", table);
+			return string.Format("{0} ({1} RID)", info, table);
 		}
 
 		string GetCodedTokenDescription(CodedToken codedToken, string codedTokenName, ColumnInfo col, HexField field) {
 			MDToken token;
 			if (!codedToken.Decode(ReadFieldValue(field), out token))
-				return string.Empty;
+				return string.Format("Invalid {0} Coded Token", codedTokenName);
 
 			var info = GetInfo(token.Table, token.Rid);
-			return string.Format("{0}: {1}[{2}] (0x{3:X8}){4}", codedTokenName, token.Table, token.Rid, token.Raw, string.IsNullOrEmpty(info) ? string.Empty : string.Format(": {0}", info));
+			if (string.IsNullOrEmpty(info))
+				return string.Format("{0}: {1}[{2}], 0x{3:X8})", codedTokenName, token.Table, token.Rid, token.Raw);
+			return string.Format("{0} ({1}: {2}[{3}], 0x{4:X8})", info, codedTokenName, token.Table, token.Rid, token.Raw);
 		}
 
 		uint ReadFieldValue(HexField field) {

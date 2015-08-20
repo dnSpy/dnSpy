@@ -43,7 +43,9 @@ namespace dnSpy.AsmEditor.Hex {
 			GoToOffsetHexBoxContextMenuEntry.OnLoaded();
 			OpenHexEditorCommand.OnLoaded();
 			PasteBlobDataHexBoxContextMenuEntry.OnLoaded();
+			GoToMDTableRowHexEditorCommand.OnLoaded();
 			GoToMDTableRowUIHexEditorCommand.OnLoaded();
+			SelectRangeHexBoxContextMenuEntry.OnLoaded();
 		}
 	}
 
@@ -723,9 +725,24 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	[ExportContextMenuEntry(Order = 510.0, Category = "Hex")]
-	[ExportMainMenuCommand(Menu = "_Edit", MenuOrder = 3510.0, MenuCategory = "Hex")]
+	[ExportContextMenuEntry(Order = 510.0, Category = "Hex", InputGestureText = "Shift+Alt+R")]
+	[ExportMainMenuCommand(Menu = "_Edit", MenuOrder = 3510.0, MenuCategory = "Hex", MenuInputGestureText = "Shift+Alt+R")]
 	sealed class GoToMDTableRowHexEditorCommand : HexCommand {
+		internal static void OnLoaded() {
+			MainWindow.Instance.CodeBindings.Add(new RoutedCommand("GoToMDTableRow", typeof(GoToMDTableRowHexEditorCommand)),
+				(s, e) => Execute(),
+				(s, e) => e.CanExecute = CanExecute(),
+				ModifierKeys.Shift | ModifierKeys.Alt, Key.R);
+		}
+
+		static void Execute() {
+			ExecuteInternal(CreateTextViewContext());
+		}
+
+		static bool CanExecute() {
+			return IsVisibleInternal(CreateTextViewContext());
+		}
+
 		public override void Execute(TextViewContext context) {
 			ExecuteInternal(context);
 		}
@@ -750,6 +767,8 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static TokenReference GetTokenReference(TextViewContext context) {
+			if (context == null)
+				return null;
 			if (context.Reference != null) {
 				var tokRef = context.Reference.Reference as TokenReference;
 				if (tokRef != null)
@@ -796,23 +815,18 @@ namespace dnSpy.AsmEditor.Hex {
 	[ExportMainMenuCommand(MenuHeader = "Go to MD Table Row…", Menu = "_Edit", MenuOrder = 3510.1, MenuCategory = "Hex", MenuInputGestureText = "Ctrl+Shift+D")]
 	sealed class GoToMDTableRowUIHexEditorCommand : HexCommand {
 		internal static void OnLoaded() {
-			MainWindow.Instance.CodeBindings.Add(new RoutedCommand("GoToMDTableRow", typeof(GoToMDTableRowUIHexEditorCommand)),
+			MainWindow.Instance.CodeBindings.Add(new RoutedCommand("GoToMDTableRowUI", typeof(GoToMDTableRowUIHexEditorCommand)),
 				(s, e) => Execute(),
 				(s, e) => e.CanExecute = CanExecute(),
 				ModifierKeys.Control | ModifierKeys.Shift, Key.D);
 		}
 
 		static void Execute() {
-			Execute2(CreateContext());
+			Execute2(CreateTextViewContext());
 		}
 
 		static bool CanExecute() {
-			return CanExecute(CreateContext());
-		}
-
-		static TextViewContext CreateContext() {
-			var tabState = MainWindow.Instance.GetActiveDecompileTabState();
-			return tabState == null ? null : TextViewContext.Create(textView: tabState.TextView, openedFromKeyboard: true);
+			return CanExecute(CreateTextViewContext());
 		}
 
 		public override void Execute(TextViewContext context) {
@@ -820,11 +834,11 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		public override bool IsEnabled(TextViewContext context) {
-			return CanExecute(context);
+			return true;
 		}
 
 		public override bool IsVisible(TextViewContext context) {
-			return true;
+			return CanExecute(context);
 		}
 
 		static bool CanExecute(TextViewContext context) {
@@ -965,9 +979,34 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Select…", Order = 110, Category = "Misc")]
+	[ExportContextMenuEntry(Header = "Select…", Order = 110, Category = "Misc", InputGestureText = "Ctrl+L")]
 	sealed class SelectRangeHexBoxContextMenuEntry : HexBoxContextMenuEntry {
+		internal static void OnLoaded() {
+			MainWindow.Instance.HexBindings.Add(new RoutedCommand("Select", typeof(SelectRangeHexBoxContextMenuEntry)),
+				(s, e) => Execute(),
+				(s, e) => e.CanExecute = CanExecute(),
+				ModifierKeys.Control, Key.L);
+		}
+
+		static void Execute() {
+			ExecuteInternal(GetHexTabState());
+		}
+
+		static bool CanExecute() {
+			return GetHexTabState() != null;
+		}
+
+		static HexTabState GetHexTabState() {
+			return MainWindow.Instance.ActiveTabState as HexTabState;
+		}
+
 		protected override void Execute(HexTabState tabState) {
+			ExecuteInternal(tabState);
+		}
+
+		static void ExecuteInternal(HexTabState tabState) {
+			if (tabState == null)
+				return;
 			var hb = tabState.HexBox;
 			ulong start = hb.CaretPosition.Offset;
 			ulong end = start;

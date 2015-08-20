@@ -245,9 +245,10 @@ namespace ICSharpCode.ILSpy.TextView {
 		void ShowLineMargin()
 		{
 			foreach (var margin in this.textEditor.TextArea.LeftMargins) {
-				if (margin is LineNumberMargin || margin is System.Windows.Shapes.Line) {
+				if (margin is LineNumberMargin)
 					margin.Visibility = DisplaySettingsPanel.CurrentDisplaySettings.ShowLineNumbers ? Visibility.Visible : Visibility.Collapsed;
-				}
+				else if (margin is System.Windows.Shapes.Line)
+					margin.Visibility = Visibility.Collapsed;
 			}
 		}
 		
@@ -1456,6 +1457,16 @@ namespace ICSharpCode.ILSpy.TextView {
 			return false;
 		}
 
+		ReferenceSegment FindReferenceSegment(ReferenceSegment refSeg) {
+			if (references == null || refSeg == null)
+				return null;
+			foreach (var r in references) {
+				if (r.IsLocal == refSeg.IsLocal && r.IsLocalTarget == refSeg.IsLocalTarget && RefSegEquals(r, refSeg))
+					return r;
+			}
+			return null;
+		}
+
 		ReferenceSegment FindLocalTarget(ReferenceSegment refSeg)
 		{
 			if (references == null)
@@ -1586,8 +1597,11 @@ namespace ICSharpCode.ILSpy.TextView {
 				}
 			}
 
-			if (references != null && pos.ReferenceSegment != null)
-				return GoToTarget(pos.ReferenceSegment, true, false);
+			if (references != null && pos.ReferenceSegment != null) {
+				var refSeg = FindReferenceSegment(pos.ReferenceSegment);
+				if (refSeg != null)
+					return GoToTarget(refSeg, false, false);
+			}
 
 			return false;
 		}

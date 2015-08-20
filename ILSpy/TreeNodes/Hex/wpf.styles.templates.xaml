@@ -2176,14 +2176,14 @@
                         <GridViewColumn Header="Token">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding TokenString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Offset">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding OffsetString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -2223,14 +2223,14 @@
                         <GridViewColumn Header="Token">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding TokenString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Offset">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding OffsetString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -2277,14 +2277,14 @@
                         <GridViewColumn Header="Token">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding TokenString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Offset">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding OffsetString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -2338,14 +2338,14 @@
                         <GridViewColumn Header="Token">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding TokenString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Offset">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding OffsetString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -2406,14 +2406,14 @@
                         <GridViewColumn Header="Token">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding TokenString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Offset">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding OffsetString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -2481,14 +2481,14 @@
                         <GridViewColumn Header="Token">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding TokenString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Offset">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding OffsetString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -2563,14 +2563,14 @@
                         <GridViewColumn Header="Token">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding TokenString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Offset">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding OffsetString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -2666,14 +2666,14 @@
                         <GridViewColumn Header="Token">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding TokenString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                        </GridViewColumn>
                         <GridViewColumn Header="Offset">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding OffsetString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -2687,7 +2687,7 @@
                         <GridViewColumn Header="{Binding InfoName, Mode=OneTime}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Info, Mode=OneWay}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Info, Mode=OneWay}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -2720,14 +2720,14 @@
                         <GridViewColumn Header="Token">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding TokenString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Offset">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding OffsetString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -2748,7 +2748,7 @@
                         <GridViewColumn Header="{Binding InfoName, Mode=OneTime}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Info, Mode=OneWay}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Info, Mode=OneWay}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -2781,14 +2781,14 @@
                         <GridViewColumn Header="Token">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding TokenString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Offset">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding OffsetString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -2816,7 +2816,7 @@
                         <GridViewColumn Header="{Binding InfoName, Mode=OneTime}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Info, Mode=OneWay}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Info, Mode=OneWay}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -2849,14 +2849,14 @@
                         <GridViewColumn Header="Token">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding TokenString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Offset">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding OffsetString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -2891,7 +2891,7 @@
                         <GridViewColumn Header="{Binding InfoName, Mode=OneTime}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Info, Mode=OneWay}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Info, Mode=OneWay}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -2924,14 +2924,14 @@
                         <GridViewColumn Header="Token">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding TokenString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Offset">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding OffsetString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -2973,7 +2973,7 @@
                         <GridViewColumn Header="{Binding InfoName, Mode=OneTime}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Info, Mode=OneWay}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Info, Mode=OneWay}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -3006,14 +3006,14 @@
                         <GridViewColumn Header="Token">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding TokenString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Offset">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding OffsetString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -3062,7 +3062,7 @@
                         <GridViewColumn Header="{Binding InfoName, Mode=OneTime}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Info, Mode=OneWay}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Info, Mode=OneWay}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -3095,14 +3095,14 @@
                         <GridViewColumn Header="Token">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding TokenString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding TokenString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
                         <GridViewColumn Header="Offset">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding OffsetString, Mode=OneTime}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding OffsetString, Mode=OneTime}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -3172,7 +3172,7 @@
                         <GridViewColumn Header="{Binding InfoName, Mode=OneTime}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Info, Mode=OneWay}" />
+                                    <TextBox Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Info, Mode=OneWay}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -3206,50 +3206,50 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column0Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0.OffsetString, Mode=OneTime}" Visibility="{Binding Column0Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column0TextBox}" Content="{Binding Column0.NameUI, Mode=OneTime}" Visibility="{Binding Column0Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column0TextBox" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" Visibility="{Binding Column0Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column0Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0Description, Mode=OneWay}" Visibility="{Binding Column0Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                <TextBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column1Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1.OffsetString, Mode=OneTime}" Visibility="{Binding Column1Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <Label Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column1TextBox}" Content="{Binding Column1.NameUI, Mode=OneTime}" Visibility="{Binding Column1Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <TextBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column1TextBox" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" Visibility="{Binding Column1Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column1Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1Description, Mode=OneWay}" Visibility="{Binding Column1Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                <TextBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column2Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2.OffsetString, Mode=OneTime}" Visibility="{Binding Column2Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <Label Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column2TextBox}" Content="{Binding Column2.NameUI, Mode=OneTime}" Visibility="{Binding Column2Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <TextBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column2TextBox" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" Visibility="{Binding Column2Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column2Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2Description, Mode=OneWay}" Visibility="{Binding Column2Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column3Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column3.OffsetString, Mode=OneTime}" Visibility="{Binding Column3Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <Label Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column3TextBox}" Content="{Binding Column3.NameUI, Mode=OneTime}" Visibility="{Binding Column3Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <TextBox Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column3TextBox" Text="{Binding Column3.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" Visibility="{Binding Column3Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column3Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column3Description, Mode=OneWay}" Visibility="{Binding Column3Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column4.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column4Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column4.OffsetString, Mode=OneTime}" Visibility="{Binding Column4Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <Label Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column4TextBox}" Content="{Binding Column4.NameUI, Mode=OneTime}" Visibility="{Binding Column4Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <TextBox Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column4TextBox" Text="{Binding Column4.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" Visibility="{Binding Column4Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column4Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column4Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column4Description, Mode=OneWay}" Visibility="{Binding Column4Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                <TextBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column5.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column5Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column5.OffsetString, Mode=OneTime}" Visibility="{Binding Column5Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <Label Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column5TextBox}" Content="{Binding Column5.NameUI, Mode=OneTime}" Visibility="{Binding Column5Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <TextBox Grid.Row="5" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column5TextBox" Text="{Binding Column5.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" Visibility="{Binding Column5Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <TextBox Grid.Row="5" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column5Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column5Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="5" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column5Description, Mode=OneWay}" Visibility="{Binding Column5Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                <TextBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column6.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column6Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column6.OffsetString, Mode=OneTime}" Visibility="{Binding Column6Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <Label Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column6TextBox}" Content="{Binding Column6.NameUI, Mode=OneTime}" Visibility="{Binding Column6Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <TextBox Grid.Row="6" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column6TextBox" Text="{Binding Column6.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" Visibility="{Binding Column6Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <TextBox Grid.Row="6" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column6Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column6Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="6" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column6Description, Mode=OneWay}" Visibility="{Binding Column6Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                <TextBox Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column7.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column7Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column7.OffsetString, Mode=OneTime}" Visibility="{Binding Column7Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <Label Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column7TextBox}" Content="{Binding Column7.NameUI, Mode=OneTime}" Visibility="{Binding Column7Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <TextBox Grid.Row="7" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column7TextBox" Text="{Binding Column7.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" Visibility="{Binding Column7Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <TextBox Grid.Row="7" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column7Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column7Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="7" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column7Description, Mode=OneWay}" Visibility="{Binding Column7Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                <TextBox Grid.Row="8" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column8.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column8Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="8" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column8.OffsetString, Mode=OneTime}" Visibility="{Binding Column8Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <Label Grid.Row="8" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column8TextBox}" Content="{Binding Column8.NameUI, Mode=OneTime}" Visibility="{Binding Column8Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <TextBox Grid.Row="8" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column8TextBox" Text="{Binding Column8.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" Visibility="{Binding Column8Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <TextBox Grid.Row="8" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column8Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" Visibility="{Binding Column8Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="8" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column8Description, Mode=OneWay}" Visibility="{Binding Column8Present, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
             </Grid>
         </Border>
     </DataTemplate>
@@ -3274,10 +3274,10 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column0TextBox}" Content="{Binding Column0.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column0TextBox" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0Description, Mode=OneWay}" />
 
                 <GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Header="Flags">
                     <Grid>
@@ -3332,30 +3332,30 @@
                     <ComboBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding Column0.Bit22.ListVM.Items}" SelectedIndex="{Binding Column0.Bit22.ListVM.SelectedIndex}" VerticalContentAlignment="Center" />
                 </Grid>
 
-                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column1TextBox}" Content="{Binding Column1.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column1TextBox" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column2TextBox}" Content="{Binding Column2.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column2TextBox" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column3.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column3TextBox}" Content="{Binding Column3.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="5" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column3TextBox" Text="{Binding Column3.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="5" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="5" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column3Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column4.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column4.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column4TextBox}" Content="{Binding Column4.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="6" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column4TextBox" Text="{Binding Column4.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="6" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column4Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="6" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column4Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column5.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column5.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column5TextBox}" Content="{Binding Column5.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="7" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column5TextBox" Text="{Binding Column5.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="7" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column5Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="7" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column5Description, Mode=OneWay}" />
             </Grid>
         </Border>
     </DataTemplate>
@@ -3377,10 +3377,10 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column0TextBox}" Content="{Binding Column0.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column0TextBox" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0Description, Mode=OneWay}" />
 
                 <GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Header="Flags">
                     <Grid>
@@ -3425,15 +3425,15 @@
                     <ComboBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding Column0.Bit0.ListVM.Items}" SelectedIndex="{Binding Column0.Bit0.ListVM.SelectedIndex}" VerticalContentAlignment="Center" />
                 </Grid>
 
-                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column1TextBox}" Content="{Binding Column1.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column1TextBox" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column2TextBox}" Content="{Binding Column2.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column2TextBox" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2Description, Mode=OneWay}" />
             </Grid>
         </Border>
     </DataTemplate>
@@ -3460,15 +3460,15 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column0TextBox}" Content="{Binding Column0.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column0TextBox" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column1TextBox}" Content="{Binding Column1.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column1TextBox" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1Description, Mode=OneWay}" />
 
                 <GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Header="ImplFlags">
                     <Grid>
@@ -3511,10 +3511,10 @@
                     <ComboBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding Column1.Bit2.ListVM.Items}" SelectedIndex="{Binding Column1.Bit2.ListVM.SelectedIndex}" VerticalContentAlignment="Center" />
                 </Grid>
 
-                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column2TextBox}" Content="{Binding Column2.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column2TextBox" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2Description, Mode=OneWay}" />
 
                 <GroupBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="4" Header="Flags">
                     <Grid>
@@ -3563,20 +3563,20 @@
                     <ComboBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding Column2.Bit8.ListVM.Items}" SelectedIndex="{Binding Column2.Bit8.ListVM.SelectedIndex}" VerticalContentAlignment="Center" />
                 </Grid>
 
-                <TextBox Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column3.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column3TextBox}" Content="{Binding Column3.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="7" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column3TextBox" Text="{Binding Column3.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="7" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="7" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column3Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="8" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column4.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="8" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column4.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="8" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column4TextBox}" Content="{Binding Column4.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="8" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column4TextBox" Text="{Binding Column4.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="8" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column4Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="8" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column4Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="9" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column5.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="9" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column5.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="9" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column5TextBox}" Content="{Binding Column5.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="9" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column5TextBox" Text="{Binding Column5.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="9" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column5Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="9" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column5Description, Mode=OneWay}" />
             </Grid>
         </Border>
     </DataTemplate>
@@ -3597,10 +3597,10 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column0TextBox}" Content="{Binding Column0.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column0TextBox" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0Description, Mode=OneWay}" />
 
                 <GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Header="Flags">
                     <Grid>
@@ -3621,15 +3621,15 @@
                     </Grid>
                 </GroupBox>
 
-                <TextBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column1TextBox}" Content="{Binding Column1.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column1TextBox" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column2TextBox}" Content="{Binding Column2.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column2TextBox" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2Description, Mode=OneWay}" />
             </Grid>
         </Border>
     </DataTemplate>
@@ -3650,10 +3650,10 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column0TextBox}" Content="{Binding Column0.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column0TextBox" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0Description, Mode=OneWay}" />
 
                 <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4">
                     <Grid.ColumnDefinitions>
@@ -3672,15 +3672,15 @@
                     <ComboBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding Column0.Bit0.ListVM.Items}" SelectedIndex="{Binding Column0.Bit0.ListVM.SelectedIndex}" VerticalContentAlignment="Center" />
                 </Grid>
 
-                <TextBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column1TextBox}" Content="{Binding Column1.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column1TextBox" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column2TextBox}" Content="{Binding Column2.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column2TextBox" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2Description, Mode=OneWay}" />
             </Grid>
         </Border>
     </DataTemplate>
@@ -3701,10 +3701,10 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column0TextBox}" Content="{Binding Column0.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column0TextBox" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0Description, Mode=OneWay}" />
 
                 <GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Header="Flags">
                     <Grid>
@@ -3721,15 +3721,15 @@
                     </Grid>
                 </GroupBox>
 
-                <TextBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column1TextBox}" Content="{Binding Column1.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column1TextBox" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column2TextBox}" Content="{Binding Column2.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column2TextBox" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2Description, Mode=OneWay}" />
             </Grid>
         </Border>
     </DataTemplate>
@@ -3750,10 +3750,10 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column0TextBox}" Content="{Binding Column0.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column0TextBox" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0Description, Mode=OneWay}" />
 
                 <GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Header="Flags">
                     <Grid>
@@ -3771,15 +3771,15 @@
                     </Grid>
                 </GroupBox>
 
-                <TextBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column1TextBox}" Content="{Binding Column1.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column1TextBox" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column2TextBox}" Content="{Binding Column2.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column2TextBox" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2Description, Mode=OneWay}" />
             </Grid>
         </Border>
     </DataTemplate>
@@ -3800,10 +3800,10 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column0TextBox}" Content="{Binding Column0.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column0TextBox" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0Description, Mode=OneWay}" />
 
                 <GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Header="Flags">
                     <Grid>
@@ -3826,15 +3826,15 @@
                     </Grid>
                 </GroupBox>
 
-                <TextBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column1TextBox}" Content="{Binding Column1.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column1TextBox" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column2TextBox}" Content="{Binding Column2.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column2TextBox" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2Description, Mode=OneWay}" />
             </Grid>
         </Border>
     </DataTemplate>
@@ -3857,10 +3857,10 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column0TextBox}" Content="{Binding Column0.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column0TextBox" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0Description, Mode=OneWay}" />
 
                 <GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Header="Flags">
                     <Grid>
@@ -3900,20 +3900,20 @@
                     <ComboBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding Column0.Bit8.ListVM.Items}" SelectedIndex="{Binding Column0.Bit8.ListVM.SelectedIndex}" VerticalContentAlignment="Center" />
                 </Grid>
 
-                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column1TextBox}" Content="{Binding Column1.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column1TextBox" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column2TextBox}" Content="{Binding Column2.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column2TextBox" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column3.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column3TextBox}" Content="{Binding Column3.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="5" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column3TextBox" Text="{Binding Column3.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="5" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="5" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column3Description, Mode=OneWay}" />
             </Grid>
         </Border>
     </DataTemplate>
@@ -3942,10 +3942,10 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column0TextBox}" Content="{Binding Column0.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column0TextBox" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0Description, Mode=OneWay}" />
 
                 <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4">
                     <Grid.ColumnDefinitions>
@@ -3962,30 +3962,30 @@
                     <ComboBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding Column0.Bit0.ListVM.Items}" SelectedIndex="{Binding Column0.Bit0.ListVM.SelectedIndex}" VerticalContentAlignment="Center" />
                 </Grid>
 
-                <TextBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column1TextBox}" Content="{Binding Column1.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column1TextBox" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column2TextBox}" Content="{Binding Column2.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column2TextBox" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column3.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column3TextBox}" Content="{Binding Column3.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column3TextBox" Text="{Binding Column3.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column3Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column4.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column4.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column4TextBox}" Content="{Binding Column4.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="5" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column4TextBox" Text="{Binding Column4.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="5" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column4Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="5" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column4Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column5.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column5.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column5TextBox}" Content="{Binding Column5.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="6" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column5TextBox" Text="{Binding Column5.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="6" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column5Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="6" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column5Description, Mode=OneWay}" />
 
                 <GroupBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="4" Header="Flags">
                     <Grid>
@@ -4024,20 +4024,20 @@
                     <ComboBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding Column5.Bit9.ListVM.Items}" SelectedIndex="{Binding Column5.Bit9.ListVM.SelectedIndex}" VerticalContentAlignment="Center" />
                 </Grid>
 
-                <TextBox Grid.Row="9" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column6.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="9" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column6.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="9" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column6TextBox}" Content="{Binding Column6.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="9" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column6TextBox" Text="{Binding Column6.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="9" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column6Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="9" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column6Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="10" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column7.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="10" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column7.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="10" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column7TextBox}" Content="{Binding Column7.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="10" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column7TextBox" Text="{Binding Column7.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="10" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column7Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="10" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column7Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="11" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column8.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="11" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column8.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="11" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column8TextBox}" Content="{Binding Column8.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="11" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column8TextBox" Text="{Binding Column8.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="11" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column8Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="11" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column8Description, Mode=OneWay}" />
             </Grid>
         </Border>
     </DataTemplate>
@@ -4065,30 +4065,30 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column0TextBox}" Content="{Binding Column0.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column0TextBox" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column1TextBox}" Content="{Binding Column1.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column1TextBox" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column2TextBox}" Content="{Binding Column2.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column2TextBox" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column3.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column3TextBox}" Content="{Binding Column3.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column3TextBox" Text="{Binding Column3.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column3Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column4.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column4.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column4TextBox}" Content="{Binding Column4.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column4TextBox" Text="{Binding Column4.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column4Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column4Description, Mode=OneWay}" />
 
                 <GroupBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="4" Header="Flags">
                     <Grid>
@@ -4127,25 +4127,25 @@
                     <ComboBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding Column4.Bit9.ListVM.Items}" SelectedIndex="{Binding Column4.Bit9.ListVM.SelectedIndex}" VerticalContentAlignment="Center" />
                 </Grid>
 
-                <TextBox Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column5.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column5.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column5TextBox}" Content="{Binding Column5.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="7" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column5TextBox" Text="{Binding Column5.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="7" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column5Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="7" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column5Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="8" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column6.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="8" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column6.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="8" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column6TextBox}" Content="{Binding Column6.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="8" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column6TextBox" Text="{Binding Column6.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="8" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column6Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="8" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column6Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="9" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column7.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="9" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column7.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="9" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column7TextBox}" Content="{Binding Column7.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="9" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column7TextBox" Text="{Binding Column7.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="9" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column7Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="9" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column7Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="10" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column8.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="10" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column8.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="10" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column8TextBox}" Content="{Binding Column8.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="10" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column8TextBox" Text="{Binding Column8.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="10" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column8Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="10" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column8Description, Mode=OneWay}" />
             </Grid>
         </Border>
     </DataTemplate>
@@ -4166,10 +4166,10 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column0TextBox}" Content="{Binding Column0.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column0TextBox" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0Description, Mode=OneWay}" />
 
                 <GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Header="Flags">
                     <Grid>
@@ -4185,15 +4185,15 @@
                     </Grid>
                 </GroupBox>
 
-                <TextBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column1TextBox}" Content="{Binding Column1.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column1TextBox" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="2" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column2TextBox}" Content="{Binding Column2.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column2TextBox" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2Description, Mode=OneWay}" />
             </Grid>
         </Border>
     </DataTemplate>
@@ -4217,10 +4217,10 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column0TextBox}" Content="{Binding Column0.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column0TextBox" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0Description, Mode=OneWay}" />
 
                 <GroupBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Header="Flags">
                     <Grid>
@@ -4275,25 +4275,25 @@
                     <ComboBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding Column0.Bit22.ListVM.Items}" SelectedIndex="{Binding Column0.Bit22.ListVM.SelectedIndex}" VerticalContentAlignment="Center" />
                 </Grid>
 
-                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column1TextBox}" Content="{Binding Column1.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column1TextBox" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column2TextBox}" Content="{Binding Column2.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column2TextBox" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column3.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column3TextBox}" Content="{Binding Column3.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="5" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column3TextBox" Text="{Binding Column3.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="5" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="5" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column3Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column4.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column4.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column4TextBox}" Content="{Binding Column4.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="6" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column4TextBox" Text="{Binding Column4.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="6" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column4Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="6" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column4Description, Mode=OneWay}" />
             </Grid>
         </Border>
     </DataTemplate>
@@ -4315,15 +4315,15 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column0TextBox}" Content="{Binding Column0.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column0TextBox" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column1TextBox}" Content="{Binding Column1.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column1TextBox" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1Description, Mode=OneWay}" />
 
                 <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4">
                     <Grid.ColumnDefinitions>
@@ -4342,15 +4342,15 @@
                     <ComboBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding Column1.Bit0.ListVM.Items}" SelectedIndex="{Binding Column1.Bit0.ListVM.SelectedIndex}" VerticalContentAlignment="Center" />
                 </Grid>
 
-                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column2TextBox}" Content="{Binding Column2.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column2TextBox" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="3" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column3.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column3TextBox}" Content="{Binding Column3.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column3TextBox" Text="{Binding Column3.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column3Description, Mode=OneWay}" />
             </Grid>
         </Border>
     </DataTemplate>
@@ -4374,15 +4374,15 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column0TextBox}" Content="{Binding Column0.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column0TextBox" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column1TextBox}" Content="{Binding Column1.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column1TextBox" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1Description, Mode=OneWay}" />
 
                 <GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Header="Constraints">
                     <Grid>
@@ -4417,20 +4417,20 @@
                     <ComboBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding Column1.Bit0.ListVM.Items}" SelectedIndex="{Binding Column1.Bit0.ListVM.SelectedIndex}" VerticalContentAlignment="Center" />
                 </Grid>
 
-                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column2TextBox}" Content="{Binding Column2.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column2TextBox" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column3.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column3TextBox}" Content="{Binding Column3.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="5" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column3TextBox" Text="{Binding Column3.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="5" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="5" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column3Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column4.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column4.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column4TextBox}" Content="{Binding Column4.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="6" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column4TextBox" Text="{Binding Column4.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="6" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column4Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="6" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column4Description, Mode=OneWay}" />
             </Grid>
         </Border>
     </DataTemplate>
@@ -4453,15 +4453,15 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column0TextBox}" Content="{Binding Column0.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column0TextBox" Text="{Binding Column0.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column0Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column0Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column1TextBox}" Content="{Binding Column1.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column1TextBox" Text="{Binding Column1.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column1Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column1Description, Mode=OneWay}" />
 
                 <GroupBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Header="Constraints">
                     <Grid>
@@ -4496,15 +4496,15 @@
                     <ComboBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding Column1.Bit0.ListVM.Items}" SelectedIndex="{Binding Column1.Bit0.ListVM.SelectedIndex}" VerticalContentAlignment="Center" />
                 </Grid>
 
-                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column2TextBox}" Content="{Binding Column2.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column2TextBox" Text="{Binding Column2.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column2Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="4" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column2Description, Mode=OneWay}" />
 
-                <TextBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3.OffsetString, Mode=OneTime}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column3.OffsetString, Mode=OneTime}" />
                 <Label Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=Column3TextBox}" Content="{Binding Column3.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="5" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource MDTableRecTextBoxStyle}" Name="Column3TextBox" Text="{Binding Column3.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
-                <TextBox Grid.Row="5" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Text="{Binding Column3Description, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
+                <TextBox Grid.Row="5" Grid.Column="3" Margin="5 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding Column3Description, Mode=OneWay}" />
             </Grid>
         </Border>
     </DataTemplate>

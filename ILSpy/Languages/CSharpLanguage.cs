@@ -916,7 +916,26 @@ namespace ICSharpCode.ILSpy {
 				}
 				output.Write(']', TextTokenType.Operator);
 			} else
-				output.Write(IdentifierEscaper.Escape(property.Name), TextTokenHelper.GetTextTokenType(property));
+				WriteIdentifier(output, property.Name, TextTokenHelper.GetTextTokenType(property));
+		}
+
+		static readonly HashSet<string> isKeyword = new HashSet<string>(StringComparer.Ordinal) {
+			"abstract", "as", "base", "bool", "break", "byte", "case", "catch",
+			"char", "checked", "class", "const", "continue", "decimal", "default", "delegate",
+			"do", "double", "else", "enum", "event", "explicit", "extern", "false",
+			"finally", "fixed", "float", "for", "foreach", "goto", "if", "implicit",
+			"in", "int", "interface", "internal", "is", "lock", "long", "namespace",
+			"new", "null", "object", "operator", "out", "override", "params", "private",
+			"protected", "public", "readonly", "ref", "return", "sbyte", "sealed", "short",
+			"sizeof", "stackalloc", "static", "string", "struct", "switch", "this", "throw",
+			"true", "try", "typeof", "uint", "ulong", "unchecked", "unsafe", "ushort",
+			"using", "virtual", "void", "volatile", "while",
+		};
+
+		static void WriteIdentifier(ITextOutput output, string id, TextTokenType tokenType) {
+			if (isKeyword.Contains(id))
+				output.Write('@', TextTokenType.Operator);
+			output.Write(IdentifierEscaper.Escape(id), tokenType);
 		}
 		
 		public override void FormatTypeName(ITextOutput output, TypeDef type)
@@ -973,12 +992,12 @@ namespace ICSharpCode.ILSpy {
 			}
 			else if (useNamespaces && !UTF8String.IsNullOrEmpty(td.Namespace)) {
 				foreach (var ns in td.Namespace.String.Split('.')) {
-					output.Write(IdentifierEscaper.Escape(ns), TextTokenType.NamespacePart);
+					WriteIdentifier(output, ns, TextTokenType.NamespacePart);
 					output.Write('.', TextTokenType.Operator);
 				}
 			}
 
-			output.Write(IdentifierEscaper.Escape(RemoveGenericTick(td.Name)), TextTokenHelper.GetTextTokenType(td));
+			WriteIdentifier(output, RemoveGenericTick(td.Name), TextTokenHelper.GetTextTokenType(td));
 			var genParams = td.GenericParameters.Skip(td.GenericParameters.Count - numGenParams).ToArray();
 			WriteToolTipGenerics(output, genParams, TextTokenType.TypeGenericParameter);
 		}
@@ -1010,7 +1029,7 @@ namespace ICSharpCode.ILSpy {
 			var gsig = type.RemovePinnedAndModifiers() as GenericSig;
 			var gp = GetGenericParam(gsig, gpContext);
 			if (gp != null) {
-				output.Write(IdentifierEscaper.Escape(gp.Name), gsig.IsMethodVar ? TextTokenType.MethodGenericParameter : TextTokenType.TypeGenericParameter);
+				WriteIdentifier(output, gp.Name, gsig.IsMethodVar ? TextTokenType.MethodGenericParameter : TextTokenType.TypeGenericParameter);
 				return;
 			}
 
@@ -1036,7 +1055,7 @@ namespace ICSharpCode.ILSpy {
 					output.Write("in", TextTokenType.Keyword);
 					output.WriteSpace();
 				}
-				output.Write(IdentifierEscaper.Escape(gp.Name), gpTokenType);
+				WriteIdentifier(output, gp.Name, gpTokenType);
 			}
 			output.Write('>', TextTokenType.Operator);
 		}
@@ -1078,7 +1097,7 @@ namespace ICSharpCode.ILSpy {
 			WriteToolTip(output, method.DeclaringType);
 			output.Write('.', TextTokenType.Operator);
 			if (writer.md != null && writer.md.IsConstructor && method.DeclaringType != null)
-				output.Write(IdentifierEscaper.Escape(RemoveGenericTick(method.DeclaringType.Name)), TextTokenHelper.GetTextTokenType(method));
+				WriteIdentifier(output, RemoveGenericTick(method.DeclaringType.Name), TextTokenHelper.GetTextTokenType(method));
 			else if (writer.md != null && writer.md.Overrides.Count > 0) {
 				var ovrMeth = (IMemberRef)writer.md.Overrides[0].MethodDeclaration;
 				WriteToolTipType(output, ovrMeth.DeclaringType, false);
@@ -1104,7 +1123,7 @@ namespace ICSharpCode.ILSpy {
 				}
 			}
 			else
-				output.Write(IdentifierEscaper.Escape(name), TextTokenHelper.GetTextTokenType(method));
+				WriteIdentifier(output, name, TextTokenHelper.GetTextTokenType(method));
 		}
 
 		static int GetNumberOfOverloads(TypeDef type, string name)
@@ -1210,7 +1229,7 @@ namespace ICSharpCode.ILSpy {
 					lang.WriteToolTip(output, paramType, GenericParamContext.Create(md), pd);
 					output.WriteSpace();
 					if (pd != null)
-						output.Write(IdentifierEscaper.Escape(pd.Name), TextTokenType.Parameter);
+						WriteIdentifier(output, pd.Name, TextTokenType.Parameter);
 				}
 				output.Write(rparen, TextTokenType.Operator);
 			}
@@ -1245,7 +1264,7 @@ namespace ICSharpCode.ILSpy {
 			}
 			WriteToolTip(output, field.DeclaringType);
 			output.Write('.', TextTokenType.Operator);
-			output.Write(IdentifierEscaper.Escape(field.Name), TextTokenHelper.GetTextTokenType(field));
+			WriteIdentifier(output, field.Name, TextTokenHelper.GetTextTokenType(field));
 			if (fd.IsLiteral && fd.Constant != null) {
 				output.WriteSpace();
 				output.Write('=', TextTokenType.Operator);
@@ -1346,10 +1365,10 @@ namespace ICSharpCode.ILSpy {
 			else if (ovrMeth != null && GetPropName(ovrMeth) != null) {
 				WriteToolTipType(output, ovrMeth.DeclaringType, false);
 				output.Write('.', TextTokenType.Operator);
-				output.Write(IdentifierEscaper.Escape(GetPropName(ovrMeth)), TextTokenHelper.GetTextTokenType(prop));
+				WriteIdentifier(output, GetPropName(ovrMeth), TextTokenHelper.GetTextTokenType(prop));
 			}
 			else
-				output.Write(IdentifierEscaper.Escape(prop.Name), TextTokenHelper.GetTextTokenType(prop));
+				WriteIdentifier(output, prop.Name, TextTokenHelper.GetTextTokenType(prop));
 
 			output.WriteSpace();
 			output.WriteLeftBrace();
@@ -1383,7 +1402,7 @@ namespace ICSharpCode.ILSpy {
 			output.WriteSpace();
 			WriteToolTip(output, evt.DeclaringType);
 			output.Write('.', TextTokenType.Operator);
-			output.Write(IdentifierEscaper.Escape(evt.Name), TextTokenHelper.GetTextTokenType(evt));
+			WriteIdentifier(output, evt.Name, TextTokenHelper.GetTextTokenType(evt));
 		}
 
 		void WriteToolTipWithClassInfo(ITextOutput output, ITypeDefOrRef type)
@@ -1438,7 +1457,7 @@ namespace ICSharpCode.ILSpy {
 
 		void WriteToolTip(ITextOutput output, GenericParam gp)
 		{
-			output.Write(IdentifierEscaper.Escape(gp.Name), TextTokenHelper.GetTextTokenType(gp));
+			WriteIdentifier(output, gp.Name, TextTokenHelper.GetTextTokenType(gp));
 			output.WriteSpace();
 			output.Write("in", TextTokenType.Text);
 			output.WriteSpace();
@@ -1502,7 +1521,7 @@ namespace ICSharpCode.ILSpy {
 			output.WriteSpace();
 			WriteToolTip(output, variable.Type, new GenericParamContext(), !isLocal ? ((Parameter)variable).ParamDef : null);
 			output.WriteSpace();
-			output.Write(IdentifierEscaper.Escape(GetName(variable, name)), isLocal ? TextTokenType.Local : TextTokenType.Parameter);
+			WriteIdentifier(output, GetName(variable, name), isLocal ? TextTokenType.Local : TextTokenType.Parameter);
 		}
 	}
 }

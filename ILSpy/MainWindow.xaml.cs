@@ -267,6 +267,18 @@ namespace ICSharpCode.ILSpy
 			this.IsEnabled = false;
 		}
 
+		protected override void OnKeyDown(KeyEventArgs e) {
+			if (Keyboard.Modifiers == ModifierKeys.None && e.Key == Key.Escape) {
+				var tabState = ActiveTabState;
+				if (tabState != null)
+					tabState.FocusContent();
+				e.Handled = true;
+				return;
+			}
+
+			base.OnKeyDown(e);
+		}
+
 		void OtherSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == "DeserializeResources") {
@@ -1619,10 +1631,10 @@ namespace ICSharpCode.ILSpy
 								var tabManager = (TabManager<TabState>)dts.Owner;
 								tabManager.RemoveTabState(dts);
 							}
-							else {
+							else if (!dts.Equals(newNodes.ToArray(), dts.Language)) {
 								dts.History.UpdateCurrent(null);
 								dts.TextView.CleanUpBeforeReDecompile();
-								DecompileRestoreLocation(dts, newNodes.ToArray());
+								DecompileRestoreLocation(dts, newNodes.ToArray(), null, true);
 							}
 							break;
 
