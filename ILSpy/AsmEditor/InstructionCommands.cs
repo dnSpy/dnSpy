@@ -49,16 +49,16 @@ namespace dnSpy.AsmEditor {
 
 	[ExportContextMenuEntry(Header = "Copy IL Bytes", Icon = "Copy", Category = "Editor", InputGestureText = "Ctrl+B", Order = 1010)]
 	sealed class CopyILBytesCommand : IContextMenuEntry {
-		public bool IsVisible(TextViewContext context) {
-			return CanExecute(context.TextView);
+		public bool IsVisible(ContextMenuEntryContext context) {
+			return CanExecute(context.Element as DecompilerTextView);
 		}
 
-		public bool IsEnabled(TextViewContext context) {
+		public bool IsEnabled(ContextMenuEntryContext context) {
 			return true;
 		}
 
-		public void Execute(TextViewContext context) {
-			Execute(context.TextView);
+		public void Execute(ContextMenuEntryContext context) {
+			Execute(context.Element as DecompilerTextView);
 		}
 
 		public static bool CanExecute(DecompilerTextView textView) {

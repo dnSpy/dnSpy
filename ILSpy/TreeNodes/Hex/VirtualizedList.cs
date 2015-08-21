@@ -104,7 +104,8 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() {
-			return list.GetEnumerator();
+			for (int i = 0; i < list.Length; i++)
+				yield return this[i];
 		}
 
 		int IList.IndexOf(object value) {

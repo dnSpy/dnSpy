@@ -68,7 +68,7 @@ namespace dnSpy.TreeNodes.Hex {
 			: base((ulong)sh.StartOffset, (ulong)sh.EndOffset - 1) {
 			this.streamNumber = streamNumber;
 			this.storageStreamType = GetStorageStreamType(knownStream);
-			this.storageStreamVM = new StorageStreamVM(doc, StartOffset, (int)(EndOffset - StartOffset + 1 - 8));
+			this.storageStreamVM = new StorageStreamVM(this, doc, StartOffset, (int)(EndOffset - StartOffset + 1 - 8));
 
 			var tblStream = knownStream as TablesStream;
 			if (tblStream != null)

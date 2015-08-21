@@ -323,6 +323,7 @@
       <DependentUpon>LocalSettingsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Hex\LocalSettingsVM.cs" />
+    <Compile Include="AsmEditor\Hex\MDTableContextMenuCommands.cs" />
     <Compile Include="AsmEditor\Hex\MDUtils.cs" />
     <Compile Include="AsmEditor\Hex\SelectDlg.xaml.cs">
       <DependentUpon>SelectDlg.xaml</DependentUpon>
@@ -618,6 +619,7 @@
     <Compile Include="Search\TreeViewNodeFilterBase.cs" />
     <Compile Include="Search\VisibleMembersFlags.cs" />
     <Compile Include="TreeNodes\GoToTokenContextMenuEntry.cs" />
+    <Compile Include="TreeNodes\Hex\ContextMenuAP.cs" />
     <Compile Include="TreeNodes\Hex\HexField.cs" />
     <Compile Include="TreeNodes\Hex\HexTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\HexUtils.cs" />

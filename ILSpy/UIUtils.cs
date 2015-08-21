@@ -17,8 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -26,6 +28,14 @@ using ICSharpCode.Decompiler;
 
 namespace dnSpy {
 	public static class UIUtils {
+		public static IEnumerable<DependencyObject> GetChildren(DependencyObject depo) {
+			if (depo == null)
+				yield break;
+			int count = VisualTreeHelper.GetChildrenCount(depo);
+			for (int i = 0; i < count; i++)
+				yield return VisualTreeHelper.GetChild(depo, i);
+		}
+
 		public static DependencyObject GetParent(DependencyObject depo) {
 			if (depo is Visual || depo is Visual3D)
 				return VisualTreeHelper.GetParent(depo);
@@ -72,6 +82,21 @@ namespace dnSpy {
 				return id;
 			id = IdentifierEscaper.Escape(id);
 			return CleanUpName(id);
+		}
+
+		public static bool HasChildrenFocus(ListBox listBox) {
+			if (listBox == null)
+				return false;
+			foreach (var item in listBox.SelectedItems) {
+				var elem = listBox.ItemContainerGenerator.ContainerFromItem(item) as UIElement;
+				if (elem == null)
+					elem = item as UIElement;
+				if (elem == null)
+					continue;
+				if (elem.IsFocused || elem.IsKeyboardFocusWithin)
+					return true;
+			}
+			return false;
 		}
 	}
 }

@@ -23,20 +23,21 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.TreeNodes;
 using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TextView;
 
 namespace dnSpy.Tabs {
 	abstract class TabGroupContextMenuEntry : IContextMenuEntry {
-		public bool IsVisible(TextViewContext context) {
-			return MainWindow.Instance.IsDecompilerTabControl(context.TabControl) &&
+		public bool IsVisible(ContextMenuEntryContext context) {
+			return MainWindow.Instance.IsDecompilerTabControl(context.Element as TabControl) &&
 				IsVisibleInternal();
 		}
 
-		public bool IsEnabled(TextViewContext context) {
-			return MainWindow.Instance.IsDecompilerTabControl(context.TabControl) &&
+		public bool IsEnabled(ContextMenuEntryContext context) {
+			return MainWindow.Instance.IsDecompilerTabControl(context.Element as TabControl) &&
 				IsEnabledInternal();
 		}
 
-		public void Execute(TextViewContext context) {
+		public void Execute(ContextMenuEntryContext context) {
 			ExecuteInternal();
 		}
 
@@ -53,118 +54,118 @@ namespace dnSpy.Tabs {
 
 	[ExportContextMenuEntry(Header = "_Close", Order = 101, InputGestureText = "Ctrl+W", Category = "Tabs")]
 	class CloseTabContextMenuEntry : IContextMenuEntry {
-		public bool IsVisible(TextViewContext context) {
-			return MainWindow.Instance.IsDecompilerTabControl(context.TabControl) &&
+		public bool IsVisible(ContextMenuEntryContext context) {
+			return MainWindow.Instance.IsDecompilerTabControl(context.Element as TabControl) &&
 				MainWindow.Instance.CloseActiveTabCanExecute();
 		}
 
-		public bool IsEnabled(TextViewContext context) {
+		public bool IsEnabled(ContextMenuEntryContext context) {
 			return true;
 		}
 
-		public void Execute(TextViewContext context) {
+		public void Execute(ContextMenuEntryContext context) {
 			MainWindow.Instance.CloseActiveTab();
 		}
 	}
 
 	[ExportContextMenuEntry(Header = "C_lose All Tabs", Order = 110, Category = "Tabs", Icon = "CloseDocuments")]
 	class CloseAllTabsContextMenuEntry : IContextMenuEntry {
-		public bool IsVisible(TextViewContext context) {
-			return MainWindow.Instance.IsDecompilerTabControl(context.TabControl) &&
+		public bool IsVisible(ContextMenuEntryContext context) {
+			return MainWindow.Instance.IsDecompilerTabControl(context.Element as TabControl) &&
 				MainWindow.Instance.CloseAllTabsCanExecute();
 		}
 
-		public bool IsEnabled(TextViewContext context) {
+		public bool IsEnabled(ContextMenuEntryContext context) {
 			return true;
 		}
 
-		public void Execute(TextViewContext context) {
+		public void Execute(ContextMenuEntryContext context) {
 			MainWindow.Instance.CloseAllTabs();
 		}
 	}
 
 	[ExportContextMenuEntry(Header = "Close _All But This", Order = 120, Category = "Tabs")]
 	class CloseAllTabsButThisContextMenuEntry : IContextMenuEntry {
-		public bool IsVisible(TextViewContext context) {
-			return MainWindow.Instance.IsDecompilerTabControl(context.TabControl) &&
+		public bool IsVisible(ContextMenuEntryContext context) {
+			return MainWindow.Instance.IsDecompilerTabControl(context.Element as TabControl) &&
 				MainWindow.Instance.ActiveTabState != null;
 		}
 
-		public bool IsEnabled(TextViewContext context) {
-			return MainWindow.Instance.IsDecompilerTabControl(context.TabControl) &&
+		public bool IsEnabled(ContextMenuEntryContext context) {
+			return MainWindow.Instance.IsDecompilerTabControl(context.Element as TabControl) &&
 				MainWindow.Instance.CloseAllButActiveTabCanExecute();
 		}
 
-		public void Execute(TextViewContext context) {
+		public void Execute(ContextMenuEntryContext context) {
 			MainWindow.Instance.CloseAllButActiveTab();
 		}
 	}
 
 	[ExportContextMenuEntry(Header = "Open in New _Tab", Order = 130, InputGestureText = "Ctrl+T", Category = "Tabs")]
 	class OpenInNewTabContextMenuEntry : IContextMenuEntry {
-		public bool IsVisible(TextViewContext context) {
+		public bool IsVisible(ContextMenuEntryContext context) {
 			return context.SelectedTreeNodes != null &&
 				context.SelectedTreeNodes.Length > 0 &&
-				context.TreeView == MainWindow.Instance.treeView;
+				context.Element == MainWindow.Instance.treeView;
 		}
 
-		public bool IsEnabled(TextViewContext context) {
+		public bool IsEnabled(ContextMenuEntryContext context) {
 			return true;
 		}
 
-		public void Execute(TextViewContext context) {
+		public void Execute(ContextMenuEntryContext context) {
 			MainWindow.Instance.OpenNewTab();
 		}
 	}
 
 	[ExportContextMenuEntry(Header = "New _Tab", Order = 140, Category = "Tabs")]
 	class NewTabContextMenuEntry : IContextMenuEntry {
-		public bool IsVisible(TextViewContext context) {
-			return MainWindow.Instance.IsDecompilerTabControl(context.TabControl) &&
+		public bool IsVisible(ContextMenuEntryContext context) {
+			return MainWindow.Instance.IsDecompilerTabControl(context.Element as TabControl) &&
 				MainWindow.Instance.CloneActiveTabCanExecute();
 		}
 
-		public bool IsEnabled(TextViewContext context) {
+		public bool IsEnabled(ContextMenuEntryContext context) {
 			return true;
 		}
 
-		public void Execute(TextViewContext context) {
+		public void Execute(ContextMenuEntryContext context) {
 			MainWindow.Instance.CloneActiveTab();
 		}
 	}
 
 	[ExportContextMenuEntry(Header = "Open in New _Tab", Order = 150, Category = "Tabs")]
 	class OpenReferenceInNewTabContextMenuEntry : IContextMenuEntry2 {
-		public bool IsVisible(TextViewContext context) {
-			return context.TextView != null &&
+		public bool IsVisible(ContextMenuEntryContext context) {
+			return context.Element is DecompilerTextView &&
 				context.Reference != null;
 		}
 
-		public bool IsEnabled(TextViewContext context) {
+		public bool IsEnabled(ContextMenuEntryContext context) {
 			return true;
 		}
 
-		public void Execute(TextViewContext context) {
-			MainWindow.Instance.OpenReferenceInNewTab(context.TextView, context.Reference);
+		public void Execute(ContextMenuEntryContext context) {
+			MainWindow.Instance.OpenReferenceInNewTab(context.Element as DecompilerTextView, context.Reference);
 		}
 
-		public void Initialize(TextViewContext context, MenuItem menuItem) {
+		public void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
 			menuItem.InputGestureText = context.OpenedFromKeyboard ? "Ctrl+F12" : "Ctrl+Click";
 		}
 	}
 
 	[ExportContextMenuEntry(Header = "Go to Reference", Order = 151, InputGestureText = "Dbl Click", Category = "Tabs")]
 	class OpenReferenceContextMenuEntry : IContextMenuEntry {
-		public bool IsVisible(TextViewContext context) {
+		public bool IsVisible(ContextMenuEntryContext context) {
 			return GetReference(context) != null;
 		}
 
-		internal static object GetReference(TextViewContext context) {
-			if (context.TextView != null)
+		internal static object GetReference(ContextMenuEntryContext context) {
+			if (context.Element is DecompilerTextView)
 				return null;
-			if (context.TabControl != null)
+			if (context.Element is TabControl)
 				return null;
-			if (context.TreeView == MainWindow.Instance.treeView)
+			if (context.Element == MainWindow.Instance.treeView)
 				return null;
 
 			if (context.Reference != null)
@@ -178,11 +179,11 @@ namespace dnSpy.Tabs {
 			return null;
 		}
 
-		public bool IsEnabled(TextViewContext context) {
+		public bool IsEnabled(ContextMenuEntryContext context) {
 			return true;
 		}
 
-		public void Execute(TextViewContext context) {
+		public void Execute(ContextMenuEntryContext context) {
 			var @ref = GetReference(context);
 			if (@ref != null) {
 				var textView = MainWindow.Instance.SafeActiveTextView;
@@ -194,15 +195,15 @@ namespace dnSpy.Tabs {
 
 	[ExportContextMenuEntry(Header = "Open in New _Tab", Order = 152, InputGestureText = "Shift+Dbl Click", Category = "Tabs")]
 	class OpenReferenceInNewTab2ContextMenuEntry : IContextMenuEntry {
-		public bool IsVisible(TextViewContext context) {
+		public bool IsVisible(ContextMenuEntryContext context) {
 			return OpenReferenceContextMenuEntry.GetReference(context) != null;
 		}
 
-		public bool IsEnabled(TextViewContext context) {
+		public bool IsEnabled(ContextMenuEntryContext context) {
 			return true;
 		}
 
-		public void Execute(TextViewContext context) {
+		public void Execute(ContextMenuEntryContext context) {
 			var @ref = OpenReferenceContextMenuEntry.GetReference(context);
 			if (@ref != null) {
 				MainWindow.Instance.OpenNewEmptyTab();

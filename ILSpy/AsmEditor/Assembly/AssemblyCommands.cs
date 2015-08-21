@@ -47,8 +47,8 @@ namespace dnSpy.AsmEditor.Assembly {
 
 	[ExportContextMenuEntryAttribute(Header = "Disable Memory Mapped I/O", Order = 960, Category = "Other")]
 	sealed class DisableMemoryMappedIOCommand : IContextMenuEntry {
-		public bool IsVisible(TextViewContext context) {
-			return context.TreeView == MainWindow.Instance.treeView &&
+		public bool IsVisible(ContextMenuEntryContext context) {
+			return context.Element == MainWindow.Instance.treeView &&
 				context.SelectedTreeNodes.Any(a => GetLoadedAssembly(a) != null);
 		}
 
@@ -66,12 +66,12 @@ namespace dnSpy.AsmEditor.Assembly {
 			return asmNode.LoadedAssembly;
 		}
 
-		public bool IsEnabled(TextViewContext context) {
+		public bool IsEnabled(ContextMenuEntryContext context) {
 			return true;
 		}
 
-		public void Execute(TextViewContext context) {
-			if (context.TreeView != MainWindow.Instance.treeView)
+		public void Execute(ContextMenuEntryContext context) {
+			if (context.Element != MainWindow.Instance.treeView)
 				return;
 			var asms = new List<LoadedAssembly>();
 			foreach (var node in context.SelectedTreeNodes) {

@@ -14,17 +14,17 @@ namespace TestPlugin
 	[ExportContextMenuEntryAttribute(Header = "_Save Assembly")]
 	public class SaveAssembly : IContextMenuEntry
 	{
-		public bool IsVisible(TextViewContext context)
+		public bool IsVisible(ContextMenuEntryContext context)
 		{
 			return context.SelectedTreeNodes != null && context.SelectedTreeNodes.All(n => n is AssemblyTreeNode);
 		}
 		
-		public bool IsEnabled(TextViewContext context)
+		public bool IsEnabled(ContextMenuEntryContext context)
 		{
 			return context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length == 1;
 		}
 		
-		public void Execute(TextViewContext context)
+		public void Execute(ContextMenuEntryContext context)
 		{
 			if (context.SelectedTreeNodes == null)
 				return;

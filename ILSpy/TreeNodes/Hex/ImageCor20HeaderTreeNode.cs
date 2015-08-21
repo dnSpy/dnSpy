@@ -52,7 +52,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		public ImageCor20HeaderTreeNode(HexDocument doc, ulong startOffset)
 			: base(startOffset, startOffset + 0x48 - 1) {
-			this.imageCor20HeaderVM = new ImageCor20HeaderVM(doc, StartOffset);
+			this.imageCor20HeaderVM = new ImageCor20HeaderVM(this, doc, StartOffset);
 		}
 
 		protected override void Write(ITextOutput output) {

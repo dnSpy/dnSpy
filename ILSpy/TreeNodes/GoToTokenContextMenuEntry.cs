@@ -23,6 +23,7 @@ using dnlib.DotNet;
 using dnSpy.AsmEditor;
 using dnSpy.Tabs;
 using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.TreeNodes {
@@ -38,16 +39,16 @@ namespace dnSpy.TreeNodes {
 
 	[ExportContextMenuEntryAttribute(Header = "Go to M_D Token…", Order = 400, Category = "Tokens", InputGestureText = "Ctrl+D")]
 	sealed class GoToTokenContextMenuEntry : IContextMenuEntry {
-		public bool IsVisible(TextViewContext context) {
+		public bool IsVisible(ContextMenuEntryContext context) {
 			return CanExecute() &&
-				(context.SelectedTreeNodes != null || context.TextView != null);
+				(context.SelectedTreeNodes != null || context.Element is DecompilerTextView);
 		}
 
-		public bool IsEnabled(TextViewContext context) {
+		public bool IsEnabled(ContextMenuEntryContext context) {
 			return true;
 		}
 
-		public void Execute(TextViewContext context) {
+		public void Execute(ContextMenuEntryContext context) {
 			Execute();
 		}
 

@@ -46,7 +46,8 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 		readonly HexField[] hexFields;
 
-		public StorageHeaderVM(HexDocument doc, ulong startOffset) {
+		public StorageHeaderVM(object owner, HexDocument doc, ulong startOffset)
+			: base(owner) {
 			this.fFlagsVM = new ByteFlagsHexField(doc, Name, "fFlags", startOffset + 0);
 			this.fFlagsVM.Add(new BooleanHexBitField("ExtraData", 0));
 			this.padVM = new ByteHexField(doc, Name, "pad", startOffset + 1);

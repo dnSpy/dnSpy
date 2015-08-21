@@ -91,7 +91,8 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 		readonly HexField[] hexFields;
 
-		public ImageCor20HeaderVM(HexDocument doc, ulong startOffset) {
+		public ImageCor20HeaderVM(object owner, HexDocument doc, ulong startOffset)
+			: base(owner) {
 			this.cbVM = new UInt32HexField(doc, Name, "cb", startOffset + 0);
 			this.majorRuntimeVersionVM = new UInt16HexField(doc, Name, "MajorRuntimeVersion", startOffset + 4, true);
 			this.minorRuntimeVersionVM = new UInt16HexField(doc, Name, "MinorRuntimeVersion", startOffset + 6, true);

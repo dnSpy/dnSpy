@@ -155,6 +155,8 @@ namespace dnSpy.Tabs {
 		}
 
 		public bool IsTabGroup(TabControl tabControl) {
+			if (tabControl == null)
+				return false;
 			foreach (var mgr in tabManagers) {
 				if (mgr.TabControl == tabControl)
 					return true;

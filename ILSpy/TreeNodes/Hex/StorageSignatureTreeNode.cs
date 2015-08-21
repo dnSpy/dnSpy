@@ -45,7 +45,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		public StorageSignatureTreeNode(HexDocument doc, MetaDataHeader mdHeader)
 			: base((ulong)mdHeader.StartOffset, (ulong)mdHeader.StorageHeaderOffset - 1) {
-			this.storageSignatureVM = new StorageSignatureVM(doc, StartOffset, (int)(EndOffset - StartOffset + 1 - 0x10));
+			this.storageSignatureVM = new StorageSignatureVM(this, doc, StartOffset, (int)(EndOffset - StartOffset + 1 - 0x10));
 		}
 
 		protected override void Write(ITextOutput output) {

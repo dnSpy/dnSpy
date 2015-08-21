@@ -24,6 +24,7 @@ using System.Linq;
 using dnlib.DotNet;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.AsmEditor.MethodBody {
@@ -134,7 +135,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 							Category = "AsmEd",
 							Order = 639.99)]
 	sealed class EditILInstructionsCommand : IContextMenuEntry {
-		public bool IsVisible(TextViewContext context) {
+		public bool IsVisible(ContextMenuEntryContext context) {
 			var list = GetMappings(context);
 			return list != null &&
 				list.Count != 0 &&
@@ -143,10 +144,10 @@ namespace dnSpy.AsmEditor.MethodBody {
 				list[0].MemberMapping.MethodDefinition.Body.Instructions.Count > 0;
 		}
 
-		internal static IList<SourceCodeMapping> GetMappings(TextViewContext context) {
-			if (context.TextView == null || context.Position == null)
+		internal static IList<SourceCodeMapping> GetMappings(ContextMenuEntryContext context) {
+			if (!(context.Element is DecompilerTextView) || context.Position == null)
 				return null;
-			var list = SourceCodeMappingUtils.Find(context.TextView, context.Position.Value.Line, context.Position.Value.Column);
+			var list = SourceCodeMappingUtils.Find((DecompilerTextView)context.Element, context.Position.Value.Line, context.Position.Value.Column);
 			if (list.Count == 0)
 				return null;
 			if (!(list[0].StartLocation.Line <= context.Position.Value.Line && context.Position.Value.Line <= list[0].EndLocation.Line))
@@ -154,11 +155,11 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return list;
 		}
 
-		public bool IsEnabled(TextViewContext context) {
+		public bool IsEnabled(ContextMenuEntryContext context) {
 			return true;
 		}
 
-		public void Execute(TextViewContext context) {
+		public void Execute(ContextMenuEntryContext context) {
 			var list = GetMappings(context);
 			if (list == null)
 				return;

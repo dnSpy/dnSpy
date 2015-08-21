@@ -331,7 +331,8 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 		readonly HexField[] hexFields;
 
-		public TablesStreamVM(HexDocument doc, TablesStream tblStream) {
+		public TablesStreamVM(object owner, HexDocument doc, TablesStream tblStream)
+			: base(owner) {
 			ulong startOffset = (ulong)tblStream.StartOffset;
 			this.m_ulReservedVM = new UInt32HexField(doc, Name, "m_ulReserved", startOffset + 0);
 			this.m_majorVM = new ByteHexField(doc, Name, "m_major", startOffset + 4, true);

@@ -246,7 +246,8 @@ namespace dnSpy.TreeNodes.Hex {
 			new IntegerHexBitFieldEnumInfo(16, "WindowsBootApplication"),
 		};
 
-		protected ImageOptionalHeaderVM(HexDocument doc, ulong startOffset, ulong endOffset, ulong offs1, ulong offs2) {
+		protected ImageOptionalHeaderVM(object owner, HexDocument doc, ulong startOffset, ulong endOffset, ulong offs1, ulong offs2)
+			: base(owner) {
 			this.magicVM = new UInt16HexField(doc, Name, "Magic", startOffset + 0);
 			this.majorLinkerVersionVM = new ByteHexField(doc, Name, "MajorLinkerVersion", startOffset + 2, true);
 			this.minorLinkerVersionVM = new ByteHexField(doc, Name, "MinorLinkerVersion", startOffset + 3, true);

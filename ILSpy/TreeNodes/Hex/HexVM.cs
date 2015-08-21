@@ -18,12 +18,23 @@
 */
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnSpy.AsmEditor;
 
 namespace dnSpy.TreeNodes.Hex {
 	abstract class HexVM : ViewModelBase {
 		public abstract string Name { get; }
 		public abstract IEnumerable<HexField> HexFields { get; }
+
+		public object Owner {
+			get { return owner; }
+		}
+		readonly object owner;
+
+		protected HexVM(object owner) {
+			Debug.Assert(owner != null);
+			this.owner = owner;
+		}
 
 		public virtual void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {
 			foreach (var field in HexFields)

@@ -26,7 +26,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	{
 		private static string msdnAddress = "http://msdn.microsoft.com/en-us/library/{0}";
 
-		public bool IsVisible(TextViewContext context)
+		public bool IsVisible(ContextMenuEntryContext context)
 		{
 			if (context.SelectedTreeNodes != null)
 				return context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n is NamespaceTreeNode || n is IMemberTreeNode);
@@ -165,7 +165,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				evt.OtherMethods.Any(m => IsAccessible(m));
 		}
 
-		public bool IsEnabled(TextViewContext context)
+		public bool IsEnabled(ContextMenuEntryContext context)
 		{
 			if (context.SelectedTreeNodes != null) {
 				foreach (var node in context.SelectedTreeNodes) {
@@ -184,7 +184,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return context.Reference != null && context.Reference.Reference is IMemberRef;
 		}
 
-		public void Execute(TextViewContext context)
+		public void Execute(ContextMenuEntryContext context)
 		{
 			if (context.SelectedTreeNodes != null) {
 				foreach (var node in context.SelectedTreeNodes) {

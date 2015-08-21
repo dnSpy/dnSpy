@@ -72,14 +72,14 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	[ExportContextMenuEntryAttribute(Header = "Analy_ze", Icon = "Search", Order = 900, Category = "Other", InputGestureText = "Ctrl+R")]
 	internal sealed class AnalyzeContextMenuEntry : IContextMenuEntry
 	{
-		public bool IsVisible(TextViewContext context)
+		public bool IsVisible(ContextMenuEntryContext context)
 		{
 			return IsEnabled(context);
 		}
 
-		public bool IsEnabled(TextViewContext context)
+		public bool IsEnabled(ContextMenuEntryContext context)
 		{
-			if (context.TreeView is AnalyzerTreeView && context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n.Parent.IsRoot))
+			if (context.Element is AnalyzerTreeView && context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n.Parent.IsRoot))
 				return false;
 			if (context.SelectedTreeNodes == null)
 				return context.Reference != null && MainWindow.ResolveReference(context.Reference.Reference) != null;
@@ -91,7 +91,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			return false;
 		}
 
-		public void Execute(TextViewContext context)
+		public void Execute(ContextMenuEntryContext context)
 		{
 			if (context.SelectedTreeNodes != null) {
 				foreach (var node in context.SelectedTreeNodes) {

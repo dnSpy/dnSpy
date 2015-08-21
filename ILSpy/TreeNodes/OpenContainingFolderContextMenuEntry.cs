@@ -26,18 +26,18 @@ using ICSharpCode.ILSpy.TreeNodes;
 namespace dnSpy.TreeNodes {
 	[ExportContextMenuEntryAttribute(Header = "_Open Containing Folder", Order = 920, Category = "Other")]
 	sealed class OpenContainingFolderContextMenuEntry : IContextMenuEntry {
-		public bool IsVisible(TextViewContext context) {
+		public bool IsVisible(ContextMenuEntryContext context) {
 			return context.SelectedTreeNodes != null &&
 				context.SelectedTreeNodes.Length == 1 &&
 				context.SelectedTreeNodes[0] is AssemblyTreeNode &&
 				!string.IsNullOrWhiteSpace(((AssemblyTreeNode)context.SelectedTreeNodes[0]).LoadedAssembly.FileName);
 		}
 
-		public bool IsEnabled(TextViewContext context) {
+		public bool IsEnabled(ContextMenuEntryContext context) {
 			return IsVisible(context);
 		}
 
-		public void Execute(TextViewContext context) {
+		public void Execute(ContextMenuEntryContext context) {
 			// Known problem: explorer can't show files in the .NET 2.0 GAC.
 			var asmNode = (AssemblyTreeNode)context.SelectedTreeNodes[0];
 			var filename = asmNode.LoadedAssembly.FileName;
