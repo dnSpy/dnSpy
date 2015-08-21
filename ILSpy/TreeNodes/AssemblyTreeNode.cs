@@ -606,19 +606,19 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	[ExportContextMenuEntryAttribute(Header = "_Load Dependencies", Order = 930, Category = "Other")]
 	sealed class LoadDependencies : IContextMenuEntry
 	{
-		public bool IsVisible(TextViewContext context)
+		public bool IsVisible(ContextMenuEntryContext context)
 		{
 			if (context.SelectedTreeNodes == null)
 				return false;
 			return context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n is AssemblyTreeNode && ((AssemblyTreeNode)n).LoadedAssembly.ModuleDefinition != null);
 		}
 
-		public bool IsEnabled(TextViewContext context)
+		public bool IsEnabled(ContextMenuEntryContext context)
 		{
 			return true;
 		}
 
-		public void Execute(TextViewContext context)
+		public void Execute(ContextMenuEntryContext context)
 		{
 			if (context.SelectedTreeNodes == null)
 				return;
@@ -636,19 +636,19 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	[ExportContextMenuEntryAttribute(Header = "_Add to Main List", Order = 950, Category = "Other")]
 	sealed class AddToMainList : IContextMenuEntry
 	{
-		public bool IsVisible(TextViewContext context)
+		public bool IsVisible(ContextMenuEntryContext context)
 		{
 			if (context.SelectedTreeNodes == null)
 				return false;
 			return context.SelectedTreeNodes.Where(n => n is AssemblyTreeNode).Any(n=>((AssemblyTreeNode)n).IsAutoLoaded);
 		}
 
-		public bool IsEnabled(TextViewContext context)
+		public bool IsEnabled(ContextMenuEntryContext context)
 		{
 			return true;
 		}
 
-		public void Execute(TextViewContext context)
+		public void Execute(ContextMenuEntryContext context)
 		{
 			if (context.SelectedTreeNodes == null)
 				return;

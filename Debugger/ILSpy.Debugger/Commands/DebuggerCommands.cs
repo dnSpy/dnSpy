@@ -834,29 +834,29 @@ namespace ICSharpCode.ILSpy.Debugger.Commands {
 		{
 		}
 
-		public void Initialize(TextViewContext context, MenuItem menuItem)
+		public void Initialize(ContextMenuEntryContext context, MenuItem menuItem)
 		{
 			var loadedAsm = GetAssembly(context);
 			menuItem.Header = string.Format("_Debug {0}", UIUtils.EscapeMenuItemHeader(loadedAsm.ShortName));
 		}
 
-		public new bool IsVisible(TextViewContext context)
+		public new bool IsVisible(ContextMenuEntryContext context)
 		{
 			return IsEnabled(context);
 		}
 
-		public bool IsEnabled(TextViewContext context)
+		public bool IsEnabled(ContextMenuEntryContext context)
 		{
 			return GetAssembly(context) != null;
 		}
 
-		LoadedAssembly GetAssembly(TextViewContext context)
+		LoadedAssembly GetAssembly(ContextMenuEntryContext context)
 		{
 			if (DebuggerService.CurrentDebugger == null || DebuggerService.CurrentDebugger.IsDebugging)
 				return null;
 
 			SharpTreeNode node;
-			if (context.TextView != null) {
+			if (context.Element is DecompilerTextView) {
 				var tabState = MainWindow.Instance.GetActiveDecompileTabState();
 				if (tabState == null)
 					return null;
@@ -888,7 +888,7 @@ namespace ICSharpCode.ILSpy.Debugger.Commands {
 			return loadedAsm;
 		}
 
-		public void Execute(TextViewContext context)
+		public void Execute(ContextMenuEntryContext context)
 		{
 			var loadedAsm = GetAssembly(context);
 			if (loadedAsm != null)
@@ -1166,24 +1166,24 @@ namespace ICSharpCode.ILSpy.Debugger.Commands {
 							Order = 210)]
 	internal sealed class InsertBreakpointContextMenuEntry : IContextMenuEntry2
 	{
-		public bool IsVisible(TextViewContext context)
+		public bool IsVisible(ContextMenuEntryContext context)
 		{
-			return context.TextView != null &&
+			return context.Element is DecompilerTextView &&
 				DebuggerService.CurrentDebugger != null &&
 				CanToggleBP();
 		}
 
-		public bool IsEnabled(TextViewContext context)
+		public bool IsEnabled(ContextMenuEntryContext context)
 		{
 			return IsVisible(context);
 		}
 
-		public void Execute(TextViewContext context)
+		public void Execute(ContextMenuEntryContext context)
 		{
 			DebuggerPlugin.DebugToggleBreakpoint();
 		}
 
-		public void Initialize(TextViewContext context, MenuItem menuItem)
+		public void Initialize(ContextMenuEntryContext context, MenuItem menuItem)
 		{
 			var textView = MainWindow.Instance.ActiveTextView;
 			if (textView == null)
@@ -1213,23 +1213,23 @@ namespace ICSharpCode.ILSpy.Debugger.Commands {
 							Order = 220)]
 	internal sealed class DisableBreakpointContextMenuEntry : IContextMenuEntry2
 	{
-		public bool IsVisible(TextViewContext context)
+		public bool IsVisible(ContextMenuEntryContext context)
 		{
-			return (context == null || context.TextView != null) &&
+			return (context == null || context.Element is DecompilerTextView) &&
 				DebuggerPlugin.DebugEnableDisableBreakpointCanExecute();
 		}
 
-		public bool IsEnabled(TextViewContext context)
+		public bool IsEnabled(ContextMenuEntryContext context)
 		{
 			return IsVisible(context);
 		}
 
-		public void Execute(TextViewContext context)
+		public void Execute(ContextMenuEntryContext context)
 		{
 			DebuggerPlugin.DebugEnableDisableBreakpoint();
 		}
 
-		public void Initialize(TextViewContext context, MenuItem menuItem)
+		public void Initialize(ContextMenuEntryContext context, MenuItem menuItem)
 		{
 			var textView = MainWindow.Instance.ActiveTextView;
 			if (textView == null)
@@ -1263,23 +1263,23 @@ namespace ICSharpCode.ILSpy.Debugger.Commands {
 							Order = 230)]
 	internal sealed class ShowNextStatementContextMenuEntry : IContextMenuEntry2
 	{
-		public bool IsVisible(TextViewContext context)
+		public bool IsVisible(ContextMenuEntryContext context)
 		{
-			return (context == null || context.TextView != null) &&
+			return (context == null || context.Element is DecompilerTextView) &&
 				DebuggerPlugin.DebugShowNextStatementCanExecute();
 		}
 
-		public bool IsEnabled(TextViewContext context)
+		public bool IsEnabled(ContextMenuEntryContext context)
 		{
 			return IsVisible(context);
 		}
 
-		public void Execute(TextViewContext context)
+		public void Execute(ContextMenuEntryContext context)
 		{
 			DebuggerPlugin.DebugShowNextStatement();
 		}
 
-		public void Initialize(TextViewContext context, MenuItem menuItem)
+		public void Initialize(ContextMenuEntryContext context, MenuItem menuItem)
 		{
 		}
 	}
@@ -1291,23 +1291,23 @@ namespace ICSharpCode.ILSpy.Debugger.Commands {
 							Order = 240)]
 	internal sealed class SetNextStatementContextMenuEntry : IContextMenuEntry2
 	{
-		public bool IsVisible(TextViewContext context)
+		public bool IsVisible(ContextMenuEntryContext context)
 		{
-			return (context == null || context.TextView != null) &&
+			return (context == null || context.Element is DecompilerTextView) &&
 				DebuggerPlugin.DebugCanSetNextStatement();
 		}
 
-		public bool IsEnabled(TextViewContext context)
+		public bool IsEnabled(ContextMenuEntryContext context)
 		{
 			return IsVisible(context);
 		}
 
-		public void Execute(TextViewContext context)
+		public void Execute(ContextMenuEntryContext context)
 		{
 			DebuggerPlugin.DebugSetNextStatement();
 		}
 
-		public void Initialize(TextViewContext context, MenuItem menuItem)
+		public void Initialize(ContextMenuEntryContext context, MenuItem menuItem)
 		{
 		}
 	}

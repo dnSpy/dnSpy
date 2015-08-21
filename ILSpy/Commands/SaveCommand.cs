@@ -28,16 +28,16 @@ namespace ICSharpCode.ILSpy {
 			: base(ApplicationCommands.Save) {
 		}
 
-		public bool IsVisible(TextViewContext context) {
-			return MainWindow.Instance.IsDecompilerTabControl(context.TabControl) &&
+		public bool IsVisible(ContextMenuEntryContext context) {
+			return MainWindow.Instance.IsDecompilerTabControl(context.Element as TabControl) &&
 				CanExecute(null);
 		}
 
-		public bool IsEnabled(TextViewContext context) {
+		public bool IsEnabled(ContextMenuEntryContext context) {
 			return CanExecute(null);
 		}
 
-		public void Execute(TextViewContext context) {
+		public void Execute(ContextMenuEntryContext context) {
 			base.Execute(null);
 		}
 
@@ -45,7 +45,7 @@ namespace ICSharpCode.ILSpy {
 			menuItem.Header = MainWindow.Instance.ActiveTabState is DecompileTabState ? "_Save Code…" : "_Save…";
 		}
 
-		public void Initialize(TextViewContext context, MenuItem menuItem) {
+		public void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
 			Initialize(menuItem);
 		}
 	}

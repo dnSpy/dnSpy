@@ -363,21 +363,21 @@ namespace dnSpy.AsmEditor.Resources {
 			this.resourceDataType = resourceDataType;
 		}
 
-		public virtual bool IsVisible(TextViewContext context) {
+		public virtual bool IsVisible(ContextMenuEntryContext context) {
 			return GetResourceNodes(context) != null;
 		}
 
-		public bool IsEnabled(TextViewContext context) {
+		public bool IsEnabled(ContextMenuEntryContext context) {
 			return true;
 		}
 
-		public void Execute(TextViewContext context) {
+		public void Execute(ContextMenuEntryContext context) {
 			SaveResources.Save(GetResourceNodes(context), useSubDirs, resourceDataType);
 		}
 
-		public abstract void Initialize(TextViewContext context, MenuItem menuItem);
+		public abstract void Initialize(ContextMenuEntryContext context, MenuItem menuItem);
 
-		protected IResourceNode[] GetResourceNodes(TextViewContext context) {
+		protected IResourceNode[] GetResourceNodes(ContextMenuEntryContext context) {
 			IResourceNode[] nodes;
 			if (context.SelectedTreeNodes != null) {
 				var inputNodes = context.SelectedTreeNodes;
@@ -408,7 +408,7 @@ namespace dnSpy.AsmEditor.Resources {
 			: base(false, ResourceDataType.Deserialized) {
 		}
 
-		public override void Initialize(TextViewContext context, MenuItem menuItem) {
+		public override void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
 			var infos = GetResourceData(GetResourceNodes(context));
 			if (infos.Length == 1)
 				menuItem.Header = string.Format("Save {0}", UIUtils.EscapeMenuItemHeader(infos[0].Name));
@@ -423,7 +423,7 @@ namespace dnSpy.AsmEditor.Resources {
 			: base(true, ResourceDataType.Deserialized) {
 		}
 
-		public override bool IsVisible(TextViewContext context) {
+		public override bool IsVisible(ContextMenuEntryContext context) {
 			var nodes = GetResourceNodes(context);
 			if (nodes == null)
 				return false;
@@ -432,7 +432,7 @@ namespace dnSpy.AsmEditor.Resources {
 				infos.Any(a => a.Name.Contains('/') || a.Name.Contains('\\'));
 		}
 
-		public override void Initialize(TextViewContext context, MenuItem menuItem) {
+		public override void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
 			var infos = GetResourceData(GetResourceNodes(context));
 			menuItem.Header = string.Format("Save {0} resources, use sub dirs", infos.Length);
 		}
@@ -444,7 +444,7 @@ namespace dnSpy.AsmEditor.Resources {
 			: base(false, ResourceDataType.Serialized) {
 		}
 
-		public override void Initialize(TextViewContext context, MenuItem menuItem) {
+		public override void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
 			var infos = GetResourceData(GetResourceNodes(context));
 			if (infos.Length == 1)
 				menuItem.Header = string.Format("Raw Save {0}", UIUtils.EscapeMenuItemHeader(infos[0].Name));
@@ -459,7 +459,7 @@ namespace dnSpy.AsmEditor.Resources {
 			: base(true, ResourceDataType.Serialized) {
 		}
 
-		public override bool IsVisible(TextViewContext context) {
+		public override bool IsVisible(ContextMenuEntryContext context) {
 			var nodes = GetResourceNodes(context);
 			if (nodes == null)
 				return false;
@@ -468,7 +468,7 @@ namespace dnSpy.AsmEditor.Resources {
 				infos.Any(a => a.Name.Contains('/') || a.Name.Contains('\\'));
 		}
 
-		public override void Initialize(TextViewContext context, MenuItem menuItem) {
+		public override void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
 			var infos = GetResourceData(GetResourceNodes(context));
 			menuItem.Header = string.Format("Raw Save {0} resources, use sub dirs", infos.Length);
 		}

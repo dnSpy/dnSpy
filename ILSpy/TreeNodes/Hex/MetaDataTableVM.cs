@@ -133,7 +133,8 @@ namespace dnSpy.TreeNodes.Hex {
 		ulong stringsStartOffset;
 		ulong stringsEndOffset;
 
-		protected MetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable) {
+		protected MetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner) {
 			this.doc = doc;
 			this.startOffset = startOffset;
 			this.endOffset = startOffset + (mdTable.Rows == 0 ? 0 : (ulong)mdTable.Rows * mdTable.RowSize - 1);
@@ -195,53 +196,53 @@ namespace dnSpy.TreeNodes.Hex {
 			}
 		}
 
-		public static MetaDataTableVM Create(HexDocument doc, ulong startOffset, MDTable mdTable) {
+		public static MetaDataTableVM Create(object owner, HexDocument doc, ulong startOffset, MDTable mdTable) {
 			switch (mdTable.Table) {
-			case Table.Module:					return new ModuleMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.TypeRef:					return new TypeRefMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.TypeDef:					return new TypeDefMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.FieldPtr:				return new FieldPtrMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.Field:					return new FieldMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.MethodPtr:				return new MethodPtrMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.Method:					return new MethodMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.ParamPtr:				return new ParamPtrMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.Param:					return new ParamMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.InterfaceImpl:			return new InterfaceImplMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.MemberRef:				return new MemberRefMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.Constant:				return new ConstantMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.CustomAttribute:			return new CustomAttributeMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.FieldMarshal:			return new FieldMarshalMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.DeclSecurity:			return new DeclSecurityMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.ClassLayout:				return new ClassLayoutMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.FieldLayout:				return new FieldLayoutMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.StandAloneSig:			return new StandAloneSigMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.EventMap:				return new EventMapMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.EventPtr:				return new EventPtrMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.Event:					return new EventMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.PropertyMap:				return new PropertyMapMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.PropertyPtr:				return new PropertyPtrMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.Property:				return new PropertyMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.MethodSemantics:			return new MethodSemanticsMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.MethodImpl:				return new MethodImplMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.ModuleRef:				return new ModuleRefMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.TypeSpec:				return new TypeSpecMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.ImplMap:					return new ImplMapMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.FieldRVA:				return new FieldRVAMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.ENCLog:					return new ENCLogMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.ENCMap:					return new ENCMapMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.Assembly:				return new AssemblyMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.AssemblyProcessor:		return new AssemblyProcessorMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.AssemblyOS:				return new AssemblyOSMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.AssemblyRef:				return new AssemblyRefMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.AssemblyRefProcessor:	return new AssemblyRefProcessorMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.AssemblyRefOS:			return new AssemblyRefOSMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.File:					return new FileMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.ExportedType:			return new ExportedTypeMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.ManifestResource:		return new ManifestResourceMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.NestedClass:				return new NestedClassMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.GenericParam:			return mdTable.Columns.Count == 5 ? (MetaDataTableVM)new GenericParamMetaDataTableV11VM(doc, startOffset, mdTable) : new GenericParamMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.MethodSpec:				return new MethodSpecMetaDataTableVM(doc, startOffset, mdTable);
-			case Table.GenericParamConstraint:	return new GenericParamConstraintMetaDataTableVM(doc, startOffset, mdTable);
+			case Table.Module:					return new ModuleMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.TypeRef:					return new TypeRefMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.TypeDef:					return new TypeDefMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.FieldPtr:				return new FieldPtrMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.Field:					return new FieldMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.MethodPtr:				return new MethodPtrMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.Method:					return new MethodMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.ParamPtr:				return new ParamPtrMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.Param:					return new ParamMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.InterfaceImpl:			return new InterfaceImplMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.MemberRef:				return new MemberRefMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.Constant:				return new ConstantMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.CustomAttribute:			return new CustomAttributeMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.FieldMarshal:			return new FieldMarshalMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.DeclSecurity:			return new DeclSecurityMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.ClassLayout:				return new ClassLayoutMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.FieldLayout:				return new FieldLayoutMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.StandAloneSig:			return new StandAloneSigMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.EventMap:				return new EventMapMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.EventPtr:				return new EventPtrMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.Event:					return new EventMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.PropertyMap:				return new PropertyMapMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.PropertyPtr:				return new PropertyPtrMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.Property:				return new PropertyMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.MethodSemantics:			return new MethodSemanticsMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.MethodImpl:				return new MethodImplMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.ModuleRef:				return new ModuleRefMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.TypeSpec:				return new TypeSpecMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.ImplMap:					return new ImplMapMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.FieldRVA:				return new FieldRVAMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.ENCLog:					return new ENCLogMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.ENCMap:					return new ENCMapMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.Assembly:				return new AssemblyMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.AssemblyProcessor:		return new AssemblyProcessorMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.AssemblyOS:				return new AssemblyOSMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.AssemblyRef:				return new AssemblyRefMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.AssemblyRefProcessor:	return new AssemblyRefProcessorMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.AssemblyRefOS:			return new AssemblyRefOSMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.File:					return new FileMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.ExportedType:			return new ExportedTypeMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.ManifestResource:		return new ManifestResourceMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.NestedClass:				return new NestedClassMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.GenericParam:			return mdTable.Columns.Count == 5 ? (MetaDataTableVM)new GenericParamMetaDataTableV11VM(owner, doc, startOffset, mdTable) : new GenericParamMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.MethodSpec:				return new MethodSpecMetaDataTableVM(owner, doc, startOffset, mdTable);
+			case Table.GenericParamConstraint:	return new GenericParamConstraintMetaDataTableVM(owner, doc, startOffset, mdTable);
 			default:							throw new InvalidOperationException();
 			}
 		}
@@ -318,44 +319,44 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	abstract class MetaDataTable1VM : MetaDataTableVM {
-		public MetaDataTable1VM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public MetaDataTable1VM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	abstract class MetaDataTable2VM : MetaDataTableVM {
-		public MetaDataTable2VM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public MetaDataTable2VM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	abstract class MetaDataTable3VM : MetaDataTableVM {
-		public MetaDataTable3VM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public MetaDataTable3VM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	abstract class MetaDataTable4VM : MetaDataTableVM {
-		public MetaDataTable4VM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public MetaDataTable4VM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	abstract class MetaDataTable5VM : MetaDataTableVM {
-		public MetaDataTable5VM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public MetaDataTable5VM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	abstract class MetaDataTable6VM : MetaDataTableVM {
-		public MetaDataTable6VM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public MetaDataTable6VM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	abstract class MetaDataTable9VM : MetaDataTableVM {
-		public MetaDataTable9VM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public MetaDataTable9VM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
@@ -364,8 +365,8 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return true; }
 		}
 
-		public MetaDataTable1InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public MetaDataTable1InfoVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
@@ -374,8 +375,8 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return true; }
 		}
 
-		public MetaDataTable2InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public MetaDataTable2InfoVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
@@ -384,8 +385,8 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return true; }
 		}
 
-		public MetaDataTable3InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public MetaDataTable3InfoVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
@@ -394,8 +395,8 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return true; }
 		}
 
-		public MetaDataTable4InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public MetaDataTable4InfoVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
@@ -404,8 +405,8 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return true; }
 		}
 
-		public MetaDataTable5InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public MetaDataTable5InfoVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
@@ -414,8 +415,8 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return true; }
 		}
 
-		public MetaDataTable6InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public MetaDataTable6InfoVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
@@ -424,284 +425,284 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return true; }
 		}
 
-		public MetaDataTable9InfoVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public MetaDataTable9InfoVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class ModuleMetaDataTableVM : MetaDataTable5InfoVM {
-		public ModuleMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public ModuleMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class TypeRefMetaDataTableVM : MetaDataTable3InfoVM {
-		public TypeRefMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public TypeRefMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class TypeDefMetaDataTableVM : MetaDataTable6InfoVM {
-		public TypeDefMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public TypeDefMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class FieldPtrMetaDataTableVM : MetaDataTable1VM {
-		public FieldPtrMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public FieldPtrMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class FieldMetaDataTableVM : MetaDataTable3InfoVM {
-		public FieldMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public FieldMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class MethodPtrMetaDataTableVM : MetaDataTable1VM {
-		public MethodPtrMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public MethodPtrMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class MethodMetaDataTableVM : MetaDataTable6InfoVM {
-		public MethodMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public MethodMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class ParamPtrMetaDataTableVM : MetaDataTable1VM {
-		public ParamPtrMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public ParamPtrMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class ParamMetaDataTableVM : MetaDataTable3InfoVM {
-		public ParamMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public ParamMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class InterfaceImplMetaDataTableVM : MetaDataTable2VM {
-		public InterfaceImplMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public InterfaceImplMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class MemberRefMetaDataTableVM : MetaDataTable3InfoVM {
-		public MemberRefMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public MemberRefMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class ConstantMetaDataTableVM : MetaDataTable4VM {
-		public ConstantMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public ConstantMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class CustomAttributeMetaDataTableVM : MetaDataTable3VM {
-		public CustomAttributeMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public CustomAttributeMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class FieldMarshalMetaDataTableVM : MetaDataTable2VM {
-		public FieldMarshalMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public FieldMarshalMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class DeclSecurityMetaDataTableVM : MetaDataTable3VM {
-		public DeclSecurityMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public DeclSecurityMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class ClassLayoutMetaDataTableVM : MetaDataTable3VM {
-		public ClassLayoutMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public ClassLayoutMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class FieldLayoutMetaDataTableVM : MetaDataTable2VM {
-		public FieldLayoutMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public FieldLayoutMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class StandAloneSigMetaDataTableVM : MetaDataTable1VM {
-		public StandAloneSigMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public StandAloneSigMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class EventMapMetaDataTableVM : MetaDataTable2VM {
-		public EventMapMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public EventMapMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class EventPtrMetaDataTableVM : MetaDataTable1VM {
-		public EventPtrMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public EventPtrMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class EventMetaDataTableVM : MetaDataTable3InfoVM {
-		public EventMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public EventMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class PropertyMapMetaDataTableVM : MetaDataTable2VM {
-		public PropertyMapMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public PropertyMapMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class PropertyPtrMetaDataTableVM : MetaDataTable1VM {
-		public PropertyPtrMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public PropertyPtrMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class PropertyMetaDataTableVM : MetaDataTable3InfoVM {
-		public PropertyMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public PropertyMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class MethodSemanticsMetaDataTableVM : MetaDataTable3VM {
-		public MethodSemanticsMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public MethodSemanticsMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class MethodImplMetaDataTableVM : MetaDataTable3VM {
-		public MethodImplMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public MethodImplMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class ModuleRefMetaDataTableVM : MetaDataTable1InfoVM {
-		public ModuleRefMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public ModuleRefMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class TypeSpecMetaDataTableVM : MetaDataTable1VM {
-		public TypeSpecMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public TypeSpecMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class ImplMapMetaDataTableVM : MetaDataTable4InfoVM {
-		public ImplMapMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public ImplMapMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class FieldRVAMetaDataTableVM : MetaDataTable2VM {
-		public FieldRVAMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public FieldRVAMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class ENCLogMetaDataTableVM : MetaDataTable2VM {
-		public ENCLogMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public ENCLogMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class ENCMapMetaDataTableVM : MetaDataTable1VM {
-		public ENCMapMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public ENCMapMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class AssemblyMetaDataTableVM : MetaDataTable9InfoVM {
-		public AssemblyMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public AssemblyMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class AssemblyProcessorMetaDataTableVM : MetaDataTable1VM {
-		public AssemblyProcessorMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public AssemblyProcessorMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class AssemblyOSMetaDataTableVM : MetaDataTable3VM {
-		public AssemblyOSMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public AssemblyOSMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class AssemblyRefMetaDataTableVM : MetaDataTable9InfoVM {
-		public AssemblyRefMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public AssemblyRefMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class AssemblyRefProcessorMetaDataTableVM : MetaDataTable2VM {
-		public AssemblyRefProcessorMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public AssemblyRefProcessorMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class AssemblyRefOSMetaDataTableVM : MetaDataTable4VM {
-		public AssemblyRefOSMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public AssemblyRefOSMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class FileMetaDataTableVM : MetaDataTable3InfoVM {
-		public FileMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public FileMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class ExportedTypeMetaDataTableVM : MetaDataTable5InfoVM {
-		public ExportedTypeMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public ExportedTypeMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class ManifestResourceMetaDataTableVM : MetaDataTable4InfoVM {
-		public ManifestResourceMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public ManifestResourceMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class NestedClassMetaDataTableVM : MetaDataTable2VM {
-		public NestedClassMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public NestedClassMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class GenericParamMetaDataTableV11VM : MetaDataTable5InfoVM {
-		public GenericParamMetaDataTableV11VM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public GenericParamMetaDataTableV11VM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class GenericParamMetaDataTableVM : MetaDataTable4InfoVM {
-		public GenericParamMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public GenericParamMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class MethodSpecMetaDataTableVM : MetaDataTable2VM {
-		public MethodSpecMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public MethodSpecMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 
 	sealed class GenericParamConstraintMetaDataTableVM : MetaDataTable2VM {
-		public GenericParamConstraintMetaDataTableVM(HexDocument doc, ulong startOffset, MDTable mdTable)
-			: base(doc, startOffset, mdTable) {
+		public GenericParamConstraintMetaDataTableVM(object owner, HexDocument doc, ulong startOffset, MDTable mdTable)
+			: base(owner, doc, startOffset, mdTable) {
 		}
 	}
 }

@@ -99,7 +99,8 @@ namespace dnSpy.TreeNodes.Hex {
 			new IntegerHexBitFieldEnumInfo(0xC0EE, "CEE"),
 		};
 
-		public ImageFileHeaderVM(HexDocument doc, ulong startOffset) {
+		public ImageFileHeaderVM(object owner, HexDocument doc, ulong startOffset)
+			: base(owner) {
 			this.machineVM = new UInt16FlagsHexField(doc, Name, "Machine", startOffset + 0);
 			this.machineVM.Add(new IntegerHexBitField("Machine", 0, 16, MachineInfos));
 			this.numberOfSectionsVM = new UInt16HexField(doc, Name, "NumberOfSections", startOffset + 2);

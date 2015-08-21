@@ -56,25 +56,25 @@ namespace dnSpy.AsmEditor {
 			return nodes.OfType<ILSpyTreeNode>().ToArray();
 		}
 
-		bool IContextMenuEntry<TextViewContext>.IsVisible(TextViewContext context) {
-			return context.TreeView == MainWindow.Instance.treeView &&
+		bool IContextMenuEntry<ContextMenuEntryContext>.IsVisible(ContextMenuEntryContext context) {
+			return context.Element == MainWindow.Instance.treeView &&
 				context.SelectedTreeNodes != null &&
 				IsVisible(GetILSpyTreeNodes(context.SelectedTreeNodes));
 		}
 
-		bool IContextMenuEntry<TextViewContext>.IsEnabled(TextViewContext context) {
-			return context.TreeView == MainWindow.Instance.treeView &&
+		bool IContextMenuEntry<ContextMenuEntryContext>.IsEnabled(ContextMenuEntryContext context) {
+			return context.Element == MainWindow.Instance.treeView &&
 				context.SelectedTreeNodes != null &&
 				CanExecute(GetILSpyTreeNodes(context.SelectedTreeNodes));
 		}
 
-		void IContextMenuEntry<TextViewContext>.Execute(TextViewContext context) {
-			if (context.TreeView == MainWindow.Instance.treeView && context.SelectedTreeNodes != null)
+		void IContextMenuEntry<ContextMenuEntryContext>.Execute(ContextMenuEntryContext context) {
+			if (context.Element == MainWindow.Instance.treeView && context.SelectedTreeNodes != null)
 				Execute(GetILSpyTreeNodes(context.SelectedTreeNodes));
 		}
 
-		void IContextMenuEntry2<TextViewContext>.Initialize(TextViewContext context, MenuItem menuItem) {
-			if (context.TreeView == MainWindow.Instance.treeView && context.SelectedTreeNodes != null)
+		void IContextMenuEntry2<ContextMenuEntryContext>.Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
+			if (context.Element == MainWindow.Instance.treeView && context.SelectedTreeNodes != null)
 				Initialize(GetILSpyTreeNodes(context.SelectedTreeNodes), menuItem);
 		}
 	}

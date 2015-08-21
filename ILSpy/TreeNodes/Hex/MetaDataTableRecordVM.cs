@@ -39,6 +39,18 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return string.Format("0x{0:X8}", startOffset); }
 		}
 
+		public MDToken Token {
+			get { return mdToken; }
+		}
+
+		public ulong StartOffset {
+			get { return startOffset; }
+		}
+
+		public ulong EndOffset {
+			get { return endOffset; }
+		}
+
 		readonly string name;
 		protected readonly HexDocument doc;
 		protected readonly ulong startOffset;
@@ -413,7 +425,8 @@ namespace dnSpy.TreeNodes.Hex {
 		readonly MetaDataTableVM mdVM;
 		readonly TableInfo tableInfo;
 
-		protected MetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo) {
+		protected MetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
+			: base(mdVM.Owner) {
 			this.mdVM = mdVM;
 			this.name = string.Format("{0}[{1:X6}]", mdToken.Table, mdToken.Rid);
 			this.doc = doc;

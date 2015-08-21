@@ -62,7 +62,8 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 		readonly HexField[] hexFields;
 
-		public StorageSignatureVM(HexDocument doc, ulong startOffset, int stringLen) {
+		public StorageSignatureVM(object owner, HexDocument doc, ulong startOffset, int stringLen)
+			: base(owner) {
 			this.lSignatureVM = new UInt32HexField(doc, Name, "lSignature", startOffset + 0);
 			this.iMajorVerVM = new UInt16HexField(doc, Name, "iMajorVer", startOffset + 4, true);
 			this.iMinorVerVM = new UInt16HexField(doc, Name, "iMinorVer", startOffset + 6, true);

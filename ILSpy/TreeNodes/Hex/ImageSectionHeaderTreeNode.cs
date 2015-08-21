@@ -51,7 +51,7 @@ namespace dnSpy.TreeNodes.Hex {
 		public ImageSectionHeaderTreeNode(HexDocument doc, ImageSectionHeader sectHdr, int sectionNumber)
 			: base((ulong)sectHdr.StartOffset, (ulong)sectHdr.EndOffset - 1) {
 			this.sectionNumber = sectionNumber;
-			this.imageSectionHeaderVM = new ImageSectionHeaderVM(doc, StartOffset);
+			this.imageSectionHeaderVM = new ImageSectionHeaderVM(this, doc, StartOffset);
 		}
 
 		public override void OnDocumentModified(ulong modifiedStart, ulong modifiedEnd) {

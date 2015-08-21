@@ -45,7 +45,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		public StorageHeaderTreeNode(HexDocument doc, MetaDataHeader mdHeader)
 			: base((ulong)mdHeader.StorageHeaderOffset, (ulong)mdHeader.StorageHeaderOffset + 4 - 1) {
-			this.storageHeaderVM = new StorageHeaderVM(doc, StartOffset);
+			this.storageHeaderVM = new StorageHeaderVM(this, doc, StartOffset);
 		}
 
 		protected override void Write(ITextOutput output) {

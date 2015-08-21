@@ -45,7 +45,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		public ImageOptionalHeader32TreeNode(HexDocument doc, ImageOptionalHeader32 optHdr)
 			: base((ulong)optHdr.StartOffset, (ulong)optHdr.EndOffset - 1) {
-			this.imageOptionalHeader32VM = new ImageOptionalHeader32VM(doc, StartOffset, EndOffset);
+			this.imageOptionalHeader32VM = new ImageOptionalHeader32VM(this, doc, StartOffset, EndOffset);
 		}
 
 		protected override void Write(ITextOutput output) {

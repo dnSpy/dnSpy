@@ -47,7 +47,8 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 		readonly HexField[] hexFields;
 
-		public StorageStreamVM(HexDocument doc, ulong startOffset, int stringLen) {
+		public StorageStreamVM(object owner, HexDocument doc, ulong startOffset, int stringLen)
+			: base(owner) {
 			this.iOffsetVM = new UInt32HexField(doc, Name, "iOffset", startOffset + 0);
 			this.iSizeVM = new UInt32HexField(doc, Name, "iSize", startOffset + 4);
 			this.rcNameVM = new StringHexField(doc, Name, "rcName", startOffset + 8, Encoding.ASCII, stringLen);

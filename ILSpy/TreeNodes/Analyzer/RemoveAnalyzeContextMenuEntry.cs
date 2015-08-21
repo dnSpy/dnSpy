@@ -23,19 +23,19 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 	[ExportContextMenuEntryAttribute(Header = "_Remove", Icon = "Delete", Order = 940, Category = "Other", InputGestureText = "Del")]
 	internal sealed class RemoveAnalyzeContextMenuEntry : IContextMenuEntry
 	{
-		public bool IsVisible(TextViewContext context)
+		public bool IsVisible(ContextMenuEntryContext context)
 		{
-			if (context.TreeView is AnalyzerTreeView && context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n.Parent.IsRoot))
+			if (context.Element is AnalyzerTreeView && context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n.Parent.IsRoot))
 				return true;
             return false;
 		}
 
-		public bool IsEnabled(TextViewContext context)
+		public bool IsEnabled(ContextMenuEntryContext context)
 		{
             return true;
 		}
 
-		public void Execute(TextViewContext context)
+		public void Execute(ContextMenuEntryContext context)
 		{
 			if (context.SelectedTreeNodes != null) {                
 				foreach (var node in context.SelectedTreeNodes) {

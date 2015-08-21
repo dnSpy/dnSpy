@@ -55,8 +55,8 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 		readonly UInt64HexField sizeOfHeapCommitVM;
 
-		public ImageOptionalHeader64VM(HexDocument doc, ulong startOffset, ulong endOffset)
-			: base(doc, startOffset, endOffset, 0x20, 0x68) {
+		public ImageOptionalHeader64VM(object owner, HexDocument doc, ulong startOffset, ulong endOffset)
+			: base(owner, doc, startOffset, endOffset, 0x20, 0x68) {
 			this.imageBaseVM = new UInt64HexField(doc, Name, "ImageBase", startOffset + 0x18);
 
 			this.sizeOfStackReserveVM = new UInt64HexField(doc, Name, "SizeOfStackReserve", startOffset + 0x48);

@@ -45,7 +45,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		public ImageDosHeaderTreeNode(HexDocument doc, ImageDosHeader dosHeader)
 			: base((ulong)dosHeader.StartOffset, (ulong)dosHeader.EndOffset - 1) {
-			this.imageDosHeaderVM = new ImageDosHeaderVM(doc, StartOffset);
+			this.imageDosHeaderVM = new ImageDosHeaderVM(this, doc, StartOffset);
 		}
 
 		protected override void Write(ITextOutput output) {

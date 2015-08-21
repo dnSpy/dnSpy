@@ -35,8 +35,8 @@ namespace dnSpy.AsmEditor {
 			}
 		}
 
-		static Context? CreateContext(TextViewContext context) {
-			if (context.TextView == null || context.Reference == null)
+		static Context? CreateContext(ContextMenuEntryContext context) {
+			if (!(context.Element is DecompilerTextView) || context.Reference == null)
 				return null;
 
 			return new Context(context.Reference);
@@ -56,23 +56,23 @@ namespace dnSpy.AsmEditor {
 		protected virtual void Initialize(Context ctx, MenuItem menuItem) {
 		}
 
-		bool IContextMenuEntry<TextViewContext>.IsVisible(TextViewContext context) {
+		bool IContextMenuEntry<ContextMenuEntryContext>.IsVisible(ContextMenuEntryContext context) {
 			var ctx = CreateContext(context);
 			return ctx != null && IsVisible(ctx.Value);
 		}
 
-		bool IContextMenuEntry<TextViewContext>.IsEnabled(TextViewContext context) {
+		bool IContextMenuEntry<ContextMenuEntryContext>.IsEnabled(ContextMenuEntryContext context) {
 			var ctx = CreateContext(context);
 			return ctx != null && IsEnabled(ctx.Value);
 		}
 
-		void IContextMenuEntry<TextViewContext>.Execute(TextViewContext context) {
+		void IContextMenuEntry<ContextMenuEntryContext>.Execute(ContextMenuEntryContext context) {
 			var ctx = CreateContext(context);
 			if (ctx != null && CanExecute(ctx.Value))
 				Execute(ctx.Value);
 		}
 
-		void IContextMenuEntry2<TextViewContext>.Initialize(TextViewContext context, MenuItem menuItem) {
+		void IContextMenuEntry2<ContextMenuEntryContext>.Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
 			var ctx = CreateContext(context);
 			if (ctx != null)
 				Initialize(ctx.Value, menuItem);

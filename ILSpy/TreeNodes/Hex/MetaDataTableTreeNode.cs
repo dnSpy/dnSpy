@@ -74,7 +74,7 @@ namespace dnSpy.TreeNodes.Hex {
 			LazyLoading = true;
 			this.doc = doc;
 			this.tableInfo = mdTable.TableInfo;
-			this.tablesStreamVM = MetaDataTableVM.Create(doc, StartOffset, mdTable);
+			this.tablesStreamVM = MetaDataTableVM.Create(this, doc, StartOffset, mdTable);
 			this.tablesStreamVM.FindMetaDataTable = FindMetaDataTable;
 			this.tablesStreamVM.InitializeHeapOffsets((ulong)md.StringsStream.StartOffset, (ulong)md.StringsStream.EndOffset - 1);
 		}
@@ -90,10 +90,20 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		protected override void DecompileFields(Language language, ITextOutput output) {
-			var cols = tablesStreamVM.TableInfo.Columns;
-
 			language.WriteCommentLine(output, string.Empty);
 			language.WriteComment(output, string.Empty);
+			WriteHeader(output);
+
+			for (int i = 0; i < (int)tablesStreamVM.Rows; i++) {
+				var obj = tablesStreamVM.Get(i);
+				language.WriteComment(output, string.Empty);
+				Write(output, obj);
+			}
+		}
+
+		public void WriteHeader(ITextOutput output) {
+			var cols = tablesStreamVM.TableInfo.Columns;
+
 			output.Write("RID\tToken\tOffset", TextTokenType.Comment);
 			for (int i = 0; i < cols.Count; i++) {
 				output.Write('\t', TextTokenType.Comment);
@@ -104,25 +114,25 @@ namespace dnSpy.TreeNodes.Hex {
 				output.Write(tablesStreamVM.InfoName, TextTokenType.Comment);
 			}
 			output.WriteLine();
+		}
 
-			for (int i = 0; i < (int)tablesStreamVM.Rows; i++) {
-				var obj = tablesStreamVM.Get(i);
-				language.WriteComment(output, string.Empty);
-				output.Write(obj.RidString, TextTokenType.Comment);
+		public void Write(ITextOutput output, MetaDataTableRecordVM mdVM) {
+			var cols = tablesStreamVM.TableInfo.Columns;
+
+			output.Write(mdVM.RidString, TextTokenType.Comment);
+			output.Write('\t', TextTokenType.Comment);
+			output.Write(mdVM.TokenString, TextTokenType.Comment);
+			output.Write('\t', TextTokenType.Comment);
+			output.Write(mdVM.OffsetString, TextTokenType.Comment);
+			for (int j = 0; j < cols.Count; j++) {
 				output.Write('\t', TextTokenType.Comment);
-				output.Write(obj.TokenString, TextTokenType.Comment);
-				output.Write('\t', TextTokenType.Comment);
-				output.Write(obj.OffsetString, TextTokenType.Comment);
-				for (int j = 0; j < cols.Count; j++) {
-					output.Write('\t', TextTokenType.Comment);
-					output.Write(obj.GetField(j).DataFieldVM.StringValue, TextTokenType.Comment);
-				}
-				if (tablesStreamVM.HasInfo) {
-					output.Write('\t', TextTokenType.Comment);
-					output.Write(obj.Info, TextTokenType.Comment);
-				}
-				output.WriteLine();
+				output.Write(mdVM.GetField(j).DataFieldVM.StringValue, TextTokenType.Comment);
 			}
+			if (tablesStreamVM.HasInfo) {
+				output.Write('\t', TextTokenType.Comment);
+				output.Write(mdVM.Info, TextTokenType.Comment);
+			}
+			output.WriteLine();
 		}
 
 		protected override void LoadChildren() {

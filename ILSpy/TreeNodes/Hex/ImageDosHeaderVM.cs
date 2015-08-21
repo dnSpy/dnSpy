@@ -186,7 +186,8 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 		readonly HexField[] hexFields;
 
-		public ImageDosHeaderVM(HexDocument doc, ulong startOffset) {
+		public ImageDosHeaderVM(object owner, HexDocument doc, ulong startOffset)
+			: base(owner) {
 			this.magicVM = new UInt16HexField(doc, Name, "e_magic", startOffset + 0);
 			this.cblpVM = new UInt16HexField(doc, Name, "e_cblp", startOffset + 2);
 			this.cpVM = new UInt16HexField(doc, Name, "e_cp", startOffset + 4);

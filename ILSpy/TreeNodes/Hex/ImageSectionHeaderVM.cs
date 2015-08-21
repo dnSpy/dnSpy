@@ -101,7 +101,8 @@ namespace dnSpy.TreeNodes.Hex {
 			new IntegerHexBitFieldEnumInfo(15, "Reserved"),
 		};
 
-		public ImageSectionHeaderVM(HexDocument doc, ulong startOffset) {
+		public ImageSectionHeaderVM(object owner, HexDocument doc, ulong startOffset)
+			: base(owner) {
 			this.nameVM = new StringHexField(doc, Name, "Name", startOffset + 0, Encoding.UTF8, 8);
 			this.virtualSizeVM = new UInt32HexField(doc, Name, "VirtualSize", startOffset + 8);
 			this.virtualAddressVM = new UInt32HexField(doc, Name, "VirtualAddress", startOffset + 0x0C);

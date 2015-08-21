@@ -46,7 +46,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		public TablesStreamTreeNode(HexDocument doc, TablesStream tblStream, IMetaData md)
 			: base((ulong)tblStream.StartOffset, (ulong)tblStream.MDTables[0].StartOffset - 1) {
-			this.tablesStreamVM = new TablesStreamVM(doc, tblStream);
+			this.tablesStreamVM = new TablesStreamVM(this, doc, tblStream);
 
 			foreach (var mdTable in tblStream.MDTables) {
 				if (mdTable.Rows != 0)

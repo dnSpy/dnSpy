@@ -22,6 +22,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using dnSpy;
 using dnSpy.HexEditor;
 using dnSpy.Images;
 using ICSharpCode.AvalonEdit;
@@ -63,72 +64,42 @@ namespace ICSharpCode.ILSpy {
 		/// <param name="menuItem"></param>
 		void Initialize(TContext context, MenuItem menuItem);
 	}
-	public interface IContextMenuEntry : IContextMenuEntry<TextViewContext>
+
+	public interface IContextMenuEntry : IContextMenuEntry<ContextMenuEntryContext>
 	{
 	}
-	public interface IContextMenuEntry2 : IContextMenuEntry, IContextMenuEntry2<TextViewContext>
+
+	public interface IContextMenuEntry2 : IContextMenuEntry, IContextMenuEntry2<ContextMenuEntryContext>
 	{
 	}
 	
-	public class TextViewContext
+	public class ContextMenuEntryContext
 	{
-		/// <summary>
-		/// Returns the selected nodes in the tree view.
-		/// Returns null, if context menu does not belong to a tree view.
-		/// </summary>
 		public SharpTreeNode[] SelectedTreeNodes { get; private set; }
-		
-		/// <summary>
-		/// Returns the tree view the context menu is assigned to.
-		/// Returns null, if context menu is not assigned to a tree view.
-		/// </summary>
-		public SharpTreeView TreeView { get; private set; }
-		
-		/// <summary>
-		/// Returns the text view the context menu is assigned to.
-		/// Returns null, if context menu is not assigned to a text view.
-		/// </summary>
-		public DecompilerTextView TextView { get; private set; }
 
-		/// <summary>
-		/// Returns the HexBox context menu is assigned to.
-		/// Returns null, if context menu is not assigned to a HexBox.
-		/// </summary>
-		public HexBox HexBox { get; private set; }
-		
-		/// <summary>
-		/// Returns the list box the context menu is assigned to.
-		/// Returns null, if context menu is not assigned to a list box.
-		/// </summary>
-		public ListBox ListBox { get; private set; }
+		public FrameworkElement Element {
+			get { return elem; }
+			private set { elem = value; }
+		}
+		FrameworkElement elem;
 
-		/// <summary>
-		/// Returns the tab control the context menu is assigned to.
-		/// Returns null, if context menu is not assigned to a tab control.
-		/// </summary>
-		public TabControl TabControl { get; private set; }
-		
-		/// <summary>
-		/// Returns the reference the mouse cursor is currently hovering above.
-		/// Returns null, if there was no reference found.
-		/// </summary>
+		public object DataContext {
+			get { return elem == null ? null : elem.DataContext; }
+		}
+
 		public ReferenceSegment Reference { get; private set; }
 		
-		/// <summary>
-		/// Returns the position in TextView the mouse cursor is currently hovering above or if
-		/// the context menu was opened from the keyboard, the current caret location.
-		/// Returns null, if TextView returns null;
-		/// </summary>
 		public TextViewPosition? Position { get; private set; }
 
-		/// <summary>
-		/// true if the context menu was opened from the keyboard instead of from the mouse
-		/// </summary>
 		public bool OpenedFromKeyboard { get; private set; }
 		
-		public static TextViewContext Create(SharpTreeView treeView = null, DecompilerTextView textView = null, ListBox listBox = null, TabControl tabControl = null, HexBox hexBox = null, bool openedFromKeyboard = false)
+		public static ContextMenuEntryContext Create(FrameworkElement elem, bool openedFromKeyboard = false)
 		{
 			TextViewPosition? position = null;
+			var textView = elem as DecompilerTextView;
+			var listBox = elem as ListBox;
+			var treeView = elem as SharpTreeView;
+
 			if (textView != null)
 				position = openedFromKeyboard ? textView.TextEditor.TextArea.Caret.Position : textView.GetPositionFromMousePosition();
 			ReferenceSegment reference;
@@ -139,13 +110,9 @@ namespace ICSharpCode.ILSpy {
 			else
 				reference = null;
 			var selectedTreeNodes = treeView != null ? treeView.GetTopLevelSelection().ToArray() : null;
-			return new TextViewContext {
-				TreeView = treeView,
+			return new ContextMenuEntryContext {
+				Element = elem,
 				SelectedTreeNodes = selectedTreeNodes,
-				TextView = textView,
-				TabControl = tabControl,
-				HexBox = hexBox,
-				ListBox = listBox,
 				Reference = reference,
 				Position = position,
 				OpenedFromKeyboard = openedFromKeyboard,
@@ -180,90 +147,50 @@ namespace ICSharpCode.ILSpy {
 	
 	internal class ContextMenuProvider : IDisposable
 	{
-		/// <summary>
-		/// Enables extensible context menu support for the specified tree view.
-		/// </summary>
-		public static ContextMenuProvider Add(SharpTreeView treeView)
+		readonly Predicate<DependencyObject> isIgnored;
+
+		ContextMenuProvider(FrameworkElement elem, Predicate<DependencyObject> isIgnored)
 		{
-			var provider = new ContextMenuProvider(treeView);
-			treeView.ContextMenuOpening += provider.treeView_ContextMenuOpening;
-			// Context menu is shown only when the ContextMenu property is not null before the
-			// ContextMenuOpening event handler is called.
-			treeView.ContextMenu = new ContextMenu();
+			this.elem = elem;
+			this.isIgnored = isIgnored;
+			this.elem.ContextMenu = new ContextMenu();
+		}
+
+		public static ContextMenuProvider Add(FrameworkElement elem, Predicate<DependencyObject> isIgnored = null)
+		{
+			var provider = new ContextMenuProvider(elem, isIgnored);
+			elem.ContextMenuOpening += provider.elem_ContextMenuOpening;
 			return provider;
 		}
 
-		/// <summary>
-		/// Enables extensible context menu support for the specified text view.
-		/// </summary>
-		public static ContextMenuProvider Add(DecompilerTextView textView)
+		public static ContextMenuProvider Add(DecompilerTextView textView, Predicate<DependencyObject> isIgnored = null)
 		{
-			var provider = new ContextMenuProvider(textView);
+			var provider = new ContextMenuProvider(textView, isIgnored);
 			textView.ContextMenuOpening += provider.textView_ContextMenuOpening;
-			// Context menu is shown only when the ContextMenu property is not null before the
-			// ContextMenuOpening event handler is called.
-			textView.ContextMenu = new ContextMenu();
 			return provider;
 		}
 
-		public static ContextMenuProvider Add(ListBox listBox)
+		public static ContextMenuProvider Add(HexBox hexBox, Predicate<DependencyObject> isIgnored = null)
 		{
-			var provider = new ContextMenuProvider(listBox);
-			listBox.ContextMenuOpening += provider.listBox_ContextMenuOpening;
-			listBox.ContextMenu = new ContextMenu();
-			return provider;
-		}
-
-		public static ContextMenuProvider Add(TabControl tabControl)
-		{
-			var provider = new ContextMenuProvider(tabControl);
-			tabControl.ContextMenuOpening += provider.tabControl_ContextMenuOpening;
-			tabControl.ContextMenu = new ContextMenu();
-			return provider;
-		}
-
-		public static ContextMenuProvider Add(HexBox hexBox)
-		{
-			var provider = new ContextMenuProvider(hexBox);
+			var provider = new ContextMenuProvider(hexBox, isIgnored);
 			hexBox.ContextMenuOpening += provider.hexBox_ContextMenuOpening;
-			hexBox.ContextMenu = new ContextMenu();
 			return provider;
 		}
 
 		// Make sure there are no more refs to modules so the GC can collect removed modules
 		void ClearReferences()
 		{
-			if (treeView != null)
-				treeView.ContextMenu = new ContextMenu();
-			if (textView != null)
-				textView.ContextMenu = new ContextMenu();
-			if (listBox != null)
-				listBox.ContextMenu = new ContextMenu();
-			if (tabControl != null)
-				tabControl.ContextMenu = new ContextMenu();
-			if (hexBox != null)
-				hexBox.ContextMenu = new ContextMenu();
+			elem.ContextMenu = new ContextMenu();
 		}
 
 		public void Dispose()
 		{
-			if (treeView != null)
-				treeView.ContextMenuOpening -= this.treeView_ContextMenuOpening;
-			if (textView != null)
-				textView.ContextMenuOpening -= this.textView_ContextMenuOpening;
-			if (listBox != null)
-				listBox.ContextMenuOpening -= this.listBox_ContextMenuOpening;
-			if (tabControl != null)
-				tabControl.ContextMenuOpening -= this.tabControl_ContextMenuOpening;
-			if (hexBox != null)
-				hexBox.ContextMenuOpening -= this.hexBox_ContextMenuOpening;
+			elem.ContextMenuOpening -= this.elem_ContextMenuOpening;
+			elem.ContextMenuOpening -= this.textView_ContextMenuOpening;
+			elem.ContextMenuOpening -= this.hexBox_ContextMenuOpening;
 		}
 
-		readonly SharpTreeView treeView;
-		readonly DecompilerTextView textView;
-		readonly ListBox listBox;
-		readonly TabControl tabControl;
-		readonly HexBox hexBox;
+		readonly FrameworkElement elem;
 
 		// Prevent big memory leaks (text editor) because the data is put into some MEF data structure.
 		// All created instances in this class are shared so this one can be shared as well.
@@ -279,52 +206,54 @@ namespace ICSharpCode.ILSpy {
 			[ImportMany(typeof(IContextMenuEntry))]
 			public Lazy<IContextMenuEntry, IContextMenuEntryMetadata>[] entries = null;
 		}
-		
-		ContextMenuProvider(SharpTreeView treeView)
-		{
-			this.treeView = treeView;
-			this.textView = null;
+
+		ContextMenuEntryContext CreateContext(ContextMenuEventArgs e) {
+			return ContextMenuEntryContext.Create(elem, e.CursorLeft == -1 && e.CursorTop == -1);
 		}
 
-		ContextMenuProvider(DecompilerTextView textView)
+		bool IsIgnored(object sender, ContextMenuEventArgs e)
 		{
-			this.treeView = null;
-			this.textView = textView;
-		}
-		
-		ContextMenuProvider(ListBox listBox)
-		{
-			this.listBox = listBox;
+			if (isIgnored == null)
+				return false;
+
+			var o = e.OriginalSource as DependencyObject;
+			while (o != null) {
+				if (o == elem)
+					return false;
+
+				if (isIgnored(o))
+					return true;	// Don't set e.Handled
+
+				o = UIUtils.GetParent(o);
+			}
+
+			e.Handled = true;
+			return true;
 		}
 
-		ContextMenuProvider(TabControl tabControl)
+		void elem_ContextMenuOpening(object sender, ContextMenuEventArgs e)
 		{
-			this.tabControl = tabControl;
-		}
+			if (IsIgnored(sender, e))
+				return;
 
-		ContextMenuProvider(HexBox hexBox)
-		{
-			this.hexBox = hexBox;
-		}
-		
-		void treeView_ContextMenuOpening(object sender, ContextMenuEventArgs e)
-		{
-			TextViewContext context = TextViewContext.Create(treeView);
+			var context = CreateContext(e);
 			ContextMenu menu;
 			if (ShowContextMenu(context, out menu))
-				treeView.ContextMenu = menu;
+				elem.ContextMenu = menu;
 			else
-				// hide the context menu.
 				e.Handled = true;
 		}
 		
 		void textView_ContextMenuOpening(object sender, ContextMenuEventArgs e)
 		{
-			bool openedFromKeyboard = e.CursorLeft == -1 && e.CursorTop == -1;
-			TextViewContext context = TextViewContext.Create(textView: textView, openedFromKeyboard: openedFromKeyboard);
+			if (IsIgnored(sender, e))
+				return;
+
+			var textView = (DecompilerTextView)elem;
+			var context = CreateContext(e);
 			ContextMenu menu;
 			if (ShowContextMenu(context, out menu)) {
-				if (openedFromKeyboard) {
+				if (context.OpenedFromKeyboard) {
 					var scrollInfo = (IScrollInfo)textView.TextEditor.TextArea.TextView;
 					var pos = textView.TextEditor.TextArea.TextView.GetVisualPosition(textView.TextEditor.TextArea.Caret.Position, ICSharpCode.AvalonEdit.Rendering.VisualYPosition.TextBottom);
 					pos = new Point(pos.X - scrollInfo.HorizontalOffset, pos.Y - scrollInfo.VerticalOffset);
@@ -345,40 +274,20 @@ namespace ICSharpCode.ILSpy {
 				textView.ContextMenu = menu;
 			}
 			else
-				// hide the context menu.
-				e.Handled = true;
-		}
-
-		void listBox_ContextMenuOpening(object sender, ContextMenuEventArgs e)
-		{
-			TextViewContext context = TextViewContext.Create(listBox: listBox);
-			ContextMenu menu;
-			if (ShowContextMenu(context, out menu))
-				listBox.ContextMenu = menu;
-			else
-				// hide the context menu.
-				e.Handled = true;
-		}
-		
-		void tabControl_ContextMenuOpening(object sender, ContextMenuEventArgs e)
-		{
-			TextViewContext context = TextViewContext.Create(tabControl: tabControl);
-			ContextMenu menu;
-			if (ShowContextMenu(context, out menu))
-				tabControl.ContextMenu = menu;
-			else
-				// hide the context menu.
 				e.Handled = true;
 		}
 
 		void hexBox_ContextMenuOpening(object sender, ContextMenuEventArgs e)
 		{
-			bool openedFromKeyboard = e.CursorLeft == -1 && e.CursorTop == -1;
-			TextViewContext context = TextViewContext.Create(hexBox: hexBox, openedFromKeyboard: openedFromKeyboard);
+			if (IsIgnored(sender, e))
+				return;
+
+			var hexBox = (HexBox)elem;
+			var context = CreateContext(e);
 			ContextMenu menu;
 			if (ShowContextMenu(context, out menu)) {
 				var rect = hexBox.GetCaretWindowRect();
-				if (rect != null && openedFromKeyboard) {
+				if (rect != null && context.OpenedFromKeyboard) {
 					var pos = rect.Value.BottomLeft;
 					menu.HorizontalOffset = pos.X;
 					menu.VerticalOffset = pos.Y;
@@ -396,11 +305,10 @@ namespace ICSharpCode.ILSpy {
 				hexBox.ContextMenu = menu;
 			}
 			else
-				// hide the context menu.
 				e.Handled = true;
 		}
 
-		bool ShowContextMenu(TextViewContext context, out ContextMenu menu)
+		bool ShowContextMenu(ContextMenuEntryContext context, out ContextMenu menu)
 		{
 			menu = new ContextMenu();
 			foreach (var category in MefState.Instance.entries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {

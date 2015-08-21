@@ -21,19 +21,19 @@ namespace ICSharpCode.ILSpy.TextView {
 	[ExportContextMenuEntryAttribute(Header = "Cop_y", Icon = "Copy", Category = "Editor", InputGestureText = "Ctrl+C", Order = 1000)]
 	internal sealed class CopyContextMenuEntry : IContextMenuEntry
 	{
-		public bool IsVisible(TextViewContext context)
+		public bool IsVisible(ContextMenuEntryContext context)
 		{
 			return IsEnabled(context);
 		}
 
-		public bool IsEnabled(TextViewContext context)
+		public bool IsEnabled(ContextMenuEntryContext context)
 		{
-			return context.TextView != null && context.TextView.textEditor.SelectionLength > 0;
+			return context.Element is DecompilerTextView && ((DecompilerTextView)context.Element).textEditor.SelectionLength > 0;
 		}
 
-		public void Execute(TextViewContext context)
+		public void Execute(ContextMenuEntryContext context)
 		{
-			context.TextView.textEditor.Copy();
+			((DecompilerTextView)context.Element).textEditor.Copy();
 		}
 	}
 }
