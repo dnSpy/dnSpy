@@ -736,8 +736,8 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	[ExportContextMenuEntry(Order = 510.0, Category = "Hex", InputGestureText = "Shift+Alt+R")]
-	[ExportMainMenuCommand(Menu = "_Edit", MenuOrder = 3510.0, MenuCategory = "Hex", MenuInputGestureText = "Shift+Alt+R")]
+	[ExportContextMenuEntry(Order = 510.0, Category = "Hex")]
+	[ExportMainMenuCommand(Menu = "_Edit", MenuOrder = 3510.0, MenuCategory = "Hex")]
 	sealed class GoToMDTableRowHexEditorCommand : HexCommand {
 		internal static void OnLoaded() {
 			MainWindow.Instance.CodeBindings.Add(new RoutedCommand("GoToMDTableRow", typeof(GoToMDTableRowHexEditorCommand)),
@@ -765,6 +765,8 @@ namespace dnSpy.AsmEditor.Hex {
 		public override void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
 			var tokRef = GetTokenReference(context);
 			menuItem.Header = string.Format("Go to MD Table Row ({0:X8})", tokRef.Token);
+			if (context.Element == MainWindow.Instance.treeView || context.Element is DecompilerTextView)
+				menuItem.InputGestureText = "Shift+Alt+R";
 		}
 
 		internal static void ExecuteInternal(ContextMenuEntryContext context) {

@@ -75,6 +75,7 @@ Ctrl+Alt+W	| (Text view) Toggle word wrap
 Shift+Dbl Click| (BP/Call stack/Search/etc windows) Open BP/method/etc in a new tab
 Ctrl+C		| (Text view) Copy selected text
 Ctrl+B		| (Text view, IL language) Copy selected lines as IL hex bytes
+Ctrl+E		| (Text view) Edit IL instructions
 Ctrl+S		| Save code
 Ctrl+Shift+S| Save all modified assemblies and netmodules
 Ctrl+O		| Open assembly

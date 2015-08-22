@@ -528,7 +528,7 @@ namespace dnSpy.Tabs {
 			DetachTabState(srcTabState);
 			dstTabManager.AttachTabState(srcTabState, insertIndex);
 
-			if ((bool)srcTabState.TabItem.GetValue(UIElement.IsKeyboardFocusWithinProperty)) {
+			if (srcTabState.TabItem.IsKeyboardFocusWithin) {
 				tabGroupsManager.SetActiveTab(srcTabState);
 				this.IsActive = false;
 				dstTabManager.IsActive = true;

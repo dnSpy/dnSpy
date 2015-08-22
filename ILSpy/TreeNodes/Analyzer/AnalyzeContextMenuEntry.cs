@@ -48,21 +48,27 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		static IMemberRef GetMemberRef()
 		{
 			var textView = MainWindow.Instance.ActiveTextView;
-			if (textView != null && (bool)textView.GetValue(UIElement.IsKeyboardFocusWithinProperty)) {
+			if (textView != null && textView.IsKeyboardFocusWithin) {
 				var refSeg = textView.GetCurrentReferenceSegment();
 				return refSeg == null ? null : refSeg.Reference as IMemberRef;
 			}
 
 			var treeView = MainWindow.Instance.treeView;
-			if ((bool)treeView.GetValue(UIElement.IsKeyboardFocusWithinProperty)) {
+			if (treeView.IsKeyboardFocusWithin) {
 				var node = treeView.SelectedItem as IMemberTreeNode;
 				return node == null ? null : node.Member;
 			}
 
 			treeView = AnalyzerTreeView.Instance;
-			if ((bool)treeView.GetValue(UIElement.IsKeyboardFocusWithinProperty)) {
+			if (treeView.IsKeyboardFocusWithin) {
 				var node = treeView.SelectedItem as IMemberTreeNode;
 				return node == null ? null : node.Member;
+			}
+
+			var listBox = SearchPane.Instance.listBox;
+			if (listBox.IsKeyboardFocusWithin) {
+				var res = listBox.SelectedItem as SearchResult;
+				return res == null ? null : res.Member;
 			}
 
 			return null;
