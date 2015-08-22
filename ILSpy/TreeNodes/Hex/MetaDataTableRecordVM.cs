@@ -32,11 +32,11 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		public override string Name {
-			get { return name; }
+			get { return string.Format("{0}[{1:X6}]", mdToken.Table, mdToken.Rid); }
 		}
 
 		public string OffsetString {
-			get { return string.Format("0x{0:X8}", startOffset); }
+			get { return string.Format("0x{0:X8}", StartOffset); }
 		}
 
 		public MDToken Token {
@@ -44,19 +44,12 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		public ulong StartOffset {
-			get { return startOffset; }
+			get { return mdVM.StartOffset + (mdToken.Rid - 1) * (ulong)mdVM.TableInfo.RowSize; }
 		}
 
 		public ulong EndOffset {
-			get { return endOffset; }
+			get { return mdVM.StartOffset + mdToken.Rid * (ulong)mdVM.TableInfo.RowSize - 1; }
 		}
-
-		readonly string name;
-		protected readonly HexDocument doc;
-		protected readonly ulong startOffset;
-		readonly ulong endOffset;
-		MDToken mdToken;
-		readonly HexField[] hexFields;
 
 		public override IEnumerable<HexField> HexFields {
 			get { return hexFields; }
@@ -184,7 +177,7 @@ namespace dnSpy.TreeNodes.Hex {
 			if ((uint)index >= (uint)hexFields.Length)
 				return string.Empty;
 
-			var col = tableInfo.Columns[index];
+			var col = mdVM.TableInfo.Columns[index];
 			var field = hexFields[index];
 
 			switch (col.ColumnSize) {
@@ -315,9 +308,9 @@ namespace dnSpy.TreeNodes.Hex {
 
 		uint ReadFieldValue(HexField field) {
 			if (field.Size == 2)
-				return doc.ReadUInt16(field.StartOffset);
+				return mdVM.Document.ReadUInt16(field.StartOffset);
 			else if (field.Size == 4)
-				return doc.ReadUInt32(field.StartOffset);
+				return mdVM.Document.ReadUInt32(field.StartOffset);
 			return 0;
 		}
 
@@ -325,7 +318,7 @@ namespace dnSpy.TreeNodes.Hex {
 			if ((uint)index >= (uint)hexFields.Length)
 				return false;
 
-			var col = tableInfo.Columns[index];
+			var col = mdVM.TableInfo.Columns[index];
 			switch (col.ColumnSize) {
 			case ColumnSize.Module:
 			case ColumnSize.TypeRef:
@@ -422,33 +415,29 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return null; }
 		}
 
-		readonly MetaDataTableVM mdVM;
-		readonly TableInfo tableInfo;
+		protected readonly MetaDataTableVM mdVM;
+		MDToken mdToken;
+		readonly HexField[] hexFields;
 
-		protected MetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
+		protected MetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
 			: base(mdVM.Owner) {
 			this.mdVM = mdVM;
-			this.name = string.Format("{0}[{1:X6}]", mdToken.Table, mdToken.Rid);
-			this.doc = doc;
-			this.startOffset = startOffset;
-			this.endOffset = startOffset + (uint)tableInfo.RowSize - 1;
 			this.mdToken = mdToken;
-			this.tableInfo = tableInfo;
-			this.hexFields = new HexField[tableInfo.Columns.Count];
+			this.hexFields = new HexField[mdVM.TableInfo.Columns.Count];
 			for (int i = 0; i < this.hexFields.Length; i++)
-				this.hexFields[i] = CreateField(tableInfo.Columns[i]);
+				this.hexFields[i] = CreateField(mdVM.TableInfo.Columns[i]);
 		}
 
 		protected virtual HexField CreateField(ColumnInfo colInfo) {
 			switch (colInfo.ColumnSize) {
-			case ColumnSize.Int16: return new Int16HexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset);
-			case ColumnSize.Int32: return new Int32HexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset);
+			case ColumnSize.Int16: return new Int16HexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
+			case ColumnSize.Int32: return new Int32HexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
 			}
 
 			switch (colInfo.Size) {
-			case 1: return new ByteHexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset);
-			case 2: return new UInt16HexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset);
-			case 4: return new UInt32HexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset);
+			case 1: return new ByteHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
+			case 2: return new UInt16HexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
+			case 4: return new UInt32HexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
 			default: throw new InvalidOperationException();
 			}
 		}
@@ -474,8 +463,8 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class ModuleMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ModuleMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public ModuleMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		public override string Info {
@@ -489,8 +478,8 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class TypeRefMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public TypeRefMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public TypeRefMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		public override string Info {
@@ -508,8 +497,8 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class TypeDefMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public TypeDefMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public TypeDefMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		static readonly IntegerHexBitFieldEnumInfo[] VisibilityInfos = new IntegerHexBitFieldEnumInfo[] {
@@ -550,7 +539,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0)
-				return CreateTypeAttributesField(colInfo, doc, Name, startOffset);
+				return CreateTypeAttributesField(colInfo, mdVM.Document, Name, StartOffset);
 			return base.CreateField(colInfo);
 		}
 
@@ -585,14 +574,14 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class FieldPtrMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public FieldPtrMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public FieldPtrMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class FieldMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public FieldMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public FieldMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		static readonly IntegerHexBitFieldEnumInfo[] AccessInfos = new IntegerHexBitFieldEnumInfo[] {
@@ -607,7 +596,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0) {
-				var field = new UInt16FlagsHexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset);
+				var field = new UInt16FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
 				field.Add(new IntegerHexBitField("Access", 0, 3, AccessInfos));
 				field.Add(new BooleanHexBitField("Static", 4));
 				field.Add(new BooleanHexBitField("InitOnly", 5));
@@ -635,14 +624,14 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class MethodPtrMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public MethodPtrMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public MethodPtrMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class MethodMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public MethodMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public MethodMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		static readonly IntegerHexBitFieldEnumInfo[] CodeTypeInfos = new IntegerHexBitFieldEnumInfo[] {
@@ -674,7 +663,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 1) {
-				var field = new UInt16FlagsHexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset);
+				var field = new UInt16FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
 				field.Add(new IntegerHexBitField("CodeType", 0, 2, CodeTypeInfos));
 				field.Add(new IntegerHexBitField("ManagedType", 2, 1, ManagedInfos));
 				field.Add(new BooleanHexBitField("NoInlining", 3));
@@ -687,7 +676,7 @@ namespace dnSpy.TreeNodes.Hex {
 				return field;
 			}
 			else if (colInfo.Index == 2) {
-				var field = new UInt16FlagsHexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset);
+				var field = new UInt16FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
 				field.Add(new IntegerHexBitField("Access", 0, 3, AccessInfos));
 				field.Add(new BooleanHexBitField("UnmanagedExport", 3));
 				field.Add(new BooleanHexBitField("Static", 4));
@@ -718,19 +707,19 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class ParamPtrMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ParamPtrMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public ParamPtrMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class ParamMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ParamMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public ParamMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0) {
-				var field = new UInt16FlagsHexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset);
+				var field = new UInt16FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
 				field.Add(new BooleanHexBitField("In", 0));
 				field.Add(new BooleanHexBitField("Out", 1));
 				field.Add(new BooleanHexBitField("Optional", 4));
@@ -752,14 +741,14 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class InterfaceImplMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public InterfaceImplMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public InterfaceImplMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class MemberRefMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public MemberRefMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public MemberRefMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		public override string Info {
@@ -773,26 +762,26 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class ConstantMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ConstantMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public ConstantMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class CustomAttributeMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public CustomAttributeMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public CustomAttributeMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class FieldMarshalMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public FieldMarshalMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public FieldMarshalMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class DeclSecurityMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public DeclSecurityMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public DeclSecurityMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		static readonly IntegerHexBitFieldEnumInfo[] SecurityActionInfos = new IntegerHexBitFieldEnumInfo[] {
@@ -816,7 +805,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0) {
-				var field = new Int16FlagsHexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset);
+				var field = new Int16FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
 				field.Add(new IntegerHexBitField("Action", 0, 16, SecurityActionInfos));
 				return field;
 			}
@@ -825,43 +814,43 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class ClassLayoutMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ClassLayoutMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public ClassLayoutMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class FieldLayoutMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public FieldLayoutMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public FieldLayoutMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class StandAloneSigMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public StandAloneSigMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public StandAloneSigMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class EventMapMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public EventMapMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public EventMapMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class EventPtrMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public EventPtrMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public EventPtrMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class EventMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public EventMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public EventMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0) {
-				var field = new UInt16FlagsHexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset);
+				var field = new UInt16FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
 				field.Add(new BooleanHexBitField("SpecialName", 9));
 				field.Add(new BooleanHexBitField("RTSpecialName", 10));
 				return field;
@@ -880,25 +869,25 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class PropertyMapMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public PropertyMapMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public PropertyMapMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class PropertyPtrMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public PropertyPtrMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public PropertyPtrMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class PropertyMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public PropertyMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public PropertyMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0) {
-				var field = new UInt16FlagsHexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset);
+				var field = new UInt16FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
 				field.Add(new BooleanHexBitField("SpecialName", 9));
 				field.Add(new BooleanHexBitField("RTSpecialName", 10));
 				field.Add(new BooleanHexBitField("HasDefault", 12));
@@ -918,13 +907,13 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class MethodSemanticsMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public MethodSemanticsMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public MethodSemanticsMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0) {
-				var field = new UInt16FlagsHexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset);
+				var field = new UInt16FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
 				field.Add(new BooleanHexBitField("Setter", 0));
 				field.Add(new BooleanHexBitField("Getter", 1));
 				field.Add(new BooleanHexBitField("Other", 2));
@@ -938,14 +927,14 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class MethodImplMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public MethodImplMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public MethodImplMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class ModuleRefMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ModuleRefMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public ModuleRefMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		public override string Info {
@@ -959,14 +948,14 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class TypeSpecMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public TypeSpecMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public TypeSpecMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class ImplMapMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ImplMapMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public ImplMapMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		static readonly IntegerHexBitFieldEnumInfo[] CharSetInfos = new IntegerHexBitFieldEnumInfo[] {
@@ -998,7 +987,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0) {
-				var field = new UInt16FlagsHexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset);
+				var field = new UInt16FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
 				field.Add(new BooleanHexBitField("NoMangle", 0));
 				field.Add(new IntegerHexBitField("CharSet", 1, 2, CharSetInfos));
 				field.Add(new IntegerHexBitField("BestFit", 4, 2, BestFitInfos));
@@ -1021,26 +1010,26 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class FieldRVAMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public FieldRVAMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public FieldRVAMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class ENCLogMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ENCLogMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public ENCLogMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class ENCMapMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ENCMapMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public ENCMapMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class AssemblyMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public AssemblyMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public AssemblyMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		static readonly IntegerHexBitFieldEnumInfo[] HashAlgoInfos = new IntegerHexBitFieldEnumInfo[] {
@@ -1076,14 +1065,14 @@ namespace dnSpy.TreeNodes.Hex {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0) {
-				var field = new UInt32FlagsHexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset);
+				var field = new UInt32FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
 				field.Add(new IntegerHexBitField("Hash Algorithm", 0, 32, HashAlgoInfos));
 				return field;
 			}
 			else if (1 <= colInfo.Index && colInfo.Index <= 4)
-				return new UInt16HexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset, true);
+				return new UInt16HexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset, true);
 			else if (colInfo.Index == 5)
-				return CreateAssemblyAttributesField(colInfo, doc, Name, startOffset);
+				return CreateAssemblyAttributesField(colInfo, mdVM.Document, Name, StartOffset);
 			return base.CreateField(colInfo);
 		}
 
@@ -1110,33 +1099,33 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class AssemblyProcessorMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public AssemblyProcessorMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public AssemblyProcessorMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class AssemblyOSMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public AssemblyOSMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public AssemblyOSMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (1 <= colInfo.Index && colInfo.Index <= 2)
-				return new UInt32HexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset, true);
+				return new UInt32HexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset, true);
 			return base.CreateField(colInfo);
 		}
 	}
 
 	sealed class AssemblyRefMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public AssemblyRefMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public AssemblyRefMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (0 <= colInfo.Index && colInfo.Index <= 3)
-				return new UInt16HexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset, true);
+				return new UInt16HexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset, true);
 			else if (colInfo.Index == 4)
-				return AssemblyMetaDataTableRecordVM.CreateAssemblyAttributesField(colInfo, doc, Name, startOffset);
+				return AssemblyMetaDataTableRecordVM.CreateAssemblyAttributesField(colInfo, mdVM.Document, Name, StartOffset);
 			return base.CreateField(colInfo);
 		}
 
@@ -1151,31 +1140,31 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class AssemblyRefProcessorMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public AssemblyRefProcessorMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public AssemblyRefProcessorMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class AssemblyRefOSMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public AssemblyRefOSMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public AssemblyRefOSMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (1 <= colInfo.Index && colInfo.Index <= 2)
-				return new UInt32HexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset, true);
+				return new UInt32HexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset, true);
 			return base.CreateField(colInfo);
 		}
 	}
 
 	sealed class FileMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public FileMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public FileMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0) {
-				var field = new UInt32FlagsHexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset);
+				var field = new UInt32FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
 				field.Add(new BooleanHexBitField("ContainsNoMetaData", 0));
 				return field;
 			}
@@ -1193,13 +1182,13 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class ExportedTypeMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ExportedTypeMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public ExportedTypeMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 0)
-				return TypeDefMetaDataTableRecordVM.CreateTypeAttributesField(colInfo, doc, Name, startOffset);
+				return TypeDefMetaDataTableRecordVM.CreateTypeAttributesField(colInfo, mdVM.Document, Name, StartOffset);
 			return base.CreateField(colInfo);
 		}
 
@@ -1214,8 +1203,8 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class ManifestResourceMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public ManifestResourceMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public ManifestResourceMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		static readonly IntegerHexBitFieldEnumInfo[] VisibilityInfos = new IntegerHexBitFieldEnumInfo[] {
@@ -1225,7 +1214,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 1) {
-				var field = new UInt32FlagsHexField(doc, Name, colInfo.Name, startOffset + (uint)colInfo.Offset);
+				var field = new UInt32FlagsHexField(mdVM.Document, Name, colInfo.Name, StartOffset + (uint)colInfo.Offset);
 				field.Add(new IntegerHexBitField("Visibility", 0, 3, VisibilityInfos));
 				return field;
 			}
@@ -1243,19 +1232,19 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class NestedClassMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public NestedClassMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public NestedClassMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class GenericParamMetaDataTableRecordV11VM : MetaDataTableRecordVM {
-		public GenericParamMetaDataTableRecordV11VM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public GenericParamMetaDataTableRecordV11VM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 1)
-				return GenericParamMetaDataTableRecordVM.CreateGenericParamAttributesField(colInfo, doc, Name, startOffset);
+				return GenericParamMetaDataTableRecordVM.CreateGenericParamAttributesField(colInfo, mdVM.Document, Name, StartOffset);
 			return base.CreateField(colInfo);
 		}
 
@@ -1270,8 +1259,8 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class GenericParamMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public GenericParamMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public GenericParamMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 
 		static readonly IntegerHexBitFieldEnumInfo[] VarianceInfos = new IntegerHexBitFieldEnumInfo[] {
@@ -1282,7 +1271,7 @@ namespace dnSpy.TreeNodes.Hex {
 
 		protected override HexField CreateField(ColumnInfo colInfo) {
 			if (colInfo.Index == 1)
-				return CreateGenericParamAttributesField(colInfo, doc, Name, startOffset);
+				return CreateGenericParamAttributesField(colInfo, mdVM.Document, Name, StartOffset);
 			return base.CreateField(colInfo);
 		}
 
@@ -1306,14 +1295,14 @@ namespace dnSpy.TreeNodes.Hex {
 	}
 
 	sealed class MethodSpecMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public MethodSpecMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public MethodSpecMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 
 	sealed class GenericParamConstraintMetaDataTableRecordVM : MetaDataTableRecordVM {
-		public GenericParamConstraintMetaDataTableRecordVM(MetaDataTableVM mdVM, HexDocument doc, ulong startOffset, MDToken mdToken, TableInfo tableInfo)
-			: base(mdVM, doc, startOffset, mdToken, tableInfo) {
+		public GenericParamConstraintMetaDataTableRecordVM(MetaDataTableVM mdVM, MDToken mdToken)
+			: base(mdVM, mdToken) {
 		}
 	}
 }
