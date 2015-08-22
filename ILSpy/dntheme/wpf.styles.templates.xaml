@@ -2085,7 +2085,9 @@
 							BorderBrush="{TemplateBinding BorderBrush}"
 							Background="{TemplateBinding Background}"
 							SnapsToDevicePixels="true">
+                        <!-- Focusable=False (setter) is ignored in the style for some reason. Override it here -->
                         <ScrollViewer Style="{DynamicResource {x:Static GridView.GridViewScrollViewerStyleKey}}"
+                                      Focusable="False"
                                       Padding="{TemplateBinding Padding}">
                             <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </ScrollViewer>

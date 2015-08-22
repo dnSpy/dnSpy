@@ -695,7 +695,7 @@ namespace ICSharpCode.ILSpy
 
 		void InstallCommands()
 		{
-			CodeBindings.Add(new RoutedCommand("GoToLine", typeof(MainWindow)), GoToLineExecuted, null, ModifierKeys.Control, Key.G);
+			CodeBindings.Add(new RoutedCommand("GoToLine", typeof(MainWindow)), GoToLineExecuted, GoToLineExecutedCanExecute, ModifierKeys.Control, Key.G);
 
 			var bindings = new TabBindings();
 			bindings.Add(new RoutedCommand("OpenNewTab", typeof(MainWindow)), OpenNewTabExecuted, null, ModifierKeys.Control, Key.T);
@@ -2585,6 +2585,12 @@ namespace ICSharpCode.ILSpy
 				Debug.Fail("Shouldn't be here.");
 				return assemblyList.OpenAssemblyDelay(moduleFilename, true);
 			}
+		}
+
+		private void GoToLineExecutedCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			var tabState = GetActiveDecompileTabState();
+			e.CanExecute = tabState != null && tabState.IsTextViewInVisualTree;
 		}
 
 		private void GoToLineExecuted(object sender, ExecutedRoutedEventArgs e)

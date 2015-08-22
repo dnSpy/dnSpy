@@ -17,13 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using System.Windows.Threading;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy {
@@ -84,9 +88,10 @@ namespace dnSpy {
 			return CleanUpName(id);
 		}
 
-		public static bool HasChildrenFocus(ListBox listBox) {
+		public static bool HasSelectedChildrenFocus(ListBox listBox) {
 			if (listBox == null)
 				return false;
+
 			foreach (var item in listBox.SelectedItems) {
 				var elem = listBox.ItemContainerGenerator.ContainerFromItem(item) as UIElement;
 				if (elem == null)
@@ -97,6 +102,23 @@ namespace dnSpy {
 					return true;
 			}
 			return false;
+		}
+
+		public static void ScrollSelectAndSetFocus(ListBox listBox, object obj) {
+			listBox.SelectedItem = obj;
+			listBox.ScrollIntoView(obj);
+			SetFocus(listBox, obj, DispatcherPriority.Normal);
+		}
+
+		public static void SetFocus(Selector selector, object obj, DispatcherPriority prio) {
+			selector.Dispatcher.BeginInvoke(prio, new Action(delegate {
+				if (selector.SelectedItem == obj) {
+					var item = selector.ItemContainerGenerator.ContainerFromItem(obj) as UIElement;
+					Debug.Assert(item != null);
+					if (item != null)
+						item.Focus();
+				}
+			}));
 		}
 	}
 }

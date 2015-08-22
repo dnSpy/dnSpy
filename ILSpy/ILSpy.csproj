@@ -329,6 +329,7 @@
       <DependentUpon>SelectDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Hex\SelectVM.cs" />
+    <Compile Include="AsmEditor\Hex\TableSorter.cs" />
     <Compile Include="AsmEditor\Hex\WriteHexUndoCommand.cs" />
     <Compile Include="AsmEditor\IIndexedItem.cs" />
     <Compile Include="AsmEditor\IndexObservableCollection.cs" />
@@ -619,7 +620,6 @@
     <Compile Include="Search\TreeViewNodeFilterBase.cs" />
     <Compile Include="Search\VisibleMembersFlags.cs" />
     <Compile Include="TreeNodes\GoToTokenContextMenuEntry.cs" />
-    <Compile Include="TreeNodes\Hex\ContextMenuAP.cs" />
     <Compile Include="TreeNodes\Hex\HexField.cs" />
     <Compile Include="TreeNodes\Hex\HexTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\HexUtils.cs" />
@@ -637,6 +637,7 @@
     <Compile Include="TreeNodes\Hex\ImageOptionalHeaderVM.cs" />
     <Compile Include="TreeNodes\Hex\ImageSectionHeaderTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\ImageSectionHeaderVM.cs" />
+    <Compile Include="TreeNodes\Hex\InitDataTemplateAP.cs" />
     <Compile Include="TreeNodes\Hex\MetaDataTableRecordTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\MetaDataTableRecordVM.cs" />
     <Compile Include="TreeNodes\Hex\MetaDataTableTreeNode.cs" />
@@ -651,6 +652,8 @@
     <Compile Include="TreeNodes\Hex\TablesStreamTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\TablesStreamVM.cs" />
     <Compile Include="TreeNodes\Hex\VirtualizedList.cs" />
+    <Compile Include="TreeNodes\IInitializeDataTemplate.cs" />
+    <Compile Include="TreeNodes\InitializeDataTemplateContextMenu.cs" />
     <Compile Include="TreeNodes\ITokenTreeNode.cs" />
     <Compile Include="TreeNodes\ITreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\NodePathName.cs" />

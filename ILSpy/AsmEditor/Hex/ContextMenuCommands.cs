@@ -63,7 +63,7 @@ namespace dnSpy.AsmEditor.Hex {
 				bool teFocus = textView != null && textView.TextEditor.TextArea.IsFocused;
 				if (teFocus)
 					return ContextMenuEntryContext.Create(textView, true);
-				if (UIUtils.HasChildrenFocus(MainWindow.Instance.treeView))
+				if (UIUtils.HasSelectedChildrenFocus(MainWindow.Instance.treeView))
 					return ContextMenuEntryContext.Create(MainWindow.Instance.treeView, true);
 			}
 
@@ -1143,7 +1143,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Fill Selection with Byte...", Order = 210, Category = "Edit", Icon = "Fill")]
+	[ExportContextMenuEntry(Header = "Fill Selection with Byte…", Order = 210, Category = "Edit", Icon = "Fill")]
 	sealed class WriteToSelectionSelectionHexBoxContextMenuEntry : HexBoxContextMenuEntry {
 		protected override void Execute(HexTabState tabState) {
 			var sel = tabState.HexBox.Selection;

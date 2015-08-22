@@ -53,7 +53,7 @@
     </Style>
 
     <DataTemplate DataType="{x:Type tnhex:ImageDosHeaderVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -222,7 +222,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:ImageFileHeaderVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -332,7 +332,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:ImageOptionalHeader32VM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.Resources>
                     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -706,7 +706,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:ImageOptionalHeader64VM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.Resources>
                     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -1078,7 +1078,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:ImageSectionHeaderVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -1228,7 +1228,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:ImageCor20HeaderVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -1355,7 +1355,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:StorageSignatureVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -1399,7 +1399,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:StorageHeaderVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -1442,7 +1442,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:StorageStreamVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -1471,7 +1471,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:TablesStreamVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -2158,7 +2158,7 @@
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
-                tnhex:ContextMenuAP.Install="True"
+                tnhex:InitDataTemplateAP.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2206,7 +2206,7 @@
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
-                tnhex:ContextMenuAP.Install="True"
+                tnhex:InitDataTemplateAP.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2261,7 +2261,7 @@
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
-                tnhex:ContextMenuAP.Install="True"
+                tnhex:InitDataTemplateAP.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2323,7 +2323,7 @@
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
-                tnhex:ContextMenuAP.Install="True"
+                tnhex:InitDataTemplateAP.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2392,7 +2392,7 @@
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
-                tnhex:ContextMenuAP.Install="True"
+                tnhex:InitDataTemplateAP.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2468,7 +2468,7 @@
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
-                tnhex:ContextMenuAP.Install="True"
+                tnhex:InitDataTemplateAP.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2551,7 +2551,7 @@
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
-                tnhex:ContextMenuAP.Install="True"
+                tnhex:InitDataTemplateAP.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2655,7 +2655,7 @@
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
-                tnhex:ContextMenuAP.Install="True"
+                tnhex:InitDataTemplateAP.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2710,7 +2710,7 @@
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
-                tnhex:ContextMenuAP.Install="True"
+                tnhex:InitDataTemplateAP.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2772,7 +2772,7 @@
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
-                tnhex:ContextMenuAP.Install="True"
+                tnhex:InitDataTemplateAP.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2841,7 +2841,7 @@
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
-                tnhex:ContextMenuAP.Install="True"
+                tnhex:InitDataTemplateAP.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -2917,7 +2917,7 @@
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
-                tnhex:ContextMenuAP.Install="True"
+                tnhex:InitDataTemplateAP.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -3000,7 +3000,7 @@
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
-                tnhex:ContextMenuAP.Install="True"
+                tnhex:InitDataTemplateAP.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -3090,7 +3090,7 @@
             <ListView
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
-                tnhex:ContextMenuAP.Install="True"
+                tnhex:InitDataTemplateAP.Initialize="True"
                 SelectionMode="Extended"
                 ItemsSource="{Binding Collection}"
                 SelectedItem="{Binding SelectedItem}">
@@ -3197,7 +3197,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:MetaDataTableRecordVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.Resources>
                     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -3269,7 +3269,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:TypeDefMetaDataTableRecordVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -3375,7 +3375,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:FieldMetaDataTableRecordVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -3453,7 +3453,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:MethodMetaDataTableRecordVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -3596,7 +3596,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:ParamMetaDataTableRecordVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -3649,7 +3649,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:DeclSecurityMetaDataTableRecordVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -3700,7 +3700,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:EventMetaDataTableRecordVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -3749,7 +3749,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:PropertyMetaDataTableRecordVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -3799,7 +3799,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:MethodSemanticsMetaDataTableRecordVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -3854,7 +3854,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:ImplMapMetaDataTableRecordVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -3933,7 +3933,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:AssemblyMetaDataTableRecordVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -4057,7 +4057,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:AssemblyRefMetaDataTableRecordVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -4165,7 +4165,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:FileMetaDataTableRecordVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -4213,7 +4213,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:ExportedTypeMetaDataTableRecordVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -4313,7 +4313,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:ManifestResourceMetaDataTableRecordVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -4370,7 +4370,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:GenericParamMetaDataTableRecordV11VM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -4450,7 +4450,7 @@
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type tnhex:GenericParamMetaDataTableRecordVM}">
-        <Border tnhex:ContextMenuAP.Install="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
+        <Border tnhex:InitDataTemplateAP.Initialize="True" TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}"  BorderThickness="1" SnapsToDevicePixels="True">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />

@@ -32,7 +32,7 @@ namespace ICSharpCode.ILSpy.Options
 	/// </summary>
 	public partial class OptionsDialog : MetroWindow
 	{
-		class MefState
+		sealed class MefState
 		{
 			public static readonly MefState Instance = new MefState();
 

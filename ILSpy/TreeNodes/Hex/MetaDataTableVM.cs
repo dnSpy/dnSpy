@@ -127,6 +127,18 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 		object selectedItem;
 
+		public HexDocument Document {
+			get { return doc; }
+		}
+
+		public ulong StartOffset {
+			get { return startOffset; }
+		}
+
+		public ulong EndOffset {
+			get { return endOffset; }
+		}
+
 		readonly HexDocument doc;
 		readonly ulong startOffset;
 		readonly ulong endOffset;
