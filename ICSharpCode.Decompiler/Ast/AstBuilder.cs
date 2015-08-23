@@ -438,9 +438,12 @@ namespace ICSharpCode.Decompiler.Ast {
 			int pos = name.LastIndexOf('`');
 			if (pos >= 0)
 				name = name.Substring(0, pos);
-			pos = name.LastIndexOf('.');
-			if (pos >= 0)
-				name = name.Substring(pos + 1);
+			// Could be a compiler-generated name, eg. "<.ctor>b__0_0"
+			if (name.Length == 0 || name[0] != '<') {
+				pos = name.LastIndexOf('.');
+				if (pos >= 0)
+					name = name.Substring(pos + 1);
+			}
 			return name;
 		}
 
