@@ -400,7 +400,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 
 		public IEnumerable<object> ModifiedObjects {
-			get { return new ILSpyTreeNode[0]; }
+			get { yield return asmNodeCreator.AssemblyTreeNode; }
 		}
 
 		public void Dispose() {
