@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -402,7 +403,8 @@ namespace ICSharpCode.ILSpy
 					(kb.Modifiers == ModifierKeys.None && kb.Key == Key.Enter) ||
 					(kb.Modifiers == ModifierKeys.None && kb.Key == Key.Tab) ||
 					(kb.Modifiers == ModifierKeys.Shift && kb.Key == Key.Tab) ||
-					(kb.Modifiers == ModifierKeys.Control && kb.Key == Key.Enter)) {
+					(kb.Modifiers == ModifierKeys.Control && kb.Key == Key.Enter) ||
+					(kb.Modifiers == ModifierKeys.None && kb.Key == Key.Delete)) {
 					inputList.RemoveAt(i);
 					commands.Add(kb.Command);
 				}
@@ -425,7 +427,9 @@ namespace ICSharpCode.ILSpy
 				if (binding.Command == ICSharpCode.AvalonEdit.AvalonEditCommands.DeleteLine ||
 					binding.Command == ApplicationCommands.Undo ||
 					binding.Command == ApplicationCommands.Redo ||
-					binding.Command == ApplicationCommands.Cut)
+					binding.Command == ApplicationCommands.Cut ||
+					binding.Command == ApplicationCommands.Delete ||
+					binding.Command == EditingCommands.Delete)
 					bindingList.RemoveAt(i);
 			}
 		}
@@ -682,6 +686,10 @@ namespace ICSharpCode.ILSpy
 					target.CommandBindings.Remove(binding);
 				foreach (var binding in InputBindings)
 					target.InputBindings.Remove(binding);
+			}
+
+			public void Add(ICommand command, ICommand realCommand, ModifierKeys modifiers1, Key key1, ModifierKeys modifiers2 = ModifierKeys.None, Key key2 = Key.None, ModifierKeys modifiers3 = ModifierKeys.None, Key key3 = Key.None) {
+				Add(command, (s, e) => realCommand.Execute(null), (s, e) => e.CanExecute = realCommand.CanExecute(null), modifiers1, key1, modifiers2, key2, modifiers3, key3);
 			}
 
 			public void Add(ICommand command, ExecutedRoutedEventHandler exec, CanExecuteRoutedEventHandler canExec, ModifierKeys modifiers1, Key key1, ModifierKeys modifiers2 = ModifierKeys.None, Key key2 = Key.None, ModifierKeys modifiers3 = ModifierKeys.None, Key key3 = Key.None) {

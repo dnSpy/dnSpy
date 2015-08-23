@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
@@ -39,6 +40,8 @@ namespace dnSpy.AsmEditor.Resources {
 		public void OnLoaded() {
 			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteResourceExecuted, DeleteResourceCanExecute));
 			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteResourceElementExecuted, DeleteResourceElementCanExecute));
+			MainWindow.Instance.CodeBindings.Add(EditingCommands.Delete, new TextEditorCommandProxy(new DeleteResourceCommand.TheTextEditorCommand()), ModifierKeys.None, Key.Delete);
+			MainWindow.Instance.CodeBindings.Add(EditingCommands.Delete, new TextEditorCommandProxy(new DeleteResourceElementCommand.TheTextEditorCommand()), ModifierKeys.None, Key.Delete);
 		}
 
 		void DeleteResourceCanExecute(object sender, CanExecuteRoutedEventArgs e) {
@@ -88,9 +91,10 @@ namespace dnSpy.AsmEditor.Resources {
 
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Delete",
+								InputGestureText = "Del",
 								Category = "AsmEd",
 								Order = 380)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
+		internal sealed class TheTextEditorCommand : TextEditorCommand {
 			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					DeleteResourceCommand.CanExecute(ctx.Nodes);
@@ -238,9 +242,10 @@ namespace dnSpy.AsmEditor.Resources {
 
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Delete",
+								InputGestureText = "Del",
 								Category = "AsmEd",
 								Order = 390)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
+		internal sealed class TheTextEditorCommand : TextEditorCommand {
 			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					DeleteResourceElementCommand.CanExecute(ctx.Nodes);

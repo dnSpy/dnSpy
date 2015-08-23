@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy;
@@ -33,6 +34,7 @@ namespace dnSpy.AsmEditor.Property {
 	sealed class AssemblyPlugin : IPlugin {
 		public void OnLoaded() {
 			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteExecuted, DeleteCanExecute));
+			MainWindow.Instance.CodeBindings.Add(EditingCommands.Delete, new TextEditorCommandProxy(new DeletePropertyDefCommand.TheTextEditorCommand()), ModifierKeys.None, Key.Delete);
 		}
 
 		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e) {
@@ -74,9 +76,10 @@ namespace dnSpy.AsmEditor.Property {
 
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Delete",
+								InputGestureText = "Del",
 								Category = "AsmEd",
 								Order = 350)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
+		internal sealed class TheTextEditorCommand : TextEditorCommand {
 			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					DeletePropertyDefCommand.CanExecute(ctx.Nodes);

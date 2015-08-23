@@ -473,6 +473,7 @@
       <DependentUpon>SaveSingleModuleDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\TextEditorCommand.cs" />
+    <Compile Include="AsmEditor\TextEditorCommandProxy.cs" />
     <Compile Include="AsmEditor\ToolbarCommands.cs" />
     <Compile Include="AsmEditor\TreeNodeCommand.cs" />
     <Compile Include="AsmEditor\Types\TypeDefCommands.cs" />
