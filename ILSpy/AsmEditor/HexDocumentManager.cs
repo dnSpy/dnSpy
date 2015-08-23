@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security;
@@ -30,9 +31,48 @@ namespace dnSpy.AsmEditor {
 		public static readonly HexDocumentManager Instance = new HexDocumentManager();
 
 		object lockObj = new object();
-		Dictionary<string, AsmEdHexDocument> filenameToDoc = new Dictionary<string, AsmEdHexDocument>(StringComparer.OrdinalIgnoreCase);
+		Dictionary<string, object> filenameToDoc = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
 		HexDocumentManager() {
+			UndoCommandManager.Instance.OnEvent += UndoCommandManager_OnEvent;
+		}
+
+		void UndoCommandManager_OnEvent(object sender, UndoCommandManagerEventArgs e) {
+			var doc = e.UndoObject as AsmEdHexDocument;
+			if (doc == null)
+				return;
+
+			if (e.Type == UndoCommandManagerEventType.Saved)
+				OnDocumentSaved(doc);
+			else if (e.Type == UndoCommandManagerEventType.Dirty)
+				OnDocumentDirty(doc);
+		}
+
+		void OnDocumentSaved(AsmEdHexDocument doc) {
+			lock (lockObj) {
+				object dictObj;
+				bool b = filenameToDoc.TryGetValue(doc.Name, out dictObj);
+				Debug.Assert(b);
+				if (!b)
+					return;
+				if (dictObj is WeakReference) {
+					Debug.Assert(((WeakReference)dictObj).Target == doc);
+					return;
+				}
+				Debug.Assert(doc == dictObj);
+				filenameToDoc[doc.Name] = new WeakReference(doc);
+			}
+		}
+
+		void OnDocumentDirty(AsmEdHexDocument doc) {
+			lock (lockObj) {
+				object dictObj;
+				bool b = filenameToDoc.TryGetValue(doc.Name, out dictObj);
+				Debug.Assert(b);
+				if (!b)
+					return;
+				filenameToDoc[doc.Name] = doc;
+			}
 		}
 
 		public bool Exists(string filename) {
@@ -42,11 +82,24 @@ namespace dnSpy.AsmEditor {
 		public AsmEdHexDocument TryGet(string filename) {
 			filename = GetFullPath(filename);
 
-			lock (lockObj) {
-				AsmEdHexDocument doc;
-				filenameToDoc.TryGetValue(filename, out doc);
+			lock (lockObj)
+				return TryGet_NoLock(filename);
+		}
+
+		AsmEdHexDocument TryGet_NoLock(string filename) {
+			object obj;
+			if (!filenameToDoc.TryGetValue(filename, out obj))
+				return null;
+			return TryGetDoc(obj);
+		}
+
+		AsmEdHexDocument TryGetDoc(object obj) {
+			var doc = obj as AsmEdHexDocument;
+			if (doc != null)
 				return doc;
-			}
+			var weakRef = obj as WeakReference;
+			Debug.Assert(weakRef != null);
+			return weakRef == null ? null : weakRef.Target as AsmEdHexDocument;
 		}
 
 		public AsmEdHexDocument GetOrCreate(string filename) {
@@ -55,8 +108,8 @@ namespace dnSpy.AsmEditor {
 			filename = GetFullPath(filename);
 
 			lock (lockObj) {
-				AsmEdHexDocument doc;
-				if (filenameToDoc.TryGetValue(filename, out doc))
+				var doc = TryGet_NoLock(filename);
+				if (doc != null)
 					return doc;
 
 				byte[] data;
@@ -68,7 +121,7 @@ namespace dnSpy.AsmEditor {
 				}
 
 				doc = new AsmEdHexDocument(data, filename);
-				filenameToDoc.Add(filename, doc);
+				filenameToDoc[filename] = new WeakReference(doc);
 				return doc;
 			}
 		}
@@ -77,14 +130,14 @@ namespace dnSpy.AsmEditor {
 			var filename = GetFullPath(peImage.FileName);
 
 			lock (lockObj) {
-				AsmEdHexDocument doc;
-				if (filenameToDoc.TryGetValue(filename, out doc))
+				var doc = TryGet_NoLock(filename);
+				if (doc != null)
 					return doc;
 
 				using (var stream = peImage.CreateFullStream()) {
 					var data = stream.ReadAllBytes();
 					doc = new AsmEdHexDocument(data, filename);
-					filenameToDoc.Add(filename, doc);
+					filenameToDoc[filename] = new WeakReference(doc);
 					return doc;
 				}
 			}
@@ -92,7 +145,7 @@ namespace dnSpy.AsmEditor {
 
 		public AsmEdHexDocument[] GetDocuments() {
 			lock (lockObj)
-				return filenameToDoc.Values.ToArray();
+				return filenameToDoc.Values.Select(a => TryGetDoc(a)).Where(a => a != null).ToArray();
 		}
 
 		static string GetFullPath(string filename) {
