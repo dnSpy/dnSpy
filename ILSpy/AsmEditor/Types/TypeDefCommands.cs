@@ -241,7 +241,7 @@ namespace dnSpy.AsmEditor.Types {
 
 			var data = new TypeOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, null);
 			var win = new TypeOptionsDlg();
-			win.Title = "Create Type";
+			win.Title = CMD_NAME;
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
 			if (win.ShowDialog() != true)
@@ -357,7 +357,7 @@ namespace dnSpy.AsmEditor.Types {
 
 			var data = new TypeOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, null);
 			var win = new TypeOptionsDlg();
-			win.Title = "Create Nested Type";
+			win.Title = CMD_NAME;
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
 			if (win.ShowDialog() != true)

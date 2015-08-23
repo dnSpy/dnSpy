@@ -369,7 +369,7 @@ namespace dnSpy.AsmEditor.Method {
 
 			var data = new MethodOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, typeNode.TypeDefinition, null);
 			var win = new MethodOptionsDlg();
-			win.Title = "Create Method";
+			win.Title = CMD_NAME;
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
 			if (win.ShowDialog() != true)

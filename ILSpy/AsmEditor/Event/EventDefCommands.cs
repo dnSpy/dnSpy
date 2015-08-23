@@ -274,7 +274,7 @@ namespace dnSpy.AsmEditor.Event {
 
 			var data = new EventOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, typeNode.TypeDefinition);
 			var win = new EventOptionsDlg();
-			win.Title = "Create Event";
+			win.Title = CMD_NAME;
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
 			if (win.ShowDialog() != true)

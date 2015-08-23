@@ -271,7 +271,7 @@ namespace dnSpy.AsmEditor.Field {
 
 			var data = new FieldOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, type);
 			var win = new FieldOptionsDlg();
-			win.Title = "Create Field";
+			win.Title = CMD_NAME;
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
 			if (win.ShowDialog() != true)

@@ -369,7 +369,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			var data = new AssemblyOptionsVM(AssemblyOptions.Create("MyAssembly"), newModule, MainWindow.Instance.CurrentLanguage);
 			data.CanShowClrVersion = true;
 			var win = new AssemblyOptionsDlg();
-			win.Title = "Create Assembly";
+			win.Title = CMD_NAME;
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
 			if (win.ShowDialog() != true)

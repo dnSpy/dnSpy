@@ -271,7 +271,7 @@ namespace dnSpy.AsmEditor.Property {
 
 			var data = new PropertyOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, typeNode.TypeDefinition);
 			var win = new PropertyOptionsDlg();
-			win.Title = "Create Property";
+			win.Title = CMD_NAME;
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
 			if (win.ShowDialog() != true)
