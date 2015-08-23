@@ -560,6 +560,7 @@
       <DependentUpon>DecompilerTabsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="dntheme\FileTabBackgroundConverter.cs" />
+    <Compile Include="MethodKey.cs" />
     <Compile Include="Search\FilterSearcher.cs" />
     <Compile Include="HexEditor\AsciiEncoding.cs" />
     <Compile Include="HexEditor\ByteArrayHexStream.cs" />

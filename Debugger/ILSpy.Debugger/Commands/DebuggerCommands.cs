@@ -15,6 +15,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using dnlib.DotNet;
 using dnSpy;
+using dnSpy.Debugger;
 using dnSpy.Debugger.Bookmarks;
 using dnSpy.Images;
 using ICSharpCode.Decompiler;

@@ -7,17 +7,14 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-
-using SR = System.Reflection;
-
 using Debugger.Interop.CorDebug;
 using Debugger.Interop.CorSym;
 using Debugger.Interop.MetaData;
-using ICSharpCode.ILSpy.Debugger;
 using dnlib.DotNet;
+using dnSpy.Debugger;
+using SR = System.Reflection;
 
-namespace Debugger.MetaData
-{
+namespace Debugger.MetaData {
 	public class DebugMethodInfo: System.Reflection.MethodInfo, IDebugMemberInfo, IOverloadable
 	{
 		DebugType declaringType;

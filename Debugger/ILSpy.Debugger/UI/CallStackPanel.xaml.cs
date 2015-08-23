@@ -13,9 +13,9 @@ using System.Xml.Linq;
 using Debugger;
 using dnlib.DotNet;
 using dnSpy;
+using dnSpy.Debugger;
 using dnSpy.Debugger.Bookmarks;
 using dnSpy.Images;
-using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Services;
 
 namespace ICSharpCode.ILSpy.Debugger.UI {

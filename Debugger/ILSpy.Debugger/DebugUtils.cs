@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using dnlib.DotNet;
+using dnSpy.Debugger;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;

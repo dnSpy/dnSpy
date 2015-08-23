@@ -4,12 +4,12 @@
 using System;
 using System.Windows.Input;
 using System.Windows.Media;
+using dnlib.DotNet;
+using dnSpy.Debugger;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.AvalonEdit;
-using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
-using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.Bookmarks {
 	/// <summary>

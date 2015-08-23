@@ -18,8 +18,8 @@
 */
 
 using System.Collections.Generic;
+using dnSpy.Debugger;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.TextView;
 
 namespace dnSpy {
