@@ -120,5 +120,9 @@ namespace dnSpy {
 				}
 			}));
 		}
+
+		public static void AddCommandBinding(this UIElement elem, ICommand cmd, ICommand realCmd) {
+			elem.CommandBindings.Add(new CommandBinding(cmd, (s, e) => realCmd.Execute(null), (s, e) => e.CanExecute = realCmd.CanExecute(null)));
+		}
 	}
 }

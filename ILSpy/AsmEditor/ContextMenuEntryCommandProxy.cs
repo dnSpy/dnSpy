@@ -17,19 +17,34 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Windows.Input;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor {
-	sealed class TextEditorCommandProxy : ContextMenuEntryCommandProxy {
-		public TextEditorCommandProxy(IContextMenuEntry cmd)
-			: base(cmd) {
+	abstract class ContextMenuEntryCommandProxy : ICommand {
+		readonly IContextMenuEntry cmd;
+
+		protected ContextMenuEntryCommandProxy(IContextMenuEntry cmd) {
+			this.cmd = cmd;
 		}
 
-		protected override ContextMenuEntryContext CreateContext() {
-			var textView = MainWindow.Instance.ActiveTextView;
-			if (textView != null && textView.IsKeyboardFocusWithin)
-				return ContextMenuEntryContext.Create(MainWindow.Instance.ActiveTextView, true);
-			return null;
+		protected abstract ContextMenuEntryContext CreateContext();
+
+		public event EventHandler CanExecuteChanged {
+			add { CommandManager.RequerySuggested += value; }
+			remove { CommandManager.RequerySuggested -= value; }
+		}
+
+		public bool CanExecute(object parameter) {
+			var ctx = CreateContext();
+			return ctx != null && cmd.IsVisible(ctx) && cmd.IsEnabled(ctx);
+		}
+
+		public void Execute(object parameter) {
+			var ctx = CreateContext();
+			if (ctx != null)
+				cmd.Execute(ctx);
 		}
 	}
 }

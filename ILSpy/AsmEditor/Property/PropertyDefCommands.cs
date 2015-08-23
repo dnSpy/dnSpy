@@ -33,16 +33,8 @@ namespace dnSpy.AsmEditor.Property {
 	[Export(typeof(IPlugin))]
 	sealed class AssemblyPlugin : IPlugin {
 		public void OnLoaded() {
-			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteExecuted, DeleteCanExecute));
+			MainWindow.Instance.treeView.AddCommandBinding(ApplicationCommands.Delete, new TreeViewCommandProxy(new DeletePropertyDefCommand.TheEditCommand()));
 			MainWindow.Instance.CodeBindings.Add(EditingCommands.Delete, new TextEditorCommandProxy(new DeletePropertyDefCommand.TheTextEditorCommand()), ModifierKeys.None, Key.Delete);
-		}
-
-		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = DeletePropertyDefCommand.CanExecute(MainWindow.Instance.SelectedNodes);
-		}
-
-		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e) {
-			DeletePropertyDefCommand.Execute(MainWindow.Instance.SelectedNodes);
 		}
 	}
 
@@ -60,7 +52,7 @@ namespace dnSpy.AsmEditor.Property {
 							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2150)]
-		sealed class TheEditCommand : EditCommand {
+		internal sealed class TheEditCommand : EditCommand {
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return DeletePropertyDefCommand.CanExecute(nodes);
 			}
@@ -101,12 +93,12 @@ namespace dnSpy.AsmEditor.Property {
 				menuItem.Header = string.Format("Delete {0} properties", nodes.Length);
 		}
 
-		internal static bool CanExecute(ILSpyTreeNode[] nodes) {
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length > 0 &&
 				nodes.All(n => n is PropertyTreeNode);
 		}
 
-		internal static void Execute(ILSpyTreeNode[] nodes) {
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 

@@ -33,15 +33,7 @@ namespace dnSpy.AsmEditor.Assembly {
 	[Export(typeof(IPlugin))]
 	sealed class AssemblyPlugin : IPlugin {
 		public void OnLoaded() {
-			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteExecuted, DeleteCanExecute));
-		}
-
-		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = RemoveAssemblyCommand.CanExecute(MainWindow.Instance.SelectedNodes);
-		}
-
-		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e) {
-			RemoveAssemblyCommand.Execute(MainWindow.Instance.SelectedNodes);
+			MainWindow.Instance.treeView.AddCommandBinding(ApplicationCommands.Delete, new TreeViewCommandProxy(new RemoveAssemblyCommand.TheEditCommand()));
 		}
 	}
 
@@ -98,7 +90,7 @@ namespace dnSpy.AsmEditor.Assembly {
 							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2100)]
-		sealed class TheEditCommand : EditCommand {
+		internal sealed class TheEditCommand : EditCommand {
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return RemoveAssemblyCommand.CanExecute(nodes);
 			}
@@ -115,12 +107,12 @@ namespace dnSpy.AsmEditor.Assembly {
 			}
 		}
 
-		internal static bool CanExecute(ILSpyTreeNode[] nodes) {
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length > 0 &&
 				nodes.All(n => n is AssemblyTreeNode && !(n.Parent is AssemblyTreeNode));
 		}
 
-		internal static void Execute(ILSpyTreeNode[] nodes) {
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 

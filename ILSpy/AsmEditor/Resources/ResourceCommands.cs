@@ -38,26 +38,10 @@ namespace dnSpy.AsmEditor.Resources {
 	[Export(typeof(IPlugin))]
 	sealed class AssemblyPlugin : IPlugin {
 		public void OnLoaded() {
-			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteResourceExecuted, DeleteResourceCanExecute));
-			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteResourceElementExecuted, DeleteResourceElementCanExecute));
+			MainWindow.Instance.treeView.AddCommandBinding(ApplicationCommands.Delete, new TreeViewCommandProxy(new DeleteResourceCommand.TheEditCommand()));
+			MainWindow.Instance.treeView.AddCommandBinding(ApplicationCommands.Delete, new TreeViewCommandProxy(new DeleteResourceElementCommand.TheEditCommand()));
 			MainWindow.Instance.CodeBindings.Add(EditingCommands.Delete, new TextEditorCommandProxy(new DeleteResourceCommand.TheTextEditorCommand()), ModifierKeys.None, Key.Delete);
 			MainWindow.Instance.CodeBindings.Add(EditingCommands.Delete, new TextEditorCommandProxy(new DeleteResourceElementCommand.TheTextEditorCommand()), ModifierKeys.None, Key.Delete);
-		}
-
-		void DeleteResourceCanExecute(object sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = DeleteResourceCommand.CanExecute(MainWindow.Instance.SelectedNodes);
-		}
-
-		void DeleteResourceExecuted(object sender, ExecutedRoutedEventArgs e) {
-			DeleteResourceCommand.Execute(MainWindow.Instance.SelectedNodes);
-		}
-
-		void DeleteResourceElementCanExecute(object sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = DeleteResourceElementCommand.CanExecute(MainWindow.Instance.SelectedNodes);
-		}
-
-		void DeleteResourceElementExecuted(object sender, ExecutedRoutedEventArgs e) {
-			DeleteResourceElementCommand.Execute(MainWindow.Instance.SelectedNodes);
 		}
 	}
 
@@ -75,7 +59,7 @@ namespace dnSpy.AsmEditor.Resources {
 							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2180)]
-		sealed class TheEditCommand : EditCommand {
+		internal sealed class TheEditCommand : EditCommand {
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return DeleteResourceCommand.CanExecute(nodes);
 			}
@@ -116,12 +100,12 @@ namespace dnSpy.AsmEditor.Resources {
 				menuItem.Header = string.Format("Delete {0} resources", nodes.Length);
 		}
 
-		internal static bool CanExecute(ILSpyTreeNode[] nodes) {
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length > 0 &&
 				nodes.All(n => n is ResourceTreeNode);
 		}
 
-		internal static void Execute(ILSpyTreeNode[] nodes) {
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -226,7 +210,7 @@ namespace dnSpy.AsmEditor.Resources {
 							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2190)]
-		sealed class TheEditCommand : EditCommand {
+		internal sealed class TheEditCommand : EditCommand {
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return DeleteResourceElementCommand.CanExecute(nodes);
 			}
@@ -267,12 +251,12 @@ namespace dnSpy.AsmEditor.Resources {
 				menuItem.Header = string.Format("Delete {0} resources", nodes.Length);
 		}
 
-		internal static bool CanExecute(ILSpyTreeNode[] nodes) {
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length > 0 &&
 				nodes.All(n => n is ResourceElementTreeNode);
 		}
 
-		internal static void Execute(ILSpyTreeNode[] nodes) {
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 

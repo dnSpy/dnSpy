@@ -32,15 +32,7 @@ namespace dnSpy.AsmEditor.Module {
 	[Export(typeof(IPlugin))]
 	sealed class AssemblyPlugin : IPlugin {
 		public void OnLoaded() {
-			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteExecuted, DeleteCanExecute));
-		}
-
-		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = RemoveNetModuleFromAssemblyCommand.CanExecute(MainWindow.Instance.SelectedNodes);
-		}
-
-		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e) {
-			RemoveNetModuleFromAssemblyCommand.Execute(MainWindow.Instance.SelectedNodes);
+			MainWindow.Instance.treeView.AddCommandBinding(ApplicationCommands.Delete, new TreeViewCommandProxy(new RemoveNetModuleFromAssemblyCommand.TheEditCommand()));
 		}
 	}
 
@@ -521,7 +513,7 @@ namespace dnSpy.AsmEditor.Module {
 							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2110)]
-		sealed class TheEditCommand : EditCommand {
+		internal sealed class TheEditCommand : EditCommand {
 			protected override bool IsVisible(ILSpyTreeNode[] nodes) {
 				return RemoveNetModuleFromAssemblyCommand.IsVisible(nodes);
 			}
@@ -542,14 +534,14 @@ namespace dnSpy.AsmEditor.Module {
 				((AssemblyTreeNode)nodes[0]).IsModuleInAssembly;
 		}
 
-		internal static bool CanExecute(ILSpyTreeNode[] nodes) {
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes != null &&
 				nodes.Length == 1 &&
 				nodes[0] is AssemblyTreeNode &&
 				((AssemblyTreeNode)nodes[0]).IsNetModuleInAssembly;
 		}
 
-		internal static void Execute(ILSpyTreeNode[] nodes) {
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 

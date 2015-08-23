@@ -20,15 +20,15 @@
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor {
-	sealed class TextEditorCommandProxy : ContextMenuEntryCommandProxy {
-		public TextEditorCommandProxy(IContextMenuEntry cmd)
+	sealed class TreeViewCommandProxy : ContextMenuEntryCommandProxy {
+		public TreeViewCommandProxy(IContextMenuEntry cmd)
 			: base(cmd) {
 		}
 
 		protected override ContextMenuEntryContext CreateContext() {
-			var textView = MainWindow.Instance.ActiveTextView;
-			if (textView != null && textView.IsKeyboardFocusWithin)
-				return ContextMenuEntryContext.Create(MainWindow.Instance.ActiveTextView, true);
+			var treeView = MainWindow.Instance.treeView;
+			if (treeView.IsKeyboardFocusWithin)
+				return ContextMenuEntryContext.Create(treeView, true);
 			return null;
 		}
 	}
