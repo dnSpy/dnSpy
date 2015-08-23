@@ -46,6 +46,7 @@ namespace ICSharpCode.Decompiler
 			ShowTokenAndRvaComments = false;
 			ShowILBytes = false;
 			SortMembers = false;
+			ForceShowAllMembers = false;
 			DecompilationObject0 = DecompilationObject.NestedTypes;
 			DecompilationObject1 = DecompilationObject.Fields;
 			DecompilationObject2 = DecompilationObject.Events;
@@ -455,6 +456,17 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 
+		public bool ForceShowAllMembers {
+			get { return forceShowAllMembers; }
+			set {
+				if (forceShowAllMembers != value) {
+					forceShowAllMembers = value;
+					OnPropertyChanged("ForceShowAllMembers");
+				}
+			}
+		}
+		bool forceShowAllMembers = false;
+
 		CSharpFormattingOptions csharpFormattingOptions;
 		
 		public CSharpFormattingOptions CSharpFormattingOptions {
@@ -529,6 +541,7 @@ namespace ICSharpCode.Decompiler
 			if (DecompilationObject3 != other.DecompilationObject3) return false;
 			if (DecompilationObject4 != other.DecompilationObject4) return false;
 			if (SortMembers != other.SortMembers) return false;
+			if (ForceShowAllMembers != other.ForceShowAllMembers) return false;
 
 			//TODO: CSharpFormattingOptions. This isn't currently used but it has a ton of properties
 
@@ -569,6 +582,7 @@ namespace ICSharpCode.Decompiler
 				h ^= ShowTokenAndRvaComments		? 0 : 0x00000400U;
 				h ^= ShowILBytes					? 0 : 0x00000200U;
 				h ^= SortMembers					? 0 : 0x00000100U;
+				h ^= ForceShowAllMembers			? 0 : 0x00000080U;
 
 				for (int i = 0; i < decompilationObjects.Length; i++)
 					h ^= (uint)decompilationObjects[i] << (i * 8);

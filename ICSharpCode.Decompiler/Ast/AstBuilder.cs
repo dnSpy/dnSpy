@@ -60,6 +60,8 @@ namespace ICSharpCode.Decompiler.Ast {
 		
 		public static bool MemberIsHidden(IMemberRef member, DecompilerSettings settings)
 		{
+			if (settings.ForceShowAllMembers)
+				return false;
 			MethodDef method = member as MethodDef;
 			if (method != null) {
 				if (method.IsGetter || method.IsSetter || method.IsAddOn || method.IsRemoveOn)
