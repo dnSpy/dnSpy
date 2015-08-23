@@ -247,7 +247,9 @@ namespace dnSpy.AsmEditor.Types {
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreateTypeDefCommand(module.Types, nodes[0], data.CreateTypeDefOptions()));
+			var cmd = new CreateTypeDefCommand(module.Types, nodes[0], data.CreateTypeDefOptions());
+			UndoCommandManager.Instance.Add(cmd);
+			MainWindow.Instance.JumpToReference(cmd.typeNode);
 		}
 
 		readonly IList<TypeDef> ownerList;
@@ -363,7 +365,9 @@ namespace dnSpy.AsmEditor.Types {
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreateNestedTypeDefCommand(typeNode, data.CreateTypeDefOptions()));
+			var cmd = new CreateNestedTypeDefCommand(typeNode, data.CreateTypeDefOptions());
+			UndoCommandManager.Instance.Add(cmd);
+			MainWindow.Instance.JumpToReference(cmd.nestedType);
 		}
 
 		readonly TypeTreeNode ownerType;

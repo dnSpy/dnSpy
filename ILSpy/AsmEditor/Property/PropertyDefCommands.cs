@@ -277,7 +277,9 @@ namespace dnSpy.AsmEditor.Property {
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreatePropertyDefCommand(typeNode, data.CreatePropertyDefOptions()));
+			var cmd = new CreatePropertyDefCommand(typeNode, data.CreatePropertyDefOptions());
+			UndoCommandManager.Instance.Add(cmd);
+			MainWindow.Instance.JumpToReference(cmd.propNode);
 		}
 
 		readonly TypeTreeNode ownerNode;

@@ -79,7 +79,9 @@ namespace dnSpy.AsmEditor.Module {
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreateNetModuleCommand(data.CreateNetModuleOptions()));
+			var cmd = new CreateNetModuleCommand(data.CreateNetModuleOptions());
+			UndoCommandManager.Instance.Add(cmd);
+			MainWindow.Instance.JumpToReference(cmd.asmNodeCreator.AssemblyTreeNode);
 		}
 
 		AssemblyTreeNodeCreator asmNodeCreator;
@@ -348,7 +350,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		readonly AssemblyTreeNode asmNode;
-		readonly AssemblyTreeNode modNode;
+		internal readonly AssemblyTreeNode modNode;
 		readonly bool modNodeWasCreated;
 
 		protected AddNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, AssemblyTreeNode modNode, bool modNodeWasCreated) {
@@ -436,7 +438,9 @@ namespace dnSpy.AsmEditor.Module {
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new AddNewNetModuleToAssemblyCommand((AssemblyTreeNode)nodes[0], data.CreateNetModuleOptions()));
+			var cmd = new AddNewNetModuleToAssemblyCommand((AssemblyTreeNode)nodes[0], data.CreateNetModuleOptions());
+			UndoCommandManager.Instance.Add(cmd);
+			MainWindow.Instance.JumpToReference(cmd.modNode);
 		}
 
 		AddNewNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, NetModuleOptions options)
@@ -489,7 +493,9 @@ namespace dnSpy.AsmEditor.Module {
 				return;
 			}
 
-			UndoCommandManager.Instance.Add(new AddExistingNetModuleToAssemblyCommand((AssemblyTreeNode)nodes[0], asm));
+			var cmd = new AddExistingNetModuleToAssemblyCommand((AssemblyTreeNode)nodes[0], asm);
+			UndoCommandManager.Instance.Add(cmd);
+			MainWindow.Instance.JumpToReference(cmd.modNode);
 		}
 
 		AddExistingNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, LoadedAssembly asm)

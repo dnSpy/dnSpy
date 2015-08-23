@@ -573,6 +573,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 
 			UndoCommandManager.Instance.Add(new CreateFileResourceCommand(rsrcListNode, newNodes));
+			MainWindow.Instance.JumpToReference(newNodes[0]);
 		}
 
 		readonly ModuleDef module;
@@ -724,6 +725,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 			var node = new ResourceElementSetTreeNode(module, data.Name, data.Attributes);
 			UndoCommandManager.Instance.Add(new CreateMultiFileResourceCommand(rsrcListNode, node));
+			MainWindow.Instance.JumpToReference(node);
 		}
 
 		CreateMultiFileResourceCommand(ResourceListTreeNode rsrcListNode, ResourceTreeNode resTreeNode)
@@ -802,6 +804,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 			var node = ResourceFactory.Create(module, new AssemblyLinkedResource(data.Name, data.Assembly, data.Attributes));
 			UndoCommandManager.Instance.Add(new CreateAssemblyLinkedResourceCommand(rsrcListNode, node));
+			MainWindow.Instance.JumpToReference(node);
 		}
 
 		CreateAssemblyLinkedResourceCommand(ResourceListTreeNode rsrcListNode, ResourceTreeNode resTreeNode)
@@ -881,6 +884,7 @@ namespace dnSpy.AsmEditor.Resources {
 			var opts = data.CreateResourceOptions();
 			var node = ResourceFactory.Create(module, new LinkedResource(opts.Name, opts.File, opts.Attributes));
 			UndoCommandManager.Instance.Add(new CreateFileLinkedResourceCommand(rsrcListNode, node));
+			MainWindow.Instance.JumpToReference(node);
 		}
 
 		CreateFileLinkedResourceCommand(ResourceListTreeNode rsrcListNode, ResourceTreeNode resTreeNode)
@@ -1162,6 +1166,7 @@ namespace dnSpy.AsmEditor.Resources {
 				return;
 
 			UndoCommandManager.Instance.Add(new CreateImageResourceElementCommand(rsrcSetNode, newNodes.ToArray()));
+			MainWindow.Instance.JumpToReference(newNodes[0]);
 		}
 
 		CreateImageResourceElementCommand(ResourceElementSetTreeNode rsrcSetNode, ResourceElementTreeNode[] nodes)
@@ -1258,6 +1263,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 			var newNode = (SerializedImageListStreamerResourceElementTreeNode)ResourceFactory.Create(module, opts.Create());
 			UndoCommandManager.Instance.Add(new CreateImageListResourceElementCommand(rsrcSetNode, newNode));
+			MainWindow.Instance.JumpToReference(newNode);
 		}
 
 		CreateImageListResourceElementCommand(ResourceElementSetTreeNode rsrcSetNode, SerializedImageListStreamerResourceElementTreeNode node)
@@ -1355,6 +1361,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 
 			UndoCommandManager.Instance.Add(createCommand(rsrcSetNode, newNodes.ToArray()));
+			MainWindow.Instance.JumpToReference(newNodes[0]);
 		}
 
 		CreateByteArrayResourceElementCommand(ResourceElementSetTreeNode rsrcSetNode, ResourceElementTreeNode[] nodes)
@@ -1492,6 +1499,7 @@ namespace dnSpy.AsmEditor.Resources {
 			var opts = data.CreateResourceElementOptions();
 			var node = ResourceFactory.Create(module, opts.Create());
 			UndoCommandManager.Instance.Add(new CreateResourceElementCommand(rsrcSetNode, node));
+			MainWindow.Instance.JumpToReference(node);
 		}
 
 		CreateResourceElementCommand(ResourceElementSetTreeNode rsrcSetNode, ResourceElementTreeNode node)

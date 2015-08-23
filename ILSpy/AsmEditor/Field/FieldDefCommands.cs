@@ -277,7 +277,9 @@ namespace dnSpy.AsmEditor.Field {
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreateFieldDefCommand(typeNode, data.CreateFieldDefOptions()));
+			var cmd = new CreateFieldDefCommand(typeNode, data.CreateFieldDefOptions());
+			UndoCommandManager.Instance.Add(cmd);
+			MainWindow.Instance.JumpToReference(cmd.fieldNode);
 		}
 
 		readonly TypeTreeNode ownerNode;

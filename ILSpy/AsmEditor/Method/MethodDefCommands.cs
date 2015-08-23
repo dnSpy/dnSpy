@@ -375,7 +375,9 @@ namespace dnSpy.AsmEditor.Method {
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreateMethodDefCommand(typeNode, data.CreateMethodDefOptions()));
+			var cmd = new CreateMethodDefCommand(typeNode, data.CreateMethodDefOptions());
+			UndoCommandManager.Instance.Add(cmd);
+			MainWindow.Instance.JumpToReference(cmd.methodNode);
 		}
 
 		readonly TypeTreeNode ownerNode;

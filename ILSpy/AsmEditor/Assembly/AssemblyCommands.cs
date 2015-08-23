@@ -346,6 +346,10 @@ namespace dnSpy.AsmEditor.Assembly {
 							MenuCategory = "AsmEd",
 							MenuOrder = 2300)]
 		sealed class TheEditCommand : EditCommand {
+			public TheEditCommand()
+				: base(true) {
+			}
+
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return CreateAssemblyCommand.CanExecute(nodes);
 			}
@@ -375,7 +379,9 @@ namespace dnSpy.AsmEditor.Assembly {
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreateAssemblyCommand(newModule, data.CreateAssemblyOptions()));
+			var cmd = new CreateAssemblyCommand(newModule, data.CreateAssemblyOptions());
+			UndoCommandManager.Instance.Add(cmd);
+			MainWindow.Instance.JumpToReference(cmd.asmNodeCreator.AssemblyTreeNode);
 		}
 
 		AssemblyTreeNodeCreator asmNodeCreator;

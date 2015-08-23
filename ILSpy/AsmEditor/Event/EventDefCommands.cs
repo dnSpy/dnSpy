@@ -280,7 +280,9 @@ namespace dnSpy.AsmEditor.Event {
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreateEventDefCommand(typeNode, data.CreateEventDefOptions()));
+			var cmd = new CreateEventDefCommand(typeNode, data.CreateEventDefOptions());
+			UndoCommandManager.Instance.Add(cmd);
+			MainWindow.Instance.JumpToReference(cmd.eventNode);
 		}
 
 		readonly TypeTreeNode ownerNode;
