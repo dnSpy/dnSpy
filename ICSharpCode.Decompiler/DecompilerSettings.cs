@@ -47,6 +47,7 @@ namespace ICSharpCode.Decompiler
 			ShowILBytes = false;
 			SortMembers = false;
 			ForceShowAllMembers = false;
+			SortSystemUsingStatementsFirst = false;
 			DecompilationObject0 = DecompilationObject.NestedTypes;
 			DecompilationObject1 = DecompilationObject.Fields;
 			DecompilationObject2 = DecompilationObject.Events;
@@ -467,6 +468,17 @@ namespace ICSharpCode.Decompiler
 		}
 		bool forceShowAllMembers = false;
 
+		public bool SortSystemUsingStatementsFirst {
+			get { return sortSystemUsingStatementsFirst; }
+			set {
+				if (sortSystemUsingStatementsFirst != value) {
+					sortSystemUsingStatementsFirst = value;
+					OnPropertyChanged("SortSystemUsingStatementsFirst");
+				}
+			}
+		}
+		bool sortSystemUsingStatementsFirst = true;
+
 		CSharpFormattingOptions csharpFormattingOptions;
 		
 		public CSharpFormattingOptions CSharpFormattingOptions {
@@ -542,6 +554,7 @@ namespace ICSharpCode.Decompiler
 			if (DecompilationObject4 != other.DecompilationObject4) return false;
 			if (SortMembers != other.SortMembers) return false;
 			if (ForceShowAllMembers != other.ForceShowAllMembers) return false;
+			if (SortSystemUsingStatementsFirst != other.SortSystemUsingStatementsFirst) return false;
 
 			//TODO: CSharpFormattingOptions. This isn't currently used but it has a ton of properties
 
@@ -583,6 +596,7 @@ namespace ICSharpCode.Decompiler
 				h ^= ShowILBytes					? 0 : 0x00000200U;
 				h ^= SortMembers					? 0 : 0x00000100U;
 				h ^= ForceShowAllMembers			? 0 : 0x00000080U;
+				h ^= SortSystemUsingStatementsFirst	? 0 : 0x00000040U;
 
 				for (int i = 0; i < decompilationObjects.Length; i++)
 					h ^= (uint)decompilationObjects[i] << (i * 8);

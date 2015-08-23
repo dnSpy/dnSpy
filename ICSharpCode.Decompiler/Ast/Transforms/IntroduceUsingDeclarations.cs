@@ -46,7 +46,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 			
 			if (context.Settings.UsingDeclarations) {
 				// Now add using declarations for those namespaces:
-				foreach (string ns in importedNamespaces.OrderByDescending(n => n)) {
+				foreach (string ns in GetNamespacesInReverseOrder()) {
 					// we go backwards (OrderByDescending) through the list of namespaces because we insert them backwards
 					// (always inserting at the start of the list)
 					string[] parts = ns.Split('.');
@@ -82,6 +82,29 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 			
 			// verify that the SimpleTypes refer to the correct type (no ambiguities)
 			compilationUnit.AcceptVisitor(new FullyQualifyAmbiguousTypeNamesVisitor(this), null);
+		}
+
+		IEnumerable<string> GetNamespacesInReverseOrder()
+		{
+			var list = new List<string>(importedNamespaces);
+
+			if (context.Settings.SortSystemUsingStatementsFirst) {
+				list.Sort((a, b) => {
+					bool sa = a == "System" || a.StartsWith("System.");
+					bool sb = b == "System" || b.StartsWith("System.");
+					if (sa && sb)
+						return StringComparer.OrdinalIgnoreCase.Compare(b, a);
+					if (sa && !sb)
+						return 1;
+					if (!sa && sb)
+						return -1;
+					return StringComparer.OrdinalIgnoreCase.Compare(b, a);
+				});
+			}
+			else
+				list.Sort((a, b) => StringComparer.OrdinalIgnoreCase.Compare(b, a));
+
+			return list;
 		}
 
 		static IEnumerable<TypeDef> GetTypes(List<AssemblyDef> asms)

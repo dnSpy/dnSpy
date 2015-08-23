@@ -5745,6 +5745,7 @@
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowILComments}">Show IL opcode comments</CheckBox>
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.SortMembers}">Sort methods, fields, properties, events and types</CheckBox>
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ForceShowAllMembers}">Show hidden compiler generated types and methods</CheckBox>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.SortSystemUsingStatementsFirst}">Place 'System' directives first when sorting usings</CheckBox>
             <GroupBox Margin="0 5 0 0" Header="Decompilation order">
                 <Grid>
                     <Grid.ColumnDefinitions>

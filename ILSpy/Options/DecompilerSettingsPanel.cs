@@ -70,6 +70,7 @@ namespace ICSharpCode.ILSpy.Options {
 			s.DecompilationObject4 = (DecompilationObject)((int?)e.Attribute("decompilationObject4") ?? (int)s.DecompilationObject4);
 			s.SortMembers = (bool?)e.Attribute("sortMembers") ?? s.SortMembers;
 			s.ForceShowAllMembers = (bool?)e.Attribute("forceShowAllMembers") ?? s.ForceShowAllMembers;
+			s.SortSystemUsingStatementsFirst = (bool?)e.Attribute("sortSystemUsingStatementsFirst") ?? s.SortSystemUsingStatementsFirst;
 			return s;
 		}
 
@@ -107,6 +108,7 @@ namespace ICSharpCode.ILSpy.Options {
 			if (CurrentDecompilerSettings.DecompilationObject4 != s.DecompilationObject4) flags |= RefreshFlags.CSharp;
 			if (CurrentDecompilerSettings.SortMembers != s.SortMembers) flags |= RefreshFlags.IL | RefreshFlags.CSharp;
 			if (CurrentDecompilerSettings.ForceShowAllMembers != s.ForceShowAllMembers) flags |= RefreshFlags.CSharp | RefreshFlags.TreeViewNodes;
+			if (CurrentDecompilerSettings.SortSystemUsingStatementsFirst != s.SortSystemUsingStatementsFirst) flags |= RefreshFlags.CSharp;
 
 			XElement section = new XElement("DecompilerSettings");
 			section.SetAttributeValue("anonymousMethods", s.AnonymousMethods);
@@ -127,6 +129,7 @@ namespace ICSharpCode.ILSpy.Options {
 			section.SetAttributeValue("decompilationObject4", (int)s.DecompilationObject4);
 			section.SetAttributeValue("sortMembers", s.SortMembers);
 			section.SetAttributeValue("forceShowAllMembers", s.ForceShowAllMembers);
+			section.SetAttributeValue("sortSystemUsingStatementsFirst", s.SortSystemUsingStatementsFirst);
 
 			XElement existingElement = root.Element("DecompilerSettings");
 			if (existingElement != null)
