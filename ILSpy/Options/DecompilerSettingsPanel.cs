@@ -76,16 +76,16 @@ namespace ICSharpCode.ILSpy.Options {
 			DecompilerSettings s = this.settings;
 			var flags = RefreshFlags.None;
 
-			if (CurrentDecompilerSettings.AnonymousMethods != s.AnonymousMethods) flags |= RefreshFlags.ILAst;
+			if (CurrentDecompilerSettings.AnonymousMethods != s.AnonymousMethods) flags |= RefreshFlags.ILAst | RefreshFlags.TreeViewNodes;
 			if (CurrentDecompilerSettings.ExpressionTrees != s.ExpressionTrees) flags |= RefreshFlags.ILAst;
-			if (CurrentDecompilerSettings.YieldReturn != s.YieldReturn) flags |= RefreshFlags.ILAst;
-			if (CurrentDecompilerSettings.AsyncAwait != s.AsyncAwait) flags |= RefreshFlags.ILAst;
-			if (CurrentDecompilerSettings.AutomaticProperties != s.AutomaticProperties) flags |= RefreshFlags.CSharp;
-			if (CurrentDecompilerSettings.AutomaticEvents != s.AutomaticEvents) flags |= RefreshFlags.CSharp;
+			if (CurrentDecompilerSettings.YieldReturn != s.YieldReturn) flags |= RefreshFlags.ILAst | RefreshFlags.TreeViewNodes;
+			if (CurrentDecompilerSettings.AsyncAwait != s.AsyncAwait) flags |= RefreshFlags.ILAst | RefreshFlags.TreeViewNodes;
+			if (CurrentDecompilerSettings.AutomaticProperties != s.AutomaticProperties) flags |= RefreshFlags.CSharp | RefreshFlags.TreeViewNodes;
+			if (CurrentDecompilerSettings.AutomaticEvents != s.AutomaticEvents) flags |= RefreshFlags.CSharp | RefreshFlags.TreeViewNodes;
 			if (CurrentDecompilerSettings.UsingStatement != s.UsingStatement) flags |= RefreshFlags.CSharp;
 			if (CurrentDecompilerSettings.ForEachStatement != s.ForEachStatement) flags |= RefreshFlags.CSharp;
 			if (CurrentDecompilerSettings.LockStatement != s.LockStatement) flags |= RefreshFlags.CSharp;
-			if (CurrentDecompilerSettings.SwitchStatementOnString != s.SwitchStatementOnString) flags |= RefreshFlags.CSharp;
+			if (CurrentDecompilerSettings.SwitchStatementOnString != s.SwitchStatementOnString) flags |= RefreshFlags.CSharp | RefreshFlags.TreeViewNodes;
 			if (CurrentDecompilerSettings.UsingDeclarations != s.UsingDeclarations) flags |= RefreshFlags.CSharp;
 			if (CurrentDecompilerSettings.QueryExpressions != s.QueryExpressions) flags |= RefreshFlags.CSharp;
 			if (CurrentDecompilerSettings.FullyQualifyAmbiguousTypeNames != s.FullyQualifyAmbiguousTypeNames) flags |= RefreshFlags.CSharp;

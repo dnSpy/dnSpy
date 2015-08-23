@@ -120,9 +120,9 @@ namespace ICSharpCode.ILSpy.Options
 		None				= 0,
 
 		/// <summary>
-		/// Tree view node names need to be updated
+		/// Tree view nodes need to be updated
 		/// </summary>
-		TreeViewNodeNames	= 0x00000001,
+		TreeViewNodes		= 0x00000001,
 
 		/// <summary>
 		/// Text editor needs to re-disassemble IL
@@ -187,8 +187,8 @@ namespace ICSharpCode.ILSpy.Options
 				if (disableMmap)
 					inst.DisableMemoryMappedIO();
 				inst.RefreshCodeCSharp(disassembleIL, decompileILAst, decompileCSharp, decompileVB);
-				if ((dlg.RefreshFlags & RefreshFlags.TreeViewNodeNames) != 0)
-					inst.RefreshTreeViewNodeNames();
+				if ((dlg.RefreshFlags & RefreshFlags.TreeViewNodes) != 0)
+					inst.RefreshTreeViewNodes();
 			}
 		}
 	}

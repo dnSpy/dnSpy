@@ -3112,7 +3112,7 @@ namespace ICSharpCode.ILSpy
 			DecompileRestoreLocation(tabState, tabState.DecompiledNodes, null, true);
 		}
 
-		internal void RefreshTreeViewNodeNames()
+		internal void RefreshTreeViewNodes()
 		{
 			RefreshTreeViewFilter();
 		}
