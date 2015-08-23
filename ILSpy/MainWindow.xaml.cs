@@ -2853,10 +2853,6 @@ namespace ICSharpCode.ILSpy
 				scaleElem.ClearValue(TextOptions.TextFormattingModeProperty);
 			}
 			else {
-				var st = scaleElem.LayoutTransform as ScaleTransform;
-				if (st == null)
-					scaleElem.LayoutTransform = st = new ScaleTransform();
-
 				if (scale < MIN_ZOOM)
 					scale = MIN_ZOOM;
 				else if (scale > MAX_ZOOM)
@@ -2864,8 +2860,10 @@ namespace ICSharpCode.ILSpy
 
 				// We must set it to Ideal or the text will be blurry
 				TextOptions.SetTextFormattingMode(scaleElem, TextFormattingMode.Ideal);
-				st.ScaleX = scale;
-				st.ScaleY = scale;
+
+				var st = new ScaleTransform(scale, scale);
+				st.Freeze();
+				scaleElem.LayoutTransform = st;
 			}
 		}
 
