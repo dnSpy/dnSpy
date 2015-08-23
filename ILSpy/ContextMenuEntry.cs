@@ -106,7 +106,7 @@ namespace ICSharpCode.ILSpy {
 			if (textView != null)
 				reference = textView.GetReferenceSegmentAt(position);
 			else if (listBox != null && listBox.SelectedItem is SearchResult)
-				reference = new ReferenceSegment { Reference = ((SearchResult)listBox.SelectedItem).MDTokenProvider };
+				reference = new ReferenceSegment { Reference = ((SearchResult)listBox.SelectedItem).Reference };
 			else
 				reference = null;
 			var selectedTreeNodes = treeView != null ? treeView.GetTopLevelSelection().ToArray() : null;

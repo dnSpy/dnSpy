@@ -45,6 +45,7 @@ using dnSpy.dntheme;
 using dnSpy.Images;
 using dnSpy.NRefactory;
 using dnSpy.Options;
+using dnSpy.Search;
 using dnSpy.Tabs;
 using dnSpy.TextView;
 using dnSpy.TreeNodes;
@@ -1773,8 +1774,17 @@ namespace ICSharpCode.ILSpy
 			return reference;
 		}
 
-		public bool JumpToNamespace(LoadedAssembly asm, string ns, bool canRecordHistory = true)
+		bool JumpToNamespace(DecompilerTextView textView, NamespaceRef nsRef, bool canRecordHistory = true)
 		{
+			if (nsRef == null)
+				return false;
+			return JumpToNamespace(textView, nsRef.Module, nsRef.Namespace, canRecordHistory);
+		}
+
+		bool JumpToNamespace(DecompilerTextView textView, LoadedAssembly asm, string ns, bool canRecordHistory = true)
+		{
+			if (asm == null || ns == null)
+				return false;
 			var asmNode = FindTreeNode(asm.ModuleDefinition) as AssemblyTreeNode;
 			if (asmNode == null)
 				return false;
@@ -1782,7 +1792,7 @@ namespace ICSharpCode.ILSpy
 			if (nsNode == null)
 				return false;
 
-			var tabState = GetOrCreateActiveDecompileTabState();
+			var tabState = textView != null ? DecompileTabState.GetDecompileTabState(textView) : GetOrCreateActiveDecompileTabState();
 			if (canRecordHistory)
 				RecordHistory(tabState);
 
@@ -1794,6 +1804,9 @@ namespace ICSharpCode.ILSpy
 
 		public bool JumpToReference(object reference, bool canRecordHistory = true)
 		{
+			var nsRef = reference as NamespaceRef;
+			if (nsRef != null)
+				return JumpToNamespace(null, nsRef);
 			var tabState = GetOrCreateActiveDecompileTabState();
 			if (canRecordHistory)
 				RecordHistory(tabState);
@@ -1802,6 +1815,9 @@ namespace ICSharpCode.ILSpy
 
 		public bool JumpToReference(DecompilerTextView textView, object reference, bool canRecordHistory = true)
 		{
+			var nsRef = reference as NamespaceRef;
+			if (nsRef != null)
+				return JumpToNamespace(textView, nsRef);
 			var tabState = DecompileTabState.GetDecompileTabState(textView);
 			if (canRecordHistory)
 				RecordHistory(tabState);
@@ -1810,6 +1826,9 @@ namespace ICSharpCode.ILSpy
 
 		public bool JumpToReference(DecompilerTextView textView, object reference, Func<TextLocation> getLocation, bool canRecordHistory = true)
 		{
+			var nsRef = reference as NamespaceRef;
+			if (nsRef != null)
+				return JumpToNamespace(textView, nsRef);
 			var tabState = DecompileTabState.GetDecompileTabState(textView);
 			if (canRecordHistory)
 				RecordHistory(tabState);
@@ -1818,6 +1837,9 @@ namespace ICSharpCode.ILSpy
 
 		public bool JumpToReference(DecompilerTextView textView, object reference, Func<bool, bool, bool> onDecompileFinished, bool canRecordHistory = true)
 		{
+			var nsRef = reference as NamespaceRef;
+			if (nsRef != null)
+				return JumpToNamespace(textView, nsRef);
 			var tabState = DecompileTabState.GetDecompileTabState(textView);
 			if (canRecordHistory)
 				RecordHistory(tabState);

@@ -599,6 +599,7 @@
     <Compile Include="Options\DisplaySettingsPanel.cs" />
     <Compile Include="Options\FontUtils.cs" />
     <Compile Include="Options\OtherSettings.cs" />
+    <Compile Include="Search\NamespaceRef.cs" />
     <Compile Include="Tabs\DecompileTabState.cs" />
     <Compile Include="Tabs\HexTabState.cs" />
     <Compile Include="Tabs\SavedTabState.cs" />

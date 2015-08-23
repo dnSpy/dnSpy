@@ -387,17 +387,7 @@ namespace ICSharpCode.ILSpy {
 			if (result != null) {
 				if (Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift)
 					MainWindow.Instance.OpenNewEmptyTab();
-				var obj = result.Object;
-				if (obj is AssemblyTreeNode)
-					obj = ((AssemblyTreeNode)obj).LoadedAssembly.AssemblyDefinition;
-				else if (obj is LoadedAssembly)
-					obj = ((LoadedAssembly)obj).ModuleDefinition;
-				else if (obj is string) {
-					var ns = (string)obj;
-					MainWindow.Instance.JumpToNamespace(result.LoadedAssembly, ns);
-					return;
-				}
-				MainWindow.Instance.JumpToReference(obj);
+				MainWindow.Instance.JumpToReference(result.Reference);
 			}
 		}
 		
@@ -543,6 +533,15 @@ namespace ICSharpCode.ILSpy {
 				if (asm != null)
 					obj = asm.ModuleDefinition;
 				return obj as IMDTokenProvider;	// returns null if it's a namespace (a string)
+			}
+		}
+
+		public object Reference {
+			get {
+				var ns = Object as string;
+				if (ns != null)
+					return new NamespaceRef(LoadedAssembly, ns);
+				return MDTokenProvider;
 			}
 		}
 
