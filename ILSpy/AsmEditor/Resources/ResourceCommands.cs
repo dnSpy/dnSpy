@@ -42,6 +42,11 @@ namespace dnSpy.AsmEditor.Resources {
 			MainWindow.Instance.treeView.AddCommandBinding(ApplicationCommands.Delete, new TreeViewCommandProxy(new DeleteResourceElementCommand.TheEditCommand()));
 			MainWindow.Instance.CodeBindings.Add(EditingCommands.Delete, new TextEditorCommandProxy(new DeleteResourceCommand.TheTextEditorCommand()), ModifierKeys.None, Key.Delete);
 			MainWindow.Instance.CodeBindings.Add(EditingCommands.Delete, new TextEditorCommandProxy(new DeleteResourceElementCommand.TheTextEditorCommand()), ModifierKeys.None, Key.Delete);
+			Utils.InstallSettingsCommand(new ResourceSettingsCommand.TheEditCommand(), new ResourceSettingsCommand.TheTextEditorCommand());
+			Utils.InstallSettingsCommand(new ResourceElementSettingsCommand.TheEditCommand(), new ResourceElementSettingsCommand.TheTextEditorCommand());
+			Utils.InstallSettingsCommand(new ImageResourceElementSettingsCommand.TheEditCommand(), new ImageResourceElementSettingsCommand.TheTextEditorCommand());
+			Utils.InstallSettingsCommand(new SerializedImageResourceElementSettingsCommand.TheEditCommand(), new SerializedImageResourceElementSettingsCommand.TheTextEditorCommand());
+			Utils.InstallSettingsCommand(new SerializedImageListStreamerResourceElementSettingsCommand.TheEditCommand(), new SerializedImageListStreamerResourceElementSettingsCommand.TheTextEditorCommand());
 		}
 	}
 
@@ -463,7 +468,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 	}
 
-	static class Utils {
+	static class ResUtils {
 		public static bool CanExecuteResourceListCommand(ILSpyTreeNode[] nodes) {
 			return GetResourceListTreeNode(nodes) != null;
 		}
@@ -530,14 +535,14 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		static bool CanExecute(ILSpyTreeNode[] nodes) {
-			return Utils.CanExecuteResourceListCommand(nodes);
+			return ResUtils.CanExecuteResourceListCommand(nodes);
 		}
 
 		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			var rsrcListNode = Utils.GetResourceListTreeNode(nodes);
+			var rsrcListNode = ResUtils.GetResourceListTreeNode(nodes);
 
 			var module = ILSpyTreeNode.GetModule(nodes[0]);
 			Debug.Assert(module != null);
@@ -690,14 +695,14 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		static bool CanExecute(ILSpyTreeNode[] nodes) {
-			return Utils.CanExecuteResourceListCommand(nodes);
+			return ResUtils.CanExecuteResourceListCommand(nodes);
 		}
 
 		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			var rsrcListNode = Utils.GetResourceListTreeNode(nodes);
+			var rsrcListNode = ResUtils.GetResourceListTreeNode(nodes);
 
 			var module = ILSpyTreeNode.GetModule(nodes[0]);
 			Debug.Assert(module != null);
@@ -767,14 +772,14 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		static bool CanExecute(ILSpyTreeNode[] nodes) {
-			return Utils.CanExecuteResourceListCommand(nodes);
+			return ResUtils.CanExecuteResourceListCommand(nodes);
 		}
 
 		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			var rsrcListNode = Utils.GetResourceListTreeNode(nodes);
+			var rsrcListNode = ResUtils.GetResourceListTreeNode(nodes);
 
 			var module = ILSpyTreeNode.GetModule(nodes[0]);
 			Debug.Assert(module != null);
@@ -845,14 +850,14 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		static bool CanExecute(ILSpyTreeNode[] nodes) {
-			return Utils.CanExecuteResourceListCommand(nodes);
+			return ResUtils.CanExecuteResourceListCommand(nodes);
 		}
 
 		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			var rsrcListNode = Utils.GetResourceListTreeNode(nodes);
+			var rsrcListNode = ResUtils.GetResourceListTreeNode(nodes);
 
 			var module = ILSpyTreeNode.GetModule(nodes[0]);
 			Debug.Assert(module != null);
@@ -892,14 +897,16 @@ namespace dnSpy.AsmEditor.Resources {
 		const string CMD_NAME = "Edit Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
+								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 680)]
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
+							MenuInputGestureText = "Alt+Enter",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2490)]
-		sealed class TheEditCommand : EditCommand {
+		internal sealed class TheEditCommand : EditCommand {
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return ResourceSettingsCommand.CanExecute(nodes);
 			}
@@ -911,9 +918,10 @@ namespace dnSpy.AsmEditor.Resources {
 
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
+								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 690)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
+		internal sealed class TheTextEditorCommand : TextEditorCommand {
 			protected override bool CanExecute(Context ctx) {
 				return ResourceSettingsCommand.CanExecute(ctx.Nodes);
 			}
@@ -1588,14 +1596,16 @@ namespace dnSpy.AsmEditor.Resources {
 		const string CMD_NAME = "Edit Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
+								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 690)]
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
+							MenuInputGestureText = "Alt+Enter",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2500)]
-		sealed class TheEditCommand : EditCommand {
+		internal sealed class TheEditCommand : EditCommand {
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return ResourceElementSettingsCommand.CanExecute(nodes);
 			}
@@ -1607,9 +1617,10 @@ namespace dnSpy.AsmEditor.Resources {
 
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
+								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 700)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
+		internal sealed class TheTextEditorCommand : TextEditorCommand {
 			protected override bool CanExecute(Context ctx) {
 				return ResourceElementSettingsCommand.CanExecute(ctx.Nodes);
 			}
@@ -1674,14 +1685,16 @@ namespace dnSpy.AsmEditor.Resources {
 		const string CMD_NAME = "Edit Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
+								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 700)]
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
+							MenuInputGestureText = "Alt+Enter",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2510)]
-		sealed class TheEditCommand : EditCommand {
+		internal sealed class TheEditCommand : EditCommand {
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return ImageResourceElementSettingsCommand.CanExecute(nodes);
 			}
@@ -1693,9 +1706,10 @@ namespace dnSpy.AsmEditor.Resources {
 
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
+								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 710)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
+		internal sealed class TheTextEditorCommand : TextEditorCommand {
 			protected override bool CanExecute(Context ctx) {
 				return ImageResourceElementSettingsCommand.CanExecute(ctx.Nodes);
 			}
@@ -1754,14 +1768,16 @@ namespace dnSpy.AsmEditor.Resources {
 		const string CMD_NAME = "Edit Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
+								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 710)]
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
+							MenuInputGestureText = "Alt+Enter",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2520)]
-		sealed class TheEditCommand : EditCommand {
+		internal sealed class TheEditCommand : EditCommand {
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return SerializedImageResourceElementSettingsCommand.CanExecute(nodes);
 			}
@@ -1773,9 +1789,10 @@ namespace dnSpy.AsmEditor.Resources {
 
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
+								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 720)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
+		internal sealed class TheTextEditorCommand : TextEditorCommand {
 			protected override bool CanExecute(Context ctx) {
 				return SerializedImageResourceElementSettingsCommand.CanExecute(ctx.Nodes);
 			}
@@ -1834,14 +1851,16 @@ namespace dnSpy.AsmEditor.Resources {
 		const string CMD_NAME = "Edit Resource";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
+								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 720)]
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
+							MenuInputGestureText = "Alt+Enter",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2530)]
-		sealed class TheEditCommand : EditCommand {
+		internal sealed class TheEditCommand : EditCommand {
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return SerializedImageListStreamerResourceElementSettingsCommand.CanExecute(nodes);
 			}
@@ -1853,9 +1872,10 @@ namespace dnSpy.AsmEditor.Resources {
 
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
+								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 730)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
+		internal sealed class TheTextEditorCommand : TextEditorCommand {
 			protected override bool CanExecute(Context ctx) {
 				return SerializedImageListStreamerResourceElementSettingsCommand.CanExecute(ctx.Nodes);
 			}

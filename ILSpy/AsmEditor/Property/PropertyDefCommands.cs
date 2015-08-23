@@ -35,6 +35,7 @@ namespace dnSpy.AsmEditor.Property {
 		public void OnLoaded() {
 			MainWindow.Instance.treeView.AddCommandBinding(ApplicationCommands.Delete, new TreeViewCommandProxy(new DeletePropertyDefCommand.TheEditCommand()));
 			MainWindow.Instance.CodeBindings.Add(EditingCommands.Delete, new TextEditorCommandProxy(new DeletePropertyDefCommand.TheTextEditorCommand()), ModifierKeys.None, Key.Delete);
+			Utils.InstallSettingsCommand(new PropertyDefSettingsCommand.TheEditCommand(), new PropertyDefSettingsCommand.TheTextEditorCommand());
 		}
 	}
 
@@ -318,14 +319,16 @@ namespace dnSpy.AsmEditor.Property {
 		const string CMD_NAME = "Edit Property";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
+								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 660)]
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
+							MenuInputGestureText = "Alt+Enter",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2460)]
-		sealed class TheEditCommand : EditCommand {
+		internal sealed class TheEditCommand : EditCommand {
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return PropertyDefSettingsCommand.CanExecute(nodes);
 			}
@@ -337,9 +340,10 @@ namespace dnSpy.AsmEditor.Property {
 
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
+								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 660)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
+		internal sealed class TheTextEditorCommand : TextEditorCommand {
 			protected override bool CanExecute(Context ctx) {
 				return PropertyDefSettingsCommand.CanExecute(ctx.Nodes);
 			}

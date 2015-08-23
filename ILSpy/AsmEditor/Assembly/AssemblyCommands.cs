@@ -34,6 +34,7 @@ namespace dnSpy.AsmEditor.Assembly {
 	sealed class AssemblyPlugin : IPlugin {
 		public void OnLoaded() {
 			MainWindow.Instance.treeView.AddCommandBinding(ApplicationCommands.Delete, new TreeViewCommandProxy(new RemoveAssemblyCommand.TheEditCommand()));
+			Utils.InstallSettingsCommand(new AssemblySettingsCommand.TheEditCommand(), null);
 		}
 	}
 
@@ -225,14 +226,16 @@ namespace dnSpy.AsmEditor.Assembly {
 		const string CMD_NAME = "Edit Assembly";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
+								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 600)]
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
+							MenuInputGestureText = "Alt+Enter",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2400)]
-		sealed class TheEditCommand : EditCommand {
+		internal sealed class TheEditCommand : EditCommand {
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return AssemblySettingsCommand.CanExecute(nodes);
 			}

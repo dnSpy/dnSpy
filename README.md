@@ -66,6 +66,7 @@ Ctrl+K		| Open search pane
 Ctrl+T		| (Search pane) Select Type
 Ctrl+M		| (Search pane) Select Member
 Ctrl+S		| (Search pane) Select Literal
+Alt+Enter	| (Text view, Tree view) Edit current type, method, field, etc
 F12			| (Text view) Follow reference at caret
 Enter		| (Text view) Follow reference at caret
 Ctrl+F12	| (Text view) Follow reference at caret in a new tab
