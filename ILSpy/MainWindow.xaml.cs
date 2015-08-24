@@ -2318,9 +2318,11 @@ namespace ICSharpCode.ILSpy
 					}
 
 					var savedHexTabState = savedTabState as SavedHexTabState;
-					if (savedHexTabState != null && File.Exists(savedHexTabState.FileName)) {
-						var tabState = CreateNewHexTabState(tabManager);
-						CreateHexTabState(tabState, savedHexTabState);
+					if (savedHexTabState != null) {
+						if (File.Exists(savedHexTabState.FileName)) {
+							var tabState = CreateNewHexTabState(tabManager);
+							CreateHexTabState(tabState, savedHexTabState);
+						}
 						continue;
 					}
 
