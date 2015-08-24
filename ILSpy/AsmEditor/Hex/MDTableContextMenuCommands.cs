@@ -46,12 +46,8 @@ namespace dnSpy.AsmEditor.Hex {
 			lv.InputBindings.Add(new KeyBinding(new CopyAsTextMDTableCommand(), Key.C, ModifierKeys.Shift | ModifierKeys.Control));
 			lv.InputBindings.Add(new KeyBinding(new GoToRidMDTableCommand(), Key.G, ModifierKeys.Control));
 			lv.InputBindings.Add(new KeyBinding(new ShowInHexEditorMDTableCommand(), Key.X, ModifierKeys.Control));
-			Add(lv, ApplicationCommands.Copy, new CopyMDTableCommand());
-			Add(lv, ApplicationCommands.Paste, new PasteMDTableCommand());
-		}
-
-		static void Add(UIElement uiElem, RoutedCommand routedCommand, ICommand realCommand) {
-			uiElem.CommandBindings.Add(new CommandBinding(routedCommand, (s, e) => realCommand.Execute(null), (s, e) => e.CanExecute = realCommand.CanExecute(null)));
+			lv.AddCommandBinding(ApplicationCommands.Copy, new CopyMDTableCommand());
+			lv.AddCommandBinding(ApplicationCommands.Paste, new PasteMDTableCommand());
 		}
 	}
 
