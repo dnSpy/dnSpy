@@ -60,9 +60,9 @@ namespace Debugger
 			this.corStepper = stackFrame.CorILFrame.CreateStepper();
 			this.ignore = false;
 			this.StackFrame.Process.Steppers.Add(this);
-			
+
+			corStepper.SetUnmappedStopMask(CorDebugUnmappedStop.STOP_NONE);
 			if (justMyCode) {
-				corStepper.SetUnmappedStopMask(CorDebugUnmappedStop.STOP_NONE);
 				((ICorDebugStepper2)corStepper).SetJMC(1);
 			}
 		}

@@ -126,7 +126,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		
 		public void Start(ProcessStartInfo processStartInfo)
 		{
-			lastStepType = StepType.Unknown;
 			if (IsDebugging) {
 				MainWindow.Instance.ShowMessageBox(errorDebugging);
 				return;
@@ -197,7 +196,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		
 		public void Attach(System.Diagnostics.Process existingProcess)
 		{
-			lastStepType = StepType.Unknown;
 			if (existingProcess == null)
 				return;
 			
@@ -240,7 +238,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 
 		public void Detach()
 		{
-			lastStepType = StepType.Unknown;
 			if (debuggedProcess == null)
 				return;
 
@@ -251,7 +248,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		
 		public void Stop()
 		{
-			lastStepType = StepType.Unknown;
 			if (!IsDebugging) {
 				MainWindow.Instance.ShowMessageBox(errorNotDebugging + " : Stop");
 				return;
@@ -267,7 +263,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		
 		public void Break()
 		{
-			lastStepType = StepType.Unknown;
 			if (!IsDebugging) {
 				MainWindow.Instance.ShowMessageBox(errorNotDebugging + " : Break");
 				return;
@@ -281,7 +276,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		
 		public void Continue()
 		{
-			lastStepType = StepType.Unknown;
 			if (!IsDebugging) {
 				MainWindow.Instance.ShowMessageBox(errorNotDebugging + " : Continue");
 				return;
@@ -366,11 +360,9 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 			StepOver,
 			StepOut,
 		}
-		StepType lastStepType = StepType.Unknown;
 
 		public void StepInto()
 		{
-			lastStepType = StepType.Unknown;
 			if (!IsDebugging) {
 				MainWindow.Instance.ShowMessageBox(errorNotDebugging + " : StepInto");
 				return;
@@ -385,14 +377,12 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				var frame = GetStackFrame();
 				if (frame != null) {
 					frame.AsyncStepInto();
-					lastStepType = StepType.StepInto;
 				}
 			}
 		}
 		
 		public void StepOver()
 		{
-			lastStepType = StepType.Unknown;
 			if (!IsDebugging) {
 				MainWindow.Instance.ShowMessageBox(errorNotDebugging + " : StepOver");
 				return;
@@ -407,7 +397,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				var frame = GetStackFrame();
 				if (frame != null) {
 					frame.AsyncStepOver();
-					lastStepType = StepType.StepOver;
 					//Utils.DoEvents(frame.Process);
 				}
 			}
@@ -415,7 +404,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		
 		public void StepOut()
 		{
-			lastStepType = StepType.Unknown;
 			if (!IsDebugging) {
 				MainWindow.Instance.ShowMessageBox(errorNotDebugging + " : StepOut");
 				return;
@@ -430,7 +418,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 				var frame = GetStackFrame();
 				if (frame != null) {
 					frame.AsyncStepOut();
-					lastStepType = StepType.StepOut;
 				}
 			}
 		}
@@ -683,29 +670,6 @@ namespace ICSharpCode.ILSpy.Debugger.Services
 		
 		void debuggedProcess_DebuggingPaused(object sender, ProcessEventArgs e)
 		{
-			// Sometimes when we step, we stop and the IP is unknown. If that is the case,
-			// execute the same step into/out/over command again.
-			// x86: happens when stepping over endfinally
-			// x64: happens often, especially when stepping into methods. TODO: This results in
-			//		stepping over the first instruction. If we're lucky it's a nop.
-			bool isInvalid = debuggedProcess != null &&
-				debuggedProcess.SelectedThread != null &&
-				debuggedProcess.SelectedThread.MostRecentStackFrame != null &&
-				debuggedProcess.SelectedThread.MostRecentStackFrame.IP.IsInvalid;
-			if (IntPtr.Size == 8)
-				isInvalid = false;
-
-			if (isInvalid) {
-				switch (lastStepType) {
-				// Call StepOver() and not StepInto() so we don't step into more methods.
-				case StepType.StepInto: StepOver(); return;
-				case StepType.StepOut: StepOut(); return;
-				case StepType.StepOver: StepOver(); return;
-				default: Debug.Fail("Unknown StepType"); break;
-				}
-			}
-
-			lastStepType = StepType.Unknown;
 			JumpToCurrentLine();
 			if (DebugEvent != null)
 				DebugEvent(this, new DebuggerEventArgs(DebuggerEvent.Paused));
