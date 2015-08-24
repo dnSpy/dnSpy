@@ -17,12 +17,31 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Linq;
+using System.Windows.Input;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor {
 	static class Utils {
 		public static void NotifyModifiedAssembly(LoadedAssembly asm) {
 			MainWindow.Instance.ModuleModified(asm);
+		}
+
+		public static void InstallSettingsCommand(IContextMenuEntry treeViewCmd, IContextMenuEntry textEditorCmd) {
+			InstallTreeViewAndTextEditorCommand(SettingsRoutedCommand, treeViewCmd, textEditorCmd, ModifierKeys.Alt, Key.Enter);
+		}
+		static readonly RoutedCommand SettingsRoutedCommand = new RoutedCommand("Settings", typeof(Utils));
+
+		public static void InstallTreeViewAndTextEditorCommand(RoutedCommand routedCmd, IContextMenuEntry treeViewCmd, IContextMenuEntry textEditorCmd, ModifierKeys modifiers, Key key) {
+			if (treeViewCmd != null) {
+				var elem = MainWindow.Instance.treeView;
+				elem.AddCommandBinding(routedCmd, new TreeViewCommandProxy(treeViewCmd));
+				bool keyBindingExists = elem.InputBindings.OfType<KeyBinding>().Any(a => a.Key == key && a.Modifiers == modifiers);
+				if (!keyBindingExists)
+					elem.InputBindings.Add(new KeyBinding(routedCmd, key, modifiers));
+			}
+			if (textEditorCmd != null)
+				MainWindow.Instance.CodeBindings.Add(routedCmd, new TextEditorCommandProxy(textEditorCmd), modifiers, key);
 		}
 	}
 }

@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy;
@@ -36,15 +37,9 @@ namespace dnSpy.AsmEditor.Types {
 	[Export(typeof(IPlugin))]
 	sealed class AssemblyPlugin : IPlugin {
 		public void OnLoaded() {
-			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteExecuted, DeleteCanExecute));
-		}
-
-		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = DeleteTypeDefCommand.CanExecute(MainWindow.Instance.SelectedNodes);
-		}
-
-		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e) {
-			DeleteTypeDefCommand.Execute(MainWindow.Instance.SelectedNodes);
+			MainWindow.Instance.treeView.AddCommandBinding(ApplicationCommands.Delete, new TreeViewCommandProxy(new DeleteTypeDefCommand.TheEditCommand()));
+			MainWindow.Instance.CodeBindings.Add(EditingCommands.Delete, new TextEditorCommandProxy(new DeleteTypeDefCommand.TheTextEditorCommand()), ModifierKeys.None, Key.Delete);
+			Utils.InstallSettingsCommand(new TypeDefSettingsCommand.TheEditCommand(), new TypeDefSettingsCommand.TheTextEditorCommand());
 		}
 	}
 
@@ -62,7 +57,7 @@ namespace dnSpy.AsmEditor.Types {
 							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2120)]
-		sealed class TheEditCommand : EditCommand {
+		internal sealed class TheEditCommand : EditCommand {
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return DeleteTypeDefCommand.CanExecute(nodes);
 			}
@@ -78,9 +73,10 @@ namespace dnSpy.AsmEditor.Types {
 
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Delete",
+								InputGestureText = "Del",
 								Category = "AsmEd",
 								Order = 320)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
+		internal sealed class TheTextEditorCommand : TextEditorCommand {
 			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					DeleteTypeDefCommand.CanExecute(ctx.Nodes);
@@ -103,7 +99,7 @@ namespace dnSpy.AsmEditor.Types {
 				menuItem.Header = string.Format("Delete {0} types", nodes.Length);
 		}
 
-		internal static bool CanExecute(ILSpyTreeNode[] nodes) {
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length > 0 &&
 				nodes.All(n => n is TypeTreeNode) &&
 				FilterOutGlobalTypes(nodes).Length > 0;
@@ -113,7 +109,7 @@ namespace dnSpy.AsmEditor.Types {
 			return nodes.Where(a => a is TypeTreeNode && !((TypeTreeNode)a).TypeDefinition.IsGlobalModuleType).ToArray();
 		}
 
-		internal static void Execute(ILSpyTreeNode[] nodes) {
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -245,13 +241,15 @@ namespace dnSpy.AsmEditor.Types {
 
 			var data = new TypeOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, null);
 			var win = new TypeOptionsDlg();
-			win.Title = "Create Type";
+			win.Title = CMD_NAME;
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreateTypeDefCommand(module.Types, nodes[0], data.CreateTypeDefOptions()));
+			var cmd = new CreateTypeDefCommand(module.Types, nodes[0], data.CreateTypeDefOptions());
+			UndoCommandManager.Instance.Add(cmd);
+			MainWindow.Instance.JumpToReference(cmd.typeNode);
 		}
 
 		readonly IList<TypeDef> ownerList;
@@ -361,13 +359,15 @@ namespace dnSpy.AsmEditor.Types {
 
 			var data = new TypeOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, null);
 			var win = new TypeOptionsDlg();
-			win.Title = "Create Nested Type";
+			win.Title = CMD_NAME;
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreateNestedTypeDefCommand(typeNode, data.CreateTypeDefOptions()));
+			var cmd = new CreateNestedTypeDefCommand(typeNode, data.CreateTypeDefOptions());
+			UndoCommandManager.Instance.Add(cmd);
+			MainWindow.Instance.JumpToReference(cmd.nestedType);
 		}
 
 		readonly TypeTreeNode ownerType;
@@ -416,14 +416,16 @@ namespace dnSpy.AsmEditor.Types {
 		const string CMD_NAME = "Edit Type";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
+								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 620)]
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
+							MenuInputGestureText = "Alt+Enter",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2420)]
-		sealed class TheEditCommand : EditCommand {
+		internal sealed class TheEditCommand : EditCommand {
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return TypeDefSettingsCommand.CanExecute(nodes);
 			}
@@ -435,9 +437,10 @@ namespace dnSpy.AsmEditor.Types {
 
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
+								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 620)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
+		internal sealed class TheTextEditorCommand : TextEditorCommand {
 			protected override bool CanExecute(Context ctx) {
 				return TypeDefSettingsCommand.CanExecute(ctx.Nodes);
 			}

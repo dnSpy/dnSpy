@@ -84,13 +84,16 @@ namespace dnSpy.AsmEditor {
 		ClearUndo,
 		ClearRedo,
 		Saved,
+		Dirty,
 	}
 
 	public class UndoCommandManagerEventArgs : EventArgs {
 		public readonly UndoCommandManagerEventType Type;
+		public readonly IUndoObject UndoObject;
 
-		public UndoCommandManagerEventArgs(UndoCommandManagerEventType type) {
+		public UndoCommandManagerEventArgs(UndoCommandManagerEventType type, IUndoObject obj) {
 			this.Type = type;
+			this.UndoObject = obj;
 		}
 	}
 
@@ -105,10 +108,10 @@ namespace dnSpy.AsmEditor {
 
 		public event EventHandler<UndoCommandManagerEventArgs> OnEvent;
 
-		void NotifyEvent(UndoCommandManagerEventType type) {
+		void NotifyEvent(UndoCommandManagerEventType type, IUndoObject obj = null) {
 			var evt = OnEvent;
 			if (evt != null)
-				evt(this, new UndoCommandManagerEventArgs(type));
+				evt(this, new UndoCommandManagerEventArgs(type, obj));
 		}
 
 		UndoCommandManager() {
@@ -234,15 +237,15 @@ namespace dnSpy.AsmEditor {
 		/// Clears undo and redo history
 		/// </summary>
 		public void Clear() {
-			Clear(true, true);
+			Clear(true, true, undoCommands.Count != 0 || redoCommands.Count != 0);
 		}
 
-		void Clear(bool clearUndo, bool clearRedo) {
+		void Clear(bool clearUndo, bool clearRedo, bool forceCallGc = false) {
 			Debug.Assert(currentCommands == null);
 			if (currentCommands != null)
 				throw new InvalidOperationException();
 
-			bool callGc = false;
+			bool callGc = forceCallGc;
 			if (clearUndo) {
 				callGc |= NeedsToCallGc(undoCommands);
 				Clear(undoCommands);
@@ -349,15 +352,23 @@ namespace dnSpy.AsmEditor {
 		}
 
 		internal void MarkAsModified(IUndoObject obj) {
-			obj.IsDirty = true;
 			if (obj.SavedCommand == 0)
 				obj.SavedCommand = currentCommandCounter;
+			WriteIsDirty(obj, true);
 		}
 
 		public void MarkAsSaved(IUndoObject obj) {
-			obj.IsDirty = false;
 			obj.SavedCommand = GetNewSavedCommand(obj);
-			NotifyEvent(UndoCommandManagerEventType.Saved);
+			WriteIsDirty(obj, false);
+		}
+
+		void WriteIsDirty(IUndoObject obj, bool newIsDirty) {
+			// Always call NotifyEvent() even when value doesn't change.
+			obj.IsDirty = newIsDirty;
+			if (newIsDirty)
+				NotifyEvent(UndoCommandManagerEventType.Dirty, obj);
+			else
+				NotifyEvent(UndoCommandManagerEventType.Saved, obj);
 		}
 
 		int GetNewSavedCommand(IUndoObject obj) {
@@ -383,7 +394,8 @@ namespace dnSpy.AsmEditor {
 			currentCommandCounter = newCurrentCommandCounter;
 			foreach (var obj in executedGroup.ModifiedObjects) {
 				Debug.Assert(obj.SavedCommand != 0);
-				obj.IsDirty = IsModifiedCounter(obj, currentCommandCounter);
+				bool newValue = IsModifiedCounter(obj, currentCommandCounter);
+				WriteIsDirty(obj, newValue);
 			}
 		}
 

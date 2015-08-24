@@ -5,13 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-
 using Debugger.Interop.CorDebug;
+using dnSpy.Debugger;
 using ICSharpCode.NRefactory;
-using ICSharpCode.ILSpy.Debugger;
 
-namespace Debugger
-{
+namespace Debugger {
 	public class Breakpoint: DebuggerObject
 	{
 		NDebugger debugger;

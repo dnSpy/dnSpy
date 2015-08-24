@@ -19,8 +19,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
@@ -28,6 +30,18 @@ using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.AsmEditor.MethodBody {
+	[Export(typeof(IPlugin))]
+	sealed class MethodBodyPlugin : IPlugin {
+		static readonly ICommand editILInstructionsCommand = new EditILInstructionsCommand();
+
+		public void OnLoaded() {
+			MainWindow.Instance.CodeBindings.Add(new RoutedCommand("EditILInstructionsCommand", typeof(MethodBodyPlugin)),
+				(s, e) => editILInstructionsCommand.Execute(null),
+				(s, e) => e.CanExecute = editILInstructionsCommand.CanExecute(null),
+				ModifierKeys.Control, Key.E);
+		}
+	}
+
 	[DebuggerDisplay("{Description}")]
 	sealed class MethodBodySettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Method Body";
@@ -133,8 +147,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 	[ExportContextMenuEntry(Header = "Edit IL Instruction_s…",
 							Icon = "ILEditor",
 							Category = "AsmEd",
-							Order = 639.99)]
-	sealed class EditILInstructionsCommand : IContextMenuEntry {
+							Order = 639.99,
+							InputGestureText = "Ctrl+E")]
+	sealed class EditILInstructionsCommand : IContextMenuEntry, ICommand {
 		public bool IsVisible(ContextMenuEntryContext context) {
 			var list = GetMappings(context);
 			return list != null &&
@@ -198,6 +213,27 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 
 			return foundInstrs.ToArray();
+		}
+
+		event EventHandler ICommand.CanExecuteChanged {
+			add { CommandManager.RequerySuggested += value; }
+			remove { CommandManager.RequerySuggested -= value; }
+		}
+
+		static ContextMenuEntryContext CreateContext() {
+			var textView = MainWindow.Instance.ActiveTextView;
+			if (textView != null && textView.IsKeyboardFocusWithin)
+				return ContextMenuEntryContext.Create(textView, true);
+
+			return ContextMenuEntryContext.Create(null, true);
+		}
+
+		void ICommand.Execute(object parameter) {
+			Execute(CreateContext());
+		}
+
+		bool ICommand.CanExecute(object parameter) {
+			return IsVisible(CreateContext());
 		}
 	}
 }

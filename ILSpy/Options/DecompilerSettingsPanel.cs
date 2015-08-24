@@ -69,6 +69,8 @@ namespace ICSharpCode.ILSpy.Options {
 			s.DecompilationObject3 = (DecompilationObject)((int?)e.Attribute("decompilationObject3") ?? (int)s.DecompilationObject3);
 			s.DecompilationObject4 = (DecompilationObject)((int?)e.Attribute("decompilationObject4") ?? (int)s.DecompilationObject4);
 			s.SortMembers = (bool?)e.Attribute("sortMembers") ?? s.SortMembers;
+			s.ForceShowAllMembers = (bool?)e.Attribute("forceShowAllMembers") ?? s.ForceShowAllMembers;
+			s.SortSystemUsingStatementsFirst = (bool?)e.Attribute("sortSystemUsingStatementsFirst") ?? s.SortSystemUsingStatementsFirst;
 			return s;
 		}
 
@@ -76,16 +78,16 @@ namespace ICSharpCode.ILSpy.Options {
 			DecompilerSettings s = this.settings;
 			var flags = RefreshFlags.None;
 
-			if (CurrentDecompilerSettings.AnonymousMethods != s.AnonymousMethods) flags |= RefreshFlags.ILAst;
+			if (CurrentDecompilerSettings.AnonymousMethods != s.AnonymousMethods) flags |= RefreshFlags.ILAst | RefreshFlags.TreeViewNodes;
 			if (CurrentDecompilerSettings.ExpressionTrees != s.ExpressionTrees) flags |= RefreshFlags.ILAst;
-			if (CurrentDecompilerSettings.YieldReturn != s.YieldReturn) flags |= RefreshFlags.ILAst;
-			if (CurrentDecompilerSettings.AsyncAwait != s.AsyncAwait) flags |= RefreshFlags.ILAst;
-			if (CurrentDecompilerSettings.AutomaticProperties != s.AutomaticProperties) flags |= RefreshFlags.CSharp;
-			if (CurrentDecompilerSettings.AutomaticEvents != s.AutomaticEvents) flags |= RefreshFlags.CSharp;
+			if (CurrentDecompilerSettings.YieldReturn != s.YieldReturn) flags |= RefreshFlags.ILAst | RefreshFlags.TreeViewNodes;
+			if (CurrentDecompilerSettings.AsyncAwait != s.AsyncAwait) flags |= RefreshFlags.ILAst | RefreshFlags.TreeViewNodes;
+			if (CurrentDecompilerSettings.AutomaticProperties != s.AutomaticProperties) flags |= RefreshFlags.CSharp | RefreshFlags.TreeViewNodes;
+			if (CurrentDecompilerSettings.AutomaticEvents != s.AutomaticEvents) flags |= RefreshFlags.CSharp | RefreshFlags.TreeViewNodes;
 			if (CurrentDecompilerSettings.UsingStatement != s.UsingStatement) flags |= RefreshFlags.CSharp;
 			if (CurrentDecompilerSettings.ForEachStatement != s.ForEachStatement) flags |= RefreshFlags.CSharp;
 			if (CurrentDecompilerSettings.LockStatement != s.LockStatement) flags |= RefreshFlags.CSharp;
-			if (CurrentDecompilerSettings.SwitchStatementOnString != s.SwitchStatementOnString) flags |= RefreshFlags.CSharp;
+			if (CurrentDecompilerSettings.SwitchStatementOnString != s.SwitchStatementOnString) flags |= RefreshFlags.CSharp | RefreshFlags.TreeViewNodes;
 			if (CurrentDecompilerSettings.UsingDeclarations != s.UsingDeclarations) flags |= RefreshFlags.CSharp;
 			if (CurrentDecompilerSettings.QueryExpressions != s.QueryExpressions) flags |= RefreshFlags.CSharp;
 			if (CurrentDecompilerSettings.FullyQualifyAmbiguousTypeNames != s.FullyQualifyAmbiguousTypeNames) flags |= RefreshFlags.CSharp;
@@ -105,6 +107,8 @@ namespace ICSharpCode.ILSpy.Options {
 			if (CurrentDecompilerSettings.DecompilationObject3 != s.DecompilationObject3) flags |= RefreshFlags.CSharp;
 			if (CurrentDecompilerSettings.DecompilationObject4 != s.DecompilationObject4) flags |= RefreshFlags.CSharp;
 			if (CurrentDecompilerSettings.SortMembers != s.SortMembers) flags |= RefreshFlags.IL | RefreshFlags.CSharp;
+			if (CurrentDecompilerSettings.ForceShowAllMembers != s.ForceShowAllMembers) flags |= RefreshFlags.CSharp | RefreshFlags.TreeViewNodes;
+			if (CurrentDecompilerSettings.SortSystemUsingStatementsFirst != s.SortSystemUsingStatementsFirst) flags |= RefreshFlags.CSharp;
 
 			XElement section = new XElement("DecompilerSettings");
 			section.SetAttributeValue("anonymousMethods", s.AnonymousMethods);
@@ -124,6 +128,8 @@ namespace ICSharpCode.ILSpy.Options {
 			section.SetAttributeValue("decompilationObject3", (int)s.DecompilationObject3);
 			section.SetAttributeValue("decompilationObject4", (int)s.DecompilationObject4);
 			section.SetAttributeValue("sortMembers", s.SortMembers);
+			section.SetAttributeValue("forceShowAllMembers", s.ForceShowAllMembers);
+			section.SetAttributeValue("sortSystemUsingStatementsFirst", s.SortSystemUsingStatementsFirst);
 
 			XElement existingElement = root.Element("DecompilerSettings");
 			if (existingElement != null)

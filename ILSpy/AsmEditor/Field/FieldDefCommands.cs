@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
@@ -33,15 +34,9 @@ namespace dnSpy.AsmEditor.Field {
 	[Export(typeof(IPlugin))]
 	sealed class AssemblyPlugin : IPlugin {
 		public void OnLoaded() {
-			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteExecuted, DeleteCanExecute));
-		}
-
-		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = DeleteFieldDefCommand.CanExecute(MainWindow.Instance.SelectedNodes);
-		}
-
-		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e) {
-			DeleteFieldDefCommand.Execute(MainWindow.Instance.SelectedNodes);
+			MainWindow.Instance.treeView.AddCommandBinding(ApplicationCommands.Delete, new TreeViewCommandProxy(new DeleteFieldDefCommand.TheEditCommand()));
+			MainWindow.Instance.CodeBindings.Add(EditingCommands.Delete, new TextEditorCommandProxy(new DeleteFieldDefCommand.TheTextEditorCommand()), ModifierKeys.None, Key.Delete);
+			Utils.InstallSettingsCommand(new FieldDefSettingsCommand.TheEditCommand(), new FieldDefSettingsCommand.TheTextEditorCommand());
 		}
 	}
 
@@ -59,7 +54,7 @@ namespace dnSpy.AsmEditor.Field {
 							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2140)]
-		sealed class TheEditCommand : EditCommand {
+		internal sealed class TheEditCommand : EditCommand {
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return DeleteFieldDefCommand.CanExecute(nodes);
 			}
@@ -75,9 +70,10 @@ namespace dnSpy.AsmEditor.Field {
 
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Delete",
+								InputGestureText = "Del",
 								Category = "AsmEd",
 								Order = 340)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
+		internal sealed class TheTextEditorCommand : TextEditorCommand {
 			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					DeleteFieldDefCommand.CanExecute(ctx.Nodes);
@@ -99,12 +95,12 @@ namespace dnSpy.AsmEditor.Field {
 				menuItem.Header = string.Format("Delete {0} fields", nodes.Length);
 		}
 
-		internal static bool CanExecute(ILSpyTreeNode[] nodes) {
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length > 0 &&
 				nodes.All(n => n is FieldTreeNode);
 		}
 
-		internal static void Execute(ILSpyTreeNode[] nodes) {
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -275,13 +271,15 @@ namespace dnSpy.AsmEditor.Field {
 
 			var data = new FieldOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, type);
 			var win = new FieldOptionsDlg();
-			win.Title = "Create Field";
+			win.Title = CMD_NAME;
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreateFieldDefCommand(typeNode, data.CreateFieldDefOptions()));
+			var cmd = new CreateFieldDefCommand(typeNode, data.CreateFieldDefOptions());
+			UndoCommandManager.Instance.Add(cmd);
+			MainWindow.Instance.JumpToReference(cmd.fieldNode);
 		}
 
 		readonly TypeTreeNode ownerNode;
@@ -333,14 +331,16 @@ namespace dnSpy.AsmEditor.Field {
 		const string CMD_NAME = "Edit Field";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
+								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 650)]
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
+							MenuInputGestureText = "Alt+Enter",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2450)]
-		sealed class TheEditCommand : EditCommand {
+		internal sealed class TheEditCommand : EditCommand {
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return FieldDefSettingsCommand.CanExecute(nodes);
 			}
@@ -352,9 +352,10 @@ namespace dnSpy.AsmEditor.Field {
 
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
+								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 650)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
+		internal sealed class TheTextEditorCommand : TextEditorCommand {
 			protected override bool CanExecute(Context ctx) {
 				return FieldDefSettingsCommand.CanExecute(ctx.Nodes);
 			}

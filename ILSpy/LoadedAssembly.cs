@@ -593,7 +593,10 @@ namespace ICSharpCode.ILSpy
 			// Prevent a ref to the module def. Needed if the OS is XP (.NET 4.0), not if Win10 (.NET 4.6).
 			// Make sure that the task has finished so the GC can collect the memory.
 			Load(ModuleDefinition);
-			assemblyTask = new Task<LoadedFile>(() => default(LoadedFile));
+			wasException = false;
+			var res = new TaskCompletionSource<LoadedFile>();
+			res.SetResult(default(LoadedFile));
+			assemblyTask = res.Task;
 		}
 
 		static void Load(object obj)

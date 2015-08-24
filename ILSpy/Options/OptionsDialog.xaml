@@ -4,7 +4,7 @@
         Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
         xmlns:ctrls="clr-namespace:dnSpy.Controls"
         MinHeight="300" MinWidth="450"
-        Title="Options" Height="450" Width="500">
+        Title="Options" Height="480" Width="500">
 	<Grid Margin="5">
 		<Grid.RowDefinitions>
 			<RowDefinition

@@ -136,7 +136,7 @@ namespace ICSharpCode.ILSpy.Options {
 			if (currentDisplaySettings.ShowMetadataTokens != s.ShowMetadataTokens ||
 				currentDisplaySettings.ShowAssemblyVersion != s.ShowAssemblyVersion ||
 				currentDisplaySettings.ShowAssemblyPublicKeyToken != s.ShowAssemblyPublicKeyToken) {
-				flags |= RefreshFlags.TreeViewNodeNames;
+				flags |= RefreshFlags.TreeViewNodes;
 			}
 
 			currentDisplaySettings.CopyValues(s);

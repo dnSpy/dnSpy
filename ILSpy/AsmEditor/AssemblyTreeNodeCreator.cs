@@ -79,7 +79,7 @@ namespace dnSpy.AsmEditor {
 					throw new InvalidOperationException();
 			}
 
-			asmNode.Delete();
+			asmNode.Delete(false);
 		}
 
 		public void Dispose() {

@@ -2085,7 +2085,9 @@
 							BorderBrush="{TemplateBinding BorderBrush}"
 							Background="{TemplateBinding Background}"
 							SnapsToDevicePixels="true">
+                        <!-- Focusable=False (setter) is ignored in the style for some reason. Override it here -->
                         <ScrollViewer Style="{DynamicResource {x:Static GridView.GridViewScrollViewerStyleKey}}"
+                                      Focusable="False"
                                       Padding="{TemplateBinding Padding}">
                             <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </ScrollViewer>
@@ -5742,6 +5744,8 @@
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowILBytes}">Show IL instruction bytes</CheckBox>
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowILComments}">Show IL opcode comments</CheckBox>
             <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.SortMembers}">Sort methods, fields, properties, events and types</CheckBox>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ForceShowAllMembers}">Show hidden compiler generated types and methods</CheckBox>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.SortSystemUsingStatementsFirst}">Place 'System' directives first when sorting usings</CheckBox>
             <GroupBox Margin="0 5 0 0" Header="Decompilation order">
                 <Grid>
                     <Grid.ColumnDefinitions>

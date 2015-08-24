@@ -184,8 +184,14 @@ namespace dnSpy.Tabs {
 		}
 
 		public void Execute(ContextMenuEntryContext context) {
+			Execute(context, false);
+		}
+
+		internal static void Execute(ContextMenuEntryContext context, bool newTab) {
 			var @ref = GetReference(context);
 			if (@ref != null) {
+				if (newTab)
+					MainWindow.Instance.OpenNewEmptyTab();
 				var textView = MainWindow.Instance.SafeActiveTextView;
 				MainWindow.Instance.JumpToReference(textView, @ref);
 				MainWindow.Instance.SetTextEditorFocus(textView);
@@ -204,13 +210,7 @@ namespace dnSpy.Tabs {
 		}
 
 		public void Execute(ContextMenuEntryContext context) {
-			var @ref = OpenReferenceContextMenuEntry.GetReference(context);
-			if (@ref != null) {
-				MainWindow.Instance.OpenNewEmptyTab();
-				var textView = MainWindow.Instance.SafeActiveTextView;
-				MainWindow.Instance.JumpToReference(textView, @ref);
-				MainWindow.Instance.SetTextEditorFocus(textView);
-			}
+			OpenReferenceContextMenuEntry.Execute(context, true);
 		}
 	}
 

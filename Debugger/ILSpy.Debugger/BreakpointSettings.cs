@@ -17,19 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
+using dnlib.DotNet;
+using dnSpy.Debugger;
 using ICSharpCode.Decompiler.ILAst;
-using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.Debugger.Bookmarks;
 using ICSharpCode.NRefactory;
-using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.Debugger
-{
+namespace ICSharpCode.ILSpy.Debugger {
 	sealed class BreakpointSettings
 	{
 		public static readonly BreakpointSettings Instance = new BreakpointSettings();

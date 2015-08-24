@@ -17,27 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using ICSharpCode.ILSpy;
 
-namespace dnSpy.TreeNodes.Hex {
-	sealed class ContextMenuAP : DependencyObject {
-		public static readonly DependencyProperty InstallProperty = DependencyProperty.RegisterAttached(
-			"Install", typeof(bool), typeof(ContextMenuAP), new UIPropertyMetadata(false, InstallPropertyChangedCallback));
-
-		public static void SetInstall(FrameworkElement element, bool value) {
-			element.SetValue(InstallProperty, value);
-		}
-
-		public static bool GetInstall(FrameworkElement element) {
-			return (bool)element.GetValue(InstallProperty);
-		}
-
-		static void InstallPropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-			if (!(bool)e.NewValue)
-				return;
+namespace dnSpy.TreeNodes {
+	[Export(typeof(IInitializeDataTemplate))]
+	sealed class InitializeDataTemplateContextMenu : IInitializeDataTemplate {
+		public void Initialize(DependencyObject d) {
 			var fwe = d as FrameworkElement;
 			if (fwe == null)
 				return;

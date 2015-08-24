@@ -412,15 +412,17 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 		
-		public void Unload(LoadedAssembly assembly)
+		public void Unload(LoadedAssembly assembly, bool canDispose)
 		{
 			if (App.Current != null)
 				App.Current.Dispatcher.VerifyAccess();
 			lock (assemblies) {
 				assemblies.Remove(assembly);
-				assembly.Dispose();
+				if (canDispose)
+					assembly.Dispose();
 			}
-			RequestGC();
+			if (canDispose)
+				RequestGC();
 		}
 		
 		static bool gcRequested;

@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Windows.Controls;
 using dnSpy;
+using dnSpy.Debugger;
 using dnSpy.Images;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.AvalonEdit;

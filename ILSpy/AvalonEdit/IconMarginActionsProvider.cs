@@ -110,7 +110,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 
 		// Prevent big memory leaks (text editor) because the data is put into some MEF data structure.
 		// All created instances in this class are shared so this one can be shared as well.
-		class MefState
+		sealed class MefState
 		{
 			public static readonly MefState Instance = new MefState();
 

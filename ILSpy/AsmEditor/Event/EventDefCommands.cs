@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy;
@@ -32,15 +33,9 @@ namespace dnSpy.AsmEditor.Event {
 	[Export(typeof(IPlugin))]
 	sealed class AssemblyPlugin : IPlugin {
 		public void OnLoaded() {
-			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteExecuted, DeleteCanExecute));
-		}
-
-		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = DeleteEventDefCommand.CanExecute(MainWindow.Instance.SelectedNodes);
-		}
-
-		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e) {
-			DeleteEventDefCommand.Execute(MainWindow.Instance.SelectedNodes);
+			MainWindow.Instance.treeView.AddCommandBinding(ApplicationCommands.Delete, new TreeViewCommandProxy(new DeleteEventDefCommand.TheEditCommand()));
+			MainWindow.Instance.CodeBindings.Add(EditingCommands.Delete, new TextEditorCommandProxy(new DeleteEventDefCommand.TheTextEditorCommand()), ModifierKeys.None, Key.Delete);
+			Utils.InstallSettingsCommand(new EventDefSettingsCommand.TheEditCommand(), new EventDefSettingsCommand.TheTextEditorCommand());
 		}
 	}
 
@@ -58,7 +53,7 @@ namespace dnSpy.AsmEditor.Event {
 							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2160)]
-		sealed class TheEditCommand : EditCommand {
+		internal sealed class TheEditCommand : EditCommand {
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return DeleteEventDefCommand.CanExecute(nodes);
 			}
@@ -74,9 +69,10 @@ namespace dnSpy.AsmEditor.Event {
 
 		[ExportContextMenuEntry(Header = CMD_NAME,
 								Icon = "Delete",
+								InputGestureText = "Del",
 								Category = "AsmEd",
 								Order = 360)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
+		internal sealed class TheTextEditorCommand : TextEditorCommand {
 			protected override bool CanExecute(Context ctx) {
 				return ctx.ReferenceSegment.IsLocalTarget &&
 					DeleteEventDefCommand.CanExecute(ctx.Nodes);
@@ -98,12 +94,12 @@ namespace dnSpy.AsmEditor.Event {
 				menuItem.Header = string.Format("Delete {0} events", nodes.Length);
 		}
 
-		internal static bool CanExecute(ILSpyTreeNode[] nodes) {
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes.Length > 0 &&
 				nodes.All(n => n is EventTreeNode);
 		}
 
-		internal static void Execute(ILSpyTreeNode[] nodes) {
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -278,13 +274,15 @@ namespace dnSpy.AsmEditor.Event {
 
 			var data = new EventOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, typeNode.TypeDefinition);
 			var win = new EventOptionsDlg();
-			win.Title = "Create Event";
+			win.Title = CMD_NAME;
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreateEventDefCommand(typeNode, data.CreateEventDefOptions()));
+			var cmd = new CreateEventDefCommand(typeNode, data.CreateEventDefOptions());
+			UndoCommandManager.Instance.Add(cmd);
+			MainWindow.Instance.JumpToReference(cmd.eventNode);
 		}
 
 		readonly TypeTreeNode ownerNode;
@@ -326,14 +324,16 @@ namespace dnSpy.AsmEditor.Event {
 		const string CMD_NAME = "Edit Event";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
+								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 670)]
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
+							MenuInputGestureText = "Alt+Enter",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2470)]
-		sealed class TheEditCommand : EditCommand {
+		internal sealed class TheEditCommand : EditCommand {
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return EventDefSettingsCommand.CanExecute(nodes);
 			}
@@ -345,9 +345,10 @@ namespace dnSpy.AsmEditor.Event {
 
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
+								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 670)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
+		internal sealed class TheTextEditorCommand : TextEditorCommand {
 			protected override bool CanExecute(Context ctx) {
 				return EventDefSettingsCommand.CanExecute(ctx.Nodes);
 			}

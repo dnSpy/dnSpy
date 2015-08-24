@@ -32,15 +32,8 @@ namespace dnSpy.AsmEditor.Module {
 	[Export(typeof(IPlugin))]
 	sealed class AssemblyPlugin : IPlugin {
 		public void OnLoaded() {
-			MainWindow.Instance.treeView.CommandBindings.Add(new CommandBinding(ApplicationCommands.Delete, DeleteExecuted, DeleteCanExecute));
-		}
-
-		void DeleteCanExecute(object sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = RemoveNetModuleFromAssemblyCommand.CanExecute(MainWindow.Instance.SelectedNodes);
-		}
-
-		void DeleteExecuted(object sender, ExecutedRoutedEventArgs e) {
-			RemoveNetModuleFromAssemblyCommand.Execute(MainWindow.Instance.SelectedNodes);
+			MainWindow.Instance.treeView.AddCommandBinding(ApplicationCommands.Delete, new TreeViewCommandProxy(new RemoveNetModuleFromAssemblyCommand.TheEditCommand()));
+			Utils.InstallSettingsCommand(new ModuleSettingsCommand.TheEditCommand(), null);
 		}
 	}
 
@@ -86,7 +79,9 @@ namespace dnSpy.AsmEditor.Module {
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new CreateNetModuleCommand(data.CreateNetModuleOptions()));
+			var cmd = new CreateNetModuleCommand(data.CreateNetModuleOptions());
+			UndoCommandManager.Instance.Add(cmd);
+			MainWindow.Instance.JumpToReference(cmd.asmNodeCreator.AssemblyTreeNode);
 		}
 
 		AssemblyTreeNodeCreator asmNodeCreator;
@@ -110,7 +105,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		public IEnumerable<object> ModifiedObjects {
-			get { return new ILSpyTreeNode[0]; }
+			get { yield return asmNodeCreator.AssemblyTreeNode; }
 		}
 
 		public void Dispose() {
@@ -355,7 +350,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		readonly AssemblyTreeNode asmNode;
-		readonly AssemblyTreeNode modNode;
+		internal readonly AssemblyTreeNode modNode;
 		readonly bool modNodeWasCreated;
 
 		protected AddNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, AssemblyTreeNode modNode, bool modNodeWasCreated) {
@@ -443,7 +438,9 @@ namespace dnSpy.AsmEditor.Module {
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new AddNewNetModuleToAssemblyCommand((AssemblyTreeNode)nodes[0], data.CreateNetModuleOptions()));
+			var cmd = new AddNewNetModuleToAssemblyCommand((AssemblyTreeNode)nodes[0], data.CreateNetModuleOptions());
+			UndoCommandManager.Instance.Add(cmd);
+			MainWindow.Instance.JumpToReference(cmd.modNode);
 		}
 
 		AddNewNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, NetModuleOptions options)
@@ -496,7 +493,9 @@ namespace dnSpy.AsmEditor.Module {
 				return;
 			}
 
-			UndoCommandManager.Instance.Add(new AddExistingNetModuleToAssemblyCommand((AssemblyTreeNode)nodes[0], asm));
+			var cmd = new AddExistingNetModuleToAssemblyCommand((AssemblyTreeNode)nodes[0], asm);
+			UndoCommandManager.Instance.Add(cmd);
+			MainWindow.Instance.JumpToReference(cmd.modNode);
 		}
 
 		AddExistingNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, LoadedAssembly asm)
@@ -521,7 +520,7 @@ namespace dnSpy.AsmEditor.Module {
 							MenuInputGestureText = "Del",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2110)]
-		sealed class TheEditCommand : EditCommand {
+		internal sealed class TheEditCommand : EditCommand {
 			protected override bool IsVisible(ILSpyTreeNode[] nodes) {
 				return RemoveNetModuleFromAssemblyCommand.IsVisible(nodes);
 			}
@@ -542,14 +541,14 @@ namespace dnSpy.AsmEditor.Module {
 				((AssemblyTreeNode)nodes[0]).IsModuleInAssembly;
 		}
 
-		internal static bool CanExecute(ILSpyTreeNode[] nodes) {
+		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes != null &&
 				nodes.Length == 1 &&
 				nodes[0] is AssemblyTreeNode &&
 				((AssemblyTreeNode)nodes[0]).IsNetModuleInAssembly;
 		}
 
-		internal static void Execute(ILSpyTreeNode[] nodes) {
+		static void Execute(ILSpyTreeNode[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
@@ -618,14 +617,16 @@ namespace dnSpy.AsmEditor.Module {
 		const string CMD_NAME = "Edit Module";
 		[ExportContextMenuEntry(Header = CMD_NAME + "…",
 								Icon = "Settings",
+								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 610)]
 		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
+							MenuInputGestureText = "Alt+Enter",
 							MenuCategory = "AsmEd",
 							MenuOrder = 2410)]
-		sealed class TheEditCommand : EditCommand {
+		internal sealed class TheEditCommand : EditCommand {
 			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
 				return ModuleSettingsCommand.CanExecute(nodes);
 			}

@@ -122,6 +122,7 @@
       <DependentUpon>AssemblyOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Assembly\AssemblyOptionsVM.cs" />
+    <Compile Include="AsmEditor\ContextMenuEntryCommandProxy.cs" />
     <Compile Include="AsmEditor\ContextMenuHandler.cs" />
     <Compile Include="AsmEditor\Converters\BooleanToGridrowLengthConverter.cs" />
     <Compile Include="AsmEditor\Converters\CilObjectConverter.cs" />
@@ -329,6 +330,7 @@
       <DependentUpon>SelectDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Hex\SelectVM.cs" />
+    <Compile Include="AsmEditor\Hex\TableSorter.cs" />
     <Compile Include="AsmEditor\Hex\WriteHexUndoCommand.cs" />
     <Compile Include="AsmEditor\IIndexedItem.cs" />
     <Compile Include="AsmEditor\IndexObservableCollection.cs" />
@@ -472,8 +474,10 @@
       <DependentUpon>SaveSingleModuleDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\TextEditorCommand.cs" />
+    <Compile Include="AsmEditor\TextEditorCommandProxy.cs" />
     <Compile Include="AsmEditor\ToolbarCommands.cs" />
     <Compile Include="AsmEditor\TreeNodeCommand.cs" />
+    <Compile Include="AsmEditor\TreeViewCommandProxy.cs" />
     <Compile Include="AsmEditor\Types\TypeDefCommands.cs" />
     <Compile Include="AsmEditor\Types\TypeDefOptions.cs" />
     <Compile Include="AsmEditor\Types\TypeOptionsDlg.xaml.cs">
@@ -556,6 +560,7 @@
       <DependentUpon>DecompilerTabsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="dntheme\FileTabBackgroundConverter.cs" />
+    <Compile Include="MethodKey.cs" />
     <Compile Include="Search\FilterSearcher.cs" />
     <Compile Include="HexEditor\AsciiEncoding.cs" />
     <Compile Include="HexEditor\ByteArrayHexStream.cs" />
@@ -598,6 +603,7 @@
     <Compile Include="Options\DisplaySettingsPanel.cs" />
     <Compile Include="Options\FontUtils.cs" />
     <Compile Include="Options\OtherSettings.cs" />
+    <Compile Include="Search\NamespaceRef.cs" />
     <Compile Include="Tabs\DecompileTabState.cs" />
     <Compile Include="Tabs\HexTabState.cs" />
     <Compile Include="Tabs\SavedTabState.cs" />
@@ -619,7 +625,6 @@
     <Compile Include="Search\TreeViewNodeFilterBase.cs" />
     <Compile Include="Search\VisibleMembersFlags.cs" />
     <Compile Include="TreeNodes\GoToTokenContextMenuEntry.cs" />
-    <Compile Include="TreeNodes\Hex\ContextMenuAP.cs" />
     <Compile Include="TreeNodes\Hex\HexField.cs" />
     <Compile Include="TreeNodes\Hex\HexTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\HexUtils.cs" />
@@ -637,6 +642,7 @@
     <Compile Include="TreeNodes\Hex\ImageOptionalHeaderVM.cs" />
     <Compile Include="TreeNodes\Hex\ImageSectionHeaderTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\ImageSectionHeaderVM.cs" />
+    <Compile Include="TreeNodes\Hex\InitDataTemplateAP.cs" />
     <Compile Include="TreeNodes\Hex\MetaDataTableRecordTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\MetaDataTableRecordVM.cs" />
     <Compile Include="TreeNodes\Hex\MetaDataTableTreeNode.cs" />
@@ -651,6 +657,8 @@
     <Compile Include="TreeNodes\Hex\TablesStreamTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\TablesStreamVM.cs" />
     <Compile Include="TreeNodes\Hex\VirtualizedList.cs" />
+    <Compile Include="TreeNodes\IInitializeDataTemplate.cs" />
+    <Compile Include="TreeNodes\InitializeDataTemplateContextMenu.cs" />
     <Compile Include="TreeNodes\ITokenTreeNode.cs" />
     <Compile Include="TreeNodes\ITreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\NodePathName.cs" />

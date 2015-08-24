@@ -150,8 +150,20 @@ namespace dnSpy.Tabs {
 			Debug.Assert(e.RemovedItems.Count <= 1);
 			Debug.Assert(e.AddedItems.Count <= 1);
 
-			var oldState = e.RemovedItems.Count >= 1 ? (TState)((TabItem)e.RemovedItems[0]).DataContext : null;
-			var newState = e.AddedItems.Count >= 1 ? (TState)((TabItem)e.AddedItems[0]).DataContext : null;
+			TState oldState = null, newState = null;
+
+			if (e.RemovedItems.Count >= 1) {
+				var tabItem = e.RemovedItems[0] as TabItem;
+				if (tabItem == null)
+					return;
+				oldState = (TState)tabItem.DataContext;
+			}
+			if (e.AddedItems.Count >= 1) {
+				var tabItem = e.AddedItems[0] as TabItem;
+				if (tabItem == null)
+					return;
+				newState = (TState)tabItem.DataContext;
+			}
 
 			foreach (var item in tabControl.Items) {
 				var tabItem = (TabItem)item;
@@ -516,7 +528,7 @@ namespace dnSpy.Tabs {
 			DetachTabState(srcTabState);
 			dstTabManager.AttachTabState(srcTabState, insertIndex);
 
-			if ((bool)srcTabState.TabItem.GetValue(UIElement.IsKeyboardFocusWithinProperty)) {
+			if (srcTabState.TabItem.IsKeyboardFocusWithin) {
 				tabGroupsManager.SetActiveTab(srcTabState);
 				this.IsActive = false;
 				dstTabManager.IsActive = true;

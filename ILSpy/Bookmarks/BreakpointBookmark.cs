@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Windows.Media;
 using dnlib.DotNet;
 using dnSpy.Bookmarks;
+using dnSpy.Debugger;
 using dnSpy.Images;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.Decompiler;

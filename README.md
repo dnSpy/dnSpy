@@ -66,6 +66,7 @@ Ctrl+K		| Open search pane
 Ctrl+T		| (Search pane) Select Type
 Ctrl+M		| (Search pane) Select Member
 Ctrl+S		| (Search pane) Select Literal
+Alt+Enter	| (Text view, Tree view) Edit current type, method, field, etc
 F12			| (Text view) Follow reference at caret
 Enter		| (Text view) Follow reference at caret
 Ctrl+F12	| (Text view) Follow reference at caret in a new tab
@@ -75,6 +76,7 @@ Ctrl+Alt+W	| (Text view) Toggle word wrap
 Shift+Dbl Click| (BP/Call stack/Search/etc windows) Open BP/method/etc in a new tab
 Ctrl+C		| (Text view) Copy selected text
 Ctrl+B		| (Text view, IL language) Copy selected lines as IL hex bytes
+Ctrl+E		| (Text view) Edit IL instructions
 Ctrl+S		| Save code
 Ctrl+Shift+S| Save all modified assemblies and netmodules
 Ctrl+O		| Open assembly

@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -45,6 +46,7 @@ using dnSpy.dntheme;
 using dnSpy.Images;
 using dnSpy.NRefactory;
 using dnSpy.Options;
+using dnSpy.Search;
 using dnSpy.Tabs;
 using dnSpy.TextView;
 using dnSpy.TreeNodes;
@@ -401,7 +403,8 @@ namespace ICSharpCode.ILSpy
 					(kb.Modifiers == ModifierKeys.None && kb.Key == Key.Enter) ||
 					(kb.Modifiers == ModifierKeys.None && kb.Key == Key.Tab) ||
 					(kb.Modifiers == ModifierKeys.Shift && kb.Key == Key.Tab) ||
-					(kb.Modifiers == ModifierKeys.Control && kb.Key == Key.Enter)) {
+					(kb.Modifiers == ModifierKeys.Control && kb.Key == Key.Enter) ||
+					(kb.Modifiers == ModifierKeys.None && kb.Key == Key.Delete)) {
 					inputList.RemoveAt(i);
 					commands.Add(kb.Command);
 				}
@@ -424,7 +427,9 @@ namespace ICSharpCode.ILSpy
 				if (binding.Command == ICSharpCode.AvalonEdit.AvalonEditCommands.DeleteLine ||
 					binding.Command == ApplicationCommands.Undo ||
 					binding.Command == ApplicationCommands.Redo ||
-					binding.Command == ApplicationCommands.Cut)
+					binding.Command == ApplicationCommands.Cut ||
+					binding.Command == ApplicationCommands.Delete ||
+					binding.Command == EditingCommands.Delete)
 					bindingList.RemoveAt(i);
 			}
 		}
@@ -683,6 +688,10 @@ namespace ICSharpCode.ILSpy
 					target.InputBindings.Remove(binding);
 			}
 
+			public void Add(ICommand command, ICommand realCommand, ModifierKeys modifiers1, Key key1, ModifierKeys modifiers2 = ModifierKeys.None, Key key2 = Key.None, ModifierKeys modifiers3 = ModifierKeys.None, Key key3 = Key.None) {
+				Add(command, (s, e) => realCommand.Execute(null), (s, e) => e.CanExecute = realCommand.CanExecute(null), modifiers1, key1, modifiers2, key2, modifiers3, key3);
+			}
+
 			public void Add(ICommand command, ExecutedRoutedEventHandler exec, CanExecuteRoutedEventHandler canExec, ModifierKeys modifiers1, Key key1, ModifierKeys modifiers2 = ModifierKeys.None, Key key2 = Key.None, ModifierKeys modifiers3 = ModifierKeys.None, Key key3 = Key.None) {
 				this.CommandBindings.Add(new CommandBinding(command, exec, canExec));
 				this.InputBindings.Add(new KeyBinding(command, key1, modifiers1));
@@ -695,7 +704,7 @@ namespace ICSharpCode.ILSpy
 
 		void InstallCommands()
 		{
-			CodeBindings.Add(new RoutedCommand("GoToLine", typeof(MainWindow)), GoToLineExecuted, null, ModifierKeys.Control, Key.G);
+			CodeBindings.Add(new RoutedCommand("GoToLine", typeof(MainWindow)), GoToLineExecuted, GoToLineExecutedCanExecute, ModifierKeys.Control, Key.G);
 
 			var bindings = new TabBindings();
 			bindings.Add(new RoutedCommand("OpenNewTab", typeof(MainWindow)), OpenNewTabExecuted, null, ModifierKeys.Control, Key.T);
@@ -1773,8 +1782,17 @@ namespace ICSharpCode.ILSpy
 			return reference;
 		}
 
-		public bool JumpToNamespace(LoadedAssembly asm, string ns, bool canRecordHistory = true)
+		bool JumpToNamespace(DecompilerTextView textView, NamespaceRef nsRef, bool canRecordHistory = true)
 		{
+			if (nsRef == null)
+				return false;
+			return JumpToNamespace(textView, nsRef.Module, nsRef.Namespace, canRecordHistory);
+		}
+
+		bool JumpToNamespace(DecompilerTextView textView, LoadedAssembly asm, string ns, bool canRecordHistory = true)
+		{
+			if (asm == null || ns == null)
+				return false;
 			var asmNode = FindTreeNode(asm.ModuleDefinition) as AssemblyTreeNode;
 			if (asmNode == null)
 				return false;
@@ -1782,7 +1800,7 @@ namespace ICSharpCode.ILSpy
 			if (nsNode == null)
 				return false;
 
-			var tabState = GetOrCreateActiveDecompileTabState();
+			var tabState = textView != null ? DecompileTabState.GetDecompileTabState(textView) : GetOrCreateActiveDecompileTabState();
 			if (canRecordHistory)
 				RecordHistory(tabState);
 
@@ -1794,6 +1812,9 @@ namespace ICSharpCode.ILSpy
 
 		public bool JumpToReference(object reference, bool canRecordHistory = true)
 		{
+			var nsRef = reference as NamespaceRef;
+			if (nsRef != null)
+				return JumpToNamespace(null, nsRef);
 			var tabState = GetOrCreateActiveDecompileTabState();
 			if (canRecordHistory)
 				RecordHistory(tabState);
@@ -1802,6 +1823,9 @@ namespace ICSharpCode.ILSpy
 
 		public bool JumpToReference(DecompilerTextView textView, object reference, bool canRecordHistory = true)
 		{
+			var nsRef = reference as NamespaceRef;
+			if (nsRef != null)
+				return JumpToNamespace(textView, nsRef);
 			var tabState = DecompileTabState.GetDecompileTabState(textView);
 			if (canRecordHistory)
 				RecordHistory(tabState);
@@ -1810,6 +1834,9 @@ namespace ICSharpCode.ILSpy
 
 		public bool JumpToReference(DecompilerTextView textView, object reference, Func<TextLocation> getLocation, bool canRecordHistory = true)
 		{
+			var nsRef = reference as NamespaceRef;
+			if (nsRef != null)
+				return JumpToNamespace(textView, nsRef);
 			var tabState = DecompileTabState.GetDecompileTabState(textView);
 			if (canRecordHistory)
 				RecordHistory(tabState);
@@ -1818,6 +1845,9 @@ namespace ICSharpCode.ILSpy
 
 		public bool JumpToReference(DecompilerTextView textView, object reference, Func<bool, bool, bool> onDecompileFinished, bool canRecordHistory = true)
 		{
+			var nsRef = reference as NamespaceRef;
+			if (nsRef != null)
+				return JumpToNamespace(textView, nsRef);
 			var tabState = DecompileTabState.GetDecompileTabState(textView);
 			if (canRecordHistory)
 				RecordHistory(tabState);
@@ -2288,9 +2318,11 @@ namespace ICSharpCode.ILSpy
 					}
 
 					var savedHexTabState = savedTabState as SavedHexTabState;
-					if (savedHexTabState != null && File.Exists(savedHexTabState.FileName)) {
-						var tabState = CreateNewHexTabState(tabManager);
-						CreateHexTabState(tabState, savedHexTabState);
+					if (savedHexTabState != null) {
+						if (File.Exists(savedHexTabState.FileName)) {
+							var tabState = CreateNewHexTabState(tabManager);
+							CreateHexTabState(tabState, savedHexTabState);
+						}
 						continue;
 					}
 
@@ -2587,6 +2619,12 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
+		private void GoToLineExecutedCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			var tabState = GetActiveDecompileTabState();
+			e.CanExecute = tabState != null && tabState.IsTextViewInVisualTree;
+		}
+
 		private void GoToLineExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			var decompilerTextView = ActiveTextView;
@@ -2825,10 +2863,6 @@ namespace ICSharpCode.ILSpy
 				scaleElem.ClearValue(TextOptions.TextFormattingModeProperty);
 			}
 			else {
-				var st = scaleElem.LayoutTransform as ScaleTransform;
-				if (st == null)
-					scaleElem.LayoutTransform = st = new ScaleTransform();
-
 				if (scale < MIN_ZOOM)
 					scale = MIN_ZOOM;
 				else if (scale > MAX_ZOOM)
@@ -2836,8 +2870,10 @@ namespace ICSharpCode.ILSpy
 
 				// We must set it to Ideal or the text will be blurry
 				TextOptions.SetTextFormattingMode(scaleElem, TextFormattingMode.Ideal);
-				st.ScaleX = scale;
-				st.ScaleY = scale;
+
+				var st = new ScaleTransform(scale, scale);
+				st.Freeze();
+				scaleElem.LayoutTransform = st;
 			}
 		}
 
@@ -3084,7 +3120,7 @@ namespace ICSharpCode.ILSpy
 			DecompileRestoreLocation(tabState, tabState.DecompiledNodes, null, true);
 		}
 
-		internal void RefreshTreeViewNodeNames()
+		internal void RefreshTreeViewNodes()
 		{
 			RefreshTreeViewFilter();
 		}
