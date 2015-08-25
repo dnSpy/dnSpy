@@ -17,7 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using dnSpy.HexEditor;
 
 namespace dnSpy.TreeNodes.Hex {
@@ -40,6 +42,21 @@ namespace dnSpy.TreeNodes.Hex {
 			get { return timeDateStampVM; }
 		}
 		readonly UInt32HexField timeDateStampVM;
+
+		public string TimeDateStampString {
+			get {
+				if (TimeDateStampVM.DataFieldVM.HasError)
+					return string.Empty;
+
+				var date = EpochToDate((uint)TimeDateStampVM.DataFieldVM.ObjectValue);
+				return date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
+			}
+		}
+
+		DateTime EpochToDate(uint val) {
+			return Epoch.AddSeconds(val);
+		}
+		static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
 		public UInt32HexField PointerToSymbolTableVM {
 			get { return pointerToSymbolTableVM; }
@@ -105,6 +122,7 @@ namespace dnSpy.TreeNodes.Hex {
 			this.machineVM.Add(new IntegerHexBitField("Machine", 0, 16, MachineInfos));
 			this.numberOfSectionsVM = new UInt16HexField(doc, Name, "NumberOfSections", startOffset + 2);
 			this.timeDateStampVM = new UInt32HexField(doc, Name, "TimeDateStamp", startOffset + 4);
+			this.timeDateStampVM.DataFieldVM.PropertyChanged += (s, e) => OnPropertyChanged("TimeDateStampString");
 			this.pointerToSymbolTableVM = new UInt32HexField(doc, Name, "PointerToSymbolTable", startOffset + 8);
 			this.numberOfSymbolsVM = new UInt32HexField(doc, Name, "NumberOfSymbols", startOffset + 0x0C);
 			this.sizeOfOptionalHeaderVM = new UInt16HexField(doc, Name, "SizeOfOptionalHeader", startOffset + 0x10);

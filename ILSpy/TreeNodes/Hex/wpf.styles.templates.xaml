@@ -239,6 +239,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <TextBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding MachineVM.OffsetString, Mode=OneTime}" />
@@ -270,23 +271,36 @@
                 <Label Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=TimeDateStampVMTextBox}" Content="{Binding TimeDateStampVM.NameUI, Mode=OneTime}" />
                 <TextBox Grid.Row="3" Grid.Column="2" Margin="5 5 0 0" Name="TimeDateStampVMTextBox" Text="{Binding TimeDateStampVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
 
-                <TextBox Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding PointerToSymbolTableVM.OffsetString, Mode=OneTime}" />
-                <Label Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=PointerToSymbolTableVMTextBox}" Content="{Binding PointerToSymbolTableVM.NameUI, Mode=OneTime}" />
-                <TextBox Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Name="PointerToSymbolTableVMTextBox" Text="{Binding PointerToSymbolTableVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                <Grid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                <TextBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding NumberOfSymbolsVM.OffsetString, Mode=OneTime}" />
-                <Label Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=NumberOfSymbolsVMTextBox}" Content="{Binding NumberOfSymbolsVM.NameUI, Mode=OneTime}" />
-                <TextBox Grid.Row="5" Grid.Column="2" Margin="5 5 0 0" Name="NumberOfSymbolsVMTextBox" Text="{Binding NumberOfSymbolsVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                    <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=TimeDateStampVMTextBox2}" Content="{Binding TimeDateStampVM.NameUI, Mode=OneTime}" />
+                    <TextBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Name="TimeDateStampVMTextBox2" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding TimeDateStampString, Mode=OneWay}" />
+                </Grid>
 
-                <TextBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding SizeOfOptionalHeaderVM.OffsetString, Mode=OneTime}" />
-                <Label Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=SizeOfOptionalHeaderVMTextBox}" Content="{Binding SizeOfOptionalHeaderVM.NameUI, Mode=OneTime}" />
-                <TextBox Grid.Row="6" Grid.Column="2" Margin="5 5 0 0" Name="SizeOfOptionalHeaderVMTextBox" Text="{Binding SizeOfOptionalHeaderVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                <TextBox Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding PointerToSymbolTableVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="5" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=PointerToSymbolTableVMTextBox}" Content="{Binding PointerToSymbolTableVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="5" Grid.Column="2" Margin="5 5 0 0" Name="PointerToSymbolTableVMTextBox" Text="{Binding PointerToSymbolTableVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
 
-                <TextBox Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding CharacteristicsVM.OffsetString, Mode=OneTime}" />
-                <Label Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=CharacteristicsVMTextBox}" Content="{Binding CharacteristicsVM.NameUI, Mode=OneTime}" />
-                <TextBox Grid.Row="7" Grid.Column="2" Margin="5 5 0 0" Name="CharacteristicsVMTextBox" Text="{Binding CharacteristicsVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+                <TextBox Grid.Row="6" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding NumberOfSymbolsVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="6" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=NumberOfSymbolsVMTextBox}" Content="{Binding NumberOfSymbolsVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="6" Grid.Column="2" Margin="5 5 0 0" Name="NumberOfSymbolsVMTextBox" Text="{Binding NumberOfSymbolsVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
 
-                <GroupBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="3" Header="Characteristics">
+                <TextBox Grid.Row="7" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding SizeOfOptionalHeaderVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="7" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=SizeOfOptionalHeaderVMTextBox}" Content="{Binding SizeOfOptionalHeaderVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="7" Grid.Column="2" Margin="5 5 0 0" Name="SizeOfOptionalHeaderVMTextBox" Text="{Binding SizeOfOptionalHeaderVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+
+                <TextBox Grid.Row="8" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource MDTableTextBoxReadOnlyStyle}" Background="Transparent" Text="{Binding CharacteristicsVM.OffsetString, Mode=OneTime}" />
+                <Label Grid.Row="8" Grid.Column="1" Margin="5 5 0 0" Target="{Binding ElementName=CharacteristicsVMTextBox}" Content="{Binding CharacteristicsVM.NameUI, Mode=OneTime}" />
+                <TextBox Grid.Row="8" Grid.Column="2" Margin="5 5 0 0" Name="CharacteristicsVMTextBox" Text="{Binding CharacteristicsVM.DataFieldVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=LostFocus}" />
+
+                <GroupBox Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="3" Header="Characteristics">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
