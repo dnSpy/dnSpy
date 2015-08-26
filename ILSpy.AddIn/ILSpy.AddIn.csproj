@@ -204,6 +204,10 @@
       <Project>{6d3d0f0d-348d-456a-a6ed-e9bd5efabb6a}</Project>
       <Name>ILSpy.Debugger</Name>
     </ProjectReference>
+    <ProjectReference Include="..\dndbg\dndbg.csproj">
+      <Project>{989a5c51-8c4c-4f4d-90a2-042cd1846075}</Project>
+      <Name>dndbg</Name>
+    </ProjectReference>
     <ProjectReference Include="..\dnspc\dnspc.csproj">
       <Project>{da111693-97c8-413b-9102-4dcbee8885b7}</Project>
       <Name>dnspc</Name>

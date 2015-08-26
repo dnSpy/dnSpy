@@ -1,62 +1,61 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{DA111693-97C8-413B-9102-4DCBEE8885B7}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{989A5C51-8C4C-4F4D-90A2-042CD1846075}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>dnspc</RootNamespace>
-    <AssemblyName>dnspc</AssemblyName>
+    <RootNamespace>dndbg</RootNamespace>
+    <AssemblyName>dndbg</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\dnSpy.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>False</DelaySign>
+    <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\ILSpy\bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\ILSpy\bin\Release\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Engine\COM\CorDebug.cs" />
+    <Compile Include="Engine\COM\MetaHost.cs" />
+    <Compile Include="Engine\CorDebugManagedCallback.cs" />
+    <Compile Include="Engine\DebugCallbackEventArgs.cs" />
+    <Compile Include="Engine\DebuggeeVersionDetector.cs" />
+    <Compile Include="Engine\DebuggerCollection.cs" />
+    <Compile Include="Engine\DebugOptions.cs" />
+    <Compile Include="Engine\DnAppDomain.cs" />
+    <Compile Include="Engine\DnAssembly.cs" />
+    <Compile Include="Engine\DnDebugger.cs" />
+    <Compile Include="Engine\DnModule.cs" />
+    <Compile Include="Engine\DnProcess.cs" />
+    <Compile Include="Engine\DnThread.cs" />
+    <Compile Include="Engine\IDebugMessageDispatcher.cs" />
+    <Compile Include="Engine\NativeMethods.cs" />
+    <Compile Include="Engine\ProcessCreationFlags.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\dnlib\src\dnlib.csproj">
-      <Project>{FDFC1237-143F-4919-8318-4926901F4639}</Project>
-      <Name>dnlib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
-      <Project>{984CC812-9470-4A13-AFF9-CC44068D666C}</Project>
-      <Name>ICSharpCode.Decompiler</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ILSpy\ILSpy.csproj">
-      <Project>{1E85EFF9-E370-4683-83E4-8A3D063FF791}</Project>
-      <Name>ILSpy</Name>
-    </ProjectReference>
+    <Reference Include="System" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

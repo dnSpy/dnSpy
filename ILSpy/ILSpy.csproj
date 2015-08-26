@@ -19,7 +19,7 @@
     <RunCodeAnalysis>False</RunCodeAnalysis>
     <StartArguments>/separate</StartArguments>
     <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\NRefactory\ICSharpCode.NRefactory.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\dnSpy.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
     <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
   </PropertyGroup>
