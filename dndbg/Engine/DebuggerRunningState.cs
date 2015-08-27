@@ -17,15 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace dndbg.Engine {
-	public interface IDebugMessageDispatcher {
+	public enum DebuggerRunningState {
 		/// <summary>
-		/// Executes <see cref="action"/> in the dndbg thread. This is typically the GUI thread,
-		/// and must always be the same thread since the debugger isn't thread safe.
+		/// Creating the first process
 		/// </summary>
-		/// <param name="action">Code to execute in the dndbg thread</param>
-		void ExecuteAsync(Action action);
+		Starting,
+
+		/// <summary>
+		/// Process is running
+		/// </summary>
+		Running,
+
+		/// <summary>
+		/// Process is temporarily stopped
+		/// </summary>
+		Stopped,
+
+		/// <summary>
+		/// All processes have terminated
+		/// </summary>
+		Terminated,
 	}
 }

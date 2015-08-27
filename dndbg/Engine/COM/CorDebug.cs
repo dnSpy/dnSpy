@@ -146,7 +146,7 @@ namespace dndbg.Engine.COM.CorDebug {
 	[ComImport]
 	public class CorDebugClass : ICorDebug, CorDebug {
 		public virtual extern void Initialize();
-		public virtual extern void Terminate();
+		public virtual extern int Terminate();
 		public virtual extern void SetManagedHandler([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugManagedCallback pCallback);
 		public virtual extern void SetUnmanagedHandler([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugUnmanagedCallback pCallback);
 		public virtual extern void CreateProcess([MarshalAs(UnmanagedType.LPWStr)] [In] string lpApplicationName, [MarshalAs(UnmanagedType.LPWStr)] [In] string lpCommandLine, IntPtr lpProcessAttributes, IntPtr lpThreadAttributes, [In] int bInheritHandles, [In] ProcessCreationFlags dwCreationFlags, [In] IntPtr lpEnvironment, [MarshalAs(UnmanagedType.LPWStr)] [In] string lpCurrentDirectory, [In] ref STARTUPINFO lpStartupInfo, [In] ref PROCESS_INFORMATION lpProcessInformation, [In] CorDebugCreateProcessFlags debuggingFlags, [MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
@@ -422,7 +422,7 @@ namespace dndbg.Engine.COM.CorDebug {
 	[ComImport]
 	public class EmbeddedCLRCorDebugClass : ICorDebug, EmbeddedCLRCorDebug {
 		public virtual extern void Initialize();
-		public virtual extern void Terminate();
+		public virtual extern int Terminate();
 		public virtual extern void SetManagedHandler([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugManagedCallback pCallback);
 		public virtual extern void SetUnmanagedHandler([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugUnmanagedCallback pCallback);
 		public virtual extern void CreateProcess([MarshalAs(UnmanagedType.LPWStr)] [In] string lpApplicationName, [MarshalAs(UnmanagedType.LPWStr)] [In] string lpCommandLine, IntPtr lpProcessAttributes, IntPtr lpThreadAttributes, [In] int bInheritHandles, [In] ProcessCreationFlags dwCreationFlags, [In] IntPtr lpEnvironment, [MarshalAs(UnmanagedType.LPWStr)] [In] string lpCurrentDirectory, [In] ref STARTUPINFO lpStartupInfo, [In] ref PROCESS_INFORMATION lpProcessInformation, [In] CorDebugCreateProcessFlags debuggingFlags, [MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
@@ -435,7 +435,8 @@ namespace dndbg.Engine.COM.CorDebug {
 	[ComImport]
 	public interface ICorDebug {
 		void Initialize();
-		void Terminate();
+		[PreserveSig]
+		int Terminate();
 		void SetManagedHandler([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugManagedCallback pCallback);
 		void SetUnmanagedHandler([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugUnmanagedCallback pCallback);
 		void CreateProcess([MarshalAs(UnmanagedType.LPWStr)] [In] string lpApplicationName, [MarshalAs(UnmanagedType.LPWStr)] [In] string lpCommandLine, IntPtr lpProcessAttributes, IntPtr lpThreadAttributes, [In] int bInheritHandles, [In] ProcessCreationFlags dwCreationFlags, [In] IntPtr lpEnvironment, [MarshalAs(UnmanagedType.LPWStr)] [In] string lpCurrentDirectory, [In] ref STARTUPINFO lpStartupInfo, [In] ref PROCESS_INFORMATION lpProcessInformation, [In] CorDebugCreateProcessFlags debuggingFlags, [MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
@@ -452,7 +453,8 @@ namespace dndbg.Engine.COM.CorDebug {
 	[ComImport]
 	public interface ICorDebugAppDomain : ICorDebugController {
 		void Stop([In] uint dwTimeoutIgnored);
-		void Continue([In] int fIsOutOfBand);
+		[PreserveSig]
+		int Continue([In] int fIsOutOfBand);
 		[PreserveSig]
 		int IsRunning(out int pbRunning);
 		void HasQueuedCallbacks([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, out int pbQueued);
@@ -631,7 +633,8 @@ namespace dndbg.Engine.COM.CorDebug {
 		void GetFunction([MarshalAs(UnmanagedType.Interface)] out ICorDebugFunction ppFunction);
 		void GetAddress(out ulong pStart);
 		void GetSize(out uint pcBytes);
-		void CreateBreakpoint([In] uint offset, [MarshalAs(UnmanagedType.Interface)] out ICorDebugFunctionBreakpoint ppBreakpoint);
+		[PreserveSig]
+		int CreateBreakpoint([In] uint offset, [MarshalAs(UnmanagedType.Interface)] out ICorDebugFunctionBreakpoint ppBreakpoint);
 		void GetCode([In] uint startOffset, [In] uint endOffset, [In] uint cBufferAlloc, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugCode buffer, out uint pcBufferSize);
 		void GetVersionNumber(out uint nVersion);
 		void GetILToNativeMapping([In] uint cMap, out uint pcMap, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugCode map);
@@ -682,7 +685,8 @@ namespace dndbg.Engine.COM.CorDebug {
 	[ComImport]
 	public interface ICorDebugController {
 		void Stop([In] uint dwTimeoutIgnored);
-		void Continue([In] int fIsOutOfBand);
+		[PreserveSig]
+		int Continue([In] int fIsOutOfBand);
 		[PreserveSig]
 		int IsRunning(out int pbRunning);
 		void HasQueuedCallbacks([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, out int pbQueued);
@@ -831,7 +835,8 @@ namespace dndbg.Engine.COM.CorDebug {
 		void GetModule([MarshalAs(UnmanagedType.Interface)] out ICorDebugModule ppModule);
 		void GetClass([MarshalAs(UnmanagedType.Interface)] out ICorDebugClass ppClass);
 		void GetToken(out uint pMethodDef);
-		void GetILCode([MarshalAs(UnmanagedType.Interface)] out ICorDebugCode ppCode);
+		[PreserveSig]
+		int GetILCode([MarshalAs(UnmanagedType.Interface)] out ICorDebugCode ppCode);
 		void GetNativeCode([MarshalAs(UnmanagedType.Interface)] out ICorDebugCode ppCode);
 		void CreateBreakpoint([MarshalAs(UnmanagedType.Interface)] out ICorDebugFunctionBreakpoint ppBreakpoint);
 		void GetLocalVarSigToken(out uint pmdSig);
@@ -853,7 +858,8 @@ namespace dndbg.Engine.COM.CorDebug {
 	[Guid("CC7BCAE9-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugFunctionBreakpoint : ICorDebugBreakpoint {
-		void Activate([In] int bActive);
+		[PreserveSig]
+		int Activate([In] int bActive);
 		void IsActive(out int pbActive);
 		void GetFunction([MarshalAs(UnmanagedType.Interface)] out ICorDebugFunction ppFunction);
 		void GetOffset(out uint pnOffset);
@@ -1112,7 +1118,8 @@ namespace dndbg.Engine.COM.CorDebug {
 		int GetName([In] uint cchName, out uint pcchName, [Out] [MarshalAs(UnmanagedType.LPWStr)] StringBuilder szName);
 		void EnableJITDebugging([In] int bTrackJITInfo, [In] int bAllowJitOpts);
 		void EnableClassLoadCallbacks([In] int bClassLoadCallbacks);
-		void GetFunctionFromToken([In] uint methodDef, [MarshalAs(UnmanagedType.Interface)] out ICorDebugFunction ppFunction);
+		[PreserveSig]
+		int GetFunctionFromToken([In] uint methodDef, [MarshalAs(UnmanagedType.Interface)] out ICorDebugFunction ppFunction);
 		void GetFunctionFromRVA([In] ulong rva, [MarshalAs(UnmanagedType.Interface)] out ICorDebugFunction ppFunction);
 		void GetClassFromToken([In] uint typeDef, [MarshalAs(UnmanagedType.Interface)] out ICorDebugClass ppClass);
 		void CreateBreakpoint([MarshalAs(UnmanagedType.Interface)] out ICorDebugModuleBreakpoint ppBreakpoint);
@@ -1236,7 +1243,8 @@ namespace dndbg.Engine.COM.CorDebug {
 	[ComImport]
 	public interface ICorDebugProcess : ICorDebugController {
 		void Stop([In] uint dwTimeoutIgnored);
-		void Continue([In] int fIsOutOfBand);
+		[PreserveSig]
+		int Continue([In] int fIsOutOfBand);
 		[PreserveSig]
 		int IsRunning(out int pbRunning);
 		void HasQueuedCallbacks([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, out int pbQueued);

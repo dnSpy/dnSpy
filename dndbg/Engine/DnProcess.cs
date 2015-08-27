@@ -199,6 +199,10 @@ namespace dndbg.Engine {
 			return list;
 		}
 
+		internal DnAppDomain TryGetAppDomain(ICorDebugAppDomain comAppDomain) {
+			return appDomains.TryGet(comAppDomain);
+		}
+
 		/// <summary>
 		/// Gets an AppDomain or null if it has exited
 		/// </summary>
@@ -233,6 +237,10 @@ namespace dndbg.Engine {
 			var list = threads.GetAll();
 			Array.Sort(list, (a, b) => a.IncrementedId.CompareTo(b.IncrementedId));
 			return list;
+		}
+
+		internal DnThread TryGetThread(ICorDebugThread comThread) {
+			return threads.TryGet(comThread);
 		}
 
 		/// <summary>

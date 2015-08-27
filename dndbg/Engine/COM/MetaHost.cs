@@ -20,8 +20,18 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using dndbg.Engine.COM.CorDebug;
 
 namespace dndbg.Engine.COM.MetaHost {
+	public enum METAHOST_POLICY_FLAGS {
+		METAHOST_POLICY_HIGHCOMPAT,
+		METAHOST_POLICY_APPLY_UPGRADE_POLICY = 8,
+		METAHOST_POLICY_EMULATE_EXE_LAUNCH = 16,
+		METAHOST_POLICY_SHOW_ERROR_DIALOG = 32,
+		METAHOST_POLICY_USE_PROCESS_IMAGE_PATH = 64,
+		METAHOST_POLICY_ENSURE_SKU_SUPPORTED = 128,
+		METAHOST_POLICY_IGNORE_ERROR_MODE = 4096
+	}
 	[Guid("00000100-0000-0000-C000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface IEnumUnknown {
@@ -61,5 +71,11 @@ namespace dndbg.Engine.COM.MetaHost {
 		void GetDefaultStartupFlags(out uint pdwStartupFlags, [MarshalAs(UnmanagedType.LPWStr)] [Out] StringBuilder pwzHostConfigFile, [In] [Out] ref uint pcchHostConfigFile);
 		void BindAsLegacyV2Runtime();
 		void IsStarted(out int pbStarted, out uint pdwStartupFlags);
+	}
+	[Guid("E2190695-77B2-492E-8E14-C4B3A7FDD593"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+	[ComImport]
+	public interface ICLRMetaHostPolicy {
+		[return: MarshalAs(UnmanagedType.Interface)]
+		object GetRequestedRuntime([In] METAHOST_POLICY_FLAGS dwPolicyFlags, [MarshalAs(UnmanagedType.LPWStr)] [In] string pwzBinary, [MarshalAs(UnmanagedType.Interface)] [In] IStream pCfgStream, [MarshalAs(UnmanagedType.LPWStr)] [In] [Out] StringBuilder pwzVersion, [In] [Out] ref uint pcchVersion, [MarshalAs(UnmanagedType.LPWStr)] [Out] StringBuilder pwzImageVersion, [In] [Out] ref uint pcchImageVersion, out uint pdwConfigFlags, [In] ref Guid riid);
 	}
 }

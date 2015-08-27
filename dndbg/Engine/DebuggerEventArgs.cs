@@ -20,12 +20,7 @@
 using System;
 
 namespace dndbg.Engine {
-	public interface IDebugMessageDispatcher {
-		/// <summary>
-		/// Executes <see cref="action"/> in the dndbg thread. This is typically the GUI thread,
-		/// and must always be the same thread since the debugger isn't thread safe.
-		/// </summary>
-		/// <param name="action">Code to execute in the dndbg thread</param>
-		void ExecuteAsync(Action action);
+	public class DebuggerEventArgs : EventArgs {
+		public new static readonly DebuggerEventArgs Empty = new DebuggerEventArgs();
 	}
 }

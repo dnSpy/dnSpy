@@ -17,7 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Runtime.InteropServices;
+using System.Text;
+using dndbg.Engine.COM.CorDebug;
+using dndbg.Engine.COM.MetaHost;
 
 namespace dndbg.Engine {
 	public static class DebuggeeVersionDetector {
@@ -26,7 +30,39 @@ namespace dndbg.Engine {
 		}
 
 		public static string TryGetVersion(string filename) {
-			return null;//TODO:
+			try {
+				var clsid = new Guid("2EBCD49A-1B47-4A61-B13A-4A03701E594B");
+				var riid = typeof(ICLRMetaHostPolicy).GUID;
+				var mhp = (ICLRMetaHostPolicy)NativeMethods.CLRCreateInstance(ref clsid, ref riid);
+
+				// GetRequestedRuntime() automatically reads the *.config file if it exists so
+				// we don't need to send in a stream with its contents.
+				IStream configStream = null;
+				const int STRING_LEN = 1024;
+				var sbVersion = new StringBuilder(STRING_LEN);
+				uint versionLength = (uint)sbVersion.MaxCapacity;
+				var sbImageVersion = new StringBuilder(STRING_LEN);
+				uint imageVersionLength = (uint)sbImageVersion.MaxCapacity;
+				uint configFlags;
+				riid = typeof(ICLRRuntimeInfo).GUID;
+
+				mhp.GetRequestedRuntime(
+						METAHOST_POLICY_FLAGS.METAHOST_POLICY_HIGHCOMPAT,
+						filename,
+						configStream,
+						sbVersion,
+						ref versionLength,
+						sbImageVersion,
+						ref imageVersionLength,
+						out configFlags,
+						ref riid);
+
+				return sbVersion.ToString();
+			}
+			catch (COMException) {
+			}
+
+			return null;
 		}
 	}
 }

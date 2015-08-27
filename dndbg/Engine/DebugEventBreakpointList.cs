@@ -17,15 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using System.Collections.Generic;
 
 namespace dndbg.Engine {
-	public interface IDebugMessageDispatcher {
-		/// <summary>
-		/// Executes <see cref="action"/> in the dndbg thread. This is typically the GUI thread,
-		/// and must always be the same thread since the debugger isn't thread safe.
-		/// </summary>
-		/// <param name="action">Code to execute in the dndbg thread</param>
-		void ExecuteAsync(Action action);
+	sealed class DebugEventBreakpointList {
+		readonly List<DebugEventBreakpoint> bps = new List<DebugEventBreakpoint>();
+
+		public DebugEventBreakpoint[] Breakpoints {
+			get { return bps.ToArray(); }
+		}
+
+		public void Add(DebugEventBreakpoint bp) {
+			bps.Add(bp);
+		}
+
+		public void Remove(DebugEventBreakpoint bp) {
+			bps.Remove(bp);
+		}
 	}
 }

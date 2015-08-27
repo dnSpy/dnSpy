@@ -128,6 +128,10 @@ namespace dndbg.Engine {
 		}
 		readonly DnAssembly ownerAssembly;
 
+		public SerializedDnModule SerializedDnModule {
+			get { return new SerializedDnModule(Name, IsDynamic, IsInMemory); }
+		}
+
 		internal DnModule(DnAssembly ownerAssembly, ICorDebugModule module, int incrementedId) {
 			this.ownerAssembly = ownerAssembly;
 			this.module = module;

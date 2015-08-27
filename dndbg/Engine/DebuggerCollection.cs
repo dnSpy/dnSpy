@@ -20,14 +20,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace dndbg.Engine {
 	sealed class DebuggerCollection<TKey, TValue> where TKey : class where TValue : class {
-		readonly object lockObj = new object();
 		readonly Dictionary<TKey, TValue> dict = new Dictionary<TKey, TValue>();
 		readonly Func<TKey, int, TValue> createValue;
 		int idCounter;
+
+		public int Count {
+			get { return dict.Count; }
+		}
 
 		public DebuggerCollection(Func<TKey, int, TValue> createValue) {
 			this.createValue = createValue;
@@ -43,8 +45,7 @@ namespace dndbg.Engine {
 				return null;
 
 			TValue value;
-			lock (lockObj)
-				dict.TryGetValue(key, out value);
+			dict.TryGetValue(key, out value);
 
 			return value;
 		}
@@ -62,16 +63,9 @@ namespace dndbg.Engine {
 			if (value != null)
 				return value;
 
-			// Create it outside the lock
-			var createdValue = createValue(key, Interlocked.Increment(ref idCounter) - 1);
-
-			lock (lockObj) {
-				if (dict.TryGetValue(key, out value))
-					return value;
-
-				dict.Add(key, createdValue);
-				return createdValue;
-			}
+			var createdValue = createValue(key, idCounter++);
+			dict.Add(key, createdValue);
+			return createdValue;
 		}
 
 		/// <summary>
@@ -82,8 +76,7 @@ namespace dndbg.Engine {
 			if (key == null)
 				return false;
 
-			lock (lockObj)
-				return dict.Remove(key);
+			return dict.Remove(key);
 		}
 
 		/// <summary>
@@ -91,8 +84,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <returns></returns>
 		public TValue[] GetAll() {
-			lock (lockObj)
-				return dict.Values.ToArray();
+			return dict.Values.ToArray();
 		}
 	}
 }

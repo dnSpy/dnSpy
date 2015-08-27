@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using dndbg.Engine.COM.CorDebug;
 
@@ -61,9 +63,16 @@ namespace dndbg.Engine {
 
 	public abstract class DebugCallbackEventArgs {
 		/// <summary>
-		/// Set it to true to stop the debugged process
+		/// true if the debugged process should be stopped
 		/// </summary>
-		public bool Stop { get; set; }
+		public bool Stop {
+			get { return debuggerStopStates.Count != 0; }
+		}
+
+		public DebuggerStopState[] StopStates {
+			get { return debuggerStopStates.ToArray(); }
+		}
+		readonly List<DebuggerStopState> debuggerStopStates = new List<DebuggerStopState>();
 
 		/// <summary>
 		/// Type of event
@@ -80,6 +89,24 @@ namespace dndbg.Engine {
 
 		protected DebugCallbackEventArgs(ICorDebugController ctrl) {
 			this.ctrl = ctrl;
+		}
+
+		public void AddStopReason(DebuggerStopReason reason) {
+			AddStopState(new DebuggerStopState(reason));
+		}
+
+		public void AddStopState(DebuggerStopState state) {
+			if (state == null)
+				throw new ArgumentNullException();
+			debuggerStopStates.Add(state);
+		}
+
+		public DebuggerStopState GetStopState(DebuggerStopReason reason) {
+			foreach (var state in debuggerStopStates) {
+				if (state.Reason == reason)
+					return state;
+			}
+			return null;
 		}
 	}
 
