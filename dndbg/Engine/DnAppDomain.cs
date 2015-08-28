@@ -134,6 +134,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <returns></returns>
 		public DnAssembly[] GetAssemblies() {
+			Debugger.DebugVerifyThread();
 			var list = assemblies.GetAll();
 			Array.Sort(list, (a, b) => a.IncrementedId.CompareTo(b.IncrementedId));
 			return list;
@@ -145,6 +146,7 @@ namespace dndbg.Engine {
 		/// <param name="comAssembly">Assembly</param>
 		/// <returns></returns>
 		public DnAssembly TryGetAssembly(ICorDebugAssembly comAssembly) {
+			Debugger.DebugVerifyThread();
 			return assemblies.TryGet(comAssembly);
 		}
 

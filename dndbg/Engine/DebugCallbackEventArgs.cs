@@ -168,13 +168,13 @@ namespace dndbg.Engine {
 
 		public ICorDebugAppDomain AppDomain { get; private set; }
 		public ICorDebugThread Thread { get; private set; }
-		public int Unhandled { get; private set; }
+		public bool Unhandled { get; private set; }
 
 		public ExceptionDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, int unhandled)
 			: base(pAppDomain) {
 			this.AppDomain = pAppDomain;
 			this.Thread = pThread;
-			this.Unhandled = unhandled;
+			this.Unhandled = unhandled != 0;
 		}
 	}
 

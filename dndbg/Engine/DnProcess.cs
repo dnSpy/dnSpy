@@ -19,7 +19,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using dndbg.Engine.COM.CorDebug;
 
 namespace dndbg.Engine {
@@ -127,13 +126,9 @@ namespace dndbg.Engine {
 			return new DnThread(this, thread, id);
 		}
 
-		public void Terminate(int exitCode) {
-			try {
-				process.Terminate((uint)exitCode);
-			}
-			catch (COMException) {
-			}
-        }
+		public bool Terminate(int exitCode) {
+			return process.Terminate((uint)exitCode) >= 0;
+		}
 
 		internal void Initialize(string filename, string cwd, string cmdLine) {
 			this.filename = filename;
@@ -174,6 +169,16 @@ namespace dndbg.Engine {
 			}
 		}
 
+		/// <summary>
+		/// Calls ICorDebugProcess7::SetWriteableMetadataUpdateMode() if the iface is available
+		/// </summary>
+		/// <param name="mode"></param>
+		public void EnableExceptionCallbacksOutsideOfMyCode(bool value) {
+			var dbg8 = process as ICorDebugProcess8;
+			if (dbg8 != null)
+				dbg8.EnableExceptionCallbacksOutsideOfMyCode(value ? 1 : 0);
+		}
+
 		internal void SetHasExited() {
 			hasExited = true;
 		}
@@ -194,6 +199,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <returns></returns>
 		public DnAppDomain[] GetAppDomains() {
+			Debugger.DebugVerifyThread();
 			var list = appDomains.GetAll();
 			Array.Sort(list, (a, b) => a.IncrementedId.CompareTo(b.IncrementedId));
 			return list;
@@ -209,6 +215,7 @@ namespace dndbg.Engine {
 		/// <param name="comAppDomain">AppDomain</param>
 		/// <returns></returns>
 		public DnAppDomain TryGetValidAppDomain(ICorDebugAppDomain comAppDomain) {
+			Debugger.DebugVerifyThread();
 			var appDomain = appDomains.TryGet(comAppDomain);
 			if (appDomain == null)
 				return null;
@@ -234,6 +241,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <returns></returns>
 		public DnThread[] GetThreads() {
+			Debugger.DebugVerifyThread();
 			var list = threads.GetAll();
 			Array.Sort(list, (a, b) => a.IncrementedId.CompareTo(b.IncrementedId));
 			return list;
@@ -249,6 +257,7 @@ namespace dndbg.Engine {
 		/// <param name="comThread">Thread</param>
 		/// <returns></returns>
 		public DnThread TryGetValidThread(ICorDebugThread comThread) {
+			Debugger.DebugVerifyThread();
 			var thread = threads.TryGet(comThread);
 			if (thread == null)
 				return null;

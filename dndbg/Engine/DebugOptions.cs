@@ -17,44 +17,156 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel;
+using dndbg.Engine.COM.CorDebug;
+
 namespace dndbg.Engine {
-	public sealed class DebugOptions {
-		/// <summary>
-		/// null if we should auto detect the version, else it should be a version of an already
-		/// installed CLR, eg. "v2.0.50727" etc.
-		/// </summary>
-		public string DebuggeeVersion { get; set; }
+	public class DebugOptions : INotifyPropertyChanged {
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged(string propName) {
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(propName));
+		}
 
 		/// <summary>
-		/// File to debug
+		/// Stepper intercept mask
 		/// </summary>
-		public string Filename { get; set; }
+		public CorDebugIntercept StepperInterceptMask {
+			get { return stepperInterceptMask; }
+			set {
+				if (stepperInterceptMask != value) {
+					stepperInterceptMask = value;
+					OnPropertyChanged("StepperInterceptMask");
+				}
+			}
+		}
+		CorDebugIntercept stepperInterceptMask = CorDebugIntercept.INTERCEPT_ALL;
 
 		/// <summary>
-		/// Command line to pass to debugged program
+		/// Stepper unmapped stop mask
 		/// </summary>
-		public string CommandLine { get; set; }
+		public CorDebugUnmappedStop StepperUnmappedStopMask {
+			get { return stepperUnmappedStopMask; }
+			set {
+				if (stepperUnmappedStopMask != value) {
+					stepperUnmappedStopMask = value;
+					OnPropertyChanged("StepperUnmappedStopMask");
+				}
+			}
+		}
+		CorDebugUnmappedStop stepperUnmappedStopMask = CorDebugUnmappedStop.STOP_NONE;
 
 		/// <summary>
-		/// Current directory of debugged program or null to use the debugger's cwd
+		/// Stepper JMC (Just My Code)
 		/// </summary>
-		public string CurrentDirectory { get; set; }
+		public bool StepperJMC {
+			get { return stepperJMC; }
+			set {
+				if (stepperJMC != value) {
+					stepperJMC = value;
+					OnPropertyChanged("StepperJMC");
+				}
+			}
+		}
+		bool stepperJMC = false;
 
 		/// <summary>
-		/// true if handles should be inherited by the started process
+		/// Passed to ICorDebugProcess2::SetDesiredNGENCompilerFlags() and ICorDebugModule2::SetJITCompilerFlags()
 		/// </summary>
-		public bool InheritHandles { get; set; }
+		public CorDebugJITCompilerFlags JITCompilerFlags {
+			get { return jitCompilerFlags; }
+			set {
+				if (jitCompilerFlags != value) {
+					jitCompilerFlags = value;
+					OnPropertyChanged("JITCompilerFlags");
+				}
+			}
+		}
+		CorDebugJITCompilerFlags jitCompilerFlags = CorDebugJITCompilerFlags.CORDEBUG_JIT_DISABLE_OPTIMIZATION;
 
 		/// <summary>
-		/// Process creation flags passed to CreateProcess()
+		/// Passed to ICorDebugModule::EnableJITDebugging()
 		/// </summary>
-		public ProcessCreationFlags? ProcessCreationFlags { get; set; }
+		public bool ModuleTrackJITInfo {
+			get { return moduleTrackJITInfo; }
+			set {
+				if (moduleTrackJITInfo != value) {
+					moduleTrackJITInfo = value;
+					OnPropertyChanged("ModuleTrackJITInfo");
+				}
+			}
+		}
+		bool moduleTrackJITInfo = true;
 
 		/// <summary>
-		/// An <see cref="IDebugMessageDispatcher"/> instance. Can't be null.
+		/// Passed to ICorDebugModule::EnableJITDebugging()
 		/// </summary>
-		public IDebugMessageDispatcher DebugMessageDispatcher { get; set; }
+		public bool ModuleAllowJitOptimizations {
+			get { return moduleAllowJitOptimizations; }
+			set {
+				if (moduleAllowJitOptimizations != value) {
+					moduleAllowJitOptimizations = value;
+					OnPropertyChanged("ModuleAllowJitOptimizations");
+				}
+			}
+		}
+		bool moduleAllowJitOptimizations = true;
 
-		public static readonly ProcessCreationFlags DefaultProcessCreationFlags = Engine.ProcessCreationFlags.CREATE_NEW_CONSOLE;
+		/// <summary>
+		/// Passed to ICorDebugModule::EnableClassLoadCallbacks()
+		/// </summary>
+		public bool ModuleClassLoadCallbacks {
+			get { return moduleClassLoadCallbacks; }
+			set {
+				if (moduleClassLoadCallbacks != value) {
+					moduleClassLoadCallbacks = value;
+					OnPropertyChanged("ModuleClassLoadCallbacks");
+				}
+			}
+		}
+		bool moduleClassLoadCallbacks = false;
+
+		/// <summary>
+		/// true if 'break' IL instructions are ignored when executed
+		/// </summary>
+		public bool IgnoreBreakInstructions {
+			get { return ignoreBreakInstructions; }
+			set {
+				if (ignoreBreakInstructions != value) {
+					ignoreBreakInstructions = value;
+					OnPropertyChanged("IgnoreBreakInstructions");
+				}
+			}
+		}
+		bool ignoreBreakInstructions = false;
+
+		/// <summary>
+		/// Passed to ICorDebugProcess::EnableLogMessages
+		/// </summary>
+		public bool LogMessages {
+			get { return logMessages; }
+			set {
+				if (logMessages != value) {
+					logMessages = value;
+					OnPropertyChanged("LogMessages");
+				}
+			}
+		}
+		bool logMessages = true;
+
+		/// <summary>
+		/// Passed to ICorDebugProcess8::EnableExceptionCallbacksOutsideOfMyCode
+		/// </summary>
+		public bool ExceptionCallbacksOutsideOfMyCode {
+			get { return exceptionCallbacksOutsideOfMyCode; }
+			set {
+				if (exceptionCallbacksOutsideOfMyCode != value) {
+					exceptionCallbacksOutsideOfMyCode = value;
+					OnPropertyChanged("ExceptionCallbacksOutsideOfMyCode");
+				}
+			}
+		}
+		bool exceptionCallbacksOutsideOfMyCode = true;
 	}
 }

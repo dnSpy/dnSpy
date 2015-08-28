@@ -102,10 +102,6 @@ namespace dndbg.Engine.COM.CorDebug {
 		public uint numRanks;
 		public uint rankOffset;
 	}
-	public struct COR_DEBUG_STEP_RANGE {
-		public uint startOffset;
-		public uint endOffset;
-	}
 	public struct COR_FIELD {
 		public uint token;
 		public uint offset;
@@ -178,17 +174,45 @@ namespace dndbg.Engine.COM.CorDebug {
 		DEBUG_EVENT_KIND_MANAGED_EXCEPTION_UNHANDLED
 	}
 	public enum CorDebugExceptionCallbackType {
+		/// <summary>
+		/// An exception was thrown.
+		/// </summary>
 		DEBUG_EXCEPTION_FIRST_CHANCE = 1,
+		/// <summary>
+		/// The exception windup process entered user code.
+		/// </summary>
 		DEBUG_EXCEPTION_USER_FIRST_CHANCE,
+		/// <summary>
+		/// The exception windup process found a catch block in user code.
+		/// </summary>
 		DEBUG_EXCEPTION_CATCH_HANDLER_FOUND,
+		/// <summary>
+		/// The exception was not handled.
+		/// </summary>
 		DEBUG_EXCEPTION_UNHANDLED
 	}
 	public enum CorDebugExceptionFlags : uint {
+		/// <summary>
+		/// There is no exception.
+		/// </summary>
 		DEBUG_EXCEPTION_NONE,
+		/// <summary>
+		/// The exception is interceptable.
+		/// 
+		/// The timing of the exception may still be such that the debugger cannot intercept it.
+		/// For example, if there is no managed code below the current callback or the exception
+		/// event resulted from a just-in-time (JIT) attachment, the exception cannot be intercepted.
+		/// </summary>
 		DEBUG_EXCEPTION_CAN_BE_INTERCEPTED
 	}
 	public enum CorDebugExceptionUnwindCallbackType {
+		/// <summary>
+		/// The beginning of the unwind process.
+		/// </summary>
 		DEBUG_EXCEPTION_UNWIND_BEGIN = 1,
+		/// <summary>
+		/// The exception was intercepted.
+		/// </summary>
 		DEBUG_EXCEPTION_INTERCEPTED
 	}
 	public enum CorDebugGCType {
@@ -461,7 +485,8 @@ namespace dndbg.Engine.COM.CorDebug {
 		void EnumerateThreads([MarshalAs(UnmanagedType.Interface)] out ICorDebugThreadEnum ppThreads);
 		void SetAllThreadsDebugState([In] CorDebugThreadState state, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pExceptThisThread);
 		void Detach();
-		void Terminate([In] uint exitCode);
+		[PreserveSig]
+		int Terminate([In] uint exitCode);
 		void CanCommitChanges([In] uint cSnapshots, [MarshalAs(UnmanagedType.Interface)] [In] ref ICorDebugEditAndContinueSnapshot pSnapshots, [MarshalAs(UnmanagedType.Interface)] out ICorDebugErrorInfoEnum pError);
 		void CommitChanges([In] uint cSnapshots, [MarshalAs(UnmanagedType.Interface)] [In] ref ICorDebugEditAndContinueSnapshot pSnapshots, [MarshalAs(UnmanagedType.Interface)] out ICorDebugErrorInfoEnum pError);
 		[PreserveSig]
@@ -693,7 +718,8 @@ namespace dndbg.Engine.COM.CorDebug {
 		void EnumerateThreads([MarshalAs(UnmanagedType.Interface)] out ICorDebugThreadEnum ppThreads);
 		void SetAllThreadsDebugState([In] CorDebugThreadState state, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pExceptThisThread);
 		void Detach();
-		void Terminate([In] uint exitCode);
+		[PreserveSig]
+		int Terminate([In] uint exitCode);
 		void CanCommitChanges([In] uint cSnapshots, [MarshalAs(UnmanagedType.Interface)] [In] ref ICorDebugEditAndContinueSnapshot pSnapshots, [MarshalAs(UnmanagedType.Interface)] out ICorDebugErrorInfoEnum pError);
 		void CommitChanges([In] uint cSnapshots, [MarshalAs(UnmanagedType.Interface)] [In] ref ICorDebugEditAndContinueSnapshot pSnapshots, [MarshalAs(UnmanagedType.Interface)] out ICorDebugErrorInfoEnum pError);
 	}
@@ -1116,8 +1142,10 @@ namespace dndbg.Engine.COM.CorDebug {
 		int GetAssembly([MarshalAs(UnmanagedType.Interface)] out ICorDebugAssembly ppAssembly);
 		[PreserveSig]
 		int GetName([In] uint cchName, out uint pcchName, [Out] [MarshalAs(UnmanagedType.LPWStr)] StringBuilder szName);
-		void EnableJITDebugging([In] int bTrackJITInfo, [In] int bAllowJitOpts);
-		void EnableClassLoadCallbacks([In] int bClassLoadCallbacks);
+		[PreserveSig]
+		int EnableJITDebugging([In] int bTrackJITInfo, [In] int bAllowJitOpts);
+		[PreserveSig]
+		int EnableClassLoadCallbacks([In] int bClassLoadCallbacks);
 		[PreserveSig]
 		int GetFunctionFromToken([In] uint methodDef, [MarshalAs(UnmanagedType.Interface)] out ICorDebugFunction ppFunction);
 		void GetFunctionFromRVA([In] ulong rva, [MarshalAs(UnmanagedType.Interface)] out ICorDebugFunction ppFunction);
@@ -1138,10 +1166,12 @@ namespace dndbg.Engine.COM.CorDebug {
 	[Guid("7FCC5FB5-49C0-41DE-9938-3B88B5B9ADD7"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugModule2 {
-		void SetJMCStatus([In] int bIsJustMyCode, [In] uint cTokens, [In] ref uint pTokens);
-		void ApplyChanges([In] uint cbMetadata, [In] ref byte pbMetadata, [In] uint cbIL, [In] ref byte pbIL);
-		void SetJITCompilerFlags([In] uint dwFlags);
-		void GetJITCompilerFlags(out uint pdwFlags);
+		[PreserveSig]
+		int SetJMCStatus([In] int bIsJustMyCode, [In] uint cTokens, [In] IntPtr pTokens);
+		void ApplyChanges([In] uint cbMetadata, [In] IntPtr pbMetadata, [In] uint cbIL, [In] IntPtr pbIL);
+		[PreserveSig]
+		int SetJITCompilerFlags([In] CorDebugJITCompilerFlags dwFlags);
+		void GetJITCompilerFlags(out CorDebugJITCompilerFlags pdwFlags);
 		void ResolveAssembly([In] uint tkAssemblyRef, [MarshalAs(UnmanagedType.Interface)] out ICorDebugAssembly ppAssembly);
 	}
 	[Guid("86F012BF-FF15-4372-BD30-B6F11CAAE1DD"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -1251,7 +1281,8 @@ namespace dndbg.Engine.COM.CorDebug {
 		void EnumerateThreads([MarshalAs(UnmanagedType.Interface)] out ICorDebugThreadEnum ppThreads);
 		void SetAllThreadsDebugState([In] CorDebugThreadState state, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pExceptThisThread);
 		void Detach();
-		void Terminate([In] uint exitCode);
+		[PreserveSig]
+		int Terminate([In] uint exitCode);
 		void CanCommitChanges([In] uint cSnapshots, [MarshalAs(UnmanagedType.Interface)] [In] ref ICorDebugEditAndContinueSnapshot pSnapshots, [MarshalAs(UnmanagedType.Interface)] out ICorDebugErrorInfoEnum pError);
 		void CommitChanges([In] uint cSnapshots, [MarshalAs(UnmanagedType.Interface)] [In] ref ICorDebugEditAndContinueSnapshot pSnapshots, [MarshalAs(UnmanagedType.Interface)] out ICorDebugErrorInfoEnum pError);
 		[PreserveSig]
@@ -1327,7 +1358,8 @@ namespace dndbg.Engine.COM.CorDebug {
 	[Guid("2E6F28C1-85EB-4141-80AD-0A90944B9639"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugProcess8 {
-		void EnableExceptionCallbacksOutsideOfMyCode([In] int enableExceptionsOutsideOfJMC);
+		[PreserveSig]
+		int EnableExceptionCallbacksOutsideOfMyCode([In] int enableExceptionsOutsideOfJMC);
 	}
 	[Guid("CC7BCB05-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -1410,17 +1442,23 @@ namespace dndbg.Engine.COM.CorDebug {
 	public interface ICorDebugStepper {
 		void IsActive(out int pbActive);
 		void Deactivate();
-		void SetInterceptMask([In] CorDebugIntercept mask);
-		void SetUnmappedStopMask([In] CorDebugUnmappedStop mask);
-		void Step([In] int bStepIn);
-		void StepRange([In] int bStepIn, [In] ref COR_DEBUG_STEP_RANGE ranges, [In] uint cRangeCount);
-		void StepOut();
+		[PreserveSig]
+		int SetInterceptMask([In] CorDebugIntercept mask);
+		[PreserveSig]
+		int SetUnmappedStopMask([In] CorDebugUnmappedStop mask);
+		[PreserveSig]
+		int Step([In] int bStepIn);
+		[PreserveSig]
+		int StepRange([In] int bStepIn, [In] IntPtr ranges, [In] uint cRangeCount);
+		[PreserveSig]
+		int StepOut();
 		void SetRangeIL([In] int bIL);
 	}
 	[Guid("C5B6E9C3-E7D1-4A8E-873B-7F047F0706F7"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugStepper2 {
-		void SetJMC([In] int fIsJMCStepper);
+		[PreserveSig]
+		int SetJMC([In] int fIsJMCStepper);
 	}
 	[Guid("CC7BCB04-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -1479,7 +1517,8 @@ namespace dndbg.Engine.COM.CorDebug {
 		void GetUserState(out CorDebugUserState pState);
 		void GetCurrentException([MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppExceptionObject);
 		void ClearCurrentException();
-		void CreateStepper([MarshalAs(UnmanagedType.Interface)] out ICorDebugStepper ppStepper);
+		[PreserveSig]
+		int CreateStepper([MarshalAs(UnmanagedType.Interface)] out ICorDebugStepper ppStepper);
 		void EnumerateChains([MarshalAs(UnmanagedType.Interface)] out ICorDebugChainEnum ppChains);
 		void GetActiveChain([MarshalAs(UnmanagedType.Interface)] out ICorDebugChain ppChain);
 		void GetActiveFrame([MarshalAs(UnmanagedType.Interface)] out ICorDebugFrame ppFrame);

@@ -121,6 +121,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <returns></returns>
 		public DnModule[] GetModules() {
+			Debugger.DebugVerifyThread();
 			var list = modules.GetAll();
 			Array.Sort(list, (a, b) => a.IncrementedId.CompareTo(b.IncrementedId));
 			return list;
@@ -132,6 +133,7 @@ namespace dndbg.Engine {
 		/// <param name="comModule">Module</param>
 		/// <returns></returns>
 		public DnModule TryGetModule(ICorDebugModule comModule) {
+			Debugger.DebugVerifyThread();
 			return modules.TryGet(comModule);
 		}
 

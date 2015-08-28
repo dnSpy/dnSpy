@@ -26,6 +26,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,6 +35,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Engine\Breakpoint.cs" />
@@ -51,6 +53,7 @@
     <Compile Include="Engine\DebuggerRunningState.cs" />
     <Compile Include="Engine\DebuggerStopState.cs" />
     <Compile Include="Engine\DebugOptions.cs" />
+    <Compile Include="Engine\DebugProcessOptions.cs" />
     <Compile Include="Engine\DnAppDomain.cs" />
     <Compile Include="Engine\DnAssembly.cs" />
     <Compile Include="Engine\DnDebugger.cs" />
@@ -63,6 +66,7 @@
     <Compile Include="Engine\NativeMethods.cs" />
     <Compile Include="Engine\ProcessCreationFlags.cs" />
     <Compile Include="Engine\SerializedDnModule.cs" />
+    <Compile Include="Engine\StepRange.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

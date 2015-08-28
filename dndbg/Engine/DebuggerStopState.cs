@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dndbg.Engine.COM.CorDebug;
+
 namespace dndbg.Engine {
 	public enum DebuggerStopReason {
 		/// <summary>
@@ -38,6 +40,11 @@ namespace dndbg.Engine {
 		/// An IL code breakpoint got triggered
 		/// </summary>
 		ILCodeBreakpoint,
+
+		/// <summary>
+		/// A step in, step out or step over command has completed
+		/// </summary>
+		Step,
 
 		/// <summary>
 		/// Start of user stop reasons
@@ -77,6 +84,18 @@ namespace dndbg.Engine {
 		public ILCodeBreakpointStopState(ILCodeBreakpoint bp)
 			: base(DebuggerStopReason.ILCodeBreakpoint) {
 			this.bp = bp;
+		}
+	}
+
+	public sealed class StepStopState : DebuggerStopState {
+		public CorDebugStepReason StepReason {
+			get { return stepReason; }
+		}
+		readonly CorDebugStepReason stepReason;
+
+		public StepStopState(CorDebugStepReason stepReason)
+			: base(DebuggerStopReason.Step) {
+			this.stepReason = stepReason;
 		}
 	}
 }
