@@ -30,7 +30,6 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Bookmarks;
-using ICSharpCode.ILSpy.Debugger;
 using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;

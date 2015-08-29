@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dndbg.Engine {
 	public sealed class DebugProcessOptions {
 		/// <summary>
@@ -61,5 +63,21 @@ namespace dndbg.Engine {
 		public DebugOptions DebugOptions { get; set; }
 
 		public static readonly ProcessCreationFlags DefaultProcessCreationFlags = Engine.ProcessCreationFlags.CREATE_NEW_CONSOLE;
+
+		public DebugProcessOptions CopyTo(DebugProcessOptions other) {
+			other.DebuggeeVersion = this.DebuggeeVersion;
+			other.Filename = this.Filename;
+			other.CommandLine = this.CommandLine;
+			other.CurrentDirectory = this.CurrentDirectory;
+			other.InheritHandles = this.InheritHandles;
+			other.ProcessCreationFlags = this.ProcessCreationFlags;
+			other.DebugMessageDispatcher = this.DebugMessageDispatcher;
+			other.DebugOptions = this.DebugOptions == null ? null : this.DebugOptions.Clone();
+			return other;
+		}
+
+		public DebugProcessOptions Clone() {
+			return CopyTo(new DebugProcessOptions());
+		}
 	}
 }

@@ -17,26 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dndbg.Engine {
-	public enum DebuggerRunningState {
-		/// <summary>
-		/// Creating the first process
-		/// </summary>
-		Starting,
+using System;
+using System.Windows.Threading;
+using dndbg.Engine;
+using ICSharpCode.ILSpy;
 
-		/// <summary>
-		/// Process is running
-		/// </summary>
-		Running,
+namespace dnSpy.Debugger {
+	sealed class WpfDebugMessageDispatcher : IDebugMessageDispatcher {
+		public static readonly WpfDebugMessageDispatcher Instance = new WpfDebugMessageDispatcher();
 
-		/// <summary>
-		/// Process is temporarily stopped
-		/// </summary>
-		Stopped,
-
-		/// <summary>
-		/// All processes have terminated
-		/// </summary>
-		Terminated,
+		public void ExecuteAsync(Action action) {
+			App.Current.Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+		}
 	}
 }

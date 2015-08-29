@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading;
 using dndbg.Engine.COM.CorDebug;
 using dndbg.Engine.COM.MetaHost;
@@ -54,23 +55,24 @@ namespace dndbg.Engine {
 			set { DebugVerifyThread(); debugOptions = value ?? new DebugOptions(); }
 		}
 
-		public DebuggerRunningState RunningState {
+		public DebuggerProcessState ProcessState {
 			get {
 				DebugVerifyThread();
 				if (hasTerminated)
-					return DebuggerRunningState.Terminated;
+					return DebuggerProcessState.Terminated;
 				if (managedCallbackCounter != 0)
-					return DebuggerRunningState.Stopped;
-				if (processes.Count == 0)
-					return DebuggerRunningState.Starting;
-				return DebuggerRunningState.Running;
+					return DebuggerProcessState.Stopped;
+				if (!hasReceivedCreateProcessEvent)
+					return DebuggerProcessState.Starting;
+				return DebuggerProcessState.Running;
 			}
 		}
+		bool hasReceivedCreateProcessEvent = false;
 
-		public event EventHandler<DebuggerEventArgs> OnRunningStateChanged;
-		void CallOnRunningStateChanged() {
-			if (OnRunningStateChanged != null)
-				OnRunningStateChanged(this, DebuggerEventArgs.Empty);
+		public event EventHandler<DebuggerEventArgs> OnProcessStateChanged;
+		void CallOnProcessStateChanged() {
+			if (OnProcessStateChanged != null)
+				OnProcessStateChanged(this, DebuggerEventArgs.Empty);
 		}
 
 		public DebugEventBreakpoint[] DebugEventBreakpoints {
@@ -130,8 +132,8 @@ namespace dndbg.Engine {
 		public event DebugCallbackEventHandler DebugCallbackEvent;
 
 		// Could be called from any thread
-		internal void OnManagedCallbackFromAnyThread(DebugCallbackEventArgs e) {
-			debugMessageDispatcher.ExecuteAsync(() => OnManagedCallbackInDebuggerThread(e));
+		internal void OnManagedCallbackFromAnyThread(Func<DebugCallbackEventArgs> func) {
+			debugMessageDispatcher.ExecuteAsync(() => OnManagedCallbackInDebuggerThread(func()));
 		}
 
 		// Called in our dndbg thread
@@ -155,7 +157,7 @@ namespace dndbg.Engine {
 
 			if (e.Stop) {
 				currentDebuggerState.StopStates = e.StopStates;
-				CallOnRunningStateChanged();
+				CallOnProcessStateChanged();
 			}
 			else {
 				currentDebuggerState = new CurrentDebuggerState();
@@ -186,7 +188,7 @@ namespace dndbg.Engine {
 		/// true if <see cref="Continue()"/> can be called
 		/// </summary>
 		public bool CanContinue {
-			get { DebugVerifyThread(); return RunningState == DebuggerRunningState.Stopped; }
+			get { DebugVerifyThread(); return ProcessState == DebuggerProcessState.Stopped; }
 		}
 
 		/// <summary>
@@ -212,7 +214,7 @@ namespace dndbg.Engine {
 				managedCallbackCounter--;
 			}
 
-			CallOnRunningStateChanged();
+			CallOnProcessStateChanged();
 		}
 
 		/// <summary>
@@ -228,7 +230,7 @@ namespace dndbg.Engine {
 		/// <param name="thread">Thread</param>
 		public bool CanStep(DnThread thread) {
 			DebugVerifyThread();
-			return RunningState == DebuggerRunningState.Stopped && thread != null;
+			return ProcessState == DebuggerProcessState.Stopped && thread != null;
 		}
 
 		ICorDebugStepper CreateStepper(DnThread thread) {
@@ -541,6 +543,7 @@ namespace dndbg.Engine {
 
 			case DebugCallbackType.CreateProcess:
 				var cpArgs = (CreateProcessDebugCallbackEventArgs)e;
+				hasReceivedCreateProcessEvent = true;
 				process = TryAdd(cpArgs.Process);
 				if (process != null) {
 					process.EnableLogMessages(debugOptions.LogMessages);
@@ -797,7 +800,7 @@ namespace dndbg.Engine {
 			if (!hasTerminated) {
 				hasTerminated = true;
 				corDebug.Terminate();
-				CallOnRunningStateChanged();
+				CallOnProcessStateChanged();
 			}
 		}
 		bool hasTerminated = false;
@@ -808,7 +811,6 @@ namespace dndbg.Engine {
 
 			var debuggeeVersion = options.DebuggeeVersion ?? DebuggeeVersionDetector.GetVersion(options.Filename);
 			var dbg = new DnDebugger(CreateCorDebug(debuggeeVersion), options.DebugOptions, options.DebugMessageDispatcher);
-			//TODO: This could fail so catch exceptions
 			dbg.CreateProcess(options);
 			return dbg;
 		}
@@ -1050,8 +1052,13 @@ namespace dndbg.Engine {
 		}
 
 		void Dispose(bool disposing) {
-			foreach (var process in processes.GetAll())
-				process.RawObject.Terminate(uint.MaxValue);
+			foreach (var process in processes.GetAll()) {
+				try {
+					process.RawObject.Terminate(uint.MaxValue);
+				}
+				catch (InvalidComObjectException) {
+				}
+            }
 		}
 	}
 }

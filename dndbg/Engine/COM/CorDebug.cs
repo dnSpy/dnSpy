@@ -1058,49 +1058,49 @@ namespace dndbg.Engine.COM.CorDebug {
 	[Guid("3D6F5F60-7538-11D3-8D5B-00104B35E7EF"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugManagedCallback {
-		void Breakpoint([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugBreakpoint pBreakpoint);
-		void StepComplete([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugStepper pStepper, [In] CorDebugStepReason reason);
-		void Break([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread thread);
-		void Exception([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, [In] int unhandled);
-		void EvalComplete([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugEval pEval);
-		void EvalException([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugEval pEval);
-		void CreateProcess([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugProcess pProcess);
-		void ExitProcess([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugProcess pProcess);
-		void CreateThread([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread thread);
-		void ExitThread([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread thread);
-		void LoadModule([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugModule pModule);
-		void UnloadModule([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugModule pModule);
-		void LoadClass([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugClass c);
-		void UnloadClass([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugClass c);
-		void DebuggerError([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugProcess pProcess, [MarshalAs(UnmanagedType.Error)] [In] int errorHR, [In] uint errorCode);
-		void LogMessage([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, [In] int lLevel, [In] [MarshalAs(UnmanagedType.LPWStr)] string pLogSwitchName, [In] [MarshalAs(UnmanagedType.LPWStr)] string pMessage);
-		void LogSwitch([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, [In] int lLevel, [In] uint ulReason, [In] [MarshalAs(UnmanagedType.LPWStr)] string pLogSwitchName, [In] [MarshalAs(UnmanagedType.LPWStr)] string pParentName);
-		void CreateAppDomain([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugProcess pProcess, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain);
-		void ExitAppDomain([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugProcess pProcess, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain);
-		void LoadAssembly([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAssembly pAssembly);
-		void UnloadAssembly([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAssembly pAssembly);
-		void ControlCTrap([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugProcess pProcess);
-		void NameChange([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread);
-		void UpdateModuleSymbols([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugModule pModule, [MarshalAs(UnmanagedType.Interface)] [In] IStream pSymbolStream);
-		void EditAndContinueRemap([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugFunction pFunction, [In] int fAccurate);
-		void BreakpointSetError([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugBreakpoint pBreakpoint, [In] uint dwError);
+		void Breakpoint([In] IntPtr pAppDomain, [In] IntPtr pThread, [In] IntPtr pBreakpoint);
+		void StepComplete([In] IntPtr pAppDomain, [In] IntPtr pThread, [In] IntPtr pStepper, [In] CorDebugStepReason reason);
+		void Break([In] IntPtr pAppDomain, [In] IntPtr thread);
+		void Exception([In] IntPtr pAppDomain, [In] IntPtr pThread, [In] int unhandled);
+		void EvalComplete([In] IntPtr pAppDomain, [In] IntPtr pThread, [In] IntPtr pEval);
+		void EvalException([In] IntPtr pAppDomain, [In] IntPtr pThread, [In] IntPtr pEval);
+		void CreateProcess([In] IntPtr pProcess);
+		void ExitProcess([In] IntPtr pProcess);
+		void CreateThread([In] IntPtr pAppDomain, [In] IntPtr thread);
+		void ExitThread([In] IntPtr pAppDomain, [In] IntPtr thread);
+		void LoadModule([In] IntPtr pAppDomain, [In] IntPtr pModule);
+		void UnloadModule([In] IntPtr pAppDomain, [In] IntPtr pModule);
+		void LoadClass([In] IntPtr pAppDomain, [In] IntPtr c);
+		void UnloadClass([In] IntPtr pAppDomain, [In] IntPtr c);
+		void DebuggerError([In] IntPtr pProcess, [MarshalAs(UnmanagedType.Error)] [In] int errorHR, [In] uint errorCode);
+		void LogMessage([In] IntPtr pAppDomain, [In] IntPtr pThread, [In] int lLevel, [In] [MarshalAs(UnmanagedType.LPWStr)] string pLogSwitchName, [In] [MarshalAs(UnmanagedType.LPWStr)] string pMessage);
+		void LogSwitch([In] IntPtr pAppDomain, [In] IntPtr pThread, [In] int lLevel, [In] uint ulReason, [In] [MarshalAs(UnmanagedType.LPWStr)] string pLogSwitchName, [In] [MarshalAs(UnmanagedType.LPWStr)] string pParentName);
+		void CreateAppDomain([In] IntPtr pProcess, [In] IntPtr pAppDomain);
+		void ExitAppDomain([In] IntPtr pProcess, [In] IntPtr pAppDomain);
+		void LoadAssembly([In] IntPtr pAppDomain, [In] IntPtr pAssembly);
+		void UnloadAssembly([In] IntPtr pAppDomain, [In] IntPtr pAssembly);
+		void ControlCTrap([In] IntPtr pProcess);
+		void NameChange([In] IntPtr pAppDomain, [In] IntPtr pThread);
+		void UpdateModuleSymbols([In] IntPtr pAppDomain, [In] IntPtr pModule, [In] IntPtr pSymbolStream);
+		void EditAndContinueRemap([In] IntPtr pAppDomain, [In] IntPtr pThread, [In] IntPtr pFunction, [In] int fAccurate);
+		void BreakpointSetError([In] IntPtr pAppDomain, [In] IntPtr pThread, [In] IntPtr pBreakpoint, [In] uint dwError);
 	}
 	[Guid("250E5EEA-DB5C-4C76-B6F3-8C46F12E3203"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugManagedCallback2 {
-		void FunctionRemapOpportunity([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugFunction pOldFunction, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugFunction pNewFunction, [In] uint oldILOffset);
-		void CreateConnection([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugProcess pProcess, [In] uint dwConnectionId, [In] [MarshalAs(UnmanagedType.LPWStr)] string pConnName);
-		void ChangeConnection([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugProcess pProcess, [In] uint dwConnectionId);
-		void DestroyConnection([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugProcess pProcess, [In] uint dwConnectionId);
-		void Exception([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugFrame pFrame, [In] uint nOffset, [In] CorDebugExceptionCallbackType dwEventType, [In] CorDebugExceptionFlags dwFlags);
-		void ExceptionUnwind([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, [In] CorDebugExceptionUnwindCallbackType dwEventType, [In] CorDebugExceptionFlags dwFlags);
-		void FunctionRemapComplete([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugFunction pFunction);
-		void MDANotification([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugController pController, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugMDA pMDA);
+		void FunctionRemapOpportunity([In] IntPtr pAppDomain, [In] IntPtr pThread, [In] IntPtr pOldFunction, [In] IntPtr pNewFunction, [In] uint oldILOffset);
+		void CreateConnection([In] IntPtr pProcess, [In] uint dwConnectionId, [In] [MarshalAs(UnmanagedType.LPWStr)] string pConnName);
+		void ChangeConnection([In] IntPtr pProcess, [In] uint dwConnectionId);
+		void DestroyConnection([In] IntPtr pProcess, [In] uint dwConnectionId);
+		void Exception([In] IntPtr pAppDomain, [In] IntPtr pThread, [In] IntPtr pFrame, [In] uint nOffset, [In] CorDebugExceptionCallbackType dwEventType, [In] CorDebugExceptionFlags dwFlags);
+		void ExceptionUnwind([In] IntPtr pAppDomain, [In] IntPtr pThread, [In] CorDebugExceptionUnwindCallbackType dwEventType, [In] CorDebugExceptionFlags dwFlags);
+		void FunctionRemapComplete([In] IntPtr pAppDomain, [In] IntPtr pThread, [In] IntPtr pFunction);
+		void MDANotification([In] IntPtr pController, [In] IntPtr pThread, [In] IntPtr pMDA);
 	}
 	[Guid("264EA0FC-2591-49AA-868E-835E6515323F"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugManagedCallback3 {
-		void CustomNotification([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugAppDomain pAppDomain);
+		void CustomNotification([In] IntPtr pThread, [In] IntPtr pAppDomain);
 	}
 	[Guid("CC726F2F-1DB7-459B-B0EC-05F01D841B42"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]

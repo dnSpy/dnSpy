@@ -50,7 +50,7 @@
     <Compile Include="Engine\DebuggeeVersionDetector.cs" />
     <Compile Include="Engine\DebuggerCollection.cs" />
     <Compile Include="Engine\DebuggerEventArgs.cs" />
-    <Compile Include="Engine\DebuggerRunningState.cs" />
+    <Compile Include="Engine\DebuggerProcessState.cs" />
     <Compile Include="Engine\DebuggerStopState.cs" />
     <Compile Include="Engine\DebugOptions.cs" />
     <Compile Include="Engine\DebugProcessOptions.cs" />

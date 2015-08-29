@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel;
 using dndbg.Engine.COM.CorDebug;
 
@@ -168,5 +169,23 @@ namespace dndbg.Engine {
 			}
 		}
 		bool exceptionCallbacksOutsideOfMyCode = true;
+
+		public DebugOptions CopyTo(DebugOptions other) {
+			other.StepperInterceptMask = this.StepperInterceptMask;
+			other.StepperUnmappedStopMask = this.StepperUnmappedStopMask;
+			other.StepperJMC = this.StepperJMC;
+			other.JITCompilerFlags = this.JITCompilerFlags;
+			other.ModuleTrackJITInfo = this.ModuleTrackJITInfo;
+			other.ModuleAllowJitOptimizations = this.ModuleAllowJitOptimizations;
+			other.ModuleClassLoadCallbacks = this.ModuleClassLoadCallbacks;
+			other.IgnoreBreakInstructions = this.IgnoreBreakInstructions;
+			other.LogMessages = this.LogMessages;
+			other.ExceptionCallbacksOutsideOfMyCode = this.ExceptionCallbacksOutsideOfMyCode;
+			return other;
+		}
+
+		public DebugOptions Clone() {
+			return CopyTo(new DebugOptions());
+		}
 	}
 }

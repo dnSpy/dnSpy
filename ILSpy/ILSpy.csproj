@@ -556,6 +556,14 @@
     <Compile Include="Controls\SysMenuButton.cs" />
     <Compile Include="Controls\TabButton.cs" />
     <Compile Include="Controls\WinSysButton.cs" />
+    <Compile Include="Debugger\AskDebugAssembly.cs" />
+    <Compile Include="Debugger\BringDebuggedProgramWindowToFront.cs" />
+    <Compile Include="Debugger\DebugCommands.cs" />
+    <Compile Include="Debugger\DebuggerPluginLoader.cs" />
+    <Compile Include="Debugger\DebugManager.cs" />
+    <Compile Include="Debugger\DebugRoutedCommands.cs" />
+    <Compile Include="Debugger\IAskDebugAssembly.cs" />
+    <Compile Include="Debugger\WpfDebugMessageDispatcher.cs" />
     <Compile Include="DecompilerTabsWindow.xaml.cs">
       <DependentUpon>DecompilerTabsWindow.xaml</DependentUpon>
     </Compile>
@@ -1179,7 +1187,11 @@
     <Resource Include="Images\Binary.png" />
     <Resource Include="Images\BinaryFile.png" />
     <Resource Include="Images\Branch.png" />
+    <Resource Include="Images\Break.png" />
     <Resource Include="Images\Breakpoint.png" />
+    <Resource Include="Images\BreakpointMenu.png" />
+    <Resource Include="Images\BreakpointsWindow.png" />
+    <Resource Include="Images\CallStackWindow.png" />
     <Resource Include="Images\Class.png" />
     <Resource Include="Images\ClassInternal.png" />
     <Resource Include="Images\ClassPrivate.png" />
@@ -1194,9 +1206,11 @@
     <Resource Include="Images\ConstructorPrivate.png" />
     <Resource Include="Images\ConstructorProtected.png" />
     <Resource Include="Images\ConstructorProtectedInternal.png" />
+    <Resource Include="Images\ContinueDebugging.png" />
     <Resource Include="Images\Copy.png" />
     <Resource Include="Images\CSharpFile.png" />
     <Resource Include="Images\CurrentLine.png" />
+    <Resource Include="Images\CurrentLineToolBar.png" />
     <Resource Include="Images\Cut.png" />
     <Resource Include="Images\Delegate.png" />
     <Resource Include="Images\DelegateInternal.png" />
@@ -1204,8 +1218,10 @@
     <Resource Include="Images\DelegateProtected.png" />
     <Resource Include="Images\DelegateProtectedInternal.png" />
     <Resource Include="Images\Delete.png" />
+    <Resource Include="Images\DeleteAllBreakpoints.png" />
     <Resource Include="Images\DeleteHistory.png" />
     <Resource Include="Images\DisabledBreakpoint.png" />
+    <Resource Include="Images\DisableEnableBreakpoint.png" />
     <Resource Include="Images\dnSpy.ico" />
     <Resource Include="Images\dnSpy-Big.png" />
     <Resource Include="Images\EntryPoint.png" />
@@ -1317,6 +1333,7 @@
     <Resource Include="Images\PInvokeMethodProtected.png" />
     <Resource Include="Images\PInvokeMethodProtectedInternal.png" />
     <Resource Include="Images\PrivateInternal.png" />
+    <Resource Include="Images\Process.png" />
     <Resource Include="Images\Property.png" />
     <Resource Include="Images\PropertyCompilerControlled.png" />
     <Resource Include="Images\PropertyInternal.png" />
@@ -1328,11 +1345,14 @@
     <Resource Include="Images\ReferenceFolderOpen.png" />
     <Resource Include="Images\Resource.png" />
     <Resource Include="Images\ResourcesFile.png" />
+    <Resource Include="Images\RestartProcess.png" />
     <Resource Include="Images\Save.png" />
     <Resource Include="Images\SaveAll.png" />
     <Resource Include="Images\Search.png" />
     <Resource Include="Images\SelectedReturnLine.png" />
+    <Resource Include="Images\SetNextStatement.png" />
     <Resource Include="Images\Settings.png" />
+    <Resource Include="Images\StartDebugging.png" />
     <Resource Include="Images\StaticClass.png" />
     <Resource Include="Images\StaticEvent.png" />
     <Resource Include="Images\StaticEventCompilerControlled.png" />
@@ -1352,6 +1372,10 @@
     <Resource Include="Images\StaticPropertyPrivate.png" />
     <Resource Include="Images\StaticPropertyProtected.png" />
     <Resource Include="Images\StaticPropertyProtectedInternal.png" />
+    <Resource Include="Images\StepInto.png" />
+    <Resource Include="Images\StepOut.png" />
+    <Resource Include="Images\StepOver.png" />
+    <Resource Include="Images\StopProcess.png" />
     <Resource Include="Images\Strings.png" />
     <Resource Include="Images\Struct.png" />
     <Resource Include="Images\StructInternal.png" />
@@ -1394,6 +1418,10 @@
     <Resource Include="Images\XsltFile.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\dndbg\dndbg.csproj">
+      <Project>{989a5c51-8c4c-4f4d-90a2-042cd1846075}</Project>
+      <Name>dndbg</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
       <Project>{984CC812-9470-4A13-AFF9-CC44068D666C}</Project>
       <Name>ICSharpCode.Decompiler</Name>
