@@ -25,6 +25,7 @@ using System.Windows.Input;
 using dnlib.DotNet.Resources;
 using dnSpy.AsmEditor;
 using dnSpy.AsmEditor.Resources;
+using dnSpy.MVVM;
 using dnSpy.Options;
 
 namespace dnSpy.TreeNodes {

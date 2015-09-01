@@ -22,6 +22,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.MVVM;
 
 namespace dnSpy.AsmEditor.Resources {
 	sealed class ImageResourceElementVM : ViewModelBase {

@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace dnSpy.AsmEditor {
+namespace dnSpy.MVVM {
 	sealed class EnumVM {
 		readonly object value;
 		readonly string name;

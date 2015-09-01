@@ -23,7 +23,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 
-namespace dnSpy.AsmEditor {
+namespace dnSpy.MVVM {
 	struct CachedValidationError {
 		readonly Func<string> checkError;
 		bool errorMsgValid;
@@ -506,18 +506,6 @@ namespace dnSpy.AsmEditor {
 			else
 				value = NumberVMUtils.ParseUInt64(StringValue, Min, Max, out error);
 			return error;
-		}
-	}
-
-	sealed class NullableCompressedUInt32 : NullableUInt32VM {
-		public NullableCompressedUInt32(Action<DataFieldVM> onUpdated)
-			: this(null, onUpdated) {
-		}
-
-		public NullableCompressedUInt32(uint? value, Action<DataFieldVM> onUpdated)
-			: base(value, onUpdated) {
-			Min = DnlibDialogs.ModelUtils.COMPRESSED_UINT32_MIN;
-			Max = DnlibDialogs.ModelUtils.COMPRESSED_UINT32_MAX;
 		}
 	}
 

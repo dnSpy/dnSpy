@@ -22,8 +22,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
-using dnSpy.AsmEditor;
 using dnSpy.HexEditor;
+using dnSpy.MVVM;
 
 namespace dnSpy.TreeNodes.Hex {
 	abstract class MetaDataTableRecordVM : HexVM, IVirtualizedListItem {

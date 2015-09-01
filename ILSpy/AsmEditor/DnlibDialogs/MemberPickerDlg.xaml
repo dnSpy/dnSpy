@@ -23,7 +23,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vc="clr-namespace:dnSpy.AsmEditor.Converters"
              xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
-             xmlns:winlocal="clr-namespace:dnSpy.AsmEditor"
+             xmlns:winlocal="clr-namespace:dnSpy.MVVM"
              Height="500" Width="600"
              Title="{Binding Title}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"

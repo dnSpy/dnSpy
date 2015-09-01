@@ -24,7 +24,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using ICSharpCode.ILSpy;
 
-namespace dnSpy.AsmEditor {
+namespace dnSpy.MVVM {
 	class ListVM<T> : INotifyPropertyChanged, IDataErrorInfo {
 		protected ObservableCollection<T> list;
 		readonly Action<int, int> onChanged;

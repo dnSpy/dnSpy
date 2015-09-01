@@ -25,7 +25,7 @@
              xmlns:vc="clr-namespace:dnSpy.AsmEditor.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
-             xmlns:winlocal="clr-namespace:dnSpy.AsmEditor"
+             xmlns:winlocal="clr-namespace:dnSpy.MVVM"
              Title="Edit Resource"
              Height="400" Width="350"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"

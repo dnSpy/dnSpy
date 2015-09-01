@@ -27,6 +27,7 @@ using System.Windows.Threading;
 using dnlib.DotNet;
 using dnSpy.Decompiler;
 using dnSpy.HexEditor;
+using dnSpy.MVVM;
 using dnSpy.Tabs;
 using dnSpy.TreeNodes;
 using dnSpy.TreeNodes.Hex;

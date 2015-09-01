@@ -18,6 +18,7 @@
 */
 
 using System.Windows.Input;
+using dnSpy.MVVM;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class NativeMethodBodyVM : ViewModelBase {

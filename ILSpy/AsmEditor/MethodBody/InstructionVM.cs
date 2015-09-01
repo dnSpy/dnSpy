@@ -24,6 +24,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnlib.DotNet.Pdb;
+using dnSpy.MVVM;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class InstructionVM : ViewModelBase, IIndexedItem {

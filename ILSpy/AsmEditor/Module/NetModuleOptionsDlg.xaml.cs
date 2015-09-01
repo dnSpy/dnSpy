@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.MVVM;
+
 namespace dnSpy.AsmEditor.Module {
 	/// <summary>
 	/// Interaction logic for NetModuleOptionsDlg.xaml

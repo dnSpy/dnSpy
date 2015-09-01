@@ -42,6 +42,7 @@ using dnSpy.Debugger;
 using dnSpy.Decompiler;
 using dnSpy.dntheme;
 using dnSpy.Images;
+using dnSpy.MVVM;
 using dnSpy.NRefactory;
 using dnSpy.TextView;
 using ICSharpCode.AvalonEdit;

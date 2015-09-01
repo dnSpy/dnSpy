@@ -28,6 +28,7 @@ using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.AsmEditor;
 using dnSpy.AvalonEdit;
+using dnSpy.MVVM;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;

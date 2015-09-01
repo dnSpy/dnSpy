@@ -18,6 +18,7 @@
 */
 
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.MVVM;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	/// <summary>

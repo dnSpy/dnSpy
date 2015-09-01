@@ -18,29 +18,35 @@
 */
 
 using System;
-using System.Windows.Input;
+using System.ComponentModel;
 
-namespace dnSpy.AsmEditor {
-	sealed class RelayCommand : ICommand {
-		readonly Action<object> exec;
-		readonly Predicate<object> canExec;
+namespace dnSpy.MVVM {
+	public abstract class ViewModelBase : INotifyPropertyChanged, IDataErrorInfo {
+		public event PropertyChangedEventHandler PropertyChanged;
 
-		public RelayCommand(Action<object> exec, Predicate<object> canExec = null) {
-			this.exec = exec;
-			this.canExec = canExec;
+		protected void OnPropertyChanged(string propName) {
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(propName));
 		}
 
-		public bool CanExecute(object parameter) {
-			return canExec == null ? true : canExec(parameter);
+		public string Error {
+			get { throw new NotImplementedException(); }
 		}
 
-		public event EventHandler CanExecuteChanged {
-			add { CommandManager.RequerySuggested += value; }
-			remove { CommandManager.RequerySuggested -= value; }
+		public string this[string columnName] {
+			get { return Verify(columnName); }
 		}
 
-		public void Execute(object parameter) {
-			exec(parameter);
+		public virtual bool HasError {
+			get { return false; }
+		}
+
+		protected virtual string Verify(string columnName) {
+			return string.Empty;
+		}
+
+		protected void HasErrorUpdated() {
+			OnPropertyChanged("HasError");
 		}
 	}
 }

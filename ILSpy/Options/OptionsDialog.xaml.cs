@@ -24,6 +24,7 @@ using System.Windows.Controls;
 using System.Xml.Linq;
 using dnSpy.AsmEditor;
 using dnSpy.Controls;
+using dnSpy.MVVM;
 
 namespace ICSharpCode.ILSpy.Options
 {

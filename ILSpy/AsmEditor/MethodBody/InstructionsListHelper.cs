@@ -31,6 +31,7 @@ using dnlib.DotNet.Emit;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Images;
+using dnSpy.MVVM;
 using dnSpy.NRefactory;
 using dnSpy.Search;
 using ICSharpCode.Decompiler;

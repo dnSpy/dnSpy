@@ -129,7 +129,7 @@
     <Compile Include="AsmEditor\Converters\InstructionOperandTextBoxStyleConverter.cs" />
     <Compile Include="AsmEditor\Converters\NegateBooleanConverter.cs" />
     <Compile Include="AsmEditor\Converters\RadioButtonConverter.cs" />
-    <Compile Include="AsmEditor\DataFieldVM.cs" />
+    <Compile Include="MVVM\DataFieldVM.cs" />
     <Compile Include="AsmEditor\DeletableNodes.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\CAArgumentVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\CANamedArgumentControl.xaml.cs">
@@ -295,7 +295,7 @@
     <Compile Include="AsmEditor\DnlibDialogs\TypeSigCreatorVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\TypeSigVM.cs" />
     <Compile Include="AsmEditor\EditCommand.cs" />
-    <Compile Include="AsmEditor\EnumVM.cs" />
+    <Compile Include="MVVM\EnumVM.cs" />
     <Compile Include="AsmEditor\Event\EventDefCommands.cs" />
     <Compile Include="AsmEditor\Event\EventDefOptions.cs" />
     <Compile Include="AsmEditor\Event\EventOptionsDlg.xaml.cs">
@@ -338,7 +338,7 @@
     <Compile Include="AsmEditor\IUndoCommand.cs" />
     <Compile Include="AsmEditor\IUndoObject.cs" />
     <Compile Include="AsmEditor\ListBoxHelperBase.cs" />
-    <Compile Include="AsmEditor\ListVM.cs" />
+    <Compile Include="MVVM\ListVM.cs" />
     <Compile Include="AsmEditor\MethodBody\BodyUtils.cs" />
     <Compile Include="AsmEditor\MethodBody\CilBodyOptions.cs" />
     <Compile Include="AsmEditor\MethodBody\CilBodyVM.cs" />
@@ -403,7 +403,7 @@
       <DependentUpon>NamespaceDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Namespace\NamespaceVM.cs" />
-    <Compile Include="AsmEditor\NumberVMUtils.cs" />
+    <Compile Include="MVVM\NumberVMUtils.cs" />
     <Compile Include="AsmEditor\Property\PropertyDefCommands.cs" />
     <Compile Include="AsmEditor\Property\PropertyDefOptions.cs" />
     <Compile Include="AsmEditor\Property\PropertyOptionsDlg.xaml.cs">
@@ -452,7 +452,7 @@
     <Compile Include="AsmEditor\SaveModule\MmapUtils.cs" />
     <Compile Include="AsmEditor\SaveModule\ModuleSaver.cs" />
     <Compile Include="AsmEditor\Namespace\NamespaceCommands.cs" />
-    <Compile Include="AsmEditor\RelayCommand.cs" />
+    <Compile Include="MVVM\RelayCommand.cs" />
     <Compile Include="AsmEditor\SaveModule\SaveHexOptionsDlg.xaml.cs">
       <DependentUpon>SaveHexOptionsDlg.xaml</DependentUpon>
     </Compile>
@@ -521,8 +521,8 @@
     <Compile Include="AsmEditor\ViewHelpers\PickNetExecutableFileName.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ShowWarningMessage.cs" />
     <Compile Include="AsmEditor\ViewHelpers\TypeSigCreator.cs" />
-    <Compile Include="AsmEditor\ViewModelBase.cs" />
-    <Compile Include="AsmEditor\WindowBase.cs" />
+    <Compile Include="MVVM\ViewModelBase.cs" />
+    <Compile Include="MVVM\WindowBase.cs" />
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
     <Compile Include="AvalonEdit\EditorPositionState.cs" />

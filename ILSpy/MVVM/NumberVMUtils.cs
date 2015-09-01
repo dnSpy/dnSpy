@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 
-namespace dnSpy.AsmEditor {
+namespace dnSpy.MVVM {
 	public static class NumberVMUtils {
 		public static byte[] ParseByteArray(string s, out string error) {
 			s = s.Replace(" ", string.Empty);

@@ -21,6 +21,7 @@ using System;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.MVVM;
 using dnSpy.Search;
 
 namespace dnSpy.AsmEditor.Resources {

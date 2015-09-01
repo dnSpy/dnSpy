@@ -27,6 +27,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using dnSpy.AsmEditor;
+using dnSpy.MVVM;
 
 namespace dnSpy.Controls {
 	public class MetroWindow : Window {

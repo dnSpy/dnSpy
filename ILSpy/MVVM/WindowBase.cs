@@ -20,7 +20,7 @@
 using System.Windows;
 using dnSpy.Controls;
 
-namespace dnSpy.AsmEditor {
+namespace dnSpy.MVVM {
 	public abstract class WindowBase : MetroWindow {
 		protected void okButton_Click(object sender, RoutedEventArgs e) {
 			this.DialogResult = true;

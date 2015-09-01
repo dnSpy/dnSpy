@@ -24,7 +24,7 @@
              xmlns:vc="clr-namespace:dnSpy.AsmEditor.Converters"
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
              xmlns:local="clr-namespace:dnSpy.AsmEditor.Module"
-             xmlns:winlocal="clr-namespace:dnSpy.AsmEditor"
+             xmlns:winlocal="clr-namespace:dnSpy.MVVM"
              Height="380" Width="400"
              Title="Edit Module"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"

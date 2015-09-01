@@ -26,6 +26,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Decompiler;
 using dnSpy.HexEditor;
+using dnSpy.MVVM;
 using dnSpy.Tabs;
 using dnSpy.TreeNodes;
 using dnSpy.TreeNodes.Hex;

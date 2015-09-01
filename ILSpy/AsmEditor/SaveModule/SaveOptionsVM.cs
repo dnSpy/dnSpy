@@ -20,6 +20,7 @@
 using System;
 using System.Windows.Input;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.MVVM;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	abstract class SaveOptionsVM : ViewModelBase {
